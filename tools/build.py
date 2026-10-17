@@ -123,7 +123,8 @@ RE_STYLE = re.compile(r"<style>(.*?)</style>", re.S)
 
 
 def load_blocks():
-    """blocks/**/*.html → {"공통1-02": [블록, …]} (order 순)"""
+    """blocks/**/*.html → {"공통1-02-01": [블록, …], "공통1-02-R": [...]} (절 코드별, order 순)
+    머리 JSON의 "sec"는 성취기준 코드(= 절) 또는 "<과목>-<대단원>-R"(단원 마무리)."""
     by_unit = {}
     for p in sorted((ROOT / "blocks").rglob("*.html")):
         text = p.read_text(encoding="utf-8")
@@ -141,14 +142,17 @@ def load_blocks():
         kind = re.search(r'data-kind="([^"]+)"', body)
         stds = re.search(r'data-std="([^"]+)"', body)
         title = re.search(r"<h2>(.*?)</h2>", body, re.S)
+        if "sec" not in meta:
+            print(f"경고: 블록 머리에 sec 없음 {p.relative_to(ROOT)}", file=sys.stderr)
+            continue
         blk = {
-            "id": p.stem, "unit": meta["unit"], "order": meta.get("order", 100),
+            "id": p.stem, "sec": meta["sec"], "order": meta.get("order", 100),
             "scripts": meta.get("scripts", []), "style": styles, "html": body,
             "kind": kind.group(1) if kind else "탐구",
             "std": stds.group(1).split() if stds else [],
             "title": re.sub(r"<[^>]+>", "", title.group(1)).strip() if title else p.stem,
         }
-        by_unit.setdefault(meta["unit"], []).append(blk)
+        by_unit.setdefault(meta["sec"], []).append(blk)
     for v in by_unit.values():
         v.sort(key=lambda b: (b["order"], b["id"]))
     return by_unit
@@ -168,11 +172,12 @@ THEME_BTN = ('<button type="button" class="theme-btn" aria-label="다크 모드"
              '<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>')
 
 
-def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차")):
+def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None):
     head_js = ('(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\\b/.exec(location.search),t=q&&q[1];'
                'if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";'
                'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c"})()')
     js = "\n".join(f'<script src="{rel}{s}"></script>' for s in scripts)
+    rec = f" data-rec='{esc(json.dumps(record, ensure_ascii=False))}'" if record else ""
     return f"""<!doctype html>
 <!-- 자동 생성: python -I tools/build.py — 직접 고치지 말고 blocks/ 와 curricula/ 를 고칠 것 -->
 <html lang="ko">
@@ -193,11 +198,11 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <link rel="stylesheet" href="{rel}css/qcard.css">
   <link rel="stylesheet" href="{rel}assets/katex/katex.min.css">{extra_head}
 </head>
-<body>
+<body{rec}>
 
 <header class="top">
   <a class="brand" href="{rel}"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
-  <div class="top-right"><a href="{rel}#courses">과목</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
+  <div class="top-right"><a href="{rel}record.html">학습 기록</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
 </header>
 
 <main class="wrap">
@@ -222,20 +227,54 @@ def num(code):
     return re.match(r"[가-힣]+(\d+)", code).group(1)
 
 
+LIEUL_STEM = {"풀": "풀기", "만들": "만들기", "알": "알기", "열": "열기", "늘": "늘기", "줄": "줄기", "벌": "벌기"}
+
+
+def sec_title(std_text):
+    """성취기준 문장 → 절 제목. '…을 증명할 수 있다.' → '…을 증명하기'"""
+    t = std_text.strip().rstrip(".")
+    m = re.match(r"^(.*?)(\S+) 수 있다$", t)
+    if not m:
+        return t
+    head, verb = m.group(1), m.group(2)
+    if verb in LIEUL_STEM:
+        return head + LIEUL_STEM[verb]
+    if verb.endswith("을") and len(verb) > 1:          # 찾을, 읽을, 얻을 → 찾기
+        return head + verb[:-1] + "기"
+    last = verb[-1]
+    code = ord(last) - 0xAC00
+    if 0 <= code < 11172 and code % 28 == 8:           # 받침 ㄹ: 그릴 → 그리기, 할 → 하기, 낼 → 내기
+        return head + verb[:-1] + chr(ord(last) - 8) + "기"
+    return t
+
+
 def ty_span(t):
     return f'<span class="ty mono" data-ty="{esc(t)}">{esc(t)}</span>' if t else ""
 
 
-def render_card(b, unit_n, idx):
-    """번호, 유형 표시, 다루는 성취기준 줄을 넣는다"""
+def render_card(b, no, std_href):
+    """번호, 유형 표시, 다루는 성취기준 줄, 학습 기록 칸을 넣는다"""
     h = b["html"]
-    h = h.replace('<span class="no"></span>', f'<span class="no">{int(unit_n)}.{idx}</span>', 1)
+    h = h.replace('<span class="no"></span>', f'<span class="no">{no}</span>', 1)
     if b["kind"]:
         h = h.replace("<h2>", f'<h2><span class="q-badge">{esc(b["kind"])}</span>', 1)
     if b["std"]:
-        links = " ".join(f'<a href="#std-{esc(s)}">[{esc(s)}]</a>' for s in b["std"])
+        links = " ".join(f'<a href="{std_href(s)}">[{esc(s)}]</a>' for s in b["std"])
         h = re.sub(r"(</header>)", rf'\1\n  <p class="q-stds mono"><span>다루는 성취기준</span> {links}</p>', h, count=1)
-    return h
+    seen = (f'\n  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="{esc(b["id"])}" aria-pressed="false">'
+            f'<span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>\n</article>')
+    i = h.rfind("</article>")
+    return h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h
+
+
+def collect(blist):
+    styles = "\n".join(b["style"] for b in blist if b["style"])
+    scripts = []
+    for b in blist:
+        for s in b["scripts"]:
+            if s not in scripts:
+                scripts.append(s)
+    return (f"\n  <style>\n{styles}\n  </style>" if styles else ""), scripts
 
 
 def write_pages(depts, blocks):
@@ -244,92 +283,174 @@ def write_pages(depts, blocks):
         for p in sorted(cdir.rglob("*"), reverse=True):
             p.unlink() if p.is_file() else p.rmdir()
     n_pages = n_cards = 0
+    used = set()
     for d in depts:
         for c in d["courses"]:
             base = cdir / d["id"] / num(c["code"])
             base.mkdir(parents=True, exist_ok=True)
             rel = "../../../"
-            # 단원 페이지
-            for i, u in enumerate(c["units"]):
-                key = f'{c["code"]}-{u["n"]}'
-                bl = blocks.get(key, [])
-                u["cards"] = len(bl)
+            c["path"] = f'c/{d["id"]}/{num(c["code"])}/'
+            dept_link = f'<a href="{rel}?dept={d["id"]}#tree">{esc(d["name"])}</a>'
+
+            # 1) 절 목록 만들기: 성취기준마다 절 하나 + 카드가 있으면 단원 마무리 절
+            for u in c["units"]:
+                un = int(u["n"])
+                secs = []
+                for k, s in enumerate(u["s"], 1):
+                    secs.append({"code": s["c"], "file": f'{u["n"]}-{k:02d}', "no": f"{un}.{k}",
+                                 "title": sec_title(s["t"]), "std": s, "blocks": blocks.get(s["c"], [])})
+                rkey = f'{c["code"]}-{u["n"]}-R'
+                if blocks.get(rkey):
+                    secs.append({"code": rkey, "file": f'{u["n"]}-R', "no": f"{un}.R",
+                                 "title": "단원 마무리", "std": None, "blocks": blocks[rkey]})
+                for sc in secs:
+                    used.add(sc["code"])
+                    sc["cards"] = [{"id": b["id"], "kind": b["kind"], "title": b["title"], "no": f'{sc["no"]}.{j}'}
+                                   for j, b in enumerate(sc["blocks"], 1)]
+                u["secs"] = secs
+                u["cards"] = sum(len(sc["blocks"]) for sc in secs)
+                # toc.js용: 성취기준마다 그 절의 카드 id, 단원 마무리 카드는 u["r"]
+                for sc in secs:
+                    if sc["std"]:
+                        sc["std"]["k"] = [x["id"] for x in sc["cards"]]
+                        sc["std"]["f"] = sc["file"]
+                u["r"] = [x["id"] for sc in secs if not sc["std"] for x in sc["cards"]]
+
+            # 성취기준 코드 → 그 절 페이지 링크
+            std_page = {sc["code"]: sc["file"] for u in c["units"] for sc in u["secs"]}
+
+            def std_href(code, here=None):
+                f = std_page.get(code)
+                return f"{f}.html#std" if f else "#"
+
+            flat = [(u, sc) for u in c["units"] for sc in u["secs"]]
+            for idx, (u, sc) in enumerate(flat):
+                un = int(u["n"])
+                prev_s = flat[idx - 1] if idx else None
+                next_s = flat[idx + 1] if idx + 1 < len(flat) else None
+                bl = sc["blocks"]
                 n_cards += len(bl)
-                cards_of = {}
-                for j, b in enumerate(bl, 1):
-                    for s in b["std"]:
-                        cards_of.setdefault(s, []).append((b["id"], f'{int(u["n"])}.{j}'))
-                lis = "".join(
-                    f'<li id="std-{esc(s["c"])}"><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {esc(s["c"])}">'
-                    f'<span class="code">{esc(s["c"].split("-", 1)[1])}</span><span class="t">{esc(s["t"])} {ty_span(s["ty"])}</span>'
-                    f'<span class="cards">{"카드" + "".join(f"<a href=\"#{cid}\">{no}</a>" for cid, no in cards_of.get(s["c"], [])) if s["c"] in cards_of else ""}</span></li>'
-                    for s in u["s"])
-                prev_u = c["units"][i - 1] if i else None
-                next_u = c["units"][i + 1] if i + 1 < len(c["units"]) else None
-                toc = "".join(f'<li><a href="#{b["id"]}"><span class="mono">{int(u["n"])}.{j}</span><span>{esc(b["title"])}</span></a></li>' for j, b in enumerate(bl, 1))
-                cards_html = "\n".join(render_card(b, u["n"], j) for j, b in enumerate(bl, 1)) if bl else \
-                    '<p class="u-empty">이 단원의 카드는 준비 중입니다. 위의 학습 요소와 성취기준을 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>'
-                body = f"""  <section class="topic-hero u-hero">
-    <div class="meta"><a href="{rel}?dept={d["id"]}#tree">{esc(d["name"])}</a><span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
-    <h1>{esc(u["t"])}</h1>
-    {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
-    <div class="q-checklist" data-unit="{esc(key)}">
-      <h2><span>성취기준 점검표</span><span class="mono q-count"></span></h2>
+                cards_html = "\n".join(render_card(b, x["no"], std_href) for b, x in zip(bl, sc["cards"])) if bl else (
+                    '<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, '
+                    '과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>')
+                toc = "".join(f'<li><a href="#{x["id"]}"><span class="mono">{x["no"]}</span><span>{esc(x["title"])}</span></a></li>' for x in sc["cards"])
+                if sc["std"]:
+                    s = sc["std"]
+                    std_box = f"""
+    <div class="q-checklist q-one" id="std" data-unit="{esc(sc["code"])}">
+      <h2><span>이 절의 성취기준</span><span class="mono">[{esc(s["c"])}] {ty_span(s["ty"])}</span></h2>
+      <ol><li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음"><span class="t">{esc(s["t"])}</span></li></ol>
+      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>"""
+                    lead = ""
+                else:
+                    lis = "".join(f'<li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {esc(s["c"])}">'
+                                  f'<span class="code">{esc(s["c"].split("-", 1)[1])}</span><span class="t"><a href="{std_href(s["c"])}">{esc(s["t"])}</a> {ty_span(s["ty"])}</span><span class="cards"></span></li>'
+                                  for s in u["s"])
+                    std_box = f"""
+    <div class="q-checklist" data-unit="{esc(sc["code"])}">
+      <h2><span>대단원 성취기준 점검표</span><span class="mono q-count"></span></h2>
       <ol>{lis}</ol>
-      <p class="note">단원을 공부한 뒤 성취기준을 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+      <p class="note">연습 문제를 풀고 나서 성취기준을 다시 점검하세요.</p>
+    </div>"""
+                    lead = '<p class="lead">대단원 전체를 아우르는 연습 문제입니다. 앞 절들의 카드를 마친 뒤 푸세요.</p>'
+                body = f"""  <section class="topic-hero u-hero" data-sec="{esc(sc["code"])}">
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">/</span><a href="{u["n"]}.html">{un}. {esc(u["t"])}</a></div>
+    <h1><span class="sec-no mono">{sc["no"]}</span>{esc(sc["title"])}</h1>
+    {lead}{std_box}
   </section>
 
   <div class="topic-layout">
-    <aside class="toc" aria-label="이 단원의 카드">
-      <p class="mono small toc-title">이 단원의 카드</p>
+    <aside class="toc" aria-label="이 절의 카드">
+      <p class="mono small toc-title">이 절의 카드</p>
       {f'<ol id="toc-list">{toc}</ol>' if toc else '<p class="small dim">준비 중</p>'}
+      <p class="progress mono small"></p>
+      <p class="toc-links mono small"><a href="{u["n"]}.html">대단원 {un} 절 목록</a><br><a href="{rel}record.html">내 학습 기록</a></p>
     </aside>
     <div>
 {cards_html}
-      <nav class="u-pager" aria-label="단원 이동">
-        <span>{f'<a href="{prev_u["n"]}.html">← {prev_u["n"]} {esc(prev_u["t"])}</a>' if prev_u else ""}</span>
-        <span>{f'<a href="{next_u["n"]}.html">{next_u["n"]} {esc(next_u["t"])} →</a>' if next_u else ""}</span>
+      <nav class="u-pager" aria-label="절 이동">
+        <span>{f'<a href="{prev_s[1]["file"]}.html">← {prev_s[1]["no"]} {esc(prev_s[1]["title"])}</a>' if prev_s else ""}</span>
+        <span>{f'<a href="{next_s[1]["file"]}.html">{next_s[1]["no"]} {esc(next_s[1]["title"])} →</a>' if next_s else ""}</span>
       </nav>
     </div>
   </div>
 """
-                styles = "\n".join(b["style"] for b in bl if b["style"])
-                extra = f"\n  <style>\n{styles}\n  </style>" if styles else ""
-                scripts = []
-                for b in bl:
-                    for s in b["scripts"]:
-                        if s not in scripts:
-                            scripts.append(s)
-                desc = f'{c["name"]} {u["n"]}. {u["t"]} — 학습 요소: {u["el"]}'
-                (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body, extra, scripts), encoding="utf-8", newline="\n")
+                extra, scripts = collect(bl)
+                desc = f'{c["name"]} {sc["no"]} {sc["title"]}' + (f' — 성취기준: {sc["std"]["t"]}' if sc["std"] else "")
+                (base / f'{sc["file"]}.html').write_text(
+                    page(rel, f'{sc["title"]} · {c["name"]}', desc, body, extra, scripts, back=(f'{u["n"]}.html', "← 절 목록"),
+                         record={"course": c["code"], "title": f'{sc["no"]} {sc["title"]}', "sub": c["name"]}),
+                    encoding="utf-8", newline="\n")
                 n_pages += 1
-            # 과목 목차
+
+            # 2) 대단원 페이지: 절 목록
+            for i, u in enumerate(c["units"]):
+                un = int(u["n"])
+                prev_u = c["units"][i - 1] if i else None
+                next_u = c["units"][i + 1] if i + 1 < len(c["units"]) else None
+                rows = "".join(f"""
+        <li class="s-row" data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}">
+          <span class="mono n">{sc["no"]}</span>
+          <a href="{sc["file"]}.html"><b>{esc(sc["title"])}</b></a>
+          <span class="s-meta mono">{ty_span(sc["std"]["ty"]) if sc["std"] else '<span class="ty mono">연습</span>'} <span class="s-cards">카드 {len(sc["cards"]) or "준비 중"}</span></span>
+          {f'<span class="s-std small">{esc(sc["std"]["t"])}</span>' if sc["std"] else ""}
+        </li>""" for sc in u["secs"])
+                body = f"""  <section class="topic-hero u-hero">
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
+    <h1>{esc(u["t"])}</h1>
+    {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
+    <p class="u-prog mono small"></p>
+  </section>
+  <ol class="s-list">{rows}
+  </ol>
+  <nav class="u-pager" aria-label="대단원 이동">
+    <span>{f'<a href="{prev_u["n"]}.html">← {int(prev_u["n"])}. {esc(prev_u["t"])}</a>' if prev_u else ""}</span>
+    <span>{f'<a href="{next_u["n"]}.html">{int(next_u["n"])}. {esc(next_u["t"])} →</a>' if next_u else ""}</span>
+  </nav>
+"""
+                desc = f'{c["name"]} {un}. {u["t"]} — 학습 요소: {u["el"]}'
+                (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body), encoding="utf-8", newline="\n")
+                n_pages += 1
+
+            # 3) 과목 목차
             nstd = sum(len(u["s"]) for u in c["units"])
+            ncard = sum(u["cards"] for u in c["units"])
             units = "".join(f"""
-      <div class="c-unit" data-unit="{esc(c["code"])}-{u["n"]}">
-        <span class="n">{u["n"]}</span>
+      <section class="c-unit" data-unit="{esc(c["code"])}-{u["n"]}">
+        <span class="n">{int(u["n"])}</span>
         <h2><a href="{u["n"]}.html">{esc(u["t"])}</a></h2>
-        <span class="meta"><span class="lp-bar" aria-hidden="true"><i></i></span><span class="lp-t">성취기준 {len(u["s"])}</span> · 카드 {u.get("cards", 0)}</span>
+        <span class="meta"><span class="lp-bar" aria-hidden="true"><i></i></span><span class="lp-t"></span></span>
         {f'<p class="el">{esc(u["el"])}</p>' if u["el"] else ""}
-      </div>""" for u in c["units"])
+        <ol class="c-secs">{"".join(f'<li data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}"><a href="{sc["file"]}.html"><span class="mono">{sc["no"]}</span><span class="t">{esc(sc["title"])}</span><span class="cnt mono">{len(sc["cards"]) if sc["cards"] else "준비 중"}</span></a></li>' for sc in u["secs"])}</ol>
+      </section>""" for u in c["units"])
             info = [("학년·학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("2026 개설", c["open"]),
                     ("선수", c["pre"]), ("학습 시간", c["hours"]), ("교재", c["books"])]
             info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
-            body = f"""  <section class="topic-hero">
-    <div class="meta"><a href="{rel}?dept={d["id"]}#tree">{esc(d["name"])}</a><span class="mono">/ {esc(c["code"])} · {esc(" / ".join(c["sub"]))}</span></div>
+            nsec = sum(len(u["secs"]) for u in c["units"])
+            body = f"""  <section class="topic-hero" data-course="{esc(c["code"])}">
+    <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])} · {esc(" / ".join(c["sub"]))}</span></div>
     <h1>{esc(c["name"])}</h1>
     {f'<p class="lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
     {f'<p class="lead small">수강편람 개요: {esc(c["handb"])}</p>' if c["handb"] else ""}
     <dl class="c-info">{info_html}</dl>
+    <p class="c-prog mono small"></p>
   </section>
-  <p class="mono small dim" style="margin-top:18px">대단원 {len(c["units"])} · 성취기준 {nstd} · 카드 {sum(u.get("cards", 0) for u in c["units"])}</p>
+  <p class="mono small dim" style="margin-top:18px">대단원 {len(c["units"])} · 절 {nsec} · 성취기준 {nstd} · 카드 {ncard}</p>
   <div class="c-units">{units}
   </div>
 """
-            (base / "index.html").write_text(page(rel, c["name"], c["yoram"] or c["name"], body, scripts=("js/toc.js",), back=(f'{rel}?dept={d["id"]}#tree', "← 학과")), encoding="utf-8", newline="\n")
+            (base / "index.html").write_text(page(rel, c["name"], c["yoram"] or c["name"], body, back=(f'{rel}?dept={d["id"]}#tree', "← 학과")),
+                                            encoding="utf-8", newline="\n")
             n_pages += 1
-            c["path"] = f'c/{d["id"]}/{num(c["code"])}/'
+            for u in c["units"]:
+                for sc in u["secs"]:
+                    sc.pop("blocks", None)
+                    sc.pop("std", None)
+                u.pop("secs", None)
+    for k in blocks:
+        if k not in used:
+            print(f"경고: 없는 절에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
     return n_pages, n_cards
 
 
@@ -345,10 +466,6 @@ def main():
         if bad:
             print(f"경고: {did} 학년을 못 읽은 과목 {bad}", file=sys.stderr)
     blocks = load_blocks()
-    known = {f'{c["code"]}-{u["n"]}' for d in out for c in d["courses"] for u in c["units"]}
-    for k in blocks:
-        if k not in known:
-            print(f"경고: 없는 단원에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
     n_pages, n_cards = write_pages(out, blocks)
     js = "/* tools/build.py가 curricula/univ-*.md와 blocks/에서 만든다. 직접 고치지 않는다. */\n"
     js += "window.UNIV = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n"

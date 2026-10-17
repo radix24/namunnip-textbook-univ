@@ -23,7 +23,8 @@
     return `<a class="tbox${nc ? "" : " soon"}" href="${esc(c.path)}" data-code="${esc(c.code)}">
       <span class="lv mono">${esc(c.kind)} · ${c.cr}학점</span><b>${esc(c.name)}</b>
       <span class="pg mono">${nc ? `카드 ${nc} · ` : ""}성취기준 ${dn ? `${dn}/` : ""}${nStd(c)}</span>
-      ${flags.length ? `<span class="pg mono u-flag">${flags.map(esc).join(" · ")}</span>` : ""}</a>`;
+      ${flags.length ? `<span class="pg mono u-flag">${flags.map(esc).join(" · ")}</span>` : ""}
+      ${dn ? `<span class="lp" aria-hidden="true"><i style="--p:${(dn / nStd(c)).toFixed(3)}"></i></span>` : ""}</a>`;
   };
   const tree = document.getElementById("tree");
   function drawTree(d) {
@@ -39,7 +40,7 @@
 
   /* ───── 과목 목록 ───── */
   const host = document.getElementById("courses-list");
-  const stdLi = (s) => `<li data-hay="${esc((s.c + " " + s.t + " " + s.ty).toLowerCase())}"><span class="mono">${esc(s.c.split("-").slice(1).join("-"))}</span><span class="t">${esc(s.t)}</span>${s.ty ? `<span class="ty mono" data-ty="${esc(s.ty)}">${esc(s.ty)}</span>` : ""}</li>`;
+  const stdLi = (s, c) => `<li data-hay="${esc((s.c + " " + s.t + " " + s.ty).toLowerCase())}"${P && P.done(s.c) ? ` class="done"` : ""}><span class="mono">${esc(s.c.split("-").slice(1).join("-"))}</span><a class="t" href="${esc(c.path + s.f)}.html">${esc(s.t)}${s.k && s.k.length ? ` <span class="mono small dim">카드 ${s.k.length}</span>` : ""}</a>${s.ty ? `<span class="ty mono" data-ty="${esc(s.ty)}">${esc(s.ty)}</span>` : ""}</li>`;
   function drawList(d) {
     host.innerHTML = d.courses.map((c) => {
       const tyCount = TYPES.map((t) => [t, c.units.reduce((a, u) => a + u.s.filter((s) => s.ty === t).length, 0)]).filter(([, k]) => k);
@@ -47,7 +48,7 @@
         <div class="chapter" data-hay="${esc((u.t + " " + u.el).toLowerCase())}">
           <h3><span class="mono">${u.n}</span><a href="${esc(c.path)}${u.n}.html">${esc(u.t)}</a>${u.cards ? `<span class="u-src mono">카드 ${u.cards}</span>` : ""}${u.src ? `<span class="u-src mono">${esc(u.src)}</span>` : ""}</h3>
           ${u.el ? `<p class="u-el small">${esc(u.el)}</p>` : ""}
-          <ol class="u-stds">${u.s.map(stdLi).join("")}</ol>
+          <ol class="u-stds">${u.s.map((s) => stdLi(s, c)).join("")}</ol>
         </div>`).join("");
       return `
       <section class="course" id="c-${esc(c.code)}" data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
@@ -140,6 +141,18 @@
   let saved = new URLSearchParams(location.search).get("dept");
   if (!saved) try { saved = localStorage.getItem(TAB_KEY); } catch (e) { saved = null; }
   setDept(saved || "common", false);
+
+  /* 이어서 공부하기: 마지막으로 연 절 */
+  const resume = document.getElementById("resume");
+  const drawResume = () => {
+    const v = P && P.last();
+    if (!resume || !v) { if (resume) resume.hidden = true; return; }
+    resume.href = v.href;
+    resume.innerHTML = `<span class="mono">이어서 공부하기</span><b>${esc(v.title)}</b><span class="small dim">${esc(v.sub || "")}</span><span class="go" aria-hidden="true">→</span>`;
+    resume.hidden = false;
+  };
+  drawResume();
+  if (P) P.onChange(() => { drawResume(); drawTree(dept); });
 
   const total = U.reduce((a, d) => { a.c += d.courses.length; d.courses.forEach((c) => { a.u += c.units.length; a.s += nStd(c); }); return a; }, { c: 0, u: 0, s: 0 });
   document.getElementById("stat").textContent = `학과 ${U.length - 1} + 공통 · 과목 ${total.c} · 대단원 ${total.u} · 성취기준 ${total.s}`;
