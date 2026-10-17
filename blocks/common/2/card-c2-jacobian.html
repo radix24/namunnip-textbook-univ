@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통2-06-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c2-jacobian" data-kind="유도" data-std="공통2-06-03">
+  <header class="card-head"><span class="no"></span><h2>야코비안: 변수변환할 때 넓이가 몇 배가 되는가</h2><span class="kind">선형 근사 · 행렬식 · 일반 변수변환</span></header>
+  <div class="q-body">
+    <div class="q-thm">
+      <span class="lb">변수변환 공식</span>
+      <p>\(T(u,v) = (x(u,v), y(u,v))\)가 영역 \(S\)를 \(R\)로 일대일로 보내고 연속인 편도함수를 가지면</p>
+      \[\iint_R f(x,y)\,dx\,dy = \iint_S f(x(u,v), y(u,v))\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv, \qquad \frac{\partial(x,y)}{\partial(u,v)} = \begin{vmatrix}x_u & x_v\\ y_u & y_v\end{vmatrix}.\]
+    </div>
+
+    <section class="q-sec">
+      <h3>유도 (넓이 요소)</h3>
+      <ol class="q-proof">
+        <li><div>\(uv\)평면의 작은 직사각형(꼭짓점 \((u_0, v_0)\), 변 \(\Delta u\), \(\Delta v\))이 \(T\)로 옮겨진 모양을 본다.</div><span class="q-why">적분은 이런 조각의 합이므로 조각 하나의 넓이가 어떻게 바뀌는지만 알면 된다.</span></li>
+        <li><div>작은 범위에서 \(T\)는 선형 근사: \(T(u_0 + h, v_0 + k) \approx T(u_0, v_0) + h\,\mathbf T_u + k\,\mathbf T_v\), \(\mathbf T_u = (x_u, y_u)\), \(\mathbf T_v = (x_v, y_v)\).</div><span class="q-why">4-02 카드의 미분가능성(전미분).</span></li>
+        <li><div>그래서 옮겨진 조각은 거의 \(\Delta u\,\mathbf T_u\)와 \(\Delta v\,\mathbf T_v\)가 만드는 평행사변형이다.</div><span class="q-why">직사각형의 두 변이 일차 근사로 옮겨진 것.</span></li>
+        <li class="q-end"><div>그 넓이는 \(\left|\det\begin{pmatrix}x_u & x_v\\ y_u & y_v\end{pmatrix}\right|\Delta u\Delta v\). 따라서 \(dA_{xy} = |J|\,du\,dv\).</div><span class="q-why">1-04 카드: 행렬식의 절댓값 = 평행사변형 넓이. 리만 합의 극한에서 근사 오차는 사라진다(엄밀한 증명은 해석학).</span></li>
+      </ol>
+      <p>확인: 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)이면 \(J = \begin{vmatrix}\cos\theta & -r\sin\theta\\ \sin\theta & r\cos\theta\end{vmatrix} = r\). 앞 카드의 \(r\,dr\,d\theta\)와 같습니다. 3차원에서는 3×3 행렬식이고, 구면좌표의 값이 \(\rho^2\sin\varphi\)입니다.</p>
+    </section>
+
+    <p class="q-prob">꼭짓점이 \((1,0), (2,0), (0,2), (0,1)\)인 사다리꼴 \(R\)에서 \(\displaystyle\iint_R e^{(y - x)/(y + x)}\,dA\)를 구하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>피적분함수에 맞춰 \(u = y - x\), \(v = y + x\)로 둔다. 경계: \(x + y = 1\) → \(v = 1\), \(x + y = 2\) → \(v = 2\), \(x = 0\) → \(u = v\), \(y = 0\) → \(u = -v\).</div><span class="q-why">피적분함수와 경계가 동시에 단순해지는 변수를 고른다.</span></li>
+        <li><div>\(S = \{1 \le v \le 2,\ -v \le u \le v\}\).</div><span class="q-why">경계를 새 변수로 옮김.</span></li>
+        <li><div>\(x = \frac{v - u}{2}\), \(y = \frac{u + v}{2}\). \(J = \begin{vmatrix}-\frac12 & \frac12\\ \frac12 & \frac12\end{vmatrix} = -\frac12\), \(|J| = \frac12\).</div><span class="q-why">\(x, y\)를 \(u, v\)로 풀고 편미분. 절댓값을 잊지 않는다.</span></li>
+        <li><div>\(\int_1^2\int_{-v}^{v}e^{u/v}\cdot\frac12\,du\,dv = \frac12\int_1^2 v(e - e^{-1})\,dv\).</div><span class="q-why">안쪽: \(\int_{-v}^{v}e^{u/v}du = v[e^{u/v}]_{-v}^{v} = v(e - e^{-1})\).</span></li>
+        <li class="q-end"><div>\(= \frac12(e - e^{-1})\cdot\frac32 = \frac34(e - e^{-1}) \approx 1.763\).</div><span class="q-why">\(\int_1^2v\,dv = \frac32\).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>사다리꼴 넓이 \(2 - \frac12 = \frac32\). \(\frac{y-x}{y+x} \in [-1, 1]\)이라 피적분함수는 \(e^{-1}\)과 \(e\) 사이이고, 평균값은 \(\frac{1.763}{1.5} \approx 1.175 = \sinh 1\). 범위 안이고, \(u\)가 대칭이라 \(e^{u/v}\)의 평균이 \(\frac{e - e^{-1}}{2}\)인 것과 맞습니다.</p>
+    </section>
+  </div>
+</article>
