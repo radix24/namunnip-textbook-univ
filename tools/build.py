@@ -356,14 +356,18 @@ def load_links(idx):
             it = it.strip()
             if not it:
                 continue
+            if it == tgt:
+                continue
             if it.startswith("고교:"):
                 items.append(it)
             elif CODE.match(it) and it in idx:
                 items.append(it)
-                post.setdefault(it, []).append(tgt)
+                if tgt not in post.setdefault(it, []):
+                    post[it].append(tgt)
             else:
                 print(f"경고: 연결표 {tgt}의 알 수 없는 선수 {it}", file=sys.stderr)
-        pre.setdefault(tgt, []).extend(items)
+        lst = pre.setdefault(tgt, [])
+        lst.extend(x for x in items if x not in lst)
     return {"pre": pre, "post": post}
 
 
