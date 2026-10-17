@@ -196,6 +196,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <link rel="stylesheet" href="{rel}css/tb.css">
   <link rel="stylesheet" href="{rel}css/quri.css">
   <link rel="stylesheet" href="{rel}css/qcard.css">
+  <link rel="stylesheet" href="{rel}css/qtext.css">
   <link rel="stylesheet" href="{rel}assets/katex/katex.min.css">{extra_head}
 </head>
 <body{rec}>
@@ -267,6 +268,27 @@ def render_card(b, no, std_href):
     return h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h
 
 
+def render_text(b):
+    """본문(전공서적식) 블록 → 책 지면. 카드 머리는 페이지 제목이 대신하므로 빼고, 소절 제목에 앵커를 단다.
+    돌려주는 값: (html, [(앵커, 번호, 소절 제목)])"""
+    h = b["html"]
+    h = re.sub(r"\s*<header class=\"card-head\">.*?</header>", "", h, count=1, flags=re.S)
+    h = h.replace('class="card q-card"', 'class="q-card tb-page"', 1)
+    subs = []
+
+    def anchor(m):
+        no, title = m.group(1), m.group(2)
+        aid = "s" + no.replace(".", "-")
+        subs.append((aid, no, re.sub(r"<[^>]+>", "", title).strip()))
+        return f'<h3 id="{aid}"><span class="no">{no}</span>{title}</h3>'
+
+    h = re.sub(r'<h3><span class="no">([\d.]+)</span>(.*?)</h3>', anchor, h)
+    seen = (f'\n  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="{esc(b["id"])}" data-kind="본문" aria-pressed="false">'
+            f'<span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>\n</article>')
+    i = h.rfind("</article>")
+    return (h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h), subs
+
+
 def collect(blist):
     styles = "\n".join(b["style"] for b in blist if b["style"])
     scripts = []
@@ -305,6 +327,9 @@ def write_pages(depts, blocks):
                                  "title": "단원 마무리", "std": None, "blocks": blocks[rkey]})
                 for sc in secs:
                     used.add(sc["code"])
+                    tb = next((b for b in sc["blocks"] if b["kind"] == "본문"), None)
+                    if tb:   # 본문이 있는 절은 책의 절 제목을 쓴다(성취기준 문장은 그 아래에)
+                        sc["title"] = tb["title"]
                     sc["cards"] = [{"id": b["id"], "kind": b["kind"], "title": b["title"], "no": f'{sc["no"]}.{j}'}
                                    for j, b in enumerate(sc["blocks"], 1)]
                 u["secs"] = secs
@@ -330,10 +355,20 @@ def write_pages(depts, blocks):
                 next_s = flat[idx + 1] if idx + 1 < len(flat) else None
                 bl = sc["blocks"]
                 n_cards += len(bl)
-                cards_html = "\n".join(render_card(b, x["no"], std_href) for b, x in zip(bl, sc["cards"])) if bl else (
-                    '<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, '
-                    '과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>')
-                toc = "".join(f'<li><a href="#{x["id"]}"><span class="mono">{x["no"]}</span><span>{esc(x["title"])}</span></a></li>' for x in sc["cards"])
+                # 본문(전공서적식)이 있으면 그것이 이 절의 중심이고, 나머지 카드는 보충 자료가 된다
+                text_b = next((b for b in bl if b["kind"] == "본문"), None)
+                rest = [(b, x) for b, x in zip(bl, sc["cards"]) if b is not text_b]
+                text_html, subs = render_text(text_b) if text_b else ("", [])
+                cards_html = "\n".join(render_card(b, x["no"], std_href) for b, x in rest)
+                if not bl:
+                    cards_html = ('<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, '
+                                  '과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>')
+                if text_b and rest:
+                    cards_html = ('<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. '
+                                  '예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>\n' + cards_html)
+                toc = "".join(f'<li><a href="#{x["id"]}"><span class="mono">{"본문" if b is text_b else x["no"]}</span><span>{esc(x["title"])}</span></a></li>'
+                              for b, x in zip(bl, sc["cards"]))
+                sub_toc = "".join(f'<li><a href="#{a}"><span class="mono">{n}</span><span>{esc(t)}</span></a></li>' for a, n, t in subs)
                 if sc["std"]:
                     s = sc["std"]
                     std_box = f"""
@@ -354,21 +389,36 @@ def write_pages(depts, blocks):
       <p class="note">연습 문제를 풀고 나서 성취기준을 다시 점검하세요.</p>
     </div>"""
                     lead = '<p class="lead">대단원 전체를 아우르는 연습 문제입니다. 앞 절들의 카드를 마친 뒤 푸세요.</p>'
-                body = f"""  <section class="topic-hero u-hero" data-sec="{esc(sc["code"])}">
+                if text_b:
+                    s = sc["std"]
+                    hero_extra = (f'<p class="sec-std"><span class="mono">[{esc(s["c"])}]</span> {esc(s["t"])} {ty_span(s["ty"])}</p>' if s else "")
+                    std_after = std_box.replace('class="q-checklist', 'class="q-checklist after-text', 1).replace(
+                        "카드를 공부한 뒤 직접 해 보고", "본문과 연습문제를 마친 뒤 직접 해 보고")
+                    hero_inner = f'{hero_extra}'
+                    main_html = f"{text_html}\n    {std_after}\n{cards_html}"
+                    h1_title = text_b["title"]
+                    side = (f'<p class="mono small toc-title">이 절의 차례</p>\n      <ol class="toc-sub">{sub_toc}</ol>\n'
+                            f'      <p class="mono small toc-title toc-title-2">이 절의 카드</p>')
+                else:
+                    hero_inner = f"{lead}{std_box}"
+                    main_html = cards_html
+                    h1_title = sc["title"]
+                    side = '<p class="mono small toc-title">이 절의 카드</p>'
+                body = f"""  <section class="topic-hero u-hero{' has-text' if text_b else ''}" data-sec="{esc(sc["code"])}">
     <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">/</span><a href="{u["n"]}.html">{un}. {esc(u["t"])}</a></div>
-    <h1><span class="sec-no mono">{sc["no"]}</span>{esc(sc["title"])}</h1>
-    {lead}{std_box}
+    <h1><span class="sec-no mono">{sc["no"]}</span>{esc(h1_title)}</h1>
+    {hero_inner}
   </section>
 
-  <div class="topic-layout">
-    <aside class="toc" aria-label="이 절의 카드">
-      <p class="mono small toc-title">이 절의 카드</p>
+  <div class="topic-layout{' with-text' if text_b else ''}">
+    <aside class="toc" aria-label="이 절의 차례">
+      {side}
       {f'<ol id="toc-list">{toc}</ol>' if toc else '<p class="small dim">준비 중</p>'}
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="{u["n"]}.html">대단원 {un} 절 목록</a><br><a href="{rel}record.html">내 학습 기록</a></p>
     </aside>
-    <div>
-{cards_html}
+    <div class="sec-main">
+{main_html}
       <nav class="u-pager" aria-label="절 이동">
         <span>{f'<a href="{prev_s[1]["file"]}.html">← {prev_s[1]["no"]} {esc(prev_s[1]["title"])}</a>' if prev_s else ""}</span>
         <span>{f'<a href="{next_s[1]["file"]}.html">{next_s[1]["no"]} {esc(next_s[1]["title"])} →</a>' if next_s else ""}</span>

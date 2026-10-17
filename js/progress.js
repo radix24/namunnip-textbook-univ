@@ -82,7 +82,9 @@ window.QProgress = (() => {
       const on = api.seen(b.dataset.card);
       b.setAttribute("aria-pressed", String(on));
       b.closest(".q-card")?.classList.toggle("is-seen", on);
-      b.querySelector(".lb").textContent = on ? "공부 완료 · 다시 누르면 취소" : "이 카드를 끝까지 공부했어요";
+      const text = b.dataset.kind === "본문";
+      b.querySelector(".lb").textContent = on ? (text ? "읽기 완료 · 다시 누르면 취소" : "공부 완료 · 다시 누르면 취소")
+        : (text ? "이 절의 본문을 끝까지 읽었어요" : "이 카드를 끝까지 공부했어요");
     });
     /* 절 페이지: 옆 목차 표시와 진도 */
     const toc = document.getElementById("toc-list");
