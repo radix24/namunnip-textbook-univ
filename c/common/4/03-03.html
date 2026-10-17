@@ -40,15 +40,63 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c4-rc"><span class="mono">3.3.1</span><span>RC 회로의 충전과 방전: 시간 상수 τ = RC</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c4-rc" data-kind="유도" data-std="공통4-03-03">
+  <header class="card-head"><span class="no">3.3.1</span><h2><span class="q-badge">유도</span>RC 회로의 충전과 방전: 시간 상수 τ = RC</h2><span class="kind">일계 미분방정식 · 지수 감쇠 · 카메라 플래시</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-03.html#std">[공통4-03-03]</a></p>
+  <div class="q-body">
+    <div class="q-thm">
+      <span class="lb">무엇을 유도하나</span>
+      <p>기전력 \(\mathcal E\)인 전지, 저항 \(R\), 빈 축전기 \(C\)를 \(t = 0\)에 연결하면 \(q(t) = C\mathcal E(1 - e^{-t/RC})\), \(I(t) = \frac{\mathcal E}{R}e^{-t/RC}\). 방전은 \(q(t) = Q_0e^{-t/RC}\).</p>
+    </div>
+
+    <section class="q-sec">
+      <h3>모형과 출발점</h3>
+      <p>도선 저항과 전지 내부 저항은 \(R\)에 포함, 인덕턴스 무시. 고리 법칙: \(\mathcal E - IR - \frac qC = 0\), 그리고 \(I = \frac{dq}{dt}\).</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>유도</h3>
+      <ol class="q-proof">
+        <li><div>\(R\frac{dq}{dt} = \mathcal E - \frac qC = -\frac1C(q - C\mathcal E)\).</div><span class="q-why">고리 법칙 정리.</span></li>
+        <li><div>변수분리: \(\frac{dq}{q - C\mathcal E} = -\frac{dt}{RC}\).</div><span class="q-why">공통8 1단원의 변수분리형.</span></li>
+        <li><div>적분: \(\ln|q - C\mathcal E| = -\frac{t}{RC} + c\), 곧 \(q - C\mathcal E = Ae^{-t/RC}\).</div><span class="q-why">지수로 바꿈.</span></li>
+        <li><div>\(q(0) = 0\)이면 \(A = -C\mathcal E\): \(q = C\mathcal E(1 - e^{-t/RC})\).</div><span class="q-why">초기조건.</span></li>
+        <li class="q-end"><div>\(I = \frac{dq}{dt} = \frac{\mathcal E}{R}e^{-t/RC}\).</div><span class="q-why">미분.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>결과 확인</h3>
+      <ul>
+        <li><b>차원</b>: \(RC\)의 단위 Ω·F = (V/A)(C/V) = C/A = s.</li>
+        <li><b>처음</b>: 빈 축전기는 전압이 0이라 도선처럼 행동, \(I(0) = \frac{\mathcal E}{R}\). <b>나중</b>: 꽉 차면 전류 0, 끊어진 도선처럼 행동.</li>
+        <li><b>시간 상수의 뜻</b>: \(t = \tau\)에 최종값의 \(1 - e^{-1} = 63\%\), \(5\tau\)에 99.3%. 실용적으로 "\(5\tau\)면 다 찼다".</li>
+        <li><b>에너지</b>: 전지가 낸 에너지 \(Q\mathcal E = C\mathcal E^2\) 중 축전기에 \(\frac12C\mathcal E^2\), 저항에서 열로 \(\int I^2R\,dt = \frac12C\mathcal E^2\). \(R\)과 상관없이 정확히 절반이 열이 됩니다.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>예</h3>
+      <p class="q-prob">카메라 플래시의 100 μF 축전기를 300 V로 충전하는 회로의 저항이 5.0 kΩ입니다. 시간 상수와 저장 에너지, 90%까지 충전되는 시간은?</p>
+      <p>\(\tau = 5000\times10^{-4} = 0.50\) s. \(U = \frac12(10^{-4})(300)^2 = 4.5\) J. \(1 - e^{-t/\tau} = 0.9\)에서 \(t = \tau\ln10 = 1.15\) s. 방전할 때는 저항이 수 Ω인 램프를 지나므로 \(\tau\)가 수백 μs로 짧아 순간적으로 큰 전력을 냅니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>한계</h3>
+      <p>아주 빠른 변화(나노초)에서는 도선의 인덕턴스가 중요해져 RLC 회로(5단원)로 다뤄야 합니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c4-rc" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="03-02.html">← 3.2 Kirchhoff 법칙으로 직류 회로를 풀기</a></span>
-        <span><a href="04-01.html">4.1 자기장 속 전하의 원운동 반지름과 주기를 구하기 →</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
