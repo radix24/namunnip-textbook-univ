@@ -40,12 +40,53 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c9-curvilinear"><span class="mono">1.1.1</span><span>기울기, 발산, 회전을 곡선 좌표에서 계산하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="01.html">대단원 1 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c9-curvilinear" data-kind="유도" data-std="공통9-01-01">
+  <header class="card-head"><span class="no">1.1.1</span><h2><span class="q-badge">유도</span>기울기, 발산, 회전을 곡선 좌표에서 계산하기</h2><span class="kind">척도 인자 · 원통좌표 · 구면좌표 · Laplacian</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="01-01.html#std">[공통9-01-01]</a></p>
+  <div class="q-body">
+    <div class="q-thm">
+      <span class="lb">무엇을 유도하나</span>
+      <p>원통좌표 \((r, \theta, z)\)에서 \(\nabla f = f_r\hat{\mathbf r} + \frac1rf_\theta\hat{\boldsymbol\theta} + f_z\hat{\mathbf z}\), \(\nabla\cdot\mathbf F = \frac1r\frac{\partial(rF_r)}{\partial r} + \frac1r\frac{\partial F_\theta}{\partial\theta} + \frac{\partial F_z}{\partial z}\), \(\nabla^2f = \frac1r\frac{\partial}{\partial r}\left(r\frac{\partial f}{\partial r}\right) + \frac{1}{r^2}\frac{\partial^2f}{\partial\theta^2} + \frac{\partial^2f}{\partial z^2}\).</p>
+    </div>
+
+    <section class="q-sec">
+      <h3>모형과 출발점</h3>
+      <p>곡선 좌표 \((u_1, u_2, u_3)\)에서 \(u_i\)만 \(du_i\) 바꿀 때 실제로 움직이는 거리가 \(h_i\,du_i\)입니다(<b>척도 인자</b> \(h_i\)). 원통좌표: \(h_r = 1\), \(h_\theta = r\) (호의 길이 \(r\,d\theta\)), \(h_z = 1\). 구면좌표: \(h_\rho = 1\), \(h_\varphi = \rho\), \(h_\theta = \rho\sin\varphi\). 공통2 6-02의 부피 요소 \(dV = h_1h_2h_3\,du_1du_2du_3\)와 같은 수입니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>유도</h3>
+      <ol class="q-proof">
+        <li><div><b>기울기</b>: 방향도함수 = 변화량 ÷ 실제 거리. \(\theta\) 방향으로 \(r\,d\theta\) 움직일 때 \(f\)는 \(f_\theta d\theta\) 변하므로 그 방향 성분은 \(\frac{f_\theta}{r}\).</div><span class="q-why">\(\nabla f\cdot\hat{\mathbf u} = \frac{df}{ds}\) (공통2 4-04).</span></li>
+        <li><div><b>발산</b>: 작은 상자 \(dr\times r\,d\theta\times dz\)의 바깥 선속 ÷ 부피 (공통2 8-03의 정의). \(r\) 방향의 두 면은 넓이 \(r\,d\theta\,dz\)가 \(r\)에 따라 달라 선속 차이가 \(\frac{\partial(rF_r)}{\partial r}dr\,d\theta\,dz\).</div><span class="q-why">넓이 변화까지 미분해야 해서 \(rF_r\).</span></li>
+        <li><div>부피 \(r\,dr\,d\theta\,dz\)로 나누면 \(\frac1r\frac{\partial(rF_r)}{\partial r}\). \(\theta\), \(z\) 방향도 같은 방식.</div><span class="q-why">세 쌍의 면을 더함.</span></li>
+        <li class="q-end"><div><b>Laplacian</b> \(\nabla^2f = \nabla\cdot\nabla f\): 1단계의 성분을 2·3단계에 넣는다.</div><span class="q-why">\(F_r = f_r\), \(F_\theta = \frac{f_\theta}{r}\), \(F_z = f_z\).</span></li>
+      </ol>
+      <p>구면좌표: \(\nabla^2f = \frac{1}{\rho^2}\frac{\partial}{\partial\rho}\left(\rho^2\frac{\partial f}{\partial\rho}\right) + \frac{1}{\rho^2\sin\varphi}\frac{\partial}{\partial\varphi}\left(\sin\varphi\frac{\partial f}{\partial\varphi}\right) + \frac{1}{\rho^2\sin^2\varphi}\frac{\partial^2f}{\partial\theta^2}\).</p>
+    </section>
+
+    <section class="q-check">
+      <h3>결과 확인</h3>
+      <ul>
+        <li><b>점전하 전위</b> \(f = \frac1\rho\): \(\rho^2f_\rho = -1\) (상수)라 \(\nabla^2\frac1\rho = 0\) (\(\rho \ne 0\)). 전하가 없는 곳의 전위는 Laplace 방정식을 만족합니다.</li>
+        <li><b>직선 전하 전위</b> \(f = \ln r\): \(rf_r = 1\)이라 \(\nabla^2\ln r = 0\) (\(r \ne 0\)). 공통4 1-02의 \(\frac{\lambda}{2\pi\varepsilon_0r}\)와 맞습니다.</li>
+        <li><b>회전 흐름</b> \(\mathbf F = \frac{1}{r}\hat{\boldsymbol\theta}\): 발산 0, 회전 \(\frac1r\frac{\partial(rF_\theta)}{\partial r} = 0\) (\(r \ne 0\)). 공통2 7-02의 원점을 뺀 소용돌이 장입니다.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>한계</h3>
+      <p>원점(\(r = 0\), \(\rho = 0\))이나 극(\(\sin\varphi = 0\))에서는 좌표 자체가 특이해 식이 터집니다. 그곳의 물리량은 직교좌표로 확인하거나 극한으로 다룹니다. 이 식들이 5단원(원판의 Laplace 방정식)과 공통8 7-03(Bessel, Legendre)의 출발점입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-curvilinear" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span></span>
         <span><a href="01-02.html">1.2 Green, Gauss, Stokes 정리로 적분을 바꾸기 →</a></span>
