@@ -40,14 +40,67 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c7-correlation"><span class="mono">8.1.1</span><span>상관계수를 계산하고 인과와 구별하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c7-correlation" data-kind="예제" data-std="공통7-08-01">
+  <header class="card-head"><span class="no">8.1.1</span><h2><span class="q-badge">예제</span>상관계수를 계산하고 인과와 구별하기</h2><span class="kind">r = Σz_x z_y/(n−1) · 직선 관계만 · 상관 ≠ 인과</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-01.html#std">[공통7-08-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>정의와 성질</h3>
+      <p>\(r = \frac{1}{n - 1}\sum z_{x_i}z_{y_i}\) (두 변수의 표준화 점수를 곱해 평균). 두 값이 함께 평균보다 크거나 함께 작으면 곱이 양수라 \(r > 0\).</p>
+      <ul>
+        <li>\(-1 \le r \le 1\) (코시-슈바르츠 부등식, 공통2 1-01). \(|r| = 1\)이면 점이 정확히 한 직선 위.</li>
+        <li>단위와 상관없고, \(x\)와 \(y\)를 바꿔도 같습니다.</li>
+        <li><b>직선 관계의 세기만</b> 잽니다. \(y = x^2\) (\(x\)가 −3~3에 대칭)처럼 강한 곡선 관계도 \(r \approx 0\)일 수 있습니다.</li>
+        <li>이상값 하나에 크게 흔들립니다.</li>
+      </ul>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>나라별 1인당 초콜릿 소비량과 인구당 노벨상 수상자 수의 상관계수가 0.79라는 분석이 있습니다. 초콜릿을 많이 먹으면 노벨상을 탈까요?</p>
+      <details><summary>예측 확인</summary><p>아닙니다. 부유한 나라일수록 초콜릿도 많이 먹고 연구 투자도 많습니다(교란 변수: 국가의 부). 상관은 인과를 말해 주지 않습니다.</p></details>
+    </div>
+
+    <p class="q-prob">학생 5명의 주당 공부 시간 \(x\)와 시험 점수 \(y\): (2, 60), (4, 70), (6, 75), (8, 85), (10, 90). 상관계수를 구하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(\bar x = 6\), \(\bar y = 76\). 편차 \(x\): −4, −2, 0, 2, 4. \(y\): −16, −6, −1, 9, 14.</div><span class="q-why">평균에서의 편차.</span></li>
+        <li><div>\(\sum(x - \bar x)(y - \bar y) = 64 + 12 + 0 + 18 + 56 = 150\).</div><span class="q-why">곱의 합.</span></li>
+        <li><div>\(\sum(x - \bar x)^2 = 40\), \(\sum(y - \bar y)^2 = 256 + 36 + 1 + 81 + 196 = 570\).</div><span class="q-why">제곱합.</span></li>
+        <li class="q-end"><div>\(r = \frac{150}{\sqrt{40\times570}} = \frac{150}{151.0} = 0.993\).</div><span class="q-why">\(r = \frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}\) (정의를 정리한 꼴, \(n - 1\)이 소거됨).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>강한 양의 직선 관계입니다. 하지만 이것이 관측 자료라면 "공부를 늘리면 점수가 오른다"고 단정할 수 없습니다. 의욕이 높은 학생이 공부도 많이 하고 점수도 높을 수 있습니다(교란, 01-02 카드). 그래도 상관은 인과를 찾는 출발점이고, 실험이나 여러 증거로 이어집니다. 그리고 5명으로는 우연의 영향이 큽니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>점들이 거의 직선 위에 있어(\(y\)가 \(x\)당 약 3.75점씩 증가) \(r\)이 1에 가까운 것이 그림과 맞습니다. 스프레드시트 <code>=CORREL()</code>.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"\(r = 0\)이면 관계가 없다."</b> 직선 관계가 없을 뿐입니다. 산점도부터 그립니다.</li>
+        <li><b>"\(r = 0.8\)이면 80%가 설명된다."</b> 설명되는 비율은 \(r^2 = 0.64\)입니다(다음 카드).</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c7-correlation" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-03.html">← 7.3 통계적 유의성과 실질적 중요성을 구별하기</a></span>
+        <span><a href="07-R.html">← 7.R 단원 마무리</a></span>
         <span><a href="08-02.html">8.2 회귀 직선으로 예측하고 외삽의 위험을 설명하기 →</a></span>
       </nav>
     </div>

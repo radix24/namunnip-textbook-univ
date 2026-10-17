@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통7-05-02",
+  "order": 10,
+  "scripts": ["js/cards/common/clt.js"]
+}
+-->
+<style>
+#card-c7-clt canvas { width: 100%; max-width: 560px; display: block; margin: 8px auto; }
+#card-c7-clt .ctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 8px 0; }
+#card-c7-clt .ctl input[type=range] { width: 180px; }
+#card-c7-clt .out { font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); }
+</style>
+<article class="card q-card" id="card-c7-clt" data-kind="실습" data-std="공통7-05-02">
+  <header class="card-head"><span class="no"></span><h2>중심극한정리를 모의실험으로 확인하기</h2><span class="kind">치우친 모집단 · 표본평균의 분포 · n이 커지면</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>모집단이 정규분포가 아니어도 표본평균 \(\bar X\)의 분포는 \(n\)이 커지면 정규분포 \(N\!\left(\mu, \frac{\sigma^2}{n}\right)\)에 가까워진다는 <b>중심극한정리</b>를 직접 확인합니다. 성취기준 [공통7-05-02].</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>아래 모의실험 그림(이 페이지에서 바로 실행). 모집단은 오른쪽으로 크게 치우친 지수분포(평균 1, 표준편차 1)로, 대기 시간이나 부품 수명과 비슷한 모양입니다. 같은 실험을 스프레드시트나 Python으로도 할 수 있습니다(맨 아래).</p>
+    </section>
+
+    <div class="ctl">
+      <label>표본 크기 n = <b class="nv">1</b> <input class="n" type="range" min="1" max="50" step="1" value="1" aria-label="표본 크기"></label>
+      <button class="link go1" type="button">표본 1개 뽑기</button>
+      <button class="link go" type="button">500개 더 뽑기</button>
+      <button class="link reset" type="button">지우기</button>
+    </div>
+    <canvas aria-label="표본평균의 히스토그램. n이 2 이상이면 이론 정규분포 곡선을 함께 그린다"></canvas>
+    <p class="out"></p>
+
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(n = 1\)에서 "500개 더 뽑기"를 몇 번 눌러 모집단의 모양(오른쪽 꼬리)을 본다.</li>
+        <li>\(n = 2, 5, 10, 30\)으로 바꿔 가며 같은 일을 한다. 막대 위의 붉은 곡선은 \(N\!\left(1, \frac1n\right)\)이다.</li>
+        <li>아래 숫자 줄에서 표본평균들의 표준편차가 \(\frac{1}{\sqrt n}\)에 가까운지 확인한다.</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(n = 1\): 오른쪽으로 길게 치우친 모양(모집단 그대로).</li>
+        <li>\(n = 5\): 아직 조금 치우쳤지만 봉우리가 1 근처로 모임.</li>
+        <li>\(n = 30\): 종 모양에 거의 가깝고 곡선과 잘 맞음. 퍼짐은 \(\frac{1}{\sqrt{30}} = 0.18\).</li>
+        <li>어느 \(n\)이든 표본평균들의 평균은 1 근처(05-01 카드의 \(E[\bar X] = \mu\)).</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>"\(n \ge 30\)이면 정규 근사"라는 흔한 규칙은 어디서 왔을까요? 모집단이 많이 치우칠수록 더 큰 \(n\)이 필요합니다. 이 지수분포에서 \(n = 10\)과 30을 비교해 보세요.</li>
+        <li>중심극한정리가 말하지 <b>않는</b> 것: 표본이 커지면 <b>자료 자체</b>가 정규분포가 되는 것이 아닙니다. 정규분포에 가까워지는 것은 표본평균의 분포입니다. \(n = 1\)에서 아무리 많이 뽑아도 모양은 그대로입니다.</li>
+        <li>6단원의 신뢰구간 \(\bar x \pm 1.96\frac{s}{\sqrt n}\)이 모집단 모양과 상관없이 쓰일 수 있는 근거가 이 실험입니다.</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Python(Google Colab에서 실행 가능):</p>
+      <pre><code>import numpy as np, matplotlib.pyplot as plt
+n, reps = 10, 5000
+means = np.random.exponential(1.0, size=(reps, n)).mean(axis=1)
+print(means.mean(), means.std(ddof=1), 1/np.sqrt(n))
+plt.hist(means, bins=50, density=True); plt.show()</code></pre>
+      <p>주사위 눈(균등분포)으로 바꾸면 \(n = 5\) 정도만 돼도 거의 종 모양입니다. 처음부터 대칭인 분포일수록 빨리 정규분포에 가까워집니다.</p>
+    </section>
+  </div>
+</article>

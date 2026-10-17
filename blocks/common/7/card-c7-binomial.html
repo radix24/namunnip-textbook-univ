@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통7-04-02",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c7-binomial" data-kind="예제" data-std="공통7-04-02">
+  <header class="card-head"><span class="no"></span><h2>이항분포: n번 중 k번 성공할 확률</h2><span class="kind">P(X = k) = C(n,k) p^k (1−p)^(n−k) · 조건 확인 · μ = np</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>조건과 식</h3>
+      <p>(1) 시행 횟수 \(n\)이 정해져 있고 (2) 각 시행은 성공/실패 둘 중 하나 (3) 성공 확률 \(p\)가 매번 같고 (4) 시행끼리 독립이면, 성공 횟수 \(X\sim B(n, p)\):</p>
+      \[P(X = k) = \binom nk p^k(1 - p)^{n-k}, \qquad \mu = np, \quad \sigma = \sqrt{np(1 - p)}.\]
+      <p>근거: 특정 순서(예: 처음 \(k\)번 성공)의 확률은 독립이라 \(p^k(1-p)^{n-k}\)이고, 성공이 들어갈 자리를 고르는 방법이 \(\binom nk\)가지입니다. 평균은 시행마다 성공 개수의 기대값 \(p\)를 \(n\)번 더한 것, 분산도 독립이라 \(p(1-p)\)를 \(n\)번 더한 것입니다.</p>
+    </section>
+
+    <p class="q-prob">객관식 10문항(보기 5개)을 모두 찍을 때 (가) 정확히 3개 맞힐 확률 (나) 6개 이상 맞혀 통과할 확률 (다) 맞힌 개수의 평균과 표준편차</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>조건 확인: \(n = 10\), 맞음/틀림, \(p = 0.2\), 문항끼리 독립(찍기). \(X\sim B(10, 0.2)\).</div><span class="q-why">네 조건을 먼저 확인.</span></li>
+        <li><div>(가) \(\binom{10}{3}(0.2)^3(0.8)^7 = 120\times0.008\times0.2097 = 0.201\).</div><span class="q-why">이항 식.</span></li>
+        <li><div>(나) \(P(X \ge 6) = \sum_{k=6}^{10}\binom{10}{k}0.2^k0.8^{10-k} = 0.00551 + 0.00079 + 0.00007 + \cdots \approx 0.0064\).</div><span class="q-why">\(k = 6\): \(210\times0.000064\times0.4096 = 0.0055\), \(k = 7\): \(120\times0.0000128\times0.512 = 0.00079\).</span></li>
+        <li class="q-end"><div>(다) \(\mu = 2\), \(\sigma = \sqrt{10\times0.2\times0.8} = 1.26\).</div><span class="q-why">공식.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>찍어서 통과할 확률은 약 0.6%로 160명 중 1명 꼴입니다. 반대로 어떤 학생이 6개 이상 맞혔다면 "찍었다"는 설명은 그럴듯하지 않습니다. 이것이 7단원 가설검정의 생각입니다(p값 = 0.0064).</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>스프레드시트 <code>=BINOM.DIST(3,10,0.2,FALSE)</code> = 0.2013, <code>=1-BINOM.DIST(5,10,0.2,TRUE)</code> = 0.0064. 모든 \(k\)의 확률 합이 1인지는 이항정리 \((p + (1 - p))^n = 1\)이 보장합니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>비복원 추출에 이항분포</b>: 상자 20개 중 불량 5개에서 4개를 꺼내면 매번 확률이 바뀌어 독립이 아닙니다(초기하분포). 모집단이 표본보다 훨씬 크면(10배 이상) 이항으로 근사해도 됩니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

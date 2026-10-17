@@ -40,14 +40,60 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c7-hypothesis-test"><span class="mono">7.1.1</span><span>가설을 세우고 p값으로 결론 내리기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c7-hypothesis-test" data-kind="예제" data-std="공통7-07-01">
+  <header class="card-head"><span class="no">7.1.1</span><h2><span class="q-badge">예제</span>가설을 세우고 p값으로 결론 내리기</h2><span class="kind">H₀ · H₁ · 검정통계량 · p값 · t 검정 · 카이제곱</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-01.html#std">[공통7-07-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>논리</h3>
+      <p>가설검정은 귀류법의 확률판입니다. "아무 효과가 없다"(귀무가설 \(H_0\))고 가정하고, 그 가정 아래에서 지금 본 자료만큼 극단적인 결과가 나올 확률(<b>p값</b>)을 구합니다. p값이 아주 작으면 "\(H_0\) 아래에서는 거의 일어나지 않을 일이 일어났다"고 보고 \(H_0\)를 기각합니다. 미리 정한 기준이 유의수준 \(\alpha\) (보통 0.05).</p>
+      <ol>
+        <li>가설: \(H_0: \mu = \mu_0\), \(H_1: \mu \ne \mu_0\) (또는 한쪽).</li>
+        <li>검정통계량: \(t = \frac{\bar x - \mu_0}{s/\sqrt n}\) (평균), \(z = \frac{\hat p - p_0}{\sqrt{p_0(1-p_0)/n}}\) (비율), 범주 자료의 관측도수와 기대도수 비교는 \(\chi^2 = \sum\frac{(O - E)^2}{E}\).</li>
+        <li>p값: \(H_0\)가 참일 때 통계량이 관측값만큼 또는 더 극단적일 확률.</li>
+        <li>결론: \(p \le \alpha\)이면 \(H_0\) 기각, 아니면 기각하지 못함. 맥락의 말로 쓴다.</li>
+      </ol>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>500 mL라고 표시된 생수 16병의 평균이 496 mL였습니다. 회사가 양을 속인다고 말할 수 있을까요? 무엇을 더 알아야 할까요?</p>
+      <details><summary>예측 확인</summary><p>병마다 양이 얼마나 퍼져 있는지(표준편차)를 알아야 합니다. 퍼짐이 크면 4 mL 차이는 우연으로 흔히 생기고, 작으면 드문 일입니다.</p></details>
+    </div>
+
+    <p class="q-prob">(가) 생수 16병의 평균 496 mL, 표준편차 8 mL. 평균이 500 mL보다 적은지 \(\alpha = 0.05\)로 검정하세요. (나) 주사위를 120번 던져 각 눈이 25, 17, 15, 23, 24, 16번 나왔습니다. 공정한 주사위인지 검정하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(H_0: \mu = 500\), \(H_1: \mu < 500\) (속이는지 묻는 한쪽 검정).</div><span class="q-why">자료를 보기 전에 질문으로 정한다.</span></li>
+        <li><div>\(t = \frac{496 - 500}{8/\sqrt{16}} = \frac{-4}{2} = -2.0\), 자유도 15.</div><span class="q-why">평균의 \(t\) 통계량.</span></li>
+        <li><div>p값 \(= P(T_{15} \le -2.0) \approx 0.032\) (<code>=T.DIST(-2,15,TRUE)</code>). \(0.032 < 0.05\)이므로 \(H_0\) 기각.</div><span class="q-why">결론: 평균 용량이 500 mL보다 적다는 증거가 있다.</span></li>
+        <li><div>(나) \(H_0\): 각 눈의 확률 \(\frac16\). 기대도수 20씩. \(\chi^2 = \frac{25 + 9 + 25 + 9 + 16 + 16}{20} = \frac{100}{20} = 5.0\), 자유도 5.</div><span class="q-why">\((O - E)^2\): 25, 9, 25, 9, 16, 16.</span></li>
+        <li class="q-end"><div>p값 \(= P(\chi^2_5 \ge 5.0) \approx 0.42\). \(H_0\)를 기각하지 못함: 공정하지 않다는 증거가 없다.</div><span class="q-why"><code>=CHISQ.DIST.RT(5,5)</code>.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>(가)의 p값 0.032는 "평균이 정말 500이라면 16병 평균이 496 이하로 나올 확률이 3.2%"라는 뜻입니다. "회사가 정직할 확률이 3.2%"가 아닙니다. (나)는 "공정하다"를 증명한 것이 아니라, 120번으로는 불공정을 보여 줄 증거가 부족하다는 뜻입니다. "기각하지 못함"과 "\(H_0\)가 참"은 다릅니다(무죄 추정: 무죄 판결이 결백의 증명은 아님).</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>(가) 95% 신뢰구간(양측) \(496 \pm 2.131\times2 = (491.7, 500.3)\)은 500을 겨우 포함해, 양측 검정이었다면 p ≈ 0.064로 5%에서 기각되지 않습니다. 한쪽 검정이라 기각된 것입니다. 한쪽인지 양쪽인지는 자료를 보기 <b>전에</b> 질문으로 정해야 합니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c7-hypothesis-test" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="06-02.html">← 6.2 신뢰수준의 뜻을 올바르게 해석하기</a></span>
+        <span><a href="06-R.html">← 6.R 단원 마무리</a></span>
         <span><a href="07-02.html">7.2 제1종 오류와 제2종 오류를 구별하기 →</a></span>
       </nav>
     </div>

@@ -40,14 +40,58 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c7-expectation"><span class="mono">4.1.1</span><span>이산확률변수의 기대값과 분산</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c7-expectation" data-kind="예제" data-std="공통7-04-01">
+  <header class="card-head"><span class="no">4.1.1</span><h2><span class="q-badge">예제</span>이산확률변수의 기대값과 분산</h2><span class="kind">E[X] = Σx p(x) · Var = E[X²] − (E[X])² · 복권 · 보험</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="04-01.html#std">[공통7-04-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>정의와 뜻</h3>
+      <ul>
+        <li>확률변수 \(X\): 우연한 결과에 수를 대응시킨 것. 확률분포 \(p(x) = P(X = x)\).</li>
+        <li><b>기대값</b> \(\mu = E[X] = \sum xp(x)\): 아주 여러 번 되풀이할 때 평균(큰 수의 법칙). 확률을 무게로 둔 무게중심.</li>
+        <li><b>분산</b> \(\sigma^2 = E[(X - \mu)^2] = E[X^2] - \mu^2\), 표준편차 \(\sigma\).</li>
+        <li>성질: \(E[aX + b] = aE[X] + b\), \(\text{Var}(aX + b) = a^2\text{Var}(X)\). \(E[X + Y] = E[X] + E[Y]\) (늘), \(\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)\) (독립일 때).</li>
+      </ul>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>1000원짜리 복권의 기대 상금이 500원이라면, 이 복권을 사는 것은 평균적으로 이득일까요, 손해일까요?</p>
+      <details><summary>예측 확인</summary><p>한 장당 평균 500원 손해입니다. 그래도 사람들이 사는 것은 큰 상금의 작은 확률에 다른 가치를 두기 때문이고, 기대값만으로는 그 선택을 설명하지 못합니다.</p></details>
+    </div>
+
+    <p class="q-prob">1000원짜리 즉석 복권: 1등 100만 원(확률 \(\frac{1}{10000}\)), 2등 1만 원(\(\frac{1}{100}\)), 3등 1000원(\(\frac{1}{10}\)), 나머지 꽝. 순이익 \(X\)의 기대값과 표준편차를 구하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>상금 \(W\)의 기대값: \(10^6\times10^{-4} + 10^4\times10^{-2} + 10^3\times10^{-1} = 100 + 100 + 100 = 300\)원.</div><span class="q-why">\(\sum wp(w)\). 꽝은 0.</span></li>
+        <li><div>순이익 \(X = W - 1000\), \(E[X] = 300 - 1000 = -700\)원.</div><span class="q-why">\(E[W + b] = E[W] + b\).</span></li>
+        <li><div>\(E[W^2] = 10^{12}\times10^{-4} + 10^8\times10^{-2} + 10^6\times10^{-1} = 10^8 + 10^6 + 10^5 = 1.011\times10^8\).</div><span class="q-why">분산 계산을 위해.</span></li>
+        <li class="q-end"><div>\(\text{Var}(W) = 1.011\times10^8 - 300^2 = 1.0101\times10^8\), \(\sigma = 10050\)원. \(\text{Var}(X) = \text{Var}(W)\).</div><span class="q-why">상수를 빼도 분산은 그대로.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>평균 손실은 700원인데 표준편차는 1만 원이 넘습니다. 한 장으로는 결과가 거의 예측되지 않지만, 100만 장을 사면 평균 순이익은 −700원 근처에 몰립니다(5단원: 평균의 표준오차는 \(\frac{\sigma}{\sqrt n}\)). 복권 회사와 보험 회사는 이 "많이 하면 평균이 된다"에 기대어 운영합니다. 보험 가입자는 기대값으로는 손해지만 큰 손실의 분산을 줄이려고 가입합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>확률의 합: \(0.0001 + 0.01 + 0.1 + 0.8899 = 1\). 기대값이 가능한 값의 범위(−1000 ~ 999000) 안에 있습니다. 분산의 대부분이 1등 한 항에서 옵니다(드문 큰 값이 퍼짐을 지배).</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c7-expectation" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-02.html">← 3.2 조건부확률과 Bayes 정리로 검사 결과를 해석하기</a></span>
+        <span><a href="03-R.html">← 3.R 단원 마무리</a></span>
         <span><a href="04-02.html">4.2 이항분포 확률을 계산하기 →</a></span>
       </nav>
     </div>
