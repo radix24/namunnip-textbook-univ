@@ -128,6 +128,18 @@ window.QProgress = (() => {
       });
       const cp = document.querySelector(".c-prog");
       if (cp) cp.innerHTML = `<span class="lp-bar" aria-hidden="true"><i style="--p:${ST ? (SD / ST).toFixed(3) : 0}"></i></span>성취기준 ${SD}/${ST} 할 수 있음 · 카드 ${CD}/${CT} 공부함`;
+      /* 책 목차형: 카드별 표시, 절의 카드 진도, '이어서 공부하기'는 아직 끝내지 않은 첫 절로 */
+      document.querySelectorAll("[data-card]").forEach((li) => li.classList.toggle("done", api.seen(li.dataset.card)));
+      let nextSec = null;
+      document.querySelectorAll(".cx-sec").forEach((li) => {
+        const c = ids(li), k = c.filter(api.seen).length, b = li.querySelector(".cx-badge");
+        /* 절 완료(✓)는 성취기준 체크로, 카드 진도와 '이어서'는 본 카드 수로 판단한다 */
+        if (b && c.length) { b.textContent = k === c.length ? "카드 완료" : `카드 ${k}/${c.length}`; b.classList.toggle("ok", k === c.length); }
+        if (!nextSec && c.length && k < c.length) nextSec = li;
+      });
+      const go = document.querySelector(".cx-go");
+      if (go && nextSec) { go.href = nextSec.dataset.href; go.textContent = `${CD ? "이어서 공부하기" : "처음부터 공부하기"} · ${nextSec.dataset.title}`; }
+      else if (go && CT) { go.textContent = "모든 절을 마쳤습니다 · 처음으로"; }
     }
     listeners.forEach((f) => { try { f(); } catch (e) { console.error(e); } });
   }

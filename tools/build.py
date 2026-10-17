@@ -541,31 +541,66 @@ def write_pages(depts, blocks, sidx, links):
                 (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body), encoding="utf-8", newline="\n")
                 n_pages += 1
 
-            # 3) 과목 목차
+            # 3) 과목 목차(책 목차형): 왼쪽에 과목 정보·진도·선수/다음 과목, 오른쪽에 대단원 → 절 → 카드
             nstd = sum(len(u["s"]) for u in c["units"])
             ncard = sum(u["cards"] for u in c["units"])
-            units = "".join(f"""
-      <section class="c-unit" data-unit="{esc(c["code"])}-{u["n"]}">
-        <span class="n">{int(u["n"])}</span>
-        <h2><a href="{u["n"]}.html">{esc(u["t"])}</a></h2>
-        <span class="meta"><span class="lp-bar" aria-hidden="true"><i></i></span><span class="lp-t"></span></span>
-        {f'<p class="el">{esc(u["el"])}</p>' if u["el"] else ""}
-        <ol class="c-secs">{"".join(f'<li data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}"><a href="{sc["file"]}.html"><span class="mono">{sc["no"]}</span><span class="t">{esc(sc["title"])}</span><span class="cnt mono">{len(sc["cards"]) if sc["cards"] else "준비 중"}</span></a></li>' for sc in u["secs"])}</ol>
-      </section>""" for u in c["units"])
-            info = [("학년·학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("2026 개설", c["open"]),
-                    ("선수", c["pre"]), ("학습 시간", c["hours"]), ("교재", c["books"])]
-            info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
             nsec = sum(len(u["secs"]) for u in c["units"])
-            body = f"""  <section class="topic-hero" data-course="{esc(c["code"])}">
-    <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])} · {esc(" / ".join(c["sub"]))}</span></div>
-    <h1>{esc(c["name"])}</h1>
-    {f'<p class="lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
-    {f'<p class="lead small">수강편람 개요: {esc(c["handb"])}</p>' if c["handb"] else ""}
-    <dl class="c-info">{info_html}</dl>
-    <p class="c-prog mono small"></p>
-  </section>
-  <p class="mono small dim" style="margin-top:18px">대단원 {len(c["units"])} · 절 {nsec} · 성취기준 {nstd} · 카드 {ncard}</p>
-  <div class="c-units">{units}
+
+            def sec_row(sc):
+                # 본문 블록은 제목이 절 제목과 같아 목록에서 뺀다(진도에는 data-cards로 들어간다)
+                cards = "".join(f'<li data-card="{esc(x["id"])}"><a href="{sc["file"]}.html#{esc(x["id"])}"><span class="cx-k mono">{esc(x["kind"])}</span>{esc(x["title"])}</a></li>'
+                                for x in sc["cards"] if x["kind"] != "본문")
+                code = f'<span class="cx-code mono">[{esc(sc["std"]["c"])}] {ty_span(sc["std"]["ty"])}</span>' if sc["std"] else ""
+                return f"""
+          <li class="cx-sec" data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}" data-href="{sc["file"]}.html" data-title="{sc["no"]} {esc(sc["title"])}">
+            <span class="cx-n mono">{sc["no"]}</span>
+            <div class="cx-t"><b><a href="{sc["file"]}.html">{esc(sc["title"])}</a></b>{code}</div>
+            <span class="cx-badge mono">{f'카드 {len(sc["cards"])}' if sc["cards"] else "준비 중"}</span>
+            {f'<ul class="cx-qs">{cards}</ul>' if cards else ""}
+          </li>"""
+            units = "".join(f"""
+      <section class="c-unit cx-ch" data-unit="{esc(c["code"])}-{u["n"]}">
+        <div class="cx-ch-head"><span class="cx-no">{int(u["n"])}</span><h2><a href="{u["n"]}.html">{esc(u["t"])}</a></h2><span class="cx-meta mono"><span class="lp-bar" aria-hidden="true"><i></i></span><span class="lp-t"></span></span></div>
+        {f'<p class="cx-goal">{esc(u["el"])}</p>' if u["el"] else ""}
+        <ol class="c-secs">{"".join(sec_row(sc) for sc in u["secs"])}
+        </ol>
+      </section>""" for u in c["units"])
+            # 선수 칸의 과목 코드(공통1, 수학7, 공통1·2)를 링크로, 이어지는 과목은 다른 과목의 선수 코드를 거꾸로 찾는다
+            by_code = {x["code"]: (dd, x) for dd in depts for x in dd["courses"]}
+
+            def pre_codes(text):
+                out = []
+                for m in re.finditer(r"([가-힣]+?)(\d+(?:·\d+)*)(?!\d)", text or ""):
+                    out += [f"{m.group(1)}{k}" for k in m.group(2).split("·") if f"{m.group(1)}{k}" in by_code]
+                return out
+
+            def pre_html(text):
+                def rep(m):
+                    parts = [f"{m.group(1)}{k}" for k in m.group(2).split("·")]
+                    if not all(p in by_code for p in parts):
+                        return m.group(0)
+                    return ", ".join(f'<a href="{rel}c/{by_code[p][0]["id"]}/{num(p)}/">{esc(by_code[p][1]["name"])}</a>' for p in parts)
+                return re.sub(r"([가-힣]+?)(\d+(?:·\d+)*)(?!\d)", rep, esc(text))
+            nexts = [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))]
+            first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
+            info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
+                    ("2026 개설", c["open"]), ("학습", c["hours"]), ("교재", c["books"])]
+            info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
+            path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
+                f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}c/{dd["id"]}/{num(x["code"])}/\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
+            body = f"""  <div class="cx" data-course="{esc(c["code"])}">
+    <aside class="cx-side">
+      <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])}{" · " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
+      <h1>{esc(c["name"])}</h1>
+      {f'<p class="cx-lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
+      {f'<p class="cx-lead small">수강편람 개요: {esc(c["handb"])}</p>' if c["handb"] else ""}
+      <p class="c-prog mono small"></p>
+      {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
+      <dl class="cx-info">{info_html}</dl>
+      {f'<div class="cx-path small">{path_html}</div>' if path_html else ""}
+    </aside>
+    <div class="cx-main">{units}
+    </div>
   </div>
 """
             (base / "index.html").write_text(page(rel, c["name"], c["yoram"] or c["name"], body, back=(f'{rel}?dept={d["id"]}#tree', "← 학과")),
