@@ -40,14 +40,58 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c8-laplace-def"><span class="mono">6.1.1</span><span>정의로 Laplace 변환 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c8-laplace-def" data-kind="예제" data-std="공통8-06-01">
+  <header class="card-head"><span class="no">6.1.1</span><h2><span class="q-badge">예제</span>정의로 Laplace 변환 구하기</h2><span class="kind">F(s) = ∫₀^∞ e^(−st) f(t) dt · 이상적분 · 수렴 조건</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-01.html#std">[공통8-06-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>정의와 뜻</h3>
+      <p>\(\mathcal L\{f\}(s) = F(s) = \int_0^\infty e^{-st}f(t)\,dt\). 시간의 함수 \(f(t)\)를 새 변수 \(s\)의 함수로 바꾸는 적분 변환입니다. 이 변환은 미분을 \(s\)의 곱셈으로 바꿔(06-02 카드), 미분방정식을 대수방정식으로 만듭니다. 공통1 6-04의 이상적분이라 \(s\)가 충분히 커서 \(e^{-st}\)가 \(f\)의 증가를 이길 때만 수렴합니다.</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · Laplace 변환</span>
+      <ol>
+        <li>방정식 양변을 변환한다. 도함수는 \(sY - y(0)\), \(s^2Y - sy(0) - y'(0)\)로 바꾼다.</li>
+        <li>\(Y(s)\)에 대해 대수적으로 푼다.</li>
+        <li>부분분수로 쪼개 표의 꼴로 만든다(공통1 6-03).</li>
+        <li>표와 이동 정리로 역변환한다.</li>
+        <li>\(y(0)\), \(y'(0)\)과 방정식을 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">정의로 (가) \(\mathcal L\{1\}\) (나) \(\mathcal L\{e^{at}\}\) (다) \(\mathcal L\{t\}\) (라) \(\mathcal L\{\sin\omega t\}\)를 구하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(\int_0^\infty e^{-st}dt = \left[-\frac1se^{-st}\right]_0^\infty = \frac1s\) (\(s > 0\)).</div><span class="q-why">\(s \le 0\)이면 발산.</span></li>
+        <li><div>(나) \(\int_0^\infty e^{-(s-a)t}dt = \frac{1}{s - a}\) (\(s > a\)).</div><span class="q-why">(가)에서 \(s\)를 \(s - a\)로. 이것이 \(s\)축 이동 정리의 씨앗.</span></li>
+        <li><div>(다) 부분적분 \(u = t\), \(dv = e^{-st}dt\): \(\left[-\frac tse^{-st}\right]_0^\infty + \frac1s\int_0^\infty e^{-st}dt = 0 + \frac{1}{s^2}\).</div><span class="q-why">\(te^{-st} \to 0\) (로피탈). 일반적으로 \(\mathcal L\{t^n\} = \frac{n!}{s^{n+1}}\).</span></li>
+        <li class="q-end"><div>(라) \(\sin\omega t = \frac{e^{i\omega t} - e^{-i\omega t}}{2i}\)이고 (나)를 복소수 \(a\)에 쓰면 \(\frac{1}{2i}\left(\frac{1}{s - i\omega} - \frac{1}{s + i\omega}\right) = \frac{1}{2i}\cdot\frac{2i\omega}{s^2 + \omega^2} = \frac{\omega}{s^2 + \omega^2}\).</div><span class="q-why">부분적분을 두 번 해도 같은 결과(공통1 6-01 (다)처럼 제자리로 돌아옴).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>\(F(s)\)의 분모가 0이 되는 \(s\)(극점)가 원래 함수의 성격을 알려 줍니다. \(\frac{1}{s - a}\)의 극점 \(a\)는 \(e^{at}\)의 지수, \(\frac{\omega}{s^2 + \omega^2}\)의 극점 \(\pm i\omega\)는 진동수입니다. 공학에서 "극점이 왼쪽 반평면에 있으면 안정"이라고 하는 것이 2단원 특성근의 실수부 판정과 같은 이야기입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(s \to \infty\)이면 모든 \(F(s) \to 0\) (변환 가능한 함수의 일반 성질). 선형성: \(\mathcal L\{\cosh at\} = \frac12\left(\frac{1}{s-a} + \frac{1}{s+a}\right) = \frac{s}{s^2 - a^2}\)으로, \(\cos\)의 변환 \(\frac{s}{s^2 + \omega^2}\)과 \(a = i\omega\)로 이어집니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-laplace-def" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-03.html">← 5.3 비선형 계를 평형점에서 선형화하여 안정성을 판단하기</a></span>
+        <span><a href="05-R.html">← 5.R 단원 마무리</a></span>
         <span><a href="06-02.html">6.2 초기값 문제를 Laplace 변환으로 풀기 →</a></span>
       </nav>
     </div>

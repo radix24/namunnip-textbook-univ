@@ -40,12 +40,56 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c8-step-delta"><span class="mono">6.3.1</span><span>계단 함수와 델타 함수 입력의 응답 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c8-step-delta" data-kind="예제" data-std="공통8-06-03">
+  <header class="card-head"><span class="no">6.3.1</span><h2><span class="q-badge">예제</span>계단 함수와 델타 함수 입력의 응답 구하기</h2><span class="kind">u(t − a) · t축 이동 · δ(t − a) · 충격 응답</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-03.html#std">[공통8-06-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>도구</h3>
+      <ul>
+        <li><b>계단 함수</b> \(u(t - a)\): \(t < a\)이면 0, \(t \ge a\)이면 1. 스위치를 켜는 순간. \(\mathcal L\{u(t - a)\} = \frac{e^{-as}}{s}\).</li>
+        <li><b>\(t\)축 이동</b>: \(\mathcal L\{f(t - a)u(t - a)\} = e^{-as}F(s)\). 시간 지연이 \(e^{-as}\) 곱하기.</li>
+        <li><b>델타 함수</b> \(\delta(t - a)\): 폭 \(\varepsilon\), 높이 \(\frac1\varepsilon\)인 직사각형 펄스(넓이 1)의 \(\varepsilon \to 0\) 극한. 망치로 한 번 치는 순간적인 충격. \(\mathcal L\{\delta(t - a)\} = e^{-as}\).</li>
+      </ul>
+      <p>델타 함수의 변환: 펄스 \(\frac1\varepsilon[u(t - a) - u(t - a - \varepsilon)]\)의 변환 \(e^{-as}\frac{1 - e^{-\varepsilon s}}{\varepsilon s} \to e^{-as}\) (로피탈).</p>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>정지한 용수철 진자를 \(t = \pi\)에 망치로 한 번 톡 치면, 그 뒤의 운동은 어떤 모양일까요?</p>
+      <details><summary>예측 확인</summary><p>\(t = \pi\)까지는 가만히 있다가, 그 순간 속도를 얻어 사인 모양으로 진동합니다.</p></details>
+    </div>
+
+    <p class="q-prob">(가) \(y'' + y = \delta(t - \pi)\), \(y(0) = y'(0) = 0\) (나) \(y' + 2y = u(t - 1)\), \(y(0) = 0\) (\(t = 1\)에 일정한 입력이 켜짐)</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \((s^2 + 1)Y = e^{-\pi s}\), \(Y = e^{-\pi s}\frac{1}{s^2 + 1}\).</div><span class="q-why">초기조건이 0이라 깔끔.</span></li>
+        <li><div>\(\frac{1}{s^2 + 1} \leftrightarrow \sin t\)이고 \(e^{-\pi s}\)는 \(\pi\)만큼 지연: \(y = \sin(t - \pi)u(t - \pi) = -\sin t\cdot u(t - \pi)\).</div><span class="q-why">\(t\)축 이동 정리.</span></li>
+        <li><div>(나) \((s + 2)Y = \frac{e^{-s}}{s}\), \(Y = e^{-s}\frac{1}{s(s + 2)} = e^{-s}\cdot\frac12\left(\frac1s - \frac{1}{s + 2}\right)\).</div><span class="q-why">부분분수.</span></li>
+        <li class="q-end"><div>\(y = \frac12\left(1 - e^{-2(t - 1)}\right)u(t - 1)\).</div><span class="q-why">\(t = 1\) 전에는 0, 그 뒤 \(\frac12\)로 지수적으로 다가감.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>(가)에서 \(y'\)는 \(t = \pi\)에서 0에서 1로 뜁니다. 델타 함수는 "순간적으로 운동량 1을 주는 충격"(공통3 4-01의 충격량)이고, 그 응답(충격 응답)은 \(\frac{1}{s^2 + 1}\), 곧 전달함수의 역변환입니다. 계의 충격 응답을 알면 어떤 입력에 대한 응답도 다음 카드의 합성곱으로 구할 수 있습니다. 공학에서 구조물을 망치로 쳐서 고유 진동수를 재는 이유입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>(나) \(t > 1\)에서 \(y' + 2y = e^{-2(t-1)} + 1 - e^{-2(t-1)} = 1\). \(t = 1\)에서 \(y = 0\)으로 연속. 정상 상태 \(\frac12\)은 \(2y = 1\)에서 바로 보입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-step-delta" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="06-02.html">← 6.2 초기값 문제를 Laplace 변환으로 풀기</a></span>
         <span><a href="06-04.html">6.4 합성곱 정리로 역변환을 구하기 →</a></span>

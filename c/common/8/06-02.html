@@ -40,12 +40,53 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c8-laplace-ivp"><span class="mono">6.2.1</span><span>초기값 문제를 Laplace 변환으로 풀기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c8-laplace-ivp" data-kind="예제" data-std="공통8-06-02">
+  <header class="card-head"><span class="no">6.2.1</span><h2><span class="q-badge">예제</span>초기값 문제를 Laplace 변환으로 풀기</h2><span class="kind">L{y′} = sY − y(0) · 대수방정식으로 · 부분분수</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-02.html#std">[공통8-06-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>도구와 근거</h3>
+      <p>\(\mathcal L\{y'\} = \int_0^\infty e^{-st}y'\,dt = \left[e^{-st}y\right]_0^\infty + s\int_0^\infty e^{-st}y\,dt = sY(s) - y(0)\) (부분적분). 한 번 더: \(\mathcal L\{y''\} = s^2Y - sy(0) - y'(0)\). 미분이 \(s\)를 곱하는 것으로 바뀌고, 초기조건이 처음부터 식에 들어갑니다. 일반해를 구한 뒤 상수를 맞출 필요가 없습니다.</p>
+      <table class="q-table">
+        <thead><tr><th>\(f(t)\)</th><th>\(F(s)\)</th><th>\(f(t)\)</th><th>\(F(s)\)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>\(\frac1s\)</td><td>\(e^{at}\)</td><td>\(\frac{1}{s - a}\)</td></tr>
+          <tr><td>\(t^n\)</td><td>\(\frac{n!}{s^{n+1}}\)</td><td>\(e^{at}f(t)\)</td><td>\(F(s - a)\)</td></tr>
+          <tr><td>\(\cos\omega t\)</td><td>\(\frac{s}{s^2 + \omega^2}\)</td><td>\(\sin\omega t\)</td><td>\(\frac{\omega}{s^2 + \omega^2}\)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="q-prob">\(y'' + 3y' + 2y = e^{-3t}\), \(y(0) = 1\), \(y'(0) = 0\)을 Laplace 변환으로 푸세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>변환: \([s^2Y - s] + 3[sY - 1] + 2Y = \frac{1}{s + 3}\).</div><span class="q-why">초기조건 \(y(0) = 1\), \(y'(0) = 0\)을 넣었다.</span></li>
+        <li><div>\((s^2 + 3s + 2)Y = s + 3 + \frac{1}{s + 3}\), \(Y = \frac{s + 3}{(s + 1)(s + 2)} + \frac{1}{(s + 1)(s + 2)(s + 3)}\).</div><span class="q-why">\(Y\)에 대해 대수적으로 풂.</span></li>
+        <li><div>부분분수: \(\frac{s + 3}{(s+1)(s+2)} = \frac{2}{s + 1} - \frac{1}{s + 2}\). \(\frac{1}{(s+1)(s+2)(s+3)} = \frac{1/2}{s + 1} - \frac{1}{s + 2} + \frac{1/2}{s + 3}\).</div><span class="q-why">근을 대입하는 방법(공통1 6-03).</span></li>
+        <li class="q-end"><div>\(Y = \frac{5/2}{s + 1} - \frac{2}{s + 2} + \frac{1/2}{s + 3}\). 역변환: \(y = \frac52e^{-t} - 2e^{-2t} + \frac12e^{-3t}\).</div><span class="q-why">표의 \(e^{at}\).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>\(Y\)의 분모 \((s+1)(s+2)\)는 계의 특성방정식(2단원)에서, \((s+3)\)은 입력 \(e^{-3t}\)에서 왔습니다. "계의 성질"과 "입력의 성질"이 곱셈으로 분리되는 것이 Laplace 변환의 힘이고, 공학의 전달함수 \(H(s) = \frac{1}{s^2 + 3s + 2}\)가 이 생각입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(y(0) = \frac52 - 2 + \frac12 = 1\). \(y'(0) = -\frac52 + 4 - \frac32 = 0\). 방정식: \(e^{-3t}\) 계수만 보면 \(\frac12(9 - 9 + 2) = 1\), \(e^{-t}\)와 \(e^{-2t}\) 항은 동차해라 0. 맞습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-laplace-ivp" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="06-01.html">← 6.1 기본 함수의 Laplace 변환을 정의로 구하기</a></span>
         <span><a href="06-03.html">6.3 계단 함수와 델타 함수 입력의 응답을 구하기 →</a></span>

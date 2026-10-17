@@ -40,15 +40,57 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c8-convolution"><span class="mono">6.4.1</span><span>합성곱 정리로 역변환 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c8-convolution" data-kind="예제" data-std="공통8-06-04">
+  <header class="card-head"><span class="no">6.4.1</span><h2><span class="q-badge">예제</span>합성곱 정리로 역변환 구하기</h2><span class="kind">(f * g)(t) = ∫₀ᵗ f(τ)g(t − τ)dτ · L{f * g} = FG</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-04.html#std">[공통8-06-04]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>정리와 뜻</h3>
+      <p>합성곱 \((f * g)(t) = \int_0^tf(\tau)g(t - \tau)\,d\tau\)에 대해 \(\mathcal L\{f * g\} = F(s)G(s)\). 곱의 역변환은 합성곱입니다(곱의 역변환은 역변환의 곱이 아닙니다).</p>
+      <p>근거(개요): \(F(s)G(s) = \int_0^\infty\int_0^\infty e^{-s(\tau + \sigma)}f(\tau)g(\sigma)\,d\tau\,d\sigma\)에서 \(t = \tau + \sigma\)로 변수를 바꾸고 적분 순서를 바꾸면(공통2 6-01, 6-03) \(\int_0^\infty e^{-st}\left[\int_0^tf(\tau)g(t - \tau)d\tau\right]dt\).</p>
+      <p>뜻: 계의 충격 응답 \(h(t)\)를 알면 입력 \(g(t)\)에 대한 응답(초기조건 0)은 \(y = h * g\). 입력을 시각 \(\tau\)마다의 작은 충격 \(g(\tau)d\tau\)로 쪼개면, 각각이 \(t - \tau\)만큼 지난 뒤의 응답 \(h(t - \tau)\)을 남기고, 그것을 모두 더한 것입니다.</p>
+    </section>
+
+    <p class="q-prob">(가) \(\mathcal L^{-1}\left\{\frac{1}{s^2(s^2 + 1)}\right\}\)을 합성곱으로 구하세요. (나) \(y'' + y = g(t)\), \(y(0) = y'(0) = 0\)의 해를 \(g\)에 대한 적분으로 쓰세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(\frac{1}{s^2} \leftrightarrow t\), \(\frac{1}{s^2 + 1} \leftrightarrow \sin t\). 따라서 역변환은 \(t * \sin t = \int_0^t\tau\sin(t - \tau)\,d\tau\).</div><span class="q-why">합성곱 정리.</span></li>
+        <li><div>부분적분 \(u = \tau\), \(dv = \sin(t - \tau)d\tau\) (\(v = \cos(t - \tau)\)): \(\left[\tau\cos(t - \tau)\right]_0^t - \int_0^t\cos(t - \tau)\,d\tau = t - \sin t\).</div><span class="q-why">\(\int_0^t\cos(t - \tau)d\tau = \sin t\).</span></li>
+        <li><div>(나) 충격 응답 \(h = \mathcal L^{-1}\left\{\frac{1}{s^2 + 1}\right\} = \sin t\).</div><span class="q-why">06-03 카드 (가)에서 지연 없는 경우.</span></li>
+        <li class="q-end"><div>\(y(t) = \int_0^t\sin(t - \tau)g(\tau)\,d\tau\).</div><span class="q-why">\(Y = \frac{G(s)}{s^2 + 1}\)의 역변환. 어떤 입력 \(g\)에도 쓸 수 있는 공식.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>(나)의 공식은 2단원의 매개변수 변환법(02-03 카드)과 같은 결과를 더 투명하게 줍니다. \(\sin(t - \tau)\)는 "\(\tau\)에 받은 충격이 \(t\)까지 남긴 흔적"입니다. 신호 처리의 필터, 영상의 흐림 효과(블러), 확률에서 두 독립 확률변수의 합의 분포가 모두 합성곱입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>(가) 부분분수로도: \(\frac{1}{s^2(s^2+1)} = \frac{1}{s^2} - \frac{1}{s^2 + 1}\) → \(t - \sin t\). 일치합니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>\(\mathcal L^{-1}\{FG\} = fg\)</b>: \(\frac{1}{s}\cdot\frac1s = \frac{1}{s^2}\)인데 \(1\cdot1 = 1 \ne t\). 곱의 역변환은 합성곱 \(1 * 1 = \int_0^t1\,d\tau = t\)입니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-convolution" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="06-03.html">← 6.3 계단 함수와 델타 함수 입력의 응답을 구하기</a></span>
-        <span><a href="07-01.html">7.1 정칙점 근처에서 거듭제곱 급수해를 구하기 →</a></span>
+        <span><a href="06-R.html">6.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

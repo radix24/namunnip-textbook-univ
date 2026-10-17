@@ -40,15 +40,63 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c8-linearization"><span class="mono">5.3.1</span><span>비선형 계를 평형점에서 선형화해 안정성 판단하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c8-linearization" data-kind="예제" data-std="공통8-05-03">
+  <header class="card-head"><span class="no">5.3.1</span><h2><span class="q-badge">예제</span>비선형 계를 평형점에서 선형화해 안정성 판단하기</h2><span class="kind">야코비 행렬 · 포식자-먹이 · 진자</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[공통8-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>방법과 근거</h3>
+      <p>\(x' = f(x, y)\), \(y' = g(x, y)\)의 평형점 \((x_0, y_0)\) (\(f = g = 0\)) 근처에서 Taylor 일차 근사(공통2 4-02의 접평면)를 쓰면 \(u = x - x_0\), \(v = y - y_0\)에 대해</p>
+      \[\begin{pmatrix}u\\v\end{pmatrix}' \approx J\begin{pmatrix}u\\v\end{pmatrix}, \qquad J = \begin{pmatrix}f_x & f_y\\ g_x & g_y\end{pmatrix}_{(x_0, y_0)}.\]
+      <p>\(J\)의 고유값이 마디, 안장점, 나선점이면 비선형 계도 그 평형점 근처에서 같은 종류입니다(하트만-그로브만 정리). <b>중심</b>은 예외: 비선형 항이 판정을 바꿀 수 있습니다.</p>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>진자의 두 평형점(바로 아래로 매달림, 바로 위로 섬)은 위상 평면에서 각각 어떤 종류일까요(마찰 있음)?</p>
+      <details><summary>예측 확인</summary><p>아래는 안정 나선점(흔들리며 멈춤), 위는 안장점(조금만 기울면 넘어짐)입니다.</p></details>
+    </div>
+
+    <p class="q-prob">감쇠가 있는 진자 \(\theta'' + 0.5\theta' + \sin\theta = 0\)을 \(x = \theta\), \(y = \theta'\)로 바꿔 평형점 \((0, 0)\)과 \((\pi, 0)\)을 분류하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(x' = y\), \(y' = -\sin x - 0.5y\). 평형점: \(y = 0\), \(\sin x = 0\) → \((k\pi, 0)\).</div><span class="q-why">이계를 일계 연립으로(05-01 카드).</span></li>
+        <li><div>\(J = \begin{pmatrix}0 & 1\\ -\cos x & -0.5\end{pmatrix}\).</div><span class="q-why">편미분.</span></li>
+        <li><div>\((0, 0)\): \(J = \begin{pmatrix}0&1\\-1&-0.5\end{pmatrix}\), tr \(= -0.5\), det \(= 1\), \(\text{tr}^2 = 0.25 < 4\): 안정 나선점.</div><span class="q-why">05-02 카드의 대각합-행렬식 판정.</span></li>
+        <li class="q-end"><div>\((\pi, 0)\): \(\cos\pi = -1\), \(J = \begin{pmatrix}0&1\\1&-0.5\end{pmatrix}\), det \(= -1 < 0\): 안장점.</div><span class="q-why">고유값 \(\frac{-0.5 \pm\sqrt{4.25}}{2}\): 0.78, −1.28.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>식을 풀 수 없는 비선형 진자에서도 평형점의 성격은 행렬 하나로 알 수 있습니다. 안장점 \((\pi, 0)\)으로 정확히 들어가는 궤도(안정 다양체)는 "진자를 딱 꼭대기에서 멈추게 하는 초기 속도"이고, 그보다 세면 넘어가고 약하면 되돌아옵니다. 로켓 자세 제어, 두발 로봇의 균형 잡기가 안장점 근처를 제어하는 문제입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>(0, 0)의 선형화 \(\theta'' + 0.5\theta' + \theta = 0\)은 작은 각 근사(\(\sin\theta \approx \theta\), 공통3 6-01)에 감쇠를 더한 것이고, 판별식 \(0.25 - 4 < 0\)으로 미감쇠(3-01 카드)와 같은 결론입니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>감쇠 없는 진자의 (0, 0)을 선형화로 판정</b>: \(J\)의 고유값이 \(\pm i\) (중심)이라 선형화만으로는 결론을 낼 수 없습니다. 이 경우는 에너지 보존을 따로 써서 실제로 중심임을 보입니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-linearization" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="05-02.html">← 5.2 위상 평면에서 마디, 안장점, 나선점, 중심을 구별하기</a></span>
-        <span><a href="06-01.html">6.1 기본 함수의 Laplace 변환을 정의로 구하기 →</a></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
