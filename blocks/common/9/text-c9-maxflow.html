@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통9-08-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c9-maxflow" data-kind="본문" data-std="공통9-08-03">
+  <header class="card-head"><span class="no"></span><h2>최대 흐름과 최소 절단</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>용량이 있는 망에서 흐름의 조건을 안다.</li>
+        <li>증가 경로로 흐름을 늘려 최대 흐름을 구하고, 최소 절단과 같음을 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>유향 그래프와 가중치 (<a href="08-01.html">8.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.3.1</span>망과 흐름</h3>
+    <p>각 유향 변에 용량(1초에 보낼 수 있는 최대량)이 붙은 그래프를 <b>망</b>이라 합니다. 물건이 나오는 곳을 원천 \(s\), 도착하는 곳을 도착점 \(t\)라 합니다. 각 변의 흐름 \(f_{ij}\)는 다음 두 조건을 만족해야 합니다.</p>
+    <ul class="tb-list">
+      <li>용량 조건: \(0 \le f_{ij} \le c_{ij}\).</li>
+      <li>보존 조건: \(s\)와 \(t\)가 아닌 꼭짓점에서는 들어오는 양 = 나가는 양 (키르히호프 전류 법칙과 같다).</li>
+    </ul>
+    <p>\(s\)에서 나가는 총량을 흐름의 값이라 하고, 이를 최대로 하는 것이 최대 흐름 문제입니다.</p>
+
+    <h3><span class="no">8.3.2</span>증가 경로와 최소 절단</h3>
+    <p><b>증가 경로</b>는 \(s\)에서 \(t\)까지, 각 변에 여유(용량 − 흐름)가 남아 있는 경로입니다. 그 경로의 가장 작은 여유만큼 흐름을 더 보낼 수 있습니다. 증가 경로가 없을 때까지 되풀이하는 것이 포드-풀커슨 방법입니다. (역방향으로 이미 흐르는 양을 줄이는 것도 증가로 칩니다.)</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.3.1</span>
+      <p>변과 용량이 \(s\to a\) 3, \(s\to b\) 2, \(a\to b\) 1, \(a\to t\) 2, \(b\to t\) 3인 망의 최대 흐름을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <ol class="tb-steps">
+      <li>\(s\to a\to t\): 여유 \(\min(3, 2) = 2\). 흐름 2.</li>
+      <li>\(s\to b\to t\): 여유 \(\min(2, 3) = 2\). 흐름 합 4.</li>
+      <li>\(s\to a\to b\to t\): 여유 \(\min(3 - 2, 1, 3 - 2) = 1\). 흐름 합 5.</li>
+    </ol>
+    <p>\(s\)에서 나가는 변이 모두 꽉 찼으므로(3과 2) 더 늘릴 수 없습니다. 최대 흐름 5.</p>
+    <p>꼭짓점을 \(s\)가 있는 쪽 \(S\)와 \(t\)가 있는 쪽 \(T\)로 나누는 것을 <b>절단</b>이라 하고, \(S\)에서 \(T\)로 가는 변의 용량 합을 절단의 용량이라 합니다. 모든 흐름은 이 변들을 지나야 하므로 흐름의 값은 어떤 절단의 용량보다도 클 수 없습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.3.2 <span class="nm">(최대 흐름 최소 절단 정리)</span></span>
+      <p>최대 흐름의 값은 최소 절단의 용량과 같다.</p>
+    </div>
+    <p>예제에서 \(S = \{s\}\)인 절단의 용량은 \(3 + 2 = 5\)로 최대 흐름과 같습니다. 그래서 흐름 5가 최대라는 것이 확인됩니다. 최소 절단은 망의 "병목"을 알려 줍니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>흐름: 용량 조건 + 보존 조건.</li>
+        <li>증가 경로가 없을 때까지 흐름을 늘린다.</li>
+        <li>최대 흐름 = 최소 절단 용량.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 8.3.1에서 \(S = \{s, a\}\)인 절단의 용량은?
+          <details><summary>답</summary><p>\(s\to b\) 2, \(a\to b\) 1, \(a\to t\) 2. 합 5. 이것도 최소 절단이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 8.3.1에서 \(b\to t\)의 용량이 2로 줄면 최대 흐름은?
+          <details><summary>답</summary><p>\(S = \{s, a, b\}\) 절단 용량 \(2 + 2 = 4\). 흐름 4 (\(s\to a\to t\) 2, \(s\to b\to t\) 2)가 가능하므로 최대 흐름 4.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

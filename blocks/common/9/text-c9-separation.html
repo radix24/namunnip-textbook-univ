@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통9-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c9-separation" data-kind="본문" data-std="공통9-02-03">
+  <header class="card-head"><span class="no"></span><h2>변수분리와 푸리에 급수로 파동방정식 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(u = F(x)G(t)\)로 놓아 편미분방정식을 두 상미분방정식으로 나눈다.</li>
+        <li>경계 조건으로 고유함수를, 초기 조건과 푸리에 급수로 계수를 정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>파동방정식 (<a href="02-02.html">2.2절</a>), 스투름-리우빌 문제와 반구간 사인 급수 (<a href="../8/06-03.html">공통8 6.3절</a>, <a href="../8/06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>문제</h3>
+    <p>길이 \(L\)인 줄의 양 끝이 고정되어 있고, 처음 모양 \(f(x)\)로 당겼다가 놓았다고 합시다(처음 속도 \(g(x)\)).</p>
+    \[u_{tt} = c^2u_{xx}, \quad u(0, t) = u(L, t) = 0, \quad u(x, 0) = f(x), \quad u_t(x, 0) = g(x).\]
+
+    <h3><span class="no">2.3.2</span>1단계: 변수분리</h3>
+    <p>해를 "위치만의 함수 × 시간만의 함수" \(u = F(x)G(t)\)로 놓아 봅니다. 넣으면 \(FG'' = c^2F''G\), 양변을 \(c^2FG\)로 나누면</p>
+    \[\frac{G''}{c^2G} = \frac{F''}{F}.\]
+    <p>왼쪽은 \(t\)만의 식, 오른쪽은 \(x\)만의 식인데 언제나 같으므로, 둘 다 같은 상수 \(-k^2\)여야 합니다. 그래서 상미분방정식 두 개가 됩니다.</p>
+    \[F'' + k^2F = 0, \qquad G'' + c^2k^2G = 0.\]
+
+    <h3><span class="no">2.3.3</span>2단계: 경계 조건 → 고유함수</h3>
+    <p>\(u(0, t) = u(L, t) = 0\)에서 \(F(0) = F(L) = 0\)입니다. 이것은 공통8 6.3절의 고유값 문제이고, 0이 아닌 해는 \(k = \frac{n\pi}{L}\)일 때 \(F_n = \sin\frac{n\pi x}{L}\)뿐입니다. 그러면 \(G'' + \lambda_n^2G = 0\) (\(\lambda_n = \frac{cn\pi}{L}\))에서 \(G_n = B_n\cos\lambda_nt + B_n^*\sin\lambda_nt\)입니다.</p>
+    <p>해 \(u_n = (B_n\cos\lambda_nt + B_n^*\sin\lambda_nt)\sin\frac{n\pi x}{L}\)은 줄의 \(n\)번째 <b>고유 진동</b>입니다. \(n = 1\)이 기본음, \(n = 2, 3, \dots\)이 배음이고, 진동수 \(\frac{\lambda_n}{2\pi} = \frac{cn}{2L}\)은 기본 진동수의 정수배입니다. 그래서 현악기의 소리가 조화롭게 들립니다.</p>
+
+    <h3><span class="no">2.3.4</span>3단계: 중첩과 초기 조건 → 푸리에 급수</h3>
+    <p>중첩 원리로 모든 고유 진동을 더합니다.</p>
+    \[u(x, t) = \sum_{n=1}^\infty(B_n\cos\lambda_nt + B_n^*\sin\lambda_nt)\sin\frac{n\pi x}{L}.\]
+    <p>\(t = 0\)이면 \(u(x, 0) = \sum B_n\sin\frac{n\pi x}{L} = f(x)\), 곧 \(B_n\)은 \(f\)의 반구간 사인 급수 계수입니다. 마찬가지로 \(u_t(x, 0) = g\)에서 \(B_n^*\)을 정합니다.</p>
+    \[B_n = \frac2L\int_0^Lf(x)\sin\frac{n\pi x}{L}dx, \qquad B_n^* = \frac{2}{cn\pi}\int_0^Lg(x)\sin\frac{n\pi x}{L}dx.\]
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>\(L = \pi\), \(c = 1\), \(f(x) = \sin x + 0.5\sin3x\), \(g = 0\)이면?</p>
+    </div>
+    <p><i>풀이.</i> \(f\)가 이미 사인 급수이므로 \(B_1 = 1\), \(B_3 = 0.5\), 나머지 0. \(u = \cos t\sin x + 0.5\cos3t\sin3x\). 기본음과 셋째 배음이 섞인 진동입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(u = FG\)로 놓으면 상수 \(-k^2\)로 두 상미분방정식이 된다.</li>
+        <li>경계 조건 → 고유함수 \(\sin\frac{n\pi x}{L}\), 고유 진동수 \(\frac{cn}{2L}\).</li>
+        <li>중첩한 뒤 초기 조건에 반구간 사인 급수를 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>길이 0.65 m, 파동 속력 \(c = 286\) m/s인 줄의 기본 진동수는?
+          <details><summary>답</summary><p>\(\frac{c}{2L} = \frac{286}{1.3} = 220\) Hz.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

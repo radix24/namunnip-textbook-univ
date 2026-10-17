@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통9-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c9-gaussseidel" data-kind="본문" data-std="공통9-07-02">
+  <header class="card-head"><span class="no"></span><h2>가우스-자이델 반복법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>근삿값을 되풀이해 고쳐 가는 반복법으로 연립방정식을 푼다.</li>
+        <li>대각 우세이면 수렴한다는 판정을 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>가우스 소거 (<a href="07-01.html">7.1절</a>), 수열의 수렴 (공통1 8단원).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>반복법의 생각</h3>
+    <p>미지수가 수천, 수만 개이고 계수 대부분이 0인 연립방정식(예: 편미분방정식을 격자로 바꾼 것)은 가우스 소거보다 반복법이 효율적입니다. 각 식을 대각 원소의 미지수에 대해 풀어 놓고, 아무 출발값에서 시작해 차례로 고쳐 갑니다. <b>가우스-자이델 방법</b>은 새로 구한 값을 바로 다음 식에 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>\(10x + y = 12\), \(x + 10y = 21\)을 \((0, 0)\)에서 시작해 가우스-자이델로 풀어라. (정확한 해 \(x = 1\), \(y = 2\))</p>
+    </div>
+    <p><i>풀이.</i> \(x = \frac{12 - y}{10}\), \(y = \frac{21 - x}{10}\).</p>
+    <table class="tb-table">
+      <thead><tr><th>단계</th><th>\(x\)</th><th>\(y\)</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>1.2</td><td>1.98</td></tr>
+        <tr><td>2</td><td>1.002</td><td>1.9998</td></tr>
+        <tr><td>3</td><td>1.00002</td><td>1.999998</td></tr>
+      </tbody>
+    </table>
+    <p>한 단계마다 오차가 약 100분의 1로 줄어듭니다.</p>
+    <p class="tb-aside">새 값을 바로 쓰지 않고 한 단계가 끝난 뒤 한꺼번에 바꾸는 방법은 야코비 방법입니다. 보통 가우스-자이델이 더 빨리 수렴합니다.</p>
+
+    <h3><span class="no">7.2.2</span>수렴 조건</h3>
+    <p>반복법이 언제나 수렴하지는 않습니다. 예제 7.2.1의 두 식 순서를 바꾸어 \(x = 21 - 10y\), \(y = 12 - 10x\)로 반복하면 \((0, 0)\)에서 \(x = 21\), \(y = -198\), … 로 발산합니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 7.2.2 <span class="nm">(대각 우세)</span></span>
+      <p>모든 행에서 대각 원소의 절댓값이 나머지 원소의 절댓값의 합보다 클 때, 곧 \(|a_{jj}| > \sum_{k\ne j}|a_{jk}|\)일 때 행렬이 (엄격히) <b>대각 우세</b>하다고 한다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.3</span>
+      <p>계수 행렬이 대각 우세이면 가우스-자이델(과 야코비) 방법은 어떤 출발값에서도 수렴한다.</p>
+    </div>
+    <p>예제 7.2.1은 \(10 > 1\)이 두 행 모두 성립하므로 수렴했고, 순서를 바꾼 것은 \(1 &lt; 10\)이라 조건을 만족하지 않았습니다. 대각 우세는 충분조건이어서, 만족하지 않아도 수렴하는 경우는 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>가우스-자이델: 각 식을 대각 미지수로 풀고, 새 값을 바로 쓰며 반복.</li>
+        <li>대각 우세이면 수렴한다. 식의 순서가 중요하다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix}4 &amp; 1 &amp; 1\\ 1 &amp; 5 &amp; 2\\ 0 &amp; 1 &amp; 3\end{pmatrix}\)은 대각 우세인가?
+          <details><summary>답</summary><p>\(4 > 2\), \(5 > 3\), \(3 > 1\). 대각 우세.</p></details>
+        </li>
+        <li>\(5x + y = 7\), \(x + 4y = 6\)을 \((0, 0)\)에서 가우스-자이델로 한 단계 계산하여라.
+          <details><summary>답</summary><p>\(x = 1.4\), \(y = \frac{6 - 1.4}{4} = 1.15\). (정확한 해 \((\frac{22}{19}, \frac{23}{19}) \approx (1.158, 1.211)\))</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

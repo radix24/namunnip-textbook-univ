@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>간단한 망에서 최대 흐름을 구하고 최소 절단과 비교하기 · 고등미적분학(2) — QURI</title>
-  <meta name="description" content="고등미적분학(2) 8.3 간단한 망에서 최대 흐름을 구하고 최소 절단과 비교하기 — 성취기준: 간단한 망에서 최대 흐름을 구하고 최소 절단과 비교할 수 있다.">
+  <title>최대 흐름과 최소 절단 · 고등미적분학(2) — QURI</title>
+  <meta name="description" content="고등미적분학(2) 8.3 최대 흐름과 최소 절단 — 성취기준: 간단한 망에서 최대 흐름을 구하고 최소 절단과 비교할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통9&quot;, &quot;title&quot;: &quot;8.3 간단한 망에서 최대 흐름을 구하고 최소 절단과 비교하기&quot;, &quot;sub&quot;: &quot;고등미적분학(2)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통9&quot;, &quot;title&quot;: &quot;8.3 최대 흐름과 최소 절단&quot;, &quot;sub&quot;: &quot;고등미적분학(2)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,32 +27,105 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통9-08-03">
+  <section class="topic-hero u-hero has-text" data-sec="공통9-08-03">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">고등미적분학(2)</a><span class="mono">/</span><a href="08.html">8. 그래프와 조합 최적화</a></div>
-    <h1><span class="sec-no mono">8.3</span>간단한 망에서 최대 흐름을 구하고 최소 절단과 비교하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통9-08-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통9-08-03] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통9-08-03" aria-label="할 수 있음"><span class="t">간단한 망에서 최대 흐름을 구하고 최소 절단과 비교할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">8.3</span>최대 흐름과 최소 절단</h1>
+    <p class="sec-std"><span class="mono">[공통9-08-03]</span> 간단한 망에서 최대 흐름을 구하고 최소 절단과 비교할 수 있다. <span class="ty mono" data-ty="계산">계산</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#card-c9-max-flow"><span class="mono">8.3.1</span><span>최대 흐름-최소 절단 정리와 간단한 망의 최대 흐름</span></a></li></ol>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s8-3-1"><span class="mono">8.3.1</span><span>망과 흐름</span></a></li><li><a href="#s8-3-2"><span class="mono">8.3.2</span><span>증가 경로와 최소 절단</span></a></li><li><a href="#s8-3-3"><span class="mono">8.3.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c9-maxflow"><span class="mono">본문</span><span>최대 흐름과 최소 절단</span></a></li><li><a href="#card-c9-max-flow"><span class="mono">8.3.2</span><span>최대 흐름-최소 절단 정리와 간단한 망의 최대 흐름</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-c9-maxflow" data-kind="본문" data-std="공통9-08-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>용량이 있는 망에서 흐름의 조건을 안다.</li>
+        <li>증가 경로로 흐름을 늘려 최대 흐름을 구하고, 최소 절단과 같음을 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>유향 그래프와 가중치 (<a href="08-01.html">8.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s8-3-1"><span class="no">8.3.1</span>망과 흐름</h3>
+    <p>각 유향 변에 용량(1초에 보낼 수 있는 최대량)이 붙은 그래프를 <b>망</b>이라 합니다. 물건이 나오는 곳을 원천 \(s\), 도착하는 곳을 도착점 \(t\)라 합니다. 각 변의 흐름 \(f_{ij}\)는 다음 두 조건을 만족해야 합니다.</p>
+    <ul class="tb-list">
+      <li>용량 조건: \(0 \le f_{ij} \le c_{ij}\).</li>
+      <li>보존 조건: \(s\)와 \(t\)가 아닌 꼭짓점에서는 들어오는 양 = 나가는 양 (키르히호프 전류 법칙과 같다).</li>
+    </ul>
+    <p>\(s\)에서 나가는 총량을 흐름의 값이라 하고, 이를 최대로 하는 것이 최대 흐름 문제입니다.</p>
+
+    <h3 id="s8-3-2"><span class="no">8.3.2</span>증가 경로와 최소 절단</h3>
+    <p><b>증가 경로</b>는 \(s\)에서 \(t\)까지, 각 변에 여유(용량 − 흐름)가 남아 있는 경로입니다. 그 경로의 가장 작은 여유만큼 흐름을 더 보낼 수 있습니다. 증가 경로가 없을 때까지 되풀이하는 것이 포드-풀커슨 방법입니다. (역방향으로 이미 흐르는 양을 줄이는 것도 증가로 칩니다.)</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.3.1</span>
+      <p>변과 용량이 \(s\to a\) 3, \(s\to b\) 2, \(a\to b\) 1, \(a\to t\) 2, \(b\to t\) 3인 망의 최대 흐름을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <ol class="tb-steps">
+      <li>\(s\to a\to t\): 여유 \(\min(3, 2) = 2\). 흐름 2.</li>
+      <li>\(s\to b\to t\): 여유 \(\min(2, 3) = 2\). 흐름 합 4.</li>
+      <li>\(s\to a\to b\to t\): 여유 \(\min(3 - 2, 1, 3 - 2) = 1\). 흐름 합 5.</li>
+    </ol>
+    <p>\(s\)에서 나가는 변이 모두 꽉 찼으므로(3과 2) 더 늘릴 수 없습니다. 최대 흐름 5.</p>
+    <p>꼭짓점을 \(s\)가 있는 쪽 \(S\)와 \(t\)가 있는 쪽 \(T\)로 나누는 것을 <b>절단</b>이라 하고, \(S\)에서 \(T\)로 가는 변의 용량 합을 절단의 용량이라 합니다. 모든 흐름은 이 변들을 지나야 하므로 흐름의 값은 어떤 절단의 용량보다도 클 수 없습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.3.2 <span class="nm">(최대 흐름 최소 절단 정리)</span></span>
+      <p>최대 흐름의 값은 최소 절단의 용량과 같다.</p>
+    </div>
+    <p>예제에서 \(S = \{s\}\)인 절단의 용량은 \(3 + 2 = 5\)로 최대 흐름과 같습니다. 그래서 흐름 5가 최대라는 것이 확인됩니다. 최소 절단은 망의 "병목"을 알려 줍니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>흐름: 용량 조건 + 보존 조건.</li>
+        <li>증가 경로가 없을 때까지 흐름을 늘린다.</li>
+        <li>최대 흐름 = 최소 절단 용량.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s8-3-3"><span class="no">8.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 8.3.1에서 \(S = \{s, a\}\)인 절단의 용량은?
+          <details><summary>답</summary><p>\(s\to b\) 2, \(a\to b\) 1, \(a\to t\) 2. 합 5. 이것도 최소 절단이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 8.3.1에서 \(b\to t\)의 용량이 2로 줄면 최대 흐름은?
+          <details><summary>답</summary><p>\(S = \{s, a, b\}\) 절단 용량 \(2 + 2 = 4\). 흐름 4 (\(s\to a\to t\) 2, \(s\to b\to t\) 2)가 가능하므로 최대 흐름 4.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c9-maxflow" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통9-08-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통9-08-03] <span class="ty mono" data-ty="계산">계산</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통9-08-03" aria-label="할 수 있음"><span class="t">간단한 망에서 최대 흐름을 구하고 최소 절단과 비교할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li class="hs"><span class="mono">고교</span><span>수학 경우의 수</span></li></ul></div></div>
     </aside>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
 <article class="card q-card" id="card-c9-max-flow" data-kind="예제" data-std="공통9-08-03">
-  <header class="card-head"><span class="no">8.3.1</span><h2><span class="q-badge">예제</span>최대 흐름-최소 절단 정리와 간단한 망의 최대 흐름</h2><span class="kind">증가 경로 · 잔여 용량 · Ford-Fulkerson</span></header>
+  <header class="card-head"><span class="no">8.3.2</span><h2><span class="q-badge">예제</span>최대 흐름-최소 절단 정리와 간단한 망의 최대 흐름</h2><span class="kind">증가 경로 · 잔여 용량 · Ford-Fulkerson</span></header>
   <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-03.html#std">[공통9-08-03]</a></p>
   <div class="q-body">
     <section class="q-sec">
@@ -104,7 +177,7 @@
   <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-max-flow" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
 </article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="08-02.html">← 8.2 다익스트라와 크러스컬 알고리즘으로 최단 경로와 최소 신장 트리를 구하기</a></span>
+        <span><a href="08-02.html">← 8.2 최단 경로와 최소 신장 트리</a></span>
         <span><a href="08-R.html">8.R 단원 마무리 →</a></span>
       </nav>
     </div>

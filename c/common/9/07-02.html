@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인하기 · 고등미적분학(2) — QURI</title>
-  <meta name="description" content="고등미적분학(2) 7.2 가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인하기 — 성취기준: 가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인할 수 있다.">
+  <title>가우스-자이델 반복법 · 고등미적분학(2) — QURI</title>
+  <meta name="description" content="고등미적분학(2) 7.2 가우스-자이델 반복법 — 성취기준: 가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통9&quot;, &quot;title&quot;: &quot;7.2 가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인하기&quot;, &quot;sub&quot;: &quot;고등미적분학(2)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통9&quot;, &quot;title&quot;: &quot;7.2 가우스-자이델 반복법&quot;, &quot;sub&quot;: &quot;고등미적분학(2)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,32 +27,103 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통9-07-02">
+  <section class="topic-hero u-hero has-text" data-sec="공통9-07-02">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">고등미적분학(2)</a><span class="mono">/</span><a href="07.html">7. 선형연립방정식의 수치 해법</a></div>
-    <h1><span class="sec-no mono">7.2</span>가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통9-07-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통9-07-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통9-07-02" aria-label="할 수 있음"><span class="t">가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.2</span>가우스-자이델 반복법</h1>
+    <p class="sec-std"><span class="mono">[공통9-07-02]</span> 가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인할 수 있다. <span class="ty mono" data-ty="계산">계산</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#card-c9-gauss-seidel"><span class="mono">7.2.1</span><span>Gauss-Seidel 반복법과 대각 우세 조건</span></a></li></ol>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>반복법의 생각</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>수렴 조건</span></a></li><li><a href="#s7-2-3"><span class="mono">7.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c9-gaussseidel"><span class="mono">본문</span><span>가우스-자이델 반복법</span></a></li><li><a href="#card-c9-gauss-seidel"><span class="mono">7.2.2</span><span>Gauss-Seidel 반복법과 대각 우세 조건</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-c9-gaussseidel" data-kind="본문" data-std="공통9-07-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>근삿값을 되풀이해 고쳐 가는 반복법으로 연립방정식을 푼다.</li>
+        <li>대각 우세이면 수렴한다는 판정을 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>가우스 소거 (<a href="07-01.html">7.1절</a>), 수열의 수렴 (공통1 8단원).</li>
+      </ul>
+    </div>
 
+    <h3 id="s7-2-1"><span class="no">7.2.1</span>반복법의 생각</h3>
+    <p>미지수가 수천, 수만 개이고 계수 대부분이 0인 연립방정식(예: 편미분방정식을 격자로 바꾼 것)은 가우스 소거보다 반복법이 효율적입니다. 각 식을 대각 원소의 미지수에 대해 풀어 놓고, 아무 출발값에서 시작해 차례로 고쳐 갑니다. <b>가우스-자이델 방법</b>은 새로 구한 값을 바로 다음 식에 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>\(10x + y = 12\), \(x + 10y = 21\)을 \((0, 0)\)에서 시작해 가우스-자이델로 풀어라. (정확한 해 \(x = 1\), \(y = 2\))</p>
+    </div>
+    <p><i>풀이.</i> \(x = \frac{12 - y}{10}\), \(y = \frac{21 - x}{10}\).</p>
+    <table class="tb-table">
+      <thead><tr><th>단계</th><th>\(x\)</th><th>\(y\)</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>1.2</td><td>1.98</td></tr>
+        <tr><td>2</td><td>1.002</td><td>1.9998</td></tr>
+        <tr><td>3</td><td>1.00002</td><td>1.999998</td></tr>
+      </tbody>
+    </table>
+    <p>한 단계마다 오차가 약 100분의 1로 줄어듭니다.</p>
+    <p class="tb-aside">새 값을 바로 쓰지 않고 한 단계가 끝난 뒤 한꺼번에 바꾸는 방법은 야코비 방법입니다. 보통 가우스-자이델이 더 빨리 수렴합니다.</p>
+
+    <h3 id="s7-2-2"><span class="no">7.2.2</span>수렴 조건</h3>
+    <p>반복법이 언제나 수렴하지는 않습니다. 예제 7.2.1의 두 식 순서를 바꾸어 \(x = 21 - 10y\), \(y = 12 - 10x\)로 반복하면 \((0, 0)\)에서 \(x = 21\), \(y = -198\), … 로 발산합니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 7.2.2 <span class="nm">(대각 우세)</span></span>
+      <p>모든 행에서 대각 원소의 절댓값이 나머지 원소의 절댓값의 합보다 클 때, 곧 \(|a_{jj}| > \sum_{k\ne j}|a_{jk}|\)일 때 행렬이 (엄격히) <b>대각 우세</b>하다고 한다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.3</span>
+      <p>계수 행렬이 대각 우세이면 가우스-자이델(과 야코비) 방법은 어떤 출발값에서도 수렴한다.</p>
+    </div>
+    <p>예제 7.2.1은 \(10 > 1\)이 두 행 모두 성립하므로 수렴했고, 순서를 바꾼 것은 \(1 &lt; 10\)이라 조건을 만족하지 않았습니다. 대각 우세는 충분조건이어서, 만족하지 않아도 수렴하는 경우는 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>가우스-자이델: 각 식을 대각 미지수로 풀고, 새 값을 바로 쓰며 반복.</li>
+        <li>대각 우세이면 수렴한다. 식의 순서가 중요하다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-2-3"><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix}4 &amp; 1 &amp; 1\\ 1 &amp; 5 &amp; 2\\ 0 &amp; 1 &amp; 3\end{pmatrix}\)은 대각 우세인가?
+          <details><summary>답</summary><p>\(4 > 2\), \(5 > 3\), \(3 > 1\). 대각 우세.</p></details>
+        </li>
+        <li>\(5x + y = 7\), \(x + 4y = 6\)을 \((0, 0)\)에서 가우스-자이델로 한 단계 계산하여라.
+          <details><summary>답</summary><p>\(x = 1.4\), \(y = \frac{6 - 1.4}{4} = 1.15\). (정확한 해 \((\frac{22}{19}, \frac{23}{19}) \approx (1.158, 1.211)\))</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c9-gaussseidel" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통9-07-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통9-07-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통9-07-02" aria-label="할 수 있음"><span class="t">가우스-자이델 반복법을 쓰고 수렴하는 조건(대각 우세)을 확인할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/8/03.html"><span class="mono">공통8 대단원 3</span><span>고등미적분학(1) <b>연립 상미분방정식과 상평면</b></span></a></li></ul></div></div>
     </aside>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
 <article class="card q-card" id="card-c9-gauss-seidel" data-kind="예제" data-std="공통9-07-02">
-  <header class="card-head"><span class="no">7.2.1</span><h2><span class="q-badge">예제</span>Gauss-Seidel 반복법과 대각 우세 조건</h2><span class="kind">Jacobi · 새 값 바로 쓰기 · 수렴 판정</span></header>
+  <header class="card-head"><span class="no">7.2.2</span><h2><span class="q-badge">예제</span>Gauss-Seidel 반복법과 대각 우세 조건</h2><span class="kind">Jacobi · 새 값 바로 쓰기 · 수렴 판정</span></header>
   <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-02.html#std">[공통9-07-02]</a></p>
   <div class="q-body">
     <section class="q-sec">
@@ -99,8 +170,8 @@
   <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-gauss-seidel" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
 </article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-01.html">← 7.1 부분 피벗팅을 포함한 가우스 소거를 하기</a></span>
-        <span><a href="07-03.html">7.3 계수가 조금만 바뀌어도 해가 크게 바뀌는 연립방정식의 예를 보이기 →</a></span>
+        <span><a href="07-01.html">← 7.1 가우스 소거와 부분 피벗팅</a></span>
+        <span><a href="07-03.html">7.3 민감한 연립방정식과 조건수 →</a></span>
       </nav>
     </div>
   </div>
