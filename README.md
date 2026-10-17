@@ -11,9 +11,9 @@
 |---|---|
 | 학과 | 7개 + 공통 기초 (수학, 물리학, 화학, 천문우주학, 응용통계학, 전기전자공학, 기계공학) |
 | 과목 | 155개 (학부 1~3학년). 과목마다 목차 페이지 |
-| 대단원 | 944개. 대단원마다 단원 페이지(학습 요소, 성취기준 점검표, 카드) |
-| 성취기준 | 2,233개 (개념·계산·증명·모형·적용·실습) |
-| 카드 | 8장 (시범 단원: 미분적분학과벡터해석(1) 02. 극한과 연속) |
+| 대단원 | 944개. 대단원마다 단원 페이지(학습 요소, 절 목록) |
+| 성취기준 = 절 | 2,233개 (개념·계산·증명·모형·적용·실습). 절마다 페이지, 대단원마다 "단원 마무리" 연습 절 |
+| 카드 | 49장. 시범 과목 미분적분학과벡터해석(1)의 8개 대단원 전체(절마다 1장 이상, 단원 마무리 연습 8장) |
 
 - 과목명, 학년·학기, 학점, 종별은 연세대학교 2026학년도 대학요람과 2026-1·2학기 수강편람을 따랐습니다(2026-10-17 확인).
 - 대단원, 학습 요소, 성취기준, 카드는 QURI가 만들었습니다. 출처와 표기 규칙은 [curricula/univ-curriculum.md](curricula/univ-curriculum.md)에 있습니다.
@@ -26,12 +26,13 @@
 
 ```
 curricula/univ-*.md       성취기준 설계 문서 (원본). 학과마다 한 파일
-blocks/<학과>/<과목번호>/   카드 한 장 = 파일 하나. 머리 JSON의 "unit"으로 단원에 배치
+blocks/<학과>/<과목번호>/   카드 한 장 = 파일 하나. 머리 JSON의 "sec"(성취기준 코드 또는 "…-R")로 절에 배치
 js/cards/<학과>/           탐구·실습 카드 스크립트
-tools/build.py            → js/toc.js, c/<학과>/<과목번호>/index.html, c/…/<대단원>.html 생성
+tools/build.py            → js/toc.js, c/<학과>/<과목번호>/index.html(목차), <대단원>.html, <대단원>-<절>.html 생성
 tools/icons.py            → assets/icons/*.png (QURI 앱 아이콘)
 index.html, js/home.js    메인 화면: 학과 탭, 학년·학기 배치도, 과목·성취기준 목록, 검색
-js/progress.js            성취기준 점검 기록 (브라우저 localStorage "quri-progress")
+js/progress.js            학습 기록: 성취기준 점검, 카드 완료, 방문 기록 (localStorage "quri-progress")
+record.html, js/record.js  학습 기록 화면: 과목별 진도, 최근 방문, 내보내기·가져오기
 css/quri.css              QURI 색 테마 (tb.css 변수 덮어쓰기)
 css/qcard.css             대학 카드와 단원·과목 페이지 스타일
 css/tb.css, css/fonts.css, js/core.js, js/math.js, assets/katex/, assets/fonts/   나뭇잎 교과서와 같은 바탕

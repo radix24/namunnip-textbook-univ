@@ -40,15 +40,63 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c1-numint"><span class="mono">6.5.1</span><span>사다리꼴 공식과 Simpson 공식, 그리고 오차 한계</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c1-numint" data-kind="예제" data-std="공통1-06-05">
+  <header class="card-head"><span class="no">6.5.1</span><h2><span class="q-badge">예제</span>사다리꼴 공식과 Simpson 공식, 그리고 오차 한계</h2><span class="kind">수치 적분 · 오차 추정</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-05.html#std">[공통1-06-05]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>공식</h3>
+      <p>\([a,b]\)를 \(n\)등분, \(h = \frac{b-a}{n}\), \(x_i = a + ih\), \(y_i = f(x_i)\).</p>
+      <ul>
+        <li><b>사다리꼴</b>: 각 소구간을 직선으로 이어 사다리꼴 넓이를 더한다.
+          \[T_n = \frac h2\left(y_0 + 2y_1 + 2y_2 + \dots + 2y_{n-1} + y_n\right).\]</li>
+        <li><b>Simpson</b> (\(n\) 짝수): 두 소구간마다 세 점을 지나는 포물선으로 근사한다.
+          \[S_n = \frac h3\left(y_0 + 4y_1 + 2y_2 + 4y_3 + \dots + 4y_{n-1} + y_n\right).\]</li>
+      </ul>
+      <div class="q-thm"><span class="lb">오차 한계</span>
+        <p>\(|f''| \le K_2\)이면 \(|E_T| \le \dfrac{K_2(b-a)^3}{12n^2}\). \(|f^{(4)}| \le K_4\)이면 \(|E_S| \le \dfrac{K_4(b-a)^5}{180n^4}\).</p>
+      </div>
+      <p>증명은 보간 다항식의 오차 공식을 쓰므로 수치해석에서 다룹니다. 읽을 거리: 사다리꼴은 \(n\)을 2배로 하면 오차가 약 \(\frac14\), Simpson은 약 \(\frac{1}{16}\)이 됩니다. 또 사다리꼴 오차에 \(f''\)이 들어가므로 일차식에서는 정확하고, Simpson은 삼차식까지 정확합니다.</p>
+    </section>
+
+    <p class="q-prob">\(\ln 2 = \displaystyle\int_1^2\frac{dx}{x}\)를 \(n = 4\)인 사다리꼴, Simpson 공식으로 근사하고 오차 한계와 실제 오차를 비교하세요. 또 사다리꼴로 오차를 \(10^{-6}\) 이하로 하려면 \(n\)이 얼마나 커야 하나요?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(h = 0.25\), \(y = 1,\ 0.8,\ 0.666667,\ 0.571429,\ 0.5\) (\(x = 1, 1.25, 1.5, 1.75, 2\)).</div><span class="q-why">\(y_i = \frac{1}{x_i}\).</span></li>
+        <li><div>\(T_4 = \frac{0.25}{2}(1 + 2(0.8 + 0.666667 + 0.571429) + 0.5) = 0.125\times5.576190 = 0.697024\).</div><span class="q-why">가운데 점은 두 사다리꼴이 공유하므로 2배.</span></li>
+        <li><div>\(S_4 = \frac{0.25}{3}(1 + 4(0.8) + 2(0.666667) + 4(0.571429) + 0.5) = \frac{0.25}{3}\times8.319048 = 0.693254\).</div><span class="q-why">계수 1, 4, 2, 4, 1.</span></li>
+        <li><div>참값 \(\ln2 = 0.693147\). 실제 오차: \(T_4\)는 \(0.003877\), \(S_4\)는 \(0.000107\).</div><span class="q-why">같은 다섯 점으로 Simpson이 약 36배 정확하다.</span></li>
+        <li><div>오차 한계: \(f'' = \frac{2}{x^3} \le 2 = K_2\), \(f^{(4)} = \frac{24}{x^5} \le 24 = K_4\) (\(x \ge 1\)). \(|E_T| \le \frac{2}{12\cdot16} = 0.0104\), \(|E_S| \le \frac{24}{180\cdot256} = 0.00052\).</div><span class="q-why">도함수의 절댓값이 구간에서 가장 큰 곳은 \(x = 1\). 한계는 실제 오차보다 크다(보장값이므로).</span></li>
+        <li class="q-end"><div>\(\frac{2}{12n^2} \le 10^{-6}\iff n^2 \ge \frac{10^6}{6} \approx 166667 \iff n \ge 409\). (Simpson이면 \(\frac{24}{180n^4} \le 10^{-6} \iff n^4 \ge 133334 \iff n \ge 20\), 짝수 20.)</div><span class="q-why">오차 한계를 목표값 이하로 두고 \(n\)을 푼다. 올림.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(\frac1x\)은 아래로 볼록(\(f'' > 0\))이라 사다리꼴의 윗변이 그래프 위에 있어 \(T_n\)은 참값보다 커야 합니다. \(0.697 > 0.693\). 맞습니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>Simpson에서 \(n\)을 홀수로</b>: 두 구간씩 묶으므로 \(n\)은 짝수여야 합니다.</li>
+        <li><b>오차 한계 = 실제 오차</b>: 한계는 "이보다 크지 않다"는 보장일 뿐입니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c1-numint" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="06-04.html">← 6.4 이상적분의 수렴과 발산을 비교 판정법으로 판정하기</a></span>
-        <span><a href="07-01.html">7.1 두 곡선 사이의 넓이와 회전체의 부피를 구하기 →</a></span>
+        <span><a href="06-R.html">6.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
