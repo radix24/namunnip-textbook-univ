@@ -18,6 +18,7 @@ window.NMMath = (() => {
       s.replace(RE, (whole, inline, display, at) => {
         frag.append(s.slice(last, at));
         const span = document.createElement("span");
+        if (display == null) span.className = "k-in";
         try {
           katex.render(inline ?? display, span, { displayMode: display != null, throwOnError: true, output: "htmlAndMathml" });
         } catch (e) {
@@ -32,6 +33,17 @@ window.NMMath = (() => {
       t.replaceWith(frag);
     });
   }
+  /* 좁은 화면에서 글 속 수식이 줄보다 길면 그 수식만 가로로 밀어 보게 한다(페이지 전체가 옆으로 밀리지 않게) */
+  function fit() {
+    document.querySelectorAll(".k-in").forEach((s) => {
+      s.classList.remove("k-wide");
+      const box = s.parentElement && s.parentElement.clientWidth;
+      if (box && s.getBoundingClientRect().width > box) s.classList.add("k-wide");
+    });
+  }
   render(document.body);
-  return { render };
+  fit();
+  window.addEventListener("resize", () => { clearTimeout(fit.t); fit.t = setTimeout(fit, 150); });
+  document.addEventListener("toggle", fit, true);
+  return { render, fit };
 })();

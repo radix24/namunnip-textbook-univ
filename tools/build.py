@@ -268,10 +268,38 @@ def render_card(b, no, std_href):
     return h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h
 
 
-def render_text(b):
+ENV_KIND = r"(정의|정리|예제|공리|따름정리|보조정리)"
+
+
+def renumber(h, secno, hstart=0, estart=0):
+    """본문의 번호를 절 번호에 맞춰 다시 매긴다. 절이 옮겨져도 번호가 맞도록 블록 안의 번호는 무시한다.
+    소절 제목(h3 .no)은 secno.1, secno.2 …, 정의·정리·예제는 secno.1 … 차례로. 본문 속 참조도 같은 대응으로 바꾼다."""
+    i = hstart
+
+    def h3(m):
+        nonlocal i
+        i += 1
+        return f'<h3><span class="no">{secno}.{i}</span>'
+
+    h = re.sub(r'<h3><span class="no">[\d.]+</span>', h3, h)
+    k, mp = estart, {}
+    for m in re.finditer(r'<span class="lb">' + ENV_KIND + r" (\d+(?:\.\d+)+)", h):
+        if m.group(2) not in mp:
+            k += 1
+            mp[m.group(2)] = f"{secno}.{k}"
+    if mp:
+        h = re.sub(ENV_KIND + r" (\d+(?:\.\d+){2})(?![\d.]*\d)", lambda m: f"{m.group(1)} {mp.get(m.group(2), m.group(2))}", h)
+    return h, i, k
+
+
+def render_text(b, secno=None):
     """본문(전공서적식) 블록 → 책 지면. 카드 머리는 페이지 제목이 대신하므로 빼고, 소절 제목에 앵커를 단다.
-    돌려주는 값: (html, [(앵커, 번호, 소절 제목)])"""
+    돌려주는 값: (html, [(앵커, 번호, 소절 제목)], (소절 수, 정의·정리 수))"""
     h = b["html"]
+    cnt = (0, 0)
+    if secno:
+        h, ci, ck = renumber(h, secno)
+        cnt = (ci, ck)
     h = re.sub(r"\s*<header class=\"card-head\">.*?</header>", "", h, count=1, flags=re.S)
     h = h.replace('class="card q-card"', 'class="q-card tb-page"', 1)
     subs = []
@@ -286,7 +314,7 @@ def render_text(b):
     seen = (f'\n  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="{esc(b["id"])}" data-kind="본문" aria-pressed="false">'
             f'<span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>\n</article>')
     i = h.rfind("</article>")
-    return (h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h), subs
+    return (h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h), subs, cnt
 
 
 CODE = re.compile(r"^[가-힣]+\d+-\d\d(?:-\d\d)?$")
@@ -435,7 +463,12 @@ def write_pages(depts, blocks, sidx, links):
                 # 본문(전공서적식)이 있으면 그것이 이 절의 중심이고, 나머지 카드는 보충 자료가 된다
                 text_b = next((b for b in bl if b["kind"] == "본문"), None)
                 rest = [(b, x) for b, x in zip(bl, sc["cards"]) if b is not text_b]
-                text_html, subs = render_text(text_b) if text_b else ("", [])
+                text_html, subs, cnt = render_text(text_b, sc["no"]) if text_b else ("", [], (0, 0))
+                # 같은 절의 다른 본문(보충 본문)은 본문 번호에 이어서 매긴다
+                ci, ck = cnt
+                for b, _ in rest:
+                    if b["kind"] == "본문":
+                        b["html"], ci, ck = renumber(b["html"], sc["no"], ci, ck)
                 cards_html = "\n".join(render_card(b, x["no"], std_href) for b, x in rest)
                 if not bl:
                     cards_html = ('<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, '
