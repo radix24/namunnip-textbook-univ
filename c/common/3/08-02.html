@@ -40,12 +40,75 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c3-graph-fit"><span class="mono">8.2.1</span><span>그래프를 직선으로 만들고 기울기로 g 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c3-graph-fit" data-kind="실습" data-std="공통3-08-02">
+  <header class="card-head"><span class="no">8.2.1</span><h2><span class="q-badge">실습</span>그래프를 직선으로 만들고 기울기로 g 구하기</h2><span class="kind">선형화 · 최소제곱 직선 · 기울기의 불확도</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-02.html#std">[공통3-08-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>진자의 길이 \(L\)을 바꿔 가며 주기 \(T\)를 재고, \(T^2\)-\(L\) 그래프가 직선임을 확인한 뒤 기울기로 \(g\)를 구합니다. 성취기준 [공통3-08-02]. 측정값 하나로 구하는 것(08-01 카드)보다 계통 오차를 잘 드러냅니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>08-01 카드의 진자 도구.</li>
+        <li>스프레드시트 또는 Python(설치 없이 Google Colab에서 실행 가능).</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>왜 \(T^2\)-\(L\)인가 (선형화)</h3>
+      <p>\(T = 2\pi\sqrt{\frac Lg}\)는 \(T\)-\(L\) 그래프에서 곡선이라 눈으로 맞는지 판단하기 어렵습니다. 양변을 제곱하면 \(T^2 = \frac{4\pi^2}{g}L\): \(T^2\)을 세로축, \(L\)을 가로축에 놓으면 원점을 지나는 직선이고 기울기가 \(\frac{4\pi^2}{g}\)입니다. 이론을 직선 꼴로 바꾸면 (1) 모형이 맞는지 눈으로 보이고 (2) 모든 측정점을 함께 써서 하나의 값을 얻습니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>길이를 0.30 m부터 1.10 m까지 0.20 m 간격으로 5가지 이상 바꾼다.</li>
+        <li>길이마다 10왕복 시간을 3번 재서 평균을 내고 \(T\)를 구한다.</li>
+        <li>\(T^2\)을 계산하고 \(T^2\)-\(L\) 산점도를 그린다.</li>
+        <li>최소제곱 직선 \(T^2 = mL + b\)를 맞춘다. 스프레드시트: <code>=SLOPE()</code>, <code>=INTERCEPT()</code>, 또는 <code>=LINEST()</code>. Python:</li>
+      </ol>
+      <pre><code>import numpy as np
+L  = np.array([0.30, 0.50, 0.70, 0.90, 1.10])        # m
+T  = np.array([1.105, 1.421, 1.682, 1.905, 2.108])   # s (예시 자료)
+(m, b), cov = np.polyfit(L, T**2, 1, cov=True)
+g  = 4*np.pi**2 / m
+dg = g * np.sqrt(cov[0, 0]) / m
+print(f"기울기 {m:.3f} s^2/m, 절편 {b:.3f} s^2, g = {g:.2f} ± {dg:.2f} m/s^2")</code></pre>
+      <ol start="5">
+        <li>\(g = \frac{4\pi^2}{m}\), \(\frac{\sigma_g}{g} = \frac{\sigma_m}{m}\).</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>예시 자료에서 기울기 약 4.03 s²/m, \(g \approx 9.8\ \text{m/s}^2\), 절편은 0에 가깝습니다. 점들이 직선 주위에 고르게 흩어지면 모형이 맞는 것입니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><b>절편이 0이 아니면?</b> 이론은 원점을 지납니다. 절편이 음수이고 불확도보다 크면, 잰 길이가 실제 진자 길이보다 일정하게 짧다는 뜻입니다(예: 추의 중심이 아니라 매듭까지 잼). 기울기는 이런 일정한 길이 오차의 영향을 받지 않습니다. 직선 맞춤의 큰 장점입니다.</li>
+        <li><b>잔차</b>(측정값 − 직선)를 \(L\)에 대해 그려 보세요. 무작위로 흩어지면 좋고, 휘어진 패턴이면 모형의 가정(작은 각, 줄 질량 무시)을 의심합니다.</li>
+        <li>왜 \(T\)-\(\sqrt L\)이 아니라 \(T^2\)-\(L\)을 그리나요? 둘 다 직선이지만, \(L\)은 직접 잰 양이라 가로축 불확도가 단순합니다.</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>같은 방법을 용수철에 써 보세요: 추의 질량 \(m\)을 바꾸며 주기를 재면 \(T^2 = \frac{4\pi^2}{k}m\). 기울기로 \(k\)를 구하고, 늘어난 길이와 무게로 잰 \(k\) (훅의 법칙)와 비교합니다. 절편이 생기면 용수철 자체의 질량 효과(유효 질량 약 \(\frac13m_{\text{용수철}}\))입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c3-graph-fit" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="08-01.html">← 8.1 측정값의 불확도를 추정하고 유효숫자로 나타내기</a></span>
         <span><a href="08-03.html">8.3 스마트폰 가속도 센서나 영상 분석으로 진자 주기를 측정하고 이론과 비교하기 →</a></span>

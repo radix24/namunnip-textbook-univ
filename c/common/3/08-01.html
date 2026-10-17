@@ -40,14 +40,77 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c3-uncertainty"><span class="mono">8.1.1</span><span>불확도 추정과 유효숫자: 측정값을 정직하게 쓰기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c3-uncertainty" data-kind="실습" data-std="공통3-08-01">
+  <header class="card-head"><span class="no">8.1.1</span><h2><span class="q-badge">실습</span>불확도 추정과 유효숫자: 측정값을 정직하게 쓰기</h2><span class="kind">반복 측정 · 표준오차 · 불확도 전파</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-01.html#std">[공통3-08-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>스톱워치로 같은 시간을 여러 번 재서 (1) 평균과 표준편차, 평균의 표준오차를 구하고, (2) 결과를 "값 ± 불확도"와 맞는 유효숫자로 쓰고, (3) 계산된 양의 불확도를 전파합니다. 성취기준 [공통3-08-01].</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>스마트폰 스톱워치, 실이나 끈 약 1 m, 작은 추(열쇠 꾸러미 등), 줄자.</li>
+        <li>계산은 손이나 스프레드시트(구글 시트, 엑셀, LibreOffice Calc).</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>끈 끝에 추를 매달아 진자를 만들고, 길이 \(L\)(매단 점 ~ 추의 중심)을 줄자로 잰다. 눈금 읽기 불확도를 적는다(예: ±0.5 cm).</li>
+        <li>작은 각(10° 이하)으로 흔들고, <b>10번 왕복하는 시간</b>을 잰다. 이것을 10회 반복한다.</li>
+        <li>10회의 평균 \(\bar t\), 표준편차 \(s = \sqrt{\frac{\sum(t_i - \bar t)^2}{n - 1}}\), 평균의 표준오차 \(\sigma_{\bar t} = \frac{s}{\sqrt n}\)을 구한다. 스프레드시트: <code>=AVERAGE()</code>, <code>=STDEV()</code>, <code>=STDEV()/SQRT(10)</code>.</li>
+        <li>주기 \(T = \frac{\bar t}{10}\), \(\sigma_T = \frac{\sigma_{\bar t}}{10}\).</li>
+        <li>\(g = \frac{4\pi^2L}{T^2}\)을 계산하고 불확도를 전파한다(아래).</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>불확도 전파 규칙과 근거</h3>
+      <p>\(q = f(x, y)\)이고 \(x, y\)의 오차가 작고 서로 독립이면 \(\sigma_q^2 \approx \left(\frac{\partial f}{\partial x}\right)^2\sigma_x^2 + \left(\frac{\partial f}{\partial y}\right)^2\sigma_y^2\). 공통2의 전미분(선형 근사)에서 오차를 제곱해 평균한 것입니다. 곱과 거듭제곱 꼴 \(q = x^ay^b\)이면 상대 불확도로:</p>
+      \[\frac{\sigma_q}{q} = \sqrt{\left(a\frac{\sigma_x}{x}\right)^2 + \left(b\frac{\sigma_y}{y}\right)^2}.\]
+      <p>\(g = 4\pi^2LT^{-2}\)이므로 \(\frac{\sigma_g}{g} = \sqrt{\left(\frac{\sigma_L}{L}\right)^2 + \left(2\frac{\sigma_T}{T}\right)^2}\). 주기의 상대 불확도가 <b>2배</b>로 들어갑니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>기대 결과 (예시 자료)</h3>
+      <p>\(L = 0.995 \pm 0.005\) m, 10회 측정한 10왕복 시간의 평균 \(\bar t = 20.04\) s, \(s = 0.12\) s.</p>
+      <ul>
+        <li>\(\sigma_{\bar t} = \frac{0.12}{\sqrt{10}} = 0.038\) s → \(T = 2.004 \pm 0.0038\) s.</li>
+        <li>\(g = \frac{4\pi^2(0.995)}{2.004^2} = 9.781\ \text{m/s}^2\).</li>
+        <li>\(\frac{\sigma_g}{g} = \sqrt{(0.0050)^2 + (2\times0.0019)^2} = \sqrt{2.5 + 1.44}\times10^{-3} = 0.0063\), \(\sigma_g = 0.062\).</li>
+        <li>결과: \(g = 9.78 \pm 0.06\ \text{m/s}^2\). 불확도는 유효숫자 1~2개, 값은 불확도의 자리까지 반올림.</li>
+      </ul>
+      <p>표준값 9.80은 이 범위 안(1σ 이내)입니다. 길이 측정이 불확도에 가장 크게 기여했으므로, 개선하려면 길이를 더 정밀하게 재야 합니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>1왕복만 10번 재는 것보다 10왕복을 재는 것이 왜 좋은가요? (반응 시간 오차 약 0.1~0.2 s가 시작과 끝에 한 번씩만 들어가고, 10으로 나뉘기 때문)</li>
+        <li>표준편차 \(s\)와 표준오차 \(\frac{s}{\sqrt n}\)은 각각 무엇을 나타내나요? (한 번 잰 값의 흩어짐 / 평균값의 불확도. 측정을 늘리면 \(s\)는 그대로, 표준오차는 \(\frac{1}{\sqrt n}\)로 준다)</li>
+        <li>여러분의 결과와 9.80의 차이를 \(\sigma_g\)로 나눈 값은? 2보다 크면 계통 오차(길이를 추 끝까지 잼, 큰 각도 등)를 의심합니다.</li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>진폭을 30°로 하면 주기가 약 1.7% 길어져(06-01 카드) \(g\)가 약 3.4% 작게 나옵니다. 불확도보다 큰 차이라 실제로 보이는지 확인해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c3-uncertainty" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-04.html">← 7.4 Carnot 효율과 엔트로피 변화를 계산하기</a></span>
+        <span><a href="07-R.html">← 7.R 단원 마무리</a></span>
         <span><a href="08-02.html">8.2 측정 자료를 그래프로 그리고 기울기로 물리량을 구하기 →</a></span>
       </nav>
     </div>
