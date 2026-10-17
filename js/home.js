@@ -7,7 +7,8 @@
   const md = (s) => esc(s).replace(/\*([^*]+)\*/g, "<i>$1</i>");   // 설계 문서의 *책 제목*
   const nStd = (c) => c.units.reduce((a, u) => a + u.s.length, 0);
   const TYPES = ["개념", "계산", "증명", "모형", "적용", "실습"];
-  const TAB_KEY = "namunnip-univ-dept";
+  const TAB_KEY = "quri-dept";
+  const P = window.QProgress;
 
   /* ───── 학과 탭 ───── */
   const tabs = document.getElementById("dom-tabs");
@@ -18,9 +19,10 @@
   const slotName = (s) => { const [y, m] = s.split("-"); return `${y}학년 ${m}학기`; };
   const box = (c) => {
     const flags = [c.closed ? "2026 미개설" : "", c.onlyU ? "수강편람만" : ""].filter(Boolean);
-    return `<a class="tbox" href="#c-${esc(c.code)}" data-code="${esc(c.code)}">
+    const nc = c.units.reduce((a, u) => a + (u.cards || 0), 0), dn = P ? c.units.reduce((a, u) => a + u.s.filter((s) => P.done(s.c)).length, 0) : 0;
+    return `<a class="tbox${nc ? "" : " soon"}" href="${esc(c.path)}" data-code="${esc(c.code)}">
       <span class="lv mono">${esc(c.kind)} · ${c.cr}학점</span><b>${esc(c.name)}</b>
-      <span class="pg mono">대단원 ${c.units.length} · 성취기준 ${nStd(c)}</span>
+      <span class="pg mono">${nc ? `카드 ${nc} · ` : ""}성취기준 ${dn ? `${dn}/` : ""}${nStd(c)}</span>
       ${flags.length ? `<span class="pg mono u-flag">${flags.map(esc).join(" · ")}</span>` : ""}</a>`;
   };
   const tree = document.getElementById("tree");
@@ -29,7 +31,7 @@
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
     tree.innerHTML = `
       <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
-        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 열은 요람의 학년·학기 순서입니다.</p></div>
+        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 열은 요람의 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).</p></div>
       <div class="tree-band tree-math" data-track="${d.id}"><div>${slots.map((s) => `
         <div class="m-col"><h3 class="mono">${slotName(s)}</h3>${d.courses.filter((c) => slot(c) === s).map(box).join("")}</div>`).join("")}
       </div></div>`;
@@ -43,7 +45,7 @@
       const tyCount = TYPES.map((t) => [t, c.units.reduce((a, u) => a + u.s.filter((s) => s.ty === t).length, 0)]).filter(([, k]) => k);
       const units = c.units.map((u) => `
         <div class="chapter" data-hay="${esc((u.t + " " + u.el).toLowerCase())}">
-          <h3><span class="mono">${u.n}</span>${esc(u.t)}${u.src ? `<span class="u-src mono">${esc(u.src)}</span>` : ""}</h3>
+          <h3><span class="mono">${u.n}</span><a href="${esc(c.path)}${u.n}.html">${esc(u.t)}</a>${u.cards ? `<span class="u-src mono">카드 ${u.cards}</span>` : ""}${u.src ? `<span class="u-src mono">${esc(u.src)}</span>` : ""}</h3>
           ${u.el ? `<p class="u-el small">${esc(u.el)}</p>` : ""}
           <ol class="u-stds">${u.s.map(stdLi).join("")}</ol>
         </div>`).join("");
@@ -51,7 +53,7 @@
       <section class="course" id="c-${esc(c.code)}" data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
         <div class="course-head">
           <span class="mono">${esc(c.code)} · ${esc(c.sub.join(" / "))}</span>
-          <h2>${esc(c.name)}</h2>
+          <h2><a href="${esc(c.path)}">${esc(c.name)}</a></h2>
           <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점</p>
           <p class="count mono dim">대단원 ${c.units.length} · 성취기준 ${nStd(c)}</p>
           ${c.open ? `<p class="small"><b>2026 개설</b> ${esc(c.open)}</p>` : ""}
@@ -59,7 +61,7 @@
           ${c.hours ? `<p class="small"><b>학습 시간</b> ${esc(c.hours)}</p>` : ""}
           ${c.books ? `<p class="small"><b>교재</b> ${md(c.books)}</p>` : ""}
           <p class="u-tys">${tyCount.map(([t, k]) => `<span class="ty mono" data-ty="${t}">${t} ${k}</span>`).join("")}</p>
-          <p><button type="button" class="link u-open" aria-expanded="false">성취기준 펼치기</button></p>
+          <p><a class="link" href="${esc(c.path)}">과목 목차 →</a> <button type="button" class="link u-open" aria-expanded="false">성취기준 펼치기</button></p>
         </div>
         <div class="u-body">
           ${c.yoram || c.handb ? `<div class="u-desc small">${c.yoram ? `<p><span class="mono">요람 개요</span>${esc(c.yoram)}</p>` : ""}${c.handb ? `<p><span class="mono">수강편람 개요</span>${esc(c.handb)}</p>` : ""}</div>` : ""}

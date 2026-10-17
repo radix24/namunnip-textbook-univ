@@ -1,0 +1,110 @@
+/* QURI 카드: 설명·증명·유도·예제·연습·실습 카드 (CARDS.md). 탐구 카드는 tb.css의 .card-body를 그대로 쓴다 */
+
+.q-card .card-head .kind::before { content: attr(data-k); }
+.q-card[data-kind] .card-head h2 { flex: 1 1 18em; }
+.q-badge { display: inline-block; margin-right: 8px; padding: 1px 7px; font-family: var(--f-mono); font-size: 11px; font-weight: 500; color: var(--on-accent); background: var(--forest); border-radius: 2px; vertical-align: 3px; }
+.q-card[data-kind="증명"] .q-badge, .q-card[data-kind="유도"] .q-badge { background: #6b5bc4; }
+.q-card[data-kind="예제"] .q-badge, .q-card[data-kind="연습"] .q-badge { background: #b07a10; }
+.q-card[data-kind="탐구"] .q-badge { background: #2f9a8f; }
+.q-card[data-kind="실습"] .q-badge { background: var(--ink-2); }
+.q-stds { padding: 8px 22px; border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.q-stds a { color: var(--ink-2); text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+
+.q-body { padding: 22px clamp(18px, 3vw, 34px) 26px; display: grid; gap: 22px; font-size: 15.5px; line-height: 1.75; }
+.q-body p + p { margin-top: .6em; }
+.q-sec > h3 { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: var(--forest); }
+.q-sec > h3::before { content: ""; flex: none; width: 14px; height: 2px; background: currentColor; transform: translateY(-4px); }
+.q-sec ul, .q-sec ol:not(.q-proof):not(.q-read) { padding-left: 1.3em; }
+.q-sec ul { list-style: disc; }
+.q-sec ol:not(.q-proof):not(.q-read) { list-style: decimal; }
+.q-sec li + li { margin-top: 4px; }
+.q-sec.warn { padding: 12px 16px; background: var(--warn-bg); border-left: 3px solid var(--warn); }
+.q-sec.warn > h3 { color: var(--warn); }
+.katex-display { margin: .7em 0; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* 정의·정리 상자 */
+.q-def, .q-thm { position: relative; padding: 14px 18px 14px; background: var(--right-bg); border-left: 3px solid var(--forest); }
+.q-thm { background: var(--card); border: 1px solid var(--ink); border-left: 3px solid #6b5bc4; }
+.q-def > .lb, .q-thm > .lb { display: block; margin-bottom: 4px; font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+
+/* 정의를 풀어 읽기: 구절 → 뜻 */
+.q-read { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.q-read > li { display: grid; grid-template-columns: minmax(8em, 15em) 1fr; gap: 4px 18px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.q-read > li > b { font-weight: 600; color: var(--ink); }
+@media (max-width: 640px) { .q-read > li { grid-template-columns: 1fr; } }
+
+/* 증명·유도·풀이 단계 */
+.q-proof { counter-reset: qs; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.q-proof > li { counter-increment: qs; display: grid; grid-template-columns: 34px 1fr; gap: 2px 10px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.q-proof > li::before { content: counter(qs); grid-row: 1 / span 3; font-family: var(--f-mono); font-size: 12px; color: #6b5bc4; padding-top: 3px; }
+.q-proof > li > * { grid-column: 2; }
+.q-why { display: block; font-size: 13px; line-height: 1.6; color: var(--ink-3); }
+.q-why::before { content: "근거"; margin-right: 8px; font-family: var(--f-kr); font-weight: 700; font-size: 11.5px; color: #6b5bc4; }
+.q-proof > li.q-end::after { content: "∎"; grid-column: 2; justify-self: end; font-size: 18px; line-height: 1; color: var(--qed, #f2b33d); }
+[data-theme="dark"] .q-proof > li::before, [data-theme="dark"] .q-why::before { color: #a397ec; }
+[data-theme="dark"] .q-thm { border-left-color: #a397ec; }
+
+/* 문제·검산 */
+.q-prob { padding: 12px 16px; background: var(--paper-2); border: 1px solid var(--rule); }
+.q-check { padding: 12px 16px; border: 1px dashed var(--forest); }
+.q-check > h3 { margin-bottom: 4px; }
+
+/* 접는 내용 (힌트, 풀이, 더 알기) */
+.q-body details { border: 1px solid var(--rule); background: var(--card); }
+.q-body details + details { margin-top: 6px; }
+.q-body details > summary { cursor: pointer; padding: 7px 12px; font-size: 13.5px; font-weight: 600; color: var(--ink-2); list-style: none; }
+.q-body details > summary::-webkit-details-marker { display: none; }
+.q-body details > summary::before { content: "+"; display: inline-block; width: 1em; font-family: var(--f-mono); color: var(--forest); }
+.q-body details[open] > summary::before { content: "−"; }
+.q-body details > :not(summary) { padding: 0 14px 12px; }
+.q-body details.q-sol > summary { color: var(--forest); }
+
+/* 연습 문제 목록 */
+.q-exlist { counter-reset: qe; display: grid; gap: 18px; }
+.q-exlist > li { counter-increment: qe; display: grid; gap: 8px; padding-top: 14px; border-top: 1px solid var(--ink); }
+.q-exlist > li > .q-prob { position: relative; padding-left: 46px; }
+.q-exlist > li > .q-prob::before { content: "문제 " counter(qe); position: absolute; left: 12px; top: 13px; width: 30px; font-family: var(--f-kr); font-weight: 700; font-size: 11.5px; line-height: 1.3; color: #b07a10; }
+
+/* 코드 */
+.q-body pre { overflow-x: auto; padding: 12px 14px; background: var(--night); color: var(--on-night); font-family: var(--f-mono); font-size: 13px; line-height: 1.55; }
+
+/* ───── 단원 페이지 ───── */
+.u-hero .meta .mono { color: var(--ink-3); }
+.u-hero .meta a { color: var(--ink-2); }
+.u-els { margin-top: 18px; max-width: 46em; font-size: 14px; color: var(--ink-2); }
+.u-els b { font-weight: 600; color: var(--ink); margin-right: 6px; }
+.q-checklist { margin: 28px 0 8px; border: 1px solid var(--ink); background: var(--card); }
+.q-checklist > h2 { display: flex; justify-content: space-between; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--ink); font-size: 14px; }
+.q-checklist > h2 .mono { color: var(--forest); font-weight: 500; }
+.q-checklist ol { display: grid; }
+.q-checklist li { display: grid; grid-template-columns: 26px 72px 1fr auto; gap: 8px; align-items: baseline; padding: 9px 16px; border-bottom: 1px solid var(--rule); font-size: 14.5px; line-height: 1.5; }
+.q-checklist li:last-child { border-bottom: 0; }
+.q-checklist input { width: 16px; height: 16px; accent-color: var(--forest); transform: translateY(2px); }
+.q-checklist .code { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.q-checklist .cards { font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
+.q-checklist .cards a { color: var(--forest); text-decoration: none; margin-left: 4px; }
+.q-checklist li.done .t { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--rule); }
+.q-checklist .note { padding: 8px 16px; font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--rule); }
+@media (max-width: 640px) {
+  .q-checklist li { grid-template-columns: 24px 1fr; }
+  .q-checklist .code, .q-checklist .cards { grid-column: 2; }
+}
+.u-empty { padding: 28px 22px; border: 1px dashed var(--rule); color: var(--ink-3); font-size: 14.5px; }
+.u-pager { display: flex; justify-content: space-between; gap: 12px; padding: 24px 0 8px; border-top: 1px solid var(--rule); margin-top: 12px; font-size: 14px; }
+.u-pager a { text-decoration: none; color: var(--ink-2); }
+.u-pager a:hover { color: var(--forest); }
+
+/* 과목 목차 */
+.c-units { display: grid; gap: 0; border-top: 2px solid var(--ink); margin-top: 28px; }
+.c-unit { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 4px 14px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.c-unit .n { font-family: var(--f-mono); font-size: 13px; color: var(--forest); }
+.c-unit h2 { font-size: 18px; letter-spacing: -.02em; }
+.c-unit h2 a { text-decoration: none; }
+.c-unit h2 a:hover { color: var(--forest); }
+.c-unit .meta { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.c-unit .el { grid-column: 2 / -1; font-size: 13.5px; color: var(--ink-2); }
+.c-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; margin-top: 22px; border: 1px solid var(--rule); background: var(--card); }
+.c-info > div { padding: 12px 14px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 13.5px; line-height: 1.55; }
+.c-info dt { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); margin-bottom: 2px; }
+.lp-bar { display: inline-block; width: 60px; height: 4px; margin-right: 6px; background: var(--rule); vertical-align: middle; }
+.lp-bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--forest); }

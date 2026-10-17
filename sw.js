@@ -1,5 +1,5 @@
 /* 오프라인: 한 번 연 파일은 캐시에 두고, 네트워크가 되면 늘 새 파일을 받는다(네트워크 우선). */
-const CACHE = "namunnip-univ-v1";
+const CACHE = "quri-v1";
 
 self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => {
