@@ -289,6 +289,83 @@ def render_text(b):
     return (h[:i] + seen + h[i + len("</article>"):] if i >= 0 else h), subs
 
 
+CODE = re.compile(r"^[가-힣]+\d+-\d\d(?:-\d\d)?$")
+
+
+def build_index(depts, blocks):
+    """성취기준·대단원 코드 → 페이지 경로와 이름 (학과를 넘나드는 링크용)"""
+    idx = {}
+    for d in depts:
+        for c in d["courses"]:
+            base = f'c/{d["id"]}/{num(c["code"])}/'
+            for u in c["units"]:
+                un = int(u["n"])
+                idx[f'{c["code"]}-{u["n"]}'] = {"path": base + f'{u["n"]}.html', "course": c["code"], "cname": c["name"],
+                                                "no": f"{un}", "title": u["t"], "unit": True}
+                for k, s in enumerate(u["s"], 1):
+                    tb = next((b for b in blocks.get(s["c"], []) if b["kind"] == "본문"), None)
+                    idx[s["c"]] = {"path": base + f'{u["n"]}-{k:02d}.html', "course": c["code"], "cname": c["name"],
+                                   "no": f"{un}.{k}", "title": tb["title"] if tb else sec_title(s["t"]), "unit": False}
+    return idx
+
+
+def load_links(idx):
+    """curricula/univ-prereq.md 7절 연결표 → {"pre": 대상→[선수], "post": 선수→[대상]}"""
+    f = SRC / "univ-prereq.md"
+    pre, post = {}, {}
+    if not f.exists():
+        return {"pre": pre, "post": post}
+    for line in f.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^- (\S+) ← (.+)$", line.strip())
+        if not m:
+            continue
+        tgt = m.group(1)
+        if tgt not in idx:
+            print(f"경고: 연결표의 없는 코드 {tgt}", file=sys.stderr)
+            continue
+        items = []
+        for it in re.sub(r"\([^)]*\)", "", m.group(2)).split(","):
+            it = it.strip()
+            if not it:
+                continue
+            if it.startswith("고교:"):
+                items.append(it)
+            elif CODE.match(it) and it in idx:
+                items.append(it)
+                post.setdefault(it, []).append(tgt)
+            else:
+                print(f"경고: 연결표 {tgt}의 알 수 없는 선수 {it}", file=sys.stderr)
+        pre.setdefault(tgt, []).extend(items)
+    return {"pre": pre, "post": post}
+
+
+def links_box(code, unit_code, links, idx, rel, here_course):
+    """절(또는 대단원) 페이지의 '먼저 볼 것 / 이 절을 쓰는 곳' 상자"""
+    def item(c):
+        if c.startswith("고교:"):
+            return f'<li class="hs"><span class="mono">고교</span><span>{esc(c[3:].strip())}</span></li>'
+        x = idx[c]
+        where = "" if x["course"] == here_course else f'{esc(x["cname"])} '
+        kind = "대단원 " if x["unit"] else ""
+        return (f'<li><a href="{rel}{x["path"]}"><span class="mono">{esc(x["course"])} {kind}{x["no"]}</span>'
+                f'<span>{where}<b>{esc(x["title"])}</b></span></a></li>')
+
+    pre = list(links["pre"].get(code, []))
+    if unit_code and unit_code != code:
+        pre += [p for p in links["pre"].get(unit_code, []) if p not in pre and p != code]
+    post = [t for t in links["post"].get(code, [])]
+    if not pre and not post:
+        return ""
+    noun = "단원" if idx.get(code, {}).get("unit") else "절"
+    cols = []
+    if pre:
+        cols.append(f'<div><h3>먼저 볼 것</h3><ul>{"".join(item(c) for c in pre)}</ul></div>')
+    if post:
+        cols.append(f'<div><h3>이 {noun}을 쓰는 곳</h3><ul>{"".join(item(c) for c in post)}</ul></div>')
+    return (f'\n    <aside class="q-links" aria-label="선수와 후속">\n      <p class="q-links-title">이 {noun}의 앞과 뒤</p>'
+            f'\n      <div class="q-links-cols">{"".join(cols)}</div>\n    </aside>')
+
+
 def collect(blist):
     styles = "\n".join(b["style"] for b in blist if b["style"])
     scripts = []
@@ -299,7 +376,7 @@ def collect(blist):
     return (f"\n  <style>\n{styles}\n  </style>" if styles else ""), scripts
 
 
-def write_pages(depts, blocks):
+def write_pages(depts, blocks, sidx, links):
     cdir = ROOT / "c"
     if cdir.exists():
         for p in sorted(cdir.rglob("*"), reverse=True):
@@ -389,19 +466,20 @@ def write_pages(depts, blocks):
       <p class="note">연습 문제를 풀고 나서 성취기준을 다시 점검하세요.</p>
     </div>"""
                     lead = '<p class="lead">대단원 전체를 아우르는 연습 문제입니다. 앞 절들의 카드를 마친 뒤 푸세요.</p>'
+                lbox = links_box(sc["code"], f'{c["code"]}-{u["n"]}', links, sidx, rel, c["code"]) if sc["std"] else ""
                 if text_b:
                     s = sc["std"]
                     hero_extra = (f'<p class="sec-std"><span class="mono">[{esc(s["c"])}]</span> {esc(s["t"])} {ty_span(s["ty"])}</p>' if s else "")
                     std_after = std_box.replace('class="q-checklist', 'class="q-checklist after-text', 1).replace(
                         "카드를 공부한 뒤 직접 해 보고", "본문과 연습문제를 마친 뒤 직접 해 보고")
                     hero_inner = f'{hero_extra}'
-                    main_html = f"{text_html}\n    {std_after}\n{cards_html}"
+                    main_html = f"{text_html}\n    {std_after}{lbox}\n{cards_html}"
                     h1_title = text_b["title"]
                     side = (f'<p class="mono small toc-title">이 절의 차례</p>\n      <ol class="toc-sub">{sub_toc}</ol>\n'
                             f'      <p class="mono small toc-title toc-title-2">이 절의 카드</p>')
                 else:
                     hero_inner = f"{lead}{std_box}"
-                    main_html = cards_html
+                    main_html = f"{lbox}\n{cards_html}" if lbox else cards_html
                     h1_title = sc["title"]
                     side = '<p class="mono small toc-title">이 절의 카드</p>'
                 body = f"""  <section class="topic-hero u-hero{' has-text' if text_b else ''}" data-sec="{esc(sc["code"])}">
@@ -451,7 +529,7 @@ def write_pages(depts, blocks):
     <h1>{esc(u["t"])}</h1>
     {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
     <p class="u-prog mono small"></p>
-  </section>
+  </section>{links_box(f'{c["code"]}-{u["n"]}', None, links, sidx, rel, c["code"])}
   <ol class="s-list">{rows}
   </ol>
   <nav class="u-pager" aria-label="대단원 이동">
@@ -516,7 +594,10 @@ def main():
         if bad:
             print(f"경고: {did} 학년을 못 읽은 과목 {bad}", file=sys.stderr)
     blocks = load_blocks()
-    n_pages, n_cards = write_pages(out, blocks)
+    idx = build_index(out, blocks)
+    links = load_links(idx)
+    n_pages, n_cards = write_pages(out, blocks, idx, links)
+    print(f"연결표: 대상 {len(links['pre'])} · 선수로 쓰인 코드 {len(links['post'])}")
     js = "/* tools/build.py가 curricula/univ-*.md와 blocks/에서 만든다. 직접 고치지 않는다. */\n"
     js += "window.UNIV = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n"
     OUT.write_text(js, encoding="utf-8", newline="\n")
