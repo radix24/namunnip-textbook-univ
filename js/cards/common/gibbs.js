@@ -26,9 +26,10 @@
     g.moveTo(X(x0), Y(-1)); g.lineTo(X(0), Y(-1)); g.lineTo(X(0), Y(1)); g.lineTo(X(x1), Y(1)); g.stroke();
     g.setLineDash([]);
     g.strokeStyle = css("--forest"); g.lineWidth = 2; g.beginPath();
-    let peak = 0;
-    for (let i = 0; i <= 800; i++) { const x = x0 + (i / 800) * (x1 - x0); const y = S(x, N); if (x > 0) peak = Math.max(peak, y); i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); }
+    for (let i = 0; i <= 2000; i++) { const x = x0 + (i / 2000) * (x1 - x0); const y = S(x, N); i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); }
     g.stroke();
+    // 첫 봉우리는 x = π/(N+1)에 있다(부분합의 도함수가 처음 0이 되는 점)
+    const peak = S(Math.PI / (N + 1), N);
     $(".out").textContent = `최고차 ${N}항까지 · 0 오른쪽의 최댓값 ${peak.toFixed(4)} (튀어나온 양 ${((peak - 1) / 2 * 100).toFixed(2)}% · 점프 2에 대한 비)`;
   };
   $(".n").addEventListener("input", render);

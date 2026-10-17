@@ -40,15 +40,72 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c9-condition-number"><span class="mono">8.3.1</span><span>조건수가 큰 계에서는 해가 민감해진다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c9-condition-number" data-kind="설명" data-std="공통9-08-03">
+  <header class="card-head"><span class="no">8.3.1</span><h2><span class="q-badge">설명</span>조건수가 큰 계에서는 해가 민감해진다</h2><span class="kind">κ(A) = ‖A‖‖A⁻¹‖ · 거의 평행한 두 직선 · 잃는 유효숫자</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-03.html#std">[공통9-08-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>왜 필요한가</h3>
+      <p>08-01 카드의 피벗팅은 계산 방법이 오차를 키우는 문제를 막았습니다. 그런데 어떤 연립방정식은 방법이 아무리 좋아도, 문제 자체가 입력의 작은 변화에 해가 크게 바뀝니다. 측정값으로 만든 \(\mathbf b\)에는 늘 오차가 있으므로, 이런 문제에서는 계산된 해를 얼마나 믿을지 알아야 합니다. 그 정도를 재는 수가 조건수입니다.</p>
+    </section>
+
+    <div class="q-def">
+      <span class="lb">정의</span>
+      <p>가역 행렬 \(A\)의 <b>조건수</b> \(\kappa(A) = \|A\|\,\|A^{-1}\|\) (\(\|\cdot\|\)는 행렬 노름). \(A\mathbf x = \mathbf b\)에서 \(\mathbf b\)가 \(\delta\mathbf b\)만큼 바뀌면 해의 상대 변화는</p>
+      \[\frac{\|\delta\mathbf x\|}{\|\mathbf x\|} \le \kappa(A)\frac{\|\delta\mathbf b\|}{\|\mathbf b\|}.\]
+    </div>
+
+    <section class="q-sec">
+      <h3>정의를 풀어 읽기</h3>
+      <ol class="q-read">
+        <li><b>부등식의 근거</b><span>\(\delta\mathbf x = A^{-1}\delta\mathbf b\)이므로 \(\|\delta\mathbf x\| \le \|A^{-1}\|\|\delta\mathbf b\|\). 또 \(\|\mathbf b\| \le \|A\|\|\mathbf x\|\). 두 부등식을 나누면 위 식.</span></li>
+        <li><b>크기의 뜻</b><span>\(\kappa \ge 1\). \(\kappa \approx 10^k\)이면 입력의 상대 오차가 최대 \(10^k\)배 커지므로, 대략 유효숫자 \(k\)자리를 잃는다고 봅니다. 배정밀도(약 16자리)에서 \(\kappa = 10^{12}\)이면 믿을 만한 자리는 4자리 정도.</span></li>
+        <li><b>기하</b><span>2×2에서 두 식은 두 직선이고 해는 교점입니다. 두 직선이 거의 평행하면 한 직선을 조금만 움직여도 교점이 멀리 미끄러집니다. 이것이 조건수가 큰 상황입니다.</span></li>
+        <li><b>행렬식과 다름</b><span>\(\det A\)가 작다고 조건수가 큰 것은 아닙니다. \(10^{-3}I\)는 행렬식이 아주 작지만 \(\kappa = 1\)입니다. 조건수는 크기가 아니라 "얼마나 특이 행렬에 가까운가"를 잽니다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>예와 반례</h3>
+      <ul>
+        <li><b>민감한 예</b>: \(x + y = 2\), \(x + 1.0001y = 2.0001\)의 해는 \((1, 1)\). 오른쪽 2.0001을 2.0002로 0.005%만 바꾸면 해는 \((0, 2)\)로 완전히 달라집니다. 이 행렬의 조건수는 약 \(4\times10^4\)입니다.</li>
+        <li><b>유명한 예</b>: 힐베르트 행렬 \(H_{ij} = \frac{1}{i + j - 1}\)은 \(n = 10\)에서 \(\kappa \approx 1.6\times10^{13}\). 다항식을 최소제곱으로 맞출 때 \(1, x, x^2, \dots\)를 기저로 쓰면 이런 행렬이 나와 계수가 엉망이 됩니다. 직교 다항식(공통8 7-03의 Legendre)을 쓰는 이유입니다.</li>
+        <li><b>반례(잔차가 작아도 해가 틀림)</b>: 위 민감한 예에서 \((0, 2)\)를 원래 식에 넣으면 잔차가 \((0, 0.0001)\)로 매우 작습니다. 그러나 참해 \((1, 1)\)과는 크게 다릅니다. 조건수가 크면 "식을 거의 만족한다"가 "해에 가깝다"를 뜻하지 않습니다.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>다른 개념과의 관계</h3>
+      <p>대칭 행렬이면 2-노름 조건수가 \(\frac{|\lambda_{\max}|}{|\lambda_{\min}|}\) (고윳값 비, 공통8 4-03)입니다. 조건수가 큰 문제는 정규화(티호노프), 더 나은 기저, 더 많은 측정으로 다룹니다. 이것은 문제의 성질이라 알고리즘을 바꿔 해결할 수 없다는 점이 08-01 카드(알고리즘의 안정성)와 다릅니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"배정밀도로 계산했으니 답이 16자리까지 맞다."</b> 조건수만큼 자릿수를 잃습니다. 결과를 보고할 때는 조건수를 함께 확인합니다(<code>numpy.linalg.cond</code>).</li>
+      </ul>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>믿을 수 있는 자릿수</h3>
+    <p class="q">조건수가 \(10^6\)인 행렬로, 자료가 유효숫자 8자리까지 정확할 때 해는 대략 몇 자리까지 믿을 수 있나요?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>약 2자리<span class="why"><b>맞습니다.</b> 상대 오차 \(10^{-8}\)이 최대 \(10^6\)배 커져 \(10^{-2}\) 정도가 됩니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>8자리<span class="why"><b>조건수에 의한 증폭을 빠뜨렸습니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>14자리<span class="why"><b>더하지 않고 빼야 합니다.</b> 조건수는 정밀도를 잃게 할 뿐 늘리지 않습니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-condition-number" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="08-02.html">← 8.2 Gauss-Seidel 반복법을 적용하고 대각 우세 조건으로 수렴을 판단하기</a></span>
-        <span><a href="09-01.html">9.1 공학 문제를 가중 그래프로 모델링하기 →</a></span>
+        <span><a href="08-R.html">8.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통9-04-01",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c9-heat-separation" data-kind="예제" data-std="공통9-04-01">
+  <header class="card-head"><span class="no"></span><h2>변수분리법으로 1차원 열방정식 풀기</h2><span class="kind">u = X(x)T(t) · 고유값 문제 · Fourier 사인 급수 · 문제 해결 전략</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>생각</h3>
+      <p>편미분방정식을 상미분방정식으로 바꾸는 가장 기본적인 방법입니다. 해를 "위치만의 함수 × 시간만의 함수" \(u = X(x)T(t)\)로 추측하면 변수가 서로 갈라집니다. 그런 해 하나는 특별한 모양이 시간에 따라 크기만 바뀌는 해이고, 일반적인 해는 그런 해들을 Fourier 급수처럼 더해서 만듭니다(중첩 원리: 방정식과 경계 조건이 선형이고 0이라서).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 변수분리법</span>
+      <ol>
+        <li>방정식과 경계 조건이 선형·동차(0)인지 확인한다. 아니면 정상 상태를 빼서 동차로 만든다.</li>
+        <li>\(u = X(x)T(t)\)를 넣고 양변을 \(XT\)로 나눠 변수를 가른다. 양쪽이 같은 상수 \(-\lambda\)여야 한다.</li>
+        <li>\(X\)의 경계 조건으로 고유값 문제를 풀어 허용되는 \(\lambda_n\)과 \(X_n\)을 찾는다.</li>
+        <li>각 \(\lambda_n\)에 대해 \(T_n\)을 푼다.</li>
+        <li>\(u = \sum c_nX_nT_n\)으로 더하고, 초기 조건을 Fourier 급수로 전개해 \(c_n\)을 정한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">\(u_t = \alpha^2u_{xx}\) (\(0 < x < L\)), \(u(0, t) = u(L, t) = 0\), \(u(x, 0) = f(x)\)를 푸세요. 그다음 \(L = \pi\), \(\alpha = 1\), \(f(x) = 1\)인 경우를 구하세요.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(XT' = \alpha^2X''T\). 나누면 \(\frac{T'}{\alpha^2T} = \frac{X''}{X}\).</div><span class="q-why">왼쪽은 \(t\)만, 오른쪽은 \(x\)만의 함수.</span></li>
+        <li><div>\(x\)와 \(t\)를 따로 바꿔도 같으려면 둘 다 상수: \(= -\lambda\). \(X'' + \lambda X = 0\), \(T' = -\lambda\alpha^2T\).</div><span class="q-why">\(x\)를 바꾸면 왼쪽은 그대로이므로 오른쪽도 변할 수 없다.</span></li>
+        <li><div>경계 조건 \(X(0) = X(L) = 0\). \(\lambda \le 0\)이면 해는 \(X = 0\)뿐. \(\lambda > 0\)이면 \(X = B\sin\sqrt\lambda x\)이고 \(\sin\sqrt\lambda L = 0\)에서 \(\lambda_n = \left(\frac{n\pi}{L}\right)^2\), \(X_n = \sin\frac{n\pi x}{L}\).</div><span class="q-why">\(\lambda < 0\): \(Ae^{kx} + Be^{-kx}\)가 두 점에서 0이면 \(A = B = 0\). \(\lambda = 0\): 직선이 두 점에서 0이면 0.</span></li>
+        <li><div>\(T_n = e^{-\alpha^2\lambda_nt} = e^{-(n\pi\alpha/L)^2t}\).</div><span class="q-why">일계 선형(공통8 1-02).</span></li>
+        <li><div>\(u = \sum_{n=1}^\infty b_ne^{-(n\pi\alpha/L)^2t}\sin\frac{n\pi x}{L}\). \(t = 0\): \(f(x) = \sum b_n\sin\frac{n\pi x}{L}\)이므로 \(b_n\)은 \(f\)의 사인 반구간 계수 \(\frac2L\int_0^Lf\sin\frac{n\pi x}{L}dx\).</div><span class="q-why">2-02 카드.</span></li>
+        <li class="q-end"><div>\(L = \pi\), \(f = 1\): \(b_n = \frac{4}{n\pi}\) (홀수 \(n\)), 0 (짝수). \(u = \frac4\pi\left(e^{-t}\sin x + \frac13e^{-9t}\sin3x + \frac15e^{-25t}\sin5x + \cdots\right)\).</div><span class="q-why">2-R 문제 2의 사인 급수.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>높은 진동수 성분일수록 \(e^{-n^2t}\)로 훨씬 빨리 사라집니다. 처음의 날카로운 모양(양 끝에서 1에서 0으로 뚝 떨어짐)은 순식간에 매끄러워지고, 조금 지나면 거의 첫 항 \(\frac4\pi e^{-t}\sin x\)만 남습니다. 열이 "울퉁불퉁함부터 지운다"는 것을 Fourier 급수가 수치로 보여 줍니다. 그래서 \(t > 0\)이면 해가 무한히 매끄럽습니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(t = 1\)에서 \(x = \frac\pi2\): 첫 항 \(\frac4\pi e^{-1} = 0.468\), 둘째 항 \(-\frac{4}{3\pi}e^{-9} = -0.00005\). 첫 항이 거의 전부입니다. 각 항이 열방정식과 경계 조건을 만족하는지: \(\frac{\partial}{\partial t}(e^{-n^2t}\sin nx) = -n^2e^{-n^2t}\sin nx = \frac{\partial^2}{\partial x^2}(\cdots)\), \(\sin0 = \sin n\pi = 0\).</p>
+    </section>
+  </div>
+</article>

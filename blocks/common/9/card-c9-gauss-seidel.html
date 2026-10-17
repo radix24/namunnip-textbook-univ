@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통9-08-02",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c9-gauss-seidel" data-kind="예제" data-std="공통9-08-02">
+  <header class="card-head"><span class="no"></span><h2>Gauss-Seidel 반복법과 대각 우세 조건</h2><span class="kind">Jacobi · 새 값 바로 쓰기 · 수렴 판정</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>방법과 수렴 조건</h3>
+      <p>각 식을 대각 성분의 미지수에 대해 풀고, 추정값을 넣어 되풀이합니다.</p>
+      <ul>
+        <li><b>Jacobi</b>: 이전 단계 값만으로 모두 새로 계산. \(x_i^{(k+1)} = \frac{1}{a_{ii}}\left(b_i - \sum_{j\ne i}a_{ij}x_j^{(k)}\right)\).</li>
+        <li><b>Gauss-Seidel</b>: 방금 구한 새 값을 바로 다음 식에 사용. 보통 Jacobi보다 약 2배 빨리 수렴하고 메모리도 덜 씁니다.</li>
+        <li><b>대각 우세</b> \(|a_{ii}| > \sum_{j\ne i}|a_{ij}|\) (모든 행): 이 조건이면 두 방법 모두 어떤 초깃값에서도 수렴합니다. 대각 성분이 커서 각 단계의 오차가 일정 비율 이하로 줄기 때문입니다(축소 사상).</li>
+      </ul>
+      <p>반복법은 큰 희소 행렬(대부분 성분이 0, 예: 편미분방정식을 격자로 이산화한 행렬)에 특히 좋습니다. 가우스 소거는 0이었던 자리를 채워 메모리를 많이 쓰지만, 반복법은 0이 아닌 성분만 씁니다.</p>
+    </section>
+
+    <div class="q-predict">
+      <span class="lb">먼저 예측</span>
+      <p>같은 연립방정식의 식 순서를 바꿔 대각 우세가 깨지면 Gauss-Seidel은 여전히 수렴할까요?</p>
+      <details><summary>예측 확인</summary><p>발산할 수 있습니다. 해는 같아도 반복법의 수렴은 식을 어떻게 배열했는지에 달려 있습니다(아래 검산).</p></details>
+    </div>
+
+    <p class="q-prob">\(4x - y + z = 7\), \(4x - 8y + z = -21\), \(-2x + y + 5z = 15\)를 Gauss-Seidel로 풀어 보세요(초깃값 \((1, 2, 2)\)). 참해는 \((2, 4, 3)\)입니다.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>대각 우세 확인: \(|4| > 1 + 1\), \(|-8| > 4 + 1\), \(|5| > 2 + 1\). 수렴 보장.</div><span class="q-why">조건 먼저.</span></li>
+        <li><div>\(x = \frac{7 + y - z}{4}\), \(y = \frac{21 + 4x + z}{8}\), \(z = \frac{15 + 2x - y}{5}\).</div><span class="q-why">각 식을 대각 미지수에 대해 풂.</span></li>
+        <li><div>1회: \(x = \frac{7 + 2 - 2}{4} = 1.75\), \(y = \frac{21 + 7 + 2}{8} = 3.75\), \(z = \frac{15 + 3.5 - 3.75}{5} = 2.95\).</div><span class="q-why">\(y\) 계산에 새 \(x = 1.75\), \(z\) 계산에 새 \(x, y\)를 바로 씀.</span></li>
+        <li><div>2회: \(x = \frac{7 + 3.75 - 2.95}{4} = 1.95\), \(y = \frac{21 + 7.8 + 2.95}{8} = 3.96875\), \(z = \frac{15 + 3.9 - 3.96875}{5} = 2.98625\).</div><span class="q-why">되풀이.</span></li>
+        <li class="q-end"><div>3회: \(x = 1.99562\), \(y = 3.99609\), \(z = 2.99903\). 참해 \((2, 4, 3)\)에 빠르게 다가간다.</div><span class="q-why">오차가 매번 약 \(\frac15\) 이하로 줄어든다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>세 번 만에 오차가 0.005 이하가 되었습니다. 미지수가 수백만 개인 열전도·구조 해석 문제에서는 가우스 소거가 메모리와 시간 면에서 불가능하고, 이런 반복법(더 발전한 켤레 기울기법, 다중격자법)을 씁니다. 공통8 8단원의 수치해처럼 "정확한 공식" 대신 "충분히 정확할 때까지 반복"하는 생각입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>3회 값을 넣은 잔차: 첫째 식 \(4(1.99562) - 3.99609 + 2.99903 = 6.98542\) (참 7). 식 순서를 바꿔 첫째와 둘째를 맞바꾸면 첫 행이 \(4x - 8y + z\)가 되어 \(x\)를 이 식에서 풀게 되는데, \(|4| < 8 + 1\)이라 대각 우세가 깨지고 실제로 반복값이 커지며 발산합니다.</p>
+    </section>
+  </div>
+</article>

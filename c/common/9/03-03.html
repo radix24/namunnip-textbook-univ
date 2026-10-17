@@ -40,15 +40,76 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c9-boundary-conditions"><span class="mono">3.3.1</span><span>Dirichlet 조건과 Neumann 조건은 무엇을 정하는가</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c9-boundary-conditions" data-kind="설명" data-std="공통9-03-03">
+  <header class="card-head"><span class="no">3.3.1</span><h2><span class="q-badge">설명</span>Dirichlet 조건과 Neumann 조건은 무엇을 정하는가</h2><span class="kind">경계 조건 · 초기 조건 · 잘 놓인 문제</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-03.html#std">[공통9-03-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>왜 필요한가</h3>
+      <p>편미분방정식 하나에는 해가 무한히 많습니다. 예를 들어 \(u = 0\), \(u = x\), \(u = e^{-t}\sin x\)는 모두 열방정식 \(u_t = u_{xx}\)를 만족합니다. 이 중 실제로 일어나는 하나를 고르려면 "처음에 어떤 상태였나"(초기 조건)와 "경계에서 무슨 일이 일어나나"(경계 조건)를 함께 정해야 합니다. 상미분방정식에서 초기값 두 개로 해가 하나로 정해졌던 것(공통8 1-04)의 편미분판입니다.</p>
+    </section>
+
+    <div class="q-def">
+      <span class="lb">정의</span>
+      <p>구간 \(0 \le x \le L\)의 경계 \(x = 0, L\)에서</p>
+      <p><b>Dirichlet 조건</b>: 값을 정한다. \(u(0, t) = a\), \(u(L, t) = b\).</p>
+      <p><b>Neumann 조건</b>: 기울기(법선 방향 도함수)를 정한다. \(u_x(0, t) = a\), \(u_x(L, t) = b\).</p>
+      <p><b>Robin(혼합) 조건</b>: 값과 기울기의 일차결합을 정한다. \(u_x + hu = 0\).</p>
+      <p><b>초기 조건</b>: 열방정식은 \(u(x, 0) = f(x)\) 하나, 파동방정식은 \(u(x, 0) = f(x)\)와 \(u_t(x, 0) = g(x)\) 두 개(시간에 대해 2계라서).</p>
+    </div>
+
+    <section class="q-sec">
+      <h3>물리적 뜻으로 풀어 읽기</h3>
+      <ol class="q-read">
+        <li><b>열: Dirichlet</b><span>막대 끝을 얼음물(0 ℃)에 담가 온도를 고정. 끝의 온도가 늘 정해져 있습니다.</span></li>
+        <li><b>열: Neumann</b><span>Fourier 법칙 \(q = -ku_x\)라서 \(u_x = 0\)은 "열 흐름 0", 곧 끝이 단열되어 있다는 뜻입니다. \(u_x = a \ne 0\)이면 일정한 열이 들어오거나 나갑니다.</span></li>
+        <li><b>열: Robin</b><span>끝이 공기와 맞닿아 온도차에 비례해 식음(Newton 냉각, 공통8 1-05).</span></li>
+        <li><b>줄: Dirichlet</b><span>끝이 고정된 기타 줄, \(u = 0\).</span></li>
+        <li><b>줄: Neumann</b><span>끝이 막대를 따라 위아래로 자유롭게 미끄러지는 고리에 매여 있음. 끝에서 세로 힘 \(Tu_x = 0\).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>예와 반례</h3>
+      <ul>
+        <li><b>예(정상 상태)</b>: 열방정식에서 시간이 오래 지나 \(u_t = 0\)이면 \(u_{xx} = 0\), 곧 \(u\)는 직선. Dirichlet \(u(0) = 0\), \(u(L) = 100\)이면 \(u = \frac{100x}{L}\). Neumann 양 끝 \(u_x = 0\)이면 \(u\)는 상수인데, 그 값은 경계 조건이 아니라 처음 열의 총량(평균 온도)이 정합니다. 단열된 막대는 열을 잃지 않기 때문입니다.</li>
+        <li><b>예(경계 조건과 Fourier 급수)</b>: 양 끝 Dirichlet 0이면 해를 사인 급수로, 양 끝 Neumann 0이면 코사인 급수로 씁니다(2-02 카드). \(\sin\frac{n\pi x}{L}\)은 양 끝에서 0, \(\cos\frac{n\pi x}{L}\)은 양 끝에서 기울기 0이기 때문입니다.</li>
+        <li><b>반례(조건이 모자라거나 넘침)</b>: 열방정식에 초기 조건 없이 경계 조건만 주면 해가 하나로 정해지지 않습니다. 반대로 Neumann 양 끝 \(u_x(0) = 0\), \(u_x(L) = 1\)인 정상 상태 \(u_{xx} = 0\)은 해가 없습니다(직선의 기울기가 양 끝에서 달라야 함). 들어오는 열이 있는데 나가는 곳이 없으니 온도가 끝없이 오르기 때문입니다.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>다른 개념과의 관계</h3>
+      <p>해가 존재하고, 하나뿐이고, 조건을 조금 바꾸면 해도 조금만 바뀌는 문제를 <b>잘 놓인 문제</b>(아다마르)라 합니다. 물리 모형은 이래야 측정 오차가 있어도 쓸모 있습니다. 4단원의 변수분리에서 경계 조건은 고유값 문제를, 초기 조건은 Fourier 계수를 정합니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"경계 조건은 시간 0에서의 조건이다."</b> 경계 조건은 공간의 끝에서 <b>모든 시간</b>에 성립하는 조건이고, 초기 조건은 <b>시간 0</b>에서 모든 위치에 대한 조건입니다.</li>
+      </ul>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>조건 고르기</h3>
+    <p class="q">한쪽 끝은 100 ℃ 열원에 붙어 있고, 다른 끝은 완전히 단열된 막대의 경계 조건은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>\(u(0, t) = 100\), \(u_x(L, t) = 0\)<span class="why"><b>맞습니다.</b> 열원 쪽은 온도 고정(Dirichlet), 단열된 쪽은 열 흐름 0(Neumann).</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>\(u(0, t) = 100\), \(u(L, t) = 0\)<span class="why"><b>단열을 "온도 0"으로 읽었습니다.</b> 단열은 온도가 아니라 열 흐름(기울기)을 정합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>\(u(x, 0) = 100\)<span class="why"><b>초기 조건과 섞었습니다.</b> 이것은 처음에 막대 전체가 100 ℃라는 뜻입니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-boundary-conditions" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="03-02.html">← 3.2 열전도에서 열방정식을 유도하기</a></span>
-        <span><a href="04-01.html">4.1 변수분리법으로 1차원 열방정식을 풀기 →</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

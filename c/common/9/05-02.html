@@ -40,15 +40,74 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 카드">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#card-c9-fourier-transform"><span class="mono">5.2.1</span><span>무한 영역 문제에 Fourier 변환을 쓰는 방법</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="card-c9-fourier-transform" data-kind="설명" data-std="공통9-05-02">
+  <header class="card-head"><span class="no">5.2.1</span><h2><span class="q-badge">설명</span>무한 영역 문제에 Fourier 변환을 쓰는 방법</h2><span class="kind">급수 → 적분 · 미분이 곱셈으로 · 열핵</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-02.html#std">[공통9-05-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>왜 필요한가</h3>
+      <p>유한한 막대에서는 경계 조건이 허락하는 진동수가 \(\frac{n\pi}{L}\)로 띄엄띄엄했고, 해를 Fourier 급수로 썼습니다. 끝없이 긴 막대(경계가 없음)에서는 모든 진동수 \(\omega\)가 허용되어, 합 \(\sum\)이 적분 \(\int d\omega\)로 바뀝니다. 그것이 Fourier 변환입니다. 공통8의 Laplace 변환이 시간 \(t \ge 0\)에 대한 도구였다면, Fourier 변환은 공간 전체 \(-\infty < x < \infty\)에 대한 도구입니다.</p>
+    </section>
+
+    <div class="q-def">
+      <span class="lb">정의 · Fourier 변환</span>
+      \[\hat f(\omega) = \int_{-\infty}^\infty f(x)e^{-i\omega x}\,dx, \qquad f(x) = \frac{1}{2\pi}\int_{-\infty}^\infty\hat f(\omega)e^{i\omega x}\,d\omega.\]
+      <p>\(\hat f(\omega)\)는 \(f\) 속에 진동수 \(\omega\)인 성분 \(e^{i\omega x}\)가 얼마나 들어 있는지를 나타낸다(2-04 카드의 복소 Fourier 계수 \(c_n\)의 연속판).</p>
+    </div>
+
+    <section class="q-sec">
+      <h3>정의를 풀어 읽기</h3>
+      <ol class="q-read">
+        <li><b>미분 → 곱셈</b><span>부분적분으로 \(\widehat{f'}(\omega) = i\omega\hat f(\omega)\) (끝에서 \(f \to 0\)이면). 그래서 \(u_{xx}\)는 \(-\omega^2\hat u\)가 되어, 편미분방정식이 \(\omega\)마다 상미분방정식이 됩니다.</span></li>
+        <li><b>곱 → 합성곱</b><span>\(\widehat{f * g} = \hat f\hat g\) (공통8 6-04의 Laplace판과 같은 구조).</span></li>
+        <li><b>절차</b><span>(1) \(x\)에 대해 변환 (2) \(\omega\)마다 \(t\)에 대한 상미분방정식을 풂 (3) 역변환.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-sec">
+      <h3>예: 무한한 막대의 열방정식</h3>
+      <p class="q-prob">\(u_t = \alpha^2u_{xx}\) (\(-\infty < x < \infty\)), \(u(x, 0) = f(x)\).</p>
+      <ol class="q-proof">
+        <li><div>\(x\)에 대해 변환: \(\hat u_t = -\alpha^2\omega^2\hat u\).</div><span class="q-why">\(u_{xx} \to (i\omega)^2\hat u\).</span></li>
+        <li><div>\(\omega\)마다 일계 선형: \(\hat u(\omega, t) = \hat f(\omega)e^{-\alpha^2\omega^2t}\).</div><span class="q-why">04-01 카드의 \(e^{-n^2t}\)가 연속판 \(e^{-\omega^2t}\)로.</span></li>
+        <li class="q-end"><div>\(e^{-\alpha^2\omega^2t}\)의 역변환은 가우스 함수 \(G(x, t) = \frac{1}{\sqrt{4\pi\alpha^2t}}e^{-x^2/4\alpha^2t}\)이므로, 곱의 역변환은 합성곱: \(u(x, t) = \int_{-\infty}^\infty G(x - s, t)f(s)\,ds\).</div><span class="q-why">가우스 함수의 Fourier 변환은 가우스 함수(공통2 6-02의 \(\int e^{-x^2} = \sqrt\pi\)가 정규화 상수를 줌).</span></li>
+      </ol>
+      <p>\(G\)를 <b>열핵</b>이라 합니다. 처음에 한 점에 모인 열(델타 함수)은 폭 \(\sqrt{2\alpha^2t}\)인 종 모양으로 퍼지고, 폭은 \(\sqrt t\)에 비례해 커집니다. 확률론의 정규분포, 브라운 운동의 퍼짐(아인슈타인, 1905)과 같은 함수입니다.</p>
+      <p><b>반례(변환이 안 되는 경우)</b>: \(f = 1\)이나 \(f = x\)처럼 무한대에서 0으로 가지 않는 함수는 보통의 의미로 변환되지 않습니다(적분 발산). 이런 함수는 델타 함수를 포함한 일반화 함수(분포)로 다룹니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>다른 개념과의 관계</h3>
+      <p>2차원 Laplace 방정식을 반평면(\(y > 0\), 경계 \(y = 0\))에서 풀 때도 \(x\)에 대해 변환하면 \(\hat u = \hat f(\omega)e^{-|\omega|y}\)가 됩니다(05-01 카드의 \(\sinh\) 대신 감쇠하는 지수). 신호 처리, 광학(렌즈는 Fourier 변환기), 양자역학(위치와 운동량)에서 같은 변환을 씁니다.</p>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>정의의 상수</b>: 교재마다 \(\frac{1}{2\pi}\)를 어디에 둘지, 지수의 부호를 어떻게 할지 다릅니다(\(\frac{1}{\sqrt{2\pi}}\)을 양쪽에 나누는 약속도 흔함). 공식을 섞어 쓰기 전에 약속을 확인합니다.</li>
+      </ul>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>퍼지는 빠르기</h3>
+    <p class="q">무한한 막대의 한 점에 모인 열이 퍼지는 폭은 시간이 4배가 되면 몇 배가 될까요?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>2배<span class="why"><b>맞습니다.</b> 열핵의 폭은 \(\sqrt t\)에 비례합니다. 확산은 시간에 비례해 퍼지지 않습니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>4배<span class="why"><b>파동처럼 일정한 속력으로 퍼진다고 생각했습니다.</b> 확산은 갈수록 느려집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>16배<span class="why"><b>지수를 거꾸로 썼습니다.</b> 거리 \(L\)을 퍼지는 시간이 \(L^2\)에 비례하는 것입니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c9-fourier-transform" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="05-01.html">← 5.1 직사각형과 원판에서 Laplace 방정식을 풀기</a></span>
-        <span><a href="06-01.html">6.1 Cauchy-Riemann 방정식으로 해석성을 판정하기 →</a></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
