@@ -1,0 +1,85 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-sampling" data-kind="본문" data-std="응통6-06-01">
+  <header class="card-head"><span class="no"></span><h2>카이제곱, t, F 분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정규 표본에서 카이제곱, t, F 분포가 어떻게 생기는지 유도한다.</li>
+        <li>각 분포가 어느 추론에 쓰이는지 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>변환 (<a href="02-02.html">2.2절</a>), 감마 분포 (<a href="04-02.html">4.2절</a>), 적률생성함수 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>추론에 쓰는 세 분포</h3>
+    <p>응통5에서 t 검정, 카이제곱 검정, F 검정을 썼습니다. 이 분포들이 정규분포에서 어떻게 나오는지 밝혀 두면 각 검정의 가정이 왜 필요한지 알 수 있습니다.</p>
+
+    <h3><span class="no">6.1.1</span>카이제곱 분포</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.1.1</span>
+      <p>\(Z_1, \ldots, Z_\nu\)가 독립인 표준정규이면 \(\sum Z_i^2\)의 분포를 자유도 \(\nu\)인 <b>카이제곱 분포</b> \(\chi^2_\nu\)라 한다.</p>
+    </div>
+    <p>2.2절 예제에서 \(Z^2\)의 밀도가 \(\frac{1}{\sqrt{2\pi y}}e^{-y/2}\), 곧 감마 \((1/2, 2)\)임을 보였습니다. 적률생성함수 \((1-2t)^{-1/2}\)를 \(\nu\)번 곱하면 \((1-2t)^{-\nu/2}\)이므로 \(\chi^2_\nu = \) 감마 \((\nu/2, 2)\), 평균 \(\nu\), 분산 \(2\nu\)입니다.</p>
+
+    <h3><span class="no">6.1.2</span>t 분포</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.1.2</span>
+      <p>\(Z \sim N(0,1)\)과 \(V \sim \chi^2_\nu\)가 독립이면 \(T = \dfrac{Z}{\sqrt{V/\nu}}\)의 분포를 자유도 \(\nu\)인 <b>t 분포</b>라 한다.</p>
+    </div>
+    <p>결합 밀도 \(f_Z(z)f_V(v)\)에서 변수 변환 \((z, v) \to (t, v)\)를 하고 \(v\)를 적분해 없애면 밀도 \(f(t) \propto (1 + t^2/\nu)^{-(\nu+1)/2}\)를 얻습니다. 꼬리가 다항식으로 줄어 정규보다 두껍고, \(\nu \to \infty\)이면 \(V/\nu \to 1\)(대수의 법칙)이라 정규로 수렴합니다. \(\nu = 1\)이면 코시 분포입니다.</p>
+
+    <h3><span class="no">6.1.3</span>F 분포</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.1.3</span>
+      <p>독립인 \(U \sim \chi^2_{m}\), \(V \sim \chi^2_{n}\)에 대해 \(F = \dfrac{U/m}{V/n}\)의 분포를 자유도 \((m, n)\)인 <b>F 분포</b>라 한다.</p>
+    </div>
+    <p>\(T \sim t_\nu\)이면 \(T^2 \sim F(1, \nu)\)입니다. 분산분석의 F 통계량이 이 꼴입니다.</p>
+
+    <h3><span class="no">6.1.4</span>정규 표본에의 적용</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.1.4</span>
+      <p>\(X_1, \ldots, X_n\)이 독립 \(N(\mu, \sigma^2)\)이면 (가) \(\bar X \sim N(\mu, \sigma^2/n)\). (나) \((n-1)S^2/\sigma^2 \sim \chi^2_{n-1}\). (다) \(\bar X\)와 \(S^2\)은 독립(6.2절). 따라서 \(\dfrac{\bar X - \mu}{S/\sqrt n} \sim t_{n-1}\).</p>
+    </div>
+    <p>마지막 식은 \(\frac{(\bar X - \mu)/(\sigma/\sqrt n)}{\sqrt{[(n-1)S^2/\sigma^2]/(n-1)}}\)로 쓰면 정의 6.1.2의 꼴이고 \(\sigma\)가 약분됩니다. 이것이 응통5 t 신뢰구간의 근거입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.5</span>
+      <p>정규 표본 \(n = 10\)에서 \(S^2\)가 \(\sigma^2\)의 2배를 넘을 확률은?</p>
+    </div>
+    <p><i>풀이.</i> \(P(9S^2/\sigma^2 &gt; 18) = P(\chi^2_9 &gt; 18) \approx 0.035\) (R: <code>1 - pchisq(18, 9)</code>). 표본분산은 \(n = 10\)이면 꽤 흔들립니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\chi^2_\nu\) = 독립 표준정규 제곱합 = 감마 \((\nu/2, 2)\).</li>
+        <li>\(t_\nu = Z/\sqrt{V/\nu}\), \(F = (U/m)/(V/n)\).</li>
+        <li>정규 표본: \((n-1)S^2/\sigma^2 \sim \chi^2_{n-1}\), \((\bar X - \mu)/(S/\sqrt n) \sim t_{n-1}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정규 표본 \(n = 16\)이면 \(\mathrm{Var}(S^2)\)은?
+          <details><summary>답</summary><p>\(15S^2/\sigma^2 \sim \chi^2_{15}\), 분산 30. \(\mathrm{Var}(S^2) = 30\sigma^4/225 = 2\sigma^4/15\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정규 표본의 분산 \(\sigma^2\)에 대한 95% 신뢰구간을 카이제곱 분위수로 쓰세요.
+          <details><summary>답</summary><p>\(\left[\frac{(n-1)s^2}{\chi^2_{0.025, n-1}}, \frac{(n-1)s^2}{\chi^2_{0.975, n-1}}\right]\) (\(\chi^2_{\alpha,\nu}\)는 위쪽 꼬리 확률 \(\alpha\)인 값).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
