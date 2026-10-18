@@ -5,7 +5,10 @@
   | 항목 | 값 | 근거 |               과목 머리 표
   #### 01. 대단원 〔근거〕             대단원
   학습 요소: ...
-  - [코드-01-01] 문장 〈유형〉         성취기준
+  - [코드-01-01] 문장 〈유형〉 《서울대 연세대》   성취기준 (《》 = 그 내용 요소가 있는 대학)
+과목 머리 표의 '| 개설 대학 | 서울대(과목명), KAIST(과목명) | 출처 |' 줄은 그 과목을 여는 대학이다.
+자체 시험: python -I -X utf8 tools/build.py --selftest
+시험용 원본 폴더: python -I -X utf8 tools/build.py --src 폴더  (curricula/ 대신 그 폴더의 univ-*.md를 읽는다)
 """
 import json
 import re
@@ -32,6 +35,8 @@ RE_COURSE = re.compile(r"^### ([가-힣]+\d+)\. (.+)$")
 RE_ROW = re.compile(r"^\| (.+?) \| (.*?) \| (.*?) \|\s*$")
 RE_UNIT = re.compile(r"^#### (\d\d)\. (.+?)(?: 〔(.+?)〕)?\s*$")
 RE_STD = re.compile(r"^- \[([가-힣]+\d+-\d\d-\d\d)\] (.+?)(?: 〈(.+?)〉)?(?: 《(.+?)》)?\s*$")   # 《서울대 연세대 …》: 그 내용 요소가 있는 대학
+# 학교별 보기에 쓰는 대학(이 순서로 보인다). 경희대는 천문우주학과만 비교한다
+UNIS = ["서울대", "연세대", "고려대", "KAIST", "POSTECH", "서강대", "성균관대", "한양대", "경희대"]
 RE_YS = [
     re.compile(r"(\d)-(\d)"),
     re.compile(r"(\d)(?:·\d)*학년\s*(\d)(?:,(\d))?학기"),
@@ -93,8 +98,52 @@ def parse(path, dept_id):
             continue
         m = RE_STD.match(line)
         if m:
-            unit["s"].append({"c": m.group(1), "t": m.group(2), "ty": m.group(3) or "", "u": (m.group(4) or "").split()})
+            u = (m.group(4) or "").split()
+            bad = [x for x in u if x not in UNIS]
+            if bad:
+                print(f"경고: {m.group(1)}의 모르는 대학 표시 {bad}", file=sys.stderr)
+            unit["s"].append({"c": m.group(1), "t": m.group(2), "ty": m.group(3) or "", "u": [x for x in UNIS if x in u]})
     return courses
+
+
+def uni_names(text, code=""):
+    """'서울대(해석학1), 연세대(해석개론), KAIST(MAS241 해석학 I)' → ["서울대", "연세대", "KAIST"] (UNIS 순서)"""
+    out, depth, cur = [], 0, ""
+    for ch in (text or "") + ",":
+        if ch in "(（":
+            depth += 1
+        elif ch in ")）":
+            depth = max(0, depth - 1)
+        if ch in ",，、" and depth == 0:
+            name = re.split(r"[(（]", cur, 1)[0].strip()
+            if name and name not in ("-", "—", "없음"):
+                if name in UNIS:
+                    out.append(name)
+                else:
+                    print(f"경고: {code} 개설 대학의 모르는 이름 {name!r}", file=sys.stderr)
+            cur = ""
+        else:
+            cur += ch
+    return [x for x in UNIS if x in out]
+
+
+def apply_unis(c):
+    """과목의 대학(c.unis)과 성취기준의 대학(s.u)을 맞춘다.
+    - 과목 대학 = '개설 대학' 줄 ∪ 성취기준 표시 전부 (성취기준에만 표시해도 과목이 그 대학에 보인다)
+    - 과목 안에 《》 표시가 하나도 없으면 성취기준은 과목의 대학을 물려받는다(과목 단위로만 비교한 경우)
+    - 표시가 전혀 없으면 둘 다 빈 목록 = '미표시'. 연세대로 여기지 않는다"""
+    stds = [s for u in c["units"] for s in u["s"]]
+    own = uni_names(c.get("unis_raw", ""), c["code"])
+    marked = any(s["u"] for s in stds)
+    if not marked:
+        for s in stds:
+            s["u"] = list(own)
+    elif own:
+        extra = sorted({x for s in stds for x in s["u"] if x not in own})
+        if extra:
+            print(f"경고: {c['code']} 성취기준에만 있는 대학 {extra} (개설 대학 줄에 없음)", file=sys.stderr)
+    c["unis"] = [x for x in UNIS if x in own or any(x in s["u"] for s in stds)]
+    return c
 
 
 def finish(c):
@@ -114,6 +163,9 @@ def finish(c):
     c["onlyU"] = ("없음" in yoram or "찾지 못함" in yoram)
     c["yoram"] = next((v for k, v in row.items() if k.startswith("요람 개요")), "")
     c["handb"] = next((v for k, v in row.items() if k.startswith("수강편람 개요") or k.endswith("수강편람 개요")), "")
+    c["unis_raw"] = row.get("개설 대학", "")
+    apply_unis(c)
+    c["unisT"] = c.pop("unis_raw")      # 과목 목차의 '개설 대학' 줄(대학별 과목명 그대로)
     return c
 
 
@@ -252,6 +304,20 @@ def sec_title(std_text):
 
 def ty_span(t):
     return f'<span class="ty mono" data-ty="{esc(t)}">{esc(t)}</span>' if t else ""
+
+
+def uni_span(us):
+    """성취기준 옆의 작은 대학 표시(회색). 표시가 없으면 '미표시'라고 쓰지 않고 비워 둔다"""
+    return f'<span class="unis mono" title="이 내용이 있는 대학">{" · ".join(esc(x) for x in us)}</span>' if us else ""
+
+
+def uni_attr(us):
+    """학교별 보기(js/core.js)가 읽는 data-u. 빈 값 = 미표시(전체 보기에서만 보인다)"""
+    return f' data-u="{esc(" ".join(us))}"'
+
+
+def unit_unis(u):
+    return [x for x in UNIS if any(x in s["u"] for s in u["s"])]
 
 
 def render_card(b, no, std_href):
@@ -488,14 +554,14 @@ def write_pages(depts, blocks, sidx, links):
                     s = sc["std"]
                     std_box = f"""
     <div class="q-checklist q-one" id="std" data-unit="{esc(sc["code"])}">
-      <h2><span>이 절의 성취기준</span><span class="mono">[{esc(s["c"])}] {ty_span(s["ty"])}</span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[{esc(s["c"])}] {ty_span(s["ty"])} {uni_span(s["u"])}</span></h2>
       <ol><li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음"><span class="t">{esc(s["t"])}</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>"""
                     lead = ""
                 else:
-                    lis = "".join(f'<li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {esc(s["c"])}">'
-                                  f'<span class="code">{esc(s["c"].split("-", 1)[1])}</span><span class="t"><a href="{std_href(s["c"])}">{esc(s["t"])}</a> {ty_span(s["ty"])}</span><span class="cards"></span></li>'
+                    lis = "".join(f'<li{uni_attr(s["u"])}><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {esc(s["c"])}">'
+                                  f'<span class="code">{esc(s["c"].split("-", 1)[1])}</span><span class="t"><a href="{std_href(s["c"])}">{esc(s["t"])}</a> {ty_span(s["ty"])} {uni_span(s["u"])}</span><span class="cards"></span></li>'
                                   for s in u["s"])
                     std_box = f"""
     <div class="q-checklist" data-unit="{esc(sc["code"])}">
@@ -507,7 +573,7 @@ def write_pages(depts, blocks, sidx, links):
                 lbox = links_box(sc["code"], f'{c["code"]}-{u["n"]}', links, sidx, rel, c["code"]) if sc["std"] else ""
                 if text_b:
                     s = sc["std"]
-                    hero_extra = (f'<p class="sec-std"><span class="mono">[{esc(s["c"])}]</span> {esc(s["t"])} {ty_span(s["ty"])}</p>' if s else "")
+                    hero_extra = (f'<p class="sec-std"><span class="mono">[{esc(s["c"])}]</span> {esc(s["t"])} {ty_span(s["ty"])} {uni_span(s["u"])}</p>' if s else "")
                     std_after = std_box.replace('class="q-checklist', 'class="q-checklist after-text', 1).replace(
                         "카드를 공부한 뒤 직접 해 보고", "본문과 연습문제를 마친 뒤 직접 해 보고")
                     hero_inner = f'{hero_extra}'
@@ -520,7 +586,8 @@ def write_pages(depts, blocks, sidx, links):
                     main_html = f"{lbox}\n{cards_html}" if lbox else cards_html
                     h1_title = sc["title"]
                     side = '<p class="mono small toc-title">이 절의 카드</p>'
-                body = f"""  <section class="topic-hero u-hero{' has-text' if text_b else ''}" data-sec="{esc(sc["code"])}">
+                sec_u = sc["std"]["u"] if sc["std"] else unit_unis(u)
+                body = f"""  <section class="topic-hero u-hero{' has-text' if text_b else ''}" data-sec="{esc(sc["code"])}"{uni_attr(sec_u)}>
     <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">/</span><a href="{u["n"]}.html">{un}. {esc(u["t"])}</a></div>
     <h1><span class="sec-no mono">{sc["no"]}</span>{esc(h1_title)}</h1>
     {hero_inner}
@@ -556,13 +623,13 @@ def write_pages(depts, blocks, sidx, links):
                 prev_u = c["units"][i - 1] if i else None
                 next_u = c["units"][i + 1] if i + 1 < len(c["units"]) else None
                 rows = "".join(f"""
-        <li class="s-row" data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}">
+        <li class="s-row"{uni_attr(sc["std"]["u"] if sc["std"] else unit_unis(u))} data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}">
           <span class="mono n">{sc["no"]}</span>
           <a href="{sc["file"]}.html"><b>{esc(sc["title"])}</b></a>
-          <span class="s-meta mono">{ty_span(sc["std"]["ty"]) if sc["std"] else '<span class="ty mono">연습</span>'} <span class="s-cards">카드 {len(sc["cards"]) or "준비 중"}</span></span>
+          <span class="s-meta mono">{ty_span(sc["std"]["ty"]) if sc["std"] else '<span class="ty mono">연습</span>'} {uni_span(sc["std"]["u"]) if sc["std"] else ""} <span class="s-cards">카드 {len(sc["cards"]) or "준비 중"}</span></span>
           {f'<span class="s-std small">{esc(sc["std"]["t"])}</span>' if sc["std"] else ""}
         </li>""" for sc in u["secs"])
-                body = f"""  <section class="topic-hero u-hero">
+                body = f"""  <section class="topic-hero u-hero"{uni_attr(unit_unis(u))}>
     <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
     <h1>{esc(u["t"])}</h1>
     {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
@@ -584,23 +651,23 @@ def write_pages(depts, blocks, sidx, links):
             ncard = sum(u["cards"] for u in c["units"])
             nsec = sum(len(u["secs"]) for u in c["units"])
 
-            def sec_row(sc):
+            def sec_row(sc, u):
                 # 본문 블록은 제목이 절 제목과 같아 목록에서 뺀다(진도에는 data-cards로 들어간다)
                 cards = "".join(f'<li data-card="{esc(x["id"])}"><a href="{sc["file"]}.html#{esc(x["id"])}"><span class="cx-k mono">{esc(x["kind"])}</span>{esc(x["title"])}</a></li>'
                                 for x in sc["cards"] if x["kind"] != "본문")
-                code = f'<span class="cx-code mono">[{esc(sc["std"]["c"])}] {ty_span(sc["std"]["ty"])}</span>' if sc["std"] else ""
+                code = f'<span class="cx-code mono">[{esc(sc["std"]["c"])}] {ty_span(sc["std"]["ty"])} {uni_span(sc["std"]["u"])}</span>' if sc["std"] else ""
                 return f"""
-          <li class="cx-sec" data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}" data-href="{sc["file"]}.html" data-title="{sc["no"]} {esc(sc["title"])}">
+          <li class="cx-sec"{uni_attr(sc["std"]["u"] if sc["std"] else unit_unis(u))} data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}" data-href="{sc["file"]}.html" data-title="{sc["no"]} {esc(sc["title"])}">
             <span class="cx-n mono">{sc["no"]}</span>
             <div class="cx-t"><b><a href="{sc["file"]}.html">{esc(sc["title"])}</a></b>{code}</div>
             <span class="cx-badge mono">{f'카드 {len(sc["cards"])}' if sc["cards"] else "준비 중"}</span>
             {f'<ul class="cx-qs">{cards}</ul>' if cards else ""}
           </li>"""
             units = "".join(f"""
-      <section class="c-unit cx-ch" data-unit="{esc(c["code"])}-{u["n"]}">
+      <section class="c-unit cx-ch" data-unit="{esc(c["code"])}-{u["n"]}"{uni_attr(unit_unis(u))}>
         <div class="cx-ch-head"><span class="cx-no">{int(u["n"])}</span><h2><a href="{u["n"]}.html">{esc(u["t"])}</a></h2><span class="cx-meta mono"><span class="lp-bar" aria-hidden="true"><i></i></span><span class="lp-t"></span></span></div>
         {f'<p class="cx-goal">{esc(u["el"])}</p>' if u["el"] else ""}
-        <ol class="c-secs">{"".join(sec_row(sc) for sc in u["secs"])}
+        <ol class="c-secs">{"".join(sec_row(sc, u) for sc in u["secs"])}
         </ol>
       </section>""" for u in c["units"])
             # 선수 칸의 과목 코드(공통1, 수학7, 공통1·2)를 링크로, 이어지는 과목은 다른 과목의 선수 코드를 거꾸로 찾는다
@@ -622,11 +689,11 @@ def write_pages(depts, blocks, sidx, links):
             nexts = [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))]
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
-                    ("연세대 개설", c.get("offered") or c["open"]), ("학습", c["hours"]), ("교재", c["books"])]
+                    ("개설 대학", c["unisT"] or " · ".join(c["unis"])), ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
             info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
             path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
                 f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}c/{dd["id"]}/{num(x["code"])}/\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
-            body = f"""  <div class="cx" data-course="{esc(c["code"])}">
+            body = f"""  <div class="cx" data-course="{esc(c["code"])}"{uni_attr(c["unis"])}>
     <aside class="cx-side">
       <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])}{" · " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
       <h1>{esc(c["name"])}</h1>
@@ -649,6 +716,7 @@ def write_pages(depts, blocks, sidx, links):
                     sc.pop("blocks", None)
                     sc.pop("std", None)
                 u.pop("secs", None)
+            c.pop("unisT", None)
     for k in blocks:
         if k not in used:
             print(f"경고: 없는 절에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
@@ -674,19 +742,89 @@ def offered_text(terms):
 
 
 def apply_offered(cs):
-    """개설 이력을 붙이고, 최근 3년 동안 한 번도 열리지 않은 과목은 뺀다. 자료가 없으면 그대로 둔다."""
+    """연세대 개설 이력을 붙이고, 최근 3년 동안 연세대에서 한 번도 열리지 않은 과목은 뺀다. 자료가 없으면 그대로 둔다.
+    - 다른 대학(연세대 밖)에도 표시된 과목은 연세대에서 안 열려도 남긴다.
+    - 학정번호가 없는 과목(다른 대학에만 있는 과목)은 이력을 붙이지 않고 남긴다."""
     if not OFFERED.exists():
         return cs, []
     data = json.loads(OFFERED.read_text(encoding="utf-8"))
     keep, gone = [], []
     for c in cs:
+        other = any(x != "연세대" for x in c.get("unis", []))
+        if not c["sub"]:
+            if not c.get("unis"):
+                print(f"경고: {c['code']} 학정번호도 개설 대학 표시도 없음", file=sys.stderr)
+            keep.append(c)
+            continue
         terms = sorted({t for s in c["sub"] for t in data["codes"].get(s, [])})
         c["offered"] = offered_text(terms)
-        (keep if any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
+        (keep if other or any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
     return keep, gone
 
 
+def selftest():
+    """대학 표시 읽기와 개설 규칙을 임시 문서로 확인한다(원본 curricula/는 건드리지 않는다)"""
+    import tempfile
+    doc = """### 수학1. 선형대수(1) (MAT2001)
+| 항목 | 값 | 근거 |
+|---|---|---|
+| 학년-학기 | 2-1 | S1 |
+| 개설 대학 | 서울대(선형대수학 1, 2), 연세대(선형대수(1)), KAIST(MAS109) | S |
+#### 01. 행렬
+- [수학1-01-01] 행렬을 곱할 수 있다. 〈계산〉 《서울대 연세대 KAIST》
+- [수학1-01-02] 행렬식을 구할 수 있다. 〈계산〉 《KAIST 서울대》
+- [수학1-01-03] 표시 없는 성취기준이다. 〈개념〉
+### 수학2. 위상기하 (MAT9999)
+| 학년-학기 | 3-1 | S1 |
+| 개설 대학 | 고려대(위상기하) | S |
+#### 01. 곡면
+- [수학2-01-01] 곡면을 분류할 수 있다. 〈개념〉
+### 수학3. 연세대만 옛 과목 (MAT9998)
+| 학년-학기 | 3-2 | S1 |
+| 개설 대학 | 연세대(옛 과목) | S |
+#### 01. 옛 단원
+- [수학3-01-01] 옛 내용을 설명할 수 있다. 〈개념〉
+### 수학4. 다른 대학에만 있는 과목
+| 학년-학기 | 3-2 | S1 |
+| 개설 대학 | POSTECH(MATH301), 서강대(위상수학) | S |
+#### 01. 단원
+- [수학4-01-01] 무엇을 할 수 있다. 〈개념〉 《POSTECH》
+### 수학5. 표시 없는 과목 (MAT2002)
+| 학년-학기 | 2-2 | S1 |
+#### 01. 단원
+- [수학5-01-01] 무엇을 할 수 있다. 〈개념〉
+"""
+    with tempfile.TemporaryDirectory() as tmp:
+        f = Path(tmp) / "t.md"
+        f.write_text(doc, encoding="utf-8")
+        cs = [finish(c) for c in parse(f, "math")]
+    a, b, old, other, none = cs
+    s1, s2, s3 = a["units"][0]["s"]
+    assert a["unis"] == ["서울대", "연세대", "KAIST"], a["unis"]
+    assert s1["u"] == ["서울대", "연세대", "KAIST"] and s2["u"] == ["서울대", "KAIST"] and s3["u"] == [], (s1, s2, s3)
+    assert b["unis"] == ["고려대"] and b["units"][0]["s"][0]["u"] == ["고려대"], b     # 《》가 없으면 과목 대학을 물려받는다
+    assert other["unis"] == ["POSTECH", "서강대"] and other["sub"] == [], other
+    assert none["unis"] == [] and none["units"][0]["s"][0]["u"] == [], none          # 미표시: 연세대로 여기지 않는다
+    assert uni_names("서울대(해석학 1, 2), 연세대（해석개론）, KAIST") == ["서울대", "연세대", "KAIST"]
+    global OFFERED
+    keep_off = OFFERED
+    with tempfile.TemporaryDirectory() as tmp:
+        OFFERED = Path(tmp) / "o.json"
+        OFFERED.write_text(json.dumps({"codes": {"MAT2001": ["2025-1"], "MAT9999": ["2010-1"], "MAT9998": ["2010-2"], "MAT2002": ["2026-2"]}}), encoding="utf-8")
+        keep, gone = apply_offered(cs)
+    OFFERED = keep_off
+    assert [c["code"] for c in gone] == ["수학3"], gone                                  # 연세대에만 있고 오래 안 열린 과목만 빠진다
+    assert "offered" not in other and "2010" in b["offered"], (other, b)
+    print("자체 시험 통과")
+
+
 def main():
+    global SRC
+    if "--selftest" in sys.argv:
+        selftest()
+        return
+    if "--src" in sys.argv:
+        SRC = Path(sys.argv[sys.argv.index("--src") + 1]).resolve()
     out, total = [], {"courses": 0, "units": 0, "stds": 0}
     for did, name, short, fname, college in DEPTS:
         cs, gone = apply_offered([finish(c) for c in parse(SRC / fname, did)])
