@@ -1,0 +1,93 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-05-04",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c10-play.js"]
+}
+-->
+<article class="card q-card" id="lab-c10-linked" data-kind="실습" data-std="공통10-05-04">
+  <header class="card-head"><span class="no"></span><h2>배열 대신 포인터로 이으면 무엇이 쉬워질까?</h2><span class="kind">실습 · 연결 리스트</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>배열은 원소가 메모리에 붙어 있어 \(i\)번째 원소를 바로 꺼낼 수 있지만, 앞이나 가운데에 넣으려면 뒤의 원소를 모두 옮겨야 합니다. 연결 리스트는 노드마다 다음 노드의 주소(포인터)를 들고 있어서, 포인터 몇 개만 바꾸면 넣고 뺄 수 있습니다. 두 구조에서 같은 일을 할 때 드는 일의 양을 비교하고, C로 직접 짜 봅니다. 성취기준 [공통10-05-04].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>노드 하나는 값(왼쪽 칸)과 다음 노드를 가리키는 포인터(오른쪽 칸)로 이루어집니다. 마지막 노드의 포인터는 NULL(∅)입니다.</li>
+        <li>head는 첫 노드를 가리키는 포인터입니다. 이 실습의 연결 리스트는 head만 있고 끝을 가리키는 포인터는 없습니다.</li>
+        <li>포인터의 뜻은 <a href="05-02.html">5.2절</a>, 구조체는 <a href="05-03.html">5.3절</a>에서 배웠습니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="btns">
+        <button type="button" data-op="front">앞에 넣기</button>
+        <button type="button" data-op="mid">가운데 넣기</button>
+        <button type="button" data-op="back">뒤에 넣기</button>
+        <button type="button" data-op="pop">앞에서 빼기</button>
+        <button type="button" data-op="reset">처음으로</button>
+      </div>
+      <canvas aria-label="연결 리스트의 노드와 포인터, 같은 내용의 배열"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 상태(10 → 20 → 30 → 40)에서 "앞에 넣기"를 누르고 두 구조가 한 일을 기록합니다.</li>
+        <li>"가운데 넣기", "뒤에 넣기", "앞에서 빼기"도 차례로 눌러 기록합니다.</li>
+        <li>아래 C 코드를 컴파일해 실행하고, 출력이 화면의 리스트와 같은지 확인합니다.</li>
+      </ol>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct Node { int val; struct Node *next; } Node;
+
+Node *push_front(Node *head, int v) {   /* 앞에 넣기: 포인터 2개 */
+    Node *p = malloc(sizeof(Node));
+    p-&gt;val = v; p-&gt;next = head;
+    return p;                            /* 새 head */
+}
+Node *pop_front(Node *head) {           /* 앞에서 빼기 */
+    Node *nx = head-&gt;next;
+    free(head);
+    return nx;
+}
+void print(Node *p) {
+    for (; p != NULL; p = p-&gt;next) printf("%d ", p-&gt;val);
+    printf("\n");
+}
+int main(void) {
+    Node *head = NULL;
+    for (int v = 40; v &gt;= 10; v -= 10) head = push_front(head, v);
+    print(head);                         /* 10 20 30 40 */
+    head = push_front(head, 50); print(head);
+    head = pop_front(head);      print(head);
+    while (head) head = pop_front(head);
+    return 0;
+}</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>앞에 넣기(원소 4개일 때): 연결 리스트는 새 노드 1개를 만들고 포인터 2개만 바꿉니다. 배열은 원소 4개를 모두 한 칸씩 뒤로 옮깁니다.</li>
+        <li>뒤에 넣기: 연결 리스트는 끝을 찾으려고 head부터 링크를 원소 수만큼 따라가야 합니다. 배열은 빈칸이 있으면 옮길 것이 없습니다.</li>
+        <li>앞에서 빼기: 연결 리스트는 head만 다음 노드로 바꾸면 되고, 배열은 나머지를 모두 앞으로 옮깁니다.</li>
+        <li>C 프로그램의 출력은 <code>10 20 30 40</code>, <code>50 10 20 30 40</code>, <code>10 20 30 40</code> 세 줄입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>원소가 \(n\)개일 때 각 연산의 일의 양이 \(n\)에 비례하는지, 일정한지 표로 정리해 보세요.</li>
+        <li>\(i\)번째 원소를 읽는 일은 두 구조에서 어떻게 다른가요? 어떤 프로그램에 연결 리스트가 알맞을까요?</li>
+        <li>끝을 가리키는 포인터(tail)를 하나 더 두면 "뒤에 넣기"가 어떻게 바뀌나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>파이썬의 <code>list</code>는 배열이라 <code>insert(0, x)</code>가 느리고, <code>collections.deque</code>는 양쪽 끝에서 빠릅니다. 원소 10만 개로 두 방법의 시간을 재서 비교해 보세요.</p>
+    </section>
+  </div>
+</article>
