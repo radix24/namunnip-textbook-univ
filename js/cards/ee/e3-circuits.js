@@ -220,6 +220,100 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
+  /* 10. 교류 테브난 등가는 주파수마다 다르다 (07-02) */
+  (() => {
+    const S = QSim.card("exp-e3-acthev"); if (!S) return;
+    const [cvZ, cvV] = S.$$("canvas");
+    const cx = (re, im = 0) => ({ re, im }), add = (a, b) => cx(a.re + b.re, a.im + b.im), mul = (a, b) => cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+    const div = (a, b) => { const d = b.re * b.re + b.im * b.im; return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d); }, abs = (a) => Math.hypot(a.re, a.im), arg = (a) => Math.atan2(a.im, a.re) * 180 / Math.PI;
+    function th(w, R, C, L) {   // v_s(10∠0) — R — 마디1 — (C 접지) — L — 단자
+      const ZC = cx(0, -1 / (w * C)), ZL = cx(0, w * L), Zp = div(mul(cx(R), ZC), add(cx(R), ZC));
+      return { Vth: mul(cx(10), div(ZC, add(cx(R), ZC))), Zth: add(ZL, Zp) };
+    }
+    function draw() {
+      const c = C(), R = S.val("R"), Cc = S.val("C") * 1e-6, L = S.val("L") * 1e-3, lw = S.val("lw"), w = 10 ** lw, RL = S.val("RL");
+      const now = th(w, R, Cc, L);
+      const v = QSim.view(cvZ, 0.45), f = QSim.frame(v, { x0: 2, x1: 5, y0: -30, y1: 30, xl: "log₁₀ ω (rad/s)", yl: "Ω" }); f.axes();
+      f.fn((x) => th(10 ** x, R, Cc, L).Zth.re, c.main, 2.2); f.fn((x) => th(10 ** x, R, Cc, L).Zth.im, c.acc, 2.2, [6, 3]);
+      f.path([[lw, -30], [lw, 30]], c.warn, 1, [2, 3]);
+      const vv = QSim.view(cvV, 0.3), g = QSim.frame(vv, { x0: 2, x1: 5, y0: 0, y1: 10.5, xl: "log₁₀ ω (rad/s)", yl: "|부하 전압| (V)" }); g.axes();
+      const VL = (x) => { const t = th(10 ** x, R, Cc, L); return abs(mul(t.Vth, div(cx(RL), add(t.Zth, cx(RL))))); };
+      g.fn(VL, c.main, 2.2); g.dot(lw, VL(lw), c.warn, 5);
+      const vl = mul(now.Vth, div(cx(RL), add(now.Zth, cx(RL))));
+      S.out(`ω = ${w.toPrecision(4)} rad/s: V_Th = ${abs(now.Vth).toFixed(3)}∠${arg(now.Vth).toFixed(1)}° V, Z_Th = ${now.Zth.re.toFixed(2)} ${now.Zth.im >= 0 ? "+" : "−"} j${Math.abs(now.Zth.im).toFixed(2)} Ω\n` +
+        `부하 ${RL} Ω 전압 = ${abs(vl).toFixed(3)}∠${arg(vl).toFixed(1)}° V. 위: Z_Th의 실수부(파랑), 허수부(주황 점선). 아래: 부하 전압의 크기`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 11. 역률 개선 (08-01) */
+  (() => {
+    const S = QSim.card("exp-e3-pf"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), V = 220, w = 2 * Math.PI * 60, P = S.val("P") * 1e3, pf = S.val("pf"), Cc = S.val("C") * 1e-6, Rline = 0.1;
+      const Q1 = P * Math.tan(Math.acos(pf)), QC = V * V * w * Cc, Q = Q1 - QC, Sa = Math.hypot(P, Q), I = Sa / V, I0 = P / pf / V;
+      const M = Math.max(P, Q1, Sa, P / pf) * 1.1;
+      const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: -0.05 * M, x1: M, y0: -0.35 * M, y1: M * 0.75, equal: true, xl: "P (W)", yl: "Q (var)", pad: 26 }); f.axes({ noGrid: true });
+      f.arrow(0, 0, P, Q1, c.ink3, "개선 전 S"); f.arrow(0, 0, P, 0, c.main, "P"); f.arrow(P, Q1, 0, -QC, c.acc, "축전기 −Q_C"); f.arrow(0, 0, P, Q, c.warn, "개선 후 S");
+      const pf2 = P / Sa;
+      S.out(`부하: P = ${(P / 1e3).toFixed(1)} kW, 역률 ${pf.toFixed(2)} (늦음) → Q = ${(Q1 / 1e3).toFixed(2)} kvar, 전류 ${I0.toFixed(1)} A (220 V, 60 Hz)\n` +
+        `병렬 축전기 ${(Cc * 1e6).toFixed(0)} μF → Q_C = V²ωC = ${(QC / 1e3).toFixed(2)} kvar. 전원에서 본 Q = ${(Q / 1e3).toFixed(2)} kvar, 역률 ${pf2.toFixed(3)} ${Q >= 0 ? "(늦음)" : "(앞섬: 과보상)"}\n` +
+        `전원 전류 ${I.toFixed(1)} A (${(100 * I / I0).toFixed(1)}%). 선로 저항 0.1 Ω의 손실 ${(I * I * Rline).toFixed(0)} W (개선 전 ${(I0 * I0 * Rline).toFixed(0)} W)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 12. 결합 코일: 무선 전력 전달 (09-01) */
+  (() => {
+    const S = QSim.card("exp-e3-coupled"); if (!S) return;
+    const cv = S.$("canvas");
+    const cx = (re, im = 0) => ({ re, im }), add = (a, b) => cx(a.re + b.re, a.im + b.im), mul = (a, b) => cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+    const div = (a, b) => { const d = b.re * b.re + b.im * b.im; return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d); }, abs = (a) => Math.hypot(a.re, a.im);
+    function solve(k, RL, w, p) {   // 1차: V — R1 — L1, 2차: L2 — RL (공진 축전기 선택)
+      const M = k * Math.sqrt(p.L1 * p.L2), Z11 = cx(p.R1, w * p.L1 - (p.res ? 1 / (w * p.C1) : 0)), Z22 = cx(RL + p.R2, w * p.L2 - (p.res ? 1 / (w * p.C2) : 0));
+      const Zr = div(cx((w * M) ** 2), Z22), I1 = div(cx(p.V), add(Z11, Zr)), I2 = mul(div(cx(0, w * M), Z22), I1);
+      const Pin = 0.5 * p.V * I1.re, PL = 0.5 * abs(I2) ** 2 * RL;
+      return { M, Zr, I1, I2, Pin, PL };
+    }
+    function draw() {
+      const c = C(), k = S.val("k"), RL = S.val("rl"), res = S.val("res"), f = 100e3, w = 2 * Math.PI * f;
+      const p = { V: 10, R1: 0.5, R2: 0.5, L1: 24e-6, L2: 24e-6, res, C1: 1 / (w * w * 24e-6), C2: 1 / (w * w * 24e-6) };
+      const now = solve(k, RL, w, p);
+      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: 1, y0: 0, y1: 1.05, xl: "결합 계수 k", yl: "효율 P_L/P_in" }); fr.axes();
+      fr.fn((x) => { const s = solve(Math.max(x, 1e-3), RL, w, p); return s.PL / s.Pin; }, c.main, 2.5);
+      const Pm = Math.max(...Array.from({ length: 101 }, (_, i) => solve(Math.max(i / 100, 1e-3), RL, w, p).PL));
+      fr.fn((x) => solve(Math.max(x, 1e-3), RL, w, p).PL / Pm, c.acc, 1.8, [6, 3]);
+      fr.dot(k, now.PL / now.Pin, c.warn, 6);
+      S.out(`f = 100 kHz, 두 코일 24 μH(코일 저항 0.5 Ω씩), 전원 10 V 진폭. ${res ? "양쪽에 공진 축전기(직렬)를 달아 리액턴스를 지움" : "공진 축전기 없음"}\n` +
+        `k = ${k.toFixed(2)} → M = ${(now.M * 1e6).toFixed(2)} μH, 1차에 반사된 임피던스 ${now.Zr.re.toFixed(2)} ${now.Zr.im >= 0 ? "+" : "−"} j${Math.abs(now.Zr.im).toFixed(2)} Ω\n` +
+        `입력 전력 ${now.Pin.toFixed(2)} W, 부하(${RL} Ω) 전력 ${now.PL.toFixed(2)} W, 효율 ${(100 * now.PL / now.Pin).toFixed(1)}%. 파랑: 효율, 주황 점선: 부하 전력(최대 대비)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 13. 비정현 주기 입력과 Fourier 급수 (09-03) */
+  (() => {
+    const S = QSim.card("exp-e3-fourier"); if (!S) return;
+    const [cvT, cvS] = S.$$("canvas");
+    function draw() {
+      const c = C(), N = S.val("n"), fc = 10 ** S.val("lfc"), f0 = 1000, V = 1;   // 0/1 V가 아니라 ±1 V 구형파, 기본 1 kHz
+      // 구형파 ±V: b_n = 4V/(nπ) (n 홀수). RC 저역 통과 H = 1/(1 + j f/fc)
+      const harm = []; for (let n = 1; n <= N; n += 2) { const b = 4 * V / (n * Math.PI), x = n * f0 / fc, g = 1 / Math.hypot(1, x), ph = -Math.atan(x); harm.push({ n, b, g, ph }); }
+      const sIn = (t) => harm.reduce((s, h) => s + h.b * Math.sin(2 * Math.PI * h.n * f0 * t), 0);
+      const sOut = (t) => harm.reduce((s, h) => s + h.b * h.g * Math.sin(2 * Math.PI * h.n * f0 * t + h.ph), 0);
+      const v = QSim.view(cvT, 0.45), f = QSim.frame(v, { x0: 0, x1: 2, y0: -1.5, y1: 1.5, xl: "t (ms)", yl: "V" }); f.axes({ noGrid: true });
+      f.fn((x) => ((x % 1) < 0.5 ? 1 : -1), c.rule, 1, [3, 3]); f.fn((x) => sIn(x / 1e3), c.ink3, 1.5, null, 800); f.fn((x) => sOut(x / 1e3), c.main, 2.5, null, 800);
+      const vs = QSim.view(cvS, 0.3), g = QSim.frame(vs, { x0: 0, x1: Math.max(N, 9) + 1, y0: 0, y1: 1.35, xl: "고조파 번호 n", yl: "진폭" }); g.axes({ noGrid: true });
+      harm.forEach((h) => { g.path([[h.n - 0.15, 0], [h.n - 0.15, h.b]], c.ink3, 4); g.path([[h.n + 0.15, 0], [h.n + 0.15, h.b * h.g]], c.main, 4); });
+      const Pin = harm.reduce((s, h) => s + h.b * h.b / 2, 0), Pout = harm.reduce((s, h) => s + (h.b * h.g) ** 2 / 2, 0);
+      S.out(`±1 V, 1 kHz 구형파를 ${N}차 고조파까지 더함(회색): 진폭 4/(nπ), 홀수 n만\n` +
+        `RC 저역 통과(차단 ${fc.toFixed(0)} Hz)를 거친 출력(파랑) = 고조파마다 |H(nf₀)|배, 위상 ∠H(nf₀)만큼 바뀐 사인파들의 합\n` +
+        `1 Ω 기준 평균 전력: 입력 ${Pin.toFixed(3)} W (완전한 구형파는 1 W), 출력 ${Pout.toFixed(3)} W. 아래 막대: 회색 입력, 파랑 출력 고조파 진폭`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
   /* 5. 최대 전력 전달과 효율 (03-03) */
   (() => {
     const S = QSim.card("exp-e3-maxpower"); if (!S) return;
