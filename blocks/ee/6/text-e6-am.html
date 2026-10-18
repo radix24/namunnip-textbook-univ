@@ -1,0 +1,85 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e6-am" data-kind="본문" data-std="전전6-04-03">
+  <header class="card-head"><span class="no"></span><h2>변조: 스펙트럼을 옮겨 보내기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정현파 반송파를 곱하면 스펙트럼이 반송파 주파수로 옮겨 감을 주파수 이동 성질로 보인다.</li>
+        <li>DSB-SC와 일반 AM의 스펙트럼을 그리고, 대역폭과 변조 지수를 계산한다.</li>
+        <li>동기 복조(다시 곱하고 저역 통과)가 원래 신호를 되살리는 과정을 스펙트럼으로 따라간다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>주파수 이동과 곱셈 정리 (<a href="04-02.html">4.2절</a>), 코사인의 변환 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>왜 옮기는가</h3>
+    <p>음성(약 0.3~3.4 kHz)을 그대로 안테나로 보내려면 파장에 맞춰 수십 km 길이의 안테나가 필요하고, 모든 방송국이 같은 대역을 쓰게 되어 서로 섞입니다. 그래서 신호의 스펙트럼을 높은 주파수(예: AM 라디오 수백 kHz~1.6 MHz 대역)로 옮겨, 방송국마다 다른 자리를 나눠 씁니다. 이 일을 변조라 합니다.</p>
+    <p class="q-term"><b>메시지</b> \(m(t)\): 보낼 신호. 대역폭 \(W\) (\(|\omega| &gt; W\)에서 \(M(j\omega) = 0\)).</p>
+    <p class="q-term"><b>반송파</b> \(\cos\omega_ct\): 신호를 실어 나르는 높은 주파수의 정현파. \(\omega_c \gg W\).</p>
+
+    <h3><span class="no">4.3.2</span>DSB-SC: 반송파를 곱하기</h3>
+    <p>구하려는 것: \(y(t) = m(t)\cos\omega_ct\)의 스펙트럼. 오일러 공식으로 \(\cos\omega_ct = \frac12(e^{j\omega_ct} + e^{-j\omega_ct})\)이고, 주파수 이동 성질을 각 항에 쓰면</p>
+    \[ Y(j\omega) = \tfrac12M(j(\omega - \omega_c)) + \tfrac12M(j(\omega + \omega_c)). \]
+    <p>원래 스펙트럼이 반 크기로 \(\pm\omega_c\) 두 곳에 복사됩니다. 각 복사본에서 \(\omega_c\)보다 위쪽이 상측파대(USB), 아래쪽이 하측파대(LSB)이며, 차지하는 대역폭은 \(2W\)입니다. 반송파 자체(\(\omega_c\)의 임펄스)는 없으므로 DSB-SC(양측파대 반송파 억압)라 부릅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>\(m(t) = \cos(2\pi\cdot1000t)\), 반송파 100 kHz일 때 DSB-SC 신호에 들어 있는 주파수와 크기를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 곱을 합으로 바꾸면 \(\cos A\cos B = \frac12[\cos(A - B) + \cos(A + B)]\)이므로 \(y = \frac12\cos(2\pi\cdot99000t) + \frac12\cos(2\pi\cdot101000t)\). 99 kHz와 101 kHz에 진폭 0.5인 두 성분, 대역폭 2 kHz. 100 kHz 자체에는 아무것도 없습니다. 메시지의 1 kHz도 출력에 없습니다(새 주파수가 생긴 것은 시스템이 시변이기 때문, 1.2절 연습 2).</p>
+
+    <h3><span class="no">4.3.3</span>일반 AM과 포락선</h3>
+    <p class="q-term"><b>일반 AM</b>: \(y(t) = A_c[1 + \mu\,m_n(t)]\cos\omega_ct\). \(m_n\)은 최댓값이 1이 되도록 정규화한 메시지.</p>
+    <p class="q-term"><b>변조 지수</b> \(\mu\): 0~1이면 포락선 \(A_c(1 + \mu m_n)\)이 늘 양수라, 다이오드와 RC로 된 간단한 포락선 검파기로 m을 되살린다. \(\mu &gt; 1\)이면 과변조로 포락선이 찌그러진다.</p>
+    <p>스펙트럼은 DSB-SC에 \(\pm\omega_c\)의 반송파 임펄스가 더해진 것입니다. 단일 톤(\(m_n = \cos\omega_mt\))이면 반송파 진폭 \(A_c\), 측파대 각각 \(\mu A_c/2\). 전력은 반송파 \(A_c^2/2\), 측파대 합 \(\mu^2A_c^2/4\)이라, \(\mu = 1\)이어도 정보가 실린 측파대 전력은 전체의 1/3뿐입니다. 간단한 수신기의 대가로 전력을 쓰는 것입니다.</p>
+
+    <h3><span class="no">4.3.4</span>동기 복조</h3>
+    <p>DSB-SC를 받은 쪽에서 같은 주파수·위상의 반송파를 다시 곱합니다: \(y\cos\omega_ct = m\cos^2\omega_ct = \frac12m + \frac12m\cos2\omega_ct\). 스펙트럼으로는 \(\frac12M\)이 기저대역에, \(\frac14M\)이 \(\pm2\omega_c\)에 생깁니다. 차단 주파수가 \(W\)와 \(2\omega_c - W\) 사이인 저역 통과 필터로 \(\pm2\omega_c\) 성분을 없애면 \(\frac12m(t)\)가 남습니다.</p>
+    <p>수신 반송파의 위상이 \(\phi\)만큼 어긋나면 \(\frac12m\cos\phi\)가 남습니다. \(\phi = 90°\)이면 신호가 완전히 사라지므로 위상 동기(PLL)가 필요합니다. 전전12 통신이론에서 이어집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "AM 신호에는 메시지 주파수(예: 1 kHz)가 들어 있다"는 틀립니다. 스펙트럼에는 \(\omega_c \pm \omega_m\)만 있고, 메시지는 포락선의 모양에만 있습니다. (2) 측파대의 크기를 \(M\)과 같다고 쓰는 실수: 코사인이 두 개의 지수로 나뉘므로 각각 \(\frac12M\)입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(m\cos\omega_ct \leftrightarrow \frac12[M(\omega - \omega_c) + M(\omega + \omega_c)]\), 대역폭 \(2W\).</li>
+        <li>일반 AM = DSB-SC + 반송파. \(\mu \le 1\)이면 포락선 검파 가능, 측파대 전력은 최대 1/3.</li>
+        <li>동기 복조: 다시 곱하고 저역 통과. 위상 오차는 \(\cos\phi\)배로 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>대역폭 5 kHz인 음성을 DSB로 보내면 필요한 대역폭은? 1 MHz 반송파를 쓰면 차지하는 주파수 범위는?
+          <details><summary>답</summary><p>10 kHz. 995~1005 kHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(A_c = 10\) V, \(\mu = 0.5\), 단일 톤 AM의 반송파와 측파대 진폭, 측파대 전력의 비율을 구하여라.
+          <details><summary>답</summary><p>반송파 10 V, 측파대 각 2.5 V. 전력 비 \(\frac{0.25/4}{1/2 + 0.25/4} = \frac{0.0625}{0.5625} \approx 11.1\%\).</p></details>
+        </li>
+        <li>동기 복조에서 저역 통과 필터 차단 주파수의 범위를 \(W = 4\) kHz, \(f_c = 50\) kHz에 대해 구하여라.
+          <details><summary>답</summary><p>4 kHz 초과, 96 kHz 미만.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>반송파 주파수가 수신 측에서 \(\Delta\omega\)만큼 어긋나면 복조 출력은? 음성에서 어떻게 들릴까?
+          <details><summary>답</summary><p>\(\frac12m(t)\cos(\Delta\omega t)\). 크기가 느리게 커졌다 작아졌다 하는 맥놀이(울렁거림)로 들립니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
