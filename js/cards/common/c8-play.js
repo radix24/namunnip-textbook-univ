@@ -39,7 +39,7 @@
       F.fn((x) => Pn(m, x), c.acc, 2); F.fn((x) => Pn(n, x), c.main, 2.5);
       const I = integ((x) => Pn(n, x) * Pn(m, x)), zeros = [];
       let prev = Pn(n, -1);
-      for (let i = 1; i <= 4000; i++) { const x = -1 + i / 2000, y = Pn(n, x); if (prev * y < 0) zeros.push(x - (1 / 2000) * (y / (y - prev))); prev = y; }
+      for (let i = 1; i <= 4000; i++) { const x = -1 + i / 2000, y = Pn(n, x); if (Math.abs(y) < 1e-12 && i < 4000) zeros.push(x); else if (prev * y < 0) zeros.push(x - (1 / 2000) * (y / (y - prev))); prev = y; }
       S.out(`Pₙ (보라) n = ${n},  Pₘ (주황) m = ${m}\n∫₋₁¹ Pₙ(x)Pₘ(x) dx = ${Math.abs(I) < 1e-10 ? "0" : I.toFixed(6)}` + (n === m ? `  (= 2/(2n + 1) = ${(2 / (2 * n + 1)).toFixed(6)})` : "  (n ≠ m이면 0: 직교)") +
         `\nPₙ(1) = ${Pn(n, 1).toFixed(3)},  [−1, 1] 안의 근 ${zeros.length}개: ${zeros.map((z) => z.toFixed(4)).join(", ") || "없음"}`);
     }
