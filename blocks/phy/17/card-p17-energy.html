@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-03-01",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-p17-energy" data-kind="예제" data-std="물리17-03-01">
+  <header class="card-head"><span class="no"></span><h2>수치 궤도의 에너지 보존으로 적분기 고르기</h2><span class="kind">Euler · RK4 · 대칭 적분기 · 문제 해결 전략</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>ODE 풀이기가 맞는지 확인하는 가장 좋은 방법은 보존량을 보는 것입니다. 궤도 운동에서는 에너지와 각운동량이 보존되어야 하는데, 단순한 Euler 방법은 에너지가 계속 늘어나 궤도가 바깥으로 나선을 그립니다.</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 적분기 점검</span>
+      <ol>
+        <li>상태 벡터 \((x, y, v_x, v_y)\)와 미분 함수를 쓴다.</li>
+        <li>여러 방법으로 같은 시간 동안 적분한다.</li>
+        <li>에너지의 상대 변화 \(\Delta E/E\)를 비교한다.</li>
+        <li>시간 간격을 절반으로 줄여 오차가 몇 배 주는지(차수)를 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">원 궤도(\(GM = 1\), \(r = 1\), 주기 \(2\pi\))를 시간 간격 \(h = 0.01\)로 10바퀴(6283걸음) 적분했다. Euler, RK4, 속도 Verlet 방법의 에너지 변화와 마지막 반지름을 비교하고, 장기 적분에 어떤 방법이 알맞은지 말하여라.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>Euler: 에너지(처음 −0.5)가 \(-0.30\)까지 올라가(\(\Delta E/|E| = 41\%\)) 반지름이 1.65로 커진다.</div><span class="q-why">1차 방법은 체계적으로 에너지가 샌다(이 교재의 Python 계산 결과).</span></li>
+        <li><div>RK4: \(\Delta E/|E| = 1.7\times10^{-10}\), 반지름 1.0000. \(h\)를 절반으로 하면 \(5\times10^{-12}\).</div><span class="q-why">4차라 아주 정확하지만 오차가 한쪽으로 조금씩 쌓인다.</span></li>
+        <li><div>Verlet: 2차인데도 에너지 오차가 최대 \(2.5\times10^{-9}\)에서 오르내리기만 하고 10바퀴 뒤에는 거의 0으로 돌아온다.</div><span class="q-why">시간 반전 대칭인 심플렉틱 적분기.</span></li>
+        <li class="q-end"><div>짧고 정밀한 계산은 RK4, 수천 바퀴 이상 장기 계산은 Verlet.</div><span class="q-why">목적에 따라 고른다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>행성 궤도처럼 아주 오래 돌려야 하는 시뮬레이션은 정확도보다 보존 성질이 중요합니다. 물리4의 리우빌 정리(위상 공간 넓이 보존)를 지키는 적분기가 장기적으로 믿을 만합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(h = 0.005\)로 다시 돌리면 Euler의 에너지 변화는 30%로 조금만 줄고(1차), RK4는 약 1/32, Verlet의 최대 오차는 약 1/16(\(1.6\times10^{-10}\))로 줄었습니다. 직접 돌려 같은 결과가 나오는지 확인해 보세요.</p>
+    </section>
+  </div>
+</article>
