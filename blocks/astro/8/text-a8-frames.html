@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우8-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a8-frames" data-kind="본문" data-std="천우8-03-03">
+  <header class="card-head"><span class="no"></span><h2>지구 중심 관성 좌표와 지상 좌표 사이의 변환</h2><span class="kind">본문 · 3.3절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>지구 중심 관성 좌표(ECI)와 지구 고정 좌표(ECEF)의 차이를 안다.</li>
+        <li>그리니치 항성시로 ECI를 ECEF로 바꾸고 위도·경도를 구한다.</li>
+        <li>지상국 기준의 고도각을 계산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>궤도요소와 회전 (<a href="03-02.html">3.2절</a>), 항성시 (<a href="../7/01-02.html">천우7 1.2절</a>).</li>
+      </ul>
+    </div>
+
+<h3>우주에서 본 위치를 지도 위로</h3>
+    <p>궤도는 별에 대해 고정된 좌표계(관성 좌표)에서 계산하지만, 지상국과 사용자는 자전하는 지구 위에 있습니다. 위성이 지금 어느 나라 위에 있는지, 서울에서 몇 도 높이에 보이는지 알려면 두 좌표계를 오가야 합니다.</p>
+
+    <h3><span class="no">3.3.1</span>두 좌표계</h3>
+    <ul>
+      <li class="q-term"><b>ECI</b>(지구 중심 관성): 원점 지구 중심, \(x\)축 춘분점, \(z\)축 북극. 궤도 계산에 쓴다.</li>
+      <li class="q-term"><b>ECEF</b>(지구 중심 지구 고정): 원점 지구 중심, \(x\)축 그리니치 자오선과 적도의 교점, \(z\)축 북극. 지구와 함께 돈다. GPS 좌표가 이것이다.</li>
+    </ul>
+    <p>둘은 \(z\)축 둘레로 그리니치 항성시 \(\theta_G\)만큼 돌아가 있습니다(세차·장동·극운동 무시).</p>
+    \[ \vec r_{ECEF} = R_3(\theta_G)\,\vec r_{ECI}, \qquad \theta_G = \theta_{G0} + \omega_\oplus(t - t_0) \]
+    <p>\(\omega_\oplus = 7.2921\times10^{-5}\) rad/s(항성일당 한 바퀴)입니다.</p>
+
+    <h3><span class="no">3.3.2</span>위도, 경도, 지상 궤적</h3>
+    <p>구형 지구로 어림하면 ECEF 위치 \((x, y, z)\)에서 지심 위도 \(\phi = \arcsin(z/r)\), 경도 \(\lambda = \text{atan2}(y, x)\)입니다(실제 지도의 측지 위도는 지구 편평도 때문에 최대 0.19° 다름). 시간에 따라 \((\lambda, \phi)\)를 찍은 것이 <b>지상 궤적</b>입니다. 지구가 동쪽으로 자전하므로 한 바퀴마다 궤적이 서쪽으로 \(360^\circ\times T/T_{항성일}\)만큼 옮겨 갑니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>주기 92.6분(고도 400 km)인 위성의 지상 궤적은 한 바퀴마다 몇 도 서쪽으로 옮겨 갑니까? 궤적이 닿는 가장 높은 위도는(경사각 51.6°)?</p>
+    </div>
+    <p><i>풀이.</i> \(360\times92.6/1436.1 = 23.2^\circ\)(J2에 의한 승교점 이동을 더하면 약 23.5°). 가장 높은 위도는 경사각과 같은 51.6°입니다(순행 궤도). 아래 실습 카드에서 지상 궤적을 그려 볼 수 있습니다.</p>
+
+    <h3><span class="no">3.3.3</span>지상국에서의 고도각</h3>
+    <p>지상국 위치 \(\vec s\)(ECEF)에서 위성까지의 벡터 \(\vec\rho = \vec r_{ECEF} - \vec s\)를 구하고, 지상국의 위쪽 단위벡터 \(\hat u = \vec s/|\vec s|\)(구형 지구)와의 각으로 고도각을 얻습니다.</p>
+    \[ \sin(\text{고도각}) = \frac{\vec\rho\cdot\hat u}{|\vec\rho|} \]
+    <p>고도각이 일정 값(보통 5~10°) 이상일 때만 교신할 수 있습니다(<a href="06-02.html">6.2절</a>).</p>
+    <div class="tb-note"><b>주의</b> 정밀한 변환(미터 수준)에는 세차·장동, 극운동, UT1-UTC, 지구 타원체(WGS84)를 모두 넣어야 합니다. 실제 위성 추적에는 SGP4 같은 표준 모형과 검증된 라이브러리(예: Skyfield)를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>ECI(별에 고정)와 ECEF(지구에 고정)는 그리니치 항성시만큼 돌아가 있다.</li>
+        <li>위도 \(\arcsin(z/r)\), 경도 atan2(y, x). 지상 궤적은 한 바퀴마다 서쪽으로 \(360^\circ T/T_{sid}\).</li>
+        <li>지상국 고도각: \(\sin = \vec\rho\cdot\hat u/|\vec\rho|\).</li>
+        <li>정밀 계산은 세차·장동·극운동·타원체와 표준 모형을 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>주기 100분 위성의 궤적은 한 바퀴마다 몇 도 서쪽으로?
+          <details><summary>답</summary><p>25.1°.</p></details>
+        </li>
+        <li>경사각 98°(역행) 궤도의 지상 궤적이 닿는 최고 위도는?
+          <details><summary>답</summary><p>\(180 - 98 = 82^\circ\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정지궤도 위성의 지상 궤적은 어떤 모양입니까? 경사각이 5°라면?
+          <details><summary>답</summary><p>경사각 0이면 적도 위 한 점. 5°면 그 점을 중심으로 위도 ±5° 사이를 하루에 한 번 오가는 8자 모양.</p></details>
+        </li>
+        <li>서울(37.6°N) 상공을 지나려면 궤도 경사각이 최소 얼마여야 합니까?
+          <details><summary>답</summary><p>37.6° 이상(순행).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
