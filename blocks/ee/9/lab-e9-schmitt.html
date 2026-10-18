@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-05-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e9-analog.js"]
+}
+-->
+<article class="card q-card" id="lab-e9-schmitt" data-kind="실습" data-std="전전9-05-03">
+  <header class="card-head"><span class="no"></span><h2>잡음 섞인 신호를 깨끗한 펄스로: 슈미트 트리거와 발진기</h2><span class="kind">실습 · 비교기, 히스테리시스, 이완 발진기</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>연산증폭기를 되먹임 없이 쓰면 비교기가 됩니다. 비교기는 입력이 문턱을 지날 때 출력을 바꾸는데, 입력에 잡음이 있으면 문턱 근처에서 출력이 여러 번 떨립니다. 출력의 일부를 비반전 입력으로 되돌린 슈미트 트리거가 이 떨림을 없애는 원리를 확인하고, 같은 회로에 RC를 더해 구형파 발진기를 만듭니다. 성취기준 [전전9-05-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li><b>비교기</b>: 문턱 0 V. 입력이 0보다 크면 +10 V, 작으면 −10 V.</li>
+        <li><b>슈미트 트리거</b>: 출력 \(\pm V_\text{sat}\)의 비율 \(\beta = R_1/(R_1+R_2)\)을 비반전 입력으로 되돌립니다. 그래서 출력이 +일 때는 문턱이 \(-\beta V_\text{sat}\), −일 때는 \(+\beta V_\text{sat}\)로 바뀝니다. 두 문턱 사이의 폭 \(2\beta V_\text{sat}\)을 히스테리시스라고 합니다.</li>
+        <li><b>이완 발진기</b>: 슈미트 트리거의 출력이 저항 R을 거쳐 축전기 C를 충전하고, 축전기 전압을 반전 입력에 넣습니다. 축전기 전압이 문턱에 닿을 때마다 출력이 뒤집혀 구형파가 나옵니다. 주기는 \(T = 2RC\ln\dfrac{1+\beta}{1-\beta}\)입니다.</li>
+      </ul>
+      <p>비교 모드에서 입력은 진폭 1 V의 느린 사인파에 정규 분포 잡음을 더한 것입니다. 출력 전압은 ±10 V로 두었습니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>모드</span><select name="mode" aria-label="모드"><option value="cmp" selected>비교기와 슈미트 트리거</option><option value="osc">이완 발진기</option></select></label>
+        <label><span>되먹임 비율 β = <b data-show="b" data-fix="2">0.03</b></span><input type="range" name="b" min="0.01" max="0.9" step="0.01" value="0.03" aria-label="되먹임 비율 베타"></label>
+        <label class="only-cmp"><span>잡음 σ = <b data-show="noise" data-fix="2">0.10</b> V</span><input type="range" name="noise" min="0" max="0.4" step="0.01" value="0.1" aria-label="잡음 표준편차"></label>
+        <label class="only-osc"><span>R = <b data-show="R">10</b> kΩ</span><input type="range" name="R" min="1" max="100" step="1" value="10" aria-label="충전 저항, 킬로옴"></label>
+        <label class="only-osc"><span>C = <b data-show="C">10</b> nF</span><input type="range" name="C" min="1" max="100" step="1" value="10" aria-label="축전기 용량, 나노패럿"></label>
+      </div>
+      <canvas aria-label="입력과 비교기, 슈미트 트리거 출력. 또는 발진기의 축전기 전압과 출력"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>비교 모드, 잡음 0.1 V, β = 0.03: 비교기와 슈미트 트리거의 출력이 몇 번 바뀌는지 적습니다.</li>
+        <li>β를 0.01부터 0.01씩 올리며 슈미트 트리거 출력이 두 주기에 4번만 바뀌게 되는 최소 β를 찾습니다. 잡음을 0.2 V로 키우면 그 값이 어떻게 달라지나요?</li>
+        <li>잡음 0.1 V로 돌려 놓고 β를 0.1부터 0.15까지 올립니다. 문턱 ±1 V는 입력 사인파의 봉우리와 같습니다. 무슨 일이 생기나요?</li>
+        <li>발진기 모드, R = 10 kΩ, C = 10 nF, β = 0.5에서 이론 주기와 시뮬레이션 주기를 비교합니다.</li>
+        <li>β를 0.462로 맞추면 \(\ln\frac{1+\beta}{1-\beta} \approx 1\)이 되어 \(T \approx 2RC\)입니다. 확인해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>잡음 0.1 V: 비교기는 0 V를 지날 때마다 여러 번 떨려 두 주기에 74번 바뀝니다. 슈미트 트리거는 β = 0.01(문턱 ±0.1 V)에서 16번, β = 0.02(±0.2 V)부터 4번만 바뀝니다.</li>
+        <li>잡음 0.2 V: 비교기 142번. 슈미트 트리거는 β = 0.02에서 26번, 0.03에서 12번, 0.04(±0.4 V)부터 4번입니다. 잡음이 2배면 필요한 히스테리시스도 약 2배입니다. 이 시뮬레이션에서는 히스테리시스 폭이 잡음 σ의 약 4배면 떨림이 사라졌습니다. 출력 줄의 6σ 기준은 여유를 둔 어림입니다.</li>
+        <li>β = 0.1~0.12(문턱 ±1.0~1.2 V)에서는 사인파 봉우리만으로는 문턱에 닿지 못하고 잡음이 더해질 때만 겨우 넘어서 바뀝니다. β ≥ 0.13이면 출력이 한 번도 바뀌지 않습니다. 너무 넓은 히스테리시스는 신호도 놓칩니다.</li>
+        <li>R = 10 kΩ, C = 10 nF, β = 0.5: \(T = 2\times10^{-4}\times\ln 3 \approx 220\ \mu\text{s}\), 약 4.55 kHz. β = 0.462이면 약 199 μs(≈ 2RC = 200 μs), β = 0.9이면 약 589 μs로 길어집니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>히스테리시스 폭이 잡음보다 넓으면 떨림이 사라지는 이유를, 출력이 한 번 바뀐 직후 문턱이 어디로 옮겨 가는지로 설명하세요.</li>
+        <li>슈미트 트리거를 쓰면 출력이 바뀌는 순간이 입력의 0 V 지점보다 늦어집니다. 늦어지는 시간은 무엇으로 정해질까요?</li>
+        <li>발진기의 β를 1에 가깝게 하면 주기는 어떻게 되나요? 식과 시뮬레이션으로 확인하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>디지털 회로의 74HC14는 슈미트 트리거 입력을 가진 NOT 게이트입니다. 기계식 스위치의 떨림(바운스)을 RC와 74HC14로 없애는 회로는 디지털실험의 스위치 바운스 카드에서 다시 다룹니다.</p>
+    </section>
+  </div>
+</article>

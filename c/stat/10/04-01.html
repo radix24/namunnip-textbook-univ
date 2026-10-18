@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>잔차 그림으로 선형성, 등분산성, 정규성을 점검하기 · 회귀분석 — QURI</title>
-  <meta name="description" content="회귀분석 4.1 잔차 그림으로 선형성, 등분산성, 정규성을 점검하기 — 성취기준: 잔차 그림으로 선형성, 등분산성, 정규성을 점검할 수 있다.">
+  <title>잔차 그림으로 가정 점검하기 · 회귀분석 — QURI</title>
+  <meta name="description" content="회귀분석 4.1 잔차 그림으로 가정 점검하기 — 성취기준: 잔차 그림으로 선형성, 등분산성, 정규성을 점검할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;4.1 잔차 그림으로 선형성, 등분산성, 정규성을 점검하기&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;4.1 잔차 그림으로 가정 점검하기&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,173 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통10-04-01">
+  <section class="topic-hero u-hero has-text" data-sec="응통10-04-01" data-u="서울대 연세대 고려대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">회귀분석</a><span class="mono">/</span><a href="04.html">4. 회귀진단</a></div>
-    <h1><span class="sec-no mono">4.1</span>잔차 그림으로 선형성, 등분산성, 정규성을 점검하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통10-04-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-04-01] <span class="ty mono" data-ty="적용">적용</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통10-04-01" aria-label="할 수 있음"><span class="t">잔차 그림으로 선형성, 등분산성, 정규성을 점검할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">4.1</span>잔차 그림으로 가정 점검하기</h1>
+    <p class="sec-std"><span class="mono">[응통10-04-01]</span> 잔차 그림으로 선형성, 등분산성, 정규성을 점검할 수 있다. <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s4-1-1"><span class="mono">4.1.1</span><span>잔차의 성질과 표준화</span></a></li><li><a href="#s4-1-2"><span class="mono">4.1.2</span><span>세 가지 그림</span></a></li><li><a href="#s4-1-3"><span class="mono">4.1.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s10-residplot"><span class="mono">본문</span><span>잔차 그림으로 가정 점검하기</span></a></li><li><a href="#lab-s10-resid"><span class="mono">4.1.2</span><span>잔차 그림은 산점도가 숨긴 것을 보여 준다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s10-residplot" data-kind="본문" data-std="응통10-04-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>잔차 대 적합값 그림, 정규 분위수 그림, 척도-위치 그림을 읽는다.</li>
+        <li>스튜던트화 잔차를 쓰는 이유를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>모자 행렬 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3>모형을 믿기 전에</h3>
+    <p>추정과 검정의 모든 결과는 1.1절의 가정 위에 서 있습니다. 가정은 오차에 대한 것인데 오차는 볼 수 없으니, 그 대리인인 잔차를 그려 봅니다.</p>
+
+    <h3 id="s4-1-1"><span class="no">4.1.1</span>잔차의 성질과 표준화</h3>
+    <p>\(\mathbf e = (I - H)\mathbf y\)이므로 \(\mathrm{Var}(e_i) = \sigma^2(1 - h_{ii})\)입니다(\(h_{ii}\)는 \(H\)의 대각 원소, 지렛값). 오차와 달리 잔차는 분산이 점마다 다르고 서로 상관이 있습니다. 그래서 크기를 비교할 때는 표준화합니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 4.1.1</span>
+      <p><b>내적 스튜던트화 잔차</b>: \(r_i = \dfrac{e_i}{s\sqrt{1 - h_{ii}}}\). \(s\)를 \(i\)번째 점을 뺀 \(s_{(i)}\)로 바꾼 것을 외적 스튜던트화 잔차라 하며, 모형이 맞으면 \(t_{n-p-1}\)을 따릅니다.</p>
+    </div>
+    <p>절댓값이 2~3을 넘으면 이상값 후보로 봅니다.</p>
+
+    <h3 id="s4-1-2"><span class="no">4.1.2</span>세 가지 그림</h3>
+    <table class="tw">
+      <tr><th>그림</th><th>보는 가정</th><th>문제의 모양</th></tr>
+      <tr><td>잔차 대 적합값</td><td>선형성, 등분산</td><td>곡선(U자) 무늬, 나팔 모양</td></tr>
+      <tr><td>정규 분위수(Q-Q)</td><td>정규성</td><td>양 끝이 직선에서 휨(두꺼운 꼬리), S자</td></tr>
+      <tr><td>척도-위치 (\(\sqrt{|r_i|}\) 대 적합값)</td><td>등분산</td><td>오른쪽으로 올라가는 추세</td></tr>
+    </table>
+    <p>시간 순서로 모은 자료라면 잔차를 시간 순으로 그려 독립성(자기상관)도 봅니다. 이웃한 잔차가 같은 부호로 몰리면 독립이 깨진 것입니다(응통20).</p>
+    <p>이 절의 실습 카드에서 참 모형을 바꿔 가며 각 무늬를 직접 볼 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.2</span>
+      <p><code>cars</code> 회귀의 진단 그림을 그리고 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>par(mfrow = c(2, 2)); plot(fit)</code>. 잔차 대 적합값에서 적합값이 커질수록 잔차가 넓게 퍼지는 나팔 모양이 약하게 보이고, Q-Q 그림의 위쪽 끝이 직선 위로 휩니다(오른쪽 꼬리가 깁니다). 제동 거리는 속도의 제곱에 가깝게 늘어난다는 물리 법칙을 생각하면 \(\sqrt{\text{dist}}\)를 반응으로 쓰는 변환(05단원)을 고려할 만합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>잔차 분산은 \(\sigma^2(1 - h_{ii})\): 스튜던트화해서 비교.</li>
+        <li>잔차-적합값(선형·등분산), Q-Q(정규), 척도-위치(등분산), 시간 순(독립).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s4-1-3"><span class="no">4.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>잔차 대 \(x\) 그림에 무늬가 없는데 잔차 대 다른 변수 \(z\)(모형에 없음) 그림에 직선 추세가 보이면?
+          <details><summary>답</summary><p>\(z\)가 반응을 설명하는데 모형에서 빠졌습니다. \(z\)를 설명변수로 넣는 것을 검토합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s10-residplot" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통10-04-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-04-01] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통10-04-01" aria-label="할 수 있음"><span class="t">잔차 그림으로 선형성, 등분산성, 정규성을 점검할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/10/02.html"><span class="mono">대단원 2</span><span><b>다중 선형회귀</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-s10-resid" data-kind="실습" data-std="응통10-04-01">
+  <header class="card-head"><span class="no">4.1.2</span><h2><span class="q-badge">실습</span>잔차 그림은 산점도가 숨긴 것을 보여 준다</h2><span class="kind">실습 · 회귀진단</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="04-01.html#std">[응통10-04-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>참 모형을 바꿔 가며 가상 자료를 만들고, 직선을 적합한 뒤 <b>잔차 대 적합값 그림</b>에서 가정 위반이 어떤 모양으로 나타나는지 익힙니다. 성취기준 [응통10-04-01].</p>
+      <p class="q-term"><b>적합값</b>: 적합한 직선이 예측한 값 \(\hat y_i = b_0 + b_1 x_i\).</p>
+      <p class="q-term"><b>잔차</b>: 관측값과 적합값의 차 \(e_i = y_i - \hat y_i\). 오차 \(\varepsilon_i\)를 대신해 볼 수 있는 값입니다.</p>
+      <p class="q-term"><b>선형회귀의 가정</b>: 평균 반응이 \(x\)의 일차식(선형성), 오차의 분산이 \(x\)와 관계없이 일정(등분산성), 오차가 서로 독립이고 정규분포.</p>
+      <p>가정이 맞으면 잔차는 0을 중심으로 폭이 일정한 띠 안에 아무 무늬 없이 흩어집니다. 무늬가 보이면 그 무늬가 어느 가정이 깨졌는지 알려 줍니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그림은 가상 자료의 산점도와 최소제곱 직선(빨강), 아래 그림은 잔차 대 적합값입니다. 주황 점선은 \(\pm 2s\)(\(s\)는 잔차 표준오차)입니다. "새 자료"를 누르면 같은 모형에서 다시 만듭니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>참 모형</span><select name="kind" aria-label="자료를 만든 참 모형">
+          <option value="lin" selected>직선 (가정 만족)</option>
+          <option value="quad">곡선</option>
+          <option value="het">오차가 점점 커짐</option>
+          <option value="out">직선 + 이상점 하나</option>
+        </select></label>
+        <label><span>오차 크기 σ = <b data-show="sg" data-fix="1">1.0</b></span><input type="range" name="sg" min="0.2" max="3" step="0.1" value="1" aria-label="오차의 표준편차"></label>
+        <label><span>자료 수 n = <b data-show="n">60</b></span><input type="range" name="n" min="10" max="200" step="5" value="60" aria-label="자료 수"></label>
+      </div>
+      <canvas aria-label="산점도와 적합 직선"></canvas>
+      <canvas aria-label="잔차 대 적합값 그림"></canvas>
+      <div class="btns"><button type="button" class="new">새 자료</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>"직선"에서 잔차 그림을 보고, "새 자료"를 몇 번 눌러 무늬 없는 그림이 어떤 모습인지 눈에 익힙니다.</li>
+        <li>"곡선"으로 바꿉니다. 산점도만 보면 직선이 그럴듯해 보이는지, 잔차 그림에서는 어떤 모양이 보이는지 적습니다.</li>
+        <li>"오차가 점점 커짐"에서 잔차 띠의 폭이 적합값에 따라 어떻게 바뀌는지 봅니다.</li>
+        <li>"이상점 하나"에서 \(\pm 2s\) 밖의 점을 찾고, 그 점이 기울기를 많이 바꾸는지 출력으로 확인합니다.</li>
+        <li>σ를 0.3으로 줄여 "곡선"의 무늬가 더 뚜렷해지는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>직선: 잔차가 0 둘레에 고르게 흩어지고, \(\pm 2s\) 밖의 점은 전체의 5% 안팎(60개 중 1~5개)입니다. 기울기는 참값 0.8 근처입니다.</li>
+        <li>곡선: 결정계수 \(R^2\)가 0.6 정도로 꽤 높게 나와도 잔차 그림은 U자(양 끝은 양수, 가운데는 음수)입니다. \(R^2\)가 높다고 모형이 맞는 것은 아닙니다.</li>
+        <li>오차가 커짐: 잔차가 오른쪽으로 갈수록 넓게 퍼지는 나팔 모양입니다.</li>
+        <li>이상점: 한 점이 \(+2s\) 훨씬 위에 떨어집니다. 이 점은 \(x\)가 가운데(\(x = 5\))에 있어 기울기는 거의 바뀌지 않고 절편과 \(s\)만 커집니다. 기울기를 크게 바꾸는 점은 다음 카드(지렛값)에서 다룹니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>U자 잔차가 보이면 어떻게 고치면 좋을까요? \(x^2\) 항을 넣는 것과 \(y\)를 변환하는 것을 비교해 보세요(10-05단원).</li>
+        <li>나팔 모양에서 기울기 추정값 자체는 대체로 맞는데, 무엇이 틀려지나요? 표준오차와 신뢰구간의 관점에서 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R에서는 <code>fit &lt;- lm(y ~ x)</code>, <code>plot(fit, which = 1)</code>이 같은 그림을, <code>plot(fit, which = 2)</code>가 정규 분위수 그림을 그립니다. 잔차를 \(x\)에 대해 그려도 단순회귀에서는 같은 무늬가 보입니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>잔차 그림 읽기</h3>
+    <p class="q">잔차 대 적합값 그림이 왼쪽에서 오른쪽으로 갈수록 넓어지는 나팔 모양입니다. 가장 먼저 의심할 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>오차의 분산이 일정하지 않다.<span class="why"><b>맞습니다.</b> 등분산성 위반입니다. 가중 최소제곱이나 로그 변환을 생각합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>평균 반응이 곡선이다.<span class="why"><b>곡선이면 잔차의 중심이 휩니다.</b> 나팔 모양은 중심은 0 그대로이고 퍼짐만 바뀌는 무늬입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>표본이 너무 작다.<span class="why"><b>표본 크기는 무늬를 흐리거나 뚜렷하게 할 뿐입니다.</b> 퍼짐이 한 방향으로 커지는 규칙성은 표본 크기 탓이 아닙니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-s10-resid" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-02.html">← 3.2 상호작용 항의 계수를 해석하기</a></span>
-        <span><a href="04-02.html">4.2 지렛값과 Cook 거리로 영향점을 찾기 →</a></span>
+        <span><a href="03-02.html">← 3.2 상호작용 항의 해석</a></span>
+        <span><a href="04-02.html">4.2 지렛값과 쿡 거리로 영향점 찾기 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +207,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/stat/stat-labs.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

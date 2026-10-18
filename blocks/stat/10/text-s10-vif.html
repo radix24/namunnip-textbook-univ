@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-vif" data-kind="본문" data-std="응통10-04-03">
+  <header class="card-head"><span class="no"></span><h2>분산팽창인자로 다중공선성 진단하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다중공선성이 계수 추정에 주는 영향을 안다.</li>
+        <li>분산팽창인자(VIF)를 계산하고 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 표현 (<a href="02-01.html">2.1절</a>), 결정계수 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>비슷한 변수 두 개</h3>
+    <p>집값 모형에 "넓이(㎡)"와 "방 개수"를 함께 넣으면 둘은 강하게 상관되어 있습니다. 넓은 집이 방도 많기 때문입니다. 이때 자료는 "넓이 효과"와 "방 개수 효과"를 따로 가려내기 어려워, 계수의 표준오차가 커지고 부호가 이상하게 나오기도 합니다.</p>
+
+    <h3><span class="no">4.3.1</span>분산팽창인자</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 4.3.1</span>
+      <p>\(x_j\)를 나머지 설명변수들로 회귀한 결정계수를 \(R_j^2\)라 할 때 \(\mathrm{VIF}_j = \dfrac{1}{1 - R_j^2}\).</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">결과 4.3.2</span>
+      <p>\(\mathrm{Var}(\hat\beta_j) = \dfrac{\sigma^2}{S_{x_jx_j}}\cdot\mathrm{VIF}_j\).</p>
+    </div>
+    <p>\(x_j\)가 다른 변수들과 무관하면 VIF = 1이고 단순회귀와 같은 분산입니다. \(R_j^2 = 0.9\)이면 VIF = 10으로 분산이 10배, 표준오차가 약 3.2배 커집니다. 흔히 VIF가 10(또는 5)을 넘으면 심각하다고 봅니다.</p>
+
+    <h3><span class="no">4.3.2</span>증상과 대처</h3>
+    <ul>
+      <li>증상: 전체 F는 유의한데 개별 t는 유의하지 않음, 변수 하나를 넣고 뺄 때 다른 계수가 크게 바뀜, 상식과 반대 부호.</li>
+      <li>예측에는 큰 문제가 아닙니다. 적합값과 \(R^2\)는 영향을 덜 받습니다. 문제는 개별 계수의 해석입니다.</li>
+      <li>대처: 비슷한 변수 중 하나만 남기기, 합쳐서 하나의 지표 만들기(주성분, 응통19), 능형 회귀(06단원), 더 다양한 자료 모으기.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.3</span>
+      <p><code>mtcars</code>에서 <code>mpg ~ disp + hp + wt</code>의 VIF를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>car</code> 패키지의 <code>vif(lm(mpg ~ disp + hp + wt, data = mtcars))</code>: disp 7.32, hp 2.74, wt 4.84. 배기량은 무게와 마력으로 상당 부분 설명되어(\(R^2 \approx 0.86\)) 표준오차가 약 2.7배 커졌습니다. 직접 계산은 <code>1/(1 - summary(lm(disp ~ hp + wt, data = mtcars))$r.squared)</code>.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{VIF}_j = 1/(1-R_j^2)\), 계수 분산이 그 배수만큼 커짐.</li>
+        <li>해석이 문제이고 예측은 덜 문제.</li>
+        <li>변수 정리, 지표화, 능형 회귀로 대처.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>설명변수가 두 개이고 상관계수가 0.95이면 각 VIF는?
+          <details><summary>답</summary><p>\(R_j^2 = 0.9025\), VIF \(\approx 10.3\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

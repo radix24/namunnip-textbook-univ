@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-02-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m-dyn.js"]
+}
+-->
+<article class="card q-card" id="card-m21-markov" data-kind="탐구" data-std="수학21-02-02">
+  <header class="card-head"><span class="no"></span><h2>어디서 출발해도 같은 분포로 간다</h2><span class="kind">탐구 · 마르코프 연쇄의 정상분포</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>날씨가 맑음, 흐림, 비 세 상태를 하루하루 확률적으로 옮겨 다닌다고 합시다. 오늘이 맑음인지 비인지에 따라 100일 뒤의 날씨 확률이 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>전이행렬 \(P\)의 \((i, j)\) 성분은 상태 \(i\)에서 다음 단계에 \(j\)로 갈 확률이고, 행마다 합이 1입니다. 지금 분포가 행벡터 \(\pi_k\)이면 다음 분포는 \(\pi_{k+1} = \pi_k P\)입니다. \(\pi P = \pi\)인 분포를 정상분포라고 합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>1→2 = <b data-show="p12" data-fix="2">0.30</b></span><input type="range" name="p12" min="0" max="1" step="0.05" value="0.3" aria-label="상태 1에서 2로 갈 확률"></label>
+        <label><span>1→3 = <b data-show="p13" data-fix="2">0.10</b></span><input type="range" name="p13" min="0" max="1" step="0.05" value="0.1" aria-label="상태 1에서 3으로 갈 확률"></label>
+        <label><span>2→1 = <b data-show="p21" data-fix="2">0.20</b></span><input type="range" name="p21" min="0" max="1" step="0.05" value="0.2" aria-label="상태 2에서 1로 갈 확률"></label>
+        <label><span>2→3 = <b data-show="p23" data-fix="2">0.30</b></span><input type="range" name="p23" min="0" max="1" step="0.05" value="0.3" aria-label="상태 2에서 3으로 갈 확률"></label>
+        <label><span>3→1 = <b data-show="p31" data-fix="2">0.40</b></span><input type="range" name="p31" min="0" max="1" step="0.05" value="0.4" aria-label="상태 3에서 1로 갈 확률"></label>
+        <label><span>3→2 = <b data-show="p32" data-fix="2">0.20</b></span><input type="range" name="p32" min="0" max="1" step="0.05" value="0.2" aria-label="상태 3에서 2로 갈 확률"></label>
+        <label><span>출발 상태</span>
+          <select name="start" aria-label="출발 상태">
+            <option value="0">1</option><option value="1">2</option><option value="2">3</option>
+          </select></label>
+        <label><span>단계 k = <b data-show="k">5</b></span><input type="range" name="k" min="0" max="40" step="1" value="5" aria-label="보는 단계"></label>
+      </div>
+      <canvas aria-label="왼쪽: 세 상태와 전이 화살표(굵을수록 확률이 큼). 원 안의 색 점 크기가 k단계 뒤 그 상태에 있을 확률. 오른쪽: 단계에 따른 세 상태의 확률 곡선과 긴 시간 평균(점선)"></canvas>
+      <p class="legend">한 행의 두 확률 합이 1을 넘으면 합이 1이 되도록 줄여서 씁니다. 남는 확률은 제자리에 머무를 확률입니다.</p>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>출발 상태를 1, 2, 3으로 바꿔 보세요. 처음 몇 단계는 곡선이 다르지만 5~6단계면 세 경우 모두 같은 점선 값에 붙습니다.</li>
+        <li>3→1과 3→2를 모두 0으로 하면 상태 3에서 나갈 수 없습니다(흡수 상태). 어디서 출발해도 결국 상태 3의 확률이 1로 갑니다.</li>
+        <li>1→2 = 1, 2→3 = 1, 3→1 = 1로 하고 나머지를 0으로 하면 1→2→3→1로 도는 주기 3의 연쇄입니다. 분포가 수렴하지 않고 계속 돕니다. 하지만 긴 시간 평균은 (1/3, 1/3, 1/3)입니다.</li>
+        <li>1→3, 2→3, 3→1, 3→2를 모두 0으로 하면 {1, 2}와 {3}이 서로 오가지 못합니다. 이제 출발 상태에 따라 긴 시간 평균이 달라집니다(3에서 출발하면 (0, 0, 1)).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>극한 정리</b><span>모든 상태가 서로 오갈 수 있고(기약), 돌아오는 단계 수에 공통 주기가 없으면(비주기), 정상분포 \(\pi\)가 하나뿐이고 출발과 상관없이 \(\pi_k \to \pi\)입니다.</span></li>
+        <li><b>조건이 깨질 때</b><span>해 보기 3은 비주기가 깨진 경우(수렴하지 않음), 해 보기 4는 기약이 깨진 경우(정상분포가 여러 개)입니다.</span></li>
+        <li><b>긴 시간 평균</b><span>\(\frac1n\sum_{k&lt;n}\pi_k\)는 주기가 있어도 수렴하고, 그 극한은 정상분포입니다. 상태 \(i\)의 정상확률은 "오래 지켜볼 때 \(i\)에 머무는 시간의 비율"입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>정상분포는 \(P^{\mathsf T}\)의 고유값 1에 대한 고유벡터입니다(<a href="../1/06-01.html">수학1 6단원</a>). 수렴 속도는 둘째로 큰 고유값의 절댓값이 정합니다. 웹 페이지 순위를 매기는 페이지랭크와 MCMC 표본 추출이 이 정리를 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"정상분포에 도달하면 연쇄가 한 상태에 멈춘다"는 틀립니다. 정상이 되는 것은 <b>확률 분포</b>이지 상태가 아닙니다. 연쇄는 계속 상태를 옮겨 다니고, 각 상태에 있을 확률만 더 이상 변하지 않습니다.</p>
+    </section>
+  </div>
+</article>

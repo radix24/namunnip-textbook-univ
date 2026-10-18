@@ -104,4 +104,53 @@
     S.on(() => { t = 1e9; draw(); }); QSim.redrawOn(draw);
     t = 1e9; draw();
   })();
+
+  /* 4. 감쇠 진동의 세 경우 (04-02) */
+  (() => {
+    const S = QSim.card("lab-p1-damped"); if (!S) return;
+    const cv = S.$("canvas"), w0 = 2 * Math.PI;   // 고유 주기 1 s
+    const sol = (b, t) => {   // x(0) = 1, v(0) = 0
+      if (Math.abs(b - w0) < 1e-6) return (1 + b * t) * Math.exp(-b * t);
+      if (b < w0) { const w1 = Math.sqrt(w0 * w0 - b * b); return Math.exp(-b * t) * (Math.cos(w1 * t) + b / w1 * Math.sin(w1 * t)); }
+      const s = Math.sqrt(b * b - w0 * w0), r1 = -b + s, r2 = -b - s; return (r2 * Math.exp(r1 * t) - r1 * Math.exp(r2 * t)) / (r2 - r1);
+    };
+    const settle = (b) => { let last = 0; for (let i = 0; i <= 20000; i++) { const t = i * 0.001; if (Math.abs(sol(b, t)) > 0.05) last = t; } return last; };
+    function draw() {
+      const c = C(), z = S.val("z"), b = z * w0;
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 4, y0: -1, y1: 1.1, xl: "t (s)", yl: "x" }); f.axes();
+      f.path([[0, 0.05], [4, 0.05]], c.rule, 1, [3, 3]); f.path([[0, -0.05], [4, -0.05]], c.rule, 1, [3, 3]);
+      f.fn((t) => sol(w0, t), c.ink3, 1.5, [5, 4], 500); f.fn((t) => sol(b, t), c.main, 2.5, null, 800);
+      const kind = Math.abs(z - 1) < 1e-6 ? "임계 감쇠" : z < 1 ? "미감쇠(진동하며 줄어듦)" : "과감쇠(진동 없이 천천히)";
+      const ts = settle(b), tc = settle(w0);
+      S.out(`감쇠비 β/ω₀ = ${z.toFixed(2)} → ${kind}. 고유 주기 1 s, 처음 x = 1에서 놓음\n${z < 1 ? `진동 주기 ${(2 * Math.PI / Math.sqrt(w0 * w0 - b * b)).toFixed(3)} s, ` : ""}|x|가 0.05 안에 머물기 시작하는 시각 ${ts.toFixed(2)} s (임계 감쇠, 회색 점선: ${tc.toFixed(2)} s)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 5. 두 물체 문제: 질량 중심과 환산 질량 (05-01) */
+  (() => {
+    const S = QSim.card("lab-p1-twobody"); if (!S) return;
+    const cv = S.$("canvas"); let t = 0;
+    const orbit = () => {   // 상대 궤도: G(m1+m2) = 1, 근점 거리 1, 이심률 e
+      const e = S.val("e"), a = 1 / (1 - e), T = 2 * Math.PI * Math.sqrt(a * a * a);
+      const M = 2 * Math.PI * ((t % T) / T); let E = M; for (let i = 0; i < 30; i++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+      return { x: a * (Math.cos(E) - e), y: a * Math.sqrt(1 - e * e) * Math.sin(E), a, T, e };
+    };
+    function draw() {
+      const c = C(), q = S.val("q"), m1 = 1, m2 = q, M = m1 + m2, o = orbit();
+      const R = Math.max(1, o.a * (1 + o.e)) * 1.1;
+      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -R, x1: R, y0: -R * 0.75, y1: R * 0.75, equal: true }); f.axes({ noGrid: true });
+      const p1 = [], p2 = [];
+      for (let i = 0; i <= 200; i++) { const E = 2 * Math.PI * i / 200, x = o.a * (Math.cos(E) - o.e), y = o.a * Math.sqrt(1 - o.e * o.e) * Math.sin(E); p1.push([m2 / M * x, m2 / M * y]); p2.push([-m1 / M * x, -m1 / M * y]); }
+      f.path(p1, c.soft, 1.5); f.path(p2, c.acc, 1.2, [4, 3]);
+      const x1 = m2 / M * o.x, y1 = m2 / M * o.y, x2 = -m1 / M * o.x, y2 = -m1 / M * o.y;
+      f.path([[x1, y1], [x2, y2]], c.rule, 1, [3, 3]);
+      f.dot(x1, y1, c.main, 5); f.dot(x2, y2, c.acc, 4 + 3 * Math.min(q, 3) / 3); f.dot(0, 0, c.ink, 2.5);
+      const mu = m1 * m2 / M;
+      S.out(`질량비 m₂/m₁ = ${q}, 환산 질량 μ = ${mu.toFixed(3)} m₁ (가벼운 쪽의 ${(mu / Math.min(m1, m2) * 100).toFixed(1)}%)\n질량 중심(검은 점)에서의 거리 비 r₁ : r₂ = m₂ : m₁ = ${q} : 1, 상대 궤도 이심률 ${o.e}\n두 물체의 궤도는 크기만 다른 닮은꼴 타원이고, 늘 질량 중심을 사이에 두고 마주 본다`);
+    }
+    const L = QSim.loop((dt) => { t += dt * S.val("sp"); draw(); }).watch(S.root);
+    QSim.playButton(S.$(".play"), L);
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

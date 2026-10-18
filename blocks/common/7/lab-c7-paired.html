@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통7-09-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c7-play.js"]
+}
+-->
+<article class="card q-card" id="lab-c7-paired" data-kind="실습" data-std="공통7-09-03">
+  <header class="card-head"><span class="no"></span><h2>같은 사람을 두 번 잰 자료를 따로 비교하면 무엇을 놓칠까?</h2><span class="kind">실습 · 짝지은 자료와 독립 두 표본</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>학생 10명이 보충 수업 전과 후에 같은 시험을 봤습니다. 이 자료를 "전 집단"과 "후 집단" 두 표본으로 보고 비교할 때와, 학생마다 차이(후 − 전)를 구해 비교할 때 결론이 어떻게 달라지는지 확인합니다. 성취기준 [공통7-09-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>자료는 모두 <b>가상</b>입니다. 학생마다 실력 \(70 + (\text{개인차})\)를 정하고, 전·후 점수에 각각 측정 잡음(표준편차 2점)을 더했습니다. 후 점수에는 실제 향상 \(\delta\)를 더했습니다.</li>
+        <li>"개인차 크기"는 학생 실력의 표준편차입니다. 클수록 잘하는 학생과 못하는 학생의 차이가 큽니다.</li>
+        <li>그림의 선 하나가 학생 한 명입니다. 점수가 오른 학생은 보라, 내린 학생은 빨강입니다. "다른 자료 뽑기"를 누르면 같은 조건으로 새 가상 자료를 만들고 자료 번호가 하나 늘어납니다. 처음 화면은 28번 자료입니다.</li>
+        <li>독립 두 표본 \(t = \dfrac{\bar x_{\text{후}} - \bar x_{\text{전}}}{s_p\sqrt{2/n}}\)(자유도 18), 짝지은 \(t = \dfrac{\bar d}{s_d/\sqrt n}\)(자유도 9). 계산은 <a href="09-01.html">9.1절</a>과 본문 9.3절을 따릅니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>실제 향상 δ = <b data-show="d">3</b>점</span><input type="range" name="d" min="0" max="10" step="1" value="3" aria-label="실제 향상"></label>
+        <label><span>개인차 크기 = <b data-show="sb">10</b>점</span><input type="range" name="sb" min="0" max="15" step="1" value="10" aria-label="개인차 크기"></label>
+      </div>
+      <canvas aria-label="학생별 전후 점수를 이은 선"></canvas>
+      <div class="btns"><button type="button" class="reroll">다른 자료 뽑기</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 상태(향상 3점, 개인차 10점, 28번 자료)에서 두 방법의 \(t\)와 p값을 기록합니다.</li>
+        <li>개인차를 0으로 줄이고 같은 것을 기록합니다.</li>
+        <li>개인차 10점에서 "다른 자료 뽑기"를 다섯 번 눌러 두 방법의 p값이 0.05보다 작은 횟수를 셉니다.</li>
+        <li>향상을 0으로 놓고 같은 일을 해 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>28번 자료, 개인차 10점: 전·후 점수의 표준편차는 10.23, 10.49로 크지만, 차이 \(d\)의 표준편차는 2.76으로 측정 잡음만 남습니다(이론값 \(2\sqrt2 \approx 2.83\)). 학생 사이의 실력 차가 뺄셈으로 지워지기 때문입니다.</li>
+        <li>그래서 같은 자료인데도 독립 두 표본으로 보면 \(t = 0.76\), \(p = 0.4586\)으로 "차이가 있다고 할 수 없다"가 되고, 짝지어 보면 \(t = 4.02\), \(p = 0.0030\)으로 향상이 뚜렷이 드러납니다.</li>
+        <li>개인차를 0으로 줄이면 독립 두 표본도 \(t = 3.68\), \(p = 0.0017\)이 되어 두 방법의 결론이 같아집니다. 짝을 지어 얻는 이득은 개인차가 클수록 큽니다.</li>
+        <li>개인차 10점에서 자료를 여러 번 새로 뽑으면 짝지은 검정은 대부분 \(p &lt; 0.05\)이지만 독립 두 표본 검정은 거의 언제나 \(p &gt; 0.05\)입니다.</li>
+        <li>향상이 0이면 두 방법 모두 대체로 \(p &gt; 0.05\)입니다. 20번 가운데 한 번쯤 작게 나오더라도 그것은 제1종 오류입니다(<a href="08-02.html">8.2절</a>).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(\operatorname{Var}(X_{\text{후}} - X_{\text{전}}) = \sigma_{\text{후}}^2 + \sigma_{\text{전}}^2 - 2\operatorname{Cov}\)에서, 같은 사람을 두 번 잰 자료는 공분산이 양수입니다. 이것으로 \(s_d\)가 작아지는 이유를 설명해 보세요.</li>
+        <li>짝지은 자료를 독립 두 표본으로 분석하는 것은 어떤 정보를 버리는 것인가요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>약의 효과를 볼 때 같은 환자에게 약과 위약을 차례로 쓰는 설계(교차 설계)도 같은 생각입니다. 표본 크기와 검정력의 관계는 <a href="08-02.html">8.2절</a>의 실습에서 확인해 보세요.</p>
+    </section>
+  </div>
+</article>

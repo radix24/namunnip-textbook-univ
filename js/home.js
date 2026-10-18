@@ -9,6 +9,29 @@
   const TAB_KEY = "quri-dept";
   const P = window.QProgress;
 
+  /* ───── 학교별 보기: 고른 대학의 커리큘럼에 있는 과목·대단원·성취기준만 남긴 학과 사본을 그린다 ─────
+     과목은 c.unis, 성취기준은 s.u(build.py가 맞춘 값). 빈 목록은 '미표시'라 '전체'에서만 보인다 */
+  const QU = window.QUni;
+  const UNIS = QU ? QU.LIST.filter((x) => U.some((d) => d.courses.some((c) => (c.unis || []).includes(x)))) : [];
+  let uni = QU ? QU.get() : "";
+  if (!UNIS.includes(uni)) uni = "";
+  const sIn = (s) => !uni || (s.u || []).includes(uni);
+  const view = (d) => !uni ? d : {
+    ...d,
+    courses: d.courses.filter((c) => (c.unis || []).includes(uni)).map((c) => ({
+      ...c,
+      units: c.units.filter((u) => u.s.some(sIn)).map((u) => {
+        const s = u.s.filter(sIn);
+        return { ...u, s, cards: s.reduce((a, x) => a + (x.k || []).length, 0) + (u.r || []).length };
+      }),
+    })),
+  };
+  const uniPick = (d) => !UNIS.length ? "" : `<label class="uni-pick"><span class="mono">학교</span><select aria-label="학교별 보기">
+      <option value="">전체</option>${UNIS.map((x) => {
+        const n = d.courses.filter((c) => (c.unis || []).includes(x)).length;
+        return `<option value="${esc(x)}"${x === uni ? " selected" : ""}${n ? "" : " disabled"}>${esc(x)}${n ? ` · ${n}` : ""}</option>`;
+      }).join("")}</select></label>`;
+
   /* ───── 학과 탭 ───── */
   const tabs = document.getElementById("dom-tabs");
   tabs.innerHTML = U.map((d) => `<button type="button" role="tab" data-dept="${d.id}" aria-selected="false" aria-controls="tree courses-list">${esc(d.short)}</button>`).join("");
@@ -24,15 +47,18 @@
       ${dn ? `<span class="lp" aria-hidden="true"><i style="--p:${(dn / nStd(c)).toFixed(3)}"></i></span>` : ""}</a>`;
   };
   const tree = document.getElementById("tree");
-  function drawTree(d) {
+  function drawTree(d0) {
+    const d = view(d0);
     const slots = [...new Set(d.courses.map(slot))].sort();
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
     const nx = d.courses.filter((c) => c.onlyU).length;
     tree.innerHTML = `
       <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
-        ${nx ? `<div class="scope-seg" role="group" aria-label="보기 범위"><button type="button" data-scope="main">주요 과목만</button><button type="button" data-scope="all">모든 과목 <span class="dim">+${nx}</span></button></div>` : ""}
-        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
-      <div class="tree-band sem-rows" data-track="${d.id}">${slots.map((s, i) => {
+        <div class="tree-ctl">${uniPick(d0)}
+        ${nx ? `<div class="scope-seg" role="group" aria-label="보기 범위"><button type="button" data-scope="main">주요 과목만</button><button type="button" data-scope="all">모든 과목 <span class="dim">+${nx}</span></button></div>` : ""}</div>
+        <p class="mono small dim">${uni ? `${esc(uni)} 커리큘럼에 있는 과목과 내용 요소만 보입니다. ` : ""}과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
+      ${uni && !d.courses.length ? `<p class="uni-none small">이 학과에는 ${esc(uni)} 표시가 붙은 과목이 아직 없습니다. 학교를 '전체'로 바꾸면 모든 과목이 보입니다.</p>` : ""}
+      <div class="tree-band sem-rows" data-track="${d.id}"${d.courses.length ? "" : " hidden"}>${slots.map((s, i) => {
         const [y, m] = s.split("-"), newYear = i > 0 && slots[i - 1].split("-")[0] !== y;
         const cs = d.courses.filter((c) => slot(c) === s);
         return `
@@ -49,6 +75,13 @@
     document.body.dataset.scope = scope;
     tree.querySelectorAll("[data-scope]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.scope === scope)));
   }
+  tree.addEventListener("change", (e) => {
+    const sel = e.target.closest(".uni-pick select"); if (!sel) return;
+    uni = UNIS.includes(sel.value) ? sel.value : "";
+    if (QU) QU.set(uni);
+    drawTree(dept); drawList(dept); apply();
+    tree.querySelector(".uni-pick select")?.focus({ preventScroll: true });
+  });
   tree.addEventListener("click", (e) => {
     const b = e.target.closest("[data-scope]"); if (!b) return;
     scope = b.dataset.scope === "all" ? "all" : "main"; paintScope();
@@ -68,7 +101,8 @@
   });
   const NEXT = new Map();
   ALL.forEach((c) => preCodes(c.pre).forEach((k) => { if (k !== c.code) (NEXT.get(k) || NEXT.set(k, []).get(k)).push(c); }));
-  function drawList(d) {
+  function drawList(d0) {
+    const d = view(d0);
     host.innerHTML = d.courses.map((c) => {
       /* 대단원은 한 줄: 번호 · 제목 · 진도(할 수 있게 된 성취기준 / 전체). 성취기준 문장은 검색에만 쓰고 과목 목차에서 본다 */
       const units = c.units.map((u) => {
