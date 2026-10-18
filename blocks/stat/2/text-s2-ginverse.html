@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통2-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s2-ginverse" data-kind="본문" data-std="응통2-06-03">
+  <header class="card-head"><span class="no"></span><h2>일반화 역행렬과 계수가 부족한 최소제곱</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>무어-펜로즈 일반화 역행렬을 SVD로 구한다.</li>
+        <li>계수가 부족한 최소제곱에서 최소 노름 해를 구하고 추정 가능한 함수를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>특이값 분해 (<a href="06-01.html">6.1절</a>), 사영 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>역행렬이 없을 때의 차선</h3>
+    <p>설명변수가 중복되면 \(X^\top X\)의 역행렬이 없어 최소제곱 해가 무수히 많습니다(1.2절 예제). 그래도 적합값은 하나로 정해지고, 해들 가운데 길이가 가장 짧은 것을 고를 수 있습니다.</p>
+
+    <h3><span class="no">6.3.1</span>무어-펜로즈 역행렬</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.3.1</span>
+      <p>\(A = U\Sigma V^\top\)일 때 \(A^+ = V\Sigma^+U^\top\). \(\Sigma^+\)는 0이 아닌 특이값의 역수를 대각에 놓고 전치한 것.</p>
+    </div>
+    <p>성질: \(AA^+A = A\), \(A^+AA^+ = A^+\), \(AA^+\)와 \(A^+A\)는 대칭. \(A\)가 가역이면 \(A^+ = A^{-1}\), 열이 독립이면 \(A^+ = (A^\top A)^{-1}A^\top\). \(AA^+\)는 \(C(A)\)로의 사영입니다.</p>
+
+    <h3><span class="no">6.3.2</span>계수 부족 최소제곱</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.3.2</span>
+      <p>\(\hat{\mathbf b} = X^+\mathbf y\)는 \(\|\mathbf y - X\mathbf b\|\)를 최소화하는 해 가운데 \(\|\mathbf b\|\)가 가장 작은 것이다. 모든 최소제곱 해는 \(\hat{\mathbf b} + N(X)\)의 원소이고, 적합값 \(X\hat{\mathbf b}\)는 모두 같다.</p>
+    </div>
+    <p>계수 자체는 정해지지 않지만 \(\mathbf c^\top\boldsymbol\beta\)에서 \(\mathbf c\)가 \(X\)의 행공간에 있으면(어떤 \(\mathbf a\)에 대해 \(\mathbf c = X^\top\mathbf a\)) 모든 해에서 같은 값을 줍니다. 이런 함수를 <b>추정 가능한 함수</b>라 합니다. 분산분석에서 처리 효과 \(\tau_i\) 각각은 추정할 수 없어도 차이 \(\tau_1 - \tau_2\)는 추정 가능합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.3</span>
+      <p>\(X = \begin{pmatrix}1 &amp; 1\\ 1 &amp; 1\end{pmatrix}\), \(\mathbf y = (2, 4)\)의 최소 노름 최소제곱 해는?</p>
+    </div>
+    <p><i>풀이.</i> 적합값은 평균 \((3, 3)\)이어야 하므로 \(b_1 + b_2 = 3\)인 모든 \(\mathbf b\)가 해입니다. 그중 길이가 가장 짧은 것은 \((1.5, 1.5)\). SVD: \(\sigma_1 = 2\), \(\mathbf u_1 = \mathbf v_1 = (1,1)/\sqrt2\), \(X^+ = \frac14\begin{pmatrix}1 &amp; 1\\1 &amp; 1\end{pmatrix}\), \(X^+\mathbf y = (1.5, 1.5)\). \(b_1 + b_2\)는 추정 가능, \(b_1\) 자체는 아닙니다.</p>
+    <pre><code>MASS::ginv(matrix(1, 2, 2)) %*% c(2, 4)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(A^+ = V\Sigma^+U^\top\): 0 아닌 특이값만 뒤집음.</li>
+        <li>\(X^+\mathbf y\)는 최소 노름 최소제곱 해, 적합값은 유일.</li>
+        <li>행공간의 선형결합만 추정 가능.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(2b_1 + 2b_2\)와 \(b_1 - b_2\) 중 추정 가능한 것은?
+          <details><summary>답</summary><p>\(2b_1 + 2b_2\)(값 6). \(b_1 - b_2\)는 해마다 달라 추정할 수 없습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
