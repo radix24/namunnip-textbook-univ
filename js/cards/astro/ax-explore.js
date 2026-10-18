@@ -350,4 +350,21 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 14. 위성 자료 예산 (천우5-05-02) */
+  (() => {
+    const S = QSim.card("exp-a5-budget"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), side = Math.pow(2, S.val("lp")), nd = S.val("nd"), bits = 16, nimg = S.val("ni"), comp = S.val("cp"), rate = S.val("rt"), hrs = S.val("hr"), oh = 0.2;
+      const vol = side * side * bits * nd * nimg / comp;           // 비트/일
+      const cap = rate * 1e6 * hrs * 3600 * (1 - oh);              // 과학 자료에 쓸 수 있는 비트/일
+      const GB = (b) => b / 8e9, ratio = cap / vol;
+      const v = QSim.view(cv, 0.45), f = QSim.frame(v, { x0: 0, x1: 2, y0: 0, y1: Math.max(GB(vol), GB(cap)) * 1.25, yl: "GB/일", pad: 34 }); f.axes({ noGrid: false });
+      const g = v.g, bar = (x, val, col, txt) => { g.fillStyle = col; g.globalAlpha = 0.8; g.fillRect(f.X(x - 0.3), f.Y(val), f.X(x + 0.3) - f.X(x - 0.3), f.Y(0) - f.Y(val)); g.globalAlpha = 1; f.text(txt, x, val * 1.04 + 0.01 * f.y1, c.ink, "center"); };
+      bar(0.55, GB(vol), c.main, `만드는 자료 ${fx(GB(vol), 1)}`); bar(1.45, GB(cap), ratio >= 1 ? c.acc : c.warn, `보낼 수 있는 양 ${fx(GB(cap), 1)}`);
+      S.out(`검출기 ${nd}개 × ${side}² 화소 × ${bits}비트, 하루 ${nimg}번 노출, 압축 ${fx(comp, 1)}배 → 하루 ${fx(GB(vol), 1)} GB\n전송 ${rate} Mbit/s × 교신 ${hrs}시간, 하우스키핑·오류 정정 몫 20% 제외 → 하루 ${fx(GB(cap), 1)} GB\n${ratio >= 1 ? `여유 ${fx(ratio, 2)}배: 모두 내려받을 수 있다` : `모자람: 만드는 자료의 ${fx(ratio * 100, 0)}%만 보낼 수 있다. 압축, 기내 처리, 교신 시간을 늘려야 한다`}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
