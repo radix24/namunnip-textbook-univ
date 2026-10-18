@@ -25,7 +25,7 @@
     const r = shown > 200 ? 1.6 : 2.6;
     for (let j = 1; j <= shown; j++) f.dot(j, s[j], j >= N && j <= M ? c.main : c.ink3, r);
     k.out(`${Sr.tex} · N = ${N}부터 4N = ${M}까지 항들의 폭(가장 큰 것 − 가장 작은 것) = ${fmt(thi - tlo, 5)}\n` +
-      `N을 2배로 하면 이 폭이 ${k.val("ser") === "harm" ? "줄지 않습니다(약 ln 4 ≈ 1.386 그대로)" : "줄어듭니다"}`);
+      `N을 2배로 하면 이 폭이 ${k.val("ser") === "harm" ? "줄지 않습니다(ln 4 ≈ 1.386 근처)" : "줄어듭니다"}`);
   }
   S.redraw();
 })();
