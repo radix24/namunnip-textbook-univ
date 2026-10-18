@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-mh" data-kind="본문" data-std="응통15-05-01">
+  <header class="card-head"><span class="no"></span><h2>메트로폴리스-헤이스팅스 알고리즘</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>메트로폴리스-헤이스팅스 알고리즘을 구현한다.</li>
+        <li>상세 균형으로 목표분포가 정상분포임을 보인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>마르코프 연쇄의 정상분포와 상세 균형 (응통9 3.3, 3.4절), 기각법 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>정규화 상수를 모를 때</h3>
+    <p>베이즈 사후분포는 \(\pi(\theta) \propto L(\theta)p(\theta)\)로, 비례 상수(주변 가능도)가 고차원 적분이라 계산할 수 없는 경우가 대부분입니다. 메트로폴리스-헤이스팅스(MH)는 밀도의 비만으로 \(\pi\)에서 표본을 만드는 마르코프 연쇄입니다.</p>
+
+    <h3><span class="no">5.1.1</span>알고리즘</h3>
+    <p>현재 상태 \(x\)에서</p>
+    <ol>
+      <li>제안 \(y \sim q(\cdot \mid x)\).</li>
+      <li>수용 확률 \(\alpha(x, y) = \min\left\{1, \dfrac{\pi(y)q(x \mid y)}{\pi(x)q(y \mid x)}\right\}\)로 \(y\)로 옮기고, 아니면 \(x\)에 머문다(머문 것도 표본으로 센다).</li>
+    </ol>
+    <p>제안이 대칭(\(q(y\mid x) = q(x \mid y)\), 예: \(y = x + \varepsilon\))이면 \(\alpha = \min\{1, \pi(y)/\pi(x)\}\)(메트로폴리스 알고리즘). 확률이 높은 곳으로는 항상 가고, 낮은 곳으로는 비율만큼 가끔 갑니다.</p>
+
+    <h3><span class="no">5.1.2</span>왜 \(\pi\)로 가나</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.1.1</span>
+      <p>MH 연쇄의 전이 핵 \(P(x, y) = q(y\mid x)\alpha(x, y)\) (\(y \ne x\))는 상세 균형 \(\pi(x)P(x,y) = \pi(y)P(y,x)\)를 만족한다. 따라서 \(\pi\)는 정상분포이다.</p>
+    </div>
+    <p class="tb-proof">\(\pi(x)q(y\mid x)\alpha(x,y) = \min\{\pi(x)q(y\mid x), \pi(y)q(x\mid y)\}\)이고 이 식은 \(x\)와 \(y\)에 대해 대칭이므로 \(\pi(y)q(x\mid y)\alpha(y,x)\)와 같습니다. <span class="qed">∎</span></p>
+    <p>연쇄가 기약·비주기이면 에르고딕 정리로 \(\frac1n\sum h(X_t) \to E_\pi[h]\)입니다(응통9 3.3절).</p>
+
+    <h3><span class="no">5.1.3</span>조율</h3>
+    <p>랜덤워크 제안의 폭이 너무 작으면 수용률은 높지만 거의 움직이지 않고, 너무 크면 대부분 기각되어 제자리에 머뭅니다. 1차원 정규 목표에서 최적 수용률은 약 0.44, 고차원에서는 약 0.23으로 알려져 있습니다. 이 절의 실습 카드에서 폭을 바꿔 확인할 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.2</span>
+      <p>베르누이 자료 \(n = 20\), 성공 14, 사전분포 균일일 때 사후분포 \(\pi(p) \propto p^{14}(1-p)^6\)에서 MH로 표본을 뽑는 코드를 쓰세요.</p>
+    </div>
+    <pre><code>lp &lt;- function(p) if (p &lt;= 0 || p &gt;= 1) -Inf else 14*log(p) + 6*log(1-p)
+x &lt;- numeric(10000); x[1] &lt;- 0.5
+for (t in 2:10000) { y &lt;- x[t-1] + rnorm(1, 0, 0.1)
+  x[t] &lt;- if (log(runif(1)) &lt; lp(y) - lp(x[t-1])) y else x[t-1] }
+mean(x[-(1:1000)])    # 참값 15/22 = 0.682 근처</code></pre>
+    <p>로그 척도에서 비교해 넘침을 피했습니다. 처음 1000개는 번인으로 버렸습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>제안 → \(\min\{1, \pi(y)q(x|y)/(\pi(x)q(y|x))\}\)로 수용.</li>
+        <li>상세 균형으로 \(\pi\)가 정상분포, 정규화 상수 불필요.</li>
+        <li>제안 폭을 수용률로 조율합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>독립 제안(\(q(y \mid x) = g(y)\))의 수용 확률을 쓰고, 기각법과 다른 점을 말하세요.
+          <details><summary>답</summary><p>\(\min\{1, \frac{\pi(y)g(x)}{\pi(x)g(y)}\}\). 기각되면 다시 뽑는 기각법과 달리 현재 값을 한 번 더 셉니다. \(M\)을 몰라도 되지만 표본이 서로 상관됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
