@@ -49,4 +49,39 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 2. 부분 속도 인자로 본 배향과 활성화 (화학5-03-02) */
+  (() => {
+    const S = QSim.card("lab-ch5-prf"); if (!S) return;
+    const cv = S.$("canvas");
+    // 나이트로화의 부분 속도 인자 [f_o, f_m, f_p] (Ingold 등의 고전 측정값, 조건에 따라 달라짐)
+    const D = {
+      tol: { n: "톨루엔 (−CH₃)", f: [42, 2.5, 58] },
+      tbu: { n: "tert-뷰틸벤젠 (−C(CH₃)₃)", f: [5.5, 4.0, 75] },
+      cl: { n: "클로로벤젠 (−Cl)", f: [0.029, 0.0009, 0.137] },
+      br: { n: "브로모벤젠 (−Br)", f: [0.037, 0.0011, 0.112] },
+      est: { n: "벤조산 에틸 (−CO₂Et)", f: [0.0026, 0.0079, 0.0009] }
+    };
+    const fmt = (x) => x >= 100 ? x.toFixed(0) : x >= 0.1 ? x.toPrecision(3) : x.toExponential(2);
+    function draw() {
+      const c = C(), key = S.val("sub");
+      const custom = key === "own";
+      S.$$(".own").forEach((e) => { e.style.display = custom ? "" : "none"; });
+      const f = custom ? [S.val("lo"), S.val("lm"), S.val("lp")].map((x) => Math.pow(10, x)) : D[key].f;
+      const name = custom ? "직접 정한 치환기" : D[key].n;
+      const w = [2 * f[0], 2 * f[1], f[2]], s = w[0] + w[1] + w[2], pct = w.map((x) => 100 * x / s), rel = s / 6;
+      const v = QSim.view(cv, 0.5), fr = QSim.frame(v, { x0: 0, x1: 4, y0: 0, y1: 100, yl: "이성질체 (%)", pad: 34 });
+      fr.axes();
+      const lab = ["오르토", "메타", "파라"], cols = [c.main, RED, "#2f8f5b"];
+      pct.forEach((p, i) => {
+        const g = v.g, x0 = fr.X(i + 0.6), x1 = fr.X(i + 1.4);
+        g.fillStyle = cols[i]; g.globalAlpha = 0.8; g.fillRect(x0, fr.Y(p), x1 - x0, fr.Y(0) - fr.Y(p)); g.globalAlpha = 1;
+        fr.text(lab[i] + " " + p.toFixed(1) + "%", i + 1, Math.min(p, 88) + 4, c.ink, "center");
+      });
+      const kind = rel > 1 ? "활성화기 (벤젠보다 빠름)" : "불활성화기 (벤젠보다 느림)";
+      const ori = pct[1] > 50 ? "메타 지향" : pct[1] < 20 ? "오르토·파라 지향" : "뚜렷하지 않음";
+      S.out(`${name}의 나이트로화\n부분 속도 인자 f_o = ${fmt(f[0])}, f_m = ${fmt(f[1])}, f_p = ${fmt(f[2])}\n이성질체 분포 오르토 ${pct[0].toFixed(1)}%, 메타 ${pct[1].toFixed(1)}%, 파라 ${pct[2].toFixed(1)}%\n벤젠 대비 상대 속도 (2f_o + 2f_m + f_p)/6 = ${fmt(rel)} → ${kind}, ${ori}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
