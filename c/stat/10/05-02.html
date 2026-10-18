@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>이분산이 있을 때 가중 최소제곱을 적용하기 · 회귀분석 — QURI</title>
-  <meta name="description" content="회귀분석 5.2 이분산이 있을 때 가중 최소제곱을 적용하기 — 성취기준: 이분산이 있을 때 가중 최소제곱을 적용할 수 있다.">
+  <title>가중 최소제곱 · 회귀분석 — QURI</title>
+  <meta name="description" content="회귀분석 5.2 가중 최소제곱 — 성취기준: 이분산이 있을 때 가중 최소제곱을 적용할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;5.2 이분산이 있을 때 가중 최소제곱을 적용하기&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;5.2 가중 최소제곱&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,93 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통10-05-02">
+  <section class="topic-hero u-hero has-text" data-sec="응통10-05-02" data-u="서울대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">회귀분석</a><span class="mono">/</span><a href="05.html">5. 변환과 가중 최소제곱</a></div>
-    <h1><span class="sec-no mono">5.2</span>이분산이 있을 때 가중 최소제곱을 적용하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통10-05-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-05-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통10-05-02" aria-label="할 수 있음"><span class="t">이분산이 있을 때 가중 최소제곱을 적용할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.2</span>가중 최소제곱</h1>
+    <p class="sec-std"><span class="mono">[응통10-05-02]</span> 이분산이 있을 때 가중 최소제곱을 적용할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>추정량</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>가중치 정하기</span></a></li><li><a href="#s5-2-3"><span class="mono">5.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s10-wls"><span class="mono">본문</span><span>가중 최소제곱</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s10-wls" data-kind="본문" data-std="응통10-05-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이분산이 있을 때 가중 최소제곱 추정량을 쓴다.</li>
+        <li>가중치를 정하는 방법을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>가우스-마르코프 정리 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>정확한 자료에 더 큰 목소리를</h3>
+    <p>여러 지역의 평균 소득을 자료로 쓰는데, 어떤 지역은 1000명, 어떤 지역은 10명을 조사해 구한 평균이라면 앞의 값이 훨씬 정확합니다. 모든 점을 똑같이 대하는 보통 최소제곱보다, 정확한 점에 더 큰 가중치를 주는 편이 낫습니다.</p>
+
+    <h3 id="s5-2-1"><span class="no">5.2.1</span>추정량</h3>
+    <p>\(\mathrm{Var}(\varepsilon_i) = \sigma^2/w_i\)(가중치 \(w_i\)는 알려짐)라 합시다. \(\sqrt{w_i}\)를 양변에 곱하면 \(\sqrt{w_i}Y_i = \sqrt{w_i}\mathbf x_i^\top\boldsymbol\beta + \sqrt{w_i}\varepsilon_i\)이고 새 오차의 분산은 \(\sigma^2\)로 같아집니다. 이 변환된 자료에 보통 최소제곱을 하면</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.2.1</span>
+      <p>\(\hat{\boldsymbol\beta}_W = (X^\top WX)^{-1}X^\top W\mathbf y\), \(W = \mathrm{diag}(w_1, \ldots, w_n)\). 이것은 \(\sum w_i(y_i - \mathbf x_i^\top\mathbf b)^2\)을 최소화하며, 가우스-마르코프 정리에 따라 BLUE이다.</p>
+    </div>
+    <p>보통 최소제곱도 여전히 불편이지만 분산이 더 크고, 무엇보다 보통의 표준오차 공식(\(\sigma^2(X^\top X)^{-1}\))이 틀려 신뢰구간과 검정이 잘못됩니다.</p>
+
+    <h3 id="s5-2-2"><span class="no">5.2.2</span>가중치 정하기</h3>
+    <ul>
+      <li>평균을 자료로 쓰면 \(w_i = n_i\)(표본 크기).</li>
+      <li>잔차 그림에서 표준편차가 \(x\)에 비례하면 \(w_i = 1/x_i^2\).</li>
+      <li>모르면 먼저 보통 최소제곱을 하고, \(|e_i|\)를 \(x\)(또는 \(\hat y\))로 회귀해 표준편차 함수를 추정한 뒤 \(w_i = 1/\hat\sigma_i^2\)로 다시 적합합니다.</li>
+      <li>가중치를 정하기 어려우면 보통 최소제곱 계수에 이분산에 강건한 표준오차(화이트 표준오차)를 쓰는 방법도 있습니다(R: <code>sandwich</code> 패키지).</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>지역 평균 자료 \((x_i, \bar y_i, n_i)\)에 가중 회귀를 적합하는 R 코드를 쓰세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>lm(ybar ~ x, weights = n)</code>. \(\mathrm{Var}(\bar y_i) = \sigma^2/n_i\)이므로 가중치는 \(n_i\)입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Var}(\varepsilon_i) = \sigma^2/w_i\)이면 \((X^\top WX)^{-1}X^\top W\mathbf y\)가 BLUE.</li>
+        <li>가중치는 분산의 역수: 표본 크기, 추정한 분산 함수.</li>
+        <li>대안: 보통 최소제곱 + 강건 표준오차.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-2-3"><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>원점을 지나는 모형 \(Y_i = \beta x_i + \varepsilon_i\), \(\mathrm{Var}(\varepsilon_i) = \sigma^2x_i\)의 가중 최소제곱 추정량은?
+          <details><summary>답</summary><p>\(w_i = 1/x_i\). \(\sum (y_i - bx_i)^2/x_i\)를 최소화: \(\hat\beta = \sum y_i/\sum x_i\) (비 추정량, 응통8 04단원).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s10-wls" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통10-05-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-05-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통10-05-02" aria-label="할 수 있음"><span class="t">이분산이 있을 때 가중 최소제곱을 적용할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-01.html">← 5.1 반응 변수 변환으로 모형 가정을 개선하기</a></span>
-        <span><a href="06-01.html">6.1 AIC, BIC, 수정 결정계수로 모형을 비교하기 →</a></span>
+        <span><a href="05-01.html">← 5.1 반응 변수 변환</a></span>
+        <span><a href="06-01.html">6.1 AIC, BIC, 수정 결정계수로 모형 비교 →</a></span>
       </nav>
     </div>
   </div>

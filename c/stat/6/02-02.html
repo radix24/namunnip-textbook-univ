@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>확률변수의 변환으로 새 분포를 구하기 · 수리통계학(1) — QURI</title>
-  <meta name="description" content="수리통계학(1) 2.2 확률변수의 변환으로 새 분포를 구하기 — 성취기준: 확률변수의 변환으로 새 분포를 구할 수 있다.">
+  <title>확률변수의 변환 · 수리통계학(1) — QURI</title>
+  <meta name="description" content="수리통계학(1) 2.2 확률변수의 변환 — 성취기준: 확률변수의 변환으로 새 분포를 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통6&quot;, &quot;title&quot;: &quot;2.2 확률변수의 변환으로 새 분포를 구하기&quot;, &quot;sub&quot;: &quot;수리통계학(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통6&quot;, &quot;title&quot;: &quot;2.2 확률변수의 변환&quot;, &quot;sub&quot;: &quot;수리통계학(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,104 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통6-02-02">
+  <section class="topic-hero u-hero has-text" data-sec="응통6-02-02" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">수리통계학(1)</a><span class="mono">/</span><a href="02.html">2. 확률변수와 분포</a></div>
-    <h1><span class="sec-no mono">2.2</span>확률변수의 변환으로 새 분포를 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통6-02-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통6-02-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통6-02-02" aria-label="할 수 있음"><span class="t">확률변수의 변환으로 새 분포를 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.2</span>확률변수의 변환</h1>
+    <p class="sec-std"><span class="mono">[응통6-02-02]</span> 확률변수의 변환으로 새 분포를 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-2-1"><span class="mono">2.2.1</span><span>누적분포함수 방법</span></a></li><li><a href="#s2-2-2"><span class="mono">2.2.2</span><span>단조 변환 공식</span></a></li><li><a href="#s2-2-3"><span class="mono">2.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s6-transform"><span class="mono">본문</span><span>확률변수의 변환</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s6-transform" data-kind="본문" data-std="응통6-02-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>누적분포함수 방법으로 \(Y = g(X)\)의 분포를 구한다.</li>
+        <li>단조 변환의 밀도 공식을 유도하고 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>분포함수와 밀도함수 (<a href="02-01.html">2.1절</a>), 합성함수의 미분.</li>
+      </ul>
+    </div>
 
+    <h3>섭씨에서 화씨로, 반지름에서 넓이로</h3>
+    <p>\(X\)의 분포를 알 때 \(Y = 1.8X + 32\)나 \(Y = \pi X^2\)의 분포를 알고 싶은 일이 많습니다. 컴퓨터가 균일 난수로 다른 분포의 난수를 만드는 원리도 변환입니다.</p>
+
+    <h3 id="s2-2-1"><span class="no">2.2.1</span>누적분포함수 방법</h3>
+    <p>가장 일반적인 방법은 \(F_Y(y) = P(g(X) \le y)\)를 \(X\)에 대한 사건으로 바꿔 계산한 뒤 미분하는 것입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(X \sim N(0, 1)\)일 때 \(Y = X^2\)의 밀도함수를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(y &gt; 0\)에서 \(F_Y(y) = P(-\sqrt y \le X \le \sqrt y) = \Phi(\sqrt y) - \Phi(-\sqrt y)\). 미분하면 \(f_Y(y) = \phi(\sqrt y)\frac{1}{2\sqrt y} + \phi(-\sqrt y)\frac1{2\sqrt y} = \frac{1}{\sqrt{2\pi y}}e^{-y/2}\). 이것이 자유도 1인 카이제곱 분포입니다(6.1절). \(X^2\)는 단조가 아니므로 양쪽 가지를 모두 더했습니다.</p>
+
+    <h3 id="s2-2-2"><span class="no">2.2.2</span>단조 변환 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.2</span>
+      <p>\(X\)의 밀도가 \(f_X\)이고 \(g\)가 \(X\)가 가질 수 있는 값의 구간에서 미분가능하고 엄격히 단조이면, \(Y = g(X)\)의 밀도는</p>
+      \[f_Y(y) = f_X\big(g^{-1}(y)\big)\left|\frac{d}{dy}g^{-1}(y)\right|.\]
+    </div>
+    <p class="tb-proof">\(g\)가 증가하면 \(F_Y(y) = P(X \le g^{-1}(y)) = F_X(g^{-1}(y))\)이고, 연쇄법칙으로 미분하면 \(f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)\)입니다. \(g\)가 감소하면 \(F_Y(y) = P(X \ge g^{-1}(y)) = 1 - F_X(g^{-1}(y))\)이고 미분하면 부호가 바뀌는데, 이때 \(\frac{d}{dy}g^{-1} &lt; 0\)이라 절댓값으로 합쳐 쓸 수 있습니다. <span class="qed">∎</span></p>
+    <p>절댓값 인자는 변환이 구간을 늘이거나 줄이는 비율입니다. 넓이(확률)는 그대로이므로 구간이 늘어난 만큼 밀도가 낮아집니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.3 (역변환법)</span>
+      <p>\(U \sim U(0, 1)\)일 때 \(Y = -\frac1\lambda\ln U\)의 분포는?</p>
+    </div>
+    <p><i>풀이.</i> \(g(u) = -\ln u/\lambda\)는 감소, \(g^{-1}(y) = e^{-\lambda y}\), \(|dg^{-1}/dy| = \lambda e^{-\lambda y}\). \(f_U = 1\)이므로 \(f_Y(y) = \lambda e^{-\lambda y}\) (\(y &gt; 0\)), 지수분포입니다. 일반적으로 \(F^{-1}(U)\)는 분포함수 \(F\)를 따르며, 이 방법으로 난수를 만듭니다(응통15 04단원).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>일반적인 방법: \(F_Y(y) = P(g(X) \le y)\)를 구해 미분.</li>
+        <li>단조 변환: \(f_Y(y) = f_X(g^{-1}(y))|dg^{-1}/dy|\).</li>
+        <li>\(F^{-1}(U)\)는 분포 \(F\)를 따릅니다(역변환법).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-2-3"><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X \sim N(\mu, \sigma^2)\)이면 \(Y = aX + b\) (\(a \ne 0\))의 분포는?
+          <details><summary>답</summary><p>정리 2.2.2로 \(N(a\mu + b, a^2\sigma^2)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(X \sim U(0, 1)\)일 때 \(Y = \sqrt X\)의 밀도는?
+          <details><summary>답</summary><p>\(g^{-1}(y) = y^2\), \(f_Y(y) = 2y\) (\(0 \le y \le 1\)).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s6-transform" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통6-02-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통6-02-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통6-02-02" aria-label="할 수 있음"><span class="t">확률변수의 변환으로 새 분포를 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/6/01.html"><span class="mono">대단원 1</span><span><b>확률의 공리와 조건부확률</b></span></a></li><li><a href="../../../c/stat/1/03.html"><span class="mono">대단원 3</span><span>미분적분학 <b>적분과 확률 밀도</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-01.html">← 2.1 이산, 연속 확률변수의 분포함수와 밀도함수를 다루기</a></span>
-        <span><a href="03-01.html">3.1 기대값, 분산, 적률을 계산하기 →</a></span>
+        <span><a href="02-01.html">← 2.1 확률변수, 분포함수, 밀도함수</a></span>
+        <span><a href="03-01.html">3.1 기대값, 분산, 적률 →</a></span>
       </nav>
     </div>
   </div>

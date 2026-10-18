@@ -1,0 +1,56 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전22-04-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/ee-explore.js"]
+}
+-->
+<article class="card q-card" id="exp-e22-rlocus" data-kind="탐구" data-std="전전22-04-01 전전22-02-01">
+  <header class="card-head"><span class="no"></span><h2>이득을 올리면 극점은 어디로 가나: 근궤적</h2><span class="kind">탐구 · 극점 위치와 계단 응답</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>되먹임 제어기의 이득 K를 올리면 응답이 빨라질 것 같습니다. 그런데 어느 정도 넘으면 출렁임이 커지고, 결국 발산합니다. 이 과정을 s 평면에서 극점의 움직임으로 볼 수 있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>열린 루프 \(G(s) = \dfrac{K}{s(s + a)(s + b)}\)에 단위 되먹임을 걸면 닫힌 루프 특성방정식은 \(s^3 + (a + b)s^2 + ab\,s + K = 0\)입니다.</li>
+        <li>이 방정식의 근(닫힌 루프 극점)이 K에 따라 움직이는 자취가 <b>근궤적</b>입니다. K = 0에서 열린 루프 극점(0, −a, −b)에서 출발합니다.</li>
+        <li>극점 \(-\sigma \pm j\omega_d\)가 응답을 정합니다. \(\sigma\)가 클수록 빨리 줄고(정착 시간 약 \(4/\sigma\)), 실수축과 이루는 각이 클수록 감쇠비 \(\zeta\)가 작아 많이 출렁입니다.</li>
+        <li>루스(Routh) 판별법으로 구한 안정 한계는 \(K = ab(a + b)\)입니다. 이 카드의 이득 막대는 이 값에 대한 비로 정합니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>a = <b data-show="a" data-fix="1">1.0</b></span><input type="range" name="a" min="0.5" max="10" step="0.5" value="1" aria-label="열린 루프 극점 a"></label>
+        <label><span>b = <b data-show="b" data-fix="1">4.0</b></span><input type="range" name="b" min="0.5" max="10" step="0.5" value="4" aria-label="열린 루프 극점 b"></label>
+        <label><span>log₁₀(K / 안정 한계) = <b data-show="lk" data-fix="2">-1.00</b></span><input type="range" name="lk" min="-3" max="0.5" step="0.01" value="-1" aria-label="이득의 로그, 안정 한계 대비"></label>
+      </div>
+      <canvas aria-label="근궤적과 지금 이득의 닫힌 루프 극점"></canvas>
+      <canvas aria-label="닫힌 루프 계단 응답"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>작은 이득</b><span>a = 1, b = 4, K를 안정 한계의 0.01배로 하면 극점이 모두 실수축 위에 있어 넘침 없이 느리게 1에 다가갑니다.</span></li>
+        <li><b>갈라지는 점</b><span>K를 키우면 0과 −1에서 출발한 두 극점이 그 사이에서 만나 위아래로 갈라집니다. 이때부터 출렁임이 생깁니다.</span></li>
+        <li><b>안정 한계</b><span>막대를 0(안정 한계)에 놓으면 두 극점이 허수축 위 \(\pm j\sqrt{ab} = \pm j2\)에 닿아 응답이 줄지 않고 계속 진동합니다. 0보다 크면 오른쪽 반평면으로 넘어가 발산합니다.</span></li>
+        <li><b>사양 맞추기</b><span>넘침이 약 16%(\(\zeta \approx 0.5\))가 되는 K를 찾아보세요. 막대를 −0.87 근처(K ≈ 2.7)에 두면 감쇠비 약 0.5, 넘침 약 16%, 정착 시간 약 10초입니다. 셋째 극점(약 −4.2)이 멀리 있어 두 극점이 응답을 거의 정합니다.</span></li>
+        <li><b>느린 극점</b><span>막대를 −2(K = 0.2)로 내리면 한 극점이 원점 가까이(약 −0.05)에 남아, 넘침은 없지만 60초가 지나도 1에 닿지 않습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>이득만으로 원하는 극점에 갈 수 없으면 근궤적 모양 자체를 바꿔야 합니다. 영점을 더하는 진상 보상기는 근궤적을 왼쪽으로 끌어당겨 빠르고 덜 출렁이는 응답을 만듭니다(전전22-04-02). 같은 시스템의 안정 한계를 주파수 응답으로 보면 이득 여유가 됩니다(전전22-05).</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"이득을 올리면 언제나 더 빠르고 정확해진다."</b> 정상상태 오차는 줄지만, 극점이 허수축 쪽으로 가면서 출렁임이 커지고 결국 불안정해집니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

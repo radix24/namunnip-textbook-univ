@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리18-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p18-eigen" data-kind="본문" data-std="물리18-02-01">
+  <header class="card-head"><span class="no"></span><h2>대칭·에르미트 행렬의 대각화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>고유값 문제가 물리에서 "특별한 방향 찾기"임을 안다.</li>
+        <li>대칭(에르미트) 행렬의 고유값이 실수이고 고유벡터가 직교함을 증명한다.</li>
+        <li>행렬을 \(\mathsf A = \mathsf U\mathsf D\mathsf U^\dagger\)로 대각화해 계산을 쉽게 한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬과 고유값 (<a href="../../common/8/03-01.html">공통8 3.1절</a>), 관성 텐서의 주축 (<a href="../4/05-01.html">물리4 5.1절</a>), 정규 모드 (<a href="../4/04-01.html">물리4 4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <p>관성 텐서의 주축, 연성 진동의 정규 모드, 양자역학의 에너지 준위는 모두 같은 질문의 답입니다. "행렬을 곱해도 방향이 바뀌지 않는 벡터는 무엇이고, 그때 몇 배가 되나?" 물리에 나오는 행렬은 대부분 대칭(실수) 또는 에르미트(복소수)라서, 이런 특별한 방향이 늘 서로 수직인 세트로 존재합니다. 그 방향을 좌표축으로 잡으면 얽혀 있던 문제가 독립된 작은 문제로 갈라집니다.</p>
+
+    <h3><span class="no">2.1.1</span>용어</h3>
+    <ul class="tb-list">
+      <li><b>고유값·고유벡터</b>: \(\mathsf A\mathbf v = \lambda\mathbf v\)를 만족하는 수 \(\lambda\)와 0이 아닌 벡터 \(\mathbf v\).</li>
+      <li><b>대칭 행렬</b>: \(\mathsf A^{\mathsf T} = \mathsf A\)인 실수 행렬.</li>
+      <li><b>에르미트 행렬</b>: \(\mathsf A^\dagger = \mathsf A\) (\(\dagger\)는 전치 후 켤레). 대칭 행렬의 복소수 판.</li>
+      <li><b>유니타리 행렬</b>: \(\mathsf U^\dagger\mathsf U = \mathsf I\). 실수이면 직교 행렬. 길이와 내적을 보존한다.</li>
+      <li><b>특성 방정식</b>: \(\det(\mathsf A - \lambda\mathsf I) = 0\). 고유값을 주는 다항식.</li>
+    </ul>
+
+    <h3><span class="no">2.1.2</span>실수 고유값과 직교성</h3>
+    <p>목적: 물리량(에너지, 진동수의 제곱, 관성 모멘트)이 실수로 나오고, 서로 다른 모드가 섞이지 않음을 보장하기.</p>
+    <ol class="tb-steps">
+      <li>\(\mathsf A\mathbf v = \lambda\mathbf v\)의 양변에 왼쪽에서 \(\mathbf v^\dagger\)를 곱하면 \(\mathbf v^\dagger\mathsf A\mathbf v = \lambda\,\mathbf v^\dagger\mathbf v\). 고유값을 꺼내려는 것이다.</li>
+      <li>왼쪽의 켤레를 취하면 \((\mathbf v^\dagger\mathsf A\mathbf v)^* = \mathbf v^\dagger\mathsf A^\dagger\mathbf v = \mathbf v^\dagger\mathsf A\mathbf v\). 에르미트라서 자기 자신의 켤레, 곧 실수다.</li>
+      <li>\(\mathbf v^\dagger\mathbf v = |\mathbf v|^2 > 0\)도 실수이므로 \(\lambda\)는 실수다.</li>
+      <li>서로 다른 고유값 \(\lambda_1 \ne \lambda_2\)에 대해 \(\mathbf v_2^\dagger\mathsf A\mathbf v_1\)을 두 가지로 계산하면 \(\lambda_1\mathbf v_2^\dagger\mathbf v_1 = \lambda_2\mathbf v_2^\dagger\mathbf v_1\). 따라서 \(\mathbf v_2^\dagger\mathbf v_1 = 0\), 직교.</li>
+    </ol>
+    <p>고유값이 겹치면(겹침, degeneracy) 그 고유값의 고유벡터들이 평면을 이루는데, 그 안에서 서로 수직인 것을 골라 쓰면 됩니다(그람-슈미트).</p>
+
+    <h3><span class="no">2.1.3</span>대각화</h3>
+    <p>목적: 행렬을 "축마다 늘리기"로 바꿔 거듭제곱, 지수, 연립 미분방정식을 쉽게 풀기. 정규화한 고유벡터를 열로 늘어놓은 \(\mathsf U\)를 쓰면</p>
+    \[\mathsf A = \mathsf U\mathsf D\mathsf U^\dagger,\qquad \mathsf D = \text{diag}(\lambda_1, \dots, \lambda_n),\qquad \mathsf A^k = \mathsf U\mathsf D^k\mathsf U^\dagger.\]
+    <p>\(\mathsf U^\dagger\)는 성분을 고유벡터 좌표로 바꾸고, \(\mathsf D\)는 각 축을 \(\lambda_i\)배 하고, \(\mathsf U\)는 원래 좌표로 돌려놓습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.2</span>
+      <p>\(\mathsf A = \begin{pmatrix}2 &amp; 1\\ 1 &amp; 2\end{pmatrix}\)을 대각화하고 \(\mathsf A^{10}\)을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\det = (2 - \lambda)^2 - 1 = 0\)에서 \(\lambda = 3, 1\). 고유벡터 \(\frac1{\sqrt2}(1, 1)\), \(\frac1{\sqrt2}(1, -1)\), 서로 수직. \(\mathsf A^{10} = 3^{10}\mathbf v_1\mathbf v_1^{\mathsf T} + 1^{10}\mathbf v_2\mathbf v_2^{\mathsf T} = \frac12\begin{pmatrix}59050 &amp; 59048\\ 59048 &amp; 59050\end{pmatrix} = \begin{pmatrix}29525 &amp; 29524\\ 29524 &amp; 29525\end{pmatrix}\). 행렬을 10번 곱하는 것보다 훨씬 빠릅니다.</p>
+
+    <div class="tb-note"><b>주의</b>고유벡터의 길이와 부호는 정해지지 않습니다. \((1, 1)\)과 \((-2, -2)\)는 같은 고유벡터입니다. 대각화 공식에 쓸 때는 반드시 길이 1로 정규화해야 \(\mathsf U^{-1} = \mathsf U^\dagger\)가 됩니다. 대칭이 아닌 행렬은 고유벡터가 직교하지 않고, 대각화가 안 되는 경우도 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>에르미트(대칭) 행렬: 고유값 실수, 서로 다른 고유값의 고유벡터 직교.</li>
+        <li>\(\mathsf A = \mathsf U\mathsf D\mathsf U^\dagger\), \(f(\mathsf A) = \mathsf Uf(\mathsf D)\mathsf U^\dagger\).</li>
+        <li>주축, 정규 모드, 에너지 준위가 모두 이 문제.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>파울리 행렬 \(\sigma_y = \begin{pmatrix}0 &amp; -i\\ i &amp; 0\end{pmatrix}\)이 에르미트임을 보이고 고유값과 고유벡터를 구하여라.
+          <details><summary>답</summary><p>\(\sigma_y^\dagger = \sigma_y\). \(\lambda^2 - 1 = 0\), \(\lambda = \pm1\). 고유벡터 \(\frac1{\sqrt2}(1, i)\), \(\frac1{\sqrt2}(1, -i)\). 내적 \((1)(1) + (i)^*(-i) = 1 - 1 = 0\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

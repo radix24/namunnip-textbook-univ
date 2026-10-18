@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통1-10-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c1-play.js"]
+}
+-->
+<article class="card q-card" id="lab-c1-logistic" data-kind="실습" data-std="공통1-10-02">
+  <header class="card-head"><span class="no"></span><h2>개체 수는 끝없이 늘어날까?</h2><span class="kind">실습 · 지수 성장과 로지스틱 성장</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>먹이와 공간이 넉넉하면 개체 수는 지금 수에 비례해 늘어납니다(지수 성장, \(P' = rP\)). 실제로는 환경이 감당할 수 있는 수 \(K\)가 있어서 증가가 느려집니다(로지스틱 성장, \(P' = rP(1 - P/K)\)). 두 해를 겹쳐 보고, 세 값 \(r\), \(K\), \(P_0\)을 움직여 가상 자료에 곡선을 맞춰 봅니다. 성취기준 [공통1-10-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>보라 곡선: 로지스틱 해 \(P(t) = \dfrac{K}{1 + (K/P_0 - 1)e^{-rt}}\). 변수분리로 얻습니다(본문 10.2절).</li>
+        <li>회색 점선: 같은 \(r\), \(P_0\)의 지수 성장 \(P_0 e^{rt}\).</li>
+        <li>빨간 점: <b>가상</b> 자료입니다. 효모를 배양하며 시간마다 센 개체 수(단위: 백만 개)라고 상상해 만든 값입니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>성장률 r = <b data-show="r" data-fix="2">0.40</b></span><input type="range" name="r" min="0.1" max="1.5" step="0.05" value="0.4" aria-label="성장률"></label>
+        <label><span>환경 수용력 K = <b data-show="K">100</b></span><input type="range" name="K" min="50" max="190" step="5" value="100" aria-label="환경 수용력"></label>
+        <label><span>처음 개체 수 P0 = <b data-show="P0">5</b></span><input type="range" name="P0" min="1" max="40" step="1" value="5" aria-label="처음 개체 수"></label>
+        <label><span>가상 자료 보이기</span><input type="checkbox" name="data" checked aria-label="가상 자료 보이기"></label>
+      </div>
+      <canvas aria-label="지수 성장과 로지스틱 성장 그래프"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 상태에서 \(t = 5\)와 \(t = 15\)일 때 두 모형의 값을 비교합니다.</li>
+        <li>\(K\)를 먼저 맞춥니다. 가상 자료가 나중에 머무는 높이를 보고 \(K\)를 움직입니다.</li>
+        <li>\(r\)을 움직여 곡선이 가파르게 오르는 구간을 자료에 맞춥니다. 출력의 "오차 제곱합"이 작아지는 쪽으로 움직입니다.</li>
+        <li>가장 작은 오차 제곱합을 얻은 \(r\), \(K\), \(P_0\)을 기록합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>가상 자료는 \(r = 0.6\), \(K = 120\), \(P_0 = 5\)인 곡선에 작은 흔들림을 더해 만들었습니다. 이 값으로 맞추면 오차 제곱합이 60쯤으로 가장 작아집니다. 처음 값(\(r = 0.4\), \(K = 100\))에서는 14157입니다.</li>
+        <li>\(r = 0.6\), \(K = 120\), \(P_0 = 5\)에서 \(P(5) = 55.9\)(지수 성장이면 100.4), \(P(15) = 119.7\)(지수 성장이면 40515). 처음에는 두 모형이 거의 같고, 개체 수가 \(K\)에 가까워질수록 크게 갈라집니다.</li>
+        <li>개체 수가 \(K/2 = 60\)일 때(\(t \approx 5.23\)) 곡선이 가장 가파르고, 그때 증가 속도는 \(rK/4 = 18\)입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>로지스틱 식의 오른쪽 \(rP(1 - P/K)\)를 \(P\)에 대한 이차함수로 보면 왜 \(P = K/2\)에서 증가 속도가 가장 큰지 설명할 수 있나요?</li>
+        <li>\(P_0 > K\)로 놓으면 곡선은 어떻게 움직이나요? 방향장(<a href="10-01.html">10.1절</a>)과 함께 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>오차 제곱합을 가장 작게 하는 값을 컴퓨터가 찾게 하는 것이 최소제곱법입니다. 회귀 직선(<a href="../7/10-02.html">공통7 10.2절</a>)도 같은 생각입니다.</p>
+    </section>
+  </div>
+</article>

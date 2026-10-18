@@ -27,12 +27,12 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전34-03-01">
+  <section class="topic-hero u-hero" data-sec="전전34-03-01" data-u="서울대 연세대 고려대 POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">디지털실험</a><span class="mono">/</span><a href="03.html">3. 유한상태기계 설계</a></div>
     <h1><span class="sec-no mono">3.1</span>신호등 제어기 같은 FSM을 설계하고 FPGA에서 확인하기</h1>
     
     <div class="q-checklist q-one" id="std" data-unit="전전34-03-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전34-03-01] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전34-03-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
       <ol><li><input type="checkbox" data-std="전전34-03-01" aria-label="할 수 있음"><span class="t">신호등 제어기 같은 FSM을 설계하고 FPGA에서 확인할 수 있다.</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
@@ -41,15 +41,82 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 차례">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#lab-e34-traffic"><span class="mono">3.1.1</span><span>감지기가 있는 신호등 제어기를 상태 기계로 만들기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="lab-e34-traffic" data-kind="실습" data-std="전전34-03-01">
+  <header class="card-head"><span class="no">3.1.1</span><h2><span class="q-badge">실습</span>감지기가 있는 신호등 제어기를 상태 기계로 만들기</h2><span class="kind">실습 · 상태도, 타이머, 상태 부호화</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-01.html#std">[전전34-03-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>큰 도로(주도로)와 작은 도로(부도로)가 만나는 교차로의 신호등을 유한상태기계(FSM)로 설계합니다. 부도로에 차가 있을 때만 신호를 바꿔 주고, 주도로 초록은 최소 시간을 보장합니다. 상태도를 그리고, 클록을 한 번씩 넣어 상태가 규칙대로 바뀌는지 확인합니다. 성취기준 [전전34-03-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>상태 네 개: 주G(주도로 초록), 주Y(주도로 노랑), 부G(부도로 초록), 부Y(부도로 노랑). 클록은 1 Hz이고, 상태 안에서 몇 초 지났는지 세는 타이머 T가 있습니다. 상태가 바뀌면 T는 0이 됩니다.</p>
+      <ul>
+        <li>주G: \(T+1 \ge T_g\)이고 부도로에 차가 있으면 주Y로.</li>
+        <li>주Y: \(T+1 \ge T_y\)이면 부G로.</li>
+        <li>부G: 차가 없어지거나 \(T+1 \ge T_s\)이면 부Y로. (부도로가 주도로를 오래 막지 않도록)</li>
+        <li>부Y: \(T+1 \ge T_y\)이면 주G로.</li>
+      </ul>
+      <p>상태 레지스터의 부호화를 고를 수 있습니다. 2진 부호화는 플립플롭 2개, 원-핫 부호화는 상태마다 플립플롭 하나(4개)를 씁니다. 원 아래 숫자가 그 부호입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>부도로에 차 있음</span><input type="checkbox" name="car" aria-label="부도로 차량 감지기"></label>
+        <label><span>주G 최소 Tg = <b data-show="tg">8</b> s</span><input type="range" name="tg" min="2" max="20" step="1" value="8" aria-label="주도로 초록 최소 시간"></label>
+        <label><span>노랑 Ty = <b data-show="ty">2</b> s</span><input type="range" name="ty" min="1" max="5" step="1" value="2" aria-label="노랑 시간"></label>
+        <label><span>부G 최대 Ts = <b data-show="ts">6</b> s</span><input type="range" name="ts" min="2" max="15" step="1" value="6" aria-label="부도로 초록 최대 시간"></label>
+        <label><span>부호화</span><select name="enc" aria-label="상태 부호화"><option value="bin" selected>2진 (00, 01, 11, 10)</option><option value="onehot">원-핫</option></select></label>
+      </div>
+      <canvas aria-label="상태도와 신호등"></canvas>
+      <canvas aria-label="감지기와 상태의 타이밍도"></canvas>
+      <div class="btns"><button type="button" class="step">클록 한 번 (1초)</button><button type="button" class="play">재생</button><button type="button" class="reset">처음으로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>차가 없는 상태로 재생합니다. 주G가 얼마나 계속되는지 봅니다.</li>
+        <li>3초쯤 뒤 "부도로에 차 있음"을 켭니다. 차를 켠 시점과 주Y로 바뀌는 시점 사이를 타이밍도에서 셉니다.</li>
+        <li>부G가 된 뒤 2초쯤에 차를 끕니다. 부G가 바로 끝나는지 봅니다.</li>
+        <li>차를 계속 켜 두면 한 바퀴(주G → 주Y → 부G → 부Y → 주G)가 몇 초인지 셉니다.</li>
+        <li>2진 부호화의 다음 상태 식을 상태표로 정리합니다(입력: 상태 2비트, 차, 타이머 비교 결과).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>차가 없으면 주G에 계속 머뭅니다. 타이머만 올라갑니다.</li>
+        <li>차가 들어와도 주G가 최소 8초를 채우기 전에는 바뀌지 않습니다. 8초가 지난 뒤라면 다음 클록에 바로 주Y가 됩니다.</li>
+        <li>부G 중 차가 없어지면 다음 클록에 부Y로 넘어갑니다.</li>
+        <li>차가 계속 있으면 한 바퀴는 \(T_g + T_y + T_s + T_y = 8 + 2 + 6 + 2 = 18\)초입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>이 기계는 무어 기계인가요, 밀리 기계인가요? 신호등 출력이 무엇으로만 정해지는지 보세요.</li>
+        <li>2진 부호화에서 상태 순서를 00, 01, 11, 10(그레이 순서)으로 둔 까닭은 무엇일까요? 한 번에 바뀌는 비트 수와 연결해 보세요.</li>
+        <li>원-핫 부호화는 플립플롭이 많은데도 FPGA에서 자주 씁니다. 다음 상태 논리가 어떻게 단순해지는지 설명하세요.</li>
+        <li>감지기 신호가 클록과 상관없이 바뀝니다. 실제 회로에서 이 입력을 바로 FSM에 넣으면 어떤 문제가 생길 수 있을까요? (힌트: 동기화기, 02-02 카드)</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>보행자 버튼을 입력으로 더해, 버튼을 누르면 다음 주Y 뒤에 보행 신호 상태를 넣는 기계로 확장해 보세요. 상태도를 먼저 그리고, Verilog의 <code>case (state)</code> 문으로 옮긴 뒤 FPGA 보드의 LED와 스위치로 확인합니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e34-traffic" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-01.html">← 2.1 카운터와 시프트 레지스터를 구현하고 동작을 측정하기</a></span>
-        <span><a href="04-01.html">4.1 7세그먼트, 스위치, UART 같은 입출력 장치를 제어하기 →</a></span>
+        <span><a href="02-02.html">← 2.2 셋업·홀드 시간과 임계 경로로 최대 클록 주파수를 계산하고 확인하기</a></span>
+        <span><a href="03-02.html">3.2 순서 검출기를 무어 기계와 밀리 기계로 각각 설계하고 출력 시점의 차이를 설명하기 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +130,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/ee/e34-digital.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

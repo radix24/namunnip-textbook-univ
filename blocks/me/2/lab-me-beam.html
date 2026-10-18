@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계2-05-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m2-solid.js"]
+}
+-->
+<article class="card q-card" id="lab-me-beam" data-kind="실습" data-std="기계2-05-01 기계2-05-02">
+  <header class="card-head"><span class="no"></span><h2>하중을 옮기면 굽힘 모멘트 선도는 어떻게 바뀔까?</h2><span class="kind">실습 · 전단력 선도와 굽힘 모멘트 선도</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>길이 4 m인 단순보(왼쪽 끝은 핀, 오른쪽 끝은 롤러)에 집중 하중 \(P\)와 등분포 하중 \(w\)를 올리고, 반력·전단력 선도(SFD)·굽힘 모멘트 선도(BMD)가 어떻게 바뀌는지 봅니다. 마지막으로 가장 큰 굽힘 모멘트에서 단면의 최대 굽힘 응력을 구합니다. 성취기준 [기계2-05-01], [기계2-05-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>장치는 다음 세 식을 그대로 계산해 그립니다. 보 전체의 자유물체도에서 B점 둘레 모멘트 평형을 쓰면 반력이 나오고, 왼쪽 끝에서 거리 \(x\)인 곳을 잘라 왼쪽 조각의 평형을 쓰면 \(V(x)\)와 \(M(x)\)가 나옵니다.</p>
+      <p>\[R_B = \frac{Pa + wL^2/2}{L},\qquad R_A = P + wL - R_B\]</p>
+      <p>\[V(x) = R_A - wx - P\,[x > a]\]</p>
+      <p>\[M(x) = R_A x - \tfrac12 wx^2 - P(x-a)\,[x > a]\]</p>
+      <p>\([x > a]\)는 \(x\)가 하중 위치 \(a\)를 지나면 1, 아니면 0이라는 뜻입니다. 보의 단면은 폭 60 mm인 직사각형이고 높이 \(h\)를 바꿀 수 있습니다. 굽힘 응력은 \(\sigma = Mc/I\), \(c = h/2\), \(I = bh^3/12\)이므로 \(\sigma_{\max} = 6M/(bh^2)\)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>집중 하중 P = <b data-show="P">20</b> kN</span><input type="range" name="P" min="0" max="50" step="1" value="20" aria-label="집중 하중"></label>
+        <label><span>하중 위치 a = <b data-show="a" data-fix="2">2.00</b> m</span><input type="range" name="a" min="0" max="4" step="0.05" value="2" aria-label="집중 하중 위치"></label>
+        <label><span>등분포 하중 w = <b data-show="w">0</b> kN/m</span><input type="range" name="w" min="0" max="20" step="1" value="0" aria-label="등분포 하중"></label>
+        <label><span>단면 높이 h = <b data-show="h">200</b> mm</span><input type="range" name="h" min="60" max="400" step="10" value="200" aria-label="단면 높이"></label>
+      </div>
+      <canvas aria-label="단순보와 하중, 반력"></canvas>
+      <p class="legend">위: 보와 하중(빨강 P, 회색 w), 반력(파랑). 가운데: 전단력 선도. 아래: 굽힘 모멘트 선도(빨간 점이 최대).</p>
+      <canvas aria-label="전단력 선도"></canvas>
+      <canvas aria-label="굽힘 모멘트 선도"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(P = 20 kN, a = 2 m, w = 0)에서 반력과 최대 굽힘 모멘트를 기록합니다.</li>
+        <li>a를 0.5 m씩 옮기며 최대 굽힘 모멘트 \(M_{\max}\)와 그 위치를 표로 적습니다. \(M_{\max} = Pa(L-a)/L\)과 비교합니다.</li>
+        <li>P = 0으로 하고 w = 10 kN/m만 올려 \(M_{\max} = wL^2/8\)인지 확인합니다.</li>
+        <li>P와 w를 함께 올리고, 전단력 선도가 0을 지나는 곳과 굽힘 모멘트가 최대인 곳이 같은지 봅니다.</li>
+        <li>단면 높이 h를 200 mm에서 400 mm로 두 배로 해 최대 응력이 몇 배가 되는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>P = 20 kN, a = 2 m: 반력은 10 kN씩, \(M_{\max} = 20\) kN·m(가운데). h = 200 mm이면 \(\sigma_{\max} = 6 \times 20\,000/(0.06 \times 0.2^2) = 50\) MPa.</li>
+        <li>a = 1 m: \(R_A = 15\) kN, \(M_{\max} = 20 \times 1 \times 3/4 = 15\) kN·m. 하중이 지점에 가까울수록 모멘트는 작아지고, 가운데에서 가장 큽니다.</li>
+        <li>w = 10 kN/m만: 반력 20 kN씩, \(M_{\max} = 10 \times 16/8 = 20\) kN·m, 선도는 포물선입니다.</li>
+        <li>집중 하중 아래에서 전단력 선도는 P만큼 뚝 떨어지고, 굽힘 모멘트 선도는 꺾입니다. 등분포 하중 구간에서는 전단력이 기울기 \(-w\)로 줄고 모멘트는 2차 곡선입니다.</li>
+        <li>h를 두 배로 하면 \(\sigma_{\max}\)는 1/4(12.5 MPa)로 줄어듭니다. 응력이 \(h^2\)에 반비례하기 때문입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(dM/dx = V\)를 선도에서 확인해 보세요. 모멘트 선도의 기울기가 0인 곳(꼭대기)에서 전단력은 얼마인가요?</li>
+        <li>\(dV/dx = -w\)도 확인해 보세요. 집중 하중 아래에서 전단력이 끊기는 이유는 무엇인가요?</li>
+        <li>같은 단면적이라면 높이를 키우고 폭을 줄이는 쪽이 굽힘에 유리합니다. 출력의 식으로 설명해 보세요. I형 단면이 쓰이는 이유와 연결해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>강의 항복강도를 250 MPa, 안전계수를 2로 잡고, P = 50 kN을 가운데에 올렸을 때 필요한 최소 높이 h를 장치로 찾아보세요. 손 계산(\(h = \sqrt{6M/(b\,\sigma_{\text{허용}})}\))과 비교합니다.</p>
+    </section>
+  </div>
+</article>
