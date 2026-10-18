@@ -109,4 +109,35 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 4. 염기에 따라 엔올레이트가 얼마나 생기나 (화학5-06-01) */
+  (() => {
+    const S = QSim.card("lab-ch5-enolate"); if (!S) return;
+    const cv = S.$("canvas");
+    const SUB = {
+      ea: ["아세트산 에틸", 25], ace: ["아세톤", 19.3], ald: ["아세트알데하이드", 17],
+      mal: ["말론산 다이에틸", 13], aac: ["아세토아세트산 에틸", 11], acac: ["2,4-펜테인다이온", 9]
+    };
+    const BASE = {
+      tea: ["트라이에틸아민 (짝산 pKa 10.7)", 10.7], oh: ["NaOH (물 15.7)", 15.7], oet: ["NaOEt (에탄올 16)", 16],
+      tbu: ["t-BuOK (t-뷰탄올 18)", 18], lda: ["LDA (다이아이소프로필아민 36)", 36]
+    };
+    // 카보닐 HA 1 mol + 염기 B⁻ e mol ⇌ A⁻ x + HB x,  K = x² / [(1 − x)(e − x)]
+    function frac(K, e) {
+      let lo = 0, hi = Math.min(1, e);
+      for (let i = 0; i < 100; i++) { const m = (lo + hi) / 2; if (m * m - K * (1 - m) * (e - m) < 0) lo = m; else hi = m; }
+      return (lo + hi) / 2;
+    }
+    const pct = (p) => p >= 99.95 ? "100.0" : p >= 1 ? p.toFixed(1) : p >= 0.01 ? p.toFixed(2) : p.toPrecision(2);
+    function draw() {
+      const c = C(), [sn, pa] = SUB[S.val("sub")], [bn, pb] = BASE[S.val("base")], e = S.val("eq");
+      const K = Math.pow(10, pb - pa), x = frac(K, e);
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: 100, xl: "염기 당량", yl: "엔올레이트 (%)", pad: 34 });
+      f.axes();
+      f.fn((ee) => 100 * frac(K, ee), c.main, 2.5);
+      f.dot(e, 100 * x, c.warn, 6);
+      S.out(`${sn} (α-H pKa ${pa}) + ${bn} ${e.toFixed(1)}당량\n산-염기 평형 상수 K = 10^(${pb} − ${pa}) = ${K.toExponential(2)}\n엔올레이트로 바뀐 비율 ${pct(100 * x)}%`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
