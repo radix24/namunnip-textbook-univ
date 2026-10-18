@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명하기 · 전자계산(1) — QURI</title>
-  <meta name="description" content="전자계산(1) 6.1 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명하기 — 성취기준: 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명할 수 있다.">
+  <title>정수와 실수의 저장, 반올림 오차 · 전자계산(1) — QURI</title>
+  <meta name="description" content="전자계산(1) 6.1 정수와 실수의 저장, 반올림 오차 — 성취기준: 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;6.1 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명하기&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;6.1 정수와 실수의 저장, 반올림 오차&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,165 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통10-06-01">
+  <section class="topic-hero u-hero has-text" data-sec="공통10-06-01">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">전자계산(1)</a><span class="mono">/</span><a href="06.html">6. 컴퓨터의 자료 표현과 과학 계산</a></div>
-    <h1><span class="sec-no mono">6.1</span>정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통10-06-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-06-01] <span class="ty mono" data-ty="개념">개념</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통10-06-01" aria-label="할 수 있음"><span class="t">정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">6.1</span>정수와 실수의 저장, 반올림 오차</h1>
+    <p class="sec-std"><span class="mono">[공통10-06-01]</span> 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명할 수 있다. <span class="ty mono" data-ty="개념">개념</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s6-1-1"><span class="mono">6.1.1</span><span>정수</span></a></li><li><a href="#s6-1-2"><span class="mono">6.1.2</span><span>부동소수점 실수</span></a></li><li><a href="#s6-1-3"><span class="mono">6.1.3</span><span>상쇄 오차</span></a></li><li><a href="#s6-1-4"><span class="mono">6.1.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c10-float"><span class="mono">본문</span><span>정수와 실수의 저장, 반올림 오차</span></a></li><li><a href="#lab-c10-bits"><span class="mono">6.1.2</span><span>수가 메모리에 저장되는 모습</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-c10-float" data-kind="본문" data-std="공통10-06-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정수가 2진수와 2의 보수로 저장되는 방식과 오버플로를 안다.</li>
+        <li>실수가 부동소수점으로 저장되는 방식과 반올림 오차, 상쇄 오차의 예를 설명한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>C 자료형의 크기 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s6-1-1"><span class="no">6.1.1</span>정수</h3>
+    <p>컴퓨터는 모든 값을 0과 1(비트)로 저장합니다. 8비트로 음이 아닌 정수를 나타내면 \(0\)~\(2^8 - 1 = 255\)입니다. 예: \(13 = 00001101_2\).</p>
+    <p>음수는 보통 <b>2의 보수</b>로 나타냅니다. \(-x\)는 \(x\)의 모든 비트를 뒤집고 1을 더한 것입니다. 8비트면 \(-13 = 11110011_2\)이고, 범위는 \(-128\)~\(127\)입니다. 이렇게 하면 덧셈 회로 하나로 뺄셈도 할 수 있습니다(\(13 + (-13)\)을 더하면 아랫자리 8비트가 모두 0).</p>
+    <p>32비트 <code>int</code>의 범위는 \(-2^{31}\)~\(2^{31} - 1\)(약 ±21억)입니다. 가장 큰 값에 1을 더하면 흔한 컴퓨터에서 가장 작은 음수가 됩니다(<b>오버플로</b>). 다만 C 표준에서 부호 있는 정수의 오버플로는 결과를 보장하지 않는 동작이라 기대면 안 됩니다. 파이썬 정수는 필요한 만큼 자리를 늘려 오버플로가 없습니다.</p>
+
+    <h3 id="s6-1-2"><span class="no">6.1.2</span>부동소수점 실수</h3>
+    <p>실수는 과학적 표기법처럼 \(\pm 1.f \times 2^{e}\) 꼴로 저장합니다(IEEE 754 표준).</p>
+    <table class="tb-table">
+      <thead><tr><th>형식</th><th>부호</th><th>지수</th><th>가수(\(f\))</th><th>유효숫자</th><th>기계 엡실론</th></tr></thead>
+      <tbody>
+        <tr><td>단정도 (<code>float</code>, 32비트)</td><td>1</td><td>8</td><td>23</td><td>약 7자리</td><td>\(\approx 1.19\times10^{-7}\)</td></tr>
+        <tr><td>배정도 (<code>double</code>, 파이썬 <code>float</code>, 64비트)</td><td>1</td><td>11</td><td>52</td><td>약 16자리</td><td>\(\approx 2.22\times10^{-16}\)</td></tr>
+      </tbody>
+    </table>
+    <p>기계 엡실론은 1과 그다음으로 큰 수의 차이로, 상대 오차의 기준입니다. 문제는 10진수로는 짧은 수가 2진수로는 끝없이 이어질 수 있다는 것입니다. \(0.1 = 0.0001100110011\cdots_2\)이라 가장 가까운 수로 반올림해 저장하고, 실제로 저장된 값은 \(0.1000000000000000055\cdots\)입니다.</p>
+<pre><code>print(0.1 + 0.2)              # 0.30000000000000004
+print(0.1 + 0.2 == 0.3)       # False
+s = 0
+for _ in range(10):
+    s += 0.1
+print(s)                      # 0.9999999999999999</code></pre>
+    <p>그래서 실수끼리는 <code>==</code>로 비교하지 않고 차이가 충분히 작은지 봅니다(1.2절). 돈 계산처럼 정확한 10진수가 필요하면 정수(원 단위)나 <code>decimal</code> 모듈을 씁니다.</p>
+
+    <h3 id="s6-1-3"><span class="no">6.1.3</span>상쇄 오차</h3>
+    <p>거의 같은 두 수를 빼면 앞자리가 지워지고 반올림 오차가 남은 자리만 남아 상대 오차가 크게 불어납니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>\(\frac{1 - \cos x}{x^2}\)은 \(x \to 0\)에서 \(\frac12\)로 다가간다. \(x = 10^{-8}\)에서 배정도로 계산하면?</p>
+    </div>
+    <p><i>풀이.</i> \(\cos 10^{-8} = 1 - 5\times10^{-17} + \cdots\)인데 1과의 차이가 기계 엡실론보다 작아 정확히 1.0으로 저장됩니다. 그래서 계산 결과는 0입니다. 같은 식을 \(\frac{2\sin^2(x/2)}{x^2}\)으로 바꾸면 빼기가 없어 0.5000000000000001로 거의 정확한 값을 얻습니다. 수식을 바꿔 빼기를 피하는 것이 수치 계산의 기본 요령입니다(이차 방정식 근의 공식도 같은 문제가 있음).</p>
+    <p>이 카드 아래의 실습에서 수를 넣어 실제로 저장되는 비트와 값을 볼 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정수: 2진수, 음수는 2의 보수. 고정된 비트 수를 넘으면 오버플로.</li>
+        <li>실수: 부호·지수·가수. 배정도 유효숫자 약 16자리, 엡실론 \(2.2\times10^{-16}\).</li>
+        <li>0.1 같은 수도 정확히 저장되지 않는다. <code>==</code> 대신 차이로 비교. 비슷한 수의 빼기를 피한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s6-1-4"><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8비트 2의 보수로 \(-1\)과 \(-128\)을 나타내어라.
+          <details><summary>답</summary><p>\(11111111_2\), \(10000000_2\).</p></details>
+        </li>
+        <li>단정도로 \(10^8 + 1\)을 저장하면 어떻게 되는가?
+          <details><summary>답</summary><p>유효숫자가 약 7자리라 1이 사라져 \(10^8\)이 저장된다(\(10^8\) 근처에서 단정도 수의 간격은 8).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c10-float" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통10-06-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-06-01] <span class="ty mono" data-ty="개념">개념</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통10-06-01" aria-label="할 수 있음"><span class="t">정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/04-01.html"><span class="mono">공통1 4.1</span><span>미분적분학과벡터해석(1) <b>정적분</b></span></a></li><li><a href="../../../c/common/1/01-04.html"><span class="mono">공통1 1.4</span><span>미분적분학과벡터해석(1) <b>연속</b></span></a></li><li><a href="../../../c/common/7/03-01.html"><span class="mono">공통7 3.1</span><span>통계학입문 <b>확률의 뜻과 덧셈·곱셈 법칙</b></span></a></li></ul></div><div><h3>이 절을 쓰는 곳</h3><ul><li><a href="../../../c/astro/6/02.html"><span class="mono">천우6 대단원 2</span><span>기초천문계산법 <b>수치 오차</b></span></a></li><li><a href="../../../c/ee/4/01.html"><span class="mono">전전4 대단원 1</span><span>디지털논리회로 <b>수 체계와 부호</b></span></a></li><li><a href="../../../c/math/16/01.html"><span class="mono">수학16 대단원 1</span><span>수치해석 <b>오차와 비선형 방정식</b></span></a></li><li><a href="../../../c/me/16/01.html"><span class="mono">기계16 대단원 1</span><span>공학수치해석 <b>오차</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-c10-bits" data-kind="실습" data-std="공통10-06-01">
+  <header class="card-head"><span class="no">6.1.2</span><h2><span class="q-badge">실습</span>수가 메모리에 저장되는 모습</h2><span class="kind">실습 · 2의 보수, 부동소수점</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-01.html#std">[공통10-06-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>수를 넣어 정수와 실수 형식에서 실제로 저장되는 비트와 값을 봅니다. 오버플로와 반올림 오차가 어디서 생기는지 확인합니다. 성취기준 [공통10-06-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>분홍 칸은 부호 비트, 노란 칸은 지수, 파란 칸은 가수(정수에서는 나머지 비트)입니다. 실수 형식에서는 저장된 값을 넉넉한 자릿수로 보여 줍니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>수</span><input type="text" name="x" value="0.1" inputmode="decimal" aria-label="저장할 수"></label>
+        <label><span>형식</span><select name="ty" aria-label="저장 형식">
+          <option value="f64" selected>double (64비트 실수)</option>
+          <option value="f32">float (32비트 실수)</option>
+          <option value="i8">8비트 정수</option>
+          <option value="i32">32비트 정수 (int)</option>
+        </select></label>
+      </div>
+      <canvas aria-label="비트 그림"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>double로 0.1, 0.5, 0.75를 넣어 저장된 값을 비교한다.</li>
+        <li>float로 0.1과 100000001을 넣는다.</li>
+        <li>8비트 정수로 13, −13, 127, 128을 넣는다.</li>
+        <li>32비트 정수로 2147483647과 2147483648을 넣는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>0.5와 0.75는 2의 거듭제곱의 합이라 정확히 저장되고, 0.1은 0.10000000000000000555처럼 조금 크게 저장된다.</li>
+        <li>float의 0.1은 0.100000001490처럼 오차가 훨씬 크다. 100000001은 100000000으로 저장된다.</li>
+        <li>13은 00001101, −13은 11110011. 128은 8비트 범위(−128~127)를 넘어 −128이 된다.</li>
+        <li>2147483648은 32비트 범위를 넘어 −2147483648이 된다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>2진수로 정확히 나타낼 수 있는 소수의 조건을 분모로 말해 보세요(1/2, 1/4, 3/8은 되고 1/10, 1/3은 안 됨).</li>
+        <li>double 1과 다음 수 사이의 간격이 약 \(2.2\times10^{-16}\)인 것을, 가수 비트가 52개라는 것으로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>−0을 넣어 보세요. 0과 −0은 부호 비트만 다릅니다. 1e308과 1e309도 넣어 보세요(1e309는 double 범위를 넘어 무한대가 됩니다).</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c10-bits" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-03.html">← 5.3 구조체와 클래스로 관련된 자료를 묶기</a></span>
-        <span><a href="06-02.html">6.2 사다리꼴 공식과 이분법을 프로그램으로 구현하기 →</a></span>
+        <span><a href="05-03.html">← 5.3 구조체와 C++ 클래스</a></span>
+        <span><a href="06-02.html">6.2 사다리꼴 공식과 이분법 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +199,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c10-prog.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

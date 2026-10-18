@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-06-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c10-prog.js"]
+}
+-->
+<article class="card q-card" id="lab-c10-bits" data-kind="실습" data-std="공통10-06-01">
+  <header class="card-head"><span class="no"></span><h2>수가 메모리에 저장되는 모습</h2><span class="kind">실습 · 2의 보수, 부동소수점</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>수를 넣어 정수와 실수 형식에서 실제로 저장되는 비트와 값을 봅니다. 오버플로와 반올림 오차가 어디서 생기는지 확인합니다. 성취기준 [공통10-06-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>분홍 칸은 부호 비트, 노란 칸은 지수, 파란 칸은 가수(정수에서는 나머지 비트)입니다. 실수 형식에서는 저장된 값을 넉넉한 자릿수로 보여 줍니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>수</span><input type="text" name="x" value="0.1" inputmode="decimal" aria-label="저장할 수"></label>
+        <label><span>형식</span><select name="ty" aria-label="저장 형식">
+          <option value="f64" selected>double (64비트 실수)</option>
+          <option value="f32">float (32비트 실수)</option>
+          <option value="i8">8비트 정수</option>
+          <option value="i32">32비트 정수 (int)</option>
+        </select></label>
+      </div>
+      <canvas aria-label="비트 그림"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>double로 0.1, 0.5, 0.75를 넣어 저장된 값을 비교한다.</li>
+        <li>float로 0.1과 100000001을 넣는다.</li>
+        <li>8비트 정수로 13, −13, 127, 128을 넣는다.</li>
+        <li>32비트 정수로 2147483647과 2147483648을 넣는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>0.5와 0.75는 2의 거듭제곱의 합이라 정확히 저장되고, 0.1은 0.10000000000000000555처럼 조금 크게 저장된다.</li>
+        <li>float의 0.1은 0.100000001490처럼 오차가 훨씬 크다. 100000001은 100000000으로 저장된다.</li>
+        <li>13은 00001101, −13은 11110011. 128은 8비트 범위(−128~127)를 넘어 −128이 된다.</li>
+        <li>2147483648은 32비트 범위를 넘어 −2147483648이 된다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>2진수로 정확히 나타낼 수 있는 소수의 조건을 분모로 말해 보세요(1/2, 1/4, 3/8은 되고 1/10, 1/3은 안 됨).</li>
+        <li>double 1과 다음 수 사이의 간격이 약 \(2.2\times10^{-16}\)인 것을, 가수 비트가 52개라는 것으로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>−0을 넣어 보세요. 0과 −0은 부호 비트만 다릅니다. 1e308과 1e309도 넣어 보세요(1e309는 double 범위를 넘어 무한대가 됩니다).</p>
+    </section>
+  </div>
+</article>

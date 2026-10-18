@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>사다리꼴 공식과 이분법을 프로그램으로 구현하기 · 전자계산(1) — QURI</title>
-  <meta name="description" content="전자계산(1) 6.2 사다리꼴 공식과 이분법을 프로그램으로 구현하기 — 성취기준: 사다리꼴 공식과 이분법을 프로그램으로 구현할 수 있다.">
+  <title>사다리꼴 공식과 이분법 · 전자계산(1) — QURI</title>
+  <meta name="description" content="전자계산(1) 6.2 사다리꼴 공식과 이분법 — 성취기준: 사다리꼴 공식과 이분법을 프로그램으로 구현할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;6.2 사다리꼴 공식과 이분법을 프로그램으로 구현하기&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;6.2 사다리꼴 공식과 이분법&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,33 +27,179 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통10-06-02">
+  <section class="topic-hero u-hero has-text" data-sec="공통10-06-02">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">전자계산(1)</a><span class="mono">/</span><a href="06.html">6. 컴퓨터의 자료 표현과 과학 계산</a></div>
-    <h1><span class="sec-no mono">6.2</span>사다리꼴 공식과 이분법을 프로그램으로 구현하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통10-06-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-06-02] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통10-06-02" aria-label="할 수 있음"><span class="t">사다리꼴 공식과 이분법을 프로그램으로 구현할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">6.2</span>사다리꼴 공식과 이분법</h1>
+    <p class="sec-std"><span class="mono">[공통10-06-02]</span> 사다리꼴 공식과 이분법을 프로그램으로 구현할 수 있다. <span class="ty mono" data-ty="실습">실습</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s6-2-1"><span class="mono">6.2.1</span><span>사다리꼴 공식</span></a></li><li><a href="#s6-2-2"><span class="mono">6.2.2</span><span>이분법</span></a></li><li><a href="#s6-2-3"><span class="mono">6.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c10-numeric"><span class="mono">본문</span><span>사다리꼴 공식과 이분법</span></a></li><li><a href="#lab-c10-numint"><span class="mono">6.2.2</span><span>사다리꼴 공식과 이분법의 수렴</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-c10-numeric" data-kind="본문" data-std="공통10-06-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사다리꼴 공식으로 정적분의 근삿값을 구하는 프로그램을 쓰고 오차가 줄어드는 빠르기를 안다.</li>
+        <li>이분법으로 방정식의 근을 구하는 프로그램을 쓰고 반복 횟수를 예측한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>정적분 (<a href="../1/04-02.html">공통1 4.2절</a>), 중간값 정리 (<a href="../1/01-04.html">공통1 1.4절</a>), 함수와 반복문 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s6-2-1"><span class="no">6.2.1</span>사다리꼴 공식</h3>
+    <p>구간 \([a, b]\)를 폭 \(h = \frac{b-a}{n}\)인 \(n\)개로 나누고, 각 조각의 넓이를 사다리꼴로 어림합니다.</p>
+    \[\int_a^b f(x)\,dx \approx h\left[\frac{f(x_0)}{2} + f(x_1) + \cdots + f(x_{n-1}) + \frac{f(x_n)}{2}\right], \quad x_i = a + ih.\]
+<pre><code>import math
+
+def trapezoid(f, a, b, n):
+    h = (b - a) / n
+    s = (f(a) + f(b)) / 2
+    for i in range(1, n):
+        s += f(a + i * h)
+    return h * s
+
+for n in [4, 8, 16, 32]:
+    T = trapezoid(math.sin, 0, math.pi, n)
+    print(n, T, 2 - T)</code></pre>
+    <table class="tb-table">
+      <thead><tr><th>\(n\)</th><th>근삿값</th><th>오차 (참값 2)</th></tr></thead>
+      <tbody>
+        <tr><td>4</td><td>1.896119</td><td>0.10388</td></tr>
+        <tr><td>8</td><td>1.974232</td><td>0.02577</td></tr>
+        <tr><td>16</td><td>1.993570</td><td>0.00643</td></tr>
+        <tr><td>32</td><td>1.998393</td><td>0.00161</td></tr>
+      </tbody>
+    </table>
+    <p>\(n\)을 두 배로 하면 오차가 약 \(\frac14\)이 됩니다. 사다리꼴 공식의 오차는 \(h^2\)에 비례합니다(\(f''\)이 연속일 때). 곡선을 직선으로 이었기 때문이며, 포물선으로 잇는 심프슨 공식은 \(h^4\)에 비례해 훨씬 빠르게 줄어듭니다.</p>
+
+    <h3 id="s6-2-2"><span class="no">6.2.2</span>이분법</h3>
+    <p>연속 함수 \(f\)가 \(f(a)\)와 \(f(b)\)의 부호가 다르면 \([a, b]\) 안에 근이 있습니다(중간값 정리). 가운데 \(m = \frac{a+b}{2}\)에서 부호를 보고 근이 있는 절반을 남기는 일을 되풀이합니다.</p>
+<pre><code>def bisect(f, a, b, tol=1e-6):
+    if f(a) * f(b) &gt; 0:
+        raise ValueError("양 끝의 부호가 같습니다")
+    steps = 0
+    while b - a &gt; tol:
+        m = (a + b) / 2
+        if f(a) * f(m) &lt;= 0:
+            b = m
+        else:
+            a = m
+        steps += 1
+    return (a + b) / 2, steps
+
+print(bisect(lambda x: x * x - 2, 1, 2))   # (1.41421..., 20)</code></pre>
+    <p>한 번에 구간이 절반이 되므로, 길이 \(L\)인 구간을 허용 오차 \(\varepsilon\) 아래로 줄이는 데 \(\lceil\log_2(L/\varepsilon)\rceil\)번이면 됩니다. \(L = 1\), \(\varepsilon = 10^{-6}\)이면 20번입니다. 느리지만 부호만 바뀌면 반드시 수렴하는 튼튼한 방법이라, 빠른 뉴턴 방법(공통1 3단원)의 출발점을 잡는 데도 씁니다. <code>lambda x: ...</code>는 이름 없는 짧은 함수입니다.</p>
+    <div class="tb-note">아래 실습 카드에서 \(n\)을 바꾸며 사다리꼴이 곡선을 덮는 모습과 이분법의 구간이 줄어드는 모습을 볼 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사다리꼴: \(h[\frac{f_0}{2} + f_1 + \cdots + \frac{f_n}{2}]\), 오차 \(\propto h^2\).</li>
+        <li>이분법: 부호가 바뀌는 절반을 남긴다. \(\lceil\log_2(L/\varepsilon)\rceil\)번.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s6-2-3"><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>사다리꼴 공식으로 \(n = 4\)일 때 오차가 0.104였다. 오차를 \(10^{-4}\) 아래로 하려면 \(n\)이 대략 얼마여야 하는가?
+          <details><summary>답</summary><p>오차가 \(1/n^2\)에 비례하므로 \(0.104 \times (4/n)^2 &lt; 10^{-4}\), \(n > 4\sqrt{1040} \approx 129\). \(n = 130\) 정도.</p></details>
+        </li>
+        <li>구간 \([0, 4]\)에서 이분법으로 오차 \(10^{-3}\) 아래까지 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(\log_2 4000 \approx 11.97\), 12번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c10-numeric" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통10-06-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-06-02] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통10-06-02" aria-label="할 수 있음"><span class="t">사다리꼴 공식과 이분법을 프로그램으로 구현할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/04-01.html"><span class="mono">공통1 4.1</span><span>미분적분학과벡터해석(1) <b>정적분</b></span></a></li><li><a href="../../../c/common/1/01-04.html"><span class="mono">공통1 1.4</span><span>미분적분학과벡터해석(1) <b>연속</b></span></a></li><li><a href="../../../c/common/7/03-01.html"><span class="mono">공통7 3.1</span><span>통계학입문 <b>확률의 뜻과 덧셈·곱셈 법칙</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-c10-numint" data-kind="실습" data-std="공통10-06-02">
+  <header class="card-head"><span class="no">6.2.2</span><h2><span class="q-badge">실습</span>사다리꼴 공식과 이분법의 수렴</h2><span class="kind">실습 · 수치 적분, 근 찾기</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-02.html#std">[공통10-06-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>사다리꼴의 수 \(n\)을 늘리며 오차가 \(1/n^2\)에 비례해 줄어드는 것을, 이분법의 반복 횟수를 늘리며 구간이 절반씩 줄어드는 것을 확인합니다. 성취기준 [공통10-06-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>사다리꼴 모드에서는 파란 사다리꼴의 넓이 합이 근삿값입니다. 이분법 모드에서는 칠한 띠가 \(n\)번 반복한 뒤 남은 구간이고, 점은 지금까지 검사한 가운데 점입니다. 조절기 \(n\)은 사다리꼴 수 또는 반복 횟수입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="mode" aria-label="방법 선택">
+          <option value="trap" selected>사다리꼴 공식</option>
+          <option value="bis">이분법</option>
+        </select></label>
+        <label><span>함수</span><select name="fn" aria-label="함수 선택">
+          <option value="sin" selected>sin x (적분 [0, π], 근 [3, 4])</option>
+          <option value="sq">x² − 2 (적분 [0, 2], 근 [1, 2])</option>
+          <option value="cos">cos x − x (적분 [0, 1], 근 [0, 1])</option>
+        </select></label>
+        <label><span>n = <b data-show="n">4</b></span><input type="range" name="n" min="1" max="40" step="1" value="4" aria-label="사다리꼴 수 또는 반복 횟수"></label>
+      </div>
+      <canvas aria-label="함수 그래프와 사다리꼴 또는 구간"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>사다리꼴, sin x에서 \(n\) = 4, 8, 16, 32의 오차를 적고 6.2절의 표와 비교한다.</li>
+        <li>"오차 × n²" 값이 일정한지 본다. x² − 2에서도 확인한다.</li>
+        <li>이분법, x² − 2에서 \(n\) = 10, 20의 오차를 본다.</li>
+        <li>cos x − x의 근을 소수 여섯째 자리까지 맞히려면 몇 번 반복해야 하는지 찾는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>오차가 0.104, 0.0258, 0.00643, 0.00161로 \(n\)을 두 배 할 때마다 약 1/4.</li>
+        <li>sin x는 오차 × n²이 약 1.65로 거의 일정하다. x² − 2는 사다리꼴이 늘 조금 크게 어림하여 오차가 음수다.</li>
+        <li>이분법 \(n = 20\)이면 구간 길이 \(2^{-20} \approx 9.5\times10^{-7}\).</li>
+        <li>약 20번이면 0.739085 근처로 좁혀진다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>x² − 2에서 사다리꼴이 늘 크게 어림하는 이유를 곡선이 아래로 볼록하다는 것으로 설명해 보세요.</li>
+        <li>이분법이 오차를 한 번에 절반으로 줄인다면, 유효숫자 한 자리를 더 얻는 데 몇 번이 필요한지 계산해 보세요(\(\log_2 10\)).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>공통11 5단원에서는 오일러 방법과 룽게-쿠타 방법으로 미분방정식을 풉니다. 그때도 간격 \(h\)를 줄일 때 오차가 \(h\)의 몇 제곱으로 줄어드는지가 방법을 고르는 기준이 됩니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c10-numint" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="06-01.html">← 6.1 정수와 실수가 메모리에 저장되는 방식과 반올림 오차의 예를 설명하기</a></span>
+        <span><a href="06-01.html">← 6.1 정수와 실수의 저장, 반올림 오차</a></span>
         <span></span>
       </nav>
     </div>
@@ -68,7 +214,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c10-prog.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

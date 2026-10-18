@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>C/C++ 함수를 정의하고 호출하기 · 전자계산(1) — QURI</title>
-  <meta name="description" content="전자계산(1) 4.3 C/C++ 함수를 정의하고 호출하기 — 성취기준: C/C++ 함수를 정의하고 호출할 수 있다.">
+  <title>C의 함수 · 전자계산(1) — QURI</title>
+  <meta name="description" content="전자계산(1) 4.3 C의 함수 — 성취기준: C/C++ 함수를 정의하고 호출할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;4.3 C/C++ 함수를 정의하고 호출하기&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통10&quot;, &quot;title&quot;: &quot;4.3 C의 함수&quot;, &quot;sub&quot;: &quot;전자계산(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,103 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통10-04-03">
+  <section class="topic-hero u-hero has-text" data-sec="공통10-04-03">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">전자계산(1)</a><span class="mono">/</span><a href="04.html">4. C/C++ 기초</a></div>
-    <h1><span class="sec-no mono">4.3</span>C/C++ 함수를 정의하고 호출하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통10-04-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-04-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통10-04-03" aria-label="할 수 있음"><span class="t">C/C++ 함수를 정의하고 호출할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">4.3</span>C의 함수</h1>
+    <p class="sec-std"><span class="mono">[공통10-04-03]</span> C/C++ 함수를 정의하고 호출할 수 있다. <span class="ty mono" data-ty="실습">실습</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s4-3-1"><span class="mono">4.3.1</span><span>함수 정의</span></a></li><li><a href="#s4-3-2"><span class="mono">4.3.2</span><span>값에 의한 전달</span></a></li><li><a href="#s4-3-3"><span class="mono">4.3.3</span><span>재귀</span></a></li><li><a href="#s4-3-4"><span class="mono">4.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c10-cfunc"><span class="mono">본문</span><span>C의 함수</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-c10-cfunc" data-kind="본문" data-std="공통10-04-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>반환형과 매개변수형을 밝혀 C 함수를 정의하고 호출한다.</li>
+        <li>함수 원형 선언과 값에 의한 전달을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>파이썬 함수 (<a href="03-01.html">3.1절</a>), C 제어문 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s4-3-1"><span class="no">4.3.1</span>함수 정의</h3>
+    <p>C 함수는 돌려줄 값의 자료형(반환형), 이름, 매개변수의 자료형과 이름을 모두 적습니다. 돌려줄 값이 없으면 반환형을 <code>void</code>로 씁니다.</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+
+double distance(double x1, double y1, double x2, double y2);   /* 원형 선언 */
+
+int main(void) {
+    printf("%.3f\n", distance(0, 0, 3, 4));     /* 5.000 */
+    return 0;
+}
+
+double distance(double x1, double y1, double x2, double y2) {
+    double dx = x2 - x1, dy = y2 - y1;
+    return sqrt(dx * dx + dy * dy);
+}</code></pre>
+    <p>C 컴파일러는 위에서 아래로 읽기 때문에, 함수를 <code>main</code>보다 뒤에 정의하려면 앞에 <b>원형</b>(머리 부분과 세미콜론)을 먼저 적어 둡니다. 수학 함수를 쓰는 프로그램은 컴파일할 때 <code>-lm</code>을 붙여야 하는 환경도 있습니다.</p>
+
+    <h3 id="s4-3-2"><span class="no">4.3.2</span>값에 의한 전달</h3>
+    <p>C는 함수를 부를 때 인수의 <b>값을 복사해서</b> 넘깁니다. 함수 안에서 매개변수를 바꿔도 부른 쪽의 변수는 그대로입니다.</p>
+<pre><code>void twice(int x) { x = 2 * x; }
+
+int a = 5;
+twice(a);
+printf("%d\n", a);     /* 5  (바뀌지 않음) */</code></pre>
+    <p>부른 쪽의 변수를 함수가 바꾸게 하려면 변수의 주소를 넘깁니다. <code>scanf("%d", &amp;a)</code>에 <code>&amp;</code>를 붙이는 이유가 이것이며, 5.2절 포인터에서 다룹니다.</p>
+
+    <h3 id="s4-3-3"><span class="no">4.3.3</span>재귀</h3>
+    <p>C 함수도 자기 자신을 부를 수 있습니다. 3.1절의 계승을 C로 쓰면</p>
+<pre><code>long long fact(int n) {
+    if (n &lt;= 1) return 1;
+    return n * fact(n - 1);
+}</code></pre>
+    <p><code>int</code>로 쓰면 <code>fact(13)</code>부터 범위(약 21억)를 넘어 틀린 값이 나옵니다. <code>long long</code>은 <code>fact(20)</code>까지 담습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>반환형 이름(자료형 매개변수, ...) { ... return 값; }</code>, 없으면 <code>void</code>.</li>
+        <li>뒤에 정의하면 앞에 원형 선언.</li>
+        <li>인수는 값이 복사되어 넘어간다. 바꾸게 하려면 주소를 넘긴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s4-3-4"><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정수 두 개를 받아 큰 값을 돌려주는 함수 <code>imax</code>를 C로 써라.
+          <details><summary>답</summary><p><code>int imax(int a, int b) { return a &gt; b ? a : b; }</code></p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c10-cfunc" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통10-04-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통10-04-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통10-04-03" aria-label="할 수 있음"><span class="t">C/C++ 함수를 정의하고 호출할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="04-02.html">← 4.2 선택문과 반복문으로 같은 프로그램을 파이썬과 C로 써서 비교하기</a></span>
-        <span><a href="05-01.html">5.1 배열에 자료를 저장하고 처리하기 →</a></span>
+        <span><a href="04-02.html">← 4.2 C의 선택문과 반복문: 파이썬과 비교</a></span>
+        <span><a href="05-01.html">5.1 C의 배열 →</a></span>
       </nav>
     </div>
   </div>

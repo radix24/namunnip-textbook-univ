@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c10-numeric" data-kind="본문" data-std="공통10-06-02">
+  <header class="card-head"><span class="no"></span><h2>사다리꼴 공식과 이분법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사다리꼴 공식으로 정적분의 근삿값을 구하는 프로그램을 쓰고 오차가 줄어드는 빠르기를 안다.</li>
+        <li>이분법으로 방정식의 근을 구하는 프로그램을 쓰고 반복 횟수를 예측한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>정적분 (<a href="../1/04-02.html">공통1 4.2절</a>), 중간값 정리 (<a href="../1/01-04.html">공통1 1.4절</a>), 함수와 반복문 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>사다리꼴 공식</h3>
+    <p>구간 \([a, b]\)를 폭 \(h = \frac{b-a}{n}\)인 \(n\)개로 나누고, 각 조각의 넓이를 사다리꼴로 어림합니다.</p>
+    \[\int_a^b f(x)\,dx \approx h\left[\frac{f(x_0)}{2} + f(x_1) + \cdots + f(x_{n-1}) + \frac{f(x_n)}{2}\right], \quad x_i = a + ih.\]
+<pre><code>import math
+
+def trapezoid(f, a, b, n):
+    h = (b - a) / n
+    s = (f(a) + f(b)) / 2
+    for i in range(1, n):
+        s += f(a + i * h)
+    return h * s
+
+for n in [4, 8, 16, 32]:
+    T = trapezoid(math.sin, 0, math.pi, n)
+    print(n, T, 2 - T)</code></pre>
+    <table class="tb-table">
+      <thead><tr><th>\(n\)</th><th>근삿값</th><th>오차 (참값 2)</th></tr></thead>
+      <tbody>
+        <tr><td>4</td><td>1.896119</td><td>0.10388</td></tr>
+        <tr><td>8</td><td>1.974232</td><td>0.02577</td></tr>
+        <tr><td>16</td><td>1.993570</td><td>0.00643</td></tr>
+        <tr><td>32</td><td>1.998393</td><td>0.00161</td></tr>
+      </tbody>
+    </table>
+    <p>\(n\)을 두 배로 하면 오차가 약 \(\frac14\)이 됩니다. 사다리꼴 공식의 오차는 \(h^2\)에 비례합니다(\(f''\)이 연속일 때). 곡선을 직선으로 이었기 때문이며, 포물선으로 잇는 심프슨 공식은 \(h^4\)에 비례해 훨씬 빠르게 줄어듭니다.</p>
+
+    <h3><span class="no">6.2.2</span>이분법</h3>
+    <p>연속 함수 \(f\)가 \(f(a)\)와 \(f(b)\)의 부호가 다르면 \([a, b]\) 안에 근이 있습니다(중간값 정리). 가운데 \(m = \frac{a+b}{2}\)에서 부호를 보고 근이 있는 절반을 남기는 일을 되풀이합니다.</p>
+<pre><code>def bisect(f, a, b, tol=1e-6):
+    if f(a) * f(b) &gt; 0:
+        raise ValueError("양 끝의 부호가 같습니다")
+    steps = 0
+    while b - a &gt; tol:
+        m = (a + b) / 2
+        if f(a) * f(m) &lt;= 0:
+            b = m
+        else:
+            a = m
+        steps += 1
+    return (a + b) / 2, steps
+
+print(bisect(lambda x: x * x - 2, 1, 2))   # (1.41421..., 20)</code></pre>
+    <p>한 번에 구간이 절반이 되므로, 길이 \(L\)인 구간을 허용 오차 \(\varepsilon\) 아래로 줄이는 데 \(\lceil\log_2(L/\varepsilon)\rceil\)번이면 됩니다. \(L = 1\), \(\varepsilon = 10^{-6}\)이면 20번입니다. 느리지만 부호만 바뀌면 반드시 수렴하는 튼튼한 방법이라, 빠른 뉴턴 방법(공통1 3단원)의 출발점을 잡는 데도 씁니다. <code>lambda x: ...</code>는 이름 없는 짧은 함수입니다.</p>
+    <div class="tb-note">아래 실습 카드에서 \(n\)을 바꾸며 사다리꼴이 곡선을 덮는 모습과 이분법의 구간이 줄어드는 모습을 볼 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사다리꼴: \(h[\frac{f_0}{2} + f_1 + \cdots + \frac{f_n}{2}]\), 오차 \(\propto h^2\).</li>
+        <li>이분법: 부호가 바뀌는 절반을 남긴다. \(\lceil\log_2(L/\varepsilon)\rceil\)번.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>사다리꼴 공식으로 \(n = 4\)일 때 오차가 0.104였다. 오차를 \(10^{-4}\) 아래로 하려면 \(n\)이 대략 얼마여야 하는가?
+          <details><summary>답</summary><p>오차가 \(1/n^2\)에 비례하므로 \(0.104 \times (4/n)^2 &lt; 10^{-4}\), \(n > 4\sqrt{1040} \approx 129\). \(n = 130\) 정도.</p></details>
+        </li>
+        <li>구간 \([0, 4]\)에서 이분법으로 오차 \(10^{-3}\) 아래까지 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(\log_2 4000 \approx 11.97\), 12번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

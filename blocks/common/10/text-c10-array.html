@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c10-array" data-kind="본문" data-std="공통10-05-01">
+  <header class="card-head"><span class="no"></span><h2>C의 배열</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>배열을 선언하고 반복문으로 처리한다.</li>
+        <li>문자열이 문자 배열이라는 것과 2차원 배열을 안다.</li>
+        <li>배열 범위를 벗어나는 위험을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>파이썬 리스트 (<a href="02-01.html">2.1절</a>), C 반복문과 함수 (<a href="04-02.html">4.2절</a>, <a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>배열 선언</h3>
+    <p>C의 배열은 <b>같은 자료형</b>의 값을 정해진 개수만큼 메모리에 이어서 놓은 것입니다. 크기는 선언할 때 정하고 바꿀 수 없습니다(파이썬 리스트와 다른 점).</p>
+<pre><code>double T[5] = {20.1, 20.6, 21.3, 22.0, 22.8};
+double sum = 0;
+for (int i = 0; i &lt; 5; i++) {
+    sum += T[i];
+}
+printf("평균 %.2f\n", sum / 5);     /* 21.36 */</code></pre>
+    <p>인덱스는 0부터 크기−1까지입니다. C는 <code>T[5]</code>나 <code>T[-1]</code>처럼 범위를 벗어나도 <b>오류를 내지 않고</b> 그 자리의 메모리를 읽거나 써 버립니다. 엉뚱한 값, 다른 변수가 망가짐, 프로그램 종료가 생길 수 있어 반복 범위를 늘 확인해야 합니다.</p>
+
+    <h3><span class="no">5.1.2</span>함수에 배열 넘기기</h3>
+    <p>배열을 함수에 넘기면 복사되지 않고 배열의 시작 주소가 넘어갑니다(5.2절). 그래서 함수 안에서 배열 원소를 바꾸면 원래 배열이 바뀌고, 크기는 따로 넘겨야 합니다.</p>
+<pre><code>double mean(const double a[], int n) {
+    double s = 0;
+    for (int i = 0; i &lt; n; i++) s += a[i];
+    return s / n;
+}</code></pre>
+    <p><code>const</code>는 이 함수가 배열을 바꾸지 않겠다는 표시입니다.</p>
+
+    <h3><span class="no">5.1.3</span>문자열과 2차원 배열</h3>
+    <p>C의 문자열은 <code>char</code> 배열이고, 끝에 널 문자 <code>'\0'</code>이 붙어 끝을 표시합니다. <code>char s[] = "H2O";</code>는 4칸(<code>'H' '2' 'O' '\0'</code>)입니다.</p>
+    <p>2차원 배열 <code>double A[3][4];</code>는 3행 4열의 표이고 <code>A[i][j]</code>로 씁니다. 메모리에는 0행, 1행, 2행 순서로 이어져 놓입니다(행 우선). 행렬 곱셈이나 격자 위의 계산(공통11 5단원)에 씁니다.</p>
+<pre><code>double A[2][2] = {{1, 2}, {3, 4}}, B[2][2] = {{0, 1}, {1, 0}}, C[2][2];
+for (int i = 0; i &lt; 2; i++)
+    for (int j = 0; j &lt; 2; j++) {
+        C[i][j] = 0;
+        for (int k = 0; k &lt; 2; k++) C[i][j] += A[i][k] * B[k][j];
+    }
+/* C = {{2, 1}, {4, 3}} */</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>자료형 이름[크기]</code>, 인덱스 0 ~ 크기−1. 범위 검사 없음.</li>
+        <li>함수에는 주소가 넘어가므로 크기도 함께 넘긴다.</li>
+        <li>문자열 = <code>'\0'</code>로 끝나는 <code>char</code> 배열. 2차원 배열은 행 우선.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정수 배열과 크기를 받아 최댓값을 돌려주는 함수를 써라.
+          <details><summary>답</summary><p><code>int amax(const int a[], int n) { int m = a[0]; for (int i = 1; i &lt; n; i++) if (a[i] &gt; m) m = a[i]; return m; }</code></p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

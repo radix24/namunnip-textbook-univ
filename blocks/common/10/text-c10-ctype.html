@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c10-ctype" data-kind="본문" data-std="공통10-04-01">
+  <header class="card-head"><span class="no"></span><h2>C의 자료형과 연산자</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>C 프로그램의 구조, 컴파일과 실행 과정을 안다.</li>
+        <li>변수를 선언하고 자료형에 맞는 연산과 입출력(<code>printf</code>, <code>scanf</code>)을 한다.</li>
+        <li>정수 나눗셈과 형 변환의 함정을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>파이썬의 자료형과 연산자 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>C 프로그램의 구조</h3>
+<pre><code>#include &lt;stdio.h&gt;           /* 입출력 함수를 쓰겠다는 선언 */
+
+int main(void) {               /* 프로그램은 main에서 시작 */
+    printf("Hello, C!\n");     /* 줄바꿈 \n을 직접 넣는다 */
+    return 0;                  /* 0: 정상 종료 */
+}</code></pre>
+    <p>C는 문장 끝에 세미콜론(<code>;</code>)을 쓰고, 묶음을 중괄호로 나타냅니다(들여쓰기는 읽기 위한 것일 뿐). 소스 파일 <code>hello.c</code>를 <b>컴파일러</b>(예: <code>gcc hello.c -o hello</code>)로 기계어 실행 파일로 바꾼 뒤 실행합니다. 번역을 미리 해 두므로 같은 계산을 파이썬보다 대체로 훨씬 빠르게 합니다(공통11 5.4절에서 비교).</p>
+
+    <h3><span class="no">4.1.2</span>자료형과 변수 선언</h3>
+    <p>C에서는 변수를 쓰기 전에 자료형을 정해 <b>선언</b>해야 하고, 그 변수에는 그 자료형의 값만 넣을 수 있습니다.</p>
+    <table class="tb-table">
+      <thead><tr><th>자료형</th><th>뜻</th><th>크기 (흔한 환경)</th><th><code>printf</code> 형식</th></tr></thead>
+      <tbody>
+        <tr><td><code>int</code></td><td>정수</td><td>4바이트, 약 ±21억</td><td><code>%d</code></td></tr>
+        <tr><td><code>long long</code></td><td>큰 정수</td><td>8바이트</td><td><code>%lld</code></td></tr>
+        <tr><td><code>float</code></td><td>실수 (유효숫자 약 7자리)</td><td>4바이트</td><td><code>%f</code></td></tr>
+        <tr><td><code>double</code></td><td>실수 (약 16자리)</td><td>8바이트</td><td><code>%f</code>, 입력은 <code>%lf</code></td></tr>
+        <tr><td><code>char</code></td><td>문자 하나</td><td>1바이트</td><td><code>%c</code></td></tr>
+      </tbody>
+    </table>
+    <p>크기는 컴파일러와 컴퓨터에 따라 다를 수 있고, <code>sizeof(int)</code>로 확인합니다. 파이썬 정수와 달리 C의 <code>int</code>는 범위를 넘으면 엉뚱한 값이 됩니다(<b>오버플로</b>, 6.1절).</p>
+<pre><code>#include &lt;stdio.h&gt;
+int main(void) {
+    double r, area;
+    printf("반지름? ");
+    scanf("%lf", &amp;r);              /* &amp;r: r의 주소 (5.2절) */
+    area = 3.14159 * r * r;
+    printf("넓이 %.2f\n", area);
+    return 0;
+}</code></pre>
+
+    <h3><span class="no">4.1.3</span>연산자와 형 변환</h3>
+    <p>산술 연산자는 <code>+ - * / %</code>이고 거듭제곱 연산자는 없습니다(<code>math.h</code>의 <code>pow</code>). 가장 흔한 함정은 <b>정수끼리 나누면 몫만 남는다</b>는 것입니다.</p>
+<pre><code>int a = 7, b = 2;
+printf("%d\n", a / b);             /* 3 */
+printf("%f\n", a / 2.0);           /* 3.500000 */
+printf("%f\n", (double)a / b);     /* 3.500000  형 변환 */
+double h = 1 / 2 * 9.8;            /* 0.0 ! 1/2가 먼저 0이 된다 */</code></pre>
+    <p>그 밖에 <code>++i</code>(1 증가), <code>+=</code>, 비교 <code>== != &lt; &gt;</code>, 논리 <code>&amp;&amp;</code>(그리고) <code>||</code>(또는) <code>!</code>(아님)이 있습니다. C에서는 0이 거짓, 0이 아닌 값이 참입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>#include</code>, <code>int main(void) { ... return 0; }</code>, 세미콜론과 중괄호. 컴파일 후 실행.</li>
+        <li>변수는 자료형과 함께 선언. <code>int</code>, <code>double</code>, <code>char</code>. 형식 지정자 <code>%d %f %lf %c</code>.</li>
+        <li>정수 나눗셈은 몫. 실수가 필요하면 <code>2.0</code>이나 <code>(double)</code>.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>int c = 37; double f = 9 / 5 * c + 32;</code>의 결과와 고치는 방법은?
+          <details><summary>답</summary><p><code>9 / 5</code>가 1이 되어 69.0. <code>9.0 / 5 * c + 32</code>로 쓰면 98.6.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

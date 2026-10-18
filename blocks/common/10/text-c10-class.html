@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c10-class" data-kind="본문" data-std="공통10-03-03">
+  <header class="card-head"><span class="no"></span><h2>모듈과 클래스</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>import</code>로 표준 모듈과 외부 패키지를 불러 쓴다.</li>
+        <li>속성과 메서드가 있는 간단한 클래스를 만든다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>함수 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>모듈</h3>
+    <p>모듈은 함수와 변수를 모아 둔 파이썬 파일입니다. 자주 쓰는 기능은 이미 만들어져 있어 불러 쓰기만 하면 됩니다.</p>
+<pre><code>import math
+print(math.sqrt(2), math.pi, math.exp(1))
+from math import sin, radians
+print(sin(radians(30)))          # 0.49999999999999994
+
+import random
+print(random.randint(1, 6))      # 주사위
+
+import numpy as np               # 외부 패키지 (pip install numpy)
+x = np.linspace(0, 1, 5)         # [0, 0.25, 0.5, 0.75, 1]
+print(np.mean(x ** 2))</code></pre>
+    <ul class="tb-list">
+      <li>표준 모듈: 파이썬에 들어 있음. <code>math</code>, <code>random</code>, <code>csv</code>, <code>time</code>, <code>os</code>.</li>
+      <li>외부 패키지: <code>pip install 이름</code>으로 설치. 과학 계산에는 <code>numpy</code>(배열 계산), <code>matplotlib</code>(그래프), <code>scipy</code>(수치 해석)를 많이 쓴다.</li>
+      <li>내가 만든 <code>mytools.py</code>도 같은 폴더에 두면 <code>import mytools</code>로 쓸 수 있다.</li>
+    </ul>
+
+    <h3><span class="no">3.3.2</span>클래스</h3>
+    <p>클래스는 관련된 자료(<b>속성</b>)와 그 자료를 다루는 함수(<b>메서드</b>)를 묶은 설계도이고, 클래스로 만든 하나하나를 <b>객체</b>(인스턴스)라 합니다. 문자열이나 리스트도 사실 객체이고, <code>s.upper()</code>, <code>a.append(x)</code>가 메서드입니다.</p>
+<pre><code>class Particle:
+    def __init__(self, m, x, v):     # 객체를 만들 때 실행
+        self.m, self.x, self.v = m, x, v
+
+    def kinetic(self):
+        return 0.5 * self.m * self.v ** 2
+
+    def move(self, dt):
+        self.x += self.v * dt
+
+p = Particle(2.0, 0.0, 3.0)
+p.move(0.5)
+print(p.x, p.kinetic())     # 1.5 9.0</code></pre>
+    <p><code>self</code>는 메서드를 부른 그 객체 자신입니다. <code>p.move(0.5)</code>는 <code>Particle.move(p, 0.5)</code>와 같은 뜻입니다. 같은 클래스로 입자를 여러 개 만들면 각자 자기 <code>x</code>, <code>v</code>를 가집니다. C++의 클래스(5.3절)도 같은 생각입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>import 모듈</code>, <code>from 모듈 import 이름</code>, <code>import 모듈 as 별명</code>.</li>
+        <li>클래스 = 속성 + 메서드. <code>__init__</code>에서 <code>self.속성</code>을 만든다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>반지름 속성과 넓이를 돌려주는 메서드 <code>area()</code>를 가진 클래스 <code>Circle</code>을 써라.
+          <details><summary>답</summary><p><code>class Circle:</code> 안에 <code>def __init__(self, r): self.r = r</code>, <code>def area(self): return math.pi * self.r ** 2</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
