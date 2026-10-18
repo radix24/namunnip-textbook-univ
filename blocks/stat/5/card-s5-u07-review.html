@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통5-07-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s5-u07-review" data-kind="연습" data-std="응통5-07-01 응통5-07-01 응통5-07-01 응통5-07-02 응통5-07-02 응통5-07-01">
+  <header class="card-head"><span class="no"></span><h2>통계패키지 실습 단원 마무리 연습</h2><span class="kind">문제 6 · 판단·계산·개념·도전 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>R에서 <code>d &lt;- read.csv("survey.csv")</code>로 자료를 읽은 직후, 분석에 들어가기 전에 확인할 것 세 가지와 그에 맞는 함수를 쓰세요. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>변수가 몇 개이고 각각 어떤 형식(숫자, 문자, 범주)으로 읽혔는지 볼 함수가 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>결측값과 말이 안 되는 값(나이 −1, 키 999)도 확인해야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>첫째, 구조: <code>str(d)</code> 또는 <code>dim(d)</code>, <code>head(d)</code>로 행과 열의 수, 변수 형식을 봅니다. 숫자여야 할 변수가 문자로 읽혔다면 어딘가에 글자가 섞인 것입니다.</p><p>둘째, 요약과 범위: <code>summary(d)</code>로 최솟값, 최댓값을 보고 말이 안 되는 값을 찾습니다.</p><p>셋째, 결측: <code>colSums(is.na(d))</code>로 변수별 결측 개수를 셉니다. 범주형 변수는 <code>table(d$x, useNA = "ifany")</code>로 오타 범주("남", "남자")도 확인합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>어떤 자료에서 결측값이 999로 저장되어 있습니다. 값이 10, 12, 11, 999, 13일 때 그대로 평균을 내면 얼마이고, 999를 결측으로 처리하면 얼마인지 구하세요. R에서는 어떻게 처리하나요? <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>그대로 평균은 \((10+12+11+999+13)/5\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>결측으로 처리하면 남은 네 값의 평균입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>그대로 평균은 \(1045/5 = 209\)이고, 999를 결측으로 처리하면 \((10+12+11+13)/4 = 11.5\)입니다. 결측 코드를 숫자로 둔 채 분석하면 결과가 완전히 틀어집니다.</p><p>R에서는 읽을 때 <code>read.csv("f.csv", na.strings = c("", "999"))</code>로 지정하거나, 읽은 뒤 <code>d$x[d$x == 999] &lt;- NA</code>로 바꾸고 <code>mean(d$x, na.rm = TRUE)</code>를 씁니다. 결측이 왜 생겼는지(무작위인지, 특정 응답자에 몰렸는지)도 함께 살펴야 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>R 코드 <code>t.test(score ~ group, data = d)</code>가 무엇을 하는지 설명하고, 기본 설정에서 어떤 종류의 t 검정이 수행되는지 쓰세요. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>~</code> 왼쪽은 반응 변수, 오른쪽은 집단을 나누는 변수입니다.</p></details>
+        <details><summary>힌트 2</summary><p>R의 <code>t.test</code>에서 <code>var.equal</code>의 기본값은 <code>FALSE</code>입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>두 수준을 가진 <code>group</code>으로 <code>score</code>를 나누어 두 집단의 평균을 비교하는 독립 이표본 t 검정을 합니다. 기본값이 <code>var.equal = FALSE</code>이므로 등분산을 가정하지 않는 웰치 t 검정이 수행되고, 자유도는 소수로 나옵니다.</p><p>합동분산 t 검정을 원하면 <code>var.equal = TRUE</code>를 넣고, 대응표본이면 자료를 넓은 형식으로 바꾸어 <code>t.test(d$after, d$before, paired = TRUE)</code>를 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>보고서에 "두 집단의 차이는 통계적으로 유의했다(p &lt; 0.05)."라고만 썼습니다. 독자가 결과를 판단하는 데 부족한 정보를 세 가지 이상 들고 고쳐 쓰세요. <span class="mono small dim">[07-02]</span></p>
+        <details><summary>힌트 1</summary><p>차이가 얼마나 큰지, 얼마나 불확실한지, 몇 명을 분석했는지 알 수 있나요?</p></details>
+        <details><summary>힌트 2</summary><p>정확한 p값과 검정 이름도 독자가 다시 확인하는 데 필요합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>부족한 정보는 (1) 각 집단의 표본 크기, 평균, 표준편차, (2) 차이의 크기와 신뢰구간(효과 크기), (3) 사용한 검정 이름과 통계량, 자유도, 정확한 p값입니다.</p><p>고쳐 쓴 예: "실험군(n = 40, 평균 78.2, SD 9.1)이 대조군(n = 38, 평균 73.5, SD 10.4)보다 평균 4.7점 높았다(웰치 t 검정, t = 2.12, 자유도 73.9, p = 0.037, 차이의 95% 신뢰구간 [0.3, 9.1])." 이렇게 쓰면 차이가 실제로 의미 있는 크기인지, 불확실성이 얼마나 큰지 독자가 판단할 수 있습니다(수치는 가상).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>분석 결과 표를 만들 때 지킬 원칙을 세 가지 쓰고, R 출력 <code>0.0371482</code>, <code>78.24513</code>을 보고서에 옮길 때 어떻게 적을지 예를 드세요. <span class="mono small dim">[07-02]</span></p>
+        <details><summary>힌트 1</summary><p>소수점 자릿수가 많다고 정확한 것이 아닙니다. 자료의 정밀도를 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>표만 보고도 무엇을 쟀는지 알 수 있어야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>원칙의 예: (1) 자릿수를 자료의 정밀도와 해석에 맞게 줄이고 같은 열은 자릿수를 통일한다. (2) 변수 이름 대신 읽을 수 있는 이름과 단위를 쓰고, 표 제목과 주석에 자료 출처, 표본 크기, 방법을 적는다. (3) 비교하려는 값을 나란히 놓는다(집단은 열, 통계량은 행 등).</p><p>예: p값 <code>0.0371482</code>는 "p = 0.037", 평균 <code>78.24513</code>(점수 정수 자료)은 "78.2"로 적습니다. p값이 0.001보다 작으면 "p &lt; 0.001"로 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">도전</span>같은 분석을 석 달 뒤 다른 사람이 똑같이 다시 할 수 있도록(재현 가능하게) 하려면 무엇을 남겨야 하는지 다섯 가지 이상 쓰세요. 무작위성이 들어간 분석(부트스트랩, 표본 추출)에서는 특히 무엇이 필요한가요? <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>마우스로 클릭한 작업은 나중에 순서를 기억하기 어렵습니다.</p></details>
+        <details><summary>힌트 2</summary><p>같은 코드라도 패키지 버전이나 난수 시드가 다르면 결과가 달라질 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>남길 것: (1) 손대지 않은 원자료(읽기 전용으로 보관), (2) 자료 정리부터 그림까지 모든 단계를 담은 스크립트(R 스크립트, R Markdown, Quarto), (3) 변수 설명서(코드북: 이름, 단위, 결측 코드), (4) 사용한 R과 패키지 버전(<code>sessionInfo()</code> 출력), (5) 제외한 관측값과 그 이유의 기록, (6) 버전 관리(git) 이력.</p><p>무작위성이 있으면 <code>set.seed(2026)</code>처럼 난수 시드를 코드에 적어야 같은 결과가 다시 나옵니다. 시드는 결과가 좋게 나올 때까지 바꾸지 말고 분석 전에 정해 둡니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>
