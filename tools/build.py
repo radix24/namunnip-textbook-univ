@@ -211,7 +211,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <footer class="site-foot">
     <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
     <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
-    <p class="mono small dim">과목·학년·학점은 연세대학교 2026학년도 대학요람과 수강편람을 따랐고, 대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
   </footer>
 </main>
 
@@ -622,7 +622,7 @@ def write_pages(depts, blocks, sidx, links):
             nexts = [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))]
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
-                    ("2026 개설", c["open"]), ("학습", c["hours"]), ("교재", c["books"])]
+                    ("연세대 개설", c.get("offered") or c["open"]), ("학습", c["hours"]), ("교재", c["books"])]
             info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
             path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
                 f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}c/{dd["id"]}/{num(x["code"])}/\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
@@ -631,7 +631,7 @@ def write_pages(depts, blocks, sidx, links):
       <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])}{" · " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
       <h1>{esc(c["name"])}</h1>
       {f'<p class="cx-lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
-      {f'<p class="cx-lead small">수강편람 개요: {esc(c["handb"])}</p>' if c["handb"] else ""}
+      {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
       <dl class="cx-info">{info_html}</dl>
@@ -655,10 +655,43 @@ def write_pages(depts, blocks, sidx, links):
     return n_pages, n_cards
 
 
+OFFERED = SRC / "univ-offered.json"   # 연세대학교 수강편람에서 모은 학정번호별 개설 학기 {"terms": [...], "codes": {"MAT1001": ["2023-1", …]}}
+RECENT_FROM = 2024                     # 이 해부터 한 번도 열리지 않은 과목(3년 이상 미개설)은 목록에서 뺀다
+
+
+def offered_text(terms):
+    """["2004-1", …, "2024-1", "2026-1", "2026-2"] → "2004년부터 · 최근 2024년 1학기, 2026년 1·2학기" (최근 = RECENT_FROM 이후)"""
+    if not terms:
+        return "최근 개설 기록 없음"
+    by = {}
+    for t in terms:
+        y, s = t.split("-")
+        by.setdefault(y, []).append(s)
+    recent = ", ".join(f'{y}년 {"·".join(sorted(ss))}학기' for y, ss in sorted(by.items()) if int(y) >= RECENT_FROM)
+    first = min(by)
+    head = f"{first}년부터 · " if int(first) < RECENT_FROM else ""
+    return head + (f"최근 {recent}" if recent else f"마지막 {max(by)}년")
+
+
+def apply_offered(cs):
+    """개설 이력을 붙이고, 최근 3년 동안 한 번도 열리지 않은 과목은 뺀다. 자료가 없으면 그대로 둔다."""
+    if not OFFERED.exists():
+        return cs, []
+    data = json.loads(OFFERED.read_text(encoding="utf-8"))
+    keep, gone = [], []
+    for c in cs:
+        terms = sorted({t for s in c["sub"] for t in data["codes"].get(s, [])})
+        c["offered"] = offered_text(terms)
+        (keep if any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
+    return keep, gone
+
+
 def main():
     out, total = [], {"courses": 0, "units": 0, "stds": 0}
     for did, name, short, fname, college in DEPTS:
-        cs = [finish(c) for c in parse(SRC / fname, did)]
+        cs, gone = apply_offered([finish(c) for c in parse(SRC / fname, did)])
+        if gone:
+            print(f"{did}: {RECENT_FROM}년 이후 미개설로 뺀 과목 {len(gone)}: {', '.join(c['name'] for c in gone)}")
         out.append({"id": did, "name": name, "short": short, "college": college, "courses": cs})
         total["courses"] += len(cs)
         total["units"] += sum(len(c["units"]) for c in cs)

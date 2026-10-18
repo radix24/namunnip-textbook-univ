@@ -19,8 +19,8 @@
   const slotName = (s) => { const [y, m] = s.split("-"); return `${y}학년 ${m}학기`; };
   const box = (c) => {
     const nc = c.units.reduce((a, u) => a + (u.cards || 0), 0), dn = P ? c.units.reduce((a, u) => a + u.s.filter((s) => P.done(s.c)).length, 0) : 0;
-    return `<a class="tbox${nc ? "" : " soon"}" href="${esc(c.path)}" data-code="${esc(c.code)}">
-      <span class="lv mono">${esc(c.kind)} · ${c.cr}학점</span><b>${esc(c.name)}</b>
+    return `<a class="tbox${nc ? "" : " soon"}" href="${esc(c.path)}" data-code="${esc(c.code)}"${c.onlyU ? " data-extra" : ""}>
+      <span class="lv mono">${esc(c.kind)} · ${c.cr}학점${c.onlyU ? ` · <span class="u-extra">수강편람 개설</span>` : ""}</span><b>${esc(c.name)}</b>
       <span class="pg mono">${nc ? `카드 ${nc} · ` : ""}성취기준 ${dn ? `${dn}/` : ""}${nStd(c)}</span>
       ${dn ? `<span class="lp" aria-hidden="true"><i style="--p:${(dn / nStd(c)).toFixed(3)}"></i></span>` : ""}</a>`;
   };
@@ -28,16 +28,33 @@
   function drawTree(d) {
     const slots = [...new Set(d.courses.map(slot))].sort();
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
+    const nx = d.courses.filter((c) => c.onlyU).length;
     tree.innerHTML = `
       <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
-        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).</p></div>
+        ${nx ? `<div class="scope-seg" role="group" aria-label="보기 범위"><button type="button" data-scope="main">주요 과목만</button><button type="button" data-scope="all">모든 과목 <span class="dim">+${nx}</span></button></div>` : ""}
+        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
       <div class="tree-band sem-rows" data-track="${d.id}">${slots.map((s, i) => {
         const [y, m] = s.split("-"), newYear = i > 0 && slots[i - 1].split("-")[0] !== y;
+        const cs = d.courses.filter((c) => slot(c) === s);
         return `
-        <div class="sem-row${newYear ? " sem-year" : ""}"><h3 class="sem-lb"><b>${y}학년</b> ${m}학기</h3><div class="sem-boxes">${d.courses.filter((c) => slot(c) === s).map(box).join("")}</div></div>`;
+        <div class="sem-row${newYear ? " sem-year" : ""}"${cs.every((c) => c.onlyU) ? " data-extra" : ""}><h3 class="sem-lb"><b>${y}학년</b> ${m}학기</h3><div class="sem-boxes">${cs.map(box).join("")}</div></div>`;
       }).join("")}
       </div>`;
+    paintScope();
   }
+  /* 보기 범위: 기본은 주요 과목(교과과정 표에 있는 과목)만. '모든 과목'은 수강편람에만 있는 과목도 보인다 */
+  const SCOPE_KEY = "quri-scope";
+  let scope = "main";
+  try { scope = localStorage.getItem(SCOPE_KEY) === "all" ? "all" : "main"; } catch (e) { scope = "main"; }
+  function paintScope() {
+    document.body.dataset.scope = scope;
+    tree.querySelectorAll("[data-scope]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.scope === scope)));
+  }
+  tree.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-scope]"); if (!b) return;
+    scope = b.dataset.scope === "all" ? "all" : "main"; paintScope();
+    try { localStorage.setItem(SCOPE_KEY, scope); } catch (err) { /* 저장 못 해도 동작은 한다 */ }
+  });
 
   /* ───── 과목 목록 ───── */
   const host = document.getElementById("courses-list");
@@ -63,7 +80,7 @@
           <ol class="u-stds">${u.s.map((s) => stdLi(s, c)).join("")}</ol>
         </div>`).join("");
       return `
-      <section class="course" id="c-${esc(c.code)}" data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
+      <section class="course" id="c-${esc(c.code)}"${c.onlyU ? " data-extra" : ""} data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
         <div class="course-head">
           <span class="mono">${esc(c.sub.join(" / "))}</span>
           <h2><a href="${esc(c.path)}">${esc(c.name)}</a></h2>
