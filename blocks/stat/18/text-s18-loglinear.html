@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-loglinear" data-kind="본문" data-std="응통18-04-01">
+  <header class="card-head"><span class="no"></span><h2>로그선형모형으로 독립과 조건부 독립 나타내기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>분할표 칸 기대 도수의 로그를 효과의 합으로 쓴다.</li>
+        <li>3원 표의 독립, 조건부 독립, 동질 연관 모형을 구별한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>독립성 검정 (<a href="01-03.html">1.3절</a>), 응통13 4.1절 이원배치.</li>
+      </ul>
+    </div>
+
+    <h3>분할표의 분산분석</h3>
+    <p>세 범주형 변수(예: 흡연, 음주, 성별)의 관계를 한꺼번에 보려면 어떤 쌍이 관련 있고 어떤 쌍이 다른 변수를 고정하면 독립인지 따져야 합니다. 로그선형모형은 칸 기대 도수의 로그를 주효과와 교호작용의 합으로 써서, 분산분석처럼 구조를 나눕니다.</p>
+
+    <h3><span class="no">4.1.1</span>2원 표</h3>
+    <p>독립이면 \(\mu_{ij} = n\pi_{i+}\pi_{+j}\)이므로 \(\log\mu_{ij} = \lambda + \lambda_i^X + \lambda_j^Y\). 연관이 있으면 교호작용 \(\lambda_{ij}^{XY}\)를 더합니다(포화 모형). 2×2 표에서 \(\lambda^{XY}\) 항은 로그 오즈비와 직접 연결됩니다.</p>
+
+    <h3><span class="no">4.1.2</span>3원 표의 모형</h3>
+    <table class="tw">
+      <tr><th>기호</th><th>항</th><th>뜻</th></tr>
+      <tr><td>(X, Y, Z)</td><td>주효과만</td><td>세 변수 서로 독립</td></tr>
+      <tr><td>(XY, Z)</td><td>+ XY</td><td>Z는 (X, Y)와 독립</td></tr>
+      <tr><td>(XZ, YZ)</td><td>+ XZ + YZ</td><td>Z가 주어지면 X와 Y는 조건부 독립</td></tr>
+      <tr><td>(XY, XZ, YZ)</td><td>모든 2원 교호작용</td><td>동질 연관: X-Y 오즈비가 Z 수준마다 같음</td></tr>
+      <tr><td>(XYZ)</td><td>포화</td><td>X-Y 연관이 Z에 따라 다름</td></tr>
+    </table>
+    <p>겹친 모형은 \(G^2\)의 차이로 비교합니다. 위계 원칙에 따라 교호작용이 있으면 그 하위 항도 넣습니다. R: <code>MASS::loglm(~ X*Z + Y*Z, data = tab)</code> 또는 <code>glm(count ~ ..., family = poisson)</code>.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>(XZ, YZ) 모형의 \(G^2 = 15.3\)(자유도 4), (XY, XZ, YZ) 모형의 \(G^2 = 2.1\)(자유도 2)입니다. 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> 차 13.2(자유도 2), p값 약 0.001. XY 교호작용이 필요합니다. Z를 고정해도 X와 Y는 관련이 있고, 동질 연관 모형은 잘 맞습니다(\(G^2 = 2.1\), 자유도 2, p값 0.35). 각 Z 수준에서 X-Y 오즈비가 같다고 봐도 됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\log\mu\) = 주효과 + 교호작용.</li>
+        <li>(XZ, YZ) = 조건부 독립, (XY, XZ, YZ) = 동질 연관.</li>
+        <li>\(G^2\) 차이로 모형 비교, 포아송 GLM으로 적합.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2×2×2 표에서 상호 독립 모형(X, Y, Z)의 자유도는?
+          <details><summary>답</summary><p>칸 8 − 모수(1 + 1 + 1 + 1) = 4.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
