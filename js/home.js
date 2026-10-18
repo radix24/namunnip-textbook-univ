@@ -6,7 +6,6 @@
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const md = (s) => esc(s).replace(/\*([^*]+)\*/g, "<i>$1</i>");   // 설계 문서의 *책 제목*
   const nStd = (c) => c.units.reduce((a, u) => a + u.s.length, 0);
-  const TYPES = ["개념", "계산", "증명", "모형", "적용", "실습"];
   const TAB_KEY = "quri-dept";
   const P = window.QProgress;
 
@@ -58,7 +57,6 @@
 
   /* ───── 과목 목록 ───── */
   const host = document.getElementById("courses-list");
-  const stdLi = (s, c) => `<li data-hay="${esc((s.c + " " + s.t + " " + s.ty).toLowerCase())}"${P && P.done(s.c) ? ` class="done"` : ""}><span class="mono">${esc(s.c.split("-").slice(1).join("-"))}</span><a class="t" href="${esc(c.path + s.f)}.html">${esc(s.t)}${s.k && s.k.length ? ` <span class="mono small dim">카드 ${s.k.length}</span>` : ""}</a>${s.ty ? `<span class="ty mono" data-ty="${esc(s.ty)}">${esc(s.ty)}</span>` : ""}</li>`;
   /* 선수 칸의 과목 코드(공통1, 수학7, 공통1·2)를 과목 이름 링크로. 이어지는 과목은 다른 과목의 선수 칸을 거꾸로 찾는다 */
   const ALL = new Map(U.flatMap((d) => d.courses.map((c) => [c.code, c])));
   const RX = /([가-힣]+?)(\d+(?:·\d+)*)(?!\d)/g;
@@ -72,13 +70,14 @@
   ALL.forEach((c) => preCodes(c.pre).forEach((k) => { if (k !== c.code) (NEXT.get(k) || NEXT.set(k, []).get(k)).push(c); }));
   function drawList(d) {
     host.innerHTML = d.courses.map((c) => {
-      const tyCount = TYPES.map((t) => [t, c.units.reduce((a, u) => a + u.s.filter((s) => s.ty === t).length, 0)]).filter(([, k]) => k);
-      const units = c.units.map((u) => `
-        <div class="chapter" data-hay="${esc((u.t + " " + u.el).toLowerCase())}">
-          <h3><span class="mono">${u.n}</span><a href="${esc(c.path)}${u.n}.html">${esc(u.t)}</a>${u.cards ? `<span class="u-src mono">카드 ${u.cards}</span>` : ""}</h3>
-          ${u.el ? `<p class="u-el small">${esc(u.el)}</p>` : ""}
-          <ol class="u-stds">${u.s.map((s) => stdLi(s, c)).join("")}</ol>
-        </div>`).join("");
+      /* 대단원은 한 줄: 번호 · 제목 · 진도(할 수 있게 된 성취기준 / 전체). 성취기준 문장은 검색에만 쓰고 과목 목차에서 본다 */
+      const units = c.units.map((u) => {
+        const dn = P ? u.s.filter((s) => P.done(s.c)).length : 0, n = u.s.length;
+        const hay = [u.t, u.el, ...u.s.map((s) => s.t)].join(" ").toLowerCase();
+        return `
+          <li class="unit${n && dn === n ? " done" : ""}" data-hay="${esc(hay)}"><a href="${esc(c.path)}${u.n}.html"><span class="mono">${u.n}</span><span class="t">${esc(u.t)}</span>
+            <span class="u-pg" title="성취기준 ${dn}/${n} 할 수 있음${u.cards ? ` · 카드 ${u.cards}` : ""}"><span class="lp" aria-hidden="true"><i style="--p:${n ? (dn / n).toFixed(3) : 0}"></i></span><span class="mono">${dn}/${n}</span></span></a></li>`;
+      }).join("");
       return `
       <section class="course" id="c-${esc(c.code)}"${c.onlyU ? " data-extra" : ""} data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
         <div class="course-head">
@@ -90,23 +89,12 @@
           ${NEXT.has(c.code) ? `<p class="small u-path"><b>이어지는 과목</b> ${NEXT.get(c.code).map(cLink).join(", ")}</p>` : ""}
           ${c.hours ? `<p class="small"><b>학습 시간</b> ${esc(c.hours)}</p>` : ""}
           ${c.books ? `<p class="small"><b>교재</b> ${md(c.books)}</p>` : ""}
-          <p class="u-tys">${tyCount.map(([t, k]) => `<span class="ty mono" data-ty="${t}">${t} ${k}</span>`).join("")}</p>
-          <p><a class="link" href="${esc(c.path)}">과목 목차 →</a> <button type="button" class="link u-open" aria-expanded="false">성취기준 펼치기</button></p>
+          <p><a class="link" href="${esc(c.path)}">과목 목차와 성취기준 →</a></p>
         </div>
-        <div class="u-body">
-          ${c.yoram || c.handb ? `<div class="u-desc small">${c.yoram ? `<p><span class="mono">과목 개요</span>${esc(c.yoram)}</p>` : ""}${c.handb ? `<p><span class="mono">다루는 주제</span>${esc(c.handb)}</p>` : ""}</div>` : ""}
-          <div class="chapters">${units}</div>
-        </div>
+        <ol class="u-units">${units}</ol>
       </section>`;
     }).join("");
   }
-  host.addEventListener("click", (e) => {
-    const b = e.target.closest(".u-open"); if (!b) return;
-    const sec = b.closest(".course"), open = !sec.classList.contains("open");
-    sec.classList.toggle("open", open);
-    b.setAttribute("aria-expanded", String(open));
-    b.textContent = open ? "성취기준 접기" : "성취기준 펼치기";
-  });
 
   /* ───── 학년 칩과 검색 ───── */
   const chips = document.getElementById("chips");
@@ -122,14 +110,9 @@
       const inYear = year === "all" || sec.dataset.y === year;
       const nameHit = !term || sec.dataset.hay.includes(term);
       let any = false;
-      sec.querySelectorAll(".chapter").forEach((ch) => {
-        const chHit = !term || nameHit || ch.dataset.hay.includes(term);
-        let liAny = false;
-        ch.querySelectorAll(".u-stds > li").forEach((li) => {
-          const hit = chHit || li.dataset.hay.includes(term);
-          li.hidden = !hit; if (hit) liAny = true;
-        });
-        ch.hidden = !liAny; if (liAny) any = true;
+      sec.querySelectorAll(".unit").forEach((li) => {   // 대단원 제목·학습 요소·성취기준 문장으로 찾는다
+        const hit = !term || nameHit || li.dataset.hay.includes(term);
+        li.hidden = !hit; if (hit) any = true;
       });
       sec.hidden = !(inYear && any);
       sec.classList.toggle("hit", !!term && any);
@@ -179,7 +162,7 @@
     go.innerHTML = v ? `<a class="dash-next" href="${esc(v.href)}"><span class="mono">이어서 공부하기</span><b>${esc(v.title)}</b><span class="small dim">${esc(v.sub || "")}</span></a>` : "";
   };
   drawResume();
-  if (P) P.onChange(() => { drawResume(); drawTree(dept); });
+  if (P) P.onChange(() => { drawResume(); drawTree(dept); drawList(dept); apply(); });
 
   /* 소개 옆 숫자: 블록 수(u.cards)에서 본문(text-*)을 빼면 카드 수 */
   const total = U.reduce((a, d) => {
