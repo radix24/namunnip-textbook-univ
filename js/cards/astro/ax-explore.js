@@ -301,4 +301,53 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 12. 은하의 차등 회전과 Oort 상수 (천우4-04-01) */
+  (() => {
+    const S = QSim.card("exp-a4-oort"); if (!S) return;
+    const cv = S.$("canvas"), R0 = 8.2, T0 = 223, W0 = T0 / R0;
+    const law = { flat: (R) => T0, solid: (R) => T0 * R / R0, kep: (R) => T0 * Math.sqrt(R0 / R) };
+    const AB = { flat: [W0 / 2, -W0 / 2], solid: [0, -W0], kep: [0.75 * W0, -0.25 * W0] };
+    const NAME = { flat: "평평한 회전 곡선 (Θ 일정)", solid: "강체 회전 (Θ ∝ R)", kep: "케플러 회전 (Θ ∝ R^−1/2)" };
+    function vrel(key, d, l) {   // 은경 l(rad), 거리 d(kpc)인 별의 태양 기준 상대 속도와 시선 성분
+      const ux = -Math.cos(l), uy = Math.sin(l), x = R0 + d * ux, y = d * uy, R = Math.hypot(x, y), th = law[key](R);
+      const vx = -y / R * th, vy = x / R * th - T0; return [vx, vy, vx * ux + vy * uy];
+    }
+    function draw() {
+      const c = C(), key = S.val("law"), d = S.val("d"), v = QSim.view(cv, 0.55), g = v.g, half = v.W * 0.45;
+      const f1 = QSim.frame({ g, W: half, H: v.H, cv }, { x0: R0 - 5, x1: R0 + 5, y0: -5, y1: 5, equal: true, pad: 6 });
+      const ring = (r) => { const pts = []; for (let i = 0; i <= 120; i++) { const t = 2 * Math.PI * i / 120; pts.push([R0 + r * Math.cos(t), r * Math.sin(t)]); } return pts; };
+      f1.path(ring(d), c.ink3, 1, [3, 3]);
+      const arc = []; for (let i = -40; i <= 40; i++) { const t = i / 40 * 0.6; arc.push([R0 * Math.cos(t), R0 * Math.sin(t)]); } f1.path(arc, c.acc, 1, [5, 3]);
+      f1.dot(R0, 0, c.warn, 5); f1.text("태양", R0 + 0.2, -0.5, c.warn); f1.text("← 은하 중심", R0 - 4.9, 0.3, c.ink3);
+      const sc = 0.04;   // km/s → kpc (그림용 화살표 길이)
+      for (let k = 0; k < 16; k++) { const l = 2 * Math.PI * k / 16, [vx, vy] = vrel(key, d, l); const x = R0 - d * Math.cos(l), y = d * Math.sin(l); f1.dot(x, y, c.main, 3); f1.arrow(x, y, vx * sc, vy * sc, c.main); }
+      g.save(); g.translate(half, 0);
+      const ymax = Math.max(10, ...Array.from({ length: 73 }, (_, i) => Math.abs(vrel(key, d, i * 5 * Math.PI / 180)[2]))) * 1.15;
+      const f2 = QSim.frame({ g, W: v.W - half, H: v.H, cv }, { x0: 0, x1: 360, y0: -ymax, y1: ymax, xl: "은경 l (°)", yl: "시선속도 (km/s)" }); f2.axes();
+      f2.fn((L) => vrel(key, d, L * Math.PI / 180)[2], c.main, 2.5, null, 360);
+      f2.fn((L) => AB[key][0] * d * Math.sin(2 * L * Math.PI / 180), c.warn, 1.5, [5, 3], 360);
+      g.restore();
+      const [A, B] = AB[key], ex45 = vrel(key, d, Math.PI / 4)[2];
+      S.out(`${NAME[key]}, 태양 R₀ = 8.2 kpc, Θ₀ = 223 km/s → Ω₀ = ${fx(W0, 1)} km/s/kpc\nOort 상수 A = ${fx(A, 1)}, B = ${fx(B, 1)} km/s/kpc (관측값 A ≈ 15.3, B ≈ −11.9)\n은경 45°, 거리 ${fx(d, 1)} kpc 별의 시선속도: 정확한 값 ${fx(ex45, 1)} km/s, Oort 근사 A d sin 2l = ${fx(A * d, 1)} km/s\n파란 화살표: 태양에서 본 이웃 별의 상대 속도(왼쪽 그림). 오른쪽 파란 선: 정확한 시선속도, 빨간 점선: Oort 근사`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 13. HII 영역의 Strömgren 구 (천우4-03-02) */
+  (() => {
+    const S = QSim.card("exp-a4-strom"); if (!S) return;
+    const cv = S.$("canvas"), aB = 2.6e-19, pc = 3.086e16, mH = 1.673e-27, Ms = 1.989e30, yr = 3.156e7;
+    function draw() {
+      const c = C(), Q = Math.pow(10, S.val("lq")), n = Math.pow(10, S.val("ln")), R = Math.cbrt(3 * Q / (4 * Math.PI * aB * n * n)), Rpc = R / pc;
+      const span = Math.pow(10, Math.ceil(Math.log10(Rpc * 1.2))), v = QSim.view(cv, 0.6);
+      const f = QSim.frame(v, { x0: -span, x1: span, y0: -span * 0.6, y1: span * 0.6, equal: true, xl: "pc", pad: 22 }); f.axes();
+      const g = v.g; g.save(); g.fillStyle = "#d9483b"; g.globalAlpha = 0.25; g.beginPath(); g.arc(f.X(0), f.Y(0), Rpc * f.sx, 0, 7); g.fill(); g.restore();
+      const circ = []; for (let i = 0; i <= 120; i++) { const t = 2 * Math.PI * i / 120; circ.push([Rpc * Math.cos(t), Rpc * Math.sin(t)]); } f.path(circ, c.warn, 2);
+      f.dot(0, 0, c.main, 5);
+      const M = 4 / 3 * Math.PI * R * R * R * n * mH / Ms, trec = 1 / (n * aB) / yr;
+      S.out(`전리 광자 Q = ${Q.toExponential(1)} s⁻¹ (O7 V 별 약 10⁴⁹, B0 V 약 10⁴⁸), 수소 수 밀도 n = ${n.toExponential(1)} m⁻³ (${(n / 1e6).toPrecision(2)} cm⁻³)\nStrömgren 반지름 R_S = (3Q / 4π α_B n²)^1/3 = ${Rpc.toPrecision(3)} pc\n전리된 수소의 질량 ${M.toPrecision(3)} 태양 질량, 재결합 시간 1/(n α_B) = ${trec.toPrecision(3)} 년\n빨간 원: 전리된 영역(HII), 바깥: 중성 수소. 축 눈금 단위 pc`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
