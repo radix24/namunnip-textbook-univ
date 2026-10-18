@@ -27,12 +27,12 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통15-05-01">
+  <section class="topic-hero u-hero" data-sec="응통15-05-01" data-u="서울대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">통계전산</a><span class="mono">/</span><a href="05.html">5. MCMC</a></div>
     <h1><span class="sec-no mono">5.1</span>Metropolis-Hastings 알고리즘을 구현하기</h1>
     
     <div class="q-checklist q-one" id="std" data-unit="응통15-05-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-05-01] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-05-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
       <ol><li><input type="checkbox" data-std="응통15-05-01" aria-label="할 수 있음"><span class="t">Metropolis-Hastings 알고리즘을 구현할 수 있다.</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
@@ -41,12 +41,81 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 차례">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#lab-s15-mh"><span class="mono">5.1.1</span><span>Metropolis 알고리즘: 제안 폭이 너무 작아도, 너무 커도 안 되는 까닭</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="lab-s15-mh" data-kind="실습" data-std="응통15-05-01">
+  <header class="card-head"><span class="no">5.1.1</span><h2><span class="q-badge">실습</span>Metropolis 알고리즘: 제안 폭이 너무 작아도, 너무 커도 안 되는 까닭</h2><span class="kind">실습 · MCMC</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-01.html#std">[응통15-05-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>봉우리가 두 개인 목표분포에서 Metropolis 알고리즘으로 표본을 뽑습니다. 제안 폭을 바꾸며 수용률, 경로 그림, 히스토그램이 어떻게 달라지는지 보고 알맞은 폭을 고르는 감을 익힙니다. 성취기준 [응통15-05-01].</p>
+      <p class="q-term"><b>Metropolis 알고리즘</b> (대칭 제안의 Metropolis-Hastings): 현재 값 \(x\)에서</p>
+      <ol>
+        <li>후보 \(y = x + w Z\)를 제안한다(\(Z \sim N(0, 1)\), \(w\)는 제안 폭).</li>
+        <li>확률 \(\min\{1, f(y)/f(x)\}\)로 \(y\)로 옮기고, 아니면 \(x\)에 머문다.</li>
+      </ol>
+      <p>\(f\)의 정규화 상수를 몰라도 비 \(f(y)/f(x)\)만 있으면 되는 것이 장점입니다. 이렇게 만든 값들은 \(f\)를 정상분포로 가지는 Markov 연쇄입니다.</p>
+      <p class="q-term"><b>수용률</b>: 제안이 받아들여진 비율. 1차원 문제에서는 대략 0.2~0.5가 좋다고 알려져 있습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>목표분포는 \(0.3\,N(-2, 0.7^2) + 0.7\,N(2, 1)\)로, 평균은 0.8이고 \(x &lt; 0\)일 확률은 약 0.315입니다. 출발점은 0입니다. 위 그림은 반복에 따른 경로(trace), 아래 그림은 뽑은 값의 히스토그램과 목표분포(빨강)입니다. 난수는 가상이며 "다시 돌리기"는 새 난수로 처음부터 돌립니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>제안 폭 w = <b data-show="w" data-fix="2">2.00</b></span><input type="range" name="w" min="0.05" max="20" step="0.05" value="2" aria-label="제안 폭"></label>
+        <label><span>반복 N = <b data-show="N">5000</b></span><input type="range" name="N" min="500" max="20000" step="500" value="5000" aria-label="반복 횟수"></label>
+      </div>
+      <canvas aria-label="반복에 따른 경로"></canvas>
+      <canvas aria-label="뽑은 값의 히스토그램과 목표분포"></canvas>
+      <div class="btns"><button type="button" class="new">다시 돌리기</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(w = 2\)에서 수용률, 표본 평균, \(x &lt; 0\) 비율을 이론값(0.8, 0.315)과 비교합니다.</li>
+        <li>\(w = 0.1\)로 줄이고 경로와 히스토그램을 봅니다. "다시 돌리기"를 여러 번 누릅니다.</li>
+        <li>\(w = 20\)으로 늘려 경로 모양과 수용률을 봅니다.</li>
+        <li>\(w = 0.1\)에서 \(N\)을 20000으로 늘리면 나아지는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(w = 2\): 수용률이 약 55%이고, 경로가 두 봉우리를 자주 오가며, 히스토그램이 빨간 곡선과 잘 맞습니다. 표본 평균과 \(x &lt; 0\) 비율이 이론값에 가깝습니다.</li>
+        <li>\(w = 0.1\): 수용률은 95% 넘게 높지만 한 걸음이 너무 작아 경로가 천천히 기어갑니다. 한 봉우리에 갇혀 다른 봉우리를 거의 못 가므로 \(x &lt; 0\) 비율이 0.315와 크게 다릅니다. 높은 수용률이 좋은 것이 아닙니다.</li>
+        <li>\(w = 20\): 후보가 대부분 확률이 낮은 먼 곳이라 수용률이 10% 안팎으로 떨어집니다. 경로가 계단 모양(같은 값에 오래 머묾)이 되고 히스토그램이 울퉁불퉁합니다.</li>
+        <li>\(w = 0.1\)에서 \(N\)을 늘리면 조금 나아지지만, 제안 폭을 고치는 것보다 훨씬 비효율적입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>수용률만 보고 표본이 좋다고 판단하면 왜 위험한지 \(w = 0.1\)의 결과로 설명해 보세요.</li>
+        <li>출발점을 \(x = 10\)처럼 먼 곳에 두면 처음 몇백 번의 값은 어떻게 될까요? 이 값들을 버리는 것을 번인(burn-in)이라 합니다.</li>
+        <li>서로 다른 출발점에서 연쇄를 여러 개 돌려 비교하는 수렴 진단([응통15-05-03])이 이 실습의 어떤 문제를 잡아 줄지 적어 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R로 직접 구현해 보세요.</p>
+      <pre><code>f &lt;- function(x) 0.3*dnorm(x, -2, 0.7) + 0.7*dnorm(x, 2, 1)
+x &lt;- numeric(5000); w &lt;- 2
+for (i in 2:5000) {
+  y &lt;- x[i-1] + w*rnorm(1)
+  x[i] &lt;- if (runif(1) &lt; f(y)/f(x[i-1])) y else x[i-1]
+}
+mean(x); mean(x &lt; 0); plot(x, type = "l")</code></pre>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-s15-mh" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="04-03.html">← 4.3 중요도 표집으로 Monte Carlo 적분의 분산을 줄이기</a></span>
         <span><a href="05-02.html">5.2 Gibbs 표집을 구현하기 →</a></span>
@@ -63,7 +132,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/stat/stat-labs.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>
