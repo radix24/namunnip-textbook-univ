@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-08-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e6-window" data-kind="본문" data-std="전전6-08-02">
+  <header class="card-head"><span class="no"></span><h2>창 함수와 스펙트럼 누설</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>유한 길이로 자르는 것이 창 함수를 곱하는 것이고, 스펙트럼에서는 창의 변환과 컨볼루션되어 누설이 생김을 안다.</li>
+        <li>직사각, Hann, Hamming 창의 주엽 폭과 옆엽 높이를 비교하고, 해상도와 누설 사이의 맞바꿈을 설명한다.</li>
+        <li>측정 목적에 맞는 창을 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>곱셈 정리 (<a href="04-02.html">4.2절</a>), DFT와 해상도 (<a href="05-02.html">5.2절</a>, <a href="05-03.html">5.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.2.1</span>자르는 것은 곱하는 것</h3>
+    <p>FFT는 유한한 N개의 표본만 봅니다. 이는 무한히 긴 신호 \(x[n]\)에 \(0 \le n \le N-1\)에서만 1인 창 \(w[n]\)을 곱한 \(x[n]w[n]\)을 분석하는 것과 같습니다. 곱셈 정리에 따라 스펙트럼은</p>
+    \[ X_w(e^{j\omega}) = \frac{1}{2\pi}\int_{2\pi}X(e^{j\theta})\,W(e^{j(\omega - \theta)})\,d\theta. \]
+    <p>정현파 하나(스펙트럼은 임펄스)라면 결과는 그 주파수로 옮긴 \(W\) 자체입니다. 직사각 창의 W는 5.1절의 \(\frac{\sin(\omega N/2)}{\sin(\omega/2)}\) 모양이라 주엽 옆에 옆엽이 계속 이어집니다. 그래서 한 주파수의 에너지가 다른 주파수로 "새어" 나가 보입니다.</p>
+    <p class="q-term"><b>스펙트럼 누설</b>: 유한 관측(창) 때문에 한 주파수 성분의 에너지가 다른 주파수로 퍼져 보이는 현상.</p>
+    <p class="q-term"><b>주엽 폭</b>: W의 가운데 봉우리 폭. 가까운 두 주파수를 가르는 능력(해상도)을 정한다.</p>
+    <p class="q-term"><b>옆엽 높이</b>: 가장 큰 옆엽이 주엽보다 몇 dB 낮은가. 큰 성분 옆의 작은 성분을 볼 수 있는지(동적 범위)를 정한다.</p>
+    <p>5.3절 실습의 2번(50 Hz가 빈 사이에 놓여 48 Hz에서 0.649로 보임)이 바로 이 누설입니다. 주파수가 정확히 빈에 놓이면 다른 빈들이 W의 영점에 찍혀 누설이 보이지 않을 뿐, 사라진 것은 아닙니다.</p>
+
+    <h3><span class="no">8.2.2</span>창을 바꾸면</h3>
+    <p>구하려는 것: 옆엽을 줄이는 방법. 직사각 창의 옆엽은 양 끝에서 갑자기 0으로 떨어지는 모서리 때문입니다(3.1절, 모서리가 있으면 계수가 \(1/k\)로 천천히 줄어듦). 끝을 부드럽게 0으로 내리는 창을 쓰면 옆엽이 줄어듭니다.</p>
+    <p class="q-term"><b>Hann 창</b>: \(w[n] = 0.5 - 0.5\cos\frac{2\pi n}{N - 1}\). 끝이 0에서 부드럽게 시작한다.</p>
+    <p class="q-term"><b>Hamming 창</b>: \(w[n] = 0.54 - 0.46\cos\frac{2\pi n}{N - 1}\). 첫 옆엽을 최소로 하도록 계수를 맞췄다.</p>
+    <table class="tb-table">
+      <tr><th>창</th><th>주엽 폭(영점 사이)</th><th>최대 옆엽</th></tr>
+      <tr><td>직사각</td><td>\(4\pi/N\)</td><td>약 −13 dB</td></tr>
+      <tr><td>Hann</td><td>\(8\pi/N\)</td><td>약 −31 dB</td></tr>
+      <tr><td>Hamming</td><td>\(8\pi/N\)</td><td>약 −43 dB</td></tr>
+    </table>
+    <p>옆엽을 줄인 대가로 주엽이 두 배 넓어집니다. 같은 N에서 <b>누설과 해상도는 맞바꿈</b> 관계입니다. 둘 다 좋게 하려면 N(관측 시간)을 늘려야 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 8.2.1</span>
+      <p>진폭 1인 1010 Hz 신호 옆에 진폭 0.001(−60 dB)인 1300 Hz 신호가 있다(가상 신호). \(f_s = 8000\) Hz, N = 256으로 측정할 때 어떤 창이 적당한가?</p>
+    </div>
+    <p><i>풀이.</i> 빈 간격 31.25 Hz. 1010 Hz는 빈 32.32로 빈 사이에 놓이고, 1300 Hz는 빈 41.6 근처(가장 가까운 빈 42)입니다. 두 주파수는 약 9빈 떨어져 있어 해상도는 충분합니다. 문제는 −60 dB 성분이 큰 성분의 옆엽에 묻히는가입니다. 큰 성분만 넣고 빈 42에 새어 든 크기를 NumPy로 계산하면(큰 봉우리 기준) 직사각 약 −29 dB, Hamming 약 −47 dB, Hann 약 −69 dB, Blackman 약 −77 dB입니다. −60 dB 성분이 보이려면 누설이 그보다 낮아야 하므로 Hann이나 Blackman을 씁니다. Hamming은 첫 옆엽은 가장 낮지만 멀리 갈수록 천천히 줄어(약 \(1/k\)) 9빈 떨어진 곳에서는 Hann보다 높습니다. 1000 Hz처럼 빈에 정확히 놓인 경우에는 직사각 창의 누설이 계산 오차 수준이라 구별되지 않으므로, 실제 측정에서는 주파수가 빈에 놓인다고 가정하지 않습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "창 함수는 잡음을 없애는 필터다": 창은 관측 구간의 양 끝을 줄여 누설 모양을 바꿀 뿐, 잡음을 걸러내지 않습니다. (2) 창을 쓰면 신호 일부를 줄였으므로 진폭이 작게 읽힙니다. Hann 창이면 평균 0.5를 곱한 셈이라 진폭을 읽을 때 \(2|X|/\sum w\)로 보정해야 합니다. (3) "창을 쓰면 해상도가 좋아진다": 주엽은 오히려 넓어집니다. 좋아지는 것은 작은 성분을 보는 능력입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>유한 관측 = 창 곱셈 → 스펙트럼이 창의 변환과 컨볼루션 → 누설.</li>
+        <li>직사각: 주엽 좁고 옆엽 높음(−13 dB). Hann·Hamming: 옆엽 낮고 주엽 두 배.</li>
+        <li>같은 N에서 해상도와 누설은 맞바꿈. 둘 다 원하면 관측 시간을 늘린다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>N = 64인 Hann 창의 \(w[0]\), \(w[31.5]\)에 해당하는 가운데 값, \(w[63]\)은?
+          <details><summary>답</summary><p>0, 1(가운데), 0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f_s = 1000\) Hz, N = 100에서 Hann 창을 쓸 때 주엽의 영점 사이 폭은 몇 Hz인가? 직사각 창은?
+          <details><summary>답</summary><p>Hann: \(8\pi/N\)은 4빈 = 40 Hz. 직사각: 2빈 = 20 Hz.</p></details>
+        </li>
+        <li>Hann 창을 쓴 N점 FFT에서 빈에 정확히 놓인 진폭 A 정현파의 봉우리 \(|X[k]|\)는 얼마인가?
+          <details><summary>답</summary><p>\(\sum w \approx N/2\)이므로 \(|X| \approx \frac A2\cdot\frac N2 = \frac{AN}{4}\). 직사각의 절반.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>Hann 창이 \(\frac12 - \frac12\cos\)의 합이라는 것을 이용해, Hann 창을 쓴 DFT를 직사각 창 DFT 세 빈의 조합 \(X_H[k] = \frac12X[k] - \frac14X[k-1] - \frac14X[k+1]\)로 쓸 수 있음을 설명하여라(주기 N 형태 \(\cos(2\pi n/N)\)로 근사).
+          <details><summary>답</summary><p>\(\cos(2\pi n/N) = \frac12(e^{j2\pi n/N} + e^{-j2\pi n/N})\)을 곱하면 DFT가 한 빈씩 이동한 것(주파수 이동). 따라서 \(\frac12X[k] - \frac12\cdot\frac12(X[k-1] + X[k+1])\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
