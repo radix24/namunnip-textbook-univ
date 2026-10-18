@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-pymodule" data-kind="본문" data-std="공통11-04-02">
+  <header class="card-head"><span class="no"></span><h2>모듈과 클래스로 프로그램 정리하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자주 쓰는 함수를 내 모듈로 만들어 여러 프로그램에서 불러 쓴다.</li>
+        <li>클래스로 상태와 동작을 묶어 시뮬레이션을 정리한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>모듈과 클래스 (<a href="../10/03-03.html">공통10 3.3절</a>), 포트란 모듈 (<a href="02-01.html">2.1절</a>), 함수로 나누기 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>내 모듈 만들기</h3>
+    <p>4.1절의 함수들을 <code>labtools.py</code> 한 파일에 모으면, 같은 폴더의 다른 프로그램에서 불러 쓸 수 있습니다. 포트란의 <code>module</code>과 <code>use</code>에 해당합니다.</p>
+<pre><code># labtools.py
+"""실험 자료 처리용 함수 모음"""
+R = 8.314
+
+def mean(xs):
+    return sum(xs) / len(xs)
+
+def stdev(xs):
+    m = mean(xs)
+    return (sum((x - m) ** 2 for x in xs) / (len(xs) - 1)) ** 0.5
+
+if __name__ == "__main__":       # 직접 실행할 때만: 간단한 시험
+    assert abs(mean([1, 2, 3]) - 2) &lt; 1e-12
+    print("labtools 시험 통과")</code></pre>
+<pre><code># analyze.py
+import labtools as lt
+g = [9.71, 9.85, 9.78, 9.80, 9.83]
+print(lt.mean(g), lt.stdev(g))</code></pre>
+    <p>모듈 아래에 <code>if __name__ == "__main__":</code>으로 시험 코드를 넣어 두면, 함수를 고친 뒤 그 파일만 실행해서 바로 확인할 수 있습니다. 파일이 많아지면 폴더(패키지)로 묶습니다.</p>
+
+    <h3><span class="no">4.2.2</span>클래스로 시뮬레이션 정리하기</h3>
+    <p>시뮬레이션의 상태(위치, 속도, 시간)와 동작(한 걸음 나아가기, 에너지 계산)을 클래스로 묶으면, 여러 개를 따로 돌리거나 조건을 바꿔 비교하기 쉽습니다.</p>
+<pre><code>class Oscillator:
+    """용수철 진동자 x'' = -(k/m) x 를 오일러-크로머 방법으로 푼다"""
+    def __init__(self, k=1.0, m=1.0, x=1.0, v=0.0):
+        self.k, self.m, self.x, self.v, self.t = k, m, x, v, 0.0
+
+    def step(self, dt):
+        self.v += -(self.k / self.m) * self.x * dt   # 속도 먼저
+        self.x += self.v * dt                         # 새 속도로 위치
+        self.t += dt
+
+    def energy(self):
+        return 0.5 * self.m * self.v**2 + 0.5 * self.k * self.x**2
+
+osc = Oscillator()
+for _ in range(1000):
+    osc.step(0.01)
+print(osc.t, osc.x, osc.energy())    # t = 10에서 x ≈ cos(10), 에너지 ≈ 0.5</code></pre>
+    <p>새 기능(감쇠, 바깥 힘)을 넣고 싶으면 이 클래스를 물려받아(상속) <code>step</code>만 고친 클래스를 만들 수 있습니다. <code>step</code>에서 위치를 먼저 바꾸면 보통의 오일러 방법이 되어 에너지가 점점 늘어납니다. 이 차이는 5.2절에서 다룹니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>함수 모음을 <code>.py</code> 파일로 두고 <code>import</code>한다. 아래쪽에 시험 코드.</li>
+        <li>클래스로 상태와 동작을 묶으면 여러 조건을 나란히 돌리기 쉽다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>Oscillator</code>에 감쇠 계수 <code>b</code>를 더한 클래스 <code>Damped(Oscillator)</code>를 만들 때 <code>step</code>을 어떻게 고치는가?
+          <details><summary>답</summary><p>속도 갱신을 <code>self.v += (-(self.k * self.x) - self.b * self.v) / self.m * dt</code>로 바꾼다. <code>__init__</code>에서 <code>super().__init__(...)</code>을 부르고 <code>self.b</code>를 더한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

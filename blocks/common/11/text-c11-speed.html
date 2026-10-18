@@ -1,0 +1,96 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-speed" data-kind="본문" data-std="공통11-05-04">
+  <header class="card-head"><span class="no"></span><h2>포트란과 파이썬의 속도 비교</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>같은 계산을 포트란, 순수 파이썬, NumPy로 써서 실행 시간을 잰다.</li>
+        <li>속도 차이가 생기는 이유를 컴파일과 인터프리트로 설명한다.</li>
+        <li>언어를 고르는 기준과 두 언어를 함께 쓰는 방법을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>포트란 배열 (<a href="01-03.html">1.3절</a>), NumPy (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>시간 재기</h3>
+    <p>\(\sum_{i=1}^{N} \frac{1}{i^2}\)을 \(N = 10^7\)까지 세 가지로 계산해 걸린 시간을 비교합니다.</p>
+<pre><code>program timing
+  implicit none
+  integer, parameter :: dp = kind(1.0d0)
+  integer :: i, N
+  real(dp) :: s, t0, t1
+  N = 10000000
+  call cpu_time(t0)
+  s = 0.0_dp
+  do i = 1, N
+    s = s + 1.0_dp / real(i, dp)**2
+  end do
+  call cpu_time(t1)
+  print '(A, F12.9, A, F8.4, A)', "s = ", s, ",  ", t1 - t0, " s"
+end program timing</code></pre>
+<pre><code>import time
+import numpy as np
+N = 10_000_000
+
+t0 = time.perf_counter()
+s = 0.0
+for i in range(1, N + 1):
+    s += 1.0 / i**2
+t1 = time.perf_counter()
+print("파이썬 반복문", s, t1 - t0)
+
+t0 = time.perf_counter()
+i = np.arange(1, N + 1, dtype=float)
+s = np.sum(1.0 / i**2)
+t1 = time.perf_counter()
+print("NumPy", s, t1 - t0)</code></pre>
+    <p>컴파일할 때 최적화 옵션(<code>gfortran -O2 timing.f90</code>)을 켜고, 같은 컴퓨터에서 여러 번 재서 비교합니다. 결과는 컴퓨터, 컴파일러, 파이썬 판에 따라 다르므로 직접 재 보아야 합니다. 일반적으로는 순수 파이썬 반복문이 가장 느리고(포트란보다 수십~수백 배), NumPy는 포트란에 가깝게 빨라지는 경우가 많습니다(확인 필요: 실제 배수는 환경마다 다름). 세 결과의 \(s\)가 마지막 몇 자리에서 조금 다를 수 있는데, 더하는 순서와 방식이 달라 반올림 오차가 다르게 쌓이기 때문입니다.</p>
+
+    <h3><span class="no">5.4.2</span>차이의 이유</h3>
+    <ul class="tb-list">
+      <li><b>포트란</b>: 실행 전에 전체를 기계어로 번역하고, 자료형이 미리 정해져 있어 컴파일러가 반복문을 최적화한다.</li>
+      <li><b>순수 파이썬</b>: 한 줄씩 해석하면서, 더하기 한 번마다 두 값의 자료형을 확인하고 새 객체를 만든다. 이 부담이 \(10^7\)번 되풀이된다.</li>
+      <li><b>NumPy</b>: 반복은 미리 컴파일된 C 코드 안에서 일어나고, 파이썬은 "배열 전체를 더하라"는 명령만 한 번 내린다. 대신 \(10^7\)개짜리 배열을 메모리에 만든다.</li>
+    </ul>
+
+    <h3><span class="no">5.4.3</span>언어 고르기</h3>
+    <table class="tb-table">
+      <thead><tr><th>기준</th><th>포트란</th><th>파이썬 (+NumPy)</th></tr></thead>
+      <tbody>
+        <tr><td>실행 속도</td><td>매우 빠름</td><td>반복문은 느림, 배열 연산은 빠름</td></tr>
+        <tr><td>코드 쓰는 시간</td><td>선언, 컴파일이 필요</td><td>짧고 바로 실행</td></tr>
+        <tr><td>그래프, 자료 정리</td><td>불편함</td><td>라이브러리가 많음</td></tr>
+        <tr><td>오래된 과학 코드</td><td>많이 남아 있음</td><td>감싸서 부를 수 있음</td></tr>
+      </tbody>
+    </table>
+    <p>실제 연구에서는 무거운 계산 부분은 포트란이나 C로 쓰고, 입력 준비와 결과 분석, 그래프는 파이썬으로 하는 경우가 많습니다. NumPy에 들어 있는 <code>f2py</code>로 포트란 서브루틴을 파이썬 함수처럼 불러 쓸 수도 있습니다. "먼저 파이썬으로 맞게 짜고, 느린 곳을 재서 그 부분만 빠르게"가 기본 순서입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>시간은 <code>cpu_time</code>, <code>time.perf_counter</code>로 같은 조건에서 여러 번 잰다.</li>
+        <li>순수 파이썬 반복문은 느리고, NumPy와 포트란은 빠르다. 이유는 컴파일과 자료형 확인 부담.</li>
+        <li>무거운 계산은 포트란, 준비와 분석은 파이썬. <code>f2py</code>로 이을 수 있다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>위 계산에서 \(N\)을 \(10^8\)로 늘리면 NumPy 방법에 어떤 문제가 생길 수 있는가?
+          <details><summary>답</summary><p>배정도 \(10^8\)개 배열은 약 800 MB라 메모리가 모자랄 수 있다. 몇 덩어리로 나눠 계산하거나 반복문을 컴파일 언어로 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

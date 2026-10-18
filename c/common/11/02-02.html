@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>포트란으로 파일을 읽고 쓰기 · 전자계산(2) — QURI</title>
-  <meta name="description" content="전자계산(2) 2.2 포트란으로 파일을 읽고 쓰기 — 성취기준: 포트란으로 파일을 읽고 쓸 수 있다.">
+  <title>포트란 파일 입출력 · 전자계산(2) — QURI</title>
+  <meta name="description" content="전자계산(2) 2.2 포트란 파일 입출력 — 성취기준: 포트란으로 파일을 읽고 쓸 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통11&quot;, &quot;title&quot;: &quot;2.2 포트란으로 파일을 읽고 쓰기&quot;, &quot;sub&quot;: &quot;전자계산(2)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통11&quot;, &quot;title&quot;: &quot;2.2 포트란 파일 입출력&quot;, &quot;sub&quot;: &quot;전자계산(2)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,108 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통11-02-02">
+  <section class="topic-hero u-hero has-text" data-sec="공통11-02-02">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">전자계산(2)</a><span class="mono">/</span><a href="02.html">2. 포트란 부프로그램과 파일</a></div>
-    <h1><span class="sec-no mono">2.2</span>포트란으로 파일을 읽고 쓰기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통11-02-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통11-02-02] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통11-02-02" aria-label="할 수 있음"><span class="t">포트란으로 파일을 읽고 쓸 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.2</span>포트란 파일 입출력</h1>
+    <p class="sec-std"><span class="mono">[공통11-02-02]</span> 포트란으로 파일을 읽고 쓸 수 있다. <span class="ty mono" data-ty="실습">실습</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-2-1"><span class="mono">2.2.1</span><span>장치 번호</span></a></li><li><a href="#s2-2-2"><span class="mono">2.2.2</span><span>형식을 정한 출력</span></a></li><li><a href="#s2-2-3"><span class="mono">2.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c11-ffile"><span class="mono">본문</span><span>포트란 파일 입출력</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-c11-ffile" data-kind="본문" data-std="공통11-02-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>open</code>, <code>read</code>, <code>write</code>, <code>close</code>로 자료 파일을 읽고 쓴다.</li>
+        <li>형식 지정으로 열을 맞춰 출력하고, 파일 끝과 오류를 <code>iostat</code>으로 처리한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>파이썬 파일 처리 (<a href="../10/03-02.html">공통10 3.2절</a>), 포트란 배열 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s2-2-1"><span class="no">2.2.1</span>장치 번호</h3>
+    <p>포트란은 파일을 <b>장치 번호</b>(unit)에 연결해 다룹니다. <code>print *</code>와 <code>read *</code>는 화면과 키보드에 연결된 기본 장치입니다. <code>newunit=</code>을 쓰면 비어 있는 번호를 저절로 골라 줍니다.</p>
+<pre><code>integer :: u, ios, n
+real(dp) :: t, T_c
+real(dp) :: tarr(1000), tcarr(1000)
+
+open(newunit=u, file="data.txt", status="old", action="read", iostat=ios)
+if (ios /= 0) stop "data.txt를 열 수 없습니다"
+read(u, *)                      ! 첫 줄(제목) 건너뛰기
+n = 0
+do
+  read(u, *, iostat=ios) t, T_c
+  if (ios /= 0) exit            ! 파일 끝이면 음수, 읽기 오류면 양수
+  n = n + 1
+  tarr(n) = t;  tcarr(n) = T_c
+end do
+close(u)
+print *, n, "줄을 읽었습니다"</code></pre>
+    <p><code>read(u, *)</code>의 <code>*</code>는 목록 지향 입력이라, 공백이나 쉼표로 나뉜 수를 차례로 읽습니다. <code>status</code>는 <code>"old"</code>(있어야 함), <code>"new"</code>(없어야 함), <code>"replace"</code>(있으면 덮어씀)입니다.</p>
+    <p>포트란에서는 변수 이름의 대소문자를 구별하지 않으므로 <code>t</code>와 <code>T</code>는 같은 변수입니다. 그래서 위에서는 온도를 <code>T_c</code>로, 배열을 <code>tarr</code>, <code>tcarr</code>로 썼습니다. <code>ts</code>와 <code>Ts</code>를 함께 선언하면 같은 이름이라 컴파일 오류가 납니다.</p>
+
+    <h3 id="s2-2-2"><span class="no">2.2.2</span>형식을 정한 출력</h3>
+<pre><code>open(newunit=u, file="result.txt", status="replace", action="write")
+write(u, '(A8, A10)') "t(s)", "T(K)"
+do i = 1, n
+  write(u, '(F8.1, F10.2)') tarr(i), tcarr(i) + 273.15_dp
+end do
+close(u)</code></pre>
+    <table class="tb-table">
+      <thead><tr><th>형식</th><th>뜻</th><th>예 (값 → 출력)</th></tr></thead>
+      <tbody>
+        <tr><td><code>I5</code></td><td>정수, 5칸</td><td>42 → <code>   42</code></td></tr>
+        <tr><td><code>F8.3</code></td><td>고정 소수점, 8칸, 소수 3자리</td><td>3.14159 → <code>   3.142</code></td></tr>
+        <tr><td><code>ES12.4</code></td><td>과학적 표기, 소수 4자리</td><td>0.000123 → <code>  1.2300E-04</code></td></tr>
+        <tr><td><code>A</code>, <code>A8</code></td><td>문자열</td><td></td></tr>
+        <tr><td><code>3F8.2</code>, <code>2X</code></td><td>같은 형식 3번, 빈칸 2개</td><td></td></tr>
+      </tbody>
+    </table>
+    <p>칸이 모자라면 별표(<code>********</code>)가 찍힙니다. 이렇게 열을 맞춘 파일은 파이썬이나 표 계산 프로그램에서 바로 읽을 수 있어, 계산은 포트란으로 하고 그래프는 파이썬(5.3절)으로 그리는 식으로 나누어 쓰기 좋습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>open(newunit=u, file=..., status=..., iostat=...)</code>, <code>read(u, *)</code>, <code>write(u, 형식)</code>, <code>close(u)</code>.</li>
+        <li>파일 끝까지 읽기: <code>do</code> 안에서 <code>iostat</code>이 0이 아니면 <code>exit</code>.</li>
+        <li>형식 <code>I</code>, <code>F</code>, <code>ES</code>, <code>A</code>, <code>X</code>. 칸이 모자라면 별표.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-2-3"><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>값 −12.5를 <code>F6.2</code>로 출력하면? <code>F5.2</code>면?
+          <details><summary>답</summary><p><code>-12.50</code>(6칸). 5칸에는 들어가지 않아 <code>*****</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c11-ffile" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통11-02-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통11-02-02] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통11-02-02" aria-label="할 수 있음"><span class="t">포트란으로 파일을 읽고 쓸 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-01.html">← 2.1 서브루틴과 함수로 포트란 프로그램을 나누기</a></span>
-        <span><a href="03-01.html">3.1 파이썬 자료형과 조건문으로 간단한 프로그램을 쓰기 →</a></span>
+        <span><a href="02-01.html">← 2.1 서브루틴과 함수</a></span>
+        <span><a href="03-01.html">3.1 파이썬 자료형과 조건문: 포트란과 비교 →</a></span>
       </nav>
     </div>
   </div>

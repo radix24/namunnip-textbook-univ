@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-fsub" data-kind="본문" data-std="공통11-02-01">
+  <header class="card-head"><span class="no"></span><h2>서브루틴과 함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>값 하나를 돌려주는 함수와 여러 값을 바꾸는 서브루틴을 만든다.</li>
+        <li><code>intent</code>로 인수의 쓰임을 밝히고, 참조에 의한 전달을 이해한다.</li>
+        <li>모듈에 부프로그램을 모아 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>포트란 배열 (<a href="01-03.html">1.3절</a>), C 함수와 포인터 (<a href="../10/04-03.html">공통10 4.3절</a>, <a href="../10/05-02.html">5.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>함수와 서브루틴</h3>
+    <p>포트란의 부프로그램은 두 가지입니다.</p>
+    <ul class="tb-list">
+      <li><b>함수</b>(<code>function</code>): 값 하나를 돌려준다. 식 안에서 <code>y = f(x)</code>처럼 쓴다.</li>
+      <li><b>서브루틴</b>(<code>subroutine</code>): 돌려주는 값 없이 인수를 바꾼다. <code>call</code>로 부른다.</li>
+    </ul>
+    <p>둘을 <b>모듈</b>에 넣고 <code>use</code>로 불러 쓰면, 컴파일러가 인수의 개수와 자료형을 검사해 주어 실수를 줄일 수 있습니다.</p>
+<pre><code>module physics
+  implicit none
+  integer, parameter :: dp = kind(1.0d0)
+contains
+  function kinetic(m, v) result(K)
+    real(dp), intent(in) :: m, v
+    real(dp) :: K
+    K = 0.5_dp * m * v**2
+  end function kinetic
+
+  subroutine polar(x, y, r, theta)
+    real(dp), intent(in)  :: x, y
+    real(dp), intent(out) :: r, theta
+    r = sqrt(x**2 + y**2)
+    theta = atan2(y, x)
+  end subroutine polar
+end module physics
+
+program main
+  use physics
+  implicit none
+  real(dp) :: r, th
+  print *, kinetic(2.0_dp, 3.0_dp)      ! 9.0
+  call polar(1.0_dp, 1.0_dp, r, th)
+  print *, r, th                        ! 1.414..., 0.785...
+end program main</code></pre>
+
+    <h3><span class="no">2.1.2</span>intent와 참조에 의한 전달</h3>
+    <p>포트란은 인수를 넘길 때 값을 복사하지 않고 <b>변수 자체(주소)</b>를 넘깁니다. 그래서 서브루틴이 인수를 바꾸면 부른 쪽의 변수가 바뀝니다(C에서 포인터를 넘긴 것과 같은 효과). 의도하지 않게 바꾸는 것을 막기 위해 <code>intent</code>를 적습니다.</p>
+    <ul class="tb-list">
+      <li><code>intent(in)</code>: 읽기만 한다. 바꾸려 하면 컴파일 오류.</li>
+      <li><code>intent(out)</code>: 결과를 써서 돌려준다.</li>
+      <li><code>intent(inout)</code>: 읽고 바꾼다.</li>
+    </ul>
+    <p>배열도 그대로 넘어갑니다. <code>real(dp), intent(in) :: a(:)</code>처럼 쓰면(형태 가정 배열) 크기를 따로 넘기지 않아도 안에서 <code>size(a)</code>로 알 수 있습니다. 이렇게 쓰려면 부프로그램이 모듈 안에 있어야 합니다.</p>
+<pre><code>subroutine normalize(v)
+  real(dp), intent(inout) :: v(:)
+  v = v / sqrt(sum(v**2))
+end subroutine normalize</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>function</code>은 값 하나, <code>subroutine</code>은 <code>call</code>로 부르며 인수를 바꾼다.</li>
+        <li>인수는 참조로 넘어간다. <code>intent(in/out/inout)</code>을 적는다.</li>
+        <li><code>module</code> ... <code>contains</code>에 모으고 <code>use</code>로 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>두 실수 <code>a</code>, <code>b</code>를 맞바꾸는 서브루틴 <code>swap</code>을 써라. 같은 일을 C로 하려면 무엇이 더 필요했는가?
+          <details><summary>답</summary><p><code>subroutine swap(a, b)</code> 안에 <code>real(dp), intent(inout) :: a, b</code>, <code>real(dp) :: t</code>, <code>t = a; a = b; b = t</code>. C는 포인터(주소)를 넘겨야 했다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
