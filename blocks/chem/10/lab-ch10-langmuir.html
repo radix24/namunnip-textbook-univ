@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학10-09-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/chemkit.js", "js/cards/chem/ch-phys.js"]
+}
+-->
+<article class="card q-card" id="lab-ch10-langmuir" data-kind="실습" data-std="화학10-09-01 화학10-09-02">
+  <header class="card-head"><span class="no"></span><h2>표면이 가득 차면 반응 속도는 어떻게 되나?</h2><span class="kind">실습 · Langmuir 흡착 등온식, 표면 반응 차수</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>고체 표면에 기체가 흡착되는 양(가상 측정값)을 압력에 따라 그리고, Langmuir 식의 직선화로 최대 흡착량과 흡착 상수를 구합니다. 표면이 차오르면 표면 반응의 겉보기 차수가 1에서 0으로 바뀌는 것을 확인합니다. 성취기준 [화학10-09-01], [화학10-09-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Langmuir 모형의 가정은 세 가지입니다. ① 표면의 흡착 자리는 모두 같다. ② 한 자리에 분자 하나만 붙는다(한 겹). ③ 이웃한 분자끼리 영향을 주지 않는다.</p>
+      <p>덮인 비율을 \(\theta\)라 하면, 붙는 속도 \(k_a P(1-\theta)\)와 떨어지는 속도 \(k_d\theta\)가 같아지는 평형에서</p>
+      <p>\[ \theta = \frac{KP}{1 + KP}, \qquad K = k_a/k_d \]</p>
+      <p>입니다. 흡착량 \(n = n_{max}\theta\)를 정리하면 \(\dfrac{P}{n} = \dfrac{P}{n_{max}} + \dfrac{1}{Kn_{max}}\)으로 직선이 되어, 기울기에서 \(n_{max}\), 절편에서 \(K\)를 구합니다.</p>
+      <p class="q-term"><b>흡착 엔탈피</b>: 흡착은 보통 발열(ΔH &lt; 0)입니다. 장치는 \(K = K_0e^{-\Delta H/RT}\), \(K_0 = 10^{-6}\) kPa⁻¹로 정했습니다. 온도가 오르면 K가 작아집니다.</p>
+      <p class="q-term"><b>표면 반응</b>: 흡착된 분자가 반응해 떨어져 나가면 속도는 \(r = k\theta\)입니다. 압력이 낮으면 \(\theta \approx KP\)라 1차, 높으면 \(\theta \approx 1\)이라 0차입니다. 겉보기 차수는 \(d\ln r/d\ln P = 1 - \theta\)입니다.</p>
+      <p>빨간 점은 2~320 kPa의 여덟 압력에서 잰 <b>가상 측정값</b>입니다(참 최대 흡착량 2.00 mmol/g).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>그래프</span><select name="plot" aria-label="그래프 종류">
+          <option value="iso" selected>흡착 등온선</option>
+          <option value="lin">직선화 (P/n 대 P)</option>
+        </select></label>
+        <label><span>온도 T = <b data-show="T">300</b> K</span><input type="range" name="T" min="250" max="450" step="5" value="300" aria-label="온도"></label>
+        <label><span>흡착 엔탈피 = <b data-show="dH">-30</b> kJ/mol</span><input type="range" name="dH" min="-45" max="-15" step="1" value="-30" aria-label="흡착 엔탈피"></label>
+        <label><span>측정 잡음 = <b data-show="nz">2</b> %</span><input type="range" name="nz" min="0" max="10" step="1" value="2" aria-label="측정 잡음"></label>
+        <label><span>반응 차수를 볼 압력 = <b data-show="Pr">10</b> kPa</span><input type="range" name="Pr" min="1" max="320" step="1" value="10" aria-label="반응 차수를 볼 압력"></label>
+      </div>
+      <canvas aria-label="흡착 등온선 또는 직선화 그래프"></canvas>
+      <div class="btns"><button type="button" class="seed">새 가상 자료</button><button type="button" class="seed0">처음 자료로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값에서 등온선이 점선(n_max)에 다가가는 모습을 보고, 직선화 그래프로 바꿔 맞춤 결과를 기록한다.</li>
+        <li>온도를 350 K, 400 K로 올리며 K와 등온선 모양을 비교한다.</li>
+        <li>300 K로 되돌리고 반응 차수를 볼 압력을 2, 10, 100, 320 kPa로 바꾸며 겉보기 차수를 기록한다.</li>
+        <li>측정 잡음을 10%로 키우고 "새 가상 자료"를 몇 번 눌러 맞춤 값이 흔들리는 폭을 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>300 K, −30 kJ/mol에서 K = 0.1674 kPa⁻¹입니다. 1번 자료(잡음 2%)의 직선화 맞춤은 n_max 1.996 mmol/g, K 0.1677 kPa⁻¹로 참값에 잘 맞습니다. 등온선은 100 kPa쯤에서 이미 n_max의 94%에 이르러 평평해집니다.</li>
+        <li>온도를 350 K, 400 K로 올리면 K가 0.0300, 0.00827 kPa⁻¹로 작아집니다. 발열 흡착이라 온도가 오르면 떨어져 나가는 쪽이 유리해지기 때문이고, 등온선이 같은 압력에서 훨씬 덜 찹니다.</li>
+        <li>300 K에서 덮인 비율 θ는 2, 10, 100, 320 kPa에서 0.251, 0.626, 0.944, 0.982이고 겉보기 반응 차수는 0.75, 0.37, 0.06, 0.02입니다. 낮은 압력에서는 거의 1차, 높은 압력에서는 거의 0차입니다.</li>
+        <li>잡음 10%에서는 자료에 따라 n_max가 1.67~2.21 mmol/g, K가 0.139~0.359 kPa⁻¹로 흔들립니다. K는 직선의 절편(낮은 압력 쪽 자료)으로 정해지므로 n_max보다 더 크게 흔들립니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      
+<h3>분석</h3>
+      <ol>
+        <li>두 온도의 K로 \(\ln(K_2/K_1) = -\dfrac{\Delta H}{R}\left(\dfrac1{T_2} - \dfrac1{T_1}\right)\)을 써서 흡착 엔탈피를 거꾸로 구하고 조절기 값과 비교해 보세요.</li>
+        <li>실제 활성탄이나 금속 표면에서 Langmuir 직선이 휘는 원인을 모형의 세 가정 가운데 어느 것이 깨진 것으로 설명할 수 있을까요?</li>
+        <li>질소의 다층 흡착을 다루는 BET 식은 Langmuir 식의 어느 가정을 바꾼 것인가요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>암모니아가 텅스텐 표면에서 분해될 때 높은 압력에서는 속도가 압력과 무관합니다(0차). 이 장치의 결과로 그 이유를 설명하고, 낮은 압력에서는 몇 차로 보일지 예측해 보세요.</p>
+    </section>
+  </div>
+</article>
