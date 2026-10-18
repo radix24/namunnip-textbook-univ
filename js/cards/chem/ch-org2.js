@@ -84,4 +84,29 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 3. 피셔 에스터화의 평형 수율 (화학5-05-02) */
+  (() => {
+    const S = QSim.card("lab-ch5-fischer"); if (!S) return;
+    const cv = S.$("canvas");
+    // 산 1 mol + 알코올 B mol ⇌ 에스터 x + 물 x. 물을 비율 r만큼 계속 빼내면 남은 물은 (1 − r)x.
+    // K = x·(1 − r)x / [(1 − x)(B − x)]  →  유효 평형 상수 K/(1 − r)로 푼다.
+    function yieldOf(K, B, r) {
+      const Ke = K / Math.max(1e-9, 1 - r), lim = Math.min(1, B);
+      let lo = 0, hi = lim;
+      for (let i = 0; i < 80; i++) { const x = (lo + hi) / 2; if (x * x - Ke * (1 - x) * (B - x) < 0) lo = x; else hi = x; }
+      return (lo + hi) / 2;
+    }
+    function draw() {
+      const c = C(), K = S.val("K"), B = Math.pow(10, S.val("lb")), r = S.val("rm") / 100;
+      const x = yieldOf(K, B, r), x0 = yieldOf(K, B, 0);
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: -0.5, x1: 1.5, y0: 0, y1: 100, xl: "log₁₀(알코올 당량)", yl: "수율 (%, 산 기준)", pad: 34 });
+      f.axes();
+      f.fn((lb) => 100 * yieldOf(K, Math.pow(10, lb), 0), c.ink3, 1.5, [5, 4]);
+      f.fn((lb) => 100 * yieldOf(K, Math.pow(10, lb), r), c.main, 2.5);
+      f.dot(Math.log10(B), 100 * x, c.warn, 6);
+      S.out(`K = ${K.toFixed(1)}, 산 1 mol + 알코올 ${B < 10 ? B.toFixed(2) : B.toFixed(1)} mol, 물 제거 ${(100 * r).toFixed(0)}%\n평형에서 에스터 ${x.toFixed(3)} mol → 산 기준 수율 ${(100 * x).toFixed(1)}%\n(물을 빼지 않으면 ${(100 * x0).toFixed(1)}%)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
