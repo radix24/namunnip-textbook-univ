@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>간격을 반으로 줄이면</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-c8-errororder"><span class="mono">본문</span><span>간격과 오차</span></a></li><li><a href="#card-c8-error-order"><span class="mono">7.2.2</span><span>간격을 줄이며 오차 차수 확인하기</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-c8-errororder"><span class="mono">본문</span><span>간격과 오차</span></a></li><li><a href="#card-c8-error-order"><span class="mono">7.2.2</span><span>간격을 줄이며 오차 차수 확인하기</span></a></li><li><a href="#lab-c8-numeric"><span class="mono">7.2.3</span><span>간격을 줄이면 오차는 얼마나 줄까</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -164,6 +164,58 @@
 
   <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-c8-error-order" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
 </article>
+<article class="card q-card" id="lab-c8-numeric" data-kind="실습" data-std="공통8-07-01 공통8-07-02">
+  <header class="card-head"><span class="no">7.2.3</span><h2><span class="q-badge">실습</span>간격을 줄이면 오차는 얼마나 줄까</h2><span class="kind">실습 · 오일러, 호인, RK4의 차수</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-01.html#std">[공통8-07-01]</a> <a href="07-02.html#std">[공통8-07-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>같은 초기값 문제를 오일러, 호인(개량 오일러), 4차 룽게-쿠타 방법으로 풀어 정확한 해와 비교하고, 간격 \(h\)를 절반으로 할 때 오차가 각각 약 2, 4, 16분의 1로 줄어드는 것(1차, 2차, 4차 방법)을 확인합니다. 성취기준 [공통8-07-01], [공통8-07-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그래프에서 검은 점선이 정확한 해, 빨강이 오일러, 주황이 호인, 파랑이 RK4입니다. 아래 그래프는 간격을 \(h_0/2^k\)로 줄일 때 끝점 오차의 로그입니다. 기울기가 가파를수록 높은 차수입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>문제</span><select name="pr" aria-label="초기값 문제"><option value="exp">y' = y, y(0) = 1</option><option value="gau">y' = −2ty, y(0) = 1</option><option value="osc">y' = cos t, y(0) = 0</option></select></label>
+        <label><span>간격 단계 k = <b data-show="k">3</b> (h = h₀/2ᵏ)</span><input type="range" name="k" min="0" max="6" step="1" value="3" aria-label="간격 단계"></label>
+      </div>
+      <canvas aria-label="세 수치해법과 정확한 해의 비교"></canvas>
+      <canvas aria-label="간격에 따른 오차의 로그 그래프"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(y' = y\)에서 \(k = 0, 1, 2, 3\)으로 바꾸며 세 방법의 끝 오차와 "몇 분의 1"을 기록한다.</li>
+        <li>아래 그래프에서 세 선의 기울기를 대략 읽는다(\(k\)가 1 늘 때 로그 오차가 줄어드는 양).</li>
+        <li>다른 문제에서도 같은 비율이 나오는지 확인한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>오일러는 정확한 해보다 늘 아래(볼록한 해를 접선으로 따라가므로). 비율 약 2.</li>
+        <li>호인은 약 4, RK4는 약 16. 로그 그래프의 기울기는 각각 약 −0.3, −0.6, −1.2(\(\log_{10}2 \approx 0.3\)의 1, 2, 4배).</li>
+        <li>RK4는 몇 걸음만으로도 오일러 수백 걸음보다 정확하다. 아주 작은 \(h\)에서는 반올림 오차 때문에 더 줄지 않는다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>RK4는 한 걸음에 함수를 네 번 계산합니다. 같은 계산량이라면 오일러로 걸음을 네 배 늘리는 것과 어느 쪽이 정확한가요?</li>
+        <li>\(y' = \cos t\)는 우변이 \(y\)에 의존하지 않아 적분과 같습니다. 이때 호인과 RK4는 각각 어떤 적분 공식(사다리꼴, 심프슨)과 같아지나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>전자계산 과목(공통10·11)에서 같은 세 방법을 Python으로 짜서 이 장치의 출력과 같은 숫자가 나오는지 확인해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c8-numeric" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="07-01.html">← 7.1 오일러 방법과 룽게-쿠타 방법</a></span>
         <span><a href="07-R.html">7.R 단원 마무리 →</a></span>
@@ -180,7 +232,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c8-ode.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

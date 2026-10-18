@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s6-3-1"><span class="mono">6.3.1</span><span>지수함수</span></a></li><li><a href="#s6-3-2"><span class="mono">6.3.2</span><span>사인 함수</span></a></li><li><a href="#s6-3-3"><span class="mono">6.3.3</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-c9-mappings"><span class="mono">본문</span><span>지수함수와 삼각함수의 사상</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-c9-mappings"><span class="mono">본문</span><span>지수함수와 삼각함수의 사상</span></a></li><li><a href="#lab-c9-mapping"><span class="mono">6.3.2</span><span>복소함수로 격자 옮기기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -111,7 +111,64 @@
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/9/03.html"><span class="mono">공통9 대단원 3</span><span><b>복소수와 복소함수</b></span></a></li><li><a href="../../../c/common/9/02.html"><span class="mono">공통9 대단원 2</span><span><b>편미분방정식</b></span></a></li></ul></div></div>
     </aside>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-c9-mapping" data-kind="실습" data-std="공통9-06-01 공통9-06-02 공통9-06-03">
+  <header class="card-head"><span class="no">6.3.2</span><h2><span class="q-badge">실습</span>복소함수로 격자 옮기기</h2><span class="kind">실습 · 등각사상</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-01.html#std">[공통9-06-01]</a> <a href="06-02.html#std">[공통9-06-02]</a> <a href="06-03.html#std">[공통9-06-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>\(z\)평면의 직사각형 격자를 여러 복소함수로 옮겨 그 모양을 보고, 해석함수가 \(f' \ne 0\)인 곳에서 직각을 직각으로 옮김(등각)을 확인합니다. 반평면, 띠, 원판 사이를 옮기는 대표 사상을 익힙니다. 성취기준 [공통9-06-01]~[공통9-06-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그림은 \(z\)평면(가로선 파랑, 세로선 주황), 아래 그림은 \(w = f(z)\)로 옮긴 모습입니다. 직사각형의 범위는 조절기나 단추로 바꿉니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>사상</span><select name="map" aria-label="사상"><option value="sq">w = z²</option><option value="exp">w = eᶻ</option><option value="inv">w = 1/z</option><option value="mob">w = (z − i)/(z + i)</option><option value="sin">w = sin z</option><option value="jou">w = z + 1/z</option></select></label>
+        <label><span>x 최소 <b data-show="x0" data-fix="1">0.2</b></span><input type="range" name="x0" min="-3" max="3" step="0.1" value="0.2" aria-label="x 최소"></label>
+        <label><span>x 최대 <b data-show="x1" data-fix="1">1.5</b></span><input type="range" name="x1" min="-3" max="3" step="0.1" value="1.5" aria-label="x 최대"></label>
+        <label><span>y 최소 <b data-show="y0" data-fix="1">0.2</b></span><input type="range" name="y0" min="-2.2" max="2.2" step="0.1" value="0.2" aria-label="y 최소"></label>
+        <label><span>y 최대 <b data-show="y1" data-fix="1">1.5</b></span><input type="range" name="y1" min="-2.2" max="2.2" step="0.1" value="1.5" aria-label="y 최대"></label>
+      </div>
+      <canvas aria-label="z평면의 직사각형 격자"></canvas>
+      <canvas aria-label="w평면으로 옮긴 격자"></canvas>
+      <div class="btns"><button type="button" class="preset" data-r="0,2,0,2">1사분면 일부</button><button type="button" class="preset" data-r="-2,1,0,3.1">띠 0 &lt; y &lt; π</button><button type="button" class="preset" data-r="-2,2,0.1,2">위쪽 반평면 일부</button><button type="button" class="preset" data-r="-1.5,1.5,-0.5,1.5">원점 포함</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(w = z^2\)에서 "1사분면 일부"를 옮겨 위쪽 반평면 쪽으로 펼쳐지는지 보고, "원점 포함"에서 원점 근처의 각을 본다.</li>
+        <li>\(w = e^z\)에서 "띠"를 옮겨 가로선이 반직선, 세로선이 원이 되는지 본다.</li>
+        <li>\(w = \frac{z - i}{z + i}\)에서 "위쪽 반평면 일부"가 단위원 안으로 들어가는지 본다.</li>
+        <li>\(w = z + \frac1z\)에서 원점 둘레의 격자가 어떻게 되는지 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>옮긴 그림에서도 파란 선과 주황 선이 직각으로 만난다. 예외는 \(f' = 0\)인 점(\(z^2\)의 원점, \(\sin z\)의 \(\pm\frac\pi2\))뿐이다.</li>
+        <li>\(e^z\): 띠 \(0 &lt; y &lt; \pi\)가 위쪽 반평면으로.</li>
+        <li>일차분수변환: 위쪽 반평면이 단위원판으로, 직선과 원이 원(또는 직선)으로.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>6.4절에서 1사분면의 온도 문제를 \(w = z^2\)으로 반평면 문제로 바꿨습니다. 이 장치의 그림으로 경계(양의 \(x\)축, 양의 \(y\)축)가 어디로 가는지 확인해 보세요.</li>
+        <li>격자의 작은 정사각형이 옮겨진 뒤에도 거의 정사각형으로 보이는 이유(국소적으로 회전과 확대)를 \(f'(z)\)로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>주코프스키 사상 \(w = z + \frac1z\)은 중심을 조금 옮긴 원을 비행기 날개 모양으로 바꿉니다. 원 둘레의 유체 흐름을 이 사상으로 옮겨 날개 둘레의 흐름을 계산했던 역사를 찾아보세요.</p>
+    </section>
+  </div>
 
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c9-mapping" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="06-02.html">← 6.2 일차분수변환</a></span>
         <span><a href="06-04.html">6.4 등각사상으로 푸는 열 문제와 퍼텐셜 문제 →</a></span>
@@ -128,7 +185,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c9-adv.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>
