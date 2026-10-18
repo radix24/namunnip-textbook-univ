@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>선형 결합의 평균과 분산으로 공차 누적을 계산하기 · 확률통계 — QURI</title>
-  <meta name="description" content="확률통계 6.2 선형 결합의 평균과 분산으로 공차 누적을 계산하기 — 성취기준: 선형 결합의 평균과 분산으로 공차 누적을 계산할 수 있다.">
+  <title>선형 결합과 공차 누적 · 확률통계 — QURI</title>
+  <meta name="description" content="확률통계 6.2 선형 결합과 공차 누적 — 성취기준: 선형 결합의 평균과 분산으로 공차 누적을 계산할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통12&quot;, &quot;title&quot;: &quot;6.2 선형 결합의 평균과 분산으로 공차 누적을 계산하기&quot;, &quot;sub&quot;: &quot;확률통계&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통12&quot;, &quot;title&quot;: &quot;6.2 선형 결합과 공차 누적&quot;, &quot;sub&quot;: &quot;확률통계&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,149 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통12-06-02">
+  <section class="topic-hero u-hero has-text" data-sec="공통12-06-02">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">확률통계</a><span class="mono">/</span><a href="06.html">6. 확률변수의 함수</a></div>
-    <h1><span class="sec-no mono">6.2</span>선형 결합의 평균과 분산으로 공차 누적을 계산하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통12-06-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통12-06-02] <span class="ty mono" data-ty="적용">적용</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통12-06-02" aria-label="할 수 있음"><span class="t">선형 결합의 평균과 분산으로 공차 누적을 계산할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">6.2</span>선형 결합과 공차 누적</h1>
+    <p class="sec-std"><span class="mono">[공통12-06-02]</span> 선형 결합의 평균과 분산으로 공차 누적을 계산할 수 있다. <span class="ty mono" data-ty="적용">적용</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s6-2-1"><span class="mono">6.2.1</span><span>선형 결합의 평균과 분산</span></a></li><li><a href="#s6-2-2"><span class="mono">6.2.2</span><span>공차 누적</span></a></li><li><a href="#s6-2-3"><span class="mono">6.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c12-lincomb"><span class="mono">본문</span><span>선형 결합과 공차 누적</span></a></li><li><a href="#lab-c12-tol"><span class="mono">6.2.2</span><span>공차 누적 시뮬레이션</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-c12-lincomb" data-kind="본문" data-std="공통12-06-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형 결합 \(\sum a_iX_i\)의 평균과 분산을 구한다.</li>
+        <li>조립품의 공차 누적을 최악 조건법과 통계적 방법(RSS)으로 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>공분산 (<a href="05-03.html">5.3절</a>), 정규분포 (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s6-2-1"><span class="no">6.2.1</span>선형 결합의 평균과 분산</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.1</span>
+      \[E\left[\sum a_iX_i\right] = \sum a_i\mu_i, \qquad \mathrm{Var}\left(\sum a_iX_i\right) = \sum a_i^2\sigma_i^2 + 2\sum_{i&lt;j}a_ia_j\,\mathrm{Cov}(X_i, X_j).\]
+      <p>독립이면 공분산 항이 사라져 \(\mathrm{Var} = \sum a_i^2\sigma_i^2\). 또 각 \(X_i\)가 정규분포이고 독립이면 \(\sum a_iX_i\)도 정규분포이다.</p>
+    </div>
+    <p>평균은 언제나 더해지지만, 표준편차는 더해지지 않고 <b>분산이 더해집니다</b>. 그래서 독립인 \(n\)개의 같은 오차를 더하면 표준편차는 \(n\)배가 아니라 \(\sqrt n\)배로 늘어납니다. 빼도 분산은 더해집니다(\(a_i = -1\)이어도 \(a_i^2 = 1\)).</p>
+
+    <h3 id="s6-2-2"><span class="no">6.2.2</span>공차 누적</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.2</span>
+      <p>길이 \(10.00 \pm 0.03\) mm인 블록 4개를 이어 붙인다. 각 블록의 길이는 서로 독립이고 \(N(10.00, 0.01^2)\)을 따른다(공차 ±0.03이 ±3σ). 전체 길이의 공차는?</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <ul class="tb-list">
+      <li><b>최악 조건법</b>: 모든 블록이 동시에 한쪽 끝이라고 보면 \(40.00 \pm 0.12\) mm.</li>
+      <li><b>통계적 방법</b>(제곱합의 제곱근, RSS): \(\sigma_{\text{전체}} = \sqrt{4 \times 0.01^2} = 0.02\) mm이므로 ±3σ는 \(40.00 \pm 0.06\) mm.</li>
+    </ul>
+    <p>네 블록이 모두 같은 방향으로 끝까지 치우칠 확률은 아주 작으므로, 통계적 공차는 최악 조건의 절반입니다. 부품 수가 \(n\)이면 비율이 \(\frac1{\sqrt n}\)이 되어 부품이 많을수록 차이가 커집니다. 대신 독립과 정규성 가정이 맞지 않으면(같은 공구 마모로 모두 길어지는 경우) 실제 불량이 예상보다 많을 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.3</span>
+      <p>구멍 지름 \(D \sim N(20.05, 0.02^2)\), 축 지름 \(d \sim N(20.00, 0.015^2)\)이 독립이다. 틈새 \(C = D - d\)가 음수여서(끼워지지 않아) 조립이 안 될 확률은?</p>
+    </div>
+    <p><i>풀이.</i> \(E[C] = 0.05\), \(\sigma_C = \sqrt{0.02^2 + 0.015^2} = 0.025\). \(P(C &lt; 0) = \Phi(-2) \approx 0.023\). 아래 실습 카드에서 부품 수와 공차를 바꾸며 최악 조건과 통계적 공차를 비교할 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>평균은 더해지고, 독립이면 분산이 더해진다(\(\sum a_i^2\sigma_i^2\)).</li>
+        <li>최악 조건 공차는 \(\sum t_i\), 통계적 공차는 \(\sqrt{\sum t_i^2}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s6-2-3"><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>공차 ±0.05인 부품 9개를 쌓으면 최악 조건과 RSS 공차는 각각?
+          <details><summary>답</summary><p>±0.45, \(\pm0.05\sqrt9 = \pm0.15\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c12-lincomb" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통12-06-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통12-06-02] <span class="ty mono" data-ty="적용">적용</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통12-06-02" aria-label="할 수 있음"><span class="t">선형 결합의 평균과 분산으로 공차 누적을 계산할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-c12-tol" data-kind="실습" data-std="공통12-06-02 공통12-06-03">
+  <header class="card-head"><span class="no">6.2.2</span><h2><span class="q-badge">실습</span>공차 누적 시뮬레이션</h2><span class="kind">실습 · 최악 조건과 RSS</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-02.html#std">[공통12-06-02]</a> <a href="06-03.html#std">[공통12-06-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>공차가 있는 부품 \(n\)개를 이어 붙인 조립품을 2만 번 만들어, 전체 길이의 편차가 최악 조건 공차와 통계적 공차(RSS) 가운데 어디까지 퍼지는지 확인합니다. 성취기준 [공통12-06-02], [공통12-06-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>막대는 전체 길이와 목표의 차이의 히스토그램, 파란 곡선은 같은 평균과 분산의 정규분포입니다. 빨간 점선은 최악 조건 \(\pm nt\), 주황 점선은 RSS \(\pm t\sqrt n\)입니다. 부품 분포는 정규(공차 = 3σ) 또는 균일(공차 안에서 고르게)로 고를 수 있습니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>부품 수 n = <b data-show="n">4</b></span><input type="range" name="n" min="1" max="12" step="1" value="4" aria-label="부품 수"></label>
+        <label><span>공차 ±t (mm) = <b data-show="t" data-fix="3">0.030</b></span><input type="range" name="t" min="0.005" max="0.1" step="0.005" value="0.03" aria-label="부품 공차"></label>
+        <label><span>부품 분포</span><select name="kind" aria-label="부품 분포">
+          <option value="norm" selected>정규 (공차 = 3σ)</option>
+          <option value="unif">균일</option>
+        </select></label>
+      </div>
+      <canvas aria-label="조립품 편차 히스토그램"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>6.2절 예제(\(n = 4\), \(t = 0.03\), 정규)의 최악 조건과 RSS 공차, RSS를 벗어난 비율을 읽는다.</li>
+        <li>\(n\)을 1에서 12까지 바꾸며 실제 최대 편차가 최악 조건의 몇 %인지 본다.</li>
+        <li>부품 분포를 균일로 바꾸고 RSS를 벗어난 비율을 비교한다.</li>
+        <li>균일, \(n = 1, 2, 3\)일 때 히스토그램 모양을 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>최악 조건 ±0.12, RSS ±0.06 mm. RSS를 벗어난 조립품은 약 0.3%(정규분포의 ±3σ 밖).</li>
+        <li>\(n\)이 커질수록 실제 편차는 최악 조건보다 훨씬 작은 범위에 머문다.</li>
+        <li>균일 부품이면 같은 공차라도 σ가 크므로(\(t/\sqrt3\)) RSS를 벗어나는 비율이 약 8%로 커진다(\(n = 4\)일 때).</li>
+        <li>균일 1개는 평평하고, 2개는 삼각형, 3개부터는 종 모양에 가까워진다(중심극한정리).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>RSS 공차를 쓸 때 부품 분포 가정이 왜 중요한지, 절차 3의 결과로 설명해 보세요.</li>
+        <li>설계 공차를 정할 때 최악 조건법이 더 알맞은 경우(부품 수가 적거나, 안전에 직결되는 경우)를 말해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>6.2절 예제 6.2.3의 구멍과 축의 틈새 문제를 이 방식으로 시뮬레이션하려면 무엇을 바꿔야 할지 생각해 보세요(부품 하나를 빼는 것).</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c12-tol" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="06-01.html">← 6.1 확률변수를 함수로 바꾼 새 확률변수의 분포를 구하기</a></span>
-        <span><a href="06-03.html">6.3 중심극한정리로 합이나 평균의 확률을 어림하기 →</a></span>
+        <span><a href="06-01.html">← 6.1 확률변수의 변환</a></span>
+        <span><a href="06-03.html">6.3 중심극한정리 →</a></span>
       </nav>
     </div>
   </div>
@@ -57,13 +177,14 @@
   <footer class="site-foot">
     <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
     <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
-    <p class="mono small dim">과목·학년·학점은 연세대학교 2026학년도 대학요람과 수강편람을 따랐고, 대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
   </footer>
 </main>
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c12-prob.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

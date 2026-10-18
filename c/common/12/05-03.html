@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>공분산과 상관계수를 계산하기 · 확률통계 — QURI</title>
-  <meta name="description" content="확률통계 5.3 공분산과 상관계수를 계산하기 — 성취기준: 공분산과 상관계수를 계산할 수 있다.">
+  <title>공분산과 상관계수 · 확률통계 — QURI</title>
+  <meta name="description" content="확률통계 5.3 공분산과 상관계수 — 성취기준: 공분산과 상관계수를 계산할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;공통12&quot;, &quot;title&quot;: &quot;5.3 공분산과 상관계수를 계산하기&quot;, &quot;sub&quot;: &quot;확률통계&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;공통12&quot;, &quot;title&quot;: &quot;5.3 공분산과 상관계수&quot;, &quot;sub&quot;: &quot;확률통계&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,155 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="공통12-05-03">
+  <section class="topic-hero u-hero has-text" data-sec="공통12-05-03">
     <div class="meta"><a href="../../../?dept=common#tree">공통 기초</a><span class="mono">/</span><a href="./">확률통계</a><span class="mono">/</span><a href="05.html">5. 여러 개의 확률변수</a></div>
-    <h1><span class="sec-no mono">5.3</span>공분산과 상관계수를 계산하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="공통12-05-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[공통12-05-03] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="공통12-05-03" aria-label="할 수 있음"><span class="t">공분산과 상관계수를 계산할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.3</span>공분산과 상관계수</h1>
+    <p class="sec-std"><span class="mono">[공통12-05-03]</span> 공분산과 상관계수를 계산할 수 있다. <span class="ty mono" data-ty="계산">계산</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-3-1"><span class="mono">5.3.1</span><span>공분산</span></a></li><li><a href="#s5-3-2"><span class="mono">5.3.2</span><span>상관계수</span></a></li><li><a href="#s5-3-3"><span class="mono">5.3.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-c12-cov"><span class="mono">본문</span><span>공분산과 상관계수</span></a></li><li><a href="#lab-c12-corr"><span class="mono">5.3.2</span><span>상관계수와 합의 분산</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-c12-cov" data-kind="본문" data-std="공통12-05-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공분산과 상관계수를 정의하고 계산한다.</li>
+        <li>상관계수의 범위와 뜻, 합의 분산 공식을 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>결합분포와 독립 (<a href="05-01.html">5.1절</a>, <a href="05-02.html">5.2절</a>), 분산 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s5-3-1"><span class="no">5.3.1</span>공분산</h3>
+    \[\mathrm{Cov}(X, Y) = E[(X - \mu_X)(Y - \mu_Y)] = E[XY] - \mu_X\mu_Y.\]
+    <p>\(X\)가 평균보다 클 때 \(Y\)도 평균보다 큰 경향이 있으면 양수, 반대 경향이면 음수입니다. 성질은 다음과 같습니다.</p>
+    <ul class="tb-list">
+      <li>\(\mathrm{Cov}(X, X) = \mathrm{Var}(X)\).</li>
+      <li>\(\mathrm{Cov}(aX + b, cY + d) = ac\,\mathrm{Cov}(X, Y)\).</li>
+      <li>독립이면 \(\mathrm{Cov}(X, Y) = 0\) (역은 성립하지 않음, 5.2절).</li>
+      <li>\(\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\,\mathrm{Cov}(X, Y)\).</li>
+    </ul>
+
+    <h3 id="s5-3-2"><span class="no">5.3.2</span>상관계수</h3>
+    <p>공분산은 단위에 따라 크기가 달라지므로(mm로 재면 cm로 잰 것의 100배), 표준편차로 나눈 상관계수를 씁니다.</p>
+    \[\rho = \frac{\mathrm{Cov}(X, Y)}{\sigma_X\sigma_Y}, \qquad -1 \le \rho \le 1.\]
+    <p>\(|\rho| = 1\)이면 \(Y = aX + b\)(직선 관계)이고, \(\rho = 0\)이면 직선 관계가 없다는 뜻입니다(곡선 관계는 있을 수 있음). 범위는 \(\mathrm{Var}\left(\frac{X}{\sigma_X} \pm \frac{Y}{\sigma_Y}\right) = 2 \pm 2\rho \ge 0\)에서 나옵니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>5.1절 예제의 결합 pmf에서 \(\mathrm{Cov}(X, Y)\)와 \(\rho\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <ul class="tb-list">
+      <li>\(E[X] = 0.6\), \(E[Y] = 1.05\).</li>
+      <li>\(E[XY] = 1\cdot1\cdot0.25 + 1\cdot2\cdot0.20 = 0.65\).</li>
+      <li>\(\mathrm{Cov} = 0.65 - 0.6 \times 1.05 = 0.02\).</li>
+      <li>\(\mathrm{Var}(X) = 0.6 - 0.36 = 0.24\), \(\mathrm{Var}(Y) = 0.45 + 4(0.30) - 1.05^2 = 0.5475\).</li>
+      <li>\(\rho = \frac{0.02}{\sqrt{0.24 \times 0.5475}} \approx 0.055\).</li>
+    </ul>
+    <p>독립은 아니지만(5.2절) 직선 관계는 아주 약합니다.</p>
+    <div class="tb-aside">자료에서 구한 표본 상관계수 \(r\)(<a href="../7/10-01.html">공통7 10.1절</a>)은 \(\rho\)를 추정한 값입니다. 상관이 있다고 원인과 결과 관계가 있는 것은 아닙니다.</div>
+    <p>아래 실습 카드에서 \(\rho\)를 바꾸며 산점도의 모양과 \(X + Y\)의 분산이 어떻게 달라지는지 볼 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Cov} = E[XY] - \mu_X\mu_Y\), \(\mathrm{Var}(X + Y) = \mathrm{Var}X + \mathrm{Var}Y + 2\mathrm{Cov}\).</li>
+        <li>\(\rho = \mathrm{Cov}/(\sigma_X\sigma_Y) \in [-1, 1]\), 직선 관계의 세기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-3-3"><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathrm{Var}(X) = 4\), \(\mathrm{Var}(Y) = 9\), \(\rho = -0.5\)일 때 \(\mathrm{Var}(X + Y)\)와 \(\mathrm{Var}(X - Y)\)는?
+          <details><summary>답</summary><p>\(\mathrm{Cov} = -0.5 \times 2 \times 3 = -3\). \(\mathrm{Var}(X + Y) = 4 + 9 - 6 = 7\), \(\mathrm{Var}(X - Y) = 4 + 9 + 6 = 19\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-c12-cov" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="공통12-05-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[공통12-05-03] <span class="ty mono" data-ty="계산">계산</span></span></h2>
+      <ol><li><input type="checkbox" data-std="공통12-05-03" aria-label="할 수 있음"><span class="t">공분산과 상관계수를 계산할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/12/04.html"><span class="mono">대단원 4</span><span><b>특수한 확률분포</b></span></a></li><li><a href="../../../c/common/2/06-02.html"><span class="mono">6.2</span><span>미분적분학과벡터해석(2) <b>일반 영역의 이중적분과 적분 순서 바꾸기</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-c12-corr" data-kind="실습" data-std="공통12-05-03">
+  <header class="card-head"><span class="no">5.3.2</span><h2><span class="q-badge">실습</span>상관계수와 합의 분산</h2><span class="kind">실습 · 공분산</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[공통12-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>상관계수 \(\rho\)를 바꾸며 산점도의 모양을 보고, \(\mathrm{Var}(X \pm Y) = \mathrm{Var}X + \mathrm{Var}Y \pm 2\mathrm{Cov}\)를 표본으로 확인합니다. 성취기준 [공통12-05-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>\(X\)는 표준정규분포, \(Y\)는 표준편차 \(\sigma_Y\)이고 \(X\)와의 상관계수가 \(\rho\)인 정규분포에서 300쌍을 뽑았습니다. 빨간 점선은 \(Y = \rho\sigma_Y X\)입니다. "새 표본"을 누르면 같은 조건에서 다시 뽑습니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>ρ = <b data-show="rho" data-fix="2">0.60</b></span><input type="range" name="rho" min="-1" max="1" step="0.05" value="0.6" aria-label="상관계수"></label>
+        <label><span>σY = <b data-show="sy" data-fix="1">1.0</b></span><input type="range" name="sy" min="0.5" max="2" step="0.1" value="1" aria-label="Y의 표준편차"></label>
+      </div>
+      <canvas aria-label="산점도"></canvas>
+      <div class="btns"><button type="button" class="new">새 표본</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(\rho\)를 −1에서 1까지 옮기며 산점도가 어떻게 바뀌는지 본다.</li>
+        <li>\(\rho = 0\)에서 "새 표본"을 여러 번 눌러 표본 상관계수 \(r\)이 얼마나 흔들리는지 본다.</li>
+        <li>\(\rho = 0.6\)과 \(-0.6\)에서 \(\mathrm{Var}(X + Y)\)와 \(\mathrm{Var}(X - Y)\)를 비교한다.</li>
+        <li>\(\sigma_Y\)를 2로 바꿔도 \(r\)은 그대로인지 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(|\rho|\)가 1에 가까울수록 점이 직선 둘레에 모이고, \(\rho = \pm1\)이면 직선 위에 놓인다.</li>
+        <li>\(\rho = 0\)이어도 \(r\)은 대략 ±0.1 범위에서 흔들린다(300쌍일 때).</li>
+        <li>\(\sigma_Y = 1\), \(\rho = 0.6\)이면 \(\mathrm{Var}(X + Y) = 3.2\), \(\mathrm{Var}(X - Y) = 0.8\). \(\rho = -0.6\)이면 둘이 바뀐다.</li>
+        <li>\(\sigma_Y\)를 바꾸면 공분산은 바뀌지만 \(r\)은 거의 그대로다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>두 측정기의 오차가 양의 상관을 가질 때, 두 측정값의 차이로 무엇을 구하면 오차가 줄어드는 이유를 \(\mathrm{Var}(X - Y)\)로 설명해 보세요.</li>
+        <li>\(\rho = 0\)인데 \(X\)와 \(Y\)가 독립이 아닌 예를 5.2절에서 찾아 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>공통7 10단원의 상관과 회귀 카드에서 표본 상관계수를 구하는 식과 비교해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-c12-corr" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-02.html">← 5.2 두 확률변수가 독립인지 판정하기</a></span>
-        <span><a href="06-01.html">6.1 확률변수를 함수로 바꾼 새 확률변수의 분포를 구하기 →</a></span>
+        <span><a href="05-02.html">← 5.2 확률변수의 독립</a></span>
+        <span><a href="06-01.html">6.1 확률변수의 변환 →</a></span>
       </nav>
     </div>
   </div>
@@ -62,13 +183,14 @@
   <footer class="site-foot">
     <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
     <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
-    <p class="mono small dim">과목·학년·학점은 연세대학교 2026학년도 대학요람과 수강편람을 따랐고, 대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
   </footer>
 </main>
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/common/c12-prob.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

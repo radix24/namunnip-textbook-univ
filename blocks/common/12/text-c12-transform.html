@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통12-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c12-transform" data-kind="본문" data-std="공통12-06-01">
+  <header class="card-head"><span class="no"></span><h2>확률변수의 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>cdf 방법으로 \(Y = g(X)\)의 분포를 구한다.</li>
+        <li>단조 변환의 pdf 공식을 쓴다.</li>
+        <li>균일 난수를 변환해 원하는 분포의 난수를 만든다(역변환법).</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>pdf와 cdf (<a href="02-02.html">2.2절</a>), 지수분포 (<a href="04-02.html">4.2절</a>), 합성함수의 미분 (<a href="../1/02-04.html">공통1 2.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>cdf 방법</h3>
+    <p>원의 반지름 \(R\)이 확률변수이면 넓이 \(\pi R^2\)도 확률변수입니다. \(Y = g(X)\)의 분포를 구하는 가장 일반적인 방법은 cdf에서 출발하는 것입니다.</p>
+    <ol class="tb-steps">
+      <li>\(F_Y(y) = P(g(X) \le y)\)를 \(X\)에 대한 사건으로 바꾼다.</li>
+      <li>\(X\)의 분포로 그 확률을 계산한다.</li>
+      <li>\(y\)로 미분해 \(f_Y\)를 얻는다.</li>
+    </ol>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>\(X \sim U(0, 1)\)일 때 \(Y = X^2\)의 pdf는?</p>
+    </div>
+    <p><i>풀이.</i> \(0 \le y \le 1\)에서 \(F_Y(y) = P(X^2 \le y) = P(X \le \sqrt y) = \sqrt y\). 미분하면 \(f_Y(y) = \frac1{2\sqrt y}\). 0 근처에 몰린 분포가 됩니다(0.1보다 작은 \(X\)는 10%지만, 0.1보다 작은 \(Y\)는 \(\sqrt{0.1} \approx 32\%\)).</p>
+
+    <h3><span class="no">6.1.2</span>단조 변환 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.1.2</span>
+      <p>\(g\)가 증가하거나 감소하는 미분 가능한 함수이고 역함수가 \(x = h(y)\)이면</p>
+      \[f_Y(y) = f_X(h(y))\,\lvert h'(y)\rvert.\]
+    </div>
+    <p>\(|h'(y)|\)는 \(g\)가 구간을 늘이거나 줄이는 비율의 역수입니다. 넓이(확률)는 보존되므로, 구간이 늘어난 곳은 밀도가 낮아집니다. 단조가 아니면(\(Y = X^2\), \(X\)가 음수도 가질 때) 구간을 나눠 각각 더합니다.</p>
+    <p>특히 선형 변환 \(Y = aX + b\)이면 \(f_Y(y) = \frac1{|a|}f_X\left(\frac{y - b}a\right)\)이고, \(X\)가 정규분포이면 \(Y\)도 정규분포입니다.</p>
+
+    <h3><span class="no">6.1.3</span>역변환법</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.3</span>
+      <p>\(U \sim U(0, 1)\)일 때 \(T = -\frac1\lambda\ln U\)의 분포는?</p>
+    </div>
+    <p><i>풀이.</i> \(P(T > t) = P(\ln U &lt; -\lambda t) = P(U &lt; e^{-\lambda t}) = e^{-\lambda t}\). 그러므로 \(T \sim \text{Exp}(\lambda)\).</p>
+    <p>일반적으로 cdf \(F\)의 역함수에 균일 난수를 넣으면 \(F^{-1}(U)\)는 분포 \(F\)를 따릅니다. 컴퓨터 시뮬레이션(몬테카를로)에서 원하는 분포의 난수를 만드는 기본 방법이고, 공통6 방사성 붕괴 카드 같은 시뮬레이션도 이런 난수를 씁니다. 아래 실습 카드에서 균일 난수 2만 개를 변환한 히스토그램을 이론 pdf와 비교할 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>cdf 방법: \(F_Y(y) = P(g(X) \le y)\)를 구해 미분.</li>
+        <li>단조 변환: \(f_Y(y) = f_X(h(y))|h'(y)|\).</li>
+        <li>역변환법: \(F^{-1}(U)\)는 분포 \(F\)를 따른다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>원의 반지름 \(R \sim U(1, 2)\)일 때 넓이 \(A = \pi R^2\)의 pdf를 구하여라.
+          <details><summary>답</summary><p>\(R = \sqrt{A/\pi}\), \(\frac{dR}{dA} = \frac1{2\sqrt{\pi A}}\). \(f_A(a) = \frac1{2\sqrt{\pi a}}\) (\(\pi \le a \le 4\pi\)).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
