@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/phy/p6-digital.js"]
+}
+-->
+<article class="card q-card" id="lab-p6-sar" data-kind="실습" data-std="물리6-04-02">
+  <header class="card-head"><span class="no"></span><h2>축차 비교 ADC를 한 단계씩</h2><span class="kind">실습 · 2진 탐색</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>축차 비교형 ADC가 가장 높은 비트부터 하나씩 시험하며 입력 전압에 다가가는 과정을 한 단계씩 보고, 비트 수에 따른 분해능과 양자화 오차를 확인합니다. 성취기준 [물리6-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>기준 전압은 4.096 V입니다. 빨간 점선이 입력 전압, 점은 각 단계에서 시험한 내부 D/A 전압(파랑: 유지해 비트 1, 회색: 넘어서 비트 0)입니다. "한 단계"를 누를 때마다 비트 하나를 정합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>입력 전압 (V) = <b data-show="vin" data-fix="3">2.900</b></span><input type="range" name="vin" min="0" max="4.09" step="0.001" value="2.9" aria-label="입력 전압"></label>
+        <label><span>비트 수 = <b data-show="bits">8</b></span><input type="range" name="bits" min="3" max="12" step="1" value="8" aria-label="비트 수"></label>
+      </div>
+      <canvas aria-label="축차 비교 단계"></canvas>
+      <div class="btns"><button type="button" class="step">한 단계</button><button type="button" class="reset">처음으로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>4.2절 예제(8비트, 2.900 V)를 한 단계씩 진행하며 예제의 풀이와 비교한다.</li>
+        <li>비트 수를 4와 12로 바꿔 최종 오차를 비교한다.</li>
+        <li>입력을 LSB의 정수배 바로 아래와 바로 위로 놓아 코드가 바뀌는 곳을 찾는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>8비트 2.900 V는 1011 0101(181), 2.896 V로 변환되어 오차 4 mV.</li>
+        <li>비트 수가 하나 늘 때마다 LSB가 절반이 되어 최대 오차가 절반이 된다. 12비트 LSB는 1 mV.</li>
+        <li>이 방식은 내림(버림)이라 오차가 0~1 LSB 사이다. 반올림하려면 기준을 반 LSB 옮긴다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(n\)비트 변환에 비교가 정확히 \(n\)번이면 되는 까닭을 이분법과 이어 설명해 보세요.</li>
+        <li>변환하는 동안 입력이 바뀌면 어떤 문제가 생기는지, 표본 유지 회로가 필요한 까닭을 말해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>마이크로컨트롤러의 ADC로 1.5 V 건전지 전압을 여러 번 재어 코드의 흔들림(잡음)이 몇 LSB인지 확인해 보세요.</p>
+    </section>
+  </div>
+</article>
