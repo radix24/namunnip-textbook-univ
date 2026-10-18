@@ -145,17 +145,13 @@
   if (!saved) try { saved = localStorage.getItem(TAB_KEY); } catch (e) { saved = null; }
   setDept(saved || "common", false);
 
-  /* 맨 위: 마지막으로 연 절(이어서 공부하기)과 최근에 공부한 과목. 기록이 없으면 공통 기초의 첫 과목을 권한다 */
+  /* 맨 위: 마지막으로 연 절(이어서 공부하기)과 최근에 공부한 과목. 기록이 없으면 비워 둔다 */
   const go = document.getElementById("dash-go");
   const byCode = new Map(U.flatMap((d) => d.courses.map((c) => [c.code, c])));
   const drawResume = () => {
     if (!go) return;
     const vs = P ? P.visits() : [], v = vs[0];
-    if (!v) {
-      const first = (U.find((d) => d.id === "common") || U[0]).courses.find((c) => c.units.some((u) => u.cards)) || U[0].courses[0];
-      go.innerHTML = `<p class="dash-h mono">처음이라면 공통 기초부터</p><a class="dash-next" href="${esc(first.path)}"><span class="mono">처음부터 · ${esc(first.kind)} · ${first.cr}학점</span><b>${esc(first.name)}</b></a>`;
-      return;
-    }
+    if (!v) { go.innerHTML = ""; return; }   // 기록이 없으면 비워 둔다(여백)
     const recent = [...new Set(vs.map((x) => x.course).filter(Boolean))].slice(0, 3).map((k) => byCode.get(k)).filter(Boolean);
     go.innerHTML = `<a class="dash-next" href="${esc(v.href)}"><span class="mono">이어서 공부하기 · ${esc(v.sub || "")}</span><b>${esc(v.title)}</b></a>` +
       (recent.length ? `<p class="dash-h mono">최근에 공부한 과목</p><div class="dash-boxes">${recent.map(box).join("")}</div>` : "");
