@@ -31,7 +31,7 @@ DEPTS = [
 RE_COURSE = re.compile(r"^### ([가-힣]+\d+)\. (.+)$")
 RE_ROW = re.compile(r"^\| (.+?) \| (.*?) \| (.*?) \|\s*$")
 RE_UNIT = re.compile(r"^#### (\d\d)\. (.+?)(?: 〔(.+?)〕)?\s*$")
-RE_STD = re.compile(r"^- \[([가-힣]+\d+-\d\d-\d\d)\] (.+?)(?: 〈(.+?)〉)?\s*$")
+RE_STD = re.compile(r"^- \[([가-힣]+\d+-\d\d-\d\d)\] (.+?)(?: 〈(.+?)〉)?(?: 《(.+?)》)?\s*$")   # 《서울대 연세대 …》: 그 내용 요소가 있는 대학
 RE_YS = [
     re.compile(r"(\d)-(\d)"),
     re.compile(r"(\d)(?:·\d)*학년\s*(\d)(?:,(\d))?학기"),
@@ -93,7 +93,7 @@ def parse(path, dept_id):
             continue
         m = RE_STD.match(line)
         if m:
-            unit["s"].append({"c": m.group(1), "t": m.group(2), "ty": m.group(3) or ""})
+            unit["s"].append({"c": m.group(1), "t": m.group(2), "ty": m.group(3) or "", "u": (m.group(4) or "").split()})
     return courses
 
 
