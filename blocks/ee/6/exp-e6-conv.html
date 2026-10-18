@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-02-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/ee-explore.js"]
+}
+-->
+<article class="card q-card" id="exp-e6-conv" data-kind="탐구" data-std="전전6-02-01">
+  <header class="card-head"><span class="no"></span><h2>뒤집고, 밀고, 곱하고, 넓이를 잰다</h2><span class="kind">탐구 · 그래프로 하는 컨볼루션 적분</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>LTI 시스템의 출력은 \(y(t) = \int_{-\infty}^{\infty} x(\tau)h(t - \tau)\,d\tau\)입니다. 식은 짧지만, 어떤 \(t\)에서 적분 구간이 어디부터 어디까지인지 정하는 데서 많이 틀립니다. 그림으로 보면 어떨까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ol>
+        <li>\(h(\tau)\)를 세로축에 대해 <b>뒤집어</b> \(h(-\tau)\)를 만듭니다.</li>
+        <li>그것을 오른쪽으로 \(t\)만큼 <b>밀어</b> \(h(t - \tau)\)를 만듭니다.</li>
+        <li>\(x(\tau)\)와 <b>곱합니다</b>. 두 그래프가 겹치는 곳에서만 0이 아닙니다.</li>
+        <li>곱의 <b>넓이</b>가 \(y(t)\)입니다. \(t\)를 바꿔 가며 반복하면 \(y\) 그래프가 그려집니다.</li>
+      </ol>
+      <p>고를 수 있는 신호: 직사각형(0~1에서 1), 지수 \(e^{-t}u(t)\), 삼각형(0~1에서 \(1 - t\)), 넓은 직사각형(0~2에서 0.5).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>입력 x</span><select name="x" aria-label="입력 신호"><option value="rect" selected>직사각형</option><option value="exp">지수</option><option value="tri">삼각형</option><option value="rect2">넓은 직사각형</option></select></label>
+        <label><span>임펄스 응답 h</span><select name="h" aria-label="임펄스 응답"><option value="rect" selected>직사각형</option><option value="exp">지수</option><option value="tri">삼각형</option><option value="rect2">넓은 직사각형</option></select></label>
+        <label><span>t = <b data-show="t" data-fix="2">0.50</b></span><input type="range" name="t" min="-1" max="5" step="0.01" value="0.5" aria-label="시간 t"></label>
+        <label><span>자동으로 움직이기</span><input type="checkbox" name="auto" aria-label="자동으로 움직이기"></label>
+      </div>
+      <canvas aria-label="x(τ)와 h(t−τ), 곱의 넓이"></canvas>
+      <canvas aria-label="출력 y(t)"></canvas>
+      <div class="btns"><button type="button" class="play">재생</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>직사각형 * 직사각형</b><span>t를 −1에서 3까지 움직입니다. 겹침이 없는 \(t &lt; 0\)에서 0, \(0 \le t \le 1\)에서 겹친 길이 \(t\)만큼 오르고, \(1 \le t \le 2\)에서 \(2 - t\)로 내려가 삼각형이 됩니다. 꼭대기는 \(t = 1\)에서 1입니다.</span></li>
+        <li><b>직사각형 입력, 지수 응답</b><span>RC 회로에 길이 1인 펄스를 넣은 것과 같습니다. \(0 \le t \le 1\)에서 \(1 - e^{-t}\)로 충전되고, 그 뒤 \((e - 1)e^{-t}\)로 방전됩니다. \(t = 1\)에서 약 0.632입니다.</span></li>
+        <li><b>순서 바꾸기</b><span>x와 h를 서로 바꿔도 아래 y(t)는 같습니다. 컨볼루션은 교환 법칙을 따릅니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>출력의 길이는 두 신호 길이의 합(1 + 1 = 2)이고, 시작 시각은 두 시작 시각의 합입니다. 이 규칙으로 적분 구간의 경계를 미리 정할 수 있습니다. 이산 시간에서는 적분이 합이 되고(컨볼루션 합), 디지털 필터(FIR)가 바로 이 계산을 합니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"h를 뒤집지 않고 밀기만 하면 된다."</b> 뒤집지 않으면 상관(correlation)을 계산하게 됩니다. 대칭인 직사각형끼리는 결과가 같아 보여 실수를 알아채기 어렵습니다. 지수나 삼각형으로 확인해 보세요.</li>
+      </ul>
+    </section>
+  </div>
+</article>
