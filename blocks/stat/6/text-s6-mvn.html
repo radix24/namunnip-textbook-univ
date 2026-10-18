@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-mvn" data-kind="본문" data-std="응통6-05-03">
+  <header class="card-head"><span class="no"></span><h2>다변량 정규분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이변량 정규분포의 밀도와 모수의 뜻을 안다.</li>
+        <li>주변분포와 조건부분포가 정규임을 쓰고, 조건부 평균이 직선임을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>공분산과 조건부 기대값 (<a href="05-02.html">5.2절</a>), 행렬과 역행렬 (응통2).</li>
+      </ul>
+    </div>
+
+    <h3>종 모양을 두 변수로</h3>
+    <p>부모 키와 자녀 키처럼 함께 정규분포 모양으로 흩어진 자료를 나타내는 분포입니다. 회귀분석과 다변량 분석의 바탕이 됩니다.</p>
+
+    <h3><span class="no">5.3.1</span>정의</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 5.3.1</span>
+      <p>평균벡터 \(\boldsymbol\mu\), 공분산 행렬 \(\Sigma\)(양정치)인 \(p\)변량 정규분포의 밀도:</p>
+      \[f(\mathbf x) = \frac{1}{(2\pi)^{p/2}|\Sigma|^{1/2}}\exp\left\{-\tfrac12(\mathbf x - \boldsymbol\mu)^\top\Sigma^{-1}(\mathbf x - \boldsymbol\mu)\right\}.\]
+    </div>
+    <p>\(p = 2\)이면 \(\Sigma = \begin{pmatrix}\sigma_1^2 &amp; \rho\sigma_1\sigma_2\\ \rho\sigma_1\sigma_2 &amp; \sigma_2^2\end{pmatrix}\)이고, 밀도의 등고선은 타원입니다. \(\rho &gt; 0\)이면 타원이 오른쪽 위로 기웁니다.</p>
+
+    <h3><span class="no">5.3.2</span>주변분포와 조건부분포</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.3.2</span>
+      <p>\((X_1, X_2)\)가 이변량 정규이면 (가) \(X_1 \sim N(\mu_1, \sigma_1^2)\), \(X_2 \sim N(\mu_2, \sigma_2^2)\). (나) \(X_2 \mid X_1 = x_1 \sim N\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1),\ \sigma_2^2(1 - \rho^2)\right)\). (다) \(\rho = 0\)이면 독립.</p>
+    </div>
+    <p>(나)는 결합 밀도를 \(f_{X_1}\)로 나누고 \(x_2\)에 대해 완전제곱해서 얻습니다. 조건부 평균이 \(x_1\)의 <b>일차식</b>이라는 점이 핵심이며, 이것이 선형회귀 모형의 근거입니다. 기울기 \(\rho\sigma_2/\sigma_1\)은 응통5 6.2절의 \(b_1 = rs_y/s_x\)와 같은 꼴입니다. 조건부 분산은 \(x_1\)과 관계없이 \(\sigma_2^2(1-\rho^2)\)로 줄어듭니다.</p>
+    <p>(다)는 일반적인 분포에서는 성립하지 않는(5.2절) 다변량 정규만의 성질입니다. \(\rho = 0\)이면 밀도가 두 정규 밀도의 곱으로 인수분해됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.3</span>
+      <p>아버지 키 \(X_1\)과 아들 키 \(X_2\)가 이변량 정규, \(\mu_1 = \mu_2 = 172\), \(\sigma_1 = \sigma_2 = 6\), \(\rho = 0.5\). 아버지가 184 cm일 때 아들 키의 조건부 분포는?</p>
+    </div>
+    <p><i>풀이.</i> 평균 \(172 + 0.5 \times (184 - 172) = 178\), 분산 \(36 \times 0.75 = 27\), 표준편차 약 5.2. 아버지가 평균보다 12 cm 크지만 아들의 기대 키는 6 cm만 큽니다. 골턴이 "평균으로의 회귀"라 부른 현상입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>밀도는 \(\Sigma^{-1}\)의 이차형식으로 정해지고 등고선은 타원.</li>
+        <li>주변·조건부 분포는 정규, 조건부 평균은 직선, 조건부 분산은 \(\sigma_2^2(1-\rho^2)\).</li>
+        <li>다변량 정규에서는 상관 0이면 독립.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 아버지 키를 알 때 아들 키 예측의 표준편차는 모를 때보다 몇 % 줄었나요?
+          <details><summary>답</summary><p>\(\sqrt{1 - 0.25} \approx 0.866\), 약 13% 줄었습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(X_1, X_2\)가 이변량 정규이면 \(X_1 + X_2\)의 분포는?
+          <details><summary>답</summary><p>\(N(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2 + 2\rho\sigma_1\sigma_2)\). 다변량 정규의 선형결합은 정규입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

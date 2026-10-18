@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s7-criteria" data-kind="본문" data-std="응통7-01-02">
+  <header class="card-head"><span class="no"></span><h2>추정량 비교: 불편성, 평균제곱오차, 일치성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>치우침과 평균제곱오차를 계산하고 분해 \(\mathrm{MSE} = \mathrm{Var} + \text{치우침}^2\)을 쓴다.</li>
+        <li>일치성의 뜻과 판정 방법을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도법 (<a href="01-01.html">1.1절</a>), 확률수렴 (응통6 7.1절).</li>
+      </ul>
+    </div>
+
+    <h3>어느 추정량이 좋은가</h3>
+    <p>같은 모수에 추정량이 여러 개 있을 수 있습니다. 균일분포 \(U(0,\theta)\)의 \(\theta\)에는 \(2\bar X\), \(X_{(n)}\), \(\frac{n+1}nX_{(n)}\)이 있습니다. 표본마다 값이 다르므로 "한 번 맞았나"가 아니라 "평균적으로 얼마나 가까운가"로 비교합니다.</p>
+
+    <h3><span class="no">1.2.1</span>불편성과 평균제곱오차</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.2.1</span>
+      <p><b>치우침</b>: \(\mathrm{bias}(\hat\theta) = E(\hat\theta) - \theta\). 모든 \(\theta\)에서 0이면 <b>불편추정량</b>. <b>평균제곱오차</b>: \(\mathrm{MSE}(\hat\theta) = E[(\hat\theta - \theta)^2]\).</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.2</span>
+      <p>\(\mathrm{MSE}(\hat\theta) = \mathrm{Var}(\hat\theta) + [\mathrm{bias}(\hat\theta)]^2\).</p>
+    </div>
+    <p class="tb-proof">\(\hat\theta - \theta = (\hat\theta - E\hat\theta) + (E\hat\theta - \theta)\)를 제곱해 기대값을 취하면 교차항은 \(2(E\hat\theta - \theta)E(\hat\theta - E\hat\theta) = 0\). <span class="qed">∎</span></p>
+    <p>MSE는 퍼짐(분산)과 과녁에서 벗어난 정도(치우침)를 함께 잽니다. 약간 치우쳐도 분산이 훨씬 작으면 MSE가 더 작을 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.3</span>
+      <p>정규 표본에서 \(S^2 = \frac{1}{n-1}\sum(X_i - \bar X)^2\)과 MLE \(\hat\sigma^2 = \frac{n-1}{n}S^2\)의 치우침과 MSE를 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> \((n-1)S^2/\sigma^2 \sim \chi^2_{n-1}\)(응통6 6.1절)이므로 \(E(S^2) = \sigma^2\), \(\mathrm{Var}(S^2) = 2\sigma^4/(n-1)\). \(S^2\)은 불편, MSE \(= 2\sigma^4/(n-1)\). \(\hat\sigma^2\): 치우침 \(-\sigma^2/n\), 분산 \(\frac{(n-1)^2}{n^2}\cdot\frac{2\sigma^4}{n-1} = \frac{2(n-1)\sigma^4}{n^2}\), MSE \(= \frac{2(n-1) + 1}{n^2}\sigma^4 = \frac{2n-1}{n^2}\sigma^4\). \(\frac{2n-1}{n^2} &lt; \frac{2}{n-1}\)이 항상 성립하므로 치우친 MLE의 MSE가 더 작습니다.</p>
+
+    <h3><span class="no">1.2.2</span>일치성</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.2.4</span>
+      <p>\(\hat\theta_n \xrightarrow{P}\theta\)이면 <b>일치추정량</b>.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.5</span>
+      <p>\(\mathrm{MSE}(\hat\theta_n) \to 0\)이면 \(\hat\theta_n\)은 일치추정량이다.</p>
+    </div>
+    <p class="tb-proof">마르코프 부등식을 \((\hat\theta_n - \theta)^2\)에 쓰면 \(P(|\hat\theta_n - \theta| \ge \varepsilon) \le \mathrm{MSE}/\varepsilon^2 \to 0\). <span class="qed">∎</span></p>
+    <p>불편성은 "평균적으로 맞음", 일치성은 "자료가 많으면 맞음"입니다. 불편하지만 일치하지 않는 추정량(첫 관측값 \(X_1\)로 \(\mu\)를 추정)도 있고, 치우쳤지만 일치하는 추정량(\(\hat\sigma^2\))도 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>MSE = 분산 + 치우침².</li>
+        <li>불편이 언제나 최선은 아닙니다(\(\hat\sigma^2\)의 예).</li>
+        <li>MSE → 0이면 일치.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(U(0,\theta)\)에서 \(X_{(n)}\)의 치우침은? 불편하게 고친 추정량은?
+          <details><summary>답</summary><p>\(E X_{(n)} = n\theta/(n+1)\), 치우침 \(-\theta/(n+1)\). \(\frac{n+1}{n}X_{(n)}\)은 불편.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(2\bar X\)와 \(\frac{n+1}nX_{(n)}\)의 분산을 비교하세요.
+          <details><summary>답</summary><p>\(\mathrm{Var}(2\bar X) = \theta^2/(3n)\). \(\mathrm{Var}(\frac{n+1}nX_{(n)}) = \theta^2/(n(n+2))\). \(n \ge 2\)이면 뒤의 것이 훨씬 작습니다(\(1/n^2\) 속도).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
