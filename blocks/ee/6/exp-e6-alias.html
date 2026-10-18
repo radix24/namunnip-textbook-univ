@@ -1,0 +1,55 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-06-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/ee-explore.js"]
+}
+-->
+<article class="card q-card" id="exp-e6-alias" data-kind="탐구" data-std="전전6-06-01 전전6-06-02">
+  <header class="card-head"><span class="no"></span><h2>표본이 거짓말을 할 때: 에일리어싱</h2><span class="kind">탐구 · 표본화 정리와 접힌 주파수</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>1초에 \(f_s\)번 값을 재면, 그 값들만으로 원래 신호를 알 수 있을까요? 영화에서 빨리 도는 바퀴가 거꾸로 도는 것처럼 보이는 것은 무엇과 관계있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>사인파 \(\sin 2\pi f_0 t\)를 \(t = n/f_s\)에서 표본화하면 \(\sin 2\pi (f_0 + kf_s)n/f_s\)와 값이 똑같습니다(\(k\)는 정수). 표본만으로는 \(f_0\)와 \(f_0 + kf_s\)를 구별할 수 없습니다.</li>
+        <li>그래서 표본화한 신호의 스펙트럼은 원래 스펙트럼이 \(f_s\)마다 되풀이된 모양입니다.</li>
+        <li>원래 신호의 주파수가 \(f_s/2\)(나이퀴스트 주파수)보다 작으면 되풀이된 복사본이 겹치지 않아 원래 신호를 되살릴 수 있습니다(표본화 정리). 넘으면 복사본이 \(-f_s/2 \sim f_s/2\) 안으로 들어와 다른 주파수인 척합니다.</li>
+      </ul>
+      <p>위 그래프: 회색은 원래 신호, 파란 점은 표본, 빨간 점선은 표본을 지나는 가장 낮은 주파수의 사인파입니다. 아래 그래프: 스펙트럼(검정이 원래 ±f₀, 파랑이 복사본).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>신호 f₀ = <b data-show="f0">12</b> Hz</span><input type="range" name="f0" min="1" max="120" step="1" value="12" aria-label="신호 주파수"></label>
+        <label><span>표본화 f_s = <b data-show="fs">50</b> Hz</span><input type="range" name="fs" min="10" max="200" step="1" value="50" aria-label="표본화 주파수"></label>
+      </div>
+      <canvas aria-label="원래 신호와 표본, 표본을 지나는 가장 낮은 주파수 사인파"></canvas>
+      <canvas aria-label="표본화한 신호의 스펙트럼"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>문제없음</b><span>f₀ = 12 Hz, f_s = 50 Hz: 빨간 점선이 회색 신호와 겹칩니다.</span></li>
+        <li><b>에일리어싱</b><span>f₀를 40 Hz로 올리면 표본은 10 Hz 사인파(부호가 뒤집힌)를 지납니다. \(|40 - 50| = 10\). f₀ = 60 Hz면 \(|60 - 50| = 10\) Hz(부호 그대로)입니다.</span></li>
+        <li><b>정확히 f_s</b><span>f₀ = f_s = 50 Hz로 두면 표본이 모두 같은 값(이 카드에서는 0)이라 직류처럼 보입니다. 바퀴가 멈춰 보이는 현상입니다.</span></li>
+        <li><b>스펙트럼</b><span>f₀가 f_s/2를 넘는 순간, 파란 복사본 하나가 칠한 띠(−f_s/2~f_s/2) 안으로 들어옵니다. 그 위치가 접힌 주파수입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>음악 CD는 사람이 듣는 20 kHz까지를 담으려고 44.1 kHz로 표본화하고, 표본화 전에 앤티에일리어싱 저역 통과 필터로 22 kHz 넘는 성분을 미리 없앱니다. 아날로그실험의 필터 카드가 바로 그 필터입니다. 디지털 신호 처리 과목(전전35)에서 이 내용을 더 다룹니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"f_s를 f₀의 2배로만 하면 된다."</b> 정확히 2배에서는 위상에 따라 표본이 모두 0이 될 수 있습니다. 실제로는 필터의 기울기를 생각해 여유를 둡니다(CD는 2.2배).</li>
+        <li><b>"에일리어싱은 표본화한 뒤 디지털 필터로 없앨 수 있다."</b> 한번 접혀 들어온 성분은 원래 낮은 주파수 성분과 구별할 수 없어 없앨 수 없습니다. 표본화 전에 막아야 합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
