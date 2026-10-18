@@ -380,7 +380,7 @@ def links_box(code, unit_code, links, idx, rel, here_course):
         x = idx[c]
         where = "" if x["course"] == here_course else f'{esc(x["cname"])} '
         kind = "대단원 " if x["unit"] else ""
-        return (f'<li><a href="{rel}{x["path"]}"><span class="mono">{esc(x["course"])} {kind}{x["no"]}</span>'
+        return (f'<li><a href="{rel}{x["path"]}"><span class="mono">{kind}{x["no"]}</span>'   # 과목 코드(공통1) 대신 과목 이름을 뒤에 쓴다
                 f'<span>{where}<b>{esc(x["title"])}</b></span></a></li>')
 
     pre = list(links["pre"].get(code, []))

@@ -44,6 +44,17 @@
   /* ───── 과목 목록 ───── */
   const host = document.getElementById("courses-list");
   const stdLi = (s, c) => `<li data-hay="${esc((s.c + " " + s.t + " " + s.ty).toLowerCase())}"${P && P.done(s.c) ? ` class="done"` : ""}><span class="mono">${esc(s.c.split("-").slice(1).join("-"))}</span><a class="t" href="${esc(c.path + s.f)}.html">${esc(s.t)}${s.k && s.k.length ? ` <span class="mono small dim">카드 ${s.k.length}</span>` : ""}</a>${s.ty ? `<span class="ty mono" data-ty="${esc(s.ty)}">${esc(s.ty)}</span>` : ""}</li>`;
+  /* 선수 칸의 과목 코드(공통1, 수학7, 공통1·2)를 과목 이름 링크로. 이어지는 과목은 다른 과목의 선수 칸을 거꾸로 찾는다 */
+  const ALL = new Map(U.flatMap((d) => d.courses.map((c) => [c.code, c])));
+  const RX = /([가-힣]+?)(\d+(?:·\d+)*)(?!\d)/g;
+  const preCodes = (text) => [...String(text || "").matchAll(RX)].flatMap((m) => m[2].split("·").map((k) => m[1] + k)).filter((k) => ALL.has(k));
+  const cLink = (c) => `<a href="${esc(c.path)}">${esc(c.name)}</a>`;
+  const preHtml = (text) => esc(text).replace(RX, (all, h, ns) => {
+    const parts = ns.split("·").map((k) => h + k);
+    return parts.every((p) => ALL.has(p)) ? parts.map((p) => cLink(ALL.get(p))).join(", ") : all;
+  });
+  const NEXT = new Map();
+  ALL.forEach((c) => preCodes(c.pre).forEach((k) => { if (k !== c.code) (NEXT.get(k) || NEXT.set(k, []).get(k)).push(c); }));
   function drawList(d) {
     host.innerHTML = d.courses.map((c) => {
       const tyCount = TYPES.map((t) => [t, c.units.reduce((a, u) => a + u.s.filter((s) => s.ty === t).length, 0)]).filter(([, k]) => k);
@@ -56,12 +67,13 @@
       return `
       <section class="course" id="c-${esc(c.code)}" data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
         <div class="course-head">
-          <span class="mono">${esc(c.code)} · ${esc(c.sub.join(" / "))}</span>
+          <span class="mono">${esc(c.sub.join(" / "))}</span>
           <h2><a href="${esc(c.path)}">${esc(c.name)}</a></h2>
           <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점</p>
           <p class="count mono dim">대단원 ${c.units.length} · 성취기준 ${nStd(c)}</p>
           ${c.open ? `<p class="small"><b>2026 개설</b> ${esc(c.open)}</p>` : ""}
-          ${c.pre ? `<p class="small"><b>선수</b> ${esc(c.pre)}</p>` : ""}
+          ${c.pre ? `<p class="small u-path"><b>먼저 공부할 과목</b> ${preHtml(c.pre)}</p>` : ""}
+          ${NEXT.has(c.code) ? `<p class="small u-path"><b>이어지는 과목</b> ${NEXT.get(c.code).map(cLink).join(", ")}</p>` : ""}
           ${c.hours ? `<p class="small"><b>학습 시간</b> ${esc(c.hours)}</p>` : ""}
           ${c.books ? `<p class="small"><b>교재</b> ${md(c.books)}</p>` : ""}
           <p class="u-tys">${tyCount.map(([t, k]) => `<span class="ty mono" data-ty="${t}">${t} ${k}</span>`).join("")}</p>
@@ -155,6 +167,17 @@
   drawResume();
   if (P) P.onChange(() => { drawResume(); drawTree(dept); });
 
-  const total = U.reduce((a, d) => { a.c += d.courses.length; d.courses.forEach((c) => { a.u += c.units.length; a.s += nStd(c); }); return a; }, { c: 0, u: 0, s: 0 });
-  document.getElementById("stat").textContent = `학과 ${U.length - 1} + 공통 · 과목 ${total.c} · 대단원 ${total.u} · 성취기준 ${total.s}`;
+  /* 소개 옆 숫자: 블록 수(u.cards)에서 본문(text-*)을 빼면 카드 수 */
+  const total = U.reduce((a, d) => {
+    a.c += d.courses.length;
+    d.courses.forEach((c) => c.units.forEach((u) => {
+      a.u++; a.s += u.s.length; a.b += u.cards || 0;
+      u.s.forEach((s) => (s.k || []).forEach((id) => { if (id.startsWith("text-")) a.t++; }));
+    }));
+    return a;
+  }, { c: 0, u: 0, s: 0, b: 0, t: 0 });
+  const nf = (n) => n.toLocaleString("ko-KR");
+  document.getElementById("figs").innerHTML = [["학과", `${U.length - 1}<small> + 공통</small>`], ["과목", nf(total.c)], ["대단원", nf(total.u)],
+    ["성취기준", nf(total.s)], ["본문", nf(total.t)], ["카드", nf(total.b - total.t)]]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
 })();
