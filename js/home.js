@@ -32,10 +32,13 @@
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
     tree.innerHTML = `
       <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
-        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 열은 요람의 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).</p></div>
-      <div class="tree-band tree-math" data-track="${d.id}"><div>${slots.map((s) => `
-        <div class="m-col"><h3 class="mono">${slotName(s)}</h3>${d.courses.filter((c) => slot(c) === s).map(box).join("")}</div>`).join("")}
-      </div></div>`;
+        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 요람의 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).</p></div>
+      <div class="tree-band sem-rows" data-track="${d.id}">${slots.map((s, i) => {
+        const [y, m] = s.split("-"), newYear = i > 0 && slots[i - 1].split("-")[0] !== y;
+        return `
+        <div class="sem-row${newYear ? " sem-year" : ""}"><h3 class="sem-lb"><b>${y}학년</b> ${m}학기</h3><div class="sem-boxes">${d.courses.filter((c) => slot(c) === s).map(box).join("")}</div></div>`;
+      }).join("")}
+      </div>`;
   }
 
   /* ───── 과목 목록 ───── */
@@ -142,14 +145,20 @@
   if (!saved) try { saved = localStorage.getItem(TAB_KEY); } catch (e) { saved = null; }
   setDept(saved || "common", false);
 
-  /* 이어서 공부하기: 마지막으로 연 절 */
-  const resume = document.getElementById("resume");
+  /* 맨 위: 마지막으로 연 절(이어서 공부하기)과 최근에 공부한 과목. 기록이 없으면 공통 기초의 첫 과목을 권한다 */
+  const go = document.getElementById("dash-go");
+  const byCode = new Map(U.flatMap((d) => d.courses.map((c) => [c.code, c])));
   const drawResume = () => {
-    const v = P && P.last();
-    if (!resume || !v) { if (resume) resume.hidden = true; return; }
-    resume.href = v.href;
-    resume.innerHTML = `<span class="mono">이어서 공부하기</span><b>${esc(v.title)}</b><span class="small dim">${esc(v.sub || "")}</span><span class="go" aria-hidden="true">→</span>`;
-    resume.hidden = false;
+    if (!go) return;
+    const vs = P ? P.visits() : [], v = vs[0];
+    if (!v) {
+      const first = (U.find((d) => d.id === "common") || U[0]).courses.find((c) => c.units.some((u) => u.cards)) || U[0].courses[0];
+      go.innerHTML = `<p class="dash-h mono">처음이라면 공통 기초부터</p><a class="dash-next" href="${esc(first.path)}"><span class="mono">처음부터 · ${esc(first.kind)} · ${first.cr}학점</span><b>${esc(first.name)}</b></a>`;
+      return;
+    }
+    const recent = [...new Set(vs.map((x) => x.course).filter(Boolean))].slice(0, 3).map((k) => byCode.get(k)).filter(Boolean);
+    go.innerHTML = `<a class="dash-next" href="${esc(v.href)}"><span class="mono">이어서 공부하기 · ${esc(v.sub || "")}</span><b>${esc(v.title)}</b></a>` +
+      (recent.length ? `<p class="dash-h mono">최근에 공부한 과목</p><div class="dash-boxes">${recent.map(box).join("")}</div>` : "");
   };
   drawResume();
   if (P) P.onChange(() => { drawResume(); drawTree(dept); });

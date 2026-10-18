@@ -167,3 +167,50 @@ window.NM = (() => {
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   });
 })();
+
+/* 카드 글을 한 단계씩: 본문이 아닌 카드에서 소제목이 있는 구역(먼저 읽는 법·전략·풀이·의미…)을 하나씩 펼친다.
+   문제(q-prob)와 예측(q-predict)은 늘 보인다. '모두 보기'를 고르면 전부 펼치고, 고른 방식은 localStorage에 둔다. */
+(() => {
+  const KEY = "quri-steps";
+  const cards = [...document.querySelectorAll('article.q-card:not([data-kind="본문"]) > .q-body')]
+    .map((body) => ({ body, steps: [...body.children].filter((el) => el.matches("section.q-sec, section.q-meaning") && el.querySelector(":scope > h3")) }))
+    .filter((x) => x.steps.length >= 2);
+  if (!cards.length) return;
+  let mode = "one";
+  try { mode = localStorage.getItem(KEY) === "all" ? "all" : "one"; } catch (e) { mode = "one"; }
+  const setOpen = (s, on) => {
+    s.classList.toggle("open", on);
+    const h = s.querySelector(":scope > h3"); h.setAttribute("aria-expanded", String(on));
+    h.querySelector(".st-ic").textContent = on ? " ▾" : " ▸";
+  };
+  cards.forEach(({ body, steps }) => {
+    steps.forEach((s, k) => {
+      s.classList.add("q-step");
+      const h = s.querySelector(":scope > h3");
+      h.setAttribute("role", "button"); h.tabIndex = 0;
+      const ic = document.createElement("span"); ic.className = "st-ic"; ic.setAttribute("aria-hidden", "true"); h.appendChild(ic);
+      const nx = steps[k + 1];
+      if (nx) {
+        const b = document.createElement("button"); b.type = "button"; b.className = "step-next";
+        b.textContent = `다음 · ${nx.querySelector(":scope > h3").firstChild.textContent.trim()} →`;
+        b.addEventListener("click", (e) => { e.stopPropagation(); setOpen(s, false); setOpen(nx, true); nx.scrollIntoView({ block: "nearest" }); nx.querySelector(":scope > h3").focus({ preventScroll: true }); });
+        s.appendChild(b);
+      }
+      const toggle = () => { if (mode === "one") setOpen(s, !s.classList.contains("open")); };
+      h.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
+      h.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+      s.addEventListener("click", () => { if (mode === "one" && !s.classList.contains("open")) setOpen(s, true); });
+    });
+    const bar = document.createElement("div"); bar.className = "steps-mode"; bar.setAttribute("role", "group"); bar.setAttribute("aria-label", "글 보기 방식");
+    bar.innerHTML = '<button type="button" data-m="one">한 단계씩</button><button type="button" data-m="all">모두 보기</button>';
+    body.insertBefore(bar, body.firstChild);
+    bar.addEventListener("click", (e) => { const b = e.target.closest("[data-m]"); if (b) apply(b.dataset.m, true); });
+  });
+  function apply(m, save) {
+    mode = m === "all" ? "all" : "one";
+    document.querySelectorAll(".steps-mode [data-m]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.m === mode)));
+    cards.forEach(({ body, steps }) => { body.classList.toggle("steps-fold", mode === "one"); steps.forEach((s, k) => setOpen(s, mode === "all" || k === 0)); });
+    if (save) try { localStorage.setItem(KEY, mode); } catch (e) { /* 저장 못 해도 동작은 한다 */ }
+  }
+  apply(mode, false);
+})();
