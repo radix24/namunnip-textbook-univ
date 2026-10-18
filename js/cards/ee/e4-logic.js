@@ -213,6 +213,41 @@
     S.$('[name="d"]').addEventListener("input", draw); S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
+  /* 8. 임계 경로 찾기: 2비트 가산기 + 비교 회로 (05-03) */
+  (() => {
+    const S = QSim.card("exp-e4-critical"); if (!S) return;
+    const cv = S.$("canvas");
+    // 게이트: [이름, 종류, 입력들, x, y]. 입력 A0 B0 A1 B1은 레지스터 출력(시각 t_cq)
+    const G = [
+      ["x0", "XOR", ["A0", "B0"], 0.28, 0.12], ["g0", "AND", ["A0", "B0"], 0.28, 0.32],
+      ["x1", "XOR", ["A1", "B1"], 0.28, 0.55], ["g1", "AND", ["A1", "B1"], 0.28, 0.78],
+      ["t1", "AND", ["x1", "g0"], 0.48, 0.62], ["c2", "OR", ["g1", "t1"], 0.66, 0.72],
+      ["s1", "XOR", ["x1", "g0"], 0.48, 0.42], ["z", "AND", ["s1", "c2"], 0.84, 0.55]
+    ];
+    function draw() {
+      const c = C(), d = { XOR: S.val("dx"), AND: S.val("da"), OR: S.val("do") }, tcq = S.val("tcq"), tsu = S.val("tsu");
+      const arr = { A0: tcq, B0: tcq, A1: tcq, B1: tcq }, from = {}, pos = { A0: [0.06, 0.12], B0: [0.06, 0.32], A1: [0.06, 0.55], B1: [0.06, 0.78] };
+      G.forEach(([n, k, ins, x, y]) => { let best = -1, src = null; ins.forEach((i) => { if (arr[i] > best) { best = arr[i]; src = i; } }); arr[n] = best + d[k]; from[n] = src; pos[n] = [x, y]; });
+      const outs = ["x0", "z"], end = outs.reduce((a, b) => (arr[a] > arr[b] ? a : b)), path = []; let p = end; while (p) { path.push(p); p = from[p]; }
+      const v = QSim.view(cv, 0.55), g = v.g, W = v.W, H = v.H;
+      g.save(); g.font = "11px " + mono();
+      G.forEach(([n, , ins]) => ins.forEach((i) => { const on = path.includes(n) && path.includes(i) && from[n] === i; g.strokeStyle = on ? c.warn : c.rule; g.lineWidth = on ? 3 : 1.2; g.beginPath(); g.moveTo(pos[i][0] * W + 18, pos[i][1] * H); g.lineTo(pos[n][0] * W - 18, pos[n][1] * H); g.stroke(); }));
+      Object.entries(pos).forEach(([n, [x, y]]) => {
+        const gate = G.find((q) => q[0] === n); g.fillStyle = path.includes(n) ? c.soft : c.card; g.strokeStyle = c.ink2; g.lineWidth = 1.2;
+        g.fillRect(x * W - 18, y * H - 12, 36, 24); g.strokeRect(x * W - 18, y * H - 12, 36, 24);
+        g.fillStyle = c.ink; g.textAlign = "center"; g.fillText(gate ? gate[1] : n, x * W, y * H + 4);
+        g.fillStyle = c.ink3; g.fillText(`${arr[n].toFixed(2)}`, x * W, y * H - 16);
+      });
+      g.textAlign = "left"; g.fillStyle = c.ink2; g.fillText("S0", 0.33 * W, 0.12 * H - 18 + 34); g.fillText("Z = S1·C2", 0.88 * W - 10, 0.55 * H + 28);
+      g.restore();
+      const tpd = arr[end] - tcq, fmax = 1e3 / (arr[end] + tsu);
+      S.out(`각 상자 위 숫자: 그 출력이 마지막으로 안정되는 시각(ns, 레지스터 출력이 t_cq = ${tcq} ns에 바뀜)\n` +
+        `임계 경로(빨강): ${path.reverse().join(" → ")}, 조합 지연 t_pd = ${tpd.toFixed(2)} ns\n` +
+        `최대 클록 f_max = 1/(t_cq + t_pd + t_su) = 1/${(arr[end] + tsu).toFixed(2)} ns = ${fmax.toFixed(0)} MHz`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
   /* 7. FPGA의 4입력 순람표 */
   (() => {
     const S = QSim.card("exp-e4-lut"); if (!S) return;
