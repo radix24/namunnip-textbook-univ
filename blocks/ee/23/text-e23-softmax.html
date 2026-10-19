@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-softmax" data-kind="본문" data-std="전전23-02-03">
+  <header class="card-head"><span class="no"></span><h2>다중 분류: 소프트맥스와 교차 엔트로피</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>점수(logit)를 확률로 바꾸는 소프트맥스를 계산한다.</li>
+        <li>다중 분류 교차 엔트로피 손실과 기울기 p − y를 쓴다.</li>
+        <li>로지스틱 회귀가 두 클래스 특수 경우임을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>로지스틱 회귀 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>점수를 확률로</h3>
+    <p>\(p_k = e^{z_k}/\sum_je^{z_j}\). 정답 클래스 c의 손실 \(-\log p_c\), 점수에 대한 기울기는 \(p - y\)(y는 원-핫)로 간단합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>점수 (2, 1, 0), 정답 클래스 0. 확률, 손실, 기울기는?</p>
+    </div>
+    <p><i>풀이.</i> e² = 7.389, e = 2.718, 1 → 합 11.107 → p = (0.665, 0.245, 0.090). 손실 −ln0.665 = 0.408. 기울기 (−0.335, 0.245, 0.090): 정답 점수는 올리고 나머지는 내리는 방향입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "점수가 가장 큰 클래스의 확률은 1": 다른 점수에 따라 달라집니다. (2) "소프트맥스는 점수에 상수를 더하면 바뀐다": 모든 점수에 같은 수를 더해도 확률은 같습니다(계산 안정화에 씀).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>p_k = e^{z_k}/Σe^{z_j}.</li>
+        <li>손실 −log p_c, 기울기 p − y.</li>
+        <li>예: (2, 1, 0) → 0.665, 손실 0.408.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>점수 (0, 0)의 확률은?
+          <details><summary>답</summary><p>(0.5, 0.5).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>점수 (3, 3, 3)의 정답 손실은?
+          <details><summary>답</summary><p>ln3 ≈ 1.099.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>점수 (1000, 999)를 그대로 계산하면 생기는 문제와 대책은?
+          <details><summary>답</summary><p>e¹⁰⁰⁰이 넘쳐(overflow) 최댓값을 빼고 계산합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
