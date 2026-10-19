@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통11-02-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s11-u02-review" data-kind="연습" data-std="응통11-02-01 응통11-02-02">
+  <header class="card-head"><span class="no"></span><h2>자료 이해와 준비 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>수백만 행의 거래 기록을 처음 받았습니다. 자료 품질을 점검할 항목을 다섯 가지 쓰고, 각 항목을 확인하는 방법을 쓰세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>완전성, 정확성, 일관성, 유일성, 시의성을 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>요약 통계와 그림, 규칙 검사를 함께 씁니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 완전성: 열별 결측 비율, 날짜별 행 수(빠진 날). (2) 정확성: 범위 밖 값(음수 금액, 미래 날짜). (3) 일관성: 같은 고객의 정보가 표마다 같은지, 범주 표기 통일("서울", "서울시"). (4) 유일성: 기본키(거래 번호) 중복. (5) 시의성: 마지막 갱신 시점, 늦게 들어오는 자료. 큰 자료는 표본을 뽑아 먼저 살피고, 검사 규칙을 코드로 남겨 다음 자료에도 적용합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>고객별 이탈 예측을 위해 거래 기록(고객, 날짜, 금액)에서 만들 수 있는 변수를 다섯 가지 쓰고, 변수를 만들 때 시점 누출을 막는 방법을 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>최근성, 빈도, 금액(RFM)을 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>예측 시점 이후의 정보가 변수에 들어가면 안 됩니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>변수 예: 마지막 구매 후 경과일(최근성), 최근 90일 구매 횟수(빈도), 최근 90일 총구매액(금액), 구매 간격의 평균과 변동, 최근 3개월 대비 이전 3개월 구매액 변화율.</p><p>누출 방지: 예측 기준일을 정하고 모든 변수는 그 이전 자료로만, 목표(이탈 여부)는 그 이후 기간으로만 만듭니다. 기준일을 여러 개 두고 같은 방식으로 반복하면 학습 자료를 늘릴 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>고객 나이 열에 결측이 20% 있습니다. 결측을 처리하는 방법 세 가지와 각각의 위험을 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>지우기, 채우기(대치), 결측 표시 변수 만들기를 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>결측이 무작위인지가 중요합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 결측 행 삭제: 간단하지만 표본이 20% 줄고, 결측이 특정 고객(가입 경로)에 몰리면 편향이 생깁니다. (2) 평균·중앙값 대치: 표본은 유지하지만 분산을 과소평가하고 관계를 흐립니다. (3) 다중대치나 모형 기반 대치에 결측 표시 변수를 함께 넣기: 결측 자체가 정보일 때 유용하지만 가정과 계산이 복잡합니다. 먼저 결측이 어떤 고객에게 많은지 살펴 결측 메커니즘을 판단합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>두 시스템에서 받은 고객 표와 주문 표를 결합했더니 주문 행 수가 원래보다 늘었습니다. 원인과 점검 방법을 쓰세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>결합 키가 고객 표에서 유일하지 않으면 어떻게 되나요?</p></details>
+        <details><summary>힌트 2</summary><p>결합 전후의 행 수를 비교하는 습관이 필요합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>고객 표에 같은 고객 번호가 여러 행(주소 변경 이력 등) 있으면 주문 한 건이 여러 행과 짝지어져 행이 늘어납니다. 결합 전 키의 유일성을 확인하고(<code>anyDuplicated</code>), 결합 후 행 수가 예상과 같은지 점검하며, 다대일 관계를 명시하는 검사(<code>pd.merge(..., validate = "many_to_one")</code>)를 씁니다. 중복이 있으면 최신 행만 남기는 등 규칙을 정합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>금액 변수가 매우 치우쳐 있고 상위 0.1%가 극단적으로 큽니다. 모형에 넣기 전 처리 방법을 두 가지 쓰고, 각각 언제 알맞은지 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>로그 변환과 상한 자르기(윈저화)가 흔합니다.</p></details>
+        <details><summary>힌트 2</summary><p>극단값이 오류인지 실제 VIP인지에 따라 다릅니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 로그 변환(\(\ln(1 + x)\) 등): 곱셈적으로 퍼진 실제 값을 압축해 선형 모형에 알맞게 합니다. 극단값이 실제 고객일 때 정보를 보존합니다. (2) 상한 자르기(예: 99.9% 분위수로 제한): 극단값의 영향을 줄이며, 오류일 가능성이 있거나 모형이 극단값에 끌려가는 것을 막고 싶을 때 씁니다. 트리 기반 모형은 단조 변환에 영향을 받지 않으므로 변환이 덜 필요합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>분석용 자료를 만드는 과정을 엑셀에서 손으로 했습니다. 재현성과 품질 측면에서 문제를 쓰고 대안을 쓰세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>석 달 뒤 새 자료로 같은 작업을 해야 한다면?</p></details>
+        <details><summary>힌트 2</summary><p>누가 어떤 셀을 고쳤는지 추적할 수 있나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>손 작업은 단계가 기록되지 않아 같은 결과를 다시 만들기 어렵고, 실수(셀 범위 잘못 지정, 정렬로 행이 어긋남)를 찾기 어려우며, 새 자료가 오면 처음부터 다시 해야 합니다. 정제 과정을 R이나 파이썬 스크립트(또는 SQL)로 작성해 원자료에서 분석용 자료까지 자동으로 만들고, 버전 관리와 검사 코드를 함께 두는 것이 대안입니다(응통3-06-02).</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>
