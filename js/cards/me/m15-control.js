@@ -72,3 +72,39 @@
   }
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
+
+/* 기계15 5단원: 개루프 Bode 선도와 이득·위상 여유 (05-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-bode"); if (!S) return;
+  const [cv1, cv2] = S.$$("canvas");
+  // GH(iω) = K / (iω (iω + 2)(iω + 4)) × 진상 (1 + iωT)/(1 + iωαT) × e^{−iωτ}
+  function GH(w, K, lead, tau) {
+    const mag0 = K / (w * Math.hypot(w, 2) * Math.hypot(w, 4));
+    let ph = -Math.PI / 2 - Math.atan(w / 2) - Math.atan(w / 4) - w * tau, mag = mag0;
+    if (lead) { const T = 1.0, a = 0.2; mag *= Math.hypot(1, w * T) / Math.hypot(1, w * a * T); ph += Math.atan(w * T) - Math.atan(w * a * T); }
+    return [mag, ph];
+  }
+  function draw() {
+    const c = QSim.col(), K = S.val("K"), lead = S.val("lead") === "1", tau = S.val("tau");
+    const lw0 = -2, lw1 = 2, N = 600, mg = [], pg = [];
+    let wc = null, w180 = null, prevM = null, prevP = null;
+    for (let i = 0; i <= N; i++) {
+      const lw = lw0 + ((lw1 - lw0) * i) / N, w = 10 ** lw, [m, p] = GH(w, K, lead, tau), db = 20 * Math.log10(m), pd = (p * 180) / Math.PI;
+      mg.push([lw, db]); pg.push([lw, pd]);
+      if (prevM !== null && prevM > 0 && db <= 0 && wc === null) wc = w;
+      if (prevP !== null && prevP > -180 && pd <= -180 && w180 === null) w180 = w;
+      prevM = db; prevP = pd;
+    }
+    const v1 = QSim.view(cv1, 0.38), f1 = QSim.frame(v1, { x0: lw0, x1: lw1, y0: -80, y1: 60, xl: "log₁₀ ω", yl: "|GH| (dB)", pad: 34 });
+    f1.axes(); f1.path([[lw0, 0], [lw1, 0]], c.ink3, 1, [3, 3]); f1.path(mg, c.main, 2.5);
+    const v2 = QSim.view(cv2, 0.38), f2 = QSim.frame(v2, { x0: lw0, x1: lw1, y0: -300, y1: -60, xl: "log₁₀ ω", yl: "∠GH (°)", pad: 34 });
+    f2.axes(); f2.path([[lw0, -180], [lw1, -180]], c.ink3, 1, [3, 3]); f2.path(pg, c.acc, 2.5);
+    let pm = null, gm = null;
+    if (wc) { pm = 180 + (GH(wc, K, lead, tau)[1] * 180) / Math.PI; f1.dot(Math.log10(wc), 0, c.warn, 5); f2.dot(Math.log10(wc), -180 + pm, c.warn, 5); }
+    if (w180) { gm = -20 * Math.log10(GH(w180, K, lead, tau)[0]); f2.dot(Math.log10(w180), -180, c.ink, 5); f1.dot(Math.log10(w180), -gm, c.ink, 5); }
+    const stable = pm !== null && pm > 0 && (gm === null || gm > 0);
+    S.out(`GH = K/[s(s + 2)(s + 4)]${lead ? " × 진상 (s + 1)/(0.2s + 1)" : ""}${tau > 0 ? ` × 지연 ${tau} s` : ""}, K = ${K}\n교차 진동수 ${wc ? wc.toFixed(2) : "-"} rad/s, 위상 여유 ${pm !== null ? pm.toFixed(1) + "°" : "-"} (빨간 점)\n위상 −180° 진동수 ${w180 ? w180.toFixed(2) : "-"} rad/s, 이득 여유 ${gm !== null ? gm.toFixed(1) + " dB" : "무한대"} (검정 점) → 폐루프 ${stable ? "안정" : "불안정"}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
