@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계11-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-pipeloss" data-kind="본문" data-std="기계11-01-01">
+  <header class="card-head"><span class="no"></span><h2>관로의 압력 손실: 주 손실과 부차 손실</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Darcy-Weisbach 식과 Moody 선도(Colebrook 식)로 곧은 관의 마찰 손실을 구한다.</li>
+        <li>입구, 엘보, 밸브, 출구의 부차 손실을 손실 계수로 더한다.</li>
+        <li>유량이나 지름이 주어지지 않은 문제를 반복 계산으로 푼다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>관로 유동과 Reynolds 수, 에너지식(수두) (<a href="../5/04-01.html">유체역학 4단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>주 손실</h3>
+    <p>점성 유체가 관을 흐르면 벽 마찰로 역학적 에너지가 열로 바뀌어 압력(수두)이 떨어집니다. 완전 발달한 흐름에서 손실 수두는 길이에 비례하고 지름에 반비례하며 속도 수두에 비례합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Darcy-Weisbach 식과 마찰계수</span>
+      \[h_f = f\frac{L}{D}\frac{V^2}{2g}\]
+      \[\Delta p = \rho gh_f\]
+      \[\text{층류 }(\text{Re} &lt; 2300):\ f = \frac{64}{\text{Re}}\]
+      \[\text{난류: }\frac{1}{\sqrt f} = -2\log_{10}\left(\frac{\varepsilon/D}{3.7} + \frac{2.51}{\text{Re}\sqrt f}\right)\]
+    </div>
+    <p>Colebrook 식은 \(f\)가 양쪽에 있어 바로 풀리지 않으므로 \(f = 0.02\)에서 시작해 오른쪽에 넣기를 몇 번 되풀이하거나, 명시적인 Haaland 식 \(1/\sqrt f \approx -1.8\log_{10}[(\varepsilon/D/3.7)^{1.11} + 6.9/\text{Re}]\)(오차 2% 정도)을 씁니다. Moody 선도는 이 식을 그린 그림입니다(Moody 선도 실습).</p>
+
+    <h3><span class="no">1.1.2</span>부차 손실</h3>
+    <p>입구, 엘보, 밸브, 확대·축소, 출구에서는 흐름이 떨어지고 소용돌이가 생겨 추가 손실이 납니다. 손실 계수 \(K\)로 \(h_m = KV^2/(2g)\)라 씁니다.</p>
+    <p class="q-term"><b>대표 손실 계수</b>: 날카로운 입구 0.5, 둥근 입구 0.03, 90° 일반 엘보 0.9, 긴 곡률 엘보 0.3, 완전히 연 게이트 밸브 0.2, 완전히 연 글로브 밸브 10, 탱크로 나가는 출구 1.0(속도 수두를 모두 잃음).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1 <span class="nm">(강관 배관의 손실)</span></span>
+      <p>20 °C 물(\(\nu = 1.0\times10^{-6}\) m²/s)이 지름 50 mm, 길이 100 m 상업용 강관(\(\varepsilon = 0.045\) mm)을 5 L/s로 흐른다. 날카로운 입구, 90° 엘보 4개, 게이트 밸브 1개, 탱크로 나가는 출구가 있다. 전체 손실 수두와 압력 강하는?</p>
+    </div>
+    <p><i>풀이.</i> \(V = 0.005/0.001963 = 2.55\) m/s, Re = 127,300, \(\varepsilon/D = 0.0009\). Colebrook 반복으로 \(f = 0.0213\). 주 손실 \(0.0213\times2000\times2.55^2/19.62 = 14.1\) m. 부차 손실 \(\sum K = 0.5 + 3.6 + 0.2 + 1.0 = 5.3\), \(5.3\times0.331 = 1.75\) m. 합 15.9 m, 압력으로 155 kPa. 부차 손실은 11%입니다. 짧은 배관이나 밸브가 많은 배관에서는 부차 손실이 주 손실보다 클 수도 있습니다.</p>
+
+    <h3><span class="no">1.1.3</span>세 가지 문제 유형</h3>
+    <ol>
+      <li><b>손실 구하기</b> (유량, 지름 주어짐): 위 예제처럼 바로 계산.</li>
+      <li><b>유량 구하기</b> (허용 손실, 지름 주어짐): \(V\)를 모르니 Re도 모름. \(f = 0.02\)로 \(V\)를 구하고, 그 \(V\)로 Re와 \(f\)를 다시 구하기를 반복.</li>
+      <li><b>지름 구하기</b> (유량, 허용 손실 주어짐): \(D\)를 가정해 손실을 계산하고 맞을 때까지 고침. 표준 관 크기 중 위의 것을 고름.</li>
+    </ol>
+
+    <div class="tb-note"><b>주의</b>(1) 손실은 대략 \(V^2\), 곧 같은 유량에서 \(D^{-5}\)에 비례하므로 지름을 조금 줄이면 손실이 크게 늘어납니다. (2) 오래된 관은 녹과 물때로 거칠기가 몇 배 커지고 지름이 줄어듭니다. (3) 비원형 단면은 수력 지름 \(D_h = 4A/P\)를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(h_f = f(L/D)V^2/(2g)\), 층류 \(64/\text{Re}\), 난류 Colebrook(반복).</li>
+        <li>부차 손실 \(\sum KV^2/(2g)\).</li>
+        <li>유량·지름 문제는 \(f\)를 가정하고 반복.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 엘보 4개를 긴 곡률 엘보(0.3)로 바꾸면 손실 수두는 얼마나 줄어드는가?
+          <details><summary>답</summary><p>\(\sum K\)가 2.4 줄어 \(2.4\times0.331 = 0.79\) m 감소, 합 15.1 m.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 배관(부차 손실 무시)에서 허용 손실이 7 m면 유량은 대략 얼마인가?
+          <details><summary>답</summary><p>손실 ∝ \(V^{1.8\text{~}2}\) 정도. \(f = 0.0215\)로 두면 \(V = \sqrt{7\times19.62/(0.0215\times2000)} = 1.79\) m/s, Re = 89,000에서 \(f = 0.0221\)로 다시 \(V = 1.76\) m/s, \(Q = 3.5\) L/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>같은 유량 5 L/s를 지름 40 mm 관으로 보내면 주 손실은 대략 몇 배가 되는가? (\(f\)는 비슷하다고 보고)
+          <details><summary>답</summary><p>\(h_f \propto D^{-5}\)이므로 \((50/40)^5 = 3.05\)배, 약 43 m. 실제로 계산하면 Re가 커져 \(f\)는 조금 줄지만 상대 조도가 커져 \(f = 0.0218\)로 거의 같고, 44 m가 나온다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
