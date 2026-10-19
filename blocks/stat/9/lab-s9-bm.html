@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통9-06-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs4.js"]
+}
+-->
+<article class="card q-card" id="lab-s9-bm" data-kind="실습" data-std="응통9-06-01">
+  <header class="card-head"><span class="no"></span><h2>걸음을 잘게 쪼갤 때 걸음 크기는 왜 √Δt여야 하나?</h2><span class="kind">실습 · 랜덤워크와 브라운 운동</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>시간 간격 \(\Delta t\)마다 \(\pm\Delta x\)씩 움직이는 대칭 랜덤워크에서 \(\Delta t\)를 줄여 가며, 걸음 크기를 \(\Delta x = \sqrt{\Delta t}\)로 줄일 때만 극한이 의미 있는 과정(브라운 운동)이 됨을 확인합니다. 성취기준 [응통9-06-01].</p>
+      <p class="q-term"><b>척도 맞추기</b>: 시각 1까지의 위치는 \(1/\Delta t\)걸음의 합이므로 분산이 \((\Delta x)^2/\Delta t\)입니다. 이 값이 0이나 무한대로 가지 않으려면 \(\Delta x\)가 \(\sqrt{\Delta t}\)에 비례해야 합니다.</p>
+      <p class="q-term"><b>표준 브라운 운동</b>: \(B(0) = 0\), 독립 증분, \(B(t) - B(s) \sim N(0, t - s)\), 연속 경로. 그래서 \(B(1) \sim N(0, 1)\), \(\mathrm{Cov}(B(s), B(t)) = \min(s, t)\)입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가상의 경로 1000개를 만들고 위 그림에 그중 12개를 그립니다(세로 범위 ±3.5를 넘는 부분은 가장자리에 붙여 그림). 아래 그림은 \(X(1)\) 1000개의 히스토그램과 표준정규 밀도(빨강)입니다. 걸음 크기 규칙을 바꿔 세 가지 극한을 비교합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>시간 간격 Δt</span><select name="dt" aria-label="시간 간격">
+          <option value="0.1">0.1 (10걸음)</option>
+          <option value="0.01" selected>0.01 (100걸음)</option>
+          <option value="0.001">0.001 (1000걸음)</option>
+        </select></label>
+        <label><span>걸음 크기 Δx</span><select name="sc" aria-label="걸음 크기 규칙">
+          <option value="sqrt" selected>√Δt</option>
+          <option value="lin">Δt</option>
+          <option value="one">1 (줄이지 않음)</option>
+        </select></label>
+      </div>
+      <canvas aria-label="랜덤워크 경로"></canvas>
+      <canvas aria-label="X(1)의 히스토그램과 표준정규 밀도"></canvas>
+      <div class="btns"><button type="button" class="new">새 경로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>걸음 크기 \(\sqrt{\Delta t}\)로 두고 \(\Delta t\)를 0.1, 0.01, 0.001로 줄이며 경로 모양과 \(X(1)\)의 분산을 봅니다.</li>
+        <li>걸음 크기를 \(\Delta t\)로 바꿔 같은 일을 합니다.</li>
+        <li>걸음 크기를 1로 바꿔 같은 일을 합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(\Delta x = \sqrt{\Delta t}\): \(\Delta t\)와 관계없이 \(X(1)\)의 분산이 1 근처(모의실험이라 ±0.1 정도)이고, \(\mathrm{Cov}(X(0.5), X(1))\)는 0.5 근처입니다. \(\Delta t = 0.1\)에서는 \(X(1)\)이 0.63 간격의 값만 가질 수 있어 막대가 넓고 거칠지만, 0.001에서는 빨간 정규 곡선과 잘 맞고 경로가 연속이지만 매우 거친 모양이 됩니다.</li>
+        <li>\(\Delta x = \Delta t\): 분산이 \(\Delta t\)(0.01, 0.001)로 0에 가까워져 경로가 0 근처의 평평한 선으로 쪼그라듭니다. 극한에서는 아무것도 움직이지 않습니다.</li>
+        <li>\(\Delta x = 1\): 분산이 \(1/\Delta t\)(100, 1000)로 폭발해 경로가 곧바로 그림 밖으로 나가고, 히스토그램 범위 ±4 밖으로 대부분이 빠집니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(\Delta x = \sqrt{\Delta t}\)일 때 \(X(1)\)이 정규분포에 가까워지는 까닭을 중심극한정리로 설명해 보세요.</li>
+        <li>구간 \([t, t + h]\)에서의 평균 기울기 \((B(t + h) - B(t))/h\)의 표준편차는 \(1/\sqrt h\)입니다. 이것이 \(h \to 0\)에서 발산한다는 사실과 "경로가 거의 어디서나 미분 불가능"하다는 성질을 연결해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R: <code>dt &lt;- 0.001; B &lt;- cumsum(sample(c(-1, 1), 1000, TRUE) * sqrt(dt)); plot(seq(dt, 1, dt), B, type = "l")</code>. 걸음을 \(\pm\)1 대신 \(N(0, \Delta t)\)로 뽑아도 같은 극한이 나옵니다(돈스커의 정리).</p>
+    </section>
+  </div>
+</article>

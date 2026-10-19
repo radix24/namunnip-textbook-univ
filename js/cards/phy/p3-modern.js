@@ -1,4 +1,4 @@
-/* 물리3 실습 카드 묶음: 시공간 도표, 흑체복사, 파동 묶음, 우물과 진동자의 고유 상태, 장벽 투과 */
+/* 물리3 실습 카드 묶음: 시공간 도표, 흑체복사, 파동 묶음, 장벽 투과 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -72,36 +72,7 @@
     S.on(() => { t = 0; draw(); }); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 무한 우물과 조화 진동자의 고유 상태 (04-02) */
-  (() => {
-    const S = QSim.card("lab-p3-states"); if (!S) return;
-    const cv = S.$("canvas");
-    const herm = (n, x) => { let h0 = 1, h1 = 2 * x; if (n === 0) return h0; for (let k = 1; k < n; k++) { const h2 = 2 * x * h1 - 2 * k * h0; h0 = h1; h1 = h2; } return h1; };
-    const fact = (n) => (n < 2 ? 1 : n * fact(n - 1));
-    const sho = (n, x) => herm(n, x) * Math.exp(-x * x / 2) / Math.sqrt(2 ** n * fact(n) * Math.sqrt(Math.PI));
-    function draw() {
-      const c = C(), well = S.val("pot") === "well", n = S.val("n"), prob = S.val("prob"), N = 6;
-      const v = QSim.view(cv, 0.62);
-      if (well) {
-        const f = QSim.frame(v, { x0: -0.2, x1: 1.2, y0: 0, y1: 40, xl: "x/L", yl: "E/E₁" }); f.axes({ noGrid: true });
-        f.path([[0, 40], [0, 0], [1, 0], [1, 40]], c.ink, 2.5);
-        for (let k = 1; k <= N; k++) { const E = k * k; if (E > 40) break; f.path([[0, E], [1, E]], k === n ? c.warn : c.rule, k === n ? 1.5 : 1); }
-        const E = n * n, A = 1.8; if (E < 40) f.fn((x) => (x < 0 || x > 1 ? NaN : E + A * (prob ? 2 * Math.sin(n * Math.PI * x) ** 2 : Math.sqrt(2) * Math.sin(n * Math.PI * x))), c.main, 2.5);
-        S.out(`무한 우물: E_n = n²E₁ (E₁ = h²/8mL²). n = ${n}: E = ${E}E₁, 마디 ${n - 1}개\n준위 간격이 n이 클수록 벌어진다 (E_{n+1} − E_n = (2n+1)E₁)\n${prob ? "|ψ|²: 고전적으로는 어디서나 같은 확률 1/L" : "ψ_n = √(2/L) sin(nπx/L)"}`);
-      } else {
-        const f = QSim.frame(v, { x0: -5, x1: 5, y0: 0, y1: 7, xl: "x (√(ħ/mω) 단위)", yl: "E/ħω" }); f.axes({ noGrid: true });
-        f.fn((x) => x * x / 2, c.ink, 2.5);
-        for (let k = 0; k < N; k++) { const E = k + 0.5, xt = Math.sqrt(2 * E); f.path([[-xt, E], [xt, E]], k === n ? c.warn : c.rule, k === n ? 1.5 : 1); }
-        const E = n + 0.5, A = 0.9, xt = Math.sqrt(2 * E); f.fn((x) => E + A * (prob ? sho(n, x) ** 2 * 2 : sho(n, x)), c.main, 2.5);
-        f.dot(-xt, E, c.acc, 4); f.dot(xt, E, c.acc, 4);
-        let out = 0; for (let i = 0; i < 4000; i++) { const x = -8 + 16 * i / 4000; if (Math.abs(x) > xt) out += sho(n, x) ** 2 * 16 / 4000; }
-        S.out(`조화 진동자: E_n = (n + ½)ħω. n = ${n}: E = ${E}ħω, 마디 ${n}개, 간격은 늘 ħω\n주황 점: 고전적 되돌이점 ±√(2E). 그 바깥(고전적으로 금지)에서 찾을 확률 ${(100 * out).toFixed(1)}%\n${prob ? "|ψ|²" : "ψ_n ∝ H_n(x) e^(−x²/2)"}`);
-      }
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 사각 장벽 투과 확률 (04-03) */
+  /* 4. 사각 장벽 투과 확률 (04-03) */
   (() => {
     const S = QSim.card("lab-p3-tunnel"); if (!S) return;
     const cv = S.$("canvas"), hc = 197.327, mc2 = 0.511e6;   // ħc (eV·nm), 전자 mc² (eV)

@@ -1,4 +1,4 @@
-/* 물리5 실습 카드 묶음: 축 위 전기장, 영상 전하, 완화법, 다중극 전개, 유전체 경계 */
+/* 물리5 실습 카드 묶음: 영상 전하, 완화법, 다중극 전개, 유전체 경계 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -14,32 +14,7 @@
     void cs; return img;
   };
 
-  /* 1. 고리, 원판, 막대의 축 위 전기장 (02-01) */
-  (() => {
-    const S = QSim.card("lab-p5-axis"); if (!S) return;
-    const cv = S.$("canvas");
-    function exact(kind, z) { if (kind === "ring") return z / Math.pow(1 + z * z, 1.5); if (kind === "disk") return 2 * (1 - z / Math.sqrt(1 + z * z)); return 1 / (z * Math.sqrt(z * z + 1)); }
-    function numeric(kind, z, N) {
-      let s = 0;
-      if (kind === "ring") { for (let i = 0; i < N; i++) s += (1 / N) * z / Math.pow(1 + z * z, 1.5); return s; }
-      if (kind === "disk") { for (let i = 0; i < N; i++) { const r = (i + 0.5) / N, dq = 2 * r / N; s += dq * z / Math.pow(r * r + z * z, 1.5); } return s; }
-      for (let i = 0; i < N; i++) { const x = -1 + (2 * i + 1) / N, dq = 1 / N; s += dq * z / Math.pow(x * x + z * z, 1.5); } return s;
-    }
-    function draw() {
-      const c = C(), kind = S.val("kind"), N = S.val("N"), z0 = S.val("z");
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 5, y0: 0, y1: kind === "disk" ? 2.1 : kind === "ring" ? 0.5 : 3, xl: "z/R (막대는 z/L)", yl: "E (상대)" }); f.axes();
-      f.fn((z) => exact(kind, z), c.main, 2.5);
-      f.fn((z) => (kind === "disk" ? 1 / (z * z) : 1 / (z * z)), c.ink3, 1.5, [5, 4]);
-      const pts = []; for (let i = 1; i <= 50; i++) { const z = 5 * i / 50; pts.push([z, numeric(kind, z, N)]); } pts.forEach(([z, e]) => f.dot(z, e, c.acc, 2.5));
-      f.dot(z0, exact(kind, z0), c.warn, 6);
-      const e = exact(kind, z0), n = numeric(kind, z0, N), pc = 1 / (z0 * z0);
-      const name = { ring: "고리 (전하 q, 반지름 R)", disk: "원판 (전하 q, 반지름 R)", rod: "막대의 수직 이등분선 (전하 q, 길이 2L)" }[kind];
-      S.out(`${name}. 세기 단위 q/(4πε₀R²)\nz = ${z0.toFixed(2)}: 공식 ${e.toFixed(4)}, 조각 ${N}개 수치 합 ${n.toFixed(4)} (주황 점), 점전하 근사 1/z² = ${pc.toFixed(4)} (회색 점선)\n멀리서는 모두 점전하에 다가간다. 공식/점전하 = ${(e / pc).toFixed(3)}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 영상 전하 (04-02) */
+  /* 1. 영상 전하 (04-02) */
   (() => {
     const S = QSim.card("lab-p5-image"); if (!S) return;
     const cv = S.$("canvas");
@@ -70,7 +45,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 라플라스 방정식의 완화법 (04-03) */
+  /* 2. 라플라스 방정식의 완화법 (04-03) */
   (() => {
     const S = QSim.card("lab-p5-relax"); if (!S) return;
     const cv = S.$("canvas"); let N, U, it;
@@ -95,7 +70,7 @@
     S.on(() => { L.stop(); S.$(".play").textContent = "재생"; reset(); }); QSim.redrawOn(draw); reset();
   })();
 
-  /* 4. 다중극 전개 (04-04) */
+  /* 3. 다중극 전개 (04-04) */
   (() => {
     const S = QSim.card("lab-p5-multi"); if (!S) return;
     const cv = S.$("canvas");
@@ -119,7 +94,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 유전체 경계에서 전기력선의 꺾임 (05-03) */
+  /* 4. 유전체 경계에서 전기력선의 꺾임 (05-03) */
   (() => {
     const S = QSim.card("lab-p5-refract"); if (!S) return;
     const cv = S.$("canvas");

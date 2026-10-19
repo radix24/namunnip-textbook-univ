@@ -1,4 +1,4 @@
-/* 물리11 실습 카드 묶음: 이원자 기체 열용량, 아인슈타인 고체 열 교환, 열기관 순환, 판데르발스 등온선, 평균장 자화 */
+/* 물리11 실습 카드 묶음: 이원자 기체 열용량, 아인슈타인 고체 열 교환, 판데르발스 등온선, 평균장 자화 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -44,37 +44,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 카르노 순환과 오토 순환 (03-03) */
-  (() => {
-    const S = QSim.card("lab-p11-cycle"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), kind = S.val("kind"), r = S.val("r"), tr = S.val("tr"), g = Number(S.val("gamma")), f = 2 / (g - 1);
-      // 단위: Nk = 1, T_c = 1, V_1 = 1
-      const pts = [], seg = (fn, a, b) => { for (let i = 0; i <= 80; i++) { const V = a + (b - a) * i / 80; pts.push([V, fn(V)]); } };
-      let e, ec, W, Qh, ok = true, note = "";
-      const Tc = 1, Th = tr;
-      if (kind === "carnot") {
-        // 1: (V1, Th) 등온 팽창 → 2: (V2 = r V1) → 단열 → 3: T = Tc → 등온 압축 → 4 → 단열 → 1
-        const V1 = 1, V2 = r, V3 = V2 * (Th / Tc) ** (f / 2), V4 = V1 * (Th / Tc) ** (f / 2);
-        seg((V) => Th / V, V1, V2); seg((V) => Th * (V2 / V) ** g / V2, V2, V3); seg((V) => Tc / V, V3, V4); seg((V) => Tc * (V4 / V) ** g / V4, V4, V1);
-        Qh = Th * Math.log(r); const Qc = Tc * Math.log(V3 / V4); W = Qh - Qc; e = W / Qh; ec = 1 - Tc / Th;
-      } else {
-        // 오토: 1 (Vmax = r, Tc) 단열 압축 → 2 (V = 1) → 등적 가열 → 3 (T = Th) → 단열 팽창 → 4 → 등적 냉각
-        const T2 = Tc * r ** (g - 1); if (Th <= T2) { ok = false; note = ` 최고 온도가 압축 뒤 온도 ${T2.toFixed(2)}T_c보다 낮아 가열할 수 없음: 온도 비를 키우거나 압축비를 줄이세요.`; }
-        const T3 = Math.max(Th, T2 * 1.0001), T4 = T3 * r ** (1 - g);
-        seg((V) => Tc * r ** g / V ** g / r * 1, r, 1); pts.push([1, T3 / 1]); seg((V) => T3 / V ** g, 1, r); pts.push([r, Tc / r]);
-        Qh = (f / 2) * (T3 - T2); const Qc = (f / 2) * (T4 - Tc); W = Qh - Qc; e = 1 - r ** (1 - g); ec = 1 - Tc / T3;
-      }
-      const Vmax = Math.max(...pts.map((p) => p[0])), Pmax = Math.max(...pts.map((p) => p[1]));
-      const v = QSim.view(cv, 0.55), fr = QSim.frame(v, { x0: 0, x1: Vmax * 1.08, y0: 0, y1: Pmax * 1.1, xl: "V (V₁ 단위)", yl: "P (NkT_c/V₁ 단위)" }); fr.axes();
-      fr.path(pts, c.main, 2.5);
-      S.out(`${kind === "carnot" ? "카르노 순환" : "오토 순환"}, γ = ${g}, ${kind === "carnot" ? "등온 팽창 부피 비" : "압축비"} ${r.toFixed(1)}, 최고/최저 온도 비 ${tr.toFixed(2)}\n${ok ? `효율 ${(100 * e).toFixed(1)}%, 같은 최고·최저 온도의 카르노 효율 ${(100 * ec).toFixed(1)}%. 한 순환의 일 ${W.toFixed(3)} NkT_c, 흡수 열 ${Qh.toFixed(3)} NkT_c` : "계산할 수 없음."}${note}\n${kind === "otto" && ok ? "오토 효율 1 − r^(1−γ)는 최고 온도와 무관하다" : ""}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 판데르발스 등온선과 맥스웰 작도 (05-01, 06-03) */
+  /* 3. 판데르발스 등온선과 맥스웰 작도 (05-01, 06-03) */
   (() => {
     const S = QSim.card("lab-p11-vdw"); if (!S) return;
     const cv = S.$("canvas");
@@ -104,7 +74,7 @@ const v = QSim.view(cv, 0.55);
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 평균장(퀴리-바이스) 자화와 임계 지수 (06-02) */
+  /* 4. 평균장(퀴리-바이스) 자화와 임계 지수 (06-02) */
   (() => {
     const S = QSim.card("lab-p11-meanfield"); if (!S) return;
     const [cvM, cvL] = S.$$("canvas");

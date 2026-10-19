@@ -1,65 +1,9 @@
-/* 물리4 실습 카드 묶음: 최단 시간 곡선, 이중 진자, 위상 공간 부피, 연성 진동자, 중간축 정리 */
+/* 물리4 실습 카드 묶음: 위상 공간 부피, 연성 진동자, 중간축 정리 */
 (() => {
   "use strict";
   const C = () => QSim.col();
 
-  /* 1. 최단 시간 곡선 경주 (01-02) */
-  (() => {
-    const S = QSim.card("lab-p4-brach"); if (!S) return;
-    const cv = S.$("canvas"), g = 9.8, Y = 1;
-    let paths = null, t = 0;
-    function build() {
-      const X = S.val("x2");
-      const f = (th) => (th - Math.sin(th)) / (1 - Math.cos(th)) - X / Y;
-      let lo = 1e-6, hi = 2 * Math.PI - 1e-6; for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; }
-      const the = (lo + hi) / 2, a = Y / (1 - Math.cos(the));
-      const cyc = []; for (let i = 0; i <= 400; i++) { const th = the * i / 400; cyc.push([a * (th - Math.sin(th)), a * (1 - Math.cos(th))]); }
-      const line = []; for (let i = 0; i <= 400; i++) line.push([X * i / 400, Y * i / 400]);
-      const drop = []; for (let i = 0; i <= 200; i++) drop.push([0, Y * i / 200]); for (let i = 1; i <= 200; i++) drop.push([X * i / 200, Y]);
-      const timing = (pts) => { const T = [0]; for (let i = 1; i < pts.length; i++) { const ds = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]), ym = (pts[i][1] + pts[i - 1][1]) / 2; T.push(T[i - 1] + ds / Math.sqrt(2 * g * Math.max(ym, 1e-9))); } return T; };
-      paths = [["사이클로이드", cyc, C().main], ["직선", line, C().acc], ["수직 낙하 후 수평", drop, C().ink3]].map(([n, p, col]) => ({ n, p, col, T: timing(p) }));
-      paths.exact = the * Math.sqrt(a / g); paths.ymax = Math.max(...cyc.map((q) => q[1])); t = 0;
-    }
-    const at = (P, tt) => { const T = P.T; if (tt >= T[T.length - 1]) return P.p[P.p.length - 1]; let i = 1; while (T[i] < tt) i++; const r = (tt - T[i - 1]) / (T[i] - T[i - 1]); return [P.p[i - 1][0] + r * (P.p[i][0] - P.p[i - 1][0]), P.p[i - 1][1] + r * (P.p[i][1] - P.p[i - 1][1])]; };
-    function draw() {
-      const c = C(), X = S.val("x2"), ym = Math.max(Y, paths.ymax);
-      const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: -0.1, x1: X + 0.2, y0: -ym - 0.1, y1: 0.15, equal: true }); f.axes({ noGrid: true });
-      paths.forEach((P) => { f.path(P.p.map(([x, y]) => [x, -y]), P.col, 2); const q = at(P, t); f.dot(q[0], -q[1], P.col, 6); });
-      f.dot(X, -Y, c.warn, 4);
-      S.out(`끝점 (${X.toFixed(2)}, −1) m, 출발은 정지\n도착 시간: ${paths.map((P) => `${P.n} ${P.T[P.T.length - 1].toFixed(3)} s`).join(", ")}\n사이클로이드 이론값 θ√(a/g) = ${paths.exact.toFixed(3)} s${paths.ymax > Y + 1e-3 ? " (끝점보다 더 내려갔다 올라온다)" : ""}`);
-    }
-    const L = QSim.loop((dt) => { t += dt * 0.5; draw(); return t < Math.max(...paths.map((P) => P.T[P.T.length - 1])) + 0.3; }).watch(S.root);
-    QSim.playButton(S.$(".play"), L, () => { t = 0; });
-    S.on(() => { L.stop(); S.$(".play").textContent = "재생"; build(); draw(); }); QSim.redrawOn(draw); build(); draw();
-  })();
-
-  /* 2. 이중 진자와 혼돈 (02-01) */
-  (() => {
-    const S = QSim.card("lab-p4-double"); if (!S) return;
-    const [cvP, cvT] = S.$$("canvas"), g = 9.8;
-    let A, B, t, hist;
-    const f = (_, s) => {
-      const [t1, t2, w1, w2] = s, d = t2 - t1, den = 2 - Math.cos(d) ** 2;
-      const a1 = (w1 * w1 * Math.sin(d) * Math.cos(d) + g * Math.sin(t2) * Math.cos(d) + w2 * w2 * Math.sin(d) - 2 * g * Math.sin(t1)) / den;
-      const a2 = (-w2 * w2 * Math.sin(d) * Math.cos(d) + 2 * (g * Math.sin(t1) * Math.cos(d) - w1 * w1 * Math.sin(d) - g * Math.sin(t2))) / den;
-      return [w1, w2, a1, a2];
-    };
-    const E = (s) => { const [t1, t2, w1, w2] = s; return w1 * w1 + 0.5 * w2 * w2 + w1 * w2 * Math.cos(t1 - t2) - 2 * g * Math.cos(t1) - g * Math.cos(t2); };
-    function reset() { const a = S.val("a1") * Math.PI / 180, b = S.val("a2") * Math.PI / 180, d = 10 ** S.val("ld"); A = [a, b, 0, 0]; B = [a + d, b, 0, 0]; t = 0; hist = []; draw(); }
-    function step(dt) { for (let i = 0; i < 20; i++) { A = QSim.rk4(f, t, A, dt / 20); B = QSim.rk4(f, t, B, dt / 20); t += dt / 20; } hist.push([t, Math.log10(Math.hypot(A[0] - B[0], A[1] - B[1], 0.1 * (A[2] - B[2]), 0.1 * (A[3] - B[3])) + 1e-16)]); if (hist.length > 2000) hist.shift(); draw(); }
-    function draw() {
-      const c = C(), v = QSim.view(cvP, 0.6), f2 = QSim.frame(v, { x0: -2.3, x1: 2.3, y0: -2.2, y1: 1.2, equal: true }); f2.axes({ noGrid: true });
-      [[B, c.acc], [A, c.main]].forEach(([s, col]) => { const x1 = Math.sin(s[0]), y1 = -Math.cos(s[0]), x2 = x1 + Math.sin(s[1]), y2 = y1 - Math.cos(s[1]); f2.path([[0, 0], [x1, y1], [x2, y2]], col, 2); f2.dot(x1, y1, col, 5); f2.dot(x2, y2, col, 6); });
-      const vt = QSim.view(cvT, 0.28), ft = QSim.frame(vt, { x0: Math.max(0, t - 30), x1: Math.max(30, t), y0: -14, y1: 1, xl: "t (s)", yl: "log₁₀ 차이" }); ft.axes({ noGrid: true }); if (hist.length > 1) ft.path(hist, c.warn, 1.8);
-      S.out(`길이 1 m, 질량이 같은 이중 진자 두 개 (파랑, 주황). 처음 각 θ₁ = ${S.val("a1")}°, θ₂ = ${S.val("a2")}°, 주황은 θ₁에 10^${S.val("ld")} rad 더함\nt = ${t.toFixed(1)} s, 에너지 보존 확인: E(t) − E(0) = ${(E(A) - E([S.val("a1") * Math.PI / 180, S.val("a2") * Math.PI / 180, 0, 0])).toExponential(1)} (상대 단위)\n아래: 두 진자의 상태 차이(로그). 작은 각이면 거의 그대로, 큰 각이면 지수적으로 커진다`);
-    }
-    const L = QSim.loop((dt) => { step(dt); return t < 120; }).watch(S.root);
-    QSim.playButton(S.$(".play"), L, () => { if (t >= 120) reset(); });
-    S.$(".reset").addEventListener("click", () => { L.stop(); S.$(".play").textContent = "재생"; reset(); });
-    S.on(() => { L.stop(); S.$(".play").textContent = "재생"; reset(); }); QSim.redrawOn(draw); reset();
-  })();
-
-  /* 3. 진자의 위상 공간과 리우빌 정리 (03-02) */
+  /* 1. 진자의 위상 공간과 리우빌 정리 (03-02) */
   (() => {
     const S = QSim.card("lab-p4-liouville"); if (!S) return;
     const cv = S.$("canvas"); let ring, t = 0;
@@ -87,7 +31,7 @@
     S.on(() => { L.stop(); S.$(".play").textContent = "재생"; reset(); }); QSim.redrawOn(draw); reset();
   })();
 
-  /* 4. 연성 진동자: 정규 모드와 맥놀이 (04-01, 04-02) */
+  /* 2. 연성 진동자: 정규 모드와 맥놀이 (04-01, 04-02) */
   (() => {
     const S = QSim.card("lab-p4-coupled"); if (!S) return;
     const [cvM, cvT] = S.$$("canvas");
@@ -114,7 +58,7 @@
     S.on(() => { reset(); }); QSim.redrawOn(draw); reset();
   })();
 
-  /* 5. 중간축 정리 (05-04) */
+  /* 3. 중간축 정리 (05-04) */
   (() => {
     const S = QSim.card("lab-p4-tennis"); if (!S) return;
     const cv = S.$("canvas"), I = [1, 2, 3];

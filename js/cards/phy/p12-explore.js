@@ -47,22 +47,4 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
-
-  /* 3. Yukawa 퍼텐셜의 Born 근사 산란 (05-03). ħ = m = 1, 세기 β = 1 */
-  (() => {
-    const S = QSim.card("lab-p12-born"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), k = S.val("k"), mu = S.val("mu");
-      const dsig = (th) => { const q2 = 4 * k * k * Math.sin(th / 2) ** 2; return (2 / (mu * mu + q2)) ** 2; };
-      const lg = (x) => Math.log10(x);
-      const top = lg(dsig(0)), bot = Math.min(lg(dsig(Math.PI)), top - 1) - 0.3;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 180, y0: bot, y1: top + 0.3, xl: "θ (도)", yl: "log₁₀ dσ/dΩ" }); f.axes();
-      f.fn((d) => lg(dsig(d * Math.PI / 180)), c.main, 2.4, null, 600);
-      f.fn((d) => { const s = Math.sin(d * Math.PI / 360); return d < 1 ? NaN : lg(1 / (4 * k ** 4 * s ** 4)); }, c.ink3, 1.2, [5, 4], 600);
-      let tot = 0; const n = 4000; for (let i = 0; i < n; i++) { const th = Math.PI * (i + 0.5) / n; tot += dsig(th) * 2 * Math.PI * Math.sin(th) * Math.PI / n; }
-      S.out(`k = ${k}, 차폐 μ = ${mu} (퍼텐셜 −e^{−μr}/r)\ndσ/dΩ: θ = 0에서 ${dsig(0).toFixed(4)}, 90°에서 ${dsig(Math.PI / 2).toFixed(4)}, 180°에서 ${dsig(Math.PI).toFixed(4)}\n전체 단면적 σ = ${tot.toFixed(4)} (이론 16π/(μ²(μ² + 4k²)) = ${(16 * Math.PI / (mu * mu * (mu * mu + 4 * k * k))).toFixed(4)})\n회색 점선: μ = 0의 Rutherford 공식 1/(4k⁴sin⁴(θ/2))`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();

@@ -1,4 +1,4 @@
-/* 물리6 실습 카드 묶음: 논리 간소화, 카운터 타이밍, PLL, 표본화와 양자화, 축차 비교 ADC */
+/* 물리6 실습 카드 묶음: 논리 간소화, PLL, 표본화와 양자화 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -46,37 +46,7 @@
     QSim.redrawOn(draw); const p = PRE[S.val("pre")]; boxes().forEach((b) => (b.checked = p.includes(+b.name.slice(1)))); draw();
   })();
 
-  /* 2. 리플 카운터와 동기 카운터의 타이밍 (02-02) */
-  (() => {
-    const S = QSim.card("lab-p6-counter"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), n = S.val("n"), sync = S.val("type") === "sync", dl = S.val("dl"), N = (1 << n) + 2, T = 1;
-      const v = QSim.view(cv, 0.18 + 0.09 * (n + 1)), g = v.g, x0 = 40, W = v.W - x0 - 10, rows = n + 2, rh = (v.H - 10) / rows, sx = W / (N * T);
-      const X = (t) => x0 + t * sx;
-      g.font = "12px " + mono(); g.fillStyle = c.ink2;
-      const wave = (row, edges, col, label) => {   // edges: [시각, 값]
-        const yb = 8 + row * rh + rh * 0.8, yt = 8 + row * rh + rh * 0.25; g.fillStyle = c.ink2; g.fillText(label, 4, yb - 4);
-        g.strokeStyle = col; g.lineWidth = 1.8; g.beginPath(); let val = edges[0][1]; g.moveTo(X(0), val ? yt : yb);
-        edges.slice(1).forEach(([t, nv]) => { g.lineTo(X(t), val ? yt : yb); g.lineTo(X(t), nv ? yt : yb); val = nv; }); g.lineTo(X(N * T), val ? yt : yb); g.stroke(); g.lineWidth = 1;
-      };
-      const clk = [[0, 0]]; for (let k = 0; k < N; k++) { clk.push([k + 0.5, 1]); clk.push([k + 1, 0]); }
-      wave(0, clk, c.ink3, "CLK");
-      const Q = Array.from({ length: n }, () => [[0, 0]]);
-      for (let k = 1; k <= N; k++) {   // k번째 상승 가장자리 = 시각 k - 0.5
-        const cnt = k % (1 << n), prev = (k - 1) % (1 << n);
-        for (let b = 0; b < n; b++) { const nb = (cnt >> b) & 1, pb = (prev >> b) & 1; if (nb !== pb) Q[b].push([k - 0.5 + (sync ? dl : dl * (b + 1)), nb]); }
-      }
-      Q.forEach((e, b) => wave(b + 1, e, c.main, "Q" + b));
-      const yb = 8 + (n + 1) * rh + rh * 0.65; g.fillStyle = c.ink2; g.fillText("수", 4, yb);
-      for (let k = 0; k < N; k++) { g.fillStyle = c.ink; g.fillText(String(k % (1 << n)), X(k + 0.5) + 4, yb); }
-      const glitch = !sync && dl > 0.02;
-      S.out(`${n}비트 ${sync ? "동기" : "리플(비동기)"} 카운터, 플립플롭 지연 ${dl.toFixed(2)} × 클록 주기\n0부터 ${(1 << n) - 1}까지 세고 되돌아간다. Q${n - 1}의 진동수 = 클록/${1 << n}\n${glitch ? `리플 카운터는 지연이 단마다 쌓여 Q${n - 1}이 ${(dl * n).toFixed(2)}주기 늦게 바뀐다. 그 사이에 잠깐 틀린 수가 나타난다(예: 3 → 4 사이에 2, 0을 거침)` : sync ? "모든 비트가 같은 순간에 바뀌어 틀린 중간값이 없다" : "지연이 작아 거의 동시에 바뀐다"}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 3. PLL 고정 과정 (03-02) */
+  /* 2. PLL 고정 과정 (03-02) */
   (() => {
     const S = QSim.card("lab-p6-pll"); if (!S) return;
     const cv = S.$("canvas");
@@ -100,7 +70,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 표본화와 양자화 (04-01) */
+  /* 3. 표본화와 양자화 (04-01) */
   (() => {
     const S = QSim.card("lab-p6-sample"); if (!S) return;
     const cv = S.$("canvas");
@@ -119,26 +89,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 축차 비교 ADC (04-02) */
-  (() => {
-    const S = QSim.card("lab-p6-sar"); if (!S) return;
-    const cv = S.$("canvas"); let k = 0;
-    function steps() {
-      const n = S.val("bits"), Vref = 4.096, Vin = S.val("vin"), lsb = Vref / 2 ** n; let code = 0; const st = [];
-      for (let b = n - 1; b >= 0; b--) { const tr = code | (1 << b), vd = tr * lsb, keep = vd <= Vin; st.push({ b, tr, vd, keep }); if (keep) code = tr; }
-      return { st, code, lsb, n, Vin };
-    }
-    function draw() {
-      const c = C(), { st, code, lsb, n, Vin } = steps(); k = Math.min(k, st.length);
-      const v = QSim.view(cv, 0.45), f = QSim.frame(v, { x0: 0, x1: n + 1, y0: 0, y1: 4.2, xl: "비교 단계", yl: "V" }); f.axes();
-      f.path([[0, Vin], [n + 1, Vin]], c.warn, 2, [6, 4]);
-      st.slice(0, k).forEach((s, i) => { f.dot(i + 1, s.vd, s.keep ? c.main : c.ink3, 5); f.text(s.keep ? "1" : "0", i + 1 - 0.1, s.vd + 0.15, s.keep ? c.main : c.ink3); });
-      let cur = 0; st.slice(0, k).forEach((s) => { if (s.keep) cur = s.tr; });
-      const bin = (x) => x.toString(2).padStart(n, "0");
-      S.out(`${n}비트, 기준 4.096 V → LSB ${(lsb * 1000).toFixed(2)} mV, 입력 ${Vin.toFixed(3)} V (빨간 점선)\n${k}/${n}단계: 지금 코드 ${bin(cur)} = ${cur} → ${(cur * lsb).toFixed(4)} V${k > 0 ? `\n방금 시도: 비트 ${st[k - 1].b}를 1로 → ${st[k - 1].vd.toFixed(4)} V ${st[k - 1].keep ? "≤ 입력이라 유지" : "> 입력이라 0으로 되돌림"}` : ""}${k === n ? `\n최종: ${bin(code)} = ${code}, 양자화 오차 ${((Vin - code * lsb) * 1000).toFixed(2)} mV` : ""}`);
-    }
-    S.$(".step").addEventListener("click", () => { k++; draw(); });
-    S.$(".reset").addEventListener("click", () => { k = 0; draw(); });
-    S.on(() => { k = 0; draw(); }); QSim.redrawOn(draw); draw();
-  })();
 })();

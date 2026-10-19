@@ -1,4 +1,4 @@
-/* 물리14 실습 카드 묶음: 홀 효과, 반도체 전도도의 온도 의존성, 광탄성 굽힘 보, 살렌-키 필터, 잠금 증폭기 */
+/* 물리14 실습 카드 묶음: 반도체 전도도의 온도 의존성, 광탄성 굽힘 보, 살렌-키 필터, 잠금 증폭기 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -7,28 +7,7 @@
   const e = 1.602176634e-19, kB = 1.380649e-23, kEV = 8.617333e-5, h = 6.62607e-34, me = 9.10938e-31;
   const fitLine = (xs, ys) => { const n = xs.length, mx = xs.reduce((a, b) => a + b, 0) / n, my = ys.reduce((a, b) => a + b, 0) / n; let sxy = 0, sxx = 0; xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; }); const b = sxy / sxx; return { a: my - b * mx, b }; };
 
-  /* 1. 홀 효과 (01-01) */
-  (() => {
-    const S = QSim.card("lab-p14-hall"); if (!S) return;
-    const cv = S.$("canvas"); let seed = 5;
-    function draw() {
-      const c = C(), sign = S.val("type") === "p" ? 1 : -1, n = 10 ** S.val("ln"), I = S.val("I") * 1e-3, t = S.val("t") * 1e-3, off = S.val("off") * 1e-3, r = rng(seed);
-      const VH = (B) => sign * I * B / (n * e * t);
-      const Bs = [0.1, 0.2, 0.3, 0.4, 0.5], noise = Math.abs(VH(0.5)) * 0.01 + 1e-9;
-      const plus = Bs.map((B) => VH(B) + off + noise * gauss(r)), minus = Bs.map((B) => -VH(B) + off + noise * gauss(r));
-      const half = Bs.map((_, i) => (plus[i] - minus[i]) / 2), fit = fitLine(Bs, half), nFit = Math.abs(I / (fit.b * e * t));
-      const all = [...plus, ...minus, 0].map((v) => v * 1e3), ymax = Math.max(...all.map(Math.abs)) * 1.15 || 1;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 0.55, y0: -ymax, y1: ymax, xl: "자기장 B (T)", yl: "전압 (mV)" }); f.axes();
-      Bs.forEach((B, i) => { f.dot(B, plus[i] * 1e3, c.main, 4); f.dot(B, minus[i] * 1e3, c.acc, 4); f.dot(B, half[i] * 1e3, c.warn, 5); });
-      f.fn((B) => (fit.a + fit.b * B) * 1e3, c.warn, 1.5, [4, 3]);
-      const fmt = (x) => (Math.abs(x) >= 1e-3 ? (x * 1e3).toFixed(3) + " mV" : Math.abs(x) >= 1e-6 ? (x * 1e6).toFixed(3) + " μV" : (x * 1e9).toFixed(3) + " nV");
-      S.out(`${sign > 0 ? "p형(양공)" : "n형(전자)"}, n = ${n.toExponential(2)} m⁻³, I = ${S.val("I")} mA, 두께 ${S.val("t")} mm, 비정렬 전압 ${S.val("off")} mV\n0.5 T에서 참 홀 전압 ${fmt(VH(0.5))}. 파랑: +B로 잰 값, 주황: −B로 잰 값, 빨강: 두 값 차이의 절반\n빨강의 기울기로 구한 R_H = ${(fit.b * t / I).toExponential(3)} m³/C → 운반자 ${fit.b > 0 ? "양(+)" : "음(−)"}, n = ${nFit.toExponential(3)} m⁻³`);
-    }
-    S.$(".new").addEventListener("click", () => { seed = (seed * 41 + 3) % 99991; draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 반도체 전도도와 온도 (01-02) */
+  /* 1. 반도체 전도도와 온도 (01-02) */
   (() => {
     const S = QSim.card("lab-p14-semicond"); if (!S) return;
     const cv = S.$("canvas");
@@ -54,7 +33,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 광탄성: 4점 굽힘 보 (03-02) */
+  /* 2. 광탄성: 4점 굽힘 보 (03-02) */
   (() => {
     const S = QSim.card("lab-p14-photo"); if (!S) return;
     const cv = S.$("canvas");
@@ -82,7 +61,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 살렌-키 저역 통과 필터 (04-01) */
+  /* 3. 살렌-키 저역 통과 필터 (04-01) */
   (() => {
     const S = QSim.card("lab-p14-sallen"); if (!S) return;
     const [cvM, cvP] = S.$$("canvas");
@@ -102,7 +81,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 잠금 증폭기 (04-02) */
+  /* 4. 잠금 증폭기 (04-02) */
   (() => {
     const S = QSim.card("lab-p14-lockin"); if (!S) return;
     const [cvS, cvX] = S.$$("canvas"); let seed = 9;

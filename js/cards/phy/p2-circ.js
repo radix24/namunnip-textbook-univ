@@ -1,27 +1,10 @@
-/* 물리2 실습 카드 묶음: 계기 부하, 보드 도표, 정류와 평활, 공통 이미터 증폭기, 555 타이머 */
+/* 물리2 실습 카드 묶음: 보드 도표, 정류와 평활, 공통 이미터 증폭기 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const eng = (x, u) => { const a = Math.abs(x); const p = [[1e6, "M"], [1e3, "k"], [1, ""], [1e-3, "m"], [1e-6, "μ"], [1e-9, "n"]].find(([v]) => a >= v * 0.9999) || [1e-9, "n"]; return +(x / p[0]).toPrecision(3) + " " + p[1] + u; };
 
-  /* 1. 전류계 앞·뒤 연결의 오차 (01-03) */
-  (() => {
-    const S = QSim.card("lab-p2-loading"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), R = 10 ** S.val("lr"), RA = S.val("ra"), RV = 10 ** S.val("lrv");
-      const eOut = (r) => (r * RV / (r + RV) - r) / r * 100, eIn = (r) => RA / r * 100;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 8, y0: -3, y1: 2, xl: "log₁₀ R (Ω)", yl: "log₁₀ |오차| (%)" }); f.axes();
-      f.fn((x) => Math.log10(Math.abs(eOut(10 ** x))), c.main, 2.5); f.fn((x) => Math.log10(eIn(10 ** x)), c.acc, 2.5);
-      const lr = Math.log10(R); f.dot(lr, Math.log10(Math.abs(eOut(R))), c.main, 5); f.dot(lr, Math.log10(eIn(R)), c.acc, 5);
-      const cross = Math.sqrt(RA * RV); f.path([[Math.log10(cross), -3], [Math.log10(cross), 2]], c.ink3, 1, [4, 4]);
-      const best = Math.abs(eOut(R)) < eIn(R) ? "전류계 바깥 연결" : "전류계 안쪽 연결";
-      S.out(`R = ${eng(R, "Ω")}, 전류계 R_A = ${RA} Ω, 전압계 R_V = ${eng(RV, "Ω")}\n전류계 바깥(파랑): 잰 값 ${eng(R * RV / (R + RV), "Ω")}, 오차 ${eOut(R).toPrecision(2)}%   전류계 안쪽(주황): 잰 값 ${eng(R + RA, "Ω")}, 오차 +${eIn(R).toPrecision(2)}%\n이 저항에는 ${best}이 낫다. 두 오차가 같은 곳 √(R_A R_V) ≈ ${eng(cross, "Ω")} (점선)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. RC 필터의 보드 도표 (03-03) */
+  /* 1. RC 필터의 보드 도표 (03-03) */
   (() => {
     const S = QSim.card("lab-p2-bode"); if (!S) return;
     const [cvB, cvT] = S.$$("canvas");
@@ -40,7 +23,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 정류와 평활 축전기의 리플 (04-02) */
+  /* 2. 정류와 평활 축전기의 리플 (04-02) */
   (() => {
     const S = QSim.card("lab-p2-rect"); if (!S) return;
     const cv = S.$("canvas");
@@ -57,7 +40,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 공통 이미터 증폭기: 동작점과 잘림 (05-02) */
+  /* 3. 공통 이미터 증폭기: 동작점과 잘림 (05-02) */
   (() => {
     const S = QSim.card("lab-p2-ce"); if (!S) return;
     const [cvL, cvW] = S.$$("canvas");
@@ -78,20 +61,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 555 비안정 발진기 (07-03) */
-  (() => {
-    const S = QSim.card("lab-p2-555"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), R1 = S.val("r1") * 1e3, R2 = S.val("r2") * 1e3, Cc = S.val("cap") * 1e-9, V = 9;
-      const tH = Math.LN2 * (R1 + R2) * Cc, tL = Math.LN2 * R2 * Cc, T = tH + tL;
-      const tot = 3 * T, n = 3000, dt = tot / n; let vc = 0, outH = true; const pc = [], po = [];
-      for (let i = 0; i <= n; i++) { const t = i * dt; if (outH) { vc += (V - vc) / ((R1 + R2) * Cc) * dt; if (vc >= 2 * V / 3) outH = false; } else { vc -= vc / (R2 * Cc) * dt; if (vc <= V / 3) outH = true; } pc.push([t * 1e3, vc]); po.push([t * 1e3, outH ? V : 0]); }
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: tot * 1e3, y0: -0.5, y1: V * 1.1, xl: "t (ms)", yl: "V" }); f.axes();
-      f.path(po, c.acc, 1.5); f.path(pc, c.main, 2.5);
-      f.path([[0, V / 3], [tot * 1e3, V / 3]], c.ink3, 1, [3, 3]); f.path([[0, 2 * V / 3], [tot * 1e3, 2 * V / 3]], c.ink3, 1, [3, 3]);
-      S.out(`R₁ = ${S.val("r1")} kΩ, R₂ = ${S.val("r2")} kΩ, C = ${eng(Cc, "F")}, V_CC = 9 V\nt_H = 0.693(R₁+R₂)C = ${eng(tH, "s")}, t_L = 0.693R₂C = ${eng(tL, "s")}\n진동수 ${eng(1 / T, "Hz")}, 듀티비 ${(100 * tH / T).toFixed(1)}% (파랑: 축전기 전압, 주황: 출력, 점선: V_CC/3, 2V_CC/3)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();

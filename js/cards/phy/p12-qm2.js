@@ -1,4 +1,4 @@
-/* 물리12 실습 카드 묶음: x⁴ 섭동, 변분법, WKB 준위, 라비 진동, 딱딱한 공의 부분파 */
+/* 물리12 실습 카드 묶음: x⁴ 섭동, 변분법, 라비 진동, 딱딱한 공의 부분파 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -57,28 +57,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. WKB 준위와 정확한 준위 (03-02) */
-  (() => {
-    const S = QSim.card("lab-p12-wkb"); if (!S) return;
-    const cv = S.$("canvas");
-    const P = { ho: { V: (x) => 0.5 * x * x, L: 9 }, x4: { V: (x) => x ** 4, L: 4.5 }, abs: { V: (x) => Math.abs(x), L: 13 } };
-    const cache = {};
-    const action = (V, E) => { let lo = 0, hi = 1; while (V(hi) < E) hi *= 2; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (V(m) < E) lo = m; else hi = m; } const xt = lo, M = 400; let s = 0; for (let i = 0; i < M; i++) { const u = (i + 0.5) / M, x = xt * Math.sin(u * Math.PI / 2); s += Math.sqrt(Math.max(0, 2 * (E - V(x)))) * xt * Math.cos(u * Math.PI / 2) * Math.PI / 2 / M; } return 2 * s; };   // ∫ p dx (되돌이점 사이), 대칭 퍼텐셜
-    const wkbE = (V, n) => { let lo = 0, hi = 1; while (action(V, hi) < (n + 0.5) * Math.PI) hi *= 2; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (action(V, m) < (n + 0.5) * Math.PI) lo = m; else hi = m; } return (lo + hi) / 2; };
-    function draw() {
-      const c = C(), key = S.val("pot"), p = P[key], nsel = S.val("n");
-      if (!cache[key]) { cache[key] = []; for (let n = 0; n <= 8; n++) cache[key].push({ ex: eig(p.V, -p.L, p.L, 2000, n), wk: wkbE(p.V, n) }); }
-      const rows = cache[key], errs = rows.map((r) => 100 * (r.wk - r.ex) / r.ex);
-      const ymax = Math.max(1, ...errs.map(Math.abs)) * 1.2;
-      const v = QSim.view(cv, 0.45), f = QSim.frame(v, { x0: -0.5, x1: 8.5, y0: -ymax, y1: ymax, xl: "n", yl: "WKB 상대 오차 (%)" }); f.axes();
-      const g = v.g; errs.forEach((e, n) => { g.fillStyle = n === nsel ? c.warn : c.main; const x0 = f.X(n - 0.3), x1 = f.X(n + 0.3); g.fillRect(x0, Math.min(f.Y(0), f.Y(e)), x1 - x0, Math.abs(f.Y(e) - f.Y(0))); });
-      const r = rows[nsel];
-      S.out(`${key === "ho" ? "조화 진동자 x²/2" : key === "x4" ? "V = x⁴" : "V = |x|"} (ħ = m = 1), n = ${nsel}\n정확한 값(수치) ${r.ex.toFixed(5)}, WKB ${r.wk.toFixed(5)}, 상대 오차 ${errs[nsel].toFixed(3)}%\n막대: n마다 WKB 오차. n이 커질수록 0에 다가간다`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 라비 진동 (04-01) */
+  /* 3. 라비 진동 (04-01) */
   (() => {
     const S = QSim.card("lab-p12-rabi"); if (!S) return;
     const [cvT, cvD] = S.$$("canvas");
@@ -95,7 +74,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 딱딱한 공의 부분파 산란 (05-02) */
+  /* 4. 딱딱한 공의 부분파 산란 (05-02) */
   (() => {
     const S = QSim.card("lab-p12-partial"); if (!S) return;
     const [cvS, cvA] = S.$$("canvas");
