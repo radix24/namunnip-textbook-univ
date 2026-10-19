@@ -45,3 +45,66 @@
   }
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
+
+/* 기계15 2단원: 2차 시스템 계단 응답과 지표 (02-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-step2"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const y = (t, z, wn) => {
+    if (z < 1) { const wd = wn * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * wn * t) * (Math.cos(wd * t) + (z / Math.sqrt(1 - z * z)) * Math.sin(wd * t)); }
+    if (z === 1) return 1 - Math.exp(-wn * t) * (1 + wn * t);
+    const r = Math.sqrt(z * z - 1), s1 = -wn * (z - r), s2 = -wn * (z + r);
+    return 1 + (s2 * Math.exp(s1 * t) - s1 * Math.exp(s2 * t)) / (s1 - s2);
+  };
+  function draw() {
+    const c = QSim.col(), z = S.val("z"), wn = S.val("wn"), T = 3;
+    const N = 3000, pts = []; let pk = 0, tp = 0, ts = 0, t10 = null, t90 = null;
+    for (let i = 0; i <= N; i++) { const t = (T * i) / N, v = y(t, z, wn); pts.push([t, v]); if (v > pk) { pk = v; tp = t; } if (Math.abs(v - 1) > 0.02) ts = t; if (t10 === null && v >= 0.1) t10 = t; if (t90 === null && v >= 0.9) t90 = t; }
+    const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: T, y0: 0, y1: 1.8, xl: "t (s)", yl: "y", pad: 32 });
+    f.axes();
+    f.path([[0, 1.02], [T, 1.02]], c.ink3, 1, [3, 3]); f.path([[0, 0.98], [T, 0.98]], c.ink3, 1, [3, 3]);
+    f.path([[0, 1.1], [T, 1.1]], c.warn, 1, [5, 4]);
+    f.path(pts, c.main, 2.5);
+    if (pk > 1.0005) f.dot(tp, pk, c.warn, 5);
+    const Mp = z < 1 ? Math.exp((-z * Math.PI) / Math.sqrt(1 - z * z)) : 0;
+    S.out(`ζ = ${z.toFixed(2)}, ωn = ${wn.toFixed(1)} rad/s, 극점 실수부 −ζωn = ${(-z * wn).toFixed(2)}\n시뮬레이션: 오버슈트 ${(Math.max(pk - 1, 0) * 100).toFixed(1)}%${pk > 1.0005 ? ` (t_p = ${tp.toFixed(3)} s)` : ""}, 정착 시간(2%) ${ts >= T * 0.999 ? "3 s 이상" : ts.toFixed(2) + " s"}, 상승 시간 ${t10 !== null && t90 !== null ? (t90 - t10).toFixed(3) + " s" : "-"}\n공식: M_p = ${(Mp * 100).toFixed(1)}%, t_s ≈ 4/(ζωn) = ${(4 / (z * wn)).toFixed(2)} s (빨간 점선: 오버슈트 10% 사양)`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
+/* 기계15 5단원: 개루프 Bode 선도와 이득·위상 여유 (05-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-bode"); if (!S) return;
+  const [cv1, cv2] = S.$$("canvas");
+  // GH(iω) = K / (iω (iω + 2)(iω + 4)) × 진상 (1 + iωT)/(1 + iωαT) × e^{−iωτ}
+  function GH(w, K, lead, tau) {
+    const mag0 = K / (w * Math.hypot(w, 2) * Math.hypot(w, 4));
+    let ph = -Math.PI / 2 - Math.atan(w / 2) - Math.atan(w / 4) - w * tau, mag = mag0;
+    if (lead) { const T = 1.0, a = 0.2; mag *= Math.hypot(1, w * T) / Math.hypot(1, w * a * T); ph += Math.atan(w * T) - Math.atan(w * a * T); }
+    return [mag, ph];
+  }
+  function draw() {
+    const c = QSim.col(), K = S.val("K"), lead = S.val("lead") === "1", tau = S.val("tau");
+    const lw0 = -2, lw1 = 2, N = 600, mg = [], pg = [];
+    let wc = null, w180 = null, prevM = null, prevP = null;
+    for (let i = 0; i <= N; i++) {
+      const lw = lw0 + ((lw1 - lw0) * i) / N, w = 10 ** lw, [m, p] = GH(w, K, lead, tau), db = 20 * Math.log10(m), pd = (p * 180) / Math.PI;
+      mg.push([lw, db]); pg.push([lw, pd]);
+      if (prevM !== null && prevM > 0 && db <= 0 && wc === null) wc = w;
+      if (prevP !== null && prevP > -180 && pd <= -180 && w180 === null) w180 = w;
+      prevM = db; prevP = pd;
+    }
+    const v1 = QSim.view(cv1, 0.38), f1 = QSim.frame(v1, { x0: lw0, x1: lw1, y0: -80, y1: 60, xl: "log₁₀ ω", yl: "|GH| (dB)", pad: 34 });
+    f1.axes(); f1.path([[lw0, 0], [lw1, 0]], c.ink3, 1, [3, 3]); f1.path(mg, c.main, 2.5);
+    const v2 = QSim.view(cv2, 0.38), f2 = QSim.frame(v2, { x0: lw0, x1: lw1, y0: -300, y1: -60, xl: "log₁₀ ω", yl: "∠GH (°)", pad: 34 });
+    f2.axes(); f2.path([[lw0, -180], [lw1, -180]], c.ink3, 1, [3, 3]); f2.path(pg, c.acc, 2.5);
+    let pm = null, gm = null;
+    if (wc) { pm = 180 + (GH(wc, K, lead, tau)[1] * 180) / Math.PI; f1.dot(Math.log10(wc), 0, c.warn, 5); f2.dot(Math.log10(wc), -180 + pm, c.warn, 5); }
+    if (w180) { gm = -20 * Math.log10(GH(w180, K, lead, tau)[0]); f2.dot(Math.log10(w180), -180, c.ink, 5); f1.dot(Math.log10(w180), -gm, c.ink, 5); }
+    const stable = pm !== null && pm > 0 && (gm === null || gm > 0);
+    S.out(`GH = K/[s(s + 2)(s + 4)]${lead ? " × 진상 (s + 1)/(0.2s + 1)" : ""}${tau > 0 ? ` × 지연 ${tau} s` : ""}, K = ${K}\n교차 진동수 ${wc ? wc.toFixed(2) : "-"} rad/s, 위상 여유 ${pm !== null ? pm.toFixed(1) + "°" : "-"} (빨간 점)\n위상 −180° 진동수 ${w180 ? w180.toFixed(2) : "-"} rad/s, 이득 여유 ${gm !== null ? gm.toFixed(1) + " dB" : "무한대"} (검정 점) → 폐루프 ${stable ? "안정" : "불안정"}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();

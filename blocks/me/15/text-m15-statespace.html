@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-statespace" data-kind="본문" data-std="기계15-06-01">
+  <header class="card-head"><span class="no"></span><h2>상태방정식과 극점 배치</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>고차 미분방정식을 1차 연립방정식 \(\dot x = Ax + Bu\), \(y = Cx\)로 쓴다.</li>
+        <li>상태 피드백 \(u = -Kx\)로 폐루프 극점을 원하는 곳에 놓는다.</li>
+        <li>가제어성의 뜻을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>전달함수와 극점 (<a href="01-01.html">1.1절</a>), 2차 응답 지표 (<a href="02-02.html">2.2절</a>), 2×2 행렬의 곱과 행렬식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>상태방정식</h3>
+    <p>질량-스프링-감쇠기 \(m\ddot x + c\dot x + kx = u\)에서 위치 \(x_1 = x\)와 속도 \(x_2 = \dot x\)를 상태로 고르면</p>
+    \[\begin{pmatrix}\dot x_1\\\dot x_2\end{pmatrix} = \begin{pmatrix}0 &amp; 1\\-k/m &amp; -c/m\end{pmatrix}\begin{pmatrix}x_1\\x_2\end{pmatrix} + \begin{pmatrix}0\\1/m\end{pmatrix}u\]
+    \[y = \begin{pmatrix}1 &amp; 0\end{pmatrix}x\]
+    <p>입니다. 상태는 "지금 상태를 알면 앞으로의 운동이 정해지는" 최소한의 변수(에너지 저장 요소마다 하나)입니다. 행렬 \(A\)의 고윳값(\(\det(sI - A) = 0\)의 근)이 전달함수의 극점과 같습니다. 여러 입력·출력을 한꺼번에 다루고 컴퓨터로 계산하기 쉬워 현대 제어의 기본 형식입니다.</p>
+
+    <h3><span class="no">6.1.2</span>극점 배치</h3>
+    <p>모든 상태를 잴 수 있으면 \(u = -Kx + r\)(\(K = (k_1, k_2)\))로 되먹입니다. 폐루프는 \(\dot x = (A - BK)x\)이고, \(K\)를 고르면 \(A - BK\)의 고윳값을 마음대로 정할 수 있습니다(가제어할 때).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1 <span class="nm">(질량-스프링-감쇠기의 극점 배치)</span></span>
+      <p>\(m = 1\), \(c = 1\), \(k = 4\)인 계(극점 \(-0.5 \pm 1.94i\), 감쇠비 0.25)를 상태 피드백으로 극점 \(-2 \pm 2i\)(감쇠비 0.707)에 놓아라.</p>
+    </div>
+    <p><i>풀이.</i> \(A - BK = \begin{pmatrix}0 &amp; 1\\-4 - k_1 &amp; -1 - k_2\end{pmatrix}\), 특성방정식 \(s^2 + (1 + k_2)s + (4 + k_1) = 0\). 원하는 \((s + 2)^2 + 4 = s^2 + 4s + 8\)과 같게 하면 \(k_2 = 3\), \(k_1 = 4\). 위치를 4배, 속도를 3배 되먹이는 것은 스프링 4 N/m와 감쇠기 3 N·s/m를 더 다는 것과 같습니다. 오버슈트는 44%에서 4%로, 정착 시간은 8 s에서 2 s로 줄어듭니다.</p>
+    <p class="q-term"><b>가제어성</b>: 입력으로 모든 상태를 원하는 곳으로 옮길 수 있는 성질. 가제어성 행렬 \([B\ \ AB\ \cdots]\)의 계수가 상태 수와 같으면 가제어하고, 그때만 모든 극점을 옮길 수 있다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 극점을 너무 왼쪽에 두면 큰 \(K\)가 필요해 작동기가 포화되고 잡음에 민감해집니다. (2) 모든 상태를 재기 어려우면 관측기(6.2절)로 추정합니다. (3) 정상상태 오차를 없애려면 적분 상태를 더합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\dot x = Ax + Bu\), \(y = Cx\), \(A\)의 고윳값 = 극점.</li>
+        <li>\(u = -Kx\): \(\det(sI - A + BK)\)를 원하는 특성다항식과 맞춘다.</li>
+        <li>가제어해야 모든 극점을 옮길 수 있다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 계의 개루프 고윳값을 \(\det(sI - A) = 0\)으로 구하여라.
+          <details><summary>답</summary><p>\(s^2 + s + 4 = 0\), \(s = -0.5 \pm 1.94i\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 극점을 \(-4 \pm 4i\)로 놓으려면 \(K\)는? 무엇이 좋아지고 무엇이 나빠지는가?
+          <details><summary>답</summary><p>\(s^2 + 8s + 32\): \(k_2 = 7\), \(k_1 = 28\). 두 배 빨라지지만 이득이 커져 작동기 힘과 잡음 민감도가 커진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>이중 적분기 \(\ddot x = u\)(마찰 없는 질량, \(m = 1\))를 상태 피드백으로 안정하게 할 수 있는가? 극점 \(-1 \pm i\)를 주는 \(K\)는?
+          <details><summary>답</summary><p>\(A = \begin{pmatrix}0 &amp; 1\\0 &amp; 0\end{pmatrix}\), \(B = (0, 1)^T\), 가제어. \(s^2 + k_2s + k_1 = s^2 + 2s + 2\): \(k_1 = 2\), \(k_2 = 2\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

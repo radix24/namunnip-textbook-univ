@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-bode" data-kind="본문" data-std="기계15-05-01">
+  <header class="card-head"><span class="no"></span><h2>Bode 선도와 이득·위상 여유</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사인파 입력에 대한 정상 응답의 크기 비와 위상차를 진동수의 함수로 그린 Bode 선도를 안다.</li>
+        <li>기본 인자(적분, 1차 극점)의 점근선으로 Bode 선도를 어림한다.</li>
+        <li>개루프 Bode 선도에서 이득 여유와 위상 여유를 읽고 폐루프 안정성과 감쇠를 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>조화 가진 응답 (<a href="../13/03-01.html">기계진동 3.1절</a>), 로그와 데시벨, 안정도 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>주파수 응답과 Bode 선도</h3>
+    <p>안정한 선형 계에 사인파 \(\sin\omega t\)를 넣으면 정상 상태 출력은 같은 진동수의 사인파이고, 크기는 \(|G(i\omega)|\)배, 위상은 \(\angle G(i\omega)\)만큼 바뀝니다(\(s\)에 \(i\omega\)를 넣음). 가로축을 로그 진동수, 세로축을 크기(dB = \(20\log_{10}|G|\))와 위상으로 그린 두 그래프가 Bode 선도입니다.</p>
+    <p class="q-term"><b>점근선</b>: 적분기 \(1/s\)는 −20 dB/decade, 위상 −90°. 1차 극점 \(1/(s/a + 1)\)은 \(\omega &lt; a\)에서 0 dB, \(\omega &gt; a\)에서 −20 dB/decade, 위상은 0°에서 −90°로(꺾임점에서 −45°). 인자를 곱하면 dB와 위상이 더해진다.</p>
+
+    <h3><span class="no">5.1.2</span>안정 여유</h3>
+    <p>폐루프가 불안정해지는 경계는 \(GH(i\omega) = -1\), 곧 크기 1(0 dB)이면서 위상 −180°인 경우입니다. 그 경계에서 얼마나 떨어져 있는지가 여유입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">이득 여유와 위상 여유</span>
+      <p>이득 여유 GM: 위상이 −180°인 진동수에서 \(-20\log|GH|\) (dB). 이득을 이만큼 더 키우면 불안정.</p>
+      <p>위상 여유 PM: 크기가 0 dB인 교차 진동수에서 \(180° + \angle GH\). 위상이 이만큼 더 늦어지면(시간 지연 등) 불안정.</p>
+      <p>권장: GM 6 dB 이상, PM 30~60°. 2차 계 근사로 PM ≈ 100ζ(°).</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1 <span class="nm">(3차 계의 여유)</span></span>
+      <p>\(GH = K/[s(s + 2)(s + 4)]\)에서 \(K = 8\)과 \(K = 24\)일 때 이득 여유와 위상 여유는?</p>
+    </div>
+    <p><i>풀이.</i> 위상 −180°는 \(\omega = 2.83\) rad/s(3.1절 Routh와 같음)이고 그곳의 \(|GH| = K/48\). \(K = 8\): GM \(= 20\log6 = 15.6\) dB, 교차 진동수 0.89 rad/s, PM 53°. \(K = 24\): GM 6.0 dB, 교차 1.94 rad/s, PM 20°. 이득을 세 배로 하면 응답은 빨라지지만 위상 여유가 크게 줄어 오버슈트가 커집니다(Bode 탐구).</p>
+
+    <div class="tb-note"><b>주의</b>(1) 여유는 개루프가 안정할 때의 해석입니다. 불안정한 개루프는 Nyquist 판별법(5.2절)을 씁니다. (2) 시간 지연 \(e^{-sT}\)은 크기는 바꾸지 않고 위상을 \(\omega T\)만큼 늦춰 위상 여유를 깎습니다(네트워크 제어, 원격 조종에서 중요).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(G(i\omega)\): 크기 비와 위상차, dB와 위상을 로그 진동수로.</li>
+        <li>GM: −180°에서의 이득 부족분, PM: 0 dB에서의 위상 남은 몫.</li>
+        <li>이득 ↑ → 교차 진동수 ↑(빨라짐), 여유 ↓.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(K\)가 얼마면 이득 여유가 0 dB가 되는가?
+          <details><summary>답</summary><p>48(한계 이득).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(K = 8\)인 예제 계에 시간 지연 0.5 s가 생기면 위상 여유는?
+          <details><summary>답</summary><p>교차 0.89 rad/s에서 지연 위상 \(0.89\times0.5 = 0.45\) rad = 25.5°. PM \(53 - 25.5 = 28°\)로 크게 줄어든다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 \(K = 8\)의 PM 53°로 폐루프 오버슈트를 어림하고, 4.1절 근궤적의 감쇠비 0.5(\(K = 8.3\))와 비교하여라.
+          <details><summary>답</summary><p>PM ≈ 100ζ에서 ζ ≈ 0.53, 오버슈트 약 14%. 근궤적에서 ζ = 0.5(약 16%)와 거의 같다. 두 방법이 같은 설계를 다른 눈으로 본 것이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
