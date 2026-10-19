@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-exponential" data-kind="본문" data-std="수학21-03-01">
+  <header class="card-head"><span class="no"></span><h2>지수분포의 무기억성과 최솟값</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>지수분포 \(\text{Exp}(\lambda)\)의 꼬리 확률 \(P(X > t) = e^{-\lambda t}\)와 평균 \(\frac1\lambda\)을 안다.</li>
+        <li>무기억성 \(P(X > s + t \mid X > s) = P(X > t)\)을 증명하고, 이를 가진 연속분포가 지수분포뿐임을 안다.</li>
+        <li>독립인 지수분포들의 최솟값이 지수분포이고, 누가 최소일 확률이 \(\frac{\lambda_i}{\sum\lambda_j}\)임을 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>연속확률변수와 밀도함수, 지수함수의 적분 (<a href="../5/index.html">수학5</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>지수분포</h3>
+    <p>밀도가 \(f(x) = \lambda e^{-\lambda x}\) (\(x \ge 0\))인 분포를 \(\text{Exp}(\lambda)\)라 합니다. \(P(X > t) = \int_t^\infty\lambda e^{-\lambda x}dx = e^{-\lambda t}\), \(E[X] = \frac1\lambda\), \(\operatorname{Var}X = \frac1{\lambda^2}\)입니다. \(\lambda\)는 "단위 시간당 일어나는 비율"이고, 손님이 오는 간격, 부품의 수명, 방사성 붕괴 시간 등의 모형입니다.</p>
+
+    <h3><span class="no">3.1.2</span>무기억성</h3>
+    <div class="tb-env thm"><b>정리 3.1.1</b> \(X \sim \text{Exp}(\lambda)\)이면 모든 \(s, t \ge 0\)에 대해 \(P(X > s + t \mid X > s) = P(X > t)\). 거꾸로, 이 성질을 가진 양의 연속확률변수는 지수분포이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(\frac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda t}\). 거꾸로, \(G(t) = P(X > t)\)이면 성질은 \(G(s + t) = G(s)G(t)\)이다. 감소하는 함수로 이 식을 만족하는 것은 \(G(t) = e^{-\lambda t}\) 꼴뿐이다(\(\log G\)가 더하기를 보존하는 단조함수라 일차함수). <span class="qed">∎</span></p>
+    </div>
+    <p>이미 \(s\)만큼 기다렸어도 앞으로 기다릴 시간의 분포는 처음과 같습니다. "곧 오겠지"가 통하지 않습니다. 이 성질 덕분에 지수분포로 이루어진 과정은 지금 상태만 알면 미래가 정해지는 마르코프 과정이 됩니다(4장).</p>
+
+    <h3><span class="no">3.1.3</span>최솟값과 경쟁</h3>
+    <div class="tb-env thm"><b>정리 3.1.2</b> \(X_i \sim \text{Exp}(\lambda_i)\) (\(i = 1, \dots, n\))가 독립이고 \(\Lambda = \sum\lambda_i\)이면 \(M = \min X_i \sim \text{Exp}(\Lambda)\)이고 \(P(X_k = M) = \frac{\lambda_k}\Lambda\)이다. 또 누가 최소인지와 \(M\)의 값은 독립이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(P(M > t) = \prod P(X_i > t) = e^{-\Lambda t}\). \(P(X_k = M, M > t) = \int_t^\infty\lambda_ke^{-\lambda_kx}\prod_{i\ne k}e^{-\lambda_ix}dx = \frac{\lambda_k}\Lambda e^{-\Lambda t}\)이 \(P(X_k = M)P(M > t)\)로 갈라진다. <span class="qed">∎</span></p>
+    </div>
+    <div class="tb-env ex"><b>예 3.1.3</b> 창구 두 곳에서 A와 B가 업무를 보고 있고, C는 먼저 빈 창구로 갑니다. 업무 시간이 모두 \(\text{Exp}(\mu)\)이면 C가 셋 가운데 마지막으로 나갈 확률은? 한 창구가 비는 순간 C가 들어가면, 무기억성으로 남은 사람의 남은 시간도 \(\text{Exp}(\mu)\)라 C와 그 사람은 대칭입니다. 답은 \(\frac12\)입니다. C가 기다리는 시간은 \(\text{Exp}(2\mu)\)라 평균 \(\frac1{2\mu}\)이고, 머무는 시간의 평균은 \(\frac1{2\mu} + \frac1\mu = \frac3{2\mu}\)입니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 오래 기다릴수록 곧 올 확률이 커진다고 여긴다. 지수분포에서는 기다린 시간과 무관하다. 반대로 사람의 수명처럼 노화가 있으면 지수분포가 아니다. (2) 최솟값의 평균을 \(\frac1{\lambda_1} + \frac1{\lambda_2}\)처럼 더한다. 비율을 더해 \(\frac1{\lambda_1 + \lambda_2}\)이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\text{Exp}(\lambda)\): \(P(X > t) = e^{-\lambda t}\), 평균 \(\frac1\lambda\).</li>
+        <li>무기억성은 연속분포 가운데 지수분포만의 성질.</li>
+        <li>\(\min X_i \sim \text{Exp}(\sum\lambda_i)\), \(k\)가 최소일 확률 \(\frac{\lambda_k}{\sum\lambda_i}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>전구의 수명이 평균 1000시간인 지수분포이다. 이미 500시간 켜져 있었을 때 앞으로 1000시간 이상 갈 확률을 구하여라.
+          <details><summary>답</summary><p>\(e^{-1} \approx 0.368\) (무기억성).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>부품 세 개의 수명이 독립이고 평균 2, 3, 6년인 지수분포이다. 처음 고장 날 때까지의 평균 시간과, 첫 고장이 평균 2년짜리일 확률을 구하여라.
+          <details><summary>답</summary><p>비율 \(\frac12 + \frac13 + \frac16 = 1\)이라 평균 1년. 확률 \(\frac{1/2}1 = \frac12\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>독립인 \(X_1, X_2 \sim \text{Exp}(\lambda)\)에 대해 \(\max(X_1, X_2)\)의 평균을 최솟값과 무기억성으로 구하여라.
+          <details><summary>답</summary><p>최솟값까지 평균 \(\frac1{2\lambda}\), 그 뒤 남은 하나는 무기억성으로 평균 \(\frac1\lambda\) 더. 합 \(\frac3{2\lambda}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

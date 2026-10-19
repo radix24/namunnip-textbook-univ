@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-martingale" data-kind="본문" data-std="수학21-06-01">
+  <header class="card-head"><span class="no"></span><h2>여과와 마팅게일</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정보의 흐름(여과)에 대한 조건부 기대값으로 마팅게일 \(E[M_{n+1} \mid \mathcal F_n] = M_n\)을 정의한다.</li>
+        <li>랜덤워크에서 나오는 대표적인 마팅게일 \(S_n\), \(S_n^2 - n\), \(\left(\frac qp\right)^{S_n}\)을 판정한다.</li>
+        <li>베팅 전략으로 공정한 게임을 이길 수 없다는 사실(마팅게일 변환)을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>조건부 기대값과 반복 기대값 법칙 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>여과</h3>
+    <p>\(\mathcal F_n\)을 "시각 \(n\)까지 관찰한 정보"라 합니다. 구체적으로는 \(X_1, \dots, X_n\)을 보았을 때 알 수 있는 사건들의 모임이고, 시간이 지나면 정보가 늘어나므로 \(\mathcal F_0 \subset \mathcal F_1 \subset \cdots\)입니다. 이를 <b>여과</b>라 합니다. \(E[Y \mid \mathcal F_n]\)은 \(E[Y \mid X_1, \dots, X_n]\)과 같은 뜻이며, 1.1절에서처럼 "지금까지 본 것으로 내린 \(Y\)의 최선의 예측"입니다.</p>
+
+    <h3><span class="no">6.1.2</span>마팅게일</h3>
+    <p>각 \(M_n\)이 \(\mathcal F_n\)의 정보로 정해지고 \(E|M_n| &lt; \infty\)이며</p>
+    \[E[M_{n+1} \mid \mathcal F_n] = M_n\]
+    <p>이면 <b>마팅게일</b>입니다. 지금까지의 모든 것을 알아도 다음 값의 예측은 지금 값 그대로라는 뜻으로, 공정한 게임에서의 재산이 전형적인 예입니다. \(\le\)이면 우마팅게일(불리한 게임), \(\ge\)이면 열마팅게일입니다. 반복 기대값으로 \(E[M_n] = E[M_0]\)가 모든 \(n\)에서 성립합니다.</p>
+    <div class="tb-env ex"><b>예 6.1.1</b> \(X_i\)가 독립이고 \(P(X_i = 1) = p\), \(P(X_i = -1) = q\)이며 \(S_n = X_1 + \cdots + X_n\)이라 합니다.
+      <ol>
+        <li>\(p = \frac12\)이면 \(S_n\)은 마팅게일: \(E[S_{n+1} \mid \mathcal F_n] = S_n + E[X_{n+1}] = S_n\).</li>
+        <li>\(p = \frac12\)이면 \(S_n^2 - n\)도 마팅게일: \(E[(S_n + X)^2 \mid \mathcal F_n] = S_n^2 + 2S_nE[X] + 1 = S_n^2 + 1\).</li>
+        <li>일반 \(p\)에서 \(S_n - n(p - q)\)과 \(\left(\frac qp\right)^{S_n}\)은 마팅게일: \(E\left[\left(\frac qp\right)^X\right] = p\cdot\frac qp + q\cdot\frac pq = q + p = 1\).</li>
+      </ol></div>
+    <p>그 밖에 \(Y\)를 하나 정하고 \(M_n = E[Y \mid \mathcal F_n]\)로 두면 늘 마팅게일입니다(두브 마팅게일, 정보가 쌓이며 다듬어지는 예측). 평균 1인 독립 확률변수들의 곱 \(\prod_{i\le n}Z_i\)도 마팅게일입니다.</p>
+
+    <h3><span class="no">6.1.3</span>베팅 전략</h3>
+    <p>\(n\)번째 판 직전까지의 정보로 판돈 \(H_n\)을 정한다면(미래를 보지 않음) 재산은 \(W_n = W_0 + \sum_{k\le n}H_k(M_k - M_{k-1})\)입니다.</p>
+    <div class="tb-env thm"><b>정리 6.1.2</b> \(M\)이 마팅게일이고 \(H_k\)가 \(\mathcal F_{k-1}\)로 정해지며 유계이면 \(W_n\)도 마팅게일이다. 특히 \(E[W_n] = W_0\).</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(E[H_{n+1}(M_{n+1} - M_n) \mid \mathcal F_n] = H_{n+1}E[M_{n+1} - M_n \mid \mathcal F_n] = 0\). \(H_{n+1}\)은 \(\mathcal F_n\)으로 정해지므로 상수처럼 밖으로 나온다. <span class="qed">∎</span></p>
+    </div>
+    <p>잃으면 판돈을 두 배로 올리는 전략도 유한한 시간 안에서는 평균 이득이 0입니다. "결국 한 번은 이기니 반드시 번다"는 주장은 무한한 자금과 시간을 가정한 것이고, 6.2절에서 선택 정지 정리의 조건이 깨지는 예로 다시 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 마팅게일이면 증분이 독립이라 여긴다. 증분의 조건부 평균만 0이면 되고, 크기는 과거에 의존해도 된다. (2) \(E[M_n] = E[M_0]\)이면 마팅게일이라 여긴다. 평균이 일정한 것은 필요조건일 뿐, 조건부 기대값 조건이 핵심이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>마팅게일: \(E[M_{n+1} \mid \mathcal F_n] = M_n\), 공정한 게임.</li>
+        <li>랜덤워크의 마팅게일: \(S_n - n(p - q)\), \(S_n^2 - n\) (\(p = \frac12\)), \(\left(\frac qp\right)^{S_n}\).</li>
+        <li>미래를 보지 않는 베팅 전략으로는 평균 이득을 만들 수 없다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(p = 0.6\)인 랜덤워크에서 \(S_n\)은 마팅게일, 우마팅게일, 열마팅게일 중 무엇인가?
+          <details><summary>답</summary><p>\(E[X] = 0.2 > 0\)이라 열마팅게일.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(X_i\)가 독립이고 \(E[X_i] = 0\), \(\operatorname{Var}X_i = \sigma^2\)이면 \(S_n^2 - n\sigma^2\)이 마팅게일임을 보여라.
+          <details><summary>답</summary><p>\(E[(S_n + X_{n+1})^2 \mid \mathcal F_n] = S_n^2 + 2S_n\cdot0 + \sigma^2\). \(-(n + 1)\sigma^2\)를 빼면 \(S_n^2 - n\sigma^2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>공정한 랜덤워크에서 \(e^{\theta S_n}(\cosh\theta)^{-n}\)이 마팅게일임을 보여라.
+          <details><summary>답</summary><p>\(E[e^{\theta X}] = \frac{e^\theta + e^{-\theta}}2 = \cosh\theta\)라 \(E[e^{\theta S_{n+1}} \mid \mathcal F_n] = e^{\theta S_n}\cosh\theta\). \((\cosh\theta)^{-(n+1)}\)을 곱하면 된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

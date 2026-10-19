@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-absorb" data-kind="본문" data-std="수학21-02-04">
+  <header class="card-head"><span class="no"></span><h2>흡수 연쇄: 흡수 확률과 기대 흡수 시간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>흡수 연쇄의 전이행렬을 표준형 \(\begin{pmatrix}Q &amp; R\\ 0 &amp; I\end{pmatrix}\)으로 쓴다.</li>
+        <li>기본 행렬 \(N = (I - Q)^{-1}\)의 성분이 방문 횟수의 기대값임을 보인다.</li>
+        <li>기대 흡수 시간 \(t = N\mathbf 1\)과 흡수 확률 \(B = NR\)을 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>첫걸음 분석 (<a href="01-02.html">1.2절</a>), 일시 상태 (<a href="02-02.html">2.2절</a>), 역행렬.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>표준형</h3>
+    <p>\(p_{aa} = 1\)인 상태 \(a\)를 <b>흡수 상태</b>라 합니다. 모든 상태에서 흡수 상태로 갈 수 있는 연쇄를 흡수 연쇄라 하고, 나머지 상태는 모두 일시입니다. 일시 상태를 앞에, 흡수 상태를 뒤에 놓으면</p>
+    \[P = \begin{pmatrix}Q &amp; R\\ 0 &amp; I\end{pmatrix}\]
+    <p>입니다. \(Q\)는 일시 상태끼리의 전이, \(R\)은 일시에서 흡수로의 전이입니다. 일시 상태에 머물 확률이 줄어들므로 \(Q^n \to 0\)입니다.</p>
+
+    <h3><span class="no">2.4.2</span>기본 행렬</h3>
+    <div class="tb-env thm"><b>정리 2.4.1</b> \(I - Q\)는 가역이고 \(N = (I - Q)^{-1} = I + Q + Q^2 + \cdots\). \(N_{ij}\)는 \(i\)에서 출발해 흡수될 때까지 \(j\)를 방문하는 횟수(시각 0 포함)의 기대값이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\((I - Q)(I + Q + \cdots + Q^n) = I - Q^{n+1} \to I\)이라 급수가 수렴하고 역행렬이다. \(Q^n_{ij}\)는 시각 \(n\)에 \(j\)에 있을 확률이므로, 모든 \(n\)에 대해 더하면 방문 횟수의 기대값이다. <span class="qed">∎</span></p>
+    </div>
+    <div class="tb-env thm"><b>따름정리 2.4.2</b> \(t = N\mathbf 1\) (\(t_i\)는 \(i\)에서 흡수까지의 기대 걸음 수), \(B = NR\) (\(B_{ia}\)는 \(i\)에서 출발해 \(a\)에 흡수될 확률).</div>
+    <p>\(t\)는 각 일시 상태의 방문 횟수를 모두 더한 것이고, \(B\)는 "마지막으로 \(j\)에 있다가 \(a\)로 뛴다"를 \(j\)에 대해 더한 것입니다. 1.2절의 첫걸음 방정식 \(t = \mathbf 1 + Qt\), \(B = R + QB\)를 행렬로 푼 것과 같습니다.</p>
+
+    <h3><span class="no">2.4.3</span>예: 도박꾼</h3>
+    <div class="tb-env ex"><b>예 2.4.3</b> 상태 0, 1, 2, 3에서 공정한 동전으로 한 칸씩 움직이고 0과 3은 흡수입니다. 일시 상태 (1, 2), 흡수 상태 (0, 3) 순으로
+      \[Q = \begin{pmatrix}0 &amp; \frac12\\ \frac12 &amp; 0\end{pmatrix},\quad R = \begin{pmatrix}\frac12 &amp; 0\\ 0 &amp; \frac12\end{pmatrix},\quad N = \frac43\begin{pmatrix}1 &amp; \frac12\\ \frac12 &amp; 1\end{pmatrix} = \begin{pmatrix}\frac43 &amp; \frac23\\ \frac23 &amp; \frac43\end{pmatrix}.\]
+      \(t = N\mathbf 1 = (2, 2)\), \(B = NR = \begin{pmatrix}\frac23 &amp; \frac13\\ \frac13 &amp; \frac23\end{pmatrix}\). 1에서 출발하면 \(\frac23\)의 확률로 파산하고 평균 2판 만에 끝납니다. 1.2절의 \(h_i = \frac iN\), \(m_i = i(N - i)\)와 같습니다.</div>
+    <p>흡수 시간의 분산도 \(N\)으로 구할 수 있습니다. \(\operatorname{Var}\) 벡터는 \((2N - I)t - t^2\)입니다(\(t^2\)은 성분별 제곱).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(N_{ii}\)가 "돌아오는 횟수"라 0일 수도 있다고 여긴다. 시각 0의 방문을 포함하므로 \(N_{ii} \ge 1\)이다. (2) 행렬을 정리할 때 상태 순서를 섞는다. \(Q\)와 \(R\)의 행과 열 순서를 일관되게 두어야 \(B\)의 열이 어느 흡수 상태인지 정해진다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>표준형 \(P = \begin{pmatrix}Q &amp; R\\ 0 &amp; I\end{pmatrix}\), \(Q^n \to 0\).</li>
+        <li>\(N = (I - Q)^{-1}\): 기대 방문 횟수.</li>
+        <li>\(t = N\mathbf 1\), \(B = NR\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예 2.4.3에서 2에서 출발할 때 1을 방문하는 횟수의 기대값을 읽어라.
+          <details><summary>답</summary><p>\(N_{21} = \frac23\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예 2.4.3에서 동전이 오른쪽으로 갈 확률이 \(\frac23\)이면 1에서 출발해 3에 흡수될 확률을 \(B = NR\)로 구하여라.
+          <details><summary>답</summary><p>\(Q = \begin{pmatrix}0 &amp; \frac23\\ \frac13 &amp; 0\end{pmatrix}\), \(\det(I - Q) = \frac79\), \(N = \frac97\begin{pmatrix}1 &amp; \frac23\\ \frac13 &amp; 1\end{pmatrix}\). \(R\)의 3열은 \((0, \frac23)^T\)라 \(B_{13} = \frac97\cdot\frac23\cdot\frac23 = \frac47\). 정리 1.2.2: \(r = \frac12\), \(\frac{1 - 1/2}{1 - 1/8} = \frac47\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>흡수 시간 \(T\)에 대해 \(E[T^2]\)의 벡터 \(s\)가 \(s = (2N - I)t\)임을 첫걸음 분석으로 보여라.
+          <details><summary>답</summary><p>\(T = 1 + T'\)(\(T'\)은 한 걸음 뒤부터의 시간)이라 \(E[T^2] = 1 + 2E[T'] + E[T'^2]\), 즉 \(s = \mathbf 1 + 2Qt + Qs\). \(t = \mathbf 1 + Qt\)를 쓰면 \(\mathbf 1 + 2Qt = 2t - \mathbf 1\), 따라서 \((I - Q)s = 2t - \mathbf 1\), \(s = 2Nt - N\mathbf 1 = (2N - I)t\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

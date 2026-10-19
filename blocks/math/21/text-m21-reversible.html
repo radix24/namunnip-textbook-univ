@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-02-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-reversible" data-kind="본문" data-std="수학21-02-05">
+  <header class="card-head"><span class="no"></span><h2>가역 연쇄와 그래프 위의 랜덤워크</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>상세균형 조건 \(\pi_ip_{ij} = \pi_jp_{ji}\)이 정상분포를 주는 이유를 안다.</li>
+        <li>그래프 위 랜덤워크의 정상분포가 차수에 비례함을 보인다.</li>
+        <li>원하는 분포를 정상분포로 갖는 연쇄를 만드는 메트로폴리스 방법을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>정상분포 (<a href="02-03.html">2.3절</a>), 그래프의 차수(꼭짓점에 붙은 변의 수).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.5.1</span>상세균형</h3>
+    <p>정상분포의 식 \(\pi_j = \sum_i\pi_ip_{ij}\)은 상태 \(j\)로 들어오는 흐름 전체와 나가는 흐름 전체가 같다는 뜻입니다. 이보다 강하게, <b>모든 쌍마다</b> 오가는 흐름이 같을 수 있습니다.</p>
+    <div class="tb-env thm"><b>정리 2.5.1</b> 확률벡터 \(\pi\)가 모든 \(i, j\)에 대해 \(\pi_ip_{ij} = \pi_jp_{ji}\) (상세균형)를 만족하면 \(\pi\)는 정상분포이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(\sum_i\pi_ip_{ij} = \sum_i\pi_jp_{ji} = \pi_j\sum_ip_{ji} = \pi_j\). <span class="qed">∎</span></p>
+    </div>
+    <p>상세균형을 만족하는 연쇄를 <b>가역</b>이라 합니다. 정상 상태에서 영상을 거꾸로 돌려도 같은 확률 법칙으로 보이기 때문입니다. 장점은 계산입니다. \(n\)개의 연립방정식 대신 이웃한 쌍의 비 \(\frac{\pi_j}{\pi_i} = \frac{p_{ij}}{p_{ji}}\)를 따라가며 곱하면 됩니다. 한 줄로 늘어선 연쇄(이웃으로만 움직이는 출생-사망 연쇄)는 늘 가역입니다.</p>
+
+    <h3><span class="no">2.5.2</span>그래프 위의 랜덤워크</h3>
+    <p>연결된 그래프의 꼭짓점 \(v\)에서 이웃 \(\deg v\)개 가운데 하나를 같은 확률로 골라 움직이면 \(p_{uv} = \frac1{\deg u}\) (\(u, v\)가 이웃)입니다.</p>
+    <div class="tb-env thm"><b>정리 2.5.2</b> 변이 \(|E|\)개인 연결 그래프 위 랜덤워크의 정상분포는 \(\pi_v = \frac{\deg v}{2|E|}\)이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>이웃한 \(u, v\)에 대해 \(\pi_up_{uv} = \frac{\deg u}{2|E|}\cdot\frac1{\deg u} = \frac1{2|E|} = \pi_vp_{vu}\). 차수의 합은 \(2|E|\)라 합이 1. <span class="qed">∎</span></p>
+    </div>
+    <div class="tb-env ex"><b>예 2.5.3</b> 삼각형 \(a, b, c\)에 꼭짓점 \(d\)가 \(c\)에만 붙은 그래프(변 4개)에서 차수는 \(2, 2, 3, 1\)이라 \(\pi = \left(\frac28, \frac28, \frac38, \frac18\right)\)입니다. \(d\)에서 출발해 \(d\)로 돌아오는 평균 걸음 수는 \(\frac1{\pi_d} = 8\)입니다(정리 2.3.2).</div>
+
+    <h3><span class="no">2.5.3</span>메트로폴리스 방법</h3>
+    <p>거꾸로, 주어진 분포 \(\pi\)를 정상분포로 갖는 연쇄를 만들고 싶을 때가 있습니다(표본 추출, 통계물리). 대칭인 제안 확률 \(g_{ij} = g_{ji}\)로 후보 \(j\)를 뽑고, 확률 \(\min\left(1, \frac{\pi_j}{\pi_i}\right)\)로 받아들이고 아니면 제자리에 머뭅니다. 그러면 \(p_{ij} = g_{ij}\min\left(1, \frac{\pi_j}{\pi_i}\right)\)이고</p>
+    \[\pi_ip_{ij} = g_{ij}\min(\pi_i, \pi_j) = \pi_jp_{ji}\]
+    <p>라 상세균형이 성립합니다. \(\pi\)를 상수배까지만 알아도 비 \(\frac{\pi_j}{\pi_i}\)만 쓰므로 정규화 상수를 모르는 복잡한 분포에서도 쓸 수 있습니다. 이것이 마르코프 연쇄 몬테카를로(MCMC)의 출발점입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 모든 정상분포가 상세균형을 만족한다고 여긴다. \(1 \to 2 \to 3 \to 1\)로 도는 연쇄는 균등분포가 정상이지만 반대 방향 흐름이 0이라 가역이 아니다. (2) 그래프 위 랜덤워크가 모든 꼭짓점에 같은 시간을 머문다고 여긴다. 차수가 큰 꼭짓점에 더 오래 머문다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>상세균형 \(\pi_ip_{ij} = \pi_jp_{ji}\) ⟹ 정상분포.</li>
+        <li>그래프 랜덤워크: \(\pi_v = \frac{\deg v}{2|E|}\).</li>
+        <li>메트로폴리스: 수락 확률 \(\min(1, \pi_j/\pi_i)\)로 원하는 \(\pi\)를 정상분포로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.5.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>꼭짓점 5개가 한 줄로 이어진 경로 그래프에서 랜덤워크의 정상분포를 구하여라.
+          <details><summary>답</summary><p>차수 \(1, 2, 2, 2, 1\), \(2|E| = 8\): \(\left(\frac18, \frac14, \frac14, \frac14, \frac18\right)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>체스판의 킹이 놓인 칸에서 갈 수 있는 칸 가운데 하나로 무작위로 움직인다. 모서리 칸에서 출발해 다시 그 칸으로 돌아오는 평균 수를 구하여라.
+          <details><summary>답</summary><p>차수: 모서리 3(4칸), 변 5(24칸), 안쪽 8(36칸). \(2|E| = 12 + 120 + 288 = 420\). \(\frac{420}3 = 140\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>상태 \(\{1, 2, 3\}\)에서 \(\pi \propto (1, 2, 4)\)를 목표로, 제안은 "나머지 두 상태 중 하나를 \(\frac12\)씩"인 메트로폴리스 연쇄의 \(p_{31}\)과 \(p_{13}\)을 구하고 상세균형을 확인하여라.
+          <details><summary>답</summary><p>\(p_{13} = \frac12\min(1, 4) = \frac12\), \(p_{31} = \frac12\cdot\frac14 = \frac18\). \(\pi_1p_{13} = \frac17\cdot\frac12 = \frac1{14}\), \(\pi_3p_{31} = \frac47\cdot\frac18 = \frac1{14}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
