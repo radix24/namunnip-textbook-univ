@@ -1,4 +1,4 @@
-/* 물리17 실습 카드 묶음: 카이제곱 지형, 몬테카를로, 과적합, k-최근접 이웃 */
+/* 물리17 실습 카드 묶음: 카이제곱 지형, 과적합 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -40,27 +40,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 2. 몬테카를로로 π 구하기 (03-02) */
-  (() => {
-    const S = QSim.card("lab-p17-mc"); if (!S) return;
-    const [cvP, cvC] = S.$$("canvas"); let seed = 1;
-    function draw() {
-      const c = C(), N = Math.round(10 ** S.val("ln")), r = rng(seed);
-      const vp = QSim.view(cvP, 1), g = vp.g, side = Math.min(vp.W, vp.H) - 10;
-      g.strokeStyle = c.ink3; g.strokeRect(5, 5, side, side); g.beginPath(); g.arc(5, 5 + side, side, -Math.PI / 2, 0); g.stroke();
-      let inside = 0; const conv = [];
-      for (let i = 1; i <= N; i++) { const x = r(), y = r(), ins = x * x + y * y < 1; if (ins) inside++; if (i <= 4000) { g.fillStyle = ins ? c.main : c.warn; g.fillRect(5 + x * side - 1, 5 + (1 - y) * side - 1, 2, 2); } if (Math.abs(Math.log10(i) * 20 - Math.round(Math.log10(i) * 20)) < 1e-9 || i === N || (i & (i - 1)) === 0) conv.push([Math.log10(i), 4 * inside / i]); }
-      const est = 4 * inside / N, p = inside / N, se = 4 * Math.sqrt(p * (1 - p) / N);
-      const vc = QSim.view(cvC, 0.45), f = QSim.frame(vc, { x0: 0, x1: Math.max(2, Math.log10(N)), y0: 2.4, y1: 3.9, xl: "log₁₀ N", yl: "추정값" }); f.axes();
-      f.fn((x) => Math.PI + 4 * Math.sqrt(0.785 * 0.215 / 10 ** x), c.soft, 1.5); f.fn((x) => Math.PI - 4 * Math.sqrt(0.785 * 0.215 / 10 ** x), c.soft, 1.5);
-      f.path([[0, Math.PI], [10, Math.PI]], c.ink3, 1, [4, 3]); f.path(conv, c.main, 2);
-      S.out(`점 ${N.toLocaleString()}개 (위 그림은 처음 4000개까지): 원 안 ${inside.toLocaleString()}개\nπ 추정 = ${est.toFixed(5)} ± ${se.toFixed(5)} (표준오차), 참값과의 차이 ${(est - Math.PI).toFixed(5)}\n아래: N에 따른 추정값(파랑)과 ±1/√N 띠. 정확도 한 자리 = 표본 100배`);
-    }
-    S.$(".new").addEventListener("click", () => { seed = (seed * 17 + 5) % 99991; draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 3. 다항식 차수와 과적합 (04-02) */
+  /* 2. 다항식 차수와 과적합 (04-02) */
   (() => {
     const S = QSim.card("lab-p17-overfit"); if (!S) return;
     const [cvF, cvE] = S.$$("canvas"); let seed = 11;
@@ -85,22 +65,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. k-최근접 이웃 분류 (04-01) */
-  (() => {
-    const S = QSim.card("lab-p17-knn"); if (!S) return;
-    const cv = S.$("canvas"); let seed = 5, train, test;
-    function gen() { const r = rng(seed), mk = (n) => Array.from({ length: n }, (_, i) => { const cl = i % 2, s = S.val("sep"); return [cl ? s / 2 + 0.8 * gauss(r) : -s / 2 + 0.8 * gauss(r), 0.9 * gauss(r) + (cl ? 0.3 : -0.3), cl]; }); train = mk(80); test = mk(200); }
-    const predict = (x, y, k) => { const d = train.map((p) => [(p[0] - x) ** 2 + (p[1] - y) ** 2, p[2]]).sort((a, b) => a[0] - b[0]).slice(0, k); return d.reduce((s, q) => s + q[1], 0) / k > 0.5 ? 1 : 0; };
-    function draw() {
-      const c = C(), k = S.val("k");
-      const v = QSim.view(cv, 0.62), g = v.g, f = QSim.frame(v, { x0: -4, x1: 4, y0: -3, y1: 3, equal: true }); f.axes({ noGrid: true });
-      const R = 60; for (let i = 0; i < R; i++) for (let j = 0; j < R * 0.75; j++) { const x = -4 + 8 * (i + 0.5) / R, y = -3 + 6 * (j + 0.5) / (R * 0.75); g.fillStyle = predict(x, y, k) ? "rgba(217,83,79,0.18)" : "rgba(90,100,230,0.18)"; g.fillRect(f.X(-4 + 8 * i / R), f.Y(-3 + 6 * (j + 1) / (R * 0.75)), f.sx * 8 / R + 1, f.sy * 6 / (R * 0.75) + 1); }
-      train.forEach(([x, y, cl]) => f.dot(x, y, cl ? c.warn : c.main, 3.5));
-      const acc = (set) => set.reduce((s, [x, y, cl]) => s + (predict(x, y, k) === cl ? 1 : 0), 0) / set.length;
-      S.out(`k = ${k}: 훈련 정확도 ${(100 * acc(train)).toFixed(1)}%, 시험 정확도 ${(100 * acc(test)).toFixed(1)}% (훈련 80점, 시험 200점)\n색 영역: 그 자리의 새 점을 어느 쪽으로 분류하는지(가장 가까운 k개 훈련 점의 다수결)\n${k === 1 ? "k = 1은 훈련 점을 모두 맞히지만 경계가 들쭉날쭉하다(과적합)" : k > 40 ? "k가 너무 크면 경계가 지나치게 매끈해 구조를 놓친다(과소적합)" : "적당한 k에서 시험 정확도가 가장 높다"}`);
-    }
-    S.$(".new").addEventListener("click", () => { seed = (seed * 19 + 3) % 99991; gen(); draw(); });
-    S.$('[name="sep"]').addEventListener("input", () => { gen(); });
-    S.on(draw); QSim.redrawOn(draw); gen(); draw();
-  })();
 })();
