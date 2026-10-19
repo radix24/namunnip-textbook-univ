@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-01-04",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m4-bugfix-ex" data-kind="예제" data-std="수학4-01-04">
+  <header class="card-head"><span class="no"></span><h2>테스트로 하나 차이 오류 잡기</h2><span class="kind">예제 · 공식과 비교하는 테스트</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p><code>sum(range(1, n))</code>은 1부터 \(n\)까지의 합일까요?</p>
+      <details><summary>예측 확인</summary><p>아닙니다. <code>range(1, n)</code>은 \(n - 1\)에서 끝나 1부터 \(n - 1\)까지의 합입니다.</p></details>
+    </section>
+    <p class="q-prob">다음 함수는 \(1^2 + 2^2 + \cdots + n^2\)을 구하려고 쓴 것이다. 공식 \(\frac{n(n + 1)(2n + 1)}6\)과 비교하는 테스트로 오류를 찾고 고쳐라.</p>
+    <pre class="mono small">def sum_sq(n):
+    return sum(k*k for k in range(1, n))</pre>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>답을 아는 공식과 여러 \(n\)에서 비교하는 테스트를 씁니다(<a href="01-04.html">1.4절</a>). 경계값 \(n = 0, 1\)을 꼭 넣습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><pre class="mono small">for n in range(0, 10):
+    assert sum_sq(n) == n*(n+1)*(2*n+1)//6, n</pre></div><span class="q-why">실패하면 그때의 \(n\)을 보여 준다.</span></li>
+        <li><div>\(n = 1\)에서 <code>AssertionError: 1</code>. <code>sum_sq(1)</code>이 0이다(공식은 1).</div><span class="q-why">\(n = 0\)은 둘 다 0이라 통과.</span></li>
+        <li class="q-end"><div><code>range(1, n + 1)</code>로 고치면 모든 테스트 통과.</div><span class="q-why">끝을 포함하도록.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>고친 함수로 <code>sum_sq(10)</code> = 385이고 공식 \(\frac{10\cdot11\cdot21}6 = 385\)과 같습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>"하나 차이(off-by-one)" 오류는 프로그래밍에서 가장 흔한 실수입니다. 큰 \(n\)에서는 결과가 그럴듯해 눈으로 찾기 어렵지만, 작은 \(n\)과 경계값의 테스트는 바로 잡아냅니다. 수학 공식은 코드를 검증하는 좋은 기준입니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\(1 + 3 + 5 + \cdots + (2n - 1) = n^2\)을 이용해 홀수의 합 함수를 검사하는 테스트를 써라.</p>
+      <details><summary>답</summary><p><code>for n in range(10): assert sum(range(1, 2*n, 2)) == n*n</code>.</p></details>
+    </section>
+  </div>
+</article>

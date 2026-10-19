@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-sgd" data-kind="본문" data-std="수학4-05-03">
+  <header class="card-head"><span class="no"></span><h2>확률적 경사하강법과 미니배치</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자료 전체로 기울기를 구하는 경사하강법과, 자료 하나(또는 일부)로 기울기를 어림하는 확률적 경사하강법(SGD)을 비교한다.</li>
+        <li>SGD의 값이 최솟점 근처에서 흔들리는 이유와 학습률을 줄이는 효과를 안다.</li>
+        <li>미니배치가 두 방법의 절충임을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>경사하강법 (<a href="05-01.html">5.1절</a>), 평균과 분산.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>문제</h3>
+    <p>자료 \(x_1, \dots, x_5 = 1, 2, 3, 4, 5\)에 대해 손실 \(L(w) = \frac15\sum_i(w - x_i)^2\)을 최소로 하는 \(w\)를 찾습니다. 답은 평균 3입니다. 기울기는 \(L'(w) = \frac15\sum_i2(w - x_i) = 2(w - \bar x)\)로, 자료 전체를 한 번씩 봐야 계산됩니다.</p>
+
+    <h3><span class="no">5.3.2</span>전체 경사하강법과 SGD</h3>
+    <pre class="mono small">import random
+xs = [1, 2, 3, 4, 5]
+w = 0.0                                   # 경사하강법
+for t in range(20):
+    w -= 0.1 * 2 * (w - sum(xs)/len(xs))
+print(w)                                  # 2.9654123548617948
+
+random.seed(0); w = 0.0                   # SGD: 자료 하나로 기울기
+for t in range(100):
+    x = random.choice(xs)
+    w -= 0.1 * 2 * (w - x)
+print(w)                                  # 약 3.196</pre>
+    <p>SGD는 매 걸음 자료 하나만 보고 \(2(w - x)\)로 기울기를 어림합니다. 이 어림값은 평균적으로는 참 기울기와 같지만(기대값이 같음) 흔들립니다. 그래서 \(w\)가 3으로 다가간 뒤에도 0.8, 1.44, 1.35, … 처럼 출발하고, 오래 지나도 3 근처에서 3.4, 3.2처럼 계속 흔들립니다(마지막 50걸음의 평균은 3.001).</p>
+
+    <h3><span class="no">5.3.3</span>학습률 줄이기와 미니배치</h3>
+    <ul>
+      <li><b>학습률 줄이기</b>: \(t\)번째 걸음의 학습률을 \(\frac{0.5}{t + 1}\)로 하면 갱신이 \(w \leftarrow w - \frac1{t + 1}(w - x_t)\)가 되어 \(w\)는 정확히 "지금까지 뽑은 자료의 평균"입니다. 100걸음 뒤 3.12로, 흔들림이 점점 잦아들며 3에 수렴합니다.</li>
+      <li><b>미니배치</b>: 매 걸음 자료 몇 개(예: 2개)의 평균 기울기를 씁니다. 배치 크기가 \(B\)이면 흔들림이 \(\frac1{\sqrt B}\)배쯤 줄고, 컴퓨터는 여러 자료를 한 번에 계산하는 데 능해 실제로 가장 많이 쓰입니다.</li>
+    </ul>
+    <p>자료가 수백만 개이면 전체 기울기 한 번에 그만큼 계산해야 하지만, SGD는 몇 개만 보고 한 걸음 갑니다. 정확한 한 걸음보다 대충 맞는 많은 걸음이 낫다는 것이 머신러닝에서 SGD를 쓰는 이유입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) SGD의 기울기가 틀렸으니 엉뚱한 곳으로 간다고 여긴다. 평균적으로는 맞는 방향이라 최솟점 근처로 간다. (2) 학습률을 고정해도 SGD가 정확히 수렴한다고 여긴다. 고정 학습률이면 최솟점 근처에서 계속 흔들린다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SGD: 자료 하나로 기울기 어림, 평균은 정확하지만 흔들림.</li>
+        <li>고정 학습률이면 최솟점 근처에서 진동, 줄이면 수렴.</li>
+        <li>미니배치: 흔들림과 계산량의 절충.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(w = 0\), 학습률 0.1에서 자료 \(x = 4\)를 하나 뽑았다. SGD 한 걸음 뒤의 \(w\)는?
+          <details><summary>답</summary><p>\(0 - 0.1\cdot2(0 - 4) = 0.8\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>학습률 \(\frac1{2(t + 1)}\)로 하면 SGD의 \(w\)가 뽑은 자료들의 평균이 됨을 보여라.
+          <details><summary>답</summary><p>갱신 \(w_{t+1} = w_t - \frac1{t + 1}(w_t - x_t) = \frac{t}{t + 1}w_t + \frac1{t + 1}x_t\), 즉 평균의 누적 갱신식이다(\(w_0\)는 첫 걸음에서 사라짐).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>자료가 100만 개일 때 전체 경사하강법 1걸음과 SGD 1000걸음의 계산량을 비교하여라.
+          <details><summary>답</summary><p>전체 1걸음은 자료 100만 개의 기울기, SGD 1000걸음은 1000개. SGD가 1000배 적게 계산하면서 1000번 움직인다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

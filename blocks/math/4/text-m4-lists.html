@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-lists" data-kind="본문" data-std="수학4-01-03">
+  <header class="card-head"><span class="no"></span><h2>리스트, 딕셔너리, 리스트 내포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>리스트 내포 <code>[식 for 변수 in 범위 if 조건]</code>로 수열표를 한 줄에 만든다.</li>
+        <li>딕셔너리로 "값마다 몇 번 나왔는지"를 세는 빈도표를 만든다.</li>
+        <li>집합으로 중복 없는 결과(예: 제곱수의 나머지)를 모은다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>반복문과 함수 (<a href="01-01.html">1.1절</a>), 고등학교의 수열과 나머지.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>리스트 내포</h3>
+    <p>"1부터 10까지의 제곱"처럼 규칙으로 만드는 목록은 반복문 대신 한 줄로 씁니다.</p>
+    <pre class="mono small">sq = [n*n for n in range(1, 11)]
+print(sq)          # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+even = [n for n in range(1, 21) if n % 2 == 0]
+print(sum(even))   # 110</pre>
+    <p>수학의 집합 기호 \(\{n^2 : 1 \le n \le 10\}\)과 모양이 같습니다. <code>if</code> 뒤의 조건으로 원소를 거릅니다.</p>
+
+    <h3><span class="no">1.3.2</span>딕셔너리로 세기</h3>
+    <p>딕셔너리는 "열쇠 → 값"의 표입니다. 제곱수의 일의 자리가 각각 몇 번 나오는지 셉니다.</p>
+    <pre class="mono small">freq = {}
+for s in sq:
+    d = s % 10
+    freq[d] = freq.get(d, 0) + 1
+print(freq)        # {1: 2, 4: 2, 9: 2, 6: 2, 5: 1, 0: 1}</pre>
+    <p><code>freq.get(d, 0)</code>은 열쇠가 없으면 0을 돌려줍니다. 제곱수의 일의 자리에는 2, 3, 7, 8이 절대 나오지 않는다는 사실이 표에서 보입니다(일의 자리는 일의 자리끼리의 곱으로 정해지기 때문).</p>
+
+    <h3><span class="no">1.3.3</span>집합</h3>
+    <pre class="mono small">r = {n*n % 7 for n in range(7)}
+print(r)           # {0, 1, 2, 4}</pre>
+    <p>중괄호 내포는 집합을 만들고 중복을 자동으로 없앱니다. 7로 나눈 나머지 가운데 제곱수의 나머지는 0, 1, 2, 4뿐입니다. 그래서 어떤 정수의 제곱도 7로 나누어 3이 남지 않습니다(이차잉여, 수학10).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) <code>range(1, 10)</code>이 10을 포함한다고 여긴다. 끝은 포함하지 않는다. (2) 딕셔너리에 없는 열쇠를 <code>freq[d] += 1</code>로 바로 올린다. 처음에는 열쇠가 없어 오류가 난다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>리스트 내포: <code>[식 for … if …]</code>.</li>
+        <li>딕셔너리로 빈도 세기: <code>get(열쇠, 0) + 1</code>.</li>
+        <li>집합 내포로 중복 없는 결과 모으기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>1부터 100까지 3의 배수이면서 5의 배수가 아닌 수의 개수를 리스트 내포로 구하여라.
+          <details><summary>답</summary><p><code>len([n for n in range(1, 101) if n % 3 == 0 and n % 5 != 0])</code> → 27 (3의 배수 33개 − 15의 배수 6개).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>세제곱수 \(n^3\) (\(0 \le n \le 8\))을 9로 나눈 나머지의 집합을 구하여라.
+          <details><summary>답</summary><p><code>{n**3 % 9 for n in range(9)}</code> → <code>{0, 1, 8}</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>문장의 글자마다 나온 횟수를 세고 가장 많이 나온 글자를 찾는 코드를 써라.
+          <details><summary>답</summary><p>빈도표 <code>freq</code>를 만든 뒤 <code>max(freq, key=freq.get)</code>. (빈칸은 미리 빼려면 <code>if ch != ' '</code>.)</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

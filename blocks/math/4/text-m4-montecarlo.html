@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-montecarlo" data-kind="본문" data-std="수학4-02-03">
+  <header class="card-head"><span class="no"></span><h2>몬테카를로 시뮬레이션</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>난수로 점을 뿌려 넓이와 원주율을 추정한다.</li>
+        <li>같은 시행을 많이 되풀이해 확률을 추정한다(상대도수).</li>
+        <li>추정 오차가 표본 수 \(N\)의 제곱근에 반비례함(\(\frac1{\sqrt N}\))을 실험으로 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>반복문과 함수 (<a href="01-01.html">1.1절</a>), 고등학교의 통계적 확률(상대도수).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>점을 뿌려 원주율 구하기</h3>
+    <p>한 변이 1인 정사각형에 점을 무작위로 뿌리면, 사분원 \(x^2 + y^2 &lt; 1\) 안에 떨어질 확률은 넓이의 비 \(\frac\pi4\)입니다. 그러니 안에 떨어진 비율에 4를 곱하면 \(\pi\)의 추정값이 됩니다.</p>
+    <pre class="mono small">import random, math
+def estimate_pi(N):
+    c = 0
+    for _ in range(N):
+        x, y = random.random(), random.random()
+        if x*x + y*y &lt; 1:
+            c += 1
+    return 4 * c / N
+
+random.seed(1)
+for N in [100, 10000, 1000000]:
+    p = estimate_pi(N)
+    print(N, p, abs(p - math.pi))</pre>
+    <pre class="mono small">100 3.2 0.05840734641020706
+10000 3.1396 0.0019926535897929476
+1000000 3.141176 0.00041665358979292577</pre>
+    <p><code>random.seed(1)</code>은 난수의 출발점을 고정해 누가 돌려도 같은 결과가 나오게 합니다. 시드를 바꾸면 값이 조금씩 달라집니다.</p>
+
+    <h3><span class="no">2.3.2</span>오차는 \(\frac1{\sqrt N}\)로 준다</h3>
+    <p>점 하나가 안에 떨어지는 것을 확률 \(p = \frac\pi4\)의 시행으로 보면, 안에 떨어진 비율의 표준편차는 \(\sqrt{\frac{p(1 - p)}N}\)입니다(이항분포). 4를 곱하면 추정값의 흩어짐은 약 \(\frac{1.64}{\sqrt N}\)입니다.</p>
+    <ul>
+      <li>\(N = 100\): 약 0.16, \(N = 10^4\): 약 0.016, \(N = 10^6\): 약 0.0016.</li>
+    </ul>
+    <p>\(N\)을 100배 늘려야 오차가 10배 줄어, 한 자리 더 정확하게 하려면 계산이 100배 듭니다. 위 실험의 오차도 이 크기 안에 있습니다. 그래서 몬테카를로 방법은 몇 자리의 정확도에는 적합하지만 매우 정밀한 값에는 비효율적입니다. 대신 차원이 높아도 오차가 \(\frac1{\sqrt N}\)로 같아, 고차원 적분처럼 다른 방법이 어려운 곳에서 강력합니다.</p>
+
+    <h3><span class="no">2.3.3</span>확률 추정</h3>
+    <p>계산이 어려운 확률도 실험을 되풀이해 셀 수 있습니다. 예를 들어 "23명 가운데 생일이 같은 두 사람이 있을 확률"은 23명의 생일을 무작위로 뽑는 실험을 만 번 해 같은 생일이 나온 비율로 추정합니다(이 절의 예제). 정확한 계산과 비교하면 시뮬레이션 코드를 검증할 수도 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 표본을 두 배로 하면 오차가 반이 된다고 여긴다. \(\frac1{\sqrt2}\)배일 뿐이다. (2) 시드를 고정하지 않은 결과를 그대로 보고한다. 재현할 수 없어 다른 사람이 확인할 수 없다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>넓이의 비 = 확률: 점 뿌리기로 \(\pi\) 추정.</li>
+        <li>오차 \(\propto\frac1{\sqrt N}\): 한 자리 더에 100배.</li>
+        <li><code>random.seed</code>로 재현 가능하게.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(N = 10^4\)에서 오차가 약 0.016이면, 0.001 정도로 줄이려면 \(N\)이 대략 얼마여야 하는가?
+          <details><summary>답</summary><p>16배 줄여야 하므로 \(16^2 = 256\)배, 약 \(2.6\times10^6\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\int_0^1x^2dx\)를 몬테카를로로 추정하는 방법 두 가지를 말하여라.
+          <details><summary>답</summary><p>(1) 정사각형에 점을 뿌려 \(y &lt; x^2\)인 비율. (2) 균등난수 \(x_i\)에 대한 \(x_i^2\)의 평균. 둘 다 \(\frac13\)에 다가간다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>주사위 두 개의 합이 7 이상일 확률을 시뮬레이션하는 코드를 쓰고 정확한 값과 비교하여라.
+          <details><summary>답</summary><p><code>sum(random.randint(1, 6) + random.randint(1, 6) &gt;= 7 for _ in range(N)) / N</code>. 정확한 값 \(\frac{21}{36} = 0.5833\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

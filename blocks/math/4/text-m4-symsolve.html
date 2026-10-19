@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-symsolve" data-kind="본문" data-std="수학4-04-02">
+  <header class="card-head"><span class="no"></span><h2>기호로 방정식 풀기와 수치해 비교</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>SymPy의 <code>solve</code>로 다항방정식과 연립방정식을 정확히 푼다.</li>
+        <li>근의 공식이 복잡하거나 없는 방정식은 <code>nsolve</code>로 수치해를 구한다.</li>
+        <li>기호해와 수치해(이분법, 뉴턴 방법)를 비교해 서로 검산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>SymPy 기초 (<a href="04-01.html">4.1절</a>), 고등학교의 이차방정식과 연립방정식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>정확한 해</h3>
+    <pre class="mono small">from sympy import *
+x, y = symbols('x y')
+print(solve(x**2 - x - 1, x))        # [1/2 - sqrt(5)/2, 1/2 + sqrt(5)/2]
+print(solve([x + y - 10, x*y - 21], [x, y]))   # [(3, 7), (7, 3)]
+r = solve(x**2 - x - 1, x)[1]
+print(N(r, 15))                       # 1.61803398874989</pre>
+    <p>근의 공식대로 \(\frac{1 \pm\sqrt5}2\)가 기호 그대로 나옵니다(황금비). <code>N(식, 자릿수)</code>로 원하는 자릿수까지 수치로 바꿉니다.</p>
+
+    <h3><span class="no">4.2.2</span>수치해</h3>
+    <p>\(x^3 - 2x - 5 = 0\)은 삼차방정식의 근의 공식으로 풀 수는 있지만 결과가 복잡합니다. 실근 하나만 필요하면 수치로 구합니다.</p>
+    <pre class="mono small">print(nsolve(x**3 - 2*x - 5, x, 2))   # 2.09455148154233</pre>
+    <p>세 번째 인수는 시작값입니다. 같은 근을 직접 짠 뉴턴 방법(\(x_0 = 2\)에서 6번 반복)으로 구하면 <code>2.0945514815423265</code>, 이분법(\([2, 3]\)에서 40번)으로 구하면 <code>2.094551481542112</code>로, 이분법은 40번에도 소수 12자리까지만 맞습니다.</p>
+
+    <h3><span class="no">4.2.3</span>서로 검산하기</h3>
+    <p>기호해를 구했으면 대입해 확인합니다: <code>simplify(r**2 - r - 1)</code> → <code>0</code>. 수치해는 원래 식에 넣어 0에 가까운지(잔차)를 봅니다. 두 방법이 같은 값을 주면 계산을 믿을 수 있습니다. 둘 중 하나만 쓰면 시작값 실수, 범위 실수를 놓치기 쉽습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) <code>solve</code>가 늘 실근만 준다고 여긴다. 복소근도 함께 준다(<code>solve(x**2 + 1, x)</code> → <code>[-I, I]</code>). (2) <code>nsolve</code>가 모든 근을 준다고 여긴다. 시작값 근처의 근 하나만 준다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>solve</code>: 정확한 해(기호), 연립도 가능.</li>
+        <li><code>nsolve(식, 변수, 시작값)</code>: 수치해 하나.</li>
+        <li>대입과 서로 다른 방법으로 검산.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>solve(x**2 - 5*x + 6, x)</code>의 결과는?
+          <details><summary>답</summary><p><code>[2, 3]</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>원 \(x^2 + y^2 = 25\)와 직선 \(y = x + 1\)의 교점을 구하는 명령과 결과를 써라.
+          <details><summary>답</summary><p><code>solve([x**2 + y**2 - 25, y - x - 1], [x, y])</code> → <code>[(-4, -3), (3, 4)]</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\cos x = x\)를 <code>solve</code>로 풀면 어떻게 되는가? 어떻게 해를 얻는가?
+          <details><summary>답</summary><p>초월방정식이라 닫힌 꼴이 없어 풀지 못한다(오류 또는 빈 결과). <code>nsolve(cos(x) - x, x, 1)</code> → 0.739085133215161.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-05-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m4-minibatch-ex" data-kind="예제" data-std="수학4-05-03">
+  <header class="card-head"><span class="no"></span><h2>배치 크기에 따라 흔들림이 얼마나 줄까</h2><span class="kind">예제 · 미니배치 실험</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>배치 크기를 1에서 2로 늘리면 최솟점 근처의 흔들림(표준편차)은 반으로 줄까요?</p>
+      <details><summary>예측 확인</summary><p>반보다 덜 줄어듭니다(약 0.47 → 0.30). 대략 \(\frac1{\sqrt2}\)배 근처이고, 이 문제에서는 같은 배치에서 중복 없이 뽑아 조금 더 줄었습니다.</p></details>
+    </section>
+    <p class="q-prob">5.3절의 자료 1~5와 손실 \(L(w) = \frac15\sum(w - x_i)^2\)에서 학습률 0.1로 300걸음 진행하되, 매 걸음 자료 \(B\)개(\(B = 1, 2, 5\))를 중복 없이 뽑아 평균 기울기를 쓴다. 101번째 걸음 이후 \(w\)의 평균과 표준편차를 비교하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p><code>random.sample(xs, B)</code>로 배치를 뽑고 <code>statistics</code>의 <code>mean</code>, <code>pstdev</code>로 뒤쪽 200걸음을 요약합니다(<a href="05-03.html">5.3절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><pre class="mono small">import random, statistics
+for B in [1, 2, 5]:
+    random.seed(0); w = 0.0; ws = []
+    for t in range(300):
+        b = random.sample(xs, B)
+        w -= 0.1 * sum(2*(w - x) for x in b) / B
+        ws.append(w)
+    tail = ws[100:]
+    print(B, round(statistics.mean(tail), 3), round(statistics.pstdev(tail), 3))</pre></div><span class="q-why">시드 고정으로 재현 가능.</span></li>
+        <li class="q-end"><div><code>1 2.842 0.471</code>, <code>2 2.906 0.298</code>, <code>5 3.0 0.0</code>.</div><span class="q-why">\(B = 5\)는 자료 전체라 보통의 경사하강법.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(B = 5\)이면 매번 정확한 기울기라 3에 정확히 수렴해 흔들림 0입니다. \(B = 1\)의 평균 2.842는 3에서 표준편차 0.47의 범위 안이라, 흔들리며 3 주위에 머무는 것과 맞습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>배치를 키우면 정확해지지만 한 걸음의 계산이 비싸집니다. 실제 머신러닝에서는 수십~수백 개의 배치와 점점 줄이는 학습률을 함께 써서 계산량과 정확도를 맞춥니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\(B = 5\)일 때 흔들림이 정확히 0인 이유는?</p>
+      <details><summary>답</summary><p>다섯 개를 모두 뽑으면 배치 평균 기울기가 매번 참 기울기 \(2(w - 3)\)과 같아 무작위성이 없다.</p></details>
+    </section>
+  </div>
+</article>

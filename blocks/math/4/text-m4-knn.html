@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-knn" data-kind="본문" data-std="수학4-06-05">
+  <header class="card-head"><span class="no"></span><h2>k-최근접 이웃 분류</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>새 점과 가장 가까운 훈련 점 \(k\)개의 다수결로 분류하는 \(k\)-최근접 이웃(k-NN)을 구현한다.</li>
+        <li>\(k\)가 작으면 결정 경계가 복잡해지고(과적합), 크면 단순해짐(과소적합)을 이해한다.</li>
+        <li>교차검증으로 \(k\)를 고르고, 특성의 크기(단위)를 맞춰야 하는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>두 점 사이의 거리(고등학교), 교차검증 (<a href="06-04.html">6.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.5.1</span>알고리즘</h3>
+    <p>훈련 자료 \((\mathbf x_i, c_i)\) (\(c_i\)는 범주)가 있을 때 새 점 \(\mathbf q\)의 범주를 다음처럼 정합니다.</p>
+    <ol>
+      <li>모든 훈련 점과 \(\mathbf q\) 사이의 거리를 잰다.</li>
+      <li>가장 가까운 \(k\)개를 고른다.</li>
+      <li>그 \(k\)개의 범주 가운데 가장 많은 것을 답한다(\(k\)는 홀수로 하면 두 범주의 동점이 없다).</li>
+    </ol>
+    <pre class="mono small">import math
+def knn(train, q, k):
+    near = sorted(train, key=lambda p: math.dist(q, p[0]))[:k]
+    labels = [c for _, c in near]
+    return max(set(labels), key=labels.count)</pre>
+    <p>학습 단계가 따로 없고 자료를 저장해 두기만 합니다. 대신 예측할 때마다 모든 점과의 거리를 계산합니다.</p>
+
+    <h3><span class="no">6.5.2</span>\(k\)의 역할</h3>
+    <p>\(k = 1\)이면 가장 가까운 점 하나를 그대로 따라 하므로, 잡음이 섞인 점 하나 때문에 그 주변이 통째로 다른 범주가 됩니다. 결정 경계가 들쭉날쭉하고 훈련 오차는 0이지만 새 자료에는 약합니다(과적합). \(k\)가 크면 경계가 매끈해지다가, 너무 크면 자료 전체의 다수 범주로만 답하게 됩니다(과소적합). 6.4절처럼 교차검증 오차가 가장 작은 \(k\)를 고릅니다.</p>
+
+    <h3><span class="no">6.5.3</span>단위를 맞추기</h3>
+    <p>거리는 모든 특성을 똑같이 섞습니다. 키(cm, 150~190)와 시력(0.1~2.0)을 그대로 쓰면 키의 차이가 거리를 거의 다 결정합니다. 각 특성에서 평균을 빼고 표준편차로 나누는 표준화(6.1절)를 먼저 합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(k = 1\)이 훈련 오차 0이니 가장 좋다고 여긴다. 훈련 점은 자기 자신이 가장 가까운 이웃이라 늘 맞힐 뿐이다. (2) 특성의 단위를 그대로 둔다. 단위가 큰 특성이 거리를 지배한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>k-NN: 가까운 \(k\)개의 다수결.</li>
+        <li>작은 \(k\) 과적합, 큰 \(k\) 과소적합, 교차검증으로 선택.</li>
+        <li>거리 전에 특성을 표준화.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.5.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>수직선 위 훈련 점 \(1(A), 2(A), 4(B), 5(B), 6(B)\)에서 \(q = 3.2\)를 \(k = 1, 3\)으로 분류하여라.
+          <details><summary>답</summary><p>거리 0.8(4, B), 1.2(2, A), 1.8(5, B). \(k = 1\): B, \(k = 3\): B(2표).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>1번에서 \(k = 5\)이면? 그 결과가 \(q\)와 무관한 이유는?
+          <details><summary>답</summary><p>B(3 대 2). \(k\)가 자료 수와 같으면 늘 전체 다수 범주를 답한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>훈련 점이 \(n\)개이고 특성이 \(m\)개일 때 예측 하나에 드는 계산량을 어림하고, 자료가 매우 많을 때의 문제를 말하여라.
+          <details><summary>답</summary><p>거리 \(n\)개 각각 \(m\)번 연산, 정렬 포함 약 \(nm + n\log n\). 자료가 수백만이면 예측이 느려 공간 분할 자료구조(k-d 트리)나 근사 탐색을 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

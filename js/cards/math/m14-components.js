@@ -30,6 +30,8 @@
       if (L) g.fillRect(F.X(X0 + (i * (X1 - X0)) / NX), F.Y(Y0 + ((j + 1) * (Y1 - Y0)) / NY), cw + 0.6, ch + 0.6);
     }
     g.restore();
+    F.path([[X0, Y0], [X1, Y0], [X1, Y1], [X0, Y1], [X0, Y0]], c.rule, 1);
+    bumps.forEach(([a, b, h]) => { F.dot(a, b, h > cut ? c.ink : c.ink3, 3); F.text(fmt(h, 2), a + 0.07, b + 0.07, c.ink3, "left"); });
     const cellA = ((X1 - X0) / NX) * ((Y1 - Y0) / NY);
     k.out(`c = ${fmt(cut, 2)} · 영역 {f > c}의 연결 성분 ${n}개${n ? ` (넓이 ${sizes.map((s) => fmt(s * cellA, 2)).join(", ")})` : ""}\nf는 높이 1.0, 0.8, 0.62, 0.45인 봉우리 넷의 합 · c를 내리면 봉우리 둘레의 섬들이 커지다가 이어진다`);
   }
