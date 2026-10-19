@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-01-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e34-digital.js"]
+}
+-->
+<article class="card q-card" id="lab-e34-adder" data-kind="실습" data-std="전전34-01-01 전전34-01-02">
+  <header class="card-head"><span class="no"></span><h2>가산기의 답은 언제 맞아질까?</h2><span class="kind">실습 · 리플 캐리 가산기의 전파 지연과 글리치</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>진리표로 확인한 가산기는 "답이 맞다"는 것만 알려 줍니다. 실제 게이트는 입력이 바뀐 뒤 조금 늦게 반응하므로, 출력은 한동안 틀린 값을 거쳐 맞는 값에 도착합니다. 4비트 리플 캐리 가산기에서 이 시간을 재고, 가장 오래 걸리는 경로(최악 경로)를 찾습니다. 성취기준 [전전34-01-01], [전전34-01-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>비트 i의 전가산기를 게이트 다섯 개로 만듭니다.</p>
+      <ul>
+        <li>\(P_i = A_i \oplus B_i\) (XOR), \(G_i = A_iB_i\) (AND)</li>
+        <li>\(S_i = P_i \oplus C_i\) (XOR)</li>
+        <li>\(C_{i+1} = G_i + P_iC_i\) (AND 하나와 OR 하나)</li>
+      </ul>
+      <p>올림수 \(C_{i+1}\)이 다음 비트의 입력이 되므로, 올림수는 비트를 하나씩 건너 물결처럼 전해집니다(리플). 이 가상 회로에서는 모든 게이트가 똑같이 한 칸(게이트 지연 \(t_{pd}\))만큼 늦게 반응합니다. 실제 74HC 계열 게이트 지연은 수 ns~10 ns쯤입니다.</p>
+      <p>타이밍도는 입력이 바뀌기 전 값에서 이미 안정된 상태로 출발해, 첫 칸 끝에서 입력을 새 값으로 바꾼 뒤 출력이 어떻게 바뀌는지 보여 줍니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>이전 A = <b data-show="a0">15</b></span><input type="range" name="a0" min="0" max="15" step="1" value="15" aria-label="이전 A"></label>
+        <label><span>이전 B = <b data-show="b0">0</b></span><input type="range" name="b0" min="0" max="15" step="1" value="0" aria-label="이전 B"></label>
+        <label><span>새 A = <b data-show="a1">15</b></span><input type="range" name="a1" min="0" max="15" step="1" value="15" aria-label="새 A"></label>
+        <label><span>새 B = <b data-show="b1">1</b></span><input type="range" name="b1" min="0" max="15" step="1" value="1" aria-label="새 B"></label>
+        <label><span>C_in = 1</span><input type="checkbox" name="cin" aria-label="자리올림 입력"></label>
+        <label><span>게이트 지연 = <b data-show="tpd">8</b> ns</span><input type="range" name="tpd" min="1" max="20" step="1" value="8" aria-label="게이트 지연"></label>
+      </div>
+      <canvas aria-label="가산기 출력의 타이밍도"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 설정(15 + 0 → 15 + 1)에서 C4와 합이 언제 안정되는지 칸 수를 셉니다. 중간에 나타난 틀린 합을 적습니다.</li>
+        <li>새 B를 0으로(15 + 0 → 15 + 0, 바뀜 없음), 2로, 4로 바꿔 안정 시간을 비교합니다. 올림수가 몇 비트를 지나가는지와 연결해 보세요.</li>
+        <li>이전 값 0 + 0에서 새 값 5 + 2로 바꾸면 올림수가 생기나요? 안정 시간은?</li>
+        <li>안정 시간이 가장 긴 입력 변화를 직접 찾아 9단과 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>15 + 0 → 15 + 1: 올림수가 비트 0에서 3까지 모두 전해져 C4가 8단(64 ns) 뒤에 1이 됩니다(G0의 AND 1단, OR 1단, 그 뒤 비트마다 AND·OR 2단씩). 그 사이 합이 14, 12, 8, 0 같은 틀린 값을 거칩니다.</li>
+        <li>새 B를 2로 하면 6단, 4로 하면 4단에 안정됩니다. 올림수가 지나가는 비트가 적을수록 빨리 끝납니다. 0 + 0 → 5 + 2처럼 올림수가 없으면 XOR 두 단(2칸) 만에 끝납니다.</li>
+        <li>가장 긴 경우는 9단(72 ns)입니다. 예: C_in = 1에서 14 + 0 → 15 + 0. A0가 바뀌어 \(P_0\)(XOR 1단)가 바뀌고, \(P_0C_0\)(AND)와 OR를 거쳐 C1이 3단째에 바뀌며, 이후 비트마다 2단씩 더해져 C4는 \(2\cdot4+1 = 9\)단입니다.</li>
+        <li>n비트 리플 캐리 가산기의 최악 경로는 \(2n+1\)단입니다. 32비트면 65단으로, 게이트 지연 8 ns에서 520 ns나 걸립니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>이 가산기를 클록이 있는 회로에 넣는다면, 클록 주기는 무엇보다 길어야 할까요? (02-02 타이밍 카드와 이어집니다.)</li>
+        <li>중간의 틀린 합(글리치)이 문제가 되는 경우와 되지 않는 경우를 구분해 보세요. (힌트: 클록 모서리에서만 값을 읽는 회로)</li>
+        <li>올림수 예견 가산기(carry-lookahead)는 \(C_{i+1}\)을 \(G\)와 \(P\)로 바로 계산합니다. \(C_2 = G_1 + P_1G_0 + P_1P_0C_0\)을 유도하고, 이 식이 몇 단이면 계산되는지 따져 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>실제 실험에서는 74HC283(4비트 가산기)이나 FPGA에 가산기를 만들고, 입력 B0를 함수 발생기 구형파로 바꿔 가며 오실로스코프로 B0와 C4를 함께 봅니다. 두 모서리 사이 시간이 리플 캐리 지연입니다. FPGA의 합성 도구가 알려 주는 최장 경로 지연과도 비교해 보세요.</p>
+    </section>
+  </div>
+</article>

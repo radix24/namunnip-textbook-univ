@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-matrix" data-kind="본문" data-std="응통10-02-01">
+  <header class="card-head"><span class="no"></span><h2>다중회귀의 행렬 표현과 추정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다중회귀를 \(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\)로 쓴다.</li>
+        <li>\(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)를 유도하고 모자 행렬의 성질을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 곱, 역행렬, 직교 사영 (응통2 01~03단원), 1.1절.</li>
+      </ul>
+    </div>
+
+    <h3>설명변수가 여럿일 때</h3>
+    <p>집값을 넓이 하나로만 설명할 수는 없습니다. 방 개수, 역까지 거리, 건축 연도를 함께 넣으려면 식이 길어지는데, 행렬로 쓰면 변수가 몇 개든 같은 모양이 됩니다.</p>
+
+    <h3><span class="no">2.1.1</span>모형</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.1.1</span>
+      <p>\(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\). \(\mathbf y\)는 \(n \times 1\), \(X\)는 첫 열이 모두 1인 \(n \times p\) 계획행렬(\(p\) = 설명변수 수 + 1), \(E(\boldsymbol\varepsilon) = \mathbf 0\), \(\mathrm{Var}(\boldsymbol\varepsilon) = \sigma^2I\).</p>
+    </div>
+    <p>계수 \(\beta_j\)는 "다른 설명변수를 고정했을 때 \(x_j\)가 1 커지면 평균 \(y\)가 얼마나 변하는가"를 뜻합니다. 단순회귀의 기울기와 다릅니다. 넓이의 계수는 방 개수를 고정한 채 넓이만 늘린 효과입니다.</p>
+
+    <h3><span class="no">2.1.2</span>최소제곱 추정량</h3>
+    <p>\(Q(\mathbf b) = (\mathbf y - X\mathbf b)^\top(\mathbf y - X\mathbf b)\)를 \(\mathbf b\)로 미분하면 \(-2X^\top\mathbf y + 2X^\top X\mathbf b\)이므로 정규방정식 \(X^\top X\mathbf b = X^\top\mathbf y\)를 얻습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.1.2</span>
+      <p>\(X\)의 열이 일차독립이면 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\), \(E(\hat{\boldsymbol\beta}) = \boldsymbol\beta\), \(\mathrm{Var}(\hat{\boldsymbol\beta}) = \sigma^2(X^\top X)^{-1}\).</p>
+    </div>
+    <p class="tb-proof">\(\hat{\boldsymbol\beta} = A\mathbf y\), \(A = (X^\top X)^{-1}X^\top\). \(E = AX\boldsymbol\beta = \boldsymbol\beta\). 확률벡터의 공분산 공식 \(\mathrm{Var}(A\mathbf y) = A\,\mathrm{Var}(\mathbf y)A^\top = \sigma^2AA^\top = \sigma^2(X^\top X)^{-1}\). <span class="qed">∎</span></p>
+
+    <h3><span class="no">2.1.3</span>모자 행렬과 기하학</h3>
+    <p>적합값 \(\hat{\mathbf y} = X\hat{\boldsymbol\beta} = H\mathbf y\), \(H = X(X^\top X)^{-1}X^\top\)(모자 행렬, \(\mathbf y\)에 모자를 씌움). \(H\)는 \(X\)의 열공간으로의 직교 사영 행렬이라 \(H^\top = H\), \(H^2 = H\)이고 \(\mathrm{tr}(H) = p\)입니다(응통2 05단원). 잔차 \(\mathbf e = (I - H)\mathbf y\)는 열공간에 수직이고, \(\mathrm{SSE}/(n-p)\)가 \(\sigma^2\)의 불편추정량입니다.</p>
+    <p>최소제곱은 "\(\mathbf y\)에서 \(X\)의 열들로 만들 수 있는 벡터 가운데 가장 가까운 것"을 고르는 일입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.3</span>
+      <p>R의 <code>mtcars</code>에서 연비를 무게(<code>wt</code>, 천 lb)와 마력(<code>hp</code>)으로 회귀하세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>coef(lm(mpg ~ wt + hp, data = mtcars))</code>: 절편 37.23, wt −3.878, hp −0.0318. 마력을 고정하면 무게 1000 lb당 연비가 약 3.9 mpg 낮습니다. 무게만 넣은 단순회귀의 기울기(−5.34)보다 작은 까닭은, 무거운 차가 마력도 커서 단순회귀에서는 마력 효과가 무게에 섞이기 때문입니다.</p>
+    <pre><code>X &lt;- cbind(1, mtcars$wt, mtcars$hp); y &lt;- mtcars$mpg
+solve(t(X) %*% X, t(X) %*% y)    # 같은 값</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\), 공분산 \(\sigma^2(X^\top X)^{-1}\).</li>
+        <li>\(H\)는 직교 사영, \(\mathrm{tr}H = p\), \(s^2 = \mathrm{SSE}/(n-p)\).</li>
+        <li>계수는 다른 변수를 고정한 효과입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단순회귀의 \(X\)에서 \(X^\top X\)를 쓰고 \((X^\top X)^{-1}\)의 (2,2) 원소가 \(1/S_{xx}\)임을 보이세요.
+          <details><summary>답</summary><p>\(X^\top X = \begin{pmatrix}n &amp; \sum x\\ \sum x &amp; \sum x^2\end{pmatrix}\), 행렬식 \(nS_{xx}\), (2,2) 원소 \(n/(nS_{xx})\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

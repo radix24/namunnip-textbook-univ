@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-01-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs.js"]
+}
+-->
+<article class="card q-card" id="lab-s21-beta" data-kind="실습" data-std="응통21-01-01">
+  <header class="card-head"><span class="no"></span><h2>사전 믿음과 자료가 만나는 법: 베타 사전분포와 이항 자료</h2><span class="kind">실습 · 사후분포</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>성공 확률 \(p\)에 대한 베타 사전분포와 이항 자료를 바꾸며 사후분포가 어떻게 만들어지는지 봅니다. 자료가 늘수록 사후분포가 사전분포의 영향에서 벗어나 가능도 쪽으로 모이는 것을 확인합니다. 성취기준 [응통21-01-01].</p>
+      <p class="q-term"><b>사전분포</b>: 자료를 보기 전 \(p\)에 대한 믿음을 나타낸 분포. 여기서는 \(\mathrm{Beta}(a, b)\), 밀도는 \(p^{a-1}(1-p)^{b-1}\)에 비례하고 평균은 \(a/(a+b)\).</p>
+      <p class="q-term"><b>가능도</b>: 자료(\(n\)번 중 \(k\)번 성공)가 나올 확률을 \(p\)의 함수로 본 것. \(p^k(1-p)^{n-k}\)에 비례.</p>
+      <p class="q-term"><b>사후분포</b>: 베이즈 정리에 따라 사전분포 × 가능도에 비례. 곱하면 \(p^{a+k-1}(1-p)^{b+n-k-1}\)이므로 사후분포는 \(\mathrm{Beta}(a+k,\ b+n-k)\)입니다.</p>
+      <p>사후 평균은 \(\dfrac{a+k}{a+b+n} = w \cdot \dfrac{a}{a+b} + (1-w)\cdot\dfrac{k}{n}\), \(w = \dfrac{a+b}{a+b+n}\)로, 사전 평균과 표본비율의 가중평균입니다. \(a+b\)를 "사전분포가 가진 가상의 표본 크기"로 읽을 수 있습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>예를 들어 새 광고의 클릭률 \(p\)를 생각합니다. 회색 점선은 사전분포, 주황 선은 가능도(넓이가 1이 되게 맞춤), 파란 선은 사후분포, 파란 세로 점선은 95% 신용구간입니다. 계산은 \(p\)를 600칸으로 나눈 수치 적분입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>사전 a = <b data-show="a">2</b></span><input type="range" name="a" min="1" max="50" step="1" value="2" aria-label="사전분포 a"></label>
+        <label><span>사전 b = <b data-show="b">2</b></span><input type="range" name="b" min="1" max="50" step="1" value="2" aria-label="사전분포 b"></label>
+        <label><span>시행 n = <b data-show="n">20</b></span><input type="range" name="n" min="0" max="500" step="1" value="20" aria-label="시행 횟수"></label>
+        <label><span>성공 k = <b data-show="k">14</b></span><input type="range" name="k" min="0" max="500" step="1" value="14" aria-label="성공 횟수"></label>
+      </div>
+      <canvas aria-label="사전분포, 가능도, 사후분포"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>기본값(\(\mathrm{Beta}(2, 2)\), 20번 중 14번)에서 사후 평균이 가중평균 식과 맞는지 확인합니다.</li>
+        <li>사전분포를 \(\mathrm{Beta}(30, 30)\)(\(p\)가 0.5 근처라고 강하게 믿음)으로 바꿉니다. 사후분포가 어디에 놓이나요?</li>
+        <li>사전분포는 \(\mathrm{Beta}(30, 30)\) 그대로 두고 자료를 \(n = 400\), \(k = 280\)(같은 70%)으로 늘립니다.</li>
+        <li>사전분포를 \(\mathrm{Beta}(1, 1)\)(균일)로 두고 \(n = 20\), \(k = 0\)으로 해 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>기본값: 사후분포 \(\mathrm{Beta}(16, 8)\), 평균 \(16/24 = 0.667\) \(= 0.17 \times 0.5 + 0.83 \times 0.7\). 95% 신용구간은 약 [0.47, 0.84]입니다(화면의 600칸 계산으로는 [0.470, 0.837]).</li>
+        <li>\(\mathrm{Beta}(30, 30)\) + 20번 중 14번: 사후 평균은 \(44/80 = 0.55\)로 사전 평균 0.5 쪽에 가깝습니다. 사전분포의 무게(60)가 자료(20)보다 크기 때문입니다.</li>
+        <li>자료를 400번 중 280번으로 늘리면 사후 평균은 \(310/460 \approx 0.674\)로 표본비율 0.7 쪽으로 옮겨 가고, 사후분포가 매우 좁아집니다. 자료가 많으면 사전분포의 영향이 줄어듭니다.</li>
+        <li>균일 사전분포 + 20번 중 0번: 표본비율은 0이지만 사후 평균은 \(1/22 \approx 0.045\)이고 신용구간은 [0, 0.16] 정도입니다. "한 번도 안 나왔다"를 "확률 0"으로 읽지 않습니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>두 사람이 서로 다른 사전분포로 출발해도 자료가 충분히 많으면 사후분포가 비슷해집니다. 절차 2와 3의 결과로 설명해 보세요.</li>
+        <li>사전분포를 고르는 것이 주관적이라는 비판에 대해, 가상 표본 크기 \(a + b\)의 해석을 써서 답해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R: <code>curve(dbeta(x, 16, 8))</code>, <code>qbeta(c(0.025, 0.975), 16, 8)</code>. 다음 자료가 성공일 사후 예측 확률은 사후 평균과 같습니다(\((a+k)/(a+b+n)\)). 포아송 자료에는 감마 사전분포가 같은 역할을 합니다([응통21-02-01]).</p>
+    </section>
+  </div>
+</article>

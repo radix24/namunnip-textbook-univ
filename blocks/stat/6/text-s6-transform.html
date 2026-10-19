@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-transform" data-kind="본문" data-std="응통6-02-02">
+  <header class="card-head"><span class="no"></span><h2>확률변수의 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>누적분포함수 방법으로 \(Y = g(X)\)의 분포를 구한다.</li>
+        <li>단조 변환의 밀도 공식을 유도하고 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>분포함수와 밀도함수 (<a href="02-01.html">2.1절</a>), 합성함수의 미분.</li>
+      </ul>
+    </div>
+
+    <h3>섭씨에서 화씨로, 반지름에서 넓이로</h3>
+    <p>\(X\)의 분포를 알 때 \(Y = 1.8X + 32\)나 \(Y = \pi X^2\)의 분포를 알고 싶은 일이 많습니다. 컴퓨터가 균일 난수로 다른 분포의 난수를 만드는 원리도 변환입니다.</p>
+
+    <h3><span class="no">2.2.1</span>누적분포함수 방법</h3>
+    <p>가장 일반적인 방법은 \(F_Y(y) = P(g(X) \le y)\)를 \(X\)에 대한 사건으로 바꿔 계산한 뒤 미분하는 것입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(X \sim N(0, 1)\)일 때 \(Y = X^2\)의 밀도함수를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(y &gt; 0\)에서 \(F_Y(y) = P(-\sqrt y \le X \le \sqrt y) = \Phi(\sqrt y) - \Phi(-\sqrt y)\). 미분하면 \(f_Y(y) = \phi(\sqrt y)\frac{1}{2\sqrt y} + \phi(-\sqrt y)\frac1{2\sqrt y} = \frac{1}{\sqrt{2\pi y}}e^{-y/2}\). 이것이 자유도 1인 카이제곱 분포입니다(6.1절). \(X^2\)는 단조가 아니므로 양쪽 가지를 모두 더했습니다.</p>
+
+    <h3><span class="no">2.2.2</span>단조 변환 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.2</span>
+      <p>\(X\)의 밀도가 \(f_X\)이고 \(g\)가 \(X\)가 가질 수 있는 값의 구간에서 미분가능하고 엄격히 단조이면, \(Y = g(X)\)의 밀도는</p>
+      \[f_Y(y) = f_X\big(g^{-1}(y)\big)\left|\frac{d}{dy}g^{-1}(y)\right|.\]
+    </div>
+    <p class="tb-proof">\(g\)가 증가하면 \(F_Y(y) = P(X \le g^{-1}(y)) = F_X(g^{-1}(y))\)이고, 연쇄법칙으로 미분하면 \(f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)\)입니다. \(g\)가 감소하면 \(F_Y(y) = P(X \ge g^{-1}(y)) = 1 - F_X(g^{-1}(y))\)이고 미분하면 부호가 바뀌는데, 이때 \(\frac{d}{dy}g^{-1} &lt; 0\)이라 절댓값으로 합쳐 쓸 수 있습니다. <span class="qed">∎</span></p>
+    <p>절댓값 인자는 변환이 구간을 늘이거나 줄이는 비율입니다. 넓이(확률)는 그대로이므로 구간이 늘어난 만큼 밀도가 낮아집니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.3 (역변환법)</span>
+      <p>\(U \sim U(0, 1)\)일 때 \(Y = -\frac1\lambda\ln U\)의 분포는?</p>
+    </div>
+    <p><i>풀이.</i> \(g(u) = -\ln u/\lambda\)는 감소, \(g^{-1}(y) = e^{-\lambda y}\), \(|dg^{-1}/dy| = \lambda e^{-\lambda y}\). \(f_U = 1\)이므로 \(f_Y(y) = \lambda e^{-\lambda y}\) (\(y &gt; 0\)), 지수분포입니다. 일반적으로 \(F^{-1}(U)\)는 분포함수 \(F\)를 따르며, 이 방법으로 난수를 만듭니다(응통15 04단원).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>일반적인 방법: \(F_Y(y) = P(g(X) \le y)\)를 구해 미분.</li>
+        <li>단조 변환: \(f_Y(y) = f_X(g^{-1}(y))|dg^{-1}/dy|\).</li>
+        <li>\(F^{-1}(U)\)는 분포 \(F\)를 따릅니다(역변환법).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X \sim N(\mu, \sigma^2)\)이면 \(Y = aX + b\) (\(a \ne 0\))의 분포는?
+          <details><summary>답</summary><p>정리 2.2.2로 \(N(a\mu + b, a^2\sigma^2)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(X \sim U(0, 1)\)일 때 \(Y = \sqrt X\)의 밀도는?
+          <details><summary>답</summary><p>\(g^{-1}(y) = y^2\), \(f_Y(y) = 2y\) (\(0 \le y \le 1\)).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

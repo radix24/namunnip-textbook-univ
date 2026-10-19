@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a13-attitude" data-kind="본문" data-std="천우13-06-03">
+  <header class="card-head"><span class="no"></span><h2>대응된 별로 위성의 자세 계산하기</h2><span class="kind">본문 · 6.3절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자세를 회전 행렬로 나타내고 Wahba 문제를 쓴다.</li>
+        <li>두 벡터로 자세를 구하는 TRIAD 방법을 계산한다.</li>
+        <li>별 수와 중심 정밀도로 자세 정밀도를 어림한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>패턴 인식 (<a href="06-02.html">6.2절</a>), 회전 행렬 (<a href="../../math/2/index.html">수학2 선형대수</a>).</li>
+      </ul>
+    </div>
+
+<h3>별 방향에서 위성 방향으로</h3>
+    <p>대응이 끝나면 같은 별을 두 좌표계에서 본 방향이 생깁니다: 성표의 관성 좌표 \(\mathbf r_k\)와 별 추적기 좌표 \(\mathbf b_k\). 두 좌표계를 잇는 회전 \(A\)(\(\mathbf b_k = A\mathbf r_k\))가 위성의 자세입니다.</p>
+
+    <h3><span class="no">6.3.1</span>Wahba 문제</h3>
+    <p>측정에 오차가 있으니 모든 별을 정확히 맞추는 회전은 없습니다. 가중 제곱 오차를 가장 작게 하는 회전을 찾는 문제가 Wahba 문제(1965)입니다.</p>
+    \[ \min_A\ \frac12\sum_kw_k\left|\mathbf b_k - A\mathbf r_k\right|^2 \]
+    <p>Davenport의 q 방법(4×4 행렬의 가장 큰 고유값의 고유벡터가 최적 쿼터니언), 이를 빠르게 한 QUEST, 특이값 분해(SVD) 방법이 쓰입니다.</p>
+
+    <h3><span class="no">6.3.2</span>TRIAD</h3>
+    <p>벡터 두 개만 있을 때의 간단한 방법입니다. 두 좌표계에서 각각 직교 기저를 만듭니다.</p>
+    \[ \mathbf t_1 = \mathbf v_1,\quad \mathbf t_2 = \frac{\mathbf v_1\times\mathbf v_2}{|\mathbf v_1\times\mathbf v_2|},\quad \mathbf t_3 = \mathbf t_1\times\mathbf t_2 \]
+    <p>추적기 좌표의 기저 \([\mathbf t^b]\)와 관성 좌표의 기저 \([\mathbf t^r]\)로 \(A = [\mathbf t^b_1\ \mathbf t^b_2\ \mathbf t^b_3][\mathbf t^r_1\ \mathbf t^r_2\ \mathbf t^r_3]^T\)입니다. 첫 벡터는 정확히 맞고, 둘째 벡터의 방향 정보는 일부만 쓰입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>관성 좌표에서 \(\mathbf r_1 = (1, 0, 0)\), \(\mathbf r_2 = (0, 1, 0)\)인 두 별이 추적기 좌표에서 \(\mathbf b_1 = (0, 1, 0)\), \(\mathbf b_2 = (-1, 0, 0)\)로 보였습니다. 자세 행렬은?</p>
+    </div>
+    <p><i>풀이.</i> 관성: \(\mathbf t^r = (1,0,0), (0,0,1), (0,-1,0)\). 추적기: \(\mathbf t^b_1 = (0,1,0)\), \(\mathbf t^b_2 = (0,1,0)\times(-1,0,0) = (0,0,1)\), \(\mathbf t^b_3 = (0,1,0)\times(0,0,1) = (1,0,0)\). \(A = [\mathbf t^b][\mathbf t^r]^T\)를 계산하면 \(A = \begin{pmatrix}0&-1&0\\1&0&0\\0&0&1\end{pmatrix}\), 곧 \(z\)축 둘레 90° 회전입니다. 확인: \(A\mathbf r_1 = (0,1,0) = \mathbf b_1\), \(A\mathbf r_2 = (-1,0,0) = \mathbf b_2\).</p>
+
+    <h3><span class="no">6.3.3</span>정밀도</h3>
+    <p>별 하나의 방향 오차가 \(\sigma_\star\)이면, 별 \(N\)개로 구한 시선 방향(광축에 수직인 두 축)의 자세 오차는 대략 \(\sigma_\star/\sqrt N\)입니다. 광축 둘레의 회전(롤)은 시야 반지름만큼의 지렛대로만 재므로 몇 배 나쁩니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.2</span>
+      <p>시야 15°를 1,024픽셀로 담는 추적기(52.7″/픽셀)가 별 중심을 0.05픽셀로 잰다면, 별 10개로 구한 시선 방향 자세 오차는?</p>
+    </div>
+    <p><i>풀이.</i> 별 하나 \(0.05\times52.7 = 2.6″\), 10개면 \(2.6/\sqrt{10} = 0.83″\)입니다. 롤 오차는 별들이 광축에서 평균 약 5°(0.087 rad) 떨어져 있다면 대략 \(2.6″/(\sqrt{10}\times0.087) = 9.4″\)로 10배쯤 나쁩니다. 현대 별 추적기의 정밀도(시선 방향 1~5″, 롤 10~30″)와 맞는 수준입니다.</p>
+    <div class="tb-note"><b>주의</b> 성표 별의 고유 운동과 광행차(위성 속도 7.5 km/s에서 최대 5″)를 보정하지 않으면 자세에 그만큼의 계통 오차가 남습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>자세 = 관성 좌표에서 추적기 좌표로의 회전 \(A\)(\(\mathbf b = A\mathbf r\)).</li>
+        <li>Wahba 문제: \(\sum w|\mathbf b - A\mathbf r|^2\) 최소. q 방법, QUEST, SVD.</li>
+        <li>TRIAD: 두 벡터로 직교 기저를 만들어 \(A = [\mathbf t^b][\mathbf t^r]^T\).</li>
+        <li>시선 방향 오차 \(\approx \sigma_\star/\sqrt N\), 롤은 몇 배 나쁨. 광행차 보정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>회전 행렬의 역행렬은?
+          <details><summary>답</summary><p>전치 행렬.</p></details>
+        </li>
+        <li>TRIAD에서 정확히 맞는 벡터는?
+          <details><summary>답</summary><p>첫째 벡터.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>별 하나 오차 5″, 별 25개면 시선 방향 자세 오차는?
+          <details><summary>답</summary><p>1″.</p></details>
+        </li>
+        <li>위성 속도 7.5 km/s에 의한 최대 광행차는?
+          <details><summary>답</summary><p>\(7.5/3\times10^5\) rad = 5.2″.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

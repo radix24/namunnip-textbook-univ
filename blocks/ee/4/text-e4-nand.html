@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e4-nand" data-kind="본문" data-std="전전4-02-02">
+  <header class="card-head"><span class="no"></span><h2>범용 게이트: NAND만으로 모든 회로를</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>NAND 하나로 NOT, AND, OR를 만들 수 있어 어떤 논리 함수도 구현할 수 있음을 보인다.</li>
+        <li>2단 AND-OR(곱의 합) 회로를 NAND-NAND 회로로 바로 바꾼다.</li>
+        <li>CMOS에서 NAND가 선호되는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>드 모르간 법칙과 곱의 합 표준형 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>왜 한 가지 게이트로</h3>
+    <p>칩을 만들 때 게이트 종류가 적을수록 설계와 제조가 단순합니다. 모든 논리 함수는 곱의 합(2.1절)으로 쓸 수 있으니 AND, OR, NOT 세 가지면 충분합니다. 그런데 이 셋을 모두 NAND 하나로 만들 수 있다면, NAND만으로 무엇이든 만들 수 있습니다. 이런 게이트를 <b>범용 게이트</b>라 합니다.</p>
+
+    <h3><span class="no">2.2.2</span>NAND로 기본 게이트 만들기</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.1 <span class="nm">(NAND의 범용성)</span></span>
+      <p>NAND 게이트만으로 NOT, AND, OR를 만들 수 있다. 따라서 모든 논리 함수를 NAND만으로 구현할 수 있다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>NOT: 두 입력을 묶으면 \((AA)' = A'\)(멱등). AND: NAND 뒤에 NOT(NAND)을 달면 \(((AB)')' = AB\). OR: 드 모르간에 의해 \(A + B = (A'B')'\)이므로 두 입력을 각각 NAND로 뒤집은 뒤 NAND에 넣는다. 세 기본 게이트가 만들어졌고 모든 함수는 곱의 합으로 쓸 수 있으므로 결론이 성립한다. <span class="qed">∎</span></p>
+    <p>OR에 NAND 3개, AND에 2개가 듭니다. 그대로 바꾸면 게이트 수가 늘지만, 다음 방법을 쓰면 늘지 않습니다.</p>
+
+    <h3><span class="no">2.2.3</span>AND-OR를 NAND-NAND로</h3>
+    <p>곱의 합 \(F = AB + CD\)를 드 모르간으로 두 번 뒤집으면</p>
+    \[ F = \big((AB + CD)'\big)' = \big((AB)'(CD)'\big)'. \]
+    <p>곧 첫째 단의 AND를 모두 NAND로, 둘째 단의 OR도 NAND로 바꾸면 끝입니다. 게이트 수는 그대로입니다. 그림으로 보면, AND 출력의 "동그라미(NOT)"와 OR 입력의 "동그라미"가 짝지어 지워지는 것입니다(OR 입력에 동그라미를 단 것 = NAND, 드 모르간).</p>
+    <p>규칙: <b>2단 곱의 합 회로는 모든 게이트를 NAND로 바꾸면 된다.</b> 단, 첫째 단에 들어가지 않고 OR로 바로 가는 변수(항이 변수 하나뿐인 경우)는 뒤집어서 넣어야 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.2</span>
+      <p>\(F = AB' + C\)를 NAND 게이트만으로 구현하고 게이트 수를 세어라. 입력 B', C'은 없다고 하자.</p>
+    </div>
+    <p><i>풀이.</i> \(F = ((AB')'\,C')'\). 필요한 것: B를 뒤집는 NAND 1개(\(B'\)), \(AB'\)의 NAND 1개, C를 뒤집는 NAND 1개(\(C'\)), 마지막 NAND 1개. 총 4개. 항 C가 변수 하나라 뒤집어 넣는다는 규칙을 썼습니다. 진리표로 확인: \(A = 1, B = 0\)이면 \((AB')' = 0\)이라 마지막 NAND 출력 1. C = 1이면 \(C' = 0\)이라 역시 1. 나머지는 0. \(AB' + C\)와 같습니다.</p>
+
+    <h3><span class="no">2.2.4</span>CMOS에서는 왜 NAND인가</h3>
+    <p>CMOS 공정에서 NAND와 NOR는 트랜지스터 4개로 만들어지고(2입력), AND와 OR는 그 뒤에 인버터가 붙어 6개가 듭니다. 그래서 칩의 기본 게이트는 반전 게이트입니다. NAND와 NOR 중에서는 NAND가 직렬로 놓이는 트랜지스터가 NMOS 쪽이고, NMOS가 PMOS보다 빨라서(전자의 이동도가 큼) 같은 크기에서 NAND가 빠릅니다(전전30 디지털전자회로). NOR도 범용 게이트이며, 합의 곱(POS) 회로는 NOR-NOR로 바꿉니다.</p>
+
+    <div class="tb-note"><b>주의</b>NAND-NAND로 바꾼 회로의 중간 신호는 원래 회로의 신호와 반대입니다. 디버깅할 때 중간 마디를 재면 원래 AND 출력의 NOT이 나온다는 것을 기억하세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>NAND로 NOT(입력 묶기), AND(NAND+NOT), OR(입력 뒤집기 + NAND)를 만든다. 그래서 범용이다.</li>
+        <li>2단 AND-OR = NAND-NAND(드 모르간 두 번). 변수 하나짜리 항은 뒤집어 넣는다.</li>
+        <li>CMOS의 기본은 반전 게이트이고, 그중 NAND가 빠르다. POS는 NOR-NOR.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>NOR만으로 NOT, OR, AND를 만드는 방법을 쓰라.
+          <details><summary>답</summary><p>NOT: \((A + A)'\). OR: NOR + NOT. AND: \(A'\), \(B'\)를 NOR에: \((A' + B')' = AB\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>XOR \(A \oplus B = AB' + A'B\)를 NAND 4개로 만드는 방법을 찾아라.
+          <details><summary>힌트</summary><p>\(N = (AB)'\)을 먼저 만들고 \((AN)'\)과 \((BN)'\)을 만든다.</p></details>
+          <details><summary>답</summary><p>\(N = (AB)'\), \(X = (AN)' = (A(A' + B'))' = (AB')'\), \(Y = (BN)' = (A'B)'\), \(F = (XY)' = AB' + A'B\). 4개.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-05-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s20-u05-review" data-kind="연습" data-std="응통20-05-01">
+  <header class="card-head"><span class="no"></span><h2>예측 단원 마무리 연습</h2><span class="kind">문제 6 · 계산·실습·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>평균이 10인 AR(1) \(X_t - 10 = 0.6(X_{t-1} - 10) + \varepsilon_t\), \(\sigma^2 = 4\)에서 마지막 관측값이 14입니다. 1기와 2기 앞 예측값과 95% 예측구간을 구하세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(\hat X_{n+h} = 10 + 0.6^h(X_n - 10)\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(h\)기 앞 예측 오차 분산은 \(\sigma^2(1 + \phi^2 + \cdots + \phi^{2(h-1)})\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>1기: \(10 + 0.6\times4 = 12.4\), 분산 4, 구간 \(12.4 \pm 1.96\times2 = [8.48, 16.32]\). 2기: \(10 + 0.36\times4 = 11.44\), 분산 \(4(1 + 0.36) = 5.44\), 구간 \(11.44 \pm 1.96\times2.33 \approx [6.87, 16.01]\).</p><p>멀리 예측할수록 예측값은 평균 10으로 돌아가고 구간은 넓어져 결국 \(10 \pm 1.96\sqrt{4/0.64} = 10 \pm 4.9\)(무조건부 분포)에 가까워집니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>랜덤워크 \(X_t = X_{t-1} + \varepsilon_t\) (\(\sigma = 2\))에서 마지막 관측값이 100일 때 1기, 4기, 25기 앞 예측값과 95% 예측구간의 반폭을 구하세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>예측값은 항상 마지막 관측값입니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(h\)기 앞 오차 분산은 \(h\sigma^2\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>예측값은 모두 100이고, 반폭은 \(1.96\times2\sqrt h\), 곧 1기 3.92, 4기 7.84, 25기 19.6입니다. 정상 AR과 달리 구간이 \(\sqrt h\)에 비례해 끝없이 넓어집니다. 비정상 계열의 장기 예측은 매우 불확실합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>MA(1) \(X_t = \varepsilon_t + 0.5\varepsilon_{t-1}\) (평균 0)에서 마지막 시점의 오차 추정값이 \(\hat\varepsilon_n = 2\)일 때 1기와 2기 앞 예측값을 구하세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(X_{n+1} = \varepsilon_{n+1} + 0.5\varepsilon_n\)이고 미래 오차의 예측값은 0입니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(X_{n+2}\)는 미래 오차만으로 이루어집니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>1기: \(0.5\times2 = 1\). 2기 이후: 0(평균). MA(1)은 기억이 한 기뿐이라 2기 앞부터는 과거 정보가 쓸모없습니다. 예측 오차 분산은 1기 \(\sigma^2\), 2기 이후 \((1 + 0.25)\sigma^2\)로 일정합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span><code>AirPassengers</code> 자료에 계절 ARIMA 모형을 적합하고 24개월 예측과 예측구간을 그리는 R 코드를 쓰세요. 로그 변환 후 예측값을 원래 척도로 돌릴 때 주의할 점도 쓰세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>arima(log(AirPassengers), order = c(0,1,1), seasonal = c(0,1,1))</code>가 유명한 항공 모형입니다.</p></details>
+        <details><summary>힌트 2</summary><p>로그 척도 예측값의 지수는 중앙값 예측입니다(응통10-05-01).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>fit &lt;- arima(log(AirPassengers), order = c(0, 1, 1), seasonal = c(0, 1, 1))
+p &lt;- predict(fit, n.ahead = 24)
+ts.plot(AirPassengers, exp(p$pred), exp(p$pred + 1.96 * p$se),
+        exp(p$pred - 1.96 * p$se), lty = c(1, 1, 2, 2))</pre><p>로그 척도 구간의 끝을 지수로 돌리면 원래 척도의 예측구간이 되지만(비대칭), 예측값 \(e^{\hat y}\)는 평균이 아니라 중앙값 예측이므로 평균이 필요하면 \(e^{\hat y + s^2/2}\)로 보정합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>ARIMA 예측구간의 실제 포함 확률이 명목값(95%)보다 낮게 나오는 경우가 많습니다. 그 까닭을 두 가지 이상 쓰세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>예측구간은 모형이 맞고 모수가 정확하다고 가정합니다.</p></details>
+        <details><summary>힌트 2</summary><p>미래에 구조가 바뀔 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 모수 추정의 불확실성을 반영하지 않는 경우가 많습니다. (2) 모형 선택의 불확실성(차수, 차분 여부)을 반영하지 않습니다. (3) 오차가 정규분포보다 꼬리가 두꺼우면 구간이 너무 좁습니다. (4) 미래에 구조 변화나 충격(경제 위기, 감염병)이 생기면 과거 모형이 맞지 않습니다. 붓스트랩 예측구간이나 여러 모형의 결합, 시나리오 분석으로 보완합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>시계열 예측의 정확도를 평가하는 지표 MAE, RMSE, MAPE를 정의하고, 실제값 100, 120, 80과 예측값 110, 115, 90에 대해 계산하세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>오차는 \(-10, 5, -10\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>MAPE는 \(|e_t/y_t|\)의 평균(%)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>MAE \(= (10 + 5 + 10)/3 \approx 8.33\), RMSE \(= \sqrt{(100 + 25 + 100)/3} \approx 8.66\), MAPE \(= (10\% + 4.17\% + 12.5\%)/3 \approx 8.9\%\)입니다. RMSE는 큰 오차에 더 민감하고, MAPE는 척도와 무관해 비교에 편하지만 실제값이 0에 가까우면 불안정합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

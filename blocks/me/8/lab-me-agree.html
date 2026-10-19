@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계8-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m8-lab.js"]
+}
+-->
+<article class="card q-card" id="lab-me-agree" data-kind="실습" data-std="기계8-04-02">
+  <header class="card-head"><span class="no"></span><h2>잔차 그래프로 숨은 계통 오차 찾기</h2><span class="kind">실습 · 정규화 편차 · 잔차 경향 · 원인 추정</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>1.1절의 관로 실험(안지름 10 mm, 탭 간격 1 m, 매끈한 관)을 Re 3000~50000에서 8점 잰 가상 자료입니다. 그래프는 각 점의 잔차(측정 \(f\)가 Colebrook보다 몇 % 큰가)와 95% 불확도 막대입니다. 숨은 계통 오차(안지름이 표시값보다 작음, 차압계 영점 어긋남)를 넣어 보고, 점마다의 \(E_n\) 판정과 잔차 경향 중 어느 쪽이 그것을 먼저 드러내는지 봅니다. 회색 띠는 Colebrook 식 자체의 불확도 ±5%입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>실제 안지름이 작은 정도 = <b data-show="dd" data-fix="1">0.0</b> %</span><input type="range" name="dd" min="0" max="3" step="0.1" value="0" aria-label="안지름 오차"></label>
+        <label><span>차압계 영점 어긋남 = <b data-show="off">0</b> Pa</span><input type="range" name="off" min="-30" max="30" step="1" value="0" aria-label="차압계 영점 오차"></label>
+        <label><span>우연 오차 = <b data-show="ns" data-fix="1">2.0</b> %</span><input type="range" name="ns" min="0" max="6" step="0.5" value="2" aria-label="우연 오차"></label>
+        <button type="button" class="reset">새 자료</button>
+      </div>
+      <canvas aria-label="Re에 따른 잔차와 불확도 막대"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>계통 오차 없음 (기본값)</b><span>잔차가 0 위아래에 섞여 있고 거의 모든 점이 \(|E_n| \le 1\)입니다. "새 자료"를 여러 번 눌러도 부호가 한쪽으로 몰리지 않습니다.</span></li>
+        <li><b>안지름 1% 작게</b><span>모든 점이 약 +5% 위로 올라갑니다(\(f \propto D^5\)). 점마다 \(E_n\)은 대개 1보다 작아 "일치"로 판정되지만, 8점이 모두 양수라 우연으로는 설명이 안 됩니다. 4.2.2의 경향 보기가 먼저 알려 줍니다.</span></li>
+        <li><b>영점 +20 Pa</b><span>낮은 Re(차압 약 200 Pa)에서 잔차가 10% 넘게 커지고 높은 Re에서는 0에 가까워집니다. Re에 따라 기울어진 경향은 "일정한 양"의 오차, 고르게 올라간 경향은 "일정한 비율"의 오차를 가리킵니다.</span></li>
+        <li><b>우연 오차를 키우면</b><span>6%로 키우면 불확도 막대가 길어져 안지름 1% 오차를 넣어도 \(E_n\)으로는 거의 드러나지 않습니다. 정밀한 측정이어야 작은 계통 오차를 찾을 수 있습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>4.2.3처럼 원인 후보의 영향 크기를 계산해 잔차 모양과 맞춰 보는 연습입니다. 1.1절 예제의 기울어진 잔차(+4.8%에서 −2.5%)가 어느 원인에 가까운지 생각해 보세요. 교정 실험(기계공학실험(1) 2단원)과 회귀 잔차 분석(6.1절)도 같은 생각을 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"모든 점이 불확도 안에 있으면 실험에 문제가 없다."</b> 부호가 한쪽으로 몰리면 계통 오차가 있습니다.</li>
+        <li><b>"우연 오차가 크면 이론과 일치하기 쉬우니 좋다."</b> 판정이 느슨해질 뿐, 실험이 아무것도 확인하지 못합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

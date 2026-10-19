@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-06-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s3-u06-review" data-kind="연습" data-std="응통3-06-01 응통3-06-02">
+  <header class="card-head"><span class="no"></span><h2>재현 가능한 보고서 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>R Markdown(또는 Quarto) 코드 청크 옵션 <code>echo = FALSE</code>, <code>eval = FALSE</code>, <code>include = FALSE</code>, <code>message = FALSE</code>가 각각 무엇을 하는지 쓰세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>코드를 보여 줄지, 실행할지, 결과를 보여 줄지는 서로 다른 문제입니다.</p></details>
+        <details><summary>힌트 2</summary><p>패키지를 불러올 때 나오는 안내문을 숨기는 옵션도 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p class="q-term"><code>echo = FALSE</code>: 코드를 실행하고 결과는 보이되 코드는 숨긴다.</p><p class="q-term"><code>eval = FALSE</code>: 코드를 보이기만 하고 실행하지 않는다.</p><p class="q-term"><code>include = FALSE</code>: 실행은 하지만 코드와 결과를 모두 문서에 넣지 않는다(설정 청크에 씀).</p><p class="q-term"><code>message = FALSE</code>: 실행 중 나오는 메시지(패키지 불러오기 안내 등)를 숨긴다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>보고서 본문에 "평균 점수는 81.7점이다"라고 숫자를 직접 적는 대신 인라인 코드로 쓰는 방법과 그 장점을 쓰세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>R Markdown에서 인라인 코드는 백틱 안에 <code>r</code>을 붙여 씁니다.</p></details>
+        <details><summary>힌트 2</summary><p>자료가 바뀌면 직접 적은 숫자는 어떻게 되나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>본문에 <code>평균 점수는 `r round(mean(d$score), 1)`점이다</code>처럼 씁니다. 문서를 만들 때마다 계산해 넣으므로, 자료를 고치거나 이상값을 빼서 결과가 바뀌어도 본문 숫자가 자동으로 맞춰집니다. 손으로 옮겨 적을 때 생기는 오타와 "그림은 새 결과, 본문은 옛 결과"인 불일치를 막습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>동료에게 받은 분석 스크립트 첫 줄이 <code>setwd("C:/Users/kim/Desktop/분석")</code>입니다. 이 줄의 문제와 더 나은 방법을 쓰세요. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>이 경로는 동료 컴퓨터에만 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>RStudio 프로젝트나 <code>here</code> 패키지는 프로젝트 폴더를 기준으로 한 상대 경로를 씁니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>절대 경로는 작성자 컴퓨터에서만 맞으므로 다른 사람(또는 다른 컴퓨터의 자신)이 실행하면 바로 오류가 납니다.</p><p>프로젝트 폴더를 하나 정하고(RStudio 프로젝트, Quarto 프로젝트), 그 안에서 <code>read.csv("data/raw.csv")</code>처럼 상대 경로를 쓰거나 <code>here::here("data", "raw.csv")</code>를 씁니다. 그러면 폴더째 복사해도 그대로 돌아갑니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>스크립트 첫 줄에 <code>rm(list = ls())</code>를 두면 "깨끗한 상태에서 실행된다"고 믿는 사람이 있습니다. 이 믿음의 문제를 설명하고, 정말로 깨끗한 상태에서 실행됐음을 확인하는 방법을 쓰세요. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>rm(list = ls())</code>는 작업 공간의 객체만 지웁니다. 불러온 패키지와 바꾼 옵션은 어떻게 되나요?</p></details>
+        <details><summary>힌트 2</summary><p>R 세션을 새로 시작하는 것과 비교해 보세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>rm(list = ls())</code>는 객체만 지우고, 이미 불러온 패키지, 바꾼 옵션(<code>options()</code>), 작업 디렉터리는 그대로 남깁니다. 그래서 스크립트 안에 <code>library()</code>가 빠져 있어도 내 컴퓨터에서는 돌아가는 일이 생깁니다.</p><p>R 세션을 새로 시작한 뒤(RStudio의 Restart R) 처음부터 실행하거나, 문서를 렌더링(knit, <code>quarto render</code>)해 보면 됩니다. 렌더링은 새 세션에서 실행되므로 숨은 상태에 기대지 않는지 확인할 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>분석을 1년 뒤에도 똑같이 다시 돌릴 수 있도록, 사용한 R과 패키지 버전을 기록하고 고정하는 방법을 두 가지 쓰세요. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>현재 세션의 버전 정보를 출력하는 함수가 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>프로젝트마다 패키지 버전을 따로 관리해 주는 패키지가 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 보고서 끝에 <code>sessionInfo()</code> 출력을 넣어 R과 패키지 버전을 기록합니다. (2) <code>renv</code> 패키지로 <code>renv::init()</code>, <code>renv::snapshot()</code>을 하면 프로젝트의 패키지 버전이 <code>renv.lock</code> 파일에 저장되고, 다른 사람은 <code>renv::restore()</code>로 같은 버전을 설치할 수 있습니다. 더 엄격하게는 도커 같은 컨테이너로 운영체제까지 고정하기도 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>부트스트랩 신뢰구간을 계산하는 보고서를 만들 때마다 구간 끝 값이 조금씩 달라집니다. 원인과 고치는 방법을 쓰고, "값이 조금씩 다르다"는 사실 자체가 알려 주는 정보도 쓰세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>부트스트랩은 무작위 재표본을 씁니다.</p></details>
+        <details><summary>힌트 2</summary><p>반복 횟수와 결과의 흔들림은 어떤 관계인가요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>시드를 정하지 않아 렌더링할 때마다 다른 재표본이 뽑히기 때문입니다. 설정 청크에 <code>set.seed(2026)</code>을 넣으면 같은 결과가 나옵니다.</p><p>값이 흔들리는 폭은 모의실험 오차의 크기를 알려 줍니다. 흔들림이 결론에 영향을 줄 만큼 크다면 시드만 고정하지 말고 부트스트랩 반복 횟수(예: 1000 → 10000)를 늘려야 합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

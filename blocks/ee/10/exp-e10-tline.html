@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전10-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/ee-explore.js"]
+}
+-->
+<article class="card q-card" id="exp-e10-tline" data-kind="탐구" data-std="전전10-04-02">
+  <header class="card-head"><span class="no"></span><h2>선로 위에 서 있는 파동: 반사와 정재파</h2><span class="kind">탐구 · 반사 계수, 정재파비, 입력 임피던스</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>특성 임피던스 50 Ω인 동축 케이블 끝에 50 Ω이 아닌 부하를 달면, 케이블 위의 전압은 어디서나 같은 진폭일까요? 케이블 길이를 바꾸면 전원 쪽에서 본 임피던스가 왜 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>선로 위 전압은 부하로 가는 입사파와 부하에서 돌아오는 반사파의 합입니다. 부하에서 거슬러 잰 거리 \(d\)에서 \(V(d) = V^+\left(e^{j\beta d} + \Gamma_L e^{-j\beta d}\right)\), \(\beta = 2\pi/\lambda\).</li>
+        <li>반사 계수 \(\Gamma_L = \dfrac{Z_L - Z_0}{Z_L + Z_0}\). 정합(\(Z_L = Z_0\))이면 0, 단락이면 −1, 개방이면 +1.</li>
+        <li>두 파동이 겹쳐 진폭이 자리마다 다른 정재파가 생깁니다. 최대와 최소의 비가 정재파비 \(\text{VSWR} = \dfrac{1 + |\Gamma|}{1 - |\Gamma|}\)입니다.</li>
+        <li>입력 임피던스 \(Z_\text{in}(d) = Z_0\dfrac{Z_L + jZ_0\tan\beta d}{Z_0 + jZ_L\tan\beta d}\)는 반 파장마다 되풀이됩니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>부하</span><select name="kind" aria-label="부하 종류"><option value="user" selected>직접 정하기</option><option value="match">정합 50 Ω</option><option value="short">단락</option><option value="open">개방</option></select></label>
+        <label class="only-user"><span>R_L = <b data-show="RL">100</b> Ω</span><input type="range" name="RL" min="0" max="500" step="5" value="100" aria-label="부하 저항"></label>
+        <label class="only-user"><span>X_L = <b data-show="XL">0</b> Ω</span><input type="range" name="XL" min="-200" max="200" step="5" value="0" aria-label="부하 리액턴스"></label>
+        <label><span>관찰 위치 d = <b data-show="d" data-fix="3">0.125</b> λ</span><input type="range" name="d" min="0" max="1.5" step="0.005" value="0.125" aria-label="부하에서의 거리, 파장 단위"></label>
+      </div>
+      <canvas aria-label="선로 위 전압 진폭과 순간 전압. 오른쪽 끝이 부하"></canvas>
+      <canvas aria-label="반사 계수 평면. 파랑 부하의 Γ, 빨강 관찰 위치의 Γ"></canvas>
+      <div class="btns"><button type="button" class="play">재생</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>100 Ω 부하</b><span>\(\Gamma_L = 50/150 = 1/3\), VSWR = 2. 진폭은 1.33과 0.67 사이를 오가고, 부하(오른쪽 끝)가 최대점입니다(저항이 \(Z_0\)보다 크면 부하에서 최대).</span></li>
+        <li><b>4분의 1 파장 변환</b><span>d = 0.25λ에서 입력 임피던스는 \(Z_0^2/Z_L = 2500/100 = 25\ \Omega\)입니다. 4분의 1 파장 선로가 임피던스를 뒤집습니다.</span></li>
+        <li><b>단락과 개방</b><span>단락에서 |V|는 부하에서 0, 반 파장마다 0이 됩니다(VSWR 무한대). d = 0.25λ에서 단락선은 개방처럼(무한대), 개방선은 단락처럼 보입니다.</span></li>
+        <li><b>정합</b><span>정합이면 반사가 없어 진폭이 어디서나 1이고, 재생하면 파동이 부하 쪽으로 흘러가기만 합니다. 반사가 있으면 파동이 제자리에서 오르내리는 부분이 생깁니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>오른쪽 그림의 원(반지름 |Γ|)을 따라 도는 점이 스미스(Smith) 도표의 출발점입니다. 스미스 도표는 이 Γ 평면 위에 임피던스 눈금을 겹쳐 그린 것이라, 선로를 따라 움직이는 것을 원 위의 회전으로 읽습니다(전전10-04-03, 전전19).</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"선로가 짧으면 반사는 상관없다."</b> 길이를 파장과 비교해야 합니다. 1 GHz 신호의 파장은 동축 케이블 안에서 약 20 cm라서, 기판 위 몇 cm 배선도 '긴 선로'입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

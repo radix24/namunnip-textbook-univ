@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통11-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s11-features" data-kind="본문" data-std="응통11-02-02">
+  <header class="card-head"><span class="no"></span><h2>분석용 자료 정제와 변수 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>거래 자료를 분석 단위(고객, 기간)로 집계해 변수를 만든다.</li>
+        <li>미래 정보가 섞이는 누수를 막는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>자료 품질 (<a href="02-01.html">2.1절</a>), 그룹 요약 (응통3 2.3절).</li>
+      </ul>
+    </div>
+
+    <h3>원자료에서 분석표로</h3>
+    <p>예측 모형은 "고객 한 명 = 한 행"처럼 분석 단위로 정리된 표가 필요합니다. 수백만 건의 거래 기록을 고객별 최근 구매일, 구매 횟수, 총액 같은 변수로 바꾸는 작업이 변수 만들기(특성 공학)입니다.</p>
+
+    <h3><span class="no">2.2.1</span>흔한 변수</h3>
+    <ul>
+      <li><b>RFM</b>: 최근성(마지막 구매 후 일수), 빈도(기간 내 구매 횟수), 금액(총액).</li>
+      <li>추세: 최근 1개월 / 이전 3개월 평균 사용량 비율.</li>
+      <li>비율·다양성: 할인 구매 비율, 구매 품목 종류 수.</li>
+      <li>범주 처리: 드문 범주를 "기타"로 묶기, 가변수.</li>
+    </ul>
+
+    <h3><span class="no">2.2.2</span>누수 막기</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.2.1</span>
+      <p><b>누수</b>: 예측 시점에는 알 수 없는 정보가 변수에 섞여 들어가는 것.</p>
+    </div>
+    <p>예: 3월 1일에 "3월 해지"를 예측하는데 3월 중 고객센터 해지 문의 횟수를 변수로 쓰면 성능은 매우 좋아 보이지만 실제로는 쓸 수 없습니다. 기준 시점(관측 마감일)을 정하고, 모든 변수는 그 이전 자료로만, 결과는 그 이후 기간에서만 만듭니다.</p>
+    <pre><code># 기준일 cutoff 이전 거래로 고객별 변수 만들기 (dplyr)
+feat &lt;- tx |&gt; filter(date &lt; cutoff) |&gt; group_by(customer) |&gt;
+  summarise(recency = as.numeric(cutoff - max(date)),
+            freq = n(), monetary = sum(amount))
+label &lt;- tx |&gt; filter(date &gt;= cutoff, date &lt; cutoff + 30) |&gt;
+  distinct(customer) |&gt; mutate(bought_next30 = 1)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>거래 → 분석 단위로 집계(RFM, 추세, 비율).</li>
+        <li>기준 시점 이전 자료로만 변수를 만듦.</li>
+        <li>성능이 지나치게 좋으면 누수를 의심.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>대출 연체 예측 모형에 "연체 독촉 문자 발송 횟수"를 넣었더니 정확도가 99%가 되었습니다. 문제는?
+          <details><summary>답</summary><p>독촉 문자는 연체 뒤에 보내므로 결과를 담은 누수 변수입니다. 예측 시점에 알 수 없으니 빼야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

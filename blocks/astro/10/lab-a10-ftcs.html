@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-04-01",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a10-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a10-ftcs" data-kind="실습" data-std="천우10-04-01">
+  <header class="card-head"><span class="no"></span><h2>확산 방정식의 명시적·암시적 차분과 안정 조건</h2><span class="kind">실습 · 유한 차분</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>1차원 확산 방정식을 명시적(FTCS)·암시적(BTCS) 방법으로 풀어, \(r = D\Delta t/\Delta x^2\)이 1/2을 넘을 때 명시적 방법이 폭발하는 것을 확인합니다. 성취기준 [천우10-04-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>격자는 50칸(\(\Delta x = 0.02\)), 양 끝은 \(u = 0\)으로 고정합니다. 처음 상태는 가운데 11칸이 1인 사각형입니다. 사각형은 짧은 파장 성분을 많이 가져 불안정이 잘 드러납니다. 암시적 방법은 토마스 알고리즘으로 풉니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="meth" aria-label="방법"><option value="ex">명시적 (FTCS)</option><option value="im">암시적 (BTCS)</option></select></label>
+        <label><span>r = DΔt/Δx² = <b data-show="r" data-fix="2">0.4</b></span><input type="range" name="r" min="0.1" max="2" step="0.01" value="0.4" aria-label="r"></label>
+        <label><span>걸음 수 = <b data-show="steps">100</b></span><input type="range" name="steps" min="10" max="300" step="10" value="100" aria-label="걸음 수"></label>
+      </div>
+      <canvas aria-label="처음 상태(회색 점선)와 현재 해(파랑)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>명시적, r = 0.4, 100걸음에서 모양과 최대값, 합을 읽습니다.</li>
+        <li>r을 0.5, 0.52, 0.6으로 올려 봅니다.</li>
+        <li>암시적으로 바꿔 r = 0.6, 2.0에서 다시 봅니다.</li>
+        <li>같은 무차원 시간(r × 걸음 수가 같게)에서 명시적 r = 0.4 × 100걸음과 암시적 r = 2 × 20걸음을 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>명시적 r = 0.4, 100걸음: 최대 0.4608, 합 10.82(처음 11, 양 끝으로 조금 빠져나감).</li>
+        <li>r = 0.5: 0.4493(안정의 경계). r = 0.52: 76.56. r = 0.6: 1.48×10¹³으로 지그재그 모양이 폭발한다.</li>
+        <li>암시적 r = 0.4, 100걸음: 0.4635. r = 0.6, 100걸음: 0.386. r = 2, 20걸음: 0.4689로 모두 안정하다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>r = 0.52에서 폭발하는 모양이 칸마다 부호가 바뀌는 지그재그인 까닭을 von Neumann 분석으로 설명하세요.</li>
+        <li>같은 시간에서 암시적 r = 2의 결과(0.4689)가 r = 0.4(0.4635)와 조금 다른 까닭은?</li>
+        <li>합 Σu가 시간에 따라 줄어드는 물리적 까닭은?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Crank-Nicolson 방법을 Python으로 짜고, 처음 상태를 \(\sin\pi x\)로 바꿔 해석해 \(e^{-\pi^2Dt}\sin\pi x\)와의 오차가 \(\Delta t^2\)으로 줄어드는지 확인해 보세요.</p>
+    </section>
+  </div>
+</article>

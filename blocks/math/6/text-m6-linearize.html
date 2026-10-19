@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학6-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m6-linearize" data-kind="본문" data-std="수학6-07-02">
+  <header class="card-head"><span class="no"></span><h2>비선형계의 선형화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>비선형 자율계의 평형점을 찾고, 야코비 행렬로 그 근처를 선형계로 근사한다.</li>
+        <li>선형화가 안정성을 결정하는 경우(쌍곡형)와 결정하지 못하는 경우(중심)를 구별한다.</li>
+        <li>감쇠 진자와 포식자-먹이 모형에 적용한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>대각합-행렬식 분류 (<a href="07-01.html">7.1절</a>), 편미분과 야코비 행렬 (<a href="../7/08-02.html">수학7 8.2절</a> 또는 다변수 미적분), 테일러 근사 \(\sin\theta \approx \theta\).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>평형점 근처를 확대하면</h3>
+    <p>비선형계 \(x' = f(x, y)\), \(y' = g(x, y)\)는 대개 풀 수 없지만, 평형점 \((x^*, y^*)\) 가까이를 확대하면 거의 선형으로 보입니다. 미분이 "가장 좋은 일차 근사"이기 때문입니다. \(\mathbf u = \mathbf x - \mathbf x^*\)로 두면</p>
+    \[\mathbf u' \approx J\mathbf u, \qquad J = \begin{pmatrix} f_x & f_y \\ g_x & g_y\end{pmatrix}_{(x^*, y^*)}.\]
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.1 <span class="nm">(선형화 정리, 하트만-그로브만)</span></span>
+      <p>\(J\)의 고유값의 실수부가 모두 0이 아니면(쌍곡형 평형점), 평형점 근처의 궤적은 선형계 \(\mathbf u' = J\mathbf u\)의 궤적과 (연속 변형으로) 같은 모양이고 안정성도 같다. 특히 모든 실수부가 음수이면 점근 안정, 양수인 것이 있으면 불안정.</p>
+    </div>
+    <p>선형화가 실패하는 것은 \(J\)가 중심(순허수 고유값)이거나 고유값 0을 가질 때입니다. 이때는 작은 비선형 항이 나선 쪽으로 기울일 수 있어, 리아푸노프 함수(7.3절) 같은 다른 방법이 필요합니다.</p>
+
+    <h3><span class="no">7.2.2</span>감쇠 진자</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>\(\theta'' + c\theta' + \sin\theta = 0\) (\(c &gt; 0\))의 평형점을 모두 찾고 안정성을 판정하여라. (7단원 자기 점검)</p>
+    </div>
+    <p><i>풀이.</i> \(x = \theta\), \(y = \theta'\)로 \(x' = y\), \(y' = -\sin x - cy\). 평형점은 \(y = 0\), \(\sin x = 0\), 곧 \((k\pi, 0)\). 야코비 행렬 \(J = \begin{pmatrix} 0 & 1 \\ -\cos x & -c\end{pmatrix}\).</p>
+    <ul>
+      <li>\(k\) 짝수(진자가 아래로 매달림): \(J = \begin{pmatrix} 0 & 1 \\ -1 & -c\end{pmatrix}\), \(\tau = -c &lt; 0\), \(\Delta = 1 &gt; 0\). 점근 안정. \(c &lt; 2\)이면 나선(흔들리며 멈춤), \(c \ge 2\)이면 마디점(흔들리지 않고 멈춤).</li>
+      <li>\(k\) 홀수(거꾸로 선 진자): \(J = \begin{pmatrix} 0 & 1 \\ 1 & -c\end{pmatrix}\), \(\Delta = -1 &lt; 0\). 안장점, 불안정.</li>
+    </ul>
+    <p>둘 다 쌍곡형이라 선형화의 판정이 그대로 맞습니다. 감쇠가 없으면(\(c = 0\)) 아래 평형점의 선형화가 중심이 되어 선형화만으로는 판정할 수 없지만, 에너지 보존으로 실제로도 중심임을 보일 수 있습니다(7.3절). 같은 절의 탐구 카드에서 상평면을 볼 수 있습니다.</p>
+
+    <h3><span class="no">7.2.3</span>포식자-먹이</h3>
+    <p>로트카-볼테라 모형 \(x' = x(1 - y)\) (먹이), \(y' = y(x - 1)\) (포식자)의 평형점은 \((0, 0)\)과 \((1, 1)\)입니다. \((0, 0)\)의 \(J = \operatorname{diag}(1, -1)\)은 안장점. \((1, 1)\)의 \(J = \begin{pmatrix} 0 & -1 \\ 1 & 0\end{pmatrix}\)은 중심이라 선형화로는 판정 불가입니다. 실제로는 보존량 \(x - \ln x + y - \ln y\)가 있어 닫힌 궤도(개체 수의 주기적 진동)가 됩니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 선형화가 중심인데 "안정한 중심"이라 결론짓는다: 비선형 항에 따라 나선이 될 수 있어 판정 불가다. (2) 야코비 행렬을 원점에서만 계산한다: 각 평형점에서 따로 계산해야 한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>평형점 근처는 야코비 행렬 \(J\)의 선형계로 근사된다.</li>
+        <li>고유값 실수부가 모두 0이 아니면(쌍곡형) 선형화가 모양과 안정성을 결정한다.</li>
+        <li>감쇠 진자: 아래 평형점 안정(나선/마디), 위 평형점 안장점. 중심이면 선형화로 판정 불가.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(x' = x - x^2\), \(y' = -y\)의 평형점과 종류를 구하여라.
+          <details><summary>답</summary><p>\((0, 0)\): \(J = \operatorname{diag}(1, -1)\) 안장점. \((1, 0)\): \(J = \operatorname{diag}(-1, -1)\) 안정 마디점(별 모양).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x' = y\), \(y' = -x + x^3\)의 평형점을 분류하여라.
+          <details><summary>답</summary><p>\((0, 0)\): \(J = \begin{pmatrix}0&1\\-1&0\end{pmatrix}\) 중심(선형화 판정 불가, 보존계라 실제 중심). \((\pm1, 0)\): \(J = \begin{pmatrix}0&1\\2&0\end{pmatrix}\) 안장점.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(x' = -y + ax(x^2 + y^2)\), \(y' = x + ay(x^2 + y^2)\)의 원점은 선형화가 중심이지만 \(a\)의 부호에 따라 안정·불안정 나선임을 극좌표로 보여라.
+          <details><summary>답</summary><p>\(r' = ar^3\), \(\theta' = 1\). \(a &lt; 0\)이면 \(r \to 0\)(안정 나선), \(a &gt; 0\)이면 불안정. 선형화가 중심일 때 판정이 불가능한 이유의 예.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

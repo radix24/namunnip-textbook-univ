@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-08-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="lab-e6-fir" data-kind="실습" data-std="전전6-08-03">
+  <header class="card-head"><span class="no"></span><h2>NumPy로 FIR 저역 통과 필터 만들고 적용하기</h2><span class="kind">실습 · 창 방법 설계, 응답 측정, 잡음 제거</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>8.3절의 창 방법으로 51탭 저역 통과 필터를 코드로 설계하고, 통과·저지 대역 이득을 재고, 가상 신호의 잡음을 걸러 봅니다. 성취기준 [전전6-08-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>Python 3과 NumPy. 그림을 보려면 matplotlib(선택).</li>
+        <li>아래 코드를 <code>fir_lab.py</code>로 저장합니다. 입력 신호는 계산으로 만든 가상 신호입니다.</li>
+      </ul>
+<pre><code>import numpy as np
+
+fs = 1000                          # 표본화 주파수 (Hz)
+fc = 100                           # 원하는 차단 주파수 (Hz)
+M = 51                             # 탭 수(홀수: 가운데가 대칭 중심)
+
+def lowpass(M, fc, win):
+    n = np.arange(M) - (M - 1) / 2             # −25 ~ 25
+    h = 2 * fc / fs * np.sinc(2 * fc / fs * n)  # 이상 저역 통과의 임펄스 응답을 자름
+    h = h * win(M)
+    return h / h.sum()                          # 직류 이득을 1로
+
+def gain_db(h, f):
+    w = 2 * np.pi * f / fs
+    H = np.sum(h * np.exp(-1j * w * np.arange(len(h))))
+    return 20 * np.log10(abs(H))
+
+for name, win in [("rect", np.ones), ("hamming", np.hamming)]:
+    h = lowpass(M, fc, win)
+    stop = max(gain_db(h, f) for f in range(150, 501))   # 저지 대역 150~500 Hz의 최댓값
+    print(name, "50Hz %.2f  100Hz %.2f dB, 150~500Hz max %.1f dB"
+          % (gain_db(h, 50), gain_db(h, 100), stop))
+
+# 가상 신호: 30 Hz(진폭 1) + 250 Hz 잡음(진폭 0.5), 1초
+t = np.arange(fs) / fs
+x = np.sin(2 * np.pi * 30 * t) + 0.5 * np.sin(2 * np.pi * 250 * t)
+y = np.convolve(x, lowpass(M, fc, np.hamming), mode="full")[:fs]
+A = 2 * np.abs(np.fft.rfft(y[100:900])) / 800     # 앞뒤 과도 구간을 빼고 0.8초
+f = np.fft.rfftfreq(800, 1 / fs)
+print("30Hz %.3f  250Hz %.1e" % (A[f == 30][0], A[f == 250][0]))
+print("delay", (M - 1) / 2, "samples")</code></pre>
+      <p><code>np.sinc(u)</code>는 \(\frac{\sin\pi u}{\pi u}\)이므로, <code>2*fc/fs*np.sinc(2*fc/fs*n)</code>이 8.3절의 \(\frac{\sin\omega_cn}{\pi n}\)입니다(\(\omega_c = 2\pi f_c/f_s\)).</p>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li><code>python fir_lab.py</code>를 실행하고 네 줄의 출력을 적습니다.</li>
+        <li>(선택) <code>gain_db</code>를 0~500 Hz에서 1 Hz 간격으로 계산해 두 창의 응답을 한 그림에 그립니다.</li>
+        <li>M을 101로 바꿔 다시 실행하고, 저지 대역 최댓값과 100~150 Hz 사이의 감쇠가 어떻게 바뀌는지 봅니다.</li>
+        <li>(선택) <code>x</code>와 <code>y</code>를 같은 그림에 그려, y가 25표본 늦은 것을 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>NumPy 2.x에서 위 코드를 실행한 출력입니다.</p>
+<pre><code>rect 50Hz -0.37  100Hz -6.51 dB, 150~500Hz max -31.8 dB
+hamming 50Hz -0.01  100Hz -6.05 dB, 150~500Hz max -61.6 dB
+30Hz 0.998  250Hz 1.1e-05
+delay 25.0 samples</code></pre>
+      <ul>
+        <li>두 필터 모두 100 Hz에서 약 −6 dB입니다. 창 방법에서 차단 주파수는 크기 0.5 지점입니다.</li>
+        <li>Hamming 창은 통과 대역 물결이 0.01 dB로 작고, 저지 대역 최대 이득이 −61.6 dB로 직사각(−31.8 dB)보다 약 30 dB 깊습니다.</li>
+        <li>30 Hz 성분은 거의 그대로(0.998), 250 Hz 잡음은 0.5에서 약 \(1.1\times10^{-5}\)으로 줄었습니다.</li>
+        <li>M = 101로 바꾸면 출력은 <code>rect 50Hz 0.40  100Hz -5.93 dB, 150~500Hz max -35.3 dB</code>, <code>hamming 50Hz 0.03  100Hz -6.01 dB, 150~500Hz max -60.2 dB</code>, 지연 50표본입니다. Hamming의 저지 대역 최댓값은 −61.6에서 −60.2 dB로 거의 그대로이고(창이 정함), 120 Hz에서의 이득은 −22.1 dB에서 −52.9 dB로 깊어집니다(전이 대역이 좁아짐).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>직사각 창의 저지 대역 최댓값은 150 Hz 바로 위 어디에서 나왔을까요? 1 Hz 간격 응답을 그려 찾고, 8.2절의 옆엽과 연결하세요.</li>
+        <li>같은 사양(100 Hz까지 통과, 150 Hz부터 60 dB 감쇠)을 Butterworth로 만들려면 몇 차가 필요할까요? 8.1절의 식으로 어림하고, 계산량(곱셈 수)을 FIR과 비교하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>SciPy가 있다면 <code>scipy.signal.firwin(51, 100, fs=1000)</code>의 결과를 위 Hamming 계수와 비교해 보세요(기본 창이 Hamming). <code>scipy.signal.butter</code>와 <code>lfilter</code>로 IIR 필터를 만들어 같은 신호에 적용하고, 출력 파형의 지연과 모양을 비교하면 8.1.4의 위상 이야기가 보입니다.</p>
+    </section>
+  </div>
+</article>

@@ -62,12 +62,12 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
-  /* 3. ΔG = ΔH − TΔS: 온도에 따라 자발성이 바뀌는 지점 (06-02, 06-03) */
+  /* 3. ΔH와 ΔS의 부호로 나누는 자발성의 네 경우 (06-02). 같은 절의 lab-c6-gibbs(c56-exp.js)는 특정 반응의 경계 온도를 다룬다 */
   (() => {
-    const S = QSim.card("lab-c6-gibbs"); if (!S) return;
+    const S = QSim.card("lab-c6-gibbs-play"); if (!S) return;
     const cv = S.$("canvas"), R = 8.314;
     /* 미리 정한 반응: [ΔH (kJ/mol), ΔS (J/(mol·K)), 이름] */
-    const PRE = { caco3: [178, 161, "CaCO₃ → CaO + CO₂"], ice: [6.01, 22.0, "얼음 → 물"], nh3: [-92.2, -198.7, "N₂ + 3H₂ → 2NH₃"], free: [null, null, "직접 정하기"] };
+    const PRE = { h2o2: [-196.0, 125.8, "2H₂O₂ → 2H₂O + O₂ (ΔH < 0, ΔS > 0)"], o3: [285.4, -137.8, "3O₂ → 2O₃ (ΔH > 0, ΔS < 0)"], nh3: [-92.2, -198.7, "N₂ + 3H₂ → 2NH₃ (ΔH < 0, ΔS < 0)"], ice: [6.01, 22.0, "얼음 → 물 (ΔH > 0, ΔS > 0)"], free: [null, null, "직접 정하기"] };
     function draw() {
       const c = C(), pre = PRE[S.val("m")];
       const dH = pre[0] ?? S.val("dH"), dS = pre[1] ?? S.val("dS"), T = S.val("T");

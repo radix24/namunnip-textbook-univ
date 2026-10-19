@@ -1,0 +1,93 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-lsq" data-kind="본문" data-std="천우6-06-01">
+  <header class="card-head"><span class="no"></span><h2>최소제곱법으로 관측 자료에 직선과 곡선 맞추기</h2><span class="kind">본문 · 6.1절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>잔차 제곱합을 최소로 하는 직선의 기울기와 절편 공식을 유도한다.</li>
+        <li>맞춤 결과의 불확도를 계산한다.</li>
+        <li>로그를 취하거나 다항식으로 곡선 맞춤으로 확장한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>편미분과 극값 (<a href="../../common/2/05.html">공통2 5단원</a>), 평균과 표준편차 (<a href="../../common/7/02.html">공통7 2단원</a>), Python (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+<h3>흩어진 점들에서 법칙을 찾기</h3>
+    <p>관측값은 늘 잡음이 섞여 있어 점들이 정확히 한 직선 위에 있지 않습니다. 그래도 거리와 후퇴 속도의 관계(허블 상수), 주기와 광도의 관계처럼 숨은 직선을 찾아야 합니다. "점들에서 가장 가까운 직선"을 정하는 표준적인 방법이 최소제곱법입니다. 1805년 르장드르와 가우스가 소행성 궤도 계산을 위해 만든 방법입니다.</p>
+
+    <h3><span class="no">6.1.1</span>직선 맞춤</h3>
+    <p>자료 \((x_i, y_i)\), \(i = 1, \dots, n\)에 직선 \(y = a + bx\)를 맞춥니다. 각 점의 <b>잔차</b> \(r_i = y_i - (a + bx_i)\)의 제곱합 \(S(a, b) = \sum r_i^2\)이 가장 작은 \(a, b\)를 고릅니다.</p>
+    <p class="tb-proof"><span class="lb">유도.</span> 극소에서 \(\partial S/\partial a = -2\sum r_i = 0\), \(\partial S/\partial b = -2\sum x_ir_i = 0\)입니다. 풀어 쓰면 \(na + b\sum x_i = \sum y_i\), \(a\sum x_i + b\sum x_i^2 = \sum x_iy_i\)인 연립방정식이고, 그 해는
+    \[ b = \frac{n\sum x_iy_i - \sum x_i\sum y_i}{n\sum x_i^2 - (\sum x_i)^2}, \qquad a = \frac{\sum y_i - b\sum x_i}{n} \]
+    입니다. <span class="qed">∎</span></p>
+    <p>제곱을 쓰는 까닭은 양과 음의 잔차가 상쇄되지 않게 하고, 미분해 식으로 풀 수 있게 하기 위해서입니다. 잡음이 정규분포를 따르면 최소제곱 해는 가장 그럴듯한(최대가능도) 해이기도 합니다(<a href="../10/05-01.html">천우10 5.1절</a>).</p>
+
+    <h3><span class="no">6.1.2</span>예제: 허블 상수</h3>
+    <pre><code># 가상 자료: 은하 거리(Mpc)와 후퇴 속도(km/s)
+d = [10, 20, 35, 50, 70, 90, 120]
+v = [820, 1310, 2650, 3420, 5100, 6150, 8500]
+n = len(d)
+sx, sy = sum(d), sum(v)
+sxx = sum(x * x for x in d); sxy = sum(x * y for x, y in zip(d, v))
+b = (n * sxy - sx * sy) / (n * sxx - sx * sx)     # 기울기
+a = (sy - b * sx) / n                             # 절편
+H0_origin = sxy / sxx                             # 원점을 지나는 직선의 기울기
+res = [y - (a + b * x) for x, y in zip(d, v)]
+s = (sum(r * r for r in res) / (n - 2)) ** 0.5
+sb = s * (n / (n * sxx - sx * sx)) ** 0.5
+print(f&quot;직선 v = a + b d: a = {a:.0f} km/s, b = {b:.1f} ± {sb:.1f} km/s/Mpc&quot;)
+print(f&quot;원점을 지나는 직선: H0 = {H0_origin:.1f} km/s/Mpc&quot;)</code></pre>
+    <pre><code>직선 v = a + b d: a = 55 km/s, b = 69.8 ± 1.7 km/s/Mpc
+원점을 지나는 직선: H0 = 70.5 km/s/Mpc</code></pre>
+    <p>자료는 가상입니다. 기울기의 불확도는 잔차의 표준편차 \(s = \sqrt{\sum r_i^2/(n-2)}\)(직선의 두 매개변수를 빼서 \(n - 2\))로 \(\sigma_b = s\sqrt{n/[n\sum x^2 - (\sum x)^2]}\)를 계산한 것입니다. 허블-르메트르 법칙은 원점을 지나야 하므로 \(a = 0\)으로 두고 \(b = \sum xy/\sum x^2\)로 맞추기도 합니다. 물리적으로 정해진 조건이 있으면 맞춤에 넣는 것이 좋습니다. 아래 실습 카드에서 잡음과 점의 수를 바꾸며 기울기의 불확도가 어떻게 바뀌는지 볼 수 있습니다.</p>
+
+    <h3><span class="no">6.1.3</span>곡선 맞춤</h3>
+    <ul>
+      <li class="q-term"><b>로그 변환</b>: \(y = Ax^k\)는 \(\log y = \log A + k\log x\)로 직선이 된다. 케플러 제3법칙, 질량-광도 관계 맞춤에 쓴다.</li>
+      <li class="q-term"><b>다항식</b>: \(y = a_0 + a_1x + a_2x^2\)도 매개변수에 대해 선형이라 같은 방법(정규 방정식)으로 푼다.</li>
+      <li class="q-term"><b>비선형</b>: 가우스 선 모양처럼 매개변수가 비선형으로 들어가면 반복 계산(<code>scipy.optimize.curve_fit</code>)으로 푼다.</li>
+    </ul>
+    <div class="tb-note"><b>주의</b> 점마다 오차가 다르면 각 잔차를 그 점의 오차 \(\sigma_i\)로 나눈 \(\chi^2 = \sum(r_i/\sigma_i)^2\)을 최소화합니다(가중 최소제곱). 또 동떨어진 점 하나(이상값)가 결과를 크게 끌 수 있으므로 맞춘 뒤 잔차를 그려 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>잔차 제곱합 \(\sum(y_i - a - bx_i)^2\)을 최소화한다.</li>
+        <li>\(b = [n\sum xy - \sum x\sum y]/[n\sum x^2 - (\sum x)^2]\), \(a = (\sum y - b\sum x)/n\).</li>
+        <li>기울기 불확도는 잔차 표준편차(자유도 \(n - 2\))에서 구한다.</li>
+        <li>로그 변환과 다항식으로 곡선에 확장하고, 잔차를 그려 확인한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>점 (0, 1), (1, 3), (2, 5)에 맞춘 직선은?
+          <details><summary>답</summary><p>\(b = (3\times13 - 3\times9)/(3\times5 - 9) = 2\), \(a = (9 - 6)/3 = 1\): \(y = 1 + 2x\)(정확히 지남).</p></details>
+        </li>
+        <li>원점을 지나는 직선 맞춤에서 \(b = \sum xy/\sum x^2\)임을 보이세요.
+          <details><summary>답</summary><p>\(S = \sum(y - bx)^2\), \(dS/db = -2\sum x(y - bx) = 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>케플러 제3법칙 \(P = Ka^k\)를 맞추려면 무엇을 맞춰야 합니까?
+          <details><summary>답</summary><p>\(\log P = \log K + k\log a\)이므로 \((\log a, \log P)\)에 직선을 맞춥니다. 1.2절 자료로 하면 \(k \approx 1.500\).</p></details>
+        </li>
+        <li>점 수를 4배로 늘리면 기울기 불확도는 대략 몇 배가 됩니까? (같은 범위, 같은 잡음)
+          <details><summary>답</summary><p>약 1/2배(\(1/\sqrt n\)).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

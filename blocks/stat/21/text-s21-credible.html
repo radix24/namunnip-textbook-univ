@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s21-credible" data-kind="본문" data-std="응통21-03-01">
+  <header class="card-head"><span class="no"></span><h2>점추정과 신용구간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사후 평균, 중앙값, 최빈값으로 점추정한다.</li>
+        <li>등꼬리 신용구간과 최고사후밀도(HPD) 구간을 만든다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>켤레 사전 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>사후분포를 요약하기</h3>
+    <p>베이즈 추론의 결과는 분포 전체이지만, 보고할 때는 대표값 하나와 불확실성의 범위가 필요합니다.</p>
+
+    <h3><span class="no">3.1.1</span>점추정</h3>
+    <ul>
+      <li><b>사후 평균</b> \(E(\theta \mid \mathbf y)\): 제곱 손실의 베이즈 추정량(5.1절).</li>
+      <li><b>사후 중앙값</b>: 절대 손실의 베이즈 추정량.</li>
+      <li><b>사후 최빈값</b>(MAP): 사후 밀도가 최대인 점. 균일 사전이면 MLE와 같음.</li>
+    </ul>
+    <p>사후가 대칭이면 셋이 같고, 치우쳤으면 다릅니다. Beta(16, 8)이면 평균 0.667, 최빈값 \((16-1)/(24-2) = 0.682\), 중앙값 약 0.672.</p>
+
+    <h3><span class="no">3.1.2</span>신용구간</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.1</span>
+      <p class="q-term"><b>신용구간</b>: \(P(\theta \in C \mid \mathbf y) = 1 - \alpha\)인 구간 \(C\).</p>
+      <p class="q-term"><b>등꼬리 구간</b>: 사후분포의 \(\alpha/2\), \(1-\alpha/2\) 분위수 사이.</p>
+      <p class="q-term"><b>HPD 구간</b>: 사후 밀도가 일정 값 이상인 영역. 같은 확률에서 가장 짧음.</p>
+    </div>
+    <p>사후가 대칭 단봉이면 두 구간이 같습니다. 치우친 분포(분산의 사후)에서는 HPD가 더 짧고, 봉우리가 둘이면 HPD는 구간 두 개로 나뉠 수 있습니다. MCMC 표본이 있으면 표본의 분위수로 구합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2</span>
+      <p>20번 중 14번 성공, 균일 사전일 때 95% 등꼬리 신용구간은? 빈도주의 윌슨 구간과 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> 사후 Beta(15, 7). <code>qbeta(c(.025, .975), 15, 7)</code> = [0.478, 0.854]. 윌슨 구간(<code>prop.test(14, 20, correct = FALSE)</code>)은 [0.481, 0.855]로 거의 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>평균(제곱 손실), 중앙값(절대 손실), 최빈값(MAP).</li>
+        <li>등꼬리 구간과 HPD 구간.</li>
+        <li>MCMC 표본의 분위수로 계산.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2.1절 연습의 사후 \(N(105, 12.5)\)에서 95% 신용구간은?
+          <details><summary>답</summary><p>\(105 \pm 1.96\sqrt{12.5} = 105 \pm 6.93\), [98.1, 111.9].</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

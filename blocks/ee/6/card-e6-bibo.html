@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-02-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e6-bibo" data-kind="예제" data-std="전전6-02-02">
+  <header class="card-head"><span class="no"></span><h2>유계 입력으로 발산시키기: 가장 나쁜 입력 찾기</h2><span class="kind">예제 · 안정 판정과 출력 상한</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>임펄스 응답이 \(h[n] = (-0.5)^nu[n]\)인 시스템에 \(|x| \le 1\)인 입력을 넣을 때, 출력이 가장 크게 될 수 있는 값은 얼마일까요? 상수 입력 \(x = 1\)일 때의 출력과 같을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>상한은 \(\sum|h| = 2\)이고, 상수 입력의 정상 상태 출력은 \(\sum h = 2/3\)뿐입니다. 상한에 닿으려면 부호가 번갈아 바뀌는 입력이 필요합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(h[n] = (-0.5)^nu[n]\)인 시스템의 인과성과 안정성을 판정하고, \(|x[n]| \le 1\)일 때 \(|y[n]|\)의 상한과 그 상한에 (극한에서) 닿는 입력을 구하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>인과: \(n &lt; 0\)에서 h가 0인가.</li>
+        <li>안정: \(\sum|h|\)를 등비급수로 계산한다.</li>
+        <li>상한에 닿는 입력: 정리 2.2.1의 증명처럼 \(x[n - k]\)의 부호를 \(h[k]\)의 부호와 맞춘다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(u[n]\)이 곱해져 있어 \(n &lt; 0\)에서 0이므로 인과. <span class="q-why">2.2.2</span></li>
+        <li>\(\sum_{n\ge0}|(-0.5)^n| = \sum 0.5^n = \frac{1}{1 - 0.5} = 2 &lt; \infty\)이므로 BIBO 안정이고, \(|y| \le 2\). <span class="q-why">정리 2.2.1</span></li>
+        <li>시각 \(n_1\)에서 \(y[n_1] = \sum_k h[k]x[n_1 - k]\). \(h[k]\)의 부호는 \((-1)^k\)이므로 \(x[n_1 - k] = (-1)^k\), 곧 \(x[m] = (-1)^{n_1 - m}\)이면 모든 항이 \(|h[k]|\)가 된다. <span class="q-why">부호 맞추기</span></li>
+        <li>이 입력을 오래전부터 넣으면 \(y[n_1] = \sum_{k\ge0}0.5^k \to 2\). 부호가 매번 바뀌는 입력 \(x[n] = (-1)^n\)이 그것이다(어느 n에서든 \(|y| \to 2\)). <span class="q-why">상한 달성</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>음의 계수 되먹임(\(y[n] = -0.5y[n-1] + x[n]\))은 번갈아 바뀌는 신호, 곧 가장 높은 이산 주파수 \(\omega = \pi\)를 키웁니다. (앞으로 배울 내용이니 지금은 결론만 보아도 됩니다) 3단원의 방법으로 주파수 응답을 구하면 \(H(e^{j\omega}) = \frac{1}{1 + 0.5e^{-j\omega}}\)이고, \(\omega = \pi\)에서 \(\frac{1}{1 - 0.5} = 2\), \(\omega = 0\)에서 \(\frac{1}{1.5} = 2/3\)입니다. 고역 통과 성격의 시스템이라 상수(가장 낮은 주파수)가 가장 나쁜 입력이 아닌 것입니다. 5단원 DTFT에서 다시 봅니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>되풀이 계산 \(y[n] = -0.5y[n-1] + x[n]\)에 \(x = 1, -1, 1, -1, \dots\)를 넣으면 \(y = 1, -1.5, 1.75, -1.875, 1.9375, \dots\)로 크기가 2에 다가갑니다. 상수 입력 1을 넣으면 \(y = 1, 0.5, 0.75, 0.625, \dots \to 2/3\).</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>\(h(t) = e^{-t}\cos(t)\,u(t)\)는 BIBO 안정인가? \(\int|h|\)의 상한을 하나 구하여라.</p>
+      <details><summary>답</summary><p>\(|h| \le e^{-t}\)이므로 \(\int_0^\infty|h|dt \le 1\). 안정.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>안정 조건</h3>
+    <p class="q">LTI 시스템의 BIBO 안정을 판정하는 데 필요충분한 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>\(h(t) \to 0\) (\(t \to \infty\))<span class="why"><b>필요하지만 충분하지 않습니다.</b> \(\frac{1}{t+1}u(t)\)는 0으로 가지만 넓이가 무한해 불안정입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>\(\int h(t)\,dt\)가 유한<span class="why"><b>절댓값이 빠졌습니다.</b> \(\frac{\sin t}{t}\)는 적분값이 유한(π)하지만 \(\int|h| = \infty\)라 불안정입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄷ</span><span>\(\int|h(t)|\,dt\)가 유한<span class="why"><b>맞습니다.</b> 충분성은 삼각부등식, 필요성은 부호를 맞춘 입력으로 증명합니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

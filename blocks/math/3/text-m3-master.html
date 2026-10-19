@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-master" data-kind="본문" data-std="수학3-03-04">
+  <header class="card-head"><span class="no"></span><h2>분할 정복 점화식과 마스터 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>분할 정복 알고리즘의 실행 시간을 \(T(n) = aT(n/b) + f(n)\)으로 세운다.</li>
+        <li>재귀 나무로 각 층의 비용을 더해 \(T(n)\)을 어림한다.</li>
+        <li>마스터 정리의 세 경우를 \(f(n) = n^d\)에서 쓰고, 이진 탐색·병합 정렬·카라추바 곱셈에 적용한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>점근 표기와 병합 정렬 (<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>), 등비급수, 로그의 성질 \(a^{\log_bn} = n^{\log_ba}\).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.4.1</span>재귀 나무</h3>
+    <p>크기 \(n\)인 문제를 크기 \(\frac nb\)인 문제 \(a\)개로 나누고, 나누고 합치는 데 \(f(n)\)이 들면 \(T(n) = aT(n/b) + f(n)\)입니다. 나무로 그리면 깊이 \(j\)에 문제가 \(a^j\)개, 크기가 \(\frac{n}{b^j}\)이고, 층 \(j\)의 비용은 \(a^jf(n/b^j)\), 깊이는 \(\log_bn\)입니다.</p>
+    <p>\(f(n) = n^d\)이면 층 \(j\)의 비용은 \(n^d\left(\frac{a}{b^d}\right)^j\), 곧 공비 \(q = \frac{a}{b^d}\)인 등비수열입니다. 전체는 이 등비수열의 합이고, 공비에 따라 세 경우가 갈립니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.4.1 <span class="nm">(마스터 정리, 다항식 꼴)</span></span>
+      <p>\(T(n) = aT(n/b) + \Theta(n^d)\) (\(a \ge 1\), \(b &gt; 1\), \(d \ge 0\))이면</p>
+      <p>(1) \(a &lt; b^d\) (\(q &lt; 1\)): \(T(n) = \Theta(n^d)\) — 맨 위층(합치기)이 지배.</p>
+      <p>(2) \(a = b^d\) (\(q = 1\)): \(T(n) = \Theta(n^d\log n)\) — 모든 층이 같아 층 수만큼.</p>
+      <p>(3) \(a &gt; b^d\) (\(q &gt; 1\)): \(T(n) = \Theta(n^{\log_ba})\) — 맨 아래층(잎)이 지배.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명의 뼈대.</span>\(T(n) = \sum_{j=0}^{\log_bn}n^dq^j\). \(q &lt; 1\)이면 등비합이 상수배라 \(\Theta(n^d)\). \(q = 1\)이면 \((\log_bn + 1)n^d\). \(q &gt; 1\)이면 마지막 항 \(n^dq^{\log_bn} = n^d\frac{a^{\log_bn}}{n^d} = n^{\log_ba}\)이 상수배로 지배. <span class="qed">∎</span></p>
+
+    <h3><span class="no">3.4.2</span>적용</h3>
+    <ul>
+      <li><b>이진 탐색</b> \(T(n) = T(n/2) + 1\): \(a = 1\), \(b = 2\), \(d = 0\), \(a = b^d\) → \(\Theta(\log n)\).</li>
+      <li><b>병합 정렬</b> \(T(n) = 2T(n/2) + n\): \(a = 2 = b^d\) → \(\Theta(n\log n)\).</li>
+      <li><b>보통 곱셈을 나눠서</b> \(T(n) = 4T(n/2) + n\): \(4 &gt; 2\) → \(\Theta(n^2)\). 나눠도 빨라지지 않습니다.</li>
+      <li><b>카라추바 곱셈</b> \(T(n) = 3T(n/2) + n\): \(3 &gt; 2\) → \(\Theta(n^{\log_23}) \approx \Theta(n^{1.585})\). 곱셈 4번을 3번으로 줄인 것이 지수를 바꿉니다.</li>
+      <li><b>스트라센 행렬 곱셈</b> \(T(n) = 7T(n/2) + n^2\): \(7 &gt; 4\) → \(\Theta(n^{\log_27}) \approx \Theta(n^{2.807})\).</li>
+    </ul>
+    <p>같은 절의 탐구 카드에서 \(a, b, d\)를 바꿔 층별 비용을 막대로 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(a\)와 \(b\)를 바꿔 읽는다: \(a\)는 하위 문제 개수, \(b\)는 크기를 나누는 비율. (2) \(f(n)\)이 \(n^d\) 꼴이 아니면 그대로 쓴다: \(T(n) = 2T(n/2) + n\log n\)은 이 표에 맞지 않고 \(\Theta(n\log^2n)\)이다(재귀 나무로 직접).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>재귀 나무 층 \(j\)의 비용 \(n^d(a/b^d)^j\): 등비수열.</li>
+        <li>\(a &lt; b^d\): \(\Theta(n^d)\), \(a = b^d\): \(\Theta(n^d\log n)\), \(a &gt; b^d\): \(\Theta(n^{\log_ba})\).</li>
+        <li>카라추바(3개로) \(n^{1.585}\), 스트라센(7개로) \(n^{2.807}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(T(n) = 9T(n/3) + n\)과 \(T(n) = 2T(n/4) + n\)을 풀어라.
+          <details><summary>답</summary><p>\(9 &gt; 3\): \(\Theta(n^2)\). \(2 &lt; 4\): \(\Theta(n)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(T(n) = 2T(n/4) + \sqrt n\)을 풀어라.
+          <details><summary>답</summary><p>\(d = \frac12\), \(b^d = 2 = a\): \(\Theta(\sqrt n\log n)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(T(n) = 2T(n/2) + n\log n\)을 재귀 나무로 풀어라.
+          <details><summary>답</summary><p>층 \(j\)의 비용 \(n\log(n/2^j) = n(\log n - j)\). 합 \(\approx n\frac{\log^2n}2 = \Theta(n\log^2n)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

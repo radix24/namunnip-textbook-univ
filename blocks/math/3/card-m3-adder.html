@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-06-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m3-adder.js"]
+}
+-->
+<article class="card q-card" id="card-m3-adder" data-kind="탐구" data-std="수학3-06-02">
+  <header class="card-head"><span class="no"></span><h2>올림이 줄지어 넘어간다</h2><span class="kind">탐구 · 전가산기로 만든 4비트 덧셈기</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>컴퓨터는 이진수 두 개를 어떻게 더할까요? 손으로 하는 받아올림 덧셈을 게이트로 만들면 어떤 구조가 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>전가산기: 합 \(s = a \oplus b \oplus c_{in}\), 올림 \(c_{out} = ab + c_{in}(a \oplus b)\). 전가산기를 이어 붙이면 여러 자리 덧셈기가 된다 (<a href="06-02.html">6.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <canvas aria-label="4비트 덧셈기. 위 두 줄은 A와 B의 비트(누르면 바뀜), 가운데는 자리마다 전가산기와 올림 입력, 아래는 합의 비트, 왼쪽 끝은 마지막 올림. 빨간 선은 올림이 넘어가는 자리"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>처음 화면은 \(0110 + 0111\) (6 + 7)입니다. 맨 오른쪽 \(0 + 1\)은 올림이 없지만, 둘째 자리 \(1 + 1\)에서 올림이 생겨 왼쪽으로 넘어가고, 결과는 \(1101 = 13\)입니다.</li>
+        <li>A를 \(1111\), B를 \(0001\)로 만들어 보세요. 올림이 오른쪽 끝에서 왼쪽 끝까지 모든 자리를 거쳐 넘어가고 결과는 \(10000 = 16\)입니다. 왼쪽 끝 올림이 4비트를 넘친 자리(오버플로)입니다.</li>
+        <li>두 수가 같은 자리에 1이 하나도 없으면(예: \(1010 + 0101\)) 올림이 전혀 생기지 않습니다. 이때는 덧셈이 비트별 OR과 같습니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>리플 캐리</b><span>각 자리는 오른쪽 자리의 올림을 기다려야 하므로, 최악의 경우(\(1111 + 0001\)) 올림이 \(n\)자리를 차례로 지나갑니다. 비트 수에 비례하는 지연이라, 실제 CPU는 올림을 미리 계산하는 회로(올림 예측)로 \(O(\log n)\) 단계에 끝냅니다.</span></li>
+        <li><b>뺄셈도 같은 회로로</b><span>2의 보수(비트를 뒤집고 1을 더함)를 쓰면 \(A - B = A + \bar B + 1\)이라 덧셈기로 뺄셈도 합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"두 4비트 수의 합은 늘 4비트에 들어간다"는 틀립니다. \(1111 + 0001\)처럼 합이 15를 넘으면 5번째 비트(올림)가 필요합니다. 이를 무시하면 결과가 0000이 되는 오버플로가 생깁니다.</p>
+    </section>
+  </div>
+</article>

@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구하기 · 신호및시스템 — QURI</title>
-  <meta name="description" content="신호및시스템 4.2 컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구하기 — 성취기준: 컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구할 수 있다.">
+  <title>Fourier 변환의 성질과 컨볼루션 정리 · 신호및시스템 — QURI</title>
+  <meta name="description" content="신호및시스템 4.2 Fourier 변환의 성질과 컨볼루션 정리 — 성취기준: 컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;4.2 컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구하기&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;4.2 Fourier 변환의 성질과 컨볼루션 정리&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,179 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전6-04-02">
+  <section class="topic-hero u-hero has-text" data-sec="전전6-04-02" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">신호및시스템</a><span class="mono">/</span><a href="04.html">4. 연속시간 Fourier 변환</a></div>
-    <h1><span class="sec-no mono">4.2</span>컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전6-04-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-04-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전6-04-02" aria-label="할 수 있음"><span class="t">컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">4.2</span>Fourier 변환의 성질과 컨볼루션 정리</h1>
+    <p class="sec-std"><span class="mono">[전전6-04-02]</span> 컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s4-2-1"><span class="mono">4.2.1</span><span>성질이 필요한 이유</span></a></li><li><a href="#s4-2-2"><span class="mono">4.2.2</span><span>컨볼루션 정리</span></a></li><li><a href="#s4-2-3"><span class="mono">4.2.3</span><span>필터링의 그림</span></a></li><li><a href="#s4-2-4"><span class="mono">4.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e6-ftprops"><span class="mono">본문</span><span>Fourier 변환의 성질과 컨볼루션 정리</span></a></li><li><a href="#card-e6-ftconv"><span class="mono">4.2.2</span><span>이상 저역 통과 필터를 지난 펄스</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-e6-ftprops" data-kind="본문" data-std="전전6-04-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형성, 시간 이동, 주파수 이동, 척도, 미분, 쌍대성, Parseval 성질을 쓴다.</li>
+        <li>컨볼루션 정리 \(x * h \leftrightarrow X(j\omega)H(j\omega)\)를 증명하고, 그 쌍대인 곱셈 정리를 안다.</li>
+        <li>변환표와 성질만으로 LTI 시스템의 출력을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기본 변환쌍 (<a href="04-01.html">4.1절</a>), 컨볼루션 (<a href="02-01.html">2.1절</a>), 부분분수 (고교 수학, <a href="../../common/8/05-01.html">공통8 5.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s4-2-1"><span class="no">4.2.1</span>성질이 필요한 이유</h3>
+    <p>모든 신호의 변환을 적분으로 구하는 것은 번거롭습니다. 대신 몇 개의 기본쌍(4.1절)과 "신호를 이렇게 바꾸면 변환은 저렇게 바뀐다"는 성질 몇 개를 알면 대부분의 변환을 조립할 수 있습니다. 아래에서 \(x \leftrightarrow X(j\omega)\)라 씁니다.</p>
+    <p class="q-term"><b>선형성</b>: \(ax_1 + bx_2 \leftrightarrow aX_1 + bX_2\).</p>
+    <p class="q-term"><b>시간 이동</b>: \(x(t - t_0) \leftrightarrow e^{-j\omega t_0}X(j\omega)\). 크기 스펙트럼은 그대로, 위상만 \(-\omega t_0\) 더해진다.</p>
+    <p class="q-term"><b>주파수 이동(변조)</b>: \(e^{j\omega_0t}x(t) \leftrightarrow X(j(\omega - \omega_0))\). 스펙트럼 전체가 \(\omega_0\)만큼 옮겨 간다(4.3절).</p>
+    <p class="q-term"><b>척도</b>: \(x(at) \leftrightarrow \frac{1}{|a|}X(j\omega/a)\).</p>
+    <p class="q-term"><b>미분·적분</b>: \(\frac{dx}{dt} \leftrightarrow j\omega X\). 적분은 \(\frac{X}{j\omega} + \pi X(0)\delta(\omega)\).</p>
+    <p class="q-term"><b>쌍대성</b>: \(x(t) \leftrightarrow X(j\omega)\)이면 \(X(jt) \leftrightarrow 2\pi x(-\omega)\). 펄스 ↔ sinc이므로 sinc ↔ 펄스.</p>
+    <p class="q-term"><b>Parseval</b>: \(\int|x|^2dt = \frac{1}{2\pi}\int|X|^2d\omega\). 에너지는 어느 영역에서 재도 같다.</p>
+    <p>시간 이동의 증명 하나를 보면 나머지도 같은 방식입니다: \(\int x(t - t_0)e^{-j\omega t}dt\)에서 \(\sigma = t - t_0\)로 치환하면 \(e^{-j\omega t_0}\int x(\sigma)e^{-j\omega\sigma}d\sigma\).</p>
+
+    <h3 id="s4-2-2"><span class="no">4.2.2</span>컨볼루션 정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.2.1</span>
+      <p>\(y = x * h\)이면 \(Y(j\omega) = X(j\omega)H(j\omega)\). 쌍대로, \(x(t)p(t) \leftrightarrow \frac{1}{2\pi}X * P\).</p>
+    </div>
+    <div class="tb-proof">
+      <p>구하려는 것은 \(Y\)를 X와 H로 쓰는 것입니다. 정의에 컨볼루션을 넣고 적분 순서를 바꿉니다.</p>
+      \[ Y = \int\Big[\int x(\tau)h(t - \tau)d\tau\Big]e^{-j\omega t}dt = \int x(\tau)\Big[\int h(t - \tau)e^{-j\omega t}dt\Big]d\tau. \]
+      <p>안쪽 괄호는 시간 이동 성질로 \(e^{-j\omega\tau}H(j\omega)\)입니다. H는 \(\tau\)와 무관하므로 밖으로 나오고, 남은 \(\int x(\tau)e^{-j\omega\tau}d\tau = X\)입니다. ∎</p>
+    </div>
+    <p>3.2절의 고유함수 성질을 모든 신호로 넓힌 결과입니다. 입력을 주파수 성분으로 쪼개고(X), 성분마다 H를 곱하고, 다시 모읍니다. 시간 영역의 어려운 컨볼루션이 주파수 영역의 곱셈이 됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>\(h(t) = e^{-2t}u(t)\)인 시스템에 \(x(t) = e^{-t}u(t)\)를 넣을 때 출력을 주파수 영역에서 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 1단계(변환): \(X = \frac{1}{1 + j\omega}\), \(H = \frac{1}{2 + j\omega}\). 2단계(곱): \(Y = \frac{1}{(1 + j\omega)(2 + j\omega)}\). 3단계(역변환): 표에 있는 꼴로 쪼개기 위해 부분분수를 씁니다. \(v = j\omega\)로 두면 \(\frac{1}{(1 + v)(2 + v)} = \frac{A}{1 + v} + \frac{B}{2 + v}\), \(A = \frac{1}{2 - 1} = 1\) (\(v = -1\) 대입), \(B = \frac{1}{1 - 2} = -1\). 따라서 \(y(t) = (e^{-t} - e^{-2t})u(t)\).</p>
+    <p>검산: 2.1절 연습 4의 공식 \(\frac{e^{-at} - e^{-bt}}{b - a}\)에 a = 1, b = 2를 넣으면 같은 결과입니다. 수치: \(y\)는 \(t = \ln 2 \approx 0.693\)에서 최댓값 \(0.5 - 0.25 = 0.25\).</p>
+
+    <h3 id="s4-2-3"><span class="no">4.2.3</span>필터링의 그림</h3>
+    <p>\(|Y| = |X||H|\), \(\angle Y = \angle X + \angle H\). 그림으로는 입력 스펙트럼에 필터의 크기 응답을 "덮어씌우는" 일입니다. 이상 저역 통과 필터 \(H = 1\) (\(|\omega| &lt; W\))를 쓰면 W 위의 성분이 완전히 사라집니다. 이 절의 예제 카드에서 두 펄스의 컨볼루션을 이 방법으로 확인합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 곱셈 정리의 \(\frac{1}{2\pi}\)를 빠뜨리기 쉽습니다(f를 쓰면 없음). (2) "시간 이동은 스펙트럼을 바꾸지 않는다"는 크기에 대해서만 맞습니다. 위상은 \(-\omega t_0\)만큼 바뀝니다. (3) 부분분수를 하지 않고 \(\frac{1}{(1 + j\omega)(2 + j\omega)}\)의 역변환을 \(e^{-t}\cdot e^{-2t}\)로 쓰는 실수: 주파수 영역의 곱은 시간 영역의 곱이 아니라 컨볼루션입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이동 ↔ 위상 \(e^{-j\omega t_0}\), 변조 ↔ 주파수 이동, 미분 ↔ \(j\omega\), 척도 ↔ 반비례, 쌍대성, Parseval.</li>
+        <li>컨볼루션 ↔ 곱 (\(Y = XH\)), 곱 ↔ \(\frac1{2\pi}\)컨볼루션.</li>
+        <li>출력 구하기: 변환 → 곱 → 부분분수 → 표로 역변환.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s4-2-4"><span class="no">4.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(e^{-(t-2)}u(t - 2)\)의 변환은?
+          <details><summary>답</summary><p>\(\frac{e^{-j2\omega}}{1 + j\omega}\).</p></details>
+        </li>
+        <li>\(\frac{\sin 3t}{\pi t}\)의 변환을 쌍대성(또는 4.1절 연습 3)으로 구하여라.
+          <details><summary>답</summary><p>\(|\omega| &lt; 3\)에서 1, 그 밖에서 0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(h = e^{-t}u(t)\), \(x = e^{-t}u(t)\)일 때 \(Y\)와 \(y(t)\)를 구하여라.
+          <details><summary>답</summary><p>\(Y = \frac{1}{(1 + j\omega)^2}\), \(y = te^{-t}u(t)\)(4.1절 연습 4).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>Parseval로 \(\int_{-\infty}^{\infty}\frac{\sin^2 t}{t^2}dt\)를 구하여라.
+          <details><summary>힌트</summary><p>\(\frac{\sin t}{t} \leftrightarrow \pi\) (\(|\omega| &lt; 1\)).</p></details>
+          <details><summary>답</summary><p>\(\frac{1}{2\pi}\int_{-1}^{1}\pi^2d\omega = \pi\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e6-ftprops" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전6-04-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-04-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전6-04-02" aria-label="할 수 있음"><span class="t">컨볼루션과 곱셈의 쌍대성을 써서 시스템 출력을 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/ee/6/03.html"><span class="mono">대단원 3</span><span><b>Fourier 급수</b></span></a></li><li><a href="../../../c/common/9/01-02.html"><span class="mono">1.2</span><span>고등미적분학(2) <b>푸리에 변환</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-e6-ftconv" data-kind="예제" data-std="전전6-04-02">
+  <header class="card-head"><span class="no">4.2.2</span><h2><span class="q-badge">예제</span>이상 저역 통과 필터를 지난 펄스</h2><span class="kind">예제 · 곱셈으로 출력의 스펙트럼과 에너지 구하기</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="04-02.html#std">[전전6-04-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>폭 1 s 직사각 펄스를 차단 주파수 1 Hz(\(2\pi\) rad/s)인 이상 저역 통과 필터에 통과시키면, 펄스 에너지의 몇 %가 남을까요? 절반? 90%?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>약 90%입니다. 펄스 스펙트럼의 주봉우리(첫 영점이 정확히 1 Hz)에 에너지 대부분이 있기 때문입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(x(t) = 1\) (\(|t| &lt; 0.5\)), 0 (그 밖), \(H(j\omega) = 1\) (\(|\omega| &lt; 2\pi\)), 0 (그 밖). (가) 출력 스펙트럼 \(Y(j\omega)\)를 쓰고, (나) 입력과 출력의 에너지를 비교하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>시간 영역 컨볼루션(펄스 * sinc) 대신 \(Y = XH\)를 쓴다.</li>
+        <li>에너지는 Parseval로 주파수 영역에서 잰다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>예제 4.1.1에서 \(T_1 = 0.5\): \(X = \frac{2\sin(\omega/2)}{\omega}\). <span class="q-why">기본쌍</span></li>
+        <li>\(Y = XH = \frac{2\sin(\omega/2)}{\omega}\) (\(|\omega| &lt; 2\pi\)), 0 (그 밖). 주봉우리만 남고 옆엽이 모두 잘린다. <span class="q-why">컨볼루션 정리</span></li>
+        <li>입력 에너지: 시간 영역에서 \(\int|x|^2dt = 1\). <span class="q-why">정의</span></li>
+        <li>출력 에너지: \(E_y = \frac{1}{2\pi}\int_{-2\pi}^{2\pi}\frac{4\sin^2(\omega/2)}{\omega^2}d\omega\). \(u = \omega/2\pi\)로 바꾸면 \(\int_{-1}^{1}\text{sinc}^2(u)\,du\)이고, 수치 적분하면 약 0.903. <span class="q-why">Parseval</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>입력 에너지의 약 90.3%가 주봉우리에 있습니다. 출력은 원래 펄스와 비슷하지만 모서리가 둥글고, 모서리 근처에서 약 9% 넘쳐 오르는 물결(Gibbs, 3.1절)이 생깁니다. 대역폭이 "첫 영점까지"인 채널로 펄스를 보내면 에너지는 거의 전해지지만 모양은 무너지기 시작합니다. 통신에서 펄스 모양과 대역폭을 함께 설계하는 이유입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(\int_{-\infty}^{\infty}\text{sinc}^2(u)du = 1\)이므로 차단 주파수를 무한히 키우면 출력 에너지가 입력 에너지 1로 돌아갑니다. 차단 주파수를 0.5 Hz로 줄이면 \(\int_{-0.5}^{0.5}\text{sinc}^2 \approx 0.774\)로 줄어듭니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 펄스를 2초 늦춘 \(x(t - 2)\)를 넣으면 출력 에너지는?</p>
+      <details><summary>답</summary><p>같습니다(약 0.903). 시간 이동은 \(|X|\)를 바꾸지 않으므로 Parseval 적분이 그대로입니다. 출력도 2초 늦어질 뿐입니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>컨볼루션 정리</h3>
+    <p class="q">\(y = x * h\)일 때 옳은 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>\(Y(j\omega) = X(j\omega)H(j\omega)\)<span class="why"><b>맞습니다.</b> 시간의 컨볼루션은 주파수의 곱입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>\(Y = X * H\)<span class="why"><b>반대입니다.</b> 주파수의 컨볼루션은 시간의 곱(변조, 창 씌우기)에 대응합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>\(y(t) = x(t)h(t)\)<span class="why"><b>시간 영역에서 곱하는 것은 컨볼루션이 아닙니다.</b></span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-e6-ftconv" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="04-01.html">← 4.1 기본 신호의 Fourier 변환쌍을 유도하기</a></span>
-        <span><a href="04-03.html">4.3 진폭 변조의 스펙트럼을 그리기 →</a></span>
+        <span><a href="04-01.html">← 4.1 Fourier 변환과 기본 변환쌍</a></span>
+        <span><a href="04-03.html">4.3 변조: 스펙트럼을 옮겨 보내기 →</a></span>
       </nav>
     </div>
   </div>

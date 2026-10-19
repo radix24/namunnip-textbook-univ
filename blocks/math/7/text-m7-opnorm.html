@@ -1,0 +1,93 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학7-08-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m7-opnorm" data-kind="본문" data-std="수학7-08-01">
+  <header class="card-head"><span class="no"></span><h2>선형작용소와 그 노름</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형작용소 \(A: \mathbb R^n \to \mathbb R^m\)의 노름 \(\|A\| = \sup_{|\mathbf x| \le 1}|A\mathbf x|\)을 정의한다.</li>
+        <li>\(|A\mathbf x| \le \|A\||\mathbf x|\), \(\|AB\| \le \|A\|\|B\|\)를 증명하고, 선형작용소가 균등연속임을 안다.</li>
+        <li>대각행렬과 \(2\times2\) 행렬의 노름을 계산하고, 가역 행렬 근처의 행렬도 가역임을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>선형대수(1)의 일차변환과 행렬 (<a href="../1/03-02.html">수학1 3.2절</a>), 코시-슈바르츠 (<a href="../1/07-01.html">수학1 7.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.1.1</span>행렬의 "크기"</h3>
+    <p>다변수 미분(8.2절)은 함수를 한 점 근처에서 선형작용소로 근사하는 것입니다. "근사가 좋다"를 말하려면 선형작용소 사이의 거리, 곧 작용소의 크기가 필요합니다. 행렬의 성분이 작으면 작다고 할 수도 있지만, 해석학에서 자연스러운 크기는 "벡터를 최대 몇 배로 늘리는가"입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 8.1.1 <span class="nm">(작용소 노름)</span></span>
+      <p>선형작용소 \(A: \mathbb R^n \to \mathbb R^m\)의 노름은 \(\|A\| = \sup\{|A\mathbf x| : |\mathbf x| \le 1\}\)이다. (\(|\cdot|\)는 유클리드 노름)</p>
+    </div>
+    <p>단위공을 \(A\)로 보낸 모양(타원)의 가장 긴 반지름이 \(\|A\|\)입니다. 이 값은 유한합니다. \(A\mathbf x\)의 \(i\)번째 성분 \(\sum_ja_{ij}x_j\)에 코시-슈바르츠를 쓰면 \(\left(\sum_ja_{ij}x_j\right)^2 \le \left(\sum_ja_{ij}^2\right)|\mathbf x|^2\)이고, \(i\)에 대해 더하면</p>
+    \[|A\mathbf x|^2 \le \Big(\sum_{i,j}a_{ij}^2\Big)|\mathbf x|^2, \quad\Longrightarrow\quad \|A\| \le \Big(\sum_{i,j}a_{ij}^2\Big)^{1/2}.\]
+    <p>특히 성분이 조금 바뀌면 노름도 조금 바뀝니다. 성분이 \(t\)에 대해 연속인 행렬 \(A(t)\)는 작용소 노름으로도 연속입니다.</p>
+
+    <h3><span class="no">8.1.2</span>기본 성질</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.1.2</span>
+      <p>(a) \(|A\mathbf x| \le \|A\||\mathbf x|\). (b) \(\|A + B\| \le \|A\| + \|B\|\), \(\|cA\| = |c|\|A\|\). (c) \(\|AB\| \le \|A\|\|B\|\). (d) \(A\)는 립시츠 연속, 따라서 균등연속이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>(a) \(\mathbf x \ne \mathbf 0\)이면 \(\frac{\mathbf x}{|\mathbf x|}\)는 단위벡터라 \(\left|A\frac{\mathbf x}{|\mathbf x|}\right| \le \|A\|\), 선형성으로 양변에 \(|\mathbf x|\)를 곱한다. (c) \(|AB\mathbf x| \le \|A\||B\mathbf x| \le \|A\|\|B\||\mathbf x|\). (d) \(|A\mathbf x - A\mathbf y| = |A(\mathbf x - \mathbf y)| \le \|A\||\mathbf x - \mathbf y|\). (b)는 삼각부등식. <span class="qed">∎</span></p>
+    <p>(b)에 따라 \(\|A - B\|\)는 선형작용소 공간의 거리가 되고, 이 공간은 \(\mathbb R^{mn}\)과 같은 유한차원이라 완비입니다.</p>
+
+    <h3><span class="no">8.1.3</span>계산</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.1.3</span>
+      <p>(a) \(D = \operatorname{diag}(3, -5)\)의 노름. (b) \(A = \begin{pmatrix} 1 & 1 \\ 0 & 1\end{pmatrix}\)의 노름.</p>
+    </div>
+    <p><i>풀이.</i> (a) \(|D\mathbf x|^2 = 9x_1^2 + 25x_2^2 \le 25(x_1^2 + x_2^2)\)이고 \(\mathbf e_2\)에서 등호이므로 \(\|D\| = 5\). 대각행렬의 노름은 대각 성분 절댓값의 최댓값입니다. (b) \(|A\mathbf x|^2 = \mathbf x^{\mathsf T}(A^{\mathsf T}A)\mathbf x\)이고 \(A^{\mathsf T}A = \begin{pmatrix} 1 & 1 \\ 1 & 2\end{pmatrix}\)의 가장 큰 고유값은 \(\frac{3 + \sqrt5}{2}\)입니다. 따라서 \(\|A\| = \sqrt{\frac{3 + \sqrt5}2} = \frac{1 + \sqrt5}{2} \approx 1.618\)(황금비). 일반적으로 \(\|A\|\)는 가장 큰 특이값입니다(선형대수(2) 특이값 분해 탐구 카드).</p>
+
+    <h3><span class="no">8.1.4</span>가역 행렬 근처는 가역</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.1.4</span>
+      <p>\(A\)가 가역이고 \(\|B - A\| &lt; \frac{1}{\|A^{-1}\|}\)이면 \(B\)도 가역이다. 곧 가역 행렬 전체는 열린집합이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\alpha = \frac1{\|A^{-1}\|}\), \(\beta = \|B - A\| &lt; \alpha\)라 하자. 모든 \(\mathbf x\)에서 \(\alpha|\mathbf x| = \alpha|A^{-1}A\mathbf x| \le |A\mathbf x| \le |(A - B)\mathbf x| + |B\mathbf x| \le \beta|\mathbf x| + |B\mathbf x|\)이므로 \((\alpha - \beta)|\mathbf x| \le |B\mathbf x|\). \(B\mathbf x = \mathbf 0\)이면 \(\mathbf x = \mathbf 0\)이라 \(B\)는 일대일이고, 정사각행렬이라 가역이다. <span class="qed">∎</span></p>
+    <p>이 정리는 역함수 정리(해석학(2) 2단원)에서 "도함수가 가역인 점 근처에서는 도함수가 계속 가역"을 말할 때 쓰입니다. 행렬식으로 보면 \(\det\)이 연속이라 \(\det A \ne 0\) 근처에서 0이 아니라는 것과 같은 내용입니다.</p>
+
+    <div class="tb-note"><b>주의</b>작용소 노름은 성분의 최댓값이 아닙니다. \(\begin{pmatrix} 1 & 1 \\ 1 & 1\end{pmatrix}\)은 성분이 모두 1이지만 \((1, 1)/\sqrt2\)를 \((\sqrt2, \sqrt2)\)로 보내 노름이 2입니다. 또 성분 제곱합의 제곱근(프로베니우스 노름, 여기서 2)과도 일반적으로 다릅니다(단위행렬이면 1과 \(\sqrt n\)).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\|A\| = \sup_{|\mathbf x|\le1}|A\mathbf x|\): 최대 확대율, 가장 큰 특이값.</li>
+        <li>\(|A\mathbf x| \le \|A\||\mathbf x|\), \(\|AB\| \le \|A\|\|B\|\). 선형작용소는 균등연속이다.</li>
+        <li>가역 행렬 근처(\(\|B - A\| &lt; 1/\|A^{-1}\|\))의 행렬은 가역이다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathbb R^2\)의 회전 행렬의 노름은?
+          <details><summary>답</summary><p>1. 길이를 보존한다.</p></details>
+        </li>
+        <li>\(A\mathbf x = (\mathbf a\cdot\mathbf x)\) (\(\mathbb R^n \to \mathbb R\))의 노름은?
+          <details><summary>답</summary><p>\(|\mathbf a|\) (코시-슈바르츠, 등호는 \(\mathbf x = \mathbf a/|\mathbf a|\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(\|A\| &lt; 1\)이면 \(I - A\)가 가역이고 \((I - A)^{-1} = \sum_{k=0}^\infty A^k\)임을 보여라.
+          <details><summary>답</summary><p>\(\|A^k\| \le \|A\|^k\)이라 급수가 절대수렴(완비). \((I - A)\sum_{k\le N}A^k = I - A^{N+1} \to I\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(\|A\|^2\)이 \(A^{\mathsf T}A\)의 가장 큰 고유값임을 보여라(대칭행렬은 직교 고유기저를 가짐을 써도 된다).
+          <details><summary>답</summary><p>\(|A\mathbf x|^2 = \mathbf x^{\mathsf T}A^{\mathsf T}A\mathbf x = \sum\lambda_iy_i^2\) (직교 고유기저 좌표 \(y\), \(\sum y_i^2 = |\mathbf x|^2\)). 최댓값은 \(\lambda_{\max}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

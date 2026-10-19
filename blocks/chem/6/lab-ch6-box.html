@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학6-02-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/chemkit.js", "js/cards/chem/ch-phys.js"]
+}
+-->
+<article class="card q-card" id="lab-ch6-box" data-kind="실습" data-std="화학6-02-01 화학15-03-02">
+  <header class="card-head"><span class="no"></span><h2>공액 염료의 색을 상자 속 입자로 맞힐 수 있을까?</h2><span class="kind">실습 · 상자 속 입자 모형, 시아닌 염료</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>사슬이 길어질수록 공액 염료가 긴 파장의 빛을 흡수하는 이유를 1차원 상자 속 입자 모형으로 계산하고, 가상 측정값과 비교해 모형의 상자 길이를 맞춥니다. 성취기준 [화학6-02-01], 물리화학실험 [화학15-03-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>시아닌 염료는 질소 원자 두 개 사이에 탄소 사슬이 이어진 분자입니다. π 전자들은 이 사슬 위를 자유롭게 움직인다고 보고, 길이 \(L\)인 1차원 상자에 갇힌 입자로 다룹니다(쿤(Kuhn)의 자유 전자 모형).</p>
+      <p class="q-term"><b>상자 속 입자의 에너지</b> \(E_n = \dfrac{n^2h^2}{8m_eL^2}\), \(n = 1, 2, 3, \dots\)</p>
+      <p class="q-term"><b>전자 채우기</b>: 사슬 탄소 수가 \(p\)인 염료는 π 전자가 \(N = p + 3\)개입니다. 한 준위에 전자 두 개씩 채우면 가장 높이 채워진 준위(HOMO)는 \(n = N/2\)입니다.</p>
+      <p class="q-term"><b>흡수 파장</b>: HOMO에서 LUMO(\(n = N/2 + 1\))로 옮겨 갈 때 \(\Delta E = \dfrac{(N+1)h^2}{8m_eL^2}\)이므로 \(\lambda = \dfrac{8m_ecL^2}{h(N+1)}\).</p>
+      <p class="q-term"><b>상자 길이</b>: \(L = N\times l + 2\delta\). \(l\)은 결합 하나의 길이, \(\delta\)는 전자가 양 끝 질소 너머로 조금 더 퍼지는 길이입니다. \(\delta\)는 모형이 정하지 못하므로 실험에 맞춰 정합니다.</p>
+      <p>아래 그래프의 빨간 점은 <b>가상 측정값</b>입니다(p = 1, 3, 5에서 523, 604, 706 nm. 실제 시아닌 염료 실험에서 보고되는 값과 비슷한 크기로 만들었습니다). 파란 선은 지금 매개변수의 모형 예측입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>사슬 탄소 수 p = <b data-show="p">3</b></span><input type="range" name="p" min="1" max="7" step="2" value="3" aria-label="사슬 탄소 수"></label>
+        <label><span>결합 길이 l = <b data-show="l" data-fix="2">1.39</b> Å</span><input type="range" name="l" min="1.20" max="1.60" step="0.01" value="1.39" aria-label="결합 길이"></label>
+        <label><span>끝 연장 δ = <b data-show="d" data-fix="2">1.39</b> Å</span><input type="range" name="d" min="0" max="3" step="0.01" value="1.39" aria-label="양 끝 연장 길이"></label>
+      </div>
+      <canvas aria-label="상자 속 입자 에너지 준위와 흡수 색"></canvas>
+      <canvas aria-label="사슬 길이에 따른 흡수 파장"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(l = 1.39 Å, δ = 1.39 Å)에서 p를 1, 3, 5로 바꾸며 예측 λ와 가상 측정값의 차이를 기록한다.</li>
+        <li>δ를 움직여 출력의 "제곱평균" 차이가 가장 작아지는 값을 찾는다.</li>
+        <li>그 δ에서 p = 7의 흡수 파장을 예측한다.</li>
+        <li>δ = 0(전자가 질소 원자에서 딱 멈춤)으로 두고 예측이 얼마나 짧아지는지 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 값(δ = 1.39 Å)에서 예측은 p = 1, 3, 5에 459, 582, 708 nm로, 가상 측정값과 −64, −22, +2 nm 차이입니다(제곱평균 39 nm). 사슬이 길어질수록 λ가 길어지는 경향은 맞지만, 짧은 염료는 너무 짧게 예측합니다.</li>
+        <li>δ를 움직이면 1.52 Å 근처에서 제곱평균 차이가 26 nm로 가장 작습니다. 이때 차이는 −35, +6, +29 nm로, 짧은 염료는 여전히 짧게, 긴 염료는 길게 예측합니다. 한 개의 δ로는 세 점을 모두 맞출 수 없습니다.</li>
+        <li>그 δ에서 p = 7은 860 nm로 예측되어 근적외선 영역입니다.</li>
+        <li>δ = 0이면 p = 3도 328 nm로 측정값보다 270 nm 이상 짧아집니다. 전자가 양 끝 질소 너머로 퍼진다는 가정이 결과에 크게 작용합니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      
+<h3>분석</h3>
+      <ol>
+        <li>사슬이 길어질수록 λ가 길어지는 이유를 \(L^2/(N+1)\)이 어떻게 변하는지로 설명해 보세요.</li>
+        <li>모형이 긴 사슬에서 측정값보다 길게 예측하는 경향이 있다면, 실제 분자에서 무엇이 "자유 전자" 가정과 다를까요? (결합 길이가 번갈아 달라지는 결합 교대를 생각해 보세요.)</li>
+        <li>흡수하는 빛의 색과 용액이 보이는 색은 왜 다른가요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>실험실에서는 세 염료를 메탄올에 녹여 UV-Vis 스펙트럼의 λmax를 잽니다. 측정값으로 \(L\)을 거꾸로 구해(\(L = \sqrt{h(N+1)\lambda/(8m_ec)}\)) \(N\)에 대해 그리면, 기울기가 결합 길이, 절편이 \(2\delta\)가 됩니다. 이 방법으로 δ를 구해 장치에서 찾은 값과 비교해 보세요.</p>
+    </section>
+  </div>
+</article>

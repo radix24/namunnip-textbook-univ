@@ -1,0 +1,111 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e2-bst" data-kind="본문" data-std="전전2-03-02">
+  <header class="card-head"><span class="no"></span><h2>이진 탐색 트리의 탐색, 삽입, 삭제</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이진 탐색 트리(BST)의 성질과, 그 성질로 탐색·삽입이 높이 h에 비례(O(h))함을 안다.</li>
+        <li>삭제의 세 경우(잎, 자식 하나, 자식 둘)를 구현한다. 자식이 둘이면 후계자(오른쪽 부분 트리의 최솟값)로 바꾼다.</li>
+        <li>입력 순서에 따라 높이가 log n에서 n까지 달라지는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이진 트리와 중위 순회 (<a href="03-01.html">3.1절</a>), 이진 탐색 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>BST 성질</h3>
+    <p class="q-term"><b>이진 탐색 트리</b>: 모든 노드에서 왼쪽 부분 트리의 키는 모두 그 노드보다 작고, 오른쪽 부분 트리의 키는 모두 크다(키는 서로 다르다고 둔다).</p>
+    <p>이 성질 때문에 중위 순회가 정렬된 순서가 되고(3.1절 예제), 탐색할 때 노드 하나와 비교해 한쪽 부분 트리를 통째로 버릴 수 있습니다. 정렬된 배열의 이진 탐색을 트리 모양으로 펼친 것이고, 배열과 달리 삽입·삭제가 쉽습니다.</p>
+
+    <h3><span class="no">3.2.2</span>탐색과 삽입</h3>
+<pre><code>def search(t, key):
+    while t is not None and t.key != key:
+        t = t.left if key &lt; t.key else t.right
+    return t                       # 없으면 None
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key &lt; root.key:
+        root.left = insert(root.left, key)
+    elif key &gt; root.key:
+        root.right = insert(root.right, key)
+    return root</code></pre>
+    <p>둘 다 뿌리에서 아래로 한 길만 내려가므로 비교 횟수는 높이 + 1 이하, O(h)입니다. 삽입은 탐색이 실패한 자리(빈 자식 자리)에 새 잎을 붙입니다.</p>
+
+    <h3><span class="no">3.2.3</span>삭제의 세 경우</h3>
+    <ul>
+      <li><b>잎</b>: 그냥 떼어 낸다.</li>
+      <li><b>자식 하나</b>: 그 자식을 자기 자리로 끌어올린다.</li>
+      <li><b>자식 둘</b>: 오른쪽 부분 트리의 최솟값(후계자, 중위 순서의 바로 다음)을 찾아 키를 복사하고, 후계자를 오른쪽 부분 트리에서 지운다. 후계자는 왼쪽 자식이 없으므로 앞의 두 경우로 끝난다.</li>
+    </ul>
+<pre><code>def delete(root, key):
+    if root is None:
+        return None
+    if key &lt; root.key:
+        root.left = delete(root.left, key)
+    elif key &gt; root.key:
+        root.right = delete(root.right, key)
+    else:
+        if root.left is None:  return root.right
+        if root.right is None: return root.left
+        succ = root.right
+        while succ.left:
+            succ = succ.left
+        root.key = succ.key
+        root.right = delete(root.right, succ.key)
+    return root</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>3.1절 예제의 트리 50(30(20, 40(35, ·)), 70(60, 80))에서 30(자식 둘), 80(잎), 70(자식 하나)을 차례로 지운 결과를 전위 순회로 적어라.</p>
+    </div>
+    <p><i>풀이.</i> 30: 오른쪽 부분 트리 40(35)의 최솟값 35가 후계자. 30 자리에 35를 쓰고 원래 35를 지움 → 전위 50, 35, 20, 40, 70, 60, 80. 80: 잎이라 떼어 냄. 70: 남은 자식 60이 올라옴 → 전위 50, 35, 20, 40, 60, 높이 2. 실습 카드의 코드 출력과 같습니다.</p>
+
+    <h3><span class="no">3.2.4</span>높이가 모든 것을 정한다</h3>
+    <p>모든 연산이 O(h)인데, h는 입력 순서에 달려 있습니다. 무작위 순서로 넣으면 높이가 평균적으로 \(\log n\)에 비례합니다. 무작위 순서 20가지로 직접 만들어 보면 n = 1000에서 평균 높이 약 20, 노드의 평균 깊이 약 10.9이고, n = 10000에서 약 30.6, 15.8입니다(\(\log_2n\)은 각각 10, 13.3). 그러나 이미 정렬된 순서(1, 2, …, 7)로 넣으면 오른쪽으로만 늘어난 사슬이 되어 높이가 n − 1 = 6입니다. 이때 BST는 연결 리스트와 같아져 탐색이 O(n)입니다. 4단원의 균형 탐색 트리는 회전으로 높이를 늘 O(log n)으로 유지해 이 문제를 없앱니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "자식이 둘인 노드는 아무 자식이나 올리면 된다": BST 성질이 깨질 수 있습니다. 후계자(또는 선행자, 왼쪽 부분 트리의 최댓값)를 써야 합니다. (2) "BST 탐색은 언제나 O(log n)": 균형일 때만입니다. (3) 같은 키를 허용하려면 "작으면 왼쪽, 크거나 같으면 오른쪽"처럼 규칙을 정해 두어야 탐색이 일관됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>BST: 왼쪽 &lt; 노드 &lt; 오른쪽. 중위 순회 = 정렬.</li>
+        <li>탐색·삽입·삭제 O(h). 삭제(자식 둘)는 후계자로 바꾼다.</li>
+        <li>h는 입력 순서에 따라 log n ~ n. 정렬된 입력은 최악.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>빈 BST에 40, 20, 60, 10, 30, 50, 70을 넣으면 높이는? 30을 찾는 비교 횟수는?
+          <details><summary>답</summary><p>완전 균형, 높이 2. 40 → 20 → 30: 3번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>문제 1의 트리에서 40을 지우면 뿌리는? 전위 순회는?
+          <details><summary>답</summary><p>후계자 50이 뿌리. 전위 50, 20, 10, 30, 60, 70.</p></details>
+        </li>
+        <li>BST에서 k보다 작은 키 중 가장 큰 것(floor)을 O(h)에 찾는 방법은?
+          <details><summary>답</summary><p>뿌리부터: 키가 k보다 크거나 같으면 왼쪽으로, 작으면 그 키를 후보로 기록하고 오른쪽으로. 마지막 후보가 답.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>1~n을 넣는 n!가지 순서 중 높이가 n − 1(사슬)이 되는 순서는 몇 가지인가?
+          <details><summary>답</summary><p>\(2^{n-1}\)가지(매번 남은 키 중 최솟값이나 최댓값을 넣어야 함). n = 7이면 64/5040 ≈ 1.3%.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

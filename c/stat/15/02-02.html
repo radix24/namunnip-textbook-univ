@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>큰 행렬 계산에서 효율을 높이는 방법을 고르기 · 통계전산 — QURI</title>
-  <meta name="description" content="통계전산 2.2 큰 행렬 계산에서 효율을 높이는 방법을 고르기 — 성취기준: 큰 행렬 계산에서 효율을 높이는 방법을 고를 수 있다.">
+  <title>큰 행렬 계산을 효율적으로 · 통계전산 — QURI</title>
+  <meta name="description" content="통계전산 2.2 큰 행렬 계산을 효율적으로 — 성취기준: 큰 행렬 계산에서 효율을 높이는 방법을 고를 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;2.2 큰 행렬 계산에서 효율을 높이는 방법을 고르기&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;2.2 큰 행렬 계산을 효율적으로&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,89 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통15-02-02">
+  <section class="topic-hero u-hero has-text" data-sec="응통15-02-02" data-u="서울대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">통계전산</a><span class="mono">/</span><a href="02.html">2. 수치 선형대수</a></div>
-    <h1><span class="sec-no mono">2.2</span>큰 행렬 계산에서 효율을 높이는 방법을 고르기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통15-02-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-02-02] <span class="ty mono" data-ty="적용">적용</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통15-02-02" aria-label="할 수 있음"><span class="t">큰 행렬 계산에서 효율을 높이는 방법을 고를 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.2</span>큰 행렬 계산을 효율적으로</h1>
+    <p class="sec-std"><span class="mono">[응통15-02-02]</span> 큰 행렬 계산에서 효율을 높이는 방법을 고를 수 있다. <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-2-1"><span class="mono">2.2.1</span><span>곱의 순서</span></a></li><li><a href="#s2-2-2"><span class="mono">2.2.2</span><span>희소 행렬</span></a></li><li><a href="#s2-2-3"><span class="mono">2.2.3</span><span>나누어 계산하기</span></a></li><li><a href="#s2-2-4"><span class="mono">2.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s15-bigmatrix"><span class="mono">본문</span><span>큰 행렬 계산을 효율적으로</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s15-bigmatrix" data-kind="본문" data-std="응통15-02-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>계산 순서, 희소 행렬, 분할 계산으로 큰 행렬 문제를 푼다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>계산 복잡도 (<a href="01-02.html">1.2절</a>), QR (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3>메모리에 다 올릴 수 없을 때</h3>
+    <p>설명변수 1000개, 관측 1000만 개의 행렬은 실수 하나 8바이트로 80 GB입니다. 계산 순서를 바꾸고 구조를 활용하면 같은 답을 훨씬 적은 메모리와 시간으로 얻을 수 있습니다.</p>
+
+    <h3 id="s2-2-1"><span class="no">2.2.1</span>곱의 순서</h3>
+    <p>\(A\mathbf B\mathbf x\)(\(A\), \(B\)는 \(n\times n\))를 \((AB)\mathbf x\)로 하면 \(O(n^3)\), \(A(B\mathbf x)\)로 하면 \(O(n^2)\)입니다. 모자 행렬 \(H = X(X^\top X)^{-1}X^\top\)(\(n\times n\))를 만들지 않고 \(H\mathbf y = X\hat{\boldsymbol\beta}\)로 계산하는 것도 같은 원리입니다. 지렛값은 \(H\)의 대각만 필요하므로 \(h_{ii} = \|Q_{i\cdot}\|^2\)(QR의 \(Q\) 행)로 구합니다.</p>
+
+    <h3 id="s2-2-2"><span class="no">2.2.2</span>희소 행렬</h3>
+    <p>가변수가 많은 계획행렬, 문서-단어 행렬은 대부분이 0입니다. 0이 아닌 값과 위치만 저장하면(희소 저장) 메모리와 계산이 0이 아닌 원소 수에 비례합니다. R의 <code>Matrix</code> 패키지, <code>glmnet</code>이 희소 입력을 받습니다.</p>
+
+    <h3 id="s2-2-3"><span class="no">2.2.3</span>나누어 계산하기</h3>
+    <p>\(X^\top X = \sum_{\text{블록}}X_b^\top X_b\), \(X^\top\mathbf y = \sum X_b^\top\mathbf y_b\)이므로 자료를 덩어리로 읽어 누적하면 메모리에는 \(p\times p\)만 있으면 됩니다(조건수가 괜찮을 때). R의 <code>biglm</code>이 이렇게 QR을 갱신합니다. 여러 컴퓨터에서 나눠 계산해 합치는 것도 같은 구조입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(n = 10^7\), \(p = 50\) 회귀를 메모리 1 GB로 하려면?</p>
+    </div>
+    <p><i>풀이.</i> 전체 \(X\)는 4 GB라 한 번에 올릴 수 없습니다. 10만 행씩(40 MB) 읽어 \(X_b^\top X_b\)(50×50)와 \(X_b^\top\mathbf y_b\)를 누적한 뒤 마지막에 촐레스키로 풉니다. 잔차 제곱합도 \(\mathbf y^\top\mathbf y - \hat{\boldsymbol\beta}^\top X^\top\mathbf y\)로 누적량에서 얻습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>곱의 순서를 바꿔 \(n\times n\) 행렬을 만들지 않습니다.</li>
+        <li>희소 구조를 저장·계산에 활용합니다.</li>
+        <li>충분통계량(\(X^\top X\), \(X^\top\mathbf y\))을 블록별로 누적합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-2-4"><span class="no">2.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(n = 10^5\)일 때 \(H\)를 만들면 메모리가 얼마나 필요한가요?
+          <details><summary>답</summary><p>\(10^{10}\)개 × 8바이트 = 80 GB. 만들지 않아야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s15-bigmatrix" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통15-02-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-02-02] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통15-02-02" aria-label="할 수 있음"><span class="t">큰 행렬 계산에서 효율을 높이는 방법을 고를 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/2/06.html"><span class="mono">대단원 6</span><span>선형대수 <b>특이값 분해</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-01.html">← 2.1 QR 분해와 Cholesky 분해로 최소제곱 문제를 안정적으로 풀기</a></span>
-        <span><a href="03-01.html">3.1 Newton-Raphson 방법으로 최대가능도추정량을 구하기 →</a></span>
+        <span><a href="02-01.html">← 2.1 QR과 촐레스키로 최소제곱 안정적으로 풀기</a></span>
+        <span><a href="02-R.html">2.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
