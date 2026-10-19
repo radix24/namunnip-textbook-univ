@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-02-01",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-p6-debounce" data-kind="예제" data-std="물리6-02-01">
+  <header class="card-head"><span class="no"></span><h2>SR 래치로 스위치 떨림 없애기</h2><span class="kind">SR 래치 · 타이밍 · 문제 해결 전략</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>NAND로 만든 SR 래치는 \(\bar S = 0\)이면 \(Q = 1\), \(\bar R = 0\)이면 \(Q = 0\), 둘 다 1이면 유지합니다(2.1절). 단극 쌍투 스위치의 공통 단자를 접지에 잇고 두 접점을 풀업 저항으로 1에 두면, 스위치가 닿은 접점만 0이 됩니다.</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 입력이 바뀌는 순서대로 상태 따라가기</span>
+      <ol>
+        <li>시간 순서대로 두 입력 \(\bar S\), \(\bar R\)의 값을 표로 적는다.</li>
+        <li>각 구간에서 래치가 설정, 재설정, 유지 가운데 무엇인지 정한다.</li>
+        <li>출력 \(Q\)의 파형을 그려 튀는 횟수가 사라졌는지 본다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">스위치가 \(\bar R\) 접점에서 \(\bar S\) 접점으로 넘어간다. 접점이 이동하는 동안 1 ms 동안은 어느 쪽에도 닿지 않고, \(\bar S\) 접점에 닿은 뒤 3 ms 동안 세 번 튀었다(닿음–떨어짐 반복). 처음 \(Q = 0\)일 때 \(Q\)의 변화는? 스위치 신호를 바로 카운터에 넣었다면 몇 번 세어지는가?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>이동 중: \(\bar S = \bar R = 1\) → 유지, \(Q = 0\).</div><span class="q-why">어느 접점에도 닿지 않음.</span></li>
+        <li><div>\(\bar S\) 접점에 첫 접촉: \(\bar S = 0\) → \(Q = 1\).</div><span class="q-why">설정.</span></li>
+        <li><div>튀어 떨어지면 \(\bar S = \bar R = 1\) → 유지(\(Q = 1\)). 다시 닿으면 다시 설정(\(Q = 1\)). 출력은 첫 접촉 때 한 번만 바뀐다.</div><span class="q-why">튀는 동안 \(\bar R\)에는 닿지 않음.</span></li>
+        <li class="q-end"><div>바로 넣었다면 닿을 때마다 하강 가장자리가 생겨 첫 접촉과 세 번의 재접촉, 모두 4번 세어진다.</div><span class="q-why">채터링.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>래치가 떨림을 없애는 열쇠는 튀는 동안 반대쪽 접점에 닿지 않는다는 사실입니다. 접점이 하나뿐인 스위치에서는 이 방법을 쓸 수 없어, RC 필터와 슈미트 트리거를 쓰거나 마이크로컨트롤러에서 수십 ms 동안 값이 같을 때만 받아들이는 소프트웨어 방법을 씁니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(\bar S = \bar R = 0\)이 되는 순간이 없으므로 금지 입력은 생기지 않습니다. 스위치를 되돌리면 같은 논리로 \(Q\)가 한 번만 0으로 바뀝니다.</p>
+    </section>
+  </div>
+</article>

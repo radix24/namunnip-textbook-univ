@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-02-04",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-p6-serial" data-kind="예제" data-std="물리6-02-04">
+  <header class="card-head"><span class="no"></span><h2>직렬 통신으로 측정값 보내기</h2><span class="kind">UART · 보 레이트 · 클록 오차</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>UART 8N1 틀은 한 바이트에 시작·자료 8·정지 비트로 10비트를 씁니다. 받는 쪽은 시작 비트에서 시간을 재어 각 비트 가운데에서 읽으므로, 마지막 비트를 읽을 때까지 쌓인 시간 오차가 반 비트보다 작아야 합니다(2.4절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 비트 시간과 쌓이는 오차</span>
+      <ol>
+        <li>비트 시간 \(1/\text{보 레이트}\)와 한 바이트 시간을 구한다.</li>
+        <li>보내야 할 자료량에서 필요한 보 레이트를 구한다.</li>
+        <li>마지막 비트에서 쌓인 오차가 반 비트를 넘지 않는 클록 오차 한계를 구한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">16비트 측정값을 1 kHz로 표본화해 9600 보 UART로 보내려 한다. (가) 가능한가? 아니면 보 레이트가 최소 얼마여야 하는가? (나) 받는 쪽 클록이 보내는 쪽보다 빠를 때, 한 바이트를 바르게 받으려면 클록 오차가 몇 % 이내여야 하는가?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) 측정값 하나 = 2바이트 = 20비트. 초당 \(1000\times20 = 20\,000\)비트가 필요하므로 9600 보로는 부족하다. 표준 속도 가운데 38 400 보 이상을 쓴다.</div><span class="q-why">8N1이면 바이트당 10비트.</span></li>
+        <li><div>(나) 정지 비트의 가운데는 시작 가장자리에서 9.5비트 뒤. 이때 쌓인 오차가 0.5비트보다 작아야 하므로 \(9.5\varepsilon < 0.5\).</div><span class="q-why">가운데에서 읽음.</span></li>
+        <li class="q-end"><div>\(\varepsilon < 0.5/9.5 \approx 5\)%. 실제로는 양쪽 오차와 가장자리 판정을 생각해 2% 안쪽을 권장한다.</div><span class="q-why">두 장치 오차의 합.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>클록선이 없는 대신 두 장치가 시간에 대한 약속(보 레이트)을 공유하는 것이 비동기 통신입니다. 마이크로컨트롤러의 RC 발진기는 오차가 수 %에 이를 수 있어, 높은 보 레이트에서 통신이 깨지면 수정 발진기를 쓰거나 동기 방식으로 바꿉니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>38 400 보의 용량은 초당 3840바이트로, 필요한 2000바이트보다 큽니다. 9600 보는 초당 960바이트라 부족하다는 판단과도 맞습니다.</p>
+    </section>
+  </div>
+</article>

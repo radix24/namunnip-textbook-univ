@@ -1,0 +1,106 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우7-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a7-etc" data-kind="본문" data-std="천우7-07-03">
+  <header class="card-head"><span class="no"></span><h2>노출 시간 계산과 관측 시간 신청서</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>CCD 방정식을 노출 시간에 대해 풀어, 원하는 S/N에 필요한 시간을 계산한다.</li>
+        <li>한 장을 길게 찍을 때와 여러 장으로 나눠 찍을 때의 S/N 차이를 읽기 잡음으로 설명한다.</li>
+        <li>관측 시간 신청서의 과학 목표, 노출 시간 근거, 일정 항목을 숫자로 뒷받침한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>신호 대 잡음비 (<a href="04-03.html">4.3절</a>), 관측 계획 (<a href="07-01.html">7.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.3.1</span>CCD 방정식을 거꾸로</h3>
+    <p>별에서 1초에 \(\dot N_*\) 전자, 하늘에서 화소당 \(\dot N_s\), 암전류 \(\dot N_d\), 구경 안 화소 \(n\)개, 읽기 잡음 \(R\)이면(4.3절)</p>
+    \[\frac SN = \frac{\dot N_*t}{\sqrt{\dot N_*t + n(\dot N_s + \dot N_d)t + nR^2}}.\]
+    <p>원하는 S/N을 \(Q\)라 두고 양변을 제곱하면 \(t\)에 대한 이차방정식이 됩니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 7.3.1 (필요 노출 시간)</span>
+      \[\dot N_*^2t^2 - Q^2\bigl[\dot N_* + n(\dot N_s + \dot N_d)\bigr]t - Q^2nR^2 = 0.\]
+      <p>양의 근을 고릅니다. 관측소가 제공하는 노출 시간 계산기(ETC)가 이 계산을 합니다.</p>
+    </div>
+    <pre><code>import math
+
+def exposure_time(snr, star, sky, npix, rn, dark=0.0):
+    """CCD 방정식을 t에 대해 푼다. star: 별 전자율(e-/s), sky·dark: 화소당 전자율, rn: 읽기 잡음(e-)"""
+    a = star**2
+    b = -snr**2 * (star + npix * (sky + dark))
+    c = -snr**2 * npix * rn**2
+    return (-b + math.sqrt(b * b - 4 * a * c)) / (2 * a)
+
+def snr_at(t, star, sky, npix, rn, dark=0.0):
+    s = star * t
+    return s / math.sqrt(s + npix * (sky * t + dark * t + rn**2))
+
+t = exposure_time(50, star=50, sky=20, npix=30, rn=8)
+print(f"S/N 50에 필요한 시간 = {t:.0f} s, 검산 S/N = {snr_at(t, 50, 20, 30, 8):.2f}")
+for n in (1, 4, 16):
+    tt = t / n
+    total = snr_at(tt, 50, 20, 30, 8) * math.sqrt(n)
+    print(f"{n:2d}장으로 나눠 찍기({tt:6.1f} s씩): 합친 S/N = {total:.2f}")</code></pre>
+    <pre><code>S/N 50에 필요한 시간 = 653 s, 검산 S/N = 50.00
+ 1장으로 나눠 찍기( 652.9 s씩): 합친 S/N = 50.00
+ 4장으로 나눠 찍기( 163.2 s씩): 합친 S/N = 49.67
+16장으로 나눠 찍기(  40.8 s씩): 합친 S/N = 48.39</code></pre>
+
+    <h3><span class="no">7.3.2</span>나눠 찍기의 값</h3>
+    <p>같은 총시간을 여러 장으로 나누면 장마다 읽기 잡음이 한 번씩 더해져 S/N이 조금 줄어듭니다(16장이면 50 → 48.4). 그래도 나눠 찍는 까닭이 있습니다. 우주선 제거(여러 장의 중앙값), 밝은 별의 포화 피하기, 위성 궤적이나 구름 낀 장 버리기, 망원경을 조금씩 옮겨 불량 화소를 메우기(디더링) 때문입니다. 하늘빛이 읽기 잡음보다 충분히 크면(\(\dot N_st \gg R^2\)) 나눠도 손해가 거의 없으므로, 한 장의 노출을 '하늘 잡음이 읽기 잡음을 넘는 시간' 이상으로 정하는 것이 경험 규칙입니다.</p>
+
+    <h3><span class="no">7.3.3</span>관측 시간 신청서</h3>
+    <p>망원경 시간은 경쟁으로 배정됩니다. 신청서는 보통 다음을 숫자로 보여야 합니다.</p>
+    <ol>
+      <li><b>과학 목표</b>: 무엇을 왜 재는지, 어떤 정밀도(예: 0.02등급, 시선속도 1 km/s)가 필요한지.</li>
+      <li><b>기술적 근거</b>: 그 정밀도가 요구하는 S/N, ETC로 구한 노출 시간, 대상 수 × 시간 + 보정 영상과 망원경 이동 시간(오버헤드)을 더한 총시간.</li>
+      <li><b>가능성</b>: 대상의 고도와 달의 위상(7.1절), 필요한 시상, 왜 이 망원경이어야 하는지.</li>
+    </ol>
+    <p>시간을 과하게 신청하면 심사에서 깎이고, 모자라게 신청하면 목표를 이루지 못합니다. ETC의 가정(시상, 하늘 밝기, 대기 질량)을 신청서에 함께 적습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>위 계산에서 하늘빛이 달빛 때문에 화소당 20에서 80 e⁻/s로 늘면 같은 S/N에 필요한 시간은?</p>
+    </div>
+    <p><i>풀이.</i> <code>exposure_time(50, 50, 80, 30, 8)</code>을 손으로 풀면 \(b = -2500\times(50 + 2400) = -6.125\times10^6\), \(t \approx 6.125\times10^6/2500 = 2450\) s(읽기 잡음 항은 거의 무시됨). 약 3.8배가 됩니다. 어두운 대상은 달 없는 밤을 신청하는 까닭입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CCD 방정식을 \(t\)의 이차방정식으로 풀어 노출 시간을 정한다(ETC).</li>
+        <li>나눠 찍으면 읽기 잡음만큼 손해. 하늘 잡음이 읽기 잡음을 넘을 만큼 길게 찍고 나눈다.</li>
+        <li>신청서: 목표 정밀도 → S/N → 노출 시간 → 오버헤드 포함 총시간, 그리고 관측 가능성.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>밝은 별(하늘과 읽기 잡음 무시)에서 S/N을 두 배로 하려면 노출 시간은?
+          <details><summary>답</summary><p>\(S/N \propto \sqrt t\)이므로 4배.</p></details>
+        </li>
+        <li>측광 정밀도 0.01등급에 필요한 S/N은?
+          <details><summary>답</summary><p>\(\sigma_m \approx 1.086/(S/N)\)이므로 약 109.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>대상 12개를 각각 653초씩 찍고, 대상마다 망원경 이동과 맞추기에 5분, 밤마다 보정 영상에 30분이 듭니다. 총 몇 시간을 신청해야 합니까?
+          <details><summary>답</summary><p>\(12\times(653 + 300) = 11{,}436\) s ≈ 3.2시간 + 0.5시간 = 약 3.7시간. 날씨 손실을 고려해 여유를 말로 적습니다.</p></details>
+        </li>
+        <li>읽기 잡음이 3 e⁻인 새 검출기로 바꾸면 16장으로 나눠 찍을 때의 손해는 어떻게 됩니까?
+          <details><summary>답</summary><p>\(nR^2\) 항이 \((3/8)^2 = 0.14\)배로 줄어 손해가 거의 없어집니다. 저잡음 검출기일수록 짧게 여러 장 찍기가 유리합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

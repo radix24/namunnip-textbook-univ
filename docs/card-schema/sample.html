@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>통일 카드 견본</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+/* ───── 공용 렌더러 CSS(css/qc.css 시안). 색은 변수로만 받는다 ───── */
+.qc-theme-quri { --qc-accent: #5b4bc4; --qc-accent-2: #ece9fb; --qc-ink: #1d1b24; --qc-ink-2: #5a5768; --qc-rule: #dcd9e6; --qc-paper: #fbfaff; --qc-card: #ffffff; --qc-warn: #c4553c; --qc-font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+.qc-theme-nmnp { --qc-accent: #2f7d4f; --qc-accent-2: #e3f2e8; --qc-ink: #1c241f; --qc-ink-2: #56645b; --qc-rule: #d3ddd6; --qc-paper: #f8fbf7; --qc-card: #ffffff; --qc-warn: #b5542f; --qc-font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+.qc { background: var(--qc-card); color: var(--qc-ink); border: 1px solid var(--qc-rule); border-top: 4px solid var(--qc-accent); border-radius: 6px; padding: 16px 18px; margin: 0 0 18px; font-family: var(--qc-font); line-height: 1.7; font-size: 15px; }
+.qc > header { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: baseline; margin-bottom: 10px; }
+.qc > header .no { grid-row: span 2; font: 600 12px ui-monospace, monospace; color: var(--qc-accent); background: var(--qc-accent-2); border-radius: 4px; padding: 2px 6px; }
+.qc > header h2 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
+.qc > header .tag { margin: 0; font-size: 12.5px; color: var(--qc-ink-2); }
+.qc > header .tag::before { content: attr(data-kindname) " · "; color: var(--qc-accent); font-weight: 600; }
+.qc-step { border-top: 1px solid var(--qc-rule); padding: 8px 0 4px; }
+.qc-step > h3 { font-size: 13px; margin: 0 0 4px; color: var(--qc-accent); letter-spacing: .02em; }
+.qc-step p, .qc-step ol, .qc-step ul { margin: 4px 0; }
+.qc-def, .qc-thm { background: var(--qc-accent-2); border-left: 3px solid var(--qc-accent); padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+.qc-def .lb, .qc-thm .lb { display: block; font-size: 12px; font-weight: 700; color: var(--qc-accent); }
+.qc-prob { font-weight: 600; }
+.qc-proof { padding-left: 1.3em; }
+.qc-proof li { margin: 4px 0; }
+.qc-proof .why { display: block; font-size: 12.5px; color: var(--qc-ink-2); }
+.qc-warn { border-left: 3px solid var(--qc-warn); padding-left: 10px; }
+.qc-warn > h3 { color: var(--qc-warn); }
+.qc-fig { background: var(--qc-paper); border: 1px solid var(--qc-rule); border-radius: 4px; padding: 10px; margin: 8px 0; }
+.qc-fig canvas { width: 100%; height: 180px; display: block; }
+.qc-fig .ctl { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; margin-top: 6px; }
+.qc-fig .ctl input[type=range] { accent-color: var(--qc-accent); width: 160px; vertical-align: middle; }
+.qc-fig .out { font: 12.5px ui-monospace, monospace; color: var(--qc-ink-2); margin: 6px 0 0; }
+.qc-quiz { border-top: 1px dashed var(--qc-rule); margin-top: 8px; padding-top: 8px; }
+.qc-quiz h3 { font-size: 13px; margin: 0 0 4px; }
+.qc-quiz ol, .qc-items { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 6px; }
+.qc button.opt { width: 100%; text-align: left; border: 1px solid var(--qc-rule); background: var(--qc-paper); border-radius: 4px; padding: 7px 10px; font: inherit; color: inherit; cursor: pointer; }
+.qc button.opt:hover { border-color: var(--qc-accent); }
+.qc button.opt .why { display: none; font-size: 12.5px; color: var(--qc-ink-2); margin-top: 3px; }
+.qc button.opt.done .why { display: block; }
+.qc button.opt.right { border-color: var(--qc-accent); box-shadow: inset 4px 0 0 var(--qc-accent); }
+.qc button.opt.wrong { border-color: var(--qc-warn); box-shadow: inset 4px 0 0 var(--qc-warn); }
+.qc .btn { border: 1px solid var(--qc-accent); color: var(--qc-accent); background: none; border-radius: 999px; padding: 3px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.qc .meta { font: 12px ui-monospace, monospace; color: var(--qc-ink-2); }
+.qc .meta b { color: var(--qc-accent); }
+.qc details { margin: 4px 0; }
+.qc details > summary { cursor: pointer; color: var(--qc-accent); font-size: 13px; }
+
+/* ───── 견본 페이지 틀 ───── */
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f4f6; color: #222; font-family: "Pretendard", "Malgun Gothic", sans-serif; }
+.page { max-width: 1240px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { font-size: 24px; margin: 0 0 6px; }
+.lead { color: #555; margin: 0 0 18px; line-height: 1.6; max-width: 60em; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.col { padding: 14px; border-radius: 10px; }
+.col.qc-theme-quri { background: var(--qc-paper); }
+.col.qc-theme-nmnp { background: var(--qc-paper); }
+.col > h2 { font-size: 15px; margin: 0 0 12px; color: var(--qc-accent); }
+.place { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 0 0 22px; }
+.place h2 { font-size: 16px; margin: 0 0 8px; }
+.place .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.place .chips button { border: 1px solid #bbb; background: #fff; border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.place .chips button[aria-pressed=true] { background: #5b4bc4; border-color: #5b4bc4; color: #fff; }
+.place .crumb { font-size: 13px; color: #444; }
+.place .crumb b { color: #5b4bc4; }
+.place .fake { font-size: 11px; color: #b5542f; border: 1px solid #b5542f; border-radius: 4px; padding: 0 4px; margin-left: 6px; }
+.place pre { background: #f6f6f8; border: 1px solid #e3e3e8; border-radius: 6px; padding: 10px; overflow-x: auto; font-size: 12px; line-height: 1.5; margin: 10px 0 0; }
+.place .nav { display: flex; justify-content: space-between; font-size: 13px; margin-top: 8px; color: #555; }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>통일 카드 견본 (qcard/1)</h1>
+  <p class="lead">아래 카드 네 장(개념, 예제, 실습, 시험 문항)은 <b>마크업 한 벌</b>을 두 번 그린 것입니다. 왼쪽은 QURI 색, 오른쪽은 나뭇잎 색으로, 다른 것은 CSS 변수 다섯 개뿐입니다. 맨 위 상자는 같은 카드가 학교·학과에 따라 다른 과목 이름과 번호 아래에 놓이는 모습입니다. 설계는 같은 폴더의 README.md에 있습니다.</p>
+
+  <section class="place" aria-label="학과별 배치 예">
+    <h2>같은 카드, 학과마다 다른 자리</h2>
+    <div class="chips" role="group" aria-label="학교·학과 고르기" id="pick"></div>
+    <p class="crumb" id="crumb"></p>
+    <div class="nav" id="nav"></div>
+    <pre id="placejson" aria-label="이 학과 배치표에서 이 카드가 놓인 부분"></pre>
+  </section>
+
+  <div class="cols">
+    <div class="col qc-theme-quri"><h2>QURI 색</h2><div class="slot"></div></div>
+    <div class="col qc-theme-nmnp"><h2>나뭇잎 색</h2><div class="slot"></div></div>
+  </div>
+</div>
+
+<template id="cards">
+  <!-- 1) 개념 카드 (나뭇잎식 단계 + 확인 문제) -->
+  <article class="qc" data-kind="concept">
+    <header><span class="no"></span><h2>진자 공식은 언제 틀릴까?</h2><p class="tag">단진동 · 근사의 조건</p></header>
+    <section class="qc-step"><h3>질문</h3><p>그네를 더 높이 밀면, 한 번 왕복하는 시간도 길어질까요?</p></section>
+    <section class="qc-step"><h3>복원</h3><p>각을 라디안으로 재면 작은 각에서 \(\sin\theta\approx\theta\)입니다. \(\sin0.1=0.0998\).</p></section>
+    <section class="qc-step"><h3>설명</h3><p>되돌리는 힘 \(mg\sin\theta\)를 \(mg\theta\)로 바꾸면 운동이 단순 조화 진동이 되어 주기가 진폭과 무관해집니다.</p></section>
+    <section class="qc-step"><h3>연결</h3><div class="qc-thm"><span class="lb">작은 진폭 주기</span>\[T_0=2\pi\sqrt{L/g}\]</div></section>
+    <section class="qc-step qc-warn"><h3>판단</h3><p>"진자의 주기는 진폭과 무관하다"는 진폭이 작을 때만 맞습니다. 90°면 약 18% 길어집니다.</p></section>
+    <div class="qc-quiz"><h3>확인 · 조건이 달라지면</h3>
+      <p>같은 진자를 달에서 흔들면 주기는?</p>
+      <ol>
+        <li><button class="opt" data-ok="0">ㄱ. 같다<span class="why"><b>아님.</b> \(T_0\)는 \(g\)에 의존합니다.</span></button></li>
+        <li><button class="opt" data-ok="1">ㄴ. 약 2.4배 길어진다<span class="why"><b>맞음.</b> \(g\)가 1/6이라 \(\sqrt6\approx2.4\)배.</span></button></li>
+        <li><button class="opt" data-ok="0">ㄷ. 6배 길어진다<span class="why"><b>아님.</b> 제곱근에 들어 있습니다.</span></button></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 2) 예제 카드 -->
+  <article class="qc" data-kind="example">
+    <header><span class="no"></span><h2>사인의 세제곱과 코사인의 제곱을 곱한 함수는 어떻게 적분할까?</h2><p class="tag">삼각함수의 거듭제곱</p></header>
+    <p class="qc-prob">\(\displaystyle\int\sin^3x\cos^2x\,dx\)를 구하세요.</p>
+    <section class="qc-step"><h3>전략</h3><p>사인의 지수가 홀수라 사인 하나를 떼어 \(u=\cos x\)로 치환합니다.</p></section>
+    <section class="qc-step"><h3>풀이</h3>
+      <ol class="qc-proof">
+        <li><div>\(\sin^3x\cos^2x=(1-\cos^2x)\cos^2x\sin x\)</div><span class="why">\(\sin^2x+\cos^2x=1\)</span></li>
+        <li><div>\(\displaystyle\int(u^4-u^2)\,du\) (\(u=\cos x\))</div><span class="why">치환적분: <a data-card="text-c1-substitution">치환적분 절</a></span></li>
+        <li><div>\(=\dfrac{\cos^5x}5-\dfrac{\cos^3x}3+C\)</div><span class="why">거듭제곱의 적분</span></li>
+      </ol>
+    </section>
+    <section class="qc-step"><h3>검산</h3><p>답을 미분하면 \(\sin x\cos^2x(1-\cos^2x)=\sin^3x\cos^2x\)입니다.</p></section>
+  </article>
+
+  <!-- 3) 실습 카드 (조작형) -->
+  <article class="qc" data-kind="lab" id="lab-demo">
+    <header><span class="no"></span><h2>진자의 주기는 정말 진폭과 무관할까?</h2><p class="tag">작은 진폭 근사의 한계</p></header>
+    <section class="qc-step"><h3>목표</h3><p>진폭을 바꾸며 실제 진자(파랑)와 근사 진자(회색)의 주기 비를 잽니다.</p></section>
+    <div class="qc-fig">
+      <canvas aria-label="실제 진자와 근사 진자의 각-시간 그래프"></canvas>
+      <div class="ctl"><label>진폭 θ₀ = <b data-show>30</b>° <input type="range" min="5" max="170" value="30" aria-label="진폭"></label></div>
+      <p class="out"></p>
+    </div>
+    <section class="qc-step"><h3>기대 결과</h3><p>30°에서 약 1.7%, 90°에서 약 18% 길어집니다.</p></section>
+  </article>
+
+  <!-- 4) 시험 문항 (문항 스키마를 렌더러가 그린 모습) -->
+  <article class="qc" data-kind="exam">
+    <header><span class="no"></span><h2>시험 연습 · 문제 3 / 12</h2><p class="tag">조화운동과 진동</p></header>
+    <p class="meta"><b>시험 전용</b> · 계산 · 응용 · std 물리1-04</p>
+    <div class="q"><p>약하게 감쇠하는 진자의 진폭이 5주기 뒤 처음의 절반이 되었습니다. 품질 인자 \(Q\)에 가장 가까운 값은?</p></div>
+    <ol class="qc-items">
+      <li><button class="opt" data-ok="0">① 7<span class="why">\(5/\ln2\)만 계산한 값입니다.</span></button></li>
+      <li><button class="opt" data-ok="1">② 23<span class="why">\(Q=5\pi/\ln2\approx22.7\).</span></button></li>
+      <li><button class="opt" data-ok="0">③ 72<span class="why">\(\pi\)를 한 번 더 곱했습니다.</span></button></li>
+    </ol>
+    <details><summary>힌트 1</summary><p>진폭은 \(e^{-\beta t}\)로 줄어듭니다.</p></details>
+    <details><summary>힌트 2</summary><p>\(Q\approx\omega_1/(2\beta)\)</p></details>
+  </article>
+</template>
+
+<script>
+/* 견본 데이터: 학과 배치표의 일부(README 5절 형식). 두 번째 학교는 가상 예시 */
+const PLACES = [
+  { key: "연세대/수학과", course: "미분적분학과벡터해석심화(1)", no: "MAT1016", unit: [5, "적분법"], sec: 2, prev: "5.1 치환적분", next: "5.3 부분분수",
+    json: { from: "공통1", n: ["01","02","03","04","05","06","07","08","09","10"] }, extra: "+ 학과 전용 단원 '실수의 완비성과 엄밀한 극한'" },
+  { key: "연세대/천문우주학과", course: "미분적분학과벡터해석(1)", no: "MAT1001", unit: [5, "적분법"], sec: 2, prev: "5.1 치환적분", next: "5.3 부분분수",
+    json: { from: "공통1" } },
+  { key: "연세대/전기전자공학부", course: "공학수학(1)", no: "MAT1011", unit: [5, "적분법"], sec: 2, prev: "5.1 치환적분", next: "5.3 부분분수",
+    json: { from: "공통1" } },
+  { key: "한빛대/물리학과", fake: true, course: "물리수학(1)", no: "PHM101", unit: [2, "적분 기법"], sec: 4, prev: "2.3 치환적분", next: "3.1 상미분방정식",
+    json: { t: "적분 기법", secs: ["공통1-05-01", "공통1-05-02", "공통1-05-03"] } }
+];
+const pick = document.getElementById("pick");
+pick.innerHTML = PLACES.map((p, i) => `<button type="button" data-i="${i}" aria-pressed="${i === 0}">${p.key.replace("/", " · ")}${p.fake ? ' <span class="fake">가상</span>' : ""}</button>`).join("");
+function showPlace(i) {
+  const p = PLACES[i];
+  pick.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.i === i)));
+  document.getElementById("crumb").innerHTML = `${p.key.replace("/", " · ")} › <b>${p.course}</b> (${p.no}) › ${p.unit[0]}. ${p.unit[1]} › <b>${p.unit[0]}.${p.sec}</b> 삼각함수의 거듭제곱 › 예제 카드 <code>card-c1-ex-trigint</code>`;
+  document.getElementById("nav").innerHTML = `<span>← ${p.prev}</span><span>${p.next} →</span>`;
+  document.getElementById("placejson").textContent = `// place/${p.key}.json 의 해당 과목 (일부)\n` + `{"name": "${p.course}", "no": "${p.no}",\n "units": [ …, ${JSON.stringify(p.json)}, … ]}` + (p.extra ? `\n// ${p.extra}` : "");
+  document.querySelectorAll('.qc[data-kind="example"] .no').forEach((el) => (el.textContent = `${p.unit[0]}.${p.sec}.2`));
+}
+pick.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showPlace(+b.dataset.i); });
+
+/* 렌더러(js/qc.js 시안): 종류 이름, 확인 문제 채점, 실습 그림 */
+const KIND = { concept: "개념", example: "예제", lab: "실습", exam: "시험 문항", text: "본문", proof: "증명", practice: "연습" };
+const tpl = document.getElementById("cards");
+document.querySelectorAll(".slot").forEach((slot) => slot.appendChild(tpl.content.cloneNode(true)));
+document.querySelectorAll(".qc").forEach((card, k) => {
+  const tag = card.querySelector(".tag"); if (tag) tag.dataset.kindname = KIND[card.dataset.kind] || "";
+  const no = card.querySelector(".no"); if (no && !no.textContent) no.textContent = { concept: "9.1.2", lab: "9.1.3", exam: "Q3" }[card.dataset.kind] || "";
+  card.querySelectorAll("button.opt").forEach((b) => b.addEventListener("click", () => {
+    const group = b.closest("ol");
+    group.querySelectorAll("button.opt").forEach((x) => { x.classList.add("done"); if (x.dataset.ok === "1") x.classList.add("right"); });
+    if (b.dataset.ok !== "1") b.classList.add("wrong");
+  }));
+  if (card.dataset.kind === "lab") lab(card);
+});
+showPlace(0);
+
+function lab(card) {
+  const cv = card.querySelector("canvas"), range = card.querySelector("input"), show = card.querySelector("[data-show]"), out = card.querySelector(".out");
+  const css = getComputedStyle(card);
+  function period(th0) {                           // g/L = 1. 각이 처음으로 0을 지나는 시각 = 주기의 1/4
+    let th = th0, w = 0, t = 0; const dt = 2e-4;
+    while (th > 0 && t < 100) { w -= Math.sin(th) * dt; th += w * dt; t += dt; }   // 반암시적 Euler
+    return 4 * t;
+  }
+  function draw() {
+    const th0 = +range.value * Math.PI / 180; show.textContent = range.value;
+    const T = period(th0), T0 = 2 * Math.PI;
+    out.textContent = `실제 주기 / 근사 주기 = ${(T / T0).toFixed(3)} (근사식 1 + θ₀²/16 = ${(1 + th0 * th0 / 16).toFixed(3)})`;
+    const dpr = devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; const c = cv.getContext("2d"); c.scale(dpr, dpr);
+    c.clearRect(0, 0, W, H); c.strokeStyle = css.getPropertyValue("--qc-rule"); c.beginPath(); c.moveTo(0, H / 2); c.lineTo(W, H / 2); c.stroke();
+    const tmax = 3 * T0, sx = W / tmax, sy = (H / 2 - 8) / Math.PI;
+    [["#9a9aa5", false], [css.getPropertyValue("--qc-accent"), true]].forEach(([col, exact]) => {
+      let th = th0, w = 0; const dt = 0.01; c.strokeStyle = col; c.lineWidth = exact ? 2 : 1.5; c.setLineDash(exact ? [] : [5, 4]); c.beginPath();
+      for (let t = 0; t <= tmax; t += dt) { c.lineTo(t * sx, H / 2 - th * sy); const a = exact ? -Math.sin(th) : -th; w += a * dt; th += w * dt; }
+      c.stroke();
+    });
+    c.setLineDash([]);
+  }
+  range.addEventListener("input", draw); addEventListener("resize", draw); draw();
+}
+addEventListener("load", () => window.renderMathInElement && renderMathInElement(document.body, { delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }] }));
+</script>
+</body>
+</html>

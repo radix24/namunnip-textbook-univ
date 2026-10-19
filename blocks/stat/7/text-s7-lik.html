@@ -1,0 +1,85 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s7-lik" data-kind="본문" data-std="응통7-01-02">
+  <header class="card-head"><span class="no"></span><h2>가능도함수와 최대가능도추정량</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>가능도함수를 세우고 로그가능도를 최대화해 MLE를 구한다.</li>
+        <li>미분이 안 되는 경우와 경계에서 최대가 되는 경우를 다룬다.</li>
+        <li>MLE의 불변성을 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>추정량 (<a href="01-01.html">1.1절</a>), 편미분 (응통1 05단원).</li>
+      </ul>
+    </div>
+
+    <h3>이 자료가 나올 가능성이 가장 큰 모수</h3>
+    <p>동전을 10번 던져 앞면이 7번 나왔다면 \(p\)는 얼마로 보는 것이 자연스러울까요? \(p = 0.5\)이면 이런 결과가 나올 확률이 \(\binom{10}7 0.5^{10} \approx 0.117\), \(p = 0.7\)이면 \(\binom{10}7 0.7^7 0.3^3 \approx 0.267\)입니다. 관측된 자료를 가장 그럴듯하게 만드는 \(p\)를 고르자는 것이 최대가능도법이며, 현대 통계학에서 가장 널리 쓰는 추정 방법입니다.</p>
+
+    <h3><span class="no">1.2.1</span>가능도함수</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.2.1</span>
+      <p>독립 표본 \(x_1, \ldots, x_n\)의 <b>가능도함수</b>: \(L(\theta) = \prod_{i=1}^n f(x_i; \theta)\). 자료를 고정하고 모수의 함수로 본 결합 밀도(질량)입니다. \(L(\theta)\)를 가장 크게 하는 \(\hat\theta\)를 <b>최대가능도추정량</b>(MLE)이라 합니다.</p>
+    </div>
+    <p>가능도는 \(\theta\)에 대한 확률분포가 아닙니다(\(\theta\)로 적분해도 1이 아님). 곱보다 합이 미분하기 쉬우므로 로그가능도 \(\ell(\theta) = \sum\log f(x_i;\theta)\)를 최대화합니다. 로그는 증가함수라 최대점이 같습니다. 보통 \(\ell'(\theta) = 0\)(<b>가능도방정식</b>)을 풀고 \(\ell''(\theta) &lt; 0\)으로 최대임을 확인합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.2</span>
+      <p>(가) 지수분포 \(f(x;\lambda) = \lambda e^{-\lambda x}\)의 MLE. (나) \(N(\mu, \sigma^2)\)의 두 모수 MLE.</p>
+    </div>
+    <p><i>풀이.</i> (가) \(\ell(\lambda) = n\log\lambda - \lambda\sum x_i\), \(\ell'(\lambda) = n/\lambda - \sum x_i = 0\)에서 \(\hat\lambda = 1/\bar x\). \(\ell''(\lambda) = -n/\lambda^2 &lt; 0\)이므로 최대. (나) \(\ell = -\frac n2\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum(x_i - \mu)^2\). \(\partial\ell/\partial\mu = 0\)에서 \(\hat\mu = \bar x\). \(\partial\ell/\partial\sigma^2 = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum(x_i - \mu)^2 = 0\)에서 \(\hat\sigma^2 = \frac1n\sum(x_i - \bar x)^2\). \(n-1\)이 아니라 \(n\)으로 나눈다는 점에 주의합니다(1.3절에서 치우침을 봅니다).</p>
+
+    <h3><span class="no">1.2.2</span>미분으로 풀 수 없을 때</h3>
+    <p>가능도방정식이 늘 답을 주지는 않습니다.</p>
+    <ul>
+      <li><b>모수가 값의 범위를 정할 때</b>: \(U(0, \theta)\)에서 \(L(\theta) = \theta^{-n}\) (모든 \(x_i \le \theta\)일 때), 아니면 0. \(\theta \ge x_{(n)}\)에서 감소하므로 \(\hat\theta = x_{(n)}\)(최댓값)입니다. 미분이 0인 점은 없습니다.</li>
+      <li><b>경계</b>: 성공이 0번이면 베르누이 MLE는 \(\hat p = 0\)으로 모수 공간의 경계입니다.</li>
+      <li><b>닫힌 식이 없을 때</b>: 감마분포의 \(\alpha\), 로지스틱 회귀 계수는 뉴턴 방법 같은 수치 최적화로 풉니다(응통15 03단원).</li>
+    </ul>
+    <p>어떤 경우든 가능도의 그래프를 그려 보는 습관이 가장 안전합니다. 극대가 여러 개이거나 평평한 경우도 그림에서 드러납니다.</p>
+
+    <h3><span class="no">1.2.3</span>불변성</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.3</span>
+      <p>\(\hat\theta\)가 \(\theta\)의 MLE이면 함수 \(g(\theta)\)의 MLE는 \(g(\hat\theta)\)이다.</p>
+    </div>
+    <p class="tb-proof">\(g\)가 일대일이면 \(\eta = g(\theta)\)로 다시 쓴 가능도 \(L^*(\eta) = L(g^{-1}(\eta))\)는 \(\eta = g(\hat\theta)\)에서 최대입니다. 일대일이 아니면 \(L^*(\eta) = \sup_{\theta: g(\theta) = \eta}L(\theta)\)(유도 가능도)로 정의하면 같은 결론이 나옵니다. <span class="qed">∎</span></p>
+    <p>정규분포 표준편차의 MLE는 \(\sqrt{\hat\sigma^2}\), 지수분포 평균 \(1/\lambda\)의 MLE는 \(\bar x\), 포아송의 \(P(X = 0) = e^{-\lambda}\)의 MLE는 \(e^{-\bar x}\)입니다. 적률법이나 불편추정량(1.3절)에는 이런 성질이 일반적으로 없습니다. \(S^2\)은 불편이지만 \(S\)는 불편이 아닌 것이 그 예입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(L(\theta) = \prod f(x_i;\theta)\), 로그가능도를 최대화합니다.</li>
+        <li>범위가 모수에 달린 경우, 경계, 닫힌 식이 없는 경우는 그래프와 수치 방법으로.</li>
+        <li>MLE는 변환에 불변: \(g(\theta)\)의 MLE는 \(g(\hat\theta)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>포아송 \(\lambda\)의 MLE와 \(P(X = 0) = e^{-\lambda}\)의 MLE는?
+          <details><summary>답</summary><p>\(\ell = -n\lambda + \sum x_i\log\lambda + c\), \(\hat\lambda = \bar x\). 불변성으로 \(e^{-\bar x}\).</p></details>
+        </li>
+        <li>베르누이 \(n\)번 중 \(k\)번 성공일 때 \(p\)의 MLE는?
+          <details><summary>답</summary><p>\(\ell = k\log p + (n-k)\log(1-p)\), \(\ell' = k/p - (n-k)/(1-p) = 0\)에서 \(\hat p = k/n\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(U(\theta, \theta + 1)\)의 MLE를 구하세요. 유일한가요?
+          <details><summary>답</summary><p>\(L(\theta) = 1\) (\(\theta \le x_{(1)}\)이고 \(x_{(n)} \le \theta + 1\)일 때). 구간 \([x_{(n)} - 1, x_{(1)}]\)의 모든 값이 최대이므로 MLE가 유일하지 않습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

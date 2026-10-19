@@ -1,0 +1,111 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우7-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a7-gain" data-kind="본문" data-std="천우7-03-03">
+  <header class="card-head"><span class="no"></span><h2>평탄 영상 두 장으로 CCD의 이득과 읽기 잡음 재기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>검출기가 기록하는 숫자(ADU)와 전자 수 사이의 비인 이득의 뜻을 안다.</li>
+        <li>광자 잡음의 분산이 평균과 같다는 성질로 이득을 재는 원리(광자 전달법)를 이해한다.</li>
+        <li>평탄 영상 두 장과 바이어스 영상 두 장으로 이득과 읽기 잡음을 계산한다.</li>
+        <li>이득으로 포화 전자 수와 측광 오차 계산의 단위를 맞춘다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>CCD의 특성 (<a href="03-01.html">3.1절</a>), 바이어스와 평탄화 (<a href="03-02.html">3.2절</a>), 신호 대 잡음비 (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>이득: 숫자와 전자 사이</h3>
+    <p>CCD 화소에 모인 전자는 증폭기와 아날로그-디지털 변환기를 거쳐 정수(ADU, 디지털 수)로 기록됩니다. 이득 \(g\)는 1 ADU에 해당하는 전자 수(e⁻/ADU)입니다. 측광 오차는 전자 수로 계산해야 맞으므로(광자 잡음 \(\sqrt{N_e}\)), 이득을 모르면 S/N을 계산할 수 없습니다. 제조사 값이 있어도 설정과 노화로 달라지므로 관측소에서 직접 잽니다.</p>
+
+    <h3><span class="no">3.3.2</span>광자 전달법의 원리</h3>
+    <p>평탄 영상의 화소에 평균 \(N\)개의 전자가 모이면 광자 잡음의 분산은 \(N\)(포아송 분포)입니다. ADU로 재면 평균은 \(S = N/g\), 분산은 \(N/g^2\)이므로</p>
+    \[\frac{S}{\sigma_S^2} = \frac{N/g}{N/g^2} = g.\]
+    <p>평균과 분산만 재면 이득이 나옵니다. 다만 화소마다 감도가 조금씩 달라(평탄화 무늬) 한 장의 분산에는 그 차이가 섞입니다. 같은 조건의 평탄 영상 두 장을 빼면 무늬는 지워지고 잡음만 남아(분산은 두 배), 읽기 잡음은 바이어스 두 장의 차로 따로 빼 줍니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 3.3.1 (Janesick 방법)</span>
+      \[g = \frac{(\bar F_1 + \bar F_2) - (\bar B_1 + \bar B_2)}{\sigma^2_{F_1 - F_2} - \sigma^2_{B_1 - B_2}}, \qquad \text{RN} = \frac{g\,\sigma_{B_1 - B_2}}{\sqrt2}.\]
+      <p>\(\bar F\), \(\bar B\)는 평탄 영상과 바이어스 영상의 평균(ADU), \(\sigma_{F_1-F_2}\)는 두 평탄 영상 차의 표준편차입니다. 읽기 잡음 RN은 전자 단위입니다.</p>
+    </div>
+
+    <h3><span class="no">3.3.3</span>모의 실험으로 확인</h3>
+    <p>이득 1.5 e⁻/ADU, 읽기 잡음 6 e⁻, 평탄 영상 2만 전자인 검출기를 흉내 내고 결과 3.3.1로 거꾸로 구합니다.</p>
+    <pre><code>import random, statistics as st
+
+random.seed(2)
+GAIN, RN, BIAS, LEVEL, N = 1.5, 6.0, 500.0, 20000.0, 20000   # e-/ADU, e-, ADU, e-, 화소 수
+
+def bias_frame():
+    return [BIAS + random.gauss(0, RN) / GAIN for _ in range(N)]
+
+def flat_frame():
+    # 광자 잡음(포아송 ≈ 정규, 분산 = 평균 전자 수) + 읽기 잡음, ADU로
+    return [BIAS + (LEVEL + random.gauss(0, LEVEL**0.5) + random.gauss(0, RN)) / GAIN for _ in range(N)]
+
+B1, B2, F1, F2 = bias_frame(), bias_frame(), flat_frame(), flat_frame()
+dB = [a - b for a, b in zip(B1, B2)]
+dF = [a - b for a, b in zip(F1, F2)]
+signal = (st.fmean(F1) + st.fmean(F2)) - (st.fmean(B1) + st.fmean(B2))
+gain = signal / (st.variance(dF) - st.variance(dB))
+rn = gain * st.stdev(dB) / 2**0.5
+print(f"평탄 영상 평균 - 바이어스 = {signal / 2:.1f} ADU")
+print(f"추정 이득 = {gain:.3f} e-/ADU (참값 {GAIN})")
+print(f"추정 읽기 잡음 = {rn:.2f} e- (참값 {RN})")</code></pre>
+    <pre><code>평탄 영상 평균 - 바이어스 = 13333.5 ADU
+추정 이득 = 1.488 e-/ADU (참값 1.5)
+추정 읽기 잡음 = 5.90 e- (참값 6.0)</code></pre>
+    <p>화소 2만 개로 1% 안팎의 정밀도로 참값을 되찾았습니다. 실제로는 평탄 영상의 밝기를 여러 단계로 바꿔 '평균 대 분산' 그래프(광자 전달 곡선)를 그리고 그 기울기로 이득을, 직선에서 벗어나 꺾이는 곳으로 포화(선형 한계)를 함께 찾습니다.</p>
+
+    <h3><span class="no">3.3.4</span>주의할 점</h3>
+    <ul class="tb-list">
+      <li>평탄 영상이 포화 근처면 분산이 줄어 이득이 크게 나옵니다. 포화의 절반 이하에서 잽니다.</li>
+      <li>별이나 우주선이 찍힌 화소, 가장자리는 빼고 고른 영역을 씁니다.</li>
+      <li>두 평탄 영상의 밝기가 다르면(광원이 흔들림) 차의 분산에 무늬가 남습니다. 밝기를 맞추거나 비율로 맞춘 뒤 뺍니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>이득 2.0 e⁻/ADU인 CCD에서 별의 신호가 5,000 ADU였습니다. 광자 잡음만 생각하면 S/N은? 이득을 1로 잘못 알았다면?</p>
+    </div>
+    <p><i>풀이.</i> 전자 수 10,000, \(S/N = \sqrt{10000} = 100\). 이득을 1로 알면 \(\sqrt{5000} = 71\)로 S/N을 30% 작게 어림합니다. ADU의 제곱근은 아무 뜻이 없습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이득 \(g\) = e⁻/ADU. 측광 오차는 전자 수로 계산한다.</li>
+        <li>광자 잡음 분산 = 평균 → \(g = S/\sigma^2_S\)(ADU 단위).</li>
+        <li>평탄 두 장의 차와 바이어스 두 장의 차로 무늬와 읽기 잡음을 지운다(결과 3.3.1).</li>
+        <li>포화 절반 이하, 고른 영역에서 잰다. 밝기를 바꿔 광자 전달 곡선을 그리면 선형 한계도 찾는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>16비트 변환기(최대 65,535 ADU)와 이득 1.2 e⁻/ADU이면 기록할 수 있는 최대 전자 수는?
+          <details><summary>답</summary><p>약 78,600 e⁻. 실제 화소의 우물 용량이 이보다 작으면 그쪽이 먼저 포화됩니다.</p></details>
+        </li>
+        <li>바이어스 두 장 차의 표준편차가 8.0 ADU, 이득이 1.5이면 읽기 잡음은?
+          <details><summary>답</summary><p>\(1.5\times8.0/\sqrt2 = 8.5\) e⁻.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>왜 평탄 영상 한 장의 분산이 아니라 두 장의 차의 분산을 씁니까?
+          <details><summary>답</summary><p>한 장의 분산에는 화소마다 다른 감도(평탄화 무늬)가 섞여 광자 잡음보다 커집니다. 같은 조건의 두 장을 빼면 무늬는 지워지고 독립인 잡음만 남습니다(분산 2배).</p></details>
+        </li>
+        <li>광자 전달 곡선이 평균 40,000 ADU부터 아래로 꺾였습니다. 무엇을 뜻하며 관측에 어떻게 반영합니까?
+          <details><summary>답</summary><p>그 근처부터 비선형(포화가 시작)입니다. 밝은 별이 이 값을 넘지 않도록 노출 시간을 정하고, 측광에 쓰는 화소의 최대값을 그 아래로 제한합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

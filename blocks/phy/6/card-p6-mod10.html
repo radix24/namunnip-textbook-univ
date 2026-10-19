@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-02-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-p6-mod10" data-kind="예제" data-std="물리6-02-03">
+  <header class="card-head"><span class="no"></span><h2>10진 카운터와 리플 지연</h2><span class="kind">모듈로 N · 되돌림 논리 · 전파 지연</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>\(n\)단 2진 카운터는 0부터 \(2^n - 1\)까지 셉니다. 원하는 수 \(N\)에 이르면 모두 0으로 되돌리는 논리를 더하면 모듈로 N 카운터가 됩니다. 리플 카운터는 각 단이 앞 단 출력으로 동작해 지연이 쌓입니다(2.3절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 되돌릴 상태 찾기</span>
+      <ol>
+        <li>\(N\)을 담을 수 있는 최소 단수 \(n\)을 정한다(\(2^n \ge N\)).</li>
+        <li>되돌릴 상태 \(N\)의 2진수에서 1인 비트를 찾아 AND(또는 NAND)로 검출한다.</li>
+        <li>지연을 더해 최대 클록 진동수를 어림한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">(가) 0~9를 세는 10진 카운터에 필요한 플립플롭 수와 되돌림 조건은? (나) 플립플롭 하나의 전파 지연이 10 ns인 리플 카운터로 만들면, 1001 → 0000처럼 여러 비트가 바뀔 때 최종 값이 정해지기까지 최대 몇 ns 걸리는가?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(2^3 = 8 < 10 \le 16 = 2^4\) → 4단.</div><span class="q-why">4비트.</span></li>
+        <li><div>10 = 1010이 되는 순간 \(Q_3 = Q_1 = 1\)을 NAND로 검출해 모든 플립플롭을 비동기 재설정 → 0000.</div><span class="q-why">1010이 처음 나오는 상태에서 1인 비트는 \(Q_3\), \(Q_1\)뿐.</span></li>
+        <li class="q-end"><div>(나) 리플에서는 \(Q_0\) → \(Q_1\) → \(Q_2\) → \(Q_3\) 순서로 바뀌므로 최대 \(4\times10 = 40\) ns, 여기에 되돌림 게이트와 재설정 지연이 더해진다.</div><span class="q-why">지연이 단마다 쌓임.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>1010은 아주 짧게(수십 ns) 나타났다가 사라지는 상태라 눈에는 보이지 않지만, 그 순간 다른 회로가 값을 읽으면 틀린 값을 볼 수 있습니다. 동기 카운터는 모든 비트가 한 클록 가장자리에서 함께 바뀌어 이런 문제가 줄고, 지연이 단수에 따라 쌓이지 않아 더 빠른 클록에서 동작합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>되돌림 조건 \(Q_3Q_1\)은 0~9 사이(0000~1001)의 어떤 상태에서도 동시에 1이 되지 않으므로, 세는 도중에 잘못 되돌려지는 일이 없습니다.</p>
+    </section>
+  </div>
+</article>
