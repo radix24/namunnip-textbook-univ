@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-fft" data-kind="본문" data-std="수학15-06-02">
+  <header class="card-head"><span class="no"></span><h2>고속 푸리에 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>DFT를 정의대로 계산하면 곱셈이 약 \(N^2\)번 필요함을 안다.</li>
+        <li>짝수 번째와 홀수 번째로 나누는 분할정복으로 \(N = 2^n\)일 때 계산량이 \(O(N\log N)\)으로 줄어드는 이유를 설명한다.</li>
+        <li>FFT가 다항식 곱셈 같은 계산을 빠르게 하는 원리를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이산 푸리에 변환 (<a href="06-01.html">6.1절</a>), 점화식으로 수열 구하기(고등학교 수열).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>정의대로 계산하면</h3>
+    <p>\(\hat f(k) = \frac1N\sum_{n=0}^{N-1}f(n)\zeta_N^{-kn}\)을 \(k = 0, \dots, N - 1\) 모두에 대해 구하려면 \(k\)마다 곱셈 \(N\)번, 전체 약 \(N^2\)번이 듭니다. \(N = 1024\)이면 약 105만 번, \(N = 10^6\)이면 \(10^{12}\)번입니다.</p>
+
+    <h3><span class="no">6.2.2</span>짝·홀로 나누기</h3>
+    <p>\(N = 2M\)이라 합시다. \(\zeta_N^2 = \zeta_M\)이므로 합을 짝수 \(n = 2m\)과 홀수 \(n = 2m + 1\)로 나누면</p>
+    \[\hat f(k) = \frac12\left(\frac1M\sum_{m=0}^{M-1}f(2m)\zeta_M^{-km} + \zeta_N^{-k}\cdot\frac1M\sum_{m=0}^{M-1}f(2m + 1)\zeta_M^{-km}\right) = \frac12\left(\hat f_0(k) + \zeta_N^{-k}\hat f_1(k)\right).\]
+    <p>여기서 \(f_0(m) = f(2m)\), \(f_1(m) = f(2m + 1)\)은 \(\mathbb Z_M\) 위의 함수이고 \(\hat f_0, \hat f_1\)은 크기 \(M\)인 DFT입니다. \(\hat f_0(k)\)는 \(k\)에 대해 주기 \(M\)이므로 \(k = 0, \dots, M - 1\)만 구하면 되고, \(\zeta_N^{-(k+M)} = -\zeta_N^{-k}\)이라</p>
+    \[\hat f(k) = \tfrac12\left(\hat f_0(k) + \zeta_N^{-k}\hat f_1(k)\right), \qquad \hat f(k + M) = \tfrac12\left(\hat f_0(k) - \zeta_N^{-k}\hat f_1(k)\right)\]
+    <p>로 두 값을 한 번의 곱 \(\zeta_N^{-k}\hat f_1(k)\)으로 얻습니다(나비 연산).</p>
+
+    <h3><span class="no">6.2.3</span>계산량</h3>
+    <div class="tb-env thm"><b>정리 6.2.1</b> \(N = 2^n\)이면 크기 \(N\)인 DFT를 곱셈 약 \(\frac N2\log_2N\)번(덧셈은 \(N\log_2N\)번)으로 계산할 수 있다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>크기 \(N\)의 곱셈 수를 \(T(N)\)이라 하면 위의 분해로 \(T(N) = 2T(\frac N2) + \frac N2\), \(T(1) = 0\)이다. \(a_n = T(2^n)/2^n\)으로 두면 \(a_n = a_{n-1} + \frac12\), \(a_0 = 0\)이라 \(a_n = \frac n2\), 즉 \(T(2^n) = \frac n2\cdot2^n\). (\(\frac12\)을 곱하는 것은 마지막에 한 번에 처리한다고 본다.) <span class="qed">∎</span></p>
+    </div>
+    <p>\(N = 1024\)이면 \(\frac{1024}2\cdot10 = 5120\)번으로, 정의대로의 약 105만 번보다 200배 적습니다. \(N\)이 커질수록 차이는 \(\frac{2N}{\log_2N}\)배로 벌어집니다. 1965년 쿨리와 튜키가 이 알고리즘을 발표하면서 디지털 신호 처리가 실용화되었습니다(가우스가 1805년경 이미 같은 생각을 했다는 기록이 있습니다).</p>
+
+    <h3><span class="no">6.2.4</span>응용: 다항식 곱셈</h3>
+    <p>차수가 \(N\) 미만인 두 다항식의 곱을 그대로 계산하면 곱셈이 \(N^2\)번입니다. 계수열을 길이 \(2N\)으로 늘려 DFT하면 곱의 계수열은 합성곱이므로(6.1절 연습 2) 변환끼리 곱하고 역변환하면 됩니다. FFT 세 번과 곱셈 \(2N\)번으로 \(O(N\log N)\)이 되어, 아주 큰 정수의 곱셈도 이 방법으로 합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) FFT가 DFT와 다른 근사 변환이라고 여긴다. 결과는 정확히 같고 계산 순서만 다르다. (2) \(N\)이 2의 거듭제곱이 아니면 쓸 수 없다고 여긴다. \(N\)을 소인수로 나누는 일반적인 분할이 있다. 다만 \(N\)이 큰 소수이면 다른 기법이 필요하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정의대로 하면 \(N^2\)번.</li>
+        <li>짝·홀 분해: \(\hat f(k), \hat f(k + M) = \frac12(\hat f_0(k) \pm \zeta_N^{-k}\hat f_1(k))\).</li>
+        <li>\(T(N) = 2T(\frac N2) + \frac N2\)에서 \(T(N) = \frac N2\log_2N\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(N = 2^{20}\)일 때 정의대로의 곱셈 수와 FFT의 곱셈 수의 비를 구하여라.
+          <details><summary>답</summary><p>\(\frac{N^2}{(N/2)\cdot20} = \frac{2N}{20} = \frac{2^{21}}{20} \approx 1.05\times10^5\)배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(N = 4\), \(f = (1, 2, 0, 0)\)의 DFT를 짝·홀 분해로 계산하여 6.1절의 예와 비교하여라.
+          <details><summary>답</summary><p>\(f_0 = (1, 0)\), \(f_1 = (2, 0)\)이라 \(\hat f_0 = (\frac12, \frac12)\), \(\hat f_1 = (1, 1)\). \(\zeta_4^{-k} = (-i)^k\): \(\hat f(0) = \frac12(\frac12 + 1) = \frac34\), \(\hat f(2) = \frac12(\frac12 - 1) = -\frac14\), \(\hat f(1) = \frac12(\frac12 - i) = \frac{1 - 2i}4\), \(\hat f(3) = \frac12(\frac12 + i) = \frac{1 + 2i}4\). 일치.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(N = 3^n\)일 때 세 갈래로 나누는 분해의 곱셈 수 점화식을 세우고 차수를 구하여라.
+          <details><summary>답</summary><p>나머지가 0, 1, 2인 세 부분으로 나누면 \(T(N) = 3T(\frac N3) + cN\) 꼴이고 \(T(N) = cN\log_3N = O(N\log N)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

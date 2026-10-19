@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-gauss" data-kind="본문" data-std="수학15-04-01">
+  <header class="card-head"><span class="no"></span><h2>푸리에 변환과 가우스 함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>주기가 없는 함수의 푸리에 변환 \(\hat f(\xi) = \int_{-\infty}^\infty f(x)e^{-2\pi ix\xi}\,dx\)를 정의하고, 이를 다룰 함수 공간(슈바르츠 공간)을 안다.</li>
+        <li>평행이동·늘이기·미분이 변환에서 어떻게 바뀌는지 정리한다.</li>
+        <li>가우스 함수 \(e^{-\pi x^2}\)의 변환이 자기 자신임을 증명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>푸리에 계수 (<a href="01-01.html">1.1절</a>), 이상적분과 적분 기호 아래 미분 (<a href="../7/index.html">수학7</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>급수에서 적분으로</h3>
+    <p>주기 \(2\pi\)인 함수는 진동수가 정수인 \(e^{in\theta}\)들로 분해되었습니다. 주기가 없는 함수는 모든 실수 진동수 \(\xi\)의 \(e^{2\pi ix\xi}\)가 필요하고, 계수는 적분</p>
+    \[\hat f(\xi) = \int_{-\infty}^\infty f(x)e^{-2\pi ix\xi}\,dx\]
+    <p>이 됩니다. 지수에 \(2\pi\)를 넣은 것은 나중에 공식이 가장 깔끔해지도록 고른 관례입니다(다른 책은 \(e^{-ix\xi}\)를 쓰고 앞에 상수를 붙입니다).</p>
+    <p>이 적분이 잘 정의되고 미분·곱셈과 자유롭게 바꿀 수 있으려면 \(f\)가 매끄럽고 빨리 줄어야 합니다.</p>
+    <div class="tb-env thm"><b>정의 4.1.1 (슈바르츠 공간)</b> 무한히 미분 가능하고, 모든 \(k, \ell \ge 0\)에 대해 \(\sup_x|x|^k|f^{(\ell)}(x)| &lt; \infty\)인 함수 \(f\)의 모임을 \(\mathcal S(\mathbb R)\)라 한다. 즉 \(f\)와 모든 도함수가 어떤 다항식보다도 빨리 0으로 간다.</div>
+    <p>\(e^{-\pi x^2}\)이 대표적인 예이고, 다항식 \(\times e^{-ax^2}\) (\(a > 0\))도 모두 속합니다. \(\frac1{1 + x^2}\)은 줄어드는 빠르기가 \(x^{-2}\)뿐이라 속하지 않습니다.</p>
+
+    <h3><span class="no">4.1.2</span>기본 성질</h3>
+    <p>\(f \in \mathcal S\)이면 \(\hat f \in \mathcal S\)이고, 다음이 성립합니다(\(f(x) \to \hat f(\xi)\)로 표기).</p>
+    <ul>
+      <li><b>평행이동</b>: \(f(x + h) \to \hat f(\xi)e^{2\pi ih\xi}\).</li>
+      <li><b>변조</b>: \(f(x)e^{-2\pi ixh} \to \hat f(\xi + h)\).</li>
+      <li><b>늘이기</b>: \(f(\delta x) \to \frac1\delta\hat f(\frac\xi\delta)\) (\(\delta > 0\)).</li>
+      <li><b>미분 ↔ 곱셈</b>: \(f'(x) \to 2\pi i\xi\hat f(\xi)\), 그리고 \(-2\pi ixf(x) \to \frac{d}{d\xi}\hat f(\xi)\).</li>
+    </ul>
+    <p>앞의 셋은 치환적분, 미분 공식은 부분적분(경계항은 \(f\)가 빨리 줄어 0)과 적분 기호 아래 미분으로 나옵니다. 마지막 성질이 핵심입니다. 매끄러울수록 \(\hat f\)가 빨리 줄고(1.1절과 같은 이야기), 빨리 줄수록 \(\hat f\)가 매끄럽습니다.</p>
+
+    <h3><span class="no">4.1.3</span>가우스 함수</h3>
+    <div class="tb-env thm"><b>정리 4.1.2</b> \(f(x) = e^{-\pi x^2}\)이면 \(\hat f(\xi) = e^{-\pi\xi^2}\)이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(F(\xi) = \hat f(\xi)\)라 하자. \(f'(x) = -2\pi xf(x)\)이므로 위의 두 미분 공식을 쓰면</p>
+      \[F'(\xi) = \widehat{(-2\pi ixf)}(\xi) = i\,\widehat{f'}(\xi) = i\cdot2\pi i\xi F(\xi) = -2\pi\xi F(\xi).\]
+      <p>\(G(\xi) = F(\xi)e^{\pi\xi^2}\)로 두면 \(G' = (F' + 2\pi\xi F)e^{\pi\xi^2} = 0\)이라 \(G\)는 상수 \(G(0) = F(0) = \int e^{-\pi x^2}\,dx = 1\)이다. 따라서 \(F(\xi) = e^{-\pi\xi^2}\). <span class="qed">∎</span></p>
+    </div>
+    <p>늘이기 성질과 합치면 \(\delta > 0\)일 때</p>
+    \[e^{-\pi\delta x^2} \;\to\; \frac1{\sqrt\delta}e^{-\pi\xi^2/\delta}\]
+    <p>입니다. 좁은 가우스 함수(\(\delta\) 큼)의 변환은 넓고, 넓은 것의 변환은 좁습니다. 이 맞바꿈을 정확히 한 것이 4.4절의 불확정성 원리입니다.</p>
+
+    <div class="tb-env ex"><b>예 4.1.3</b> 구간 \([-\frac12, \frac12]\)의 특성함수 \(\chi\)는 슈바르츠 함수가 아니지만 적분은 계산됩니다. \(\hat\chi(\xi) = \int_{-1/2}^{1/2}e^{-2\pi ix\xi}\,dx = \frac{\sin\pi\xi}{\pi\xi}\). 불연속인 \(\chi\)의 변환은 \(\frac1{|\xi|}\) 정도로만 천천히 줄어듭니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(\hat f\)가 실수값이라고 여긴다. \(f\)가 실수이고 짝함수일 때만 실수이다(예: \(f(x + h)\)의 변환에는 \(e^{2\pi ih\xi}\)가 곱해진다). (2) 관례가 다른 책의 공식(\(\sqrt{2\pi}\) 등)을 그대로 섞어 쓴다. 이 교재는 \(e^{-2\pi ix\xi}\)를 쓴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\hat f(\xi) = \int f(x)e^{-2\pi ix\xi}\,dx\), 슈바르츠 공간은 변환으로 닫혀 있다.</li>
+        <li>미분 ↔ \(2\pi i\xi\) 곱하기, 늘이기 \(\delta\) ↔ \(\frac1\delta\)로 줄이기.</li>
+        <li>\(e^{-\pi x^2}\)은 자기 자신으로 변환된다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(e^{-\pi(x - 3)^2}\)의 푸리에 변환을 구하여라.
+          <details><summary>답</summary><p>평행이동 \(h = -3\): \(e^{-\pi\xi^2}e^{-6\pi i\xi}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(e^{-x^2}\)의 변환을 구하여라.
+          <details><summary>답</summary><p>\(\delta = \frac1\pi\): \(\sqrt\pi\,e^{-\pi^2\xi^2}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(xe^{-\pi x^2}\)의 변환을 구하고 그것이 순허수값임을 확인하여라.
+          <details><summary>답</summary><p>\(-2\pi ixf \to F'\)이므로 \(xf \to \frac{i}{2\pi}F'(\xi) = \frac{i}{2\pi}(-2\pi\xi)e^{-\pi\xi^2} = -i\xi e^{-\pi\xi^2}\). 실수 홀함수의 변환은 순허수 홀함수이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

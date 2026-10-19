@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-dft" data-kind="본문" data-std="수학15-06-01">
+  <header class="card-head"><span class="no"></span><h2>유한군 위의 푸리에 해석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(\mathbb Z_N = \{0, 1, \dots, N - 1\}\) 위의 함수에 대해 이산 푸리에 변환(DFT)을 정의한다.</li>
+        <li>1의 \(N\)제곱근의 합으로 직교 관계를 증명하고, 이로부터 역변환 공식과 파서벌 등식을 얻는다.</li>
+        <li>유한 아벨 군의 지표로 같은 이론이 일반화됨을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>복소수의 곱과 등비수열의 합, 푸리에 계수 (<a href="01-01.html">1.1절</a>), 군과 준동형 사상 (<a href="../12/index.html">수학12</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>1의 거듭제곱근</h3>
+    <p>\(\zeta = e^{2\pi i/N}\)으로 두면 \(\zeta^N = 1\)이고 \(1, \zeta, \dots, \zeta^{N-1}\)은 단위원을 \(N\)등분하는 점입니다. 함수 \(e_k(n) = \zeta^{kn}\) (\(k = 0, \dots, N - 1\))은 \(\mathbb Z_N\) 위의 "진동수 \(k\)인 파동"으로, 원 위의 \(e^{ik\theta}\)에 해당합니다.</p>
+    <div class="tb-env thm"><b>보조정리 6.1.1 (직교 관계)</b> \(\displaystyle\frac1N\sum_{n=0}^{N-1}\zeta^{(k-\ell)n} = \begin{cases}1 & k \equiv \ell \pmod N\\ 0 & \text{otherwise}\end{cases}\)</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(k \equiv \ell\)이면 모든 항이 1이다. 아니면 \(w = \zeta^{k-\ell} \ne 1\)이고 \(w^N = 1\)이므로 등비수열의 합 \(\sum_{n=0}^{N-1}w^n = \frac{w^N - 1}{w - 1} = 0\). <span class="qed">∎</span></p>
+    </div>
+    <p>내적 \((f, g) = \frac1N\sum_nf(n)\overline{g(n)}\)으로 보면 \(e_0, \dots, e_{N-1}\)은 \(N\)차원 공간 \(\{f : \mathbb Z_N \to \mathbb C\}\)의 정규직교기저입니다.</p>
+
+    <h3><span class="no">6.1.2</span>이산 푸리에 변환</h3>
+    <p>\(f : \mathbb Z_N \to \mathbb C\)의 \(k\)번째 계수를 \(\hat f(k) = (f, e_k) = \frac1N\sum_{n=0}^{N-1}f(n)\zeta^{-kn}\)이라 합니다.</p>
+    <div class="tb-env thm"><b>정리 6.1.2</b> (1) 역변환: \(f(n) = \sum_{k=0}^{N-1}\hat f(k)\zeta^{kn}\). (2) 파서벌: \(\frac1N\sum_n|f(n)|^2 = \sum_k|\hat f(k)|^2\).</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>(1) \(\sum_k\hat f(k)\zeta^{kn} = \sum_mf(m)\cdot\frac1N\sum_k\zeta^{k(n-m)}\)이고 직교 관계로 안쪽 합은 \(m = n\)에서만 1이다. (2) 정규직교기저에 대한 피타고라스 정리이다. <span class="qed">∎</span></p>
+    </div>
+    <p>원 위의 급수에서는 수렴을 걱정해야 했지만, 여기서는 모든 것이 유한합이라 바로 성립합니다.</p>
+    <div class="tb-env ex"><b>예 6.1.3</b> \(N = 4\), \(\zeta = i\)이고 \(f = (1, 2, 0, 0)\)이면 \(\hat f(k) = \frac14(1 + 2(-i)^k)\)이라 \(\hat f = \left(\frac34, \frac{1 - 2i}4, -\frac14, \frac{1 + 2i}4\right)\)입니다. 파서벌: 왼쪽 \(\frac14(1 + 4) = \frac54\), 오른쪽 \(\frac9{16} + \frac5{16} + \frac1{16} + \frac5{16} = \frac{20}{16} = \frac54\).</div>
+
+    <h3><span class="no">6.1.3</span>표본과 겹침</h3>
+    <p>\(f(n) = \cos\frac{2\pi an}N\)처럼 연속 신호를 \(N\)개 표본으로 얻으면, \(a\)가 정수일 때 \(\hat f\)는 \(k = a\)와 \(k = N - a\)에서만 \(\frac12\)입니다. \(\zeta^{(N-a)n} = \zeta^{-an}\)이므로 진동수 \(a\)와 \(N - a\)는 표본에서 구별되지 않습니다(겹침, aliasing). \(a\)가 정수가 아니면 한 진동수의 에너지가 여러 \(k\)로 새어 나갑니다(누출). 같은 절의 탐구 카드에서 확인합니다.</p>
+
+    <h3><span class="no">6.1.4</span>유한 아벨 군</h3>
+    <p>\(\mathbb Z_N\)에서 \(e_k\)는 \(e_k(m + n) = e_k(m)e_k(n)\), \(|e_k| = 1\)을 만족합니다. 일반적으로 유한 아벨 군 \(G\)에서 \(\chi(ab) = \chi(a)\chi(b)\)인 \(\chi : G \to \{|z| = 1\}\)을 <b>지표</b>라 하며, 지표는 정확히 \(|G|\)개이고 서로 직교합니다. 그래서 \(G\) 위의 모든 함수가 지표들로 분해됩니다. 6.3절에서 \(G = (\mathbb Z/q\mathbb Z)^\times\)의 지표를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(\hat f(k)\)와 \(\hat f(N - k)\)를 별개의 진동수로 해석한다. 실수 신호에서는 \(\hat f(N - k) = \overline{\hat f(k)}\)라 같은 정보이다. (2) \(\frac1N\)을 어디에 두는지 관례가 같다고 여긴다. 계산 라이브러리는 보통 변환에 \(\frac1N\)을 두지 않고 역변환에 둔다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\zeta = e^{2\pi i/N}\), 직교 관계는 등비수열의 합 \(\sum w^n = 0\) (\(w \ne 1\), \(w^N = 1\)).</li>
+        <li>\(\hat f(k) = \frac1N\sum f(n)\zeta^{-kn}\), \(f(n) = \sum\hat f(k)\zeta^{kn}\), 파서벌 성립.</li>
+        <li>유한 아벨 군에서는 지표가 같은 역할을 한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(N = 3\)에서 \(f = (1, 1, 1)\)과 \(f = (1, 0, 0)\)의 DFT를 구하여라.
+          <details><summary>답</summary><p>\((1, 0, 0)\)과 \((\frac13, \frac13, \frac13)\). 상수는 진동수 0 하나, 한 점의 충격은 모든 진동수에 고르게 퍼진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\mathbb Z_N\) 위의 합성곱 \((f * g)(n) = \frac1N\sum_mf(n - m)g(m)\)에 대해 \(\widehat{f * g} = \hat f\hat g\)임을 보여라.
+          <details><summary>답</summary><p>\(\frac1N\sum_n\frac1N\sum_mf(n - m)g(m)\zeta^{-kn}\)에서 \(\zeta^{-kn} = \zeta^{-k(n-m)}\zeta^{-km}\)로 나누고 \(n - m\)을 새 변수로 두면 \(\hat f(k)\hat g(k)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(f\)가 실수값이면 \(\hat f(N - k) = \overline{\hat f(k)}\)임을 보여라.
+          <details><summary>답</summary><p>\(\zeta^{-(N-k)n} = \zeta^{kn} = \overline{\zeta^{-kn}}\)이고 \(f(n)\)이 실수이므로.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

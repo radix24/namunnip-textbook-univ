@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-coeff" data-kind="본문" data-std="수학15-01-01">
+  <header class="card-head"><span class="no"></span><h2>푸리에 계수와 매끄러움</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>복소지수 꼴의 푸리에 계수 \(\hat f(n) = \frac1{2\pi}\int f(\theta)e^{-in\theta}d\theta\)를 계산한다.</li>
+        <li>부분적분으로 "\(f\)가 \(k\)번 매끄러우면 \(\hat f(n) = O(|n|^{-k})\)"를 보인다.</li>
+        <li>계수의 감쇠 속도로 함수의 매끄러움(점프, 꺾임)을 읽는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\), 부분적분, 실수 꼴 푸리에 급수 (<a href="../11/06-01.html">수학11 6.1절</a>, 함께 보면 좋음).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>복소지수 꼴</h3>
+    <p>\(2\pi\)-주기 함수 \(f\)의 푸리에 계수와 급수를 복소지수로 쓰면 식이 짧아집니다.</p>
+    \[\hat f(n) = \frac1{2\pi}\int_{-\pi}^\pi f(\theta)e^{-in\theta}\,d\theta \quad (n \in \mathbb Z), \qquad f(\theta) \sim \sum_{n=-\infty}^\infty\hat f(n)e^{in\theta}.\]
+    <p>오일러 공식으로 \(\cos n\theta = \frac{e^{in\theta} + e^{-in\theta}}2\)이므로 실수 꼴과의 관계는 \(a_n = \hat f(n) + \hat f(-n)\), \(b_n = i(\hat f(n) - \hat f(-n))\)이고, \(f\)가 실수값이면 \(\hat f(-n) = \overline{\hat f(n)}\)입니다. 핵심 계산은</p>
+    \[\frac1{2\pi}\int_{-\pi}^\pi e^{im\theta}e^{-in\theta}\,d\theta = \begin{cases}1 &amp; m = n\\0 &amp; m \ne n\end{cases}\]
+    <p>로, 지수함수들이 직교한다는 것입니다(\(m \ne n\)이면 \(e^{i(m-n)\theta}\)의 원시함수가 주기함수라 한 주기 적분이 0).</p>
+
+    <h3><span class="no">1.1.2</span>예</h3>
+    <ul>
+      <li><b>사각파</b> \(f = \operatorname{sgn}\theta\): \(\hat f(n) = \frac{1 - (-1)^n}{i\pi n}\), 곧 홀수 \(n\)에서 \(\frac2{i\pi n}\). 크기 \(\sim\frac1{|n|}\).</li>
+      <li><b>삼각파</b> \(f = |\theta|\): \(\hat f(0) = \frac\pi2\), 홀수 \(n\)에서 \(-\frac2{\pi n^2}\). 크기 \(\sim\frac1{n^2}\).</li>
+      <li><b>매끄러운 함수</b> \(f = e^{\cos\theta}\): 모든 미분이 연속이고 \(\hat f(n) = I_n(1)\) (변형 베셀 함수)로 \(\frac1{2^n n!}\) 정도의 빠르기로 줄어든다.</li>
+    </ul>
+    <p>점프가 있는 사각파는 \(\frac1n\), 연속이지만 꺾인 삼각파는 \(\frac1{n^2}\), 무한히 매끄러운 함수는 어떤 거듭제곱보다도 빠르게 줄어듭니다.</p>
+
+    <h3><span class="no">1.1.3</span>매끄러움과 감쇠</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.1.1</span>
+      <p>\(f\)가 \(2\pi\)-주기이고 \(C^k\) (\(k\)번 미분 가능하고 \(f^{(k)}\)이 연속)이면 \(\widehat{f^{(k)}}(n) = (in)^k\hat f(n)\)이고, 따라서 \(|\hat f(n)| \le \frac{C}{|n|^k}\) (\(C = \max|f^{(k)}|\)).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(k = 1\)이면 부분적분으로 \(\frac1{2\pi}\int f'(\theta)e^{-in\theta}d\theta = \frac1{2\pi}[f(\theta)e^{-in\theta}]_{-\pi}^\pi + \frac{in}{2\pi}\int f(\theta)e^{-in\theta}d\theta = in\hat f(n)\) (주기성으로 경계항이 0). 반복하면 \((in)^k\hat f(n) = \widehat{f^{(k)}}(n)\)이고 \(|\widehat{f^{(k)}}(n)| \le \max|f^{(k)}|\)이다. <span class="qed">∎</span></p>
+    <p>거꾸로 계수가 빨리 줄면 함수가 매끄럽습니다. 예를 들어 \(\sum|n|^k|\hat f(n)| &lt; \infty\)이면 급수를 항별로 \(k\)번 미분해도 균등수렴하므로 \(f \in C^k\)입니다. 매끄러움과 계수의 감쇠는 거의 같은 정보입니다. 같은 절의 탐구 카드에서 감쇠 속도를 로그 그래프로 비교합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "\(f\)가 \(C^1\)이면 계수가 \(\frac1{n^2}\)로 준다": \(\frac1n\)보다 빠를 뿐(\(o(\frac1n)\))이다. (2) 주기 확장에서 생기는 점프를 잊는다. \(f(\theta) = \theta\)는 \((-\pi, \pi)\)에서 매끄럽지만 주기 확장하면 \(\pm\pi\)에서 점프가 있어 계수가 \(\frac1n\)로만 준다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\hat f(n) = \frac1{2\pi}\int fe^{-in\theta}\), \(e^{in\theta}\)들은 직교.</li>
+        <li>\(C^k\)이면 \(\widehat{f^{(k)}} = (in)^k\hat f\), \(|\hat f(n)| = O(|n|^{-k})\).</li>
+        <li>점프 → \(\frac1n\), 꺾임 → \(\frac1{n^2}\), 무한히 매끄러움 → 어떤 거듭제곱보다 빠름.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(\theta) = \theta\) (\(-\pi &lt; \theta &lt; \pi\))의 \(\hat f(n)\)을 구하여라.
+          <details><summary>답</summary><p>\(\hat f(0) = 0\). \(n \ne 0\)이면 부분적분으로 \(\frac1{2\pi}\int_{-\pi}^\pi\theta e^{-in\theta}d\theta = \frac1{2\pi}\left[\frac{\theta e^{-in\theta}}{-in}\right]_{-\pi}^\pi = \frac{(-1)^n}{-in} = \frac{(-1)^n i}{n}\) (남은 적분 \(\int e^{-in\theta}\)은 0). 크기 \(\frac1{|n|}\) (주기 확장의 점프 때문).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f = \theta^2(\pi^2 - \theta^2)\) (\([-\pi, \pi]\))의 주기 확장은 몇 번 연속 미분 가능한가? 계수는 어떤 빠르기로 줄 것으로 예상되는가?
+          <details><summary>답</summary><p>\(f(\pm\pi) = 0\), \(f'(\theta) = 2\pi^2\theta - 4\theta^3\)이라 \(f'(\pm\pi) = \mp2\pi^3\): 양 끝의 기울기가 달라 꺾인다. 따라서 연속이지만 \(C^1\)이 아니고, 계수는 \(\frac1{n^2}\)로 준다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\sum_n|\hat f(n)| &lt; \infty\)이면 푸리에 급수가 연속함수로 균등수렴함을 보여라.
+          <details><summary>답</summary><p>\(|\hat f(n)e^{in\theta}| = |\hat f(n)|\)이므로 바이어슈트라스 M-판정법으로 균등수렴하고, 연속함수의 균등극한은 연속이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
