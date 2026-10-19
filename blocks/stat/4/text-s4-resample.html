@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-resample" data-kind="본문" data-std="응통4-06-03">
+  <header class="card-head"><span class="no"></span><h2>붓스트랩과 순열 검정을 파이썬으로</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>np.random.default_rng</code>로 재현 가능한 난수 생성기를 만든다.</li>
+        <li>벡터화로 붓스트랩 표본을 한꺼번에 뽑아 신뢰구간을 구한다.</li>
+        <li>순열 검정을 구현하고 <code>scipy.stats.permutation_test</code>와 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>모의실험 (<a href="06-02.html">6.2절</a>), 배열 인덱싱 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>R에서 한 일을 파이썬으로</h3>
+    <p>응통3 4.3절에서 R로 한 재표집을 파이썬으로 옮깁니다. NumPy에서는 반복문 대신 2차원 배열로 표본을 한꺼번에 뽑으면 훨씬 빠릅니다.</p>
+
+    <h3><span class="no">6.3.1</span>난수 생성기</h3>
+    <pre><code>import numpy as np
+rng = np.random.default_rng(2026)   # 시드가 있는 생성기
+rng.integers(0, 10, size=5)          # 정수
+rng.choice([1, 2, 3], size=5, replace=True)
+rng.permutation(5)                   # 0~4를 섞기</code></pre>
+    <p>예전 방식 <code>np.random.seed</code>보다 생성기 객체를 쓰는 것이 권장됩니다. 함수에 <code>rng</code>를 인자로 넘기면 어디서 난수를 썼는지 분명해집니다.</p>
+
+    <h3><span class="no">6.3.2</span>붓스트랩</h3>
+    <pre><code>x = np.array([12, 15, 9, 20, 14, 11, 30, 13, 10, 16])
+B = 5000
+idx = rng.integers(0, len(x), size=(B, len(x)))   # B × n 복원 추출 번호
+boot = np.median(x[idx], axis=1)                   # 행마다 중앙값
+boot.std(ddof=1), np.percentile(boot, [2.5, 97.5])</code></pre>
+
+    <h3><span class="no">6.3.3</span>순열 검정</h3>
+    <pre><code>a = np.array([12, 15, 18]); b = np.array([20, 22, 25])
+obs = b.mean() - a.mean()
+allv = np.concatenate([a, b])
+perm = np.array([ (p := rng.permutation(allv))[3:].mean() - p[:3].mean()
+                  for _ in range(10000) ])
+(perm &gt;= obs).mean()                               # 약 0.05
+
+from scipy.stats import permutation_test
+permutation_test((b, a), lambda u, v: u.mean() - v.mean(),
+                 alternative="greater").pvalue     # 작은 표본은 정확 계산: 0.05</code></pre>
+    <p><code>permutation_test</code>는 가능한 배치 수가 적으면 모두 세서 정확한 p값을 줍니다. 이 자료는 \(\binom63 = 20\)가지라 \(1/20 = 0.05\)입니다(응통3 4.3절과 같은 결과).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p><code>idx = rng.integers(0, 10, size=(5000, 10))</code>은 몇 개의 난수를 만들고, 반복문으로 5000번 뽑는 것과 무엇이 다른가요?</p>
+    </div>
+    <p><i>풀이.</i> 50000개를 한 번에 만듭니다. 결과의 통계적 성질은 같지만 계산이 C 수준 반복으로 처리되어 수십 배 빠릅니다. 메모리가 \(B \times n\)만큼 필요하므로 \(n\)이 아주 크면 묶음으로 나눠 처리합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>rng = np.random.default_rng(시드)</code>로 재현성.</li>
+        <li>번호 행렬 <code>x[idx]</code>와 <code>axis=1</code>로 붓스트랩을 벡터화.</li>
+        <li><code>permutation_test</code>는 작은 표본에서 정확 p값.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>평균의 붓스트랩 표준오차를 구하는 한 줄 코드를 쓰세요(<code>x</code>, <code>rng</code>, <code>B</code>가 있음).
+          <details><summary>답</summary><p><code>x[rng.integers(0, len(x), (B, len(x)))].mean(axis=1).std(ddof=1)</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>같은 시드로 두 번 실행했는데 붓스트랩 결과가 다릅니다. 가능한 원인은?
+          <details><summary>답</summary><p>생성기를 만든 뒤 다른 곳에서 난수를 먼저 소비해 위치가 달라졌거나, 생성기를 함수마다 새로 만들지 않고 전역으로 공유했을 수 있습니다. 분석 단계마다 생성기를 명시적으로 넘기거나 같은 시드로 새로 만듭니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

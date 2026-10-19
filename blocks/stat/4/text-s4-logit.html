@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-logit" data-kind="본문" data-std="응통4-06-04">
+  <header class="card-head"><span class="no"></span><h2>statsmodels로 로지스틱 회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공식 문법(<code>smf.logit</code>)으로 로지스틱 회귀를 적합한다.</li>
+        <li>계수와 신뢰구간을 지수로 바꿔 오즈비로 해석한다.</li>
+        <li>예측 확률을 구하고 statsmodels와 scikit-learn의 차이를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>통계 라이브러리 (<a href="06-01.html">6.1절</a>), 로지스틱 회귀의 이론 (응통18 03단원).</li>
+      </ul>
+    </div>
+
+    <h3>결과가 예/아니요일 때</h3>
+    <p>6.1절의 <code>ols</code>는 연속 반응에 씁니다. 합격 여부, 구매 여부처럼 0/1 반응에는 로지스틱 회귀를 씁니다. statsmodels는 R과 비슷한 공식 문법과 통계 검정 결과표를 주어 해석 중심 분석에 알맞습니다.</p>
+
+    <h3><span class="no">6.4.1</span>적합</h3>
+    <pre><code>import numpy as np, pandas as pd
+import statsmodels.formula.api as smf
+fit = smf.logit("buy ~ age + C(region)", data=df).fit()
+print(fit.summary())             # 계수, 표준오차, z, p, 로그가능도
+np.exp(fit.params)               # 오즈비
+np.exp(fit.conf_int())           # 오즈비의 95% 구간
+fit.predict(pd.DataFrame({"age": [30], "region": ["서울"]}))   # 예측 확률</code></pre>
+    <p><code>C()</code>는 범주형 변수를 가변수로 바꿉니다(R의 <code>factor</code>). 반응은 0/1 정수여야 합니다. 완전 분리(어떤 변수가 결과를 완벽히 가름)가 있으면 수렴하지 않고 경고가 나므로, 그때는 벌점을 준 적합(<code>fit_regularized</code>)이나 베이즈 방법(응통21 6.3절)을 씁니다.</p>
+
+    <h3><span class="no">6.4.2</span>statsmodels와 scikit-learn</h3>
+    <p>scikit-learn의 <code>LogisticRegression</code>은 예측 성능 중심이라 기본으로 L2 벌점(능형, 응통10 6.4절)이 걸려 있어 계수가 0 쪽으로 줄어 있고, 표준오차와 p값을 주지 않습니다. 계수를 해석하고 검정하려면 statsmodels를, 예측 모형을 교차검증으로 고르려면 scikit-learn을 씁니다. scikit-learn에서 벌점을 빼려면 <code>penalty=None</code>을 지정합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.4.1</span>
+      <p>쿠폰을 받은 40명 중 20명, 받지 않은 40명 중 10명이 구매했습니다. <code>smf.logit("buy ~ coupon", df)</code>의 계수를 예상하고 오즈비를 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> 설명변수가 이진이면 포화 모형이라 계수가 표에서 바로 나옵니다. 절편 = 쿠폰 없는 쪽 로그 오즈 \(\log(10/30) = -1.099\), 기울기 = 로그 오즈비 \(\log\frac{20/20}{10/30} = \log 3 = 1.099\). 쿠폰을 받으면 구매 오즈가 3배입니다. 예측 확률은 쿠폰 없음 0.25, 있음 0.5로 관측 비율과 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>smf.logit("y ~ x + C(g)", df).fit()</code>.</li>
+        <li><code>np.exp(params)</code>, <code>np.exp(conf_int())</code>로 오즈비와 구간.</li>
+        <li>해석·검정은 statsmodels, 예측 모형 선택은 scikit-learn(기본 벌점 주의).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>나이 계수가 0.04이면 나이 10세 증가의 오즈비는?
+          <details><summary>답</summary><p>\(e^{0.4} = 1.49\). 오즈가 약 1.5배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>같은 자료를 scikit-learn 기본값으로 적합했더니 계수가 statsmodels보다 작았습니다. 이유는?
+          <details><summary>답</summary><p>scikit-learn의 기본 L2 벌점(<code>C=1.0</code>)이 계수를 0 쪽으로 줄였기 때문입니다. 표본이 작을수록 차이가 큽니다. <code>penalty=None</code>으로 맞추면 같아집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-strings" data-kind="본문" data-std="응통4-01-03">
+  <header class="card-head"><span class="no"></span><h2>문자열 처리와 파일 입출력</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>문자열을 자르고, 합치고, 바꾸고, f-문자열로 서식을 만든다.</li>
+        <li><code>with open</code>으로 텍스트 파일을 안전하게 읽고 쓴다.</li>
+        <li>정규표현식 모듈 <code>re</code>로 패턴을 찾는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>자료형과 반복 (<a href="01-01.html">1.1절</a>), 리스트와 딕셔너리 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>표가 되기 전의 자료</h3>
+    <p>로그 파일, 설문 자유 응답, 웹에서 받은 텍스트는 처음에 문자열 덩어리입니다. pandas(5.1절)로 넘기기 전에 문자열을 정리하는 일이 자주 필요합니다.</p>
+
+    <h3><span class="no">1.3.1</span>문자열 메서드</h3>
+    <pre><code>s = "  Seoul, Gangnam  "
+s.strip()                 # 'Seoul, Gangnam' (양끝 공백 제거)
+s.strip().split(", ")     # ['Seoul', 'Gangnam']
+"-".join(["2026", "03", "15"])   # '2026-03-15'
+"abc".upper(), "A1B2".replace("1", "")   # 'ABC', 'AB2'
+"report.csv".endswith(".csv")    # True
+n, m = 7, 3.14159
+f"표본 {n}개, 평균 {m:.2f}"      # '표본 7개, 평균 3.14'</code></pre>
+    <p>문자열은 바꿀 수 없는(불변) 자료형이라 메서드는 새 문자열을 돌려줍니다. 결과를 변수에 다시 담아야 합니다.</p>
+
+    <h3><span class="no">1.3.2</span>파일 읽고 쓰기</h3>
+    <pre><code>with open("data.txt", encoding="utf-8") as f:
+    lines = [line.rstrip("\n") for line in f]   # 한 줄씩
+
+with open("out.txt", "w", encoding="utf-8") as f:
+    f.write("결과: 42\n")</code></pre>
+    <p><code>with</code> 문은 블록이 끝나면 오류가 나도 파일을 자동으로 닫습니다. 한글이 있으면 <code>encoding="utf-8"</code>을 명시합니다(윈도의 기본 인코딩은 다를 수 있음). 표 형식 파일은 <code>csv</code> 모듈이나 pandas의 <code>read_csv</code>가 편합니다.</p>
+
+    <h3><span class="no">1.3.3</span>정규표현식</h3>
+    <pre><code>import re
+re.findall(r"\d+", "A12 B3 C456")          # ['12', '3', '456']
+re.sub(r"\s+", " ", "too   many  spaces")   # 'too many spaces'
+bool(re.match(r"^\d{3}-\d{4}$", "123-4567"))  # True</code></pre>
+    <p><code>\d</code>(숫자), <code>\s</code>(공백), <code>+</code>(한 번 이상), <code>{n}</code>(정확히 \(n\)번), <code>^ $</code>(시작과 끝). 문자열 앞의 <code>r</code>은 역슬래시를 그대로 두는 원시 문자열입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p>문장 <code>"the cat and the hat and the bat"</code>에서 가장 많이 나온 단어 두 개를 세세요.</p>
+    </div>
+    <pre><code>from collections import Counter
+Counter("the cat and the hat and the bat".split()).most_common(2)
+# [('the', 3), ('and', 2)]</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>strip</code>, <code>split</code>, <code>join</code>, <code>replace</code>, f-문자열.</li>
+        <li><code>with open(..., encoding="utf-8")</code>로 안전하게 읽고 쓰기.</li>
+        <li><code>re.findall</code>, <code>re.sub</code>로 패턴 처리.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>"95, 82, 77"</code>을 정수 리스트로 바꾸고 평균을 구하세요.
+          <details><summary>답</summary><p><code>xs = [int(t) for t in "95, 82, 77".split(", ")]</code>, 평균 <code>sum(xs)/len(xs)</code> = 84.67.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>로그 줄 <code>"2026-03-15 10:20:05 ERROR disk full"</code>들에서 오류(ERROR) 줄의 날짜만 모으는 코드를 쓰세요.
+          <details><summary>답</summary><p><code>dates = [ln.split()[0] for ln in lines if " ERROR " in ln]</code>. 정규표현식으로는 <code>re.match(r"(\d{4}-\d{2}-\d{2}) \S+ ERROR", ln)</code>의 그룹 1.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

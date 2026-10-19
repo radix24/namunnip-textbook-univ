@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-numcalc" data-kind="본문" data-std="응통4-04-03">
+  <header class="card-head"><span class="no"></span><h2>수치 미분과 수치 적분</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전진 차분과 중심 차분으로 도함수를 어림하고 오차의 차수를 비교한다.</li>
+        <li>사다리꼴과 심프슨 공식으로 적분을 구현한다.</li>
+        <li><code>scipy.integrate.quad</code>의 결과와 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>근 찾기와 최적화 (<a href="04-01.html">4.1절</a>, <a href="04-02.html">4.2절</a>), 테일러 전개 (응통1 2.3절).</li>
+      </ul>
+    </div>
+
+    <h3>식이 없어도 미분하고 적분하기</h3>
+    <p>최적화(4.2절)에는 기울기가, 기대값에는 적분이 필요하지만 복잡한 가능도는 손으로 미분하기 어렵고, 많은 밀도는 적분의 닫힌 꼴이 없습니다. 함수값만으로 어림하는 방법을 직접 구현해 보면 라이브러리가 하는 일과 그 한계를 이해할 수 있습니다.</p>
+
+    <h3><span class="no">4.3.1</span>수치 미분</h3>
+    <ul>
+      <li><b>전진 차분</b> \(\frac{f(x+h) - f(x)}{h}\): 테일러 전개로 오차 \(\frac h2f''(x) = O(h)\).</li>
+      <li><b>중심 차분</b> \(\frac{f(x+h) - f(x-h)}{2h}\): 짝수 차 항이 상쇄되어 오차 \(O(h^2)\).</li>
+    </ul>
+    <p>\(h\)를 무작정 줄이면 안 됩니다. 두 함수값의 차가 너무 작아져 부동소수점의 상쇄 오차(응통15 1.1절)가 커지므로, 중심 차분은 \(h \approx 10^{-5}\) 정도가 알맞습니다.</p>
+    <pre><code>import numpy as np
+def dcentral(f, x, h=1e-5):
+    return (f(x + h) - f(x - h)) / (2 * h)
+dcentral(np.exp, 0.0)        # 1.0000000000 근처</code></pre>
+
+    <h3><span class="no">4.3.2</span>수치 적분</h3>
+    <pre><code>def trapezoid(f, a, b, n):
+    x = np.linspace(a, b, n + 1); y = f(x); h = (b - a) / n
+    return h * (y[0] / 2 + y[1:-1].sum() + y[-1] / 2)
+
+def simpson(f, a, b, n):            # n은 짝수
+    x = np.linspace(a, b, n + 1); y = f(x); h = (b - a) / n
+    return h / 3 * (y[0] + 4 * y[1:-1:2].sum() + 2 * y[2:-1:2].sum() + y[-1])
+
+from scipy.integrate import quad
+quad(lambda t: np.exp(-t**2), 0, 1)   # (0.746824..., 오차 추정)</code></pre>
+    <p>사다리꼴의 오차는 \(O(h^2)\), 심프슨은 \(O(h^4)\)입니다(응통15 4.1절). <code>quad</code>는 적응 구적법으로 오차 추정값까지 돌려줍니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>\(f(x) = e^x\)의 \(x = 0\) 도함수를 \(h = 0.1\)로 전진 차분과 중심 차분으로 어림하세요.</p>
+    </div>
+    <p><i>풀이.</i> 전진 \((e^{0.1} - 1)/0.1 = 1.0517\)(오차 0.052 ≈ \(h/2\)), 중심 \((e^{0.1} - e^{-0.1})/0.2 = 1.00167\)(오차 0.0017 ≈ \(h^2/6\)). 같은 \(h\)에서 중심 차분이 30배 정확합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전진 차분 \(O(h)\), 중심 차분 \(O(h^2)\), \(h\)는 너무 작아도 안 됨.</li>
+        <li>사다리꼴 \(O(h^2)\), 심프슨 \(O(h^4)\).</li>
+        <li>라이브러리(<code>quad</code>)는 오차 추정까지 줍니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 4.3.1의 중심 차분에서 \(h\)를 0.01로 줄이면 오차는 대략 얼마가 되나요?
+          <details><summary>답</summary><p>오차 \(\propto h^2\)이라 100분의 1, 약 \(1.7 \times 10^{-5}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>로그가능도 \(\ell(\theta)\)의 이계 도함수를 수치 미분으로 어림하는 공식을 쓰고, 그 값으로 무엇을 구할 수 있는지 쓰세요.
+          <details><summary>답</summary><p>\(\ell''(\theta) \approx \frac{\ell(\theta + h) - 2\ell(\theta) + \ell(\theta - h)}{h^2}\). 최대가능도 추정값에서 \(-1/\ell''\)이 분산의 어림이라 표준오차를 구합니다(<code>optim(..., hessian = TRUE)</code>가 하는 일).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

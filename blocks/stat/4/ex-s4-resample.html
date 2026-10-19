@@ -1,0 +1,40 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-06-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s4-resample" data-kind="예제" data-std="응통4-06-03">
+  <header class="card-head"><span class="no"></span><h2>대응 자료의 부호 뒤집기 검정</h2><span class="kind">예제 · 정확한 순열 분포</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>같은 사람의 전후 차이는 귀무가설 아래 부호가 무작위입니다. 차이가 몇 개 안 되면 \(2^n\)가지 부호 조합을 모두 세어 정확한 p값을 구할 수 있습니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 전후 차이가 \(d = (3, 5, -1, 4)\)입니다. 평균 차이의 단측(양수) 순열 p값을 부호 조합 16가지를 모두 세어 구하고, 파이썬 코드를 쓰세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>관측 합 \(3 + 5 - 1 + 4 = 11\)(평균 대신 합으로 비교해도 같음).</div><span class="q-why">\(n\)이 고정이라 합의 순서 = 평균의 순서.</span></li>
+        <li><div>절댓값 (3, 5, 1, 4)에 부호를 붙인 합 가운데 11 이상: 모두 + 13, 1만 − 11. 두 가지.</div><span class="q-why">13 다음으로 큰 합이 11.</span></li>
+        <li class="q-end"><div>p값 \(2/16 = 0.125\).</div><span class="q-why">정확한 분포.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <pre><code>import itertools, numpy as np
+d = np.array([3, 5, -1, 4]); obs = d.sum(); a = np.abs(d)
+sums = [ (a * np.array(s)).sum() for s in itertools.product([-1, 1], repeat=4) ]
+np.mean(np.array(sums) &gt;= obs)      # 0.125</code></pre>
+      <p>다음으로 큰 합은 3이 음수일 때 \(13 - 6 = 7\)이라 11보다 작습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>네 명 중 세 명이 좋아졌어도 p값은 0.125로, 4명으로는 확정할 수 없습니다. \(n = 4\)인 부호 조합은 16가지뿐이라 가장 극단적인 결과(모두 양수)도 p값이 \(1/16 = 0.0625\)보다 작아질 수 없습니다. 작은 표본에서는 검정이 낼 수 있는 가장 작은 p값을 먼저 확인합니다.</p>
+    </section>
+  </div>
+</article>
