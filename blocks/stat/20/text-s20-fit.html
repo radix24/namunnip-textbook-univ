@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-fit" data-kind="본문" data-std="응통20-04-01">
+  <header class="card-head"><span class="no"></span><h2>ARIMA 적합과 차수 선택</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>ARIMA를 최대가능도로 적합하고 계수를 읽는다.</li>
+        <li>AIC·BIC로 후보 모형 가운데 고른다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>식별 (<a href="02-02.html">2.2절</a>), 응통10 6.1절 정보기준.</li>
+      </ul>
+    </div>
+
+    <h3>식별 다음 단계</h3>
+    <p>ACF·PACF로 후보를 골랐으면 모수를 추정하고 후보끼리 비교합니다. 박스-젠킨스 절차는 식별 → 추정 → 진단을 되풀이합니다.</p>
+
+    <h3><span class="no">4.1.1</span>추정</h3>
+    <p>정규 잡음을 가정한 최대가능도(조건부 제곱합으로 시작해 정확한 가능도로 마무리)를 씁니다. R: <code>arima(x, order = c(p, d, q))</code>. 출력은 계수, 표준오차, \(\hat\sigma^2\), 로그가능도, AIC입니다. 계수/표준오차가 2보다 작으면 그 항이 필요한지 의심합니다.</p>
+
+    <h3><span class="no">4.1.2</span>차수 선택</h3>
+    <p>후보마다 AIC \(= -2\ell + 2k\), BIC \(= -2\ell + k\log n\)을 구해 작은 것을 고릅니다. 같은 \(d\)(차분 횟수)끼리만 비교합니다(차분하면 자료가 바뀌므로). <code>forecast::auto.arima</code>는 단위근 검정으로 \(d\)를 정한 뒤 AIC로 p, q를 단계적으로 찾습니다. 가능하면 간단한 모형(절약의 원칙)을 고릅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>R의 <code>lh</code>(48개 호르몬 측정값)에 AR(1), AR(3), ARMA(1,1)을 적합해 비교하세요.</p>
+    </div>
+    <pre><code>sapply(list(c(1,0,0), c(3,0,0), c(1,0,1)), function(o) AIC(arima(lh, order = o)))
+arima(lh, order = c(1, 0, 0))</code></pre>
+    <p>AR(1)의 \(\hat\phi = 0.57\)(표준오차 0.12)입니다. AIC는 AR(1) 64.8, AR(3) 64.2, ARMA(1,1) 65.5로 AR(3)이 조금 작지만 차이가 0.6뿐이라 더 간단한 AR(1)을 우선 후보로 둡니다. 잔차 진단(4.2절)으로 최종 결정합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최대가능도 적합, 계수/표준오차 확인.</li>
+        <li>같은 \(d\)의 후보를 AIC·BIC로 비교.</li>
+        <li>단순한 모형을 우선.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>ARIMA(1,1,0)과 ARMA(2,0)의 AIC를 직접 비교해도 되나요?
+          <details><summary>답</summary><p>안 됩니다. 차분 횟수가 달라 가능도가 다른 자료(차분 계열 대 원계열)에서 계산됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

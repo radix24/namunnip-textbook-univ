@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통2-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s2-lowrank" data-kind="본문" data-std="응통2-06-02">
+  <header class="card-head"><span class="no"></span><h2>저계수 근사로 자료 압축하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>특이값 분해를 잘라 최적의 저계수 근사를 만든다.</li>
+        <li>근사 오차와 압축률을 계산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>특이값 분해 (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>중요한 성분만 남기기</h3>
+    <p>사진 한 장을 1000×1000 행렬로 보면 100만 개의 수입니다. 특이값이 빠르게 작아진다면 앞의 몇십 개 성분만으로 사진을 거의 그대로 되살릴 수 있습니다.</p>
+
+    <h3><span class="no">6.2.1</span>에카르트-영 정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.1</span>
+      <p>\(A_k = \sum_{i=1}^k\sigma_i\mathbf u_i\mathbf v_i^\top\)는 계수가 \(k\) 이하인 모든 행렬 \(B\) 가운데 \(\|A - B\|_F\)를 최소화하고, 최소 오차는 \(\|A - A_k\|_F^2 = \sum_{i&gt;k}\sigma_i^2\)이다.</p>
+    </div>
+    <p>\(\|\cdot\|_F\)는 원소 제곱합의 제곱근(프로베니우스 노름)이고 \(\|A\|_F^2 = \sum\sigma_i^2\)입니다. 그래서 \(\sum_{i\le k}\sigma_i^2/\sum\sigma_i^2\)가 근사가 담는 "에너지" 비율로, 주성분의 설명 분산 비율과 같습니다.</p>
+    <p>저장할 수: \(m\times n\) 대신 \(k(m + n + 1)\). \(m = n = 1000\), \(k = 50\)이면 약 10만 개로 1/10입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.2</span>
+      <p>R에서 내장 <code>volcano</code>(87×61 지형 높이 행렬)를 계수 5로 근사하고 오차를 보세요.</p>
+    </div>
+    <pre><code>s &lt;- svd(volcano); k &lt;- 5
+Ak &lt;- s$u[, 1:k] %*% diag(s$d[1:k]) %*% t(s$v[, 1:k])
+sum(s$d[1:k]^2) / sum(s$d^2)          # 담은 에너지 비율
+par(mfrow = c(1, 2)); image(volcano); image(Ak)</code></pre>
+    <p>첫 성분 하나가 에너지의 99.5%, 다섯 개가 99.99%를 담습니다(높이 전체의 평균 수준이 첫 성분에 크게 실리기 때문). 그림에서도 계수 5 근사가 산의 모양을 거의 그대로 보여 줍니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SVD를 \(k\)개에서 자르면 최적 저계수 근사.</li>
+        <li>오차² = 버린 특이값의 제곱합.</li>
+        <li>압축, 잡음 제거, 주성분분석.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>특이값이 10, 5, 1, 0.5이면 계수 2 근사가 담는 비율은?
+          <details><summary>답</summary><p>\((100 + 25)/(100 + 25 + 1 + 0.25) = 125/126.25 \approx 0.990\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

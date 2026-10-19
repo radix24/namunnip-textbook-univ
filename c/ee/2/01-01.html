@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>반복문과 재귀 알고리즘의 시간 복잡도를 구하기 · 데이터구조 — QURI</title>
-  <meta name="description" content="데이터구조 1.1 반복문과 재귀 알고리즘의 시간 복잡도를 구하기 — 성취기준: 반복문과 재귀 알고리즘의 시간 복잡도를 구할 수 있다.">
+  <title>반복문과 재귀의 시간 복잡도 · 데이터구조 — QURI</title>
+  <meta name="description" content="데이터구조 1.1 반복문과 재귀의 시간 복잡도 — 성취기준: 반복문과 재귀 알고리즘의 시간 복잡도를 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;1.1 반복문과 재귀 알고리즘의 시간 복잡도를 구하기&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;1.1 반복문과 재귀의 시간 복잡도&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,183 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전2-01-01">
+  <section class="topic-hero u-hero has-text" data-sec="전전2-01-01" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">데이터구조</a><span class="mono">/</span><a href="01.html">1. 복잡도 분석</a></div>
-    <h1><span class="sec-no mono">1.1</span>반복문과 재귀 알고리즘의 시간 복잡도를 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전2-01-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-01-01] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전2-01-01" aria-label="할 수 있음"><span class="t">반복문과 재귀 알고리즘의 시간 복잡도를 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">1.1</span>반복문과 재귀의 시간 복잡도</h1>
+    <p class="sec-std"><span class="mono">[전전2-01-01]</span> 반복문과 재귀 알고리즘의 시간 복잡도를 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s1-1-1"><span class="mono">1.1.1</span><span>시간을 재지 않고 세는 이유</span></a></li><li><a href="#s1-1-2"><span class="mono">1.1.2</span><span>반복문 세기</span></a></li><li><a href="#s1-1-3"><span class="mono">1.1.3</span><span>재귀: 점화식 세우기</span></a></li><li><a href="#s1-1-4"><span class="mono">1.1.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e2-complexity"><span class="mono">본문</span><span>반복문과 재귀의 시간 복잡도</span></a></li><li><a href="#card-e2-loops"><span class="mono">1.1.2</span><span>행렬 곱과 거듭제곱의 연산 횟수</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="01.html">대단원 1 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-e2-complexity" data-kind="본문" data-std="전전2-01-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>알고리즘의 실행 시간을 입력 크기 n의 함수로, "기본 연산 횟수"로 센다.</li>
+        <li>중첩 반복문, 반씩 줄어드는 반복문의 연산 횟수를 합으로 구한다.</li>
+        <li>재귀 알고리즘의 점화식을 세우고, 펼치기와 재귀 트리로 푼다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Python의 반복문과 함수, 재귀 (<a href="../../common/10/02-03.html">공통10 2.3절</a>, <a href="../../common/10/03-01.html">3.1절</a>), 등차·등비수열의 합과 로그(고교 수학).</li>
+      </ul>
+    </div>
 
+    <h3 id="s1-1-1"><span class="no">1.1.1</span>시간을 재지 않고 세는 이유</h3>
+    <p>같은 프로그램도 컴퓨터, 언어, 그날의 다른 작업에 따라 실행 시간이 다릅니다. 그래서 알고리즘끼리 비교할 때는 초가 아니라 "입력이 커지면 일이 얼마나 늘어나는가"를 봅니다. 이 과목은 자료를 담는 방법(자료 구조)과 그 위의 연산(알고리즘)을 다루며, 그 비교의 언어가 복잡도입니다.</p>
+    <p class="q-term"><b>입력 크기</b> n: 정렬할 원소 수, 그래프의 정점 수처럼 문제의 크기를 나타내는 수.</p>
+    <p class="q-term"><b>기본 연산</b>: 비교, 대입, 산술처럼 상수 시간이 걸린다고 보는 연산. 알고리즘의 핵심이 되는 연산(예: 정렬의 비교)만 세기도 한다.</p>
+    <p class="q-term"><b>최악·최선·평균</b>: 같은 n이라도 입력에 따라 횟수가 다르다. 보통 최악 경우를 기준으로 삼는다(보장이 필요하므로).</p>
+
+    <h3 id="s1-1-2"><span class="no">1.1.2</span>반복문 세기</h3>
+    <p>구하려는 것: 다음 코드의 비교 횟수. 길이 n인 리스트에서 합이 0인 쌍을 셉니다.</p>
+<pre><code>def zero_pairs(a):
+    n = len(a); count = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            if a[i] + a[j] == 0:     # 기본 연산: 이 비교
+                count += 1
+    return count</code></pre>
+    <p>i마다 안쪽 반복은 \(n - 1 - i\)번이므로 전체는 \((n - 1) + (n - 2) + \cdots + 0 = \frac{n(n - 1)}{2}\)번입니다. n = 10, 100, 1000이면 45, 4950, 499500번. n이 10배가 되면 약 100배이므로 n²에 비례합니다.</p>
+    <p>반씩 줄어드는 반복은 다르게 셉니다. 정렬된 리스트에서 값을 찾는 이진 탐색은 매번 구간을 반으로 줄이므로, n이 1이 될 때까지 나누는 횟수 \(\log_2n\) 정도입니다. 정확히는 최대 \(\lfloor\log_2n\rfloor + 1\)번 비교합니다: n = 10, 1000, 10⁶이면 4, 10, 20번. 원소가 백만 개여도 20번이면 됩니다.</p>
+
+    <h3 id="s1-1-3"><span class="no">1.1.3</span>재귀: 점화식 세우기</h3>
+    <p>재귀 함수는 자기 자신을 더 작은 입력으로 부르므로, 실행 시간도 자기 자신으로 표현됩니다.</p>
+    <p class="q-term"><b>점화식</b>: \(T(n)\)을 더 작은 n의 \(T\)로 나타낸 식. 예: 반으로 나눠 한쪽만 보는 이진 탐색 \(T(n) = T(n/2) + c\).</p>
+    <p><b>펼치기.</b> \(T(n) = T(n/2) + c = T(n/4) + 2c = \cdots = T(1) + c\log_2n\). 따라서 \(\log n\)에 비례합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>병합 정렬처럼 반으로 나눠 둘 다 처리하고 n에 비례하는 일로 합치는 알고리즘 \(T(n) = 2T(n/2) + cn\)을 재귀 트리로 풀어라.</p>
+    </div>
+    <p><i>풀이.</i> 맨 위(깊이 0)는 cn의 일, 깊이 1에는 크기 n/2인 문제 2개가 각각 cn/2, 합 cn. 깊이 k에는 \(2^k\)개 × \(cn/2^k\) = cn. 문제 크기가 1이 되는 깊이는 \(\log_2n\)이므로 층이 \(\log_2n + 1\)개, 전체 \(cn(\log_2n + 1)\)입니다. 층마다 같은 양의 일을 한다는 것이 이 트리의 특징이고, 결과는 \(n\log n\)에 비례합니다(5단원).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.2</span>
+      <p>피보나치 수를 그대로 재귀로 계산하는 <code>fib(n) = fib(n-1) + fib(n-2)</code>의 호출 횟수를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 호출 횟수 \(C(n) = 1 + C(n - 1) + C(n - 2)\), \(C(0) = C(1) = 1\). 실제로 세면 n = 10, 20, 25에서 177, 21891, 242785번입니다. n이 5 늘 때마다 약 11배(\(\phi^5 \approx 11.1\), \(\phi = 1.618\)), 곧 지수적으로 늘어납니다. 같은 값을 반복해 계산하기 때문이며, 계산한 값을 저장해 두면(메모이제이션) n에 비례하는 호출로 줄어듭니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "반복문이 두 개면 n²": 중첩되었을 때 그렇고, 나란히 있으면 \(n + n = 2n\)입니다. 또 안쪽 반복의 범위가 i에 따라 달라지는지 확인해야 합니다. (2) "재귀는 느리다": 피보나치 재귀가 느린 것은 같은 부분 문제를 반복하기 때문이지 재귀 자체 때문이 아닙니다. 병합 정렬은 재귀로도 빠릅니다. (3) Python의 <code>in</code>(리스트), <code>insert(0, x)</code>, 슬라이싱처럼 한 줄짜리도 내부에서 n에 비례하는 일을 할 수 있습니다(2단원).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>시간 대신 기본 연산 횟수를 n의 함수로 센다. 보통 최악 경우.</li>
+        <li>중첩 반복 \(\frac{n(n - 1)}{2}\), 반씩 줄이는 반복 \(\log_2n\).</li>
+        <li>재귀는 점화식으로: \(T(n/2) + c \to \log n\), \(2T(n/2) + cn \to n\log n\), 피보나치 재귀는 지수.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s1-1-4"><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>for i in range(n): for j in range(n): for k in range(n): x += 1</code>의 연산 횟수는?
+          <details><summary>답</summary><p>\(n^3\).</p></details>
+        </li>
+        <li><code>i = n; while i &gt; 1: i //= 3</code>은 몇 번 도는가?
+          <details><summary>답</summary><p>약 \(\log_3n\)번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li><code>for i in range(n): j = 1; while j &lt; n: j *= 2</code>의 안쪽 반복 총 횟수는?
+          <details><summary>답</summary><p>바깥 n번 × 안쪽 \(\lceil\log_2n\rceil\)번 → \(n\log n\)에 비례.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(T(n) = T(n - 1) + n\), \(T(1) = 1\)을 풀어라. 어떤 알고리즘에서 나오는가?
+          <details><summary>답</summary><p>\(T(n) = 1 + 2 + \cdots + n = \frac{n(n + 1)}{2}\). 매번 가장 작은 것을 골라 빼는 선택 정렬, 퀵 정렬의 최악 경우.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e2-complexity" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전2-01-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-01-01] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전2-01-01" aria-label="할 수 있음"><span class="t">반복문과 재귀 알고리즘의 시간 복잡도를 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/03-03.html"><span class="mono">3.3</span><span>미분적분학과벡터해석(1) <b>부정형과 로피탈 법칙</b></span></a></li><li><a href="../../../c/common/1/01-02.html"><span class="mono">1.2</span><span>미분적분학과벡터해석(1) <b>역함수와 로그함수</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-e2-loops" data-kind="예제" data-std="전전2-01-01">
+  <header class="card-head"><span class="no">1.1.2</span><h2><span class="q-badge">예제</span>행렬 곱과 거듭제곱의 연산 횟수</h2><span class="kind">예제 · 반복문과 재귀를 세기</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="01-01.html#std">[전전2-01-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(x^{1000}\)을 계산할 때 x를 999번 곱하는 대신 더 적은 곱셈으로 할 수 있을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>제곱을 되풀이하면 약 15번으로 됩니다. \(x^{1000} = (x^{500})^2\)처럼 지수를 반으로 줄이기 때문입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">(가) n × n 행렬 두 개를 정의대로 곱하는 세 겹 반복문의 곱셈 횟수, (나) 아래 재귀 거듭제곱의 곱셈 횟수 점화식과 그 해를 구하라. n = 1000일 때 (나)의 곱셈 수는?</p>
+<pre><code>def power(x, n):
+    if n == 0:
+        return 1
+    half = power(x, n // 2)
+    return half * half if n % 2 == 0 else half * half * x</code></pre>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>(가) 각 칸 \(c_{ij} = \sum_ka_{ik}b_{kj}\)에 곱셈 n번, 칸이 n²개.</li>
+        <li>(나) 한 번 호출에 곱셈 1~2번 + 크기 n//2 호출 하나: \(T(n) = T(n/2) + c\).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) \(n \cdot n \cdot n = n^3\)번, Θ(n³). n = 1000이면 10⁹번. <span class="q-why">세 겹 반복</span></li>
+        <li>(나) 짝수면 곱셈 1번, 홀수면 2번. 지수가 매번 반 이하로 줄어 호출이 \(\lfloor\log_2n\rfloor + 1\)번(마지막 n = 0 호출은 곱셈 없음). <span class="q-why">펼치기</span></li>
+        <li>n = 1000(이진수 1111101000, 10자리, 1이 6개): 곱셈 = 10(제곱) + 6(홀수일 때 추가) = 16번. 처음 n = 1인 호출의 제곱(1 × 1)까지 세었으므로 의미 있는 곱셈은 약 15번. <span class="q-why">이진수로 세기</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>지수를 반씩 줄이는 거듭제곱은 999번을 약 15번으로 줄입니다. 공개 키 암호(RSA)는 수백 자리 지수의 거듭제곱을 이 방법(나머지 연산과 함께)으로 계산합니다. 행렬 곱의 n³도 분할 정복으로 줄일 수 있어 Strassen 알고리즘은 약 \(n^{2.81}\)입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>n = 8: 8 → 4 → 2 → 1 → 0. 곱셈은 n = 8, 4, 2에서 각 1번, n = 1에서 2번(1 × 1 × x) = 5번. 공식: 이진수 1000은 4자리, 1이 1개 → 4 + 1 = 5. 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p><code>for i in range(n): for j in range(i): for k in range(j): x += 1</code>의 횟수는 어떤 Θ인가?</p>
+      <details><summary>답</summary><p>\(\sum_i\sum_{j&lt;i}j = \sum_i\frac{i(i - 1)}{2} = \binom{n}{3} \approx n^3/6\), Θ(n³).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>재귀의 비용</h3>
+    <p class="q">위 <code>power</code>를 <code>return power(x, n // 2) * power(x, n // 2)</code>처럼 같은 호출을 두 번 하도록 바꾸면 곱셈 횟수는?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>그대로 Θ(log n)<span class="why"><b>호출이 매번 둘로 갈라집니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>Θ(n)<span class="why"><b>맞습니다.</b> \(T(n) = 2T(n/2) + c\)이고 재귀 트리의 잎이 n개라 Θ(n). 결과를 변수에 저장해 한 번만 부르는 것이 핵심입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>Θ(2ⁿ)<span class="why"><b>깊이가 log n이라 잎은 \(2^{\log n} = n\)개입니다.</b></span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-e2-loops" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span></span>
-        <span><a href="01-02.html">1.2 점근 표기로 알고리즘을 비교하기 →</a></span>
+        <span><a href="01-02.html">1.2 점근 표기: O, Ω, Θ →</a></span>
       </nav>
     </div>
   </div>

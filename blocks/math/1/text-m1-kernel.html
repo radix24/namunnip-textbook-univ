@@ -1,0 +1,109 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학1-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m1-kernel" data-kind="본문" data-std="수학1-03-01">
+  <header class="card-head"><span class="no"></span><h2>일차변환, 핵과 상, 차원 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>일차변환을 정의하고 예를 든다.</li>
+        <li>핵(영공간)과 상(치역)을 구하고, 각각이 부분공간임을 보인다.</li>
+        <li>차원 정리 \(\dim V = \operatorname{nullity}T + \operatorname{rank}T\)를 증명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>부분공간 판정법 (<a href="02-02.html">2.2절</a>), 기저로의 확장 (<a href="02-03.html">2.3절</a>), 차원 (<a href="02-04.html">2.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>구조를 지키는 함수</h3>
+    <p>벡터공간에서 가장 중요한 연산은 덧셈과 실수배였습니다. 두 벡터공간 사이의 함수 가운데 이 두 연산을 "그대로 옮겨 주는" 것이 있으면, 한쪽 공간에서 한 계산을 다른 쪽으로 가져갈 수 있습니다. 행렬 곱 \(\mathbf x \mapsto A\mathbf x\)가 그런 함수였고(1.2절의 두 성질), 미분 \(p \mapsto p'\)도 \((p + q)' = p' + q'\), \((cp)' = cp'\)이라 그렇습니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 3.1.1 <span class="nm">(일차변환)</span></span>
+      <p>벡터공간 \(V, W\) 사이의 함수 \(T: V \to W\)가 모든 \(\mathbf u, \mathbf v \in V\)와 실수 \(c\)에 대해 \(T(\mathbf u + \mathbf v) = T\mathbf u + T\mathbf v\), \(T(c\mathbf u) = cT\mathbf u\)를 만족하면 \(T\)를 <b>일차변환</b>(선형사상)이라 한다.</p>
+    </div>
+    <p>정의에서 곧 \(T(\mathbf 0) = T(0\mathbf 0) = 0T(\mathbf 0) = \mathbf 0\)이고, 일차결합을 일차결합으로 보냅니다: \(T(\sum c_i\mathbf v_i) = \sum c_iT\mathbf v_i\). 그래서 \(T(\mathbf 0) \ne \mathbf 0\)인 함수, 예컨대 평행이동 \(\mathbf x \mapsto \mathbf x + \mathbf a\) (\(\mathbf a \ne \mathbf 0\))는 일차변환이 아닙니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2 <span class="nm">(일차변환의 예)</span></span>
+      <ul>
+        <li>\(\mathbb R^2\)의 원점 중심 회전, \(x\)축 대칭, \(x\)축으로의 정사영.</li>
+        <li>미분 \(D: P_n \to P_{n-1}\), \(Dp = p'\). 적분 \(I: P_n \to P_{n+1}\), \((Ip)(x) = \int_0^x p(t)\,dt\).</li>
+        <li>전치 \(M_{m\times n} \to M_{n\times m}\), \(A \mapsto A^{\mathsf T}\). 대각합 \(M_{n\times n} \to \mathbb R\), \(A \mapsto \operatorname{tr}A\).</li>
+      </ul>
+    </div>
+    <p>일차변환은 기저에서의 값만 정하면 전체가 정해집니다. \(\{\mathbf v_1, \dots, \mathbf v_n\}\)이 \(V\)의 기저이면 모든 벡터가 \(\sum c_i\mathbf v_i\)로 하나뿐인 방법으로 쓰이고, \(T(\sum c_i\mathbf v_i) = \sum c_iT\mathbf v_i\)이기 때문입니다. 거꾸로 기저의 상을 아무렇게나 정해도 그것을 만족하는 일차변환이 정확히 하나 있습니다.</p>
+
+    <h3><span class="no">3.1.2</span>핵과 상</h3>
+    <p>일차변환이 무엇을 "잃어버리는지"와 "어디까지 닿는지"를 재는 두 부분공간이 있습니다.</p>
+    <p class="q-term"><b>핵</b> \(N(T) = \{\mathbf v \in V : T\mathbf v = \mathbf 0\}\): \(\mathbf 0\)으로 보내지는 벡터들. 행렬이면 동차 방정식의 해집합(영공간)입니다.</p>
+    <p class="q-term"><b>상</b> \(R(T) = \{T\mathbf v : \mathbf v \in V\}\): 실제로 닿는 값들. 행렬이면 열들의 생성(열공간)입니다.</p>
+    <p class="q-term"><b>영공간의 차원</b> \(\operatorname{nullity}T = \dim N(T)\), <b>계수(랭크)</b> \(\operatorname{rank}T = \dim R(T)\).</p>
+    <p>둘 다 부분공간입니다. 예를 들어 \(T\mathbf u = T\mathbf v = \mathbf 0\)이면 \(T(\mathbf u + \mathbf v) = \mathbf 0\)이고, 상의 두 원소 \(T\mathbf u, T\mathbf v\)의 합은 \(T(\mathbf u + \mathbf v)\)라 상에 있습니다. 또 \(\{\mathbf v_i\}\)가 \(V\)의 기저이면 \(R(T) = \operatorname{span}\{T\mathbf v_1, \dots, T\mathbf v_n\}\)입니다. 상을 구할 때는 기저의 상만 모아 군더더기를 빼면 됩니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.1.3</span>
+      <p>\(T\)가 일대일 ⇔ \(N(T) = \{\mathbf 0\}\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>일대일이면 \(T\mathbf v = \mathbf 0 = T\mathbf 0\)에서 \(\mathbf v = \mathbf 0\). 거꾸로 \(N(T) = \{\mathbf 0\}\)이고 \(T\mathbf u = T\mathbf v\)이면 \(T(\mathbf u - \mathbf v) = \mathbf 0\)이라 \(\mathbf u - \mathbf v = \mathbf 0\). <span class="qed">∎</span></p>
+
+    <h3><span class="no">3.1.3</span>차원 정리</h3>
+    <p>\(T: \mathbb R^3 \to \mathbb R^3\)이 \(xy\)평면으로의 정사영이면 핵은 \(z\)축(1차원), 상은 \(xy\)평면(2차원)이고 \(1 + 2 = 3\)입니다. 잃어버린 차원과 남은 차원의 합이 처음 차원이라는 것이 일반적으로 성립합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.1.4 <span class="nm">(차원 정리)</span></span>
+      <p>\(V\)가 유한차원이고 \(T: V \to W\)가 일차변환이면 \(\dim V = \operatorname{nullity}T + \operatorname{rank}T\).</p>
+    </div>
+    <p>아이디어는 핵의 기저를 \(V\)의 기저로 확장하고, 보탠 벡터들의 상이 상공간의 기저임을 보이는 것입니다. 핵의 기저는 \(T\)를 거치면 모두 \(\mathbf 0\)이 되어 사라지고, 보탠 벡터들만 살아남습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\{\mathbf u_1, \dots, \mathbf u_k\}\)를 \(N(T)\)의 기저라 하고 정리 2.3.5로 \(V\)의 기저 \(\{\mathbf u_1, \dots, \mathbf u_k, \mathbf v_1, \dots, \mathbf v_r\}\)로 확장한다(\(k + r = \dim V\)). \(\{T\mathbf v_1, \dots, T\mathbf v_r\}\)이 \(R(T)\)의 기저임을 보이면 된다. 생성: \(R(T)\)는 기저의 상들로 생성되는데 \(T\mathbf u_i = \mathbf 0\)이므로 \(T\mathbf v_j\)들로 생성된다. 일차독립: \(\sum c_jT\mathbf v_j = \mathbf 0\)이면 \(T(\sum c_j\mathbf v_j) = \mathbf 0\)이라 \(\sum c_j\mathbf v_j \in N(T)\)이고, \(\sum c_j\mathbf v_j = \sum d_i\mathbf u_i\)로 쓸 수 있다. 그러면 \(\sum d_i\mathbf u_i - \sum c_j\mathbf v_j = \mathbf 0\)인데 이것은 \(V\)의 기저의 일차결합이므로 모든 계수가 0, 특히 \(c_j = 0\). 따라서 \(\operatorname{rank}T = r = \dim V - k\). <span class="qed">∎</span></p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.5</span>
+      <p>\(T: P_3 \to P_2\), \(Tp = p'\)의 핵, 상, 차원을 구하고 차원 정리를 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(p' = 0\)인 다항식은 상수이므로 \(N(T) = \operatorname{span}\{1\}\), nullity 1. 기저 \(1, x, x^2, x^3\)의 상은 \(0, 1, 2x, 3x^2\)이므로 \(R(T) = \operatorname{span}\{1, x, x^2\} = P_2\), rank 3. \(\dim P_3 = 4 = 1 + 3\). 미분은 상수를 잃어버리고(적분상수 \(C\)가 필요한 이유), 그 대신 \(P_2\) 전체에 닿습니다.</p>
+    <p>차원 정리에서 바로 나오는 결론이 있습니다. \(\dim V = \dim W\)이면 "일대일"과 "전사"가 같은 말입니다(nullity 0 ⇔ rank \(= \dim W\)). 정사각행렬에서 "\(A\mathbf x = \mathbf 0\)의 해가 0뿐"과 "모든 \(\mathbf b\)에 해가 있다"가 동치였던 이유(정리 1.3.5)가 여기 있습니다.</p>
+
+    <div class="tb-note"><b>주의</b>행렬 \(A\)의 기약 행사다리꼴 \(R\)에서 "상(열공간)의 기저"를 고를 때는 \(R\)의 피벗 열이 아니라 \(A\)의 피벗 위치에 있는 <b>원래 열</b>을 써야 합니다. 행 연산은 열들 사이의 관계는 지키지만 열공간 자체는 바꿉니다. 예: \(A = \begin{pmatrix} 1 \\ 1\end{pmatrix}\)의 열공간은 \(\operatorname{span}\{(1,1)\}\)인데 \(R = \begin{pmatrix} 1 \\ 0\end{pmatrix}\)의 열공간은 \(x\)축입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>일차변환은 덧셈과 실수배를 보존하며, 기저에서의 값으로 정해진다.</li>
+        <li>핵(0으로 가는 것)과 상(닿는 곳)은 부분공간이다. 일대일 ⇔ 핵이 \(\{\mathbf 0\}\).</li>
+        <li>차원 정리: \(\dim V = \operatorname{nullity} + \operatorname{rank}\). 증명은 핵의 기저를 확장한다.</li>
+        <li>같은 차원 사이에서는 일대일 ⇔ 전사.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(T(x, y, z) = (x - y,\ y - z)\)의 핵과 상을 구하여라.
+          <details><summary>답</summary><p>핵 \(\operatorname{span}\{(1,1,1)\}\), 상 \(\mathbb R^2\). \(3 = 1 + 2\).</p></details>
+        </li>
+        <li>\(T(x, y) = (x + 1, y)\)는 일차변환인가?
+          <details><summary>답</summary><p>아니다. \(T(0,0) = (1, 0) \ne \mathbf 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>대각합 \(\operatorname{tr}: M_{3\times3} \to \mathbb R\)의 핵의 차원을 구하여라.
+          <details><summary>답</summary><p>상이 \(\mathbb R\)(rank 1)이므로 nullity \(= 9 - 1 = 8\).</p></details>
+        </li>
+        <li>\(T: \mathbb R^5 \to \mathbb R^3\)은 일대일일 수 없음을 보여라.
+          <details><summary>답</summary><p>rank ≤ 3이므로 nullity ≥ 2 &gt; 0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="5">
+        <li>\(T: V \to V\)이고 \(T^2 = 0\)이면 \(\operatorname{rank}T \le \frac12\dim V\)임을 보여라.
+          <details><summary>힌트</summary><p>\(T^2 = 0\)은 \(R(T) \subseteq N(T)\)라는 뜻입니다.</p></details>
+          <details><summary>답</summary><p>\(T(T\mathbf v) = \mathbf 0\)이므로 \(R(T) \subseteq N(T)\), 따라서 rank ≤ nullity. 차원 정리로 \(2\operatorname{rank} \le \operatorname{rank} + \operatorname{nullity} = \dim V\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

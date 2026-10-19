@@ -1,4 +1,5 @@
-# main에 푸시하면 저장소 전체를 GitHub Pages에 올린다. 빌드 산출물(js/toc.js)은 커밋해 둔다.
+# main에 푸시하면 tools/build.py로 c/와 js/toc.js를 다시 만든 뒤 저장소 전체를 GitHub Pages에 올린다.
+# 학과 브랜치 PR은 원본만 담으므로, 배포할 때마다 여기서 빌드해 최신 원본이 바로 사이트에 반영된다.
 name: Pages
 
 on:
@@ -23,6 +24,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build pages
+        run: python -I -X utf8 tools/build.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

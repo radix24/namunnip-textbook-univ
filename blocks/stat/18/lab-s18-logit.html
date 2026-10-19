@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-03-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs2.js"]
+}
+-->
+<article class="card q-card" id="lab-s18-logit" data-kind="실습" data-std="응통18-03-01">
+  <header class="card-head"><span class="no"></span><h2>로지스틱 회귀 계수는 확률을 어떻게 움직이는가?</h2><span class="kind">실습 · 로짓과 오즈비</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>\(\mathrm{logit}\,P(Y = 1) = \beta_0 + \beta_1x\)의 두 계수를 바꾸면서 S자 곡선의 위치와 가파르기가 어떻게 변하는지 봅니다. \(x\)가 1 늘 때 오즈는 어디서나 \(e^{\beta_1}\)배가 되지만, 확률의 증가량은 \(x\)의 위치에 따라 다르다는 것을 숫자로 확인합니다. 성취기준 [응통18-03-01].</p>
+      <p class="q-term"><b>오즈</b>: \(p/(1-p)\). 확률 0.8의 오즈는 4입니다.</p>
+      <p class="q-term"><b>로짓</b>: 오즈의 로그 \(\ln\frac{p}{1-p}\). 로지스틱 회귀는 로짓을 \(x\)의 일차식으로 놓습니다.</p>
+      <p class="q-term"><b>오즈비</b>: 두 오즈의 비. 이 모형에서 \(x\)가 1 늘 때의 오즈비는 \(e^{\beta_1}\)로 일정합니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>파란 곡선이 \(P(Y = 1 \mid x)\), 주황 세로선이 고른 \(x\), 빨간 점이 그 확률입니다. 회색 점선은 확률 0.5가 되는 곳입니다. "가상 자료 보기"를 켜면 이 모형에서 만든 0/1 자료 40개를 함께 보여 줍니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>β₀ = <b data-show="b0" data-fix="1">-4.0</b></span><input type="range" name="b0" min="-8" max="4" step="0.5" value="-4" aria-label="절편"></label>
+        <label><span>β₁ = <b data-show="b1" data-fix="2">0.80</b></span><input type="range" name="b1" min="-2" max="3" step="0.05" value="0.8" aria-label="기울기"></label>
+        <label><span>x = <b data-show="x" data-fix="1">5.0</b></span><input type="range" name="x" min="0" max="9" step="0.5" value="5" aria-label="x 위치"></label>
+        <label><span>가상 자료 보기</span><input type="checkbox" name="pts" aria-label="가상 자료 보기"></label>
+      </div>
+      <canvas aria-label="로지스틱 곡선"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 설정(\(\beta_0 = -4\), \(\beta_1 = 0.8\))에서 \(x = 5\)의 확률, 오즈, 오즈비를 적습니다.</li>
+        <li>\(x\)를 1, 5, 8로 옮기며 "확률 증가"(x가 1 늘 때)를 적습니다. 오즈비는 바뀌나요?</li>
+        <li>\(\beta_0\)만 −6, −2로 바꾸어 곡선이 어느 쪽으로 움직이는지 봅니다.</li>
+        <li>\(\beta_1\)을 0.3, 2로 바꾸어 곡선의 가파르기와 확률 0.5인 곳의 기울기 \(\beta_1/4\)를 비교합니다.</li>
+        <li>\(\beta_1\)을 음수로 바꾸면 어떻게 되나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 설정에서 \(x = 5\)이면 로짓이 0이라 확률 0.5, 오즈 1이고, \(x = 6\)에서 확률 0.6900입니다. 오즈비는 \(e^{0.8} \approx 2.2255\)입니다.</li>
+        <li>확률 증가량은 \(x = 5\)에서 약 0.19로 가장 크고, \(x = 1\)이나 \(x = 8\)처럼 곡선의 양 끝에서는 0.05 안팎으로 작습니다. 오즈비는 어디서나 2.2255로 같습니다.</li>
+        <li>\(\beta_0\)는 곡선을 좌우로 옮깁니다. 확률 0.5인 곳은 \(x = -\beta_0/\beta_1\)이라 \(\beta_0 = -6\)이면 7.5, \(\beta_0 = -2\)이면 2.5입니다.</li>
+        <li>\(\beta_1\)이 클수록 곡선이 가파르고, 확률 0.5인 곳의 기울기는 정확히 \(\beta_1/4\)입니다(\(p(1-p)\beta_1\)에서 \(p = 0.5\)).</li>
+        <li>\(\beta_1 &lt; 0\)이면 곡선이 내려가는 S자가 되고 오즈비가 1보다 작습니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>"\(\beta_1 = 0.8\)이므로 \(x\)가 1 늘면 확률이 0.8 늘어난다"는 해석이 틀린 까닭을 이 실습의 숫자로 설명해 보세요.</li>
+        <li>"\(\beta_1/4\)는 확률 변화의 최대치"라는 경험 규칙(나누기 4 규칙)이 어디서 나오는지 설명해 보세요.</li>
+        <li>자료의 \(x\)가 모두 0~2에 있다면 곡선의 어느 부분만 보게 되나요? 그때 선형 확률 모형과 결과가 비슷할까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R에서 <code>plogis(-4 + 0.8 * 5)</code>로 확률을, <code>exp(0.8)</code>로 오즈비를 계산합니다. 실제 자료 적합은 <code>glm(am ~ wt, family = binomial, data = mtcars)</code>로 해 보세요(응통18-03-02).</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>오즈비의 뜻</h3>
+    <p class="q">로지스틱 회귀에서 \(\hat\beta_1 = \ln 2 \approx 0.693\)입니다. 옳은 해석은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>\(x\)가 1 늘면 확률이 두 배가 된다.<span class="why"><b>확률이 아니라 오즈입니다.</b> 확률 0.6의 두 배는 1.2라 불가능합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>\(x\)가 1 늘면 오즈가 두 배가 된다.<span class="why"><b>맞습니다.</b> \(e^{0.693} = 2\)입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>\(x\)가 1 늘면 확률이 0.693 늘어난다.<span class="why"><b>계수는 로짓 척도의 변화입니다.</b> 확률 변화는 \(x\)의 위치에 따라 다릅니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

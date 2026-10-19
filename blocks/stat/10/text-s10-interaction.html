@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-interaction" data-kind="본문" data-std="응통10-03-02">
+  <header class="card-head"><span class="no"></span><h2>상호작용 항의 해석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>상호작용 항이 있는 모형을 쓰고 계수를 해석한다.</li>
+        <li>연속형 × 범주형, 연속형 × 연속형 상호작용을 구별한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>가변수 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>효과가 다른 변수에 따라 달라질 때</h3>
+    <p>광고비가 매출에 주는 효과가 온라인 매장과 오프라인 매장에서 다르다면, 평행한 직선 모형으로는 이를 나타낼 수 없습니다. 한 변수의 효과가 다른 변수의 값에 따라 달라지는 것을 <b>상호작용</b>이라 합니다.</p>
+
+    <h3><span class="no">3.2.1</span>연속형 × 범주형</h3>
+    <p>\(y = \beta_0 + \beta_1x + \gamma D + \delta(xD) + \varepsilon\). \(D = 0\)이면 \(\beta_0 + \beta_1x\), \(D = 1\)이면 \((\beta_0 + \gamma) + (\beta_1 + \delta)x\). 이제 기울기도 다릅니다. \(\delta\)는 두 집단 기울기의 차이이고, \(H_0: \delta = 0\)은 "두 직선이 평행한가"를 검정합니다.</p>
+    <p>상호작용이 있으면 \(\gamma\)를 "집단 효과"라고 해석할 수 없습니다. \(\gamma\)는 \(x = 0\)에서의 두 직선 높이 차이일 뿐이고, 집단 차이는 \(\gamma + \delta x\)로 \(x\)마다 다릅니다. \(x = 0\)이 의미 없는 값이면 \(x\)를 평균에서 뺀 값(중심화)으로 넣어 \(\gamma\)를 평균 \(x\)에서의 차이로 만들면 해석이 쉬워집니다.</p>
+
+    <h3><span class="no">3.2.2</span>연속형 × 연속형</h3>
+    <p>\(y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_1x_2 + \varepsilon\). \(x_1\)의 효과(편미분)는 \(\beta_1 + \beta_3x_2\)로 \(x_2\)에 따라 달라집니다. 예를 들어 비료(\(x_1\))의 효과가 강수량(\(x_2\))이 많을수록 커지면 \(\beta_3 &gt; 0\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p><code>mtcars</code>에서 무게 효과가 변속기(<code>am</code>: 0 자동, 1 수동)에 따라 다른지 보세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>summary(lm(mpg ~ wt * am, data = mtcars))</code>: 절편 31.42, wt −3.786, am 14.88, wt:am −5.298(p값 약 0.001). 자동은 무게 1000 lb당 −3.79, 수동은 \(-3.79 - 5.30 = -9.08\) mpg. 수동 변속기 차에서 무게에 따른 연비 감소가 훨씬 가파릅니다. am의 계수 14.88은 무게 0인 차의 차이라 그대로 해석하지 않습니다.</p>
+
+    <div class="tb-note">
+      <b>주의</b> 상호작용 항을 넣으면 그 주효과 항(\(x\), \(D\))도 함께 두는 것이 원칙입니다(위계 원칙). 주효과를 빼면 모형이 특정 기준점에 묶여 해석이 이상해집니다.
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>상호작용 = 한 변수의 효과가 다른 변수 값에 따라 달라짐.</li>
+        <li>\(xD\) 계수 = 기울기 차이, \(x_1x_2\) 계수 = 효과의 변화율.</li>
+        <li>상호작용이 있으면 주효과 계수는 기준점에서의 값일 뿐.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 무게 3000 lb(wt = 3)인 차의 수동-자동 연비 차이 추정값은?
+          <details><summary>답</summary><p>\(14.88 - 5.298 \times 3 = -1.01\). 이 무게에서는 수동이 약 1 mpg 낮습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-fitlogit" data-kind="본문" data-std="응통18-03-02">
+  <header class="card-head"><span class="no"></span><h2>로지스틱 회귀 적합과 계수 검정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>최대가능도로 로지스틱 회귀를 적합하고 출력을 읽는다.</li>
+        <li>왈드 검정과 우도비(이탈도 차) 검정을 한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>로지스틱 모형 (<a href="03-01.html">3.1절</a>), 응통15 3.2절 피셔 점수법.</li>
+      </ul>
+    </div>
+
+    <h3>최소제곱 대신 최대가능도</h3>
+    <p>이진 자료의 가능도는 \(\prod\pi_i^{y_i}(1-\pi_i)^{1-y_i}\)입니다. 로그가능도를 \(\boldsymbol\beta\)에 대해 최대화하는 닫힌 꼴의 해가 없어 반복 계산(IRLS, 응통15 3.2절)으로 구합니다.</p>
+
+    <h3><span class="no">3.2.1</span>적합</h3>
+    <pre><code>fit &lt;- glm(am ~ wt + hp, family = binomial, data = mtcars)
+summary(fit)          # Estimate, Std. Error, z value, Pr(&gt;|z|)
+exp(coef(fit))        # 오즈비
+exp(confint(fit))     # 프로파일 가능도 구간(MASS)
+predict(fit, newdata = data.frame(wt = 3, hp = 120), type = "response")</code></pre>
+    <p>점수 방정식 \(X^\top(\mathbf y - \hat{\boldsymbol\pi}) = \mathbf 0\)은 "관측 성공 수와 예측 성공 수가 설명변수 방향마다 같다"는 뜻입니다. 계수의 공분산은 \((X^\top WX)^{-1}\), \(W = \mathrm{diag}(\hat\pi_i(1-\hat\pi_i))\)입니다.</p>
+
+    <h3><span class="no">3.2.2</span>검정</h3>
+    <ul>
+      <li><b>왈드</b>: \(z = \hat\beta/\mathrm{se}\), 출력의 z value. 간단하지만 계수가 크거나 완전 분리(어떤 \(x\) 값 이상은 모두 1)에 가까우면 표준오차가 부풀어 믿기 어렵습니다.</li>
+      <li><b>우도비</b>: 두 겹친 모형의 이탈도 차 \(D_0 - D_1 \sim \chi^2_{df}\)(응통7 6.1절). R: <code>anova(fit0, fit1, test = "Chisq")</code>. 왈드보다 믿을 만합니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>위 모형의 결과를 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> wt 계수 −8.08(오즈비 약 0.0003), hp 0.036(오즈비 약 1.04)입니다. 이 모형의 널 이탈도는 43.2, 모형 이탈도는 10.1입니다(3.3절 예제). 마력이 같다면 무거운 차일수록 수동 변속기일 오즈가 크게 줄고, 무게가 같다면 마력이 클수록 수동일 오즈가 조금씩 늘어납니다. 32대뿐이라 계수의 표준오차가 크다는 점도 함께 봅니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>glm(family = binomial)</code>, IRLS로 최대가능도.</li>
+        <li>오즈비 \(e^{\hat\beta}\)와 구간.</li>
+        <li>왈드보다 우도비(이탈도 차) 검정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>완전 분리가 일어나면 최대가능도 추정값은 어떻게 되나요?
+          <details><summary>답</summary><p>계수를 키울수록 가능도가 계속 커져 추정값이 무한대로 발산하고, 소프트웨어는 매우 큰 계수와 표준오차를 냅니다. 벌점(피르스) 로지스틱 회귀 등으로 대처합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

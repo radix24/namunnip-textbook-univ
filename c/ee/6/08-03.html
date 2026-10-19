@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>간단한 저역 통과 필터를 코드로 설계하고 적용하기 · 신호및시스템 — QURI</title>
-  <meta name="description" content="신호및시스템 8.3 간단한 저역 통과 필터를 코드로 설계하고 적용하기 — 성취기준: 간단한 저역 통과 필터를 코드로 설계하고 적용할 수 있다.">
+  <title>창 방법으로 FIR 저역 통과 필터 설계하기 · 신호및시스템 — QURI</title>
+  <meta name="description" content="신호및시스템 8.3 창 방법으로 FIR 저역 통과 필터 설계하기 — 성취기준: 간단한 저역 통과 필터를 코드로 설계하고 적용할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;8.3 간단한 저역 통과 필터를 코드로 설계하고 적용하기&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;8.3 창 방법으로 FIR 저역 통과 필터 설계하기&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,212 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전6-08-03">
+  <section class="topic-hero u-hero has-text" data-sec="전전6-08-03" data-u="연세대 POSTECH">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">신호및시스템</a><span class="mono">/</span><a href="08.html">8. 필터 설계와 스펙트럼 해석</a></div>
-    <h1><span class="sec-no mono">8.3</span>간단한 저역 통과 필터를 코드로 설계하고 적용하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전6-08-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-08-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전6-08-03" aria-label="할 수 있음"><span class="t">간단한 저역 통과 필터를 코드로 설계하고 적용할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">8.3</span>창 방법으로 FIR 저역 통과 필터 설계하기</h1>
+    <p class="sec-std"><span class="mono">[전전6-08-03]</span> 간단한 저역 통과 필터를 코드로 설계하고 적용할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대 · POSTECH</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s8-3-1"><span class="mono">8.3.1</span><span>설계 절차</span></a></li><li><a href="#s8-3-2"><span class="mono">8.3.2</span><span>탭 수와 창의 효과</span></a></li><li><a href="#s8-3-3"><span class="mono">8.3.3</span><span>적용과 지연</span></a></li><li><a href="#s8-3-4"><span class="mono">8.3.4</span><span>FIR과 IIR</span></a></li><li><a href="#s8-3-5"><span class="mono">8.3.5</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e6-firdesign"><span class="mono">본문</span><span>창 방법으로 FIR 저역 통과 필터 설계하기</span></a></li><li><a href="#lab-e6-fir"><span class="mono">8.3.2</span><span>NumPy로 FIR 저역 통과 필터 만들고 적용하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="08.html">대단원 8 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e6-firdesign" data-kind="본문" data-std="전전6-08-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이상 저역 통과 필터의 임펄스 응답을 자르고 늦추고 창을 씌워 인과 FIR 필터를 만든다.</li>
+        <li>탭 수와 창이 전이 대역 폭과 저지 대역 감쇠를 어떻게 정하는지 안다.</li>
+        <li>설계한 필터를 신호에 적용하고(컨볼루션), 선형 위상에 따른 지연을 보정한다.</li>
+        <li>IIR(Butterworth)과 FIR의 장단점을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이상 필터와 선형 위상 (<a href="08-01.html">8.1절</a>), 창 함수 (<a href="08-02.html">8.2절</a>), 컨볼루션 합 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s8-3-1"><span class="no">8.3.1</span>설계 절차</h3>
+    <p>구하려는 것: 차단 주파수 \(f_c\), 표본화 주파수 \(f_s\)가 주어졌을 때 M개의 계수 \(h[0], \dots, h[M-1]\). 8.1절에서 이상 필터의 문제는 무한히 길고 비인과라는 것이었습니다. 하나씩 고칩니다.</p>
+    <ol>
+      <li><b>이상 응답</b>: 이산 차단 주파수 \(\omega_c = 2\pi f_c/f_s\)인 이상 저역 통과의 임펄스 응답은 \(h_d[n] = \frac{\sin\omega_cn}{\pi n} = \frac{\omega_c}{\pi}\text{sinc}\!\left(\frac{\omega_cn}{\pi}\right)\) (n = 0에서 \(\omega_c/\pi\)). 5.1절 DTFT의 역변환으로 얻습니다.</li>
+      <li><b>자르기</b>: \(|n| \le (M - 1)/2\)만 남긴다(M은 홀수). 유한 길이가 되어 FIR이 됩니다.</li>
+      <li><b>늦추기</b>: \((M - 1)/2\)만큼 오른쪽으로 옮겨 n = 0부터 시작하게 한다. 인과가 됩니다. 계수가 가운데에 대해 대칭이라 위상은 \(-\omega(M - 1)/2\)로 선형입니다.</li>
+      <li><b>창 씌우기</b>: 그냥 자르는 것은 직사각 창이라 통과 대역에 물결(Gibbs)이 생기고 저지 대역 감쇠가 약합니다. Hamming 같은 창을 곱합니다.</li>
+      <li><b>정규화</b>: 계수 합을 1로 맞춰 직류 이득을 정확히 1로 한다.</li>
+    </ol>
+
+    <h3 id="s8-3-2"><span class="no">8.3.2</span>탭 수와 창의 효과</h3>
+    <p>창 방법에서 결과 응답은 이상 응답과 창의 변환의 컨볼루션이므로(8.2절과 같은 원리), 다음이 성립합니다.</p>
+    <ul>
+      <li><b>전이 대역 폭</b>은 창의 주엽 폭으로 정해진다: 대략 직사각 \(f_s/M\), Hamming \(3.3f_s/M\) 정도(확인 필요: 교재마다 정의하는 폭의 기준이 다름). M을 늘리면 좁아진다.</li>
+      <li><b>저지 대역 감쇠</b>는 창의 옆엽으로 정해지고 M과 거의 무관하다: 직사각 약 21 dB, Hamming 약 53 dB가 교재에서 흔히 쓰는 값이다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 8.3.1</span>
+      <p>\(f_s = 1000\) Hz, \(f_c = 100\) Hz, M = 51로 직사각 창과 Hamming 창 FIR을 설계했다. 50 Hz, 100 Hz에서의 이득과 150~500 Hz 저지 대역의 최대 이득을 비교하여라. (값은 이 절 실습 카드의 NumPy 계산 결과)</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <table class="tb-table">
+      <tr><th>창</th><th>50 Hz</th><th>100 Hz</th><th>150~500 Hz 최대</th></tr>
+      <tr><td>직사각</td><td>−0.37 dB</td><td>−6.51 dB</td><td>−31.8 dB</td></tr>
+      <tr><td>Hamming</td><td>−0.01 dB</td><td>−6.05 dB</td><td>−61.6 dB</td></tr>
+    </table>
+    <p>두 필터 모두 차단 주파수에서 약 −6 dB(크기 0.5)입니다. 창 방법에서는 이상 응답의 경계가 크기 0.5 근처가 되기 때문이고, Butterworth의 −3 dB와 기준이 다릅니다. Hamming 창은 통과 대역이 평평하고(물결 0.01 dB) 저지 대역 감쇠가 30 dB 가까이 더 깊습니다. 대신 전이 대역이 넓어 100~150 Hz 사이의 감쇠가 완만합니다. 이 예에서 직사각 창의 최대 옆엽(−31.8 dB)은 교과서 값(−21 dB)보다 깊은데, 저지 대역 경계(150 Hz)가 주엽에서 조금 떨어져 있어 첫 옆엽 일부가 측정 범위 밖에 있기 때문입니다.</p>
+
+    <h3 id="s8-3-3"><span class="no">8.3.3</span>적용과 지연</h3>
+    <p>필터링은 계수와 입력의 컨볼루션 \(y[n] = \sum_kh[k]x[n - k]\)입니다. M = 51이면 표본마다 곱셈 51번입니다. 선형 위상이므로 모든 성분이 \((M - 1)/2 = 25\)표본(\(f_s = 1000\) Hz에서 25 ms) 늦어지며, 파형 모양은 그대로입니다. 저장된 데이터를 처리할 때는 출력을 25표본 앞당기면 원래 시각과 맞습니다.</p>
+    <p>실습 카드의 가상 신호(30 Hz 진폭 1 + 250 Hz 잡음 진폭 0.5)에 Hamming 필터를 쓰면, 과도 구간을 뺀 출력에서 30 Hz 진폭은 0.998, 250 Hz는 약 \(10^{-5}\)으로 줄어듭니다.</p>
+
+    <h3 id="s8-3-4"><span class="no">8.3.4</span>FIR과 IIR</h3>
+    <ul>
+      <li><b>FIR</b>: 언제나 안정, 정확한 선형 위상 가능, 설계가 간단. 대신 가파른 응답에 많은 탭(곱셈)이 필요하다.</li>
+      <li><b>IIR</b>(Butterworth 등을 디지털로 바꾼 것): 적은 계수로 가파른 응답. 대신 위상이 비선형이고, 극점이 단위원 밖으로 나가지 않도록(계수 양자화 포함) 주의해야 한다.</li>
+    </ul>
+    <p>더 정교한 FIR 설계(최적 등리플, Parks-McClellan)와 IIR의 쌍선형 변환은 디지털신호처리(전전35)에서 다룹니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "탭 수를 늘리면 저지 대역 감쇠가 깊어진다": 창 방법에서 감쇠는 주로 창의 종류가 정하고, 탭 수는 전이 대역 폭을 정합니다. (2) 짝수 M으로 대칭 필터를 만들면 지연이 반 표본(예: 24.5)이 되어 원래 시각과 정수로 맞출 수 없습니다. 지연을 정확히 보정하려면 홀수 M을 씁니다. (3) 출력의 처음 M − 1개 표본은 필터가 아직 입력으로 다 차지 않은 과도 구간이라 그대로 해석하면 안 됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이상 응답 \(\frac{\sin\omega_cn}{\pi n}\) → M개로 자르기 → \((M-1)/2\) 늦추기 → 창 → 정규화.</li>
+        <li>전이 대역 폭 ∝ 1/M(창마다 계수 다름), 저지 대역 감쇠는 창이 정한다.</li>
+        <li>대칭 FIR은 선형 위상, 지연 \((M-1)/2\)표본. IIR은 적은 계수로 가파르지만 위상이 비선형.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s8-3-5"><span class="no">8.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f_s = 1000\), \(f_c = 100\)이면 \(h_d[0]\)은? M = 51 필터의 지연은 몇 ms인가?
+          <details><summary>답</summary><p>\(\omega_c/\pi = 0.2\). 25표본 = 25 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위 설계에서 전이 대역을 절반으로 줄이려면 M을 대략 얼마로 해야 하는가?
+          <details><summary>답</summary><p>전이 폭이 1/M에 비례하므로 두 배, M ≈ 101.</p></details>
+        </li>
+        <li>3점 이동 평균 \(\{1/3, 1/3, 1/3\}\)은 대칭 FIR이다. 군지연과 영점 주파수(\(f_s = 300\) Hz)를 구하여라.
+          <details><summary>답</summary><p>지연 1표본. 영점 \(\omega = 2\pi/3\), 곧 100 Hz(5.1절 예제 5.1.2).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>저역 통과 FIR \(h_{LP}[n]\)에서 고역 통과 FIR을 \(h_{HP}[n] = \delta[n - (M-1)/2] - h_{LP}[n]\)로 만들 수 있는 이유를 주파수 응답으로 설명하여라.
+          <details><summary>답</summary><p>\(H_{HP} = e^{-j\omega(M-1)/2} - H_{LP}\). 두 항의 위상이 같은 선형 위상이므로 크기는 \(1 - |H_{LP}|\): 통과 대역에서 0, 저지 대역에서 1. 지연된 "모두 통과"에서 저역 통과를 뺀 것입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e6-firdesign" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전6-08-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-08-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대 · POSTECH</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전6-08-03" aria-label="할 수 있음"><span class="t">간단한 저역 통과 필터를 코드로 설계하고 적용할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-e6-fir" data-kind="실습" data-std="전전6-08-03">
+  <header class="card-head"><span class="no">8.3.2</span><h2><span class="q-badge">실습</span>NumPy로 FIR 저역 통과 필터 만들고 적용하기</h2><span class="kind">실습 · 창 방법 설계, 응답 측정, 잡음 제거</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="08-03.html#std">[전전6-08-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>8.3절의 창 방법으로 51탭 저역 통과 필터를 코드로 설계하고, 통과·저지 대역 이득을 재고, 가상 신호의 잡음을 걸러 봅니다. 성취기준 [전전6-08-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>Python 3과 NumPy. 그림을 보려면 matplotlib(선택).</li>
+        <li>아래 코드를 <code>fir_lab.py</code>로 저장합니다. 입력 신호는 계산으로 만든 가상 신호입니다.</li>
+      </ul>
+<pre><code>import numpy as np
+
+fs = 1000                          # 표본화 주파수 (Hz)
+fc = 100                           # 원하는 차단 주파수 (Hz)
+M = 51                             # 탭 수(홀수: 가운데가 대칭 중심)
+
+def lowpass(M, fc, win):
+    n = np.arange(M) - (M - 1) / 2             # −25 ~ 25
+    h = 2 * fc / fs * np.sinc(2 * fc / fs * n)  # 이상 저역 통과의 임펄스 응답을 자름
+    h = h * win(M)
+    return h / h.sum()                          # 직류 이득을 1로
+
+def gain_db(h, f):
+    w = 2 * np.pi * f / fs
+    H = np.sum(h * np.exp(-1j * w * np.arange(len(h))))
+    return 20 * np.log10(abs(H))
+
+for name, win in [("rect", np.ones), ("hamming", np.hamming)]:
+    h = lowpass(M, fc, win)
+    stop = max(gain_db(h, f) for f in range(150, 501))   # 저지 대역 150~500 Hz의 최댓값
+    print(name, "50Hz %.2f  100Hz %.2f dB, 150~500Hz max %.1f dB"
+          % (gain_db(h, 50), gain_db(h, 100), stop))
+
+# 가상 신호: 30 Hz(진폭 1) + 250 Hz 잡음(진폭 0.5), 1초
+t = np.arange(fs) / fs
+x = np.sin(2 * np.pi * 30 * t) + 0.5 * np.sin(2 * np.pi * 250 * t)
+y = np.convolve(x, lowpass(M, fc, np.hamming), mode="full")[:fs]
+A = 2 * np.abs(np.fft.rfft(y[100:900])) / 800     # 앞뒤 과도 구간을 빼고 0.8초
+f = np.fft.rfftfreq(800, 1 / fs)
+print("30Hz %.3f  250Hz %.1e" % (A[f == 30][0], A[f == 250][0]))
+print("delay", (M - 1) / 2, "samples")</code></pre>
+      <p><code>np.sinc(u)</code>는 \(\frac{\sin\pi u}{\pi u}\)이므로, <code>2*fc/fs*np.sinc(2*fc/fs*n)</code>이 8.3절의 \(\frac{\sin\omega_cn}{\pi n}\)입니다(\(\omega_c = 2\pi f_c/f_s\)).</p>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li><code>python fir_lab.py</code>를 실행하고 네 줄의 출력을 적습니다.</li>
+        <li>(선택) <code>gain_db</code>를 0~500 Hz에서 1 Hz 간격으로 계산해 두 창의 응답을 한 그림에 그립니다.</li>
+        <li>M을 101로 바꿔 다시 실행하고, 저지 대역 최댓값과 100~150 Hz 사이의 감쇠가 어떻게 바뀌는지 봅니다.</li>
+        <li>(선택) <code>x</code>와 <code>y</code>를 같은 그림에 그려, y가 25표본 늦은 것을 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>NumPy 2.x에서 위 코드를 실행한 출력입니다.</p>
+<pre><code>rect 50Hz -0.37  100Hz -6.51 dB, 150~500Hz max -31.8 dB
+hamming 50Hz -0.01  100Hz -6.05 dB, 150~500Hz max -61.6 dB
+30Hz 0.998  250Hz 1.1e-05
+delay 25.0 samples</code></pre>
+      <ul>
+        <li>두 필터 모두 100 Hz에서 약 −6 dB입니다. 창 방법에서 차단 주파수는 크기 0.5 지점입니다.</li>
+        <li>Hamming 창은 통과 대역 물결이 0.01 dB로 작고, 저지 대역 최대 이득이 −61.6 dB로 직사각(−31.8 dB)보다 약 30 dB 깊습니다.</li>
+        <li>30 Hz 성분은 거의 그대로(0.998), 250 Hz 잡음은 0.5에서 약 \(1.1\times10^{-5}\)으로 줄었습니다.</li>
+        <li>M = 101로 바꾸면 출력은 <code>rect 50Hz 0.40  100Hz -5.93 dB, 150~500Hz max -35.3 dB</code>, <code>hamming 50Hz 0.03  100Hz -6.01 dB, 150~500Hz max -60.2 dB</code>, 지연 50표본입니다. Hamming의 저지 대역 최댓값은 −61.6에서 −60.2 dB로 거의 그대로이고(창이 정함), 120 Hz에서의 이득은 −22.1 dB에서 −52.9 dB로 깊어집니다(전이 대역이 좁아짐).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>직사각 창의 저지 대역 최댓값은 150 Hz 바로 위 어디에서 나왔을까요? 1 Hz 간격 응답을 그려 찾고, 8.2절의 옆엽과 연결하세요.</li>
+        <li>같은 사양(100 Hz까지 통과, 150 Hz부터 60 dB 감쇠)을 Butterworth로 만들려면 몇 차가 필요할까요? 8.1절의 식으로 어림하고, 계산량(곱셈 수)을 FIR과 비교하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>SciPy가 있다면 <code>scipy.signal.firwin(51, 100, fs=1000)</code>의 결과를 위 Hamming 계수와 비교해 보세요(기본 창이 Hamming). <code>scipy.signal.butter</code>와 <code>lfilter</code>로 IIR 필터를 만들어 같은 신호에 적용하고, 출력 파형의 지연과 모양을 비교하면 8.1.4의 위상 이야기가 보입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e6-fir" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="08-02.html">← 8.2 창 함수가 스펙트럼 누설을 줄이는 원리를 설명하기</a></span>
-        <span></span>
+        <span><a href="08-02.html">← 8.2 창 함수와 스펙트럼 누설</a></span>
+        <span><a href="08-R.html">8.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

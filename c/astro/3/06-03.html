@@ -1,0 +1,205 @@
+<!doctype html>
+<!-- 자동 생성: python -I tools/build.py — 직접 고치지 말고 blocks/ 와 curricula/ 를 고칠 것 -->
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>실습 안내: 수치 모의실험으로 궤도 공명 재현하기 · 기초천체물리학(1) — QURI</title>
+  <meta name="description" content="기초천체물리학(1) 6.3 실습 안내: 수치 모의실험으로 궤도 공명 재현하기 — 성취기준: 수치 모의실험으로 궤도 공명이나 섭동 같은 태양계 역학 현상을 재현할 수 있다.">
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../../../manifest.webmanifest">
+  <meta name="theme-color" content="#f5f5f2">
+  <script>(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\b/.exec(location.search),t=q&&q[1];if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(t==="dark")document.querySelector('meta[name="theme-color"]').content="#12131c"})()</script>
+  <meta name="apple-mobile-web-app-title" content="QURI">
+  <link rel="stylesheet" href="../../../css/fonts.css">
+  <link rel="stylesheet" href="../../../css/tb.css">
+  <link rel="stylesheet" href="../../../css/quri.css">
+  <link rel="stylesheet" href="../../../css/qcard.css">
+  <link rel="stylesheet" href="../../../css/qtext.css">
+  <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
+</head>
+<body data-rec='{&quot;course&quot;: &quot;천우3&quot;, &quot;title&quot;: &quot;6.3 실습 안내: 수치 모의실험으로 궤도 공명 재현하기&quot;, &quot;sub&quot;: &quot;기초천체물리학(1)&quot;}'>
+
+<header class="top">
+  <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
+  <div class="top-right"><a href="../../../record.html">학습 기록</a><a href="06.html">← 절 목록</a><button type="button" class="theme-btn" aria-label="다크 모드" aria-pressed="false" title="다크 모드 켜고 끄기"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</header>
+
+<main class="wrap">
+  <section class="topic-hero u-hero has-text" data-sec="천우3-06-03" data-u="서울대">
+    <div class="meta"><a href="../../../?dept=astro#tree">천문우주학과</a><span class="mono">/</span><a href="./">기초천체물리학(1)</a><span class="mono">/</span><a href="06.html">6. 실습: 관측 자료로 물리량 구하기</a></div>
+    <h1><span class="sec-no mono">6.3</span>실습 안내: 수치 모의실험으로 궤도 공명 재현하기</h1>
+    <p class="sec-std"><span class="mono">[천우3-06-03]</span> 수치 모의실험으로 궤도 공명이나 섭동 같은 태양계 역학 현상을 재현할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></p>
+  </section>
+
+  <div class="topic-layout with-text">
+    <aside class="toc" aria-label="이 절의 차례">
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s6-3-1"><span class="mono">6.3.1</span><span>운동 방정식</span></a></li><li><a href="#s6-3-2"><span class="mono">6.3.2</span><span>도약 개구리(leapfrog) 방법</span></a></li><li><a href="#s6-3-3"><span class="mono">6.3.3</span><span>무엇을 볼 것인가</span></a></li><li><a href="#s6-3-4"><span class="mono">6.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-a3-simulate"><span class="mono">본문</span><span>실습 안내: 수치 모의실험으로 궤도 공명 재현하기</span></a></li><li><a href="#lab-a3-reson"><span class="mono">6.3.2</span><span>목성 공명에서 소행성 궤도가 흔들린다</span></a></li></ol>
+      <p class="progress mono small"></p>
+      <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
+    </aside>
+    <div class="sec-main">
+<article class="q-card tb-page" id="text-a3-simulate" data-kind="본문" data-std="천우3-06-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>운동 방정식을 작은 시간 간격으로 적분하는 원리(도약 개구리 방법)를 안다.</li>
+        <li>태양 중심 좌표에서 목성의 섭동(직접항과 간접항)을 쓴다.</li>
+        <li>모의실험으로 공명 근처 소행성의 이심률 변화를 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>궤도 요소와 활력 방정식 (<a href="03-02.html">3.2절</a>), 궤도 공명 (<a href="04-03.html">4.3절</a>).</li>
+        <li>수치 적분의 기초 (<a href="../6/05-01.html">천우6 5.1절</a>).</li>
+      </ul>
+    </div>
+
+<h3>식으로 풀 수 없을 때</h3>
+    <p>태양, 목성, 소행성 셋의 운동은 일반적인 해를 식으로 쓸 수 없습니다(3체 문제). 대신 컴퓨터로 시간을 아주 잘게 나누어 "지금의 위치와 속도에서 힘을 계산하고, 조금 뒤의 위치와 속도를 구하는" 일을 반복하면 궤도를 따라갈 수 있습니다. 서울대 태양계천문학 및 실험이 다루는 이 방법으로 4.3절의 커크우드 간극을 직접 확인해 봅니다.</p>
+
+    <h3 id="s6-3-1"><span class="no">6.3.1</span>운동 방정식</h3>
+    <p>태양을 원점으로 잡으면 소행성(위치 \(\vec r\))이 받는 가속도는 세 항입니다.</p>
+    \[ \ddot{\vec r} = -\frac{GM_\odot\vec r}{r^3} - \frac{GM_J(\vec r - \vec r_J)}{|\vec r - \vec r_J|^3} - \frac{GM_J\vec r_J}{r_J^3} \]
+    <ul>
+      <li class="q-term">첫째 항: 태양의 중력.</li>
+      <li class="q-term">둘째 항(직접항): 목성이 소행성을 당기는 중력.</li>
+      <li class="q-term">셋째 항(간접항): 목성이 태양을 당겨 원점 자체가 가속되는 효과. 태양 중심 좌표는 관성계가 아니므로 이 항을 빼 주어야 한다.</li>
+    </ul>
+    <p>단위는 AU, 년, 태양 질량으로 잡으면 \(GM_\odot = 4\pi^2\)이고 목성 질량은 \(9.55\times10^{-4}\)입니다. 목성은 반지름 5.20 AU인 원 궤도를 돈다고 둡니다.</p>
+
+    <h3 id="s6-3-2"><span class="no">6.3.2</span>도약 개구리(leapfrog) 방법</h3>
+    <p>시간 간격 \(\Delta t\)마다 다음을 반복합니다.</p>
+    <ol class="tb-steps">
+      <li>속도를 반 간격만큼 가속: \(\vec v \leftarrow \vec v + \vec a(\vec r)\,\Delta t/2\)</li>
+      <li>위치를 한 간격만큼 이동: \(\vec r \leftarrow \vec r + \vec v\,\Delta t\)</li>
+      <li>새 위치에서 가속도를 다시 계산해 속도를 반 간격 가속: \(\vec v \leftarrow \vec v + \vec a(\vec r)\,\Delta t/2\)</li>
+    </ol>
+    <p>단순한 오일러 방법은 오랜 시간 돌리면 궤도 에너지가 한쪽으로 계속 늘어나 행성이 나선을 그리며 빠져나갑니다. 도약 개구리 방법은 위치와 속도를 엇갈려 갱신해 에너지가 작게 출렁일 뿐 쌓이지 않으므로, 수천 바퀴를 도는 궤도 계산에 알맞습니다(<a href="../10/03-02.html">천우10 3.2절</a>). 실습에서는 \(\Delta t = 0.004\)년(소행성 한 바퀴의 약 1/1000)을 씁니다.</p>
+
+    <h3 id="s6-3-3"><span class="no">6.3.3</span>무엇을 볼 것인가</h3>
+    <p>매 순간의 위치와 속도에서 활력 방정식으로 긴반지름 \(a\)를, 각운동량으로 이심률 \(e = \sqrt{1 - h^2/(GMa)}\)을 계산해 시간에 따라 그립니다. 목성과 3 : 1 공명인 \(a = 2.50\) AU 근처에서 출발한 소행성과, 공명에서 조금 떨어진 \(a = 2.60\) AU의 소행성을 비교합니다. 공명에서는 섭동이 같은 배치에서 되풀이되어 이심률이 크게 출렁입니다. 이심률이 커지면 소행성이 화성 궤도를 가로질러 결국 쫓겨나고, 그 자리가 비어 간극이 됩니다.</p>
+    <div class="tb-note"><b>주의</b> 실제 커크우드 간극이 비는 데는 수백만 년이 걸립니다. 화면에서 몇백 바퀴 안에 효과를 보려고 실습 카드에는 목성 질량을 실제의 몇 배로 키우는 막대를 두었습니다. 키운 결과는 "같은 방향의 효과가 더 빨리 나타난 것"으로만 해석하세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>태양 중심 좌표: 태양 + 목성 직접항 + 간접항.</li>
+        <li>도약 개구리 방법은 에너지 오차가 쌓이지 않아 긴 적분에 알맞다.</li>
+        <li>위치·속도에서 \(a, e\)를 계산해 시간 변화를 본다.</li>
+        <li>공명(3 : 1, 2.50 AU)에서는 이심률이 크게 출렁인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s6-3-4"><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>AU, 년, 태양 질량 단위에서 \(GM_\odot = 4\pi^2\)인 까닭은?
+          <details><summary>답</summary><p>지구(1 AU, 1년)에 제3법칙 \(P^2 = 4\pi^2a^3/GM\)을 넣으면 \(GM = 4\pi^2\).</p></details>
+        </li>
+        <li>목성과 2 : 1 공명인 소행성의 긴반지름은?
+          <details><summary>답</summary><p>\(P = 11.86/2 = 5.93\)년, \(a = 5.93^{2/3} = 3.28\) AU.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>간접항을 빼먹으면 어떤 잘못이 생깁니까?
+          <details><summary>답</summary><p>원점(태양)이 목성 쪽으로 가속되는 효과를 무시해, 목성 주기로 흔들리는 가짜 힘이 생깁니다. 특히 목성 주기와 맞물리는 공명 근처에서 결과가 틀립니다.</p></details>
+        </li>
+        <li>시간 간격을 절반으로 줄이면 도약 개구리 방법의 에너지 출렁임은 대략 몇 배가 됩니까?
+          <details><summary>답</summary><p>2차 방법이므로 약 1/4배.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-a3-simulate" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="천우3-06-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[천우3-06-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="천우3-06-03" aria-label="할 수 있음"><span class="t">수치 모의실험으로 궤도 공명이나 섭동 같은 태양계 역학 현상을 재현할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-a3-reson" data-kind="실습" data-std="천우3-06-03">
+  <header class="card-head"><span class="no">6.3.2</span><h2><span class="q-badge">실습</span>목성 공명에서 소행성 궤도가 흔들린다</h2><span class="kind">실습 · 수치 모의실험</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-03.html#std">[천우3-06-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>태양-목성-소행성의 운동을 도약 개구리 방법으로 적분해, 3 : 1 공명 근처 소행성의 이심률 변화를 공명 밖과 비교합니다. 성취기준 [천우3-06-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>목성은 5.20 AU 원 궤도, 소행성은 이심률 0.05의 궤도로 근일점에서 출발합니다. 왼쪽 그림은 궤도 모습(주황 점선: 목성 궤도, 회색 점선: 2.5 AU), 오른쪽 그림은 시간(목성 공전 횟수)에 따른 소행성의 이심률입니다. 목성 질량 배수를 키우면 섭동이 커져 같은 효과가 빨리 나타납니다(×1이 실제).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>처음 긴반지름 = <b data-show="a" data-fix="3">2.502</b> AU</span><input type="range" name="a" min="2.0" max="3.4" step="0.002" value="2.502" aria-label="소행성의 처음 긴반지름"></label>
+        <label><span>목성 질량 배수 = <b data-show="mj">5</b></span><input type="range" name="mj" min="1" max="20" step="1" value="5" aria-label="목성 질량 배수"></label>
+      </div>
+      <canvas aria-label="왼쪽: 태양, 목성, 소행성의 위치. 오른쪽: 시간에 따른 소행성 이심률"></canvas>
+      <div class="btns"><button class="play" type="button">재생</button><button class="reset" type="button">처음으로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(2.502 AU, 목성 질량 ×5)으로 재생을 누르고 목성 200바퀴쯤까지 이심률의 최댓값을 기록합니다.</li>
+        <li>긴반지름을 2.600 AU로 바꾸고 같은 시간만큼 돌려 최대 이심률을 비교합니다.</li>
+        <li>2.300 AU와 3.276 AU(2 : 1 공명)에서도 해 봅니다.</li>
+        <li>목성 질량 배수를 1로 낮추고 2.502 AU에서 400바퀴까지 돌려 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>2.502 AU(3 : 1 공명)에서는 목성 200바퀴 동안 이심률이 0.05에서 약 0.14까지 커졌다 줄었다 합니다. 3.276 AU(2 : 1 공명)에서는 약 0.22까지 커집니다.</li>
+        <li>2.600 AU처럼 공명에서 벗어나면 최대 이심률이 약 0.07, 2.300 AU에서는 약 0.055로 처음 값 근처에서 작게만 출렁입니다.</li>
+        <li>목성 질량을 실제 값(×1)으로 줄이면 400바퀴 동안 최대 이심률이 약 0.085로 출렁임이 작고 느려집니다. 실제 간극은 훨씬 긴 시간 동안의 누적 효과입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>공명에서만 이심률이 크게 바뀌는 까닭을 '섭동이 같은 배치에서 되풀이된다'는 말로 설명해 보세요(4.3절).</li>
+        <li>이심률이 0.3이 되면 근일점 거리는 얼마입니까? 화성 궤도(1.52 AU)와 비교하세요.</li>
+        <li>출력의 긴반지름은 이심률만큼 크게 변합니까? 그렇지 않다면 공명이 주로 무엇을 바꾸는지 말해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>천우6 5단원에서 같은 문제를 Python으로 짜고 오일러 방법과 도약 개구리 방법의 에너지 보존을 비교해 보세요. 더 나아가 소행성 수백 개를 2.0~3.5 AU에 고르게 놓고 오래 돌려 긴반지름 분포에 간극이 생기는지 확인할 수 있습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-a3-reson" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
+      <nav class="u-pager" aria-label="절 이동">
+        <span><a href="06-02.html">← 6.2 실습 안내: 궤도 자료로 천체의 질량 구하기</a></span>
+        <span><a href="06-R.html">6.R 단원 마무리 →</a></span>
+      </nav>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
+    <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+  </footer>
+</main>
+
+<script src="../../../assets/katex/katex.min.js"></script>
+<script src="../../../js/core.js"></script>
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/astro/a3-lab.js"></script>
+<script src="../../../js/math.js"></script>
+<script src="../../../js/progress.js"></script>
+</body>
+</html>

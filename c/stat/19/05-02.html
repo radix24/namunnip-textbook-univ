@@ -1,0 +1,130 @@
+<!doctype html>
+<!-- 자동 생성: python -I tools/build.py — 직접 고치지 말고 blocks/ 와 curricula/ 를 고칠 것 -->
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>오분류율과 교차검증 · 다변량통계분석 — QURI</title>
+  <meta name="description" content="다변량통계분석 5.2 오분류율과 교차검증 — 성취기준: 오분류율을 교차검증으로 추정할 수 있다.">
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../../../manifest.webmanifest">
+  <meta name="theme-color" content="#f5f5f2">
+  <script>(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\b/.exec(location.search),t=q&&q[1];if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(t==="dark")document.querySelector('meta[name="theme-color"]').content="#12131c"})()</script>
+  <meta name="apple-mobile-web-app-title" content="QURI">
+  <link rel="stylesheet" href="../../../css/fonts.css">
+  <link rel="stylesheet" href="../../../css/tb.css">
+  <link rel="stylesheet" href="../../../css/quri.css">
+  <link rel="stylesheet" href="../../../css/qcard.css">
+  <link rel="stylesheet" href="../../../css/qtext.css">
+  <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
+</head>
+<body data-rec='{&quot;course&quot;: &quot;응통19&quot;, &quot;title&quot;: &quot;5.2 오분류율과 교차검증&quot;, &quot;sub&quot;: &quot;다변량통계분석&quot;}'>
+
+<header class="top">
+  <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
+  <div class="top-right"><a href="../../../record.html">학습 기록</a><a href="05.html">← 절 목록</a><button type="button" class="theme-btn" aria-label="다크 모드" aria-pressed="false" title="다크 모드 켜고 끄기"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</header>
+
+<main class="wrap">
+  <section class="topic-hero u-hero has-text" data-sec="응통19-05-02" data-u="서울대 연세대 성균관대">
+    <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">다변량통계분석</a><span class="mono">/</span><a href="05.html">5. 판별분석과 분류</a></div>
+    <h1><span class="sec-no mono">5.2</span>오분류율과 교차검증</h1>
+    <p class="sec-std"><span class="mono">[응통19-05-02]</span> 오분류율을 교차검증으로 추정할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 성균관대</span></p>
+  </section>
+
+  <div class="topic-layout with-text">
+    <aside class="toc" aria-label="이 절의 차례">
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>오분류율 추정</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s19-misclass"><span class="mono">본문</span><span>오분류율과 교차검증</span></a></li></ol>
+      <p class="progress mono small"></p>
+      <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
+    </aside>
+    <div class="sec-main">
+<article class="q-card tb-page" id="text-s19-misclass" data-kind="본문" data-std="응통19-05-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>겉보기 오분류율이 낙관적인 이유를 안다.</li>
+        <li>하나 빼기·k겹 교차검증으로 오분류율을 추정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>선형판별 (<a href="05-01.html">5.1절</a>), 응통10 6.2절 교차검증.</li>
+      </ul>
+    </div>
+
+    <h3>학습 자료로 시험 보기</h3>
+    <p>분류 규칙을 만든 자료로 그 규칙을 평가하면 규칙이 자료의 우연한 특징까지 외운 덕을 봅니다. 새 관측에 대한 실제 오분류율은 그보다 높습니다.</p>
+
+    <h3 id="s5-2-1"><span class="no">5.2.1</span>오분류율 추정</h3>
+    <ul>
+      <li><b>겉보기 오분류율</b>: 학습 자료의 혼동행렬에서 틀린 비율. 낙관적.</li>
+      <li><b>하나 빼기(LOOCV)</b>: 관측 하나를 빼고 규칙을 만들어 그 관측을 분류, \(n\)번 반복. 판별분석은 공식으로 빠르게 계산됩니다(R: <code>lda(..., CV = TRUE)</code>).</li>
+      <li><b>k겹 교차검증, 시험 자료 분리</b>: 응통16 3.1절.</li>
+    </ul>
+    <p>집단 크기가 크게 다르면 전체 오분류율보다 집단별 오분류율(민감도, 특이도)을 함께 봅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p><code>iris</code> 선형판별의 겉보기 오분류율과 LOOCV 오분류율을 비교하세요.</p>
+    </div>
+    <pre><code>library(MASS)
+f &lt;- lda(Species ~ ., data = iris); mean(predict(f)$class != iris$Species)
+fcv &lt;- lda(Species ~ ., data = iris, CV = TRUE); mean(fcv$class != iris$Species)
+table(iris$Species, fcv$class)</code></pre>
+    <p>겉보기 2.0%(3송이), LOOCV 2.0%로 같습니다. 변수가 4개뿐이고 집단이 잘 나뉘어 과적합이 작기 때문입니다. 변수가 많고 표본이 작으면 두 값의 차이가 커집니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>겉보기 오분류율은 낙관적.</li>
+        <li>LOOCV, k겹, 시험 자료로 정직하게.</li>
+        <li>집단별 오분류도 보고.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-2-2"><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>순수한 잡음 변수 50개와 두 집단(각 20개)으로 선형판별을 하면 겉보기와 LOOCV 오분류율이 어떻게 될까요?
+          <details><summary>답</summary><p>겉보기는 0에 가깝고(변수가 표본보다 많아 완벽히 가름) LOOCV는 50% 근처입니다. 과적합의 전형입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s19-misclass" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통19-05-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통19-05-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통19-05-02" aria-label="할 수 있음"><span class="t">오분류율을 교차검증으로 추정할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
+      <nav class="u-pager" aria-label="절 이동">
+        <span><a href="05-01.html">← 5.1 선형판별함수로 분류하기</a></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
+      </nav>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
+    <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+  </footer>
+</main>
+
+<script src="../../../assets/katex/katex.min.js"></script>
+<script src="../../../js/core.js"></script>
+
+<script src="../../../js/math.js"></script>
+<script src="../../../js/progress.js"></script>
+</body>
+</html>

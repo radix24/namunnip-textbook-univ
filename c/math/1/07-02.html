@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gram-Schmidt 과정으로 정규직교기저를 구하기 · 선형대수(1) — QURI</title>
-  <meta name="description" content="선형대수(1) 7.2 Gram-Schmidt 과정으로 정규직교기저를 구하기 — 성취기준: Gram-Schmidt 과정으로 정규직교기저를 구할 수 있다.">
+  <title>정규직교기저와 그람-슈미트 과정 · 선형대수(1) — QURI</title>
+  <meta name="description" content="선형대수(1) 7.2 정규직교기저와 그람-슈미트 과정 — 성취기준: Gram-Schmidt 과정으로 정규직교기저를 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;수학1&quot;, &quot;title&quot;: &quot;7.2 Gram-Schmidt 과정으로 정규직교기저를 구하기&quot;, &quot;sub&quot;: &quot;선형대수(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;수학1&quot;, &quot;title&quot;: &quot;7.2 정규직교기저와 그람-슈미트 과정&quot;, &quot;sub&quot;: &quot;선형대수(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,169 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="수학1-07-02">
+  <section class="topic-hero u-hero has-text" data-sec="수학1-07-02" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대">
     <div class="meta"><a href="../../../?dept=math#tree">수학과</a><span class="mono">/</span><a href="./">선형대수(1)</a><span class="mono">/</span><a href="07.html">7. 겹선형형식과 내적공간</a></div>
-    <h1><span class="sec-no mono">7.2</span>Gram-Schmidt 과정으로 정규직교기저를 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="수학1-07-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[수학1-07-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="수학1-07-02" aria-label="할 수 있음"><span class="t">Gram-Schmidt 과정으로 정규직교기저를 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.2</span>정규직교기저와 그람-슈미트 과정</h1>
+    <p class="sec-std"><span class="mono">[수학1-07-02]</span> Gram-Schmidt 과정으로 정규직교기저를 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>직교하는 기저가 좋은 이유</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>그람-슈미트 과정</span></a></li><li><a href="#s7-2-3"><span class="mono">7.2.3</span><span>함수에도: 르장드르 다항식</span></a></li><li><a href="#s7-2-4"><span class="mono">7.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-m1-gramschmidt"><span class="mono">본문</span><span>정규직교기저와 그람-슈미트 과정</span></a></li><li><a href="#card-m1-gs"><span class="mono">7.2.2</span><span>그림자를 빼면 수직이 남는다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-m1-gramschmidt" data-kind="본문" data-std="수학1-07-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정규직교기저에서는 좌표를 내적 한 번으로 구함을 안다.</li>
+        <li>그람-슈미트(Gram-Schmidt) 과정으로 일차독립 집합을 직교 집합으로 바꾼다.</li>
+        <li>다항식 공간에서 직교 다항식(르장드르 다항식)을 만든다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>내적, 직교, 정사영 공식 (<a href="07-01.html">7.1절</a>과 그 탐구 카드).</li>
+      </ul>
+    </div>
 
+    <h3 id="s7-2-1"><span class="no">7.2.1</span>직교하는 기저가 좋은 이유</h3>
+    <p>일반 기저에서 벡터의 좌표를 구하려면 연립방정식을 풀어야 했습니다(3.2절). 기저 벡터들이 서로 직교하면 사정이 달라집니다. \(\mathbf v = c_1\mathbf u_1 + \dots + c_n\mathbf u_n\)의 양변을 \(\mathbf u_j\)와 내적하면, 직교성 때문에 \(j\)째 항만 남아 \(\langle\mathbf v, \mathbf u_j\rangle = c_j\|\mathbf u_j\|^2\)입니다.</p>
+    <p class="q-term"><b>직교 집합</b>: 서로 다른 두 벡터의 내적이 모두 0인 집합(영벡터 제외). 직교 집합은 일차독립입니다(위 계산에서 \(\mathbf v = \mathbf 0\)이면 모든 \(c_j = 0\)).</p>
+    <p class="q-term"><b>정규직교 집합</b>: 직교 집합이면서 모든 벡터의 길이가 1인 것. 이때 \(c_j = \langle\mathbf v, \mathbf u_j\rangle\)입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.1</span>
+      <p>\(\{\mathbf u_1, \dots, \mathbf u_n\}\)이 정규직교기저이면 모든 \(\mathbf v\)에 대해 \(\mathbf v = \sum_j\langle\mathbf v, \mathbf u_j\rangle\mathbf u_j\)이고 \(\|\mathbf v\|^2 = \sum_j\langle\mathbf v, \mathbf u_j\rangle^2\)이다.</p>
+    </div>
+    <p>둘째 식은 \(n\)차원 피타고라스 정리이고, 무한차원으로 넓힌 것이 푸리에 급수의 파스발 정리(수학15 2단원)입니다.</p>
+
+    <h3 id="s7-2-2"><span class="no">7.2.2</span>그람-슈미트 과정</h3>
+    <p>주어진 기저는 대개 직교하지 않습니다. 각 벡터에서 앞서 만든 직교 벡터 방향의 성분(정사영)을 빼면 나머지는 그것들과 직교합니다. 이 일을 차례로 합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.2 <span class="nm">(그람-슈미트 과정)</span></span>
+      <p>\(\{\mathbf w_1, \dots, \mathbf w_n\}\)이 일차독립이면 다음으로 정한 \(\mathbf v_1, \dots, \mathbf v_n\)은 직교 집합이고, 각 \(k\)에 대해 \(\operatorname{span}\{\mathbf v_1, \dots, \mathbf v_k\} = \operatorname{span}\{\mathbf w_1, \dots, \mathbf w_k\}\)이다.</p>
+      \[\mathbf v_1 = \mathbf w_1,\qquad \mathbf v_k = \mathbf w_k - \sum_{j=1}^{k-1}\frac{\langle\mathbf w_k, \mathbf v_j\rangle}{\|\mathbf v_j\|^2}\mathbf v_j.\]
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(k\)에 대한 귀납법. \(\mathbf v_1, \dots, \mathbf v_{k-1}\)이 직교하고 생성이 같다고 하자. \(i &lt; k\)이면 \(\langle\mathbf v_k, \mathbf v_i\rangle = \langle\mathbf w_k, \mathbf v_i\rangle - \frac{\langle\mathbf w_k, \mathbf v_i\rangle}{\|\mathbf v_i\|^2}\|\mathbf v_i\|^2 = 0\)이다(합에서 \(j = i\)인 항만 남음, 직교성). \(\mathbf v_k \ne \mathbf 0\)인 이유: \(\mathbf v_k = \mathbf 0\)이면 \(\mathbf w_k\)가 \(\mathbf v_1, \dots, \mathbf v_{k-1}\), 곧 \(\mathbf w_1, \dots, \mathbf w_{k-1}\)의 일차결합이 되어 일차독립에 어긋난다. 정의식에서 \(\mathbf v_k \in \operatorname{span}\{\mathbf w_1, \dots, \mathbf w_k\}\)이고 \(\mathbf w_k \in \operatorname{span}\{\mathbf v_1, \dots, \mathbf v_k\}\)이므로 생성이 같다. <span class="qed">∎</span></p>
+    <p>마지막에 각 \(\mathbf v_k\)를 길이로 나누면 정규직교기저가 됩니다. 따라서 모든 유한차원 내적공간에는 정규직교기저가 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.3</span>
+      <p>\(\mathbf w_1 = (1, 1, 0)\), \(\mathbf w_2 = (1, 0, 1)\), \(\mathbf w_3 = (0, 1, 1)\)에 그람-슈미트 과정을 적용하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\mathbf v_1 = (1, 1, 0)\), \(\|\mathbf v_1\|^2 = 2\). \(\langle\mathbf w_2, \mathbf v_1\rangle = 1\)이므로 \(\mathbf v_2 = (1, 0, 1) - \frac12(1, 1, 0) = (\frac12, -\frac12, 1)\), \(\|\mathbf v_2\|^2 = \frac32\). \(\langle\mathbf w_3, \mathbf v_1\rangle = 1\), \(\langle\mathbf w_3, \mathbf v_2\rangle = \frac12\)이므로</p>
+    \[\mathbf v_3 = (0, 1, 1) - \frac12(1, 1, 0) - \frac{1/2}{3/2}\left(\tfrac12, -\tfrac12, 1\right) = \left(-\tfrac23, \tfrac23, \tfrac23\right).\]
+    <p>검산: \(\mathbf v_1\cdot\mathbf v_3 = -\frac23 + \frac23 = 0\), \(\mathbf v_2\cdot\mathbf v_3 = -\frac13 - \frac13 + \frac23 = 0\). 길이로 나누면 \(\frac1{\sqrt2}(1,1,0)\), \(\frac1{\sqrt6}(1,-1,2)\), \(\frac1{\sqrt3}(-1,1,1)\).</p>
+
+    <h3 id="s7-2-3"><span class="no">7.2.3</span>함수에도: 르장드르 다항식</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.4</span>
+      <p>\(P_2\)에 \(\langle f, g\rangle = \int_{-1}^1 fg\,dx\)를 주고 \(1, x, x^2\)에 그람-슈미트 과정을 적용하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\mathbf v_1 = 1\). \(\langle x, 1\rangle = 0\)이므로 \(\mathbf v_2 = x\). \(\langle x^2, 1\rangle = \frac23\), \(\|1\|^2 = 2\), \(\langle x^2, x\rangle = 0\)이므로 \(\mathbf v_3 = x^2 - \frac{2/3}{2}\cdot1 = x^2 - \frac13\). 이것들의 상수배가 르장드르 다항식 \(P_0 = 1\), \(P_1 = x\), \(P_2 = \frac12(3x^2 - 1)\)입니다. 물리학의 전기 다중극 전개, 수치적분의 가우스 구적법에 쓰이고, 상미분방정식(수학6 4단원)의 르장드르 방정식의 해이기도 합니다.</p>
+
+    <div class="tb-note"><b>주의</b>그람-슈미트 과정은 순서에 따라 결과가 다릅니다. \(\mathbf w_1, \mathbf w_2\)의 순서를 바꾸면 첫 벡터가 \(\mathbf w_2\)가 되어 다른 직교기저가 나옵니다. 또 컴퓨터로 계산하면 반올림 오차 때문에 뒤쪽 벡터들의 직교성이 깨지기 쉬워, 실제로는 한 번에 한 방향씩 빼는 수정된 그람-슈미트나 하우스홀더 변환(수학16)을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정규직교기저에서 좌표는 내적 \(\langle\mathbf v, \mathbf u_j\rangle\)이고, 길이의 제곱은 좌표의 제곱합이다.</li>
+        <li>그람-슈미트: 각 벡터에서 앞선 직교 벡터들로의 정사영을 빼서 직교화하고, 끝에 길이로 나눈다.</li>
+        <li>생성은 단계마다 보존되고, 일차독립이면 영벡터가 나오지 않는다.</li>
+        <li>적분 내적에서 \(1, x, x^2, \dots\)를 직교화하면 르장드르 다항식이 나온다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-2-4"><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\((3, 4)\), \((1, 0)\)에 그람-슈미트 과정을 적용해 정규직교기저를 구하여라.
+          <details><summary>답</summary><p>\(\mathbf v_1 = (3, 4)\), \(\mathbf v_2 = (1, 0) - \frac{3}{25}(3, 4) = (\frac{16}{25}, -\frac{12}{25})\). 정규화: \(\frac15(3, 4)\), \(\frac15(4, -3)\).</p></details>
+        </li>
+        <li>정규직교기저 \(\frac1{\sqrt2}(1, 1), \frac1{\sqrt2}(1, -1)\)에 대한 \((5, 1)\)의 좌표를 내적으로 구하여라.
+          <details><summary>답</summary><p>\(\frac{6}{\sqrt2} = 3\sqrt2\), \(\frac4{\sqrt2} = 2\sqrt2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(\mathbb R^4\)의 \(\operatorname{span}\{(1, 1, 1, 1), (1, 1, 0, 0), (1, 0, 0, 0)\}\)의 정규직교기저를 구하여라.
+          <details><summary>답</summary><p>\(\frac12(1,1,1,1)\), \(\frac12(1,1,-1,-1)\), \(\frac1{\sqrt2}(1,-1,0,0)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>예제 7.2.4를 이어 \(x^3\)을 직교화해 \(\mathbf v_4\)를 구하여라.
+          <details><summary>답</summary><p>\(\langle x^3, 1\rangle = 0\), \(\langle x^3, x\rangle = \frac25\), \(\|x\|^2 = \frac23\), \(\langle x^3, x^2 - \frac13\rangle = 0\). \(\mathbf v_4 = x^3 - \frac35x\) (\(P_3 = \frac12(5x^3 - 3x)\)의 상수배).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-m1-gramschmidt" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="수학1-07-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[수학1-07-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="수학1-07-02" aria-label="할 수 있음"><span class="t">Gram-Schmidt 과정으로 정규직교기저를 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/09-03.html"><span class="mono">9.3</span><span>미분적분학과벡터해석(1) <b>내적</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-m1-gs" data-kind="탐구" data-std="수학1-07-02">
+  <header class="card-head"><span class="no">7.2.2</span><h2><span class="q-badge">탐구</span>그림자를 빼면 수직이 남는다</h2><span class="kind">탐구 · 그람-슈미트 과정 한 단계씩</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-02.html#std">[수학1-07-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>서로 비스듬한 두 벡터 \(\mathbf w_1, \mathbf w_2\)에서 같은 평면을 생성하면서 서로 수직인 두 벡터를 만들고 싶습니다. \(\mathbf w_2\)에서 무엇을 빼야 할까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>\(\mathbf w_2\)의 \(\mathbf v_1\) 방향 정사영은 \(\frac{\langle\mathbf w_2, \mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1\)이고, \(\mathbf w_2\)에서 이것을 뺀 것은 \(\mathbf v_1\)과 직교합니다 (<a href="07-02.html">7.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>단계 = <b data-show="step">0</b></span><input type="range" name="step" min="0" max="3" step="1" value="0" aria-label="그람-슈미트 단계"></label>
+      </div>
+      <canvas aria-label="파랑 w1(=v1), 회색 w2, 노랑은 w2의 v1 방향 정사영, 빨강 v2 = w2 − 정사영. 마지막 단계에서 길이 1로 줄인 u1, u2와 단위원"></canvas>
+      <p class="legend">w₁, w₂의 끝점을 끌어 바꿀 수 있습니다.</p>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>단계를 0에서 3까지 올리며 그림이 어떻게 쌓이는지 봅니다. 3단계에서 출력의 \(\langle\mathbf v_2, \mathbf v_1\rangle\)은 0(반올림 오차 정도)입니다.</li>
+        <li>3단계에서 \(\mathbf w_2\)를 \(\mathbf w_1\)과 평행한 방향으로 끌어 보세요. \(\mathbf v_2\)는 \(\mathbf w_2\)를 \(\mathbf w_1\)에 평행하게 미는 동안 변하지 않습니다. 정사영만 바뀌기 때문입니다.</li>
+        <li>\(\mathbf w_2\)를 \(\mathbf w_1\)의 직선 위로 가져가면 \(\mathbf v_2 = \mathbf 0\)이 됩니다. 일차독립이 아니면 과정이 멈춥니다.</li>
+        <li>\(\mathbf w_1\)과 \(\mathbf w_2\)의 역할을 바꿔(\(\mathbf w_2\)를 먼저) 생각하면 다른 직교기저가 나옵니다. 순서가 결과를 바꿉니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>왜 수직인가</b><span>\(\langle\mathbf w_2 - c\mathbf v_1, \mathbf v_1\rangle = \langle\mathbf w_2, \mathbf v_1\rangle - c\|\mathbf v_1\|^2\)이 0이 되도록 \(c\)를 고른 것이 정사영의 계수입니다.</span></li>
+        <li><b>생성이 같은 이유</b><span>\(\mathbf v_2\)는 \(\mathbf w_1, \mathbf w_2\)의 일차결합이고, 거꾸로 \(\mathbf w_2 = \mathbf v_2 + c\mathbf v_1\)입니다. 평면은 그대로, 그 평면을 재는 눈금만 직각으로 바뀝니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"\(\mathbf w_2\)에서 \(\mathbf w_1\)을 빼면 수직이 된다"는 틀립니다. 빼야 하는 것은 \(\mathbf w_1\) 자체가 아니라 \(\mathbf w_2\)가 \(\mathbf w_1\) 방향으로 드리운 그림자(정사영)입니다. 그 크기는 두 벡터의 각과 길이에 따라 달라집니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-m1-gs" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-01.html">← 7.1 Cauchy-Schwarz 부등식과 삼각 부등식을 증명하기</a></span>
-        <span><a href="07-03.html">7.3 직교 여공간과 직교 사영으로 최소제곱 근사를 구하기 →</a></span>
+        <span><a href="07-01.html">← 7.1 내적과 노름, 코시-슈바르츠 부등식</a></span>
+        <span><a href="07-03.html">7.3 직교 여공간, 직교 사영, 최소제곱 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +203,9 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/math/m-kit.js"></script>
+<script src="../../../js/cards/math/m1-gs.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

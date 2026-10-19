@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-01-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m3-warshall.js"]
+}
+-->
+<article class="card q-card" id="card-m3-warshall" data-kind="탐구" data-std="수학3-01-02">
+  <header class="card-head"><span class="no"></span><h2>경유지를 하나씩 허락하며 길 찾기</h2><span class="kind">탐구 · 추이 폐포와 워셜 알고리즘</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>화살표를 따라 어느 꼭짓점에서 어느 꼭짓점으로 갈 수 있을까요(추이 폐포)? 모든 경로를 나열하지 않고 효율적으로 구할 수 있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>추이 폐포 \(R^+\)는 한 걸음 이상으로 갈 수 있는 쌍 전체이고, 워셜은 \(W[i][j] \mathrel{|}= W[i][k] \wedge W[k][j]\)를 \(k = 1, \dots, n\)으로 되풀이한다 (<a href="01-02.html">1.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>꼭짓점 수 = <b data-show="n">5</b></span><input type="range" name="n" min="3" max="7" step="1" value="5" aria-label="꼭짓점 수"></label>
+        <label><span>단계 k = <b data-show="k">0</b></span><input type="range" name="k" min="0" max="5" step="1" value="0" aria-label="경유지로 허락한 꼭짓점 수 k"></label>
+      </div>
+      <canvas aria-label="왼쪽: 방향 그래프. 파란 화살표는 원래 관계, 노란 점선은 지금까지 추가된 쌍, 연보라로 칠한 꼭짓점은 경유지로 허락된 것. 꼭짓점 두 개를 차례로 누르면 화살표를 넣거나 뺌. 오른쪽: 도달 행렬 W_k"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>처음 그래프(1→2→3→4→2, 5→1)에서 \(k\)를 0에서 5까지 올려 보세요. \(k = 1\)에서 (5, 2), \(k = 2\)에서 (1, 3), (4, 3), (5, 3), \(k = 3\)에서 (1, 4), (2, 4), (4, 4), (5, 4), \(k = 4\)에서 (2, 2), (3, 2), (3, 3)이 생깁니다.</li>
+        <li>최종 행렬에서 1이 16개입니다. 2, 3, 4는 순환을 이루어 서로 모두 오갈 수 있고 자기 자신으로도 돌아옵니다(대각선 1).</li>
+        <li>꼭짓점 4와 2를 차례로 눌러 4→2 화살표를 지우면 순환이 끊겨 대각선이 0이 됩니다.</li>
+        <li>꼭짓점을 7개로 늘리고 일렬 1→2→…→7을 만들면 최종 결과는 \(i &lt; j\)인 모든 쌍입니다(예제 1.2.3).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>왜 맞는가</b><span>\(W_k[i][j] = 1\)은 "중간 꼭짓점을 \(1..k\) 중에서만 써서 \(i\)에서 \(j\)로 가는 길이 있다"는 뜻입니다. 경유지 \(k\)를 새로 허락하면, 새 길은 \(i \to k\)와 \(k \to j\)를 이은 것뿐입니다.</span></li>
+        <li><b>비용</b><span>삼중 반복문이라 \(n^3\)번의 연산입니다. \(R, R^2, \dots, R^n\)을 행렬 곱으로 모두 구하는 \(n^4\)보다 빠릅니다. 최단 거리 버전이 플로이드-워셜 알고리즘입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"경유지 순서를 바꾸면(예: 5, 4, 3, 2, 1 순으로 허락하면) 결과가 달라진다"는 틀립니다. 중간 단계의 행렬은 다르지만, 모든 꼭짓점을 허락한 마지막 결과는 순서와 관계없이 추이 폐포입니다.</p>
+    </section>
+  </div>
+</article>

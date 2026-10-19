@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계2-02-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m2-tensile.js"]
+}
+-->
+<article class="card q-card" id="lab-me-tensile" data-kind="실습" data-std="기계2-02-01 기계7-02-01">
+  <header class="card-head"><span class="no"></span><h2>인장 시험 그래프에서 재료의 성질을 읽어 보자</h2><span class="kind">실습 · 응력-변형률 선도 (가상 시험 자료)</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>연강, 알루미늄 합금, 회주철의 <b>가상 인장 시험 자료</b>에서 탄성계수, 항복강도(0.2% 오프셋), 극한강도, 파단 변형률을 읽고, 연성 재료와 취성 재료의 선도가 어떻게 다른지 비교합니다. 성취기준 [기계2-02-01], 실험 [기계7-02-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가상 자료는 교재의 대표값으로 만든 곡선에 측정 잡음(±0.25%)을 더한 것입니다. 실제 시험 결과가 아닙니다.</p>
+      <ul>
+        <li>파란 곡선: 공칭 응력 \(\sigma = P/A_0\)과 공칭 변형률 \(\varepsilon = \delta/L_0\).</li>
+        <li>회색 점선: 원점에서 그은 탄성 직선(기울기 \(E\)).</li>
+        <li>노란 점선: 변형률 0.2%에서 탄성 직선과 나란히 그은 오프셋 직선. 노란 점이 곡선과 만나는 점, 곧 0.2% 오프셋 항복강도입니다.</li>
+        <li>빨간 점: 최고점(극한강도).</li>
+      </ul>
+      <p>"처음 부분 확대"를 켜면 가로축을 줄여 탄성 구간과 항복 근처를 자세히 볼 수 있습니다. 탄성 구간은 변형률 0.1~0.4% 정도로 아주 좁아서, 전체 그림에서는 거의 세로선처럼 보입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>재료</span><select name="mat" aria-label="재료"><option value="steel">연강</option><option value="al">알루미늄 합금 6061-T6</option><option value="ci">회주철</option></select></label>
+        <label><span>처음 부분 확대</span><input type="checkbox" name="zoom" aria-label="처음 부분 확대"></label>
+      </div>
+      <canvas aria-label="응력-변형률 선도"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>연강을 고르고 전체 선도에서 항복 계단, 변형 경화, 최고점, 네킹 뒤 내려가는 부분을 찾습니다.</li>
+        <li>"처음 부분 확대"를 켜고, 탄성 직선 위의 한 점(예: 응력 200 MPa)의 변형률을 읽어 \(E = \sigma/\varepsilon\)을 계산합니다.</li>
+        <li>알루미늄 합금으로 바꿔 확대 그림에서 0.2% 오프셋 항복강도를 읽습니다. 연강과 달리 항복 계단이 없는 것을 확인합니다.</li>
+        <li>회주철로 바꿔 파단 변형률과 극한강도를 기록합니다.</li>
+        <li>세 재료의 \(E\), \(\sigma_Y\), \(\sigma_U\), 파단 변형률을 표로 정리합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>연강: \(E\) = 200 GPa(200 MPa에서 변형률 0.1%), 항복강도 약 250 MPa(뚜렷한 항복 계단), 극한강도 약 410 MPa(변형률 약 20%), 파단 변형률 32%.</li>
+        <li>알루미늄 합금: \(E\) = 69 GPa로 강철의 약 1/3. 항복 계단 없이 부드럽게 휘고, 0.2% 오프셋 항복강도는 약 276 MPa, 극한강도 약 310 MPa, 파단 변형률 15%.</li>
+        <li>회주철: 거의 늘어나지 않고 변형률 0.6%에서 약 200 MPa로 갑자기 끊어집니다. 처음부터 곡선이 조금씩 휘어 탄성 직선이 분명하지 않고, 항복강도를 정의하지 않습니다.</li>
+        <li>알루미늄 합금은 연강보다 항복강도가 높지만 \(E\)가 작아, 같은 하중에서 약 3배 더 늘어납니다. 강도와 강성은 다른 성질입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>연강 시험편을 300 MPa까지 당겼다 뺐습니다. 하중을 뺄 때의 선은 어떤 기울기로 내려오며, 남는 변형률은 대략 얼마일까요?</li>
+        <li>네킹이 시작된 뒤 공칭 응력이 줄어드는데 재료가 약해진 것일까요? 진응력과 비교해 설명해 보세요.</li>
+        <li>건물 기둥이나 자동차 차체에 회주철 대신 연강을 쓰는 이유를 파단 변형률로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>기계공학실험에서 실제 인장 시험을 하면 하중-늘음 자료가 나옵니다. 자료를 스프레드시트에 넣어 응력·변형률로 바꾸고, 처음 직선 부분에 최소제곱 직선을 맞춰 \(E\)를 구한 뒤, 오프셋 직선과 곡선의 교점을 찾는 순서를 이 장치처럼 직접 해 보세요.</p>
+    </section>
+  </div>
+</article>

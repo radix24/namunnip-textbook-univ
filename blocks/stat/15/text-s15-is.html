@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-is" data-kind="본문" data-std="응통15-04-03">
+  <header class="card-head"><span class="no"></span><h2>몬테카를로 적분과 중요도 표집</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>몬테카를로 적분의 오차가 \(1/\sqrt n\)로 줄어듦을 안다.</li>
+        <li>중요도 표집으로 분산을 줄인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>대수의 법칙과 중심극한정리 (응통6 7.2절), 난수 생성 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>적분을 평균으로</h3>
+    <p>\(\int h(x)f(x)dx = E_f[h(X)]\)이므로 \(f\)에서 난수를 많이 뽑아 \(h\)의 평균을 내면 적분의 근사가 됩니다. 차원과 관계없이 쓸 수 있다는 것이 구적법과 다른 점입니다.</p>
+
+    <h3><span class="no">4.3.1</span>몬테카를로 적분</h3>
+    <p>\(\hat I = \frac1n\sum h(X_i)\), \(X_i \sim f\). 대수의 법칙으로 \(I\)에 수렴하고 표준오차는 \(\sigma_h/\sqrt n\)입니다. 정확도 한 자리를 더 얻으려면 표본이 100배 필요합니다. 차원이 높아도 이 속도는 같아서 고차원에서는 구적법보다 유리합니다. 표준오차도 같은 표본으로 추정해 함께 보고합니다.</p>
+
+    <h3><span class="no">4.3.2</span>중요도 표집</h3>
+    <p>드문 사건의 확률처럼 \(h\)가 \(f\)의 꼬리에서만 크면, \(f\)에서 뽑은 대부분의 점이 쓸모없습니다. 그 영역을 많이 뽑는 다른 밀도 \(g\)에서 뽑고 가중치로 보정합니다.</p>
+    \[I = \int h(x)\frac{f(x)}{g(x)}g(x)dx, \qquad \hat I_{IS} = \frac1n\sum h(Y_i)\frac{f(Y_i)}{g(Y_i)},\ Y_i \sim g.\]
+    <p>\(g\)가 \(|h|f\)에 비례할수록 분산이 작고, \(g\)의 꼬리가 \(f\)보다 얇으면 가중치가 폭발해 분산이 무한해질 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>\(P(Z &gt; 4)\)(참값 \(3.17\times10^{-5}\))를 표준정규 표본 10만 개로 추정하면? 중요도 표집으로는?</p>
+    </div>
+    <p><i>풀이.</i> 직접: 10만 개 중 평균 3개 정도만 4를 넘어 추정값이 0, \(1\times10^{-5}\), \(5\times10^{-5}\)처럼 크게 흔들립니다(상대 표준오차 약 56%). 중요도: \(g = N(4, 1)\)에서 뽑아 가중치 \(\phi(y)/\phi(y - 4) = e^{-4y + 8}\)를 쓰면 절반이 4를 넘고 상대 표준오차가 약 0.7%로 줄어듭니다.</p>
+    <pre><code>y &lt;- rnorm(1e5, 4); w &lt;- exp(-4 * y + 8)
+mean((y &gt; 4) * w); sd((y &gt; 4) * w) / sqrt(1e5)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>몬테카를로: 평균으로 적분, 오차 \(\sigma/\sqrt n\), 차원과 무관.</li>
+        <li>중요도 표집: 중요한 영역에서 뽑고 \(f/g\)로 보정.</li>
+        <li>\(g\)의 꼬리가 \(f\)보다 두꺼워야 합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\pi\)를 단위 정사각형 안의 점 중 사분원 안의 비율로 추정할 때 표본 \(n\)의 표준오차는?
+          <details><summary>답</summary><p>\(p = \pi/4\), \(\hat\pi = 4\hat p\)의 표준오차 \(4\sqrt{p(1-p)/n} \approx 1.64/\sqrt n\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

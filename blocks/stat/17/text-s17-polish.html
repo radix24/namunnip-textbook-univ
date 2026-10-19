@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통17-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s17-polish" data-kind="본문" data-std="응통17-05-02">
+  <header class="card-head"><span class="no"></span><h2>중위수 다듬기로 이원표 분석하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이원표를 전체 + 행 효과 + 열 효과 + 잔차로 분해한다.</li>
+        <li>중위수 다듬기와 분산분석(평균) 분해를 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이원배치 (응통13 4.1절), 저항성 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>표 하나를 네 조각으로</h3>
+    <p>지역(행) × 연도(열)별 사망률 표가 있습니다. 표의 각 칸을 "전체 수준 + 지역 효과 + 연도 효과 + 나머지"로 나누면 어느 지역, 어느 해가 특별한지 보입니다. 평균으로 나누면 분산분석과 같지만, 튀는 칸 하나가 모든 효과를 비틉니다. 중앙값으로 나누면 튀는 칸이 잔차에 그대로 남아 눈에 띕니다.</p>
+
+    <h3><span class="no">5.2.1</span>중위수 다듬기</h3>
+    <ol>
+      <li>각 행의 중앙값을 구해 행 효과로 옮기고, 행의 각 칸에서 뺍니다.</li>
+      <li>각 열의 중앙값을 구해 열 효과로 옮기고, 열의 각 칸에서 뺍니다.</li>
+      <li>행 효과들과 열 효과들의 중앙값을 전체 효과로 옮깁니다.</li>
+      <li>변화가 거의 없을 때까지 1~3을 반복합니다.</li>
+    </ol>
+    <p>결과: \(y_{ij} = m + r_i + c_j + e_{ij}\). R: <code>medpolish(table)</code>. 잔차에 큰 값이 있으면 그 칸이 특별하다는 뜻입니다. 잔차가 행 효과 × 열 효과에 비례하는 무늬를 보이면 곱셈 구조이므로 로그를 취한 뒤 다듬기를 다시 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>2×3 표 \(\begin{pmatrix}10 &amp; 12 &amp; 14\\ 20 &amp; 22 &amp; 50\end{pmatrix}\)를 중위수 다듬기 한 단계로 분해하세요.</p>
+    </div>
+    <p><i>풀이.</i> 행 중앙값 12, 22를 빼면 \(\begin{pmatrix}-2 &amp; 0 &amp; 2\\ -2 &amp; 0 &amp; 28\end{pmatrix}\). 열 중앙값(두 값 평균) −2, 0, 15를 빼면 \(\begin{pmatrix}0 &amp; 0 &amp; -13\\ 0 &amp; 0 &amp; 13\end{pmatrix}\). 행 효과 12, 22의 중앙값 17을 전체로: 행 효과 −5, +5. 열 효과 −2, 0, 15. 2행 3열의 50이 이상한 칸이지만, 칸이 두 개뿐인 열에서는 중앙값=평균이라 잔차가 ±13으로 나뉘었습니다. 행이 셋 이상이면 튀는 칸만 큰 잔차로 남습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>행·열 중앙값을 번갈아 빼서 \(m + r_i + c_j + e_{ij}\).</li>
+        <li>튀는 칸이 효과를 비틀지 않고 잔차에 남음.</li>
+        <li>잔차의 곱셈 무늬는 로그 변환 신호.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>R 내장 <code>VADeaths</code>(연령대 × 집단 사망률)에 <code>medpolish</code>를 적용하고 해석하세요.
+          <details><summary>답</summary><p>연령대(행) 효과가 나이가 많을수록 크게 증가하고, 집단(열) 효과는 도시 남성이 가장 큽니다. 잔차가 행 효과와 함께 커지면 <code>medpolish(log(VADeaths))</code>가 더 깔끔합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

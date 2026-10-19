@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-04-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs.js"]
+}
+-->
+<article class="card q-card" id="lab-s10-resid" data-kind="실습" data-std="응통10-04-01">
+  <header class="card-head"><span class="no"></span><h2>잔차 그림은 산점도가 숨긴 것을 보여 준다</h2><span class="kind">실습 · 회귀진단</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>참 모형을 바꿔 가며 가상 자료를 만들고, 직선을 적합한 뒤 <b>잔차 대 적합값 그림</b>에서 가정 위반이 어떤 모양으로 나타나는지 익힙니다. 성취기준 [응통10-04-01].</p>
+      <p class="q-term"><b>적합값</b>: 적합한 직선이 예측한 값 \(\hat y_i = b_0 + b_1 x_i\).</p>
+      <p class="q-term"><b>잔차</b>: 관측값과 적합값의 차 \(e_i = y_i - \hat y_i\). 오차 \(\varepsilon_i\)를 대신해 볼 수 있는 값입니다.</p>
+      <p class="q-term"><b>선형회귀의 가정</b>: 평균 반응이 \(x\)의 일차식(선형성), 오차의 분산이 \(x\)와 관계없이 일정(등분산성), 오차가 서로 독립이고 정규분포.</p>
+      <p>가정이 맞으면 잔차는 0을 중심으로 폭이 일정한 띠 안에 아무 무늬 없이 흩어집니다. 무늬가 보이면 그 무늬가 어느 가정이 깨졌는지 알려 줍니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그림은 가상 자료의 산점도와 최소제곱 직선(빨강), 아래 그림은 잔차 대 적합값입니다. 주황 점선은 \(\pm 2s\)(\(s\)는 잔차 표준오차)입니다. "새 자료"를 누르면 같은 모형에서 다시 만듭니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>참 모형</span><select name="kind" aria-label="자료를 만든 참 모형">
+          <option value="lin" selected>직선 (가정 만족)</option>
+          <option value="quad">곡선</option>
+          <option value="het">오차가 점점 커짐</option>
+          <option value="out">직선 + 이상점 하나</option>
+        </select></label>
+        <label><span>오차 크기 σ = <b data-show="sg" data-fix="1">1.0</b></span><input type="range" name="sg" min="0.2" max="3" step="0.1" value="1" aria-label="오차의 표준편차"></label>
+        <label><span>자료 수 n = <b data-show="n">60</b></span><input type="range" name="n" min="10" max="200" step="5" value="60" aria-label="자료 수"></label>
+      </div>
+      <canvas aria-label="산점도와 적합 직선"></canvas>
+      <canvas aria-label="잔차 대 적합값 그림"></canvas>
+      <div class="btns"><button type="button" class="new">새 자료</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>"직선"에서 잔차 그림을 보고, "새 자료"를 몇 번 눌러 무늬 없는 그림이 어떤 모습인지 눈에 익힙니다.</li>
+        <li>"곡선"으로 바꿉니다. 산점도만 보면 직선이 그럴듯해 보이는지, 잔차 그림에서는 어떤 모양이 보이는지 적습니다.</li>
+        <li>"오차가 점점 커짐"에서 잔차 띠의 폭이 적합값에 따라 어떻게 바뀌는지 봅니다.</li>
+        <li>"이상점 하나"에서 \(\pm 2s\) 밖의 점을 찾고, 그 점이 기울기를 많이 바꾸는지 출력으로 확인합니다.</li>
+        <li>σ를 0.3으로 줄여 "곡선"의 무늬가 더 뚜렷해지는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>직선: 잔차가 0 둘레에 고르게 흩어지고, \(\pm 2s\) 밖의 점은 전체의 5% 안팎(60개 중 1~5개)입니다. 기울기는 참값 0.8 근처입니다.</li>
+        <li>곡선: 결정계수 \(R^2\)가 0.6 정도로 꽤 높게 나와도 잔차 그림은 U자(양 끝은 양수, 가운데는 음수)입니다. \(R^2\)가 높다고 모형이 맞는 것은 아닙니다.</li>
+        <li>오차가 커짐: 잔차가 오른쪽으로 갈수록 넓게 퍼지는 나팔 모양입니다.</li>
+        <li>이상점: 한 점이 \(+2s\) 훨씬 위에 떨어집니다. 이 점은 \(x\)가 가운데(\(x = 5\))에 있어 기울기는 거의 바뀌지 않고 절편과 \(s\)만 커집니다. 기울기를 크게 바꾸는 점은 다음 카드(지렛값)에서 다룹니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>U자 잔차가 보이면 어떻게 고치면 좋을까요? \(x^2\) 항을 넣는 것과 \(y\)를 변환하는 것을 비교해 보세요(10-05단원).</li>
+        <li>나팔 모양에서 기울기 추정값 자체는 대체로 맞는데, 무엇이 틀려지나요? 표준오차와 신뢰구간의 관점에서 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R에서는 <code>fit &lt;- lm(y ~ x)</code>, <code>plot(fit, which = 1)</code>이 같은 그림을, <code>plot(fit, which = 2)</code>가 정규 분위수 그림을 그립니다. 잔차를 \(x\)에 대해 그려도 단순회귀에서는 같은 무늬가 보입니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>잔차 그림 읽기</h3>
+    <p class="q">잔차 대 적합값 그림이 왼쪽에서 오른쪽으로 갈수록 넓어지는 나팔 모양입니다. 가장 먼저 의심할 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>오차의 분산이 일정하지 않다.<span class="why"><b>맞습니다.</b> 등분산성 위반입니다. 가중 최소제곱이나 로그 변환을 생각합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>평균 반응이 곡선이다.<span class="why"><b>곡선이면 잔차의 중심이 휩니다.</b> 나팔 모양은 중심은 0 그대로이고 퍼짐만 바뀌는 무늬입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>표본이 너무 작다.<span class="why"><b>표본 크기는 무늬를 흐리거나 뚜렷하게 할 뿐입니다.</b> 퍼짐이 한 방향으로 커지는 규칙성은 표본 크기 탓이 아닙니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

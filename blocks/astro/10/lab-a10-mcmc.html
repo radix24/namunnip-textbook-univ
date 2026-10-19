@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-05-02",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a10-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a10-mcmc" data-kind="실습" data-std="천우10-05-02">
+  <header class="card-head"><span class="no"></span><h2>Metropolis MCMC로 직선의 기울기와 절편 추정하기</h2><span class="kind">실습 · MCMC</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>가상 자료에 직선을 Metropolis 알고리즘으로 맞추고, 걸음 크기와 걸음 수에 따라 받아들임 비율과 결과가 어떻게 바뀌는지 해석해와 비교합니다. 성취기준 [천우10-05-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 자료: \(x = 0, 0.5, \ldots, 9.5\)에서 참값 \(y = 2x + 1\)에 \(\sigma = 1\)의 가우스 잡음을 더한 20개(5.1절 예제와 같음). 사슬은 \((a, b) = (0, 0)\)에서 출발하고, 앞 20%를 버립니다. 그림은 기울기 \(a\)의 사슬입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>걸음 크기 = <b data-show="step" data-fix="3">0.1</b></span><input type="range" name="step" min="0.005" max="1" step="0.005" value="0.1" aria-label="걸음 크기"></label>
+        <label><span>걸음 수 = <b data-show="nst">5000</b></span><input type="range" name="nst" min="1000" max="20000" step="1000" value="5000" aria-label="걸음 수"></label>
+        <label><span>난수 씨앗 = <b data-show="seed">1</b></span><input type="range" name="seed" min="1" max="5" step="1" value="1" aria-label="난수 씨앗"></label>
+      </div>
+      <canvas aria-label="MCMC 걸음에 따른 기울기 a의 값(파랑), 버리는 구간의 끝(빨간 점선), 최소제곱 값(주황 점선)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>걸음 0.1, 5,000걸음, 씨앗 1에서 받아들임 비율과 결과를 읽고 해석해와 비교합니다.</li>
+        <li>걸음을 0.01과 1로 바꿔 봅니다.</li>
+        <li>걸음 0.1에서 20,000걸음으로 늘려 봅니다.</li>
+        <li>씨앗을 2로 바꿔 결과가 얼마나 달라지는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>해석해: a = 1.819 ± 0.078, b = 1.635 ± 0.431.</li>
+        <li>걸음 0.1, 5,000걸음, 씨앗 1: 받아들임 41.9%, a = 1.810 ± 0.073, b = 1.695 ± 0.410. 씨앗 2: 41.4%, a = 1.840 ± 0.071, b = 1.501 ± 0.384.</li>
+        <li>걸음 0.01: 88.6%, a = 1.907 ± 0.049, b = 1.136 ± 0.203(아직 수렴하지 않음). 걸음 1: 2.9%, a = 1.820 ± 0.086, b = 1.637 ± 0.485.</li>
+        <li>걸음 0.1, 20,000걸음: a = 1.818 ± 0.080, b = 1.642 ± 0.449.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>걸음 0.01의 사슬 그림에서 처음 부분이 어떤 모양이며, 왜 버리는 구간(20%)으로도 부족합니까?</li>
+        <li>씨앗에 따른 평균의 차이(1.810 대 1.840)는 불확도(0.07)에 비해 큰가요? 이것이 '몬테카를로 오차'입니다.</li>
+        <li>b의 불확도가 a보다 해석해에 더 늦게 다가가는 까닭을 a와 b의 상관으로 설명하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Python의 emcee 패키지로 같은 문제를 풀어 보고, 사슬의 자기상관 길이(<code>get_autocorr_time</code>)를 Metropolis와 비교해 보세요.</p>
+    </section>
+  </div>
+</article>

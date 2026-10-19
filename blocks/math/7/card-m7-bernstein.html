@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학7-07-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m-analysis.js"]
+}
+-->
+<article class="card q-card" id="card-m7-bernstein" data-kind="탐구" data-std="수학7-07-01">
+  <header class="card-head"><span class="no"></span><h2>뾰족한 함수도 다항식으로 근사할 수 있을까?</h2><span class="kind">탐구 · 번스타인 다항식과 바이어슈트라스 근사 정리</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>테일러 다항식은 미분할 수 있는 함수만 근사합니다. \(|x - 1/2|\)처럼 꺾인 점이 있는 연속함수는 테일러 전개가 없습니다. 그래도 \([0, 1]\) 전체에서 오차가 원하는 만큼 작은 다항식이 있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>번스타인(Bernstein) 다항식은 \(B_n f(x) = \sum_{k=0}^{n} f\!\left(\tfrac kn\right)\binom nk x^k(1-x)^{n-k}\)입니다. \(\binom nk x^k(1-x)^{n-k}\)는 동전을 \(n\)번 던져(앞면 확률 \(x\)) 앞면이 \(k\)번 나올 확률이므로, \(B_nf(x)\)는 "\(f(\text{앞면 비율})\)의 평균"입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>근사할 함수</span>
+          <select name="fn" aria-label="함수 고르기">
+            <option value="abs">|x − 1/2|</option>
+            <option value="sin">sin 2πx</option>
+            <option value="ramp">가파른 경사</option>
+          </select></label>
+        <label><span>차수 n = <b data-show="n">4</b></span><input type="range" name="n" min="1" max="200" step="1" value="4" aria-label="번스타인 다항식의 차수"></label>
+      </div>
+      <canvas aria-label="원래 함수(회색 점선)와 번스타인 다항식(파랑). n이 40 이하이면 표본점 (k/n, f(k/n))을 노란 점으로 표시"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>\(|x - 1/2|\)에서 n = 4, 16, 64, 200의 최대 오차는 0.188, 0.098, 0.050, 0.028입니다. n을 4배로 할 때 오차가 대략 절반이 됩니다.</li>
+        <li>출력의 "오차 × √n"이 0.40 근처로 거의 일정합니다. 꺾인 점에서는 오차가 \(1/\sqrt n\) 속도로 줄어듭니다.</li>
+        <li>\(\sin 2\pi x\)로 바꾸면 "오차 × n"이 3.9 근처로 거의 일정합니다. 매끄러운 함수는 \(1/n\) 속도로 더 빨리 줄어듭니다.</li>
+        <li>노란 표본점을 보세요. 다항식은 표본점을 지나지 않습니다. 보간이 아니라 "주변 표본점의 가중평균"입니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>평균이 왜 \(f(x)\)에 가까운가</b><span>앞면 비율 \(k/n\)의 평균은 \(x\), 분산은 \(x(1-x)/n \le 1/(4n)\)입니다. \(n\)이 크면 비율이 거의 늘 \(x\) 근처에 있으므로(체비쇼프 부등식), \(f\)가 연속이면 \(f(k/n)\)도 거의 늘 \(f(x)\) 근처입니다.</span></li>
+        <li><b>균등하게 가까운 이유</b><span>닫힌 구간의 연속함수는 균등연속이라, "\(k/n\)이 \(x\)에서 δ 안"이면 \(|f(k/n) - f(x)| &lt; \varepsilon\)이 모든 \(x\)에 같은 δ로 성립합니다. 그래서 오차 한계가 \(x\)와 상관없게 됩니다.</span></li>
+        <li><b>정리</b><span>바이어슈트라스 근사 정리: 닫힌 구간의 연속함수는 다항식으로 균등하게 근사된다. 번스타인 다항식이 그 다항식을 직접 만들어 줍니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>같은 생각을 삼각다항식으로 하면 페예르 평균(<a href="../15/02-02.html">수학15 2.2절</a>)이 되고, 일반 함수공간으로 넓히면 스톤-바이어슈트라스 정리가 됩니다. 컴퓨터 그래픽의 베지어 곡선이 번스타인 다항식입니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"다항식으로 균등하게 근사되면 그 함수도 미분 가능하다"는 틀립니다. \(|x - 1/2|\)는 다항식의 균등극한이지만 \(x = 1/2\)에서 미분할 수 없습니다. 균등수렴은 연속성은 보존하지만 미분 가능성은 보존하지 않습니다.</p>
+    </section>
+  </div>
+</article>

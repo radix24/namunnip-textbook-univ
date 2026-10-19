@@ -1,0 +1,118 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학7-08-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m7-totalderiv" data-kind="본문" data-std="수학7-08-02">
+  <header class="card-head"><span class="no"></span><h2>전미분과 연속미분가능성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(\mathbf f: \mathbb R^n \to \mathbb R^m\)의 전미분(도함수) \(\mathbf f'(\mathbf p)\)를 선형작용소로 정의하고, 그 행렬이 편도함수로 이루어진 야코비 행렬임을 안다.</li>
+        <li>편도함수가 모두 있어도 미분 가능하지 않을 수 있음을 반례로 확인한다.</li>
+        <li>편도함수가 연속이면 미분 가능함을 증명하고, 연쇄 법칙을 쓴다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>작용소 노름 (<a href="08-01.html">8.1절</a>), 평균값 정리 (<a href="04-01.html">4.1절</a>), 고등학교 미적분의 미분계수.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.2.1</span>미분은 "가장 좋은 일차 근사"</h3>
+    <p>한 변수에서 \(f'(p) = \lim_{h\to0}\frac{f(p + h) - f(p)}{h}\)였습니다. 이 식은 \(h\)로 나누기 때문에 \(h\)가 벡터이면 그대로 쓸 수 없습니다. 그래서 같은 내용을 나눗셈 없이 다시 씁니다.</p>
+    \[f(p + h) = f(p) + f'(p)\,h + r(h), \qquad \frac{r(h)}{h} \to 0.\]
+    <p>곧 \(f\)를 \(p\) 근처에서 일차함수 \(h \mapsto f'(p)h\)로 근사했을 때, 오차 \(r(h)\)가 \(h\)보다 빨리 0으로 간다는 뜻입니다. 이 꼴은 \(h\)가 벡터여도 말이 됩니다. 수 \(f'(p)\) 자리에 선형작용소를 두면 됩니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 8.2.1 <span class="nm">(전미분)</span></span>
+      <p>\(E \subseteq \mathbb R^n\)이 열린집합이고 \(\mathbf f: E \to \mathbb R^m\), \(\mathbf p \in E\)일 때, 선형작용소 \(A: \mathbb R^n \to \mathbb R^m\)가 있어</p>
+      \[\lim_{\mathbf h \to \mathbf 0}\frac{|\mathbf f(\mathbf p + \mathbf h) - \mathbf f(\mathbf p) - A\mathbf h|}{|\mathbf h|} = 0\]
+      <p>이면 \(\mathbf f\)는 \(\mathbf p\)에서 <b>미분 가능</b>하다고 하고 \(\mathbf f'(\mathbf p) = A\)라 쓴다. 이 \(A\)를 <b>전미분</b> 또는 <b>도함수</b>라 한다.</p>
+    </div>
+    <p>여기서 \(\mathbf h \to \mathbf 0\)은 모든 방향에서 한꺼번에 다가가는 극한입니다. 한 방향씩만 보는 것으로는 부족하다는 것이 이 절의 핵심입니다.</p>
+
+    <h3><span class="no">8.2.2</span>기본 성질</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.2.2</span>
+      <p>(a) 전미분은 있으면 하나뿐이다. (b) 미분 가능하면 연속이다. (c) \(\mathbf f'(\mathbf p)\)의 행렬의 \((i, j)\) 성분은 편도함수 \(\frac{\partial f_i}{\partial x_j}(\mathbf p)\)이다(야코비 행렬).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>(a) \(A, B\)가 모두 정의를 만족하면 삼각부등식으로 \(\frac{|(A - B)\mathbf h|}{|\mathbf h|} \to 0\). 단위벡터 \(\mathbf u\)를 고정하고 \(\mathbf h = t\mathbf u\) (\(t \to 0^+\))를 넣으면 선형성으로 \(|(A - B)\mathbf u| = 0\)이라 \(A = B\). (b) \(|\mathbf f(\mathbf p + \mathbf h) - \mathbf f(\mathbf p)| \le |\mathbf r(\mathbf h)| + \|A\||\mathbf h| \to 0\). (c) \(\mathbf h = t\mathbf e_j\)를 넣으면 \(\frac{\mathbf f(\mathbf p + t\mathbf e_j) - \mathbf f(\mathbf p)}{t} \to A\mathbf e_j\)이고, 왼쪽의 \(i\)번째 성분의 극한이 \(\frac{\partial f_i}{\partial x_j}(\mathbf p)\)이다. <span class="qed">∎</span></p>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.2.3</span>
+      <p>\(f(x, y) = x^2y\)가 \(\mathbf p = (1, 2)\)에서 미분 가능함을 정의로 보이고 \(f'(\mathbf p)\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 후보는 (c)에 따라 편도함수 \((2xy, x^2) = (4, 1)\)입니다. \(\mathbf h = (u, v)\)로 두고 전개하면</p>
+    \[f(1 + u, 2 + v) - f(1, 2) - (4u + v) = 2u^2 + 2uv + u^2v.\]
+    <p>\(|u|, |v| \le |\mathbf h|\)이므로 오른쪽 절댓값은 \(|\mathbf h|^2(4 + |\mathbf h|)\) 이하이고, \(|\mathbf h|\)로 나누면 0으로 갑니다. 따라서 \(f'(1, 2) = \begin{pmatrix} 4 & 1\end{pmatrix}\)입니다. 예를 들어 \(\mathbf h = (0.01, 0.01)\)이면 \(f = 2.050401\)이고 일차 근사 \(2 + 0.05 = 2.05\)와의 차는 \(0.000401\)로, \(|\mathbf h| \approx 0.0141\)보다 훨씬 작습니다.</p>
+
+    <h3><span class="no">8.2.3</span>편도함수만으로는 부족하다</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.2.4</span>
+      <p>\(f(x, y) = \frac{xy}{x^2 + y^2}\) (\((x, y) \ne \mathbf 0\)), \(f(\mathbf 0) = 0\)은 원점에서 두 편도함수가 모두 있지만 미분 가능하지 않다.</p>
+    </div>
+    <p><i>풀이.</i> 축 위에서 \(f = 0\)이므로 \(f_x(\mathbf 0) = f_y(\mathbf 0) = 0\)입니다. 그런데 직선 \(y = x\) 위에서는 \(f = \frac12\)이라 원점에서 연속조차 아니고, 정리 8.2.2(b)로 미분 가능하지 않습니다. 편도함수는 두 축 방향만 보기 때문에 나머지 방향의 행동을 놓칩니다.</p>
+    <p>연속이고 모든 방향의 방향도함수가 있어도 부족할 수 있습니다. \(g(x, y) = \frac{x^2y}{x^2 + y^2}\), \(g(\mathbf 0) = 0\)은 \(|g| \le |y|\)라 연속이고, 방향 \(\mathbf u = (\cos\theta, \sin\theta)\)의 방향도함수는 \(\lim\frac{g(t\mathbf u)}{t} = \cos^2\theta\sin\theta\)입니다. 미분 가능하다면 이 값이 \(\theta\)에 대해 선형, 곧 \(g'(\mathbf 0)\mathbf u = g_x\cos\theta + g_y\sin\theta = 0\)이어야 하는데 그렇지 않습니다. 같은 절의 탐구 카드에서 오차 비율이 \(|\mathbf h|\)를 줄여도 최댓값 약 0.385(\(= \frac{2}{3\sqrt3}\))에 머무는 것을 볼 수 있습니다.</p>
+
+    <h3><span class="no">8.2.4</span>편도함수가 연속이면 미분 가능</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.2.5</span>
+      <p>\(E\)가 열린집합이고 \(\mathbf f: E \to \mathbb R^m\)의 편도함수 \(\frac{\partial f_i}{\partial x_j}\)가 모두 \(E\)에서 있고 \(\mathbf p\)에서 연속이면, \(\mathbf f\)는 \(\mathbf p\)에서 미분 가능하다. 편도함수가 \(E\) 전체에서 연속이면 \(\mathbf f\)를 <b>연속미분가능</b>(\(C^1\))이라 한다.</p>
+    </div>
+    <p><b>무엇을 보이는가.</b> 후보 \(A\)는 야코비 행렬뿐이므로, 오차 \(\mathbf f(\mathbf p + \mathbf h) - \mathbf f(\mathbf p) - A\mathbf h\)가 \(|\mathbf h|\)보다 빨리 작아짐을 보이면 됩니다. 성분마다 보이면 되므로 \(m = 1\)로 둡니다. 생각은 "한 번에 한 좌표씩 움직이며 각 단계에 일변수 평균값 정리를 쓴다"입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\varepsilon > 0\)이 주어졌다. 편도함수가 \(\mathbf p\)에서 연속이므로 \(r > 0\)이 있어 \(|\mathbf q - \mathbf p| &lt; r\)이면 \(\mathbf q \in E\)이고 모든 \(j\)에서 \(|D_jf(\mathbf q) - D_jf(\mathbf p)| &lt; \frac{\varepsilon}{n}\)이다. \(|\mathbf h| &lt; r\)인 \(\mathbf h = \sum h_j\mathbf e_j\)에 대해 \(\mathbf v_0 = \mathbf 0\), \(\mathbf v_k = h_1\mathbf e_1 + \dots + h_k\mathbf e_k\)로 두면 (계단 모양 경로)</p>
+    \[f(\mathbf p + \mathbf h) - f(\mathbf p) = \sum_{j=1}^n\big[f(\mathbf p + \mathbf v_j) - f(\mathbf p + \mathbf v_{j-1})\big].\]
+    <p class="tb-proof">\(j\)번째 항은 \(j\)번째 좌표만 \(0\)에서 \(h_j\)까지 바뀌는 일변수 함수의 차이다. 경로 위의 점은 모두 \(\mathbf p\)에서 \(|\mathbf h|\) 이내에 있으므로 평균값 정리로 그 선분 위의 점 \(\mathbf q_j\)가 있어 \(j\)번째 항 \(= h_jD_jf(\mathbf q_j)\)이다. 따라서</p>
+    \[\Big|f(\mathbf p + \mathbf h) - f(\mathbf p) - \sum_jh_jD_jf(\mathbf p)\Big| \le \sum_j|h_j|\,|D_jf(\mathbf q_j) - D_jf(\mathbf p)| &lt; n\cdot|\mathbf h|\cdot\frac{\varepsilon}{n} = \varepsilon|\mathbf h|.\]
+    <p class="tb-proof">\(|\mathbf h|\)로 나누면 정의 8.2.1의 극한이 0이다. <span class="qed">∎</span></p>
+    <p>예제 8.2.4가 왜 이 정리에 걸리지 않는지 보면 이해가 깊어집니다. \(f_x = \frac{y(y^2 - x^2)}{(x^2 + y^2)^2}\)는 원점 근처에서 유계가 아니라(예: \(x = 0\)이면 \(\frac1y\)) 원점에서 연속이 아닙니다.</p>
+
+    <h3><span class="no">8.2.5</span>연쇄 법칙</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.2.6 <span class="nm">(연쇄 법칙)</span></span>
+      <p>\(\mathbf f\)가 \(\mathbf p\)에서, \(\mathbf g\)가 \(\mathbf f(\mathbf p)\)에서 미분 가능하면 \(\mathbf g\circ\mathbf f\)는 \(\mathbf p\)에서 미분 가능하고 \((\mathbf g\circ\mathbf f)'(\mathbf p) = \mathbf g'(\mathbf f(\mathbf p))\,\mathbf f'(\mathbf p)\) (작용소의 합성, 곧 야코비 행렬의 곱)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명의 뼈대.</span>\(A = \mathbf f'(\mathbf p)\), \(B = \mathbf g'(\mathbf f(\mathbf p))\), \(\mathbf k = \mathbf f(\mathbf p + \mathbf h) - \mathbf f(\mathbf p) = A\mathbf h + \mathbf r(\mathbf h)\)라 하면 \(\mathbf g(\mathbf f(\mathbf p) + \mathbf k) - \mathbf g(\mathbf f(\mathbf p)) - BA\mathbf h = B\mathbf r(\mathbf h) + \mathbf s(\mathbf k)\)이다. 첫 항은 \(\|B\||\mathbf r(\mathbf h)|\)라 \(o(|\mathbf h|)\)이고, \(|\mathbf k| \le (\|A\| + 1)|\mathbf h|\) (\(|\mathbf h|\)가 작을 때)이므로 둘째 항도 \(o(|\mathbf h|)\)이다. 정리 8.1.2의 \(|B\mathbf x| \le \|B\||\mathbf x|\)가 여기서 쓰인다. <span class="qed">∎</span></p>
+    <p>예: \(\gamma(t) = (\cos t, \sin t)\), \(f = x^2y\)이면 \((f\circ\gamma)'(t) = (2xy, x^2)\cdot(-\sin t, \cos t) = -2\cos t\sin^2t + \cos^3t\)이고, \(\cos^2t\sin t\)를 직접 미분한 것과 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>"편도함수가 있으면 미분 가능하다"는 일변수의 습관에서 오는 오해입니다. 함의는 미분 가능 ⇒ 편도함수 존재, 그리고 편도함수 연속 ⇒ 미분 가능입니다. 거꾸로는 모두 성립하지 않습니다. \(x^2\sin\frac1x\)를 두 변수로 늘린 \(f = |\mathbf x|^2\sin\frac1{|\mathbf x|}\)는 원점에서 미분 가능하지만 편도함수가 원점에서 연속이 아닙니다.</div>
+
+    <div class="tb-aside"><b>이어지는 내용</b>해석학(2)는 \(C^1\) 함수에 대해 역함수 정리와 음함수 정리를 증명합니다. 증명의 재료가 이 단원의 작용소 노름, 정리 8.1.4(가역 행렬 근처는 가역), 7.3절의 축소사상 원리입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전미분은 오차가 \(|\mathbf h|\)보다 빨리 작아지는 일차 근사 \(A\)이고, 행렬은 야코비 행렬이다.</li>
+        <li>편도함수(또는 모든 방향도함수)가 있어도 미분 가능하지 않을 수 있다.</li>
+        <li>편도함수가 연속이면 미분 가능하다(계단 경로 + 평균값 정리).</li>
+        <li>연쇄 법칙: 합성의 도함수는 도함수의 합성(행렬 곱)이다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.2.6</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathbf f(x, y) = (xy, x + y^2)\)의 야코비 행렬을 \((1, 1)\)에서 구하여라.
+          <details><summary>답</summary><p>\(\begin{pmatrix} y & x \\ 1 & 2y\end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 1 & 2\end{pmatrix}\).</p></details>
+        </li>
+        <li>선형작용소 \(A\)의 도함수는 모든 점에서 \(A\)임을 보여라.
+          <details><summary>답</summary><p>\(A(\mathbf p + \mathbf h) - A\mathbf p - A\mathbf h = \mathbf 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(f(x, y) = \sqrt{|xy|}\)는 원점에서 편도함수가 0이지만 미분 가능하지 않음을 보여라.
+          <details><summary>답</summary><p>축 위에서 0이라 편도함수 0. 미분 가능하면 도함수가 0이어야 하는데 \(\mathbf h = (t, t)\)에서 \(\frac{|f(\mathbf h)|}{|\mathbf h|} = \frac{|t|}{\sqrt2|t|} = \frac1{\sqrt2}\)라 0으로 가지 않는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(E\)가 볼록이고 \(\|\mathbf f'(\mathbf x)\| \le M\) (모든 \(\mathbf x \in E\))이면 \(|\mathbf f(\mathbf b) - \mathbf f(\mathbf a)| \le M|\mathbf b - \mathbf a|\)임을 보여라.
+          <details><summary>답</summary><p>\(\mathbf u = \mathbf f(\mathbf b) - \mathbf f(\mathbf a)\)라 하고 \(\varphi(t) = \mathbf u\cdot\mathbf f(\mathbf a + t(\mathbf b - \mathbf a))\)에 일변수 평균값 정리와 연쇄 법칙: \(|\mathbf u|^2 = \varphi(1) - \varphi(0) = \mathbf u\cdot\mathbf f'(\mathbf c)(\mathbf b - \mathbf a) \le |\mathbf u|M|\mathbf b - \mathbf a|\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

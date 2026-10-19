@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통5-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s5-anova" data-kind="본문" data-std="응통5-05-01">
+  <header class="card-head"><span class="no"></span><h2>일원 분산분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전체 변동을 집단 간 변동과 집단 내 변동으로 나눈다.</li>
+        <li>분산분석표를 만들고 F 검정을 한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이표본 t 검정 (<a href="04-02.html">4.2절</a>), 다중 비교 (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>세 집단을 한 번에</h3>
+    <p>세 가지 비료로 키운 콩의 수확량을 비교하려 합니다. 쌍마다 t 검정을 세 번 하면 다중 비교 문제가 생깁니다. "세 평균이 모두 같다"를 한 번에 검정하는 방법이 분산분석(ANOVA)입니다. 이름과 달리 평균을 비교하는 방법이며, 변동을 나누어 비교하기 때문에 이런 이름이 붙었습니다.</p>
+
+    <h3><span class="no">5.1.1</span>변동의 분해</h3>
+    <p>집단 \(i = 1, \ldots, k\)에 자료 \(y_{ij}\)가 \(n_i\)개씩, 전체 \(N\)개 있다고 합시다. 집단 평균을 \(\bar y_i\), 전체 평균을 \(\bar y\)라 하면</p>
+    \[\underbrace{\sum_{i,j}(y_{ij} - \bar y)^2}_{SST} = \underbrace{\sum_i n_i(\bar y_i - \bar y)^2}_{SSB} + \underbrace{\sum_{i,j}(y_{ij} - \bar y_i)^2}_{SSW}.\]
+    <p class="tb-proof">\(y_{ij} - \bar y = (y_{ij} - \bar y_i) + (\bar y_i - \bar y)\)를 제곱해 더하면 교차항이 \(2\sum_i(\bar y_i - \bar y)\sum_j(y_{ij} - \bar y_i)\)이고, 안쪽 합은 집단 평균의 정의에 따라 0입니다. <span class="qed">∎</span></p>
+    <p>SSB는 집단 평균들이 서로 얼마나 다른지, SSW는 같은 집단 안에서 얼마나 흩어졌는지를 잽니다.</p>
+
+    <h3><span class="no">5.1.2</span>F 검정</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.1.1</span>
+      <p>\(H_0: \mu_1 = \cdots = \mu_k\). 각 집단이 같은 분산의 정규분포이고 서로 독립이면, \(H_0\) 아래에서</p>
+      \[F = \frac{SSB/(k-1)}{SSW/(N-k)}\]
+      <p>는 자유도 \((k-1, N-k)\)인 F 분포를 따른다. F가 크면 기각한다.</p>
+    </div>
+    <p>분자 MSB와 분모 MSW는 모두 \(H_0\) 아래에서 \(\sigma^2\)의 추정량입니다. 집단 평균이 다르면 MSB만 커지므로 비 F가 1보다 훨씬 커집니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.2</span>
+      <p>비료 A: 5, 6, 7. B: 8, 9, 10. C: 5, 7, 6 (단위: kg). 분산분석표를 만드세요.</p>
+    </div>
+    <p><i>풀이.</i> 집단 평균 6, 9, 6, 전체 평균 7. SSB = \(3(1 + 4 + 1) = 18\). SSW = A \(1+0+1\) + B \(1+0+1\) + C \(1+1+0\) = 6. 자유도 2와 6.</p>
+    <table class="tw">
+      <tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>F</th></tr>
+      <tr><td>집단 간</td><td>18</td><td>2</td><td>9</td><td>9</td></tr>
+      <tr><td>집단 내</td><td>6</td><td>6</td><td>1</td><td></td></tr>
+      <tr><td>합계</td><td>24</td><td>8</td><td></td><td></td></tr>
+    </table>
+    <p>\(F_{0.05}(2, 6) = 5.14\)보다 크므로 기각합니다(p값 약 0.016). 세 평균이 모두 같지는 않습니다. 어느 쌍이 다른지는 사후 비교(응통13 02단원)로 봅니다.</p>
+    <pre><code>y &lt;- c(5,6,7, 8,9,10, 5,7,6); g &lt;- factor(rep(c("A","B","C"), each = 3))
+summary(aov(y ~ g))</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SST = SSB + SSW.</li>
+        <li>\(F = \mathrm{MSB}/\mathrm{MSW}\), 자유도 \((k-1, N-k)\).</li>
+        <li>가정: 독립, 정규, 등분산. 기각 뒤에는 사후 비교.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>집단이 2개일 때 F 검정과 합동 분산 t 검정의 관계는?
+          <details><summary>답</summary><p>\(F = t^2\)이고 p값이 같습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>예제에서 B의 값을 6, 7, 8로 바꾸면 F는?
+          <details><summary>답</summary><p>집단 평균 6, 7, 6, 전체 평균 6.33. SSB = \(3(0.111 + 0.444 + 0.111) = 2\), SSW = 6, \(F = (2/2)/(6/6) = 1\). 기각하지 않습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

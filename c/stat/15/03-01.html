@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Newton-Raphson 방법으로 최대가능도추정량을 구하기 · 통계전산 — QURI</title>
-  <meta name="description" content="통계전산 3.1 Newton-Raphson 방법으로 최대가능도추정량을 구하기 — 성취기준: Newton-Raphson 방법으로 최대가능도추정량을 구할 수 있다.">
+  <title>뉴턴-랩슨으로 최대가능도 구하기 · 통계전산 — QURI</title>
+  <meta name="description" content="통계전산 3.1 뉴턴-랩슨으로 최대가능도 구하기 — 성취기준: Newton-Raphson 방법으로 최대가능도추정량을 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;3.1 Newton-Raphson 방법으로 최대가능도추정량을 구하기&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;3.1 뉴턴-랩슨으로 최대가능도 구하기&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,88 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통15-03-01">
+  <section class="topic-hero u-hero has-text" data-sec="응통15-03-01" data-u="서울대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">통계전산</a><span class="mono">/</span><a href="03.html">3. 최적화</a></div>
-    <h1><span class="sec-no mono">3.1</span>Newton-Raphson 방법으로 최대가능도추정량을 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통15-03-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-03-01] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통15-03-01" aria-label="할 수 있음"><span class="t">Newton-Raphson 방법으로 최대가능도추정량을 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.1</span>뉴턴-랩슨으로 최대가능도 구하기</h1>
+    <p class="sec-std"><span class="mono">[응통15-03-01]</span> Newton-Raphson 방법으로 최대가능도추정량을 구할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-1-1"><span class="mono">3.1.1</span><span>반복식</span></a></li><li><a href="#s3-1-2"><span class="mono">3.1.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s15-newton"><span class="mono">본문</span><span>뉴턴-랩슨으로 최대가능도 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s15-newton" data-kind="본문" data-std="응통15-03-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>뉴턴-랩슨 반복식을 유도하고 수렴 성질을 안다.</li>
+        <li>닫힌 꼴이 없는 MLE를 구현한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도 (응통7 1.1절), 응통4 04단원 근 찾기, 테일러 전개.</li>
+      </ul>
+    </div>
+
+    <h3>방정식을 풀 수 없을 때</h3>
+    <p>감마분포의 형상 모수, 로지스틱 회귀의 계수처럼 점수 방정식 \(\ell'(\theta) = 0\)을 손으로 풀 수 없는 경우가 대부분입니다. 컴퓨터로 반복해 근을 찾습니다.</p>
+
+    <h3 id="s3-1-1"><span class="no">3.1.1</span>반복식</h3>
+    <p>현재 값 \(\theta_t\) 근처에서 \(\ell'(\theta) \approx \ell'(\theta_t) + \ell''(\theta_t)(\theta - \theta_t)\)를 0으로 두면</p>
+    \[\theta_{t+1} = \theta_t - \frac{\ell'(\theta_t)}{\ell''(\theta_t)}.\]
+    <p>다모수이면 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - H(\boldsymbol\theta_t)^{-1}\nabla\ell(\boldsymbol\theta_t)\)(\(H\)는 헤세 행렬). 로그가능도를 2차식으로 근사하고 그 꼭짓점으로 옮기는 것입니다.</p>
+    <p>참값 근처에서는 <b>2차 수렴</b>합니다. 오차가 매 단계 대략 제곱되어 맞는 자릿수가 두 배씩 늘어납니다. 반면 출발점이 멀거나 로그가능도가 오목하지 않은 곳에서는 발산하거나 최소점으로 갈 수 있으므로, 단계 크기를 줄이는 보호 장치(선 탐색)를 둡니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>코시 분포 위치 모수 \(\theta\)의 MLE를 자료 \(-1.2, 0.3, 0.8, 1.5, 9.0\)으로 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\ell(\theta) = -\sum\log(1 + (x_i - \theta)^2)\). \(\ell' = \sum\frac{2(x_i - \theta)}{1 + (x_i - \theta)^2}\), \(\ell'' = \sum\frac{2[(x_i-\theta)^2 - 1]}{[1 + (x_i - \theta)^2]^2}\). 출발점을 중앙값 0.8로 두면 몇 번 만에 약 0.668에 수렴하고, <code>optimize</code>로 찾은 최대점과 같습니다. 평균 2.08은 이상값 9.0에 끌려가지만 MLE는 그렇지 않습니다. 출발점을 9.0 근처로 두면 다른 국소 최대로 갈 수 있으니 가능도를 그려 확인합니다.</p>
+    <pre><code>x &lt;- c(-1.2, 0.3, 0.8, 1.5, 9); th &lt;- median(x)
+for (i in 1:20) { u &lt;- x - th
+  g &lt;- sum(2*u/(1+u^2)); h &lt;- sum(2*(u^2-1)/(1+u^2)^2)
+  th &lt;- th - g/h }
+th; optimize(function(t) -sum(log(1+(x-t)^2)), c(-5, 10), maximum = TRUE)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\theta_{t+1} = \theta_t - \ell'/\ell''\), 다모수는 헤세 행렬.</li>
+        <li>근처에서 2차 수렴, 멀면 불안정 → 좋은 출발점과 선 탐색.</li>
+        <li>수렴 뒤 \(-H^{-1}\)은 공분산 행렬의 추정값(관측 정보량).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-1-2"><span class="no">3.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>포아송 \(\lambda\)에 뉴턴-랩슨을 쓰면 한 단계 식은? 수렴값은?
+          <details><summary>답</summary><p>\(\ell' = S/\lambda - n\), \(\ell'' = -S/\lambda^2\). \(\lambda_{t+1} = \lambda_t + \lambda_t^2(S/\lambda_t - n)/S = 2\lambda_t - n\lambda_t^2/S\). 수렴값 \(S/n = \bar x\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s15-newton" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통15-03-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-03-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통15-03-01" aria-label="할 수 있음"><span class="t">Newton-Raphson 방법으로 최대가능도추정량을 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-02.html">← 2.2 큰 행렬 계산에서 효율을 높이는 방법을 고르기</a></span>
-        <span><a href="03-02.html">3.2 Fisher 점수법과 경사하강법을 비교하기 →</a></span>
+        <span><a href="02-R.html">← 2.R 단원 마무리</a></span>
+        <span><a href="03-02.html">3.2 피셔 점수법과 경사하강법 →</a></span>
       </nav>
     </div>
   </div>

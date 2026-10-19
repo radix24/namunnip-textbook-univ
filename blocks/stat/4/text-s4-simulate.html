@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-simulate" data-kind="본문" data-std="응통4-06-02">
+  <header class="card-head"><span class="no"></span><h2>모의실험으로 확률 계산 검증하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>확률 문제를 모의실험으로 근사하고 정답과 비교한다.</li>
+        <li>모의실험 결과의 표준오차를 보고한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>NumPy 난수 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>계산이 맞는지 실험으로 확인</h3>
+    <p>확률 문제는 직관이 자주 틀립니다. 계산 결과가 맞는지 확인하는 가장 확실한 방법은 컴퓨터로 수만 번 실험해 보는 것입니다.</p>
+
+    <h3><span class="no">6.2.1</span>생일 문제</h3>
+    <p>23명 중 생일이 같은 사람이 있을 확률은 \(1 - \frac{365\cdot364\cdots343}{365^{23}} \approx 0.507\)입니다.</p>
+    <pre><code>import numpy as np
+rng = np.random.default_rng(0)
+B, n = 100_000, 23
+days = rng.integers(0, 365, size=(B, n))
+has_dup = np.array([len(set(r)) &lt; n for r in days])
+p = has_dup.mean(); se = np.sqrt(p * (1 - p) / B)
+print(f"{p:.4f} ± {1.96 * se:.4f}")       # 약 0.507 ± 0.003
+
+exact = 1 - np.prod((365 - np.arange(n)) / 365)
+print(round(exact, 4))                    # 0.5073</code></pre>
+    <p>모의실험 추정값은 표준오차 \(\sqrt{p(1-p)/B}\)와 함께 보고합니다. \(B = 10^5\)이면 약 ±0.003입니다.</p>
+
+    <h3><span class="no">6.2.2</span>몬티 홀 문제</h3>
+    <pre><code>B = 100_000
+car = rng.integers(0, 3, B); pick = rng.integers(0, 3, B)
+stay_win = (car == pick).mean()          # 약 1/3
+switch_win = 1 - stay_win                # 바꾸면 약 2/3 (사회자가 늘 염소 문을 열므로)
+print(stay_win, switch_win)</code></pre>
+    <p>처음 고른 문이 맞을 확률은 1/3이고, 바꾸는 전략은 처음 선택이 틀렸을 때(확률 2/3) 이깁니다. 많은 사람이 1/2이라고 믿었던 문제입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사건을 난수로 흉내 내고 비율을 셈.</li>
+        <li>표준오차 \(\sqrt{p(1-p)/B}\)와 함께 보고.</li>
+        <li>정확한 계산과 비교해 둘 다 검증.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>주사위 두 개의 합이 7일 확률을 모의실험으로 구하고 정답(1/6)과 비교하세요.
+          <details><summary>답</summary><p><code>(rng.integers(1, 7, B) + rng.integers(1, 7, B) == 7).mean()</code>이 약 0.1667 ± 0.002.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
