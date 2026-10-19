@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-02-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m16-runge.js"]
+}
+-->
+<article class="card q-card" id="card-m16-runge" data-kind="탐구" data-std="수학16-02-02">
+  <header class="card-head"><span class="no"></span><h2>점을 늘렸는데 더 틀린다</h2><span class="kind">탐구 · 룽게 현상</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\([-1, 1]\)에서 함수를 \(n + 1\)개의 점으로 보간합니다. 점을 늘리면 보간 다항식이 원래 함수에 늘 더 가까워질까요? 점의 위치는 중요할까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>\(f(x) - p(x) = \frac{f^{(n+1)}(\xi)}{(n + 1)!}\prod(x - x_i)\). 체비쇼프 점 \(x_i = \cos\frac{(2i + 1)\pi}{2(n + 1)}\)은 \(\max|\prod(x - x_i)|\)을 가장 작게 한다 (<a href="02-02.html">2.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>f(x)</span>
+          <select name="f" aria-label="함수 선택"><option value="runge">1/(1 + 25x²)</option><option value="abs">|x|</option><option value="exp">eˣ</option></select></label>
+        <label><span>점 배치</span>
+          <select name="p" aria-label="보간 점 배치"><option value="eq">등간격</option><option value="ch">체비쇼프</option></select></label>
+        <label><span>n = <b data-show="n">10</b></span><input type="range" name="n" min="2" max="40" step="1" value="10" aria-label="보간 다항식의 차수"></label>
+      </div>
+      <canvas aria-label="원래 함수(회색 점선), 보간 다항식(등간격은 빨강, 체비쇼프는 파랑), 보간 점(검은 점)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>\(\frac1{1 + 25x^2}\), 등간격에서 \(n = 4, 10, 20\)이면 최대 오차가 0.44, 1.92, 59.8로 커지고, 늘 양 끝 근처(\(x \approx \pm0.9\))에서 생깁니다.</li>
+        <li>체비쇼프로 바꾸면 같은 \(n\)에서 0.40, 0.109, 0.0153으로 줄고, \(n = 40\)이면 \(2.9\times10^{-4}\)입니다.</li>
+        <li>\(|x|\)는 \(x = 0\)에서 미분 불가능합니다. 체비쇼프 점에서도 \(n = 10, 20, 40\)일 때 0.055, 0.028, 0.015로 \(\frac1n\)처럼 천천히 줍니다.</li>
+        <li>\(e^x\)는 등간격으로도 \(n = 10\)에서 \(2.4\times10^{-10}\)으로 잘 맞습니다. 그런데 \(n = 40\)으로 올리면 \(5.4\times10^{-7}\)으로 오히려 나빠집니다. 체비쇼프는 \(3.6\times10^{-15}\)을 유지합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>양 끝의 \(\prod(x - x_i)\)</b><span>등간격 점에서는 끝 근처의 \(x\)가 대부분의 점과 멀어 곱이 가운데보다 수천~수백만 배 큽니다. 체비쇼프 점은 끝에 점을 더 촘촘히 두어 곱을 고르게 \(2^{-n}\) 이하로 만듭니다.</span></li>
+        <li><b>\(e^x\)도 나빠지는 이유</b><span>수학적으로는 등간격 보간도 \(e^x\)로 수렴하지만, 등간격 고차 보간은 \(y_i\)의 작은 반올림 오차(\(10^{-16}\))를 엄청나게 키웁니다. 같은 현상이 계산에서도 나타납니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"실험 데이터 20개를 모두 지나는 19차 다항식이 가장 정확한 모형이다"는 틀리기 쉽습니다. 출력의 룽게 함수처럼 점 사이에서 크게 출렁일 수 있습니다. 구간을 나눠 낮은 차수를 이어 붙이는 스플라인(<a href="02-03.html">2.3절</a>)이나 최소제곱(<a href="05-01.html">5.1절</a>)을 씁니다.</p>
+    </section>
+  </div>
+</article>
