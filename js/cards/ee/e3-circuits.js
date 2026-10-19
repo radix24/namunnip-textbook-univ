@@ -332,3 +332,38 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 })();
+
+/* 전전3 1단원 추가: 수동 부호 규약 (03-01-01) */
+(() => {
+  "use strict";
+  if (!window.QSim) return;
+  const S = QSim.card("exp-e3-sign"); if (!S) return;
+  const cv = S.$("canvas");
+  const f2 = (x, d = 2) => (Math.abs(x) < 5e-13 ? 0 : x).toFixed(d);
+  function draw() {
+    const c = QSim.col(), v = S.val("v"), i = S.val("i"), dir = S.val("dir");
+    const into = dir === "in", p = into ? v * i : -v * i;
+    const V = QSim.view(cv, 0.5), fr = QSim.frame(V, { x0: 0, x1: 10, y0: 0, y1: 5, pad: 4 });
+    const g = V.g;
+    // 소자 상자와 단자
+    fr.path([[3, 4.6], [3, 3.6]], c.ink, 2); fr.path([[3, 1.4], [3, 0.4]], c.ink, 2);
+    g.save(); g.strokeStyle = c.ink; g.lineWidth = 2; g.strokeRect(fr.X(2.3), fr.Y(3.6), fr.X(3.7) - fr.X(2.3), fr.Y(1.4) - fr.Y(3.6)); g.restore();
+    fr.text("+", 1.8, 3.3, c.ink, "center"); fr.text("−", 1.8, 1.5, c.ink, "center");
+    fr.text(`v = ${f2(v, 1)} V`, 0.9, 2.4, c.ink2, "center");
+    // 전류 화살표: 위 단자 옆
+    if (into) fr.arrow(3.5, 4.6, 0, -0.9, c.main, `i = ${f2(i, 1)} A`); else fr.arrow(3.5, 3.7, 0, 0.9, c.main, `i = ${f2(i, 1)} A`);
+    // 전력 막대
+    const P = 50, w = Math.max(-P, Math.min(P, p));
+    fr.path([[6, 2.5], [9.6, 2.5]], c.rule, 1);
+    g.save(); g.fillStyle = p >= 0 ? c.acc : c.main;
+    const x0 = fr.X(7.8), x1 = fr.X(7.8 + 1.8 * w / P);
+    g.fillRect(Math.min(x0, x1), fr.Y(2.9), Math.abs(x1 - x0), fr.Y(2.1) - fr.Y(2.9)); g.restore();
+    fr.path([[7.8, 3.2], [7.8, 1.8]], c.ink3, 1);
+    fr.text("공급", 6.6, 3.5, c.ink3, "center"); fr.text("흡수", 9.0, 3.5, c.ink3, "center");
+    fr.text(`p = ${f2(p, 1)} W`, 7.8, 1.2, c.ink, "center");
+    S.out(`화살표가 + 단자로 ${into ? "들어감" : "나옴"} → 흡수 전력 p = ${into ? "+" : "−"}vi = ${into ? "" : "−"}(${f2(v, 1)})(${f2(i, 1)}) = ${f2(p, 1)} W\n` +
+      (Math.abs(p) < 1e-9 ? "전력 0: 전압이나 전류가 0입니다." : p > 0 ? `p > 0: 이 소자는 ${f2(p, 1)} W를 흡수합니다(저항, 충전되는 전지처럼).` : `p < 0: 이 소자는 ${f2(-p, 1)} W를 공급합니다(회로에 에너지를 내놓는 전원처럼).`) +
+      `\n같은 실제 상황을 화살표 방향만 바꿔 그리면 i의 부호가 바뀌고 규약의 부호도 바뀌어, 흡수·공급 판정은 그대로입니다.`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();

@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-04-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e9-budget" data-kind="예제" data-std="전전9-04-02">
+  <header class="card-head"><span class="no"></span><h2>비반전 증폭기 이득이 왜 9.4인가</h2><span class="kind">예제 · 오차 예산으로 원인 나누기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(R_f\) = 47 kΩ, \(R_i\) = 4.7 kΩ 비반전 증폭기(설계 이득 11)를 50 kHz에서 쟀더니 9.4였습니다. 저항이 불량일까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>먼저 연산증폭기의 대역폭을 확인합니다. 50 kHz가 대역폭에 가까우면 저항이 정상이어도 이득이 줄어듭니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">GBW = 1 MHz(가정)인 연산증폭기로 \(R_f\) = 47 kΩ(±5%), \(R_i\) = 4.7 kΩ(±5%) 비반전 증폭기를 만들었다. 1 kHz에서 측정 이득 10.8, 50 kHz에서 9.4였다. (가) 설계 이득과 대역폭, (나) 50 kHz의 이론 이득, (다) 1 kHz의 차이가 저항 허용 오차로 설명되는지 판정하라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>닫힌 루프 대역폭 \(f_B = \text{GBW}/G\)(5.2절).</li>
+        <li>1차 저역 통과처럼 \(|A| = G/\sqrt{1 + (f/f_B)^2}\).</li>
+        <li>이득 \(1 + R_f/R_i\)의 허용 범위를 최악의 경우로 구한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) G = 11, \(f_B = 1\text{ MHz}/11 \approx 90.9\) kHz. <span class="q-why">잡음 이득 = 신호 이득</span></li>
+        <li>(나) \(f/f_B = 0.55\), \(|A| = 11/\sqrt{1 + 0.3025} \approx 9.64\). <span class="q-why">1차 근사</span></li>
+        <li>측정 9.4는 이론 9.64와 약 −2.5% 차이. 대역폭이 주된 원인이다. <span class="q-why">오차 예산</span></li>
+        <li>(다) \(R_f/R_i\)의 최악 범위 \(10 \times 0.95/1.05 = 9.05\)부터 \(10 \times 1.05/0.95 = 11.05\)까지, 이득 10.05~12.05. 측정 10.8은 범위 안. <span class="q-why">허용 오차</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>같은 회로라도 측정 주파수에 따라 이득이 다르게 나옵니다. 50 kHz의 이득만 보고 저항을 바꾸면 고장을 고치는 대신 설계를 틀리게 바꾸게 됩니다. 차이를 원인별로 나누는 습관(4.2절)이 필요한 이유입니다. 남은 −2.5%는 1 kHz에서 이미 보인 저항 오차(10.8/11 = −1.8%)와 비슷한 크기이므로 둘을 함께 놓으면 거의 설명됩니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>1 kHz에서의 이론 이득은 \(11/\sqrt{1 + (0.011)^2} \approx 10.999\)로 대역폭 영향이 거의 없으므로, 1 kHz 측정값으로 저항 오차를 따로 볼 수 있습니다. \(10.8 \times 9.64/11 \approx 9.46\)으로 50 kHz 측정 9.4와 약 0.7% 안에서 맞습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 증폭기를 100 kHz에서 재면 이론 이득은?</p>
+      <details><summary>답</summary><p>\(f/f_B = 1.1\), \(11/\sqrt{2.21} \approx 7.40\).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>원인 찾기</h3>
+    <p class="q">증폭기의 이득이 높은 주파수에서만 작게 나온다. 가장 먼저 의심할 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>연산증폭기의 이득-대역폭 곱<span class="why"><b>맞습니다.</b> 대역폭 근처에서는 이득이 주파수에 따라 줄어듭니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>저항 불량<span class="why"><b>저항 값은 주파수와 거의 무관합니다.</b> 낮은 주파수에서는 이득이 맞으므로 저항은 정상일 가능성이 큽니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>전원 전압 부족<span class="why"><b>전원 부족은 주파수와 무관하게 출력을 자릅니다.</b> 포화 모양을 보면 구별됩니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>
