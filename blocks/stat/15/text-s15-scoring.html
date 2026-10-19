@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-scoring" data-kind="본문" data-std="응통15-03-02">
+  <header class="card-head"><span class="no"></span><h2>피셔 점수법과 경사하강법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>피셔 점수법을 뉴턴-랩슨과 비교한다.</li>
+        <li>경사하강법과 확률적 경사하강법의 장단점을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>뉴턴-랩슨 (<a href="03-01.html">3.1절</a>), 피셔 정보량 (응통7 3.1절).</li>
+      </ul>
+    </div>
+
+    <h3>헤세 행렬 대신</h3>
+    <p>뉴턴-랩슨은 빠르지만 매 단계 헤세 행렬을 계산하고 풀어야 합니다. 모수가 수백만 개인 신경망에서는 불가능합니다. 그 대안들을 봅니다.</p>
+
+    <h3><span class="no">3.2.1</span>피셔 점수법</h3>
+    <p>관측 헤세 \(-\ell''(\theta)\) 대신 기대값인 피셔 정보량 \(nI(\theta)\)를 씁니다.</p>
+    \[\theta_{t+1} = \theta_t + [nI(\theta_t)]^{-1}\ell'(\theta_t).\]
+    <p>정보량은 항상 양정치라 단계가 늘 오르막 방향이고, 식이 간단한 경우가 많습니다. 일반화선형모형에서 피셔 점수법은 가중치를 바꿔 가며 최소제곱을 되풀이하는 <b>반복 재가중 최소제곱</b>(IRLS)과 같으며, R의 <code>glm</code>이 이 방법을 씁니다. 자연 연결함수(로지스틱 회귀의 로짓)에서는 관측 헤세와 기대 정보량이 같아 뉴턴-랩슨과 똑같습니다.</p>
+
+    <h3><span class="no">3.2.2</span>경사하강법</h3>
+    <p>최소화할 함수 \(f\)(음의 로그가능도, 손실)에 대해 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - \eta\nabla f(\boldsymbol\theta_t)\). 2차 정보 없이 기울기만 씁니다. 계산은 싸지만 수렴이 1차(선형)이고, 학습률 \(\eta\)가 크면 발산, 작으면 느립니다. 등고선이 길쭉하면(조건수가 크면) 지그재그로 느리게 갑니다.</p>
+    <p><b>확률적 경사하강법</b>(SGD)은 매 단계 자료 일부(미니배치)로 기울기를 추정합니다. 한 단계가 매우 싸서 큰 자료와 딥러닝의 표준입니다. 학습률을 점점 줄여야 수렴합니다.</p>
+
+    <table class="tw">
+      <tr><th>방법</th><th>단계 비용</th><th>수렴 속도</th><th>쓰는 곳</th></tr>
+      <tr><td>뉴턴-랩슨</td><td>높음 (\(O(p^3)\))</td><td>2차</td><td>모수 적음, 정확도 중요</td></tr>
+      <tr><td>피셔 점수</td><td>높음</td><td>대개 빠름</td><td>GLM (IRLS)</td></tr>
+      <tr><td>준뉴턴(BFGS)</td><td>중간 (\(O(p^2)\))</td><td>초선형</td><td><code>optim</code> 기본 선택지</td></tr>
+      <tr><td>경사하강</td><td>낮음</td><td>1차</td><td>단순한 큰 문제</td></tr>
+      <tr><td>SGD</td><td>매우 낮음</td><td>느리지만 자료가 클 때 유리</td><td>딥러닝, 매우 큰 \(n\)</td></tr>
+    </table>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>\(f(\theta) = (\theta - 3)^2\)에 경사하강법을 \(\eta = 0.1\), \(\theta_0 = 0\)으로 쓰면?</p>
+    </div>
+    <p><i>풀이.</i> \(\theta_{t+1} = \theta_t - 0.2(\theta_t - 3)\), 오차 \(e_t = \theta_t - 3\)이 매 단계 0.8배. \(e_t = -3(0.8)^t\), 20단계 뒤 오차 약 0.035. \(\eta = 1.1\)이면 오차가 \(-1.2\)배씩 커져 발산합니다. 뉴턴-랩슨은 한 단계에 3에 도달합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>피셔 점수: 기대 정보량 사용, GLM의 IRLS.</li>
+        <li>경사하강: 싸고 단순, 1차 수렴, 학습률 조절 필요.</li>
+        <li>문제 크기에 따라 방법을 고릅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 수렴이 가장 빠른 \(\eta\)는?
+          <details><summary>답</summary><p>오차 배율 \(1 - 2\eta = 0\)인 \(\eta = 0.5\). 한 단계에 수렴(2차 함수에서는 뉴턴과 같음).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

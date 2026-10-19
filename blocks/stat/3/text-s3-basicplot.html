@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-basicplot" data-kind="본문" data-std="응통3-03-01">
+  <header class="card-head"><span class="no"></span><h2>히스토그램, 상자그림, 산점도 그리기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기본 그래픽 함수로 세 가지 기본 그래프를 그리고 꾸민다.</li>
+        <li>그래프를 파일로 저장한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통5 2.3절 그래프 읽기.</li>
+      </ul>
+    </div>
+
+    <h3>한 줄로 그리는 그래프</h3>
+    <p>R의 기본 그래픽 함수는 자료를 넣으면 바로 그림이 나옵니다. 탐색 단계에서는 빠르게 많이 그려 보는 것이 중요합니다.</p>
+
+    <h3><span class="no">3.1.1</span>세 가지 그래프</h3>
+    <pre><code>hist(mtcars$mpg, breaks = 10, main = "연비 분포", xlab = "mpg", col = "grey")
+boxplot(mpg ~ cyl, data = mtcars, xlab = "기통", ylab = "mpg")
+plot(mpg ~ wt, data = mtcars, pch = 19, col = mtcars$cyl / 2,
+     xlab = "무게 (천 lb)", ylab = "연비 (mpg)")
+abline(lm(mpg ~ wt, data = mtcars), col = "red")      # 회귀선 추가
+legend("topright", legend = c(4, 6, 8), col = c(2, 3, 4), pch = 19, title = "기통")</code></pre>
+    <p>공통 인수: <code>main</code>(제목), <code>xlab</code>/<code>ylab</code>(축 이름), <code>col</code>(색), <code>pch</code>(점 모양), <code>xlim</code>/<code>ylim</code>(축 범위). <code>par(mfrow = c(1, 2))</code>로 여러 그림을 한 화면에 놓습니다.</p>
+
+    <h3><span class="no">3.1.2</span>저장</h3>
+    <pre><code>png("fig/mpg.png", width = 1600, height = 1200, res = 200)
+hist(mtcars$mpg)
+dev.off()
+# 한글 글꼴이 깨지면: par(family = "AppleGothic")(맥), windowsFonts() 확인(윈도우)</code></pre>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p><code>airquality</code>에서 월별 오존 상자그림과 기온-오존 산점도를 나란히 그리세요.</p>
+    </div>
+    <pre><code>par(mfrow = c(1, 2))
+boxplot(Ozone ~ Month, data = airquality, xlab = "월", ylab = "오존 (ppb)")
+plot(Ozone ~ Temp, data = airquality, xlab = "기온 (°F)")</code></pre>
+    <p>7~8월에 오존이 높고 퍼짐도 크며, 기온이 높을수록 오존이 휘어 오르는(지수적) 모양입니다. 결측 행은 자동으로 빠집니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>hist</code>, <code>boxplot(y ~ g)</code>, <code>plot(y ~ x)</code>.</li>
+        <li>제목, 축 이름, 단위를 항상 붙임.</li>
+        <li><code>png()</code> … <code>dev.off()</code>로 저장.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>hist</code>의 <code>breaks</code>를 5, 20으로 바꿔 그려 보고 차이를 설명하세요.
+          <details><summary>답</summary><p>5는 너무 뭉뚱그려 모양이 안 보이고, 20은 막대가 들쭉날쭉해 잡음이 커 보입니다. 구간 수를 바꿔 보며 안정된 모양을 확인합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

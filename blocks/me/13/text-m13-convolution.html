@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계13-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m13-convolution" data-kind="본문" data-std="기계13-04-01">
+  <header class="card-head"><span class="no"></span><h2>임펄스 응답과 합성곱: 아무 모양의 힘에 대한 응답</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>짧은 충격(임펄스)에 대한 1자유도계의 응답을 구한다.</li>
+        <li>임의의 힘을 짧은 임펄스의 연속으로 보고, 각 응답을 더하는 합성곱 적분을 이해한다.</li>
+        <li>사각 펄스의 최대 응답이 펄스 길이와 고유 주기의 비에 따라 어떻게 바뀌는지(충격 응답 스펙트럼) 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>감쇠 자유 진동 (<a href="02-01.html">2.1절</a>), 충격량과 운동량(고등학교 물리), 정적분을 넓이의 합으로 보는 생각.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>임펄스 응답</h3>
+    <p>망치로 치듯 아주 짧은 시간에 힘을 주면, 그동안 질량은 거의 움직이지 못하고 속도만 얻습니다. 충격량 \(\hat F = \int F\,dt\)가 운동량 변화와 같으므로 질량은 \(\dot x(0) = \hat F/m\)로 출발하고, 그 뒤는 자유 진동입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">단위 임펄스 응답 (부족감쇠)</span>
+      \[h(t) = \frac{1}{m\omega_d}e^{-\zeta\omega_nt}\sin\omega_dt\]
+      <p>충격량 \(\hat F\)이면 응답은 \(\hat Fh(t)\).</p>
+    </div>
+
+    <h3><span class="no">4.1.2</span>합성곱 적분</h3>
+    <p>임의의 힘 \(F(t)\)를 폭 \(\Delta\tau\)인 얇은 막대들로 자르면, 시각 \(\tau\)의 막대는 충격량 \(F(\tau)\Delta\tau\)인 임펄스입니다. 계가 선형이므로 각 임펄스가 만든 응답(시각 \(\tau\)부터 시작한 \(h\))을 모두 더하면 전체 응답이 됩니다. 막대를 아주 얇게 하면 합이 적분이 됩니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">합성곱(Duhamel) 적분 (처음에 정지)</span>
+      \[x(t) = \int_0^tF(\tau)\,h(t - \tau)\,d\tau\]
+    </div>
+    <p>식이 어려워 보이지만 뜻은 "지금(\(t\))의 응답 = 과거 각 순간(\(\tau\))의 힘이 그 뒤 \(t - \tau\)만큼 지나 남긴 흔적의 합"입니다. 실제 계산은 컴퓨터로 이 합을 바로 더합니다(합성곱 탐구).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1 <span class="nm">(사각 펄스)</span></span>
+      <p>감쇠 없는 계(\(m = 10\) kg, \(k = 4000\) N/m, 고유 주기 \(T_n = 0.314\) s)에 크기 100 N 힘을 (가) 0.01 s, (나) 0.2 s 동안 주었다. 최대 변위는?</p>
+    </div>
+    <p><i>풀이.</i> 힘이 걸린 동안의 응답은 계단 힘의 응답 \(\frac{F_0}{k}(1 - \cos\omega_nt)\)이고, 힘이 끝난 뒤는 자유 진동입니다. (가) 펄스가 주기보다 아주 짧아 임펄스(충격량 1 N·s)로 볼 수 있습니다. \(x_{\max} = \hat F/(m\omega_n) = 1/200 = 5.0\) mm(정확한 값 4.99 mm). 정적 처짐 25 mm의 5분의 1뿐입니다. (나) 펄스가 반 주기(0.157 s)보다 길어, 힘이 걸린 동안 이미 \(2F_0/k = 50\) mm까지 갑니다. 정적 처짐의 두 배입니다.</p>
+
+    <h3><span class="no">4.1.3</span>충격 응답 스펙트럼</h3>
+    <p>최대 응답과 정적 처짐의 비를 펄스 길이/고유 주기에 대해 그린 것이 충격 응답 스펙트럼입니다. 사각 펄스는 길이가 반 주기 이상이면 2, 짧으면 \(2\sin(\pi t_0/T_n)\)로 줄어듭니다. 낙하 충격을 받는 전자 제품은 고유 주기에 비해 충격이 짧도록(부드러운 완충재로 충격을 늘리지 않도록 주의) 설계하고, 지진 하중은 건물의 고유 주기별 응답 스펙트럼으로 설계합니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 합성곱은 선형계에만 씁니다. (2) 처음에 움직이고 있었다면 자유 진동 응답을 더합니다. (3) 충격 뒤 감쇠가 있으면 최대값은 조금 줄지만, 첫 봉우리는 감쇠의 영향을 덜 받습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>임펄스 응답 \(h(t) = e^{-\zeta\omega_nt}\sin\omega_dt/(m\omega_d)\).</li>
+        <li>\(x(t) = \int_0^tF(\tau)h(t - \tau)d\tau\): 과거 임펄스 응답의 합.</li>
+        <li>사각 펄스 최대 배율: 길이 ≥ 반 주기면 2, 짧으면 \(2\sin(\pi t_0/T_n)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 계를 충격량 2 N·s로 치면 최대 변위는?
+          <details><summary>답</summary><p>\(2/(10\times20) = 10\) mm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 펄스 길이 0.05 s일 때 최대 변위는?
+          <details><summary>답</summary><p>\(t_0/T_n = 0.159\), 배율 \(2\sin(0.5) = 0.959\), 24 mm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>계단 힘(갑자기 걸려 계속 유지)의 응답 \(\frac{F_0}{k}(1 - \cos\omega_nt)\)을 합성곱으로 얻어라(감쇠 없음).
+          <details><summary>답</summary><p>\(x = \int_0^tF_0\frac{\sin\omega_n(t - \tau)}{m\omega_n}d\tau = \frac{F_0}{m\omega_n^2}[1 - \cos\omega_nt]\), \(m\omega_n^2 = k\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

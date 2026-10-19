@@ -2,12 +2,14 @@
    - std:    성취기준 코드 → 표시한 시각   ("할 수 있다" 점검)
    - seen:   카드 id → 표시한 시각        ("이 카드를 끝까지 공부했어요")
    - visits: 최근에 연 절 페이지 30개      (메인 화면의 "이어서 공부하기", 기록 페이지)
+   - wrong:  시험 연습에서 틀린 문제 id → { c: 과목 코드, ts }   (다시 맞히면 지운다. js/exam.js)
+   - exams:  시험 연습 결과 최근 50개 { c, ts, n, ok, scope }
    페이지마다 있는 요소를 찾아 기록을 그리고 바꾼다. 다른 탭에서 바꾸면(storage 이벤트) 다시 그린다. */
 window.QProgress = (() => {
   "use strict";
   const KEY = "quri-progress";
   const ROOT = new URL("../", document.currentScript.src);   // 사이트 맨 위
-  const empty = () => ({ v: 2, std: {}, seen: {}, visits: [] });
+  const empty = () => ({ v: 2, std: {}, seen: {}, visits: [], wrong: {}, exams: [] });
   let data = empty();
   const load = () => {
     let raw = null;
@@ -32,19 +34,27 @@ window.QProgress = (() => {
     visits: () => data.visits.slice(),
     last: () => data.visits[0] || null,
     root: ROOT,
+    /* 시험 연습 */
+    wrong: (course) => Object.keys(data.wrong).filter((id) => !course || data.wrong[id].c === course),
+    setWrong(id, course, v) { if (v) data.wrong[id] = { c: course, ts: Date.now() }; else delete data.wrong[id]; },
+    logExam(r) { data.exams = [{ ts: Date.now(), ...r }, ...data.exams].slice(0, 50); save(); paint(); },
+    exams: (course) => data.exams.filter((x) => !course || x.c === course),
     export: () => JSON.stringify({ ...data, exported: new Date().toISOString(), app: "QURI" }, null, 1),
     import(text) {
       const o = JSON.parse(text);
       if (!o || o.v !== 2 || typeof o.std !== "object" || typeof o.seen !== "object") throw new Error("QURI 학습 기록 파일이 아닙니다");
       data.std = { ...data.std, ...o.std };
       data.seen = { ...data.seen, ...o.seen };
+      data.wrong = { ...data.wrong, ...(o.wrong || {}) };
+      data.exams = [...(o.exams || []), ...data.exams].sort((a, b) => b.ts - a.ts)
+        .filter((x, i, a) => i === 0 || x.ts !== a[i - 1].ts).slice(0, 50);
       const all = [...(o.visits || []), ...data.visits].sort((a, b) => b.ts - a.ts);
       const seenHref = new Set();
       data.visits = all.filter((x) => (seenHref.has(x.href) ? false : seenHref.add(x.href))).slice(0, 30);
       save(); paint();
     },
     reset() { data = empty(); save(); paint(); },
-    stats: () => ({ std: Object.keys(data.std).length, seen: Object.keys(data.seen).length }),
+    stats: () => ({ std: Object.keys(data.std).length, seen: Object.keys(data.seen).length, wrong: Object.keys(data.wrong).length, exams: data.exams.length }),
     onChange: (f) => listeners.push(f),
   };
   const listeners = [];
@@ -75,7 +85,7 @@ window.QProgress = (() => {
   function paint() {
     document.querySelectorAll("input[data-std]").forEach((b) => { b.checked = api.done(b.dataset.std); b.closest("li")?.classList.toggle("done", b.checked); });
     document.querySelectorAll(".q-checklist").forEach((box) => {
-      const all = box.querySelectorAll("input[data-std]"), k = [...all].filter((b) => b.checked).length;
+      const all = box.querySelectorAll("li:not(.uni-off) input[data-std]"), k = [...all].filter((b) => b.checked).length;
       const out = box.querySelector(".q-count"); if (out) out.textContent = `${k}/${all.length} 할 수 있음`;
     });
     document.querySelectorAll(".q-seen-btn").forEach((b) => {
@@ -95,7 +105,7 @@ window.QProgress = (() => {
       if (p) p.textContent = `카드 ${links.filter((a) => a.classList.contains("seen")).length}/${links.length} 공부함`;
     }
     /* 대단원 페이지: 절 목록 */
-    const rows = document.querySelectorAll(".s-row");
+    const rows = document.querySelectorAll(".s-row:not(.uni-off)");   // 학교별 보기로 숨긴 것(.uni-off)은 세지 않는다
     if (rows.length) {
       let sd = 0, st = 0, cd = 0, ct = 0;
       rows.forEach((r) => {
@@ -109,12 +119,12 @@ window.QProgress = (() => {
       if (up) up.textContent = `성취기준 ${sd}/${st} 할 수 있음 · 카드 ${cd}/${ct} 공부함`;
     }
     /* 과목 목차: 대단원 막대와 절 표시 */
-    const units = document.querySelectorAll(".c-unit");
+    const units = document.querySelectorAll(".c-unit:not(.uni-off)");
     if (units.length) {
       let SD = 0, ST = 0, CD = 0, CT = 0;
       units.forEach((u) => {
         let sd = 0, st = 0, cd = 0, ct = 0;
-        u.querySelectorAll(".c-secs li").forEach((li) => {
+        u.querySelectorAll(".c-secs li:not(.uni-off)").forEach((li) => {
           const c = ids(li), k = c.filter(api.seen).length;
           const ok = li.dataset.std ? api.done(li.dataset.std) : c.length > 0 && k === c.length;
           li.classList.toggle("done", ok);
@@ -131,7 +141,7 @@ window.QProgress = (() => {
       /* 책 목차형: 카드별 표시, 절의 카드 진도, '이어서 공부하기'는 아직 끝내지 않은 첫 절로 */
       document.querySelectorAll("[data-card]").forEach((li) => li.classList.toggle("done", api.seen(li.dataset.card)));
       let nextSec = null;
-      document.querySelectorAll(".cx-sec").forEach((li) => {
+      document.querySelectorAll(".cx-sec:not(.uni-off)").forEach((li) => {
         const c = ids(li), k = c.filter(api.seen).length, b = li.querySelector(".cx-badge");
         /* 절 완료(✓)는 성취기준 체크로, 카드 진도와 '이어서'는 본 카드 수로 판단한다 */
         if (b && c.length) { b.textContent = k === c.length ? "카드 완료" : `카드 ${k}/${c.length}`; b.classList.toggle("ok", k === c.length); }

@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-02-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e14-encode" data-kind="예제" data-std="전전14-02-02">
+  <header class="card-head"><span class="no"></span><h2>분기 명령의 오프셋 인코딩</h2><span class="kind">예제 · B 형식 비트 쪼개기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p><code>bne x10, x0, -8</code>(8바이트 뒤로 분기)의 기계어에서 음수 오프셋은 어떻게 들어갈까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>13비트 2의 보수로 만든 뒤, 맨 아래 0을 빼고 B 형식 자리로 쪼개 넣습니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob"><code>bne x10, x0, -8</code>을 인코딩하라(opcode 1100011, bne funct3 001).</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>−8을 13비트 2의 보수로.</li>
+        <li>imm[12], imm[10:5], imm[4:1], imm[11]을 각 자리로.</li>
+        <li>rs1 = 10, rs2 = 0.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>−8 = 1 1111 1111 1000(13비트). imm[12] = 1, imm[11] = 1, imm[10:5] = 111111, imm[4:1] = 1100. <span class="q-why">2의 보수</span></li>
+        <li>배치: imm[12] | imm[10:5] | rs2 | rs1 | funct3 | imm[4:1] | imm[11] | opcode = 1 111111 | 00000 | 01010 | 001 | 1100 | 1 | 1100011. <span class="q-why">필드 배치</span></li>
+        <li>16진: 0xFE051CE3. <span class="q-why">결과</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>부호 비트(imm[12])를 명령의 31번 비트에 두어 모든 형식에서 부호 확장 회로를 공유합니다. 반복문의 끝에서 앞으로 돌아가는 분기는 이렇게 음수 오프셋을 씁니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>1111 1110 0000 0101 0001 1100 1110 0011 = 0xFE051CE3. 해독하면 imm = −8.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p><code>beq x5, x6, +16</code>의 기계어는?</p>
+      <details><summary>답</summary><p>0x00628863.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>범위</h3>
+    <p class="q">B 형식 분기 오프셋의 범위는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>−4096 ~ +4094바이트<span class="why"><b>맞습니다.</b> 13비트 부호 있는 짝수.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>−2048 ~ +2047바이트<span class="why"><b>I 형식 상수의 범위입니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>±1 MB<span class="why"><b>jal의 범위입니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>

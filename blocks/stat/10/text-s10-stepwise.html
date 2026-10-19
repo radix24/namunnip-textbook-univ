@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-stepwise" data-kind="본문" data-std="응통10-06-02">
+  <header class="card-head"><span class="no"></span><h2>단계적 선택과 교차검증</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전진, 후진, 단계적 선택의 절차와 한계를 안다.</li>
+        <li>\(k\)겹 교차검증으로 예측 오차를 추정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>AIC, BIC (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>후보가 많을 때</h3>
+    <p>설명변수 후보가 20개면 가능한 모형이 \(2^{20} \approx 100\)만 개입니다. 모두 적합해 볼 수 없으므로 변수를 하나씩 넣거나 빼며 찾아갑니다.</p>
+
+    <h3><span class="no">6.2.1</span>단계적 방법</h3>
+    <ul>
+      <li><b>전진 선택</b>: 빈 모형에서 시작해, 넣었을 때 기준(AIC 등)을 가장 많이 개선하는 변수를 하나씩 추가. 개선이 없으면 멈춤.</li>
+      <li><b>후진 제거</b>: 모든 변수에서 시작해, 빼도 기준이 가장 덜 나빠지는(또는 좋아지는) 변수를 하나씩 제거.</li>
+      <li><b>단계적 선택</b>: 매 단계 추가와 제거를 모두 고려.</li>
+    </ul>
+    <p>R: <code>step(lm(mpg ~ ., data = mtcars), direction = "both")</code>.</p>
+    <div class="tb-note">
+      <b>주의</b> 단계적 방법은 최선의 모형을 보장하지 않고(지역적 탐색), 같은 자료로 고른 뒤 같은 자료로 계산한 p값과 신뢰구간은 지나치게 낙관적입니다. 선택 과정이 이미 "유의해 보이는" 변수를 골랐기 때문입니다(응통5 4.5절의 다중 비교와 같은 문제).
+    </div>
+
+    <h3><span class="no">6.2.2</span>교차검증</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.2.1</span>
+      <p><b>\(k\)겹 교차검증</b>: 자료를 \(k\)개 묶음으로 나누고, 묶음 하나를 빼고 나머지로 적합해 뺀 묶음을 예측하는 일을 \(k\)번 되풀이한다. 예측 오차 제곱의 평균을 모형의 예측 오차 추정값으로 쓴다.</p>
+    </div>
+    <p>모형을 고르는 데 쓴 자료로 성능을 재지 않으므로 과적합을 정직하게 드러냅니다. \(k = 5\) 또는 10이 흔하고, \(k = n\)이면 하나씩 빼는 교차검증(LOOCV)입니다. 선형회귀의 LOOCV는 다시 적합하지 않고 \(\frac1n\sum\left(\frac{e_i}{1 - h_{ii}}\right)^2\)로 계산됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.2</span>
+      <p>\(k\)겹 교차검증 R 코드를 직접 쓰세요.</p>
+    </div>
+    <pre><code>set.seed(1); k &lt;- 5; fold &lt;- sample(rep(1:k, length.out = nrow(mtcars)))
+cv &lt;- function(formula) mean(sapply(1:k, function(j) {
+  fit &lt;- lm(formula, data = mtcars[fold != j, ])
+  mean((mtcars$mpg[fold == j] - predict(fit, mtcars[fold == j, ]))^2) }))
+cv(mpg ~ wt); cv(mpg ~ wt + hp); cv(mpg ~ .)</code></pre>
+    <p>모든 변수를 넣은 모형은 자료 적합(\(R^2\))은 가장 좋지만 교차검증 오차는 작은 모형보다 크게 나오는 것이 보통입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>단계적 선택은 빠르지만 최선을 보장하지 않고, 선택 후 추론이 낙관적입니다.</li>
+        <li>교차검증은 새 자료에 대한 예측 오차를 정직하게 추정합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>순수한 난수 설명변수 50개와 난수 반응 \(n = 100\)으로 단계적 선택을 하면 어떤 일이 생길까요?
+          <details><summary>답</summary><p>관계가 전혀 없는데도 몇 개 변수가 "유의한" 모형이 골라지는 경우가 많습니다. 선택 후 p값을 그대로 믿으면 안 되는 이유입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

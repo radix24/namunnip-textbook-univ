@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-routh" data-kind="본문" data-std="기계15-03-01">
+  <header class="card-head"><span class="no"></span><h2>안정도와 Routh 판별법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형 계가 안정하려면 모든 극점의 실수부가 음수여야 함을 안다.</li>
+        <li>특성방정식을 풀지 않고 Routh 표로 오른쪽 반평면 근의 개수를 센다.</li>
+        <li>이득의 안정 범위와 진동이 시작되는 진동수를 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>극점과 응답 (<a href="02-02.html">2.2절</a>), 블록선도 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>안정의 조건</h3>
+    <p>응답에는 극점마다 \(e^{st}\) 꼴의 항이 들어갑니다. 실수부가 음수면 시간이 지나며 사라지고, 양수면 끝없이 커집니다. 그래서 폐루프 특성방정식 \(1 + GH = 0\)의 모든 근이 왼쪽 반평면에 있어야 안정입니다. 차수가 높으면 근을 직접 구하기 어려우므로 계수만으로 판정합니다.</p>
+    <p>필요조건: 모든 계수가 같은 부호이고 빠진 항이 없어야 합니다. 이것만으로는 부족해(3차 이상) Routh 표를 씁니다.</p>
+
+    <h3><span class="no">3.1.2</span>Routh 표</h3>
+    <div class="tb-env thm">
+      <span class="lb">Routh 판별법</span>
+      <p>\(a_ns^n + a_{n-1}s^{n-1} + \cdots + a_0 = 0\)의 계수를 첫 두 행에 번갈아 쓰고(\(a_n, a_{n-2}, \ldots\) / \(a_{n-1}, a_{n-3}, \ldots\)), 아래 행은 바로 위 두 행으로 \(b_1 = \dfrac{a_{n-1}a_{n-2} - a_na_{n-3}}{a_{n-1}}\)처럼 계산한다. 첫 열의 부호가 바뀌는 횟수 = 오른쪽 반평면 근의 개수.</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1 <span class="nm">(이득의 안정 범위)</span></span>
+      <p>\(G = \dfrac{K}{s(s + 2)(s + 4)}\)에 단위 피드백을 걸었다. 안정한 \(K\)의 범위와, 경계에서 진동하는 진동수는?</p>
+    </div>
+    <p><i>풀이.</i> 특성방정식 \(s^3 + 6s^2 + 8s + K = 0\). Routh 표:</p>
+    <p>\(s^3\): 1, 8 / \(s^2\): 6, \(K\) / \(s^1\): \((48 - K)/6\) / \(s^0\): \(K\).</p>
+    <p>첫 열이 모두 양수이려면 \(0 &lt; K &lt; 48\). \(K = 48\)이면 \(s^1\) 행이 0이 되고, 그 위 행으로 만든 보조 방정식 \(6s^2 + 48 = 0\)에서 \(s = \pm2.83i\), 곧 2.83 rad/s로 끝없이 진동합니다. 이득을 너무 키우면 불안정해진다는 것을 숫자로 보여 줍니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 첫 열에 0이 생기면 작은 양수 \(\varepsilon\)으로 바꿔 계속하고, 한 행 전체가 0이면 보조 방정식을 미분해 채웁니다. (2) Routh 표는 안정 여부만 알려 주고 얼마나 안정한지(감쇠, 여유)는 근궤적·주파수 응답으로 봅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>안정: 모든 폐루프 극점의 실수부 &lt; 0.</li>
+        <li>Routh 표 첫 열 부호 변화 수 = 불안정 근 수.</li>
+        <li>경계 이득에서 보조 방정식으로 진동 진동수.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(s^3 + 2s^2 + 3s + 10 = 0\)은 안정한가?
+          <details><summary>답</summary><p>\(s^1\) 행: \((6 - 10)/2 = -2\). 첫 열 1, 2, −2, 10으로 부호가 두 번 바뀌어 오른쪽 근 2개, 불안정.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 \(K = 24\)일 때 첫 열은? 안정 여유를 말로 설명하여라.
+          <details><summary>답</summary><p>1, 6, 4, 24로 모두 양수. 한계 이득 48의 절반이라 이득 여유가 2배(약 6 dB)다(5단원).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(G = \dfrac{K(s + 1)}{s(s - 1)(s + 6)}\)(불안정한 플랜트)의 안정 범위는?
+          <details><summary>답</summary><p>\(s^3 + 5s^2 + (K - 6)s + K = 0\). \(s^1\) 행 \((5(K - 6) - K)/5 = (4K - 30)/5\). \(K &gt; 7.5\)이면 안정. 불안정한 플랜트는 이득이 충분히 커야 안정해진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전5-02-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e5-materials.js"]
+}
+-->
+<article class="card q-card" id="exp-e5-tunnel" data-kind="탐구" data-std="전전5-02-02">
+  <header class="card-head"><span class="no"></span><h2>장벽 두께와 터널링 확률</h2><span class="kind">탐구 · 옹스트롬 하나에 몇 배</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>장벽을 0.1 nm(원자 반 개 정도)만 두껍게 해도 투과 확률은 얼마나 줄어들까요? 플래시 메모리와 STM이 이 민감도를 어떻게 쓸까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>높이 \(V_0\), 두께 d인 사각 장벽에 에너지 \(E \lt V_0\)인 전자가 올 때 투과 확률의 정확한 식은 \(T = \left[1 + \dfrac{V_0^2\sinh^2(\kappa d)}{4E(V_0 - E)}\right]^{-1}\), \(\kappa = \sqrt{2m^*(V_0 - E)}/\hbar\)입니다. 두꺼운 장벽에서는 \(T \approx 16\frac{E}{V_0}(1 - \frac{E}{V_0})e^{-2\kappa d}\)(2.2절)입니다. 세로축은 \(\log_{10}T\)라 직선이면 지수 감소입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>V₀ = <b data-show="v0" data-fix="1">2.0</b> eV</span><input type="range" name="v0" min="0.5" max="5" step="0.1" value="2" aria-label="장벽 높이"></label>
+        <label><span>E/V₀ = <b data-show="e" data-fix="2">0.50</b></span><input type="range" name="e" min="0.05" max="0.95" step="0.05" value="0.5" aria-label="전자 에너지 비율"></label>
+        <label><span>d = <b data-show="d" data-fix="2">1.00</b> nm</span><input type="range" name="d" min="0.1" max="3" step="0.05" value="1" aria-label="장벽 두께"></label>
+        <label><span>유효 질량</span><select name="mass" aria-label="유효 질량"><option value="1" selected>자유 전자 1</option><option value="0.26">Si 0.26</option><option value="0.067">GaAs 0.067</option></select></label>
+      </div>
+      <canvas aria-label="장벽 두께에 따른 투과 확률의 로그"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>처음 화면(\(V_0 - E = 1\) eV, d = 1 nm): \(\kappa = 5.12\) nm⁻¹, \(T = 1.42\times10^{-4}\). 예제 2.2.1의 \(e^{-2\kappa d} = 3.6\times10^{-5}\)에 앞 인수 \(16 \times 0.5 \times 0.5 = 4\)를 곱한 값입니다.</span></li>
+        <li><b>0.1 nm의 차이</b><span>"약 2.79배씩"이 출력됩니다. d를 1 nm → 2 nm로 하면 \(5.04\times10^{-9}\)으로 약 2만 8천 배 줄어듭니다.</span></li>
+        <li><b>얇은 장벽</b><span>d = 0.2 nm에서는 정확한 값 0.404, 근사 0.515로 근사가 맞지 않습니다(\(\kappa d \approx 1\)). 0.5 nm에서는 0.0236과 0.0238로 거의 같습니다.</span></li>
+        <li><b>가벼운 전자</b><span>GaAs(0.067)로 바꾸면 d = 1 nm에서 \(T = 0.25\)로 커집니다. κ가 \(\sqrt{m^*}\)에 비례하기 때문입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>주사 터널링 현미경(STM)은 탐침과 시료 사이 0.1 nm 차이가 전류를 몇 배씩 바꾸는 것을 이용해 원자 하나의 높이를 봅니다. 플래시 메모리는 수 nm 산화막을 통한 터널링으로 전하를 넣고 빼며, 반대로 트랜지스터의 게이트 산화막을 얇게 하면 터널링 누설이 커져 high-k 절연막을 쓰게 되었습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"터널링은 장벽보다 에너지가 큰 전자만 넘는 것이다."</b> 에너지가 장벽보다 작아도 확률적으로 건너가는 것이 터널링입니다. 큰 에너지의 전자가 넘는 것은 고전적인 넘기입니다.</li>
+        <li><b>"두께가 2배면 확률이 1/2이 된다."</b> 지수 감소라 확률이 제곱만큼(위 예에서 1.4×10⁻⁴ → 5×10⁻⁹) 줄어듭니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

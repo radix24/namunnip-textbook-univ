@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-01-02",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e14-arch.js"]
+}
+-->
+<article class="card q-card" id="exp-e14-amdahl" data-kind="탐구" data-std="전전14-01-02">
+  <header class="card-head"><span class="no"></span><h2>일부만 빨라지면 전체는 얼마나?</h2><span class="kind">탐구 · Amdahl 법칙의 포화</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>실행 시간의 90%를 차지하는 부분을 1000배 빠르게 하면 프로그램은 1000배 빨라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>개선 가능한 비율 f와 그 부분의 가속 s로 전체 가속 \(1/((1 - f) + f/s)\)를 계산합니다(1.2절). 가로축은 log₁₀ s, 빨간 점선은 상한 1/(1 − f)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>f = <b data-show="f" data-fix="2">0.80</b></span><input type="range" name="f" min="0.1" max="0.99" step="0.01" value="0.8" aria-label="개선 비율"></label>
+        <label><span>s = <b data-show="s" data-fix="0">10</b>배</span><input type="range" name="s" min="1" max="1000" step="1" value="10" aria-label="부분 가속"></label>
+      </div>
+      <canvas aria-label="부분 가속에 따른 전체 가속"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>f = 0.8, s = 10: 전체 3.571배, 상한 5배(예제 1.2.1). 개선 후 시간의 71.4%가 개선 안 된 부분입니다.</span></li>
+        <li><b>100배</b><span>s = 100이면 4.808배. 열 배를 더 투자했는데 35%만 늘었습니다.</span></li>
+        <li><b>f = 0.9, s = 1000</b><span>전체 9.91배, 상한 10배. 남은 10%가 전부를 정합니다.</span></li>
+        <li><b>병렬 처리</b><span>f를 병렬화 비율 p, s를 코어 수 N으로 읽으면 같은 그래프입니다. p = 0.95면 1000코어로도 19.6배.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>GPU 가속, 하드웨어 가속기, 병렬화의 효과를 미리 어림할 때 씁니다. 실제로는 병렬화 부분의 통신·동기화 비용 때문에 이 곡선보다 더 낮습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"가장 큰 부분을 빠르게 하면 끝이다."</b> 개선 후에는 나머지가 병목이 되어, 다음 개선 대상을 다시 찾아야 합니다.</li>
+        <li><b>"s를 키우면 가속이 계속 는다."</b> 1/(1 − f)에서 멈춥니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

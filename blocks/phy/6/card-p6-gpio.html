@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-05-02",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-p6-gpio" data-kind="예제" data-std="물리6-05-02">
+  <header class="card-head"><span class="no"></span><h2>레지스터 비트로 LED 켜기</h2><span class="kind">비트 연산 · 마스크 · 문제 해결 전략</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>입출력 핀은 레지스터의 비트 하나에 대응합니다. 다른 핀을 건드리지 않고 한 비트만 바꾸려면 OR(켜기), AND와 NOT(끄기), XOR(뒤집기) 마스크를 씁니다.</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 비트 조작</span>
+      <ol>
+        <li>바꿀 핀 번호로 마스크 \(1 \ll n\)을 만든다.</li>
+        <li>켜기: 레지스터 |= 마스크.</li>
+        <li>끄기: 레지스터 &= ~마스크. 뒤집기: ^= 마스크.</li>
+        <li>결과를 이진수로 적어 다른 비트가 그대로인지 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">8비트 출력 레지스터가 0b1010_0001이다. (가) 3번 핀 켜기 (나) 0번 핀 끄기 (다) 7번 핀 뒤집기를 차례로 하면 결과는?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) 마스크 0b0000_1000, OR: 0b1010_1001.</div><span class="q-why">3번 비트만 1이 됨.</span></li>
+        <li><div>(나) ~0b0000_0001 = 0b1111_1110, AND: 0b1010_1000.</div><span class="q-why">0번 비트만 0.</span></li>
+        <li><div>(다) 마스크 0b1000_0000, XOR: 0b0010_1000.</div><span class="q-why">7번 비트가 1 → 0.</span></li>
+        <li class="q-end"><div>16진수 0x28.</div><span class="q-why">확인용 표기.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>레지스터 전체를 새 값으로 덮어쓰면 다른 장치가 쓰는 핀까지 바뀔 수 있습니다. 마스크 연산은 펌웨어에서 가장 자주 쓰는 기술입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>처음 0xA1에서 비트 3 켜고(+8), 비트 0 끄고(−1), 비트 7 끄면(−128) \(161 + 8 - 1 - 128 = 40 = \)0x28. 같습니다.</p>
+    </section>
+  </div>
+</article>

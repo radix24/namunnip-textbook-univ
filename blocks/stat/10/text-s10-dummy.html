@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-dummy" data-kind="본문" data-std="응통10-03-01">
+  <header class="card-head"><span class="no"></span><h2>가변수로 범주형 설명변수 넣기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>범주 \(k\)개를 가변수 \(k-1\)개로 부호화한다.</li>
+        <li>가변수 계수를 기준 범주와의 차이로 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 표현 (<a href="02-01.html">2.1절</a>), 부분 F 검정 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>전공은 숫자가 아니다</h3>
+    <p>전공(인문, 사회, 이공)을 1, 2, 3으로 넣으면 "인문에서 사회로 가는 효과 = 사회에서 이공으로 가는 효과"라는 근거 없는 가정이 생깁니다. 범주마다 따로 효과를 주려면 가변수를 씁니다.</p>
+
+    <h3><span class="no">3.1.1</span>부호화</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.1</span>
+      <p><b>가변수</b>(지시변수): 해당 범주이면 1, 아니면 0. 범주가 \(k\)개이면 하나를 <b>기준 범주</b>로 두고 나머지 \(k-1\)개에 가변수를 만든다.</p>
+    </div>
+    <p>\(k\)개를 모두 만들면 그 합이 언제나 1이라 절편 열과 같아져 \(X\)의 열이 일차종속이 되고 \((X^\top X)^{-1}\)이 없습니다(가변수 함정). R은 factor 변수를 넣으면 알파벳 순서 첫 범주를 기준으로 자동 부호화합니다.</p>
+
+    <h3><span class="no">3.1.2</span>해석</h3>
+    <p>모형 \(y = \beta_0 + \beta_1x + \gamma_2D_{\text{사회}} + \gamma_3D_{\text{이공}} + \varepsilon\)(기준: 인문). 범주별 평균 식은</p>
+    <ul>
+      <li>인문: \(\beta_0 + \beta_1x\)</li>
+      <li>사회: \((\beta_0 + \gamma_2) + \beta_1x\)</li>
+      <li>이공: \((\beta_0 + \gamma_3) + \beta_1x\)</li>
+    </ul>
+    <p>기울기는 같고 절편만 다른 평행한 직선 세 개입니다. \(\gamma_2\)는 "\(x\)가 같을 때 사회 계열과 인문 계열의 평균 차이"입니다. 전공 변수 전체의 효과는 \(\gamma_2 = \gamma_3 = 0\)을 부분 F 검정으로 봅니다. 기준 범주를 바꾸면 계수 값은 바뀌지만 적합값과 F 검정은 같습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2</span>
+      <p><code>mtcars</code>에서 <code>mpg ~ wt + factor(cyl)</code>를 적합하고 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> 계수: 절편 33.99, wt −3.206, cyl6 −4.256, cyl8 −6.071. 무게가 같을 때 6기통은 4기통보다 연비가 평균 약 4.3, 8기통은 약 6.1 mpg 낮습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>범주 \(k\)개 → 가변수 \(k-1\)개, 나머지는 기준.</li>
+        <li>계수 = 기준 범주와의 평균 차이(다른 변수 고정).</li>
+        <li>범주 변수 전체 효과는 부분 F 검정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 6기통과 8기통의 차이 추정값은?
+          <details><summary>답</summary><p>\(-6.071 - (-4.256) = -1.815\). 8기통이 약 1.8 mpg 낮습니다. 표준오차는 공분산까지 써서 구하거나 기준을 6기통으로 바꿔 적합합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

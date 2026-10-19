@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-04-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e3-circuits.js"]
+}
+-->
+<article class="card q-card" id="exp-e3-opamp" data-kind="탐구" data-std="전전3-04-01">
+  <header class="card-head"><span class="no"></span><h2>연산증폭기 회로의 전달 특성 그려 보기</h2><span class="kind">탐구 · 이상 조건이 맞는 범위</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>4.1절의 이득 공식은 "이득이 무한대이고 출력이 전원 안에 있을 때"의 결과입니다. 열린 루프 이득이 1000밖에 안 되면 얼마나 틀릴까요? 입력이 커져 출력이 전원에 닿으면 그래프는 어떻게 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가로축은 입력 \(v_1\), 세로축은 출력 \(v_o\)입니다(전달 특성). 회색 점선은 이상 공식, 파란 선은 유한 이득 \(A\)의 VCVS 모형을 정확히 푼 결과에 출력 한계(전원보다 1.5 V 낮음, 빨간 점선)를 씌운 것입니다. 차동 증폭기에서는 \(R_1\)이 두 입력 저항, \(R_f\)가 되먹임 저항과 비반전 쪽 접지 저항입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>회로</span><select name="cfg" aria-label="회로"><option value="inv" selected>반전</option><option value="non">비반전</option><option value="fol">전압 폴로어</option><option value="dif">차동</option></select></label>
+        <label class="no-fol"><span>R₁ = <b data-show="r1">10</b> kΩ</span><input type="range" name="r1" min="1" max="100" step="1" value="10" aria-label="R1"></label>
+        <label class="no-fol"><span>R_f = <b data-show="rf">100</b> kΩ</span><input type="range" name="rf" min="1" max="1000" step="1" value="100" aria-label="Rf"></label>
+        <label><span>v₁ = <b data-show="v1" data-fix="2">0.50</b> V</span><input type="range" name="v1" min="-2" max="2" step="0.01" value="0.5" aria-label="입력 v1"></label>
+        <label class="only-dif"><span>v₂ = <b data-show="v2" data-fix="2">0.60</b> V</span><input type="range" name="v2" min="-2" max="2" step="0.01" value="0.6" aria-label="입력 v2"></label>
+        <label><span>log₁₀ A = <b data-show="la" data-fix="1">5.0</b></span><input type="range" name="la" min="1" max="6" step="0.1" value="5" aria-label="열린 루프 이득의 로그"></label>
+        <label><span>전원 ± <b data-show="vs">12</b> V</span><input type="range" name="vs" min="3" max="18" step="1" value="12" aria-label="전원 전압"></label>
+      </div>
+      <canvas aria-label="입력에 따른 출력. 회색 점선 이상, 파랑 실제"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>포화</b><span>반전, 이득 10, 입력 0.5 V면 출력 −5 V로 직선 위에 있습니다. 입력을 1.2 V보다 크게 하면 −10.5 V에서 평평해집니다. 포화 구간에서는 두 입력의 전압 차가 더 이상 0이 아닙니다.</span></li>
+        <li><b>유한 이득</b><span>log A를 3(A = 1000)으로 낮추면 이득 10의 오차가 약 1.1%, R_f를 1000 kΩ(이득 100)으로 하면 약 9%로 커집니다. 이득을 크게 잡을수록 \(A\)가 충분히 커야 합니다.</span></li>
+        <li><b>폴로어</b><span>폴로어는 A = 10⁵이면 오차가 0.001%로, 출력이 입력을 거의 정확히 따라갑니다.</span></li>
+        <li><b>차동</b><span>v₁ = 0.50, v₂ = 0.60, 이득 10이면 출력 1 V입니다. 두 입력을 같이 움직여도(차이가 같으면) 출력은 그대로입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>되먹임 덕분에 회로 이득이 \(A\)가 아니라 저항 비로 정해집니다. 그 대가로 회로 이득은 \(A\)보다 훨씬 작아지고, 그만큼 정확도와 대역폭을 얻습니다(전전13 궤환). 실제 연산증폭기의 주파수 한계와 슬루율은 아날로그실험(전전9)의 연산증폭기 카드에서 봅니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"가상 단락은 언제나 성립한다."</b> 출력이 포화되거나 되먹임이 없으면 성립하지 않습니다. 계산한 출력이 전원 범위를 넘으면 먼저 의심하세요.</li>
+      </ul>
+    </section>
+  </div>
+</article>

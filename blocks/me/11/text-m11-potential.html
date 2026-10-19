@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계11-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-potential" data-kind="본문" data-std="기계11-02-01">
+  <header class="card-head"><span class="no"></span><h2>포텐셜 유동: 간단한 흐름을 겹쳐 원기둥 주위 흐름 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>회전이 없고 점성을 무시한 흐름을 속도 퍼텐셜과 유선 함수로 나타낸다.</li>
+        <li>균일 흐름, 소스, 와류, 이중 소스(더블릿)를 겹쳐 원기둥 주위 흐름을 만든다.</li>
+        <li>원기둥 표면의 속도와 압력 계수를 구하고, 순환이 있을 때의 양력을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>유선과 Bernoulli 식, 연속 방정식 (<a href="../5/01-01.html">유체역학 1·2단원</a>), 극좌표.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>퍼텐셜과 유선 함수</h3>
+    <p>물체에서 멀리 떨어진 곳이나 경계층 바깥의 흐름은 점성 효과가 작고, 유체 덩어리가 제자리에서 돌지 않는(비회전) 경우가 많습니다. 이런 흐름은 속도를 하나의 스칼라 함수의 기울기로 쓸 수 있습니다.</p>
+    <p class="q-term"><b>속도 퍼텐셜</b> \(\phi\): \(u = \partial\phi/\partial x\), \(v = \partial\phi/\partial y\)인 함수. 높이 함수의 경사가 곧 속도라고 생각하면 된다.</p>
+    <p class="q-term"><b>유선 함수</b> \(\psi\): \(u = \partial\psi/\partial y\), \(v = -\partial\psi/\partial x\)인 함수. \(\psi\)가 같은 선이 유선이고, 두 유선의 \(\psi\) 차가 그 사이를 흐르는 유량(단위 폭당)이다.</p>
+    <p>비압축성 연속 방정식을 쓰면 \(\phi\)와 \(\psi\)는 모두 Laplace 방정식 \(\partial^2\phi/\partial x^2 + \partial^2\phi/\partial y^2 = 0\)을 만족합니다. 이 방정식은 선형이라 해 두 개를 더해도 해입니다. 그래서 간단한 흐름들을 더해 복잡한 흐름을 만들 수 있습니다(중첩).</p>
+
+    <h3><span class="no">2.1.2</span>기본 흐름</h3>
+    <div class="tb-env thm">
+      <span class="lb">기본 흐름 (극좌표 \(r\), \(\theta\))</span>
+      <p>균일 흐름 \(U\): \(\psi = Ur\sin\theta\). 소스(세기 \(m\)): \(\psi = \frac{m}{2\pi}\theta\), 바깥으로 퍼지는 흐름 \(v_r = m/(2\pi r)\).</p>
+      <p>자유 와류(반시계 방향 순환 \(\Gamma\)): \(\psi = -\frac{\Gamma}{2\pi}\ln r\), 원을 도는 흐름 \(v_\theta = \Gamma/(2\pi r)\). 더블릿(세기 \(\kappa\)): \(\psi = -\frac{\kappa\sin\theta}{2\pi r}\), 소스와 싱크를 아주 가깝게 붙인 것.</p>
+    </div>
+
+    <h3><span class="no">2.1.3</span>원기둥 주위 흐름</h3>
+    <p>균일 흐름에 더블릿을 더하고 \(\kappa = 2\pi UR^2\)으로 고르면, 반지름 \(R\)인 원 위에서 \(\psi = 0\)이 되어 그 원이 유선, 곧 물체 표면이 됩니다.</p>
+    \[\psi = U\left(r - \frac{R^2}{r}\right)\sin\theta\]
+    \[v_\theta\big|_{r=R} = -2U\sin\theta\]
+    <p>표면 속도는 앞뒤 정체점(\(\theta = 0, \pi\))에서 0, 위아래(\(\theta = \pm90°\))에서 \(2U\)로 최대입니다. Bernoulli 식으로 압력 계수는 \(C_p = (p - p_\infty)/(\frac12\rho U^2) = 1 - 4\sin^2\theta\)로, 정체점에서 1, 위아래에서 −3입니다.</p>
+    <p>여기에 시계 방향 순환 \(\Gamma\)인 와류(위 식에서 \(\Gamma\) 대신 \(-\Gamma\))를 더하면(흐름이 왼쪽에서 올 때 시계 방향으로 도는 원기둥) 위쪽은 빨라지고 아래쪽은 느려져 위아래 압력이 달라지고 위로 양력이 생깁니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">순환이 있는 원기둥 (\(\Gamma\): 시계 방향)</span>
+      \[v_\theta\big|_{r=R} = -2U\sin\theta - \frac{\Gamma}{2\pi R}\]
+      \[\sin\theta_s = -\frac{\Gamma}{4\pi UR}\]
+      \[L' = \rho U\Gamma\quad(\text{Kutta-Joukowski 정리, 단위 길이당 양력})\]
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1 <span class="nm">(회전 원기둥)</span></span>
+      <p>반지름 0.5 m 원기둥이 10 m/s 공기(\(\rho = 1.2\) kg/m³) 속에 있다. 순환이 없을 때 표면 최대 속도와 최소 압력 계수는? 순환 20 m²/s를 주면 정체점 위치와 단위 길이당 양력은?</p>
+    </div>
+    <p><i>풀이.</i> 순환이 없으면 최대 속도 20 m/s, \(C_{p,\min} = -3\). 순환이 있으면 \(\sin\theta_s = -20/(4\pi\times10\times0.5) = -0.318\), 정체점은 \(\theta = -18.6°\)와 \(-161.4°\)로 아래쪽으로 내려옵니다. 양력 \(1.2\times10\times20 = 240\) N/m. 순환이 \(4\pi UR = 62.8\) m²/s를 넘으면 정체점이 표면을 떠나 원기둥 아래로 떨어집니다(포텐셜 흐름 탐구).</p>
+
+    <div class="tb-note"><b>주의</b>(1) 포텐셜 흐름은 점성을 무시하므로 벽에서 미끄러지는 흐름입니다. 실제로는 벽에 경계층이 생기고 뒤쪽에서 떨어져 나가므로, 앞쪽 압력 분포는 잘 맞지만 뒤쪽은 크게 다릅니다(2.2절, 3단원). (2) 회전하는 원기둥에서 순환은 표면 속도와 경계층이 정하므로 \(\Gamma = 2\pi R\cdot\omega R\)는 대략의 상한일 뿐입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>비회전·비점성 흐름: \(\phi\), \(\psi\)가 Laplace 방정식을 만족, 중첩 가능.</li>
+        <li>균일 흐름 + 더블릿 = 원기둥, 표면 \(v_\theta = -2U\sin\theta\), \(C_p = 1 - 4\sin^2\theta\).</li>
+        <li>와류를 더하면 양력 \(L' = \rho U\Gamma\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>원기둥 표면에서 압력이 자유 흐름 압력과 같은(\(C_p = 0\)) 각도는?
+          <details><summary>답</summary><p>\(\sin^2\theta = 1/4\), \(\theta = \pm30°, \pm150°\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>균일 흐름 \(U\)에 소스 \(m\)을 더하면 앞쪽은 둥글고 뒤로 열린 물체(Rankine 반물체)가 된다. 정체점은 소스에서 얼마나 앞에 있는가?
+          <details><summary>답</summary><p>소스의 흐름 \(m/(2\pi r)\)이 \(U\)와 상쇄되는 곳: \(r = m/(2\pi U)\), 소스 앞쪽에 있다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제에서 순환이 정확히 \(4\pi UR\)이면 정체점은 어디인가? 표면 최대 속도는?
+          <details><summary>답</summary><p>\(\sin\theta_s = -1\), 두 정체점이 맨 아래(\(\theta = -90°\))에서 하나로 합쳐진다. 맨 위 속도는 \(2U + 2U = 4U = 40\) m/s.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

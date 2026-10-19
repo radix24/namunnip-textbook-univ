@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전17-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e17-rpeak" data-kind="본문" data-std="전전17-06-01">
+  <header class="card-head"><span class="no"></span><h2>ECG에서 R 피크 찾기와 심박수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>ECG의 P, QRS, T 파와 R 피크를 안다.</li>
+        <li>기저선 제거, 전원 잡음 제거, 문턱과 불응기로 R 피크를 검출하는 처리 순서를 설계한다.</li>
+        <li>RR 간격으로 심박수와 변이도를 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>생체 신호 대역 (<a href="02-01.html">2.1절</a>), 이동 평균 필터 (<a href="../6/02-03.html">전전6 2.3절</a>), 이 절의 실습.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>처리 순서</h3>
+    <ol>
+      <li><b>기저선 제거</b>: 호흡 등으로 0.1~0.5 Hz 흔들림. 긴 이동 평균(약 0.6 s)을 빼거나 고역 통과(0.5 Hz).</li>
+      <li><b>전원 잡음 제거</b>: 1/60 s 이동 평균(60 Hz와 고조파에 영점) 또는 노치.</li>
+      <li><b>QRS 강조</b>: 미분·제곱·적분(Pan-Tompkins)으로 기울기가 급한 QRS를 키운다(선택).</li>
+      <li><b>검출</b>: 문턱(최댓값의 일정 비율 또는 적응 문턱)을 넘는 극대점을 찾되, 불응기(약 0.2~0.3 s) 안의 두 번째 봉우리는 무시.</li>
+      <li><b>계산</b>: RR 간격 → 심박수 60/RR(bpm), RR 표준편차(심박 변이도).</li>
+    </ol>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>가상 ECG(250 Hz, 10 s, 평균 간격 0.8 s, 기저선 흔들림과 60 Hz 잡음 포함)에 위 순서(1, 2, 4)를 적용한 결과는?</p>
+    </div>
+    <p><i>풀이.</i> 실습의 실행 결과: 실제 박동 12개 모두 검출, 시각 오차 최대 3.5 ms, RR 평균 0.811 s, 표준편차 0.03 s, 평균 심박수 74.0 bpm. 기저선을 빼지 않으면 호흡 위상에 따라 문턱을 넘지 못하는 박동이 생기고, 불응기가 없으면 T파를 R로 잘못 셀 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "가장 큰 값만 찾으면 R 피크다": 잡음, 큰 T파, 기저선 때문에 전처리와 불응기가 필요합니다. (2) "심박수는 10초 동안 센 박동 수 × 6이다": 박동 수 세기는 끝 처리에 따라 ±1개 차이가 커, RR 간격 평균이 정확합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>기저선 제거 → 60 Hz 제거 → (QRS 강조) → 문턱 + 불응기.</li>
+        <li>심박수 = 60/RR, 변이도 = RR 표준편차.</li>
+        <li>가상 자료 결과: 12/12 검출, 74.0 bpm.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>RR 간격 0.75 s의 심박수는?
+          <details><summary>답</summary><p>80 bpm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>250 Hz에서 1/60 s 이동 평균의 표본 수는? 정확히 60 Hz 영점이 되는가?
+          <details><summary>답</summary><p>약 4표본(4.17). 정수로 반올림해 영점이 조금 어긋나며 완전히 지워지지는 않습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>불응기를 0.3 s로 하면 검출할 수 있는 최대 심박수는?
+          <details><summary>답</summary><p>200 bpm.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

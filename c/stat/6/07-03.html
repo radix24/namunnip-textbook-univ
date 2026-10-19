@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>델타 방법으로 함수의 근사 분포를 구하기 · 수리통계학(1) — QURI</title>
-  <meta name="description" content="수리통계학(1) 7.3 델타 방법으로 함수의 근사 분포를 구하기 — 성취기준: 델타 방법으로 함수의 근사 분포를 구할 수 있다.">
+  <title>델타 방법 · 수리통계학(1) — QURI</title>
+  <meta name="description" content="수리통계학(1) 7.3 델타 방법 — 성취기준: 델타 방법으로 함수의 근사 분포를 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통6&quot;, &quot;title&quot;: &quot;7.3 델타 방법으로 함수의 근사 분포를 구하기&quot;, &quot;sub&quot;: &quot;수리통계학(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통6&quot;, &quot;title&quot;: &quot;7.3 델타 방법&quot;, &quot;sub&quot;: &quot;수리통계학(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,105 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통6-07-03">
+  <section class="topic-hero u-hero has-text" data-sec="응통6-07-03" data-u="서울대 연세대 POSTECH 서강대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">수리통계학(1)</a><span class="mono">/</span><a href="07.html">7. 극한분포</a></div>
-    <h1><span class="sec-no mono">7.3</span>델타 방법으로 함수의 근사 분포를 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통6-07-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통6-07-03] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통6-07-03" aria-label="할 수 있음"><span class="t">델타 방법으로 함수의 근사 분포를 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.3</span>델타 방법</h1>
+    <p class="sec-std"><span class="mono">[응통6-07-03]</span> 델타 방법으로 함수의 근사 분포를 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH · 서강대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-3-1"><span class="mono">7.3.1</span><span>델타 방법</span></a></li><li><a href="#s7-3-2"><span class="mono">7.3.2</span><span>분산 안정화 변환</span></a></li><li><a href="#s7-3-3"><span class="mono">7.3.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s6-delta"><span class="mono">본문</span><span>델타 방법</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s6-delta" data-kind="본문" data-std="응통6-07-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(g(\bar X_n)\)의 근사 분포를 일차 테일러 전개로 구한다.</li>
+        <li>분산 안정화 변환의 아이디어를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>중심극한정리 (<a href="07-02.html">7.2절</a>), 테일러 전개 (응통1 02단원).</li>
+      </ul>
+    </div>
 
+    <h3>평균의 함수는 어떻게 흔들리나</h3>
+    <p>성공률 \(\hat p\)의 분포는 알지만 오즈 \(\hat p/(1-\hat p)\)나 로그 \(\log\hat p\)의 분포가 필요할 때가 많습니다. 함수를 직선으로 근사하면 간단히 답할 수 있습니다.</p>
+
+    <h3 id="s7-3-1"><span class="no">7.3.1</span>델타 방법</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.3.1</span>
+      <p>\(\sqrt n(T_n - \theta) \xrightarrow D N(0, \sigma^2)\)이고 \(g\)가 \(\theta\)에서 미분가능하며 \(g'(\theta) \ne 0\)이면</p>
+      \[\sqrt n\big(g(T_n) - g(\theta)\big) \xrightarrow{D} N\big(0, [g'(\theta)]^2\sigma^2\big).\]
+    </div>
+    <p class="tb-proof">테일러 전개 \(g(T_n) = g(\theta) + g'(\theta)(T_n - \theta) + R_n\). \(T_n \xrightarrow P \theta\)이므로 나머지 \(\sqrt nR_n\)은 확률적으로 0으로 갑니다(엄밀한 증명은 슬러츠키 정리를 씀). 따라서 \(\sqrt n(g(T_n) - g(\theta)) \approx g'(\theta)\sqrt n(T_n - \theta)\)이고, 정규변수에 상수를 곱하면 분산이 \([g'(\theta)]^2\)배가 됩니다. <span class="qed">∎</span></p>
+    <p>실제 계산에서는 "\(g(T)\)의 근사 분산 \(\approx [g'(\theta)]^2 \mathrm{Var}(T)\)"로 기억하면 됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.2</span>
+      <p>양수 값 표본의 \(\log\bar X\)의 근사 분포를 구하세요(평균 \(\mu\), 분산 \(\sigma^2\)).</p>
+    </div>
+    <p><i>풀이.</i> \(g(x) = \log x\), \(g'(\mu) = 1/\mu\). \(\log\bar X \approx N(\log\mu, \sigma^2/(n\mu^2))\). 표준편차가 \(\sigma/(\mu\sqrt n)\), 곧 변동계수를 \(\sqrt n\)으로 나눈 값입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.3</span>
+      <p>\(\hat p\)로 오즈 \(p/(1-p)\)를 추정할 때 근사 분산은?</p>
+    </div>
+    <p><i>풀이.</i> \(g(p) = p/(1-p)\), \(g'(p) = 1/(1-p)^2\), \(\mathrm{Var}(\hat p) = p(1-p)/n\). 근사 분산 \(\frac{p(1-p)}{n(1-p)^4} = \frac{p}{n(1-p)^3}\).</p>
+
+    <h3 id="s7-3-2"><span class="no">7.3.2</span>분산 안정화 변환</h3>
+    <p>포아송 자료는 분산이 평균과 같아 평균이 크면 더 흔들립니다. \(g(x) = \sqrt x\)로 바꾸면 근사 분산이 \([1/(2\sqrt\lambda)]^2\lambda = 1/4\)로 \(\lambda\)와 관계없어집니다. 이렇게 분산을 일정하게 만드는 변환은 회귀분석의 반응 변환(응통10 05단원)에 쓰입니다. 비율에는 \(\arcsin\sqrt p\)가 같은 역할을 합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Var}(g(T)) \approx [g'(\theta)]^2\mathrm{Var}(T)\), 근사 분포는 정규.</li>
+        <li>\(g'(\theta) = 0\)이면 2차 항이 필요합니다.</li>
+        <li>\(\sqrt{\ }\) (포아송), \(\arcsin\sqrt{\ }\) (비율)은 분산 안정화 변환입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-3-3"><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(1/\bar X\)의 근사 분산은?
+          <details><summary>답</summary><p>\(g'(\mu) = -1/\mu^2\), 근사 분산 \(\sigma^2/(n\mu^4)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(\arcsin\sqrt{\hat p}\)의 근사 분산이 \(1/(4n)\)임을 보이세요.
+          <details><summary>답</summary><p>\(g'(p) = \frac{1}{\sqrt{1-p}}\cdot\frac{1}{2\sqrt p}\). \(g'(p)^2 \cdot p(1-p)/n = \frac{1}{4p(1-p)}\cdot\frac{p(1-p)}{n} = \frac1{4n}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s6-delta" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통6-07-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통6-07-03] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH · 서강대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통6-07-03" aria-label="할 수 있음"><span class="t">델타 방법으로 함수의 근사 분포를 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/6/06.html"><span class="mono">대단원 6</span><span><b>표본분포</b></span></a></li><li><a href="../../../c/stat/1/01.html"><span class="mono">대단원 1</span><span>미분적분학 <b>극한과 연속</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-02.html">← 7.2 대수의 법칙과 중심극한정리를 적용하기</a></span>
-        <span></span>
+        <span><a href="07-02.html">← 7.2 대수의 법칙과 중심극한정리</a></span>
+        <span><a href="07-R.html">7.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

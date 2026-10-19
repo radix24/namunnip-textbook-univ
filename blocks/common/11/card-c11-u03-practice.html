@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-03-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c11-u03-practice" data-kind="연습" data-std="공통11-03-01 공통11-03-02 공통11-03-03">
+  <header class="card-head"><span class="no"></span><h2>파이썬 기초 단원 마무리 연습</h2><span class="kind">문제 7 · 개념·계산·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 코드는 그 문제가 확인하는 성취기준입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>낙하 시간 \(t\)(초)를 입력받아 자유 낙하 거리 \(h = \tfrac12gt^2\)(\(g = 9.8\) m/s²)를 소수 둘째 자리까지 출력하세요. \(t = 2.5\)이면 30.62 m가 나와야 합니다. <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>float(input())</code>, f-문자열 <code>{h:.2f}</code>.</p></details>
+        <details><summary>힌트 2</summary><p>거듭제곱은 <code>t ** 2</code>입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>g = 9.8
+t = float(input("t = "))
+h = 0.5 * g * t ** 2
+print(f"h = {h:.2f} m")   # 30.62 (30.625를 반올림)</code></pre>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>하루 기온 리스트 <code>[12.5, 15.0, 17.5, 14.0, 11.0]</code>의 평균과 최고 기온을 구하고, 리스트 축약으로 화씨 리스트를 만드세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>sum(xs) / len(xs)</code>, <code>max(xs)</code>.</p></details>
+        <details><summary>힌트 2</summary><p><code>[c * 9 / 5 + 32 for c in xs]</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>평균 14.0, 최고 17.5. 화씨 <code>[54.5, 59.0, 63.5, 57.2, 51.8]</code>. 리스트 축약은 "각 원소에 같은 계산을 해서 새 리스트를 만든다"를 한 줄로 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>원자량을 딕셔너리 <code>{"H": 1.008, "C": 12.011, "O": 15.999}</code>로 두고, 분자식을 <code>{"H": 2, "O": 1}</code>처럼 주면 분자량을 계산하는 코드를 쓰세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>분자식 딕셔너리를 <code>items()</code>로 돌며 원자량 × 개수를 더합니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>sum(mass[e] * n for e, n in formula.items())</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>mass = {"H": 1.008, "C": 12.011, "O": 15.999}
+def molar(formula):
+    return sum(mass[e] * n for e, n in formula.items())
+print(molar({"H": 2, "O": 1}))          # 18.015
+print(molar({"C": 6, "H": 12, "O": 6})) # 180.156</code></pre>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(n = 1, \ldots, 5\)에 대해 \(n\), \(n^2\), \(\sqrt n\)을 열을 맞춰 출력하는 표를 만드세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>for n in range(1, 6):</code>.</p></details>
+        <details><summary>힌트 2</summary><p>f-문자열의 폭 지정: <code>{n:3d}{n*n:5d}{math.sqrt(n):9.4f}</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>import math
+for n in range(1, 6):
+    print(f"{n:3d}{n * n:5d}{math.sqrt(n):9.4f}")</code></pre>
+          <p>마지막 줄은 <code>  5   25   2.2361</code>입니다. 포트란의 형식 <code>(I3, I5, F9.4)</code>와 같은 일을 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>10000원을 연 5% 복리로 맡기면 처음으로 두 배 이상이 되는 해는 몇 년 뒤인가요? <code>while</code>로 구하세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>잔액이 20000원보다 작은 동안 1.05를 곱하고 해를 하나 늘립니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(1.05^{14} = 1.98\), \(1.05^{15} = 2.08\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>money, year = 10000, 0
+while money &lt; 20000:
+    money *= 1.05
+    year += 1
+print(year, round(money))   # 15 20789</code></pre>
+          <p>"72 법칙"(72 ÷ 5 = 14.4년)으로도 어림할 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span><code>for i in range(1, 10): total += i</code>로 1부터 10까지의 합을 구했다고 생각한 학생이 45를 얻었습니다. 무엇이 틀렸나요? 들여쓰기를 틀리면 어떤 일이 생기나요? <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>range(1, 10)</code>에 10이 들어가나요?</p></details>
+        <details><summary>힌트 2</summary><p>파이썬은 들여쓰기로 반복문의 몸통을 정합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>range(1, 10)</code>은 1~9라 45입니다. <code>range(1, 11)</code>로 고쳐야 55가 나옵니다. 들여쓰기를 잘못하면 반복 안에 있어야 할 문장이 밖으로 나가 한 번만 실행되거나, <code>IndentationError</code>가 납니다. 포트란의 <code>end do</code>처럼 끝을 표시하는 말이 없으니 들여쓰기가 곧 구조입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>점수 배열 <code>g = np.array([55, 72, 90, 38, 81])</code>에서 60점 이상인 학생 수와 그 학생들의 평균을 반복문 없이 구하세요. <span class="mono small dim">[03-03]</span></p>
+        <details><summary>힌트 1</summary><p><code>g &gt;= 60</code>은 참·거짓 배열입니다.</p></details>
+        <details><summary>힌트 2</summary><p>참은 1로 더해지고, 마스크로 고른 배열에도 <code>.mean()</code>을 쓸 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>ok = g &gt;= 60
+print(np.sum(ok), g[ok].mean())   # 3 81.0</code></pre>
+          <p>72, 90, 81의 세 명이고 평균은 \(243/3 = 81\)입니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

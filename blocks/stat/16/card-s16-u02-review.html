@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통16-02-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s16-u02-review" data-kind="연습" data-std="응통16-02-01 응통16-02-02">
+  <header class="card-head"><span class="no"></span><h2>자료 파이프라인 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·적용·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>매주 새로 들어오는 대출 자료를 받아 정제하고 분석용 표를 만드는 파이프라인을 단계별로 설계하세요. 각 단계의 입력과 출력을 쓰세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>수집 → 검증 → 정제 → 변환 → 저장 순서를 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>각 단계는 독립적으로 다시 실행할 수 있어야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 수집: 시스템에서 내보낸 원파일 → 날짜별 원자료 폴더(손대지 않음). (2) 검증: 원자료 → 품질 검사 보고(행 수, 결측, 범위, 중복) — 기준을 벗어나면 중단·알림. (3) 정제: 원자료 → 정제 자료(형 변환, 표기 통일, 가명 처리). (4) 변환: 정제 자료 → 분석용 표(도서관·분야·주별 집계, 변수 생성). (5) 저장: 분석용 표 → 데이터베이스나 버전이 붙은 파일. 각 단계를 스크립트로 만들고 실행 기록을 남깁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>대출 자료의 품질을 매주 자동으로 점검하는 규칙을 다섯 가지 쓰세요. 규칙을 어기면 어떻게 할지도 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>행 수의 급변, 결측, 범위, 중복, 참조 무결성을 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>경고와 중단을 구별할 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 주간 행 수가 최근 8주 평균의 ±30%를 벗어나면 경고. (2) 필수 열(대출일, 도서 번호)의 결측이 0.5%를 넘으면 중단. (3) 대출일이 미래이거나 반납일이 대출일보다 앞서면 해당 행 격리. (4) 같은 대출 번호의 중복이 있으면 중단. (5) 도서 번호가 도서 목록에 없으면(참조 무결성) 경고 후 목록 갱신 요청. 중단 시 담당자에게 알리고, 격리된 행은 따로 저장해 원인을 확인합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>파이프라인을 "반복 가능"하게 만드는 원칙 세 가지를 쓰세요. 같은 날 두 번 실행했을 때 결과가 달라지면 어떤 문제가 있는 것인가요? <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>같은 입력이면 같은 출력(멱등성)이어야 합니다.</p></details>
+        <details><summary>힌트 2</summary><p>숨은 상태(시스템 시각, 난수, 수동 입력)를 생각하세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>원칙: (1) 같은 입력에 같은 출력(멱등성): 다시 실행해도 결과가 중복되거나 바뀌지 않음, (2) 모든 단계를 코드로 기록하고 설정(경로, 기준일)을 매개변수로 분리, (3) 버전 관리와 실행 로그. 같은 날 두 번 실행해 결과가 다르면 현재 시각을 기준으로 계산하거나, 시드 없는 난수, 이전 실행 결과에 덧붙이는 동작, 원자료 변경 같은 숨은 상태에 의존하는 것입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>여러 도서관의 자료를 합치는데 도서관마다 분야 분류 표기(KDC 번호 형식, 한글 이름)가 다릅니다. 표준화 방법과 그 과정을 관리하는 방법을 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>대응표(매핑 테이블)를 만들어 씁니다.</p></details>
+        <details><summary>힌트 2</summary><p>대응표도 버전을 관리해야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>도서관별 원래 표기를 표준 분류로 바꾸는 대응표를 만들어 코드에서 결합으로 변환합니다(손으로 고치지 않음). 대응되지 않는 표기는 따로 모아 담당자가 검토해 대응표에 추가하고, 대응표 자체를 버전 관리해 언제 어떤 규칙이 바뀌었는지 추적합니다. 변환 후 분야별 건수를 이전 주와 비교해 대응 오류를 점검합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>파이프라인 코드에 단위 검사(테스트)를 넣는다면 어떤 것을 검사할지 예를 세 가지 쓰세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>작은 예제 입력에 대해 예상 출력을 정해 둡니다.</p></details>
+        <details><summary>힌트 2</summary><p>경계 상황(빈 파일, 결측)도 검사합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 정제 함수에 표기가 다른 예제 행을 넣었을 때 표준 표기로 바뀌는지. (2) 집계 함수에 손으로 계산 가능한 작은 표를 넣었을 때 합계가 맞는지. (3) 빈 파일이나 결측이 많은 파일을 넣었을 때 오류 메시지를 내고 멈추는지. R에서는 <code>testthat</code>, 파이썬에서는 <code>pytest</code>로 작성하고 코드를 바꿀 때마다 실행합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>분석가가 "자료 품질 점검은 시간이 많이 들어서 이번에는 건너뛰자"고 제안했습니다. 이 결정의 위험을 구체적인 예로 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p>잘못된 자료로 만든 모형과 대시보드는 어떤 결정을 낳을까요?</p></details>
+        <details><summary>힌트 2</summary><p>문제를 늦게 발견할수록 고치는 비용이 커집니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>예를 들어 한 도서관의 시스템 변경으로 한 달간 대출 기록이 절반만 들어왔다면, 품질 점검 없이는 "그 도서관의 수요가 급감했다"고 해석해 예산을 줄이는 잘못된 결정으로 이어집니다. 문제를 발표 뒤에 발견하면 결과 전체의 신뢰를 잃고 다시 분석해야 합니다. 핵심 점검(행 수, 결측, 중복)은 자동화해 비용을 줄이고 반드시 수행합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

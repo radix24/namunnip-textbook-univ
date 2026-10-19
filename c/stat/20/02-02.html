@@ -1,0 +1,194 @@
+<!doctype html>
+<!-- 자동 생성: python -I tools/build.py — 직접 고치지 말고 blocks/ 와 curricula/ 를 고칠 것 -->
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ACF와 PACF로 차수 짐작하기 · 시계열분석 — QURI</title>
+  <meta name="description" content="시계열분석 2.2 ACF와 PACF로 차수 짐작하기 — 성취기준: 자기상관함수와 편자기상관함수의 모양으로 차수를 짐작할 수 있다.">
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../../../manifest.webmanifest">
+  <meta name="theme-color" content="#f5f5f2">
+  <script>(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\b/.exec(location.search),t=q&&q[1];if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(t==="dark")document.querySelector('meta[name="theme-color"]').content="#12131c"})()</script>
+  <meta name="apple-mobile-web-app-title" content="QURI">
+  <link rel="stylesheet" href="../../../css/fonts.css">
+  <link rel="stylesheet" href="../../../css/tb.css">
+  <link rel="stylesheet" href="../../../css/quri.css">
+  <link rel="stylesheet" href="../../../css/qcard.css">
+  <link rel="stylesheet" href="../../../css/qtext.css">
+  <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
+</head>
+<body data-rec='{&quot;course&quot;: &quot;응통20&quot;, &quot;title&quot;: &quot;2.2 ACF와 PACF로 차수 짐작하기&quot;, &quot;sub&quot;: &quot;시계열분석&quot;}'>
+
+<header class="top">
+  <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
+  <div class="top-right"><a href="../../../record.html">학습 기록</a><a href="02.html">← 절 목록</a><button type="button" class="theme-btn" aria-label="다크 모드" aria-pressed="false" title="다크 모드 켜고 끄기"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</header>
+
+<main class="wrap">
+  <section class="topic-hero u-hero has-text" data-sec="응통20-02-02" data-u="서울대 연세대 고려대 성균관대">
+    <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">시계열분석</a><span class="mono">/</span><a href="02.html">2. AR, MA, ARMA 모형</a></div>
+    <h1><span class="sec-no mono">2.2</span>ACF와 PACF로 차수 짐작하기</h1>
+    <p class="sec-std"><span class="mono">[응통20-02-02]</span> 자기상관함수와 편자기상관함수의 모양으로 차수를 짐작할 수 있다. <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></p>
+  </section>
+
+  <div class="topic-layout with-text">
+    <aside class="toc" aria-label="이 절의 차례">
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-2-1"><span class="mono">2.2.1</span><span>편자기상관</span></a></li><li><a href="#s2-2-2"><span class="mono">2.2.2</span><span>식별표</span></a></li><li><a href="#s2-2-3"><span class="mono">2.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s20-identify"><span class="mono">본문</span><span>ACF와 PACF로 차수 짐작하기</span></a></li><li><a href="#lab-s20-ar"><span class="mono">2.2.2</span><span>오늘이 내일을 얼마나 닮는가: AR(1)과 자기상관</span></a></li></ol>
+      <p class="progress mono small"></p>
+      <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
+    </aside>
+    <div class="sec-main">
+<article class="q-card tb-page" id="text-s20-identify" data-kind="본문" data-std="응통20-02-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>편자기상관함수(PACF)의 뜻을 안다.</li>
+        <li>ACF·PACF의 절단과 감소 무늬로 AR, MA, ARMA 차수를 짐작한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>AR·MA의 ACF (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>지문으로 모형 알아보기</h3>
+    <p>AR과 MA는 ACF와 PACF에 서로 다른 지문을 남깁니다. 박스와 젠킨스는 이 지문으로 모형을 고르는 절차(식별)를 정리했습니다.</p>
+
+    <h3 id="s2-2-1"><span class="no">2.2.1</span>편자기상관</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.2.1</span>
+      <p>시차 \(h\)의 <b>편자기상관</b> \(\phi_{hh}\): 중간 값 \(x_{t-1}, \ldots, x_{t-h+1}\)의 영향을 제거한 뒤 \(x_t\)와 \(x_{t-h}\)의 상관. \(x_t\)를 \(x_{t-1}, \ldots, x_{t-h}\)로 회귀했을 때 마지막 계수와 같다.</p>
+    </div>
+    <p>AR(1)에서 \(x_t\)와 \(x_{t-2}\)는 상관(\(\phi^2\))이 있지만, \(x_{t-1}\)을 알면 \(x_{t-2}\)는 새 정보가 없으므로 PACF는 시차 2부터 0입니다.</p>
+
+    <h3 id="s2-2-2"><span class="no">2.2.2</span>식별표</h3>
+    <table class="tw">
+      <tr><th>모형</th><th>ACF</th><th>PACF</th></tr>
+      <tr><td>AR(p)</td><td>천천히 감소(지수·감쇠 진동)</td><td>시차 p 뒤 절단</td></tr>
+      <tr><td>MA(q)</td><td>시차 q 뒤 절단</td><td>천천히 감소</td></tr>
+      <tr><td>ARMA(p, q)</td><td>시차 q 뒤 감소</td><td>시차 p 뒤 감소</td></tr>
+    </table>
+    <p>"절단"은 그 시차 이후 막대가 \(\pm2/\sqrt n\) 띠 안에 든다는 뜻입니다. 실제 자료에서는 무늬가 흐릿해 후보를 몇 개 골라 적합하고 정보기준(4.1절)과 잔차(4.2절)로 고릅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.2</span>
+      <p>표본 ACF가 0.62, 0.40, 0.25, 0.17, …로 줄고, PACF가 0.62, 0.02, −0.05, …(시차 2부터 띠 안)입니다. 모형은?</p>
+    </div>
+    <p><i>풀이.</i> ACF 감소, PACF 시차 1 뒤 절단 → AR(1), \(\hat\phi \approx 0.62\).</p>
+    <pre><code>x &lt;- arima.sim(list(ar = 0.6), n = 300); par(mfrow = c(1, 2)); acf(x); pacf(x)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>PACF = 중간 값을 제거한 상관.</li>
+        <li>AR은 PACF 절단, MA는 ACF 절단.</li>
+        <li>식별은 후보를 고르는 단계, 최종 선택은 적합·진단으로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-2-3"><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>ACF가 시차 1에서만 −0.45이고 나머지는 띠 안, PACF는 감쇠 진동입니다. 모형은?
+          <details><summary>답</summary><p>MA(1), \(\theta &lt; 0\). \(\theta/(1+\theta^2) = -0.45\)에서 \(\theta \approx -0.63\)(가역 쪽).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s20-identify" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통20-02-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통20-02-02] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통20-02-02" aria-label="할 수 있음"><span class="t">자기상관함수와 편자기상관함수의 모양으로 차수를 짐작할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-s20-ar" data-kind="실습" data-std="응통20-02-02">
+  <header class="card-head"><span class="no">2.2.2</span><h2><span class="q-badge">실습</span>오늘이 내일을 얼마나 닮는가: AR(1)과 자기상관</h2><span class="kind">실습 · 시계열</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="02-02.html#std">[응통20-02-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>계수 \(\varphi\)를 바꾸며 AR(1) 과정의 가상 시계열을 만들고, 표본 자기상관함수가 이론값 \(\varphi^k\)를 따르는지 확인합니다. \(\varphi = 1\)(랜덤워크)에서 무엇이 달라지는지도 봅니다. 성취기준 [응통20-02-02].</p>
+      <p class="q-term"><b>AR(1) 과정</b>: \(x_t = \varphi x_{t-1} + e_t\). \(e_t\)는 서로 독립인 \(N(0, 1)\) 잡음(백색잡음)입니다. \(|\varphi| &lt; 1\)이면 정상 과정입니다.</p>
+      <p class="q-term"><b>자기상관</b>: 시차 \(k\)만큼 떨어진 두 값의 상관계수 \(\rho_k = \mathrm{Corr}(x_t, x_{t-k})\). AR(1)이면 \(\rho_k = \varphi^k\)입니다.</p>
+      <p class="q-term"><b>표본 자기상관</b>: \(r_k = \dfrac{\sum_{t=k+1}^{n}(x_t - \bar x)(x_{t-k} - \bar x)}{\sum_{t=1}^{n}(x_t - \bar x)^2}\).</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그림은 시계열, 아래 그림은 시차 0~20의 표본 자기상관(파란 막대)과 이론값 \(\varphi^k\)(빨간 점선)입니다. 주황 점선 \(\pm 2/\sqrt n\)은 백색잡음일 때 \(r_k\)가 대부분 들어가는 범위입니다. "새 자료"는 같은 \(\varphi\)로 잡음을 새로 뽑습니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>φ = <b data-show="phi" data-fix="2">0.70</b></span><input type="range" name="phi" min="-0.95" max="1" step="0.05" value="0.7" aria-label="자기회귀 계수"></label>
+        <label><span>길이 n = <b data-show="n">200</b></span><input type="range" name="n" min="50" max="1000" step="50" value="200" aria-label="시계열 길이"></label>
+      </div>
+      <canvas aria-label="AR(1) 시계열"></canvas>
+      <canvas aria-label="표본 자기상관함수"></canvas>
+      <div class="btns"><button type="button" class="new">새 자료</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(\varphi = 0\)에서 시계열과 자기상관 막대를 봅니다. 백색잡음입니다.</li>
+        <li>\(\varphi = 0.7\), 0.95로 올리며 시계열이 어떻게 매끄러워지는지, 막대가 얼마나 천천히 줄어드는지 봅니다.</li>
+        <li>\(\varphi = -0.7\)로 바꿔 막대의 부호가 어떻게 바뀌는지 봅니다.</li>
+        <li>\(\varphi = 1\)로 두고 "새 자료"를 여러 번 누릅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(\varphi = 0\): 시계열이 0 둘레에서 마구 오르내리고, 시차 1 이상의 막대 대부분(20개 중 19개 정도)이 주황 점선 안에 듭니다.</li>
+        <li>\(\varphi = 0.7\): 막대가 이론값 \(0.7, 0.49, \ldots\)(\(k = 5\)이면 0.17)을 따라 기하급수적으로 줄어듭니다. 길이 200이면 \(r_1\)은 ±0.05 안팎으로 맞지만 시차가 클수록 더 흔들려 \(r_5\)는 0.15 가까이 벗어나기도 합니다. 0.95에서는 시계열이 긴 물결처럼 보이고 막대가 아주 천천히 줄어듭니다.</li>
+        <li>\(\varphi = -0.7\): 시계열이 매번 부호를 바꾸며 지그재그하고, 막대도 \(-0.7, 0.49, -0.34, \ldots\)처럼 부호가 번갈아 바뀝니다.</li>
+        <li>\(\varphi = 1\): 랜덤워크가 되어 평균으로 돌아오지 않고 멀리 떠돕니다. 새 자료마다 모양이 전혀 다르고, 표본 자기상관은 시차 20까지도 크게 남습니다. 정상 과정이 아니므로 차분 \(x_t - x_{t-1}\)을 해서 분석합니다(20-03단원).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(\rho_1 = \varphi\)를 \(\mathrm{Cov}(x_t, x_{t-1}) = \mathrm{Cov}(\varphi x_{t-1} + e_t, x_{t-1})\)에서 유도해 보세요.</li>
+        <li>MA(1) 과정 \(x_t = e_t + \theta e_{t-1}\)의 자기상관은 시차 2부터 0입니다. 자기상관 그림만 보고 AR(1)과 MA(1)을 어떻게 구별할지 적어 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R: <code>x &lt;- arima.sim(list(ar = 0.7), n = 200)</code>, <code>acf(x)</code>, <code>pacf(x)</code>. 편자기상관은 AR(1)이면 시차 1에서만 크고 나머지는 점선 안에 듭니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-s20-ar" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
+      <nav class="u-pager" aria-label="절 이동">
+        <span><a href="02-01.html">← 2.1 AR(1)과 MA(1)의 자기상관 유도</a></span>
+        <span><a href="02-R.html">2.R 단원 마무리 →</a></span>
+      </nav>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
+    <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
+    <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
+  </footer>
+</main>
+
+<script src="../../../assets/katex/katex.min.js"></script>
+<script src="../../../js/core.js"></script>
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/stat/stat-labs.js"></script>
+<script src="../../../js/math.js"></script>
+<script src="../../../js/progress.js"></script>
+</body>
+</html>

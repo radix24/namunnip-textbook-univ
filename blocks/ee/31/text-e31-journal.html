@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-journal" data-kind="본문" data-std="전전31-05-02">
+  <header class="card-head"><span class="no"></span><h2>저널링이 충돌 일관성을 지키는 원리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>파일 추가가 여러 블록(비트맵, inode, 데이터)을 바꿔 중간 충돌 시 불일치가 생김을 안다.</li>
+        <li>선행 기록(저널 기록 → 커밋 → 제자리 반영 → 해제) 순서를 설명한다.</li>
+        <li>데이터 저널링과 순서 모드(메타데이터만)의 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파일 할당 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>문제</h3>
+    <p>파일에 블록 하나를 붙이려면 데이터 블록, inode(크기와 포인터), 블록 비트맵 세 곳을 써야 합니다. 디스크는 한 번에 한 블록씩 쓰므로 그 사이 전원이 끊기면 "inode는 블록을 가리키는데 비트맵은 비어 있음" 같은 불일치가 남습니다. 예전에는 부팅 때 fsck로 전체를 검사해 오래 걸렸습니다.</p>
+    <h3><span class="no">5.2.2</span>저널링</h3>
+    <ol>
+      <li>바꿀 블록들을 저널 영역에 먼저 쓴다.</li>
+      <li>모두 쓰였으면 커밋 블록을 쓴다(원자적 한 블록).</li>
+      <li>제자리(실제 위치)에 반영한다(체크포인트).</li>
+      <li>저널 공간을 해제한다.</li>
+    </ol>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>(가) 1단계 도중, (나) 2단계 후 3단계 도중 충돌하면 복구는 어떻게 되는가?</p>
+    </div>
+    <p><i>풀이.</i> (가) 커밋이 없으니 저널을 버리면 됩니다. 제자리는 손대지 않았으므로 옛 상태로 일관됩니다. (나) 커밋이 있으니 저널 내용을 다시 제자리에 씁니다(재실행). 두 경우 모두 저널만 훑으면 되어 복구가 빠릅니다.</p>
+    <p>모든 데이터를 저널에 두 번 쓰면 느리므로, ext4의 기본 순서 모드는 데이터 블록을 제자리에 먼저 쓰고 메타데이터만 저널링합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "저널링이면 데이터 손실이 없다": 커밋되지 않은 최근 쓰기는 잃을 수 있고, 일관성(구조가 깨지지 않음)을 지키는 것입니다. (2) "커밋 블록은 아무 때나 써도 된다": 앞의 저널 블록이 다 쓰인 뒤(쓰기 장벽)여야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>여러 블록 갱신 중 충돌 → 불일치.</li>
+        <li>저널 기록 → 커밋 → 체크포인트 → 해제.</li>
+        <li>커밋 전 충돌은 버림, 후 충돌은 재실행. 순서 모드.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>커밋 블록이 하나의 블록이어야 하는 이유는?
+          <details><summary>답</summary><p>블록 쓰기는 원자적이라 커밋이 반쯤 쓰이는 일이 없도록.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>순서 모드에서 데이터를 먼저 쓰는 이유는?
+          <details><summary>답</summary><p>메타데이터가 아직 쓰레기 데이터를 가리키는 일을 막기 위해.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>저널 크기가 작으면 무엇이 성능을 제한하는가?
+          <details><summary>답</summary><p>저널이 차면 체크포인트를 기다려야 해 쓰기가 멈춥니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

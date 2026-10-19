@@ -1,0 +1,56 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-08-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e3-resonance" data-kind="예제" data-std="전전3-08-03">
+  <header class="card-head"><span class="no"></span><h2>원하는 대역폭의 대역 통과 필터 만들기</h2><span class="kind">예제 · 공진 주파수와 Q로 설계</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>공진 주파수는 그대로 두고 대역폭만 넓히려면 R, L, C 중 무엇을 바꾸면 될까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>직렬 RLC에서 \(B = R/L\)이고 \(\omega_0\)에는 R이 없으므로 R을 키우면 됩니다. L과 C의 곱을 유지하며 비를 바꿔도 됩니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">입력 — L — C — 출력(저항 R 양 끝) 꼴의 직렬 RLC 대역 통과 필터로, 중심 주파수 10 kHz, 대역폭 1 kHz를 만들고 싶다. \(C = 10\) nF로 정할 때 L과 R을 구하고, 9 kHz와 12 kHz에서 이득(dB)을 구하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <p>출력이 저항 전압이므로 \(H = \frac{R}{\mathbf Z} = \frac{R}{R + j(\omega L - 1/\omega C)}\), 공진에서 1(0 dB)입니다. \(\omega_0\)에서 L, \(B\)에서 R을 정합니다. 단위를 rad/s로 바꾸는 것을 잊지 않습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(\omega_0 = 2\pi\times10^4 = 62832\) rad/s. \(L = \frac{1}{\omega_0^2C} = \frac{1}{(62832)^2\times10^{-8}} \approx 25.3\) mH. <span class="q-why">\(\omega_0 = 1/\sqrt{LC}\)</span></li>
+        <li>\(B = 2\pi\times1000 = 6283\) rad/s, \(R = BL = 6283\times0.0253 \approx 159\ \Omega\). \(Q = 10\). <span class="q-why">정리 8.3.2</span></li>
+        <li>9 kHz: \(\omega L = 1431\ \Omega\), \(1/\omega C = 1768\ \Omega\), 리액턴스 \(-337\ \Omega\). \(|H| = 159/\sqrt{159^2 + 337^2} \approx 0.427\), −7.4 dB. <span class="q-why">전달함수</span></li>
+        <li>12 kHz: \(\omega L = 1908\), \(1/\omega C = 1326\), 리액턴스 \(582\ \Omega\). \(|H| = 159/\sqrt{159^2 + 582^2} \approx 0.264\), −11.6 dB. <span class="q-why">전달함수</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>9 kHz는 중심에서 1 kHz 아래, 12 kHz는 2 kHz 위라 12 kHz가 더 많이 줄어듭니다. 대역폭 1 kHz인 필터도 바로 옆 주파수를 완전히 막지는 못하고, 한 decade 떨어져야 약 −20 dB입니다. 더 날카로운 필터가 필요하면 공진 회로를 여러 단 쓰거나 능동 필터(전전13)를 씁니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>반전력 주파수에서 리액턴스의 크기가 R(159 Ω)이어야 합니다. 9.51 kHz 근처에서 \(\omega L - 1/\omega C \approx -159\)인지 계산기로 확인해 보세요(\(1513 - 1673 = -160\)). 또 \(f_1f_2 = f_0^2\)에서 \(f_2 \approx 10.51\) kHz, 차이 1.0 kHz로 맞습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 L, C로 대역폭을 2 kHz로 넓히려면 R은?</p>
+      <details><summary>답</summary><p>약 318 Ω(2배). Q는 5가 됩니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>Q와 대역폭</h3>
+    <p class="q">중심 주파수 1 MHz, Q = 50인 공진 회로의 대역폭은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>20 kHz<span class="why"><b>맞습니다.</b> \(B = f_0/Q = 10^6/50\).</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>50 MHz<span class="why"><b>곱했습니다.</b> Q가 클수록 대역폭은 좁아집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>125.7 kHz<span class="why"><b>Hz와 rad/s를 섞었습니다.</b> 20 kHz × 2π ≈ 125.7 krad/s입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

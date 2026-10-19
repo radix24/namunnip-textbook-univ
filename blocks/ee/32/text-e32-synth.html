@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-synth" data-kind="본문" data-std="전전32-04-01">
+  <header class="card-head"><span class="no"></span><h2>합성 결과의 면적과 타이밍 보고서 해석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>타이밍 보고서의 도착 시간, 요구 시간, 여유(slack)를 읽는다.</li>
+        <li>임계 경로를 찾아 개선 방법(파이프라인, 재구성)을 정한다.</li>
+        <li>면적 보고서를 NAND2 등가 게이트로 해석한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>셋업 제약 (<a href="../30/03-01.html">전전30 3.1절</a>), 데이터패스 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>여유</h3>
+    <p class="q-term">여유 = 요구 시간 − 도착 시간. 요구 시간 = 클록 주기 − 셋업 시간(− 불확실성). 음수면 위반.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1(가상 보고서)</span>
+      <p>클록 2.0 ns, 셋업 0.05 ns, 불확실성 0.1 ns. 경로 도착 시간 1.92 ns(t_cq 0.12 + 곱셈기 1.45 + 덧셈기 0.30 + 배선 0.05). 여유는? 위반이면 어떻게 고치는가?</p>
+    </div>
+    <p><i>풀이.</i> 요구 2.0 − 0.05 − 0.1 = 1.85 ns, 여유 1.85 − 1.92 = −0.07 ns(위반). 곱셈기가 대부분이므로 곱셈 뒤에 레지스터를 넣어 2단 파이프라인으로 나누거나(지연 1클록 증가), 합성 도구에 더 빠른 곱셈기 구조를 쓰게 하거나, 클록을 1.92 + 0.15 = 2.07 ns(483 MHz)로 낮춥니다.</p>
+    <p>면적 보고서는 셀 면적 합을 NAND2 한 개의 면적으로 나눈 등가 게이트 수(예: 50 k 게이트)로 비교하는 일이 많습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "여유가 양수면 칩에서도 동작": 배치·배선 뒤 배선 지연이 늘어나므로 합성 단계에서 여유를 남겨 둡니다. (2) "모든 경로를 고쳐야 한다": 음수 여유인 경로만, 그중 최악부터 고칩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>여유 = (주기 − 셋업 − 불확실성) − 도착 시간.</li>
+        <li>예: −0.07 ns → 파이프라인, 빠른 구조, 클록 낮춤.</li>
+        <li>면적은 NAND2 등가 게이트.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>요구 3.0 ns, 도착 2.7 ns의 여유는?
+          <details><summary>답</summary><p>+0.3 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>셀 면적 합 12 000 μm², NAND2 0.6 μm²의 등가 게이트 수는?
+          <details><summary>답</summary><p>20 000.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>파이프라인 단을 넣으면 처리율과 지연 시간은?
+          <details><summary>답</summary><p>처리율(주파수)은 오르고, 결과가 나오기까지의 클록 수는 늘어납니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

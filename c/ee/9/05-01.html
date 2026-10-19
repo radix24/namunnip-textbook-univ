@@ -27,12 +27,12 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전9-05-01">
+  <section class="topic-hero u-hero" data-sec="전전9-05-01" data-u="서울대 연세대 고려대 POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">아날로그실험</a><span class="mono">/</span><a href="05.html">5. 연산증폭기 응용</a></div>
     <h1><span class="sec-no mono">5.1</span>연산증폭기 능동 필터를 설계하고 주파수 응답을 측정하기</h1>
     
     <div class="q-checklist q-one" id="std" data-unit="전전9-05-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전9-05-01] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전9-05-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
       <ol><li><input type="checkbox" data-std="전전9-05-01" aria-label="할 수 있음"><span class="t">연산증폭기 능동 필터를 설계하고 주파수 응답을 측정할 수 있다.</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
@@ -41,15 +41,73 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 차례">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#lab-e9-sallen"><span class="mono">5.1.1</span><span>연산증폭기 2차 필터: 축전기 비로 모양을 고른다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="lab-e9-sallen" data-kind="실습" data-std="전전9-05-01">
+  <header class="card-head"><span class="no">5.1.1</span><h2><span class="q-badge">실습</span>연산증폭기 2차 필터: 축전기 비로 모양을 고른다</h2><span class="kind">실습 · 살렌-키 저역 통과 필터</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-01.html#std">[전전9-05-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>RC 하나로 된 1차 필터는 차단 주파수 위에서 10배마다 20 dB씩만 줄어듭니다. 연산증폭기 하나에 저항 둘, 축전기 둘을 쓰는 살렌-키(Sallen-Key) 필터는 2차 필터로 40 dB씩 줄고, 축전기 비를 바꿔 차단 근처의 모양(평평함, 봉우리)을 고를 수 있습니다. 필터 설계값 \(f_0\)과 Q를 정하고 주파수 응답과 계단 응답으로 확인합니다. 성취기준 [전전9-05-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>회로(이득 1): 입력 → \(R_1\) → 마디 A → \(R_2\) → 마디 B → 연산증폭기 비반전 입력. 마디 B와 접지 사이에 \(C_2\), 마디 A와 출력 사이에 \(C_1\)(되먹임). 연산증폭기는 출력과 반전 입력을 이은 전압 폴로어입니다. \(R_1 = R_2 = R\)이면</p>
+      <p>\[ f_0 = \frac{1}{2\pi R\sqrt{C_1C_2}}, \qquad Q = \frac12\sqrt{\frac{C_1}{C_2}} \]</p>
+      <p>입니다. \(Q = 1/\sqrt2 \approx 0.707\)이면 통과 대역이 가장 평평한 버터워스(Butterworth) 응답으로, \(C_1 = 2C_2\)일 때입니다. Q가 이보다 크면 \(f_0\) 근처에 봉우리가 생기고 계단 응답이 출렁입니다. 연산증폭기는 이상적이라고 봅니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>R = <b data-show="R">10</b> kΩ</span><input type="range" name="R" min="1" max="100" step="1" value="10" aria-label="저항, 킬로옴"></label>
+        <label><span>C₁ (되먹임) = <b data-show="c1">22</b> nF</span><input type="range" name="c1" min="1" max="200" step="1" value="22" aria-label="되먹임 축전기, 나노패럿"></label>
+        <label><span>C₂ = <b data-show="c2">10</b> nF</span><input type="range" name="c2" min="1" max="100" step="1" value="10" aria-label="접지 축전기, 나노패럿"></label>
+      </div>
+      <canvas aria-label="주파수 응답. 파랑 이 필터, 회색 점선 버터워스, 연한 점선 1차 RC"></canvas>
+      <canvas aria-label="계단 응답"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(10 kΩ, 22 nF, 10 nF)에서 \(f_0\)와 Q를 손으로 계산합니다.</li>
+        <li>\(C_1\)을 20 nF로 바꿔 버터워스 응답을 만들고 −3 dB 주파수가 \(f_0\)과 같아지는지 봅니다.</li>
+        <li>\(C_1\)을 100 nF, 200 nF로 키워 Q, 봉우리 높이, 계단 응답의 넘침이 어떻게 변하는지 적습니다.</li>
+        <li>\(C_1 = C_2\)로 두면 Q = 0.5가 됩니다. 이때 응답을 1차 RC(연한 점선)와 비교합니다.</li>
+        <li>1 kHz 버터워스 필터를 설계해 봅니다. \(C_2\) = 10 nF로 정하면 \(C_1\)과 R은 얼마일까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 값: \(f_0 \approx 1.07\ \text{kHz}\), Q ≈ 0.74로 버터워스에 가깝습니다. 봉우리는 0.04 dB로 거의 없고, 계단 응답 넘침은 약 5.7%입니다.</li>
+        <li>\(C_1\) = 20 nF: Q = 0.707, 최대 이득 0 dB, −3 dB 주파수 = \(f_0\) ≈ 1.13 kHz, 계단 넘침 약 4.3%.</li>
+        <li>\(C_1\) = 200 nF: Q ≈ 2.24, 봉우리 약 +7 dB, 넘침 약 50%로 크게 출렁입니다.</li>
+        <li>버터워스 1 kHz, \(C_2\) = 10 nF: \(C_1\) = 20 nF, \(R = 1/(2\pi\cdot1000\cdot\sqrt{2}\cdot10\,\text{nF}) \approx 11.3\ \text{k}\Omega\).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>2차 필터의 차단 위 기울기가 −40 dB/decade인 것을 그래프에서 확인하세요. 10배 위 주파수에서 1차와 2차의 감쇠는 몇 dB씩인가요?</li>
+        <li>Q가 큰 필터가 계단 응답에서 출렁이는 것은 앞의 RLC 계단 응답 카드의 무엇과 같은 현상인가요? 감쇠비 ζ와 Q의 관계(\(\zeta = 1/(2Q)\))로 설명하세요.</li>
+        <li>실제로는 축전기 오차가 ±5%입니다. Q는 \(C_1\)과 \(C_2\) 오차에 어떻게 민감할까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>살렌-키 두 단을 이어 4차 버터워스 필터를 만들려면 두 단의 Q를 0.541과 1.307로 다르게 해야 합니다. 이 값으로 축전기 비를 정하고, 두 단의 응답을 곱(dB로는 합)해서 확인해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e9-sallen" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="04-02.html">← 4.2 측정값과 설계값의 차이 원인을 찾기</a></span>
-        <span><a href="06-01.html">6.1 동작하지 않는 회로를 단계별 측정으로 진단하기 →</a></span>
+        <span><a href="05-02.html">5.2 반전·비반전 증폭기를 만들고 이득-대역폭 곱과 출력 포화가 측정에 주는 한계를 확인하기 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +121,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/ee/e9-analog.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

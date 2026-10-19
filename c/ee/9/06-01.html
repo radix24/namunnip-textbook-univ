@@ -27,12 +27,12 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전9-06-01">
+  <section class="topic-hero u-hero" data-sec="전전9-06-01" data-u="서울대 연세대 고려대 POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">아날로그실험</a><span class="mono">/</span><a href="06.html">6. 디버깅과 보고서</a></div>
     <h1><span class="sec-no mono">6.1</span>동작하지 않는 회로를 단계별 측정으로 진단하기</h1>
     
     <div class="q-checklist q-one" id="std" data-unit="전전9-06-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전9-06-01] <span class="ty mono" data-ty="적용">적용</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전9-06-01] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
       <ol><li><input type="checkbox" data-std="전전9-06-01" aria-label="할 수 있음"><span class="t">동작하지 않는 회로를 단계별 측정으로 진단할 수 있다.</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
@@ -41,14 +41,80 @@
   <div class="topic-layout">
     <aside class="toc" aria-label="이 절의 차례">
       <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <ol id="toc-list"><li><a href="#lab-e9-debug"><span class="mono">6.1.1</span><span>고장 난 증폭기를 측정으로 진단하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="card q-card" id="lab-e9-debug" data-kind="실습" data-std="전전9-06-01">
+  <header class="card-head"><span class="no">6.1.1</span><h2><span class="q-badge">실습</span>고장 난 증폭기를 측정으로 진단하기</h2><span class="kind">실습 · 단계별 측정과 추론</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-01.html#std">[전전9-06-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>만든 회로가 동작하지 않을 때 부품을 마구 바꾸는 대신, 몇 군데 전압을 재고 "정상이라면 얼마여야 하는가"와 비교해 고장 위치를 좁혀 갑니다. 고장이 하나 숨겨진 공통 이미터 증폭기에서 측정을 되도록 적게 하고 고장을 맞혀 봅니다. 성취기준 [전전9-06-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>회로: \(V_{CC}\) = 12 V, R1 = 47 kΩ, R2 = 10 kΩ, \(R_C\) = 4.7 kΩ, \(R_E\) = 1 kΩ(바이패스 축전기 \(C_E\) 병렬), 부하 10 kΩ, β ≈ 150. 입력은 결합 축전기 \(C_\text{in}\)을 거쳐 10 mV 사인파가 들어갑니다.</p>
+      <p><b>먼저 정상값을 계산합니다.</b> \(V_B \approx 12\times10/57 - (\text{베이스 전류에 의한 강하}) \approx 2.0\ \text{V}\), \(V_E \approx V_B - 0.65 \approx 1.4\ \text{V}\), \(I_C \approx 1.4\ \text{mA}\), \(V_C \approx 12 - 4.7\,\text{k}\Omega\times1.4\,\text{mA} \approx 5.6\ \text{V}\). 출력 진폭은 이득 약 −170배(\(r_e \approx 19\ \Omega\), \(R_C\parallel R_L \approx 3.2\ \text{k}\Omega\))로 약 1.7 V입니다.</p>
+      <p>진단 순서의 예:</p>
+      <ol>
+        <li>직류부터: \(V_B\)가 2 V 근처인가? 아니면 바이어스 저항 쪽.</li>
+        <li>\(V_E \approx V_B - 0.65\)인가? 아니면 베이스-이미터 접합이나 \(R_E\) 쪽.</li>
+        <li>\(V_C\)가 \(V_{CC}\)와 \(V_E\) 사이 중간쯤인가? 12 V면 전류가 흐르지 않는 것, \(V_E\)와 같으면 포화이거나 단락.</li>
+        <li>직류가 모두 정상인데 출력이 작거나 없으면 축전기(교류 경로) 쪽.</li>
+      </ol>
+    </section>
+    <div class="q-sim">
+      <canvas aria-label="공통 이미터 증폭기 회로도. 측정점 B, C, E"></canvas>
+      <div class="btns">
+        <button type="button" class="m" data-k="B">V_B 재기</button><button type="button" class="m" data-k="E">V_E 재기</button><button type="button" class="m" data-k="C">V_C 재기</button><button type="button" class="m" data-k="out">출력 진폭 재기</button>
+      </div>
+      <div class="ctl">
+        <label><span>고장 추정</span><select name="guess" aria-label="고장 추정">
+          <option value="ok">고장 없음</option><option value="r1">R1 끊어짐</option><option value="r2">R2 끊어짐</option><option value="rc">R_C 끊어짐</option><option value="re">R_E 끊어짐</option>
+          <option value="be">트랜지스터 B-E 끊어짐</option><option value="ce">트랜지스터 C-E 단락</option><option value="cbyp">바이패스 축전기 C_E 끊어짐</option><option value="cin">입력 결합 축전기 끊어짐</option></select></label>
+      </div>
+      <div class="btns"><button type="button" class="check">추정 확인</button><button type="button" class="new">새 회로 받기</button><button type="button" class="reveal">답 보기</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 회로는 고장이 없는 정상 회로입니다. 네 가지를 모두 재어 위의 정상값과 비교하고 기준으로 적어 둡니다.</li>
+        <li>"새 회로 받기"를 누르면 아홉 가지 경우(정상 포함) 중 하나가 숨겨집니다. 위의 진단 순서대로 재고, 측정 두세 번 만에 추정합니다.</li>
+        <li>"추정 확인"으로 맞는지 봅니다. 틀렸다면 어떤 측정을 잘못 해석했는지 적습니다.</li>
+        <li>열 번쯤 반복하며, 고장마다 "가장 먼저 이상해지는 측정값"을 표로 정리합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>정상: \(V_B\) ≈ 2.03 V, \(V_E\) ≈ 1.38 V, \(V_C\) ≈ 5.6 V, 출력 약 1.7 V.</li>
+        <li>R1 끊어짐, B-E 끊어짐, R_E 끊어짐: 모두 \(V_C\) = 12 V(전류 없음)이지만 \(V_B\)와 \(V_E\)가 서로 달라 구분됩니다. 예를 들어 R1이 끊기면 \(V_B\) ≈ 0 V입니다.</li>
+        <li>R2 끊어짐: 베이스가 너무 높아져 포화. \(V_C\)가 \(V_E\)보다 0.2 V쯤만 높습니다.</li>
+        <li>C-E 단락: \(V_C = V_E\) ≈ 2.1 V. 바이패스 축전기나 입력 축전기 고장은 직류가 정상이고 출력만 작아지거나(바이패스가 빠지면 이득이 약 3배로 떨어져 약 30 mV) 0이 됩니다. R_C가 끊기면 컬렉터 전류가 흐르지 못해 베이스 전류만 이미터로 흘러 \(V_B\) ≈ 0.8 V, \(V_E\) ≈ 0.16 V로 낮아집니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(V_C\) = 12 V 하나만 보고 "트랜지스터가 나갔다"고 판단하면 어떤 고장을 놓칠까요?</li>
+        <li>R_C가 끊겼는데 \(V_C\)가 0이 아니라 \(V_B\)보다 조금 낮게 읽히는 이유는 무엇일까요? (힌트: 멀티미터도 10 MΩ 저항이고, 베이스-컬렉터도 다이오드입니다.)</li>
+        <li>측정 순서를 정하는 원칙을 한 문장으로 써 보세요. (예: 전원 → 직류 바이어스 → 교류 경로)</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>진단 결과를 보고서로 정리할 때는 "측정값, 정상이라면 기대한 값, 차이에서 내린 결론"을 한 줄씩 씁니다. 성취기준 [전전9-06-02]의 보고서 형식과 같습니다. 실제 실험에서는 전원 전압부터 재는 습관을 들이세요. 전원 선이 빠진 것이 가장 흔한 고장입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e9-debug" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-01.html">← 5.1 연산증폭기 능동 필터를 설계하고 주파수 응답을 측정하기</a></span>
+        <span><a href="05-03.html">← 5.3 비교기와 슈미트 트리거로 잡음 섞인 신호를 깨끗한 펄스로 바꾸고, 같은 원리로 구형파 발진기를 설계하기</a></span>
         <span><a href="06-02.html">6.2 설계, 시뮬레이션, 측정 결과를 비교하는 보고서를 쓰기 →</a></span>
       </nav>
     </div>
@@ -63,7 +129,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/ee/e9-analog.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

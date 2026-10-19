@@ -155,6 +155,48 @@ window.NM = (() => {
   return { reduce, C, F, clamp, ease, fit, loop, axes };
 })();
 
+/* 학교별 보기: 메인에서 고른 대학(localStorage "quri-uni")을 과목 목차·대단원·절 페이지에도 적용한다.
+   build.py가 붙인 data-u="서울대 연세대"를 읽는다. 빈 data-u는 '미표시'라 '전체'에서만 보인다.
+   숨긴 요소에는 .uni-off를 붙이고, progress.js는 그것을 진도에서 뺀다. */
+window.QUni = (() => {
+  "use strict";
+  const KEY = "quri-uni";
+  const LIST = ["서울대", "연세대", "고려대", "KAIST", "POSTECH", "서강대", "성균관대", "한양대", "경희대"];
+  /* 지금은 연세대 커리큘럼만 보인다(학교 선택을 감춤). 다른 대학 표시(c.unis, s.u, data-u)는 데이터에 그대로 둔다.
+     학교 선택을 되살리려면 FIXED를 ""로 바꾸면 된다 */
+  const FIXED = "연세대";
+  const get = () => { if (FIXED) return FIXED; try { const v = localStorage.getItem(KEY); return LIST.includes(v) ? v : ""; } catch (e) { return ""; } };
+  const set = (v) => { if (FIXED) return; try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) { /* 저장 못 해도 이 화면에서는 동작한다 */ } };
+  const has = (el, uni) => !uni || (el.dataset.u || "").split(" ").includes(uni);
+  const api = { KEY, LIST, FIXED, get, set, has };
+
+  const course = document.querySelector(".cx[data-u]");
+  const hero = document.querySelector(".topic-hero[data-u]");
+  if (!course && !hero) return api;
+  const uni = get();
+  document.body.dataset.uni = uni;
+  if (!uni) return api;
+  /* 이 페이지 자체(과목 또는 절·대단원)가 그 대학에 없으면 내용을 숨기지 않고 알림만 한다 */
+  const scope = course || hero;
+  const note = document.createElement("p");
+  note.className = "uni-note mono small";
+  const clear = FIXED ? "" : ' · <button type="button" class="uni-clear">전체 보기</button>';
+  if (!has(scope, uni)) {
+    note.innerHTML = `${course ? "이 과목은" : "이 내용은"} ${uni} 커리큘럼 표시가 없습니다${clear}`;
+  } else {
+    if (document.querySelector(".q-checklist.q-one")) return api;   // 성취기준 하나인 절 페이지는 알릴 것이 없다
+    note.innerHTML = FIXED ? "" : `${uni} 커리큘럼 기준으로 보는 중${clear}`;
+    document.querySelectorAll(".cx-sec[data-u], .c-unit[data-u], .s-row[data-u], .q-checklist li[data-u]").forEach((el) => {
+      const off = !has(el, uni);
+      el.classList.toggle("uni-off", off); el.hidden = off;
+    });
+  }
+  const at = course ? course.querySelector(".c-prog") : hero.querySelector("h1");
+  if (note.innerHTML) at.insertAdjacentElement(course ? "beforebegin" : "afterend", note);
+  note.querySelector(".uni-clear")?.addEventListener("click", () => { set(""); location.reload(); });
+  return api;
+})();
+
 /* 앱으로 설치(PWA)·오프라인: 교과서 최상위의 sw.js를 등록한다. 시험 모드(?test)와 iframe 안에서는 건너뛴다. */
 (() => {
   if (!("serviceWorker" in navigator) || !window.isSecureContext) return;

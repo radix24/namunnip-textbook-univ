@@ -1,0 +1,106 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-04-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c11-u04-practice" data-kind="연습" data-std="공통11-04-01 공통11-04-02 공통11-04-03">
+  <header class="card-head"><span class="no"></span><h2>파이썬 함수와 모듈 단원 마무리 연습</h2><span class="kind">문제 7 · 개념·계산·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 코드는 그 문제가 확인하는 성취기준입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>이차방정식 \(ax^2 + bx + c = 0\)의 두 근을 돌려주는 함수를 쓰세요. 판별식이 음수여도 복소수 근을 돌려주게 하세요. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>cmath.sqrt</code>는 음수의 제곱근을 복소수로 돌려줍니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>return (-b + d) / (2*a), (-b - d) / (2*a)</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>import cmath
+def roots(a, b, c):
+    d = cmath.sqrt(b * b - 4 * a * c)
+    return (-b + d) / (2 * a), (-b - d) / (2 * a)
+print(roots(1, -3, 2))   # ((2+0j), (1+0j))
+print(roots(1, 2, 5))    # ((-1+2j), (-1-2j))</code></pre>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>첫 줄이 머리글(<code>t,x</code>)인 CSV 파일 <code>data.csv</code>를 읽어 x 열의 평균을 구하세요. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>csv.DictReader</code>는 줄마다 머리글을 키로 하는 딕셔너리를 줍니다.</p></details>
+        <details><summary>힌트 2</summary><p>읽은 값은 문자열이므로 <code>float()</code>로 바꿉니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>import csv
+with open("data.csv", newline="") as f:
+    xs = [float(row["x"]) for row in csv.DictReader(f)]
+print(sum(xs) / len(xs))</code></pre>
+          <p><code>split(",")</code>로 직접 나눠도 되지만, 값 안에 쉼표가 있는 경우까지 처리하려면 <code>csv</code> 모듈이 안전합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>자주 쓰는 함수 <code>mean</code>을 <code>mystat.py</code>에 넣고 다른 파일에서 불러 쓰세요. <code>if __name__ == "__main__":</code>은 왜 쓰나요? <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>같은 폴더의 <code>mystat.py</code>는 <code>import mystat</code>로 불러옵니다.</p></details>
+        <details><summary>힌트 2</summary><p>모듈을 불러올 때와 직접 실행할 때 <code>__name__</code>의 값이 다릅니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code># mystat.py
+def mean(xs):
+    return sum(xs) / len(xs)
+if __name__ == "__main__":
+    print(mean([1, 2, 3]))   # 직접 실행할 때만 시험
+          <p># main.py
+import mystat
+print(mystat.mean([2, 4, 9]))   # 5.0</code></pre></p>
+          <p><code>if __name__ == "__main__":</code> 아래의 시험 코드는 <code>python mystat.py</code>로 직접 실행할 때만 돌고, 다른 파일이 불러올 때는 돌지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>위치와 속도를 가진 입자 클래스 <code>Particle</code>을 만들고, 중력 가속도로 시간 간격 dt만큼 움직이는 메서드 <code>step</code>을 넣으세요(오일러 방법). <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>self.v += a * dt</code>, <code>self.y += self.v * dt</code>.</p></details>
+        <details><summary>힌트 2</summary><p>처음 높이 10 m, 속도 0에서 dt = 0.1로 1초(10걸음) 뒤 위치를 출력해 보세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>class Particle:
+    def __init__(self, y, v):
+        self.y, self.v = y, v
+    def step(self, dt, a=-9.8):
+        self.v += a * dt
+        self.y += self.v * dt
+p = Particle(10.0, 0.0)
+for _ in range(10):
+    p.step(0.1)
+print(round(p.y, 3), round(p.v, 3))   # 4.61 -9.8</code></pre>
+          <p>정확한 값은 \(10 - 4.9 = 5.1\) m입니다. 속도를 먼저 고친 뒤 위치를 고치는 이 방법은 걸음마다 조금씩 더 떨어져 0.49 m 작게 나옵니다. dt를 줄이면 차이도 줄어듭니다(<a href='05-02.html'>5.2절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>NumPy로 0부터 \(\pi\)까지 1001개 점에서 \(\sin x\)를 계산하고 사다리꼴 공식으로 적분하세요. 반복문 없이 쓰는 것이 왜 빠른가요? <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>np.linspace(0, np.pi, 1001)</code>, <code>np.sin(x)</code>는 배열 전체에 한 번에 적용됩니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>np.trapz(y, x)</code>(NumPy 2.0부터는 <code>np.trapezoid</code>).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>import numpy as np
+x = np.linspace(0, np.pi, 1001)
+y = np.sin(x)
+print(np.trapezoid(y, x))   # 1.99999836...</code></pre>
+          <p>NumPy의 배열 연산은 C로 짠 반복문이 한꺼번에 처리하므로, 파이썬 <code>for</code>로 원소 하나씩 계산하는 것보다 수십 배 빠릅니다(<a href='05-04.html'>5.4절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span><code>count = 0</code>을 함수 밖에 두고 함수 안에서 <code>count += 1</code>을 했더니 <code>UnboundLocalError</code>가 났습니다. 왜 그런지, 어떻게 고치는 것이 좋은지 말하세요. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>함수 안에서 이름에 값을 대입하면 파이썬은 그 이름을 지역 변수로 봅니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>global count</code>로 고칠 수도 있지만, 값을 인자로 받고 돌려주는 편이 낫습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>count += 1</code>은 대입이라 <code>count</code>가 지역 변수가 되는데, 값을 더하기 전에 읽으려 하니 아직 값이 없다는 오류입니다. <code>global count</code>를 쓰면 되지만, 전역 변수를 바꾸는 함수는 추적이 어렵습니다. <code>def bump(count): return count + 1</code>처럼 인자와 반환값으로 주고받는 것이 좋습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>SciPy의 <code>quad</code>로 \(\int_1^e \frac{1}{x}\,dx\)를 계산하고, 결과가 왜 1이어야 하는지 말하세요. <span class="mono small dim">[04-03]</span></p>
+        <details><summary>힌트 1</summary><p><code>from scipy.integrate import quad</code>. 값과 오차 어림 두 개를 돌려줍니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(\frac1x\)의 부정적분은 \(\ln x\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>import numpy as np
+from scipy.integrate import quad
+val, err = quad(lambda x: 1 / x, 1, np.e)
+print(val)   # 1.0 (반올림 오차 안에서)</code></pre>
+          <p>\(\ln e - \ln 1 = 1\)입니다. 손으로 아는 값으로 라이브러리 사용법을 먼저 확인하는 습관을 들입니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

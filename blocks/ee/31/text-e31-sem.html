@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-sem" data-kind="본문" data-std="전전31-03-01">
+  <header class="card-head"><span class="no"></span><h2>세마포어로 푸는 생산자-소비자 문제</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>경쟁 조건과 임계 구역을 정의한다.</li>
+        <li>empty, full 계수 세마포어와 상호 배제 락으로 유한 버퍼 문제를 푼다.</li>
+        <li>세마포어 순서를 바꾸면 교착이 생기는 경우를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>프로세스와 스레드 (<a href="02-01.html">2.1절</a>), Python 스레드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>세 개의 동기화 객체</h3>
+    <p>크기 N 버퍼에서 생산자는 빈 칸이 있어야, 소비자는 찬 칸이 있어야 진행합니다. empty(처음 N), full(처음 0) 세마포어로 개수를, 락으로 버퍼 조작의 상호 배제를 맡깁니다. 아래는 크기 5 버퍼로 100개를 주고받는 Python 코드입니다.</p>
+    <pre><code>import threading
+N, SIZE = 100, 5
+buf, lock = [], threading.Lock()
+empty, full = threading.Semaphore(SIZE), threading.Semaphore(0)
+got = []
+def producer():
+    for i in range(N):
+        empty.acquire()
+        with lock: buf.append(i)
+        full.release()
+def consumer():
+    for _ in range(N):
+        full.acquire()
+        with lock: x = buf.pop(0)
+        empty.release()
+        got.append(x)
+t1, t2 = threading.Thread(target=producer), threading.Thread(target=consumer)
+t1.start(); t2.start(); t1.join(); t2.join()
+print("소비한 개수:", len(got), "합:", sum(got), "순서 유지:", got == list(range(N)))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>소비한 개수: 100 합: 4950 순서 유지: True</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>생산자가 empty.acquire() 전에 락을 먼저 잡으면 무슨 일이 생기는가?</p>
+    </div>
+    <p><i>풀이.</i> 버퍼가 가득 찬 상태에서 생산자가 락을 쥔 채 empty를 기다리면, 소비자는 락을 얻지 못해 꺼낼 수 없어 서로 영원히 기다립니다(교착). 개수 세마포어를 먼저, 락을 나중에 잡아야 합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "락 하나면 충분하다": 락은 동시 접근만 막고, 버퍼가 비었을 때 기다리게 하는 것은 계수 세마포어(또는 조건 변수)가 합니다. (2) "Python에는 GIL이 있어 동기화가 필요 없다": 리스트 조작 여러 단계 사이에 스레드가 바뀔 수 있어 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>empty(N), full(0), 락.</li>
+        <li>예: 100개, 합 4950, 순서 유지(실제 실행).</li>
+        <li>세마포어 → 락 순서. 반대면 교착.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>버퍼 크기 10이면 empty의 처음 값은?
+          <details><summary>답</summary><p>10.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>소비자가 full.acquire()를 빼먹으면?
+          <details><summary>답</summary><p>빈 버퍼에서 꺼내려다 오류가 납니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>생산자 2, 소비자 2이면 코드에서 바꿀 것은?
+          <details><summary>답</summary><p>구조는 같습니다. 세마포어와 락이 여럿에게도 맞게 동작합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

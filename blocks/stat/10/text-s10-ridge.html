@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-ridge" data-kind="본문" data-std="응통10-06-03">
+  <header class="card-head"><span class="no"></span><h2>능형 회귀와 라쏘의 원리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>벌점을 더한 최소제곱으로 능형 회귀와 라쏘를 정의한다.</li>
+        <li>두 방법의 차이(축소 대 선택)와 조율 모수를 고르는 법을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>MSE 분해 (응통7 1.2절), 다중공선성 (<a href="04-03.html">4.3절</a>), 교차검증 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>조금 치우치더라도 덜 흔들리게</h3>
+    <p>다중공선성이 있거나 변수가 많으면 최소제곱 계수는 불편이지만 분산이 큽니다. MSE = 분산 + 치우침²이므로, 계수를 0 쪽으로 조금 당겨 치우침을 감수하고 분산을 크게 줄이면 전체 오차가 줄어들 수 있습니다.</p>
+
+    <h3><span class="no">6.3.1</span>능형 회귀</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.3.1</span>
+      <p>\(\hat{\boldsymbol\beta}_{\text{ridge}} = \arg\min_{\mathbf b}\left\{\|\mathbf y - X\mathbf b\|^2 + \lambda\sum_{j \ge 1}b_j^2\right\} = (X^\top X + \lambda I)^{-1}X^\top\mathbf y\) (설명변수는 표준화, 절편은 벌점에서 제외).</p>
+    </div>
+    <p>\(\lambda I\)를 더하면 \(X^\top X\)가 거의 특이할 때도 역행렬이 안정됩니다. \(\lambda = 0\)이면 최소제곱, \(\lambda \to \infty\)이면 계수가 모두 0으로 갑니다. 계수는 작아지지만 정확히 0이 되지는 않습니다.</p>
+
+    <h3><span class="no">6.3.2</span>라쏘</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.3.2</span>
+      <p>\(\hat{\boldsymbol\beta}_{\text{lasso}} = \arg\min_{\mathbf b}\left\{\|\mathbf y - X\mathbf b\|^2 + \lambda\sum_{j\ge1}|b_j|\right\}\).</p>
+    </div>
+    <p>절댓값 벌점은 원점에서 뾰족하기 때문에 \(\lambda\)가 적당히 크면 일부 계수를 <b>정확히 0</b>으로 만듭니다. 그래서 축소와 변수 선택을 한꺼번에 합니다. 기하학적으로는 제약 영역이 능형은 원(구), 라쏘는 꼭짓점이 축 위에 있는 마름모이고, SSE의 등고선이 마름모의 꼭짓점에 먼저 닿기 쉬워 일부 좌표가 0이 됩니다. 닫힌 꼴 해는 없고 좌표 하강법으로 계산합니다.</p>
+
+    <h3><span class="no">6.3.3</span>\(\lambda\) 고르기</h3>
+    <p>\(\lambda\)를 여러 값으로 바꿔 교차검증 오차가 가장 작은 값을 고르거나, 그보다 표준오차 하나만큼 큰 오차를 허용하는 가장 큰 \(\lambda\)(더 단순한 모형)를 고릅니다.</p>
+    <pre><code>library(glmnet)
+X &lt;- scale(as.matrix(mtcars[, -1])); y &lt;- mtcars$mpg
+cvfit &lt;- cv.glmnet(X, y, alpha = 1)     # alpha = 0이면 능형
+coef(cvfit, s = "lambda.1se")           # 0이 된 계수 확인</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>능형: 제곱 벌점, \((X^\top X + \lambda I)^{-1}X^\top\mathbf y\), 계수를 줄임.</li>
+        <li>라쏘: 절댓값 벌점, 일부 계수를 0으로(선택).</li>
+        <li>\(\lambda\)는 교차검증으로. 설명변수는 표준화합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>설명변수가 하나이고 표준화되어 \(\sum x_i^2 = n\)일 때 능형 추정량을 최소제곱 추정량으로 나타내세요.
+          <details><summary>답</summary><p>\(\hat\beta_{\text{ridge}} = \frac{\sum x_iy_i}{n + \lambda} = \frac{n}{n + \lambda}\hat\beta_{LS}\). 최소제곱을 일정 비율로 줄입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

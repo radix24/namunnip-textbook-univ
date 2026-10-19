@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-kmeans" data-kind="본문" data-std="전전23-05-01">
+  <header class="card-head"><span class="no"></span><h2>k-평균과 가우스 혼합 모형</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>k-평균의 할당·갱신 반복을 손으로 계산한다.</li>
+        <li>가우스 혼합 모형(GMM)의 EM 알고리즘이 부드러운 할당을 하는 k-평균의 일반화임을 안다.</li>
+        <li>군집의 모양·크기가 다를 때 두 방법의 차이를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>정규 분포와 Bayes 정리 (<a href="../11/01-01.html">전전11 1.1절</a>), 거리와 노름 (<a href="../20/01-01.html">전전20 1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>k-평균</h3>
+    <p>(1) 각 점을 가장 가까운 중심에 할당, (2) 중심을 할당된 점들의 평균으로 갱신. 바뀌지 않을 때까지 반복합니다. 군집 안 제곱 거리 합이 매 단계 줄어 반드시 멈추지만, 시작점에 따라 국소 최적에 머물 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>1차원 점 1, 2, 3, 10, 11, 12를 중심 1, 2에서 시작해 k = 2로 묶어라.</p>
+    </div>
+    <p><i>풀이.</i> 1회: {1}, {2, 3, 10, 11, 12} → 중심 1, 7.6. 2회: 경계 4.3 → {1, 2, 3}, {10, 11, 12} → 중심 2, 11. 3회: 변화 없음. 나쁜 시작에서도 두 번 만에 자연스러운 군집을 찾았습니다.</p>
+    <h3><span class="no">5.1.2</span>GMM과 EM</h3>
+    <p>GMM은 자료가 \(\sum_k\pi_kN(\mu_k, \Sigma_k)\)에서 나왔다고 봅니다. E 단계에서 각 점이 군집 k에서 왔을 사후 확률(책임도)을, M 단계에서 책임도로 가중한 평균·공분산·비율을 계산합니다. 공분산이 모두 같은 구형이고 분산 → 0이면 책임도가 0 또는 1이 되어 k-평균과 같아집니다. 그래서 GMM은 타원형·크기가 다른 군집과 확률적 소속을 다룰 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "k-평균은 전역 최적을 찾는다": 국소 최적이라 여러 시작점(k-means++)으로 돌립니다. (2) "k는 알고리즘이 정한다": 사람이 고르며, 팔꿈치 방법이나 정보 기준(BIC)을 참고합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>k-평균: 할당 → 평균 갱신, 국소 최적.</li>
+        <li>GMM-EM: 부드러운 책임도, 타원·크기 차이 표현.</li>
+        <li>구형·같은 분산의 극한이 k-평균.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>점 0, 2, 4의 중심은?
+          <details><summary>답</summary><p>2.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제를 중심 1, 12에서 시작하면 몇 번 만에 멈추는가?
+          <details><summary>답</summary><p>1회 할당 {1, 2, 3}, {10, 11, 12}, 중심 2, 11; 2회에 변화 없음.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>길쭉한 타원형 군집 둘에 k-평균을 쓰면 생길 수 있는 문제는?
+          <details><summary>답</summary><p>거리만 보므로 타원을 가로질러 잘못 나눌 수 있습니다. 전체 공분산 GMM이 낫습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

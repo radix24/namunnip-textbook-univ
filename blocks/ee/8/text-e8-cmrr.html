@@ -1,0 +1,95 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e8-cmrr" data-kind="본문" data-std="전전8-06-02">
+  <header class="card-head"><span class="no"></span><h2>공통 모드 제거비(CMRR)와 개선 방법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>CMRR = \(|A_d/A_{cm}|\)을 정의하고 dB로 나타낸다.</li>
+        <li>한쪽 출력의 CMRR \(\approx 2g_mR_{SS}\)와, 차동 출력에서 부하 불일치 \(\Delta R_D\)가 만드는 CMRR \(\approx 2g_mR_{SS}/(\Delta R_D/R_D)\)를 유도한다.</li>
+        <li>꼬리 전류원의 출력 저항을 키우고(캐스코드), 대칭을 맞추고, 능동 부하로 한쪽 출력을 만드는 개선 방법을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>차동 쌍의 반쪽 회로 (<a href="06-01.html">6.1절</a>), 전류 거울과 캐스코드 (<a href="05-01.html">5.1절</a>), 데시벨 (<a href="../3/08-02.html">전전3 8.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>CMRR의 정의</h3>
+    <p>실제 차동 증폭기의 출력은 \(v_o = A_dv_{id} + A_{cm}v_{icm}\)입니다. 차동 신호는 크게, 공통 모드는 작게 증폭할수록 좋으므로 둘의 비로 성능을 잽니다.</p>
+    <p class="q-term"><b>공통 모드 제거비</b> \(\text{CMRR} = \left|\dfrac{A_d}{A_{cm}}\right|\), dB로 \(20\log_{10}\text{CMRR}\).</p>
+    <p>예: 심전도 측정에서 전극의 신호는 1 mV, 몸에 실린 60 Hz 전원 잡음은 공통 모드로 1 V일 수 있습니다. 출력에서 잡음이 신호의 1% 이하가 되려면 \(A_{cm}\cdot1\text{ V} \le 0.01 \times A_d\cdot1\text{ mV}\), 곧 CMRR ≥ \(10^5\)(100 dB)가 필요합니다.</p>
+
+    <h3><span class="no">6.2.2</span>한쪽 출력의 CMRR</h3>
+    <p>6.1절의 결과를 쓰면 한쪽 출력에서 \(A_d = g_mR_D/2\), \(A_{cm} \approx -R_D/(2R_{SS})\)이므로</p>
+    \[ \text{CMRR}_{\text{한쪽}} \approx \frac{g_mR_D/2}{R_D/(2R_{SS})} = g_mR_{SS}. \]
+    <p>정확히는 \(A_{cm} = -g_mR_D/(1 + 2g_mR_{SS})\)이라 CMRR = \((1 + 2g_mR_{SS})/2 \approx g_mR_{SS}\)입니다. 꼬리 전류원의 출력 저항 \(R_{SS}\)가 클수록 좋습니다. 이상 전류원(\(R_{SS} = \infty\))이면 무한대입니다.</p>
+
+    <h3><span class="no">6.2.3</span>차동 출력과 불일치</h3>
+    <p>차동 출력 \(v_{d2} - v_{d1}\)을 쓰면 완벽히 대칭일 때 공통 모드가 정확히 상쇄되지만, 실제로는 두 부하 저항이 조금 다릅니다(\(R_D\)와 \(R_D + \Delta R_D\)). 공통 모드 입력에서 두 반쪽의 전류 변화는 같고(\(v_{icm}/(2R_{SS})\) 근사), 저항이 다르므로 출력 차이가 남습니다.</p>
+    \[ A_{cm,\text{차동}} \approx \frac{\Delta R_D}{2R_{SS}}, \qquad \text{CMRR}_{\text{차동}} \approx \frac{g_mR_D}{\Delta R_D/(2R_{SS})} = \frac{2g_mR_{SS}}{\Delta R_D/R_D}. \]
+    <p>트랜지스터의 \(g_m\) 불일치(\(\Delta g_m/g_m\))도 같은 꼴의 항을 만듭니다(\(\Delta R_D/R_D\) 자리에 \(\Delta g_m/g_m\)).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>6.1절 예제의 차동 쌍(\(g_m = 2\) mA/V, \(R_D = 5\) kΩ, \(R_{SS} = 50\) kΩ). (가) 한쪽 출력 CMRR, (나) 차동 출력에서 부하 저항이 1% 어긋날 때의 CMRR, (다) 꼬리 전류원을 캐스코드로 바꿔 \(R_{SS} = 5\) MΩ이 되면 (나)는?</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <ul>
+      <li>(가) \((1 + 2 \times 2 \times 50)/2 = 100.5\), 약 40 dB.</li>
+      <li>(나) \(2 \times 2 \times 50/0.01 = 20{,}000\), 약 86 dB.</li>
+      <li>(다) \(R_{SS}\)가 100배라 CMRR도 100배, \(2 \times 10^6\), 약 126 dB.</li>
+    </ul>
+    <p>차동 출력과 높은 꼬리 저항을 함께 써야 심전도 같은 응용의 100 dB를 넘길 수 있습니다.</p>
+
+    <h3><span class="no">6.2.4</span>개선 방법 정리</h3>
+    <ol>
+      <li><b>꼬리 전류원의 출력 저항 키우기</b>: 저항 대신 전류 거울, 그다음 캐스코드 전류원.</li>
+      <li><b>대칭 맞추기</b>: 두 입력 트랜지스터와 부하를 같은 크기·방향으로, 칩 위에서 가까이(공통 중심 배치). 개별 소자로 만들 때는 짝을 골라 쓴다.</li>
+      <li><b>능동 부하(전류 거울 부하)</b>: 한쪽 드레인의 전류 변화를 거울로 다른 쪽에 복사해, 한쪽 출력에서도 차동 출력 같은 이득(\(g_m(r_{o2} \parallel r_{o4})\))과 높은 CMRR을 얻는다. 연산증폭기 입력단의 표준 구조(전전13).</li>
+      <li><b>계측 증폭기</b>: 연산증폭기 세 개로 만든 구조로 입력 저항과 CMRR을 모두 높인다(전전9, 전전17 바이오전자).</li>
+    </ol>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "차동 출력이면 CMRR이 무한대": 이론상의 대칭에서만 그렇고, 실제로는 불일치가 CMRR을 정합니다. (2) CMRR을 dB로 바꿀 때 \(10\log\)을 쓰는 실수: 전압비이므로 \(20\log\)입니다. (3) 주파수가 높아지면 꼬리 마디의 정전 용량 때문에 \(R_{SS}\)가 사실상 작아져 CMRR이 떨어집니다. 데이터시트의 CMRR은 보통 직류나 저주파 값입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CMRR = \(|A_d/A_{cm}|\), dB는 \(20\log\).</li>
+        <li>한쪽 출력 \(\approx g_mR_{SS}\). 차동 출력 \(\approx 2g_mR_{SS}/(\Delta R_D/R_D)\).</li>
+        <li>높은 \(R_{SS}\)(캐스코드), 대칭, 능동 부하로 개선.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(A_d = 200\), \(A_{cm} = 0.02\)이면 CMRR은 몇 dB인가?
+          <details><summary>답</summary><p>\(10^4\), 80 dB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>CMRR 80 dB, \(A_d = 100\)인 증폭기에 차동 2 mV와 공통 모드 2 V가 들어오면 출력의 신호와 잡음 성분은?
+          <details><summary>답</summary><p>신호 0.2 V, \(A_{cm} = 0.01\)이라 잡음 0.02 V. 신호 대 잡음 10배.</p></details>
+        </li>
+        <li>\(g_m = 1\) mA/V, \(R_{SS} = 200\) kΩ, 부하 불일치 0.5%일 때 차동 출력 CMRR(dB)은?
+          <details><summary>답</summary><p>\(2 \times 200/0.005 = 80{,}000\), 약 98 dB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>꼬리 전류원을 저항 \(R_{SS}\)로 대신하면 직류 꼬리 전류를 위해 \(R_{SS}\)에 걸리는 전압이 \(IR_{SS}\)이다. 예제 6.2.1에서 \(R_{SS} = 50\) kΩ을 저항으로 만들면 몇 V가 필요한가? 전류원을 쓰는 이유를 설명하여라.
+          <details><summary>답</summary><p>\(0.4\text{ mA} \times 50\text{ k} = 20\) V. 저전압 칩에서는 불가능하므로, 직류 강하가 작고(\(V_{OV}\) 정도) 소신호 저항이 큰 전류원을 씁니다(5.2절의 능동 부하와 같은 이유).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

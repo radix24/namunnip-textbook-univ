@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-04-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-sine" data-kind="실습" data-std="전전1-04-01">
+  <header class="card-head"><span class="no"></span><h2>NumPy로 사인파 만들고 Matplotlib으로 그리기</h2><span class="kind">실습 · 배열 계산과 그래프</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>시간 축 배열로 50 Hz 사인파 두 개를 계산하고, 값과 실효값을 확인한 뒤 그림 파일로 저장합니다. 성취기준 [전전1-04-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>NumPy와 Matplotlib이 필요합니다(<code>pip install numpy matplotlib</code>). 아래 코드를 <code>sine_plot.py</code>로 저장합니다.</p>
+<pre><code># 사인파 만들고 그리기: NumPy와 Matplotlib
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")              # 화면 없이 파일로 저장
+import matplotlib.pyplot as plt
+
+f, A = 50, 2.0                     # 주파수 50 Hz, 진폭 2 V
+t = np.linspace(0, 0.04, 401)      # 0~40 ms를 400칸으로 (두 주기)
+v = A * np.sin(2 * np.pi * f * t)
+v2 = A * np.sin(2 * np.pi * f * t - np.pi / 2)   # 90° 늦은 신호
+
+print("표본 수:", len(t), " 간격:", round((t[1] - t[0]) * 1000, 3), "ms")
+print("t = 5 ms에서 v =", round(float(v[50]), 3), "V")
+print("최댓값", round(float(v.max()), 3), " 최솟값", round(float(v.min()), 3))
+print("실효값(제곱 평균의 제곱근):", round(float(np.sqrt(np.mean(v[:400] ** 2))), 4), "V")
+
+plt.figure(figsize=(6, 3))
+plt.plot(t * 1000, v, label="v")
+plt.plot(t * 1000, v2, "--", label="v2 (90° lag)")
+plt.xlabel("t (ms)")
+plt.ylabel("V")
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.savefig("sine.png", dpi=100)
+print("sine.png 저장")</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적고 같은 폴더의 <code>sine.png</code>를 엽니다.</li>
+        <li><code>np.linspace(0, 0.04, 401)</code>의 401을 9로 바꿔 그림이 어떻게 변하는지 봅니다.</li>
+        <li><code>f</code>를 100으로 바꾸면 그림에 몇 주기가 보이는지 예측하고 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>표본 수: 401  간격: 0.1 ms
+t = 5 ms에서 v = 2.0 V
+최댓값 2.0  최솟값 -2.0
+실효값(제곱 평균의 제곱근): 1.4142 V
+sine.png 저장</code></pre>
+      <ul>
+        <li>점 401개, 간격 0.1 ms. t = 5 ms(4분의 1 주기)에서 2.0 V, 최댓값 2.0, 최솟값 −2.0.</li>
+        <li>실효값 1.4142 V = \(2/\sqrt2\)(예제 4.1.1). 정확히 두 주기(400칸)로 평균을 내야 이 값이 나옵니다.</li>
+        <li>그림: 파란 실선 v가 0에서 시작해 5 ms에 2 V, 주황 점선 v2는 −2 V에서 시작해 5 ms 늦게 따라가는 두 주기의 사인파. 축은 t (ms), V이고 격자와 범례가 있습니다.</li>
+        <li>절차 2: 점 9개(5 ms 간격)면 꼭짓점만 이은 삼각파처럼 보입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>v[:400]</code>로 마지막 점을 빼고 실효값을 낸 이유는? 401개 모두 쓰면 값이 어떻게 달라질까요?</li>
+        <li><code>matplotlib.use("Agg")</code>는 무엇을 위한 줄인가요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>두 신호의 합 <code>v + v2</code>를 그리고 진폭을 확인해 보세요(이론값 \(2\sqrt2 \approx 2.83\) V).</p>
+    </section>
+  </div>
+</article>

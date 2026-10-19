@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전13-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e13-inverter" data-kind="본문" data-std="전전13-06-03">
+  <header class="card-head"><span class="no"></span><h2>CMOS 인버터의 전달 특성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>NMOS와 PMOS가 상보적으로 켜지는 CMOS 인버터의 동작 영역을 입력 전압에 따라 나눈다.</li>
+        <li>두 트랜지스터 전류가 같은 조건으로 스위칭 문턱 \(V_M\)을 구한다.</li>
+        <li>잡음 여유, 정적 전력 0, 동적 전력 \(CV_{DD}^2f\)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>MOSFET 동작 영역 (<a href="../8/02-01.html">전전8 2.1절</a>), 디지털 논리 (<a href="../4/02-01.html">전전4 2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>전달 특성</h3>
+    <p>입력이 0 V면 PMOS 켜짐·NMOS 꺼짐으로 출력 \(V_{DD}\), 입력이 \(V_{DD}\)면 반대로 0 V. 중간에서 두 트랜지스터가 모두 포화하는 좁은 구간이 있어 출력이 가파르게 떨어집니다. 이 구간의 기울기가 이득이고 클수록 잡음 여유가 큽니다.</p>
+    <p><b>스위칭 문턱</b> \(V_M\): 입력 = 출력인 점. 두 트랜지스터가 포화이고 전류가 같다는 조건 \(\frac{k_n}{2}(V_M - V_{tn})^2 = \frac{k_p}{2}(V_{DD} - V_M - |V_{tp}|)^2\)에서, \(r = \sqrt{k_n/k_p}\)라 하면</p>
+    \[ V_M = \frac{V_{DD} - |V_{tp}| + rV_{tn}}{1 + r}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>\(V_{DD}\) = 1.8 V, \(V_{tn} = |V_{tp}|\) = 0.4 V. (가) \(k_n = k_p\), (나) \(k_n = 2k_p\)일 때 \(V_M\).</p>
+    </div>
+    <p><i>풀이.</i> (가) r = 1, \(V_M = (1.8 - 0.4 + 0.4)/2 = 0.9\) V(가운데). (나) r = 1.414, \(V_M = (1.4 + 0.566)/2.414 = 0.814\) V. NMOS가 강하면 문턱이 아래로 내려갑니다. 정공 이동도가 전자보다 작아(약 1/2~1/3, 확인 필요) 대칭으로 만들려면 PMOS 폭을 NMOS의 2~3배로 합니다.</p>
+
+    <h3><span class="no">6.3.2</span>전력</h3>
+    <p>정지 상태에서는 한쪽 트랜지스터가 꺼져 전류가 흐르지 않습니다(정적 전력 거의 0, 누설 제외). 출력이 바뀔 때마다 부하 용량을 충방전하므로 동적 전력 \(P = \alpha CV_{DD}^2f\)(α는 활동 비율). 전압을 낮추면 제곱으로 전력이 줄어 칩의 공급 전압이 세대마다 낮아졌습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "CMOS는 전력을 안 쓴다": 스위칭 때와 누설로 씁니다. 고성능 칩의 큰 전력 대부분이 동적 전력입니다. (2) "V_M은 언제나 V_DD/2": 두 트랜지스터의 세기 비로 정해집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>입력 낮음 → 출력 V_DD, 입력 높음 → 0. 중간에 가파른 전이.</li>
+        <li>\(V_M = (V_{DD} - |V_{tp}| + rV_{tn})/(1 + r)\), \(r = \sqrt{k_n/k_p}\).</li>
+        <li>정적 전력 ≈ 0, 동적 \(\alpha CV_{DD}^2f\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>C = 10 fF, V_DD = 1 V, f = 1 GHz, α = 0.1이면 동적 전력은?
+          <details><summary>답</summary><p>1 μW.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>V_DD를 1.2 V에서 0.9 V로 낮추면 동적 전력은 몇 배인가?
+          <details><summary>답</summary><p>\((0.9/1.2)^2 = 0.5625\)배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 (나)에서 V_M을 0.9 V로 되돌리려면 k_p를 얼마로 해야 하는가?
+          <details><summary>답</summary><p>\(k_p = k_n\)(r = 1). PMOS 폭을 두 배로 키웁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

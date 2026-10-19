@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-02-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e4-nand" data-kind="예제" data-std="전전4-02-02">
+  <header class="card-head"><span class="no"></span><h2>다수결 회로를 NAND 칩 하나로</h2><span class="kind">예제 · AND-OR를 NAND-NAND로</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>입력 셋 중 둘 이상이 1이면 1을 내는 다수결 회로 \(F = AB + BC + CA\)를 NAND만으로 만들면 게이트가 몇 개 들까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>AND 3개 + 3입력 OR 1개 = 4개였으므로, NAND-NAND로 바꾸면 2입력 NAND 3개와 3입력 NAND 1개, 모두 4개입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(F = AB + BC + CA\)를 NAND만으로 구현하라. 3입력 NAND가 없고 2입력 NAND 4개가 든 칩(74HC00) 두 개만 있다면 어떻게 하는가?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>곱의 합이 이미 최소이므로 그대로 NAND-NAND로 바꾼다(2.2.3).</li>
+        <li>3입력 NAND가 없으면 \((XYZ)' = ((XY)''Z)'\)처럼 2입력 NAND와 NOT으로 쪼갠다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(F = \big((AB)'(BC)'(CA)'\big)'\). 첫째 단 NAND 3개, 둘째 단 3입력 NAND 1개. <span class="q-why">드 모르간 두 번</span></li>
+        <li>3입력 NAND를 2입력으로: \(P = (AB)'\), \(Q = (BC)'\), \(R = (CA)'\)일 때 \((PQR)' = \big((PQ)\,R\big)'\). \(PQ\)는 NAND 뒤 NOT으로 만든다: \(U = (PQ)'\), \(U' = (UU)'\). <span class="q-why">AND = NAND + NOT</span></li>
+        <li>마지막: \(F = (U'R)'\). 게이트: P, Q, R(3개) + U + U' + F = 6개. 칩 두 개(8게이트)로 충분하다. <span class="q-why">세기</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>NAND-NAND 변환은 게이트 수를 늘리지 않지만, 입력 수가 맞는 게이트가 없으면 쪼개는 비용이 듭니다. 실제 칩 설계 도구는 셀 라이브러리(어떤 게이트가 있는지)에 맞춰 이런 변환을 자동으로 합니다(기술 매핑, 전전32).</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>A = 1, B = 1, C = 0: P = 0이라 PQ = 0, U = 1, U' = 0, F = (0·R)' = 1. 맞음(둘이 1). A = 1, B = 0, C = 0: P = Q = R = 1, U = 0, U' = 1, F = (1·1)' = 0. 맞음.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>\(F = A'B + C\)를 2입력 NAND만으로 만드는 데 몇 개가 드나요(\(A'\), \(C'\)은 없음)?</p>
+      <details><summary>답</summary><p>\(F = ((A'B)'C')'\). \(A'\) 1, \((A'B)'\) 1, \(C'\) 1, 마지막 1. 4개.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>바꾸는 규칙</h3>
+    <p class="q">2단 AND-OR 회로 \(F = AB + C'D\)를 NAND-NAND로 바꿀 때 해야 할 일은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>모든 게이트를 NAND로 바꾼다<span class="why"><b>맞습니다.</b> 첫째 단 출력의 NOT과 둘째 단 입력의 NOT이 지워집니다. 변수 하나짜리 항이 없으니 다른 처리는 필요 없습니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>NAND로 바꾸고 출력에 NOT을 단다<span class="why"><b>NOT이 이미 짝지어 지워졌습니다.</b> 출력에 하나 더 달면 F'이 됩니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>모든 입력을 뒤집고 NAND로 바꾼다<span class="why"><b>입력을 뒤집는 것은 OR 게이트에 바로 들어가는 변수 하나짜리 항뿐입니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

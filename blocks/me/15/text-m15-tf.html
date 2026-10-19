@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-tf" data-kind="본문" data-std="기계15-01-01">
+  <header class="card-head"><span class="no"></span><h2>전달함수: 질량-스프링-감쇠기와 DC 모터</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>미분방정식을 Laplace 변환하면 미분이 \(s\) 곱하기가 되어 대수식이 된다는 것을 안다.</li>
+        <li>입력과 출력의 비인 전달함수를 정의하고 질량-스프링-감쇠기 계의 전달함수를 구한다.</li>
+        <li>DC 모터의 전기·기계 방정식을 합쳐 전압-속도 전달함수를 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>질량-스프링-감쇠기 운동 방정식 (<a href="../13/01-01.html">기계진동 1.1절</a>), 옴의 법칙과 기전력(고등학교 물리).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>Laplace 변환과 \(s\)</h3>
+    <p>제어에서는 미분방정식을 그대로 풀기보다 Laplace 변환으로 바꿔 대수식으로 다룹니다. 변환의 계산 방법보다 중요한 성질은 다음 하나입니다.</p>
+    <p class="q-term"><b>미분 = \(s\) 곱하기</b>: 처음 값이 0이면 \(\dot x \to sX(s)\), \(\ddot x \to s^2X(s)\). 적분은 \(1/s\) 곱하기.</p>
+    <p class="q-term"><b>전달함수</b> \(G(s) = Y(s)/U(s)\): 처음 상태가 0일 때 출력과 입력의 Laplace 변환 비. 시스템의 성질만 담고 입력과 무관하다.</p>
+    <div class="tb-aside"><b>왜 이렇게 하나</b> \(\dot x\)가 \(sX\)로 바뀌면 미분방정식이 \(X\)에 대한 일차식이 되어 나눗셈만으로 풀립니다. 여러 장치를 이어 붙인 계의 전체 전달함수는 각 전달함수를 곱하면 됩니다(2단원). 시간 응답은 표를 보고 되돌리거나 시뮬레이션으로 구합니다.</div>
+
+    <h3><span class="no">1.1.2</span>질량-스프링-감쇠기</h3>
+    <p>\(m\ddot x + c\dot x + kx = f(t)\)을 변환하면 \((ms^2 + cs + k)X = F\)이므로</p>
+    \[G(s) = \frac{X(s)}{F(s)} = \frac{1}{ms^2 + cs + k} = \frac{1/m}{s^2 + 2\zeta\omega_ns + \omega_n^2}\]
+    <p>입니다. 분모를 0으로 두는 근(극점)이 기계진동 2.1절의 특성 방정식 근과 같습니다. 극점이 응답의 모양(진동수, 감쇠)을 정합니다.</p>
+
+    <h3><span class="no">1.1.3</span>DC 모터</h3>
+    <p>전압 \(V\)를 넣으면 전기자 전류 \(i\)가 흘러 토크 \(K_ti\)를 내고, 회전하면 역기전력 \(K_e\omega\)가 생깁니다. 전기 회로와 회전 운동 방정식은</p>
+    \[L\frac{di}{dt} + Ri = V - K_e\omega\]
+    \[J\dot\omega + b\omega = K_ti\]
+    <p>입니다(SI 단위에서 \(K_t = K_e = K\)). 인덕턴스 \(L\)이 작아 전기 응답이 기계 응답보다 훨씬 빠르면 \(L = 0\)으로 두고 \(i = (V - K\omega)/R\)을 넣어</p>
+    <div class="tb-env thm">
+      <span class="lb">DC 모터 전압-속도 전달함수 (\(L\) 무시)</span>
+      \[\frac{\Omega(s)}{V(s)} = \frac{K_m}{\tau s + 1}\]
+      \[K_m = \frac{K}{Rb + K^2},\quad \tau = \frac{RJ}{Rb + K^2}\]
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1 <span class="nm">(소형 DC 모터)</span></span>
+      <p>\(J = 2\times10^{-5}\) kg·m², \(b = 1\times10^{-5}\) N·m·s, \(K = 0.05\) N·m/A, \(R = 2\) Ω인 모터에 12 V를 갑자기 걸었다. 정상 속도와 시간 상수는?</p>
+    </div>
+    <p><i>풀이.</i> \(Rb + K^2 = 2\times10^{-5} + 0.0025 = 0.00252\). \(K_m = 19.8\) rad/(s·V), 정상 속도 238 rad/s(2270 rpm). \(\tau = 4\times10^{-5}/0.00252 = 0.016\) s. 약 0.05 s(3τ) 만에 거의 정상 속도에 이릅니다. 역기전력(\(K^2\) 항)이 마찰(\(Rb\))보다 훨씬 커서 속도를 주로 정합니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 전달함수는 선형·시불변 계에만 정의됩니다(비선형은 1.2절에서 선형화). (2) 위치를 출력으로 하면 속도를 한 번 적분해 \(\Theta/V = K_m/[s(\tau s + 1)]\)이 됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>미분 → \(s\), \(G = Y/U\).</li>
+        <li>질량-스프링-감쇠기 \(1/(ms^2 + cs + k)\).</li>
+        <li>DC 모터 \(K_m/(\tau s + 1)\), \(K_m = K/(Rb + K^2)\), \(\tau = RJ/(Rb + K^2)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(m = 1\), \(c = 2\), \(k = 20\)인 계의 \(\omega_n\)과 \(\zeta\)는?
+          <details><summary>답</summary><p>\(\omega_n = 4.47\) rad/s, \(\zeta = 2/(2\times4.47) = 0.224\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 모터에 관성 모멘트 \(8\times10^{-5}\) kg·m² 원판을 달면 시간 상수는?
+          <details><summary>답</summary><p>\(J = 10^{-4}\), \(\tau = 2\times10^{-4}/0.00252 = 0.079\) s. 정상 속도는 그대로.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 모터 축을 손으로 꽉 잡아 멈추면(\(\omega = 0\)) 흐르는 전류와 토크는? 왜 모터가 뜨거워지는가?
+          <details><summary>답</summary><p>역기전력이 0이라 \(i = 12/2 = 6\) A, 토크 0.3 N·m(구속 토크). 정상 운전 전류(약 \((12 - 0.05\times238)/2 = 0.05\) A)의 100배 이상이 흘러 \(i^2R = 72\) W가 모두 열이 된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

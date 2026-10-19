@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전16-05-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e16-svd" data-kind="실습" data-std="전전16-05-01">
+  <header class="card-head"><span class="no"></span><h2>SVD로 가상 영상 압축하기</h2><span class="kind">실습 · 순위 k 근사와 저장량</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>64×64 가상 영상의 SVD로 순위 k 근사를 만들고 상대 오차와 저장량을 비교합니다. 성취기준 [전전16-05-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>NumPy가 필요합니다(<code>pip install numpy</code>). 아래 코드를 <code>svd_compress.py</code>로 저장합니다.</p>
+<pre><code># SVD로 영상 압축하기: 순위 k 근사의 오차와 저장량
+import numpy as np
+
+# 64×64 가상 영상: 부드러운 그라데이션 + 원 + 가로 줄무늬 + 약한 잡음
+n = 64
+y, x = np.mgrid[0:n, 0:n] / n
+img = 0.5 * x + 0.3 * y
+img += 0.8 * (((x - 0.6) ** 2 + (y - 0.4) ** 2) &lt; 0.04)
+img += 0.2 * np.sin(2 * np.pi * 8 * y)
+rng = np.random.default_rng(0)
+img += 0.02 * rng.standard_normal((n, n))
+
+U, s, Vt = np.linalg.svd(img)
+print("가장 큰 특이값 5개:", np.round(s[:5], 3))
+total = np.sum(s ** 2)
+for k in (1, 2, 5, 10, 20):
+    Ak = (U[:, :k] * s[:k]) @ Vt[:k, :]
+    err = np.linalg.norm(img - Ak) / np.linalg.norm(img)
+    energy = np.sum(s[:k] ** 2) / total
+    store = k * (n + n + 1)
+    print(f"k = {k:2d}: 상대 오차 {err:.4f}, 에너지 {energy * 100:6.2f}%, 저장 수 {store:5d} (원본 {n * n}, 비율 {store / (n * n):.3f})")
+
+# 오차 = 버린 특이값들의 제곱합의 제곱근(Eckart-Young)
+k = 5
+print("k = 5 오차 검산:", round(float(np.sqrt(np.sum(s[k:] ** 2)) / np.linalg.norm(img)), 4))</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 표를 적습니다.</li>
+        <li>k = 1과 k = 2의 상대 오차 차이가 큰 이유를 둘째 특이값으로 설명합니다.</li>
+        <li>잡음 세기 0.02를 0.2로 키우면 표가 어떻게 바뀔지 예측하고 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>가장 큰 특이값 5개: [37.266  8.503  4.081  3.29   2.178]
+k =  1: 상대 오차 0.2780, 에너지  92.27%, 저장 수   129 (원본 4096, 비율 0.031)
+k =  2: 상대 오차 0.1710, 에너지  97.08%, 저장 수   258 (원본 4096, 비율 0.063)
+k =  5: 상대 오차 0.0885, 에너지  99.22%, 저장 수   645 (원본 4096, 비율 0.157)
+k = 10: 상대 오차 0.0499, 에너지  99.75%, 저장 수  1290 (원본 4096, 비율 0.315)
+k = 20: 상대 오차 0.0213, 에너지  99.95%, 저장 수  2580 (원본 4096, 비율 0.630)
+k = 5 오차 검산: 0.0885</code></pre>
+      <ul>
+        <li>가장 큰 특이값 37.27이 압도적이라(그라데이션 성분) k = 1에서 에너지 92.27%, 상대 오차 27.8%.</li>
+        <li>k = 5: 오차 8.85%, 저장 645개(원본의 15.7%). k = 10: 5.0%, 31.5%. k = 20: 2.1%, 63%.</li>
+        <li>마지막 줄: 버린 특이값으로 계산한 오차가 직접 계산과 같은 0.0885(Eckart-Young).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>저장 비율이 1을 넘는 k는? 그때는 압축 의미가 없습니다.</li>
+        <li>가로 줄무늬(sin) 성분은 순위 몇짜리 행렬인가요? 몇 번째 특이값에 해당할까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>matplotlib으로 원본과 k = 1, 5, 20 근사를 나란히 그려 눈으로 비교하세요.</p>
+    </section>
+  </div>
+</article>

@@ -1,4 +1,4 @@
-/* 물리7 실습 카드 묶음: 회전-진동 스펙트럼, 세 통계 분포, 크로니히-페니 띠, 반경험 질량 공식, 입자 반응 판정 */
+/* 물리7 실습 카드 묶음: 회전-진동 스펙트럼, 세 통계 분포, 크로니히-페니 띠, 반경험 질량 공식 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -84,38 +84,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 입자 반응 판정기 (05-02) */
-  (() => {
-    const S = QSim.card("lab-p7-react"); if (!S) return;
-    const cv = S.$("canvas");
-    // 이름: [전하, 바리온 수, L_e, L_mu, 기묘도, 질량 MeV]
-    const P = { "p": [1, 1, 0, 0, 0, 938.3], "p̄": [-1, -1, 0, 0, 0, 938.3], "n": [0, 1, 0, 0, 0, 939.6], "e⁻": [-1, 0, 1, 0, 0, 0.511], "e⁺": [1, 0, -1, 0, 0, 0.511], "μ⁻": [-1, 0, 0, 1, 0, 105.7], "μ⁺": [1, 0, 0, -1, 0, 105.7], "νₑ": [0, 0, 1, 0, 0, 0], "ν̄ₑ": [0, 0, -1, 0, 0, 0], "ν_μ": [0, 0, 0, 1, 0, 0], "ν̄_μ": [0, 0, 0, -1, 0, 0], "γ": [0, 0, 0, 0, 0, 0], "π⁺": [1, 0, 0, 0, 0, 139.6], "π⁻": [-1, 0, 0, 0, 0, 139.6], "π⁰": [0, 0, 0, 0, 0, 135.0], "K⁺": [1, 0, 0, 0, 1, 493.7], "K⁰": [0, 0, 0, 0, 1, 497.6], "K⁻": [-1, 0, 0, 0, -1, 493.7], "Λ⁰": [0, 1, 0, 0, -1, 1115.7], "Σ⁺": [1, 1, 0, 0, -1, 1189.4] };
-    const R = {
-      beta: [["n"], ["p", "e⁻", "ν̄ₑ"], true], pdec: [["p"], ["e⁺", "γ"], true], pion: [["π⁺"], ["μ⁺", "ν_μ"], true], mueg: [["μ⁻"], ["e⁻", "γ"], true],
-      assoc: [["π⁻", "p"], ["K⁰", "Λ⁰"], false], lam: [["Λ⁰"], ["p", "π⁻"], true], wrong: [["π⁻", "p"], ["K⁻", "Σ⁺"], false], pp: [["p", "p"], ["p", "p", "p", "p̄"], false], mudec: [["μ⁻"], ["e⁻", "ν̄ₑ", "ν_μ"], true]
-    };
-    const sum = (list, k) => list.reduce((s, n) => s + P[n][k], 0);
-    function draw() {
-      const c = C(), [ini, fin, decay] = R[S.val("rx")];
-      const names = ["전하", "바리온 수", "L_e", "L_μ", "기묘도"];
-      const rows = names.map((nm, k) => [nm, sum(ini, k), sum(fin, k)]);
-      const mI = sum(ini, 5), mF = sum(fin, 5);
-      const v = QSim.view(cv, 0.32), g = v.g; g.font = "13px sans-serif";
-      const cw = v.W / 4;
-      ["", "전", "후", "보존"].forEach((h, i) => { g.fillStyle = c.ink2; g.fillText(h, 10 + i * cw, 18); });
-      rows.forEach(([nm, a, b], j) => { const y = 40 + j * 20, ok = Math.abs(a - b) < 1e-9; g.fillStyle = c.ink; g.fillText(nm, 10, y); g.fillText(String(a), 10 + cw, y); g.fillText(String(b), 10 + 2 * cw, y); g.fillStyle = ok ? c.main : c.warn; g.fillText(ok ? "예" : "아니요", 10 + 3 * cw, y); });
-      const bad = rows.filter(([, a, b]) => a !== b).map(([n]) => n);
-      const dS = Math.abs(rows[4][1] - rows[4][2]);
-      const strangeOnly = bad.length === 1 && bad[0] === "기묘도" && dS === 1;
-      const energyOK = decay ? mF < mI : true;
-      let verdict;
-      if (bad.length === 1 && bad[0] === "기묘도" && dS >= 2) verdict = `금지: 기묘도가 ${dS}만큼 바뀐다 (약한 상호작용도 한 번에 1까지만 바꾼다)`;
-      else if (bad.length && !strangeOnly) verdict = `금지: ${bad.join(", ")} 보존이 깨진다`;
-      else if (!energyOK) verdict = `금지: 생성물 질량 합 ${mF.toFixed(1)} MeV가 처음 질량 ${mI.toFixed(1)} MeV보다 크다`;
-      else if (strangeOnly) verdict = "약한 상호작용으로만 가능 (기묘도가 1만큼 바뀜, 느리다)";
-      else verdict = fin.some((n) => n.startsWith("ν")) ? "가능: 중성미자가 나오므로 약한 상호작용" : fin.includes("γ") && !ini.some((n) => n.startsWith("π")) ? "가능 (전자기)" : "가능 (강한 상호작용으로 일어날 수 있음)";
-      S.out(`${ini.join(" + ")} → ${fin.join(" + ")}\n${decay ? `붕괴: Q = ${(mI - mF).toFixed(1)} MeV` : `충돌: 정지 에너지 합 전 ${mI.toFixed(1)} MeV, 후 ${mF.toFixed(1)} MeV (모자라면 운동 에너지로 보충)`}\n판정: ${verdict}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();

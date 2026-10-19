@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-transfer" data-kind="본문" data-std="전전33-04-01">
+  <header class="card-head"><span class="no"></span><h2>사전 학습 모델의 전이 학습</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>대규모 자료로 학습한 특징 추출부를 재사용하는 이유를 안다.</li>
+        <li>몸통을 고정하고 머리만 학습하는 단계와 미세 조정 단계를 구별한다.</li>
+        <li>새 분류층의 매개변수 수와 학습률 선택을 계산·판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>CNN (<a href="../23/04-02.html">전전23 4.2절</a>), 자료 수집 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>두 단계</h3>
+    <p>ImageNet 같은 큰 자료로 학습한 CNN의 앞쪽 층은 경계·질감 같은 일반 특징을 압니다. 마지막 분류층만 우리 클래스 수로 바꿔</p>
+    <ol>
+      <li><b>특징 추출</b>: 몸통을 고정하고 새 머리만 학습(자료가 적을 때).</li>
+      <li><b>미세 조정</b>: 뒤쪽 몇 층을 풀고 작은 학습률(예: 10분의 1)로 함께 학습(자료가 더 있을 때).</li>
+    </ol>
+    <pre><code>model = torchvision.models.resnet18(weights="IMAGENET1K_V1")
+for p in model.parameters():
+    p.requires_grad = False                      # 1단계: 몸통 고정
+model.fc = nn.Linear(model.fc.in_features, 5)    # 공구 5종
+opt = torch.optim.Adam(model.fc.parameters(), lr=1e-3)
+# ... 학습 후 2단계: layer4를 풀고 lr=1e-4로 미세 조정</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>ResNet-18의 마지막 특징 차원은 512다. 5클래스 머리의 매개변수 수는? 전체 모델(약 1170만 개, 확인 필요)과 비교하면?</p>
+    </div>
+    <p><i>풀이.</i> 512 × 5 + 5 = 2565개로 전체의 약 0.02%. 클래스당 수십 장으로도 학습이 가능한 이유입니다. 입력 영상은 사전 학습 때와 같은 크기·정규화(평균·표준편차)로 맞춥니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "미세 조정은 처음부터 큰 학습률로": 좋은 특징을 망가뜨리므로 작게 합니다. (2) "사전 학습 자료와 전혀 다른 영역(예: 열화상)에도 그대로 잘 된다": 차이가 크면 더 많은 층을 다시 학습해야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>몸통 재사용 + 새 머리.</li>
+        <li>1단계 고정·머리 학습, 2단계 작은 학습률 미세 조정.</li>
+        <li>예: 512 × 5 + 5 = 2565 매개변수.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>특징 2048차원, 10클래스 머리의 매개변수는?
+          <details><summary>답</summary><p>20 490.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>검증 정확도가 1단계에서 정체되면 다음 단계는?
+          <details><summary>답</summary><p>뒤쪽 층을 풀어 작은 학습률로 미세 조정합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>사전 학습 모델의 입력 정규화를 빼먹으면?
+          <details><summary>답</summary><p>입력 분포가 달라 특징이 어긋나 성능이 떨어집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

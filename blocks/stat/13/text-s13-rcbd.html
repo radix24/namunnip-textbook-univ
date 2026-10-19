@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통13-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s13-rcbd" data-kind="본문" data-std="응통13-03-01">
+  <header class="card-head"><span class="no"></span><h2>랜덤화 블록 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>랜덤화 블록 설계의 모형과 분산분석표를 쓴다.</li>
+        <li>블록화로 오차가 얼마나 줄었는지 상대 효율로 잰다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>일원배치 (<a href="02-01.html">2.1절</a>), 블록화 원리 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>블록 안에서 모든 처리를</h3>
+    <p>비료 4종을 밭 5곳에서 시험하는데 밭마다 토질이 다릅니다. 밭마다 네 구획으로 나누고 각 구획에 비료를 무작위로 하나씩 배정하면, 밭이 블록인 랜덤화 블록 설계가 됩니다.</p>
+
+    <h3><span class="no">3.1.1</span>모형과 분산분석</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.1</span>
+      <p>\(y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij}\), 처리 \(i = 1, \ldots, a\), 블록 \(j = 1, \ldots, b\). 블록마다 각 처리가 한 번씩.</p>
+    </div>
+    <table class="tw">
+      <tr><th>요인</th><th>제곱합</th><th>자유도</th></tr>
+      <tr><td>처리</td><td>\(b\sum(\bar y_{i\cdot} - \bar y)^2\)</td><td>\(a-1\)</td></tr>
+      <tr><td>블록</td><td>\(a\sum(\bar y_{\cdot j} - \bar y)^2\)</td><td>\(b-1\)</td></tr>
+      <tr><td>오차</td><td>나머지</td><td>\((a-1)(b-1)\)</td></tr>
+    </table>
+    <p>처리 검정은 \(F = \mathrm{MS}_{\text{처리}}/\mathrm{MSE}\). 블록 제곱합이 오차에서 빠져 나가므로 블록 차이가 크면 MSE가 크게 줄어듭니다. 블록과 처리 사이에 교호작용이 없다고 가정합니다(블록마다 처리 효과가 같음). 블록의 F 검정은 랜덤화가 블록 안에서만 되었으므로 엄밀한 검정은 아니고, 블록화가 효과적이었는지 보는 참고로만 씁니다. 처리가 2개이면 대응 t 검정과 같습니다.</p>
+
+    <h3><span class="no">3.1.2</span>상대 효율</h3>
+    <p>같은 자료를 블록 없이 완전 랜덤화 설계로 분석했다면 오차 분산이 얼마였을지 추정한 값과 MSE의 비를 상대 효율이라 합니다. 근사적으로 \(\hat\sigma^2_{CR} = \frac{(b-1)\mathrm{MS}_{\text{블록}} + b(a-1)\mathrm{MSE}}{ab - 1}\)이고, 효율 \(= \hat\sigma^2_{CR}/\mathrm{MSE}\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2</span>
+      <p>비료 3종(A, B, C), 밭 4곳의 수확량: 밭1 (10, 12, 14), 밭2 (14, 15, 19), 밭3 (8, 11, 11), 밭4 (12, 14, 16). 분석하세요.</p>
+    </div>
+    <p><i>풀이.</i> 처리 평균 11, 13, 15, 전체 13. 블록 평균 12, 16, 10, 14. SS처리 \(= 4(4 + 0 + 4) = 32\). SS블록 \(= 3(1 + 9 + 9 + 1) = 60\). SS합계 \(= 9 + 1 + 1 + 1 + 4 + 36 + 25 + 4 + 4 + 1 + 1 + 9 = 96\). SSE \(= 96 - 32 - 60 = 4\), 자유도 6, MSE 0.667. \(F_{\text{처리}} = 16/0.667 = 24\), p값 약 0.0014. 블록을 무시하면 오차 제곱합 64(자유도 9), MSE 7.1, \(F = 2.25\)로 유의하지 않습니다. 블록화가 결론을 바꿨습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij}\), 블록 안 랜덤화.</li>
+        <li>블록 제곱합이 오차에서 빠져 검정력이 커짐.</li>
+        <li>블록 × 처리 교호작용이 없다고 가정합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>예제의 상대 효율을 구하세요.
+          <details><summary>답</summary><p>\(\hat\sigma^2_{CR} = (3 \times 20 + 4 \times 2 \times 0.667)/11 = (60 + 5.33)/11 = 5.94\). 효율 \(5.94/0.667 \approx 8.9\). 블록 없이 같은 정밀도를 얻으려면 약 9배의 반복이 필요합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

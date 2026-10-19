@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-feature" data-kind="본문" data-std="전전33-02-02">
+  <header class="card-head"><span class="no"></span><h2>특징점 검출과 영상 간 정합</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모서리(Harris)와 크기 불변 특징(SIFT, ORB)의 원리를 안다.</li>
+        <li>기술자 거리와 비율 검사로 대응점을 고른다.</li>
+        <li>RANSAC으로 잘못된 대응을 걸러 호모그래피를 추정하고 반복 수를 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>필터와 기울기 (<a href="02-01.html">2.1절</a>), 최소제곱 (<a href="../16/03-01.html">전전16 3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>세 단계</h3>
+    <ol>
+      <li><b>검출</b>: 어느 방향으로 움직여도 밝기가 크게 바뀌는 점(모서리)을 찾는다. SIFT·ORB는 크기와 회전이 달라도 같은 점을 찾도록 여러 척도에서 찾고 방향을 정한다.</li>
+      <li><b>기술과 정합</b>: 점 주변을 벡터(기술자)로 만들고, 다른 영상에서 가장 가까운 것을 찾는다. 가장 가까운 거리가 두 번째의 0.8배보다 작을 때만 받아들이는 비율 검사로 애매한 대응을 버린다.</li>
+      <li><b>기하 검증</b>: 대응 4쌍으로 평면 사이 변환(호모그래피)을 계산하고, 무작위로 뽑기를 반복해 가장 많은 대응이 맞는 모형을 고른다(RANSAC).</li>
+    </ol>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>대응의 50%가 맞다(정상치 비율 w = 0.5). 4쌍을 뽑아 모두 정상치일 확률을 99% 이상 얻으려면 RANSAC을 몇 번 반복해야 하는가?</p>
+    </div>
+    <p><i>풀이.</i> \(N = \log(1 - 0.99)/\log(1 - 0.5^4) = 71.4\) → 72번. 정상치 비율이 30%면 \(\log0.01/\log(1 - 0.0081) = 567\)번으로 급증해, 비율 검사로 처음부터 잘못된 대응을 줄이는 것이 중요합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "가장 가까운 기술자가 언제나 맞는 대응": 반복 무늬에서는 틀리기 쉬워 비율 검사와 RANSAC이 필요합니다. (2) "호모그래피로 모든 장면을 맞출 수 있다": 평면 장면이나 회전만 한 카메라에서만 정확합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>검출(모서리, 척도·회전 불변) → 기술·정합(비율 검사) → RANSAC.</li>
+        <li>N = log(1 − p)/log(1 − wˢ).</li>
+        <li>예: w 0.5, s 4, p 0.99 → 72번.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>호모그래피를 정하는 최소 대응 쌍 수는?
+          <details><summary>답</summary><p>4쌍.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>w = 0.8, s = 4, p = 0.99의 반복 수는?
+          <details><summary>답</summary><p>log 0.01/log(1 − 0.4096) ≈ 8.7 → 9번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>파노라마 이어 붙이기에 호모그래피가 맞는 조건은?
+          <details><summary>답</summary><p>카메라가 제자리에서 회전만 하거나 장면이 멀어 평면처럼 볼 수 있을 때.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

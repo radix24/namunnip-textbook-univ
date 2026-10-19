@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-statslib" data-kind="본문" data-std="응통4-06-01">
+  <header class="card-head"><span class="no"></span><h2>통계 라이브러리로 기술통계, 검정, 회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>scipy.stats</code>로 분포 계산과 기본 검정을 한다.</li>
+        <li><code>statsmodels</code>로 회귀를 적합하고 요약표를 읽는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>pandas (<a href="05-01.html">5.1절</a>), 응통5 검정과 회귀.</li>
+      </ul>
+    </div>
+
+    <h3>R의 t.test와 lm을 파이썬에서</h3>
+    <p>파이썬에서 고전 통계 분석은 주로 두 라이브러리로 합니다. <code>scipy.stats</code>는 분포와 검정, <code>statsmodels</code>는 R과 비슷한 공식 문법의 회귀모형과 요약표를 제공합니다.</p>
+
+    <h3><span class="no">6.1.1</span>scipy.stats</h3>
+    <pre><code>from scipy import stats
+stats.norm.cdf(1.96); stats.norm.ppf(0.975); stats.t.ppf(0.975, df=9)   # 0.975, 1.96, 2.262
+a = tips.loc[tips.time == "Lunch", "tip"]; b = tips.loc[tips.time == "Dinner", "tip"]
+stats.ttest_ind(a, b, equal_var=False)        # 웰치 t 검정
+stats.mannwhitneyu(a, b)                      # 맨-휘트니
+tab = pd.crosstab(tips.sex, tips.smoker)
+stats.chi2_contingency(tab)                   # 카이제곱 통계량, p값, 자유도, 기대 도수</code></pre>
+    <p>분포 객체의 메서드 이름: <code>pdf/pmf</code>(밀도), <code>cdf</code>(누적), <code>ppf</code>(분위수), <code>rvs</code>(난수). R의 d, p, q, r과 같습니다(응통3 4.1절).</p>
+
+    <h3><span class="no">6.1.2</span>statsmodels 회귀</h3>
+    <pre><code>import statsmodels.formula.api as smf
+fit = smf.ols("tip ~ total_bill + C(time) + size", data=tips).fit()
+print(fit.summary())         # 계수, 표준오차, t, p, 신뢰구간, R²
+fit.params; fit.conf_int(); fit.resid
+smf.logit("I(smoker == 'Yes') ~ total_bill", data=tips).fit().summary()   # 로지스틱</code></pre>
+    <p><code>C()</code>는 범주형 변수를 가변수로 바꿉니다(응통10 3.1절). 공식 문법은 R의 <code>lm</code>과 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>scipy.stats: <code>cdf/ppf/pdf/rvs</code>, <code>ttest_ind</code>, <code>chi2_contingency</code>.</li>
+        <li>statsmodels: 공식 문법 <code>ols("y ~ x", data)</code>, <code>summary()</code>.</li>
+        <li>머신러닝 예측에는 scikit-learn이 있지만, 추론(표준오차, p값)은 statsmodels가 편합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>scipy로 자유도 3인 카이제곱 분포의 95% 분위수를 구하세요.
+          <details><summary>답</summary><p><code>stats.chi2.ppf(0.95, 3)</code> = 7.815.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

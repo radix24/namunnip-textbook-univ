@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-scipy" data-kind="본문" data-std="공통11-04-03">
+  <header class="card-head"><span class="no"></span><h2>SciPy로 적분, 근, 미분방정식 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>SciPy의 <code>quad</code>, <code>brentq</code>, <code>solve_ivp</code>를 불러 쓴다.</li>
+        <li>라이브러리 결과를 직접 만든 사다리꼴 공식, 이분법 결과와 비교한다.</li>
+        <li>허용 오차 옵션의 뜻을 알고 결과를 그대로 믿지 않는 습관을 들인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>함수를 인수로 넘기기 (<a href="04-01.html">4.1절</a>), 모듈 불러오기 (<a href="04-02.html">4.2절</a>), 사다리꼴 공식과 이분법 (<a href="../10/06-02.html">공통10 6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>왜 라이브러리를 쓰나</h3>
+    <p>SciPy(사이파이)는 NumPy 위에 만든 과학 계산 모듈 모음입니다(<code>pip install scipy</code>). 적분, 방정식의 근, 미분방정식, 선형대수, 최적화, 통계 함수가 들어 있고, 오랫동안 검증된 알고리즘을 씁니다. 직접 짠 코드보다 대개 정확하고 빠르며, 오차를 어림해 주기도 합니다. 그래도 "어떤 방법을 쓰는지"를 알아야 결과가 이상할 때 알아챌 수 있습니다. 그래서 이 교재는 방법을 먼저 직접 짜 보고(공통10 6단원, 이 과목 5단원) 라이브러리와 비교합니다.</p>
+    <table class="tb-table">
+      <thead><tr><th>할 일</th><th>함수</th><th>직접 짠 방법</th></tr></thead>
+      <tbody>
+        <tr><td>정적분 \(\int_a^b f\,dx\)</td><td><code>scipy.integrate.quad(f, a, b)</code></td><td>사다리꼴, 심프슨</td></tr>
+        <tr><td>방정식 \(f(x) = 0\)의 근</td><td><code>scipy.optimize.brentq(f, a, b)</code></td><td>이분법, 뉴턴 방법</td></tr>
+        <tr><td>미분방정식 \(y' = f(t, y)\)</td><td><code>scipy.integrate.solve_ivp(f, (t0, t1), y0)</code></td><td>오일러, 룽게-쿠타</td></tr>
+      </tbody>
+    </table>
+
+    <h3><span class="no">4.3.2</span>적분과 근</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>(1) \(\int_0^\pi \sin x\,dx\)를 <code>quad</code>와 사다리꼴 공식(\(n = 100\))으로 구해 참값 2와 비교하세요. (2) \(\cos x = x\)의 근을 <code>brentq</code>로 구하세요.</p>
+    </div>
+<pre><code>import numpy as np
+from scipy.integrate import quad
+from scipy.optimize import brentq
+
+val, err = quad(np.sin, 0, np.pi)
+print(val, err)       # 2.0과 오차 어림(아주 작은 수)
+
+def trap(f, a, b, n):
+    h = (b - a) / n
+    return h * (0.5 * f(a) + 0.5 * f(b) + sum(f(a + i * h) for i in range(1, n)))
+print(trap(np.sin, 0, np.pi, 100))   # 1.9998355...
+
+r = brentq(lambda x: np.cos(x) - x, 0, 1)
+print(r)              # 0.739085133...</code></pre>
+    <p><i>풀이.</i> (1) <code>quad</code>는 값과 함께 <b>오차 어림</b>을 돌려주므로 두 변수로 받습니다. 값은 2.0이고 오차 어림은 \(10^{-14}\) 정도의 작은 수입니다(정확한 값은 판마다 조금 다름). 사다리꼴 공식 \(n = 100\)은 1.9998355로 오차가 약 \(1.6\times10^{-4}\)입니다. 사다리꼴 오차는 \(h^2\)에 비례하므로 \(n\)을 10배 늘려야 오차가 100분의 1로 줄어듭니다. <code>quad</code>는 구간을 적응적으로 나누는 가우스 구적법이라 같은 정확도를 훨씬 적은 계산으로 냅니다. (2) <code>brentq</code>는 이분법처럼 부호가 바뀌는 구간 \([a, b]\)를 받아 이분법의 안전함과 빠른 방법을 섞어 씁니다. 결과 0.7390851332…는 이분법으로 \(10^{-12}\)까지 좁힌 값(40번 반복)과 같습니다. \(f(a)\)와 \(f(b)\)의 부호가 같으면 오류를 내므로, 먼저 그래프를 그려 구간을 정합니다.</p>
+
+    <h3><span class="no">4.3.3</span>미분방정식</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.2</span>
+      <p>방사성 붕괴 \(y' = -2y\), \(y(0) = 1\)을 \(t = 0\)부터 1까지 <code>solve_ivp</code>로 풀어 \(y(1)\)을 참값 \(e^{-2} = 0.1353353\)과 비교하세요.</p>
+    </div>
+<pre><code>from scipy.integrate import solve_ivp
+sol = solve_ivp(lambda t, y: -2 * y, (0, 1), [1.0])
+print(sol.t[-1], sol.y[0, -1])           # 기본 허용 오차
+sol2 = solve_ivp(lambda t, y: -2 * y, (0, 1), [1.0], rtol=1e-10, atol=1e-12)
+print(sol2.y[0, -1])                     # 0.1353352832...</code></pre>
+    <p><i>풀이.</i> 몇 가지 약속을 알아야 합니다. 함수는 <code>f(t, y)</code> 순서로 받고, <code>y</code>는 배열이라 처음 값도 <code>[1.0]</code>처럼 리스트로 줍니다. 결과 <code>sol.t</code>는 계산한 시각들, <code>sol.y</code>는 (변수 개수 × 시각 수) 배열이라 마지막 값은 <code>sol.y[0, -1]</code>입니다. 기본 상대 허용 오차는 <code>rtol=1e-3</code>이라 결과가 소수 셋째~넷째 자리 정도까지만 맞습니다. 실험 자료와 비교할 정도면 충분하지만, 참값과 비교하는 수치 실험에서는 <code>rtol</code>, <code>atol</code>을 작게 주어야 0.1353352832…처럼 많은 자리가 맞습니다. 라이브러리가 낸 숫자도 기본 설정의 정확도를 알고 써야 합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>quad</code>(적분, 값과 오차 어림), <code>brentq</code>(부호가 바뀌는 구간의 근), <code>solve_ivp</code>(초기값 문제).</li>
+        <li>라이브러리는 대개 더 정확하고 빠르지만, 방법과 허용 오차를 알아야 결과를 판단할 수 있다.</li>
+        <li><code>solve_ivp</code>의 기본 <code>rtol=1e-3</code>은 넉넉하다. 정밀한 비교에는 작게 준다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>quad</code>로 \(\int_0^1 e^{-x^2}dx\)를 구하는 코드를 쓰세요. 이 적분은 초등함수로 나타낼 수 없습니다.
+          <details><summary>답</summary><p><code>quad(lambda x: np.exp(-x**2), 0, 1)</code>. 값은 약 0.746824입니다.</p></details>
+        </li>
+        <li><code>brentq(lambda x: x**2 - 2, 0, 1)</code>은 왜 오류가 나나요?
+          <details><summary>답</summary><p>\(f(0) = -2\), \(f(1) = -1\)로 부호가 같아 구간 안에 근이 있다는 보장이 없기 때문입니다. 구간을 \([0, 2]\)로 넓히면 \(\sqrt2\)를 찾습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-ml" data-kind="본문" data-std="천우10-05-01">
+  <header class="card-head"><span class="no"></span><h2>최대가능도와 카이제곱으로 매개변수 추정하기</h2><span class="kind">본문 · 5.1절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>가우스 오차에서 최대가능도가 카이제곱 최소화와 같음을 보인다.</li>
+        <li>\(\Delta\chi^2 = 1\)로 매개변수의 1σ 범위를 구한다.</li>
+        <li>축소 카이제곱으로 맞춤의 질과 오차 추정을 점검한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱법 (<a href="../6/06-01.html">천우6 6.1절</a>), 정규분포 (<a href="../../stat/1/index.html">통계1</a>).</li>
+      </ul>
+    </div>
+
+<h3>가장 그럴듯한 매개변수</h3>
+    <p>천우6에서 최소제곱법을 공식으로 썼습니다. 이 절에서는 그 공식이 어디서 오는지, 그리고 오차 막대는 어떻게 구하는지를 확률로 설명합니다. 모형의 매개변수 \(\theta\)가 주어졌을 때 관측 자료가 나올 확률을 <b>가능도</b> \(\mathcal L(\theta)\)라 하고, 이를 가장 크게 하는 \(\theta\)를 고르는 것이 최대가능도 추정입니다.</p>
+
+    <h3><span class="no">5.1.1</span>가우스 오차와 카이제곱</h3>
+    <p class="tb-proof"><span class="lb">유도.</span> 각 측정 \(y_i\)가 모형 \(f(x_i; \theta)\) 둘레에 표준편차 \(\sigma_i\)의 가우스 분포로 흩어지고 서로 독립이면
+    \[ \mathcal L = \prod_i\frac{1}{\sqrt{2\pi}\sigma_i}\exp\left[-\frac{(y_i - f(x_i;\theta))^2}{2\sigma_i^2}\right], \qquad -2\ln\mathcal L = \chi^2 + \text{상수} \]
+    입니다. 여기서 \(\chi^2 = \sum(y_i - f_i)^2/\sigma_i^2\). 따라서 가능도를 최대로 하는 것은 \(\chi^2\)를 최소로 하는 것과 같습니다. <span class="qed">∎</span></p>
+    <p>오차가 가우스가 아니면(광자 수가 적은 X선 자료의 푸아송 분포 등) 카이제곱 대신 그 분포의 가능도(Cash 통계량)를 써야 합니다.</p>
+
+    <h3><span class="no">5.1.2</span>불확도: \(\Delta\chi^2 = 1\)</h3>
+    <p>최소값 근처에서 \(\chi^2\)는 매개변수의 2차식(포물선)이고, \(\mathcal L \propto e^{-\chi^2/2}\)는 가우스 모양입니다. 매개변수 하나의 1σ 범위는 \(\chi^2\)가 최소값보다 1 커지는 곳입니다(다른 매개변수는 그때마다 다시 최소화). 두 매개변수를 함께 볼 때 68% 영역은 \(\Delta\chi^2 = 2.30\)입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1 <span class="nm">(가상 자료)</span></span>
+      <p>\(x = 0, 0.5, \ldots, 9.5\)(20개)에서 참값 \(y = 2x + 1\)에 \(\sigma = 1\) 잡음을 더한 가상 자료(<a href="05-02.html">5.2절</a> 실습과 같음)에 직선을 맞춘 결과는 \(a = 1.819 \pm 0.078\), \(b = 1.635 \pm 0.431\), \(\chi^2_{min} = 26.92\)입니다. 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> 기울기는 참값 2에서 \(2.3\sigma\), 절편은 참값 1에서 \(1.5\sigma\) 떨어져 있습니다. 둘이 함께 어긋난 것은 \(a\)와 \(b\)가 음의 상관을 갖기 때문입니다(기울기를 낮추면 절편을 올려야 자료 가운데를 지남). 자유도는 \(20 - 2 = 18\)이고 축소 카이제곱 \(26.92/18 = 1.50\)입니다.</p>
+
+    <h3><span class="no">5.1.3</span>축소 카이제곱</h3>
+    <p>모형이 맞고 \(\sigma_i\)가 옳으면 \(\chi^2\)는 평균 자유도 \(\nu\), 표준편차 \(\sqrt{2\nu}\)로 흩어집니다. 그래서 \(\chi^2_\nu = \chi^2/\nu \approx 1\)이어야 합니다.</p>
+    <ul>
+      <li class="q-term">\(\chi^2_\nu \gg 1\): 모형이 틀렸거나 오차를 작게 잡았다.</li>
+      <li class="q-term">\(\chi^2_\nu \ll 1\): 오차를 크게 잡았거나 자료가 독립이 아니다.</li>
+    </ul>
+    <p>예제의 1.50은 \(\nu = 18\)에서 \(\chi^2 = 26.9\)로 평균보다 \((26.9 - 18)/\sqrt{36} = 1.5\) 표준편차 큰 정도라 우연히 나올 수 있는 값입니다(\(p \approx 0.08\)).</p>
+    <div class="tb-note"><b>주의</b> 오차가 모를 때 \(\chi^2_\nu = 1\)이 되도록 \(\sigma\)를 다시 맞추는 일이 흔하지만, 이는 모형이 옳다고 가정한 것입니다. 모형이 틀린 경우를 가려낼 수 없게 되므로 보고서에 그렇게 했다고 밝힙니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>가우스 독립 오차에서 \(-2\ln\mathcal L = \chi^2\) + 상수: 최대가능도 = 최소 카이제곱.</li>
+        <li>1σ: \(\Delta\chi^2 = 1\)(매개변수 하나), 두 매개변수 68% 영역은 2.30.</li>
+        <li>\(\chi^2_\nu = \chi^2/\nu \approx 1\)이 좋은 맞춤. 너무 크거나 작으면 모형이나 오차를 의심.</li>
+        <li>푸아송 자료는 Cash 통계량을 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>측정 10개에 매개변수 3개를 맞추면 자유도는?
+          <details><summary>답</summary><p>7.</p></details>
+        </li>
+        <li>\(\chi^2 = 45\), \(\nu = 15\)이면 축소 카이제곱과 해석은?
+          <details><summary>답</summary><p>3.0. 모형이 틀렸거나 오차를 작게 잡았습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(\chi^2(a) = 20 + 25(a - 3)^2\)이면 \(a\)의 최적값과 1σ는?
+          <details><summary>답</summary><p>\(a = 3\), \(25(a-3)^2 = 1\)에서 \(\sigma_a = 0.2\).</p></details>
+        </li>
+        <li>측정값 하나 \(y = 5 \pm 1\)에 상수 모형 \(f = c\)를 맞출 때 \(\chi^2(c)\)와 \(\Delta\chi^2 = 1\) 범위는?
+          <details><summary>답</summary><p>\((5 - c)^2\), \(c = 5 \pm 1\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
