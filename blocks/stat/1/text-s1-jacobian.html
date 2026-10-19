@@ -11,50 +11,76 @@
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>이중적분의 변수 변환 공식과 야코비안을 쓴다.</li>
-        <li>결합 밀도를 변환해 합이나 비의 분포를 구한다.</li>
+        <li>좌표를 바꾸면 작은 넓이가 몇 배가 되는지 나타내는 야코비안을 구한다.</li>
+        <li>이중적분의 변수 변환 공식을 쓴다.</li>
+        <li>결합 밀도를 변환해 두 확률변수의 합의 분포를 구한다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>이중적분 (<a href="06-01.html">6.1절</a>), 행렬식 (응통2 02단원).</li>
+        <li>이중적분 (<a href="06-01.html">6.1절</a>), 편미분 (<a href="05-01.html">5.1절</a>), 치환적분(고등학교 미적분). 행렬식은 몰라도 됩니다. 필요한 식을 이 절에서 직접 유도합니다.</li>
       </ul>
     </div>
 
     <h3>좌표를 바꾸면 넓이가 늘거나 준다</h3>
-    <p>일변수에서 \(u = g(x)\)로 치환하면 \(du = g'(x)dx\)가 따라왔습니다. 이변수에서는 작은 직사각형이 평행사변형으로 바뀌며 넓이가 바뀌고, 그 배율이 야코비안 행렬식입니다.</p>
+    <p>고등학교에서 \(u = g(x)\)로 치환적분을 하면 \(du = g'(x)\,dx\)가 따라왔습니다. \(g'(x)\)는 "\(x\)축의 짧은 길이 \(dx\)가 \(u\)축에서 몇 배 길이가 되는가"를 나타내는 배율입니다.</p>
+    <p>변수가 둘이면 길이 대신 넓이의 배율이 필요합니다. \((u, v)\) 평면의 아주 작은 직사각형이 변환 \(x = x(u, v)\), \(y = y(u, v)\)를 거치면 \((x, y)\) 평면에서 (거의) 평행사변형이 됩니다. 그 평행사변형의 넓이가 원래 직사각형 넓이의 몇 배인지가 야코비안입니다.</p>
 
-    <h3><span class="no">6.2.1</span>변환 공식</h3>
+    <h3><span class="no">6.2.1</span>평행사변형의 넓이에서 야코비안으로</h3>
+    <p>먼저 고등학교 좌표기하로 구할 수 있는 사실 하나를 준비합니다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 6.2.1</span>
-      <p>\((x, y) = T(u, v)\)가 일대일이고 미분가능하면 \(\iint_R f(x,y)\,dx\,dy = \iint_S f(T(u,v))\,|J|\,du\,dv\), \(J = \det\begin{pmatrix}\partial x/\partial u &amp; \partial x/\partial v\\ \partial y/\partial u &amp; \partial y/\partial v\end{pmatrix}\).</p>
+      <span class="lb">보조정리 6.2.1</span>
+      <p>원점, \((a, c)\), \((b, d)\), \((a + b, c + d)\)를 꼭짓점으로 하는 평행사변형의 넓이는 \(|ad - bc|\)입니다.</p>
     </div>
+    <p class="tb-proof">\(a, b, c, d\)가 모두 양수이고 \((a, c)\)가 \((b, d)\)보다 오른쪽 아래에 있는 경우를 봅니다. 평행사변형을 감싸는 가로 \(a + b\), 세로 \(c + d\)인 직사각형에서, 평행사변형 바깥의 삼각형 네 개(넓이 \(\frac12ac\) 두 개, \(\frac12bd\) 두 개)와 작은 직사각형 두 개(넓이 \(bc\) 두 개)를 빼면 \((a + b)(c + d) - ac - bd - 2bc = ad - bc\)입니다. 다른 배치에서는 부호만 바뀌므로 절댓값을 붙입니다. <span class="qed"></span></p>
+    <p>이제 \((u, v)\)에서 \(u\)를 \(du\)만큼 늘리면 점 \((x, y)\)는 대략 \(\left(\frac{\partial x}{\partial u}du, \frac{\partial y}{\partial u}du\right)\)만큼, \(v\)를 \(dv\)만큼 늘리면 \(\left(\frac{\partial x}{\partial v}dv, \frac{\partial y}{\partial v}dv\right)\)만큼 움직입니다(편미분의 뜻, 5.1절). 작은 직사각형의 두 변이 이 두 화살표로 바뀌므로, 보조정리에 \(a = x_u\,du\), \(c = y_u\,du\), \(b = x_v\,dv\), \(d = y_v\,dv\)를 넣으면 평행사변형의 넓이는 \(|x_uy_v - x_vy_u|\,du\,dv\)입니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 6.2.2</span>
+      <p><b>야코비안</b> \(J = \dfrac{\partial x}{\partial u}\dfrac{\partial y}{\partial v} - \dfrac{\partial x}{\partial v}\dfrac{\partial y}{\partial u}\). 따라서 \(dx\,dy = |J|\,du\,dv\)입니다.</p>
+      <p>네 편도함수를 \(\begin{pmatrix}x_u & x_v\\ y_u & y_v\end{pmatrix}\)처럼 표로 늘어놓고 "대각선 곱의 차"를 구하는 셈이라, 이 값을 그 표(행렬)의 행렬식이라고도 부릅니다(응통2에서 자세히 배움).</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.3</span>
+      <p>\((u, v) \mapsto (x, y)\)가 일대일이고 편도함수가 연속이면 \(\displaystyle\iint_R f(x,y)\,dx\,dy = \iint_S f\big(x(u,v), y(u,v)\big)\,|J|\,du\,dv\)입니다. \(S\)는 \(R\)에 대응하는 \((u, v)\)의 영역입니다.</p>
+    </div>
+    <p>일변수 치환적분의 \(|g'(x)|\) 자리에 \(|J|\)가 들어간 모양입니다. 절댓값을 붙이는 것은 넓이가 음수일 수 없기 때문입니다.</p>
 
     <h3><span class="no">6.2.2</span>밀도의 변환</h3>
-    <p>\((X, Y)\)의 결합 밀도가 \(f\)이고 \((U, V)\)가 일대일 변환이면, 역변환 \((x, y) = T(u, v)\)를 써서</p>
-    \[f_{U,V}(u, v) = f(T(u, v))\,|J|.\]
-    <p>관심이 \(U\) 하나뿐이면 보조 변수 \(V\)를 적당히 만들고 나중에 \(v\)로 적분해 없앱니다.</p>
+    <p>확률은 밀도를 넓이 위에서 적분한 값이므로, 좌표를 바꾸면 밀도에도 같은 배율이 붙습니다. \((X, Y)\)의 결합 밀도가 \(f\)이고 \((U, V)\)로 일대일 변환할 때, 역변환 \(x = x(u, v)\), \(y = y(u, v)\)를 써서</p>
+    \[f_{U,V}(u, v) = f\big(x(u, v), y(u, v)\big)\,|J|\]
+    <p>입니다. 관심이 \(U\) 하나뿐이면 계산하기 쉬운 보조 변수 \(V\)를 만들어 변환한 뒤, 마지막에 \(v\)로 적분해 없앱니다(주변 밀도, 6.1절).</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 6.2.2</span>
-      <p>\(X, Y\)가 독립 지수분포(비율 1)일 때 \(U = X + Y\)의 밀도를 구하세요.</p>
+      <span class="lb">예제 6.2.4</span>
+      <p>\(X, Y\)가 서로 독립이고 둘 다 밀도 \(e^{-t}\) (\(t > 0\))인 지수분포를 따를 때 \(U = X + Y\)의 밀도를 구하세요.</p>
     </div>
-    <p><i>풀이.</i> \(V = X\)로 두면 \(x = v\), \(y = u - v\), \(J = \det\begin{pmatrix}0 &amp; 1\\ 1 &amp; -1\end{pmatrix} = -1\), \(|J| = 1\). \(f_{U,V} = e^{-v}e^{-(u-v)} = e^{-u}\) (\(0 &lt; v &lt; u\)). \(v\)로 적분: \(f_U(u) = ue^{-u}\), 감마\((2, 1)\)분포입니다.</p>
+    <p><i>풀이.</i> 보조 변수 \(V = X\)를 둡니다. 역변환은 \(x = v\), \(y = u - v\)이고, 편도함수는 \(x_u = 0\), \(x_v = 1\), \(y_u = 1\), \(y_v = -1\)이므로 \(J = 0\times(-1) - 1\times1 = -1\), \(|J| = 1\)입니다. 결합 밀도는 독립이라 \(f(x, y) = e^{-x}e^{-y}\)이므로 \(f_{U,V}(u, v) = e^{-v}e^{-(u - v)} = e^{-u}\)이고, \(x > 0\), \(y > 0\)이라는 조건이 \(0 &lt; v &lt; u\)가 됩니다. \(v\)로 적분하면 \(f_U(u) = \int_0^u e^{-u}dv = ue^{-u}\) (\(u > 0\))입니다. 이것은 감마분포 \(\mathrm{Gamma}(2, 1)\)이고, "첫 번째 도착까지 기다린 뒤 두 번째 도착까지 또 기다리는 총 시간"의 분포입니다(응통6-04-02).</p>
+
+    <div class="tb-note">
+      <b>흔한 실수</b>
+      <p>변환한 뒤 범위를 바꾸지 않는 실수가 가장 흔합니다. 위 예제에서 \(v\)의 범위를 \(0\)부터 \(\infty\)까지로 적분하면 틀립니다. \(y = u - v > 0\)이라는 조건 때문에 \(v &lt; u\)입니다.</p>
+    </div>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>\(dx\,dy = |J|\,du\,dv\).</li>
-        <li>밀도 변환: \(f_{U,V} = f(T(u,v))|J|\), 보조 변수를 적분해 없앰.</li>
-        <li>합, 비, 극좌표 변환에 씁니다.</li>
+        <li>야코비안 \(J = x_uy_v - x_vy_u\)는 좌표를 바꿀 때 작은 넓이의 배율이고, \(dx\,dy = |J|\,du\,dv\)입니다.</li>
+        <li>밀도 변환: \(f_{U,V} = f(x(u,v), y(u,v))\,|J|\). 관심 없는 보조 변수는 적분해 없앱니다.</li>
+        <li>범위(지지집합)의 변환을 꼭 함께 합니다.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(u = x + y\), \(v = x - y\)일 때 \(x, y\)를 \(u, v\)로 나타내고 \(|J|\)를 구하세요.
+          <details><summary>답</summary><p>\(x = (u + v)/2\), \(y = (u - v)/2\), \(J = \frac12\cdot(-\frac12) - \frac12\cdot\frac12 = -\frac12\), \(|J| = \frac12\).</p></details>
+        </li>
+      </ol>
       <p class="tb-lv">심화</p>
       <ol>
         <li>\(\Gamma(a)\Gamma(b) = \int_0^\infty\int_0^\infty x^{a-1}y^{b-1}e^{-x-y}dx\,dy\)에서 \(x = uv\), \(y = u(1-v)\)로 바꿔 \(B(a, b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)\)를 보이세요.
-          <details><summary>답</summary><p>\(|J| = u\). 적분이 \(\int_0^\infty u^{a+b-1}e^{-u}du\int_0^1v^{a-1}(1-v)^{b-1}dv = \Gamma(a+b)B(a,b)\)로 분리됩니다.</p></details>
+          <details><summary>답</summary><p>\(x_u = v\), \(x_v = u\), \(y_u = 1 - v\), \(y_v = -u\)이므로 \(J = -uv - u(1 - v) = -u\), \(|J| = u\). 적분이 \(\int_0^\infty u^{a+b-1}e^{-u}du\int_0^1v^{a-1}(1-v)^{b-1}dv = \Gamma(a+b)B(a,b)\)로 분리됩니다.</p></details>
         </li>
       </ol>
     </div>

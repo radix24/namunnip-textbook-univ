@@ -11,54 +11,64 @@
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>지수·로그 함수의 도함수와 연쇄법칙을 쓴다.</li>
-        <li>로그 미분법과 로피탈 법칙을 쓴다.</li>
+        <li>지수·로그 함수의 도함수와 합성함수의 미분(연쇄법칙)을 통계 식에 쓴다.</li>
+        <li>곱과 거듭제곱이 많은 함수에 로그 미분법을 쓴다.</li>
+        <li>\(\frac00\), \(\frac\infty\infty\) 꼴의 극한을 미분으로 계산하는 로피탈 법칙을 쓴다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>고교 수학II 다항함수의 미분, 1.1절의 기본 극한.</li>
+        <li>고등학교 미적분의 지수·로그함수의 미분과 합성함수의 미분, 1.1절의 기본 극한.</li>
       </ul>
     </div>
 
     <h3>가능도 함수는 지수와 로그투성이</h3>
-    <p>정규분포 밀도 \(e^{-(x-\mu)^2/2}\), 로그가능도 \(\sum\log f(x_i)\)처럼 통계의 식에는 지수와 로그가 계속 나옵니다. 이들을 자유롭게 미분할 수 있어야 최대가능도 추정(2.2절)을 할 수 있습니다.</p>
+    <p>정규분포의 밀도 \(\frac{1}{\sqrt{2\pi}\sigma}e^{-(x-\mu)^2/(2\sigma^2)}\)에는 지수함수가, 여러 관측값의 확률을 곱한 가능도에 로그를 취한 로그가능도 \(\sum\ln f(x_i)\)에는 로그가 들어 있습니다. 이런 식을 자유롭게 미분할 수 있어야 다음 절의 최대가능도 추정을 할 수 있습니다. 대부분 고등학교 미적분에서 배운 규칙이므로, 통계에서 쓰는 모양으로 정리합니다.</p>
 
     <h3><span class="no">2.1.1</span>기본 도함수</h3>
     <table class="tw">
-      <tr><th>함수</th><th>도함수</th></tr>
-      <tr><td>\(e^x\)</td><td>\(e^x\)</td></tr>
-      <tr><td>\(a^x\)</td><td>\(a^x\log a\)</td></tr>
-      <tr><td>\(\log x\) (자연로그)</td><td>\(1/x\)</td></tr>
-      <tr><td>\(x^r\)</td><td>\(rx^{r-1}\)</td></tr>
+      <tr><th>함수</th><th>도함수</th><th>메모</th></tr>
+      <tr><td>\(e^x\)</td><td>\(e^x\)</td><td>미분해도 자기 자신</td></tr>
+      <tr><td>\(a^x\) (\(a > 0\))</td><td>\(a^x\ln a\)</td><td>\(a^x = e^{x\ln a}\)로 바꾸어 연쇄법칙</td></tr>
+      <tr><td>\(\ln x\)</td><td>\(1/x\)</td><td>\(x > 0\)</td></tr>
+      <tr><td>\(x^r\)</td><td>\(rx^{r-1}\)</td><td>\(r\)이 분수나 음수여도 성립(\(x > 0\))</td></tr>
     </table>
-    <p>\((e^x)' = e^x\)는 \(\lim_{h\to0}\frac{e^{x+h} - e^x}{h} = e^x\lim\frac{e^h - 1}{h} = e^x\)에서 나옵니다. 통계에서 \(\log\)는 자연로그입니다.</p>
+    <p>\((e^x)' = e^x\)는 도함수의 정의 \(\lim_{h\to0}\frac{e^{x+h} - e^x}{h} = e^x\lim_{h\to0}\frac{e^h - 1}{h}\)와 1.1절의 기본 극한 \(\frac{e^h - 1}{h} \to 1\)에서 나옵니다. 앞으로 \(\log\)라고만 쓴 것은 자연로그 \(\ln\)입니다(통계학 책의 관례).</p>
 
-    <h3><span class="no">2.1.2</span>연쇄법칙</h3>
+    <h3><span class="no">2.1.2</span>합성함수의 미분(연쇄법칙)</h3>
     <div class="tb-env thm">
       <span class="lb">정리 2.1.1 (연쇄법칙)</span>
-      <p>\(\frac{d}{dx}f(g(x)) = f'(g(x))\,g'(x)\).</p>
+      <p>\(\dfrac{d}{dx}f(g(x)) = f'(g(x))\,g'(x)\). 바깥 함수를 미분하고, 안쪽 함수의 도함수를 곱합니다.</p>
     </div>
-    <p>예: \(\frac{d}{dx}e^{-x^2/2} = -xe^{-x^2/2}\). 정규 밀도 \(\phi(x)\)에 대해 \(\phi'(x) = -x\phi(x)\)라는 유용한 식입니다.</p>
-    <p><b>로그 미분법</b>: 곱과 거듭제곱이 많으면 로그를 취한 뒤 미분합니다. \(y = x^x\)이면 \(\log y = x\log x\), \(y'/y = \log x + 1\), \(y' = x^x(\log x + 1)\).</p>
+    <p>예를 들어 \(e^{-x^2/2}\)는 바깥 함수 \(e^u\)와 안쪽 함수 \(u = -x^2/2\)의 합성이므로 \(\frac{d}{dx}e^{-x^2/2} = e^{-x^2/2}\cdot(-x) = -xe^{-x^2/2}\)입니다. 표준정규 밀도 \(\phi(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}\)에 대해 \(\phi'(x) = -x\phi(x)\)라는 식이 되고, 정규분포 계산에서 자주 씁니다.</p>
+    <p><b>로그 미분법.</b> 곱과 거듭제곱이 많은 함수는 먼저 로그를 취하면 곱이 합으로 바뀌어 미분이 쉬워집니다. 예를 들어 \(y = x^x\) (\(x > 0\))은 \(\ln y = x\ln x\)이고, 양변을 \(x\)로 미분하면 왼쪽은 연쇄법칙으로 \(y'/y\), 오른쪽은 곱의 미분으로 \(\ln x + 1\)이므로 \(y' = x^x(\ln x + 1)\)입니다. 로그가능도를 쓰는 것도 같은 아이디어입니다.</p>
 
     <h3><span class="no">2.1.3</span>로피탈 법칙</h3>
+    <p>\(\lim_{x\to\infty}\frac{x^2}{e^x}\)처럼 분자와 분모가 함께 0으로 가거나 함께 한없이 커지는 극한은 약분으로 풀기 어려울 때가 있습니다. 이때 쓰는 대학 미적분의 도구가 로피탈 법칙입니다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 2.1.2</span>
-      <p>\(\lim f = \lim g = 0\)(또는 둘 다 \(\pm\infty\))이고 \(\lim f'/g'\)이 있으면 \(\lim\frac fg = \lim\frac{f'}{g'}\).</p>
+      <span class="lb">정리 2.1.2 (로피탈 법칙)</span>
+      <p>\(\lim f(x) = \lim g(x) = 0\)(또는 둘 다 \(\pm\infty\))이고 \(\lim\frac{f'(x)}{g'(x)}\)가 있으면 \(\lim\dfrac{f(x)}{g(x)} = \lim\dfrac{f'(x)}{g'(x)}\)입니다. \(x \to a\)이든 \(x \to \infty\)이든 같습니다.</p>
     </div>
+    <p><b>왜 그럴듯한가.</b> \(f(a) = g(a) = 0\)이고 \(g'(a) \ne 0\)인 가장 단순한 경우를 보면, \(x\)가 \(a\)에 가까울 때 \(f(x) \approx f'(a)(x - a)\), \(g(x) \approx g'(a)(x - a)\)(접선 근사)이므로 \(\frac{f(x)}{g(x)} \approx \frac{f'(a)}{g'(a)}\)입니다. 두 함수 모두 0에서 출발하므로, 비는 출발하는 속도(기울기)의 비로 정해집니다. 일반적인 증명은 평균값 정리를 쓰며 공통1(미분적분학과벡터해석)에서 다룹니다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.1.3</span>
-      <p>(가) \(\frac{d}{dp}[k\log p + (n-k)\log(1-p)]\) (나) \(\lim_{x\to\infty}\frac{x^2}{e^x}\)</p>
+      <p>(가) \(\dfrac{d}{dp}\big[k\ln p + (n-k)\ln(1-p)\big]\) (나) \(\displaystyle\lim_{x\to\infty}\frac{x^2}{e^x}\) (다) \(\displaystyle\lim_{x\to0}\frac{\ln(1 + 2x)}{x}\)</p>
     </div>
-    <p><i>풀이.</i> (가) \(\frac kp - \frac{n-k}{1-p}\). 베르누이 로그가능도의 점수함수입니다(2.2절). (나) 로피탈을 두 번: \(\frac{2x}{e^x} \to \frac{2}{e^x} \to 0\).</p>
+    <p><i>풀이.</i> (가) \(\ln p\)의 도함수는 \(1/p\), \(\ln(1-p)\)는 연쇄법칙으로 \(\frac{1}{1-p}\cdot(-1)\)이므로 \(\frac kp - \frac{n-k}{1-p}\)입니다. 동전을 \(n\)번 던져 앞면이 \(k\)번 나왔을 때 로그가능도를 앞면 확률 \(p\)로 미분한 것으로, 다음 절에서 이 값을 0으로 두어 \(p\)를 추정합니다.</p>
+    <p>(나) 둘 다 한없이 커지므로 로피탈 법칙을 쓰면 \(\frac{2x}{e^x}\)이고, 여전히 \(\frac\infty\infty\) 꼴이라 한 번 더 쓰면 \(\frac{2}{e^x} \to 0\)입니다. 지수함수가 거듭제곱보다 빨리 커진다는 1.1절의 사실과 맞습니다.</p>
+    <p>(다) \(\frac00\) 꼴이므로 \(\frac{2/(1+2x)}{1} \to 2\)입니다. 1.1절의 기본 극한으로도 \(\frac{\ln(1+2x)}{2x}\cdot2 \to 2\)로 같은 답을 얻습니다.</p>
+
+    <div class="tb-note">
+      <b>흔한 실수</b>
+      <p>로피탈 법칙은 \(\frac00\)이나 \(\frac\infty\infty\) 꼴에서만 씁니다. \(\lim_{x\to0}\frac{x + 1}{x + 2}\)는 그냥 넣으면 \(\frac12\)인데, 분자·분모를 미분해 \(\frac11 = 1\)로 계산하면 틀립니다. 또 몫의 미분 \((f/g)'\)을 하는 것이 아니라 분자와 분모를 <b>각각</b> 미분합니다.</p>
+    </div>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>\((e^x)' = e^x\), \((\log x)' = 1/x\).</li>
-        <li>연쇄법칙, 로그 미분법.</li>
-        <li>\(0/0\), \(\infty/\infty\)는 로피탈 법칙.</li>
+        <li>\((e^x)' = e^x\), \((\ln x)' = 1/x\), \((a^x)' = a^x\ln a\).</li>
+        <li>합성함수는 연쇄법칙으로, 곱과 거듭제곱이 많으면 로그를 취한 뒤 미분합니다.</li>
+        <li>\(\frac00\), \(\frac\infty\infty\) 꼴은 로피탈 법칙으로 분자와 분모를 각각 미분해 극한을 구합니다.</li>
       </ol>
     </div>
 
@@ -66,11 +76,17 @@
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\frac{d}{d\mu}\left[-\frac{(x - \mu)^2}{2\sigma^2}\right]\)은?
-          <details><summary>답</summary><p>\(\frac{x - \mu}{\sigma^2}\).</p></details>
+        <li>\(\dfrac{d}{d\mu}\left[-\dfrac{(x - \mu)^2}{2\sigma^2}\right]\)을 구하세요(\(x\)와 \(\sigma\)는 상수).
+          <details><summary>답</summary><p>연쇄법칙으로 \(-\frac{2(x - \mu)\cdot(-1)}{2\sigma^2} = \frac{x - \mu}{\sigma^2}\).</p></details>
         </li>
-        <li>\(f(x) = \frac{1}{1 + e^{-x}}\)(로지스틱 함수)의 도함수가 \(f(1-f)\)임을 보이세요.
-          <details><summary>답</summary><p>\(f' = \frac{e^{-x}}{(1 + e^{-x})^2} = \frac{1}{1 + e^{-x}}\cdot\frac{e^{-x}}{1 + e^{-x}} = f(1 - f)\).</p></details>
+        <li>\(f(x) = \dfrac{1}{1 + e^{-x}}\)(로지스틱 함수)의 도함수가 \(f(1-f)\)임을 보이세요.
+          <details><summary>답</summary><p>\(f' = \frac{e^{-x}}{(1 + e^{-x})^2} = \frac{1}{1 + e^{-x}}\cdot\frac{e^{-x}}{1 + e^{-x}} = f(1 - f)\). 로지스틱 회귀(응통18)에서 쓰는 식입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(\displaystyle\lim_{x\to0^+}x\ln x\)를 \(\frac{\ln x}{1/x}\)로 바꾸어 구하세요.
+          <details><summary>답</summary><p>\(\frac{-\infty}{\infty}\) 꼴이라 로피탈 법칙으로 \(\frac{1/x}{-1/x^2} = -x \to 0\). 엔트로피 계산에서 \(0\ln 0 = 0\)으로 두는 근거입니다.</p></details>
         </li>
       </ol>
     </div>
