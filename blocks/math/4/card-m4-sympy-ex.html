@@ -1,0 +1,45 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-04-01",
+  "order": 21
+}
+-->
+<article class="card q-card" id="card-m4-sympy-ex" data-kind="예제" data-std="수학4-04-01">
+  <header class="card-head"><span class="no"></span><h2>부분적분 결과를 두 방향으로 검증하기</h2><span class="kind">예제 · 기호적 검증과 수치적 검증</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(\int_0^1 x^2e^x\,dx\)는 1보다 클까, 작을까?</p>
+      <details><summary>예측 확인</summary><p>작습니다. \([0, 1]\)에서 \(x^2e^x \le e\)이고 \(x^2\)이 작은 곳이 많아 약 0.718입니다.</p></details>
+    </section>
+    <p class="q-prob">부분적분을 두 번 해서 \(\int x^2e^x\,dx = (x^2 - 2x + 2)e^x + C\)를 얻었다. 이 결과를 SymPy로 기호적으로, 또 심프슨 공식으로 수치적으로 검증하고 \(\int_0^1 x^2e^x\,dx\)의 값을 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>원시함수 \(F\)를 미분해 피적분함수와의 차가 0인지 보고(기호적), \(F(1) - F(0)\)과 수치 적분값을 비교합니다(수치적, <a href="04-01.html">4.1절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><code>x = sp.symbols('x')</code>; <code>F = (x**2 - 2*x + 2)*sp.exp(x)</code></div><span class="q-why">손으로 얻은 답을 식으로 입력한다.</span></li>
+        <li><div><code>sp.simplify(sp.diff(F, x) - x**2*sp.exp(x))</code> → <code>0</code>.</div><span class="q-why">\(F' = (2x - 2)e^x + (x^2 - 2x + 2)e^x = x^2e^x\). 기호적 검증 완료.</span></li>
+        <li><div><code>sp.integrate(x**2*sp.exp(x), (x, 0, 1))</code> → <code>-2 + E</code>, 곧 \(e - 2 \approx 0.7182818285\).</div><span class="q-why">\(F(1) - F(0) = e - 2\)와 일치.</span></li>
+        <li><div>수치: <code>g = sp.lambdify(x, x**2*sp.exp(x))</code>로 함수를 만들고, 간격 \(h = 0.01\)(구간 100개)의 심프슨 공식 \(\frac h3[g_0 + 4g_1 + 2g_2 + \cdots + 4g_{99} + g_{100}]\)을 계산하면 약 0.7182818301.</div><span class="q-why">\(e - 2\)와의 차는 약 \(1.6\times10^{-9}\): 심프슨 공식의 오차 \(O(h^4)\) 수준.</span></li>
+        <li class="q-end"><div>\(\int_0^1 x^2e^x\,dx = e - 2 \approx 0.718282\).</div><span class="q-why">두 방향의 검증이 모두 통과.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(h\)를 반으로(구간 200개) 줄이면 심프슨 오차가 약 \(\frac1{16}\)로 줄어야 합니다. 그렇게 줄어든다면 수치 적분이 제대로 구현된 것입니다. 또 예측대로 0과 \(e\) 사이의 값입니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>기호적 검증은 "식이 같다"는 정확한 확인이고, 수치적 검증은 계산 실수나 부호 오류를 빠르게 잡는 확인입니다. 둘이 서로 다른 종류의 실수를 잡으므로 함께 쓰는 것이 좋습니다. 수치 오차가 \(10^{-9}\) 수준이면 일치로 판단하고, \(10^{-2}\) 수준이면 답을 다시 봅니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">한 학생이 \(\int x^2e^x\,dx = (x^2 - 2x)e^x + C\)라고 답했다. 기호적 검증에서 무엇이 나오는가?</p>
+      <details><summary>답</summary><p>\(\frac{d}{dx}(x^2 - 2x)e^x - x^2e^x = (2x - 2)e^x\)로 0이 아니다. 수치적으로도 \(F(1) - F(0) = -e \approx -2.718\)로 0.718과 크게 다르다.</p></details>
+    </section>
+  </div>
+</article>
