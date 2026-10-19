@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-tcpcc" data-kind="본문" data-std="전전29-03-02">
+  <header class="card-head"><span class="no"></span><h2>TCP 혼잡 제어와 혼잡 창</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>느린 시작(지수 증가)과 혼잡 회피(선형 증가)를 혼잡 창 그래프로 설명한다.</li>
+        <li>중복 ACK 3개와 타임아웃에 대한 Tahoe, Reno의 반응을 비교한다.</li>
+        <li>AIMD가 공정성과 안정성을 주는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>신뢰성 전송 (<a href="03-01.html">3.1절</a>), 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>규칙</h3>
+    <ul>
+      <li><b>느린 시작</b>: 혼잡 창(cwnd) 1에서 시작해 RTT마다 두 배, ssthresh에 이르면</li>
+      <li><b>혼잡 회피</b>: RTT마다 1씩 증가.</li>
+      <li><b>중복 ACK 3개</b>(가벼운 혼잡): ssthresh = cwnd/2. Reno는 cwnd = ssthresh로 바로 혼잡 회피(빠른 회복), Tahoe는 cwnd = 1.</li>
+      <li><b>타임아웃</b>(심한 혼잡): ssthresh = cwnd/2, cwnd = 1(둘 다).</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>처음 ssthresh = 16, 라운드 12에서 중복 ACK 3개. Reno와 Tahoe의 혼잡 창 변화와 30라운드 동안 보낸 세그먼트 수를 비교하라(단순 모형: 느린 시작은 ssthresh를 넘지 않게 자름).</p>
+    </div>
+    <p><i>풀이.</i> 1, 2, 4, 8, 16, 17, …, 라운드 12에 24. 손실 후 ssthresh = 12. Reno: 12, 13, 14, …로 이어져 30라운드 합 535. Tahoe: 1, 2, 4, 8, 12, 13, …으로 다시 시작해 합 444. 탐구 카드에서 사건 종류와 알고리즘을 바꿔 확인합니다.</p>
+    <p>덧셈 증가·곱셈 감소(AIMD)는 여러 흐름이 한 병목을 나눌 때 각 흐름의 창을 같은 몫으로 모이게 하고, 혼잡에는 빠르게 물러나 네트워크 붕괴를 막습니다. 최근에는 지연을 보고 조절하는 BBR 같은 방식도 쓰입니다(확인 필요: 배포 현황).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "느린 시작은 느리다": 이름과 달리 지수 증가입니다(1에서 시작해서 붙은 이름). (2) "혼잡 창은 수신자의 버퍼 크기": 그것은 수신 창이고, 보낼 수 있는 양은 둘 중 작은 값입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>느린 시작(2배) → ssthresh → 혼잡 회피(+1).</li>
+        <li>중복 ACK 3개: Reno는 cwnd/2, Tahoe는 1. 타임아웃은 1.</li>
+        <li>예: 30라운드 합 Reno 535, Tahoe 444.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>ssthresh 8에서 느린 시작은 몇 라운드 만에 8에 이르는가(1에서)?
+          <details><summary>답</summary><p>3라운드 뒤(1, 2, 4, 8).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>cwnd 20에서 타임아웃이 나면 ssthresh와 cwnd는?
+          <details><summary>답</summary><p>10, 1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>RTT 100 ms, cwnd 50세그먼트(1460 B)의 처리율은?
+          <details><summary>답</summary><p>약 5.84 Mb/s.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

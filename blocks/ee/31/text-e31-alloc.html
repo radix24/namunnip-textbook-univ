@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-alloc" data-kind="본문" data-std="전전31-05-01">
+  <header class="card-head"><span class="no"></span><h2>파일 할당 방식 비교</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>연속, 연결, 색인 할당의 구조와 장단점을 비교한다.</li>
+        <li>Unix inode의 직접·간접 블록으로 최대 파일 크기를 계산한다.</li>
+        <li>익스텐트 기반 할당의 장점을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>저장장치 (<a href="../25/06-02.html">전전25 6.2절</a>), 거듭제곱 계산.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>세 방식</h3>
+    <ul>
+      <li><b>연속</b>: 시작 블록과 길이만. 순차·임의 접근이 빠르지만 외부 단편화, 파일 키우기 어려움.</li>
+      <li><b>연결</b>: 블록마다 다음 블록 포인터(FAT은 표로 모음). 단편화 없음, 임의 접근 느림.</li>
+      <li><b>색인</b>: 블록 번호 목록(색인 블록). 임의 접근 빠름, 색인 공간 필요.</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>inode에 직접 포인터 12개, 단일·이중·삼중 간접 포인터 각 1개. 블록 4 KB, 포인터 4 B. 최대 파일 크기와, 50 KB 파일을 읽을 때 간접 블록이 필요한가?</p>
+    </div>
+    <p><i>풀이.</i> 간접 블록 하나에 포인터 1024개. (12 + 1024 + 1024² + 1024³) × 4 KB ≈ 4.0 TB. 50 KB는 13블록이라 직접 12개에 단일 간접 1개가 더 필요합니다. 작은 파일은 대부분 직접 포인터로 끝나 빠르고, 큰 파일만 간접 단계를 거칩니다.</p>
+    <p>ext4 등은 (시작 블록, 길이) 묶음인 익스텐트로 큰 연속 구간을 한 항목으로 적어, 색인 공간과 탐색을 줄입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "FAT은 연속 할당": 연결 할당을 표로 모은 것입니다. (2) "최대 파일 크기는 디스크 크기로만 정해진다": 포인터 구조와 크기 필드도 한계를 정합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>연속(빠름, 단편화), 연결(유연, 임의 접근 느림), 색인(균형).</li>
+        <li>inode: (12 + 1024 + 1024² + 1024³) × 4 KB ≈ 4 TB.</li>
+        <li>익스텐트로 큰 연속 구간을 한 항목에.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>블록 4 KB, 포인터 4 B의 간접 블록 하나가 담는 데이터는?
+          <details><summary>답</summary><p>4 MB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>직접 12개로 담을 수 있는 최대 크기는?
+          <details><summary>답</summary><p>48 KB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>연결 할당에서 파일의 1000번째 블록을 읽으려면 디스크 접근이 몇 번인가(FAT 없음)?
+          <details><summary>답</summary><p>약 1000번(앞 블록들을 따라가야 함).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

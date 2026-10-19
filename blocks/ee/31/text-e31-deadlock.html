@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-deadlock" data-kind="본문" data-std="전전31-03-02">
+  <header class="card-head"><span class="no"></span><h2>교착 상태의 네 조건과 회피</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>상호 배제, 점유 대기, 비선점, 순환 대기의 네 조건을 안다.</li>
+        <li>자원 순서 정하기로 순환 대기를 깨는 예방법을 쓴다.</li>
+        <li>은행원 알고리즘으로 안전 상태를 판정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>동기화 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>네 조건</h3>
+    <p>네 조건이 모두 성립해야 교착이 생기므로 하나를 깨면 예방됩니다. 실무에서 가장 흔한 방법은 모든 락에 순서를 정해 그 순서로만 잡는 것(순환 대기 제거)입니다.</p>
+    <h3><span class="no">3.2.2</span>은행원 알고리즘</h3>
+    <p>요청을 들어준 뒤에도 모든 프로세스가 끝날 수 있는 순서(안전 순서)가 있으면 들어줍니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>테이프 12대. P0 최대 10·보유 5, P1 최대 4·보유 2, P2 최대 9·보유 2, 남은 3대. 안전한가? 이때 P2가 1대를 더 요청하면?</p>
+    </div>
+    <p><i>풀이.</i> 남은 3: P1(2 더 필요) 가능 → 끝나면 5. P0(5 필요) → 10. P2(7 필요) → 12. 안전 순서 P1, P0, P2. P2에 1대를 주면 남은 2, P2 보유 3: P1(2) 가능 → 4. P0는 5, P2는 6이 필요해 진행 불가 → 불안전이므로 요청을 미룹니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "불안전 상태 = 교착": 교착이 생길 수 있는 상태일 뿐 반드시 생기지는 않습니다. (2) "교착은 드물어 무시해도 된다": 운영체제는 대부분 무시(타조 알고리즘)하지만, 응용 프로그램은 락 순서 규칙으로 막아야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>상호 배제, 점유 대기, 비선점, 순환 대기.</li>
+        <li>락 순서 정하기로 예방.</li>
+        <li>은행원: 안전 순서가 있을 때만 할당. 예: P1, P0, P2.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>두 스레드가 락 A, B를 반대 순서로 잡으면 어떤 조건이 생기는가?
+          <details><summary>답</summary><p>순환 대기.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 P1이 1대 더 요청하면 안전한가?
+          <details><summary>답</summary><p>남은 2, P1 보유 3(1 더 필요) → P1, P0, P2 순서 가능 → 안전.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>선점이 가능한 자원(CPU)에서 교착이 덜 문제인 이유는?
+          <details><summary>답</summary><p>빼앗을 수 있어 비선점 조건이 깨지기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

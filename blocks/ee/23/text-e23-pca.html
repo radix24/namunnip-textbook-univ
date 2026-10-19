@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-pca" data-kind="본문" data-std="전전23-05-02">
+  <header class="card-head"><span class="no"></span><h2>PCA로 차원 줄이기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자료를 평균 중심화하고 공분산 행렬의 고유벡터로 주성분을 구한다.</li>
+        <li>고유값 비율(설명된 분산)로 남길 차원을 정한다.</li>
+        <li>NumPy로 PCA를 계산하고 결과를 해석한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>고유값과 SVD (<a href="../16/04-01.html">전전16 4.1절</a>, <a href="../16/05-01.html">5.1절</a>), 공분산 (<a href="../11/03-01.html">전전11 3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>절차</h3>
+    <p>(1) 각 특징의 평균을 뺀다. (2) 공분산 \(C = X_c^TX_c/(n - 1)\)를 구한다. (3) 고유값이 큰 순서로 고유벡터를 고른다. (4) 자료를 그 방향에 정사영한다. 첫 주성분은 분산이 가장 큰 방향, 다음은 그와 직교하면서 남은 분산이 가장 큰 방향입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1(실습)</span>
+      <p>2차원 점 8개의 주성분을 계산하고 1차원으로 줄여라.</p>
+    </div>
+    <pre><code>import numpy as np
+X = np.array([[2.0, 1.9], [0.5, 0.7], [2.2, 2.6], [1.9, 2.2], [3.1, 3.0], [2.3, 2.7], [1.0, 1.1], [1.5, 1.6]])
+Xc = X - X.mean(axis=0)
+C = Xc.T @ Xc / (len(X) - 1)
+w, V = np.linalg.eigh(C)
+order = np.argsort(w)[::-1]; w, V = w[order], V[:, order]
+if V[0, 0] &lt; 0: V[:, 0] *= -1
+print("공분산 행렬:\n", np.round(C, 4))
+print("고유값:", np.round(w, 4))
+print("첫째 주성분 방향:", np.round(V[:, 0], 4))
+print("설명된 분산 비율:", np.round(w / w.sum(), 4))
+z = Xc @ V[:, 0]
+print("1차원 좌표(앞 3개):", np.round(z[:3], 4))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>공분산 행렬:
+ [[0.6527 0.6318]
+ [0.6318 0.6507]]
+고유값: [1.2835 0.0199]
+첫째 주성분 방향: [0.7077 0.7066]
+설명된 분산 비율: [0.9847 0.0153]
+1차원 좌표(앞 3개): [ 0.0797 -1.8297  0.7158]</code></pre>
+    <p><i>해석.</i> 첫째 주성분 (0.71, 0.71)은 두 특징이 함께 커지는 방향이고, 분산의 98.5%를 설명합니다. 둘째 방향의 1.5%는 대부분 잡음으로 보고 버려도 정보 손실이 작습니다. 특징 단위가 다르면 먼저 표준화(분산 1)해야 단위가 큰 특징이 주성분을 독차지하지 않습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "PCA는 분류에 유용한 방향을 찾는다": 분산이 큰 방향일 뿐 레이블을 보지 않습니다. (2) "주성분의 부호에 의미가 있다": 고유벡터의 부호는 임의입니다(코드에서 맞춰 줌).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>중심화 → 공분산 → 고유벡터 → 정사영.</li>
+        <li>설명된 분산 비율로 차원 선택(예: 98.5%).</li>
+        <li>단위가 다르면 표준화 먼저. 레이블은 보지 않음.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>고유값 3, 1이면 첫 주성분의 설명된 분산은?
+          <details><summary>답</summary><p>75%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>공분산 [[2, 1], [1, 2]]의 첫 주성분 방향은?
+          <details><summary>답</summary><p>(1, 1)/√2.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>100차원 자료의 고유값 누적 비율이 10개에서 95%라면 무엇을 뜻하는가?
+          <details><summary>답</summary><p>자료가 대략 10차원 부분공간 근처에 있어 10차원으로 줄여도 분산 손실이 5%입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-hdl" data-kind="본문" data-std="전전32-02-01">
+  <header class="card-head"><span class="no"></span><h2>HDL로 조합과 순차 회로 기술</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Verilog의 assign·always @(*)로 조합 회로를, always @(posedge clk)로 순차 회로를 기술한다.</li>
+        <li>블로킹(=)과 논블로킹(&lt;=) 대입을 구별해 쓴다.</li>
+        <li>래치가 의도치 않게 생기는 경우를 피한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>디지털 논리 (<a href="../4/05.html">전전4 5단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>두 예</h3>
+    <pre><code>// 4:1 멀티플렉서(조합)
+module mux4 (input [1:0] sel, input [7:0] a, b, c, d, output reg [7:0] y);
+  always @(*) begin
+    case (sel)
+      2'd0: y = a;
+      2'd1: y = b;
+      2'd2: y = c;
+      default: y = d;      // 모든 경우를 덮어 래치를 막음
+    endcase
+  end
+endmodule
+
+// 사용 가능 신호가 있는 8비트 계수기(순차)
+module counter (input clk, rst_n, en, output reg [7:0] q);
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n)  q &lt;= 8'd0;
+    else if (en) q &lt;= q + 8'd1;   // 논블로킹 대입
+  end
+endmodule</code></pre>
+    <p>조합 always 블록은 블로킹(=), 순차 블록은 논블로킹(&lt;=)이 원칙입니다. 논블로킹은 같은 클록 가장자리의 대입을 모두 오른쪽 값으로 계산한 뒤 한꺼번에 바꿔, 하드웨어 플립플롭과 같이 동작합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1</span>
+      <p>순차 블록에 <code>b = a; c = b;</code>(블로킹)와 <code>b &lt;= a; c &lt;= b;</code>(논블로킹)를 쓰면 각각 어떤 회로가 되는가?</p>
+    </div>
+    <p><i>풀이.</i> 블로킹은 c가 새 b(= a)를 받아 플립플롭 하나 거리(b, c가 같은 값)가 되고, 논블로킹은 c가 옛 b를 받아 a → b → c 두 단 시프트 레지스터가 됩니다. 시프트 레지스터를 의도했다면 논블로킹이 맞습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "HDL은 소프트웨어처럼 위에서부터 실행된다": 모든 always 블록이 동시에 동작하는 하드웨어 기술입니다. (2) "if에 else가 없어도 된다": 조합 블록에서 값이 정해지지 않는 경우가 있으면 래치가 생깁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>조합: assign, always @(*), 블로킹.</li>
+        <li>순차: always @(posedge clk), 논블로킹.</li>
+        <li>모든 경우에 값 지정해 래치 방지.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8비트 계수기가 255 다음에 갖는 값은?
+          <details><summary>답</summary><p>0(넘침).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>case에서 default를 빼고 sel = 3을 처리하지 않으면?
+          <details><summary>답</summary><p>y를 유지해야 해 래치가 생깁니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>비동기 리셋과 동기 리셋의 Verilog 차이는?
+          <details><summary>답</summary><p>민감도 목록에 negedge rst_n이 있으면 비동기, clk만 있으면 동기.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
