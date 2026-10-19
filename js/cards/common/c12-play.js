@@ -27,4 +27,25 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 2. 베이즈 정리: 양성 판정을 받은 1000명 가운데 실제 환자는 몇 명인가 (01-02) */
+  (() => {
+    const S = QSim.card("lab-c12-bayes"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), p = S.val("p") / 100, se = S.val("se") / 100, sp = S.val("sp") / 100;
+      const N = 1000, D = Math.round(N * p), TP = Math.round(D * se), FN = D - TP, H = N - D, FP = Math.round(H * (1 - sp)), TN = H - FP;
+      const v = QSim.view(cv, 0.5), g = v.g, cols = 50, rows = 20, w = v.W / cols, h = (v.H - 4) / rows;
+      g.clearRect(0, 0, v.W, v.H);
+      /* 왼쪽 위부터: 참양성(진한 빨강), 거짓음성(옅은 빨강), 거짓양성(주황), 참음성(회색) */
+      const kinds = [[TP, c.warn, 1], [FN, c.warn, 0.3], [FP, c.acc, 1], [TN, c.rule, 0.5]];
+      let k = 0;
+      kinds.forEach(([n, col, al]) => { g.fillStyle = col; g.globalAlpha = al; g.beginPath(); for (let i = 0; i < n; i++, k++) { const x = (k % cols) * w, y = Math.floor(k / cols) * h; g.rect(x + 1, y + 1, w - 2, h - 2); } g.fill(); });
+      g.globalAlpha = 1;
+      const pos = TP + FP, exact = (p * se) / (p * se + (1 - p) * (1 - sp));
+      S.out(`1000명 가운데 실제 환자 ${D}명, 건강한 사람 ${H}명\n` +
+        `양성 판정: 환자 중 ${TP}명(진한 빨강) + 건강한 사람 중 ${FP}명(주황) = ${pos}명.  놓친 환자 ${FN}명(옅은 빨강)\n` +
+        `양성일 때 실제 환자일 확률 P(병|양성) = ${TP} / ${pos} ≈ ${pos ? (TP / pos).toFixed(3) : "-"}  (베이즈 정리로 정확히 ${exact.toFixed(4)})`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
