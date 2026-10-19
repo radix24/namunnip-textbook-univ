@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-02-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e11-poisson" data-kind="예제" data-std="전전11-02-01">
+  <header class="card-head"><span class="no"></span><h2>패킷 손실 개수의 분포</h2><span class="kind">예제 · 이항과 포아송 근사</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>패킷 손실률 0.2%인 링크로 1000개를 보낼 때 손실이 5개 이상일 확률은 클까요, 작을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>평균 손실 2개이므로 5개 이상은 드물지만 무시할 정도는 아닙니다(약 5%).</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">손실률 p = 0.002, 패킷 n = 1000(손실은 독립). (가) 손실 개수의 평균과 분산, (나) 포아송 근사로 손실 0개, 5개 이상일 확률, (다) 이항으로 계산한 0개 확률과 비교하라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>손실 개수 ~ 이항(n, p).</li>
+        <li>n이 크고 p가 작으면 포아송(λ = np).</li>
+        <li>\(P(K \ge 5) = 1 - \sum_{k=0}^{4}P(k)\).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) 평균 2, 분산 \(2 \times 0.998 = 1.996\). <span class="q-why">이항</span></li>
+        <li>(나) \(P(0) = e^{-2} = 0.1353\). \(P(\le 4) = e^{-2}(1 + 2 + 2 + 4/3 + 2/3) = 7e^{-2} = 0.9473\), \(P(\ge 5) = 0.0527\). <span class="q-why">포아송</span></li>
+        <li>(다) 이항 \(0.998^{1000} = e^{1000\ln0.998} \approx 0.1351\). 포아송과 0.2% 차이. <span class="q-why">근사 확인</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>포아송 근사는 계산이 쉬우면서도 정확해, 네트워크 손실, 광자 계수, 방사선 계수처럼 "많은 시도 중 드문 사건"에 널리 씁니다. 이 링크로 1000개를 보내면 약 5% 확률로 손실이 5개 이상이므로, 재전송 버퍼를 평균(2개)이 아니라 꼬리 확률 기준으로 설계해야 합니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>Python으로 이항 합을 직접 계산해도 \(P(\ge 5) \approx 0.0525\)로 포아송 0.0527과 맞습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 링크로 10,000개를 보내면 손실 개수의 평균과 표준편차는?</p>
+      <details><summary>답</summary><p>평균 20, 표준편차 약 4.47. 이때는 정규 근사도 쓸 만합니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>분포 고르기</h3>
+    <p class="q">1초 동안 도착하는 전화 호출 수에 가장 알맞은 분포는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>포아송<span class="why"><b>맞습니다.</b> 독립적인 드문 사건의 개수입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>균일<span class="why"><b>개수가 고르게 퍼질 이유가 없습니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>가우시안<span class="why"><b>평균이 클 때 근사로는 쓸 수 있지만, 기본은 포아송입니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>

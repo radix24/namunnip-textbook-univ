@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-06-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e11-wienerex" data-kind="예제" data-std="전전11-06-02">
+  <header class="card-head"><span class="no"></span><h2>센서 측정값을 얼마나 믿을까</h2><span class="kind">예제 · 스칼라 Wiener 추정</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>온도 센서 측정이 잡음 섞인 값일 때, 측정값을 그대로 쓰는 것이 최선일까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>아닙니다. 평소 온도의 분포를 알면 측정값과 평균 사이에서 가중 평균하는 것이 오차가 작습니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">실내 온도 X는 평균 22 °C, 분산 4 °C². 센서 측정 Y = X + N, 잡음 N은 평균 0, 분산 1 °C², X와 독립. (가) 평균을 뺀 형태 \(\hat X = 22 + a(Y - 22)\)의 최적 a와 MSE, (나) Y = 25 °C를 읽었을 때 추정값, (다) 센서가 하나 더 있으면(잡음 독립, 분산 1) 두 측정의 평균을 쓸 때 최적 a와 MSE.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>평균을 뺀 변수로 6.2절 공식.</li>
+        <li>두 센서 평균의 잡음 분산은 1/2.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) a = 4/(4 + 1) = 0.8, MSE = 4 × 1/5 = 0.8 °C². <span class="q-why">스칼라 Wiener</span></li>
+        <li>(나) 22 + 0.8 × 3 = 24.4 °C. 측정 25 °C보다 평균 쪽으로 당긴다. <span class="q-why">추정</span></li>
+        <li>(다) 평균 측정의 잡음 분산 0.5: a = 4/4.5 = 0.889, MSE = 4 × 0.5/4.5 = 0.444 °C². <span class="q-why">두 센서</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>측정을 사전 지식과 잡음 크기에 따라 가중하는 것이 Wiener(그리고 칼만) 필터의 핵심입니다. 측정이 정확할수록 a → 1(측정을 믿음), 부정확할수록 평균 쪽을 믿습니다. 칼만 필터는 이 계산을 시간에 따라 반복하며 a를 갱신합니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>직교 원리 확인: E[(X − aY)Y] = 4 − 0.8 × 5 = 0(평균을 뺀 변수 기준).</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>잡음 분산이 4(신호와 같음)면 a와 MSE는?</p>
+      <details><summary>답</summary><p>a = 0.5, MSE = 2.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>직교 원리</h3>
+    <p class="q">최적 선형 추정에서 오차는 무엇과 무상관이어야 하는가?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>관측값<span class="why"><b>맞습니다.</b> 그래서 관측에서 더 짜낼 정보가 없습니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>추정하려는 신호<span class="why"><b>그렇지 않습니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>잡음<span class="why"><b>오차에는 잡음 성분이 남습니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>
