@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-sgd" data-kind="본문" data-std="전전20-04-03">
+  <header class="card-head"><span class="no"></span><h2>확률적 경사하강법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전체 기울기 대신 표본 하나(또는 미니배치)의 기울기로 갱신하는 SGD를 안다.</li>
+        <li>기울기 추정의 분산과 학습률 감소의 필요를 설명한다.</li>
+        <li>선형 회귀에서 SGD를 실행해 수렴을 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>경사하강 (<a href="04-01.html">4.1절</a>), 최소제곱 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>싸지만 시끄러운 기울기</h3>
+    <p>손실이 표본 합 \(\frac1n\sum f_i(x)\)이면, 무작위 표본 i의 \(\nabla f_i\)는 전체 기울기의 불편 추정입니다. 계산이 n배 싸지만 잡음이 있어, 학습률을 점점 줄이거나 미니배치로 평균해 분산을 줄입니다.</p><pre><code>import numpy as np
+rng = np.random.default_rng(0)
+n = 1000
+x = rng.uniform(-1, 1, n); y = 2.0 * x + 1.0 + rng.normal(0, 0.1, n)
+w = np.zeros(2)
+for epoch in range(5):
+    for i in rng.permutation(n):
+        lr = 0.1 / (1 + 0.01 * epoch * n / 100)
+        g = (w[0] + w[1] * x[i] - y[i]) * np.array([1.0, x[i]])
+        w -= lr * g
+    print(f"에폭 {epoch + 1}: 절편 {w[0]:.4f}, 기울기 {w[1]:.4f}")
+A = np.c_[np.ones(n), x]
+print("최소제곱 해:", np.round(np.linalg.lstsq(A, y, rcond=None)[0], 4))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>에폭 1: 절편 0.9815, 기울기 2.0235
+에폭 2: 절편 1.0047, 기울기 1.9613
+에폭 3: 절편 0.9746, 기울기 1.9957
+에폭 4: 절편 1.0311, 기울기 2.0267
+에폭 5: 절편 0.9756, 기울기 1.9750
+최소제곱 해: [0.9988 1.999 ]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>위 실행에서 SGD가 최소제곱 해에 가까워지는가? 학습률을 줄이지 않으면 어떻게 되는가?</p>
+    </div>
+    <p><i>풀이.</i> 몇 에폭 만에 최소제곱 해(약 1.0, 2.0)에 가까워집니다. 학습률을 일정하게 두면 마지막까지 잡음만큼 해 주변에서 흔들려 정밀도가 제한됩니다. 딥러닝은 거대한 n 때문에 전체 기울기 계산이 불가능해 SGD 계열을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "SGD는 경사하강보다 부정확해 쓸모없다": 같은 계산량에서 훨씬 빨리 좋은 해에 다가갑니다. (2) "미니배치는 클수록 좋다": 분산은 줄지만 계산이 늘고 일반화가 나빠지기도 합니다(확인 필요).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>표본 기울기 = 불편 추정, 계산 n배 절약.</li>
+        <li>잡음 → 학습률 감소·미니배치.</li>
+        <li>예: 5 에폭에 최소제곱 해 근처.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>미니배치 크기 B면 기울기 분산은 대략 몇 배인가?
+          <details><summary>답</summary><p>1/B.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>에폭의 뜻은?
+          <details><summary>답</summary><p>모든 표본을 한 번씩 쓰는 한 바퀴.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>표본 순서를 섞는 이유는?
+          <details><summary>답</summary><p>같은 순서의 치우침(주기적 편향)을 막기 위해.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
