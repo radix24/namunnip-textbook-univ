@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>미적분학의 기본정리를 증명하기 · 해석학(1) — QURI</title>
-  <meta name="description" content="해석학(1) 5.3 미적분학의 기본정리를 증명하기 — 성취기준: 미적분학의 기본정리를 증명할 수 있다.">
+  <title>미적분학의 기본정리 · 해석학(1) — QURI</title>
+  <meta name="description" content="해석학(1) 5.3 미적분학의 기본정리 — 성취기준: 미적분학의 기본정리를 증명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;수학7&quot;, &quot;title&quot;: &quot;5.3 미적분학의 기본정리를 증명하기&quot;, &quot;sub&quot;: &quot;해석학(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;수학7&quot;, &quot;title&quot;: &quot;5.3 미적분학의 기본정리&quot;, &quot;sub&quot;: &quot;해석학(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,168 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="수학7-05-03" data-u="서울대 연세대 POSTECH 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="수학7-05-03" data-u="서울대 연세대 POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=math#tree">수학과</a><span class="mono">/</span><a href="./">해석학(1)</a><span class="mono">/</span><a href="05.html">5. Riemann-Stieltjes 적분</a></div>
-    <h1><span class="sec-no mono">5.3</span>미적분학의 기본정리를 증명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="수학7-05-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[수학7-05-03] <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="수학7-05-03" aria-label="할 수 있음"><span class="t">미적분학의 기본정리를 증명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.3</span>미적분학의 기본정리</h1>
+    <p class="sec-std"><span class="mono">[수학7-05-03]</span> 미적분학의 기본정리를 증명할 수 있다. <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-3-1"><span class="mono">5.3.1</span><span>넓이를 미분하면</span></a></li><li><a href="#s5-3-2"><span class="mono">5.3.2</span><span>도함수를 알면 적분이 나온다</span></a></li><li><a href="#s5-3-3"><span class="mono">5.3.3</span><span>부분적분</span></a></li><li><a href="#s5-3-4"><span class="mono">5.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-m7-ftc"><span class="mono">본문</span><span>미적분학의 기본정리</span></a></li><li><a href="#card-m7-ftc"><span class="mono">5.3.2</span><span>넓이 함수의 기울기는 높이다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-m7-ftc" data-kind="본문" data-std="수학7-05-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>적분 함수 \(F(x) = \int_a^xf\)가 연속이고, \(f\)가 연속인 점에서 \(F' = f\)임을 증명한다(기본정리 1).</li>
+        <li>\(F' = f\)이고 \(f\)가 적분 가능하면 \(\int_a^bf = F(b) - F(a)\)임을 증명한다(기본정리 2).</li>
+        <li>부분적분을 기본정리로 증명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>적분의 성질 (<a href="05-02.html">5.2절</a>), 평균값 정리 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s5-3-1"><span class="no">5.3.1</span>넓이를 미분하면</h3>
+    <p>적분은 넓이(합의 극한), 미분은 기울기(차의 극한)로 서로 무관하게 정의되었습니다. 둘이 서로 역연산이라는 놀라운 사실이 기본정리입니다. 고교에서는 그림으로 받아들였지만, 이제 상합·하합의 정의와 평균값 정리로 증명합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.3.1 <span class="nm">(기본정리 1)</span></span>
+      <p>\(f \in \mathcal R\)이 \([a, b]\)에서 적분 가능하고 \(F(x) = \int_a^xf(t)\,dt\)라 하자. 그러면 \(F\)는 \([a, b]\)에서 (립시츠) 연속이고, \(f\)가 \(x_0\)에서 연속이면 \(F'(x_0) = f(x_0)\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(|f| \le M\)이라 하면 \(x &lt; y\)일 때 \(|F(y) - F(x)| = \left|\int_x^yf\right| \le M(y - x)\)이므로 연속이다. 다음으로 \(f\)가 \(x_0\)에서 연속이면 \(\varepsilon\)에 대해 \(|t - x_0| &lt; \delta\)에서 \(|f(t) - f(x_0)| &lt; \varepsilon\)인 \(\delta\)가 있다. \(0 &lt; |h| &lt; \delta\)이면</p>
+    \[\left|\frac{F(x_0 + h) - F(x_0)}{h} - f(x_0)\right| = \left|\frac1h\int_{x_0}^{x_0+h}[f(t) - f(x_0)]\,dt\right| \le \varepsilon.\]
+    <p class="tb-proof">(구간 가법성으로 차분몫을 적분 하나로 쓰고, \(f(x_0) = \frac1h\int_{x_0}^{x_0+h}f(x_0)\,dt\)를 빼서 단조성으로 어림했다.) 곧 차분몫이 \(f(x_0)\)로 수렴한다. <span class="qed">∎</span></p>
+    <p>"넓이 함수의 기울기는 높이"라는 그림 그대로입니다. 폭 \(h\)의 띠의 넓이는 높이 \(f(x_0)\) 곱하기 \(h\)와 거의 같고, \(f\)가 연속이라 그 오차가 \(\varepsilon h\) 이하입니다.</p>
+
+    <h3 id="s5-3-2"><span class="no">5.3.2</span>도함수를 알면 적분이 나온다</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.3.2 <span class="nm">(기본정리 2)</span></span>
+      <p>\(f \in \mathcal R\)이 \([a, b]\)에서 적분 가능하고, 미분 가능한 \(F\)가 \(F' = f\)를 만족하면 \(\int_a^bf = F(b) - F(a)\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>임의의 분할 \(P\)에서 각 조각에 평균값 정리를 쓰면 \(F(x_i) - F(x_{i-1}) = f(t_i)\Delta x_i\)인 \(t_i\)가 있다. 더하면 망원급수로 \(F(b) - F(a) = \sum f(t_i)\Delta x_i\)이고, 이 값은 \(L(P) \le \cdot \le U(P)\) 사이에 있다. 적분도 그 사이에 있으므로 \(\left|F(b) - F(a) - \int f\right| \le U(P) - L(P)\). 적분 가능이라 오른쪽을 \(\varepsilon\)보다 작게 만들 수 있다. <span class="qed">∎</span></p>
+    <p>이 증명은 \(f\)의 연속성을 쓰지 않습니다. 대신 "\(f\)가 적분 가능"이라는 가정이 필요합니다. 도함수가 존재해도 적분 가능하지 않은 예가 있기 때문입니다(볼테라의 함수).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.3</span>
+      <p>\(G(x) = \displaystyle\int_0^{x^2}\sqrt{1 + t^3}\,dt\)의 도함수를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(F(u) = \int_0^u\sqrt{1 + t^3}\,dt\)로 두면 피적분함수가 연속이라 \(F'(u) = \sqrt{1 + u^3}\)(기본정리 1). \(G(x) = F(x^2)\)이므로 연쇄 법칙으로 \(G'(x) = \sqrt{1 + x^6}\cdot2x\). 적분을 계산하지 않고(사실 초등함수로 쓸 수 없음) 도함수를 얻었습니다.</p>
+
+    <h3 id="s5-3-3"><span class="no">5.3.3</span>부분적분</h3>
+    <p>\(F, G\)가 미분 가능하고 \(F' = f\), \(G' = g\)가 적분 가능하면 \((FG)' = fG + Fg\)에 기본정리 2를 써서</p>
+    \[\int_a^bF(x)g(x)\,dx = F(b)G(b) - F(a)G(a) - \int_a^bf(x)G(x)\,dx.\]
+    <p>(\(fG\), \(Fg\)는 적분 가능한 함수와 연속함수의 곱이라 적분 가능합니다.) 치환적분도 같은 방식으로 연쇄 법칙과 기본정리에서 나옵니다.</p>
+
+    <div class="tb-note"><b>주의</b>기본정리 1에서 "\(f\)가 \(x_0\)에서 연속"이라는 조건을 빼면 \(F'(x_0) = f(x_0)\)이 깨집니다. \(f\)가 0에서 0, 그 밖에서 1인 함수면 \(F(x) = x\)라 \(F'(0) = 1 \ne 0 = f(0)\)입니다. 적분은 한 점의 값을 보지 못합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>기본정리 1: \(F(x) = \int_a^xf\)는 연속이고, \(f\)가 연속인 점에서 \(F' = f\).</li>
+        <li>기본정리 2: \(F' = f\)이고 \(f\)가 적분 가능하면 \(\int_a^bf = F(b) - F(a)\). 평균값 정리 + 망원급수.</li>
+        <li>부분적분과 치환적분은 곱·연쇄 법칙과 기본정리 2에서 나온다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-3-4"><span class="no">5.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\frac{d}{dx}\int_x^{2x}\frac{\sin t}{t}\,dt\)를 구하여라 (\(x > 0\)).
+          <details><summary>답</summary><p>\(\frac{\sin2x}{2x}\cdot2 - \frac{\sin x}{x} = \frac{\sin2x - \sin x}{x}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f\)가 연속이고 모든 \(x\)에서 \(\int_0^xf = \int_x^1f\)이면 \(f = 0\)임을 보여라.
+          <details><summary>답</summary><p>양변을 미분하면 \(f(x) = -f(x)\).</p></details>
+        </li>
+        <li>부분적분으로 \(\int_0^1xe^x\,dx\)를 구하여라.
+          <details><summary>답</summary><p>\([xe^x]_0^1 - \int_0^1e^x = e - (e - 1) = 1\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(f\)가 \([a, b]\)에서 연속이면 \(\int_a^bf = f(c)(b - a)\)인 \(c\)가 있음(적분의 평균값 정리)을 보여라.
+          <details><summary>답</summary><p>\(F(x) = \int_a^xf\)에 평균값 정리: \(F(b) - F(a) = F'(c)(b - a) = f(c)(b - a)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-m7-ftc" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="수학7-05-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[수학7-05-03] <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="수학7-05-03" aria-label="할 수 있음"><span class="t">미적분학의 기본정리를 증명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/04-01.html"><span class="mono">4.1</span><span>미분적분학과벡터해석(1) <b>정적분</b></span></a></li><li><a href="../../../c/common/1/04-02.html"><span class="mono">4.2</span><span>미분적분학과벡터해석(1) <b>미적분의 기본정리</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-m7-ftc" data-kind="탐구" data-std="수학7-05-03">
+  <header class="card-head"><span class="no">5.3.2</span><h2><span class="q-badge">탐구</span>넓이 함수의 기울기는 높이다</h2><span class="kind">탐구 · 미적분학의 기본정리</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[수학7-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\(F(x) = \int_0^xf(t)\,dt\)는 0부터 \(x\)까지의 넓이입니다. \(x\)를 조금(\(h\)만큼) 움직이면 넓이는 얼마나 늘어날까요? 그 비율은 무엇에 가까워질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>\(\frac{F(x + h) - F(x)}{h} = \frac1h\int_x^{x+h}f\)이고, \(f\)가 \(x\)에서 연속이면 이것이 \(f(x)\)로 간다 (<a href="05-03.html">5.3절</a> 기본정리 1).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>함수</span>
+          <select name="fn" aria-label="함수 고르기">
+            <option value="wave">1 + 0.6 sin 2t</option>
+            <option value="jump">계단</option>
+            <option value="lin">t/2</option>
+          </select></label>
+        <label><span>x = <b data-show="x" data-fix="2">1.00</b></span><input type="range" name="x" min="0.1" max="2.5" step="0.01" value="1" aria-label="위치 x"></label>
+        <label><span>띠의 폭 h = 10^−<b data-show="lh" data-fix="1">0.5</b></span><input type="range" name="lh" min="0.3" max="4" step="0.1" value="0.5" aria-label="띠의 폭 (로그 눈금)"></label>
+      </div>
+      <canvas aria-label="왼쪽: f의 그래프, 0부터 x까지 넓이(파랑), 폭 h의 띠(빨강). 오른쪽: 넓이 함수 F와 x에서의 차분몫 직선"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>h를 줄이면 차분몫이 \(f(x)\)에 다가갑니다. 빨간 띠가 거의 직사각형(높이 \(f(x)\), 폭 \(h\))이 되기 때문입니다.</li>
+        <li>\(\frac t2\)에서는 \(F(x) = \frac{x^2}4\)이고, 오른쪽 그래프의 기울기가 왼쪽의 높이 \(\frac x2\)와 같습니다.</li>
+        <li>계단 함수에서 x를 1.5로 맞추면 오른쪽 차분몫은 1.5, 왼쪽에서 오면 0.5라 \(F\)가 꺾입니다. 오른쪽 그래프에서 \(F\)는 연속이지만 그 점에서 기울기가 바뀝니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>연속성이 하는 일</b><span>띠 안에서 \(f\)가 \(f(x)\)에서 \(\varepsilon\) 이상 벗어나지 않으면 띠의 넓이는 \(h(f(x) \pm \varepsilon)\) 사이에 있습니다. 그래서 차분몫의 오차가 \(\varepsilon\) 이하입니다.</span></li>
+        <li><b>F는 늘 연속</b><span>\(f\)가 불연속이어도 \(|F(y) - F(x)| \le M|y - x|\)라 넓이 함수는 연속입니다. 적분은 함수를 "매끄럽게" 만듭니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"모든 적분 가능한 \(f\)에 대해 \(F' = f\)가 모든 점에서 성립한다"는 틀립니다. 계단 함수의 뜀에서 \(F\)는 미분 가능하지 않습니다. \(F' = f\)는 \(f\)가 연속인 점에서만 보장됩니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-m7-ftc" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-02.html">← 5.2 연속함수와 단조함수가 적분 가능함을 증명하기</a></span>
-        <span><a href="06-01.html">6.1 점별수렴과 균등수렴의 차이를 예로 보이기 →</a></span>
+        <span><a href="05-02.html">← 5.2 적분 가능한 함수들</a></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +202,9 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/math/m-kit.js"></script>
+<script src="../../../js/cards/math/m7-ftc.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

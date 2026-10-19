@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>체이닝과 개방 주소법의 성능을 적재율로 비교하기 · 데이터구조 — QURI</title>
-  <meta name="description" content="데이터구조 6.1 체이닝과 개방 주소법의 성능을 적재율로 비교하기 — 성취기준: 체이닝과 개방 주소법의 성능을 적재율로 비교할 수 있다.">
+  <title>해시 테이블: 체이닝과 개방 주소법 · 데이터구조 — QURI</title>
+  <meta name="description" content="데이터구조 6.1 해시 테이블: 체이닝과 개방 주소법 — 성취기준: 체이닝과 개방 주소법의 성능을 적재율로 비교할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;6.1 체이닝과 개방 주소법의 성능을 적재율로 비교하기&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;6.1 해시 테이블: 체이닝과 개방 주소법&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,161 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전2-06-01" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="전전2-06-01" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">데이터구조</a><span class="mono">/</span><a href="06.html">6. 해싱</a></div>
-    <h1><span class="sec-no mono">6.1</span>체이닝과 개방 주소법의 성능을 적재율로 비교하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전2-06-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-06-01] <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전2-06-01" aria-label="할 수 있음"><span class="t">체이닝과 개방 주소법의 성능을 적재율로 비교할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">6.1</span>해시 테이블: 체이닝과 개방 주소법</h1>
+    <p class="sec-std"><span class="mono">[전전2-06-01]</span> 체이닝과 개방 주소법의 성능을 적재율로 비교할 수 있다. <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s6-1-1"><span class="mono">6.1.1</span><span>키로 바로 칸을 찾기</span></a></li><li><a href="#s6-1-2"><span class="mono">6.1.2</span><span>체이닝</span></a></li><li><a href="#s6-1-3"><span class="mono">6.1.3</span><span>개방 주소법(선형 조사)</span></a></li><li><a href="#s6-1-4"><span class="mono">6.1.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e2-hashing"><span class="mono">본문</span><span>해시 테이블: 체이닝과 개방 주소법</span></a></li><li><a href="#exp-e2-hashviz"><span class="mono">6.1.2</span><span>선형 조사의 군집이 자라는 모습</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="06.html">대단원 6 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e2-hashing" data-kind="본문" data-std="전전2-06-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사전 ADT를 평균 O(1)에 구현하는 해시 테이블의 생각(키 → 해시 함수 → 칸 번호)을 안다.</li>
+        <li>충돌을 연결 리스트로 모으는 체이닝과, 빈 칸을 찾아가는 개방 주소법(선형 조사)을 비교한다.</li>
+        <li>적재율 α = n/m에 따른 평균 탐색 비용 식을 쓰고, 실제로 센 값과 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Python 딕셔너리 (<a href="../../common/10/02-02.html">공통10 2.2절</a>), 연결 리스트 (<a href="02-01.html">2.1절</a>), 나머지 연산, 기댓값(고교 확률).</li>
+      </ul>
+    </div>
+
+    <h3 id="s6-1-1"><span class="no">6.1.1</span>키로 바로 칸을 찾기</h3>
+    <p>균형 탐색 트리는 O(log n)에 키를 찾습니다. 순서(범위 검색)가 필요 없고 "이 키가 있나, 값이 무엇인가"만 알면 되면 더 빠를 수 있습니다. 키를 정수로 바꿔 배열 칸 번호로 쓰면 O(1)입니다.</p>
+    <p class="q-term"><b>해시 함수</b> h(k): 키를 0~m−1의 칸 번호로 바꾸는 함수. 같은 키는 늘 같은 번호, 서로 다른 키는 고르게 흩어지는 것이 좋다. 예: 정수 키 \(h(k) = k \bmod m\)(m은 소수).</p>
+    <p class="q-term"><b>충돌</b>: 서로 다른 키가 같은 칸에 가는 것. 칸 수보다 가능한 키가 훨씬 많으므로 피할 수 없다(비둘기집 원리).</p>
+    <p class="q-term"><b>적재율</b> α = n/m: 저장한 키 수 / 칸 수.</p>
+
+    <h3 id="s6-1-2"><span class="no">6.1.2</span>체이닝</h3>
+    <p>각 칸에 리스트를 두고, 같은 칸에 온 키를 그 리스트에 모읍니다. 해시 함수가 키를 고르게 흩는다면(단순 균등 해싱 가정) 각 리스트의 평균 길이는 α입니다.</p>
+    <ul>
+      <li>실패한 탐색(없는 키): 그 칸의 리스트를 끝까지, 평균 α번 비교.</li>
+      <li>성공한 탐색: 평균 약 \(1 + \alpha/2\)번.</li>
+    </ul>
+    <p>α가 커져도 서서히 느려질 뿐이고, α &gt; 1(칸보다 키가 많음)도 가능합니다.</p>
+
+    <h3 id="s6-1-3"><span class="no">6.1.3</span>개방 주소법(선형 조사)</h3>
+    <p>모든 키를 배열 안에 직접 넣고, 칸이 차 있으면 다음 칸(i + 1, i + 2, …)을 차례로 봅니다. 참조가 없어 메모리를 덜 쓰고 연속된 칸을 훑어 캐시에 유리하지만, 차 있는 칸이 덩어리(군집)를 이루어 α가 1에 가까워지면 급격히 느려집니다. Knuth가 구한 평균 조사 횟수의 근사식(표가 크고 해시가 고르다고 가정)은 다음과 같습니다.</p>
+    \[ \text{성공} \approx \frac12\left(1 + \frac{1}{1 - \alpha}\right), \qquad \text{실패} \approx \frac12\left(1 + \frac{1}{(1 - \alpha)^2}\right). \]
+    <p>α = 1이면 더 넣을 수 없으므로, 보통 α가 0.5~0.7을 넘으면 표를 두 배로 키우고 모든 키를 다시 넣습니다(재해싱, 분할상환 O(1), 1.3절과 같은 원리). 삭제할 때는 칸을 비우면 뒤쪽 키를 못 찾게 되므로 "지워짐" 표시(묘비)를 남깁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>칸 1009개 표에 무작위 정수 키를 적재율 0.25, 0.5, 0.75, 0.9만큼 넣고, 저장된 키(성공)와 없는 키(실패) 500개의 평균 조사 횟수를 세어 이론과 비교하라(실습 카드의 코드).</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과(시드 7):</p>
+    <table class="tb-table">
+      <tr><th>α</th><th>체이닝 성공 / 실패</th><th>이론 \(1 + \alpha/2\) / α</th><th>선형 조사 성공 / 실패</th><th>이론</th></tr>
+      <tr><td>0.25</td><td>1.10 / 0.24</td><td>1.13 / 0.25</td><td>1.17 / 1.37</td><td>1.17 / 1.39</td></tr>
+      <tr><td>0.5</td><td>1.23 / 0.52</td><td>1.25 / 0.5</td><td>1.49 / 2.41</td><td>1.5 / 2.5</td></tr>
+      <tr><td>0.75</td><td>1.38 / 0.75</td><td>1.38 / 0.75</td><td>2.65 / 9.29</td><td>2.5 / 8.5</td></tr>
+      <tr><td>0.9</td><td>1.47 / 0.89</td><td>1.45 / 0.9</td><td>5.49 / 34.82</td><td>5.5 / 50.5</td></tr>
+    </table>
+    <p>체이닝은 α = 0.9에서도 1.5번 안팎이지만, 선형 조사는 실패한 탐색이 수십 번으로 치솟습니다. α = 0.9의 실패 탐색은 군집의 크기에 크게 좌우되어 표마다 값이 많이 흔들립니다(이론값은 큰 표의 평균).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "해시 테이블은 언제나 O(1)": 평균입니다. 모든 키가 한 칸으로 가면(나쁜 해시 함수나 일부러 만든 입력) O(n)입니다. Python은 문자열 해시에 실행마다 바뀌는 무작위 값을 섞어 이런 공격을 막습니다. (2) m을 2의 거듭제곱으로 하고 \(k \bmod m\)을 쓰면 키의 낮은 비트만 보게 되어, 짝수만 들어오는 키가 절반의 칸만 씁니다. 소수 m이나 잘 섞는 해시 함수를 씁니다. (3) 개방 주소법에서 삭제한 칸을 그냥 비우는 실수.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>키 → h(k) → 칸. 충돌은 피할 수 없고, 적재율 α = n/m이 성능을 정한다.</li>
+        <li>체이닝: 성공 ≈ 1 + α/2, 실패 ≈ α. α가 커도 완만.</li>
+        <li>선형 조사: 성공 ≈ ½(1 + 1/(1 − α)), 실패 ≈ ½(1 + 1/(1 − α)²). α를 0.5~0.7 아래로 유지(재해싱).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s6-1-4"><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>m = 7, \(h(k) = k \bmod 7\)인 체이닝 표에 10, 22, 31, 4, 15, 28, 17을 넣으면 각 칸의 리스트는?
+          <details><summary>답</summary><p>칸 0: 28. 칸 1: 22, 15. 칸 3: 10, 31, 17. 칸 4: 4. 나머지 빈칸.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 키를 선형 조사(m = 7)로 넣으면 배열은?
+          <details><summary>답</summary><p>10→3, 22→1, 31→3 차서 4, 4→4 차서 5, 15→1 차서 2, 28→0, 17→3, 4, 5 차서 6. [28, 22, 15, 10, 31, 4, 17].</p></details>
+        </li>
+        <li>선형 조사에서 실패 탐색의 평균 조사를 3번 이하로 하려면 α는 얼마 이하여야 하는가?
+          <details><summary>답</summary><p>\(\frac12(1 + 1/(1 - \alpha)^2) \le 3\) → \((1 - \alpha)^2 \ge 0.2\), \(\alpha \le 0.553\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>23명이 있으면 생일이 같은 쌍이 있을 확률이 50%를 넘는다. 이것으로 m칸 해시 표에 키를 넣을 때 첫 충돌이 대략 언제 생기는지 어림하라.
+          <details><summary>답</summary><p>약 \(\sqrt{\pi m/2}\)번째 키 근처(m = 365면 약 24). m = 1009면 약 40개만 넣어도 충돌이 생길 가능성이 큽니다. 충돌 처리가 필수인 이유입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e2-hashing" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전2-06-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-06-01] <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전2-06-01" aria-label="할 수 있음"><span class="t">체이닝과 개방 주소법의 성능을 적재율로 비교할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="exp-e2-hashviz" data-kind="탐구" data-std="전전2-06-01">
+  <header class="card-head"><span class="no">6.1.2</span><h2><span class="q-badge">탐구</span>선형 조사의 군집이 자라는 모습</h2><span class="kind">탐구 · 적재율과 충돌</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="06-01.html#std">[전전2-06-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>칸 101개짜리 해시 표를 채워 갈 때, 선형 조사는 왜 적재율이 높아지면 급격히 느려질까요? 체이닝과 무엇이 다를까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>같은 무작위 키(가상)를 선형 조사(위, 찬 칸 주황)와 체이닝(아래, 칸마다 리스트 길이 막대)에 넣습니다. 없는 키를 찾을 때의 평균 조사 횟수를 모든 시작 칸에 대해 평균해 이론값과 비교합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>적재율 α = <b data-show="alpha" data-fix="2">0.75</b></span><input type="range" name="alpha" min="0.05" max="0.98" step="0.01" value="0.75" aria-label="적재율"></label>
+      </div>
+      <canvas aria-label="해시 표의 모습"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>α = 0.5</b><span>키 50개: 체이닝 실패 탐색 0.50번, 선형 조사 2.09번(이론 2.46), 가장 긴 덩어리 6칸.</span></li>
+        <li><b>α = 0.75</b><span>키 76개: 체이닝 0.75번, 선형 조사 6.64번(이론 8.66), 덩어리 25칸.</span></li>
+        <li><b>α = 0.9</b><span>키 91개: 체이닝 0.90번, 선형 조사 20.75번(이론 51.5), 덩어리 60칸. 표가 작아(101칸) 이론값(큰 표의 평균)과 차이가 큽니다.</span></li>
+        <li><b>군집</b><span>덩어리 하나가 커지면 그 덩어리 어디에 떨어지는 새 키도 끝에 붙어 덩어리를 더 키웁니다. 부자가 더 부자가 되는 현상입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>개방 주소법을 쓰는 표(Python dict 포함)는 그래서 적재율이 2/3 근처가 되면 키웁니다. 이중 해싱처럼 조사 간격을 키마다 다르게 하면 군집이 줄어듭니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"적재율 0.9면 열에 하나 비어 있으니 금방 빈칸을 찾는다"</b> 빈칸이 고르게 흩어져 있다면 그렇지만, 선형 조사에서는 빈칸이 덩어리 사이에 몰려 평균이 훨씬 길어집니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="exp-e2-hashviz" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-02.html">← 5.2 비교 정렬의 하한 Ω(n log n)을 결정 트리로 증명하기</a></span>
-        <span><a href="06-02.html">6.2 해시 테이블을 구현하기 →</a></span>
+        <span><a href="05-R.html">← 5.R 단원 마무리</a></span>
+        <span><a href="06-02.html">6.2 해시 테이블 구현: 해시 함수, 재해싱, 삭제 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +195,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/ee/e2-ds.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

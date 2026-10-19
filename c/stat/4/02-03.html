@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>예외 처리로 오류에 대응하기 · 파이썬프로그래밍 — QURI</title>
-  <meta name="description" content="파이썬프로그래밍 2.3 예외 처리로 오류에 대응하기 — 성취기준: 예외 처리로 오류에 대응할 수 있다.">
+  <title>예외 처리 · 파이썬프로그래밍 — QURI</title>
+  <meta name="description" content="파이썬프로그래밍 2.3 예외 처리 — 성취기준: 예외 처리로 오류에 대응할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통4&quot;, &quot;title&quot;: &quot;2.3 예외 처리로 오류에 대응하기&quot;, &quot;sub&quot;: &quot;파이썬프로그래밍&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통4&quot;, &quot;title&quot;: &quot;2.3 예외 처리&quot;, &quot;sub&quot;: &quot;파이썬프로그래밍&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,90 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통4-02-03" data-u="서울대">
+  <section class="topic-hero u-hero has-text" data-sec="응통4-02-03" data-u="서울대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">파이썬프로그래밍</a><span class="mono">/</span><a href="02.html">2. 모듈과 객체</a></div>
-    <h1><span class="sec-no mono">2.3</span>예외 처리로 오류에 대응하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통4-02-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통4-02-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통4-02-03" aria-label="할 수 있음"><span class="t">예외 처리로 오류에 대응할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.3</span>예외 처리</h1>
+    <p class="sec-std"><span class="mono">[응통4-02-03]</span> 예외 처리로 오류에 대응할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-3-1"><span class="mono">2.3.1</span><span>try / except</span></a></li><li><a href="#s2-3-2"><span class="mono">2.3.2</span><span>오류 일으키기</span></a></li><li><a href="#s2-3-3"><span class="mono">2.3.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s4-exceptions"><span class="mono">본문</span><span>예외 처리</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s4-exceptions" data-kind="본문" data-std="응통4-02-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>try/except</code>로 오류에 대응한다.</li>
+        <li>잘못된 입력에 대해 의미 있는 오류를 일으킨다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>함수와 클래스 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>자료는 언제나 지저분하다</h3>
+    <p>숫자여야 할 칸에 "없음"이 적혀 있거나, 파일이 없거나, 0으로 나누는 일이 생깁니다. 프로그램이 첫 오류에서 멈추는 대신 문제를 기록하고 계속 진행하게 하거나, 무엇이 잘못됐는지 분명히 알려 줘야 합니다.</p>
+
+    <h3 id="s2-3-1"><span class="no">2.3.1</span>try / except</h3>
+    <pre><code>raw = ["12", "7", "없음", "", "3.5"]
+values, bad = [], []
+for i, r in enumerate(raw):
+    try:
+        values.append(float(r))
+    except ValueError:              # 숫자로 바꿀 수 없을 때만 잡음
+        bad.append(i)
+print(values, bad)                  # [12.0, 7.0, 3.5] [2, 3]</code></pre>
+    <p>잡을 오류의 종류를 구체적으로 적습니다. 모든 오류를 잡는 <code>except:</code>는 진짜 버그까지 숨기므로 피합니다. <code>finally</code> 블록은 오류가 있든 없든 실행됩니다(파일 닫기 등). 파일은 <code>with open(...) as f:</code>를 쓰면 자동으로 닫힙니다.</p>
+
+    <h3 id="s2-3-2"><span class="no">2.3.2</span>오류 일으키기</h3>
+    <pre><code>def variance(xs):
+    if len(xs) &lt; 2:
+        raise ValueError("분산을 구하려면 관측이 2개 이상 필요합니다.")
+    m = sum(xs) / len(xs)
+    return sum((x - m) ** 2 for x in xs) / (len(xs) - 1)</code></pre>
+    <p>잘못된 입력을 조용히 넘기면 나중에 엉뚱한 결과로 나타나 찾기 어렵습니다. 문제를 발견한 곳에서 이유를 담아 오류를 일으키는 편이 낫습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>try/except 오류종류</code>로 예상한 오류만 처리.</li>
+        <li><code>with</code>로 파일 자동 닫기.</li>
+        <li>잘못된 입력은 <code>raise</code>로 분명하게 알림.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-3-3"><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>1 / 0</code>, <code>int("a")</code>, <code>[1, 2][5]</code>가 일으키는 오류 종류는?
+          <details><summary>답</summary><p><code>ZeroDivisionError</code>, <code>ValueError</code>, <code>IndexError</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s4-exceptions" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통4-02-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통4-02-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통4-02-03" aria-label="할 수 있음"><span class="t">예외 처리로 오류에 대응할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-02.html">← 2.2 클래스와 객체의 개념으로 간단한 자료 구조를 설계하기</a></span>
-        <span><a href="03-01.html">3.1 NumPy 배열로 벡터화 계산을 하기 →</a></span>
+        <span><a href="02-02.html">← 2.2 클래스와 객체</a></span>
+        <span><a href="02-R.html">2.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

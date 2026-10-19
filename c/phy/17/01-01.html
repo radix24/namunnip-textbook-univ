@@ -27,10 +27,10 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero has-text" data-sec="물리17-01-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대">
+  <section class="topic-hero u-hero has-text" data-sec="물리17-01-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=phy#tree">물리학과</a><span class="mono">/</span><a href="./">빅데이터물리학</a><span class="mono">/</span><a href="01.html">1. 과학 자료 처리 도구</a></div>
     <h1><span class="sec-no mono">1.1</span>NumPy와 pandas로 실험 자료 정리하기</h1>
-    <p class="sec-std"><span class="mono">[물리17-01-01]</span> NumPy와 pandas로 실험 자료를 읽고 정리할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></p>
+    <p class="sec-std"><span class="mono">[물리17-01-01]</span> NumPy와 pandas로 실험 자료를 읽고 정리할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
   <div class="topic-layout with-text">
@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s1-1-1"><span class="mono">1.1.1</span><span>NumPy</span></a></li><li><a href="#s1-1-2"><span class="mono">1.1.2</span><span>pandas</span></a></li><li><a href="#s1-1-3"><span class="mono">1.1.3</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-p17-pandas"><span class="mono">본문</span><span>NumPy와 pandas로 실험 자료 정리하기</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-p17-pandas"><span class="mono">본문</span><span>NumPy와 pandas로 실험 자료 정리하기</span></a></li><li><a href="#card-p17-groupby"><span class="mono">1.1.2</span><span>여러 번 잰 자료를 조건별로 묶어 평균 내기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="01.html">대단원 1 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -118,11 +118,55 @@ print(summary)</code></pre>
 </article>
     
     <div class="q-checklist after-text q-one" id="std" data-unit="물리17-01-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[물리17-01-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[물리17-01-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
       <ol><li><input type="checkbox" data-std="물리17-01-01" aria-label="할 수 있음"><span class="t">NumPy와 pandas로 실험 자료를 읽고 정리할 수 있다.</span></li></ol>
       <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-p17-groupby" data-kind="예제" data-std="물리17-01-01">
+  <header class="card-head"><span class="no">1.1.2</span><h2><span class="q-badge">예제</span>여러 번 잰 자료를 조건별로 묶어 평균 내기</h2><span class="kind">pandas groupby · 표준 오차 · 문제 해결 전략</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="01-01.html#std">[물리17-01-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>실험 자료는 보통 "조건(예: 길이), 반복 번호, 측정값"의 긴 표입니다. pandas로 읽어 조건별로 묶고(groupby) 평균과 표준 오차를 구하면 그래프에 쓸 점과 오차 막대가 나옵니다.</p>
+    </section>
 
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 자료 정리</span>
+      <ol>
+        <li><code>pd.read_csv</code>로 읽고 열 이름과 단위를 확인한다.</li>
+        <li><code>df.groupby('조건')['값'].agg(['mean', 'std', 'count'])</code>로 요약한다.</li>
+        <li>표준 오차 \(\sigma/\sqrt N\)을 새 열로 만든다.</li>
+        <li>이상한 값(입력 실수)을 먼저 걸러 낸다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">진자 길이 0.5 m에서 주기를 4번 재서 1.42, 1.41, 1.43, 1.42 s, 1.0 m에서 2.01, 2.00, 2.02, 2.01 s를 얻었다. 길이별 평균과 표준 오차를 구하고, 이 정리를 하는 코드를 써라.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>0.5 m: 평균 1.420 s, 표준편차 0.0082 s, 표준 오차 \(0.0082/\sqrt4 = 0.0041\) s.</div><span class="q-why">표본 표준편차(\(N - 1\)).</span></li>
+        <li><div>1.0 m: 평균 2.010 s, 표준 오차 0.0041 s.</div><span class="q-why">같은 흩어짐.</span></li>
+        <li><div>코드: <code>s = df.groupby('L')['T'].agg(['mean','std','count']); s['sem'] = s['std']/s['count']**0.5</code>.</div><span class="q-why">pandas의 <code>sem()</code>도 같다.</span></li>
+        <li class="q-end"><div>점검: \(T^2/L\) = 4.03, 4.04 s²/m로 거의 같아 \(T \propto \sqrt L\)과 맞다.</div><span class="q-why">물리 관계로 확인.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>자료를 "긴 표" 하나로 두고 필요할 때 묶어 요약하면, 측정을 더해도 같은 코드로 다시 정리할 수 있습니다. 손으로 평균을 내는 것보다 실수가 적고 재현이 쉽습니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(4\pi^2/(T^2/L) = 39.48/4.03 = 9.80\) m/s². 표준값과 맞습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-p17-groupby" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span></span>
         <span><a href="01-02.html">1.2 통계 그래프로 분포와 상관 보기 →</a></span>

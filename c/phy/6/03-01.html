@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s3-1-1"><span class="mono">3.1.1</span><span>주소와 자료</span></a></li><li><a href="#s3-1-2"><span class="mono">3.1.2</span><span>메모리의 종류</span></a></li><li><a href="#s3-1-3"><span class="mono">3.1.3</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-p6-memory"><span class="mono">본문</span><span>메모리의 주소와 자료</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-p6-memory"><span class="mono">본문</span><span>메모리의 주소와 자료</span></a></li><li><a href="#card-p6-memory"><span class="mono">3.1.2</span><span>주소 선 개수와 메모리 용량</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -109,9 +109,53 @@
       <ol><li><input type="checkbox" data-std="물리6-03-01" aria-label="할 수 있음"><span class="t">메모리의 주소와 자료 구조를 설명할 수 있다.</span></li></ol>
       <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-p6-memory" data-kind="예제" data-std="물리6-03-01">
+  <header class="card-head"><span class="no">3.1.2</span><h2><span class="q-badge">예제</span>주소 선 개수와 메모리 용량</h2><span class="kind">주소 공간 · 자료 폭 · 문제 해결 전략</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-01.html#std">[물리6-03-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>메모리는 주소로 칸을 고르고 그 칸의 자료를 읽거나 씁니다. 주소 선이 \(n\)개면 \(2^n\)칸, 칸마다 자료 폭이 \(w\)비트이면 용량은 \(2^n\times w\)비트입니다.</p>
+    </section>
 
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 메모리 구성</span>
+      <ol>
+        <li>필요한 칸 수와 자료 폭을 정한다.</li>
+        <li>주소 선 \(n = \lceil\log_2(\text{칸 수})\rceil\).</li>
+        <li>칩 여러 개를 쓸 때 주소 디코더로 칩을 고른다.</li>
+        <li>바이트 단위로 환산해 점검한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">8K × 8 메모리 칩으로 32 KB(8비트 폭) 메모리를 만들려면 칩이 몇 개, 주소 선이 모두 몇 개 필요한가? 칩을 고르는 데 쓰는 주소 선은?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>8K × 8 칩 하나는 8192칸 × 8비트 = 8 KB.</div><span class="q-why">\(8\text{K} = 2^{13}\).</span></li>
+        <li><div>32 KB에 칩 4개.</div><span class="q-why">병렬이 아니라 주소 영역을 나눔.</span></li>
+        <li><div>32 K칸 = \(2^{15}\): 주소 선 15개.</div><span class="q-why">\(A_0\)~\(A_{14}\).</span></li>
+        <li class="q-end"><div>칩 안 주소 13개(\(A_0\)~\(A_{12}\)), 위 2개(\(A_{13}, A_{14}\))를 2-4 디코더에 넣어 칩 고르기.</div><span class="q-why">상위 비트가 칩 번호.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>주소를 나눠 쓰는 이 방식이 컴퓨터 메모리 지도의 기본입니다. 입출력 장치도 같은 방식으로 주소 일부를 받아 메모리처럼 읽고 씁니다(메모리 사상 입출력, 5.2절).</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(4\times8192 = 32768 = 2^{15}\). 주소 선 15개와 맞습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-p6-memory" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-02.html">← 2.2 카운터와 시프트 레지스터</a></span>
+        <span><a href="02-R.html">← 2.R 단원 마무리</a></span>
         <span><a href="03-02.html">3.2 위상 고정 루프(PLL) →</a></span>
       </nav>
     </div>

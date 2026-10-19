@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>순서기저에 대한 행렬표현을 구하기 · 선형대수(1) — QURI</title>
-  <meta name="description" content="선형대수(1) 3.2 순서기저에 대한 행렬표현을 구하기 — 성취기준: 순서기저에 대한 행렬표현을 구할 수 있다.">
+  <title>순서기저와 행렬표현 · 선형대수(1) — QURI</title>
+  <meta name="description" content="선형대수(1) 3.2 순서기저와 행렬표현 — 성취기준: 순서기저에 대한 행렬표현을 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;수학1&quot;, &quot;title&quot;: &quot;3.2 순서기저에 대한 행렬표현을 구하기&quot;, &quot;sub&quot;: &quot;선형대수(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;수학1&quot;, &quot;title&quot;: &quot;3.2 순서기저와 행렬표현&quot;, &quot;sub&quot;: &quot;선형대수(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,179 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="수학1-03-02" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="수학1-03-02" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=math#tree">수학과</a><span class="mono">/</span><a href="./">선형대수(1)</a><span class="mono">/</span><a href="03.html">3. 일차변환과 행렬표현</a></div>
-    <h1><span class="sec-no mono">3.2</span>순서기저에 대한 행렬표현을 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="수학1-03-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[수학1-03-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="수학1-03-02" aria-label="할 수 있음"><span class="t">순서기저에 대한 행렬표현을 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.2</span>순서기저와 행렬표현</h1>
+    <p class="sec-std"><span class="mono">[수학1-03-02]</span> 순서기저에 대한 행렬표현을 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-2-1"><span class="mono">3.2.1</span><span>좌표</span></a></li><li><a href="#s3-2-2"><span class="mono">3.2.2</span><span>행렬표현</span></a></li><li><a href="#s3-2-3"><span class="mono">3.2.3</span><span>합성은 행렬의 곱</span></a></li><li><a href="#s3-2-4"><span class="mono">3.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-m1-matrep"><span class="mono">본문</span><span>순서기저와 행렬표현</span></a></li><li><a href="#card-m1-matrep-ex"><span class="mono">3.2.2</span><span>표준이 아닌 기저로 행렬표현 구하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-m1-matrep" data-kind="본문" data-std="수학1-03-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>순서기저에 대한 좌표 벡터 \([\mathbf v]_\beta\)를 구한다.</li>
+        <li>일차변환의 행렬표현 \([T]_\beta^\gamma\)를 "기저의 상의 좌표를 열로 세운 것"으로 구한다.</li>
+        <li>\([T\mathbf v]_\gamma = [T]_\beta^\gamma[\mathbf v]_\beta\)와 \([UT] = [U][T]\)를 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기저와 표현의 유일성 (<a href="02-03.html">2.3절</a>), 일차변환은 기저의 값으로 정해짐 (<a href="03-01.html">3.1절</a>), 행렬의 곱 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s3-2-1"><span class="no">3.2.1</span>좌표</h3>
+    <p>미분 \(D: P_2 \to P_2\)를 컴퓨터로 계산하려면 다항식을 수의 목록으로 바꿔야 합니다. 기저를 하나 정하고 "그 기저로 쓸 때의 계수"를 목록으로 삼으면 됩니다. 계수의 순서가 중요하므로 기저에 순서를 붙입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 3.2.1 <span class="nm">(좌표 벡터)</span></span>
+      <p>\(\beta = (\mathbf v_1, \dots, \mathbf v_n)\)이 \(V\)의 순서기저이고 \(\mathbf v = a_1\mathbf v_1 + \dots + a_n\mathbf v_n\)이면, \(\mathbf v\)의 \(\beta\)에 대한 <b>좌표 벡터</b>는 \([\mathbf v]_\beta = (a_1, \dots, a_n)^{\mathsf T} \in \mathbb R^n\)이다.</p>
+    </div>
+    <p>계수가 하나뿐이라는 기저의 성질(2.3절) 때문에 좌표가 잘 정의됩니다. \(P_2\)의 표준 순서기저 \((1, x, x^2)\)에서 \([3 - x + 2x^2] = (3, -1, 2)\)이고, 순서기저 \((x^2, x, 1)\)에서는 \((2, -1, 3)\)입니다. 같은 벡터라도 기저와 순서에 따라 좌표가 다릅니다.</p>
+
+    <h3 id="s3-2-2"><span class="no">3.2.2</span>행렬표현</h3>
+    <p>일차변환은 기저의 상으로 정해집니다. 그러니 기저의 상들의 좌표를 모아 두면 \(T\)의 정보가 모두 담깁니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 3.2.2 <span class="nm">(행렬표현)</span></span>
+      <p>\(T: V \to W\), \(\beta = (\mathbf v_1, \dots, \mathbf v_n)\), \(\gamma\)가 \(W\)의 순서기저일 때, \(j\)째 열이 \([T\mathbf v_j]_\gamma\)인 행렬을 \(T\)의 \(\beta, \gamma\)에 대한 <b>행렬표현</b> \([T]_\beta^\gamma\)라 한다. \(V = W\), \(\beta = \gamma\)이면 \([T]_\beta\)로 쓴다.</p>
+    </div>
+    <p>열을 하나씩 만드는 순서는 늘 같습니다. (1) 정의역 기저의 \(j\)째 벡터에 \(T\)를 적용하고, (2) 결과를 공역 기저로 표현해 계수를 읽고, (3) 그것을 \(j\)째 열에 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.3</span>
+      <p>\(D: P_3 \to P_2\), \(Dp = p'\)의 표준 순서기저 \(\beta = (1, x, x^2, x^3)\), \(\gamma = (1, x, x^2)\)에 대한 행렬표현을 구하고, \(p = 2 - x + 4x^3\)의 도함수를 행렬 곱으로 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(D1 = 0\), \(Dx = 1\), \(Dx^2 = 2x\), \(Dx^3 = 3x^2\)의 \(\gamma\)-좌표는 \((0,0,0), (1,0,0), (0,2,0), (0,0,3)\)이므로</p>
+    \[[D]_\beta^\gamma = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3\end{pmatrix}.\]
+    <p>\([p]_\beta = (2, -1, 0, 4)\)이므로 \([D]_\beta^\gamma[p]_\beta = (-1, 0, 12)\), 곧 \(p' = -1 + 12x^2\). 직접 미분한 결과와 같습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.2.4</span>
+      <p>모든 \(\mathbf v \in V\)에 대해 \([T\mathbf v]_\gamma = [T]_\beta^\gamma\,[\mathbf v]_\beta\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\mathbf v = \sum a_j\mathbf v_j\)이면 \(T\mathbf v = \sum a_jT\mathbf v_j\). 좌표를 잡는 일도 선형이므로 \([T\mathbf v]_\gamma = \sum a_j[T\mathbf v_j]_\gamma\)이고, 이것은 열이 \([T\mathbf v_j]_\gamma\)인 행렬에 \((a_1, \dots, a_n)\)을 곱한 것(1.2절의 열 읽기)이다. <span class="qed">∎</span></p>
+    <p>그래서 "추상적인" 일차변환의 계산이 행렬과 수의 목록의 곱으로 바뀝니다. 컴퓨터가 미분, 적분, 회전을 행렬로 처리하는 원리입니다.</p>
+
+    <h3 id="s3-2-3"><span class="no">3.2.3</span>합성은 행렬의 곱</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.2.5</span>
+      <p>\(T: V \to W\), \(U: W \to Z\)이고 \(\alpha, \beta, \gamma\)가 각각 \(V, W, Z\)의 순서기저이면 \([UT]_\alpha^\gamma = [U]_\beta^\gamma\,[T]_\alpha^\beta\).</p>
+    </div>
+    <p>정리 3.2.4를 두 번 쓰면 \([UT\mathbf v]_\gamma = [U]_\beta^\gamma[T\mathbf v]_\beta = [U]_\beta^\gamma[T]_\alpha^\beta[\mathbf v]_\alpha\)이고, 이것이 모든 \(\mathbf v\)에 대해 성립하므로(특히 기저 벡터를 넣으면 열마다 같으므로) 두 행렬이 같습니다. 1.3절에서 행렬의 곱을 "차례로 적용하기"가 되도록 정의한 보람이 여기서 나옵니다. 위첨자와 아래첨자의 기저가 사슬처럼 이어지는 것도 기억해 두면 좋습니다(\(\gamma \leftarrow \beta \leftarrow \alpha\)).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.6</span>
+      <p>\(\mathbb R^2\)에서 \(R_\theta\)를 각 \(\theta\)만큼의 회전이라 하자. 표준기저에 대한 행렬로 \(R_\alpha R_\beta = R_{\alpha+\beta}\)를 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(R_\theta\mathbf e_1 = (\cos\theta, \sin\theta)\), \(R_\theta\mathbf e_2 = (-\sin\theta, \cos\theta)\)이므로 \([R_\theta] = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta\end{pmatrix}\). 곱의 \((1,1)\) 성분은 \(\cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha + \beta)\), \((2,1)\) 성분은 \(\sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha + \beta)\)이고 나머지도 마찬가지입니다. 고교에서 외운 삼각함수의 덧셈정리가 "회전 두 번 = 한 번에 회전"이라는 사실의 행렬 표현입니다.</p>
+
+    <div class="tb-note"><b>주의</b>행렬표현은 기저를 바꾸면 바뀝니다. "미분의 행렬은 이것이다"라고 말할 때는 반드시 어느 기저에 대한 것인지 함께 말해야 합니다. 기저를 바꾸면 행렬이 어떻게 바뀌는지가 다음 절의 주제입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>좌표 \([\mathbf v]_\beta\)는 순서기저에 대한 계수의 목록이다.</li>
+        <li>\([T]_\beta^\gamma\)의 \(j\)째 열은 \([T\mathbf v_j]_\gamma\): 기저에 \(T\)를 적용하고 공역 기저로 좌표를 읽는다.</li>
+        <li>\([T\mathbf v]_\gamma = [T]_\beta^\gamma[\mathbf v]_\beta\), \([UT] = [U][T]\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-2-4"><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(T(x, y) = (2x - y,\ x + 3y,\ y)\)의 표준기저에 대한 행렬을 구하여라.
+          <details><summary>답</summary><p>\(\begin{pmatrix} 2 & -1 \\ 1 & 3 \\ 0 & 1\end{pmatrix}\).</p></details>
+        </li>
+        <li>\(\beta = ((1, 1), (1, -1))\)에 대한 \((3, 1)\)의 좌표를 구하여라.
+          <details><summary>답</summary><p>\((3,1) = 2(1,1) + 1(1,-1)\)이므로 \((2, 1)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(T: P_2 \to P_2\), \((Tp)(x) = p(x + 1)\)의 표준기저 \((1, x, x^2)\)에 대한 행렬을 구하여라.
+          <details><summary>답</summary><p>\(T1 = 1\), \(Tx = 1 + x\), \(Tx^2 = 1 + 2x + x^2\). \(\begin{pmatrix} 1 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 1\end{pmatrix}\) (파스칼 삼각형).</p></details>
+        </li>
+        <li>\(\mathbb R^2\)에서 직선 \(y = x\)에 대한 대칭 \(S\)의 표준 행렬을 구하고, \(S^2 = I\)를 행렬로 확인하여라.
+          <details><summary>답</summary><p>\(S\mathbf e_1 = \mathbf e_2\), \(S\mathbf e_2 = \mathbf e_1\)이므로 \(\begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix}\), 제곱은 \(I\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="5">
+        <li>\(V = \operatorname{span}\{e^x\cos x,\ e^x\sin x\}\)에서 미분 \(D\)의 행렬을 구하고, 이를 이용해 \(\int e^x\cos x\,dx\)를 구하여라.
+          <details><summary>힌트</summary><p>\(D\)가 가역이면 \(D^{-1}\)이 \(V\) 안의 적분(상수 제외)입니다.</p></details>
+          <details><summary>답</summary><p>\(D(e^x\cos x) = e^x\cos x - e^x\sin x\), \(D(e^x\sin x) = e^x\sin x + e^x\cos x\). \([D] = \begin{pmatrix} 1 & 1 \\ -1 & 1\end{pmatrix}\), \([D]^{-1} = \frac12\begin{pmatrix} 1 & -1 \\ 1 & 1\end{pmatrix}\). \(e^x\cos x\)의 좌표 \((1, 0)\)에 곱하면 \((\frac12, \frac12)\). \(\int e^x\cos x\,dx = \frac12e^x(\cos x + \sin x) + C\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-m1-matrep" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="수학1-03-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[수학1-03-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="수학1-03-02" aria-label="할 수 있음"><span class="t">순서기저에 대한 행렬표현을 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/2/02-03.html"><span class="mono">2.3</span><span>미분적분학과벡터해석(2) <b>행렬의 곱과 일차변환</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-m1-matrep-ex" data-kind="예제" data-std="수학1-03-02">
+  <header class="card-head"><span class="no">3.2.2</span><h2><span class="q-badge">예제</span>표준이 아닌 기저로 행렬표현 구하기</h2><span class="kind">예제 · 기저에 맞춘 행렬은 단순해진다</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-02.html#std">[수학1-03-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>직선 \(y = 2x\)로의 정사영 \(P\)를 생각합니다. 그 직선 방향의 벡터와 수직 방향의 벡터를 기저로 쓰면, \(P\)의 행렬은 어떤 모양일까요?</p>
+      <details><summary>예측 확인</summary><p>직선 방향은 그대로(1배), 수직 방향은 0으로 가므로 \(\begin{pmatrix} 1 & 0 \\ 0 & 0\end{pmatrix}\)입니다.</p></details>
+    </section>
+    <p class="q-prob">\(P: \mathbb R^2 \to \mathbb R^2\)를 직선 \(y = 2x\)로의 정사영이라 하자. (a) \(\beta = ((1, 2), (-2, 1))\)에 대한 \([P]_\beta\)를 구하여라. (b) 표준기저 \(\varepsilon\)에 대한 \([P]_\varepsilon\)을 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>(a)는 정의대로 기저 벡터의 상을 구하면 바로 나옵니다. (b)는 표준기저 벡터의 정사영을 구해야 합니다. 정사영 공식 \(\operatorname{proj}_{\mathbf u}\mathbf x = \frac{\mathbf x\cdot\mathbf u}{\mathbf u\cdot\mathbf u}\mathbf u\)(공통2의 벡터)를 씁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(P(1, 2) = (1, 2) = 1\cdot(1,2) + 0\cdot(-2,1)\), \(P(-2, 1) = (0, 0)\).</div><span class="q-why">직선 위의 벡터는 그대로, 직선에 수직인 벡터(\((1,2)\cdot(-2,1) = 0\))는 0으로 간다.</span></li>
+        <li><div>\([P]_\beta = \begin{pmatrix} 1 & 0 \\ 0 & 0\end{pmatrix}\).</div><span class="q-why">상의 \(\beta\)-좌표 \((1,0)\), \((0,0)\)을 열로.</span></li>
+        <li><div>\(P\mathbf e_1 = \frac{1}{5}(1, 2)\), \(P\mathbf e_2 = \frac{2}{5}(1, 2)\).</div><span class="q-why">\(\mathbf u = (1,2)\), \(\mathbf u\cdot\mathbf u = 5\), \(\mathbf e_1\cdot\mathbf u = 1\), \(\mathbf e_2\cdot\mathbf u = 2\).</span></li>
+        <li class="q-end"><div>\([P]_\varepsilon = \frac15\begin{pmatrix} 1 & 2 \\ 2 & 4\end{pmatrix}\).</div><span class="q-why">상의 표준좌표를 열로.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\([P]_\varepsilon(1, 2) = \frac15(1 + 4,\ 2 + 8) = (1, 2)\), \([P]_\varepsilon(-2, 1) = \frac15(0, 0)\). 또 정사영은 두 번 해도 같으므로 \([P]^2 = [P]\)이어야 합니다: \(\frac1{25}\begin{pmatrix} 5 & 10 \\ 10 & 20\end{pmatrix} = \frac15\begin{pmatrix} 1 & 2 \\ 2 & 4\end{pmatrix}\). 맞습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>같은 일차변환이 기저에 따라 \(\frac15\begin{pmatrix} 1 & 2 \\ 2 & 4\end{pmatrix}\)로도, \(\begin{pmatrix} 1 & 0 \\ 0 & 0\end{pmatrix}\)로도 보입니다. 변환의 "성질에 맞는" 기저를 고르면 행렬이 대각행렬처럼 단순해집니다. 이 생각을 끝까지 밀고 가는 것이 6단원의 대각화입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>정사영 대신 직선 \(y = 2x\)에 대한 대칭 \(S\)를 쓰면 \([S]_\beta = \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}\)입니다. 직선 방향은 그대로, 수직 방향은 뒤집히기 때문입니다. \(S = 2P - I\)이므로 \([S]_\varepsilon = \frac15\begin{pmatrix} -3 & 4 \\ 4 & 3\end{pmatrix}\).</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\([P]_\beta\)의 대각합과 \([P]_\varepsilon\)의 대각합을 비교해 보세요.</p>
+      <details><summary>답</summary><p>둘 다 1입니다. 대각합은 기저를 바꿔도 변하지 않습니다(다음 절, 닮음 행렬).</p></details>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-m1-matrep-ex" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-01.html">← 3.1 일차변환의 핵과 상을 구하고 차원 정리를 증명하기</a></span>
-        <span><a href="03-03.html">3.3 기저 변환 행렬로 닮음 행렬을 구하기 →</a></span>
+        <span><a href="03-01.html">← 3.1 일차변환, 핵과 상, 차원 정리</a></span>
+        <span><a href="03-03.html">3.3 기저 변환과 닮음 행렬 →</a></span>
       </nav>
     </div>
   </div>

@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s5-3-1"><span class="mono">5.3.1</span><span>측정 사슬</span></a></li><li><a href="#s5-3-2"><span class="mono">5.3.2</span><span>설계 예: 온도 기록기</span></a></li><li><a href="#s5-3-3"><span class="mono">5.3.3</span><span>점검 목록</span></a></li><li><a href="#s5-3-4"><span class="mono">5.3.4</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-p6-logger"><span class="mono">본문</span><span>센서 신호를 기록하는 측정 장치</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-p6-logger"><span class="mono">본문</span><span>센서 신호를 기록하는 측정 장치</span></a></li><li><a href="#card-p6-logger"><span class="mono">5.3.2</span><span>온도 기록기의 분해능과 표본화 간격 정하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -109,10 +109,54 @@
       <ol><li><input type="checkbox" data-std="물리6-05-03" aria-label="할 수 있음"><span class="t">센서 신호를 받아 기록하는 간단한 측정 장치를 만들 수 있다.</span></li></ol>
       <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-p6-logger" data-kind="예제" data-std="물리6-05-03">
+  <header class="card-head"><span class="no">5.3.2</span><h2><span class="q-badge">예제</span>온도 기록기의 분해능과 표본화 간격 정하기</h2><span class="kind">ADC 분해능 · 센서 감도 · 기록 용량 · 문제 해결 전략</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[물리6-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>측정 장치를 설계할 때는 센서가 낼 신호 범위, ADC 분해능, 표본화 간격, 기록 용량을 함께 맞춥니다. ADC 한 단계에 해당하는 물리량이 원하는 정밀도보다 작아야 합니다.</p>
+    </section>
 
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 측정 장치 사양 정하기</span>
+      <ol>
+        <li>센서 출력 범위와 감도(V/°C)를 정리한다.</li>
+        <li>ADC 한 단계 \(V_{ref}/2^N\)를 물리량으로 바꾼다.</li>
+        <li>측정할 변화의 빠르기로 표본화 간격을 정한다(나이퀴스트).</li>
+        <li>기록 시간과 자료 크기로 저장 용량을 구한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">감도 10 mV/°C(0 °C에서 0 V)인 온도 센서를 기준 전압 3.3 V, 10비트 ADC로 읽는다. 온도 분해능과 최대 측정 온도는? 0.05 °C 분해능이 필요하면? 1분마다 2바이트씩 30일 기록하면 용량은?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>한 단계 \(3.3/1024 = 3.22\) mV = 0.322 °C.</div><span class="q-why">10비트 = 1024단계.</span></li>
+        <li><div>최대 \(3.3\) V = 330 °C(센서 범위가 더 좁으면 그 값).</div><span class="q-why">ADC 범위.</span></li>
+        <li><div>0.05 °C(0.5 mV)이 필요하면 증폭기로 신호를 6.4배 키우거나 12비트 이상(0.08 °C), 14비트(0.02 °C)를 쓴다.</div><span class="q-why">분해능 맞추기.</span></li>
+        <li class="q-end"><div>30일 = 43200분, 86400바이트 ≈ 84 KB.</div><span class="q-why">기록 용량.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>분해능이 좋아도 센서 잡음이나 정확도(보정)가 그보다 나쁘면 의미가 없습니다. 측정 장치는 가장 나쁜 고리가 전체 성능을 정합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>증폭 6.4배이면 3.3 V가 51.6 °C에 해당하고, 한 단계 \(0.322/6.4 = 0.050\) °C. 요구와 맞습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-p6-logger" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="05-02.html">← 5.2 저수준 코드로 입출력 제어하기</a></span>
-        <span></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
