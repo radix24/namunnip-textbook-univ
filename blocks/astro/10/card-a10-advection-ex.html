@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-04-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a10-advection-ex" data-kind="예제" data-std="천우10-04-03 천우10-04-01">
+  <header class="card-head"><span class="no"></span><h2>폰 노이만 분석으로 안정 조건 유도하기</h2><span class="kind">예제 · 증폭 인자 · CFL</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 폰 노이만 안정성 분석</span>
+      <ol>
+        <li>해를 파동 하나 \(u_j^n = G^ne^{ij\theta}\)(\(\theta = k\Delta x\))로 두고 차분식에 넣는다.</li>
+        <li>한 걸음의 증폭 인자 \(G(\theta)\)를 구한다.</li>
+        <li>모든 \(\theta\)에서 \(|G| \le 1\)이면 안정, 하나라도 \(|G| &gt; 1\)이면 그 파동이 지수적으로 자라 불안정.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 가장 먼저 터지는 파동은 긴 파장일까요, 격자 두 칸짜리 가장 짧은 파장일까요?</div>
+    <p class="q-prob"><b>문제.</b> 상류 차분 \(u_j^{n+1} = u_j^n - C(u_j^n - u_{j-1}^n)\)과 중앙 차분 \(u_j^{n+1} = u_j^n - \tfrac C2(u_{j+1}^n - u_{j-1}^n)\)의 증폭 인자를 구하고 안정 조건을 정하세요. \(C = 1.1\)에서 가장 짧은 파동(\(\theta = \pi\))은 한 걸음에 몇 배 자랍니까?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>상류: \(G = 1 - C(1 - e^{-i\theta})\), \(|G|^2 = 1 - 2C(1 - C)(1 - \cos\theta)\).</div><span class="q-why">\(|a + ib|^2 = a^2 + b^2\)로 정리.</span></li>
+        <li><div>\(0 \le C \le 1\)이면 \(C(1 - C) \ge 0\)이라 \(|G| \le 1\): 안정. \(C &gt; 1\)이면 \(1 - C &lt; 0\)이라 \(|G| &gt; 1\): 불안정.</div><span class="q-why">CFL 조건이 수식으로 나온다.</span></li>
+        <li><div>\(C = 1.1\), \(\theta = \pi\): \(|G|^2 = 1 - 2\times1.1\times(-0.1)\times2 = 1.44\), \(|G| = 1.2\). 한 걸음에 20%씩 자란다.</div><span class="q-why">\(1 - \cos\pi = 2\)로 가장 크다.</span></li>
+        <li class="q-end"><div>중앙: \(G = 1 - iC\sin\theta\), \(|G|^2 = 1 + C^2\sin^2\theta &gt; 1\)(\(\theta \ne 0, \pi\)). 어떤 \(C\)에서도 불안정.</div><span class="q-why">본문 실험과 같은 결론.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>격자 두 칸짜리 짧은 파동이 가장 먼저 터집니다. 그래서 불안정한 계산은 결과가 '톱니 모양'으로 번쩍이다 발산합니다. 반대로 \(C &lt; 1\)에서 짧은 파동은 \(|G| &lt; 1\)로 줄어드는데, 이것이 봉우리가 뭉개지는 수치 확산의 정체입니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>본문에서 \(C = 1.1\)로 91걸음 돌렸을 때 봉우리가 1.8배였습니다. 가장 짧은 파동만 20%씩 자라고 매끄러운 봉우리는 대부분 긴 파동이라, 처음에는 천천히 커지다 짧은 파동이 자라면서 급히 발산합니다(세 바퀴면 \(3\times10^5\)). \(C = 1\)이면 \(|G| = 1\)로 모든 파동이 그대로 옮겨져 정확한 결과와 맞습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>상류 차분에서 \(C = 0.5\)일 때 \(\theta = \pi\) 파동은 한 걸음에 몇 배가 됩니까?</p>
+      <details><summary>답</summary><p>\(|G|^2 = 1 - 2\times0.5\times0.5\times2 = 0\), \(G = 0\). 가장 짧은 파동은 한 걸음에 완전히 지워집니다. 수치 확산이 가장 짧은 파장에서 가장 강합니다.</p></details>
+    </section>
+  </div>
+</article>

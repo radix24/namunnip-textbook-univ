@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-05-05",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a10-kde-ex" data-kind="예제" data-std="천우10-05-05">
+  <header class="card-head"><span class="no"></span><h2>손으로 KDE 계산하기, 그리고 측정 오차가 봉우리를 지울 때</h2><span class="kind">예제 · 커널 밀도 · 측정 오차</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · KDE와 측정 오차</span>
+      <ol>
+        <li>KDE 값 = 각 자료점의 가우스 종이 그 점에서 갖는 높이의 합 ÷ \((Nb\sqrt{2\pi})\).</li>
+        <li>측정 오차는 참 분포에 오차 분포를 겹쳐 넓힌다: 폭 \(\sigma_{\text{관측}}^2 = \sigma_{\text{참}}^2 + \sigma_{\text{오차}}^2\).</li>
+        <li>같은 폭 \(\sigma\)의 두 정규분포는 중심 거리 \(d &gt; 2\sigma\)일 때 봉우리 둘로 보인다.</li>
+      </ol>
+    </div>
+    <p class="q-prob"><b>문제 1.</b> 자료 \(\{0, 0.2, 1.0, 1.1\}\), 커널 폭 \(b = 0.3\)으로 \(x = 0.1\), 0.6, 1.05의 KDE 값을 구하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(x = 0.6\)에서 각 종의 높이: \(e^{-0.5(0.6/0.3)^2} = 0.135\), \(e^{-0.5(0.4/0.3)^2} = 0.411\), 0.411, \(e^{-0.5(0.5/0.3)^2} = 0.249\). 합 1.207.</div><span class="q-why">거리를 폭으로 나눈 값의 가우스.</span></li>
+        <li><div>\(\hat f(0.6) = 1.207/(4\times0.3\times2.507) = 0.401\).</div><span class="q-why">\(\sqrt{2\pi} = 2.507\).</span></li>
+        <li class="q-end"><div>같은 방법으로 \(\hat f(0.1) = 0.634\), \(\hat f(1.05) = 0.662\). 가운데(0.6)가 양쪽보다 낮아 봉우리가 둘이다.</div><span class="q-why">두 무리 사이에 골.</span></li>
+      </ol>
+    </section>
+
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 금속 함량 측정 오차가 커지면 두 종족의 봉우리는 어떻게 될까요?</div>
+    <p class="q-prob"><b>문제 2.</b> 참 분포가 폭 0.2인 두 정규분포(중심 거리 1.0)라고 합시다. 측정 오차가 0.4 dex, 0.5 dex일 때 관측 분포의 각 봉우리 폭과, 봉우리가 둘로 보이는지 판단하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>오차 0.4: \(\sigma = \sqrt{0.04 + 0.16} = 0.447\), \(2\sigma = 0.89 &lt; 1.0\): 둘로 보인다(골은 얕다).</div><span class="q-why">분산이 더해진다.</span></li>
+        <li class="q-end"><div>오차 0.5: \(\sigma = \sqrt{0.04 + 0.25} = 0.539\), \(2\sigma = 1.08 &gt; 1.0\): 하나로 뭉친다.</div><span class="q-why">\(d &gt; 2\sigma\) 조건이 깨진다.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>측정 오차가 참 분포의 구조를 지울 수 있습니다. '봉우리가 하나뿐이다'라는 결론은 측정 오차가 그 구조를 가릴 만큼 크지 않은지 확인한 뒤에야 말할 수 있습니다. 정밀 분광 탐사가 측광 금속 함량보다 종족 구분을 잘하는 까닭입니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>문제 1에서 커널 폭을 0.6으로 키우면 골이 사라질까요? 두 무리 중심 거리가 약 0.95이고 커널 폭이 그 절반을 넘으면 두 종이 합쳐져 하나의 봉우리가 됩니다. 문제 2와 같은 원리(넓히는 폭이 거리의 절반 정도를 넘으면 합쳐짐)입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>문제 2에서 표본이 매우 많다면, 관측 분포에서 측정 오차를 '되돌려' 참 분포의 폭 0.2를 얻을 수 있습니까?</p>
+      <details><summary>답</summary><p>측정 오차를 정확히 안다면 \(\sigma_{\text{참}}^2 = \sigma_{\text{관측}}^2 - \sigma_{\text{오차}}^2\)으로 폭을 되돌릴 수 있고(혼합 모형을 오차와 함께 맞추기), 표본이 많을수록 정확해집니다. 오차를 잘못 알면 참 폭이 크게 틀립니다.</p></details>
+    </section>
+  </div>
+</article>
