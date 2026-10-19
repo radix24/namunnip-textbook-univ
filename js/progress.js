@@ -2,12 +2,14 @@
    - std:    성취기준 코드 → 표시한 시각   ("할 수 있다" 점검)
    - seen:   카드 id → 표시한 시각        ("이 카드를 끝까지 공부했어요")
    - visits: 최근에 연 절 페이지 30개      (메인 화면의 "이어서 공부하기", 기록 페이지)
+   - wrong:  시험 연습에서 틀린 문제 id → { c: 과목 코드, ts }   (다시 맞히면 지운다. js/exam.js)
+   - exams:  시험 연습 결과 최근 50개 { c, ts, n, ok, scope }
    페이지마다 있는 요소를 찾아 기록을 그리고 바꾼다. 다른 탭에서 바꾸면(storage 이벤트) 다시 그린다. */
 window.QProgress = (() => {
   "use strict";
   const KEY = "quri-progress";
   const ROOT = new URL("../", document.currentScript.src);   // 사이트 맨 위
-  const empty = () => ({ v: 2, std: {}, seen: {}, visits: [] });
+  const empty = () => ({ v: 2, std: {}, seen: {}, visits: [], wrong: {}, exams: [] });
   let data = empty();
   const load = () => {
     let raw = null;
@@ -32,19 +34,27 @@ window.QProgress = (() => {
     visits: () => data.visits.slice(),
     last: () => data.visits[0] || null,
     root: ROOT,
+    /* 시험 연습 */
+    wrong: (course) => Object.keys(data.wrong).filter((id) => !course || data.wrong[id].c === course),
+    setWrong(id, course, v) { if (v) data.wrong[id] = { c: course, ts: Date.now() }; else delete data.wrong[id]; },
+    logExam(r) { data.exams = [{ ts: Date.now(), ...r }, ...data.exams].slice(0, 50); save(); paint(); },
+    exams: (course) => data.exams.filter((x) => !course || x.c === course),
     export: () => JSON.stringify({ ...data, exported: new Date().toISOString(), app: "QURI" }, null, 1),
     import(text) {
       const o = JSON.parse(text);
       if (!o || o.v !== 2 || typeof o.std !== "object" || typeof o.seen !== "object") throw new Error("QURI 학습 기록 파일이 아닙니다");
       data.std = { ...data.std, ...o.std };
       data.seen = { ...data.seen, ...o.seen };
+      data.wrong = { ...data.wrong, ...(o.wrong || {}) };
+      data.exams = [...(o.exams || []), ...data.exams].sort((a, b) => b.ts - a.ts)
+        .filter((x, i, a) => i === 0 || x.ts !== a[i - 1].ts).slice(0, 50);
       const all = [...(o.visits || []), ...data.visits].sort((a, b) => b.ts - a.ts);
       const seenHref = new Set();
       data.visits = all.filter((x) => (seenHref.has(x.href) ? false : seenHref.add(x.href))).slice(0, 30);
       save(); paint();
     },
     reset() { data = empty(); save(); paint(); },
-    stats: () => ({ std: Object.keys(data.std).length, seen: Object.keys(data.seen).length }),
+    stats: () => ({ std: Object.keys(data.std).length, seen: Object.keys(data.seen).length, wrong: Object.keys(data.wrong).length, exams: data.exams.length }),
     onChange: (f) => listeners.push(f),
   };
   const listeners = [];
