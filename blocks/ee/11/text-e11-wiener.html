@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-wiener" data-kind="본문" data-std="전전11-06-02">
+  <header class="card-head"><span class="no"></span><h2>Wiener 필터의 원리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>잡음 섞인 관측에서 원래 신호를 평균 제곱 오차(MSE)가 가장 작게 추정하는 문제를 세운다.</li>
+        <li>직교 원리(오차가 관측과 무상관)로 최적 선형 추정기를 구한다.</li>
+        <li>주파수 영역 Wiener 필터 \(H = S_X/(S_X + S_N)\)의 뜻을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>공분산 (<a href="03-01.html">3.1절</a>), PSD와 LTI (<a href="05-02.html">5.2절</a>), 정합 필터와의 비교 (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>한 개의 값부터</h3>
+    <p>관측 Y = X + N(X, N 독립, 평균 0, 분산 \(\sigma_X^2, \sigma_N^2\))에서 \(\hat X = aY\)로 X를 추정합니다. 구하려는 것: \(E[(X - aY)^2]\)를 가장 작게 하는 a.</p>
+    <p>a로 미분해 0으로 두면 \(E[(X - aY)Y] = 0\): 오차가 관측과 무상관이어야 합니다(직교 원리). 그래서</p>
+    \[ a = \frac{E[XY]}{E[Y^2]} = \frac{\sigma_X^2}{\sigma_X^2 + \sigma_N^2}, \qquad \text{MSE} = \frac{\sigma_X^2\sigma_N^2}{\sigma_X^2 + \sigma_N^2}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>\(\sigma_X^2 = 4\), \(\sigma_N^2 = 1\). (가) 최적 a와 MSE, (나) 관측을 그대로 쓰면(a = 1) MSE, (다) 아무것도 안 보고 0으로 추정하면?</p>
+    </div>
+    <p><i>풀이.</i> (가) a = 0.8, MSE = 4/5 = 0.8. (나) MSE = E[N²] = 1. (다) MSE = E[X²] = 4. 최적 추정은 관측을 조금 줄여(0.8배) 잡음의 영향을 덜어 그대로 쓰는 것보다 낫습니다. 신호가 잡음보다 훨씬 크면 a → 1, 훨씬 작으면 a → 0입니다.</p>
+
+    <h3><span class="no">6.2.2</span>주파수 영역</h3>
+    <p>WSS 신호와 잡음이 독립일 때, 같은 생각을 주파수마다 적용하면 비인과 Wiener 필터는</p>
+    \[ H(f) = \frac{S_X(f)}{S_X(f) + S_N(f)}. \]
+    <p>신호가 강한 주파수는 통과(H ≈ 1), 잡음이 강한 주파수는 억제(H ≈ 0)합니다. 사진의 잡음 제거, 음성 향상, 통신의 채널 등화에 쓰입니다. 실시간(인과) 필터나 적응 필터(LMS)는 이 원리를 바탕으로 합니다.</p>
+    <p>정합 필터(6.1절)는 "펄스가 있는지 판정"을 위해 한 시각의 SNR을 최대로 하고, Wiener 필터는 "파형 전체를 복원"하기 위해 MSE를 최소로 합니다. 목적이 다르면 최적 필터도 다릅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "잡음이 섞인 관측을 그대로 쓰는 것이 편향이 없어 최선이다": MSE로는 약간 줄여 쓰는 것이 낫습니다(편향과 분산의 절충). (2) "Wiener 필터는 신호를 몰라도 된다": 신호와 잡음의 PSD(통계)를 알아야 합니다. 모르면 측정으로 추정하거나 적응 필터를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>직교 원리: 오차와 관측은 무상관.</li>
+        <li>스칼라: \(a = \sigma_X^2/(\sigma_X^2 + \sigma_N^2)\), MSE \(= \sigma_X^2\sigma_N^2/(\sigma_X^2 + \sigma_N^2)\).</li>
+        <li>주파수 영역: \(H = S_X/(S_X + S_N)\). 정합 필터와 목적이 다르다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\sigma_X^2 = \sigma_N^2 = 1\)이면 최적 a와 MSE는?
+          <details><summary>답</summary><p>0.5, 0.5.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>관측이 두 개 \(Y_1 = X + N_1\), \(Y_2 = X + N_2\)(잡음 독립, 분산 1, \(\sigma_X^2 = 4\))일 때 대칭성으로 \(\hat X = b(Y_1 + Y_2)\)의 최적 b와 MSE는?
+          <details><summary>답</summary><p>\(E[(X - bS)S] = 0\), S = Y₁ + Y₂: \(E[XS] = 8\), \(E[S^2] = 16 + 2 = 18\), b = 4/9. MSE = 4 − 8b = 4 − 32/9 = 4/9.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>어떤 주파수에서 SNR(\(S_X/S_N\))이 9이면 Wiener 필터 이득과 그 주파수의 오차 PSD 비율은?
+          <details><summary>답</summary><p>H = 0.9, 오차 PSD = \(S_XS_N/(S_X+S_N) = 0.9S_N\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

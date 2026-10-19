@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-matched" data-kind="본문" data-std="전전11-06-01">
+  <header class="card-head"><span class="no"></span><h2>정합 필터와 최대 신호 대 잡음비</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>백색 잡음 속 알려진 펄스를 검출할 때 출력 SNR을 최대로 하는 필터를 유도한다.</li>
+        <li>정합 필터의 임펄스 응답 \(h(t) = s(T - t)\)와 최대 SNR \(2E/N_0\)를 안다.</li>
+        <li>정합 필터가 상관기와 같으며 통신 수신기의 기본 구조임을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>LTI와 PSD (<a href="05-02.html">5.2절</a>), 백색 잡음 (<a href="05-03.html">5.3절</a>), Cauchy-Schwarz 부등식, 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>문제</h3>
+    <p>받은 신호 \(x(t) = s(t) + n(t)\), s는 길이 T인 알려진 펄스, n은 PSD \(N_0/2\)인 백색 잡음. 필터 h를 지난 출력을 시각 T에 한 번 표본해 판정합니다. 구하려는 것: 표본 시각의 신호 전력 / 잡음 전력(SNR)이 가장 큰 h.</p>
+    <p>신호 성분 \(y_s(T) = \int h(\tau)s(T - \tau)d\tau\), 잡음 전력 \(\frac{N_0}{2}\int h^2(\tau)d\tau\)(5.2절)이므로</p>
+    \[ \text{SNR} = \frac{\left(\int h(\tau)s(T - \tau)d\tau\right)^2}{\frac{N_0}{2}\int h^2(\tau)d\tau} \le \frac{\int h^2\int s^2}{\frac{N_0}{2}\int h^2} = \frac{2E}{N_0}. \]
+    <p>부등식은 Cauchy-Schwarz이며, 등호는 \(h(\tau) = c\,s(T - \tau)\)일 때입니다. 곧 정합 필터의 임펄스 응답은 신호 펄스를 시간 반전해 T만큼 옮긴 것이고, 최대 SNR은 펄스 모양과 무관하게 에너지 E로만 정해집니다.</p>
+
+    <h3><span class="no">6.1.2</span>상관기로 보기</h3>
+    <p>\(y(T) = \int x(t)s(t)dt\): 받은 신호와 알려진 펄스를 곱해 적분하는 상관기와 같습니다. 디지털 수신기에서는 표본끼리 곱해 더하는 연산입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>진폭 1, 표본 20개인 사각 펄스(E = 20)를 표본당 잡음 분산 σ² = 1인 백색 잡음 속에서 검출한다(이산 시간, \(N_0/2 = \sigma^2\)). 표본 하나의 SNR과 정합 필터 출력 SNR을 비교하라.</p>
+    </div>
+    <p><i>풀이.</i> 표본 하나: 첨두²/σ² = 1(0 dB). 정합 필터: \(E/\sigma^2 = 2E/N_0 = 20\)(13 dB). 펄스 길이만큼 에너지를 모아 SNR이 20배가 됩니다. 탐구 카드의 처음 화면(13 dB, σ = 1.00)에서 정합 필터 출력의 봉우리 22.3이 그 밖의 잡음 최대 12.8보다 뚜렷하고, 7 dB로 낮추면 잡음(25.5)이 봉우리(24.6)보다 커지는 것을 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "정합 필터는 파형을 복원한다": 표본 한 시각의 SNR을 최대로 할 뿐 출력 파형은 펄스와 다릅니다(사각 펄스 → 삼각형). (2) "펄스 모양을 바꾸면 최대 SNR이 커진다": 에너지가 같으면 같습니다. (3) 잡음이 백색이 아니면 먼저 잡음을 백색으로 만드는 필터(화이트닝)를 거친 뒤 정합해야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최대 SNR = \(2E/N_0\), 펄스 모양과 무관.</li>
+        <li>\(h(t) = s(T - t)\): 시간 반전·이동한 펄스. 상관기와 같다.</li>
+        <li>Cauchy-Schwarz의 등호 조건으로 유도.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>펄스 에너지 \(10^{-9}\) J, \(N_0 = 10^{-10}\) W/Hz일 때 최대 SNR(dB)은?
+          <details><summary>답</summary><p>2E/N₀ = 20, 13 dB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>사각 펄스 s(t) = 1 (0 ≤ t ≤ T)의 정합 필터 출력 신호 성분 모양은?
+          <details><summary>답</summary><p>0에서 T까지 직선으로 올라 T에서 최대 T, 2T까지 직선으로 내려오는 삼각형.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>같은 에너지로 펄스 길이를 두 배로(진폭 \(1/\sqrt2\)) 하면 최대 SNR과 첨두 전력은 어떻게 되는가?
+          <details><summary>답</summary><p>최대 SNR은 그대로, 첨두 전력은 절반. 첨두 전력 제한이 있는 레이더가 긴 펄스(펄스 압축)를 쓰는 이유입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
