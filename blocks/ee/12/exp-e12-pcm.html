@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-06-01",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e12-comm.js"]
+}
+-->
+<article class="card q-card" id="exp-e12-pcm" data-kind="탐구" data-std="전전12-06-01">
+  <header class="card-head"><span class="no"></span><h2>비트 하나에 6 dB: 양자화 잡음</h2><span class="kind">탐구 · PCM의 SQNR 측정</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>양자화 비트를 하나 늘리면 신호 대 양자화 잡음비는 얼마나 좋아질까요? 공식은 비트가 적을 때도 맞을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>범위 ±1을 \(2^n\)단계로 나누어 최대 진폭 사인파를 양자화한 값(파랑)과 원래 사인파(회색)를 그리고, 20,000점으로 실제 SQNR을 재어 공식 6.02n + 1.76 dB와 비교합니다(6.1절). 표본화율로 비트율도 계산합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>n = <b data-show="n" data-fix="0">4</b>비트</span><input type="range" name="n" min="2" max="16" step="1" value="4" aria-label="비트 수"></label>
+        <label><span>f_s = <b data-show="fs" data-fix="1">8.0</b> kHz</span><input type="range" name="fs" min="8" max="96" step="0.1" value="8" aria-label="표본화율"></label>
+      </div>
+      <canvas aria-label="양자화한 사인파"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>4비트(16단계), 8 kHz → 32 kbps. 측정 SQNR 25.35 dB, 공식 25.84 dB. 계단 모양이 눈에 보입니다.</span></li>
+        <li><b>8비트</b><span>측정 49.95 dB, 공식 49.92 dB로 거의 같습니다. 전화 PCM(8 kHz) 64 kbps.</span></li>
+        <li><b>16비트</b><span>측정 98.13 dB, 공식 98.08 dB. 표본화를 44.1 kHz로 하면 채널당 705.6 kbps(스테레오 1.4112 Mbps).</span></li>
+        <li><b>적은 비트</b><span>3비트에서 측정 19.12 dB, 공식 19.82 dB로 차이가 커집니다. 오차가 신호와 상관되어 균일 잡음 가정이 맞지 않기 때문입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>디지털 오디오(16·24비트), 이미지 센서의 ADC(10~14비트), 측정 장비의 고해상도 ADC 모두 이 관계로 비트 수를 정합니다. 실제 ADC는 회로 잡음 때문에 유효 비트 수(ENOB)가 표시 비트보다 작습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"비트가 많으면 높은 주파수도 담는다."</b> 담을 수 있는 대역은 표본화율이 정합니다.</li>
+        <li><b>"작은 소리도 SQNR이 같다."</b> 공식은 최대 진폭 기준이라 작은 신호는 그만큼 SQNR이 낮습니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

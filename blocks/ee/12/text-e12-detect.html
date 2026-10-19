@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e12-detect" data-kind="본문" data-std="전전12-02-02">
+  <header class="card-head"><span class="no"></span><h2>동기 검파와 포락선 검파</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>동기 검파(반송파를 곱하고 저역 통과)의 원리와 위상·주파수 오차의 영향을 안다.</li>
+        <li>포락선 검파기(다이오드 + RC)의 동작 조건 \(1/f_c \ll RC \ll 1/W\)를 정한다.</li>
+        <li>AM, DSB-SC에 각각 쓸 수 있는 검파 방식을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>AM 스펙트럼 (<a href="02-01.html">2.1절</a>), 정류와 평활 (<a href="../8/01-02.html">전전8 1.2절</a>), 곱을 합으로 바꾸는 삼각 공식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>동기 검파</h3>
+    <p>받은 신호에 수신기가 만든 반송파 \(\cos(\omega_ct + \phi)\)를 곱하면</p>
+    \[ m(t)\cos\omega_ct\cdot\cos(\omega_ct + \phi) = \frac{m(t)}{2}[\cos\phi + \cos(2\omega_ct + \phi)]. \]
+    <p>저역 통과 필터로 2ω_c 성분을 버리면 \(\frac{m(t)}{2}\cos\phi\). 위상 오차 φ가 90°면 출력이 0이 되고, 주파수가 Δω 틀리면 출력이 \(\cos(\Delta\omega t)\)로 출렁입니다. 그래서 수신기가 반송파의 주파수와 위상을 정확히 맞춰야 하며(PLL 등), DSB-SC와 SSB는 이 방법이 필요합니다.</p>
+
+    <h3><span class="no">2.2.2</span>포락선 검파</h3>
+    <p>다이오드가 반송파의 꼭대기마다 RC를 충전하고, 사이에는 R로 방전하며 포락선을 따라갑니다. 반송파 주기보다 충분히 느리게 방전해야 반송파 출렁임이 작고(\(RC \gg 1/f_c\)), 포락선이 내려갈 때 따라잡을 만큼 빨라야 합니다(\(RC \ll 1/W\)). 정현파 메시지에서 따라잡지 못하는 대각 클리핑을 피하는 조건은 \(RC \le \frac{\sqrt{1 - \mu^2}}{\omega_m\mu}\)입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(f_c\) = 1 MHz, 메시지 최고 주파수 5 kHz, μ = 0.7. 포락선 검파기의 RC 범위를 정하라.</p>
+    </div>
+    <p><i>풀이.</i> 위 한계: \(\sqrt{1 - 0.49}/(2\pi \times 5000 \times 0.7) \approx 32.5\) μs. 아래 한계: 반송파 주기 1 μs보다 충분히 커야 하므로 수 μs 이상. 예를 들어 RC = 10 μs(R = 10 kΩ, C = 1 nF). 포락선 검파는 μ ≤ 1인 AM에만 쓸 수 있고, DSB-SC는 포락선이 |m(t)|이라 쓸 수 없습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "동기 검파는 AM에 쓸 수 없다": 쓸 수 있고 잡음에서 오히려 유리하지만, 반송파 복원 회로가 필요합니다. (2) "RC는 클수록 출렁임이 작아 좋다": 너무 크면 포락선이 내려갈 때 따라가지 못해(대각 클리핑) 일그러집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>동기 검파: 곱하고 저역 통과. 위상 오차는 cos φ로 출력을 줄인다.</li>
+        <li>포락선 검파: \(1/f_c \ll RC \ll 1/W\), 대각 클리핑 조건 \(RC \le \sqrt{1-\mu^2}/(\omega_m\mu)\).</li>
+        <li>AM은 둘 다, DSB-SC·SSB는 동기 검파만.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>동기 검파의 위상 오차가 60°면 출력은 몇 배인가?
+          <details><summary>답</summary><p>cos 60° = 0.5배(−6 dB).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>μ = 0.5, 메시지 3 kHz일 때 대각 클리핑을 피하는 RC 상한은?
+          <details><summary>답</summary><p>\(\sqrt{0.75}/(2\pi \times 3000 \times 0.5) \approx 91.9\) μs.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>DSB-SC 신호에 수신 반송파 주파수가 10 Hz 틀리면 출력은 어떻게 들리는가?
+          <details><summary>답</summary><p>\(m(t)\cos(2\pi 10t)/2\): 메시지 크기가 초당 20번 커졌다 작아지는 울렁거림(비트)으로 들립니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

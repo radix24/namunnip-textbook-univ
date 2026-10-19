@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e12-friis" data-kind="본문" data-std="전전12-05-01">
+  <header class="card-head"><span class="no"></span><h2>잡음 지수와 Friis 식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>잡음 지수 F(입력 SNR/출력 SNR)와 등가 잡음 온도 \(T_e = (F - 1)290\) K를 안다.</li>
+        <li>연쇄 단의 전체 잡음 지수 \(F = F_1 + (F_2 - 1)/G_1 + \cdots\)를 계산한다.</li>
+        <li>수신기 맨 앞에 저잡음 증폭기를 두는 이유를 수치로 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>열잡음과 잡음 등가 대역폭 (<a href="../11/05-03.html">전전11 5.3절</a>), dB 계산, 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>잡음 지수</h3>
+    <p class="q-term"><b>잡음 지수</b> \(F = \dfrac{\text{SNR}_{in}}{\text{SNR}_{out}}\)(입력 잡음은 290 K 열잡음 기준). 회로가 SNR을 얼마나 나쁘게 하는지. dB로 NF = 10 log F.</p>
+    <p class="q-term"><b>등가 잡음 온도</b> \(T_e = (F - 1)\times290\) K: 회로 잡음을 입력에 둔 저항 온도로 환산한 값.</p>
+
+    <h3><span class="no">5.1.2</span>Friis 식</h3>
+    <p>이득 \(G_1, G_2, \dots\), 잡음 지수 \(F_1, F_2, \dots\)인 단을 이으면, 둘째 단의 잡음은 첫 단 이득으로 나누어 입력에 환산되므로</p>
+    \[ F = F_1 + \frac{F_2 - 1}{G_1} + \frac{F_3 - 1}{G_1G_2} + \cdots. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>LNA(G 20 dB, NF 1 dB) → 혼합기(G −6 dB, NF 8 dB) → IF 증폭기(G 30 dB, NF 4 dB). 전체 NF와 \(T_e\)는? LNA와 혼합기 순서를 바꾸면?</p>
+    </div>
+    <p><i>풀이.</i> 선형 값 \(F_1 = 1.259\), \(G_1 = 100\), \(F_2 = 6.31\), \(G_2 = 0.251\), \(F_3 = 2.512\). \(F = 1.259 + 5.31/100 + 1.512/25.1 = 1.259 + 0.053 + 0.060 = 1.372\), NF 1.37 dB, \(T_e \approx 108\) K. 순서를 바꾸면 \(6.31 + 0.259/0.251 + 1.512/25.1 = 7.40\), NF 8.69 dB로 7 dB 넘게 나빠집니다. 이 절의 탐구 카드에서 값을 바꿔 봅니다.</p>
+    <p>손실이 있는 수동 소자(케이블, 필터)는 이득 1/L, 잡음 지수 L(실온)이라 안테나와 LNA 사이 케이블 손실 1 dB가 전체 NF를 거의 1 dB 높입니다. 위성 수신기가 LNA를 안테나 바로 뒤에 다는 이유입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "잡음 지수가 큰 단은 어디에 있어도 같다": 앞 단 이득이 크면 뒤 단의 영향은 작아집니다. (2) dB 값을 Friis 식에 그대로 넣는 실수: 선형 값으로 계산합니다. (3) 잡음 지수는 대역폭과 무관한 비율이고, 실제 잡음 전력은 kT₀(F)B로 대역폭을 곱해 구합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>F = SNR_in/SNR_out(290 K 기준), \(T_e = (F-1)290\).</li>
+        <li>Friis: \(F = F_1 + (F_2-1)/G_1 + (F_3-1)/(G_1G_2) + \cdots\)(선형).</li>
+        <li>첫 단이 지배: LNA를 맨 앞에, 앞쪽 손실을 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>NF 3 dB의 등가 잡음 온도는?
+          <details><summary>답</summary><p>F ≈ 2, \(T_e \approx 290\) K.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 LNA 이득을 10 dB로 낮추면 전체 NF는?
+          <details><summary>답</summary><p>\(1.259 + 5.31/10 + 1.512/2.51 = 2.392\), 약 3.79 dB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>안테나와 예제 수신기 사이에 손실 2 dB 케이블(F = 1.585, G = 0.631)이 있으면 전체 NF는?
+          <details><summary>답</summary><p>\(1.585 + (1.372 - 1)/0.631 = 2.175\), 약 3.37 dB(2 dB 악화).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
