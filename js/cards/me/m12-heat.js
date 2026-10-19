@@ -50,3 +50,38 @@
   S.on(() => { L.stop(); setBtn(); reset(); draw(); });
   QSim.redrawOn(draw); reset(); draw();
 })();
+
+/* 기계12 열전달: 2차원 정상 전도의 Gauss-Seidel 반복 (03-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-fdm"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  function solve(N, top, left, right, bottom, iters) {
+    const T = [...Array(N)].map(() => new Array(N).fill(0));
+    for (let j = 0; j < N; j++) { T[0][j] = top; T[N - 1][j] = bottom; }
+    for (let i = 0; i < N; i++) { T[i][0] = left; T[i][N - 1] = right; }
+    T[0][0] = (top + left) / 2; T[0][N - 1] = (top + right) / 2; T[N - 1][0] = (bottom + left) / 2; T[N - 1][N - 1] = (bottom + right) / 2;
+    let d = 0;
+    for (let k = 0; k < iters; k++) {
+      d = 0;
+      for (let i = 1; i < N - 1; i++) for (let j = 1; j < N - 1; j++) { const nw = (T[i - 1][j] + T[i + 1][j] + T[i][j - 1] + T[i][j + 1]) / 4; d = Math.max(d, Math.abs(nw - T[i][j])); T[i][j] = nw; }
+    }
+    return { T, d };
+  }
+  function draw() {
+    const c = QSim.col(), n = S.val("n"), N = n + 2, it = S.val("it"), top = S.val("top"), left = S.val("left");
+    const { T, d } = solve(N, top, left, 0, 0, it);
+    const v = QSim.view(cv, 1), g = v.g, W = v.W, H = v.H, s = Math.min(W, H) * 0.9, x0 = (W - s) / 2, y0 = (H - s) / 2, cs = s / N;
+    const maxT = Math.max(top, left, 1);
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const t = Math.max(0, Math.min(1, T[i][j] / maxT));
+      g.fillStyle = `rgb(${Math.round(40 + 215 * t)},${Math.round(70 + 60 * (1 - Math.abs(t - 0.5) * 2))},${Math.round(230 - 200 * t)})`;
+      g.fillRect(x0 + j * cs, y0 + i * cs, cs + 0.5, cs + 0.5);
+    }
+    if (N <= 9) { g.fillStyle = "#fff"; g.font = `${Math.max(10, cs * 0.28)}px sans-serif`; g.textAlign = "center"; for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) g.fillText(T[i][j].toFixed(1), x0 + (j + 0.5) * cs, y0 + (i + 0.6) * cs); }
+    const mid = (N - 1) / 2, center = N % 2 === 1 ? T[mid][mid] : (T[Math.floor(mid)][Math.floor(mid)] + T[Math.ceil(mid)][Math.ceil(mid)] + T[Math.floor(mid)][Math.ceil(mid)] + T[Math.ceil(mid)][Math.floor(mid)]) / 4;
+    const exact = top / 4 + left / 4; // 겹침: 한 변만 θ면 가운데 θ/4
+    S.out(`안쪽 절점 ${n}×${n}, Gauss-Seidel ${it}회, 마지막 회의 최대 변화 ${d.toExponential(1)} °C\n윗변 ${top} °C, 왼쪽 변 ${left} °C, 나머지 0 °C\n가운데 온도 ${center.toFixed(2)} °C, 겹침으로 구한 참값 ${exact.toFixed(2)} °C (차이 ${(center - exact).toFixed(2)})`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();

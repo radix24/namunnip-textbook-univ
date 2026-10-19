@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계12-03-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m12-heat.js"]
+}
+-->
+<article class="card q-card" id="lab-me-fdm" data-kind="실습" data-std="기계12-03-02">
+  <header class="card-head"><span class="no"></span><h2>평균을 되풀이하면 온도장이 나온다: Gauss-Seidel 실습</h2><span class="kind">실습 · 유한차분 · 반복 수렴 · 격자</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>정사각형 판의 윗변과 왼쪽 변 온도를 정하고(나머지 두 변 0 °C), 안쪽 절점을 "이웃 넷의 평균"으로 갱신하기를 몇 번 되풀이합니다. 색은 온도(빨강일수록 뜨거움)이고, 격자가 작으면 각 절점 값이 적힙니다. 반복 횟수와 격자 수를 바꾸며 가운데 온도가 참값(겹침으로 구한 값)에 다가가는 모습을 보세요.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>안쪽 절점 = <b data-show="n">3</b> × 같은 수</span><input type="range" name="n" min="3" max="41" step="2" value="3" aria-label="안쪽 절점 수"></label>
+        <label><span>반복 횟수 = <b data-show="it">1</b></span><input type="range" name="it" min="0" max="2000" step="1" value="1" aria-label="반복 횟수"></label>
+        <label><span>윗변 온도 = <b data-show="top">100</b> °C</span><input type="range" name="top" min="0" max="100" step="5" value="100" aria-label="윗변 온도"></label>
+        <label><span>왼쪽 변 온도 = <b data-show="left">0</b> °C</span><input type="range" name="left" min="0" max="100" step="5" value="0" aria-label="왼쪽 변 온도"></label>
+      </div>
+      <canvas aria-label="격자 절점의 온도 분포"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 3×3</b><span>반복을 1, 2, 5, 10회로 바꿔 보세요. 가운데 열이 31.3 → 44.1 → 51.7 → 52.7(윗줄)로 다가가고, 가운데 절점은 10회면 25.0에 거의 닿습니다(예제 3.2.1).</span></li>
+        <li><b>격자를 촘촘히</b><span>절점을 21×21로 하면 같은 10회 반복으로는 가운데가 아직 0 근처입니다. 윗변의 열이 한 번에 한 칸씩만 퍼지기 때문입니다. 수백 회를 돌려야 25에 다가갑니다. 격자가 촘촘할수록 반복이 훨씬 많이 필요합니다.</span></li>
+        <li><b>겹침 확인</b><span>왼쪽 변도 50 °C로 하면 참값은 25 + 12.5 = 37.5 °C입니다. 충분히 반복하면 이 값에 닿습니다.</span></li>
+        <li><b>멈춤 기준</b><span>마지막 반복의 최대 변화가 0.01 °C 아래로 내려가도, 촘촘한 격자에서는 참값과 아직 차이가 남을 수 있습니다. 변화량이 작은 것과 답이 맞는 것은 다릅니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>전자 기판, 굴뚝 모서리, 용접부 주변의 온도 해석이 같은 방법이고, 상용 열해석 프로그램은 이것을 수백만 절점으로 빠르게 풉니다. 반복 해법은 공학수치해석, 격자 독립성은 응용유체역학 6.2절 CFD와 이어집니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"격자를 촘촘히 하면 무조건 더 좋다."</b> 정확도는 오르지만 반복과 계산 시간이 크게 늘어 수렴 전에 멈추면 오히려 틀린 답을 줍니다.</li>
+        <li><b>"반복 계산이 멈추면 답이 맞다."</b> 수렴(반복)과 격자 독립(정확도)을 따로 확인해야 합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
