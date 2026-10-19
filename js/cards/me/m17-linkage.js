@@ -56,3 +56,56 @@
   S.on(() => { trace = []; th = 0.3; dir = 1; if (!solve(th)) { for (let a = 0; a < 6.3; a += 0.01) if (solve(a)) { th = a; break; } } draw(); });
   QSim.redrawOn(draw); draw();
 })();
+
+/* 기계17 4단원: 캠 변위 함수의 SVAJ 선도 (04-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-cam"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const PI = Math.PI;
+  // 상승 구간 x = θ/β ∈ [0, 1]에서 s/h와 β·ds/dθ/h, β²·s''/h, β³·s'''/h
+  const FN = {
+    cv: { n: "등속도", f: (x) => [x, 1, 0, 0] },
+    shm: { n: "단현(SHM)", f: (x) => [(1 - Math.cos(PI * x)) / 2, (PI / 2) * Math.sin(PI * x), (PI * PI / 2) * Math.cos(PI * x), -(PI ** 3 / 2) * Math.sin(PI * x)] },
+    cyc: { n: "사이클로이드", f: (x) => [x - Math.sin(2 * PI * x) / (2 * PI), 1 - Math.cos(2 * PI * x), 2 * PI * Math.sin(2 * PI * x), 4 * PI * PI * Math.cos(2 * PI * x)] },
+    p345: { n: "3-4-5 다항식", f: (x) => [10 * x ** 3 - 15 * x ** 4 + 6 * x ** 5, 30 * x * x - 60 * x ** 3 + 30 * x ** 4, 60 * x - 180 * x * x + 120 * x ** 3, 60 - 360 * x + 360 * x * x] },
+  };
+  function draw() {
+    const c = QSim.col(), F = FN[S.val("fn")], h = S.val("h") / 1000, bdeg = S.val("b"), rpm = S.val("rpm");
+    const be = (bdeg * PI) / 180, w = (rpm * 2 * PI) / 60;
+    const scale = [h, (h * w) / be, (h * w * w) / (be * be), (h * w ** 3) / be ** 3];
+    // 한 바퀴: 0~β 상승, β~180 위 정지, 180~180+β 하강, 나머지 아래 정지
+    const at = (deg) => {
+      if (deg < bdeg) return F.f(deg / bdeg);
+      if (deg < 180) return [1, 0, 0, 0];
+      if (deg < 180 + bdeg) { const r = F.f((deg - 180) / bdeg); return [1 - r[0], -r[1], -r[2], -r[3]]; }
+      return [0, 0, 0, 0];
+    };
+    const N = 1440, rows = [[], [], [], []];
+    for (let k = 0; k <= N; k++) { const d = (360 * k) / N, r = at(d); for (let j = 0; j < 4; j++) rows[j].push([d, r[j]]); }
+    const mx = rows.map((r) => Math.max(1e-9, ...r.map((p) => Math.abs(p[1]))));
+    const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: 0, x1: 360, y0: 0, y1: 4, pad: 30 });
+    f.axes({ noGrid: true });
+    const lab = ["s 변위", "v 속도", "a 가속도", "j 저크"], colr = [c.main, c.acc, c.warn, c.ink2];
+    for (let j = 0; j < 4; j++) {
+      const y0 = 3.5 - j;
+      f.path([[0, y0], [360, y0]], c.rule, 1);
+      const sc = 0.42 / mx[j];
+      f.path(rows[j].map(([d, y]) => [d, y0 + (j === 0 ? (y - 0.5) * 0.84 : y * sc)]), colr[j], 2);
+      f.text(lab[j], 4, y0 + 0.36, colr[j]);
+    }
+    // 경계에서의 불연속: 등속도는 가속도 무한, SHM·등속도는 저크 무한
+    const edges = [0, bdeg, 180, 180 + bdeg];
+    const accJump = F === FN.shm ? (PI * PI) / 2 : 0, infAcc = F === FN.cv, infJerk = F === FN.cv || F === FN.shm;
+    edges.forEach((d) => {
+      if (infAcc) f.path([[d, 1.5 - 0.48], [d, 1.5 + 0.48]], c.warn, 2, [3, 2]);
+      if (infJerk) f.path([[d, 0.5 - 0.48], [d, 0.5 + 0.48]], c.ink2, 2, [3, 2]);
+    });
+    const pk = (j) => mx[j] * scale[j];
+    const lines = [`${F.n}, 상승 h = ${S.val("h")} mm, 상승각 β = ${bdeg}°, ${rpm} rpm (ω = ${w.toFixed(1)} rad/s)`];
+    lines.push(`최대 속도 ${pk(1).toFixed(2)} m/s, 최대 가속도 ${infAcc ? "무한대 (경계에서 속도가 순간적으로 바뀜)" : `${pk(2).toFixed(0)} m/s²`}, 최대 저크 ${infJerk ? "무한대 (가속도가 경계에서 끊김)" : `${(pk(3) / 1000).toFixed(1)} km/s³`}`);
+    lines.push(infAcc ? "캠 설계 기본 법칙 위반: 가속도가 연속이 아님 (충격)" : accJump ? `캠 설계 기본 법칙 위반: 경계에서 가속도가 0 ↔ ${(accJump * scale[2]).toFixed(0)} m/s²로 끊김` : "가속도가 연속: 캠 설계 기본 법칙 만족");
+    S.out(lines.join("\n"));
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
