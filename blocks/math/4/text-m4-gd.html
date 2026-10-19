@@ -1,0 +1,105 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-gd" data-kind="본문" data-std="수학4-05-01">
+  <header class="card-head"><span class="no"></span><h2>경사하강법과 학습률</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>목적함수, 기울기(그래디언트), 학습률의 뜻을 알고 경사하강법을 구현한다.</li>
+        <li>이차함수에서 학습률에 따라 수렴, 진동, 발산이 갈리는 이유를 계산으로 설명한다.</li>
+        <li>멈춤 조건과 기울기 검증 같은 실용적인 구현 요령을 익힌다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>편미분과 그래디언트, NumPy 배열 (<a href="03-01.html">3.1절</a>), 수치 미분 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>내리막으로 한 걸음씩</h3>
+    <p class="q-term"><b>목적함수</b>(objective function): 최소로 만들고 싶은 함수 \(f:\mathbb R^n \to \mathbb R\). 머신러닝에서는 손실함수라고 부른다.</p>
+    <p class="q-term"><b>기울기</b>(gradient): 편도함수를 모은 벡터 \(\nabla f = (\partial f/\partial x_1, \dots, \partial f/\partial x_n)\). 함수가 가장 빨리 증가하는 방향을 가리킨다.</p>
+    <p class="q-term"><b>경사하강법</b>(gradient descent): 점화식 \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\)로 기울기의 반대 방향으로 조금씩 움직이는 반복법.</p>
+    <p class="q-term"><b>학습률</b>(learning rate, 보폭): 위 식의 양수 \(\eta\). 한 번에 얼마나 멀리 움직일지 정한다.</p>
+    <p>기울기의 반대 방향이 가장 가파른 내리막이므로, 충분히 작게 움직이면 함수값이 줄어듭니다. 테일러 전개로 쓰면 \(f(\mathbf x - \eta\nabla f) \approx f(\mathbf x) - \eta\|\nabla f\|^2\)입니다. 기울기가 0이 아닌 한 줄어들지만, "\(\approx\)"가 성립할 만큼 \(\eta\)가 작아야 합니다.</p>
+    <pre class="mono small">import numpy as np
+
+def grad_descent(grad, x0, eta, steps=1000, tol=1e-8):
+    x = np.array(x0, dtype=float)
+    for k in range(steps):
+        g = grad(x)
+        if np.linalg.norm(g) &lt; tol:      # 기울기가 거의 0이면 멈춤
+            return x, k
+        x = x - eta * g
+    return x, steps
+
+# f(x, y) = (x^2 + 10 y^2) / 2,  기울기 (x, 10 y)
+grad = lambda p: np.array([p[0], 10 * p[1]])
+x, k = grad_descent(grad, [-4, 1.5], eta=0.1)
+print(x, k)</pre>
+
+    <h3><span class="no">5.1.2</span>1차원에서 정확히 계산하기</h3>
+    <p>\(f(x) = x^2\)이면 \(f'(x) = 2x\)이므로 \(x_{k+1} = x_k - 2\eta x_k = (1 - 2\eta)x_k\), 곧 \(x_k = (1 - 2\eta)^kx_0\)입니다. 이는 \(|1 - 2\eta| &lt; 1\), 즉 \(0 &lt; \eta &lt; 1\)일 때만 0으로 수렴합니다.</p>
+    <ul>
+      <li>\(0 &lt; \eta &lt; \frac12\): 같은 쪽에서 단조롭게 다가갑니다.</li>
+      <li>\(\eta = \frac12\): 한 번에 최솟점에 도착합니다.</li>
+      <li>\(\frac12 &lt; \eta &lt; 1\): 최솟점을 넘나들며(부호가 바뀌며) 다가갑니다.</li>
+      <li>\(\eta = 1\): \(x_k = (-1)^kx_0\)로 영원히 진동합니다. \(\eta > 1\)이면 발산합니다.</li>
+    </ul>
+    <p>일반적으로 \(f''(x^*) = L\)이면 최솟점 근처에서 \(x_{k+1} - x^* \approx (1 - \eta L)(x_k - x^*)\)이므로, 수렴 조건은 대략 \(\eta &lt; 2/L\)입니다. 곡률이 클수록 보폭을 작게 잡아야 합니다.</p>
+
+    <h3><span class="no">5.1.3</span>2차원: 가장 가파른 방향이 문제</h3>
+    <p>\(f(x, y) = \frac12(x^2 + 10y^2)\)이면 갱신은 \(x \leftarrow (1 - \eta)x\), \(y \leftarrow (1 - 10\eta)y\)로 좌표별로 나뉩니다. \(y\) 방향의 곡률 10이 크므로 \(|1 - 10\eta| &lt; 1\), 곧 \(\eta &lt; 0.2\)여야 합니다. 그런데 \(\eta\)를 0.2 가까이 키우면 \(x\) 방향은 \(1 - \eta \approx 0.8\)배씩 천천히 줄어듭니다. \((-4, 1.5)\)에서 출발해 \(f &lt; 10^{-6}\)이 될 때까지의 반복 횟수는 다음과 같습니다(파이썬으로 확인한 값).</p>
+    <table class="tb-table">
+      <tr><th>\(\eta\)</th><td>0.01</td><td>0.05</td><td>0.1</td><td>\(2/11 \approx 0.182\)</td><td>0.19</td><td>0.2</td><td>0.21</td></tr>
+      <tr><th>반복 횟수</th><td>791</td><td>155</td><td>76</td><td>42</td><td>78</td><td>수렴 안 함</td><td>발산</td></tr>
+    </table>
+    <p>\(\eta = 0.2\)에서는 \(y\)가 \(1.5, -1.5, 1.5, \dots\)로 진동하여 \(f\)가 11.25에 머물고, 0.21에서는 진동 폭이 커져 발산합니다. 가장 빠른 \(\eta = \frac2{1 + 10}\)은 두 방향의 수축률 \(|1 - \eta|\)와 \(|1 - 10\eta|\)를 같게(\(\frac9{11}\)) 만드는 값입니다. 곡률의 비(조건수) \(\kappa = 10\)이 클수록 수렴이 느려지며, 경로가 골짜기를 가로질러 지그재그로 움직입니다. 같은 절의 탐구 카드에서 경로를 직접 봅니다.</p>
+
+    <h3><span class="no">5.1.4</span>구현 요령</h3>
+    <ol>
+      <li><b>멈춤 조건</b>: 최대 반복 횟수, 기울기 크기 \(\|\nabla f\| &lt; \varepsilon\), 함수값의 변화가 작아짐 중 하나 이상을 씁니다.</li>
+      <li><b>기울기 검증</b>: 손으로 구한 기울기를 중심 차분 \(\frac{f(\mathbf x + h\mathbf e_i) - f(\mathbf x - h\mathbf e_i)}{2h}\) (\(h \approx 10^{-6}\))과 비교합니다(<a href="04-01.html">4.1절</a>). 기울기 공식의 실수는 가장 흔한 버그입니다.</li>
+      <li><b>학습률 고르기</b>: 함수값이 커지면 \(\eta\)를 줄이고, 너무 느리면 키웁니다. 몇 배씩(1, 0.1, 0.01, …) 바꿔 보는 것이 보통입니다.</li>
+    </ol>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 기울기 방향으로 더해서(\(+\eta\nabla f\)) 최대화를 한다. (2) 함수값이 진동하거나 커지는데도 반복 횟수만 늘린다. (3) 반복 안에서 <code>x</code>를 제자리 수정(<code>x -= ...</code>)하면서 이전 값을 기록한 리스트까지 바뀌게 한다(배열은 참조로 저장된다).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>경사하강법: \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\).</li>
+        <li>\(f = x^2\)에서 \(x_k = (1 - 2\eta)^kx_0\): \(\eta &lt; 1\)이면 수렴, \(\eta = 1\)이면 진동, 그보다 크면 발산.</li>
+        <li>곡률 \(L\)이면 대략 \(\eta &lt; 2/L\). 곡률의 비가 크면 지그재그로 느리게 수렴한다.</li>
+        <li>기울기는 중심 차분으로 검증하고, 멈춤 조건을 둔다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = (x - 3)^2\), \(x_0 = 0\), \(\eta = 0.25\)일 때 \(x_1, x_2, x_3\)을 구하여라.
+          <details><summary>답</summary><p>\(x_{k+1} - 3 = 0.5(x_k - 3)\)이므로 \(x_1 = 1.5\), \(x_2 = 2.25\), \(x_3 = 2.625\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f(x, y) = \frac12(x^2 + \kappa y^2)\) (\(\kappa \ge 1\))에서 경사하강법이 수렴하는 \(\eta\)의 범위와 가장 빠른 \(\eta\)를 구하여라.
+          <details><summary>답</summary><p>\(|1 - \eta| &lt; 1\), \(|1 - \kappa\eta| &lt; 1\)에서 \(0 &lt; \eta &lt; 2/\kappa\). \(\max(|1 - \eta|, |1 - \kappa\eta|)\)을 최소로 하는 \(\eta = \frac2{1 + \kappa}\), 이때 수축률 \(\frac{\kappa - 1}{\kappa + 1}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\kappa = 100\)이면 가장 빠른 학습률로도 오차를 \(10^{-6}\)배로 줄이는 데 대략 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>수축률 \(\frac{99}{101} \approx 0.9802\). \(0.9802^k = 10^{-6}\)에서 \(k = \frac{6\ln 10}{-\ln(99/101)} \approx 690\)번. 조건수에 거의 비례해 늘어난다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
