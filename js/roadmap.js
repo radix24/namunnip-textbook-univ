@@ -26,6 +26,11 @@
   const DEPT = new Map();
   UNIV.forEach((d) => { DEPT.set(d.id, d); d.courses.forEach((c) => COURSE.set(c.code, c)); });
   const codeNum = (code) => parseInt(String(code).replace(/\D+/g, ""), 10) || 0;
+  /* 화면에 보이는 과목 번호는 연세대 학정번호(c.sub의 첫 번호). 학정번호가 없는 과목만 QURI 코드로 둔다 */
+  const hak = (c) => (c.sub && c.sub[0]) || c.code;
+  /* 선수 과목 글 속의 QURI 코드(공통1, 수학3 …)를 "과목명(학정번호)"로 바꿔 보여 준다 */
+  const preText = (s) => String(s || "").replace(new RegExp(`(?:${PREFIX})\\d+`, "g"),
+    (k) => { const x = COURSE.get(k); return x ? `${x.name}(${hak(x)})` : k; });
 
   /* 선수 과목 글을 읽어 hard(먼저 끝낼 것: [[하나라도]] 묶음), co(같은 학기까지), soft(권장)로 나눈다 */
   function codesIn(s) {
@@ -236,7 +241,7 @@
     const req = /필수|기초/.test(c.kind) && c.dept !== "common";
     const alt = G.school !== "연세대" ? courseSchools(c).get(G.school) : "";
     return `<button type="button" class="rm-chip${req ? " is-req" : ""}${c.dept === "common" ? " is-common" : ""}" data-code="${c.code}">
-      <span class="mono">${esc(c.code)}</span> ${esc(alt || c.name)}${withSem ? ` <small>${c.y}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}</small></button>`;
+      <span class="mono">${esc(hak(c))}</span> ${esc(alt || c.name)}${withSem ? ` <small>${c.y}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}</small></button>`;
   }
   function renderDetail() {
     const box = $("#g-detail");
@@ -252,10 +257,10 @@
     const off = offeredTerms(c.sub || []);
     const offTxt = off.known ? (off.t.size ? `연세대 ${[...off.t].sort().join("·")}학기 (${OFFER_FROM}년 이후 개설 이력)` : `${OFFER_FROM}년 이후 연세대 개설 기록 없음`) : (c.open || "");
     const schools = [...courseSchools(c).entries()].map(([s, n]) => n ? `${s}(${n})` : s);
-    box.innerHTML = `<h3><span class="mono">${esc(c.code)}</span> ${esc(c.name)}</h3>
-      <p class="small dim">${c.y}학년 ${esc(String(c.sem))}학기 · ${esc(c.kind)} · ${c.cr}학점${c.sub && c.sub.length ? ` · ${c.sub.join(", ")}` : ""}${offTxt ? ` · ${esc(offTxt)}` : ""}</p>
+    box.innerHTML = `<h3><span class="mono">${esc(hak(c))}</span> ${esc(c.name)}</h3>
+      <p class="small dim">${c.y}학년 ${esc(String(c.sem))}학기 · ${esc(c.kind)} · ${c.cr}학점${c.sub && c.sub.length > 1 ? ` · 학정번호 ${c.sub.join(", ")}` : ""}${offTxt ? ` · ${esc(offTxt)}` : ""}</p>
       <dl>
-        <dt>선수 (요람·설계)</dt><dd>${esc(c.pre || "없음")}</dd>
+        <dt>선수 (요람·설계)</dt><dd>${esc(preText(c.pre) || "없음")}</dd>
         ${hard.filter((k) => !p.hard.some((g) => g.length > 1 && g.includes(k))).length ? `<dt>먼저 끝낼 과목</dt><dd>${hard.filter((k) => !p.hard.some((g) => g.length > 1 && g.includes(k))).map(link).join(", ")}</dd>` : ""}
         ${orText.length ? `<dt>하나만 먼저</dt><dd>${orText.join("; ")}</dd>` : ""}
         ${p.co.length ? `<dt>같은 학기까지</dt><dd>${p.co.map(link).join(", ")}</dd>` : ""}
@@ -485,7 +490,7 @@
     return `<button type="button" class="rm-card${it.out ? " is-out" : ""}${iss.length ? " is-warn" : ""}${tags.length > 1 ? " is-multi" : ""}" draggable="true" data-id="${esc(id)}"
       aria-label="${esc(it.name)} ${it.cr}학점${iss.length ? ", 확인할 점 " + iss.length + "개" : ""}">
       <span class="t">${esc(it.name)}</span>
-      <span class="m"><span class="mono">${it.c ? esc(it.c.code) : "요람"}</span> ${it.cr}학점${pinned ? ' <span class="pin" title="직접 옮긴 과목">고정</span>' : ""}${it.out ? ' <span class="pin">QURI 밖</span>' : ""}</span>
+      <span class="m"><span class="mono">${it.c ? esc(hak(it.c)) : esc((it.out && it.out.code) || "요람")}</span> ${it.cr}학점${pinned ? ' <span class="pin" title="직접 옮긴 과목">고정</span>' : ""}${it.out ? ' <span class="pin">QURI 밖</span>' : ""}</span>
       ${tags.length ? `<span class="tags">${tags.map((t) => `<span class="tag${t.i === 0 ? " is-first" : ""}">${esc(t.short)} ${CAT[t.cat]}</span>`).join("")}</span>` : (it.out && it.out.lib) || (it.c && it.c.kind === "대학교양") ? '<span class="tags"><span class="tag">교양</span></span>' : ""}
       ${iss.length ? `<span class="warn">${iss.map(esc).join("<br>")}</span>` : ""}</button>`;
   }
