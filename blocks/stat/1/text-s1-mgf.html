@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통1-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s1-mgf" data-kind="본문" data-std="응통1-04-03">
+  <header class="card-head"><span class="no"></span><h2>테일러 급수와 적률생성함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>적률생성함수 \(M(t) = E(e^{tX})\)의 테일러 계수가 적률임을 안다.</li>
+        <li>미분하거나 급수를 전개해 평균과 분산을 구한다.</li>
+        <li>로그를 취한 누율생성함수로 분산을 더 쉽게 얻는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>거듭제곱 급수와 지수함수의 급수 (<a href="04-02.html">4.2절</a>), 테일러 전개 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>모든 적률을 한 함수에</h3>
+    <p>평균 \(E(X)\), \(E(X^2)\), \(E(X^3)\), …을 하나씩 합이나 적분으로 구하는 대신, 이 모두를 계수로 담은 함수 하나를 만들면 미분만으로 꺼낼 수 있습니다. 4.2절에서 \(\sum nx^{n-1}\)을 등비급수의 미분으로 얻은 것과 같은 생각입니다.</p>
+
+    <h3><span class="no">4.3.1</span>정의와 테일러 계수</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 4.3.1</span>
+      <p>\(M_X(t) = E(e^{tX})\)(0 근처의 \(t\)에서 유한할 때)를 <b>적률생성함수</b>라 한다.</p>
+    </div>
+    <p>\(e^{tX} = 1 + tX + \frac{t^2X^2}{2!} + \cdots\)의 기대값을 항마다 취하면</p>
+    \[M_X(t) = 1 + E(X)t + \frac{E(X^2)}{2!}t^2 + \frac{E(X^3)}{3!}t^3 + \cdots.\]
+    <p>따라서 \(t^k\)의 계수에 \(k!\)을 곱한 것, 곧 \(M_X^{(k)}(0)\)이 \(k\)차 적률 \(E(X^k)\)입니다. 같은 이유로 적률생성함수가 같으면 분포도 같고(유일성), 독립인 합의 적률생성함수는 곱(\(M_{X+Y} = M_XM_Y\))이라 합의 분포를 구할 때 강력합니다(응통6).</p>
+
+    <h3><span class="no">4.3.2</span>누율생성함수</h3>
+    <p>\(K(t) = \log M(t)\)라 하면 \(K'(0) = E(X)\), \(K''(0) = \mathrm{Var}(X)\)입니다. 분산을 \(E(X^2) - E(X)^2\)로 따로 계산하지 않아도 되어 편합니다. 정규분포 \(N(\mu, \sigma^2)\)의 \(K(t) = \mu t + \sigma^2t^2/2\)처럼 깔끔해지는 경우가 많습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.2</span>
+      <p>포아송(\(\lambda\))의 적률생성함수를 구하고 평균과 분산을 얻으세요.</p>
+    </div>
+    <p><i>풀이.</i> \(M(t) = \sum e^{tn}e^{-\lambda}\frac{\lambda^n}{n!} = e^{-\lambda}\sum\frac{(\lambda e^t)^n}{n!} = e^{-\lambda}e^{\lambda e^t} = e^{\lambda(e^t - 1)}\). 4.2절의 지수 급수를 그대로 썼습니다. \(K(t) = \lambda(e^t - 1)\), \(K'(0) = \lambda\), \(K''(0) = \lambda\). 평균과 분산이 모두 \(\lambda\)입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(M(t) = E(e^{tX}) = \sum E(X^k)t^k/k!\), \(M^{(k)}(0) = E(X^k)\).</li>
+        <li>\(K = \log M\): \(K'(0)\) = 평균, \(K''(0)\) = 분산.</li>
+        <li>독립 합의 적률생성함수는 곱입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>베르누이(\(p\))의 적률생성함수와 평균, 분산은?
+          <details><summary>답</summary><p>\(M(t) = 1 - p + pe^t\). \(M'(0) = p\), \(M''(0) = p\), 분산 \(p - p^2 = p(1-p)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>독립인 포아송(\(\lambda_1\))과 포아송(\(\lambda_2\))의 합의 분포를 적률생성함수로 구하세요.
+          <details><summary>답</summary><p>\(e^{\lambda_1(e^t - 1)}e^{\lambda_2(e^t - 1)} = e^{(\lambda_1 + \lambda_2)(e^t - 1)}\), 포아송(\(\lambda_1 + \lambda_2\)). 응통9 5.2절의 합병과 같은 결과입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
