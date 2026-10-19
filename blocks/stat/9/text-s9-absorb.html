@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통9-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s9-absorb" data-kind="본문" data-std="응통9-03-03">
+  <header class="card-head"><span class="no"></span><h2>흡수 연쇄: 흡수 확률과 기대 흡수 시간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>흡수 상태와 일시 상태로 전이행렬을 표준형으로 나눈다.</li>
+        <li>기본 행렬 \(N = (I - Q)^{-1}\)로 기대 방문 횟수와 기대 흡수 시간을 구한다.</li>
+        <li>\(B = NR\)로 어느 흡수 상태에 닿을지의 확률을 구한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>전이행렬 (<a href="03-01.html">3.1절</a>), 상태의 분류 (<a href="03-02.html">3.2절</a>), 역행렬 (응통2 02단원).</li>
+      </ul>
+    </div>
+
+    <h3>언제 끝나고, 어떻게 끝나나</h3>
+    <p>도박꾼의 파산, 고객이 결국 구매하거나 이탈하는 과정, 환자가 회복하거나 사망하는 과정처럼 "한번 들어가면 나오지 않는" 상태가 있는 연쇄가 많습니다. 관심은 정상분포가 아니라 두 질문입니다. 어느 끝(흡수 상태)에 도달하는가, 그리고 거기까지 몇 단계 걸리는가. 2.1절에서 점화식으로 풀었던 문제를 행렬로 한꺼번에 풉니다.</p>
+
+    <h3><span class="no">3.3.1</span>표준형</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.3.1</span>
+      <p>\(P_{ii} = 1\)인 상태를 <b>흡수 상태</b>라 합니다. 모든 상태에서 흡수 상태로 갈 수 있는 연쇄를 <b>흡수 연쇄</b>라 하며, 일시 상태를 앞에 두면 전이행렬은 \(P = \begin{pmatrix} Q &amp; R \\ 0 &amp; I \end{pmatrix}\) 꼴입니다. \(Q\)는 일시 상태 사이, \(R\)은 일시 상태에서 흡수 상태로의 전이확률입니다.</p>
+    </div>
+    <p>흡수 연쇄에서는 확률 1로 결국 흡수되므로 \(Q^n \to 0\)입니다.</p>
+
+    <h3><span class="no">3.3.2</span>기본 행렬</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.3.2</span>
+      <p>\(N = (I - Q)^{-1} = I + Q + Q^2 + \cdots\)가 존재하고, \(N_{ij}\)는 일시 상태 \(i\)에서 출발해 흡수되기 전까지 일시 상태 \(j\)를 방문하는 기대 횟수이다(출발 시점 포함). 따라서 (가) \(i\)에서 흡수까지의 기대 단계 수는 \(t = N\mathbf 1\)의 \(i\)번째 성분, (나) \(i\)에서 출발해 흡수 상태 \(k\)에 흡수될 확률은 \(B = NR\)의 \((i, k)\) 성분이다.</p>
+    </div>
+    <p class="tb-proof">\((Q^n)_{ij}\)는 \(n\)단계 뒤 아직 흡수되지 않고 \(j\)에 있을 확률이므로 \(j\) 방문 횟수의 기대값은 \(\sum_n(Q^n)_{ij} = N_{ij}\). \(Q^n \to 0\)이 등비급수의 수렴을 보장합니다. (가)는 모든 일시 상태의 방문 횟수를 더한 것입니다. (나) 마지막으로 머문 일시 상태가 \(j\)이고 거기서 \(k\)로 넘어갈 확률을 더하면 \(\sum_j N_{ij}R_{jk}\)입니다. <span class="qed">∎</span></p>
+    <p>(가)와 (나)는 첫 단계 분석의 행렬판이기도 합니다. \(t = \mathbf 1 + Qt\), \(B = R + QB\)를 풀면 같은 답이 나옵니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.3</span>
+      <p>대칭 랜덤워크에서 0과 4가 흡수 상태인 도박꾼의 파산(일시 상태 1, 2, 3)의 \(N\), 기대 흡수 시간, 4에 흡수될 확률을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(Q = \begin{pmatrix}0 &amp; 1/2 &amp; 0\\ 1/2 &amp; 0 &amp; 1/2\\ 0 &amp; 1/2 &amp; 0\end{pmatrix}\). \(I - Q\)의 역행렬은 \(N = \begin{pmatrix}3/2 &amp; 1 &amp; 1/2\\ 1 &amp; 2 &amp; 1\\ 1/2 &amp; 1 &amp; 3/2\end{pmatrix}\). 행의 합 \(t = (3, 4, 3)\)으로 2.1절의 \(k(N-k)\) = 3, 4, 3과 같습니다. \(R\)의 "4로 가는" 열은 \((0, 0, 1/2)^\top\)이므로 \(B\)의 그 열은 \((1/4, 1/2, 3/4)\), 곧 \(k/4\)입니다.</p>
+    <pre><code>Q &lt;- matrix(c(0,.5,0, .5,0,.5, 0,.5,0), 3, byrow = TRUE)
+N &lt;- solve(diag(3) - Q); rowSums(N)
+R &lt;- matrix(c(.5,0, 0,0, 0,.5), 3, byrow = TRUE)   # 열: 0으로, 4로
+N %*% R</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>표준형 \(\begin{pmatrix}Q &amp; R\\ 0 &amp; I\end{pmatrix}\), 기본 행렬 \(N = (I - Q)^{-1}\).</li>
+        <li>\(N_{ij}\): 기대 방문 횟수, \(N\mathbf 1\): 기대 흡수 시간, \(NR\): 흡수 확률.</li>
+        <li>첫 단계 분석의 점화식을 행렬로 한꺼번에 푼 것입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>일시 상태 하나(1)와 흡수 상태 두 개(0, 2)가 있고 \(P_{11} = 0.5\), \(P_{10} = 0.2\), \(P_{12} = 0.3\)입니다. 기대 흡수 시간과 2에 흡수될 확률은?
+          <details><summary>답</summary><p>\(N = 1/(1 - 0.5) = 2\). 기대 시간 2단계. \(B = 2 \times 0.3 = 0.6\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>동전을 던져 앞앞(HH)이 처음 나올 때까지의 기대 횟수를 흡수 연쇄로 구하세요(상태: 처음, H 하나, HH).
+          <details><summary>답</summary><p>\(Q = \begin{pmatrix}1/2 &amp; 1/2\\ 1/2 &amp; 0\end{pmatrix}\), \(I - Q = \begin{pmatrix}1/2 &amp; -1/2\\ -1/2 &amp; 1\end{pmatrix}\), 행렬식 1/4, \(N = \begin{pmatrix}4 &amp; 2\\ 2 &amp; 2\end{pmatrix}\). 처음에서의 기대 시간 \(4 + 2 = 6\)번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -100,7 +100,7 @@ def check(p, U, sim=False):
     code, units = U[key]
     pol = POLICY.get(code, "")
     if pol == "none":
-        errs.append("시험 방식이 none(중간·기말 없음)인 과목인데 문항 파일이 있음")
+        warns.append("시험 방식이 none(중간·기말 없음)이라 빌드에 쓰이지 않는 문항 파일 — 삭제 대상")
     half = len(units) if pol == "fin" else (len(units) + 1) // 2
     items = data.get("items", [])
     seen, n_lv, mid, scope = set(), {k: 0 for k in LV}, 0, {"mid": [], "fin": []}

@@ -224,7 +224,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 8. Markov 연쇄의 정상분포 (응통9-03-03) */
+  /* 8. Markov 연쇄의 정상분포 (응통9-03-04) */
   (() => {
     const S = QSim.card("lab-s9-markov"); if (!S) return;
     const cv = S.$("canvas"), NAMES = ["맑음", "흐림", "비"];

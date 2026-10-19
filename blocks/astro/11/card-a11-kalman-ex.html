@@ -1,0 +1,43 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우11-05-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a11-kalman-ex" data-kind="예제" data-std="천우11-05-03 천우11-05-02">
+  <header class="card-head"><span class="no"></span><h2>궤도 예측과 GNSS 측정을 섞기</h2><span class="kind">예제 · 칼만 이득 · 정상 상태 분산</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 두 정보 합치기</span>
+      <ol>
+        <li>예측 분산 \(P^-\)와 측정 분산 \(R\)로 이득 \(K = P^-/(P^- + R)\)를 구한다.</li>
+        <li>갱신 분산은 \(1/P = 1/P^- + 1/R\)(역분산이 더해짐).</li>
+        <li>측정이 일정한 간격으로 계속 오면, 예측이 키우는 분산과 갱신이 줄이는 분산이 맞서는 정상 상태를 구한다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 오차 20 m인 궤도 예측과 오차 5 m인 GNSS 측정을 합치면, 합친 오차는 5 m보다 클까요, 작을까요?</div>
+    <p class="q-prob"><b>문제.</b> 위성의 한 방향 위치를 궤도 예측으로 오차 20 m, GNSS로 오차 5 m에 압니다. (가) 합친 추정의 오차와 이득은? (나) 10초마다 GNSS 측정이 오고, 그 사이 예측 분산이 10초에 \(q = 10\) m²씩 늘어난다면, 오래 지난 뒤 갱신 직후의 분산(정상 상태)은?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(P^- = 400\), \(R = 25\), \(K = 400/425 = 0.94\). \(1/P = 1/400 + 1/25 = 0.0425\), \(P = 23.5\) m², 오차 4.85 m.</div><span class="q-why">두 정보를 합치면 어느 하나보다 정확하다.</span></li>
+        <li><div>(나) 정상 상태에서 갱신 직후 분산 \(P\)가 다음 갱신 뒤에도 같아야 하므로 \(1/P = 1/(P + 10) + 1/25\).</div><span class="q-why">예측(+q) → 갱신(역분산 합)이 한 바퀴 돌아 제자리.</span></li>
+        <li class="q-end"><div>정리하면 \(P^2 + 10P - 250 = 0\), \(P = -5 + \sqrt{25 + 250} = 11.6\) m², 오차 3.4 m. 이득 \(K = 21.6/46.6 = 0.46\).</div><span class="q-why">이차방정식의 양의 근.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>GNSS 한 번(5 m)보다 정상 상태의 필터(3.4 m)가 더 정확합니다. 과거 측정들이 궤도 모형을 통해 쌓여 오기 때문입니다. 예측이 정확할수록(\(q\)가 작을수록) 정상 상태 오차가 줄고 이득도 작아집니다. 궤도 모형(중력, 항력)을 좋게 하는 것이 곧 필터를 좋게 하는 길입니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(P = 11.6\)이면 예측 뒤 21.6, 갱신 뒤 \(1/(1/21.6 + 1/25) = 11.6\)으로 제자리에 옵니다. \(q = 0\)이면 식이 \(1/P = 1/P + 1/25\)가 되어 해가 없고, \(P\)가 끝없이 0으로 줄어듭니다(5.3.2절의 \(q = 0\) 필터).</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>(나)에서 GNSS가 1초마다 오고 1초에 \(q = 1\) m²씩 늘어난다면 정상 상태 오차는?</p>
+      <details><summary>답</summary><p>\(P^2 + P - 25 = 0\), \(P = (-1 + \sqrt{101})/2 = 4.5\) m², 오차 2.1 m. 측정이 잦을수록 좋아집니다.</p></details>
+    </section>
+  </div>
+</article>
