@@ -159,7 +159,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 지렛값과 Cook 거리: 점 하나를 옮겨 보기 (응통10-04-02) */
+  /* 5. 지렛값과 Cook 거리: 점 하나를 옮겨 보기 (응통10-04-03) */
   (() => {
     const S = QSim.card("lab-s10-influence"); if (!S) return;
     const cv = S.$("canvas"), u = rng(77), BX = [], BY = [];

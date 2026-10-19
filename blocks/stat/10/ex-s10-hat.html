@@ -1,0 +1,37 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-02-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s10-hat" data-kind="예제" data-std="응통10-02-02">
+  <header class="card-head"><span class="no"></span><h2>적합값은 관측값의 가중평균: 모자 행렬의 한 행 읽기</h2><span class="kind">예제 · 모자 행렬</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>\(\hat y_i = \sum_j h_{ij}y_j\)이므로 \(H\)의 \(i\)번째 행은 \(\hat y_i\)를 만들 때 각 관측값에 주는 가중치입니다. 절편이 있으면 행의 합이 1(\(H\mathbf 1 = \mathbf 1\))이고, 대각원소가 자기 자신의 몫입니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> \(x = 0, 1, 2, 3, 4\)에서 단순회귀를 합니다. \(x = 4\)인 점의 적합값을 만드는 가중치(모자 행렬 5행)를 구하고, 모든 지렛값과 잔차의 분산을 비교하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(\bar x = 2\), \(S_{xx} = 10\), \(h_{5j} = 0.2 + \frac{(4 - 2)(x_j - 2)}{10} = 0.2 + 0.2(x_j - 2)\).</div><span class="q-why">단순회귀의 \(h_{ij}\) 공식.</span></li>
+        <li><div>5행 = \((-0.2, 0, 0.2, 0.4, 0.6)\), 합 1.</div><span class="q-why">\(H\mathbf 1 = \mathbf 1\).</span></li>
+        <li><div>지렛값 \(h_{ii} = 0.2 + (x_i - 2)^2/10\) = 0.6, 0.3, 0.2, 0.3, 0.6, 합 2.</div><span class="q-why">\(\mathrm{tr}H = p = 2\).</span></li>
+        <li class="q-end"><div>\(\mathrm{Var}(e_i) = \sigma^2(1 - h_{ii})\) = \(0.4\sigma^2, 0.7\sigma^2, 0.8\sigma^2, 0.7\sigma^2, 0.4\sigma^2\).</div><span class="q-why">\(\mathrm{Var}(\mathbf e) = \sigma^2(I - H)\).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(y = x\)(완벽한 직선)를 넣으면 \(\hat y_5 = -0.2 \cdot 0 + 0 + 0.2 \cdot 2 + 0.4 \cdot 3 + 0.6 \cdot 4 = 0.4 + 1.2 + 2.4 = 4\)로 그대로 나옵니다. \(HX = X\)와 맞습니다. 잔차 분산의 합 \(\sigma^2(5 - 2) = 3\sigma^2\)도 \(0.4 + 0.7 + 0.8 + 0.7 + 0.4 = 3\)과 같습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>끝점의 적합값은 60%를 자기 값에 기대고, 반대쪽 끝점에는 음의 가중치를 줍니다. 직선이 그 점 쪽으로 끌려가므로 끝점의 잔차는 원래 오차보다 작게 나옵니다(분산 0.4배). 그래서 원시 잔차를 그대로 비교하면 끝점의 이상값을 놓치기 쉽고, \(\sqrt{1 - h_{ii}}\)로 나눈 표준화 잔차(4.1절)와 지렛값 진단(4.3절)이 필요합니다.</p>
+    </section>
+  </div>
+</article>

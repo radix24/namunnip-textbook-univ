@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-anova" data-kind="본문" data-std="응통10-01-04">
+  <header class="card-head"><span class="no"></span><h2>분산분석표와 결정계수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>제곱합을 SST = SSR + SSE로 분해하고 분산분석표를 만든다.</li>
+        <li>F 검정과 t 검정의 관계(\(F = t^2\))를 확인한다.</li>
+        <li>결정계수가 알려 주는 것과 알려 주지 않는 것을 구별한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱 직선의 성질 (<a href="01-01.html">1.1절</a>), 기울기 t 검정 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>변동을 나누어 보기</h3>
+    <p>\(y\)가 관측마다 다른 까닭을 두 부분으로 나눕니다. \(x\)가 달라서 생긴 부분(직선을 따라 움직인 몫)과 직선으로 설명되지 않는 나머지입니다. 이 분해가 결정계수와 F 검정의 출발점이고, 응통13의 실험계획법 분산분석과 같은 생각입니다.</p>
+
+    <h3><span class="no">1.4.1</span>제곱합 분해</h3>
+    <p>\(y_i - \bar y = (\hat y_i - \bar y) + (y_i - \hat y_i)\)를 제곱해 더하면, 교차항 \(\sum(\hat y_i - \bar y)e_i = \sum\hat y_ie_i - \bar y\sum e_i = 0\)(1.1절의 성질)이 사라져</p>
+    \[\underbrace{\sum(y_i - \bar y)^2}_{\mathrm{SST}} = \underbrace{\sum(\hat y_i - \bar y)^2}_{\mathrm{SSR}} + \underbrace{\sum(y_i - \hat y_i)^2}_{\mathrm{SSE}}.\]
+    <p>단순회귀에서는 \(\hat y_i - \bar y = \hat\beta_1(x_i - \bar x)\)이므로 \(\mathrm{SSR} = \hat\beta_1^2S_{xx} = S_{xy}^2/S_{xx}\)입니다. 02단원에서 보듯 이 분해는 직교하는 두 벡터에 대한 피타고라스 정리입니다.</p>
+
+    <h3><span class="no">1.4.2</span>분산분석표와 F 검정</h3>
+    <table class="tw">
+      <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>F</th></tr></thead>
+      <tbody>
+        <tr><td>회귀</td><td>SSR</td><td>1</td><td>MSR = SSR/1</td><td>MSR/MSE</td></tr>
+        <tr><td>잔차</td><td>SSE</td><td>\(n - 2\)</td><td>MSE = SSE/(\(n-2\))</td><td></td></tr>
+        <tr><td>전체</td><td>SST</td><td>\(n - 1\)</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="tb-env thm">
+      <span class="lb">결과 1.4.1</span>
+      <p>\(H_0: \beta_1 = 0\) 아래 \(F = \mathrm{MSR}/\mathrm{MSE} \sim F(1, n-2)\)이고, 단순회귀에서는 \(F = t^2\)(\(t\)는 기울기의 t 통계량)이다.</p>
+    </div>
+    <p class="tb-proof">\(F = \frac{\hat\beta_1^2S_{xx}}{s^2} = \left(\frac{\hat\beta_1}{s/\sqrt{S_{xx}}}\right)^2 = t^2\). <span class="qed">∎</span></p>
+    <p>\(E(\mathrm{MSR}) = \sigma^2 + \beta_1^2S_{xx}\), \(E(\mathrm{MSE}) = \sigma^2\)이므로 \(\beta_1 \ne 0\)이면 F가 1보다 커지는 경향이 있습니다. 단순회귀에서는 t 검정과 같은 결론이지만, 다중회귀에서는 F가 "설명변수 전체가 쓸모 있는가"를 한꺼번에 검정합니다(2.5절).</p>
+
+    <h3><span class="no">1.4.3</span>결정계수</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.4.2</span>
+      <p><b>결정계수</b> \(R^2 = \mathrm{SSR}/\mathrm{SST} = 1 - \mathrm{SSE}/\mathrm{SST}\). \(y\)의 변동 가운데 직선으로 설명된 비율이다.</p>
+    </div>
+    <p>단순회귀에서 \(R^2 = r^2\)(표본 상관계수의 제곱)입니다. \(R^2\)는 0과 1 사이이고, 절편이 있는 모형에서만 이렇게 해석됩니다.</p>
+    <div class="tb-note">
+      <b>주의</b> \(R^2\)는 "모형이 맞는가"를 재지 않습니다. 곡선 관계에 직선을 맞춰도 \(R^2\)가 높을 수 있고(앤스컴 4중주, 04단원 실습 카드), 맞는 모형이라도 오차가 크면 \(R^2\)는 낮습니다. \(R^2\)가 낮아도 기울기는 유의하고 중요할 수 있으며, \(x\)의 범위를 넓게 잡기만 해도 \(R^2\)가 커집니다(예제 카드).
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.3</span>
+      <p>1.1절 연습 자료(\(y\) = 3, 5, 4, 7, 6, SSE = 3.6, \(\hat\beta_1 = 0.8\), \(S_{xx} = 10\))의 분산분석표를 만들고 \(R^2\)와 F를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\bar y = 5\), SST = 4 + 0 + 1 + 4 + 1 = 10. SSR = \(0.64 \times 10 = 6.4\), SSE = 3.6(합 10 확인). MSE = 3.6/3 = 1.2, F = 6.4/1.2 = 5.33. 1.3절 연습의 \(t = 2.31\)의 제곱과 같고, p값 약 0.10으로 결론도 같습니다. \(R^2 = 0.64\)로 높아 보이지만 \(n = 5\)라 우연으로도 쉽게 나오는 값입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SST = SSR + SSE, 자유도 \(n - 1 = 1 + (n - 2)\).</li>
+        <li>F = MSR/MSE, 단순회귀에서는 \(F = t^2\).</li>
+        <li>\(R^2\) = SSR/SST = \(r^2\), 적합도의 한 측면일 뿐입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단순회귀에서 \(R^2 = r^2\)임을 보이세요.
+          <details><summary>답</summary><p>\(\mathrm{SSR} = \hat\beta_1^2S_{xx} = S_{xy}^2/S_{xx}\), \(R^2 = S_{xy}^2/(S_{xx}S_{yy}) = r^2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(R^2\)와 F 사이에 \(F = \dfrac{R^2/1}{(1 - R^2)/(n-2)}\)가 성립함을 보이고, \(n = 102\), \(R^2 = 0.04\)이면 기울기가 5% 수준에서 유의한지 판단하세요.
+          <details><summary>답</summary><p>SSR = \(R^2\)SST, SSE = \((1 - R^2)\)SST를 대입합니다. \(F = 0.04 \times 100/0.96 = 4.17 &gt; F_{0.05}(1, 100) \approx 3.94\)이므로 유의합니다. 설명력이 4%뿐이어도 자료가 많으면 관계가 0이 아니라고 말할 수 있습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

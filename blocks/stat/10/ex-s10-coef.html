@@ -1,0 +1,36 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-02-04",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s10-coef" data-kind="예제" data-std="응통10-02-04">
+  <header class="card-head"><span class="no"></span><h2>무게의 효과는 −5.34인가 −3.88인가</h2><span class="kind">예제 · 누락 변수 공식</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>단순회귀 기울기와 다중회귀 계수의 차이는 정확히 "빠진 변수의 계수 × 빠진 변수를 남은 변수로 회귀한 기울기"입니다. 세 회귀의 결과를 나란히 놓고 이 항등식을 확인합니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> <code>mtcars</code>에서 (가) <code>mpg ~ wt</code>의 기울기 −5.344, (나) <code>mpg ~ wt + hp</code>의 계수 wt −3.878, hp −0.03177, (다) <code>hp ~ wt</code>의 기울기 46.16입니다. 세 값의 관계를 확인하고, 무게의 "효과"를 어떻게 보고할지 쓰세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>누락 변수 공식: \(\tilde\beta_{wt} = \hat\beta_{wt} + \hat\beta_{hp}\hat\delta\).</div><span class="q-why">2.4.2절.</span></li>
+        <li><div>\(-3.878 + (-0.03177)(46.16) = -3.878 - 1.467 = -5.345\).</div><span class="q-why">(가)의 −5.344와 반올림 안에서 같습니다.</span></li>
+        <li class="q-end"><div>단순회귀의 −5.34 가운데 −1.47은 "무거운 차는 마력이 크고(1000 lb당 46마력), 마력이 크면 연비가 낮다"는 경로입니다. 마력을 고정한 무게의 연관은 −3.88입니다.</div><span class="q-why">두 값은 서로 다른 질문의 답.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>R에서 FWL로도 확인됩니다. <code>ry &lt;- resid(lm(mpg ~ hp, mtcars)); rw &lt;- resid(lm(wt ~ hp, mtcars)); coef(lm(ry ~ rw))[2]</code>는 −3.878로 (나)의 wt 계수와 같습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>"차를 1000 lb 가볍게 만들면 연비가 얼마나 좋아지나"가 질문이라면, 엔진을 그대로 두고 차체만 가볍게 하는 경우는 −3.88에, 차급을 낮춰 엔진도 작아지는 경우는 −5.34에 가깝습니다. 어느 계수를 보고할지는 통계가 아니라 질문이 정합니다. 둘 다 관측 자료의 연관이므로, 인과를 말하려면 다른 교란 변수가 없다는 근거가 따로 필요합니다.</p>
+    </section>
+  </div>
+</article>

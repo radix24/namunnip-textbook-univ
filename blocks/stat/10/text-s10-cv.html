@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-cv" data-kind="본문" data-std="응통10-06-03">
+  <header class="card-head"><span class="no"></span><h2>교차검증</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>훈련 오차가 예측 오차를 과소평가하는 이유를 안다.</li>
+        <li>\(k\)겹 교차검증과 LOOCV로 예측 오차를 추정한다.</li>
+        <li>교차검증으로 모형과 조절 모수를 고르는 규칙(1-SE 규칙)을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>모자 행렬 (<a href="02-02.html">2.2절</a>), 정보 기준 (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>시험 문제를 미리 보고 치른 시험</h3>
+    <p>모형을 맞춘 자료로 그 모형의 성능을 재면, 모형이 자료의 우연한 굴곡까지 따라간 몫이 성능으로 계산됩니다. 변수를 더할수록 훈련 SSE는 반드시 줄지만 새 자료에 대한 예측은 오히려 나빠질 수 있습니다. 교차검증은 자료 일부를 숨겨 두고 "처음 보는 자료"로 시험합니다.</p>
+
+    <h3><span class="no">6.3.1</span>훈련 오차의 낙관</h3>
+    <p>선형회귀에서 같은 \(x\)에 새 반응을 뽑아 예측하면, 평균 예측 오차 제곱은 \(\sigma^2(1 + p/n)\)이고 훈련 오차(SSE/\(n\))의 기대값은 \(\sigma^2(1 - p/n)\)입니다. 둘의 차이 \(2p\sigma^2/n\)이 모수 수에 비례하는 낙관이고, AIC의 벌점 \(2p\)가 바로 이것을 보정합니다. 교차검증은 이 보정을 공식 없이 자료로 직접 합니다.</p>
+
+    <h3><span class="no">6.3.2</span>\(k\)겹 교차검증</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.3.1</span>
+      <p><b>\(k\)겹 교차검증</b>: 자료를 \(k\)개 묶음으로 무작위로 나누고, 묶음 하나를 빼고 나머지로 적합해 뺀 묶음을 예측하는 일을 \(k\)번 되풀이한다. 예측 오차 제곱의 평균 CV\(_{(k)}\)를 모형의 예측 오차 추정값으로 쓴다.</p>
+    </div>
+    <p>\(k = 5\) 또는 10이 흔합니다. \(k\)가 작으면 훈련 자료가 적어 오차를 약간 크게 추정하고(치우침), \(k = n\)에 가까우면 치우침은 작지만 \(n\)개 적합이 거의 같은 자료를 써서 추정값이 흔들립니다(분산). 묶음 나누기가 무작위라 결과가 실행마다 조금씩 다르므로 <code>set.seed</code>로 고정하거나 여러 번 반복해 평균합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 6.3.2 (LOOCV 지름길)</span>
+      <p>\(k = n\)(하나씩 빼기)인 선형회귀의 교차검증은 다시 적합하지 않고 \(\mathrm{CV}_{(n)} = \dfrac1n\sum\left(\dfrac{e_i}{1 - h_{ii}}\right)^2\)로 계산된다.</p>
+    </div>
+    <p>\(i\)번째 점을 빼고 적합한 예측의 오차가 \(e_i/(1 - h_{ii})\)이기 때문입니다. 지렛값이 큰 점일수록 자기 자신에게 끌린 적합값이 빠지므로 오차가 크게 부풀려집니다. \(\sum\)을 PRESS 통계량이라고도 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.3</span>
+      <p>\(k\)겹 교차검증 R 코드를 직접 쓰세요.</p>
+    </div>
+    <pre><code>set.seed(1); k &lt;- 5; fold &lt;- sample(rep(1:k, length.out = nrow(mtcars)))
+cv &lt;- function(formula) mean(sapply(1:k, function(j) {
+  fit &lt;- lm(formula, data = mtcars[fold != j, ])
+  mean((mtcars$mpg[fold == j] - predict(fit, mtcars[fold == j, ]))^2) }))
+cv(mpg ~ wt); cv(mpg ~ wt + hp); cv(mpg ~ .)</code></pre>
+    <p>모든 변수를 넣은 모형은 자료 적합(\(R^2\))은 가장 좋지만 교차검증 오차는 작은 모형보다 크게 나오는 것이 보통입니다.</p>
+
+    <h3><span class="no">6.3.3</span>교차검증으로 고르기</h3>
+    <p>후보 모형(또는 6.4절의 \(\lambda\))마다 CV 오차와 그 표준오차(묶음별 오차의 표준편차 / \(\sqrt k\))를 구합니다. 오차가 가장 작은 모형을 고르거나, <b>1-SE 규칙</b>으로 "최소 오차 + 표준오차 1개" 안에 드는 가장 단순한 모형을 고릅니다. 차이가 잡음 수준이면 단순한 모형이 해석과 안정성에서 낫기 때문입니다.</p>
+    <div class="tb-note">
+      <b>주의</b> 변수 선택이나 전처리(표준화, 결측 대치)까지 포함해 모든 단계를 각 묶음의 훈련 자료 안에서만 해야 합니다. 전체 자료로 변수를 고른 뒤 교차검증하면 숨긴 자료가 이미 선택에 쓰여 오차가 낙관적으로 나옵니다.
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>훈련 오차는 예측 오차를 약 \(2p\sigma^2/n\)만큼 과소평가합니다.</li>
+        <li>\(k\)겹 CV(5, 10)가 표준, 선형회귀 LOOCV는 \(e_i/(1 - h_{ii})\)로 바로 계산.</li>
+        <li>1-SE 규칙으로 단순한 모형을, 모든 단계는 묶음 안에서.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>모형 세 개의 10겹 CV 오차(표준오차)가 A 4.10(0.30), B 3.95(0.28), C 4.40(0.35)이고 크기는 A &lt; B &lt; C입니다. 최소 규칙과 1-SE 규칙은 각각 무엇을 고르나요?
+          <details><summary>답</summary><p>최소 규칙은 B. 1-SE 기준 \(3.95 + 0.28 = 4.23\) 안에 A(4.10)가 들고 A가 더 단순하므로 1-SE 규칙은 A.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>후보 1000개 가운데 반응과 상관이 가장 큰 변수 20개를 전체 자료로 고른 뒤 그 20개로 10겹 CV를 했더니 오차가 매우 작았습니다. 무엇이 잘못되었나요?
+          <details><summary>답</summary><p>변수 선택이 숨긴 묶음까지 본 상태에서 이루어졌습니다. 반응이 순수한 잡음이어도 1000개 가운데 우연히 상관이 큰 20개가 뽑히므로 CV 오차가 낙관적입니다. 선택을 각 묶음의 훈련 자료 안에서 다시 해야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-boxcox" data-kind="본문" data-std="응통10-05-02">
+  <header class="card-head"><span class="no"></span><h2>박스-콕스 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>박스-콕스 변환족이 로그와 거듭제곱 변환을 하나로 묶는 방식을 안다.</li>
+        <li>프로파일 가능도로 \(\lambda\)를 추정하고 신뢰구간을 구한다.</li>
+        <li>추정값을 해석하기 쉬운 값으로 고르는 판단을 한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>로그 변환 (<a href="05-01.html">5.1절</a>), 가능도비 검정 (응통7 6.1절).</li>
+      </ul>
+    </div>
+
+    <h3>변환도 자료로 고르기</h3>
+    <p>로그가 좋을지, 제곱근이 좋을지를 잔차 그림만 보고 정하기 어려울 때가 많습니다. 박스와 콕스(1964)는 거듭제곱 변환을 하나의 모수 \(\lambda\)로 묶고, 그 \(\lambda\)를 회귀계수와 함께 최대가능도로 추정하자고 제안했습니다.</p>
+
+    <h3><span class="no">5.2.1</span>변환족</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 5.2.1</span>
+      <p>\(y &gt; 0\)에 대해 \(y^{(\lambda)} = \dfrac{y^\lambda - 1}{\lambda}\) (\(\lambda \ne 0\)), \(\log y\) (\(\lambda = 0\)).</p>
+    </div>
+    <p>\(\lambda \to 0\)일 때 \((y^\lambda - 1)/\lambda \to \log y\)이므로 로그가 자연스럽게 이어집니다. \(\lambda = 1\)은 변환 없음(평행이동만), 0.5는 제곱근, −1은 역수에 해당합니다. 1을 빼고 \(\lambda\)로 나누는 것은 \(\lambda &lt; 0\)에서도 순서(증가 함수)를 지키기 위해서입니다. \(y\)에 0이나 음수가 있으면 상수를 더한 뒤 쓰거나 다른 변환(예: 여-존슨)을 씁니다.</p>
+
+    <h3><span class="no">5.2.2</span>프로파일 가능도</h3>
+    <p>\(\lambda\)마다 SSE를 그대로 비교하면 안 됩니다. 변환하면 \(y\)의 단위가 바뀌기 때문입니다. 기하평균 \(\dot y = (\prod y_i)^{1/n}\)으로 크기를 맞춘 \(z^{(\lambda)} = y^{(\lambda)}/\dot y^{\lambda - 1}\)(\(\lambda = 0\)이면 \(\dot y\log y\))를 반응으로 회귀하면, 변환의 야코비안이 반영되어 SSE끼리 비교할 수 있습니다. 그러면 프로파일 로그가능도는</p>
+    \[\ell(\lambda) = -\frac n2\log\frac{\mathrm{SSE}(\lambda)}{n} + \text{상수}\]
+    <p>이고, \(\mathrm{SSE}(\lambda)\)가 가장 작은 \(\hat\lambda\)가 최대가능도 추정값입니다. 가능도비 검정을 뒤집으면 95% 신뢰구간은 \(2[\ell(\hat\lambda) - \ell(\lambda)] \le 3.84\), 곧</p>
+    \[\mathrm{SSE}(\lambda) \le \mathrm{SSE}(\hat\lambda)\,e^{3.84/n}\]
+    <p>인 \(\lambda\)들입니다. R의 <code>MASS::boxcox(fit)</code>가 이 곡선과 구간을 그립니다.</p>
+
+    <h3><span class="no">5.2.3</span>고르는 법</h3>
+    <p>추정값 \(\hat\lambda = 0.37\)처럼 어중간한 값을 그대로 쓰면 계수를 해석하기 어렵습니다. 신뢰구간 안에서 해석하기 쉬운 값(1, 0.5, 0, −1)을 고르고, 그 변환으로 잔차 그림이 좋아졌는지 다시 확인합니다. 구간에 1이 들어 있으면 변환하지 않습니다. 박스-콕스는 오차의 정규성·등분산·선형성을 한꺼번에 근사적으로 맞추려 하므로, 세 가지가 서로 다른 변환을 원하면 타협점이 나옵니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.2</span>
+      <p><code>cars</code>에서 박스-콕스를 적용하세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>MASS::boxcox(lm(dist ~ speed, data = cars))</code>의 최댓값이 \(\lambda \approx 0.4\) 근처이고 구간에 0.5가 들어갑니다(1은 들어가지 않음). \(\sqrt{\text{dist}}\)를 반응으로 쓰면 잔차의 나팔 모양이 줄어듭니다. 제동 거리가 속도의 제곱에 비례한다는 물리 법칙(\(\sqrt{d} \propto v\))과도 맞습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(y^{(\lambda)} = (y^\lambda - 1)/\lambda\), \(\lambda = 0\)이면 로그.</li>
+        <li>기하평균으로 크기를 맞춘 SSE가 가장 작은 \(\lambda\)가 최대가능도 추정.</li>
+        <li>구간 \(\mathrm{SSE}(\lambda) \le \mathrm{SSE}_{\min}e^{3.84/n}\) 안에서 해석하기 쉬운 값을 고릅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\lambda \to 0\)일 때 \((y^\lambda - 1)/\lambda \to \log y\)임을 보이세요.
+          <details><summary>답</summary><p>\(y^\lambda = e^{\lambda\log y} = 1 + \lambda\log y + O(\lambda^2)\)이므로 \((y^\lambda - 1)/\lambda = \log y + O(\lambda)\). 로피탈 정리로도 됩니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>기하평균으로 크기를 맞추지 않고 \(y^{(\lambda)}\)의 SSE를 그대로 비교하면 어떤 \(\lambda\)가 유리해지나요? \(y\)가 모두 1보다 훨씬 큰 경우를 생각하세요.
+          <details><summary>답</summary><p>\(y\)가 크면 \(\lambda\)가 작을수록 변환된 값의 범위가 줄어 SSE가 저절로 작아지므로, 실제 적합과 무관하게 작은(음의) \(\lambda\)가 뽑힙니다. 크기 맞춤은 이런 단위 효과를 없앱니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
