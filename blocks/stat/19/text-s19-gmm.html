@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-gmm" data-kind="본문" data-std="응통19-06-03">
+  <header class="card-head"><span class="no"></span><h2>정규 혼합모형 군집</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>군집을 정규분포의 혼합으로 모형화한다.</li>
+        <li>사후 소속 확률로 관측값을 부드럽게 배정한다.</li>
+        <li>BIC로 군집 수와 공분산 구조를 함께 고른다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>k-평균 (<a href="06-01.html">6.1절</a>), 군집 수 (<a href="06-02.html">6.2절</a>), EM 알고리즘 (응통15 3.3절).</li>
+      </ul>
+    </div>
+
+    <h3>군집에도 확률 모형을</h3>
+    <p>k-평균은 관측을 가장 가까운 중심에 딱 잘라 배정하고, 군집이 둥글고 크기가 비슷하다고 암묵적으로 가정합니다. 정규 혼합모형은 각 군집을 하나의 정규분포로 보고, 관측값이 각 군집에서 왔을 확률을 계산합니다. 군집 모양(공분산)과 크기(혼합 비율)도 자료로 추정하고, 군집 수를 가능도 기준으로 고를 수 있습니다.</p>
+
+    <h3><span class="no">6.3.1</span>모형과 사후 확률</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.3.1</span>
+      <p>\(f(\mathbf x) = \sum_{k=1}^K\pi_k\,\phi(\mathbf x; \boldsymbol\mu_k, \Sigma_k)\), \(\sum\pi_k = 1\). 관측 \(\mathbf x\)가 군집 \(k\)에서 왔을 사후 확률은 \(\tau_k(\mathbf x) = \dfrac{\pi_k\phi(\mathbf x; \boldsymbol\mu_k, \Sigma_k)}{\sum_h\pi_h\phi(\mathbf x; \boldsymbol\mu_h, \Sigma_h)}\).</p>
+    </div>
+    <p>모수는 EM 알고리즘(응통15 3.3절)으로 추정합니다. E 단계에서 \(\tau_k\)를 계산하고, M 단계에서 \(\tau_k\)를 가중치로 한 평균, 공분산, 비율을 다시 구합니다. 공분산이 모두 \(\sigma^2I\)로 같고 \(\sigma \to 0\)이면 \(\tau_k\)가 0 또는 1이 되어 k-평균과 같아집니다.</p>
+
+    <h3><span class="no">6.3.2</span>모형 선택</h3>
+    <p>공분산 구조(모두 같음, 대각, 군집마다 다름 등)와 군집 수 \(K\)의 조합마다 BIC \(= -2\log L + d\log n\)을 계산해 가장 작은(R <code>mclust</code>는 부호를 반대로 써서 가장 큰) 것을 고릅니다. 사후 확률이 0.5 근처인 관측은 소속이 불확실하다는 정보로 보고합니다. 혼합모형의 가능도는 국소 최댓값이 많아 여러 시작점이 필요합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.2</span>
+      <p>1차원 혼합 \(0.5N(0, 1) + 0.5N(3, 1)\)에서 \(x = 1\), 1.5, 2의 군집 1 사후 확률은?</p>
+    </div>
+    <p><i>풀이.</i> 밀도의 비 \(\phi(x)/\phi(x - 3) = e^{-3x + 4.5}\)이므로 \(\tau_1(x) = 1/(1 + e^{3x - 4.5})\)입니다. \(x = 1\): \(\phi(1) = 0.242\), \(\phi(-2) = 0.054\), \(\tau_1 = 0.242/0.296 = 0.82\). \(x = 1.5\): 대칭이라 0.50. \(x = 2\): 0.18. k-평균이라면 1.5 근처의 점도 한 군집에 확정되지만, 혼합모형은 불확실성을 숫자로 남깁니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>군집 = 정규분포 성분, 소속은 사후 확률 \(\tau_k\).</li>
+        <li>EM으로 추정, k-평균은 특수한 극한.</li>
+        <li>BIC로 군집 수와 공분산 구조를 함께 고릅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 6.3.2에서 혼합 비율이 \(\pi_1 = 0.8\)이면 \(x = 1.5\)의 군집 1 사후 확률은?
+          <details><summary>답</summary><p>두 밀도가 같으므로 \(0.8/(0.8 + 0.2) = 0.8\). 큰 군집 쪽으로 기웁니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>길쭉하게 기울어진 두 군집을 k-평균으로 나누면 잘못 나뉘는 경우가 있습니다. 혼합모형은 왜 더 잘할 수 있나요?
+          <details><summary>답</summary><p>k-평균은 유클리드 거리로 둥근 군집을 가정하지만, 혼합모형은 군집마다 공분산을 추정해 기울어진 타원 모양을 반영합니다. 마할라노비스 거리로 배정하는 것과 같습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
