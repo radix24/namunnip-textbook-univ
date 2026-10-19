@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통2-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s2-matdiff" data-kind="본문" data-std="응통2-05-04">
+  <header class="card-head"><span class="no"></span><h2>벡터로 미분하기와 최소제곱</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형식 \(\mathbf a^\top\mathbf x\)와 이차형식 \(\mathbf x^\top A\mathbf x\)의 기울기를 구한다.</li>
+        <li>잔차제곱합을 벡터로 미분해 정규방정식을 유도한다.</li>
+        <li>헤세 행렬로 최소임을 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이차형식 (<a href="05-01.html">5.1절</a>), 양정치 (<a href="05-02.html">5.2절</a>), 편미분과 기울기 (응통1 5.1절).</li>
+      </ul>
+    </div>
+
+    <h3>변수 \(p\)개를 한꺼번에 미분</h3>
+    <p>회귀계수가 10개이면 잔차제곱합을 10번 편미분해 10개 식을 세워야 합니다. 벡터 미분 공식 두 개를 알면 이 일을 한 줄로 끝낼 수 있습니다.</p>
+
+    <h3><span class="no">5.4.1</span>기본 공식</h3>
+    <p>스칼라 함수 \(f(\mathbf x)\)의 기울기 \(\nabla f = \partial f/\partial\mathbf x\)는 편미분을 모은 열벡터입니다(응통1 5.1절).</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.4.1</span>
+      <p>(가) \(\dfrac{\partial}{\partial\mathbf x}\mathbf a^\top\mathbf x = \mathbf a\). (나) \(\dfrac{\partial}{\partial\mathbf x}\mathbf x^\top A\mathbf x = (A + A^\top)\mathbf x\), \(A\)가 대칭이면 \(2A\mathbf x\). (다) 이차형식의 헤세 행렬은 \(A + A^\top\)(대칭이면 \(2A\)).</p>
+    </div>
+    <p class="tb-proof">(가) \(\mathbf a^\top\mathbf x = \sum a_ix_i\)를 \(x_j\)로 미분하면 \(a_j\). (나) \(\mathbf x^\top A\mathbf x = \sum_i\sum_k a_{ik}x_ix_k\)를 \(x_j\)로 미분하면 \(\sum_k a_{jk}x_k + \sum_i a_{ij}x_i\), 곧 \((A\mathbf x)_j + (A^\top\mathbf x)_j\). <span class="qed">∎</span></p>
+    <p>일변수의 \(\frac{d}{dx}ax = a\), \(\frac{d}{dx}ax^2 = 2ax\)와 똑같은 모양이라 기억하기 쉽습니다.</p>
+
+    <h3><span class="no">5.4.2</span>정규방정식</h3>
+    <p>\(Q(\boldsymbol\beta) = (\mathbf y - X\boldsymbol\beta)^\top(\mathbf y - X\boldsymbol\beta) = \mathbf y^\top\mathbf y - 2\mathbf y^\top X\boldsymbol\beta + \boldsymbol\beta^\top X^\top X\boldsymbol\beta\). 결과 5.4.1로</p>
+    \[\nabla Q = -2X^\top\mathbf y + 2X^\top X\boldsymbol\beta = \mathbf 0 \ \Rightarrow\ X^\top X\boldsymbol\beta = X^\top\mathbf y.\]
+    <p>헤세 행렬 \(2X^\top X\)는 \(X\)의 열이 일차독립이면 양정치(5.2절)라 이 해가 유일한 최소입니다. 능형 회귀(응통10 6.4절)는 여기에 \(\lambda\boldsymbol\beta^\top\boldsymbol\beta\)를 더해 \((X^\top X + \lambda I)\boldsymbol\beta = X^\top\mathbf y\)를 얻습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.2</span>
+      <p>\(f(\mathbf x) = x_1^2 + 4x_1x_2 + 5x_2^2 - 2x_1 - 4x_2\)의 최솟점을 벡터 미분으로 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(A = \begin{pmatrix}1 &amp; 2\\ 2 &amp; 5\end{pmatrix}\), \(\mathbf a = (2, 4)\)로 \(f = \mathbf x^\top A\mathbf x - \mathbf a^\top\mathbf x\). \(\nabla f = 2A\mathbf x - \mathbf a = 0\)에서 \(A\mathbf x = (1, 2)\), \(\mathbf x = A^{-1}(1, 2) = \frac11\begin{pmatrix}5 &amp; -2\\ -2 &amp; 1\end{pmatrix}(1, 2) = (1, 0)\). 헤세 \(2A\)는 대각 원소 양수, 행렬식 \(4 \times 1 = 4 &gt; 0\)이라 양정치, 최솟값 \(f(1, 0) = -1\).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\nabla(\mathbf a^\top\mathbf x) = \mathbf a\), \(\nabla(\mathbf x^\top A\mathbf x) = 2A\mathbf x\)(대칭).</li>
+        <li>잔차제곱합의 기울기 = 0 → 정규방정식.</li>
+        <li>헤세 \(2X^\top X\)가 양정치면 유일한 최소.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>가중 최소제곱 \(Q = (\mathbf y - X\boldsymbol\beta)^\top W(\mathbf y - X\boldsymbol\beta)\)(\(W\) 대칭)의 정규방정식을 구하세요.
+          <details><summary>답</summary><p>\(\nabla Q = -2X^\top W\mathbf y + 2X^\top WX\boldsymbol\beta = 0\), \(X^\top WX\boldsymbol\beta = X^\top W\mathbf y\)(응통10 5.3절).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>제약 \(\mathbf 1^\top\mathbf w = 1\) 아래 \(\mathbf w^\top\Sigma\mathbf w\)를 최소로 하는 \(\mathbf w\)(최소분산 포트폴리오)를 라그랑주 승수법(응통1 5.3절)으로 구하세요.
+          <details><summary>답</summary><p>\(L = \mathbf w^\top\Sigma\mathbf w - \lambda(\mathbf 1^\top\mathbf w - 1)\), \(2\Sigma\mathbf w = \lambda\mathbf 1\), \(\mathbf w \propto \Sigma^{-1}\mathbf 1\). 정규화하면 \(\mathbf w = \Sigma^{-1}\mathbf 1/(\mathbf 1^\top\Sigma^{-1}\mathbf 1)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

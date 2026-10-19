@@ -1,68 +1,67 @@
-/* 메인 화면: js/toc.js(window.UNIV)에서 학과 탭 · 학년·학기 배치도 · 과목 목록을 그린다 */
+/* 메인 화면: 학과 고르기(연세대 고정) → 그 학과의 학년·학기 배치도와 과목 목록.
+   자료는 tools/place.py가 만든 data/yonsei.json(학과 목록), data/yonsei-<학과>.json(학과 요약), data/pool.json(교재 전체).
+   학과는 js/place.js(QPlace)가 기억한다. ?pick = 학과 다시 고르기, ?all = 교재 전체 보기, ?d=<학과> = 그 학과로 보기(저장 안 함) */
 (() => {
   "use strict";
-  const U = window.UNIV;
-  if (!U || document.body.dataset.view !== "home") return;
+  const Q = window.QPlace;
+  if (!Q || document.body.dataset.view !== "home") return;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const md = (s) => esc(s).replace(/\*([^*]+)\*/g, "<i>$1</i>");   // 설계 문서의 *책 제목*
   const nStd = (c) => c.units.reduce((a, u) => a + u.s.length, 0);
-  const TAB_KEY = "quri-dept";
+  const path = (c) => `c/${c.id}/`;
   const P = window.QProgress;
+  const params = new URLSearchParams(location.search);
 
-  /* ───── 학교별 보기: 고른 대학의 커리큘럼에 있는 과목·대단원·성취기준만 남긴 학과 사본을 그린다 ─────
-     과목은 c.unis, 성취기준은 s.u(build.py가 맞춘 값). 빈 목록은 '미표시'라 '전체'에서만 보인다 */
-  const QU = window.QUni;
-  const UNIS = QU ? QU.LIST.filter((x) => U.some((d) => d.courses.some((c) => (c.unis || []).includes(x)))) : [];
-  let uni = QU ? QU.get() : "";
-  if (!UNIS.includes(uni)) uni = "";
-  const sIn = (s) => !uni || (s.u || []).includes(uni);
-  const view = (d) => !uni ? d : {
-    ...d,
-    courses: d.courses.filter((c) => (c.unis || []).includes(uni)).map((c) => ({
-      ...c,
-      units: c.units.filter((u) => u.s.some(sIn)).map((u) => {
-        const s = u.s.filter(sIn);
-        return { ...u, s, cards: s.reduce((a, x) => a + (x.k || []).length, 0) + (u.r || []).length };
-      }),
-    })),
-  };
-  const uniPick = (d) => !UNIS.length || (QU && QU.FIXED) ? "" : `<label class="uni-pick"><span class="mono">학교</span><select aria-label="학교별 보기">
-      <option value="">전체</option>${UNIS.map((x) => {
-        const n = d.courses.filter((c) => (c.unis || []).includes(x)).length;
-        return `<option value="${esc(x)}"${x === uni ? " selected" : ""}${n ? "" : " disabled"}>${esc(x)}${n ? ` · ${n}` : ""}</option>`;
-      }).join("")}</select></label>`;
+  const pick = document.getElementById("pick"), tree = document.getElementById("tree"), host = document.getElementById("courses-list");
+  const bar = document.getElementById("courses"), empty = document.getElementById("empty");
+  let dept = null;   // 지금 보이는 학과 요약
 
-  /* ───── 학과 탭 ───── */
-  const tabs = document.getElementById("dom-tabs");
-  tabs.innerHTML = U.map((d) => `<button type="button" role="tab" data-dept="${d.id}" aria-selected="false" aria-controls="tree courses-list">${esc(d.short)}</button>`).join("");
+  /* ───── 학과 고르기 ───── */
+  function drawPick(list, cur, open) {
+    if (!open && cur) {
+      pick.innerHTML = `<div class="pick-line"><span class="mono">${esc(Q.SCHOOL_NAME)}</span><b>${esc(list.find((x) => x.id === cur).name)}</b>
+        <button type="button" class="pick-change">학과 바꾸기</button><a class="pick-all" href="?all">교재 전체 보기</a></div>`;
+      return;
+    }
+    pick.innerHTML = `
+      <div class="pick-box">
+        <h2>${esc(Q.SCHOOL_NAME)} 학과를 고르세요</h2>
+        <p class="small dim">학과마다 듣는 과목, 과목 이름, 학기 배치가 다릅니다. 고른 학과는 이 브라우저에 기억되고, 어느 페이지에서든 위쪽의 학과 이름을 눌러 바꿀 수 있습니다.</p>
+        <div class="pick-grid" role="list">${list.map((x) => `
+          <button type="button" role="listitem" class="pick-dept" data-d="${x.id}" aria-pressed="${x.id === cur}"><b>${esc(x.name)}</b><span class="mono small">${esc(x.college)} · ${x.courses}과목</span></button>`).join("")}
+        </div>
+        <p class="pick-foot small"><a href="?all">교재 전체 보기</a> — 학과와 관계없이 모든 교재(과목)를 분야별로 봅니다.</p>
+      </div>`;
+  }
+  pick.addEventListener("click", (e) => {
+    const b = e.target.closest(".pick-dept");
+    if (b) { Q.set(b.dataset.d); history.replaceState(null, "", location.pathname); show(b.dataset.d); return; }
+    if (e.target.closest(".pick-change")) Q.index().then((ix) => { drawPick(ix.depts, dept && dept.id, true); pick.scrollIntoView({ block: "start" }); });
+  });
 
-  /* ───── 배치도: 학년-학기 열마다 과목 상자 ───── */
+  /* ───── 배치도: 학년-학기 행마다 과목 상자 ───── */
   const slot = (c) => `${c.y}-${c.sem}`;
-  const slotName = (s) => { const [y, m] = s.split("-"); return `${y}학년 ${m}학기`; };
   const box = (c) => {
-    const nc = c.units.reduce((a, u) => a + (u.cards || 0), 0), dn = P ? c.units.reduce((a, u) => a + u.s.filter((s) => P.done(s.c)).length, 0) : 0;
-    return `<a class="tbox${nc ? "" : " soon"}" href="${esc(c.path)}" data-code="${esc(c.code)}"${c.onlyU ? " data-extra" : ""}>
-      <span class="lv mono">${esc(c.kind)} · ${c.cr}학점${c.onlyU ? ` · <span class="u-extra">수강편람 개설</span>` : ""}</span><b>${esc(c.name)}</b>
+    const nc = c.units.reduce((a, u) => a + (u.cards || 0), 0), dn = P ? c.units.reduce((a, u) => a + u.s.filter((s) => P.done(s)).length, 0) : 0;
+    return `<a class="tbox${nc ? "" : " soon"}" href="${esc(path(c))}" data-code="${esc(c.id)}"${c.extra ? " data-extra" : ""}>
+      <span class="lv mono">${esc(c.kind)} · ${c.cr}학점${c.extra ? ` · <span class="u-extra">수강편람 개설</span>` : ""}</span><b>${esc(c.name)}</b>
       <span class="pg mono">${nc ? `카드 ${nc} · ` : ""}성취기준 ${dn ? `${dn}/` : ""}${nStd(c)}</span>
       ${dn ? `<span class="lp" aria-hidden="true"><i style="--p:${(dn / nStd(c)).toFixed(3)}"></i></span>` : ""}</a>`;
   };
-  const tree = document.getElementById("tree");
-  function drawTree(d0) {
-    const d = view(d0);
+  function drawTree(d) {
     const slots = [...new Set(d.courses.map(slot))].sort();
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
-    const nx = d.courses.filter((c) => c.onlyU).length;
+    const nx = d.courses.filter((c) => c.extra).length;
     tree.innerHTML = `
-      <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
-        <div class="tree-ctl">${uniPick(d0)}
+      <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.school)} ${esc(d.college)}</span></h2>
+        <div class="tree-ctl">
         ${nx ? `<div class="scope-seg" role="group" aria-label="보기 범위"><button type="button" data-scope="main">주요 과목만</button><button type="button" data-scope="all">모든 과목 <span class="dim">+${nx}</span></button></div>` : ""}</div>
-        <p class="mono small dim">${uni ? `${esc(uni)} 커리큘럼에 있는 과목과 내용 요소만 보입니다. ` : ""}과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서입니다. 점선 상자는 카드 준비 중입니다(학습 요소와 성취기준은 볼 수 있음).${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
-      ${uni && !d.courses.length ? `<p class="uni-none small">이 학과에는 ${esc(uni)} 표시가 붙은 과목이 아직 없습니다. 학교를 '전체'로 바꾸면 모든 과목이 보입니다.</p>` : ""}
-      <div class="tree-band sem-rows" data-track="${d.id}"${d.courses.length ? "" : " hidden"}>${slots.map((s, i) => {
+        <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서이고, 1학년 공통 과목도 ${esc(d.name)}에서 쓰는 이름으로 보입니다. 점선 상자는 카드 준비 중입니다.${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
+      <div class="tree-band sem-rows" data-track="${d.id}">${slots.map((s, i) => {
         const [y, m] = s.split("-"), newYear = i > 0 && slots[i - 1].split("-")[0] !== y;
         const cs = d.courses.filter((c) => slot(c) === s);
         return `
-        <div class="sem-row${newYear ? " sem-year" : ""}"${cs.every((c) => c.onlyU) ? " data-extra" : ""}><h3 class="sem-lb"><b>${y}학년</b> ${m}학기</h3><div class="sem-boxes">${cs.map(box).join("")}</div></div>`;
+        <div class="sem-row${newYear ? " sem-year" : ""}"${cs.every((c) => c.extra) ? " data-extra" : ""}><h3 class="sem-lb"><b>${y}학년</b> ${m}학기</h3><div class="sem-boxes">${cs.map(box).join("")}</div></div>`;
       }).join("")}
       </div>`;
     paintScope();
@@ -75,13 +74,6 @@
     document.body.dataset.scope = scope;
     tree.querySelectorAll("[data-scope]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.scope === scope)));
   }
-  tree.addEventListener("change", (e) => {
-    const sel = e.target.closest(".uni-pick select"); if (!sel) return;
-    uni = UNIS.includes(sel.value) ? sel.value : "";
-    if (QU) QU.set(uni);
-    drawTree(dept); drawList(dept); apply();
-    tree.querySelector(".uni-pick select")?.focus({ preventScroll: true });
-  });
   tree.addEventListener("click", (e) => {
     const b = e.target.closest("[data-scope]"); if (!b) return;
     scope = b.dataset.scope === "all" ? "all" : "main"; paintScope();
@@ -89,62 +81,63 @@
   });
 
   /* ───── 과목 목록 ───── */
-  const host = document.getElementById("courses-list");
-  /* 선수 칸의 과목 코드(공통1, 수학7, 공통1·2)를 과목 이름 링크로. 이어지는 과목은 다른 과목의 선수 칸을 거꾸로 찾는다 */
-  const ALL = new Map(U.flatMap((d) => d.courses.map((c) => [c.code, c])));
-  const RX = /([가-힣]+?)(\d+(?:·\d+)*)(?!\d)/g;
-  const preCodes = (text) => [...String(text || "").matchAll(RX)].flatMap((m) => m[2].split("·").map((k) => m[1] + k)).filter((k) => ALL.has(k));
-  const cLink = (c) => `<a href="${esc(c.path)}">${esc(c.name)}</a>`;
-  const preHtml = (text) => esc(text).replace(RX, (all, h, ns) => {
-    const parts = ns.split("·").map((k) => h + k);
-    return parts.every((p) => ALL.has(p)) ? parts.map((p) => cLink(ALL.get(p))).join(", ") : all;
-  });
-  const NEXT = new Map();
-  ALL.forEach((c) => preCodes(c.pre).forEach((k) => { if (k !== c.code) (NEXT.get(k) || NEXT.set(k, []).get(k)).push(c); }));
-  /* 이어지는 과목은 로드맵의 바로 다음 학기만(없으면 그 뒤 가장 가까운 학기). 공통 기초 뒤에는 2학년 과목부터 (build.py next_courses와 같은 규칙) */
-  const terms = (c) => { const s = String(c.sem).match(/[12]/g) || ["1"]; return Math.min(...s.map((x) => (c.y - 1) * 2 + +x - 1)); };
-  NEXT.forEach((list, k) => {
-    const c = ALL.get(k), base = terms(c);
-    const later = list.filter((x) => (c.dept !== "common" || x.y >= 2) && terms(x) > base);
-    const near = Math.min(...later.map(terms));
-    if (later.length) NEXT.set(k, later.filter((x) => terms(x) === near)); else NEXT.delete(k);
-  });
-  function drawList(d0) {
-    const d = view(d0);
+  function drawList(d) {
+    const byId = new Map(d.courses.map((c) => [c.id, c]));
+    const cLink = (c) => `<a href="${esc(path(c))}">${esc(c.name)}</a>`;
+    /* 이어지는 과목: 그 학과 배치에서 이 과목을 선수로 둔 과목 가운데 가장 가까운 다음 학기 (build.py next_courses와 같은 규칙) */
+    const term = (c) => { const s = String(c.sem).match(/[12]/g) || ["1"]; return Math.min(...s.map((x) => (c.y - 1) * 2 + +x - 1)); };
+    const next = (c) => {
+      const later = d.courses.filter((x) => x.pre.includes(c.id) && term(x) > term(c));
+      const near = Math.min(...later.map(term));
+      return later.filter((x) => term(x) === near);
+    };
     host.innerHTML = d.courses.map((c) => {
-      /* 대단원은 한 줄: 번호 · 제목 · 진도(할 수 있게 된 성취기준 / 전체). 성취기준 문장은 검색에만 쓰고 과목 목차에서 본다 */
       const units = c.units.map((u) => {
-        const dn = P ? u.s.filter((s) => P.done(s.c)).length : 0, n = u.s.length;
-        const hay = [u.t, u.el, ...u.s.map((s) => s.t)].join(" ").toLowerCase();
+        const dn = P ? u.s.filter((s) => P.done(s)).length : 0, n = u.s.length;
+        const hay = [u.t, u.el, ...u.st].join(" ").toLowerCase();
         return `
-          <li class="unit${n && dn === n ? " done" : ""}" data-hay="${esc(hay)}"><a href="${esc(c.path)}${u.n}.html"><span class="mono">${u.n}</span><span class="t">${esc(u.t)}</span>
+          <li class="unit${n && dn === n ? " done" : ""}" data-hay="${esc(hay)}"><a href="${esc(path(c))}${u.n}.html"><span class="mono">${u.n}</span><span class="t">${esc(u.t)}</span>
             <span class="u-pg" title="성취기준 ${dn}/${n} 할 수 있음${u.cards ? ` · 카드 ${u.cards}` : ""}"><span class="lp" aria-hidden="true"><i style="--p:${n ? (dn / n).toFixed(3) : 0}"></i></span><span class="mono">${dn}/${n}</span></span></a></li>`;
       }).join("");
+      const pre = c.pre.map((k) => byId.get(k)).filter(Boolean), nx = next(c);
       return `
-      <section class="course" id="c-${esc(c.code)}"${c.onlyU ? " data-extra" : ""} data-y="${c.y}" data-hay="${esc((c.name + " " + c.sub.join(" ") + " " + c.code).toLowerCase())}">
+      <section class="course" id="c-${esc(c.id)}"${c.extra ? " data-extra" : ""} data-y="${c.y}" data-hay="${esc((c.name + " " + c.no + " " + c.id).toLowerCase())}">
         <div class="course-head">
-          <span class="mono">${esc(c.sub.join(" / "))}</span>
-          <h2><a href="${esc(c.path)}">${esc(c.name)}</a></h2>
-          <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점</p>
+          <span class="mono">${esc(c.no)}</span>
+          <h2><a href="${esc(path(c))}">${esc(c.name)}</a></h2>
+          <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점${c.exam === "none" ? " · 시험 없음" : c.exam === "fin" ? " · 기말만" : ""}</p>
           <p class="count mono dim">대단원 ${c.units.length} · 성취기준 ${nStd(c)}</p>
-          ${c.pre ? `<p class="small u-path"><b>먼저 공부할 과목</b> ${preHtml(c.pre)}</p>` : ""}
-          ${NEXT.has(c.code) ? `<p class="small u-path"><b>이어지는 과목</b> ${NEXT.get(c.code).map(cLink).join(", ")}</p>` : ""}
+          ${pre.length ? `<p class="small u-path"><b>먼저 공부할 과목</b> ${pre.map(cLink).join(", ")}</p>` : c.preT ? `<p class="small u-path"><b>먼저 공부할 내용</b> ${esc(c.preT)}</p>` : ""}
+          ${nx.length ? `<p class="small u-path"><b>이어지는 과목</b> ${nx.map(cLink).join(", ")}</p>` : ""}
           ${c.hours ? `<p class="small"><b>학습 시간</b> ${esc(c.hours)}</p>` : ""}
           ${c.books ? `<p class="small"><b>교재</b> ${md(c.books)}</p>` : ""}
-          <p><a class="link" href="${esc(c.path)}">과목 목차와 성취기준 →</a></p>
+          <p><a class="link" href="${esc(path(c))}">과목 목차와 성취기준 →</a></p>
         </div>
         <ol class="u-units">${units}</ol>
       </section>`;
     }).join("");
   }
 
+  /* ───── 교재 전체 보기: 학과와 무관하게 풀 모듈을 분야별로 ───── */
+  function drawPool(p) {
+    tree.innerHTML = `<div class="tree-head"><h2>교재 전체 보기</h2><p class="mono small dim">학과 배치와 관계없는 교재(과목) ${p.modules.length}개입니다. 과목 이름은 교재 이름이며, 학과를 고르면 그 학과에서 쓰는 이름으로 보입니다.</p></div>
+      ${p.fields.map((f) => {
+        const ms = p.modules.filter((m) => m.field === f.id).sort((a, b) => a.y - b.y || a.code.localeCompare(b.code, "ko", { numeric: true }));
+        return ms.length ? `<section class="pool-field"><h3>${esc(f.name)} <span class="mono small dim">${ms.length}</span></h3><div class="sem-boxes">${ms.map((m) => `
+          <a class="tbox${m.cards ? "" : " soon"}" href="c/${esc(m.id)}/"><span class="lv mono">${m.y}학년 · ${esc(m.id)}</span><b>${esc(m.title)}</b><span class="pg mono">${m.cards ? `카드 ${m.cards} · ` : ""}절 ${m.secs}</span></a>`).join("")}</div></section>` : "";
+      }).join("")}`;
+    host.innerHTML = "";
+    bar.hidden = true; empty.style.display = "none";
+  }
+
   /* ───── 학년 칩과 검색 ───── */
   const chips = document.getElementById("chips");
   chips.innerHTML = [["all", "전체"], ["1", "1학년"], ["2", "2학년"], ["3", "3학년"]]
     .map(([v, nm]) => `<button class="chip" data-y="${v}" aria-pressed="${v === "all"}">${nm}</button>`).join("");
-  const q = document.getElementById("q"), empty = document.getElementById("empty");
-  let year = "all", dept = U[0];
+  const q = document.getElementById("q");
+  let year = "all";
   function apply() {
+    if (!dept) return;
     const term = q.value.trim().toLowerCase();
     document.body.classList.toggle("searching", !!term);
     let shown = 0;
@@ -174,27 +167,29 @@
   });
   q.addEventListener("input", apply);
 
-  function setDept(id, save) {
-    dept = U.find((d) => d.id === id) || U[0];
-    document.body.dataset.dept = dept.id;
-    tabs.querySelectorAll("[role=tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.dept === dept.id)));
-    const on = tabs.querySelector("[aria-selected=true]");   // 좁은 화면에서 고른 탭이 보이도록 탭 줄만 민다
-    if (on) tabs.scrollLeft = Math.max(0, on.offsetLeft - tabs.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2);
-    drawTree(dept); drawList(dept);
-    if (save) try { localStorage.setItem(TAB_KEY, dept.id); } catch (e) { console.warn("학과 탭을 저장하지 못함", e); }
-    apply();
+  /* ───── 보이기 ───── */
+  function show(d) {
+    Q.index().then((ix) => drawPick(ix.depts, d, false));
+    Q.load(d).then((data) => {
+      dept = data;
+      document.body.dataset.dept = d;
+      bar.hidden = false;
+      drawTree(data); drawList(data); apply();
+      const chip = document.querySelector(".place-chip");
+      if (chip) { chip.hidden = false; chip.textContent = `${Q.SCHOOL_NAME} · ${data.name}`; }
+    }).catch((e) => { tree.innerHTML = `<p class="u-empty">학과 자료를 불러오지 못했습니다(${esc(e.message)}).</p>`; });
   }
-  tabs.addEventListener("click", (e) => { const b = e.target.closest("[role=tab]"); if (b) setDept(b.dataset.dept, true); });
-  tabs.addEventListener("keydown", (e) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    const i = U.indexOf(dept), j = (i + (e.key === "ArrowRight" ? 1 : U.length - 1)) % U.length;
-    setDept(U[j].id, true);
-    tabs.querySelector("[aria-selected=true]").focus();
-  });
-
-  let saved = new URLSearchParams(location.search).get("dept");
-  if (!saved) try { saved = localStorage.getItem(TAB_KEY); } catch (e) { saved = null; }
-  setDept(saved || "common", false);
+  const cur = Q.get();
+  if (params.has("all")) {
+    Q.index().then((ix) => drawPick(ix.depts, cur, !cur));
+    Q.pool().then(drawPool);
+  } else if (!cur || params.has("pick")) {
+    Q.index().then((ix) => drawPick(ix.depts, cur, true));
+    tree.innerHTML = ""; host.innerHTML = ""; bar.hidden = true; empty.style.display = "none";
+    if (cur && params.has("pick")) Q.load(cur).then((data) => { dept = data; });
+  } else {
+    show(cur);
+  }
 
   /* 소개 아래 한 줄: 마지막으로 연 절(이어서 공부하기). 기록이 없으면 비워 둔다 */
   const go = document.getElementById("dash-go");
@@ -204,19 +199,14 @@
     go.innerHTML = v ? `<a class="dash-next" href="${esc(v.href)}"><span class="mono">이어서 공부하기</span><b>${esc(v.title)}</b><span class="small dim">${esc(v.sub || "")}</span></a>` : "";
   };
   drawResume();
-  if (P) P.onChange(() => { drawResume(); drawTree(dept); drawList(dept); apply(); });
+  if (P) P.onChange(() => { drawResume(); if (dept && !params.has("all")) { drawTree(dept); drawList(dept); apply(); } });
 
-  /* 소개 옆 숫자: 카드는 본문·예제·실습·연습 등 블록 전부(u.cards), 문항은 문제은행(c.bank) */
-  const total = U.reduce((a, d) => {
-    a.c += d.courses.length;
-    d.courses.forEach((c) => {
-      a.q += c.bank || 0;
-      c.units.forEach((u) => { a.u++; a.s += u.s.length; a.b += u.cards || 0; });
-    });
-    return a;
-  }, { c: 0, u: 0, s: 0, b: 0, q: 0 });
-  const nf = (n) => n.toLocaleString("ko-KR");
-  document.getElementById("figs").innerHTML = [["학과", `${U.length - 1}<small> + 공통</small>`], ["과목", nf(total.c)], ["대단원", nf(total.u)],
-    ["성취기준", nf(total.s)], ["카드", nf(total.b)], ["문항", nf(total.q)]]
-    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  /* 소개 옆 숫자: 교재 전체(풀) 기준 */
+  Q.pool().then((p) => {
+    const t = p.modules.reduce((a, m) => ({ u: a.u + m.units, s: a.s + m.secs, b: a.b + m.cards, q: a.q + (m.q || 0) }), { u: 0, s: 0, b: 0, q: 0 });
+    const nf = (n) => n.toLocaleString("ko-KR");
+    document.getElementById("figs").innerHTML = [["학과", `${Q.DEPTS.length}<small> · ${esc(Q.SCHOOL_NAME)}</small>`], ["교재", nf(p.modules.length)], ["대단원", nf(t.u)],
+      ["성취기준", nf(t.s)], ["카드", nf(t.b)], ["문항", nf(t.q)]]
+      .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  }).catch(() => {});
 })();

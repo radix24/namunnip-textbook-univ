@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s21-mcsummary" data-kind="본문" data-std="응통21-03-03">
+  <header class="card-head"><span class="no"></span><h2>사후 표본으로 요약하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사후분포에서 뽑은 표본으로 평균, 분위수, 사후 확률을 구한다.</li>
+        <li>모수의 함수(차이, 비, 오즈)의 사후분포를 표본 변환으로 얻는다.</li>
+        <li>몬테카를로 오차를 표본 수와 함께 보고한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>점추정과 신용구간 (<a href="03-01.html">3.1절</a>), 몬테카를로 적분 (응통15 4.3절).</li>
+      </ul>
+    </div>
+
+    <h3>적분 대신 세기</h3>
+    <p>사후분포가 닫힌 꼴이어도 "두 처리의 반응률 차이가 0.1보다 클 확률"처럼 모수의 함수에 관한 질문은 적분이 번거롭습니다. 사후분포에서 표본을 많이 뽑아 두면(켤레면 직접, 아니면 MCMC, 06단원) 그런 질문은 모두 표본을 세는 문제가 됩니다.</p>
+
+    <h3><span class="no">3.3.1</span>기본 요약</h3>
+    <p>사후 표본 \(\theta^{(1)}, \ldots, \theta^{(S)}\)에 대해</p>
+    <ul>
+      <li>사후 평균 ≈ 표본 평균, 사후 중앙값·신용구간 ≈ 표본 분위수.</li>
+      <li>\(P(\theta \in A \mid \mathbf y) \approx\) 표본 가운데 \(A\)에 든 비율.</li>
+      <li>\(g(\theta)\)의 사후분포 ≈ \(g(\theta^{(s)})\)들의 분포. 변환마다 다시 적분할 필요가 없습니다.</li>
+    </ul>
+    <p>R: <code>th &lt;- rbeta(10000, 8, 4); mean(th &gt; 0.5); quantile(th/(1 - th), c(0.025, 0.975))</code>.</p>
+
+    <h3><span class="no">3.3.2</span>몬테카를로 오차</h3>
+    <p>독립 표본 \(S\)개로 구한 사후 확률 \(\hat p\)의 몬테카를로 표준오차는 \(\sqrt{\hat p(1 - \hat p)/S}\)이고, 평균은 사후 표준편차/\(\sqrt S\)입니다. MCMC 표본은 자기상관이 있어 \(S\) 대신 유효 표본 크기(응통15 5.3절)를 씁니다. 꼬리 확률(0.01 근처)이나 꼬리 분위수는 많은 표본이 필요합니다. 몬테카를로 오차는 표본을 늘리면 줄지만, 사후분포 자체의 불확실성(자료가 적어서 생긴)은 줄지 않는다는 점을 구별합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>사후 \(\mathrm{Beta}(8, 4)\)에서 \(P(\theta &gt; 0.5)\)를 정확히 구하고, 표본 1만 개로 어림했을 때의 몬테카를로 표준오차를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> 정수 모수의 베타 분포는 \(P(\theta \le 0.5) = P(\mathrm{Bin}(11, 0.5) \ge 8) = (165 + 55 + 11 + 1)/2048 = 0.113\)이므로 \(P(\theta &gt; 0.5) = 0.887\). 표본 1만 개의 표준오차 \(\sqrt{0.887 \times 0.113/10000} = 0.003\)이라 0.887 ± 0.006 정도로 어림됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사후 표본의 평균·분위수·비율이 사후 요약.</li>
+        <li>모수의 함수는 표본을 변환해 바로 얻습니다.</li>
+        <li>몬테카를로 오차를 유효 표본 크기와 함께 보고합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>사후 확률이 0.02 근처인 사건을 상대 오차 10%(표준오차 0.002)로 어림하려면 독립 표본이 몇 개 필요한가요?
+          <details><summary>답</summary><p>\(\sqrt{0.02 \times 0.98/S} = 0.002\), \(S = 4900\)개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>두 처리의 반응률 사후분포가 \(\mathrm{Beta}(30, 20)\), \(\mathrm{Beta}(22, 28)\)입니다. 반응률 차이가 0보다 클 사후 확률을 구하는 R 코드를 쓰세요.
+          <details><summary>답</summary><p><code>a &lt;- rbeta(1e5, 30, 20); b &lt;- rbeta(1e5, 22, 28); mean(a - b &gt; 0)</code>. 두 사후분포가 독립이라 따로 뽑아 빼면 차이의 사후 표본이 됩니다(약 0.95).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

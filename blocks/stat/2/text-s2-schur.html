@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통2-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s2-schur" data-kind="본문" data-std="응통2-02-03">
+  <header class="card-head"><span class="no"></span><h2>블록 행렬의 역행렬과 슈어 보수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>블록 소거로 슈어 보수를 정의한다.</li>
+        <li>블록 행렬의 역행렬과 행렬식을 슈어 보수로 쓴다.</li>
+        <li>슈어 보수가 조건부 분산과 편회귀에 나타나는 이유를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>블록 행렬 (<a href="01-01.html">1.1절</a>), 역행렬 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>변수를 두 묶음으로 나눌 때</h3>
+    <p>공분산 행렬을 "관심 변수"와 "나머지"로 나누면 블록 행렬이 됩니다. 조건부분포(응통19 1.3절), 다중회귀의 한 계수(응통10 2.4절)는 모두 이 블록 행렬의 역행렬 한 부분입니다. 그 공통 재료가 슈어 보수입니다.</p>
+
+    <h3><span class="no">2.3.1</span>블록 소거와 슈어 보수</h3>
+    <p>\(M = \begin{pmatrix}A &amp; B\\ C &amp; D\end{pmatrix}\)에서 \(A\)가 가역이면, 가우스 소거처럼 둘째 블록 행에서 첫째 블록 행의 \(CA^{-1}\)배를 빼면</p>
+    \[\begin{pmatrix}I &amp; 0\\ -CA^{-1} &amp; I\end{pmatrix}M = \begin{pmatrix}A &amp; B\\ 0 &amp; D - CA^{-1}B\end{pmatrix}.\]
+    <div class="tb-env def">
+      <span class="lb">정의 2.3.1</span>
+      <p>\(M/A = D - CA^{-1}B\)를 \(M\)에서 \(A\)의 <b>슈어 보수</b>라 한다.</p>
+    </div>
+    <p>여기서 바로 \(\det M = \det A\cdot\det(D - CA^{-1}B)\)가 나옵니다(삼각 블록 행렬의 행렬식).</p>
+
+    <h3><span class="no">2.3.2</span>블록 역행렬</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.3.2</span>
+      <p>\(A\)와 \(S = D - CA^{-1}B\)가 가역이면 \(M^{-1} = \begin{pmatrix}A^{-1} + A^{-1}BS^{-1}CA^{-1} &amp; -A^{-1}BS^{-1}\\ -S^{-1}CA^{-1} &amp; S^{-1}\end{pmatrix}\).</p>
+    </div>
+    <p>핵심은 오른쪽 아래 블록이 슈어 보수의 역 \(S^{-1}\)이라는 점입니다. 공분산 행렬 \(\Sigma\)를 이렇게 나누면 \(S = \Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\)는 응통19 1.3절의 조건부 공분산이고, \(\Sigma^{-1}\)의 오른쪽 아래 블록이 그 역입니다. 정밀도 행렬 \(\Sigma^{-1}\)의 원소가 편상관과 이어지는 이유입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.3</span>
+      <p>\(M = \begin{pmatrix}4 &amp; 2\\ 2 &amp; 3\end{pmatrix}\)를 1×1 블록으로 보고 슈어 보수, 행렬식, 역행렬을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(S = 3 - 2 \times \frac14 \times 2 = 2\). \(\det M = 4 \times 2 = 8\). 역행렬: 오른쪽 아래 \(1/S = 0.5\), 비대각 \(-\frac{2}{4 \times 2} = -0.25\), 왼쪽 위 \(\frac14 + \frac{2 \times 2}{16 \times 2} = 0.375\). 보통 공식 \(\frac18\begin{pmatrix}3 &amp; -2\\ -2 &amp; 4\end{pmatrix}\)과 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>슈어 보수 \(D - CA^{-1}B\) = 블록 소거 뒤 남는 블록.</li>
+        <li>\(\det M = \det A\det S\), \(M^{-1}\)의 오른쪽 아래 = \(S^{-1}\).</li>
+        <li>공분산 행렬에서는 조건부 공분산과 같습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix}1 &amp; \rho\\ \rho &amp; 1\end{pmatrix}\)의 슈어 보수와 역행렬의 (2,2) 원소는?
+          <details><summary>답</summary><p>\(S = 1 - \rho^2\), (2,2) 원소 \(1/(1 - \rho^2)\). 상관이 1에 가까우면 커져 다중공선성의 분산팽창인자(응통10 4.4절)와 같은 꼴입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>회귀의 \(X^\top X\)를 \((\mathbf 1, \mathbf x)\)로 나눌 때 \(\mathbf x\) 쪽 슈어 보수가 \(S_{xx}\)임을 보이세요.
+          <details><summary>답</summary><p>\(A = n\), \(B = C^\top = \sum x\), \(D = \sum x^2\). \(S = \sum x^2 - (\sum x)^2/n = S_{xx}\). 그래서 \((X^\top X)^{-1}\)의 (2,2) 원소가 \(1/S_{xx}\), 기울기의 분산 \(\sigma^2/S_{xx}\)입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

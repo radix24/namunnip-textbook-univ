@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s21-bayeslogit" data-kind="본문" data-std="응통21-06-03">
+  <header class="card-head"><span class="no"></span><h2>메트로폴리스로 베이즈 로지스틱 회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>켤레 사전분포가 없는 로지스틱 회귀의 사후분포를 정규화 상수 없이 쓴다.</li>
+        <li>랜덤워크 메트로폴리스로 계수를 표집하고 채택 확률을 계산한다.</li>
+        <li>사후 표본으로 오즈비와 예측 확률을 요약한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>깁스 표집 (<a href="06-01.html">6.1절</a>), 메트로폴리스-헤이스팅스 (응통15 5.1절), 로지스틱 회귀 (응통18 3단원).</li>
+      </ul>
+    </div>
+
+    <h3>깁스 표집이 어려울 때</h3>
+    <p>정규 모형(6.1절)은 조건부분포가 익숙한 꼴이라 깁스 표집이 쉬웠습니다. 로지스틱 회귀는 어떤 사전분포를 써도 사후분포가 이름 있는 분포가 되지 않습니다. 하지만 메트로폴리스 알고리즘은 사후 밀도의 비만 계산할 수 있으면 되므로 정규화 상수를 몰라도 됩니다.</p>
+
+    <h3><span class="no">6.3.1</span>로그 사후 밀도</h3>
+    <p>\(P(y_i = 1) = p_i\), \(\mathrm{logit}\,p_i = \mathbf x_i^\top\boldsymbol\beta\), 사전 \(\beta_j \sim N(0, s^2)\)이면</p>
+    \[\log p(\boldsymbol\beta \mid \mathbf y) = \sum_i\left[y_i\eta_i - \log(1 + e^{\eta_i})\right] - \frac{\|\boldsymbol\beta\|^2}{2s^2} + \text{상수}, \quad \eta_i = \mathbf x_i^\top\boldsymbol\beta.\]
+    <p>로그 척도로 계산해야 넘침(응통15 1.1절)을 피합니다. 사전 표준편차 \(s\)를 2.5 정도(표준화한 설명변수 기준)로 두는 약한 정보 사전분포는 완전 분리(어떤 변수가 결과를 완벽히 가르는 경우) 때 최대가능도가 무한대로 발산하는 문제도 막아 줍니다.</p>
+
+    <h3><span class="no">6.3.2</span>알고리즘</h3>
+    <ol>
+      <li>현재 \(\boldsymbol\beta\)에서 제안 \(\boldsymbol\beta^* = \boldsymbol\beta + \boldsymbol\epsilon\), \(\boldsymbol\epsilon \sim N(\mathbf 0, \delta^2I)\).</li>
+      <li>채택 확률 \(\alpha = \min\{1, \exp[\log p(\boldsymbol\beta^* \mid \mathbf y) - \log p(\boldsymbol\beta \mid \mathbf y)]\}\).</li>
+      <li>균등 난수 \(u &lt; \alpha\)면 이동, 아니면 제자리.</li>
+    </ol>
+    <p>\(\delta\)는 채택률이 25~45%가 되도록 조율합니다(응통15 5.1절). 수렴을 진단한 뒤(응통15 5.3절), 사후 표본의 \(e^{\beta_j}\)로 오즈비의 신용구간을, \(\mathrm{logit}^{-1}(\mathbf x_0^\top\boldsymbol\beta^{(s)})\)로 새 개체의 예측 확률 구간을 얻습니다(3.3절). R의 <code>rstanarm::stan_glm(y ~ x, family = binomial)</code>은 더 효율적인 해밀토니안 몬테카를로로 같은 일을 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>자료 \((x, y)\) = (0, 0), (1, 0), (1, 1), (2, 1), 절편 0으로 고정한 모형 \(\mathrm{logit}\,p = \beta x\), 사전 \(N(0, 10^2)\)입니다. 현재 \(\beta = 1\)에서 제안 \(\beta^* = 1.5\)의 채택 확률은?</p>
+    </div>
+    <p><i>풀이.</i> \(\log p(1) = [0 - \log 2] + [0 - \log(1 + e)] + [1 - \log(1 + e)] + [2 - \log(1 + e^2)] - 0.005 = -2.452\). \(\log p(1.5) = -2.656\). 차이 −0.204, 채택 확률 \(e^{-0.204} = 0.82\). 사후 밀도가 조금 낮은 곳이라 82% 확률로 옮겨 갑니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>로그 가능도 + 로그 사전을 정규화 상수 없이 계산.</li>
+        <li>랜덤워크 제안, 채택 확률은 로그 사후의 차이의 지수.</li>
+        <li>사후 표본으로 오즈비와 예측 확률의 구간을 얻습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>제안이 현재보다 로그 사후가 0.5 높으면 채택 확률은?
+          <details><summary>답</summary><p>\(\min(1, e^{0.5}) = 1\). 사후 밀도가 높은 쪽 제안은 항상 받아들입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>모든 \(x = 1\)인 개체가 \(y = 1\)이고 \(x = 0\)인 개체가 \(y = 0\)입니다(완전 분리). 최대가능도와 베이즈 사후분포는 어떻게 다른가요?
+          <details><summary>답</summary><p>가능도는 \(\beta \to \infty\)에서 커지기만 해 최대가능도 추정값이 없습니다. 정규 사전분포가 큰 \(\beta\)에 벌점을 주어 사후분포는 유한한 곳에 봉우리를 갖고, 크지만 유한한 오즈비와 넓은 신용구간을 줍니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

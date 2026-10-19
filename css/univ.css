@@ -17,11 +17,6 @@
 [data-theme="dark"] .tree [data-track="ee"] { --tc: #e07fbd; }
 [data-theme="dark"] .tree [data-track="me"] { --tc: #aab86a; }
 
-/* 학과 탭: 8개라 좁은 화면에서는 가로로 밀어 본다 */
-.u-tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-.u-tabs::-webkit-scrollbar { display: none; }
-.u-tabs button { flex: none; padding: 10px 18px; white-space: nowrap; }
-@media (max-width: 720px) { .u-tabs button { flex: none; padding: 10px 14px; } }
 
 /* 배치도 */
 .tree-head h2 .mono { font-weight: 500; letter-spacing: 0; margin-left: 6px; }
@@ -113,7 +108,6 @@ body[data-dept="astro"] { --dc: #6b5bc4; } body[data-dept="stat"] { --dc: #2f9a8
 [data-theme="dark"] body[data-dept="math"] { --dc: #e0aa3e; } [data-theme="dark"] body[data-dept="phy"] { --dc: #7fa6ea; } [data-theme="dark"] body[data-dept="chem"] { --dc: #e58a73; }
 [data-theme="dark"] body[data-dept="astro"] { --dc: #a397ec; } [data-theme="dark"] body[data-dept="stat"] { --dc: #5cc8bc; } [data-theme="dark"] body[data-dept="ee"] { --dc: #e07fbd; } [data-theme="dark"] body[data-dept="me"] { --dc: #aab86a; }
 body[data-view="home"] .ty[data-ty] { color: var(--ink-3); }
-.u-tabs button[aria-selected="true"] { box-shadow: inset 0 3px 0 var(--dc, var(--forest)); }
 .tree-head h2 { color: var(--dc, var(--ink)); }
 body[data-view="home"] a.link, body[data-view="home"] button.link, .how a, .u-path a, .u-desc a { color: var(--ink); text-decoration: underline; text-decoration-color: currentColor; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 body[data-view="home"] a.link:hover, body[data-view="home"] button.link:hover, .how a:hover, .u-path a:hover, .u-desc a:hover { color: var(--dc, var(--forest)); text-decoration-color: currentColor; }
@@ -154,12 +148,28 @@ body[data-scope="main"] [data-extra] { display: none !important; }
 .tree-head .tree-ctl { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto; }
 .tree-head .tree-ctl .scope-seg { margin-left: 0; }
 .tree-head .tree-ctl:empty { display: none; }
-.uni-pick { display: inline-flex; align-items: center; border: 1px solid var(--rule); border-radius: 2px; background: var(--card); overflow: hidden; }
-.uni-pick > span { padding: 5px 0 5px 12px; font-size: 11.5px; color: var(--ink-3); }
-.uni-pick select { font: inherit; font-size: 12.5px; padding: 5px 26px 5px 8px; color: var(--ink); background: transparent; border: 0; cursor: pointer;
   appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%), linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
   background-position: right 13px center, right 9px center; background-size: 4px 4px; background-repeat: no-repeat; }
-.uni-pick select option { color: var(--ink); background: var(--card); }
-.uni-pick:has(select:focus-visible) { outline: 2px solid var(--dc, var(--forest)); outline-offset: 2px; }
-.uni-pick:has(option[value]:checked:not([value=""])) { border-color: var(--ink); }
-.uni-none { margin: 0 0 12px; padding: 12px 14px; border: 1px dashed var(--rule); color: var(--ink-2); }
+
+/* ───── 학과 고르기(연세대 고정)와 교재 전체 보기 — js/home.js, js/place.js ───── */
+.pick { margin: 8px 0 18px; }
+.pick-box { border: 1px solid var(--ink); background: var(--card); padding: 18px 20px; }
+.pick-box h2 { font-size: 19px; letter-spacing: -.02em; margin-bottom: 4px; }
+.pick-box > p { max-width: 52em; }
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; margin: 14px 0 12px; }
+.pick-dept { display: grid; gap: 2px; text-align: left; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.pick-dept b { font-size: 15.5px; }
+.pick-dept .mono { color: var(--ink-3); }
+.pick-dept:hover { border-color: var(--ink); }
+.pick-dept[aria-pressed="true"] { border-color: var(--ink); background: var(--paper-2); }
+.pick-foot a, .pick-all { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.pick-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.pick-line b { font-size: 17px; }
+.pick-line .mono { color: var(--ink-3); font-size: 12px; }
+.pick-change { font: inherit; font-size: 13px; padding: 3px 10px; border: 1px solid var(--rule); border-radius: 2px; background: var(--card); color: var(--ink-2); cursor: pointer; }
+.pick-change:hover { border-color: var(--ink); color: var(--ink); }
+.pick-line .pick-all { margin-left: auto; font-size: 13px; }
+.place-chip { font-weight: 600; }
+.place-off { margin-left: 8px; color: var(--ink-3); font-size: 11.5px; }
+.pool-field { margin: 18px 0 8px; }
+.pool-field h3 { font-size: 15px; margin-bottom: 8px; }

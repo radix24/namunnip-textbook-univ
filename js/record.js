@@ -39,7 +39,7 @@
     /* 최근 방문 */
     const vs = P.visits();
     $("r-visits").innerHTML = vs.length ? vs.slice(0, 12).map((v) => `<li><a href="${esc(v.href)}"><span class="t">${esc(v.title)}</span><span class="small dim">${esc(v.sub || "")}</span><span class="mono small dim">${ago(v.ts)}</span></a></li>`).join("")
-      : `<li class="dim small">아직 연 절이 없습니다. <a href="./?dept=common#tree">공통 기초</a>부터 시작해 보세요.</li>`;
+      : `<li class="dim small">아직 연 절이 없습니다. <a href="./?pick">학과를 고르고</a> 1학년 과목부터 시작해 보세요.</li>`;
 
     /* 과목별 */
     const list = rows.filter((r) => showAll || r.s || r.k);

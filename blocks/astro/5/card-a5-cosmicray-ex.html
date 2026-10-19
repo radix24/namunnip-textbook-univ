@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우5-04-04",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a5-cosmicray-ex" data-kind="예제" data-std="천우5-04-04">
+  <header class="card-head"><span class="no"></span><h2>1,000초 노출을 몇 장으로 나눌까</h2><span class="kind">예제 · 우주선 · 포아송 확률</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 맞을 확률에서 남는 오염까지</span>
+      <ol>
+        <li>한 장에서 픽셀이 맞을 확률 \(p = 1 - e^{-\mu}\)(\(\mu\): 평균 맞는 횟수).</li>
+        <li>\(n\)장의 중앙값이 오염되려면 과반이 맞아야 한다: 이항 분포의 꼬리.</li>
+        <li>장 수를 늘리면 읽기 잡음이 늘어나는 대가와 비교한다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 노출을 세 장으로 나누면 오염된 픽셀이 3분의 1로 줄까요, 훨씬 더 줄까요?</div>
+    <p class="q-prob"><b>문제.</b> L2의 CCD에서 1,000초 노출 동안 한 픽셀이 우주선을 맞는 평균 횟수가 \(\mu = 0.16\)입니다(본문의 값). (가) 한 장으로 찍으면 오염된 픽셀 비율은? (나) 333초씩 3장, (다) 200초씩 5장으로 나눠 중앙값을 쓰면 남는 오염 비율은? (라) 2,048 × 2,048 검출기에서 (다)의 오염 픽셀 수는?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(1 - e^{-0.16} = 0.148\). 약 15%.</div><span class="q-why">포아송: 0번 맞을 확률 \(e^{-\mu}\).</span></li>
+        <li><div>(나) 한 장 \(p = 1 - e^{-0.0533} = 0.052\). 2장 이상 맞을 확률 \(3p^2(1 - p) + p^3 = 0.0078\).</div><span class="q-why">3장 중앙값은 2장이 맞아야 오염.</span></li>
+        <li><div>(다) \(p = 1 - e^{-0.032} = 0.031\). 3장 이상 맞을 확률 \(\approx\binom53p^3 = 3.0\times10^{-4}\).</div><span class="q-why">5장 중앙값은 3장이 맞아야 오염.</span></li>
+        <li class="q-end"><div>(라) \(4.19\times10^6\times3.0\times10^{-4} \approx 1{,}250\)개.</div><span class="q-why">60만 개(한 장)에서 1천여 개로.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>나누는 장 수를 늘리면 오염이 비율로 줄지 않고 거듭제곱으로 줄어듭니다. 대가는 읽기 잡음입니다. 어두운 천체에서 하늘 잡음이 작으면 5장으로 나눈 영상의 읽기 잡음은 한 장의 \(\sqrt5\)배가 되므로, 하늘 배경이 읽기 잡음보다 충분히 크도록 한 장의 길이를 정합니다. 적외선 검출기의 연속 읽기는 이 맞바꿈을 거의 없애 줍니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(\mu\)가 작으면 \(1 - e^{-\mu} \approx \mu\)라 (가)는 0.16에 가깝고, (나)의 \(3p^2 \approx 3\times0.0027 = 0.008\)과 같습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>같은 검출기를 남대서양 이상 지역(선속 100배)에서 333초 노출하면 한 장의 오염 비율은?</p>
+      <details><summary>답</summary><p>\(\mu = 0.16\times100/3 = 5.3\), \(1 - e^{-5.3} = 0.995\). 거의 모든 픽셀이 맞아 관측을 멈춰야 합니다.</p></details>
+    </section>
+  </div>
+</article>

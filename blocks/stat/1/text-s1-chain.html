@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통1-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s1-chain" data-kind="본문" data-std="응통1-05-04">
+  <header class="card-head"><span class="no"></span><h2>다변수 연쇄법칙과 방향도함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>변수들이 다른 변수의 함수일 때 다변수 연쇄법칙으로 미분한다.</li>
+        <li>방향도함수를 기울기 벡터와의 내적으로 계산한다.</li>
+        <li>기울기 벡터가 가장 가파른 방향임을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>편미분과 기울기 벡터 (<a href="05-01.html">5.1절</a>), 일변수 연쇄법칙 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>모수가 다른 모수의 함수일 때</h3>
+    <p>로지스틱 회귀의 로그가능도는 확률 \(p\)의 함수이고, \(p\)는 다시 계수 \(\beta_0, \beta_1\)의 함수입니다. 계수에 대한 기울기를 구하려면 여러 단계를 거치는 변화를 곱하고 더해야 합니다. 최적화 알고리즘(응통15)과 신경망의 역전파도 모두 이 규칙 위에 서 있습니다.</p>
+
+    <h3><span class="no">5.4.1</span>다변수 연쇄법칙</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.4.1</span>
+      <p>\(z = f(x, y)\), \(x = x(t)\), \(y = y(t)\)이면 \(\dfrac{dz}{dt} = \dfrac{\partial f}{\partial x}\dfrac{dx}{dt} + \dfrac{\partial f}{\partial y}\dfrac{dy}{dt}\). \(x, y\)가 \((s, t)\)의 함수이면 \(\dfrac{\partial z}{\partial s} = f_x\dfrac{\partial x}{\partial s} + f_y\dfrac{\partial y}{\partial s}\).</p>
+    </div>
+    <p>"\(t\)가 변하면 \(x\)와 \(y\)가 각각 변하고, 그 각각이 \(z\)를 바꾼다"는 경로를 모두 더한 것입니다. 행렬로 쓰면 야코비 행렬의 곱이 됩니다(6.2절의 야코비안과 같은 대상).</p>
+
+    <h3><span class="no">5.4.2</span>방향도함수</h3>
+    <p>점 \(\mathbf a\)에서 단위벡터 \(\mathbf u\) 방향으로 움직일 때의 변화율은 \(g(t) = f(\mathbf a + t\mathbf u)\)를 연쇄법칙으로 미분해</p>
+    \[D_{\mathbf u}f(\mathbf a) = \nabla f(\mathbf a)\cdot\mathbf u = |\nabla f|\cos\theta\]
+    <p>입니다. \(\theta = 0\), 곧 \(\mathbf u\)가 기울기 방향일 때 가장 크므로 기울기 벡터는 가장 가파르게 오르는 방향이고, 그 크기가 최대 변화율입니다. 반대 방향 \(-\nabla f\)로 조금씩 움직이는 것이 경사하강법입니다. 등고선과 수직인 방향(\(\theta = 90°\))으로는 변화가 0입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.2</span>
+      <p>\(f(x, y) = x^2 + 3y^2\)의 점 (1, 1)에서 (가) 기울기 (나) \(\mathbf u = (1, 1)/\sqrt2\) 방향의 도함수 (다) 가장 가파른 변화율을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\nabla f = (2x, 6y) = (2, 6)\). \(D_{\mathbf u}f = (2 + 6)/\sqrt2 = 5.66\). 최대 변화율 \(|\nabla f| = \sqrt{40} = 6.32\), 방향 \((2, 6)/\sqrt{40}\). 대각선 방향은 최대의 약 90%입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>다변수 연쇄법칙: 모든 경로의 (편미분 × 도함수)를 더함.</li>
+        <li>방향도함수 \(= \nabla f\cdot\mathbf u\).</li>
+        <li>기울기 = 가장 가파른 오르막, 등고선에 수직.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(z = xy\), \(x = t^2\), \(y = e^t\)일 때 \(dz/dt\)를 연쇄법칙으로 구하고 직접 미분과 비교하세요.
+          <details><summary>답</summary><p>\(y \cdot 2t + x \cdot e^t = 2te^t + t^2e^t\). 직접: \(z = t^2e^t\), \(z' = 2te^t + t^2e^t\). 같습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>로지스틱 회귀 한 관측의 로그가능도 \(\ell = y\log p + (1 - y)\log(1 - p)\), \(p = 1/(1 + e^{-\eta})\), \(\eta = \beta_0 + \beta_1x\)에서 \(\partial\ell/\partial\beta_1 = (y - p)x\)임을 보이세요.
+          <details><summary>답</summary><p>\(\frac{\partial\ell}{\partial p} = \frac yp - \frac{1-y}{1-p} = \frac{y - p}{p(1-p)}\), \(\frac{dp}{d\eta} = p(1-p)\), \(\frac{\partial\eta}{\partial\beta_1} = x\). 곱하면 \((y - p)x\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

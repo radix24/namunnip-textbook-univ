@@ -15,6 +15,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import place   # noqa: E402  풀 목차·학과 배치표·학과 요약(tools/place.py)
+
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "curricula"
 OUT = ROOT / "js" / "toc.js"
@@ -224,12 +227,14 @@ THEME_BTN = ('<button type="button" class="theme-btn" aria-label="다크 모드"
              '<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>')
 
 
-def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None, body_attrs=""):
+def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None, body_attrs="", module=""):
     head_js = ('(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\\b/.exec(location.search),t=q&&q[1];'
                'if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";'
                'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c"})()')
     js = "\n".join(f'<script src="{rel}{s}"></script>' for s in scripts)
     rec = f" data-rec='{esc(json.dumps(record, ensure_ascii=False))}'" if record else ""
+    if module:
+        rec += f' data-module="{esc(module)}"'
     return f"""<!doctype html>
 <!-- 자동 생성: python -I tools/build.py — 직접 고치지 말고 blocks/ 와 curricula/ 를 고칠 것 -->
 <html lang="ko">
@@ -255,7 +260,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
 
 <header class="top">
   <a class="brand" href="{rel}"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
-  <div class="top-right"><a href="{rel}record.html">학습 기록</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
+  <div class="top-right"><a class="place-chip" href="{rel}?pick" hidden></a><a href="{rel}record.html">학습 기록</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
 </header>
 
 <main class="wrap">
@@ -269,6 +274,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
 
 <script src="{rel}assets/katex/katex.min.js"></script>
 <script src="{rel}js/core.js"></script>
+<script src="{rel}js/place.js"></script>
 {js}
 <script src="{rel}js/math.js"></script>
 <script src="{rel}js/progress.js"></script>
@@ -307,13 +313,17 @@ def ty_span(t):
 
 
 def uni_span(us):
-    """성취기준 옆의 작은 대학 표시(회색). 표시가 없으면 '미표시'라고 쓰지 않고 비워 둔다"""
-    return f'<span class="unis mono" title="이 내용이 있는 대학">{" · ".join(esc(x) for x in us)}</span>' if us else ""
+    """다른 대학 표시는 학교·학과별 배치(tools/place.py)로 대신하므로 페이지에 쓰지 않는다(데이터 c.unis·s.u는 toc.js에 남김)"""
+    return ""
 
 
 def uni_attr(us):
-    """학교별 보기(js/core.js)가 읽는 data-u. 빈 값 = 미표시(전체 보기에서만 보인다)"""
-    return f' data-u="{esc(" ".join(us))}"'
+    return ""
+
+
+def mpath(code):
+    """과목 코드 → 페이지 폴더(c/<영문 모듈 id>/)"""
+    return f"c/{place.module_id(code)}/"
 
 
 def unit_unis(u):
@@ -392,7 +402,7 @@ def build_index(depts, blocks):
     idx = {}
     for d in depts:
         for c in d["courses"]:
-            base = f'c/{d["id"]}/{num(c["code"])}/'
+            base = mpath(c["code"])
             for u in c["units"]:
                 un = int(u["n"])
                 idx[f'{c["code"]}-{u["n"]}'] = {"path": base + f'{u["n"]}.html', "course": c["code"], "cname": c["name"],
@@ -692,7 +702,7 @@ def exam_page(c, d, items, rel, dept_link):
         inner = ('<div id="exam" class="ex-app" aria-live="polite"><p class="dim small">문제를 불러오는 중입니다…</p></div>'
                  '<noscript><p class="u-empty">시험 연습은 자바스크립트가 켜져 있어야 합니다.</p></noscript>')
     return f"""  <section class="topic-hero u-hero ex-hero">
-    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">시험 연습</span></div>
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./" data-place="course">{esc(c["name"])}</a><span class="mono">시험 연습</span></div>
     <h1>시험 연습</h1>
     {f'<p class="lead">{esc(c["name"])}의 시험 전용 문항 {cnt["x"]}개(본문에 나오지 않는 새 문제로, AI가 성취기준에 맞춰 출제한 연습 문항이며 실제 기출이 아닙니다. 응용·심화 {sum(1 for it in items if it["src"] == "x" and it["lv"] in ("응용", "심화"))}개)에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 공부하며 본 단원 마무리 연습, 예제, 본문 연습문제 {len(items) - cnt["x"]}개는 \'복습 문항 포함\'을 고를 때만 섞입니다. 객관식은 바로 채점되고, 나머지는 풀이를 보고 스스로 채점합니다. 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if cnt["x"] else f'<p class="lead">{esc(c["name"])}의 단원 마무리 연습, 예제, 본문 연습문제 {len(items)}개에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 힌트와 풀이를 보고 스스로 채점하면, 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if items else ""}
   </section>
@@ -711,11 +721,13 @@ def write_pages(depts, blocks, sidx, links):
     used = set()
     for d in depts:
         for c in d["courses"]:
-            base = cdir / d["id"] / num(c["code"])
+            mid = place.module_id(c["code"])
+            base = cdir / mid
             base.mkdir(parents=True, exist_ok=True)
-            rel = "../../../"
-            c["path"] = f'c/{d["id"]}/{num(c["code"])}/'
-            dept_link = f'<a href="{rel}?dept={d["id"]}#tree">{esc(d["name"])}</a>'
+            rel = "../../"
+            c["path"] = mpath(c["code"])
+            # 학과·과목 이름은 학과마다 다르다: 풀 이름을 써 두고 js/place.js가 고른 학과의 이름으로 바꾼다
+            dept_link = f'<a href="{rel}" data-place="dept">{esc(d["name"])}</a>'
 
             # 1) 절 목록 만들기: 성취기준마다 절 하나 + 카드가 있으면 단원 마무리 절
             for u in c["units"]:
@@ -815,7 +827,7 @@ def write_pages(depts, blocks, sidx, links):
                     side = '<p class="mono small toc-title">이 절의 카드</p>'
                 sec_u = sc["std"]["u"] if sc["std"] else unit_unis(u)
                 body = f"""  <section class="topic-hero u-hero{' has-text' if text_b else ''}" data-sec="{esc(sc["code"])}"{uni_attr(sec_u)}>
-    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">/</span><a href="{u["n"]}.html">{un}. {esc(u["t"])}</a></div>
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./" data-place="course">{esc(c["name"])}</a><span class="mono">/</span><a href="{u["n"]}.html">{un}. {esc(u["t"])}</a></div>
     <h1><span class="sec-no mono">{sc["no"]}</span>{esc(h1_title)}</h1>
     {hero_inner}
   </section>
@@ -840,7 +852,7 @@ def write_pages(depts, blocks, sidx, links):
                 desc = f'{c["name"]} {sc["no"]} {sc["title"]}' + (f' — 성취기준: {sc["std"]["t"]}' if sc["std"] else "")
                 (base / f'{sc["file"]}.html').write_text(
                     page(rel, f'{sc["title"]} · {c["name"]}', desc, body, extra, scripts, back=(f'{u["n"]}.html', "← 절 목록"),
-                         record={"course": c["code"], "title": f'{sc["no"]} {sc["title"]}', "sub": c["name"]}),
+                         record={"course": c["code"], "title": f'{sc["no"]} {sc["title"]}', "sub": c["name"]}, module=mid),
                     encoding="utf-8", newline="\n")
                 n_pages += 1
 
@@ -857,7 +869,7 @@ def write_pages(depts, blocks, sidx, links):
           {f'<span class="s-std small">{esc(sc["std"]["t"])}</span>' if sc["std"] else ""}
         </li>""" for sc in u["secs"])
                 body = f"""  <section class="topic-hero u-hero"{uni_attr(unit_unis(u))}>
-    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./" data-place="course">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
     <h1>{esc(u["t"])}</h1>
     {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
     <p class="u-prog mono small"></p>
@@ -870,7 +882,7 @@ def write_pages(depts, blocks, sidx, links):
   </nav>
 """
                 desc = f'{c["name"]} {un}. {u["t"]} — 학습 요소: {u["el"]}'
-                (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body), encoding="utf-8", newline="\n")
+                (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body, module=mid), encoding="utf-8", newline="\n")
                 n_pages += 1
 
             # 2-1) 시험 연습: 문제은행(bank.js)과 연습 페이지(exam.html)
@@ -888,8 +900,8 @@ def write_pages(depts, blocks, sidx, links):
             if not noexam:
                 (base / "exam.html").write_text(
                     page(rel, f'시험 연습 · {c["name"]}', f'{c["name"]} 중간고사·기말고사 연습 문제은행', exam_page(c, d, items, rel, dept_link),
-                         '\n  <link rel="stylesheet" href="' + rel + 'css/exam.css">', (["c/" + f'{d["id"]}/{num(c["code"])}/bank.js'] if items else []) + ["js/exam.js"],
-                         body_attrs=f' data-dept="{d["id"]}"'),
+                         '\n  <link rel="stylesheet" href="' + rel + 'css/exam.css">', ([c["path"] + "bank.js"] if items else []) + ["js/exam.js"],
+                         body_attrs=f' data-dept="{d["id"]}"', module=mid),
                     encoding="utf-8", newline="\n")
                 n_pages += 1
             n_bank[0] += len(items)
@@ -933,32 +945,33 @@ def write_pages(depts, blocks, sidx, links):
                     parts = [f"{m.group(1)}{k}" for k in m.group(2).split("·")]
                     if not all(p in by_code for p in parts):
                         return m.group(0)
-                    return ", ".join(f'<a href="{rel}c/{by_code[p][0]["id"]}/{num(p)}/">{esc(by_code[p][1]["name"])}</a>' for p in parts)
+                    return ", ".join(f'<a href="{rel}{mpath(p)}">{esc(by_code[p][1]["name"])}</a>' for p in parts)
                 return re.sub(r"([가-힣]+?)(\d+(?:·\d+)*)(?!\d)", rep, esc(text))
             nexts = next_courses(c, [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))])
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
-                    ("개설 대학", c["unisT"] or " · ".join(c["unis"])), ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
-            info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
+                    ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
+            term_attr = ' data-place="term"'   # 학기·이수구분·학점은 학과마다 다르다(js/place.js가 바꿈)
+            info_html = "".join(f'<div><dt>{k}</dt><dd{term_attr if k == "학기" else ""}>{md(v)}</dd></div>' for k, v in info if v)
             path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
-                f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}c/{dd["id"]}/{num(x["code"])}/\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
+                f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}{mpath(x["code"])}\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
             body = f"""  <div class="cx" data-course="{esc(c["code"])}"{uni_attr(c["unis"])}>
     <aside class="cx-side">
-      <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])}{" · " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
-      <h1>{esc(c["name"])}</h1>
+      <div class="meta">{dept_link}<span class="mono" data-place="no">/ {esc(" / ".join(c["sub"])) if c["sub"] else esc(place.module_id(c["code"]))}</span></div>
+      <h1 data-place="course">{esc(c["name"])}</h1>
       {f'<p class="cx-lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
       {"" if c["noexam"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{"기말" if EXAM_POLICY.get(c["code"]) == "fin" else "중간·기말"} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
-      {f'<div class="cx-path small">{path_html}</div>' if path_html else ""}
+      <div class="cx-path small" data-place="path"{"" if path_html else " hidden"}>{path_html}</div>
     </aside>
     <div class="cx-main">{units}
     </div>
   </div>
 """
-            (base / "index.html").write_text(page(rel, c["name"], c["yoram"] or c["name"], body, back=(f'{rel}?dept={d["id"]}#tree', "← 학과")),
+            (base / "index.html").write_text(page(rel, c["name"], c["yoram"] or c["name"], body, back=(rel, "← 학과"), module=mid),
                                             encoding="utf-8", newline="\n")
             n_pages += 1
             for u in c["units"]:
@@ -1109,9 +1122,17 @@ def main():
     links = load_links(idx)
     n_pages, n_cards = write_pages(out, blocks, idx, links)
     print(f"연결표: 대상 {len(links['pre'])} · 선수로 쓰인 코드 {len(links['post'])}")
+    summ = place.build(out, blocks, EXAM_POLICY)
+    print(f"학과 배치: {place.SCHOOL_NAME} " + " · ".join(f"{k} {len(v['courses'])}" for k, v in summ.items()))
     js = "/* tools/build.py가 curricula/univ-*.md와 blocks/에서 만든다. 직접 고치지 않는다. */\n"
     js += "window.UNIV = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n"
     OUT.write_text(js, encoding="utf-8", newline="\n")
+    # 로드맵 등 여러 학과를 한꺼번에 쓰는 화면용 합본: toc.js와 같은 내용(QURI 코드, sub, open, path, unis, s.u …)에
+    # 과목마다 영문 모듈 id를 더한 것. 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
+    for d in out:
+        for c in d["courses"]:
+            c["id"] = place.module_id(c["code"])
+    (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"js/toc.js: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
 
