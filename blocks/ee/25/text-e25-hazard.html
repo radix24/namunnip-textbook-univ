@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-hazard" data-kind="본문" data-std="전전25-05-03">
+  <header class="card-head"><span class="no"></span><h2>파이프라인 해저드와 분기 예측</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>데이터·제어 해저드가 파이프라인을 멈추는 원리를 안다.</li>
+        <li>분기 예측 실패가 CPI에 주는 영향을 계산한다.</li>
+        <li>전달(forwarding)과 예측으로 줄이는 방법을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>비순차 실행 (<a href="05-01.html">5.1절</a>), 파이프라인 (<a href="../14/05.html">전전14 5단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>멈춤의 비용</h3>
+    <p>앞 명령 결과를 바로 쓰면(데이터 해저드) 전달 경로로 대부분 해결하지만 적재 직후 사용은 한 클록 멈춥니다. 분기는 결과가 늦게 나와 잘못 가져온 명령을 버려야 하므로(제어 해저드) 예측기를 씁니다. \(\mathrm{CPI} = 1 + f_{br}\cdot m\cdot P\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>분기 비율 20%, 예측 실패율 10%, 실패 벌칙 15클록의 CPI는? 실패율이 5%로 줄면?</p>
+    </div>
+    <p><i>풀이.</i> 1 + 0.2 × 0.1 × 15 = 1.3, 실패율 5%면 1.15. 파이프라인이 깊을수록 벌칙이 커져 예측기 정확도가 성능을 크게 좌우합니다. 데이터에 따라 갈리는 분기를 조건부 실행이나 산술로 바꾸는 최적화도 같은 이유입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "파이프라인이 깊으면 늘 빠르다": 클록은 오르지만 해저드 벌칙이 커집니다. (2) "분기 예측은 항상 맞는다": 무작위 자료에 따른 분기는 자주 틀립니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CPI = 1 + f_br·m·P(+ 적재 사용 멈춤).</li>
+        <li>예: 0.2 × 0.1 × 15 → 1.3.</li>
+        <li>전달, 분기 예측, 조건부 실행.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>분기 25%, 실패 4%, 벌칙 20의 CPI는?
+          <details><summary>답</summary><p>1.2.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>적재 30% 중 절반이 바로 사용되어 1클록 멈추면 CPI 증가는?
+          <details><summary>답</summary><p>0.15.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>ARM 조건 실행(IT 블록)이 짧은 분기에 유리한 이유는?
+          <details><summary>답</summary><p>분기 자체가 없어 예측 실패가 없기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

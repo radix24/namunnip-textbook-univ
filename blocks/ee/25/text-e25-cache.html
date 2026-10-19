@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-cache" data-kind="본문" data-std="전전25-03-02">
+  <header class="card-head"><span class="no"></span><h2>메모리 계층과 캐시 성능</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>레지스터·캐시·SRAM·플래시·외부 메모리의 속도 계층을 안다.</li>
+        <li>평균 메모리 접근 시간(AMAT)을 계산한다.</li>
+        <li>플래시 대기 상태와 명령 캐시(가속기)의 효과를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>버스 타이밍 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>가까운 곳에 두기</h3>
+    <p>\(\mathrm{AMAT} = t_{hit} + m\cdot t_{miss}\). 마이크로컨트롤러에서도 플래시가 코어보다 느려 대기 상태가 생기므로, 미리 읽기 버퍼와 작은 명령 캐시로 대부분의 접근을 0 대기로 만듭니다.</p><pre><code>for m in (0.01, 0.05, 0.10):
+    print(f"실패율 {m:.0%}: AMAT = 1 + {m} x 50 = {1 + m * 50:.1f} 클록")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>실패율 1%: AMAT = 1 + 0.01 x 50 = 1.5 클록
+실패율 5%: AMAT = 1 + 0.05 x 50 = 3.5 클록
+실패율 10%: AMAT = 1 + 0.1 x 50 = 6.0 클록</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>히트 1클록, 실패 벌칙 50클록, 실패율 5%의 AMAT는?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 3.5클록으로 히트만 할 때의 3.5배입니다. 실패율 1%면 1.5클록이라, 반복문을 작게 유지해 캐시에 들어가게 하는 것이 성능에 큽니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "클록이 빠르면 프로그램도 그만큼 빠르다": 메모리 대기가 늘면 효과가 줄어듭니다. (2) "캐시는 고성능 CPU에만 있다": 많은 마이크로컨트롤러에도 플래시 가속기가 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>AMAT = t_hit + m·t_miss.</li>
+        <li>예: 1 + 0.05 × 50 = 3.5클록.</li>
+        <li>플래시 대기 → 미리 읽기·명령 캐시.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>실패율 2%, 벌칙 100클록, 히트 1클록의 AMAT는?
+          <details><summary>답</summary><p>3클록.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>2단계 캐시: L1 히트 1, L1 실패 10% → L2 10클록, L2 실패 20% → 100클록. AMAT는?
+          <details><summary>답</summary><p>1 + 0.1 × (10 + 0.2 × 100) = 4클록.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>공간 지역성을 살리는 코드 습관은?
+          <details><summary>답</summary><p>배열을 메모리 순서대로 차례로 접근합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
