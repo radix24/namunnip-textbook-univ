@@ -1,0 +1,94 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-03-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-search" data-kind="실습" data-std="전전1-03-02">
+  <header class="card-head"><span class="no"></span><h2>탐색과 정렬의 비교 횟수 세기</h2><span class="kind">실습 · 효율을 숫자로</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>선형 탐색, 이진 탐색, 선택 정렬에 비교 횟수를 세는 변수를 넣어 n에 따른 증가를 표로 봅니다. 성취기준 [전전1-03-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>search_sort.py</code>로 저장합니다.</p>
+<pre><code># 선형 탐색, 이진 탐색, 선택 정렬의 비교 횟수 세기
+def linear(xs, target):
+    steps = 0
+    for i, x in enumerate(xs):
+        steps += 1
+        if x == target:
+            return i, steps
+    return -1, steps
+
+def binary(xs, target):          # xs는 정렬되어 있어야 함
+    lo, hi, steps = 0, len(xs) - 1, 0
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        steps += 1
+        if xs[mid] == target:
+            return mid, steps
+        if xs[mid] &lt; target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1, steps
+
+def selection_sort(xs):
+    xs, comps = list(xs), 0
+    for i in range(len(xs)):
+        m = i
+        for j in range(i + 1, len(xs)):
+            comps += 1
+            if xs[j] &lt; xs[m]:
+                m = j
+        xs[i], xs[m] = xs[m], xs[i]
+    return xs, comps
+
+for n in (10, 100, 1000):
+    data = list(range(0, 2 * n, 2))          # 0, 2, 4, ... (정렬됨)
+    target = data[-1]                         # 가장 나쁜 경우: 마지막 원소
+    _, s1 = linear(data, target)
+    _, s2 = binary(data, target)
+    _, c = selection_sort(data[::-1])
+    print(f"n = {n:4d}: 선형 {s1:4d}번, 이진 {s2:2d}번, 선택 정렬 비교 {c:6d}번")
+
+print(selection_sort([5, 2, 9, 1, 7])[0])</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 표를 적습니다.</li>
+        <li><code>for n in (10, 100, 1000)</code>에 10000을 더하기 전에 세 값을 예측합니다(선택 정렬은 실행에 몇 초 걸릴 수 있음).</li>
+        <li><code>target</code>을 <code>data[0]</code>으로 바꾸면 선형과 이진 탐색의 횟수가 어떻게 되는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>n =   10: 선형   10번, 이진  4번, 선택 정렬 비교     45번
+n =  100: 선형  100번, 이진  7번, 선택 정렬 비교   4950번
+n = 1000: 선형 1000번, 이진 10번, 선택 정렬 비교 499500번
+[1, 2, 5, 7, 9]</code></pre>
+      <ul>
+        <li>선형 10, 100, 1000번, 이진 4, 7, 10번(예제 3.2.1).</li>
+        <li>선택 정렬 비교 45, 4950, 499500번 = n(n − 1)/2.</li>
+        <li>마지막 줄은 정렬 결과 [1, 2, 5, 7, 9].</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>n이 10배가 될 때 세 방법의 횟수는 각각 몇 배가 되나요? 표에서 읽으세요.</li>
+        <li>선택 정렬은 이미 정렬된 입력에서도 같은 횟수를 비교합니다. 코드에서 그 이유를 찾으세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Python 내장 <code>sorted</code>와 선택 정렬의 실행 시간을 <code>time.perf_counter()</code>로 n = 2000에서 재어 비교해 보세요.</p>
+    </section>
+  </div>
+</article>

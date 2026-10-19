@@ -26,7 +26,7 @@
       }),
     })),
   };
-  const uniPick = (d) => !UNIS.length ? "" : `<label class="uni-pick"><span class="mono">학교</span><select aria-label="학교별 보기">
+  const uniPick = (d) => !UNIS.length || (QU && QU.FIXED) ? "" : `<label class="uni-pick"><span class="mono">학교</span><select aria-label="학교별 보기">
       <option value="">전체</option>${UNIS.map((x) => {
         const n = d.courses.filter((c) => (c.unis || []).includes(x)).length;
         return `<option value="${esc(x)}"${x === uni ? " selected" : ""}${n ? "" : " disabled"}>${esc(x)}${n ? ` · ${n}` : ""}</option>`;

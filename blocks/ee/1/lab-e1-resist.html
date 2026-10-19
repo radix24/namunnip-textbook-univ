@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-04-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-resist" data-kind="실습" data-std="전전1-04-02">
+  <header class="card-head"><span class="no"></span><h2>저항 계산 함수와 표준값 고르기</h2><span class="kind">실습 · 함수 조합과 모든 조합 검사</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>직렬, 병렬, 분압 함수로 사다리 회로를 계산하고, E12 표준값 두 개로 3.3 V 분압기를 고릅니다. 성취기준 [전전1-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>resistors.py</code>로 저장합니다.</p>
+<pre><code># 저항 회로 계산 자동화: 직렬, 병렬, 분압과 표준 저항 고르기
+def series(*rs):
+    return sum(rs)
+
+def parallel(*rs):
+    return 1 / sum(1 / r for r in rs)
+
+def divider(vin, r_top, r_bottom):
+    return vin * r_bottom / (r_top + r_bottom)
+
+# 사다리 회로: 12 V — 1k — (2k ∥ (1k + 1k)) — 접지
+r_load = parallel(2000, series(1000, 1000))
+v_mid = divider(12, 1000, r_load)
+print(f"아래쪽 합성 저항 {r_load:.0f} Ω, 가운데 전압 {v_mid:.2f} V, 전체 전류 {12 / (1000 + r_load) * 1000:.2f} mA")
+
+# E12 표준값 두 개로 5 V → 3.3 V 분압기 만들기(가장 가까운 비율 찾기)
+E12 = [1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2]
+values = [round(m * 10 ** k, 1) for k in (3, 4) for m in E12]   # 1 kΩ ~ 82 kΩ
+target = 3.3
+best = min(((divider(5, a, b), a, b) for a in values for b in values),
+           key=lambda x: abs(x[0] - target))
+v, a, b = best
+print(f"위 {a:.0f} Ω, 아래 {b:.0f} Ω → {v:.4f} V (오차 {abs(v - target) / target * 100:.2f}%)")
+print("조합 수:", len(values) ** 2)</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>예제 4.2.1의 손 계산과 첫 줄을 비교합니다.</li>
+        <li><code>target</code>을 2.5로 바꾸면 어떤 쌍이 나올지 예측하고 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>아래쪽 합성 저항 1000 Ω, 가운데 전압 6.00 V, 전체 전류 6.00 mA
+위 1200 Ω, 아래 2200 Ω → 3.2353 V (오차 1.96%)
+조합 수: 576</code></pre>
+      <ul>
+        <li>아래쪽 합성 저항 1000 Ω, 가운데 전압 6.00 V, 전류 6.00 mA(손 계산과 같음).</li>
+        <li>3.3 V에 가장 가까운 E12 쌍은 위 1.2 kΩ, 아래 2.2 kΩ, 3.2353 V, 오차 1.96%. 576가지 조합을 검사했습니다.</li>
+        <li>절차 3: 같은 값 두 개(예: 1 kΩ, 1 kΩ)면 정확히 2.5 V. 같은 오차의 쌍이 여럿이면 먼저 찾은 쌍이 나옵니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>min(..., key=...)</code>가 무엇을 기준으로 가장 작은 것을 고르는지 설명하세요.</li>
+        <li>두 저항의 합이 너무 작으면(예: 1 kΩ 미만) 무엇이 문제일까요? 조건을 코드에 넣는다면?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>E24 계열(1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1)로 바꾸면 오차가 얼마나 줄어드는지 확인해 보세요.</p>
+    </section>
+  </div>
+</article>

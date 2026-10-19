@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-02-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-grades" data-kind="실습" data-std="전전1-02-02">
+  <header class="card-head"><span class="no"></span><h2>함수로 나눈 성적 처리</h2><span class="kind">실습 · 함수, 기본값 매개변수, 재사용</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>평균, 등급, 보고 문장을 각각 함수로 만들고 조합해 씁니다. 점수는 가상입니다. 성취기준 [전전1-02-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>grades.py</code>로 저장합니다.</p>
+<pre><code># 함수로 나눈 성적 처리 (가상 점수)
+def mean(xs):
+    """리스트의 평균"""
+    return sum(xs) / len(xs)
+
+def letter(score, cuts=(90, 80, 70, 60)):
+    """점수를 등급으로. cuts는 A, B, C, D의 최저 점수"""
+    for grade, cut in zip("ABCD", cuts):
+        if score &gt;= cut:
+            return grade
+    return "F"
+
+def report(name, scores):
+    m = mean(scores)
+    return f"{name}: 평균 {m:.1f}, 최고 {max(scores)}, 등급 {letter(m)}"
+
+students = {"가": [92, 85, 78], "나": [65, 70, 58], "다": [88, 91, 95]}
+for name, scores in students.items():
+    print(report(name, scores))
+
+# 같은 함수를 기준만 바꿔 다시 쓰기(재사용)
+print("엄격한 기준:", [letter(mean(s), cuts=(95, 85, 75, 65)) for s in students.values()])</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li><code>letter(79.99)</code>와 <code>letter(80)</code>의 결과를 예측하고 확인합니다.</li>
+        <li><code>report</code>가 평균을 소수 첫째 자리로 출력하는 부분을 찾아 둘째 자리로 바꿔 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>가: 평균 85.0, 최고 92, 등급 B
+나: 평균 64.3, 최고 70, 등급 D
+다: 평균 91.3, 최고 95, 등급 A
+엄격한 기준: ['B', 'F', 'B']</code></pre>
+      <ul>
+        <li>"가" 평균 85.0 → B, "나" 64.3 → D, "다" 91.3 → A(예제 2.2.1의 기본 기준).</li>
+        <li>엄격한 기준(95, 85, 75, 65)에서는 "가" 85.0 → B(85 이상), "나" 64.3 → F, "다" 91.3 → B.</li>
+        <li>절차 2: 79.99는 C, 80은 B입니다(경계값은 <code>&gt;=</code>로 처리).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>letter</code> 안의 <code>zip("ABCD", cuts)</code>는 무엇을 짝짓나요? 기준을 5개로 늘리려면 무엇을 바꿔야 하나요?</li>
+        <li><code>mean</code>에 빈 리스트를 넣으면 어떻게 되나요? 어떻게 막을 수 있나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>학생별로 가장 낮은 점수 하나를 빼고 평균을 내는 함수 <code>mean_drop_lowest</code>를 만들어 <code>report</code>에서 골라 쓸 수 있게 하세요.</p>
+    </section>
+  </div>
+</article>

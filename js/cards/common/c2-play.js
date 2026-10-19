@@ -195,4 +195,35 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 7. 스토크스 정리: 경계가 같으면 어떤 곡면이든 회전의 선속이 같다 (08-03) */
+  (() => {
+    const S = QSim.card("lab-c2-stokes"); if (!S) return;
+    const cv = S.$("canvas");
+    /* F = (−y + z², x, xy), curl F = (x, 2z − y, 2). 경계: 단위원 (z = 0, 반시계).
+       곡면: z = h(1 − x² − y²) (h = 0이면 평평한 원판). 위쪽 법선 N = (2hx, 2hy, 1) dA */
+    function draw() {
+      const c = C(), h = S.val("h"), az = (S.val("view") * Math.PI) / 180;
+      /* 비스듬히 본 그림: (x, y, z) → 화면 (x cos az − y sin az, (x sin az + y cos az)·0.35 + z) */
+      const P = (x, y, z) => [x * Math.cos(az) - y * Math.sin(az), (x * Math.sin(az) + y * Math.cos(az)) * 0.35 + z];
+      const v = QSim.view(cv, 0.6), F = QSim.frame(v, { x0: -1.8, x1: 1.8, y0: -1.0, y1: 1.9, equal: true, pad: 16 });
+      for (let i = 1; i <= 5; i++) { const r = i / 5, pts = []; for (let k = 0; k <= 60; k++) { const t = (k / 60) * 2 * Math.PI; pts.push(P(r * Math.cos(t), r * Math.sin(t), h * (1 - r * r))); } F.path(pts, c.soft, 1); }
+      for (let k = 0; k < 12; k++) { const t = (k / 12) * 2 * Math.PI, pts = []; for (let i = 0; i <= 20; i++) { const r = i / 20; pts.push(P(r * Math.cos(t), r * Math.sin(t), h * (1 - r * r))); } F.path(pts, c.soft, 1); }
+      const ring = []; for (let k = 0; k <= 120; k++) { const t = (k / 120) * 2 * Math.PI; ring.push(P(Math.cos(t), Math.sin(t), 0)); }
+      F.path(ring, c.main, 3);
+      for (let k = 0; k < 4; k++) { const t = (k / 4) * 2 * Math.PI + 0.3, a = P(Math.cos(t), Math.sin(t), 0), b = P(Math.cos(t + 0.25), Math.sin(t + 0.25), 0); F.arrow(a[0], a[1], b[0] - a[0], b[1] - a[1], c.main); }
+      /* 경계를 따른 선적분 */
+      let circ = 0; const M = 2000;
+      for (let k = 0; k < M; k++) { const t = ((k + 0.5) / M) * 2 * Math.PI, x = Math.cos(t), y = Math.sin(t), dx = -Math.sin(t), dy = Math.cos(t); circ += (-y * dx + x * dy) * ((2 * Math.PI) / M); }
+      /* 곡면 위에서 curl F · N 을 항목별로 더한다 */
+      let s1 = 0, s2 = 0, s3 = 0; const nr = 80, nt = 160;
+      for (let i = 0; i < nr; i++) { const r = (i + 0.5) / nr; for (let j = 0; j < nt; j++) {
+        const t = ((j + 0.5) / nt) * 2 * Math.PI, x = r * Math.cos(t), y = r * Math.sin(t), z = h * (1 - r * r), dA = r * (1 / nr) * ((2 * Math.PI) / nt);
+        s1 += x * 2 * h * x * dA; s2 += (2 * z - y) * 2 * h * y * dA; s3 += 2 * dA; } }
+      const flux = s1 + s2 + s3;
+      S.out(`곡면 z = ${h.toFixed(2)}(1 − x² − y²) ${Math.abs(h) < 1e-9 ? "(평평한 원판)" : h > 0 ? "(위로 볼록)" : "(아래로 오목)"}\n` +
+        `경계 원을 따라 잰 순환 ∮F·dr = ${circ.toFixed(4)}  (2π = ${(2 * Math.PI).toFixed(4)})\n` +
+        `곡면을 지나는 회전의 선속 = x 성분 몫 ${s1.toFixed(4)} + y 성분 몫 ${s2.toFixed(4)} + z 성분 몫 ${s3.toFixed(4)} = ${flux.toFixed(4)}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
