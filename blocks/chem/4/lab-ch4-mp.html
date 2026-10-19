@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/ch-viz.js"]
+}
+-->
+<article class="card q-card" id="lab-ch4-mp" data-kind="탐구" data-std="화학4-04-02">
+  <header class="card-head"><span class="no"></span><h2>그래프 신경망은 이성질체를 어떻게 구별하나?</h2><span class="kind">탐구 · 메시지 전달, 읽어내기</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>두 분자에 같은 메시지 전달 규칙을 몇 번 적용하며 원자마다의 숫자 목록(특성)과 분자 전체의 합(읽어내기)이 어떻게 바뀌는지 보고, 몇 번 전달해야 두 이성질체가 구별되는지 확인합니다. 성취기준 [화학4-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>무거운 원자(C, O)만 보고, 각 원자에 숫자 두 개 [C인가, O인가]를 줍니다. C는 [1, 0], O는 [0, 1]입니다.</p>
+      <p class="q-term"><b>메시지 전달 한 번</b>: 모든 원자가 동시에 "내 목록 + 결합한 이웃들의 목록"으로 새 목록을 만든다. 실제 GNN은 여기에 학습되는 가중치를 곱하고 활성화 함수를 거치지만, 이 장치는 그 부분을 빼고 더하기만 한다(4.2절의 \(H' = (I + A)H\)).</p>
+      <p class="q-term"><b>읽어내기</b>: 모든 원자의 목록을 칸별로 더해 분자 전체의 목록 하나를 만든다. 원자에 번호를 붙이는 순서와 관계없이 같은 값이 나온다.</p>
+      <p>그림에서 각 원자 옆의 [ , ]가 지금 단계의 목록입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>분자 1</span><select name="m1" aria-label="분자 1">
+          <option value="etoh" selected>에탄올</option>
+          <option value="dme">다이메틸 에터</option>
+          <option value="prop1">1-프로판올</option>
+          <option value="prop2">2-프로판올</option>
+          <option value="eme">에틸 메틸 에터</option>
+          <option value="acoh">아세트산</option>
+        </select></label>
+        <label><span>분자 2</span><select name="m2" aria-label="분자 2">
+          <option value="etoh">에탄올</option>
+          <option value="dme" selected>다이메틸 에터</option>
+          <option value="prop1">1-프로판올</option>
+          <option value="prop2">2-프로판올</option>
+          <option value="eme">에틸 메틸 에터</option>
+          <option value="acoh">아세트산</option>
+        </select></label>
+        <label><span>메시지 전달 횟수 = <b data-show="t">0</b></span><input type="range" name="t" min="0" max="3" step="1" value="0" aria-label="메시지 전달 횟수"></label>
+      </div>
+      <canvas aria-label="두 분자 그래프와 원자 특성"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>에탄올과 다이메틸 에터는 분자식이 같습니다(C₂H₆O). 원자 수만 세는 방법으로는 둘을 구별할 수 없습니다. 메시지 전달을 몇 번 하면 구별될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <ol>
+        <li>에탄올과 다이메틸 에터로 전달 횟수를 0, 1, 2로 바꾸며 원자 목록과 읽어내기를 기록한다.</li>
+        <li>1-프로판올과 2-프로판올(둘 다 C₃H₈O)로 같은 일을 한다.</li>
+        <li>1-프로판올과 에틸 메틸 에터를 비교한다.</li>
+        <li>2-프로판올의 전달 2번 결과를 4.2절 연습문제의 손 계산과 비교한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <p>전달 0번에서 에탄올과 다이메틸 에터의 읽어내기는 모두 [2, 1]로 같습니다. 원자 수만 센 것과 같기 때문입니다. 한 번 전달하면 에탄올은 C1 [2,0], C2 [2,1], O3 [1,1]로 합 [5, 2], 다이메틸 에터는 C1 [1,1], O2 [2,1], C3 [1,1]로 합 [4, 3]이 되어 구별됩니다. "C가 O 옆에 있는가"라는 이웃 정보가 목록에 들어왔기 때문입니다. 두 번 전달하면 [12, 5]와 [10, 7]로 차이가 더 벌어집니다.</p>
+      <p>1-프로판올과 2-프로판올도 전달 0번에는 [3, 1]로 같고, 한 번 전달하면 [8, 2]로 여전히 같습니다! 두 분자 모두 C−C 결합 2개, C−O 결합 1개라, 이웃을 한 번 더하는 것만으로는 합이 같아지기 때문입니다. 두 번 전달하면 1-프로판올 [21, 5], 2-프로판올 [22, 6]으로 비로소 구별됩니다. 가운데 탄소에 O가 붙었는지(2-프로판올), 끝 탄소에 붙었는지라는 두 결합 거리의 정보가 필요했던 것입니다.</p>
+      <p>1-프로판올과 에틸 메틸 에터는 한 번 전달로 [8, 2]와 [7, 3]이 되어 바로 구별됩니다. O의 이웃 수(1개와 2개)가 다르기 때문입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>"자기 정보에 이웃 정보를 더해 새 이름을 붙이기"를 반복하는 것은 원형 지문(2.2절)과 같은 생각입니다. 4.1절의 신경망이 각 단계에 가중치를 곱하면, 어떤 이웃 정보가 물성 예측에 중요한지 자료로부터 배웁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>적용</h3>
+      <p>아세트산과 에탄올을 비교해 보세요. 이 장치는 C=O 이중 결합과 C−O 단일 결합을 같은 "결합"으로 봅니다. 결합 차수를 구별하려면 규칙에 무엇을 더해야 할까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>판단</h3>
+      <p>"메시지 전달을 많이 할수록 분자를 더 잘 구별하므로, 10번이든 100번이든 많을수록 좋다." 원자 목록의 숫자가 단계마다 어떻게 커지는지, 서로 다른 원자의 목록 비율이 어떻게 되는지 보고 이 말을 평가해 보세요(과평활).</p>
+    </section>
+  </div>
+</article>
