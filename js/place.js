@@ -41,6 +41,27 @@ window.QPlace = (() => {
       const pool = el.textContent;
       if (pool !== c.name) { el.textContent = c.name; el.title = `교재 이름: ${pool}`; document.title = document.title.replace(pool, c.name); }
     });
+    /* 과목 목차: 학기·이수구분·학점, 학정번호, 선수·이어지는 과목을 이 학과의 배치로 */
+    const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+    const term = document.querySelector("[data-place=term]");
+    if (term) term.textContent = `${c.y}학년 ${c.sem}학기 · ${c.kind} · ${c.cr}학점`;
+    const no = document.querySelector("[data-place=no]");
+    if (no && c.no) no.textContent = `/ ${c.no}`;
+    const box = document.querySelector("[data-place=path]");
+    if (box) {
+      const byId = new Map(dept.courses.map((x) => [x.id, x]));
+      const link = (x) => `<a href="${new URL(`c/${x.id}/`, ROOT).href}">${esc(x.name)}</a>`;
+      const t = (x) => Math.min(...(String(x.sem).match(/[12]/g) || ["1"]).map((s) => (x.y - 1) * 2 + +s - 1));
+      const later = dept.courses.filter((x) => x.pre.includes(c.id) && t(x) > t(c)), near = Math.min(...later.map(t));
+      const pre = c.pre.map((k) => byId.get(k)).filter(Boolean), nx = later.filter((x) => t(x) === near);
+      const html = (pre.length ? `<p><span class="dim">먼저 공부할 과목</span>${pre.map(link).join(", ")}</p>` : "") +
+        (nx.length ? `<p><span class="dim">이어지는 과목</span>${nx.map(link).join(" · ")}</p>` : "");
+      if (html) { box.innerHTML = html; box.hidden = false; }
+      else {   // 학과 배치 안에 선수·후속 과목이 없으면, 교재의 '먼저 공부할 내용'(고교 과정 등)만 남기고 다른 학과 과목 목록은 뺀다
+        [...box.querySelectorAll("p")].filter((p) => p.textContent.includes("이어지는 과목")).forEach((p) => p.remove());
+        box.hidden = !box.querySelector("p");
+      }
+    }
   }).catch((e) => console.warn("학과 요약을 읽지 못함", e));
   return api;
 })();

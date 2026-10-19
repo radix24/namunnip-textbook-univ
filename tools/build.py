@@ -951,12 +951,13 @@ def write_pages(depts, blocks, sidx, links):
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
                     ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
-            info_html = "".join(f'<div><dt>{k}</dt><dd>{md(v)}</dd></div>' for k, v in info if v)
+            term_attr = ' data-place="term"'   # 학기·이수구분·학점은 학과마다 다르다(js/place.js가 바꿈)
+            info_html = "".join(f'<div><dt>{k}</dt><dd{term_attr if k == "학기" else ""}>{md(v)}</dd></div>' for k, v in info if v)
             path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
                 f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}{mpath(x["code"])}\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
             body = f"""  <div class="cx" data-course="{esc(c["code"])}"{uni_attr(c["unis"])}>
     <aside class="cx-side">
-      <div class="meta">{dept_link}<span class="mono">/ {esc(c["code"])}{" · " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
+      <div class="meta">{dept_link}<span class="mono" data-place="no">/ {esc(" / ".join(c["sub"])) if c["sub"] else esc(place.module_id(c["code"]))}</span></div>
       <h1 data-place="course">{esc(c["name"])}</h1>
       {f'<p class="cx-lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
@@ -964,7 +965,7 @@ def write_pages(depts, blocks, sidx, links):
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
       {"" if c["noexam"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{"기말" if EXAM_POLICY.get(c["code"]) == "fin" else "중간·기말"} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
-      {f'<div class="cx-path small">{path_html}</div>' if path_html else ""}
+      <div class="cx-path small" data-place="path"{"" if path_html else " hidden"}>{path_html}</div>
     </aside>
     <div class="cx-main">{units}
     </div>
