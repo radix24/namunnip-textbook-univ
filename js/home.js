@@ -198,15 +198,17 @@
   drawResume();
   if (P) P.onChange(() => { drawResume(); drawTree(dept); drawList(dept); apply(); });
 
-  /* 소개 옆 숫자: 카드(본문·예제·실습·연습 등 블록 전부, u.cards)와 문제은행 문항(c.bank) */
+  /* 소개 옆 숫자: 카드는 본문·예제·실습·연습 등 블록 전부(u.cards), 문항은 문제은행(c.bank) */
   const total = U.reduce((a, d) => {
+    a.c += d.courses.length;
     d.courses.forEach((c) => {
       a.q += c.bank || 0;
-      c.units.forEach((u) => { a.b += u.cards || 0; });
+      c.units.forEach((u) => { a.u++; a.s += u.s.length; a.b += u.cards || 0; });
     });
     return a;
-  }, { b: 0, q: 0 });
+  }, { c: 0, u: 0, s: 0, b: 0, q: 0 });
   const nf = (n) => n.toLocaleString("ko-KR");
-  document.getElementById("figs").innerHTML = [["카드", nf(total.b)], ["문항", nf(total.q)]]
+  document.getElementById("figs").innerHTML = [["학과", `${U.length - 1}<small> + 공통</small>`], ["과목", nf(total.c)], ["대단원", nf(total.u)],
+    ["성취기준", nf(total.s)], ["카드", nf(total.b)], ["문항", nf(total.q)]]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
 })();
