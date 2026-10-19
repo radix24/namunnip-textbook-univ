@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p17-dataframe" data-kind="본문" data-std="물리17-01-02">
+  <header class="card-head"><span class="no"></span><h2>pandas 데이터프레임으로 표 자료 다루기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>pandas 데이터프레임으로 표 자료를 읽고, 열을 만들고, 조건으로 거른다.</li>
+        <li>groupby로 조건별 평균과 표준오차를 구하고, 가중 평균이 필요한 경우를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>NumPy 배열 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>데이터프레임</h3>
+    <p>열마다 이름과 자료형이 다른 표(측정 일지, 여러 조건의 결과)는 pandas의 데이터프레임이 편합니다. 열 하나는 NumPy 배열처럼 계산할 수 있습니다(<code>df["T_s"].to_numpy()</code>).</p>
+<pre><code>import numpy as np
+import pandas as pd
+df = pd.read_csv("pendulum.csv")       # 열: L_m, T_s, group
+df.head()                              # 앞 다섯 줄
+df.describe()                          # 요약 통계
+df["g"] = 4 * np.pi**2 * df["L_m"] / df["T_s"]**2   # 새 열
+long = df[df["L_m"] &gt; 0.5]             # 조건으로 거르기</code></pre>
+
+    <h3><span class="no">1.2.2</span>묶어서 요약하기</h3>
+<pre><code>summary = df.groupby("group")["g"].agg(["mean", "std", "count"])
+summary["sem"] = summary["std"] / np.sqrt(summary["count"])
+print(summary)</code></pre>
+    <p><code>groupby</code>는 같은 값(조, 날짜, 장비)을 가진 행끼리 묶어 각 묶음에 같은 계산을 합니다. 표준편차를 측정 수의 제곱근으로 나누면 평균의 표준오차가 됩니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>위 코드에서 조마다 측정 횟수가 다르다. 전체 평균 \(g\)를 조 평균의 단순 평균으로 구하면 어떤 문제가 있는가?</p>
+    </div>
+    <p><i>풀이.</i> 측정이 적은 조와 많은 조가 같은 무게를 받습니다. 개별 측정을 모두 평균하거나, 조 평균을 표준오차의 역제곱으로 가중 평균(\(w_i = 1/\sigma_i^2\), 2.1절)해야 합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>데이터프레임: 이름 붙은 열, 열 단위 계산, 조건 거르기.</li>
+        <li>groupby → 조건별 평균, 표준편차, 개수 → 표준오차.</li>
+        <li>조 평균을 합칠 때는 가중 평균.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>df[df["T_s"] &lt; 0]</code>은 무엇을 찾는가?
+          <details><summary>답</summary><p>주기가 음수인, 곧 잘못 기록된 행.</p></details>
+        </li>
+        <li>조 하나의 측정값 표준편차가 0.04, 측정 수가 16이면 표준오차는?
+          <details><summary>답</summary><p>0.01.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

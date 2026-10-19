@@ -1,26 +1,26 @@
 <!--block
 {
   "type": "card",
-  "sec": "물리17-03-02",
+  "sec": "물리17-03-04",
   "order": 5
 }
 -->
-<article class="card q-card" id="text-p17-montecarlo" data-kind="본문" data-std="물리17-03-02">
-  <header class="card-head"><span class="no"></span><h2>몬테카를로 시뮬레이션</h2><span class="kind">본문</span></header>
+<article class="card q-card" id="text-p17-montecarlo" data-kind="본문" data-std="물리17-03-04">
+  <header class="card-head"><span class="no"></span><h2>몬테카를로 방법의 원리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
         <li>난수로 확률 과정을 흉내 내는 몬테카를로 방법의 원리와 오차 \(1/\sqrt N\)을 안다.</li>
-        <li>방사성 붕괴를 몬테카를로로 시뮬레이션해 이론과 비교한다.</li>
+        <li>난수 씨앗으로 재현성을 확보하고, 격자 방법과 몬테카를로를 언제 쓰는지 판단한다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>난수 변환 (<a href="../../common/12/06-01.html">공통12 6.1절</a>), 중심극한정리 (<a href="../../common/12/06-03.html">공통12 6.3절</a>), 붕괴 법칙 (<a href="../7/04-02.html">물리7 4.2절</a>).</li>
+        <li>난수 변환 (<a href="../../common/12/06-01.html">공통12 6.1절</a>), 중심극한정리 (<a href="../../common/12/06-03.html">공통12 6.3절</a>).</li>
       </ul>
     </div>
 
-    <h3><span class="no">3.2.1</span>원리</h3>
+    <h3><span class="no">3.4.1</span>원리</h3>
     <p>구하려는 값을 어떤 확률 실험의 기댓값으로 바꾸고, 난수로 그 실험을 \(N\)번 되풀이해 평균을 냅니다. 예를 들어 정사각형 안에 점을 고르게 뿌리면 4분의 1 원 안에 들어갈 확률이 \(\pi/4\)입니다.</p>
 <pre><code>rng = np.random.default_rng(42)          # 씨앗을 정해 재현 가능하게
 N = 100_000
@@ -31,27 +31,16 @@ err = 4 * inside.std() / np.sqrt(N)       # 표준오차
 print(pi_est, err)</code></pre>
     <p>중심극한정리에 따라 오차는 차원과 상관없이 \(1/\sqrt N\)으로 줄어듭니다. 정확도 한 자리를 더 얻으려면 표본이 100배 필요합니다. 그래서 1~2차원 적분은 사다리꼴 같은 격자 방법이 낫지만, 수십 차원 적분(통계역학의 상태 합, 입자 검출기의 시뮬레이션)에서는 몬테카를로가 거의 유일한 방법입니다.</p>
 
-    <h3><span class="no">3.2.2</span>방사성 붕괴</h3>
-    <p>핵 \(N_0\)개가 시간 간격 \(\Delta t\)마다 각각 확률 \(p = 1 - e^{-\lambda\Delta t}\)로 붕괴하게 합니다.</p>
-<pre><code>lam, dt, N0 = 0.1, 0.1, 1000
-alive = N0
-counts = []
-for step in range(500):
-    decays = rng.binomial(alive, 1 - np.exp(-lam*dt))   # 이번 간격의 붕괴 수
-    alive -= decays
-    counts.append(alive)</code></pre>
-    <p>평균은 \(N_0e^{-\lambda t}\)를 따르지만, 실행마다 흔들립니다. 남은 수 \(N\)의 표준편차는 이항분포에서 \(\sqrt{N_0p(1-p)}\) (\(p = e^{-\lambda t}\))이고, 핵이 적어질수록 상대 흔들림 \(\sim1/\sqrt N\)이 커집니다. 같은 시뮬레이션을 여러 번 돌려 평균과 표준편차를 이론과 비교하면 코드도 검증되고 통계적 흔들림도 실감할 수 있습니다. 또 시뮬레이션 자료에 2.1절 방법으로 지수 함수를 맞춰, 맞춘 \(\lambda\)의 불확도가 실행 사이 흔들림과 맞는지 확인해 봅니다.</p>
-
     <div class="tb-summary">
       <b>요약</b>
       <ol>
         <li>값을 확률 실험의 기댓값으로 바꾸고 난수로 평균. 오차 \(\propto 1/\sqrt N\).</li>
-        <li>씨앗으로 재현성 확보, 여러 번 돌려 흔들림과 이론을 비교.</li>
+        <li>씨앗으로 재현성 확보. 고차원 적분에서 강하다. 방사성 붕괴 흉내는 3.5절.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <h3><span class="no">3.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(N = 10^4\)일 때 \(\pi\) 추정의 표준오차를 어림하여라. (\(p = \pi/4\))

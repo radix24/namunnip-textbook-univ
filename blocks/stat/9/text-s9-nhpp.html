@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통9-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s9-nhpp" data-kind="본문" data-std="응통9-05-03">
+  <header class="card-head"><span class="no"></span><h2>비동차 Poisson 과정과 복합 Poisson 과정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>시간에 따라 도착률이 바뀌는 비동차 Poisson 과정의 분포를 구한다.</li>
+        <li>도착마다 크기가 붙는 복합 Poisson 과정의 평균과 분산을 구한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Poisson 과정 (<a href="05-01.html">5.1절</a>), 합병과 분해 (<a href="05-02.html">5.2절</a>), 조건부기대값 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>일정하지 않은 도착, 크기가 있는 도착</h3>
+    <p>콜센터의 전화는 점심 직후에 몰리고 새벽에는 뜸합니다. 보험 청구는 건수뿐 아니라 건마다 금액이 다릅니다. Poisson 과정의 두 가정(도착률 일정, 도착은 1씩 셈)을 하나씩 풀면 이 두 상황을 다룰 수 있습니다.</p>
+
+    <h3><span class="no">5.3.1</span>비동차 Poisson 과정</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 5.3.1</span>
+      <p>도착률 함수 \(\lambda(t) \ge 0\)에 대해 \(N(0) = 0\), 겹치지 않는 구간의 도착 수가 독립이고, 짧은 구간 \([t, t+h]\)에 도착이 하나일 확률이 \(\lambda(t)h + o(h)\), 둘 이상일 확률이 \(o(h)\)이면 <b>비동차 Poisson 과정</b>이다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.3.2</span>
+      <p>평균 함수 \(\Lambda(t) = \int_0^t\lambda(s)\,ds\)라 하면 \(N(t) - N(s) \sim \text{Poisson}(\Lambda(t) - \Lambda(s))\).</p>
+    </div>
+    <p>시간축을 \(\Lambda\)로 바꾸어 재면(도착이 많은 시간대를 늘이고 뜸한 시간대를 줄이면) 도착률 1인 보통 Poisson 과정이 됩니다. 반대로 도착률의 최대값 \(\lambda^*\)인 Poisson 과정을 만들고, 시각 \(t\)의 도착을 확률 \(\lambda(t)/\lambda^*\)로만 남기면(5.2절의 분해) 비동차 과정을 모의실험할 수 있습니다(솎아내기 방법). 다만 도착 간격은 더 이상 독립인 지수분포가 아닙니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.3</span>
+      <p>개장 후 \(t\)시간에 손님의 도착률이 \(\lambda(t) = 4t\)(명/시간), \(0 \le t \le 3\)입니다. 첫 1시간에 손님이 없을 확률, 2명 이상 올 확률, 3시간 동안의 평균 손님 수는?</p>
+    </div>
+    <p><i>풀이.</i> \(\Lambda(1) = \int_0^1 4s\,ds = 2\). \(P(N(1) = 0) = e^{-2} \approx 0.135\), \(P(N(1) \ge 2) = 1 - e^{-2} - 2e^{-2} \approx 0.594\). \(\Lambda(3) = 2 \cdot 9 = 18\)명.</p>
+
+    <h3><span class="no">5.3.2</span>복합 Poisson 과정</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 5.3.4</span>
+      <p>\(N(t)\)가 도착률 \(\lambda\)인 Poisson 과정이고 \(Y_1, Y_2, \ldots\)가 \(N\)과 독립인 iid 확률변수일 때 \(S(t) = \sum_{i=1}^{N(t)}Y_i\)를 <b>복합 Poisson 과정</b>이라 한다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.3.5</span>
+      <p>\(E[S(t)] = \lambda tE(Y)\), \(\text{Var}[S(t)] = \lambda tE(Y^2)\).</p>
+    </div>
+    <p class="tb-proof">\(N(t) = n\)으로 조건을 걸면 \(E(S\mid N) = NE(Y)\), \(\text{Var}(S\mid N) = N\text{Var}(Y)\). 전체 분산 공식으로 \(\text{Var}(S) = E(N)\text{Var}(Y) + \text{Var}(N)E(Y)^2 = \lambda t[\text{Var}(Y) + E(Y)^2] = \lambda tE(Y^2)\). <span class="qed">∎</span></p>
+    <p>분산에 \(E(Y)^2\)이 아니라 \(E(Y^2)\)이 들어가는 점이 핵심입니다. 건수의 불확실성과 금액의 불확실성이 함께 쌓여, 금액이 고정일 때보다 총액이 더 크게 흔들립니다. 보험료 산정과 지급준비금 계산의 기본식입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>비동차 Poisson: 구간 도착 수 \(\sim \text{Poisson}\left(\int\lambda(s)ds\right)\).</li>
+        <li>모의실험은 최대 도착률 과정을 솎아내어 만듭니다.</li>
+        <li>복합 Poisson: 평균 \(\lambda tE(Y)\), 분산 \(\lambda tE(Y^2)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 5.3.3에서 2시간째(\(1 \le t \le 2\))에 오는 손님 수의 분포는?
+          <details><summary>답</summary><p>\(\Lambda(2) - \Lambda(1) = 8 - 2 = 6\). Poisson(6).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>도착률 2인 Poisson 과정에서 손님마다 구매액이 1만 원(확률 0.5) 또는 3만 원(확률 0.5)입니다. 10시간 매출의 평균과 표준편차는?
+          <details><summary>답</summary><p>\(E(Y) = 2\), \(E(Y^2) = 5\). 평균 \(20 \times 2 = 40\)만 원, 분산 \(20 \times 5 = 100\), 표준편차 10만 원.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

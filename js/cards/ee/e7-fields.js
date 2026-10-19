@@ -9,29 +9,6 @@
   const f2 = (x, d = 3) => (Math.abs(x) < 5e-13 ? 0 : x).toFixed(d);
   const deg = Math.PI / 180, e0 = 8.854e-12;
 
-  /* 1. 좌표계 성분 변환: 고정 벡터 A = (2, −1, 3), 점의 위치를 φ, θ로 */
-  (() => {
-    const S = QSim.card("exp-e7-coords"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), ph = S.val("phi") * deg, th = S.val("theta") * deg, A = [S.val("ax"), S.val("ay"), S.val("az")];
-      const ar = [Math.sin(th) * Math.cos(ph), Math.sin(th) * Math.sin(ph), Math.cos(th)], at = [Math.cos(th) * Math.cos(ph), Math.cos(th) * Math.sin(ph), -Math.sin(th)];
-      const arho = [Math.cos(ph), Math.sin(ph), 0], aph = [-Math.sin(ph), Math.cos(ph), 0], dot = (u, w) => u[0] * w[0] + u[1] * w[1] + u[2] * w[2];
-      const cyl = [dot(A, arho), dot(A, aph), A[2]], sph = [dot(A, ar), dot(A, at), dot(A, aph)];
-      const v = QSim.view(cv, 0.62), fr = QSim.frame(v, { x0: -3.4, x1: 3.4, y0: -2.6, y1: 2.6, equal: true, pad: 10 }); fr.axes({ noGrid: true });
-      const px = 1.6 * Math.cos(ph), py = 1.6 * Math.sin(ph);   // 점의 xy 투영(크기는 그림용)
-      fr.path([[0, 0], [px, py]], c.rule, 1, [3, 3]); fr.dot(px, py, c.ink, 4);
-      fr.arrow(px, py, arho[0], arho[1], c.main, "a_ρ"); fr.arrow(px, py, aph[0], aph[1], c.acc, "a_φ");
-      fr.arrow(0, 0, A[0] * 0.5, A[1] * 0.5, c.warn, "A의 xy 성분 (×0.5)");
-      fr.text("x", 3.2, 0.15, c.ink3); fr.text("y", 0.1, 2.4, c.ink3);
-      const m = Math.hypot(...A);
-      S.out(`점의 방향: φ = ${S.val("phi")}°, θ = ${S.val("theta")}°. 벡터 A = ${A[0]}a_x ${A[1] < 0 ? "−" : "+"} ${Math.abs(A[1])}a_y ${A[2] < 0 ? "−" : "+"} ${Math.abs(A[2])}a_z (|A| = ${f2(m)})\n` +
-        `원통: A_ρ = ${f2(cyl[0])}, A_φ = ${f2(cyl[1])}, A_z = ${f2(cyl[2])} (크기 ${f2(Math.hypot(...cyl))})\n` +
-        `구: A_r = ${f2(sph[0])}, A_θ = ${f2(sph[1])}, A_φ = ${f2(sph[2])} (크기 ${f2(Math.hypot(...sph))}). 그림: xy 평면에서 본 a_ρ(파랑), a_φ(주황)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. 2차원 벡터장의 선속과 순환 (원 경로) */
   (() => {
     const S = QSim.card("exp-e7-flux2d"); if (!S) return;
@@ -151,67 +128,6 @@
     S.on(() => { reset(); draw(); }); QSim.redrawOn(draw); reset(); draw();
   })();
   const mu0 = 4e-7 * Math.PI;
-
-  /* 7. 원형 고리 축 위 자계와 쌍극자 근사, 같은 크기 정사각형 고리 */
-  (() => {
-    const S = QSim.card("exp-e7-loop"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), I = S.val("i"), a = S.val("a") / 100, z0 = S.val("z") / 100;
-      const Hc = (z) => I * a * a / (2 * Math.pow(a * a + z * z, 1.5));
-      const Hd = (z) => I * a * a / (2 * Math.abs(z) ** 3);
-      // 한 변 2a 정사각형 고리 축 위: 각 변의 유한 직선 자계의 축 성분 × 4
-      const Hs = (z) => { const d = Math.hypot(a, z), sa = a / Math.hypot(a, d); return 4 * (I / (4 * Math.PI * d)) * 2 * sa * (a / d); };
-      const Z = 4 * a, top = Hc(0) * 1.15;
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: Z, y0: 0, y1: top, xl: "z (m)", yl: "H (A/m)" }); fr.axes();
-      fr.fn(Hc, c.main, 2.6); fr.fn(Hs, c.acc, 2, [6, 3]); fr.fn((z) => Math.min(top * 2, Hd(Math.max(z, 1e-6))), c.ink3, 1.2, [2, 3]);
-      fr.dot(z0, Hc(z0), c.warn, 6);
-      S.out(`원형 고리: 반지름 ${f2(a * 100, 1)} cm, I = ${I} A. 축 위 z = ${f2(z0 * 100, 1)} cm: H = ${f2(Hc(z0), 3)} A/m (B = ${f2(mu0 * Hc(z0) * 1e6, 3)} μT)\n` +
-        `쌍극자 근사 Ia²/(2z³) = ${z0 > 0 ? f2(Hd(z0), 3) : "∞"} A/m${z0 > 0 ? ` (오차 ${f2((Hd(z0) / Hc(z0) - 1) * 100, 1)}%)` : ""}. 중심 I/(2a) = ${f2(Hc(0), 3)} A/m\n` +
-        `한 변 2a 정사각형(주황 점선): 중심 ${f2(Hs(0), 3)} A/m, z에서 ${f2(Hs(z0), 3)} A/m. 회색 점선: 쌍극자 근사`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 8. 동축선의 H(ρ): 네 영역 */
-  (() => {
-    const S = QSim.card("exp-e7-coaxh"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), a = S.val("a"), b = S.val("b"), cc = b + S.val("t"), I = 1, ret = S.val("ret") / 100;   // mm
-      const Ienc = (r) => (r < a ? I * r * r / (a * a) : r < b ? I : r < cc ? I - ret * I * (r * r - b * b) / (cc * cc - b * b) : I - ret * I);
-      const H = (r) => Ienc(r) / (2 * Math.PI * r * 1e-3);
-      const R = cc * 1.6, top = Math.max(...Array.from({ length: 400 }, (_, i) => H(0.01 + i * R / 400))) * 1.15;
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: R, y0: 0, y1: top, xl: "ρ (mm)", yl: "H (A/m)" }); fr.axes();
-      [a, b, cc].forEach((x) => fr.path([[x, 0], [x, top]], c.rule, 1, [2, 3]));
-      fr.fn((r) => H(Math.max(r, 1e-3)), c.main, 2.6, undefined, 800);
-      const Hout = H(R * 0.95);
-      S.out(`안 도체 a = ${f2(a, 1)} mm, 바깥 도체 ${f2(b, 1)}~${f2(cc, 1)} mm, 안 도체 1 A(+z), 바깥 도체로 ${S.val("ret")}% 되돌아옴(−z)\n` +
-        `안 도체 표면 H = ${f2(H(a), 1)} A/m, 사이 가운데(${f2((a + b) / 2, 2)} mm) ${f2(H((a + b) / 2), 1)} A/m, 바깥(ρ = ${f2(R * 0.95, 1)} mm) ${f2(Hout, 2)} A/m\n` +
-        `바깥 도체가 전류를 모두 되돌려야(100%) 케이블 밖 자계가 0이 됩니다. 점선: 도체 경계`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 9. 자기 회로: 철심 + 공기 틈 */
-  (() => {
-    const S = QSim.card("exp-e7-magcirc"); if (!S) return;
-    const cv = S.$("canvas");
-    const lc = 0.3, A = 4e-4, N = 500;
-    function draw() {
-      const c = C(), mur = S.val("mur"), g = S.val("g") / 1000, I = S.val("i");
-      const Rc = lc / (mur * mu0 * A), Rg = g / (mu0 * A), R = Rc + Rg, phi = N * I / R, B = phi / A, L = N * N / R;
-      const v = QSim.view(cv, 0.3), g2 = v.g, W = v.W, H = v.H, x0 = 20, w = W - 40, fc = Rc / R;
-      g2.fillStyle = c.main; g2.fillRect(x0, H * 0.3, w * fc, H * 0.35); g2.fillStyle = c.acc; g2.fillRect(x0 + w * fc, H * 0.3, w * (1 - fc), H * 0.35);
-      g2.fillStyle = c.ink2; g2.font = "12px " + (getComputedStyle(document.documentElement).getPropertyValue("--f-mono") || "monospace");
-      g2.fillText(`철심 ${f2(fc * 100, 1)}%`, x0, H * 0.25); g2.textAlign = "right"; g2.fillText(`공기 틈 ${f2((1 - fc) * 100, 1)}%`, x0 + w, H * 0.25); g2.textAlign = "left";
-      g2.fillText("기자력 NI가 두 구간에 나뉘는 비율(자기 저항 비)", x0, H * 0.88);
-      S.out(`철심: 길이 30 cm, 단면 4 cm², μ_r = ${mur}. 공기 틈 ${f2(g * 1000, 2)} mm. 코일 500회, ${f2(I, 2)} A → NI = ${f2(N * I, 0)}\n` +
-        `자기 저항: 철심 ${(Rc / 1e5).toFixed(2)}×10⁵, 공기 틈 ${(Rg / 1e5).toFixed(2)}×10⁵ A/Wb. 자속 ${f2(phi * 1e3, 4)} mWb, B = ${f2(B, 3)} T, L = N²/ℛ = ${f2(L * 1000, 1)} mH\n` +
-        (B > 1.6 ? `B가 약 1.6 T를 넘었습니다. 실제 철심은 포화되어 이 선형 계산이 맞지 않습니다(가상 기준값).` : `포화 전(선형 모델 유효 범위로 봄)`));
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 10. 레일 위 막대: 처음 속도 v₀로 밀고 놓으면 */
   (() => {

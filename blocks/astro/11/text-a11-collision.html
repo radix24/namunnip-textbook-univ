@@ -1,0 +1,91 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우11-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a11-collision" data-kind="본문" data-std="천우11-05-04">
+  <header class="card-head"><span class="no"></span><h2>충돌 확률: 가까운 접근을 숫자로 판단하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>두 물체가 가장 가까워지는 순간의 만남 평면에서 충돌 확률을 정의한다.</li>
+        <li>위치 오차가 원형 정규분포일 때 충돌 확률 근사식을 쓴다.</li>
+        <li>위치 오차가 너무 크면 확률이 오히려 작게 나오는 '희석' 현상을 이해한다.</li>
+        <li>회피 기동의 판단 기준(예: \(10^{-4}\))과 그 근거를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>공분산의 전파 (<a href="05-02.html">5.2절</a>), 우주 쓰레기 (<a href="../2/04-04.html">천우2 4.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>만남 평면</h3>
+    <p>두 물체(위성과 파편)는 보통 수 km/s의 상대 속도로 스쳐 지나가므로, 가장 가까운 순간 근처의 짧은 시간 동안 상대 운동은 직선입니다. 상대 속도에 수직인 평면(만남 평면)에 두 물체의 위치 오차를 투영하면, 문제는 '2차원 확률 분포에서 반지름 \(R\)(두 물체 크기의 합)인 원 안에 들어갈 확률'이 됩니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.4.1 (원형 오차, \(R \ll \sigma\))</span>
+      \[P_c \approx \frac{R^2}{2\sigma^2}\exp\!\left(-\frac{d^2}{2\sigma^2}\right).\]
+      <p>\(d\)는 예측된 최소 거리, \(\sigma\)는 두 물체 위치 오차를 합친 만남 평면의 표준편차(각 방향)입니다.</p>
+    </div>
+    <p>원 넓이 \(\pi R^2\)에 그곳의 확률 밀도 \(\exp(-d^2/2\sigma^2)/(2\pi\sigma^2)\)를 곱한 것입니다. 실제 운용에서는 오차 타원이 길쭉하므로 2차원 적분을 수치로 합니다.</p>
+
+    <h3><span class="no">5.4.2</span>희석: 모를수록 안전해 보인다</h3>
+    <p>\(R = 10\) m, 예측 최소 거리 \(d = 500\) m일 때 위치 오차에 따라 충돌 확률은</p>
+    <div class="tb-table">
+      <table>
+        <thead><tr><th>위치 오차 \(\sigma\) (m)</th><th>충돌 확률 \(P_c\)</th></tr></thead>
+        <tbody>
+          <tr><td>100</td><td>\(1.9\times10^{-8}\)</td></tr>
+          <tr><td>200</td><td>\(5.5\times10^{-5}\)</td></tr>
+          <tr><td>354</td><td>\(1.5\times10^{-4}\)</td></tr>
+          <tr><td>500</td><td>\(1.2\times10^{-4}\)</td></tr>
+          <tr><td>1,000</td><td>\(4.4\times10^{-5}\)</td></tr>
+          <tr><td>5,000</td><td>\(2.0\times10^{-6}\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>위치를 정확히 알면(작은 \(\sigma\)) 500 m 떨어져 지나는 것이 확실해 확률이 매우 작습니다. 위치를 거의 모르면(큰 \(\sigma\)) 확률 밀도가 넓게 퍼져 원 안에 들어갈 몫도 작아집니다. 그 사이 \(\sigma = d/\sqrt2\)에서 최대 \(P_{\max} = R^2/(ed^2)\)입니다. 작은 \(P_c\)가 '안전하다'는 뜻인지 '잘 모른다'는 뜻인지 구별해야 하며, 오차가 큰 경우에는 추가 관측으로 \(\sigma\)를 줄인 뒤 다시 판단합니다.</p>
+
+    <h3><span class="no">5.4.3</span>판단 기준</h3>
+    <p>많은 운용 기관이 \(P_c \gtrsim 10^{-4}\)이면 회피 기동을 검토합니다. 너무 낮게 잡으면 기동이 잦아 연료와 임무 시간을 잃고, 너무 높게 잡으면 위험을 떠안습니다. 국제우주정거장은 하루에 여러 건의 접근 경보를 받고, 1년에 몇 번 실제 회피 기동을 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>\(R = 10\) m, \(d = 500\) m, \(\sigma = 200\) m일 때 충돌 확률을 결과 5.4.1로 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(R^2/(2\sigma^2) = 100/80000 = 1.25\times10^{-3}\), \(\exp(-250000/80000) = e^{-3.125} = 0.044\). \(P_c = 5.5\times10^{-5}\). 원 안을 수치 적분해도 \(5.50\times10^{-5}\)으로 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>만남 평면에 오차를 투영해, 반지름 \(R\) 원 안에 들어갈 확률을 구한다.</li>
+        <li>\(P_c \approx (R^2/2\sigma^2)e^{-d^2/2\sigma^2}\). 최대 \(R^2/(ed^2)\)(\(\sigma = d/\sqrt2\)).</li>
+        <li>오차가 크면 확률이 희석된다. 작은 \(P_c\)가 안전인지 무지인지 구별한다. 기준 \(\sim10^{-4}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(d = 0\)(정면으로 지나는 예측)이면 \(P_c\)는?
+          <details><summary>답</summary><p>\(R^2/(2\sigma^2)\). \(\sigma = 100\) m, \(R = 10\) m이면 0.005.</p></details>
+        </li>
+        <li>\(R\)이 두 배(큰 위성)면 \(P_c\)는?
+          <details><summary>답</summary><p>4배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(d = 1\) km, \(R = 5\) m일 때 오차가 어떻든 충돌 확률이 넘을 수 없는 값은?
+          <details><summary>답</summary><p>\(R^2/(ed^2) = 25/(2.718\times10^6) = 9.2\times10^{-6}\). 기준 \(10^{-4}\)보다 작으므로 회피가 필요 없습니다.</p></details>
+        </li>
+        <li>추가 관측으로 \(\sigma\)가 5 km에서 350 m로 줄었더니 \(P_c\)가 \(2\times10^{-6}\)에서 \(1.5\times10^{-4}\)으로 커졌습니다. 관측이 위험을 키웠습니까?
+          <details><summary>답</summary><p>아닙니다. 위험은 그대로이고, 처음 값은 정보 부족으로 희석된 것이었습니다. 정보가 늘어 실제 위험이 드러났으므로 회피를 검토해야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

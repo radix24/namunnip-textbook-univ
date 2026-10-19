@@ -258,45 +258,6 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 6. 순서 검출기: 무어 기계와 밀리 기계 (03-02) */
-  (() => {
-    const S = QSim.card("lab-e34-seqdet"); if (!S) return;
-    const cv = S.$("canvas");
-    function machines(pat, bits, overlap) {
-      const k = pat.length;
-      // KMP 방식으로 "지금까지 맞은 길이" j 를 상태로 쓴다. 무어는 j = k 인 상태를 하나 더 둔다
-      const nextJ = (j, b) => { let s = pat.slice(0, j) + b; while (s.length && !pat.startsWith(s)) s = s.slice(1); return s.length; };
-      const longestBorder = (p) => { for (let L = p.length - 1; L > 0; L--) if (p.slice(0, L) === p.slice(p.length - L)) return L; return 0; };
-      let jM = 0, jo = 0; const mealy = [], moore = [], mstate = [], ostate = [];
-      for (const b of bits) {
-        // 밀리: 이번 입력과 지금 상태로 바로 출력
-        const hit = nextJ(jM, b) === k; mealy.push(hit ? 1 : 0); mstate.push(jM); jM = hit ? (overlap ? longestBorder(pat) : 0) : nextJ(jM, b);
-        // 무어: 출력은 상태(= 다 맞은 상태 k)로만 결정 → 한 클록 늦게 보인다
-        moore.push(jo === k ? 1 : 0); ostate.push(jo);
-        const from = jo === k ? (overlap ? longestBorder(pat) : 0) : jo; jo = nextJ(from, b);
-      }
-      moore.push(jo === k ? 1 : 0); ostate.push(jo);   // 입력이 끝난 다음 칸: 무어 출력은 여기서야 보일 수 있다
-      return { mealy, moore, mstate, ostate, nM: k, nO: k + 1 };
-    }
-    function bits() { const s = (S.$('[name="bits"]').value || "").replace(/[^01]/g, ""); return s.slice(0, 32); }
-    function draw() {
-      const c = C(), pat = S.val("pat"), b = bits(), ov = S.val("ov"), m = machines(pat, b, ov), n = Math.max(b.length + 1, 8);
-      const v = QSim.view(cv, 0.5), pad = (a) => a.concat(Array(n).fill(null)).slice(0, n);
-      timing(v, [
-        { name: "입력", v: pad([...b].map(Number)), color: c.acc },
-        { name: "밀리 상태", bus: true, v: pad(m.mstate), color: c.ink3 },
-        { name: "밀리 출력", v: pad(m.mealy), color: c.warn },
-        { name: "무어 상태", bus: true, v: pad(m.ostate), color: c.ink3 },
-        { name: "무어 출력", v: pad(m.moore), color: c.main }], n, { xl: "한 칸 = 클록 한 주기", left: 66 });
-      const at = (a) => a.map((x, i) => (x ? i : -1)).filter((i) => i >= 0);
-      S.out(`찾는 순서 ${pat}, ${ov ? "겹침 허용" : "겹침 없음"}. 입력 ${b.length}비트: ${b}\n` +
-        `밀리 기계(상태 ${m.nM}개): 출력 1인 칸 ${at(m.mealy).join(", ") || "없음"} — 마지막 비트가 들어오는 그 칸\n` +
-        `무어 기계(상태 ${m.nO}개): 출력 1인 칸 ${at(m.moore).join(", ") || "없음"} — 한 칸 늦게, 한 클록 동안 꼬박\n상태 번호 = 지금까지 맞은 앞부분의 길이 (무어의 ${pat.length}는 "다 맞음" 상태)`);
-    }
-    S.$(".rand").addEventListener("click", () => { const r = rng(Date.now() % 100000); S.$('[name="bits"]').value = Array.from({ length: 24 }, () => (r() < 0.5 ? 0 : 1)).join(""); draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 7. 스위치 바운스와 디바운서 (04-02) */
   (() => {
     const S = QSim.card("lab-e34-debounce"); if (!S) return;

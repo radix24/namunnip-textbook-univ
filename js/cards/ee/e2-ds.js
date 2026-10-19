@@ -10,29 +10,6 @@
   const mono = () => getComputedStyle(document.documentElement).getPropertyValue("--f-mono") || "monospace";
   const fmtT = (s) => (s < 1e-6 ? `${f2(s * 1e9, 1)} ns` : s < 1e-3 ? `${f2(s * 1e6, 1)} μs` : s < 1 ? `${f2(s * 1e3, 1)} ms` : s < 3600 ? `${f2(s, 1)} 초` : s < 86400 * 365 ? `${f2(s / 3600, 1)} 시간` : `${(s / 86400 / 365).toExponential(1)} 년`);
 
-  /* 1. 증가율 비교 (로그-로그) */
-  (() => {
-    const S = QSim.card("exp-e2-growth"); if (!S) return;
-    const cv = S.$("canvas");
-    const fs = [
-      ["log n", (n) => Math.log2(n)], ["n", (n) => n], ["n log n", (n) => n * Math.log2(n)],
-      ["n²", (n) => n * n], ["n³", (n) => n ** 3], ["2ⁿ", (n) => 2 ** n],
-    ];
-    function draw() {
-      const c = C(), lg = S.val("lgn"), n = 10 ** lg, ka = S.val("ka");
-      const v = QSim.view(cv, 0.5), fr = QSim.frame(v, { x0: 0, x1: 7, y0: 0, y1: 22, xl: "log₁₀ n", yl: "log₁₀ 연산 수" }); fr.axes();
-      const cols = [c.ink3, c.main, c.acc, c.warn, c.ink2, c.rule];
-      fs.forEach(([name, f], i) => fr.fn((u) => { const y = Math.log10(Math.max(1, f(10 ** u))); return y > 22 ? NaN : y; }, cols[i], 2, undefined, 400));
-      fr.path([[lg, 0], [lg, 22]], c.rule, 1, [3, 3]);
-      fs.forEach(([name, f], i) => { const y = Math.log10(Math.max(1, f(10 ** 0.9))); if (y < 21) fr.text(name, 0.95, y + 0.4, cols[i]); });
-      const rows = fs.map(([name, f]) => { const ops = f(n); return `${name.padEnd(7)} ${ops > 1e300 || !isFinite(ops) ? "∞" : ops.toExponential(2)}회 → ${!isFinite(ops) || ops > 1e300 ? "계산 불가" : fmtT(ops / 1e9)}`; });
-      const A = (m) => ka * m * Math.log2(m), B = (m) => m * m; let cross = 2; while (cross < 1e9 && A(cross) >= B(cross)) cross++;
-      S.out(`n = 10^${f2(lg, 1)} (${n.toExponential(1)}), 초당 10⁹번 연산하는 컴퓨터 기준\n${rows.join("\n")}\n` +
-        `상수 비교: ${ka}·n log n 과 n² → n ≥ ${cross}부터 n log n 쪽이 빠름`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. 동적 배열: 누적 복사 횟수 */
   (() => {
     const S = QSim.card("exp-e2-dynarray"); if (!S) return;
@@ -50,33 +27,6 @@
       S.out(`용량 늘리기: ${name}, 처음 용량 1, append ${n}번\n` +
         `재할당 ${r.realloc.length}번, 총 복사 ${r.copies}번 (append 한 번당 ${f2(r.copies / n, 3)}번), 한 번에 가장 많이 복사한 수 ${r.worst}, 마지막 용량 ${r.cap}\n` +
         `회색 점선: 두 배 전략(${d.copies}번), 연한 점선: 2n 직선. 일정 비율로 늘리면 2n 아래(또는 근처)의 직선, 일정량씩 늘리면 포물선이 됩니다.`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 3. 배열과 연결 리스트의 위치 i 삽입 비용 */
-  (() => {
-    const S = QSim.card("exp-e2-insert"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), n = S.val("n"), i = Math.min(S.val("i"), n);
-      const arrMove = n - i, listWalk = i;   // 배열: 뒤 n − i개 이동, 연결 리스트: i번 따라가기 + 참조 2개
-      const v = QSim.view(cv, 0.42), g = v.g, W = v.W, H = v.H, m = Math.min(n, 24), cw = (W - 40) / m;
-      g.font = "11px " + mono(); g.textAlign = "center";
-      const shown = (j) => Math.round(j * (n - 1) / Math.max(1, m - 1));
-      for (let j = 0; j < m; j++) {
-        const idx = shown(j), x = 20 + j * cw;
-        g.fillStyle = idx >= i ? c.warn : c.soft; g.globalAlpha = idx >= i ? 0.35 : 0.6; g.fillRect(x + 1, 20, cw - 2, 26); g.globalAlpha = 1;
-        g.strokeStyle = c.rule; g.strokeRect(x + 1, 20, cw - 2, 26);
-        g.fillStyle = c.ink2; if (m <= 24) g.fillText(String(idx), x + cw / 2, 37);
-        g.fillStyle = idx < i ? c.main : c.soft; g.globalAlpha = idx < i ? 0.35 : 0.2; g.beginPath(); g.arc(x + cw / 2, H - 40, Math.min(10, cw / 2 - 2), 0, 7); g.fill(); g.globalAlpha = 1;
-        if (j < m - 1) { g.strokeStyle = c.rule; g.beginPath(); g.moveTo(x + cw / 2 + 8, H - 40); g.lineTo(x + cw * 1.5 - 8, H - 40); g.stroke(); }
-      }
-      g.fillStyle = c.ink2; g.textAlign = "left"; g.fillText(`배열(주황 칸이 한 칸씩 밀림)`, 20, 14); g.fillText(`연결 리스트(파랑 노드를 따라감)`, 20, H - 16);
-      S.out(`원소 ${n}개, 위치 i = ${i}에 삽입\n` +
-        `배열: 뒤쪽 ${arrMove}개를 한 칸씩 이동 → 쓰기 ${arrMove + 1}번 (O(n − i))\n` +
-        `연결 리스트: 머리에서 ${listWalk}번 따라간 뒤 참조 2개 변경 (O(i)). 위치를 이미 알면 참조 변경만, O(1)\n` +
-        `i = 0이면 배열이 가장 비싸고(${n}번 이동) 연결 리스트가 가장 쌉니다. i = ${n}(끝)이면 반대입니다(배열은 이동 0, 꼬리 참조가 없는 리스트는 ${n}번 따라감).`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

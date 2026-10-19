@@ -11,11 +11,17 @@
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   const KEY = "quri-roadmap-v1";
   const SEMS = 8;
+  /* 학기 위치: 정규학기 s(0~7)는 2s, 그 뒤 계절학기(1-1 뒤 여름, 1-2 뒤 겨울 …)는 2s+1. 4학년 2학기 뒤 겨울은 넣지 않는다 */
+  const NP = 2 * SEMS - 1;
+  const SEASON_CR = 6;   // 계절학기마다 들을 수 있는 학점
+  const isSeason = (p) => p % 2 === 1;
+  const termOf = (p) => (p / 2) % 2 + 1;   // 정규학기의 1·2학기
+  const yearOfP = (p) => Math.floor(p / 4) + 1;
   const OFFER_FROM = 2024;   // 이 해부터의 개설 이력으로 1·2학기를 판단한다
   const PREFIX = "공통|수학|물리|화학|천우|응통|전전|기계";
   const SCHOOLS = ["연세대", "서울대", "고려대", "KAIST", "POSTECH", "서강대", "성균관대", "한양대", "경희대"];
-  const semName = (s) => `${Math.floor(s / 2) + 1}학년 ${s % 2 + 1}학기`;
-  const semShort = (s) => `${Math.floor(s / 2) + 1}-${s % 2 + 1}`;
+  const semName = (p) => `${yearOfP(p)}학년 ${isSeason(p) ? seasonName(p) + "학기" : termOf(p) + "학기"}`;
+  const semShort = (p) => `${yearOfP(p)}-${isSeason(p) ? seasonName(p) : termOf(p)}`;
 
   const store = {
     get() { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; } },
@@ -168,6 +174,41 @@
     });
     indexPre();
   }
+  /* 계절학기: 최근 3년(curricula/univ-season.json) 여름·겨울학기에 열린 학정번호만 넣을 수 있다 */
+  let SEASON = { codes: {}, lib: {}, terms: [] };
+  const seasonOf = (codes) => new Set(codes.flatMap((k) => (SEASON.codes[k] || []).map((t) => t.split("-")[1])));   // {"여름","겨울"}
+  const seasonLib = (k) => new Set((SEASON.lib[k] && SEASON.lib[k].ok && SEASON.lib[k].types) || []);
+  const seasonOn = (p) => P.season && !(P.seasonOff || []).includes(p);   // 계절학기 칸마다 끄고 켤 수 있다
+  const seasonName = (p) => (((p - 1) / 2) % 2 ? "겨울" : "여름");
+
+  /* 교양 요건: 제1전공 대학의 libReq에 학번별 덮어쓰기(libByCohort)와 전공별 값(영어 지정과목 등)을 합친다 */
+  function libFor(T) {
+    const col = REQ.colleges[T.m.college];
+    const L = Object.assign({ basic: 8, rc: 2, area: 0, info: false, english: false }, col.libReq || {}, { srcs: [(col.libReq || {}).src].filter(Boolean) });
+    (col.libByCohort || []).forEach((p) => {
+      if (P.cohort < (p.from || 0) || P.cohort > (p.to || 9999)) return;
+      Object.entries(p).forEach(([k, v]) => { if (k === "src") L.srcs.push(v); else if (k !== "from" && k !== "to") L[k] = v; });
+    });
+    Object.assign(L, T.m.libReq || {});
+    return L;
+  }
+  /* 교양 필수를 계획에 넣을 자리표시 카드(QURI 밖). 대학교양 영역 과목은 영역만 정해 둔다 */
+  function libItems(L) {
+    const out = [];
+    const add = (id, name, cr, y, cat, extra) => out.push(Object.assign({ id: "@교양:" + id, name, cr, y, sem: "1·2", kind: "교양", lib: true, libCat: cat, cat: null }, extra));
+    [1, 2, 3, 4].forEach((n) => add("채플" + n, `채플(${n})`, 0.5, n <= 2 ? 1 : 2, "basic", { season: seasonLib("채플"), hard: n > 1 ? ["@교양:채플" + (n - 1)] : [] }));
+    add("글쓰기", "글쓰기", 3, 1, "basic", { season: seasonLib("글쓰기") });
+    add("기독교", "기독교의이해", 3, 1, "basic", { season: seasonLib("기독교의이해") });
+    add("RC101", "Yonsei RC101", 1, 1, "rc", { season: seasonLib("RC101") });
+    if (L.rc >= 2) add("사회참여", "사회참여", 1, 1, "rc", { season: seasonLib("사회참여") });
+    const names = [];
+    if (L.info) names.push("대학교양: 정보와기술 영역");
+    if (L.english) names.push("대학교양: 언어와표현(지정 영어)");
+    for (let i = names.length, n = Math.ceil(L.area / 3); i < n; i++) names.push(`대학교양 영역 과목 ${i + 1}`);
+    names.forEach((nm, i) => add("영역" + (i + 1), nm, 3, 1, "area", { season: seasonLib("대학교양") }));
+    return out;
+  }
+
   /* 학번 요람의 과목명이 지금과 다르면 그 이름 */
   function oldName(c, cohort) {
     const r = (REQ && REQ.renames || []).find((x) => x.code && x.old && x.new && !x.tableOnly && x.code === hak(c) && cohort < x.since);
@@ -336,7 +377,7 @@
   }
 
   /* ---------- 졸업 로드맵 ---------- */
-  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 3, pins: {}, removed: [] };
+  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 0, season: true, seasonOff: [], pins: {}, removed: [] };
   let PLAN = null;
 
   function trackOf(i) {
@@ -369,12 +410,14 @@
       if (!off.known) terms = semTerms(String(c.sem) + (c.open ? " " + c.open : ""));
       const P0 = PRE.get(id);
       const extra = ctx.extraPre[id] || [];
+      const subs = pref ? [pref] : c.sub || [];
       it = { id, c, out: c.out ? c : null, name: c.name, cr: c.cr, y: c.y, terms, known: off.known, kind: c.kind, dept: c.dept,
-        hard: [...P0.hard, ...extra.map((k) => [k])], co: P0.co, soft: P0.soft };
+        season: seasonOf(subs), hard: [...P0.hard, ...extra.map((k) => [k])], co: P0.co, soft: P0.soft };
     } else {
       const o = ctx.outsideById.get(id);
       if (!o) return null;
-      it = { id, out: o, name: o.name, cr: o.cr, y: o.y, terms: semTerms(o.sem || "1·2"), known: false, kind: o.kind || "", dept: "", hard: [], co: [], soft: [] };
+      it = { id, out: o, name: o.name, cr: o.cr, y: o.y, terms: semTerms(o.sem || "1·2"), known: false, kind: o.kind || "", dept: "",
+        season: o.season != null ? o.season : seasonOf(o.code ? [o.code] : []), hard: (o.hard || []).map((k) => [k]), co: [], soft: [] };
       if (!it.terms.size) { it.terms.add(1); it.terms.add(2); }
     }
     ctx.items.set(id, it);
@@ -400,6 +443,9 @@
     const ctx = { items: new Map(), prefer: col.prefer || {}, extraPre: {}, outsideById: new Map() };
     Ts.forEach((T) => { Object.assign(ctx.extraPre, T.m.extraPre || {}); T.outside.forEach((o) => ctx.outsideById.set(o.id, o)); });
     (col.libOutside || []).forEach((o) => ctx.outsideById.set(o.id || "@" + o.name, Object.assign({ id: o.id || "@" + o.name, cat: null, lib: true }, o)));
+    const LIB = libFor(Ts[0]);
+    const libCards = libItems(LIB);
+    libCards.forEach((o) => ctx.outsideById.set(o.id, o));
     const removed = new Set(P.removed);
     const need = [];               // [id, 우선순위]
     const prio = new Map();
@@ -410,6 +456,7 @@
     /* 1) 교양 필수(과목 관련), 각 전공의 기초·필수, 골라 듣기 묶음, QURI 밖 필수 */
     (col.lib || []).forEach((k) => want(k, 0));
     (col.libOutside || []).forEach((o) => want(o.id || "@" + o.name, 0));
+    libCards.forEach((o) => want(o.id, o.libCat === "area" ? 3 : 0));   // 영역 과목은 전공 필수 뒤에 빈자리로
     Ts.forEach((T, i) => {
       T.libExtra.forEach((k) => want(k, 0));
       [...T.basicList, ...T.reqList].forEach((k) => want(k, 1 + Math.min(i, 1)));
@@ -486,10 +533,11 @@
     }
 
     /* 3) 학기 배치: 고정한 과목 먼저, 나머지는 선수·개설 학기·학점 상한을 지키며 앞에서부터 */
-    const at = new Map();
+    const at = new Map();   // 과목 → 학기 위치(0~14, 홀수는 계절학기)
     const budget = Math.max(3, P.cap - P.rsv);
-    const used = Array(SEMS).fill(0);
-    Object.entries(P.pins).forEach(([id, s]) => { if (prio.has(id) && s >= 0 && s < SEMS) { at.set(id, s); used[s] += ctx.items.get(id).cr; } });
+    const cap = (p) => (isSeason(p) ? SEASON_CR : budget);
+    const used = Array(NP).fill(0);
+    Object.entries(P.pins).forEach(([id, p]) => { if (prio.has(id) && p >= 0 && p < NP) { at.set(id, p); used[p] += ctx.items.get(id).cr; } });
     /* 뒤에 딸린 선수 사슬이 긴 과목부터(임계 경로): 양자역학처럼 3~4학기 사슬이 있는 과목이 밀리지 않게 */
     const tail = new Map();
     const tailOf = (k, stack = new Set()) => {
@@ -510,36 +558,39 @@
     const order = need.filter((k) => !at.has(k)).sort((a, b) => band(a) - band(b) || tailOf(b) - tailOf(a) || prio.get(a) - prio.get(b)
       || ctx.items.get(a).y - ctx.items.get(b).y || codeNum(a) - codeNum(b));
     let early = 0;   // 넣지 못한 과목이 생기면 요람 학년보다 한 학기 일찍 듣는 것까지 허용해 다시 배치한다
-    const ok = (it, s) => {
-      if (!it.terms.has(s % 2 + 1)) return false;
-      if (s < ((it.slotY || it.y) - 1) * 2 - early) return false;
+    let useSeason = false;   // 계절학기는 정규학기에 다 넣지 못할 때만 자동으로 쓴다
+    const ok = (it, p) => {
+      if (isSeason(p)) { if (!useSeason || !seasonOn(p) || !it.season.has(seasonName(p))) return false; }
+      else if (!it.terms.has(termOf(p))) return false;
+      if (p < ((it.slotY || it.y) - 1) * 4 - early * 2) return false;
       for (const g of it.hard) {
         const inPlan = g.filter((k) => prio.has(k));
-        if (inPlan.length && !inPlan.some((k) => at.has(k) && at.get(k) < s)) return false;
+        if (inPlan.length && !inPlan.some((k) => at.has(k) && at.get(k) < p)) return false;
       }
-      for (const k of it.co) if (prio.has(k) && !(at.has(k) && at.get(k) <= s)) return false;
+      for (const k of it.co) if (prio.has(k) && !(at.has(k) && at.get(k) <= p)) return false;
       return true;
     };
     const pinned = new Map(at), pinnedUsed = used.slice();
     const run = () => {
       at.clear(); pinned.forEach((v, k) => at.set(k, v));
-      used.splice(0, SEMS, ...pinnedUsed);
-      for (let s = 0; s < SEMS; s++) {
+      used.splice(0, NP, ...pinnedUsed);
+      for (let p = 0; p < NP; p++) {
         let moved = true;
         while (moved) {
           moved = false;
           for (const id of order) {
             if (at.has(id)) continue;
             const it = ctx.items.get(id);
-            if (used[s] + it.cr <= budget && ok(it, s)) { at.set(id, s); used[s] += it.cr; moved = true; }
+            if (used[p] + it.cr <= cap(p) && ok(it, p)) { at.set(id, p); used[p] += it.cr; moved = true; }
           }
         }
       }
     };
     run();
+    if (P.season && need.some((k) => !at.has(k))) { useSeason = true; run(); }
     if (need.some((k) => !at.has(k))) { early = 1; run(); }
     const unplaced = need.filter((k) => !at.has(k));
-    PLAN = { Ts, col, ctx, need, prio, at, used, budget, unplaced, removed };
+    PLAN = { Ts, col, ctx, need, prio, at, used, budget, cap, unplaced, removed, LIB };
     return PLAN;
   }
 
@@ -548,15 +599,16 @@
     const { ctx, at, prio } = PLAN;
     const it = ctx.items.get(id), s = at.get(id), out = [];
     if (s == null) return out;
-    if (!it.terms.size) out.push(`${OFFER_FROM}년 이후 연세대 개설 기록이 없습니다`);
-    else if (!it.terms.has(s % 2 + 1)) out.push(`연세대에서 주로 ${[...it.terms].join("·")}학기에 열립니다`);
+    if (isSeason(s)) { if (!it.season.has(seasonName(s))) out.push(`최근 3년 ${seasonName(s)}학기 개설 기록이 없습니다`); }
+    else if (!it.terms.size) out.push(`${OFFER_FROM}년 이후 연세대 개설 기록이 없습니다`);
+    else if (!it.terms.has(termOf(s))) out.push(`연세대에서 주로 ${[...it.terms].join("·")}학기에 열립니다`);
     it.hard.forEach((g) => {
       const inPlan = g.filter((k) => prio.has(k));
       if (!inPlan.length) { if (g.every((k) => PLAN.removed.has(k))) out.push(`선수 ${g.map(nm).join(" 또는 ")}을(를) 계획에서 뺐습니다`); return; }
       if (!inPlan.some((k) => at.has(k) && at.get(k) < s)) out.push(`선수 ${inPlan.map(nm).join(" 또는 ")}이(가) 이보다 앞 학기에 있어야 합니다`);
     });
     it.co.forEach((k) => { if (prio.has(k) && !(at.has(k) && at.get(k) <= s)) out.push(`${nm(k)}을(를) 같은 학기나 그 전에 들어야 합니다`); });
-    if (s < (it.y - 1) * 2) out.push(`요람 배치는 ${it.y}학년입니다. 일찍 듣는다면 학과에 확인하세요`);
+    if (s < (it.y - 1) * 4) out.push(`요람 배치는 ${it.y}학년입니다. 일찍 듣는다면 학과에 확인하세요`);
     return out;
   }
   const nm = (k) => (COURSE.get(k) || {}).name || (PLAN.ctx.items.get(k) || {}).name || k;
@@ -588,7 +640,7 @@
 
   function renderPlan() {
     buildPlan();
-    const { Ts, col, at, used, budget, unplaced } = PLAN;
+        const { Ts, col, at, used, budget, unplaced } = PLAN;
     document.body.dataset.dept = Ts[0].m.id;
 
     /* 전공 목록 */
@@ -603,7 +655,7 @@
     const left = REQ.majors.filter((m) => !P.majors.some((x) => x.id === m.id));
     $("#p-add").innerHTML = left.map((m) => `<option value="${m.id}">${esc(m.name)}</option>`).join("");
     $("#p-add").disabled = $("#p-add-btn").disabled = P.majors.length >= 5 || !left.length;
-    $("#p-cap").value = P.cap; $("#p-rsv").value = P.rsv;
+    $("#p-cap").value = P.cap; $("#p-rsv").value = P.rsv; $("#p-season").checked = !!P.season;
     $("#p-cohort").innerHTML = YEARS.slice().reverse().map((y) => `<option value="${y}"${y === P.cohort ? " selected" : ""}>${y}학번</option>`).join("");
 
     /* 요건 충족 */
@@ -612,7 +664,8 @@
     const total = Ts[0].m.total || col.total, est = planCr + P.rsv * SEMS;
     let html = `<div class="rm-rq rm-total"><h3>졸업 총학점 <small>${P.cohort}학번 ${esc(Ts[0].m.name)}(${esc(col.name)}) 기준 ${total}학점</small></h3>
       ${bar(planCr, total, P.rsv * SEMS)}
-      <p class="small">계획한 과목 ${planCr}학점 + 학기마다 남긴 교양·일반선택 ${P.rsv}학점 × 8 = 약 <b>${est}</b>학점${est < total ? `. ${total - est}학점이 더 필요합니다` : ""}. ${esc(col.libNote)} <span class="rm-cite">${esc(col.libSrc)}</span></p></div>`;
+      <p class="small">계획한 과목(교양 포함) ${planCr}학점 + 학기마다 남긴 일반선택 ${P.rsv}학점 × 8 = 약 <b>${est}</b>학점${est < total ? `. ${total - est}학점은 일반선택 등으로 더 채워야 합니다` : ""}.</p></div>`;
+    html += libBox(placed);
     html += Ts.map((T, i) => reqBox(T, i, placed)).join("");
     $("#p-req").innerHTML = html;
 
@@ -633,13 +686,15 @@
 
     /* 8학기 계획표 */
     const lost = unplaced.reduce((s, k) => s + PLAN.ctx.items.get(k).cr, 0);
-    $("#p-board").innerHTML = (unplaced.length ? `<p class="rm-alert rm-lost">${unplaced.length}과목(${lost}학점)을 8학기 안에 넣지 못했습니다. 학기당 학점 상한을 올리거나, 남길 교양 학점을 줄이거나, 전공 수를 줄여 보세요. 아래 '넣지 못한 과목'에서 직접 학기를 골라 넣을 수도 있습니다.</p>` : "") + Array.from({ length: SEMS }, (_, s) => {
-      const ids = placed.filter((k) => at.get(k) === s).sort((a, b) => (PLAN.prio.get(a) - PLAN.prio.get(b)) || codeNum(a) - codeNum(b));
-      const over = used[s] > budget;
-      return `<section class="rm-sem${over ? " is-over" : ""}" data-s="${s}" style="--col:${Math.floor(s / 2) + 1};--row:${s % 2 + 1 + (unplaced.length ? 1 : 0)}" aria-label="${semName(s)}">
-        <h3>${semName(s)} <span class="mono">${used[s]}<small>/${budget}</small></span></h3>
-        <div class="rm-drop">${ids.map((k) => card(k, "board")).join("") || '<p class="rm-hint">여기로 끌어 놓기</p>'}</div>
-        ${over ? `<p class="rm-alert small">학기 상한 ${P.cap}학점 − 교양 ${P.rsv}학점을 넘었습니다</p>` : ""}</section>`;
+    const shown = Array.from({ length: NP }, (_, p) => p).filter((p) => !isSeason(p) || P.season || placed.some((k) => at.get(k) === p));
+    const rowOf = (p) => { const r = p % 4; return P.season ? r + 1 : r === 0 ? 1 : 2; };   // 1학기, 여름, 2학기, 겨울
+    $("#p-board").innerHTML = (unplaced.length ? `<p class="rm-alert rm-lost">${unplaced.length}과목(${lost}학점)을 8학기${P.season ? "와 계절학기" : ""} 안에 넣지 못했습니다. 학기당 학점 상한을 올리거나, 일반선택에 남길 학점을 줄이거나, 전공 수를 줄여 보세요. 아래 '넣지 못한 과목'에서 직접 학기를 골라 넣을 수도 있습니다.</p>` : "") + shown.map((p) => {
+      const ids = placed.filter((k) => at.get(k) === p).sort((a, b) => (PLAN.prio.get(a) - PLAN.prio.get(b)) || codeNum(a) - codeNum(b));
+      const lim = PLAN.cap(p), over = used[p] > lim, se = isSeason(p), off = se && !seasonOn(p);
+      return `<section class="rm-sem${over ? " is-over" : ""}${se ? " is-season" : ""}${off ? " is-off" : ""}" data-s="${p}" style="--col:${yearOfP(p)};--row:${rowOf(p) + (unplaced.length ? 1 : 0)}" aria-label="${semName(p)}">
+        <h3>${semName(p)} <span class="mono">${off ? "" : `${used[p]}<small>/${lim}</small>`}${se ? ` <button type="button" class="rm-btn sm rm-stog" data-stog="${p}" aria-pressed="${!off}" aria-label="${semName(p)} ${off ? "켜기" : "끄기"}">${off ? "켜기" : "끄기"}</button>` : ""}</span></h3>
+        <div class="rm-drop">${ids.map((k) => card(k, "board")).join("") || `<p class="rm-hint">${off ? "꺼 둔 계절학기입니다" : se ? "최근 3년 계절학기에 열린 과목만" : "여기로 끌어 놓기"}</p>`}</div>
+        ${over ? `<p class="rm-alert small">${se ? `계절학기 상한 ${SEASON_CR}학점` : `학기 상한 ${P.cap}학점 − 일반선택 ${P.rsv}학점`}을 넘었습니다</p>` : ""}</section>`;
     }).join("");
 
     /* 배치하지 않은 과목 */
@@ -675,13 +730,30 @@
     $("#p-src").innerHTML = `${rnTbl}<h2 class="rm-h2">출처</h2><ul class="rm-notes">
       ${Object.entries(REQ.sources).map(([k, s]) => `<li><span class="mono">${k}</span> <a href="${esc(s.url)}" rel="noopener">${esc(s.title)}</a></li>`).join("")}
       ${REQ.general.map((g) => `<li>${esc(g.t)} <span class="rm-cite">${esc(g.src)}</span></li>`).join("")}
-      <li>개설 학기는 ${OFFER_FROM}년 이후 연세대 수강편람 개설 이력으로 판단했습니다(1·2학기만, 계절학기 제외). 확인일 ${esc(REQ.checked)}.</li></ul>`;
+      <li>개설 학기는 ${OFFER_FROM}년 이후 연세대 수강편람 개설 이력으로 판단했습니다(1·2학기). 확인일 ${esc(REQ.checked)}.</li>
+      <li>계절학기에는 학기마다 ${SEASON_CR}학점까지, 최근 3년(${esc(SEASON.terms[0] || "")}~${esc(SEASON.terms[SEASON.terms.length - 1] || "")}) 계절학기에 열린 과목만 넣습니다(curricula/univ-season.json, 확인일 ${esc(SEASON.checked || "")}). ${esc(Object.entries(SEASON.lib).map(([k, v]) => `${k}: ${v.t}`).join(" · "))}</li></ul>`;
     save();
   }
 
   function bar(v, max, extra) {
     const pct = (x) => Math.max(0, Math.min(100, (x / Math.max(1, max)) * 100));
     return `<div class="rm-bar" role="img" aria-label="${v}/${max}학점"><span class="f" style="width:${pct(v)}%"></span>${extra ? `<span class="x" style="left:${pct(v)}%;width:${pct(Math.min(extra, max - v))}%"></span>` : ""}</div>`;
+  }
+  /* 교양 요건: 교양기초(채플·글쓰기·기독교의이해), RC, 대학교양 필수 과목(이과 공통필수·공학수학 등), 대학교양 영역 */
+  function libBox(placed) {
+    const { LIB, col, ctx, Ts } = PLAN;
+    const got = { basic: 0, rc: 0, area: 0, must: 0 };
+    const mustIds = [...(col.lib || []), ...(col.libOutside || []).map((o) => o.id || "@" + o.name), ...Ts[0].libExtra];
+    placed.forEach((k) => { const it = ctx.items.get(k); if (it.out && it.out.libCat) got[it.out.libCat] += it.cr; else if (mustIds.includes(k)) got.must += it.cr; });
+    const mustCr = mustIds.reduce((s, k) => s + ((itemOf(k, ctx) || {}).cr || 0), 0);
+    const row = (lab, v, max) => `<div class="rm-row"><span>${lab}</span>${bar(v, max)}<span class="mono">${v}/${max}</span></div>`;
+    const area = Math.ceil(LIB.area / 3) * 3;
+    return `<div class="rm-rq rm-lib"><h3>교양 <small>${P.cohort}학번 ${esc(Ts[0].m.name)} 기준 · 교양기초 ${LIB.basic} · RC ${LIB.rc} · 대학교양 필수 ${mustCr} · 영역 ${LIB.area}</small></h3>
+      ${row("교양기초", got.basic, LIB.basic)}${row("RC", got.rc, LIB.rc)}${row("대학교양 필수", got.must, mustCr)}${row("대학교양 영역", got.area, area)}
+      <p class="small">교양기초는 채플(4학기, 2학점)·글쓰기·기독교의이해입니다. 영역 과목은 QURI에 카드가 없어 자리만 잡아 두었습니다: ${esc(LIB.areaNote || "")}${LIB.info ? " 정보와기술 영역 1과목은 필수입니다." : ""}${LIB.english ? " 언어와표현 영역의 지정 영어 과목 1과목이 필수입니다." : ""}</p>
+      <details><summary>요건 메모와 출처</summary><ul class="rm-notes">
+        <li>${esc(col.libNote)} <span class="rm-cite">${esc(col.libSrc)}</span></li>
+        <li>${esc(LIB.srcs.join(" · "))}${LIB.englishSrc ? " · " + esc(LIB.englishSrc) : ""}</li></ul></details></div>`;
   }
   function reqBox(T, i, placed) {
     const pp = placedPicks(T);
@@ -712,6 +784,13 @@
 
   /* ---------- 옮기기 (끌기와 누르기) ---------- */
   function moveTo(id, s) {
+    const it = PLAN.ctx.items.get(id) || itemOf(id, PLAN.ctx);
+    if (s >= 0 && isSeason(s) && !seasonOn(s)) return;   // 꺼 둔 계절학기
+    if (s >= 0 && isSeason(s) && !(it && it.season.has(seasonName(s)))) {   // 최근 3년 계절학기에 열리지 않은 과목은 계절학기에 넣지 않는다
+      const note = $("#p-board").querySelector(".rm-season-no") || $("#p-board").insertAdjacentElement("afterbegin", Object.assign(document.createElement("p"), { className: "rm-alert rm-lost rm-season-no" }));
+      note.textContent = `${it ? it.name : id}은(는) 최근 3년 ${seasonName(s)}학기에 열린 기록이 없어 ${semName(s)}에 넣지 않았습니다.`;
+      return;
+    }
     if (s < 0) {
       delete P.pins[id];
       if (!P.removed.includes(id)) P.removed.push(id);
@@ -727,7 +806,8 @@
     const it = PLAN.ctx.items.get(id);
     const cur = PLAN.at.get(id);
     menu.innerHTML = `<p><b>${esc(it.name)}</b> <span class="small dim">${it.cr}학점${it.terms.size ? ` · 연세대 ${[...it.terms].join("·")}학기` : ""}</span></p>
-      <div class="rm-menu-g">${Array.from({ length: SEMS }, (_, s) => `<button type="button" class="rm-btn sm" data-to="${s}"${s === cur ? ' aria-current="true"' : ""}>${semShort(s)}${it.terms.has(s % 2 + 1) ? "" : " ·미개설"}</button>`).join("")}</div>
+      <div class="rm-menu-g">${Array.from({ length: SEMS }, (_, s) => 2 * s).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}>${semShort(p)}${it.terms.has(termOf(p)) ? "" : " ·미개설"}</button>`).join("")}</div>
+      ${P.season ? `<p class="small dim">계절학기 ${it.season.size ? `(최근 3년 ${[...it.season].join("·")}학기 개설)` : "(최근 3년 개설 기록 없음)"}</p><div class="rm-menu-g">${Array.from({ length: SEMS - 1 }, (_, s) => 2 * s + 1).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}${it.season.has(seasonName(p)) && seasonOn(p) ? "" : " disabled"}>${semShort(p)}${seasonOn(p) ? "" : " ·끔"}</button>`).join("")}</div>` : ""}
       <div class="rm-menu-a">
         ${cur != null || PLAN.unplaced.includes(id) ? '<button type="button" class="rm-btn sm" data-to="-1">계획에서 빼기</button>' : ""}
         ${P.pins[id] != null ? '<button type="button" class="rm-btn sm" data-unpin="1">자동 배치에 맡기기</button>' : ""}
@@ -759,6 +839,12 @@
     const cardEl = e.target.closest(".rm-card");
     if (cardEl) { openMenu(cardEl); return; }
     const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.stog != null) {   // 계절학기 칸 끄기·켜기. 끄면 그 칸에 고정한 과목은 자동 배치로 돌린다
+      const p = +b.dataset.stog, off = new Set(P.seasonOff || []);
+      if (off.has(p)) off.delete(p); else { off.add(p); Object.keys(P.pins).forEach((k) => { if (P.pins[k] === p) delete P.pins[k]; }); }
+      P.seasonOff = [...off].sort((a, b) => a - b);
+      renderPlan(); return;
+    }
     if (b.dataset.up != null) { const i = +b.dataset.up; [P.majors[i - 1], P.majors[i]] = [P.majors[i], P.majors[i - 1]]; renderPlan(); }   // 이수 형태는 trackOf가 자리에 맞게 고친다
     else if (b.dataset.del != null) { P.majors.splice(+b.dataset.del, 1); renderPlan(); }
   });
@@ -776,6 +862,7 @@
   $("#p-cohort").addEventListener("change", (e) => { P.cohort = YEARS.includes(+e.target.value) ? +e.target.value : COHORT0; renderPlan(); });
   $("#p-cap").addEventListener("change", (e) => { P.cap = Math.max(9, Math.min(24, +e.target.value || 18)); renderPlan(); });
   $("#p-rsv").addEventListener("change", (e) => { P.rsv = Math.max(0, Math.min(12, +e.target.value || 0)); renderPlan(); });
+  $("#p-season").addEventListener("change", (e) => { P.season = e.target.checked; renderPlan(); });
   $("#p-auto").addEventListener("click", () => { P.pins = {}; renderPlan(); });
   $("#p-reset").addEventListener("click", () => { P.pins = {}; P.removed = []; renderPlan(); });
 
@@ -802,7 +889,7 @@
   });
 
   /* ---------- 저장과 탭 ---------- */
-  function save() { store.set({ v: 1, guide: { school: G.school, dept: G.dept, common: G.common }, plan: P, tab: TAB }); }
+  function save() { store.set({ v: 2, guide: { school: G.school, dept: G.dept, common: G.common }, plan: P, tab: TAB }); }
   let TAB = "guide";
   function setTab(t) {
     TAB = t;
@@ -832,14 +919,21 @@
   Promise.all([
     fetch("curricula/univ-requirements.json").then((r) => r.json()),
     fetch("curricula/univ-offered.json").then((r) => r.json()).catch(() => ({ codes: {} })),
-  ]).then(([req, off]) => {
-    REQ = req; OFFER = off.codes || {};
+    fetch("curricula/univ-season.json").then((r) => r.json()).catch(() => ({ codes: {}, lib: {}, terms: [] })),
+  ]).then(([req, off, sea]) => {
+    REQ = req; OFFER = off.codes || {}; SEASON = sea;
     REQ.majors.forEach((m) => MAJOR.set(m.id, m));
     addFourth();
     const saved = store.get();
-    if (saved && saved.v === 1) {
+    if (saved && (saved.v === 1 || saved.v === 2)) {
       Object.assign(G, saved.guide || {});
       if (saved.plan) Object.assign(P, saved.plan);
+      if (saved.v === 1) {   // v1은 정규학기 번호(0~7)로 고정했고, 남길 학점에 교양을 넣었다
+        Object.keys(P.pins).forEach((k) => { P.pins[k] *= 2; });
+        if (P.rsv === 3) P.rsv = 0;
+        P.season = true;
+        P.seasonOff = [];
+      }
       P.majors = (P.majors || []).filter((x) => MAJOR.has(x.id)).slice(0, 5);
       if (!P.majors.length) P.majors = [{ id: "math", track: "single" }];
       TAB = saved.tab === "plan" ? "plan" : "guide";

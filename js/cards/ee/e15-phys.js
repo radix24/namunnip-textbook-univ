@@ -56,31 +56,6 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 전도대 전자 분포: g(E)·f(E) */
-  (() => {
-    const S = QSim.card("exp-e15-dos"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), T = S.val("T"), dEF = S.val("ef"), md = 1.08, kT = kB * T;   // dEF = E_c − E_F (eV)
-      const Nc = 2 * Math.pow(2 * Math.PI * md * m0 * 1.381e-23 * T / (6.626e-34) ** 2, 1.5) / 1e6;   // cm⁻³
-      // g(E) = (1/2π²)(2m/ħ²)^{3/2}√(E − Ec), cm⁻³/eV
-      const gc = (x) => (1 / (2 * Math.PI ** 2)) * Math.pow(2 * md * m0 / hb ** 2, 1.5) * Math.sqrt(x * q) * q / 1e6;
-      const fd = (x) => 1 / (1 + Math.exp((x + dEF) / kT));   // x = E − Ec
-      const emax = 10 * kT;
-      let n = 0; const N = 4000; for (let i = 1; i <= N; i++) { const x = (i - 0.5) / N * Math.max(emax, 0.3); n += gc(x) * fd(x) * Math.max(emax, 0.3) / N; }
-      const nMB = Nc * Math.exp(-dEF / kT);
-      const v = QSim.view(cv, 0.45);
-      let ymax = 0; for (let i = 1; i <= 200; i++) { const x = i / 200 * emax; ymax = Math.max(ymax, gc(x) * fd(x)); }
-      const fr = QSim.frame(v, { x0: 0, x1: emax * 1000, y0: 0, y1: ymax * 1.15, xl: "E − E_c (meV)", yl: "n(E)" }); fr.axes({ noGrid: true });
-      fr.fn((m) => gc(m / 1000) * fd(m / 1000), c.main, 2.4, undefined, 400);
-      let peak = 0, pv = 0; for (let i = 1; i <= 400; i++) { const x = i / 400 * emax, y = gc(x) * fd(x); if (y > pv) { pv = y; peak = x; } }
-      S.out(`Si 전도대(상태 밀도 유효 질량 1.08m₀), T = ${T} K, E_c − E_F = ${f2(dEF, 3)} eV(${f2(dEF / kT, 2)} kT)\n` +
-        `N_c = ${Nc.toExponential(3)} cm⁻³. 적분한 전자 농도 n = ∫g(E)f(E)dE = ${n.toExponential(3)} cm⁻³, Boltzmann 근사 N_c e^(−(E_c−E_F)/kT) = ${nMB.toExponential(3)} (비 ${f2(n / nMB, 3)})\n` +
-        `분포의 봉우리 E − E_c = ${f2(peak * 1000, 1)} meV(Boltzmann이면 kT/2 = ${f2(kT / 2 * 1000, 1)} meV). 전자는 띠 바닥 몇 kT 안에 몰려 있습니다.`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 4. 이종 접합의 띠 정렬(Anderson 규칙) */
   (() => {
     const S = QSim.card("exp-e15-hetero"); if (!S) return;

@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우11-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a11-j2accel" data-kind="본문" data-std="천우11-03-03">
+  <header class="card-head"><span class="no"></span><h2>J2 섭동 가속도를 벡터로 쓰고 코드에 넣기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>편평한 지구의 중력 퍼텐셜을 2차 르장드르 다항식으로 쓴다.</li>
+        <li>퍼텐셜의 기울기로 J2 섭동 가속도의 세 성분을 유도한다.</li>
+        <li>적도와 극에서 가속도의 크기와 방향을 계산하고, 수치 미분으로 코드를 검산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Cowell 방법 (<a href="03-01.html">3.1절</a>), 평균화와 J2 영년 변화 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>퍼텐셜</h3>
+    <p>지구는 적도가 부풀어 있어 중력 퍼텐셜이 구 대칭이 아닙니다. 가장 큰 항까지 쓰면(위도 \(\phi\), \(\sin\phi = z/r\))</p>
+    \[U = \frac\mu r\left[1 - J_2\left(\frac Rr\right)^2P_2(\sin\phi)\right], \qquad P_2(s) = \tfrac12(3s^2 - 1),\]
+    <p>\(J_2 = 1.0826\times10^{-3}\), \(R = 6378\) km입니다(가속도는 \(\mathbf a = \nabla U\)).</p>
+
+    <h3><span class="no">3.3.2</span>가속도 벡터</h3>
+    <p>\(\sin\phi = z/r\)를 넣고 \(x, y, z\)로 편미분하면 2체 가속도 \(-\mu\mathbf r/r^3\)에 더해지는 섭동이 나옵니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 3.3.1 (J2 가속도)</span>
+      \[\mathbf a_{J_2} = -\frac{3J_2\mu R^2}{2r^5}\begin{pmatrix}x\left(1 - 5z^2/r^2\right)\\ y\left(1 - 5z^2/r^2\right)\\ z\left(3 - 5z^2/r^2\right)\end{pmatrix}.\]
+    </div>
+    <p>Cowell 방법(3.1절)에서는 운동 방정식의 오른쪽에 이 벡터를 더하기만 하면 됩니다.</p>
+
+    <h3><span class="no">3.3.3</span>크기와 방향</h3>
+    <p>고도 400 km(\(r = 6{,}778\) km)에서 계산하면</p>
+    <ul class="tb-list">
+      <li>적도 위(\(z = 0\)): \(\mathbf a_{J_2} = (-12.5, 0, 0)\) mm/s². 중심 쪽으로 더 끌린다. 부푼 적도의 질량이 가깝기 때문.</li>
+      <li>북극 위(\(x = y = 0\)): \((0, 0, +25.0)\) mm/s². 바깥쪽, 곧 중력이 약해진다.</li>
+      <li>위도 45°: \((13.2, 0, -4.4)\) mm/s². 적도 쪽으로 기울여 끄는 성분이 생긴다. 이것이 궤도면을 비트는 돌림힘이 되어 승교점이 돈다(4.2절).</li>
+    </ul>
+    <p>중심 중력(8.68 m/s²)에 비해 0.1~0.3%로, 저궤도에서 가장 큰 섭동입니다(천우8 5.1절).</p>
+
+    <h3><span class="no">3.3.4</span>코드 검산</h3>
+    <p>식을 옮기다 부호나 지수를 틀리기 쉬우므로, 퍼텐셜 \(U\)를 따로 짜서 수치 미분 \((U(x+h) - U(x-h))/2h\)와 비교합니다. 위도 45° 점에서 수치 미분으로 얻은 섭동은 \((13.232, -4.411)\) mm/s²로, 결과 3.3.1의 값과 소수 셋째 자리까지 같습니다. 이렇게 '퍼텐셜에서 다시 구하기'는 섭동 코드의 표준 검산입니다(천우6 1.3절).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>정지궤도(\(r = 42{,}164\) km) 적도 위에서 J2 가속도의 크기는? 저궤도(400 km)의 몇 분의 1입니까?</p>
+    </div>
+    <p><i>풀이.</i> \(1.5\times1.0826\times10^{-3}\times398600\times6378^2/42164^4 = 8.3\times10^{-9}\) km/s² = 0.0083 mm/s². \(r^{-4}\)에 비례하므로 \((6778/42164)^4 = 6.7\times10^{-4}\), 약 1,500분의 1입니다. 정지궤도에서는 달·태양 섭동(약 0.007~0.01 mm/s², 천우8 5.4절)과 같은 크기입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(U = (\mu/r)[1 - J_2(R/r)^2P_2(\sin\phi)]\).</li>
+        <li>\(\mathbf a_{J_2} = -\tfrac{3J_2\mu R^2}{2r^5}(x(1 - 5z^2/r^2),\ y(1 - 5z^2/r^2),\ z(3 - 5z^2/r^2))\).</li>
+        <li>적도에서는 더 끌고 극에서는 덜 끈다. \(r^{-4}\)로 빠르게 약해진다. 퍼텐셜의 수치 미분으로 검산.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>극궤도 위성이 북극 위를 지날 때 J2 가속도는 지구 쪽입니까, 바깥쪽입니까?
+          <details><summary>답</summary><p>바깥쪽(\(+z\)). 극 위에서는 구형 지구보다 중력이 약합니다.</p></details>
+        </li>
+        <li>고도가 두 배로(반지름 기준) 멀어지면 J2 가속도는 몇 배가 됩니까?
+          <details><summary>답</summary><p>\(r^{-4}\)이므로 1/16.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>결과 3.3.1에서 적도면(\(z = 0\))의 J2 가속도에는 \(z\) 성분이 없습니다. 이것이 적도 궤도의 경사각에 대해 무엇을 뜻합니까?
+          <details><summary>답</summary><p>적도면 밖으로 미는 힘이 없으므로 적도 궤도는 J2만으로는 경사가 생기지 않습니다. J2는 경사진 궤도의 승교점만 돌립니다.</p></details>
+        </li>
+        <li>J2 가속도를 Cowell 적분에 넣을 때 시간 간격을 바꿀 필요가 있습니까?
+          <details><summary>답</summary><p>J2는 2체 가속도의 0.1% 정도이고 같은 공간 규모로 변하므로, 2체 적분에 알맞은 간격이면 대개 충분합니다. 다만 오차 허용치를 J2 효과보다 충분히 작게 잡아야 섭동을 제대로 봅니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

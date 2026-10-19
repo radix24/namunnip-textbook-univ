@@ -22,7 +22,7 @@
   /* 표준정규 위꼬리 확률 Q(c) = P(Z > c): 꼬리까지 정확하게 (심프슨 적분) */
   const Qn = (c) => { const a = c, b = c + 12, N = 4000, h = (b - a) / N; let s = phi(a) + phi(b); for (let i = 1; i < N; i++) s += (i % 2 ? 4 : 2) * phi(a + i * h); return s * h / 3; };
 
-  /* 1. 이변량 정규분포: 조건부분포와 평균으로의 회귀 (응통6-05-03) */
+  /* 1. 이변량 정규분포: 조건부분포와 평균으로의 회귀 (응통6-05-04) */
   (() => {
     const S = QSim.card("lab-s6-mvn"); if (!S) return;
     const [cvA, cvB] = S.$$("canvas"); let seed = 5;
@@ -51,7 +51,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 2. MLE의 표본분포와 점근 정규 근사 (응통7-03-02) */
+  /* 2. MLE의 표본분포와 점근 정규 근사 (응통7-03-03) */
   (() => {
     const S = QSim.card("lab-s7-asymp"); if (!S) return;
     const cv = S.$("canvas"); let seed = 13;
