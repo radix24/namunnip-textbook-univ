@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-05-01",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e14-arch.js"]
+}
+-->
+<article class="card q-card" id="exp-e14-pipe" data-kind="탐구" data-std="전전14-05-01">
+  <header class="card-head"><span class="no"></span><h2>멈춤을 세는 파이프라인 도표</h2><span class="kind">탐구 · 전달과 명령 재배치</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>같은 명령 네 개라도 순서와 전달 회로에 따라 사이클 수가 얼마나 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>5단계 파이프라인(IF, ID, EX, MEM, WB)에서 프로그램 세 가지를 실행하는 도표입니다. 전달이 없으면 레지스터 파일을 통해서만 값을 받고(WB 앞 반주기 쓰기, ID 뒤 반주기 읽기), 전달이 있으면 ALU 결과를 바로 다음 EX로, load 결과를 MEM 뒤에 넘깁니다(5.1절).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>프로그램</span><select name="prog" aria-label="프로그램"><option value="alu">ALU 의존 사슬</option><option value="load" selected>load 바로 사용</option><option value="sched">재배치한 load</option></select></label>
+        <label><span>전달</span><input type="checkbox" name="fwd" aria-label="전달 회로 사용"></label>
+      </div>
+      <canvas aria-label="파이프라인 시간 도표"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>load 바로 사용, 전달 없음: 12사이클(이상적 8), 멈춤 4(예제 5.1.1 (가)).</span></li>
+        <li><b>전달 켜기</b><span>9사이클, 멈춤 1: load-use의 1사이클만 남습니다(예제 (나)).</span></li>
+        <li><b>재배치</b><span>"재배치한 load"(addi를 lw 바로 뒤로)와 전달: 8사이클, 멈춤 0(예제 (다)). 전달 없이는 11사이클.</span></li>
+        <li><b>ALU 사슬</b><span>전달 없음 12사이클(멈춤 4), 전달 있음 8사이클(멈춤 0).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>현대 CPU는 전달 회로, 분기 예측, 비순차 실행으로 멈춤을 숨기고, 컴파일러는 명령 재배치로 돕습니다. 이 도표가 그 모든 기법의 출발점입니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"전달 회로가 있으면 멈춤이 없다."</b> load 직후 사용은 1사이클 멈춤이 남습니다.</li>
+        <li><b>"명령 순서는 결과에만 영향이 있다."</b> 의존이 없는 명령끼리는 순서를 바꿔도 결과가 같으면서 멈춤을 줄일 수 있습니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

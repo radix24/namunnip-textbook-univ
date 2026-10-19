@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-cacheaddr" data-kind="본문" data-std="전전14-06-01">
+  <header class="card-head"><span class="no"></span><h2>캐시의 주소 분할</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>블록, 집합, 연관도로 캐시 구조를 정의한다.</li>
+        <li>주소를 태그, 인덱스, 오프셋으로 나누는 비트 수를 계산한다.</li>
+        <li>직접 사상과 집합 연관의 충돌 실패 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>2진수와 2의 거듭제곱, 로그(고교 수학 I), 이 절의 탐구 카드(6.2절).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>구조</h3>
+    <p class="q-term"><b>블록</b>: 메모리와 캐시가 한 번에 주고받는 단위(예: 64바이트).</p>
+    <p class="q-term"><b>연관도</b>: 한 블록이 들어갈 수 있는 자리 수. 1이면 직접 사상, 전체면 완전 연관, 그 사이가 n-way 집합 연관.</p>
+    <p>집합 수 = 캐시 크기/(블록 크기 × 연관도). 주소(바이트)는</p>
+    \[ \text{오프셋} = \log_2(\text{블록}),\quad \text{인덱스} = \log_2(\text{집합 수}),\quad \text{태그} = \text{주소 비트} - \text{인덱스} - \text{오프셋}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>32 KB, 블록 64 B, 4-way, 32비트 주소. (가) 비트 분할, (나) 주소 0x12345678의 오프셋, 인덱스, 태그.</p>
+    </div>
+    <p><i>풀이.</i> (가) 집합 32768/(64 × 4) = 128. 오프셋 6, 인덱스 7, 태그 19비트. (나) 오프셋 = 주소 & 63 = 56(0x38), 인덱스 = (주소 ≫ 6) & 127 = 89(0x59), 태그 = 주소 ≫ 13 = 0x91A2.</p>
+
+    <h3><span class="no">6.1.2</span>충돌</h3>
+    <p>직접 사상은 블록마다 자리가 하나라, 같은 인덱스로 가는 두 블록을 번갈아 쓰면 서로 쫓아내 매번 실패합니다(충돌 실패). 연관도를 올리면 같은 집합에 여럿이 함께 있어 줄어듭니다. 대신 태그 비교기가 연관도만큼 필요하고 적중 시간이 조금 늘어납니다. 탐구 카드에서 4 KB 떨어진 두 배열을 직접 사상과 2-way로 비교합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "인덱스 비트 수는 캐시 크기로만 정해진다": 연관도가 올라가면 집합 수가 줄어 인덱스가 줄고 태그가 늘어납니다. (2) "블록을 크게 하면 언제나 좋다": 공간 지역성은 잘 쓰지만 블록 수가 줄어 충돌이 늘고, 실패 벌점(옮길 양)이 커집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>집합 수 = 크기/(블록 × 연관도).</li>
+        <li>오프셋 log₂블록, 인덱스 log₂집합, 나머지 태그.</li>
+        <li>직접 사상은 충돌 실패, 연관도로 줄인다(비교기·시간 대가).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8 KB 직접 사상, 블록 32 B, 32비트 주소의 비트 분할은?
+          <details><summary>답</summary><p>집합 256: 오프셋 5, 인덱스 8, 태그 19.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 8 KB를 2-way로 하면?
+          <details><summary>답</summary><p>집합 128: 오프셋 5, 인덱스 7, 태그 20.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 캐시에서 태그 저장에 필요한 비트 수(유효 비트 포함, 블록당)와 전체는?
+          <details><summary>답</summary><p>블록 512개, (19 + 1) × 512 = 10,240비트(약 1.25 KB).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

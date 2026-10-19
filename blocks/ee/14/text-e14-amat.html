@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-amat" data-kind="본문" data-std="전전14-06-02">
+  <header class="card-head"><span class="no"></span><h2>평균 메모리 접근 시간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>AMAT = 적중 시간 + 실패율 × 실패 벌점을 계산한다.</li>
+        <li>다단계 캐시(L1, L2)의 AMAT를 계산한다.</li>
+        <li>메모리 접근 지연이 CPI에 주는 영향을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>캐시 구조 (<a href="06-01.html">6.1절</a>), CPU 성능 식 (<a href="01-01.html">1.1절</a>), 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>AMAT</h3>
+    \[ \text{AMAT} = t_{hit} + m \times t_{penalty}. \]
+    <p>L2가 있으면 L1의 실패 벌점이 다시 L2의 AMAT입니다: \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\)(\(m_2\)는 L2 지역 실패율).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>(가) 적중 1사이클, 실패율 5%, 벌점 100사이클의 AMAT. (나) L2(적중 10사이클, 지역 실패율 20%)를 넣으면? (다) load/store가 명령의 30%, 기본 CPI 1일 때 (가)와 (나)의 CPI.</p>
+    </div>
+    <p><i>풀이.</i> (가) 1 + 0.05 × 100 = 6사이클. (나) 1 + 0.05 × (10 + 0.2 × 100) = 2.5사이클. (다) 명령 인출도 메모리 접근이지만 L1 명령 캐시 적중을 가정하면, 데이터 접근의 추가 지연만 더해 (가) 1 + 0.3 × 5 = 2.5, (나) 1 + 0.3 × 1.5 = 1.45. L2 하나로 1.7배 빨라집니다.</p>
+
+    <h3><span class="no">6.2.2</span>실패의 세 종류(3C)</h3>
+    <p>처음 접근하는 강제 실패(compulsory), 캐시가 작아 생기는 용량 실패(capacity), 같은 집합에 몰려 생기는 충돌 실패(conflict). 블록 크기, 캐시 크기, 연관도가 각각에 영향을 줍니다. 탐구 카드에서 접근 패턴을 바꿔 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "적중률 95%면 거의 메모리 속도다": 벌점이 100이면 AMAT가 6배입니다. (2) "L2 실패율은 전체 접근 대비다": 보통 L2에 온 접근 대비(지역 실패율)로 정의하며, 전역 실패율은 \(m_1m_2\)입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>AMAT = 적중 + 실패율 × 벌점.</li>
+        <li>L2: \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\).</li>
+        <li>CPI += (메모리 접근 비율) × (AMAT − 1).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>적중 2, 실패율 2%, 벌점 200의 AMAT는?
+          <details><summary>답</summary><p>6사이클.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 (나)의 전역 L2 실패율은?
+          <details><summary>답</summary><p>0.05 × 0.2 = 1%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>AMAT 6을 3으로 줄이려면 실패율을 얼마로(벌점 100, 적중 1)?
+          <details><summary>답</summary><p>2%.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
