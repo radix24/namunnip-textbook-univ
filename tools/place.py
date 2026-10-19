@@ -92,6 +92,7 @@ def build(depts, blocks, policy, out_root=ROOT):
         (odir / f'{o["id"]}.json').write_text(json.dumps(o, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
 
     pool = [{"id": o["id"], "code": code, "title": o["title"], "field": o["field"], "y": by_code[code]["y"],
+             "no": by_code[code].get("sub") or [],   # 화면에는 내부 코드 대신 학정번호를 보인다
              "units": len(o["units"]), "secs": sum(len(u["secs"]) for u in o["units"]),
              "cards": sum(len(s["cards"]) for u in o["units"] for s in u["secs"]) + sum(len(u["review"]) for u in o["units"]),
              "q": by_code[code].get("bank", 0)}

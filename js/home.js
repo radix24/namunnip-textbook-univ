@@ -124,7 +124,7 @@
       ${p.fields.map((f) => {
         const ms = p.modules.filter((m) => m.field === f.id).sort((a, b) => a.y - b.y || a.code.localeCompare(b.code, "ko", { numeric: true }));
         return ms.length ? `<section class="pool-field"><h3>${esc(f.name)} <span class="mono small dim">${ms.length}</span></h3><div class="sem-boxes">${ms.map((m) => `
-          <a class="tbox${m.cards ? "" : " soon"}" href="c/${esc(m.id)}/"><span class="lv mono">${m.y}학년 · ${esc(m.id)}</span><b>${esc(m.title)}</b><span class="pg mono">${m.cards ? `카드 ${m.cards} · ` : ""}절 ${m.secs}</span></a>`).join("")}</div></section>` : "";
+          <a class="tbox${m.cards ? "" : " soon"}" href="c/${esc(m.id)}/"><span class="lv mono">${m.y}학년${m.no && m.no.length ? ` · ${esc(m.no.join(" / "))}` : ""}</span><b>${esc(m.title)}</b><span class="pg mono">${m.cards ? `카드 ${m.cards} · ` : ""}절 ${m.secs}</span></a>`).join("")}</div></section>` : "";
       }).join("")}`;
     host.innerHTML = "";
     bar.hidden = true; empty.style.display = "none";
