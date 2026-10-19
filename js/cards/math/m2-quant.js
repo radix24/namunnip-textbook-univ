@@ -37,7 +37,7 @@
       const s = val ? yes() : no(); g.fillText(s.length > 34 ? s.slice(0, 33) + "…" : s, tx, y + 15);
     });
     g.restore();
-    k.out(`행 = x, 열 = y. 칸을 누르면 P(x, y)의 참(T)·거짓(F)이 바뀝니다.\n∀x∃y: 모든 행에 T가 있는가 · ∃y∀x: 전부 T인 열이 있는가 · ∃x∀y: 전부 T인 행이 있는가 · ∀y∃x: 모든 열에 T가 있는가`);
+    k.out(rows.map(([name, val, no, yes]) => `${name}: ${val ? "참" : "거짓"} (${val ? yes() : no()})`).join("\n") + "\n칸을 누르면 P(x, y)의 참(T)·거짓(F)이 바뀝니다. 행 = x, 열 = y");
   }
   cv.addEventListener("pointerdown", (e) => {
     if (!geo) return;
