@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-05-08",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-f2py" data-kind="본문" data-std="공통11-05-08">
+  <header class="card-head"><span class="no"></span><h2>포트란과 파이썬 함께 쓰기: f2py</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>계산은 포트란, 입출력과 그래프는 파이썬으로 나누는 까닭을 안다.</li>
+        <li>f2py로 포트란 서브루틴을 파이썬 모듈로 만들고 부른다.</li>
+        <li><code>intent(in)</code>, <code>intent(out)</code>이 파이썬 쪽 인수와 반환값으로 바뀌는 규칙을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>포트란 서브루틴과 <code>intent</code> (<a href="02-01.html">2.1절</a>), NumPy 배열 (<a href="03-03.html">3.3절</a>), 두 언어의 속도 차이 (<a href="05-04.html">5.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.8.1</span>왜 섞어 쓰나</h3>
+    <p>5.4절에서 본 것처럼, 반복문이 많은 계산은 포트란이 파이썬보다 훨씬 빠릅니다. 반대로 파일 정리, 그래프, 결과 분석은 파이썬이 훨씬 편합니다. 그래서 과학 계산에서는 무거운 계산만 포트란(또는 C)으로 쓰고 나머지는 파이썬으로 쓰는 경우가 많습니다. NumPy와 SciPy의 내부도 상당 부분이 이렇게 만들어져 있습니다.</p>
+    <p><b>f2py</b>는 NumPy에 들어 있는 도구로, 포트란 소스를 컴파일해 파이썬에서 <code>import</code>할 수 있는 모듈을 만들어 줍니다. 포트란 컴파일러(gfortran)가 깔려 있어야 하고, 최근 판에서는 빌드 도구 meson도 필요합니다(<code>pip install meson ninja</code>, 판에 따라 다르므로 확인 필요).</p>
+
+    <h3><span class="no">5.8.2</span>서브루틴을 모듈로 만들기</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.8.1</span>
+      <p>같은 간격 \(h\)로 잰 값 \(y_1, \ldots, y_n\)의 사다리꼴 적분을 계산하는 포트란 서브루틴을 쓰고, 파이썬에서 불러 \(\int_0^\pi \sin x\,dx\)를 계산하세요.</p>
+    </div>
+<pre><code>! trapz.f90
+subroutine trapz(y, n, h, s)
+  implicit none
+  integer, intent(in) :: n
+  double precision, intent(in) :: y(n), h
+  double precision, intent(out) :: s
+  integer :: i
+  s = 0.5d0 * (y(1) + y(n))
+  do i = 2, n - 1
+     s = s + y(i)
+  end do
+  s = s * h
+end subroutine trapz</code></pre>
+<pre><code>python -m numpy.f2py -c trapz.f90 -m ftrapz</code></pre>
+<pre><code>import numpy as np
+import ftrapz
+print(ftrapz.trapz.__doc__)        # 파이썬 쪽 호출 모양을 보여 준다
+x = np.linspace(0, np.pi, 101)     # 점 101개 = 칸 100개
+s = ftrapz.trapz(np.sin(x), x[1] - x[0])
+print(s)                            # 1.99983550...</code></pre>
+    <p><i>풀이.</i> 명령 한 줄이 <code>trapz.f90</code>을 컴파일해 <code>ftrapz</code>라는 모듈 파일(윈도에서는 <code>.pyd</code>, 리눅스에서는 <code>.so</code>)을 만듭니다. 파이썬 쪽 호출 모양은 포트란과 조금 다릅니다.</p>
+    <ul class="tb-list">
+      <li><code>intent(out)</code>인 <code>s</code>는 인수가 아니라 <b>반환값</b>이 됩니다.</li>
+      <li>배열 크기 <code>n</code>은 넘긴 배열에서 알아내므로 생략할 수 있는 인수가 됩니다.</li>
+      <li>그래서 <code>trapz(y, h)</code>처럼 부르고 결과를 받습니다. 정확한 모양은 <code>__doc__</code>으로 확인합니다.</li>
+    </ul>
+    <p>결과는 4.3절에서 파이썬으로 계산한 사다리꼴 값 1.9998355…와 같아야 합니다. 같은 방법을 두 언어로 계산해 값이 같은지 먼저 확인하고, 그다음에 속도를 비교하는 순서가 안전합니다.</p>
+
+    <h3><span class="no">5.8.3</span>주의할 점</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.8.2</span>
+      <p>포트란 서브루틴이 <code>intent(inout)</code>인 배열을 받아 값을 바꾸게 했는데, 파이썬에서 <code>np.array([1, 2, 3])</code>을 넘겼더니 원래 배열이 바뀌지 않았습니다. 왜 그럴까요?</p>
+    </div>
+    <p><i>풀이.</i> <code>np.array([1, 2, 3])</code>은 정수 배열이라, 포트란이 기대하는 <code>double precision</code>과 자료형이 다릅니다. 이때 f2py는 자료형을 맞춘 <b>복사본</b>을 만들어 넘기므로, 포트란이 바꾼 것은 복사본입니다(경우에 따라 오류를 내기도 함, 확인 필요). <code>np.array([1.0, 2.0, 3.0])</code>처럼 실수 배열을 만들어 넘겨야 합니다. 2차원 배열은 포트란이 열 우선, NumPy가 기본으로 행 우선이라(<a href="01-03.html">1.3절</a>의 메모리 순서 실습) 순서가 맞지 않으면 복사가 일어납니다. <code>np.asfortranarray(A)</code>로 열 우선 배열을 만들어 넘기면 복사를 피할 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>무거운 반복 계산은 포트란, 입출력·분석·그래프는 파이썬.</li>
+        <li><code>python -m numpy.f2py -c 파일.f90 -m 모듈이름</code>. <code>intent(out)</code>은 반환값, 배열 크기는 생략 가능한 인수.</li>
+        <li>자료형(배정도 실수)과 배열 순서(열 우선)를 맞춰야 복사와 혼동을 피한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.8.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>포트란 서브루틴 <code>subroutine stats(x, n, mean, var)</code>에서 <code>x</code>, <code>n</code>은 <code>intent(in)</code>, <code>mean</code>, <code>var</code>는 <code>intent(out)</code>입니다. f2py로 만든 모듈에서는 어떻게 부르나요?
+          <details><summary>답</summary><p><code>mean, var = mod.stats(x)</code>. 반환값이 둘이면 튜플로 돌아오고, <code>n</code>은 생략합니다.</p></details>
+        </li>
+        <li>계산 결과가 파이썬 판과 포트란 판에서 소수 여섯째 자리부터 다릅니다. 가장 먼저 의심할 곳은 어디인가요?
+          <details><summary>답</summary><p>포트란 쪽 변수나 상수가 단정도인지 봅니다. <code>real</code>이나 <code>0.5</code>(단정도 상수)를 쓰면 유효숫자가 7자리 정도라 그 근처에서 차이가 납니다. <code>double precision</code>과 <code>0.5d0</code>으로 맞춥니다(1.1절).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

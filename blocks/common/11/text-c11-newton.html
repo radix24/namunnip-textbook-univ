@@ -1,0 +1,100 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-05-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-newton" data-kind="본문" data-std="공통11-05-05">
+  <header class="card-head"><span class="no"></span><h2>뉴턴 방법으로 방정식 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>뉴턴 방법의 점화식을 접선에서 끌어내고 프로그램으로 쓴다.</li>
+        <li>이분법과 반복 횟수를 비교해 2차 수렴의 뜻을 안다.</li>
+        <li>멈춤 조건과 실패하는 경우를 프로그램에 넣는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이분법 (<a href="../10/06-02.html">공통10 6.2절</a>), 도함수와 접선 (공통1 2단원), 포트란 함수 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.5.1</span>접선을 따라 내려가기</h3>
+    <p>이분법은 부호만 보므로 튼튼하지만, 한 번에 구간이 절반으로 줄 뿐이라 느립니다. 뉴턴 방법은 함수의 기울기까지 씁니다. 현재 추정값 \(x_n\)에서 그래프의 접선 \(y = f(x_n) + f'(x_n)(x - x_n)\)을 긋고, 접선이 \(x\)축과 만나는 점을 다음 추정값으로 삼습니다. \(y = 0\)으로 놓고 풀면</p>
+    \[x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}\]
+    <p>입니다. 근 가까이에서는 오차가 대략 이전 오차의 제곱에 비례해 줄어듭니다(<b>2차 수렴</b>). 맞는 자릿수가 매번 약 두 배가 된다는 뜻입니다.</p>
+<pre><code>def newton(f, df, x, tol=1e-12, maxit=50):
+    for k in range(1, maxit + 1):
+        d = df(x)
+        if d == 0:
+            raise ZeroDivisionError(f"x = {x}에서 기울기가 0")
+        step = f(x) / d
+        x -= step
+        if abs(step) &lt; tol:          # 고친 양이 충분히 작으면 멈춤
+            return x, k
+    raise RuntimeError("maxit 안에 수렴하지 않음")</code></pre>
+    <p>반복 횟수에 상한(<code>maxit</code>)을 두지 않으면, 수렴하지 않을 때 프로그램이 끝나지 않습니다. 멈춤 조건은 "고친 양 \(|x_{n+1} - x_n|\)이 충분히 작다"를 많이 씁니다.</p>
+
+    <h3><span class="no">5.5.2</span>이분법과 비교</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.5.1</span>
+      <p>\(f(x) = x^2 - 2\)의 양의 근 \(\sqrt2\)를 뉴턴 방법(\(x_0 = 1\))과 이분법(\([1, 2]\), 구간 폭 \(10^{-10}\)까지)으로 구하고 반복 횟수를 비교하세요.</p>
+    </div>
+    <table class="tb-table">
+      <thead><tr><th>\(n\)</th><th>\(x_n\) (뉴턴)</th><th>\(|x_n - \sqrt2|\)</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>1</td><td>\(4.1\times10^{-1}\)</td></tr>
+        <tr><td>1</td><td>1.5</td><td>\(8.6\times10^{-2}\)</td></tr>
+        <tr><td>2</td><td>1.4166666667</td><td>\(2.5\times10^{-3}\)</td></tr>
+        <tr><td>3</td><td>1.4142156863</td><td>\(2.1\times10^{-6}\)</td></tr>
+        <tr><td>4</td><td>1.4142135624</td><td>\(1.6\times10^{-12}\)</td></tr>
+      </tbody>
+    </table>
+    <p><i>풀이.</i> \(f'(x) = 2x\)이므로 점화식은 \(x_{n+1} = x_n - \frac{x_n^2 - 2}{2x_n} = \frac12\left(x_n + \frac{2}{x_n}\right)\)입니다. 오차의 지수가 \(-3 \to -6 \to -12\)로 두 배씩 커져, 4번 만에 \(10^{-12}\)에 이릅니다. 이분법은 폭이 1인 구간을 \(10^{-10}\)까지 줄이려면 \(2^{-k} &lt; 10^{-10}\), 곧 \(k = 34\)번이 필요합니다(직접 세어 보아도 34번). 대신 뉴턴 방법은 도함수가 필요하고, 시작점이 나쁘면 발산할 수 있습니다.</p>
+
+    <h3><span class="no">5.5.3</span>물리 문제에 쓰기: 케플러 방정식</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.5.2</span>
+      <p>타원 궤도를 도는 행성의 위치를 시각으로부터 구할 때 케플러 방정식 \(E - e\sin E = M\)을 풉니다. \(E\)는 이심 근점 이각, \(M\)은 시간에 비례하는 평균 근점 이각, \(e\)는 이심률입니다. 이 식은 \(E\)에 대해 손으로 풀 수 없습니다. \(e = 0.5\), \(M = 1\)일 때 \(E\)를 뉴턴 방법으로 구하세요. 시작값은 \(E_0 = M\)으로 합니다.</p>
+    </div>
+    <p><i>풀이.</i> \(f(E) = E - e\sin E - M\), \(f'(E) = 1 - e\cos E\)입니다. \(e &lt; 1\)이면 \(f' &gt; 0\)이라 기울기가 0이 되는 일이 없습니다. 반복하면 \(E_1 = 1.5764694\), \(E_2 = 1.5002083\), \(E_3 = 1.4987017\), \(E_4 = 1.4987011335\)이고, 이때 \(|f(E_4)|\)는 약 \(10^{-13}\)입니다. 첫 걸음은 근을 지나쳤지만 그 뒤로 빠르게 수렴했습니다. 위성 궤도 계산 프로그램에서 실제로 이렇게 풉니다.</p>
+    <p>포트란으로 쓰면 다음과 같습니다. 함수 \(f\)와 \(f'\)을 프로그램 안에 직접 씁니다.</p>
+<pre><code>program kepler
+  implicit none
+  integer, parameter :: dp = kind(1.0d0)
+  real(dp) :: E, step, ecc = 0.5_dp, M = 1.0_dp
+  integer :: k
+  E = M
+  do k = 1, 50
+     step = (E - ecc * sin(E) - M) / (1.0_dp - ecc * cos(E))
+     E = E - step
+     if (abs(step) &lt; 1.0e-12_dp) exit
+  end do
+  print *, k, E
+end program kepler</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(x_{n+1} = x_n - f(x_n)/f'(x_n)\). 근 가까이에서 맞는 자릿수가 매번 약 두 배(2차 수렴).</li>
+        <li>이분법은 느리지만 언제나 수렴하고, 뉴턴 방법은 빠르지만 도함수와 좋은 시작점이 필요하다.</li>
+        <li>멈춤 조건과 최대 반복 횟수를 꼭 넣는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.5.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = x^3 - 2x + 2\)에 \(x_0 = 0\)으로 뉴턴 방법을 쓰면 \(x_1\), \(x_2\)는 얼마인가요? 어떤 일이 생기나요?
+          <details><summary>답</summary><p>\(f'(x) = 3x^2 - 2\). \(x_1 = 0 - \frac{2}{-2} = 1\), \(x_2 = 1 - \frac{1}{1} = 0\). 0과 1을 끝없이 오가며 수렴하지 않습니다. 실제 근은 약 \(-1.769\)입니다. <code>maxit</code>이 없으면 프로그램이 멈추지 않습니다.</p></details>
+        </li>
+        <li>두 방법을 섞는 방법을 말로 설명하세요.
+          <details><summary>답</summary><p>이분법으로 근이 있는 구간을 먼저 충분히 좁힌 뒤 그 안에서 뉴턴 방법을 씁니다. 뉴턴 걸음이 구간 밖으로 나가면 그 걸음만 이분법으로 바꿉니다. SciPy의 <code>brentq</code>(4.3절)도 이분법에 빠른 방법을 섞는 같은 생각을 씁니다. 다만 도함수가 필요 없도록 접선 대신 두 점을 잇는 할선 등을 씁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

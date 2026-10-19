@@ -1,0 +1,91 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-c11-npindex" data-kind="본문" data-std="공통11-03-03">
+  <header class="card-head"><span class="no"></span><h2>NumPy 배열 고르기와 브로드캐스팅</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>NumPy 배열의 인덱싱과 슬라이싱, 그리고 슬라이스가 원본을 공유한다는 점을 안다.</li>
+        <li>조건 마스크로 원하는 자료만 골라 계산한다.</li>
+        <li>브로드캐스팅으로 모양이 다른 배열끼리 반복문 없이 계산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>리스트와 NumPy 배열의 차이 (<a href="03-02.html">3.2절</a>), 포트란 배열 전체 연산 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>인덱싱과 슬라이싱</h3>
+    <p>NumPy(넘파이)는 같은 자료형의 수를 한 덩어리 메모리에 담는 배열을 제공하는 파이썬 모듈입니다. 설치되어 있지 않으면 터미널에서 <code>pip install numpy</code>로 설치합니다. 1차원 배열은 리스트처럼 <code>a[i]</code>, <code>a[시작:끝:간격]</code>으로 고릅니다. 2차원 배열은 <code>A[행, 열]</code>로 쓰며, <code>A[:, 0]</code>은 첫째 열 전체, <code>A[1, :]</code>은 둘째 행 전체입니다. 번호는 0부터 셉니다(포트란은 1부터).</p>
+<pre><code>import numpy as np
+a = np.array([10, 20, 30, 40, 50])
+b = a[1:3]          # [20 30]
+b[0] = 99
+print(a)            # [10 99 30 40 50]  ← 원본도 바뀐다</code></pre>
+    <p>리스트의 슬라이스는 새 리스트(복사본)를 만들지만, NumPy 배열의 슬라이스는 원본 메모리를 함께 쓰는 <b>뷰</b>입니다. 큰 배열을 복사하지 않아 빠른 대신, 위처럼 원본이 바뀔 수 있습니다. 따로 쓰고 싶으면 <code>a[1:3].copy()</code>로 복사합니다.</p>
+
+    <h3><span class="no">3.3.2</span>조건 마스크</h3>
+    <p>배열에 비교 연산을 하면 원소마다 참·거짓을 담은 같은 크기의 배열이 나옵니다. 이것을 <b>마스크</b>라 하며, <code>a[마스크]</code>는 참인 자리의 원소만 골라냅니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>온도 기록계가 고장 난 시각에는 −99를 기록합니다. 아래 자료에서 고장 값을 빼고 평균을 구하고, 30 °C를 넘는 기록이 몇 번인지 세세요.</p>
+<pre><code>T = np.array([21.5, 22.0, 35.2, 22.4, -99.0, 23.1])</code></pre>
+    </div>
+<pre><code>ok = T &gt; -50                # [ True  True  True  True False  True]
+print(T[ok].mean())          # 24.84
+print(np.sum(T[ok] &gt; 30))    # 1   (True는 1, False는 0으로 더해진다)
+T2 = np.where(ok, T, np.nan) # 고장 값만 NaN(숫자 아님)으로 바꾼 새 배열</code></pre>
+    <p><i>풀이.</i> 마스크 <code>ok</code>로 고른 값은 21.5, 22.0, 35.2, 22.4, 23.1의 5개이고 합은 124.2이므로 평균은 \(124.2/5 = 24.84\)입니다. −99를 빼지 않고 평균을 내면 \(25.2/6 = 4.2\)라는 엉뚱한 값이 나옵니다. 조건 두 개는 <code>&amp;</code>(그리고), <code>|</code>(또는)로 묶고 각 조건을 괄호로 감쌉니다: <code>(T &gt; 20) &amp; (T &lt; 30)</code>. 파이썬의 <code>and</code>, <code>or</code>는 배열에 쓸 수 없습니다.</p>
+
+    <h3><span class="no">3.3.3</span>브로드캐스팅</h3>
+    <p>모양이 다른 배열끼리 계산할 때, NumPy는 크기가 1인 축을 늘려 모양을 맞춘 것처럼 계산합니다. 이를 <b>브로드캐스팅</b>이라 합니다. 가장 간단한 경우가 배열과 수 하나의 계산 <code>a + 1</code>입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.2</span>
+      <p>(1) 시료 3개에서 두 가지 양을 잰 \(3\times2\) 배열(행: 시료, 열: 측정량)에서 열마다 평균을 빼세요. (2) 직선 위의 점 0, 1, 3 사이의 거리를 모두 담은 \(3\times3\) 표를 반복문 없이 만드세요.</p>
+    </div>
+<pre><code>D = np.array([[1.0, 10.0],
+              [2.0, 20.0],
+              [6.0, 60.0]])          # 계산을 쉽게 하려고 고른 수
+m = D.mean(axis=0)                  # 열마다 평균: [ 3. 30.]
+print(D - m)                        # (3,2) - (2,) → 행마다 같은 m을 뺀다
+# [[ -2. -20.]
+#  [ -1. -10.]
+#  [  3.  30.]]
+
+x = np.array([0, 1, 3])
+dist = np.abs(x[:, None] - x[None, :])   # (3,1) - (1,3) → (3,3)
+print(dist)
+# [[0 1 3]
+#  [1 0 2]
+#  [3 2 0]]</code></pre>
+    <p><i>풀이.</i> (1) <code>axis=0</code>은 "행 방향으로 모아서", 곧 열마다 평균을 냅니다. 모양 \((3, 2)\)에서 \((2,)\)를 빼면, 뒤쪽 축의 크기가 같으므로 세 행 모두에 같은 평균이 빠집니다. (2) <code>x[:, None]</code>은 세로로 세운 \((3, 1)\) 배열, <code>x[None, :]</code>은 가로로 눕힌 \((1, 3)\) 배열입니다. 둘을 빼면 양쪽이 \((3, 3)\)으로 늘어나 \(x_i - x_j\)가 \(i\)행 \(j\)열에 들어갑니다. 이중 반복문으로 쓰면 \(n^2\)번 돌 계산을 한 줄로 쓴 것이고, 계산은 C로 만든 NumPy 내부에서 일어나 훨씬 빠릅니다. 모양을 맞추는 규칙은 "뒤쪽 축부터 비교해 크기가 같거나 한쪽이 1이어야 한다"입니다. 맞지 않으면 <code>ValueError: operands could not be broadcast together</code>가 납니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>A[행, 열]</code>, 슬라이스는 원본을 공유하는 뷰. 따로 쓰려면 <code>.copy()</code>.</li>
+        <li>마스크 <code>a[a &gt; 0]</code>로 고르고, 조건은 <code>&amp;</code>, <code>|</code>와 괄호로 묶는다.</li>
+        <li>브로드캐스팅: 뒤쪽 축부터 크기가 같거나 1이면 늘려서 계산한다. <code>x[:, None] - x[None, :]</code>은 모든 쌍의 차.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>a = np.arange(10)</code>(0부터 9까지)에서 짝수만 골라 제곱한 배열을 반복문 없이 만드세요.
+          <details><summary>답</summary><p><code>a[a % 2 == 0] ** 2</code> → <code>[ 0  4 16 36 64]</code>.</p></details>
+        </li>
+        <li>모양 \((4, 3)\)인 배열에서 모양 \((4,)\)인 배열을 빼면 오류가 납니다. 행마다 다른 값을 빼려면 어떻게 고쳐야 하나요?
+          <details><summary>답</summary><p>뒤쪽 축 크기 3과 4가 달라 맞지 않습니다. 빼는 배열을 <code>b[:, None]</code>으로 \((4, 1)\) 모양으로 세우면 열 방향으로 늘어나 행마다 다른 값이 빠집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
