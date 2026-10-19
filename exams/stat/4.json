@@ -1,0 +1,970 @@
+{
+ "items": [
+  {
+   "id": "ai-stat4-01-01",
+   "std": "응통4-01-01",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>[1, 2, 3] * 2</code>의 결과는?</p>",
+   "choices": [
+    "<code>[2, 4, 6]</code>",
+    "<code>[1, 2, 3, 1, 2, 3]</code>",
+    "<code>[[1, 2, 3], [1, 2, 3]]</code>",
+    "오류",
+    "<code>12</code>"
+   ],
+   "answer": "2",
+   "hints": [
+    "리스트의 곱셈은 반복입니다.",
+    "원소별 계산은 NumPy 배열이나 내포로 합니다."
+   ],
+   "sol": "<p>리스트에 정수를 곱하면 이어 붙여 반복합니다. 원소별로 두 배를 하려면 <code>[2 * v for v in x]</code>나 <code>np.array(x) * 2</code>를 씁니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-02",
+   "std": "응통4-01-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>d = {\"a\": 1}</code>일 때 <code>d.get(\"b\", 0)</code>과 <code>d[\"b\"]</code>의 결과는?</p>",
+   "answer": "0, KeyError",
+   "hints": [
+    "<code>get</code>은 없는 키에 기본값을 돌려줍니다.",
+    "대괄호는 없는 키에서 예외를 냅니다."
+   ],
+   "sol": "<p><code>d.get(\"b\", 0)</code>은 0이고 <code>d[\"b\"]</code>는 <code>KeyError</code>입니다. 빈도 세기에는 <code>d[k] = d.get(k, 0) + 1</code>이나 <code>collections.Counter</code>를 씁니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-03",
+   "std": "응통4-01-03",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>\"  Hello, World \".strip().lower().split(\",\")</code>의 결과를 쓰세요.</p>",
+   "answer": "<code>['hello', ' world']</code>",
+   "hints": [
+    "<code>strip</code>은 양 끝 공백만 지웁니다.",
+    "쉼표 뒤의 공백은 남습니다."
+   ],
+   "sol": "<p>양 끝 공백을 지우고 소문자로 바꾼 <code>\"hello, world\"</code>를 쉼표로 나누면 <code>['hello', ' world']</code>입니다. 둘째 원소 앞 공백을 없애려면 <code>[t.strip() for t in ...]</code>로 다시 다듬습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-04",
+   "std": "응통4-01-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>다음 코드의 마지막 출력은 무엇이고, 왜 그런가요?</p><pre><code>def f(x, L=[]):\n    L.append(x)\n    return L\n\nf(1)\nprint(f(2))</code></pre>",
+   "answer": "<code>[1, 2]</code>. 기본값 리스트가 함수 정의 때 한 번만 만들어져 공유됨",
+   "hints": [
+    "기본 인수는 함수를 정의할 때 계산됩니다.",
+    "<code>L=None</code>으로 바꾸는 관용구."
+   ],
+   "sol": "<p>기본값 <code>[]</code>은 정의 시점에 한 번 만들어져 호출마다 같은 객체를 씁니다. 첫 호출이 1을 넣었으므로 둘째 호출 결과는 <code>[1, 2]</code>입니다. <code>def f(x, L=None): L = [] if L is None else L</code>로 고칩니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-05",
+   "std": "응통4-01-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>a = [3, 1, 3, 2, 1]</code>에서 서로 다른 값의 개수와, 처음 나온 순서를 유지한 중복 제거 리스트를 구하는 코드와 결과를 쓰세요.</p>",
+   "answer": "<code>len(set(a))</code> = 3, <code>list(dict.fromkeys(a))</code> = [3, 1, 2]",
+   "hints": [
+    "집합은 순서를 보장하지 않습니다.",
+    "딕셔너리는 넣은 순서를 유지합니다(3.7 이상)."
+   ],
+   "sol": "<p><code>set</code>은 중복을 없애지만 순서가 정해져 있지 않아 <code>list(set(a))</code>의 순서를 믿을 수 없습니다. <code>dict.fromkeys(a)</code>는 키를 처음 나온 순서대로 유지하므로 <code>[3, 1, 2]</code>입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-06",
+   "std": "응통4-01-02",
+   "type": "mc",
+   "ty": "개념",
+   "lv": "응용",
+   "q": "<p>딕셔너리의 키로 쓸 수 없는 것은?</p>",
+   "choices": [
+    "<code>(1, 2)</code>",
+    "<code>\"name\"</code>",
+    "<code>3.5</code>",
+    "<code>[1, 2]</code>",
+    "<code>frozenset({1, 2})</code>"
+   ],
+   "answer": "4",
+   "hints": [
+    "키는 해시 가능(불변)해야 합니다.",
+    "리스트는 바뀔 수 있습니다."
+   ],
+   "sol": "<p>리스트는 가변이라 해시할 수 없어 키가 될 수 없습니다(<code>TypeError: unhashable type</code>). 좌표처럼 여러 값을 키로 쓰려면 튜플로 바꿉니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-07",
+   "std": "응통4-01-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>7 // 2</code>, <code>-7 // 2</code>, <code>0.1 + 0.2 == 0.3</code>의 결과를 쓰고, 셋째가 그렇게 나오는 이유와 올바른 비교 방법을 쓰세요.</p>",
+   "answer": "3, −4, False. 이진 부동소수점 오차. <code>math.isclose(0.1 + 0.2, 0.3)</code>",
+   "hints": [
+    "<code>//</code>는 아래로 내림한 몫입니다.",
+    "0.1은 이진수로 정확히 나타낼 수 없습니다."
+   ],
+   "sol": "<p><code>//</code>는 음의 무한대 쪽으로 내리므로 <code>-7 // 2</code>는 −4입니다(−3.5의 내림). <code>0.1 + 0.2</code>는 <code>0.30000000000000004</code>라 같지 않습니다. 실수 비교는 <code>math.isclose</code>나 <code>abs(a - b) &lt; 1e-9</code>로 합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-08",
+   "std": "응통4-01-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>UTF-8 텍스트 파일 review.txt에서 단어(공백으로 구분, 소문자로 통일)의 빈도 상위 3개를 출력하는 코드를 쓰세요. 파일을 닫는 것을 잊지 않는 방법도 쓰세요.</p>",
+   "answer": "<code>with open(..., encoding='utf-8')</code>과 <code>Counter(...).most_common(3)</code>",
+   "hints": [
+    "<code>with</code> 문은 블록이 끝나면 파일을 닫습니다.",
+    "<code>collections.Counter</code>"
+   ],
+   "sol": "<pre><code>from collections import Counter\nwith open(\"review.txt\", encoding=\"utf-8\") as f:\n    words = f.read().lower().split()\nprint(Counter(words).most_common(3))</code></pre><p><code>with</code> 문은 예외가 나도 파일을 닫습니다. 인코딩을 지정하지 않으면 윈도우에서 기본 인코딩(cp949)으로 읽어 한글 파일에서 오류가 날 수 있습니다. 문장 부호를 떼려면 <code>re.findall(r'\\w+', text)</code>를 씁니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-09",
+   "std": "응통4-01-01",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>3×3 영행렬을 만들려고 <code>a = [[0] * 3] * 3</code>을 쓴 뒤 <code>a[0][0] = 1</code>을 했습니다. <code>print(a)</code>의 결과를 쓰고 원인을 객체 참조로 설명한 뒤, 올바른 코드를 쓰세요. <code>b = a.copy()</code>는 이 문제를 해결하나요?</p>",
+   "answer": "<code>[[1, 0, 0], [1, 0, 0], [1, 0, 0]]</code>. 같은 내부 리스트를 세 번 참조. <code>[[0] * 3 for _ in range(3)]</code>. copy는 얕은 복사라 해결 못함",
+   "hints": [
+    "<code>* 3</code>은 같은 객체에 대한 참조를 세 번 복사합니다.",
+    "<code>id(a[0]) == id(a[1])</code>를 확인해 봅니다."
+   ],
+   "sol": "<p><code>[0] * 3</code>으로 만든 리스트 하나를 바깥 <code>* 3</code>이 세 번 가리키므로 <code>a[0]</code>, <code>a[1]</code>, <code>a[2]</code>는 같은 객체입니다. 하나를 고치면 셋 모두 바뀌어 <code>[[1, 0, 0], [1, 0, 0], [1, 0, 0]]</code>이 출력됩니다. 정수 0은 불변이라 안쪽 <code>* 3</code>은 문제가 없습니다.</p><p>올바른 코드는 <code>[[0] * 3 for _ in range(3)]</code>로 행마다 새 리스트를 만듭니다. <code>a.copy()</code>는 바깥 리스트만 새로 만들고 안쪽 리스트는 공유하는 얕은 복사라 소용없고, <code>copy.deepcopy(a)</code>가 필요합니다. 수치 행렬이라면 <code>np.zeros((3, 3))</code>을 쓰는 것이 가장 낫습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-10",
+   "std": "응통4-01-02",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>고객 번호 10만 개가 든 리스트 ids에서, 새로 들어온 주문 10만 건의 고객 번호가 기존 고객인지 하나씩 확인하는 코드 <code>[x in ids for x in new]</code>가 매우 느립니다. 이유를 계산량으로 설명하고 고치세요. 순서가 필요한 경우와 개수가 필요한 경우에는 어떤 자료구조를 고르나요?</p>",
+   "answer": "리스트 포함 검사는 O(n)이라 전체 약 5×10⁹ 비교. <code>s = set(ids)</code>로 바꾸면 평균 O(1)",
+   "hints": [
+    "리스트는 앞에서부터 하나씩 비교합니다.",
+    "집합과 딕셔너리는 해시 표입니다."
+   ],
+   "sol": "<p>리스트의 <code>in</code>은 순서대로 비교하므로 한 번에 평균 \\(n/2\\), 전체 \\(10^{5}\\times5\\times10^{4} = 5\\times10^{9}\\)번 비교합니다. <code>s = set(ids)</code>를 한 번 만들면(\\(O(n)\\)) 포함 검사가 평균 \\(O(1)\\)이라 전체 \\(O(n)\\)으로 줄어듭니다.</p><p>자료구조 선택: 순서와 중복이 의미 있으면 리스트, 바뀌지 않는 묶음(키로 쓸 값)은 튜플, 포함 여부만 필요하면 집합, 값에 붙은 정보(고객별 주문 수 등)가 필요하면 딕셔너리(개수는 <code>Counter</code>)를 씁니다. 해시 기반 구조는 메모리를 더 쓰지만 대개 그만한 가치가 있습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-01-11",
+   "std": "응통4-01-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>CSV 한 줄 <code>\"Seoul, Korea\",3</code>을 <code>line.split(\",\")</code>으로 나누면 어떤 결과가 나오고 무엇이 문제인가요? <code>csv</code> 모듈로 고친 코드와 결과를 쓰고, 큰 CSV를 다룰 때의 추가 고려 사항을 쓰세요.</p>",
+   "answer": "<code>['\"Seoul', ' Korea\"', '3']</code>(3개로 잘못 나뉨). <code>csv.reader</code> → <code>['Seoul, Korea', '3']</code>",
+   "hints": [
+    "따옴표 안의 쉼표는 구분자가 아닙니다.",
+    "<code>csv.reader</code>는 따옴표 규칙을 압니다."
+   ],
+   "sol": "<p><code>split</code>은 따옴표를 모르므로 <code>['\"Seoul', ' Korea\"', '3']</code>로 열이 하나 늘어나 이후 모든 열이 밀립니다.</p><pre><code>import csv\nwith open(\"cities.csv\", encoding=\"utf-8\", newline=\"\") as f:\n    for row in csv.reader(f):\n        print(row)   # ['Seoul, Korea', '3']</code></pre><p><code>newline=\"\"</code>은 따옴표 안의 줄바꿈을 올바르게 처리하기 위해 권장됩니다. 큰 파일은 한 줄씩 읽어 메모리를 아끼고, 숫자 열은 직접 <code>float</code>로 바꿔야 합니다(모든 값이 문자열). 분석용이라면 <code>pandas.read_csv</code>가 형 추론, 결측, 인코딩을 함께 처리합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-01",
+   "std": "응통4-02-01",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>import math as m</code> 다음에 <code>m.sqrt(16)</code>의 결과는?</p>",
+   "choices": [
+    "<code>4</code>",
+    "<code>4.0</code>",
+    "<code>16</code>",
+    "오류",
+    "<code>(4, -4)</code>"
+   ],
+   "answer": "2",
+   "hints": [
+    "<code>as</code>는 별칭입니다.",
+    "<code>math.sqrt</code>는 실수를 돌려줍니다."
+   ],
+   "sol": "<p><code>m</code>은 <code>math</code> 모듈의 별칭이고 <code>sqrt</code>는 float <code>4.0</code>을 돌려줍니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-02",
+   "std": "응통4-02-03",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>int(\"3.5\")</code>를 실행하면 어떤 예외가 나고, <code>int(float(\"3.5\"))</code>의 결과는?</p>",
+   "answer": "<code>ValueError</code>, 3",
+   "hints": [
+    "<code>int</code>는 정수 형식의 문자열만 받습니다.",
+    "float에서 int로는 0 쪽으로 버립니다."
+   ],
+   "sol": "<p><code>int(\"3.5\")</code>는 <code>ValueError</code>입니다. 먼저 <code>float</code>로 바꾸면 3.5이고, <code>int</code>는 소수 부분을 버려 3입니다(반올림이 아님).</p>"
+  },
+  {
+   "id": "ai-stat4-02-03",
+   "std": "응통4-02-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p>다음 코드의 출력은?</p><pre><code>class Account:\n    def __init__(self, balance):\n        self.balance = balance\n    def deposit(self, x):\n        self.balance += x\n        return self.balance\n\na = Account(100)\na.deposit(50)\nprint(a.deposit(20))</code></pre>",
+   "answer": "170",
+   "hints": [
+    "두 번의 입금이 누적됩니다.",
+    "<code>self</code>는 그 객체 자신입니다."
+   ],
+   "sol": "<p>처음 100, 50을 넣어 150, 20을 넣어 170이 출력됩니다. 객체가 상태(<code>balance</code>)를 가지고 메서드가 그 상태를 바꿉니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-04",
+   "std": "응통4-02-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>모듈 파일 stats_util.py의 끝에 <code>if __name__ == \"__main__\":</code> 블록을 두는 이유는?</p>",
+   "answer": "파일을 직접 실행할 때만 그 블록이 돌고, 다른 파일에서 import할 때는 실행되지 않게 하려고",
+   "hints": [
+    "직접 실행하면 <code>__name__</code>이 <code>\"__main__\"</code>입니다.",
+    "import하면 모듈 이름이 됩니다."
+   ],
+   "sol": "<p>import 시에는 <code>__name__</code>이 <code>\"stats_util\"</code>이라 블록이 건너뛰어집니다. 함수 정의는 재사용하고, 시험 코드나 예시 실행은 직접 실행할 때만 돌게 하는 관례입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-05",
+   "std": "응통4-02-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>다음 코드에서 <code>print(b2.items)</code>의 결과와 그 이유는?</p><pre><code>class Bag:\n    items = []\n    def add(self, x):\n        self.items.append(x)\n\nb1, b2 = Bag(), Bag()\nb1.add(1)\nprint(b2.items)</code></pre>",
+   "answer": "<code>[1]</code>. 클래스 속성이라 모든 객체가 공유",
+   "hints": [
+    "클래스 본문에서 만든 변수는 클래스 속성입니다.",
+    "객체마다 따로 두려면 <code>__init__</code>에서 만듭니다."
+   ],
+   "sol": "<p><code>items</code>는 클래스에 하나만 있는 리스트이고 <code>self.items</code>는 그것을 찾아 고칩니다. 그래서 <code>b2.items</code>도 <code>[1]</code>입니다. <code>def __init__(self): self.items = []</code>로 객체마다 만들어야 합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-06",
+   "std": "응통4-02-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>다음 함수에 대해 <code>g(\"3\")</code>과 <code>g(\"x\")</code>의 반환값을 쓰고, <code>else</code>와 <code>finally</code>의 쓰임을 설명하세요.</p><pre><code>def g(s):\n    out = []\n    try:\n        v = int(s)\n        out.append(\"try\")\n    except ValueError:\n        out.append(\"except\")\n    else:\n        out.append(\"else\")\n    finally:\n        out.append(\"finally\")\n    return out</code></pre>",
+   "answer": "<code>['try', 'else', 'finally']</code>, <code>['except', 'finally']</code>",
+   "hints": [
+    "<code>else</code>는 예외가 없을 때만.",
+    "<code>finally</code>는 언제나."
+   ],
+   "sol": "<p>예외가 없으면 try → else → finally, 예외가 나면 except → finally 순으로 실행됩니다. <code>else</code>에는 예외가 없을 때만 할 일(예외를 잡고 싶지 않은 코드)을 두어 try 블록을 좁히고, <code>finally</code>에는 파일 닫기 같은 정리 작업을 둡니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-07",
+   "std": "응통4-02-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>스택 클래스를 만들어 <code>len(s)</code>가 원소 수를, <code>print(s)</code>가 <code>Stack([1, 2])</code>처럼 보이게 하려면 어떤 특별 메서드를 정의하나요?</p>",
+   "answer": "<code>__len__</code>과 <code>__repr__</code>(또는 <code>__str__</code>)",
+   "hints": [
+    "<code>len()</code>은 <code>__len__</code>을 부릅니다.",
+    "출력 문자열은 <code>__repr__</code>."
+   ],
+   "sol": "<pre><code>class Stack:\n    def __init__(self):\n        self._data = []\n    def push(self, x):\n        self._data.append(x)\n    def pop(self):\n        return self._data.pop()\n    def __len__(self):\n        return len(self._data)\n    def __repr__(self):\n        return f\"Stack({self._data})\"</code></pre><p>내장 함수와 같은 방식으로 쓸 수 있게 해 주는 것이 특별 메서드의 역할입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-08",
+   "std": "응통4-02-02",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>자료를 한 번에 하나씩 받으며 평균과 분산을 갱신하는 클래스 <code>RunningStats</code>를 웰퍼드 방법(\\(\\delta = x - \\bar x\\), \\(\\bar x \\leftarrow \\bar x + \\delta/n\\), \\(M_2 \\leftarrow M_2 + \\delta(x - \\bar x)\\))으로 작성하고, 자료 2, 4, 4, 4, 5, 5, 7, 9를 넣었을 때 평균과 표본분산을 구하세요. 합과 제곱합을 누적해 \\((\\sum x^{2} - n\\bar x^{2})/(n - 1)\\)로 계산하는 방법보다 나은 점은?</p>",
+   "answer": "평균 5, 표본분산 32/7 ≈ 4.571. 큰 수에서 빼기로 생기는 자릿수 손실이 없음",
+   "hints": [
+    "\\(M_2\\)는 편차제곱합, 분산은 \\(M_2/(n-1)\\).",
+    "값이 \\(10^{9}\\) 근처이고 변동이 작으면 두 큰 수의 차가 부정확해집니다."
+   ],
+   "sol": "<pre><code>class RunningStats:\n    def __init__(self):\n        self.n, self.mean, self.m2 = 0, 0.0, 0.0\n    def add(self, x):\n        self.n += 1\n        d = x - self.mean\n        self.mean += d / self.n\n        self.m2 += d * (x - self.mean)\n    def var(self):\n        return self.m2 / (self.n - 1)</code></pre><p>자료의 평균은 40/8 = 5, 편차제곱합은 9 + 1 + 1 + 1 + 0 + 0 + 4 + 16 = 32이므로 표본분산 32/7 = 4.571입니다(모분산 4).</p><p>제곱합 방식은 \\(\\sum x^{2}\\)와 \\(n\\bar x^{2}\\)가 거의 같은 큰 수일 때(예: 값이 \\(10^{9}\\) 근처, 변동이 1 정도) 그 차를 구하면서 유효숫자가 대부분 사라져 분산이 음수가 나오기도 합니다. 웰퍼드 방법은 평균에서의 편차만 다뤄 이런 손실이 없고, 자료를 저장하지 않고 스트림에서 한 번만 읽어도 됩니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-09",
+   "std": "응통4-02-03",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>동료가 자료 정리 함수 전체를 <code>try: ... except Exception: return None</code>으로 감쌌습니다. 이 방식의 문제를 설명하고, 다음 상황에 맞는 예외 처리를 쓰세요: 파일이 없으면 사용자에게 경로를 알려 주고 멈추며, 숫자로 바꿀 수 없는 줄은 건너뛰되 몇 줄을 건너뛰었는지 기록합니다.</p>",
+   "answer": "모든 오류(오타, 논리 오류)가 조용히 None이 되어 원인을 숨김. FileNotFoundError와 ValueError를 따로, 좁은 범위에서 처리",
+   "hints": [
+    "잡을 예외는 구체적으로, try 블록은 짧게.",
+    "건너뛴 줄 수를 세어 보고합니다."
+   ],
+   "sol": "<p>광범위한 <code>except Exception</code>은 변수 이름 오타(<code>NameError</code>)나 잘못된 인덱스 같은 버그까지 삼켜 None을 돌려주므로, 문제가 한참 뒤 엉뚱한 곳에서 드러납니다.</p><pre><code>def load(path):\n    try:\n        f = open(path, encoding=\"utf-8\")\n    except FileNotFoundError:\n        raise SystemExit(f\"파일이 없습니다: {path}\")\n    vals, skipped = [], 0\n    with f:\n        for line in f:\n            try:\n                vals.append(float(line))\n            except ValueError:\n                skipped += 1\n    print(f\"건너뛴 줄 {skipped}개\")\n    return vals</code></pre><p>예상한 예외만, 그 예외가 날 수 있는 가장 좁은 줄에서 잡고, 처리한 사실(건너뛴 줄 수)을 남깁니다. 예상하지 못한 예외는 그대로 전파되게 두어야 디버깅할 수 있습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-02-10",
+   "std": "응통4-02-01",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>직접 만든 모듈 mypkg/loader.py 안에서 같은 폴더의 <code>prices.csv</code>를 <code>open(\"prices.csv\")</code>로 읽었더니, 다른 폴더에서 이 모듈을 import해 실행하면 <code>FileNotFoundError</code>가 납니다. 원인과 해결 방법을 쓰고, 노트북에서 모듈을 고친 뒤 다시 import해도 바뀐 내용이 반영되지 않는 이유와 대처도 쓰세요.</p>",
+   "answer": "상대 경로는 현재 작업 폴더 기준. <code>Path(__file__).parent / 'prices.csv'</code>. 모듈은 한 번만 불러와 캐시되므로 <code>importlib.reload</code> 또는 커널 재시작",
+   "hints": [
+    "<code>os.getcwd()</code>와 모듈 파일의 위치는 다릅니다.",
+    "<code>sys.modules</code>에 이미 있으면 다시 읽지 않습니다."
+   ],
+   "sol": "<p>상대 경로는 모듈 파일이 아니라 프로그램을 실행한 현재 작업 폴더를 기준으로 풀리므로, 다른 폴더에서 실행하면 파일을 찾지 못합니다. <code>from pathlib import Path; DATA = Path(__file__).resolve().parent / \"prices.csv\"</code>처럼 모듈 위치를 기준으로 경로를 만듭니다.</p><p>파이썬은 모듈을 처음 import할 때 실행해 <code>sys.modules</code>에 저장하고, 이후의 import는 저장된 것을 돌려줍니다. 그래서 파일을 고쳐도 반영되지 않습니다. <code>importlib.reload(loader)</code>로 다시 읽거나(이미 가져온 이름은 갱신되지 않을 수 있음), 커널을 재시작하거나, 주피터에서 <code>%autoreload 2</code>를 씁니다. 최종 결과는 커널을 재시작해 처음부터 실행해 확인합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-01",
+   "std": "응통4-03-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>np.arange(6).reshape(2, 3).sum(axis=0)</code>의 결과는?</p>",
+   "answer": "<code>array([3, 5, 7])</code>",
+   "hints": [
+    "행렬은 [[0, 1, 2], [3, 4, 5]]입니다.",
+    "axis=0은 행 방향으로 합쳐 열마다 하나."
+   ],
+   "sol": "<p>axis=0은 첫 번째 축(행)을 따라 더해 열 합 \\((0+3, 1+4, 2+5) = (3, 5, 7)\\)입니다. axis=1이면 행 합 \\((3, 12)\\)입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-02",
+   "std": "응통4-03-01",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>x = np.array([1, 2, 3])</code>일 때 <code>x * x</code>의 결과는?</p>",
+   "choices": [
+    "<code>14</code>",
+    "<code>array([1, 4, 9])</code>",
+    "<code>array([[1, 2, 3], [2, 4, 6], [3, 6, 9]])</code>",
+    "오류",
+    "<code>array([2, 4, 6])</code>"
+   ],
+   "answer": "2",
+   "hints": [
+    "<code>*</code>는 원소별 곱입니다.",
+    "내적은 <code>x @ x</code>."
+   ],
+   "sol": "<p>배열의 <code>*</code>는 원소별 곱 <code>[1, 4, 9]</code>이고, 내적 14는 <code>x @ x</code> 또는 <code>np.dot(x, x)</code>입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-03",
+   "std": "응통4-03-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>모양이 (3, 1)인 배열과 (1, 4)인 배열을 더한 결과의 모양은? (3,)과 (4,)를 더하면 어떻게 되나요?</p>",
+   "answer": "(3, 4). 오류(브로드캐스트 불가)",
+   "hints": [
+    "뒤에서부터 축을 맞추고, 크기 1인 축은 늘어납니다.",
+    "3과 4는 맞출 수 없습니다."
+   ],
+   "sol": "<p>(3, 1)과 (1, 4)는 각 축에서 한쪽이 1이라 (3, 4)로 늘어납니다(외적 같은 표). (3,)과 (4,)는 마지막 축이 3과 4로 달라 <code>ValueError: operands could not be broadcast</code>가 납니다. 외적을 원하면 <code>a[:, None] + b</code>처럼 축을 만들어 줍니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-04",
+   "std": "응통4-03-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>A = np.array([[1, 2], [3, 4]])</code>, <code>B = np.array([[0, 1], [1, 0]])</code>일 때 <code>A @ B</code>와 <code>A * B</code>를 구하세요.</p>",
+   "answer": "<code>A @ B</code> = [[2, 1], [4, 3]], <code>A * B</code> = [[0, 2], [3, 0]]",
+   "hints": [
+    "오른쪽에 치환행렬을 곱하면 열이 바뀝니다.",
+    "<code>*</code>는 원소별."
+   ],
+   "sol": "<p>행렬곱 <code>A @ B</code>는 A의 두 열을 바꾼 [[2, 1], [4, 3]]이고, <code>A * B</code>는 원소별 곱 [[0, 2], [3, 0]]입니다. 두 연산을 혼동하면 오류 없이 틀린 답이 나옵니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-05",
+   "std": "응통4-03-03",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>x = np.array([5, -2, 7, 0, -1])</code>에서 음수를 0으로 바꾸는 코드를 불리언 마스크로 쓰고 결과를 쓰세요. 원본을 바꾸지 않으려면?</p>",
+   "answer": "<code>x[x &lt; 0] = 0</code> → [5, 0, 7, 0, 0]. <code>np.where(x &lt; 0, 0, x)</code> 또는 <code>np.maximum(x, 0)</code>",
+   "hints": [
+    "마스크로 고른 위치에 대입할 수 있습니다.",
+    "<code>np.where</code>는 새 배열을 만듭니다."
+   ],
+   "sol": "<p><code>x[x &lt; 0] = 0</code>은 x 자체를 바꿔 [5, 0, 7, 0, 0]이 됩니다. 원본을 두려면 <code>np.where(x &lt; 0, 0, x)</code>나 <code>np.maximum(x, 0)</code>(또는 <code>x.clip(min=0)</code>)으로 새 배열을 만듭니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-06",
+   "std": "응통4-03-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>rng = np.random.default_rng(0); z = rng.normal(size=(1000, 2))</code>에서 <code>z.mean(axis=0)</code>의 각 값은 대략 어느 정도 범위에 있을 것으로 기대하나요?</p>",
+   "answer": "0 근처, 대략 \\(\\pm 0.06\\)(표준오차 0.032의 2배) 안",
+   "hints": [
+    "표준정규 1000개의 평균.",
+    "표준오차 \\(1/\\sqrt{1000}\\)"
+   ],
+   "sol": "<p>각 열은 표준정규 1000개이므로 평균의 표준오차는 \\(1/\\sqrt{1000} = 0.032\\)이고, 약 95%의 경우 \\(\\pm0.063\\) 안에 듭니다. 정확히 0이 아닌 것은 정상입니다. 시드 0을 주었으므로 실행할 때마다 같은 값이 나옵니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-07",
+   "std": "응통4-03-03",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>x = np.arange(5)</code>에서 (가) <code>y = x[1:3]; y[0] = 99</code> (나) <code>z = x[[1, 2]]; z[0] = 99</code>를 각각 실행한 뒤 x는 어떻게 되나요?</p>",
+   "answer": "(가) x = [0, 99, 2, 3, 4] (뷰) (나) x 그대로 (복사)",
+   "hints": [
+    "슬라이싱은 뷰, 팬시 인덱싱은 복사입니다.",
+    "<code>np.shares_memory(x, y)</code>"
+   ],
+   "sol": "<p>슬라이싱 결과는 원본 메모리를 공유하는 뷰라 y를 바꾸면 x도 바뀝니다. 정수 리스트로 인덱싱(팬시 인덱싱)하면 새 배열이 만들어져 x는 그대로입니다. 뷰를 따로 쓰려면 <code>x[1:3].copy()</code>를 씁니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-08",
+   "std": "응통4-03-01",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>np.array([1, 2, 3], dtype=np.int8) * 100</code>의 결과는?</p>",
+   "choices": [
+    "<code>array([100, 200, 300])</code>",
+    "<code>array([100, -56, 44], dtype=int8)</code>",
+    "OverflowError",
+    "<code>array([100, 127, 127])</code>",
+    "<code>array([100., 200., 300.])</code>"
+   ],
+   "answer": "2",
+   "hints": [
+    "int8의 범위는 −128~127입니다.",
+    "배열 연산의 넘침은 감싸 돌아갑니다(경고 없이)."
+   ],
+   "sol": "<p>int8 배열에 맞는 정수를 곱하면 결과도 int8이고, 200과 300은 256을 법으로 감싸 −56, 44가 됩니다. 파이썬 정수와 달리 NumPy 고정 크기 정수는 조용히 넘칩니다. 이미지(uint8) 자료를 계산할 때 흔한 실수이므로 먼저 <code>astype(np.int64)</code>나 float로 바꿉니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-09",
+   "std": "응통4-03-01",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>자료 행렬 <code>X</code>(n × p)의 각 열을 표준화하려고 <code>Z = X - X.mean(axis=0) / X.std(axis=0)</code>를 썼습니다. 무엇이 잘못되었는지 설명하고 고치세요. <code>axis=1</code>로 바꾸면 어떻게 되며, <code>X.std()</code>의 기본 자유도와 R의 <code>sd()</code>는 어떻게 다른가요?</p>",
+   "answer": "연산자 우선순위로 나눗셈이 먼저. <code>Z = (X - X.mean(axis=0)) / X.std(axis=0, ddof=1)</code>. axis=1은 행 기준(관측마다)이 되어 뜻이 달라짐. NumPy 기본 ddof=0, R은 n − 1",
+   "hints": [
+    "나눗셈이 뺄셈보다 먼저입니다.",
+    "axis=0의 결과는 길이 p 벡터로 각 행에 브로드캐스트됩니다."
+   ],
+   "sol": "<p>나눗셈이 먼저 계산되어 <code>X - (평균/표준편차)</code>가 됩니다. 괄호를 넣어 <code>(X - X.mean(axis=0)) / X.std(axis=0, ddof=1)</code>로 고칩니다. <code>X.mean(axis=0)</code>은 모양 (p,)이라 (n, p)에서 각 행에 브로드캐스트되어 열마다 빼집니다.</p><p><code>axis=1</code>로 하면 관측(행)마다 평균과 표준편차를 구하게 되어 변수 표준화가 아닌 다른 변환이 됩니다(게다가 모양 (n,)은 (n, p)에 바로 브로드캐스트되지 않아 p ≠ n이면 오류, 같으면 조용히 틀린 결과). <code>keepdims=True</code>를 쓰면 의도가 분명해집니다.</p><p>NumPy의 <code>std</code>는 기본 <code>ddof=0</code>(n으로 나눔)이고 R의 <code>sd</code>는 n − 1로 나눕니다. pandas의 <code>.std()</code>는 기본 ddof=1이라 세 도구의 결과가 다를 수 있으니 명시하는 습관이 필요합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-10",
+   "std": "응통4-03-02",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>회귀계수를 <code>beta = np.linalg.inv(X.T @ X) @ X.T @ y</code>로 계산했습니다. 이 방법의 수치적 문제를 설명하고 더 나은 두 가지 방법을 쓰세요. 열 두 개가 거의 같은(상관 0.9999) 경우 어떤 일이 생기나요?</p>",
+   "answer": "역행렬 계산과 X^TX가 조건수를 제곱해 오차 증폭. <code>np.linalg.lstsq(X, y)</code>(SVD) 또는 QR. 거의 공선이면 계수가 불안정",
+   "hints": [
+    "\\(\\kappa(X^{T}X) = \\kappa(X)^{2}\\)",
+    "연립방정식은 역행렬 없이 풉니다."
+   ],
+   "sol": "<p>역행렬을 명시적으로 구하면 <code>solve</code>보다 계산량이 많고 오차가 큽니다. 더 큰 문제는 \\(X^{T}X\\)의 조건수가 \\(X\\)의 조건수의 제곱이라 유효숫자를 두 배로 잃는다는 점입니다.</p><p>더 나은 방법: (1) <code>np.linalg.lstsq(X, y, rcond=None)</code>는 SVD로 \\(X\\)를 직접 다루고 계수가 부족해도 최소 노름 해를 줍니다. (2) <code>Q, R = np.linalg.qr(X)</code> 뒤 <code>scipy.linalg.solve_triangular(R, Q.T @ y)</code>로 QR을 씁니다. 정규방정식을 꼭 쓴다면 <code>np.linalg.solve(X.T @ X, X.T @ y)</code>가 inv보다 낫습니다.</p><p>상관 0.9999인 두 열은 거의 선형종속이라 \\(X^{T}X\\)가 특이에 가깝고, 자료가 조금만 바뀌어도 두 계수가 큰 반대 부호로 요동칩니다. 합은 안정적이지만 개별 계수는 해석할 수 없으므로, 변수를 합치거나 하나를 빼거나 능형 회귀를 씁니다.</p>"
+  },
+  {
+   "id": "ai-stat4-03-11",
+   "std": "응통4-03-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p><code>x = np.array([3, 8, -1, 4, 6])</code>에서 0보다 크고 5보다 작은 값을 고르려고 <code>x[x &gt; 0 &amp; x &lt; 5]</code>를 썼더니 오류가 났습니다. 원인과 고친 코드, 결과를 쓰세요. 또 행렬 <code>S</code>의 각 행에서 가장 큰 값 2개의 열 번호를 구하는 코드를 쓰세요.</p>",
+   "answer": "우선순위로 <code>0 &amp; x</code>가 먼저 계산되고 연쇄 비교가 됨. <code>x[(x &gt; 0) &amp; (x &lt; 5)]</code> → [3, 4]. <code>np.argsort(-S, axis=1)[:, :2]</code>",
+   "hints": [
+    "<code>&amp;</code>는 비교 연산자보다 먼저 계산됩니다.",
+    "<code>argsort</code>는 작은 값부터의 위치를 줍니다."
+   ],
+   "sol": "<p><code>&amp;</code>는 비교보다 우선순위가 높아 <code>x &gt; (0 &amp; x) &lt; 5</code>로 읽히고, 이는 연쇄 비교 <code>(x &gt; (0 &amp; x)) and ((0 &amp; x) &lt; 5)</code>가 되어 배열의 진리값을 물어 <code>ValueError: The truth value of an array ... is ambiguous</code>가 납니다. 각 비교를 괄호로 묶은 <code>x[(x &gt; 0) &amp; (x &lt; 5)]</code>는 <code>[3, 4]</code>입니다. <code>and</code>는 배열에 쓸 수 없고 <code>&amp;</code>, <code>|</code>, <code>~</code>를 씁니다.</p><p>행마다 큰 값 2개의 열 번호는 <code>np.argsort(-S, axis=1)[:, :2]</code>입니다. 큰 행렬에서는 전체 정렬 대신 <code>np.argpartition(-S, 2, axis=1)[:, :2]</code>가 빠르지만 두 값의 순서는 보장하지 않습니다. 값 자체는 <code>np.take_along_axis(S, idx, axis=1)</code>로 꺼냅니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-01",
+   "std": "응통4-04-01",
+   "type": "short",
+   "ty": "계산",
+   "lv": "기본",
+   "q": "<p>길이 1인 구간에서 시작한 이분법으로 근을 오차 \\(10^{-6}\\) 이하로 찾으려면 최소 몇 번 반복해야 하나요?</p>",
+   "answer": "20번",
+   "hints": [
+    "한 번에 구간이 절반이 됩니다.",
+    "\\(2^{-n} \\le 10^{-6}\\)"
+   ],
+   "sol": "<p>\\(n \\ge \\log_2 10^{6} = 19.93\\)이므로 20번입니다. 이분법은 함수 모양과 관계없이 이 횟수가 보장되지만, 뉴턴 방법보다 느립니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-02",
+   "std": "응통4-04-01",
+   "type": "mc",
+   "ty": "계산",
+   "lv": "기본",
+   "q": "<p>뉴턴 방법으로 \\(f(x) = 0\\)을 풀 때의 갱신식은?</p>",
+   "choices": [
+    "\\(x - f'(x)/f(x)\\)",
+    "\\(x - f(x)/f'(x)\\)",
+    "\\(x + f(x)/f'(x)\\)",
+    "\\(x - f(x)f'(x)\\)",
+    "\\((a + b)/2\\)"
+   ],
+   "answer": "2",
+   "hints": [
+    "접선의 \\(x\\)절편으로 갑니다.",
+    "\\(0 = f(x) + f'(x)(x_{\\text{new}} - x)\\)"
+   ],
+   "sol": "<p>접선 \\(y = f(x) + f'(x)(t - x)\\)가 0이 되는 \\(t = x - f(x)/f'(x)\\)가 다음 점입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-03",
+   "std": "응통4-04-03",
+   "type": "short",
+   "ty": "개념",
+   "lv": "기본",
+   "q": "<p>도함수의 전진 차분 \\((f(x+h) - f(x))/h\\)와 중심 차분 \\((f(x+h) - f(x-h))/(2h)\\)의 절단 오차 차수는?</p>",
+   "answer": "전진 \\(O(h)\\), 중심 \\(O(h^{2})\\)",
+   "hints": [
+    "테일러 전개에서 \\(f''\\) 항이 남는지 봅니다.",
+    "중심 차분에서는 짝수 차 항이 상쇄됩니다."
+   ],
+   "sol": "<p>전진 차분의 오차는 \\(\\frac{h}{2}f''(\\xi)\\), 중심 차분은 \\(\\frac{h^{2}}{6}f'''(\\xi)\\)입니다. h를 10배 줄이면 오차가 각각 10배, 100배 줄어듭니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-04",
+   "std": "응통4-04-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>\\(f(x) = x^{2} - 2\\)에 뉴턴 방법을 \\(x_0 = 1\\)에서 세 번 적용한 값을 쓰고, 맞는 자릿수가 어떻게 늘어나는지 쓰세요.</p>",
+   "answer": "1.5, 1.416667, 1.414216",
+   "hints": [
+    "\\(x \\leftarrow x - (x^{2} - 2)/(2x) = (x + 2/x)/2\\)",
+    "\\(\\sqrt2 = 1.41421356\\)"
+   ],
+   "sol": "<p>\\(x_1 = 1.5\\), \\(x_2 = 1.416667\\), \\(x_3 = 1.414216\\)입니다. 오차는 0.086, 0.0025, 0.0000021로 매번 대략 제곱이 되어(2차 수렴) 맞는 자릿수가 두 배씩 늘어납니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-05",
+   "std": "응통4-04-02",
+   "type": "free",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>포아송 자료 [2, 3, 1, 4, 0, 2]의 \\(\\lambda\\)를 <code>scipy.optimize.minimize</code>로 최대가능도 추정하는 코드를 쓰세요. 음의 로그가능도를 최소화하는 이유, \\(\\lambda &gt; 0\\) 제약을 다루는 방법, 해석적 해와 비교한 결과를 쓰세요.</p>",
+   "answer": "\\(\\hat\\lambda = \\bar x = 2\\). 로그 모수 \\(\\theta = \\log\\lambda\\)로 바꾸거나 bounds 사용",
+   "hints": [
+    "minimize는 최소화만 합니다.",
+    "로그가능도 \\(\\sum x_i\\log\\lambda - n\\lambda\\)(상수 제외)."
+   ],
+   "sol": "<pre><code>import numpy as np\nfrom scipy.optimize import minimize\nx = np.array([2, 3, 1, 4, 0, 2])\nnll = lambda th: -(x.sum() * th[0] - len(x) * np.exp(th[0]))   # th = log(lambda)\nres = minimize(nll, x0=[0.0])\nprint(np.exp(res.x))   # 약 2.0</code></pre><p>최적화 라이브러리는 최소화를 하므로 로그가능도에 음수를 붙입니다. \\(\\theta = \\log\\lambda\\)로 바꾸면 제약 없이 풀 수 있고(또는 <code>bounds=[(1e-9, None)]</code>), 해석적 해 \\(\\hat\\lambda = \\bar x = 12/6 = 2\\)와 일치하는지 확인해 코드를 검증합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-06",
+   "std": "응통4-04-03",
+   "type": "short",
+   "ty": "계산",
+   "lv": "응용",
+   "q": "<p>\\(\\int_0^1 x^{2}dx\\)를 구간 2개(\\(h = 0.5\\))의 사다리꼴 규칙과 심프슨 규칙으로 계산하고 참값과 비교하세요.</p>",
+   "answer": "사다리꼴 0.375, 심프슨 1/3(정확)",
+   "hints": [
+    "사다리꼴: \\(h[f_0/2 + f_1 + f_2/2]\\)",
+    "심프슨: \\(\\frac h3[f_0 + 4f_1 + f_2]\\)"
+   ],
+   "sol": "<p>사다리꼴 \\(0.5(0 + 0.25 + 0.5) = 0.375\\)로 0.042 큽니다(볼록함수라 과대). 심프슨은 \\(\\frac{0.5}{3}(0 + 1 + 1) = 1/3\\)로 정확합니다. 심프슨은 3차 다항식까지 정확합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-07",
+   "std": "응통4-04-03",
+   "type": "short",
+   "ty": "판단",
+   "lv": "응용",
+   "q": "<p>배정밀도(기계 엡실론 약 \\(2.2\\times10^{-16}\\))에서 전진 차분으로 도함수를 구할 때, h를 \\(10^{-15}\\)처럼 아주 작게 하면 오히려 오차가 커지는 이유와, 대략 적당한 h를 쓰세요.</p>",
+   "answer": "반올림 오차가 \\(\\epsilon/h\\)로 커짐. h ≈ \\(\\sqrt\\epsilon \\approx 10^{-8}\\)",
+   "hints": [
+    "\\(f(x+h)\\)와 \\(f(x)\\)가 거의 같아 빼기에서 자릿수를 잃습니다.",
+    "전체 오차 \\(\\approx \\frac h2|f''| + \\frac{\\epsilon|f|}{h}\\)"
+   ],
+   "sol": "<p>절단 오차는 h에 비례해 줄지만, 분자의 반올림 오차 약 \\(\\epsilon|f|\\)를 h로 나누므로 \\(\\epsilon/h\\)로 커집니다. 두 오차의 합은 \\(h \\approx \\sqrt\\epsilon \\approx 10^{-8}\\)에서 최소이고, 그때 오차도 약 \\(10^{-8}\\)입니다. 중심 차분은 \\(h \\approx \\epsilon^{1/3} \\approx 10^{-5}\\)가 적당합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-08",
+   "std": "응통4-04-01",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>\\(f(x) = x^{3} - 2x + 2\\)에 뉴턴 방법을 \\(x_0 = 0\\)에서 적용하면 어떻게 되는지 두 단계를 계산해 보이고, 이런 실패를 막는 실용적 방법을 쓰세요. 이 함수의 실근은 약 −1.769입니다.</p>",
+   "answer": "0 → 1 → 0 → … 순환. 이분법과 결합(안전장치), 다른 시작점, 감쇠 단계",
+   "hints": [
+    "\\(f'(x) = 3x^{2} - 2\\)",
+    "\\(x_1 = 0 - 2/(-2)\\)"
+   ],
+   "sol": "<p>\\(x_1 = 0 - f(0)/f'(0) = 0 - 2/(-2) = 1\\), \\(x_2 = 1 - f(1)/f'(1) = 1 - 1/1 = 0\\)으로 0과 1을 영원히 오갑니다. 뉴턴 방법은 근 근처에서는 2차 수렴하지만 전역 수렴이 보장되지 않습니다.</p><p>대처: (1) 부호가 바뀌는 구간을 먼저 찾아 이분법과 뉴턴을 결합한 방법(브렌트 방법, <code>scipy.optimize.brentq</code>)을 씁니다. 여기서는 \\(f(-2) = -2\\), \\(f(-1) = 3\\)이므로 \\([-2, -1]\\)에서 −1.769를 확실히 찾습니다. (2) 단계를 \\(f\\)의 절댓값이 줄어들 때까지 절반으로 줄이는 감쇠 뉴턴을 씁니다. (3) 반복 횟수 상한과 수렴 판정을 두어 무한 반복을 막습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-09",
+   "std": "응통4-04-02",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>예산 100, 가격 \\(p_x = 1\\), \\(p_y = 4\\)일 때 효용 \\(u = \\sqrt x + \\sqrt y\\)를 최대화하는 소비 묶음을 라그랑주 조건으로 구하고, <code>scipy.optimize.minimize</code>로 푸는 코드를 쓰세요. 제약을 다루는 두 가지 방법을 비교하세요.</p>",
+   "answer": "\\(x = 80\\), \\(y = 5\\), \\(u = \\sqrt{80} + \\sqrt5 \\approx 11.18\\)",
+   "hints": [
+    "\\(\\frac{1}{2\\sqrt x} = \\lambda\\), \\(\\frac{1}{2\\sqrt y} = 4\\lambda\\)",
+    "\\(\\sqrt x = 4\\sqrt y\\), 곧 \\(x = 16y\\)"
+   ],
+   "sol": "<p>일계 조건에서 \\(x = 16y\\)이고 예산식 \\(16y + 4y = 100\\)에서 \\(y = 5\\), \\(x = 80\\), 효용 \\(8.944 + 2.236 = 11.18\\)입니다. 값이 싼 x를 16배 더 삽니다.</p><pre><code>from scipy.optimize import minimize\nimport numpy as np\nobj = lambda v: -(np.sqrt(v[0]) + np.sqrt(v[1]))\ncons = {\"type\": \"eq\", \"fun\": lambda v: v[0] + 4 * v[1] - 100}\nres = minimize(obj, x0=[50, 12.5], constraints=[cons],\n               bounds=[(1e-9, None), (1e-9, None)], method=\"SLSQP\")\nprint(res.x)   # [80, 5]</code></pre><p>방법 1은 위처럼 등식 제약을 SLSQP에 넘기는 것이고, 방법 2는 예산식으로 \\(x = 100 - 4y\\)를 대입해 한 변수 문제(\\(0 &lt; y &lt; 25\\))로 바꾸는 것입니다. 대입은 간단하고 정확하지만 제약이 여러 개면 어렵고, 제약 최적화는 일반적이지만 시작점과 경계(\\(\\sqrt{}\\)의 정의역) 처리에 신경 써야 합니다. 결과가 라그랑주 해와 같은지 확인하는 것이 검증입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-04-10",
+   "std": "응통4-04-03",
+   "type": "free",
+   "ty": "계산",
+   "lv": "심화",
+   "q": "<p>\\(f(x) = e^{x}\\)의 \\(x = 0\\)에서의 도함수를 중심 차분 \\(D(h)\\)로 \\(h = 0.1\\)과 \\(0.05\\)에서 구하고, 리처드슨 외삽 \\((4D(h/2) - D(h))/3\\)으로 개선하세요. 각 오차를 비교하고 외삽이 작동하는 원리를 설명하세요.</p>",
+   "answer": "D(0.1) = 1.0016675, D(0.05) = 1.0004167, 외삽 0.9999998. 오차 1.7×10⁻³, 4.2×10⁻⁴, 2×10⁻⁷",
+   "hints": [
+    "\\(D(h) = f'(0) + ch^{2} + O(h^{4})\\)",
+    "\\(D(h) = \\sinh(h)/h\\)"
+   ],
+   "sol": "<p>\\(D(h) = (e^{h} - e^{-h})/(2h) = \\sinh h/h\\)이므로 \\(D(0.1) = 1.0016675\\), \\(D(0.05) = 1.0004167\\)이고 오차는 \\(1.7\\times10^{-3}\\), \\(4.2\\times10^{-4}\\)로 4배 줄었습니다(2차).</p><p>중심 차분의 오차는 \\(D(h) = f'(0) + ch^{2} + O(h^{4})\\)의 꼴이므로 \\(4D(h/2) - D(h) = 3f'(0) + O(h^{4})\\)에서 \\(h^{2}\\) 항이 지워집니다. 외삽값 \\((4\\times1.0004167 - 1.0016675)/3 = 0.9999998\\)의 오차는 \\(2\\times10^{-7}\\)로, 함수값 두 개를 더 쓰지 않고 정확도를 천 배 이상 높였습니다. 오차의 형태를 알면 그것을 지워 낼 수 있다는 이 생각은 롬베르크 적분에도 쓰입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-01",
+   "std": "응통4-05-01",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p>인덱스가 [10, 20, 30]인 데이터프레임에서 <code>df.loc[10]</code>과 <code>df.iloc[0]</code>에 대한 설명으로 옳은 것은?</p>",
+   "choices": [
+    "둘 다 오류",
+    "둘 다 첫 행을 고른다",
+    "loc는 0번째 행, iloc는 이름이 10인 행",
+    "loc는 오류, iloc는 첫 행",
+    "둘 다 이름이 10인 행이 없어 오류"
+   ],
+   "answer": "2",
+   "hints": [
+    "<code>loc</code>는 이름(레이블), <code>iloc</code>는 위치.",
+    "이름 10인 행은 첫 행입니다."
+   ],
+   "sol": "<p><code>loc[10]</code>은 이름이 10인 행, <code>iloc[0]</code>은 위치 0인 행으로 여기서는 같은 행입니다. 정렬이나 필터 뒤에는 둘이 달라지므로 의도에 맞게 골라야 합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-02",
+   "std": "응통4-05-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>df[\"g\"].value_counts()</code>는 어떤 결과를 주며, 비율을 얻으려면 어떻게 하나요?</p>",
+   "answer": "범주별 빈도(내림차순). <code>normalize=True</code>",
+   "hints": [
+    "Series를 돌려줍니다.",
+    "결측은 기본으로 빠집니다(<code>dropna=False</code>)."
+   ],
+   "sol": "<p>범주별 빈도를 많은 순으로 돌려줍니다. <code>value_counts(normalize=True)</code>는 비율, <code>dropna=False</code>는 결측도 셉니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-03",
+   "std": "응통4-05-03",
+   "type": "mc",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p>월별 매출의 2년간 흐름을 보여 주기에 가장 알맞은 그림은?</p>",
+   "choices": [
+    "원그래프",
+    "선그래프",
+    "상자그림 하나",
+    "산점도 행렬",
+    "히스토그램"
+   ],
+   "answer": "2",
+   "hints": [
+    "시간 순서를 보여 줘야 합니다.",
+    "x축이 시간입니다."
+   ],
+   "sol": "<p>시간에 따른 변화는 선그래프(<code>df.plot(x=\"month\", y=\"sales\")</code>)로 그립니다. 계절성 비교는 연도별로 선을 겹쳐 그리면 좋습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-04",
+   "std": "응통4-05-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>주문 표(열 <code>region, month, sales</code>)에서 지역을 행, 월을 열, 매출 합계를 값으로 하는 표를 만드는 코드를 쓰세요.</p>",
+   "answer": "<code>df.pivot_table(index=\"region\", columns=\"month\", values=\"sales\", aggfunc=\"sum\")</code>",
+   "hints": [
+    "<code>pivot</code>은 중복 조합이 있으면 오류.",
+    "<code>pivot_table</code>은 집계합니다."
+   ],
+   "sol": "<p><code>pivot_table(index=\"region\", columns=\"month\", values=\"sales\", aggfunc=\"sum\", fill_value=0)</code>을 씁니다. 같은 (지역, 월) 주문이 여러 건이므로 집계 없이 바꾸는 <code>pivot</code>은 오류가 납니다. 기본 aggfunc는 평균이라 합계는 명시해야 합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-05",
+   "std": "응통4-05-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>df[df[\"age\"] &gt; 30][\"score\"] = 0</code>이 경고(SettingWithCopyWarning)를 내고 df가 바뀌지 않는 이유와 올바른 코드는?</p>",
+   "answer": "연쇄 인덱싱으로 복사본에 대입. <code>df.loc[df[\"age\"] &gt; 30, \"score\"] = 0</code>",
+   "hints": [
+    "첫 대괄호가 새 데이터프레임을 만들 수 있습니다.",
+    "<code>loc</code>로 행과 열을 한 번에."
+   ],
+   "sol": "<p>앞의 필터가 복사본을 만들고 거기에 대입하므로 원본은 그대로입니다. <code>df.loc[df[\"age\"] &gt; 30, \"score\"] = 0</code>로 한 번에 지정합니다. pandas 3의 copy-on-write에서는 이런 연쇄 대입이 아예 원본을 바꾸지 않습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-06",
+   "std": "응통4-05-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>고객 표(1000행, 고객 번호 유일)에 주문 표(3500행)를 <code>customers.merge(orders, on=\"cid\", how=\"left\")</code>로 붙였더니 3720행이 되었습니다. 주문이 없는 고객 수는? 의도치 않은 중복 결합을 막는 인수는?</p>",
+   "answer": "220명. <code>validate=\"one_to_many\"</code>(또는 <code>\"1:m\"</code>)",
+   "hints": [
+    "주문이 있는 고객의 행 수 합은 주문 수와 같습니다.",
+    "<code>validate</code>는 키 관계를 검사합니다."
+   ],
+   "sol": "<p>주문이 있는 고객은 주문 수만큼(합 3500), 없는 고객은 1행씩 남으므로 \\(3720 - 3500 = 220\\)명입니다. <code>validate=\"1:m\"</code>을 주면 고객 표의 키가 유일하지 않을 때 오류를 내고, <code>indicator=True</code>는 각 행이 어느 표에서 왔는지 보여 줍니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-07",
+   "std": "응통4-05-04",
+   "type": "free",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>일별 매출 <code>s</code>(DatetimeIndex)를 월별 합계와 월별 일평균으로 요약하는 코드를 쓰고, 날짜 문자열 \"03/04/2026\"을 읽을 때 주의할 점을 쓰세요.</p>",
+   "answer": "<code>s.resample(\"ME\").sum()</code>, <code>s.resample(\"ME\").mean()</code>. 3월 4일인지 4월 3일인지 모호 → <code>format</code> 지정",
+   "hints": [
+    "pandas 2.2부터 월말 빈도는 \"ME\"입니다.",
+    "<code>pd.to_datetime(..., format=\"%d/%m/%Y\")</code>"
+   ],
+   "sol": "<p><code>s.resample(\"ME\").sum()</code>은 월 합계, <code>.mean()</code>은 그달의 일평균입니다. 달마다 일수가 다르므로 합계를 비교할 때는 일평균이나 영업일 수를 함께 봅니다. \"03/04/2026\"은 미국식이면 3월 4일, 유럽·한국식 일/월이면 4월 3일이므로 <code>pd.to_datetime(x, format=\"%d/%m/%Y\")</code>처럼 형식을 명시해야 합니다. 추론에 맡기면 13일 이후 날짜만 다르게 해석되는 혼합 오류가 생길 수 있습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-08",
+   "std": "응통4-05-04",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>s.rolling(7).mean()</code>의 처음 몇 개 값이 NaN이 되고, 이 이동평균은 어느 날짜에 붙나요? 가운데 정렬로 바꾸려면?</p>",
+   "answer": "처음 6개 NaN. 마지막 날(뒤쪽 창). <code>center=True</code>",
+   "hints": [
+    "창이 7개를 채워야 계산됩니다.",
+    "기본은 그날까지의 7일입니다."
+   ],
+   "sol": "<p>기본 창은 그날과 이전 6일이라 처음 6개가 NaN이고 값은 창의 마지막 날짜에 붙습니다(실시간 지표에 적합). <code>center=True</code>면 앞뒤 3일을 써서 추세를 그리기에 좋지만 미래 값을 쓰므로 예측 변수로 쓰면 누수가 됩니다. <code>min_periods</code>로 앞부분 NaN을 줄일 수도 있습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-09",
+   "std": "응통4-05-01",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>열 <code>x</code>에 NaN이 섞여 있습니다. (가) <code>df[\"x\"].mean()</code> (나) <code>np.mean(df[\"x\"].to_numpy())</code> (다) <code>df[df[\"x\"] == np.nan]</code>의 결과를 각각 설명하고, 결측을 다룰 때 지켜야 할 원칙을 쓰세요.</p>",
+   "answer": "(가) NaN 빼고 평균 (나) nan (다) 빈 표(NaN == NaN은 거짓). <code>isna()</code> 사용, 결측 수와 처리 방법 보고",
+   "hints": [
+    "pandas는 기본 skipna=True.",
+    "NaN은 자기 자신과도 같지 않습니다."
+   ],
+   "sol": "<p>(가) pandas의 집계는 기본으로 NaN을 빼고 계산합니다. (나) NumPy 배열의 <code>np.mean</code>은 NaN이 하나라도 있으면 nan입니다(<code>np.nanmean</code>을 써야 함). 같은 자료로 두 도구가 다른 답을 냅니다. (다) IEEE 규칙상 <code>NaN == NaN</code>은 거짓이라 아무 행도 고르지 못합니다. 결측 행은 <code>df[df[\"x\"].isna()]</code>로 고릅니다.</p><p>원칙: 먼저 <code>df.isna().sum()</code>로 열별 결측 수를 보고, 결측이 무작위인지(특정 집단에 몰리는지) 확인한 뒤, 삭제·대체 등 처리 방법을 정해 보고서에 밝힙니다. 기본값의 조용한 제외에 맡기면 열마다 표본 수가 달라져 비교가 어긋날 수 있습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-10",
+   "std": "응통4-05-02",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>학생 점수 표(열 <code>school, student, score</code>)에서 학교 안에서 표준화한 점수(학교 평균을 빼고 학교 표준편차로 나눈 값)를 새 열로 붙이는 코드를 쓰세요. <code>agg</code>와 <code>transform</code>의 차이를 결과의 모양으로 설명하고, 학생이 1명인 학교에서는 어떤 일이 생기는지 쓰세요.</p>",
+   "answer": "<code>df[\"z\"] = df.groupby(\"school\")[\"score\"].transform(lambda s: (s - s.mean()) / s.std())</code>. agg는 학교당 1행, transform은 원래 행 수. 1명이면 std가 NaN이라 z도 NaN",
+   "hints": [
+    "<code>transform</code>은 결과를 원래 인덱스에 맞춰 돌려줍니다.",
+    "표본표준편차는 n − 1로 나눕니다."
+   ],
+   "sol": "<pre><code>g = df.groupby(\"school\")[\"score\"]\ndf[\"z\"] = (df[\"score\"] - g.transform(\"mean\")) / g.transform(\"std\")</code></pre><p><code>agg</code>(또는 <code>mean()</code>)는 학교마다 한 행으로 줄어든 요약을 돌려주고, <code>transform</code>은 각 학생 행에 자기 학교의 값을 붙여 원래와 같은 길이로 돌려주어 바로 열로 넣을 수 있습니다. <code>\"mean\"</code>처럼 문자열로 주면 빠른 내장 구현을 씁니다.</p><p>학생이 1명인 학교는 표본표준편차가 \\(0/0\\)이라 NaN이 되고 z도 NaN입니다. 이런 학교를 따로 표시하거나 분석에서 빼는 기준(예: 5명 미만 제외)을 정해야 합니다. 표준편차가 0인 학교(모두 같은 점수)는 0으로 나누어 inf가 됩니다.</p>"
+  },
+  {
+   "id": "ai-stat4-05-11",
+   "std": "응통4-05-04",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p>월별 매출 시계열에서 몇 달이 자료에 아예 빠져 있습니다(행 자체가 없음). <code>s.pct_change()</code>로 전월 대비 증가율을 구하면 어떤 문제가 생기는지 설명하고, 올바르게 처리하는 코드를 쓰세요.</p>",
+   "answer": "빠진 달을 건너뛴 두 달 사이 변화가 '전월 대비'로 계산됨. <code>s.asfreq(\"MS\")</code>나 <code>reindex</code>로 빠진 달을 NaN으로 채운 뒤 계산",
+   "hints": [
+    "<code>pct_change</code>는 바로 앞 행과 비교합니다.",
+    "날짜 기준 완전한 인덱스를 만듭니다."
+   ],
+   "sol": "<p><code>pct_change</code>는 날짜를 보지 않고 앞 행과 비교하므로, 4월이 빠지면 5월 값이 3월과 비교되어 두 달 변화가 '전월 대비'로 보고됩니다. 오류 없이 틀린 숫자가 나와 발견하기 어렵습니다.</p><pre><code>full = pd.date_range(s.index.min(), s.index.max(), freq=\"MS\")\ns = s.reindex(full)          # 빠진 달은 NaN\ngrowth = s.pct_change(fill_method=None)</code></pre><p>빠진 달 다음 달의 증가율은 NaN이 되어 정직하게 '알 수 없음'으로 남습니다. 빠진 값을 보간할지는 업무 판단이며, 보간했다면 그 사실을 밝힙니다. 시계열은 분석 전에 <code>s.index.to_series().diff().value_counts()</code>로 간격이 일정한지 확인하는 습관이 필요합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-01",
+   "std": "응통4-06-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "기본",
+   "q": "<p><code>df.describe()</code>가 수치형 열마다 보여 주는 통계량 8가지를 쓰세요.</p>",
+   "answer": "count, mean, std, min, 25%, 50%, 75%, max",
+   "hints": [
+    "개수, 위치, 퍼짐, 분위수.",
+    "std는 n − 1로 나눈 값입니다."
+   ],
+   "sol": "<p>count, mean, std, min, 25%, 50%, 75%, max입니다. count가 행 수보다 작으면 결측이 있다는 뜻입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-02",
+   "std": "응통4-06-04",
+   "type": "mc",
+   "ty": "개념",
+   "lv": "기본",
+   "q": "<p>로지스틱 회귀에서 변수 x의 계수가 \\(\\beta\\)일 때 x가 1 늘면 무엇이 \\(e^{\\beta}\\)배가 되나요?</p>",
+   "choices": [
+    "확률",
+    "오즈",
+    "로그오즈",
+    "상대위험도",
+    "반응의 평균"
+   ],
+   "answer": "2",
+   "hints": [
+    "\\(\\log\\frac{p}{1-p} = \\beta_0 + \\beta x\\)",
+    "로그오즈는 β만큼 더해집니다."
+   ],
+   "sol": "<p>로그오즈가 \\(\\beta\\)만큼 늘므로 오즈가 \\(e^{\\beta}\\)배입니다. 확률의 변화는 기준 확률에 따라 다릅니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-03",
+   "std": "응통4-06-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>scipy.stats.ttest_ind(a, b)</code>와 R의 <code>t.test(a, b)</code>가 같은 자료에서 다른 p값을 내는 이유와, 웰치 검정을 하려면 파이썬에서 어떻게 하나요?</p>",
+   "answer": "scipy 기본은 등분산 가정(equal_var=True), R 기본은 웰치. <code>equal_var=False</code>",
+   "hints": [
+    "두 함수의 기본값을 비교합니다.",
+    "분산이 다르고 표본 크기가 다르면 차이가 큽니다."
+   ],
+   "sol": "<p>scipy의 기본은 합동분산 t 검정이고 R의 기본은 웰치 검정입니다. <code>ttest_ind(a, b, equal_var=False)</code>로 맞춥니다. 도구를 바꿀 때 기본값을 확인해야 하는 대표적인 예입니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-04",
+   "std": "응통4-06-02",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>23명 가운데 생일이 같은 쌍이 있을 확률을 모의실험으로 확인하는 코드를 쓰고, 정확한 값을 쓰세요(1년 365일, 균등 가정).</p>",
+   "answer": "정확값 약 0.507",
+   "hints": [
+    "\\(1 - \\prod_{k=0}^{22}(365 - k)/365\\)",
+    "한 실험에서 서로 다른 생일 수가 23보다 작은지 봅니다."
+   ],
+   "sol": "<pre><code>rng = np.random.default_rng(1)\nb = rng.integers(0, 365, size=(100_000, 23))\nhit = np.array([len(set(r)) &lt; 23 for r in b])\nprint(hit.mean())   # 약 0.507</code></pre><p>정확값 \\(1 - \\prod_{k=0}^{22}\\frac{365-k}{365} = 0.507\\)입니다. 10만 번의 몬테카를로 표준오차가 약 0.0016이므로 0.504~0.510 안이면 맞습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-05",
+   "std": "응통4-06-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p>두 집단 a, b의 평균 차이에 대한 순열 검정을 NumPy로 구현하세요(순열 9999번, 양측). p값 계산에 관측값을 포함하는 이유도 쓰세요.</p>",
+   "answer": "<code>rng.permutation</code>으로 합친 자료를 섞어 차이를 계산, <code>(np.sum(abs(d) &gt;= abs(obs)) + 1) / (B + 1)</code>",
+   "hints": [
+    "귀무가설 아래에서는 집단 이름이 교환 가능합니다.",
+    "관측 배정도 가능한 배정 중 하나입니다."
+   ],
+   "sol": "<pre><code>rng = np.random.default_rng(0)\nz = np.concatenate([a, b]); na = len(a); B = 9999\nobs = a.mean() - b.mean()\nd = np.empty(B)\nfor i in range(B):\n    p = rng.permutation(z)\n    d[i] = p[:na].mean() - p[na:].mean()\npval = (np.sum(np.abs(d) &gt;= abs(obs)) + 1) / (B + 1)</code></pre><p>관측값을 포함하면 p값이 0이 되지 않고, 검정의 크기가 정확히 α 이하로 유지됩니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-06",
+   "std": "응통4-06-04",
+   "type": "short",
+   "ty": "계산",
+   "lv": "응용",
+   "q": "<p>로지스틱 회귀에서 나이 계수가 0.4(단위 10세)입니다. 10세와 50세 차이의 오즈비를 구하세요.</p>",
+   "answer": "10세: \\(e^{0.4} \\approx 1.49\\), 50세: \\(e^{2} \\approx 7.39\\)",
+   "hints": [
+    "50세는 5단위입니다.",
+    "로그오즈는 더해지고 오즈는 곱해집니다."
+   ],
+   "sol": "<p>10세당 오즈비 \\(e^{0.4} = 1.49\\), 50세는 \\(e^{0.4\\times5} = e^{2} = 7.39\\)입니다. \\(1.49\\times5\\)로 계산하면 틀립니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-07",
+   "std": "응통4-06-01",
+   "type": "short",
+   "ty": "실습",
+   "lv": "응용",
+   "q": "<p><code>smf.ols(\"y ~ x + C(region)\", data=df).fit()</code>에서 <code>C(region)</code>의 역할과, 절편을 따로 넣지 않아도 되는 이유를 쓰세요.</p>",
+   "answer": "region을 범주형으로 보고 가변수로 바꿈(기준 범주 제외). 수식 인터페이스가 절편을 자동으로 넣음",
+   "hints": [
+    "숫자 코드로 된 범주를 연속형으로 쓰면 안 됩니다.",
+    "<code>- 1</code>을 쓰면 절편이 빠집니다."
+   ],
+   "sol": "<p><code>C()</code>는 region을 범주형으로 다뤄 (수준 수 − 1)개의 가변수를 만듭니다. 지역 코드가 1, 2, 3 같은 숫자일 때 <code>C()</code>를 빠뜨리면 하나의 기울기로 잘못 적합됩니다. 수식 인터페이스는 R처럼 절편을 자동으로 넣고, 배열 인터페이스 <code>sm.OLS(y, X)</code>는 <code>sm.add_constant</code>가 필요합니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-08",
+   "std": "응통4-06-02",
+   "type": "mc",
+   "ty": "계산",
+   "lv": "응용",
+   "q": "<p>단위 정사각형에 점 \\(10^{6}\\)개를 뿌려 사분원 안의 비율의 4배로 \\(\\pi\\)를 추정합니다. 추정값의 표준오차는 대략?</p>",
+   "choices": [
+    "0.00002",
+    "0.0016",
+    "0.016",
+    "0.16",
+    "0.41"
+   ],
+   "answer": "2",
+   "hints": [
+    "비율 \\(p = \\pi/4\\)의 표준오차 \\(\\sqrt{p(1-p)/n}\\)",
+    "4배를 합니다."
+   ],
+   "sol": "<p>\\(4\\sqrt{0.785\\times0.215/10^{6}} = 0.0016\\)입니다. 소수 셋째 자리 정도까지만 믿을 수 있고, 한 자리 더 얻으려면 점이 100배 필요합니다. 몬테카를로의 느린 수렴(\\(1/\\sqrt n\\))을 보여 줍니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-09",
+   "std": "응통4-06-04",
+   "type": "free",
+   "ty": "적용",
+   "lv": "심화",
+   "q": "<p>질병 유무의 로지스틱 회귀에서 절편 −3, 나이(세) 계수 0.05가 나왔습니다. 40세와 60세의 예측 확률을 구하고, 20세 차이의 오즈비와 확률의 비(상대위험)를 비교하세요. '60세는 40세보다 질병 위험이 2.7배'라는 보도는 정확한가요?</p>",
+   "answer": "40세 0.269, 60세 0.5. 오즈비 e ≈ 2.72, 확률의 비 1.86. 보도는 오즈비를 위험비로 잘못 씀",
+   "hints": [
+    "\\(p = 1/(1 + e^{-(\\beta_0 + \\beta x)})\\)",
+    "결과가 흔하면 오즈비와 위험비가 크게 다릅니다."
+   ],
+   "sol": "<p>40세: 로그오즈 \\(-3 + 2 = -1\\), \\(p = 1/(1 + e) = 0.269\\). 60세: 로그오즈 0, \\(p = 0.5\\)입니다.</p><p>오즈비는 \\(e^{0.05\\times20} = e = 2.72\\)이고, 확률의 비는 \\(0.5/0.269 = 1.86\\)입니다. 결과가 드물면(확률 10% 미만) 두 값이 비슷하지만, 여기처럼 확률이 크면 오즈비가 위험비를 크게 부풀립니다.</p><p>따라서 '위험이 2.7배'는 틀리고, '오즈가 2.7배, 확률로는 27%에서 50%로 약 1.9배'가 정확합니다. 독자에게는 예측 확률이나 위험비를 함께 제시하는 것이 좋습니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-10",
+   "std": "응통4-06-03",
+   "type": "free",
+   "ty": "실습",
+   "lv": "심화",
+   "q": "<p>표본 20쌍 (x, y)의 상관계수에 대한 붓스트랩 95% 백분위수 신뢰구간을 구하는 코드를 쓰세요. 쌍을 유지하며 뽑아야 하는 이유, 반복 횟수를 정하는 기준, 이 구간이 부정확해질 수 있는 상황을 쓰세요.</p>",
+   "answer": "행 번호를 복원추출해 (x, y) 쌍째 뽑음. B는 2000 이상. 상관이 ±1에 가깝거나 n이 작으면 치우침 → 피셔 z 변환이나 BCa",
+   "hints": [
+    "x와 y를 따로 섞으면 상관이 0이 됩니다.",
+    "상관계수의 분포는 ±1 근처에서 비대칭입니다."
+   ],
+   "sol": "<pre><code>rng = np.random.default_rng(0)\nn = len(x); B = 5000\nr = np.empty(B)\nfor i in range(B):\n    idx = rng.integers(0, n, n)\n    r[i] = np.corrcoef(x[idx], y[idx])[0, 1]\nprint(np.percentile(r, [2.5, 97.5]))</code></pre><p>관측 단위가 (x, y) 쌍이므로 행 번호를 뽑아 쌍을 함께 가져와야 관계가 보존됩니다. x와 y를 따로 뽑으면 독립인 자료가 되어 상관이 0 근처로 갑니다.</p><p>백분위수 구간의 끝은 분포의 꼬리라 B를 2000 이상(가능하면 5000~10000)으로 하고, 시드를 바꿔도 구간이 거의 같은지 확인합니다. n = 20처럼 작고 상관이 0.9처럼 1에 가까우면 분포가 크게 비대칭이라 백분위수 구간의 포함 확률이 명목보다 낮아질 수 있으므로, 피셔 z 변환 구간이나 <code>scipy.stats.bootstrap</code>의 BCa 방법을 함께 봅니다.</p>"
+  },
+  {
+   "id": "ai-stat4-06-11",
+   "std": "응통4-06-04",
+   "type": "free",
+   "ty": "판단",
+   "lv": "심화",
+   "q": "<p><code>smf.logit</code>으로 적합했더니 계수 하나가 35, 표준오차가 \\(10^{6}\\) 정도로 나오고 완전 분리 경고가 떴습니다. 자료에서 무슨 일이 일어난 것이고, 왜 이런 계수가 나오는지 설명하세요. 대처 방법 두 가지를 쓰세요.</p>",
+   "answer": "어떤 변수 값으로 반응이 완벽히 나뉨. 최대가능도 추정값이 무한대로 발산. 벌점 로지스틱(능형·Firth), 변수 범주 합치기 또는 정확 검정",
+   "hints": [
+    "예: x &gt; 5이면 모두 1, 이하이면 모두 0.",
+    "계수가 커질수록 가능도가 계속 1에 가까워집니다."
+   ],
+   "sol": "<p>어떤 변수(또는 조합)가 반응을 완벽히 나누면, 계수를 키울수록 모든 관측의 예측 확률이 0이나 1에 가까워져 가능도가 계속 늘어나므로 최대가능도 추정값이 존재하지 않습니다(무한대). 반복 알고리즘이 정한 횟수에서 멈춘 큰 값(35)이 출력되고 정보행렬이 거의 특이해 표준오차가 폭발합니다. 이때의 p값과 신뢰구간은 의미가 없습니다.</p><p>대처: (1) 벌점을 주는 능형 로지스틱(<code>fit_regularized</code>)이나 Firth의 편향 감소 로지스틱으로 유한한 추정값을 얻습니다. (2) 범주가 너무 잘게 나뉘어 생긴 분리라면 범주를 합치고, 표본이 작으면 정확 로지스틱 회귀나 피셔 정확 검정으로 연관을 검정합니다. 분리 자체가 '이 변수의 효과가 매우 크다'는 정보이므로, 변수를 그냥 빼 버리는 것은 바람직하지 않습니다.</p>"
+  }
+ ]
+}
