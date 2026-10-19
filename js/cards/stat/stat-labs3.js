@@ -3,7 +3,8 @@
 (() => {
   "use strict";
   const C = () => QSim.col();
-  const rng = (seed) => () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return (seed + 0.5) / 4294967296; };
+  /* 선형합동 난수 (seed·1664525 + 1013904223) mod 2³². Math.imul로 같은 수열을 빠르게 */
+  const rng = (seed) => () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return (seed + 0.5) / 4294967296; };
   const gauss = (r) => Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
   const erf = (x) => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x); const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; };
   const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
