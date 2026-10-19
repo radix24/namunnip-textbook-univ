@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-06-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-tlb" data-kind="본문" data-std="전전14-06-05">
+  <header class="card-head"><span class="no"></span><h2>TLB와 실효 메모리 접근 시간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>TLB가 페이지 테이블 접근을 줄이는 원리를 안다.</li>
+        <li>TLB 적중률로 실효 접근 시간을 계산한다.</li>
+        <li>TLB가 감당하는 메모리 범위(reach)를 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>가상 주소 변환 (<a href="06-03.html">6.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.5.1</span>주소 변환도 캐시한다</h3>
+    <p>가상 주소마다 페이지 테이블(다단계면 여러 번)을 읽으면 메모리 접근이 몇 배가 됩니다. 최근 변환을 저장하는 작은 연관 캐시 TLB가 적중하면 바로 물리 주소를 얻습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.5.1</span>
+      <p>TLB 조회 1 ns, 메모리 접근 100 ns, 2단계 페이지 테이블(실패 시 2번 더 읽음). TLB 적중률 98%의 실효 접근 시간은?</p>
+    </div>
+    <p><i>풀이.</i> 적중: 1 + 100 = 101 ns. 실패: 1 + 200 + 100 = 301 ns. 실효 0.98 × 101 + 0.02 × 301 = 105 ns로, TLB가 없을 때(300 ns)의 약 1/3입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "TLB는 데이터 캐시의 일부": 주소 변환만 저장하는 별도 구조입니다. (2) "적중률 98%면 충분히 작은 손해": 실패 비용이 커서 2%가 4%의 시간 증가를 만듭니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>실효 = h(t_TLB + t_mem) + (1 − h)(t_TLB + k·t_mem + t_mem).</li>
+        <li>예: 98% → 105 ns.</li>
+        <li>TLB reach = 항목 수 × 페이지 크기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>TLB 64항목, 4 KB 페이지의 reach는?
+          <details><summary>답</summary><p>256 KB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 TLB에 2 MB 큰 페이지를 쓰면 reach는?
+          <details><summary>답</summary><p>128 MB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>적중률 99.5%면 예제의 실효 시간은?
+          <details><summary>답</summary><p>약 102 ns.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

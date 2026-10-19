@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-multicycle" data-kind="본문" data-std="전전14-04-03">
+  <header class="card-head"><span class="no"></span><h2>다중 사이클 데이터패스의 CPI</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>명령어를 여러 단계(인출, 해독, 실행, 메모리, 쓰기)로 나눠 단계마다 한 클록을 쓰는 다중 사이클 구조를 안다.</li>
+        <li>명령어 구성 비율로 평균 CPI를 계산한다.</li>
+        <li>단일 사이클과 성능을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>단일 사이클 데이터패스 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>필요한 단계만</h3>
+    <p>단일 사이클은 가장 긴 명령(load)에 클록을 맞춰야 하지만, 다중 사이클은 짧은 단계에 클록을 맞추고 명령마다 필요한 단계 수만큼만 씁니다(load 5, store 4, R형 4, 분기 3).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>load 25%, store 10%, R형 45%, 분기 15%, 점프 5%(3단계). 평균 CPI는? 단일 사이클 주기 800 ps, 다중 사이클 주기 200 ps면 어느 쪽이 빠른가?</p>
+    </div>
+    <p><i>풀이.</i> CPI = 0.25×5 + 0.1×4 + 0.45×4 + 0.15×3 + 0.05×3 = 4.05. 다중 사이클 명령당 4.05 × 200 = 810 ps로 단일 사이클 800 ps와 비슷합니다. 단계 사이 레지스터 지연을 넣으면 더 불리해, 실제로는 파이프라인(5장)이 답입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "다중 사이클은 언제나 빠르다": 단계 나누기가 고르지 않거나 레지스터 오버헤드가 있으면 이득이 없습니다. (2) "CPI 4면 4배 느리다": 클록이 짧아져 실행 시간은 CPI × 주기로 비교해야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>단계마다 한 클록, 명령마다 단계 수 다름.</li>
+        <li>평균 CPI = Σ비율 × 단계 수.</li>
+        <li>예: CPI 4.05 × 200 ps ≈ 단일 사이클 800 ps.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>모든 명령이 4단계면 CPI는?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>load 비율이 50%로 늘면(나머지 R형) CPI는?
+          <details><summary>답</summary><p>0.5×5 + 0.5×4 = 4.5.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>클록 200 ps에서 CPI 4.05의 MIPS는?
+          <details><summary>답</summary><p>약 1235.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

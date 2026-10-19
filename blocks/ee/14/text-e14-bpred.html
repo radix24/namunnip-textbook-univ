@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-bpred" data-kind="본문" data-std="전전14-05-03">
+  <header class="card-head"><span class="no"></span><h2>분기 예측기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>1비트와 2비트 포화 카운터 분기 예측기의 동작을 안다.</li>
+        <li>반복문 분기에서 두 예측기의 정확도를 계산한다.</li>
+        <li>예측 실패 비용이 CPI에 주는 영향을 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>제어 해저드 (<a href="05-01.html">5.1절</a>), 파이프라인 성능 (<a href="05-02.html">5.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>한 번 틀려도 바로 바꾸지 않기</h3>
+    <p>1비트 예측기는 지난번 결과를 그대로 예측합니다. 2비트 포화 카운터는 강한·약한 "분기함", 약한·강한 "분기 안 함"의 네 상태를 두어 두 번 연속 틀려야 예측을 바꿉니다.</p><pre><code>def simulate(outcomes, bits):
+    state = (1 &lt;&lt; bits) - 1            # 처음엔 '분기함' 쪽으로
+    th = 1 &lt;&lt; (bits - 1); miss = 0
+    for t in outcomes:
+        pred = state &gt;= th
+        miss += pred != t
+        state = min(state + 1, (1 &lt;&lt; bits) - 1) if t else max(state - 1, 0)
+    return miss
+loop = ([True] * 9 + [False]) * 100     # 10번 도는 반복문을 100번 실행
+for b in (1, 2):
+    m = simulate(loop, b)
+    print(f"{b}비트 예측기: 예측 실패 {m}번 / {len(loop)}번, 정확도 {100 * (1 - m / len(loop)):.1f}%")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>1비트 예측기: 예측 실패 199번 / 1000번, 정확도 80.1%
+2비트 예측기: 예측 실패 100번 / 1000번, 정확도 90.0%</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>위 반복문(분기 9번 함, 1번 안 함)에서 1비트와 2비트 예측기의 반복문 한 번당 실패 수는?</p>
+    </div>
+    <p><i>풀이.</i> 1비트: 마지막 '안 함'에서 한 번, 다음 실행 첫 '함'에서 또 한 번 → 2번(정확도 약 80%). 2비트: 마지막 한 번만 틀리고 약한 상태로만 내려가 다음 첫 분기는 맞힘 → 1번(약 90%). 실행 결과와 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "예측기는 비트가 많을수록 좋다": 2비트 이상은 이득이 작고, 분기 이력을 쓰는 상관 예측기가 더 효과적입니다. (2) "예측 실패는 한 클록 손해": 파이프라인이 깊으면 10~20클록을 버립니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>1비트: 지난 결과, 2비트: 두 번 틀려야 바꿈.</li>
+        <li>반복문: 1비트 2번, 2비트 1번 실패.</li>
+        <li>CPI += 분기 비율 × 실패율 × 벌점.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2비트 카운터의 상태 수는?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>분기 20%, 실패율 10%, 벌점 15클록의 CPI 증가는?
+          <details><summary>답</summary><p>0.3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>분기 결과가 함/안 함으로 번갈아 나오면 1비트 예측기 정확도는?
+          <details><summary>답</summary><p>0%.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

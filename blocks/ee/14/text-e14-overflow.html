@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-overflow" data-kind="본문" data-std="전전14-03-03">
+  <header class="card-head"><span class="no"></span><h2>오버플로 검출과 부호 확장</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>2의 보수 덧셈에서 오버플로를 부호 비트로 검출한다.</li>
+        <li>부호 있는 수와 없는 수의 오버플로 차이를 안다.</li>
+        <li>부호 확장과 0 확장을 구별한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>2의 보수 (<a href="../4/01-01.html">전전4 1.1절</a>), 정수 산술 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>같은 비트, 다른 해석</h3>
+    <p>부호 있는 덧셈의 오버플로: 두 피연산자 부호가 같은데 결과 부호가 다를 때. 부호 없는 덧셈: 최상위 자리올림이 날 때. 하드웨어는 같은 덧셈기를 쓰고, 플래그로 둘을 구별합니다. 8비트 값을 32비트로 넓힐 때 부호 있는 수는 부호 비트를 복사하고(부호 확장), 부호 없는 수는 0을 채웁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>8비트 100 + 50과 −100 + (−50)은? 0xF0을 32비트로 부호 확장, 0 확장하면?</p>
+    </div>
+    <p><i>풀이.</i> 100 + 50 = 150은 8비트 부호 있는 범위(−128~127) 밖: 결과 비트 10010110 = −106(양 + 양 → 음, 오버플로). −150도 범위 밖: 01101010 = +106(오버플로). 0xF0(−16) 부호 확장 0xFFFFFFF0, 0 확장 0x000000F0(240).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "자리올림이 나면 늘 오버플로": 부호 있는 연산에서는 부호 비교로 판정합니다. (2) "C의 정수 오버플로는 감싸서 돈다": 부호 있는 정수 오버플로는 정의되지 않은 동작입니다(부호 없는 것만 감쌈).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>부호 있는 오버플로: 같은 부호 + → 다른 부호.</li>
+        <li>부호 없는: 최상위 자리올림.</li>
+        <li>부호 확장(부호 복사) 대 0 확장.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8비트 127 + 1의 부호 있는 결과는?
+          <details><summary>답</summary><p>−128(오버플로).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>8비트 200 + 100(부호 없음)의 결과와 오버플로 여부는?
+          <details><summary>답</summary><p>44, 자리올림 → 오버플로.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>lb와 lbu 명령의 차이는?
+          <details><summary>답</summary><p>바이트를 읽어 부호 확장(lb)과 0 확장(lbu).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
