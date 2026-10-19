@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학11-03-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/chemkit.js", "js/cards/chem/ch-inolab.js"]
+}
+-->
+<article class="card q-card" id="lab-ch11-pxrd" data-kind="실습" data-std="화학11-03-03">
+  <header class="card-head"><span class="no"></span><h2>회절 무늬로 결정 격자 맞히기</h2><span class="kind">실습 · 브래그 식, 소멸 규칙, Scherrer 식</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>미지 입방 결정의 분말 X선 회절 봉우리(빨간 막대)에 맞도록 격자 종류와 격자 상수를 골라, 시료의 결정 구조를 정합니다. 봉우리 폭을 바꾸며 결정 크기가 어떻게 계산되는지도 봅니다. 성취기준 [화학11-03-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Cu Kα선(λ = 1.5406 Å)이 간격 d인 원자 면에서 반사되면 \(\lambda = 2d\sin\theta\)일 때 봉우리가 생깁니다. 한 변 a인 입방 격자에서 \(d = a/\sqrt{h^2+k^2+l^2}\)입니다.</p>
+      <p class="q-term"><b>소멸 규칙</b>: 단순 입방은 모든 (hkl), 체심 입방은 h+k+l이 짝수인 것만, 면심 입방은 h, k, l이 모두 홀수이거나 모두 짝수인 것만 봉우리가 생깁니다.</p>
+      <p class="q-term"><b>Scherrer 식</b>: 결정 크기 \(D = 0.9\lambda/(\beta\cos\theta)\), β는 봉우리의 반치폭(라디안). 결정이 작을수록 봉우리가 넓습니다.</p>
+      <p>파란 곡선은 고른 격자로 계산한 무늬입니다(봉우리 세기는 모두 같게 그렸습니다). 측정 봉우리는 20~80°의 <b>가상 측정값</b> 8개입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>격자</span><select name="lat" aria-label="격자 종류">
+          <option value="SC" selected>단순 입방</option>
+          <option value="BCC">체심 입방</option>
+          <option value="FCC">면심 입방</option>
+        </select></label>
+        <label><span>격자 상수 a = <b data-show="a">5.00</b> Å</span><input type="range" name="a" min="3" max="6.5" step="0.01" value="5" aria-label="격자 상수"></label>
+        <label><span>반치폭 = <b data-show="w">0.40</b>°</span><input type="range" name="w" min="0.1" max="1" step="0.05" value="0.4" aria-label="봉우리 반치폭"></label>
+      </div>
+      <canvas aria-label="계산 회절 무늬와 측정 봉우리"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(단순 입방, 5.00 Å)에서 맞는 봉우리 수를 기록한다.</li>
+        <li>격자 상수를 움직여 측정 봉우리 8개가 모두 맞는 값을 찾는다. 이때 측정에 없는 계산 봉우리 수도 기록한다.</li>
+        <li>격자를 체심 입방, 면심 입방으로 바꾸며 같은 일을 하고, 남는 봉우리가 없는 격자를 고른다.</li>
+        <li>반치폭을 0.20°, 0.40°, 0.80°로 바꾸며 Scherrer 결정 크기를 기록한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>단순 입방 5.00 Å에서는 측정 봉우리 8개 가운데 하나도 맞지 않고, 계산 봉우리 14개가 모두 어긋납니다.</li>
+        <li>a = 5.64 Å으로 맞추면 단순 입방은 8개가 모두 맞지만 측정에 없는 봉우리가 11개 남고, 체심 입방은 5개만 맞고 6개가 남습니다.</li>
+        <li>면심 입방, a = 5.64 Å에서 8개가 모두 맞고 남는 봉우리가 없습니다. 첫 봉우리는 (111) 27.37°, 이어서 (200) 31.70°, (220) 45.45°, (311) 53.87°, (222) 56.47°입니다. 시료는 a = 5.64 Å인 면심 입방, NaCl과 같은 값입니다.</li>
+        <li>첫 봉우리 기준 Scherrer 크기는 반치폭 0.20°, 0.40°, 0.80°에서 40.9, 20.4, 10.2 nm로, 폭과 반비례합니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>단순 입방으로도 봉우리 8개가 모두 맞는데, 왜 면심 입방이 옳은 답일까요? "남는 봉우리"가 무엇을 뜻하는지 쓰세요.</li>
+        <li>측정 봉우리의 sin²θ 비를 직접 계산해 3 : 4 : 8 : 11 : 12 … 꼴인지 확인해 보세요.</li>
+        <li>실제 NaCl 무늬에서는 (111)이 매우 약합니다. 이 장치가 세기를 모두 같게 그린 것이 어떤 판단에 한계가 될까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>KCl(면심 입방, a = 6.29 Å)로 격자 상수를 바꾸면 봉우리가 어느 쪽으로 옮겨 가나요? 격자가 클수록 2θ가 작아지는 이유를 브래그 식으로 설명해 보세요.</p>
+    </section>
+  </div>
+</article>
