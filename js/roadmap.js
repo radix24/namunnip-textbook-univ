@@ -503,13 +503,20 @@
       need.forEach((k) => { const it = ctx.items.get(k), ss = slots(it); ss.forEach((s) => L.set(s, (L.get(s) || 0) + it.cr / ss.length)); });
       return L;
     };
-    Ts.forEach((T, i) => {
+    const skip = new Set(), autoElec = new Set();   // 배치하지 못해 바꾼 과목, 자동으로 고른 전공선택
+    let placedOnce = false;
+    const fits = (k) => {   // 한 번 배치한 뒤 바꿀 과목은 아직 자리가 남은 정규학기에 들어갈 수 있는 것만
+      const it = itemOf(k, ctx);
+      for (let p = Math.max(0, ((it.slotY || it.y) - 1) * 4); p < NP; p += 2) if (it.terms.has(termOf(p)) && used[p] + it.cr <= budget) return true;
+      return false;
+    };
+    const fillElec = () => Ts.forEach((T, i) => {
       let guard = 0;
       while (credit(T, "elec") < T.spec.elec && guard++ < 80) {
         const L = slotLoad();
         const best = (k) => slots(itemOf(k, ctx)).reduce((a, s) => ((L.get(s) || 0) < (L.get(a) || 0) ? s : a));
         const load = (k) => L.get(best(k)) || 0;
-        const cand = pool(T).filter((k) => !prio.has(k) && !removed.has(k) && itemOf(k, ctx).terms.size)
+        const cand = pool(T).filter((k) => !prio.has(k) && !removed.has(k) && !skip.has(k) && itemOf(k, ctx).terms.size && (!placedOnce || fits(k)))
           .filter((k) => !(COURSE.get(k).out && COURSE.get(k).cr < 3))   // 1~2학점 세미나·연구는 직접 고른다
           .filter((k) => !firstOf(k) || prio.has(firstOf(k)))   // '…(2)'는 '…(1)'을 고른 뒤에
           .filter((k) => !T.accept.includes(k) || acceptUsed(T) + COURSE.get(k).cr <= T.acceptMax)
@@ -519,9 +526,10 @@
         if (!cand.length) break;
         const pickIt = itemOf(cand[0], ctx), by = Math.floor(best(cand[0]) / 10);
         if (by > Math.min(4, pickIt.y)) pickIt.slotY = by;   // 4학년 칸을 채우려고 고른 3·4학년 공통 과목은 4학년에 놓는다
-        want(cand[0], 3 + i); closure();
+        want(cand[0], 3 + i); autoElec.add(cand[0]); closure();
       }
     });
+    fillElec();
     function acceptUsed(T) { return need.filter((k) => T.accept.includes(k) && catOf(T, k) === "elec").reduce((s, k) => s + ctx.items.get(k).cr, 0); }
     function preDepth(k) { return PRE.get(k).hard.length; }
     function firstOf(k) {   // QURI 밖 과목 '이름(2)'의 짝 '이름(1)' (같은 학과에 있을 때)
@@ -555,8 +563,14 @@
       return v;
     };
     const band = (k) => { const p = prio.get(k); return p === 0 ? 0 : p <= 2 ? 1 : 2; };   // 교양, 어느 전공이든 기초·필수, 전공선택
-    const order = need.filter((k) => !at.has(k)).sort((a, b) => band(a) - band(b) || tailOf(b) - tailOf(a) || prio.get(a) - prio.get(b)
-      || ctx.items.get(a).y - ctx.items.get(b).y || codeNum(a) - codeNum(b));
+    let order = [];
+    const sortOrder = () => {
+      tail.clear();
+      order = need.filter((k) => !pinnedAt.has(k)).sort((a, b) => band(a) - band(b) || tailOf(b) - tailOf(a) || prio.get(a) - prio.get(b)
+        || ctx.items.get(a).y - ctx.items.get(b).y || codeNum(a) - codeNum(b));
+    };
+    const pinnedAt = new Map(at);
+    sortOrder();
     let early = 0;   // 넣지 못한 과목이 생기면 요람 학년보다 한 학기 일찍 듣는 것까지 허용해 다시 배치한다
     let useSeason = false;   // 계절학기는 정규학기에 다 넣지 못할 때만 자동으로 쓴다
     const ok = (it, p) => {
@@ -588,7 +602,30 @@
     };
     run();
     if (P.season && need.some((k) => !at.has(k))) { useSeason = true; run(); }
-    if (need.some((k) => !at.has(k))) { early = 1; run(); }
+    placedOnce = true;
+    /* 그래도 남는 과목이 있으면 두 길을 모두 해 보고 빠지는 학점이 적은 쪽을 쓴다:
+       (가) 요람 학년보다 한 학기 일찍 듣기, (나) 자동으로 고른 전공선택을 자리가 남은 학기의 다른 과목으로 바꾸기 */
+    if (need.some((k) => !at.has(k))) {
+      const lack = () => need.filter((k) => !at.has(k)).reduce((s, k) => s + ctx.items.get(k).cr, 0)
+        + Ts.reduce((s, T) => s + Math.max(0, T.spec.elec - need.filter((k) => at.has(k) && catOf(T, k) === "elec").reduce((x, k) => x + ctx.items.get(k).cr, 0)), 0);
+      const snap = { need: need.slice(), prio: new Map(prio), auto: new Set(autoElec) };
+      early = 1; run();
+      const lackA = lack();
+      early = 0;
+      for (let round = 0; round < 6; round++) {
+        const bad = need.filter((k) => !at.has(k) && autoElec.has(k));
+        if (!bad.length) break;
+        bad.forEach((k) => { skip.add(k); autoElec.delete(k); need.splice(need.indexOf(k), 1); prio.delete(k); });
+        fillElec(); sortOrder(); run();
+      }
+      if (need.some((k) => !at.has(k))) { early = 1; run(); }
+      if (lackA <= lack()) {   // (가)가 낫거나 같으면 되돌린다
+        need.splice(0, need.length, ...snap.need);
+        prio.clear(); snap.prio.forEach((v, k) => prio.set(k, v));
+        autoElec.clear(); snap.auto.forEach((k) => autoElec.add(k));
+        sortOrder(); early = 1; run();
+      }
+    }
     const unplaced = need.filter((k) => !at.has(k));
     PLAN = { Ts, col, ctx, need, prio, at, used, budget, cap, unplaced, removed, LIB };
     return PLAN;
