@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-06-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e9-reporttable" data-kind="예제" data-std="전전9-06-02">
+  <header class="card-head"><span class="no"></span><h2>공진 실험의 비교 표 쓰기</h2><span class="kind">예제 · 설계·시뮬레이션·측정의 차이 판정</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>설계 Q가 10인데 측정 Q가 5.4였습니다. 보고서에 "측정 오차"라고 쓰면 될까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>아닙니다. 측정 Q를 낮춘 숨은 저항을 계산해 차이를 설명해야 합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">직렬 RLC(L = 10 mH ±10%, C = 10 nF ±5%, R = 100 Ω ±5%)의 측정 결과가 \(f_0\) = 15.4 kHz, BW = 2.85 kHz였다. 시뮬레이션은 이상 부품으로 \(f_0\) = 15.92 kHz, Q = 10. 발생기 출력 저항 50 Ω, 코일의 직류 저항은 멀티미터로 32 Ω. 비교 표를 쓰고 각 차이를 판정하라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>\(f_0\)는 L, C에만 의존. 허용 오차 범위를 구한다.</li>
+        <li>Q는 총 저항으로 다시 계산한다.</li>
+        <li>차이가 설명되면 "설명됨", 남으면 "추가 원인 필요".</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(f_0\) 차이 \((15.4 - 15.92)/15.92 \approx -3.3\%\). \(f_0 \propto 1/\sqrt{LC}\)이므로 RSS 범위 \(\frac12\sqrt{10^2 + 5^2} \approx 5.6\%\) 안. <span class="q-why">제곱근의 오차는 절반</span></li>
+        <li>측정 Q = 15.4/2.85 ≈ 5.40. <span class="q-why">Q = f₀/BW</span></li>
+        <li>총 저항 100 + 50 + 32 = 182 Ω으로 다시 계산한 Q = \(\sqrt{L/C}/R = 1000/182 \approx 5.49\). 측정과 약 −1.6% 차이로 R ±5% 안. <span class="q-why">숨은 저항</span></li>
+        <li>표: \(f_0\) 설계 15.92 / 시뮬 15.92 / 측정 15.4 kHz / −3.3% / 허용 오차 안. Q 설계 10 / 시뮬 10 / 측정 5.40 / −46% / 발생기·코일 저항 82 Ω으로 설명됨(보정 예상 5.49). <span class="q-why">비교 표</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>Q의 −46%는 커 보이지만 원인이 분명하고 계산으로 거의 다 설명됩니다. 보고서에 "시뮬레이션에도 50 Ω과 32 Ω을 넣어 다시 돌리면 Q ≈ 5.5"를 함께 적으면, 시뮬레이션이 실제 회로를 반영했는지도 보여 줄 수 있습니다. 코일 저항은 고주파에서 직류값보다 커질 수 있다는 점도 남은 차이의 후보로 적습니다(확인 필요).</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(\sqrt{L/C} = \sqrt{10^{-2}/10^{-8}} = 1000\) Ω. BW 예상 \(15.92/5.49 \approx 2.90\) kHz(측정 2.85). 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>측정 \(f_0\)가 15.4 kHz이고 C가 정격(10 nF)이라면 L은?</p>
+      <details><summary>답</summary><p>\(L = 1/((2\pi f_0)^2C) \approx 10.7\) mH. 정격 +7%로 허용 오차(±10%) 안.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>판정</h3>
+    <p class="q">측정과 설계의 차이가 허용 오차 범위 밖이면 보고서에 무엇을 써야 하는가?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>측정을 다시 해서 범위 안의 값을 쓴다<span class="why"><b>자료를 고르는 것은 잘못입니다.</b> 범위 밖이라는 결과 자체가 정보입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>추가 원인의 후보와 그것을 확인할 측정<span class="why"><b>맞습니다.</b> 오차 예산에서 남는 차이를 다음 측정으로 좁힙니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>"측정 오차"라고 쓴다<span class="why"><b>원인과 크기가 없으면 설명이 아닙니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>
