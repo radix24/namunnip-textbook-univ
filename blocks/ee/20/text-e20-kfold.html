@@ -1,0 +1,85 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-kfold" data-kind="본문" data-std="전전20-05-04">
+  <header class="card-head"><span class="no"></span><h2>교차 검증으로 정규화 세기 고르기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>k-겹 교차 검증으로 λ 후보마다 검증 오차를 추정한다.</li>
+        <li>가장 작은 평균 검증 오차의 λ를 고르고 전체 자료로 다시 학습한다.</li>
+        <li>코드로 리지 회귀의 λ를 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>과적합과 정규화 (<a href="05-02.html">5.2절</a>), 리지 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>번갈아 검증</h3>
+    <p>자료를 k묶음으로 나눠, 한 묶음으로 검증하고 나머지로 학습하기를 k번 돌려 평균 검증 오차를 구합니다. λ 후보마다 반복해 가장 작은 것을 고릅니다.</p><pre><code>import numpy as np
+rng = np.random.default_rng(3)
+n, d = 40, 15
+X = rng.normal(size=(n, d)); w_true = np.zeros(d); w_true[:3] = [3, -2, 1]
+y = X @ w_true + rng.normal(0, 1.0, n)
+folds = np.array_split(rng.permutation(n), 5)
+def ridge(Xt, yt, lam):
+    return np.linalg.solve(Xt.T @ Xt + lam * np.eye(d), Xt.T @ yt)
+for lam in [0.0, 0.1, 1.0, 10.0, 100.0]:
+    errs = []
+    for f in folds:
+        tr = np.setdiff1d(np.arange(n), f)
+        w = ridge(X[tr], y[tr], lam)
+        errs.append(np.mean((X[f] @ w - y[f]) ** 2))
+    print(f"λ = {lam:6.1f}: 5-겹 평균 검증 MSE {np.mean(errs):.3f}")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>λ =    0.0: 5-겹 평균 검증 MSE 1.356
+λ =    0.1: 5-겹 평균 검증 MSE 1.346
+λ =    1.0: 5-겹 평균 검증 MSE 1.328
+λ =   10.0: 5-겹 평균 검증 MSE 3.130
+λ =  100.0: 5-겹 평균 검증 MSE 11.150</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>위 결과에서 어떤 λ를 고르는가? 그다음에 할 일은?</p>
+    </div>
+    <p><i>풀이.</i> 평균 검증 MSE가 가장 작은 λ(실행 결과에서 확인)를 고르고, 그 λ로 40개 전체 자료에 다시 학습해 최종 모델로 씁니다. 자료가 적고 특징이 많아(n = 40, d = 15) λ = 1이 λ = 0보다 조금 낫고, 너무 큰 λ(10, 100)는 계수를 지나치게 줄여 오차가 크게 늘어납니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "교차 검증 오차가 최종 성능": 선택에 썼으므로 별도 시험 자료로 보고합니다(전전23 1.1절). (2) "k가 클수록 언제나 좋다": 계산이 k배이고 k = n(LOO)은 분산이 커질 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>k-겹: 묶음마다 검증, 평균.</li>
+        <li>최소 평균 오차의 λ → 전체 자료로 재학습.</li>
+        <li>시험 자료는 따로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>10-겹 교차 검증의 학습 횟수(λ 후보 5개)는?
+          <details><summary>답</summary><p>50번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>자료 100개, 5-겹이면 각 학습 자료 수는?
+          <details><summary>답</summary><p>80개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>시계열 자료에서 교차 검증을 어떻게 바꾸나?
+          <details><summary>답</summary><p>과거로 학습하고 미래로 검증하는 순서 분할(전전23 6.2절).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전21-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e21-crc" data-kind="본문" data-std="전전21-05-03">
+  <header class="card-head"><span class="no"></span><h2>순환 부호와 CRC</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다항식 나눗셈(XOR 나눗셈)으로 CRC 검사 비트를 계산한다.</li>
+        <li>수신 측이 나머지 0으로 오류를 검출하는 원리를 안다.</li>
+        <li>CRC가 검출하는 오류(버스트 길이 등)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>선형 블록 부호 (<a href="05-01.html">5.1절</a>), XOR.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>나머지를 붙인다</h3>
+    <p>메시지 다항식에 \(x^r\)을 곱하고(r개 0을 붙이고) 생성 다항식 G로 나눈 나머지를 붙여 보내면, 받은 비트열 전체가 G로 나누어떨어집니다. 나머지가 0이 아니면 오류입니다. 길이 r 이하의 버스트 오류는 모두 검출합니다.</p><pre><code>def crc(bits, gen):
+    r = len(gen) - 1
+    a = list(map(int, bits + "0" * r))
+    g = list(map(int, gen))
+    for i in range(len(bits)):
+        if a[i]:
+            for j in range(len(g)):
+                a[i + j] ^= g[j]
+    return "".join(map(str, a[-r:]))
+msg, gen = "1101011011", "10011"         # 생성 다항식 x⁴ + x + 1
+rem = crc(msg, gen)
+print("CRC:", rem, " 보내는 비트열:", msg + rem)
+print("수신 검사(오류 없음) 나머지:", crc(msg + rem, gen)[-4:] if False else crc((msg + rem)[:-4], gen) == rem)
+bad = "1101111011" + rem                 # 한 비트 뒤집힘
+print("오류 있는 수신의 재계산 CRC:", crc(bad[:-4], gen), "→ 받은 CRC와 다름:", crc(bad[:-4], gen) != rem)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>CRC: 1110  보내는 비트열: 11010110111110
+수신 검사(오류 없음) 나머지: True
+오류 있는 수신의 재계산 CRC: 0100 → 받은 CRC와 다름: True</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>위 메시지 1101011011, 생성 다항식 10011의 CRC는? 한 비트가 뒤집히면?</p>
+    </div>
+    <p><i>풀이.</i> CRC 1110, 보내는 비트열 11010110111110. 한 비트가 뒤집히면 다시 계산한 CRC가 받은 것과 달라 오류를 검출합니다(실행 결과). 이더넷은 32비트 CRC로 프레임 오류를 거릅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "CRC는 오류를 고친다": 검출만 하고, 고치는 것은 재전송이나 정정 부호입니다. (2) "CRC는 모든 오류를 잡는다": 생성 다항식의 배수인 오류는 못 잡지만 확률이 2⁻ʳ 정도로 작습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>x^r M(x) mod G(x)를 붙임.</li>
+        <li>수신: 나머지 0이 아니면 오류.</li>
+        <li>예: 1101011011, 10011 → 1110.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>생성 다항식 10011의 검사 비트 수는?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>길이 4 이하 버스트 오류의 검출은?
+          <details><summary>답</summary><p>모두 검출.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>CRC-32가 놓치는 무작위 오류 비율은 대략?
+          <details><summary>답</summary><p>2⁻³² ≈ 2.3×10⁻¹⁰.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -92,7 +92,7 @@
     f.fn(st, c.main, 2.5); f.fn(sr, c.acc, 2.5); f.fn(tr, c.warn, 1.5, [5, 4]);
     if (po === 0) f.path([[a, thin], [b, thin]], c.ink3, 1.5, [2, 3]);
     const Tin = tr(a);
-    S.out(`안쪽 반지름 50 mm, 바깥 ${b.toFixed(0)} mm (b/a = ${k}), 내압 ${pi}, 외압 ${po} MPa\n안쪽: 원주 ${st(a).toFixed(1)} (파랑), 반지름 ${(sr(a) + 0).toFixed(1).replace("-0.0", "0.0")} (초록) MPa / 바깥: 원주 ${st(b).toFixed(1)}, 반지름 ${sr(b).toFixed(1)} MPa\n안쪽 Tresca 등가 응력 ${Tin.toFixed(1)} MPa (빨간 점선${pi > 0 ? `, 내압의 ${(Tin / pi).toFixed(2)}배` : ""})${po === 0 ? `\n얇은 식 p·a/t = ${thin.toFixed(1)} MPa (회색 점선), 실제 최대 원주 응력보다 ${(((st(a) - thin) / st(a)) * 100).toFixed(0)}% 작음` : ""}`);
+    S.out(`안쪽 반지름 50 mm, 바깥 ${b.toFixed(0)} mm (b/a = ${k}), 내압 ${pi}, 외압 ${po} MPa\n안쪽: 원주 ${st(a).toFixed(1)} (파랑), 반지름 ${(sr(a) + 0).toFixed(1).replace("-0.0", "0.0")} (초록) MPa / 바깥: 원주 ${st(b).toFixed(1)}, 반지름 ${sr(b).toFixed(1)} MPa\n안쪽 Tresca 등가 응력 ${Tin.toFixed(1)} MPa (빨간 점선${pi > 0 ? `, 내압의 ${(Tin / pi).toFixed(2)}배` : ""})${po === 0 && pi > 0 ? `\n얇은 식 p·a/t = ${thin.toFixed(1)} MPa (회색 점선), 실제 최대 원주 응력보다 ${(((st(a) - thin) / st(a)) * 100).toFixed(0)}% 작음` : ""}`);
   }
   S.on(draw); QSim.redrawOn(draw); draw();
 })();

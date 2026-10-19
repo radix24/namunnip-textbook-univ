@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통13-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s13-nested" data-kind="본문" data-std="응통13-04-04">
+  <header class="card-head"><span class="no"></span><h2>지분 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>한 요인의 수준이 다른 요인의 수준마다 따로인 지분 구조를 알아본다.</li>
+        <li>지분 설계의 분산분석표를 만들고 알맞은 분모로 F 검정을 한다.</li>
+        <li>분산 성분으로 변동이 어디서 오는지 나눈다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이원배치 (<a href="04-01.html">4.1절</a>), 변량 효과 (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>이 회사의 1번 묶음과 저 회사의 1번 묶음</h3>
+    <p>공급업체 세 곳에서 원료를 받는데, 업체마다 원료 묶음 4개를 골라 묶음마다 시료 2개를 분석한다고 합시다. A 업체의 "1번 묶음"과 B 업체의 "1번 묶음"은 이름만 같을 뿐 전혀 다른 묶음입니다. 이처럼 요인 B의 수준이 A의 각 수준 안에서만 의미가 있으면 B가 A에 <b>지분</b>(nested)되었다고 합니다. 교수법 안의 반, 병원 안의 의사, 지역 안의 학교도 같은 구조입니다.</p>
+
+    <h3><span class="no">4.4.1</span>교차와 지분</h3>
+    <p>이원배치(4.1절)에서는 A와 B의 모든 조합이 의미가 있어(교차) "B의 효과가 A에 따라 다른가"(교호작용)를 물을 수 있습니다. 지분에서는 B의 수준을 A와 무관하게 비교할 수 없으므로 교호작용이 정의되지 않고, B의 효과는 A 안에서만 잽니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 4.4.1</span>
+      <p><b>2단 지분 모형</b>: \(y_{ijk} = \mu + \alpha_i + \beta_{j(i)} + \varepsilon_{k(ij)}\), \(i = 1, \ldots, a\), \(j = 1, \ldots, b\), \(k = 1, \ldots, n\). \(\beta_{j(i)}\)는 A의 \(i\)번째 수준 안의 \(j\)번째 B 수준의 효과.</p>
+    </div>
+
+    <h3><span class="no">4.4.2</span>분산분석</h3>
+    <table class="tw">
+      <tr><th>요인</th><th>자유도</th><th>제곱합</th><th>A 고정, B 변량일 때 F</th></tr>
+      <tr><td>A</td><td>\(a - 1\)</td><td>\(bn\sum(\bar y_{i\cdot\cdot} - \bar y)^2\)</td><td>MS\(_A\)/MS\(_{B(A)}\)</td></tr>
+      <tr><td>B(A)</td><td>\(a(b - 1)\)</td><td>\(n\sum\sum(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot})^2\)</td><td>MS\(_{B(A)}\)/MSE</td></tr>
+      <tr><td>오차</td><td>\(ab(n - 1)\)</td><td>\(\sum\sum\sum(y_{ijk} - \bar y_{ij\cdot})^2\)</td><td></td></tr>
+    </table>
+    <p>묶음(B)이 업체에서 무작위로 고른 것이면 변량 효과이고, \(E(\mathrm{MS}_A) = \sigma^2 + n\sigma_\beta^2 + bn\sum\alpha_i^2/(a-1)\)이라 A의 검정은 <b>MS\(_{B(A)}\)를 분모로</b> 합니다(\(E(\mathrm{MS}_{B(A)}) = \sigma^2 + n\sigma_\beta^2\)). 업체 차이를 묶음 사이 변동과 비교해야지 같은 묶음 안 시료 차이와 비교하면 안 됩니다. 분산 성분은 \(\hat\sigma^2 = \mathrm{MSE}\), \(\hat\sigma_\beta^2 = (\mathrm{MS}_{B(A)} - \mathrm{MSE})/n\)입니다(4.3절과 같은 방식).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.2</span>
+      <p>업체 3곳, 업체마다 묶음 4개, 묶음마다 시료 2개에서 MS\(_A\) = 60, MS\(_{B(A)}\) = 12, MSE = 3입니다. 검정과 분산 성분 추정을 하세요.</p>
+    </div>
+    <p><i>풀이.</i> 자유도 A 2, B(A) 9, 오차 12. 업체: \(F = 60/12 = 5.0\), \(F_{0.05}(2, 9) = 4.26\)이므로 업체 차이가 있습니다. 묶음: \(F = 12/3 = 4.0\), \(F_{0.05}(9, 12) = 2.80\)이므로 같은 업체 안에서도 묶음 차이가 있습니다. \(\hat\sigma_\beta^2 = (12 - 3)/2 = 4.5\), \(\hat\sigma^2 = 3\). 같은 업체 안에서 품질 변동의 60%(\(4.5/7.5\))가 묶음 사이에서 옵니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>B의 수준이 A의 수준마다 따로면 지분, 교호작용은 정의되지 않음.</li>
+        <li>B가 변량이면 A는 MS\(_{B(A)}\)로, B(A)는 MSE로 검정합니다.</li>
+        <li>분산 성분으로 변동의 출처(묶음 사이 대 묶음 안)를 나눕니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>학교 5곳, 학교마다 반 3개, 반마다 학생 20명의 지분 설계에서 각 자유도는?
+          <details><summary>답</summary><p>학교 4, 반(학교) \(5 \times 2 = 10\), 오차 \(15 \times 19 = 285\). 합 299 = 300 − 1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>예제 4.4.2에서 비용이 묶음 하나에 10, 시료 하나에 1이라면 업체 평균을 정밀하게 재기 위해 묶음 수와 시료 수 가운데 무엇을 늘려야 하나요?
+          <details><summary>답</summary><p>업체 평균의 분산은 \(\sigma_\beta^2/b + \sigma^2/(bn) = 4.5/b + 3/(bn)\). 시료를 늘려 줄일 수 있는 것은 둘째 항뿐이고, 묶음 사이 변동(4.5)이 더 크므로 묶음 수 \(b\)를 늘리는 것이 효과적입니다. 예: \(b = 4, n = 2\)(비용 48)은 분산 1.50, \(b = 4, n = 8\)(비용 72)은 1.22, \(b = 6, n = 1\)(비용 66)은 1.25.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

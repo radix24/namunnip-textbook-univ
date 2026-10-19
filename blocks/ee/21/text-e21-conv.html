@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전21-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e21-conv" data-kind="본문" data-std="전전21-05-04">
+  <header class="card-head"><span class="no"></span><h2>길쌈 부호와 Viterbi 복호</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>시프트 레지스터와 생성 다항식으로 길쌈 부호를 만든다.</li>
+        <li>부호화 출력 열을 계산한다.</li>
+        <li>트렐리스와 Viterbi 복호(최소 거리 경로 찾기)의 원리를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>블록 부호 (<a href="05-01.html">5.1절</a>), 코딩 이득 (<a href="05-02.html">5.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>기억이 있는 부호</h3>
+    <p>부호율 1/2, 구속 길이 3의 (7, 5)₈ 부호는 입력 비트와 앞의 두 비트로 두 출력을 냅니다: \(c_1 = u_k \oplus u_{k-1} \oplus u_{k-2}\), \(c_2 = u_k \oplus u_{k-2}\). 자유 거리 5라 경판정으로 2비트 오류까지 고칩니다. Viterbi 복호는 상태 4개의 트렐리스에서 받은 열과 해밍 거리가 가장 작은 경로를 동적 계획으로 찾습니다.</p><pre><code>def encode(bits):
+    s1 = s2 = 0; out = []
+    for u in bits + [0, 0]:                      # 끝에 0 두 개로 상태를 비움
+        out.append(f"{u ^ s1 ^ s2}{u ^ s2}")
+        s2, s1 = s1, u
+    return out
+print("입력 1011 → 출력:", " ".join(encode([1, 0, 1, 1])))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>입력 1011 → 출력: 11 10 00 01 01 11</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>입력 1011의 (7, 5) 부호 출력은? 부호율과 꼬리 비트의 역할은?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 11 10 00 01 01 11(꼬리 0 두 개 포함). 부호율 1/2이지만 꼬리 때문에 실제로는 4/12. 꼬리는 상태를 0으로 돌려 복호기가 끝 상태를 알게 합니다. 긴 메시지에서는 꼬리의 몫이 작아집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "길쌈 부호는 블록마다 독립": 이전 비트를 기억해 연속된 열 전체로 복호합니다. (2) "Viterbi는 모든 경로를 다 비교한다": 상태마다 살아남는 경로 하나만 유지해 계산이 길이에 비례합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>(7, 5) 부호: c₁ = u ⊕ u₋₁ ⊕ u₋₂, c₂ = u ⊕ u₋₂.</li>
+        <li>자유 거리 5 → 경판정 2비트 정정.</li>
+        <li>Viterbi: 상태별 최선 경로, 계산 ∝ 길이.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>구속 길이 3 부호의 상태 수는?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>입력 1의 출력(처음 상태 0)은?
+          <details><summary>답</summary><p>11.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>구속 길이 7 부호(Wi-Fi 등)의 상태 수는?
+          <details><summary>답</summary><p>64.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

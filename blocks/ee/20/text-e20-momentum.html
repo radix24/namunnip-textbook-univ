@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-momentum" data-kind="본문" data-std="전전20-04-04">
+  <header class="card-head"><span class="no"></span><h2>운동량 방법과 Adam</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>운동량(모멘텀)이 길쭉한 골짜기에서 지그재그를 줄이는 원리를 안다.</li>
+        <li>Adam의 1차·2차 적률 추정과 매개변수별 학습률을 안다.</li>
+        <li>이차 함수에서 경사하강과 운동량 방법의 반복 수를 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>경사하강과 조건수 (<a href="04-01.html">4.1절</a>), SGD (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>속도를 쌓기</h3>
+    <p>운동량: \(v \leftarrow \beta v - \alpha\nabla f\), \(x \leftarrow x + v\). 일관된 방향(골짜기 바닥)으로는 속도가 쌓이고, 오락가락하는 방향은 상쇄됩니다. Adam은 기울기의 이동 평균(1차)과 제곱의 이동 평균(2차)으로 매개변수마다 보폭을 정합니다.</p><pre><code>import numpy as np
+k = 100.0                                   # f = x² + k y², 조건수 100
+grad = lambda p: np.array([2 * p[0], 2 * k * p[1]])
+def run(beta, alpha):
+    p, v = np.array([10.0, 1.0]), np.zeros(2)
+    for it in range(1, 20001):
+        v = beta * v - alpha * grad(p); p = p + v
+        if np.linalg.norm(p) &lt; 1e-6:
+            return it
+    return None
+print("경사하강(α 0.0099):", run(0.0, 0.0099), "번")
+print("운동량(β 0.9, α 0.0099):", run(0.9, 0.0099), "번")
+print("운동량(β 0.81, α 0.0164):", run(0.81, 0.0164), "번")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>경사하강(α 0.0099): 807 번
+운동량(β 0.9, α 0.0099): 271 번
+운동량(β 0.81, α 0.0164): 148 번</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1</span>
+      <p>조건수 100인 위 문제에서 경사하강과 운동량 방법의 반복 수를 비교하라.</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과처럼 운동량 방법이 수 배 적은 반복으로 수렴합니다. 이론적으로 최적 매개변수에서 경사하강의 수축 비 (κ − 1)/(κ + 1)이 운동량(Heavy-ball)에서는 \((\sqrt\kappa - 1)/(\sqrt\kappa + 1)\)로 좋아집니다(κ = 100: 0.98 대 0.82).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "운동량은 항상 안정": β와 α가 크면 진동·발산합니다. (2) "Adam이 언제나 최선": 문제에 따라 SGD + 운동량이 일반화가 더 좋은 경우도 있습니다(확인 필요).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>v ← βv − α∇f, x ← x + v.</li>
+        <li>수축 비 (√κ − 1)/(√κ + 1).</li>
+        <li>Adam: 매개변수별 적응 보폭.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>β = 0이면 운동량 방법은?
+          <details><summary>답</summary><p>경사하강.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>κ = 10 000에서 경사하강과 운동량 최적 수축 비는?
+          <details><summary>답</summary><p>약 0.9998 대 0.980.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>Adam의 2차 적률이 하는 일은?
+          <details><summary>답</summary><p>기울기가 큰 매개변수의 보폭을 줄이고 작은 것은 키웁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
