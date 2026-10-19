@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학19-06-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m19-hamming.js"]
+}
+-->
+<article class="card q-card" id="card-m19-hamming" data-kind="탐구" data-std="수학19-06-01">
+  <header class="card-head"><span class="no"></span><h2>뒤집힌 비트를 스스로 찾는 부호</h2><span class="kind">탐구 · 해밍 (7, 4) 부호</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>정보 4비트를 해밍 부호로 7비트로 만들어 보냅니다. 전송 중에 한 비트가 뒤집히면 받는 쪽은 어느 비트가 틀렸는지 어떻게 알까요? 두 비트가 뒤집히면?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>검사 행렬 \(H\)의 \(j\)번째 열은 \(j\)의 이진 표현. 증후 \(H\mathbf r = H\mathbf e_j\)가 오류 위치를 가리킨다. 최소 거리 3이라 한 비트까지 정정 (<a href="06-01.html">6.1절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>정보 4비트</span>
+          <select name="m" aria-label="정보 비트 선택"><option value="1011">1011</option><option value="0000">0000</option><option value="1111">1111</option><option value="0110">0110</option><option value="1001">1001</option></select></label>
+        <label><span>첫째 오류 위치</span>
+          <select name="e1" aria-label="첫째로 뒤집을 비트"><option value="0">없음</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option></select></label>
+        <label><span>둘째 오류 위치</span>
+          <select name="e2" aria-label="둘째로 뒤집을 비트"><option value="0" selected>없음</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></label>
+      </div>
+      <canvas aria-label="보낸 부호어, 받은 벡터(뒤집힌 비트는 빨강), 증후로 고친 벡터"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>정보 1011의 부호어는 0110011입니다. 5번 비트를 뒤집으면 증후가 \((1, 0, 1)\), 이진수 101 = 5라 5번을 고쳐 1011을 되찾습니다.</li>
+        <li>첫째 오류 위치를 1부터 7까지 바꿔 보세요. 어느 자리든(검사 비트 자리도) 증후가 그 번호를 정확히 가리킵니다.</li>
+        <li>둘째 오류로 2번을 더하면(5번과 2번) 증후는 \(5 \oplus 2 = 7\)을 가리켜 7번을 잘못 고치고, 복원한 정보가 틀립니다.</li>
+        <li>정보를 바꿔도 같은 위치의 오류는 같은 증후를 줍니다. 증후는 부호어와 무관하고 오류에만 달려 있습니다(\(H\mathbf c = 0\)).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>증후는 오류의 지문</b><span>\(H\mathbf r = H(\mathbf c + \mathbf e) = H\mathbf e\)이므로 받은 벡터만으로 오류 벡터의 정보를 얻습니다. 한 비트 오류 \(\mathbf e_j\)의 증후는 \(H\)의 \(j\)번째 열, 곧 \(j\)의 이진 표현입니다.</span></li>
+        <li><b>두 비트는 한계</b><span>두 오류의 증후는 두 열의 합(이진수의 XOR)이고, 이것은 다른 한 자리의 열과 같습니다. 최소 거리 3인 부호는 두 비트 오류를 한 비트 오류와 구별할 수 없습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"증후가 0이 아니면 그 자리 한 비트만 틀린 것이 확실하다"는 틀립니다. 출력에서 두 비트를 뒤집어도 증후는 0이 아닌 한 자리를 가리킵니다. 해밍 부호는 "오류가 많아야 하나"라는 가정 아래에서만 정확히 고칩니다.</p>
+    </section>
+  </div>
+</article>
