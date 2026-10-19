@@ -1,0 +1,36 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-01-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s15-root" data-kind="예제" data-std="응통15-01-03">
+  <header class="card-head"><span class="no"></span><h2>검정력 0.8이 되는 표본 크기를 근 찾기로</h2><span class="kind">예제 · uniroot 응용</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>"검정력 = 0.8"인 \(n\)은 \(g(n) = \text{검정력}(n) - 0.8\)의 근입니다. 검정력이 \(n\)에 대해 증가하므로 부호가 바뀌는 구간을 찾아 이분법 계열 방법으로 풉니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 두 집단 비교에서 효과 크기 \(\Delta/\sigma = 0.5\), 양측 5% 수준의 검정력을 정규근사 \(\Phi(0.5\sqrt{n/2} - 1.96)\)로 나타냅니다(그룹당 \(n\)). 검정력 0.8이 되는 \(n\)을 이분법으로 구하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(g(n) = \Phi(0.5\sqrt{n/2} - 1.96) - 0.8\). \(g(10) = \Phi(-0.84) - 0.8 = -0.60\), \(g(100) = \Phi(1.58) - 0.8 = 0.14\). 근은 [10, 100] 안.</div><span class="q-why">부호가 바뀌는 구간.</span></li>
+        <li><div>가운데 55: \(\Phi(0.5\sqrt{27.5} - 1.96) = \Phi(0.66) = 0.746\), 음수 → [55, 100]. 77.5: \(\Phi(1.15) = 0.875\) → [55, 77.5]. 66.25: \(\Phi(0.92) = 0.821\) → [55, 66.25]. …</div><span class="q-why">이분법.</span></li>
+        <li class="q-end"><div>계속하면 \(n = 62.8\), 올림해 그룹당 63명. 닫힌 꼴 \(2(1.96 + 0.84)^2/0.25 = 62.8\)과 같습니다.</div><span class="q-why">응통13 1.3절 공식.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(n = 63\): \(0.5\sqrt{31.5} - 1.96 = 0.846\), \(\Phi(0.846) = 0.801\). \(n = 62\): \(0.5\sqrt{31} - 1.96 = 0.824\), \(\Phi = 0.795\). 63이 0.8을 처음 넘습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>닫힌 꼴이 있는 경우에는 근 찾기가 검산 도구이고, t 분포를 쓰는 정확한 검정력이나 복잡한 설계처럼 닫힌 꼴이 없는 경우에는 근 찾기가 유일한 방법입니다. R의 <code>power.t.test</code>도 내부에서 <code>uniroot</code>로 \(n\)을 구합니다(정확한 t 기준 64명).</p>
+    </section>
+  </div>
+</article>

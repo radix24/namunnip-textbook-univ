@@ -1,0 +1,37 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-03-04",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s15-optim" data-kind="예제" data-std="응통15-03-04">
+  <header class="card-head"><span class="no"></span><h2>지수분포 비율 모수를 로그 척도에서 추정하기</h2><span class="kind">예제 · 모수 변환과 헤세 행렬</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>닫힌 꼴 답이 있는 문제로 <code>optim</code>의 결과(추정값, 헤세 행렬로 만든 표준오차)가 무엇을 계산하는지 손으로 확인합니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 대기 시간 \(n = 50\)개의 합이 100(평균 2)이고 지수분포(비율 \(\lambda\))를 가정합니다. \(\eta = \log\lambda\)로 음의 로그가능도를 최소화할 때 \(\hat\eta\), 그 점에서의 헤세(2계 도함수), \(\mathrm{se}(\hat\eta)\), \(\lambda\)의 95% 구간을 구하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>음의 로그가능도 \(g(\eta) = -n\eta + e^\eta\sum y = -50\eta + 100e^\eta\).</div><span class="q-why">\(-\sum(\log\lambda - \lambda y_i)\), \(\lambda = e^\eta\).</span></li>
+        <li><div>\(g'(\eta) = -50 + 100e^\eta = 0\)에서 \(\hat\eta = \log 0.5 = -0.693\), \(\hat\lambda = 0.5 = 1/\bar y\).</div><span class="q-why">익숙한 최대가능도추정량.</span></li>
+        <li><div>\(g''(\hat\eta) = 100e^{\hat\eta} = 50 = n\). \(\mathrm{se}(\hat\eta) = 1/\sqrt{50} = 0.141\).</div><span class="q-why">헤세의 역의 제곱근.</span></li>
+        <li class="q-end"><div>\(\eta\) 구간 \(-0.693 \pm 0.277\) → \(\lambda \in [e^{-0.970}, e^{-0.416}] = [0.379, 0.660]\).</div><span class="q-why">되돌려 비대칭 구간.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(\lambda\) 척도의 정보량은 \(n/\lambda^2 = 200\), \(\mathrm{se}(\hat\lambda) = 0.0707\), 델타 방법 \(\hat\lambda\,\mathrm{se}(\hat\eta) = 0.5 \times 0.141 = 0.0707\)로 같습니다. 대칭 구간 \(0.5 \pm 0.139 = [0.361, 0.639]\)와 비교하면 로그 척도 구간이 오른쪽으로 치우쳐 있습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>로그 척도에서는 \(\mathrm{se}(\hat\eta) = 1/\sqrt n\)으로 모수 값과 무관해 정규근사가 더 잘 맞습니다. 이런 이유로 비율·분산 모수는 로그 척도에서 최적화하고 구간을 만드는 것이 표준 관행이며, <code>glm</code>의 연결 함수도 같은 생각입니다.</p>
+    </section>
+  </div>
+</article>

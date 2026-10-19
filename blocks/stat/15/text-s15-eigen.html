@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-eigen" data-kind="본문" data-std="응통15-02-03">
+  <header class="card-head"><span class="no"></span><h2>고유값의 수치 계산: 거듭제곱법과 특이값 분해</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>거듭제곱법으로 가장 큰 고유값과 고유벡터를 구한다.</li>
+        <li>수렴 속도가 두 고유값의 비에 달려 있음을 안다.</li>
+        <li>주성분분석을 공분산 행렬 대신 자료 행렬의 특이값 분해로 계산하는 이유를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>QR 분해와 조건수 (<a href="02-01.html">2.1절</a>), 고유값과 특이값 분해 (응통2 04, 06단원).</li>
+      </ul>
+    </div>
+
+    <h3>특성방정식을 풀지 않는다</h3>
+    <p>교과서에서는 \(\det(A - \lambda I) = 0\)을 풀어 고유값을 구하지만, 5차 이상 다항식은 근의 공식이 없고 계수의 작은 오차에도 근이 크게 흔들립니다. 실제 소프트웨어는 행렬에 반복 변환을 가해 고유값을 구합니다. 가장 단순한 방법이 거듭제곱법이고, 표준 방법(QR 알고리즘)도 같은 생각을 확장한 것입니다.</p>
+
+    <h3><span class="no">2.3.1</span>거듭제곱법</h3>
+    <p>시작 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하고 크기를 맞춥니다: \(\mathbf v_{k+1} = A\mathbf v_k/\|A\mathbf v_k\|\). \(\mathbf v_0 = \sum c_i\mathbf u_i\)(고유벡터 전개)라 하면 \(A^k\mathbf v_0 = \sum c_i\lambda_i^k\mathbf u_i\)이고, \(|\lambda_1| &gt; |\lambda_2|\)이면 첫 항이 지배해 \(\mathbf v_k \to \pm\mathbf u_1\)입니다. 오차는 매번 \(|\lambda_2/\lambda_1|\)배로 줄므로, 두 고유값이 가까우면 느립니다. 고유값은 레일리 몫 \(\mathbf v_k^\top A\mathbf v_k/\mathbf v_k^\top\mathbf v_k\)로 어림합니다.</p>
+    <p>큰 희소 행렬에서 몇 개의 큰 고유값만 필요할 때(웹 페이지 순위, 큰 자료의 주성분 몇 개) 이 방식이 쓰입니다. 응통9의 페이지 순위 정상분포 계산이 거듭제곱법입니다.</p>
+
+    <h3><span class="no">2.3.2</span>주성분은 특이값 분해로</h3>
+    <p>중심화한 자료 행렬 \(X\)(\(n \times p\))의 공분산 행렬은 \(X^\top X/(n-1)\)입니다. 이 행렬을 만들어 고유값 분해하면 조건수가 제곱되어(2.1절) 작은 고유값의 정밀도를 잃습니다. 대신 \(X = UDV^\top\)를 직접 분해하면 \(V\)의 열이 주성분 방향, \(d_j^2/(n-1)\)이 주성분 분산입니다. R의 <code>prcomp</code>는 특이값 분해를, <code>princomp</code>는 공분산 행렬의 고유값 분해를 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>\(A = \begin{pmatrix}2 &amp; 1\\ 1 &amp; 3\end{pmatrix}\)에 \(\mathbf v_0 = (1, 1)\)로 거듭제곱법을 하세요(큰 성분이 1이 되게 크기 조정).</p>
+    </div>
+    <p><i>풀이.</i> \(A\mathbf v_0 = (3, 4)\) → (0.75, 1), 배율 4. 다음 (2.5, 3.75) → (0.667, 1), 배율 3.75. 계속하면 배율 3.667, 3.636, 3.625, 3.621로 참 고유값 \((5 + \sqrt5)/2 = 3.618\)에 다가가고, 벡터는 (0.618, 1)로 갑니다. 둘째 고유값 1.382와의 비 0.38만큼씩 오차가 줄어 빠르게 수렴합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>거듭제곱법: 곱하고 크기 맞추기, \(|\lambda_2/\lambda_1|\)의 속도로 수렴.</li>
+        <li>고유값은 레일리 몫으로 어림.</li>
+        <li>주성분은 \(X^\top X\)를 만들지 말고 \(X\)의 특이값 분해로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>고유값이 10과 9.9인 행렬에 거듭제곱법을 쓰면 오차를 1000분의 1로 줄이는 데 몇 번 반복해야 하나요?
+          <details><summary>답</summary><p>\(0.99^k = 0.001\), \(k = \ln 0.001/\ln 0.99 \approx 687\)번. 고유값이 가까우면 매우 느립니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>가장 작은 고유값을 거듭제곱법으로 구하려면 어떻게 하나요?
+          <details><summary>답</summary><p>\(A^{-1}\)의 고유값은 \(1/\lambda_i\)이므로 \(A^{-1}\)에 거듭제곱법을 씁니다(역 반복법). 역행렬을 만들지 않고 매번 \(A\mathbf w = \mathbf v_k\)를 분해(촐레스키, 2.1절)로 풉니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-parallel" data-kind="본문" data-std="응통15-06-03">
+  <header class="card-head"><span class="no"></span><h2>병렬 계산과 재현 가능한 난수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모의실험 반복이 병렬화하기 쉬운 이유와 속도 향상의 한계(암달의 법칙)를 안다.</li>
+        <li>작업마다 독립인 난수 흐름을 배정해 결과를 재현한다.</li>
+        <li>R에서 <code>parallel</code> 패키지로 반복을 나누어 실행한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>벡터화와 프로파일링 (<a href="06-01.html">6.1절</a>), 모의실험 연구 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>코어가 여덟 개인데 하나만 쓴다</h3>
+    <p>모의실험 연구(6.2절)의 반복 1만 번은 서로 독립이라, 여러 코어에 나누어 동시에 돌릴 수 있습니다(곤란할 것 없는 병렬, embarrassingly parallel). R은 기본적으로 코어 하나만 쓰므로, 나누는 일은 직접 해야 합니다.</p>
+
+    <h3><span class="no">6.3.1</span>얼마나 빨라지나</h3>
+    <p>전체 작업 가운데 병렬화할 수 있는 비율이 \(f\)이고 코어가 \(k\)개면 속도 향상은 최대</p>
+    \[S = \frac{1}{(1 - f) + f/k}\]
+    <p>입니다(암달의 법칙). \(f = 0.9\)이면 코어를 무한히 늘려도 10배가 한계입니다. 여기에 작업을 나누고 결과를 모으는 비용이 더해지므로, 반복 하나가 아주 짧으면 여러 개를 묶어 한 작업으로 보냅니다. 먼저 6.1절대로 벡터화해 한 코어의 속도를 높이는 것이 순서입니다.</p>
+
+    <h3><span class="no">6.3.2</span>난수 흐름</h3>
+    <p>작업마다 <code>set.seed(1)</code>을 똑같이 주면 모든 코어가 같은 난수를 써 반복이 독립이 아니게 되고, 시드를 1, 2, 3, …으로 주면 흐름이 겹치지 않는다는 보장이 없습니다. R의 <code>"L'Ecuyer-CMRG"</code> 생성기는 한 시드에서 서로 멀리 떨어진(겹치지 않는) 흐름을 작업마다 하나씩 만들어 줍니다. 이렇게 하면 코어 수와 상관없이 같은 결과를 다시 얻을 수 있습니다.</p>
+    <pre><code>library(parallel)
+RNGkind("L'Ecuyer-CMRG"); set.seed(2026)
+one &lt;- function(i) { x &lt;- rexp(20); mean(x) - 1 }
+res &lt;- mclapply(1:10000, one, mc.cores = 4)   # 윈도에서는 parLapply
+mean(unlist(res))</code></pre>
+    <p>윈도에서는 포크가 없어 <code>makeCluster</code>와 <code>parLapply</code>를 쓰고, <code>clusterSetRNGStream(cl, 2026)</code>으로 흐름을 배정합니다. 작업자에게 필요한 함수와 자료는 <code>clusterExport</code>로 보내야 합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>모의실험 하나가 자료 읽기 2분(병렬 불가)과 반복 계산 18분으로 이루어져 있습니다. 코어 4개와 16개로 걸리는 시간은?</p>
+    </div>
+    <p><i>풀이.</i> \(f = 0.9\). 4개: \(2 + 18/4 = 6.5\)분(3.1배). 16개: \(2 + 18/16 = 3.1\)분(6.4배). 코어를 4배 늘렸지만 시간은 절반만 줄었습니다. 자료 읽기를 미리 한 번만 해 두는 것이 코어를 더 사는 것보다 효과적입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>독립 반복은 병렬화하기 쉽지만 속도 향상은 \(1/[(1 - f) + f/k]\)로 제한.</li>
+        <li>작업마다 겹치지 않는 난수 흐름(L'Ecuyer-CMRG)을 배정해 재현성 확보.</li>
+        <li>벡터화가 먼저, 짧은 반복은 묶어서 보냅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f = 0.99\), 코어 32개의 최대 속도 향상은?
+          <details><summary>답</summary><p>\(1/(0.01 + 0.99/32) = 1/0.0409 = 24.4\)배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>코어 4개로 돌린 결과와 8개로 돌린 결과의 소수 넷째 자리가 다릅니다. 원인과 해결책은?
+          <details><summary>답</summary><p>반복이 작업자에게 배분되는 방식이 바뀌면서 각 반복이 받는 난수가 달라졌을 수 있습니다. 반복 번호마다 고정된 흐름을 배정하거나(예: 반복 \(i\)에 흐름 \(i\)), <code>future.apply</code>의 <code>future.seed = TRUE</code>처럼 배분과 무관하게 재현되는 방식을 씁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
