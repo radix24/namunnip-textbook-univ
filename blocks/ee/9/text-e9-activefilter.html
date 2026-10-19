@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e9-activefilter" data-kind="본문" data-std="전전9-05-01">
+  <header class="card-head"><span class="no"></span><h2>연산증폭기 능동 필터 설계와 측정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이득 1 Sallen-Key 저역 통과 필터의 \(f_0\)와 Q를 부품값으로 계산한다.</li>
+        <li>버터워스(Q = 0.707) 응답을 축전기 비로 맞추고, \(f_0\)에서의 이득이 Q와 같음을 측정으로 확인한다.</li>
+        <li>수동 RC 필터와 비교해 2차 필터의 장점(−40 dB/decade)을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>RC 필터 측정 (<a href="02-01.html">2.1절</a>), 공진과 Q (<a href="02-03.html">2.3절</a>), 연산증폭기 폴로어 (<a href="../3/04-01.html">전전3 4.1절</a>), 이 절의 실습 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>왜 능동 필터인가</h3>
+    <p>RC 한 단의 저역 통과 필터는 차단 주파수 위에서 10배마다 20 dB씩만 줄어 날카롭지 않습니다. RC를 두 번 이으면 두 단이 서로 부하가 되어 모양을 설계하기 어렵습니다. 연산증폭기 폴로어를 쓰면 부하 효과 없이 2차 필터를 만들 수 있고, 인덕터 없이도 RLC 같은 공진 모양(Q)을 낼 수 있습니다.</p>
+
+    <h3><span class="no">5.1.2</span>Sallen-Key 저역 통과(이득 1)</h3>
+    <p>입력 → \(R_1\) → 마디 A → \(R_2\) → 마디 B → 폴로어 입력. 마디 B와 접지 사이에 \(C_2\), 마디 A와 출력 사이에 \(C_1\)(되먹임). \(R_1 = R_2 = R\)이면</p>
+    \[ f_0 = \frac{1}{2\pi R\sqrt{C_1C_2}}, \qquad Q = \frac12\sqrt{\frac{C_1}{C_2}}. \]
+    <p>\(f_0\)에서의 이득은 정확히 Q입니다. 그래서 \(f_0\) 근처를 재면 Q를 바로 확인할 수 있습니다. \(f_0\)보다 훨씬 높은 주파수에서는 10배마다 40 dB씩 줄어듭니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>R = 10 kΩ, \(C_1\) = 22 nF, \(C_2\) = 10 nF. (가) \(f_0\)와 Q, \(f_0\)에서의 이득(dB). (나) 버터워스로 만들려면 \(C_1\)을 얼마로 하는가? 그때 \(f_0\)는?</p>
+    </div>
+    <p><i>풀이.</i> (가) \(\sqrt{C_1C_2} = 14.8\) nF, \(f_0 \approx 1073\) Hz, \(Q = 0.5\sqrt{2.2} \approx 0.742\), 이득 0.742 = −2.6 dB. (나) \(C_1/C_2 = 2\)이므로 \(C_1\) = 20 nF, \(f_0 \approx 1125\) Hz, 이 주파수에서 −3 dB. 실습 카드의 처음 값과 같은 회로이므로 화면에서 확인할 수 있습니다.</p>
+
+    <h3><span class="no">5.1.3</span>측정할 때</h3>
+    <ul>
+      <li>2.1절처럼 입력과 출력을 함께 재고, \(f_0\) 근처는 촘촘히 잰다.</li>
+      <li>\(f_0\)에서 위상은 −90°(2차 저역 통과)이다. 위상으로 \(f_0\)를 찾고 그때의 이득으로 Q를 구한다.</li>
+      <li>연산증폭기의 이득-대역폭 곱(5.2절)이 \(f_0\)보다 100배 이상 크도록 고른다. 그렇지 않으면 높은 주파수에서 감쇠가 덜 되고 Q가 달라진다.</li>
+      <li>축전기는 허용 오차가 큰 편(±5~10%)이라 Q가 설계와 다를 수 있다. 비가 중요하므로 같은 묶음의 부품을 쓰면 좋다.</li>
+    </ul>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "Q가 클수록 좋은 필터다": Q가 0.707보다 크면 봉우리와 계단 응답의 출렁임이 생깁니다. (2) "\(f_0\)는 언제나 −3 dB 점이다": 버터워스(Q = 0.707)일 때만 그렇습니다. (3) 능동 필터의 출력도 전원 레일 근처에서 포화하므로 입력 진폭을 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이득 1 Sallen-Key, \(R_1 = R_2\): \(f_0 = 1/(2\pi R\sqrt{C_1C_2})\), \(Q = \frac12\sqrt{C_1/C_2}\).</li>
+        <li>\(f_0\)에서 이득 = Q, 위상 −90°. 버터워스는 \(C_1 = 2C_2\).</li>
+        <li>2차 필터는 −40 dB/decade. 연산증폭기 대역폭과 부품 허용 오차에 주의.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>R = 4.7 kΩ, \(C_1\) = 20 nF, \(C_2\) = 10 nF의 \(f_0\)와 Q는?
+          <details><summary>답</summary><p>\(f_0 \approx 2394\) Hz, Q ≈ 0.707.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(C_1 = C_2\)이면 Q와 \(f_0\)에서의 이득(dB)은?
+          <details><summary>답</summary><p>Q = 0.5, −6.0 dB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(f_0\) = 1 kHz 버터워스 필터를 10 kHz에서 재면 이론 감쇠는? 1차 RC(1 kHz)와 비교하라.
+          <details><summary>답</summary><p>2차 버터워스 \(|H| = 1/\sqrt{1 + (f/f_0)^4} \approx 0.01\), −40 dB. 1차는 약 −20 dB.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
