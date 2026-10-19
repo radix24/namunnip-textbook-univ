@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>분할 정복 점화식을 마스터 정리로 풀기 · 이산수학 — QURI</title>
-  <meta name="description" content="이산수학 3.4 분할 정복 점화식을 마스터 정리로 풀기 — 성취기준: 분할 정복 점화식을 마스터 정리로 풀 수 있다.">
+  <title>분할 정복 점화식과 마스터 정리 · 이산수학 — QURI</title>
+  <meta name="description" content="이산수학 3.4 분할 정복 점화식과 마스터 정리 — 성취기준: 분할 정복 점화식을 마스터 정리로 풀 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;수학3&quot;, &quot;title&quot;: &quot;3.4 분할 정복 점화식을 마스터 정리로 풀기&quot;, &quot;sub&quot;: &quot;이산수학&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;수학3&quot;, &quot;title&quot;: &quot;3.4 분할 정복 점화식과 마스터 정리&quot;, &quot;sub&quot;: &quot;이산수학&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,156 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="수학3-03-04" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="수학3-03-04" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 한양대">
     <div class="meta"><a href="../../../?dept=math#tree">수학과</a><span class="mono">/</span><a href="./">이산수학</a><span class="mono">/</span><a href="03.html">3. 셈과 점화관계</a></div>
-    <h1><span class="sec-no mono">3.4</span>분할 정복 점화식을 마스터 정리로 풀기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="수학3-03-04">
-      <h2><span>이 절의 성취기준</span><span class="mono">[수학3-03-04] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="수학3-03-04" aria-label="할 수 있음"><span class="t">분할 정복 점화식을 마스터 정리로 풀 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.4</span>분할 정복 점화식과 마스터 정리</h1>
+    <p class="sec-std"><span class="mono">[수학3-03-04]</span> 분할 정복 점화식을 마스터 정리로 풀 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-4-1"><span class="mono">3.4.1</span><span>재귀 나무</span></a></li><li><a href="#s3-4-2"><span class="mono">3.4.2</span><span>적용</span></a></li><li><a href="#s3-4-3"><span class="mono">3.4.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-m3-master"><span class="mono">본문</span><span>분할 정복 점화식과 마스터 정리</span></a></li><li><a href="#card-m3-master"><span class="mono">3.4.2</span><span>재귀 나무의 어느 층이 비싼가</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-m3-master" data-kind="본문" data-std="수학3-03-04">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>분할 정복 알고리즘의 실행 시간을 \(T(n) = aT(n/b) + f(n)\)으로 세운다.</li>
+        <li>재귀 나무로 각 층의 비용을 더해 \(T(n)\)을 어림한다.</li>
+        <li>마스터 정리의 세 경우를 \(f(n) = n^d\)에서 쓰고, 이진 탐색·병합 정렬·카라추바 곱셈에 적용한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>점근 표기와 병합 정렬 (<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>), 등비급수, 로그의 성질 \(a^{\log_bn} = n^{\log_ba}\).</li>
+      </ul>
+    </div>
 
+    <h3 id="s3-4-1"><span class="no">3.4.1</span>재귀 나무</h3>
+    <p>크기 \(n\)인 문제를 크기 \(\frac nb\)인 문제 \(a\)개로 나누고, 나누고 합치는 데 \(f(n)\)이 들면 \(T(n) = aT(n/b) + f(n)\)입니다. 나무로 그리면 깊이 \(j\)에 문제가 \(a^j\)개, 크기가 \(\frac{n}{b^j}\)이고, 층 \(j\)의 비용은 \(a^jf(n/b^j)\), 깊이는 \(\log_bn\)입니다.</p>
+    <p>\(f(n) = n^d\)이면 층 \(j\)의 비용은 \(n^d\left(\frac{a}{b^d}\right)^j\), 곧 공비 \(q = \frac{a}{b^d}\)인 등비수열입니다. 전체는 이 등비수열의 합이고, 공비에 따라 세 경우가 갈립니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.4.1 <span class="nm">(마스터 정리, 다항식 꼴)</span></span>
+      <p>\(T(n) = aT(n/b) + \Theta(n^d)\) (\(a \ge 1\), \(b &gt; 1\), \(d \ge 0\))이면</p>
+      <p>(1) \(a &lt; b^d\) (\(q &lt; 1\)): \(T(n) = \Theta(n^d)\) — 맨 위층(합치기)이 지배.</p>
+      <p>(2) \(a = b^d\) (\(q = 1\)): \(T(n) = \Theta(n^d\log n)\) — 모든 층이 같아 층 수만큼.</p>
+      <p>(3) \(a &gt; b^d\) (\(q &gt; 1\)): \(T(n) = \Theta(n^{\log_ba})\) — 맨 아래층(잎)이 지배.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명의 뼈대.</span>\(T(n) = \sum_{j=0}^{\log_bn}n^dq^j\). \(q &lt; 1\)이면 등비합이 상수배라 \(\Theta(n^d)\). \(q = 1\)이면 \((\log_bn + 1)n^d\). \(q &gt; 1\)이면 마지막 항 \(n^dq^{\log_bn} = n^d\frac{a^{\log_bn}}{n^d} = n^{\log_ba}\)이 상수배로 지배. <span class="qed">∎</span></p>
+
+    <h3 id="s3-4-2"><span class="no">3.4.2</span>적용</h3>
+    <ul>
+      <li><b>이진 탐색</b> \(T(n) = T(n/2) + 1\): \(a = 1\), \(b = 2\), \(d = 0\), \(a = b^d\) → \(\Theta(\log n)\).</li>
+      <li><b>병합 정렬</b> \(T(n) = 2T(n/2) + n\): \(a = 2 = b^d\) → \(\Theta(n\log n)\).</li>
+      <li><b>보통 곱셈을 나눠서</b> \(T(n) = 4T(n/2) + n\): \(4 &gt; 2\) → \(\Theta(n^2)\). 나눠도 빨라지지 않습니다.</li>
+      <li><b>카라추바 곱셈</b> \(T(n) = 3T(n/2) + n\): \(3 &gt; 2\) → \(\Theta(n^{\log_23}) \approx \Theta(n^{1.585})\). 곱셈 4번을 3번으로 줄인 것이 지수를 바꿉니다.</li>
+      <li><b>스트라센 행렬 곱셈</b> \(T(n) = 7T(n/2) + n^2\): \(7 &gt; 4\) → \(\Theta(n^{\log_27}) \approx \Theta(n^{2.807})\).</li>
+    </ul>
+    <p>같은 절의 탐구 카드에서 \(a, b, d\)를 바꿔 층별 비용을 막대로 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(a\)와 \(b\)를 바꿔 읽는다: \(a\)는 하위 문제 개수, \(b\)는 크기를 나누는 비율. (2) \(f(n)\)이 \(n^d\) 꼴이 아니면 그대로 쓴다: \(T(n) = 2T(n/2) + n\log n\)은 이 표에 맞지 않고 \(\Theta(n\log^2n)\)이다(재귀 나무로 직접).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>재귀 나무 층 \(j\)의 비용 \(n^d(a/b^d)^j\): 등비수열.</li>
+        <li>\(a &lt; b^d\): \(\Theta(n^d)\), \(a = b^d\): \(\Theta(n^d\log n)\), \(a &gt; b^d\): \(\Theta(n^{\log_ba})\).</li>
+        <li>카라추바(3개로) \(n^{1.585}\), 스트라센(7개로) \(n^{2.807}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-4-3"><span class="no">3.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(T(n) = 9T(n/3) + n\)과 \(T(n) = 2T(n/4) + n\)을 풀어라.
+          <details><summary>답</summary><p>\(9 &gt; 3\): \(\Theta(n^2)\). \(2 &lt; 4\): \(\Theta(n)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(T(n) = 2T(n/4) + \sqrt n\)을 풀어라.
+          <details><summary>답</summary><p>\(d = \frac12\), \(b^d = 2 = a\): \(\Theta(\sqrt n\log n)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(T(n) = 2T(n/2) + n\log n\)을 재귀 나무로 풀어라.
+          <details><summary>답</summary><p>층 \(j\)의 비용 \(n\log(n/2^j) = n(\log n - j)\). 합 \(\approx n\frac{\log^2n}2 = \Theta(n\log^2n)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-m3-master" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="수학3-03-04">
+      <h2><span>이 절의 성취기준</span><span class="mono">[수학3-03-04] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="수학3-03-04" aria-label="할 수 있음"><span class="t">분할 정복 점화식을 마스터 정리로 풀 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/08-01.html"><span class="mono">8.1</span><span>미분적분학과벡터해석(1) <b>수열</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-m3-master" data-kind="탐구" data-std="수학3-03-04">
+  <header class="card-head"><span class="no">3.4.2</span><h2><span class="q-badge">탐구</span>재귀 나무의 어느 층이 비싼가</h2><span class="kind">탐구 · 마스터 정리</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-04.html#std">[수학3-03-04]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>분할 정복 알고리즘의 시간은 "나누고 합치는 일"과 "가장 작은 문제를 푸는 일" 중 어느 쪽이 정할까요? \(a, b, d\)가 바뀌면 그 균형은 어떻게 변할까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>층 \(j\)의 비용은 \(n^d(a/b^d)^j\). 공비 \(&lt; 1\)이면 \(\Theta(n^d)\), \(= 1\)이면 \(\Theta(n^d\log n)\), \(&gt; 1\)이면 \(\Theta(n^{\log_ba})\) (<a href="03-04.html">3.4절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>하위 문제 수 a = <b data-show="a">2</b></span><input type="range" name="a" min="1" max="9" step="1" value="2" aria-label="하위 문제 수 a"></label>
+        <label><span>나누는 비 b = <b data-show="b">2</b></span><input type="range" name="b" min="2" max="4" step="1" value="2" aria-label="크기를 나누는 비 b"></label>
+        <label><span>합치는 비용 n^d, d = <b data-show="d">1</b></span><input type="range" name="d" min="0" max="3" step="0.5" value="1" aria-label="합치는 비용의 지수 d"></label>
+        <label><span>깊이 = <b data-show="E">10</b></span><input type="range" name="E" min="3" max="14" step="1" value="10" aria-label="재귀 깊이 (n = b^깊이)"></label>
+      </div>
+      <canvas aria-label="재귀 나무의 층 j마다 그 층 전체의 비용을 막대로. 노랑은 맨 위층, 빨강은 맨 아래층(잎)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>처음 화면(병합 정렬 \(a = 2\), \(b = 2\), \(d = 1\))은 모든 층의 막대 높이가 같습니다. 층이 \(\log_2n\)개라 \(\Theta(n\log n)\)입니다.</li>
+        <li>\(a = 3\)(카라추바)으로 바꾸면 막대가 아래로 갈수록 1.5배씩 커져 잎이 지배합니다: \(\Theta(n^{1.585})\).</li>
+        <li>\(a = 4\)이면 공비 2로 \(\Theta(n^2)\), 나눠 푸는 이득이 사라집니다.</li>
+        <li>\(a = 2\), \(d = 2\)이면 공비 \(\frac12\)라 맨 위층(합치기)이 대부분이고 \(\Theta(n^2)\)입니다.</li>
+        <li>\(a = 1\), \(d = 0\)(이진 탐색)이면 층마다 1이라 \(\Theta(\log n)\)입니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>두 힘의 줄다리기</b><span>층이 내려갈 때 문제 수는 \(a\)배로 늘고, 문제 하나의 비용은 \(b^d\)분의 1로 줄어듭니다. 둘 중 어느 쪽이 큰지가 공비 \(\frac{a}{b^d}\)이고, 그것이 결과를 정합니다.</span></li>
+        <li><b>알고리즘 설계에의 교훈</b><span>잎이 지배하는 경우(\(a &gt; b^d\))에는 합치는 비용을 줄여도 소용이 없고, 하위 문제 수 \(a\)를 줄여야 합니다. 카라추바와 스트라센이 바로 그렇게 했습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"문제를 반으로 나누면 늘 빨라진다"는 틀립니다. \(T(n) = 4T(n/2) + n\)(곱셈을 4번 하는 분할)은 그냥 곱하는 \(\Theta(n^2)\)과 같습니다. 나눈 뒤 하위 문제 수가 너무 많으면 이득이 없습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-m3-master" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-03.html">← 3.3 선형 점화식을 특성방정식으로 풀기</a></span>
-        <span><a href="04-01.html">4.1 확장 유클리드 호제법으로 모듈러 역원을 구하기 →</a></span>
+        <span><a href="03-03.html">← 3.3 선형 점화식</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +190,9 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/math/m-kit.js"></script>
+<script src="../../../js/cards/math/m3-master.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

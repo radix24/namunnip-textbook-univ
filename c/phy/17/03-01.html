@@ -27,10 +27,10 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero has-text" data-sec="물리17-03-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대">
+  <section class="topic-hero u-hero has-text" data-sec="물리17-03-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=phy#tree">물리학과</a><span class="mono">/</span><a href="./">빅데이터물리학</a><span class="mono">/</span><a href="03.html">3. 수치 시뮬레이션</a></div>
     <h1><span class="sec-no mono">3.1</span>ODE 풀이기로 궤도와 연성 진동자 시뮬레이션</h1>
-    <p class="sec-std"><span class="mono">[물리17-03-01]</span> 궤도 운동과 연성 진동자를 ODE 풀이기로 시뮬레이션할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></p>
+    <p class="sec-std"><span class="mono">[물리17-03-01]</span> 궤도 운동과 연성 진동자를 ODE 풀이기로 시뮬레이션할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
   <div class="topic-layout with-text">
@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s3-1-1"><span class="mono">3.1.1</span><span>solve_ivp</span></a></li><li><a href="#s3-1-2"><span class="mono">3.1.2</span><span>연성 진동자</span></a></li><li><a href="#s3-1-3"><span class="mono">3.1.3</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-p17-odesim"><span class="mono">본문</span><span>ODE 풀이기로 궤도와 연성 진동자 시뮬레이션</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-p17-odesim"><span class="mono">본문</span><span>ODE 풀이기로 궤도와 연성 진동자 시뮬레이션</span></a></li><li><a href="#card-p17-energy"><span class="mono">3.1.2</span><span>수치 궤도의 에너지 보존으로 적분기 고르기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -109,13 +109,57 @@ print(np.ptp(E)/abs(E[0]), np.ptp(L)/abs(L[0]))   # 보존량의 상대 변화</
 </article>
     
     <div class="q-checklist after-text q-one" id="std" data-unit="물리17-03-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[물리17-03-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[물리17-03-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
       <ol><li><input type="checkbox" data-std="물리17-03-01" aria-label="할 수 있음"><span class="t">궤도 운동과 연성 진동자를 ODE 풀이기로 시뮬레이션할 수 있다.</span></li></ol>
       <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-p17-energy" data-kind="예제" data-std="물리17-03-01">
+  <header class="card-head"><span class="no">3.1.2</span><h2><span class="q-badge">예제</span>수치 궤도의 에너지 보존으로 적분기 고르기</h2><span class="kind">Euler · RK4 · 대칭 적분기 · 문제 해결 전략</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-01.html#std">[물리17-03-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>ODE 풀이기가 맞는지 확인하는 가장 좋은 방법은 보존량을 보는 것입니다. 궤도 운동에서는 에너지와 각운동량이 보존되어야 하는데, 단순한 Euler 방법은 에너지가 계속 늘어나 궤도가 바깥으로 나선을 그립니다.</p>
+    </section>
 
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 적분기 점검</span>
+      <ol>
+        <li>상태 벡터 \((x, y, v_x, v_y)\)와 미분 함수를 쓴다.</li>
+        <li>여러 방법으로 같은 시간 동안 적분한다.</li>
+        <li>에너지의 상대 변화 \(\Delta E/E\)를 비교한다.</li>
+        <li>시간 간격을 절반으로 줄여 오차가 몇 배 주는지(차수)를 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">원 궤도(\(GM = 1\), \(r = 1\), 주기 \(2\pi\))를 시간 간격 \(h = 0.01\)로 10바퀴(6283걸음) 적분했다. Euler, RK4, 속도 Verlet 방법의 에너지 변화와 마지막 반지름을 비교하고, 장기 적분에 어떤 방법이 알맞은지 말하여라.</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>Euler: 에너지(처음 −0.5)가 \(-0.30\)까지 올라가(\(\Delta E/|E| = 41\%\)) 반지름이 1.65로 커진다.</div><span class="q-why">1차 방법은 체계적으로 에너지가 샌다(이 교재의 Python 계산 결과).</span></li>
+        <li><div>RK4: \(\Delta E/|E| = 1.7\times10^{-10}\), 반지름 1.0000. \(h\)를 절반으로 하면 \(5\times10^{-12}\).</div><span class="q-why">4차라 아주 정확하지만 오차가 한쪽으로 조금씩 쌓인다.</span></li>
+        <li><div>Verlet: 2차인데도 에너지 오차가 최대 \(2.5\times10^{-9}\)에서 오르내리기만 하고 10바퀴 뒤에는 거의 0으로 돌아온다.</div><span class="q-why">시간 반전 대칭인 심플렉틱 적분기.</span></li>
+        <li class="q-end"><div>짧고 정밀한 계산은 RK4, 수천 바퀴 이상 장기 계산은 Verlet.</div><span class="q-why">목적에 따라 고른다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>행성 궤도처럼 아주 오래 돌려야 하는 시뮬레이션은 정확도보다 보존 성질이 중요합니다. 물리4의 리우빌 정리(위상 공간 넓이 보존)를 지키는 적분기가 장기적으로 믿을 만합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(h = 0.005\)로 다시 돌리면 Euler의 에너지 변화는 30%로 조금만 줄고(1차), RK4는 약 1/32, Verlet의 최대 오차는 약 1/16(\(1.6\times10^{-10}\))로 줄었습니다. 직접 돌려 같은 결과가 나오는지 확인해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-p17-energy" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-02.html">← 2.2 카이제곱으로 적합의 좋음 평가하기</a></span>
+        <span><a href="02-R.html">← 2.R 단원 마무리</a></span>
         <span><a href="03-02.html">3.2 몬테카를로 시뮬레이션 →</a></span>
       </nav>
     </div>

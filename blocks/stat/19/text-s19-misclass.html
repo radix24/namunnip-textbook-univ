@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-misclass" data-kind="본문" data-std="응통19-05-02">
+  <header class="card-head"><span class="no"></span><h2>오분류율과 교차검증</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>겉보기 오분류율이 낙관적인 이유를 안다.</li>
+        <li>하나 빼기·k겹 교차검증으로 오분류율을 추정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>선형판별 (<a href="05-01.html">5.1절</a>), 응통10 6.2절 교차검증.</li>
+      </ul>
+    </div>
+
+    <h3>학습 자료로 시험 보기</h3>
+    <p>분류 규칙을 만든 자료로 그 규칙을 평가하면 규칙이 자료의 우연한 특징까지 외운 덕을 봅니다. 새 관측에 대한 실제 오분류율은 그보다 높습니다.</p>
+
+    <h3><span class="no">5.2.1</span>오분류율 추정</h3>
+    <ul>
+      <li><b>겉보기 오분류율</b>: 학습 자료의 혼동행렬에서 틀린 비율. 낙관적.</li>
+      <li><b>하나 빼기(LOOCV)</b>: 관측 하나를 빼고 규칙을 만들어 그 관측을 분류, \(n\)번 반복. 판별분석은 공식으로 빠르게 계산됩니다(R: <code>lda(..., CV = TRUE)</code>).</li>
+      <li><b>k겹 교차검증, 시험 자료 분리</b>: 응통16 3.1절.</li>
+    </ul>
+    <p>집단 크기가 크게 다르면 전체 오분류율보다 집단별 오분류율(민감도, 특이도)을 함께 봅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p><code>iris</code> 선형판별의 겉보기 오분류율과 LOOCV 오분류율을 비교하세요.</p>
+    </div>
+    <pre><code>library(MASS)
+f &lt;- lda(Species ~ ., data = iris); mean(predict(f)$class != iris$Species)
+fcv &lt;- lda(Species ~ ., data = iris, CV = TRUE); mean(fcv$class != iris$Species)
+table(iris$Species, fcv$class)</code></pre>
+    <p>겉보기 2.0%(3송이), LOOCV 2.0%로 같습니다. 변수가 4개뿐이고 집단이 잘 나뉘어 과적합이 작기 때문입니다. 변수가 많고 표본이 작으면 두 값의 차이가 커집니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>겉보기 오분류율은 낙관적.</li>
+        <li>LOOCV, k겹, 시험 자료로 정직하게.</li>
+        <li>집단별 오분류도 보고.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>순수한 잡음 변수 50개와 두 집단(각 20개)으로 선형판별을 하면 겉보기와 LOOCV 오분류율이 어떻게 될까요?
+          <details><summary>답</summary><p>겉보기는 0에 가깝고(변수가 표본보다 많아 완벽히 가름) LOOCV는 50% 근처입니다. 과적합의 전형입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

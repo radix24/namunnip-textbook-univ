@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계7-02-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m7-solid.js"]
+}
+-->
+<article class="card q-card" id="lab-me-offset" data-kind="실습" data-std="기계7-02-01">
+  <header class="card-head"><span class="no"></span><h2>인장 자료로 탄성계수와 항복강도 구하기</h2><span class="kind">실습 · 최소제곱 직선 · 0.2% 오프셋</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>가상 재료(성질을 알고 있음)로 만든 인장 시험 자료에 측정 잡음을 섞었습니다. 탄성계수를 구할 직선 맞춤 구간(파란 점)과 오프셋 크기를 바꾸며, 자료 처리 방법이 결과를 얼마나 바꾸는지 봅니다. 초록 점선은 맞춘 탄성 직선, 빨간 점선은 오프셋 선, 빨간 점은 항복강도입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>재료</span><select name="m" aria-label="재료"><option value="steel">구조용 강 (가상)</option><option value="al">알루미늄 합금 (가상)</option></select></label>
+        <label><span>맞춤 구간 상한 = 항복의 <b data-show="fit">60</b>%</span><input type="range" name="fit" min="20" max="100" step="5" value="60" aria-label="최소제곱 맞춤 구간 상한"></label>
+        <label><span>오프셋 = <b data-show="off" data-fix="2">0.20</b>%</span><input type="range" name="off" min="0.05" max="0.5" step="0.05" value="0.2" aria-label="오프셋 크기"></label>
+        <label><span>변형률 잡음 = <b data-show="ns">20</b> με</span><input type="range" name="ns" min="0" max="100" step="5" value="20" aria-label="변형률 측정 잡음"></label>
+      </div>
+      <canvas aria-label="응력-변형률 자료 점, 맞춤 직선, 오프셋 선, 항복점"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>잡음 0</b><span>맞춤 구간 60%, 잡음 0이면 E가 참값 200 GPa에 매우 가깝고 항복강도도 300 MPa입니다. 처리 방법 자체는 정확합니다.</span></li>
+        <li><b>맞춤 구간을 넓히기</b><span>잡음 0에서 상한을 100%로 올리면 이미 소성이 시작된 점이 섞여 E가 106.7 GPa로 크게 작아지고(−47%), 항복강도도 306.8 MPa로 달라집니다. 맞춤 구간은 직선성이 확실한 곳까지만 잡습니다.</span></li>
+        <li><b>잡음과 구간</b><span>잡음을 100 με로 키우고 구간을 20%로 좁히면 점이 10개뿐이고 변형률이 작아 E가 212 GPa(+6%)로 빗나갑니다. 구간을 넓게 잡을수록 잡음에는 강하지만 비선형에는 약해지는 균형이 있습니다.</span></li>
+        <li><b>오프셋 크기</b><span>강에서 오프셋 0.1%는 286 MPa, 0.5%는 319 MPa입니다. 그래서 보고서에는 반드시 "0.2% 오프셋"처럼 정의를 함께 씁니다. 알루미늄(가상)에서는 236~270 MPa로 차이가 더 큽니다. 항복이 완만한 재료일수록 정의에 민감합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>실제 시험기 소프트웨어가 같은 계산을 자동으로 합니다. 그러나 맞춤 구간과 오프셋 정의는 사용자가 정하고, 그 선택이 결과를 몇 %씩 바꿉니다. 고체역학 2.1절의 응력-변형률 선도 탐구와 함께 보면, 재료 성질이 "재료의 값"이면서도 "측정과 처리의 결과"임을 알 수 있습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"모든 점에 직선을 맞추면 가장 정확하다."</b> 비선형 구간이 섞이면 기울기가 틀어집니다.</li>
+        <li><b>"항복강도는 곡선이 꺾이는 점이다."</b> 완만한 재료에는 꺾이는 점이 없습니다. 오프셋 정의가 필요한 이유입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

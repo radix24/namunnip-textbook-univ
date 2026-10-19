@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e4-fpga" data-kind="본문" data-std="전전4-07-02">
+  <header class="card-head"><span class="no"></span><h2>프로그래머블 논리: ROM, PLA, FPGA</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>ROM과 PLA가 진리표와 곱의 합을 하드웨어로 그대로 담는 방식임을 안다.</li>
+        <li>FPGA의 구성 요소(순람표 LUT, 플립플롭, 배선, 입출력 블록)를 설명한다.</li>
+        <li>HDL 코드가 FPGA 위의 회로가 되기까지의 흐름(합성, 배치·배선, 비트스트림)을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>디코더와 MUX로 함수 만들기 (<a href="04-02.html">4.2절</a>), HDL (<a href="07-01.html">7.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>만들어 둔 칩을 나중에 프로그램한다</h3>
+    <p>지금까지는 게이트를 골라 회로를 "만드는" 이야기였습니다. 그러나 새 칩을 만드는 데는 수개월과 큰 비용이 듭니다. 프로그래머블 논리는 일반적인 구조의 칩을 먼저 만들어 두고, 연결과 내용을 나중에 정해 원하는 회로가 되게 합니다.</p>
+
+    <h3><span class="no">7.2.2</span>ROM과 PLA</h3>
+    <p class="q-term"><b>ROM</b>: n비트 주소, m비트 출력의 메모리. 주소 디코더가 모든 최소항을 만들고, 각 출력은 원하는 최소항을 OR한다(4.2절 디코더 + OR). 곧 진리표를 통째로 저장한다. n이 커지면 크기가 \(2^n\)으로 커진다.</p>
+    <p class="q-term"><b>PLA</b>: 프로그램할 수 있는 AND 배열과 OR 배열. 최소항 전부가 아니라 필요한 곱 항만 만들고 OR한다. 3단원에서 줄인 곱의 합을 그대로 싣는다. 출력끼리 같은 곱 항을 나눠 쓸 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>전가산기를 ROM과 PLA로 구현할 때 크기를 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> ROM: 주소 3비트(A, B, Cin), 출력 2비트(S, Cout) → 8 × 2비트. 저장 내용은 진리표 그대로: S = 0,1,1,0,1,0,0,1, Cout = 0,0,0,1,0,1,1,1. PLA: S는 최소항 4개(더 줄지 않음), Cout은 AB, ACin, BCin 3개 → 곱 항 7개를 나눠 쓸 것이 없어 AND 배열 7줄. 변수가 적으면 ROM이 단순하고, 변수가 많고 곱 항이 적으면 PLA가 작습니다.</p>
+
+    <h3><span class="no">7.2.3</span>FPGA의 구성</h3>
+    <p>FPGA(field-programmable gate array)는 오늘날 가장 널리 쓰이는 프로그래머블 논리입니다. 칩 위에 같은 블록이 수만~수백만 개 바둑판처럼 놓여 있습니다.</p>
+    <p class="q-term"><b>순람표(LUT)</b>: k입력(보통 4~6) 작은 메모리. 진리표 \(2^k\)비트를 저장해 어떤 k변수 함수든 구현한다(4.2절 MUX로 함수 만들기의 일반화). 이 절의 LUT 카드에서 직접 본다.</p>
+    <p class="q-term"><b>플립플롭</b>: LUT 출력 옆에 붙어, 그 값을 클록에 맞춰 저장할지 그냥 내보낼지 고른다. LUT + 플립플롭이 기본 논리 셀.</p>
+    <p class="q-term"><b>배선 자원</b>: 논리 셀 사이를 잇는 도선과 스위치 행렬. 어느 스위치를 켤지가 연결을 정한다. 칩 면적과 지연의 상당 부분을 차지한다.</p>
+    <p class="q-term"><b>입출력 블록과 특수 블록</b>: 핀, 블록 메모리(BRAM), 곱셈기(DSP), 클록 관리기(PLL).</p>
+    <p>LUT 내용과 스위치 상태는 전원을 켤 때 외부 플래시에서 읽어 오는 <b>비트스트림</b>으로 정해집니다(대부분 SRAM형이라 전원을 끄면 지워짐).</p>
+
+    <h3><span class="no">7.2.4</span>HDL에서 비트스트림까지</h3>
+    <ol>
+      <li><b>합성</b>: HDL을 게이트와 플립플롭 회로로 바꾸고 최소화한다(3단원의 일을 컴퓨터가).</li>
+      <li><b>기술 매핑</b>: 회로를 k입력 LUT와 플립플롭 단위로 나눈다.</li>
+      <li><b>배치와 배선</b>: 각 LUT를 칩의 어느 자리에 둘지, 어떤 도선으로 이을지 정한다.</li>
+      <li><b>타이밍 분석</b>: 모든 경로의 지연을 계산해 클록 제약을 지키는지 확인한다(5.3절, 임계 경로 카드).</li>
+      <li><b>비트스트림 생성</b>과 다운로드.</li>
+    </ol>
+    <p>FPGA는 같은 회로를 전용 칩(ASIC)으로 만들 때보다 느리고 전력을 더 쓰지만, 몇 분 만에 고칠 수 있어 시제품, 소량 제품, 통신 장비, AI 가속기 실험에 씁니다.</p>
+
+    <div class="tb-note"><b>주의</b>FPGA에서 "게이트 수"는 의미가 약합니다. 4입력 AND 하나든 4입력 XOR 세 개를 합친 함수든 LUT 하나입니다. 자원은 LUT와 플립플롭 개수로 셉니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>ROM = 디코더 + OR, 진리표를 통째로. PLA = 프로그램 가능한 AND·OR 배열, 곱의 합을 그대로.</li>
+        <li>FPGA = LUT(진리표 메모리) + 플립플롭 + 배선 + 입출력·특수 블록. 비트스트림으로 설정한다.</li>
+        <li>흐름: 합성 → 기술 매핑 → 배치·배선 → 타이밍 분석 → 비트스트림.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>6입력 LUT 하나는 몇 비트를 저장하는가? 6변수 함수는 모두 몇 가지인가?
+          <details><summary>답</summary><p>64비트, \(2^{64}\)가지.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>아무 8변수 함수든 만들 수 있도록 4입력 LUT를 MUX 분해 방법으로 쌓으면 몇 개가 드는가?
+          <details><summary>힌트</summary><p>4.2절 정리 4.2.1처럼 변수를 하나씩 데이터 쪽으로 넘긴다.</p></details>
+          <details><summary>답</summary><p>4변수 함수 16개(앞 4변수의 각 값마다)와 16:1 MUX. 16:1 MUX를 4입력 LUT로 쌓으면 2:1 MUX(입력 3개라 LUT 하나)가 15개 필요해, 이 방법으로는 31개. 함수에 따라 훨씬 적게 들 수 있고, 실제 FPGA는 LUT 사이에 전용 MUX를 두어 이 비용을 줄인다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통12-06-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s12-u06-review" data-kind="연습" data-std="응통12-06-01 응통12-06-02">
+  <header class="card-head"><span class="no"></span><h2>재표집 방법 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·계산·개념·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>두 집단의 평균 차이에 대한 순열 검정을 R로 구현하는 코드를 쓰고, p값이 무엇을 뜻하는지 쓰세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>귀무가설 아래 집단 표시는 아무 뜻이 없으므로 무작위로 섞어도 됩니다.</p></details>
+        <details><summary>힌트 2</summary><p>섞을 때마다 평균 차이를 계산해 관측값과 비교합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>perm_test &lt;- function(a, b, B = 10000) {
+  obs &lt;- mean(a) - mean(b)
+  z &lt;- c(a, b); m &lt;- length(a)
+  d &lt;- replicate(B, { i &lt;- sample(length(z), m); mean(z[i]) - mean(z[-i]) })
+  (sum(abs(d) >= abs(obs)) + 1) / (B + 1)
+}</pre><p>p값은 "집단 표시가 무작위였다면 관측된 만큼 또는 더 큰 차이가 나올 비율"입니다. 분자와 분모에 1을 더하면 관측 배치도 순열 하나로 세어 p값이 0이 되지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>A = (3, 5), B = (1, 2, 4)에서 평균 차이 \(\bar a - \bar b\)의 정확한 순열 분포를 구해 단측 p값(A가 더 크다)을 구하세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>다섯 값에서 A에 들어갈 두 개를 고르는 방법은 10가지입니다.</p></details>
+        <details><summary>힌트 2</summary><p>관측 차이는 \(4 - 7/3 \approx 1.67\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>10가지 배치 가운데 차이가 1.67 이상인 것은 A = (4, 5)(차이 \(4.5 - 2 = 2.5\))와 관측 배치 (3, 5) 두 가지입니다. 따라서 단측 p값은 \(2/10 = 0.2\)입니다. 표본이 작으면 가능한 p값이 0.1 단위라 5% 유의수준에 도달할 수조차 없습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>표본 중앙값의 표준오차와 95% 백분위수 신뢰구간을 붓스트랩으로 구하는 R 코드를 쓰세요. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>원표본에서 같은 크기로 복원추출해 중앙값을 계산하는 일을 여러 번 반복합니다.</p></details>
+        <details><summary>힌트 2</summary><p>백분위수 구간은 붓스트랩 중앙값들의 2.5%, 97.5% 분위수입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>set.seed(1)
+bm &lt;- replicate(5000, median(sample(x, replace = TRUE)))
+sd(bm)                          # 표준오차
+quantile(bm, c(0.025, 0.975))   # 백분위수 신뢰구간</pre><p>중앙값은 표준오차 공식이 복잡한데, 붓스트랩은 "표본을 모집단 대신 써서 표본추출을 흉내 내는" 방식으로 공식 없이 구합니다. <code>boot</code> 패키지의 <code>boot.ci</code>는 더 정확한 BCa 구간도 줍니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>\(U(0, \theta)\) 표본의 최댓값으로 \(\theta\)를 추정할 때 붓스트랩이 잘 맞지 않는 까닭을 설명하세요. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>붓스트랩 표본의 최댓값은 원표본의 최댓값보다 클 수 있나요?</p></details>
+        <details><summary>힌트 2</summary><p>붓스트랩 표본에 원표본 최댓값이 포함될 확률은 \(1 - (1 - 1/n)^n \approx 0.632\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>붓스트랩 표본의 최댓값은 원표본 최댓값을 넘을 수 없고, 약 63%의 확률로 정확히 원표본 최댓값과 같습니다. 그래서 붓스트랩 분포가 한 점에 크게 몰려, 실제 표본분포(연속이고 \(\theta\) 아래쪽으로 퍼진 분포)를 흉내 내지 못합니다. 붓스트랩은 통계량이 자료의 "매끄러운" 함수일 때 잘 맞고, 최댓값처럼 극단값에 의존하는 통계량에서는 실패할 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>두 집단의 분산이 크게 다를 때 평균 차이의 순열 검정을 그대로 써도 되는지 판단하세요. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>순열 검정의 귀무가설은 "두 분포가 같다"(교환 가능)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>평균은 같고 분산만 다르면 어떻게 되나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>주의가 필요합니다. 순열 검정은 두 집단의 분포가 완전히 같다는 귀무가설 아래 정확하므로, 평균이 같아도 분산이 다르면 교환 가능성이 깨져 제1종 오류 확률이 명목값과 달라질 수 있습니다(특히 표본 크기가 다를 때). 평균 차이만 검정하고 싶다면 웰치 t 통계량처럼 분산을 표준화한 통계량으로 순열 검정을 하면 더 안정적입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>크기 3인 표본 \((x_1, x_2, x_3)\)에서 만들 수 있는 서로 다른 붓스트랩 표본(순서 무시)은 몇 가지인가요? 모든 관측값이 다른 붓스트랩 표본의 확률은 얼마인가요? <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>3개 값에서 중복을 허락해 3개를 고르는 조합 수는 \(\binom{3+3-1}{3}\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>순서를 고려한 전체 경우는 \(3^3 = 27\)가지이고 모두 같은 확률입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(\binom53 = 10\)가지입니다. 세 값이 모두 다른 표본(원표본과 같음)은 순서 고려 시 \(3! = 6\)가지이므로 확률은 \(6/27 \approx 0.22\)입니다. 붓스트랩 표본은 같은 값이 여러 번 들어가는 것이 보통이며, 표본이 작으면 가능한 붓스트랩 분포가 매우 거칠어집니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

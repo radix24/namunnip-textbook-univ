@@ -1,0 +1,107 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e2-sorting" data-kind="본문" data-std="전전2-05-01">
+  <header class="card-head"><span class="no"></span><h2>병합 정렬과 퀵 정렬</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>삽입 정렬(O(n²))에서 출발해 분할 정복으로 O(n log n) 정렬을 만드는 생각을 안다.</li>
+        <li>병합 정렬을 구현하고 \(T(n) = 2T(n/2) + n\)으로 분석한다.</li>
+        <li>퀵 정렬을 구현하고 기준(pivot) 선택에 따른 최선·평균·최악 비용과 무작위 기준의 효과를 안다.</li>
+        <li>안정성, 제자리 정렬, 힙 정렬을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>재귀와 점화식 (<a href="01-01.html">1.1절</a>), 힙 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>단순한 정렬과 그 한계</h3>
+    <p class="q-term"><b>삽입 정렬</b>: 앞부분을 정렬된 상태로 유지하며 다음 원소를 알맞은 자리에 끼워 넣는다. 최악(역순) \(n(n - 1)/2\)번 비교, 이미 거의 정렬되어 있으면 O(n). 작은 n에서 빠르다.</p>
+    <p>n이 커지면 O(n²)이 감당되지 않으므로(1.2절: 10⁶개면 약 17분), 문제를 반으로 나눠 푸는 분할 정복으로 O(n log n)을 얻습니다.</p>
+
+    <h3><span class="no">5.1.2</span>병합 정렬</h3>
+    <p>나누기는 쉽게(반으로), 합치기에서 일하는 방법입니다.</p>
+<pre><code>def merge_sort(a):
+    if len(a) &lt;= 1:
+        return a
+    mid = len(a) // 2
+    left, right = merge_sort(a[:mid]), merge_sort(a[mid:])
+    out, i, j = [], 0, 0
+    while i &lt; len(left) and j &lt; len(right):     # 두 정렬된 줄의 앞을 비교
+        if left[i] &lt;= right[j]:
+            out.append(left[i]); i += 1
+        else:
+            out.append(right[j]); j += 1
+    return out + left[i:] + right[j:]</code></pre>
+    <p>병합은 각 원소를 한 번씩 옮기므로 O(n), 점화식 \(T(n) = 2T(n/2) + O(n)\)은 1.1절 예제처럼 O(n log n)입니다. 입력과 관계없이 언제나 O(n log n)이고, 같은 값의 상대 순서를 지키는 <b>안정 정렬</b>입니다(<code>&lt;=</code> 때문). 대신 병합할 때 n 크기의 추가 메모리가 필요합니다.</p>
+
+    <h3><span class="no">5.1.3</span>퀵 정렬</h3>
+    <p>나누기에서 일하고(기준보다 작은 쪽과 큰 쪽으로), 합치기는 이어 붙이기만 합니다.</p>
+    <p class="q-term"><b>분할(partition)</b>: 기준 p를 골라 p보다 작은 것을 왼쪽, 큰 것을 오른쪽으로 모은다. 비교 n − 1번. 배열 안에서 자리 바꾸기로 하면 추가 메모리가 거의 없다(제자리).</p>
+    <ul>
+      <li><b>최선</b>: 기준이 늘 가운데값이면 반씩 나뉘어 O(n log n).</li>
+      <li><b>최악</b>: 기준이 늘 최솟값(예: 첫 원소를 기준으로 하는데 입력이 이미 정렬됨)이면 크기가 1씩만 줄어 \(T(n) = T(n - 1) + n\), O(n²).</li>
+      <li><b>평균</b>: 무작위 입력(또는 무작위 기준)에서 비교 약 \(2n\ln n \approx 1.39n\log_2n\), O(n log n).</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>서로 다른 수 1000개를 무작위 순서와 정렬된 순서로 주고, 병합 정렬, 첫 원소 기준 퀵 정렬, 무작위 기준 퀵 정렬의 비교 횟수를 세어라(실습 카드의 코드).</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과(시드 2026):</p>
+    <table class="tb-table">
+      <tr><th>알고리즘</th><th>무작위 입력</th><th>정렬된 입력</th></tr>
+      <tr><td>병합</td><td>8,707</td><td>4,932</td></tr>
+      <tr><td>퀵(첫 원소 기준)</td><td>10,985</td><td>499,500</td></tr>
+      <tr><td>퀵(무작위 기준)</td><td>10,883</td><td>10,710</td></tr>
+    </table>
+    <p>참고로 \(n\log_2n = 9966\), \(n(n - 1)/2 = 499{,}500\)입니다. 첫 원소 기준 퀵 정렬은 정렬된 입력에서 정확히 최악(499,500번)이 되고, 재귀 깊이도 n이라 Python의 기본 재귀 한도(1000)를 넘어 한도를 늘려야 했습니다. 기준을 무작위로 고르면 입력이 무엇이든 평균 경우가 됩니다. 병합 정렬은 정렬된 입력에서 비교가 오히려 줄어듭니다(한쪽 줄이 먼저 끝나서).</p>
+    <p>그럼에도 실제로 퀵 정렬이 많이 쓰이는 이유는 제자리에서 연속된 메모리를 차례로 훑어 캐시 효율이 좋기 때문입니다. Python의 <code>sorted</code>는 병합과 삽입 정렬을 섞은 Timsort(안정, 최악 O(n log n), 부분적으로 정렬된 자료에서 매우 빠름)입니다.</p>
+
+    <h3><span class="no">5.1.4</span>힙 정렬</h3>
+    <p>배열을 heapify(O(n), 3.3절)한 뒤 최댓값을 n번 꺼내 뒤에서부터 채우면 제자리 O(n log n) 정렬입니다. 최악도 O(n log n)이지만 안정하지 않고 캐시 효율이 낮아 실제로는 퀵 정렬보다 느린 편입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "퀵 정렬은 언제나 O(n log n)": 평균일 뿐, 기준 선택이 나쁘면 O(n²)입니다. (2) "병합 정렬이 비교가 적으니 언제나 더 빠르다": 메모리 복사와 캐시 효과 때문에 실제 시간은 퀵 정렬이 빠른 경우가 많습니다. (3) 안정성이 필요한 경우(예: 이름순으로 정렬한 뒤 학년순으로 다시 정렬해 같은 학년 안에서 이름순을 유지)에 불안정 정렬을 쓰는 실수.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>병합: 반으로 나누고 O(n)에 합침, 언제나 O(n log n), 안정, 추가 메모리 O(n).</li>
+        <li>퀵: 기준으로 분할, 평균 O(n log n), 최악 O(n²), 무작위 기준으로 최악을 피함, 제자리.</li>
+        <li>힙 정렬: 제자리 최악 O(n log n), 불안정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>[5, 2, 4, 6, 1, 3]을 병합 정렬할 때 마지막 병합 직전의 두 줄은?
+          <details><summary>답</summary><p>[2, 4, 5]와 [1, 3, 6].</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>[3, 8, 2, 5, 1, 4, 7, 6]을 첫 원소(3)를 기준으로 한 번 분할한 결과는?
+          <details><summary>답</summary><p>작은 쪽 [2, 1], 기준 3, 큰 쪽 [8, 5, 4, 7, 6](이 구현의 순서 유지 방식 기준).</p></details>
+        </li>
+        <li>퀵 정렬의 기준을 "세 값(처음, 가운데, 끝)의 중앙값"으로 고르면 정렬된 입력에서 비용은?
+          <details><summary>답</summary><p>정렬된 입력에서는 가운데 원소가 중앙값이라 반씩 나뉘어 O(n log n). 다만 일부러 만든 나쁜 입력에서는 여전히 O(n²)이 가능합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>같은 값이 아주 많은 입력(예: 0과 1만 100만 개)에서 위 <code>quick_sort</code>(<code>&gt;=</code>를 오른쪽으로)의 문제와, 무작위 기준 코드처럼 세 갈래(&lt;, =, &gt;)로 나누는 효과를 설명하라.
+          <details><summary>답</summary><p>같은 값이 모두 한쪽으로 가 분할이 한쪽으로 쏠려 O(n²)에 가까워집니다. 세 갈래 분할은 기준과 같은 값을 한 번에 끝내므로 서로 다른 값이 k개면 O(n log k) 정도로 빨라집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

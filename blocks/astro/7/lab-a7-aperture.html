@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우7-04-01",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a7-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a7-aperture" data-kind="실습" data-std="천우7-04-01">
+  <header class="card-head"><span class="no"></span><h2>구경 반지름을 바꾸며 S/N 최적값 찾기</h2><span class="kind">실습 · 구경 측광</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>가상 별 영상에서 구경 반지름을 바꾸며 담기는 별빛(성장 곡선)과 S/N을 비교하고, S/N이 가장 큰 구경을 찾습니다. 성취기준 [천우7-04-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 영상입니다. 별빛을 가우스 모양으로 퍼뜨리고 하늘 배경, 광자 잡음, 읽기 잡음(8 e⁻)을 더했습니다. 왼쪽 영상의 빨간 원이 별 구경, 주황 점선이 하늘 고리입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>log 별빛 = <b data-show="lf" data-fix="1">4</b> (e⁻)</span><input type="range" name="lf" min="3" max="6" step="0.1" value="4" aria-label="별빛 전자 수의 로그"></label>
+        <label><span>시상 반치폭 = <b data-show="fw" data-fix="1">3</b> 화소</span><input type="range" name="fw" min="1.5" max="8" step="0.1" value="3" aria-label="시상 반치폭"></label>
+        <label><span>하늘 = <b data-show="sky" data-fix="0">500</b> e⁻/화소</span><input type="range" name="sky" min="0" max="3000" step="50" value="500" aria-label="하늘"></label>
+        <label><span>구경 반지름 = <b data-show="r" data-fix="1">3</b> 화소</span><input type="range" name="r" min="0.5" max="15" step="0.1" value="3" aria-label="구경 반지름"></label>
+      </div>
+      <canvas aria-label="왼쪽: 가상 별 영상과 구경. 오른쪽: 구경 반지름에 따른 성장 곡선과 S/N"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(별빛 10⁴ e⁻, 반치폭 3화소, 하늘 500)에서 구경 반지름을 1부터 10까지 움직이며 S/N을 봅니다.</li>
+        <li>출력의 'S/N이 가장 큰 반지름'을 기록합니다.</li>
+        <li>별빛을 10⁶ e⁻(밝은 별)로 바꾸고 최적 반지름을 다시 찾습니다.</li>
+        <li>하늘을 0으로 하면 어떻게 됩니까?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>어두운 별(10⁴ e⁻)에서는 S/N이 반치폭의 약 0.8배(2.4화소, S/N 61)에서 가장 크고, 반지름을 키우면 오히려 떨어집니다. 반지름 3화소에서는 별빛의 93.7%를 담고 S/N 58.9입니다.</li>
+        <li>밝은 별(10⁶ e⁻)에서는 최적 반지름이 반치폭의 약 1.4배(4.1화소)로 옮겨 갑니다. 별빛 자체의 잡음이 지배하기 때문입니다.</li>
+        <li>하늘이 0이어도 읽기 잡음 때문에 최적 반지름이 무한대가 되지는 않습니다(밝은 별에서 약 1.6배).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>성장 곡선이 1에 가까워진 뒤에도 S/N이 떨어지는 까닭을 화소 수로 설명하세요.</li>
+        <li>작은 구경으로 재고 구경 보정을 하는 방법이 왜 유리한지 정리하세요.</li>
+        <li>시상이 나빠지면(반치폭이 커지면) 같은 별의 최대 S/N은 어떻게 바뀝니까?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>공개 자료의 실제 FITS 영상에서 Python <code>photutils</code>의 <code>CircularAperture</code>와 <code>CircularAnnulus</code>로 같은 측광을 해 보세요(<a href="06-02.html">6.2절</a>).</p>
+    </section>
+  </div>
+</article>

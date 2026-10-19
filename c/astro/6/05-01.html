@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분하기 · 기초천문계산법 — QURI</title>
-  <meta name="description" content="기초천문계산법 5.1 Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분하기 — 성취기준: Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분할 수 있다.">
+  <title>Euler 방법과 Runge-Kutta 방법으로 궤도 적분하기 · 기초천문계산법 — QURI</title>
+  <meta name="description" content="기초천문계산법 5.1 Euler 방법과 Runge-Kutta 방법으로 궤도 적분하기 — 성취기준: Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;천우6&quot;, &quot;title&quot;: &quot;5.1 Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분하기&quot;, &quot;sub&quot;: &quot;기초천문계산법&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;천우6&quot;, &quot;title&quot;: &quot;5.1 Euler 방법과 Runge-Kutta 방법으로 궤도 적분하기&quot;, &quot;sub&quot;: &quot;기초천문계산법&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,140 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="천우6-05-01" data-u="서울대 연세대 경희대">
+  <section class="topic-hero u-hero has-text" data-sec="천우6-05-01" data-u="서울대 연세대 경희대">
     <div class="meta"><a href="../../../?dept=astro#tree">천문우주학과</a><span class="mono">/</span><a href="./">기초천문계산법</a><span class="mono">/</span><a href="05.html">5. 상미분방정식의 수치해</a></div>
-    <h1><span class="sec-no mono">5.1</span>Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="천우6-05-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[천우6-05-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 경희대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="천우6-05-01" aria-label="할 수 있음"><span class="t">Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.1</span>Euler 방법과 Runge-Kutta 방법으로 궤도 적분하기</h1>
+    <p class="sec-std"><span class="mono">[천우6-05-01]</span> Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 경희대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-1-1"><span class="mono">5.1.1</span><span>1차 연립 방정식으로 바꾸기</span></a></li><li><a href="#s5-1-2"><span class="mono">5.1.2</span><span>Euler 방법</span></a></li><li><a href="#s5-1-3"><span class="mono">5.1.3</span><span>4차 Runge-Kutta 방법</span></a></li><li><a href="#s5-1-4"><span class="mono">5.1.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-a6-ode"><span class="mono">본문</span><span>Euler 방법과 Runge-Kutta 방법으로 궤도 적분하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-a6-ode" data-kind="본문" data-std="천우6-05-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>2차 운동 방정식을 1차 연립 미분방정식으로 바꾼다.</li>
+        <li>Euler 방법과 4차 Runge-Kutta(RK4) 방법을 코드로 짠다.</li>
+        <li>시간 간격에 따른 두 방법의 정확도를 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>1계 미분방정식 (<a href="../../common/8/01.html">공통8 1단원</a>), 만유인력과 궤도 (<a href="../3/03-01.html">천우3 3.1절</a>).</li>
+      </ul>
+    </div>
 
+<h3>힘을 알면 미래가 보인다</h3>
+    <p>뉴턴 운동 방정식은 지금의 위치와 속도에서 다음 순간의 위치와 속도를 정해 줍니다. 식으로 풀리지 않는 궤도(3체 문제, 섭동, 대기 저항)도 시간을 잘게 나누어 한 걸음씩 나아가면 따라갈 수 있습니다. 이것이 상미분방정식의 수치 풀이입니다.</p>
+
+    <h3 id="s5-1-1"><span class="no">5.1.1</span>1차 연립 방정식으로 바꾸기</h3>
+    <p>태양 둘레 행성의 운동 \(\ddot{\vec r} = -GM\vec r/r^3\)은 2차 방정식입니다. 속도를 새 변수로 두면 1차 방정식 네 개가 됩니다(평면 운동).</p>
+    \[ \dot x = v_x,\quad \dot y = v_y,\quad \dot v_x = -\frac{GMx}{r^3},\quad \dot v_y = -\frac{GMy}{r^3} \]
+    <p>상태 \(\vec s = (x, y, v_x, v_y)\)와 그 변화율 \(\vec f(\vec s)\)로 쓰면 \(\dot{\vec s} = \vec f(\vec s)\)입니다. AU, 년, 태양 질량 단위에서 \(GM = 4\pi^2\)이고, 지구 궤도는 \((1, 0)\)에서 속도 \((0, 2\pi)\)로 출발합니다.</p>
+
+    <h3 id="s5-1-2"><span class="no">5.1.2</span>Euler 방법</h3>
+    <p>지금의 변화율로 간격 \(\Delta t\)만큼 곧장 나아갑니다: \(\vec s_{n+1} = \vec s_n + \Delta t\,\vec f(\vec s_n)\). 가장 간단하지만 한 걸음 오차가 \(\Delta t^2\), 전체 오차가 \(\Delta t\)에 비례하는 1차 방법입니다. 곡선 궤도에서 늘 접선 방향으로 나가므로 바깥으로 벗어나 에너지가 계속 늡니다.</p>
+
+    <h3 id="s5-1-3"><span class="no">5.1.3</span>4차 Runge-Kutta 방법</h3>
+    <p>한 걸음 안에서 변화율을 네 번 계산해 가중 평균합니다.</p>
+    \[ \begin{aligned} k_1 &= f(s_n), & k_2 &= f(s_n + \tfrac{\Delta t}2k_1),\\ k_3 &= f(s_n + \tfrac{\Delta t}2k_2), & k_4 &= f(s_n + \Delta t\,k_3),\\ s_{n+1} &= s_n + \tfrac{\Delta t}{6}(k_1 + 2k_2 + 2k_3 + k_4) \end{aligned} \]
+    <p>시작, 가운데(두 번), 끝의 기울기를 Simpson 공식(4.2절)처럼 1 : 2 : 2 : 1로 섞은 것입니다. 전체 오차가 \(\Delta t^4\)에 비례합니다.</p>
+    <pre><code>import math
+GM = 4 * math.pi**2            # AU, 년, 태양 질량
+
+def acc(x, y):
+    r3 = (x * x + y * y) ** 1.5
+    return -GM * x / r3, -GM * y / r3
+
+def energy(x, y, vx, vy):
+    return 0.5 * (vx * vx + vy * vy) - GM / math.hypot(x, y)
+
+def euler(dt, years):
+    x, y, vx, vy = 1.0, 0.0, 0.0, 2 * math.pi
+    for _ in range(round(years / dt)):
+        ax, ay = acc(x, y)
+        x, y, vx, vy = x + vx * dt, y + vy * dt, vx + ax * dt, vy + ay * dt
+    return x, y, vx, vy
+
+def rk4(dt, years):
+    s = [1.0, 0.0, 0.0, 2 * math.pi]
+    def f(s):
+        ax, ay = acc(s[0], s[1])
+        return [s[2], s[3], ax, ay]
+    for _ in range(round(years / dt)):
+        k1 = f(s)
+        k2 = f([s[i] + dt / 2 * k1[i] for i in range(4)])
+        k3 = f([s[i] + dt / 2 * k2[i] for i in range(4)])
+        k4 = f([s[i] + dt * k3[i] for i in range(4)])
+        s = [s[i] + dt / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) for i in range(4)]
+    return s
+
+E0 = energy(1.0, 0.0, 0.0, 2 * math.pi)
+for dt in (0.01, 0.001):
+    e1 = energy(*euler(dt, 10)); e2 = energy(*rk4(dt, 10))
+    print(f&quot;dt={dt}: 오일러 상대 에너지 오차 {abs((e1 - E0) / E0):.2e}, RK4 {abs((e2 - E0) / E0):.2e}&quot;)</code></pre>
+    <pre><code>dt=0.01: 오일러 상대 에너지 오차 6.69e-01, RK4 1.71e-06
+dt=0.001: 오일러 상대 에너지 오차 3.33e-01, RK4 1.71e-11</code></pre>
+    <p>지구 궤도를 10년(10바퀴) 적분한 뒤의 상대 에너지 오차입니다. Euler 방법은 \(\Delta t = 0.001\)년(한 바퀴에 1,000걸음)에도 에너지가 33% 틀려 궤도가 크게 벗어납니다. RK4는 \(\Delta t = 0.01\)년에서 이미 \(10^{-6}\)이고, 간격을 10배 줄이면 약 \(10^5\)배 더 정확해집니다. 1년만 적분하면 Euler의 오차가 \(\Delta t = 0.01, 0.001, 0.0001\)에서 0.35, 0.068, 0.0078로 대략 \(\Delta t\)에 비례해 줄어드는 것도 확인할 수 있습니다. 아래 실습 카드에서 궤도 모양을 직접 비교합니다.</p>
+    <div class="tb-note"><b>주의</b> 이 예제의 RK4 코드는 이해하기 쉽게 리스트로 짰습니다. 실전에서는 <code>scipy.integrate.solve_ivp</code>처럼 간격을 자동으로 조절하는 검증된 도구를 쓰고, 직접 짠 코드는 에너지 보존 같은 검산으로 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>2차 운동 방정식은 속도를 변수로 넣어 1차 연립 방정식으로 바꾼다.</li>
+        <li>Euler: \(s_{n+1} = s_n + \Delta tf(s_n)\), 1차 정확도, 궤도에서 에너지가 계속 는다.</li>
+        <li>RK4: 기울기 네 번을 1:2:2:1로 평균, 4차 정확도.</li>
+        <li>지구 궤도 10년: Euler(\(\Delta t = 0.001\)) 33% vs RK4(0.01) \(10^{-6}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-1-4"><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>한 바퀴(1년)를 \(\Delta t = 0.01\)년으로 적분하면 몇 걸음입니까? RK4는 힘을 몇 번 계산합니까?
+          <details><summary>답</summary><p>100걸음, 400번.</p></details>
+        </li>
+        <li>Euler 방법의 전체 오차가 \(\Delta t\)에 비례하면 간격을 1/10로 할 때 오차는?
+          <details><summary>답</summary><p>1/10.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>단진자 \(\ddot\theta = -(g/L)\sin\theta\)를 1차 연립 방정식으로 쓰세요.
+          <details><summary>답</summary><p>\(\dot\theta = \omega\), \(\dot\omega = -(g/L)\sin\theta\).</p></details>
+        </li>
+        <li>RK4의 전체 오차가 \(\Delta t^4\)이면 간격을 1/10로 할 때 오차는? 위 표의 \(10^5\)배와 다른 까닭을 생각해 보세요.
+          <details><summary>답</summary><p>\(10^{-4}\)배가 예상입니다. 표는 에너지 오차이고, 원 궤도에서는 RK4의 에너지 오차가 \(\Delta t^5\)처럼 줄어드는 성질이 있어 더 빨리 줄어듭니다(측정량에 따라 차수가 다르게 보일 수 있음).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-a6-ode" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="천우6-05-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[천우6-05-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 경희대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="천우6-05-01" aria-label="할 수 있음"><span class="t">Euler 방법과 Runge-Kutta 방법으로 궤도 운동을 적분할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/8/01.html"><span class="mono">대단원 1</span><span>고등미적분학(1) <b>1계 상미분방정식</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="04-03.html">← 4.3 Planck 함수를 수치 적분하여 Stefan-Boltzmann 법칙을 확인하기</a></span>
-        <span><a href="05-02.html">5.2 에너지 보존을 기준으로 적분 방법의 정확도를 비교하기 →</a></span>
+        <span><a href="04-R.html">← 4.R 단원 마무리</a></span>
+        <span><a href="05-02.html">5.2 에너지 보존으로 적분 방법의 정확도 비교하기 →</a></span>
       </nav>
     </div>
   </div>

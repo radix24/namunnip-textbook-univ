@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성하기 · 파이썬프로그래밍 — QURI</title>
-  <meta name="description" content="파이썬프로그래밍 4.1 이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성하기 — 성취기준: 이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성할 수 있다.">
+  <title>이분법과 뉴턴 방법으로 근 찾기 · 파이썬프로그래밍 — QURI</title>
+  <meta name="description" content="파이썬프로그래밍 4.1 이분법과 뉴턴 방법으로 근 찾기 — 성취기준: 이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통4&quot;, &quot;title&quot;: &quot;4.1 이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성하기&quot;, &quot;sub&quot;: &quot;파이썬프로그래밍&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통4&quot;, &quot;title&quot;: &quot;4.1 이분법과 뉴턴 방법으로 근 찾기&quot;, &quot;sub&quot;: &quot;파이썬프로그래밍&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,184 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통4-04-01" data-u="연세대">
+  <section class="topic-hero u-hero has-text" data-sec="응통4-04-01" data-u="연세대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">파이썬프로그래밍</a><span class="mono">/</span><a href="04.html">4. 근 찾기와 최적화</a></div>
-    <h1><span class="sec-no mono">4.1</span>이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통4-04-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통4-04-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통4-04-01" aria-label="할 수 있음"><span class="t">이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">4.1</span>이분법과 뉴턴 방법으로 근 찾기</h1>
+    <p class="sec-std"><span class="mono">[응통4-04-01]</span> 이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s4-1-1"><span class="mono">4.1.1</span><span>이분법</span></a></li><li><a href="#s4-1-2"><span class="mono">4.1.2</span><span>뉴턴 방법</span></a></li><li><a href="#s4-1-3"><span class="mono">4.1.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s4-rootfind"><span class="mono">본문</span><span>이분법과 뉴턴 방법으로 근 찾기</span></a></li><li><a href="#lab-s4-root"><span class="mono">4.1.2</span><span>이분법과 뉴턴 방법, 어느 쪽이 얼마나 빠른가?</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s4-rootfind" data-kind="본문" data-std="응통4-04-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이분법과 뉴턴 방법을 함수로 구현한다.</li>
+        <li>두 방법의 수렴 속도와 안정성을 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>중간값 정리와 테일러 근사 (응통1 1.2, 2.3절), 함수 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>방정식을 컴퓨터로 풀기</h3>
+    <p>내부수익률(IRR), 분위수, 최대가능도 방정식처럼 손으로 풀 수 없는 방정식 \(f(x) = 0\)이 많습니다. 반복해서 근에 다가가는 두 가지 기본 방법을 직접 만들어 봅니다.</p>
+
+    <h3 id="s4-1-1"><span class="no">4.1.1</span>이분법</h3>
+    <p>\(f(a)\)와 \(f(b)\)의 부호가 다르면 중간값 정리로 사이에 근이 있습니다. 가운데 점 \(m\)에서 부호를 보고 근이 있는 절반만 남깁니다.</p>
+    <pre><code>def bisect(f, a, b, tol=1e-10, maxit=200):
+    fa = f(a)
+    if fa * f(b) &gt; 0:
+        raise ValueError("f(a)와 f(b)의 부호가 같습니다.")
+    for _ in range(maxit):
+        m = (a + b) / 2
+        fm = f(m)
+        if fm == 0 or (b - a) / 2 &lt; tol:
+            return m
+        if fa * fm &lt; 0:
+            b = m
+        else:
+            a, fa = m, fm
+    return (a + b) / 2</code></pre>
+    <p>매 단계 구간이 절반이 되므로 오차가 \(2^{-k}\)로 줄어듭니다(선형 수렴, 약 3.3단계마다 한 자리). 느리지만 부호가 바뀌는 구간만 있으면 반드시 수렴합니다.</p>
+
+    <h3 id="s4-1-2"><span class="no">4.1.2</span>뉴턴 방법</h3>
+    <p>현재 점에서 접선을 그어 그 접선의 근으로 옮깁니다: \(x_{k+1} = x_k - f(x_k)/f'(x_k)\).</p>
+    <pre><code>def newton(f, df, x0, tol=1e-12, maxit=50):
+    x = x0
+    for k in range(maxit):
+        step = f(x) / df(x)
+        x -= step
+        if abs(step) &lt; tol:
+            return x, k + 1
+    raise RuntimeError("수렴하지 않았습니다.")</code></pre>
+    <p>근 근처에서는 2차 수렴(맞는 자릿수가 매번 약 두 배)이라 매우 빠르지만, 출발점이 멀거나 \(f'\)이 0에 가까우면 발산할 수 있습니다. 실무에서는 이분법으로 좁힌 뒤 뉴턴으로 마무리하는 혼합 방법(브렌트 방법, <code>scipy.optimize.brentq</code>)을 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>\(\sqrt2\)를 \(f(x) = x^2 - 2\)의 근으로 두 방법으로 구하고 반복 횟수를 비교하세요.</p>
+    </div>
+    <pre><code>f = lambda x: x * x - 2
+print(bisect(f, 1, 2))                       # 1.41421356..., 34번 반복
+print(newton(f, lambda x: 2 * x, 1.0))       # (1.4142135623730951, 6)</code></pre>
+    <p>뉴턴 방법은 1 → 1.5 → 1.4167 → 1.41422 → …로 다섯 번째에 기계 정밀도에 닿습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이분법: 확실하지만 느림(선형 수렴).</li>
+        <li>뉴턴: 빠르지만(2차 수렴) 좋은 출발점 필요.</li>
+        <li>실무는 혼합 방법(brentq).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s4-1-3"><span class="no">4.1.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>3년 동안 매년 말 100만 원씩 받는 투자에 250만 원을 냈습니다. 내부수익률 \(r\)(\(\sum_{t=1}^3 100/(1+r)^t = 250\))을 이분법으로 구하세요.
+          <details><summary>답</summary><p><code>bisect(lambda r: sum(100 / (1 + r) ** t for t in (1, 2, 3)) - 250, 0, 1)</code> → 약 0.097(9.7%).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s4-rootfind" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통4-04-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통4-04-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통4-04-01" aria-label="할 수 있음"><span class="t">이분법과 Newton 방법으로 방정식의 근을 구하는 함수를 작성할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-s4-root" data-kind="실습" data-std="응통4-04-01">
+  <header class="card-head"><span class="no">4.1.2</span><h2><span class="q-badge">실습</span>이분법과 뉴턴 방법, 어느 쪽이 얼마나 빠른가?</h2><span class="kind">실습 · 근 찾기</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="04-01.html#std">[응통4-04-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>같은 방정식을 이분법과 뉴턴 방법으로 풀면서, 반복할 때마다 오차가 어떻게 줄어드는지 비교합니다. 이분법은 오차가 반씩(선형 수렴), 뉴턴 방법은 맞는 자릿수가 두 배씩(이차 수렴) 늘어나는 것을 숫자로 확인하고, 뉴턴 방법이 시작값에 민감하다는 것도 봅니다. 성취기준 [응통4-04-01].</p>
+      <p class="q-term"><b>이분법</b>: 부호가 다른 두 끝점의 구간을 반으로 나누어, 부호가 바뀌는 쪽 절반을 남기는 일을 되풀이합니다.</p>
+      <p class="q-term"><b>뉴턴 방법</b>: 현재 점의 접선이 \(x\)축과 만나는 점으로 옮겨 갑니다. \(x_{k+1} = x_k - f(x_k)/f'(x_k)\).</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>회색 곡선이 \(f(x)\), 회색 점선이 참 근입니다. 뉴턴 방법에서는 처음 네 걸음의 접선(빨강)을 그립니다. 출력에는 마지막 여섯 번 반복의 근사값과 참 근과의 오차를 보여 줍니다. 파이썬으로 같은 일을 하는 함수는 응통4-04-01 본문에 있습니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방정식</span><select name="fn" aria-label="방정식">
+          <option value="cubic" selected>x³ + x − 1 = 0</option>
+          <option value="cos">cos x − x = 0</option>
+        </select></label>
+        <label><span>방법</span><select name="meth" aria-label="방법">
+          <option value="bis" selected>이분법 [0, 1]</option>
+          <option value="new">뉴턴 방법</option>
+        </select></label>
+        <label><span>반복 횟수 = <b data-show="k">5</b></span><input type="range" name="k" min="1" max="30" step="1" value="5" aria-label="반복 횟수"></label>
+        <label><span>뉴턴 시작값 = <b data-show="x0" data-fix="2">1.00</b></span><input type="range" name="x0" min="-0.5" max="2" step="0.05" value="1" aria-label="뉴턴 시작값"></label>
+      </div>
+      <canvas aria-label="함수와 근사값"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>이분법으로 반복을 5, 10, 20번으로 늘리며 마지막 오차를 적습니다. 반복 한 번에 오차가 대략 몇 배가 되나요?</li>
+        <li>뉴턴 방법(시작값 1)으로 바꾸어 반복 1~5번의 오차를 적습니다. 오차의 지수(e−n의 n)가 어떻게 늘어나나요?</li>
+        <li>오차 \(10^{-10}\)에 이르는 데 각 방법이 몇 번 반복하는지 비교합니다.</li>
+        <li>뉴턴 방법의 시작값을 0, −0.5, 2로 바꾸어 봅니다. 접선이 엉뚱한 곳으로 가는 경우가 있나요?</li>
+        <li>방정식을 \(\cos x - x\)로 바꾸어 같은 비교를 합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>이분법은 반복마다 오차 상한이 정확히 절반이 됩니다. 실제 오차는 들쭉날쭉하지만 대략 \(2^{-k}\) 크기로 줄어, 오차 \(10^{-10}\)에 약 33번이 필요합니다.</li>
+        <li>뉴턴 방법(\(x^3 + x - 1\), 시작값 1)은 \(x_1 = 0.75\), \(x_2 \approx 0.686047\), \(x_3 \approx 0.682340\), \(x_4 \approx 0.6823278\)으로, 오차가 약 \(7\times10^{-2}\), \(4\times10^{-3}\), \(1\times10^{-5}\), \(1\times10^{-10}\)처럼 지수가 거의 두 배씩 늘어납니다. 다섯 번이면 기계 정밀도에 닿습니다.</li>
+        <li>시작값 0에서도 이 방정식은 빠르게 수렴합니다(\(f'(x) = 3x^2 + 1 > 0\)이라 접선이 수평이 되지 않음). 다른 함수에서는 시작값에 따라 발산하거나 다른 근으로 갈 수 있습니다(응통4 단원 연습 참조).</li>
+        <li>\(\cos x - x\)의 근은 0.7390851이고, 두 방법의 속도 차이는 같은 양상입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>뉴턴 방법이 이렇게 빠른데 이분법을 쓰는 까닭은 무엇일까요? (도함수, 안정성을 생각하세요.)</li>
+        <li>최대가능도 추정에서 \(\ell'(\theta) = 0\)을 뉴턴 방법으로 풀 때 \(f\)와 \(f'\)은 각각 무엇인가요(응통15-03-01)?</li>
+        <li>반복을 멈추는 기준으로 "구간 폭 &lt; 허용 오차"와 "\(|f(x_k)|\) &lt; 허용 오차" 가운데 무엇이 더 안전한지 생각해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>파이썬에서 <code>scipy.optimize.brentq(lambda x: x**3 + x - 1, 0, 1)</code>은 이분법의 안전성과 빠른 수렴을 섞은 방법으로 같은 근을 줍니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>수렴 속도</h3>
+    <p class="q">어떤 반복법의 오차가 \(10^{-2}, 10^{-4}, 10^{-8}, 10^{-16}\)으로 줄었습니다. 이 방법의 수렴은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>선형 수렴<span class="why"><b>아닙니다.</b> 선형 수렴이면 오차가 일정한 비율(예: 절반)로 줄어 지수가 일정하게 늘어납니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>이차 수렴<span class="why"><b>맞습니다.</b> 오차가 이전 오차의 제곱 크기로 줄어 맞는 자릿수가 두 배씩 늘어납니다. 뉴턴 방법의 특징입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>수렴하지 않음<span class="why"><b>아닙니다.</b> 오차가 빠르게 0으로 가고 있습니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-s4-root" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-02.html">← 3.2 행렬 연산과 난수 생성을 하기</a></span>
-        <span><a href="04-02.html">4.2 최적화 라이브러리로 효용 극대화나 가능도 최대화 문제를 풀기 →</a></span>
+        <span><a href="03-R.html">← 3.R 단원 마무리</a></span>
+        <span><a href="04-02.html">4.2 최적화 라이브러리로 효용·가능도 최대화 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +218,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/stat/stat-labs2.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

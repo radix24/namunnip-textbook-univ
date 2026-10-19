@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs3.js"]
+}
+-->
+<article class="card q-card" id="lab-s18-simpson" data-kind="실습" data-std="응통18-04-02">
+  <header class="card-head"><span class="no"></span><h2>층마다 이기는데 합치면 지는 까닭은?</h2><span class="kind">실습 · 심슨의 역설</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>경증·중증 환자 모두에서 치료 A의 성공률이 B보다 높은데, 두 치료가 받은 환자의 중증 비율이 다르면 합친 성공률은 B가 높아질 수 있습니다. 중증 비율을 바꾸며 이 역전이 언제 생기는지 확인하고, 조건부 비교와 주변 비교의 차이를 이해합니다. 성취기준 [응통18-04-02].</p>
+      <p class="q-term"><b>교란 변수</b>: 처리(치료 종류)와 결과(성공) 모두에 관련된 제3의 변수. 여기서는 중증도입니다.</p>
+      <p class="q-term"><b>전체 성공률</b>: 층별 성공률을 그 치료의 환자 구성(경증·중증 비율)으로 가중평균한 값.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>층별 성공률은 A가 경증 93%, 중증 73%, B가 경증 87%, 중증 69%로 고정했습니다(응통5 01단원 연습의 신장 결석 자료와 비슷한 <b>가상 값</b>). 막대는 파랑이 A, 빨강이 B입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>A 환자 중 중증 비율 = <b data-show="sA">75</b>%</span><input type="range" name="sA" min="0" max="100" step="1" value="75" aria-label="A 환자 중 중증 비율"></label>
+        <label><span>B 환자 중 중증 비율 = <b data-show="sB">23</b>%</span><input type="range" name="sB" min="0" max="100" step="1" value="23" aria-label="B 환자 중 중증 비율"></label>
+      </div>
+      <canvas aria-label="층별 및 전체 성공률"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 설정(A 중증 75%, B 중증 23%)에서 층별 성공률과 전체 성공률을 비교합니다.</li>
+        <li>두 비율을 같게(예: 둘 다 50%) 맞춥니다. 전체 성공률의 순서가 어떻게 되나요?</li>
+        <li>B의 중증 비율을 23%로 둔 채 A의 중증 비율을 0%부터 올리며, 전체 순서가 뒤집히는 지점을 찾습니다.</li>
+        <li>A의 중증 비율을 B보다 낮게 하면 역전이 생길 수 있나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 설정에서 전체 성공률은 A 78.0%, B 82.9%로, 층마다 A가 높은데도 합치면 B가 높습니다. A가 어려운 중증 환자를 훨씬 많이 맡았기 때문입니다.</li>
+        <li>두 치료의 중증 비율이 같으면 가중치가 같아져 전체에서도 A가 높습니다. 무작위 배정 실험에서 역설이 생기지 않는 까닭입니다(배정이 중증도와 무관해 비율이 비슷해짐).</li>
+        <li>B 중증 23%에서는 A의 중증 비율이 약 51%를 넘으면 순서가 뒤집힙니다. 계산: \(0.93 - 0.20s_A = 0.8286\)에서 \(s_A \approx 0.507\).</li>
+        <li>A의 중증 비율이 B 이하이면 A가 층마다 높고 쉬운 환자도 더 많으므로 역전이 생기지 않습니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>이 상황에서 어느 치료를 권해야 하나요? 조건부 비교(층별)를 써야 하는 까닭을 써 보세요.</li>
+        <li>로그선형모형이나 로지스틱 회귀에서 중증도를 넣는 것이 이 그림의 "층별 비교"와 어떻게 대응하나요?</li>
+        <li>반대로 층으로 나누면 안 되는 변수(예: 치료 후에 측정한 변수)도 있습니다. 어떤 경우인지 생각해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R의 <code>UCBAdmissions</code> 자료(버클리 대학원 입시)는 유명한 심슨의 역설 사례입니다. <code>apply(UCBAdmissions, c(1, 2), sum)</code>와 학과별 표를 비교해 보세요.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>역설의 원인</h3>
+    <p class="q">심슨의 역설이 생기려면 무엇이 필요한가요?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>층 변수가 처리 배정과 결과 모두와 관련되어 있어야 한다.<span class="why"><b>맞습니다.</b> 처리마다 층 구성이 다르고, 층에 따라 결과가 달라야 가중평균이 뒤집힙니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>표본이 아주 작아야 한다.<span class="why"><b>표본 크기와 상관없습니다.</b> 이 카드의 값은 확률 그 자체라 표본오차가 없어도 역전됩니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>층별 성공률의 순서가 층마다 달라야 한다.<span class="why"><b>반대입니다.</b> 층마다 순서가 같은데 합치면 뒤집히는 것이 역설입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

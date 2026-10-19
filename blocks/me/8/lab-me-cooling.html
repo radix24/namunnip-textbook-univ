@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계8-03-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m8-lab.js"]
+}
+-->
+<article class="card q-card" id="lab-me-cooling" data-kind="실습" data-std="기계8-03-01">
+  <header class="card-head"><span class="no"></span><h2>식어 가는 금속 구로 대류 계수 재기</h2><span class="kind">실습 · 냉각 곡선 · 집중 열용량법 · 오차 요인</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>100 °C로 데운 금속 구를 25 °C 공기에 매달아 10초마다 온도를 기록합니다(가상 측정: 참 대류 계수와 복사 손실을 넣어 계산하고 열전대 잡음을 섞음). 3.1절처럼 로그 온도 차의 직선 맞춤으로 \(h\)를 추정하고, 복사와 주위 온도 오차가 추정을 어떻게 바꾸는지 봅니다. 초록 곡선은 맞춘 지수 곡선입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>재료</span><select name="m" aria-label="재료"><option value="al">알루미늄</option><option value="cu">구리</option><option value="st">강</option></select></label>
+        <label><span>참 대류 계수 h = <b data-show="h">20</b> W/(m²·K)</span><input type="range" name="h" min="5" max="100" step="1" value="20" aria-label="대류 열전달 계수"></label>
+        <label><span>지름 = <b data-show="D">20</b> mm</span><input type="range" name="D" min="5" max="60" step="1" value="20" aria-label="지름"></label>
+        <label><span>방사율 = <b data-show="eps" data-fix="2">0.05</b></span><input type="range" name="eps" min="0" max="0.95" step="0.05" value="0.05" aria-label="방사율"></label>
+        <label><span>주위 온도 입력 오차 = <b data-show="dTi">0</b> °C</span><input type="range" name="dTi" min="-3" max="3" step="0.5" value="0" aria-label="주위 온도 오차"></label>
+        <label><span>열전대 잡음 = <b data-show="ns" data-fix="1">0.2</b> °C</span><input type="range" name="ns" min="0" max="2" step="0.1" value="0.2" aria-label="열전대 잡음"></label>
+      </div>
+      <canvas aria-label="온도 기록 점과 맞춘 냉각 곡선"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>광택 알루미늄 (기본값)</b><span>방사율 0.05라 복사 몫이 0.4 W/(m²·K) 정도로 작아, 추정 \(h\)가 참값 20에 가깝습니다(예제 3.1.1).</span></li>
+        <li><b>검게 칠하면</b><span>방사율을 0.9로 하면 복사 몫이 약 8 W/(m²·K)로, 추정 \(h\)가 대류만의 값보다 30% 남짓 크게 나옵니다(약 26). 측정한 것은 대류 + 복사의 합이라는 3.1.3의 주의입니다.</span></li>
+        <li><b>주위 온도 오차</b><span>주위 온도를 2 °C 높게 넣으면 늦은 시각의 점들이 직선에서 벗어나 추정이 10% 가까이 틀립니다. 맞춤 구간을 온도 차 15% 이상으로 제한한 이유입니다.</span></li>
+        <li><b>큰 강 구</b><span>강(열전도도 낮음) 지름 60 mm, \(h\) = 100이면 Biot 수가 0.02로 커집니다. 0.1을 넘을 정도로 큰 물체나 플라스틱에서는 이 방법을 쓸 수 없습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>열전달 4.1절의 Biot 수 탐구와 짝을 이룹니다. 전자 부품의 방열판 성능 시험, 열처리의 담금질 냉각 속도 측정이 같은 원리입니다. 같은 구를 바람 세기를 바꾸며 재면 강제 대류의 \(h\)-속도 관계(열전달 5·6단원의 상관식)를 실험으로 확인할 수 있습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"냉각 곡선에서 구한 h는 대류만의 값이다."</b> 복사와 전도 손실이 함께 들어갑니다.</li>
+        <li><b>"자료가 많을수록 끝까지 다 쓰면 좋다."</b> 온도 차가 작아진 끝부분은 상대 오차가 커 오히려 결과를 흔듭니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

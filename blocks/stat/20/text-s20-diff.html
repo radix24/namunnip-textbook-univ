@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-diff" data-kind="본문" data-std="응통20-03-01">
+  <header class="card-head"><span class="no"></span><h2>차분으로 정상 시계열 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>차분과 계절 차분으로 추세와 계절성을 없앤다.</li>
+        <li>ARIMA(p, d, q)의 뜻을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>정상성 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>변화량은 정상일 수 있다</h3>
+    <p>주가 수준은 정상이 아니지만 하루 변화량(수익률)은 대개 정상에 가깝습니다. 비정상 계열을 다루는 가장 간단한 방법은 이웃한 값의 차이를 보는 것입니다.</p>
+
+    <h3><span class="no">3.1.1</span>차분</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.1</span>
+      <p class="q-term"><b>1차 차분</b>: \(\nabla x_t = x_t - x_{t-1}\).</p>
+      <p class="q-term"><b>계절 차분</b>(주기 \(s\)): \(\nabla_s x_t = x_t - x_{t-s}\).</p>
+    </div>
+    <p>선형 추세 \(a + bt\)는 1차 차분으로 상수 \(b\)가 되고, 이차 추세는 2차 차분으로 없앱니다. 월별 계절성은 \(\nabla_{12}\)로 없앱니다. 너무 많이 차분하면(과차분) 불필요한 음의 자기상관(MA 구조)이 생기고 분산이 커지므로, 보통 \(d \le 2\)입니다.</p>
+
+    <h3><span class="no">3.1.2</span>ARIMA</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.2</span>
+      <p>\(\nabla^dx_t\)가 ARMA(p, q)이면 \(x_t\)는 <b>ARIMA(p, d, q)</b>. "I"는 적분(차분의 역)을 뜻한다.</p>
+    </div>
+    <p>로그를 취하고 차분한 \(\nabla\log x_t \approx\) 증가율은 경제 자료에서 자주 쓰는 변환입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p><code>AirPassengers</code>를 정상으로 만드는 변환을 고르세요.</p>
+    </div>
+    <pre><code>y &lt;- log(AirPassengers)
+plot(diff(y))             # 추세는 사라졌지만 계절 무늬가 남음
+plot(diff(diff(y), 12))   # 계절 차분까지: 정상에 가까움
+acf(diff(diff(y), 12))</code></pre>
+    <p>로그 → 1차 차분 → 계절 차분으로 거의 정상이 됩니다. 이 계열에 맞춘 ARIMA(0,1,1)(0,1,1)<sub>12</sub>가 유명한 "항공 모형"입니다(6.1절).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>차분 \(\nabla\)로 추세, 계절 차분 \(\nabla_s\)로 계절성 제거.</li>
+        <li>ARIMA(p, d, q) = \(d\)번 차분한 ARMA.</li>
+        <li>과차분을 피함.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>백색잡음 \(e_t\)를 차분하면 \(\nabla e_t\)의 \(\rho(1)\)은?
+          <details><summary>답</summary><p>\(\nabla e_t = e_t - e_{t-1}\)은 \(\theta = -1\)인 MA(1), \(\rho(1) = -0.5\). 과차분의 지문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

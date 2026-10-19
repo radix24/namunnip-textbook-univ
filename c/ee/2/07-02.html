@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구하기 · 데이터구조 — QURI</title>
-  <meta name="description" content="데이터구조 7.2 Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구하기 — 성취기준: Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구할 수 있다.">
+  <title>최소 신장 트리: Kruskal과 Prim · 데이터구조 — QURI</title>
+  <meta name="description" content="데이터구조 7.2 최소 신장 트리: Kruskal과 Prim — 성취기준: Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;7.2 Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구하기&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;7.2 최소 신장 트리: Kruskal과 Prim&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,145 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전2-07-02" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="전전2-07-02" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">데이터구조</a><span class="mono">/</span><a href="07.html">7. 그래프</a></div>
-    <h1><span class="sec-no mono">7.2</span>Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전2-07-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-07-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전2-07-02" aria-label="할 수 있음"><span class="t">Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.2</span>최소 신장 트리: Kruskal과 Prim</h1>
+    <p class="sec-std"><span class="mono">[전전2-07-02]</span> Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>문제</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>Kruskal 알고리즘</span></a></li><li><a href="#s7-2-3"><span class="mono">7.2.3</span><span>Prim 알고리즘</span></a></li><li><a href="#s7-2-4"><span class="mono">7.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e2-mst"><span class="mono">본문</span><span>최소 신장 트리: Kruskal과 Prim</span></a></li><li><a href="#exp-e2-kruskal"><span class="mono">7.2.2</span><span>가벼운 간선부터, 고리는 버리고</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e2-mst" data-kind="본문" data-std="전전2-07-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>연결 가중 그래프의 신장 트리와 최소 신장 트리(MST)를 정의한다.</li>
+        <li>"가장 가벼운 건너가는 간선은 MST에 들어간다"(절단 성질)를 이용하는 두 탐욕 알고리즘을 구현한다.</li>
+        <li>Kruskal(간선 정렬 + 서로소 집합)과 Prim(힙)의 비용을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>그래프 표현과 연결 성분 (<a href="07-01.html">7.1절</a>), 힙 (<a href="03-03.html">3.3절</a>), 정렬 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s7-2-1"><span class="no">7.2.1</span>문제</h3>
+    <p>마을 여러 곳을 전선으로 모두 잇되 전선 길이의 합을 최소로 하려면 어떤 구간을 깔아야 할까요? 회로 기판의 접지망, 통신망 설계, 클러스터링이 같은 문제입니다.</p>
+    <p class="q-term"><b>신장 트리</b>: 연결 그래프의 모든 정점을 잇는, 고리 없는 부분 그래프. 간선이 정확히 V − 1개.</p>
+    <p class="q-term"><b>최소 신장 트리</b>: 간선 무게의 합이 가장 작은 신장 트리.</p>
+    <p class="q-term"><b>절단 성질</b>: 정점을 두 무리로 나눌 때, 두 무리를 잇는 간선 중 가장 가벼운 것은 어떤 MST에 반드시 들어간다(무게가 모두 다르면 유일한 MST). 다른 간선으로 이었다면 그 간선과 바꿔 더 가볍게 만들 수 있기 때문이다.</p>
+
+    <h3 id="s7-2-2"><span class="no">7.2.2</span>Kruskal 알고리즘</h3>
+    <p>간선을 가벼운 순서로 보며, 고리를 만들지 않으면 채택합니다. "고리를 만드는가"는 두 끝점이 이미 같은 무리에 있는지로 판정하며, 이것을 빠르게 하는 구조가 서로소 집합(union-find)입니다.</p>
+    <p class="q-term"><b>서로소 집합</b>: 각 원소가 대표(뿌리)를 가리키는 숲. find(x)는 대표를 찾고, union은 두 대표를 잇는다. 경로 압축과 크기 기준 합치기를 쓰면 거의 O(1).</p>
+    <p>비용은 간선 정렬 O(E log E)가 지배합니다.</p>
+
+    <h3 id="s7-2-3"><span class="no">7.2.3</span>Prim 알고리즘</h3>
+    <p>한 정점에서 시작해 트리를 키웁니다. 매번 "트리 안과 밖을 잇는 간선 중 가장 가벼운 것"(절단 성질 그대로)을 힙에서 꺼내 붙입니다. 힙을 쓰면 O(E log V). Dijkstra(7.3절)와 같은 모양입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>7.1절 예제 그래프에 무게 A–B 4, A–C 1, B–C 2, B–D 5, C–D 8, D–E 3, F–G 6을 준다. Kruskal과 Prim(A에서)으로 최소 신장 트리(숲)를 구하라.</p>
+    </div>
+    <p><i>풀이.</i> Kruskal: 무게 순 1(A–C) 채택, 2(B–C) 채택, 3(D–E) 채택, 4(A–B)는 A, B가 이미 같은 무리라 버림, 5(B–D) 채택, 6(F–G) 채택, 8(C–D) 버림. 결과 {A–C, B–C, D–E, B–D, F–G}, 합 17. 그래프가 두 성분이라 최소 신장 숲입니다. Prim(A에서): A–C(1) → C–B(2) → B–D(5) → D–E(3), 합 11. A가 속한 성분만 덮으므로 F–G(6)가 빠졌습니다. 실습 카드의 출력과 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "MST는 두 정점 사이의 최단 경로를 준다": 다른 문제입니다. 예제에서 MST 위 A→D는 A–C–B–D로 8이지만, 최단 경로도 8이 된 것은 우연이고 일반적으로 다릅니다. (2) Prim을 비연결 그래프에 쓰면 시작 성분만 덮습니다. (3) Kruskal에서 고리 판정을 DFS로 매번 하면 O(E·V)로 느려집니다. 서로소 집합을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>MST: 모든 정점을 잇는 V − 1개 간선, 무게 합 최소. 절단 성질이 탐욕 선택을 정당화한다.</li>
+        <li>Kruskal: 가벼운 간선부터, 고리 판정은 서로소 집합. O(E log E).</li>
+        <li>Prim: 트리에서 나가는 가장 가벼운 간선을 힙으로. O(E log V).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-2-4"><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정점 6개 연결 그래프의 신장 트리에는 간선이 몇 개인가?
+          <details><summary>답</summary><p>5개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>삼각형 A–B 1, B–C 2, A–C 3과 C–D 4로 된 그래프의 MST와 무게 합은?
+          <details><summary>답</summary><p>A–B, B–C, C–D, 합 7(A–C 3은 고리를 만들어 버림).</p></details>
+        </li>
+        <li>모든 간선 무게에 같은 상수를 더하면 MST가 바뀌는가? 제곱하면(무게가 양수)?
+          <details><summary>답</summary><p>둘 다 바뀌지 않습니다. 간선의 상대 순서만 쓰기 때문입니다(Kruskal 관점). 최단 경로는 상수를 더하면 바뀔 수 있다는 점과 대조적입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>점들을 k개 무리로 나누는 클러스터링을 MST로 하는 방법을 설명하라.
+          <details><summary>답</summary><p>완전 그래프(무게 = 거리)의 MST를 만들고 가장 무거운 간선 k − 1개를 끊으면, 무리 사이의 최소 거리를 최대로 하는 k개 무리가 됩니다(단일 연결 클러스터링).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e2-mst" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전2-07-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-07-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전2-07-02" aria-label="할 수 있음"><span class="t">Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="exp-e2-kruskal" data-kind="탐구" data-std="전전2-07-02">
+  <header class="card-head"><span class="no">7.2.2</span><h2><span class="q-badge">탐구</span>가벼운 간선부터, 고리는 버리고</h2><span class="kind">탐구 · Kruskal 알고리즘 따라가기</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-02.html#std">[전전2-07-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>Kruskal 알고리즘은 간선을 가벼운 순서로 보며 고리를 만들지 않는 것만 고릅니다. 어떤 간선이 왜 버려지는지 한 단계씩 볼까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>7.2절 예제의 그래프입니다. "다음"을 누를 때마다 무게 순서로 간선 하나를 봅니다. 두 끝이 서로 다른 무리이면 채택(파랑 굵은 선)하고 무리를 합치며, 같은 무리이면 고리가 생기므로 버립니다(빨강 점선). 출력 줄에 현재 무리를 적습니다.</p>
+    </section>
+    <div class="q-sim">
+      <canvas aria-label="가중 그래프와 채택된 간선"></canvas>
+      <div class="btns"><button type="button" class="next">다음</button><button type="button" class="reset">처음으로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>1~3단계</b><span>A–C(1), B–C(2), D–E(3)를 차례로 채택합니다. 무리는 ABC, DE, F, G.</span></li>
+        <li><b>4단계</b><span>A–B(4)는 A와 B가 이미 같은 무리(ABC)라 버립니다. 이 간선을 넣으면 A–B–C 고리가 생깁니다.</span></li>
+        <li><b>끝</b><span>B–D(5), F–G(6)를 채택하고 C–D(8)는 버립니다. 채택 합 17. 그래프가 두 성분이라 최소 신장 숲(무리 ABCDE, FG)이 됩니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>무리를 관리하는 서로소 집합(union-find)은 이미지에서 연결된 영역 찾기, 네트워크의 연결 여부 판단에도 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"Kruskal은 시작 정점이 필요하다"</b> 간선만 보므로 시작점이 없고, 그래프가 끊겨 있어도 성분마다 최소 신장 트리를 한꺼번에 얻습니다(Prim은 시작 정점의 성분만).</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="exp-e2-kruskal" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-01.html">← 7.1 DFS와 BFS를 구현하고 연결 성분을 찾기</a></span>
-        <span><a href="07-03.html">7.3 Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명하기 →</a></span>
+        <span><a href="07-01.html">← 7.1 그래프 표현과 DFS, BFS</a></span>
+        <span><a href="07-03.html">7.3 Dijkstra 최단 경로와 음의 간선 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +179,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/ee/e2-ds.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

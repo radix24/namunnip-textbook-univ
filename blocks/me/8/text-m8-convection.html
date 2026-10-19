@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계8-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m8-convection" data-kind="본문" data-std="기계8-03-01">
+  <header class="card-head"><span class="no"></span><h2>냉각 곡선으로 대류 열전달 계수 재기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>집중 열용량법(물체 속 온도가 고르다는 근사)의 냉각 곡선을 유도하고 성립 조건(Biot 수)을 확인한다.</li>
+        <li>온도 기록의 로그를 시간에 대해 그려 시간 상수와 대류 열전달 계수를 구한다.</li>
+        <li>복사 열손실과 센서 오차가 결과에 주는 영향을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>대류와 Biot 수 (<a href="../12/04-01.html">열전달 4.1절</a>), 1차 응답과 시간 상수 (<a href="../7/01-01.html">기계공학실험(1) 1.1절</a>), 직선 맞춤 (<a href="../7/06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>원리</h3>
+    <p>뜨거운 작은 금속 구(질량 \(m\), 비열 \(c\), 겉넓이 \(A\))를 온도 \(T_\infty\)인 공기에 두면, 표면에서 대류로 잃는 열 \(hA(T - T_\infty)\)만큼 내부 에너지가 줄어듭니다. 금속은 열을 잘 전해 속까지 온도가 고르다고 보면(Biot 수 \(\text{Bi} = hL_c/k &lt; 0.1\), \(L_c = V/A\))</p>
+    \[mc\frac{dT}{dt} = -hA(T - T_\infty)\]
+    <p>이고, "온도 차가 줄어드는 빠르기가 남은 온도 차에 비례"하므로(기계공학실험(1) 1.1절의 센서 응답과 같은 꼴) 해는</p>
+    <div class="tb-env thm">
+      <span class="lb">집중 열용량 냉각</span>
+      \[T - T_\infty = (T_0 - T_\infty)e^{-t/\tau}\]
+      \[\tau = \frac{mc}{hA} = \frac{\rho cV}{hA}\]
+    </div>
+    <p>양변에 자연로그를 씌우면 \(\ln\frac{T - T_\infty}{T_0 - T_\infty} = -t/\tau\)로 시간에 대한 직선입니다. 기록한 온도로 이 값을 계산해 시간에 대해 그리고 최소제곱 기울기 \(-1/\tau\)를 구하면 \(h = \rho cV/(A\tau)\)입니다.</p>
+
+    <h3><span class="no">3.1.2</span>예제</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1 <span class="nm">(알루미늄 구, 가상 측정값)</span></span>
+      <p>지름 20 mm 알루미늄 구(\(\rho = 2700\) kg/m³, \(c = 900\) J/(kg·K), \(k = 237\) W/(m·K))를 100 °C로 데운 뒤 25 °C 공기에 매달았더니 300초 뒤 60 °C였다. 대류 열전달 계수와 Biot 수는?</p>
+    </div>
+    <p><i>풀이.</i> \(\ln(35/75) = -0.762 = -300/\tau\), \(\tau = 394\) s. 구는 \(V/A = D/6 = 3.33\) mm이므로 \(h = 2700\times900\times0.00333/394 = 20.6\) W/(m²·K). \(\text{Bi} = 20.6\times0.00333/237 = 0.0003\)으로 0.1보다 훨씬 작아 근사가 맞습니다. 정지 공기의 자연 대류로 적당한 값입니다. 실제 실험에서는 두 점이 아니라 수십 점의 직선 맞춤으로 구합니다(냉각 곡선 실습).</p>
+
+    <h3><span class="no">3.1.3</span>오차 요인</h3>
+    <ul>
+      <li><b>복사</b>: 표면이 복사로도 열을 잃습니다. 온도 차가 작으면 복사도 \(h_r(T - T_\infty)\) 꼴로 쓸 수 있어(\(h_r = 4\varepsilon\sigma T_m^3\), \(T_m\)은 평균 절대 온도: 방사율 0.8, 60 °C 근처에서 \(h_r \approx 7\) W/(m²·K)) 측정한 \(h\)는 대류와 복사의 합입니다. 광택 있는 표면(방사율 0.05)을 쓰면 복사 몫이 작아집니다.</li>
+      <li><b>열전대 위치와 전도 손실</b>: 열전대 선과 매다는 줄로도 열이 빠져나갑니다. 가는 선을 씁니다.</li>
+      <li><b>주위 온도</b>: \(T_\infty\)가 1 °C 틀리면 끝부분의 \(T - T_\infty\)가 크게 틀려 로그 그래프가 휩니다. 온도 차가 처음의 10~20%로 줄어든 뒤 자료는 빼는 것이 안전합니다.</li>
+    </ul>
+
+    <div class="tb-note"><b>주의</b>(1) Biot 수를 먼저 확인합니다. 크면(나무, 플라스틱, 큰 물체) 속과 겉 온도가 달라 이 방법을 쓸 수 없습니다(열전달 4단원). (2) \(h\)는 공기 흐름(자연 대류인지 선풍기 바람인지)에 따라 크게 달라지므로 실험 조건을 자세히 적습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\text{Bi} &lt; 0.1\)이면 \(T - T_\infty = (T_0 - T_\infty)e^{-t/\tau}\), \(\tau = \rho cV/(hA)\).</li>
+        <li>로그 온도 차-시간 직선의 기울기로 \(\tau\), \(h\)를 구한다.</li>
+        <li>복사, 전도 손실, 주위 온도 오차를 고려하고 끝부분 자료는 조심한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제의 구를 선풍기 바람 앞에 두었더니 시간 상수가 130 s였다. \(h\)는?
+          <details><summary>답</summary><p>\(h = 2700\times900\times0.00333/130 = 62\) W/(m²·K), 정지 공기의 약 3배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 조건에서 온도가 30 °C가 되는 시각은?
+          <details><summary>답</summary><p>\(t = \tau\ln(75/5) = 394\times2.71 = 1066\) s(약 18분).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>주위 온도를 25 °C가 아니라 실제 24 °C로 잘못 넣었다면(1 °C 틀림), 300초의 값으로 구한 \(h\)는 얼마나 틀리는가?
+          <details><summary>답</summary><p>참 \(T_\infty = 24\): \(\ln(36/76) = -0.747\), \(\tau = 402\) s, \(h = 20.2\). 25로 계산한 20.6은 약 2% 크다. 온도 차가 작아지는 늦은 시각일수록 이 오차가 커진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

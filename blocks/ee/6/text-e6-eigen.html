@@ -1,0 +1,101 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e6-eigen" data-kind="본문" data-std="전전6-03-02">
+  <header class="card-head"><span class="no"></span><h2>복소 지수는 LTI 시스템의 고유함수다</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>LTI 시스템에 \(e^{st}\)(이산은 \(z^n\))을 넣으면 \(H(s)e^{st}\)가 나옴을 증명한다.</li>
+        <li>주파수 응답 \(H(j\omega)\)를 정의하고, 주기 입력의 출력 Fourier 계수가 \(b_k = H(jk\omega_0)a_k\)임을 보인다.</li>
+        <li>실수 정현파 입력에 대한 응답을 크기와 위상으로 쓴다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>컨볼루션 (<a href="02-01.html">2.1절</a>), Fourier 급수 (<a href="03-01.html">3.1절</a>), 페이저 (<a href="../3/07-01.html">전전3 7.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>고유함수라는 말</h3>
+    <p>행렬 A에 대해 \(A\mathbf{v} = \lambda\mathbf{v}\)이면 \(\mathbf{v}\)를 고유벡터라 했습니다. 방향은 그대로이고 크기만 \(\lambda\)배 됩니다. 시스템에서도 같은 말을 씁니다.</p>
+    <p class="q-term"><b>고유함수</b>: 시스템을 통과해도 모양이 그대로이고 상수배만 되는 입력 \(\phi\). \(T\{\phi\} = \lambda\phi\).</p>
+    <p class="q-term"><b>고윳값</b>: 그 상수 \(\lambda\). 복소수일 수 있다.</p>
+    <p>정현파를 RC 회로에 넣으면 같은 주파수의 정현파가 나오고 크기와 위상만 바뀐다는 것을 회로이론에서 보았습니다(페이저). 이 절은 그 사실이 회로만이 아니라 모든 LTI 시스템에서 성립함을 증명합니다.</p>
+
+    <h3><span class="no">3.2.2</span>증명</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.2.1</span>
+      <p>임펄스 응답이 h(t)인 LTI 시스템에 \(x(t) = e^{st}\)를 넣으면, 적분이 수렴하는 한 \(y(t) = H(s)e^{st}\)이다. 여기서 \(H(s) = \int_{-\infty}^{\infty}h(\tau)e^{-s\tau}d\tau\). 이산시간에서는 \(x[n] = z^n\)이면 \(y[n] = H(z)z^n\), \(H(z) = \sum_kh[k]z^{-k}\).</p>
+    </div>
+    <div class="tb-proof">
+      <p>구하려는 것은 출력이 입력의 상수배라는 사실입니다. 컨볼루션의 교환 법칙으로 h를 움직이지 않는 쪽에 둡니다.</p>
+      \[ y(t) = \int_{-\infty}^{\infty}h(\tau)\,x(t - \tau)\,d\tau = \int_{-\infty}^{\infty}h(\tau)\,e^{s(t - \tau)}\,d\tau. \]
+      <p>지수 법칙 \(e^{s(t - \tau)} = e^{st}e^{-s\tau}\)에서 \(e^{st}\)는 적분 변수 \(\tau\)와 무관하므로 적분 밖으로 나옵니다.</p>
+      \[ y(t) = e^{st}\int_{-\infty}^{\infty}h(\tau)\,e^{-s\tau}\,d\tau = H(s)\,e^{st}. \]
+      <p>\(H(s)\)는 t에 의존하지 않는 상수이므로 \(e^{st}\)는 고유함수이고 \(H(s)\)는 고윳값입니다. 이산시간도 합으로 똑같이 하면 됩니다. ∎</p>
+    </div>
+    <p>증명에서 쓴 것은 컨볼루션 표현(곧 LTI라는 사실)과 지수 법칙 둘뿐입니다. 비선형이나 시변 시스템에서는 성립하지 않습니다. 예를 들어 \(y = x^2\)에 \(e^{j\omega t}\)를 넣으면 \(e^{j2\omega t}\)가 나와 주파수가 바뀝니다.</p>
+    <p class="q-term"><b>주파수 응답</b> \(H(j\omega)\): \(s = j\omega\)로 둔 고윳값. \(H(j\omega) = \int h(t)e^{-j\omega t}dt\), 곧 h의 Fourier 변환(4단원).</p>
+    <p class="q-term"><b>전달함수</b> \(H(s)\): 일반 복소수 s에 대한 고윳값. h의 Laplace 변환(7단원).</p>
+
+    <h3><span class="no">3.2.3</span>주기 입력의 출력</h3>
+    <p>입력이 \(x(t) = \sum a_ke^{jk\omega_0t}\)이면 선형성으로 각 항이 따로 고윳값을 곱받습니다.</p>
+    \[ y(t) = \sum_k a_kH(jk\omega_0)\,e^{jk\omega_0t}, \qquad b_k = H(jk\omega_0)\,a_k. \]
+    <p>출력도 같은 주기 T의 주기 신호이고, Fourier 계수는 입력 계수에 그 주파수에서의 주파수 응답을 곱한 것입니다. 시스템은 새로운 주파수를 만들지 못하고, 있는 주파수의 크기와 위상만 바꿉니다.</p>
+    <p><b>실수 정현파.</b> 실수 h이면 \(H(-j\omega) = H(j\omega)^*\)이므로, \(\cos\omega t = \frac12(e^{j\omega t} + e^{-j\omega t})\)를 넣으면</p>
+    \[ y(t) = |H(j\omega)|\cos(\omega t + \angle H(j\omega)). \]
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>\(h(t) = e^{-t}u(t)\)인 시스템(시정수 1 s인 RC 저역 통과)에 \(x(t) = 1 + \cos t + \cos 10t\)를 넣었을 때 출력을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 먼저 주파수 응답: \(H(j\omega) = \int_0^\infty e^{-t}e^{-j\omega t}dt = \frac{1}{1 + j\omega}\). 각 주파수에서 값을 구합니다.</p>
+    <ul>
+      <li>\(\omega = 0\): \(H = 1\). 직류는 그대로 1.</li>
+      <li>\(\omega = 1\): \(H = \frac{1}{1 + j}\), \(|H| = 1/\sqrt2 \approx 0.707\), \(\angle H = -45°\).</li>
+      <li>\(\omega = 10\): \(|H| = 1/\sqrt{101} \approx 0.0995\), \(\angle H = -\arctan 10 \approx -84.3°\).</li>
+    </ul>
+    <p>따라서 \(y(t) = 1 + 0.707\cos(t - 45°) + 0.0995\cos(10t - 84.3°)\). 높은 주파수 성분이 약 1/10로 줄었습니다. 컨볼루션 적분을 직접 하지 않고 곱셈 세 번으로 끝났다는 것이 이 절의 요점입니다. 전전3의 페이저 계산 \(\frac{1}{1 + j\omega RC}\)와 같은 결과입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "사인파는 LTI 시스템의 고유함수"라고 하면 엄밀히는 틀립니다. \(\sin\omega t\)를 넣으면 \(|H|\sin(\omega t + \angle H)\)가 나와 위상이 바뀌므로 상수배가 아닙니다. 고유함수는 복소 지수입니다. (2) 고유함수 성질은 \(-\infty\)부터 계속된 입력에 대한 것입니다. \(t = 0\)에 켠 \(\cos(\omega t)u(t)\)는 과도 응답이 붙고, 그것이 사라진 정상 상태에서만 위 식이 맞습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(e^{st} \to H(s)e^{st}\), \(H(s) = \int h(\tau)e^{-s\tau}d\tau\). 증명은 컨볼루션 + 지수 법칙.</li>
+        <li>주파수 응답 \(H(j\omega)\). 주기 입력의 출력 계수 \(b_k = H(jk\omega_0)a_k\).</li>
+        <li>실수 정현파: 크기 \(|H|\)배, 위상 \(\angle H\)만큼 이동. 새 주파수는 생기지 않는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>지연기 \(y(t) = x(t - t_0)\)의 \(H(j\omega)\)를 구하여라.
+          <details><summary>답</summary><p>\(e^{j\omega(t - t_0)} = e^{-j\omega t_0}e^{j\omega t}\)이므로 \(H = e^{-j\omega t_0}\). 크기 1, 위상 \(-\omega t_0\)(주파수에 비례).</p></details>
+        </li>
+        <li>\(y[n] = \frac12(x[n] + x[n-1])\)의 \(H(e^{j\omega})\)와 \(\omega = 0, \pi\)에서의 크기는?
+          <details><summary>답</summary><p>\(H = \frac12(1 + e^{-j\omega})\). \(|H(0)| = 1\), \(|H(\pi)| = 0\). 저역 통과.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>예제 3.2.1의 시스템에 3.1절의 사각파(\(T = 2\pi\), 듀티 50%)를 넣으면 출력의 기본파 진폭은?
+          <details><summary>답</summary><p>입력 기본파 진폭 \(2|a_1| = 2/\pi \approx 0.637\), \(\omega_0 = 1\)에서 \(|H| = 0.707\)이므로 약 0.450.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(y = x^2\)에 \(\cos\omega t\)를 넣어 나오는 주파수를 구하고, 이것이 3.2.3의 "새 주파수가 생기지 않는다"와 모순되지 않는 이유를 설명하여라.
+          <details><summary>답</summary><p>\(\cos^2 = \frac12 + \frac12\cos2\omega t\): 직류와 \(2\omega\)가 생김. 이 시스템은 비선형이라 정리 3.2.1의 가정을 만족하지 않으므로 모순이 아님. 비선형 증폭기의 고조파 왜곡이 이 현상입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

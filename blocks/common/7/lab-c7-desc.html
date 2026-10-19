@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통7-02-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c7-play.js"]
+}
+-->
+<article class="card q-card" id="lab-c7-desc" data-kind="실습" data-std="공통7-02-03 공통7-02-01">
+  <header class="card-head"><span class="no"></span><h2>내 자료를 넣으면 평균, 사분위수, 상자 그림이 바로 나올까?</h2><span class="kind">실습 · 컴퓨터로 기술통계</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>자료를 상자에 넣으면 평균, 표준편차, 사분위수와 히스토그램, 상자 그림이 바로 그려집니다. 값을 하나씩 바꾸며 이상값이 평균과 중앙값에 주는 영향을 보고, 같은 계산을 엑셀과 R로 해서 결과를 맞춰 봅니다. 성취기준 [공통7-02-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>처음 들어 있는 자료는 <b>가상</b>의 시험 점수 20개입니다. 쉼표, 띄어쓰기, 줄바꿈 아무것으로나 수를 나눠 넣으면 됩니다.</li>
+        <li>표준편차는 표본 표준편차(\(n - 1\)로 나눔), 사분위수는 R의 기본 방법(엑셀 <code>QUARTILE.INC</code>와 같음)입니다.</li>
+        <li>그래프 위쪽은 히스토그램, 아래쪽은 상자 그림입니다. 주황 세로선은 중앙값(상자 안)과 평균(점선), 빨간 점은 상자에서 1.5 × IQR보다 멀리 떨어진 이상값입니다.</li>
+      </ul>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>자료</span><textarea name="data" rows="3" aria-label="자료 입력">62 71 75 58 80 77 69 73 88 65 70 74 79 68 95 72 66 81 76 70</textarea></label>
+        <label><span>막대 수 = <b data-show="bins">6</b></span><input type="range" name="bins" min="3" max="15" step="1" value="6" aria-label="히스토그램 막대 수"></label>
+      </div>
+      <canvas aria-label="히스토그램과 상자 그림"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 자료의 평균, 표준편차, 다섯 수치(최솟값, Q1, 중앙값, Q3, 최댓값)를 기록합니다.</li>
+        <li>95를 195로 바꾸고(입력 실수 흉내) 평균과 중앙값이 각각 얼마나 바뀌는지 봅니다.</li>
+        <li>막대 수를 3, 6, 15로 바꿔 히스토그램 모양이 어떻게 달라지는지 봅니다.</li>
+        <li>같은 자료로 아래 R 코드와 엑셀 함수를 실행해 값이 같은지 확인합니다.</li>
+      </ol>
+<pre><code>x &lt;- c(62, 71, 75, 58, 80, 77, 69, 73, 88, 65, 70, 74, 79, 68, 95, 72, 66, 81, 76, 70)
+mean(x); sd(x); quantile(x)
+hist(x); boxplot(x, horizontal = TRUE)
+# 엑셀: =AVERAGE(A1:A20)  =STDEV.S(A1:A20)  =QUARTILE.INC(A1:A20, 1)</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 자료: \(n = 20\), 평균 73.450, 표준편차 8.605, 최솟값 58, Q1 68.75, 중앙값 72.50, Q3 77.50, 최댓값 95, IQR 8.75. 95가 \(77.5 + 1.5 \times 8.75 = 90.625\)보다 커서 이상값으로 표시됩니다.</li>
+        <li>95를 195로 바꾸면 평균은 5점(100/20) 올라 78.450이 되고 표준편차는 8.605에서 28.300으로 세 배 넘게 커지지만, 중앙값 72.50과 IQR 8.75는 그대로입니다. 이상값이 있을 때 중앙값과 IQR이 평균과 표준편차보다 안정적입니다.</li>
+        <li>막대가 너무 적으면 모양이 뭉개지고, 너무 많으면 들쭉날쭉해 모양을 읽기 어렵습니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>평균과 중앙값 가운데 어느 쪽이 큰지 보고, 분포가 어느 쪽으로 꼬리가 긴지 말해 보세요.</li>
+        <li>사분위수를 구하는 방법은 교과서와 프로그램마다 조금씩 다릅니다. 자료가 짝수 개일 때 "아래 절반의 중앙값"으로 Q1을 구하면 얼마인지 손으로 계산해 위 값과 비교해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>자신의 하루 걸음 수나 수면 시간을 2주 동안 기록해 넣어 보세요. 표준화 점수(<a href="02-02.html">2.2절</a>)로 가장 특이했던 날을 찾을 수 있습니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a13-psf" data-kind="본문" data-std="천우13-03-02">
+  <header class="card-head"><span class="no"></span><h2>점 확산 함수와 역회선의 원리</h2><span class="kind">본문 · 3.2절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>관측 영상 = 천체 ⊗ PSF + 잡음 모형을 쓴다.</li>
+        <li>단순 역필터가 잡음을 폭발시키는 까닭을 주파수 영역에서 설명한다.</li>
+        <li>Wiener 필터와 Richardson-Lucy 방법의 생각을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>2차원 푸리에 변환 (<a href="03-01.html">3.1절</a>), 시상과 PSF (<a href="../7/02-03.html">천우7 2.3절</a>).</li>
+      </ul>
+    </div>
+
+<h3>흐려진 상을 되돌릴 수 있을까</h3>
+    <p>점 광원(별)도 망원경과 대기를 거치면 퍼진 상이 되고, 그 모양을 <b>점 확산 함수</b>(PSF)라 합니다. 모든 천체의 상은 참 모습을 PSF로 회선한 것입니다. 회선의 반대 연산인 <b>역회선</b>으로 흐림을 되돌릴 수 있을까요?</p>
+
+    <h3><span class="no">3.2.1</span>모형</h3>
+    \[ g = f\ast h + n \quad\Longleftrightarrow\quad G = F\cdot H + N \]
+    <p>\(f\)는 참 영상, \(h\)는 PSF, \(n\)은 잡음입니다. \(H\)(PSF의 푸리에 변환, 광학 전달 함수 OTF)는 높은 주파수에서 작아집니다. 흐려진다는 것은 높은 주파수의 정보가 줄어든다는 뜻입니다.</p>
+
+    <h3><span class="no">3.2.2</span>역필터의 문제</h3>
+    <p>단순히 \(\hat F = G/H\)로 나누면 \(\hat F = F + N/H\)입니다. \(H\)가 작은 높은 주파수에서 잡음이 \(1/H\)배로 커져 결과가 잡음으로 뒤덮입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>PSF가 표준편차 2 px의 가우스이면 OTF는 \(e^{-2\pi^2\sigma^2k^2}\)입니다. 0.25주기/픽셀에서 역필터는 잡음을 몇 배 키웁니까?</p>
+    </div>
+    <p><i>풀이.</i> \(e^{-2\times9.87\times4\times0.0625} = e^{-4.93} = 0.0072\), 잡음은 139배로 커집니다. 나이퀴스트(0.5)에서는 \(e^{-19.7}\), 곧 \(3.5\times10^8\)배입니다.</p>
+
+    <h3><span class="no">3.2.3</span>안정된 역회선</h3>
+    <ul>
+      <li class="q-term"><b>Wiener 필터</b>: \(\hat F = \frac{H^*}{|H|^2 + N_p/S_p}G\). 신호가 잡음보다 큰 주파수에서는 역필터처럼, 잡음이 큰 주파수에서는 0에 가깝게 해 평균 제곱 오차를 가장 작게 한다(\(S_p, N_p\)는 신호·잡음 파워).</li>
+      <li class="q-term"><b>Richardson-Lucy</b>: 푸아송 잡음의 가능도를 최대로 하는 반복법. \(f_{k+1} = f_k\cdot\left[h^\dagger\ast\frac{g}{h\ast f_k}\right]\). 값이 늘 양수로 유지되고 플럭스가 보존된다. 반복을 너무 많이 하면 잡음이 커지므로 적당한 횟수에서 멈춘다.</li>
+      <li class="q-term"><b>예</b>: 1990년 허블 우주 망원경의 주거울 구면 수차를 1993년 교정 광학을 달기 전까지 Richardson-Lucy 역회선으로 부분 보정했다.</li>
+    </ul>
+    <div class="tb-note"><b>주의</b> 역회선은 PSF를 정확히 알아야 합니다. 시야 위치나 시간에 따라 PSF가 바뀌는데 하나만 쓰면 가짜 고리와 구조가 생깁니다. 측광·형태 측정에는 역회선 영상 대신 PSF 모형을 맞추는 방법(PSF 측광, 순방향 모형)이 더 안전합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(g = f\ast h + n\), 주파수 영역 \(G = FH + N\).</li>
+        <li>역필터 \(G/H\)는 \(H\)가 작은 높은 주파수에서 잡음을 폭발시킨다(σ = 2 px, 0.25주기/픽셀에서 139배).</li>
+        <li>Wiener: 신호 대 잡음에 따라 가중. Richardson-Lucy: 푸아송 가능도 반복, 양수·플럭스 보존.</li>
+        <li>PSF가 정확해야 한다. 측정은 순방향 모형이 안전하다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>PSF가 넓을수록 OTF는 높은 주파수에서 어떻게 됩니까?
+          <details><summary>답</summary><p>더 빨리 작아진다.</p></details>
+        </li>
+        <li>Richardson-Lucy를 너무 많이 반복하면?
+          <details><summary>답</summary><p>잡음이 커지고 별 둘레에 가짜 구조가 생긴다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>가우스 PSF σ = 1 px에서 0.25주기/픽셀의 역필터 잡음 증폭은?
+          <details><summary>답</summary><p>\(1/e^{-1.23} = 3.4\)배.</p></details>
+        </li>
+        <li>Wiener 필터에서 \(N_p/S_p = 0.01\), \(|H| = 0.05\)이면 그 주파수의 이득은 역필터(1/H = 20)에 비해?
+          <details><summary>답</summary><p>\(H/(H^2 + 0.01) = 0.05/0.0125 = 4\). 역필터의 1/5로 줄여 잡음을 억제합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

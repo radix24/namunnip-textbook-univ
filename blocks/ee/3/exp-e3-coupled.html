@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-09-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e3-circuits.js"]
+}
+-->
+<article class="card q-card" id="exp-e3-coupled" data-kind="탐구" data-std="전전3-09-01">
+  <header class="card-head"><span class="no"></span><h2>무선 충전기는 왜 공진을 쓸까?</h2><span class="kind">탐구 · 결합 계수, 반사 임피던스, 효율</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>휴대폰 무선 충전기는 충전 패드의 코일(1차)과 휴대폰 안의 코일(2차)이 자기장으로 에너지를 나눕니다. 두 코일이 멀어져 결합 계수 \(k\)가 작아지면 무슨 일이 생기고, 코일에 축전기를 달아 공진시키면 왜 좋아질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가상 회로: 100 kHz, 10 V(진폭) 전원 — 코일 1(24 μH, 저항 0.5 Ω), 코일 2(24 μH, 저항 0.5 Ω) — 부하 \(R_L\). 2차 쪽이 1차에서는 반사 임피던스 \((\omega M)^2/\mathbf Z_{22}\)로 보입니다(9.1절). 효율은 부하 전력 / 전원 전력입니다. "공진" 체크는 두 코일에 직렬 축전기를 달아 100 kHz에서 리액턴스를 지우는 것입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>결합 계수 k = <b data-show="k" data-fix="2">0.30</b></span><input type="range" name="k" min="0.01" max="0.99" step="0.01" value="0.3" aria-label="결합 계수"></label>
+        <label><span>부하 R_L = <b data-show="rl">10</b> Ω</span><input type="range" name="rl" min="1" max="50" step="1" value="10" aria-label="부하 저항"></label>
+        <label><span>공진 축전기 달기</span><input type="checkbox" name="res" aria-label="공진 축전기 달기"></label>
+      </div>
+      <canvas aria-label="결합 계수에 따른 효율과 부하 전력"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>공진 없이</b><span>k = 0.3, 부하 10 Ω에서 출력 줄의 효율과 부하 전력을 적습니다. 2차의 리액턴스(\(\omega L_2 \approx 15\ \Omega\))가 부하 전류를 막아 반사 임피던스의 실수부가 작습니다.</span></li>
+        <li><b>공진</b><span>"공진 축전기 달기"를 켜면 같은 k에서 부하 전력이 크게 늘고 효율이 올라갑니다. 2차의 리액턴스가 사라져 \(\mathbf Z_{22}\)가 \(R_L\)만 남기 때문입니다.</span></li>
+        <li><b>k를 줄이면</b><span>k를 0.05까지 내리면(휴대폰을 패드에서 떼면) 반사 임피던스가 \(k^2\)에 비례해 작아지고, 1차 코일 저항에서 잃는 비율이 커져 효율이 떨어집니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>실제 무선 충전 규격(Qi)은 100 ~ 200 kHz의 공진형 결합을 쓰고, 반사 임피던스가 바뀌는 것으로 기기를 감지하고 출력을 조절합니다. 결합이 아주 강하면(k → 1) 9.2절의 이상 변압기에 가까워집니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"코일이 멀면 전압만 줄어든다."</b> 반사 임피던스가 작아져 1차 전류의 대부분이 코일 저항에서 열이 되므로 효율도 함께 떨어집니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

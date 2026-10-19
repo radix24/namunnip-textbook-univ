@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전7-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e7-laplace" data-kind="본문" data-std="전전7-03-03">
+  <header class="card-head"><span class="no"></span><h2>Poisson·Laplace 방정식으로 전위 구하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Gauss 법칙과 \(\mathbf E = -\nabla V\)에서 Poisson 방정식 \(\nabla^2V = -\rho_v/\epsilon\)와 Laplace 방정식 \(\nabla^2V = 0\)을 유도한다.</li>
+        <li>경계에서 전위가 주어진 1차원 문제(평행판, 동축, 동심구)를 직접 적분해 풀고, 그 결과로 정전용량을 다시 얻는다.</li>
+        <li>해의 유일성 정리의 뜻과, 2차원 문제를 수치 이완법으로 푸는 생각을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Gauss 법칙 미분형 (<a href="02-02.html">2.2절</a>), 전위 (<a href="02-03.html">2.3절</a>), 정전용량 (<a href="03-02.html">3.2절</a>), 상미분방정식 (<a href="../../common/8/01-01.html">공통8 1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>왜 미분방정식으로 바꾸는가</h3>
+    <p>지금까지는 전하 분포를 알고 전계를 구했습니다. 그러나 실제 문제에서는 도체의 전위(전원에 연결된 전극의 전압)가 주어지고, 도체 표면의 전하 분포는 모릅니다. 이때는 전위가 만족하는 미분방정식을 경계 조건과 함께 풉니다.</p>
+    <p>구하려는 것: V가 만족하는 방정식. \(\nabla\cdot\mathbf D = \rho_v\)에 \(\mathbf D = \epsilon\mathbf E = -\epsilon\nabla V\)를 넣으면(균일한 \(\epsilon\))</p>
+    \[ \nabla^2V = -\frac{\rho_v}{\epsilon}\ (\text{Poisson}), \qquad \rho_v = 0:\ \nabla^2V = 0\ (\text{Laplace}). \]
+    <p class="q-term"><b>라플라시안</b>: 직교 \(\frac{\partial^2V}{\partial x^2} + \frac{\partial^2V}{\partial y^2} + \frac{\partial^2V}{\partial z^2}\). 원통(\(\rho\)만) \(\frac1\rho\frac{d}{d\rho}\left(\rho\frac{dV}{d\rho}\right)\), 구(r만) \(\frac1{r^2}\frac{d}{dr}\left(r^2\frac{dV}{dr}\right)\).</p>
+    <p class="q-term"><b>유일성 정리</b>: 영역 경계의 전위(또는 법선 전계)가 정해지면 Laplace·Poisson 방정식의 해는 하나뿐이다. 그래서 어떤 방법으로든(추측, 대칭, 영상법) 방정식과 경계 조건을 만족하는 해를 찾으면 그것이 답이다.</p>
+
+    <h3><span class="no">3.3.2</span>1차원 Laplace 문제</h3>
+    <p>V가 좌표 하나에만 의존하면 상미분방정식을 두 번 적분하고, 두 경계 조건으로 적분 상수 둘을 정합니다.</p>
+    <ul>
+      <li><b>평행판</b>(\(V(0) = 0\), \(V(d) = V_0\)): \(V'' = 0\) → \(V = V_0x/d\), \(E = -V_0/d\)(+x 쪽 판에서 −x 쪽으로).</li>
+      <li><b>동축</b>(\(V(a) = V_0\), \(V(b) = 0\)): \(\frac{d}{d\rho}(\rho V') = 0\) → \(V = A\ln\rho + B\) → \(V = V_0\frac{\ln(b/\rho)}{\ln(b/a)}\).</li>
+      <li><b>동심구</b>(\(V(a) = V_0\), \(V(b) = 0\)): \(r^2V' = \)상수 → \(V = V_0\frac{1/r - 1/b}{1/a - 1/b}\).</li>
+    </ul>
+    <p>이 전위에서 도체 표면의 \(D_N = \rho_S\)를 구하고 넓이를 곱해 Q를 얻으면, \(C = Q/V_0\)가 3.2절과 같은 결과로 나옵니다. 예를 들어 동축에서 \(E_\rho(a) = \frac{V_0}{a\ln(b/a)}\), \(Q = \epsilon E_\rho(a)\cdot2\pi aL\), \(C = \frac{2\pi\epsilon L}{\ln(b/a)}\).</p>
+
+    <h3><span class="no">3.3.3</span>Poisson 문제: 공간 전하가 있을 때</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>간격 d = 1 cm인 평행판 사이(\(\epsilon_0\))에 균일한 공간 전하 \(\rho_v = 1\) μC/m³가 있다. \(V(0) = 0\), \(V(d) = 100\) V일 때 \(V(x)\), 가운데 전위, 두 판에서의 전계를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(V'' = -\rho_v/\epsilon_0\)를 두 번 적분: \(V = -\frac{\rho_v}{2\epsilon_0}x^2 + Ax + B\). \(V(0) = 0\)에서 B = 0, \(V(d) = 100\)에서 \(A = \frac{100 + \rho_vd^2/(2\epsilon_0)}{d}\). \(\rho_vd^2/(2\epsilon_0) = 5.65\) V이므로 \(A = 10{,}565\) V/m. 가운데 \(V(d/2) = 50 + \rho_vd^2/(8\epsilon_0) = 51.41\) V(전하가 없을 때의 50 V보다 높음). 전계 \(E = -V'\): x = 0에서 \(-10{,}565\) V/m, x = d에서 \(-9{,}435\) V/m. 두 값의 차이 \(\rho_vd/\epsilon_0 = 1130\) V/m가 사이 전하의 몫입니다(Gauss 법칙과 일치).</p>
+    <p>반도체 pn 접합의 공핍 영역(이온화된 도펀트가 공간 전하)이 바로 이 Poisson 문제이고, 전전15·전전27에서 접합 전위와 공핍 폭을 이렇게 구합니다.</p>
+
+    <h3><span class="no">3.3.4</span>2차원 문제와 수치 해법</h3>
+    <p>전위가 두 좌표에 의존하면 변수 분리(Fourier 급수)로 풀 수 있지만, 모양이 복잡하면 수치 해법이 실용적입니다. Laplace 방정식을 격자에서 차분으로 쓰면</p>
+    \[ V_{i,j} = \frac14\left(V_{i+1,j} + V_{i-1,j} + V_{i,j+1} + V_{i,j-1}\right): \]
+    <p>각 점의 전위는 이웃 네 점의 평균입니다. 경계 값을 고정하고 내부 점을 이 평균으로 되풀이해 바꾸면(이완법) 해로 수렴합니다. 정사각형 홈의 윗변만 \(V_0\)이고 나머지 세 변이 0이면 가운데 전위는 정확히 \(V_0/4\)입니다(대칭: 네 변을 돌아가며 \(V_0\)로 둔 네 문제의 합이 모든 변 \(V_0\)인 문제, 곧 어디서나 \(V_0\)). 이 절의 탐구 카드에서 이완이 이 값에 다가가는 모습을 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "Laplace 방정식이 성립하면 전계가 0이다": 전하가 없을 뿐, 전위의 2차 도함수 합이 0이라는 뜻입니다. 평행판 사이처럼 전계가 있습니다. (2) 원통·구 좌표의 라플라시안을 \(V''\)로 쓰는 실수: 면적이 반지름에 따라 커지는 효과(\(\rho\), \(r^2\))가 빠집니다. (3) Laplace 방정식의 해에는 내부 극대·극소가 없습니다(평균 성질). 그래서 전하 없는 공간 안에 전하를 안정하게 가둘 수 없습니다(Earnshaw 정리).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\nabla^2V = -\rho_v/\epsilon\)(Poisson), \(\nabla^2V = 0\)(Laplace). 경계 조건이 해를 하나로 정한다.</li>
+        <li>평행판 선형, 동축 \(\ln\rho\), 동심구 \(1/r\). 표면 D로 Q를 구해 C를 얻는다.</li>
+        <li>격자에서 각 점 = 이웃 평균. 이완법으로 수치 해.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>동축선(a = 1 mm, b = 5 mm, 안 도체 10 V, 바깥 0 V)에서 \(\rho = 2\) mm의 전위는?
+          <details><summary>답</summary><p>\(10\ln(5/2)/\ln5 = 10 \times 0.916/1.609 \approx 5.69\) V.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>동심구(a = 1 cm, b = 3 cm, 안 100 V, 바깥 0 V)의 r = 2 cm 전위와 r = a의 전계는?
+          <details><summary>답</summary><p>\(V = 100\frac{50 - 33.3}{100 - 33.3} = 25\) V. \(V = A/r + B\)에서 \(A = 100/(100 - 33.3) = 1.5\) V·m, \(E(a) = A/a^2 = 15{,}000\) V/m.</p></details>
+        </li>
+        <li>예제 3.3.1에서 \(\rho_v\)를 얼마로 하면 x = 0의 전계가 0이 되는가?
+          <details><summary>답</summary><p>A = 0: \(100 + \rho_vd^2/(2\epsilon_0) = 0\) → \(\rho_v = -2\epsilon_0 \times 100/d^2 \approx -17.7\) μC/m³(음전하).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>정사각형 홈에서 윗변 \(V_0\), 왼쪽 변 \(2V_0\), 나머지 0일 때 가운데 전위를 유일성과 중첩으로 구하여라.
+          <details><summary>답</summary><p>각 변 하나만 \(V_0\)인 문제의 가운데 값이 \(V_0/4\)이므로 \(V_0/4 + 2V_0/4 = 0.75V_0\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

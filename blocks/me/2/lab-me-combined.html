@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계2-06-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m2-combined.js"]
+}
+-->
+<article class="card q-card" id="lab-me-combined" data-kind="실습" data-std="기계2-06-03 기계2-06-01">
+  <header class="card-head"><span class="no"></span><h2>굽힘과 비틀림을 함께 받는 막대에서 가장 위험한 점은 어디일까?</h2><span class="kind">실습 · 복합 하중, 응력 요소, Mohr 원</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>예제 6.3.1의 L자 막대(벽에 고정된 원형 막대 끝에 팔이 붙고, 팔 끝에 하중)에서 고정단 단면의 둘레를 따라 점을 옮기며 응력 요소와 Mohr 원이 어떻게 바뀌는지 보고, 가장 위험한 점을 찾습니다. 성취기준 [기계2-06-03], [기계2-06-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>하중 \(P\)는 고정단 단면에 굽힘 모멘트 \(M = PL\), 토크 \(T = Pa\), 전단력 \(V = P\)를 만들고, 축 방향 힘 \(N\)을 따로 더할 수 있습니다. 둘레 각 \(\varphi\)(맨 위 = 0°, 시계 방향)인 점의 응력은 중첩으로 구합니다.</p>
+      <ul>
+        <li>수직 응력: \(\sigma_x = N/A + My/I\), \(y = r\cos\varphi\)(위가 인장).</li>
+        <li>전단 응력: 비틀림 \(Tr/J\)에, 전단력에 의한 몫 \(\frac{4V}{3A}(1 - y^2/r^2)\)를 옆면에서 한쪽은 더하고 반대쪽은 뺍니다(원형 단면의 근사).</li>
+        <li>주응력은 \(\sigma_{1,2} = \sigma_x/2 \pm \sqrt{(\sigma_x/2)^2 + \tau^2}\)(\(\sigma_y = 0\)).</li>
+      </ul>
+      <p>그림은 왼쪽이 고정단 단면(빨간 점이 고른 점), 가운데가 그 점의 응력 요소(파랑 수직 응력, 노랑 전단 응력), 아래가 Mohr 원입니다. 출력의 마지막 줄은 둘레 360°를 1°씩 훑어 찾은 가장 위험한 점입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>점의 위치 φ = <b data-show="phi">0</b>°</span><input type="range" name="phi" min="0" max="359" step="1" value="0" aria-label="둘레 각"></label>
+        <label><span>지름 d = <b data-show="d">40</b> mm</span><input type="range" name="d" min="20" max="80" step="2" value="40" aria-label="막대 지름"></label>
+        <label><span>막대 길이 L = <b data-show="L">500</b> mm</span><input type="range" name="L" min="100" max="1000" step="50" value="500" aria-label="막대 길이"></label>
+        <label><span>팔 길이 a = <b data-show="a">300</b> mm</span><input type="range" name="a" min="0" max="600" step="50" value="300" aria-label="팔 길이"></label>
+        <label><span>하중 P = <b data-show="P" data-fix="1">1.0</b> kN</span><input type="range" name="P" min="0" max="5" step="0.1" value="1" aria-label="하중"></label>
+        <label><span>축 방향 힘 N = <b data-show="N">0</b> kN</span><input type="range" name="N" min="-50" max="50" step="5" value="0" aria-label="축 방향 힘"></label>
+      </div>
+      <canvas aria-label="고정단 단면과 고른 점, 그 점의 응력 요소"></canvas>
+      <canvas aria-label="고른 점의 Mohr 원"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(d = 40, L = 500, a = 300 mm, P = 1 kN)에서 φ = 0°(맨 위)의 응력과 주응력을 예제 6.3.1과 비교합니다.</li>
+        <li>φ를 90°, 180°, 270°로 옮기며 σx, τ, σ₁, 최대 전단 응력을 표로 적습니다.</li>
+        <li>팔 길이 a를 0으로 하고 같은 일을 합니다. Mohr 원이 어떻게 바뀌나요?</li>
+        <li>N = +30 kN(인장)과 −30 kN(압축)을 더하고 가장 위험한 점이 어떻게 바뀌는지 봅니다.</li>
+        <li>지름을 40 mm에서 50 mm로 키우면 최대 전단 응력이 몇 배가 되는지 확인하고, \((40/50)^3\)과 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>φ = 0°: σx = 79.6, τ = 23.9 MPa, σ₁ = 86.2, σ₂ = −6.6, 최대 면내 전단 46.4 MPa로 예제 6.3.1과 같습니다.</li>
+        <li>φ = 90°(옆면): 굽힘 응력이 0이고 τ = 24.9 MPa(비틀림 23.9 + 전단력 1.1)로 순수 전단입니다. σ₁ = 24.9 MPa. φ = 270°에서는 22.8 MPa로 조금 작습니다.</li>
+        <li>φ = 180°(맨 아래): σx = −79.6 MPa(압축), σ₁ = 6.6, σ₂ = −86.2 MPa. 최대 전단 응력은 맨 위와 같은 46.4 MPa입니다.</li>
+        <li>a = 0이면 τ가 거의 사라져(옆면에만 전단력의 몫) 맨 위에서 Mohr 원이 원점을 지나고 σ₁ = 79.6 MPa입니다.</li>
+        <li>N = +30 kN이면 모든 점에 23.9 MPa의 인장이 더해져 맨 위가 더 위험해지고, N = −30 kN이면 맨 아래의 압축이 커져 최대 전단 응력이 맨 아래에서 생깁니다.</li>
+        <li>지름 50 mm에서는 응력이 \((40/50)^3 = 0.512\)배로 줄어 최대 전단 응력은 약 23.8 MPa입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>최대 수직 응력과 최대 전단 응력이 같은 점(맨 위·맨 아래)에서 생기는 이유를 각 응력의 분포로 설명해 보세요.</li>
+        <li>옆면(90°, 270°)에서 전단 응력이 서로 다른 이유는 무엇인가요? 전단력에 의한 몫이 비틀림 전단과 같은 방향인 쪽은 어디인가요?</li>
+        <li>등가 토크 \(\sqrt{M^2 + T^2}\)로 계산한 \(16\sqrt{M^2 + T^2}/(\pi d^3)\)가 출력의 최대 전단 응력과 같은지 확인해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>막대의 재료가 항복강도 250 MPa인 강철이고 최대 전단 응력이 항복 전단 강도 \(\sigma_Y/2\)에 이르면 항복한다고 볼 때(Tresca 기준, 응용고체역학 9.2절), 안전계수 2를 확보하는 최대 하중 P를 장치로 찾아보세요.</p>
+    </section>
+  </div>
+</article>

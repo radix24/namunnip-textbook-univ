@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>손실함수의 기울기로 매개변수를 갱신하는 원리를 설명하기 · 화학인공지능기초 — QURI</title>
-  <meta name="description" content="화학인공지능기초 1.2 손실함수의 기울기로 매개변수를 갱신하는 원리를 설명하기 — 성취기준: 손실함수의 기울기로 매개변수를 갱신하는 원리를 설명할 수 있다.">
+  <title>경사 하강법: 기울기로 매개변수 갱신하기 · 화학인공지능기초 — QURI</title>
+  <meta name="description" content="화학인공지능기초 1.2 경사 하강법: 기울기로 매개변수 갱신하기 — 성취기준: 손실함수의 기울기로 매개변수를 갱신하는 원리를 설명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;화학4&quot;, &quot;title&quot;: &quot;1.2 손실함수의 기울기로 매개변수를 갱신하는 원리를 설명하기&quot;, &quot;sub&quot;: &quot;화학인공지능기초&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;화학4&quot;, &quot;title&quot;: &quot;1.2 경사 하강법: 기울기로 매개변수 갱신하기&quot;, &quot;sub&quot;: &quot;화학인공지능기초&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,176 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="화학4-01-02" data-u="연세대">
+  <section class="topic-hero u-hero has-text" data-sec="화학4-01-02" data-u="연세대">
     <div class="meta"><a href="../../../?dept=chem#tree">화학과</a><span class="mono">/</span><a href="./">화학인공지능기초</a><span class="mono">/</span><a href="01.html">1. 필요한 수학</a></div>
-    <h1><span class="sec-no mono">1.2</span>손실함수의 기울기로 매개변수를 갱신하는 원리를 설명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="화학4-01-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[화학4-01-02] <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="화학4-01-02" aria-label="할 수 있음"><span class="t">손실함수의 기울기로 매개변수를 갱신하는 원리를 설명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">1.2</span>경사 하강법: 기울기로 매개변수 갱신하기</h1>
+    <p class="sec-std"><span class="mono">[화학4-01-02]</span> 손실함수의 기울기로 매개변수를 갱신하는 원리를 설명할 수 있다. <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s1-2-1"><span class="mono">1.2.1</span><span>왜 기울기의 반대 방향인가</span></a></li><li><a href="#s1-2-2"><span class="mono">1.2.2</span><span>학습률</span></a></li><li><a href="#s1-2-3"><span class="mono">1.2.3</span><span>특성 표준화</span></a></li><li><a href="#s1-2-4"><span class="mono">1.2.4</span><span>배치, 미니배치, 확률적 경사 하강법</span></a></li><li><a href="#s1-2-5"><span class="mono">1.2.5</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-ch4-gd"><span class="mono">본문</span><span>경사 하강법: 기울기로 매개변수 갱신하기</span></a></li><li><a href="#lab-ch4-gd"><span class="mono">1.2.2</span><span>학습률이 크면 왜 학습이 망가지나?</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="01.html">대단원 1 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-ch4-gd" data-kind="본문" data-std="화학4-01-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>손실의 기울기 반대 방향으로 매개변수를 움직이는 이유를 설명한다.</li>
+        <li>경사 하강법의 갱신 규칙을 코드로 쓰고, 학습률이 수렴과 발산에 주는 영향을 안다.</li>
+        <li>배치·미니배치·확률적 경사 하강법과 특성 표준화의 필요를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>손실과 기울기 계산 (<a href="01-01.html">1.1절</a>), 테일러 1차 근사 (공통1).</li>
+      </ul>
+    </div>
+
+    <h3 id="s1-2-1"><span class="no">1.2.1</span>왜 기울기의 반대 방향인가</h3>
+    <p>구하려는 것: 손실 L(w)을 가장 작게 하는 매개변수 w. 매개변수가 두 개면 그림을 그려 찾을 수 있지만, 신경망은 수천~수백만 개라 그림이 불가능합니다. 대신 "지금 자리에서 어느 쪽이 내리막인가"만 반복해서 묻습니다.</p>
+    <p>w를 작은 벡터 Δw만큼 움직이면 테일러 1차 근사로 \(L(\mathbf w + \Delta\mathbf w) \approx L(\mathbf w) + \nabla L\cdot\Delta\mathbf w\)입니다. 같은 걸음 크기에서 손실을 가장 많이 줄이는 방향은 내적 \(\nabla L\cdot\Delta\mathbf w\)가 가장 음수인 방향, 곧 기울기 벡터의 반대 방향입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">식 1.2.1 <span class="nm">(경사 하강법)</span></span>
+      <p>\[ \mathbf w \leftarrow \mathbf w - \eta\,\nabla L(\mathbf w) \]</p>
+      <p>η &gt; 0은 학습률(걸음 크기). 기울기가 0인 점(평탄한 바닥)에서 멈춘다.</p>
+    </div>
+<pre><code>b, a, lr = 0.0, 0.0, 0.05
+for step in range(1, 1001):
+    gb, ga = grad(b, a)          # 1.1절의 grad 함수
+    b, a = b - lr * gb, a - lr * ga
+    if step in (1, 10, 100, 1000):
+        print(step, round(b, 2), round(a, 2), round(loss(b, a), 2))
+# 1 -7.32 -11.68 6632.19
+# 10 -33.22 -5.66 5026.61
+# 100 -161.21 37.87 395.4
+# 1000 -205.55 52.95 67.01</code></pre>
+    <p>1000번 뒤의 값은 최소제곱 공식으로 바로 푼 답(기울기 52.95 °C/탄소, 절편 −205.55 °C)과 같습니다. 이 단순한 문제에는 공식이 있지만, 신경망처럼 공식이 없는 문제에도 같은 반복이 통한다는 것이 경사 하강법의 힘입니다. 남은 손실 67.01은 직선 모형의 한계입니다. 실제 끓는점은 탄소 수에 대해 곡선이기 때문입니다(3단원의 과적합 논의로 이어짐).</p>
+
+    <h3 id="s1-2-2"><span class="no">1.2.2</span>학습률</h3>
+    <p class="q-term"><b>학습률 η</b>: 한 번에 기울기 몇 배만큼 움직일지 정하는 수. 학습이 스스로 정하지 않고 사람이 고르는 값(하이퍼파라미터)이다.</p>
+    <ul>
+      <li><b>너무 작으면</b>: 안정하지만 느립니다. 이 문제에서 η = 0.01은 1000번 뒤에도 손실 83.68입니다.</li>
+      <li><b>알맞으면</b>: η = 0.05~0.11은 1000번 안에 최솟값에 닿습니다.</li>
+      <li><b>너무 크면</b>: 골짜기를 넘어 반대편 더 높은 곳으로 튀고, 이것이 커지며 발산합니다. 이 문제는 η = 0.12부터 발산합니다.</li>
+    </ul>
+    <p>한계가 어디인지는 손실의 곡률로 정해집니다. 2차 함수 손실에서 곡률 행렬(헤세 행렬)의 가장 큰 고윳값이 λ이면 η &lt; 2/λ여야 수렴하고, 이 문제는 λ = 16.70이라 한계가 0.120입니다. 탐구 카드에서 직접 확인할 수 있습니다.</p>
+
+    <h3 id="s1-2-3"><span class="no">1.2.3</span>특성 표준화</h3>
+    <p>특성의 크기가 서로 크게 다르면, 손실 지형이 한 방향으로만 가파른 길쭉한 골짜기가 됩니다. 가파른 방향 때문에 학습률을 작게 잡아야 하고, 그러면 완만한 방향으로는 매우 느리게 갑니다. 그래서 각 특성에서 평균을 빼고 표준 편차로 나눠(표준화, z-점수) 크기를 맞춘 뒤 학습합니다. 분자량(수백)과 고리 수(0~3)를 함께 쓰는 화학 자료에서 특히 중요합니다.</p>
+
+    <h3 id="s1-2-4"><span class="no">1.2.4</span>배치, 미니배치, 확률적 경사 하강법</h3>
+    <p class="q-term"><b>배치 경사 하강법</b>: 매번 모든 샘플로 기울기를 계산. 정확하지만 자료가 크면 한 걸음이 비싸다.</p>
+    <p class="q-term"><b>확률적 경사 하강법(SGD)</b>: 매번 샘플 하나로 기울기를 어림해 갱신. 싸지만 길이 들쭉날쭉하다.</p>
+    <p class="q-term"><b>미니배치</b>: 매번 수십~수백 개 샘플로 기울기를 어림. 실제 신경망 학습의 표준.</p>
+    <p class="q-term"><b>에포크</b>: 전체 자료를 한 번 다 쓴 단위.</p>
+    <p>신경망 학습에서는 SGD의 개선판(모멘텀, Adam)이 흔히 쓰이며, 모두 식 1.2.1을 바탕으로 걸음 크기와 방향을 조절한 것입니다.</p>
+    <div class="tb-note"><b>흔한 오해</b>"학습률이 클수록 빨리 배운다"는 한계까지만 맞습니다. 한계를 넘으면 반복할수록 오히려 나빠집니다. 또 "손실이 0이 될 때까지 반복해야 한다"도 아닙니다. 모형이 표현할 수 없는 부분(직선으로 곡선을 맞출 때)은 손실이 남고, 그것을 억지로 줄이려 모형을 키우면 과적합이 됩니다(3.2절). 그리고 경사 하강법은 손실이 2차 함수가 아니면 시작점에 따라 다른 국소 최솟값에 멈출 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathbf w \leftarrow \mathbf w - \eta\nabla L\): 기울기의 반대가 가장 가파른 내리막.</li>
+        <li>학습률이 작으면 느리고, 너무 크면 발산한다. 2차 손실에서 한계는 η &lt; 2/λ_max.</li>
+        <li>특성을 표준화하면 골짜기가 둥글어져 학습이 빠르고 안정하다.</li>
+        <li>실제 학습은 미니배치 SGD와 그 변형(Adam 등).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s1-2-5"><span class="no">1.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(L(w) = (w - 3)^2\)에서 w = 0, η = 0.1로 경사 하강법을 두 번 하면 w는?
+          <details><summary>답</summary><p>\(L' = 2(w - 3)\). 첫 걸음: 0 − 0.1 × (−6) = 0.6. 둘째: 0.6 − 0.1 × (−4.8) = 1.08.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 \(L(w) = (w - 3)^2\)에서 η = 1.0이면 어떻게 되는가? 발산하지 않을 η의 범위는?
+          <details><summary>답</summary><p>w ← w − 2(w − 3) = 6 − w. 0 → 6 → 0 → 6으로 끝없이 진동한다. 곡률 L'' = 2이므로 η &lt; 2/2 = 1이어야 수렴한다(0 &lt; η &lt; 1).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>특성 x를 표준화하지 않고 분자량(약 100~500)을 그대로 쓰면, 1.1절과 같은 선형 모형에서 ∂L/∂a와 ∂L/∂b의 크기가 어떻게 달라지는지 설명하고 학습률 선택에 미치는 영향을 쓰시오.
+          <details><summary>답</summary><p>∂L/∂a에는 x가 곱해지므로 ∂L/∂b보다 수백 배 크고, 곡률도 x²에 비례해 수만 배 크다. 안정 한계(2/λ_max)가 a 방향 곡률로 정해져 학습률을 아주 작게 잡아야 하고, 그러면 b는 거의 움직이지 않는다. 표준화하면 두 방향의 곡률이 비슷해져 한 학습률로 둘 다 빠르게 수렴한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-ch4-gd" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="화학4-01-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[화학4-01-02] <span class="ty mono" data-ty="개념">개념</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="화학4-01-02" aria-label="할 수 있음"><span class="t">손실함수의 기울기로 매개변수를 갱신하는 원리를 설명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-ch4-gd" data-kind="탐구" data-std="화학4-01-02">
+  <header class="card-head"><span class="no">1.2.2</span><h2><span class="q-badge">탐구</span>학습률이 크면 왜 학습이 망가지나?</h2><span class="kind">탐구 · 경사 하강법, 학습률, 수렴과 발산</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="01-02.html#std">[화학4-01-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>메테인~뷰테인 네 알케인의 끓는점을 탄소 수의 직선 \(\hat y = b + a n_C\)로 맞추는 문제에서, 경사 하강법의 학습률과 반복 횟수를 바꿔 가며 가중치가 최솟값으로 가는 길을 봅니다. 성취기준 [화학4-01-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>자료는 실제 끓는점(−161.5, −88.6, −42.1, −0.5 °C)이고, 손실은 평균 제곱 오차입니다. 매 반복마다 \(b \leftarrow b - \eta\,\partial L/\partial b\), \(a \leftarrow a - \eta\,\partial L/\partial a\)로 갱신합니다(η는 학습률, 출발은 b = a = 0). 첫 그림은 (a, b) 평면의 손실 지형으로, 진할수록 손실이 작습니다. 주황 선이 가중치가 지나간 길, 검은 점이 최소제곱 해입니다. 둘째 그림은 반복에 따른 손실(로그 눈금)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>학습률 η = <b data-show="lr" data-fix="2">0.05</b></span><input type="range" name="lr" min="0.01" max="0.13" step="0.01" value="0.05" aria-label="학습률"></label>
+        <label><span>반복 = <b data-show="st">100</b>번</span><input type="range" name="st" min="0" max="1000" step="10" value="100" aria-label="반복 횟수"></label>
+      </div>
+      <canvas aria-label="손실 지형과 경로"></canvas>
+      <canvas aria-label="반복에 따른 손실"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>학습률을 두 배로 올리면 두 배 빨리 최솟값에 갈까요? 어디까지 올려도 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <ol>
+        <li>η = 0.05로 100번, 1000번 반복한 결과를 읽는다.</li>
+        <li>η = 0.01, 0.10, 0.11로 100번과 1000번을 비교한다.</li>
+        <li>η = 0.12, 0.13으로 올려 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <p>η = 0.05는 100번 뒤 b = −161.21, a = 37.87, 손실 395.4로 아직 가는 중이고, 1000번 뒤 최소제곱 해(b = −205.55, a = 52.95, 손실 67.01)에 닿습니다. η = 0.01은 너무 조심스러워 1000번 뒤에도 손실 83.68입니다. η = 0.10은 100번 뒤 82.36, 0.11은 75.28로 빨라집니다.</p>
+      <p>그런데 0.12는 100번 뒤 손실이 4926으로 오히려 커지고, 1000번 뒤에는 7.309×10⁶으로 발산합니다. 0.13은 100번 만에 10¹⁷에 이릅니다. 손실 지형이 a 방향으로 아주 가파른 골짜기라, 걸음이 너무 크면 골짜기 건너편으로 넘어가 더 높은 곳에 떨어지고, 이것이 되풀이되며 커집니다. 이 문제에서 안정한 한계는 손실 곡률(헤세 행렬)의 가장 큰 고윳값 16.70에서 정해지는 η &lt; 2/16.70 = 0.120입니다. 가장 빠른 학습률은 이 한계 바로 아래이지만, 거기서는 진동하며 다가갑니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>기울기 계산은 [화학4-01-01]의 코드와 같습니다. 특성의 크기가 서로 크게 다르면(예: 분자량 수백, 고리 수 0~3) 골짜기가 더 길쭉해져 학습률을 작게 잡아야 하므로, 특성을 표준화한 뒤 학습합니다([화학4-03-01]). 신경망 학습([화학4-04-01])도 같은 갱신 규칙을 씁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>적용</h3>
+      <p>반복 횟수를 100번으로 고정할 때 손실이 가장 작은 학습률을 장치에서 찾아보세요. 그 값이 안정 한계 0.120과 어떤 관계인지 설명해 보세요.</p>
+    </section>
+    <section class="q-sec">
+      <h3>판단</h3>
+      <p>"손실이 줄지 않으면 반복 횟수를 늘리면 된다." η = 0.12의 결과를 근거로 이 말을 평가해 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-ch4-gd" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="01-01.html">← 1.1 행렬 곱과 기울기 계산을 코드로 구현하기</a></span>
-        <span><a href="02-01.html">2.1 SMILES로 분자를 나타내고 읽기 →</a></span>
+        <span><a href="01-01.html">← 1.1 행렬 곱과 기울기를 코드로</a></span>
+        <span><a href="01-R.html">1.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +210,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/chem/ch-ai.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>
