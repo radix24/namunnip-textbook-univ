@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-histeq" data-kind="본문" data-std="전전33-02-03">
+  <header class="card-head"><span class="no"></span><h2>히스토그램 평활화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>영상 밝기 히스토그램과 누적 분포를 계산한다.</li>
+        <li>누적 분포로 밝기를 다시 매겨 대비를 늘린다.</li>
+        <li>국소 평활화(CLAHE)의 필요를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>필터링 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>고르게 펴기</h3>
+    <p>밝기 값 k를 \(s_k = \mathrm{round}((L - 1)\cdot\mathrm{CDF}(k))\)로 바꾸면 많이 몰린 밝기 구간이 넓게 퍼져 대비가 커집니다. 영상 전체에 하나의 변환을 쓰면 일부 영역이 지나치게 밝아질 수 있어 작은 구역마다 하는 CLAHE를 씁니다.</p><pre><code>img = [52, 55, 61, 59, 79, 61, 76, 61, 62, 59, 55, 104, 94, 85, 59, 71]
+L = 256
+vals = sorted(set(img))
+n = len(img)
+cdf, c = {}, 0
+for v in vals:
+    c += img.count(v); cdf[v] = c / n
+mapping = {v: round((L - 1) * cdf[v]) for v in vals}
+print("변환표:", mapping)
+out = [mapping[v] for v in img]
+print("원래 범위:", min(img), "~", max(img), "/ 평활화 후:", min(out), "~", max(out))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>변환표: {52: 16, 55: 48, 59: 96, 61: 143, 62: 159, 71: 175, 76: 191, 79: 207, 85: 223, 94: 239, 104: 255}
+원래 범위: 52 ~ 104 / 평활화 후: 16 ~ 255</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>위 16화소(52~104 범위)를 평활화한 결과 범위는?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 최솟값 52는 CDF 1/16 → 16, 최댓값 104는 255로 바뀌어 대비가 크게 늘었습니다. 가장 많은 값(59, 61 각 3개)은 간격이 크게 벌어집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "평활화는 늘 영상을 좋게 만든다": 잡음도 함께 키우고 자연스럽지 않을 수 있습니다. (2) "결과 히스토그램이 완전히 평평하다": 이산 값이라 근사적으로만 고릅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>s_k = round((L − 1)·CDF(k)).</li>
+        <li>몰린 구간을 넓게 폄.</li>
+        <li>CLAHE: 구역별 + 기울기 제한.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>모든 화소가 같은 값이면 평활화 결과는?
+          <details><summary>답</summary><p>모두 255(CDF 1).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>CDF(k) = 0.5인 값은 몇으로 바뀌나(L = 256)?
+          <details><summary>답</summary><p>128(반올림 127.5).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>의료 X선 영상에 CLAHE를 쓰는 이유는?
+          <details><summary>답</summary><p>부위마다 밝기가 달라 국소 대비를 따로 키워야 해서.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

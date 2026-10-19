@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-sobel" data-kind="본문" data-std="전전33-02-04">
+  <header class="card-head"><span class="no"></span><h2>기울기와 Sobel 경계 검출</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Sobel 커널로 가로·세로 기울기를 계산한다.</li>
+        <li>기울기 크기와 방향으로 경계를 판정한다.</li>
+        <li>Canny 검출기의 단계(평활, 기울기, 비최대 억제, 이력 문턱)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>합성곱 필터 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>밝기가 급하게 바뀌는 곳</h3>
+    <p>Sobel 커널 \(G_x = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\), \(G_y\)는 그 전치입니다. 크기 \(\sqrt{G_x^2 + G_y^2}\)가 문턱보다 크면 경계이고, 방향은 경계에 수직입니다. Canny는 가는 선과 끊김 없는 경계를 위해 여러 단계를 더합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>3×3 구역 위 두 줄이 10, 아래 줄이 50인 영상의 Sobel G_x, G_y와 크기는?</p>
+    </div>
+    <p><i>풀이.</i> G_x = 0(좌우 같음), G_y = (50 + 100 + 50) − (10 + 20 + 10) = 160, 크기 160 → 가로 방향 경계(기울기는 세로). 잡음이 많으면 먼저 Gauss 평활로 거짓 경계를 줄입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "경계 방향과 기울기 방향은 같다": 서로 수직입니다. (2) "문턱 하나면 충분": Canny는 두 문턱(이력)으로 약한 경계를 이어 줍니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Sobel G_x, G_y → 크기·방향.</li>
+        <li>예: G_y 160, G_x 0.</li>
+        <li>Canny: 평활 → 기울기 → 비최대 억제 → 이력 문턱.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>왼쪽 열 0, 오른쪽 열 100(가운데 열 50)의 G_x는?
+          <details><summary>답</summary><p>400.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>G_x = 30, G_y = 40의 크기는?
+          <details><summary>답</summary><p>50.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>비최대 억제의 역할은?
+          <details><summary>답</summary><p>기울기 방향으로 가장 큰 화소만 남겨 경계를 한 화소 폭으로 만듭니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

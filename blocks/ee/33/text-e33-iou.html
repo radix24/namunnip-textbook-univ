@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-iou" data-kind="본문" data-std="전전33-04-02">
+  <header class="card-head"><span class="no"></span><h2>객체 탐지 평가: IoU와 NMS</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>두 상자의 IoU를 계산한다.</li>
+        <li>IoU 문턱으로 탐지의 맞고 틀림을 정해 정밀도·재현율을 구한다.</li>
+        <li>비최대 억제(NMS)로 중복 상자를 지운다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이미지 분류와 탐지 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>얼마나 겹치나</h3>
+    <p>IoU = 교집합 넓이/합집합 넓이. 정답 상자와 IoU ≥ 0.5인 탐지를 맞힌 것(TP)으로 봅니다. 한 물체에 여러 상자가 나오면 점수가 높은 상자부터 남기고 그와 IoU가 큰 상자를 지우는 NMS를 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>상자 A (0, 0, 10, 10), B (5, 5, 15, 15)(x₁, y₁, x₂, y₂)의 IoU는?</p>
+    </div>
+    <p><i>풀이.</i> 교집합 5 × 5 = 25, 합집합 100 + 100 − 25 = 175 → 0.143. 0.5 문턱이면 다른 물체로 봅니다. 상자가 한 칸만 어긋나도 작은 물체는 IoU가 크게 떨어져 작은 물체 탐지가 어렵습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "상자 중심만 맞으면 된다": 크기도 맞아야 IoU가 큽니다. (2) "NMS 문턱은 낮을수록 좋다": 붙어 있는 다른 물체까지 지웁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>IoU = 교/합.</li>
+        <li>IoU ≥ 0.5 → TP.</li>
+        <li>NMS: 점수순, 큰 IoU 제거.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>같은 상자 두 개의 IoU는?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>(0, 0, 4, 4)와 (2, 0, 6, 4)의 IoU는?
+          <details><summary>답</summary><p>1/3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>mAP@[0.5:0.95]가 0.5 하나보다 엄격한 이유는?
+          <details><summary>답</summary><p>높은 IoU 문턱에서도 맞아야 해 상자 정확도를 더 봅니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
