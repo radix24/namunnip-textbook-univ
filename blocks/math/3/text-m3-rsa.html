@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-rsa" data-kind="본문" data-std="수학3-04-02">
+  <header class="card-head"><span class="no"></span><h2>RSA 암호</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공개 키 암호의 아이디어(잠그는 열쇠는 공개, 여는 열쇠는 비밀)를 안다.</li>
+        <li>RSA의 키 만들기·암호화·복호화를 합동식으로 설명하고, 페르마·오일러 정리로 복호화가 맞음을 보인다.</li>
+        <li>빠른 거듭제곱(제곱하여 곱하기)으로 계산하고, 안전성이 소인수분해의 어려움에 기댐을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>확장 유클리드 호제법과 모듈러 역원 (<a href="04-01.html">4.1절</a>), 중국인의 나머지 정리와 페르마 소정리 (<a href="../12/06-04.html">수학12 6.4절</a>, 이 절에서 필요한 만큼 설명).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>공개 키 암호</h3>
+    <p>인터넷에서 처음 만난 상대와 비밀 메시지를 주고받으려면, 미리 비밀 열쇠를 나눌 수 없다는 문제가 있습니다. 공개 키 암호는 누구나 쓸 수 있는 "잠그는 열쇠"를 공개하고, "여는 열쇠"는 받는 사람만 가집니다. RSA(1977)는 큰 수의 소인수분해가 어렵다는 사실에 기댑니다.</p>
+
+    <h3><span class="no">4.2.2</span>알고리즘</h3>
+    <ol>
+      <li><b>키 만들기</b>: 큰 소수 \(p, q\)를 고르고 \(n = pq\), \(\varphi = (p - 1)(q - 1)\). \(\gcd(e, \varphi) = 1\)인 \(e\)를 고르고, \(d = e^{-1} \bmod \varphi\) (확장 호제법). 공개 키 \((n, e)\), 비밀 키 \(d\).</li>
+      <li><b>암호화</b>: 평문 \(m\) (\(0 \le m &lt; n\))을 \(c = m^e \bmod n\).</li>
+      <li><b>복호화</b>: \(m = c^d \bmod n\).</li>
+    </ol>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.2.1</span>
+      <p>\(ed \equiv 1 \pmod\varphi\)이면 모든 \(m\)에 대해 \(m^{ed} \equiv m \pmod n\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(ed = 1 + k(p - 1)(q - 1)\). \(p \nmid m\)이면 페르마 소정리 \(m^{p-1} \equiv 1 \pmod p\)로 \(m^{ed} = m\cdot(m^{p-1})^{k(q-1)} \equiv m \pmod p\). \(p \mid m\)이면 양변이 0. 같은 이유로 \(\bmod q\)에서도 성립하고, \(p, q\)가 서로 다른 소수라 \(\bmod pq\)에서 성립(중국인의 나머지 정리). <span class="qed">∎</span></p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.2</span>
+      <p>\(p = 61\), \(q = 53\), \(e = 17\)로 키를 만들고 \(m = 65\)를 암호화·복호화하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(n = 3233\), \(\varphi = 60\cdot52 = 3120\). 확장 호제법으로 \(17d \equiv 1 \pmod{3120}\)을 풀면 \(d = 2753\) (\(17\cdot2753 = 46801 = 15\cdot3120 + 1\)). \(c = 65^{17} \bmod 3233 = 2790\), \(2790^{2753} \bmod 3233 = 65\). 같은 절의 탐구 카드에서 직접 해 볼 수 있습니다.</p>
+
+    <h3><span class="no">4.2.3</span>빠른 거듭제곱과 안전성</h3>
+    <p>\(m^e\)를 \(e\)번 곱하면 \(e\)가 수백 자리일 때 불가능합니다. 지수를 이진법으로 쓰고 제곱을 되풀이하면 곱셈 \(O(\log e)\)번이면 됩니다: \(65^{17} = 65^{16}\cdot65\), \(65^{16} = (((65^2)^2)^2)^2\), 매번 \(\bmod n\)으로 줄입니다.</p>
+    <p>공격자는 \(n, e\)를 알지만 \(d\)를 구하려면 \(\varphi = (p-1)(q-1)\)이 필요하고, 그러려면 \(n\)을 소인수분해해야 합니다. 2048비트(약 617자리) \(n\)의 소인수분해는 현재 알려진 방법으로 사실상 불가능합니다. 반면 곱셈, 거듭제곱, 호제법은 모두 \(O(\log n)\)번의 연산이라 빠릅니다. "한쪽 방향은 쉽고 반대 방향은 어려운" 비대칭이 공개 키 암호의 핵심입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(d = e^{-1} \bmod n\)으로 계산한다: 법은 \(n\)이 아니라 \(\varphi(n)\)이다. (2) 작은 수 예제에서 \(m \ge n\)을 암호화한다: \(m\)은 \(n\)보다 작아야 복원된다. (3) 같은 평문을 그대로 암호화하면 늘 같은 암호문이 나와 안전하지 않다: 실제로는 무작위 덧붙이기(패딩)를 한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(n = pq\), \(ed \equiv 1 \pmod{(p-1)(q-1)}\). 암호화 \(m^e\), 복호화 \(c^d\) (\(\bmod n\)).</li>
+        <li>페르마 소정리와 중국인의 나머지 정리로 \(m^{ed} \equiv m\).</li>
+        <li>제곱하여 곱하기로 빠르게 계산, 안전성은 소인수분해의 어려움.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(p = 5\), \(q = 11\), \(e = 3\)일 때 \(d\)를 구하고 \(m = 2\)를 암호화하여라.
+          <details><summary>답</summary><p>\(\varphi = 40\), \(d = 27\). \(c = 8\). 복호화 \(8^{27} \bmod 55 = 2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(3^{13} \bmod 7\)을 제곱하여 곱하기로 계산하여라.
+          <details><summary>답</summary><p>\(13 = 8 + 4 + 1\). \(3^2 = 2\), \(3^4 = 4\), \(3^8 = 2\). \(3^{13} = 2\cdot4\cdot3 = 24 \equiv 3\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(n = pq\)와 \(\varphi(n)\)을 알면 \(p, q\)를 쉽게 구할 수 있음을 보여라.
+          <details><summary>답</summary><p>\(p + q = n - \varphi + 1\), \(pq = n\)이라 \(p, q\)는 이차방정식 \(x^2 - (n - \varphi + 1)x + n = 0\)의 근. 그래서 \(\varphi\)를 구하는 것은 소인수분해만큼 어렵다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
