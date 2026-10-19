@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-06-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs3.js"]
+}
+-->
+<article class="card q-card" id="lab-s10-ridge" data-kind="실습" data-std="응통10-06-03 응통10-04-03">
+  <header class="card-head"><span class="no"></span><h2>벌점을 키우면 회귀계수는 어떻게 줄어드는가?</h2><span class="kind">실습 · 능형 회귀와 라쏘</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>설명변수 네 개(그중 두 개는 상관이 매우 큼)로 만든 가상 자료에서, 벌점의 크기 \(\lambda\)를 바꾸며 능형 회귀와 라쏘의 계수가 어떻게 변하는지 계수 경로 그림으로 봅니다. 라쏘만 계수를 정확히 0으로 만든다는 것, 상관이 큰 변수 쌍을 두 방법이 다르게 다룬다는 것을 확인합니다. 성취기준 [응통10-06-03], [응통10-04-03].</p>
+      <p class="q-term"><b>능형 회귀</b>: 잔차제곱합 \(+\ \lambda\sum\beta_j^2\)을 최소화. 계수를 0 쪽으로 고르게 줄입니다.</p>
+      <p class="q-term"><b>라쏘</b>: 잔차제곱합 \(+\ \lambda\sum|\beta_j|\)을 최소화. 계수 일부를 정확히 0으로 만들어 변수 선택을 겸합니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>참 모형은 \(y = 2x_1 + 0\cdot x_2 + 1\cdot x_3 + 0\cdot x_4 + \varepsilon\)이고, \(x_2\)는 \(x_1\)과 상관이 0.95입니다(<b>가상 자료</b> 40개, 설명변수는 표준화). 가로축은 \(\log_{10}\lambda\)(왼쪽 끝이 최소제곱에 가까움), 세로축은 계수이며 검은 세로선이 현재 \(\lambda\)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="meth" aria-label="방법">
+          <option value="ridge" selected>능형 회귀</option>
+          <option value="lasso">라쏘</option>
+        </select></label>
+        <label><span>log₁₀ λ = <b data-show="L" data-fix="2">0.00</b></span><input type="range" name="L" min="-2" max="3" step="0.05" value="0" aria-label="벌점 크기의 로그"></label>
+      </div>
+      <canvas aria-label="계수 경로"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>능형 회귀에서 \(\lambda = 0.01\)(왼쪽 끝)의 계수를 최소제곱 계수와 비교합니다. \(x_1\)과 \(x_2\)의 계수가 참값(2, 0)에서 얼마나 벗어나 있나요?</li>
+        <li>\(\log_{10}\lambda\)를 0, 1, 2, 3으로 올리며 네 계수가 줄어드는 모습과 잔차제곱합을 적습니다.</li>
+        <li>라쏘로 바꾸어 같은 일을 합니다. 어떤 계수가 먼저 0이 되나요?</li>
+        <li>두 방법에서 \(x_1\)(파랑)과 \(x_2\)(노랑)의 경로를 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>최소제곱 계수는 (1.45, 0.56, 1.20, −0.15)입니다. \(x_3\)은 참값 1에 가깝지만, 상관이 큰 \(x_1\)과 \(x_2\)는 참값 (2, 0) 대신 (1.45, 0.56)처럼 효과를 나눠 가집니다. 두 변수가 거의 같은 정보를 담아 따로 구별하기 어렵기 때문입니다(분산팽창).</li>
+        <li>능형 회귀는 \(\lambda = 1\)에서 (1.24, 0.75, 1.17, −0.14), \(\lambda = 100\)에서 (0.48, 0.49, 0.41, −0.07)처럼 모든 계수를 매끄럽게 줄이되 정확히 0으로 만들지는 않습니다. 상관이 큰 \(x_1\)과 \(x_2\)는 거의 같은 값으로 모입니다. 잔차제곱합은 최소제곱의 32.2에서 \(\lambda = 100\)이면 115.2로 커집니다.</li>
+        <li>라쏘는 \(\lambda \approx 30\)에서 참값이 0인 \(x_4\)가 먼저 정확히 0이 되고(0.92, 0.77, 0.88, 0), \(\lambda \approx 160\)에서는 \(x_2\) 하나만 0.30으로 남습니다. 참 계수가 0인 \(x_2\)가 남고 진짜 효과가 있는 \(x_1\)이 빠진 것입니다. 상관이 큰 쌍에서 라쏘는 둘 중 하나를 거의 임의로 고르며, 자료가 조금만 달라도 고르는 변수가 바뀔 수 있습니다.</li>
+        <li>\(\log_{10}\lambda = 3\)이면 두 방법 모두 계수가 거의 0입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>잔차제곱합이 커지는데도 벌점을 주는 까닭을 "새 자료에서의 예측 오차"로 설명해 보세요(편향과 분산의 교환).</li>
+        <li>라쏘가 계수를 정확히 0으로 만드는 까닭을 마름모 모양의 제약 영역으로 설명해 보세요(응통10 단원 연습).</li>
+        <li>실제로는 \(\lambda\)를 어떻게 고르나요? 이 그림에 교차검증 오차 곡선을 겹친다면 어떤 모양일지 예상해 보세요.</li>
+        <li>라쏘가 \(x_1\) 대신 \(x_2\)를 남긴 결과를 "\(x_2\)가 중요한 변수"로 해석하면 왜 위험한가요? 상관이 큰 변수 묶음을 함께 남기는 엘라스틱 넷(두 벌점을 섞은 방법)이 왜 쓰이는지도 생각해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R에서는 <code>library(glmnet); fit &lt;- glmnet(X, y, alpha = 0); plot(fit, xvar = "lambda")</code>(능형, <code>alpha = 1</code>이면 라쏘)로 같은 계수 경로를 그리고, <code>cv.glmnet</code>으로 \(\lambda\)를 고릅니다. glmnet은 벌점을 \(1/(2n)\) 척도로 쓰므로 \(\lambda\) 값의 크기가 이 카드와 다릅니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>두 벌점의 차이</h3>
+    <p class="q">변수 100개 가운데 실제로 반응과 관련된 것은 몇 개뿐이라고 생각될 때 더 알맞은 방법은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>라쏘<span class="why"><b>맞습니다.</b> 관련 없는 변수의 계수를 정확히 0으로 만들어 해석하기 쉬운 모형을 줍니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>능형 회귀<span class="why"><b>능형은 모든 변수를 조금씩 남깁니다.</b> 많은 변수가 조금씩 기여할 때 알맞습니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>벌점 없는 최소제곱<span class="why"><b>변수가 많으면 분산이 커져 과적합되기 쉽습니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

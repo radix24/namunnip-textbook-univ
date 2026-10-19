@@ -1,0 +1,99 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-02-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-c11-u02-practice" data-kind="연습" data-std="공통11-02-01 공통11-02-02">
+  <header class="card-head"><span class="no"></span><h2>포트란 부프로그램과 파일 단원 마무리 연습</h2><span class="kind">문제 6 · 개념·계산·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 코드는 그 문제가 확인하는 성취기준입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>반지름을 받아 원의 넓이를 돌려주는 포트란 함수 <code>area</code>를 쓰고 주 프로그램에서 부르세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>contains</code> 뒤에 내부 함수를 두면 인터페이스가 자동으로 맞춰집니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>real(dp) function area(r)</code>, 인자에 <code>intent(in)</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>program circle
+  implicit none
+  integer, parameter :: dp = kind(1.0d0)
+  print *, area(2.0_dp)          ! 12.566...
+contains
+  real(dp) function area(r)
+    real(dp), intent(in) :: r
+    real(dp), parameter :: pi = 3.141592653589793_dp
+    area = pi * r**2
+  end function area
+end program circle</code></pre>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>두 실수를 맞바꾸는 서브루틴 <code>swap</code>을 쓰세요. C와 달리 포인터 없이 되는 이유는? <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>서브루틴은 <code>call</code>로 부르고 값을 돌려주지 않습니다. 인자를 바꿀 수 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>두 인자 모두 <code>intent(inout)</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>subroutine swap(a, b)
+  real(dp), intent(inout) :: a, b
+  real(dp) :: t
+  t = a
+  a = b
+  b = t
+end subroutine swap
+! 쓰는 법: call swap(x, y)</code></pre>
+          <p>포트란은 인자를 참조로 넘기므로(변수의 주소가 넘어감) 서브루틴 안에서 바꾸면 부른 쪽 변수도 바뀝니다. C는 값을 복사해 넘기므로 주소(포인터)를 넘겨야 합니다(<a href='../10/05-02.html'>공통10 5.2절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span><code>intent(in)</code>, <code>intent(out)</code>, <code>intent(inout)</code>의 뜻을 말하고, <code>intent(in)</code>인 인자에 값을 넣으면 어떻게 되는지 말하세요. <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>intent는 인자를 읽기만 하는지, 결과를 담는지, 둘 다인지를 컴파일러에게 알립니다.</p></details>
+        <details><summary>힌트 2</summary><p>컴파일러가 약속을 어긴 코드를 찾아 줍니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>in: 읽기만 함. out: 서브루틴이 값을 채워 돌려줌(들어올 때 값은 쓰지 않음). inout: 읽고 바꿈. <code>intent(in)</code> 인자에 대입하면 컴파일 오류가 납니다. 실수로 입력을 바꾸는 버그를 막고, 코드를 읽는 사람에게도 역할을 알려 줍니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>1부터 10까지 \(i\)와 \(\sqrt i\)를 <code>out.dat</code> 파일에 <code>(I3, F10.4)</code> 형식으로 쓰는 프로그램을 쓰세요. <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>open(unit=10, file="out.dat", status="replace")</code>, <code>write(10, '(I3, F10.4)') ...</code>, <code>close(10)</code>.</p></details>
+        <details><summary>힌트 2</summary><p><code>I3</code>은 정수 3칸, <code>F10.4</code>는 실수 10칸에 소수 넷째 자리까지.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>program table
+  implicit none
+  integer :: i
+  open(unit=10, file="out.dat", status="replace", action="write")
+  do i = 1, 10
+    write(10, '(I3, F10.4)') i, sqrt(real(i))
+  end do
+  close(10)
+end program table</code></pre>
+          <p>첫 줄은 <code>  1    1.0000</code>, 마지막 줄은 <code> 10    3.1623</code>입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>앞 문제의 <code>out.dat</code>를 끝까지 읽어 둘째 열의 합을 구하세요. 줄 수를 미리 모를 때는 어떻게 하나요? <span class="mono small dim">[02-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>read(10, *, iostat=ios) i, x</code>에서 <code>ios</code>가 0이 아니면 파일 끝이나 오류입니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>do</code> … <code>if (ios /= 0) exit</code> … <code>end do</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre><code>open(unit=10, file="out.dat", status="old", action="read")
+s = 0.0
+do
+  read(10, *, iostat=ios) i, x
+  if (ios /= 0) exit
+  s = s + x
+end do
+close(10)
+print *, s      ! 22.4683 (sqrt(1) + ... + sqrt(10))</code></pre>
+          <p><code>iostat</code> 없이 읽으면 파일 끝에서 프로그램이 오류로 멈춥니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>앞의 <code>swap(a, b)</code>(<code>intent(inout)</code>)를 <code>call swap(1.0_dp, 2.0_dp)</code>처럼 상수로 불렀습니다. 괜찮을까요? <span class="mono small dim">[02-01]</span></p>
+        <details><summary>힌트 1</summary><p>inout 인자는 값이 바뀝니다. 상수 1.0은 바뀔 수 있나요?</p></details>
+        <details><summary>힌트 2</summary><p>인터페이스가 있으면 컴파일러가 검사해 줍니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>안 됩니다. 바꿀 수 없는 상수를 <code>intent(inout)</code>에 넘긴 것이라, 내부 서브루틴이나 모듈 서브루틴처럼 인터페이스가 알려진 경우 컴파일 오류가 납니다. 옛날 방식(외부 서브루틴)에서는 오류 없이 상수 자리를 덮어써 이상한 결과가 나기도 했습니다. 바꿀 인자에는 변수를 넘겨야 합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

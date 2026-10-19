@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-tests" data-kind="본문" data-std="응통3-05-02">
+  <header class="card-head"><span class="no"></span><h2>t 검정, 카이제곱 검정, 단순 회귀를 R로</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>t.test</code>, <code>chisq.test</code>, <code>lm</code>을 실행하고 출력을 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통5의 4~6장(검정과 회귀의 개념).</li>
+      </ul>
+    </div>
+
+    <h3>세 가지 기본 분석</h3>
+    <p>평균 비교, 범주 사이 관계, 두 수치 변수의 관계는 경제·사회 자료 분석에서 가장 자주 쓰는 세 가지입니다. R에서는 각각 한 줄로 실행됩니다.</p>
+
+    <h3><span class="no">5.2.1</span>코드와 출력</h3>
+    <pre><code># 1. 두 집단 평균 비교: 변속기별 연비
+t.test(mpg ~ am, data = mtcars)
+# t = -3.77, df = 18.3, p-value = 0.0014, 평균 자동 17.1, 수동 24.4
+
+# 2. 분할표 독립성: 기통 × 변속기
+tab &lt;- table(mtcars$cyl, mtcars$am); tab
+chisq.test(tab)               # 기대 도수가 작다는 경고 → fisher.test(tab)
+
+# 3. 단순 회귀: 무게 → 연비
+fit &lt;- lm(mpg ~ wt, data = mtcars); summary(fit)
+# 기울기 -5.34 (표준오차 0.56), R-squared 0.753
+confint(fit)</code></pre>
+    <p>출력에서 읽을 것: 추정값(차이, 기울기), 표준오차, 검정통계량, 자유도, p값, 신뢰구간. 응통5 7.1절에 각 항목의 뜻이 있습니다. 경고 메시지(기대 도수 &lt; 5)는 무시하지 말고 대안 검정을 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>위 t 검정 결과를 한 문장으로 보고하세요.</p>
+    </div>
+    <p><i>풀이.</i> "수동 변속기 차의 평균 연비(24.4 mpg)는 자동 변속기 차(17.1 mpg)보다 7.2 mpg 높았다(웰치 t 검정, \(t = 3.77\), 자유도 18.3, \(p = 0.001\)). 다만 수동 차가 대체로 가벼워 무게를 고려하면 차이가 줄 수 있다." 마지막 문장처럼 교란 가능성을 함께 씁니다(응통10 3.2절에서 확인).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>t.test(y ~ g)</code>, <code>chisq.test(table)</code>, <code>lm(y ~ x)</code>.</li>
+        <li>추정값, 표준오차, 통계량, 자유도, p값, 신뢰구간을 읽음.</li>
+        <li>경고 메시지에 대응하고 교란 가능성을 적음.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>lm(mpg ~ wt + am, data = mtcars)</code>에서 am 계수는 얼마이고 위 t 검정 결과와 어떻게 다른가요?
+          <details><summary>답</summary><p>am 계수는 약 −0.02로 거의 0입니다. 무게를 고정하면 변속기에 따른 연비 차이가 사라집니다. 단순 비교의 차이 7.2는 대부분 무게 차이에서 온 것입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

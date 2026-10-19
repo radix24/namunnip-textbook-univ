@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gauss-Markov 정리를 설명하기 · 회귀분석 — QURI</title>
-  <meta name="description" content="회귀분석 2.2 Gauss-Markov 정리를 설명하기 — 성취기준: Gauss-Markov 정리를 설명할 수 있다.">
+  <title>가우스-마르코프 정리 · 회귀분석 — QURI</title>
+  <meta name="description" content="회귀분석 2.2 가우스-마르코프 정리 — 성취기준: Gauss-Markov 정리를 설명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;2.2 Gauss-Markov 정리를 설명하기&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통10&quot;, &quot;title&quot;: &quot;2.2 가우스-마르코프 정리&quot;, &quot;sub&quot;: &quot;회귀분석&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,94 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통10-02-02">
+  <section class="topic-hero u-hero has-text" data-sec="응통10-02-02" data-u="서울대 연세대 고려대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">회귀분석</a><span class="mono">/</span><a href="02.html">2. 다중 선형회귀</a></div>
-    <h1><span class="sec-no mono">2.2</span>Gauss-Markov 정리를 설명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통10-02-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-02-02] <span class="ty mono" data-ty="증명">증명</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통10-02-02" aria-label="할 수 있음"><span class="t">Gauss-Markov 정리를 설명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.2</span>가우스-마르코프 정리</h1>
+    <p class="sec-std"><span class="mono">[응통10-02-02]</span> Gauss-Markov 정리를 설명할 수 있다. <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-2-1"><span class="mono">2.2.1</span><span>정리</span></a></li><li><a href="#s2-2-2"><span class="mono">2.2.2</span><span>가정이 하는 일</span></a></li><li><a href="#s2-2-3"><span class="mono">2.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s10-gm"><span class="mono">본문</span><span>가우스-마르코프 정리</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s10-gm" data-kind="본문" data-std="응통10-02-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형 불편추정량의 뜻을 안다.</li>
+        <li>최소제곱 추정량이 최량 선형 불편추정량(BLUE)임을 증명한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 표현 (<a href="02-01.html">2.1절</a>), 양반정치 행렬 (응통2 05단원).</li>
+      </ul>
+    </div>
 
+    <h3>왜 최소제곱인가</h3>
+    <p>잔차의 절댓값 합을 최소화할 수도 있고 다른 방법도 많습니다. 최소제곱을 쓰는 근거 하나는, 정규성 없이도 "선형이고 불편인 추정량 가운데 분산이 가장 작다"는 이 절의 정리입니다.</p>
+
+    <h3 id="s2-2-1"><span class="no">2.2.1</span>정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.1 (가우스-마르코프)</span>
+      <p>\(E(\boldsymbol\varepsilon) = \mathbf 0\), \(\mathrm{Var}(\boldsymbol\varepsilon) = \sigma^2I\)이면, 모든 상수 벡터 \(\mathbf c\)에 대해 \(\mathbf c^\top\hat{\boldsymbol\beta}\)는 \(\mathbf c^\top\boldsymbol\beta\)의 선형 불편추정량 가운데 분산이 가장 작다.</p>
+    </div>
+    <p class="tb-proof">선형 불편추정량을 \(\mathbf a^\top\mathbf y\)라 합시다. 불편이려면 모든 \(\boldsymbol\beta\)에서 \(\mathbf a^\top X\boldsymbol\beta = \mathbf c^\top\boldsymbol\beta\), 곧 \(X^\top\mathbf a = \mathbf c\). 최소제곱 쪽은 \(\mathbf a_0 = X(X^\top X)^{-1}\mathbf c\)입니다. \(\mathbf d = \mathbf a - \mathbf a_0\)이라 하면 \(X^\top\mathbf d = \mathbf c - \mathbf c = \mathbf 0\)이고 \(\mathbf a_0^\top\mathbf d = \mathbf c^\top(X^\top X)^{-1}X^\top\mathbf d = 0\). 따라서 \(\mathrm{Var}(\mathbf a^\top\mathbf y) = \sigma^2\|\mathbf a_0 + \mathbf d\|^2 = \sigma^2(\|\mathbf a_0\|^2 + \|\mathbf d\|^2) \ge \sigma^2\|\mathbf a_0\|^2 = \mathrm{Var}(\mathbf c^\top\hat{\boldsymbol\beta})\). 등호는 \(\mathbf d = \mathbf 0\)일 때뿐. <span class="qed">∎</span></p>
+
+    <h3 id="s2-2-2"><span class="no">2.2.2</span>가정이 하는 일</h3>
+    <ul>
+      <li><b>등분산·무상관</b> (\(\sigma^2I\)): 증명의 \(\mathrm{Var}(\mathbf a^\top\mathbf y) = \sigma^2\|\mathbf a\|^2\)에 쓰입니다. 분산이 다르면 가중 최소제곱이 BLUE가 됩니다(05단원).</li>
+      <li><b>정규성</b>: 필요 없습니다. 정규성을 더하면 최소제곱은 비선형 추정량까지 포함한 모든 불편추정량 가운데 최선(UMVUE)이 됩니다.</li>
+      <li><b>선형·불편이라는 제한</b>: 치우친 추정량(능형 회귀, 06단원)은 MSE가 더 작을 수 있습니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.2</span>
+      <p>단순회귀에서 첫 점과 마지막 점을 잇는 기울기 \(\tilde\beta_1 = (Y_n - Y_1)/(x_n - x_1)\)는 선형 불편추정량임을 보이고, 최소제곱과 분산을 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(E(\tilde\beta_1) = \beta_1(x_n - x_1)/(x_n - x_1) = \beta_1\). \(\mathrm{Var}(\tilde\beta_1) = 2\sigma^2/(x_n - x_1)^2\). \(x = 1, \ldots, 5\)이면 \(\sigma^2/8\), 최소제곱은 \(\sigma^2/S_{xx} = \sigma^2/10\)으로 더 작습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>오차가 평균 0, 등분산, 무상관이면 최소제곱은 BLUE.</li>
+        <li>정규성은 필요 없지만, 등분산이 깨지면 BLUE가 아닙니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-2-3"><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>평균 \(\mu\)만 있는 모형 \(Y_i = \mu + \varepsilon_i\)에 정리를 적용하면 무엇을 말하나요?
+          <details><summary>답</summary><p>\(\sum a_iY_i\) (\(\sum a_i = 1\)) 중 분산이 가장 작은 것은 \(\bar Y\)입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s10-gm" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통10-02-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통10-02-02] <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통10-02-02" aria-label="할 수 있음"><span class="t">Gauss-Markov 정리를 설명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/10/01.html"><span class="mono">대단원 1</span><span><b>단순 선형회귀</b></span></a></li><li><a href="../../../c/stat/2/03.html"><span class="mono">대단원 3</span><span>선형대수 <b>벡터공간과 사영</b></span></a></li><li><a href="../../../c/stat/2/05.html"><span class="mono">대단원 5</span><span>선형대수 <b>이차형식과 양정치 행렬</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-01.html">← 2.1 회귀모형을 행렬로 쓰고 추정량을 구하기</a></span>
-        <span><a href="02-03.html">2.3 부분 F 검정으로 변수 묶음의 기여를 검정하기 →</a></span>
+        <span><a href="02-01.html">← 2.1 다중회귀의 행렬 표현과 추정</a></span>
+        <span><a href="02-03.html">2.3 부분 F 검정 →</a></span>
       </nav>
     </div>
   </div>

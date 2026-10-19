@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-gibbs" data-kind="본문" data-std="응통15-05-02">
+  <header class="card-head"><span class="no"></span><h2>깁스 표집</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>완전 조건부분포를 번갈아 뽑는 깁스 표집을 구현한다.</li>
+        <li>깁스 표집이 MH의 특수한 경우임을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>메트로폴리스-헤이스팅스 (<a href="05-01.html">5.1절</a>), 다변량 정규의 조건부분포 (응통6 5.3절).</li>
+      </ul>
+    </div>
+
+    <h3>한 번에 한 변수씩</h3>
+    <p>여러 모수의 결합 분포에서 직접 뽑기는 어렵지만, 나머지를 고정했을 때 한 모수의 조건부분포는 알려진 분포인 경우가 많습니다. 그 조건부분포들을 번갈아 뽑으면 결합 분포의 표본이 됩니다.</p>
+
+    <h3><span class="no">5.2.1</span>알고리즘</h3>
+    <p>목표 \(\pi(\theta_1, \ldots, \theta_k)\). 한 바퀴에서 \(j = 1, \ldots, k\) 순서로</p>
+    \[\theta_j^{(t+1)} \sim \pi(\theta_j \mid \theta_1^{(t+1)}, \ldots, \theta_{j-1}^{(t+1)}, \theta_{j+1}^{(t)}, \ldots, \theta_k^{(t)}).\]
+    <p>이 완전 조건부분포에서 뽑는 것은 제안분포를 조건부분포 자체로 둔 MH이고, 이때 수용 확률은 항상 1입니다. 그래서 기각이 없습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1 (정규 모형)</span>
+      <p>\(x_1, \ldots, x_n \sim N(\mu, 1/\tau)\), 사전분포 \(\mu \sim N(0, 100)\), \(\tau \sim \mathrm{Gamma}(a, b)\)(비율 \(b\)). 완전 조건부분포를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\mu\mid\tau, \mathbf x \sim N\left(\frac{\tau\sum x_i}{n\tau + 0.01}, \frac{1}{n\tau + 0.01}\right)\) (정밀도가 더해짐). \(\tau\mid\mu, \mathbf x \sim \mathrm{Gamma}\left(a + \frac n2, b + \frac12\sum(x_i - \mu)^2\right)\). 두 분포 모두 R 함수로 바로 뽑을 수 있습니다.</p>
+    <pre><code>x &lt;- c(4.9, 5.6, 5.1, 6.2, 5.8, 4.7); n &lt;- length(x); a &lt;- b &lt;- 0.01
+S &lt;- 5000; mu &lt;- tau &lt;- numeric(S); mu[1] &lt;- mean(x); tau[1] &lt;- 1
+for (t in 2:S) {
+  prec &lt;- n * tau[t-1] + 0.01
+  mu[t] &lt;- rnorm(1, tau[t-1] * sum(x) / prec, sqrt(1 / prec))
+  tau[t] &lt;- rgamma(1, a + n/2, b + sum((x - mu[t])^2) / 2) }
+quantile(mu[-(1:500)], c(.025, .5, .975))</code></pre>
+
+    <div class="tb-note">
+      <b>주의</b> 두 변수의 상관이 매우 높으면 축 방향으로만 움직이는 깁스 표집은 대각선 모양 분포 위에서 아주 느리게 움직입니다. 모수를 다시 매개화하거나 함께 묶어 뽑습니다(블록 깁스).
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>완전 조건부분포를 번갈아 뽑음, 수용률 1인 MH.</li>
+        <li>켤레 사전분포에서 조건부분포가 간단해집니다.</li>
+        <li>변수 사이 상관이 크면 느립니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>이변량 정규(평균 0, 분산 1, 상관 \(\rho\))의 깁스 표집 단계를 쓰세요.
+          <details><summary>답</summary><p>\(x \mid y \sim N(\rho y, 1 - \rho^2)\), \(y \mid x \sim N(\rho x, 1 - \rho^2)\). \(\rho = 0.99\)이면 한 걸음 표준편차가 0.14로 작아 느리게 섞입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

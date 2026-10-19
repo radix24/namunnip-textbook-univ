@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-components" data-kind="본문" data-std="응통20-01-01">
+  <header class="card-head"><span class="no"></span><h2>추세, 계절성, 불규칙 변동</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>시계열 그림에서 추세, 계절성, 순환, 불규칙 변동을 구별한다.</li>
+        <li>가법·승법 분해를 하고 결과를 읽는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통17 5.1절 평활, 3.1절 로그 변환.</li>
+      </ul>
+    </div>
+
+    <h3>시간 순서가 있는 자료</h3>
+    <p>지금까지는 관측들이 서로 독립이라고 가정했습니다. 월별 매출, 일별 기온, 분기 GDP는 어제가 오늘과 닮고, 매년 같은 달이 비슷합니다. 이 의존성이 분석의 장애물이자 예측의 재료입니다.</p>
+
+    <h3><span class="no">1.1.1</span>네 가지 구성 요소</h3>
+    <p class="q-term"><b>추세</b>: 장기적으로 오르거나 내리는 흐름.</p>
+    <p class="q-term"><b>계절성</b>: 정해진 주기(1년, 1주, 하루)로 되풀이되는 무늬.</p>
+    <p class="q-term"><b>순환</b>: 주기가 일정하지 않은 장기 오르내림(경기 순환).</p>
+    <p class="q-term"><b>불규칙 변동</b>: 나머지 우연한 변동.</p>
+
+    <h3><span class="no">1.1.2</span>분해</h3>
+    <p>가법 모형 \(y_t = T_t + S_t + E_t\)는 계절 진폭이 일정할 때, 승법 모형 \(y_t = T_t\times S_t\times E_t\)는 수준이 커질수록 계절 진폭도 커질 때 씁니다. 승법은 로그를 취하면 가법이 됩니다. 고전적 분해: (1) 주기 길이의 중심 이동평균으로 추세를 구하고, (2) 추세를 뺀(나눈) 값을 달마다 평균해 계절 성분을 구하고, (3) 나머지가 불규칙 성분입니다. 더 유연한 방법으로 STL(국소 회귀 기반)이 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>R의 <code>AirPassengers</code>를 분해하세요.</p>
+    </div>
+    <pre><code>plot(AirPassengers)
+plot(decompose(AirPassengers, type = "multiplicative"))
+plot(stl(log(AirPassengers), s.window = "periodic"))</code></pre>
+    <p>뚜렷한 증가 추세, 여름(7~8월)에 높은 연간 계절성이 있고, 계절 진폭이 해마다 커지므로 승법(또는 로그 가법)이 알맞습니다. <code>decompose</code>의 7월 계절 지수는 1.227(평균보다 약 23% 많음), 11월은 0.801입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>추세, 계절성, 순환, 불규칙.</li>
+        <li>진폭 일정 → 가법, 비례 → 승법(로그).</li>
+        <li>이동평균 분해, STL.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>월별 자료의 추세를 구할 때 길이 12의 이동평균을 쓰는 이유는?
+          <details><summary>답</summary><p>한 해의 모든 달을 같은 비중으로 평균하면 계절 성분이 상쇄되어 추세만 남기 때문입니다(짝수라 2×12 중심 이동평균을 씀).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

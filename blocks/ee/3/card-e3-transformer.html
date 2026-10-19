@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-09-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e3-transformer" data-kind="예제" data-std="전전3-09-02">
+  <header class="card-head"><span class="no"></span><h2>변압기가 낀 회로를 한쪽으로 옮겨 풀기</h2><span class="kind">예제 · 2차 회로를 1차로 반사</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>1 : 10 승압 변압기의 2차에 1 kΩ을 달면 1차에서는 몇 Ω으로 보일까요? 10 kΩ? 100 kΩ? 10 Ω?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>\(1000/10^2 = 10\ \Omega\). 승압 변압기는 2차 부하를 작게 보이게 합니다. 전압을 10배 올리는 대신 1차 전류가 10배 많이 흘러야 하기 때문입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(\omega = 1000\) rad/s. 1차: \(\mathbf V_s = 20\angle0°\) V — 2 Ω — 변압기 1 : 5(점 양쪽 위). 2차: 50 Ω과 0.05 H 직렬, 그리고 그 뒤에 2차 단자와 기준 사이 20 μF 축전기가 병렬로 함께 있다(곧 2차 부하 = (50 + j50) ∥ (−j50)). 1차 전류와 축전기 전류를 구하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>문제 해결 전략</h3>
+      <ol>
+        <li>2차 부하 임피던스를 하나로 합친다.</li>
+        <li>\(n^2\)으로 나누어 1차로 옮긴다.</li>
+        <li>1차 회로에서 \(\mathbf I_1\)과 \(\mathbf V_1\)을 구한다.</li>
+        <li>\(\mathbf V_2 = n\mathbf V_1\)로 돌아가 2차 각 가지 전류를 구한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(\mathbf Z_L = \frac{(50 + j50)(-j50)}{50 + j50 - j50} = \frac{2500 - j2500}{50} = 50 - j50\ \Omega\). <span class="q-why">병렬 합성</span></li>
+        <li>1차로 옮기면 \((50 - j50)/25 = 2 - j2\ \Omega\). <span class="q-why">\(\mathbf Z_L/n^2\)</span></li>
+        <li>\(\mathbf I_1 = \frac{20}{2 + 2 - j2} = \frac{20}{4.472\angle{-26.6°}} = 4.47\angle26.6°\) A. \(\mathbf V_1 = \mathbf I_1(2 - j2) = 4.47\angle26.6°\times2.83\angle{-45°} = 12.65\angle{-18.4°}\) V. <span class="q-why">1차 KVL</span></li>
+        <li>\(\mathbf V_2 = 5\mathbf V_1 = 63.2\angle{-18.4°}\) V. 축전기 전류 \(\mathbf V_2/(-j50) = 1.26\angle71.6°\) A. <span class="q-why">2차로 돌아감</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>2차 부하 전류는 \(\mathbf V_2/\mathbf Z_L = 63.2\angle{-18.4°}/70.7\angle{-45°} = 0.894\angle26.6°\) A로, 1차 전류의 정확히 1/5이고 위상도 같습니다(이상 변압기). 축전기 전류(1.26 A)가 전체 2차 전류보다 큰 것은 축전기와 RL 가지 사이에 무효 전류가 오가기 때문입니다(병렬 공진에 가까움).</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>전력(진폭 페이저, ½): 전원 \(\frac12\times20\times4.47\cos26.6° = 40\) W. 1차 저항 \(\frac12\times4.47^2\times2 = 20\) W. 2차 50 Ω: RL 가지 전류 \(\mathbf V_2/(50 + j50) = 63.2/70.7 = 0.894\) A, \(\frac12\times0.894^2\times50 = 20\) W. 합 40 W로 맞습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>권수비를 1 : 7.07로 하면 1차에서 본 부하가 \(1 - j1\ \Omega\)이 되어, 실수부가 1차 저항 2 Ω과 같아지지 않습니다. 최대 전력을 원하면 실수부를 맞추고(\(n = 5\)일 때 이미 2 Ω) 허수부 \(-j2\)를 1차에 직렬 인덕터 \(j2\)(2 mH)로 지우면 됩니다(켤레 정합, 8.1절).</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>옮기는 방향</h3>
+    <p class="q">1 : n 변압기의 1차 쪽 전원 \(\mathbf V_s\)와 직렬 저항 \(R_s\)를 2차 쪽으로 옮기면?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>\(n\mathbf V_s\)와 \(n^2R_s\)<span class="why"><b>맞습니다.</b> 전압은 n배, 임피던스는 n²배로 옮겨집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>\(n\mathbf V_s\)와 \(R_s/n^2\)<span class="why"><b>방향이 반대입니다.</b> 2차 → 1차가 1/n²이고, 1차 → 2차는 n²입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>\(\mathbf V_s/n\)와 \(nR_s\)<span class="why"><b>임피던스는 n이 아니라 n²로 바뀝니다.</b> 전압과 전류가 각각 n배, 1/n배 되기 때문입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

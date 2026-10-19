@@ -27,10 +27,10 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero has-text" data-sec="물리6-05-02">
+  <section class="topic-hero u-hero has-text" data-sec="물리6-05-02" data-u="연세대">
     <div class="meta"><a href="../../../?dept=phy#tree">물리학과</a><span class="mono">/</span><a href="./">물리학실험(A-2)</a><span class="mono">/</span><a href="05.html">5. 마이크로컴퓨터와 측정 자동화</a></div>
     <h1><span class="sec-no mono">5.2</span>저수준 코드로 입출력 제어하기</h1>
-    <p class="sec-std"><span class="mono">[물리6-05-02]</span> 기계어 또는 저수준 코드로 입출력 장치를 제어할 수 있다. <span class="ty mono" data-ty="실습">실습</span></p>
+    <p class="sec-std"><span class="mono">[물리6-05-02]</span> 기계어 또는 저수준 코드로 입출력 장치를 제어할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></p>
   </section>
 
   <div class="topic-layout with-text">
@@ -38,7 +38,7 @@
       <p class="mono small toc-title">이 절의 차례</p>
       <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>포트 레지스터</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>기계어와 어셈블리</span></a></li><li><a href="#s5-2-3"><span class="mono">5.2.3</span><span>타이머와 인터럽트</span></a></li><li><a href="#s5-2-4"><span class="mono">5.2.4</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#text-p6-io"><span class="mono">본문</span><span>저수준 코드로 입출력 제어하기</span></a></li></ol>
+      <ol id="toc-list"><li><a href="#text-p6-io"><span class="mono">본문</span><span>저수준 코드로 입출력 제어하기</span></a></li><li><a href="#card-p6-gpio"><span class="mono">5.2.2</span><span>레지스터 비트로 LED 켜기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
@@ -106,11 +106,55 @@ if (PINB &amp; (1 &lt;&lt; 0)) {   /* 0번 핀 입력이 High이면 */
 </article>
     
     <div class="q-checklist after-text q-one" id="std" data-unit="물리6-05-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[물리6-05-02] <span class="ty mono" data-ty="실습">실습</span></span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">[물리6-05-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
       <ol><li><input type="checkbox" data-std="물리6-05-02" aria-label="할 수 있음"><span class="t">기계어 또는 저수준 코드로 입출력 장치를 제어할 수 있다.</span></li></ol>
       <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-p6-gpio" data-kind="예제" data-std="물리6-05-02">
+  <header class="card-head"><span class="no">5.2.2</span><h2><span class="q-badge">예제</span>레지스터 비트로 LED 켜기</h2><span class="kind">비트 연산 · 마스크 · 문제 해결 전략</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-02.html#std">[물리6-05-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>입출력 핀은 레지스터의 비트 하나에 대응합니다. 다른 핀을 건드리지 않고 한 비트만 바꾸려면 OR(켜기), AND와 NOT(끄기), XOR(뒤집기) 마스크를 씁니다.</p>
+    </section>
 
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 비트 조작</span>
+      <ol>
+        <li>바꿀 핀 번호로 마스크 \(1 \ll n\)을 만든다.</li>
+        <li>켜기: 레지스터 |= 마스크.</li>
+        <li>끄기: 레지스터 &= ~마스크. 뒤집기: ^= 마스크.</li>
+        <li>결과를 이진수로 적어 다른 비트가 그대로인지 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">8비트 출력 레지스터가 0b1010_0001이다. (가) 3번 핀 켜기 (나) 0번 핀 끄기 (다) 7번 핀 뒤집기를 차례로 하면 결과는?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) 마스크 0b0000_1000, OR: 0b1010_1001.</div><span class="q-why">3번 비트만 1이 됨.</span></li>
+        <li><div>(나) ~0b0000_0001 = 0b1111_1110, AND: 0b1010_1000.</div><span class="q-why">0번 비트만 0.</span></li>
+        <li><div>(다) 마스크 0b1000_0000, XOR: 0b0010_1000.</div><span class="q-why">7번 비트가 1 → 0.</span></li>
+        <li class="q-end"><div>16진수 0x28.</div><span class="q-why">확인용 표기.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>레지스터 전체를 새 값으로 덮어쓰면 다른 장치가 쓰는 핀까지 바뀔 수 있습니다. 마스크 연산은 펌웨어에서 가장 자주 쓰는 기술입니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>처음 0xA1에서 비트 3 켜고(+8), 비트 0 끄고(−1), 비트 7 끄면(−128) \(161 + 8 - 1 - 128 = 40 = \)0x28. 같습니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-p6-gpio" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
         <span><a href="05-01.html">← 5.1 마이크로프로세서의 구조와 명령 주기</a></span>
         <span><a href="05-03.html">5.3 센서 신호를 기록하는 측정 장치 →</a></span>

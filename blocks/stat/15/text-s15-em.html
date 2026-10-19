@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-em" data-kind="본문" data-std="응통15-03-03">
+  <header class="card-head"><span class="no"></span><h2>EM 알고리즘</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>E 단계와 M 단계를 결측 자료 문제에 적용한다.</li>
+        <li>EM이 매 단계 가능도를 감소시키지 않음을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도 (응통7 1.1절), 조건부기대값 (응통6 5.2절).</li>
+      </ul>
+    </div>
+
+    <h3>빠진 값이 있다면 채워 넣고 다시</h3>
+    <p>자료 일부가 빠졌거나, 관측되지 않는 집단 정보(이 사람은 어느 집단 소속인가)가 있으면 가능도가 복잡해집니다. 빠진 것을 알았다면 쉬웠을 문제를, "빠진 것의 기대값으로 채우기"와 "채운 자료로 쉽게 추정하기"를 번갈아 하며 풉니다.</p>
+
+    <h3><span class="no">3.3.1</span>알고리즘</h3>
+    <p>관측 자료 \(\mathbf y\), 결측(잠재) 자료 \(\mathbf z\), 완전 자료 로그가능도 \(\ell_c(\theta; \mathbf y, \mathbf z)\).</p>
+    <ol>
+      <li><b>E 단계</b>: \(Q(\theta \mid \theta_t) = E_{\mathbf z \mid \mathbf y, \theta_t}[\ell_c(\theta; \mathbf y, \mathbf z)]\).</li>
+      <li><b>M 단계</b>: \(\theta_{t+1} = \arg\max_\theta Q(\theta \mid \theta_t)\).</li>
+    </ol>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.3.1</span>
+      <p>EM의 각 단계에서 관측 자료 로그가능도는 감소하지 않는다: \(\ell(\theta_{t+1}) \ge \ell(\theta_t)\).</p>
+    </div>
+    <p>증명은 \(\ell(\theta) = Q(\theta\mid\theta_t) - H(\theta\mid\theta_t)\)로 쓰고, \(H\) 부분이 \(\theta = \theta_t\)에서 최대라는 사실(젠센 부등식)을 씁니다. 수렴은 안정적이지만 1차 속도라 결측 비율이 크면 느리고, 국소 최대에 갈 수 있어 여러 출발점을 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.2 (두 정규분포 혼합)</span>
+      <p>자료가 확률 \(\pi\)로 \(N(\mu_1, \sigma^2)\), \(1-\pi\)로 \(N(\mu_2, \sigma^2)\)에서 나왔고 어느 쪽인지는 모릅니다. EM 단계를 쓰세요.</p>
+    </div>
+    <p><i>풀이.</i> 잠재 변수 \(z_i\) = 1이면 첫 집단. E 단계: 각 점의 소속 확률(책임도) \(w_i = \frac{\pi\phi_1(x_i)}{\pi\phi_1(x_i) + (1-\pi)\phi_2(x_i)}\). M 단계: 가중 평균으로 갱신. \(\pi = \bar w\), \(\mu_1 = \sum w_ix_i/\sum w_i\), \(\mu_2 = \sum(1-w_i)x_i/\sum(1-w_i)\), \(\sigma^2 = \frac1n\sum[w_i(x_i - \mu_1)^2 + (1-w_i)(x_i - \mu_2)^2]\). R의 <code>faithful$waiting</code>(봉우리 두 개)에 적용하면 평균 약 54.6, 80.1분, \(\pi \approx 0.36\), \(\sigma \approx 5.9\)로 수렴합니다(등분산 가정).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>E: 결측의 조건부 기대로 완전 자료 가능도를 평균. M: 최대화.</li>
+        <li>가능도는 단조 증가, 수렴은 느릴 수 있음.</li>
+        <li>혼합 모형, 결측 자료, 잠재 변수 모형에 씁니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정규 표본 \(n\)개 중 \(m\)개가 결측(무작위)일 때 \(\mu\)의 EM 반복은 무엇으로 수렴하나요?
+          <details><summary>답</summary><p>E 단계에서 결측값을 현재 \(\mu_t\)로 채우고, M 단계 \(\mu_{t+1} = (\sum_{\text{관측}}x_i + m\mu_t)/n\). 고정점은 관측값의 평균. 수렴 속도는 결측 비율 \(m/n\)배씩 오차가 줄어듭니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

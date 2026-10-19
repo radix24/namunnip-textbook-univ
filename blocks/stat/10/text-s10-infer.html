@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-infer" data-kind="본문" data-std="응통10-01-02">
+  <header class="card-head"><span class="no"></span><h2>기울기 추론과 결정계수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기울기의 t 검정과 신뢰구간을 만든다.</li>
+        <li>분산분석 분해와 결정계수를 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱 추정량 (<a href="01-01.html">1.1절</a>), t 분포 (응통6 6.1절).</li>
+      </ul>
+    </div>
+
+    <h3>기울기가 정말 0이 아닌가</h3>
+    <p>표본에서 구한 기울기 3.9는 우연히 나왔을 수도 있습니다. 참 기울기 \(\beta_1\)이 0이라면 이런 값이 얼마나 드문지를 계산해 \(x\)와 \(y\)의 직선 관계를 검정합니다.</p>
+
+    <h3><span class="no">1.2.1</span>t 검정과 신뢰구간</h3>
+    <p>정규 오차 가정 아래 \(\hat\beta_1 \sim N(\beta_1, \sigma^2/S_{xx})\)이고, \((n-2)s^2/\sigma^2 \sim \chi^2_{n-2}\)이 \(\hat\beta_1\)과 독립입니다(증명은 02단원 행렬 표현에서).</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 1.2.1</span>
+      <p>\(\dfrac{\hat\beta_1 - \beta_1}{\mathrm{se}(\hat\beta_1)} \sim t_{n-2}\), \(\mathrm{se}(\hat\beta_1) = \dfrac{s}{\sqrt{S_{xx}}}\). \(H_0: \beta_1 = 0\)의 검정통계량 \(t = \hat\beta_1/\mathrm{se}(\hat\beta_1)\), 신뢰구간 \(\hat\beta_1 \pm t_{\alpha/2, n-2}\,\mathrm{se}(\hat\beta_1)\).</p>
+    </div>
+
+    <h3><span class="no">1.2.2</span>분산분석 분해와 결정계수</h3>
+    <p>\(y_i - \bar y = (\hat y_i - \bar y) + (y_i - \hat y_i)\)를 제곱해 더하면 정규방정식 덕분에 교차항이 사라져</p>
+    \[\underbrace{\sum(y_i - \bar y)^2}_{SST} = \underbrace{\sum(\hat y_i - \bar y)^2}_{SSR} + \underbrace{\sum(y_i - \hat y_i)^2}_{SSE}.\]
+    <div class="tb-env def">
+      <span class="lb">정의 1.2.2</span>
+      <p><b>결정계수</b> \(R^2 = \mathrm{SSR}/\mathrm{SST} = 1 - \mathrm{SSE}/\mathrm{SST}\).</p>
+    </div>
+    <p>\(F = \frac{\mathrm{SSR}/1}{\mathrm{SSE}/(n-2)}\)는 \(H_0: \beta_1 = 0\) 아래 \(F(1, n-2)\)를 따르고, 단순회귀에서는 \(F = t^2\)입니다.</p>
+    <div class="tb-note">
+      <b>주의</b> \(R^2\)는 "모형이 맞는가"를 재지 않습니다. 곡선 관계에 직선을 맞춰도 \(R^2\)가 높을 수 있고(04단원 실습 카드), 맞는 모형이라도 오차가 크면 \(R^2\)는 낮습니다. \(R^2\)가 낮아도 기울기는 유의하고 중요할 수 있습니다.
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.3</span>
+      <p><code>cars</code> 자료에서 기울기의 표준오차가 0.416입니다. t 통계량, 95% 신뢰구간, \(R^2 = 0.651\)의 뜻은?</p>
+    </div>
+    <p><i>풀이.</i> \(t = 3.932/0.416 = 9.46\), 자유도 48, p값은 \(10^{-11}\) 수준. \(t_{0.025, 48} = 2.011\), 구간 \(3.932 \pm 0.837\), 곧 [3.10, 4.77]. 제동 거리 변동의 약 65%가 속도와의 직선 관계로 설명됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{se}(\hat\beta_1) = s/\sqrt{S_{xx}}\), 자유도 \(n-2\)인 t.</li>
+        <li>SST = SSR + SSE, \(R^2\) = SSR/SST.</li>
+        <li>\(R^2\)는 적합도의 한 측면일 뿐입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>1.1절 연습 자료(\(\hat\beta_1 = 0.8\), \(s^2 = 1.2\), \(S_{xx} = 10\))에서 기울기의 t 값과 결론(\(\alpha = 0.05\))은?
+          <details><summary>답</summary><p>\(\mathrm{se} = \sqrt{0.12} = 0.346\), \(t = 2.31\), 자유도 3, \(t_{0.025,3} = 3.182\). 기각하지 않습니다.</p></details>
+        </li>
+        <li>단순회귀에서 \(R^2 = r^2\)임을 보이세요.
+          <details><summary>답</summary><p>\(\mathrm{SSR} = \hat\beta_1^2S_{xx} = S_{xy}^2/S_{xx}\), \(R^2 = S_{xy}^2/(S_{xx}S_{yy}) = r^2\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾기 · 천문계산법 — QURI</title>
-  <meta name="description" content="천문계산법 5.3 푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾기 — 성취기준: 푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾을 수 있다.">
+  <title>푸리에 변환과 주기도로 주기 찾기 · 천문계산법 — QURI</title>
+  <meta name="description" content="천문계산법 5.3 푸리에 변환과 주기도로 주기 찾기 — 성취기준: 푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾을 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;천우10&quot;, &quot;title&quot;: &quot;5.3 푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾기&quot;, &quot;sub&quot;: &quot;천문계산법&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;천우10&quot;, &quot;title&quot;: &quot;5.3 푸리에 변환과 주기도로 주기 찾기&quot;, &quot;sub&quot;: &quot;천문계산법&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,165 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="천우10-05-03">
+  <section class="topic-hero u-hero has-text" data-sec="천우10-05-03" data-u="서울대 연세대">
     <div class="meta"><a href="../../../?dept=astro#tree">천문우주학과</a><span class="mono">/</span><a href="./">천문계산법</a><span class="mono">/</span><a href="05.html">5. 통계적 자료 분석</a></div>
-    <h1><span class="sec-no mono">5.3</span>푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="천우10-05-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[천우10-05-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="천우10-05-03" aria-label="할 수 있음"><span class="t">푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾을 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.3</span>푸리에 변환과 주기도로 주기 찾기</h1>
+    <p class="sec-std"><span class="mono">[천우10-05-03]</span> 푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾을 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-3-1"><span class="mono">5.3.1</span><span>이산 푸리에 변환</span></a></li><li><a href="#s5-3-2"><span class="mono">5.3.2</span><span>Lomb-Scargle 주기도</span></a></li><li><a href="#s5-3-3"><span class="mono">5.3.3</span><span>하루 앨리어스</span></a></li><li><a href="#s5-3-4"><span class="mono">5.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-a10-periodogram"><span class="mono">본문</span><span>푸리에 변환과 주기도로 주기 찾기</span></a></li><li><a href="#lab-a10-ls"><span class="mono">5.3.2</span><span>Lomb-Scargle 주기도로 가상 변광성의 주기 찾기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-a10-periodogram" data-kind="본문" data-std="천우10-05-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이산 푸리에 변환과 나이퀴스트 진동수를 안다.</li>
+        <li>고르지 않은 간격의 자료에 Lomb-Scargle 주기도를 쓴다.</li>
+        <li>하루 간격 관측이 만드는 앨리어스를 알아보고 피한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>삼각함수와 최소제곱 (<a href="../6/06-01.html">천우6 6.1절</a>), 변광성 (<a href="../3/05-01.html">천우3 5.1절</a>).</li>
+      </ul>
+    </div>
+
+<h3>밝기의 오르내림에 숨은 박자</h3>
+    <p>변광성의 맥동, 쌍성의 식, 외계행성의 통과, 별의 자전은 모두 주기적인 신호입니다. 관측 자료에서 그 주기를 찾는 도구가 푸리에 분석과 주기도입니다.</p>
+
+    <h3 id="s5-3-1"><span class="no">5.3.1</span>이산 푸리에 변환</h3>
+    <p>같은 간격 \(\Delta t\)로 잰 \(N\)개 자료 \(y_k\)의 이산 푸리에 변환은 진동수 \(f_j = j/(N\Delta t)\)마다</p>
+    \[ Y_j = \sum_{k=0}^{N-1}y_ke^{-2\pi ijk/N} \]
+    <p>이고, \(|Y_j|^2\)이 그 진동수 성분의 세기입니다. FFT 알고리즘으로 \(N\log N\) 연산에 계산합니다.</p>
+    <ul>
+      <li class="q-term"><b>진동수 분해능</b>: \(\delta f \approx 1/T\)(\(T = N\Delta t\)는 전체 관측 기간). 30일 관측이면 0.033 /일.</li>
+      <li class="q-term"><b>나이퀴스트 진동수</b>: \(f_N = 1/(2\Delta t)\). 이보다 빠른 신호는 느린 신호로 잘못 보인다(앨리어싱).</li>
+    </ul>
+
+    <h3 id="s5-3-2"><span class="no">5.3.2</span>Lomb-Scargle 주기도</h3>
+    <p>지상 관측은 낮, 날씨, 달 때문에 간격이 고르지 않아 FFT를 바로 쓸 수 없습니다. Lomb-Scargle 주기도는 진동수마다 사인 곡선 \(A\cos\omega t + B\sin\omega t\)를 최소제곱으로 맞춰 줄어든 \(\chi^2\)을 세기로 나타낸 것입니다. 시간 원점을 \(\tan2\omega\tau = \sum\sin2\omega t_i/\sum\cos2\omega t_i\)로 옮기면 식이 간단해집니다.</p>
+    \[ P(\omega) = \frac{1}{2\sigma^2}\left[\frac{\left(\sum y_i\cos\omega(t_i - \tau)\right)^2}{\sum\cos^2\omega(t_i - \tau)} + \frac{\left(\sum y_i\sin\omega(t_i - \tau)\right)^2}{\sum\sin^2\omega(t_i - \tau)}\right] \]
+    <p>(\(y_i\)는 평균을 뺀 값, \(\sigma^2\)은 분산.) 순수한 잡음이면 \(P\)가 평균 1의 지수 분포를 따르므로 봉우리의 유의성을 판단할 수 있습니다(<a href="05-04.html">5.4절</a>). astropy의 <code>LombScargle</code>로 계산합니다.</p>
+
+    <h3 id="s5-3-3"><span class="no">5.3.3</span>하루 앨리어스</h3>
+    <p>한 관측소에서 밤에만 관측하면 자료에 하루 주기의 틈이 생깁니다. 그 결과 참 진동수 \(f\) 말고도 \(f \pm 1\) /일, \(f \pm 2\) /일에 가짜 봉우리(앨리어스)가 생기고, 자료가 적거나 잡음이 크면 가짜가 더 높을 수도 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1 <span class="nm">(실습 카드 결과, 가상 자료)</span></span>
+      <p>참 주기 0.537일(진동수 1.862 /일), 30일 동안 밤에만 관측한 가상 변광성의 주기도 결과입니다.</p>
+    </div>
+    <ul>
+      <li class="q-term">60번, 잡음 0.3: 가장 높은 봉우리 1.8642 /일 → 0.5364일(세기 24.2). 참 주기를 찾았다(격자 간격 0.0025 /일 안).</li>
+      <li class="q-term">10번, 잡음 0.3: 2.8616 /일 → 0.3495일. \(1.862 + 1\)의 1일 앨리어스가 이겼다.</li>
+      <li class="q-term">30번, 잡음 1: 1.7800 /일 → 0.5618일. 잡음이 만든 봉우리가 이겼다.</li>
+    </ul>
+    <p>앨리어스를 피하려면 경도가 다른 여러 관측소에서 관측하거나, 우주 망원경(TESS, Kepler)처럼 끊김 없는 자료를 쓰거나, 자료가 많아지도록 관측 기간을 늘립니다. 찾은 주기로 위상을 접은 광도 곡선이 깔끔한지도 꼭 확인합니다.</p>
+    <div class="tb-note"><b>주의</b> 식쌍성처럼 사인 곡선과 모양이 매우 다른 신호는 주기도가 참 주기의 절반에서 가장 높을 수 있습니다(두 식이 비슷하면). 외계행성 통과처럼 짧은 상자 모양에는 BLS(상자 맞춤) 주기도가 더 민감합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>DFT: 진동수 분해능 \(1/T\), 나이퀴스트 \(1/(2\Delta t)\). FFT는 \(N\log N\).</li>
+        <li>Lomb-Scargle: 간격이 고르지 않은 자료에 진동수마다 사인 곡선을 최소제곱으로 맞춘 세기.</li>
+        <li>하루 앨리어스 \(f \pm 1\) /일: 자료가 적거나 잡음이 크면 가짜가 이길 수 있다.</li>
+        <li>위상 접기로 확인하고, 여러 관측소·우주 자료로 앨리어스를 피한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-3-4"><span class="no">5.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>10분 간격 관측의 나이퀴스트 진동수는?
+          <details><summary>답</summary><p>1/(20분) = 72 /일.</p></details>
+        </li>
+        <li>100일 관측의 진동수 분해능은?
+          <details><summary>답</summary><p>약 0.01 /일.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>참 주기 0.25일(4 /일)의 1일 앨리어스 주기는?
+          <details><summary>답</summary><p>3 /일 → 0.333일, 5 /일 → 0.2일.</p></details>
+        </li>
+        <li>주기 3일 근처에서 주기 분해능은 30일 관측일 때 대략 몇 일?
+          <details><summary>답</summary><p>\(\delta P = P^2\delta f = 9\times0.033 = 0.3\)일.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-a10-periodogram" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="천우10-05-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[천우10-05-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="천우10-05-03" aria-label="할 수 있음"><span class="t">푸리에 변환과 주기도로 시계열 관측 자료의 주기를 찾을 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-a10-ls" data-kind="실습" data-std="천우10-05-03">
+  <header class="card-head"><span class="no">5.3.2</span><h2><span class="q-badge">실습</span>Lomb-Scargle 주기도로 가상 변광성의 주기 찾기</h2><span class="kind">실습 · 주기도</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[천우10-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>밤에만 관측한 가상 변광성 자료의 Lomb-Scargle 주기도를 계산하고, 관측 수와 잡음에 따라 참 주기, 1일 앨리어스, 잡음 봉우리 가운데 무엇이 가장 높아지는지 봅니다. 성취기준 [천우10-05-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 자료: 참 주기 0.537일, 진폭 1의 사인 곡선. 30일 가운데 무작위 날의 밤(하루 중 0.35일 동안)에만 관측하고 가우스 잡음을 더합니다. 진동수 0.05~5 /일을 2,001개 격자(간격 0.0025 /일)로 계산합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>관측 수 = <b data-show="np">60</b> 번</span><input type="range" name="np" min="10" max="120" step="5" value="60" aria-label="관측 수"></label>
+        <label><span>잡음 σ = <b data-show="sig" data-fix="1">0.3</b></span><input type="range" name="sig" min="0.1" max="2" step="0.1" value="0.3" aria-label="잡음 σ"></label>
+      </div>
+      <canvas aria-label="진동수에 따른 Lomb-Scargle 세기(파랑), 참 진동수(주황 점선), 가장 높은 봉우리(빨강)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>관측 60번, 잡음 0.3에서 가장 높은 봉우리와 앨리어스 위치(0.862, 2.862 /일)를 확인합니다.</li>
+        <li>관측 수를 20, 10으로 줄여 봅니다.</li>
+        <li>관측 30번에서 잡음을 1로 키우고, 다시 관측 수를 100, 잡음 2로 해 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>60번, 0.3: 1.8642 /일 → 0.5364일(세기 24.2), 참 주기를 찾는다. 앨리어스 봉우리도 뚜렷이 보인다.</li>
+        <li>20번, 0.3: 1.8667 /일 → 0.5357일(세기 8.1). 10번, 0.3: 2.8616 /일 → 0.3495일, 1일 앨리어스가 이긴다.</li>
+        <li>30번, 1: 1.7800 /일 → 0.5618일, 잡음 봉우리. 100번, 2: 1.8642 /일 → 0.5364일(세기 5.1), 자료가 많으면 큰 잡음 속에서도 찾는다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>앨리어스 봉우리가 참 봉우리에서 정확히 1 /일 떨어진 까닭을 관측 시각의 규칙성으로 설명하세요.</li>
+        <li>가장 높은 봉우리의 세기가 순수 잡음의 평균(1)보다 얼마나 커야 믿을 만할까요(5.4절)?</li>
+        <li>주기 0.5364일과 참 주기 0.537일의 차이는 격자 간격과 분해능(1/30 /일) 가운데 무엇 때문입니까?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>astropy의 <code>LombScargle</code>로 TESS나 ZTF의 실제 변광성 광도 곡선(공개 자료)의 주기를 구하고, 위상 접기 그림을 그려 보세요.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-a10-ls" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-02.html">← 5.2 Monte Carlo 방법(MCMC 포함)으로 매개변수의 불확도를 추정하기</a></span>
-        <span></span>
+        <span><a href="05-02.html">← 5.2 MCMC로 매개변수의 불확도 추정하기</a></span>
+        <span><a href="05-04.html">5.4 가설 검정과 모형 선택으로 신호 판별하기 →</a></span>
       </nav>
     </div>
   </div>
@@ -63,7 +199,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/astro/a10-lab.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>

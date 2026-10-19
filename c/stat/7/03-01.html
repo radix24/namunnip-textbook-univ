@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fisher 정보량과 Cramér-Rao 하한을 구하기 · 수리통계학(2) — QURI</title>
-  <meta name="description" content="수리통계학(2) 3.1 Fisher 정보량과 Cramér-Rao 하한을 구하기 — 성취기준: Fisher 정보량과 Cramér-Rao 하한을 구할 수 있다.">
+  <title>피셔 정보량과 크라메르-라오 하한 · 수리통계학(2) — QURI</title>
+  <meta name="description" content="수리통계학(2) 3.1 피셔 정보량과 크라메르-라오 하한 — 성취기준: Fisher 정보량과 Cramér-Rao 하한을 구할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통7&quot;, &quot;title&quot;: &quot;3.1 Fisher 정보량과 Cramér-Rao 하한을 구하기&quot;, &quot;sub&quot;: &quot;수리통계학(2)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통7&quot;, &quot;title&quot;: &quot;3.1 피셔 정보량과 크라메르-라오 하한&quot;, &quot;sub&quot;: &quot;수리통계학(2)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,108 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통7-03-01">
+  <section class="topic-hero u-hero has-text" data-sec="응통7-03-01" data-u="서울대 POSTECH">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">수리통계학(2)</a><span class="mono">/</span><a href="03.html">3. 정보량과 점근 이론</a></div>
-    <h1><span class="sec-no mono">3.1</span>Fisher 정보량과 Cramér-Rao 하한을 구하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통7-03-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통7-03-01] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통7-03-01" aria-label="할 수 있음"><span class="t">Fisher 정보량과 Cramér-Rao 하한을 구할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.1</span>피셔 정보량과 크라메르-라오 하한</h1>
+    <p class="sec-std"><span class="mono">[응통7-03-01]</span> Fisher 정보량과 Cramér-Rao 하한을 구할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · POSTECH</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-1-1"><span class="mono">3.1.1</span><span>점수와 정보량</span></a></li><li><a href="#s3-1-2"><span class="mono">3.1.2</span><span>크라메르-라오 하한</span></a></li><li><a href="#s3-1-3"><span class="mono">3.1.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s7-fisher"><span class="mono">본문</span><span>피셔 정보량과 크라메르-라오 하한</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s7-fisher" data-kind="본문" data-std="응통7-03-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>점수함수와 피셔 정보량을 계산한다.</li>
+        <li>불편추정량의 분산 하한(크라메르-라오)을 구하고 효율을 판정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도법 (<a href="01-01.html">1.1절</a>), 공분산과 \(|\rho| \le 1\) (응통6 5.2절).</li>
+      </ul>
+    </div>
 
+    <h3>분산을 얼마나 줄일 수 있나</h3>
+    <p>UMVUE는 불편추정량 중 최선이지만, 그 분산이 절대적으로 얼마나 작은지는 말하지 않습니다. 자료에 담긴 정보량이 정해지면 어떤 불편추정량도 넘을 수 없는 분산의 하한이 있습니다.</p>
+
+    <h3 id="s3-1-1"><span class="no">3.1.1</span>점수와 정보량</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 3.1.1</span>
+      <p><b>점수함수</b>: \(U(\theta) = \frac{\partial}{\partial\theta}\log f(X;\theta)\). <b>피셔 정보량</b>: \(I(\theta) = E[U(\theta)^2]\).</p>
+    </div>
+    <p>미분과 적분의 순서를 바꿀 수 있는 정칙 조건 아래에서 \(E[U(\theta)] = \int\frac{\partial f/\partial\theta}{f}f\,dx = \frac{\partial}{\partial\theta}\int f = 0\)이고, 한 번 더 미분하면</p>
+    \[I(\theta) = \mathrm{Var}(U) = -E\left[\frac{\partial^2}{\partial\theta^2}\log f(X;\theta)\right].\]
+    <p>로그가능도의 곡률이 클수록(뾰족할수록) 정보가 많습니다. 독립 표본 \(n\)개의 정보량은 \(nI(\theta)\)입니다.</p>
+
+    <h3 id="s3-1-2"><span class="no">3.1.2</span>크라메르-라오 하한</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.1.2</span>
+      <p>정칙 조건 아래에서 \(\tau(\theta)\)의 불편추정량 \(W\)는 \(\mathrm{Var}(W) \ge \dfrac{[\tau'(\theta)]^2}{nI(\theta)}\)를 만족한다.</p>
+    </div>
+    <p class="tb-proof">표본 점수 \(U_n = \sum U_i\)는 평균 0, 분산 \(nI\). \(\mathrm{Cov}(W, U_n) = E(WU_n) = \int W\frac{\partial f_n}{\partial\theta}d\mathbf x = \frac{\partial}{\partial\theta}E(W) = \tau'(\theta)\). 상관계수가 1 이하이므로 \([\tau'(\theta)]^2 = \mathrm{Cov}^2 \le \mathrm{Var}(W)\cdot nI(\theta)\). <span class="qed">∎</span></p>
+    <p>하한과 분산이 같은 불편추정량을 <b>효율적</b>이라 합니다. 증명에서 등호는 \(W\)가 \(U_n\)의 일차식일 때만 성립하며, 이는 지수족에서 \(T\)의 평균을 추정할 때입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.3</span>
+      <p>포아송 \(\lambda\)의 정보량과 하한을 구하고 \(\bar X\)가 효율적인지 보세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\log f = -\lambda + x\log\lambda - \log x!\), \(\partial^2/\partial\lambda^2 = -x/\lambda^2\), \(I = E(X)/\lambda^2 = 1/\lambda\). 하한 \(\lambda/n\). \(\mathrm{Var}(\bar X) = \lambda/n\)이므로 효율적입니다.</p>
+
+    <div class="tb-note">
+      <b>주의</b> \(U(0,\theta)\)처럼 값을 가지는 영역이 \(\theta\)에 의존하면 정칙 조건이 깨져 하한이 성립하지 않습니다. 실제로 UMVUE \(\frac{n+1}{n}X_{(n)}\)의 분산은 \(1/n^2\) 속도로 줄어 "하한"보다 작습니다.
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(I(\theta) = E[U^2] = -E[\partial^2\log f/\partial\theta^2]\), 표본은 \(nI\).</li>
+        <li>불편추정량의 분산 ≥ \([\tau']^2/(nI)\).</li>
+        <li>정칙 조건(영역이 모수에 무관 등)이 필요합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-1-3"><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>베르누이 \(p\)의 피셔 정보량은?
+          <details><summary>답</summary><p>\(\partial^2\log f = -x/p^2 - (1-x)/(1-p)^2\), \(I = 1/p + 1/(1-p) = \frac{1}{p(1-p)}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(N(\mu, \sigma^2)\)에서 \(\sigma^2\)(알려진 \(\mu\))의 하한과, \(\mu\)를 모를 때 \(S^2\)의 분산을 비교하세요.
+          <details><summary>답</summary><p>\(I(\sigma^2) = 1/(2\sigma^4)\), 하한 \(2\sigma^4/n\). \(\mathrm{Var}(S^2) = 2\sigma^4/(n-1)\)로 하한보다 조금 큽니다. \(S^2\)은 UMVUE이지만 효율적이지는 않습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s7-fisher" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통7-03-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통7-03-01] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · POSTECH</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통7-03-01" aria-label="할 수 있음"><span class="t">Fisher 정보량과 Cramér-Rao 하한을 구할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/7/02.html"><span class="mono">대단원 2</span><span><b>충분통계량과 최적 추정</b></span></a></li><li><a href="../../../c/stat/1/02.html"><span class="mono">대단원 2</span><span>미분적분학 <b>미분과 응용</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-03.html">← 2.3 지수족의 완비 충분통계량을 찾기</a></span>
-        <span><a href="03-02.html">3.2 최대가능도추정량의 점근 정규성을 설명하기 →</a></span>
+        <span><a href="02-R.html">← 2.R 단원 마무리</a></span>
+        <span><a href="03-02.html">3.2 최대가능도추정량의 점근 정규성 →</a></span>
       </nav>
     </div>
   </div>

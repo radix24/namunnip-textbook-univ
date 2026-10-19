@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-04-02",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a13-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a13-stack" data-kind="실습" data-std="천우13-04-02">
+  <header class="card-head"><span class="no"></span><h2>평균, 중앙값, 시그마 자름으로 여러 장 합성하기</h2><span class="kind">실습 · 영상 합성</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>우주선이 있는 가상 영상 여러 장을 세 가지 방법으로 합성해, 배경 잡음이 장 수에 따라 줄어드는 정도와 우주선 제거 능력을 비교합니다. 성취기준 [천우13-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 영상 48×48 최대 32장: 가운데 희미한 별(최고값 약 8), 잡음 10, 한 장마다 픽셀 0.5%꼴로 우주선(+300). 영상끼리는 이미 정합된 것으로 둡니다. 배경 잡음은 MAD(중앙 절대 편차 × 1.4826)로 재고, 별에서 8픽셀 밖 배경 2,107픽셀 가운데 5σ를 넘는 픽셀(남은 우주선 등)을 셉니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>합성 방법</span><select name="m" aria-label="합성 방법"><option value="mean">평균</option><option value="med">중앙값</option><option value="clip">3σ 자름 평균</option></select></label>
+        <label><span>장 수 = <b data-show="nf">8</b> 장</span><input type="range" name="nf" min="1" max="32" step="1" value="8" aria-label="장 수"></label>
+      </div>
+      <canvas aria-label="가상 영상 한 장(왼쪽)과 합성 영상(오른쪽)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>평균, 8장에서 잡음과 남은 우주선 수를 읽습니다.</li>
+        <li>중앙값과 3σ 자름 평균으로 바꿔 비교합니다.</li>
+        <li>장 수를 1, 4, 16, 32로 바꿔 잡음이 10/√N을 따르는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>8장: 평균 잡음 3.68, 남은 우주선 92개. 중앙값 4.15, 0개. 자름 평균 3.75, 0개. (10/√8 = 3.54)</li>
+        <li>32장: 평균 2.13, 92개. 중앙값 2.15, 0개. 자름 평균 1.83, 0개. (10/√32 = 1.77)</li>
+        <li>16장: 평균 2.66인데 남은 우주선 165개(300/16 = 18.8이 5σ를 넘음). 1장: 10.07, 10개.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>평균 합성에서 남은 우주선 수가 장 수에 따라 단순히 줄지 않는 까닭은?</li>
+        <li>중앙값 합성의 잡음이 평균보다 큰 까닭은?</li>
+        <li>4장처럼 장 수가 적을 때 시그마 자름의 기준을 평균·표준편차 대신 중앙값·MAD로 잡아야 하는 까닭은?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>astropy의 <code>sigma_clipped_stats</code>와 ccdproc의 <code>Combiner</code>로 실제 관측 영상 여러 장을 합성하고, 결과의 배경 잡음이 이론값을 따르는지 확인해 보세요.</p>
+    </section>
+  </div>
+</article>

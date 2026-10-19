@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FFT로 신호의 스펙트럼을 계산하고 해상도를 판단하기 · 신호및시스템 — QURI</title>
-  <meta name="description" content="신호및시스템 5.3 FFT로 신호의 스펙트럼을 계산하고 해상도를 판단하기 — 성취기준: FFT로 신호의 스펙트럼을 계산하고 해상도를 판단할 수 있다.">
+  <title>FFT와 스펙트럼 계산의 실제 · 신호및시스템 — QURI</title>
+  <meta name="description" content="신호및시스템 5.3 FFT와 스펙트럼 계산의 실제 — 성취기준: FFT로 신호의 스펙트럼을 계산하고 해상도를 판단할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;5.3 FFT로 신호의 스펙트럼을 계산하고 해상도를 판단하기&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;5.3 FFT와 스펙트럼 계산의 실제&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,198 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전6-05-03">
+  <section class="topic-hero u-hero has-text" data-sec="전전6-05-03" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">신호및시스템</a><span class="mono">/</span><a href="05.html">5. 이산시간 Fourier 변환과 DFT</a></div>
-    <h1><span class="sec-no mono">5.3</span>FFT로 신호의 스펙트럼을 계산하고 해상도를 판단하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전6-05-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-05-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전6-05-03" aria-label="할 수 있음"><span class="t">FFT로 신호의 스펙트럼을 계산하고 해상도를 판단할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.3</span>FFT와 스펙트럼 계산의 실제</h1>
+    <p class="sec-std"><span class="mono">[전전6-05-03]</span> FFT로 신호의 스펙트럼을 계산하고 해상도를 판단할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-3-1"><span class="mono">5.3.1</span><span>나누어 정복하기</span></a></li><li><a href="#s5-3-2"><span class="mono">5.3.2</span><span>FFT 결과 읽기</span></a></li><li><a href="#s5-3-3"><span class="mono">5.3.3</span><span>해상도</span></a></li><li><a href="#s5-3-4"><span class="mono">5.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e6-fft"><span class="mono">본문</span><span>FFT와 스펙트럼 계산의 실제</span></a></li><li><a href="#lab-e6-fft"><span class="mono">5.3.2</span><span>Python FFT로 두 음을 구별하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e6-fft" data-kind="본문" data-std="전전6-05-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기수 2 FFT가 N점 DFT를 두 개의 N/2점 DFT로 나누어 계산량을 \(N^2\)에서 \(\frac N2\log_2N\)으로 줄이는 원리를 안다.</li>
+        <li>FFT 결과의 빈 번호를 Hz로 바꾸고, 정현파의 진폭을 \(2|X[k]|/N\)으로 읽는다.</li>
+        <li>관측 시간과 주파수 해상도의 관계 \(\Delta f \approx 1/T\)로 두 주파수를 구별할 수 있는지 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>DFT (<a href="05-02.html">5.2절</a>), Python 기초와 리스트 (<a href="../1/04-01.html">전전1 4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s5-3-1"><span class="no">5.3.1</span>나누어 정복하기</h3>
+    <p>구하려는 것: N점 DFT를 \(N^2\)번보다 훨씬 적은 곱셈으로 계산하는 방법. N이 짝수일 때 합을 짝수 번째와 홀수 번째 표본으로 나눕니다. \(W_N = e^{-j2\pi/N}\)이라 쓰면</p>
+    \[ X[k] = \sum_{m=0}^{N/2-1}x[2m]W_{N/2}^{km} + W_N^k\sum_{m=0}^{N/2-1}x[2m+1]W_{N/2}^{km} = E[k] + W_N^kO[k]. \]
+    <p>여기서 \(W_N^{2km} = W_{N/2}^{km}\)을 썼습니다. E와 O는 각각 N/2점 DFT이고 주기 N/2이므로, \(k\)와 \(k + N/2\)에서 같은 값을 다시 씁니다. 또 \(W_N^{k + N/2} = -W_N^k\)이므로</p>
+    \[ X[k] = E[k] + W_N^kO[k], \qquad X[k + N/2] = E[k] - W_N^kO[k]. \]
+    <p class="q-term"><b>나비(butterfly) 연산</b>: 위 두 식. 곱셈 한 번(\(W_N^kO[k]\))으로 출력 두 개를 만든다.</p>
+    <p class="q-term"><b>회전 인자(twiddle factor)</b>: \(W_N^k\). 단위원 위의 점.</p>
+    <p>이 쪼개기를 N/2, N/4, …, 1점까지 \(\log_2N\)단계 되풀이하면 각 단계에 나비 N/2개, 곧 곱셈 \(\frac N2\log_2N\)번입니다. N = 1024이면 5120번으로, 정의대로 하는 약 100만 번보다 약 200배 빠릅니다. 이 알고리즘(Cooley-Tukey, 1965)이 디지털 신호 처리를 실용화했습니다.</p>
+
+    <h3 id="s5-3-2"><span class="no">5.3.2</span>FFT 결과 읽기</h3>
+    <p>표본화 주파수 \(f_s\), N점으로 \(A\cos(2\pi f_0t)\)를 표본화했고 \(f_0\)가 정확히 빈 \(k_0 = f_0N/f_s\)에 놓인다고 합시다. 코사인은 \(\pm f_0\) 두 성분으로 나뉘어 각 성분이 \(\frac A2 \times N\)의 크기로 모입니다.</p>
+    <ul>
+      <li>빈 → 주파수: \(f_k = kf_s/N\) (\(k \le N/2\)). 넘는 빈은 음의 주파수(\(k - N\)).</li>
+      <li>크기 → 진폭: \(A = \frac{2|X[k_0]|}{N}\). 직류(k = 0)만은 \(|X[0]|/N\).</li>
+      <li>위상: \(\angle X[k_0]\)는 코사인의 위상. 사인이면 −90°.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>\(f_s = 1000\) Hz로 1초(N = 1000) 동안 \(x = \sin(2\pi\cdot50t) + 0.5\sin(2\pi\cdot120t)\)를 표본화했다. FFT에서 봉우리가 나오는 빈과 그 크기를 예측하여라.</p>
+    </div>
+    <p><i>풀이.</i> 간격 \(\Delta f = 1000/1000 = 1\) Hz이므로 50 Hz는 빈 50, 120 Hz는 빈 120(그리고 대칭인 950, 880). 크기는 \(|X[50]| = \frac{1 \times 1000}{2} = 500\), \(|X[120]| = 250\). 진폭으로 바꾸면 \(2 \times 500/1000 = 1\), \(0.5\). 다른 빈은 (계산 오차 수준으로) 0입니다. 이 절의 실습 카드에서 그대로 확인합니다.</p>
+
+    <h3 id="s5-3-3"><span class="no">5.3.3</span>해상도</h3>
+    <p class="q-term"><b>주파수 해상도</b>: 가까운 두 주파수를 따로 보이는 봉우리로 구별하는 능력. 대략 \(\Delta f \approx 1/T\) (T = 관측 시간 = \(N/f_s\)). 직사각 창으로는 두 주파수가 약 \(2/T\) 정도 떨어져야 확실히 갈라진다(창에 따라 다름, 8.2절).</p>
+    <p>왜 그런가: 길이 T로 자르는 것은 무한한 신호에 직사각 펄스를 곱하는 것이고(4.2절 곱셈 정리), 스펙트럼은 sinc와 컨볼루션되어 폭 약 \(2/T\)의 봉우리로 퍼집니다. 두 봉우리가 이 폭보다 가까우면 겹쳐 하나로 보입니다. 50 Hz와 52 Hz를 구별하려면 적어도 0.5~1초를 관측해야 하고, 0.25초(\(\Delta f = 4\) Hz)로는 0을 아무리 채워도 51 Hz 근처의 넓은 봉우리 하나로 보입니다(실습 카드에서 확인).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 진폭을 \(|X[k]|\)로 그대로 읽어 "50 Hz 성분의 크기가 500"이라 하는 실수: N과 2로 나눠야 합니다. 라이브러리마다 정규화가 달라 확인 필요. (2) "표본화 주파수를 높이면 해상도가 좋아진다": 같은 시간 동안이면 N과 \(f_s\)가 같이 늘어 \(\Delta f = f_s/N = 1/T\)가 그대로입니다. 해상도는 관측 시간으로 정해집니다. (3) FFT가 근사라는 오해: FFT는 DFT를 정확히 계산하는 빠른 방법일 뿐입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>FFT: 짝·홀로 나누어 나비 연산을 \(\log_2N\)단계. 곱셈 \(\frac N2\log_2N\)번.</li>
+        <li>빈 k ↔ \(kf_s/N\) Hz, 진폭 \(2|X[k]|/N\).</li>
+        <li>해상도 \(\approx 1/T\). 영 채우기나 \(f_s\) 증가로는 늘지 않는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-3-4"><span class="no">5.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>N = 8 FFT는 몇 단계, 각 단계 나비 몇 개인가?
+          <details><summary>답</summary><p>3단계, 각 4개(곱셈 12번).</p></details>
+        </li>
+        <li>\(f_s = 48\) kHz, N = 4096에서 빈 간격과 관측 시간은?
+          <details><summary>답</summary><p>약 11.72 Hz, 약 85.3 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>440 Hz와 442 Hz 두 음의 맥놀이를 FFT로 갈라 보려면 최소 몇 초를 녹음해야 하는가(대략)?
+          <details><summary>답</summary><p>차이 2 Hz → \(T \gtrsim 1/2\) s, 확실히 갈라 보려면 1 s 정도.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(X[k + N/2] = E[k] - W_N^kO[k]\)에서 \(W_N^{k + N/2} = -W_N^k\)임을 보이고, \(E[k + N/2] = E[k]\)인 이유를 설명하여라.
+          <details><summary>답</summary><p>\(W_N^{N/2} = e^{-j\pi} = -1\). E는 N/2점 DFT라 k에 대해 주기 N/2(5.1절의 주기성과 같은 이유).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e6-fft" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전6-05-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-05-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전6-05-03" aria-label="할 수 있음"><span class="t">FFT로 신호의 스펙트럼을 계산하고 해상도를 판단할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-e6-fft" data-kind="실습" data-std="전전6-05-03">
+  <header class="card-head"><span class="no">5.3.2</span><h2><span class="q-badge">실습</span>Python FFT로 두 음을 구별하기</h2><span class="kind">실습 · NumPy rfft, 관측 시간과 해상도</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-03.html#std">[전전6-05-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>NumPy의 FFT로 정현파 합의 스펙트럼을 계산해 봉우리의 주파수와 진폭을 읽고, 관측 시간과 영 채우기가 해상도에 미치는 영향을 숫자로 확인합니다. 성취기준 [전전6-05-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>Python 3과 NumPy(<code>pip install numpy</code>). 그림을 보고 싶으면 matplotlib도 설치합니다(선택).</li>
+        <li>아래 코드를 <code>fft_lab.py</code>로 저장합니다. 신호는 모두 계산으로 만든 가상 신호입니다.</li>
+      </ul>
+<pre><code>import numpy as np
+
+fs = 1000                      # 표본화 주파수 (Hz)
+
+def spectrum(x, nfft=None):
+    """한쪽 진폭 스펙트럼: 주파수(Hz)와 진폭 2|X|/N"""
+    N = len(x)
+    X = np.fft.rfft(x, nfft or N)          # nfft &gt; N이면 뒤에 0을 채움
+    f = np.fft.rfftfreq(nfft or N, 1 / fs)
+    return f, 2 * np.abs(X) / N
+
+def peaks(f, A, thr=0.2):
+    """이웃보다 크고 thr보다 큰 봉우리의 (주파수, 진폭)"""
+    return [(round(float(f[k]), 2), round(float(A[k]), 3))
+            for k in range(1, len(A) - 1)
+            if A[k] &gt; A[k - 1] and A[k] &gt;= A[k + 1] and A[k] &gt; thr]
+
+def tones(N, parts):
+    t = np.arange(N) / fs
+    return sum(a * np.sin(2 * np.pi * f0 * t) for f0, a in parts)
+
+# 1. 1초(N = 1000): 50 Hz(진폭 1) + 120 Hz(진폭 0.5)
+print("1:", peaks(*spectrum(tones(1000, [(50, 1), (120, 0.5)]))))
+# 2. 같은 신호를 0.25초(N = 250)만
+print("2:", peaks(*spectrum(tones(250, [(50, 1), (120, 0.5)]))))
+# 3. 50 Hz와 52 Hz(진폭 각 1)를 0.25초와 1초로
+for N in (250, 1000):
+    print("3:", N, peaks(*spectrum(tones(N, [(50, 1), (52, 1)]))))
+# 4. 0.25초 신호에 0을 채워 4000점으로
+print("4:", peaks(*spectrum(tones(250, [(50, 1), (52, 1)]), 4000)))</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li><code>python fft_lab.py</code>를 실행하고 다섯 줄의 출력을 적습니다.</li>
+        <li>각 경우의 빈 간격 \(\Delta f = f_s/N\)(영 채우기 때는 \(f_s/\text{nfft}\))을 계산해 출력 옆에 적습니다.</li>
+        <li>(선택) matplotlib으로 <code>plt.stem(*spectrum(...))</code>을 그려 봉우리 모양을 봅니다.</li>
+        <li><code>tones</code>의 <code>np.sin</code>을 <code>np.cos</code>로 바꾸고 2번을 다시 돌려 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>NumPy 2.x에서 위 코드를 실행한 출력입니다.</p>
+<pre><code>1: [(50.0, 1.0), (120.0, 0.5)]
+2: [(48.0, 0.649), (120.0, 0.5)]
+3: 250 [(52.0, 1.179)]
+3: 1000 [(50.0, 1.0), (52.0, 1.0)]
+4: [(44.75, 0.237), (51.0, 1.273), (57.25, 0.213)]</code></pre>
+      <ul>
+        <li><b>1</b>: \(\Delta f = 1\) Hz. 두 주파수가 빈에 정확히 놓여 진폭이 그대로(1, 0.5) 읽힙니다(5.3절 예제 5.3.1).</li>
+        <li><b>2</b>: \(\Delta f = 4\) Hz. 120 Hz는 빈(30번)에 놓이지만 50 Hz는 빈 12.5, 곧 두 빈의 한가운데라 에너지가 이웃 빈으로 새어 48 Hz에서 0.649로 작게 보입니다(누설, 8.2절).</li>
+        <li><b>3</b>: 2 Hz 차이는 0.25초 관측(\(\Delta f = 4\) Hz)으로는 봉우리 하나(52 Hz, 1.179)이고, 1초 관측(\(\Delta f = 1\) Hz)으로는 50 Hz와 52 Hz가 진폭 1로 정확히 갈라집니다.</li>
+        <li><b>4</b>: 0.25초 신호에 0을 채워 점 간격을 0.25 Hz로 줄여도 봉우리는 51 Hz 하나입니다. 양옆 44.75, 57.25 Hz의 작은 봉우리는 실제 성분이 아니라 직사각 창의 옆엽입니다. 영 채우기는 해상도를 늘리지 못합니다.</li>
+        <li>코사인으로 바꾸면 2번이 <code>[(52.0, 0.649), (120.0, 0.509)]</code>가 됩니다. 50 Hz의 봉우리가 48 Hz 대신 52 Hz 쪽에 서고, 빈에 놓인 120 Hz까지 0.509로 조금 달라집니다. 50 Hz에서 새어 나온 에너지가 다른 빈에 더해질 때 위상에 따라 보강되거나 상쇄되기 때문입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>2번에서 50 Hz의 겉보기 진폭이 0.649로 줄었습니다. 이 오차를 줄이는 방법 두 가지(관측 시간 바꾸기, 창 함수)를 제안하고, 8.2절을 읽은 뒤 확인하세요.</li>
+        <li>3번 결과로 "두 주파수를 구별하는 데 필요한 관측 시간"을 어림하는 규칙을 한 줄로 쓰세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>휴대폰으로 녹음한 기타 한 음(WAV)을 <code>scipy.io.wavfile.read</code>로 읽어 FFT를 하면 기본음과 배음이 보입니다. 녹음 길이를 0.1초, 1초로 바꿔 봉우리 폭을 비교하세요. 디지털신호처리(전전35)로 이어집니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e6-fft" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-02.html">← 5.2 DFT와 DTFT의 관계를 설명하기</a></span>
-        <span><a href="06-01.html">6.1 Nyquist 표본화 정리를 주파수 영역으로 설명하기 →</a></span>
+        <span><a href="05-02.html">← 5.2 DFT: DTFT를 N점에서 표본화하기</a></span>
+        <span><a href="05-R.html">5.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-05-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="lab-e6-fft" data-kind="실습" data-std="전전6-05-03">
+  <header class="card-head"><span class="no"></span><h2>Python FFT로 두 음을 구별하기</h2><span class="kind">실습 · NumPy rfft, 관측 시간과 해상도</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>NumPy의 FFT로 정현파 합의 스펙트럼을 계산해 봉우리의 주파수와 진폭을 읽고, 관측 시간과 영 채우기가 해상도에 미치는 영향을 숫자로 확인합니다. 성취기준 [전전6-05-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>Python 3과 NumPy(<code>pip install numpy</code>). 그림을 보고 싶으면 matplotlib도 설치합니다(선택).</li>
+        <li>아래 코드를 <code>fft_lab.py</code>로 저장합니다. 신호는 모두 계산으로 만든 가상 신호입니다.</li>
+      </ul>
+<pre><code>import numpy as np
+
+fs = 1000                      # 표본화 주파수 (Hz)
+
+def spectrum(x, nfft=None):
+    """한쪽 진폭 스펙트럼: 주파수(Hz)와 진폭 2|X|/N"""
+    N = len(x)
+    X = np.fft.rfft(x, nfft or N)          # nfft &gt; N이면 뒤에 0을 채움
+    f = np.fft.rfftfreq(nfft or N, 1 / fs)
+    return f, 2 * np.abs(X) / N
+
+def peaks(f, A, thr=0.2):
+    """이웃보다 크고 thr보다 큰 봉우리의 (주파수, 진폭)"""
+    return [(round(float(f[k]), 2), round(float(A[k]), 3))
+            for k in range(1, len(A) - 1)
+            if A[k] &gt; A[k - 1] and A[k] &gt;= A[k + 1] and A[k] &gt; thr]
+
+def tones(N, parts):
+    t = np.arange(N) / fs
+    return sum(a * np.sin(2 * np.pi * f0 * t) for f0, a in parts)
+
+# 1. 1초(N = 1000): 50 Hz(진폭 1) + 120 Hz(진폭 0.5)
+print("1:", peaks(*spectrum(tones(1000, [(50, 1), (120, 0.5)]))))
+# 2. 같은 신호를 0.25초(N = 250)만
+print("2:", peaks(*spectrum(tones(250, [(50, 1), (120, 0.5)]))))
+# 3. 50 Hz와 52 Hz(진폭 각 1)를 0.25초와 1초로
+for N in (250, 1000):
+    print("3:", N, peaks(*spectrum(tones(N, [(50, 1), (52, 1)]))))
+# 4. 0.25초 신호에 0을 채워 4000점으로
+print("4:", peaks(*spectrum(tones(250, [(50, 1), (52, 1)]), 4000)))</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li><code>python fft_lab.py</code>를 실행하고 다섯 줄의 출력을 적습니다.</li>
+        <li>각 경우의 빈 간격 \(\Delta f = f_s/N\)(영 채우기 때는 \(f_s/\text{nfft}\))을 계산해 출력 옆에 적습니다.</li>
+        <li>(선택) matplotlib으로 <code>plt.stem(*spectrum(...))</code>을 그려 봉우리 모양을 봅니다.</li>
+        <li><code>tones</code>의 <code>np.sin</code>을 <code>np.cos</code>로 바꾸고 2번을 다시 돌려 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>NumPy 2.x에서 위 코드를 실행한 출력입니다.</p>
+<pre><code>1: [(50.0, 1.0), (120.0, 0.5)]
+2: [(48.0, 0.649), (120.0, 0.5)]
+3: 250 [(52.0, 1.179)]
+3: 1000 [(50.0, 1.0), (52.0, 1.0)]
+4: [(44.75, 0.237), (51.0, 1.273), (57.25, 0.213)]</code></pre>
+      <ul>
+        <li><b>1</b>: \(\Delta f = 1\) Hz. 두 주파수가 빈에 정확히 놓여 진폭이 그대로(1, 0.5) 읽힙니다(5.3절 예제 5.3.1).</li>
+        <li><b>2</b>: \(\Delta f = 4\) Hz. 120 Hz는 빈(30번)에 놓이지만 50 Hz는 빈 12.5, 곧 두 빈의 한가운데라 에너지가 이웃 빈으로 새어 48 Hz에서 0.649로 작게 보입니다(누설, 8.2절).</li>
+        <li><b>3</b>: 2 Hz 차이는 0.25초 관측(\(\Delta f = 4\) Hz)으로는 봉우리 하나(52 Hz, 1.179)이고, 1초 관측(\(\Delta f = 1\) Hz)으로는 50 Hz와 52 Hz가 진폭 1로 정확히 갈라집니다.</li>
+        <li><b>4</b>: 0.25초 신호에 0을 채워 점 간격을 0.25 Hz로 줄여도 봉우리는 51 Hz 하나입니다. 양옆 44.75, 57.25 Hz의 작은 봉우리는 실제 성분이 아니라 직사각 창의 옆엽입니다. 영 채우기는 해상도를 늘리지 못합니다.</li>
+        <li>코사인으로 바꾸면 2번이 <code>[(52.0, 0.649), (120.0, 0.509)]</code>가 됩니다. 50 Hz의 봉우리가 48 Hz 대신 52 Hz 쪽에 서고, 빈에 놓인 120 Hz까지 0.509로 조금 달라집니다. 50 Hz에서 새어 나온 에너지가 다른 빈에 더해질 때 위상에 따라 보강되거나 상쇄되기 때문입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>2번에서 50 Hz의 겉보기 진폭이 0.649로 줄었습니다. 이 오차를 줄이는 방법 두 가지(관측 시간 바꾸기, 창 함수)를 제안하고, 8.2절을 읽은 뒤 확인하세요.</li>
+        <li>3번 결과로 "두 주파수를 구별하는 데 필요한 관측 시간"을 어림하는 규칙을 한 줄로 쓰세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>휴대폰으로 녹음한 기타 한 음(WAV)을 <code>scipy.io.wavfile.read</code>로 읽어 FFT를 하면 기본음과 배음이 보입니다. 녹음 길이를 0.1초, 1초로 바꿔 봉우리 폭을 비교하세요. 디지털신호처리(전전35)로 이어집니다.</p>
+    </section>
+  </div>
+</article>

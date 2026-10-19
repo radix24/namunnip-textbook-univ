@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-05-03",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e4-logic.js"]
+}
+-->
+<article class="card q-card" id="exp-e4-critical" data-kind="탐구" data-std="전전4-05-03">
+  <header class="card-head"><span class="no"></span><h2>어느 길이 클록을 정하나: 임계 경로 찾기</h2><span class="kind">탐구 · 도착 시각 계산과 최대 클록</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>레지스터 사이에 게이트 여러 개가 얽혀 있을 때, 어느 길이 가장 느린지 어떻게 찾을까요? XOR 게이트를 더 빠른 것으로 바꾸면 클록은 얼마나 올라갈까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>레지스터에 담긴 2비트 수 \(A_1A_0\), \(B_1B_0\)를 더해(반가산기와 전가산기 일부) 합 비트 \(S_0\)과 "\(S_1\)과 올림 \(C_2\)가 모두 1인가" 신호 Z를 다음 레지스터로 보내는 회로입니다. 각 게이트의 출력 시각 = (입력 중 가장 늦은 도착 시각) + (그 게이트의 지연)으로, 입력 쪽부터 차례로 계산합니다. 출력 중 가장 늦은 것을 거꾸로 따라가면 임계 경로입니다. 이것이 실제 설계 도구의 정적 타이밍 분석(STA)이 하는 일입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>XOR 지연 = <b data-show="dx" data-fix="2">0.30</b> ns</span><input type="range" name="dx" min="0.05" max="1" step="0.05" value="0.3" aria-label="XOR 지연"></label>
+        <label><span>AND 지연 = <b data-show="da" data-fix="2">0.15</b> ns</span><input type="range" name="da" min="0.05" max="1" step="0.05" value="0.15" aria-label="AND 지연"></label>
+        <label><span>OR 지연 = <b data-show="do" data-fix="2">0.20</b> ns</span><input type="range" name="do" min="0.05" max="1" step="0.05" value="0.2" aria-label="OR 지연"></label>
+        <label><span>t_cq = <b data-show="tcq" data-fix="2">0.20</b> ns</span><input type="range" name="tcq" min="0.05" max="1" step="0.05" value="0.2" aria-label="클록에서 출력까지 지연"></label>
+        <label><span>t_su = <b data-show="tsu" data-fix="2">0.10</b> ns</span><input type="range" name="tsu" min="0" max="1" step="0.05" value="0.1" aria-label="셋업 시간"></label>
+      </div>
+      <canvas aria-label="게이트 회로와 출력 도착 시각. 빨간 선이 임계 경로"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 값</b><span>임계 경로는 A1(또는 B1) → XOR → AND(t1) → OR(c2) → AND(z)이며, 조합 지연은 0.3 + 0.15 + 0.2 + 0.15 = 0.8 ns, 최대 클록은 1/(0.2 + 0.8 + 0.1) ≈ 909 MHz입니다. 합 비트 S1을 거치는 경로(0.75 ns)보다 조금 깁니다.</span></li>
+        <li><b>XOR를 빠르게</b><span>XOR 지연을 0.1 ns로 줄이면 경로가 바뀝니다. 이제 \(g_0\)(AND)를 지나는 경로와 \(x_1\)을 지나는 경로가 거의 같아져, 하나만 더 줄여도 이득이 작아집니다.</span></li>
+        <li><b>OR를 느리게</b><span>OR 지연을 1 ns로 키우면 c2를 지나는 경로가 압도적으로 길어져 클록이 크게 떨어집니다. 한 게이트가 전체를 지배할 수 있습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>FPGA나 칩 설계 도구는 합성 뒤 모든 경로에 대해 이 계산을 해서 "가장 나쁜 여유(worst slack)"를 보고합니다. 디지털실험(전전34)의 타이밍 카드에서는 이렇게 구한 \(t_{pd}\)로 셋업·홀드 여유를 그림으로 봅니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"게이트 수가 가장 많은 길이 임계 경로다."</b> 게이트마다 지연이 다르므로 지연의 합이 가장 큰 길입니다. 게이트 수가 적어도 느린 게이트가 있으면 임계 경로가 될 수 있습니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,94 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e6-fourierseries" data-kind="본문" data-std="전전6-03-01">
+  <header class="card-head"><span class="no"></span><h2>주기 신호의 Fourier 급수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>주기 신호를 복소 지수의 합 \(x(t) = \sum a_ke^{jk\omega_0t}\)로 나타내고 계수 공식을 유도한다.</li>
+        <li>사각파, 톱니파 같은 기본 신호의 계수를 계산하고 스펙트럼(선 스펙트럼)으로 그린다.</li>
+        <li>Parseval 관계, 수렴과 Gibbs 현상, 이산시간 Fourier 급수(DTFS)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>실수형 Fourier 급수 (<a href="../../common/8/06-01.html">공통8 6.1절</a>), 오일러 공식 (<a href="../../common/9/03-01.html">공통9 3.1절</a>).</li>
+        <li>회로에서 비정현 입력을 급수로 나눈 경험 (<a href="../3/09-03.html">전전3 9.3절</a>)이 있으면 좋습니다.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>왜 복소 지수로 쪼개는가</h3>
+    <p>2단원에서는 입력을 임펄스로 쪼갰습니다. 이 단원은 입력을 복소 지수 \(e^{j\omega t}\)로 쪼갭니다. 이유는 3.2절에서 증명할 사실 때문입니다: LTI 시스템은 \(e^{j\omega t}\)를 넣으면 같은 \(e^{j\omega t}\)에 복소수 \(H(j\omega)\)를 곱한 것을 내놓습니다. 그러면 입력을 복소 지수로 쪼개 놓기만 하면, 출력은 각 성분에 곱셈 하나씩만 하면 됩니다. 컨볼루션 적분이 곱셈으로 바뀌는 것입니다.</p>
+
+    <h3><span class="no">3.1.2</span>급수와 계수 공식</h3>
+    <p class="q-term"><b>기본 주기·기본 각주파수</b>: \(T\), \(\omega_0 = 2\pi/T\).</p>
+    <p class="q-term"><b>고조파</b>: \(e^{jk\omega_0t}\) (k는 정수). 모두 주기 T로 반복한다. k = ±1이 기본파, |k| = 2, 3, …이 2, 3, … 고조파.</p>
+    <p class="q-term"><b>Fourier 급수 계수</b> \(a_k\): 각 고조파의 복소 진폭. 크기는 그 주파수 성분의 세기, 편각은 위상.</p>
+    \[ x(t) = \sum_{k=-\infty}^{\infty}a_k\,e^{jk\omega_0t}, \qquad a_k = \frac1T\int_T x(t)\,e^{-jk\omega_0t}\,dt. \]
+    <p><b>계수 공식이 나오는 이유.</b> 구하려는 것은 \(a_k\) 하나입니다. 급수 양변에 \(e^{-jn\omega_0t}\)를 곱하고 한 주기 적분합니다. 오른쪽의 각 항은 \(\int_Te^{j(k - n)\omega_0t}dt\)인데, \(k \ne n\)이면 정수 바퀴를 도는 복소 지수의 적분이라 0이고, \(k = n\)이면 T입니다(직교성). 그래서 \(a_n\) 하나만 살아남아 \(\int_Tx\,e^{-jn\omega_0t}dt = T\,a_n\)이 됩니다.</p>
+    <p>실수 신호이면 \(a_{-k} = a_k^*\)이므로, 짝을 묶어 \(x(t) = a_0 + \sum_{k\ge1}2|a_k|\cos(k\omega_0t + \angle a_k)\)로도 씁니다. 공통8의 실수형 \(a_0 + \sum(a_n\cos n\omega_0t + b_n\sin n\omega_0t)\)와 비교하면, 복소 계수(이 절의 \(a_k\))는 실수형 계수로 \(a_k = (a_n - jb_n)/2\) (k = n ≥ 1)입니다. 같은 글자 a를 두 뜻으로 쓰니 주의하세요.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>주기 T, 한 주기 안에서 \(|t| &lt; T_1\)이면 1, 나머지는 0인 사각파의 계수를 구하고, \(T_1 = T/4\)(듀티 50%)일 때 \(a_0, a_1, a_2, a_3\)을 수치로 적어라.</p>
+    </div>
+    <p><i>풀이.</i> \(a_0\)는 평균이므로 \(a_0 = \frac{2T_1}{T}\). \(k \ne 0\)이면</p>
+    \[ a_k = \frac1T\int_{-T_1}^{T_1}e^{-jk\omega_0t}dt = \frac{1}{T}\cdot\frac{e^{jk\omega_0T_1} - e^{-jk\omega_0T_1}}{jk\omega_0} = \frac{\sin(k\omega_0T_1)}{k\pi}. \]
+    <p>(마지막 단계에서 \(\frac{e^{j\theta} - e^{-j\theta}}{2j} = \sin\theta\)와 \(T\omega_0 = 2\pi\)를 썼습니다.) \(T_1 = T/4\)이면 \(\omega_0T_1 = \pi/2\)이므로 \(a_k = \frac{\sin(k\pi/2)}{k\pi}\): \(a_0 = 0.5\), \(a_1 = 1/\pi \approx 0.318\), \(a_2 = 0\), \(a_3 = -1/(3\pi) \approx -0.106\). 짝수 고조파가 모두 사라지고 홀수 고조파가 \(1/k\)로 줄어듭니다. 신호가 짝함수라 계수가 모두 실수라는 점도 보세요.</p>
+
+    <h3><span class="no">3.1.3</span>Parseval 관계와 수렴</h3>
+    <p class="q-term"><b>Parseval 관계</b>: \(\frac1T\int_T|x|^2dt = \sum_k|a_k|^2\). 평균 전력은 각 고조파 전력의 합이다.</p>
+    <p>위 사각파의 평균 전력은 \(0.5\)입니다. 직류 \(a_0^2 = 0.25\), 기본파 \(2|a_1|^2 \approx 0.203\)을 더하면 이미 \(0.453\), 약 91%입니다. 남은 9%가 날카로운 모서리를 만드는 고조파들입니다.</p>
+    <p class="q-term"><b>Dirichlet 조건</b>: 한 주기에서 절대 적분 가능하고, 극대·극소와 불연속점이 유한 개이면 급수가 연속점에서 \(x(t)\)로, 불연속점에서 좌우 극한의 평균으로 수렴한다.</p>
+    <p class="q-term"><b>Gibbs 현상</b>: 불연속점 근처에서 부분합이 약 9%(뛰는 크기 기준) 넘쳐 오르고, 항을 늘려도 넘침의 높이는 줄지 않고 폭만 좁아진다.</p>
+    <p>이 절의 탐구 카드에서 항 수를 늘리며 직접 확인할 수 있습니다.</p>
+
+    <h3><span class="no">3.1.4</span>이산시간 Fourier 급수</h3>
+    <p>주기 N인 수열 \(x[n]\)에도 같은 생각이 통합니다. 차이는 \(e^{jk(2\pi/N)n}\)이 k에 대해 주기 N이라 서로 다른 고조파가 N개뿐이라는 점입니다.</p>
+    \[ x[n] = \sum_{k=0}^{N-1}a_k\,e^{jk(2\pi/N)n}, \qquad a_k = \frac1N\sum_{n=0}^{N-1}x[n]\,e^{-jk(2\pi/N)n}. \]
+    <p>무한 급수가 아니라 유한 합이므로 수렴 문제가 없고, 컴퓨터로 정확히 계산됩니다. 5단원의 DFT가 바로 이 식(1/N 위치만 다름)입니다. 예: \(x = \{1, 0, 0, 0\}\)(N = 4)이면 모든 \(a_k = 1/4\)입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 음의 주파수 \(k &lt; 0\)를 "물리적으로 없는 것"으로 버리면 안 됩니다. 실수 신호는 \(\pm k\) 한 쌍이 합쳐 코사인 하나를 이룹니다. 그래서 진폭 A인 코사인의 계수는 \(A/2\) 두 개입니다. (2) 사각파의 \(a_1\)을 1로 착각하는 경우가 많습니다. 높이 1 사각파의 기본파 진폭은 \(2|a_1| = 2/\pi \approx 0.64\)입니다. (3) Gibbs 넘침은 계산 실수가 아니라 불연속 신호를 연속 함수의 유한 합으로 나타낼 때 생기는 본질적 현상입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(x = \sum a_ke^{jk\omega_0t}\), \(a_k = \frac1T\int_Tx\,e^{-jk\omega_0t}dt\). 직교성으로 유도한다.</li>
+        <li>사각파: \(a_k = \sin(k\omega_0T_1)/(k\pi)\). 실수 신호는 \(a_{-k} = a_k^*\).</li>
+        <li>Parseval: 평균 전력 = \(\sum|a_k|^2\). 불연속점에서 Gibbs 넘침 약 9%.</li>
+        <li>DTFS는 N개 계수의 유한 합(DFT로 이어짐).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(x(t) = 3 + 4\cos(2t) + 2\sin(6t)\)의 \(\omega_0\)와 0이 아닌 \(a_k\)를 모두 적어라.
+          <details><summary>답</summary><p>\(\omega_0 = 2\). \(a_0 = 3\), \(a_{\pm1} = 2\), \(a_3 = 1/j = -j\), \(a_{-3} = j\).</p></details>
+        </li>
+        <li>위 신호의 평균 전력을 Parseval로 구하여라.
+          <details><summary>답</summary><p>\(9 + 2\cdot4 + 2\cdot1 = 19\). 확인: \(3^2 + 4^2/2 + 2^2/2 = 19\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>주기 \(2\pi\), 한 주기 \(-\pi &lt; t &lt; \pi\)에서 \(x = t\)인 톱니파의 \(a_k\)를 구하여라.
+          <details><summary>힌트</summary><p>홀함수라 \(a_0 = 0\). 부분적분.</p></details>
+          <details><summary>답</summary><p>\(a_k = \frac{j(-1)^k}{k}\) (\(k \ne 0\)). 크기는 \(1/k\)로 줄어든다(불연속이 있으면 \(1/k\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>주기 2인 삼각파(사각파를 적분한 모양)의 계수가 \(1/k^2\)로 줄어드는 이유를, 미분과 계수의 관계 \(\frac{dx}{dt} \leftrightarrow jk\omega_0a_k\)로 설명하여라.
+          <details><summary>답</summary><p>삼각파를 미분하면 사각파(계수 ~\(1/k\))이므로, 삼각파 계수 = 사각파 계수 / \((jk\omega_0)\) ~ \(1/k^2\). 신호가 매끄러울수록 계수가 빨리 줄어든다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

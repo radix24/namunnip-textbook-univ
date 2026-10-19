@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-plot" data-kind="본문" data-std="응통4-05-03">
+  <header class="card-head"><span class="no"></span><h2>그래프로 분포와 관계 나타내기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>matplotlib의 그림-축 구조로 그래프를 그린다.</li>
+        <li>seaborn으로 분포와 집단 비교 그래프를 빠르게 그린다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>pandas (<a href="05-01.html">5.1절</a>), 응통5 2.2절 그래프 읽기.</li>
+      </ul>
+    </div>
+
+    <h3>그림과 축</h3>
+    <p>matplotlib은 파이썬 그래프의 기반입니다. 그림(Figure) 안에 축(Axes)을 하나 이상 만들고, 축에 그래프를 그리는 구조를 이해하면 원하는 대로 꾸밀 수 있습니다.</p>
+
+    <h3><span class="no">5.3.1</span>matplotlib</h3>
+    <pre><code>import matplotlib.pyplot as plt
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+axes[0].hist(tips["total_bill"], bins=20, color="grey", edgecolor="white")
+axes[0].set(xlabel="계산 금액 ($)", ylabel="빈도", title="분포")
+axes[1].scatter(tips["total_bill"], tips["tip"], s=12, alpha=0.6)
+axes[1].set(xlabel="계산 금액 ($)", ylabel="팁 ($)", title="관계")
+fig.tight_layout(); fig.savefig("fig/tips.png", dpi=200)
+# 한글: plt.rcParams["font.family"] = "Malgun Gothic"(윈도우) 또는 "AppleGothic"(맥)
+#       plt.rcParams["axes.unicode_minus"] = False</code></pre>
+
+    <h3><span class="no">5.3.2</span>seaborn</h3>
+    <pre><code>import seaborn as sns
+sns.boxplot(data=tips, x="day", y="tip")                       # 집단 비교
+sns.histplot(data=tips, x="total_bill", hue="time", kde=True)  # 집단별 분포
+sns.scatterplot(data=tips, x="total_bill", y="tip", hue="smoker")
+sns.lmplot(data=tips, x="total_bill", y="tip", col="time")     # 회귀선 + 패널
+sns.pairplot(tips, hue="sex")                                  # 산점도 행렬</code></pre>
+    <p>seaborn은 데이터프레임과 열 이름으로 그리며, 색(<code>hue</code>), 패널(<code>col</code>, <code>row</code>)에 변수를 대응시키는 방식이 ggplot2(응통3 3.2절)와 비슷합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>fig, ax = plt.subplots()</code>, <code>ax.set(...)</code>, <code>savefig</code>.</li>
+        <li>seaborn: <code>data</code>, <code>x</code>, <code>y</code>, <code>hue</code>, <code>col</code>로 빠르게.</li>
+        <li>축 이름, 단위, 한글 글꼴 설정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>팁 비율(<code>tip / total_bill</code>)의 분포를 흡연 여부별로 겹쳐 그리는 코드를 쓰세요.
+          <details><summary>답</summary><p><code>sns.histplot(data=tips.assign(rate=tips.tip / tips.total_bill), x="rate", hue="smoker", stat="density", common_norm=False)</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
