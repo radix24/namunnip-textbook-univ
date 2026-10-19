@@ -26,6 +26,34 @@
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
 
+/* 기계10 4단원: 과잉 공기와 예열에 따른 단열 화염 온도 (04-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-flame"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  // 연료: C, H 원자 수와 저위 발열량 (kJ/kmol, 생성 엔탈피 차)
+  const FUEL = { ch4: { n: "메탄 CH₄", C: 1, H: 4, Q: 802310 }, c3h8: { n: "프로판 C₃H₈", C: 3, H: 8, Q: 2043990 }, h2: { n: "수소 H₂", C: 0, H: 2, Q: 241820 } };
+  // 298~2000 K 평균 몰 비열 (kJ/(kmol·K)), 어림 모델
+  const CP = { co2: 53.7, h2o: 42.7, n2: 33.0, o2: 34.8, air: 30.0 };
+  const Tad = (fu, ex, Tp) => {
+    const o2 = (fu.C + fu.H / 4) * (1 + ex), cpP = fu.C * CP.co2 + (fu.H / 2) * CP.h2o + o2 * 3.76 * CP.n2 + (o2 - (fu.C + fu.H / 4)) * CP.o2;
+    return 298 + (fu.Q + o2 * 4.76 * CP.air * (Tp - 298)) / cpP;
+  };
+  function draw() {
+    const c = QSim.col(), fu = FUEL[S.val("fuel")], ex = S.val("ex") / 100, Tp = S.val("Tp") + 273;
+    const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 300, y0: 600, y1: 3000, xl: "과잉 공기 (%)", yl: "단열 화염 온도 (K)", pad: 38 });
+    f.axes();
+    f.fn((x) => Tad(fu, x / 100, 298), c.ink3, 1.5, [4, 3]);
+    f.fn((x) => Tad(fu, x / 100, Tp), c.main, 2.5);
+    f.path([[0, 1800], [300, 1800]], c.warn, 1, [5, 4]);
+    const T = Tad(fu, ex, Tp), o2 = (fu.C + fu.H / 4) * (1 + ex);
+    f.dot(ex * 100, T, c.warn, 6);
+    const M = fu.C * 12.011 + fu.H * 1.008, AF = (o2 * 4.76 * 28.97) / M;
+    S.out(`${fu.n}, 과잉 공기 ${(ex * 100).toFixed(0)}% (공기연료비 ${AF.toFixed(1)}), 공기 예열 ${S.val("Tp")} °C\n단열 화염 온도 약 ${T.toFixed(0)} K (${(T - 273).toFixed(0)} °C), 예열 없으면 ${Tad(fu, ex, 298).toFixed(0)} K (회색 점선)\n평균 비열 어림 모델(해리 무시). 빨간 점선 1800 K: NOx가 빠르게 늘기 시작하는 대략의 온도`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계10 3단원: 습공기 선도 위의 냉각 제습과 재열 (03-02) */
 (() => {
   "use strict";
