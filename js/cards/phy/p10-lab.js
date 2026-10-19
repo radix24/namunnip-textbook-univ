@@ -1,45 +1,16 @@
-/* 물리10 실습 카드 묶음: e/m 가상 측정, 밀리컨 전하 양자화, 프랑크-헤르츠 곡선, 발머선과 뤼드베리 상수, 마이컬슨 간섭계 */
+/* 물리10 실습 카드 묶음: 밀리컨 전하 양자화, 프랑크-헤르츠 곡선, 마이컬슨 간섭계 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const rng = (s) => () => { s = (s * 1664525 + 1013904223) % 4294967296; return (s + 0.5) / 4294967296; };
   const gauss = (r) => Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
-  const deg = Math.PI / 180, MU0 = 4e-7 * Math.PI, EM = 1.75882e11, E0 = 1.602176634e-19;
   const fitLine = (xs, ys, ws) => {   // 가중 최소제곱 y = a + bx
     ws = ws || xs.map(() => 1);
     let S = 0, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0; xs.forEach((x, i) => { const w = ws[i], y = ys[i]; S += w; Sx += w * x; Sy += w * y; Sxx += w * x * x; Sxy += w * x * y; });
     const D = S * Sxx - Sx * Sx; return { a: (Sxx * Sy - Sx * Sxy) / D, b: (S * Sxy - Sx * Sy) / D, sa: Math.sqrt(Sxx / D), sb: Math.sqrt(S / D) };
   };
 
-  /* 1. e/m 가상 측정 (02-01, 02-02) */
-  (() => {
-    const S = QSim.card("lab-p10-em"); if (!S) return;
-    const cv = S.$("canvas"), R = 0.15, N = 130, k = 0.7155 * MU0 * N / R; let seed = 5, rec = [];
-    let last = null;
-    function measure() {
-      const V = S.val("V"), I = S.val("I"), BE = Number(S.val("earth")) * 1e-6, B = k * I, Bt = B + BE;
-      const r = Math.sqrt(2 * V / EM) / Bt, rr = rng(seed + Math.round(V * 7 + I * 1000)), dRead = 2 * r + 0.0015 * gauss(rr);   // 지름 읽기 오차 1.5 mm
-      return { V, I, B, Bt, r, dRead, em: 2 * V / (B * B * (dRead / 2) ** 2) };
-    }
-    function draw() {
-      const c = C(), m = measure(); last = m;
-      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -0.13, x1: 0.13, y0: -0.11, y1: 0.11, equal: true });
-      const g = v.g; g.save(); g.strokeStyle = c.rule; g.lineWidth = 1; g.beginPath(); g.arc(f.X(0), f.Y(0), 0.1 * f.sx, 0, 7); g.stroke(); g.restore();
-      const pts = []; for (let i = 0; i <= 200; i++) { const t = 2 * Math.PI * i / 200; pts.push([m.r * Math.sin(t), -0.09 + m.r - m.r * Math.cos(t)]); }
-      f.path(pts.filter(([x, y]) => Math.hypot(x, y) < 0.1), "#7fd6a0", 3);
-      f.dot(0, -0.09, c.ink, 4); f.text("전자총", 0.005, -0.1, c.ink3);
-      for (let i = 0; i <= 16; i++) { const y = -0.09 + i * 0.01; f.path([[-0.118, y], [i % 5 === 0 ? -0.108 : -0.112, y]], c.ink3, 1); if (i % 5 === 0) f.text(`${i}`, -0.13, y - 0.002, c.ink3); }
-      f.text("cm", -0.13, 0.085, c.ink3);
-      const list = rec.map((q) => q.em), mean = list.length ? list.reduce((s, x) => s + x, 0) / list.length : NaN;
-      const sd = list.length > 1 ? Math.sqrt(list.reduce((s, x) => s + (x - mean) ** 2, 0) / (list.length - 1)) : NaN;
-      S.out(`가상 장치: 헬름홀츠 코일 R = 15 cm, N = 130. V = ${m.V} V, I = ${m.I.toFixed(2)} A → 코일 장 B = ${(m.B * 1e3).toFixed(3)} mT${Number(S.val("earth")) ? `, 지구 장 축 성분 ${S.val("earth")} μT 포함 실제 ${(m.Bt * 1e3).toFixed(3)} mT` : ""}\n읽은 지름 ${(m.dRead * 100).toFixed(2)} cm (읽기 오차 약 0.15 cm) → e/m = 2V/(B²r²) = ${(m.em / 1e11).toFixed(3)} × 10¹¹ C/kg (기준 1.7588)\n기록 ${rec.length}개${rec.length ? `: 평균 ${(mean / 1e11).toFixed(3)}${rec.length > 1 ? ` ± ${(sd / Math.sqrt(rec.length) / 1e11).toFixed(3)} (표준오차)` : ""} × 10¹¹ C/kg` : " (\"측정 기록\"으로 추가)"}`);
-    }
-    S.$(".rec").addEventListener("click", () => { if (last) rec.push(last); seed = (seed * 13 + 7) % 99991; draw(); });
-    S.$(".clear").addEventListener("click", () => { rec = []; draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 밀리컨 자료의 양자화 (03-02) */
+  /* 1. 밀리컨 자료의 양자화 (03-02) */
   (() => {
     const S = QSim.card("lab-p10-millikan"); if (!S) return;
     const [cvH, cvD] = S.$$("canvas"); let seed = 21;
@@ -63,7 +34,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 프랑크-헤르츠 곡선 (04-01, 04-02) */
+  /* 2. 프랑크-헤르츠 곡선 (04-01, 04-02) */
   (() => {
     const S = QSim.card("lab-p10-fh"); if (!S) return;
     const [cvI, cvF] = S.$$("canvas"); let seed = 9;
@@ -106,31 +77,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 발머선과 뤼드베리 상수 (05-01, 05-02) */
-  (() => {
-    const S = QSim.card("lab-p10-rydberg"); if (!S) return;
-    const [cvS, cvF] = S.$$("canvas"); let seed = 4;
-    const RH = 1.09678e7, lines = [3, 4, 5, 6].map((n) => ({ n, lam: 1 / (RH * (0.25 - 1 / (n * n))) / 1.00028 }));   // 공기 중 파장 (m)
-    const cols = { 3: "#d9483b", 4: "#2bb3b1", 5: "#3b5bd8", 6: "#8a5cf5" };
-    function draw() {
-      const c = C(), N0 = Number(S.val("grating")), d = 1e-3 / N0, ua = S.val("ua") / 60 * deg, r = rng(seed);
-      const meas = []; lines.forEach((L) => { for (let m = 1; m <= 3; m++) { const s = m * L.lam / d; if (s >= 0.98) break; const th = Math.asin(s), thR = th + ua * gauss(r); meas.push({ n: L.n, m, th, thR, lam: d * Math.sin(thR) / m }); } });
-      const v = QSim.view(cvS, 0.28), f = QSim.frame(v, { x0: 0, x1: 80, y0: 0, y1: 1, xl: "회절각 θ (°)" }); f.axes({ noGrid: true });
-      const g = v.g; meas.forEach((q) => { g.strokeStyle = cols[q.n]; g.lineWidth = q.m === 1 ? 3 : 2; g.globalAlpha = q.n === 6 ? 0.5 : 1; g.beginPath(); g.moveTo(f.X(q.th / deg), f.Y(0.1)); g.lineTo(f.X(q.th / deg), f.Y(0.9)); g.stroke(); g.globalAlpha = 1; f.text(`${q.m}`, q.th / deg + 0.4, 0.92, c.ink3); });
-      const xs = meas.map((q) => 0.25 - 1 / (q.n * q.n)), ys = meas.map((q) => 1 / q.lam / 1e6), us = meas.map((q) => (d * Math.cos(q.thR) * ua / q.m) / q.lam ** 2 / 1e6);
-      const fit0 = (() => { let Sxx = 0, Sxy = 0; xs.forEach((x, i) => { const w = 1 / us[i] ** 2; Sxx += w * x * x; Sxy += w * x * ys[i]; }); return { b: Sxy / Sxx, sb: 1 / Math.sqrt(Sxx) }; })();
-      const fit = fitLine(xs, ys, us.map((u) => 1 / u ** 2));
-      const chi = xs.reduce((s, x, i) => s + ((ys[i] - fit0.b * x) / us[i]) ** 2, 0);
-      const vf = QSim.view(cvF, 0.4), ff = QSim.frame(vf, { x0: 0, x1: 0.25, y0: 0, y1: 2.8, xl: "1/4 − 1/n²", yl: "1/λ (10⁶ m⁻¹)" }); ff.axes();
-      ff.fn((x) => fit0.b * x, c.ink3, 1.5, [4, 3]); meas.forEach((q, i) => { ff.path([[xs[i], ys[i] - us[i]], [xs[i], ys[i] + us[i]]], cols[q.n], 1); ff.dot(xs[i], ys[i], cols[q.n], 4); });
-      const Rv = fit0.b * 1e6 / 1.00028, z = Math.abs(Rv - RH) / (fit0.sb * 1e6 / 1.00028);
-      S.out(`격자 ${N0}선/mm, 각 읽기 불확도 ${S.val("ua")}′. 보이는 선 ${meas.length}개 (색: Hα 빨강, Hβ 청록, Hγ 파랑, Hδ 보라, 숫자는 차수)\n원점 맞춤 기울기 → R_H = ${(Rv / 1e7).toFixed(5)} ± ${(fit0.sb * 1e6 / 1.00028 / 1e7).toFixed(5)} × 10⁷ m⁻¹ (진공 보정 포함), χ²/ν = ${(chi / Math.max(1, meas.length - 1)).toFixed(2)}\n기준 1.09678 × 10⁷ m⁻¹와 차이/불확도 z = ${z.toFixed(1)}. 절편을 자유롭게 둔 맞춤의 절편 ${fit.a.toFixed(4)} ± ${fit.sa.toFixed(4)} (0이어야 함)`);
-    }
-    S.$(".new").addEventListener("click", () => { seed = (seed * 19 + 11) % 99991; draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 마이컬슨 간섭계 (06-02) */
+  /* 3. 마이컬슨 간섭계 (06-02) */
   (() => {
     const S = QSim.card("lab-p10-michelson"); if (!S) return;
     const [cvR, cvC] = S.$$("canvas");
