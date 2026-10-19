@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-06-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m15-dft.js"]
+}
+-->
+<article class="card q-card" id="card-m15-dft" data-kind="탐구" data-std="수학15-06-01">
+  <header class="card-head"><span class="no"></span><h2>표본으로 본 진동수</h2><span class="kind">탐구 · 이산 푸리에 변환</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>파동 \(\cos(2\pi ax/N)\)을 \(x = 0, 1, \dots, N - 1\)에서 표본으로 얻어 DFT합니다. 계수 \(|\hat f(k)|\)는 어디에 나타날까요? \(a\)가 정수가 아니거나 \(N\)보다 반 이상 크면 어떻게 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>\(\hat f(k) = \frac1N\sum_nf(n)\zeta^{-kn}\), \(\zeta = e^{2\pi i/N}\). 직교 관계: \(\frac1N\sum_n\zeta^{(k-\ell)n}\)은 \(k \equiv \ell\)이면 1, 아니면 0 (<a href="06-01.html">6.1절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>N = <b data-show="N">32</b></span><input type="range" name="N" min="8" max="64" step="1" value="32" aria-label="표본 개수"></label>
+        <label><span>a = <b data-show="a">4</b></span><input type="range" name="a" min="0" max="32" step="0.25" value="4" aria-label="진동수"></label>
+      </div>
+      <canvas aria-label="k = 0부터 N − 1까지 DFT 계수의 크기 막대(파랑)와 높이 0.5 기준선(주황 점선)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>\(N = 32\), \(a = 4\)이면 \(k = 4\)와 \(k = 28\)에만 높이 0.5인 막대가 섭니다. \(\cos = \frac12(e^{i\cdot} + e^{-i\cdot})\)이고 \(-4 \equiv 28\)이기 때문입니다.</li>
+        <li>\(a = 4.5\)로 바꾸면 막대가 32개 모두에 퍼집니다(가장 큰 것이 0.331). \(a = 4.25\)이면 \(k = 4\)가 0.462로 가장 크고 0.01보다 큰 계수가 25개입니다. 이것이 누출입니다.</li>
+        <li>어느 경우든 출력의 파서벌 두 값은 같습니다. 에너지는 새어 나가 흩어질 뿐 사라지지 않습니다.</li>
+        <li>\(N = 16\)으로 두고 \(a = 5\)와 \(a = 11\)을 비교하면 막대가 똑같습니다(\(k = 5, 11\)). 표본만 보고는 두 진동수를 구별할 수 없습니다(겹침).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>정수 진동수는 기저 벡터</b><span>\(a\)가 정수이면 \(f = \frac12(e_a + e_{N-a})\)로 정규직교기저 두 개의 합이라 계수가 정확히 두 곳에만 있습니다.</span></li>
+        <li><b>표본 간격이 구별 한계를 정한다</b><span>정수 \(n\)에서 \(e^{2\pi i(a + N)n/N} = e^{2\pi ian/N}\)이므로 \(N\)만큼 차이 나는 진동수는 같은 표본을 줍니다. 그래서 진동수 \(\frac N2\)보다 큰 성분을 담으려면 표본을 더 촘촘히 얻어야 합니다(나이퀴스트 한계).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"DFT에서 \(k = 5\)에 막대가 있으니 원래 신호의 진동수는 5이다"는 단정할 수 없습니다. \(N = 16\)에서 진동수 11(또는 21, 27, …)도 같은 막대를 줍니다. 표본을 얻기 전에 높은 진동수를 걸러 내야 하는 이유입니다.</p>
+    </section>
+  </div>
+</article>

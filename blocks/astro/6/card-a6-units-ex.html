@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-01-04",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a6-units-ex" data-kind="예제" data-std="천우6-01-04">
+  <header class="card-head"><span class="no"></span><h2>cgs 플럭스와 Mpc 거리로 광도 구하기</h2><span class="kind">예제 · 단위 변환 · 이름에 단위 붙이기</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 섞인 단위 다루기</span>
+      <ol>
+        <li>입력마다 단위를 확인하고 함수 이름과 인자 이름에 적는다.</li>
+        <li>함수 첫 줄에서 모두 SI로 바꾼다.</li>
+        <li>답을 아는 경우나 손 계산으로 크기를 확인한다.</li>
+      </ol>
+    </div>
+    <p class="q-prob"><b>문제.</b> 거리 10 Mpc인 은하에서 X선 플럭스 \(2.5\times10^{-13}\) erg s⁻¹ cm⁻²를 받았습니다. 광도를 W와 \(L_\odot\)로 구하는 함수를 짜고, 단위를 바꾸지 않고 섞으면 얼마나 틀리는지 보이세요.</p>
+    <pre><code>import math
+
+PC = 3.086e16          # m
+L_SUN = 3.828e26       # W
+ERG = 1e-7             # J
+CM2 = 1e-4             # m^2
+
+def luminosity_W(flux_cgs, d_Mpc):
+    """플럭스(erg s^-1 cm^-2), 거리(Mpc) -> 광도(W)"""
+    flux_SI = flux_cgs * ERG / CM2        # W m^-2
+    d_m = d_Mpc * 1e6 * PC
+    return 4 * math.pi * d_m**2 * flux_SI
+
+L = luminosity_W(2.5e-13, 10.0)
+print(f"L = {L:.3e} W = {L / L_SUN:.3e} L_sun")
+
+# 단위를 바꾸지 않고 섞으면
+d_m = 10.0 * 1e6 * PC
+L_mixed = 4 * math.pi * d_m**2 * 2.5e-13
+print(f"섞은 값 = {L_mixed:.3e} (단위 없음, 정답의 {L_mixed / L:.0e}배)")</code></pre>
+    <pre><code>L = 2.992e+32 W = 7.816e+05 L_sun
+섞은 값 = 2.992e+35 (단위 없음, 정답의 1e+03배)</code></pre>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>플럭스: \(2.5\times10^{-13}\) erg s⁻¹ cm⁻² × \(10^{-7}\) J/erg ÷ \(10^{-4}\) m²/cm² = \(2.5\times10^{-16}\) W/m².</div><span class="q-why">1 erg/s/cm² = \(10^{-3}\) W/m².</span></li>
+        <li><div>거리: \(10\ \text{Mpc} = 3.086\times10^{23}\) m, \(4\pi d^2 = 1.20\times10^{48}\) m².</div><span class="q-why">구 겉넓이.</span></li>
+        <li class="q-end"><div>\(L = 1.20\times10^{48}\times2.5\times10^{-16} = 3.0\times10^{32}\) W \(\approx 7.8\times10^5L_\odot\). 프로그램 출력과 같다.</div><span class="q-why">손 계산으로 검산.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>섞은 값 \(2.99\times10^{35}\)은 거리를 m², 플럭스를 cm²로 쓴 '단위 없는 숫자'입니다. W로 읽으면 1,000배, erg/s로 읽으면 1만 배 틀립니다. 어떻게 읽어도 맞지 않는 숫자가 아무 경고 없이 나온다는 점이 단위 실수의 무서움입니다. 함수 이름과 인자 이름에 단위를 붙이면 <code>luminosity_W(flux_cgs, d_Mpc)</code>만 보고도 무엇을 넣고 무엇이 나오는지 알 수 있습니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>cgs로만 계산해도 같아야 합니다. \(d = 3.086\times10^{25}\) cm, \(4\pi d^2 = 1.20\times10^{52}\) cm², \(L = 3.0\times10^{39}\) erg/s = \(3.0\times10^{32}\) W. 맞습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>같은 함수로 거리 1 kpc인 우리은하 안의 X선 쌍성(같은 플럭스)의 광도를 구하려면 무엇을 넣어야 합니까? 결과는?</p>
+      <details><summary>답</summary><p><code>luminosity_W(2.5e-13, 0.001)</code>. 거리가 1만 배 가까우므로 광도는 \(10^8\)분의 1인 \(3.0\times10^{24}\) W(약 \(0.008L_\odot\))입니다.</p></details>
+    </section>
+  </div>
+</article>

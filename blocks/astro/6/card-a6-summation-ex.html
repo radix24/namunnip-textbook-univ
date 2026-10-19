@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-02-04",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a6-summation-ex" data-kind="예제" data-std="천우6-02-04">
+  <header class="card-head"><span class="no"></span><h2>같은 급수, 더하는 순서만 바꾸기</h2><span class="kind">예제 · 흡수 · 더하는 순서</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 합의 정확도 판단</span>
+      <ol>
+        <li>참값(또는 아주 정확한 기준값)을 마련한다. 여기서는 \(\sum 1/n^2 = \pi^2/6\)에서 꼬리 \(\approx 1/N\)을 뺀 값.</li>
+        <li>같은 항을 순서만 바꿔 더하고 오차를 비교한다.</li>
+        <li>오차의 크기를 '흡수되는 항'으로 설명한다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> \(1 + 1/4 + 1/9 + \cdots\)을 천만 항까지 더할 때, 큰 항부터 더하는 것과 작은 항부터 더하는 것 가운데 어느 쪽이 정확할까요?</div>
+    <p class="q-prob"><b>문제.</b> \(\sum_{n=1}^{N}1/n^2\)(\(N = 10^7\))을 큰 항부터, 작은 항부터, <code>math.fsum</code>으로 더해 비교하세요.</p>
+    <pre><code>import math
+
+N = 10_000_000
+exact = math.pi**2 / 6 - 1 / N + 1 / (2 * N**2)     # 꼬리를 뺀 참값(적분 근사)
+
+fwd = 0.0
+for n in range(1, N + 1):          # 큰 항부터
+    fwd += 1.0 / (n * n)
+bwd = 0.0
+for n in range(N, 0, -1):          # 작은 항부터
+    bwd += 1.0 / (n * n)
+
+print(f"참값(근사)  = {exact:.16f}")
+print(f"큰 항부터   = {fwd:.16f}  오차 {fwd - exact:+.1e}")
+print(f"작은 항부터 = {bwd:.16f}  오차 {bwd - exact:+.1e}")
+print(f"math.fsum   = {math.fsum(1.0 / (n * n) for n in range(1, N + 1)):.16f}")</code></pre>
+    <pre><code>참값(근사)  = 1.6449339668482315
+큰 항부터   = 1.6449339668472596  오차 -9.7e-13
+작은 항부터 = 1.6449339668482315  오차 +0.0e+00
+math.fsum   = 1.6449339668482315</code></pre>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>큰 항부터 더하면 합은 금세 약 1.64가 되고, 그 뒤의 항 \(1/n^2\)은 합의 \(\varepsilon\)배(약 \(3.6\times10^{-16}\))와 크기를 견줄 만큼 작아진다.</div><span class="q-why">합이 크면 한 번 더할 때 잃는 자리도 크다.</span></li>
+        <li><div>마지막 항(\(n = 10^7\))은 \(10^{-14}\)으로, 합의 반올림 단위(약 \(2\times10^{-16}\))의 50배밖에 되지 않는다. 더할 때마다 항의 아래 자리가 잘려, 천만 번 동안 \(10^{-12}\) 정도의 오차가 쌓인다. \(N\)이 더 크면 항이 통째로 흡수된다.</div><span class="q-why">잘림과 흡수.</span></li>
+        <li class="q-end"><div>작은 항부터 더하면 합이 작을 때 작은 항들이 모여 커진 뒤 큰 항과 만나, 잘리는 자리가 거의 없다. <code>math.fsum</code>과 마지막 자리까지 같다.</div><span class="q-why">크기가 비슷한 수끼리 더하는 것이 유리하다.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>코드는 한 줄(<code>range</code>의 방향)만 다른데 정확도가 1,000배 넘게 다릅니다. 수학적으로 같은 계산도 컴퓨터에서는 순서에 따라 결과가 다르다는 것을 기억하세요. 정확한 합이 필요하면 순서를 고민하기보다 <code>math.fsum</code>을 쓰는 것이 가장 간단합니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>참값으로 쓴 식의 꼬리 근사 오차는 \(1/(6N^3) \sim 10^{-22}\)으로 무시할 만하고, 작은 항부터 더한 결과가 독립적인 방법(<code>math.fsum</code>)과 16자리 모두 같으므로 기준으로 믿을 수 있습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>\(N\)을 \(10^7\)에서 \(10^8\)로 늘리면 큰 항부터 더한 합의 정확도는 좋아질까요?</p>
+      <details><summary>답</summary><p>거의 좋아지지 않습니다. 늘어난 항(\(n > 10^7\))은 \(10^{-14}\)보다 작아 대부분 잘리거나 흡수되고, 덧셈 횟수가 늘어 반올림 오차는 오히려 더 쌓입니다.</p></details>
+    </section>
+  </div>
+</article>

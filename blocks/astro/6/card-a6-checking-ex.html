@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-01-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a6-checking-ex" data-kind="예제" data-std="천우6-01-03">
+  <header class="card-head"><span class="no"></span><h2>남중 고도가 음수로 나온 프로그램 고치기</h2><span class="kind">예제 · 각도와 라디안 · 극한값 검산</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 틀린 프로그램 고치기</span>
+      <ol>
+        <li>손으로 답을 아는 경우 하나를 넣어 틀렸는지부터 확인한다.</li>
+        <li>단위가 바뀌는 곳(각도↔라디안, AU↔m, 등급↔플럭스)을 먼저 의심한다.</li>
+        <li>고친 뒤 극한값 몇 개로 다시 확인한다.</li>
+      </ol>
+    </div>
+    <p class="q-prob"><b>문제.</b> 고도 식 \(\sin h = \sin\delta\sin\varphi + \cos\delta\cos\varphi\cos H\)로 서울(위도 37.6°)에서 시리우스(적위 −16.7°)의 남중 고도(\(H = 0\))를 구하는 함수입니다. 결과가 이상합니다. 원인을 찾아 고치고, 극한값 두 개로 확인하세요.</p>
+    <pre><code>import math
+
+def altitude_bug(dec, lat, H):
+    s = math.sin(dec) * math.sin(lat) + math.cos(dec) * math.cos(lat) * math.cos(H)
+    return math.degrees(math.asin(s))
+
+print(f"버그: 시리우스 남중 고도 = {altitude_bug(-16.7, 37.6, 0.0):.2f}°")</code></pre>
+    <pre><code>버그: 시리우스 남중 고도 = -38.84°</code></pre>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>답을 아는 경우: 남중 고도는 \(90° - \varphi + \delta = 90 - 37.6 - 16.7 = 35.7°\)이어야 한다. −38.84°는 틀렸다.</div><span class="q-why">남중일 때의 간단한 식으로 검산.</span></li>
+        <li><div>원인: <code>math.sin</code>은 라디안을 받는데 각도(°)를 그대로 넣었다. \(\sin(37.6\ \text{rad})\)를 계산한 셈이다.</div><span class="q-why">단위가 바뀌는 곳을 먼저 의심한다.</span></li>
+        <li class="q-end"><div>입력을 <code>math.radians</code>로 바꾼다.</div><span class="q-why">출력은 이미 <code>math.degrees</code>로 바꾸고 있었다. 한쪽만 바꾼 전형적인 실수.</span></li>
+      </ol>
+    </section>
+    <pre><code>def altitude(dec_deg, lat_deg, H_deg):
+    d, p, h = map(math.radians, (dec_deg, lat_deg, H_deg))
+    s = math.sin(d) * math.sin(p) + math.cos(d) * math.cos(p) * math.cos(h)
+    return math.degrees(math.asin(s))
+
+print(f"고침: 시리우스 남중 고도 = {altitude(-16.7, 37.6, 0.0):.2f}°  (기대 {90 - 37.6 - 16.7:.1f}°)")
+print(f"극한: 적도에서 적위 0° 별의 남중 고도 = {altitude(0, 0, 0):.2f}°")
+print(f"극한: 북극에서 적위 30° 별, 시간각 6시 = {altitude(30, 90, 90):.2f}°")</code></pre>
+    <pre><code>고침: 시리우스 남중 고도 = 35.70°  (기대 35.7°)
+극한: 적도에서 적위 0° 별의 남중 고도 = 90.00°
+극한: 북극에서 적위 30° 별, 시간각 6시 = 30.00°</code></pre>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>극한값 두 개는 서로 다른 것을 확인합니다. 적도의 천정 통과(90°)는 식의 둘째 항이, 북극에서 고도가 시간각과 상관없이 적위와 같다는 것(30°)은 첫째 항이 맞게 짜였음을 보여 줍니다. 버그 버전으로 같은 극한값을 넣어 보면 둘 다 틀리게 나옵니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>버그 값이 왜 −38.84°인지 확인해 볼 수 있습니다. 라디안으로 계산하면 \(\sin(-16.7) = 0.84\), \(\sin(37.6) = -0.10\), \(\cos(-16.7) = -0.55\), \(\cos(37.6) = 1.00\)이라 \(\sin h \approx -0.08 - 0.54 = -0.63\), \(h \approx -38.8°\)입니다. 원인을 정확히 짚었음을 확인한 셈입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>함수 끝에 넣을 <code>assert</code> 문 하나를 써 보세요.</p>
+      <details><summary>답</summary><p>예: <code>assert abs(altitude(0, 0, 0) - 90) &lt; 1e-9</code> 또는 <code>assert abs(altitude(-16.7, 37.6, 0) - 35.7) &lt; 1e-6</code>.</p></details>
+    </section>
+  </div>
+</article>

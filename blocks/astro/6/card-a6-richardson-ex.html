@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-04-04",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a6-richardson-ex" data-kind="예제" data-std="천우6-04-04 천우6-04-01">
+  <header class="card-head"><span class="no"></span><h2>수치 미분에 외삽 쓰기, 그리고 오차 차수를 자료로 확인하기</h2><span class="kind">예제 · Richardson 외삽 · 오차 차수</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 외삽 전에 차수 확인</span>
+      <ol>
+        <li>간격을 \(h, h/2, h/4\)로 줄여 세 값을 얻는다.</li>
+        <li>\(p \approx \log_2[(A(h) - A(h/2))/(A(h/2) - A(h/4))]\)로 오차 차수를 확인한다.</li>
+        <li>확인한 \(p\)로 \((2^pA(h/2) - A(h))/(2^p - 1)\)을 계산한다.</li>
+      </ol>
+    </div>
+    <p class="q-prob"><b>문제.</b> \(f(x) = e^x\)의 \(x = 1\)에서 도함수를 중앙 차분 \(D(h) = [f(x+h) - f(x-h)]/(2h)\)로 \(h = 0.2, 0.1, 0.05\)에 대해 구하고, 오차 차수를 확인한 뒤 외삽하세요.</p>
+    <pre><code>import math
+
+def D(f, x, h):
+    """중앙 차분: 오차 ~ h^2"""
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+exact = math.exp(1.0)
+for h in (0.2, 0.1, 0.05):
+    d = D(math.exp, 1.0, h)
+    print(f"h = {h:&lt;5}  D = {d:.10f}  오차 {d - exact:+.2e}")
+R1 = (4 * D(math.exp, 1, 0.1) - D(math.exp, 1, 0.2)) / 3
+R2 = (4 * D(math.exp, 1, 0.05) - D(math.exp, 1, 0.1)) / 3
+print(f"외삽 (0.2, 0.1)  = {R1:.10f}  오차 {R1 - exact:+.2e}")
+print(f"외삽 (0.1, 0.05) = {R2:.10f}  오차 {R2 - exact:+.2e}")
+d1, d2, d3 = (D(math.exp, 1, h) for h in (0.2, 0.1, 0.05))
+print(f"오차 차수 어림 p = {math.log2((d1 - d2) / (d2 - d3)):.3f}")</code></pre>
+    <pre><code>h = 0.2    D = 2.7364399856  오차 +1.82e-02
+h = 0.1    D = 2.7228145639  오차 +4.53e-03
+h = 0.05   D = 2.7194145875  오차 +1.13e-03
+외삽 (0.2, 0.1)  = 2.7182727567  오차 -9.07e-06
+외삽 (0.1, 0.05) = 2.7182812620  오차 -5.66e-07
+오차 차수 어림 p = 2.003</code></pre>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>오차가 \(h\)를 반으로 할 때마다 약 4배씩 준다(\(1.82\times10^{-2} \to 4.53\times10^{-3} \to 1.13\times10^{-3}\)).</div><span class="q-why">\(h^2\) 오차의 표시.</span></li>
+        <li><div>참값을 몰라도 세 값의 차의 비로 \(p = 2.003\)을 얻는다.</div><span class="q-why">\(A(h) - A(h/2) \propto h^p\)의 비 \(= 2^p\).</span></li>
+        <li class="q-end"><div>\(p = 2\)로 외삽하면 오차가 \(4.5\times10^{-3} \to 9\times10^{-6}\), \(1.1\times10^{-3} \to 6\times10^{-7}\)으로 수백~천 배 준다.</div><span class="q-why">\(h^2\) 항을 지우고 \(h^4\) 항만 남는다.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>같은 정확도(\(10^{-6}\))를 중앙 차분만으로 얻으려면 \(h \approx 0.002\)가 필요하고, 그만큼 작은 \(h\)에서는 반올림 오차가 커지기 시작합니다(2.2절). 외삽은 큰 \(h\)로 정확도를 얻어 반올림 오차의 영역을 피하게 해 줍니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>외삽값 두 개의 오차가 \(9.07\times10^{-6}\)에서 \(5.66\times10^{-7}\)으로 16배 줄었습니다. 외삽 뒤 남은 오차가 \(h^4\)이라는 이론과 맞습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>앞쪽 차분 \([f(x+h) - f(x)]/h\)는 오차가 \(h\)에 비례합니다. 이 경우 외삽 식은?</p>
+      <details><summary>답</summary><p>\(p = 1\)이므로 \((2A(h/2) - A(h))/1 = 2A(h/2) - A(h)\).</p></details>
+    </section>
+  </div>
+</article>
