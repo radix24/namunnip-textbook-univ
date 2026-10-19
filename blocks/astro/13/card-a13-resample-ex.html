@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-01-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a13-resample-ex" data-kind="예제" data-std="천우13-01-03">
+  <header class="card-head"><span class="no"></span><h2>재표본화한 영상에서 잡음을 잘못 재면</h2><span class="kind">예제 · 쌍선형 보간 · 상관된 잡음</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 섞인 잡음 따라가기</span>
+      <ol>
+        <li>새 픽셀 하나의 잡음: \(\sigma_{\text{new}} = \sigma\sqrt{\sum w_i^2}\).</li>
+        <li>구경 안 여러 새 픽셀의 합은 옛 픽셀 값들의 합으로 다시 써서 잡음을 구한다.</li>
+        <li>'새 픽셀이 독립'이라고 본 잘못된 값과 비교한다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 보간 뒤 픽셀 잡음이 반으로 줄었다면, 별 측광의 잡음도 반으로 줄었을까요?</div>
+    <p class="q-prob"><b>문제.</b> 픽셀 잡음 \(\sigma = 10\) 전자인 하늘 영상을 쌍선형으로 \((0.5, 0.5)\) 픽셀 옮겼습니다. (가) 새 픽셀 하나의 잡음은? (나) 새 영상에서 \(2\times2\) 픽셀을 더한 값의 실제 잡음은? (다) 새 픽셀이 독립이라고 보고 계산한 잡음과 비교하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) \(10\sqrt{4\times(1/4)^2} = 5\) 전자.</div><span class="q-why">결과 1.3.1.</span></li>
+        <li><div>(나) 새 \(2\times2\) 픽셀은 옛 \(3\times3\) 픽셀을 덮는다. 옛 픽셀이 받는 가중치의 합은 가운데 1, 변 4개가 1/2, 모서리 4개가 1/4이다.</div><span class="q-why">새 픽셀 넷이 가운데 옛 픽셀을 1/4씩 나눠 씀.</span></li>
+        <li><div>잡음 \(= 10\sqrt{1^2 + 4(1/2)^2 + 4(1/4)^2} = 10\sqrt{2.25} = 15\) 전자.</div><span class="q-why">\(1 + 1 + 0.25\).</span></li>
+        <li class="q-end"><div>(다) 독립이라 보면 \(5\sqrt4 = 10\) 전자. 실제 잡음 15를 2/3로 작게 잡는다.</div><span class="q-why">상관을 무시한 결과.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>재표본화한 영상의 픽셀 잡음으로 측광 오차를 계산하면 오차를 과소평가해, 실제보다 S/N이 높고 '유의한' 검출이 많아 보입니다. 그래서 합성 영상에는 보통 따로 계산한 가중치 영상(분산 지도)을 함께 저장하고, 큰 구경에서는 상관 보정 계수를 곱합니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>구경이 아주 크면 보간이 빛을 옮기기만 하므로 합의 잡음은 원래 영상의 같은 넓이의 잡음(\(10\sqrt{\text{픽셀 수}}\))에 가까워야 합니다. \(2\times2\)에서 원래 영상의 \(10\sqrt4 = 20\)보다 작은 15가 나온 것은 가장자리 픽셀이 일부만 들어오기 때문입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>최근접 보간으로 옮겼다면 (가)와 (나)의 잡음은?</p>
+      <details><summary>답</summary><p>픽셀 값을 그대로 옮기므로 (가) 10, (나) \(10\sqrt4 = 20\) 전자로 상관이 생기지 않습니다(위치는 최대 반 픽셀 어긋남).</p></details>
+    </section>
+  </div>
+</article>
