@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-slack" data-kind="본문" data-std="전전32-04-02">
+  <header class="card-head"><span class="no"></span><h2>셋업 여유와 임계 경로 계산</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>도착 시간과 요구 시간으로 여유(slack)를 계산한다.</li>
+        <li>임계 경로를 찾아 최대 주파수를 구한다.</li>
+        <li>음의 여유를 고치는 방법을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>합성과 타이밍 보고서 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>얼마나 남았나</h3>
+    <p>도착 시간 = t_cq + 경로 지연, 요구 시간 = T_clk − t_setup(+ 스큐). 여유 = 요구 − 도착이 음수면 위반입니다. 모든 경로 중 여유가 가장 작은 경로가 임계 경로이고, 최대 주파수 = 1/(T_clk − 최소 여유)입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>클록 2 ns, t_cq 0.1, t_setup 0.05 ns. 경로 A 1.6 ns, B 1.9 ns. 각 여유와 최대 주파수는?</p>
+    </div>
+    <p><i>풀이.</i> 요구 1.95 ns. A: 도착 1.7, 여유 +0.25. B: 도착 2.0, 여유 −0.05 → 위반. 최대 주파수 1/2.05 = 488 MHz. 경로 B의 논리를 줄이거나(재구성, 큰 셀), 레지스터를 옮기거나(리타이밍), 파이프라인 단을 더합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "여유가 클수록 좋은 설계": 지나친 여유는 면적·전력 낭비일 수 있습니다. (2) "가장 긴 논리가 늘 임계 경로": 배선 지연이 커서 바뀔 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>여유 = (T − t_setup) − (t_cq + 경로).</li>
+        <li>f_max = 1/(T − 최소 여유).</li>
+        <li>예: B −0.05 → 488 MHz.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>클록 1 ns, t_cq 0.08, t_setup 0.04, 경로 0.8의 여유는?
+          <details><summary>답</summary><p>+0.08 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 경로의 f_max는?
+          <details><summary>답</summary><p>약 1.087 GHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>리타이밍이란?
+          <details><summary>답</summary><p>기능은 그대로 두고 레지스터 위치를 옮겨 단계 지연을 고르게 하는 것.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

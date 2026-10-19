@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-encoding" data-kind="본문" data-std="전전32-03-02">
+  <header class="card-head"><span class="no"></span><h2>FSM 상태 부호화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이진, 그레이, 원-핫 부호화의 플립플롭 수를 계산한다.</li>
+        <li>원-핫이 FPGA에서 빠르고 단순한 이유를 안다.</li>
+        <li>부호화에 따른 출력 글리치와 전력 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>데이터패스와 FSM (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>상태를 어떻게 적을까</h3>
+    <p>N개 상태를 이진으로 쓰면 ⌈log₂N⌉개, 원-핫이면 N개 플립플롭이 필요합니다. 원-핫은 다음 상태 논리가 단순해(입력 몇 개의 OR) 빠르고 FPGA처럼 플립플롭이 많은 구조에 맞습니다. 그레이는 차례로 지나는 상태 사이에 한 비트만 바뀌어 전력과 글리치가 줄어듭니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>상태 10개 FSM의 이진·원-핫 플립플롭 수는? 이진 상태 0111 → 1000 전이에서 일어날 수 있는 문제는?</p>
+    </div>
+    <p><i>풀이.</i> 이진 4개, 원-핫 10개. 0111 → 1000은 네 비트가 동시에 바뀌어, 디코딩 출력이 순간적으로 다른 상태(예: 1111)를 거치는 글리치가 생길 수 있습니다. 출력이 중요하면 출력을 레지스터로 받거나 그레이 부호를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "플립플롭이 적은 이진이 늘 낫다": 다음 상태 논리가 커져 느릴 수 있습니다. (2) "원-핫은 잘못된 상태가 없다": 두 비트가 1인 불법 상태로 빠지지 않게 복구 논리가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이진 ⌈log₂N⌉, 원-핫 N.</li>
+        <li>원-핫: 빠름·FPGA, 그레이: 한 비트 전이.</li>
+        <li>출력 글리치 → 레지스터 출력.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>상태 20개의 이진 플립플롭 수는?
+          <details><summary>답</summary><p>5개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>원-핫 상태 8개의 불법 상태 수는?
+          <details><summary>답</summary><p>2⁸ − 8 = 248개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>그레이 부호가 카운터 형태 FSM에 유리한 이유는?
+          <details><summary>답</summary><p>차례 전이마다 한 비트만 바뀌기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

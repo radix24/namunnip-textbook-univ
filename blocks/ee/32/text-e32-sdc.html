@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-sdc" data-kind="본문" data-std="전전32-04-03">
+  <header class="card-head"><span class="no"></span><h2>타이밍 제약 작성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>클록 정의, 입력·출력 지연 제약의 의미를 안다.</li>
+        <li>입출력 지연으로 내부 논리 예산을 계산한다.</li>
+        <li>거짓 경로와 다중 사이클 경로 지정을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>타이밍 보고서 (<a href="04-01.html">4.1절</a>), 셋업 여유 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>바깥 사정을 알려 주기</h3>
+    <p>합성 도구는 칩 바깥을 모르므로 <code>create_clock</code>으로 주기를, <code>set_input_delay</code>로 입력이 클록 뒤 언제 도착하는지, <code>set_output_delay</code>로 출력이 언제까지 준비돼야 하는지 알려 줍니다. 입력 포트에서 첫 레지스터까지 예산 = T − 입력 지연 − t_setup입니다.</p><pre><code>create_clock -period 10 [get_ports clk]
+set_input_delay  2.0 -clock clk [get_ports din]
+set_output_delay 3.0 -clock clk [get_ports dout]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>위 제약과 t_setup 0.2 ns, t_cq 0.3 ns에서 입력 경로와 출력 경로의 논리 예산은?</p>
+    </div>
+    <p><i>풀이.</i> 입력: 10 − 2 − 0.2 = 7.8 ns. 출력: 10 − 3 − 0.3 = 6.7 ns(레지스터 출력에서 포트까지). 제약을 빠뜨리면 도구가 그 경로를 검사하지 않아 실제 칩에서 실패할 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "클록만 정의하면 충분": 입출력 경로는 따로 제약해야 합니다. (2) "거짓 경로를 많이 지정하면 편하다": 실제 경로를 빼면 위반을 놓칩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>입력 예산 = T − 입력 지연 − t_setup.</li>
+        <li>출력 예산 = T − 출력 지연 − t_cq.</li>
+        <li>거짓·다중 사이클 경로는 신중히.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>T 5 ns, 입력 지연 1.5, t_setup 0.1의 예산은?
+          <details><summary>답</summary><p>3.4 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>다중 사이클 2를 지정하면 그 경로의 셋업 요구는?
+          <details><summary>답</summary><p>2주기 안에 도착하면 됩니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>서로 다른 비동기 클록 사이 경로를 어떻게 다루나?
+          <details><summary>답</summary><p>동기화기로 연결하고 그 경로는 거짓 경로나 클록 그룹으로 지정합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

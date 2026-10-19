@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-singlecycle" data-kind="본문" data-std="전전32-06-02">
+  <header class="card-head"><span class="no"></span><h2>단일 사이클 프로세서의 임계 경로</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>단일 사이클 데이터패스에서 명령마다 지나는 블록을 안다.</li>
+        <li>가장 긴 명령(lw)의 경로로 클록 주기를 계산한다.</li>
+        <li>단일 사이클 설계의 비효율을 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>RISC 프로세서 설계 (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>모든 명령이 가장 느린 명령을 기다린다</h3>
+    <p>단일 사이클 프로세서는 모든 명령을 한 클록에 끝내므로 주기가 가장 긴 명령 경로로 정해집니다. 적재(lw)는 명령 메모리 → 레지스터 읽기 → ALU(주소) → 데이터 메모리 → 레지스터 쓰기를 모두 지나 보통 가장 깁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>명령 메모리 200, 레지스터 읽기 100, ALU 150, 데이터 메모리 200, 쓰기 전 MUX·셋업 50 ps. lw와 R형(데이터 메모리 없음) 경로, 클록은?</p>
+    </div>
+    <p><i>풀이.</i> lw 700 ps, R형 500 ps. 클록 700 ps(1.43 GHz). R형도 700 ps를 기다려 낭비가 생기며, 이를 줄이려 다중 사이클이나 파이프라인으로 갑니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "단일 사이클이면 CPI 1이라 가장 빠르다": 주기가 길어 전체는 느립니다. (2) "모든 명령의 경로가 같다": 명령마다 쓰는 블록이 다릅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>주기 = 가장 긴 명령 경로(lw).</li>
+        <li>예: 700 ps → 1.43 GHz.</li>
+        <li>짧은 명령도 같은 주기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>sw 경로(레지스터 쓰기 없음)는?
+          <details><summary>답</summary><p>650 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>beq(데이터 메모리 없음, 쓰기 없음)는?
+          <details><summary>답</summary><p>450 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>명령 섞임이 lw 25%라면 주기를 명령별로 다르게 할 수 있을 때 평균은(나머지 500 ps 가정)?
+          <details><summary>답</summary><p>550 ps.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
