@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e34-report" data-kind="본문" data-std="전전34-05-02">
+  <header class="card-head"><span class="no"></span><h2>FPGA 구현 보고서 읽기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자원 사용률(LUT, FF, BRAM, DSP)을 해석한다.</li>
+        <li>WNS(최악 여유)로 타이밍 충족과 최대 주파수를 판단한다.</li>
+        <li>보고서 경고(래치, 제약 없음)를 찾아 고친다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>설계 프로젝트 (<a href="05-01.html">5.1절</a>), 최대 클록 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>숫자로 확인하는 설계</h3>
+    <p>구현 뒤 사용률 보고서는 자원이 얼마나 남았는지, 타이밍 보고서의 WNS는 가장 나쁜 경로의 여유를 알려 줍니다. WNS ≥ 0이면 제약 클록을 만족하며, 대략 f_max ≈ 1/(T − WNS)입니다. “latch inferred”, “no clock constraint” 경고는 대부분 설계 실수입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>LUT 2,400/20,800, FF 1,900/41,600(가상 보고서). 100 MHz 제약에서 WNS +1.2 ns. 사용률과 최대 주파수 어림은?</p>
+    </div>
+    <p><i>풀이.</i> LUT 11.5%, FF 4.6%. f_max ≈ 1/(10 − 1.2) ns = 114 MHz. 학생 프로젝트에서 WNS가 음수면 대개 큰 조합 논리(나눗셈, 긴 비교 사슬)나 제약 없는 비동기 입력이 원인입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "합성만 성공하면 동작한다": 타이밍과 경고를 확인해야 합니다. (2) "WNS가 크면 클록을 마음대로 올려도 된다": 입출력 장치 타이밍도 함께 봐야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사용률 = 사용/전체.</li>
+        <li>f_max ≈ 1/(T − WNS).</li>
+        <li>래치·무제약 경고 확인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>WNS −0.5 ns, 제약 10 ns의 f_max 어림은?
+          <details><summary>답</summary><p>약 95 MHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>BRAM 30/50의 사용률은?
+          <details><summary>답</summary><p>60%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>TNS(총 음수 여유)가 WNS와 다른 정보는?
+          <details><summary>답</summary><p>위반 경로 전체의 합으로, 고칠 경로가 얼마나 많은지 알려 줍니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
