@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리19-03-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/phy/p19-coherence.js"]
+}
+-->
+<article class="card q-card" id="lab-p19-coherence" data-kind="실습" data-std="물리19-03-01">
+  <header class="card-head"><span class="no"></span><h2>스펙트럼이 넓으면 무늬가 빨리 사라진다</h2><span class="kind">실습 · 결맞음 길이와 선명도</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>Michelson 간섭계에서 경로 차를 늘려 갈 때 간섭무늬가 어떻게 흐려지는지, 광원의 스펙트럼 모양을 바꾸며 봅니다. 선명도가 줄어드는 거리가 \(\ell_c \approx \lambda^2/\Delta\lambda\)라는 것과, 두 선으로 된 빛은 무늬가 사라졌다가 다시 살아난다는 것을 확인합니다. 성취기준 [물리19-03-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그림은 광원의 스펙트럼, 아래 그림은 경로 차 \(x\)에 따른 출력 세기입니다. 스펙트럼의 각 파장 성분은 저마다 \(1 + \cos(2\pi x/\lambda)\)의 무늬를 만들고, 검출기는 이것을 모두 더해 봅니다. \(x\)가 작을 때는 모든 성분의 밝은 줄이 겹치지만, \(x\)가 커지면 파장마다 줄의 위치가 어긋나 서로 메웁니다. 빨간 점선은 무늬의 위아래 끝(봉투)이고, 그 반폭이 선명도 \(V\)입니다.</p>
+      <p>무늬 간격(파장, 0.5 μm 안팎)이 그림 한 화소보다 촘촘해지면 줄 하나하나 대신 연한 띠로 칠합니다. 백색광을 고르면 파장과 선폭 막대는 쓰지 않습니다. 선폭과 경로 차 범위 막대는 로그 눈금입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>광원</span><select name="kind" aria-label="광원 고르기">
+          <option value="gauss" selected>선 하나 (LED, 레이저)</option>
+          <option value="doublet">가까운 선 둘 (나트륨 D선)</option>
+          <option value="white">백색광 400~700 nm</option>
+        </select></label>
+        <label><span>중심 파장 λ (nm) = <b data-show="lam" data-fix="0">650</b></span><input type="range" name="lam" min="400" max="700" step="1" value="650" aria-label="중심 파장"></label>
+        <label><span>선폭 log₁₀(Δλ/nm) = <b data-show="lw" data-fix="2">1.54</b></span><input type="range" name="lw" min="-2" max="2" step="0.01" value="1.544" aria-label="선폭의 로그"></label>
+        <label><span>두 선의 간격 δ (nm) = <b data-show="dd" data-fix="2">0.60</b></span><input type="range" name="dd" min="0" max="2" step="0.01" value="0.6" aria-label="두 선의 간격"></label>
+        <label><span>경로 차 범위 log₁₀(x/μm) = <b data-show="lx" data-fix="2">1.48</b></span><input type="range" name="lx" min="0" max="5" step="0.01" value="1.48" aria-label="경로 차 범위의 로그"></label>
+        <label><span>탐침 위치 (범위의 비율) = <b data-show="xp" data-fix="3">0.400</b></span><input type="range" name="xp" min="0" max="1" step="0.001" value="0.4" aria-label="탐침 위치"></label>
+      </div>
+      <canvas aria-label="광원의 스펙트럼"></canvas>
+      <canvas aria-label="경로 차에 따른 간섭 세기"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>선 하나, \(\lambda = 650\) nm, \(\Delta\lambda \approx 35\) nm(LED)에서 탐침을 옮겨 경로 차 3 μm, 6 μm, 12 μm의 선명도를 읽는다.</li>
+        <li>선폭 막대를 왼쪽 끝(0.01 nm)으로 옮기고, 같은 범위에서 무늬가 얼마나 오래 남는지 본다. 경로 차 범위를 넓혀 무늬가 흐려지기 시작하는 곳을 찾는다.</li>
+        <li>가까운 선 둘로 바꾸고 \(\lambda = 589\) nm, \(\delta = 0.60\) nm, 선폭 0.02 nm(log 값 −1.70)로 둔다. 범위를 log 값 3(1 mm)으로 넓혀 선명도가 0이 되는 곳과 다시 1에 가까워지는 곳을 읽는다.</li>
+        <li>백색광으로 바꾸고 범위를 log 값 0.3(2 μm)으로 줄여, 무늬가 처음 사라지는 경로 차를 읽는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>LED: \(\ell_c \approx 12\) μm. 경로 차 3 μm에서 \(V \approx 0.80\), 6 μm에서 약 0.42, 12 μm에서 약 0.03으로 거의 사라진다. 예제의 "거울을 6 μm 움직이니 무늬가 사라졌다"(경로 차 12 μm)와 맞는다. 가우스 스펙트럼에서 \(V = \frac12\)이 되는 곳은 \(0.44\,\lambda^2/\Delta\lambda \approx 5.3\) μm이다.</li>
+        <li>선폭 0.01 nm이면 \(\ell_c \approx 42\) mm로, 30 μm 범위에서는 선명도가 1에서 거의 줄지 않는다. 선폭을 1000배 줄이면 결맞음 길이가 1000배 늘어난다.</li>
+        <li>나트륨: 선명도가 경로 차 0.289 mm에서 0이 되고 0.579 mm(\(=\lambda^2/\delta\))에서 0.996으로 되살아난다. 되살아난 봉우리 높이는 각 선의 폭 때문에 천천히 줄어(5번째 봉우리 약 0.91) \(\ell_c \approx 17\) mm 근처에서 사라진다.</li>
+        <li>백색광: 중심 파장은 약 509 nm이고 무늬는 경로 차 약 0.93 μm에서 처음 사라진다. 그 뒤 작게 되살아나지만(1.4 μm에서 \(V \approx 0.21\)) 몇 μm 안에 없어진다. 비눗방울처럼 아주 얇은 막에서만 색 무늬가 보이는 까닭이다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>나트륨 등으로 Michelson 간섭계를 맞출 때 거울을 움직이면 무늬가 주기적으로 흐려졌다 돌아옵니다. 그 주기(거울 이동 거리)에서 두 선의 간격 \(\delta\)를 구하는 식을 쓰고, 0.6 nm이면 거울을 몇 mm 움직여야 하는지 구해 보세요(거울 이동의 두 배가 경로 차).</li>
+        <li>선명도 곡선 \(V(x)\)는 스펙트럼의 Fourier 변환 크기입니다(물리18 3.2절). 넓은 스펙트럼이 좁은 \(V(x)\)를 주는 것을 Fourier 변환의 폭 관계로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>백색광 간섭계(광간섭 단층 촬영, OCT)는 결맞음 길이가 짧은 것을 이용해 깊이를 μm 정밀도로 구별합니다. 선 하나에서 선폭을 50 nm, 100 nm로 늘리며 무늬가 남는 범위가 어떻게 줄어드는지 보고, 깊이 분해능이 무엇으로 정해지는지 말해 보세요.</p>
+    </section>
+  </div>
+</article>
