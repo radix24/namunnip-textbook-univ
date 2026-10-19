@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-symlinalg" data-kind="본문" data-std="수학24-02-02">
+  <header class="card-head"><span class="no"></span><h2>기호 방정식 풀이와 선형대수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>solve</code>로 다항방정식과 연립방정식을 정확히 푼다.</li>
+        <li><code>Matrix</code>로 역행렬, 행렬식, 고윳값과 고유벡터를 기호로 구한다.</li>
+        <li>매개변수가 들어 있는 행렬의 고윳값처럼 손으로 하기 번거로운 계산을 맡긴다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기호 계산의 기초 (<a href="02-01.html">2.1절</a>), 행렬과 고윳값 (<a href="../math2/index.html">수학2</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>방정식</h3>
+    <pre><code>&gt;&gt;&gt; x, y = symbols('x y')
+&gt;&gt;&gt; solve(x**2 - 3*x + 2, x)
+[1, 2]
+&gt;&gt;&gt; solve(x**2 + 1, x)
+[-I, I]
+&gt;&gt;&gt; solve([x + y - 3, x - y - 1], [x, y])
+{x: 2, y: 1}</code></pre>
+    <p><code>solve(식, 변수)</code>는 식 = 0의 해를 줍니다. <code>I</code>는 허수 단위입니다. 4차까지의 다항식은 근의 공식으로 정확히 풀리지만, 5차 이상은 일반적으로 근호로 쓸 수 없어(수학19의 갈루아 이론) <code>CRootOf</code> 같은 형식적인 근이나 수치해(2.3절)가 나옵니다.</p>
+
+    <h3><span class="no">2.2.2</span>행렬</h3>
+    <pre><code>&gt;&gt;&gt; A = Matrix([[2, 1], [1, 2]])
+&gt;&gt;&gt; A.det()
+3
+&gt;&gt;&gt; A.inv()
+Matrix([
+[ 2/3, -1/3],
+[-1/3,  2/3]])
+&gt;&gt;&gt; A.eigenvals()
+{3: 1, 1: 1}
+&gt;&gt;&gt; A.eigenvects()
+[(1, 1, [Matrix([[-1], [1]])]), (3, 1, [Matrix([[1], [1]])])]</code></pre>
+    <p><code>eigenvals()</code>는 {고윳값: 중복도}, <code>eigenvects()</code>는 (고윳값, 중복도, 고유벡터 목록)입니다. 결과가 분수 그대로라 반올림 오차가 없습니다.</p>
+    <div class="tb-env ex"><b>예 2.2.1</b> 매개변수 \(a\)가 든 \(\begin{pmatrix}0 &amp; 1\\ -a &amp; 0\end{pmatrix}\)의 고윳값을 <code>Matrix([[0, 1], [-a, 0]]).eigenvals()</code>로 구하면 <code>{-sqrt(-a): 1, sqrt(-a): 1}</code>입니다. \(a > 0\)이면 \(\pm i\sqrt a\)로 진동(용수철), \(a &lt; 0\)이면 실수 고윳값으로 발산하는 해가 있습니다.</div>
+    <p>행렬이 커지면 기호 계산은 급격히 느려집니다(\(n\times n\) 행렬식의 기호 전개는 항이 \(n!\)개). 큰 행렬은 수치 선형대수(3장, 수학16)로 다룹니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) <code>solve</code>가 늘 모든 해를 준다고 여긴다. 초월방정식(\(\cos x = x\))은 풀지 못하거나 일부만 준다. (2) 기호 계산이 큰 행렬에도 좋다고 여긴다. 식이 폭발적으로 커져 수치 방법이 낫다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>solve(식, 변수)</code>: 다항·연립방정식의 정확한 해.</li>
+        <li><code>Matrix</code>: <code>det inv eigenvals eigenvects</code>.</li>
+        <li>매개변수 계산에 유용, 큰 문제는 수치로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>solve(x**3 - x, x)</code>의 결과는?
+          <details><summary>답</summary><p><code>[-1, 0, 1]</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\begin{pmatrix}1 &amp; 2\\ 3 &amp; 4\end{pmatrix}\)의 역행렬과 고윳값을 SymPy로 구할 때의 결과를 손으로 확인하여라.
+          <details><summary>답</summary><p>역행렬 \(\frac1{-2}\begin{pmatrix}4 &amp; -2\\ -3 &amp; 1\end{pmatrix} = \begin{pmatrix}-2 &amp; 1\\ \frac32 &amp; -\frac12\end{pmatrix}\). 고윳값 \(\frac{5 \pm\sqrt{33}}2\) (출력 <code>5/2 - sqrt(33)/2</code> 등).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(x^5 - x - 1 = 0\)을 <code>solve</code>로 풀면 어떤 결과가 나올지 예상하고, 실근의 수치값을 얻는 방법을 써라.
+          <details><summary>답</summary><p>근호로 풀리지 않아 <code>CRootOf(x**5 - x - 1, 0)</code> 등이 나온다. <code>N(CRootOf(x**5 - x - 1, 0))</code> 또는 <code>nsolve(x**5 - x - 1, x, 1)</code> → 약 1.1673.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

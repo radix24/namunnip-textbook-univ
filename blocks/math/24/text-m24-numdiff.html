@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-numdiff" data-kind="본문" data-std="수학24-06-02">
+  <header class="card-head"><span class="no"></span><h2>수치 미분의 오차 분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전진 차분 \(\frac{f(x + h) - f(x)}h\)과 중앙 차분 \(\frac{f(x + h) - f(x - h)}{2h}\)을 구현한다.</li>
+        <li>절단 오차(\(h\)를 줄이면 감소)와 반올림 오차(\(h\)를 줄이면 증가)의 균형을 로그-로그 그래프로 본다.</li>
+        <li>최적 간격 \(h \approx \sqrt\varepsilon\) (전진), \(\sqrt[3]\varepsilon\) (중앙)을 유도한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>테일러 전개, 상쇄 오차 (<a href="04-03.html">4.3절</a>), 로그 그래프 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>실험</h3>
+    <pre><code>import math
+for h in [1e-1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12]:
+    fd = (math.sin(1 + h) - math.sin(1))/h
+    cd = (math.sin(1 + h) - math.sin(1 - h))/(2*h)
+    print(h, f'{abs(fd - math.cos(1)):.2e}', f'{abs(cd - math.cos(1)):.2e}')</code></pre>
+    <pre><code>0.1 4.29e-02 9.00e-04
+0.01 4.22e-03 9.00e-06
+0.0001 4.21e-05 9.00e-10
+1e-06 4.21e-07 2.77e-11
+1e-08 2.97e-09 2.58e-09
+1e-10 5.85e-08 5.85e-08
+1e-12 4.32e-05 1.23e-05</code></pre>
+    <p>전진 차분은 \(h\)를 10배 줄이면 오차도 10배(1차), 중앙 차분은 100배(2차) 줄다가, 어느 순간부터 오히려 커집니다. 로그-로그 그래프로 그리면 V자입니다.</p>
+
+    <h3><span class="no">6.2.2</span>두 오차의 균형</h3>
+    <p>테일러 전개로 전진 차분의 절단 오차는 \(\frac h2|f''|\)입니다. 한편 \(f(x + h)\)와 \(f(x)\)는 각각 상대 오차 \(\varepsilon\) 정도로 계산되고, 그 차를 \(h\)로 나누므로 반올림 오차는 \(\frac{\varepsilon|f|}h\) 정도입니다(4.3절의 상쇄). 합 \(E(h) \approx \frac{Mh}2 + \frac{\varepsilon|f|}h\)을 최소로 하는 \(h\)는</p>
+    \[h^* \approx \sqrt{\frac{2\varepsilon|f|}M} \sim \sqrt\varepsilon \approx 10^{-8}, \qquad E(h^*) \sim \sqrt\varepsilon \approx 10^{-8}.\]
+    <p>중앙 차분은 절단 오차 \(\frac{h^2}6|f'''|\)라 \(h^* \sim \sqrt[3]\varepsilon \approx 6\times10^{-6}\), 최소 오차 \(\sim\varepsilon^{2/3} \approx 10^{-11}\)입니다. 실험의 최솟값(전진 \(3\times10^{-9}\) at \(10^{-8}\), 중앙 \(3\times10^{-11}\) at \(10^{-6}\))과 맞습니다.</p>
+    <p>결론: 수치 미분은 배정밀도로도 유효숫자 절반(전진)이나 3분의 2(중앙)밖에 얻지 못합니다. 정확한 도함수가 필요하면 기호 미분(2장)이나 자동 미분을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(h\)를 작게 할수록 정확하다고 여긴다. \(10^{-12}\)에서 전진 차분 오차는 \(4\times10^{-5}\)로 \(h = 10^{-4}\)일 때와 비슷하다. (2) 최적 \(h\)가 함수와 무관하다고 여긴다. \(f\), \(f''\)의 크기에 따라 달라진다(대략 \(\sqrt\varepsilon\cdot|x|\)로 크기를 맞춘다).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전진 차분 1차, 중앙 차분 2차의 절단 오차.</li>
+        <li>반올림 오차 \(\sim\frac\varepsilon h\): \(h\)를 줄이면 커짐 → V자.</li>
+        <li>최적 \(h \sim \sqrt\varepsilon\) (전진), \(\sqrt[3]\varepsilon\) (중앙).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>표에서 중앙 차분의 오차가 \(h = 10^{-1}\)에서 \(10^{-2}\)로 갈 때 몇 배 줄었는가? 차수는?
+          <details><summary>답</summary><p>\(9.00\times10^{-4} \to 9.00\times10^{-6}\), 100배. 2차.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>단정밀도(\(\varepsilon \approx 1.2\times10^{-7}\))에서 전진 차분의 최적 \(h\)와 얻을 수 있는 정확도를 어림하여라.
+          <details><summary>답</summary><p>\(h^* \sim \sqrt\varepsilon \approx 3\times10^{-4}\), 오차도 \(\sim 3\times10^{-4}\). 유효숫자 3~4자리.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>이계 도함수 \(\frac{f(x + h) - 2f(x) + f(x - h)}{h^2}\)의 반올림 오차는 \(h\)에 대해 어떻게 커지며, 최적 \(h\)는 어느 정도인가?
+          <details><summary>답</summary><p>반올림 오차 \(\sim\frac{4\varepsilon|f|}{h^2}\), 절단 오차 \(\frac{h^2}{12}|f^{(4)}|\). 균형 \(h^4 \sim \varepsilon\), \(h^* \sim \varepsilon^{1/4} \approx 10^{-4}\), 최소 오차 \(\sim\sqrt\varepsilon \approx 10^{-8}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

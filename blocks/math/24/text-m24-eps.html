@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-eps" data-kind="본문" data-std="수학24-04-02">
+  <header class="card-head"><span class="no"></span><h2>기계 엡실론 실험</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기계 엡실론 \(\varepsilon\)을 "\(1 + \varepsilon > 1\)인 가장 작은 2의 거듭제곱"으로 정의하고 실험으로 구한다.</li>
+        <li>상대 반올림 오차가 \(\frac\varepsilon2\) 이하임을 안다.</li>
+        <li>단정밀도와 배정밀도의 엡실론을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>IEEE 754 구조 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>실험</h3>
+    <pre><code>e = 1.0
+n = 0
+while 1.0 + e/2 &gt; 1.0:
+    e = e/2
+    n = n + 1
+print(e, n)</code></pre>
+    <pre><code>2.220446049250313e-16 52</code></pre>
+    <p>\(\varepsilon = 2^{-52} \approx 2.22\times10^{-16}\)입니다. 가수가 52비트이므로 1 다음으로 큰 수가 \(1 + 2^{-52}\)이기 때문입니다. \(1 + 2^{-53}\)은 1과 \(1 + 2^{-52}\)의 정확히 가운데라 짝수 쪽(1)으로 반올림됩니다. NumPy에서는 <code>np.finfo(float).eps</code>, Python 3.9 이상은 <code>math.ulp(1.0)</code>으로 같은 값을 얻습니다.</p>
+
+    <h3><span class="no">4.2.2</span>의미</h3>
+    <p>실수 \(x\)를 가장 가까운 부동소수점 수 \(\mathrm{fl}(x)\)로 반올림하면</p>
+    \[\mathrm{fl}(x) = x(1 + \delta), \qquad |\delta| \le \frac\varepsilon2 = 2^{-53} \approx 1.1\times10^{-16}.\]
+    <p>즉 상대 오차가 늘 약 \(10^{-16}\) 이하입니다. 크기와 무관한 "상대" 오차라는 점이 중요합니다. \(10^{20}\) 근처에서는 이웃한 부동소수점 수의 간격이 \(10^{20}\times2.2\times10^{-16} \approx 2\times10^4\)이나 됩니다.</p>
+    <div class="tb-env ex"><b>예 4.2.1</b> 단정밀도(32비트, 가수 23비트)로 같은 실험을 하면(<code>np.float32</code>) \(\varepsilon = 2^{-23} \approx 1.19\times10^{-7}\)입니다. 유효숫자 약 7자리라, 큰 행렬 계산이나 긴 시간 적분에서 오차가 쌓이면 금방 드러납니다. 그래픽처럼 정밀도보다 속도가 중요할 때 씁니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 기계 엡실론이 표현 가능한 가장 작은 양수라 여긴다. 그것은 약 \(5\times10^{-324}\)이다. 엡실론은 1 근처의 간격이다. (2) 모든 계산의 오차가 \(10^{-16}\)이라 여긴다. 연산 하나의 상대 오차가 그렇다는 것이고, 상쇄(4.3절)나 나쁜 조건수로 크게 불어날 수 있다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>배정밀도 \(\varepsilon = 2^{-52} \approx 2.2\times10^{-16}\), 단정밀도 \(2^{-23}\).</li>
+        <li>반올림의 상대 오차 \(\le \frac\varepsilon2\).</li>
+        <li>간격은 크기에 비례: 큰 수 근처는 간격도 크다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>1.0 + 1e-16 == 1.0</code>은 참인가?
+          <details><summary>답</summary><p>참. \(10^{-16} &lt; \frac\varepsilon2 \approx 1.1\times10^{-16}\)이라 반올림되어 1이 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(1000\) 근처에서 이웃한 배정밀도 수의 간격을 구하여라.
+          <details><summary>답</summary><p>\(1000\)은 \([2^9, 2^{10})\)에 있어 간격 \(2^9\varepsilon = 2^{-43} \approx 1.14\times10^{-13}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\sum_{k=1}^{10^7}\frac1k\)을 큰 것부터 더할 때와 작은 것부터 더할 때 어느 쪽이 정확한지 엡실론으로 설명하여라.
+          <details><summary>답</summary><p>큰 것부터 더하면 합이 16쯤으로 커진 뒤 \(10^{-7}\) 크기의 항이 더해질 때 각각 \(16\cdot\frac\varepsilon2\) 정도의 반올림 오차가 생기고 작은 항의 하위 자리가 잘린다. 작은 것부터 더하면 비슷한 크기끼리 더해져 오차가 작다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

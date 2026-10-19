@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-05-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m24-cuberoot-ex" data-kind="예제" data-std="수학24-05-02">
+  <header class="card-head"><span class="no"></span><h2>뉴턴 방법으로 세제곱근 구하기</h2><span class="kind">예제 · 2차 수렴 관찰</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>시작값 1에서 \(\sqrt[3]2\)를 뉴턴 방법으로 구하면 16자리를 얻는 데 몇 번 걸릴까요?</p>
+      <details><summary>예측 확인</summary><p>5번입니다. 오차가 0.07 → 0.004 → \(10^{-5}\) → \(10^{-10}\) → 0으로 줄어듭니다.</p></details>
+    </section>
+    <p class="q-prob">\(f(x) = x^3 - 2\)에 뉴턴 방법을 \(x_0 = 1\)로 적용해 \(\sqrt[3]2\)를 구하고 오차가 줄어드는 모양을 확인하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>\(x_{k+1} = x_k - \frac{x_k^3 - 2}{3x_k^2} = \frac{2x_k^3 + 2}{3x_k^2}\) (<a href="05-02.html">5.2절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><pre><code>x = 1.0
+for k in range(1, 6):
+    x = x - (x**3 - 2)/(3*x*x)
+    print(k, repr(x), abs(x - 2**(1/3)))</code></pre></div><span class="q-why">5번 반복.</span></li>
+        <li class="q-end"><div><pre><code>1 1.3333333333333333 0.07341228343846007
+2 1.2638888888888888 0.003967838994015649
+3 1.259933493449977 1.24435551038804e-05
+4 1.2599210500177698 1.2289658180009155e-10
+5 1.2599210498948732 0.0</code></pre></div><span class="q-why">오차 지수가 약 두 배씩.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(e_{k+1} \approx \frac{f''}{2f'}e_k^2 = \frac1{\sqrt[3]2}e_k^2 \approx 0.79e_k^2\): \(0.79\times0.0734^2 \approx 0.0043\), \(0.79\times0.00397^2 \approx 1.2\times10^{-5}\), \(0.79\times(1.24\times10^{-5})^2 \approx 1.2\times10^{-10}\). 출력과 맞습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>계산기와 라이브러리의 제곱근, 세제곱근, 나눗셈 같은 기본 연산도 이런 뉴턴 반복으로 구현됩니다. 좋은 시작값(지수 필드로 대략 맞춤)에서 2~3번이면 배정밀도 전체 자리를 얻습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\(\frac1a\)을 나눗셈 없이 구하는 뉴턴 반복을 \(f(x) = \frac1x - a\)로 만들어라.</p>
+      <details><summary>답</summary><p>\(x_{k+1} = x_k - \frac{1/x_k - a}{-1/x_k^2} = x_k(2 - ax_k)\). 곱셈만 쓴다.</p></details>
+    </section>
+  </div>
+</article>

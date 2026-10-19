@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-secant" data-kind="본문" data-std="수학24-05-03">
+  <header class="card-head"><span class="no"></span><h2>할선법과 종료 조건</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>도함수 대신 두 점의 기울기를 쓰는 할선법을 구현한다.</li>
+        <li>수렴 차수 \(\frac{1 + \sqrt5}2 \approx 1.618\)을 출력으로 관찰한다.</li>
+        <li>절대 오차, 상대 오차, 잔차, 반복 상한을 섞은 종료 조건을 설계한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>뉴턴 방법 (<a href="05-02.html">5.2절</a>), 기계 엡실론 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>할선법</h3>
+    <p>뉴턴 방법의 \(f'(x_k)\)를 최근 두 점의 기울기 \(\frac{f(x_k) - f(x_{k-1})}{x_k - x_{k-1}}\)로 바꿉니다.</p>
+    <pre><code>def secant(f, x0, x1, tol=1e-12, maxit=50):
+    for k in range(1, maxit + 1):
+        x2 = x1 - f(x1)*(x1 - x0)/(f(x1) - f(x0))
+        print(k, repr(x2))
+        x0, x1 = x1, x2
+        if abs(x1 - x0) &lt; tol:
+            return x1
+    raise RuntimeError('수렴하지 않음')
+
+secant(lambda x: x**3 - x - 2, 1.0, 2.0)</code></pre>
+    <pre><code>1 1.3333333333333335
+2 1.462686567164179
+3 1.5311694321412044
+4 1.5209264205152802
+5 1.5213763166697438
+6 1.5213797079848717
+7 1.5213797068045645
+8 1.5213797068045676</code></pre>
+    <p>근까지의 오차는 \(0.19, 0.059, 0.0098, 4.5\times10^{-4}, 3.4\times10^{-6}, 1.2\times10^{-9}, 3.1\times10^{-15}\)입니다. 매번 대략 1.6제곱으로 줄어(로그로 보면 지수가 \(\times1.6\)), 뉴턴(\(\times2\))보다 느리지만 이분법보다 훨씬 빠릅니다. 반복마다 \(f\)를 한 번만 새로 계산하므로(\(f'\) 계산 없음) 계산량으로는 뉴턴과 비슷하거나 낫습니다.</p>
+
+    <h3><span class="no">5.3.2</span>종료 조건</h3>
+    <p>어느 하나만으로는 위험합니다.</p>
+    <ul>
+      <li>\(|x_{k+1} - x_k| &lt; \text{tol}\): 근이 매우 크면(\(10^{10}\)) 간격이 \(10^{-6}\)보다 작아질 수 없어 끝나지 않는다. → 상대 조건 \(|x_{k+1} - x_k| &lt; \text{rtol}\cdot|x_{k+1}|\)을 함께.</li>
+      <li>\(|f(x_k)| &lt; \text{tol}\): \(f\)의 크기 단위에 좌우된다. \(10^6f\)는 같은 근인데 조건이 다르다.</li>
+      <li>반복 상한: 수렴하지 않는 경우를 위해 늘 둔다.</li>
+    </ul>
+    <p>실전 라이브러리는 <code>abs(dx) &lt; atol + rtol*abs(x)</code> 꼴(예: <code>atol = 1e-12</code>, <code>rtol = 4*eps</code>)과 반복 상한을 함께 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 할선법이 이분법처럼 늘 수렴한다고 여긴다. 두 점이 근을 끼고 있지 않아도 되는 대신 발산할 수 있다(근을 끼도록 유지하는 변형이 가위치법). (2) \(f(x_1) = f(x_0)\)인 경우를 생각하지 않는다. 0으로 나누므로 검사가 필요하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>할선법: 기울기를 두 점으로, 수렴 차수 약 1.618.</li>
+        <li>도함수 불필요, 반복당 \(f\) 한 번.</li>
+        <li>종료: 절대 + 상대 변화량, 잔차, 반복 상한.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = x^2 - 2\), \(x_0 = 1\), \(x_1 = 2\)에서 할선법의 첫 단계 \(x_2\)를 구하여라.
+          <details><summary>답</summary><p>\(x_2 = 2 - 2\cdot\frac{1}{2 - (-1)} = 2 - \frac23 = \frac43\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>오차가 \(10^{-3}\), \(10^{-5}\)이면 할선법의 다음 오차는 대략? (\(e_{k+1} \approx Ce_ke_{k-1}\), \(C \approx 1\))
+          <details><summary>답</summary><p>\(10^{-8}\), 그다음 \(10^{-13}\). 지수가 피보나치처럼 더해진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>근이 \(x^* = 10^{12}\) 근처일 때 <code>abs(dx) &lt; 1e-12</code>만 쓰면 왜 끝나지 않는가?
+          <details><summary>답</summary><p>\(10^{12}\) 근처의 부동소수점 간격은 \(10^{12}\cdot2.2\times10^{-16} \approx 2\times10^{-4}\)이라 \(|dx|\)가 0이 아닌 한 그보다 작아질 수 없다(0이 되면 끝나지만 진동할 수 있다). 상대 조건을 써야 한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

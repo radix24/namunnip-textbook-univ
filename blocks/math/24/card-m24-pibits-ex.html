@@ -1,0 +1,43 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-04-01",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m24-pibits-ex" data-kind="예제" data-std="수학24-04-01">
+  <header class="card-head"><span class="no"></span><h2>16진수 0x400921FB54442D18을 해독하기</h2><span class="kind">예제 · 비트 표현에서 값으로</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>이 64비트 패턴이 나타내는 배정밀도 수는 무엇일까요? 앞 세 자리 <code>400</code>만 보고 크기를 짐작해 보세요.</p>
+      <details><summary>예측 확인</summary><p><code>0x400</code> = 1024라 지수가 \(2^1\), 즉 2와 4 사이의 수입니다. 실제로 \(\pi\)입니다.</p></details>
+    </section>
+    <p class="q-prob">비트 패턴 <code>0x400921FB54442D18</code>을 부호, 지수, 가수로 나누어 값을 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>맨 앞 12비트(16진 3자리)가 부호 1비트 + 지수 11비트, 나머지 13자리(52비트)가 가수입니다(<a href="04-01.html">4.1절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><code>0x400</code> = \(0100\,0000\,0000_2\): 부호 0, 지수 \(E = 10000000000_2 = 1024\), \(2^{1024 - 1023} = 2\).</div><span class="q-why">편향 1023.</span></li>
+        <li><div>가수 <code>0x921FB54442D18</code> = \(2570638124657944\), \(1 + \frac{2570638124657944}{2^{52}} = 1.5707963267948966\).</div><span class="q-why">숨은 1을 붙인다.</span></li>
+        <li class="q-end"><div>값 \(= 2\times1.5707963267948966 = 3.141592653589793\).</div><span class="q-why"><code>struct.unpack('&gt;d', bytes.fromhex('400921FB54442D18'))</code>로 확인.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>가수 부분 \(1.5707963\cdots\)는 \(\frac\pi2\)입니다. \(\pi = 2\times\frac\pi2\)이고 \(\frac\pi2 \in [1, 2)\)이므로 지수가 1인 것이 맞습니다. 저장된 값은 참 \(\pi\)와 약 \(1.2\times10^{-16}\) 차이입니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>디버깅할 때 이상한 값(예: <code>0x7FF8…</code>는 NaN)이 메모리에 보이면 이렇게 해독합니다. 지수 필드는 크기(자릿수), 가수는 유효숫자라는 역할 분담이 한눈에 보입니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob"><code>0xC000000000000000</code>은 어떤 수인가?</p>
+      <details><summary>답</summary><p>부호 1, 지수 1024(\(2^1\)), 가수 0: \(-2.0\).</p></details>
+    </section>
+  </div>
+</article>
