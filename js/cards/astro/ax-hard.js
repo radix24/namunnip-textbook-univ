@@ -188,4 +188,79 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 11. 거듭제곱 방법으로 고유값 찾기 (천우10-02-02) */
+  (() => {
+    const S = QSim.card("exp-a10-power"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), a = S.val("a"), b = S.val("b"), d = S.val("d"), th = S.val("th") * deg, K = S.val("k");
+      const m = (a + d) / 2, q = Math.sqrt(((a - d) / 2) ** 2 + b * b), l1 = m + q, l2 = m - q;
+      const big = Math.abs(l1) >= Math.abs(l2) ? l1 : l2, small = big === l1 ? l2 : l1;
+      const ev = (lam) => { const x = b, y = lam - a; const n = Math.hypot(x, y); return n < 1e-12 ? [1, 0] : [x / n, y / n]; };
+      const e1 = Math.abs(b) < 1e-12 ? (Math.abs(a) >= Math.abs(d) ? [1, 0] : [0, 1]) : ev(big);
+      let x = Math.cos(th), y = Math.sin(th); const vs = [[x, y]]; let rq = a * x * x + 2 * b * x * y + d * y * y;
+      for (let k = 0; k < K; k++) { const nx = a * x + b * y, ny = b * x + d * y; rq = (x * nx + y * ny) / (x * x + y * y); const n = Math.hypot(nx, ny) || 1; x = nx / n; y = ny / n; vs.push([x, y]); }
+      rq = (a * x * x + 2 * b * x * y + d * y * y);
+      const L = 1.3, v = QSim.view(cv, 0.56), f = QSim.frame(v, { x0: -L * 1.5, x1: L * 1.5, y0: -L, y1: L, xl: "", yl: "", equal: true }); f.axes({ noGrid: true });
+      f.path(circ(0, 0, 1), c.ink3, 1, [3, 3]); f.path([[-1.3 * e1[0], -1.3 * e1[1]], [1.3 * e1[0], 1.3 * e1[1]]], c.acc, 1.5, [5, 3]);
+      vs.forEach((p, i) => f.arrow(0, 0, p[0], p[1], i === vs.length - 1 ? c.warn : c.main, i === vs.length - 1 ? String(i) : ""));
+      const ang = Math.acos(Math.min(1, Math.abs(x * e1[0] + y * e1[1]))) / deg;
+      S.out(`행렬 A = [[${fx(a, 1)}, ${fx(b, 1)}], [${fx(b, 1)}, ${fx(d, 1)}]]: 고유값 ${fx(big, 3)}, ${fx(small, 3)} (비 ${fx(Math.abs(small / big), 3)})\n처음 벡터에 A를 ${K}번 곱함: 레일리 몫(고유값 추정) ${fx(rq, 4)}, 오차 ${Math.abs(rq - big).toExponential(2)}, 큰 고유값 방향과의 각 ${fx(ang, 2)}°\n곱할 때마다 큰 고유값 방향 성분이 작은 쪽보다 ${fx(Math.abs(big / small), 2)}배씩 빨리 자라 벡터가 그 방향으로 돌아간다\n파란 화살표: 곱할 때마다의 방향(길이 1로 맞춤), 빨강: 마지막, 주황 점선: 큰 고유값의 고유벡터 방향`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 12. 음향 지평선의 각 크기와 곡률 (천우16-05-02) */
+  (() => {
+    const S = QSim.card("exp-a16-acoustic"); if (!S) return;
+    const cv = S.$("canvas"), CK = 299792.458, h0 = 67.4, rs = 147, zs = 1090, orad = 9.1e-5;
+    const DM = (om, ok) => { const ol = 1 - om - ok - orad, E = (z) => Math.sqrt(Math.max(orad * (1 + z) ** 4 + om * (1 + z) ** 3 + ok * (1 + z) ** 2 + ol, 1e-12));
+      // 적분 변수를 ln(1+z)로 바꿔 높은 적색이동까지 고르게
+      const n = 4000, X = Math.log(1 + zs), hh = X / n; let s = 0; for (let k = 0; k <= n; k++) { const x = k * hh, z = Math.exp(x) - 1, w = (k === 0 || k === n) ? 1 : (k % 2 ? 4 : 2); s += w * (1 + z) / E(z); } const dc = CK / h0 * s * hh / 3, DH = CK / h0;
+      if (Math.abs(ok) < 1e-6) return dc; const q = Math.sqrt(Math.abs(ok)); return ok > 0 ? DH / q * Math.sinh(q * dc / DH) : DH / q * Math.sin(q * dc / DH); };
+    function draw() {
+      const c = C(), om = S.val("om"), ok = S.val("ok"), d = DM(om, ok), th = rs / d, d0 = DM(om, 0), th0 = rs / d0;
+      const v = QSim.view(cv, 0.45), f = QSim.frame(v, { x0: -3.4, x1: 3.4, y0: -1.2, y1: 1.2, xl: "", yl: "", equal: true }); f.axes({ noGrid: true });
+      const s = 1 / (th0 / deg);   // 평탄 우주의 각을 지름 1로
+      f.path(circ(-1.6, 0, 0.5 * (th0 / deg) * s), c.ink3, 2); f.text("평탄 우주", -2.2, -0.85, c.ink3);
+      f.path(circ(1.6, 0, 0.5 * (th / deg) * s), c.warn, 2); f.text("고른 우주", 1.05, -0.85, c.warn);
+      S.out(`Ω_m = ${fx(om, 3)}, Ω_k = ${fx(ok, 3)}, Ω_Λ = ${fx(1 - om - ok - orad, 3)} (H₀ = 67.4, 복사 포함)\n마지막 산란면(z = 1090)까지 가로 공변 거리 ${d.toFixed(0)} Mpc → 음향 지평선(147 Mpc)의 각 θ = ${fx(th / deg, 3)}° (평탄 우주 ${fx(th0 / deg, 3)}°)\n${ok < -1e-6 ? "닫힌 우주: 빛이 모여 얼룩이 더 크게 보인다" : ok > 1e-6 ? "열린 우주: 얼룩이 더 작게 보인다" : "평탄 우주"}. 다중극으로 ℓ ≈ π/θ = ${(Math.PI / th).toFixed(0)}(첫 봉우리는 그 약 0.75배인 220 근처)\n원의 크기: 하늘에서 보이는 얼룩의 각 크기 비교(평탄 우주를 기준으로)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 13. 별 속 압력의 지배 영역 (천우9-02-01) */
+  (() => {
+    const S = QSim.card("exp-a9-eos"); if (!S) return;
+    const cv = S.$("canvas"), k = 1.380649e-23, mH = 1.6726e-27, a = 7.566e-16, mu = 0.6, mue = 2;
+    const P = (lr, lt) => { const r = 10 ** lr, T = 10 ** lt, x = r / mue; return [r * k * T / (mu * mH), a * T ** 4 / 3, x < 2e9 ? 1.0e7 * x ** (5 / 3) : 1.24e10 * x ** (4 / 3)]; };
+    function draw() {
+      const c = C(), lr = S.val("lr"), lt = S.val("lt");
+      const v = QSim.view(cv, 0.56), f = QSim.frame(v, { x0: -4, x1: 12, y0: 3, y1: 9.5, xl: "log₁₀ 밀도 (kg/m³)", yl: "log₁₀ 온도 (K)" });
+      const g = v.g, cols = [c.soft, "#f6d7a7", "#e7b8c8"], nx = 64, ny = 40;
+      for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) { const x0 = -4 + 16 * i / nx, y0 = 3 + 6.5 * j / ny, p = P(x0 + 8 / nx, y0 + 3.25 / ny), m = p.indexOf(Math.max(...p));
+        g.fillStyle = cols[m]; g.fillRect(f.X(x0), f.Y(y0 + 6.5 / ny), f.X(x0 + 16 / nx) - f.X(x0) + 0.5, f.Y(y0) - f.Y(y0 + 6.5 / ny) + 0.5); }
+      f.axes();
+      [[5.18, 7.20, "태양 중심"], [9, 7, "백색왜성"], [4, 7.5, "10 M☉ 별 중심"], [-3, 3.76, "태양 광구"]].forEach(([x, y, t]) => { f.dot(x, y, c.ink2, 3); f.text(t, x + 0.15, y + 0.1, c.ink2); });
+      f.dot(lr, lt, c.warn, 6);
+      const p = P(lr, lt), names = ["이상 기체", "복사압", "전자 축퇴압"], m = p.indexOf(Math.max(...p)), tot = p[0] + p[1] + p[2];
+      S.out(`밀도 10^${fx(lr, 2)} kg/m³, 온도 10^${fx(lt, 2)} K (평균 입자 질량 μ = 0.6, 전자당 질량 μₑ = 2)\n기체 ${p[0].toExponential(2)} Pa, 복사 ${p[1].toExponential(2)} Pa, 축퇴(완전 축퇴로 계산) ${p[2].toExponential(2)} Pa → ${names[m]}가 가장 크다(${fx(100 * p[m] / tot, 1)}%)\n파랑: 이상 기체, 주황: 복사압, 분홍: 전자 축퇴압이 가장 큰 영역. 경계는 두 압력이 같은 곳\n복사압은 T⁴라 뜨겁고 묽은 곳, 축퇴압은 온도와 무관해 차갑고 조밀한 곳에서 이긴다`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 14. 상대론적 도플러 효과 (천우3-02-05) */
+  (() => {
+    const S = QSim.card("exp-a3-doppler"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), bt = S.val("b"), zc = bt, zr = Math.sqrt((1 + bt) / (1 - bt)) - 1;
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 1, y0: 0, y1: 6, xl: "후퇴 속도 v/c", yl: "적색이동 z" }); f.axes();
+      f.fn((x) => x, c.ink3, 1.6, [5, 3]); f.fn((x) => x < 0.995 ? Math.sqrt((1 + x) / (1 - x)) - 1 : NaN, c.main, 2.2);
+      f.dot(bt, Math.min(zr, 6), c.warn, 5);
+      S.out(`후퇴 속도 v = ${fx(bt, 3)}c (${(bt * 299792).toFixed(0)} km/s)\n고전 도플러 z = v/c = ${fx(zc, 3)}, 상대론 도플러 z = √((1+β)/(1−β)) − 1 = ${fx(zr, 3)} (차이 ${fx(100 * (zr - zc) / Math.max(zc, 1e-9), 1)}%)\nHα(656.3 nm)는 상대론으로 ${(656.3 * (1 + zr)).toFixed(1)} nm에서 관측(고전 공식이면 ${(656.3 * (1 + zc)).toFixed(1)} nm)\nv가 c에 가까워지면 z는 끝없이 커진다(빛보다 빠를 수 없음). 회색 점선: 고전, 파란 선: 상대론`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
