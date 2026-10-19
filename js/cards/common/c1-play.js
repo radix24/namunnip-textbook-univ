@@ -203,4 +203,80 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 8. 쌍곡선 함수와 현수선 (02-06) */
+  (() => {
+    const S = QSim.card("lab-c1-hyper"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), x0 = S.val("x"), a = S.val("a");
+      const v = QSim.view(cv, 0.62), F = QSim.frame(v, { x0: -3, x1: 3, y0: -4, y1: 6, xl: "x", yl: "y" }); F.axes();
+      F.fn(Math.exp, c.rule, 1, [3, 3]); F.fn((x) => Math.exp(-x), c.rule, 1, [3, 3]);
+      F.fn(Math.cosh, c.main, 2.5); F.fn(Math.sinh, c.acc, 2.5);
+      F.fn((x) => a * Math.cosh(x / a), c.ink3, 1.5, [6, 3]);
+      F.dot(x0, Math.cosh(x0), c.main, 5); F.dot(x0, Math.sinh(x0), c.acc, 5);
+      const ch = Math.cosh(x0), sh = Math.sinh(x0);
+      S.out(`x = ${x0.toFixed(2)}:  cosh x = (eˣ + e⁻ˣ)/2 = ${ch.toFixed(4)},  sinh x = (eˣ − e⁻ˣ)/2 = ${sh.toFixed(4)}\n` +
+        `cosh²x − sinh²x = ${(ch * ch - sh * sh).toFixed(6)},  tanh x = ${Math.tanh(x0).toFixed(4)}\n` +
+        `(cosh x)' = sinh x = ${sh.toFixed(4)},  (sinh x)' = cosh x = ${ch.toFixed(4)}\n` +
+        `회색 점선: 현수선 y = a·cosh(x/a), a = ${a.toFixed(2)},  가장 낮은 점 (0, ${a.toFixed(2)})`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 9. 이심률로 보는 원뿔곡선 (07-05) */
+  (() => {
+    const S = QSim.card("lab-c1-conic"); if (!S) return;
+    const cv = S.$("canvas"), d = 2;
+    function draw() {
+      const c = C(), e = S.val("e"), th = (S.val("t") * Math.PI) / 180;
+      const v = QSim.view(cv, 0.7), F = QSim.frame(v, { x0: -6, x1: 4, y0: -4, y1: 4, equal: true, xl: "x", yl: "y" }); F.axes();
+      /* 초점 (0, 0), 준선 x = d. 극방정식 r = ed/(1 + e cos θ) */
+      const r = (t) => (e * d) / (1 + e * Math.cos(t));
+      let seg = [];
+      const flush = () => { if (seg.length > 1) F.path(seg, c.main, 2.5); seg = []; };
+      for (let k = 0; k <= 1440; k++) { const t = -Math.PI + (2 * Math.PI * k) / 1440, R = r(t); if (R > 0 && R < 60) seg.push([R * Math.cos(t), R * Math.sin(t)]); else flush(); }
+      flush();
+      F.path([[d, -4], [d, 4]], c.acc, 1.5, [5, 4]); F.text("준선", d + 0.1, 3.6, c.acc);
+      F.dot(0, 0, c.warn, 5); F.text("F", 0.15, -0.35, c.warn);
+      const R = r(th), ok = R > 0 && isFinite(R);
+      let msg = e < 1e-9 ? "e = 0이면 r = 0이라 곡선이 초점 한 점으로 줄어듭니다 (원은 d를 한없이 키운 극한)" : Math.abs(e - 1) < 1e-9 ? "이 방향으로는 포물선이 한없이 열려 있어 곡선 위의 점이 없습니다" : "이 방향에는 이 가지가 없습니다 (점근선 바깥, 다른 가지는 준선 건너편)";
+      if (ok && R < 60) {
+        const px = R * Math.cos(th), py = R * Math.sin(th), PF = R, PD = Math.abs(d - px);
+        F.path([[0, 0], [px, py]], c.ink3, 1); F.path([[px, py], [d, py]], c.ink3, 1, [2, 2]); F.dot(px, py, c.ink, 5);
+        msg = `P = (${px.toFixed(3)}, ${py.toFixed(3)}),  PF = ${PF.toFixed(3)},  P에서 준선까지 = ${PD.toFixed(3)},  PF ÷ PD = ${(PF / PD).toFixed(3)}`;
+      }
+      const kind = e < 1e-9 ? "원(e = 0, 준선은 무한히 멂: 이 그림에서는 점 하나)" : e < 1 ? "타원" : Math.abs(e - 1) < 1e-9 ? "포물선" : "쌍곡선(한쪽 가지)";
+      S.out(`이심률 e = ${e.toFixed(2)}: ${kind}\n극방정식 r = ed / (1 + e cos θ), d = 2\n${msg}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 10. 비 판정법과 근 판정법 (08-05) */
+  (() => {
+    const S = QSim.card("lab-c1-ratio"); if (!S) return;
+    const cv = S.$("canvas");
+    const lf = (n) => { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; };
+    const R = {
+      a: { n: "Σ n / 2ⁿ", la: (n) => Math.log(n) - n * Math.log(2), L: "1/2", sum: "2" },
+      b: { n: "Σ 2ⁿ / n!", la: (n) => n * Math.log(2) - lf(n), L: "0", sum: "e² − 1 = 6.389" },
+      c: { n: "Σ n! / nⁿ", la: (n) => lf(n) - n * Math.log(n), L: "1/e = 0.368", sum: "약 1.880" },
+      d: { n: "Σ 1 / n", la: (n) => -Math.log(n), L: "1 (판정 불가, 실제로는 발산)", sum: "∞" },
+      e: { n: "Σ 1 / n²", la: (n) => -2 * Math.log(n), L: "1 (판정 불가, 실제로는 수렴)", sum: "π²/6 = 1.645" },
+      f: { n: "Σ 3ⁿ / n²", la: (n) => n * Math.log(3) - 2 * Math.log(n), L: "3", sum: "∞" }
+    };
+    function draw() {
+      const c = C(), s = R[S.val("s")], N = S.val("N");
+      const v = QSim.view(cv, 0.55), F = QSim.frame(v, { x0: 0, x1: 40, y0: 0, y1: 3.2, xl: "n" }); F.axes();
+      const rat = [], root = [];
+      for (let n = 1; n <= 40; n++) { rat.push([n, Math.exp(s.la(n + 1) - s.la(n))]); root.push([n, Math.exp(s.la(n) / n)]); }
+      F.path([[0, 1], [40, 1]], c.warn, 1, [4, 4]);
+      F.path(rat, c.main, 2); F.path(root, c.acc, 2);
+      F.dot(N, Math.exp(s.la(N + 1) - s.la(N)), c.main, 5); F.dot(N, Math.exp(s.la(N) / N), c.acc, 5);
+      let part = 0; for (let n = 1; n <= N; n++) part += Math.exp(s.la(n));
+      S.out(`${s.n}:  n = ${N}에서  aₙ₊₁/aₙ = ${Math.exp(s.la(N + 1) - s.la(N)).toFixed(4)} (보라),  ⁿ√aₙ = ${Math.exp(s.la(N) / N).toFixed(4)} (주황)\n` +
+        `극한 L = ${s.L}.  L < 1이면 수렴, L > 1이면 발산, L = 1이면 이 판정법으로는 알 수 없음\n앞 ${N}항의 합 = ${part < 1e12 ? part.toPrecision(6) : "매우 큼"},  급수의 합 = ${s.sum}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
