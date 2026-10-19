@@ -1,4 +1,4 @@
-/* 물리18 실습 카드 묶음: 선속과 순환, 대칭 행렬의 고유벡터, Fourier 부분합, 직교 함수, 확산 모드 */
+/* 물리18 실습 카드 묶음: 선속과 순환, 대칭 행렬의 고유벡터, Fourier 부분합, 확산 모드 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -86,36 +86,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. Legendre 다항식과 Bessel 함수의 직교성 (05-02) */
-  (() => {
-    const S = QSim.card("lab-p18-ortho"); if (!S) return;
-    const cv = S.$("canvas");
-    const P = (l, x) => { let p0 = 1, p1 = x; if (l === 0) return 1; for (let k = 1; k < l; k++) { const p2 = ((2 * k + 1) * x * p1 - k * p0) / (k + 1); p0 = p1; p1 = p2; } return p1; };
-    // 급수로 J_m(x) (x ≤ 15에서 40항이면 충분), 영점은 표준 표값
-    const J = (m, x) => { let term = 1; for (let k = 1; k <= m; k++) term *= x / 2 / k; let s = term; for (let k = 1; k < 40; k++) { term *= -(x * x / 4) / (k * (k + m)); s += term; } return s; };
-    const Z = [[2.4048, 5.5201, 8.6537, 11.7915], [3.8317, 7.0156, 10.1735, 13.3237], [5.1356, 8.4172, 11.6198, 14.7960]];
-    const zero = (m, n) => Z[m][n - 1];
-    function draw() {
-      const c = C(), fam = S.val("fam"), p = S.val("p"), q = S.val("q");
-      let g1, g2, x0, x1, I, Iw = null, lab;
-      if (fam === "leg") {
-        g1 = (x) => P(p, x); g2 = (x) => P(q, x); x0 = -1; x1 = 1;
-        let s = 0; const N = 2000; for (let i = 0; i <= N; i++) { const x = -1 + 2 * i / N, w = i === 0 || i === N ? 1 : i % 2 ? 4 : 2; s += w * g1(x) * g2(x); } I = s * (2 / N) / 3;
-        lab = `Legendre P${p}, P${q} (x = cos θ, −1~1)\n∫P${p}P${q} dx = ${f4(I)}  (이론: ${p === q ? (2 / (2 * p + 1)).toFixed(4) : "0"})`;
-      } else {
-        const m = S.val("m"), z1 = zero(m, p), z2 = zero(m, q);
-        g1 = (x) => J(m, z1 * x); g2 = (x) => J(m, z2 * x); x0 = 0; x1 = 1;
-        let s = 0, s0 = 0; const N = 400; for (let i = 0; i <= N; i++) { const x = i / N, w = i === 0 || i === N ? 1 : i % 2 ? 4 : 2, pr = g1(x) * g2(x); s += w * pr * x; s0 += w * pr; } I = s / N / 3; Iw = s0 / N / 3;
-        lab = `Bessel J${m}(j${m},${p} ρ), J${m}(j${m},${q} ρ), 반지름 1인 원판. 영점 j${m},${p} = ${z1.toFixed(3)}, j${m},${q} = ${z2.toFixed(3)}\n가중치 ρ를 넣은 ∫ … ρ dρ = ${f4(I)}  (이론: ${p === q ? (0.5 * J(m + 1, z1) ** 2).toFixed(4) : "0"}),  가중치 없이 ∫ … dρ = ${f4(Iw)}`;
-      }
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0, x1, y0: -1.1, y1: 1.1, xl: fam === "leg" ? "x" : "ρ" }); f.axes();
-      f.fn((x) => g1(x) * g2(x), c.soft, 1.5, null, 300); f.fn(g1, c.main, 2.2, null, 300); f.fn(g2, c.acc, 2.2, null, 300);
-      S.out(lab + "\n(연한 선: 두 함수의 곱. 넓이가 지워지면 직교)");
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 확산 방정식의 모드 감쇠 (06-02) */
+  /* 4. 확산 방정식의 모드 감쇠 (06-02) */
   (() => {
     const S = QSim.card("lab-p18-heat"); if (!S) return;
     const [cvU, cvB] = S.$$("canvas"), N = 40; let t = 0;
