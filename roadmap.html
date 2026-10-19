@@ -55,40 +55,72 @@
   <section id="plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
     <p class="rm-warn"><b>참고용입니다.</b> 연세대학교 2020~2026학년도 대학요람(교과과정·졸업요건)을 읽어 학번별로 정리했지만 원문과 다를 수 있고, 학과 내규에 따라 요건이 바뀝니다. 4학년 과목은 QURI에 아직 카드가 없어 요람의 과목명·학정번호만 넣었습니다. 실제 수강 계획은 반드시 소속 학과 사무실과 학사 안내로 확인하세요. 요건마다 출처를 적어 두었습니다.</p>
 
-    <div class="rm-majors">
+    <ol class="rm-wiz" aria-label="졸업 로드맵 단계">
+      <li><button type="button" data-step="1"><span class="mono">1</span><b>학번·전공</b><small id="w-s1"></small></button></li>
+      <li><button type="button" data-step="2"><span class="mono">2</span><b>요건 확인</b><small id="w-s2"></small></button></li>
+      <li><button type="button" data-step="3"><span class="mono">3</span><b>학기 배치</b><small id="w-s3"></small></button></li>
+      <li><button type="button" data-step="4"><span class="mono">4</span><b>저장·공유</b><small id="w-s4"></small></button></li>
+    </ol>
+
+    <section class="rm-step" id="step-1" aria-labelledby="h-step-1">
+      <h2 class="rm-h2" id="h-step-1">1. 학번과 전공 고르기</h2>
       <div class="rm-pick rm-cohort">
         <label>학번(입학 연도) <select id="p-cohort" aria-describedby="p-cohort-note"></select></label>
         <span id="p-cohort-note" class="small dim">고른 학번의 대학요람 졸업요건으로 계산합니다. 과목 배치와 개설 학기는 지금(2026) 교과과정 기준입니다.</span>
       </div>
-      <h2 class="rm-h2">전공 고르기 <small>최대 5개</small></h2>
+      <h3 class="rm-h3">전공 <small>최대 5개</small></h3>
       <ol id="p-majors" class="rm-mlist"></ol>
       <div class="rm-addrow">
         <select id="p-add" aria-label="추가할 전공"></select>
         <button type="button" id="p-add-btn" class="rm-btn">전공 추가</button>
       </div>
+      <h3 class="rm-h3">학기 설정</h3>
       <div class="rm-opts">
         <label>학기당 학점 상한 <input type="number" id="p-cap" min="9" max="24" step="1" value="18"></label>
         <label>학기마다 일반선택에 남길 학점 <input type="number" id="p-rsv" min="0" max="12" step="1" value="0"></label>
         <label class="rm-check"><input type="checkbox" id="p-season" checked> 계절학기 쓰기(학기마다 6학점)</label>
-        <button type="button" id="p-auto" class="rm-btn rm-btn-main">자동으로 다시 배치</button>
+      </div>
+      <div class="rm-nav"><span></span><button type="button" class="rm-btn rm-btn-main" data-go="2">요건 확인으로</button></div>
+    </section>
+
+    <section class="rm-step" id="step-2" aria-labelledby="h-step-2" hidden>
+      <h2 class="rm-h2" id="h-step-2">2. 졸업 요건 확인</h2>
+      <p class="rm-sub" id="p-req-sub"></p>
+      <div id="p-req" class="rm-req"></div>
+      <div id="p-overlap" class="rm-overlap"></div>
+      <div id="p-rn" class="rm-src"></div>
+      <div class="rm-nav"><button type="button" class="rm-btn" data-go="1">학번·전공으로</button><button type="button" class="rm-btn rm-btn-main" data-go="3">학기 배치로</button></div>
+    </section>
+
+    <section class="rm-step" id="step-3" aria-labelledby="h-step-3" hidden>
+      <h2 class="rm-h2" id="h-step-3">3. 학기에 배치하기</h2>
+      <p class="rm-sub">과목을 끌어서 다른 학기로 옮기거나 아래 '배치하지 않은 과목'으로 빼세요. 끌기 어려우면 과목을 누르고 학기를 고르면 됩니다. 계절학기 칸은 칸마다 끄고 켤 수 있습니다.</p>
+      <div class="rm-opts rm-opts-plan">
+        <span id="p-mini" class="small"></span>
+        <button type="button" id="p-auto" class="rm-btn">자동으로 다시 배치</button>
         <button type="button" id="p-reset" class="rm-btn">처음으로</button>
       </div>
-    </div>
+      <div id="p-board" class="rm-board"></div>
+      <div id="p-pool" class="rm-pool"></div>
+      <div class="rm-nav"><button type="button" class="rm-btn" data-go="2">요건 확인으로</button><button type="button" class="rm-btn rm-btn-main" data-go="4">저장·공유로</button></div>
+    </section>
 
-    <h2 class="rm-h2">요건 충족 현황</h2>
-    <div id="p-req" class="rm-req"></div>
-    <div id="p-overlap" class="rm-overlap"></div>
-
-    <h2 class="rm-h2">8학기 계획표</h2>
-    <p class="rm-sub">과목을 끌어서 다른 학기로 옮기거나 아래 '배치하지 않은 과목'으로 빼세요. 끌기 어려우면 과목을 누르고 학기를 고르면 됩니다. 계획은 이 브라우저에 저장됩니다.</p>
-    <div id="p-board" class="rm-board"></div>
-    <div id="p-pool" class="rm-pool"></div>
-    <div id="p-src" class="rm-src"></div>
+    <section class="rm-step" id="step-4" aria-labelledby="h-step-4" hidden>
+      <h2 class="rm-h2" id="h-step-4">4. 저장과 공유</h2>
+      <p class="rm-sub">계획은 이 브라우저에 자동으로 저장됩니다. 다른 기기나 다른 사람에게 보내려면 링크를 복사하고, 종이로 보려면 인쇄하세요.</p>
+      <div class="rm-opts">
+        <button type="button" id="p-link" class="rm-btn rm-btn-main">계획 링크 복사</button>
+        <button type="button" id="p-print" class="rm-btn">인쇄</button>
+        <span id="p-link-msg" class="small dim" aria-live="polite"></span>
+      </div>
+      <div id="p-src" class="rm-src"></div>
+      <div class="rm-nav"><button type="button" class="rm-btn" data-go="3">학기 배치로</button><span></span></div>
+    </section>
   </section>
 
   <footer class="site-foot">
     <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
-    <p class="mono small dim">v0.1 시제품. 졸업 요건은 연세대학교 2026학년도 대학요람을 QURI가 정리한 것으로, 학교의 공식 안내가 아닙니다.</p>
+    <p class="mono small dim">v0.1 시제품. 졸업 요건은 연세대학교 2020~2026학년도 대학요람을 QURI가 정리한 것으로, 학교의 공식 안내가 아닙니다.</p>
   </footer>
 </main>
 
