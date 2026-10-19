@@ -267,3 +267,40 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 })();
+
+/* 전전4 6단원 추가: 패턴 검출기의 Moore·Mealy 타이밍 (04-06-02) */
+(() => {
+  "use strict";
+  if (!window.QSim) return;
+  const S = QSim.card("exp-e4-fsm"); if (!S) return;
+  const cv = S.$("canvas"), box = S.$('[name="bits"]');
+  // 상태 q = 지금까지 맞은 패턴 앞부분의 길이. 다음 상태 = (앞부분 + 새 비트)의 꼬리 중 패턴의 앞부분과 같은 가장 긴 것
+  const delta = (pat, q, b) => { const s = pat.slice(0, q) + b; for (let k = Math.min(s.length, pat.length); k >= 0; k--) if (s.endsWith(pat.slice(0, k))) return k; return 0; };
+  function draw() {
+    const c = QSim.col(), pat = S.val("pat");
+    const bits = (box.value || "").replace(/[^01]/g, "").slice(0, 24), m = pat.length, N = bits.length;
+    // Moore: 상태 0..m, 상태 m이면 출력 1. 클록 k 동안의 출력은 그 클록 시작 상태로 정해짐
+    const qm = [0]; for (const b of bits) qm.push(delta(pat, qm[qm.length - 1], b));
+    // Mealy: 상태 0..m-1, 패턴이 완성되는 전이에서 출력 1
+    let border = m - 1; while (border > 0 && !pat.endsWith(pat.slice(0, border))) border--;   // 완성 뒤 겹침으로 이어 쓸 길이
+    const qy = [0], zy = []; for (const b of bits) { const n = delta(pat, qy[qy.length - 1], b); zy.push(n === m ? 1 : 0); qy.push(n === m ? border : n); }
+    const zm = bits.split("").map((_, k) => (qm[k] === m ? 1 : 0));
+    const V = QSim.view(cv, 0.42), fr = QSim.frame(V, { x0: -2.2, x1: Math.max(N, 8) + 0.5, y0: 0, y1: 6, pad: 6 });
+    const rows = [["입력 x", bits.split("")], ["Mealy 상태", qy.slice(0, N)], ["Mealy z", zy], ["Moore 상태", qm.slice(0, N)], ["Moore z", zm]];
+    rows.forEach(([name, arr], r) => {
+      const y = 5.2 - r;
+      fr.text(name, -2.1, y - 0.15, c.ink2);
+      arr.forEach((val, k) => {
+        if ((r === 2 || r === 4) && +val === 1) fr.dot(k + 0.5, y, c.acc, 9);
+        fr.text(String(val), k + 0.5, y - 0.15, r === 0 ? c.ink : c.main, "center");
+      });
+    });
+    for (let k = 0; k <= N; k++) fr.path([[k, 0.4], [k, 5.7]], c.rule, 1, [2, 3]);
+    const hits = (z) => z.map((v, k) => (v ? k + 1 : 0)).filter((v) => v).join(", ") || "없음";
+    S.out(`패턴 "${pat}"(겹침 허용), 입력 ${N}비트. 상태 번호 = 지금까지 맞은 패턴 앞부분의 길이\n` +
+      `Mealy(상태 ${m}개): 출력 1인 클록 ${hits(zy)}. 마지막 비트가 들어오는 그 클록에 바로 1\n` +
+      `Moore(상태 ${m + 1}개): 출력 1인 클록 ${hits(zm)}. 패턴을 다 본 상태 ${m}에 들어간 다음 클록에 1(한 클록 늦음)` +
+      (N === 24 ? "\n입력은 앞 24비트만 씁니다." : ""));
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
