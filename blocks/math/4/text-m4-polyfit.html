@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-polyfit" data-kind="본문" data-std="수학4-03-02">
+  <header class="card-head"><span class="no"></span><h2>최소제곱으로 다항식 맞추기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다항식 맞춤을 계획행렬(방데르몽드 행렬)의 최소제곱 문제로 쓴다.</li>
+        <li><code>np.polyfit</code>, <code>np.linalg.lstsq</code>로 계수를 구하고 잔차를 계산한다.</li>
+        <li>차수를 올리면 잔차는 줄지만 곡선이 이상해지는 현상(과적합)을 관찰한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>정규방정식과 QR (<a href="../8/01-01.html">수학8 1.1절</a>), NumPy 배열 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>계획행렬</h3>
+    <p>점 \((x_i, y_i)\)에 \(p(x) = c_0 + c_1x + \cdots + c_dx^d\)를 맞추는 것은 \(\|A\mathbf c - \mathbf y\|\)를 최소로 하는 문제입니다. \(A\)의 \(i\)행은 \((1, x_i, x_i^2, \dots, x_i^d)\)이고, 계수에 대해 일차이므로 "선형" 최소제곱입니다(다항식이 \(x\)에 대해 비선형이어도 상관없음).</p>
+    <pre class="mono small">import numpy as np
+x = np.array([0, 1, 2, 3, 4, 5], dtype=float)
+y = np.array([1.0, 1.8, 3.3, 4.5, 6.3, 7.4])
+
+c1 = np.polyfit(x, y, 1)      # 높은 차수부터: [기울기, 절편]
+print(c1)                      # 약 [1.3343 0.7143]
+c2 = np.polyfit(x, y, 2)
+print(c2)                      # 약 [0.0482 1.0932 0.875 ]
+
+A = np.vander(x, 3, increasing=True)          # 열: 1, x, x^2
+c, res, rank, sv = np.linalg.lstsq(A, y, rcond=None)
+print(c)                       # 약 [0.875  1.0932 0.0482] (낮은 차수부터)
+print(res)                     # 잔차 제곱합 약 [0.1726]</pre>
+    <p><code>polyfit</code>은 계수를 높은 차수부터, <code>lstsq</code>는 계획행렬의 열 순서대로 돌려줍니다. 직선의 잔차 제곱합은 약 0.2594, 2차는 0.1726입니다. <code>np.polyval(c2, 6)</code>처럼 다항식을 계산하고, <code>lstsq</code>는 내부적으로 특이값 분해(<a href="../8/04-03.html">수학8 4.3절</a>)를 써서 수치적으로 안정합니다.</p>
+
+    <h3><span class="no">3.2.2</span>차수를 올리면</h3>
+    <p>점이 6개이면 5차 다항식은 모든 점을 정확히 지나 잔차가 0입니다. 그러나 점 사이에서는 크게 출렁이고, 자료 범위 밖에서는 터무니없는 값을 냅니다. 잔차가 작다고 좋은 모형이 아닙니다. 자료의 잡음까지 외워 버린 것이 <b>과적합</b>이며, 6.3절에서 검증 오차로 진단합니다. 또 차수가 높으면 계획행렬의 열 \(1, x, x^2, \dots\)이 거의 평행해져 조건수가 커집니다(<a href="../8/07-02.html">수학8 7.2절</a>). 같은 절의 탐구 카드에서 차수를 바꿔 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) <code>polyfit</code>의 계수 순서(높은 차수부터)를 잊는다. (2) 정규방정식 \(A^TA\mathbf c = A^T\mathbf y\)를 <code>inv</code>로 풀어 고차에서 정확도를 잃는다. (3) 잔차 0을 "완벽한 모형"으로 여긴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>다항식 맞춤 = 계획행렬 \((x_i^k)\)의 선형 최소제곱.</li>
+        <li><code>np.polyfit</code>(높은 차수부터), <code>np.linalg.lstsq</code>(SVD 기반, 안정).</li>
+        <li>차수를 올리면 잔차는 줄지만 과적합과 나쁜 조건수가 생긴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>위 자료에서 직선 모형으로 \(x = 6\)일 때의 예측값은?
+          <details><summary>답</summary><p>\(0.7143 + 1.3343\cdot6 \approx 8.72\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y = ae^{bx}\) 꼴을 맞추려면 어떻게 선형 최소제곱으로 바꾸는가?
+          <details><summary>답</summary><p>로그를 취하면 \(\ln y = \ln a + bx\)이므로 <code>np.polyfit(x, np.log(y), 1)</code>로 \(b\)와 \(\ln a\)를 구한다(다만 원래 척도에서의 오차 최소화와는 조금 다르다).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>점이 \(n\)개이고 서로 다른 \(x\)에서 \(n - 1\)차 다항식을 맞추면 잔차가 0인 이유를 선형대수로 설명하여라.
+          <details><summary>답</summary><p>계획행렬이 \(n\times n\) 방데르몽드 행렬이고 \(x_i\)가 서로 다르면 가역(행렬식 \(\prod_{i&lt;j}(x_j - x_i) \ne 0\))이라 \(A\mathbf c = \mathbf y\)가 정확한 해를 가진다(<a href="../1/04-02.html">수학1 4.2절의 라그랑주 보간</a>).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
