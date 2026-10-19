@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전22-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e22-observer" data-kind="본문" data-std="전전22-06-04">
+  <header class="card-head"><span class="no"></span><h2>상태 관측기 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>출력만 잴 수 있을 때 상태를 추정하는 Luenberger 관측기를 안다.</li>
+        <li>오차 동역학 \(\dot e = (A - LC)e\)의 극점을 L로 배치한다.</li>
+        <li>관측기 극점을 제어 극점보다 빠르게 두는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>극점 배치 (<a href="06-03.html">6.3절</a>), 가관측성 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.4.1</span>모델 + 출력 보정</h3>
+    <p>\(\dot{\hat x} = A\hat x + Bu + L(y - C\hat x)\). 추정 오차 e = x − x̂는 \(\dot e = (A - LC)e\)로 줄어들므로, 가관측이면 L로 이 극점을 원하는 곳에 둡니다(제어기 극점 배치의 쌍대). 보통 제어 극점보다 2~5배 빠르게 둡니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.4.1</span>
+      <p>A = [[0, 1], [−2, −3]], C = [1, 0]. 관측기 극점을 −10, −10에 두는 L은?</p>
+    </div>
+    <p><i>풀이.</i> A − LC = [[−l₁, 1], [−2 − l₂, −3]], 특성 다항식 s² + (3 + l₁)s + (3l₁ + 2 + l₂). 목표 s² + 20s + 100 → l₁ = 17, l₂ = 100 − 2 − 51 = 47. L = (17, 47). 6.3절 제어 극점(−2 ± j2)보다 약 5배 빨라 추정이 먼저 수렴합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "관측기 극점은 빠를수록 좋다": 측정 잡음을 크게 증폭합니다. (2) "관측기는 정확한 모델이 없어도 된다": 모델 오차만큼 추정이 틀립니다(칼만 필터는 잡음까지 고려).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>x̂' = Ax̂ + Bu + L(y − Cx̂), e' = (A − LC)e.</li>
+        <li>예: 극점 −10, −10 → L = (17, 47).</li>
+        <li>제어 극점보다 2~5배 빠르게.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>오차 동역학 행렬은?
+          <details><summary>답</summary><p>A − LC.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>관측기 극점을 −5, −5로 하는 L(같은 A, C)은?
+          <details><summary>답</summary><p>l₁ = 7, l₂ = 25 − 2 − 21 = 2.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>분리 원리의 뜻은?
+          <details><summary>답</summary><p>제어기 극점과 관측기 극점을 따로 설계해도 전체 극점이 두 집합의 합이 됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
