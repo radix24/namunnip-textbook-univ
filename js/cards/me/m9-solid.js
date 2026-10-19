@@ -75,6 +75,89 @@
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
 
+/* 기계9 4단원: 두꺼운 실린더의 Lamé 응력 분포 (04-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-lame"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  function draw() {
+    const c = QSim.col(), pi = S.val("pi"), po = S.val("po"), k = S.val("k"), a = 50, b = a * k;
+    const A = (pi * a * a - po * b * b) / (b * b - a * a), B = ((pi - po) * a * a * b * b) / (b * b - a * a);
+    const st = (r) => A + B / (r * r), sr = (r) => A - B / (r * r);
+    const thin = (pi * a) / (b - a); // 얇은 식 (안쪽 반지름 기준)
+    const tr = (r) => Math.max(st(r), sr(r), 0) - Math.min(st(r), sr(r), 0); // Tresca (σz 무시, 0 포함)
+    const ys = [st(a), sr(a), st(b), sr(b), thin, tr(a)], lo = Math.min(...ys, 0), hi = Math.max(...ys, 10);
+    const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: a, x1: b, y0: lo - 0.08 * (hi - lo), y1: hi + 0.08 * (hi - lo), xl: "r (mm)", yl: "응력 (MPa)", pad: 36 });
+    f.axes();
+    f.fn(st, c.main, 2.5); f.fn(sr, c.acc, 2.5); f.fn(tr, c.warn, 1.5, [5, 4]);
+    if (po === 0) f.path([[a, thin], [b, thin]], c.ink3, 1.5, [2, 3]);
+    const Tin = tr(a);
+    S.out(`안쪽 반지름 50 mm, 바깥 ${b.toFixed(0)} mm (b/a = ${k}), 내압 ${pi}, 외압 ${po} MPa\n안쪽: 원주 ${st(a).toFixed(1)} (파랑), 반지름 ${(sr(a) + 0).toFixed(1).replace("-0.0", "0.0")} (초록) MPa / 바깥: 원주 ${st(b).toFixed(1)}, 반지름 ${sr(b).toFixed(1)} MPa\n안쪽 Tresca 등가 응력 ${Tin.toFixed(1)} MPa (빨간 점선${pi > 0 ? `, 내압의 ${(Tin / pi).toFixed(2)}배` : ""})${po === 0 ? `\n얇은 식 p·a/t = ${thin.toFixed(1)} MPa (회색 점선), 실제 최대 원주 응력보다 ${(((st(a) - thin) / st(a)) * 100).toFixed(0)}% 작음` : ""}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
+/* 기계9 5단원: 최소 일의 원리, 반력을 바꾸며 에너지 보기 (05-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-leastwork"); if (!S) return;
+  const [cv1, cv2] = S.$$("canvas");
+  const L = 2, EI = 1.44e5; // m, N·m²
+  function draw() {
+    const c = QSim.col(), w = S.val("w") * 1000, R = S.val("R") * 1000;
+    // 롤러에서 x인 곳 M = R x − w x²/2
+    const U = (r) => (r * r * L ** 3 / 3 - (r * w * L ** 4) / 4 + (w * w * L ** 5) / 20) / (2 * EI);
+    const dRoll = (w * L ** 4 / 8 - (R * L ** 3) / 3) / EI; // 롤러 점 처짐 (아래 +)
+    const Rt = (3 * w * L) / 8;
+    const Rmax = Math.max(8000, 2 * Rt), Umax = Math.max(U(0), U(Rmax)) * 1.1;
+    const v1 = QSim.view(cv1, 0.45), f1 = QSim.frame(v1, { x0: 0, x1: Rmax / 1000, y0: 0, y1: Umax, xl: "R (kN)", yl: "U (J)", pad: 34 });
+    f1.axes();
+    f1.fn((r) => U(r * 1000), c.main, 2);
+    f1.dot(R / 1000, U(R), c.warn, 6); f1.dot(Rt / 1000, U(Rt), c.acc, 5);
+    // 기울기 (= 롤러 점 처짐) 접선
+    const sl = -dRoll * 1000, dx = Rmax / 1000 / 8;
+    f1.path([[R / 1000 - dx, U(R) - sl * dx], [R / 1000 + dx, U(R) + sl * dx]], c.warn, 1.5, [4, 3]);
+    // 처짐 모양: 고정단(s = 0)에서 수치 적분, y'' = M/EI
+    const N = 200, ys = [[0, 0]]; let y = 0, yp = 0;
+    for (let i = 0; i < N; i++) { const s = ((i + 0.5) * L) / N, x = L - s, M = R * x - (w * x * x) / 2; yp += (M / EI) * (L / N); y += yp * (L / N); ys.push([((i + 1) * L) / N, y]); }
+    const ym = Math.max(0.03, ...ys.map((p) => Math.abs(p[1]))) * 1.2;
+    const v2 = QSim.view(cv2, 0.35), f2 = QSim.frame(v2, { x0: -0.1, x1: L + 0.1, y0: -ym * 1000, y1: ym * 1000, xl: "위치 (m)", yl: "처짐 (mm)", pad: 34 });
+    f2.axes({ noGrid: true });
+    f2.path([[0, 0], [L, 0]], c.ink3, 1, [3, 3]);
+    f2.path(ys.map(([s, yy]) => [s, yy * 1000]), c.main, 2.5);
+    f2.dot(L, 0, c.acc, 5); f2.path([[-0.04, -ym * 600], [-0.04, ym * 600]], c.ink, 4);
+    S.out(`길이 2 m, EI = 1.44×10⁵ N·m², 균일 하중 ${S.val("w")} kN/m, 시험 반력 R = ${S.val("R").toFixed(2)} kN\n저장 에너지 U = ${U(R).toFixed(2)} J, 기울기 dU/dR에 해당하는 롤러 점 처짐 ${(dRoll * 1000).toFixed(2)} mm (아래 +)\n실제 반력 3wL/8 = ${(Rt / 1000).toFixed(2)} kN (초록 점, U 최소, 처짐 0)${Math.abs(R - Rt) < 30 ? "\n지금 R이 실제 반력과 같습니다" : ""}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
+/* 기계9 6단원: 편심 하중 기둥의 시컨트 곡선 (06-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-secant"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const E = 200e3, Sy = 250, d = 50, A = (Math.PI * d * d) / 4, I = (Math.PI * d ** 4) / 64, r = Math.sqrt(I / A), c = 25; // mm, MPa
+  function draw() {
+    const col = QSim.col(), e = S.val("e"), L = S.val("L") * 1000, P = S.val("P") * 1000;
+    const Pcr = (Math.PI ** 2 * E * I) / (L * L);
+    const smax = (p) => (p / A) * (1 + ((e * c) / (r * r)) / Math.cos((L / (2 * r)) * Math.sqrt(p / (E * A))));
+    // 항복 하중: σmax = Sy (이분법)
+    let lo = 0, hi = Math.min(Pcr, Sy * A) * 0.999999;
+    for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (smax(m) > Sy) hi = m; else lo = m; }
+    const Py = lo, Pmax = Math.min(Pcr, Sy * A) * 1.05;
+    const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: 0, x1: Pmax / 1000, y0: 0, y1: 400, xl: "P (kN)", yl: "σmax (MPa)", pad: 36 });
+    f.axes();
+    f.fn((p) => { const s = smax(p * 1000); return p * 1000 < Pcr && s > 0 ? Math.min(s, 450) : NaN; }, col.main, 2.5);
+    f.fn((p) => (p * 1000 * (1 + (e * c) / (r * r))) / A, col.ink3, 1.5, [4, 3]);
+    f.path([[0, Sy], [Pmax / 1000, Sy]], col.warn, 1, [5, 4]);
+    if (Pcr < Pmax) f.path([[Pcr / 1000, 0], [Pcr / 1000, 400]], col.acc, 1.5, [6, 4]);
+    const ok = P < Pcr, sP = ok ? smax(P) : Infinity;
+    if (ok && sP < 450) f.dot(P / 1000, sP, sP > Sy ? col.warn : col.ink, 6);
+    S.out(`지름 50 mm 강봉 (Sy = 250 MPa), 양끝 핀, 길이 ${S.val("L")} m (세장비 L/r = ${(L / r).toFixed(0)}), 편심 ${e} mm (편심비 ec/r² = ${((e * c) / (r * r)).toFixed(2)})\nEuler 하중 ${(Pcr / 1000).toFixed(1)} kN (초록 세로선), 압축 항복 하중 Sy·A = ${((Sy * A) / 1000).toFixed(0)} kN\n하중 ${S.val("P")} kN에서 최대 응력 ${ok ? sP.toFixed(0) + " MPa" : "Euler 하중 이상: 계산 불가"}, 휨을 무시하면 ${((P * (1 + (e * c) / (r * r))) / A).toFixed(0)} MPa (회색 점선)\n항복이 시작되는 하중 ${(Py / 1000).toFixed(1)} kN = Euler 하중의 ${((Py / Pcr) * 100).toFixed(0)}%`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계9 2단원: 평면 응력의 항복 곡면 (Tresca 육각형, von Mises 타원) (02-01) */
 (() => {
   "use strict";
