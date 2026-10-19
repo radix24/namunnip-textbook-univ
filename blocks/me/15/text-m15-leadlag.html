@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-leadlag" data-kind="본문" data-std="기계15-04-02">
+  <header class="card-head"><span class="no"></span><h2>진상·지상 보상기 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>진상 보상기는 위상을 앞당겨 안정 여유와 속도를, 지상 보상기는 저주파 이득을 키워 정상 오차를 개선함을 안다.</li>
+        <li>위상 여유 사양에서 진상 보상기의 \(\alpha\), \(T\)를 정한다.</li>
+        <li>지상 보상기로 속도 오차 상수를 키우는 방법을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>근궤적과 PID (<a href="04-01.html">4.1절</a>), 정상상태 오차 (<a href="03-02.html">3.2절</a>), 위상 여유 (<a href="05-01.html">5.1절</a>, 먼저 읽어도 좋음).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>진상 보상기</h3>
+    <div class="tb-env thm">
+      <span class="lb">진상 보상기 (\(0 &lt; \alpha &lt; 1\))</span>
+      \[C(s) = \frac{Ts + 1}{\alpha Ts + 1}\]
+      <p>영점 \(-1/T\)가 극점 \(-1/(\alpha T)\)보다 원점에 가까워 위상을 앞당긴다. 최대 위상 \(\sin\phi_m = \frac{1 - \alpha}{1 + \alpha}\), 그 진동수 \(\omega_m = \frac{1}{T\sqrt\alpha}\), 거기서 이득 \(1/\sqrt\alpha\).</p>
+    </div>
+    <p>근궤적으로는 D 동작처럼 궤적을 왼쪽으로 끌어 빨라지고 감쇠가 커지며, 주파수 응답으로는 교차 주파수 근처에 위상을 더해 위상 여유를 늘립니다. 고주파 이득이 커지는 대신 순수 미분보다 잡음에 덜 민감합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1 <span class="nm">(위상 여유 45°)</span></span>
+      <p>\(G = \dfrac{10}{s(s + 1)}\)(속도 오차 상수 10을 위해 이득을 정함)의 위상 여유는 18°뿐이다. 진상 보상기로 45° 이상을 만들어라.</p>
+    </div>
+    <p><i>풀이.</i> 필요한 추가 위상: \(45 - 18 + 10(\text{교차 주파수 이동 여유}) = 37°\). \(\alpha = (1 - \sin37°)/(1 + \sin37°) = 0.249\). 보상기가 \(\omega_m\)에서 이득을 \(1/\sqrt\alpha\)(6 dB) 올리므로, \(|G| = \sqrt\alpha = 0.50\)인 진동수를 새 교차 주파수로 잡습니다: \(\omega_m = 4.42\) rad/s. \(T = 1/(\omega_m\sqrt\alpha) = 0.453\) s, \(\alpha T = 0.113\) s. 보상 후 위상 여유는 49.7°입니다. 교차 주파수가 3.1에서 4.4 rad/s로 올라 응답도 빨라집니다.</p>
+
+    <h3><span class="no">4.2.2</span>지상 보상기</h3>
+    <p>\(C(s) = \beta\frac{Ts + 1}{\beta Ts + 1}\)(\(\beta &gt; 1\))은 저주파 이득을 \(\beta\)배 키우고, 영점·극점을 원점 가까이(교차 주파수보다 10배 낮게) 두어 교차 주파수 근처의 위상은 거의 건드리지 않습니다. 그래서 안정 여유를 유지한 채 정상상태 오차를 줄입니다(3.2절 연습 도전 문제). 둘을 함께 쓴 진상-지상 보상기는 속도와 정확도를 함께 개선합니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 한 단 진상 보상기로 얻을 수 있는 위상은 60° 정도가 현실적입니다. 더 필요하면 두 단을 씁니다. (2) 지상 보상기는 느린 극점·영점 쌍 때문에 응답 끝부분에 천천히 다가가는 꼬리가 생길 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>진상 \((Ts + 1)/(\alpha Ts + 1)\): \(\sin\phi_m = (1 - \alpha)/(1 + \alpha)\), \(\omega_m = 1/(T\sqrt\alpha)\).</li>
+        <li>설계: 필요 위상 → \(\alpha\) → \(|G| = \sqrt\alpha\)인 \(\omega_m\) → \(T\).</li>
+        <li>지상: 저주파 이득 \(\beta\)배, 교차 주파수 아래 멀리 배치.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\alpha = 0.1\)인 진상 보상기의 최대 위상은?
+          <details><summary>답</summary><p>\(\sin^{-1}(0.9/1.1) = 54.9°\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 보상기의 영점과 극점 위치는?
+          <details><summary>답</summary><p>영점 \(-1/0.453 = -2.21\), 극점 \(-1/0.113 = -8.87\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 보상 후 정상상태 램프 오차는 바뀌는가? 바뀌지 않게 하려고 무엇을 했는가?
+          <details><summary>답</summary><p>보상기의 \(s \to 0\) 이득이 1이라 \(K_v = 10\) 그대로, 오차 0.1 유지. 이득 10은 오차 사양으로 먼저 정하고, 보상기는 저주파 이득을 바꾸지 않게 정규화했다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
