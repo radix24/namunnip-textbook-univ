@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-02-02",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a13-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a13-filter" data-kind="실습" data-std="천우13-02-02">
+  <header class="card-head"><span class="no"></span><h2>평균, 가우스, 중앙값 필터로 희미한 별 찾기</h2><span class="kind">실습 · 회선 필터</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>잡음에 묻힌 희미한 별과 우주선이 있는 가상 영상에 여러 필터를 적용해, 배경 잡음, 별의 검출 S/N, 우주선이 어떻게 달라지는지 비교하고 정합 필터의 원리를 확인합니다. 성취기준 [천우13-02-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 영상 64×64: 잡음 10, 가운데에 표준편차 1.5 px인 희미한 별(최고값 약 25), 오른쪽 위에 우주선 한 픽셀(+200). 왼쪽은 원본, 오른쪽은 필터 뒤 영상(배경 −3σ~+9σ로 표시)입니다. 검출 S/N은 별 중심 픽셀 값 ÷ 배경 rms입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>필터</span><select name="m" aria-label="필터"><option value="none">필터 없음</option><option value="box">3×3 상자 평균</option><option value="gau">가우스</option><option value="med">3×3 중앙값</option></select></label>
+        <label><span>가우스 σ = <b data-show="sk" data-fix="1">1.5</b> px</span><input type="range" name="sk" min="0.5" max="4" step="0.5" value="1.5" aria-label="가우스 σ"></label>
+      </div>
+      <canvas aria-label="원본 가상 영상(왼쪽)과 필터를 적용한 영상(오른쪽)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>필터 없음에서 별이 보이는지 확인합니다.</li>
+        <li>3×3 상자와 3×3 중앙값을 비교합니다(우주선 자리 값에 주목).</li>
+        <li>가우스 필터에서 σ를 0.5부터 3까지 바꿔 S/N이 가장 큰 값을 찾습니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>없음: 잡음 9.79, 중심 12.45, S/N 1.27, 우주선 213.5.</li>
+        <li>상자: 3.26, 16.04, 4.92, 28.6. 중앙값: 3.97, 16.59, 4.18, 5.4.</li>
+        <li>가우스 σ = 0.5/1.0/1.5/2.0/3.0: S/N 2.23/5.22/6.09/6.05/5.13, 우주선 134.4/37.3/17.3/10.0/4.6. 별의 크기(1.5 px) 근처에서 S/N이 가장 크다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>가우스 σ가 커질수록 잡음은 계속 주는데 S/N이 다시 작아지는 까닭은?</li>
+        <li>중앙값 필터가 우주선을 없애면서 별은 덜 깎는 까닭은?</li>
+        <li>필터 뒤 영상의 rms로 별의 측광 오차를 계산하면 안 되는 까닭은?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Python의 scipy.ndimage(gaussian_filter, median_filter, sobel)로 실제 CCD 영상에 같은 필터를 적용하고, photutils의 검출 결과가 필터에 따라 어떻게 바뀌는지 보세요.</p>
+    </section>
+  </div>
+</article>
