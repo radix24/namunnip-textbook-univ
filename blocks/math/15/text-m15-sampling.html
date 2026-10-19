@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-04-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-sampling" data-kind="본문" data-std="수학15-04-05">
+  <header class="card-head"><span class="no"></span><h2>표본화 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>주파수 대역이 제한된 함수는 정수점의 값만으로 완전히 복원됨(섀넌의 표본화 정리)을 증명한다.</li>
+        <li>복원 공식 \(f(x) = \sum f(n)\,\mathrm{sinc}(x - n)\)을 쓰고, 표본 간격과 대역폭의 관계(나이퀴스트 율)를 설명한다.</li>
+        <li>간격이 너무 넓을 때 생기는 겹침(앨리어싱)을 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>푸리에 역변환 (<a href="04-02.html">4.2절</a>), 평균제곱 수렴 (<a href="02-01.html">2.1절</a>), 이산 변환의 겹침 (6.1절).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.5.1</span>대역 제한 함수</h3>
+    <p>\(\hat f(\xi) = 0\) (\(|\xi| > \frac12\))인 함수를 <b>대역폭 \(\frac12\)로 제한된</b> 함수라 합니다. 진동수 \(\frac12\)보다 빠른 진동을 담고 있지 않다는 뜻입니다. \(\mathrm{sinc}(x) = \frac{\sin\pi x}{\pi x}\) (\(\mathrm{sinc}(0) = 1\))는 그 대표로, \(\widehat{\mathrm{sinc}} = \mathbf 1_{[-1/2, 1/2]}\)입니다. \(\mathrm{sinc}(n) = 0\) (\(n \ne 0\) 정수)도 기억해 둡시다.</p>
+
+    <h3><span class="no">4.5.2</span>정리와 증명</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.5.1 <span class="nm">(섀넌 표본화 정리)</span></span>
+      <p>\(f\)가 연속이고 적분 가능하며 \(\hat f\)가 \([-\frac12, \frac12]\) 밖에서 0이면</p>
+      \[f(x) = \sum_{n=-\infty}^\infty f(n)\,\mathrm{sinc}(x - n).\]
+    </div>
+    <p>증명 방향: \(\hat f\)를 구간 \([-\frac12, \frac12]\) 위의 함수로 보고 주기 1의 푸리에 급수로 전개하면, 그 계수가 바로 표본 \(f(n)\)입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\([-\frac12, \frac12]\)에서 \(\hat f(\xi) = \sum_nc_ne^{2\pi in\xi}\), \(c_n = \int_{-1/2}^{1/2}\hat f(\xi)e^{-2\pi in\xi}d\xi = f(-n)\) (역변환 공식). 역변환에 대입하면 \(f(x) = \int_{-1/2}^{1/2}\hat f(\xi)e^{2\pi ix\xi}d\xi = \sum_nf(-n)\int_{-1/2}^{1/2}e^{2\pi i(x + n)\xi}d\xi = \sum_nf(-n)\,\mathrm{sinc}(x + n)\). 합과 적분의 교환은 평균제곱 수렴과 내적의 연속성으로 정당화된다. \(n \to -n\)으로 바꾸면 결론. <span class="qed">∎</span></p>
+    <p>크기를 바꾸면 일반형이 됩니다. 대역폭이 \(B\)(\(|\xi| > B\)에서 \(\hat f = 0\))이면 간격 \(\frac1{2B}\)마다 표본을 얻으면 충분합니다. 초당 \(2B\)번이라는 이 율을 <b>나이퀴스트 율</b>이라 합니다. 사람의 귀는 약 20 kHz까지 들으므로 CD는 그 두 배를 조금 넘는 44.1 kHz로 표본을 얻습니다.</p>
+
+    <h3><span class="no">4.5.3</span>앨리어싱</h3>
+    <p>표본 간격이 너무 넓으면 정보가 사라집니다. 간격 1로 \(\cos(2\pi\cdot0.9x)\)를 재면 \(\cos(2\pi\cdot0.9n) = \cos(2\pi\cdot0.1n)\)이라 진동수 0.1의 느린 파동과 구별되지 않습니다. 표본만 보면 빠른 진동이 느린 진동으로 둔갑하는 것인데, 영상에서 바퀴가 거꾸로 도는 것처럼 보이는 현상이 이것입니다. 이산 푸리에 변환에서 본 겹침(6.1절)과 같은 원리입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 표본 사이의 값은 직선으로 이으면 된다고 여긴다: 정확한 복원은 sinc 보간이고 모든 표본이 기여한다. (2) 대역폭 \(B\)이면 간격 \(\frac1B\)이면 된다고 여긴다: \(\frac1{2B}\)이 필요하다. (3) 실제 신호에 그대로 쓸 수 있다고 여긴다: 시간이 유한한 신호는 대역 제한일 수 없어(불확정성, 4.4절), 실제로는 저역 통과 필터로 먼저 거른다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>대역폭 \(\frac12\) ⟹ \(f(x) = \sum f(n)\,\mathrm{sinc}(x - n)\).</li>
+        <li>증명: \(\hat f\)의 푸리에 계수가 표본 \(f(-n)\).</li>
+        <li>대역폭 \(B\)이면 간격 \(\frac1{2B}\) (나이퀴스트), 더 넓으면 앨리어싱.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.5.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>최고 진동수가 4 kHz인 음성 신호를 복원하려면 초당 최소 몇 번 표본을 얻어야 하는가?
+          <details><summary>답</summary><p>8000번(8 kHz). 전화의 표본화 율이 이 값이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>간격 1로 표본을 얻을 때 진동수 0.7의 코사인은 어떤 진동수의 코사인과 구별되지 않는가?
+          <details><summary>답</summary><p>\(\cos(2\pi\cdot0.7n) = \cos(2\pi\cdot0.3n)\)이므로 0.3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>정리 4.5.1의 \(f\)에 대해 \(\int|f|^2 = \sum|f(n)|^2\)을 보여라.
+          <details><summary>답</summary><p>플랑셰렐로 \(\int|f|^2 = \int_{-1/2}^{1/2}|\hat f|^2\)이고, 파시발(2.1절)로 이는 계수 \(f(-n)\)의 제곱합이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
