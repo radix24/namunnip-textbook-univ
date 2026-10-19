@@ -135,6 +135,28 @@
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
 
+/* 기계10 7단원: 난방 방식의 제1·제2법칙 효율 (07-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-exergy"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  function draw() {
+    const c = QSim.col(), Td = S.val("Td") + 273.15, T0 = S.val("T0") + 273.15, fhp = S.val("fhp") / 100, eb = S.val("eb") / 100, ep = S.val("ep") / 100;
+    const carnot = Td / (Td - T0), cop = Math.max(1, fhp * carnot), xq = 1 - T0 / Td; // 열 1 kJ의 엑서지
+    // [이름, 제1법칙 효율(열/구입 에너지), 제2법칙 효율(열 엑서지/구입 엑서지), 1차 에너지당 열]
+    const rows = [
+      ["전기 히터", 1, xq, ep],
+      ["가스 보일러", eb, xq * eb, eb],
+      [`히트펌프 COP ${cop.toFixed(2)}`, cop, xq * cop, ep * cop],
+    ];
+    const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: 1, xl: "", yl: "제2법칙 효율", pad: 34 });
+    f.axes({ noGrid: true });
+    rows.forEach(([n, , e2], i) => { const x = i + 0.5; f.path([[x, 0], [x, Math.min(e2, 1)]], i === 2 ? c.main : c.ink3, 28); f.text(`${(e2 * 100).toFixed(0)}%`, x, Math.min(e2, 1) + 0.04, c.ink, "center"); f.text(n.split(" ")[0], x, -0.06 + 0.1, c.ink2, "center"); });
+    S.out(`공급 온도 ${S.val("Td")} °C, 주위 ${S.val("T0")} °C: 열 1 kJ의 엑서지 ${xq.toFixed(3)} kJ, Carnot COP ${carnot.toFixed(1)}\n${rows.map(([n, e1, e2, pe]) => `${n}: 제1법칙 ${(e1 * 100).toFixed(0)}%, 제2법칙 ${(e2 * 100).toFixed(1)}%, 1차 에너지 1 kJ당 열 ${pe.toFixed(2)} kJ`).join("\n")}\n(전기는 발전 효율 ${(ep * 100).toFixed(0)}%로 1차 에너지에서 만든다고 봄)`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계10 3단원: 습공기 선도 위의 냉각 제습과 재열 (03-02) */
 (() => {
   "use strict";
