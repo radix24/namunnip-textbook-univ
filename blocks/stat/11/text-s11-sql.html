@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통11-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s11-sql" data-kind="본문" data-std="응통11-02-03">
+  <header class="card-head"><span class="no"></span><h2>SQL로 자료 추출하고 집계하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>ORDER BY</code>로 자료를 뽑고 요약한다.</li>
+        <li><code>JOIN</code>으로 표를 결합한다.</li>
+        <li>큰 자료는 데이터베이스에서 집계한 뒤 가져오는 이유를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>자료 품질 (<a href="02-01.html">2.1절</a>), 그룹 요약 (응통3 2.3절, 응통4 5.2절).</li>
+      </ul>
+    </div>
+
+    <h3>자료는 데이터베이스에 있다</h3>
+    <p>기업 자료는 대개 CSV 파일이 아니라 데이터베이스의 여러 표에 나뉘어 있습니다. 수억 행을 R이나 파이썬으로 다 가져올 수는 없으므로, SQL로 필요한 행과 열만 뽑고 집계한 결과를 가져옵니다. SQL의 문법은 dplyr과 pandas의 동사(응통3 2.3절)와 거의 일대일로 대응합니다.</p>
+
+    <h3><span class="no">2.3.1</span>기본 문장</h3>
+    <pre><code>SELECT customer_id, SUM(amount) AS total, COUNT(*) AS n_orders
+FROM orders
+WHERE order_date &gt;= '2026-01-01'
+GROUP BY customer_id
+HAVING COUNT(*) &gt;= 2
+ORDER BY total DESC
+LIMIT 10;</code></pre>
+    <p>실행 순서는 <code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</code>입니다. <code>WHERE</code>는 묶기 전 행을, <code>HAVING</code>은 묶은 뒤 그룹을 거릅니다. 집계 함수 <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>는 <code>NULL</code>을 빼고 계산합니다(<code>COUNT(*)</code>만 행 수 전체).</p>
+
+    <h3><span class="no">2.3.2</span>결합</h3>
+    <pre><code>SELECT c.region, AVG(o.amount) AS avg_amount
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+GROUP BY c.region;</code></pre>
+    <p><code>JOIN</code>(내부 결합)은 양쪽에 모두 있는 키만 남기고, <code>LEFT JOIN</code>은 왼쪽 표의 모든 행을 남겨 짝이 없으면 <code>NULL</code>을 채웁니다. 결합 전후의 행 수를 꼭 확인합니다(2.5절의 중복 결합 문제).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p><code>orders</code> 표가 (고객 1, 30), (고객 1, 20), (고객 2, 50), (고객 3, 10), (고객 3, NULL)일 때 <code>SELECT customer_id, COUNT(*), COUNT(amount), AVG(amount) FROM orders GROUP BY customer_id</code>의 결과는?</p>
+    </div>
+    <p><i>풀이.</i> 고객 1: 2, 2, 25. 고객 2: 1, 1, 50. 고객 3: 2, 1, 10. 고객 3의 <code>AVG</code>는 <code>NULL</code>을 빼고 10이라, 금액 누락을 0으로 보는 \((10 + 0)/2 = 5\)와 다릅니다. <code>COUNT(*)</code>와 <code>COUNT(amount)</code>의 차이로 누락을 찾을 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY</code>.</li>
+        <li>집계 함수는 <code>NULL</code>을 뺍니다. <code>COUNT(*)</code>는 행 수.</li>
+        <li><code>JOIN</code>/<code>LEFT JOIN</code> 뒤에는 행 수를 확인합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2026년 3월 주문의 상품별 매출 합계 상위 5개를 뽑는 SQL을 쓰세요(<code>orders(product_id, amount, order_date)</code>).
+          <details><summary>답</summary><p><code>SELECT product_id, SUM(amount) AS sales FROM orders WHERE order_date &gt;= '2026-03-01' AND order_date &lt; '2026-04-01' GROUP BY product_id ORDER BY sales DESC LIMIT 5;</code></p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>주문이 한 번도 없는 고객까지 포함해 고객별 주문 수를 세려면 어떻게 하나요?
+          <details><summary>답</summary><p><code>customers</code>를 왼쪽에 두고 <code>LEFT JOIN orders</code> 후 <code>COUNT(o.order_id)</code>로 셉니다. <code>COUNT(*)</code>를 쓰면 주문 없는 고객도 1로 세어집니다(결합된 행이 하나 있으므로).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통16-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s16-pipeobj" data-kind="본문" data-std="응통16-02-04">
+  <header class="card-head"><span class="no"></span><h2>파이프라인 객체</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전처리와 모형을 하나의 파이프라인 객체로 묶는다.</li>
+        <li>열의 종류마다 다른 전처리를 적용한다.</li>
+        <li>학습한 파이프라인을 저장해 새 자료에 그대로 적용한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>정보 누수 (<a href="02-03.html">2.3절</a>), 파이썬 객체 (응통4 2장).</li>
+      </ul>
+    </div>
+
+    <h3>학습 때와 운영 때의 전처리가 다르면</h3>
+    <p>학습 노트북에서는 결측을 중앙값으로 채우고 범주를 원핫 인코딩했는데, 운영 코드를 다른 사람이 다시 짜면서 중앙값을 새 자료에서 다시 계산하거나 범주 순서가 바뀌면 예측이 조용히 틀어집니다. 파이프라인 객체는 전처리의 "학습된 값"까지 모형과 함께 저장해 이 문제를 없앱니다.</p>
+
+    <h3><span class="no">2.4.1</span>scikit-learn의 파이프라인</h3>
+    <pre><code>from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+
+num = Pipeline([("impute", SimpleImputer(strategy="median")),
+                ("scale", StandardScaler())])
+cat = OneHotEncoder(handle_unknown="ignore")
+prep = ColumnTransformer([("num", num, ["income", "tenure"]),
+                          ("cat", cat, ["plan", "region"])])
+model = Pipeline([("prep", prep), ("clf", LogisticRegression())])
+
+model.fit(X_train, y_train)        # 중앙값, 평균, 범주 목록을 학습 자료로 계산
+p = model.predict_proba(X_new)     # 같은 값으로 변환 후 예측</code></pre>
+    <p><code>fit</code>은 각 단계의 값을 학습 자료로 계산하고, <code>predict</code>는 그 값을 그대로 씁니다. 교차검증에 파이프라인 전체를 넣으면 겹마다 전처리가 다시 학습되어 2.3절의 누수도 막힙니다. R에서는 <code>recipes</code>와 <code>workflows</code> 패키지가 같은 역할을 합니다.</p>
+
+    <h3><span class="no">2.4.2</span>저장과 재사용</h3>
+    <p>학습한 파이프라인을 <code>joblib.dump(model, "model.joblib")</code>로 저장하면 운영 코드는 불러와 <code>predict</code>만 하면 됩니다. 패키지 버전이 다르면 불러오지 못하거나 결과가 달라질 수 있으므로 버전도 함께 기록합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>학습 자료의 <code>plan</code>은 basic, pro 두 범주였는데 운영에서 새 범주 premium이 들어왔습니다. <code>handle_unknown="ignore"</code>이면 어떻게 처리되나요?</p>
+    </div>
+    <p><i>풀이.</i> basic, pro 두 열이 모두 0인 행으로 변환되어 오류 없이 예측합니다. 기본값("error")이면 예측이 실패합니다. 다만 새 범주가 많아지면 성능이 떨어지므로 4.4절의 감시 항목에 넣습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전처리와 모형을 한 객체로: <code>fit</code>은 학습 자료로, <code>predict</code>는 그 값으로.</li>
+        <li>열 종류별 전처리는 <code>ColumnTransformer</code>.</li>
+        <li>파이프라인 전체를 저장하고 버전을 기록합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>교차검증 전에 전체 자료에 <code>StandardScaler().fit_transform</code>을 먼저 적용하면 어떤 문제가 있나요?
+          <details><summary>답</summary><p>각 겹의 검증 자료가 평균과 표준편차 계산에 들어가 누수가 생깁니다. 파이프라인을 <code>cross_val_score</code>에 넣어 겹마다 학습시킵니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>"로그 변환 후 표준화"를 파이프라인에 넣으려면 어떻게 하나요?
+          <details><summary>답</summary><p><code>FunctionTransformer(np.log1p)</code>를 <code>StandardScaler</code> 앞 단계로 넣습니다. 로그 변환은 학습할 값이 없지만 파이프라인 안에 두어야 운영에서도 빠짐없이 적용됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

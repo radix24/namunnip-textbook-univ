@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통11-02-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s11-grain" data-kind="본문" data-std="응통11-02-05">
+  <header class="card-head"><span class="no"></span><h2>표 결합과 분석 단위</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>표의 한 행이 무엇을 뜻하는지(분석 단위, grain)를 밝힌다.</li>
+        <li>일대다 결합에서 생기는 중복 집계를 막는다.</li>
+        <li>결합 전후의 행 수와 키 중복을 점검한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>SQL 결합 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>한 행은 무엇인가</h3>
+    <p>"고객 표"는 한 행이 고객 한 명, "주문 표"는 주문 한 건, "주문 상품 표"는 주문 안의 상품 한 줄입니다. 이 단위를 분석 단위(grain)라 합니다. 서로 다른 단위의 표를 결합하면 행이 복제되고, 복제된 행 위에서 합계나 평균을 구하면 숫자가 부풀려집니다.</p>
+
+    <h3><span class="no">2.5.1</span>결합의 종류와 행 수</h3>
+    <table class="tw">
+      <tr><th>관계</th><th>결합 후 행 수</th><th>주의</th></tr>
+      <tr><td>일대일</td><td>그대로</td><td>키가 정말 유일한지 확인</td></tr>
+      <tr><td>일대다</td><td>"다" 쪽 행 수</td><td>"일" 쪽 값이 복제됨</td></tr>
+      <tr><td>다대다</td><td>곱으로 폭증</td><td>대개 키 설계 오류</td></tr>
+    </table>
+    <p>결합 전에 각 키가 유일한지 <code>SELECT key, COUNT(*) … GROUP BY key HAVING COUNT(*) &gt; 1</code>로 확인하고, 결합 뒤 행 수가 예상과 같은지 봅니다.</p>
+
+    <h3><span class="no">2.5.2</span>먼저 집계하고 결합하기</h3>
+    <p>분석 단위가 고객이면, 주문과 상품 표를 각각 고객 단위로 먼저 집계한 뒤 고객 표에 붙입니다. 이렇게 하면 결합이 모두 일대일이 되어 중복이 생기지 않습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.5.1</span>
+      <p>고객 표 100행, 주문 표 350행(고객마다 0건 이상)을 <code>customers LEFT JOIN orders</code>로 결합했더니 360행이 나왔습니다. 주문이 없는 고객은 몇 명인가요?</p>
+    </div>
+    <p><i>풀이.</i> 주문이 있는 고객의 행은 모두 주문 수만큼(합 350), 주문이 없는 고객은 1행씩 남으므로 \(360 - 350 = 10\)명입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>표마다 한 행의 의미(grain)를 적어 둡니다.</li>
+        <li>일대다 결합은 "일" 쪽 값을 복제합니다.</li>
+        <li>분석 단위로 먼저 집계한 뒤 일대일로 결합합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 내부 결합(<code>JOIN</code>)을 쓰면 몇 행이 나오나요?
+          <details><summary>답</summary><p>350행. 주문 없는 고객 10명이 빠집니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>고객 표(나이 포함)와 주문 표를 결합한 뒤 <code>AVG(age)</code>를 구했습니다. 무엇이 잘못되었나요?
+          <details><summary>답</summary><p>주문이 많은 고객의 나이가 여러 번 들어가 "주문 가중 평균 나이"가 됩니다. 고객 평균 나이는 고객 표만으로 구해야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
