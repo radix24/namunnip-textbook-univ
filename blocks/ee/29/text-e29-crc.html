@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-crc" data-kind="본문" data-std="전전29-05-02">
+  <header class="card-head"><span class="no"></span><h2>CRC 오류 검출 계산</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>생성 다항식으로 나눈 나머지를 CRC로 붙이는 방식을 안다.</li>
+        <li>모듈로-2 나눗셈으로 CRC를 계산한다.</li>
+        <li>CRC가 검출하는 오류(버스트 길이 ≤ r 등)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>링크 계층 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>나머지를 붙이기</h3>
+    <p>데이터 D 뒤에 r개의 0을 붙여 r + 1비트 생성자 G로 모듈로-2(XOR) 나눗셈을 하고, 나머지 R을 붙여 보냅니다. 받는 쪽은 전체를 G로 나눠 나머지가 0이 아니면 오류로 판정합니다. 길이 r 이하의 버스트 오류는 모두 검출됩니다.</p><pre><code>def rem(bits, gen):
+    b = [int(x) for x in bits]; g = [int(x) for x in gen]
+    for i in range(len(b) - len(g) + 1):
+        if b[i]:
+            for j in range(len(g)):
+                b[i + j] ^= g[j]
+    return "".join(map(str, b[-(len(g) - 1):]))
+D, G = "101110", "1001"
+R = rem(D + "000", G)
+print("CRC:", R, "/ 보내는 비트:", D + R)
+print("받은 쪽 나머지(오류 없음):", rem(D + R, G))
+print("한 비트 오류(101010011) 나머지:", rem("101010011", G))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>CRC: 011 / 보내는 비트: 101110011
+받은 쪽 나머지(오류 없음): 000
+한 비트 오류(101010011) 나머지: 100</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>D = 101110, G = 1001(r = 3)의 CRC는? 한 비트가 바뀌면?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 R = 011, 보내는 비트 101110011. 오류 없으면 나머지 000, 한 비트가 바뀐 101010011은 나머지가 0이 아니라 검출됩니다. 이더넷은 32비트 CRC를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "CRC는 오류를 고친다": 검출만 하고 재전송으로 해결합니다. (2) "CRC는 모든 오류를 잡는다": 생성자의 배수 꼴 오류는 놓칩니다(확률 매우 낮음).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>D·2^r를 G로 나눈 나머지 R.</li>
+        <li>예: 101110, 1001 → 011.</li>
+        <li>버스트 ≤ r 모두 검출.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>G = 10011이면 r은?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>CRC-32가 검출하지 못할 확률(무작위 오류) 어림은?
+          <details><summary>답</summary><p>약 2⁻³² ≈ 2.3×10⁻¹⁰.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>패리티 비트가 놓치는 오류는?
+          <details><summary>답</summary><p>짝수 개 비트 오류.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
