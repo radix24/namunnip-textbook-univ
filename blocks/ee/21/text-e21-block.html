@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전21-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e21-block" data-kind="본문" data-std="전전21-05-01">
+  <header class="card-head"><span class="no"></span><h2>선형 블록 부호의 부호화와 복호화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>생성 행렬 G로 메시지를 부호어 \(c = mG\)로 바꾼다(mod 2).</li>
+        <li>패리티 검사 행렬 H와 신드롬 \(s = rH^T\)로 오류 위치를 찾는다.</li>
+        <li>최소 거리 d_min과 정정 능력 ⌊(d_min − 1)/2⌋를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 곱 (<a href="../16/01-01.html">전전16 1.1절</a>), 이진 연산(XOR) (<a href="../4/01-01.html">전전4 1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>(7, 4) 해밍 부호</h3>
+    <p>4비트 메시지에 패리티 3비트를 붙여 7비트로 보냅니다. 조직형 생성 행렬과 검사 행렬은</p>
+    \[ G = \left(\begin{array}{cccc|ccc} 1&0&0&0&1&1&0 \\ 0&1&0&0&0&1&1 \\ 0&0&1&0&1&1&1 \\ 0&0&0&1&1&0&1 \end{array}\right), \quad H = \left(\begin{array}{cccc|ccc} 1&0&1&1&1&0&0 \\ 1&1&1&0&0&1&0 \\ 0&1&1&1&0&0&1 \end{array}\right). \]
+    <p>\(GH^T = 0\)이므로 부호어의 신드롬은 0이고, 한 비트 오류가 있으면 신드롬이 H의 그 열과 같아 위치를 알려 줍니다. d_min = 3이라 1비트를 정정합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>m = 1011을 부호화하고, 셋째 비트가 뒤집혀 수신되었을 때 복호하라.</p>
+    </div>
+    <p><i>풀이.</i> c = 1000110 ⊕ 0010111 ⊕ 0001101 = 1011100(G의 1, 3, 4행의 합). 수신 r = 1001100. 신드롬 \(s = rH^T\) = (1, 1, 1) = H의 셋째 열 → 셋째 비트를 뒤집어 1011100, 메시지 1011.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "패리티 비트가 많을수록 언제나 좋다": 부호율 k/n이 줄어 같은 대역에서 정보율이 줄고 비트당 에너지가 나뉩니다. (2) "해밍 부호는 2비트 오류도 정정": 2비트 오류는 다른 위치로 잘못 정정합니다(검출만 가능하게 쓰려면 확장 해밍).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>c = mG, 신드롬 s = rHᵀ, GHᵀ = 0.</li>
+        <li>1비트 오류의 신드롬 = H의 해당 열.</li>
+        <li>(7, 4) 해밍: d_min 3, 1비트 정정, 부호율 4/7.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>m = 1000의 부호어는?
+          <details><summary>답</summary><p>1000110.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>수신 1000111의 신드롬과 정정 결과는?
+          <details><summary>답</summary><p>s = (0, 0, 1) = H의 7번째 열 → 1000110.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>d_min = 5인 부호는 몇 비트를 정정할 수 있는가?
+          <details><summary>답</summary><p>2비트.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
