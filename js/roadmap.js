@@ -178,6 +178,7 @@
   let SEASON = { codes: {}, lib: {}, terms: [] };
   const seasonOf = (codes) => new Set(codes.flatMap((k) => (SEASON.codes[k] || []).map((t) => t.split("-")[1])));   // {"여름","겨울"}
   const seasonLib = (k) => new Set((SEASON.lib[k] && SEASON.lib[k].ok && SEASON.lib[k].types) || []);
+  const seasonOn = (p) => P.season && !(P.seasonOff || []).includes(p);   // 계절학기 칸마다 끄고 켤 수 있다
   const seasonName = (p) => (((p - 1) / 2) % 2 ? "겨울" : "여름");
 
   /* 교양 요건: 제1전공 대학의 libReq에 학번별 덮어쓰기(libByCohort)와 전공별 값(영어 지정과목 등)을 합친다 */
@@ -376,7 +377,7 @@
   }
 
   /* ---------- 졸업 로드맵 ---------- */
-  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 0, season: true, pins: {}, removed: [] };
+  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 0, season: true, seasonOff: [], pins: {}, removed: [] };
   let PLAN = null;
 
   function trackOf(i) {
@@ -559,7 +560,7 @@
     let early = 0;   // 넣지 못한 과목이 생기면 요람 학년보다 한 학기 일찍 듣는 것까지 허용해 다시 배치한다
     let useSeason = false;   // 계절학기는 정규학기에 다 넣지 못할 때만 자동으로 쓴다
     const ok = (it, p) => {
-      if (isSeason(p)) { if (!useSeason || !it.season.has(seasonName(p))) return false; }
+      if (isSeason(p)) { if (!useSeason || !seasonOn(p) || !it.season.has(seasonName(p))) return false; }
       else if (!it.terms.has(termOf(p))) return false;
       if (p < ((it.slotY || it.y) - 1) * 4 - early * 2) return false;
       for (const g of it.hard) {
@@ -689,10 +690,10 @@
     const rowOf = (p) => { const r = p % 4; return P.season ? r + 1 : r === 0 ? 1 : 2; };   // 1학기, 여름, 2학기, 겨울
     $("#p-board").innerHTML = (unplaced.length ? `<p class="rm-alert rm-lost">${unplaced.length}과목(${lost}학점)을 8학기${P.season ? "와 계절학기" : ""} 안에 넣지 못했습니다. 학기당 학점 상한을 올리거나, 일반선택에 남길 학점을 줄이거나, 전공 수를 줄여 보세요. 아래 '넣지 못한 과목'에서 직접 학기를 골라 넣을 수도 있습니다.</p>` : "") + shown.map((p) => {
       const ids = placed.filter((k) => at.get(k) === p).sort((a, b) => (PLAN.prio.get(a) - PLAN.prio.get(b)) || codeNum(a) - codeNum(b));
-      const lim = PLAN.cap(p), over = used[p] > lim, se = isSeason(p);
-      return `<section class="rm-sem${over ? " is-over" : ""}${se ? " is-season" : ""}" data-s="${p}" style="--col:${yearOfP(p)};--row:${rowOf(p) + (unplaced.length ? 1 : 0)}" aria-label="${semName(p)}">
-        <h3>${semName(p)} <span class="mono">${used[p]}<small>/${lim}</small></span></h3>
-        <div class="rm-drop">${ids.map((k) => card(k, "board")).join("") || `<p class="rm-hint">${se ? "최근 3년 계절학기에 열린 과목만" : "여기로 끌어 놓기"}</p>`}</div>
+      const lim = PLAN.cap(p), over = used[p] > lim, se = isSeason(p), off = se && !seasonOn(p);
+      return `<section class="rm-sem${over ? " is-over" : ""}${se ? " is-season" : ""}${off ? " is-off" : ""}" data-s="${p}" style="--col:${yearOfP(p)};--row:${rowOf(p) + (unplaced.length ? 1 : 0)}" aria-label="${semName(p)}">
+        <h3>${semName(p)} <span class="mono">${off ? "" : `${used[p]}<small>/${lim}</small>`}${se ? ` <button type="button" class="rm-btn sm rm-stog" data-stog="${p}" aria-pressed="${!off}" aria-label="${semName(p)} ${off ? "켜기" : "끄기"}">${off ? "켜기" : "끄기"}</button>` : ""}</span></h3>
+        <div class="rm-drop">${ids.map((k) => card(k, "board")).join("") || `<p class="rm-hint">${off ? "꺼 둔 계절학기입니다" : se ? "최근 3년 계절학기에 열린 과목만" : "여기로 끌어 놓기"}</p>`}</div>
         ${over ? `<p class="rm-alert small">${se ? `계절학기 상한 ${SEASON_CR}학점` : `학기 상한 ${P.cap}학점 − 일반선택 ${P.rsv}학점`}을 넘었습니다</p>` : ""}</section>`;
     }).join("");
 
@@ -784,6 +785,7 @@
   /* ---------- 옮기기 (끌기와 누르기) ---------- */
   function moveTo(id, s) {
     const it = PLAN.ctx.items.get(id) || itemOf(id, PLAN.ctx);
+    if (s >= 0 && isSeason(s) && !seasonOn(s)) return;   // 꺼 둔 계절학기
     if (s >= 0 && isSeason(s) && !(it && it.season.has(seasonName(s)))) {   // 최근 3년 계절학기에 열리지 않은 과목은 계절학기에 넣지 않는다
       const note = $("#p-board").querySelector(".rm-season-no") || $("#p-board").insertAdjacentElement("afterbegin", Object.assign(document.createElement("p"), { className: "rm-alert rm-lost rm-season-no" }));
       note.textContent = `${it ? it.name : id}은(는) 최근 3년 ${seasonName(s)}학기에 열린 기록이 없어 ${semName(s)}에 넣지 않았습니다.`;
@@ -805,7 +807,7 @@
     const cur = PLAN.at.get(id);
     menu.innerHTML = `<p><b>${esc(it.name)}</b> <span class="small dim">${it.cr}학점${it.terms.size ? ` · 연세대 ${[...it.terms].join("·")}학기` : ""}</span></p>
       <div class="rm-menu-g">${Array.from({ length: SEMS }, (_, s) => 2 * s).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}>${semShort(p)}${it.terms.has(termOf(p)) ? "" : " ·미개설"}</button>`).join("")}</div>
-      ${P.season ? `<p class="small dim">계절학기 ${it.season.size ? `(최근 3년 ${[...it.season].join("·")}학기 개설)` : "(최근 3년 개설 기록 없음)"}</p><div class="rm-menu-g">${Array.from({ length: SEMS - 1 }, (_, s) => 2 * s + 1).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}${it.season.has(seasonName(p)) ? "" : " disabled"}>${semShort(p)}</button>`).join("")}</div>` : ""}
+      ${P.season ? `<p class="small dim">계절학기 ${it.season.size ? `(최근 3년 ${[...it.season].join("·")}학기 개설)` : "(최근 3년 개설 기록 없음)"}</p><div class="rm-menu-g">${Array.from({ length: SEMS - 1 }, (_, s) => 2 * s + 1).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}${it.season.has(seasonName(p)) && seasonOn(p) ? "" : " disabled"}>${semShort(p)}${seasonOn(p) ? "" : " ·끔"}</button>`).join("")}</div>` : ""}
       <div class="rm-menu-a">
         ${cur != null || PLAN.unplaced.includes(id) ? '<button type="button" class="rm-btn sm" data-to="-1">계획에서 빼기</button>' : ""}
         ${P.pins[id] != null ? '<button type="button" class="rm-btn sm" data-unpin="1">자동 배치에 맡기기</button>' : ""}
@@ -837,6 +839,12 @@
     const cardEl = e.target.closest(".rm-card");
     if (cardEl) { openMenu(cardEl); return; }
     const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.stog != null) {   // 계절학기 칸 끄기·켜기. 끄면 그 칸에 고정한 과목은 자동 배치로 돌린다
+      const p = +b.dataset.stog, off = new Set(P.seasonOff || []);
+      if (off.has(p)) off.delete(p); else { off.add(p); Object.keys(P.pins).forEach((k) => { if (P.pins[k] === p) delete P.pins[k]; }); }
+      P.seasonOff = [...off].sort((a, b) => a - b);
+      renderPlan(); return;
+    }
     if (b.dataset.up != null) { const i = +b.dataset.up; [P.majors[i - 1], P.majors[i]] = [P.majors[i], P.majors[i - 1]]; renderPlan(); }   // 이수 형태는 trackOf가 자리에 맞게 고친다
     else if (b.dataset.del != null) { P.majors.splice(+b.dataset.del, 1); renderPlan(); }
   });
@@ -924,6 +932,7 @@
         Object.keys(P.pins).forEach((k) => { P.pins[k] *= 2; });
         if (P.rsv === 3) P.rsv = 0;
         P.season = true;
+        P.seasonOff = [];
       }
       P.majors = (P.majors || []).filter((x) => MAJOR.has(x.id)).slice(0, 5);
       if (!P.majors.length) P.majors = [{ id: "math", track: "single" }];
