@@ -1,5 +1,5 @@
 /* 화학과 무기화학2 카드 묶음 (화학13)
-   d³ 착물의 Tanabe-Sugano 맞춤, 치환 반응 메커니즘의 속도 자료, 헤모글로빈의 협동적 산소 결합, 18전자 규칙 계산기 */
+   d³ 착물의 Tanabe-Sugano 맞춤, 치환 반응 메커니즘의 속도 자료, 헤모글로빈의 협동적 산소 결합 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -75,25 +75,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 18전자 규칙 계산기 (화학13-06-01) */
-  (() => {
-    const S = QSim.card("lab-ch13-18e"); if (!S) return;
-    const cv = S.$("canvas");
-    const MET = { Cr: 6, Mo: 6, W: 6, Mn: 7, Re: 7, Fe: 8, Ru: 8, Co: 9, Rh: 9, Ir: 9, Ni: 10, Pd: 10, Pt: 10 };   // 족 번호 = 중성 원자의 원자가 전자 수
-    // [중성 원자 계산법의 전자 수, 산화수 계산에서 X형(음이온)이면 1]
-    const LIG = { CO: [2, 0], PR3: [2, 0], NH3: [2, 0], alkene: [2, 0], Cl: [1, 1], H: [1, 1], CH3: [1, 1], Cp: [5, 1], C6H6: [6, 0] };
-    const NAME = { CO: "CO", PR3: "PR₃", NH3: "NH₃", alkene: "알켄(η²)", Cl: "Cl", H: "H", CH3: "CH₃", Cp: "Cp(η⁵)", C6H6: "C₆H₆(η⁶)" };
-    function draw() {
-      const c = C(), m = S.val("m"), q = S.val("q"), mm = S.val("mm");
-      let e = MET[m] - q + mm, X = 0; const used = [];
-      Object.keys(LIG).forEach((k) => { const nL = S.val(k); if (nL > 0) { e += nL * LIG[k][0]; X += nL * LIG[k][1]; used.push(`${NAME[k]}×${nL}`); } });
-      const ox = q + X, dn = MET[m] - ox;
-      const v = QSim.view(cv, 0.3), f = QSim.frame(v, { x0: 0, x1: 22, y0: 0, y1: 1, pad: 8, noGrid: true });
-      const g = v.g; for (let i = 0; i < 20; i++) { g.fillStyle = i < e ? (e === 18 ? GRN : e === 16 ? c.acc : RED) : c.grid || "#ddd"; g.fillRect(f.X(i + 1) + 1, f.Y(0.8), f.X(i + 2) - f.X(i + 1) - 2, f.Y(0.2) - f.Y(0.8)); }
-      f.path([[19, 0.05], [19, 0.95]], c.ink, 2); f.text("18", 19, 0.98, c.ink, "center");
-      const verdict = e === 18 ? "18전자: 안정한 포화 착물" : e === 16 ? "16전자: d⁸ 평면 사각형에서 흔함(촉매가 여기서 반응을 시작)" : e < 18 ? `${e}전자: 전자 부족(리간드가 더 붙거나 금속-금속 결합을 만들려 함)` : `${e}전자: 18을 넘음(드묾, 리간드가 떨어지기 쉬움)`;
-      S.out(`${m} (${MET[m]}족), 착물 전하 ${q > 0 ? "+" : ""}${q}, 리간드: ${used.join(", ") || "없음"}${mm ? `, 금속-금속 결합 ${mm}개` : ""}\n중성 원자 계산법: ${MET[m]} − (${q}) + 리간드 전자${mm ? " + M−M 결합" : ""} = ${e}전자\n산화수 = 전하 + X형 리간드 수 = ${ox > 0 ? "+" : ""}${ox}, d 전자 수 = ${MET[m]} − (${ox}) = d${dn}\n판정: ${verdict}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();
