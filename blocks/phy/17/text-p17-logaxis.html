@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-01-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p17-logaxis" data-kind="본문" data-std="물리17-01-05">
+  <header class="card-head"><span class="no"></span><h2>로그 축과 거듭제곱 법칙</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>로그-로그, 반로그 그래프에서 거듭제곱 법칙과 지수 법칙이 직선이 되는 까닭을 안다.</li>
+        <li>기울기와 절편에서 지수와 계수를 읽고, 로그 변환이 오차에 주는 영향을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>통계 그래프 (<a href="01-04.html">1.4절</a>), 로그함수 (<a href="../../common/1/01-02.html">공통1 1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.5.1</span>직선이 되는 그래프</h3>
+    <ul class="tb-list">
+      <li>거듭제곱 법칙 \(y = Ax^n\): 양변에 로그를 취하면 \(\log y = \log A + n\log x\). 로그-로그 그래프에서 기울기 \(n\)인 직선.</li>
+      <li>지수 법칙 \(y = Ae^{-x/\tau}\): \(\ln y = \ln A - x/\tau\). 반로그(세로축만 로그) 그래프에서 기울기 \(-1/\tau\)인 직선.</li>
+    </ul>
+    <p>진자의 \(T\)와 \(L\)은 로그-로그에서 기울기 1/2, 방사성 붕괴의 계수율은 반로그에서 직선입니다. 어느 그래프에서 직선이 되는지 보면 법칙의 꼴을 알아낼 수 있습니다.</p>
+<pre><code>fig, ax = plt.subplots()
+ax.loglog(L, T, "o")                    # 두 축 모두 로그
+n, logA = np.polyfit(np.log10(L), np.log10(T), 1)
+print(n, 10**logA)                      # 지수와 계수</code></pre>
+
+    <h3><span class="no">1.5.2</span>로그 변환과 오차</h3>
+    <p>\(\log y\)의 오차는 \(\sigma_{\log y} \approx \frac{\sigma_y}{y\ln10}\)으로, 상대 오차에 비례합니다. 그래서 \(y\)의 오차가 모든 점에서 같으면(작은 \(y\)의 상대 오차가 큼) 로그를 취한 뒤 그냥 직선을 맞추면 작은 값들에 지나친 무게가 실립니다. 빠른 확인에는 로그 그래프가 좋지만, 최종 매개변수는 원래 꼴의 모형을 가중 최소제곱(2.1절)으로 맞추는 것이 정확합니다. 계수가 0 근처까지 줄어드는 붕괴 자료에서는 0인 값의 로그를 취할 수 없다는 문제도 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(y = Ax^n\): 로그-로그 기울기 \(n\). \(y = Ae^{-x/\tau}\): 반로그 기울기 \(-1/\tau\).</li>
+        <li>로그 변환은 오차 구조를 바꾼다. 최종 적합은 원래 모형으로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>로그-로그 그래프의 기울기가 −2인 자료의 법칙은?
+          <details><summary>답</summary><p>\(y \propto x^{-2}\) (역제곱 법칙).</p></details>
+        </li>
+        <li>반로그 그래프에서 세로축이 10배 줄어드는 데 가로축으로 23 s가 걸렸다. 시간 상수는?
+          <details><summary>답</summary><p>\(\tau = 23/\ln10 \approx 10\) s.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

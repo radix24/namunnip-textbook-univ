@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p17-coupled" data-kind="본문" data-std="물리17-03-02">
+  <header class="card-head"><span class="no"></span><h2>연성 진동자 시뮬레이션과 정규 모드 검증</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>두 연성 진자의 운동 방정식을 수치로 풀고 정규 모드 진동수로 검증한다.</li>
+        <li>맥놀이로 에너지가 오가는 시간을 예측하고, 비선형 항을 넣어 해석해가 없는 경우로 넓힌다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>solve_ivp (<a href="03-01.html">3.1절</a>), 연성 진동 (<a href="../4/04-01.html">물리4 4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>운동 방정식과 코드</h3>
+    <p>길이 \(L\)인 같은 진자 둘을 용수철(상수 \(k\))로 이으면, 작은 각에서</p>
+    \[m\ddot x_1 = -\frac{mg}{L}x_1 - k(x_1 - x_2), \qquad m\ddot x_2 = -\frac{mg}{L}x_2 - k(x_2 - x_1).\]
+<pre><code>def f(t, s):
+    x1, x2, v1, v2 = s
+    a1 = -w0**2 * x1 - kappa * (x1 - x2)    # w0^2 = g/L, kappa = k/m
+    a2 = -w0**2 * x2 - kappa * (x2 - x1)
+    return [v1, v2, a1, a2]
+sol = solve_ivp(f, (0, 400), [0.05, 0, 0, 0], rtol=1e-9, atol=1e-12, max_step=0.05)</code></pre>
+
+    <h3><span class="no">3.2.2</span>정규 모드로 검증</h3>
+    <p>물리4 4.1절의 정규 모드는 같은 방향으로 흔들리는 \(\omega_1 = \omega_0\)과 반대 방향의 \(\omega_2 = \sqrt{\omega_0^2 + 2\kappa}\)입니다. 한 진자만 당겼다 놓으면 두 모드가 같은 크기로 섞여, 진폭이 \(\cos\frac{(\omega_2 - \omega_1)t}{2}\)로 천천히 오르내리는 맥놀이가 생기고 에너지가 두 진자 사이를 오갑니다. 수치해의 맥놀이 주기, 또는 푸리에 변환한 봉우리 진동수가 \(\omega_1\), \(\omega_2\)와 맞는지 보면 코드가 검증됩니다.</p>
+
+    <h3><span class="no">3.2.3</span>해석해가 없는 문제로</h3>
+    <p>검증한 코드에서 \(-\omega_0^2x\)를 \(-\omega_0^2\sin x\)(큰 진폭의 진자)로 바꾸거나 감쇠와 구동을 넣으면 해석해가 없는 문제가 됩니다. 큰 진폭에서는 진동수가 진폭에 따라 달라져 맥놀이가 완전한 에너지 교환을 하지 못하는 것 같은 새로운 현상을 볼 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정규 모드 \(\omega_1 = \omega_0\), \(\omega_2 = \sqrt{\omega_0^2 + 2k/m}\).</li>
+        <li>한 진자만 당기면 맥놀이, 에너지 완전 교환 시간 \(\pi/(\omega_2 - \omega_1)\).</li>
+        <li>해석해로 검증한 뒤 비선형으로 넓힌다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>수치해를 FFT했더니 봉우리가 0.4982 Hz와 0.5032 Hz에 나왔다. 맥놀이 주기는?
+          <details><summary>답</summary><p>\(1/(0.5032 - 0.4982) = 200\) s.</p></details>
+        </li>
+        <li><code>max_step</code>을 정해 주는 까닭은?
+          <details><summary>답</summary><p>적응 걸음이 너무 커져 빠른 진동을 거칠게 표본화하지 않게 하려고.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
