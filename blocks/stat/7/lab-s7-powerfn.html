@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-05-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs3.js"]
+}
+-->
+<article class="card q-card" id="lab-s7-powerfn" data-kind="실습" data-std="응통7-05-01 응통7-05-03">
+  <header class="card-head"><span class="no"></span><h2>검정력 함수: 참값이 달라지면 기각 확률은 어떻게 변하나?</h2><span class="kind">실습 · 가설검정 이론</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>정규 평균 검정에서 참 평균 \(\mu\)를 가로축에, 귀무가설을 기각할 확률을 세로축에 그린 검정력 함수를 단측 검정과 양측 검정에 대해 함께 봅니다. 표본 크기와 유의수준을 바꾸며 곡선의 모양이 어떻게 변하는지, 단측 검정이 \(\mu > 0\) 쪽에서 양측보다 검정력이 높은 까닭(균일 최강력)을 확인합니다. 성취기준 [응통7-05-01], [응통7-05-03].</p>
+      <p class="q-term"><b>검정력 함수</b>: \(\beta(\mu) = P_\mu(\text{기각})\). 귀무가설 영역에서는 제1종 오류 확률, 대립가설 영역에서는 검정력입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>\(X_1, \ldots, X_n \sim N(\mu, 1)\)에서 단측 검정은 \(\bar X > z_\alpha/\sqrt n\)이면 기각하고(파란 실선), 양측 검정은 \(|\bar X| > z_{\alpha/2}/\sqrt n\)이면 기각합니다(빨간 점선). 공식으로 계산한 정확한 곡선이며, 주황 세로선의 \(\mu\)에서 두 검정의 검정력을 출력합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>표본 크기 n = <b data-show="n">25</b></span><input type="range" name="n" min="2" max="200" step="1" value="25" aria-label="표본 크기"></label>
+        <label><span>유의수준 α = <b data-show="a" data-fix="3">0.050</b></span><input type="range" name="a" min="0.005" max="0.2" step="0.005" value="0.05" aria-label="유의수준"></label>
+        <label><span>보는 μ = <b data-show="mu1" data-fix="2">0.50</b></span><input type="range" name="mu1" min="-1" max="1.5" step="0.05" value="0.5" aria-label="참 평균"></label>
+      </div>
+      <canvas aria-label="검정력 함수"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 설정(\(n = 25\), \(\alpha = 0.05\))에서 \(\mu = 0\)과 \(\mu = 0.5\)의 기각 확률을 두 검정에 대해 적습니다.</li>
+        <li>\(n\)을 10, 50, 100으로 바꾸며 곡선이 가팔라지는 정도와 \(\mu = 0.5\)의 검정력을 적습니다.</li>
+        <li>\(\alpha\)를 0.01과 0.1로 바꾸면 곡선 전체가 어떻게 움직이나요?</li>
+        <li>\(\mu\)를 −0.5로 옮겨 단측 검정과 양측 검정의 기각 확률을 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(\mu = 0\)에서 두 곡선 모두 높이가 \(\alpha = 0.05\)입니다(회색 점선). \(\mu = 0.5\), \(n = 25\)이면 단측 검정력이 약 0.80, 양측이 약 0.71입니다.</li>
+        <li>\(n\)이 커지면 곡선이 가팔라져 작은 차이도 잘 잡아냅니다. \(\mu = 0.5\)의 단측 검정력은 \(n = 10\)에서 약 0.47, \(n = 50\)에서 약 0.97입니다.</li>
+        <li>\(\alpha\)를 키우면 곡선 전체가 위로 올라가 검정력이 커지는 대신 제1종 오류 확률도 커집니다. 둘을 동시에 줄이는 유일한 방법은 표본을 늘리는 것입니다.</li>
+        <li>\(\mu &lt; 0\)이면 단측 검정은 거의 기각하지 않지만(귀무가설 쪽이므로 바람직함), 양측 검정은 기각 확률이 다시 올라갑니다. \(\mu > 0\)만 관심이면 단측 검정이 모든 \(\mu > 0\)에서 더 강력하고, 이것이 단조 우도비에서 나오는 균일 최강력 검정입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>검정력 0.8에 필요한 표본 크기 \(n \approx ((z_\alpha + z_{0.2})/\mu)^2\)을 \(\mu = 0.5\)에 넣어 출력과 비교해 보세요.</li>
+        <li>단측 검정을 자료를 본 뒤에 고르면 왜 문제가 될까요? 검정력 함수로 설명해 보세요.</li>
+        <li>양측 대립가설에서 균일 최강력 검정이 없는 까닭을 두 곡선의 교차로 설명해 보세요(응통7 단원 연습).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R에서 <code>power.t.test(n = 25, delta = 0.5, sd = 1, type = "one.sample", alternative = "one.sided")</code>는 t 검정의 검정력(정규 근사보다 조금 작음)을 줍니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>검정력 함수의 값</h3>
+    <p class="q">검정력 함수에서 \(\mu = 0\)(귀무가설 값)의 높이는 무엇을 뜻하나요?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>제1종 오류 확률(유의수준)<span class="why"><b>맞습니다.</b> 귀무가설이 참인데 기각할 확률입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>검정력<span class="why"><b>검정력은 대립가설이 참일 때의 기각 확률입니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>p값<span class="why"><b>p값은 자료마다 달라지는 값입니다.</b> 검정력 함수는 자료를 보기 전에 정해지는 확률입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

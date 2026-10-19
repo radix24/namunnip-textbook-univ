@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e2-mst" data-kind="본문" data-std="전전2-07-02">
+  <header class="card-head"><span class="no"></span><h2>최소 신장 트리: Kruskal과 Prim</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>연결 가중 그래프의 신장 트리와 최소 신장 트리(MST)를 정의한다.</li>
+        <li>"가장 가벼운 건너가는 간선은 MST에 들어간다"(절단 성질)를 이용하는 두 탐욕 알고리즘을 구현한다.</li>
+        <li>Kruskal(간선 정렬 + 서로소 집합)과 Prim(힙)의 비용을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>그래프 표현과 연결 성분 (<a href="07-01.html">7.1절</a>), 힙 (<a href="03-03.html">3.3절</a>), 정렬 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>문제</h3>
+    <p>마을 여러 곳을 전선으로 모두 잇되 전선 길이의 합을 최소로 하려면 어떤 구간을 깔아야 할까요? 회로 기판의 접지망, 통신망 설계, 클러스터링이 같은 문제입니다.</p>
+    <p class="q-term"><b>신장 트리</b>: 연결 그래프의 모든 정점을 잇는, 고리 없는 부분 그래프. 간선이 정확히 V − 1개.</p>
+    <p class="q-term"><b>최소 신장 트리</b>: 간선 무게의 합이 가장 작은 신장 트리.</p>
+    <p class="q-term"><b>절단 성질</b>: 정점을 두 무리로 나눌 때, 두 무리를 잇는 간선 중 가장 가벼운 것은 어떤 MST에 반드시 들어간다(무게가 모두 다르면 유일한 MST). 다른 간선으로 이었다면 그 간선과 바꿔 더 가볍게 만들 수 있기 때문이다.</p>
+
+    <h3><span class="no">7.2.2</span>Kruskal 알고리즘</h3>
+    <p>간선을 가벼운 순서로 보며, 고리를 만들지 않으면 채택합니다. "고리를 만드는가"는 두 끝점이 이미 같은 무리에 있는지로 판정하며, 이것을 빠르게 하는 구조가 서로소 집합(union-find)입니다.</p>
+    <p class="q-term"><b>서로소 집합</b>: 각 원소가 대표(뿌리)를 가리키는 숲. find(x)는 대표를 찾고, union은 두 대표를 잇는다. 경로 압축과 크기 기준 합치기를 쓰면 거의 O(1).</p>
+    <p>비용은 간선 정렬 O(E log E)가 지배합니다.</p>
+
+    <h3><span class="no">7.2.3</span>Prim 알고리즘</h3>
+    <p>한 정점에서 시작해 트리를 키웁니다. 매번 "트리 안과 밖을 잇는 간선 중 가장 가벼운 것"(절단 성질 그대로)을 힙에서 꺼내 붙입니다. 힙을 쓰면 O(E log V). Dijkstra(7.3절)와 같은 모양입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>7.1절 예제 그래프에 무게 A–B 4, A–C 1, B–C 2, B–D 5, C–D 8, D–E 3, F–G 6을 준다. Kruskal과 Prim(A에서)으로 최소 신장 트리(숲)를 구하라.</p>
+    </div>
+    <p><i>풀이.</i> Kruskal: 무게 순 1(A–C) 채택, 2(B–C) 채택, 3(D–E) 채택, 4(A–B)는 A, B가 이미 같은 무리라 버림, 5(B–D) 채택, 6(F–G) 채택, 8(C–D) 버림. 결과 {A–C, B–C, D–E, B–D, F–G}, 합 17. 그래프가 두 성분이라 최소 신장 숲입니다. Prim(A에서): A–C(1) → C–B(2) → B–D(5) → D–E(3), 합 11. A가 속한 성분만 덮으므로 F–G(6)가 빠졌습니다. 실습 카드의 출력과 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "MST는 두 정점 사이의 최단 경로를 준다": 다른 문제입니다. 예제에서 MST 위 A→D는 A–C–B–D로 8이지만, 최단 경로도 8이 된 것은 우연이고 일반적으로 다릅니다. (2) Prim을 비연결 그래프에 쓰면 시작 성분만 덮습니다. (3) Kruskal에서 고리 판정을 DFS로 매번 하면 O(E·V)로 느려집니다. 서로소 집합을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>MST: 모든 정점을 잇는 V − 1개 간선, 무게 합 최소. 절단 성질이 탐욕 선택을 정당화한다.</li>
+        <li>Kruskal: 가벼운 간선부터, 고리 판정은 서로소 집합. O(E log E).</li>
+        <li>Prim: 트리에서 나가는 가장 가벼운 간선을 힙으로. O(E log V).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정점 6개 연결 그래프의 신장 트리에는 간선이 몇 개인가?
+          <details><summary>답</summary><p>5개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>삼각형 A–B 1, B–C 2, A–C 3과 C–D 4로 된 그래프의 MST와 무게 합은?
+          <details><summary>답</summary><p>A–B, B–C, C–D, 합 7(A–C 3은 고리를 만들어 버림).</p></details>
+        </li>
+        <li>모든 간선 무게에 같은 상수를 더하면 MST가 바뀌는가? 제곱하면(무게가 양수)?
+          <details><summary>답</summary><p>둘 다 바뀌지 않습니다. 간선의 상대 순서만 쓰기 때문입니다(Kruskal 관점). 최단 경로는 상수를 더하면 바뀔 수 있다는 점과 대조적입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>점들을 k개 무리로 나누는 클러스터링을 MST로 하는 방법을 설명하라.
+          <details><summary>답</summary><p>완전 그래프(무게 = 거리)의 MST를 만들고 가장 무거운 간선 k − 1개를 끊으면, 무리 사이의 최소 거리를 최대로 하는 k개 무리가 됩니다(단일 연결 클러스터링).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

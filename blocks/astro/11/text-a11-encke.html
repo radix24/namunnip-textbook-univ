@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우11-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a11-encke" data-kind="본문" data-std="천우11-03-02">
+  <header class="card-head"><span class="no"></span><h2>Encke 방법의 원리와 장점</h2><span class="kind">본문 · 3.2절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기준 원뿔곡선 궤도에서의 벗어남만 적분하는 Encke 방법을 설명한다.</li>
+        <li>정류(기준 궤도 갱신)가 필요한 까닭과 시점을 안다.</li>
+        <li>Cowell 방법과의 장단점을 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Cowell 방법 (<a href="03-01.html">3.1절</a>), Kepler 방정식 (<a href="../8/02-02.html">천우8 2.2절</a>).</li>
+      </ul>
+    </div>
+
+<h3>큰 것은 알고 작은 것만 계산하기</h3>
+    <p>섭동이 중심 중력보다 천 배쯤 작으면, 위성은 대부분 케플러 궤도대로 움직이고 아주 조금 벗어납니다. 이미 해석적으로 아는 케플러 운동까지 매번 수치로 적분하는 것은 낭비입니다. Encke 방법은 그 작은 벗어남만 적분합니다(1857, 혜성 궤도 계산).</p>
+
+    <h3><span class="no">3.2.1</span>원리</h3>
+    <p>어느 시각 \(t_0\)의 실제 위치·속도와 같은 값을 가진 케플러 궤도(접촉 궤도) \(\boldsymbol\rho(t)\)를 기준으로 잡습니다. 실제 위치를 \(\mathbf r = \boldsymbol\rho + \boldsymbol\delta\)로 쓰면 벗어남 \(\boldsymbol\delta\)는</p>
+    \[ \ddot{\boldsymbol\delta} = \frac{\mu}{\rho^3}\left[\left(1 - \frac{\rho^3}{r^3}\right)\mathbf r - \boldsymbol\delta\right] + \mathbf a_{섭동}, \qquad \boldsymbol\delta(t_0) = \dot{\boldsymbol\delta}(t_0) = 0 \]
+    <p>을 따릅니다. \(\boldsymbol\rho(t)\)는 Kepler 방정식으로 언제든 바로 계산합니다. 괄호 안의 \(1 - \rho^3/r^3\)은 비슷한 두 수의 차라 반올림 오차가 크므로, 바틀렛의 \(f(q)\) 함수로 바꿔 계산합니다.</p>
+
+    <h3><span class="no">3.2.2</span>정류</h3>
+    <p>시간이 지나 \(\boldsymbol\delta\)가 커지면(예: \(|\boldsymbol\delta|/\rho > 0.01\)) 선형 근사의 이점이 사라집니다. 그때 현재의 실제 위치·속도로 새 접촉 궤도를 만들고 \(\boldsymbol\delta = 0\)에서 다시 시작합니다. 이것을 <b>정류</b>라 합니다.</p>
+
+    <h3><span class="no">3.2.3</span>장단점</h3>
+    <ul>
+      <li class="q-term"><b>장점</b>: \(\boldsymbol\delta\)의 변화가 느리므로 큰 간격을 쓸 수 있다(Cowell의 수 배~10배). 혜성처럼 행성 섭동을 받는 태양 궤도나 행성 간 궤적에서 효율적이었다.</li>
+      <li class="q-term"><b>단점</b>: 섭동이 크면(대기권 진입, 행성 근접 통과) 정류를 자주 해야 해 이점이 사라진다. 코드가 복잡하다.</li>
+      <li class="q-term">오늘날: 계산기가 빨라 정밀 궤도 결정은 대부분 고차 Cowell을 쓰지만, Encke 방식의 생각(기준 궤도 + 벗어남)은 상대 운동(<a href="05-02.html">5.2절</a>)과 궤도 오차 분석에 그대로 쓰인다.</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>저궤도 위성에서 J2만 있을 때 한 바퀴 뒤 벗어남의 크기를 어림하세요(J2 상대 가속도 \(1.4\times10^{-3}\), 반지름 6,878 km).</p>
+    </div>
+    <p><i>풀이.</i> 벗어남은 대략 (상대 섭동) × (궤도 반지름)의 수배 정도, \(1.4\times10^{-3}\times6878 \approx 10\) km의 수배입니다. 반지름의 0.1~1% 수준이라 몇 바퀴마다 정류하면 됩니다.</p>
+    <div class="tb-note"><b>주의</b> \(1 - \rho^3/r^3\)을 그대로 계산하면 \(\delta/\rho \approx 10^{-6}\)일 때 유효숫자 6자리를 잃습니다. Encke 방법의 이점은 이 반올림 처리를 바르게 할 때만 얻어집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Encke: 접촉 케플러 궤도 \(\boldsymbol\rho\)를 기준으로 벗어남 \(\boldsymbol\delta\)만 적분.</li>
+        <li>\(\boldsymbol\rho(t)\)는 Kepler 방정식으로 해석적으로 계산.</li>
+        <li>\(\boldsymbol\delta\)가 커지면 정류(새 기준 궤도). 반올림 오차는 \(f(q)\)로 처리.</li>
+        <li>섭동이 작을 때 큰 간격을 쓸 수 있다. 섭동이 크면 Cowell이 낫다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Encke 방법에서 처음 벗어남 \(\boldsymbol\delta(t_0)\)는?
+          <details><summary>답</summary><p>0(기준 궤도가 그 순간의 실제 궤도와 같으므로).</p></details>
+        </li>
+        <li>정류란?
+          <details><summary>답</summary><p>벗어남이 커졌을 때 현재 상태로 새 기준 궤도를 만들고 벗어남을 0으로 되돌리는 것.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>행성 근접 통과 중에는 Encke와 Cowell 가운데 어느 것이 낫습니까?
+          <details><summary>답</summary><p>섭동(행성 중력)이 커서 정류를 자주 해야 하므로 Cowell이 낫습니다(또는 중심 천체를 바꿔 적분).</p></details>
+        </li>
+        <li>\(\rho = 7000\) km, \(r = 7000.007\) km에서 \(1 - \rho^3/r^3\)은 대략? 유효숫자 몇 자리를 잃습니까?
+          <details><summary>답</summary><p>\(3\times10^{-6}\). 1에서 1에 가까운 수를 빼므로 약 6자리를 잃습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

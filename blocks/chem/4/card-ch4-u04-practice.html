@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-04-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-ch4-u04-practice" data-kind="연습" data-std="화학4-04-01 화학4-04-02">
+  <header class="card-head"><span class="no"></span><h2>신경망 연습 문제</h2><span class="kind">문제 6 · 개념·계산·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>ReLU 은닉 뉴런 둘의 입력이 z = (1.5, −0.8)이고 출력층 가중치가 (2, 3), 편향 0.5이다. 출력은? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>ReLU(z) = max(0, z).</p></details>
+        <details><summary>힌트 2</summary><p>h = (1.5, 0).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>h = (1.5, 0), 출력 = 2 × 1.5 + 3 × 0 + 0.5 = 3.5.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>1번에서 손실의 출력에 대한 기울기가 ∂L/∂ŷ = 2일 때, 두 은닉 뉴런의 입력 z에 대한 기울기는? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>∂L/∂h_j = (∂L/∂ŷ) × 출력층 가중치.</p></details>
+        <details><summary>힌트 2</summary><p>ReLU의 미분은 z &gt; 0이면 1, z &lt; 0이면 0.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>∂L/∂h = (4, 6). ReLU 미분이 (1, 0)이므로 ∂L/∂z = (4, 0). 둘째 뉴런은 꺼져 있어 이번 샘플로는 학습되지 않습니다(오래 꺼져 있으면 "죽은 ReLU").</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>은닉층이 다섯 개인 신경망의 모든 활성화를 항등 함수로 바꾸면 무엇과 같아지는가? 이유는? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>선형 변환의 합성은?</p></details>
+        <details><summary>힌트 2</summary><p>\(W_5W_4W_3W_2W_1\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>선형 회귀 하나와 같습니다. 행렬 곱의 곱은 행렬 하나이고 편향들도 상수 벡터 하나로 합쳐지므로, 층을 쌓아도 표현할 수 있는 함수가 늘지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>폼알데하이드의 무거운 원자 C=O를 원-핫 [C, O]로 두고 \(H' = (I + A)H\)를 한 번 한 뒤 합으로 읽어내면? 일산화 탄소 C≡O와 구별되는가? <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>두 분자의 무거운 원자 그래프 모양은?</p></details>
+        <details><summary>힌트 2</summary><p>인접 행렬이 결합 차수를 담지 않으면?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>C = [1,0] + [0,1] = [1,1], O = [0,1] + [1,0] = [1,1], 합 [2, 2]. CO도 C−O 두 원자라 같은 [2, 2]가 나와 구별되지 않습니다. 결합 차수(변 특성)나 붙은 수소 수(원자 특성)를 넣어야 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>GNN의 읽어내기에서 원자 벡터를 원자 번호 순서대로 이어 붙이면 어떤 문제가 생기는가? <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>같은 분자의 원자 번호를 바꾸면?</p></details>
+        <details><summary>힌트 2</summary><p>원자 수가 다른 분자는?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>원자 번호를 매기는 순서만 바꿔도 같은 분자의 벡터가 달라져 예측이 달라집니다(순서 무관성이 깨짐). 또 원자 수에 따라 벡터 길이가 달라 다음 신경망에 넣을 수 없습니다. 합·평균·최댓값 같은 순서 무관 연산을 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>분자 200개로 GNN과 "원형 지문 + 랜덤 포레스트"를 비교했더니 GNN의 훈련 오차는 훨씬 작고 교차검증 오차는 더 컸다. 어떤 모형을 쓰겠는가? <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>훈련 오차와 검증 오차의 차이가 뜻하는 것은?</p></details>
+        <details><summary>힌트 2</summary><p>자료 200개에 매개변수 수만 개면?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>지문 + 랜덤 포레스트를 씁니다. GNN은 매개변수가 많아 적은 자료에서 과적합했습니다(3.2절). 자료가 늘거나, 사전 학습된 표현을 쓰거나, 정규화를 강하게 하면 GNN을 다시 비교해 볼 수 있습니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

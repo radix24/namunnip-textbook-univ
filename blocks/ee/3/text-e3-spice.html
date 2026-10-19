@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-08-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e3-spice" data-kind="본문" data-std="전전3-08-04">
+  <header class="card-head"><span class="no"></span><h2>회로 시뮬레이터로 회로 해석하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>SPICE 계열 시뮬레이터가 회로를 어떻게 푸는지(마디 해석 행렬) 안다.</li>
+        <li>넷리스트로 회로를 적고 동작점(.op), 과도(.tran), 교류 주파수 응답(.ac) 해석을 돌린다.</li>
+        <li>손 계산과 시뮬레이션 결과를 비교하고 차이의 원인을 찾는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>마디 해석 (<a href="02-02.html">2.2절</a>), 과도 응답 (<a href="05-03.html">5.3절</a>), 보드 도표 (<a href="08-02.html">8.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.4.1</span>시뮬레이터는 무엇을 하나</h3>
+    <p>SPICE는 1970년대 버클리에서 만든 회로 시뮬레이터이고, 오늘날의 무료 도구 ngspice, LTspice, Qucs 등이 모두 그 후손입니다. 하는 일은 이 과목에서 배운 것과 같습니다.</p>
+    <ul>
+      <li><b>동작점</b>: 축전기를 개방, 인덕터를 단락으로 두고 마디 해석 행렬 \(G\mathbf v = \mathbf b\)를 풉니다(2.2절, 5.1절). 다이오드 같은 비선형 소자가 있으면 뉴턴 방법으로 되풀이합니다.</li>
+      <li><b>과도 해석</b>: 시간을 잘게 나누고, 한 걸음마다 축전기·인덕터를 "저항 + 전원" 꼴로 근사해 행렬을 다시 풉니다. 5단원의 미분방정식을 수치로 푸는 것입니다.</li>
+      <li><b>교류 해석</b>: 임피던스로 복소 행렬을 만들고 주파수마다 풉니다(7.2절).</li>
+    </ul>
+    <p>그래서 시뮬레이터는 손 계산을 대신하는 것이 아니라 <b>검산하는</b> 도구입니다. 결과가 손 계산과 다르면 어느 한쪽이 틀린 것이고, 그 차이를 찾는 과정에서 회로를 더 잘 이해하게 됩니다.</p>
+
+    <h3><span class="no">8.4.2</span>넷리스트</h3>
+    <p>회로도 그리기 도구를 써도 되지만, 속에서는 회로가 <b>넷리스트</b>라는 글로 바뀝니다. 한 줄에 소자 하나이고, 마디 이름 0은 접지입니다.</p>
+<pre><code>* 6.2절 예제: 직렬 RLC 계단 응답
+V1 in 0 PULSE(0 5 0 1n 1n 10m 20m)
+R1 in a 50
+L1 a b 10m
+C1 b 0 1u
+.tran 1u 3m
+.end</code></pre>
+    <p class="q-term"><b>소자 줄</b>: 첫 글자가 종류(R 저항, C 축전기, L 인덕터, V 전압원, I 전류원, E/G/F/H 종속 전원), 다음이 두 마디, 그다음 값. 단위 접두어 m(밀리), u(마이크로), n(나노), k(킬로), meg(메가). 주의: SPICE에서 M과 m은 모두 밀리이고, 메가는 meg입니다.</p>
+    <p class="q-term"><b>해석 줄</b>: .op(동작점), .tran 간격 끝시간(과도), .ac dec 점수 시작 끝(로그 간격 주파수 응답).</p>
+    <p>종속 전원은 예를 들어 VCCS를 <code>G1 out 0 a b 0.002</code>(마디 a–b 전압의 2 mS배 전류를 out에서 0으로)처럼 적습니다.</p>
+
+    <h3><span class="no">8.4.3</span>결과를 손 계산과 비교하기</h3>
+    <p>위 넷리스트를 돌리면 마디 b(축전기 전압)가 0.32 ms 근처에서 약 7.2 V로 넘쳤다가 5 V로 가라앉습니다. 6.2절 예제 6.2.1의 값(\(t_p \approx 0.324\) ms, 7.22 V)과 같습니다. 같은 회로를 교류 해석하려면 전원을 <code>V1 in 0 AC 1</code>로 바꾸고 <code>.ac dec 50 100 100k</code>를 넣습니다. 축전기 전압의 크기는 \(f_0 \approx 1.59\) kHz에서 봉우리(Q = 2, 약 +6 dB)를 보이고, 그 위에서 −40 dB/decade로 떨어집니다.</p>
+    <p>차이가 나면 다음을 의심합니다.</p>
+    <ul>
+      <li>단위 접두어(M을 메가로 쓴 실수).</li>
+      <li>마디 이름 오타로 소자가 서로 이어지지 않음.</li>
+      <li>과도 해석의 시간 간격이 너무 커서 봉우리를 건너뜀.</li>
+      <li>손 계산의 가정(이상 연산증폭기, 작은 신호)과 시뮬레이터의 실제 모형의 차이.</li>
+    </ul>
+
+    <div class="tb-note"><b>주의</b>시뮬레이터에는 접지(마디 0)가 반드시 있어야 하고, 모든 마디에서 접지로 가는 직류 경로가 있어야 합니다. 축전기로만 이어진 마디는 동작점에서 떠 버려 "singular matrix" 오류가 납니다. 이럴 때는 아주 큰 저항(예: 1 GΩ)을 접지로 달아 줍니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SPICE는 마디 해석 행렬을 동작점, 시간 걸음마다, 주파수마다 푼다.</li>
+        <li>넷리스트: 소자 줄(종류, 마디, 값)과 해석 줄(.op, .tran, .ac). 메가는 meg.</li>
+        <li>시뮬레이션은 손 계산의 검산이다. 차이가 나면 단위, 연결, 시간 간격, 모형 가정을 확인한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>"R2 a 0 1M"은 몇 Ω인가? 1 MΩ을 쓰려면?
+          <details><summary>답</summary><p>1 mΩ(0.001 Ω). 1 MΩ은 1meg.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>2.2절 예제 2.2.3(VCCS가 있는 회로)을 넷리스트로 적어라.
+          <details><summary>답</summary><p><code>V1 s 0 10</code>, <code>R1 s n1 2</code>, <code>R2 n1 0 4</code>, <code>G1 n1 n2 n1 0 0.5</code>, <code>R3 n2 0 3</code>, <code>.op</code>. 결과 n1 = 4 V, n2 = 6 V.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

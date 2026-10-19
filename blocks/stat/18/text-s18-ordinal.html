@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-ordinal" data-kind="본문" data-std="응통18-06-01">
+  <header class="card-head"><span class="no"></span><h2>순서형 반응의 누적 로짓 모형</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>순서 범주의 누적 확률을 로짓으로 모형화한다.</li>
+        <li>비례 오즈 가정과 계수 해석을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>로지스틱 회귀 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>만족도 1~5점을 어떻게 분석할까</h3>
+    <p>순서 범주를 1~5 점수로 선형회귀하면 간격이 같다는 가정이 들어가고, 범주마다 따로 로지스틱 회귀를 하면 순서 정보를 버립니다. 누적 로짓 모형은 "몇 점 이하일 확률"을 모형화해 순서를 살립니다.</p>
+
+    <h3><span class="no">6.1.1</span>모형</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.1.1</span>
+      <p>범주 \(1 &lt; 2 &lt; \cdots &lt; J\)에 대해 \(\mathrm{logit}\,P(Y \le j \mid \mathbf x) = \alpha_j - \boldsymbol\beta^\top\mathbf x\), \(j = 1, \ldots, J-1\). \(\alpha_1 &lt; \cdots &lt; \alpha_{J-1}\).</p>
+    </div>
+    <p>절편 \(\alpha_j\)는 범주 경계마다 다르지만 기울기 \(\boldsymbol\beta\)는 모든 경계에서 같습니다(<b>비례 오즈 가정</b>). 그래서 \(e^{\beta}\)는 "\(x\)가 1 커질 때 더 높은 범주에 있을 오즈"의 비로, 어느 경계에서 잘라도 같습니다. 잠재 연속 변수 \(Y^* = \boldsymbol\beta^\top\mathbf x + \varepsilon\)(로지스틱 오차)를 경계 \(\alpha_j\)로 자른 것으로 볼 수 있습니다. (부호 규약은 소프트웨어마다 달라 확인이 필요합니다.)</p>
+
+    <h3><span class="no">6.1.2</span>적합과 점검</h3>
+    <pre><code>library(MASS)
+fit &lt;- polr(satisfaction ~ wait_time + staff, data = d, Hess = TRUE)
+summary(fit); exp(coef(fit))      # 오즈비</code></pre>
+    <p>비례 오즈 가정은 경계마다 따로 이진 로지스틱 회귀를 해서 계수가 비슷한지 보거나, 가정을 푼 모형과 우도비로 비교해 점검합니다. 깨지면 부분 비례 오즈 모형이나 기준범주 로짓(범주마다 다른 계수)을 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>대기 시간 계수(10분 단위) \(\beta = -0.4\)입니다. 해석하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(e^{-0.4} = 0.67\). 대기 시간이 10분 길어질 때마다 더 높은 만족도 범주에 있을 오즈가 0.67배(33% 감소)이며, "4점 이상 대 3점 이하"로 자르든 "2점 이상 대 1점"으로 자르든 같습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>누적 확률의 로짓 = 경계별 절편 − 공통 기울기.</li>
+        <li>비례 오즈: 한 오즈비로 순서 효과를 요약.</li>
+        <li>가정을 점검하고 깨지면 더 유연한 모형.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>범주가 5개이면 절편과 기울기(설명변수 2개) 모수는 모두 몇 개인가요?
+          <details><summary>답</summary><p>절편 4 + 기울기 2 = 6개. 범주마다 따로 하는 기준범주 로짓이면 \(4\times3 = 12\)개.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

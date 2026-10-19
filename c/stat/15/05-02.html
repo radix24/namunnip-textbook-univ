@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gibbs 표집을 구현하기 · 통계전산 — QURI</title>
-  <meta name="description" content="통계전산 5.2 Gibbs 표집을 구현하기 — 성취기준: Gibbs 표집을 구현할 수 있다.">
+  <title>깁스 표집 · 통계전산 — QURI</title>
+  <meta name="description" content="통계전산 5.2 깁스 표집 — 성취기준: Gibbs 표집을 구현할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;5.2 Gibbs 표집을 구현하기&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;5.2 깁스 표집&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,93 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통15-05-02" data-u="서울대">
+  <section class="topic-hero u-hero has-text" data-sec="응통15-05-02" data-u="서울대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">통계전산</a><span class="mono">/</span><a href="05.html">5. MCMC</a></div>
-    <h1><span class="sec-no mono">5.2</span>Gibbs 표집을 구현하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통15-05-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-05-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통15-05-02" aria-label="할 수 있음"><span class="t">Gibbs 표집을 구현할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.2</span>깁스 표집</h1>
+    <p class="sec-std"><span class="mono">[응통15-05-02]</span> Gibbs 표집을 구현할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>알고리즘</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s15-gibbs"><span class="mono">본문</span><span>깁스 표집</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s15-gibbs" data-kind="본문" data-std="응통15-05-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>완전 조건부분포를 번갈아 뽑는 깁스 표집을 구현한다.</li>
+        <li>깁스 표집이 MH의 특수한 경우임을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>메트로폴리스-헤이스팅스 (<a href="05-01.html">5.1절</a>), 다변량 정규의 조건부분포 (응통6 5.3절).</li>
+      </ul>
+    </div>
+
+    <h3>한 번에 한 변수씩</h3>
+    <p>여러 모수의 결합 분포에서 직접 뽑기는 어렵지만, 나머지를 고정했을 때 한 모수의 조건부분포는 알려진 분포인 경우가 많습니다. 그 조건부분포들을 번갈아 뽑으면 결합 분포의 표본이 됩니다.</p>
+
+    <h3 id="s5-2-1"><span class="no">5.2.1</span>알고리즘</h3>
+    <p>목표 \(\pi(\theta_1, \ldots, \theta_k)\). 한 바퀴에서 \(j = 1, \ldots, k\) 순서로</p>
+    \[\theta_j^{(t+1)} \sim \pi(\theta_j \mid \theta_1^{(t+1)}, \ldots, \theta_{j-1}^{(t+1)}, \theta_{j+1}^{(t)}, \ldots, \theta_k^{(t)}).\]
+    <p>이 완전 조건부분포에서 뽑는 것은 제안분포를 조건부분포 자체로 둔 MH이고, 이때 수용 확률은 항상 1입니다. 그래서 기각이 없습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1 (정규 모형)</span>
+      <p>\(x_1, \ldots, x_n \sim N(\mu, 1/\tau)\), 사전분포 \(\mu \sim N(0, 100)\), \(\tau \sim \mathrm{Gamma}(a, b)\)(비율 \(b\)). 완전 조건부분포를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\mu\mid\tau, \mathbf x \sim N\left(\frac{\tau\sum x_i}{n\tau + 0.01}, \frac{1}{n\tau + 0.01}\right)\) (정밀도가 더해짐). \(\tau\mid\mu, \mathbf x \sim \mathrm{Gamma}\left(a + \frac n2, b + \frac12\sum(x_i - \mu)^2\right)\). 두 분포 모두 R 함수로 바로 뽑을 수 있습니다.</p>
+    <pre><code>x &lt;- c(4.9, 5.6, 5.1, 6.2, 5.8, 4.7); n &lt;- length(x); a &lt;- b &lt;- 0.01
+S &lt;- 5000; mu &lt;- tau &lt;- numeric(S); mu[1] &lt;- mean(x); tau[1] &lt;- 1
+for (t in 2:S) {
+  prec &lt;- n * tau[t-1] + 0.01
+  mu[t] &lt;- rnorm(1, tau[t-1] * sum(x) / prec, sqrt(1 / prec))
+  tau[t] &lt;- rgamma(1, a + n/2, b + sum((x - mu[t])^2) / 2) }
+quantile(mu[-(1:500)], c(.025, .5, .975))</code></pre>
+
+    <div class="tb-note">
+      <b>주의</b> 두 변수의 상관이 매우 높으면 축 방향으로만 움직이는 깁스 표집은 대각선 모양 분포 위에서 아주 느리게 움직입니다. 모수를 다시 매개화하거나 함께 묶어 뽑습니다(블록 깁스).
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>완전 조건부분포를 번갈아 뽑음, 수용률 1인 MH.</li>
+        <li>켤레 사전분포에서 조건부분포가 간단해집니다.</li>
+        <li>변수 사이 상관이 크면 느립니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-2-2"><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>이변량 정규(평균 0, 분산 1, 상관 \(\rho\))의 깁스 표집 단계를 쓰세요.
+          <details><summary>답</summary><p>\(x \mid y \sim N(\rho y, 1 - \rho^2)\), \(y \mid x \sim N(\rho x, 1 - \rho^2)\). \(\rho = 0.99\)이면 한 걸음 표준편차가 0.14로 작아 느리게 섞입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s15-gibbs" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통15-05-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-05-02] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통15-05-02" aria-label="할 수 있음"><span class="t">Gibbs 표집을 구현할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-01.html">← 5.1 Metropolis-Hastings 알고리즘을 구현하기</a></span>
-        <span><a href="05-03.html">5.3 수렴 진단 방법으로 표본의 품질을 평가하기 →</a></span>
+        <span><a href="05-01.html">← 5.1 메트로폴리스-헤이스팅스 알고리즘</a></span>
+        <span><a href="05-03.html">5.3 MCMC 수렴 진단 →</a></span>
       </nav>
     </div>
   </div>

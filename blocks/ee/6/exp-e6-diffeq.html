@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-02-03",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e6-signals.js"]
+}
+-->
+<article class="card q-card" id="exp-e6-diffeq" data-kind="탐구" data-std="전전6-02-03 전전6-02-02">
+  <header class="card-head"><span class="no"></span><h2>특성근이 단위원 밖으로 나가면</h2><span class="kind">탐구 · 2차 차분 방정식의 임펄스 응답</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\(y[n] = a_1y[n-1] + a_2y[n-2] + x[n]\)에 임펄스를 넣으면 출력이 줄어들까요, 진동할까요, 커질까요? 계수 두 개만 보고 미리 알 수 있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>위 그래프는 되풀이 계산으로 구한 \(h[n]\) (n = 0~30), 아래는 특성 방정식 \(r^2 - a_1r - a_2 = 0\)의 두 근(×)과 단위원(점선)입니다. 처음 값은 2.3절 예제 2.3.2(\(a_1 = 1\), \(a_2 = -0.5\))입니다. 불안정하면 색이 빨강으로 바뀝니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>a₁ = <b data-show="a1" data-fix="2">1.00</b></span><input type="range" name="a1" min="-2" max="2" step="0.05" value="1" aria-label="계수 a1"></label>
+        <label><span>a₂ = <b data-show="a2" data-fix="2">-0.50</b></span><input type="range" name="a2" min="-1" max="1" step="0.05" value="-0.5" aria-label="계수 a2"></label>
+      </div>
+      <canvas aria-label="임펄스 응답 h[n]"></canvas>
+      <canvas aria-label="특성근과 단위원"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>처음 화면: 근 \(0.5 \pm 0.5j\), 크기 0.707, 각 45°. \(h = 1, 1, 0.5, 0, -0.25, -0.25, -0.125, 0\)이고 \(\sum|h| \approx 3.333\)입니다. 8표본마다 한 번 진동하며 줄어듭니다.</span></li>
+        <li><b>1차로 만들기</b><span>\(a_2 = 0\), \(a_1 = 0.5\)이면 근이 0.5와 0이고 \(h = 0.5^n\), \(\sum|h| = 2\)입니다(2.2절 예제). \(a_1 = -0.9\)이면 근 −0.9, 부호가 번갈아 바뀌며 \(\sum|h| = 10\)입니다.</span></li>
+        <li><b>단위원에 가까이</b><span>\(a_1 = 1.6\), \(a_2 = -0.8\)이면 근의 크기 0.894, 진동이 오래 남고 \(\sum|h| \approx 14.05\)로 커집니다. 근이 단위원에 가까울수록 오래 울리는 시스템입니다.</span></li>
+        <li><b>경계와 밖</b><span>\(a_1 = 1.8\), \(a_2 = -1\)이면 근의 크기가 정확히 1이라 진동이 줄지도 늘지도 않습니다. 합이 끝없이 커지므로 BIBO 안정이 아닙니다. \(a_2 = 0.5\), \(a_1 = 1\)이면 근 1.366이 단위원 밖에 있어 h가 지수적으로 커집니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>7단원에서 이 근들은 전달함수 \(H(z)\)의 극점이 되고, "모든 극점이 단위원 안"이 인과 이산 시스템의 안정 조건으로 다시 나옵니다. 디지털 공진기, 오디오 이퀄라이저의 피크 필터가 이렇게 단위원 가까이 극점을 둔 2차 구조(biquad)입니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"계수가 모두 1보다 작으면 안정이다."</b> \(a_1 = 1\), \(a_2 = 0.5\)는 계수가 1 이하인데도 근 1.366으로 불안정합니다. 판정은 계수가 아니라 근의 크기로 합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-meancov" data-kind="본문" data-std="응통19-01-01">
+  <header class="card-head"><span class="no"></span><h2>평균벡터와 공분산 행렬</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다변량 자료를 행렬로 쓰고 표본 평균벡터와 공분산 행렬을 계산한다.</li>
+        <li>상관 행렬과 마할라노비스 거리를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통2 행렬 연산, 응통6 5.2절 공분산.</li>
+      </ul>
+    </div>
+
+    <h3>변수가 여러 개일 때의 평균과 퍼짐</h3>
+    <p>학생 \(n\)명의 국어·영어·수학 점수처럼 한 관측에 변수가 \(p\)개 있으면, 평균은 숫자 하나가 아니라 벡터이고 퍼짐은 분산 \(p\)개와 공분산 \(p(p-1)/2\)개를 담은 행렬입니다. 다변량 분석은 이 두 가지에서 시작합니다.</p>
+
+    <h3><span class="no">1.1.1</span>자료 행렬과 요약</h3>
+    <p>\(n\times p\) 자료 행렬 \(X\)의 \(i\)행 \(\mathbf x_i^\top\)가 \(i\)번째 관측입니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 1.1.1</span>
+      <p class="q-term"><b>표본 평균벡터</b>: \(\bar{\mathbf x} = \frac1n\sum_i\mathbf x_i = \frac1nX^\top\mathbf 1\).</p>
+      <p class="q-term"><b>표본 공분산 행렬</b>: \(S = \frac{1}{n-1}\sum_i(\mathbf x_i - \bar{\mathbf x})(\mathbf x_i - \bar{\mathbf x})^\top = \frac{1}{n-1}X_c^\top X_c\) (\(X_c\)는 중심화한 자료).</p>
+    </div>
+    <div class="tb-note">
+      <b>기호 정리 (응통2를 오래전에 배웠다면)</b>
+      <p class="q-term">굵은 소문자 \(\mathbf x_i\): 관측 하나의 변수 \(p\)개를 세로로 묶은 벡터. \(\mathbf x_i^\top\)는 이를 가로로 눕힌 것(전치)입니다.</p>
+      <p class="q-term">\(\mathbf 1\): 성분이 모두 1인 벡터. \(X^\top\mathbf 1\)은 각 변수(열)의 합을 모은 벡터입니다.</p>
+      <p class="q-term">\((\mathbf x_i - \bar{\mathbf x})(\mathbf x_i - \bar{\mathbf x})^\top\): 편차들을 두 개씩 곱한 값을 \(p\times p\) 표로 모은 것. \((j, k)\) 칸이 \((x_{ij} - \bar x_j)(x_{ik} - \bar x_k)\)입니다.</p>
+      <p class="q-term">\(S^{-1}\): \(S\)의 역행렬, 곧 \(SS^{-1} = I\)인 행렬. 수의 역수처럼 "\(S\)로 나누기"에 해당합니다.</p>
+    </div>
+    <p>\(S\)의 대각은 각 변수의 분산, 비대각은 공분산입니다. 예를 들어 변수가 둘이면 \(S = \begin{pmatrix}s_1^2 & s_{12}\\ s_{12} & s_2^2\end{pmatrix}\)입니다. \(S\)는 대칭이고, 어떤 가중합 \(a_1x_1 + \cdots + a_px_p\)의 분산도 음수가 될 수 없다는 성질(양반정치, 응통2 5.2절)을 가집니다. 상관 행렬 \(R = D^{-1/2}SD^{-1/2}\)(\(D\)는 \(S\)의 대각)는 단위의 영향을 없앤 것입니다.</p>
+
+    <h3><span class="no">1.1.2</span>마할라노비스 거리</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.1.2</span>
+      <p>\(d^2(\mathbf x) = (\mathbf x - \bar{\mathbf x})^\top S^{-1}(\mathbf x - \bar{\mathbf x})\).</p>
+    </div>
+    <p>보통 거리는 키 10 cm와 몸무게 10 kg을 같은 크기로 봅니다. 마할라노비스 거리는 변수의 퍼짐과 상관을 고려합니다. 키가 크면 몸무게도 무거운 것이 보통이므로, 키 큰 사람이 무거운 것보다 키 작은 사람이 무거운 것이 "더 멀리 떨어진" 관측이 됩니다. 변수가 둘이면 행렬 없이 쓸 수 있습니다. 각 변수를 표준화한 값 \(z_1 = (x_1 - \bar x_1)/s_1\), \(z_2 = (x_2 - \bar x_2)/s_2\)와 상관계수 \(r\)로 \(d^2 = \dfrac{z_1^2 - 2rz_1z_2 + z_2^2}{1 - r^2}\)입니다. \(r = 0\)이면 표준화 값의 제곱합(피타고라스)이고, \(r > 0\)이면 \(z_1\)과 \(z_2\)의 부호가 다를 때(한쪽만 큼) 거리가 커집니다. 다변량 이상값 찾기에 씁니다(응통17 2.3절). 다변량 정규라면 \(d^2\)는 근사적으로 \(\chi^2_p\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.3</span>
+      <p>세 학생의 (수학, 과학) 점수 (60, 70), (70, 80), (80, 90)의 평균벡터와 공분산 행렬은?</p>
+    </div>
+    <p><i>풀이.</i> \(\bar{\mathbf x} = (70, 80)\). 편차 (−10, −10), (0, 0), (10, 10). \(S = \frac12\begin{pmatrix}200 &amp; 200\\ 200 &amp; 200\end{pmatrix} = \begin{pmatrix}100 &amp; 100\\ 100 &amp; 100\end{pmatrix}\). 상관 1이고 \(S\)는 특이해(역행렬 없음) 마할라노비스 거리를 정의할 수 없습니다. 점들이 한 직선 위에 있기 때문입니다.</p>
+    <pre><code>X &lt;- as.matrix(iris[, 1:4]); colMeans(X); cov(X); cor(X)
+d2 &lt;- mahalanobis(X, colMeans(X), cov(X)); which(d2 &gt; qchisq(0.99, 4))</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>평균벡터 \(\frac1nX^\top\mathbf 1\), 공분산 \(\frac{1}{n-1}X_c^\top X_c\).</li>
+        <li>상관 행렬은 단위를 없앤 공분산.</li>
+        <li>마할라노비스 거리는 퍼짐과 상관을 고려한 거리.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(S = \begin{pmatrix}4 &amp; 0\\ 0 &amp; 1\end{pmatrix}\), \(\bar{\mathbf x} = \mathbf 0\)일 때 (2, 0)과 (0, 2)의 마할라노비스 거리 제곱은?
+          <details><summary>답</summary><p>(2, 0): \(4/4 = 1\). (0, 2): \(4/1 = 4\). 퍼짐이 작은 방향으로 같은 거리만큼 떨어진 쪽이 더 멉니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,127 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-03-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e2-tree" data-kind="실습" data-std="전전2-03-02">
+  <header class="card-head"><span class="no"></span><h2>이진 탐색 트리의 삽입, 순회, 삭제</h2><span class="kind">실습 · 재귀로 구현하는 BST</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>3.1·3.2절의 BST를 구현하고 네 가지 순회, 세 가지 삭제 경우, 정렬된 입력의 높이를 확인합니다. 성취기준 [전전2-03-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 라이브러리 없음). 아래 코드를 <code>tree_lab.py</code>로 저장합니다.</p>
+<pre><code>from collections import deque
+
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key &lt; root.key:
+        root.left = insert(root.left, key)
+    elif key &gt; root.key:
+        root.right = insert(root.right, key)
+    return root
+
+def delete(root, key):
+    if root is None:
+        return None
+    if key &lt; root.key:
+        root.left = delete(root.left, key)
+    elif key &gt; root.key:
+        root.right = delete(root.right, key)
+    else:
+        if root.left is None:
+            return root.right
+        if root.right is None:
+            return root.left
+        succ = root.right                 # 오른쪽 부분 트리의 최솟값
+        while succ.left:
+            succ = succ.left
+        root.key = succ.key
+        root.right = delete(root.right, succ.key)
+    return root
+
+def preorder(t):  return [] if t is None else [t.key] + preorder(t.left) + preorder(t.right)
+def inorder(t):   return [] if t is None else inorder(t.left) + [t.key] + inorder(t.right)
+def postorder(t): return [] if t is None else postorder(t.left) + postorder(t.right) + [t.key]
+
+def levelorder(t):
+    out, q = [], deque([t] if t else [])
+    while q:
+        n = q.popleft()
+        out.append(n.key)
+        if n.left: q.append(n.left)
+        if n.right: q.append(n.right)
+    return out
+
+def height(t):
+    return -1 if t is None else 1 + max(height(t.left), height(t.right))
+
+root = None
+for k in [50, 30, 70, 20, 40, 60, 80, 35]:
+    root = insert(root, k)
+print("전위", preorder(root))
+print("중위", inorder(root))
+print("후위", postorder(root))
+print("레벨", levelorder(root))
+print("높이", height(root))
+root = delete(root, 30)        # 자식 둘
+print("30 삭제 후 전위", preorder(root))
+root = delete(root, 80)        # 잎
+root = delete(root, 70)        # 자식 하나
+print("80, 70 삭제 후 전위", preorder(root), "높이", height(root))
+
+skew = None
+for k in range(1, 8):
+    skew = insert(skew, k)
+print("정렬된 순서로 넣은 트리 높이", height(skew))</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>30을 지운 뒤 트리를 종이에 그려 전위 순회 결과와 맞는지 확인합니다.</li>
+        <li>마지막 줄의 "정렬된 순서로 넣은 트리"를 무작위 순서(<code>random.shuffle</code>)로 바꿔 높이가 어떻게 되는지 여러 번 실행해 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>전위 [50, 30, 20, 40, 35, 70, 60, 80]
+중위 [20, 30, 35, 40, 50, 60, 70, 80]
+후위 [20, 35, 40, 30, 60, 80, 70, 50]
+레벨 [50, 30, 70, 20, 40, 60, 80, 35]
+높이 3
+30 삭제 후 전위 [50, 35, 20, 40, 70, 60, 80]
+80, 70 삭제 후 전위 [50, 35, 20, 40, 60] 높이 2
+정렬된 순서로 넣은 트리 높이 6</code></pre>
+      <ul>
+        <li>네 순회 결과가 3.1절 예제와 같습니다. 중위 순회는 정렬된 순서입니다. 높이 3.</li>
+        <li>30(자식 둘)을 지우면 후계자 35가 그 자리에 옵니다: 전위 50, 35, 20, 40, 70, 60, 80.</li>
+        <li>80(잎), 70(자식 하나)을 지운 뒤 전위 50, 35, 20, 40, 60, 높이 2(예제 3.2.1).</li>
+        <li>1~7을 정렬된 순서로 넣으면 높이 6: 사슬 모양입니다. 무작위 순서로 바꾼 결과는 실행할 때마다 다릅니다(직접 확인).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>delete</code>에서 자식이 둘일 때 후계자 대신 선행자(왼쪽 부분 트리의 최댓값)를 써도 되는 이유는?</li>
+        <li>재귀 대신 반복문으로 <code>insert</code>를 쓰면 무엇이 달라지나요? 사슬 모양 트리(높이 수천)에서 재귀 버전에 어떤 문제가 생길 수 있나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p><code>height</code>를 이용해 1부터 1000까지 무작위 순서로 넣은 트리의 높이를 100번 재고 평균을 내 보세요(3.2.4절의 값과 비교).</p>
+    </section>
+  </div>
+</article>

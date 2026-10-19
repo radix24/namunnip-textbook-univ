@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-06-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e3-rlcstep" data-kind="예제" data-std="전전3-06-02">
+  <header class="card-head"><span class="no"></span><h2>병렬 RLC의 계단 응답: 인덕터 전류 구하기</h2><span class="kind">예제 · 최종값과 초기 조건 정하기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>1 A 전류원을 \(t = 0\)에 병렬 RLC에 연결하면, 처음 순간 1 A는 R, L, C 중 어디로 갈까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>인덕터 전류는 0에서 바로 바뀔 수 없고, 축전기 전압이 0이라 저항 전류도 0입니다. 그래서 처음 순간 1 A는 모두 축전기로 갑니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(R = 500\ \Omega\), \(L = 0.1\) H, \(C = 0.1\ \mu\text{F}\)가 같은 두 마디 사이에 병렬로 있고, 처음 에너지는 0이다. \(t = 0\)에 1 mA 전류원을 연결한다. 인덕터 전류 \(i_L(t)\)를 구하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>문제 해결 전략</h3>
+      <ol>
+        <li>감쇠 유형: 병렬이므로 \(\alpha = 1/(2RC)\), \(\omega_0 = 1/\sqrt{LC}\).</li>
+        <li>최종값: 직류 정상 상태에서 인덕터 단락 → 모든 전류가 인덕터로.</li>
+        <li>초기 조건: \(i_L(0^+) = 0\), \(di_L/dt(0^+) = v_L(0^+)/L = v_C(0^+)/L = 0\).</li>
+        <li>최종값 + 자연 응답 꼴에 넣어 상수를 정한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(\alpha = 1/(2\times500\times10^{-7}) = 10^4\), \(\omega_0 = 1/\sqrt{10^{-8}} = 10^4\). \(\zeta = 1\), 임계감쇠. <span class="q-why">6.1절</span></li>
+        <li>최종값 \(i_L(\infty) = 1\) mA. <span class="q-why">L 단락이면 R, C에는 전압 0</span></li>
+        <li>\(i_L = 1 + (A_1 + A_2t)e^{-10^4t}\) mA. \(i_L(0) = 0\) → \(A_1 = -1\). <span class="q-why">연속성</span></li>
+        <li>\(\dot i_L(0) = A_2 - 10^4A_1 = 0\) → \(A_2 = -10^4\). <span class="q-why">\(v_C(0^+) = 0\)</span></li>
+        <li>\(i_L(t) = 1 - (1 + 10^4t)e^{-10^4t}\) mA. <span class="q-why">정리</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>1 mA는 처음에 축전기로 들어가 전압을 세우고, 그 전압이 인덕터 전류를 키워 결국 모두 인덕터로 넘어갑니다. 임계감쇠라 넘침 없이 0.5 ms 만에 96% 도달합니다. 같은 회로에서 \(R\)을 키우면(병렬이라 감쇠가 줄어) 인덕터 전류가 1 mA를 넘어 출렁입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>암페어로 쓰면 \(i_L = 10^{-3}[1 - (1 + 10^4t)e^{-10^4t}]\)이고, 미분하면 \(di_L/dt = 10^{-3}\cdot10^8\,t\,e^{-10^4t} = 10^5\,t\,e^{-10^4t}\) A/s입니다. 따라서 \(v_C = L\,di_L/dt = 10^4\,t\,e^{-10^4t}\) V로, \(t = 0\)과 \(t \to \infty\)에서 0이고 \(t = 0.1\) ms에서 최대 \(e^{-1} \approx 0.37\) V입니다. 0⁺에서 축전기 전류 \(C\,dv_C/dt(0) = 10^{-7}\times10^4 = 1\) mA로, 처음 1 mA가 모두 축전기로 간다는 예측과 같습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>\(R = 2\ \text{k}\Omega\)이면 \(\alpha = 2500\), \(\zeta = 0.25\)로 부족감쇠가 되어 인덕터 전류의 첫 봉우리는 약 1.44 mA입니다(6.2절의 넘침 식).</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>감쇠의 방향</h3>
+    <p class="q">병렬 RLC에서 저항을 크게 하면?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>감쇠가 작아져 더 출렁인다<span class="why"><b>맞습니다.</b> 병렬에서 \(\alpha = 1/(2RC)\)이라 R이 크면 \(\alpha\)가 작습니다. 저항이 클수록 그쪽으로 빠지는 전류가 작아 에너지 손실이 적습니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>감쇠가 커져 덜 출렁인다<span class="why"><b>직렬 RLC와 헷갈렸습니다.</b> 직렬에서는 \(\alpha = R/(2L)\)이라 반대입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>공진 주파수가 바뀐다<span class="why"><b>\(\omega_0 = 1/\sqrt{LC}\)에는 R이 없습니다.</b> 감쇠 진동 주파수 \(\omega_d\)는 조금 바뀝니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

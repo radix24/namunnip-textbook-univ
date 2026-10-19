@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-apply" data-kind="본문" data-std="응통3-01-03">
+  <header class="card-head"><span class="no"></span><h2>벡터화 연산과 apply 계열 함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>반복문을 벡터 연산으로 바꾼다.</li>
+        <li><code>apply</code>, <code>sapply</code>, <code>tapply</code>, <code>replicate</code>로 반복을 줄인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>반복문과 함수 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>반복문 없이 쓰기</h3>
+    <p>1.2절의 제곱합은 <code>sum((1:10)^2)</code> 한 줄이면 됩니다. R다운 코드는 짧고, 읽기 쉽고, 대개 더 빠릅니다(응통15 6.1절).</p>
+
+    <h3><span class="no">1.3.1</span>벡터화</h3>
+    <p>산술 연산, 비교, 수학 함수(<code>log</code>, <code>exp</code>, <code>sqrt</code>)는 원소마다 적용됩니다. 길이가 다르면 짧은 쪽을 되풀이합니다(재사용 규칙). <code>(x - mean(x)) / sd(x)</code>는 표준화, <code>cumsum</code>, <code>diff</code>, <code>pmax</code>도 벡터 함수입니다.</p>
+
+    <h3><span class="no">1.3.2</span>apply 계열</h3>
+    <table class="tw">
+      <tr><th>함수</th><th>하는 일</th><th>예</th></tr>
+      <tr><td><code>apply(m, 1 또는 2, f)</code></td><td>행렬의 행(1)·열(2)마다</td><td><code>apply(m, 2, sd)</code></td></tr>
+      <tr><td><code>sapply(x, f)</code></td><td>벡터·리스트 원소마다, 결과를 벡터로</td><td><code>sapply(mtcars, mean)</code></td></tr>
+      <tr><td><code>tapply(x, g, f)</code></td><td>집단마다</td><td><code>tapply(mtcars$mpg, mtcars$cyl, mean)</code></td></tr>
+      <tr><td><code>replicate(B, expr)</code></td><td>식을 B번 실행</td><td><code>replicate(1000, mean(rnorm(100)))</code></td></tr>
+    </table>
+    <p>열 합·평균은 전용 함수 <code>colSums</code>, <code>colMeans</code>, <code>rowMeans</code>가 더 빠릅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p><code>mtcars</code>의 모든 변수의 변동계수를 구하고, 기통 수별 평균 무게를 구하세요.</p>
+    </div>
+    <pre><code>sapply(mtcars, function(v) sd(v) / mean(v))
+tapply(mtcars$wt, mtcars$cyl, mean)     # 4: 2.29, 6: 3.12, 8: 4.00</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>산술·비교·수학 함수는 원소별로 적용.</li>
+        <li>행·열: <code>apply</code>, 원소: <code>sapply</code>, 집단: <code>tapply</code>, 반복 실험: <code>replicate</code>.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>1.2절 예제를 <code>replicate</code> 한 줄로 바꾸세요.
+          <details><summary>답</summary><p><code>sd(replicate(1000, mean(rnorm(100))))</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

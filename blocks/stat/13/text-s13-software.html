@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통13-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s13-software" data-kind="본문" data-std="응통13-07-01">
+  <header class="card-head"><span class="no"></span><h2>통계 소프트웨어로 실험 자료 분석하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>R로 설계를 만들고(랜덤화) 분석하는 흐름을 익힌다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이 과목 02~06단원.</li>
+      </ul>
+    </div>
+
+    <h3>설계부터 분석까지 코드로</h3>
+    <p>실험의 랜덤화 순서를 손으로 정하면 실수하기 쉽고 기록이 남지 않습니다. 설계표를 코드로 만들고, 같은 표에 결과를 채워 분석하면 처음부터 끝까지 재현할 수 있습니다.</p>
+
+    <h3><span class="no">7.1.1</span>설계표 만들기</h3>
+    <pre><code># 2^3 요인계획, 반복 2, 실험 순서 랜덤화
+d &lt;- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1), rep = 1:2)
+set.seed(2026); d$run &lt;- sample(nrow(d))
+d &lt;- d[order(d$run), ]
+write.csv(d, "design.csv", row.names = FALSE)   # 현장에서 이 순서로 실험</code></pre>
+    <p>랜덤화 블록이면 블록마다 따로 <code>sample</code>을 합니다. 일부실시법과 중심합성계획은 <code>FrF2</code>, <code>rsm</code> 패키지가 설계표를 만들어 줍니다.</p>
+
+    <h3><span class="no">7.1.2</span>분석</h3>
+    <pre><code>d &lt;- read.csv("design_with_y.csv")
+fit &lt;- lm(y ~ A * B * C, data = d)      # 모든 효과
+anova(fit)
+2 * coef(fit)[-1]                      # ±1 부호화이면 효과 = 2 × 계수
+par(mfrow = c(2, 2)); plot(fit)        # 잔차 진단
+with(d, interaction.plot(A, B, y))</code></pre>
+    <p>±1 부호화에서 회귀계수는 효과의 절반입니다(5.1절의 효과는 −1에서 +1로 2단위 움직인 변화).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>랜덤화 블록 설계 자료(<code>y</code>, <code>trt</code>, <code>block</code>)를 분석하는 코드를 쓰세요.</p>
+    </div>
+    <pre><code>fit &lt;- aov(y ~ trt + block, data = d)   # 블록을 모형에 넣음
+summary(fit)
+TukeyHSD(fit, "trt")</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>설계표와 랜덤화 순서를 코드로 만들고 저장.</li>
+        <li>설계 구조(블록, 요인, 교호작용)를 모형식에 그대로.</li>
+        <li>±1 부호화에서 효과 = 2 × 계수.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>블록을 빼고 <code>aov(y ~ trt)</code>로 분석하면 무엇이 달라지나요?
+          <details><summary>답</summary><p>블록 변동이 오차에 섞여 MSE가 커지고 처리 F 값이 작아집니다(3.1절 예제).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

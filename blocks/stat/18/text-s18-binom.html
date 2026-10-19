@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-binom" data-kind="본문" data-std="응통18-01-01">
+  <header class="card-head"><span class="no"></span><h2>이항·다항분포로 비율 추정하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이항·다항분포의 최대가능도로 비율을 추정한다.</li>
+        <li>왈드, 윌슨, 정확(클로퍼-피어슨) 구간을 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통7 4.2절 근사 신뢰구간, 응통6 4.1절 이산분포.</li>
+      </ul>
+    </div>
+
+    <h3>범주형 자료의 기본 모형</h3>
+    <p>찬성/반대, 합격/불합격, 혈액형처럼 결과가 범주인 자료는 각 범주의 비율이 모수입니다. 범주가 둘이면 이항분포, 셋 이상이면 다항분포가 기본 모형입니다.</p>
+
+    <h3><span class="no">1.1.1</span>이항분포</h3>
+    <p>\(n\)번 독립 시행에서 성공 수 \(Y \sim B(n, \pi)\)이면 최대가능도 추정값 \(\hat\pi = y/n\), 표준오차 \(\sqrt{\pi(1-\pi)/n}\)입니다.</p>
+    <table class="tw">
+      <tr><th>구간</th><th>식</th><th>특징</th></tr>
+      <tr><td>왈드</td><td>\(\hat\pi \pm z\sqrt{\hat\pi(1-\hat\pi)/n}\)</td><td>간단, 작은 \(n\)과 0·1 근처에서 덮임률이 나쁨</td></tr>
+      <tr><td>윌슨(점수)</td><td>\(|\hat\pi - \pi| \le z\sqrt{\pi(1-\pi)/n}\)을 \(\pi\)에 대해 풂</td><td>대부분 상황에서 덮임률이 좋음</td></tr>
+      <tr><td>클로퍼-피어슨(정확)</td><td>이항 꼬리확률로 정의</td><td>항상 신뢰수준 이상(보수적)</td></tr>
+    </table>
+    <p>윌슨 구간의 가운데는 \(\frac{y + z^2/2}{n + z^2}\)으로, 95%이면 성공·실패에 2씩 더한 비율에 가깝습니다(아그레스티-쿨 구간의 아이디어).</p>
+
+    <h3><span class="no">1.1.2</span>다항분포</h3>
+    <p>범주 \(k\)개의 관측 수 \((n_1, \ldots, n_k)\)는 다항분포 \(P = \frac{n!}{\prod n_j!}\prod\pi_j^{n_j}\)를 따르고, 최대가능도 추정값은 \(\hat\pi_j = n_j/n\)입니다(응통1 5.3절 라그랑주 승수법). 각 \(\hat\pi_j\)는 주변적으로 이항입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>신약 시험 20명 중 18명이 반응했습니다. 왈드와 윌슨 95% 구간을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\hat\pi = 0.9\). 왈드: \(0.9 \pm 1.96\sqrt{0.09/20} = 0.9 \pm 0.131\), [0.769, 1.031] — 1을 넘어 말이 안 됩니다. 윌슨: R의 <code>prop.test(18, 20, correct = FALSE)$conf.int</code>는 [0.699, 0.972]로 [0, 1] 안이고 비대칭입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\hat\pi = y/n\), 다항은 \(n_j/n\).</li>
+        <li>왈드보다 윌슨 구간, 작은 표본은 정확 구간.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>아그레스티-쿨 근사: 성공·실패에 2씩 더한 \(\tilde\pi\)로 왈드 구간을 만듭니다. 예제에 적용하세요.
+          <details><summary>답</summary><p>\(\tilde\pi = 20/24 = 0.833\), \(\tilde n = 24\). \(0.833 \pm 1.96\sqrt{0.833\times0.167/24} = 0.833 \pm 0.149\), [0.684, 0.982].</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-04-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m3-rsa.js"]
+}
+-->
+<article class="card q-card" id="card-m3-rsa" data-kind="탐구" data-std="수학3-04-02">
+  <header class="card-head"><span class="no"></span><h2>손바닥만 한 RSA</h2><span class="kind">탐구 · 공개 키 암호의 계산</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>공개 키 \((n, e)\)로 잠근 메시지가 비밀 키 \(d\)로 정말 원래대로 돌아올까요? \(e\)를 아무 수로나 골라도 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>\(n = pq\), \(\varphi = (p-1)(q-1)\), \(\gcd(e, \varphi) = 1\), \(d = e^{-1} \bmod \varphi\). 암호화 \(c = m^e \bmod n\), 복호화 \(m = c^d \bmod n\) (<a href="04-02.html">4.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>p</span>
+          <select name="p" aria-label="소수 p"><option>11</option><option>13</option><option>17</option><option>19</option><option>23</option><option>29</option><option>31</option><option>37</option><option>41</option><option>43</option><option>47</option><option>53</option><option selected>61</option></select></label>
+        <label><span>q</span>
+          <select name="q" aria-label="소수 q"><option>11</option><option>13</option><option>17</option><option>19</option><option>23</option><option>29</option><option>31</option><option>37</option><option>41</option><option>43</option><option>47</option><option selected>53</option><option>61</option></select></label>
+        <label><span>e = <b data-show="e">17</b></span><input type="range" name="e" min="3" max="99" step="2" value="17" aria-label="공개 지수 e"></label>
+        <label><span>평문 m = <b data-show="m">65</b></span><input type="range" name="m" min="0" max="3000" step="1" value="65" aria-label="평문 m"></label>
+      </div>
+      <canvas aria-label="세 상자: 평문 m, 암호문 c, 복호 결과. 화살표에 지수 e와 d"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>처음 화면(\(p = 61\), \(q = 53\), \(e = 17\))은 예제 4.2.2입니다. \(d = 2753\), 평문 65 → 암호문 2790 → 복호 65.</li>
+        <li>평문을 아무 값으로 움직여도 복호 결과가 평문과 같습니다(정리 4.2.1).</li>
+        <li>\(e = 13\)으로 바꾸면 \(\varphi = 3120\)과 공약수 13이 있어 \(d\)가 없습니다. \(e\)는 \(\varphi\)와 서로소여야 합니다.</li>
+        <li>\(p = q\)로 두면 경고가 나옵니다. 같은 소수 두 개를 쓰면 \(n = p^2\)에서 \(\varphi\)가 \((p-1)^2\)이 아니어서 공식이 틀립니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>계산 속도</b><span>\(c^d\)의 \(d = 2753\)번 곱하기 대신, 지수를 이진법(\(2753 = 2048 + 512 + 128 + 64 + 1\))으로 쓰고 제곱을 되풀이해 곱셈 약 20번으로 계산합니다.</span></li>
+        <li><b>이 예의 약점</b><span>\(n = 3233\)은 손으로도 \(61\times53\)으로 쪼갤 수 있어 \(d\)가 드러납니다. 실제 RSA는 수백 자리 소수를 쓰고, 그 곱을 소인수분해하는 알려진 방법은 너무 느립니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"암호문을 \(e\)번째 거듭제곱근으로 되돌리면 된다"는 실수에서의 생각입니다. \(\bmod n\)에서 \(e\)제곱근을 구하는 쉬운 방법은 \(d\)를 아는 것뿐이고, \(d\)를 구하려면 \(\varphi(n)\), 곧 \(n\)의 소인수분해가 필요합니다.</p>
+    </section>
+  </div>
+</article>

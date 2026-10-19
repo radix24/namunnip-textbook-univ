@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-04-01",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e4-adder" data-kind="예제" data-std="전전4-04-01">
+  <header class="card-head"><span class="no"></span><h2>BCD 한 자리 덧셈기 설계</h2><span class="kind">예제 · 2진 가산기 + 보정 회로</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>BCD로 7 + 5를 4비트 2진 가산기에 넣으면 1100(12)이 나옵니다. BCD로는 "1 0010"(12)이어야 하는데, 무엇을 더하면 고쳐질까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>6(0110)을 더하면 됩니다. 4비트 2진수는 16에서, BCD 한 자리는 10에서 넘어가므로 그 차이 6을 보정합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">BCD 두 자리(각 0~9)와 아래에서 오는 올림 \(C_\text{in}\)을 더해 BCD 한 자리 합과 올림을 내는 회로를 4비트 2진 가산기 두 개와 게이트로 설계하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>첫째 가산기로 2진 합 \(K Z_3Z_2Z_1Z_0\)(0~19)를 구한다.</li>
+        <li>합이 9보다 크면 보정 신호 \(C_\text{out} = 1\)을 만든다.</li>
+        <li>\(C_\text{out} = 1\)이면 둘째 가산기로 0110을 더한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>합이 10 이상인 경우: K = 1(16~19)이거나, K = 0이면서 \(Z_3Z_2Z_1Z_0\)이 1010~1111. <span class="q-why">명세</span></li>
+        <li>후자를 카르노 맵으로: 1010~1111은 \(Z_3Z_1 + Z_3Z_2\). 따라서 \(C_\text{out} = K + Z_3Z_2 + Z_3Z_1\). <span class="q-why">3.1절</span></li>
+        <li>둘째 가산기 입력: \(Z_3Z_2Z_1Z_0 + 0C_\text{out}C_\text{out}0\). 둘째 가산기의 맨 위 올림은 버린다. <span class="q-why">보정</span></li>
+        <li>검산 7 + 5 + 0: Z = 1100, K = 0, \(Z_3Z_2 = 1\) → \(C_\text{out} = 1\). 1100 + 0110 = (1)0010 → 합 자리 2, 올림 1. "12". <span class="q-why">진리표 한 줄</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>계산기와 금융용 프로세서는 10진수를 정확히 다루려고 BCD 덧셈을 하드웨어로 갖습니다(0.1을 2진수로 정확히 쓸 수 없기 때문). 이 회로를 여러 자리 이으면 BCD 다자리 가산기가 됩니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>가장 큰 경우 9 + 9 + 1 = 19: Z = 0011, K = 1 → 보정 → 0011 + 0110 = 1001(9), 올림 1. "19". 맞습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>4 + 3 + 1을 이 회로에 넣으면 보정이 일어나나요?</p>
+      <details><summary>답</summary><p>합 8 = 1000, K = 0, \(Z_3Z_2 = Z_3Z_1 = 0\)이라 보정 없음. 결과 8, 올림 0.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>가감산기</h3>
+    <p class="q">가감산기에서 B의 각 비트에 XOR를 거는 이유는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>M = 1일 때만 B를 뒤집으려고<span class="why"><b>맞습니다.</b> \(B \oplus 0 = B\), \(B \oplus 1 = B'\). 여기에 \(C_0 = M\)으로 1을 더하면 2의 보수가 됩니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>오버플로를 판정하려고<span class="why"><b>오버플로는 \(C_n \oplus C_{n-1}\)로 따로 판정합니다.</b> B 쪽 XOR는 뺄셈을 위한 것입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>합 S를 만들려고<span class="why"><b>합의 XOR는 전가산기 안에 이미 있습니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

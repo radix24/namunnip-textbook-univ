@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-01-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-ch4-u01-practice" data-kind="연습" data-std="화학4-01-01 화학4-01-02">
+  <header class="card-head"><span class="no"></span><h2>필요한 수학 연습 문제</h2><span class="kind">문제 6 · 개념·계산·코드·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>\(A = \begin{pmatrix}1 &amp; 2\\ 0 &amp; 1\end{pmatrix}\), \(B = \begin{pmatrix}3 &amp; 0\\ 1 &amp; 2\end{pmatrix}\)일 때 AB와 BA를 구하시오. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(C_{ij}\) = A의 i번째 줄과 B의 j번째 열을 짝지어 곱한 뒤 더한 값.</p></details>
+        <details><summary>힌트 2</summary><p>AB의 (1,1) = 1×3 + 2×1.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>AB = [[5, 4], [1, 2]], BA = [[3, 6], [1, 4]]. 행렬 곱은 순서를 바꾸면 결과가 다릅니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">코드</span>1.1절의 <code>matmul</code>에 2×3 행렬과 2×3 행렬을 넣으면 어떻게 되는가? 왜 그 검사가 필요한가? <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>A의 열 수와 B의 행 수는?</p></details>
+        <details><summary>힌트 2</summary><p><code>assert</code>가 없으면 반복문은 어떻게 될까요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>A의 열 수 3과 B의 행 수 2가 달라 <code>assert</code>가 AssertionError를 냅니다. 검사가 없으면 k가 0~1만 돌아 A의 셋째 열을 조용히 무시한 틀린 결과를 내거나, 크기에 따라 IndexError가 납니다. 조용히 틀리는 것이 가장 위험하므로 크기를 먼저 검사합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>자료 (x, y) = (1, 2), (2, 3), (3, 5)와 모형 ŷ = a x(절편 없음)에서 MSE 손실의 a에 대한 기울기를 a = 1에서 구하시오. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(\partial L/\partial a = \frac2N\sum(\hat y_i - y_i)x_i\).</p></details>
+        <details><summary>힌트 2</summary><p>오차: −1, −1, −2.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(2/3)[(−1)(1) + (−1)(2) + (−2)(3)] = (2/3)(−9) = −6. 음수이므로 a를 늘려야 손실이 줄어듭니다(최적 a = Σxy/Σx² = 23/14 = 1.64).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>3번 문제에서 a = 1, η = 0.05로 경사 하강을 한 번 하면 a는? 이 걸음은 최적값을 넘어가는가? <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>a ← a − η × 기울기.</p></details>
+        <details><summary>힌트 2</summary><p>최적 a = 1.64.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>a = 1 − 0.05 × (−6) = 1.30. 최적 1.64를 넘지 않았습니다. 곡률 L'' = (2/3)Σx² = 9.33이므로 η &lt; 2/9.33 = 0.214면 수렴하고, η &gt; 1/9.33 = 0.107이면 최적값을 넘어갔다 돌아오며(진동하며) 다가갑니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>학습 중 손실이 한동안 줄다가 갑자기 nan(숫자 아님)이 되었다. 가능한 원인과 대처를 쓰시오. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>학습률이 한계를 넘으면 손실은 어떻게 되나요?</p></details>
+        <details><summary>힌트 2</summary><p>특성의 크기는 맞췄나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>학습률이 너무 커서 발산해 숫자가 넘쳐(inf) nan이 된 경우가 흔합니다. 학습률을 줄이고, 특성을 표준화하고, 기울기 크기를 제한(그래디언트 클리핑)합니다. 자료에 nan이나 0으로 나누는 계산이 있는지도 확인합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>한 학생이 "경사 하강법으로 구한 답이 최소제곱 공식의 답과 소수점 셋째 자리에서 달라서 코드가 틀렸다"고 했다. 평가하시오. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>경사 하강법은 몇 번 반복해야 정확히 같아지나요?</p></details>
+        <details><summary>힌트 2</summary><p>수치 미분으로 무엇을 검산할 수 있나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>꼭 틀린 것은 아닙니다. 경사 하강법은 반복할수록 최솟값에 다가가는 방법이라 유한 번 반복하면 작은 차이가 남습니다. 반복을 늘리거나 학습률을 조절해 차이가 줄어드는지 보고, 기울기 코드는 중심 차분으로 검산합니다. 차이가 반복을 늘려도 줄지 않으면 그때 코드를 의심합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

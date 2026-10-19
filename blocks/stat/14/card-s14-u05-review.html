@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통14-05-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s14-u05-review" data-kind="연습" data-std="응통14-05-01 응통14-05-02">
+  <header class="card-head"><span class="no"></span><h2>통계 패키지 사례 분석 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>실제 자료 분석 계획서에 들어가야 할 항목을 다섯 가지 이상 쓰세요. 자료를 보기 전에 정해야 하는 항목은 무엇인가요? <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>연구 질문, 자료, 주 결과 변수, 분석 방법, 결측 처리를 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>결과를 본 뒤 바꾸면 안 되는 것이 무엇인지 생각해 보세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 연구 질문과 가설, (2) 자료 출처와 포함·제외 기준, (3) 주 결과 변수와 주요 설명변수, (4) 주 분석 방법과 유의수준, (5) 결측값과 이상값 처리 규칙, (6) 부가 분석과 민감도 분석, (7) 표본 크기와 검정력 근거. 이 가운데 질문, 주 결과 변수, 주 분석 방법, 제외 기준은 자료를 보기 전에 정해야 결과에 따라 분석을 바꾸는 일을 막을 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>분석 프로젝트 폴더를 재현 가능하게 구성하는 방법을 쓰세요. 원자료와 정리된 자료를 어떻게 다루나요? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>폴더를 역할별로 나누고, 원자료는 손대지 않습니다.</p></details>
+        <details><summary>힌트 2</summary><p>스크립트를 순서대로 실행하면 모든 결과가 다시 나와야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>예: <code>data/raw</code>(받은 그대로, 읽기 전용), <code>data/clean</code>(스크립트로 만든 자료), <code>R/</code> 또는 <code>scripts/</code>(정리→분석→그림 순서의 스크립트), <code>output/</code>(그림, 표), <code>report.qmd</code>(보고서). 원자료는 절대 손으로 고치지 않고 모든 정리는 코드로 하며, 상대 경로와 <code>set.seed</code>, 패키지 버전 기록(<code>renv</code>)을 씁니다(응통3-06-02). 버전 관리(git)로 변경 이력을 남깁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span><code>ToothGrowth</code>를 분석해 용량과 투여 방법의 효과를 보고하려 합니다. 분석 단계와 R 코드의 뼈대를 쓰세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>두 요인(방법 2수준, 용량 3수준)과 교호작용이 있는 이원배치입니다.</p></details>
+        <details><summary>힌트 2</summary><p>먼저 그림으로 패턴을 봅니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>d &lt;- ToothGrowth; d$dose &lt;- factor(d$dose)
+with(d, interaction.plot(dose, supp, len))
+fit &lt;- aov(len ~ supp * dose, data = d)
+summary(fit)
+plot(fit, which = 1:2)
+TukeyHSD(fit, "dose")</pre><p>교호작용 그림에서 낮은 용량에서는 오렌지 주스가 길고 2 mg에서는 차이가 거의 없으므로, 교호작용이 유의하면 용량별로 방법의 효과를 보고합니다. 잔차 그림으로 가정을 점검합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>R Markdown 보고서를 동료에게 보냈더니 동료 컴퓨터에서 렌더링이 실패했습니다. 흔한 원인 세 가지와 예방법을 쓰세요. <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>경로, 패키지, 자료 파일을 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>숨은 작업 공간 상태도 원인이 됩니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 절대 경로 사용 → 프로젝트 기준 상대 경로나 <code>here</code>. (2) 설치되지 않았거나 버전이 다른 패키지 → <code>renv</code>로 버전 고정, 필요한 패키지 목록 명시. (3) 자료 파일 누락이나 작업 공간에만 있던 객체에 의존 → 자료를 함께 전달하고 새 R 세션에서 렌더링해 확인. 그 밖에 한글 인코딩(UTF-8로 저장)과 글꼴 문제도 흔합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>분석 결과 보고서의 "결과" 절에 통계 수치를 쓰는 형식의 예를 t 검정, 분산분석, 상관계수에 대해 하나씩 쓰세요. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>통계량, 자유도, p값, 효과 크기와 신뢰구간을 함께 씁니다.</p></details>
+        <details><summary>힌트 2</summary><p>수치는 앞선 문제들의 결과를 쓰세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>t 검정: "오렌지 주스 집단이 평균 3.70 길었다(웰치 t(55.3) = 1.92, p = 0.061, 차이의 95% 신뢰구간 [−0.17, 7.57])." 분산분석: "세 집단의 무게가 달랐다(F(2, 27) = 4.85, p = 0.016, \(\eta^2\) = 0.26)." 상관: "무게와 연비는 강한 음의 상관을 보였다(r = −0.87, n = 32)."</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>같은 자료와 코드로 다른 사람이 분석을 다시 했는데 결과의 소수 셋째 자리가 조금 달랐습니다. 원인이 될 수 있는 것을 쓰고, 이 정도 차이를 어떻게 판단할지 쓰세요. <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>난수, 패키지 버전, 수치 계산 방식의 차이를 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>결론이 바뀌는지가 중요합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>원인: (1) 난수 시드를 정하지 않았거나 R 버전에 따라 난수 생성 방식이 다름, (2) 패키지 버전에 따라 기본 설정이나 알고리즘이 바뀜, (3) 최적화의 수렴 기준과 부동소수점 계산 순서 차이. 결론이 바뀌지 않는 작은 수치 차이는 받아들일 수 있지만, 원인을 찾아 기록하고(시드, <code>sessionInfo()</code>) 무작위성이 있는 결과라면 반복 횟수를 늘려 흔들림을 줄입니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-03-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e8-hybridpi" data-kind="예제" data-std="전전8-03-02">
+  <header class="card-head"><span class="no"></span><h2>이미터 저항이 있는 증폭기를 T 모델로</h2><span class="kind">예제 · 저항 반사 규칙</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>공통 이미터 증폭기에서 이미터 저항 \(R_E\)의 일부(200 Ω)만 바이패스하지 않고 남겨 두면, 이득과 입력 저항은 각각 커질까요 작아질까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>이득은 작아지고 입력 저항은 커집니다. 대신 이득이 β와 \(I_C\)에 덜 민감해집니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">동작점 \(I_C = 1\) mA, β = 100, \(r_o\) 무시. 컬렉터 \(R_C = 5\) kΩ, 이미터에 신호에도 남는 \(R_e = 200\) Ω. (가) T 모델로 전압 이득 \(v_c/v_b\)를 구하고, (나) 베이스에서 본 입력 저항 \(R_{ib}\)를 구하라. (다) β가 200으로 바뀌면 각각 어떻게 되는가?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>이미터에 저항이 있으므로 T 모델: 베이스 전압 \(v_b\)가 \(r_e\)와 \(R_e\)의 직렬에 걸린다.</li>
+        <li>컬렉터 전류 \(\alpha i_e\)가 \(R_C\)에 흐른다.</li>
+        <li>입력 저항은 저항 반사 규칙 \((\beta + 1)(r_e + R_e)\).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(g_m = 40\) mA/V, \(r_e = \alpha/g_m = 0.990/40 = 24.75\) Ω. <span class="q-why">3.2.2</span></li>
+        <li>\(i_e = v_b/(r_e + R_e) = v_b/224.75\). \(v_c = -\alpha i_eR_C\). <span class="q-why">T 모델</span></li>
+        <li>\(A_v = -\frac{\alpha R_C}{r_e + R_e} = -\frac{0.990 \times 5000}{224.75} \approx -22.0\). <span class="q-why">대입</span></li>
+        <li>\(R_{ib} = (\beta + 1)(r_e + R_e) = 101 \times 224.75 \approx 22.7\) kΩ. <span class="q-why">저항 반사</span></li>
+        <li>β = 200: \(\alpha = 0.995\), \(r_e = 24.9\) Ω, \(A_v \approx -22.1\), \(R_{ib} \approx 201 \times 224.9 \approx 45.2\) kΩ. <span class="q-why">다시 계산</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>\(R_e\)가 없으면 이득은 \(-g_mR_C = -200\)이지만, \(g_m\)은 \(I_C\)에, 따라서 온도와 바이어스 편차에 그대로 따라 움직입니다. \(R_e\)를 남기면 이득이 약 \(-R_C/R_e = -25\)에 가까워져, 저항 비로 정해지는 안정한 이득이 됩니다(이미터 퇴화, emitter degeneration). 입력 저항도 \(r_\pi = 2.5\) kΩ에서 22.7 kΩ으로 커집니다. 이득을 내주고 안정성과 선형성을 얻는 거래입니다. 4단원과 전전13의 되먹임 증폭기에서 일반화됩니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>하이브리드 π로 풀어도 같아야 합니다. 베이스에서 \(v_b = i_br_\pi + (\beta + 1)i_bR_e\), \(r_\pi = 2.5\) kΩ: \(R_{ib} = 2.5 + 101 \times 0.2 = 22.7\) kΩ. 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 회로에서 \(I_C\)가 2 mA로 바뀌면 이득은?</p>
+      <details><summary>답</summary><p>\(r_e \approx 12.4\) Ω, \(A_v \approx -0.990 \times 5000/212.4 \approx -23.3\)(β = 100). \(R_e\)가 없을 때는 −200에서 −400으로 두 배가 되지만, 여기서는 약 6%만 변합니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>저항 반사</h3>
+    <p class="q">β = 100인 BJT의 이미터에 1 kΩ이 있다. 베이스에서 보면 이 저항은 얼마처럼 보이는가(\(r_e\) 무시)?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>1 kΩ<span class="why"><b>베이스 전류는 이미터 전류보다 훨씬 작습니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>101 kΩ<span class="why"><b>맞습니다.</b> \((\beta + 1)R_E\).</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>10 Ω<span class="why"><b>반대 방향입니다.</b> 베이스 쪽 저항을 이미터에서 보면 \(1/(\beta + 1)\)배로 작아 보입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>헤세 행렬로 다변수 극값을 판정하기 · 미분적분학 — QURI</title>
-  <meta name="description" content="미분적분학 5.2 헤세 행렬로 다변수 극값을 판정하기 — 성취기준: 헤세 행렬로 다변수 극값을 판정할 수 있다.">
+  <title>헤세 행렬로 극값 판정하기 · 미분적분학 — QURI</title>
+  <meta name="description" content="미분적분학 5.2 헤세 행렬로 극값 판정하기 — 성취기준: 헤세 행렬로 다변수 극값을 판정할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통1&quot;, &quot;title&quot;: &quot;5.2 헤세 행렬로 다변수 극값을 판정하기&quot;, &quot;sub&quot;: &quot;미분적분학&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통1&quot;, &quot;title&quot;: &quot;5.2 헤세 행렬로 극값 판정하기&quot;, &quot;sub&quot;: &quot;미분적분학&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,93 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통1-05-02" data-u="연세대 성균관대">
+  <section class="topic-hero u-hero has-text" data-sec="응통1-05-02" data-u="연세대 성균관대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">미분적분학</a><span class="mono">/</span><a href="05.html">5. 다변수 미분</a></div>
-    <h1><span class="sec-no mono">5.2</span>헤세 행렬로 다변수 극값을 판정하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통1-05-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통1-05-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대 · 성균관대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통1-05-02" aria-label="할 수 있음"><span class="t">헤세 행렬로 다변수 극값을 판정할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.2</span>헤세 행렬로 극값 판정하기</h1>
+    <p class="sec-std"><span class="mono">[응통1-05-02]</span> 헤세 행렬로 다변수 극값을 판정할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대 · 성균관대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>헤세 행렬</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s1-hessian"><span class="mono">본문</span><span>헤세 행렬로 극값 판정하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s1-hessian" data-kind="본문" data-std="응통1-05-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이계 편도함수로 헤세 행렬을 만든다.</li>
+        <li>임계점에서 극대, 극소, 안장점을 판정한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>편미분 (<a href="05-01.html">5.1절</a>), 행렬식 (응통2 02단원).</li>
+      </ul>
+    </div>
 
+    <h3>기울기가 0인 점은 꼭대기인가 골짜기인가</h3>
+    <p>일변수에서는 \(f''\)의 부호로 판정했습니다. 다변수에서는 방향마다 휘는 정도가 다를 수 있습니다. 한 방향으로는 오르고 다른 방향으로는 내리는 말안장 같은 점도 있습니다.</p>
+
+    <h3 id="s5-2-1"><span class="no">5.2.1</span>헤세 행렬</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 5.2.1</span>
+      <p>\(H = \left(\dfrac{\partial^2f}{\partial x_i\partial x_j}\right)\). 이계 편도함수가 연속이면 대칭 행렬이다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.2.2</span>
+      <p>\(\nabla f(\mathbf a) = \mathbf 0\)인 점에서 \(H\)가 양정치(모든 고유값 &gt; 0)이면 극소, 음정치(모든 고유값 &lt; 0)이면 극대, 고유값 부호가 섞이면 안장점.</p>
+    </div>
+    <p>이변수에서는 \(D = f_{xx}f_{yy} - f_{xy}^2\)(헤세 행렬식)로 판정합니다. \(D &gt; 0\)이고 \(f_{xx} &lt; 0\)이면 극대, \(D &gt; 0\)이고 \(f_{xx} &gt; 0\)이면 극소, \(D &lt; 0\)이면 안장점, \(D = 0\)이면 판정 불가.</p>
+    <p>통계에서는 로그가능도의 헤세 행렬에 −를 붙인 것이 관측 정보량이고, 그 역행렬이 추정량 공분산의 근사입니다(응통7 3.2절).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.3</span>
+      <p>\(f(x, y) = x^2 + xy + y^2 - 3x\)의 임계점과 종류는?</p>
+    </div>
+    <p><i>풀이.</i> \(f_x = 2x + y - 3 = 0\), \(f_y = x + 2y = 0\). 풀면 \((2, -1)\). \(f_{xx} = 2\), \(f_{yy} = 2\), \(f_{xy} = 1\), \(D = 4 - 1 = 3 &gt; 0\), \(f_{xx} &gt; 0\)이므로 극소(값 −3).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>헤세 행렬 = 이계 편도함수의 대칭 행렬.</li>
+        <li>양정치 → 극소, 음정치 → 극대, 부정 → 안장점.</li>
+        <li>이변수: \(D = f_{xx}f_{yy} - f_{xy}^2\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-2-2"><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x, y) = x^2 - y^2\)의 원점은?
+          <details><summary>답</summary><p>\(D = 2 \cdot (-2) - 0 = -4 &lt; 0\), 안장점.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s1-hessian" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통1-05-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통1-05-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대 · 성균관대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통1-05-02" aria-label="할 수 있음"><span class="t">헤세 행렬로 다변수 극값을 판정할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/1/02.html"><span class="mono">대단원 2</span><span><b>미분과 응용</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-01.html">← 5.1 편미분과 기울기 벡터를 계산하기</a></span>
-        <span><a href="05-03.html">5.3 Lagrange 승수법으로 제약 최적화 문제를 풀기 →</a></span>
+        <span><a href="05-01.html">← 5.1 편미분과 기울기 벡터</a></span>
+        <span><a href="05-03.html">5.3 라그랑주 승수법 →</a></span>
       </nav>
     </div>
   </div>

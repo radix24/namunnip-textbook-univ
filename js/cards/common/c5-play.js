@@ -62,4 +62,31 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 3. 결합 쌍극자를 더해 분자의 극성 구하기 (09-02) */
+  (() => {
+    const S = QSim.card("lab-c5-dipole"); if (!S) return;
+    const cv = S.$("canvas");
+    const PRE = { h2o: [1.5, 104.5, "H₂O (굽은형)", 1], co2: [2.3, 180, "CO₂ (직선형)", -1], so2: [1.6, 119, "SO₂ (굽은형)", -1], free: [null, null, "직접 정하기", 1] };
+    function draw() {
+      const c = C(), pre = PRE[S.val("m")];
+      const mu = pre[0] ?? S.val("mu"), ang = pre[1] ?? S.val("ang");
+      const v = QSim.view(cv, 0.62), F = QSim.frame(v, { x0: -3, x1: 3, y0: -2.6, y1: 2.6, equal: true }); F.axes({ noGrid: true });
+      const h = ((ang / 2) * Math.PI) / 180, L = 1.6;
+      /* 가운데 원자는 원점, 바깥 원자 두 개는 아래쪽으로 벌어짐. 결합 쌍극자는 전기음성도가 큰 쪽을 향한다:
+         H₂O는 바깥 → 가운데(O), CO₂·SO₂는 가운데 → 바깥(O) */
+      const A = [-L * Math.sin(h), -L * Math.cos(h)], B = [L * Math.sin(h), -L * Math.cos(h)];
+      F.path([A, [0, 0], B], c.ink3, 3);
+      F.dot(0, 0, c.warn, 14); F.dot(A[0], A[1], c.soft, 10); F.dot(B[0], B[1], c.soft, 10);
+      const s = 0.55;
+      const sg = pre[3], dA = [(-A[0] / L) * mu * s * sg, (-A[1] / L) * mu * s * sg], dB = [(-B[0] / L) * mu * s * sg, (-B[1] / L) * mu * s * sg];
+      const st = (P, d) => (sg > 0 ? P : [P[0] * 0.25, P[1] * 0.25]);
+      F.arrow(...st(A, dA), dA[0], dA[1], c.main); F.arrow(...st(B, dB), dB[0], dB[1], c.main);
+      const R = [dA[0] + dB[0], dA[1] + dB[1]], tot = (2 * mu * Math.cos(h));
+      if (Math.abs(tot) > 1e-6) F.arrow(0, 0.2, R[0], R[1], c.acc, "합");
+      S.out(`${pre[2]}: 결합 쌍극자 ${mu.toFixed(2)} D 두 개, 결합각 ${ang.toFixed(1)}°\n` +
+        `이등분선 방향 성분 ${mu.toFixed(2)} × cos(${(ang / 2).toFixed(2)}°) = ${(mu * Math.cos(h)).toFixed(3)} D씩 더해지고, 옆 성분은 서로 지워짐\n` +
+        `분자의 쌍극자 모멘트 = 2μ cos(θ/2) = ${Math.abs(tot) < 5e-4 ? "0 (무극성)" : Math.abs(tot).toFixed(2) + " D (극성)"}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

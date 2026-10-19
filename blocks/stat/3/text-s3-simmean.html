@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-simmean" data-kind="본문" data-std="응통3-04-02">
+  <header class="card-head"><span class="no"></span><h2>모의실험으로 표본평균의 분포 확인하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>replicate</code>로 표본평균의 분포를 만든다.</li>
+        <li>중심극한정리와 표준오차 공식을 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>분포 함수 (<a href="04-01.html">4.1절</a>), apply 계열 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>이론을 눈으로</h3>
+    <p>"표본평균은 정규분포에 가깝고 표준오차는 \(\sigma/\sqrt n\)"이라는 말을 컴퓨터로 직접 확인해 봅니다. 응통5 3.1절의 실습 카드를 코드로 재현하는 것입니다.</p>
+
+    <h3><span class="no">4.2.1</span>코드</h3>
+    <pre><code>set.seed(2026)
+n &lt;- 30; B &lt;- 5000
+m &lt;- replicate(B, mean(rexp(n, rate = 1)))   # 지수분포(평균 1, 표준편차 1)
+mean(m); sd(m); 1 / sqrt(n)                  # 약 1, 약 0.18, 0.1826
+hist(m, breaks = 50, freq = FALSE, main = "표본평균의 분포 (n = 30)")
+curve(dnorm(x, 1, 1 / sqrt(n)), add = TRUE, col = "red", lwd = 2)
+qqnorm(m); qqline(m)                          # 정규성 확인</code></pre>
+    <p><code>freq = FALSE</code>로 히스토그램을 밀도 척도로 그려야 정규 곡선과 겹쳐 비교할 수 있습니다. Q-Q 그림의 위쪽 끝이 직선 위로 조금 휘면 아직 오른쪽 꼬리가 남아 있다는 뜻입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>\(n\)을 5, 30, 100으로 바꾸며 표본평균들의 치우침(왜도)을 구하는 코드를 쓰세요.</p>
+    </div>
+    <pre><code>skew &lt;- function(x) mean(((x - mean(x)) / sd(x))^3)
+sapply(c(5, 30, 100), function(n) skew(replicate(5000, mean(rexp(n)))))
+# 이론값 2/sqrt(n): 0.89, 0.37, 0.20 근처</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>replicate(B, mean(r분포(n)))</code>로 표본분포를 만듦.</li>
+        <li>히스토그램(밀도 척도) + 이론 곡선, Q-Q 그림으로 비교.</li>
+        <li><code>set.seed</code>로 재현 가능하게.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>코시 분포(<code>rcauchy</code>)로 같은 실험을 하면 어떻게 되나요?
+          <details><summary>답</summary><p>\(n\)을 키워도 표본평균의 퍼짐이 줄지 않습니다. 코시 분포는 평균이 없어 중심극한정리가 성립하지 않기 때문입니다(응통6 7.2절).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
