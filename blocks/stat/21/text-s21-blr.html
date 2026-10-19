@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s21-blr" data-kind="본문" data-std="응통21-06-02">
+  <header class="card-head"><span class="no"></span><h2>베이즈 선형회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>계수에 정규 사전을 둔 베이즈 회귀의 사후분포를 안다.</li>
+        <li>능형 회귀와의 관계와 사후 예측분포를 이해한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>깁스 표집 (<a href="06-01.html">6.1절</a>), 응통10 회귀분석과 6.3절 능형 회귀.</li>
+      </ul>
+    </div>
+
+    <h3>회귀계수에 대한 믿음</h3>
+    <p>회귀계수에도 사전분포를 줄 수 있습니다. 그러면 결과로 계수마다 사후분포를 얻어 "가격 탄력성이 −1보다 작을 확률" 같은 질문에 답하고, 예측에 모수의 불확실성까지 반영할 수 있습니다.</p>
+
+    <h3><span class="no">6.2.1</span>사후분포</h3>
+    <p>\(\mathbf y \mid \boldsymbol\beta, \sigma^2 \sim N(X\boldsymbol\beta, \sigma^2I)\), 사전 \(\boldsymbol\beta \sim N(\mathbf 0, \sigma^2\lambda^{-1}I)\)(\(\sigma^2\)을 안다고 두면).</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 6.2.1</span>
+      <p>\(\boldsymbol\beta \mid \mathbf y \sim N\left((X^\top X + \lambda I)^{-1}X^\top\mathbf y,\ \sigma^2(X^\top X + \lambda I)^{-1}\right)\).</p>
+    </div>
+    <p>사후 평균은 능형 회귀 추정량(응통10 6.3절)과 같습니다. 능형 회귀의 벌점은 "계수가 0 근처라는 사전 믿음"으로 해석됩니다. 라쏘는 라플라스(이중지수) 사전의 사후 최빈값입니다. \(\lambda \to 0\)(평평한 사전)이면 최소제곱과 같아집니다. \(\sigma^2\)도 모르면 역감마 사전을 두고 깁스 표집(6.1절과 같은 구조)으로 계산합니다.</p>
+
+    <h3><span class="no">6.2.2</span>사후 예측</h3>
+    <p>새 \(\mathbf x_0\)에서의 예측분포 \(p(y_0 \mid \mathbf y) = \int p(y_0 \mid \boldsymbol\beta)p(\boldsymbol\beta \mid \mathbf y)\,d\boldsymbol\beta\)는 \(N(\mathbf x_0^\top\hat{\boldsymbol\beta}, \sigma^2[1 + \mathbf x_0^\top(X^\top X + \lambda I)^{-1}\mathbf x_0])\)로, 응통10 1.3절 예측구간과 같은 구조입니다. MCMC 표본이 있으면 표본마다 \(y_0\)를 뽑아 분포를 얻습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>설명변수 하나(표준화, \(\sum x_i^2 = n = 20\)), \(\sum x_iy_i = 30\), \(\sigma^2 = 4\), \(\lambda = 5\)일 때 기울기의 사후 평균과 표준편차는? 최소제곱과 비교하세요(절편 없음).</p>
+    </div>
+    <p><i>풀이.</i> 사후 평균 \(30/(20 + 5) = 1.2\), 분산 \(4/25 = 0.16\), 표준편차 0.4. 최소제곱 \(30/20 = 1.5\), 표준오차 \(\sqrt{4/20} = 0.447\). 사전이 계수를 0 쪽으로 당기고 불확실성을 줄였습니다. \(P(\beta &gt; 0 \mid \mathbf y) = \Phi(1.2/0.4) = 0.9987\).</p>
+    <pre><code># rstanarm::stan_glm(y ~ x, data = d, prior = normal(0, 1)) 같은 패키지로 MCMC 적합</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정규 사전 → 정규 사후, 평균 = 능형 추정량.</li>
+        <li>벌점 회귀 = 사전분포의 사후 최빈값.</li>
+        <li>사후 예측분포로 불확실성을 반영한 예측.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(\lambda = 0\)이면 사후분포는?
+          <details><summary>답</summary><p>\(N(1.5, 0.2)\). 최소제곱 추정과 그 분산과 같습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

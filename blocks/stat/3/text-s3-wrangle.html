@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-wrangle" data-kind="본문" data-std="응통3-02-03">
+  <header class="card-head"><span class="no"></span><h2>필터, 정렬, 그룹 요약, 결합</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>행 고르기, 열 고르기, 정렬, 새 변수 만들기, 그룹 요약을 한다.</li>
+        <li>두 표를 열쇠 변수로 결합한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>자료 정리 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>다섯 가지 동사</h3>
+    <p>자료 정리의 대부분은 다섯 동작의 조합입니다. 고르기(행), 고르기(열), 정렬, 변수 만들기, 요약. dplyr 패키지는 이것을 동사 이름의 함수로 제공하고, 파이프 <code>|&gt;</code>로 이어 씁니다.</p>
+
+    <h3><span class="no">2.3.1</span>기본 R과 dplyr</h3>
+    <table class="tw">
+      <tr><th>동작</th><th>기본 R</th><th>dplyr</th></tr>
+      <tr><td>행 고르기</td><td><code>d[d$cyl == 4, ]</code></td><td><code>filter(d, cyl == 4)</code></td></tr>
+      <tr><td>열 고르기</td><td><code>d[, c("mpg", "wt")]</code></td><td><code>select(d, mpg, wt)</code></td></tr>
+      <tr><td>정렬</td><td><code>d[order(-d$mpg), ]</code></td><td><code>arrange(d, desc(mpg))</code></td></tr>
+      <tr><td>변수 만들기</td><td><code>d$kpl &lt;- d$mpg * 0.425</code></td><td><code>mutate(d, kpl = mpg * 0.425)</code></td></tr>
+      <tr><td>그룹 요약</td><td><code>aggregate(mpg ~ cyl, d, mean)</code></td><td><code>d |&gt; group_by(cyl) |&gt; summarise(m = mean(mpg), n = n())</code></td></tr>
+    </table>
+    <p><code>|&gt;</code>(R 4.1 이상)는 왼쪽 결과를 오른쪽 함수의 첫 인수로 넘깁니다. "자료를 → 거르고 → 묶고 → 요약한다"처럼 읽힙니다.</p>
+
+    <h3><span class="no">2.3.2</span>결합</h3>
+    <pre><code>sales &lt;- data.frame(store = c(1, 2, 3, 4), amount = c(120, 80, 150, 60))
+info  &lt;- data.frame(store = c(1, 2, 3, 5), region = c("서울", "부산", "서울", "대구"))
+merge(sales, info, by = "store")                 # 공통 열쇠만: 1, 2, 3
+merge(sales, info, by = "store", all.x = TRUE)   # sales 기준: 4번은 region NA
+# dplyr: inner_join(sales, info, by = "store"), left_join(...)</code></pre>
+    <p>결합 뒤에는 행 수가 예상과 같은지 꼭 확인합니다. 열쇠가 중복되면 행이 불어납니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p><code>mtcars</code>에서 기통 수별 대수, 평균 연비, 평균 마력을 연비 순으로 구하세요.</p>
+    </div>
+    <pre><code>library(dplyr)
+mtcars |&gt; group_by(cyl) |&gt;
+  summarise(n = n(), mpg = mean(mpg), hp = mean(hp)) |&gt;
+  arrange(desc(mpg))
+# 4기통 11대 26.7 82.6 / 6기통 7대 19.7 122 / 8기통 14대 15.1 209</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>filter, select, arrange, mutate, group_by + summarise.</li>
+        <li>파이프로 단계를 이어 읽기 쉽게.</li>
+        <li>결합(merge, join) 뒤 행 수 확인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>기본 R로 예제의 결과를 만드세요.
+          <details><summary>답</summary><p><code>a &lt;- aggregate(cbind(mpg, hp) ~ cyl, mtcars, mean); a$n &lt;- table(mtcars$cyl); a[order(-a$mpg), ]</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

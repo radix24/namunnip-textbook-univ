@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-diagnose" data-kind="본문" data-std="응통20-04-02">
+  <header class="card-head"><span class="no"></span><h2>잔차 자기상관 검정으로 진단하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>적합한 모형의 잔차가 백색잡음인지 그림과 융-박스 검정으로 점검한다.</li>
+        <li>진단 결과로 모형을 고친다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>ARIMA 적합 (<a href="04-01.html">4.1절</a>), 표본 ACF (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>모형이 의존 구조를 다 잡았나</h3>
+    <p>좋은 시계열 모형은 자료의 의존성을 모두 설명해, 남은 잔차가 예측할 수 없는 백색잡음이어야 합니다. 잔차에 자기상관이 남아 있으면 그만큼 예측을 개선할 여지가 있다는 뜻입니다.</p>
+
+    <h3><span class="no">4.2.1</span>점검 항목</h3>
+    <ul>
+      <li>잔차 시계열 그림: 추세, 분산 변화, 이상점.</li>
+      <li>잔차 ACF: 막대가 \(\pm2/\sqrt n\) 안에.</li>
+      <li>잔차의 정규 Q-Q 그림: 예측구간이 정규 가정에 기대므로.</li>
+      <li>융-박스 검정: 여러 시차의 자기상관을 한꺼번에.</li>
+    </ul>
+    <div class="tb-env thm">
+      <span class="lb">결과 4.2.1 (융-박스)</span>
+      <p>\(Q = n(n+2)\sum_{h=1}^{H}\dfrac{\hat\rho_e(h)^2}{n-h}\)는 잔차가 백색잡음이면 근사적으로 \(\chi^2_{H - p - q}\)를 따른다.</p>
+    </div>
+    <p>p값이 작으면 잔차에 자기상관이 남은 것입니다. 남은 자기상관의 시차를 보고 항을 추가합니다(예: 시차 12의 막대가 크면 계절 항). \(H\)는 보통 10~20(계절 자료는 \(2s\)).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>4.1절의 <code>lh</code> AR(1) 모형을 진단하세요.</p>
+    </div>
+    <pre><code>fit &lt;- arima(lh, order = c(1, 0, 0))
+tsdiag(fit)                                         # 잔차, 잔차 ACF, 융-박스 p값
+Box.test(residuals(fit), lag = 10, type = "Ljung-Box", fitdf = 1)</code></pre>
+    <p>융-박스 p값이 0.41로 커서 잔차에 남은 자기상관의 증거가 없습니다. AR(1)로 충분하다고 봅니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>잔차는 백색잡음이어야 함.</li>
+        <li>잔차 그림, ACF, Q-Q, 융-박스(자유도 \(H - p - q\)).</li>
+        <li>남은 시차에 맞춰 모형을 고침.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>ARMA(1,1) 잔차로 \(H = 12\)인 융-박스 검정을 하면 자유도는?
+          <details><summary>답</summary><p>\(12 - 1 - 1 = 10\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

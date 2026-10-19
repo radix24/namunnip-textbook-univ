@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-ggplot" data-kind="본문" data-std="응통3-03-02">
+  <header class="card-head"><span class="no"></span><h2>문법 기반 그래픽(ggplot2)</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자료, 대응(aes), 기하 객체(geom)로 그래프를 쌓는다.</li>
+        <li>색, 패널, 평활선으로 다변수 그래프를 그린다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>기본 그래프 (<a href="03-01.html">3.1절</a>), 긴 형식 (<a href="02-04.html">2.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>그래프를 문장처럼 조립하기</h3>
+    <p>ggplot2는 "이 자료의 이 변수를 x에, 저 변수를 색에 대응시켜 점으로 그린다"처럼 그래프를 요소로 쌓아 만듭니다. 처음에는 길어 보이지만, 그래프를 바꾸고 확장하기가 훨씬 쉽습니다.</p>
+
+    <h3><span class="no">3.2.1</span>구조</h3>
+    <pre><code>library(ggplot2)
+ggplot(data = mtcars, aes(x = wt, y = mpg)) +   # 자료와 대응
+  geom_point() +                                # 기하 객체: 점
+  labs(x = "무게 (천 lb)", y = "연비 (mpg)")</code></pre>
+    <table class="tw">
+      <tr><th>요소</th><th>예</th></tr>
+      <tr><td>aes(대응)</td><td><code>x, y, colour, fill, size, shape, group</code></td></tr>
+      <tr><td>geom</td><td><code>geom_point, geom_line, geom_histogram, geom_boxplot, geom_smooth, geom_col</code></td></tr>
+      <tr><td>facet</td><td><code>facet_wrap(~ g)</code>, <code>facet_grid(r ~ c)</code></td></tr>
+      <tr><td>scale, theme</td><td><code>scale_y_log10()</code>, <code>theme_minimal()</code></td></tr>
+    </table>
+    <p>aes 안에 쓰면 변수에 대응하고(<code>colour = factor(cyl)</code>), 밖에 쓰면 고정값입니다(<code>colour = "red"</code>).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p><code>mtcars</code>에서 무게-연비 산점도를 기통별 색으로, 변속기별 패널로, 직선 평활선과 함께 그리세요.</p>
+    </div>
+    <pre><code>ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2) +
+  geom_smooth(aes(group = 1), method = "lm", se = TRUE, colour = "black") +
+  facet_wrap(~ am, labeller = label_both) +
+  labs(x = "무게 (천 lb)", y = "연비 (mpg)", colour = "기통") +
+  theme_minimal()
+ggsave("fig/mpg_wt.png", width = 7, height = 4, dpi = 200)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>ggplot(자료, aes(...)) + geom_*()</code>로 쌓기.</li>
+        <li>aes 안 = 변수 대응, 밖 = 고정값.</li>
+        <li>facet으로 패널, geom_smooth로 추세, ggsave로 저장.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2.4절의 긴 형식 점수 자료로 학생별 월 추이 선 그래프를 그리는 코드를 쓰세요.
+          <details><summary>답</summary><p><code>ggplot(long, aes(month, score, group = id, colour = factor(id))) + geom_line() + geom_point()</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

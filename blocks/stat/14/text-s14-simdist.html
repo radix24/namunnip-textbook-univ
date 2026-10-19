@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통14-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s14-simdist" data-kind="본문" data-std="응통14-01-02">
+  <header class="card-head"><span class="no"></span><h2>모의실험으로 통계량의 표본분포 확인하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>R로 표본분포를 모의실험하는 기본 틀을 쓴다.</li>
+        <li>이론 결과(표준오차, 정규 근사)를 모의실험으로 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통5 3.1절 표본분포, 응통3 04단원.</li>
+      </ul>
+    </div>
+
+    <h3>이론을 실험으로 확인하기</h3>
+    <p>표본분포는 "표본을 되풀이해 뽑으면"이라는 상상 위에 서 있습니다. 컴퓨터로 그 상상을 실제로 해 볼 수 있습니다. 이론이 맞는지, 근사가 언제 깨지는지 직접 확인하는 습관은 응용 통계가의 기본기입니다.</p>
+
+    <h3><span class="no">1.2.1</span>기본 틀</h3>
+    <pre><code>set.seed(1)
+B &lt;- 10000; n &lt;- 20
+stat &lt;- replicate(B, {
+  x &lt;- rexp(n, rate = 1)        # 1. 모집단에서 표본 생성
+  median(x)                     # 2. 통계량 계산
+})
+mean(stat); sd(stat)            # 3. 표본분포 요약
+hist(stat, breaks = 50)</code></pre>
+    <p>세 단계(생성 → 계산 → 요약)만 바꾸면 거의 모든 통계량에 쓸 수 있습니다. 반복 수 \(B\)가 클수록 모의실험 오차가 작아집니다. 비율을 추정한다면 그 표준오차는 \(\sqrt{p(1-p)/B}\)로, \(B = 10000\)이면 약 ±0.005입니다.</p>
+
+    <h3><span class="no">1.2.2</span>이론과 비교하기</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>지수분포(평균 1) 표본 20개의 중앙값의 표준오차를 모의실험으로 구하고, 큰 표본 근사 \(\frac{1}{2f(m)\sqrt n}\)과 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> 모집단 중앙값 \(m = \ln 2\), \(f(m) = e^{-\ln2} = 0.5\). 근사 표준오차 \(1/(2 \times 0.5 \times \sqrt{20}) = 0.224\). 위 코드의 <code>sd(stat)</code>은 0.222로 거의 같습니다. 평균은 약 0.72로 \(\ln2 = 0.693\)보다 조금 큰데, 표본 중앙값이 작은 표본에서 약간 치우치기 때문입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>생성 → 계산 → 요약을 <code>replicate</code>로.</li>
+        <li><code>set.seed</code>로 재현 가능하게.</li>
+        <li>이론값과 비교해 근사의 질을 확인합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.3</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정규 표본 \(n = 10\)에서 \(s^2\)의 표본분포를 모의실험으로 그리고 \(\sigma^2\chi^2_9/9\)와 겹쳐 그리세요.
+          <details><summary>답</summary><p><code>s2 &lt;- replicate(1e4, var(rnorm(10))); hist(s2, freq = FALSE, 50); curve(9 * dchisq(9 * x, 9), add = TRUE)</code>. 오른쪽으로 치우친 모양이 잘 맞습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
