@@ -887,7 +887,7 @@ def write_pages(depts, blocks, sidx, links):
                         return m.group(0)
                     return ", ".join(f'<a href="{rel}c/{by_code[p][0]["id"]}/{num(p)}/">{esc(by_code[p][1]["name"])}</a>' for p in parts)
                 return re.sub(r"([가-힣]+?)(\d+(?:·\d+)*)(?!\d)", rep, esc(text))
-            nexts = [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))]
+            nexts = next_courses(c, [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))])
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
                     ("개설 대학", c["unisT"] or " · ".join(c["unis"])), ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
@@ -924,6 +924,22 @@ def write_pages(depts, blocks, sidx, links):
             print(f"경고: 없는 절에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
     print(f"문제은행: 문제 {n_bank[0]} · 과목 {n_bank[1]}")
     return n_pages, n_cards
+
+
+def terms_of(c):
+    """요람 배치 학기를 0부터 센 번호로: 1학년 1학기 = 0, 1학년 2학기 = 1, … ("1·2"는 두 학기 모두)"""
+    return {(c["y"] - 1) * 2 + int(s) - 1 for s in re.findall(r"[12]", str(c.get("sem", ""))) or ["1"]}
+
+
+def next_courses(c, cands):
+    """이어지는 과목은 로드맵의 바로 다음 학기만 보인다. 다음 학기에 없으면 그 뒤 가장 가까운 학기의 과목.
+    공통 기초 뒤에는 2학년 과목부터 잇는다. cands는 (학과, 과목) 쌍"""
+    base = min(terms_of(c))
+    later = [(dd, x) for dd, x in cands if (c["dept"] != "common" or x["y"] >= 2) and min(terms_of(x)) > base]
+    if not later:
+        return []
+    near = min(min(terms_of(x)) for _, x in later)
+    return [(dd, x) for dd, x in later if min(terms_of(x)) == near]
 
 
 OFFERED = SRC / "univ-offered.json"   # 연세대학교 수강편람에서 모은 학정번호별 개설 학기 {"terms": [...], "codes": {"MAT1001": ["2023-1", …]}}
