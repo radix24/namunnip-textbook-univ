@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계21-06-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m21-em.js"]
+}
+-->
+<article class="card q-card" id="lab-me-laplace" data-kind="실습" data-std="기계21-06-01">
+  <header class="card-head"><span class="no"></span><h2>전위 분포를 반복법으로 풀기: Jacobi, Gauss-Seidel, SOR</h2><span class="kind">실습 · Laplace 방정식 · 5점 공식 · 수렴 속도</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>정사각 상자(20 × 20 격자)의 윗변이 100 V, 나머지 변이 0 V입니다. 처음에는 안쪽 전위를 모두 0으로 두고, 각 절점을 네 이웃의 평균으로 바꾸는 일을 반복합니다. 색은 전위(파랑 0 V → 빨강 100 V)입니다. 방법과 반복 횟수를 바꾸며 얼마나 빨리 정답에 다가가는지 비교하세요.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="m" aria-label="반복 방법"><option value="gs">Gauss-Seidel</option><option value="jacobi">Jacobi</option><option value="sor">SOR</option></select></label>
+        <label><span>반복 = <b data-show="it" data-fix="0">50</b>회</span><input type="range" name="it" min="1" max="600" step="1" value="50" aria-label="반복 횟수"></label>
+        <label><span>모양</span><select name="geo" aria-label="전극 배치"><option value="top">윗변 전극만</option><option value="elec">가운데 전극 추가</option></select></label>
+      </div>
+      <canvas aria-label="격자 위의 전위 분포"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>Gauss-Seidel, 50회 (기본값)</b><span>판 중심 전위가 11.92 V로, 정확한 값 25 V의 절반에도 못 미칩니다. 윗변의 정보가 한 번 반복에 한두 칸씩만 퍼지기 때문입니다.</span></li>
+        <li><b>세 방법을 50회로 비교</b><span>Jacobi 4.42 V, Gauss-Seidel 11.92 V, SOR 25.00 V. 새로 구한 값을 바로 쓰는 Gauss-Seidel이 Jacobi보다 약 2배 빠르고, 변화량을 1.73배로 과감히 키우는 SOR이 훨씬 빠릅니다.</span></li>
+        <li><b>수렴까지 반복 수</b><span>최대 변화가 0.001 V 아래로 내려가려면 Jacobi 약 500회, Gauss-Seidel 약 285회, SOR 약 47회가 걸립니다. 격자가 촘촘할수록 이 차이가 더 벌어집니다.</span></li>
+        <li><b>가운데 전극 추가 (SOR, 600회)</b><span>가운데에 50 V 도체가 놓이면 그 주변 등전위선이 전극 모양을 따라 휩니다. 점 P의 전위는 전극이 없을 때 53.98 V에서 62.67 V로 오릅니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>정전 액추에이터, 센서 전극, 고전압 절연 설계, 플라즈마 추진기의 가속 격자가 이런 전위 계산으로 설계됩니다. 같은 식이 정상 열전도(<a href="../16/07-01.html">공학수치해석 7.1절</a>)와 이상 유동의 퍼텐셜에도 쓰이므로, 한 번 짠 풀이 프로그램을 여러 분야에 그대로 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"반복이 멈춘 듯 보이면 수렴했다."</b> 한 번 반복의 변화가 작아도 정답에서 멀 수 있습니다(Gauss-Seidel 수백 회 근처). 변화량 기준을 충분히 작게 하고, 격자를 바꿔 결과도 확인합니다.</li>
+        <li><b>"SOR의 ω는 클수록 빠르다."</b> 최적값(여기서 1.73)을 넘어 2에 가까우면 오히려 느려지고, 2 이상이면 발산합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
