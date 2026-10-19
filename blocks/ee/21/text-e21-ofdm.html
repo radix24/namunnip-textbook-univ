@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전21-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e21-ofdm" data-kind="본문" data-std="전전21-06-03">
+  <header class="card-head"><span class="no"></span><h2>OFDM의 부반송파와 순환 전치</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>넓은 대역을 많은 좁은 부반송파로 나누는 OFDM의 구조를 안다.</li>
+        <li>부반송파 간격, 기호 길이, 순환 전치 오버헤드를 계산한다.</li>
+        <li>다중 경로 지연 확산을 순환 전치로 견디는 원리를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>다중화 (<a href="../12/03.html">전전12 3단원</a>), FFT (<a href="../6/05.html">전전6 5단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>좁게 나누고 앞에 붙이기</h3>
+    <p>대역 B를 N개 부반송파로 나누면 간격 Δf = B/N, 기호 길이 T = 1/Δf입니다. 부반송파들이 서로 직교해 겹쳐도 분리되고(IFFT/FFT로 구현), 기호 앞에 끝부분을 복사한 순환 전치(CP)를 붙이면 CP보다 짧은 다중 경로 지연은 기호 사이 간섭을 만들지 않습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>Wi-Fi(802.11a): 20 MHz, 64개 부반송파, CP 0.8 μs. 부반송파 간격, 기호 길이, CP 오버헤드, 견디는 경로 차 거리는?</p>
+    </div>
+    <p><i>풀이.</i> Δf = 312.5 kHz, T = 3.2 μs, CP 포함 4 μs → 오버헤드 20%. 0.8 μs × 3×10⁸ = 240 m의 경로 차까지 견딥니다. 실내 반사(수십 m)에 충분합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "부반송파가 겹치면 간섭한다": 직교라 정확한 주파수에서 표본화하면 분리됩니다. (2) "CP는 공짜": 그만큼 시간과 전력을 쓰는 오버헤드입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Δf = B/N, T = 1/Δf.</li>
+        <li>CP ≥ 지연 확산 → ISI 없음, 오버헤드 CP/(T + CP).</li>
+        <li>예: 312.5 kHz, 3.2 μs, 20%, 240 m.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>10 MHz, 1024개 부반송파의 간격은?
+          <details><summary>답</summary><p>약 9.77 kHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>그 기호 길이는?
+          <details><summary>답</summary><p>102.4 μs.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>주파수 오프셋에 OFDM이 민감한 이유는?
+          <details><summary>답</summary><p>부반송파 간격이 좁아 작은 오프셋도 직교성을 깨 이웃 간섭이 생기기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
