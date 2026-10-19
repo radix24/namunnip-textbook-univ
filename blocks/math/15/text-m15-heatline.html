@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-heatline" data-kind="본문" data-std="수학15-05-01">
+  <header class="card-head"><span class="no"></span><h2>실수선 위의 열방정식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>무한히 긴 막대의 열방정식 \(u_t = u_{xx}\)를 \(x\)에 대한 푸리에 변환으로 풀어 열핵 \(\mathcal H_t(x) = \frac1{\sqrt{4\pi t}}e^{-x^2/4t}\)을 얻는다.</li>
+        <li>해 \(u = f * \mathcal H_t\)가 초기 조건을 만족함을 좋은 핵으로 설명한다.</li>
+        <li>열이 즉시 모든 곳으로 퍼지는 현상을 계산으로 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>원 위의 열방정식 (<a href="03-03.html">3.3절</a>), 가우스 함수의 변환과 합성곱 공식 (<a href="04-01.html">4.1절</a>, <a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>변환으로 풀기</h3>
+    <p>막대의 위치 \(x \in \mathbb R\), 시각 \(t > 0\)의 온도 \(u(x, t)\)가</p>
+    \[u_t = u_{xx}, \qquad u(x, 0) = f(x) \in \mathcal S\]
+    <p>를 만족한다고 합시다. 3.3절처럼 \(u_t\)는 \(x\)를 고정하고 \(t\)로, \(u_{xx}\)는 \(t\)를 고정하고 \(x\)로 두 번 미분한 것입니다. 각 시각에서 \(x\)에 대해 변환한 \(\hat u(\xi, t)\)를 생각하면, 미분 ↔ 곱셈 공식으로 \(\widehat{u_{xx}} = (2\pi i\xi)^2\hat u = -4\pi^2\xi^2\hat u\)이므로 \(\xi\)마다</p>
+    \[\frac{\partial\hat u}{\partial t}(\xi, t) = -4\pi^2\xi^2\,\hat u(\xi, t), \qquad \hat u(\xi, 0) = \hat f(\xi)\]
+    <p>라는 \(t\)에 대한 간단한 미분방정식이 됩니다. 해는 \(\hat u(\xi, t) = \hat f(\xi)e^{-4\pi^2\xi^2t}\)입니다. 원 위에서 \(e^{-n^2t}\)였던 것과 같은 구조입니다.</p>
+
+    <h3><span class="no">5.1.2</span>열핵</h3>
+    <p>곱의 역변환은 합성곱이므로 \(u = f * \mathcal H_t\)이고, \(\mathcal H_t\)는 \(e^{-4\pi^2\xi^2t}\)를 변환으로 갖는 함수입니다. \(e^{-\pi\delta\xi^2}\)의 역변환이 \(\frac1{\sqrt\delta}e^{-\pi x^2/\delta}\)였으므로 \(\delta = 4\pi t\)로 놓으면</p>
+    \[\mathcal H_t(x) = \frac1{\sqrt{4\pi t}}e^{-x^2/4t}, \qquad u(x, t) = \int_{-\infty}^\infty f(x - y)\,\mathcal H_t(y)\,dy.\]
+    <div class="tb-env thm"><b>정리 5.1.1</b> \(f \in \mathcal S\)이면 \(u = f * \mathcal H_t\)는 \(t > 0\)에서 열방정식을 만족하고, \(t \to 0^+\)일 때 \(u(\cdot, t) \to f\) (균등수렴)이다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(\hat u = \hat fe^{-4\pi^2\xi^2t}\)가 변환된 방정식을 만족하고, 역변환 적분은 \(x, t\)로 미분해도 빨리 수렴하므로 \(u\)가 방정식을 만족한다. \(\mathcal H_t\)는 양수이고 적분 1이며, \(t \to 0^+\)이면 \(|x| \ge \eta\) 바깥의 적분이 0으로 가는 좋은 핵이므로 \(f * \mathcal H_t \to f\) (1.3절과 같은 논증). <span class="qed">∎</span></p>
+    </div>
+    <p>\(\mathcal H_t\)는 평균 0, 분산 \(2t\)인 정규분포의 밀도입니다. 열이 퍼지는 폭은 \(\sqrt t\)에 비례합니다(브라운 운동과 같은 규모).</p>
+
+    <h3><span class="no">5.1.3</span>즉시 퍼지는 열</h3>
+    <div class="tb-env ex"><b>예 5.1.2</b> 처음 온도가 \([-1, 1]\) 밖에서 0이어도, \(t > 0\)이면 \(\mathcal H_t > 0\)이라 모든 \(x\)에서 \(u(x, t) > 0\)입니다. 다만 그 크기는 매우 작습니다. \(\mathcal H_t(5)\)는 \(t = 0.01\)에서 약 \(10^{-271}\), \(t = 0.1\)에서 약 \(6.4\times10^{-28}\), \(t = 1\)에서 약 \(5.4\times10^{-4}\)입니다. 수학적으로 전파 속도는 무한이지만 실제로 느낄 수 있는 범위는 \(\sqrt t\) 규모입니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 해가 늘 하나뿐이라고 여긴다. 해가 \(|x| \to \infty\)에서 너무 빨리 커지는 것까지 허용하면 \(f = 0\)인데 0이 아닌 해가 있다(티호노프의 예). 유일성에는 "적당히 유계" 같은 조건이 필요하다. (2) 원 위의 해와 달리 평형이 평균 온도라고 여긴다. 실수선에서는 열이 무한히 퍼져 \(u \to 0\)이다(전체 열량 \(\int u = \int f\)는 보존).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(x\)에 대한 변환으로 \(\hat u_t = -4\pi^2\xi^2\hat u\), \(\hat u = \hat fe^{-4\pi^2\xi^2t}\).</li>
+        <li>\(u = f * \mathcal H_t\), \(\mathcal H_t(x) = \frac1{\sqrt{4\pi t}}e^{-x^2/4t}\)는 좋은 핵.</li>
+        <li>\(t > 0\)이면 해는 매끄럽고 어디서나 양수(무한 전파), 퍼지는 폭은 \(\sqrt t\) 규모.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\int\mathcal H_t(x)\,dx = 1\)임을 확인하여라.
+          <details><summary>답</summary><p>\(\int e^{-x^2/4t}\,dx = \sqrt{4\pi t}\)이므로 1. (또는 \(\hat{\mathcal H_t}(0) = e^0 = 1\).)</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f(x) = e^{-\pi x^2}\)일 때 \(u(x, t)\)를 구하여라.
+          <details><summary>답</summary><p>\(\hat u = e^{-\pi\xi^2(1 + 4\pi t)}\)이므로 \(\delta = 1 + 4\pi t\)로 \(u = \frac1{\sqrt{1 + 4\pi t}}e^{-\pi x^2/(1 + 4\pi t)}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\int u(x, t)\,dx\)가 \(t\)에 관계없이 \(\int f\)임을 변환으로 보여라.
+          <details><summary>답</summary><p>\(\int u\,dx = \hat u(0, t) = \hat f(0)e^0 = \int f\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
