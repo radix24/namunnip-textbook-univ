@@ -43,7 +43,9 @@
     g.strokeStyle = c.warn; g.lineWidth = 2; g.beginPath(); taus.forEach((t, i) => { const X = tx0 + (t / tmax) * (tx1 - tx0); i ? g.lineTo(X, Y(r.ys[i])) : g.moveTo(X, Y(r.ys[i])); }); g.stroke(); g.lineWidth = 1;
     g.fillStyle = c.warn; g.fillText("τ (전단)", tx0, Hh - 8);
     const webArea = r.bs.reduce((s, w, i) => s + (w <= 8 ? w * r.dy : 0), 0);
-    S.out(`넓이 A = ${r.A.toFixed(0)} mm², 중립축 높이 ${r.yc.toFixed(1)} mm (아래 끝에서), I = ${(r.I / 1e6).toFixed(2)}×10⁶ mm⁴\n굽힘: 위 끝 σ = ${sig(H).toFixed(1)} MPa, 아래 끝 σ = ${sig(0).toFixed(1)} MPa (M = ${S.val("M")} kN·m)\n전단: 최대 τ = ${tmax.toFixed(2)} MPa, 평균 V/A = ${(V / r.A).toFixed(2)} MPa, 비 ${(tmax / (V / r.A)).toFixed(2)}${webArea > 0 ? `\n웨브 근사 V/(웨브 넓이) = ${(V / webArea).toFixed(2)} MPa` : ""}`);
+    // 최대/평균 비는 단면 모양만으로 정해지므로 V와 무관하게 계산(V = 0일 때 0/0 방지)
+    const ratio = r.A * Math.max(...r.Q.slice(0, N).map((q, i) => q / (r.I * r.bs[i])));
+    S.out(`넓이 A = ${r.A.toFixed(0)} mm², 중립축 높이 ${r.yc.toFixed(1)} mm (아래 끝에서), I = ${(r.I / 1e6).toFixed(2)}×10⁶ mm⁴\n굽힘: 위 끝 σ = ${sig(H).toFixed(1)} MPa, 아래 끝 σ = ${sig(0).toFixed(1)} MPa (M = ${S.val("M")} kN·m)\n전단: 최대 τ = ${tmax.toFixed(2)} MPa, 평균 V/A = ${(V / r.A).toFixed(2)} MPa, 비 ${ratio.toFixed(2)}${webArea > 0 ? `\n웨브 근사 V/(웨브 넓이) = ${(V / webArea).toFixed(2)} MPa` : ""}`);
   }
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
