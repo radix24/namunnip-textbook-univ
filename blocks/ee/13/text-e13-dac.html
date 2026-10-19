@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전13-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e13-dac" data-kind="본문" data-std="전전13-06-01">
+  <header class="card-head"><span class="no"></span><h2>R-2R D/A 변환기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>R-2R 사다리의 각 마디에서 본 저항이 R로 같아 전류가 단계마다 절반씩 나뉘는 원리를 안다.</li>
+        <li>디지털 코드에서 출력 전압 \(V_{out} = V_{ref}\cdot D/2^N\)을 계산한다.</li>
+        <li>저항 오차가 비선형(DNL, INL)으로 나타나는 것을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>테브냉 등가와 분압 (<a href="../3/03-02.html">전전3 3.2절</a>), 2진수, 반전 증폭기.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>왜 R과 2R만으로 되는가</h3>
+    <p>사다리 끝(최하위 쪽)에서 2R ∥ 2R = R, 여기에 직렬 R을 더하면 2R, 다시 다음 2R과 병렬이면 R… 어느 마디에서 오른쪽을 봐도 저항이 R로 같습니다. 그래서 기준 전압에서 들어간 전류가 마디마다 정확히 반으로 나뉘어, 각 비트 스위치의 2R에는 I/2, I/4, I/8, …이 흐릅니다. 스위치가 1인 비트의 전류를 연산증폭기 가상 접지로 모아 전압으로 바꾸면</p>
+    \[ V_{out} = -V_{ref}\frac{R_f}{R}\sum_{k=1}^{N}\frac{b_k}{2^k} \;\xrightarrow{R_f = R}\; |V_{out}| = V_{ref}\frac{D}{2^N}. \]
+    <p>두 가지 값의 저항만 필요해 집적 회로로 정밀하게 만들기 쉽습니다(가중 저항형은 2ᴺ배 차이 나는 값이 필요).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>8비트 R-2R, \(V_{ref}\) = 5 V. 코드 10110100의 출력, 1 LSB, 최대 출력은?</p>
+    </div>
+    <p><i>풀이.</i> D = 180, \(5 \times 180/256 = 3.516\) V. 1 LSB = 5/256 = 19.53 mV. 최대(11111111) 4.980 V(= V_ref − 1 LSB).</p>
+
+    <h3><span class="no">6.1.2</span>오차</h3>
+    <p>최상위 비트 저항이 0.5% 틀리면 그 비트의 전류(전체의 절반)가 0.5% 틀려 출력이 약 0.64 LSB(8비트) 어긋납니다. 코드가 01111111 → 10000000으로 넘어갈 때 출력 계단이 1 LSB에서 크게 벗어날 수 있습니다(미분 비선형 DNL). 비트 수가 많을수록 상위 비트 저항 정밀도가 엄격해집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "최대 출력은 V_ref다": \(V_{ref}(1 - 2^{-N})\)입니다. (2) "R-2R은 저항 값의 절대 정확도가 중요하다": 비(R과 2R의 비율)가 중요하고, 절대값은 출력 크기 비례 상수만 바꿉니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>어느 마디에서 봐도 R → 비트마다 전류 절반.</li>
+        <li>\(V_{out} = V_{ref}D/2^N\), 1 LSB = \(V_{ref}/2^N\).</li>
+        <li>상위 비트 저항 비 오차가 DNL을 만든다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>10비트, 3.3 V의 1 LSB는?
+          <details><summary>답</summary><p>약 3.22 mV.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>8비트, 5 V에서 출력 2.0 V에 가장 가까운 코드는?
+          <details><summary>답</summary><p>2.0/0.01953 = 102.4 → 102(01100110), 1.992 V.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>8비트 R-2R에서 최상위 비트 전류가 0.5% 크면 코드 10000000의 출력 오차는 몇 LSB인가?
+          <details><summary>답</summary><p>MSB 몫 128 LSB의 0.5% = 0.64 LSB.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
