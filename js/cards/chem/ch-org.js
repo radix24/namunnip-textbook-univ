@@ -1,5 +1,5 @@
 /* 화학과 유기화학 탐구 카드 묶음 (화학2 유기화학1)
-   Newman 투영과 회전 에너지 */
+   Newman 투영과 회전 에너지, 입체 중심을 돌려 보며 R/S 정하기 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -64,50 +64,93 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 2. 치환과 제거의 경쟁: 기질 × 시약 × 온도 (화학2-05-03) */
+  /* 2. 입체 중심을 돌려 보며 R/S 정하기 (화학2-04-01, 04-02) */
   (() => {
-    const S = QSim.card("lab-ch2-snse"); if (!S) return;
+    const S = QSim.card("lab-ch2-rs"); if (!S) return;
     const cv = S.$("canvas");
-    const SUB = ["me", "p1", "p2", "p3"], SUBN = { me: "메틸", p1: "1차", p2: "2차", p3: "3차" };
-    const REA = ["nuc", "base", "bulky", "weak"], REAN = { nuc: "친핵체만 강함 (I⁻, CN⁻, N₃⁻, RS⁻)", base: "강한 염기·친핵체 (OH⁻, EtO⁻)", bulky: "부피 큰 염기 (t-BuO⁻)", weak: "약한 친핵체·염기 (H₂O, EtOH)" };
-    // [주경로 문자열, 이유] — 교재의 일반 규칙. 온도가 높으면 제거 쪽으로 기운다.
-    function rule(s, r, hot) {
-      if (s === "me") return r === "weak" ? ["거의 반응 없음", "메틸 양이온은 생기지 않고, 약한 친핵체로는 SN2도 매우 느리다"] : ["SN2", "β 수소가 없어 제거가 불가능하고, 입체 장애가 가장 작아 SN2가 빠르다"];
-      if (s === "p1") {
-        if (r === "bulky") return ["E2 (주) + SN2 (부)", "부피 큰 염기는 탄소 뒤쪽으로 다가가기 어려워 노출된 β 수소를 뗀다"];
-        if (r === "weak") return ["거의 반응 없음", "1차 탄소 양이온은 너무 불안정해 SN1/E1이 일어나지 않는다"];
-        if (r === "base") return [hot ? "SN2 (주) + E2 (늘어남)" : "SN2 (주)", "1차 탄소는 붐비지 않아 강한 염기라도 대부분 치환한다. 가열하면 E2가 늘어난다"];
-        return ["SN2", "1차 탄소, 좋은 친핵체"];
-      }
-      if (s === "p2") {
-        if (r === "nuc") return ["SN2", "약한 염기라 제거를 거의 하지 않고, 2차 탄소에서도 SN2가 가능하다 (비양성자성 용매가 유리)"];
-        if (r === "base") return ["E2 (주) + SN2 (부)", "2차 탄소는 SN2가 느려지고 강한 염기는 β 수소를 떼기 쉽다" + (hot ? ". 가열로 E2가 더 늘어난다" : "")];
-        if (r === "bulky") return ["E2", "부피 큰 염기, 덜 치환된 알켄(Hofmann)이 많아진다"];
-        return [hot ? "E1 + SN1 (느림)" : "SN1 + E1 (느림)", "2차 탄소 양이온은 생기기는 하지만 느리다. 재배열에 주의"];
-      }
-      if (r === "nuc") return [hot ? "E1 + SN1" : "SN1 (주) + E1", "3차라 SN2는 불가능하다. 약한 염기이므로 탄소 양이온을 거치는 경로가 주가 된다"];
-      if (r === "base" || r === "bulky") return ["E2", "3차 탄소는 SN2가 불가능하고 강한 염기는 β 수소를 뗀다" + (r === "bulky" ? " (Hofmann 생성물 증가)" : " (Zaitsev 생성물)")];
-      return [hot ? "E1 (늘어남) + SN1" : "SN1 (주) + E1", "3차 탄소 양이온이 쉽게 생긴다. 온도가 높으면 엔트로피 때문에 제거가 늘어난다"];
-    }
+    cv.style.touchAction = "none"; cv.style.cursor = "grab";
+    const ATOM = { Br: "#9c4a2a", Cl: "#2f8f5b", F: "#7fb069", O: "#d0453b", N: "#3d6fd6", C: "#4a4d5a", H: "#c9cbd3" };
+    // 치환기: [표시 이름, 결합한 원자, 순위를 정하는 근거]. 배열 순서가 CIP 순위 1 → 4
+    const MOL = {
+      brbut: { n: "2-브로모뷰테인", cfg: "R", sub: [["Br", "Br", "원자 번호 35"], ["CH₂CH₃", "C", "C에 (C, H, H)"], ["CH₃", "C", "C에 (H, H, H)"], ["H", "H", "원자 번호 1"]] },
+      ala: { n: "L-알라닌", cfg: "S", sub: [["NH₂", "N", "원자 번호 7"], ["COOH", "C", "C에 (O, O, O): 이중 결합 O는 두 번 센다"], ["CH₃", "C", "C에 (H, H, H)"], ["H", "H", "원자 번호 1"]] },
+      glyc: { n: "D-글리세르알데하이드", cfg: "R", sub: [["OH", "O", "원자 번호 8"], ["CHO", "C", "C에 (O, O, H)"], ["CH₂OH", "C", "C에 (O, H, H)"], ["H", "H", "원자 번호 1"]] },
+      halo: { n: "브로모클로로플루오로메테인", cfg: "S", sub: [["Br", "Br", "원자 번호 35"], ["Cl", "Cl", "원자 번호 17"], ["F", "F", "원자 번호 9"], ["H", "H", "원자 번호 1"]] }
+    };
+    const k3 = 1 / Math.sqrt(3);
+    const A = [k3, k3, k3], B = [k3, -k3, -k3], Cc = [-k3, k3, -k3], D = [-k3, -k3, k3];
+    // 1 = A, 4 = D로 두면 2 = B, 3 = C일 때 S, 2 = C, 3 = B일 때 R이다 ((v1×v2)·v3 > 0이면 S)
+    const place = (cfg, mirror) => {
+      const P = cfg === "R" ? [A, Cc, B, D] : [A, B, Cc, D];
+      return mirror ? P.map(([x, y, z]) => [-x, y, z]) : P;
+    };
+    const rot = (p, yaw, pitch) => {
+      const a = yaw * Math.PI / 180, b = pitch * Math.PI / 180;
+      const x1 = p[0] * Math.cos(a) + p[2] * Math.sin(a), z1 = -p[0] * Math.sin(a) + p[2] * Math.cos(a);
+      return [x1, p[1] * Math.cos(b) - z1 * Math.sin(b), p[1] * Math.sin(b) + z1 * Math.cos(b)];
+    };
+    const setAng = (yaw, pitch) => {
+      S.$('[name="yaw"]').value = Math.round(((yaw % 360) + 360) % 360);
+      S.$('[name="pitch"]').value = Math.round(Math.max(-90, Math.min(90, pitch)));
+      S.show();
+    };
     function draw() {
-      const c = C(), s = S.val("sub"), r = S.val("rea"), hot = S.val("hot");
-      const v = QSim.view(cv, 0.62), g = v.g, W = v.W, H = v.H;
-      const L = Math.min(110, W * 0.26), T = 30, cw = (W - L - 8) / 4, ch = (H - T - 8) / 4;
-      g.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--f-mono"); g.textAlign = "center"; g.textBaseline = "middle";
-      const short = { nuc: "친핵체", base: "강염기", bulky: "부피 큰 염기", weak: "약한 친핵체" };
-      REA.forEach((rr, j) => { g.fillStyle = c.ink2; g.fillText(short[rr], L + cw * (j + 0.5), T / 2); });
-      SUB.forEach((ss, i) => {
-        g.fillStyle = c.ink2; g.fillText(SUBN[ss], L / 2, T + ch * (i + 0.5));
-        REA.forEach((rr, j) => {
-          const [p] = rule(ss, rr, hot), x = L + cw * j, y = T + ch * i;
-          const col = p.startsWith("SN2") ? "#4b4fe0" : p.startsWith("E2") ? RED : p.startsWith("SN1") ? GRN : p.startsWith("E1") ? "#9b59b6" : c.ink3;
-          g.fillStyle = col; g.globalAlpha = (ss === s && rr === r) ? 0.9 : 0.25; g.fillRect(x + 2, y + 2, cw - 4, ch - 4); g.globalAlpha = 1;
-          g.fillStyle = (ss === s && rr === r) ? "#fff" : c.ink; g.fillText(p.split(" ")[0], x + cw / 2, y + ch / 2);
-        });
+      const c = C(), m = MOL[S.val("mol")], mirror = S.val("mirror"), yaw = S.val("yaw"), pitch = S.val("pitch");
+      const cfg = mirror ? (m.cfg === "R" ? "S" : "R") : m.cfg;
+      const P = place(m.cfg, mirror).map((p) => rot(p, yaw, pitch));
+      const v = QSim.view(cv, 0.72), g = v.g, W = v.W, H = v.H, cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.34;
+      const scr = (p) => { const s = 3 / (3 - p[2]); return [cx + R * p[0] * s, cy - R * p[1] * s, s]; };
+      const font = getComputedStyle(document.documentElement).getPropertyValue("--f-mono");
+      const items = P.map((p, i) => ({ i, z: p[2], p })).concat([{ i: -1, z: 0 }]).sort((a, b) => a.z - b.z);
+      items.forEach((it) => {
+        if (it.i < 0) { g.fillStyle = ATOM.C; g.beginPath(); g.arc(cx, cy, R * 0.13, 0, 7); g.fill(); g.fillStyle = "#fff"; g.font = "bold 12px " + font; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("C*", cx, cy); return; }
+        const [x, y, s] = scr(it.p), [lab, at] = m.sub[it.i], fade = it.z < -0.2 ? 0.55 : 1;
+        g.globalAlpha = fade;
+        g.strokeStyle = c.ink3; g.lineWidth = 3 + 3 * Math.max(0, it.z); g.beginPath(); g.moveTo(cx, cy); g.lineTo(x, y); g.stroke();
+        const r = R * (at === "H" ? 0.12 : 0.17) * s;
+        g.fillStyle = ATOM[at]; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+        g.strokeStyle = c.card; g.lineWidth = 1.5; g.stroke();
+        g.fillStyle = c.ink; g.font = "13px " + font; g.textAlign = "center"; g.textBaseline = "middle";
+        const ox = (x - cx), oy = (y - cy), L = Math.hypot(ox, oy) || 1;
+        g.fillText(lab, x + ox / L * (r + 22), y + oy / L * (r + 12));
+        g.fillStyle = at === "H" ? "#222" : "#fff"; g.font = "bold 12px " + font; g.fillText(String(it.i + 1), x, y);
+        g.globalAlpha = 1;
       });
-      const [p, why] = rule(s, r, hot);
-      S.out(`기질: ${SUBN[s]} 할로젠화 알킬 · 시약: ${REAN[r]} · ${hot ? "가열" : "실온"}\n예측되는 주경로: ${p}\n이유: ${why}\n(일반 규칙에 따른 예측이다. 실제 비율은 용매, 이탈기, 구체적 구조에 따라 달라진다.)`);
+      const Q = P.map(scr);
+      // 화면에서 1 → 2 → 3이 도는 방향 (화면 y는 아래로 커지므로 부호를 뒤집는다)
+      const area = (Q[1][0] - Q[0][0]) * (Q[2][1] - Q[0][1]) - (Q[1][1] - Q[0][1]) * (Q[2][0] - Q[0][0]);
+      const cw = area > 0, z4 = P[3][2];
+      if (S.val("arrow")) {
+        // 입체 중심 둘레의 원호로 1 → 2, 2 → 3을 잇는다. 도는 방향(시계/반시계)을 따라가므로 다른 치환기를 지나지 않는다
+        const th = Q.map(([x, y]) => Math.atan2(y - cy, x - cx)), rA = R * 0.62;
+        g.strokeStyle = c.warn; g.fillStyle = c.warn; g.lineWidth = 2.2;
+        for (let k2 = 0; k2 < 2; k2++) {
+          const a0 = th[k2] + (cw ? 0.18 : -0.18), a1 = th[k2 + 1] - (cw ? 0.18 : -0.18);
+          g.beginPath(); g.arc(cx, cy, rA, a0, a1, !cw); g.stroke();
+          const ex = cx + rA * Math.cos(a1), ey = cy + rA * Math.sin(a1), ang = a1 + (cw ? Math.PI / 2 : -Math.PI / 2);
+          g.beginPath(); g.moveTo(ex + 3 * Math.cos(ang), ey + 3 * Math.sin(ang)); g.lineTo(ex - 9 * Math.cos(ang - 0.45), ey - 9 * Math.sin(ang - 0.45)); g.lineTo(ex - 9 * Math.cos(ang + 0.45), ey - 9 * Math.sin(ang + 0.45)); g.closePath(); g.fill();
+        }
+      }
+      const where = z4 < -0.5 ? "화면 안쪽(뒤)" : z4 > 0.5 ? "화면 바깥쪽(앞)" : "거의 옆";
+      let read;
+      if (z4 < -0.5) read = `4순위가 뒤에 있으므로 보이는 방향을 그대로 읽습니다: ${cw ? "시계 방향 → R" : "반시계 방향 → S"}`;
+      else if (z4 > 0.5) read = `4순위가 앞에 있으므로 보이는 방향의 반대로 읽습니다: ${cw ? "시계 방향으로 보이니 S" : "반시계 방향으로 보이니 R"}`;
+      else read = "4순위가 옆을 향해 이 각도에서는 읽기 어렵습니다. 분자를 돌리거나 \"4순위를 뒤로\"를 누르세요";
+      S.out(`${m.n}${mirror ? "의 거울상" : ""}\n순위: ` + m.sub.map((sb, i) => `${i + 1} ${sb[0]} (${sb[2]})`).join(" > ")
+        + `\n지금 화면: 4순위 ${m.sub[3][0]}이(가) ${where}, 1 → 2 → 3은 ${cw ? "시계" : "반시계"} 방향으로 보임\n${read}`
+        + (S.val("ans") ? `\n정답: 이 분자는 ${cfg} 배열입니다. 어떤 각도에서 읽어도 같은 답이 나와야 합니다` : ""));
     }
+    let drag = null;
+    cv.addEventListener("pointerdown", (e) => { drag = [e.clientX, e.clientY, S.val("yaw"), S.val("pitch")]; cv.setPointerCapture(e.pointerId); cv.style.cursor = "grabbing"; });
+    cv.addEventListener("pointermove", (e) => { if (!drag) return; setAng(drag[2] + (e.clientX - drag[0]) * 0.7, drag[3] + (e.clientY - drag[1]) * 0.7); draw(); });
+    const end = () => { drag = null; cv.style.cursor = "grab"; };
+    cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+    S.$(".back4").addEventListener("click", () => {
+      const p4 = place(MOL[S.val("mol")].cfg, S.val("mirror"))[3];
+      let best = [0, 0, 9];
+      for (let a = 0; a < 360; a += 1) for (let b = -90; b <= 90; b += 1) { const q = rot(p4, a, b), d = q[0] ** 2 + q[1] ** 2 + (q[2] + 1) ** 2; if (d < best[2]) best = [a, b, d]; }
+      setAng(best[0], best[1]); draw();
+    });
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 })();
