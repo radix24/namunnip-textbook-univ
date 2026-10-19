@@ -1,0 +1,97 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전17-06-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e17-rpeak" data-kind="실습" data-std="전전17-06-01">
+  <header class="card-head"><span class="no"></span><h2>가상 ECG에서 R 피크 찾기</h2><span class="kind">실습 · 기저선 제거, 잡음 제거, 문턱과 불응기</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>기저선 흔들림과 60 Hz 잡음이 섞인 가상 ECG에서 R 피크를 찾아 심박수를 계산합니다. 성취기준 [전전17-06-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>NumPy가 필요합니다(<code>pip install numpy</code>). 아래 코드를 <code>ecg_rpeak.py</code>로 저장합니다.</p>
+<pre><code># 가상 ECG에서 R 피크를 찾아 심박수 계산하기
+import numpy as np
+
+fs = 250                                    # 표본화 250 Hz
+t = np.arange(0, 10, 1 / fs)                # 10초
+rng = np.random.default_rng(1)
+
+# 박동 시각: 평균 0.8 s 간격(75 bpm)에 ±0.05 s 흔들림(가상)
+beats = np.cumsum(0.8 + 0.05 * rng.standard_normal(12))
+beats = beats[beats &lt; 9.8]
+
+def gauss(t0, w, a):
+    return a * np.exp(-((t - t0) / w) ** 2)
+
+ecg = np.zeros_like(t)
+for b in beats:
+    ecg += gauss(b - 0.20, 0.025, 0.15)     # P파
+    ecg += gauss(b - 0.03, 0.008, -0.10)    # Q
+    ecg += gauss(b, 0.010, 1.00)            # R(가장 큰 봉우리, mV)
+    ecg += gauss(b + 0.03, 0.010, -0.20)    # S
+    ecg += gauss(b + 0.25, 0.050, 0.30)     # T파
+ecg += 0.15 * np.sin(2 * np.pi * 0.3 * t)   # 호흡에 따른 기저선 흔들림
+ecg += 0.05 * np.sin(2 * np.pi * 60 * t)    # 60 Hz 전원 잡음
+ecg += 0.02 * rng.standard_normal(t.size)
+
+# 1) 기저선 제거: 0.6 s 이동 평균을 빼기
+k = int(0.6 * fs)
+base = np.convolve(ecg, np.ones(k) / k, mode="same")
+x = ecg - base
+# 2) 60 Hz 제거: 1/60 s(약 4표본) 이동 평균
+m = round(fs / 60)
+x = np.convolve(x, np.ones(m) / m, mode="same")
+# 3) 문턱 = 최댓값의 50%, 봉우리 사이 최소 0.3 s(불응기)
+thr = 0.5 * x.max()
+peaks, last = [], -1e9
+for i in range(1, x.size - 1):
+    if x[i] &gt; thr and x[i] &gt;= x[i - 1] and x[i] &gt;= x[i + 1] and t[i] - last &gt; 0.3:
+        peaks.append(i)
+        last = t[i]
+tp = t[peaks]
+rr = np.diff(tp)
+print("실제 박동 수:", len(beats), " 찾은 R 피크 수:", len(peaks))
+print("찾은 시각과 실제의 최대 차이:", round(float(np.max(np.abs(tp - beats[:len(tp)]))) * 1000, 1), "ms")
+print("RR 간격 평균", round(float(rr.mean()), 3), "s, 표준편차", round(float(rr.std()), 3), "s")
+print("평균 심박수", round(60 / float(rr.mean()), 1), "bpm")</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>기저선 제거(1단계)를 빼고 실행하면 결과가 어떻게 되는지 예측하고 확인합니다.</li>
+        <li>불응기를 0.3에서 0.05 s로 줄여 T파가 잡히는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>실제 박동 수: 12  찾은 R 피크 수: 12
+찾은 시각과 실제의 최대 차이: 3.5 ms
+RR 간격 평균 0.811 s, 표준편차 0.03 s
+평균 심박수 74.0 bpm</code></pre>
+      <ul>
+        <li>실제 박동 12개, 찾은 R 피크 12개.</li>
+        <li>찾은 시각과 실제 시각의 최대 차이 3.5 ms(250 Hz의 표본 간격 4 ms 안).</li>
+        <li>RR 평균 0.811 s, 표준편차 0.03 s, 평균 심박수 74.0 bpm(예제 6.1.1).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>문턱을 최댓값의 50%로 정한 방식의 약점은? 아주 큰 잡음 봉우리가 하나 있으면 어떻게 되나요?</li>
+        <li>60 Hz 이동 평균이 R 피크의 높이와 위치에 주는 영향을 설명하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Pan-Tompkins 방식(미분 → 제곱 → 150 ms 이동 적분)을 덧붙이고 잡음 세기를 키워 두 방법의 검출률을 비교해 보세요.</p>
+    </section>
+  </div>
+</article>

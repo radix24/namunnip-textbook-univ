@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-pareto" data-kind="본문" data-std="전전18-03-01">
+  <header class="card-head"><span class="no"></span><h2>성능·전력·면적의 절충과 파레토 곡선</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>여러 설계안을 성능, 전력, 면적 같은 여러 기준으로 비교한다.</li>
+        <li>다른 안에 지배되지 않는 안들의 집합(파레토 경계)을 찾는다.</li>
+        <li>전압·주파수 조절(DVFS)과 병렬화의 에너지 효율을 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>동적 전력 \(\alpha CV^2f\) (<a href="../13/06-03.html">전전13 6.3절</a>), Amdahl 법칙 (<a href="../14/01-02.html">전전14 1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>지배와 파레토 경계</h3>
+    <p>안 A가 안 B보다 모든 기준에서 같거나 낫고 하나 이상에서 확실히 나으면 A가 B를 지배한다고 합니다. 어느 안에도 지배되지 않는 안들의 집합이 파레토 경계이며, 그 위에서는 한 기준을 개선하려면 다른 기준을 희생해야 합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>(처리량 fps, 전력 W): A(30, 2.0), B(20, 0.8), C(25, 1.5), D(15, 1.0), E(40, 3.5). 처리량은 클수록, 전력은 작을수록 좋다. 파레토 경계는?</p>
+    </div>
+    <p><i>풀이.</i> D는 B에 지배(처리량 작고 전력 큼). 나머지 B, C, A, E는 서로 지배하지 않아 경계입니다. 사양이 "25 fps 이상, 최소 전력"이면 C(1.5 W)를 고릅니다.</p>
+
+    <h3><span class="no">3.1.2</span>DVFS와 병렬화</h3>
+    <p>동적 전력 \(P \approx \alpha CV^2f\)이고 주파수는 대략 전압에 비례하므로, 같은 일을 할 때 전압·주파수를 반으로 낮추면 시간은 2배, 전력은 1/8, 에너지(전력 × 시간)는 1/4입니다. 코어를 둘로 늘려 각 코어를 반 속도로 돌리면 같은 처리량에 에너지가 약 1/4이 됩니다(병렬화 가능한 일, 누설 전력 무시, 확인 필요: 전압을 비례해 낮출 수 있는 범위 안).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "가장 빠른 안이 가장 좋다": 사양을 만족하는 안 중 다른 기준이 가장 좋은 안을 고릅니다. (2) "전압을 계속 낮추면 에너지가 계속 준다": 문턱 전압 근처에서는 누설과 지연이 급격히 늘어 한계가 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>지배: 모든 기준에서 같거나 낫고 하나는 확실히 나음.</li>
+        <li>파레토 경계 위에서 기준 사이 교환.</li>
+        <li>DVFS: V, f 반 → 전력 1/8, 에너지 1/4(같은 일).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 F(35, 2.0)를 추가하면 지배되는 안은?
+          <details><summary>답</summary><p>A(30, 2.0)가 F에 지배됩니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>전압을 0.8배, 주파수를 0.8배로 하면 같은 일의 에너지는 몇 배?
+          <details><summary>답</summary><p>V² 비례: 0.64배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>병렬화 비율 0.9인 일을 코어 4개, 각 반 속도로 돌리면 한 코어 전속 대비 시간과 에너지(이상적 DVFS)는?
+          <details><summary>답</summary><p>시간: 직렬 0.1/0.5 + 0.9/(4 × 0.5) = 0.2 + 0.45 = 0.65배. 에너지: 같은 연산량을 반 전압으로 하므로 약 1/4배(누설 무시).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
