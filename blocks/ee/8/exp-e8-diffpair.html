@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-06-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e8-electronics.js"]
+}
+-->
+<article class="card q-card" id="exp-e8-diffpair" data-kind="탐구" data-std="전전8-06-01">
+  <header class="card-head"><span class="no"></span><h2>꼬리 전류를 나눠 갖는 두 트랜지스터</h2><span class="kind">탐구 · 차동 쌍의 전달 특성과 선형 범위</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>차동 쌍에 넣는 차동 전압을 키우면 출력은 어디까지 따라올까요? 과구동 전압 \(V_{OV}\)를 바꾸면 이득과 선형 범위는 어떻게 바뀔까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>6.1절의 큰 신호 식 \(i_{D1,2} = \frac I2 \pm \frac{I}{V_{OV}}\frac{v_{id}}{2}\sqrt{1 - (v_{id}/2V_{OV})^2}\)(\(|v_{id}| \le \sqrt2V_{OV}\), 그 밖에서는 한쪽이 전부)을 그립니다. \(R_D = 5\) kΩ. 위: 두 드레인 전류와 소신호 직선(회색 점선). 아래: 첨두 \(v_{id}\)인 사인파를 넣었을 때 차동 출력 \(v_{od} = (i_{D1} - i_{D2})R_D\)와 소신호 예측.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>꼬리 전류 I = <b data-show="itail" data-fix="2">0.40</b> mA</span><input type="range" name="itail" min="0.1" max="1" step="0.05" value="0.4" aria-label="꼬리 전류"></label>
+        <label><span>V_OV = <b data-show="vov" data-fix="2">0.20</b> V</span><input type="range" name="vov" min="0.05" max="0.4" step="0.01" value="0.2" aria-label="과구동 전압"></label>
+        <label><span>첨두 v_id = <b data-show="vid">50</b> mV</span><input type="range" name="vid" min="10" max="500" step="10" value="50" aria-label="차동 입력 첨두"></label>
+      </div>
+      <canvas aria-label="차동 입력에 따른 드레인 전류"></canvas>
+      <canvas aria-label="차동 출력 파형"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>처음 화면(I = 0.4 mA, \(V_{OV} = 0.2\) V): \(g_m = 2\) mA/V, 선형 범위 끝 0.283 V(6.1절 예제). 50 mV에서 출력 첨두 0.496 V로 소신호 예측 0.5 V보다 0.8% 작습니다.</span></li>
+        <li><b>200 mV</b><span>출력 첨두 1.732 V로 예측 2.0 V보다 13.4% 작고 파형 끝이 둥글어집니다.</span></li>
+        <li><b>300 mV</b><span>0.283 V를 넘는 동안 전류가 모두 한쪽으로 넘어가 출력이 \(\pm IR_D = \pm2\) V에서 평평해집니다. 차동 쌍이 전류 스위치가 되는 영역입니다.</span></li>
+        <li><b>V_OV를 0.1 V로</b><span>\(g_m\)이 4 mA/V로 두 배라 기울기가 가팔라지지만 선형 범위는 0.141 V로 절반입니다. 이득과 선형 범위의 맞바꿈(6.1절 연습 4)입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>연산증폭기의 입력단은 되먹임 덕분에 \(v_{id}\)가 거의 0 근처에 머물러 이 곡선의 가운데만 씁니다. 반대로 비교기와 고속 디지털 회로(CML)는 차동 쌍을 일부러 끝까지 넘겨 스위치로 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"출력은 v_id에 비례해 계속 커진다."</b> 차동 쌍의 출력은 \(\pm IR_D\)를 넘을 수 없습니다. 꼬리 전류가 상한을 정합니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-04-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e8-electronics.js"]
+}
+-->
+<article class="card q-card" id="exp-e8-cs" data-kind="탐구" data-std="전전8-04-01">
+  <header class="card-head"><span class="no"></span><h2>입력을 키우면 이득이 줄고 파형이 찌그러진다</h2><span class="kind">탐구 · 공통 소스 증폭기의 큰 신호 동작</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>소신호 모델은 이득이 −6이라고 말합니다. 입력을 50 mV에서 400 mV로 키우면 출력도 정말 6배일까요? 소스 저항을 남기면 무엇이 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>2.1절 예제의 공통 소스 증폭기(\(k_n = 2\) mA/V², \(V_t = 0.5\) V, \(V_{DD} = 3\) V)를 제곱 법칙 그대로(트라이오드 포함) 풀어 드레인 전압 파형을 그립니다. 동작점은 \(R_S\)와 관계없이 \(I_D = 0.25\) mA(\(g_m = 1\) mA/V)가 되도록 게이트 직류 전압을 맞춥니다. 입력은 게이트의 사인파입니다(\(R_S\)는 바이패스하지 않음). 위: 출력(파랑)과 소신호 모델의 예측(회색 점선). 아래: 출력의 1~3차 고조파 진폭.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>입력 첨두 <b data-show="vp" data-fix="2">0.05</b> V</span><input type="range" name="vp" min="0.01" max="0.6" step="0.01" value="0.05" aria-label="입력 첨두 전압"></label>
+        <label><span>R_D = <b data-show="rd">6</b> kΩ</span><input type="range" name="rd" min="2" max="10" step="1" value="6" aria-label="드레인 저항"></label>
+        <label><span>R_S = <b data-show="rs" data-fix="1">0.0</b> kΩ</span><input type="range" name="rs" min="0" max="3" step="0.5" value="0" aria-label="소스 저항"></label>
+      </div>
+      <canvas aria-label="드레인 전압 파형"></canvas>
+      <canvas aria-label="고조파 진폭"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>소신호</b><span>처음 화면(50 mV): 이득 6.00으로 소신호 식과 같고, 2차 고조파가 2.50%입니다. 2.3절의 \(V_p/(4V_{OV}) = 0.05/2\)와 정확히 맞습니다.</span></li>
+        <li><b>200 mV</b><span>출력이 0.446~2.460 V로 위아래가 비대칭입니다. 아래쪽이 트라이오드에 들어가 눌리면서 이득이 5.40으로 줄고 3차 고조파가 6.31%로 커집니다.</span></li>
+        <li><b>소스 저항 2 kΩ</b><span>같은 200 mV에서 이득은 1.98(소신호 식 2.00)로 작지만, 2차 0.38%, 3차 0.70%로 왜곡이 크게 줄었습니다. 이득을 내주고 선형성을 얻는 되먹임입니다. 대신 동작점의 \(V_{DS}\)가 1.0 V로 줄어 봉우리에서 트라이오드에 살짝 닿습니다.</span></li>
+        <li><b>600 mV</b><span>\(R_S = 0\)이면 출력 위쪽이 3.0 V(차단)에, 아래쪽이 0.24 V(트라이오드)에 붙어 사각파에 가까워집니다. 이득은 2.77로 떨어집니다.</span></li>
+        <li><b>R_D = 8 kΩ</b><span>소신호 이득은 8이지만 직류 \(V_D\)가 1.0 V로 내려가 아래 여유가 줄어, 200 mV에서 2차 왜곡이 15.2%가 됩니다. 이득을 키우려고 \(R_D\)만 늘리면 출력 여유를 잃습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>오디오 증폭기의 "찌그러짐(THD)" 사양이 이 고조파 비율입니다. 실제 증폭기는 소스 저항과 같은 음의 되먹임을 여러 단에 걸쳐 크게 걸어 왜곡을 줄입니다(전전13). 아날로그실험의 공통 소스·이미터 증폭기 실습(전전9 4단원)에서 오실로스코프로 이 모양을 직접 볼 수 있습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"출력이 전원 전압 안에만 있으면 왜곡이 없다."</b> 잘리기 훨씬 전부터 제곱 법칙 때문에 2차 왜곡이 생깁니다(50 mV에서도 2.5%).</li>
+      </ul>
+    </section>
+  </div>
+</article>

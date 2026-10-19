@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-05-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e8-activeload" data-kind="예제" data-std="전전8-05-02">
+  <header class="card-head"><span class="no"></span><h2>이득 40 dB를 1.2 V 전원에서</h2><span class="kind">예제 · 저항 부하로는 안 되는 이득</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>전원 1.2 V, \(V_{OV} = 0.15\) V인 공통 소스 증폭기로 이득 100(40 dB)을 얻을 수 있을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>저항 부하로는 최대 \(V_{DD}/V_{OV} = 8\) 정도입니다. 능동 부하와 긴 채널(작은 λ)이 필요합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(V_{DD} = 1.2\) V, \(I_D = 50\) μA, \(V_{OV} = 0.15\) V(두 트랜지스터 모두). 이득 \(|A_v| \ge 100\)이 목표다. (가) 출력 직류를 0.6 V로 둔 저항 부하의 이득은? (나) 능동 부하로 목표를 맞추려면 λ가 얼마 이하여야 하는가? (다) 그 λ가 기준 길이에서 0.2 V⁻¹라면 채널 길이를 몇 배로 해야 하는가? (λ ∝ 1/L로 본다)</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>저항 부하: \(|A_v| = 2(I_DR_D)/V_{OV}\).</li>
+        <li>능동 부하: \(|A_v| = g_m(r_o \parallel r_o) = 1/(\lambda V_{OV})\).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) \(R_D = 0.6/50\,\mu = 12\) kΩ, \(g_m = 2 \times 50\,\mu/0.15 = 0.667\) mA/V, \(|A_v| = 8\)(\(r_o\) 무시). <span class="q-why">\(2 \times 0.6/0.15\)</span></li>
+        <li>(나) \(1/(\lambda \times 0.15) \ge 100\) → \(\lambda \le 0.0667\) V⁻¹. <span class="q-why">고유 이득의 절반</span></li>
+        <li>(다) \(0.2/0.0667 = 3\): 채널 길이를 3배 이상. 확인: λ = 0.0667이면 \(r_o = 1/(0.0667 \times 50\,\mu) = 300\) kΩ, \(g_m(r_o/2) = 0.667 \times 150 = 100\). <span class="q-why">λ ∝ 1/L</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>낮은 전원 전압의 칩에서 이득은 저항이 아니라 트랜지스터의 \(r_o\)에서 나옵니다. 채널을 길게 하면 같은 전류와 \(V_{OV}\)에서 W도 같은 비율로 늘려야 해(W/L 유지) 면적과 정전 용량이 커지고 속도가 줄어듭니다. 이득·속도·면적의 맞바꿈이 아날로그 칩 설계의 핵심 문제입니다(전전32).</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>(가)에서 \(r_o\)를 넣어도(λ = 0.2, \(r_o = 100\) kΩ) \(0.667 \times (12 \parallel 100) = 7.1\)로 오히려 줄어듭니다. 저항 부하로는 목표에 닿을 수 없음이 확인됩니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 회로를 캐스코드 부하와 캐스코드 구동(출력 저항 각 \(g_mr_o^2\))으로 바꾸면(λ = 0.2) 이득은 대략?</p>
+      <details><summary>답</summary><p>\(r_o = 100\) kΩ, \(g_mr_o = 66.7\), 각 출력 저항 6.67 MΩ, 병렬 3.33 MΩ. \(|A_v| \approx 0.667 \times 3333 \approx 2200\). 대신 출력 전압 여유가 크게 줄어 1.2 V 전원에서는 쓰기 어렵습니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>능동 부하 이득</h3>
+    <p class="q">능동 부하 CS 증폭기의 이득을 두 배로 하는 방법은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>전류를 두 배로<span class="why"><b>\(g_m\)은 늘지만 \(r_o\)가 절반이 되어 이득은 그대로입니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>\(V_{OV}\)를 절반으로(W/L 네 배)<span class="why"><b>맞습니다.</b> \(|A_v| \approx 1/(\lambda V_{OV})\).</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>전원 전압을 두 배로<span class="why"><b>능동 부하 이득은 전원 전압과 거의 무관합니다.</b> 그것은 저항 부하의 한계를 풀 때의 방법입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

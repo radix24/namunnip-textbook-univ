@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-06-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e8-cmrr" data-kind="예제" data-std="전전8-06-02">
+  <header class="card-head"><span class="no"></span><h2>심전도 앞단의 CMRR 예산</h2><span class="kind">예제 · 사양에서 꼬리 저항과 정합 정밀도 정하기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>몸에 실린 60 Hz 공통 모드 전압 0.5 V가 1 mV 심전도 신호를 덮지 않게 하려면, 부하 저항 정합은 몇 % 이내여야 할까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>\(g_m = 1\) mA/V, 꼬리 저항 1 MΩ이면 약 4%까지 허용됩니다. \(g_m\)이나 꼬리 저항이 작으면 훨씬 엄격해집니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">(가상 사양) 차동 입력 신호 1 mV, 공통 모드 60 Hz 잡음 0.5 V. 출력에서 잡음 성분이 신호 성분의 1% 이하여야 한다. 차동 쌍은 \(g_m = 1\) mA/V이고 차동 출력을 쓴다. (가) 필요한 CMRR(dB), (나) 꼬리 전류원 \(R_{SS} = 1\) MΩ일 때 허용되는 부하 불일치 \(\Delta R_D/R_D\), (다) 불일치가 1%로 정해져 있다면 필요한 \(R_{SS}\)는?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>출력에서 \(A_{cm}v_{cm} \le 0.01A_dv_d\) → CMRR ≥ \(v_{cm}/(0.01v_d)\).</li>
+        <li>CMRR ≈ \(2g_mR_{SS}/(\Delta R_D/R_D)\)를 정리한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) CMRR ≥ \(0.5/(0.01 \times 0.001) = 5 \times 10^4\), 약 94 dB. <span class="q-why">20 log</span></li>
+        <li>(나) \(2g_mR_{SS} = 2 \times 10^{-3} \times 10^6 = 2000\)이므로 \(\Delta R_D/R_D \le 2000/(5 \times 10^4) = 0.04\), 곧 4%. <span class="q-why">정리</span></li>
+        <li>(다) \(R_{SS} \ge \text{CMRR}\times0.01/(2g_m) = 5 \times 10^4 \times 0.01/(2 \times 10^{-3}) = 250\) kΩ. <span class="q-why">정리</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>이 사양에서는 1 MΩ 꼬리로 4% 불일치까지 버틸 수 있지만, 저전력 설계로 \(g_m\)이 0.1 mA/V가 되면 허용 불일치는 0.4%로 열 배 엄격해집니다. 실제 생체 신호 증폭기는 트랜지스터 불일치와 전극 임피던스 차이까지 겹쳐 CMRR이 떨어지므로, 계측 증폭기와 오른다리 구동(driven right leg) 회로로 공통 모드 자체를 줄입니다. 생체 계측 회로는 전전17 바이오전자공학에서 다룹니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>(다)의 값을 넣으면 CMRR = \(2 \times 10^{-3} \times 2.5 \times 10^5/0.01 = 5 \times 10^4\). 출력 잡음/신호 = \(\frac{0.5/5\times10^4}{0.001} = 0.01\). 사양과 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>한쪽 출력(CMRR ≈ \(g_mR_{SS}\))만 쓰면 (가)를 만족하는 \(R_{SS}\)는?</p>
+      <details><summary>답</summary><p>\(R_{SS} \ge 5 \times 10^4/10^{-3} = 50\) MΩ. 단순 전류원으로는 어렵고 캐스코드가 필요합니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>CMRR을 키우는 방법</h3>
+    <p class="q">차동 출력 차동 쌍의 CMRR을 키우는 데 효과가 없는 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>꼬리 전류원을 캐스코드로<span class="why"><b>효과 있습니다.</b> \(R_{SS}\)가 커집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>부하 저항을 더 정밀하게 맞춤<span class="why"><b>효과 있습니다.</b> \(\Delta R_D/R_D\)가 작아집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄷ</span><span>두 부하 저항을 똑같이 두 배로<span class="why"><b>맞습니다(효과 없음).</b> \(A_d\)와 \(A_{cm}\)이 같은 비율로 커져 비는 그대로입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>

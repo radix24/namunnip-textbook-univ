@@ -133,5 +133,84 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 6. 공통 소스 증폭기의 큰 신호 파형: 이득, 왜곡, 잘림 (04-01) */
+  (() => {
+    const S = QSim.card("exp-e8-cs"); if (!S) return;
+    const [cvT, cvK] = S.$$("canvas");
+    const k = 2, Vt = 0.5, Vdd = 3, Id0 = 0.25;   // 동작점: I_D = 0.25 mA (V_OV = 0.5 V)
+    function draw() {
+      const c = C(), Rd = S.val("rd"), Rs = S.val("rs"), Vp = S.val("vp");
+      const VG = Vt + 0.5 + Id0 * Rs;   // R_S가 있어도 같은 동작점
+      // 순간값: i = nmos(v_G − i R_S, V_DD − i(R_D + R_S))를 만족하는 i
+      const iOf = (vg) => bisect((i) => nmos(k, Vt, 0, vg - i * Rs, Vdd - i * (Rd + Rs)) - i, 0, Vdd / (Rd + Rs));
+      const N = 256, vd = [];
+      let tri = false, cut = false;
+      for (let n = 0; n < N; n++) {
+        const vg = VG + Vp * Math.sin(2 * Math.PI * n / N), i = iOf(vg), vs = i * Rs, d = Vdd - i * Rd;
+        vd.push(d); if (vg - vs - Vt <= 1e-6) cut = true; else if (d - vs < vg - vs - Vt) tri = true;
+      }
+      const Vd0 = Vdd - iOf(VG) * Rd;
+      const harm = (h) => { let re = 0, im = 0; vd.forEach((x, n) => { re += x * Math.cos(2 * Math.PI * h * n / N); im -= x * Math.sin(2 * Math.PI * h * n / N); }); return 2 * Math.hypot(re, im) / N; };
+      const A1 = harm(1), A2 = harm(2), A3 = harm(3);
+      const vt = QSim.view(cvT, 0.42), ft = QSim.frame(vt, { x0: 0, x1: 2, y0: 0, y1: Vdd, xl: "주기", yl: "v_D (V)" }); ft.axes({ noGrid: true });
+      ft.path(Array.from({ length: 2 * N + 1 }, (_, n) => [n / N, vd[n % N]]), c.main, 2.2);
+      ft.fn((x) => Vd0 - Vp * (Rd / (1 / (k * 0.5) + Rs)) * Math.sin(2 * Math.PI * x), c.ink3, 1.2, [5, 3], 400);
+      ft.path([[0, Vd0], [2, Vd0]], c.rule, 1, [2, 3]);
+      const vk = QSim.view(cvK, 0.26), fk = QSim.frame(vk, { x0: 0, x1: 4, y0: 0, y1: Math.max(0.1, A1 * 1.15), xl: "고조파 번호", yl: "진폭 (V)" }); fk.axes({ noGrid: true });
+      const g = vk.g; g.save(); g.strokeStyle = c.main; g.lineWidth = 6; [[1, A1], [2, A2], [3, A3]].forEach(([h, a]) => { g.beginPath(); g.moveTo(fk.X(h), fk.Y(0)); g.lineTo(fk.X(h), fk.Y(a)); g.stroke(); }); g.restore();
+      const gm = k * 0.5, Asmall = gm * Rd / (1 + gm * Rs), vmin = Math.min(...vd), vmax = Math.max(...vd);
+      const clip = [tri ? "출력 아래쪽이 트라이오드로 들어감" : "", cut ? "출력 위쪽이 차단으로 잘림" : ""].filter(Boolean).join(", ") || "포화 영역 유지(잘림 없음)";
+      S.out(`k_n = 2 mA/V², V_t = 0.5 V, V_DD = 3 V, 동작점 I_D = 0.25 mA (g_m = 1 mA/V), R_D = ${Rd} kΩ, R_S = ${Rs} kΩ, 입력 첨두 ${Vp * 1000} mV\n` +
+        `직류 V_D = ${f2(Vd0, 3)} V. 출력 ${f2(vmin, 3)} ~ ${f2(vmax, 3)} V, 기본파 진폭 ${f2(A1, 3)} V → 이득 ${f2(A1 / Vp, 2)} (소신호 식 g_mR_D/(1 + g_mR_S) = ${f2(Asmall, 2)})\n` +
+        `2차 고조파 ${f2(A2 / A1 * 100, 2)}%, 3차 ${f2(A3 / A1 * 100, 2)}%. ${clip}. 회색 점선: 소신호 모델의 예측`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+  /* 7. 전류 거울: 단순 거울과 캐스코드의 출력 특성 (05-01) */
+  (() => {
+    const S = QSim.card("exp-e8-mirror"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), lam = S.val("lam"), ratio = S.val("ratio"), Iref = 100, Vt = 0.5, Vov = 0.3, Vgs = Vt + Vov;   // μA, V
+      const k1 = 2 * Iref / (Vov * Vov * (1 + lam * Vgs)), k2 = k1 * ratio;   // μA/V²
+      const simple = (vo) => nmos(k2, Vt, lam, Vgs, vo);
+      // 캐스코드: 아래 Q2(게이트 V_GS), 위 Q4(게이트 2V_GS, 소스 v_x). Q2 전류 = Q4 전류가 되는 v_x
+      const casc = (vo) => { if (vo <= 0) return 0; const vx = bisect((x) => nmos(k2, Vt, lam, 2 * Vgs - x, vo - x) - nmos(k2, Vt, lam, Vgs, x), 0, Math.min(vo, 2 * Vgs)); return nmos(k2, Vt, lam, Vgs, vx); };
+      const top = Iref * ratio * 1.5, v = QSim.view(cv, 0.5), fr = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: top, xl: "출력 전압 V_O (V)", yl: "I_O (μA)" }); fr.axes();
+      fr.path([[0, Iref * ratio], [3, Iref * ratio]], c.rule, 1, [3, 3]);
+      fr.fn(simple, c.warn, 2.2, undefined, 600); fr.fn(casc, c.main, 2.6, undefined, 600);
+      const ro = (f, a, b) => (b - a) / (f(b) - f(a)) * 1e3;   // kΩ (μA 단위라 ×1e3)
+      const Rs = ro(simple, 1.5, 2.5), Rc = ro(casc, 1.5, 2.5);
+      S.out(`I_REF = 100 μA, V_GS = 0.8 V (V_OV = 0.3 V), λ = ${f2(lam, 2)} V⁻¹, 크기 비 ${ratio} → 목표 ${Iref * ratio} μA\n` +
+        `단순 거울(빨강): V_O = 0.8 V에서 ${f2(simple(0.8), 1)} μA, 2 V에서 ${f2(simple(2), 1)} μA, 출력 저항 ${Rs > 1e5 ? "매우 큼" : f2(Rs, 0) + " kΩ"}, 최소 출력 약 0.3 V\n` +
+        `캐스코드(파랑): 2 V에서 ${f2(casc(2), 1)} μA, 출력 저항 ${Rc > 1e6 ? "매우 큼" : f2(Rc / 1000, 2) + " MΩ"}, 1.1 V(= 2V_GS − V_t) 아래에서는 위 트랜지스터가 포화를 벗어나 곡선이 기울어짐`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+  /* 8. MOS 차동 쌍의 전달 특성 (06-01) */
+  (() => {
+    const S = QSim.card("exp-e8-diffpair"); if (!S) return;
+    const [cvI, cvT] = S.$$("canvas");
+    function draw() {
+      const c = C(), I = S.val("itail"), Vov = S.val("vov"), Rd = 5, vid0 = S.val("vid") / 1000;   // mA, V, kΩ
+      const lim = Math.SQRT2 * Vov;
+      const id1 = (v) => { if (v >= lim) return I; if (v <= -lim) return 0; const x = v / 2 / Vov; return I / 2 + (I / Vov) * (v / 2) * Math.sqrt(1 - x * x); };
+      const id2 = (v) => I - id1(v), gm = I / Vov;
+      const X = 0.6, vi = QSim.view(cvI, 0.4), fi = QSim.frame(vi, { x0: -X, x1: X, y0: 0, y1: 1.05 * Math.max(I, 0.4), xl: "v_id (V)", yl: "i_D (mA)" }); fi.axes();
+      fi.fn(id1, c.main, 2.4, undefined, 600); fi.fn(id2, c.acc, 2.4, undefined, 600);
+      fi.fn((v) => I / 2 + gm * v / 2, c.ink3, 1, [5, 3], 200);
+      [lim, -lim].forEach((x) => fi.path([[x, 0], [x, I]], c.rule, 1, [2, 3]));
+      fi.dot(vid0, id1(vid0), c.warn, 5); fi.dot(vid0, id2(vid0), c.warn, 5);
+      // 시간 파형: v_id = vid0 sin, 차동 출력 v_od = (i_D1 − i_D2) R_D
+      const vt = QSim.view(cvT, 0.3), Y = I * Rd * 1.1, ft = QSim.frame(vt, { x0: 0, x1: 2, y0: -Y, y1: Y, xl: "주기", yl: "v_od (V)" }); ft.axes({ noGrid: true });
+      ft.fn((t) => (id1(vid0 * Math.sin(2 * Math.PI * t)) - id2(vid0 * Math.sin(2 * Math.PI * t))) * Rd, c.main, 2.2, undefined, 600);
+      ft.fn((t) => gm * Rd * vid0 * Math.sin(2 * Math.PI * t), c.ink3, 1.2, [5, 3], 400);
+      const out = (id1(vid0) - id2(vid0)) * Rd;
+      S.out(`꼬리 전류 I = ${f2(I, 2)} mA, V_OV = ${f2(Vov, 2)} V → k_n = I/V_OV² = ${f2(I / Vov / Vov, 1)} mA/V², g_m = I/V_OV = ${f2(gm, 2)} mA/V, R_D = 5 kΩ\n` +
+        `선형 범위 끝 √2·V_OV = ${f2(lim, 3)} V (세로 점선). v_id = ${f2(vid0 * 1000, 0)} mV에서 i_D1 = ${f2(id1(vid0), 4)}, i_D2 = ${f2(id2(vid0), 4)} mA\n` +
+        `차동 출력 첨두 ${f2(out, 3)} V, 소신호 예측 g_mR_D·v_id = ${f2(gm * Rd * vid0, 3)} V (${f2((out / (gm * Rd * vid0) - 1) * 100, 1)}%). 위: 파랑 i_D1, 주황 i_D2, 회색 점선 소신호 직선. 아래: 사인파 입력의 차동 출력`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 /*__MORE__*/
 })();
