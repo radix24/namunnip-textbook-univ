@@ -90,3 +90,84 @@
   S.$(".reset").addEventListener("click", () => { seed++; draw(); });
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
+
+/* 기계4 2단원: 구속의 자유도 세기 — 스케치 (02-01), 조립 (02-02) */
+(() => {
+  "use strict";
+  // 행 벡터들의 계수(rank)를 가우스 소거로 구한다
+  const rank = (rows) => {
+    const M = rows.map((r) => r.slice()); let rk = 0; const n = M.length ? M[0].length : 0;
+    for (let col = 0; col < n && rk < M.length; col++) {
+      let p = -1; for (let i = rk; i < M.length; i++) if (Math.abs(M[i][col]) > 1e-9) { p = i; break; }
+      if (p < 0) continue; [M[rk], M[p]] = [M[p], M[rk]];
+      for (let i = 0; i < M.length; i++) if (i !== rk) { const f = M[i][col] / M[rk][col]; for (let j = 0; j < n; j++) M[i][j] -= f * M[rk][j]; }
+      rk++;
+    }
+    return rk;
+  };
+
+  /* ── 직사각형 스케치: 꼭짓점 1(왼아래) 2(오른아래) 3(오른위) 4(왼위), 변수 [x1,y1,x2,y2,x3,y3,x4,y4] ── */
+  (() => {
+    const S = QSim.card("lab-me-dof"); if (!S) return;
+    const [cv] = S.$$("canvas");
+    const e = (i, s) => { const r = new Array(8).fill(0); r[i] = s; return r; }, add = (...rs) => rs.reduce((a, b) => a.map((v, i) => v + b[i]));
+    const C = {
+      hb: { n: "아랫변 수평", rows: [add(e(3, 1), e(1, -1))] },
+      ht: { n: "윗변 수평", rows: [add(e(5, 1), e(7, -1))] },
+      vl: { n: "왼변 수직", rows: [add(e(6, 1), e(0, -1))] },
+      vr: { n: "오른변 수직", rows: [add(e(4, 1), e(2, -1))] },
+      par: { n: "윗변 ∥ 아랫변", rows: [add(e(3, 1), e(1, -1), e(5, -1), e(7, 1))] },
+      dw: { n: "가로 치수 60", rows: [add(e(2, 1), e(0, -1))] },
+      dh: { n: "세로 치수 40", rows: [add(e(7, 1), e(1, -1))] },
+      eq: { n: "아랫변 = 왼변 (같은 길이)", rows: [add(e(2, 1), e(0, -1), e(7, -1), e(1, 1))] },
+      org: { n: "왼아래 꼭짓점 원점 일치", rows: [e(0, 1), e(1, 1)] }
+    };
+    const box = S.$(".dof-list");
+    box.innerHTML = Object.entries(C).map(([k, c]) => `<label style="display:inline-flex;gap:6px;margin:4px 12px 4px 0"><input type="checkbox" name="${k}" aria-label="${c.n}"><span>${c.n}</span></label>`).join("");
+    const on = (k) => S.$(`[name=${k}]`).checked;
+    function draw() {
+      const col = QSim.col(), keys = Object.keys(C).filter(on), rows = keys.flatMap((k) => C[k].rows);
+      const rk = rank(rows), dof = 8 - rk, red = rows.length - rk;
+      const conflict = on("eq") && on("dw") && on("dh"); // 60 ≠ 40인데 같게 하라 → 모순
+      const v = QSim.view(cv, 0.45), G = v.g, f = QSim.frame(v, { x0: -20, x1: 100, y0: -10, y1: 55, equal: true, pad: 4 });
+      const color = conflict || red > 0 ? col.warn : dof === 0 ? col.ink : col.main;
+      // 덜 정의된 정도를 보이려고 남은 자유도만큼 약간 비뚤게 그림
+      const sk = dof > 4 ? 6 : 0, w = on("eq") && !on("dw") ? 40 : 60;
+      const P = [[0, 0], [w, sk * 0.5], [w + sk, 40], [sk * 0.3, 40 - sk * 0.4]];
+      f.path([...P, P[0]], color, 3); P.forEach(([x, y]) => f.dot(x, y, color, 4));
+      f.dot(0, 0, col.acc, 3); f.text("원점", -14, -6, col.ink3);
+      let msg = `걸린 구속 ${keys.length ? keys.map((k) => C[k].n).join(", ") : "없음"}\n꼭짓점 4개(자유도 8) − 독립 구속 ${rk} = 남은 자유도 ${dof}`;
+      if (conflict) msg += "\n모순: 가로 60, 세로 40인데 같은 길이를 요구한다 (과다 정의, CAD가 빨간색으로 경고)";
+      else if (red > 0) msg += `\n중복 구속 ${red}개: 이미 다른 구속으로 정해진 것을 또 정했다 (과다 정의). 하나를 지우세요`;
+      else msg += dof === 0 ? "\n완전 정의 (검정): 모양, 크기, 위치가 모두 정해졌다" : `\n덜 정의됨 (파랑): 끌면 아직 ${dof}가지 방향으로 움직인다`;
+      S.out(msg);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* ── 조립 구속: 강체 자유도 6 [tx, ty, tz, rx, ry, rz] ── */
+  (() => {
+    const S = QSim.card("lab-me-mate"); if (!S) return;
+    const ROW = (i) => { const r = new Array(6).fill(0); r[i] = 1; return r; };
+    const NAME = ["x 방향 이동", "y 방향 이동", "z 방향 이동", "x축 둘레 회전", "y축 둘레 회전", "z축 둘레 회전"];
+    const SC = {
+      shaft: { n: "축을 베어링 구멍에 (축 방향 z)", m: { con: ["축과 구멍 동심", [0, 1, 3, 4]], face: ["축 어깨면 ↔ 베어링 옆면 면 일치 (법선 z)", [2, 3, 4]], key: ["키 홈 정렬 (z축 둘레 회전 고정)", [5]] } },
+      box: { n: "상자를 책상 위 모서리에", m: { bot: ["상자 바닥 ↔ 책상면 면 일치 (법선 z)", [2, 3, 4]], side: ["상자 옆면 ↔ 칸막이 면 일치 (법선 x)", [0, 4, 5]], back: ["상자 뒷면 ↔ 벽 면 일치 (법선 y)", [1, 3, 5]] } },
+      hinge: { n: "문짝을 경첩 핀에 (핀 방향 z)", m: { pin: ["경첩 구멍과 핀 동심", [0, 1, 3, 4]], gap: ["날개 사이 거리 0 (z 방향)", [2]], stop: ["문 열림 각도 0° 고정", [5]] } }
+    };
+    const box = S.$(".mate-list");
+    function build() {
+      const sc = SC[S.val("sc")];
+      box.innerHTML = Object.entries(sc.m).map(([k, [n]]) => `<label style="display:inline-flex;gap:6px;margin:4px 12px 4px 0"><input type="checkbox" name="mt_${k}" aria-label="${n}"><span>${n}</span></label>`).join("");
+      box.querySelectorAll("input").forEach((el) => el.addEventListener("input", draw));
+    }
+    function draw() {
+      const sc = SC[S.val("sc")], ks = Object.keys(sc.m).filter((k) => S.$(`[name=mt_${k}]`)?.checked);
+      const rows = ks.flatMap((k) => sc.m[k][1].map(ROW)), rk = rank(rows), dof = 6 - rk, red = rows.length - rk;
+      const removed = new Set(ks.flatMap((k) => sc.m[k][1])), left = [0, 1, 2, 3, 4, 5].filter((i) => !removed.has(i)).map((i) => NAME[i]);
+      S.out(`${sc.n}: 공간의 강체 자유도 6\n걸린 구속: ${ks.length ? ks.map((k) => sc.m[k][0]).join(", ") : "없음"}\n남은 자유도 ${dof}${left.length ? ": " + left.join(", ") : " (완전 고정)"}${red > 0 ? `\n중복으로 없앤 자유도 ${red}개 (이미 다른 구속이 없앤 것을 또 없앰)` : ""}`);
+    }
+    S.$("select[name=sc]").addEventListener("input", () => { build(); draw(); });
+    build(); draw();
+  })();
+})();
