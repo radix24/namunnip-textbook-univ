@@ -233,3 +233,28 @@
   })();
 /*__MORE__*/
 })();
+
+/* 전전7 6단원 추가: 매질 속 평면파 (07-06-02) */
+(() => {
+  "use strict";
+  if (!window.QSim) return;
+  const S = QSim.card("exp-e7-wave"); if (!S) return;
+  const cv = S.$("canvas"), c0 = 2.998e8, eta0 = 376.7;
+  let t = 0;
+  function draw() {
+    const c = QSim.col(), er = S.val("er"), f = S.val("f") * 1e9, n = Math.sqrt(er);
+    const lam0 = c0 / f, lam = lam0 / n, eta = eta0 / n;
+    const V = QSim.view(cv, 0.45), fr = QSim.frame(V, { x0: 0, x1: 3, y0: -3.2, y1: 3.2, xl: "z / λ₀", yl: "E (파랑), η₀H (주황)" }); fr.axes();
+    const ph = 2 * Math.PI * t;
+    fr.fn((z) => Math.cos(ph - 2 * Math.PI * n * z), c.main, 2.4);
+    fr.fn((z) => n * Math.cos(ph - 2 * Math.PI * n * z), c.acc, 2, [6, 3]);
+    // 한 마루를 따라가는 점: cos(ph − 2πnz) = 1 → z = ph/(2πn) (0~3 안으로)
+    let zc = (ph / (2 * Math.PI * n)) % (1 / n); while (zc < 3 - 1 / n) { fr.dot(zc, 1, c.warn, 4); zc += 1 / n; }
+    S.out(`ε_r = ${er.toFixed(1)}, f = ${(f / 1e9).toFixed(1)} GHz → 진공 파장 λ₀ = ${(lam0 * 100).toFixed(2)} cm, 매질 속 파장 λ = λ₀/√ε_r = ${(lam * 100).toFixed(2)} cm\n` +
+      `속력 v = c/√ε_r = ${(c0 / n / 1e8).toFixed(3)}×10⁸ m/s, 고유 임피던스 η = 376.7/√ε_r = ${eta.toFixed(1)} Ω (E/H 비)\n` +
+      `E = 1 V/m이면 H = ${(1 / eta * 1000).toFixed(2)} mA/m. 그림의 E와 H는 서로 수직인 방향(x, y)이지만 같은 위상이라 한 그래프에 겹쳐 그렸습니다. 빨간 점은 마루를 따라 속력 v로 움직입니다.`);
+  }
+  const L = QSim.loop((dt) => { t += dt * 0.5; draw(); }).watch(S.root);
+  QSim.playButton(S.$(".play"), L);
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();

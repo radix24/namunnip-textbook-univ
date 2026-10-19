@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-06-02",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e4-logic.js"]
+}
+-->
+<article class="card q-card" id="exp-e4-fsm" data-kind="탐구" data-std="전전4-06-02">
+  <header class="card-head"><span class="no"></span><h2>같은 검출기, 한 클록 차이: Moore와 Mealy</h2><span class="kind">탐구 · 타이밍표로 비교</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>같은 패턴을 찾는 두 기계 중 왜 Moore는 상태가 하나 더 필요하고 출력이 한 클록 늦을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>직렬 입력 x에서 패턴(겹침 허용)이 나타나면 1을 내는 검출기입니다. 상태 번호는 "지금까지 맞은 패턴 앞부분의 길이"입니다. Mealy는 마지막 비트가 들어오는 전이에서 바로 출력하고, Moore는 패턴을 다 본 상태(번호 = 패턴 길이)에 머무는 동안 출력합니다. 표의 각 칸은 한 클록이며, 상태 줄은 그 클록이 시작할 때의 상태입니다. 입력은 0과 1만 쓰세요.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>패턴</span><select name="pat" aria-label="찾을 패턴"><option value="11" selected>11</option><option value="101">101</option><option value="110">110</option></select></label>
+        <label><span>입력 비트</span><input type="text" name="bits" value="0110111011" maxlength="24" aria-label="입력 비트열"></label>
+      </div>
+      <canvas aria-label="입력, 두 기계의 상태와 출력 타이밍표"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>처음 화면(패턴 11, 입력 0110111011): Mealy 출력 1은 클록 3, 6, 7, 10, Moore는 4, 7, 8입니다(예제 6.2.1의 두 설계). Moore는 모두 한 클록 늦고, 10번째 비트에서 찾은 패턴은 11번째 클록에 나와 표 밖입니다.</span></li>
+        <li><b>겹침</b><span>클록 6, 7(입력 …111)에서 Mealy가 연속 두 번 1을 냅니다. "11"을 찾은 뒤 마지막 1을 다음 패턴의 첫 1로 다시 쓰기 때문입니다.</span></li>
+        <li><b>패턴 101</b><span>입력을 0110101101로 바꾸면 Mealy는 5, 7, 10, Moore는 6, 8에서 1입니다. 상태 수는 Mealy 3개(0, 1, 2), Moore 4개(0~3)입니다.</span></li>
+        <li><b>패턴 110</b><span>입력 0110111011이면 Mealy 4, 8, Moore 5, 9입니다. 110은 끝과 앞이 겹치지 않아, 찾은 뒤 상태 0으로 돌아갑니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>Mealy는 상태가 적고 반응이 빠르지만, 출력이 입력에 바로 의존해 입력의 글리치가 출력으로 새어 나갈 수 있습니다. Moore는 출력이 상태만으로 정해져 클록에 맞춰 깨끗합니다. 실제 설계에서는 Mealy 출력 뒤에 플립플롭을 하나 두어 Moore처럼 쓰기도 합니다. 상태 번호를 정하는 방법은 문자열 검색 알고리즘(KMP)에서도 같은 생각을 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"Moore와 Mealy는 찾는 패턴이 다르다."</b> 같은 패턴을 찾고, 출력이 나오는 시점과 상태 수만 다릅니다.</li>
+        <li><b>"Moore 출력은 틀렸다(늦었다)."</b> 출력을 상태에 묶은 대가로 한 클록 늦을 뿐, 모든 패턴을 빠짐없이 찾습니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
