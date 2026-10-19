@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e12-esd" data-kind="본문" data-std="전전12-01-01">
+  <header class="card-head"><span class="no"></span><h2>에너지 스펙트럼 밀도와 전력 스펙트럼 밀도</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>에너지 신호와 전력 신호를 구별한다.</li>
+        <li>에너지 스펙트럼 밀도 \(|X(f)|^2\)와 Parseval 정리로 대역 안의 에너지를 계산한다.</li>
+        <li>주기 신호와 랜덤 신호의 전력 스펙트럼 밀도를 구하고 대역폭을 정의한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Fourier 변환 (<a href="../6/04-01.html">전전6 4.1절</a>), PSD와 Wiener-Khinchin (<a href="../11/05-01.html">전전11 5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>에너지 신호와 전력 신호</h3>
+    <p class="q-term"><b>에너지 신호</b>: \(E = \int|x(t)|^2dt\)가 유한(펄스 하나). 평균 전력은 0.</p>
+    <p class="q-term"><b>전력 신호</b>: 평균 전력 \(P = \lim\frac1T\int_{-T/2}^{T/2}|x|^2dt\)가 유한하고 0이 아님(주기 신호, 랜덤 신호). 에너지는 무한.</p>
+    <p>에너지 신호는 에너지 스펙트럼 밀도(ESD) \(\Psi(f) = |X(f)|^2\)를, 전력 신호는 전력 스펙트럼 밀도(PSD) S(f)를 씁니다. Parseval 정리 \(\int|x|^2dt = \int|X(f)|^2df\)가 둘을 잇습니다.</p>
+
+    <h3><span class="no">1.1.2</span>사각 펄스의 에너지 분포</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>진폭 A = 1 V, 폭 T = 1 ms인 사각 펄스(1 Ω 기준). (가) 에너지, (나) ESD, (다) |f| ≤ 1/T(주엽) 안의 에너지 비율.</p>
+    </div>
+    <p><i>풀이.</i> (가) \(E = A^2T = 1\) mJ. (나) \(X(f) = AT\,\mathrm{sinc}(fT)\)이므로 \(\Psi(f) = A^2T^2\mathrm{sinc}^2(fT)\). (다) \(\int_{-1/T}^{1/T}T^2\mathrm{sinc}^2(fT)df/T = \int_{-1}^{1}\mathrm{sinc}^2u\,du \approx 0.903\). 에너지의 90.3%가 ±1 kHz 안에 있어, 이 펄스로 디지털 신호를 보낼 때 필요한 대역폭을 대략 1/T로 잡는 근거가 됩니다.</p>
+
+    <h3><span class="no">1.1.3</span>주기 신호의 PSD</h3>
+    <p>주기 \(T_0\)인 신호의 Fourier 급수 계수 \(c_n\)이 있으면 PSD는 \(S(f) = \sum|c_n|^2\delta(f - nf_0)\): 전력이 고조파에 나뉘어 있습니다. 예: \(A\cos2\pi f_0t\)는 ±f₀에 \(A^2/4\)씩, 합 \(A^2/2\).</p>
+    <p class="q-term"><b>대역폭의 정의</b>: 절대 대역폭(스펙트럼이 0이 아닌 범위), 3 dB 대역폭, 영점 간 대역폭, 전력 일정 비율(예: 99%)을 담는 대역폭 등. 같은 신호도 정의에 따라 값이 다르므로 함께 밝힌다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "ESD와 PSD는 같은 단위다": ESD는 J/Hz(V²·s/Hz), PSD는 W/Hz. (2) "사각 펄스의 대역폭은 1/T이다": 주엽만의 근사이고 실제 스펙트럼은 무한히 퍼집니다. (3) 양측 스펙트럼에서 대역 안 에너지를 구할 때 음의 주파수 쪽을 빠뜨리는 실수.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>에너지 신호 → ESD \(|X(f)|^2\), 전력 신호 → PSD.</li>
+        <li>Parseval: 시간 영역 에너지 = 주파수 영역 에너지. 사각 펄스 주엽에 90.3%.</li>
+        <li>주기 신호 PSD = 고조파 위치의 델타, 크기 \(|c_n|^2\). 대역폭은 정의를 밝힌다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(x(t) = 2\cos(2\pi 100t) + \cos(2\pi 300t)\)의 평균 전력은?
+          <details><summary>답</summary><p>2 + 0.5 = 2.5 W.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x(t) = e^{-at}u(t)\)(a &gt; 0)의 에너지와 ESD는?
+          <details><summary>답</summary><p>\(E = 1/(2a)\), \(\Psi = 1/(a^2 + (2\pi f)^2)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제의 펄스에서 영점 간 대역폭(양측)과 3 dB 대역폭(한쪽)을 비교하라.
+          <details><summary>답</summary><p>영점 간 ±1 kHz(2 kHz). \(\mathrm{sinc}^2(fT) = 0.5\)는 fT ≈ 0.443, 약 443 Hz.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

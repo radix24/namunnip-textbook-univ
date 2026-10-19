@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-01-02",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e12-comm.js"]
+}
+-->
+<article class="card q-card" id="exp-e12-hilbert" data-kind="탐구" data-std="전전12-01-02">
+  <header class="card-head"><span class="no"></span><h2>해석 신호로 포락선 꺼내기</h2><span class="kind">탐구 · Hilbert 변환의 90° 이동</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>반송파 위에 실린 메시지를 "포락선"으로 정확히 정의하려면 무엇이 필요할까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>\(x(t) = (1 + \mu\cos2\pi t)\cos2\pi f_ct\)(파랑)와 그 Hilbert 변환 \(\hat x = (1 + \mu\cos2\pi t)\sin2\pi f_ct\)(주황 점선, 메시지 대역이 반송파보다 낮을 때)를 그리고, 해석 신호의 크기 \(|x + j\hat x|\)(빨강)를 겹칩니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>μ = <b data-show="mu" data-fix="2">0.50</b></span><input type="range" name="mu" min="0" max="1.5" step="0.05" value="0.5" aria-label="변조도"></label>
+        <label><span>f_c = <b data-show="fc" data-fix="0">20</b> Hz</span><input type="range" name="fc" min="5" max="40" step="1" value="20" aria-label="반송파 주파수"></label>
+      </div>
+      <canvas aria-label="신호, Hilbert 변환, 포락선"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>μ = 0.5, f_c = 20 Hz: 빨간 포락선이 1.5와 0.5 사이를 오가며 파란 신호의 꼭대기를 정확히 감쌉니다(예제 1.2.1).</span></li>
+        <li><b>90° 관계</b><span>주황 점선이 파랑보다 4분의 1 반송파 주기 늦은 사인 모양입니다. 두 신호를 제곱해 더하면 반송파가 사라지고 포락선의 제곱만 남습니다.</span></li>
+        <li><b>과변조</b><span>μ = 1.2로 올리면 1 + μcos가 음수인 구간에서 빨간 곡선이 0에서 꺾여 다시 올라가, 메시지 모양과 달라집니다. 포락선 검파가 과변조를 복원하지 못하는 이유입니다.</span></li>
+        <li><b>느린 반송파</b><span>f_c를 5 Hz로 낮춰도 이 카드의 식에서는 포락선이 맞지만, 메시지 대역과 반송파가 가까워지면 실제 Hilbert 변환은 이 단순한 꼴이 아니게 됩니다(Bedrosian 조건).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>디지털 수신기는 받은 신호를 I(cos)와 Q(sin) 두 성분으로 나눠 해석 신호를 직접 만들고, 크기와 각으로 진폭·위상·주파수를 읽습니다. 진동 감시 장치는 베어링 소리의 포락선 스펙트럼으로 결함을 찾습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"포락선은 꼭짓점을 이은 선이다."</b> 해석 신호의 크기로 정의되며, 반송파가 빠를 때 꼭짓점을 잇는 선과 거의 같아집니다.</li>
+        <li><b>"Hilbert 변환은 시간을 늦춘다."</b> 모든 주파수의 위상을 90° 돌리는 것이라, 주파수마다 시간 지연이 다릅니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
