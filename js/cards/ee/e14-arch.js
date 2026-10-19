@@ -6,24 +6,6 @@
   const C = () => QSim.col();
   const f2 = (x, d = 3) => (Math.abs(x) < 5e-13 ? 0 : x).toFixed(d);
 
-  /* 1. Amdahl 법칙 */
-  (() => {
-    const S = QSim.card("exp-e14-amdahl"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), f = S.val("f"), s = S.val("s");
-      const sp = (k) => 1 / ((1 - f) + f / k), lim = 1 / (1 - f);
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: Math.min(25, Math.max(4, lim * 1.15)), xl: "log₁₀(부분 가속 s)", yl: "전체 가속" }); fr.axes();
-      fr.fn((ls) => sp(10 ** ls), c.main, 2.4);
-      if (lim < 25) fr.path([[0, lim], [3, lim]], c.warn, 1.4, [6, 3]);
-      fr.dot(Math.log10(s), sp(s), c.warn, 6);
-      S.out(`실행 시간 중 개선 가능한 비율 f = ${f2(f, 2)}, 그 부분의 가속 s = ${f2(s, 1)}배\n` +
-        `전체 가속 = 1/((1 − f) + f/s) = ${f2(sp(s), 3)}배. s를 무한히 키워도 1/(1 − f) = ${f2(lim, 2)}배(빨간 점선)를 넘지 못합니다.\n` +
-        `개선 후 실행 시간에서 개선 안 된 부분의 비율 ${f2((1 - f) / ((1 - f) + f / s) * 100, 1)}%`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. IEEE 754 단정밀도 덧셈 */
   (() => {
     const S = QSim.card("exp-e14-float"); if (!S) return;

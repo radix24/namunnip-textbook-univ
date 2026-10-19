@@ -1,0 +1,111 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-cost" data-kind="본문" data-std="천우10-01-03">
+  <header class="card-head"><span class="no"></span><h2>계산 시간을 재고 계산량을 어림하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>프로그램의 실행 시간을 재고, 크기 \(N\)을 두 배로 할 때 시간이 몇 배가 되는지로 계산량의 차수를 확인한다.</li>
+        <li>계산량이 \(O(N)\), \(O(N\log N)\), \(O(N^2)\), \(O(N^3)\)인 대표 알고리즘을 안다.</li>
+        <li>작은 실행으로 큰 계산의 시간을 미리 어림해 계산 계획을 세운다.</li>
+        <li>병목을 찾아 알고리즘을 바꾸는 것이 코드를 다듬는 것보다 효과가 큼을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Unix 명령과 스크립트 (<a href="01-01.html">1.1절</a>), 직접 합산법 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>시간 재기</h3>
+    <p>Python에서는 <code>time.perf_counter()</code>로 구간의 시간을 재거나, 명령창에서 <code>time python run.py</code>(Unix)로 전체 시간을 잽니다. 한 번만 재면 다른 프로그램의 영향으로 흔들리므로 여러 번 재서 가장 짧은 값이나 중앙값을 씁니다. 함수별로 시간을 나눠 보려면 <code>python -m cProfile run.py</code> 같은 프로파일러를 씁니다.</p>
+
+    <h3><span class="no">1.3.2</span>계산량의 차수</h3>
+    <p>N체 직접 합산은 모든 쌍 \(N(N-1)/2\)개를 계산하므로 시간이 \(N^2\)에 비례할 것입니다. 실제로 재 봅니다.</p>
+    <pre><code>import random, time
+
+def accelerations(pos, eps2=1e-4):
+    """직접 합산: 모든 쌍의 중력 가속도 (G = m = 1)"""
+    n = len(pos)
+    acc = [[0.0, 0.0, 0.0] for _ in range(n)]
+    for i in range(n):
+        xi, yi, zi = pos[i]
+        for j in range(i + 1, n):
+            dx, dy, dz = pos[j][0] - xi, pos[j][1] - yi, pos[j][2] - zi
+            inv = (dx * dx + dy * dy + dz * dz + eps2) ** -1.5
+            acc[i][0] += dx * inv; acc[i][1] += dy * inv; acc[i][2] += dz * inv
+            acc[j][0] -= dx * inv; acc[j][1] -= dy * inv; acc[j][2] -= dz * inv
+    return acc
+
+random.seed(0)
+prev = None
+for n in (200, 400, 800):
+    pos = [[random.random() for _ in range(3)] for _ in range(n)]
+    t0 = time.perf_counter()
+    accelerations(pos)
+    dt = time.perf_counter() - t0
+    ratio = f"  (앞의 {dt / prev:.1f}배)" if prev else ""
+    print(f"N = {n:4d}: {dt:.3f} s{ratio}")
+    prev = dt</code></pre>
+    <pre><code>N =  200: 0.054 s
+N =  400: 0.261 s  (앞의 4.8배)
+N =  800: 1.203 s  (앞의 4.6배)</code></pre>
+    <p>(시간은 컴퓨터마다 다릅니다. 중요한 것은 비율입니다.) \(N\)을 두 배로 할 때 시간이 약 4배(\(2^2\))가 되므로 \(O(N^2)\)임이 확인됩니다.</p>
+    <div class="tb-table">
+      <table>
+        <thead><tr><th>차수</th><th>\(N\)을 2배로 하면</th><th>예</th></tr></thead>
+        <tbody>
+          <tr><td>\(O(N)\)</td><td>2배</td><td>합계, 평균, 히스토그램</td></tr>
+          <tr><td>\(O(N\log N)\)</td><td>2배 조금 넘게</td><td>정렬, 고속 푸리에 변환, 트리 코드</td></tr>
+          <tr><td>\(O(N^2)\)</td><td>4배</td><td>N체 직접 합산, 단순한 쌍 찾기</td></tr>
+          <tr><td>\(O(N^3)\)</td><td>8배</td><td>가우스 소거(\(N\times N\) 행렬)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="no">1.3.3</span>큰 계산 미리 어림하기</h3>
+    <p>위 결과에서 \(N = 800\)이 1.2초이면, \(N = 10^5\)은 \((10^5/800)^2 = 15{,}600\)배인 약 5시간이 걸리고, 그것도 한 걸음뿐입니다. 궤도를 1,000걸음 적분하면 약 200일입니다. 이렇게 작은 실행으로 미리 어림하면, 코드를 다듬어 몇 배 빠르게 할지(예: 배열 연산 라이브러리, 컴파일 언어로 수십~수백 배), 알고리즘을 바꿀지(트리 코드 \(O(N\log N)\)이면 \(N = 10^5\)에서 수천 배)를 정할 수 있습니다. 큰 \(N\)에서는 알고리즘의 차수가 상수배 개선을 압도합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p>\(1000\times1000\) 행렬의 가우스 소거가 0.5초 걸렸습니다. \(4000\times4000\)이면?</p>
+    </div>
+    <p><i>풀이.</i> \(O(N^3)\)이므로 \(4^3 = 64\)배, 약 32초. 메모리도 \(N^2\)에 비례해 16배(배정밀도로 8 MB → 128 MB)가 됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>time.perf_counter()</code>, 프로파일러로 재고, 여러 번 재서 흔들림을 줄인다.</li>
+        <li>\(N\)을 2배로 할 때의 시간 비로 차수를 확인한다(2, 4, 8배 ↔ \(N\), \(N^2\), \(N^3\)).</li>
+        <li>작은 실행으로 큰 계산을 어림하고, 필요하면 알고리즘(차수)을 바꾼다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(N\)을 10배로 했더니 시간이 약 100배가 되었습니다. 차수는?
+          <details><summary>답</summary><p>\(O(N^2)\).</p></details>
+        </li>
+        <li>정렬이 \(N = 10^6\)에서 1초 걸렸다면 \(N = 10^7\)은 대략?
+          <details><summary>답</summary><p>\(O(N\log N)\): \(10\times\log10^7/\log10^6 = 10\times7/6 \approx 12\)초.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>두 목록(각 \(10^6\)개)에서 가까운 쌍을 찾을 때 모든 쌍을 비교하면 몇 번 비교합니까? 하늘을 칸으로 나눠 같은 칸과 이웃 칸만 비교하면?
+          <details><summary>답</summary><p>모든 쌍 \(10^{12}\)번. 칸으로 나누면 천체마다 근처 몇 개만 비교해 대략 \(10^6\)~\(10^7\)번으로 줄어듭니다(교차 맞춤 프로그램이 쓰는 방법, 천우7 6.4절).</p></details>
+        </li>
+        <li>위 코드에서 <code>acc[j]</code>를 빼는 줄을 지우고 <code>j</code> 반복을 <code>range(n)</code>(단 \(j \ne i\))으로 바꾸면 시간은 몇 배가 되고, 답은 같습니까?
+          <details><summary>답</summary><p>쌍마다 두 번 계산하므로 약 2배 느려집니다. 힘의 대칭(작용-반작용)을 쓰지 않을 뿐이라 답은 같습니다(반올림 차이 정도).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

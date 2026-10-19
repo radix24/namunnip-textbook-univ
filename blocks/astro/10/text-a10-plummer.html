@@ -1,0 +1,109 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-plummer" data-kind="본문" data-std="천우10-03-04">
+  <header class="card-head"><span class="no"></span><h2>N체 모의실험의 처음 조건: 플러머 구 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>성단 모형으로 쓰는 플러머 구의 밀도와 질량 분포를 안다.</li>
+        <li>누적 분포를 거꾸로 풀어(역변환 표본 추출) 반지름을 뽑는다.</li>
+        <li>기각 표본 추출로 속도를 뽑아 비리얼 평형인 처음 조건을 만든다.</li>
+        <li>비리얼 비와 반질량 반지름으로 만든 조건을 검산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>직접 합산법과 연화 길이 (<a href="03-01.html">3.1절</a>, <a href="03-03.html">3.3절</a>), 비리얼 정리 (<a href="../3/03-04.html">천우3 3.4절</a>), 난수 (<a href="../6/06-02.html">천우6 6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.4.1</span>플러머 구</h3>
+    <p>1911년 플러머가 구상성단의 밝기 분포를 맞추려고 쓴 모형으로, 식이 간단해 N체 계산의 표준 시험 대상입니다. 전체 질량 \(M\), 척도 반지름 \(a\)일 때</p>
+    <div class="tb-env thm">
+      <span class="lb">정의 3.4.1</span>
+      \[\rho(r) = \frac{3M}{4\pi a^3}\left(1 + \frac{r^2}{a^2}\right)^{-5/2},\]
+      \[M(r) = M\frac{r^3}{(r^2 + a^2)^{3/2}}, \qquad \Phi(r) = -\frac{GM}{\sqrt{r^2 + a^2}}.\]
+    </div>
+    <p>퍼텐셜 에너지는 \(W = -3\pi GM^2/(32a)\), 반질량 반지름은 \(r_h = a/\sqrt{2^{2/3} - 1} = 1.305a\)입니다.</p>
+
+    <h3><span class="no">3.4.2</span>반지름: 역변환 표본 추출</h3>
+    <p>0과 1 사이 고른 난수 \(X\)를 '안쪽 질량의 비율'로 보고 \(M(r)/M = X\)를 \(r\)에 대해 풀면, 그 \(r\)들은 플러머 분포를 따릅니다. 단위를 \(G = M = a = 1\)로 두면</p>
+    \[r = \frac{1}{\sqrt{X^{-2/3} - 1}}.\]
+    <p>방향은 구면 위에서 고르게 뽑습니다(\(\cos\theta\)를 −1~1에서 고르게, \(\phi\)를 0~\(2\pi\)에서 고르게). \(\theta\)를 고르게 뽑으면 극 쪽에 점이 몰리므로 주의합니다.</p>
+
+    <h3><span class="no">3.4.3</span>속도: 기각 표본 추출</h3>
+    <p>평형 상태의 플러머 구에서 그 자리 탈출 속력 \(v_e = \sqrt2(1 + r^2)^{-1/4}\)에 대한 비 \(q = v/v_e\)는 \(g(q) \propto q^2(1 - q^2)^{7/2}\)을 따릅니다. 이 식은 거꾸로 풀기 어려우므로, \(q\)와 높이 \(y\)를 고르게 뽑아 \(y < g(q)\)일 때만 받아들입니다. \(g\)의 최댓값이 0.1보다 작으므로 \(y\)를 0~0.1에서 뽑으면 됩니다.</p>
+    <pre><code>import math, random
+
+def plummer(n, seed=1):
+    """플러머 구 (G = 전체 질량 = 척도 반지름 a = 1). 위치와 속도 목록"""
+    rng = random.Random(seed)
+    def iso(r):                      # 고른 방향의 길이 r 벡터
+        z = rng.uniform(-1, 1); phi = rng.uniform(0, 2 * math.pi); s = math.sqrt(1 - z * z)
+        return [r * s * math.cos(phi), r * s * math.sin(phi), r * z]
+    pos, vel = [], []
+    for _ in range(n):
+        X = rng.random()
+        r = 1 / math.sqrt(X**(-2 / 3) - 1)           # 질량 분포를 거꾸로 풀기
+        while True:                                   # 속도 크기: g(q) = q^2 (1-q^2)^3.5 에서 기각 표본
+            q, y = rng.random(), 0.1 * rng.random()
+            if y &lt; q * q * (1 - q * q)**3.5:
+                break
+        vesc = math.sqrt(2) * (1 + r * r)**-0.25
+        pos.append(iso(r)); vel.append(iso(q * vesc))
+    return pos, vel
+
+pos, vel = plummer(20000)
+n = len(pos)
+K = 0.5 * sum(vx * vx + vy * vy + vz * vz for vx, vy, vz in vel) / n     # 입자 질량 1/n
+W = -3 * math.pi / 32                                                       # 플러머 구의 퍼텐셜 에너지(이론)
+r_sorted = sorted(math.sqrt(x * x + y * y + z * z) for x, y, z in pos)
+print(f"운동 에너지 K = {K:.4f}, 이론 퍼텐셜 에너지 W = {W:.4f}, 비리얼 비 2K/|W| = {2 * K / abs(W):.3f}")
+print(f"반질량 반지름: 표본 {r_sorted[n // 2]:.3f}, 이론 {1 / math.sqrt(2**(2 / 3) - 1):.3f}")</code></pre>
+    <pre><code>운동 에너지 K = 0.1461, 이론 퍼텐셜 에너지 W = -0.2945, 비리얼 비 2K/|W| = 0.992
+반질량 반지름: 표본 1.301, 이론 1.305</code></pre>
+    <p>비리얼 비 \(2K/|W| = 0.99\)로 평형(1)에 가깝고, 반질량 반지름도 이론과 맞습니다. 표본 수가 유한해 생기는 차(1% 안팎)는 \(1/\sqrt N\) 크기입니다. 이 처음 조건으로 적분을 시작했을 때 성단이 크게 부풀거나 수축하지 않으면 적분기와 처음 조건이 모두 맞다는 좋은 검사가 됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>\(X = 0.5\)를 뽑으면 반지름은? 이것이 무슨 반지름입니까?</p>
+    </div>
+    <p><i>풀이.</i> \(r = 1/\sqrt{0.5^{-2/3} - 1} = 1/\sqrt{1.587 - 1} = 1.305\). 질량의 절반이 그 안에 있는 반질량 반지름입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>플러머 구: \(\rho \propto (1 + r^2/a^2)^{-5/2}\), \(W = -3\pi GM^2/(32a)\), \(r_h = 1.305a\).</li>
+        <li>반지름은 \(M(r)/M = X\)를 거꾸로 풀어, 방향은 \(\cos\theta\)를 고르게.</li>
+        <li>속도는 기각 표본 추출. 비리얼 비와 \(r_h\)로 검산한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X = 0.9\)를 뽑으면 반지름은?
+          <details><summary>답</summary><p>\(1/\sqrt{0.9^{-2/3} - 1} = 1/\sqrt{0.0728} = 3.71\).</p></details>
+        </li>
+        <li>기각 표본 추출에서 \(q\) 하나를 얻으려면 평균 몇 번 뽑습니까? (\(\int_0^1 g\,dq \approx 0.043\))
+          <details><summary>답</summary><p>받아들일 확률 = \(0.043/(1\times0.1) = 0.43\), 평균 약 2.3번. \(g\)의 최댓값(0.092)에 더 가깝게 상자를 잡으면 조금 더 효율적입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>속도를 모두 0으로 두고 시작하면 성단은 어떻게 됩니까? 비리얼 비는?
+          <details><summary>답</summary><p>비리얼 비 0. 받쳐 줄 운동이 없어 성단이 한꺼번에 무너졌다가(차가운 붕괴) 다시 튀어나오며 새로운 평형으로 갑니다.</p></details>
+        </li>
+        <li>\(\theta\)를 0~\(\pi\)에서 고르게 뽑으면 점의 분포가 어떻게 틀립니까?
+          <details><summary>답</summary><p>위도선마다 같은 수의 점이 놓여, 둘레가 짧은 극 근처에 점이 몰립니다. 넓이가 \(\sin\theta\,d\theta\)에 비례하므로 \(\cos\theta\)를 고르게 뽑아야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

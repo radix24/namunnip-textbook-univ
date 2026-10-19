@@ -7,57 +7,6 @@
   const par = (a, b) => (a * b) / (a + b);
   const fmtR = (r) => (r >= 1e6 ? `${+(r / 1e6).toPrecision(3)} MΩ` : r >= 1e3 ? `${+(r / 1e3).toPrecision(3)} kΩ` : `${+r.toPrecision(3)} Ω`);
 
-  /* 1. 부하가 걸린 분압기 */
-  (() => {
-    const S = QSim.card("exp-e3-divider"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), V = S.val("V"), R1 = S.val("r1") * 1e3, R2 = S.val("r2") * 1e3, lRL = S.val("lrl"), RL = 10 ** lRL;
-      const ideal = V * R2 / (R1 + R2), out = (rl) => V * par(R2, rl) / (R1 + par(R2, rl));
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 2, x1: 7, y0: 0, y1: V * 1.05, xl: "log₁₀ R_L (Ω)", yl: "출력 (V)" }); f.axes();
-      f.path([[2, ideal], [7, ideal]], c.ink3, 1.2, [5, 4]);
-      f.fn((x) => out(10 ** x), c.main, 2.5);
-      f.path([[Math.log10(R2), 0], [Math.log10(R2), V]], c.rule, 1, [2, 3]); f.text("R_L = R₂", Math.log10(R2) + 0.05, V * 0.95, c.ink3);
-      const vo = out(RL); f.dot(lRL, vo, c.warn, 6);
-      const Ith = ideal / par(R1, R2);
-      S.out(`부하 없음: V × R₂/(R₁ + R₂) = ${ideal.toFixed(3)} V (회색 점선)\n` +
-        `부하 R_L = ${fmtR(RL)}: R₂ ∥ R_L = ${fmtR(par(R2, RL))} → 출력 ${vo.toFixed(3)} V (부하 없을 때의 ${(100 * vo / ideal).toFixed(1)}%)\n` +
-        `출력 마디의 테브난 등가: ${ideal.toFixed(3)} V, R₁ ∥ R₂ = ${fmtR(par(R1, R2))} (단락 전류 ${(Ith * 1e3).toFixed(3)} mA). 부하가 이 저항의 100배 이상이면 1% 안으로 맞습니다.\n` +
-        `분압기가 쓰는 전력(부하 없음) ${(V * V / (R1 + R2) * 1e3).toFixed(3)} mW`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 휘트스톤 다리를 마디 해석으로 (02-02) */
-  (() => {
-    const S = QSim.card("exp-e3-bridge"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), V = S.val("V"), R1 = S.val("r1"), R2 = S.val("r2"), R3 = S.val("r3"), Rx = S.val("rx"), R5 = S.val("r5");   // kΩ, mA
-      // 마디 b, c (a = V, 아래 = 0). 나가는 전류 합 = 0
-      const g11 = 1 / R1 + 1 / R3 + 1 / R5, g12 = -1 / R5, g22 = 1 / R2 + 1 / Rx + 1 / R5, b1 = V / R1, b2 = V / R2;
-      const D = g11 * g22 - g12 * g12, vb = (b1 * g22 - g12 * b2) / D, vc = (g11 * b2 - g12 * b1) / D, i5 = (vb - vc) / R5;
-      const v = QSim.view(cv, 0.6), g = v.g, W = v.W, H = v.H, P = { a: [W * 0.5, H * 0.1], b: [W * 0.27, H * 0.5], c: [W * 0.73, H * 0.5], d: [W * 0.5, H * 0.9] };
-      g.save(); g.font = "12px " + (getComputedStyle(document.documentElement).getPropertyValue("--f-mono") || "monospace");
-      const edge = (p, q, label, cur) => {
-        const [x1, y1] = P[p], [x2, y2] = P[q]; g.strokeStyle = c.ink3; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
-        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; g.fillStyle = c.card; g.fillRect(mx - 26, my - 9, 52, 18); g.strokeStyle = c.ink2; g.strokeRect(mx - 26, my - 9, 52, 18);
-        g.fillStyle = c.ink; g.textAlign = "center"; g.fillText(label, mx, my + 4);
-        g.fillStyle = Math.abs(cur) < 1e-6 ? c.ink3 : c.main; g.fillText(`${Math.abs(cur).toFixed(3)} mA${cur >= 0 ? "" : " (반대)"}`, mx + (q === "c" || p === "c" ? 72 : -72) * (p === "b" && q === "c" ? 0 : 1), my + (p === "b" && q === "c" ? 24 : 4));
-      };
-      edge("a", "b", `R1 ${R1}k`, (V - vb) / R1); edge("a", "c", `R2 ${R2}k`, (V - vc) / R2); edge("b", "d", `R3 ${R3}k`, vb / R3); edge("c", "d", `Rx ${Rx}k`, vc / Rx); edge("b", "c", `R5 ${R5}k`, i5);
-      Object.entries({ a: V, b: vb, c: vc, d: 0 }).forEach(([k, val]) => { const [x, y] = P[k]; g.beginPath(); g.arc(x, y, 5, 0, 7); g.fillStyle = c.warn; g.fill(); g.fillStyle = c.ink; g.textAlign = "left"; g.fillText(`${k}: ${val.toFixed(3)} V`, x + 8, y - 6); });
-      g.restore();
-      const bal = R1 / R3 === R2 / Rx;
-      S.out(`위 마디 a = ${V} V(전압원으로 정해짐), 아래 마디 d = 기준 0 V. 미지수는 v_b, v_c 두 개\n` +
-        `마디 식 G·v = b (mS, V, mA): [${g11.toFixed(3)}, ${g12.toFixed(3)}; ${g12.toFixed(3)}, ${g22.toFixed(3)}]·[v_b; v_c] = [${b1.toFixed(3)}; ${b2.toFixed(3)}], det G = ${D.toFixed(4)}\n` +
-        `v_b = ${vb.toFixed(4)} V, v_c = ${vc.toFixed(4)} V → R5(b→c) 전류 ${(i5 * 1000).toFixed(2)} μA\n` +
-        `균형 조건 R1/R3 = R2/Rx: ${(R1 / R3).toFixed(3)} 와 ${(R2 / Rx).toFixed(3)}${bal ? " → 균형, R5 전류 0" : ""}. 균형이 되는 Rx = R2·R3/R1 = ${(R2 * R3 / R1).toFixed(3)} kΩ\n` +
-        `전력 균형: 전원 ${(V * ((V - vb) / R1 + (V - vc) / R2)).toFixed(3)} mW 공급 = 저항 합 ${((V - vb) ** 2 / R1 + (V - vc) ** 2 / R2 + vb * vb / R3 + vc * vc / Rx + (vb - vc) ** 2 / R5).toFixed(3)} mW`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 3. 중첩: 전원을 하나씩 켜고 더하기 (03-01) */
   (() => {
     const S = QSim.card("exp-e3-superpos"); if (!S) return;
@@ -167,27 +116,6 @@
     S.on(() => { sync(); draw(); }); sync(); QSim.redrawOn(draw); draw();
   })();
 
-  /* 8. 스위치를 켰다 끄는 1차 회로 (05-03) */
-  (() => {
-    const S = QSim.card("exp-e3-switch"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), Vs = S.val("vs"), Rc = S.val("rc") * 1e3, Rd = S.val("rd") * 1e3, Cc = S.val("cap") * 1e-6, t1 = S.val("t1") * 1e-3;
-      // 0 ≤ t < t1: 충전(V_s, R_c). t ≥ t1: 방전(R_d)
-      const tc = Rc * Cc, td = Rd * Cc, v1 = Vs * (1 - Math.exp(-t1 / tc)), T = t1 + 5 * td;
-      const vt = (t) => (t < 0 ? 0 : t < t1 ? Vs * (1 - Math.exp(-t / tc)) : v1 * Math.exp(-(t - t1) / td));
-      const it = (t) => (t < 0 ? 0 : t < t1 ? (Vs - vt(t)) / Rc : -vt(t) / Rd);
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: -0.05 * T * 1e3, x1: T * 1e3, y0: -Vs * 0.6, y1: Vs * 1.1, xl: "t (ms)", yl: "V" }); f.axes();
-      f.fn((x) => vt(x / 1e3), c.main, 2.5, null, 800);
-      const Imax = Math.max(Vs / Rc, v1 / Rd); f.fn((x) => it(x / 1e3) / Imax * Vs * 0.5, c.acc, 1.5, [5, 3], 800);
-      f.path([[t1 * 1e3, -Vs * 0.6], [t1 * 1e3, Vs * 1.1]], c.warn, 1, [2, 3]); f.text("스위치 전환", t1 * 1e3 + 1, Vs * 1.02, c.warn);
-      S.out(`0 ≤ t &lt; t₁: v_C = ${Vs}(1 − e^(−t/τ₁)), τ₁ = R_c·C = ${(tc * 1e3).toPrecision(3)} ms\n`.replace("&lt;", "<") +
-        `t₁ = ${(t1 * 1e3).toFixed(1)} ms에서 v_C = ${v1.toFixed(3)} V (최종값 ${Vs} V의 ${(100 * v1 / Vs).toFixed(1)}%: t₁/τ₁ = ${(t1 / tc).toFixed(2)})\n` +
-        `t ≥ t₁: v_C = ${v1.toFixed(3)}·e^(−(t − t₁)/τ₂), τ₂ = R_d·C = ${(td * 1e3).toPrecision(3)} ms. 파랑 v_C, 주황 점선 축전기 전류(크기 맞춤, 방전 때 음수)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 9. RLC 자연 응답과 특성근 (06-01) */
   (() => {
     const S = QSim.card("exp-e3-roots"); if (!S) return;
@@ -242,24 +170,6 @@
       const vl = mul(now.Vth, div(cx(RL), add(now.Zth, cx(RL))));
       S.out(`ω = ${w.toPrecision(4)} rad/s: V_Th = ${abs(now.Vth).toFixed(3)}∠${arg(now.Vth).toFixed(1)}° V, Z_Th = ${now.Zth.re.toFixed(2)} ${now.Zth.im >= 0 ? "+" : "−"} j${Math.abs(now.Zth.im).toFixed(2)} Ω\n` +
         `부하 ${RL} Ω 전압 = ${abs(vl).toFixed(3)}∠${arg(vl).toFixed(1)}° V. 위: Z_Th의 실수부(파랑), 허수부(주황 점선). 아래: 부하 전압의 크기`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 11. 역률 개선 (08-01) */
-  (() => {
-    const S = QSim.card("exp-e3-pf"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), V = 220, w = 2 * Math.PI * 60, P = S.val("P") * 1e3, pf = S.val("pf"), Cc = S.val("C") * 1e-6, Rline = 0.1;
-      const Q1 = P * Math.tan(Math.acos(pf)), QC = V * V * w * Cc, Q = Q1 - QC, Sa = Math.hypot(P, Q), I = Sa / V, I0 = P / pf / V;
-      const M = Math.max(P, Q1, Sa, P / pf) * 1.1;
-      const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: -0.05 * M, x1: M, y0: -0.35 * M, y1: M * 0.75, equal: true, xl: "P (W)", yl: "Q (var)", pad: 26 }); f.axes({ noGrid: true });
-      f.arrow(0, 0, P, Q1, c.ink3, "개선 전 S"); f.arrow(0, 0, P, 0, c.main, "P"); f.arrow(P, Q1, 0, -QC, c.acc, "축전기 −Q_C"); f.arrow(0, 0, P, Q, c.warn, "개선 후 S");
-      const pf2 = P / Sa;
-      S.out(`부하: P = ${(P / 1e3).toFixed(1)} kW, 역률 ${pf.toFixed(2)} (늦음) → Q = ${(Q1 / 1e3).toFixed(2)} kvar, 전류 ${I0.toFixed(1)} A (220 V, 60 Hz)\n` +
-        `병렬 축전기 ${(Cc * 1e6).toFixed(0)} μF → Q_C = V²ωC = ${(QC / 1e3).toFixed(2)} kvar. 전원에서 본 Q = ${(Q / 1e3).toFixed(2)} kvar, 역률 ${pf2.toFixed(3)} ${Q >= 0 ? "(늦음)" : "(앞섬: 과보상)"}\n` +
-        `전원 전류 ${I.toFixed(1)} A (${(100 * I / I0).toFixed(1)}%). 선로 저항 0.1 Ω의 손실 ${(I * I * Rline).toFixed(0)} W (개선 전 ${(I0 * I0 * Rline).toFixed(0)} W)`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
@@ -331,39 +241,4 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
-})();
-
-/* 전전3 1단원 추가: 수동 부호 규약 (03-01-01) */
-(() => {
-  "use strict";
-  if (!window.QSim) return;
-  const S = QSim.card("exp-e3-sign"); if (!S) return;
-  const cv = S.$("canvas");
-  const f2 = (x, d = 2) => (Math.abs(x) < 5e-13 ? 0 : x).toFixed(d);
-  function draw() {
-    const c = QSim.col(), v = S.val("v"), i = S.val("i"), dir = S.val("dir");
-    const into = dir === "in", p = into ? v * i : -v * i;
-    const V = QSim.view(cv, 0.5), fr = QSim.frame(V, { x0: 0, x1: 10, y0: 0, y1: 5, pad: 4 });
-    const g = V.g;
-    // 소자 상자와 단자
-    fr.path([[3, 4.6], [3, 3.6]], c.ink, 2); fr.path([[3, 1.4], [3, 0.4]], c.ink, 2);
-    g.save(); g.strokeStyle = c.ink; g.lineWidth = 2; g.strokeRect(fr.X(2.3), fr.Y(3.6), fr.X(3.7) - fr.X(2.3), fr.Y(1.4) - fr.Y(3.6)); g.restore();
-    fr.text("+", 1.8, 3.3, c.ink, "center"); fr.text("−", 1.8, 1.5, c.ink, "center");
-    fr.text(`v = ${f2(v, 1)} V`, 0.9, 2.4, c.ink2, "center");
-    // 전류 화살표: 위 단자 옆
-    if (into) fr.arrow(3.5, 4.6, 0, -0.9, c.main, `i = ${f2(i, 1)} A`); else fr.arrow(3.5, 3.7, 0, 0.9, c.main, `i = ${f2(i, 1)} A`);
-    // 전력 막대
-    const P = 50, w = Math.max(-P, Math.min(P, p));
-    fr.path([[6, 2.5], [9.6, 2.5]], c.rule, 1);
-    g.save(); g.fillStyle = p >= 0 ? c.acc : c.main;
-    const x0 = fr.X(7.8), x1 = fr.X(7.8 + 1.8 * w / P);
-    g.fillRect(Math.min(x0, x1), fr.Y(2.9), Math.abs(x1 - x0), fr.Y(2.1) - fr.Y(2.9)); g.restore();
-    fr.path([[7.8, 3.2], [7.8, 1.8]], c.ink3, 1);
-    fr.text("공급", 6.6, 3.5, c.ink3, "center"); fr.text("흡수", 9.0, 3.5, c.ink3, "center");
-    fr.text(`p = ${f2(p, 1)} W`, 7.8, 1.2, c.ink, "center");
-    S.out(`화살표가 + 단자로 ${into ? "들어감" : "나옴"} → 흡수 전력 p = ${into ? "+" : "−"}vi = ${into ? "" : "−"}(${f2(v, 1)})(${f2(i, 1)}) = ${f2(p, 1)} W\n` +
-      (Math.abs(p) < 1e-9 ? "전력 0: 전압이나 전류가 0입니다." : p > 0 ? `p > 0: 이 소자는 ${f2(p, 1)} W를 흡수합니다(저항, 충전되는 전지처럼).` : `p < 0: 이 소자는 ${f2(-p, 1)} W를 공급합니다(회로에 에너지를 내놓는 전원처럼).`) +
-      `\n같은 실제 상황을 화살표 방향만 바꿔 그리면 i의 부호가 바뀌고 규약의 부호도 바뀌어, 흡수·공급 판정은 그대로입니다.`);
-  }
-  S.on(draw); QSim.redrawOn(draw); draw();
 })();

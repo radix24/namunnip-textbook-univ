@@ -1,0 +1,113 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-advection" data-kind="본문" data-std="천우10-04-03">
+  <header class="card-head"><span class="no"></span><h2>이류 방정식과 CFL 조건</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모양을 그대로 옮기는 이류 방정식 \(u_t + cu_x = 0\)을 유한 차분으로 푼다.</li>
+        <li>상류 차분이 안정하고 중앙 차분(FTCS)이 불안정한 까닭을 안다.</li>
+        <li>Courant 수 \(C = c\Delta t/\Delta x \le 1\)(CFL 조건)의 물리적 뜻을 '정보가 한 걸음에 한 칸 넘게 가지 못한다'로 이해한다.</li>
+        <li>상류 차분의 수치 확산이 모양을 뭉개는 정도를 본다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>확산 방정식의 유한 차분과 안정 조건 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>이류 방정식</h3>
+    <p>\(u_t + cu_x = 0\)의 해는 \(u(x, t) = u_0(x - ct)\)로, 처음 모양이 속력 \(c\)로 그대로 옮겨 갑니다. 기체 흐름의 밀도, 충격파, 별 대기의 파동 같은 쌍곡형 방정식의 가장 단순한 원형입니다. 확산 방정식(4.1절)과 달리 모양이 퍼지지 않아야 하므로, 수치 방법이 만드는 퍼짐이나 진동이 바로 눈에 띕니다.</p>
+
+    <h3><span class="no">4.3.2</span>두 가지 차분</h3>
+    <ul class="tb-list">
+      <li><b>중앙 차분(FTCS)</b>: \(u_i^{n+1} = u_i^n - \tfrac C2(u_{i+1}^n - u_{i-1}^n)\). 공간 2차 정확도지만 어떤 \(\Delta t\)에서도 불안정합니다.</li>
+      <li><b>상류 차분</b>(\(c > 0\)): \(u_i^{n+1} = u_i^n - C(u_i^n - u_{i-1}^n)\). 정보가 오는 쪽(상류)의 값만 씁니다. \(C \le 1\)이면 안정합니다.</li>
+    </ul>
+    <div class="tb-env thm">
+      <span class="lb">결과 4.3.1 (CFL 조건)</span>
+      \[C = \frac{c\,\Delta t}{\Delta x} \le 1.\]
+      <p>참해에서 \(u_i^{n+1}\)은 한 걸음 전 \(x_i - c\Delta t\)의 값입니다. 이 점이 차분이 쓰는 격자점(\(x_{i-1}\)~\(x_i\)) 사이에 있어야 하므로 \(c\Delta t \le \Delta x\)여야 합니다. 정보가 한 걸음에 한 칸보다 멀리 가면, 수치 방법은 그 정보를 볼 수 없습니다.</p>
+    </div>
+
+    <h3><span class="no">4.3.3</span>실험</h3>
+    <p>격자 100칸의 주기 경계에서 가우스 봉우리(높이 1)를 한 바퀴 돌립니다. 참해라면 한 바퀴 뒤에도 높이가 1입니다.</p>
+    <pre><code>import math
+
+def advect(C, scheme="upwind", N=100, laps=1.0):
+    """u_t + c u_x = 0, 주기 경계, 격자 N개, Courant 수 C = c dt/dx"""
+    dx = 1.0 / N
+    u = [math.exp(-((i * dx - 0.5) / 0.05)**2) for i in range(N)]
+    steps = round(laps * N / C)
+    for _ in range(steps):
+        if scheme == "upwind":
+            u = [u[i] - C * (u[i] - u[i - 1]) for i in range(N)]
+        else:  # 중앙 차분(FTCS)
+            u = [u[i] - 0.5 * C * (u[(i + 1) % N] - u[i - 1]) for i in range(N)]
+        if max(abs(x) for x in u) &gt; 1e6:
+            return steps, float("inf")
+    return steps, max(u)
+
+for C in (0.5, 0.9, 1.0, 1.1):
+    steps, peak = advect(C)
+    print(f"상류 차분 C = {C:3.1f}: {steps:4d}걸음 뒤 봉우리 높이 {peak:.3f}" if peak != float('inf') else f"상류 차분 C = {C:3.1f}: 발산")
+steps, peak = advect(0.5, "ftcs")
+print(f"중앙 차분 C = 0.5: " + ("발산" if peak == float('inf') else f"{steps}걸음 뒤 봉우리 {peak:.3f}"))</code></pre>
+    <pre><code>상류 차분 C = 0.5:  200걸음 뒤 봉우리 높이 0.447
+상류 차분 C = 0.9:  111걸음 뒤 봉우리 높이 0.746
+상류 차분 C = 1.0:  100걸음 뒤 봉우리 높이 1.000
+상류 차분 C = 1.1:   91걸음 뒤 봉우리 높이 1.814
+중앙 차분 C = 0.5: 200걸음 뒤 봉우리 29269.651</code></pre>
+    <ul class="tb-list">
+      <li>\(C = 1\): 상류 차분이 \(u_i^{n+1} = u_{i-1}^n\)이 되어 한 칸씩 정확히 옮깁니다(우연한 정확도).</li>
+      <li>\(C &lt; 1\): 안정하지만 봉우리가 낮고 넓게 뭉개집니다(\(C = 0.5\)에서 절반 아래). 상류 차분이 실제로는 '이류 + 인위적 확산'을 풀기 때문이며, 이를 수치 확산이라 합니다.</li>
+      <li>\(C &gt; 1\): 봉우리가 커지기 시작해 계속하면 발산합니다(세 바퀴면 높이 \(3\times10^5\)).</li>
+      <li>중앙 차분: \(C\)가 작아도 진동이 커져 결국 터집니다.</li>
+    </ul>
+    <p>실제 유체 코드는 수치 확산을 줄이려고 2차 정확도 방법(Lax-Wendroff, 경사 제한자를 쓴 MUSCL)을 쓰고, CFL 조건은 \(C \approx 0.3\sim0.8\)로 여유를 둡니다. 음속이나 유속이 가장 빠른 곳이 \(\Delta t\)를 정합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>태양 대류층 모의실험에서 격자 간격 10 km, 음속 최대 100 km/s이면 시간 간격은 최대 얼마입니까?</p>
+    </div>
+    <p><i>풀이.</i> \(\Delta t \le \Delta x/c = 10/100 = 0.1\) s. 여유를 두어 0.05 s쯤 씁니다. 하루를 계산하려면 약 170만 걸음입니다. 격자를 2배 촘촘히 하면 칸 수가 3차원으로 8배, 걸음 수가 2배라 계산은 16배가 됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이류 방정식은 모양을 그대로 옮긴다. 쌍곡형 방정식의 원형.</li>
+        <li>중앙 차분(FTCS)은 늘 불안정, 상류 차분은 \(C \le 1\)에서 안정.</li>
+        <li>CFL: \(c\Delta t \le \Delta x\). 정보가 한 걸음에 한 칸을 넘지 못한다.</li>
+        <li>상류 차분은 수치 확산으로 모양을 뭉갠다. 2차 방법과 여유 있는 \(C\)를 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(c = 2\), \(\Delta x = 0.01\)이면 상류 차분의 최대 \(\Delta t\)는?
+          <details><summary>답</summary><p>0.005.</p></details>
+        </li>
+        <li>\(c &lt; 0\)(왼쪽으로 흐름)이면 상류 차분은 어느 이웃을 씁니까?
+          <details><summary>답</summary><p>오른쪽 이웃 \(u_{i+1}\). 정보가 오른쪽에서 오기 때문입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(C = 0.5\)에서 격자를 100칸에서 400칸으로 늘리면 수치 확산은 어떻게 됩니까?
+          <details><summary>답</summary><p>인위적 확산 계수가 \(\Delta x\)에 비례해 줄어 봉우리가 훨씬 덜 뭉개집니다(코드로 돌리면 한 바퀴 뒤 높이 0.447 → 0.707). 대신 걸음 수가 4배, 칸 수가 4배라 계산은 16배입니다.</p></details>
+        </li>
+        <li>확산 방정식의 안정 조건(4.1절, \(D\Delta t/\Delta x^2 \le 1/2\))과 CFL 조건은 \(\Delta x\)를 줄일 때 어떻게 다릅니까?
+          <details><summary>답</summary><p>확산은 \(\Delta t \propto \Delta x^2\), 이류는 \(\Delta t \propto \Delta x\)로 줄어듭니다. 격자를 촘촘히 할 때 확산 문제가 시간 간격 제약을 훨씬 심하게 받아, 암시적 방법을 쓰는 까닭입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

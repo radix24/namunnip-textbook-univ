@@ -41,26 +41,6 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 2. 사인파와 그리는 점의 수 */
-  (() => {
-    const S = QSim.card("exp-e1-sine"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), A = S.val("a"), f = S.val("f"), ph = S.val("ph"), N = S.val("n");
-      const T = 1 / f, tmax = 0.04, deg = Math.PI / 180;
-      const fn = (t) => A * Math.sin(2 * Math.PI * f * t + ph * deg);
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: tmax * 1000, y0: -3.2, y1: 3.2, xl: "t (ms)", yl: "v (V)" }); fr.axes();
-      fr.fn((ms) => fn(ms / 1000), c.rule, 1.2, undefined, 800);
-      const dt = T / N, pts = []; for (let t = 0; t <= tmax + 1e-12; t += dt) pts.push([t * 1000, fn(t)]);
-      fr.path(pts, c.main, 2.2);
-      pts.forEach(([x, y]) => fr.dot(x, y, c.main, 2.5));
-      S.out(`v(t) = ${f2(A, 1)} sin(2π·${f2(f, 0)}·t ${ph >= 0 ? "+" : "−"} ${Math.abs(ph)}°): 주기 ${f2(T * 1000, 2)} ms, 40 ms 동안 ${f2(tmax / T, 1)}주기, 실효값 ${f2(A / Math.SQRT2, 3)} V\n` +
-        `한 주기에 점 ${N}개(간격 ${f2(dt * 1000, 3)} ms), 그린 점 ${pts.length}개. 파랑은 점을 직선으로 이은 그래프(plt.plot과 같은 방식), 회색은 실제 사인파입니다.` +
-        (N < 8 ? "\n점이 적어 꺾은선이 사인파와 많이 다릅니다. np.linspace의 개수를 늘리세요." : ""));
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 3. 합성곱 필터(CNN의 한 층) */
   (() => {
     const S = QSim.card("exp-e1-conv"); if (!S) return;
@@ -165,21 +145,4 @@
     S.on(draw); QSim.redrawOn(draw); mine();
   })();
 
-  /* 5. 동영상 스트리밍의 비트율 */
-  (() => {
-    const S = QSim.card("exp-e1-stream"); if (!S) return;
-    const cv = S.$("canvas");
-    const RES = { "720": [1280, 720], "1080": [1920, 1080], "2160": [3840, 2160] };
-    function draw() {
-      const c = C(), [w, h] = RES[S.val("res")], fps = S.val("fps"), ratio = 10 ** S.val("cr"), net = 10 ** S.val("net");
-      const raw = w * h * 24 * fps, comp = raw / ratio;   // bit/s
-      const v = QSim.view(cv, 0.4), fr = QSim.frame(v, { x0: 0, x1: 3, y0: 5, y1: 11, yl: "log₁₀(bit/s)", pad: 34 }); fr.axes({ noGrid: true });
-      const g = v.g, bar = (i, val, col, name) => { const y = Math.log10(val); g.fillStyle = col; g.fillRect(fr.X(i + 0.2), fr.Y(y), fr.X(i + 0.8) - fr.X(i + 0.2), fr.Y(5) - fr.Y(y)); fr.text(name, i + 0.5, 5.15, c.ink2, "center"); };
-      bar(0, raw, c.ink3, "압축 전"); bar(1, comp, c.main, "압축 후"); bar(2, net * 1e6, comp <= net * 1e6 ? c.acc : c.warn, "통신 속도");
-      const fmt = (b) => b >= 1e9 ? f2(b / 1e9, 2) + " Gbps" : b >= 1e6 ? f2(b / 1e6, 2) + " Mbps" : f2(b / 1e3, 1) + " kbps";
-      S.out(`${w}×${h}, ${fps} fps, 화소당 24비트 → 압축 전 ${fmt(raw)}. 압축 ${f2(ratio, 0)}배 → ${fmt(comp)}, 1시간이면 ${f2(comp * 3600 / 8 / 1e9, 2)} GB\n` +
-        `통신 속도 ${fmt(net * 1e6)}: ${comp <= net * 1e6 ? `끊김 없이 재생 가능(여유 ${f2(net * 1e6 / comp, 1)}배)` : `부족(${f2(comp / (net * 1e6), 1)}배 모자람) → 버퍼가 비어 끊기거나 화질을 낮춰야 합니다`}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();

@@ -83,27 +83,6 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 바이어스와 문턱 전압 편차 (02-02) */
-  (() => {
-    const S = QSim.card("exp-e8-bias"); if (!S) return;
-    const cv = S.$("canvas");
-    // V_G와 R_S가 주어지면 I_D = ½k(V_G − I_D R_S − V_t)² 를 푼다. 목표: V_t = 0.5에서 I_D = 0.25 mA가 되도록 V_G를 맞춘다.
-    const k = 2, Itarget = 0.25, ov0 = Math.sqrt(2 * Itarget / k);
-    const solve = (VG, Rs, Vt) => { if (Rs === 0) return 0.5 * k * Math.max(0, VG - Vt) ** 2; const x = bisect((ov) => VG - Vt - ov - 0.5 * k * ov * ov * Rs, 0, Math.max(VG - Vt, 0)); return 0.5 * k * x * x; };
-    function draw() {
-      const c = C(), Rs = S.val("rs"), dv = S.val("dvt") / 1000;
-      const VG = 0.5 + ov0 + Itarget * Rs;   // V_t = 0.5 V에서 목표 전류
-      const v = QSim.view(cv, 0.42), fr = QSim.frame(v, { x0: 0.5 - 0.15, x1: 0.5 + 0.15, y0: 0, y1: 0.5, xl: "문턱 전압 V_t (V)", yl: "I_D (mA)" }); fr.axes();
-      fr.fn((vt) => solve(0.5 + ov0, 0, vt), c.warn, 1.8, [5, 3], 300);
-      fr.fn((vt) => solve(VG, Rs, vt), c.main, 2.6, undefined, 300);
-      fr.path([[0.5 - dv, 0], [0.5 - dv, 0.5]], c.rule, 1, [2, 3]); fr.path([[0.5 + dv, 0], [0.5 + dv, 0.5]], c.rule, 1, [2, 3]);
-      const lo = solve(VG, Rs, 0.5 + dv), hi = solve(VG, Rs, 0.5 - dv), flo = solve(0.5 + ov0, 0, 0.5 + dv), fhi = solve(0.5 + ov0, 0, 0.5 - dv);
-      S.out(`목표 I_D = 0.25 mA (V_t = 0.5 V). R_S = ${f2(Rs, 1)} kΩ → V_G = ${f2(VG, 3)} V, 소스 전압 ${f2(Itarget * Rs, 3)} V\n` +
-        `V_t가 ±${S.val("dvt")} mV 흔들리면: 소스 저항 바이어스 ${f2(lo, 3)} ~ ${f2(hi, 3)} mA (폭 ${f2((hi - lo) / Itarget * 100, 1)}%), 고정 V_GS ${f2(flo, 3)} ~ ${f2(fhi, 3)} mA (폭 ${f2((fhi - flo) / Itarget * 100, 1)}%)\n` +
-        `빨간 점선: 고정 V_GS = 1.0 V, 파랑: 소스 저항 바이어스. R_S를 키울수록 곡선이 평평해집니다(대가: 소스 전압 ${f2(Itarget * Rs, 2)} V만큼 전원 여유 감소).`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
   /* 5. BJT 네 저항 바이어스와 β 편차 (03-01) */
   (() => {
     const S = QSim.card("exp-e8-bjtbias"); if (!S) return;
@@ -163,27 +142,6 @@
       S.out(`k_n = 2 mA/V², V_t = 0.5 V, V_DD = 3 V, 동작점 I_D = 0.25 mA (g_m = 1 mA/V), R_D = ${Rd} kΩ, R_S = ${Rs} kΩ, 입력 첨두 ${Vp * 1000} mV\n` +
         `직류 V_D = ${f2(Vd0, 3)} V. 출력 ${f2(vmin, 3)} ~ ${f2(vmax, 3)} V, 기본파 진폭 ${f2(A1, 3)} V → 이득 ${f2(A1 / Vp, 2)} (소신호 식 g_mR_D/(1 + g_mR_S) = ${f2(Asmall, 2)})\n` +
         `2차 고조파 ${f2(A2 / A1 * 100, 2)}%, 3차 ${f2(A3 / A1 * 100, 2)}%. ${clip}. 회색 점선: 소신호 모델의 예측`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-  /* 7. 전류 거울: 단순 거울과 캐스코드의 출력 특성 (05-01) */
-  (() => {
-    const S = QSim.card("exp-e8-mirror"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), lam = S.val("lam"), ratio = S.val("ratio"), Iref = 100, Vt = 0.5, Vov = 0.3, Vgs = Vt + Vov;   // μA, V
-      const k1 = 2 * Iref / (Vov * Vov * (1 + lam * Vgs)), k2 = k1 * ratio;   // μA/V²
-      const simple = (vo) => nmos(k2, Vt, lam, Vgs, vo);
-      // 캐스코드: 아래 Q2(게이트 V_GS), 위 Q4(게이트 2V_GS, 소스 v_x). Q2 전류 = Q4 전류가 되는 v_x
-      const casc = (vo) => { if (vo <= 0) return 0; const vx = bisect((x) => nmos(k2, Vt, lam, 2 * Vgs - x, vo - x) - nmos(k2, Vt, lam, Vgs, x), 0, Math.min(vo, 2 * Vgs)); return nmos(k2, Vt, lam, Vgs, vx); };
-      const top = Iref * ratio * 1.5, v = QSim.view(cv, 0.5), fr = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: top, xl: "출력 전압 V_O (V)", yl: "I_O (μA)" }); fr.axes();
-      fr.path([[0, Iref * ratio], [3, Iref * ratio]], c.rule, 1, [3, 3]);
-      fr.fn(simple, c.warn, 2.2, undefined, 600); fr.fn(casc, c.main, 2.6, undefined, 600);
-      const ro = (f, a, b) => (b - a) / (f(b) - f(a)) * 1e3;   // kΩ (μA 단위라 ×1e3)
-      const Rs = ro(simple, 1.5, 2.5), Rc = ro(casc, 1.5, 2.5);
-      S.out(`I_REF = 100 μA, V_GS = 0.8 V (V_OV = 0.3 V), λ = ${f2(lam, 2)} V⁻¹, 크기 비 ${ratio} → 목표 ${Iref * ratio} μA\n` +
-        `단순 거울(빨강): V_O = 0.8 V에서 ${f2(simple(0.8), 1)} μA, 2 V에서 ${f2(simple(2), 1)} μA, 출력 저항 ${Rs > 1e5 ? "매우 큼" : f2(Rs, 0) + " kΩ"}, 최소 출력 약 0.3 V\n` +
-        `캐스코드(파랑): 2 V에서 ${f2(casc(2), 1)} μA, 출력 저항 ${Rc > 1e6 ? "매우 큼" : f2(Rc / 1000, 2) + " MΩ"}, 1.1 V(= 2V_GS − V_t) 아래에서는 위 트랜지스터가 포화를 벗어나 곡선이 기울어짐`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

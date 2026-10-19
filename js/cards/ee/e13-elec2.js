@@ -12,28 +12,6 @@
   const abs = (a) => Math.hypot(a.re, a.im), arg = (a) => Math.atan2(a.im, a.re);
   const fmtf = (f) => f >= 1e9 ? f2(f / 1e9, 3) + " GHz" : f >= 1e6 ? f2(f / 1e6, 3) + " MHz" : f >= 1e3 ? f2(f / 1e3, 3) + " kHz" : f2(f, 1) + " Hz";
 
-  /* 1. 공통 소스 증폭기의 고주파 응답: Miller 근사 vs 정확한 2극점 식 */
-  (() => {
-    const S = QSim.card("exp-e13-miller"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), Rs = S.val("rs") * 1e3, Cgd = S.val("cgd") * 1e-12, gm = 4e-3, RL = 5e3, Cgs = 2e-12, CL = 1e-12, A0 = gm * RL;
-      const b1 = Rs * (Cgs + Cgd * (1 + gm * RL)) + RL * (CL + Cgd), b2 = Rs * RL * (Cgs * Cgd + Cgs * CL + Cgd * CL);
-      const H = (f) => { const w = 2 * Math.PI * f; return div(cx(-A0, A0 * w * Cgd / gm), cx(1 - w * w * b2, w * b1)); };
-      const fM = 1 / (2 * Math.PI * Rs * (Cgs + Cgd * (1 + A0)));
-      const HM = (f) => A0 / Math.hypot(1, f / fM);
-      let lo = 1e3, hi = 1e10; for (let i = 0; i < 100; i++) { const m = Math.sqrt(lo * hi); if (abs(H(m)) > A0 / Math.SQRT2) lo = m; else hi = m; }
-      const disc = b1 * b1 - 4 * b2, p2 = (b1 + Math.sqrt(disc)) / (2 * b2) / (2 * Math.PI);
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 4, x1: 10, y0: -20, y1: 30, xl: "log₁₀ f (Hz)", yl: "|A| (dB)" }); fr.axes();
-      fr.fn((lf) => 20 * Math.log10(abs(H(10 ** lf))), c.main, 2.4, undefined, 500);
-      fr.fn((lf) => 20 * Math.log10(HM(10 ** lf)), c.acc, 1.8, [6, 3], 500);
-      S.out(`g_m = 4 mA/V, R_L' = 5 kΩ(중간 대역 이득 −${A0}), C_gs = 2 pF, C_L = 1 pF, R_sig = ${f2(Rs / 1e3, 1)} kΩ, C_gd = ${f2(Cgd * 1e12, 2)} pF\n` +
-        `Miller 입력 용량 C_gs + C_gd(1 + g_mR_L') = ${f2((Cgs + Cgd * (1 + A0)) * 1e12, 2)} pF → 극점 ${fmtf(fM)} (주황 점선). 정확한 −3 dB ${fmtf(lo)} (파랑)\n` +
-        `정확한 둘째 극점 ${fmtf(p2)}, 영점 g_m/(2πC_gd) = ${fmtf(gm / (2 * Math.PI * Cgd))}. 주극점은 Miller 근사가 잘 맞고, 둘째 극점은 근사(출력 극점 1/(2πR_L'(C_L + C_gd)) = ${fmtf(1 / (2 * Math.PI * RL * (CL + Cgd)))})보다 훨씬 높습니다(극점 분리).`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. 루프 이득의 위상 여유 */
   (() => {
     const S = QSim.card("exp-e13-pm"); if (!S) return;
@@ -80,29 +58,8 @@
       fr.fn((t) => Vp * Math.sin(2 * Math.PI * t), c.ink3, 1.2, [5, 3]);
       fr.path(pts, c.main, 2.4);
       S.out(`입력 진폭 ${f2(Vp, 1)} V, 바이어스 V_BB = ${f2(Vbb, 2)} V(트랜지스터마다 ${f2(Vbb / 2, 2)} V), 켜짐 전압 0.6 V로 근사, V_CC = ±10 V\n` +
-        `출력 기본파 진폭 ${f2(a1, 2)} V, 전고조파 왜곡(THD) ${f2(thd * 100, 2)}%. ${Vbb >= 1.2 ? "AB급: 두 트랜지스터가 0 근처에서 함께 켜져 데드 존이 없음" : `B급 쪽: |v_in| < ${f2(Math.max(0, 0.6 - Vbb / 2), 2)} V 구간에서 출력 0(교차 왜곡)`}\n` +
+        `출력 기본파 진폭 ${f2(a1, 2)} V, 전고조파 왜곡(THD) ${p1 > 1e-12 ? f2(thd * 100, 2) + "%" : "정의 안 됨(입력이 데드 존 안이라 출력이 0)"}.${Vbb >= 1.2 ? "AB급: 두 트랜지스터가 0 근처에서 함께 켜져 데드 존이 없음" : `B급 쪽: |v_in| < ${f2(Math.max(0, 0.6 - Vbb / 2), 2)} V 구간에서 출력 0(교차 왜곡)`}\n` +
         `이상적 B급 효율 (π/4)(V_p/V_CC) = ${f2(eff * 100, 1)}% (출력 진폭 기준). 회색 점선: 입력, 파랑: 출력`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 사양에서 필터 차수 정하기: 버터워스와 체비셰프 */
-  (() => {
-    const S = QSim.card("exp-e13-order"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), fs = S.val("fs"), As = S.val("as"), rip = S.val("rip");   // fp = 1 kHz, Ap = 3 dB(버터) / rip dB(체비)
-      const nB = Math.ceil(Math.log10(10 ** (As / 10) - 1) / (2 * Math.log10(fs)));
-      const eps = Math.sqrt(10 ** (rip / 10) - 1);
-      const nC = Math.ceil(Math.acosh(Math.sqrt((10 ** (As / 10) - 1)) / eps) / Math.acosh(fs));
-      const butter = (f) => -10 * Math.log10(1 + f ** (2 * nB));
-      const cheb = (f) => { const x = f <= 1 ? Math.cos(nC * Math.acos(f)) : Math.cosh(nC * Math.acosh(f)); return -10 * Math.log10(1 + eps * eps * x * x); };
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: 5, y0: -80, y1: 5, xl: "f (kHz)", yl: "dB" }); fr.axes();
-      fr.path([[fs, -As], [5, -As]], c.warn, 1.6); fr.path([[fs, 5], [fs, -As]], c.warn, 1, [3, 3]);
-      fr.fn(butter, c.main, 2.4, undefined, 600); fr.fn(cheb, c.acc, 2, [6, 3], 600);
-      S.out(`통과 대역 끝 1 kHz, 저지 대역 ${f2(fs, 1)} kHz에서 ${As} dB 이상 감쇠(빨간 선)\n` +
-        `버터워스(통과 끝 −3 dB): 차수 N ≥ log(10^(A_s/10) − 1)/(2 log(f_s/f_p)) → ${nB}차(파랑), ${f2(fs, 1)} kHz에서 ${f2(-butter(fs), 1)} dB\n` +
-        `체비셰프(통과 대역 리플 ${rip} dB): ${nC}차(주황 점선), ${f2(fs, 1)} kHz에서 ${f2(-cheb(fs), 1)} dB. 리플을 허용하면 차수가 줄어듭니다.`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
