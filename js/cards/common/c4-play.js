@@ -91,4 +91,29 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 4. 전자기파: 전기장과 자기장의 진동, 세기와 복사압 (09-02) */
+  (() => {
+    const S = QSim.card("lab-c4-wave"); if (!S) return;
+    const cv = S.$("canvas"), c0 = 2.998e8, e0 = 8.854e-12;
+    function draw() {
+      const c = C(), E = S.val("E"), ph = (S.val("t") / 360) * 2 * Math.PI, refl = S.val("r");
+      const v = QSim.view(cv, 0.5), F = QSim.frame(v, { x0: -0.3, x1: 4.3, y0: -1.5, y1: 1.5, equal: false, pad: 20 });
+      /* 진행 방향 x는 오른쪽, 전기장 y는 위, 자기장 z는 비스듬히 아래(빗금으로 깊이를 나타냄) */
+      const zx = 0.28, zy = -0.45;
+      F.path([[0, 0], [4.2, 0]], c.ink3, 1.5); F.text("진행 방향 x", 4.1, 0.15, c.ink, "right");
+      const Ep = [], Bp = [];
+      for (let k = 0; k <= 200; k++) {
+        const x = (k / 200) * 4, s = Math.sin(2 * Math.PI * (x / 2) - ph);
+        Ep.push([x, s]); Bp.push([x + zx * s, zy * s]);
+        if (k % 8 === 0) { F.path([[x, 0], [x, s]], c.main, 1); F.path([[x, 0], [x + zx * s, zy * s]], c.warn, 1); }
+      }
+      F.path(Ep, c.main, 2.5); F.path(Bp, c.warn, 2.5);
+      F.text("E", 0.5, 1.25, c.main, "center"); F.text("B", 0.62, -0.75, c.warn, "center");
+      const B = E / c0, I = 0.5 * c0 * e0 * E * E, P = (refl ? 2 : 1) * I / c0;
+      S.out(`전기장 최댓값 E = ${E.toFixed(0)} V/m → 자기장 최댓값 B = E/c = ${(B * 1e6).toFixed(3)} μT\n` +
+        `세기(시간 평균) I = ½cε₀E² = ${I.toFixed(1)} W/m²\n` +
+        `복사압 = ${refl ? "2I/c (완전 반사)" : "I/c (완전 흡수)"} = ${P.toExponential(2)} Pa,  1 m²에 미는 힘 ${(P * 1e6).toFixed(2)} μN`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
