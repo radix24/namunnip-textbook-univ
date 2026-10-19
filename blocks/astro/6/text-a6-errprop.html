@@ -1,0 +1,105 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-errprop" data-kind="본문" data-std="천우6-02-03">
+  <header class="card-head"><span class="no"></span><h2>측정 오차는 계산을 따라 어떻게 퍼지는가</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>독립적인 측정 오차가 함수 값에 전해지는 크기를 1차 오차 전파 공식으로 구한다.</li>
+        <li>곱과 거듭제곱에서는 상대 오차를 제곱해 더하는 지름길을 쓴다.</li>
+        <li>난수로 같은 계산을 되풀이하는 Monte Carlo 방법으로 공식을 확인한다.</li>
+        <li>상대 오차가 크면 1차 공식이 틀리고 결과가 치우침을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>편미분, 표준편차, 난수 (<a href="06-02.html">6.2절</a>), 연주시차 (<a href="../1/03-01.html">천우1 3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>1차 오차 전파</h3>
+    <p>측정값 \(x \pm \sigma_x\), \(y \pm \sigma_y\)로 \(f(x, y)\)를 계산합니다. 오차가 작으면 \(f\)를 1차까지 펼쳐 \(\delta f \approx f_x\delta x + f_y\delta y\)이고, 두 오차가 서로 독립이면 분산이 더해집니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 2.3.1 (오차 전파)</span>
+      \[\sigma_f^2 = \left(\frac{\partial f}{\partial x}\right)^2\sigma_x^2 + \left(\frac{\partial f}{\partial y}\right)^2\sigma_y^2.\]
+      <p>곱과 거듭제곱 \(f = Cx^ay^b\)이면 상대 오차로</p>
+      \[\left(\frac{\sigma_f}{f}\right)^2 = a^2\left(\frac{\sigma_x}{x}\right)^2 + b^2\left(\frac{\sigma_y}{y}\right)^2.\]
+    </div>
+    <p>거듭제곱의 지수가 상대 오차를 키웁니다. 광도 \(L = 4\pi d^2F\)에서 거리 오차 5%는 광도 오차 10%가 됩니다. 등급처럼 로그로 정의된 양은 \(\sigma_m = 1.086\,\sigma_F/F\)입니다(\(2.5/\ln10 = 1.086\)).</p>
+
+    <h3><span class="no">2.3.2</span>Monte Carlo로 확인하기</h3>
+    <p>공식이 맞는지, 또 쓸 수 있는 범위인지 확인하는 가장 쉬운 방법은 난수로 측정을 흉내 내는 것입니다. 측정값마다 정규분포에서 값을 뽑아 함수를 계산하고, 이를 많이 되풀이해 결과의 퍼짐을 봅니다. 플럭스 오차 3%, 시차 \(10.0 \pm 0.5\) mas(5%)인 별의 광도입니다.</p>
+    <pre><code>import math, random, statistics
+
+random.seed(1)
+F0, sF = 1.00, 0.03      # 플럭스(임의 단위), 3%
+p0, sp = 10.0, 0.5       # 시차(mas), 5%
+
+def L_rel(F, p_mas):
+    """광도 ∝ F d^2 = F / p^2, p0일 때 1이 되도록"""
+    return F * (p0 / p_mas)**2
+
+# 오차 전파 공식
+rel = math.sqrt((sF / F0)**2 + (2 * sp / p0)**2)
+print(f"공식: σ_L/L = {rel * 100:.1f}%")
+
+# Monte Carlo
+samples = [L_rel(random.gauss(F0, sF), random.gauss(p0, sp)) for _ in range(100000)]
+m, s = statistics.fmean(samples), statistics.stdev(samples)
+print(f"Monte Carlo: 평균 {m:.4f}, 표준편차 {s * 100:.1f}%")
+
+# 시차 오차가 20%라면
+sp2 = 2.0
+rel2 = math.sqrt((sF / F0)**2 + (2 * sp2 / p0)**2)
+samples2 = [L_rel(random.gauss(F0, sF), random.gauss(p0, sp2)) for _ in range(100000)]
+print(f"시차 20%: 공식 {rel2 * 100:.1f}%, Monte Carlo 평균 {statistics.fmean(samples2):.3f}, 표준편차 {statistics.stdev(samples2) * 100:.1f}%")</code></pre>
+    <pre><code>공식: σ_L/L = 10.4%
+Monte Carlo: 평균 1.0072, 표준편차 10.7%
+시차 20%: 공식 40.1%, Monte Carlo 평균 1.159, 표준편차 67.8%</code></pre>
+
+    <h3><span class="no">2.3.3</span>1차 공식이 틀릴 때</h3>
+    <p>시차 오차 5%에서는 공식(10.4%)과 Monte Carlo(10.7%)가 잘 맞습니다. 그러나 시차 오차가 20%가 되면 공식은 40%를 말하는데 Monte Carlo는 68%이고, 평균도 1이 아니라 1.16으로 치우칩니다. \(1/p^2\)은 \(p\)가 작아지는 쪽으로 가파르게 커지므로, 시차가 우연히 작게 나온 경우가 결과를 크게 끌어올리기 때문입니다. 1차 전파는 함수가 오차 범위 안에서 거의 직선일 때만 맞습니다. 대략 상대 오차가 10%를 넘으면 Monte Carlo로 확인하는 것이 안전합니다. 연주시차의 상대 오차가 크면 \(1/p\)로 거리를 구하지 말라는 경고(천우1 3.1절)의 까닭이 이것입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>별의 반지름을 \(R = \sqrt{L/(4\pi\sigma T^4)}\)로 구합니다. 광도 오차 10%, 온도 오차 2%이면 반지름의 상대 오차는?</p>
+    </div>
+    <p><i>풀이.</i> \(R \propto L^{1/2}T^{-2}\)이므로 \((\sigma_R/R)^2 = (0.5\times0.10)^2 + (2\times0.02)^2 = 0.0025 + 0.0016\), \(\sigma_R/R = 6.4\%\). 온도 오차는 작아도 지수 2 때문에 광도 오차와 비슷하게 기여합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\sigma_f^2 = \sum(\partial f/\partial x_i)^2\sigma_i^2\)(독립 오차, 1차 근사).</li>
+        <li>\(f = Cx^ay^b\): 상대 오차를 지수만큼 곱해 제곱합.</li>
+        <li>Monte Carlo로 확인한다. 상대 오차가 크면 1차 공식이 과소평가하고 평균이 치우친다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>플럭스 상대 오차가 2%이면 등급 오차는?
+          <details><summary>답</summary><p>\(1.086\times0.02 = 0.022\)등급.</p></details>
+        </li>
+        <li>\(f = x - y\)에서 \(x = 10.0 \pm 0.3\), \(y = 9.5 \pm 0.4\)이면?
+          <details><summary>답</summary><p>\(f = 0.5 \pm 0.5\). 비슷한 두 값의 차는 상대 오차가 매우 커집니다(100%).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>케플러 제3법칙 \(M = 4\pi^2a^3/(GP^2)\)에서 \(a\) 오차 3%, \(P\) 오차 0.1%이면 질량 오차는? 어느 쪽을 더 정밀하게 재야 합니까?
+          <details><summary>답</summary><p>\(\sqrt{(3\times3)^2 + (2\times0.1)^2} \approx 9.0\%\). 거의 모두 \(a\)에서 오므로 \(a\)를 정밀하게 재야 합니다.</p></details>
+        </li>
+        <li>위 Monte Carlo 코드를 고쳐 시차 오차 10%일 때 공식과 Monte Carlo의 표준편차를 비교하려면 어느 줄을 바꿉니까?
+          <details><summary>답</summary><p><code>sp2 = 2.0</code>을 <code>sp2 = 1.0</code>으로 바꿉니다(10 mas의 10%). 공식은 \(\sqrt{0.03^2 + 0.2^2} = 20.2\%\)입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

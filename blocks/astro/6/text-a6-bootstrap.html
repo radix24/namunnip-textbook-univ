@@ -1,0 +1,110 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-bootstrap" data-kind="본문" data-std="천우6-06-04">
+  <header class="card-head"><span class="no"></span><h2>부트스트랩: 표본 하나로 오차를 어림하는 법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공식이 없거나 가정이 의심스러운 통계량의 오차를, 자료를 복원 추출해 다시 계산하는 부트스트랩으로 어림한다.</li>
+        <li>부트스트랩 분포에서 표준편차와 신뢰 구간을 읽는다.</li>
+        <li>작은 표본에서 부트스트랩의 한계를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>난수와 Monte Carlo (<a href="06-02.html">6.2절</a>), 오차 전파 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.4.1</span>왜 필요한가</h3>
+    <p>평균의 오차는 \(s/\sqrt N\)이라는 공식이 있지만, 중앙값, 두 양의 비, 상관 계수, 맞춤으로 얻은 복잡한 모수의 오차는 공식이 없거나, 자료가 정규분포라는 가정에 기대는 경우가 많습니다. 천문학 표본은 작고(은하군의 은하 15개) 분포가 정규분포가 아닌 경우가 많습니다. 이때 쓰는 방법이 부트스트랩(1979, 에프론)입니다.</p>
+
+    <h3><span class="no">6.4.2</span>방법</h3>
+    <div class="tb-env thm">
+      <span class="lb">방법 6.4.1 (부트스트랩)</span>
+      <ol>
+        <li>자료 \(N\)개에서 \(N\)개를 <b>복원 추출</b>(뽑은 것을 다시 넣고 뽑기)해 새 표본을 만든다. 같은 자료가 여러 번 뽑히기도 하고 안 뽑히기도 한다.</li>
+        <li>새 표본으로 구하려는 통계량을 계산한다.</li>
+        <li>1~2를 수천 번 되풀이해 통계량의 분포를 얻는다. 그 표준편차가 오차, 16%와 84% 지점이 68% 신뢰 구간이다.</li>
+      </ol>
+    </div>
+    <p>가지고 있는 표본을 '모집단의 대리'로 보고, 그 대리에서 다시 표본을 뽑아 '표본마다 얼마나 달라질 수 있는가'를 흉내 내는 것입니다.</p>
+
+    <h3><span class="no">6.4.3</span>예: 은하군의 속도 분산</h3>
+    <pre><code>import math, random, statistics
+
+random.seed(5)
+# 가상 은하군: 은하 15개의 시선속도(km/s), 참 속도 분산 300 km/s
+v = [round(4000 + random.gauss(0, 300)) for _ in range(15)]
+print("시선속도:", v)
+
+s = statistics.stdev(v)
+print(f"속도 분산 s = {s:.0f} km/s")
+print(f"정규분포 가정의 오차 s/sqrt(2(N-1)) = {s / math.sqrt(2 * (len(v) - 1)):.0f} km/s")
+
+# 부트스트랩: 같은 크기로 '복원 추출'한 표본을 많이 만들어 s를 다시 계산
+B = 10000
+boot = []
+for _ in range(B):
+    sample = [random.choice(v) for _ in v]
+    boot.append(statistics.stdev(sample))
+boot.sort()
+print(f"부트스트랩 표준편차 = {statistics.stdev(boot):.0f} km/s")
+print(f"부트스트랩 68% 구간 = {boot[int(0.16 * B)]:.0f} ~ {boot[int(0.84 * B)]:.0f} km/s")</code></pre>
+    <pre><code>시선속도: [3646, 3656, 4201, 3312, 3957, 3323, 4330, 4061, 4407, 3849, 4119, 3914, 3779, 4044, 3623]
+속도 분산 s = 330 km/s
+정규분포 가정의 오차 s/sqrt(2(N-1)) = 62 km/s
+부트스트랩 표준편차 = 50 km/s
+부트스트랩 68% 구간 = 265 ~ 364 km/s</code></pre>
+    <p>속도 분산은 \(330\) km/s, 오차는 공식으로 62, 부트스트랩으로 50 km/s입니다. 같은 크기라는 것이 중요합니다. 부트스트랩 구간(265~364)이 참값 300을 담고, 구간이 대칭이 아니라는 것도 알려 줍니다.</p>
+
+    <h3><span class="no">6.4.4</span>한계</h3>
+    <ul class="tb-list">
+      <li>표본이 아주 작으면(N이 10 안팎) 표본이 모집단을 잘 대신하지 못해, 부트스트랩 오차가 실제보다 작게 나오기 쉽습니다. 위에서 50이 62보다 작은 것도 그 경향입니다.</li>
+      <li>자료가 서로 독립이 아니면(시계열, 공간적으로 이웃한 화소) 단순 복원 추출은 오차를 과소평가합니다. 묶음 단위로 뽑는 방법을 씁니다.</li>
+      <li>최댓값처럼 표본의 끝값에 기대는 통계량에는 잘 맞지 않습니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.4.1</span>
+      <p>자료 5개 \(\{1, 2, 3, 4, 10\}\)에서 복원 추출로 만든 표본 하나의 예를 들고, 원래 평균(4)과 그 표본의 평균을 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> 예: \(\{2, 2, 4, 10, 1\}\)(2가 두 번, 3은 빠짐), 평균 3.8. 다른 표본 \(\{10, 10, 3, 4, 1\}\)은 평균 5.6. 10이 몇 번 뽑히느냐에 따라 평균이 크게 흔들리고, 이 흔들림의 폭이 '10 하나에 크게 기대는 평균'의 불확도를 보여 줍니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>부트스트랩: 복원 추출 → 통계량 다시 계산 → 수천 번 → 분포의 폭이 오차.</li>
+        <li>공식이 없는 통계량, 정규분포가 아닌 자료에 쓴다. 비대칭 구간도 얻는다.</li>
+        <li>아주 작은 표본, 독립이 아닌 자료, 끝값 통계량에서는 조심한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>자료 \(N\)개에서 복원 추출할 때, 어떤 자료 하나가 한 번도 뽑히지 않을 확률은? \(N\)이 크면?
+          <details><summary>답</summary><p>\((1 - 1/N)^N\), \(N\)이 크면 \(1/e \approx 0.37\). 표본마다 원래 자료의 약 63%만 들어갑니다.</p></details>
+        </li>
+        <li>부트스트랩 표본 수 \(B\)를 100에서 10,000으로 늘리면 오차 어림 자체가 작아집니까?
+          <details><summary>답</summary><p>아닙니다. 오차 어림의 '흔들림'이 줄 뿐, 오차의 크기는 원래 표본 크기 \(N\)이 정합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>위 코드를 고쳐 속도의 중앙값과 그 부트스트랩 오차를 구하려면 어느 줄을 바꿉니까?
+          <details><summary>답</summary><p><code>boot.append(statistics.stdev(sample))</code>를 <code>boot.append(statistics.median(sample))</code>로 바꿉니다.</p></details>
+        </li>
+        <li>은하군의 질량은 속도 분산의 제곱에 비례합니다(\(M \propto \sigma^2\)). 속도 분산 오차 15%이면 질량 오차는? 부트스트랩으로는 어떻게 구합니까?
+          <details><summary>답</summary><p>오차 전파로 약 30%. 부트스트랩에서는 각 표본마다 \(\sigma^2\)(또는 질량)를 계산해 그 분포의 폭을 봅니다. 비대칭이면 구간으로 보고합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

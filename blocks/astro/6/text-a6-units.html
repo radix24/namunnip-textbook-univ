@@ -1,0 +1,118 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-units" data-kind="본문" data-std="천우6-01-04">
+  <header class="card-head"><span class="no"></span><h2>단위와 물리 상수를 코드에서 다루기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>천문학에서 함께 쓰이는 SI, cgs, 천문 단위를 구별한다.</li>
+        <li>상수를 한곳에 모으고, 계산은 SI로 한 뒤 출력할 때만 바꾸는 규칙을 쓴다.</li>
+        <li>변수와 함수 이름에 단위를 붙여 단위 실수를 줄인다.</li>
+        <li>상수를 반올림한 정도가 결과에 주는 영향을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>함수 (<a href="01-01.html">1.1절</a>), 검산하는 습관 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.4.1</span>세 가지 단위 체계</h3>
+    <p>천문학 논문과 자료에는 세 단위 체계가 섞여 나옵니다.</p>
+    <div class="tb-table">
+      <table>
+        <thead><tr><th>체계</th><th>예</th><th>주로 쓰는 곳</th></tr></thead>
+        <tbody>
+          <tr><td>SI</td><td>m, kg, s, J, W</td><td>교과서, 공학, 위성</td></tr>
+          <tr><td>cgs</td><td>cm, g, s, erg(\(10^{-7}\) J), erg/s</td><td>천체물리학 논문(광도 erg/s, 밀도 g/cm³, 기둥 밀도 cm⁻²)</td></tr>
+          <tr><td>천문 단위</td><td>AU, pc, \(M_\odot\), \(L_\odot\), \(R_\odot\), 년, Jy, mag</td><td>관측 자료, 목록, 결과 보고</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>광도 \(3.8\times10^{33}\)이라는 숫자는 erg/s이면 태양 하나지만, W로 읽으면 태양의 1,000만 배입니다. 숫자만 옮기다가 단위가 바뀌는 실수가 가장 흔합니다.</p>
+
+    <h3><span class="no">1.4.2</span>세 가지 규칙</h3>
+    <ol>
+      <li><b>상수는 한곳에</b>: 파일 맨 위에 대문자 이름으로 모으고, 옆에 단위를 주석으로 적습니다.</li>
+      <li><b>안에서는 SI</b>: 입력을 받자마자 SI로 바꾸고, 계산은 모두 SI로 한 뒤, 출력할 때만 사람이 읽기 쉬운 단위로 바꿉니다.</li>
+      <li><b>이름에 단위를</b>: <code>R_m</code>, <code>v_kms</code>, <code>luminosity_Lsun</code>처럼 이름만 보고 단위를 알 수 있게 합니다.</li>
+    </ol>
+    <pre><code>import math
+
+# SI 상수
+G = 6.674e-11        # m^3 kg^-1 s^-2
+SIGMA = 5.670e-8     # W m^-2 K^-4
+# 천문 단위를 SI로
+M_SUN = 1.989e30     # kg
+R_SUN = 6.957e8      # m
+L_SUN = 3.828e26     # W
+AU = 1.496e11        # m
+PC = 3.086e16        # m
+KM = 1e3             # m
+
+def v_escape_kms(M_kg, R_m):
+    """질량(kg), 반지름(m) -> 탈출 속력(km/s)"""
+    return math.sqrt(2 * G * M_kg / R_m) / KM
+
+def luminosity_Lsun(R_Rsun, T_K):
+    """반지름(태양 단위), 온도(K) -> 광도(태양 단위)"""
+    R_m = R_Rsun * R_SUN
+    return 4 * math.pi * R_m**2 * SIGMA * T_K**4 / L_SUN
+
+print(f"태양 표면 탈출 속력 = {v_escape_kms(M_SUN, R_SUN):.1f} km/s")
+print(f"지구 표면 탈출 속력 = {v_escape_kms(5.972e24, 6.371e6):.2f} km/s")
+print(f"태양 광도 검산      = {luminosity_Lsun(1.0, 5772):.3f} L_sun")
+print(f"베텔게우스(R=800, T=3600) = {luminosity_Lsun(800, 3600):.3e} L_sun")
+print(f"1 pc = {PC / AU:.0f} AU = {PC / 9.461e15:.3f} 광년")</code></pre>
+    <pre><code>태양 표면 탈출 속력 = 617.8 km/s
+지구 표면 탈출 속력 = 11.19 km/s
+태양 광도 검산      = 1.000 L_sun
+베텔게우스(R=800, T=3600) = 9.684e+04 L_sun
+1 pc = 206283 AU = 3.262 광년</code></pre>
+
+    <h3><span class="no">1.4.3</span>반올림한 상수의 흔적</h3>
+    <p>마지막 줄에서 1 pc가 206,265 AU가 아니라 206,283 AU로 나왔습니다. 1 pc와 1 AU를 각각 네 자리로 반올림했기 때문에 비가 0.009% 어긋난 것입니다. 정의상 1 pc = 206,264.8 AU이므로, 정확도가 중요하면 pc를 AU에서 계산해(\(\text{PC} = 206264.8\times\text{AU}\)) 정의 관계를 지키는 것이 좋습니다. 실제 연구에서는 <code>astropy.constants</code>와 <code>astropy.units</code> 같은 라이브러리가 최신 값과 단위 변환을 함께 관리해 이런 실수를 막아 줍니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.1</span>
+      <p>어떤 논문에 은하 X선 광도가 \(L_X = 10^{42}\) erg/s로 적혀 있습니다. W와 \(L_\odot\)로는?</p>
+    </div>
+    <p><i>풀이.</i> \(10^{42}\times10^{-7} = 10^{35}\) W, \(10^{35}/3.828\times10^{26} = 2.6\times10^8L_\odot\). erg/s를 W로 착각하면 1,000만 배 큰 값을 쓰게 됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SI, cgs(erg, cm, g), 천문 단위(AU, pc, \(M_\odot\), Jy)가 섞여 쓰인다.</li>
+        <li>상수는 한곳에, 계산은 SI로, 출력할 때만 바꾸기, 이름에 단위 붙이기.</li>
+        <li>상수의 반올림이 정의 관계를 깨뜨릴 수 있다. 라이브러리(astropy)를 쓰면 편하다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>밀도 1.41 g/cm³(태양 평균)를 kg/m³로 바꾸세요.
+          <details><summary>답</summary><p>1 g/cm³ = 1,000 kg/m³이므로 1,410 kg/m³.</p></details>
+        </li>
+        <li>1 Jy = \(10^{-26}\) W m⁻² Hz⁻¹을 cgs(erg s⁻¹ cm⁻² Hz⁻¹)로 바꾸세요.
+          <details><summary>답</summary><p>1 W = \(10^7\) erg/s, 1 m² = \(10^4\) cm²이므로 \(10^{-26}\times10^7/10^4 = 10^{-23}\) erg s⁻¹ cm⁻² Hz⁻¹.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li><code>luminosity_Lsun</code>에서 <code>R_m = R_Rsun * R_SUN</code> 줄을 빼먹으면 태양의 결과는 얼마가 나옵니까? 어떤 검산이 잡아냅니까?
+          <details><summary>답</summary><p>\(4\pi\times1\times5.67\times10^{-8}\times5772^4/3.828\times10^{26} \approx 2\times10^{-18}\). '답을 아는 경우'(태양 = 1) 검산이 잡아냅니다.</p></details>
+        </li>
+        <li>중성자별(1.4 \(M_\odot\), 반지름 12 km)의 표면 탈출 속력을 위 함수로 구하고 빛의 속력과 비교하세요.
+          <details><summary>답</summary><p>\(\sqrt{2\times6.674\times10^{-11}\times2.78\times10^{30}/1.2\times10^4}/10^3 \approx 1.76\times10^5\) km/s, 빛의 속력의 약 59%. 이 정도면 일반 상대론 보정이 필요합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

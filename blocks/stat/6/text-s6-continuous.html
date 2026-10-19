@@ -6,53 +6,59 @@
 }
 -->
 <article class="card q-card" id="text-s6-continuous" data-kind="본문" data-std="응통6-04-02">
-  <header class="card-head"><span class="no"></span><h2>정규, 감마, 지수, 베타 분포</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>정규분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>감마 함수를 이용해 감마, 지수, 베타 분포의 밀도와 평균·분산을 쓴다.</li>
-        <li>각 분포가 쓰이는 상황을 안다.</li>
+        <li>정규분포의 밀도가 넓이 1을 갖는 이유와 적률생성함수를 안다.</li>
+        <li>표준화로 모든 정규 확률을 표준정규 하나로 계산한다.</li>
+        <li>독립인 정규변수의 선형결합이 정규임(재생성)을 증명하고 쓴다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>감마 함수와 베타 함수 (응통1 03단원), 적률생성함수 (<a href="03-02.html">3.2절</a>).</li>
+        <li>적률생성함수 (<a href="03-02.html">3.2절</a>), 극좌표 적분(응통1 06단원).</li>
       </ul>
     </div>
 
-    <h3>대기 시간과 비율의 분포</h3>
-    <p>버스가 올 때까지의 시간, 부품의 수명, 확률 자체의 불확실성처럼 연속형 양을 나타내는 분포가 필요합니다. 감마 함수 하나로 여러 분포를 한꺼번에 정리할 수 있습니다.</p>
+    <h3>통계학의 중심에 있는 분포</h3>
+    <p>측정 오차, 키, 시험 점수의 분포가 종 모양이라는 경험과, 많은 것을 더하면 종 모양이 된다는 중심극한정리(7.3절) 때문에 정규분포는 통계학의 거의 모든 곳에 나옵니다. 계산이 쉬운 성질, 특히 "정규끼리 더하면 다시 정규"라는 성질이 그 위상을 굳혔습니다. 이 절은 그 성질들을 증명과 함께 정리합니다.</p>
 
-    <h3><span class="no">4.2.1</span>감마 분포와 지수분포</h3>
-    <p>감마 함수 \(\Gamma(\alpha) = \int_0^\infty x^{\alpha-1}e^{-x}dx\)는 \(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\), \(\Gamma(n) = (n-1)!\), \(\Gamma(1/2) = \sqrt\pi\)를 만족합니다.</p>
+    <h3><span class="no">4.2.1</span>정의와 넓이</h3>
     <div class="tb-env def">
       <span class="lb">정의 4.2.1</span>
-      <p><b>감마 분포</b> \(\mathrm{Gamma}(\alpha, \beta)\): \(f(x) = \dfrac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta}\) (\(x &gt; 0\)). 평균 \(\alpha\beta\), 분산 \(\alpha\beta^2\), 적률생성함수 \((1 - \beta t)^{-\alpha}\) (\(t &lt; 1/\beta\)).</p>
+      <p><b>정규분포</b> \(N(\mu, \sigma^2)\): \(f(x) = \dfrac{1}{\sigma\sqrt{2\pi}}\exp\left\{-\dfrac{(x-\mu)^2}{2\sigma^2}\right\}\), \(-\infty &lt; x &lt; \infty\). \(\mu = 0\), \(\sigma = 1\)이면 표준정규분포이고 밀도를 \(\phi\), 분포함수를 \(\Phi\)로 씁니다.</p>
     </div>
-    <p>\(\alpha = 1\)이면 <b>지수분포</b>(평균 \(\beta\))입니다. 포아송 과정에서 사건 사이 시간은 지수분포, \(\alpha\)번째 사건까지 시간은 감마분포입니다(응통9 05단원). \(\alpha = \nu/2\), \(\beta = 2\)이면 자유도 \(\nu\)인 카이제곱 분포입니다(6.1절). 교재에 따라 \(\beta\) 대신 비율 \(\lambda = 1/\beta\)를 쓰므로 확인합니다.</p>
+    <p>넓이가 1임은 \(I = \int e^{-z^2/2}dz\)의 제곱을 이중적분으로 보고 극좌표로 바꾸어 보입니다: \(I^2 = \int_0^{2\pi}\int_0^\infty e^{-r^2/2}r\,dr\,d\theta = 2\pi\), 따라서 \(I = \sqrt{2\pi}\). \(\Phi\)는 닫힌 식이 없어 표나 소프트웨어(<code>pnorm</code>)로 계산합니다. 밀도는 \(\mu\)에서 최대이고 \(\mu \pm \sigma\)에서 변곡점을 가집니다.</p>
 
-    <h3><span class="no">4.2.2</span>베타 분포</h3>
-    <div class="tb-env def">
-      <span class="lb">정의 4.2.2</span>
-      <p><b>베타 분포</b> \(\mathrm{Beta}(a, b)\): \(f(x) = \dfrac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}\) (\(0 &lt; x &lt; 1\)). 평균 \(\frac{a}{a+b}\), 분산 \(\frac{ab}{(a+b)^2(a+b+1)}\).</p>
+    <h3><span class="no">4.2.2</span>표준화와 적률</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.2.2</span>
+      <p>(가) \(X \sim N(\mu, \sigma^2)\)이면 \(Z = (X - \mu)/\sigma \sim N(0, 1)\), 따라서 \(P(a \le X \le b) = \Phi\left(\frac{b - \mu}\sigma\right) - \Phi\left(\frac{a-\mu}\sigma\right)\). (나) \(M_X(t) = \exp(\mu t + \sigma^2t^2/2)\). (다) \(E(X) = \mu\), \(\mathrm{Var}(X) = \sigma^2\).</p>
     </div>
-    <p>0과 1 사이 값이라 비율이나 확률의 분포로 씁니다. \(a = b = 1\)이면 균일분포. 균일 표본의 순서통계량(6.3절)과 베이즈 추론의 사전분포(응통21)로 다시 나옵니다.</p>
+    <p class="tb-proof">(가)는 단조 변환 공식(2.3절)에서 바로 나옵니다. (나) 표준정규에서 \(E(e^{tZ}) = \int \frac1{\sqrt{2\pi}}e^{tz - z^2/2}dz\), 지수의 완전제곱 \(tz - z^2/2 = -\frac12(z - t)^2 + \frac{t^2}2\)로 적분은 \(e^{t^2/2}\). \(X = \mu + \sigma Z\)이면 \(M_X(t) = e^{\mu t}M_Z(\sigma t)\). (다)는 (나)를 미분합니다. <span class="qed">∎</span></p>
+    <p>대칭 \(\Phi(-z) = 1 - \Phi(z)\)와 몇 개의 값 \(\Phi(1) \approx 0.841\), \(\Phi(1.645) = 0.95\), \(\Phi(1.96) = 0.975\), \(\Phi(2.576) = 0.995\)를 기억해 두면 대부분의 계산을 할 수 있습니다.</p>
 
-    <h3><span class="no">4.2.3</span>정규분포</h3>
-    <p>\(N(\mu, \sigma^2)\): \(f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/(2\sigma^2)}\). 규격화 상수는 응통1 06단원의 극좌표 적분으로 구합니다. 표준화 \(Z = (X - \mu)/\sigma\)로 모든 정규 확률을 표준정규표 하나로 계산하고, 독립인 정규변수의 선형결합은 정규입니다(3.2절).</p>
+    <h3><span class="no">4.2.3</span>재생성: 선형결합</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.2.3</span>
+      <p>\(X_i \sim N(\mu_i, \sigma_i^2)\) (\(i = 1, \ldots, n\))가 독립이면 \(\sum a_iX_i \sim N\left(\sum a_i\mu_i, \sum a_i^2\sigma_i^2\right)\). 특히 정규 표본의 평균은 \(\bar X \sim N(\mu, \sigma^2/n)\).</p>
+    </div>
+    <p class="tb-proof">독립이므로 적률생성함수가 곱해져 \(\prod_i \exp(a_i\mu_it + a_i^2\sigma_i^2t^2/2) = \exp\left(t\sum a_i\mu_i + \frac{t^2}2\sum a_i^2\sigma_i^2\right)\). 이것은 정규분포의 적률생성함수이고, 적률생성함수가 분포를 정하므로(3.2절) 결론이 나옵니다. <span class="qed">∎</span></p>
+    <p>빼는 경우에도 분산은 더해진다는 점(\(a_i^2 \ge 0\))이 중요합니다. 독립이 아니면 공분산 항이 붙으며(5.2절), 결합분포가 다변량 정규이면 선형결합은 여전히 정규입니다(5.4절).</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 4.2.3</span>
-      <p>감마 분포의 평균을 직접 적분으로 구하세요.</p>
+      <span class="lb">예제 4.2.4</span>
+      <p>남학생 키 \(X \sim N(173, 6^2)\), 여학생 키 \(Y \sim N(161, 5^2)\)이고 독립입니다. 무작위로 고른 여학생이 무작위로 고른 남학생보다 클 확률은?</p>
     </div>
-    <p><i>풀이.</i> \(E(X) = \frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^\infty x^{\alpha}e^{-x/\beta}dx\). \(u = x/\beta\)로 치환하면 적분은 \(\beta^{\alpha+1}\Gamma(\alpha+1)\). 따라서 \(E(X) = \beta\Gamma(\alpha+1)/\Gamma(\alpha) = \alpha\beta\).</p>
+    <p><i>풀이.</i> \(D = Y - X \sim N(161 - 173, 25 + 36) = N(-12, 61)\). \(P(D &gt; 0) = P(Z &gt; 12/\sqrt{61}) = P(Z &gt; 1.536) \approx 0.062\). 평균 차이 12 cm에도 6% 정도는 여학생이 큽니다.</p>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>감마 \((\alpha, \beta)\): 평균 \(\alpha\beta\), 분산 \(\alpha\beta^2\). 지수와 카이제곱은 특수한 경우.</li>
-        <li>베타 \((a, b)\): (0, 1)의 분포, 평균 \(a/(a+b)\).</li>
-        <li>정규는 표준화와 선형결합에 닫혀 있습니다.</li>
+        <li>표준화 \(Z = (X - \mu)/\sigma\)로 모든 정규 확률을 \(\Phi\)로 계산합니다.</li>
+        <li>적률생성함수 \(e^{\mu t + \sigma^2t^2/2}\).</li>
+        <li>독립 정규의 선형결합은 정규, 평균은 선형으로 분산은 계수 제곱으로 더해집니다.</li>
       </ol>
     </div>
 
@@ -60,14 +66,14 @@
       <h3><span class="no">4.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>독립인 지수분포(평균 \(\beta\)) \(n\)개의 합의 분포는?
-          <details><summary>답</summary><p>적률생성함수 \((1-\beta t)^{-n}\), 감마 \((n, \beta)\).</p></details>
+        <li>\(X \sim N(100, 15^2)\)일 때 \(P(X &gt; 130)\)과 상위 10%의 경계는?
+          <details><summary>답</summary><p>\(P(Z &gt; 2) \approx 0.0228\). 상위 10% 경계 \(100 + 1.2816 \times 15 \approx 119.2\).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol>
-        <li>\(\mathrm{Beta}(2, 2)\)의 평균, 분산, 최빈값은?
-          <details><summary>답</summary><p>평균 1/2, 분산 \(4/(16 \times 5) = 0.05\), 밀도 \(6x(1-x)\)의 최댓값 위치 1/2.</p></details>
+        <li>정규 표본 크기 \(n\)의 평균이 모평균에서 \(0.1\sigma\) 안에 있을 확률이 0.95 이상이 되려면 \(n\)은?
+          <details><summary>답</summary><p>\(\bar X \sim N(\mu, \sigma^2/n)\). \(0.1\sigma \ge 1.96\sigma/\sqrt n\)에서 \(\sqrt n \ge 19.6\), \(n \ge 384.2\), 385.</p></details>
         </li>
       </ol>
     </div>

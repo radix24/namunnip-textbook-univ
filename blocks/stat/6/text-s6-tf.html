@@ -1,0 +1,91 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-tf" data-kind="본문" data-std="응통6-06-02">
+  <header class="card-head"><span class="no"></span><h2>t 분포와 F 분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>표준정규와 카이제곱의 비로 t 분포를 정의하고 밀도를 유도한다.</li>
+        <li>두 카이제곱의 비로 F 분포를 정의하고 t 분포와의 관계를 안다.</li>
+        <li>정규 표본에서 t 통계량과 두 분산의 비가 이 분포를 따름을 보인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>카이제곱 분포 (<a href="06-01.html">6.1절</a>), 두 변수 변환 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>σ를 모르면 생기는 일</h3>
+    <p>정규 표본의 평균은 \(\frac{\bar X - \mu}{\sigma/\sqrt n} \sim N(0, 1)\)이지만 실제로는 \(\sigma\) 대신 \(S\)를 씁니다. 분모도 표본마다 흔들리므로 비율은 표준정규보다 넓게 퍼집니다. 1908년 맥주 회사 기니스의 고셋이 "스튜던트"라는 필명으로 이 분포를 구한 것이 t 분포입니다. 두 집단의 분산을 비교할 때 쓰는 F 분포도 같은 방식으로 나옵니다.</p>
+
+    <h3><span class="no">6.2.1</span>t 분포</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.2.1</span>
+      <p>\(Z \sim N(0,1)\)과 \(V \sim \chi^2_\nu\)가 독립이면 \(T = \dfrac{Z}{\sqrt{V/\nu}}\)의 분포를 자유도 \(\nu\)인 <b>t 분포</b> \(t_\nu\)라 한다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.2</span>
+      <p>\(t_\nu\)의 밀도는 \(f(t) = \dfrac{\Gamma\left(\frac{\nu+1}2\right)}{\sqrt{\nu\pi}\,\Gamma\left(\frac\nu2\right)}\left(1 + \dfrac{t^2}\nu\right)^{-(\nu+1)/2}\), \(-\infty &lt; t &lt; \infty\).</p>
+    </div>
+    <p class="tb-proof">짝 변수 \(W = V\)를 붙여 \((Z, V) \to (T, W)\)로 바꿉니다. 역변환 \(z = t\sqrt{w/\nu}\), \(v = w\), \(|J| = \sqrt{w/\nu}\). 결합 밀도는 \(f(t, w) = \phi(t\sqrt{w/\nu})\,f_V(w)\sqrt{w/\nu} \propto w^{(\nu+1)/2 - 1}\exp\{-\tfrac w2(1 + t^2/\nu)\}\). \(w\)로 적분하면 감마 적분으로 \(\Gamma(\tfrac{\nu+1}2)\left[\tfrac12(1 + t^2/\nu)\right]^{-(\nu+1)/2}\)이 나오고, 상수를 정리하면 위 식입니다. <span class="qed">∎</span></p>
+    <p>밀도가 \(|t|^{-(\nu+1)}\)처럼 다항식으로 줄어 정규보다 꼬리가 두껍습니다. 그래서 \(t_\nu\)는 \(k &lt; \nu\)인 적률만 가지며, \(\nu &gt; 2\)이면 분산 \(\nu/(\nu - 2)\)입니다. \(\nu = 1\)이면 평균도 없는 코시 분포이고, \(\nu \to \infty\)이면 \(V/\nu \to 1\)(대수의 법칙, 7.2절)이라 표준정규로 수렴합니다.</p>
+
+    <h3><span class="no">6.2.2</span>F 분포</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.2.3</span>
+      <p>독립인 \(U \sim \chi^2_{m}\), \(V \sim \chi^2_{n}\)에 대해 \(F = \dfrac{U/m}{V/n}\)의 분포를 자유도 \((m, n)\)인 <b>F 분포</b> \(F(m, n)\)이라 한다.</p>
+    </div>
+    <p>같은 방법(짝 변수와 감마 적분)으로 밀도를 구할 수 있습니다. 몇 가지 관계가 유용합니다.</p>
+    <ul>
+      <li>\(F \sim F(m, n)\)이면 \(1/F \sim F(n, m)\). 그래서 아래쪽 분위수는 \(F_{1-\alpha}(m, n) = 1/F_\alpha(n, m)\)로 위쪽 분위수표에서 얻습니다.</li>
+      <li>\(T \sim t_\nu\)이면 \(T^2 = \frac{Z^2/1}{V/\nu} \sim F(1, \nu)\). 집단이 둘일 때 분산분석의 F 검정과 합동분산 t 검정이 같은 이유입니다.</li>
+      <li>\(n \to \infty\)이면 \(mF \to \chi^2_m\).</li>
+    </ul>
+
+    <h3><span class="no">6.2.3</span>정규 표본에의 적용</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.4</span>
+      <p>(가) \(X_1, \ldots, X_n\)이 독립 \(N(\mu, \sigma^2)\)이면 \(\dfrac{\bar X - \mu}{S/\sqrt n} \sim t_{n-1}\). (나) 독립인 두 정규 표본(크기 \(n_1, n_2\), 분산 \(\sigma_1^2, \sigma_2^2\))이면 \(\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2} \sim F(n_1 - 1, n_2 - 1)\).</p>
+    </div>
+    <p class="tb-proof">(가) \(\frac{(\bar X - \mu)/(\sigma/\sqrt n)}{\sqrt{[(n-1)S^2/\sigma^2]/(n-1)}}\)로 쓰면 분자는 \(N(0, 1)\), 분모 안은 \(\chi^2_{n-1}\)을 자유도로 나눈 것이고 둘은 독립(6.3절)이므로 정의 6.2.1의 꼴입니다. \(\sigma\)는 약분됩니다. (나) \((n_i - 1)S_i^2/\sigma_i^2 \sim \chi^2_{n_i - 1}\)이고 두 표본이 독립이므로 정의 6.2.3입니다. <span class="qed">∎</span></p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.5</span>
+      <p>두 기계로 만든 부품의 길이를 각각 11개, 16개 재어 표본분산 \(s_1^2 = 0.40\), \(s_2^2 = 0.16\)을 얻었습니다. 두 모분산이 같다는 가설을 유의수준 10%에서 양측 검정하세요(\(F_{0.05}(10, 15) = 2.54\), \(F_{0.05}(15, 10) = 2.85\)).</p>
+    </div>
+    <p><i>풀이.</i> \(H_0: \sigma_1^2 = \sigma_2^2\)이면 \(F = s_1^2/s_2^2 = 2.5 \sim F(10, 15)\). 위쪽 임계값 2.54, 아래쪽 임계값 \(1/F_{0.05}(15, 10) = 1/2.85 \approx 0.351\). \(0.351 &lt; 2.5 &lt; 2.54\)이므로 아슬아슬하게 기각하지 않습니다. F 검정은 정규성에 매우 민감하므로, 실제로는 레빈 검정 같은 대안을 함께 봅니다.</p>
+    <pre><code>2 * pf(2.5, 10, 15, lower.tail = FALSE)   # 양측 p값 약 0.10
+var.test(x1, x2)                          # 원자료가 있을 때</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(t_\nu = Z/\sqrt{V/\nu}\): 대칭, 정규보다 두꺼운 꼬리, \(\nu \to \infty\)이면 정규.</li>
+        <li>\(F(m, n) = (U/m)/(V/n)\), \(1/F \sim F(n, m)\), \(t_\nu^2 \sim F(1, \nu)\).</li>
+        <li>정규 표본의 t 통계량과 두 표본분산의 비가 각각 t, F 분포를 따릅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(t_{0.025, 10} = 2.228\)이면 \(F(1, 10)\)의 위쪽 5% 분위수는?
+          <details><summary>답</summary><p>\(T^2 \sim F(1, 10)\)이고 \(P(T^2 &gt; c) = P(|T| &gt; \sqrt c)\). \(\sqrt c = 2.228\)이면 이 확률이 0.05이므로 \(c = 2.228^2 \approx 4.96\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(t_\nu\)의 분산이 \(\nu/(\nu-2)\)임을 \(E(Z^2) = 1\), \(E(1/V)\)로 보이세요(\(V \sim \chi^2_\nu\)이면 \(E(1/V) = 1/(\nu - 2)\)).
+          <details><summary>답</summary><p>독립이므로 \(E(T^2) = E(Z^2)E(\nu/V) = \nu/(\nu - 2)\). \(E(T) = 0\)이라 이것이 분산입니다. \(E(1/V)\)는 감마 밀도로 \(\int v^{-1}f_V(v)dv = \Gamma(\nu/2 - 1)/[2\Gamma(\nu/2)] = 1/(\nu - 2)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -6,67 +6,69 @@
 }
 -->
 <article class="card q-card" id="text-s6-transform" data-kind="본문" data-std="응통6-02-02">
-  <header class="card-head"><span class="no"></span><h2>확률변수의 변환</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>누적분포함수 방법과 역변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>누적분포함수 방법으로 \(Y = g(X)\)의 분포를 구한다.</li>
-        <li>단조 변환의 밀도 공식을 유도하고 쓴다.</li>
+        <li>\(Y = g(X)\)의 분포함수를 \(X\)에 대한 사건으로 바꿔 구한다.</li>
+        <li>최댓값, 최솟값처럼 여러 변수의 함수에도 같은 방법을 쓴다.</li>
+        <li>확률적분변환과 역변환법의 원리를 안다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>분포함수와 밀도함수 (<a href="02-01.html">2.1절</a>), 합성함수의 미분.</li>
+        <li>누적분포함수와 밀도 (<a href="02-01.html">2.1절</a>).</li>
       </ul>
     </div>
 
     <h3>섭씨에서 화씨로, 반지름에서 넓이로</h3>
-    <p>\(X\)의 분포를 알 때 \(Y = 1.8X + 32\)나 \(Y = \pi X^2\)의 분포를 알고 싶은 일이 많습니다. 컴퓨터가 균일 난수로 다른 분포의 난수를 만드는 원리도 변환입니다.</p>
+    <p>\(X\)의 분포를 알 때 \(Y = 1.8X + 32\)나 \(Y = \pi X^2\)의 분포를 알고 싶은 일이 많습니다. 컴퓨터가 균일 난수로 다른 분포의 난수를 만드는 원리도 변환입니다. 이 절은 어떤 변환에도 쓸 수 있는 가장 기본적인 방법, 분포함수를 거치는 방법을 다룹니다. 단조 변환에서 이를 공식으로 줄이는 것은 다음 절에서 합니다.</p>
 
     <h3><span class="no">2.2.1</span>누적분포함수 방법</h3>
-    <p>가장 일반적인 방법은 \(F_Y(y) = P(g(X) \le y)\)를 \(X\)에 대한 사건으로 바꿔 계산한 뒤 미분하는 것입니다.</p>
+    <p>\(F_Y(y) = P(g(X) \le y)\)에서 사건 \(\{g(X) \le y\}\)를 \(X\)가 놓일 집합 \(\{x : g(x) \le y\}\)로 바꾸고 \(X\)의 분포로 계산합니다. 연속형이면 마지막에 미분해 밀도를 얻습니다. 단계는 세 개입니다. (1) \(Y\)가 가질 수 있는 값의 범위를 정한다. (2) 그 범위의 \(y\)마다 \(\{g(x) \le y\}\)를 \(x\)의 구간으로 푼다. (3) 확률을 계산하고 미분한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>\(X \sim N(0, 1)\)일 때 \(Y = X^2\)의 밀도함수를 구하세요.</p>
     </div>
-    <p><i>풀이.</i> \(y &gt; 0\)에서 \(F_Y(y) = P(-\sqrt y \le X \le \sqrt y) = \Phi(\sqrt y) - \Phi(-\sqrt y)\). 미분하면 \(f_Y(y) = \phi(\sqrt y)\frac{1}{2\sqrt y} + \phi(-\sqrt y)\frac1{2\sqrt y} = \frac{1}{\sqrt{2\pi y}}e^{-y/2}\). 이것이 자유도 1인 카이제곱 분포입니다(6.1절). \(X^2\)는 단조가 아니므로 양쪽 가지를 모두 더했습니다.</p>
+    <p><i>풀이.</i> \(Y \ge 0\). \(y &gt; 0\)에서 \(F_Y(y) = P(-\sqrt y \le X \le \sqrt y) = \Phi(\sqrt y) - \Phi(-\sqrt y)\). 미분하면 \(f_Y(y) = \phi(\sqrt y)\frac{1}{2\sqrt y} + \phi(-\sqrt y)\frac1{2\sqrt y} = \frac{1}{\sqrt{2\pi y}}e^{-y/2}\). 이것이 자유도 1인 카이제곱 분포입니다(6.1절). \(X^2\)는 단조가 아니므로 양쪽 가지를 모두 더했습니다.</p>
 
-    <h3><span class="no">2.2.2</span>단조 변환 공식</h3>
-    <div class="tb-env thm">
-      <span class="lb">정리 2.2.2</span>
-      <p>\(X\)의 밀도가 \(f_X\)이고 \(g\)가 \(X\)가 가질 수 있는 값의 구간에서 미분가능하고 엄격히 단조이면, \(Y = g(X)\)의 밀도는</p>
-      \[f_Y(y) = f_X\big(g^{-1}(y)\big)\left|\frac{d}{dy}g^{-1}(y)\right|.\]
-    </div>
-    <p class="tb-proof">\(g\)가 증가하면 \(F_Y(y) = P(X \le g^{-1}(y)) = F_X(g^{-1}(y))\)이고, 연쇄법칙으로 미분하면 \(f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)\)입니다. \(g\)가 감소하면 \(F_Y(y) = P(X \ge g^{-1}(y)) = 1 - F_X(g^{-1}(y))\)이고 미분하면 부호가 바뀌는데, 이때 \(\frac{d}{dy}g^{-1} &lt; 0\)이라 절댓값으로 합쳐 쓸 수 있습니다. <span class="qed">∎</span></p>
-    <p>절댓값 인자는 변환이 구간을 늘이거나 줄이는 비율입니다. 넓이(확률)는 그대로이므로 구간이 늘어난 만큼 밀도가 낮아집니다.</p>
-
+    <h3><span class="no">2.2.2</span>여러 변수의 함수: 최댓값과 최솟값</h3>
+    <p>같은 방법이 여러 변수의 함수에도 통합니다. \(X_1, \ldots, X_n\)이 독립이고 분포함수가 \(F\)이면 최댓값 \(M = \max X_i\)에 대해 \(\{M \le y\} = \{X_1 \le y, \ldots, X_n \le y\}\)이므로 \(F_M(y) = F(y)^n\)이고, 최솟값 \(m\)은 \(P(m &gt; y) = [1 - F(y)]^n\)입니다. 직렬로 연결된 부품(하나라도 고장 나면 멈춤)의 수명은 최솟값, 병렬(모두 고장 나야 멈춤)은 최댓값입니다. 6.4절의 순서통계량이 이 계산을 일반화합니다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 2.2.3 (역변환법)</span>
-      <p>\(U \sim U(0, 1)\)일 때 \(Y = -\frac1\lambda\ln U\)의 분포는?</p>
+      <span class="lb">예제 2.2.2</span>
+      <p>수명이 독립인 \(\mathrm{Exp}(\lambda)\) 부품 3개를 직렬로 연결한 장치의 수명 분포는?</p>
     </div>
-    <p><i>풀이.</i> \(g(u) = -\ln u/\lambda\)는 감소, \(g^{-1}(y) = e^{-\lambda y}\), \(|dg^{-1}/dy| = \lambda e^{-\lambda y}\). \(f_U = 1\)이므로 \(f_Y(y) = \lambda e^{-\lambda y}\) (\(y &gt; 0\)), 지수분포입니다. 일반적으로 \(F^{-1}(U)\)는 분포함수 \(F\)를 따르며, 이 방법으로 난수를 만듭니다(응통15 04단원).</p>
+    <p><i>풀이.</i> \(P(m &gt; y) = (e^{-\lambda y})^3 = e^{-3\lambda y}\). 장치 수명은 \(\mathrm{Exp}(3\lambda)\), 평균은 부품 하나의 1/3입니다.</p>
+
+    <h3><span class="no">2.2.3</span>확률적분변환과 역변환법</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.3</span>
+      <p>(가) \(X\)의 분포함수 \(F\)가 연속이면 \(F(X) \sim U(0, 1)\). (나) \(U \sim U(0, 1)\)이고 \(F^{-1}(u) = \inf\{x : F(x) \ge u\}\)이면 \(F^{-1}(U)\)의 분포함수는 \(F\)입니다.</p>
+    </div>
+    <p class="tb-proof">(나) \(F^{-1}(u) \le x \iff u \le F(x)\)이므로 \(P(F^{-1}(U) \le x) = P(U \le F(x)) = F(x)\). (가)는 \(F\)가 순증가인 경우 \(P(F(X) \le u) = P(X \le F^{-1}(u)) = u\)에서 나오며, 일반적인 연속 \(F\)에서도 같은 결론이 성립합니다. <span class="qed">∎</span></p>
+    <p>(나)가 <b>역변환법</b>입니다. 균일 난수 하나를 \(F^{-1}\)에 넣으면 원하는 분포의 난수가 됩니다. 지수분포는 \(F(x) = 1 - e^{-\lambda x}\)에서 \(F^{-1}(u) = -\ln(1-u)/\lambda\)이고, \(1 - U\)도 균일이므로 \(-\ln U/\lambda\)를 씁니다. (가)는 분포 적합 검정(응통12 05단원)과 p값이 귀무가설 아래에서 균일분포를 따르는 이유입니다. 이 절의 실습 카드에서 여러 변환을 직접 해 볼 수 있습니다.</p>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>일반적인 방법: \(F_Y(y) = P(g(X) \le y)\)를 구해 미분.</li>
-        <li>단조 변환: \(f_Y(y) = f_X(g^{-1}(y))|dg^{-1}/dy|\).</li>
-        <li>\(F^{-1}(U)\)는 분포 \(F\)를 따릅니다(역변환법).</li>
+        <li>\(F_Y(y) = P(g(X) \le y)\)를 \(X\)의 사건으로 바꿔 계산하고 미분합니다.</li>
+        <li>독립인 \(n\)개의 최댓값은 \(F^n\), 최솟값은 \(1 - (1-F)^n\).</li>
+        <li>\(F(X) \sim U(0,1)\), \(F^{-1}(U) \sim F\): 역변환법의 원리.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <h3><span class="no">2.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(X \sim N(\mu, \sigma^2)\)이면 \(Y = aX + b\) (\(a \ne 0\))의 분포는?
-          <details><summary>답</summary><p>정리 2.2.2로 \(N(a\mu + b, a^2\sigma^2)\).</p></details>
+        <li>\(X \sim U(-1, 1)\)일 때 \(Y = |X|\)의 분포는?
+          <details><summary>답</summary><p>\(0 \le y \le 1\)에서 \(F_Y(y) = P(-y \le X \le y) = y\). \(Y \sim U(0, 1)\).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol>
-        <li>\(X \sim U(0, 1)\)일 때 \(Y = \sqrt X\)의 밀도는?
-          <details><summary>답</summary><p>\(g^{-1}(y) = y^2\), \(f_Y(y) = 2y\) (\(0 \le y \le 1\)).</p></details>
+        <li>분포함수 \(F(x) = 1 - (1 + x)^{-3}\) (\(x &gt; 0\), 파레토형)을 따르는 난수를 균일 난수로 만드는 식을 쓰세요.
+          <details><summary>답</summary><p>\(u = 1 - (1+x)^{-3}\)을 풀면 \(x = (1-u)^{-1/3} - 1\). \(1 - U\)도 균일이므로 \(X = U^{-1/3} - 1\).</p></details>
         </li>
       </ol>
     </div>

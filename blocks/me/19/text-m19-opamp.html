@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-opamp" data-kind="본문" data-std="기계19-01-02">
+  <header class="card-head"><span class="no"></span><h2>연산증폭기로 센서 신호 다듬기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이상적 연산증폭기의 두 규칙으로 회로를 해석한다.</li>
+        <li>반전·비반전 증폭기, 차동·계측 증폭기의 이득을 구한다.</li>
+        <li>능동 저역 통과 필터의 차단 주파수를 정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>저항과 RC 회로 (<a href="01-01.html">1.1절</a>), 계측 실험의 연산증폭기(<a href="../7/05-01.html">기계공학실험(1) 5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>이상적 연산증폭기</h3>
+    <p>연산증폭기는 두 입력의 차를 아주 크게(10만 배 이상) 증폭하는 소자입니다. 출력을 저항으로 반전 입력에 되먹이면(음되먹임) 다음 두 규칙으로 해석할 수 있습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">이상적 연산증폭기의 규칙 (음되먹임일 때)</span>
+      <p>① 두 입력의 전압이 같다(\(v_+ = v_-\)). ② 입력 단자로 전류가 흐르지 않는다.</p>
+    </div>
+    <ul>
+      <li><b>비반전 증폭기</b>: \(v_{\text{out}} = (1 + R_f/R_g)v_{\text{in}}\). 입력 저항이 매우 커 센서에 부담을 주지 않습니다.</li>
+      <li><b>반전 증폭기</b>: \(v_{\text{out}} = -(R_f/R_{\text{in}})v_{\text{in}}\).</li>
+      <li><b>차동 증폭기</b>: 두 입력의 차만 증폭하고 둘에 공통으로 실린 잡음(공통 모드)은 지웁니다.</li>
+      <li><b>계측 증폭기</b>: 입력 버퍼 둘과 차동 증폭기를 합친 것으로, 저항 하나로 이득을 정하고 공통 모드 제거비가 큽니다. 스트레인 게이지 브리지처럼 작은 차동 신호에 씁니다.</li>
+    </ul>
+
+    <h3><span class="no">1.2.2</span>능동 필터</h3>
+    <p>RC 저역 통과 필터의 차단 주파수는 \(f_c = 1/(2\pi RC)\)입니다. 반전 증폭기의 되먹임 저항과 병렬로 축전기를 달면 증폭과 저역 통과를 한 번에 하는 능동 필터가 되어, 이득 \(-R_f/R_{\text{in}}\), 차단 주파수 \(1/(2\pi R_fC_f)\)입니다. A/D 변환 전에는 Nyquist 주파수 이상의 성분을 지우는 앤티에일리어싱 필터로 씁니다(3.1절).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1 <span class="nm">(스트레인 게이지 신호)</span></span>
+      <p>스트레인 게이지 브리지 출력이 최대 2.5 mV이다. 0~3.3 V A/D 변환기의 범위를 잘 쓰도록 증폭하고, 100 Hz 이상의 잡음을 줄이려 한다. 증폭기와 필터를 정하여라.</p>
+    </div>
+    <p><i>풀이.</i> 최대 2.5 mV를 약 2.5 V로 키우려면 이득 1000. 작은 차동 신호이므로 계측 증폭기를 쓰고 이득 저항으로 1000을 맞춥니다(A/D 입력 중간점에 기준 전압을 더하면 음의 변형률도 잴 수 있습니다). 이어서 \(R = 16\) kΩ, \(C = 0.1\) μF인 저역 통과 필터를 두면 \(f_c = 1/(2\pi\times16000\times10^{-7}) = 99.5\) Hz입니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 출력은 전원 전압을 넘을 수 없습니다(포화). 3.3 V 단전원이면 레일-투-레일 연산증폭기를 고릅니다. (2) 이득이 클수록 대역폭이 줄어듭니다(이득-대역폭 곱 일정). 이득 1000에 GBW 1 MHz면 대역폭은 약 1 kHz입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>음되먹임: \(v_+ = v_-\), 입력 전류 0.</li>
+        <li>비반전 \(1 + R_f/R_g\), 반전 \(-R_f/R_{\text{in}}\), 작은 차동 신호는 계측 증폭기.</li>
+        <li>필터 \(f_c = 1/(2\pi RC)\), A/D 앞에 앤티에일리어싱.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>비반전 증폭기에서 \(R_f\) = 99 kΩ, \(R_g\) = 1 kΩ이면 이득은?
+          <details><summary>답</summary><p>100.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>반전 증폭기 \(R_{\text{in}}\) = 10 kΩ, \(R_f\) = 100 kΩ에 \(C_f\) = 16 nF을 병렬로 달면 이득과 차단 주파수는?
+          <details><summary>답</summary><p>이득 −10, \(f_c = 1/(2\pi\times10^5\times1.6\times10^{-8}) = 99.5\) Hz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 신호 위에 60 Hz 전원 잡음이 두 입력에 똑같이 0.5 V 실려 있다. 공통 모드 제거비 100 dB인 계측 증폭기(이득 1000)의 출력에는 잡음이 얼마나 나타나는가?
+          <details><summary>답</summary><p>공통 모드 이득 = 1000/10⁵ = 0.01, 출력 잡음 5 mV. 신호 2.5 V에 비해 작다. 차동 증폭이 아니면 0.5 V가 그대로 섞인다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

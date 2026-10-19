@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-01-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s6-count" data-kind="예제" data-std="응통6-01-02">
+  <header class="card-head"><span class="no"></span><h2>포커 패의 확률: 순서를 셀 것인가 말 것인가</h2><span class="kind">예제 · 경우의 수</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>분자와 분모를 <b>같은 방식</b>으로 세는 것이 핵심입니다. 분모를 조합(순서 없음)으로 셌다면 분자도 조합으로 세야 합니다. 그리고 분자를 "단계별 선택"으로 나눌 때 같은 패를 두 번 세지 않는지 확인합니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제 1.</b> 52장에서 5장을 뽑을 때 "원 페어"(같은 숫자 2장, 나머지 3장은 서로 다르고 그 숫자와도 다름)가 나올 확률은?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>분모: 순서 없는 5장 \(\binom{52}5 = 2598960\).</div><span class="q-why">손에 든 패는 받은 순서와 관계없습니다.</span></li>
+        <li><div>페어의 숫자: 13가지. 그 숫자의 무늬 2개: \(\binom42 = 6\).</div><span class="q-why">곱의 법칙의 첫 두 단계.</span></li>
+        <li><div>나머지 세 장의 숫자: 남은 12개 숫자 중 서로 다른 3개 \(\binom{12}3 = 220\). 각 숫자의 무늬: \(4^3 = 64\).</div><span class="q-why">세 숫자를 순서 없이 고릅니다. "첫째 12, 둘째 11, 셋째 10"으로 세면 같은 패를 \(3! = 6\)번 셉니다.</span></li>
+        <li class="q-end"><div>분자 \(13 \times 6 \times 220 \times 64 = 1098240\), 확률 \(1098240/2598960 \approx 0.4226\).</div><span class="q-why">다섯 장 중 약 42%가 원 페어입니다.</span></li>
+      </ol>
+    </section>
+
+    <p class="q-prob"><b>문제 2.</b> "투 페어"(서로 다른 두 숫자가 각각 2장씩, 나머지 1장은 또 다른 숫자)의 확률을 구하세요. 흔한 실수도 짚어 보세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>페어 두 숫자를 <b>순서 없이</b> 고릅니다: \(\binom{13}2 = 78\). 각각의 무늬 \(\binom42^2 = 36\).</div><span class="q-why">"첫 페어 13가지 × 둘째 페어 12가지"로 세면 (킹, 3)과 (3, 킹)을 따로 세어 2배가 됩니다.</span></li>
+        <li><div>나머지 한 장: 남은 11개 숫자 × 무늬 4 = 44.</div><span class="q-why">세 번째 숫자가 페어 숫자와 같으면 풀하우스가 됩니다.</span></li>
+        <li class="q-end"><div>분자 \(78 \times 36 \times 44 = 123552\), 확률 \(\approx 0.0475\).</div><span class="q-why">흔한 실수(순서 있게 셈)는 0.0951로 두 배가 나옵니다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>R로 10만 번 모의실험해 비교합니다. <code>sim &lt;- replicate(1e5, { r &lt;- sample(rep(1:13, 4), 5); t &lt;- sort(table(r)); identical(as.vector(t), c(1L, 2L, 2L)) }); mean(sim)</code>는 0.047 근처가 나옵니다. 계산이 맞습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>"같은 대상을 몇 번 세었는가"를 확인하는 습관은 조합론뿐 아니라 확률 모형 전체에 쓰입니다. 순서 있게 센 경우의 수를 같은 대상의 중복 횟수로 나누는 방법(\(\binom nr = {}_nP_r/r!\))이 가장 안전한 점검입니다.</p>
+    </section>
+  </div>
+</article>

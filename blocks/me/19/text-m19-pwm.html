@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-pwm" data-kind="본문" data-std="기계19-04-02">
+  <header class="card-head"><span class="no"></span><h2>H 브리지와 PWM으로 모터 구동하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>H 브리지로 모터의 회전 방향을 바꾸는 원리를 안다.</li>
+        <li>PWM 듀티비로 평균 전압을 조절한다.</li>
+        <li>PWM 주파수를 모터의 전기적 시정수와 비교해 정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>트랜지스터 스위치 (<a href="01-01.html">1.1절</a>), DC 모터 특성 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>H 브리지</h3>
+    <p>모터 양 끝을 각각 위·아래 두 스위치로 전원과 접지에 연결한 구조로, 그림이 H 모양입니다. 왼쪽 위와 오른쪽 아래를 켜면 전류가 한 방향으로, 반대 대각선을 켜면 반대 방향으로 흘러 회전 방향이 바뀝니다. 같은 쪽 위아래를 동시에 켜면 전원이 단락(관통 전류)되어 소자가 타므로, 전환 사이에 짧은 정지 시간(dead time)을 둡니다. 아래 두 스위치를 함께 켜면 모터 단자가 단락되어 역기전력으로 제동이 걸립니다.</p>
+
+    <h3><span class="no">4.2.2</span>PWM</h3>
+    <p>스위치를 빠르게 켰다 껐다 하며 켜진 시간의 비율(듀티비 \(D\))을 바꿉니다. 모터의 인덕턴스와 관성이 이 빠른 변화를 평균 내므로 모터는 평균 전압 \(DV\)를 받은 것처럼 돕니다. 트랜지스터가 완전히 켜지거나 꺼진 상태만 쓰므로 손실이 작습니다(선형 증폭기는 남는 전압을 열로 버림).</p>
+    <div class="tb-env thm">
+      <span class="lb">PWM 평균 전압과 주파수 선택</span>
+      <p>평균 전압 \(\bar V = DV\). PWM 주기는 모터의 전기적 시정수 \(L/R\)보다 충분히 짧아야 전류가 매끄럽다. 전류 맥동 크기는 대략 \(\Delta i \approx \dfrac{V D(1 - D)}{Lf}\).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1 <span class="nm">(PWM 설계)</span></span>
+      <p>4.1절 모터(12 V, \(R\) = 2 Ω)의 인덕턴스가 1 mH이다. 듀티비 0.6이면 평균 전압은? PWM 주파수를 20 kHz로 하면 전류 맥동은?</p>
+    </div>
+    <p><i>풀이.</i> 평균 7.2 V. 전기적 시정수 \(L/R = 0.5\) ms이고 PWM 주기 50 μs는 그 1/10이므로 전류가 매끄럽습니다. 맥동 \(\approx 12\times0.24/(10^{-3}\times20000) = 0.14\) A. 20 kHz는 사람 귀에 들리지 않는 주파수라 모터 울림도 없앱니다. 1 kHz로 하면 맥동이 20배인 2.9 A가 되어 소음과 발열이 커집니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 주파수가 너무 높으면 스위칭 손실이 늘어 드라이버가 뜨거워집니다. (2) 마이크로컨트롤러 핀으로 모터를 직접 구동하지 말고 모터 드라이버 칩(H 브리지 내장)을 씁니다. (3) 모터 전원과 제어 전원 사이에 큰 축전기를 두어 전류 맥동이 제어 회로를 흔들지 않게 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>H 브리지: 대각선 스위치로 방향 전환, 같은 쪽 동시 켜짐 금지.</li>
+        <li>\(\bar V = DV\), 스위칭이라 효율 높음.</li>
+        <li>PWM 주기 ≪ \(L/R\), 보통 수~수십 kHz.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>24 V 전원에서 평균 9 V를 주려면 듀티비는?
+          <details><summary>답</summary><p>0.375.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 모터를 듀티비 0.5, 무부하로 돌리면 정상 속도는? (마찰 무시)
+          <details><summary>답</summary><p>평균 6 V, \(\omega = V/K_e = 120\) rad/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>전류 맥동이 가장 큰 듀티비는? 그 값을 예제 조건에서 구하여라.
+          <details><summary>답</summary><p>\(D(1 - D)\)가 최대인 \(D = 0.5\): \(12\times0.25/20 = 0.15\) A.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
