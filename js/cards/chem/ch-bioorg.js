@@ -1,31 +1,12 @@
 /* 화학과 생물유기화학 카드 묶음 (화학12)
-   글루코스의 변광 회전, 아미노산의 전하와 등전점, 고상 펩타이드 합성의 누적 수율 */
+   아미노산의 전하와 등전점, 효소의 pH-속도 곡선 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const RED = "#b5562a", GRN = "#2f8f5b";
 
-  /* 1. 글루코스의 변광 회전 (화학12-01-02) */
-  (() => {
-    const S = QSim.card("lab-ch12-mutarot"); if (!S) return;
-    const cv = S.$("canvas");
-    const RA = 112.2, RB = 18.7, REQ = 52.7;   // 비선광도 [α]D (도)
-    function draw() {
-      const c = C(), k = S.val("k") * 1e-4, tm = S.val("t"), start = S.val("start");
-      const rot = (r0, t) => REQ + (r0 - REQ) * Math.exp(-k * t * 60);
-      const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: 0, x1: 300, y0: 0, y1: 120, xl: "시간 (분)", yl: "비선광도 [α]D (도)", pad: 46 }); f.axes();
-      f.fn(() => REQ, c.ink3, 1, [4, 4]);
-      f.fn((t) => rot(RA, t), start === "a" ? c.main : c.ink3, start === "a" ? 2.5 : 1.2);
-      f.fn((t) => rot(RB, t), start === "b" ? RED : c.ink3, start === "b" ? 2.5 : 1.2);
-      const r0 = start === "a" ? RA : RB, r = rot(r0, tm), fb = (RA - r) / (RA - RB);
-      f.dot(tm, r, start === "a" ? c.main : RED, 5.5);
-      const K = (RA - REQ) / (REQ - RB), th = Math.log(2) / k / 60;
-      S.out(`출발: 순수한 ${start === "a" ? "α" : "β"}-D-글루코피라노스 ([α]D = ${r0}°) · 겉보기 속도 상수 k = k₁ + k₋₁ = ${(k * 1e4).toFixed(1)}×10⁻⁴ s⁻¹ (반감기 ${th.toFixed(1)}분)\n${tm}분 뒤 [α]D = ${r.toFixed(1)}° → β 비율 ${(100 * fb).toFixed(1)}%, α 비율 ${(100 * (1 - fb)).toFixed(1)}%\n평형: [α]D = 52.7°, β 63.6% : α 36.4% (K = [β]/[α] = ${K.toFixed(2)}, ΔG° = ${(-8.314 * 298 * Math.log(K) / 1000).toFixed(2)} kJ/mol)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
-  /* 2. 아미노산의 알짜 전하와 등전점 (화학12-02-01) */
+  /* 1. 아미노산의 알짜 전하와 등전점 (화학12-02-01) */
   (() => {
     const S = QSim.card("lab-ch12-pi"); if (!S) return;
     const cv = S.$("canvas");
@@ -57,7 +38,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 효소 활성의 pH 의존성: 일반 염기와 일반 산 (화학12-04-01) */
+  /* 2. 효소 활성의 pH 의존성: 일반 염기와 일반 산 (화학12-04-01) */
   (() => {
     const S = QSim.card("lab-ch12-phrate"); if (!S) return;
     const cv = S.$("canvas");
@@ -76,21 +57,4 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. 고상 펩타이드 합성의 누적 수율 (화학12-03-01) */
-  (() => {
-    const S = QSim.card("lab-ch12-spps"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), y = S.val("y") / 100, n = S.val("n");
-      const tot = (yy, nn) => yy ** (nn - 1);
-      const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: 1, x1: 100, y0: 0, y1: 100, xl: "펩타이드 길이 (잔기 수)", yl: "목표 펩타이드 비율 (%)", pad: 44 }); f.axes();
-      f.fn((x) => 100 * tot(0.99, x), c.ink3, 1.2, [4, 4]);
-      f.fn((x) => 100 * tot(0.999, x), c.ink3, 1.2, [2, 3]);
-      f.fn((x) => 100 * tot(y, x), c.main, 2.5);
-      const T = tot(y, n), del1 = (n - 1) * (1 - y) * y ** (n - 2);
-      f.dot(n, 100 * T, RED, 5.5);
-      S.out(`한 잔기를 붙이는 순환(탈보호 + 결합)의 수율 ${(100 * y).toFixed(1)}%, 길이 ${n} (순환 ${n - 1}번)\n목표 펩타이드 = ${(100 * y).toFixed(1)}%^${n - 1} = ${(100 * T).toFixed(1)}%\n잔기 하나가 빠진 펩타이드(결실 서열) 합계 ≈ ${(100 * del1).toFixed(1)}% · 점선: 99%, 점점선: 99.9%`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 })();
