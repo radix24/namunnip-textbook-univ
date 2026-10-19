@@ -83,3 +83,55 @@
     QSim.redrawOn(draw); make(); draw();
   })();
 })();
+
+/* 기계13 4단원: 합성곱으로 구한 펄스 응답 (04-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-conv"); if (!S) return;
+  const [cv1, cv2] = S.$$("canvas");
+  const m = 10, k = 4000, wn = Math.sqrt(k / m), Tn = (2 * Math.PI) / wn, F0 = 100;
+  function draw() {
+    const c = QSim.col(), t0 = S.val("t0"), z = S.val("z"), shape = S.val("shape");
+    const wd = wn * Math.sqrt(1 - z * z), h = (t) => (t < 0 ? 0 : (Math.exp(-z * wn * t) * Math.sin(wd * t)) / (m * wd));
+    const F = (t) => (t < 0 || t > t0 ? 0 : shape === "rect" ? F0 : shape === "sine" ? F0 * Math.sin((Math.PI * t) / t0) : F0 * (1 - t / t0));
+    const T = 1.2, dt = 0.0005, N = Math.round(T / dt), xs = [];
+    for (let i = 0; i <= N; i++) { const t = i * dt; let s = 0; for (let j = 0; j < i; j++) { const tj = (j + 0.5) * dt; s += F(tj) * h(t - tj) * dt; } xs.push([t, s * 1000]); }
+    const xmax = Math.max(...xs.map((p) => Math.abs(p[1]))), st = (F0 / k) * 1000;
+    const v1 = QSim.view(cv1, 0.3), f1 = QSim.frame(v1, { x0: 0, x1: T, y0: 0, y1: 110, xl: "t (s)", yl: "F (N)", pad: 34 });
+    f1.axes(); f1.fn(F, c.acc, 2, null, 800);
+    const v2 = QSim.view(cv2, 0.45), f2 = QSim.frame(v2, { x0: 0, x1: T, y0: -60, y1: 60, xl: "t (s)", yl: "x (mm)", pad: 34 });
+    f2.axes(); f2.path(xs, c.main, 2); f2.path([[0, st], [T, st]], c.ink3, 1, [4, 3]);
+    const name = { rect: "사각", sine: "반 사인", tri: "삼각(줄어듦)" }[shape];
+    S.out(`${name} 펄스, 최대 힘 ${F0} N, 길이 ${t0.toFixed(3)} s (고유 주기 ${Tn.toFixed(3)} s의 ${(t0 / Tn).toFixed(2)}배), 감쇠비 ${z}\n최대 변위 ${xmax.toFixed(1)} mm, 정적 처짐 ${st.toFixed(1)} mm (회색 점선)의 ${(xmax / st).toFixed(2)}배\n충격량 ${(xs.length ? (shape === "rect" ? F0 * t0 : shape === "sine" ? (2 * F0 * t0) / Math.PI : (F0 * t0) / 2) : 0).toFixed(2)} N·s`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
+/* 기계13 5단원: 동흡진기 달린 2자유도계의 주파수 응답 (05-03) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-absorber"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const m1 = 100, k1 = 1.0e5, w1 = Math.sqrt(k1 / m1); // 주 계: 고유진동수 31.6 rad/s
+  function resp(w, mu, f, za) {
+    // 복소수 연산으로 주 질량 진폭 |X1| / (F0/k1)
+    const m2 = mu * m1, wa = f * w1, k2 = m2 * wa * wa, c2 = 2 * za * m2 * wa;
+    // [k1+k2 − m1w² + i c2 w,  −k2 − i c2 w; −k2 − i c2 w, k2 − m2 w² + i c2 w] X = [F0, 0]
+    const a = [k1 + k2 - m1 * w * w, c2 * w], b = [-k2, -c2 * w], d = [k2 - m2 * w * w, c2 * w];
+    const mul = (p, q) => [p[0] * q[0] - p[1] * q[1], p[0] * q[1] + p[1] * q[0]];
+    const det = [mul(a, d)[0] - mul(b, b)[0], mul(a, d)[1] - mul(b, b)[1]];
+    const num = d, mag = Math.hypot(...num) / Math.hypot(...det);
+    return mag * k1;
+  }
+  function draw() {
+    const c = QSim.col(), mu = S.val("mu"), f = S.val("f"), za = S.val("za");
+    const v = QSim.view(cv, 0.55), fr = QSim.frame(v, { x0: 0.5, x1: 1.5, y0: 0, y1: 20, xl: "가진 진동수 / 주 계 고유진동수", yl: "|X₁| / (F₀/k₁)", pad: 34 });
+    fr.axes();
+    fr.fn((r) => Math.min(1 / Math.sqrt((1 - r * r) ** 2 + (2 * 0.02 * r) ** 2), 25), c.ink3, 1.5, [4, 3], 600);
+    fr.fn((r) => Math.min(resp(r * w1, mu, f, za), 25), c.main, 2.5, null, 800);
+    let peak = 0; for (let i = 0; i <= 2000; i++) peak = Math.max(peak, resp((0.5 + i / 2000) * w1, mu, f, za));
+    const at1 = resp(w1, mu, f, za);
+    S.out(`주 계 m₁ = 100 kg (감쇠 무시), 흡진기 질량비 μ = ${mu}, 동조비 f = ω_a/ω₁ = ${f}, 흡진기 감쇠비 ${za}\n원래 공진 진동수(r = 1)에서 주 질량 진폭 배율 ${at1.toFixed(2)} (흡진기 없을 때 감쇠비 0.02 가정 25)\n0.5 < r < 1.5에서 최대 배율 ${peak.toFixed(1)}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
