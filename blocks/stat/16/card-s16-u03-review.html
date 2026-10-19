@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통16-03-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s16-u03-review" data-kind="연습" data-std="응통16-03-01 응통16-03-02">
+  <header class="card-head"><span class="no"></span><h2>예측 모형과 평가 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·적용·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>다음 달 도서관·분야별 대출 건수를 예측하는 모형을 만들 때 학습 자료와 검증 자료를 나누는 방법을 쓰세요. 무작위로 나누면 안 되는 까닭은 무엇인가요? <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p>시계열은 시간 순서가 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>미래 자료로 과거를 예측하는 일이 생기면 안 됩니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>시간 순서대로 나눕니다. 예를 들어 2023~2024년으로 학습하고 2025년 상반기로 검증하거나, 기준 시점을 한 달씩 옮겨 가며 "그 시점까지 자료로 학습 → 다음 달 예측"을 반복하는 순차 검증을 합니다. 무작위로 나누면 같은 시기의 이웃한 달이 학습과 검증에 섞여 미래 정보가 새어 들어가 성능이 과대평가됩니다(응통20-04-01).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>예측 모형의 성능을 비교할 기준선(베이스라인) 모형을 두 가지 쓰고, 기준선이 필요한 까닭을 쓰세요. <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p>가장 단순한 예측은 무엇일까요?</p></details>
+        <details><summary>힌트 2</summary><p>복잡한 모형이 단순한 방법보다 나은지 확인해야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 직전 달 값을 그대로 쓰는 단순 예측, (2) 작년 같은 달 값을 쓰는 계절 단순 예측(또는 최근 3개월 평균). 복잡한 모형의 성능이 이런 기준선보다 나아야 만들 가치가 있습니다. 기준선 없이 "오차 10%"만 보고하면 그것이 좋은지 나쁜지 판단할 수 없습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>대출 예측 모형의 평균절대오차가 분야당 월 12건입니다. 이 숫자를 도서관 사서가 이해할 수 있는 업무 지표로 바꾸어 설명하세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>오차가 구입 결정에 주는 영향을 생각하세요.</p></details>
+        <details><summary>힌트 2</summary><p>평균 대출 건수와 비교하면 상대적 크기를 알 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>예: "분야당 월평균 대출이 약 150건이므로 예측은 보통 ±8% 정도 빗나갑니다. 이 정도면 분야별 예산 배분 비율을 정하는 데는 충분하지만, 개별 도서의 복본 수를 정하기에는 거칠다는 뜻입니다." 나아가 예측을 써서 예산을 배분했을 때 과거보다 대기 예약이 얼마나 줄었을지(모의 계산)를 보여 주면 업무 가치가 분명해집니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>희망 도서 예약이 많을 책을 미리 분류하는 모형에서 거짓 양성(예약이 적은데 많다고 예측)과 거짓 음성(많은데 적다고 예측)의 업무상 비용을 비교하고, 분류 기준값을 어떻게 정할지 쓰세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>거짓 양성은 불필요한 복본 구입, 거짓 음성은 긴 대기입니다.</p></details>
+        <details><summary>힌트 2</summary><p>비용 비가 기준값을 정합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>거짓 양성은 복본을 더 사서 예산을 낭비하고, 거짓 음성은 이용자가 오래 기다려 만족도가 떨어집니다. 예를 들어 거짓 음성 한 건의 비용이 거짓 양성 한 건의 두 배라면, 기대 비용을 최소로 하는 규칙은 예측 확률이 \(c_{FP}/(c_{FP} + c_{FN}) = 1/3\)을 넘으면 "예약 많음"으로 분류합니다. 기준값 0.5는 두 비용이 같을 때만 최적입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>모형을 배포한 뒤 성능이 시간이 지나며 나빠질 수 있는 까닭(자료 표류)을 설명하고, 이를 감시하는 방법을 쓰세요. <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p>이용 행태나 소장 정책이 바뀌면 입력과 출력의 관계가 바뀝니다.</p></details>
+        <details><summary>힌트 2</summary><p>예측 오차와 입력 분포를 주기적으로 추적합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>코로나19 같은 사건, 전자책 확대, 대출 규정 변경으로 입력 변수의 분포(공변량 표류)나 입력과 대출의 관계(개념 표류)가 바뀌면 과거 자료로 만든 모형이 맞지 않게 됩니다. 매달 예측 오차를 기준선과 함께 기록하고, 주요 입력 변수의 분포 변화를 감시하며, 오차가 정해진 수준을 넘으면 재학습하거나 모형을 점검하는 절차를 둡니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>모형이 전체적으로는 정확하지만, 작은 분관이나 외국어 도서처럼 표본이 적은 집단에서는 오차가 매우 큽니다. 이 결과를 어떻게 다루어야 하는지 쓰세요. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>평균 성능은 큰 집단에 지배됩니다.</p></details>
+        <details><summary>힌트 2</summary><p>집단별 성능을 따로 보고해야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>전체 평균 성능만 보고하면 작은 집단의 큰 오차가 가려져, 그 집단에 불리한 예산 결정이 내려질 수 있습니다. 집단별 성능을 따로 보고하고, 작은 집단에는 계층 모형(부분 풀링)으로 큰 집단의 정보를 빌려 오거나, 예측 대신 최소 보장 예산 같은 규칙을 함께 쓰도록 제안합니다. 모형의 한계를 의사결정자가 알도록 명시합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>
