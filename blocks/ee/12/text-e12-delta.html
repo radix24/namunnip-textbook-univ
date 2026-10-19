@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e12-delta" data-kind="본문" data-std="전전12-06-04">
+  <header class="card-head"><span class="no"></span><h2>델타 변조와 기울기 과부하</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>표본마다 1비트(올림/내림)만 보내는 델타 변조를 안다.</li>
+        <li>기울기 과부하 조건 \(\Delta f_s \ge |dm/dt|_{max}\)를 계산한다.</li>
+        <li>알갱이 잡음과의 절충, 적응 델타 변조를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>PCM (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.4.1</span>계단으로 따라가기</h3>
+    <p>수신기의 근사값을 매 표본 Δ만큼 올리거나 내려, 그 방향 비트만 보냅니다. 1초에 따라갈 수 있는 최대 기울기는 Δf_s이므로, 메시지가 그보다 빨리 변하면 따라가지 못합니다(기울기 과부하). Δ를 키우면 평탄한 구간에서 위아래로 떠는 알갱이 잡음이 커집니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.4.1</span>
+      <p>m(t) = cos(2π·1000t)(진폭 1 V)를 f_s = 64 kHz로 델타 변조한다. 기울기 과부하가 없으려면 Δ는?</p>
+    </div>
+    <p><i>풀이.</i> 최대 기울기 2π × 1000 × 1 = 6283 V/s. Δ ≥ 6283/64000 = 0.098 V. 비트율 64 kb/s로 8비트 PCM(8 kHz × 8)과 같지만 회로가 아주 간단합니다. 음성처럼 크기가 변하는 신호에는 Δ를 바꾸는 적응 델타 변조를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "Δ를 작게 할수록 좋다": 기울기 과부하가 생깁니다. (2) "델타 변조는 PCM보다 늘 나쁘다": 같은 비트율에서 회로가 간단하고, Σ-Δ ADC의 바탕이 됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>1비트/표본, 최대 기울기 Δf_s.</li>
+        <li>과부하 없음: Δf_s ≥ |dm/dt|max.</li>
+        <li>Δ 크면 알갱이 잡음, 적응 DM.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Δ = 0.05 V, f_s = 100 kHz의 최대 추종 기울기는?
+          <details><summary>답</summary><p>5000 V/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>진폭 2 V, 500 Hz 사인의 최대 기울기는?
+          <details><summary>답</summary><p>2π × 500 × 2 ≈ 6283 V/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>f_s를 두 배로 하면 같은 신호에 필요한 Δ는?
+          <details><summary>답</summary><p>절반.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
