@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-expsmooth" data-kind="본문" data-std="응통20-05-02">
+  <header class="card-head"><span class="no"></span><h2>지수평활 예측</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>단순 지수평활이 과거 관측의 지수 가중 평균임을 안다.</li>
+        <li>홀트 방법으로 수준과 추세를, 홀트-윈터스로 계절까지 갱신한다.</li>
+        <li>지수평활과 ARIMA의 관계를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>ARIMA 예측 (<a href="05-01.html">5.1절</a>), 확정적·확률적 추세 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>최근 값에 더 큰 무게를</h3>
+    <p>재고 수천 품목의 수요를 매주 예측하는 일처럼 모형을 하나하나 고를 수 없을 때, 간단하고 튼튼한 지수평활이 널리 쓰입니다. 최근 관측일수록 더 큰 무게를 주는 가중 평균으로 수준을 갱신합니다.</p>
+
+    <h3><span class="no">5.2.1</span>단순 지수평활</h3>
+    <p>수준 \(\ell_t = \alpha y_t + (1 - \alpha)\ell_{t-1}\), 다음 예측 \(\hat y_{t+1} = \ell_t\)(\(0 &lt; \alpha &lt; 1\)). 풀어 쓰면 \(\ell_t = \alpha\sum_{j \ge 0}(1 - \alpha)^jy_{t-j}\)로 과거 관측의 지수 가중 평균입니다. \(\alpha\)가 크면 최근 변화에 빨리 반응하고, 작으면 잡음을 더 많이 걸러 냅니다. 추세나 계절이 없는 계열에 알맞고, 먼 미래 예측도 모두 \(\ell_t\)로 같습니다.</p>
+
+    <h3><span class="no">5.2.2</span>홀트와 홀트-윈터스</h3>
+    <ul>
+      <li><b>홀트(추세)</b>: \(\ell_t = \alpha y_t + (1 - \alpha)(\ell_{t-1} + b_{t-1})\), \(b_t = \beta(\ell_t - \ell_{t-1}) + (1 - \beta)b_{t-1}\), \(h\)기 앞 예측 \(\ell_t + hb_t\).</li>
+      <li><b>홀트-윈터스(계절)</b>: 여기에 계절 성분 \(s_t\)(주기 \(m\))를 더하거나(덧셈) 곱해(곱셈) 갱신하고, 예측에 같은 계절의 성분을 붙입니다.</li>
+      <li><b>감쇠 추세</b>: 추세가 영원히 이어지지 않도록 \(b\)를 \(\phi\)배씩 줄여 가는 방식으로, 장기 예측이 과하게 치솟는 것을 막아 실무 성능이 좋은 편입니다.</li>
+    </ul>
+    <p>평활 모수는 한 걸음 앞 예측 오차 제곱합을 최소로 하도록 추정합니다. R: <code>forecast::ets(y)</code>는 오차·추세·계절의 형태(ETS)를 정보 기준으로 자동 선택합니다.</p>
+
+    <h3><span class="no">5.2.3</span>ARIMA와의 관계</h3>
+    <p>단순 지수평활의 예측은 ARIMA(0, 1, 1) \(\nabla y_t = \varepsilon_t - (1 - \alpha)\varepsilon_{t-1}\)의 최적 예측과 같고, 홀트 방법은 ARIMA(0, 2, 2)와 대응합니다. 지수평활은 상태공간 모형(07단원)으로 쓸 수 있어 예측구간도 계산됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>판매량 100, 104, 99, 106, 110, 108에 \(\alpha = 0.3\), \(\ell_1 = 100\)으로 단순 지수평활을 하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\ell_2 = 0.3(104) + 0.7(100) = 101.2\), \(\ell_3 = 0.3(99) + 0.7(101.2) = 100.54\), \(\ell_4 = 102.18\), \(\ell_5 = 104.52\), \(\ell_6 = 0.3(108) + 0.7(104.52) = 105.57\). 다음 기 예측 105.6. 관측의 오르내림이 평활되어 완만한 수준으로 따라갑니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>단순 지수평활 = 지수 가중 평균, \(\alpha\)는 반응 속도.</li>
+        <li>홀트는 추세, 홀트-윈터스는 계절까지, 감쇠 추세가 장기 예측에 안전.</li>
+        <li>단순 지수평활 ⟺ ARIMA(0, 1, 1).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\alpha = 0.3\)일 때 최근 관측, 1기 전, 2기 전의 가중치는?
+          <details><summary>답</summary><p>0.3, \(0.3 \times 0.7 = 0.21\), \(0.3 \times 0.49 = 0.147\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>추세가 있는 계열에 단순 지수평활을 쓰면 예측이 어떻게 되나요?
+          <details><summary>답</summary><p>수준이 늘 실제보다 뒤처져, 증가 추세라면 예측이 체계적으로 낮게 나옵니다. 홀트 방법으로 추세를 함께 갱신합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

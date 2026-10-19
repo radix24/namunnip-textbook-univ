@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-roots" data-kind="본문" data-std="응통20-02-03">
+  <header class="card-head"><span class="no"></span><h2>ARMA의 정상 조건과 가역 조건</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>후행 연산자로 ARMA 모형을 다항식으로 쓴다.</li>
+        <li>AR 다항식의 근으로 정상성을, MA 다항식의 근으로 가역성을 판정한다.</li>
+        <li>ARMA(1, 1)의 자기상관 구조를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>AR(1)과 MA(1) (<a href="02-01.html">2.1절</a>), 식별 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>계수만 보고 정상인지 알 수 있나</h3>
+    <p>AR(1)은 \(|\phi| &lt; 1\)이면 정상입니다. 그런데 AR(2) \(X_t = 1.2X_{t-1} - 0.2X_{t-2} + \varepsilon_t\)는 계수가 모두 1보다 작은데도 정상이 아닙니다. 차수가 높아지면 계수를 하나씩 보아서는 안 되고, 다항식의 근을 봐야 합니다.</p>
+
+    <h3><span class="no">2.3.1</span>후행 연산자와 다항식</h3>
+    <p>\(BX_t = X_{t-1}\)로 쓰면 ARMA(\(p, q\))는 \(\phi(B)X_t = \theta(B)\varepsilon_t\), \(\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p\), \(\theta(z) = 1 + \theta_1z + \cdots + \theta_qz^q\)입니다.</p>
+    <ul>
+      <li><b>정상 조건</b>: \(\phi(z) = 0\)의 모든 근이 단위원 밖(\(|z| &gt; 1\)). 이때 \(X_t = \phi(B)^{-1}\theta(B)\varepsilon_t\)로 과거 잡음의 수렴하는 합(MA(∞))으로 쓸 수 있습니다.</li>
+      <li><b>가역 조건</b>: \(\theta(z) = 0\)의 모든 근이 단위원 밖. 이때 \(\varepsilon_t\)를 과거 \(X\)들의 수렴하는 합(AR(∞))으로 되돌릴 수 있습니다. 같은 ACF를 주는 MA 모형이 둘 있을 때 가역인 쪽을 골라 모형을 하나로 정합니다.</li>
+      <li>근이 단위원 위(\(|z| = 1\))에 있으면 단위근으로, 차분이 필요합니다(03단원).</li>
+    </ul>
+
+    <h3><span class="no">2.3.2</span>ARMA(1, 1)</h3>
+    <p>\(X_t = \phi X_{t-1} + \varepsilon_t + \theta\varepsilon_{t-1}\)의 자기상관은 시차 1에서 \(\rho_1 = \frac{(1 + \phi\theta)(\phi + \theta)}{1 + 2\phi\theta + \theta^2}\)이고 그 뒤로 \(\rho_k = \phi\rho_{k-1}\)로 지수적으로 줄어듭니다. ACF와 PACF가 모두 꼬리를 끌며 줄어드는 모양(2.2절 식별표)이 ARMA의 지문입니다. 적은 모수로 AR이나 MA만으로는 많은 차수가 필요한 구조를 나타냅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>(가) \(X_t = 0.5X_{t-1} + 0.3X_{t-2} + \varepsilon_t\) (나) \(X_t = 1.2X_{t-1} - 0.2X_{t-2} + \varepsilon_t\)의 정상성을 판정하세요.</p>
+    </div>
+    <p><i>풀이.</i> (가) \(1 - 0.5z - 0.3z^2 = 0\)의 근 1.17, −2.84. 모두 \(|z| &gt; 1\)이라 정상. (나) \(1 - 1.2z + 0.2z^2 = (1 - z)(1 - 0.2z)\), 근 1과 5. 근 1이 단위원 위에 있어 비정상(단위근). 차분 \(\nabla X_t\)는 AR(1) \(\nabla X_t = 0.2\nabla X_{t-1} + \varepsilon_t\)가 되어 ARIMA(1, 1, 0)입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\phi(B)X_t = \theta(B)\varepsilon_t\).</li>
+        <li>\(\phi(z)\)의 근이 모두 단위원 밖이면 정상, \(\theta(z)\)의 근이 밖이면 가역.</li>
+        <li>근 1은 단위근 → 차분. ARMA(1, 1)은 ACF와 PACF가 모두 꼬리를 끎.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>MA(1) \(X_t = \varepsilon_t + 2\varepsilon_{t-1}\)은 가역인가요? 같은 ACF를 주는 가역 모형은?
+          <details><summary>답</summary><p>\(1 + 2z = 0\)의 근 −0.5, 단위원 안이라 가역이 아닙니다. \(\rho_1 = \theta/(1 + \theta^2)\)는 \(\theta\)와 \(1/\theta\)에서 같으므로 \(X_t = \varepsilon_t + 0.5\varepsilon_{t-1}\)(잡음 분산 4배)이 같은 ACF의 가역 모형입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>AR(2)의 정상 조건을 계수로 쓰면 \(\phi_1 + \phi_2 &lt; 1\), \(\phi_2 - \phi_1 &lt; 1\), \(|\phi_2| &lt; 1\)입니다. 예제 2.3.1 (나)가 어느 조건을 어기나요?
+          <details><summary>답</summary><p>\(\phi_1 + \phi_2 = 1.2 - 0.2 = 1\)로 첫 조건의 경계에 있습니다(근 1).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
