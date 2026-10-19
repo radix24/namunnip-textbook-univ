@@ -93,4 +93,38 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 3. 불균형 자료에서 문턱값, 정밀도, 재현율 (화학4-05-02) */
+  (() => {
+    const S = QSim.card("lab-ch4-imb"); if (!S) return;
+    const [cv1, cv2] = S.$$("canvas");
+    // 가상 모형 점수: 비활성 ~ N(0, 1), 활성 ~ N(1.5, 1). 분자 10000개 기준의 기댓값
+    const MU = 1.5, NTOT = 10000;
+    const erf = (x) => { const s = Math.sign(x), a = Math.abs(x), t = 1 / (1 + 0.3275911 * a);
+      return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-a * a)); };
+    const Phi = (x) => 0.5 * (1 + erf(x / Math.SQRT2));
+    const pdf = (x, m) => Math.exp(-0.5 * (x - m) ** 2) / Math.sqrt(2 * Math.PI);
+    function draw() {
+      const c = C(), p = S.val("prev") / 100, t = S.val("thr");
+      const rec = 1 - Phi(t - MU), fpr = 1 - Phi(t);
+      const tp = p * NTOT * rec, fp = (1 - p) * NTOT * fpr, tn = (1 - p) * NTOT - fp;
+      const prec = tp + fp > 0 ? tp / (tp + fp) : NaN, acc = (tp + tn) / NTOT;
+      // 점수 분포 (넓이를 비율에 맞춤)
+      const v = QSim.view(cv1, 0.42), top = Math.max(0.4 * (1 - p), 0.4 * p) * 1.15;
+      const f = QSim.frame(v, { x0: -3.5, x1: 5, y0: 0, y1: top, xl: "모형 점수", pad: 30 });
+      f.axes({ noGrid: true });
+      f.fn((x) => (1 - p) * pdf(x, 0), c.ink3, 2);
+      f.fn((x) => p * pdf(x, MU), RED, 2.5);
+      f.path([[t, 0], [t, top]], c.main, 2, [5, 4]);
+      f.text("비활성", -2.8, top * 0.85, c.ink3); f.text("활성", 3.3, top * 0.85, RED);
+      // ROC 곡선
+      const w = QSim.view(cv2, 0.5), f2 = QSim.frame(w, { x0: 0, x1: 1, y0: 0, y1: 1, xl: "거짓 양성률", yl: "재현율", pad: 34 });
+      f2.axes();
+      const roc = []; for (let s = 6; s >= -5; s -= 0.05) roc.push([1 - Phi(s), 1 - Phi(s - MU)]);
+      f2.path(roc, c.main, 2.5); f2.path([[0, 0], [1, 1]], c.ink3, 1, [4, 4]);
+      f2.dot(fpr, rec, c.warn, 6);
+      S.out(`활성 비율 ${(100 * p).toFixed(0)}%, 문턱값 ${t.toFixed(2)} (분자 10000개 기준 기댓값)\n활성 판정 ${Math.round(tp + fp)}개 중 실제 활성 ${Math.round(tp)}개, 거짓 양성 ${Math.round(fp)}개\n재현율 ${(100 * rec).toFixed(1)}%, 거짓 양성률 ${(100 * fpr).toFixed(2)}%, 정밀도 ${isNaN(prec) ? "—" : (100 * prec).toFixed(1) + "%"}, 정확도 ${(100 * acc).toFixed(1)}%\n(ROC-AUC = 0.856, 문턱값·활성 비율과 무관)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
