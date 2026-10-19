@@ -30,4 +30,39 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 2. 1차 섭동 전이 확률과 Fermi 황금률 (04-02). ħ = 1, 결합 |V| = 0.01 */
+  (() => {
+    const S = QSim.card("lab-p12-golden"); if (!S) return;
+    const cv = S.$("canvas");
+    const V = 0.01;
+    const P = (d, t) => Math.abs(d) < 1e-9 ? V * V * t * t : V * V * (Math.sin(d * t / 2) / (d / 2)) ** 2;
+    function draw() {
+      const c = C(), t = S.val("t");
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: -3, x1: 3, y0: 0, y1: V * V * t * t * 1.12, xl: "어긋남 Δ = ω − ω₀", yl: "P(t)" }); f.axes();
+      f.fn((d) => P(d, t), c.main, 2.4, null, 1200);
+      f.fn((d) => P(d, t / 2), c.ink3, 1.2, [5, 4], 1200);
+      let area = 0; const h = 0.002; for (let d = -200; d <= 200; d += h) area += P(d, t) * h;
+      S.out(`시각 t = ${t} (ħ = 1, |V| = ${V})\n봉우리 높이 P(Δ = 0) = |V|²t² = ${(V * V * t * t).toExponential(3)}, 첫 0점 Δ = 2π/t = ${(2 * Math.PI / t).toFixed(3)}\n곡선 아래 넓이(모든 Δ에 대한 합) = ${area.toExponential(4)}, 이론 2π|V|²t = ${(2 * Math.PI * V * V * t).toExponential(4)}\n넓이 ÷ t = ${(area / t).toExponential(4)}: 시간에 무관한 전이율 → 황금률 (회색 점선: t/2일 때)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 3. Yukawa 퍼텐셜의 Born 근사 산란 (05-03). ħ = m = 1, 세기 β = 1 */
+  (() => {
+    const S = QSim.card("lab-p12-born"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), k = S.val("k"), mu = S.val("mu");
+      const dsig = (th) => { const q2 = 4 * k * k * Math.sin(th / 2) ** 2; return (2 / (mu * mu + q2)) ** 2; };
+      const lg = (x) => Math.log10(x);
+      const top = lg(dsig(0)), bot = Math.min(lg(dsig(Math.PI)), top - 1) - 0.3;
+      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 180, y0: bot, y1: top + 0.3, xl: "θ (도)", yl: "log₁₀ dσ/dΩ" }); f.axes();
+      f.fn((d) => lg(dsig(d * Math.PI / 180)), c.main, 2.4, null, 600);
+      f.fn((d) => { const s = Math.sin(d * Math.PI / 360); return d < 1 ? NaN : lg(1 / (4 * k ** 4 * s ** 4)); }, c.ink3, 1.2, [5, 4], 600);
+      let tot = 0; const n = 4000; for (let i = 0; i < n; i++) { const th = Math.PI * (i + 0.5) / n; tot += dsig(th) * 2 * Math.PI * Math.sin(th) * Math.PI / n; }
+      S.out(`k = ${k}, 차폐 μ = ${mu} (퍼텐셜 −e^{−μr}/r)\ndσ/dΩ: θ = 0에서 ${dsig(0).toFixed(4)}, 90°에서 ${dsig(Math.PI / 2).toFixed(4)}, 180°에서 ${dsig(Math.PI).toFixed(4)}\n전체 단면적 σ = ${tot.toFixed(4)} (이론 16π/(μ²(μ² + 4k²)) = ${(16 * Math.PI / (mu * mu * (mu * mu + 4 * k * k))).toFixed(4)})\n회색 점선: μ = 0의 Rutherford 공식 1/(4k⁴sin⁴(θ/2))`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

@@ -83,4 +83,54 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 4. 충전하는 축전기의 변위 전류와 자기장 (04-01) */
+  (() => {
+    const S = QSim.card("lab-p9-displacement"); if (!S) return;
+    const [cv1, cv2] = S.$$("canvas");
+    const a = 0.05, mu0 = 4e-7 * Math.PI, e0 = 8.854e-12;   // 원판 반지름 5 cm
+    function draw() {
+      const c = C(), V0 = S.val("V0"), R = S.val("R") * 1e3, Cp = S.val("C") * 1e-6, t = S.val("t") * 1e-3, r = S.val("r") * 1e-2;
+      const tau = R * Cp, I = (s) => V0 / R * Math.exp(-s / tau), It = I(t);
+      const tm = Math.max(5 * tau, t * 1.1);
+      const v = QSim.view(cv1, 0.36), f = QSim.frame(v, { x0: 0, x1: tm * 1e3, y0: 0, y1: V0 / R * 1e3 * 1.1, xl: "t (ms)", yl: "I (mA)" }); f.axes();
+      f.fn((s) => I(s * 1e-3) * 1e3, c.main, 2.4); f.dot(t * 1e3, It * 1e3, c.acc, 5);
+      const B = (s) => s < a ? mu0 * It * s / (2 * Math.PI * a * a) : mu0 * It / (2 * Math.PI * s);
+      const Bmax = mu0 * (V0 / R) / (2 * Math.PI * a);
+      const v2 = QSim.view(cv2, 0.36), g = QSim.frame(v2, { x0: 0, x1: 15, y0: 0, y1: Bmax * 1e9 * 1.1, xl: "r (cm)", yl: "B (nT)" }); g.axes();
+      g.path([[a * 100, 0], [a * 100, Bmax * 1e9 * 1.1]], c.ink3, 1, [4, 4]);
+      g.fn((s) => B(s / 100) * 1e9, c.main, 2.4, null, 600); g.dot(r * 100, B(r) * 1e9, c.acc, 5);
+      const dEdt = It / (e0 * Math.PI * a * a);
+      S.out(`시정수 RC = ${(tau * 1e3).toFixed(1)} ms, t = ${(t * 1e3).toFixed(0)} ms\n도선의 전류 I = ${(It * 1e3).toFixed(4)} mA, 극판 사이 변위 전류 ε₀ dΦ_E/dt = ${(e0 * dEdt * Math.PI * a * a * 1e3).toFixed(4)} mA (같다)\n극판 사이 전기장의 변화율 dE/dt = ${dEdt.toExponential(3)} V/(m·s)\n축에서 ${(r * 100).toFixed(1)} cm 떨어진 곳의 자기장 B = ${(B(r) * 1e9).toFixed(3)} nT (점선: 극판 가장자리 5 cm)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 5. 지연: 진동하는 근원의 신호가 거리 r까지 r/c 늦게 도착한다 (06-01) */
+  (() => {
+    const S = QSim.card("lab-p9-retard"); if (!S) return;
+    const [cv1, cv2] = S.$$("canvas");
+    let t = 0;
+    function draw() {
+      const c = C(), fq = S.val("f") * 1e6, r = S.val("r"), w = 2 * Math.PI * fq, lam = 3e8 / fq, T = 1 / fq, d = r / 3e8;
+      const L = 10, v = QSim.view(cv1, 0.5), W = v.W, H = v.H, g = v.g, sc = Math.min(W, 2 * H) / (2 * L), cx = W / 2, cy = H / 2;
+      const N = 4; for (let px = 0; px < W; px += N) for (let py = 0; py < H; py += N) {
+        const x = (px - cx) / sc, y = (cy - py) / sc, s = Math.hypot(x, y); if (s < 0.3) continue;
+        const u = Math.cos(w * (t - s / 3e8)) / Math.max(1, s);
+        g.fillStyle = u >= 0 ? `rgba(75,79,224,${(0.6 * u).toFixed(3)})` : `rgba(242,179,61,${(-0.6 * u).toFixed(3)})`; g.fillRect(px, py, N, N);
+      }
+      g.fillStyle = c.warn; g.beginPath(); g.arc(cx, cy, 5, 0, 7); g.fill();
+      g.fillStyle = c.ink; g.beginPath(); g.arc(cx + r * sc, cy, 5, 0, 7); g.fill();
+      g.font = "12px sans-serif"; g.fillStyle = c.ink2; g.fillText("근원", cx - 14, cy - 10); g.fillText("관찰자", cx + r * sc - 18, cy - 10); g.fillText(`가로 ±${L} m`, 6, H - 6);
+      const v2 = QSim.view(cv2, 0.34), h = QSim.frame(v2, { x0: 0, x1: 3 * T * 1e9, y0: -1.2, y1: 1.2, xl: "t (ns)", yl: "" }); h.axes();
+      h.fn((s) => Math.cos(w * s * 1e-9), c.warn, 2, [6, 4]);
+      h.fn((s) => s * 1e-9 < d ? 0 : Math.cos(w * (s * 1e-9 - d)), c.main, 2.4, null, 600);
+      h.path([[d * 1e9, -1.2], [d * 1e9, 1.2]], c.ink3, 1, [3, 4]);
+      const cyc = r / lam, lag = (cyc % 1) * 360;
+      S.out(`진동수 ${S.val("f")} MHz, 파장 λ = c/f = ${lam.toFixed(2)} m, 관찰자 거리 ${r} m\n도착 지연 r/c = ${(d * 1e9).toFixed(2)} ns = 주기의 ${cyc.toFixed(2)}배\n한 주기 안으로 줄인 위상 차 ${lag.toFixed(0)}°${Math.abs(lag) < 1 || Math.abs(lag - 360) < 1 ? " (같은 위상)" : Math.abs(lag - 180) < 1 ? " (반대 위상)" : ""}\n아래: 빨간 점선이 근원의 신호, 파랑이 관찰자가 받는 신호(크기는 맞춰 그림)`);
+    }
+    const Lp = QSim.loop((dt) => { t += dt * 2e-9; draw(); }).watch(cv1);
+    QSim.playButton(S.$(".play"), Lp);
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

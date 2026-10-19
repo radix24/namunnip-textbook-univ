@@ -86,4 +86,24 @@
     S.$(".reset").addEventListener("click", () => { counts = [0, 0, 0]; collapsed = 0; draw(); });
     S.on(() => { counts = [0, 0, 0]; collapsed = 0; draw(); }); QSim.redrawOn(draw); draw();
   })();
+
+  /* 4. 각운동량의 벡터 모형 (05-01) */
+  (() => {
+    const S = QSim.card("lab-p8-vecmodel"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), l = S.val("l"), m = Math.max(-l, Math.min(l, S.val("m"))), Lm = Math.sqrt(l * (l + 1)), R = Math.max(1, Lm) * 1.15;
+      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -R * 1.6, x1: R * 1.6, y0: -R, y1: R, equal: true, xl: "", yl: "L_z/ħ" }); f.axes({ noGrid: true });
+      const circ = []; for (let k = 0; k <= 120; k++) { const a = 2 * Math.PI * k / 120; circ.push([Lm * Math.cos(a), Lm * Math.sin(a)]); }
+      if (l > 0) f.path(circ, c.rule, 1, [4, 4]);
+      for (let mm = -l; mm <= l; mm++) { const x = Math.sqrt(Math.max(0, l * (l + 1) - mm * mm)); f.path([[-x, mm], [x, mm]], mm === m ? c.acc : c.ink3, mm === m ? 2 : 1, mm === m ? null : [3, 3]); f.text(`m=${mm}`, R * 1.15, mm - 0.1, c.ink2); }
+      const x = Math.sqrt(Math.max(0, l * (l + 1) - m * m));
+      const ell = []; for (let k = 0; k <= 80; k++) { const a = 2 * Math.PI * k / 80; ell.push([x * Math.cos(a), m + 0.18 * x * Math.sin(a)]); }
+      if (x > 0) f.path(ell, c.acc, 1.5);
+      f.arrow(0, 0, x, m, c.main, "L"); f.path([[0, 0], [-x, m]], c.main, 1.2, [4, 3]);
+      const th = Math.acos(Lm ? m / Lm : 1) * 180 / Math.PI;
+      S.out(`ℓ = ${l}, m = ${m}: |L| = √(ℓ(ℓ+1)) ħ = ${Lm.toFixed(3)} ħ, L_z = ${m} ħ\nz축과 이루는 각 θ = ${l ? th.toFixed(1) + "°" : "정해지지 않음 (L = 0)"}, L_x² + L_y² = ${(l * (l + 1) - m * m).toFixed(0)} ħ² (주황 원뿔을 따라 정해지지 않은 채 퍼져 있음)\n${l ? `가능한 m: ${2 * l + 1}개 (−ℓ … ℓ). m = ℓ이어도 θ = ${(Math.acos(l / Lm) * 180 / Math.PI).toFixed(1)}°로, L은 z축과 완전히 나란할 수 없다` : "ℓ = 0이면 L = 0이라 세 성분이 모두 0으로 함께 정해진다(원뿔 없음)"}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
