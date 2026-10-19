@@ -154,7 +154,7 @@ def finish(c):
     if not kind and c["dept"] == "common":
         kind = "대학교양" if "대학교양" in ys else "전공기초"
     c["kind"] = re.split(r"[,(]", kind)[0].strip()
-    m = re.search(r"(?:^|, )(\d)(?:,|$| )", kind)
+    m = re.search(r"(?:^|, )(\d)(?:,|$| )", kind) or re.match(r"\s*(\d)\b", row.get("학점", ""))   # 공통 과목은 '학점' 줄(전자계산 2학점)
     c["cr"] = int(m.group(1)) if m else 3
     op = row.get("2026 개설", "")
     c["open"] = op

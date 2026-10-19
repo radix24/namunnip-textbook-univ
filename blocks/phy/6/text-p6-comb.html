@@ -1,57 +1,50 @@
 <!--block
 {
   "type": "card",
-  "sec": "물리6-01-02",
+  "sec": "물리6-01-03",
   "order": 5
 }
 -->
-<article class="card q-card" id="text-p6-comb" data-kind="본문" data-std="물리6-01-02">
-  <header class="card-head"><span class="no"></span><h2>조합 회로: 가산기, 인코더, 멀티플렉서</h2><span class="kind">본문</span></header>
+<article class="card q-card" id="text-p6-comb" data-kind="본문" data-std="물리6-01-03">
+  <header class="card-head"><span class="no"></span><h2>조합 회로: 가산기와 논리 IC</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
         <li>반가산기와 전가산기를 설계하고 여러 비트 덧셈으로 잇는다.</li>
-        <li>디코더, 멀티플렉서의 동작과 논리 IC로 조합 회로를 만드는 요령을 안다.</li>
+        <li>논리 IC로 조합 회로를 만들고 진리표로 동작을 확인하는 요령을 안다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>부울 대수 (<a href="01-01.html">1.1절</a>).</li>
+        <li>부울 대수 (<a href="01-01.html">1.1절</a>), 카르노 맵 (<a href="01-02.html">1.2절</a>).</li>
       </ul>
     </div>
 
-    <h3><span class="no">1.2.1</span>가산기</h3>
+    <h3><span class="no">1.3.1</span>가산기</h3>
     <ul class="tb-list">
       <li><b>반가산기</b>: 두 비트 \(A, B\)를 더해 합 \(S = A \oplus B\), 올림 \(C = AB\).</li>
       <li><b>전가산기</b>: 아래 자리에서 올라온 \(C_{\text{in}}\)까지 세 비트를 더함. \(S = A \oplus B \oplus C_{\text{in}}\), \(C_{\text{out}} = AB + C_{\text{in}}(A \oplus B)\).</li>
     </ul>
     <p>전가산기 \(n\)개를 올림으로 이으면 \(n\)비트 덧셈기(리플 캐리 가산기)가 됩니다. 올림이 자리마다 차례로 전달되어 비트 수가 많으면 느려지므로, 실제 프로세서는 올림을 미리 계산하는 방식을 씁니다. 뺄셈은 2의 보수(<a href="../../common/10/06-01.html">공통10 6.1절</a>)를 더해서 합니다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 1.2.1</span>
+      <span class="lb">예제 1.3.1</span>
       <p>4비트 가산기로 0110 + 0111을 계산하고 각 자리의 올림을 써라.</p>
     </div>
     <p><i>풀이.</i> 0자리: 0 + 1 = 1, 올림 0. 1자리: 1 + 1 = 0, 올림 1. 2자리: 1 + 1 + 1 = 1, 올림 1. 3자리: 0 + 0 + 1 = 1, 올림 0. 결과 1101(= 13). 6 + 7 = 13이 맞습니다.</p>
 
-    <h3><span class="no">1.2.2</span>디코더와 멀티플렉서</h3>
-    <ul class="tb-list">
-      <li><b>디코더</b>: \(n\)비트 입력에 따라 \(2^n\)개 출력 가운데 하나만 활성화. 메모리 주소 선택(3.1절), 7-세그먼트 표시에 쓴다.</li>
-      <li><b>멀티플렉서</b>: 선택 입력에 따라 여러 데이터 입력 가운데 하나를 출력으로 보낸다. 여러 신호를 한 줄로 번갈아 보내거나, 진리표를 그대로 구현하는 데 쓴다.</li>
-    </ul>
-
-    <h3><span class="no">1.2.3</span>IC로 만들기</h3>
+    <h3><span class="no">1.3.2</span>IC로 만들기</h3>
     <p>74HC00(NAND 4개), 74HC08(AND), 74HC86(XOR) 같은 논리 IC를 브레드보드에 꽂아 회로를 만듭니다. 전원(VCC, GND) 핀을 잊지 않고, 쓰지 않는 입력은 떠 있게 두지 말고 전원이나 접지에 묶습니다(CMOS 입력이 떠 있으면 동작이 불안정하고 전류가 늘 수 있음). 각 IC 전원 핀 옆에 0.1 μF 축전기를 달아 순간 전류에 의한 잡음을 줄입니다. 동작 확인은 스위치 입력과 LED 출력으로 진리표를 한 줄씩 채우는 방법이 기본입니다. 핀 배치와 전압 조건은 반드시 사양서로 확인합니다.</p>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
         <li>반가산기 \(S = A \oplus B\), \(C = AB\). 전가산기를 이어 \(n\)비트 덧셈.</li>
-        <li>디코더(하나만 선택), 멀티플렉서(여럿 중 하나를 출력).</li>
         <li>IC: 전원 핀, 안 쓰는 입력 묶기, 바이패스 축전기.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">1.2.4</span>연습문제</h3>
+      <h3><span class="no">1.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>XOR을 NAND 게이트만으로 만들려면 몇 개가 필요한가?

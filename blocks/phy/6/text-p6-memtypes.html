@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p6-memtypes" data-kind="본문" data-std="물리6-03-02">
+  <header class="card-head"><span class="no"></span><h2>메모리의 종류: SRAM, DRAM, 플래시</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>SRAM, DRAM, 플래시 메모리가 1비트를 저장하는 원리와 차이를 안다.</li>
+        <li>측정 자료의 양을 계산해 알맞은 저장 장치를 고른다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>메모리의 주소와 자료 (<a href="03-01.html">3.1절</a>), 래치 (<a href="02-01.html">2.1절</a>), 터널 효과 (<a href="../3/04-05.html">물리3 4.5절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>휘발성과 비휘발성</h3>
+    <table class="tb-table">
+      <thead><tr><th>종류</th><th>원리</th><th>전원을 끄면</th><th>쓰임</th></tr></thead>
+      <tbody>
+        <tr><td>SRAM</td><td>래치 (트랜지스터 여섯 개 정도)</td><td>지워짐</td><td>캐시, 마이크로컨트롤러 내부</td></tr>
+        <tr><td>DRAM</td><td>축전기 하나 + 트랜지스터 하나</td><td>지워짐</td><td>컴퓨터 주기억 장치</td></tr>
+        <tr><td>ROM, 플래시</td><td>떠 있는 게이트에 가둔 전하</td><td>남음</td><td>프로그램, USB 메모리, SSD</td></tr>
+      </tbody>
+    </table>
+    <p>SRAM은 2.1절의 래치처럼 되먹임으로 상태를 유지하므로 전원만 있으면 값이 그대로이고 빠르지만, 한 비트에 트랜지스터가 많아 비쌉니다. DRAM은 축전기 하나에 전하가 있고 없음으로 비트를 저장해 집적도가 높고 쌉니다.</p>
+
+    <h3><span class="no">3.2.2</span>DRAM의 리프레시</h3>
+    <p>DRAM 축전기(수십 fF)의 전하는 누설 전류로 조금씩 새어 나갑니다. 그래서 정해진 시간(보통 64 ms) 안에 모든 칸을 읽어 다시 쓰는 리프레시를 해야 합니다. 읽기도 축전기의 작은 전하를 감지 증폭기로 키우는 과정이라 읽은 뒤 다시 써 주어야 합니다. 이런 이유로 DRAM은 SRAM보다 느리고 제어가 복잡합니다(아래 예제).</p>
+
+    <h3><span class="no">3.2.3</span>플래시 메모리</h3>
+    <p>플래시 메모리는 트랜지스터의 게이트 아래에 절연막으로 둘러싸인 떠 있는 게이트를 두고, 여기에 전자를 가두어 비트를 저장합니다. 전원이 없어도 전자가 빠져나가지 못해 값이 수 년 이상 남습니다. 전자를 넣고 빼는 데 얇은 절연막을 지나는 터널 효과(물리3 4.5절)가 쓰이고, 그때마다 절연막이 조금씩 손상되어 쓰고 지우는 횟수에 수명(수천~수십만 번)이 있습니다. 또 블록 단위로만 지울 수 있어, 자주 바뀌는 값은 RAM에 두고 모아서 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>16비트 측정값을 1 kHz로 10분 동안 저장하려면 메모리가 얼마 필요한가?</p>
+    </div>
+    <p><i>풀이.</i> \(1000\times600 = 6\times10^5\)개 × 2바이트 = 1.2 MB입니다. 마이크로컨트롤러 내부 SRAM(보통 수 KB~수백 KB)으로는 모자라 SD 카드 같은 외부 플래시 저장 장치에 써야 합니다(5.4절).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SRAM: 래치, 빠르고 비쌈. DRAM: 축전기, 리프레시 필요. 둘 다 휘발성.</li>
+        <li>플래시: 떠 있는 게이트, 비휘발성, 쓰기 수명과 블록 지우기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>DRAM 한 칸과 SRAM 한 칸의 트랜지스터 수를 비교하여라.
+          <details><summary>답</summary><p>DRAM은 1개(+축전기), SRAM은 6개 정도.</p></details>
+        </li>
+        <li>쓰기 수명이 10만 번인 플래시의 같은 블록에 1초마다 기록하면 며칠 만에 수명에 이르는가?
+          <details><summary>답</summary><p>\(10^5\) s ≈ 1.2일. 그래서 기록을 RAM에 모았다가 쓰고, 여러 블록에 고르게 나누어 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
