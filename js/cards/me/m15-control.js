@@ -45,3 +45,30 @@
   }
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
+
+/* 기계15 2단원: 2차 시스템 계단 응답과 지표 (02-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-step2"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const y = (t, z, wn) => {
+    if (z < 1) { const wd = wn * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * wn * t) * (Math.cos(wd * t) + (z / Math.sqrt(1 - z * z)) * Math.sin(wd * t)); }
+    if (z === 1) return 1 - Math.exp(-wn * t) * (1 + wn * t);
+    const r = Math.sqrt(z * z - 1), s1 = -wn * (z - r), s2 = -wn * (z + r);
+    return 1 + (s2 * Math.exp(s1 * t) - s1 * Math.exp(s2 * t)) / (s1 - s2);
+  };
+  function draw() {
+    const c = QSim.col(), z = S.val("z"), wn = S.val("wn"), T = 3;
+    const N = 3000, pts = []; let pk = 0, tp = 0, ts = 0, t10 = null, t90 = null;
+    for (let i = 0; i <= N; i++) { const t = (T * i) / N, v = y(t, z, wn); pts.push([t, v]); if (v > pk) { pk = v; tp = t; } if (Math.abs(v - 1) > 0.02) ts = t; if (t10 === null && v >= 0.1) t10 = t; if (t90 === null && v >= 0.9) t90 = t; }
+    const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: T, y0: 0, y1: 1.8, xl: "t (s)", yl: "y", pad: 32 });
+    f.axes();
+    f.path([[0, 1.02], [T, 1.02]], c.ink3, 1, [3, 3]); f.path([[0, 0.98], [T, 0.98]], c.ink3, 1, [3, 3]);
+    f.path([[0, 1.1], [T, 1.1]], c.warn, 1, [5, 4]);
+    f.path(pts, c.main, 2.5);
+    if (pk > 1.0005) f.dot(tp, pk, c.warn, 5);
+    const Mp = z < 1 ? Math.exp((-z * Math.PI) / Math.sqrt(1 - z * z)) : 0;
+    S.out(`ζ = ${z.toFixed(2)}, ωn = ${wn.toFixed(1)} rad/s, 극점 실수부 −ζωn = ${(-z * wn).toFixed(2)}\n시뮬레이션: 오버슈트 ${(Math.max(pk - 1, 0) * 100).toFixed(1)}%${pk > 1.0005 ? ` (t_p = ${tp.toFixed(3)} s)` : ""}, 정착 시간(2%) ${ts >= T * 0.999 ? "3 s 이상" : ts.toFixed(2) + " s"}, 상승 시간 ${t10 !== null && t90 !== null ? (t90 - t10).toFixed(3) + " s" : "-"}\n공식: M_p = ${(Mp * 100).toFixed(1)}%, t_s ≈ 4/(ζωn) = ${(4 / (z * wn)).toFixed(2)} s (빨간 점선: 오버슈트 10% 사양)`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
