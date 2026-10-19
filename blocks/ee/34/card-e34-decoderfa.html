@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-01-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e34-decoderfa" data-kind="예제" data-std="전전34-01-01">
+  <header class="card-head"><span class="no"></span><h2>3-8 디코더 하나로 전가산기 만들기</h2><span class="kind">예제 · 최소항을 모으는 설계</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>74HC138(출력 활성 Low) 한 개와 게이트 몇 개로 전가산기를 만들 수 있을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>디코더 출력이 최소항이므로, 합과 올림수의 최소항 출력을 NAND로 모으면 됩니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">입력 A, B, \(C_{in}\)을 74HC138의 선택 입력(C, B, A 핀; A가 최하위)에 \(A\), \(B\), \(C_{in}\) 순서로 넣는다고 하자(최소항 번호 = \(4A + 2B + C_{in}\)). 출력 \(\overline{Y_0}\)~\(\overline{Y_7}\)은 활성 Low이다. (가) S와 \(C_{out}\)의 최소항, (나) 필요한 게이트, (다) 입력 1, 1, 0에서 각 출력의 값을 구하라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>진리표에서 S = 1, \(C_{out}\) = 1인 행의 번호를 적는다.</li>
+        <li>활성 Low 출력의 OR는 NAND(드모르간: \(Y_a + Y_b = \overline{\overline{Y_a}\cdot\overline{Y_b}}\)).</li>
+        <li>74HC138의 허용 입력(G1 = 1, G2A = G2B = 0)을 잊지 않는다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) S = Σm(1, 2, 4, 7), \(C_{out}\) = Σm(3, 5, 6, 7). <span class="q-why">진리표</span></li>
+        <li>(나) 4입력 NAND 두 개(74HC20 한 개): S = NAND(\(\overline{Y_1}, \overline{Y_2}, \overline{Y_4}, \overline{Y_7}\)), \(C_{out}\) = NAND(\(\overline{Y_3}, \overline{Y_5}, \overline{Y_6}, \overline{Y_7}\)). <span class="q-why">드모르간</span></li>
+        <li>(다) 1, 1, 0은 최소항 6. \(\overline{Y_6}\) = 0, 나머지 1. S의 NAND 입력은 모두 1 → S = 0. \(C_{out}\)의 NAND에 0이 하나 → \(C_{out}\) = 1. <span class="q-why">1 + 1 + 0 = 10</span></li>
+        <li>허용 핀: G1을 V<sub>CC</sub>에, G2A, G2B를 접지에. <span class="q-why">배선</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>디코더와 OR(또는 NAND)는 진리표를 그대로 회로로 옮기는 가장 직접적인 방법입니다. 함수가 여러 개여도 디코더 하나를 공유할 수 있어, 출력이 많은 작은 함수(예: 7세그먼트의 일곱 막대)에 쓰기 좋습니다. 입력이 많아지면 디코더 출력 수가 2ⁿ으로 늘어 카르노 맵 최소화(1.3절)나 FPGA의 LUT가 유리합니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>입력 8가지를 모두 넣어 S, \(C_{out}\)이 1비트 덧셈과 같은지 확인합니다. 예: 0, 1, 1(최소항 3) → S = 0, \(C_{out}\) = 1. 1, 1, 1(7) → S = 1, \(C_{out}\) = 1.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 디코더로 "세 입력 중 정확히 하나만 1"인 함수를 만들려면?</p>
+      <details><summary>답</summary><p>최소항 1, 2, 4를 3입력 NAND로 모읍니다(\(\overline{Y_1}, \overline{Y_2}, \overline{Y_4}\)).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>활성 Low</h3>
+    <p class="q">74HC138에서 입력이 5(101)일 때 출력 상태는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>\(\overline{Y_5}\)만 0, 나머지 1<span class="why"><b>맞습니다.</b> 선택된 출력만 Low입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>\(\overline{Y_5}\)만 1, 나머지 0<span class="why"><b>활성 High 디코더의 동작입니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>모두 0<span class="why"><b>허용 입력이 꺼졌을 때는 모두 1입니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>
