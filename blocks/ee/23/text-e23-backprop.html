@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-backprop" data-kind="본문" data-std="전전23-04-01">
+  <header class="card-head"><span class="no"></span><h2>계산 그래프로 보는 역전파</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>연산을 노드로 나눈 계산 그래프에서 연쇄 법칙으로 기울기를 뒤에서부터 구한다.</li>
+        <li>뉴런 하나(선형, 시그모이드, 제곱 손실)의 기울기를 손으로 계산한다.</li>
+        <li>역전파의 비용이 순전파와 같은 차수임을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>연쇄 법칙(공통 미분), 로지스틱 회귀 기울기 (<a href="../20/05-01.html">전전20 5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>연쇄 법칙을 그래프로</h3>
+    <p>\(z = wx + b\), \(a = \sigma(z)\), \(L = \frac12(a - y)^2\). 순전파로 z, a, L을 계산해 저장한 뒤, 뒤에서부터 국소 미분을 곱해 갑니다.</p>
+    \[ \frac{\partial L}{\partial a} = a - y,\quad \frac{\partial L}{\partial z} = \frac{\partial L}{\partial a}\sigma'(z) = (a - y)a(1 - a),\quad \frac{\partial L}{\partial w} = \frac{\partial L}{\partial z}x,\quad \frac{\partial L}{\partial b} = \frac{\partial L}{\partial z}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>x = 2, y = 1, w = 0.5, b = 1에서 L과 ∂L/∂w, ∂L/∂b를 구하라.</p>
+    </div>
+    <p><i>풀이.</i> z = 2, a = σ(2) = 0.8808, L = ½(0.1192)² = 0.00710. ∂L/∂a = −0.1192, σ' = a(1 − a) = 0.1050, ∂L/∂z = −0.01252, ∂L/∂w = −0.02503, ∂L/∂b = −0.01252. 음수라 w, b를 키우면 손실이 줄어듭니다.</p>
+    <p>층이 많아도 같은 방식입니다. 한 노드에서 여러 갈래로 나간 값은 돌아오는 기울기를 더합니다. 순전파의 중간값을 저장해 다시 쓰므로 전체 비용이 순전파의 몇 배 정도이고, 이것이 수백만 개 매개변수를 학습할 수 있는 이유입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "역전파는 학습 알고리즘이다": 기울기를 계산하는 방법이며, 갱신은 경사하강(또는 Adam)이 합니다. (2) "시그모이드를 깊게 쌓아도 기울기가 잘 전달된다": σ' ≤ 0.25가 곱해져 기울기가 사라질 수 있어 ReLU 등을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>순전파로 중간값 저장, 역방향으로 국소 미분 곱.</li>
+        <li>예: ∂L/∂w = −0.0250, ∂L/∂b = −0.0125.</li>
+        <li>갈래가 합쳐지면 기울기를 더한다. 비용은 순전파 수준.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>σ(0)에서 σ'(0)은?
+          <details><summary>답</summary><p>0.25.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 y = 0이면 ∂L/∂b는?
+          <details><summary>답</summary><p>0.8808 × 0.1050 ≈ 0.0925.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>ReLU의 기울기는?
+          <details><summary>답</summary><p>z &gt; 0이면 1, z &lt; 0이면 0.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

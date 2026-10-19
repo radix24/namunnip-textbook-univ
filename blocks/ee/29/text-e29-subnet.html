@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-subnet" data-kind="본문" data-std="전전29-04-01">
+  <header class="card-head"><span class="no"></span><h2>서브넷 주소 계산</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>CIDR 표기 a.b.c.d/n에서 네트워크 주소, 브로드캐스트 주소, 호스트 수를 계산한다.</li>
+        <li>주어진 블록을 여러 서브넷으로 나눈다.</li>
+        <li>최장 접두사 일치로 전달 경로를 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>2진수와 비트 연산 (<a href="../4/01.html">전전4 1단원</a>), IP 계층 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>계산</h3>
+    <p>/n은 앞 n비트가 네트워크 부분이라는 뜻입니다. 호스트 비트 h = 32 − n, 쓸 수 있는 호스트 주소 \(2^h - 2\)(네트워크·브로드캐스트 제외). 네트워크 주소는 호스트 비트를 모두 0, 브로드캐스트는 모두 1로 한 것입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>192.168.10.0/24를 같은 크기 서브넷 4개로 나눠라. 192.168.10.77이 속한 서브넷의 네트워크·브로드캐스트 주소는?</p>
+    </div>
+    <p><i>풀이.</i> 2비트를 더 빌려 /26: .0, .64, .128, .192, 각 호스트 62개. 77 = 0100 1101(2진)에서 앞 2비트 01 → .64 서브넷, 브로드캐스트 .127.</p>
+    <p>라우터는 전달표에서 목적지와 가장 길게 일치하는 접두사의 항목을 고릅니다. 예: 10.0.0.0/8과 10.1.0.0/16이 모두 있으면 10.1.2.3은 /16 쪽으로 갑니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "/26이면 호스트 64개": 네트워크·브로드캐스트를 빼 62개입니다. (2) "서브넷은 아무 경계에서 시작해도 된다": 블록 크기의 배수에서 시작해야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>/n: 호스트 2^{32−n} − 2개.</li>
+        <li>네트워크(호스트 비트 0), 브로드캐스트(모두 1).</li>
+        <li>예: .77/26 → .64 ~ .127. 최장 접두사 일치.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>/28 서브넷의 사용 가능한 호스트 수는?
+          <details><summary>답</summary><p>14.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>10.0.5.200/22의 네트워크 주소는?
+          <details><summary>답</summary><p>10.0.4.0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>문제 a의 브로드캐스트 주소는?
+          <details><summary>답</summary><p>10.0.7.255.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-kernel" data-kind="본문" data-std="전전23-03-02">
+  <header class="card-head"><span class="no"></span><h2>커널 트릭과 비선형 분류</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>특징 사상 φ로 차원을 올리면 선형 분리가 가능해지는 예(XOR)를 보인다.</li>
+        <li>쌍대 SVM이 내적만 쓰므로 \(K(x, z) = \phi(x)^T\phi(z)\)로 바꿀 수 있음을 안다.</li>
+        <li>다항식 커널과 RBF 커널의 특징 공간을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>최대 마진 (<a href="03-01.html">3.1절</a>), 쌍대 문제 (<a href="../20/04-02.html">전전20 4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>XOR</h3>
+    <p>(0, 0), (1, 1)은 −1, (0, 1), (1, 0)은 +1인 XOR 자료는 어떤 직선으로도 나눌 수 없습니다. 특징 \(\phi(x) = (x_1, x_2, x_1x_2)\)을 더하면 \(x_1 + x_2 - 2x_1x_2 - 0.5\)의 부호로 나뉩니다(네 점에서 −0.5, 0.5, 0.5, −0.5).</p>
+    <h3><span class="no">3.2.2</span>커널</h3>
+    <p>쌍대 SVM의 학습과 예측은 \(\phi(x_i)^T\phi(x_j)\) 꼴의 내적만 씁니다. 이를 직접 계산되는 함수 K로 바꾸면 φ를 만들지 않고도 높은 차원에서 학습할 수 있습니다.</p>
+    <ul>
+      <li>다항식 \(K = (x^Tz + 1)^d\): d차 이하 모든 단항식 특징. 입력 2차원, d = 2면 특징 6개.</li>
+      <li>RBF \(K = \exp(-\gamma\|x - z\|^2)\): 무한 차원 특징. γ가 크면 경계가 복잡(과적합 위험).</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>x = (1, 2), z = (3, 1)에서 \((x^Tz + 1)^2\)을 계산하고, 같은 값을 주는 6차원 φ를 쓰라.</p>
+    </div>
+    <p><i>풀이.</i> \(x^Tz = 5\), K = 36. \(\phi(x) = (1, \sqrt2x_1, \sqrt2x_2, x_1^2, x_2^2, \sqrt2x_1x_2)\)이면 \(\phi(x)^T\phi(z) = 1 + 2(3) + 2(2) + 9 + 4 + 2(6) = 36\)으로 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "고차원으로 가면 계산이 폭발한다": 커널로 n×n 행렬만 계산하면 됩니다(대신 자료 수 n이 크면 부담). (2) "아무 함수나 커널이 된다": 어떤 φ의 내적이어야 합니다(양의 준정부호 조건).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>φ로 차원을 올리면 XOR도 선형 분리.</li>
+        <li>쌍대는 내적만 쓰므로 K(x, z)로 대체.</li>
+        <li>다항식(유한 차원), RBF(무한 차원, γ 조절).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>x = (1, 0), z = (0, 1)의 (xᵀz + 1)²는?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>x = z의 RBF 커널 값은?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>입력 3차원, d = 2 다항식 커널의 특징 수는?
+          <details><summary>답</summary><p>C(3 + 2, 2) = 10.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-syscall" data-kind="본문" data-std="전전31-01-01">
+  <header class="card-head"><span class="no"></span><h2>시스템 호출이 처리되는 과정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사용자 모드와 커널 모드의 구분과 그 이유를 안다.</li>
+        <li>write() 호출이 라이브러리 → 트랩 → 커널 처리 → 복귀로 가는 과정을 설명한다.</li>
+        <li>시스템 호출의 비용과 줄이는 방법(버퍼링)을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>인터럽트와 예외 (<a href="../25/02-01.html">전전25 2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>순서</h3>
+    <ol>
+      <li>프로그램이 C 라이브러리 함수 write(fd, buf, n)를 부른다.</li>
+      <li>라이브러리가 시스템 호출 번호와 인자를 레지스터에 넣고 트랩 명령(x86-64 syscall, ARM svc)을 실행한다.</li>
+      <li>CPU가 커널 모드로 바뀌고, 커널의 진입점이 번호로 처리 함수를 찾는다.</li>
+      <li>커널이 인자(포인터가 사용자 영역인지)를 검사하고 파일 시스템·장치 드라이버를 거쳐 처리한다.</li>
+      <li>결과(쓴 바이트 수 또는 오류)를 레지스터에 넣고 사용자 모드로 돌아간다.</li>
+    </ol>
+    <p>사용자 프로그램이 장치와 다른 프로세스의 메모리에 직접 접근하지 못하게 하려고 모드를 나누며, 커널에 들어가는 문은 시스템 호출(과 인터럽트·예외)뿐입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1(가상 비용)</span>
+      <p>시스템 호출 한 번에 200 ns가 든다. 1바이트씩 100만 번 write하는 것과 4 KB 버퍼에 모아 쓰는 것의 호출 비용은?</p>
+    </div>
+    <p><i>풀이.</i> 100만 번 × 200 ns = 0.2 s. 버퍼링: 10⁶/4096 ≈ 245번 → 약 49 μs. C의 printf/fwrite가 사용자 영역 버퍼를 두는 이유입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "라이브러리 함수 = 시스템 호출": printf는 라이브러리 함수이고, 내부에서 필요할 때만 write를 부릅니다. (2) "커널 모드에서는 아무 검사도 없다": 커널은 사용자 인자를 철저히 검사해야 합니다(보안).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사용자/커널 모드, 트랩으로 진입.</li>
+        <li>번호 → 처리 함수 → 검사 → 수행 → 복귀.</li>
+        <li>호출 비용 → 버퍼링.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>시스템 호출 번호는 어디에 넣는가?
+          <details><summary>답</summary><p>정해진 레지스터(예: x86-64 rax).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 버퍼 64 KB면 호출 수는?
+          <details><summary>답</summary><p>약 16번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>커널이 사용자 포인터를 검사하지 않으면 생기는 문제는?
+          <details><summary>답</summary><p>사용자가 커널 메모리 주소를 넘겨 읽거나 덮어쓸 수 있습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

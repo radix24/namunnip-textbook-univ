@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-rdt" data-kind="본문" data-std="전전29-03-01">
+  <header class="card-head"><span class="no"></span><h2>정지-대기와 Go-Back-N</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>순서 번호, 확인 응답(ACK), 타이머로 신뢰성 전송을 만든다.</li>
+        <li>정지-대기의 이용률 \(U = (L/R)/(RTT + L/R)\)를 계산한다.</li>
+        <li>파이프라이닝(Go-Back-N, 선택적 반복)으로 이용률을 높이는 원리를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>지연 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>정지-대기</h3>
+    <p>패킷 하나를 보내고 ACK를 받을 때까지 기다립니다. 손실되면 타이머가 만료되어 다시 보내고, 중복을 구별하려 1비트 순서 번호를 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>1 Gb/s, RTT 30 ms, 패킷 1000바이트. 정지-대기의 이용률과 처리율은? 이용률을 거의 100%로 하려면 창 크기 N이 얼마여야 하는가?</p>
+    </div>
+    <p><i>풀이.</i> L/R = 8 μs, U = 8 μs/30.008 ms = 0.00027, 처리율 약 267 kb/s(1 Gb/s 링크인데!). 창 N개를 연달아 보내면 이용률이 N배이므로 N ≥ 30.008/0.008 ≈ 3751.</p>
+    <h3><span class="no">3.1.2</span>Go-Back-N</h3>
+    <p>ACK 없이 N개까지 보내고, 누적 ACK(“n번까지 받음”)를 씁니다. 손실이 나면 그 패킷부터 창 전체를 다시 보냅니다. 수신자는 순서가 어긋난 패킷을 버려 구현이 간단하지만 재전송이 많습니다. 선택적 반복은 손실된 것만 다시 보내는 대신 수신 버퍼가 필요합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "링크가 빠르면 정지-대기도 빠르다": RTT가 지배해 이용률이 매우 낮습니다. (2) "Go-Back-N은 손실된 하나만 다시 보낸다": 그 뒤의 창 전체를 다시 보냅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정지-대기: U = (L/R)/(RTT + L/R).</li>
+        <li>예: 1 Gb/s, 30 ms → U 0.00027, N ≈ 3751 필요.</li>
+        <li>Go-Back-N(누적 ACK, 전체 재전송) 대 선택적 반복.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>창 크기 100이면 예제의 이용률은?
+          <details><summary>답</summary><p>약 0.027.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>100 Mb/s, RTT 10 ms, 1250 B 패킷의 정지-대기 이용률은?
+          <details><summary>답</summary><p>0.1 ms/10.1 ms ≈ 0.0099.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>Go-Back-N에서 순서 번호가 k비트면 최대 창 크기는?
+          <details><summary>답</summary><p>2ᵏ − 1.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-arm" data-kind="본문" data-std="전전25-06-01">
+  <header class="card-head"><span class="no"></span><h2>ARM 어셈블리로 반복문과 함수 호출</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>비교·조건 분기로 반복문을 작성한다.</li>
+        <li>BL/BX LR과 PUSH/POP으로 함수 호출과 레지스터 보존을 한다.</li>
+        <li>AAPCS 호출 규약(인자 R0~R3, 피호출자 보존 R4~R11)을 지킨다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>어셈블리 기초 (<a href="01-02.html">1.2절</a>), 스택 (<a href="../2/03.html">전전2 3단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>함수 안에서 다른 함수 부르기</h3>
+    <p>1부터 n까지 제곱의 합을 구하는 함수가 square를 부르는 예입니다.</p>
+    <pre><code>square: MUL   r0, r0, r0       @ r0 = r0 * r0
+        BX    lr
+
+sumsq:  PUSH  {r4, r5, lr}     @ 쓸 피호출자 보존 레지스터와 복귀 주소 저장
+        MOV   r4, r0           @ r4 = n (호출을 건너 살아남아야 함)
+        MOVS  r5, #0           @ r5 = 합
+loop:   CMP   r4, #0
+        BEQ   done
+        MOV   r0, r4
+        BL    square           @ lr이 덮어써짐 → 앞에서 저장해 둔 이유
+        ADD   r5, r5, r0
+        SUBS  r4, r4, #1
+        B     loop
+done:   MOV   r0, r5
+        POP   {r4, r5, pc}     @ 저장한 lr을 pc로 꺼내 복귀</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>sumsq(3)의 결과와, PUSH에 lr을 넣지 않았다면 생기는 일은?</p>
+    </div>
+    <p><i>풀이.</i> 9 + 4 + 1 = 14. lr을 저장하지 않으면 BL square가 lr을 덮어써, 마지막에 sumsq를 부른 곳이 아니라 루프 안으로 돌아가 무한 반복하거나 엉뚱한 곳으로 갑니다. 다른 함수를 부르지 않는 잎 함수(square)는 lr을 저장할 필요가 없습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "R0~R3은 함수 호출 뒤에도 그대로": 호출자 보존 레지스터라 피호출 함수가 마음대로 바꿉니다. (2) "PUSH 순서는 쓴 순서대로": 레지스터 목록은 번호 순으로 저장됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CMP + 조건 분기로 반복.</li>
+        <li>BL은 lr에 복귀 주소, 중첩 호출이면 lr을 PUSH.</li>
+        <li>AAPCS: 인자 R0~R3, R4~R11 보존.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>sumsq(4)의 결과는?
+          <details><summary>답</summary><p>30.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>square가 r4를 썼다면 무엇을 해야 하는가?
+          <details><summary>답</summary><p>PUSH/POP으로 r4를 보존해야 합니다(피호출자 보존).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>POP {pc}가 복귀가 되는 이유는?
+          <details><summary>답</summary><p>저장해 둔 lr 값(복귀 주소)이 pc에 들어가기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

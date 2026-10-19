@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-asmc" data-kind="본문" data-std="전전25-01-02">
+  <header class="card-head"><span class="no"></span><h2>어셈블리와 C로 마이크로컨트롤러 프로그래밍</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>C 코드가 어떤 어셈블리 명령으로 바뀌는지 읽는다.</li>
+        <li>배열 합을 C와 Thumb 어셈블리로 각각 작성한다.</li>
+        <li>비트 연산으로 레지스터의 특정 비트를 설정·해제·검사한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>프로그래밍 모델 (<a href="01-01.html">1.1절</a>), C 기초(공통 프로그래밍).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>같은 일을 두 언어로</h3>
+    <p>배열 a의 n개 원소 합을 구하는 C 함수와, 이를 손으로 옮긴 Thumb-2 어셈블리입니다(R0 = 주소, R1 = 개수, 결과 R0).</p>
+    <pre><code>int sum(const int *a, int n) {
+    int s = 0;
+    for (int i = 0; i &lt; n; i++) s += a[i];
+    return s;
+}</code></pre><pre><code>sum:    MOVS  r2, #0          @ s = 0
+loop:   CBZ   r1, done        @ n == 0이면 끝
+        LDR   r3, [r0], #4    @ r3 = *a, a += 4 (사후 증가)
+        ADDS  r2, r2, r3      @ s += r3
+        SUBS  r1, r1, #1      @ n--
+        B     loop
+done:   MOV   r0, r2          @ 반환값
+        BX    lr</code></pre>
+    <p>원소 하나에 명령어 다섯 개(LDR, ADDS, SUBS, B, CBZ)가 돕니다. 컴파일러 최적화(-O2)는 루프를 펼치거나 비교를 줄여 더 빠른 코드를 만들기도 합니다. 대부분은 C로 쓰고, 시동 코드나 시간이 엄격한 부분만 어셈블리로 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>32비트 레지스터 reg에서 비트 3을 1로, 비트 7을 0으로, 비트 4를 검사하는 C 식은?</p>
+    </div>
+    <p><i>풀이.</i> <code>reg |= (1u &lt;&lt; 3);</code> <code>reg &amp;= ~(1u &lt;&lt; 7);</code> <code>if (reg &amp; (1u &lt;&lt; 4))</code>. 읽고-바꾸고-쓰기 중간에 인터럽트가 같은 레지스터를 바꾸면 값이 덮어써질 수 있어, 비트 설정 전용 레지스터(SET/RESET)나 인터럽트 금지 구간을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "어셈블리가 언제나 C보다 빠르다": 현대 컴파일러가 대부분 더 낫습니다. (2) "int는 언제나 32비트": 플랫폼마다 달라 고정 폭 형식(uint32_t)을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>C ↔ 어셈블리 대응(LDR 사후 증가, CBZ, BX lr).</li>
+        <li>비트 설정 |=, 해제 &amp;= ~, 검사 &amp;.</li>
+        <li>읽고-바꾸고-쓰기의 경쟁 조건 주의.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>reg의 비트 0~3을 모두 0으로 만드는 식은?
+          <details><summary>답</summary><p>reg &amp;= ~0xFu;</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>LDR r3, [r0], #4 뒤 r0는 얼마나 바뀌는가?
+          <details><summary>답</summary><p>4 증가(다음 int).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>위 어셈블리에서 n = 0으로 호출하면 결과는?
+          <details><summary>답</summary><p>CBZ로 바로 done, 0 반환.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

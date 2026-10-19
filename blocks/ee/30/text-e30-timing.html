@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-timing" data-kind="본문" data-std="전전30-03-01">
+  <header class="card-head"><span class="no"></span><h2>셋업·홀드 제약과 최대 클록 주파수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>셋업 제약 \(T \ge t_{cq} + t_{logic,max} + t_{setup} - t_{skew}\)를 쓴다.</li>
+        <li>홀드 제약 \(t_{cq} + t_{logic,min} \ge t_{hold} + t_{skew}\)를 쓴다.</li>
+        <li>클록 스큐가 두 제약에 반대로 작용함을 계산으로 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>플립플롭 (<a href="../4/05.html">전전4 5단원</a>), 게이트 지연 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>두 제약</h3>
+    <p>발사 플립플롭에서 나간 데이터가 논리를 지나 포획 플립플롭에 다음 클록 가장자리보다 t_setup 먼저 도착해야 합니다(셋업). 동시에 같은 가장자리에서 새로 나간 데이터가 너무 빨리 도착해 이전 값을 망치면 안 됩니다(홀드). 포획 클록이 t_skew만큼 늦게 오면</p>
+    \[ T \ge t_{cq} + t_{logic,max} + t_{setup} - t_{skew}, \qquad t_{cq} + t_{logic,min} \ge t_{hold} + t_{skew}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>t_cq = 50 ps, 논리 최대 400 ps, 최소 30 ps, t_setup = 30 ps, t_hold = 10 ps. 스큐 0과 +20 ps(포획 늦음)의 최대 주파수와 홀드 여유는?</p>
+    </div>
+    <p><i>풀이.</i> 스큐 0: T ≥ 480 ps → 2.08 GHz, 홀드 80 ≥ 10(여유 70 ps). 스큐 +20: T ≥ 460 ps → 2.17 GHz, 홀드 80 ≥ 30(여유 50 ps). 양의 스큐는 셋업에 유리하고 홀드에 불리합니다. 셋업 위반은 클록을 늦춰 고칠 수 있지만, 홀드 위반은 주파수와 무관해 지연 소자를 넣어야 합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "홀드 위반도 클록을 낮추면 해결": 홀드 식에는 T가 없습니다. (2) "스큐는 늘 해롭다": 일부러 스큐를 주어 느린 경로를 돕는 설계도 있습니다(유용한 스큐).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>셋업: T ≥ t_cq + t_max + t_setup − skew.</li>
+        <li>홀드: t_cq + t_min ≥ t_hold + skew(주파수 무관).</li>
+        <li>예: 480 ps(2.08 GHz) → 스큐 20 ps면 460 ps.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>t_cq 40, 논리 500, setup 20, 스큐 0의 최대 주파수는?
+          <details><summary>답</summary><p>560 ps → 약 1.79 GHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 스큐 −30 ps(포획이 빠름)면 최소 주기는?
+          <details><summary>답</summary><p>510 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>논리 최소 지연이 0인 시프트 레지스터의 홀드 조건은(스큐 0)?
+          <details><summary>답</summary><p>t_cq ≥ t_hold.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

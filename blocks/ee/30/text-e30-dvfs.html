@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-dvfs" data-kind="본문" data-std="전전30-04-02">
+  <header class="card-head"><span class="no"></span><h2>전압 조절과 클록 게이팅</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>동적 전압·주파수 조절(DVFS)에서 전력이 대략 V³, 연산당 에너지가 V²에 비례함을 계산한다.</li>
+        <li>클록 게이팅이 쉬는 블록의 클록 전력을 없애는 원리를 안다.</li>
+        <li>두 기법의 비용(전환 시간, 회로 추가)을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>동적 전력 (<a href="04-01.html">4.1절</a>), 지연과 전압 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>DVFS</h3>
+    <p>최대 주파수는 대략 V_DD에 비례하므로, 일이 적을 때 V와 f를 함께 낮춥니다. 전력은 \(V^2f \propto V^3\), 일정한 일(연산 수)의 에너지는 \(V^2\)에 비례합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>V와 f를 20% 낮추면 전력과 같은 일을 하는 데 드는 에너지는 몇 배인가? 같은 일을 마치는 시간은?</p>
+    </div>
+    <p><i>풀이.</i> 전력 0.8³ = 0.512배, 에너지 0.8² = 0.64배, 시간 1/0.8 = 1.25배. 마감 시간이 여유로우면 천천히 하는 것이 에너지에 유리합니다(반대로 빨리 끝내고 깊이 잠드는 race-to-idle이 유리한 경우도 있음: 누설이 클 때).</p>
+    <h3><span class="no">4.2.2</span>클록 게이팅</h3>
+    <p>레지스터 묶음의 값이 바뀌지 않을 때(사용 가능 신호 0) 그 클록을 막으면 클록 망과 플립플롭의 α가 0이 됩니다. 래치를 둔 통합 클록 게이팅 셀로 글리치 없이 막습니다. 합성 도구가 "if (en) q &lt;= d" 구조에서 자동으로 넣습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "클록 게이팅은 누설도 줄인다": 동적 전력만 줄이고, 누설은 전력 게이팅이 줄입니다. (2) "AND 게이트 하나로 클록을 막으면 된다": 사용 가능 신호가 클록이 높을 때 바뀌면 글리치가 생겨 래치가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>DVFS: 전력 ∝ V³, 에너지 ∝ V².</li>
+        <li>예: 20% 낮추면 전력 0.512, 에너지 0.64, 시간 1.25배.</li>
+        <li>클록 게이팅: 쉬는 블록의 클록 차단(동적 전력).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>V, f를 절반으로 하면 전력은?
+          <details><summary>답</summary><p>8분의 1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 경우 일정한 일의 에너지는?
+          <details><summary>답</summary><p>4분의 1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>블록이 시간의 70% 동안 쉬고 클록 전력이 그 블록 동적 전력의 40%면, 클록 게이팅으로 줄어드는 비율은?
+          <details><summary>답</summary><p>0.7 × 0.4 = 28%(쉬는 동안 다른 전이는 없다고 볼 때).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

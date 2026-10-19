@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-dma" data-kind="본문" data-std="전전25-04-02">
+  <header class="card-head"><span class="no"></span><h2>DMA가 CPU 부담을 줄이는 원리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>DMA 제어기가 CPU 대신 주변 장치와 메모리 사이 전송을 하는 구조를 안다.</li>
+        <li>인터럽트마다 복사하는 방식과 DMA의 CPU 점유율을 비교 계산한다.</li>
+        <li>반 버퍼·원형 버퍼(이중 버퍼링)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>인터럽트 비용 (<a href="02-01.html">2.1절</a>), 버스 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>원리</h3>
+    <p>DMA 제어기에 원본 주소, 목적 주소, 개수, 트리거(예: ADC 변환 완료)를 설정하면, 트리거마다 버스를 빌려 한 항목을 옮깁니다. CPU는 전송이 끝났다는(또는 절반 찼다는) 인터럽트만 받습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1(가상 사이클 수)</span>
+      <p>100 MHz 코어로 ADC 100 kS/s를 받는다. (가) 표본마다 인터럽트(50 사이클). (나) DMA로 512표본 원형 버퍼, 반 찰 때마다 인터럽트(처리 준비 100 사이클). CPU 점유율은?</p>
+    </div>
+    <p><i>풀이.</i> (가) 50 × 10⁵ = 5 × 10⁶ 사이클/s → 5%. (나) 초당 10⁵/256 ≈ 391번 × 100 = 3.9 × 10⁴ → 0.04%. 남은 시간에 신호 처리를 하고, 반 버퍼 방식이라 DMA가 뒷부분을 채우는 동안 CPU는 앞부분을 처리합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "DMA는 공짜": 버스를 함께 써서 CPU의 메모리 접근이 잠시 늦어질 수 있습니다. (2) "캐시가 있는 프로세서에서도 그냥 읽으면 된다": DMA가 쓴 메모리가 캐시에 옛 값으로 남을 수 있어 캐시 무효화가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>DMA: 트리거마다 하드웨어가 전송, CPU는 완료만 통보받음.</li>
+        <li>예: 5% → 0.04%.</li>
+        <li>반 버퍼(이중 버퍼링), 캐시 일관성 주의.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>DMA 설정에 필요한 네 가지는?
+          <details><summary>답</summary><p>원본, 목적, 개수, 트리거.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>48 kHz 스테레오 오디오를 256프레임 반 버퍼로 받으면 인터럽트 빈도는?
+          <details><summary>답</summary><p>48000/128 = 375 Hz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>DMA 전송이 끝나기 전에 CPU가 그 버퍼를 읽으면?
+          <details><summary>답</summary><p>일부 옛 자료를 읽습니다. 완료(반 완료) 인터럽트 뒤 읽습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

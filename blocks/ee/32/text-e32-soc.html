@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-soc" data-kind="본문" data-std="전전32-01-01">
+  <header class="card-head"><span class="no"></span><h2>SoC의 구성 블록과 버스 구조</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>SoC의 구성(CPU, 메모리 제어기, 가속기, 주변 장치, 상호 연결)을 안다.</li>
+        <li>고속 버스(AXI)와 저속 버스(APB)를 나누는 이유를 설명한다.</li>
+        <li>버스 대역폭을 폭과 클록으로 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>버스 (<a href="../25/03-01.html">전전25 3.1절</a>), 컴퓨터 구조 (<a href="../14/01.html">전전14 1단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>구성</h3>
+    <p>스마트폰 AP 한 칩에 CPU 묶음, GPU, NPU(신경망 가속기), 영상·오디오 처리기, 모뎀, DRAM 제어기, USB·카메라·디스플레이 인터페이스, 전원·클록 관리가 들어갑니다. 이들을 상호 연결(버스 또는 NoC)이 잇습니다.</p>
+    <p>ARM AMBA 규격에서 AXI는 주소·데이터 채널이 분리되어 여러 거래를 겹쳐(아웃스탠딩) 처리하는 고성능 버스이고, APB는 단순한 저속 레지스터 접근용입니다. 브리지로 둘을 이어, 느린 주변 장치가 빠른 버스를 붙잡지 않게 합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>128비트 AXI, 500 MHz의 한 방향 최대 대역폭은? 4K 60 fps 영상(픽셀당 4바이트)을 읽고 쓰는 데 필요한 대역폭과 비교하라.</p>
+    </div>
+    <p><i>풀이.</i> 16 B × 500 MHz = 8 GB/s(읽기·쓰기 채널 각각). 4K: 3840 × 2160 × 4 × 60 = 1.99 GB/s, 읽기와 쓰기 각 약 2 GB/s로 한 버스의 4분의 1 정도. 여러 블록이 함께 쓰면 DRAM 대역폭이 병목이 되어 압축, 캐시, 우선순위 제어를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "모든 블록을 하나의 빠른 버스에 달면 된다": 느린 장치 접근이 버스를 점유하고 면적·전력이 낭비됩니다. (2) "SoC는 CPU가 전부": 면적의 상당 부분이 가속기, 메모리, 인터페이스입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CPU, GPU, NPU, 메모리 제어기, 주변 장치, 상호 연결.</li>
+        <li>AXI(고성능, 채널 분리), APB(저속), 브리지.</li>
+        <li>예: 128비트 500 MHz → 8 GB/s, 4K60 ≈ 2 GB/s.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>64비트, 1 GHz 버스의 한 방향 대역폭은?
+          <details><summary>답</summary><p>8 GB/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>1080p 30 fps, 픽셀당 2바이트의 대역폭은?
+          <details><summary>답</summary><p>약 124 MB/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>NoC가 큰 SoC에서 버스보다 나은 이유는?
+          <details><summary>답</summary><p>여러 전송을 동시에 다른 경로로 보내 확장성이 좋기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
