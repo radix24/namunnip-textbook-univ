@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-04-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-pfault" data-kind="본문" data-std="전전31-04-05">
+  <header class="card-head"><span class="no"></span><h2>페이지 부재 비용과 스래싱</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>페이지 부재율로 유효 접근 시간을 계산한다.</li>
+        <li>성능 저하를 제한하는 부재율 상한을 구한다.</li>
+        <li>작업 집합과 스래싱의 관계를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>페이지 교체 (<a href="04-01.html">4.1절</a>), TLB (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.5.1</span>디스크는 백만 배 느리다</h3>
+    <p>부재율 p, 메모리 접근 t_m, 부재 처리 시간 t_f이면 EAT = (1 − p)t_m + p·t_f입니다. 디스크 부재 처리는 수 ms라 p가 아주 작아야 합니다. 프로세스들의 작업 집합 합이 메모리보다 크면 계속 부재가 나 CPU가 놀고(스래싱), 프로세스 수를 줄여야 합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.5.1</span>
+      <p>t_m = 100 ns, t_f = 8 ms. 성능 저하를 10% 이내로 하려면 부재율이 얼마 이하여야 하나?</p>
+    </div>
+    <p><i>풀이.</i> 110 > 100 + p(8×10⁶ − 100) → p &lt; 1.25×10⁻⁶(약 80만 번 접근에 한 번). SSD(약 0.1 ms)면 10⁻⁴까지 허용됩니다. 스래싱 때는 다중 프로그래밍 수를 늘릴수록 CPU 이용률이 오히려 떨어집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "메모리가 부족하면 조금 느려질 뿐": 스래싱이 나면 수백 배 느려집니다. (2) "프로세스를 더 넣으면 CPU 이용률이 오른다": 스래싱 영역에서는 떨어집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>EAT = (1 − p)t_m + p·t_f.</li>
+        <li>10% 이내: p &lt; 1.25×10⁻⁶(디스크).</li>
+        <li>작업 집합 합 &gt; 메모리 → 스래싱.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>p = 10⁻⁵, t_f = 8 ms의 EAT는?
+          <details><summary>답</summary><p>약 180 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>t_f = 0.1 ms(SSD)의 10% 한계 p는?
+          <details><summary>답</summary><p>약 10⁻⁴.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>스래싱을 막는 OS 방법은?
+          <details><summary>답</summary><p>부재율 감시로 프로세스를 일시 내보내 다중 프로그래밍 수를 줄입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

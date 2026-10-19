@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-inode" data-kind="본문" data-std="전전31-05-04">
+  <header class="card-head"><span class="no"></span><h2>inode와 최대 파일 크기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>직접·간접 블록 포인터로 파일 블록을 찾는 inode 구조를 안다.</li>
+        <li>블록 크기와 포인터 크기로 최대 파일 크기를 계산한다.</li>
+        <li>작은 파일과 큰 파일에서 접근 횟수 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파일 할당 방식 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>포인터의 나무</h3>
+    <p>유닉스 계열 inode는 직접 포인터 12개, 단일·이중·삼중 간접 포인터를 둡니다. 블록 B바이트, 포인터 p바이트면 간접 블록 하나가 B/p개 포인터를 담아 최대 크기 = (12 + B/p + (B/p)² + (B/p)³) × B입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>블록 4 KB, 포인터 4바이트의 최대 파일 크기는? 직접 + 단일 간접으로 덮는 크기는?</p>
+    </div>
+    <p><i>풀이.</i> B/p = 1024 → (12 + 1024 + 1024² + 1024³) × 4 KB ≈ 4 TB. 직접 + 단일 간접은 1036 × 4 KB ≈ 4 MB. 작은 파일은 inode만 읽으면 되고, 큰 파일 끝부분은 간접 블록을 몇 번 더 읽습니다. ext4는 연속 구간(extent)으로 이 부담을 줄입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "파일 크기 한계는 디스크 크기": inode 구조와 포인터 크기가 먼저 제한할 수 있습니다. (2) "모든 블록 접근 비용이 같다": 삼중 간접 영역은 디스크 읽기가 더 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최대 = (12 + n + n² + n³) × B, n = B/p.</li>
+        <li>예: 4 KB, 4 B → 약 4 TB.</li>
+        <li>extent로 큰 파일 효율화.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>블록 1 KB, 포인터 4 B의 n은?
+          <details><summary>답</summary><p>256.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>그때 직접 + 단일 간접의 크기는?
+          <details><summary>답</summary><p>268 KB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>삼중 간접 영역 블록을 읽으려면 디스크 읽기 몇 번(inode 제외)?
+          <details><summary>답</summary><p>간접 블록 3번 + 데이터 1번 = 4번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

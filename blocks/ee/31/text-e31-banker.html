@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-banker" data-kind="본문" data-std="전전31-03-04">
+  <header class="card-head"><span class="no"></span><h2>은행원 알고리즘과 안전 상태</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>최대 요구량, 할당량, 남은 자원으로 필요량 행렬을 만든다.</li>
+        <li>안전 순서를 찾아 안전 상태인지 판정한다.</li>
+        <li>요청을 들어줄지 결정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>교착 상태 조건 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.4.1</span>모두 끝낼 수 있는 순서</h3>
+    <p>Need = Max − Allocation. 남은 자원(Work)으로 Need를 채울 수 있는 프로세스를 찾아 끝냈다고 보고 그 할당을 돌려받는 일을 반복해, 모두 끝낼 수 있으면 안전 상태입니다. 요청을 들어준 뒤에도 안전할 때만 실제로 할당합니다.</p><pre><code>alloc = {"P0": [0, 1, 0], "P1": [2, 0, 0], "P2": [3, 0, 2], "P3": [2, 1, 1], "P4": [0, 0, 2]}
+maxm  = {"P0": [7, 5, 3], "P1": [3, 2, 2], "P2": [9, 0, 2], "P3": [2, 2, 2], "P4": [4, 3, 3]}
+work = [3, 3, 2]
+need = {p: [m - a for m, a in zip(maxm[p], alloc[p])] for p in alloc}
+print("Need:", need)
+order, done = [], set()
+while len(done) &lt; len(alloc):
+    for p in alloc:
+        if p not in done and all(n &lt;= w for n, w in zip(need[p], work)):
+            work = [w + a for w, a in zip(work, alloc[p])]
+            order.append(p); done.add(p)
+            break
+    else:
+        break
+print("안전 순서:", order, "/ 끝난 뒤 Work:", work)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>Need: {'P0': [7, 4, 3], 'P1': [1, 2, 2], 'P2': [6, 0, 0], 'P3': [0, 1, 1], 'P4': [4, 3, 1]}
+안전 순서: ['P1', 'P3', 'P0', 'P2', 'P4'] / 끝난 뒤 Work: [10, 5, 7]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>위 상태(자원 3종류, 남은 자원 (3, 3, 2))는 안전한가?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 안전 순서 P1 → P3 → P0 → P2 → P4가 있어 안전합니다(순서는 하나가 아닐 수 있음). 모든 작업이 끝나면 Work가 전체 자원 (10, 5, 7)이 됩니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "불안전 상태 = 교착 상태": 불안전하면 교착이 생길 수 있을 뿐입니다. (2) "은행원 알고리즘은 실무에서 흔하다": 최대 요구를 미리 알아야 해 일반 OS에서는 드뭅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Need = Max − Allocation.</li>
+        <li>Work로 채울 수 있는 프로세스를 반복 선택.</li>
+        <li>요청 후에도 안전할 때만 승인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>P1의 Need는?
+          <details><summary>답</summary><p>(1, 2, 2).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>처음 Work (3, 3, 2)로 바로 끝낼 수 있는 프로세스는?
+          <details><summary>답</summary><p>P1, P3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>교착 상태 예방과 회피의 차이는?
+          <details><summary>답</summary><p>예방은 네 조건 중 하나를 막고, 회피는 상태를 보며 위험한 요청을 미룹니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
