@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m9-fisher" data-kind="본문" data-std="수학9-02-03">
+  <header class="card-head"><span class="no"></span><h2>피셔 정보와 최대가능도 추정량의 점근분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>피셔 정보 \(I(\theta) = E\left[\left(\frac{\partial}{\partial\theta}\ln f(X;\theta)\right)^2\right]\)를 계산한다.</li>
+        <li>최대가능도 추정량이 근사적으로 \(N\left(\theta, \frac1{nI(\theta)}\right)\)을 따름을 쓰고 근사 표준오차를 구한다.</li>
+        <li>크래머-라오 하한의 뜻(어떤 불편추정량도 분산이 \(\frac1{nI(\theta)}\)보다 작을 수 없다)을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도 추정 (<a href="02-01.html">2.1절</a>), 편향과 평균제곱오차 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>피셔 정보</h3>
+    <p>로그가능도의 기울기(점수) \(S(\theta) = \frac{\partial}{\partial\theta}\ln f(X;\theta)\)는 평균이 0이고, 그 분산을 <b>피셔 정보</b> \(I(\theta)\)라 합니다. 가능도 곡선이 꼭대기에서 뾰족할수록(점수가 크게 변할수록) 자료가 \(\theta\)에 대해 많은 정보를 줍니다. 정칙 조건 아래 \(I(\theta) = -E\left[\frac{\partial^2}{\partial\theta^2}\ln f\right]\)로도 계산합니다.</p>
+    <div class="tb-env ex"><b>예 2.3.1</b>
+      <ul>
+        <li>베르누이(\(p\)): \(\ln f = x\ln p + (1 - x)\ln(1 - p)\), \(I(p) = \frac1{p(1 - p)}\).</li>
+        <li>포아송(\(\lambda\)): \(\ln f = x\ln\lambda - \lambda - \ln x!\), 이계 도함수 \(-\frac x{\lambda^2}\)이라 \(I(\lambda) = \frac1\lambda\).</li>
+        <li>정규(\(\mu\), \(\sigma\) 알려짐): \(I(\mu) = \frac1{\sigma^2}\).</li>
+      </ul></div>
+
+    <h3><span class="no">2.3.2</span>점근정규성</h3>
+    <div class="tb-env thm"><b>정리 2.3.2</b> 정칙 조건 아래 최대가능도 추정량 \(\hat\theta\)는 \(n\)이 클 때 근사적으로 \(N\left(\theta, \frac1{nI(\theta)}\right)\)을 따른다. 따라서 근사 표준오차는 \(\operatorname{SE}(\hat\theta) \approx \frac1{\sqrt{nI(\hat\theta)}}\)이고 근사 95% 신뢰구간은 \(\hat\theta \pm 1.96\operatorname{SE}\)이다.</div>
+    <p>베르누이에서는 \(\operatorname{SE}(\hat p) = \sqrt{\frac{\hat p(1 - \hat p)}n}\), 포아송에서는 \(\sqrt{\frac{\hat\lambda}n}\)으로 익숙한 공식이 나옵니다. 장점은 공식을 몰라도 로그가능도의 이계 도함수만 있으면 어떤 모형에서든 표준오차를 구할 수 있다는 것입니다.</p>
+
+    <h3><span class="no">2.3.3</span>크래머-라오 하한</h3>
+    <p>정칙 조건 아래 \(\theta\)의 불편추정량 \(T\)는 모두 \(\operatorname{Var}(T) \ge \frac1{nI(\theta)}\)를 만족합니다. 최대가능도 추정량은 큰 표본에서 이 하한에 다다르므로 "점근적으로 가장 효율적"입니다. 정규 평균의 \(\bar X\)는 \(\frac{\sigma^2}n\)으로 정확히 하한과 같습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 점근정규성이 작은 표본에서도 정확하다고 여긴다. \(\hat p\)가 0이나 1에 가까우면 \(n\)이 꽤 커야 한다. (2) 피셔 정보가 표본 크기와 무관하다고 여긴다. 표본 \(n\)개의 정보는 \(nI(\theta)\)로 \(n\)에 비례한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(I(\theta)\): 점수의 분산, \(-E[\ell'']\).</li>
+        <li>\(\hat\theta \approx N\left(\theta, \frac1{nI(\theta)}\right)\), SE \(= \frac1{\sqrt{nI(\hat\theta)}}\).</li>
+        <li>크래머-라오: 불편추정량의 분산 \(\ge \frac1{nI}\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>동전을 200번 던져 앞면이 120번 나왔다. \(\hat p\)와 근사 표준오차를 구하여라.
+          <details><summary>답</summary><p>\(\hat p = 0.6\), \(\sqrt{\frac{0.6\cdot0.4}{200}} \approx 0.0346\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>지수분포 \(f(x) = \theta e^{-\theta x}\)의 피셔 정보를 구하고, \(\hat\theta = \frac1{\bar x}\)의 근사 표준오차를 써라.
+          <details><summary>답</summary><p>\(\ln f = \ln\theta - \theta x\), \(\ell'' = -\frac1{\theta^2}\), \(I = \frac1{\theta^2}\). SE \(\approx\frac{\hat\theta}{\sqrt n}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>정규분포에서 표본중앙값의 큰 표본 분산은 약 \(\frac{\pi\sigma^2}{2n}\)이다. \(\bar X\)에 비한 효율을 구하여라.
+          <details><summary>답</summary><p>\(\frac{\sigma^2/n}{\pi\sigma^2/(2n)} = \frac2\pi \approx 0.64\). 같은 정확도에 중앙값은 표본이 약 1.57배 필요하다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
