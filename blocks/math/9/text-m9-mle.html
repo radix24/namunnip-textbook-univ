@@ -1,0 +1,95 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m9-mle" data-kind="본문" data-std="수학9-02-01">
+  <header class="card-head"><span class="no"></span><h2>적률법과 최대가능도법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>표본 적률을 모적률에 맞추는 적률법으로 추정량을 구한다.</li>
+        <li>가능도함수를 최대화하는 최대가능도 추정량(MLE)을 구한다.</li>
+        <li>균등분포 \(U(0, \theta)\)처럼 미분으로 풀리지 않는 경우와 MLE의 불변성을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>대표 분포와 적률 (<a href="../5/03-02.html">수학5 3.2절</a>), 로그 미분과 극값.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>점추정</h3>
+    <p>모집단 분포의 꼴은 알지만 모수 \(\theta\)를 모를 때, 표본으로 \(\theta\)의 값 하나를 내놓는 것이 점추정입니다. 추정 규칙(통계량) \(\hat\theta = T(X_1, \dots, X_n)\)을 <b>추정량</b>, 실제 자료를 넣은 값을 <b>추정값</b>이라 합니다. 규칙을 만드는 대표적인 방법이 둘 있습니다.</p>
+
+    <h3><span class="no">2.1.2</span>적률법</h3>
+    <div class="tb-env">
+      <span class="lb">정의 2.1.1</span>
+      <p class="q-term"><b>적률법</b>: 모적률 \(E[X^j] = \mu_j(\theta)\)를 표본 적률 \(\frac1n\sum X_i^j\)와 같게 놓은 방정식(모수 개수만큼)의 해를 추정량으로 한다.</p>
+    </div>
+    <p>대수의 법칙으로 표본 적률은 모적률에 가까우므로 자연스러운 방법입니다. 예: 지수분포 \(E[X] = 1/\lambda\)이면 \(\bar X = 1/\hat\lambda\), \(\hat\lambda = 1/\bar X\). 균등분포 \(U(0, \theta)\)이면 \(E[X] = \theta/2\)이므로 \(\hat\theta = 2\bar X\).</p>
+
+    <h3><span class="no">2.1.3</span>최대가능도법</h3>
+    <p>관측한 자료가 "가장 그럴듯하게" 나오게 하는 모수를 고르는 방법입니다. 자료를 고정하고 결합밀도를 모수의 함수로 본 것이 가능도입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 2.1.2</span>
+      <p class="q-term"><b>가능도함수</b>: \(L(\theta) = \prod_{i=1}^nf(x_i; \theta)\). 로그를 취한 \(\ell(\theta) = \sum\ln f(x_i; \theta)\)를 로그가능도라 한다.</p>
+      <p class="q-term"><b>최대가능도 추정량</b>: \(L(\theta)\)를 최대로 하는 \(\hat\theta\).</p>
+    </div>
+    <p>곱은 미분하기 어려우므로 로그를 취해 합으로 바꿉니다. 로그는 증가함수라 최대점이 같습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.3</span>
+      <p>(a) 베르누이(\(p\)) 표본 (b) 지수(\(\lambda\)) 표본 (c) 정규(\(\mu, \sigma^2\)) 표본의 MLE를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> (a) \(\ell(p) = k\ln p + (n - k)\ln(1 - p)\) (\(k = \sum x_i\)). \(\ell'(p) = k/p - (n-k)/(1-p) = 0\)에서 \(\hat p = k/n = \bar x\). 동전 20번에 앞면 7번이면 \(\hat p = 0.35\).</p>
+    <p>(b) \(\ell(\lambda) = n\ln\lambda - \lambda\sum x_i\), \(\ell' = n/\lambda - \sum x_i = 0\)에서 \(\hat\lambda = 1/\bar x\) (적률법과 같다). 대기 시간 0.8, 2.1, 0.4, 1.5, 0.7, 3.0, 1.1, 0.4이면 \(\bar x = 1.25\), \(\hat\lambda = 0.8\).</p>
+    <p>(c) \(\ell = -\frac n2\ln(2\pi\sigma^2) - \frac1{2\sigma^2}\sum(x_i - \mu)^2\). \(\mu\)로 미분하면 \(\hat\mu = \bar x\), \(\sigma^2\)로 미분하면 \(\hat\sigma^2 = \frac1n\sum(x_i - \bar x)^2\). 분모가 \(n - 1\)이 아니라 \(n\)임에 주의합니다(2.2절).</p>
+
+    <h3><span class="no">2.1.4</span>미분이 통하지 않는 경우</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.4</span>
+      <p>\(U(0, \theta)\) 표본 1.2, 3.5, 0.7, 2.9, 4.1로 \(\theta\)를 적률법과 MLE로 추정하여라.</p>
+    </div>
+    <p><i>풀이.</i> 적률법: \(\bar x = 2.48\), \(\hat\theta = 4.96\). MLE: \(L(\theta) = \theta^{-n}\) (모든 \(x_i \le \theta\)일 때), 아니면 0. \(\theta\)가 가장 큰 관측값보다 작으면 가능도가 0이고, 그 이상에서는 \(\theta^{-n}\)이 감소하므로 최대점은 \(\hat\theta = \max x_i = 4.1\)입니다. 미분이 0인 점이 아니라 경계에서 최대가 됩니다. MLE는 항상 참값보다 작거나 같다는 약점이 있어 2.2절에서 보정합니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 2.1.5 <span class="nm">(불변성)</span></span>
+      <p>\(\hat\theta\)가 \(\theta\)의 MLE이면 \(g(\hat\theta)\)는 \(g(\theta)\)의 MLE이다.</p>
+    </div>
+    <p>예: 정규 표본에서 \(\sigma\)의 MLE는 \(\sqrt{\hat\sigma^2}\), 지수분포의 평균 \(1/\lambda\)의 MLE는 \(\bar x\). 같은 절의 탐구 카드에서 가능도 곡선의 모양과 최댓점을 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 가능도를 \(\theta\)의 확률분포로 여긴다: \(L(\theta)\)를 \(\theta\)로 적분해도 1이 아니다. (2) 지지 집합이 \(\theta\)에 의존하는데(균등분포) 미분만 한다. (3) 로그가능도의 임계점이 최대인지 확인하지 않는다(2계 도함수나 경계 비교).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>적률법: 표본 적률 = 모적률. 간단하지만 효율이 낮을 수 있다.</li>
+        <li>MLE: \(\ell(\theta) = \sum\ln f(x_i;\theta)\) 최대화. 베르누이 \(\bar x\), 지수 \(1/\bar x\), 정규 \((\bar x, \frac1n\sum(x_i - \bar x)^2)\).</li>
+        <li>지지 집합이 모수에 의존하면 경계 최대(균등: \(\max x_i\)). MLE는 함수 변환에 불변.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>포아송(\(\lambda\)) 표본의 MLE를 구하여라.
+          <details><summary>답</summary><p>\(\ell = \sum x_i\ln\lambda - n\lambda - \sum\ln x_i!\). \(\hat\lambda = \bar x\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>밀도 \(f(x; \theta) = \theta x^{\theta - 1}\) (\(0 &lt; x &lt; 1\))의 적률 추정량과 MLE를 구하여라.
+          <details><summary>답</summary><p>\(E[X] = \theta/(\theta + 1)\)이므로 적률 \(\hat\theta = \bar x/(1 - \bar x)\). \(\ell = n\ln\theta + (\theta - 1)\sum\ln x_i\), MLE \(\hat\theta = -n/\sum\ln x_i\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>기하분포(첫 성공까지 시행 수, 성공 확률 \(p\)) 표본의 MLE를 구하고 적률 추정량과 비교하여라.
+          <details><summary>답</summary><p>\(\ell = n\ln p + (\sum x_i - n)\ln(1 - p)\), \(\hat p = n/\sum x_i = 1/\bar x\). \(E[X] = 1/p\)이므로 적률 추정량도 \(1/\bar x\)로 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
