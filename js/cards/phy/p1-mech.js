@@ -1,4 +1,4 @@
-/* 물리1 실습 카드 묶음: 공기 저항 궤적, 퍼텐셜 그림, 공명 곡선, 궤도와 유효 퍼텐셜, 푸코 진자 */
+/* 물리1 실습 카드 묶음: 공기 저항 궤적, 퍼텐셜 그림, 공명 곡선, 궤도와 유효 퍼텐셜 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -70,6 +70,7 @@
       if (st) f.dot(st.x, p.U(st.x), c.warn, 6);
       const vx = QSim.view(cvX, 0.3);
       if (st && st.hist.length > 1) { const t0 = st.hist[0][0], t1 = Math.max(t0 + 1, st.hist[st.hist.length - 1][0]); const fx = QSim.frame(vx, { x0: t0, x1: t1, y0: p.x0, y1: p.x1, xl: "t", yl: "x" }); fx.axes({ noGrid: true }); fx.path(st.hist, c.main, 2); }
+      else { const fx = QSim.frame(vx, { x0: 0, x1: 1, y0: p.x0, y1: p.x1, xl: "t", yl: "x" }); fx.axes({ noGrid: true }); vx.g.fillStyle = c.ink3; vx.g.font = "12px sans-serif"; vx.g.fillText("재생을 누르면 위치 x(t)가 여기에 그려집니다", 40, vx.H / 2 - 6); }
       let per = "";
       if (st) { const L = tp.filter((t) => t <= st.x + 1e-9).pop(), R = tp.filter((t) => t >= st.x - 1e-9)[0];
         if (L !== undefined && R !== undefined && R - L > 1e-6) { let s = 0; const N = 2000; for (let i = 0; i < N; i++) { const th = Math.PI * (i + 0.5) / N, x = (L + R) / 2 - (R - L) / 2 * Math.cos(th), dx = (R - L) / 2 * Math.sin(th) * Math.PI / N; s += dx / Math.sqrt(Math.max(1e-12, 2 * (E - p.U(x)))); } per = `주기 2∫dx/v = ${(2 * s).toFixed(3)} (질량 1)`; }
@@ -137,27 +138,5 @@
       S.out(txt + "\n(질량 1, 힘의 세기 1인 단위)");
     }
     S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 푸코 진자 (06-02) */
-  (() => {
-    const S = QSim.card("lab-p1-foucault"); if (!S) return;
-    const cv = S.$("canvas"); let t = 0, trail = [];
-    const w0 = 2 * Math.PI / 1.0;   // 진자 주기 1 (화면 시간)
-    function draw() {
-      const c = C(), lat = S.val("lat") * Math.PI / 180, sp = S.val("sp"), Om = 2 * Math.PI / sp, Oz = Om * Math.sin(lat);
-      const v = QSim.view(cv, 0.6), f = QSim.frame(v, { x0: -1.3, x1: 1.3, y0: -1.05, y1: 1.05, equal: true }); f.axes({ noGrid: true });
-      const g = v.g; g.strokeStyle = c.rule; g.beginPath(); g.arc(f.X(0), f.Y(0), f.sx, 0, 7); g.stroke();
-      f.path(trail, c.soft, 1);
-      const ang = -Oz * t, x = Math.cos(w0 * t), px = x * Math.cos(ang), py = x * Math.sin(ang);
-      f.path([[-Math.cos(ang), -Math.sin(ang)], [Math.cos(ang), Math.sin(ang)]], c.acc, 1.5, [5, 4]);
-      f.dot(px, py, c.main, 7);
-      const hours = 23.934 / Math.max(1e-9, Math.abs(Math.sin(lat)));
-      S.out(`위도 ${S.val("lat")}°: 진동면이 도는 각속도 Ω sin λ, 한 바퀴 ${Math.abs(Math.sin(lat)) < 1e-6 ? "돌지 않음 (적도)" : hours.toFixed(1) + "시간"}\n화면에서는 하루 = ${sp}초로 빠르게 했다 (진자 주기 1초)\n지금 진동면 각도 ${(((ang * 180 / Math.PI) % 360) + 360) % 360 | 0}° (북반구는 위에서 볼 때 시계 방향)`);
-    }
-    const L = QSim.loop((dt) => { t += dt; const lat = S.val("lat") * Math.PI / 180, ang = -2 * Math.PI / S.val("sp") * Math.sin(lat) * t, x = Math.cos(w0 * t); trail.push([x * Math.cos(ang), x * Math.sin(ang)]); if (trail.length > 1200) trail.shift(); draw(); }).watch(S.root);
-    QSim.playButton(S.$(".play"), L);
-    S.$(".reset").addEventListener("click", () => { t = 0; trail = []; draw(); });
-    S.on(() => { t = 0; trail = []; draw(); }); QSim.redrawOn(draw); draw();
   })();
 })();
