@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-04-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e34-mux" data-kind="예제" data-std="전전34-04-01">
+  <header class="card-head"><span class="no"></span><h2>4자리 표시기 시분할 설계</h2><span class="kind">예제 · 새로 고침 주파수와 밝기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>4자리 7세그먼트를 한 자리씩 돌아가며 켜면 왜 네 자리가 동시에 켜진 것처럼 보일까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>자리를 1초에 수백 번 바꾸면 눈의 잔상이 깜빡임을 느끼지 못합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">50 MHz 클록, 공통 양극 4자리 표시기. 자리 전환 주기를 약 1 ms로 하려 한다. (가) 몇 클록마다 자리를 바꾸는가(2의 거듭제곱으로 맞추려면)? (나) 새로 고침 주파수, (다) 한 막대의 평균 전류를 5 mA로 하려면 켜져 있는 동안의 전류는?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>자리 하나 시간 × 4 = 한 바퀴.</li>
+        <li>켜져 있는 비율(듀티) = 1/4.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) 1 ms = 50,000클록. 2의 거듭제곱으로는 \(2^{16}\) = 65,536클록(1.31 ms). <span class="q-why">분주</span></li>
+        <li>(나) 한 바퀴 4 × 1.31 = 5.24 ms, 약 191 Hz. <span class="q-why">새로 고침</span></li>
+        <li>(다) 듀티 1/4이므로 켜져 있을 때 20 mA. <span class="q-why">평균 = 순간 × 듀티</span></li>
+        <li>공통 양극이라 자리 선택 신호와 막대 신호가 모두 활성 Low. 20 mA × 막대 8개 = 160 mA가 공통 단자로 흐르므로 자리 구동에 트랜지스터를 쓴다. <span class="q-why">구동</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>시분할은 핀 수를 줄이는 대신 순간 전류를 키우고, 자리 구동 트랜지스터가 필요해집니다. 순간 전류는 LED의 최대 펄스 전류를 넘지 않게 데이터시트로 확인합니다(확인 필요). 같은 원리가 LED 전광판과 키보드 스캔에 쓰입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(2^{16}/(50\times10^6) = 1.311\) ms, × 4 = 5.243 ms, 1/5.243 ms = 190.7 Hz.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>자리를 8개로 늘리고 전환 주기를 그대로 두면 새로 고침 주파수와 평균 5 mA를 위한 순간 전류는?</p>
+      <details><summary>답</summary><p>약 95 Hz, 40 mA(듀티 1/8). 순간 전류가 커져 LED 정격을 확인해야 합니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>잔상</h3>
+    <p class="q">자리 전환을 너무 느리게(예: 자리당 20 ms) 하면 무엇이 보이는가?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>숫자가 깜빡이거나 자리가 차례로 켜지는 것<span class="why"><b>맞습니다.</b> 한 바퀴 80 ms(12.5 Hz)라 눈에 보입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>더 밝아진다<span class="why"><b>평균 밝기는 듀티로 정해집니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>아무 차이 없다<span class="why"><b>새로 고침이 낮으면 깜빡임이 보입니다.</b> </span></span></button></li>
+    </ol>
+  </div>
+</article>

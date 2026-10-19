@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e34-adder" data-kind="본문" data-std="전전34-01-01">
+  <header class="card-head"><span class="no"></span><h2>가산기와 디코더 구현</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>반가산기·전가산기의 진리표와 논리식을 게이트 IC로 배선한다.</li>
+        <li>디코더(3-8)의 출력이 최소항이라는 점을 이용해 임의의 논리 함수를 만든다.</li>
+        <li>같은 회로를 FPGA에서 HDL 한두 줄로 기술하고 핀에 연결한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Boolean 대수와 최소항 (<a href="../4/02-01.html">전전4 2.1절</a>), 조합 논리 설계 (<a href="../4/04-01.html">전전4 4.1절</a>), 이 절의 예제 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>전가산기</h3>
+    <p>한 비트의 덧셈은 입력 A, B와 아래 자리에서 올라온 올림수 \(C_{in}\)을 더해 합 S와 올림수 \(C_{out}\)을 냅니다.</p>
+    \[ S = A \oplus B \oplus C_{in}, \qquad C_{out} = AB + C_{in}(A \oplus B). \]
+    <p>XOR 2개, AND 2개, OR 1개(74HC86, 74HC08, 74HC32 한 개씩에서 나눠 씀)로 만들 수 있습니다. 4비트 가산기는 전가산기 네 개의 올림수를 차례로 잇습니다(리플 캐리, 1.2절). 4비트 가산기 IC(74HC283)를 바로 쓸 수도 있습니다.</p>
+
+    <h3><span class="no">1.1.2</span>디코더로 논리 함수 만들기</h3>
+    <p class="q-term"><b>디코더</b> n-to-2ⁿ: 입력 n비트가 가리키는 출력 하나만 활성. 3-8 디코더 74HC138의 출력은 활성 Low(선택된 출력이 0).</p>
+    <p>디코더의 각 출력은 입력의 최소항 하나와 같으므로, 함수의 1인 최소항 출력을 OR로 모으면 그 함수가 됩니다. 전가산기는 \(S = \sum m(1, 2, 4, 7)\), \(C_{out} = \sum m(3, 5, 6, 7)\)입니다. 74HC138처럼 출력이 활성 Low이면 해당 출력들을 NAND로 모읍니다(드모르간).</p>
+
+    <h3><span class="no">1.1.3</span>배선과 시험</h3>
+    <ul>
+      <li>IC마다 전원(V<sub>CC</sub>)과 접지 핀을 먼저 잇고, 가까이에 0.1 μF 바이패스 축전기를 단다.</li>
+      <li>쓰지 않는 입력 핀은 띄우지 않고 V<sub>CC</sub>나 접지에 묶는다(CMOS 입력이 떠 있으면 값이 불안정하고 전류가 샌다).</li>
+      <li>입력은 스위치(풀업 저항), 출력은 LED(직렬 저항)로 보고, 진리표 8줄을 모두 확인한다.</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>4비트 가산기에 A = 0101(5), B = 1011(11), \(C_0\) = 0을 넣었다. 각 자리의 올림수와 출력 \(S_3S_2S_1S_0\), \(C_4\)를 구하라.</p>
+    </div>
+    <p><i>풀이.</i> 0자리 1 + 1 = 10: \(S_0 = 0\), \(C_1 = 1\). 1자리 0 + 1 + 1 = 10: \(S_1 = 0\), \(C_2 = 1\). 2자리 1 + 0 + 1 = 10: \(S_2 = 0\), \(C_3 = 1\). 3자리 0 + 1 + 1 = 10: \(S_3 = 0\), \(C_4 = 1\). 출력 0000, 올림 1 = 16. 올림수가 끝까지 이어지는 이 입력이 1.2절의 가장 긴 지연을 만듭니다.</p>
+    <p>FPGA에서는 <code>assign {cout, s} = a + b + cin;</code> 한 줄로 쓰고, 합성 도구가 FPGA 안의 전용 올림수 회로로 만들어 줍니다. 핀 배정 파일에서 스위치와 LED 핀을 지정합니다(보드 설명서 참고).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "74HC138의 선택된 출력은 1이다": 활성 Low라 0입니다. 데이터시트의 출력 이름 위 막대(또는 _N)를 확인합니다. (2) "LED를 출력 핀에 바로 연결해도 된다": 직렬 저항이 없으면 과전류로 IC나 LED가 상합니다. (3) "FPGA는 회로가 아니라 프로그램이다": HDL은 실행 순서가 아니라 연결된 하드웨어를 기술합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(S = A \oplus B \oplus C_{in}\), \(C_{out} = AB + C_{in}(A \oplus B)\).</li>
+        <li>디코더 출력 = 최소항. 1인 최소항을 OR(활성 Low면 NAND)로 모은다.</li>
+        <li>전원·바이패스·안 쓰는 입력 처리 후 진리표 전부를 시험한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>A = 0111, B = 0001의 4비트 합과 \(C_4\)는?
+          <details><summary>답</summary><p>1000, \(C_4 = 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>3-8 디코더(활성 High)와 OR 게이트로 다수결 함수(입력 셋 중 둘 이상이 1)를 만들려면 어떤 출력을 묶는가?
+          <details><summary>답</summary><p>\(m_3, m_5, m_6, m_7\). 전가산기의 \(C_{out}\)과 같습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>4비트 가산기로 A − B를 계산하려면 B와 \(C_0\)를 어떻게 넣는가?
+          <details><summary>답</summary><p>B를 모두 반전(XOR 게이트에 1)하고 \(C_0 = 1\). A + (B의 2의 보수).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
