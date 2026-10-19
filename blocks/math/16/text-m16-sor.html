@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-sor" data-kind="본문" data-std="수학16-04-02">
+  <header class="card-head"><span class="no"></span><h2>SOR 방법과 완화 인자</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>가우스-자이델의 갱신량에 완화 인자 \(\omega\)를 곱하는 SOR 방법을 정의한다.</li>
+        <li>\(0 &lt; \omega &lt; 2\)일 때만 수렴할 수 있음을 보이고, 가장 좋은 \(\omega\)가 1보다 크다는 것을 안다.</li>
+        <li>모형 문제에서 최적 \(\omega\)를 쓰면 반복 횟수가 크게 줄어듦을 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>야코비와 가우스-자이델 방법, 스펙트럼 반지름 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>더 멀리 가기</h3>
+    <p>가우스-자이델이 \(x_i\)를 \(x_i^{GS}\)로 바꾸는 갱신량은 \(x_i^{GS} - x_i^{(k)}\)입니다. 수렴이 한 방향으로 천천히 진행된다면 그 방향으로 조금 더 가는 것이 낫습니다.</p>
+    \[x_i^{(k+1)} = x_i^{(k)} + \omega\left(x_i^{GS} - x_i^{(k)}\right) = (1 - \omega)x_i^{(k)} + \omega x_i^{GS}.\]
+    <p>\(\omega = 1\)이면 가우스-자이델, \(\omega > 1\)이면 과완화(successive over-relaxation, SOR), \(\omega &lt; 1\)이면 저완화입니다. 행렬로는 \(T_\omega = (D - \omega L)^{-1}((1 - \omega)D + \omega U)\)입니다.</p>
+
+    <h3><span class="no">4.2.2</span>\(\omega\)의 범위</h3>
+    <div class="tb-env thm"><b>정리 4.2.1 (카한)</b> \(\rho(T_\omega) \ge |\omega - 1|\)이다. 따라서 SOR이 수렴하려면 \(0 &lt; \omega &lt; 2\)이어야 한다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>삼각행렬의 행렬식은 대각 성분의 곱이므로 \(\det T_\omega = \frac{\det((1 - \omega)D)}{\det D} = (1 - \omega)^n\). 행렬식은 고윳값의 곱이므로 \(|\lambda_1\cdots\lambda_n| = |1 - \omega|^n\)이고, 가장 큰 \(|\lambda_i|\)는 \(|1 - \omega|\) 이상이다. <span class="qed">∎</span></p>
+    </div>
+    <p>대칭 양정치 행렬이면 \(0 &lt; \omega &lt; 2\)에서 늘 수렴합니다(오스트롭스키-라이히 정리).</p>
+
+    <h3><span class="no">4.2.3</span>최적의 \(\omega\)</h3>
+    <p>삼중대각 행렬처럼 특정한 구조(일관 순서)를 가진 행렬에서는 \(\mu = \rho(T_J)\)로</p>
+    \[\omega_{\mathrm{opt}} = \frac2{1 + \sqrt{1 - \mu^2}}, \qquad \rho(T_{\omega_{\mathrm{opt}}}) = \omega_{\mathrm{opt}} - 1\]
+    <p>입니다(영의 정리). 증명은 고윳값 사이의 관계식 \((\lambda + \omega - 1)^2 = \lambda\omega^2\mu^2\)에서 나오며 여기서는 결과만 씁니다.</p>
+    <div class="tb-env ex"><b>예 4.2.2</b> \(n = 20\)인 삼중대각 행렬 \(\operatorname{tridiag}(-1, 2, -1)\)(7.1절의 경계치 문제)에서 \(\mu = \cos\frac\pi{21} \approx 0.9888\)이라 \(\rho(T_J) \approx 0.9888\), \(\rho(T_{GS}) \approx 0.9778\)이고 \(\omega_{\mathrm{opt}} \approx 1.741\), \(\rho(T_{\omega_{\mathrm{opt}}}) \approx 0.741\)입니다. 상대 오차 \(10^{-8}\)까지 반복 횟수는 야코비 1643번, 가우스-자이델 822번, \(\omega = 1.75\)의 SOR 69번입니다.</div>
+    <p>\(\omega\)가 최적값보다 조금 작으면 반복 횟수가 빠르게 늘고, 조금 크면 천천히 늘어납니다. 그래서 정확한 값을 모를 때는 약간 크게 잡는 편이 안전합니다. 같은 절의 탐구 카드에서 \(\omega\)를 바꿔 가며 확인하고, 예제 카드에서 손으로 한 단계를 계산합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(\omega\)를 크게 할수록 빠르다고 여긴다. 최적값을 넘으면 다시 느려지고 \(\omega \ge 2\)이면 발산한다. (2) 최적 \(\omega\)가 모든 행렬에서 같은 공식으로 나온다고 여긴다. 영의 공식은 특정 구조의 행렬에서만 성립한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>SOR: \(x_i \leftarrow (1 - \omega)x_i + \omega x_i^{GS}\).</li>
+        <li>\(\rho(T_\omega) \ge |\omega - 1|\): 수렴하려면 \(0 &lt; \omega &lt; 2\).</li>
+        <li>일관 순서 행렬에서 \(\omega_{\mathrm{opt}} = \frac2{1 + \sqrt{1 - \rho(T_J)^2}}\), 반복 횟수를 수십 배 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\rho(T_J) = 0.6\)일 때 영의 공식으로 \(\omega_{\mathrm{opt}}\)과 \(\rho(T_{\omega_{\mathrm{opt}}})\)를 구하여라.
+          <details><summary>답</summary><p>\(\sqrt{1 - 0.36} = 0.8\), \(\omega_{\mathrm{opt}} = \frac2{1.8} \approx 1.111\), \(\rho \approx 0.111\). 가우스-자이델은 \(0.36\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\rho = 0.978\)과 \(\rho = 0.741\)에서 오차를 \(10^{-8}\)배로 줄이는 반복 횟수를 어림하여 예 4.2.2와 비교하여라.
+          <details><summary>답</summary><p>\(\frac{8}{-\log_{10}\rho}\): 약 821번과 61번. 실제 822번, 69번과 비슷하다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\omega = 2\)이면 \(\rho(T_\omega) \ge 1\)이라 수렴하지 않음을 카한 정리로 설명하여라. \(\omega = 0\)이면 무슨 일이 생기는가?
+          <details><summary>답</summary><p>\(|\omega - 1| = 1\)이라 \(\rho \ge 1\). \(\omega = 0\)이면 \(x_i^{(k+1)} = x_i^{(k)}\)로 전혀 움직이지 않는다(\(T_0 = I\)).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

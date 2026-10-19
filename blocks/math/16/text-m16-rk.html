@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-rk" data-kind="본문" data-std="수학16-06-01">
+  <header class="card-head"><span class="no"></span><h2>오일러 방법과 룽게-쿠타 방법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>초깃값 문제 \(y' = f(t, y)\), \(y(t_0) = y_0\)를 오일러 방법으로 풀고, 국소 오차와 전역 오차를 구별한다.</li>
+        <li>기울기를 여러 번 재어 평균하는 룽게-쿠타 방법(2차, 4차)을 쓴다.</li>
+        <li>간격을 절반으로 할 때 오차의 비로 방법의 차수를 실험으로 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>미분방정식과 초깃값 문제 (<a href="../6/index.html">수학6</a>), 테일러 정리 (<a href="01-04.html">1.4절</a>), 수치 적분 (<a href="02-05.html">2.5절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>오일러 방법</h3>
+    <p>간격 \(h\)로 \(t_n = t_0 + nh\)를 잡고, 현재 점의 기울기로 한 걸음 갑니다.</p>
+    \[y_{n+1} = y_n + hf(t_n, y_n).\]
+    <p>테일러 정리로 \(y(t_{n+1}) = y(t_n) + hy'(t_n) + \frac{h^2}2y''(\xi)\)이므로 한 걸음의 오차(<b>국소 절단 오차</b>)는 \(O(h^2)\)입니다. 구간 \([t_0, T]\)를 가려면 \(\frac{T - t_0}h\)걸음이 필요하므로, 오차가 쌓인 <b>전역 오차</b>는 \(O(h)\)입니다. 이를 1차 방법이라 합니다.</p>
+    <div class="tb-env ex"><b>예 6.1.1</b> \(y' = y\), \(y(0) = 1\)로 \(y(1) = e\)를 구하면 \(h = 0.1, 0.05, 0.025\)에서 오일러의 오차가 \(0.125, 0.065, 0.033\)으로 \(h\)에 비례해 절반씩 줍니다.</div>
+
+    <h3><span class="no">6.1.2</span>룽게-쿠타 방법</h3>
+    <p>한 걸음 안에서 기울기를 몇 번 더 재어 평균을 내면, 고차 도함수를 직접 계산하지 않고도 테일러 전개의 높은 차수까지 맞출 수 있습니다.</p>
+    <ul>
+      <li><b>2차(개선된 오일러, 호인 방법)</b>: \(k_1 = f(t_n, y_n)\), \(k_2 = f(t_n + h, y_n + hk_1)\), \(y_{n+1} = y_n + \frac h2(k_1 + k_2)\). 사다리꼴 공식에 해당한다.</li>
+      <li><b>고전적 4차</b>:
+        \[k_1 = f(t_n, y_n),\quad k_2 = f\!\left(t_n + \tfrac h2, y_n + \tfrac h2k_1\right),\quad k_3 = f\!\left(t_n + \tfrac h2, y_n + \tfrac h2k_2\right),\quad k_4 = f(t_n + h, y_n + hk_3),\]
+        \[y_{n+1} = y_n + \frac h6(k_1 + 2k_2 + 2k_3 + k_4).\]
+        \(f\)가 \(t\)에만 의존하면 심프슨 공식이 된다.</li>
+    </ul>
+    <p>\(p\)차 방법은 전역 오차가 \(O(h^p)\)이고, \(h\)를 절반으로 하면 오차가 \(2^{-p}\)배가 됩니다.</p>
+    <div class="tb-env ex"><b>예 6.1.2</b> 같은 문제에서 \(h = 0.1, 0.05, 0.025\)일 때 2차 방법의 오차는 \(4.2\times10^{-3}\), \(1.09\times10^{-3}\), \(2.8\times10^{-4}\)(약 \(\frac14\)씩), 4차는 \(2.08\times10^{-6}\), \(1.36\times10^{-7}\), \(8.7\times10^{-9}\)(약 \(\frac1{16}\)씩)입니다. 함숫값 계산이 4배라도 4차 방법이 훨씬 효율적입니다.</div>
+
+    <h3><span class="no">6.1.3</span>구현과 차수 확인</h3>
+    <pre><code>def rk4(f, t, y, h, n):
+    for _ in range(n):
+        k1 = f(t, y); k2 = f(t + h/2, y + h/2*k1)
+        k3 = f(t + h/2, y + h/2*k2); k4 = f(t + h, y + h*k3)
+        y += h/6*(k1 + 2*k2 + 2*k3 + k4); t += h
+    return y</code></pre>
+    <p>두 간격의 오차 \(E(h)\), \(E(h/2)\)로 \(p \approx \log_2\frac{E(h)}{E(h/2)}\)를 계산해 차수를 확인합니다. 참값을 모르면 \(h, \frac h2, \frac h4\)의 세 결과의 차로 같은 비를 얻습니다. \(y\)를 벡터로 바꾸면 연립 미분방정식(고차 방정식 포함)에도 그대로 쓸 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 국소 오차의 차수가 곧 방법의 차수라고 여긴다. 국소 오차가 \(O(h^{p+1})\)이면 전역 오차가 \(O(h^p)\)이고, 방법의 차수는 \(p\)이다. (2) \(h\)를 아주 작게 하면 늘 좋아진다고 여긴다. 걸음 수가 늘어 반올림 오차가 쌓이고 계산량도 커진다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>오일러: \(y_{n+1} = y_n + hf\), 국소 \(O(h^2)\), 전역 \(O(h)\).</li>
+        <li>RK2(호인)는 2차, 고전 RK4는 4차: \(h\)를 절반으로 하면 오차가 \(\frac14\), \(\frac1{16}\).</li>
+        <li>차수는 \(\log_2\frac{E(h)}{E(h/2)}\)로 실험으로 확인한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(y' = -2y\), \(y(0) = 1\)에서 \(h = 0.1\)로 오일러 방법 두 걸음을 계산하여라.
+          <details><summary>답</summary><p>\(y_1 = 1 - 0.2 = 0.8\), \(y_2 = 0.64\). 참값 \(e^{-0.4} \approx 0.670\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y' = y\)에 호인 방법을 한 걸음 쓰면 \(y_1 = 1 + h + \frac{h^2}2\)임을 보이고, 국소 오차의 차수를 구하여라.
+          <details><summary>답</summary><p>\(k_1 = 1\), \(k_2 = 1 + h\), \(y_1 = 1 + \frac h2(2 + h)\). \(e^h\)와의 차는 \(\frac{h^3}6 + \cdots\)이라 국소 오차 \(O(h^3)\), 방법은 2차.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>RK4를 \(y' = y\)에 한 걸음 쓰면 \(y_1 = 1 + h + \frac{h^2}2 + \frac{h^3}6 + \frac{h^4}{24}\)임을 확인하여라.
+          <details><summary>답</summary><p>\(k_1 = 1\), \(k_2 = 1 + \frac h2\), \(k_3 = 1 + \frac h2 + \frac{h^2}4\), \(k_4 = 1 + h + \frac{h^2}2 + \frac{h^3}4\). \(\frac h6(k_1 + 2k_2 + 2k_3 + k_4) = h + \frac{h^2}2 + \frac{h^3}6 + \frac{h^4}{24}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

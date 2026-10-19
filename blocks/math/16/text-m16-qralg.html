@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-qralg" data-kind="본문" data-std="수학16-05-03">
+  <header class="card-head"><span class="no"></span><h2>QR 알고리즘</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(A_k = Q_kR_k\), \(A_{k+1} = R_kQ_k\)를 반복하면 고윳값이 보존되면서 \(A_k\)가 상삼각(대칭이면 대각) 행렬로 다가감을 안다.</li>
+        <li>QR 알고리즘이 모든 고유벡터에 동시에 거듭제곱법을 쓰는 것과 같다는 원리를 이해한다.</li>
+        <li>헤센베르크 꼴로 줄이기와 이동(shift)이 실용적인 속도를 만드는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>QR 분해 (<a href="05-01.html">5.1절</a>), 거듭제곱법 (<a href="05-02.html">5.2절</a>), 닮은 행렬 (<a href="../1/index.html">수학1</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>알고리즘</h3>
+    <div class="tb-env thm"><b>알고리즘 5.3.1 (이동 없는 QR 알고리즘)</b> \(A_0 = A\). \(k = 0, 1, \dots\)에 대해 \(A_k = Q_kR_k\)로 분해하고 \(A_{k+1} = R_kQ_k\)로 둔다.</div>
+    <p>\(R_k = Q_k^TA_k\)이므로 \(A_{k+1} = Q_k^TA_kQ_k\)는 \(A_k\)와 닮았고 고윳값이 같습니다. 대칭성도 유지됩니다.</p>
+    <div class="tb-env ex"><b>예 5.3.2</b> \(A = \begin{pmatrix}2 & 1\\ 1 & 3\end{pmatrix}\) (고윳값 3.618, 1.382)이면
+      \[A_1 = \begin{pmatrix}3 & 1\\ 1 & 2\end{pmatrix}, \ A_2 = \begin{pmatrix}3.5 & 0.5\\ 0.5 & 1.5\end{pmatrix}, \ A_3 = \begin{pmatrix}3.6 & 0.2\\ 0.2 & 1.4\end{pmatrix}, \ A_5 \approx \begin{pmatrix}3.6176 & 0.0294\\ 0.0294 & 1.3824\end{pmatrix}.\]
+      비대각 성분이 매번 약 \(\frac{1.382}{3.618} \approx 0.38\)배로 줄고, 대각에 고윳값이 나타납니다. 대각 \((1, 1)\) 성분 3, 3.5, 3.6, 3.6154, …는 \(\mathbf e_1 = (1, 0)\)에서 시작한 거듭제곱법(5.2절)의 레일리 몫과 같은 수열입니다.</div>
+
+    <h3><span class="no">5.3.2</span>왜 되는가</h3>
+    <p>\(A^k = (Q_0Q_1\cdots Q_{k-1})(R_{k-1}\cdots R_0)\)임을 귀납법으로 보일 수 있습니다. 즉 \(\bar Q_k = Q_0\cdots Q_{k-1}\)은 \(A^k\)의 QR 분해의 \(Q\)이고, 이는 표준기저 \(\mathbf e_1, \dots, \mathbf e_n\)에 \(A\)를 \(k\)번 곱한 뒤 그람-슈미트로 직교화한 것입니다. 첫 열은 거듭제곱법으로 \(\mathbf v_1\)에, 둘째 열은 \(\mathbf v_1\)에 직교하는 성분이 \(\mathbf v_2\)에, …로 모든 고유벡터를 동시에 찾습니다(동시 반복). \(A_k = \bar Q_k^TA\bar Q_k\)이므로 그 기저에서 \(A\)는 거의 대각입니다. 비대각 \((i, j)\) 성분은 \(\left|\frac{\lambda_i}{\lambda_j}\right|^k\) 꼴로 줄어듭니다.</p>
+
+    <h3><span class="no">5.3.3</span>실용적인 QR 알고리즘</h3>
+    <ul>
+      <li><b>헤센베르크 꼴</b>: 먼저 직교 닮음변환으로 \(A\)를 대각선 아래 첫째 줄만 남긴 꼴(대칭이면 삼중대각)로 바꿉니다(\(O(n^3)\) 한 번). 이 꼴은 QR 반복에서 유지되고, 한 단계가 \(O(n^3)\) 대신 \(O(n^2)\)(삼중대각이면 \(O(n)\))로 줄어듭니다.</li>
+      <li><b>이동</b>: \(A_k - \sigma_kI = Q_kR_k\), \(A_{k+1} = R_kQ_k + \sigma_kI\)로 바꾸면 수렴 비가 \(\left|\frac{\lambda_n - \sigma}{\lambda_{n-1} - \sigma}\right|\)이 되어(역거듭제곱법과 같은 효과), \(\sigma_k\)를 오른쪽 아래 성분 근처로 고르면 2차~3차로 수렴합니다.</li>
+      <li><b>축소</b>: 오른쪽 아래 비대각 성분이 충분히 작아지면 그 고윳값을 확정하고 행렬 크기를 하나 줄입니다.</li>
+    </ul>
+    <p>이렇게 하면 고윳값 하나당 평균 두세 번의 반복으로 끝나, 모든 고윳값을 약 \(10n^3\)번의 연산으로 구합니다. NumPy의 <code>numpy.linalg.eig</code>가 내부에서 쓰는 LAPACK이 이 방법입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 고윳값을 특성다항식의 근으로 구한다고 여긴다. 다항식의 근은 계수에 매우 민감해 수치적으로 쓰지 않는다. 오히려 다항식의 근을 동반행렬의 고윳값(QR 알고리즘)으로 구한다. (2) QR 분해(5.1절)와 QR 알고리즘이 같은 것이라고 여긴다. 알고리즘은 분해를 반복해 쓰는 고윳값 계산법이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(A_k = Q_kR_k\), \(A_{k+1} = R_kQ_k = Q_k^TA_kQ_k\): 고윳값 보존, 대각(상삼각)으로 수렴.</li>
+        <li>원리는 모든 고유벡터에 대한 동시 거듭제곱법.</li>
+        <li>헤센베르크 축소 + 이동 + 축소로 실용적인 \(O(n^3)\) 방법이 된다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예 5.3.2에서 \(A_1\)의 대각합과 행렬식이 \(A\)와 같음을 확인하여라.
+          <details><summary>답</summary><p>대각합 \(5 = 5\), 행렬식 \(6 - 1 = 5 = 6 - 1\). 닮은 행렬이므로 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(A = \begin{pmatrix}2 & 1\\ 1 & 3\end{pmatrix}\)의 QR 분해에서 \(R\)의 첫 행을 구하고 \(A_1 = RQ\)의 \((1, 1)\) 성분이 3임을 확인하여라.
+          <details><summary>답</summary><p>첫 열 \((2, 1)\)의 길이 \(\sqrt5\), \(\mathbf q_1 = \frac1{\sqrt5}(2, 1)\), \(r_{12} = \mathbf q_1\cdot(1, 3) = \frac5{\sqrt5} = \sqrt5\). \((RQ)_{11} = r_{11}q_{11} + r_{12}q_{21} = \sqrt5\cdot\frac2{\sqrt5} + \sqrt5\cdot\frac1{\sqrt5} = 3\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>이동 없는 QR 알고리즘이 \(\begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix}\)에서 전혀 변하지 않음을 보이고 이유를 설명하여라.
+          <details><summary>답</summary><p>이 행렬 자신이 직교행렬이라 \(Q = A\), \(R = I\)이고 \(RQ = A\)이다. 고윳값 \(\pm1\)의 절댓값이 같아 비 \(\left|\frac{\lambda_2}{\lambda_1}\right| = 1\)이다. 이동을 쓰면 해결된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

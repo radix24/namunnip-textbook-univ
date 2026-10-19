@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-08-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-gdnewton" data-kind="본문" data-std="수학16-08-01">
+  <header class="card-head"><span class="no"></span><h2>경사하강법과 뉴턴 방법의 수렴 속도</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>무제약 최소화 문제에서 경사하강법 \(\mathbf x_{k+1} = \mathbf x_k - \alpha\nabla f(\mathbf x_k)\)의 일차 수렴 속도가 헤세 행렬의 조건수 \(\kappa\)로 정해짐을 안다.</li>
+        <li>뉴턴 방법 \(\mathbf x_{k+1} = \mathbf x_k - H^{-1}\nabla f\)가 최솟점 근처에서 이차 수렴함을 이해한다.</li>
+        <li>두 방법의 단계당 비용과 반복 횟수를 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기울기와 헤세 행렬 (<a href="../11/index.html">수학11</a>), 뉴턴 방법 (<a href="01-04.html">1.4절</a>), 켤레기울기법의 최소화 관점 (<a href="04-03.html">4.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.1.1</span>경사하강법</h3>
+    <p>\(f : \mathbb R^n \to \mathbb R\)의 최솟점을 찾을 때, 함숫값이 가장 빨리 줄어드는 방향 \(-\nabla f\)로 조금씩 갑니다.</p>
+    \[\mathbf x_{k+1} = \mathbf x_k - \alpha\nabla f(\mathbf x_k).\]
+    <p>속도를 알아보려고 이차함수 \(f(\mathbf x) = \frac12\mathbf x^TA\mathbf x\) (\(A\)는 대칭 양정치, 고윳값 \(0 &lt; m \le \cdots \le L\))를 봅니다. \(\nabla f = A\mathbf x\)이므로 \(\mathbf x_{k+1} = (I - \alpha A)\mathbf x_k\)이고, 고유벡터 방향마다 \(1 - \alpha\lambda_i\)배가 됩니다.</p>
+    <div class="tb-env thm"><b>정리 8.1.1</b> 이차함수에서 경사하강법은 \(0 &lt; \alpha &lt; \frac2L\)일 때 수렴하고, 가장 좋은 고정 간격 \(\alpha = \frac2{m + L}\)에서 오차가 매 단계 \(\frac{\kappa - 1}{\kappa + 1}\)배 이하로 줄어든다(\(\kappa = \frac Lm\)).</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>모든 \(i\)에서 \(|1 - \alpha\lambda_i| &lt; 1\)이어야 하고 가장 큰 \(\lambda = L\)에서 \(\alpha &lt; \frac2L\)이다. 수렴 비 \(\max(|1 - \alpha m|, |1 - \alpha L|)\)은 두 값이 같을 때, 즉 \(1 - \alpha m = \alpha L - 1\)인 \(\alpha = \frac2{m + L}\)에서 최소이고 그 값은 \(\frac{L - m}{L + m}\)이다. <span class="qed">∎</span></p>
+    </div>
+    <div class="tb-env ex"><b>예 8.1.2</b> \(f = \frac12(x^2 + \kappa y^2)\)를 \((1, 1)\)에서 시작해 \(\|\mathbf x\| &lt; 10^{-6}\)까지: \(\kappa = 10\)이면 최적 간격으로 71번(비 0.818), \(\kappa = 100\)이면 709번(비 0.980)입니다. 간격이 \(\frac2L\)을 넘으면(\(\alpha = \frac{2.1}L\)) 발산합니다. 등고선이 길쭉하면 경로가 골짜기를 가로지르며 지그재그로 움직입니다.</div>
+
+    <h3><span class="no">8.1.2</span>뉴턴 방법</h3>
+    <p>\(f\)를 \(\mathbf x_k\) 근처에서 2차 테일러 근사 \(f(\mathbf x_k) + \nabla f^T\mathbf p + \frac12\mathbf p^TH\mathbf p\) (\(H\)는 헤세 행렬)로 바꾸고 그 최솟점으로 갑니다.</p>
+    \[H(\mathbf x_k)\mathbf p_k = -\nabla f(\mathbf x_k), \qquad \mathbf x_{k+1} = \mathbf x_k + \mathbf p_k.\]
+    <p>이는 \(\nabla f = 0\)에 대한 다변수 뉴턴 방법이라, \(H\)가 양정치인 최솟점 근처에서 <b>이차 수렴</b>합니다(1.4절과 같은 증명). 이차함수에서는 한 번에 정확한 최솟점에 도달하므로 조건수에 영향을 받지 않습니다.</p>
+
+    <h3><span class="no">8.1.3</span>비교</h3>
+    <ul>
+      <li><b>단계당 비용</b>: 경사하강법은 기울기 한 번(\(O(n)\) 저장). 뉴턴은 헤세 행렬(\(n^2\)개 성분)을 만들고 연립방정식(\(O(n^3)\))을 푼다.</li>
+      <li><b>반복 횟수</b>: 경사하강법은 \(\kappa\)에 비례, 뉴턴은 최솟점 근처에서 몇 번.</li>
+      <li><b>안정성</b>: 뉴턴은 먼 곳에서 \(H\)가 양정치가 아니면 오르막으로 갈 수 있어, 다음 절의 선탐색과 보정이 필요하다.</li>
+    </ul>
+    <p>로젠브록 함수 \((1 - x)^2 + 100(y - x^2)^2\)를 \((-1.2, 1)\)에서 기울기 크기 \(10^{-6}\)까지 풀면 선탐색을 붙인 경사하강법은 약 14000번, 뉴턴 방법은 21번입니다. 차원이 매우 큰 기계학습에서는 헤세 행렬이 너무 커서 경사하강법 계열과 준뉴턴법(BFGS)을 씁니다. 같은 절의 탐구 카드에서 경로를 비교합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 기울기 반대 방향이 최솟점을 향한다고 여긴다. 등고선에 수직일 뿐, 길쭉한 그릇에서는 최솟점과 거의 직각일 수 있다. (2) 간격이 크면 빨리 간다고 여긴다. \(\frac2L\)을 넘으면 발산한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>경사하강법: \(\alpha &lt; \frac2L\)에서 수렴, 최선의 비 \(\frac{\kappa - 1}{\kappa + 1}\): 일차, 조건수에 민감.</li>
+        <li>뉴턴: \(H\mathbf p = -\nabla f\), 최솟점 근처 이차 수렴, 이차함수는 한 번.</li>
+        <li>단계 비용(뉴턴이 비쌈)과 반복 횟수(경사하강이 많음)의 교환.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f = x^2 + 4y^2\)에서 경사하강법이 수렴하는 \(\alpha\)의 범위와 최적 \(\alpha\)를 구하여라.
+          <details><summary>답</summary><p>헤세 행렬 \(\operatorname{diag}(2, 8)\), \(m = 2\), \(L = 8\). \(0 &lt; \alpha &lt; \frac14\), 최적 \(\alpha = \frac2{10} = 0.2\), 비 \(\frac{6}{10} = 0.6\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 \(f\)에 뉴턴 방법을 \((1, 1)\)에서 한 번 쓰면 어디로 가는가?
+          <details><summary>답</summary><p>\(\nabla f = (2, 8)\), \(H^{-1}\nabla f = (1, 1)\)이므로 \((0, 0)\). 이차함수라 한 번에 최솟점이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\kappa = 10^4\)이면 최적 간격의 경사하강법으로 오차를 \(10^{-6}\)배 하는 데 대략 몇 번이 필요한가?
+          <details><summary>답</summary><p>\(\ln\frac{\kappa - 1}{\kappa + 1} \approx -\frac2\kappa\)이므로 \(\frac{6\ln10}{2\times10^{-4}} \approx 6.9\times10^4\)번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

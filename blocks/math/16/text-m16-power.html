@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-power" data-kind="본문" data-std="수학16-05-02">
+  <header class="card-head"><span class="no"></span><h2>거듭제곱법과 역거듭제곱법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>벡터에 행렬을 거듭 곱하면 절댓값이 가장 큰 고윳값의 고유벡터 방향으로 정렬됨을 보이고, 수렴 속도가 \(\left|\frac{\lambda_2}{\lambda_1}\right|\)임을 안다.</li>
+        <li>레일리 몫으로 고윳값을 추정한다.</li>
+        <li>\((A - \sigma I)^{-1}\)에 거듭제곱법을 쓰는 역거듭제곱법으로 \(\sigma\)에 가장 가까운 고윳값을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>고윳값과 대각화 (<a href="../1/index.html">수학1</a>), LU 분해 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>거듭제곱법</h3>
+    <p>\(A\)의 고윳값이 \(|\lambda_1| > |\lambda_2| \ge \cdots\)이고 고유벡터 \(\mathbf v_i\)가 기저를 이룬다고 합시다. \(\mathbf x_0 = \sum c_i\mathbf v_i\) (\(c_1 \ne 0\))이면</p>
+    \[A^k\mathbf x_0 = \lambda_1^k\left(c_1\mathbf v_1 + \sum_{i\ge2}c_i\left(\frac{\lambda_i}{\lambda_1}\right)^k\mathbf v_i\right)\]
+    <p>이므로 방향이 \(\mathbf v_1\)로 다가가고, 오차는 매 단계 \(\left|\frac{\lambda_2}{\lambda_1}\right|\)배가 됩니다. 수가 너무 커지거나 작아지지 않도록 매번 정규화합니다.</p>
+    <div class="tb-env thm"><b>알고리즘 5.2.1</b> \(\mathbf y = A\mathbf x_k\), \(\mathbf x_{k+1} = \frac{\mathbf y}{\|\mathbf y\|}\), 고윳값 추정은 레일리 몫 \(\mu_k = \frac{\mathbf x_k^TA\mathbf x_k}{\mathbf x_k^T\mathbf x_k}\).</div>
+    <p>\(A\)가 대칭이면 레일리 몫의 오차는 벡터 오차의 제곱 정도라, 고윳값은 \(\left|\frac{\lambda_2}{\lambda_1}\right|^2\)배씩 빨리 맞습니다.</p>
+    <div class="tb-env ex"><b>예 5.2.2</b> \(A = \begin{pmatrix}2 & 1\\ 1 & 3\end{pmatrix}\)의 고윳값은 \(\frac{5 \pm \sqrt5}2 \approx 3.618, 1.382\), 비는 0.382입니다. \(\mathbf x_0 = (1, 1)\)에서 레일리 몫은 3.5, 3.6, 3.6154, 3.6176, 3.61798, …이고 오차가 매번 약 \(0.382^2 \approx 0.146\)배가 됩니다.</div>
+
+    <h3><span class="no">5.2.2</span>역거듭제곱법</h3>
+    <p>\(A\)의 고윳값이 \(\lambda_i\)이면 \((A - \sigma I)^{-1}\)의 고윳값은 \(\frac1{\lambda_i - \sigma}\)이고, \(\sigma\)에 가장 가까운 \(\lambda_j\)가 절댓값이 가장 큰 고윳값이 됩니다. 여기에 거듭제곱법을 쓰면 수렴 비는</p>
+    \[\frac{|\lambda_j - \sigma|}{|\lambda_{\text{next}} - \sigma|}\]
+    <p>(\(\lambda_{\text{next}}\)는 두 번째로 가까운 고윳값)이라, \(\sigma\)를 잘 고르면 매우 빠릅니다. 역행렬을 구하지 않고 \(A - \sigma I = LU\)로 한 번 분해한 뒤 매 단계 \((A - \sigma I)\mathbf y = \mathbf x_k\)를 대입으로 풉니다. \(\sigma = 0\)이면 가장 작은 고윳값을 얻습니다.</p>
+    <p>\(\sigma\)를 매 단계 레일리 몫으로 바꾸면(레일리 몫 반복) 대칭 행렬에서 3차 수렴까지 빨라집니다. 같은 절의 탐구 카드에서 2차원 벡터가 고유벡터 방향으로 돌아가는 모습을 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 시작 벡터는 아무것이나 된다고 여긴다. \(c_1 = 0\)이면(우연히 \(\mathbf v_1\)과 직교) 이론상 수렴하지 않는다. 실제로는 반올림 오차가 \(c_1\)을 만들어 주지만 느리다. (2) \(|\lambda_1| = |\lambda_2|\)여도 된다고 여긴다. 예를 들어 \(\lambda = \pm1\)이면 방향이 번갈아 바뀌며 수렴하지 않는다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>거듭제곱법: \(\mathbf x \leftarrow \frac{A\mathbf x}{\|A\mathbf x\|}\), 수렴 비 \(\left|\frac{\lambda_2}{\lambda_1}\right|\).</li>
+        <li>레일리 몫으로 고윳값 추정, 대칭이면 오차는 비의 제곱.</li>
+        <li>역거듭제곱법: \((A - \sigma I)^{-1}\)로 \(\sigma\)에 가장 가까운 고윳값, LU 한 번 + 대입 반복.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>고윳값이 \(10, 9, 1\)인 행렬에서 거듭제곱법의 벡터 오차를 \(10^{-6}\)배로 줄이는 데 몇 단계가 필요한가?
+          <details><summary>답</summary><p>\(0.9^k = 10^{-6}\)에서 \(k \approx 131\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 행렬에 \(\sigma = 9.5\)로 역거듭제곱법을 쓰면 어느 고윳값으로 수렴하는가? 수렴 비는?
+          <details><summary>답</summary><p>\(|10 - 9.5| = |9 - 9.5| = 0.5\)로 같아 수렴이 정해지지 않는다. \(\sigma = 9.2\)라면 9로 수렴하고 비는 \(\frac{0.2}{0.8} = 0.25\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(A = \begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix}\)에 \(\mathbf x_0 = (1, 0)\)으로 거듭제곱법을 쓰면 어떻게 되는가?
+          <details><summary>답</summary><p>\((0, 1), (1, 0), \dots\)으로 번갈아 바뀌며 수렴하지 않는다. 고윳값이 \(\pm1\)로 절댓값이 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-cn" data-kind="본문" data-std="수학16-07-03">
+  <header class="card-head"><span class="no"></span><h2>음적 방법과 크랭크-니콜슨 방법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공간 차분을 새 시각에서 계산하는 음적(후진 오일러) 방법과, 두 시각의 평균을 쓰는 크랭크-니콜슨 방법을 세운다.</li>
+        <li>폰 노이만 분석으로 두 방법이 모든 \(r\)에서 안정함을 보인다.</li>
+        <li>매 걸음 삼중대각 연립방정식을 풀어야 하지만 큰 시간 간격으로 전체 계산이 줄어드는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>양적 방법과 폰 노이만 분석 (<a href="07-02.html">7.2절</a>), 토머스 알고리즘 (<a href="07-01.html">7.1절</a>), 사다리꼴 공식 (<a href="06-03.html">6.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.3.1</span>음적 방법</h3>
+    <p>공간 차분을 새 시각 \(n + 1\)에서 계산하면</p>
+    \[u_i^{n+1} - r\left(u_{i-1}^{n+1} - 2u_i^{n+1} + u_{i+1}^{n+1}\right) = u_i^n,\]
+    <p>즉 \(-ru_{i-1}^{n+1} + (1 + 2r)u_i^{n+1} - ru_{i+1}^{n+1} = u_i^n\)입니다. 매 걸음 삼중대각 연립방정식을 토머스 알고리즘으로 풉니다(\(O(n)\)). 증폭률은 \(g = \frac1{1 + 4r\sin^2(\theta/2)}\)이라 모든 \(r > 0\)에서 \(0 &lt; g \le 1\)입니다(무조건 안정). 시간 정확도는 \(O(k)\)입니다.</p>
+
+    <h3><span class="no">7.3.2</span>크랭크-니콜슨 방법</h3>
+    <p>공간 차분을 두 시각의 평균으로 계산합니다(시간에 대한 사다리꼴 공식).</p>
+    \[u_i^{n+1} - \frac r2\delta^2u_i^{n+1} = u_i^n + \frac r2\delta^2u_i^n, \qquad \delta^2u_i = u_{i-1} - 2u_i + u_{i+1}.\]
+    <p>증폭률은</p>
+    \[g = \frac{1 - 2r\sin^2(\theta/2)}{1 + 2r\sin^2(\theta/2)}\]
+    <p>로 모든 \(r\)에서 \(|g| \le 1\)이고, 시간·공간 모두 2차 정확도 \(O(k^2 + h^2)\)입니다. 그래서 \(k\)를 \(h\)와 같은 크기로 잡아도 됩니다. 다만 \(r\)이 매우 크면 \(\theta \approx \pi\)인 성분의 \(g\)가 \(-1\)에 가까워, 날카로운 처음 값에서 작은 진동이 오래 남을 수 있습니다(6.3절 연습 3).</p>
+
+    <h3><span class="no">7.3.3</span>계산량 비교</h3>
+    <p>\(h = 0.01\), \(t = 1\)까지 계산한다고 합시다. 양적 방법은 \(k \le 5\times10^{-5}\)이라 2만 걸음, 걸음마다 약 \(3n = 300\)번의 연산입니다. 크랭크-니콜슨은 정확도만 맞추면 되므로 \(k = 0.01\)로 100걸음, 걸음마다 토머스 알고리즘(약 \(8n\)번)이면 됩니다. 걸음당 비용은 3배 정도지만 걸음 수가 200분의 1이라 전체로는 약 70배 빠릅니다. 같은 절의 예제 카드에서 한 걸음을 손으로 계산하고, 7.2절의 탐구 카드에서 세 방법을 비교합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 무조건 안정이면 \(k\)를 얼마든지 키워도 정확하다고 여긴다. 정확도는 여전히 \(k\)에 달렸다(음적 방법은 \(O(k)\)). (2) 음적 방법은 연립방정식을 풀어야 해서 늘 느리다고 여긴다. 삼중대각이면 \(O(n)\)이라 큰 간격의 이득이 훨씬 크다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>음적 방법: \(-ru_{i-1}^{n+1} + (1 + 2r)u_i^{n+1} - ru_{i+1}^{n+1} = u_i^n\), \(g = \frac1{1 + 4r\sin^2(\theta/2)}\), 1차.</li>
+        <li>크랭크-니콜슨: 두 시각의 평균, \(|g| \le 1\), 2차.</li>
+        <li>매 걸음 삼중대각 풀이(\(O(n)\))로 큰 \(k\)를 쓸 수 있다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>음적 방법의 증폭률이 \(r = 10\), \(\theta = \pi\)에서 얼마인가?
+          <details><summary>답</summary><p>\(\frac1{1 + 40} \approx 0.024\). 톱니 성분이 빠르게 사라진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>크랭크-니콜슨의 증폭률이 \(r = 10\), \(\theta = \pi\)에서 얼마인가? 음적 방법과 비교하여라.
+          <details><summary>답</summary><p>\(\frac{1 - 20}{1 + 20} \approx -0.905\). 부호를 바꾸며 천천히 줄어 진동이 남는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>작은 \(\theta\)에서 크랭크-니콜슨의 \(g\)가 정확한 감쇠 \(e^{-k(\theta/h)^2}\)와 \(k^2\) 차수까지 일치함을 보여라 (\(z = 4r\sin^2(\theta/2) \approx k(\theta/h)^2\)).
+          <details><summary>답</summary><p>\(g = \frac{1 - z/2}{1 + z/2} = 1 - z + \frac{z^2}2 - \frac{z^3}4 + \cdots\)이고 \(e^{-z} = 1 - z + \frac{z^2}2 - \frac{z^3}6 + \cdots\)이라 \(z^2\)항까지 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

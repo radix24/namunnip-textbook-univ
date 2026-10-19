@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-08-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-linesearch" data-kind="본문" data-std="수학16-08-02">
+  <header class="card-head"><span class="no"></span><h2>선탐색을 포함한 최적화 알고리즘</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>내리막 방향 \(\mathbf p\)가 정해졌을 때 간격 \(t\)를 정하는 선탐색, 특히 아르미호 조건의 백트래킹을 쓴다.</li>
+        <li>선탐색을 붙인 경사하강법과 뉴턴 방법을 구현하고, 뉴턴 방향이 내리막이 아닐 때의 처리를 안다.</li>
+        <li>멈춤 조건과 함수 호출 횟수를 고려해 알고리즘을 설계한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>경사하강법과 뉴턴 방법 (<a href="08-01.html">8.1절</a>), 방향도함수 (<a href="../11/index.html">수학11</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">8.2.1</span>왜 선탐색인가</h3>
+    <p>8.1절에서 고정 간격은 \(\frac2L\)보다 작아야 했는데, 일반 함수에서는 \(L\)(곡률의 최댓값)을 모르고 위치마다 다릅니다. 또 뉴턴 방법은 최솟점에서 멀면 한 걸음이 너무 커서 오히려 함숫값이 커질 수 있습니다. 그래서 매 단계 방향 \(\mathbf p_k\)를 정한 뒤 "충분히 줄어드는" 간격 \(t_k\)를 찾습니다.</p>
+
+    <h3><span class="no">8.2.2</span>아르미호 조건과 백트래킹</h3>
+    <p>\(\mathbf p\)가 내리막 방향(\(\nabla f^T\mathbf p &lt; 0\))이면 작은 \(t\)에서 \(f(\mathbf x + t\mathbf p) \approx f(\mathbf x) + t\nabla f^T\mathbf p\)이므로, 그 기울기의 일부(\(c\)배, 보통 \(c = 10^{-4}\))라도 줄면 받아들입니다.</p>
+    \[f(\mathbf x + t\mathbf p) \le f(\mathbf x) + c\,t\,\nabla f(\mathbf x)^T\mathbf p.\]
+    <p><b>백트래킹</b>: \(t = 1\)에서 시작해 조건을 만족할 때까지 \(t \leftarrow \frac t2\). 내리막 방향이면 유한 번 안에 끝나고, 너무 작은 간격을 고르지도 않습니다(조건을 처음 만족하는 \(t\)이므로).</p>
+    <div class="tb-env ex"><b>예 8.2.1</b> \(f = x^2 + 10y^2\), \(\mathbf x = (1, 1)\), \(\mathbf p = -\nabla f = (-2, -20)\)이면 \(f = 11\), \(\nabla f^T\mathbf p = -404\). \(t = 1, 0.5, 0.25, 0.125\)에서 \(f\)는 3611, 810, 160.25, 23.06으로 모두 늘고, \(t = 0.0625\)에서 \(1.39 \le 11 - 10^{-4}\cdot0.0625\cdot404\)로 받아들여집니다.</div>
+
+    <h3><span class="no">8.2.3</span>알고리즘</h3>
+    <pre><code>def minimize(f, grad, hess, x, newton=True, tol=1e-6, maxit=10000):
+    for k in range(maxit):
+        g = grad(x)
+        if norm(g) &lt; tol: return x, k
+        p = -g
+        if newton:
+            q = solve(hess(x), -g)          # H p = -g
+            if dot(q, g) &lt; 0: p = q         # 내리막일 때만 뉴턴 방향
+        t, fx, slope = 1.0, f(x), dot(g, p)
+        while f(x + t*p) &gt; fx + 1e-4*t*slope:
+            t /= 2
+        x = x + t*p
+    return x, maxit</code></pre>
+    <p>뉴턴 방향은 \(H\)가 양정치일 때만 내리막이므로, 그렇지 않으면 기울기 방향으로 바꿉니다(실제로는 \(H + \mu I\)로 양정치가 되게 보정하기도 합니다). 최솟점 근처에서는 \(t = 1\)이 바로 받아들여져 뉴턴 방법의 이차 수렴이 그대로 나타납니다.</p>
+    <div class="tb-env ex"><b>예 8.2.2</b> 로젠브록 함수를 \((-1.2, 1)\)에서 기울기 크기 \(10^{-6}\)까지 풀면 백트래킹 경사하강법은 약 13756번, 백트래킹 뉴턴 방법은 21번입니다. 뉴턴 방법은 처음 몇 단계에서 \(t &lt; 1\)로 줄여 휘어진 골짜기를 따라가고, 마지막 대여섯 번은 \(t = 1\)로 이차 수렴합니다.</div>
+
+    <h3><span class="no">8.2.4</span>설계 시 고려할 점</h3>
+    <ul>
+      <li><b>멈춤 조건</b>: \(\|\nabla f\| &lt; \)허용 오차, 또는 \(\mathbf x\)와 \(f\)의 변화가 충분히 작을 때. 상대적 기준이 크기에 덜 민감하다.</li>
+      <li><b>비용</b>: 백트래킹의 함수 호출 횟수도 센다. 뉴턴 방법은 헤세 행렬 비용이 크면 준뉴턴법(BFGS)으로 \(H\)를 기울기 변화로부터 추정한다.</li>
+      <li><b>울프 조건</b>: 아르미호 조건에 "기울기가 충분히 줄었다"는 조건을 더하면 너무 짧은 걸음을 막아 준뉴턴법의 수렴이 보장된다.</li>
+    </ul>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 선탐색이 정확한 최솟점 \(\min_tf(\mathbf x + t\mathbf p)\)을 찾아야 한다고 여긴다. 충분한 감소면 되고, 정확한 탐색은 비용만 늘린다. (2) 뉴턴 방향은 늘 내리막이라고 여긴다. \(H\)가 양정치가 아니면 오르막이거나 안장점으로 갈 수 있다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>아르미호 조건 \(f(\mathbf x + t\mathbf p) \le f(\mathbf x) + ct\nabla f^T\mathbf p\), 백트래킹으로 \(t = 1, \frac12, \frac14, \dots\).</li>
+        <li>뉴턴 방향은 내리막일 때만, 아니면 기울기 방향(또는 \(H\) 보정).</li>
+        <li>최솟점 근처에서 \(t = 1\)이 받아들여져 뉴턴의 이차 수렴이 살아난다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = x^2\), \(x = 1\), \(p = -f'(1) = -2\)에서 백트래킹(\(c = 10^{-4}\))이 받아들이는 첫 \(t\)는?
+          <details><summary>답</summary><p>\(t = 1\): \(f(-1) = 1 > 1 - 4\times10^{-4}\)라 거절. \(t = \frac12\): \(f(0) = 0\)으로 받아들임.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f(x, y) = x^2 - y^2\)의 \((1, 1)\)에서 뉴턴 방향을 구하고 내리막인지 판정하여라.
+          <details><summary>답</summary><p>\(\nabla f = (2, -2)\), \(H = \operatorname{diag}(2, -2)\), \(\mathbf p = -H^{-1}\nabla f = (-1, -1)\). \(\nabla f^T\mathbf p = -2 + 2 = 0\)이라 내리막이 아니다(안장점 \((0, 0)\)으로 향함).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\nabla f\)가 립시츠 상수 \(L\)을 가지면, 경사하강 방향에서 \(t \le \frac{2(1 - c)}L\)인 모든 \(t\)가 아르미호 조건을 만족함을 보여라(따라서 백트래킹은 \(\frac{1 - c}L\) 이상의 간격을 고른다).
+          <details><summary>답</summary><p>\(f(\mathbf x - t\mathbf g) \le f(\mathbf x) - t\|\mathbf g\|^2 + \frac L2t^2\|\mathbf g\|^2\)이고, 이것이 \(f(\mathbf x) - ct\|\mathbf g\|^2\) 이하일 조건은 \(\frac L2t \le 1 - c\)이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
