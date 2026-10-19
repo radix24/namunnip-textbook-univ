@@ -6,63 +6,64 @@
 }
 -->
 <article class="card q-card" id="text-s6-cov" data-kind="본문" data-std="응통6-05-02">
-  <header class="card-head"><span class="no"></span><h2>공분산, 상관계수, 조건부 기대값</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>공분산, 상관계수, 합의 분산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>공분산과 상관계수의 성질, 합의 분산 공식을 쓴다.</li>
-        <li>조건부 기대값과 반복 기대값의 법칙, 분산 분해를 쓴다.</li>
+        <li>공분산과 상관계수를 정의하고 계산한다.</li>
+        <li>여러 확률변수의 합과 선형결합의 분산을 공분산으로 구한다.</li>
+        <li>\(|\rho| \le 1\)과 "상관 0이 독립이 아니다"를 증명하고 예를 든다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>결합·조건부 분포 (<a href="05-01.html">5.1절</a>).</li>
+        <li>결합분포 (<a href="05-01.html">5.1절</a>), 기대값과 분산 (<a href="03-01.html">3.1절</a>).</li>
       </ul>
     </div>
 
     <h3>함께 변하는 정도</h3>
-    <p>포트폴리오 두 주식의 수익률이 함께 오르내리면 위험이 커지고, 반대로 움직이면 위험이 줄어듭니다. 이 "함께 움직임"을 재는 것이 공분산입니다.</p>
+    <p>포트폴리오 두 주식의 수익률이 함께 오르내리면 위험이 커지고, 반대로 움직이면 위험이 줄어듭니다. 합의 퍼짐은 각자의 퍼짐뿐 아니라 "함께 움직이는 정도"에 달려 있으며, 이것을 재는 양이 공분산입니다.</p>
 
     <h3><span class="no">5.2.1</span>공분산과 상관계수</h3>
     <div class="tb-env def">
       <span class="lb">정의 5.2.1</span>
-      <p>\(\mathrm{Cov}(X, Y) = E[(X - \mu_X)(Y - \mu_Y)] = E(XY) - \mu_X\mu_Y\). \(\rho = \mathrm{Cov}(X,Y)/(\sigma_X\sigma_Y)\).</p>
+      <p>\(\mathrm{Cov}(X, Y) = E[(X - \mu_X)(Y - \mu_Y)] = E(XY) - \mu_X\mu_Y\). <b>상관계수</b> \(\rho = \mathrm{Cov}(X,Y)/(\sigma_X\sigma_Y)\).</p>
     </div>
+    <p>두 편차의 곱이 평균적으로 양수이면(함께 평균보다 크거나 함께 작음) 공분산이 양수입니다. 공분산은 단위에 따라 크기가 바뀌므로(cm를 mm로 바꾸면 10배), 표준편차로 나눈 상관계수로 강도를 비교합니다. 공분산은 쌍선형입니다: \(\mathrm{Cov}(aX + b, cY + d) = ac\,\mathrm{Cov}(X, Y)\), \(\mathrm{Cov}(X_1 + X_2, Y) = \mathrm{Cov}(X_1, Y) + \mathrm{Cov}(X_2, Y)\), \(\mathrm{Cov}(X, X) = \mathrm{Var}(X)\).</p>
+
+    <h3><span class="no">5.2.2</span>합의 분산</h3>
     <div class="tb-env thm">
       <span class="lb">정리 5.2.2</span>
-      <p>(가) \(\mathrm{Var}(aX + bY) = a^2\mathrm{Var}X + b^2\mathrm{Var}Y + 2ab\,\mathrm{Cov}(X,Y)\). (나) 독립이면 \(E(XY) = E(X)E(Y)\), 따라서 \(\mathrm{Cov} = 0\). (다) \(|\rho| \le 1\).</p>
+      <p>(가) \(\mathrm{Var}(aX + bY) = a^2\mathrm{Var}X + b^2\mathrm{Var}Y + 2ab\,\mathrm{Cov}(X,Y)\). (나) 일반적으로 \(\mathrm{Var}\left(\sum_i a_iX_i\right) = \sum_i a_i^2\mathrm{Var}X_i + 2\sum_{i&lt;j}a_ia_j\mathrm{Cov}(X_i, X_j)\). (다) 독립이면 \(E(XY) = E(X)E(Y)\), 따라서 \(\mathrm{Cov} = 0\)이고 분산이 그대로 더해집니다.</p>
     </div>
-    <p>(다)는 \(\mathrm{Var}(X/\sigma_X \pm Y/\sigma_Y) = 2(1 \pm \rho) \ge 0\)에서 나옵니다. (나)의 역은 거짓입니다. \(X \sim N(0,1)\), \(Y = X^2\)이면 \(\mathrm{Cov} = E(X^3) = 0\)이지만 \(Y\)는 \(X\)로 완전히 정해집니다.</p>
+    <p class="tb-proof">(나) \(\mathrm{Var}(\sum a_iX_i) = \mathrm{Cov}(\sum_i a_iX_i, \sum_j a_jX_j) = \sum_i\sum_j a_ia_j\mathrm{Cov}(X_i, X_j)\)을 대각(\(i = j\))과 나머지로 나눕니다. (다) 연속형이면 \(E(XY) = \iint xy f_X(x)f_Y(y)\,dx\,dy = E(X)E(Y)\). <span class="qed">∎</span></p>
+    <p>(나)는 행렬로 \(\mathrm{Var}(\mathbf a^\top\mathbf X) = \mathbf a^\top\Sigma\mathbf a\)(\(\Sigma\)는 공분산 행렬)이고, 분산은 음이 될 수 없으므로 공분산 행렬은 양의 준정치입니다(응통2 05단원).</p>
 
-    <h3><span class="no">5.2.2</span>조건부 기대값</h3>
-    <div class="tb-env def">
-      <span class="lb">정의 5.2.3</span>
-      <p>\(E(Y \mid X = x) = \int y f(y \mid x)\,dy\). 이것을 \(x\)의 함수로 보아 \(x\) 자리에 \(X\)를 넣은 확률변수를 \(E(Y \mid X)\)라 씁니다.</p>
-    </div>
+    <h3><span class="no">5.2.3</span>상관계수의 범위와 한계</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 5.2.4</span>
-      <p>(가) 반복 기대값: \(E[E(Y \mid X)] = E(Y)\). (나) 분산 분해: \(\mathrm{Var}(Y) = E[\mathrm{Var}(Y \mid X)] + \mathrm{Var}[E(Y \mid X)]\).</p>
+      <span class="lb">정리 5.2.3</span>
+      <p>\(|\rho| \le 1\)이고, \(|\rho| = 1\)일 필요충분조건은 \(Y = a + bX\) (\(b \ne 0\))가 확률 1로 성립하는 것입니다.</p>
     </div>
-    <p class="tb-proof">(가) \(E[E(Y\mid X)] = \int\left(\int y f(y\mid x)dy\right)f_X(x)dx = \iint y f(x,y)\,dy\,dx = E(Y)\). (나) \(\mathrm{Var}(Y \mid X) = E(Y^2 \mid X) - [E(Y\mid X)]^2\)의 기대값에 (가)를 쓰면 \(E[\mathrm{Var}(Y\mid X)] = E(Y^2) - E\{[E(Y\mid X)]^2\}\). 한편 \(\mathrm{Var}[E(Y \mid X)] = E\{[E(Y\mid X)]^2\} - [E(Y)]^2\). 둘을 더하면 \(\mathrm{Var}(Y)\). <span class="qed">∎</span></p>
-    <p>분산 분해는 "전체 변동 = 집단 안 변동의 평균 + 집단 평균들의 변동"으로, 분산분석(응통5 5.1절)과 같은 구조입니다.</p>
+    <p class="tb-proof">표준화 변수 \(U = (X - \mu_X)/\sigma_X\), \(V = (Y - \mu_Y)/\sigma_Y\)에 대해 \(0 \le \mathrm{Var}(U \pm V) = 2(1 \pm \rho)\)이므로 \(-1 \le \rho \le 1\). 등호면 \(U \mp V\)의 분산이 0, 곧 \(V = \pm U\)가 확률 1로 성립합니다. <span class="qed">∎</span></p>
+    <p>(다)의 역은 거짓입니다. \(X \sim N(0,1)\), \(Y = X^2\)이면 \(\mathrm{Cov} = E(X^3) = 0\)이지만 \(Y\)는 \(X\)로 완전히 정해집니다. 상관계수는 <b>직선</b> 관계의 강도만 재기 때문입니다. 예외로, 결합분포가 다변량 정규이면 상관 0과 독립이 같습니다(5.4절).</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 5.2.5</span>
-      <p>5.1절 예제(\(0 &lt; x &lt; y &lt; 1\)에서 균일)의 \(E(Y \mid X)\)와 \(E(Y)\)는?</p>
+      <span class="lb">예제 5.2.4</span>
+      <p>두 주식 수익률의 표준편차가 20%, 30%이고 상관계수가 \(\rho\)입니다. 반씩 투자한 포트폴리오의 표준편차를 \(\rho = 1, 0, -0.5\)에서 구하세요.</p>
     </div>
-    <p><i>풀이.</i> \(Y \mid X = x\)는 \(U(x, 1)\)이므로 \(E(Y\mid X) = (1 + X)/2\). \(E(X) = \int_0^1 2x(1-x)dx = 1/3\)이므로 \(E(Y) = (1 + 1/3)/2 = 2/3\). 직접 \(\int 2y\cdot y\,dy = 2/3\)과 같습니다.</p>
+    <p><i>풀이.</i> \(\mathrm{Var} = 0.25(0.04) + 0.25(0.09) + 2(0.25)\rho(0.2)(0.3) = 0.0325 + 0.03\rho\). \(\rho = 1\): \(\sqrt{0.0625} = 25\%\)(두 표준편차의 평균). \(\rho = 0\): \(\sqrt{0.0325} \approx 18.0\%\). \(\rho = -0.5\): \(\sqrt{0.0175} \approx 13.2\%\). 상관이 낮을수록 분산 투자의 효과가 큽니다.</p>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>합의 분산에는 \(2\mathrm{Cov}\) 항이 붙습니다. 독립이면 공분산 0, 역은 거짓.</li>
-        <li>\(E[E(Y\mid X)] = E(Y)\).</li>
-        <li>\(\mathrm{Var}Y = E[\mathrm{Var}(Y\mid X)] + \mathrm{Var}[E(Y\mid X)]\).</li>
+        <li>\(\mathrm{Cov}(X, Y) = E(XY) - \mu_X\mu_Y\), 쌍선형, \(\rho\)는 단위 없는 강도.</li>
+        <li>\(\mathrm{Var}(\sum a_iX_i) = \sum a_i^2\sigma_i^2 + 2\sum_{i&lt;j}a_ia_j\sigma_{ij}\).</li>
+        <li>\(|\rho| \le 1\), 독립이면 \(\rho = 0\)이지만 역은 성립하지 않습니다.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <h3><span class="no">5.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\mathrm{Var}X = 4\), \(\mathrm{Var}Y = 9\), \(\rho = 0.5\)이면 \(\mathrm{Var}(X - Y)\)는?
@@ -71,8 +72,8 @@
       </ol>
       <p class="tb-lv">응용</p>
       <ol>
-        <li>하루 손님 수 \(N \sim\) 포아송(10), 손님마다 독립으로 평균 2만 원, 분산 1을 씁니다. 하루 매출의 평균과 분산은?
-          <details><summary>답</summary><p>\(E(S\mid N) = 2N\), \(\mathrm{Var}(S\mid N) = N\). 평균 20. 분산 \(E(N) + \mathrm{Var}(2N) = 10 + 40 = 50\).</p></details>
+        <li>\(X_1, \ldots, X_n\)의 분산이 모두 \(\sigma^2\)이고 어떤 두 개의 상관계수도 \(\rho\)일 때 \(\mathrm{Var}(\bar X)\)는? \(n \to \infty\)이면?
+          <details><summary>답</summary><p>\(\frac{1}{n^2}[n\sigma^2 + n(n-1)\rho\sigma^2] = \frac{\sigma^2}{n}[1 + (n-1)\rho]\). \(n \to \infty\)이면 \(\rho\sigma^2\)로 가며 0이 되지 않습니다. 같은 학교 학생처럼 서로 닮은 표본은 아무리 늘려도 정확도에 한계가 있습니다(응통8 05단원의 설계 효과).</p></details>
         </li>
       </ol>
     </div>

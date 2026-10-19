@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-beta" data-kind="본문" data-std="응통6-04-04">
+  <header class="card-head"><span class="no"></span><h2>베타분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>베타 함수로 베타분포의 밀도를 정의하고 평균과 분산을 구한다.</li>
+        <li>모수에 따라 달라지는 모양(균일, 종, U자, 치우침)을 읽는다.</li>
+        <li>감마분포와의 관계, 순서통계량·비율 모형에서의 쓰임을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>감마분포 (<a href="04-03.html">4.3절</a>), 베타 함수(응통1 03단원).</li>
+      </ul>
+    </div>
+
+    <h3>확률 자체가 불확실할 때</h3>
+    <p>새 약의 치료 성공률, 광고의 클릭률, 타자의 타율처럼 0과 1 사이의 비율이 관심 대상인데 그 값을 정확히 모를 때가 많습니다. 값이 0과 1 사이에만 있고, 0 근처, 1 근처, 가운데 어디에 몰릴지를 두 개의 모수로 자유롭게 정할 수 있는 분포가 베타분포입니다. 베이즈 통계에서 비율에 대한 믿음을 나타내는 데 가장 많이 씁니다(응통21 01단원).</p>
+
+    <h3><span class="no">4.4.1</span>정의와 적률</h3>
+    <p>베타 함수 \(B(a, b) = \int_0^1 x^{a-1}(1-x)^{b-1}dx\) (\(a, b &gt; 0\))는 감마 함수로 \(B(a, b) = \dfrac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\)입니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 4.4.1</span>
+      <p><b>베타분포</b> \(\mathrm{Beta}(a, b)\): \(f(x) = \dfrac{1}{B(a, b)}x^{a-1}(1-x)^{b-1}\) (\(0 &lt; x &lt; 1\)).</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.4.2</span>
+      <p>\(X \sim \mathrm{Beta}(a, b)\)이면 \(E(X^k) = \dfrac{B(a+k, b)}{B(a, b)}\), 특히 \(E(X) = \dfrac{a}{a+b}\), \(\mathrm{Var}(X) = \dfrac{ab}{(a+b)^2(a+b+1)}\).</p>
+    </div>
+    <p class="tb-proof">\(E(X^k) = \frac{1}{B(a,b)}\int_0^1 x^{a+k-1}(1-x)^{b-1}dx = B(a+k, b)/B(a, b)\). 감마 함수로 쓰면 \(\frac{\Gamma(a+k)\Gamma(a+b)}{\Gamma(a)\Gamma(a+b+k)}\)이고, \(k = 1\)이면 \(\frac{a}{a+b}\), \(k = 2\)이면 \(\frac{a(a+1)}{(a+b)(a+b+1)}\). 분산은 둘째에서 첫째의 제곱을 빼 정리합니다. <span class="qed">∎</span></p>
+    <p>베타분포는 적분 계산이 대부분 베타 함수로 끝나므로, 적률생성함수보다 위처럼 적률을 직접 구하는 편이 쉽습니다.</p>
+
+    <h3><span class="no">4.4.2</span>모양 읽기</h3>
+    <ul>
+      <li>\(a = b = 1\): 균일분포 \(U(0, 1)\).</li>
+      <li>\(a = b &gt; 1\): 0.5를 중심으로 대칭인 종 모양. \(a = b\)가 클수록 좁아집니다.</li>
+      <li>\(a, b &lt; 1\): 양 끝이 솟은 U자.</li>
+      <li>\(a &gt; b\): 1 쪽으로 몰림(왼쪽으로 긴 꼬리), \(a &lt; b\): 0 쪽으로 몰림.</li>
+      <li>\(a, b &gt; 1\)이면 최빈값은 \(\frac{a-1}{a+b-2}\).</li>
+    </ul>
+    <p>\(a + b\)는 분포가 얼마나 좁은지를 정하는 "자료 수"처럼 동작합니다. 평균이 0.3인 베타분포라도 \(\mathrm{Beta}(3, 7)\)은 표준편차 약 0.14, \(\mathrm{Beta}(30, 70)\)은 약 0.046입니다. 그래서 베이즈 분석에서 \(\mathrm{Beta}(a, b)\) 사전분포는 "성공 \(a\)번, 실패 \(b\)번을 미리 본 것과 같은 믿음"으로 해석합니다.</p>
+
+    <h3><span class="no">4.4.3</span>다른 분포와의 관계</h3>
+    <ul>
+      <li><b>감마의 비</b>: \(X \sim \mathrm{Gamma}(a, \beta)\), \(Y \sim \mathrm{Gamma}(b, \beta)\)가 독립이면 \(X/(X+Y) \sim \mathrm{Beta}(a, b)\)이고 \(X + Y\)와 독립입니다(2.3절 예제의 일반화).</li>
+      <li><b>균일 순서통계량</b>: \(U(0, 1)\) \(n\)개의 \(k\)번째로 작은 값은 \(\mathrm{Beta}(k, n-k+1)\)입니다(6.4절).</li>
+      <li><b>이항과의 켤레</b>: 비율 \(p\)의 사전분포가 \(\mathrm{Beta}(a, b)\)이고 \(n\)번 중 \(x\)번 성공하면 사후분포는 \(\mathrm{Beta}(a + x, b + n - x)\)입니다(응통21 01단원의 실습 카드).</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.3</span>
+      <p>\(\mathrm{Beta}(2, 2)\)와 \(\mathrm{Beta}(2, 5)\)의 평균, 분산, 최빈값을 구하고 모양을 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\mathrm{Beta}(2, 2)\): 평균 \(1/2\), 분산 \(4/(16 \times 5) = 0.05\), 최빈값 \(1/2\). 밀도 \(6x(1-x)\)로 0.5를 중심으로 대칭인 둥근 봉우리입니다. \(\mathrm{Beta}(2, 5)\): 평균 \(2/7 \approx 0.286\), 분산 \(10/(49 \times 8) \approx 0.0255\), 최빈값 \(1/5 = 0.2\). 0 쪽으로 몰리고 오른쪽으로 꼬리가 깁니다(최빈값 &lt; 평균).</p>
+    <pre><code>curve(dbeta(x, 2, 2), 0, 1); curve(dbeta(x, 2, 5), add = TRUE, lty = 2)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Beta}(a, b)\): (0, 1)의 분포, 평균 \(a/(a+b)\), 분산 \(ab/[(a+b)^2(a+b+1)]\).</li>
+        <li>\(a = b = 1\)은 균일, \(a + b\)가 클수록 좁아집니다.</li>
+        <li>감마의 비, 균일 순서통계량, 이항 비율의 사후분포가 모두 베타분포입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X \sim \mathrm{Beta}(3, 1)\)의 밀도와 \(P(X &gt; 0.5)\)는?
+          <details><summary>답</summary><p>\(B(3, 1) = \Gamma(3)\Gamma(1)/\Gamma(4) = 2/6 = 1/3\), \(f(x) = 3x^2\). \(P(X &gt; 0.5) = 1 - 0.5^3 = 0.875\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>평균이 0.2이고 표준편차가 0.1인 베타분포의 모수를 구하세요.
+          <details><summary>답</summary><p>평균 \(m = a/(a+b) = 0.2\), 분산 \(m(1-m)/(a+b+1) = 0.01\)에서 \(a + b + 1 = 0.16/0.01 = 16\), \(a + b = 15\). \(a = 3\), \(b = 12\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

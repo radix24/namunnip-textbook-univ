@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-clt" data-kind="본문" data-std="응통6-07-03">
+  <header class="card-head"><span class="no"></span><h2>중심극한정리와 슬러츠키 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>적률생성함수로 중심극한정리를 증명하는 흐름을 안다.</li>
+        <li>이항·포아송의 정규 근사와 연속성 보정을 쓴다.</li>
+        <li>슬러츠키 정리로 \(\sigma\)를 \(S\)로 바꾼 통계량의 극한분포를 구한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>분포수렴 (<a href="07-01.html">7.1절</a>), 대수의 법칙 (<a href="07-02.html">7.2절</a>), 적률생성함수 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>왜 어디서나 종 모양인가</h3>
+    <p>키, 측정 오차, 시험 점수처럼 작은 요인이 많이 더해져 만들어진 양은 원래 요인의 분포와 관계없이 종 모양을 띱니다. 대수의 법칙이 "표본평균은 \(\mu\)로 간다"를 말한다면, 중심극한정리는 "그 오차를 \(\sqrt n\)배로 확대하면 정규분포가 보인다"를 말합니다. 응통5 3.1절의 실습 카드가 이 정리를 모의실험으로 보여 줍니다.</p>
+
+    <h3><span class="no">7.3.1</span>정리와 증명 흐름</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.3.1 (중심극한정리)</span>
+      <p>\(X_1, X_2, \ldots\)가 독립이고 같은 분포, 평균 \(\mu\), 분산 \(0 &lt; \sigma^2 &lt; \infty\)이면 \(Z_n = \dfrac{\sqrt n(\bar X_n - \mu)}{\sigma} \xrightarrow{D} N(0, 1)\).</p>
+    </div>
+    <p class="tb-proof">적률생성함수가 0 근처에서 있다고 가정합니다. \(Y_i = (X_i - \mu)/\sigma\)는 평균 0, 분산 1이고 \(Z_n = \sum Y_i/\sqrt n\). 독립이므로 \(M_{Z_n}(t) = [M_Y(t/\sqrt n)]^n\). 테일러 전개 \(M_Y(s) = 1 + 0\cdot s + \frac{s^2}{2} + o(s^2)\)에 \(s = t/\sqrt n\)을 넣으면 \(M_{Z_n}(t) = \left[1 + \frac{t^2}{2n} + o(1/n)\right]^n \to e^{t^2/2}\). 이것은 \(N(0,1)\)의 적률생성함수이고, 적률생성함수가 0 근처에서 수렴하면 분포수렴한다는 연속성 정리(증명 생략)에서 결론이 나옵니다. <span class="qed">∎</span></p>
+    <p>증명에서 쓴 것은 평균과 분산뿐입니다. 셋째 이상의 적률(치우침, 꼬리)은 \(o(1/n)\)에 묻혀 사라지므로 극한은 원래 분포와 무관하게 정규입니다. 다만 수렴 속도는 치우침에 달려 있어, 치우친 분포일수록 큰 \(n\)이 필요합니다(오차가 대략 \(\text{왜도}/\sqrt n\)에 비례). 적률생성함수가 없는 분포에서는 특성함수 \(E(e^{itX})\)로 같은 증명을 합니다.</p>
+
+    <h3><span class="no">7.3.2</span>이산 분포의 정규 근사</h3>
+    <p>\(X \sim B(n, p)\)는 베르누이 \(n\)개의 합이므로 \(n\)이 크면 \(N(np, np(1-p))\)로 근사합니다. 포아송\((\lambda)\)도 포아송\((1)\) \(\lambda\)개의 합으로 볼 수 있어 \(\lambda\)가 크면 \(N(\lambda, \lambda)\)입니다. 정수값 분포를 연속분포로 근사할 때는 각 정수 \(k\)를 구간 \([k - 0.5, k + 0.5]\)로 보는 <b>연속성 보정</b>을 하면 정확도가 크게 올라갑니다: \(P(X \ge k) \approx P(Z \ge (k - 0.5 - np)/\sqrt{np(1-p)})\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.2</span>
+      <p>이항 \(B(100, 0.5)\)에서 \(P(X \ge 60)\)을 정규 근사로, 보정 없이와 보정해서 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> 평균 50, 표준편차 5. 보정 없이 \(P(Z \ge 2) \approx 0.0228\). 보정하면 \(P(X \ge 59.5) = P(Z \ge 1.9) \approx 0.0287\). 정확한 값은 0.0284로, 보정한 근사가 훨씬 가깝습니다.</p>
+
+    <h3><span class="no">7.3.3</span>슬러츠키 정리</h3>
+    <p>실제로는 \(\sigma\)를 모르므로 \(\sqrt n(\bar X - \mu)/S\)의 분포가 필요합니다. 정규 모집단이 아니면 t 분포를 쓸 근거가 없지만, 큰 표본에서는 다음 정리가 답을 줍니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.3.3 (슬러츠키 정리)</span>
+      <p>\(X_n \xrightarrow{D} X\)이고 \(Y_n \xrightarrow{P} c\) (상수)이면 \(X_n + Y_n \xrightarrow{D} X + c\), \(X_nY_n \xrightarrow{D} cX\), \(c \ne 0\)이면 \(X_n/Y_n \xrightarrow{D} X/c\).</p>
+    </div>
+    <p>대수의 법칙과 연속함수 성질로 \(S_n \xrightarrow{P} \sigma\)이므로 \(\frac{\sqrt n(\bar X - \mu)}{S_n} = \frac{\sqrt n(\bar X - \mu)}{\sigma}\cdot\frac{\sigma}{S_n} \xrightarrow{D} N(0, 1) \cdot 1\). 모집단 분포와 관계없이 큰 표본에서 \(\bar x \pm 1.96\,s/\sqrt n\)이 근사 95% 신뢰구간이 되는 근거입니다. 같은 논리로 비율의 신뢰구간에서 \(p\)를 \(\hat p\)로 바꾸는 것도 정당화됩니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\sqrt n(\bar X - \mu)/\sigma \to N(0, 1)\). 평균과 분산만 있으면 됩니다.</li>
+        <li>이항·포아송은 연속성 보정을 해서 정규 근사합니다.</li>
+        <li>슬러츠키: 확률수렴하는 인자는 극한값으로 바꿔 넣어도 됩니다. 그래서 \(\sigma\) 대신 \(S\)를 써도 극한은 정규입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>주사위 100번 눈의 합이 380을 넘을 확률을 근사하세요.
+          <details><summary>답</summary><p>평균 350, 분산 \(100 \times 35/12 \approx 291.7\), 표준편차 17.08. 연속성 보정으로 \(z = 30.5/17.08 \approx 1.79\), 약 0.037.</p></details>
+        </li>
+        <li>콜센터 하루 전화 수가 포아송(400)이면 하루 430통 이상 올 확률은?
+          <details><summary>답</summary><p>\(N(400, 400)\)으로 근사, 보정해서 \(z = (429.5 - 400)/20 = 1.475\), 약 0.070.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(X_i\)가 독립인 \(\mathrm{Exp}(1)\)일 때 \(\sqrt n(\bar X_n - 1)/\bar X_n\)의 극한분포는?
+          <details><summary>답</summary><p>중심극한정리로 \(\sqrt n(\bar X_n - 1) \to N(0, 1)\), 대수의 법칙으로 \(\bar X_n \to 1\). 슬러츠키로 극한은 \(N(0, 1)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-jacobian" data-kind="본문" data-std="응통6-02-03">
+  <header class="card-head"><span class="no"></span><h2>단조 변환 공식과 야코비안</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>단조 변환의 밀도 공식을 유도하고 쓴다.</li>
+        <li>단조가 아닌 변환은 구간을 나누어 더한다.</li>
+        <li>두 변수의 변환에서 야코비안으로 결합 밀도를 구한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>누적분포함수 방법 (<a href="02-02.html">2.2절</a>), 응통1의 야코비안(06단원).</li>
+      </ul>
+    </div>
+
+    <h3>매번 분포함수를 거쳐야 하나</h3>
+    <p>2.2절의 누적분포함수 방법은 어떤 변환에도 쓸 수 있지만, 매번 확률을 \(X\)에 대한 사건으로 바꾸고 미분해야 합니다. 변환이 한 방향으로만 움직이면(단조) 이 과정을 한 줄 공식으로 줄일 수 있고, 같은 생각을 두 변수로 넓히면 야코비안이 나옵니다.</p>
+
+    <h3><span class="no">2.3.1</span>단조 변환 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.3.1</span>
+      <p>\(X\)의 밀도가 \(f_X\)이고 \(g\)가 \(X\)가 가질 수 있는 값의 구간에서 미분가능하고 엄격히 단조이면, \(Y = g(X)\)의 밀도는</p>
+      \[f_Y(y) = f_X\big(g^{-1}(y)\big)\left|\frac{d}{dy}g^{-1}(y)\right|.\]
+    </div>
+    <p class="tb-proof">\(g\)가 증가하면 \(F_Y(y) = P(X \le g^{-1}(y)) = F_X(g^{-1}(y))\)이고, 연쇄법칙으로 미분하면 \(f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)\)입니다. \(g\)가 감소하면 \(F_Y(y) = P(X \ge g^{-1}(y)) = 1 - F_X(g^{-1}(y))\)이고 미분하면 부호가 바뀌는데, 이때 \(\frac{d}{dy}g^{-1} &lt; 0\)이라 절댓값으로 합쳐 쓸 수 있습니다. <span class="qed">∎</span></p>
+    <p>절댓값 인자는 변환이 구간을 늘이거나 줄이는 비율입니다. \(x\) 근처의 짧은 구간 \(dx\)에 담긴 확률 \(f_X(x)\,dx\)는 변환 뒤 \(dy = |g'(x)|\,dx\) 길이의 구간에 그대로 옮겨지므로, 구간이 늘어난 만큼 밀도가 낮아집니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.2</span>
+      <p>(가) \(X \sim N(\mu, \sigma^2)\)이면 \(Y = aX + b\) (\(a \ne 0\))의 분포는? (나) \(X \sim N(\mu, \sigma^2)\)이면 \(Y = e^X\)의 밀도는?</p>
+    </div>
+    <p><i>풀이.</i> (가) \(g^{-1}(y) = (y - b)/a\), \(|dg^{-1}/dy| = 1/|a|\). \(f_Y(y) = \frac{1}{|a|\sigma\sqrt{2\pi}}\exp\left(-\frac{(y - b - a\mu)^2}{2a^2\sigma^2}\right)\), 곧 \(N(a\mu + b, a^2\sigma^2)\)입니다. (나) \(g^{-1}(y) = \ln y\), \(|dg^{-1}/dy| = 1/y\). \(f_Y(y) = \frac{1}{y\sigma\sqrt{2\pi}}\exp\left(-\frac{(\ln y - \mu)^2}{2\sigma^2}\right)\) (\(y &gt; 0\)). 이것이 <b>로그정규분포</b>로, 소득과 주가처럼 곱셈으로 쌓이는 양의 모형입니다.</p>
+
+    <h3><span class="no">2.3.2</span>단조가 아닌 변환</h3>
+    <p>\(g\)가 단조가 아니면 정의역을 \(g\)가 단조인 조각 \(I_1, \ldots, I_m\)으로 나누고, 각 조각에서 공식을 쓴 뒤 더합니다: \(f_Y(y) = \sum_j f_X(g_j^{-1}(y))\left|\frac{d}{dy}g_j^{-1}(y)\right|\). 2.2절 예제의 \(Y = X^2\)는 \(x &lt; 0\)과 \(x &gt; 0\) 두 가지에서 \(\pm\sqrt y\)를 더한 것입니다.</p>
+
+    <h3><span class="no">2.3.3</span>두 변수의 변환과 야코비안</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.3.3</span>
+      <p>\((X_1, X_2)\)의 결합 밀도가 \(f\)이고 \((Y_1, Y_2) = g(X_1, X_2)\)가 일대일이며 역변환 \(x_1 = h_1(y_1, y_2)\), \(x_2 = h_2(y_1, y_2)\)가 미분가능하면</p>
+      \[f_{Y}(y_1, y_2) = f\big(h_1(y), h_2(y)\big)\,|J|, \qquad J = \det\begin{pmatrix}\partial x_1/\partial y_1 &amp; \partial x_1/\partial y_2\\ \partial x_2/\partial y_1 &amp; \partial x_2/\partial y_2\end{pmatrix}.\]
+    </div>
+    <p>1변수의 \(|dx/dy|\)가 2변수에서는 작은 사각형의 넓이가 몇 배로 바뀌는지를 재는 \(|J|\)가 됩니다(응통1 06단원의 실습 카드). 한 변수 \(Y_1 = X_1 + X_2\)의 분포만 원할 때도 짝 변수 \(Y_2 = X_2\)를 붙여 결합 밀도를 구한 뒤 \(y_2\)로 적분해 없앱니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.4</span>
+      <p>\(X_1, X_2\)가 독립이고 둘 다 \(\mathrm{Exp}(1)\)일 때 \(Y_1 = X_1 + X_2\), \(Y_2 = X_1/(X_1 + X_2)\)의 결합 밀도를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> 역변환 \(x_1 = y_1y_2\), \(x_2 = y_1(1 - y_2)\). \(J = \det\begin{pmatrix}y_2 &amp; y_1\\ 1 - y_2 &amp; -y_1\end{pmatrix} = -y_1y_2 - y_1(1 - y_2) = -y_1\), \(|J| = y_1\). \(f(x_1, x_2) = e^{-(x_1+x_2)} = e^{-y_1}\)이므로 \(f_Y(y_1, y_2) = y_1e^{-y_1}\) (\(y_1 &gt; 0\), \(0 &lt; y_2 &lt; 1\)). 이 밀도가 \(y_1\)만의 함수 \(y_1e^{-y_1}\)과 \(y_2\)만의 함수 1의 곱이므로 \(Y_1 \sim \mathrm{Gamma}(2, 1)\), \(Y_2 \sim U(0, 1)\)이고 서로 독립입니다(4.3절).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>단조 변환: \(f_Y(y) = f_X(g^{-1}(y))\,|dg^{-1}/dy|\).</li>
+        <li>단조가 아니면 단조 조각마다 더합니다.</li>
+        <li>두 변수: 결합 밀도 × \(|J|\), 필요 없는 짝 변수는 적분해 없앱니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X \sim U(0, 1)\)일 때 \(Y = \sqrt X\)와 \(Y = X^2\)의 밀도는?
+          <details><summary>답</summary><p>\(\sqrt X\): \(g^{-1}(y) = y^2\), \(f_Y(y) = 2y\) (\(0 &lt; y &lt; 1\)). \(X^2\): \(g^{-1}(y) = \sqrt y\), \(f_Y(y) = 1/(2\sqrt y)\) (\(0 &lt; y &lt; 1\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(Z_1, Z_2\)가 독립인 표준정규일 때 극좌표 \(R = \sqrt{Z_1^2 + Z_2^2}\), \(\Theta\)로 변환하면 \(R\)과 \(\Theta\)가 독립이고 \(\Theta \sim U(0, 2\pi)\)임을 보이세요(\(x_1 = r\cos\theta\), \(x_2 = r\sin\theta\), \(|J| = r\)).
+          <details><summary>답</summary><p>\(f(r, \theta) = \frac{1}{2\pi}e^{-r^2/2} \cdot r = \frac1{2\pi} \cdot re^{-r^2/2}\). \(\theta\)만의 함수 \(1/(2\pi)\)와 \(r\)만의 함수 \(re^{-r^2/2}\)의 곱이므로 독립이고 \(\Theta \sim U(0, 2\pi)\). 이를 거꾸로 쓴 것이 정규 난수를 만드는 박스-뮬러 방법입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
