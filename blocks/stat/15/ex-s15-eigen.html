@@ -1,0 +1,36 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-02-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s15-eigen" data-kind="예제" data-std="응통15-02-03">
+  <header class="card-head"><span class="no"></span><h2>공분산 행렬을 만들면 잃는 자릿수</h2><span class="kind">예제 · 특이값 분해와 조건수</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>자료 행렬의 특이값 비(조건수)가 \(\kappa\)이면 \(X^\top X\)의 조건수는 \(\kappa^2\)입니다. 배정밀도는 유효 숫자 약 16자리이므로, 조건수가 \(10^k\)이면 계산 결과에서 대략 \(k\)자리를 잃습니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 거의 같은 두 변수(예: 같은 양을 단위만 조금 다르게 잰 것)가 섞인 자료 행렬의 가장 큰 특이값이 \(10^4\), 가장 작은 특이값이 \(10^{-3}\)입니다. (1) 특이값 분해로 구한 가장 작은 주성분 분산의 상대 정밀도 (2) \(X^\top X\)를 만들어 고유값 분해했을 때의 정밀도를 어림하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(X\)의 조건수 \(\kappa = 10^4/10^{-3} = 10^7\). 특이값 분해의 오차는 대략 \(\kappa \times 10^{-16} = 10^{-9}\) 수준이라 유효 숫자 약 9자리가 남습니다.</div><span class="q-why">안정적 알고리즘의 오차 크기.</span></li>
+        <li><div>\(X^\top X\)의 고유값은 \(d^2\): \(10^8\)과 \(10^{-6}\), 조건수 \(10^{14}\). 남는 유효 숫자 약 2자리.</div><span class="q-why">조건수 제곱.</span></li>
+        <li class="q-end"><div>가장 작은 고유값 \(10^{-6}\)은 큰 고유값 \(10^8\)의 계산 오차(\(10^8 \times 10^{-16} = 10^{-8}\))보다 겨우 100배 큰 수준이라, 공분산 행렬 경로에서는 거의 믿을 수 없습니다.</div><span class="q-why">\(X^\top X\)를 만드는 순간 정보 손실.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>R에서 <code>x1 &lt;- rnorm(100); X &lt;- cbind(x1, x1 + 1e-7 * rnorm(100))</code>로 만들면 <code>svd(scale(X, scale = FALSE))$d</code>의 작은 값은 안정적으로 나오지만, <code>eigen(crossprod(...))$values</code>의 작은 값은 실행마다 크게 달라지거나 음수가 나오기도 합니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>가장 작은 주성분은 "거의 일차종속인 방향"을 알려 주는 공선성 진단(응통10 4.4절)에 쓰이므로, 바로 그 값이 정밀해야 합니다. 행렬 곱을 미리 만들지 않는다는 원칙은 최소제곱(2.1절)과 주성분 계산에 똑같이 적용됩니다.</p>
+    </section>
+  </div>
+</article>

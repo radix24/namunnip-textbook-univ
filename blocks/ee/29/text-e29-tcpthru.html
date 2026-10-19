@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-tcpthru" data-kind="본문" data-std="전전29-03-04">
+  <header class="card-head"><span class="no"></span><h2>TCP 처리량과 손실률</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>AIMD 동작에서 평균 처리량이 \(1.22\,MSS/(RTT\sqrt p)\)임을 안다.</li>
+        <li>손실률과 RTT가 처리량에 주는 영향을 계산한다.</li>
+        <li>고속 장거리 전송의 어려움을 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>TCP 혼잡 제어 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.4.1</span>톱니 평균</h3>
+    <p>혼잡 창이 손실 때마다 반으로 줄고 RTT마다 1 MSS씩 느는 AIMD에서, 평균 처리량은 근사적으로 \(1.22\,MSS/(RTT\sqrt p)\)(p: 손실률)입니다. 같은 손실률이면 RTT가 긴 흐름이 불리합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>MSS 1460바이트, RTT 100 ms, 손실률 10⁻⁴의 처리량은? 10 Gb/s를 얻으려면 손실률이 얼마여야 하나?</p>
+    </div>
+    <p><i>풀이.</i> 1.22 × 11680/(0.1 × 0.01) = 14.2 Mb/s. 10 Gb/s: √p = 1.22 × 11680/(0.1 × 10¹⁰) = 1.42×10⁻⁵ → p ≈ 2×10⁻¹⁰. 현실적이지 않아 BBR 같은 다른 혼잡 제어나 병렬 흐름을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "대역폭이 크면 TCP가 알아서 다 쓴다": 손실과 RTT가 상한을 정합니다. (2) "RTT는 처리량과 무관": 반비례합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>처리량 ≈ 1.22 MSS/(RTT√p).</li>
+        <li>예: 1460 B, 100 ms, 10⁻⁴ → 14.2 Mb/s.</li>
+        <li>RTT 길면 불리.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>손실률을 1/4로 줄이면 처리량은?
+          <details><summary>답</summary><p>2배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>RTT 50 ms(나머지 예제와 같음)의 처리량은?
+          <details><summary>답</summary><p>약 28.5 Mb/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>같은 병목을 RTT 10 ms와 100 ms 흐름이 나누면?
+          <details><summary>답</summary><p>RTT 짧은 흐름이 약 10배 더 받습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-frag" data-kind="본문" data-std="전전29-04-03">
+  <header class="card-head"><span class="no"></span><h2>IP 단편화와 MTU</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>링크 MTU보다 큰 데이터그램이 단편으로 나뉘는 방식을 안다.</li>
+        <li>단편의 길이, 오프셋(8바이트 단위), 플래그를 계산한다.</li>
+        <li>경로 MTU 탐색과 IPv6의 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>IP 주소 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>잘라 보내고 끝에서 붙이기</h3>
+    <p>IPv4 라우터는 MTU보다 큰 데이터그램을 데이터 부분이 8바이트 배수가 되게 나누고, 오프셋(8바이트 단위)과 “더 있음” 플래그를 붙입니다. 재조립은 목적지에서만 합니다. 단편 하나만 잃어도 전체를 다시 보내야 해, 보통 경로 MTU 탐색으로 단편화를 피하고 IPv6는 라우터 단편화를 없앴습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>총 4000바이트(헤더 20) 데이터그램을 MTU 1500 링크로 보낼 때 단편들의 데이터 길이와 오프셋은?</p>
+    </div>
+    <p><i>풀이.</i> 데이터 3980바이트 → 1480, 1480, 1020바이트. 오프셋 0, 185, 370(1480/8 = 185), 플래그 1, 1, 0. 각 단편은 헤더 20바이트를 더해 1500, 1500, 1040바이트입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "오프셋은 바이트 단위": 8바이트 단위입니다. (2) "중간 라우터가 재조립한다": 목적지에서만 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>단편 데이터 = 8의 배수(마지막 제외).</li>
+        <li>오프셋 = 바이트/8, 마지막만 플래그 0.</li>
+        <li>예: 3980 → 1480, 1480, 1020; 0, 185, 370.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>데이터 2960바이트, MTU 1500의 단편 수는?
+          <details><summary>답</summary><p>2개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>MTU 576(헤더 20)에서 단편당 최대 데이터는?
+          <details><summary>답</summary><p>552바이트.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>단편화가 성능에 나쁜 이유는?
+          <details><summary>답</summary><p>단편 하나만 잃어도 전체가 버려집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

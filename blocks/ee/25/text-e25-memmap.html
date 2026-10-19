@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-memmap" data-kind="본문" data-std="전전25-01-03">
+  <header class="card-head"><span class="no"></span><h2>메모리 맵과 엔디언</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>32비트 주소 공간이 코드·SRAM·주변 장치 영역으로 나뉘는 메모리 맵을 읽는다.</li>
+        <li>주변 장치 레지스터를 주소로 읽고 쓰는 메모리 맵 입출력을 안다.</li>
+        <li>리틀·빅 엔디언의 바이트 배치를 구별한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>프로그래밍 모델 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>모든 것은 주소</h3>
+    <p>Cortex-M 계열은 4 GiB 주소 공간을 정해진 구역으로 나눕니다: 0x0000_0000부터 코드(플래시), 0x2000_0000부터 SRAM, 0x4000_0000부터 주변 장치. 주변 장치 레지스터도 주소이므로 포인터로 읽고 쓰며(C에서는 <code>volatile</code>), 여러 바이트 값은 리틀 엔디언이면 낮은 바이트가 낮은 주소에 놓입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p>SRAM 64 KB가 0x2000_0000에서 시작할 때 마지막 주소는? 0x1234_5678을 0x2000_0000에 리틀 엔디언으로 쓰면 각 주소의 바이트는?</p>
+    </div>
+    <p><i>풀이.</i> 마지막 주소 0x2000_FFFF(64 K = 0x1_0000). 바이트는 0x2000_0000: 78, 0x…01: 56, 0x…02: 34, 0x…03: 12. 빅 엔디언이면 12 34 56 78 순서이며, 네트워크 바이트 순서가 빅 엔디언이라 통신 코드에서 변환합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "레지스터 접근에 volatile은 필요 없다": 빼면 컴파일러가 읽기·쓰기를 없애거나 합칠 수 있습니다. (2) "엔디언은 비트 순서": 바이트 순서입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>코드 0x0, SRAM 0x2000_0000, 주변 장치 0x4000_0000(Cortex-M).</li>
+        <li>메모리 맵 입출력 + volatile.</li>
+        <li>리틀 엔디언: 낮은 바이트가 낮은 주소.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>32비트 주소 공간의 크기는?
+          <details><summary>답</summary><p>4 GiB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>0xAABBCCDD를 리틀 엔디언으로 쓸 때 첫 바이트는?
+          <details><summary>답</summary><p>0xDD.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>주변 장치 영역을 캐시하면 안 되는 이유는?
+          <details><summary>답</summary><p>장치가 값을 바꿔도 캐시의 옛 값을 읽게 되기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

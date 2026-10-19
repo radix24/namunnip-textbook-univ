@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-cond" data-kind="본문" data-std="기계16-03-02">
+  <header class="card-head"><span class="no"></span><h2>조건수: 해는 입력 오차에 얼마나 민감한가</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>행렬 노름과 조건수를 계산한다.</li>
+        <li>조건수로 입력 오차가 해에서 얼마나 커지는지 어림한다.</li>
+        <li>나쁜 조건의 원인과 대처를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>가우스 소거와 역행렬 (<a href="03-01.html">3.1절</a>), 부동소수점 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>민감한 연립방정식</h3>
+    <p>두 직선이 거의 평행하면 교점은 직선이 조금만 움직여도 멀리 옮겨 갑니다. 행렬이 거의 특이하면 오른쪽 항(측정값)이나 계수의 작은 오차가 해를 크게 바꿉니다. 이것은 풀이 방법이 아니라 문제 자체의 성질입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">조건수</span>
+      <p>\[\kappa(A) = \|A\|\,\|A^{-1}\|\]</p>
+      <p>\[\frac{\|\Delta\vec x\|}{\|\vec x\|} \le \kappa(A)\frac{\|\Delta\vec b\|}{\|\vec b\|}\]</p>
+      <p>무한 노름 \(\|A\|_\infty\) = 행의 절댓값 합 중 최대. \(\kappa \approx 10^k\)이면 해에서 유효숫자를 약 \(k\)자리 잃는다.</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1 <span class="nm">(거의 평행한 두 직선)</span></span>
+      <p>\(A = \begin{bmatrix}1 & 1\\ 1 & 1.0001\end{bmatrix}\), \(\vec b = (2, 2.0001)\)의 해와 조건수는? \(b_2\)를 2.0002로 0.005% 바꾸면?</p>
+    </div>
+    <p><i>풀이.</i> 해 \((1, 1)\). \(A^{-1} = 10^4\begin{bmatrix}1.0001 & -1\\ -1 & 1\end{bmatrix}\), \(\|A\|_\infty = 2.0001\), \(\|A^{-1}\|_\infty = 20001\), \(\kappa \approx 4.0\times10^4\). \(b_2\)를 바꾸면 해가 \((0, 2)\)로 100% 바뀝니다. 0.005% × 40000 = 200%가 상한이므로 조건수 어림과 맞습니다.</p>
+
+    <h3><span class="no">3.2.2</span>대처</h3>
+    <p>(1) 단위를 맞춰 행렬의 크기를 고르게 하고(척도 조정), (2) 부분 피벗을 쓰며, (3) 자료 맞춤에서는 정규방정식 \(A^TA\) 대신 QR 분해를 씁니다(\(A^TA\)는 조건수가 제곱이 됨). (4) 문제 자체가 나쁜 조건이면 측정 설계를 바꿔(서로 덜 비슷한 실험 조건) 근본적으로 고칩니다.</p>
+
+    <div class="tb-note"><b>주의</b>잔차 \(A\vec x - \vec b\)가 작다고 해가 정확한 것은 아닙니다. 나쁜 조건에서는 잔차가 작아도 해가 크게 틀릴 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\kappa = \|A\|\|A^{-1}\|\), 상대 오차 증폭의 상한.</li>
+        <li>\(\kappa \sim 10^k\) → 약 \(k\)자리 손실.</li>
+        <li>척도 조정, 피벗, QR, 실험 설계로 대처.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단위 행렬의 조건수는?
+          <details><summary>답</summary><p>1(가장 좋은 조건).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\kappa = 10^{10}\)인 행렬을 배정밀도로 풀면 해의 유효숫자는 대략 몇 자리인가?
+          <details><summary>답</summary><p>16 − 10 = 약 6자리.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>두 변형률 게이지 신호로 두 하중을 구하는데, 두 게이지가 거의 같은 방향을 향해 붙어 있다. 무엇이 문제이고 어떻게 고치는가?
+          <details><summary>답</summary><p>두 게이지의 감도 행렬 행이 거의 같아 조건수가 크므로, 게이지 잡음이 하중 추정에서 크게 증폭된다. 두 하중에 서로 다르게 반응하도록 게이지 방향과 위치를 바꾼다(예: 서로 직교, 굽힘과 축력을 분리하는 브리지 배치).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

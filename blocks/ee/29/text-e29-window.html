@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-window" data-kind="본문" data-std="전전29-03-03">
+  <header class="card-head"><span class="no"></span><h2>창 크기와 링크 이용률</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정지-대기의 이용률 \(U = (L/R)/(RTT + L/R)\)를 계산한다.</li>
+        <li>파이프라인 창 크기 N으로 이용률을 높인다.</li>
+        <li>선택적 반복에서 순서 번호 공간이 창의 두 배 이상이어야 하는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>정지-대기·Go-Back-N (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>파이프를 채우기</h3>
+    <p>한 패킷을 보내고 ACK를 기다리면 링크가 대부분 놉니다. N개를 연달아 보내면 \(U = N(L/R)/(RTT + L/R)\)(최대 1). 대역폭-지연 곱(R × RTT)만큼 비행 중이어야 링크가 가득 찹니다. 선택적 반복은 받는 쪽도 창을 가지므로 순서 번호가 창 크기의 두 배 이상이어야 옛 패킷과 새 패킷을 혼동하지 않습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>R = 1 Gb/s, 패킷 1500바이트, RTT 30 ms. 정지-대기 이용률과 100% 이용에 필요한 N은?</p>
+    </div>
+    <p><i>풀이.</i> L/R = 12 μs, U = 0.012/30.012 = 0.0004. N = 2501. 대역폭-지연 곱 30 Mb(3.75 MB)가 비행 중이어야 하므로 TCP 창도 그만큼 커야 합니다(3.5절).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "빠른 링크면 정지-대기도 충분": 링크가 빠를수록 이용률은 더 떨어집니다. (2) "순서 번호는 창 크기만큼이면 된다": 선택적 반복은 2배 이상 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>U = N(L/R)/(RTT + L/R).</li>
+        <li>N ≥ (RTT + L/R)/(L/R).</li>
+        <li>선택적 반복: 순서 번호 ≥ 2N.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>L/R = 1 ms, RTT 9 ms의 정지-대기 U는?
+          <details><summary>답</summary><p>0.1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 조건에서 U = 1인 N은?
+          <details><summary>답</summary><p>10.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>창 4인 선택적 반복의 최소 순서 번호 수는?
+          <details><summary>답</summary><p>8.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

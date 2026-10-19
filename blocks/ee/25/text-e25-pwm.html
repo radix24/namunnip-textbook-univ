@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-pwm" data-kind="본문" data-std="전전25-04-04">
+  <header class="card-head"><span class="no"></span><h2>타이머로 PWM 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>타이머 클록, 분주비, 자동 재장전 값으로 PWM 주파수를 정한다.</li>
+        <li>비교 값으로 듀티비를 정하고 듀티 분해능을 계산한다.</li>
+        <li>서보 모터처럼 정해진 펄스 폭 신호를 만든다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>타이머 인터럽트 (<a href="02-02.html">2.2절</a>), 주변 장치 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>세고, 비교하고</h3>
+    <p>카운터가 0부터 ARR까지 세고 다시 시작하면 PWM 주파수 \(f = f_{clk}/((PSC + 1)(ARR + 1))\). 카운터가 비교 값 CCR보다 작을 때 출력 1이면 듀티 = CCR/(ARR + 1). 단계 수 ARR + 1이 듀티 분해능입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1</span>
+      <p>타이머 클록 72 MHz, 분주 없음, PWM 20 kHz의 ARR과 듀티 분해능은? 듀티 25%의 CCR은?</p>
+    </div>
+    <p><i>풀이.</i> ARR + 1 = 3600 → ARR = 3599, 분해능 약 11.8비트. CCR = 900. 주파수를 높이면 단계 수가 줄어 분해능이 떨어지는 절충이 있습니다(200 kHz면 360단계).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "PWM 주파수와 분해능을 따로 정할 수 있다": 클록이 정해져 있으면 서로 반비례합니다. (2) "ARR은 주기 카운트 수": 0부터 세므로 주기는 ARR + 1입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>f = f_clk/((PSC + 1)(ARR + 1)).</li>
+        <li>듀티 = CCR/(ARR + 1).</li>
+        <li>예: 72 MHz, 20 kHz → ARR 3599, 11.8비트.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>72 MHz, ARR 999, PSC 0의 PWM 주파수는?
+          <details><summary>답</summary><p>72 kHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 설정에서 듀티 40%의 CCR은?
+          <details><summary>답</summary><p>400.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>LED 밝기 PWM 주파수를 몇 Hz 이상으로 하나?
+          <details><summary>답</summary><p>깜빡임이 안 보이도록 수백 Hz 이상(확인 필요: 기준마다).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

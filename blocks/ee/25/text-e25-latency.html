@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-latency" data-kind="본문" data-std="전전25-02-03">
+  <header class="card-head"><span class="no"></span><h2>인터럽트 지연과 우선순위</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>인터럽트 진입 지연(클록 수)을 시간으로 바꾼다.</li>
+        <li>선점 우선순위와 꼬리 물기(tail-chaining)를 안다.</li>
+        <li>최악 응답 시간을 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>인터럽트 처리 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>얼마나 빨리 반응하나</h3>
+    <p>Cortex-M3/M4는 인터럽트 진입에 약 12클록(레지스터 8개 자동 저장)이 걸립니다. 우선순위가 더 높은 인터럽트는 실행 중인 ISR을 선점하고, 같은 우선순위는 기다립니다. ISR이 끝날 때 다음 인터럽트가 대기 중이면 복원·저장을 건너뛰고 바로 넘어갑니다(꼬리 물기, 약 6클록).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>72 MHz에서 진입 지연 12클록은 몇 ns인가? 우선순위가 높은 ISR(5 μs)이 실행 중일 때 낮은 인터럽트의 최악 응답은?</p>
+    </div>
+    <p><i>풀이.</i> 12/72 MHz = 167 ns. 낮은 인터럽트는 높은 ISR이 끝날 때까지 기다려 약 5 μs + 진입 지연이 최악 응답입니다(높은 인터럽트가 또 오면 더 길어짐). 그래서 ISR은 짧게 쓰고 긴 처리는 메인 루프나 낮은 우선순위 작업으로 넘깁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "우선순위 숫자가 크면 높다": Cortex-M은 숫자가 작을수록 높습니다. (2) "ISR 안에서 오래 계산해도 된다": 다른 인터럽트 응답을 늦춥니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>진입 약 12클록(Cortex-M3/M4).</li>
+        <li>높은 우선순위가 선점, 같은 순위는 대기.</li>
+        <li>꼬리 물기로 연속 처리 단축.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>168 MHz에서 12클록은?
+          <details><summary>답</summary><p>약 71 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>꼬리 물기 6클록을 쓰면 72 MHz에서 아끼는 시간(진입 12클록 대비)은?
+          <details><summary>답</summary><p>약 83 ns.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>공유 변수를 ISR과 메인에서 같이 쓸 때 필요한 것은?
+          <details><summary>답</summary><p>volatile과 임계 구역(잠시 인터럽트 금지).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

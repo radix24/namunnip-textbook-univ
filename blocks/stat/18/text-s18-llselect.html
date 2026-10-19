@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-llselect" data-kind="본문" data-std="응통18-04-03">
+  <header class="card-head"><span class="no"></span><h2>로그선형모형의 비교와 선택</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>3원 표의 계층적 로그선형모형들을 포함 관계로 정리한다.</li>
+        <li>이탈도 \(G^2\)와 자유도로 적합도를 판정하고 모형 차이를 검정한다.</li>
+        <li>고른 모형을 조건부 오즈비로 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>로그선형모형 (<a href="04-01.html">4.1절</a>), 이탈도 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>어떤 연관을 남길 것인가</h3>
+    <p>세 범주형 변수 X, Y, Z의 표에서 "Z를 고정하면 X와 Y는 독립인가", "X-Y 연관이 Z의 수준마다 같은가" 같은 질문은 로그선형모형의 선택 문제가 됩니다. 4.1절에서 모형을 정의했다면, 이 절은 자료로 어느 모형을 고를지 다룹니다.</p>
+
+    <h3><span class="no">4.3.1</span>계층적 모형의 사슬</h3>
+    <p>괄호 안의 항을 포함하면 그 하위 항도 모두 포함하는 계층적 모형을 씁니다.</p>
+    <table class="tw">
+      <tr><th>모형</th><th>뜻</th></tr>
+      <tr><td>(X, Y, Z)</td><td>셋 모두 서로 독립</td></tr>
+      <tr><td>(XZ, Y)</td><td>Y가 X, Z와 함께 독립</td></tr>
+      <tr><td>(XZ, YZ)</td><td>Z를 고정하면 X와 Y가 독립(조건부 독립)</td></tr>
+      <tr><td>(XY, XZ, YZ)</td><td>동질 연관: X-Y 조건부 오즈비가 Z의 모든 수준에서 같음</td></tr>
+      <tr><td>(XYZ)</td><td>포화 모형: 모든 칸을 그대로 맞춤</td></tr>
+    </table>
+
+    <h3><span class="no">4.3.2</span>이탈도로 판정하기</h3>
+    <p>각 모형의 이탈도 \(G^2 = 2\sum O\log(O/E)\)는 포화 모형과의 비교로, 모형이 맞으면 근사적으로 \(\chi^2\)(자유도 = 칸 수 − 모수 수)를 따릅니다. 포함 관계에 있는 두 모형은 이탈도의 차이가 자유도의 차이를 자유도로 하는 \(\chi^2\)를 따르므로, 단순한 모형으로 충분한지 검정할 수 있습니다. 이탈도가 자유도와 비슷하면 잘 맞는 것이고, 단순한 쪽에서 출발해 필요한 항만 더하거나 AIC로 비교합니다. R: <code>glm(count ~ X*Z + Y*Z, family = poisson)</code>, <code>anova(m1, m2, test = "Chisq")</code>.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>2×2×3 표(X, Y 이진, Z 3수준)에서 조건부 독립 모형 (XZ, YZ)의 \(G^2 = 15.2\)(자유도 3), 동질 연관 모형 (XY, XZ, YZ)의 \(G^2 = 3.1\)(자유도 2)입니다. 어느 모형을 고르나요?</p>
+    </div>
+    <p><i>풀이.</i> (XZ, YZ)는 15.2 대 \(\chi^2_3\)의 5% 임계값 7.81로 맞지 않습니다. 차이 \(15.2 - 3.1 = 12.1\)(자유도 1)는 유의하므로 XY 항이 필요합니다. (XY, XZ, YZ)는 3.1 대 \(\chi^2_2\)의 임계값 5.99로 잘 맞으므로, 포화 모형까지 갈 필요 없이 동질 연관 모형을 고릅니다. 해석: Z의 세 수준 모두에서 X와 Y의 조건부 오즈비가 같은 값 \(e^{\hat\lambda^{XY}}\)(이진 부호에 따라)이고, 그 값이 맨텔-헨젤 공통 오즈비(4.2절)와 같은 것을 추정합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>(X, Y, Z) ⊂ (XZ, Y) ⊂ (XZ, YZ) ⊂ (XY, XZ, YZ) ⊂ (XYZ).</li>
+        <li>이탈도와 자유도로 적합도, 이탈도 차이로 포함 모형 비교.</li>
+        <li>고른 모형을 조건부 독립과 조건부 오즈비로 해석합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(I \times J \times K\) 표에서 조건부 독립 모형 (XZ, YZ)의 자유도는?
+          <details><summary>답</summary><p>Z의 각 수준에서 \((I-1)(J-1)\)씩 독립 제약, 합 \(K(I-1)(J-1)\). 2×2×3이면 3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>동질 연관 모형도 맞지 않고 포화 모형만 맞는다면 무엇을 뜻하나요?
+          <details><summary>답</summary><p>X-Y 연관의 크기가 Z의 수준마다 다릅니다(3요인 교호작용, 효과 수정). 하나의 공통 오즈비로 요약하지 말고 Z의 수준별 오즈비를 보고합니다(3.5절).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-regularize-nn" data-kind="본문" data-std="전전23-04-04">
+  <header class="card-head"><span class="no"></span><h2>신경망 학습 안정화: 드롭아웃과 정규화 층</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>드롭아웃이 학습 때 뉴런을 무작위로 끄고 출력을 보정하는 방식을 안다.</li>
+        <li>배치 정규화가 층 입력 분포를 맞춰 학습을 빠르게 하는 원리를 안다.</li>
+        <li>학습·추론 모드의 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>CNN 학습 (<a href="04-02.html">4.2절</a>), 과적합 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>두 기법</h3>
+    <p><b>드롭아웃</b>: 학습 때 각 뉴런을 확률 p로 0으로 만들고 남은 출력을 1/(1 − p)배 해 기댓값을 맞춥니다. 여러 작은 망을 평균하는 효과로 과적합을 줄입니다. <b>배치 정규화</b>: 미니배치의 평균·분산으로 층 입력을 표준화하고 학습 가능한 크기·이동을 곱합니다. 추론 때는 학습 중 모은 이동 평균을 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1</span>
+      <p>드롭아웃 p = 0.5인 층의 어떤 뉴런 출력이 2.0이다. 학습 때와 추론 때 다음 층으로 가는 값은?</p>
+    </div>
+    <p><i>풀이.</i> 학습: 확률 0.5로 0, 0.5로 2.0/(1 − 0.5) = 4.0 → 기댓값 2.0. 추론: 드롭아웃 없이 2.0. 보정 덕분에 추론 때 따로 크기를 맞출 필요가 없습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "추론 때도 드롭아웃을 켠다": 기본은 끄며, 켜면 결과가 매번 달라집니다. (2) "배치 정규화는 배치 크기와 무관": 배치가 아주 작으면 통계가 흔들려 다른 정규화(층 정규화)를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>드롭아웃: 확률 p로 끄고 1/(1 − p) 보정.</li>
+        <li>배치 정규화: 미니배치 표준화 + 크기·이동.</li>
+        <li>model.eval()로 추론 모드.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>p = 0.2 드롭아웃의 보정 배수는?
+          <details><summary>답</summary><p>1.25.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>배치 평균 4, 표준편차 2에서 입력 6의 정규화 값은?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>추론 때 배치 정규화가 미니배치 통계를 쓰지 않는 이유는?
+          <details><summary>답</summary><p>입력 하나만 와도 같은 결과를 내야 하기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

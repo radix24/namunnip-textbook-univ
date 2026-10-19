@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-03-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-flow" data-kind="본문" data-std="전전29-03-05">
+  <header class="card-head"><span class="no"></span><h2>TCP 흐름 제어와 연결 관리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>수신 창(rwnd)이 처리량 상한 rwnd/RTT를 정함을 안다.</li>
+        <li>창 확장 옵션의 필요를 계산으로 보인다.</li>
+        <li>3-way 핸드셰이크와 연결 종료 순서를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>창 크기 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.5.1</span>받는 쪽의 사정</h3>
+    <p>수신자는 버퍼 여유를 rwnd로 알려 송신자가 그 이상 보내지 않게 합니다. 보내는 양은 min(cwnd, rwnd)이므로 처리량 ≤ rwnd/RTT. 헤더의 창 필드는 16비트(최대 65535바이트)라, 고속 장거리에는 창 확장 옵션이 필요합니다. 연결은 SYN, SYN-ACK, ACK로 열고 FIN을 주고받아 닫습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.5.1</span>
+      <p>rwnd 64 KB(65535 B), RTT 100 ms의 최대 처리량은? 10 Gb/s를 얻으려면 rwnd는?</p>
+    </div>
+    <p><i>풀이.</i> 65535 × 8/0.1 = 5.24 Mb/s. 10 Gb/s × 0.1 s = 1 Gb = 125 MB가 필요해, 창 확장 배수(최대 2¹⁴)를 씁니다. 수신 응용이 느리게 읽으면 rwnd가 0이 되어 송신이 멈춥니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "흐름 제어와 혼잡 제어는 같다": 흐름 제어는 수신자 보호, 혼잡 제어는 네트워크 보호입니다. (2) "연결 설정은 2단계면 된다": 양쪽 초기 순서 번호를 확인하려 3단계가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>처리량 ≤ min(cwnd, rwnd)/RTT.</li>
+        <li>16비트 창 → 창 확장 옵션.</li>
+        <li>SYN, SYN-ACK, ACK / FIN.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>rwnd 32 KB, RTT 10 ms의 상한은?
+          <details><summary>답</summary><p>약 26 Mb/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>1 Gb/s, RTT 20 ms에 필요한 rwnd는?
+          <details><summary>답</summary><p>2.5 MB.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>rwnd = 0을 받은 송신자는?
+          <details><summary>답</summary><p>주기적으로 1바이트 탐색 세그먼트를 보내 창이 열렸는지 확인합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
