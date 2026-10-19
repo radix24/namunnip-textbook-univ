@@ -1,12 +1,12 @@
 /* QURI 커리큘럼 안내와 졸업 로드맵 (roadmap.html)
-   - 과목: js/toc.js의 window.UNIV (tools/build.py가 만든다)
+   - 과목: data/univ.json (tools/build.py가 만드는 전 학과 합본, 예전 js/toc.js의 window.UNIV와 같은 꼴)
    - 졸업 요건: curricula/univ-requirements.json (연세대 2020~2026 요람을 옮긴 것. 2026학번이 기본이고 학번별 차이는 byCohort,
      QURI에 카드가 없는 4학년 과목은 fourth)
    - 연세대 개설 이력: curricula/univ-offered.json */
 (() => {
   "use strict";
 
-  const UNIV = window.UNIV || [];
+  let UNIV = [];
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   const KEY = "quri-roadmap-v1";
@@ -31,10 +31,28 @@
   /* ---------- 과목 색인 ---------- */
   const COURSE = new Map();
   const DEPT = new Map();
-  UNIV.forEach((d) => { DEPT.set(d.id, d); d.courses.forEach((c) => COURSE.set(c.code, c)); });
+  function loadUniv(U) {   // data/univ.json을 받은 뒤 색인을 만든다
+    UNIV = U || [];
+    COURSE.clear(); DEPT.clear();
+    UNIV.forEach((d) => { DEPT.set(d.id, d); d.courses.forEach((c) => COURSE.set(c.code, c)); });
+    indexPre();
+  }
   const codeNum = (code) => parseInt(String(code).replace(/\D+/g, ""), 10) || 0;
   /* 화면에 보이는 과목 번호는 연세대 학정번호(c.sub의 첫 번호). 학정번호가 없는 과목만 QURI 코드로 둔다 */
   const hak = (c) => (c.sub && c.sub[0]) || c.code;
+  /* 학과에서 실제로 쓰는 과목명·학정번호(data/yonsei-<학과>.json, 예: 공대의 공통1 = 공학수학(1) MAT1011). 보이는 곳에만 쓴다 */
+  const DNAMES = new Map();
+  let NAME_DEPT = "";
+  const dn = (c) => { const m = DNAMES.get(NAME_DEPT); return (m && c && m.get(c.code)) || null; };
+  const nameOf = (c) => (dn(c) || {}).name || c.name;
+  const noOf = (c) => (dn(c) || {}).no || hak(c);
+  function needNames(id, then) {
+    if (!id || id === "common" || DNAMES.has(id)) return;
+    DNAMES.set(id, null);
+    fetch(`data/yonsei-${id}.json`).then((r) => r.json())
+      .then((d) => { DNAMES.set(id, new Map((d.courses || []).map((x) => [x.code, { name: x.name, no: x.no }]))); then(); })
+      .catch(() => { /* 학과 이름 파일이 없으면 교재 이름 그대로 */ });
+  }
   /* 선수 과목 글 속의 QURI 코드(공통1, 수학3 …)를 "과목명(학정번호)"로 바꿔 보여 준다 */
   const preText = (s) => String(s || "").replace(new RegExp(`(?:${PREFIX})\\d+`, "g"),
     (k) => { const x = COURSE.get(k); return x ? `${x.name}(${hak(x)})` : k; });
@@ -282,6 +300,8 @@
   const kindShort = (k) => ({ "전공기초": "기초", "전공필수": "필수", "전공선택": "선택", "대학교양": "교양" }[k] || k || "");
 
   function renderGuide() {
+    NAME_DEPT = G.school === "연세대" ? G.dept : "";
+    needNames(NAME_DEPT, () => { if (TAB === "guide") renderGuide(); });
     document.body.dataset.dept = G.dept;
     const list = schoolList();
     $("#g-school").innerHTML = list.map(({ s, n }) => `<option value="${esc(s)}"${s === G.school ? " selected" : ""}${n ? "" : " disabled"}>${esc(s)}${n ? "" : " (준비 중)"}</option>`).join("");
@@ -336,7 +356,7 @@
     const req = /필수|기초/.test(c.kind) && c.dept !== "common";
     const alt = G.school !== "연세대" ? courseSchools(c).get(G.school) : "";
     return `<button type="button" class="rm-chip${req ? " is-req" : ""}${c.dept === "common" ? " is-common" : ""}${c.out ? " is-out" : ""}" data-code="${c.code}">
-      <span class="mono">${esc(hak(c))}</span> ${esc(alt || c.name)}${withSem ? ` <small>${esc(c.yr || c.y)}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}${c.out ? " · QURI 밖" : ""}</small></button>`;
+      <span class="mono">${esc(noOf(c))}</span> ${esc(alt || nameOf(c))}${withSem ? ` <small>${esc(c.yr || c.y)}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}${c.out ? " · QURI 밖" : ""}</small></button>`;
   }
   function renderDetail() {
     const box = $("#g-detail");
@@ -360,7 +380,7 @@
     const offTxt = off.known ? (off.t.size ? `연세대 ${[...off.t].sort().join("·")}학기 (${OFFER_FROM}년 이후 개설 이력)` : `${OFFER_FROM}년 이후 연세대 개설 기록 없음`) : (c.open || "");
     const schools = [...courseSchools(c).entries()].map(([s, n]) => n ? `${s}(${n})` : s);
     const old = REQ ? oldName(c, P.cohort) : "";
-    box.innerHTML = `<h3><span class="mono">${esc(hak(c))}</span> ${esc(c.name)}</h3>
+    box.innerHTML = `<h3><span class="mono">${esc(noOf(c))}</span> ${esc(nameOf(c))}${nameOf(c) !== c.name ? ` <small class="dim">QURI 교재: ${esc(c.name)}</small>` : ""}</h3>
       <p class="small dim">${esc(c.yr || c.y)}학년 ${esc(String(c.sem))}학기 · ${esc(c.kind)} · ${c.cr}학점${c.sub && c.sub.length > 1 ? ` · 학정번호 ${c.sub.join(", ")}` : ""}${offTxt ? ` · ${esc(offTxt)}` : ""}</p>
       ${c.out ? `<p class="small">QURI에 아직 카드가 없는 과목입니다. 요람의 과목명·학정번호·학년만 옮겨 졸업 로드맵에 넣을 수 있게 했습니다. <span class="rm-cite">${esc(c.src)}</span></p>` : ""}
       ${old ? `<p class="small">${P.cohort}학번 요람에서는 '${esc(old)}'(으)로 적혀 있습니다.</p>` : ""}
@@ -669,14 +689,16 @@
     const lib = (it.out && it.out.lib) || (it.c && it.c.kind === "대학교양") || PLAN.Ts.some((T) => T.libExtra.includes(id));
     return `<button type="button" class="rm-card${it.out ? " is-out" : ""}${iss.length ? " is-warn" : ""}${tags.length > 1 ? " is-multi" : ""}" draggable="true" data-id="${esc(id)}"
       aria-label="${esc(it.name)} ${it.cr}학점${it.out ? ", QURI 밖 과목" : ""}${iss.length ? ", 확인할 점 " + iss.length + "개" : ""}">
-      <span class="t">${esc(it.name)}${old ? ` <small class="old" title="${P.cohort}학번 요람의 과목명">(${esc(old)})</small>` : ""}</span>
-      <span class="m"><span class="mono">${it.c ? esc(hak(it.c)) : esc((it.out && it.out.code) || "요람")}</span> ${it.cr}학점${pinned ? ' <span class="pin" title="직접 옮긴 과목">고정</span>' : ""}${it.out ? ' <span class="pin">QURI 밖</span>' : ""}</span>
+      <span class="t">${esc(it.c ? nameOf(it.c) : it.name)}${old ? ` <small class="old" title="${P.cohort}학번 요람의 과목명">(${esc(old)})</small>` : ""}</span>
+      <span class="m"><span class="mono">${it.c ? esc(noOf(it.c)) : esc((it.out && it.out.code) || "요람")}</span> ${it.cr}학점${pinned ? ' <span class="pin" title="직접 옮긴 과목">고정</span>' : ""}${it.out ? ' <span class="pin">QURI 밖</span>' : ""}</span>
       ${tags.length ? `<span class="tags">${tags.map((t) => `<span class="tag${t.i === 0 ? " is-first" : ""}">${esc(t.short)} ${CAT[t.cat]}</span>`).join("")}</span>` : lib ? '<span class="tags"><span class="tag">교양</span></span>' : ""}
       ${iss.length ? `<span class="warn">${iss.map(esc).join("<br>")}</span>` : ""}</button>`;
   }
 
   function renderPlan() {
     buildPlan();
+    NAME_DEPT = PLAN.Ts[0].m.id;   // 계획은 제1전공 학과의 과목명으로 보인다
+    needNames(NAME_DEPT, () => { if (TAB === "plan") renderPlan(); });
         const { Ts, col, at, used, budget, unplaced } = PLAN;
     document.body.dataset.dept = Ts[0].m.id;
 
@@ -1002,7 +1024,7 @@
   });
 
   $("#g-school").addEventListener("change", (e) => { G.school = e.target.value; G.sel = null; renderGuide(); save(); });
-  $("#g-dept").addEventListener("change", (e) => { G.dept = e.target.value; G.sel = null; renderGuide(); save(); });
+  $("#g-dept").addEventListener("change", (e) => { G.dept = e.target.value; G.sel = null; if (G.school === "연세대") setPlace(G.dept); renderGuide(); save(); });
   $("#g-common").addEventListener("change", (e) => { G.common = e.target.checked; renderGuide(); save(); });
   $("#guide").addEventListener("click", (e) => {
     const b = e.target.closest("[data-code]"); if (!b) return;
@@ -1012,11 +1034,16 @@
   });
 
   /* ---------- 시작 ---------- */
+  /* 메인에서 고른 학과(localStorage "quri-place" = "yonsei/phy" 꼴). 'common'은 학과가 아니라 없다 */
+  const placeDept = () => { try { const v = localStorage.getItem("quri-place") || ""; const m = /^yonsei\/(\w+)$/.exec(v); return m ? m[1] : ""; } catch (e) { return ""; } };
+  const setPlace = (id) => { try { if (id && id !== "common") localStorage.setItem("quri-place", "yonsei/" + id); } catch (e) { /* 저장소를 막은 브라우저 */ } };
   Promise.all([
+    fetch("data/univ.json").then((r) => { if (!r.ok) throw new Error("data/univ.json " + r.status); return r.json(); }),
     fetch("curricula/univ-requirements.json").then((r) => r.json()),
     fetch("curricula/univ-offered.json").then((r) => r.json()).catch(() => ({ codes: {} })),
     fetch("curricula/univ-season.json").then((r) => r.json()).catch(() => ({ codes: {}, lib: {}, terms: [] })),
-  ]).then(([req, off, sea]) => {
+  ]).then(([univ, req, off, sea]) => {
+    loadUniv(univ);
     REQ = req; OFFER = off.codes || {}; SEASON = sea;
     REQ.majors.forEach((m) => MAJOR.set(m.id, m));
     addFourth();
@@ -1033,6 +1060,11 @@
       P.majors = (P.majors || []).filter((x) => MAJOR.has(x.id)).slice(0, 5);
       if (!P.majors.length) P.majors = [{ id: "math", track: "single" }];
       TAB = saved.tab === "plan" ? "plan" : "guide";
+    }
+    const pd = placeDept();   // 메인에서 고른 학과가 있으면 안내 탭은 그 학과로, 처음 만드는 계획은 그 학과 단일전공으로
+    if (pd && DEPT.has(pd)) {
+      G.dept = pd;
+      if (!(saved && saved.plan) && MAJOR.has(pd)) P.majors = [{ id: pd, track: "single" }];
     }
     const q = new URLSearchParams(location.search);
     if (q.get("cohort")) P.cohort = +q.get("cohort");
@@ -1052,7 +1084,8 @@
   }).catch((err) => {
     console.error(err);
     $("#tab-plan").disabled = true;
-    $("#guide").insertAdjacentHTML("afterbegin", '<p class="rm-alert">졸업 요건 자료(curricula/univ-requirements.json)를 읽지 못해 졸업 로드맵을 열 수 없습니다. 이 폴더를 웹 서버(python -m http.server)로 열었는지 확인하세요.</p>');
-    TAB = "guide"; renderGuide();
+    $("#guide").insertAdjacentHTML("afterbegin", '<p class="rm-alert">과목 자료(data/univ.json)나 졸업 요건 자료(curricula/univ-requirements.json)를 읽지 못했습니다. 이 폴더를 웹 서버(python -m http.server)로 열었는지, tools/build.py를 한 번 돌렸는지 확인하세요.</p>');
+    TAB = "guide";
+    if (UNIV.length) renderGuide();
   });
 })();
