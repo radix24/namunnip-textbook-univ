@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-clt" data-kind="본문" data-std="수학5-06-02">
+  <header class="card-head"><span class="no"></span><h2>중심극한정리와 그 증명</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>중심극한정리의 내용과 표준화의 뜻을 안다.</li>
+        <li>적률생성함수의 테일러 전개로 \([M(t/\sqrt n)]^n \to e^{t^2/2}\)를 보이는 증명의 흐름을 설명한다.</li>
+        <li>증명에서 각 가정(독립, 같은 분포, 유한 분산)이 어디에 쓰이는지 짚는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>적률생성함수 (<a href="03-02.html">3.2절</a>), 분포수렴 (<a href="06-01.html">6.1절</a>), 테일러 정리와 \((1 + a_n/n)^n \to e^a\).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>정리의 내용</h3>
+    <p>대수의 법칙은 \(\bar X_n - \mu \to 0\)이라고 말합니다. 그러면 그 차이는 얼마나 빨리, 어떤 모양으로 0이 될까요? 분산이 \(\sigma^2/n\)이므로 차이의 크기는 \(\sigma/\sqrt n\) 정도이고, 이 비율로 확대해 보면 모양이 항상 정규분포라는 것이 중심극한정리입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 6.2.1 <span class="nm">(중심극한정리)</span></span>
+      <p>\(X_i\)가 독립이고 같은 분포이며 평균 \(\mu\), 분산 \(0 &lt; \sigma^2 &lt; \infty\)이면</p>
+      <p>\[Z_n = \frac{X_1 + \cdots + X_n - n\mu}{\sigma\sqrt n} = \frac{\bar X_n - \mu}{\sigma/\sqrt n} \xrightarrow{d} N(0, 1),\]</p>
+      <p>곧 모든 \(z\)에서 \(P(Z_n \le z) \to \Phi(z)\).</p>
+    </div>
+    <p>놀라운 점은 원래 분포가 균등이든, 지수든, 동전이든 극한이 똑같다는 것입니다. 원래 분포의 정보 중 평균과 분산만 남고 나머지(비대칭, 꼬리 모양)는 \(n\)이 커지면 사라집니다(<a href="04-02.html">4.2절</a> 탐구 카드).</p>
+
+    <h3><span class="no">6.2.2</span>적률생성함수를 이용한 증명</h3>
+    <p>여기서는 \(X_i\)의 적률생성함수가 0 근처에서 존재한다고 가정합니다(일반적인 경우는 특성함수 \(E[e^{itX}]\)로 같은 논법). 쓰는 도구는 다음 정리입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 6.2.2 <span class="nm">(연속성 정리, 증명 생략)</span></span>
+      <p>0 근처의 모든 \(t\)에서 \(M_{Z_n}(t) \to M_Z(t)\)이면 \(Z_n \xrightarrow{d} Z\).</p>
+    </div>
+    <div class="tb-proof">
+      <p><b>1단계(표준화).</b> \(Y_i = (X_i - \mu)/\sigma\)로 두면 \(E[Y_i] = 0\), \(E[Y_i^2] = 1\)이고 \(Z_n = \frac1{\sqrt n}\sum Y_i\).</p>
+      <p><b>2단계(곱).</b> 독립이고 같은 분포이므로 \(M_{Z_n}(t) = E\left[e^{(t/\sqrt n)\sum Y_i}\right] = \left[M_Y(t/\sqrt n)\right]^n\).</p>
+      <p><b>3단계(테일러).</b> \(M_Y(s) = 1 + E[Y]s + \frac{E[Y^2]}2s^2 + o(s^2) = 1 + \frac{s^2}2 + o(s^2)\) (\(s \to 0\)). \(s = t/\sqrt n\)을 넣으면 \(M_Y(t/\sqrt n) = 1 + \frac{t^2}{2n} + o(1/n)\).</p>
+      <p><b>4단계(극한).</b> \(\left[1 + \frac{t^2/2 + n\cdot o(1/n)}{n}\right]^n\)에서 \(n\cdot o(1/n) \to 0\)이므로 \((1 + a_n/n)^n \to e^a\) (\(a_n \to a\))에 의해 극한은 \(e^{t^2/2}\).</p>
+      <p><b>5단계.</b> \(e^{t^2/2}\)는 \(N(0, 1)\)의 적률생성함수이므로 연속성 정리로 \(Z_n \xrightarrow{d} N(0,1)\). <span class="qed">∎</span></p>
+    </div>
+    <p>가정이 쓰인 곳을 짚어 보면: 독립과 같은 분포는 2단계의 "\(n\)제곱"에, 평균 0은 3단계에서 1차항을 없애는 데, 분산 1은 2차항의 계수 \(1/2\)를 정하는 데 쓰였습니다. 3차 이상의 항(비대칭 등)은 \(1/n\)보다 빨리 작아져 극한에 남지 않습니다. 이것이 "평균과 분산만 남는" 이유입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.3</span>
+      <p>\(Y\)가 \(\pm1\)을 1/2씩 갖는 경우 \(\ln M_{Z_n}(1)\)이 \(1/2\)로 다가가는 모습을 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(M_Y(s) = \cosh s\)이므로 \(\ln M_{Z_n}(1) = n\ln\cosh(1/\sqrt n)\). \(n = 1, 4, 16, 100\)에서 0.4338, 0.4805, 0.4949, 0.4992로 \(1/2\)에 다가갑니다. 평균 1인 지수분포에서 1을 뺀 \(Y\)는 \(n = 4, 16, 100\)에서 0.7726, 0.6029, 0.5361로 더 천천히 다가가는데(\(n = 1\)이면 무한대), 비대칭을 나타내는 3차항이 더 크기 때문입니다. 같은 절의 탐구 카드에서 \(t\)와 \(n\)을 바꿔 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) "\(X_i\)가 정규분포에 가까워진다"로 읽는다: 정규에 가까워지는 것은 표준화한 합(평균)이지 개별 값이 아니다. (2) 분포수렴을 확률수렴으로 착각한다: \(Z_n\) 자체는 어떤 값으로도 수렴하지 않는다. (3) 분산이 무한한 분포에 쓴다: 코시분포 같은 경우 극한이 정규가 아니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\((\bar X_n - \mu)/(\sigma/\sqrt n) \xrightarrow{d} N(0,1)\). 분포의 종류와 무관.</li>
+        <li>증명: 표준화 → \(M_{Z_n} = [M_Y(t/\sqrt n)]^n\) → 2차 테일러 → \(e^{t^2/2}\) → 연속성 정리.</li>
+        <li>평균 0, 분산 1이 1·2차항을 정하고, 3차 이상은 극한에서 사라진다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(Z_n\)의 평균과 분산이 정확히 0과 1임을 보여라.
+          <details><summary>답</summary><p>\(E[Z_n] = \frac{1}{\sqrt n}\sum E[Y_i] = 0\), \(\mathrm{Var}(Z_n) = \frac1n\sum\mathrm{Var}(Y_i) = 1\) (독립).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\mathrm{Pois}(n)\)을 표준화한 \((X - n)/\sqrt n\)이 \(N(0,1)\)로 분포수렴함을 적률생성함수로 직접 보여라.
+          <details><summary>답</summary><p>\(\ln M(t) = -t\sqrt n + n(e^{t/\sqrt n} - 1) = -t\sqrt n + n\left(\frac t{\sqrt n} + \frac{t^2}{2n} + O(n^{-3/2})\right) \to t^2/2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>증명의 3단계에서 \(E[Y^3] = \gamma\)까지 쓰면 \(\ln M_{Z_n}(t) = \frac{t^2}2 + \frac{\gamma t^3}{6\sqrt n} + O(1/n)\)임을 보이고, 예제 6.2.3의 지수분포 수치(\(\gamma = 2\))와 비교하여라.
+          <details><summary>답</summary><p>\(\ln M_Y(s) = \frac{s^2}2 + \frac{\gamma s^3}6 + O(s^4)\) (누적량 전개), \(n\)배 하고 \(s = t/\sqrt n\). \(t = 1\), \(n = 100\): \(0.5 + 2/60 \approx 0.533\), 실제 0.5361.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
