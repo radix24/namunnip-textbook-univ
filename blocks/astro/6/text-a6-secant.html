@@ -1,0 +1,139 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-secant" data-kind="본문" data-std="천우6-03-03">
+  <header class="card-head"><span class="no"></span><h2>할선법과 수렴 차수: 얼마나 빨리 근에 다가가나</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>도함수 없이 두 점의 할선으로 근을 찾는 할선법을 쓴다.</li>
+        <li>오차가 줄어드는 빠르기를 수렴 차수 \(p\)(\(\varepsilon_{n+1} \approx C\varepsilon_n^p\))로 나타낸다.</li>
+        <li>이분법(\(p = 1\)), 할선법(\(p \approx 1.62\)), Newton 방법(\(p = 2\))을 실험으로 비교한다.</li>
+        <li>안정성과 속도를 함께 고려해 방법을 고른다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>이분법과 Newton 방법 (<a href="03-01.html">3.1절</a>), Kepler 방정식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>할선법</h3>
+    <p>Newton 방법은 \(x_{n+1} = x_n - f(x_n)/f'(x_n)\)으로 빠르지만 도함수가 필요합니다. 도함수를 구하기 어렵거나 계산이 비싸면, 최근 두 점을 잇는 직선(할선)의 기울기로 도함수를 대신합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정의 3.3.1 (할선법)</span>
+      \[x_{n+1} = x_n - f(x_n)\,\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}.\]
+    </div>
+    <p>처음 두 점이 필요하고, 한 걸음에 함숫값 계산이 한 번뿐입니다(Newton은 함수와 도함수 두 번). 근을 사이에 두는 보장이 없어 이분법처럼 항상 수렴하지는 않습니다.</p>
+
+    <h3><span class="no">3.3.2</span>수렴 차수</h3>
+    <p>\(n\)번째 오차 \(\varepsilon_n = |x_n - x^*|\)가 \(\varepsilon_{n+1} \approx C\varepsilon_n^p\)로 줄면 수렴 차수가 \(p\)입니다.</p>
+    <ul class="tb-list">
+      <li>\(p = 1\)(선형): 이분법은 한 걸음에 오차가 대략 절반, 열 걸음에 약 1,000분의 1.</li>
+      <li>\(p = 2\)(2차): Newton 방법은 맞는 자릿수가 걸음마다 두 배.</li>
+      <li>\(p = (1 + \sqrt5)/2 \approx 1.618\): 할선법. 걸음마다 맞는 자릿수가 약 1.6배.</li>
+    </ul>
+
+    <h3><span class="no">3.3.3</span>실험: Kepler 방정식</h3>
+    <p>\(E - e\sin E = M\)(\(e = 0.5\), \(M = 1\) rad)을 세 방법으로 풀어 오차를 비교합니다. 이분법은 \([0, \pi]\)에서, Newton은 \(E_0 = M\)에서, 할선법은 \(0\)과 \(M\)에서 시작합니다.</p>
+    <pre><code>import math
+
+e, M = 0.5, 1.0
+f = lambda E: E - e * math.sin(E) - M
+df = lambda E: 1 - e * math.cos(E)
+
+# 기준값
+E_true = M
+for _ in range(50):
+    E_true -= f(E_true) / df(E_true)
+
+def bisect(a, b, n):
+    out = []
+    for _ in range(n):
+        c = 0.5 * (a + b)
+        if f(a) * f(c) &lt;= 0: b = c
+        else: a = c
+        out.append(abs(0.5 * (a + b) - E_true))
+    return out
+
+def newton(x, n):
+    out = []
+    for _ in range(n):
+        x -= f(x) / df(x)
+        out.append(abs(x - E_true))
+    return out
+
+def secant(x0, x1, n):
+    out = []
+    for _ in range(n):
+        if f(x1) == f(x0): break
+        x0, x1 = x1, x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0))
+        out.append(abs(x1 - E_true))
+    return out
+
+print(f"E = {E_true:.15f}")
+rows = zip(bisect(0, math.pi, 7), newton(M, 7), secant(0.0, M, 7))
+print(" 반복   이분법      Newton      할선법")
+for i, (a, b, c) in enumerate(rows, 1):
+    print(f"{i:4d}  {a:9.2e}  {b:9.2e}  {c:9.2e}")</code></pre>
+    <pre><code>E = 1.498701133517848
+ 반복   이분법      Newton      할선법
+   1   7.13e-01   7.78e-02   2.28e-01
+   2   3.21e-01   1.51e-03   3.08e-02
+   3   1.24e-01   5.87e-07   1.73e-03
+   4   2.61e-02   8.93e-14   1.39e-05
+   5   2.30e-02   0.00e+00   6.19e-09
+   6   1.54e-03   0.00e+00   2.22e-14
+   7   1.07e-02   0.00e+00   0.00e+00</code></pre>
+    <p>Newton 방법의 오차는 \(1.5\times10^{-3} \to 5.9\times10^{-7} \to 8.9\times10^{-14}\)으로 지수가 두 배씩(3 → 6.2 → 13) 늘고, 할선법은 \(1.4\times10^{-5} \to 6.2\times10^{-9} \to 2.2\times10^{-14}\)으로 약 1.6배씩 늘어납니다. 이분법은 구간이 절반씩 줄지만 가운데 점과 근의 거리는 들쭉날쭉해, 오차가 단조롭게 줄지 않습니다(구간의 폭은 꾸준히 절반).</p>
+
+    <h3><span class="no">3.3.4</span>방법 고르기</h3>
+    <ul class="tb-list">
+      <li>근을 사이에 둔 구간을 알고 안전이 최우선이면 이분법.</li>
+      <li>도함수를 쉽게 계산할 수 있고 좋은 처음 값이 있으면 Newton.</li>
+      <li>도함수가 없거나 비싸면 할선법. 함숫값 계산 횟수로 따지면 할선법이 Newton보다 빠른 경우도 많습니다(한 번 계산당 효율 \(1.618 > \sqrt2\)).</li>
+      <li>실제 라이브러리(예: Brent 방법)는 이분법의 안전과 할선법·역보간의 속도를 섞어 씁니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>오차가 \(10^{-2}\)에서 시작할 때 \(10^{-14}\)에 이르기까지 이분법과 Newton 방법은 각각 대략 몇 걸음이 필요합니까?</p>
+    </div>
+    <p><i>풀이.</i> 이분법: \(10^{-12}\)배로 줄여야 하므로 \(\log_2 10^{12} \approx 40\)걸음. Newton(\(C \approx 1\)이라 보면): \(10^{-2} \to 10^{-4} \to 10^{-8} \to 10^{-16}\)으로 3걸음. 2차 수렴은 근에 가까워지면 압도적으로 빠릅니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>할선법: 두 점의 할선으로 도함수를 대신한다. 처음 두 점, 걸음당 함숫값 1번.</li>
+        <li>수렴 차수: 이분법 1, 할선법 1.618, Newton 2.</li>
+        <li>안전(이분법)과 속도(Newton, 할선법)를 상황에 맞게 고르거나 섞는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2차 수렴에서 오차가 \(10^{-3}\)이면 다음 걸음의 오차는 대략?(\(C \approx 1\))
+          <details><summary>답</summary><p>\(10^{-6}\).</p></details>
+        </li>
+        <li>이분법으로 처음 구간 폭 \(\pi\)를 \(10^{-10}\)보다 좁히려면 몇 걸음이 필요합니까?
+          <details><summary>답</summary><p>\(\pi/2^n < 10^{-10}\), \(n > \log_2(3.14\times10^{10}) = 34.9\), 곧 35걸음.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>표의 할선법 오차 \(\varepsilon_4 = 1.39\times10^{-5}\), \(\varepsilon_5 = 6.19\times10^{-9}\), \(\varepsilon_6 = 2.22\times10^{-14}\)로 수렴 차수를 어림하세요.
+          <details><summary>답</summary><p>\(p \approx \log(\varepsilon_6/\varepsilon_5)/\log(\varepsilon_5/\varepsilon_4) = \log(3.6\times10^{-6})/\log(4.5\times10^{-4}) = -5.45/-3.35 \approx 1.63\). 이론값 1.618과 맞습니다.</p></details>
+        </li>
+        <li>이심률이 0.99로 아주 큰 궤도에서 \(M\)이 작으면 Newton 방법이 처음 값 \(E_0 = M\)에서 잘 수렴하지 않을 수 있습니다. 어떻게 하면 좋을까요?
+          <details><summary>답</summary><p>이분법으로 몇 걸음 먼저 근을 좁힌 뒤 Newton으로 넘어가거나, 처음 값을 \(E_0 = \pi\)처럼 바꿉니다(\(e\)가 크면 \(E_0 = M + e\sin M\)나 \(\pi\)가 안전한 선택으로 알려져 있습니다).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

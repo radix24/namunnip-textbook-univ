@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-06-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a6-chi2-ex" data-kind="예제" data-std="천우6-06-03">
+  <header class="card-head"><span class="no"></span><h2>이 별은 변광성인가: 일정한 밝기 모형의 카이제곱</h2><span class="kind">예제 · \(\chi^2\) 검정 · 변광 판정</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 모형 검정</span>
+      <ol>
+        <li>가장 단순한 모형(밝기가 일정)을 세우고 모수(평균 등급)를 맞춘다.</li>
+        <li>\(\chi^2\)와 자유도 \(\nu = N - 1\)을 구한다.</li>
+        <li>\(\chi^2/\nu\)가 \(1 \pm \sqrt{2/\nu}\)를 크게 벗어나면 모형을 버린다. 단, 측광 오차가 정직하다는 전제가 필요하다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 오차 0.02등급으로 잰 별의 밝기가 ±0.05등급 범위에서 오르내립니다. 눈으로 그래프를 보면 변광성인지 바로 알 수 있을까요?</div>
+    <p class="q-prob"><b>문제.</b> 두 별 A, B를 12일 동안 하루 한 번 측광했습니다(오차 0.02등급). 일정한 밝기 모형으로 \(\chi^2\)를 구해 어느 별이 변광성인지 판단하세요.</p>
+    <pre><code>import math, random
+
+random.seed(3)
+t = list(range(12))                       # 관측 날짜(일)
+sig = 0.02                                # 측광 오차(등급)
+A = [12.30 + random.gauss(0, sig) for _ in t]
+B = [12.30 + 0.05 * math.sin(2 * math.pi * ti / 5.3) + random.gauss(0, sig) for ti in t]
+
+def const_fit(m, s):
+    """일정한 밝기 모형: 가중 평균과 chi^2"""
+    w = 1 / s**2
+    mean = sum(m) / len(m)                # 오차가 모두 같으면 가중 평균 = 산술 평균
+    chi2 = sum(((mi - mean) / s)**2 for mi in m)
+    return mean, math.sqrt(1 / (w * len(m))), chi2
+
+for name, m in (("별 A", A), ("별 B", B)):
+    mean, err, chi2 = const_fit(m, sig)
+    nu = len(m) - 1
+    print(f"{name}: 평균 {mean:.3f} ± {err:.3f}, chi2 = {chi2:.1f} (자유도 {nu}), chi2/nu = {chi2 / nu:.2f}")</code></pre>
+    <pre><code>별 A: 평균 12.308 ± 0.006, chi2 = 7.1 (자유도 11), chi2/nu = 0.65
+별 B: 평균 12.289 ± 0.006, chi2 = 36.5 (자유도 11), chi2/nu = 3.31</code></pre>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>자유도 \(\nu = 12 - 1 = 11\), 흩어짐 \(\sqrt{2/11} = 0.43\).</div><span class="q-why">모수(평균) 하나.</span></li>
+        <li><div>별 A: \(\chi^2/\nu = 0.65\)는 1에서 0.8 표준편차 안쪽이라 일정한 밝기와 모순이 없다.</div><span class="q-why">우연한 흩어짐으로 충분히 설명된다.</span></li>
+        <li class="q-end"><div>별 B: \(\chi^2 = 36.5\)는 \(\nu = 11\)에서 우연히 나올 확률이 0.1%보다 작다(\(\chi^2_{11}\)의 99.9% 지점이 31.3). 변광성이다.</div><span class="q-why">일정한 밝기 모형을 버린다.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>별 B의 변광 폭(±0.05등급)은 오차(0.02등급)의 2.5배라, 점 하나하나를 보면 애매해도 \(\chi^2\)로 모으면 확실해집니다. 우주망원경 측광 탐사(TESS, 가이아)는 수억 개의 별에서 이렇게 \(\chi^2\)나 비슷한 통계로 변광성 후보를 먼저 골라 냅니다. 다음 단계는 주기를 찾는 것입니다(천우10의 주기도).</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>변광이 \(\pm0.05\)등급 사인 곡선이면 그 분산은 \(0.05^2/2\)이고, 오차 분산 \(0.02^2\)에 더해 점 하나의 \(\chi^2\) 기여 기대값은 \((0.00125 + 0.0004)/0.0004 = 4.1\)입니다. 12점이면 약 \(4.1\times11 \approx 45\) 근처로, 관측된 36.5와 같은 크기입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>별 A의 측광 오차를 실제보다 작은 0.01등급으로 잘못 넣으면 \(\chi^2/\nu\)는 얼마가 되고, 어떤 잘못된 결론에 이르게 됩니까?</p>
+      <details><summary>답</summary><p>\(\chi^2 \propto 1/\sigma^2\)이라 4배인 \(0.65\times4 = 2.6\). 일정한 별을 변광성으로 잘못 판정합니다. 측광 오차를 정직하게 재는 것이 검정의 전제입니다.</p></details>
+    </section>
+  </div>
+</article>

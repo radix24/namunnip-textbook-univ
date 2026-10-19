@@ -1,0 +1,108 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-summation" data-kind="본문" data-std="천우6-02-04">
+  <header class="card-head"><span class="no"></span><h2>많은 수를 더할 때 쌓이는 반올림 오차</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>덧셈을 수백만 번 되풀이하면 반올림 오차가 쌓이는 까닭을 설명한다.</li>
+        <li>큰 합에 작은 수를 더하면 작은 수가 통째로 사라지는 현상(흡수)을 이해한다.</li>
+        <li>Kahan 보정 합과 <code>math.fsum</code>으로 오차를 줄인다.</li>
+        <li>작은 수부터 더하기, 쌍으로 더하기 같은 순서의 효과를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>부동소수점과 반올림 오차 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>덧셈 한 번의 오차</h3>
+    <p>배정밀도 부동소수점은 유효 숫자가 약 16자리이고, 기계 엡실론은 \(\varepsilon \approx 2.2\times10^{-16}\)입니다(2.1절). 두 수를 더한 결과도 16자리로 반올림되므로, 합 \(S\)에 수를 하나 더할 때마다 \(S\varepsilon\) 정도의 오차가 생길 수 있습니다. \(N\)번 더하면 이 오차가 쌓여 최악의 경우 \(NS\varepsilon\), 보통은 무작위로 쌓여 \(\sqrt N S\varepsilon\) 정도가 됩니다.</p>
+    <p>더 나쁜 경우가 '흡수'입니다. 합이 1이고 더할 수가 \(10^{-16}\)이면, \(1 + 10^{-16}\)은 16자리 안에서 1과 구별되지 않아 더한 수가 통째로 사라집니다. 백만 번 더해도 합은 1에서 움직이지 않습니다.</p>
+
+    <h3><span class="no">2.4.2</span>실험</h3>
+    <pre><code>import math
+
+def naive_sum(xs):
+    s = 0.0
+    for x in xs:
+        s += x
+    return s
+
+def kahan_sum(xs):
+    s, c = 0.0, 0.0          # c: 지난번에 잃어버린 작은 부분
+    for x in xs:
+        y = x - c
+        t = s + y
+        c = (t - s) - y
+        s = t
+    return s
+
+N = 10_000_000
+xs = [0.1] * N
+print(f"단순 합   = {naive_sum(xs):.10f}")
+print(f"Kahan 합  = {kahan_sum(xs):.10f}")
+print(f"math.fsum = {math.fsum(xs):.10f}")
+
+# 큰 수에 작은 수를 계속 더하기
+big = [1.0] + [1e-16] * 1_000_000
+print(f"1 + 1e-16 백만 번: 단순 {naive_sum(big):.12f}, Kahan {kahan_sum(big):.12f}")</code></pre>
+    <pre><code>단순 합   = 999999.9998389754
+Kahan 합  = 1000000.0000000000
+math.fsum = 1000000.0000000000
+1 + 1e-16 백만 번: 단순 1.000000000000, Kahan 1.000000000100</code></pre>
+    <p>0.1을 천만 번 단순히 더하면 \(1.6\times10^{-4}\)만큼 틀립니다. 상대 오차로 \(1.6\times10^{-10}\)이라 작아 보이지만, 같은 계산을 두 번 해 차이를 보는 문제(예: 에너지 보존 확인)에서는 이 오차가 결과를 망칠 수 있습니다. 1에 \(10^{-16}\)을 백만 번 더한 경우 단순 합은 하나도 더하지 못했고, Kahan 합은 정확히 \(10^{-10}\)을 더했습니다.</p>
+
+    <h3><span class="no">2.4.3</span>Kahan 보정 합의 원리</h3>
+    <p>\(t = s + y\)를 계산하면 \(y\)의 아래 자리 일부가 잘려 나갑니다. 잘려 나간 양은 \((t - s) - y\)로 다시 계산할 수 있습니다(\(t - s\)는 '실제로 더해진 양'). 이것을 \(c\)에 기억해 두었다가 다음 덧셈에서 빼 주면, 잃어버린 부분이 다음 번에 되살아납니다. 계산량은 네 배쯤 늘지만 오차가 \(N\)에 거의 상관없이 \(\varepsilon\) 정도로 유지됩니다. Python의 <code>math.fsum</code>은 이보다 더 정밀한 방법으로 정확한 반올림 결과를 줍니다.</p>
+
+    <h3><span class="no">2.4.4</span>순서의 효과</h3>
+    <ul class="tb-list">
+      <li><b>작은 수부터 더하기</b>: 크기가 크게 다른 수를 더할 때, 작은 것끼리 먼저 더해 키운 뒤 큰 수에 더하면 흡수가 줄어듭니다.</li>
+      <li><b>쌍으로 더하기</b>: 반으로 나눠 각각 더하고 합치기를 되풀이하면 오차가 \(\log_2N\)에 비례해 천천히 쌓입니다. 많은 수치 라이브러리의 합계 함수가 이렇게 합니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>궤도 적분에서 시간을 <code>t += dt</code>로 \(10^8\)걸음 누적합니다(dt = 0.01). 마지막 \(t\)의 오차를 어림하고, 오차가 쌓이지 않게 하는 방법을 제안하세요.</p>
+    </div>
+    <p><i>풀이.</i> 마지막 \(t = 10^6\)이므로 걸음마다 \(10^6\times2.2\times10^{-16} \approx 2\times10^{-10}\) 정도의 반올림이 생기고, \(10^8\)번이면 무작위로 쌓여도 \(\sqrt{10^8}\times2\times10^{-10} = 2\times10^{-6}\), 한쪽으로 쌓이면 \(10^{-2}\)까지 갈 수 있습니다. 누적 대신 걸음 번호로 <code>t = i * dt</code>를 매번 계산하면 오차가 쌓이지 않습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>덧셈마다 \(|S|\varepsilon\) 정도의 반올림, \(N\)번이면 쌓인다. 큰 합에 아주 작은 수는 흡수되어 사라진다.</li>
+        <li>Kahan 합: 잘려 나간 부분을 기억했다가 되돌린다. <code>math.fsum</code>은 정확한 반올림.</li>
+        <li>작은 수부터, 쌍으로 더하기. 누적 대신 다시 계산하기(<code>t = i*dt</code>).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>합이 \(10^8\)일 때 더해도 사라지지 않는 가장 작은 수는 대략 얼마입니까?
+          <details><summary>답</summary><p>\(10^8\times1.1\times10^{-16} \approx 10^{-8}\)(반 엡실론). 그보다 작으면 흡수됩니다.</p></details>
+        </li>
+        <li>단정밀도(유효 숫자 약 7자리)로 0.1을 천만 번 더하면 어떤 일이 생길까요?
+          <details><summary>답</summary><p>합이 \(10^6\) 근처가 되면 0.1이 유효 숫자 7자리의 끝에 걸려 크게 잘리거나 흡수되어, 결과가 크게 틀립니다. 실제로는 100만 근처에서 더 늘지 않는 일이 생깁니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>은하 \(10^7\)개의 광도(\(10^6\sim10^{11}L_\odot\))를 더해 전체 광도를 구할 때 정확도를 높이는 두 가지 방법은?
+          <details><summary>답</summary><p>광도를 작은 것부터 정렬해 더하거나, <code>math.fsum</code>(또는 Kahan 합)을 씁니다.</p></details>
+        </li>
+        <li>Kahan 합에서 <code>c = (t - s) - y</code>를 수학적으로 정리하면 0입니다. 그런데 왜 0이 아닙니까?
+          <details><summary>답</summary><p>컴퓨터의 \(t = s + y\)는 반올림되어 정확한 \(s + y\)가 아니기 때문입니다. \((t - s)\)는 실제로 더해진 양이고, 여기서 \(y\)를 빼면 반올림으로 잃은 양이 나옵니다. 컴파일러가 이 식을 '수학적으로' 0으로 바꾸지 않게 하는 것이 중요합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

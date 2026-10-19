@@ -1,0 +1,106 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-checking" data-kind="본문" data-std="천우6-01-03">
+  <header class="card-head"><span class="no"></span><h2>프로그램을 믿기 전에: 검산하는 습관</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>오류 메시지 없이 틀린 답을 내는 프로그램이 가장 위험함을 안다.</li>
+        <li>답을 아는 경우, 비례 관계, 극한값, 차원으로 프로그램을 검산한다.</li>
+        <li>검산을 코드 안에 <code>assert</code>로 넣어 두는 습관을 들인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>변수, 함수, 반복문 (<a href="01-01.html">1.1절</a>), 케플러 제3법칙 (<a href="../1/01-03.html">천우1 1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>조용히 틀리는 프로그램</h3>
+    <p>문법이 틀리면 Python은 곧바로 오류를 냅니다. 정말 위험한 것은 문법은 맞는데 답이 틀린 프로그램입니다. 단위를 하나 빼먹거나 괄호를 잘못 치면 프로그램은 아무 말 없이 엉뚱한 숫자를 냅니다. 다음은 긴반지름(AU)으로 공전 주기(년)를 구하려던 함수입니다.</p>
+    <pre><code>import math
+
+G = 6.674e-11       # m^3 kg^-1 s^-2
+M_SUN = 1.989e30    # kg
+AU = 1.496e11       # m
+YEAR = 3.156e7      # s
+
+def period_years_bug(a_au):
+    return 2 * math.pi * math.sqrt(a_au**3 / (G * M_SUN)) / YEAR
+
+print(f"지구  P = {period_years_bug(1.0):.3e} 년")</code></pre>
+    <pre><code>지구  P = 1.728e-17 년</code></pre>
+    <p>AU를 m로 바꾸지 않아, 지구가 \(10^{-17}\)년 만에 태양을 도는 답이 나왔습니다. 지구라는 '답을 아는 경우'를 넣어 보지 않았다면 다른 행성의 값도 그대로 믿었을 것입니다.</p>
+
+    <h3><span class="no">1.3.2</span>네 가지 검산</h3>
+    <ul class="tb-list">
+      <li><b>답을 아는 경우</b>: 지구는 1년, 태양 표면 중력은 274 m/s²처럼 알려진 값을 먼저 넣어 본다.</li>
+      <li><b>비례 관계</b>: \(P \propto a^{3/2}\)이면 \(a\)를 4배로 할 때 주기는 정확히 8배여야 한다. 상수의 값이 틀려도 지수가 맞는지는 확인된다.</li>
+      <li><b>극한값</b>: 이심률 0이면 원 궤도 결과와 같아야 하고, 질량이 0이면 힘이 0이어야 한다.</li>
+      <li><b>차원(단위)</b>: 식의 양변 단위가 같은지 손으로 따져 본다. \(\sqrt{a^3/(GM)}\)은 \(\sqrt{\text{m}^3/(\text{m}^3\text{s}^{-2})} = \text{s}\)이므로 맞다.</li>
+    </ul>
+    <p>고친 함수와 검산입니다.</p>
+    <pre><code>def period_years(a_au):
+    a = a_au * AU
+    return 2 * math.pi * math.sqrt(a**3 / (G * M_SUN)) / YEAR
+
+print(f"지구  P = {period_years(1.0):.4f} 년")
+print(f"a를 4배로: 비 = {period_years(4.0) / period_years(1.0):.4f} (기대 8)")
+for name, a in [("화성", 1.524), ("목성", 5.203), ("해왕성", 30.07)]:
+    print(f"{name:4s} a = {a:6.3f} AU  P = {period_years(a):7.2f} 년")</code></pre>
+    <pre><code>지구  P = 0.9998 년
+a를 4배로: 비 = 8.0000 (기대 8)
+화성   a =  1.524 AU  P =    1.88 년
+목성   a =  5.203 AU  P =   11.87 년
+해왕성  a = 30.070 AU  P =  164.87 년</code></pre>
+    <p>지구가 정확히 1이 아니라 0.9998인 것은 상수를 네 자리로 반올림했기 때문입니다. 검산은 '틀렸는지'뿐 아니라 '얼마나 정확한지'도 알려 줍니다.</p>
+
+    <h3><span class="no">1.3.3</span>검산을 코드에 남기기</h3>
+    <p>한 번 확인하고 지우지 말고, <code>assert</code> 문으로 코드에 남겨 두면 나중에 코드를 고쳐도 검산이 자동으로 다시 돕니다. 조건이 거짓이면 프로그램이 멈추고 알려 줍니다.</p>
+    <pre><code>assert abs(period_years(1.0) - 1.0) &lt; 1e-3, "지구 주기가 1년이 아니다"
+assert abs(period_years(4.0) / period_years(1.0) - 8.0) &lt; 1e-9</code></pre>
+    <p>이렇게 쌓인 검산 묶음을 '테스트'라 하고, 연구용 코드도 테스트를 함께 두는 것이 좋은 관례입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p>별의 광도를 \(L = 4\pi R^2\sigma T^4\)로 구하는 함수에서 \(R\)을 태양 반지름 단위로 넣었습니다. 어떤 검산이 이 실수를 잡아낼까요?</p>
+    </div>
+    <p><i>풀이.</i> 태양(\(R = 1\), \(T = 5772\) K)을 넣으면 \(3.8\times10^{26}\) W가 나와야 하는데, 단위를 바꾸지 않으면 \(4\pi\times1^2\times5.67\times10^{-8}\times5772^4 = 7.9\times10^8\) W가 나옵니다. '답을 아는 경우' 검산이 곧바로 잡아냅니다. 비례 관계 검산(\(R\)을 2배로 하면 \(L\)이 4배)은 이 실수를 잡지 못합니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>문법 오류보다 조용히 틀리는 답이 위험하다.</li>
+        <li>답을 아는 경우, 비례 관계, 극한값, 차원으로 검산한다. 검산마다 잡는 실수가 다르다.</li>
+        <li><code>assert</code>로 검산을 코드에 남긴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>탈출 속력 \(\sqrt{2GM/R}\)을 구하는 함수의 '답을 아는 경우' 검산을 하나 제안하세요.
+          <details><summary>답</summary><p>지구(\(M = 5.97\times10^{24}\) kg, \(R = 6.37\times10^6\) m)를 넣어 11.2 km/s가 나오는지 봅니다.</p></details>
+        </li>
+        <li>\(\sqrt{GM/r}\)의 단위를 따져 속도인지 확인하세요.
+          <details><summary>답</summary><p>\(\sqrt{(\text{m}^3\text{kg}^{-1}\text{s}^{-2})(\text{kg})/\text{m}} = \sqrt{\text{m}^2/\text{s}^2} = \text{m/s}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>궤도 적분 프로그램을 검산할 극한값 하나와 보존량 하나를 제안하세요.
+          <details><summary>답</summary><p>극한값: 이심률 0으로 시작하면 반지름이 일정해야 합니다. 보존량: 전체 에너지와 각운동량이 시간에 따라 거의 변하지 않아야 합니다(5.2절).</p></details>
+        </li>
+        <li><code>period_years</code>에서 <code>YEAR</code>를 3.156e7 대신 365*24*3600으로 바꾸면 지구의 값은 어떻게 바뀝니까?
+          <details><summary>답</summary><p>\(365\times86400 = 3.1536\times10^7\) s라 분모가 약 0.07% 작아져, 지구 주기가 약 1.0006년으로 나옵니다. 1년이 365.25일이기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
