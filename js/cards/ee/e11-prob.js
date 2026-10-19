@@ -10,27 +10,6 @@
   const rng = (seed) => () => { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed / 2147483648; };
   const gauss = (r) => { let u = r(); if (u < 1e-12) u = 1e-12; return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); };
 
-  /* 1. 이진 대칭 채널과 사후 확률 */
-  (() => {
-    const S = QSim.card("exp-e11-bayes"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), pi = S.val("pi"), p = S.val("p");
-      const py1 = (1 - p) * pi + p * (1 - pi), post1 = (1 - p) * pi / py1, post0 = (1 - p) * (1 - pi) / (1 - py1);
-      const v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: 0, x1: 0.5, y0: 0, y1: 1, xl: "교차 확률 p", yl: "P(X=1 | Y=1)" }); fr.axes();
-      [0.1, 0.5, 0.9].forEach((q, i) => fr.fn((pp) => (1 - pp) * q / ((1 - pp) * q + pp * (1 - q)), [c.acc, c.ink3, c.warn][i], 1.3, [5, 3]));
-      fr.fn((pp) => (1 - pp) * pi / ((1 - pp) * pi + pp * (1 - pi)), c.main, 2.6);
-      fr.dot(p, post1, c.warn, 6);
-      const err = pi * p + (1 - pi) * p;   // 받은 비트를 그대로 믿을 때의 오류 확률 = p
-      const map1 = post1 >= 0.5 ? 1 : 0, map0 = post0 >= 0.5 ? 0 : 1;
-      const perrMap = (map1 === 1 ? p * (1 - pi) : (1 - p) * pi) + (map0 === 0 ? p * pi : (1 - p) * (1 - pi));
-      S.out(`사전 확률 P(X=1) = ${f2(pi, 2)}, 교차 확률 p = ${f2(p, 3)}\n` +
-        `P(Y=1) = ${f2(py1, 4)}, 사후 확률 P(X=1|Y=1) = ${f2(post1, 4)}, P(X=0|Y=0) = ${f2(post0, 4)}\n` +
-        `MAP 판정: Y=1이면 ${map1}, Y=0이면 ${map0}로 결정 → 오류 확률 ${f2(perrMap, 4)} (받은 비트를 그대로 믿으면 ${f2(err, 4)}). 점선: 사전 확률 0.1(주황), 0.5(회색), 0.9(빨강).`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. 중심극한정리: 균일 분포 n개의 합 */
   (() => {
     const S = QSim.card("exp-e11-clt"); if (!S) return;
@@ -74,27 +53,6 @@
         `평균 E[x(0)] = ${f2(mean(0))}, E[x(0.25)] = ${f2(mean(0.25))}\n` +
         `R(t, t+τ), τ = ${f2(tau, 2)}: t = 0에서 ${f2(R(0, tau))}, t = 0.25에서 ${f2(R(0.25, tau))} (이론 (1/2)cos(2πτ) = ${f2(0.5 * Math.cos(2 * Math.PI * tau))}는 균일(0, 2π)일 때)`);
     }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. RC 저역 통과를 지난 백색 잡음의 PSD */
-  (() => {
-    const S = QSim.card("exp-e11-filter"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), fc = S.val("fc") * 1e3, N0 = 1e-8;   // 양측 PSD N0/2 = 0.5e-8 V²/Hz
-      const H2 = (f) => 1 / (1 + (f / fc) ** 2);
-      const fmax = 50e3, v = QSim.view(cv, 0.45), fr = QSim.frame(v, { x0: -fmax / 1e3, x1: fmax / 1e3, y0: 0, y1: 1.2, xl: "f (kHz)", yl: "S(f) / (N₀/2)" }); fr.axes();
-      fr.path([[-fmax / 1e3, 1], [fmax / 1e3, 1]], c.ink3, 1.2, [5, 3]);
-      fr.fn((k) => H2(k * 1e3), c.main, 2.4, undefined, 600);
-      const BN = Math.PI * fc / 2;   // 1/(4RC) = πfc/2
-      g2(fr, -BN / 1e3, BN / 1e3, c);
-      const P = N0 / 2 * 2 * BN;     // 출력 전력 = (N0/2)·2B_N
-      S.out(`입력: 양측 PSD N₀/2 = ${(N0 / 2).toExponential(1)} V²/Hz인 백색 잡음(점선). RC 저역 통과 f_c = ${f2(fc / 1e3, 1)} kHz (RC = ${f2(1e6 / (2 * Math.PI * fc), 2)} μs)\n` +
-        `출력 PSD = (N₀/2)/(1 + (f/f_c)²) (파랑). 출력 전력 = N₀/(4RC) = ${P.toExponential(3)} V², 실효값 ${f2(Math.sqrt(P) * 1e3, 3)} mV\n` +
-        `잡음 등가 대역폭 B_N = 1/(4RC) = (π/2)f_c = ${f2(BN / 1e3, 2)} kHz (주황 사각형과 같은 넓이). f_c보다 ${f2(BN / fc, 3)}배 넓습니다.`);
-    }
-    function g2(fr, a, b, c) { fr.path([[a, 0], [a, 1], [b, 1], [b, 0]], c.acc, 1.6); }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
