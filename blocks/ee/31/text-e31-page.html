@@ -1,0 +1,97 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-page" data-kind="본문" data-std="전전31-04-01">
+  <header class="card-head"><span class="no"></span><h2>페이지 교체 알고리즘의 페이지 부재 수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>FIFO, LRU, OPT(최적) 교체를 참조열에 적용한다.</li>
+        <li>프레임 수에 따른 페이지 부재 수를 계산한다.</li>
+        <li>Belady의 이상 현상과 LRU 근사(클록 알고리즘)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>가상 메모리 (<a href="../14/06.html">전전14 6단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>세 알고리즘</h3>
+    <p><b>FIFO</b>: 가장 먼저 들어온 페이지를 내보냄. <b>LRU</b>: 가장 오래 쓰지 않은 페이지. <b>OPT</b>: 앞으로 가장 늦게 쓰일 페이지(미래를 알아야 해 비교 기준으로만 씀).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>참조열 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1에서 프레임 3개와 4개의 페이지 부재 수.</p>
+    </div>
+    <pre><code>ref = [7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1]
+def fifo(r, n):
+    f, q, c = set(), [], 0
+    for p in r:
+        if p not in f:
+            c += 1
+            if len(f) == n: f.remove(q.pop(0))
+            f.add(p); q.append(p)
+    return c
+def lru(r, n):
+    f, c = [], 0
+    for p in r:
+        if p in f: f.remove(p)
+        else:
+            c += 1
+            if len(f) == n: f.pop(0)
+        f.append(p)
+    return c
+def opt(r, n):
+    f, c = [], 0
+    for i, p in enumerate(r):
+        if p in f: continue
+        c += 1
+        if len(f) == n:
+            nxt = [r[i+1:].index(x) if x in r[i+1:] else 99 for x in f]
+            f.pop(nxt.index(max(nxt)))
+        f.append(p)
+    return c
+for n in (3, 4): print(n, "프레임: FIFO", fifo(ref, n), "LRU", lru(ref, n), "OPT", opt(ref, n))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>3 프레임: FIFO 15 LRU 12 OPT 9
+4 프레임: FIFO 10 LRU 8 OPT 8</code></pre>
+    <p>LRU는 OPT에 가깝고 FIFO보다 낫습니다. LRU를 정확히 구현하려면 참조마다 시각을 기록해야 해 비싸므로, 참조 비트를 돌며 확인하는 클록(두 번째 기회) 알고리즘으로 근사합니다. FIFO는 프레임을 늘렸는데 부재가 늘어나는 Belady 이상이 생길 수 있습니다(예: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5에서 3프레임 9번, 4프레임 10번).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "프레임을 늘리면 어떤 알고리즘이든 부재가 준다": FIFO는 아닐 수 있습니다(LRU, OPT는 보장). (2) "OPT를 구현할 수 있다": 미래 참조를 알 수 없어 비교 기준입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>FIFO, LRU, OPT.</li>
+        <li>예(3프레임): 15, 12, 9(실제 계산).</li>
+        <li>클록 알고리즘으로 LRU 근사, FIFO의 Belady 이상.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>처음 세 참조 7, 0, 1은 어떤 알고리즘이든 부재인가?
+          <details><summary>답</summary><p>예(빈 프레임에 처음 적재).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>참조열 1, 2, 3, 1, 4, 1(3프레임)의 LRU 부재 수는?
+          <details><summary>답</summary><p>4번(1, 2, 3, 4 적재; 4가 2를 내보냄).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>작업 집합이 프레임 수보다 크면 무슨 일이 생기는가?
+          <details><summary>답</summary><p>부재가 폭증해 디스크 입출력만 하는 스래싱이 생깁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

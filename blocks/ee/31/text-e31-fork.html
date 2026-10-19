@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-fork" data-kind="본문" data-std="전전31-02-02">
+  <header class="card-head"><span class="no"></span><h2>프로세스 생성 시스템 호출로 프로그램 작성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>fork()가 부모를 복제하고 두 번 반환(자식 0, 부모 자식 PID)함을 안다.</li>
+        <li>exec로 다른 프로그램을 적재하고 wait로 자식 종료를 기다린다.</li>
+        <li>좀비와 고아 프로세스를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>시스템 호출 (<a href="01-01.html">1.1절</a>), C 기초.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>fork-exec-wait</h3>
+    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+int main(void) {
+    pid_t pid = fork();                 /* 이 줄 뒤로 프로세스가 둘 */
+    if (pid &lt; 0) { perror("fork"); return 1; }
+    if (pid == 0) {                     /* 자식 */
+        execlp("ls", "ls", "-l", (char *)NULL);
+        perror("exec");                 /* exec가 성공하면 여기에 오지 않음 */
+        return 1;
+    }
+    int status;
+    waitpid(pid, &amp;status, 0);           /* 부모: 자식이 끝날 때까지 기다림 */
+    printf("child %d exited with %d\n", (int)pid, WEXITSTATUS(status));
+    return 0;
+}</code></pre>
+    <p>셸이 명령을 실행하는 방식이 이것입니다. 자식은 ls로 바뀌어 목록을 출력하고, 부모는 기다렸다가 종료 코드를 출력합니다(리눅스·macOS에서 컴파일해 실행, Windows에는 fork가 없음). 부모가 wait로 기다리므로 "child … exited" 줄은 언제나 ls 출력 뒤에 나옵니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>fork()를 연달아 세 번 부르면(조건 없이) 프로세스는 몇 개가 되는가? 자식이 끝났는데 부모가 wait하지 않으면?</p>
+    </div>
+    <p><i>풀이.</i> 매번 두 배라 2³ = 8개. 끝난 자식은 종료 상태를 부모가 거둘 때까지 프로세스 표에 남는 좀비가 됩니다. 부모가 먼저 끝나면 자식은 고아가 되어 init(systemd)이 거둡니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "fork 뒤 자식이 먼저 실행된다": 순서는 스케줄러가 정해 보장되지 않습니다. (2) "fork는 메모리를 모두 복사해 느리다": 쓰기 시 복사(copy-on-write)로 실제 복사는 쓸 때만 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>fork: 자식 0, 부모 PID 반환.</li>
+        <li>exec로 다른 프로그램, wait로 종료 수거.</li>
+        <li>좀비(수거 안 됨), 고아(부모 먼저 종료).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>fork 실패 시 반환값은?
+          <details><summary>답</summary><p>−1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>fork 두 번이면 프로세스 수는?
+          <details><summary>답</summary><p>4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>exec 뒤에도 유지되는 것 하나는?
+          <details><summary>답</summary><p>PID(그리고 열린 파일 기술자 대부분).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

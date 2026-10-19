@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전25-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e25-ooo" data-kind="본문" data-std="전전25-05-01">
+  <header class="card-head"><span class="no"></span><h2>비순차 실행이 성능을 높이는 원리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>데이터 의존이 없는 명령어를 먼저 실행해 지연을 숨기는 원리를 안다.</li>
+        <li>레지스터 이름 바꾸기가 가짜 의존(WAR, WAW)을 없앰을 안다.</li>
+        <li>재정렬 버퍼(ROB)가 순서대로 결과를 확정해 정확한 예외를 지키는 것을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파이프라이닝과 해저드 (<a href="../14/05.html">전전14 5단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>예</h3>
+    <pre><code>1: LDR  r1, [r2]      @ 캐시 미스: 100 사이클
+2: ADD  r3, r1, #1    @ 1에 의존
+3: MUL  r4, r5, r6    @ 독립
+4: ADD  r7, r4, r8    @ 3에 의존
+5: SUB  r1, r9, r10   @ r1을 다시 씀(WAW·WAR)</code></pre>
+    <p>순차 파이프라인은 2에서 100 사이클 멈춰 3~5도 기다립니다. 비순차 프로세서는 명령어를 대기열에 넣고 피연산자가 준비된 것부터 실행해, 미스 동안 3, 4를 끝냅니다. 5는 r1을 덮어써 1, 2와 이름이 겹칠 뿐 실제 값 의존은 없으므로, 물리 레지스터를 새로 배정(이름 바꾸기)해 먼저 실행할 수 있습니다.</p>
+    <p>실행은 뒤섞여도 재정렬 버퍼가 원래 순서대로 결과를 확정(커밋)하므로, 중간에 예외가 나면 그 앞 명령까지만 반영된 정확한 상태를 볼 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>위 다섯 명령에서 독립 명령 3, 4, 5가 각 1 사이클이라 할 때, 순차 실행과 이상적 비순차 실행의 총 사이클을 어림하라(미스 100, 나머지 1).</p>
+    </div>
+    <p><i>풀이.</i> 순차: 1(100) + 2 + 3 + 4 + 5 ≈ 104. 비순차: 3, 4, 5가 미스 동안 끝나 1(100) + 2 ≈ 101. 숨길 독립 명령이 많을수록(창이 클수록) 이득이 커집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "비순차면 프로그램 결과 순서도 바뀐다": 확정은 순서대로라 단일 스레드 결과는 같습니다. (2) "비순차 실행은 공짜": 대기열, ROB, 이름 바꾸기 하드웨어로 면적과 전력이 큽니다(그래서 저전력 MCU는 순차).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>준비된 명령부터 실행해 지연 숨김.</li>
+        <li>이름 바꾸기로 WAR·WAW 제거.</li>
+        <li>ROB가 순서대로 확정, 정확한 예외.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>진짜 의존(RAW)의 예는?
+          <details><summary>답</summary><p>2가 1의 결과 r1을 읽음.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>5가 1과 갖는 해저드 종류는?
+          <details><summary>답</summary><p>WAW(같은 r1을 씀), 2와는 WAR.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>Cortex-M0 같은 MCU가 비순차 실행을 쓰지 않는 이유는?
+          <details><summary>답</summary><p>면적·전력·결정적 실행 시간이 더 중요하기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

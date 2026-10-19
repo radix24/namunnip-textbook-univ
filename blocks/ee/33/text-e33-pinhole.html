@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-pinhole" data-kind="본문" data-std="전전33-01-01">
+  <header class="card-head"><span class="no"></span><h2>핀홀 카메라 모델로 영상 좌표 구하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>원근 투영 \(u = f_xX/Z + c_x\), \(v = f_yY/Z + c_y\)를 쓴다.</li>
+        <li>내부 행렬 K와 외부 매개변수(R, t)로 세계 좌표를 픽셀로 바꾼다.</li>
+        <li>초점 거리(픽셀)와 화각의 관계를 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 곱 (<a href="../16/01-01.html">전전16 1.1절</a>), 닮음비(고교 수학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>투영</h3>
+    <p>카메라 좌표 (X, Y, Z)의 점은 닮음비로 영상면에 투영됩니다. 픽셀 단위 초점 거리 f와 주점 (c_x, c_y)를 묶은 내부 행렬로</p>
+    \[ \begin{pmatrix} u \\ v \\ 1 \end{pmatrix} \sim K\begin{pmatrix} X \\ Y \\ Z \end{pmatrix}, \quad K = \begin{pmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{pmatrix}. \]
+    <p>세계 좌표는 먼저 \(X_c = RX_w + t\)로 카메라 좌표로 바꿉니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>f = 1000 px, 주점 (320, 240), 카메라 좌표 (0.5, 0.25, 5) m인 점의 픽셀 좌표는? 폭 640 px 영상의 수평 화각은?</p>
+    </div>
+    <p><i>풀이.</i> u = 1000 × 0.1 + 320 = 420, v = 1000 × 0.05 + 240 = 290. 수평 화각 = 2 tan⁻¹(320/1000) = 35.5°. 같은 점이 10 m로 멀어지면 (370, 265)로 주점에 가까워집니다(원근).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "초점 거리는 mm 단위로만 쓴다": 영상 계산에서는 픽셀 단위(f_mm / 픽셀 크기)를 씁니다. (2) "실제 렌즈도 완벽한 핀홀": 방사 왜곡이 있어 보정(캘리브레이션)으로 계수를 구합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>u = fX/Z + c_x, v = fY/Z + c_y.</li>
+        <li>K(내부) + R, t(외부).</li>
+        <li>예: (0.5, 0.25, 5) → (420, 290), 화각 35.5°.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Z가 두 배가 되면 주점으로부터의 거리는?
+          <details><summary>답</summary><p>절반.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>f_mm = 4 mm, 픽셀 2 μm의 f(픽셀)는?
+          <details><summary>답</summary><p>2000 px.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>체커보드로 카메라를 보정하는 이유는?
+          <details><summary>답</summary><p>K와 렌즈 왜곡 계수를 정확히 알아 측정·3차원 복원을 하기 위해.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

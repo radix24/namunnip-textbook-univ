@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-biasvar" data-kind="본문" data-std="전전23-01-02">
+  <header class="card-head"><span class="no"></span><h2>편향-분산 트레이드오프</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기대 제곱 오차가 편향² + 분산 + 잡음으로 나뉨을 안다.</li>
+        <li>모델이 단순하면 편향, 복잡하면 분산이 커지는 이유를 설명한다.</li>
+        <li>축소 추정량 예로 편향을 조금 늘려 전체 오차를 줄이는 계산을 한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기댓값과 분산 (<a href="../11/02-01.html">전전11 2.1절</a>), 정규화 (<a href="../20/02-01.html">전전20 2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>분해</h3>
+    <p>같은 방식으로 다른 훈련 자료를 뽑아 학습할 때마다 예측 \(\hat f(x)\)가 달라집니다. 참값 f(x)와 잡음 분산 σ²에 대해</p>
+    \[ E[(y - \hat f)^2] = \underbrace{(E\hat f - f)^2}_{\text{편향}^2} + \underbrace{\text{Var}(\hat f)}_{\text{분산}} + \sigma^2. \]
+    <p>직선처럼 단순한 모델은 곡선을 따라가지 못해 편향이 크고, 고차 다항식처럼 복잡한 모델은 자료마다 크게 흔들려 분산이 큽니다. 전체 오차가 가장 작은 중간 복잡도를 고르는 것이 모델 선택입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>평균 μ = 1, 분산 4인 분포에서 n = 4개를 뽑아 μ를 \(\hat\mu = c\bar x\)로 추정한다. c = 1과 c = 0.5의 평균 제곱 오차는?</p>
+    </div>
+    <p><i>풀이.</i> \(\text{Var}(\bar x) = 4/4 = 1\). 편향 \((c - 1)\mu\), 분산 \(c^2\). c = 1: 0 + 1 = 1. c = 0.5: 0.25 + 0.25 = 0.5. 일부러 0 쪽으로 줄여(편향 증가) 분산을 4분의 1로 줄인 결과 전체 오차가 절반이 되었습니다. 리지 정규화가 하는 일이 이것입니다. (최적 c는 \(\mu^2/(\mu^2 + 1) = 0.5\)로, μ를 알아야 정할 수 있어 실제로는 검증 자료로 고릅니다.)</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "편향이 없는 추정이 언제나 낫다": 분산이 크면 전체 오차가 더 클 수 있습니다. (2) "자료를 늘리면 편향이 준다": 자료를 늘리면 주로 분산이 줄고, 편향은 모델의 표현력으로 정해집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>오차 = 편향² + 분산 + 잡음.</li>
+        <li>단순 모델은 편향, 복잡 모델은 분산이 크다.</li>
+        <li>축소(정규화)는 편향을 조금 늘려 분산을 크게 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>잡음 σ²는 모델을 바꿔 줄일 수 있는가?
+          <details><summary>답</summary><p>아닙니다. 줄일 수 없는 오차입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 c = 0.8의 평균 제곱 오차는?
+          <details><summary>답</summary><p>0.04 + 0.64 = 0.68.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>훈련 오차와 검증 오차가 모두 크면 어느 쪽 문제인가?
+          <details><summary>답</summary><p>편향(과소적합). 모델을 키우거나 특징을 늘립니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
