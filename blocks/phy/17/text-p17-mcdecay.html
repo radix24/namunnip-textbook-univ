@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-03-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p17-mcdecay" data-kind="본문" data-std="물리17-03-05">
+  <header class="card-head"><span class="no"></span><h2>몬테카를로로 방사성 붕괴 흉내 내기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>핵마다 붕괴 확률을 주어 방사성 붕괴를 시뮬레이션하고 평균을 이론과 비교한다.</li>
+        <li>실행마다의 흔들림을 이항분포로 예측하고, 시뮬레이션 자료에 맞춘 매개변수의 불확도를 확인한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>몬테카를로 원리 (<a href="03-04.html">3.4절</a>), 붕괴 법칙 (<a href="../7/04-02.html">물리7 4.2절</a>), 곡선 적합 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.5.1</span>시뮬레이션</h3>
+    <p>핵 \(N_0\)개가 시간 간격 \(\Delta t\)마다 각각 확률 \(p = 1 - e^{-\lambda\Delta t}\)로 붕괴하게 합니다. 남은 핵 하나하나에 난수를 쓰는 대신, 이번 간격의 붕괴 수를 이항분포에서 한 번에 뽑으면 빠릅니다.</p>
+<pre><code>rng = np.random.default_rng(1)
+lam, dt, N0 = 0.1, 0.1, 1000
+alive = N0
+counts = []
+for step in range(500):
+    decays = rng.binomial(alive, 1 - np.exp(-lam*dt))   # 이번 간격의 붕괴 수
+    alive -= decays
+    counts.append(alive)</code></pre>
+    <p>\(p = \lambda\Delta t\)로 근사해도 되지만, \(\lambda\Delta t\)가 크면 오차가 생기므로 정확한 식을 씁니다.</p>
+
+    <h3><span class="no">3.5.2</span>흔들림과 검증</h3>
+    <p>평균은 \(N_0e^{-\lambda t}\)를 따르지만 실행마다 흔들립니다. 시각 \(t\)에 각 핵이 살아 있을 확률이 \(q = e^{-\lambda t}\)이므로 남은 수는 이항분포를 따라, 표준편차가 \(\sqrt{N_0q(1 - q)}\)입니다. 핵이 적을수록 상대 흔들림이 커집니다.</p>
+    <p>같은 시뮬레이션을 여러 번 돌려 평균과 표준편차를 이론과 비교하면 코드가 검증되고 통계적 흔들림도 실감할 수 있습니다. 또 한 번의 시뮬레이션 자료에 2.1절 방법으로 지수 함수를 맞춰 얻은 \(\lambda\)의 불확도가, 여러 실행 사이에서 맞춘 \(\lambda\)가 흔들리는 정도와 같은지 확인해 봅니다. 같다면 불확도 계산이 올바른 것입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>간격마다 붕괴 수를 이항분포로: \(p = 1 - e^{-\lambda\Delta t}\).</li>
+        <li>남은 수의 표준편차 \(\sqrt{N_0q(1 - q)}\), \(q = e^{-\lambda t}\).</li>
+        <li>여러 실행으로 평균, 흔들림, 맞춘 매개변수의 불확도를 검증.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\lambda = 0.1\) s⁻¹, \(\Delta t = 0.1\) s일 때 한 간격의 붕괴 확률은?
+          <details><summary>답</summary><p>\(1 - e^{-0.01} \approx 0.00995\).</p></details>
+        </li>
+        <li>\(N_0 = 1000\)일 때 \(t = 10\) s(\(\lambda t = 1\))에 남은 수의 기대값과 표준편차는?
+          <details><summary>답</summary><p>\(1000e^{-1} = 368\), \(\sqrt{1000\times0.368\times0.632} \approx 15\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
