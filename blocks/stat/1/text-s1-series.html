@@ -11,51 +11,75 @@
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>비교, 비, 적분 판정법으로 급수의 수렴을 판정한다.</li>
-        <li>확률질량함수의 합이 1이 되는지 확인한다.</li>
+        <li>발산 판정, 비교 판정, 비 판정, 적분 판정으로 급수의 수렴을 판정한다.</li>
+        <li>값이 끝없이 많은 이산분포에서 확률의 합이 1인지, 평균이 존재하는지 확인한다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>수열의 극한 (<a href="01-01.html">1.1절</a>), 이상적분 (<a href="03-02.html">3.2절</a>).</li>
+        <li>고등학교 미적분의 급수(부분합의 극한)와 등비급수, 수열의 극한 (<a href="01-01.html">1.1절</a>), 이상적분 (<a href="03-02.html">3.2절</a>).</li>
       </ul>
     </div>
 
     <h3>무한히 더해도 유한한가</h3>
-    <p>포아송분포처럼 값이 0, 1, 2, …로 끝없는 이산분포에서 확률을 모두 더하면 1이어야 하고, 기대값 \(\sum xp(x)\)도 유한해야 의미가 있습니다. 무한급수의 수렴 판정이 필요한 이유입니다.</p>
+    <p>주사위 눈은 1부터 6까지 여섯 값뿐이지만, "하루 동안 걸려 오는 전화 수"처럼 0, 1, 2, …로 끝없이 많은 값을 가질 수 있는 확률변수도 있습니다(포아송분포). 이런 분포가 제대로 된 확률분포이려면 모든 값의 확률을 끝없이 더한 합이 1이어야 하고, 평균 \(\sum x\,P(X = x)\)도 유한해야 의미가 있습니다. 끝없는 합이 유한한 값이 되는지 판정하는 방법이 필요합니다.</p>
+    <p>고등학교에서 배운 대로, 급수 \(\sum_{n=1}^\infty a_n\)은 부분합 \(S_N = a_1 + \cdots + a_N\)의 극한이고, 극한이 유한하면 수렴, 아니면 발산입니다. 공비 \(r\)인 등비급수 \(\sum r^n\)은 \(|r| &lt; 1\)일 때만 수렴합니다. 대부분의 급수는 부분합을 깔끔한 식으로 쓸 수 없으므로, 합을 구하지 않고 수렴 여부만 판정하는 방법을 씁니다.</p>
 
-    <h3><span class="no">4.1.1</span>판정법</h3>
+    <h3><span class="no">4.1.1</span>네 가지 판정법</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 4.1.1</span>
-      <ol>
-        <li><b>발산 판정</b>: \(a_n \not\to 0\)이면 \(\sum a_n\)은 발산.</li>
-        <li><b>비교 판정</b>: \(0 \le a_n \le b_n\)이고 \(\sum b_n\) 수렴이면 \(\sum a_n\) 수렴.</li>
-        <li><b>비 판정</b>: \(\lim|a_{n+1}/a_n| = r\)일 때 \(r &lt; 1\)이면 (절대)수렴, \(r &gt; 1\)이면 발산.</li>
-        <li><b>적분 판정</b>: \(f\)가 양수이고 감소하면 \(\sum f(n)\)과 \(\int^\infty f\)는 함께 수렴·발산. 그래서 \(\sum n^{-p}\)는 \(p &gt; 1\)에서 수렴.</li>
-      </ol>
+      <span class="lb">정리 4.1.1 (발산 판정)</span>
+      <p>\(a_n\)이 0으로 가지 않으면 \(\sum a_n\)은 발산합니다.</p>
     </div>
-    <p>\(a_n \to 0\)은 필요조건일 뿐입니다. 조화급수 \(\sum 1/n\)은 항이 0으로 가도 발산합니다.</p>
+    <p>수렴하면 \(a_n = S_n - S_{n-1} \to L - L = 0\)이어야 하기 때문입니다. 그러나 거꾸로 \(a_n \to 0\)이라고 수렴하는 것은 아닙니다. 조화급수 \(1 + \frac12 + \frac13 + \cdots\)는 항이 0으로 가지만, \(\frac13 + \frac14 > \frac12\), \(\frac15 + \cdots + \frac18 > \frac12\)처럼 묶으면 \(\frac12\)보다 큰 묶음이 끝없이 나오므로 발산합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.1.2 (비교 판정)</span>
+      <p>모든 \(n\)에서 \(0 \le a_n \le b_n\)이고 \(\sum b_n\)이 수렴하면 \(\sum a_n\)도 수렴합니다. \(\sum a_n\)이 발산하면 \(\sum b_n\)도 발산합니다.</p>
+    </div>
+    <p>음이 아닌 항을 더하면 부분합이 줄지 않고, 위에서 유한한 값으로 막혀 있으면 수렴하기 때문입니다(이상적분의 비교 판정과 같은 생각).</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.1.3 (비 판정)</span>
+      <p>\(\lim_{n\to\infty}\left|\dfrac{a_{n+1}}{a_n}\right| = r\)일 때, \(r &lt; 1\)이면 수렴하고 \(r > 1\)이면 발산합니다. \(r = 1\)이면 이 방법으로는 판정할 수 없습니다.</p>
+    </div>
+    <p>이웃한 항의 비가 결국 \(r\)에 가까워진다는 것은, 뒤쪽 항들이 공비가 거의 \(r\)인 등비급수처럼 줄어든다는 뜻입니다. 그래서 \(r &lt; 1\)이면 등비급수와 비교해 수렴합니다. 계승 \(n!\)이나 \(\lambda^n\) 같은 지수가 들어 있는 급수에 먼저 써 볼 방법입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.1.4 (적분 판정)</span>
+      <p>\(f(x)\)가 양수이고 줄어드는 함수일 때 \(\sum_{n=1}^\infty f(n)\)과 \(\int_1^\infty f(x)\,dx\)는 함께 수렴하거나 함께 발산합니다.</p>
+    </div>
+    <p>폭 1인 막대 \(f(1), f(2), \ldots\)를 늘어놓은 넓이와 곡선 아래 넓이가 서로 위아래로 끼워지기 때문입니다. 결과 3.2.3을 쓰면 \(\sum\frac{1}{n^p}\)는 \(p > 1\)에서 수렴하고 \(p \le 1\)에서 발산합니다.</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 4.1.2</span>
-      <p>(가) \(\sum\frac{\lambda^n}{n!}\) (나) \(\sum\frac{1}{n(n+1)}\) (다) 포아송 기대값 \(\sum ne^{-\lambda}\lambda^n/n!\)의 수렴.</p>
+      <span class="lb">예제 4.1.5</span>
+      <p>다음 급수의 수렴을 판정하세요. (가) \(\displaystyle\sum_{n=0}^\infty\frac{\lambda^n}{n!}\) (\(\lambda > 0\)) (나) \(\displaystyle\sum_{n=1}^\infty\frac{1}{n(n+1)}\) (다) 포아송분포의 평균 \(\displaystyle\sum_{n=0}^\infty n\,e^{-\lambda}\frac{\lambda^n}{n!}\)</p>
     </div>
-    <p><i>풀이.</i> (가) 비 \(\frac{\lambda}{n+1} \to 0 &lt; 1\), 수렴(합은 \(e^\lambda\), 4.2절). (나) \(\frac1n - \frac1{n+1}\)로 쪼개면 부분합이 \(1 - \frac1{N+1} \to 1\)(망원급수). (다) 비 \(\frac{\lambda}{n} \to 0\), 수렴.</p>
+    <p><i>풀이.</i> (가) 이웃한 항의 비는 \(\frac{\lambda^{n+1}/(n+1)!}{\lambda^n/n!} = \frac{\lambda}{n+1} \to 0 &lt; 1\)이므로 수렴합니다(합은 \(e^\lambda\)이며 4.2절에서 보입니다). 따라서 포아송 확률 \(e^{-\lambda}\lambda^n/n!\)을 모두 더하면 \(e^{-\lambda}e^\lambda = 1\)입니다.</p>
+    <p>(나) \(\frac{1}{n(n+1)} = \frac1n - \frac1{n+1}\)로 쪼개면 부분합의 대부분이 서로 지워져 \(S_N = 1 - \frac{1}{N+1} \to 1\)입니다(망원급수). 비교 판정으로도 \(\frac{1}{n(n+1)} \le \frac{1}{n^2}\)이라 수렴을 알 수 있습니다.</p>
+    <p>(다) 이웃한 항의 비가 \(\frac{\lambda}{n} \to 0\)이므로 수렴하고, 포아송분포의 평균이 존재합니다.</p>
+
+    <div class="tb-note">
+      <b>흔한 실수</b>
+      <p>비 판정에서 극한이 1이면 "수렴"이라고 결론짓는 실수가 있습니다. \(\sum\frac1n\)(발산)과 \(\sum\frac{1}{n^2}\)(수렴)은 둘 다 비의 극한이 1입니다. 이때는 비교 판정이나 적분 판정을 씁니다.</p>
+    </div>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>항이 0으로 가지 않으면 발산.</li>
-        <li>비 판정: 계승·지수가 있으면 먼저 시도.</li>
-        <li>\(\sum n^{-p}\): \(p &gt; 1\)에서 수렴(적분 판정).</li>
+        <li>항이 0으로 가지 않으면 발산. 0으로 가도 수렴한다는 보장은 없습니다(조화급수).</li>
+        <li>계승이나 지수가 있으면 비 판정부터, 다항식 꼴이면 \(\sum n^{-p}\)와 비교합니다.</li>
+        <li>\(\sum n^{-p}\)는 \(p > 1\)에서만 수렴합니다(적분 판정).</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">4.1.3</span>연습문제</h3>
+      <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(p(n) = \frac{c}{n^2}\) (\(n = 1, 2, \ldots\))가 확률질량함수가 되는 \(c\)는? 평균은 있나요? (\(\sum 1/n^2 = \pi^2/6\))
-          <details><summary>답</summary><p>\(c = 6/\pi^2\). 평균 \(\sum cn/n^2 = c\sum 1/n = \infty\), 없음.</p></details>
+        <li>\(\displaystyle\sum_{n=1}^\infty\frac{n}{3^n}\)의 수렴을 비 판정으로 판정하세요.
+          <details><summary>답</summary><p>\(\frac{n+1}{3n} \to \frac13 &lt; 1\)이므로 수렴합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(p(n) = \dfrac{c}{n^2}\) (\(n = 1, 2, \ldots\))가 확률질량함수가 되는 \(c\)를 구하고, 평균이 존재하는지 판정하세요. (\(\sum 1/n^2 = \pi^2/6\)임을 써도 됩니다.)
+          <details><summary>답</summary><p>\(c = 6/\pi^2\). 평균은 \(\sum n\cdot\frac{c}{n^2} = c\sum\frac1n = \infty\)이므로 존재하지 않습니다.</p></details>
         </li>
       </ol>
     </div>

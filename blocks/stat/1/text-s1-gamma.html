@@ -11,49 +11,63 @@
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>감마 함수의 정의와 \(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\), \(\Gamma(1/2) = \sqrt\pi\)를 쓴다.</li>
-        <li>베타 함수와 감마 함수의 관계로 적분을 계산한다.</li>
+        <li>감마 함수의 정의와 성질 \(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\), \(\Gamma(n) = (n-1)!\), \(\Gamma(1/2) = \sqrt\pi\)를 쓴다.</li>
+        <li>베타 함수를 감마 함수로 바꾸어 적분을 빠르게 계산한다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>부분적분과 이상적분 (<a href="03-01.html">3.1</a>, <a href="03-02.html">3.2절</a>).</li>
+        <li>부분적분과 이상적분 (<a href="03-01.html">3.1</a>, <a href="03-02.html">3.2절</a>), 고등학교 확률과 통계의 계승 \(n!\).</li>
       </ul>
     </div>
 
     <h3>계승을 실수로 넓히기</h3>
-    <p>\(\int_0^\infty x^ne^{-x}dx = n!\)입니다. 이 적분은 \(n\)이 정수가 아니어도 계산할 수 있으므로, 계승을 실수로 넓힌 함수를 얻습니다. 감마분포, 카이제곱분포, t 분포의 밀도에 모두 이 함수가 들어 있습니다.</p>
+    <p>부분적분을 되풀이하면 \(\int_0^\infty x^2e^{-x}dx = 2\), \(\int_0^\infty x^3e^{-x}dx = 6\)처럼 \(\int_0^\infty x^ne^{-x}dx = n!\)이 나옵니다. 그런데 이 적분은 \(n\)이 2.5처럼 정수가 아니어도 계산할 수 있습니다. 그러니 이 적분을 이용하면 계승을 정수가 아닌 수로 넓힐 수 있습니다. 이렇게 만든 함수가 감마 함수이고, 감마분포, 카이제곱분포, t 분포처럼 통계에서 중요한 분포의 밀도 상수에 모두 들어 있습니다.</p>
 
     <h3><span class="no">3.3.1</span>감마 함수</h3>
     <div class="tb-env def">
       <span class="lb">정의 3.3.1</span>
-      <p>\(\Gamma(\alpha) = \int_0^\infty x^{\alpha-1}e^{-x}dx\) (\(\alpha &gt; 0\)).</p>
+      <p>\(\alpha > 0\)에 대해 \(\Gamma(\alpha) = \displaystyle\int_0^\infty x^{\alpha-1}e^{-x}dx\). (\(\Gamma\)는 그리스 문자 "감마"의 대문자입니다.)</p>
     </div>
+    <p>지수 \(\alpha - 1\)이 한 칸 밀려 있다는 점에 주의하세요. 이 적분이 수렴하는 까닭은, \(x\)가 클 때는 \(e^{-x}\)가 어떤 거듭제곱보다 빨리 줄고(1.1절), \(x\)가 0 근처일 때는 \(x^{\alpha-1}\)의 지수가 \(-1\)보다 커서 결과 3.2.3의 조건을 만족하기 때문입니다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 3.3.2</span>
-      <p>(가) \(\Gamma(\alpha + 1) = \alpha\Gamma(\alpha)\). (나) \(\Gamma(n) = (n-1)!\). (다) \(\Gamma(1/2) = \sqrt\pi\).</p>
+      <p>(가) \(\Gamma(\alpha + 1) = \alpha\Gamma(\alpha)\). (나) 자연수 \(n\)에 대해 \(\Gamma(n) = (n-1)!\). (다) \(\Gamma(1/2) = \sqrt\pi\).</p>
     </div>
-    <p class="tb-proof">(가) 부분적분 \(u = x^\alpha\), \(dv = e^{-x}dx\): \([-x^\alpha e^{-x}]_0^\infty + \alpha\int x^{\alpha-1}e^{-x}dx = \alpha\Gamma(\alpha)\). (나) \(\Gamma(1) = 1\)과 (가)를 반복. (다) \(x = z^2/2\)로 치환하면 \(\Gamma(1/2) = \sqrt2\int_0^\infty e^{-z^2/2}dz = \sqrt2\cdot\frac{\sqrt{2\pi}}{2} = \sqrt\pi\)(6.3절의 가우스 적분). <span class="qed">∎</span></p>
-    <p>쓸모 있는 꼴: \(\int_0^\infty x^{\alpha-1}e^{-x/\beta}dx = \Gamma(\alpha)\beta^\alpha\) (\(x = \beta u\)로 치환).</p>
+    <p class="tb-proof">(가) 부분적분에서 \(u = x^\alpha\), \(v' = e^{-x}\)(\(v = -e^{-x}\))로 두면 \(\Gamma(\alpha + 1) = \big[-x^\alpha e^{-x}\big]_0^\infty + \alpha\int_0^\infty x^{\alpha-1}e^{-x}dx\)입니다. 첫 항은 \(x = 0\)에서 0, \(x \to \infty\)에서도 0이므로 \(\alpha\Gamma(\alpha)\)만 남습니다.</p>
+    <p class="tb-proof">(나) \(\Gamma(1) = \int_0^\infty e^{-x}dx = 1\)이고, (가)를 되풀이하면 \(\Gamma(2) = 1\cdot\Gamma(1) = 1\), \(\Gamma(3) = 2\Gamma(2) = 2\), \(\Gamma(4) = 3\cdot2 = 6\), …, \(\Gamma(n) = (n-1)!\)입니다. \(\Gamma(1) = 1\)은 \(0! = 1\)이라는 약속과도 맞습니다.</p>
+    <p class="tb-proof">(다) \(x = z^2/2\)로 치환하면 \(dx = z\,dz\), \(x^{-1/2} = \sqrt2/z\)이므로 \(\Gamma(1/2) = \sqrt2\int_0^\infty e^{-z^2/2}dz\)입니다. 6.3절에서 \(\int_{-\infty}^\infty e^{-z^2/2}dz = \sqrt{2\pi}\)를 보이며, 대칭이라 \(0\)부터의 적분은 그 절반입니다. 따라서 \(\Gamma(1/2) = \sqrt2\cdot\frac{\sqrt{2\pi}}{2} = \sqrt\pi\)입니다. <span class="qed"></span></p>
+    <p>자주 쓰는 꼴이 하나 더 있습니다. \(x = \beta u\)로 치환하면</p>
+    <p>\(\displaystyle\int_0^\infty x^{\alpha-1}e^{-x/\beta}dx = \Gamma(\alpha)\beta^\alpha\)</p>
+    <p>이므로, 이런 모양의 적분은 부분적분을 여러 번 하지 않고 감마 함수로 바로 계산할 수 있습니다. 예를 들어 \(\int_0^\infty x^3e^{-2x}dx = \Gamma(4)(1/2)^4 = 6/16 = 3/8\)입니다.</p>
 
     <h3><span class="no">3.3.2</span>베타 함수</h3>
     <div class="tb-env def">
       <span class="lb">정의 3.3.3</span>
-      <p>\(B(a, b) = \int_0^1 x^{a-1}(1-x)^{b-1}dx = \dfrac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\).</p>
+      <p>\(a, b > 0\)에 대해 \(B(a, b) = \displaystyle\int_0^1 x^{a-1}(1-x)^{b-1}dx\).</p>
     </div>
-    <p>두 번째 등호는 이중적분과 변수 변환으로 증명합니다(6.2절 연습). 베타분포 밀도의 상수가 \(1/B(a, b)\)입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.3.4</span>
+      <p>\(B(a, b) = \dfrac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\).</p>
+    </div>
+    <p>증명에는 변수가 둘인 적분과 좌표 변환이 필요해 6.2절의 연습문제로 미룹니다. 정수 \(a, b\)라면 \(B(a, b) = \frac{(a-1)!(b-1)!}{(a+b-1)!}\)이고, 작은 경우는 전개해서 직접 확인할 수 있습니다(예: \(B(2, 2) = \int_0^1(x - x^2)dx = \frac16 = \frac{1!\,1!}{3!}\)). 0과 1 사이의 비율을 나타내는 베타분포의 밀도 상수가 \(1/B(a, b)\)입니다.</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 3.3.4</span>
-      <p>(가) \(\Gamma(5/2)\) (나) \(\int_0^1 x^3(1-x)^2dx\)</p>
+      <span class="lb">예제 3.3.5</span>
+      <p>(가) \(\Gamma(5/2)\) (나) \(\displaystyle\int_0^1 x^3(1-x)^2dx\)</p>
     </div>
-    <p><i>풀이.</i> (가) \(\frac32\cdot\frac12\Gamma(\frac12) = \frac34\sqrt\pi \approx 1.329\). (나) \(B(4, 3) = \frac{3!\,2!}{6!} = \frac{12}{720} = \frac1{60}\).</p>
+    <p><i>풀이.</i> (가) 정리 3.3.2 (가)를 두 번 쓰면 \(\Gamma(\frac52) = \frac32\Gamma(\frac32) = \frac32\cdot\frac12\Gamma(\frac12) = \frac34\sqrt\pi \approx 1.329\)입니다. (나) \(x^{4-1}(1-x)^{3-1}\)이므로 \(B(4, 3) = \frac{3!\,2!}{6!} = \frac{12}{720} = \frac1{60}\)입니다. 전개해서 적분해도(\(\int_0^1(x^3 - 2x^4 + x^5)dx = \frac14 - \frac25 + \frac16\)) 같은 값입니다.</p>
+
+    <div class="tb-note">
+      <b>흔한 실수</b>
+      <p>\(\Gamma(n) = n!\)로 착각하기 쉽습니다. \(\Gamma(n) = (n-1)!\)이고, \(\Gamma(5) = 24\)입니다. 정의의 지수가 \(\alpha - 1\)이라는 것을 떠올리면 헷갈리지 않습니다.</p>
+    </div>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
-        <li>\(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\), \(\Gamma(n) = (n-1)!\), \(\Gamma(1/2) = \sqrt\pi\).</li>
-        <li>\(\int_0^\infty x^{\alpha-1}e^{-x/\beta} = \Gamma(\alpha)\beta^\alpha\).</li>
-        <li>\(B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)\).</li>
+        <li>\(\Gamma(\alpha) = \int_0^\infty x^{\alpha-1}e^{-x}dx\), \(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\), \(\Gamma(n) = (n-1)!\), \(\Gamma(1/2) = \sqrt\pi\).</li>
+        <li>\(\int_0^\infty x^{\alpha-1}e^{-x/\beta}dx = \Gamma(\alpha)\beta^\alpha\)으로 지수 꼴 적분을 바로 계산합니다.</li>
+        <li>\(B(a,b) = \int_0^1x^{a-1}(1-x)^{b-1}dx = \Gamma(a)\Gamma(b)/\Gamma(a+b)\).</li>
       </ol>
     </div>
 
@@ -61,8 +75,14 @@
       <h3><span class="no">3.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>감마 밀도 \(\frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta}\)의 평균을 감마 함수로 구하세요.
-          <details><summary>답</summary><p>\(\frac{\Gamma(\alpha+1)\beta^{\alpha+1}}{\Gamma(\alpha)\beta^\alpha} = \alpha\beta\).</p></details>
+        <li>\(\Gamma(6)\)과 \(\Gamma(7/2)\)를 구하세요.
+          <details><summary>답</summary><p>\(\Gamma(6) = 5! = 120\), \(\Gamma(7/2) = \frac52\cdot\frac32\cdot\frac12\sqrt\pi = \frac{15}{8}\sqrt\pi \approx 3.323\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>감마 밀도 \(\frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta}\) (\(x > 0\))의 평균을 감마 함수로 구하세요.
+          <details><summary>답</summary><p>\(E(X) = \frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^\infty x^{\alpha}e^{-x/\beta}dx = \frac{\Gamma(\alpha+1)\beta^{\alpha+1}}{\Gamma(\alpha)\beta^\alpha} = \alpha\beta\).</p></details>
         </li>
       </ol>
     </div>
