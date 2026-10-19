@@ -634,7 +634,47 @@ def course_bank(c):
     return items
 
 
-EXAM_SRC = {"R": "단원 마무리 연습", "ex": "예제", "tb": "본문 연습문제"}
+# ───── 시험 전용 문항(exams/<학과>/<과목번호>.json) ─────
+# 본문·예제·연습에 없는 새 문항. 형식은 docs/card-schema/의 "시험 문항"(kind: exam) 그대로다.
+#   {"schema": "qcard/1", "kind": "exam", "course": "물리1", "items": [
+#     {"id", "std": "물리1-03"(대단원) 또는 "물리1-03-02"(절), "type": "mc|short|free", "ty", "lv": "기본|응용|심화",
+#      "q", "choices"(mc), "answer"(mc는 1부터 센 번호 문자열), "hints": [힌트 1, 힌트 2], "sol"}]}
+# 시험 연습은 이 문항을 기본으로 쓰고, 블록에서 모은 복습 문항(R·ex·tb)은 고를 때만 섞는다.
+EXAMS = ROOT / "exams"
+EXAM_TYPES = ("mc", "short", "free")
+
+
+def exam_items(c):
+    p = EXAMS / c["dept"] / f'{num(c["code"])}.json'
+    if not p.exists():
+        return []
+    data = json.loads(p.read_text(encoding="utf-8"))
+    if data.get("course") != c["code"]:
+        print(f"경고: {p.relative_to(ROOT)}의 course가 {c['code']}가 아님", file=sys.stderr)
+    units = {u["n"]: u for u in c["units"]}
+    out = []
+    for it in data.get("items", []):
+        std = it.get("std")
+        std = std[0] if isinstance(std, list) else std
+        m = re.match(rf'{re.escape(c["code"])}-(\d\d)(?:-(\d\d))?$', std or "")
+        if not m or m.group(1) not in units or it.get("type") not in EXAM_TYPES:
+            print(f"경고: 시험 문항 {it.get('id')}의 std·type이 맞지 않음 ({std}, {it.get('type')})", file=sys.stderr)
+            continue
+        u = units[m.group(1)]
+        sc = next((s for s in u["secs"] if s["code"] == std), None) if m.group(2) else None
+        sol = it.get("sol", "")
+        if it["type"] != "mc" and it.get("answer"):
+            sol = f'<p class="ex-ans"><b>답</b> {it["answer"]}</p>{sol}'
+        row = {"u": u["n"], "s": sc["no"] if sc else "", "card": "", "href": f'{sc["file"] if sc else u["n"]}.html',
+               "ct": sc["title"] if sc else u["t"], "id": it["id"], "src": "x",
+               "ty": it.get("ty", ""), "lv": it.get("lv", ""), "q": it["q"], "h": it.get("hints", [])[:2], "a": sol}
+        if it["type"] == "mc":
+            row["ch"], row["ans"] = it["choices"], int(it["answer"])
+        out.append(row)
+    return out
+
+
+EXAM_SRC = {"x": "시험 전용", "R": "단원 마무리 연습", "ex": "예제", "tb": "본문 연습문제"}
 
 
 def exam_page(c, d, items, rel, dept_link):
@@ -651,7 +691,7 @@ def exam_page(c, d, items, rel, dept_link):
     return f"""  <section class="topic-hero u-hero ex-hero">
     <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">시험 연습</span></div>
     <h1>시험 연습</h1>
-    {f'<p class="lead">{esc(c["name"])}의 단원 마무리 연습, 예제, 본문 연습문제 {len(items)}개에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 힌트와 풀이를 보고 스스로 채점하면, 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if items else ""}
+    {f'<p class="lead">{esc(c["name"])}의 시험 전용 문항 {cnt["x"]}개(본문에 나오지 않는 새 문제, 응용·심화 {sum(1 for it in items if it["src"] == "x" and it["lv"] in ("응용", "심화"))}개)에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 공부하며 본 단원 마무리 연습, 예제, 본문 연습문제 {len(items) - cnt["x"]}개는 \'복습 문항 포함\'을 고를 때만 섞입니다. 객관식은 바로 채점되고, 나머지는 풀이를 보고 스스로 채점합니다. 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if cnt["x"] else f'<p class="lead">{esc(c["name"])}의 단원 마무리 연습, 예제, 본문 연습문제 {len(items)}개에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 힌트와 풀이를 보고 스스로 채점하면, 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if items else ""}
   </section>
   <script type="application/json" id="exam-conf">{json.dumps(conf, ensure_ascii=False).replace("</", "<\\/")}</script>
   {inner}
@@ -831,11 +871,12 @@ def write_pages(depts, blocks, sidx, links):
                 n_pages += 1
 
             # 2-1) 시험 연습: 문제은행(bank.js)과 연습 페이지(exam.html)
-            items = course_bank(c)
-            c["bank"] = len(items)
+            xs = exam_items(c)
+            items = xs + course_bank(c)
+            c["bank"], c["xbank"] = len(items), len(xs)
             if items:
                 (base / "bank.js").write_text(
-                    "/* tools/build.py가 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
+                    "/* tools/build.py가 exams/의 시험 전용 문항과 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
                     "window.QBANK = " + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + ";\n",
                     encoding="utf-8", newline="\n")
             (base / "exam.html").write_text(
@@ -902,7 +943,7 @@ def write_pages(depts, blocks, sidx, links):
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
-      {f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
+      {f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
       {f'<div class="cx-path small">{path_html}</div>' if path_html else ""}
     </aside>
