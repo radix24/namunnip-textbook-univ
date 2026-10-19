@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-06-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m16-numeric.js"]
+}
+-->
+<article class="card q-card" id="lab-me-rk" data-kind="실습" data-std="기계16-06-01">
+  <header class="card-head"><span class="no"></span><h2>Euler와 RK4: 같은 진동자를 다르게 푸는 두 방법</h2><span class="kind">실습 · 시간 전진 · 정확도 차수 · 수치 불안정</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\(\ddot x + 2\zeta\dot x + x = 0\)(고유진동수 1), \(x(0) = 1\)을 다섯 주기(\(t = 10\pi\)) 동안 풉니다. 회색 점선이 정확한 해, 파란 선이 수치 해입니다. 방법과 간격을 바꾸며 정확도와 계산량(함수 계산 횟수)을 비교하고, 언제 발산하는지 찾아보세요.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="m" aria-label="방법"><option value="euler">Euler</option><option value="rk4">RK4</option></select></label>
+        <label><span>간격 h = <b data-show="h" data-fix="2">0.10</b></span><input type="range" name="h" min="0.01" max="3" step="0.01" value="0.1" aria-label="시간 간격"></label>
+        <label><span>감쇠비 = <b data-show="z" data-fix="2">0.00</b></span><input type="range" name="z" min="0" max="0.5" step="0.01" value="0" aria-label="감쇠비"></label>
+      </div>
+      <canvas aria-label="수치 해와 정확한 해"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>Euler, h = 0.1 (기본값)</b><span>감쇠가 없는데도 진폭이 매 주기 커져 다섯 주기에 에너지가 약 23배가 됩니다. h = 0.01로 줄여도 1.37배입니다.</span></li>
+        <li><b>RK4, h = 0.1</b><span>에너지 0.999996으로 정확한 해와 겹칩니다. 함수 계산은 Euler의 4배지만 Euler가 이 정확도를 내려면 간격을 수천 배 줄여야 합니다.</span></li>
+        <li><b>RK4, 큰 간격</b><span>h = 1(한 주기에 6걸음)이면 진폭이 조금씩 줄고 위상이 어긋납니다. h = 2.9로 하면 진폭이 걸음마다 커져 다섯 주기 만에 에너지가 약 50배가 됩니다(발산). RK4도 진동자에서 \(\omega h &lt; 2.83\)이라는 안정 한계가 있습니다.</span></li>
+        <li><b>감쇠가 있으면</b><span>감쇠비 0.2에서 Euler h = 0.1은 감쇠를 실제보다 약하게 보여 줍니다. 수치 오차가 물리 현상(감쇠)을 가리거나 흉내 낼 수 있다는 점에 주의합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>이 교재의 동역학·진동·로켓 실습 장치들도 RK4로 운동 방정식을 풉니다. 차량 동역학, 로봇 시뮬레이션, 회로 해석의 시간 응답 계산이 모두 같은 원리이며, 실무 프로그램은 간격을 자동 조절하는 적응형 Runge-Kutta를 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"간격만 작게 하면 어떤 방법이든 괜찮다."</b> Euler는 간격을 줄여도 오차가 천천히 줄고 계산 시간만 크게 늘어납니다.</li>
+        <li><b>"수치 해가 진동하면 물리적으로도 진동한다."</b> 간격이 너무 크면 없는 진동이나 발산이 수치적으로 생깁니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

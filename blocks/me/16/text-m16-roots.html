@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-roots" data-kind="본문" data-std="기계16-02-01">
+  <header class="card-head"><span class="no"></span><h2>방정식의 근: 이분법, Newton 방법, 할선법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>구간법(이분법)과 열린 방법(Newton, 할선법)의 원리와 장단점을 안다.</li>
+        <li>수렴 속도(선형, 2차)를 반복 횟수로 비교한다.</li>
+        <li>마찰계수 Colebrook 식을 각 방법으로 푼다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>오차와 수렴 판정 (<a href="01-01.html">1.1절</a>), 접선의 방정식(고등학교 미적분), Colebrook 식 (<a href="../11/01-01.html">응용유체역학 1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>세 방법</h3>
+    <p class="q-term"><b>이분법</b>: \(f(a)\)와 \(f(b)\)의 부호가 다르면 사이에 근이 있다. 가운데 점의 부호로 구간을 반씩 줄인다. 반드시 수렴하지만 한 번에 한 자리(이진수 1비트)씩만 정확해진다(선형 수렴).</p>
+    <p class="q-term"><b>Newton 방법</b>: 현재 점의 접선이 0이 되는 곳으로 간다: \(x_{n+1} = x_n - f(x_n)/f'(x_n)\). 근 근처에서는 맞는 자릿수가 매번 두 배(2차 수렴). 도함수가 필요하고 처음 값이 나쁘면 발산할 수 있다.</p>
+    <p class="q-term"><b>할선법</b>: 도함수 대신 최근 두 점을 잇는 직선(할선)을 쓴다. 수렴 차수 약 1.62로 Newton에 가깝고 도함수가 필요 없다.</p>
+
+    <h3><span class="no">2.1.2</span>Colebrook 식 풀기</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1 <span class="nm">(마찰계수)</span></span>
+      <p>\(\text{Re} = 10^5\), \(\varepsilon/D = 0.001\)일 때 Colebrook 식 \(\frac{1}{\sqrt f} = -2\log_{10}\left(\frac{\varepsilon/D}{3.7} + \frac{2.51}{\text{Re}\sqrt f}\right)\)을 푼다. \(x = 1/\sqrt f\)로 바꿔 \(g(x) = x + 2\log_{10}(\cdots) = 0\)을 각 방법으로 풀고 반복 횟수를 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 이분법은 \(x \in [1, 20]\)에서 폭이 \(10^{-6}\)이 되기까지 25회. Newton은 \(x_0 = 5\)에서 2회 만에 \(f = 0.0221745\)로 7자리가 맞고 3회째 더 변하지 않습니다. 응용유체역학에서 쓴 고정점 반복(\(f\)를 오른쪽에 넣기)은 매번 약 한 자리씩 좋아져 6회 정도 걸립니다. 답은 \(f = 0.02217\)입니다(근 찾기 실습).</p>
+
+    <div class="tb-note"><b>주의</b>(1) Newton 방법은 \(f'(x) \approx 0\)인 곳(극값 근처)에서 크게 튀어 발산합니다. 실무에서는 이분법으로 구간을 좁힌 뒤 Newton으로 마무리하는 혼합법(Brent)을 씁니다. (2) 중근에서는 Newton도 선형 수렴으로 느려집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이분법: 안전, 선형 수렴(약 3.3회에 한 자리).</li>
+        <li>Newton: \(x - f/f'\), 2차 수렴, 처음 값과 도함수 필요.</li>
+        <li>할선법: 도함수 없이 약 1.62차.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>이분법으로 처음 구간 폭 1을 \(10^{-6}\)까지 줄이려면 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(2^n \ge 10^6\), \(n = 20\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f(x) = x^2 - 2\)에 Newton 방법을 \(x_0 = 1\)에서 세 번 적용하여라.
+          <details><summary>답</summary><p>\(x_1 = 1.5\), \(x_2 = 1.41667\), \(x_3 = 1.414216\)(참값 1.414214). 맞는 자릿수가 1, 3, 6자리로 두 배씩 는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(f(x) = x^3 - 2x + 2\)에 Newton 방법을 \(x_0 = 0\)에서 쓰면 어떻게 되는가?
+          <details><summary>답</summary><p>\(x_1 = 1\), \(x_2 = 0\), 다시 1… 두 점을 오가며 수렴하지 않는다. 처음 값을 바꾸거나 이분법과 섞는다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

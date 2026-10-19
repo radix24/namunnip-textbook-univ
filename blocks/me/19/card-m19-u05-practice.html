@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-05-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m19-u05-practice" data-kind="연습" data-std="기계19-05-01 기계19-05-02">
+  <header class="card-head"><span class="no"></span><h2>디지털 제어 구현 단원 마무리 연습</h2><span class="kind">문제 6 · 개념·계산·판단·도전 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>디지털 제어기의 영차 유지가 왜 시간 지연처럼 작용하나요? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>출력이 계단 모양. <a href="05-02.html">5.2절</a></p></details>
+        <details><summary>힌트 2</summary><p>계단의 평균 위치.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>출력을 한 주기 동안 고정하므로 계단 신호는 연속 신호를 평균적으로 반 주기 늦게 따라갑니다. 크기는 거의 그대로이고 위상만 \(\omega T/2\) 늦어져 위상 여유를 깎습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>\(K_p\) = 3, \(K_d\) = 0.1, \(T\) = 0.005 s, 측정값 미분을 쓰는 PD 제어기에서 목표 1, 현재 위치 0.62, 이전 위치 0.60이면 \(u\)는? <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(u = K_pe - K_d(y_k - y_{k-1})/T\).</p></details>
+        <details><summary>힌트 2</summary><p>속도 추정 4 rad/s.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(u = 3\times0.38 - 0.1\times4 = 1.14 - 0.4 = 0.74\) V.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>교차 주파수 40 rad/s인 루프를 \(T\) = 10 ms로 구현하면 위상 손실은? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(\omega_cT/2\).</p></details>
+        <details><summary>힌트 2</summary><p>0.2 rad.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>0.2 rad = 11.5°. 위상 여유 45° 설계라면 33°로 줄어 오버슈트가 커집니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>저속(10 rpm)에서 모터 속도 제어가 덜덜거린다. 엔코더는 500펄스(4체배 2000), 주기 1 ms이다. 원인과 대책은? <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>10 rpm이면 1 ms에 몇 카운트?</p></details>
+        <details><summary>힌트 2</summary><p>0.33카운트.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>10 rpm = 1/6 rev/s, 1 ms에 0.33카운트라 속도 값이 대부분 0이고 가끔 1카운트(30 rpm)로 튀어 제어기가 흔들립니다. 카운트 사이 시간을 재는 방법, 여러 주기 이동 평균, 고분해능 엔코더, 또는 위치 루프로 제어하는 방법을 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>표본화 실습에서 \(K_p\) = 5일 때 \(T\) = 1 ms에서도 오버슈트가 약 22%였다. 표본화를 더 빠르게 하면 해결되나요? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>회색 선(0.5 ms)도 오버슈트가 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>연속 설계 자체의 감쇠.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>해결되지 않습니다. 이 오버슈트는 연속 시간 설계에서 이미 감쇠가 부족해(위상 여유 약 48°) 생긴 것입니다. \(K_d\)를 키워 감쇠를 늘려야 하고, 표본화는 설계 성능을 잃지 않게 할 뿐입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">도전</span>위치 PID에서 \(K_i\)를 넣었더니 목표가 계단으로 바뀔 때마다 크게 넘쳤다. 와인드업 외에 생각할 수 있는 원인과, 실무에서 쓰는 목표 처리 방법은? <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>적분이 1형 시스템에 더해지면?</p></details>
+        <details><summary>힌트 2</summary><p>목표를 매끄럽게.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>모터 위치는 이미 적분기가 있는데 적분 제어를 더하면 위상이 더 늦어져 감쇠가 줄고 오버슈트가 커집니다. 실무에서는 목표를 계단 대신 사다리꼴 속도 프로파일(또는 S자 곡선)로 서서히 바꾸고, 적분은 작게 두어 마찰로 남는 오차만 없앱니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

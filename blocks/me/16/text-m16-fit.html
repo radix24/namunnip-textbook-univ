@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-fit" data-kind="본문" data-std="기계16-04-02">
+  <header class="card-head"><span class="no"></span><h2>최소제곱 회귀와 스플라인 보간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>잡음이 있는 자료에는 회귀(점을 지나지 않는 최적선), 정확한 자료에는 보간(모든 점을 지나는 곡선)을 쓴다.</li>
+        <li>직선 최소제곱 회귀의 기울기·절편과 결정계수를 구한다.</li>
+        <li>고차 다항식 보간의 진동 문제와 3차 스플라인의 장점을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>직선 맞춤과 잔차 (<a href="../7/06-01.html">기계공학실험(1) 6.1절</a>), 연립방정식 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>최소제곱 회귀</h3>
+    <p>측정값 \((x_i, y_i)\)에 직선 \(y = a_0 + a_1x\)를 맞출 때, 잔차 제곱합 \(\sum(y_i - a_0 - a_1x_i)^2\)을 최소로 하는 \(a_0\), \(a_1\)은 각각으로 미분해 0으로 둔 두 식(정규 방정식)의 해입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">직선 회귀</span>
+      \[a_1 = \frac{n\sum x_iy_i - \sum x_i\sum y_i}{n\sum x_i^2 - (\sum x_i)^2}\]
+      \[a_0 = \bar y - a_1\bar x\]
+      \[R^2 = 1 - \frac{\sum(\text{잔차})^2}{\sum(y_i - \bar y)^2}\]
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1 <span class="nm">(하중-처짐 자료)</span></span>
+      <p>자료 (1, 2.1), (2, 3.9), (3, 6.2), (4, 7.8), (5, 10.1)에 직선을 맞추고 결정계수를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\sum x = 15\), \(\sum y = 30.1\), \(\sum x^2 = 55\), \(\sum xy = 110.2\). \(a_1 = (551 - 451.5)/(275 - 225) = 1.99\), \(a_0 = 6.02 - 1.99\times3 = 0.05\). \(R^2 = 0.997\). 다항식, 지수(\(\ln y\)를 맞춤), 거듭제곱(\(\log\)-\(\log\)) 꼴도 변수를 바꿔 같은 방법을 씁니다.</p>
+
+    <h3><span class="no">4.2.2</span>보간과 스플라인</h3>
+    <p>증기표처럼 정확한 값 사이를 메울 때는 모든 점을 지나는 보간을 씁니다. 점이 많을 때 하나의 고차 다항식으로 지나가게 하면 양 끝에서 크게 출렁입니다(Runge 현상). 3차 스플라인은 구간마다 3차 다항식을 쓰되, 이음점에서 값·기울기·곡률이 연속하도록 이어 매끈하면서도 출렁이지 않습니다. 이음점의 곡률을 미지수로 한 띠 모양(삼중 대각) 연립방정식을 풉니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) \(R^2\)이 높아도 잔차에 경향이 있으면 모델이 틀린 것입니다(잔차 그래프 확인). (2) 회귀식으로 자료 범위 밖을 외삽하면 위험합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>잡음 자료 → 최소제곱 회귀, 정확한 자료 → 보간.</li>
+        <li>직선: 정규 방정식, \(R^2\)와 잔차 확인.</li>
+        <li>점이 많으면 고차 다항식 대신 3차 스플라인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제의 회귀식으로 \(x = 3.5\)에서 \(y\)를 예측하여라.
+          <details><summary>답</summary><p>\(0.05 + 1.99\times3.5 = 7.02\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y = ae^{bx}\) 꼴을 최소제곱으로 맞추려면 무엇을 직선으로 맞추는가?
+          <details><summary>답</summary><p>\(\ln y = \ln a + bx\)이므로 \((x, \ln y)\)에 직선을 맞춰 기울기 \(b\), 절편 \(\ln a\)를 얻는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>점 다섯 개를 지나는 4차 다항식과 3차 스플라인 중 기계 부품 캠 윤곽을 설계할 때 어느 쪽을 쓰는가? 이유는?
+          <details><summary>답</summary><p>3차 스플라인. 이음점까지 곡률이 연속해 가속도가 매끈하고(캠 종동절의 충격 방지), 고차 다항식의 출렁임이 없다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

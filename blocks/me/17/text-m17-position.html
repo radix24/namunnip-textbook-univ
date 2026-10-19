@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계17-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m17-position" data-kind="본문" data-std="기계17-02-01">
+  <header class="card-head"><span class="no"></span><h2>벡터 루프로 4절 링크의 위치 구하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>4절 링크를 닫힌 벡터 루프 방정식으로 나타낸다.</li>
+        <li>크랭크 각이 주어질 때 커플러 각과 로커 각을 구한다.</li>
+        <li>같은 크랭크 각에 조립 방법이 두 가지(열림·교차)임을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Grashof 조건 (<a href="01-02.html">1.2절</a>), 벡터의 성분과 삼각함수(고등학교 수학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>벡터 루프 방정식</h3>
+    <p>지면 핀 \(O_2\)를 원점, 다른 지면 핀 \(O_4\)를 \(x\)축 위 \((d, 0)\)에 둡니다. 크랭크 \(O_2A\)(길이 \(a\), 각 \(\theta_2\)), 커플러 \(AB\)(\(b\), \(\theta_3\)), 로커 \(O_4B\)(\(c\), \(\theta_4\))를 벡터로 보면, \(O_2\)에서 \(B\)까지 두 경로가 같아야 합니다.</p>
+    <p>\[ \vec a + \vec b = \vec d + \vec c \]</p>
+    <p>\(x\), \(y\) 성분으로 나누면</p>
+    <p>\[a\cos\theta_2 + b\cos\theta_3 = d + c\cos\theta_4\]</p>
+    <p>\[a\sin\theta_2 + b\sin\theta_3 = c\sin\theta_4\]</p>
+    <p>\(\theta_2\)를 알면 미지수는 \(\theta_3\), \(\theta_4\) 둘이고 식도 둘입니다(자유도 1과 일치).</p>
+
+    <h3><span class="no">2.1.2</span>두 원의 교점으로 풀기</h3>
+    <p>삼각함수 식을 직접 풀기보다 그림으로 보면 쉽습니다. \(A = (a\cos\theta_2, a\sin\theta_2)\)가 정해지면, \(B\)는 "A에서 거리 \(b\)"이고 "\(O_4\)에서 거리 \(c\)"인 점, 곧 두 원의 교점입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">계산 절차</span>
+      <p>① \(e = |O_4 - A|\). \(e > b + c\)이거나 \(e &lt; |b - c|\)이면 조립 불가. ② \(A\)에서 \(O_4\) 방향으로 \(m = (b^2 - c^2 + e^2)/(2e)\) 간 점에서, 수직으로 \(\pm\sqrt{b^2 - m^2}\) 떨어진 두 점이 \(B\)의 후보. ③ \(\theta_3 = \operatorname{atan2}(B - A)\), \(\theta_4 = \operatorname{atan2}(B - O_4)\).</p>
+    </div>
+    <p>두 후보가 열린(open) 조립과 교차(crossed) 조립입니다. 실제 기구는 조립할 때 정한 쪽을 계속 따라가며, 크랭크-로커는 운전 중에 다른 쪽으로 넘어가지 않습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1 <span class="nm">(크랭크 60°)</span></span>
+      <p>\(d = 4\), \(a = 1.5\), \(b = 4\), \(c = 3\)(1.2절 예제)에서 \(\theta_2 = 60°\)일 때 열린 조립의 \(\theta_3\), \(\theta_4\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(A = (0.75, 1.299)\). \(O_4 - A = (3.25, -1.299)\), \(e = 3.500\). \(m = (16 - 9 + 12.25)/7 = 2.750\), \(\sqrt{16 - 7.5625} = 2.905\). 단위 벡터 \(u = (0.9286, -0.3712)\), 수직 \((0.3712, 0.9286)\). 위쪽 해: \(B - A = 2.750u + 2.905(0.3712, 0.9286) = (2.554 + 1.078, -1.021 + 2.698) = (3.632, 1.677)\), \(B = (4.382, 2.976)\). 따라서 \(\theta_3 = \operatorname{atan2}(1.677, 3.632) = 24.8°\), \(\theta_4 = \operatorname{atan2}(2.976, 0.382) = 82.7°\). 검산: \(1.5\cos60° + 4\cos24.8° = 4.38 = 4 + 3\cos82.7°\) ✓. 교차 조립은 \(\theta_3 = -68.4°\), \(\theta_4 = -126.3°\)입니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) \(\arctan\) 대신 사분면을 구별하는 \(\operatorname{atan2}(y, x)\)를 씁니다. (2) Freudenstein 식이나 반각 공식으로 \(\theta_4\)를 닫힌 꼴로 구하는 방법도 같은 두 해를 줍니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\vec a + \vec b = \vec d + \vec c\): 성분 식 2개, 미지수 2개.</li>
+        <li>B는 두 원의 교점. 조립 불가면 그 크랭크 각에 도달 못 함.</li>
+        <li>해가 둘: 열린·교차 조립.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 링크에서 \(\theta_2 = 0\)이면 \(e\)는? 조립 가능한가?
+          <details><summary>답</summary><p>\(A = (1.5, 0)\), \(e = 2.5\). \(|b - c| = 1 \le 2.5 \le 7\)이므로 가능.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>슬라이더-크랭크(크랭크 \(r\), 커넥팅 로드 \(l\), 오프셋 0)에서 피스톤 위치 \(x\)를 크랭크 각 \(\theta\)로 나타내어라.
+          <details><summary>답</summary><p>루프 \(r\cos\theta + l\cos\phi = x\), \(r\sin\theta = l\sin\phi\)에서 \(x = r\cos\theta + \sqrt{l^2 - r^2\sin^2\theta}\). (<a href="../6/04-01.html">동역학</a>의 크랭크 기구와 같다.)</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>비Grashof 링크(\(a = b = c = 3\), \(d = 4.5\))에서 크랭크가 도달할 수 있는 최대 각은?
+          <details><summary>답</summary><p>\(e = b + c = 6\)일 때가 한계이다. \(e^2 = a^2 + d^2 - 2ad\cos\theta_2 = 36\)에서 \(\cos\theta_2 = (9 + 20.25 - 36)/27 = -0.25\), \(\theta_2 = 104.5°\). 크랭크는 −104.5°~104.5° 사이를 왕복한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
