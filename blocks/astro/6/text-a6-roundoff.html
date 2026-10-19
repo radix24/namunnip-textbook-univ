@@ -1,0 +1,92 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우6-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a6-roundoff" data-kind="본문" data-std="천우6-02-01">
+  <header class="card-head"><span class="no"></span><h2>부동소수점과 반올림 오차</h2><span class="kind">본문 · 2.1절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>컴퓨터가 실수를 유한한 자릿수(배정밀도)로 저장한다는 것을 안다.</li>
+        <li>기계 엡실론의 뜻과 크기(약 \(2.2\times10^{-16}\))를 안다.</li>
+        <li>비슷한 두 수의 뺄셈에서 생기는 정밀도 손실을 알아보고 피한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Python 기초 (<a href="01-01.html">1.1절</a>), 테일러 근사 (<a href="../../common/1/08.html">공통1 8단원</a>).</li>
+      </ul>
+    </div>
+
+<h3>0.1 + 0.2는 0.3이 아니다</h3>
+    <p>Python에 <code>0.1 + 0.2</code>를 넣으면 <code>0.30000000000000004</code>가 나옵니다. 컴퓨터가 고장 난 것이 아니라, 실수를 2진법의 유한한 자릿수로 저장하기 때문입니다. 계산 결과를 믿으려면 이 오차가 언제 작고 언제 커지는지 알아야 합니다.</p>
+
+    <h3><span class="no">2.1.1</span>배정밀도 부동소수점</h3>
+    <p>Python의 실수(<code>float</code>)는 IEEE 754 배정밀도 형식으로, 64비트에 부호 1비트, 지수 11비트, 가수 52비트를 담아 \(\pm(1.\text{가수})_2\times2^{\text{지수}}\)로 나타냅니다. 유효 숫자는 10진법으로 약 15~16자리이고, 크기는 약 \(10^{-308}\)에서 \(10^{308}\)까지입니다. 0.1은 2진법으로 무한소수(0.000110011…)라 가장 가까운 값으로 반올림되어 저장되며, 그 작은 차이가 덧셈 결과에 드러납니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 2.1.1 <span class="nm">(기계 엡실론)</span></span>
+      <p>1에 더했을 때 1과 구별되는 가장 작은 수 \(\varepsilon_{mach}\)를 기계 엡실론이라 한다. 배정밀도에서 \(\varepsilon_{mach} = 2^{-52} \approx 2.2\times10^{-16}\)이다.</p>
+    </div>
+    <p>어떤 실수든 저장할 때 상대 오차 \(\varepsilon_{mach}/2\) 정도가 생깁니다. 이것이 <b>반올림 오차</b>입니다.</p>
+    <pre><code>import sys, math
+print(0.1 + 0.2)
+print(0.1 + 0.2 == 0.3)
+print(sys.float_info.epsilon)
+print(1.0 + 1e-16 == 1.0)
+x = 1e-8
+print(1 - math.cos(x))
+print(2 * math.sin(x / 2) ** 2)</code></pre>
+    <p>실행 결과:</p>
+    <pre><code>0.30000000000000004
+False
+2.220446049250313e-16
+True
+0.0
+5.0000000000000005e-17</code></pre>
+    <h3><span class="no">2.1.2</span>비슷한 수의 뺄셈</h3>
+    <p>마지막 두 줄이 중요합니다. \(x = 10^{-8}\)에서 \(1 - \cos x\)의 참값은 \(x^2/2 = 5\times10^{-17}\)입니다. 그런데 \(\cos x = 0.99999999999999995\)는 1과 너무 가까워 배정밀도로는 정확히 1로 저장되고, 뺄셈 결과는 0이 됩니다. 비슷한 두 수를 빼면 앞자리들이 지워지고 반올림 오차만 남는 것을 <b>상쇄 오차</b>(자릿수 손실)라 합니다.</p>
+    <p>피하는 방법은 식을 바꾸는 것입니다. 삼각함수 공식 \(1 - \cos x = 2\sin^2(x/2)\)는 뺄셈이 없어 정확한 값 \(5.0\times10^{-17}\)을 줍니다. 같은 이유로 <code>math.expm1(x)</code>(\(e^x - 1\))와 <code>math.log1p(x)</code>(\(\ln(1+x)\))처럼 작은 \(x\)에서 정확한 전용 함수가 있습니다.</p>
+
+    <h3><span class="no">2.1.3</span>천문 계산의 예</h3>
+    <ul>
+      <li class="q-term">율리우스일(약 2,460,000일)에 하루의 작은 부분을 더하면 소수 아래 자릿수가 줄어 밀리초 정밀도를 잃는다. 그래서 정밀한 시간은 정수부와 소수부를 따로 저장한다.</li>
+      <li class="q-term">거의 같은 두 궤도의 위치 차를 구할 때 큰 좌표끼리 빼면 상쇄 오차가 생긴다. 차이를 직접 적분하는 방법(엔케 방법, <a href="../11/03-02.html">천우11 3.2절</a>)이 그래서 쓰인다.</li>
+    </ul>
+    <div class="tb-note"><b>흔한 실수</b> 실수를 <code>==</code>로 비교하지 않습니다. <code>abs(a - b) &lt; 1e-12</code>처럼 허용 오차를 두거나 <code>math.isclose(a, b)</code>를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>배정밀도 실수는 유효 숫자 약 16자리. 저장할 때 상대 오차 약 \(10^{-16}\).</li>
+        <li>기계 엡실론 \(2^{-52} \approx 2.2\times10^{-16}\).</li>
+        <li>비슷한 수의 뺄셈은 자릿수를 잃는다. 식을 바꾸거나 전용 함수를 쓴다.</li>
+        <li>실수를 <code>==</code>로 비교하지 않는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>1e16 + 1 - 1e16</code>의 결과는? 왜 그렇습니까?
+          <details><summary>답</summary><p>0.0입니다. \(10^{16}\)에서 이웃한 실수 간격이 2라 1을 더해도 반올림되어 사라집니다.</p></details>
+        </li>
+        <li>\(\sqrt{x^2+1} - x\)를 큰 \(x\)에서 정확하게 계산하려면 식을 어떻게 바꿉니까?
+          <details><summary>답</summary><p>\(1/(\sqrt{x^2+1} + x)\)로 바꿔 뺄셈을 없앱니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>이차방정식 \(x^2 - 10^8x + 1 = 0\)의 작은 근을 근의 공식으로 계산하면 무엇이 문제이고 어떻게 고칩니까?
+          <details><summary>답</summary><p>\((10^8 - \sqrt{10^{16} - 4})/2\)는 비슷한 수의 뺄셈이라 부정확합니다. 큰 근 \(x_1 \approx 10^8\)을 구한 뒤 \(x_2 = 1/x_1 = 10^{-8}\)(근과 계수의 관계)로 구합니다.</p></details>
+        </li>
+        <li>율리우스일 2460000.5를 배정밀도로 저장하면 시간 정밀도는 대략 몇 초입니까?
+          <details><summary>답</summary><p>상대 정밀도 \(2.2\times10^{-16}\times2.46\times10^6\)일 \(= 5.4\times10^{-10}\)일 ≈ 47 μs.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

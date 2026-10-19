@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-mcmc" data-kind="본문" data-std="천우10-05-02">
+  <header class="card-head"><span class="no"></span><h2>MCMC로 매개변수의 불확도 추정하기</h2><span class="kind">본문 · 5.2절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>베이즈 정리로 사후 분포를 정의한다.</li>
+        <li>Metropolis 알고리즘의 단계를 쓰고 걸음 크기, 받아들임 비율, 버리는 구간의 뜻을 안다.</li>
+        <li>사슬의 수렴을 판단한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도와 카이제곱 (<a href="05-01.html">5.1절</a>), Monte Carlo (<a href="../6/06-02.html">천우6 6.2절</a>).</li>
+      </ul>
+    </div>
+
+<h3>포물선이 아닐 때</h3>
+    <p>매개변수가 많거나 \(\chi^2\)가 포물선 모양이 아니면(구불구불한 골짜기, 봉우리 여러 개) \(\Delta\chi^2 = 1\)로 오차를 읽기 어렵습니다. 그럴 때 매개변수 공간을 무작위로 걸어 다니며 사후 분포에서 표본을 뽑는 방법이 MCMC(Markov chain Monte Carlo)입니다. 외계행성 궤도 맞춤, 우주론 매개변수 추정에 표준으로 쓰입니다.</p>
+
+    <h3><span class="no">5.2.1</span>사후 분포</h3>
+    <p>베이즈 정리로 자료 \(D\)를 본 뒤 매개변수의 확률(사후 분포)은</p>
+    \[ p(\theta|D) \propto \mathcal L(D|\theta)\,p(\theta) \]
+    <p>입니다. \(p(\theta)\)는 사전 분포(자료를 보기 전의 지식, 예: 질량은 양수). 사전 분포가 고르면 사후 분포는 \(e^{-\chi^2/2}\)에 비례합니다.</p>
+
+    <h3><span class="no">5.2.2</span>Metropolis 알고리즘</h3>
+    <ol class="tb-steps">
+      <li>현재 위치 \(\theta\)에서 무작위로 한 걸음 제안: \(\theta' = \theta + s\cdot\mathcal N(0, 1)\).</li>
+      <li>사후 확률의 비 \(\alpha = p(\theta'|D)/p(\theta|D) = e^{-(\chi'^2 - \chi^2)/2}\)를 계산한다.</li>
+      <li>\(\alpha \ge 1\)이면 받아들이고, 아니면 확률 \(\alpha\)로 받아들인다(0~1 난수 \(u\)를 뽑아 \(u &lt; \alpha\)이면). 받아들이지 않으면 제자리에 한 번 더 머문다.</li>
+      <li>되풀이한다. 처음 일부(버리는 구간, burn-in)는 출발점의 영향이 남아 버린다.</li>
+    </ol>
+    <p>이렇게 모인 위치들의 분포가 사후 분포가 됩니다. 평균과 표준편차, 또는 16·50·84 백분위수를 매개변수 값과 불확도로 보고합니다.</p>
+
+    <h3><span class="no">5.2.3</span>걸음 크기와 수렴</h3>
+    <p>아래 실습 카드(가상 자료, 5.1절 예제와 같음, 해석해 \(a = 1.819 \pm 0.078\), \(b = 1.635 \pm 0.431\))의 결과입니다.</p>
+    <ul>
+      <li class="q-term">걸음 0.1, 5,000걸음: 받아들임 41.9%, \(a = 1.810 \pm 0.073\), \(b = 1.695 \pm 0.410\). 해석해와 잘 맞는다.</li>
+      <li class="q-term">걸음 0.01: 받아들임 88.6%, \(b = 1.136 \pm 0.203\). 너무 조금씩 움직여 아직 출발점(0) 근처를 벗어나는 중이고, 불확도도 작게 나온다.</li>
+      <li class="q-term">걸음 1: 받아들임 2.9%. 거의 늘 제자리라 표본이 적어 결과가 거칠다.</li>
+      <li class="q-term">걸음 0.1, 20,000걸음: \(a = 1.818 \pm 0.080\), \(b = 1.642 \pm 0.449\). 길게 돌릴수록 해석해에 다가간다.</li>
+    </ul>
+    <p>받아들임 비율은 대략 20~50%가 좋습니다. 수렴은 사슬 그림(값이 출발점의 흔적 없이 고르게 오르내리는지), 출발점을 바꾼 여러 사슬의 비교(Gelman-Rubin 지표), 자기상관 길이로 판단합니다. \(a\)와 \(b\)처럼 상관이 강한 매개변수는 둥근 걸음으로 탐색하기 어려우므로 상관을 반영한 제안 분포나 emcee 같은 앙상블 표본기를 씁니다.</p>
+    <div class="tb-note"><b>주의</b> MCMC는 자료와 모형, 사전 분포가 정한 사후 분포를 뽑을 뿐입니다. 모형이 틀리면 MCMC 결과도 틀립니다. 사전 분포를 바꿨을 때 결과가 크게 달라지면 자료가 그 매개변수를 잘 제약하지 못한다는 뜻입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>사후 분포 \(p(\theta|D) \propto \mathcal L\,p(\theta)\), 고른 사전 분포면 \(\propto e^{-\chi^2/2}\).</li>
+        <li>Metropolis: 제안 → 비 \(\alpha\) → 확률 \(\min(1,\alpha)\)로 받아들임 → 반복, 처음 일부는 버림.</li>
+        <li>받아들임 20~50%가 알맞다. 너무 작은 걸음은 수렴이 늦고, 너무 큰 걸음은 거의 늘 거절된다.</li>
+        <li>사슬 그림, 여러 사슬 비교, 자기상관으로 수렴을 판단한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>현재 \(\chi^2 = 20\), 제안 \(\chi'^2 = 22\)이면 받아들일 확률은?
+          <details><summary>답</summary><p>\(e^{-1} = 0.37\).</p></details>
+        </li>
+        <li>제안 \(\chi'^2 = 18\)이면?
+          <details><summary>답</summary><p>1(언제나 받아들임).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>받아들임 비율이 95%라면 걸음 크기를 어떻게 바꿔야 합니까?
+          <details><summary>답</summary><p>키웁니다. 너무 작은 걸음이라 사슬이 느리게 움직입니다.</p></details>
+        </li>
+        <li>사슬 10,000걸음의 자기상관 길이가 200걸음이면 독립 표본은 대략 몇 개?
+          <details><summary>답</summary><p>약 50개.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우7-05-02",
+  "order": 30,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/a7-lab.js"
+  ]
+}
+-->
+<article class="card q-card" id="lab-a7-wavecal" data-kind="실습" data-std="천우7-05-02">
+  <header class="card-head"><span class="no"></span><h2>비교 광원 선으로 분산 함수 맞추기</h2><span class="kind">실습 · 파장 보정</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>가상 네온 비교 광원 선의 화소 위치에 1차와 2차 다항식을 맞추고, 잔차 그림으로 알맞은 차수를 고릅니다. 성취기준 [천우7-05-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p><b>가상</b> 자료입니다. 네온 선의 실제 파장(585~703 nm)을 정해 둔 분산 함수 \(\lambda = 580 + 0.06p + d_2p^2\)로 화소 위치에 놓고, 선 중심 측정 오차를 더했습니다. 그림은 맞춘 함수에 대한 각 선의 잔차입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>분산의 2차 항 d₂ = <b data-show="d2" data-fix="1">2</b> ×10⁻⁸ nm/화소²</span><input type="range" name="d2" min="0" max="5" step="0.1" value="2" aria-label="2차 항"></label>
+        <label><span>맞춤 차수</span><select name="ord" aria-label="맞춤 차수"><option value="1">1차 (직선)</option><option value="2">2차</option></select></label>
+        <label><span>선 중심 측정 오차 = <b data-show="sig" data-fix="2">0.05</b> 화소</span><input type="range" name="sig" min="0" max="0.5" step="0.01" value="0.05" aria-label="선 중심 측정 오차"></label>
+      </div>
+      <canvas aria-label="가로축 화소, 세로축 파장 잔차(nm). 각 비교 선의 잔차"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값(d₂ = 2×10⁻⁸, 1차 맞춤)에서 잔차의 모양과 표준편차를 봅니다.</li>
+        <li>맞춤 차수를 2차로 바꿉니다.</li>
+        <li>d₂를 0으로 하면 1차 맞춤으로 충분한지 봅니다.</li>
+        <li>측정 오차를 0.3화소로 키우고 2차 맞춤의 잔차를 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>1차 맞춤은 잔차가 포물선 무늬를 그리고, 표준편차가 5.2 pm(시선속도 2.5 km/s)입니다.</li>
+        <li>2차 맞춤으로 바꾸면 무늬가 사라지고 잔차가 3.5 pm(1.7 km/s)로, 측정 오차(0.05화소 × 0.06 nm = 3 pm) 수준이 됩니다.</li>
+        <li>d₂ = 0이면 1차 맞춤으로도 잔차가 3.7 pm로 충분합니다.</li>
+        <li>측정 오차를 0.3화소로 키우면 2차 맞춤의 잔차가 21 pm(10 km/s)로 커지지만 무늬는 없습니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>잔차에 '무늬'가 있다는 것과 '크기'가 크다는 것은 각각 무엇을 뜻합니까?</li>
+        <li>출력의 km/s 값으로, 이 분광기로 시선속도를 몇 km/s 정밀도로 잴 수 있을지 판단하세요.</li>
+        <li>선이 가운데에만 몰려 있고 양 끝에 없다면 높은 차수 맞춤에 어떤 위험이 있습니까?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>실제 비교 광원 스펙트럼(관측소 공개 자료나 NIST 선 목록)으로 Python <code>numpy.polyfit</code>을 써서 같은 맞춤을 해 보세요.</p>
+    </section>
+  </div>
+</article>

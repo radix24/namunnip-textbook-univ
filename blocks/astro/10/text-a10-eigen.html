@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-eigen" data-kind="본문" data-std="천우10-02-02">
+  <header class="card-head"><span class="no"></span><h2>고유값 문제를 수치로 풀기</h2><span class="kind">본문 · 2.2절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>거듭제곱 방법으로 가장 큰 고유값을 구하고 수렴 속도를 안다.</li>
+        <li>라이브러리의 고유값 풀이를 쓰고 결과를 확인한다.</li>
+        <li>천문학의 고유값 문제(진동 모드, 안정성, 주성분 분석)를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>고유값과 고유벡터 (<a href="../../math/2/index.html">수학2 선형대수</a>), LU 분해 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+<h3>고유값이 나오는 곳</h3>
+    <p>\(A\mathbf v = \lambda\mathbf v\)를 만족하는 \(\lambda\)와 \(\mathbf v\)가 고유값과 고유벡터입니다. 별의 진동 모드(성진학), 궤도나 평형의 안정성(선형화한 계의 고유값의 부호), 수많은 스펙트럼을 몇 개의 기본 성분으로 요약하는 주성분 분석(공분산 행렬의 고유벡터)이 모두 고유값 문제입니다.</p>
+
+    <h3><span class="no">2.2.1</span>거듭제곱 방법</h3>
+    <p>아무 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하면, 가장 큰(절댓값) 고유값 \(\lambda_1\)의 고유벡터 성분이 다른 성분보다 \((\lambda_1/\lambda_2)^k\)배 빨리 자라 결국 그 방향만 남습니다. 고유값은 레일리 몫 \(\mathbf v^T A\mathbf v/\mathbf v^T\mathbf v\)로 읽습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(A = \begin{pmatrix}2&1\\1&2\end{pmatrix}\)(고유값 3, 1)에 \(\mathbf v_0 = (1, 0)\)에서 거듭제곱 방법을 두 번 적용하고 레일리 몫을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\mathbf v_1 = A\mathbf v_0 = (2, 1)\), \(A\mathbf v_1 = (5, 4)\), 레일리 몫 \((2\cdot5 + 1\cdot4)/5 = 2.8\). \(\mathbf v_2 = (5, 4)\), \(A\mathbf v_2 = (14, 13)\), 몫 \((70 + 52)/41 = 2.976\). 오차가 0.2에서 0.024로 약 \((1/3)^2 = 1/9\)씩 줄어듭니다(대칭 행렬에서 레일리 몫은 비의 제곱으로 수렴).</p>
+    <p>두 고유값이 비슷하면(\(\lambda_2/\lambda_1 \approx 1\)) 수렴이 매우 느립니다. 원하는 값 \(\sigma\) 근처의 고유값은 \((A - \sigma I)^{-1}\)에 거듭제곱 방법을 쓰는 역반복으로 구하며, 이때 매번 LU로 연립방정식을 풉니다.</p>
+
+    <h3><span class="no">2.2.2</span>라이브러리</h3>
+    <p>모든 고유값은 QR 알고리즘(LAPACK)으로 구합니다. 계산량은 \(n^3\) 정도입니다.</p>
+    <pre><code>import numpy as np
+A = np.array([[2., 1], [1, 2]])
+w, V = np.linalg.eigh(A)      # 대칭 행렬용: w = [1, 3], V의 열이 고유벡터
+print(A @ V[:, 1] - w[1] * V[:, 1])   # 확인: 0에 가까워야 함</code></pre>
+    <p>대칭 행렬에는 <code>eigh</code>(빠르고 고유값이 실수로 정렬됨), 일반 행렬에는 <code>eig</code>(복소수 고유값 가능)를 씁니다. 큰 희소 행렬에서 몇 개만 필요하면 <code>scipy.sparse.linalg.eigsh</code>를 씁니다.</p>
+
+    <h3><span class="no">2.2.3</span>안정성 판단</h3>
+    <p>평형점 근처에서 \(\dot{\mathbf x} = J\mathbf x\)로 선형화하면, \(J\)의 고유값 실수부가 모두 음수면 안정, 하나라도 양수면 불안정입니다. 예를 들어 삼체 문제의 라그랑주점 L1~L3에서는 양의 실수 고유값이 있어 불안정합니다(<a href="../8/04-03.html">천우8 4.3절</a>).</p>
+    <div class="tb-note"><b>주의</b> 고유벡터는 크기와 부호가 정해지지 않아 라이브러리마다 \(-\mathbf v\)를 줄 수도 있습니다. 결과를 비교할 때는 부호와 정규화를 맞추세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>거듭제곱 방법: \(A^k\mathbf v_0\)가 가장 큰 고유값의 고유벡터로 수렴, 오차 비 \(\lambda_2/\lambda_1\).</li>
+        <li>역반복으로 원하는 값 근처의 고유값을 구한다.</li>
+        <li>라이브러리: 대칭은 eigh, 일반은 eig, 희소는 eigsh.</li>
+        <li>선형화한 계의 고유값 실수부 부호로 안정성을 판단한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix}3&0\\0&1\end{pmatrix}\)에 \((1, 1)\)을 세 번 곱하면?
+          <details><summary>답</summary><p>\((27, 1)\). 첫 성분이 지배합니다.</p></details>
+        </li>
+        <li>고유값 5와 4.9인 행렬에서 거듭제곱 방법의 수렴은 빠릅니까?
+          <details><summary>답</summary><p>느립니다. 한 번에 오차가 0.98배밖에 줄지 않습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>거듭제곱 방법으로 오차를 \(10^{-6}\)으로 줄이려면 \(\lambda_2/\lambda_1 = 0.5\)에서 몇 번(벡터 기준)?
+          <details><summary>답</summary><p>\(0.5^k = 10^{-6}\), \(k = 20\)번.</p></details>
+        </li>
+        <li>\(J = \begin{pmatrix}0&1\\4&0\end{pmatrix}\)인 평형점은 안정합니까?
+          <details><summary>답</summary><p>고유값 \(\pm2\). 양수 2가 있어 불안정합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
