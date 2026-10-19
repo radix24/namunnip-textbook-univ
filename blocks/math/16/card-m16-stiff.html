@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-06-03",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m16-stiff.js"]
+}
+-->
+<article class="card q-card" id="card-m16-stiff" data-kind="탐구" data-std="수학16-06-03">
+  <header class="card-head"><span class="no"></span><h2>이미 사라진 성분이 걸음을 막는다</h2><span class="kind">탐구 · 강성 문제</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\(y' = -\lambda(y - \cos t) - \sin t\), \(y(0) = 2\)의 해 \(\cos t + e^{-\lambda t}\)를 양적 오일러, RK4, 음적 오일러로 같은 간격 \(h\)로 풉니다. \(h\)를 키우면 어느 방법이 먼저 무너질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>양적 오일러는 \(h\lambda \le 2\), RK4는 \(h\lambda \le 2.79\)일 때만 안정. 음적 오일러는 모든 \(h > 0\)에서 안정 (<a href="06-03.html">6.3절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>λ</span>
+          <select name="L" aria-label="λ 선택"><option value="10">10</option><option value="50" selected>50</option><option value="200">200</option></select></label>
+        <label><span>h = <b data-show="h">0.02</b></span><input type="range" name="h" min="0.005" max="0.1" step="0.005" value="0.02" aria-label="간격 h"></label>
+      </div>
+      <canvas aria-label="참 해(회색 점선), 양적 오일러(빨강), RK4(주황), 음적 오일러(파랑)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>\(\lambda = 50\), \(h = 0.02\) (\(h\lambda = 1\))이면 세 방법 모두 참 해를 따라갑니다. \(t \ge 0.5\)의 오차는 양적·음적 오일러가 \(1.8\times10^{-4}\), RK4가 \(5.9\times10^{-6}\)입니다.</li>
+        <li>\(h = 0.04\) (\(h\lambda = 2\))이면 양적 오일러가 \(\pm1\) 크기로 계속 진동하며 줄지 않습니다(\(|1 + h\lambda| = 1\)). \(h = 0.05\)이면 발산하고, RK4는 아직 버팁니다(오차 \(7.5\times10^{-3}\)).</li>
+        <li>\(h = 0.1\) (\(h\lambda = 5\))이면 RK4도 발산하지만 음적 오일러는 오차 \(8\times10^{-4}\)로 멀쩡합니다.</li>
+        <li>\(\lambda = 200\)으로 바꾸면 양적 방법은 \(h = 0.01\)에서 이미 한계입니다. \(\lambda = 10\)이면 \(h = 0.1\)까지 모두 안정합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>한 걸음의 증폭률</b><span>오차 속의 빠른 성분은 양적 오일러에서 매 걸음 \(1 - h\lambda\)배가 됩니다. \(h\lambda > 2\)이면 절댓값이 1보다 커서, 처음엔 아주 작아도 걸음마다 커져 결국 폭발합니다. 음적 오일러의 배율 \(\frac1{1 + h\lambda}\)은 늘 1보다 작습니다.</span></li>
+        <li><b>정확도와 안정성은 다르다</b><span>\(t \ge 0.5\)에서 참 해는 \(\cos t\)뿐이라 \(h = 0.1\)로도 정확도는 충분합니다. 양적 방법의 간격을 제한하는 것은 이미 \(e^{-25}\)으로 사라진 성분입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"양적 오일러가 발산했으니 RK4로 바꾸면 된다"는 강성 문제에서는 해결책이 아닙니다. 출력에서 \(\lambda = 200\)이면 RK4도 \(h = 0.02\)에서 발산합니다. 안정 한계가 \(\frac2\lambda\)에서 \(\frac{2.79}\lambda\)로 늘 뿐이라 음적 방법이 필요합니다.</p>
+    </section>
+  </div>
+</article>

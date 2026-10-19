@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-cg" data-kind="본문" data-std="수학16-04-03">
+  <header class="card-head"><span class="no"></span><h2>켤레기울기법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>대칭 양정치 \(A\)에 대해 \(A\mathbf x = \mathbf b\)를 푸는 것이 이차함수 \(\phi(\mathbf x) = \frac12\mathbf x^TA\mathbf x - \mathbf b^T\mathbf x\)의 최솟값을 찾는 것과 같음을 안다.</li>
+        <li>가장 가파른 하강법이 지그재그로 느린 이유와, 서로 \(A\)-켤레인 방향을 쓰는 켤레기울기법의 아이디어를 이해한다.</li>
+        <li>켤레기울기법을 손으로 두 단계 계산하고, 정확한 산술에서 \(n\)단계 안에 해에 도달함을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>내적과 양정치 행렬 (<a href="../8/index.html">수학8</a>), 반복법 (<a href="04-01.html">4.1절</a>), 숄레스키 분해 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>최소화 문제로 보기</h3>
+    <p>\(A\)가 대칭 양정치이면 \(\phi(\mathbf x) = \frac12\mathbf x^TA\mathbf x - \mathbf b^T\mathbf x\)의 기울기는 \(\nabla\phi = A\mathbf x - \mathbf b = -\mathbf r\) (잔차의 반대)이고, \(\phi\)는 아래로 볼록한 그릇 모양이라 기울기가 0인 점, 즉 \(A\mathbf x = \mathbf b\)의 해에서 최소입니다.</p>
+    <p>가장 단순한 방법은 내리막 방향 \(\mathbf r\)로 가장 낮은 곳까지 가는 것(가장 가파른 하강법)입니다. 그러나 그릇이 길쭉하면(조건수가 크면) 방향이 매번 직각으로 꺾이며 지그재그로 움직여 느립니다. \(n = 20\)인 \(\operatorname{tridiag}(-1, 2, -1)\)에서 잔차를 \(10^{-8}\)배로 줄이는 데 1624번이 걸립니다.</p>
+
+    <h3><span class="no">4.3.2</span>켤레 방향</h3>
+    <p>두 벡터가 \(\mathbf p_i^TA\mathbf p_j = 0\)이면 <b>\(A\)-켤레</b>라 합니다(\(A\)로 정한 내적에서 직교). 서로 \(A\)-켤레인 방향 \(\mathbf p_0, \dots, \mathbf p_{n-1}\)을 따라 한 번씩 최소화하면, 앞에서 한 최소화가 뒤의 단계에 의해 망가지지 않아 \(n\)단계 뒤 정확한 최솟값에 도달합니다. 켤레기울기법은 이런 방향을 잔차로부터 하나씩 싸게 만듭니다.</p>
+    <div class="tb-env thm"><b>알고리즘 4.3.1 (켤레기울기법)</b> \(\mathbf x_0\), \(\mathbf r_0 = \mathbf b - A\mathbf x_0\), \(\mathbf p_0 = \mathbf r_0\). \(k = 0, 1, \dots\)에 대해
+      \[\alpha_k = \frac{\mathbf r_k^T\mathbf r_k}{\mathbf p_k^TA\mathbf p_k}, \quad \mathbf x_{k+1} = \mathbf x_k + \alpha_k\mathbf p_k, \quad \mathbf r_{k+1} = \mathbf r_k - \alpha_kA\mathbf p_k,\]
+      \[\beta_k = \frac{\mathbf r_{k+1}^T\mathbf r_{k+1}}{\mathbf r_k^T\mathbf r_k}, \quad \mathbf p_{k+1} = \mathbf r_{k+1} + \beta_k\mathbf p_k.\]</div>
+    <p>한 단계에 행렬-벡터 곱은 \(A\mathbf p_k\) 한 번뿐이고, 저장할 벡터도 몇 개뿐입니다.</p>
+    <div class="tb-env ex"><b>예 4.3.2</b> \(A = \begin{pmatrix}4 & 1\\ 1 & 3\end{pmatrix}\), \(\mathbf b = (1, 2)^T\), \(\mathbf x_0 = 0\). \(\mathbf r_0 = \mathbf p_0 = (1, 2)\), \(A\mathbf p_0 = (6, 7)\), \(\alpha_0 = \frac5{20} = \frac14\), \(\mathbf x_1 = (\frac14, \frac12)\), \(\mathbf r_1 = (-\frac12, \frac14)\). \(\beta_0 = \frac{5/16}{5} = \frac1{16}\), \(\mathbf p_1 = (-\frac7{16}, \frac38)\), \(\alpha_1 = \frac4{11}\), \(\mathbf x_2 = (\frac1{11}, \frac7{11})\)이고 \(\mathbf r_2 = 0\). 두 단계(\(n = 2\))에 정확한 해입니다. \(\mathbf p_0^TA\mathbf p_1 = 6(-\frac7{16}) + 7\cdot\frac38 = 0\)으로 켤레임도 확인됩니다.</div>
+
+    <h3><span class="no">4.3.3</span>실제 수렴</h3>
+    <p>반올림 오차 때문에 큰 \(n\)에서는 정확히 \(n\)단계에 끝나지 않지만, 오차는 대략 \(\left(\frac{\sqrt\kappa - 1}{\sqrt\kappa + 1}\right)^k\)로 줄어듭니다(\(\kappa\)는 조건수). 가장 가파른 하강법의 \(\frac{\kappa - 1}{\kappa + 1}\)보다 훨씬 빨라, 필요한 반복 횟수가 \(\kappa\)가 아니라 \(\sqrt\kappa\)에 비례합니다. \(\operatorname{tridiag}(-1, 2, -1)\), \(\mathbf b = \mathbf 1\)이면 \(n = 20, 50, 100\)에서 10, 25, 50번에 잔차가 \(10^{-8}\)배가 됩니다(\(\mathbf b\)가 좌우 대칭이라 고유벡터의 절반만 쓰여 \(\frac n2\)번).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 켤레기울기법을 아무 행렬에나 쓴다. 대칭 양정치가 아니면 \(\phi\)가 그릇 모양이 아니라 보장이 없다(비대칭이면 GMRES 같은 다른 방법). (2) 켤레기울기법이 직접법이라 \(n\)번을 다 돌려야 한다고 여긴다. 실제로는 \(n\)보다 훨씬 적은 반복에서 멈추는 반복법으로 쓴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>대칭 양정치 \(A\mathbf x = \mathbf b\) ⟺ \(\phi = \frac12\mathbf x^TA\mathbf x - \mathbf b^T\mathbf x\) 최소화, 기울기는 \(-\mathbf r\).</li>
+        <li>\(A\)-켤레 방향으로 차례로 최소화하면 \(n\)단계에 정확한 해.</li>
+        <li>반복 횟수는 \(\sqrt\kappa\)에 비례, 단계당 행렬-벡터 곱 1번.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예 4.3.2의 해 \((\frac1{11}, \frac7{11})\)이 \(A\mathbf x = \mathbf b\)를 만족함을 확인하여라.
+          <details><summary>답</summary><p>\(4\cdot\frac1{11} + \frac7{11} = 1\), \(\frac1{11} + 3\cdot\frac7{11} = 2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예 4.3.2에서 \(\mathbf r_0^T\mathbf r_1 = 0\)임을 확인하여라(잔차들은 서로 직교한다).
+          <details><summary>답</summary><p>\((1, 2)\cdot(-\frac12, \frac14) = -\frac12 + \frac12 = 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\kappa = 10^4\)일 때 \(\frac{\kappa - 1}{\kappa + 1}\)과 \(\frac{\sqrt\kappa - 1}{\sqrt\kappa + 1}\)로 오차를 \(10^{-6}\)배 하는 반복 횟수를 어림하여라.
+          <details><summary>답</summary><p>\(\ln\frac{\kappa - 1}{\kappa + 1} \approx -\frac2\kappa\)이므로 \(\frac{6\ln10}{2\times10^{-4}} \approx 6.9\times10^4\)번. 켤레기울기법은 \(\frac{6\ln10}{2\times10^{-2}} \approx 690\)번.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

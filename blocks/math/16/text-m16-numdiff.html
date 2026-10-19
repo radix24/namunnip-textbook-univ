@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-numdiff" data-kind="본문" data-std="수학16-02-04">
+  <header class="card-head"><span class="no"></span><h2>수치 미분과 간격의 균형</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전진 차분 \(\frac{f(x + h) - f(x)}h\)과 중심 차분 \(\frac{f(x + h) - f(x - h)}{2h}\)의 절단 오차가 각각 \(O(h)\), \(O(h^2)\)임을 보인다.</li>
+        <li>\(h\)를 줄이면 절단 오차는 줄지만 반올림 오차가 \(\frac\varepsilon h\)로 커져, 가장 좋은 \(h\)가 있음을 이해한다.</li>
+        <li>리처드슨 외삽으로 정확도를 한 차수 올린다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>미분계수의 정의(고등학교 수학), 반올림 오차와 자릿수 손실 (<a href="01-02.html">1.2절</a>), 2차 테일러 정리 (<a href="01-04.html">1.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>차분 공식의 절단 오차</h3>
+    <p>미분계수의 정의에서 극한을 빼고 작은 \(h\)를 그대로 쓰는 것이 수치 미분입니다. 테일러 정리 \(f(x \pm h) = f(x) \pm hf'(x) + \frac{h^2}2f''(x) \pm \frac{h^3}6f'''(\xi_\pm)\)를 쓰면</p>
+    \[\frac{f(x + h) - f(x)}h = f'(x) + \frac h2f''(\xi), \qquad \frac{f(x + h) - f(x - h)}{2h} = f'(x) + \frac{h^2}6f'''(\eta).\]
+    <p>중심 차분에서는 \(h^2\) 항이 대칭으로 지워져 절단 오차가 \(h^2\)에 비례합니다. \(h\)를 10분의 1로 줄이면 전진 차분의 오차는 10분의 1, 중심 차분은 100분의 1이 됩니다.</p>
+    <div class="tb-env ex"><b>예 2.4.1</b> \(f(x) = e^x\), \(x = 1\)에서 \(h = 10^{-2}\)이면 전진 차분의 오차가 \(1.36\times10^{-2}\) (\(\approx\frac h2e\)), 중심 차분은 \(4.53\times10^{-5}\) (\(\approx\frac{h^2}6e\))입니다.</div>
+
+    <h3><span class="no">2.4.2</span>너무 작은 \(h\)</h3>
+    <p>그런데 \(h\)를 계속 줄이면 분자 \(f(x + h) - f(x)\)는 거의 같은 두 수의 뺄셈이 됩니다. \(f\)의 값에 상대 오차 \(\varepsilon\)이 있으면 분자의 오차는 약 \(2\varepsilon|f|\)이고, 이를 \(h\)로 나누므로 반올림 오차가 \(\frac{2\varepsilon|f|}h\)로 커집니다. 전진 차분의 전체 오차는</p>
+    \[E(h) \approx \frac h2|f''| + \frac{2\varepsilon|f|}h\]
+    <p>이고, 산술·기하 평균 부등식으로 최소인 \(h\)는 \(h^* = 2\sqrt{\varepsilon|f|/|f''|} \approx 3\times10^{-8}\), 그때의 오차는 약 \(\sqrt\varepsilon \approx 10^{-8}\) 크기입니다. 중심 차분은 같은 방법으로 \(h^* \approx \varepsilon^{1/3} \approx 10^{-5}\), 오차는 \(\varepsilon^{2/3} \approx 10^{-11}\) 크기입니다.</p>
+    <div class="tb-env ex"><b>예 2.4.2</b> \(e^x\), \(x = 1\)의 전진 차분 오차는 \(h = 10^{-8}\)에서 \(6.6\times10^{-9}\)로 가장 작고, \(h = 10^{-10}\)에서 \(1.5\times10^{-6}\), \(h = 10^{-12}\)에서 \(4.3\times10^{-4}\)로 다시 커집니다. 배정밀도로는 유효숫자 16자리 가운데 8자리 정도만 얻습니다.</div>
+    <p>같은 절의 탐구 카드에서 \(\log h\)와 \(\log E\)의 그래프가 V자를 그리는 것을 봅니다.</p>
+
+    <h3><span class="no">2.4.3</span>리처드슨 외삽</h3>
+    <p>중심 차분 \(D(h) = f'(x) + ch^2 + O(h^4)\)이면 \(D(h/2) = f'(x) + \frac c4h^2 + O(h^4)\)이고,</p>
+    \[\frac{4D(h/2) - D(h)}3 = f'(x) + O(h^4)\]
+    <p>로 \(h^2\) 항을 지울 수 있습니다. 예를 들어 \(\sin x\)의 \(x = 1\)에서 \(D(0.1)\)의 오차는 \(-9.0\times10^{-4}\), \(D(0.05)\)는 \(-2.3\times10^{-4}\)인데 외삽값의 오차는 \(-1.1\times10^{-7}\)입니다. 큰 \(h\)로도 정확도를 얻으므로 반올림 오차를 피할 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) \(h\)는 작을수록 좋다고 여긴다. 어느 지점부터는 반올림 오차가 지배한다. (2) 수치 미분의 정확도가 함숫값의 정확도와 같다고 여긴다. 최선이어도 유효숫자가 절반 정도로 준다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전진 차분 오차 \(\frac h2f''\), 중심 차분 오차 \(\frac{h^2}6f'''\).</li>
+        <li>반올림 오차 \(\sim\frac\varepsilon h\) 때문에 최적 \(h\)가 있다: 전진 \(\sim10^{-8}\), 중심 \(\sim10^{-5}\).</li>
+        <li>리처드슨 외삽 \(\frac{4D(h/2) - D(h)}3\)으로 차수를 올린다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = x^2\)이면 중심 차분이 \(h\)에 관계없이 정확함을 보여라.
+          <details><summary>답</summary><p>\(\frac{(x + h)^2 - (x - h)^2}{2h} = \frac{4xh}{2h} = 2x\). \(f''' = 0\)이라 절단 오차가 없다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>2계 도함수의 중심 차분 \(\frac{f(x + h) - 2f(x) + f(x - h)}{h^2}\)의 절단 오차가 \(O(h^2)\)임을 테일러 전개로 보여라.
+          <details><summary>답</summary><p>4차까지 전개해 더하면 \(f(x + h) + f(x - h) = 2f(x) + h^2f''(x) + \frac{h^4}{12}f^{(4)}(\xi)\) 꼴이라 오차는 \(\frac{h^2}{12}f^{(4)}\). 7.1절에서 경계치 문제에 쓴다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>위 2계 차분의 반올림 오차는 \(\frac{4\varepsilon|f|}{h^2}\) 정도이다. 최적 \(h\)의 크기를 어림하여라.
+          <details><summary>답</summary><p>\(\frac{h^2}{12}|f^{(4)}| \approx \frac{4\varepsilon|f|}{h^2}\)에서 \(h \approx (48\varepsilon)^{1/4} \approx 10^{-4}\), 오차는 \(\sqrt\varepsilon \approx 10^{-8}\) 정도.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

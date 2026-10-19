@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학19-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-dh" data-kind="본문" data-std="수학19-06-02">
+  <header class="card-head"><span class="no"></span><h2>이산로그와 디피-헬먼 키 교환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(\mathbb F_p^\times\)에서 \(g^x\)는 빠르게 계산되지만 \(g^x\)에서 \(x\)를 구하는 이산로그는 어렵다는 비대칭을 이해한다.</li>
+        <li>제곱을 반복하는 빠른 거듭제곱으로 \(g^x \bmod p\)를 \(O(\log x)\)번의 곱셈으로 계산한다.</li>
+        <li>디피-헬먼 키 교환의 절차와 안전성의 근거를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>원시근과 순환군 (<a href="04-04.html">4.4절</a>), 이진법.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>이산로그 문제</h3>
+    <p>\(g\)가 \(\mathbb F_p^\times\)의 원시근이면 모든 \(h \ne 0\)은 \(h = g^x\)로 쓰이고, \(x \in \{0, \dots, p - 2\}\)를 \(h\)의 <b>이산로그</b> \(\log_gh\)라 합니다. 실수의 로그와 달리 \(g^x\)의 값이 \(x\)에 따라 마구 흩어져(4.4절 탐구 카드) 크기 비교로 \(x\)를 좁힐 수 없습니다. 알려진 가장 좋은 알고리즘도 \(p \approx 2^{2048}\)이면 현실적인 시간에 풀지 못합니다.</p>
+
+    <h3><span class="no">6.2.2</span>빠른 거듭제곱</h3>
+    <p>반대 방향 \(g^x \bmod p\)는 쉽습니다. \(x\)를 이진법으로 쓰고 \(g, g^2, g^4, g^8, \dots\)을 제곱으로 구해 필요한 것만 곱합니다.</p>
+    <div class="tb-env ex"><b>예 6.2.1</b> \(5^{13} \bmod 23\): \(13 = 8 + 4 + 1\). \(5^1 = 5\), \(5^2 = 25 \equiv 2\), \(5^4 \equiv 4\), \(5^8 \equiv 16\). \(5^{13} \equiv 16\cdot4\cdot5 = 320 \equiv 21\). 곱셈 5번(제곱 3번 + 곱 2번)으로 끝납니다. 2048비트 지수도 약 3000번의 곱셈이면 됩니다.</div>
+
+    <h3><span class="no">6.2.3</span>디피-헬먼 키 교환</h3>
+    <p>앨리스와 밥이 도청되는 통신로로 공통 비밀 키를 만들려 합니다.</p>
+    <ol>
+      <li>공개: 큰 소수 \(p\)와 원시근 \(g\).</li>
+      <li>앨리스는 비밀 \(a\)를 골라 \(A = g^a\)를, 밥은 비밀 \(b\)를 골라 \(B = g^b\)를 공개로 보낸다.</li>
+      <li>앨리스는 \(B^a = g^{ab}\), 밥은 \(A^b = g^{ab}\)를 계산한다. 이 \(g^{ab}\)가 공통 키이다.</li>
+    </ol>
+    <div class="tb-env ex"><b>예 6.2.2</b> \(p = 23\), \(g = 5\), \(a = 6\), \(b = 15\). \(A = 5^6 \equiv 8\), \(B = 5^{15} \equiv 19\). 앨리스는 \(19^6 \equiv 2\), 밥은 \(8^{15} \equiv 2\). 공통 키 2입니다.</div>
+    <p>도청자는 \(p, g, A, B\)를 알지만 \(g^{ab}\)를 얻으려면 \(A\)에서 \(a\)를 구하는(이산로그) 것 외에 알려진 효율적 방법이 없습니다. 같은 원리를 타원곡선 위의 군에서 쓰면 더 짧은 키로 같은 안전성을 얻습니다(인터넷 TLS의 기본).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 공개 정보로 \(g^{ab}\)를 \(A\cdot B = g^{a+b}\)로 구할 수 있다고 여긴다. 필요한 것은 \(g^{ab}\)이지 \(g^{a+b}\)가 아니다. (2) 디피-헬먼만으로 상대가 누구인지 확인된다고 여긴다. 중간자 공격을 막으려면 서명 같은 인증이 따로 필요하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(g^x\)는 제곱 반복으로 빠르게, \(x = \log_gh\)는 어렵게: 일방향성.</li>
+        <li>DH: \(A = g^a\), \(B = g^b\)를 교환해 \(g^{ab}\)를 공유.</li>
+        <li>안전성은 이산로그(정확히는 DH 문제)의 어려움에 기댄다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(3^{10} \bmod 11\)을 계산하여라.
+          <details><summary>답</summary><p>페르마 소정리로 1. (제곱 반복: \(3^2 = 9\), \(3^4 = 81 \equiv 4\), \(3^8 \equiv 16 \equiv 5\), \(3^{10} = 5\cdot9 = 45 \equiv 1\).)</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(p = 11\), \(g = 2\)에서 \(\log_27\)을 구하여라.
+          <details><summary>답</summary><p>\(2^k \bmod 11\): 2, 4, 8, 5, 10, 9, 7, … 이므로 \(\log_27 = 7\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(p = 11\), \(g = 2\)로 앨리스 \(a = 3\), 밥 \(b = 7\)이면 공통 키는?
+          <details><summary>답</summary><p>\(A = 8\), \(B = 2^7 \equiv 7\). \(7^3 = 343 \equiv 2\), \(8^7 = 2^{21} = 2^{20}\cdot2 \equiv 2\). 공통 키 2.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

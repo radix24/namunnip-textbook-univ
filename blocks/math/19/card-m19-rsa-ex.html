@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학19-06-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m19-rsa-ex" data-kind="예제" data-std="수학19-06-03">
+  <header class="card-head"><span class="no"></span><h2>작은 수로 RSA 한 바퀴</h2><span class="kind">예제 · 키 생성에서 복호화까지</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(p = 61\), \(q = 53\), \(e = 17\)로 RSA 키를 만듭니다. 비밀 키 \(d\)는 \(\bmod n = 3233\)의 역원일까요, \(\bmod\varphi(n)\)의 역원일까요?</p>
+      <details><summary>예측 확인</summary><p>\(\bmod\varphi(n) = 3120\)의 역원입니다. 지수는 \(\bmod\varphi(n)\)으로 줄어들기 때문입니다(오일러 정리).</p></details>
+    </section>
+    <p class="q-prob">\(p = 61\), \(q = 53\), \(e = 17\)로 RSA 키를 만들고, 메시지 \(m = 65\)를 암호화한 뒤 다시 복호화하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>\(n\), \(\varphi(n)\)을 구하고, 유클리드 호제법으로 \(17d \equiv 1 \pmod{3120}\)을 풉니다. 거듭제곱은 제곱 반복으로 계산합니다(<a href="06-03.html">6.3절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(n = 61\cdot53 = 3233\), \(\varphi(n) = 60\cdot52 = 3120\).</div><span class="q-why">\(\varphi(pq) = (p - 1)(q - 1)\).</span></li>
+        <li><div>\(3120 = 17\cdot183 + 9\), \(17 = 9 + 8\), \(9 = 8 + 1\). 거꾸로: \(1 = 9 - 8 = 9 - (17 - 9) = 2\cdot9 - 17 = 2(3120 - 17\cdot183) - 17 = 2\cdot3120 - 367\cdot17\).</div><span class="q-why">확장 유클리드 호제법.</span></li>
+        <li><div>\(d \equiv -367 \equiv 2753 \pmod{3120}\). 공개 키 \((3233, 17)\), 비밀 키 2753.</div><span class="q-why">\(17\cdot2753 = 46801 = 15\cdot3120 + 1\).</span></li>
+        <li class="q-end"><div>암호화 \(c = 65^{17} \bmod 3233 = 2790\). 복호화 \(2790^{2753} \bmod 3233 = 65\).</div><span class="q-why">제곱 반복으로 각각 곱셈 20번 안팎.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>정리 6.3.2의 증명대로 \(\bmod 61\)과 \(\bmod 53\)에서 따로 확인할 수 있습니다. \(ed = 46801 = 1 + 15\cdot3120\)이고 \(3120\)은 \(60\)과 \(52\)의 배수라 \(65^{ed} \equiv 65\)가 두 법에서 모두 성립합니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>공개된 것은 \(n = 3233\)과 \(e = 17\)뿐입니다. 이 작은 \(n\)은 쉽게 소인수분해되지만, 실제로는 수백 자리의 \(n\)을 써서 \(\varphi(n)\)과 \(d\)를 숨깁니다. 계산 과정(호제법, 빠른 거듭제곱)은 자리수가 커져도 빠릅니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\(n = 33\), \(e = 3\), \(d = 7\)로 \(m = 4\)를 암호화하고 복호화하여라.</p>
+      <details><summary>답</summary><p>\(c = 4^3 = 64 \equiv 31\). \(31^7 \bmod 33\): \(31 \equiv -2\), \((-2)^7 = -128 \equiv -128 + 132 = 4\). 원래 메시지 4입니다.</p></details>
+    </section>
+  </div>
+</article>

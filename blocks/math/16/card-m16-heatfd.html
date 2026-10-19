@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-07-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m16-heatfd.js"]
+}
+-->
+<article class="card q-card" id="card-m16-heatfd" data-kind="탐구" data-std="수학16-07-02 수학16-07-03">
+  <header class="card-head"><span class="no"></span><h2>r = 1/2의 벽</h2><span class="kind">탐구 · 열방정식의 차분법</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>삼각형 모양의 처음 온도(가운데 1, 양 끝 0)를 \(h = \frac1{20}\)인 격자로 \(t = 0.1\)까지 풉니다. 시간 간격을 \(r = \frac k{h^2}\)로 정할 때, \(r\)을 0.5보다 조금만 크게 하면 무슨 일이 생길까요? 음적 방법은 어떨까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>양적 방법의 증폭률 \(g = 1 - 4r\sin^2\frac\theta2\), 안정 ⟺ \(r \le \frac12\) (<a href="07-02.html">7.2절</a>). 음적 방법과 크랭크-니콜슨은 모든 \(r\)에서 안정 (<a href="07-03.html">7.3절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span>
+          <select name="s" aria-label="차분법 선택"><option value="ex">양적(FTCS)</option><option value="im">음적(후진 오일러)</option><option value="cn">크랭크-니콜슨</option></select></label>
+        <label><span>r = <b data-show="r">0.45</b></span><input type="range" name="r" min="0.1" max="5" step="0.01" value="0.45" aria-label="r = k/h²"></label>
+      </div>
+      <canvas aria-label="처음 온도(회색 점선), t = 0.1의 참 해(주황 점선), 수치해(양적은 빨강, 음적·크랭크-니콜슨은 파랑)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>양적 방법, \(r = 0.45\)이면 89걸음에 최대 오차 \(4.3\times10^{-4}\)로 참 해와 겹칩니다. \(r = 0.5\)이면 80걸음, 오차 \(2.5\times10^{-3}\)입니다.</li>
+        <li>\(r = 0.52\)로 아주 조금 올리면 77걸음 만에 오차가 0.65로 커지고, 수치해가 톱니 모양으로 흔들립니다. \(r = 0.55\)이면 800, \(r = 0.6\)이면 폭발합니다.</li>
+        <li>음적 방법으로 바꾸면 \(r = 1, 2, 5\)에서 오차가 \(4.9\times10^{-3}\), \(8.5\times10^{-3}\), \(1.9\times10^{-2}\)로 안정적입니다(걸음 수 40, 20, 8).</li>
+        <li>크랭크-니콜슨은 같은 \(r\)에서 \(1.2\times10^{-3}\) 정도로 음적 방법보다 정확합니다. \(r = 5\)에서는 \(5.3\times10^{-3}\)입니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>톱니가 먼저 자란다</b><span>가장 빠르게 진동하는 성분(\(\theta = \pi\), 이웃 점마다 부호가 바뀜)의 증폭률이 \(1 - 4r\)이라, \(r > \frac12\)이면 \(|g| > 1\)이 되어 부호를 바꾸며 커집니다. 삼각형의 꼭짓점이 이 성분을 처음부터 담고 있어 빨리 드러납니다.</span></li>
+        <li><b>음적 방법의 증폭률</b><span>후진 오일러는 \(g = \frac1{1 + 4r\sin^2(\theta/2)}\)으로 늘 0과 1 사이라 안정합니다. 크랭크-니콜슨은 \(g = \frac{1 - 2r\sin^2(\theta/2)}{1 + 2r\sin^2(\theta/2)}\)으로 절댓값이 1 이하이고, 시간에 대해서도 2차 정확도라 더 정확합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"\(r = 0.52\)는 0.5와 거의 같으니 결과도 거의 같을 것이다"는 틀립니다. 출력에서 오차가 \(2.5\times10^{-3}\)에서 0.65로 260배가 됩니다. 안정 조건은 경계를 넘으면 결과가 급격히 달라지는 문턱입니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-stiff" data-kind="본문" data-std="수학16-06-03">
+  <header class="card-head"><span class="no"></span><h2>절대 안정 영역과 강성 문제</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>시험 방정식 \(y' = \lambda y\)에 방법을 적용해 \(y_{n+1} = R(h\lambda)y_n\)을 얻고, \(|R(h\lambda)| \le 1\)인 영역을 절대 안정 영역으로 정의한다.</li>
+        <li>양적 오일러는 \(|1 + h\lambda| \le 1\), 음적 오일러는 왼쪽 반평면 전체에서 안정함을 보인다.</li>
+        <li>빨리 사라지는 성분이 있는 강성 문제에서 양적 방법은 정확도와 상관없이 아주 작은 \(h\)를 강요받음을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>오일러와 룽게-쿠타 방법 (<a href="06-01.html">6.1절</a>), 애덤스-몰턴 공식 (<a href="06-02.html">6.2절</a>), 복소평면(고등학교 복소수).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>시험 방정식</h3>
+    <p>\(y' = \lambda y\) (\(\lambda\)는 실수부가 음수인 복소수)의 해 \(e^{\lambda t}\)는 0으로 줄어듭니다. 수치해도 줄어들어야 합니다. 한 걸음을 계산하면</p>
+    <ul>
+      <li>양적 오일러: \(y_{n+1} = y_n + h\lambda y_n = (1 + h\lambda)y_n\), \(R(z) = 1 + z\).</li>
+      <li>음적 오일러 \(y_{n+1} = y_n + h\lambda y_{n+1}\): \(y_{n+1} = \frac1{1 - h\lambda}y_n\), \(R(z) = \frac1{1 - z}\).</li>
+      <li>RK4: \(R(z) = 1 + z + \frac{z^2}2 + \frac{z^3}6 + \frac{z^4}{24}\) (6.1절 연습 3).</li>
+    </ul>
+    <p>\(|R(h\lambda)| \le 1\)인 \(z = h\lambda\)의 집합을 <b>절대 안정 영역</b>이라 합니다. 양적 오일러는 중심 \(-1\), 반지름 1인 원판이라, 실수 \(\lambda &lt; 0\)이면 \(h \le \frac2{|\lambda|}\)이어야 합니다. RK4의 영역은 조금 더 커서 실수축에서 \(-2.79 \le z \le 0\)입니다. 음적 오일러는 \(|1 - z| \ge 1\)인 곳, 즉 왼쪽 반평면을 모두 포함합니다(<b>A-안정</b>).</p>
+
+    <h3><span class="no">6.3.2</span>강성 문제</h3>
+    <div class="tb-env ex"><b>예 6.3.1</b> \(y' = -\lambda(y - \cos t) - \sin t\), \(y(0) = 2\)의 해는 \(y = \cos t + e^{-\lambda t}\)입니다. \(\lambda = 50\)이면 \(e^{-50t}\)는 \(t = 0.1\)이면 이미 \(0.007\)로 사라지고, 그 뒤 해는 천천히 변하는 \(\cos t\)뿐입니다. 정확도만 보면 \(h = 0.05\)로 충분하지만, 양적 오일러는 \(h\lambda = 2.5 > 2\)라 발산합니다. 음적 오일러는 \(h = 0.1\) (\(h\lambda = 5\))에서도 \(t \ge 0.5\)의 오차가 \(8\times10^{-4}\)입니다.</div>
+    <p>이렇게 해에 아주 빨리 사라지는 성분과 천천히 변하는 성분이 함께 있어, 양적 방법의 간격이 정확도가 아니라 <b>안정성</b> 때문에 제한되는 문제를 <b>강성 문제</b>라 합니다. 화학 반응(빠른 반응과 느린 반응), 회로, 열방정식의 공간 이산화(7.2절)에서 흔합니다. 이미 사라진 성분이 간격을 정한다는 점이 핵심입니다.</p>
+
+    <h3><span class="no">6.3.3</span>음적 방법의 대가</h3>
+    <p>음적 방법은 매 걸음 \(y_{n+1} = y_n + hf(t_{n+1}, y_{n+1})\)을 풀어야 합니다. \(f\)가 비선형이면 뉴턴 방법(1.4절)을, 연립이면 매 걸음 선형연립방정식(3장)을 풉니다. 한 걸음이 비싸지만 큰 간격을 쓸 수 있어 강성 문제에서는 훨씬 빠릅니다. 2차 정확도가 필요하면 사다리꼴 공식(A-안정)이나 BDF(후진 미분 공식)를 씁니다. 같은 절의 탐구 카드에서 \(h\)와 \(\lambda\)를 바꿔 가며 확인합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 고차 양적 방법(RK4)이면 강성 문제도 해결된다고 여긴다. 안정 영역이 조금 넓을 뿐 \(h \lesssim \frac{2.79}{|\lambda|}\)라는 제한은 같다. (2) 안정하면 정확하다고 여긴다. 음적 오일러도 1차 방법이라 \(h\)가 크면 오차는 크다. 안정성은 발산하지 않는다는 보장일 뿐이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(y' = \lambda y\)에서 \(y_{n+1} = R(h\lambda)y_n\), 절대 안정 영역 \(|R| \le 1\).</li>
+        <li>양적 오일러: \(|1 + h\lambda| \le 1\) (실수면 \(h \le \frac2{|\lambda|}\)). 음적 오일러: 왼쪽 반평면 전체.</li>
+        <li>강성 문제에서는 안정성이 간격을 정하므로 음적 방법을 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\lambda = -1000\)일 때 양적 오일러의 최대 간격은?
+          <details><summary>답</summary><p>\(h \le \frac2{1000} = 0.002\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>사다리꼴 공식 \(y_{n+1} = y_n + \frac h2(f_n + f_{n+1})\)의 \(R(z)\)를 구하고, \(\operatorname{Re}z &lt; 0\)이면 \(|R(z)| &lt; 1\)임을 보여라.
+          <details><summary>답</summary><p>\(R(z) = \frac{1 + z/2}{1 - z/2}\). \(\operatorname{Re}z &lt; 0\)이면 \(z/2\)는 \(-1\)보다 \(1\)에서 더 멀어 \(|1 + z/2| &lt; |1 - z/2|\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>음적 오일러는 \(h\lambda \to -\infty\)에서 \(R \to 0\), 사다리꼴은 \(R \to -1\)이다. 강성 성분을 다룰 때 이 차이가 어떤 결과를 낳는가?
+          <details><summary>답</summary><p>음적 오일러는 빠른 성분을 한 걸음에 거의 없애지만, 사다리꼴은 그 성분이 부호를 바꾸며 거의 줄지 않고 남아 해가 진동한다. 그래서 매우 강성인 문제에는 \(R(-\infty) = 0\)인 방법(L-안정)을 선호한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

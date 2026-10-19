@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-heatfd" data-kind="본문" data-std="수학16-07-02">
+  <header class="card-head"><span class="no"></span><h2>열방정식의 양적 방법과 안정 조건</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>열방정식 \(u_t = u_{xx}\)를 시간은 전진 차분, 공간은 중심 차분으로 바꾼 양적(FTCS) 방법을 세운다.</li>
+        <li>푸리에 모드를 넣는 폰 노이만 분석으로 증폭률 \(g = 1 - 4r\sin^2\frac{\theta}2\)를 구하고, 안정 조건 \(r = \frac k{h^2} \le \frac12\)를 유도한다.</li>
+        <li>이 조건이 6.3절의 강성 문제와 같은 현상임을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>경계치 문제의 이산화 (<a href="07-01.html">7.1절</a>), 절대 안정 영역 (<a href="06-03.html">6.3절</a>), 삼각함수의 덧셈정리와 반각 공식(고등학교 수학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>양적 방법</h3>
+    <p>공간 간격 \(h\), 시간 간격 \(k\)로 \(u_i^n \approx u(ih, nk)\)라 하면</p>
+    \[\frac{u_i^{n+1} - u_i^n}k = \frac{u_{i-1}^n - 2u_i^n + u_{i+1}^n}{h^2} \quad\Longrightarrow\quad u_i^{n+1} = u_i^n + r\left(u_{i-1}^n - 2u_i^n + u_{i+1}^n\right),\ r = \frac k{h^2}.\]
+    <p>새 값은 옛 값에서 바로 계산되므로(양적) 한 걸음이 \(O(n)\)으로 쌉니다. 절단 오차는 시간 \(O(k)\), 공간 \(O(h^2)\)입니다.</p>
+
+    <h3><span class="no">7.2.2</span>폰 노이만 분석</h3>
+    <p>오차를 푸리에 모드 \(u_i^n = g^ne^{\mathrm i i\theta}\) (\(\theta\)는 격자에서 본 진동수, \(\mathrm i = \sqrt{-1}\))로 나눠 하나씩 넣어 봅니다. 그러면 \(e^{\mathrm i(i\pm1)\theta} = e^{\mathrm i i\theta}e^{\pm\mathrm i\theta}\)이므로</p>
+    \[g = 1 + r\left(e^{-\mathrm i\theta} - 2 + e^{\mathrm i\theta}\right) = 1 + r(2\cos\theta - 2) = 1 - 4r\sin^2\frac\theta2.\]
+    <div class="tb-env thm"><b>정리 7.2.1</b> 양적 방법은 \(r = \frac k{h^2} \le \frac12\)일 때 안정하고, \(r > \frac12\)이면 불안정하다.</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>모든 모드가 커지지 않으려면 모든 \(\theta\)에서 \(|g| \le 1\)이어야 한다. \(g \le 1\)은 늘 성립하고, \(g \ge -1\)은 \(4r\sin^2\frac\theta2 \le 2\)이다. 가장 진동이 빠른 모드 \(\theta = \pi\)에서 \(\sin^2\frac\theta2 = 1\)이므로 \(r \le \frac12\)가 필요충분조건이다. <span class="qed">∎</span></p>
+    </div>
+    <p>\(r > \frac12\)이면 \(\theta \approx \pi\)인 톱니 모양 성분이 매 걸음 \(|g| > 1\)배 커집니다. 처음에는 반올림 오차 수준이어도 지수적으로 자라 해를 덮어 버립니다.</p>
+
+    <h3><span class="no">7.2.3</span>강성과의 관계</h3>
+    <p>공간만 이산화한 연립 미분방정식 \(\mathbf u' = -\frac1{h^2}\operatorname{tridiag}(-1, 2, -1)\mathbf u\)의 고윳값은 \(-\frac4{h^2}\sin^2\frac{j\pi}{2n}\)으로 \(-\frac4{h^2}\)까지 내려갑니다. 양적 오일러의 조건 \(k|\lambda| \le 2\)에 넣으면 \(k \le \frac{h^2}2\), 즉 같은 조건입니다. \(h\)를 10분의 1로 줄이면 \(k\)는 100분의 1이 되어야 하므로, 촘촘한 격자에서 양적 방법은 매우 느립니다. 같은 절의 탐구 카드에서 \(r\)을 0.5 근처에서 바꿔 봅니다.</p>
+    <div class="tb-env ex"><b>예 7.2.2</b> \([0, 1]\)에서 처음 온도가 삼각형(가운데 1, 양 끝 0), \(h = \frac1{20}\), \(t = 0.1\)까지 계산하면 \(r = 0.45\)에서 최대 오차 \(4.3\times10^{-4}\), \(r = 0.5\)에서 \(2.5\times10^{-3}\)인데, \(r = 0.52\)이면 0.65, \(r = 0.55\)이면 800으로 폭발합니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 불안정은 큰 \(r\)에서 오차가 조금 커지는 것이라고 여긴다. 지수적으로 폭발한다. (2) 처음 온도가 매끄러우면 불안정해도 괜찮다고 여긴다. 반올림 오차가 모든 모드를 조금씩 만들어 결국 폭발한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>FTCS: \(u_i^{n+1} = u_i^n + r(u_{i-1}^n - 2u_i^n + u_{i+1}^n)\), \(r = \frac k{h^2}\).</li>
+        <li>증폭률 \(g = 1 - 4r\sin^2\frac\theta2\), 안정 ⟺ \(r \le \frac12\).</li>
+        <li>공간 이산화의 고윳값이 \(-\frac4{h^2}\)까지 가는 강성 문제라 \(k \le \frac{h^2}2\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(h = 0.01\)일 때 양적 방법의 최대 시간 간격과 \(t = 1\)까지의 걸음 수를 구하여라.
+          <details><summary>답</summary><p>\(k \le \frac{10^{-4}}2 = 5\times10^{-5}\), 걸음 수 \(2\times10^4\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(r = \frac12\)이면 \(u_i^{n+1} = \frac12(u_{i-1}^n + u_{i+1}^n)\)임을 보이고, 최대 원리(새 값이 이웃 값 사이)를 설명하여라.
+          <details><summary>답</summary><p>\(-2r = -1\)이라 \(u_i^n\) 항이 사라진다. 새 값은 이웃 두 값의 평균이므로 최대·최소를 넘지 않는다. \(r \le \frac12\)이면 모든 계수 \(r, 1 - 2r, r\)이 0 이상이라 같은 성질이 있다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(u_t = u_{xx}\) 대신 \(u_t = Du_{xx}\) (\(D > 0\))이면 안정 조건은?
+          <details><summary>답</summary><p>\(r = \frac{Dk}{h^2} \le \frac12\), 즉 \(k \le \frac{h^2}{2D}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

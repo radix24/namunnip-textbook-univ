@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학16-01-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-secant" data-kind="본문" data-std="수학16-01-05">
+  <header class="card-head"><span class="no"></span><h2>할선법과 수렴 차수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>도함수 대신 두 점을 잇는 할선을 쓰는 할선법을 유도한다.</li>
+        <li>수렴 차수 \(p\)를 \(|e_{n+1}| \approx C|e_n|^p\)로 정의하고, 할선법의 차수가 황금비 \(\frac{1 + \sqrt5}2 \approx 1.618\)임을 이해한다.</li>
+        <li>함숫값 계산 한 번당 효율로 뉴턴 방법과 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>뉴턴 방법 (<a href="01-04.html">1.4절</a>), 두 점을 지나는 직선, 이차방정식(고등학교 수학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.5.1</span>할선법</h3>
+    <p>\(f'\)를 구하기 어렵거나 계산이 비쌀 때는 접선 기울기 \(f'(x_n)\) 자리에 최근 두 점을 잇는 할선의 기울기 \(\frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}\)을 씁니다.</p>
+    \[x_{n+1} = x_n - f(x_n)\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}.\]
+    <p>시작값이 두 개 필요하고, 매 단계 새로 계산하는 함숫값은 \(f(x_n)\) 하나뿐입니다.</p>
+
+    <h3><span class="no">1.5.2</span>수렴 차수</h3>
+    <p>오차 \(e_n = x_n - r\)이 \(\lim\frac{|e_{n+1}|}{|e_n|^p} = C\) (\(0 &lt; C &lt; \infty\))를 만족하면 <b>수렴 차수가 \(p\)</b>라 합니다. \(p = 1\)(그리고 \(C &lt; 1\))이면 일차, \(p = 2\)이면 이차 수렴입니다. 차수가 \(p\)이면 맞는 자릿수가 매 단계 약 \(p\)배가 됩니다.</p>
+    <div class="tb-env thm"><b>정리 1.5.1</b> 단순근 근처에서 할선법의 오차는 \(e_{n+1} \approx \frac{f''(r)}{2f'(r)}e_ne_{n-1}\)을 만족하고, 수렴 차수는 \(p = \frac{1 + \sqrt5}2 \approx 1.618\)이다.</div>
+    <div class="tb-proof"><b>증명의 흐름</b>
+      <p>첫 식은 뉴턴 방법의 증명처럼 테일러 정리로 얻는다(할선과 접선의 차이가 \(e_{n-1}\)에 비례). 이제 \(|e_{n+1}| \approx C|e_n|^p\)이라 가정하면 \(|e_n| \approx C|e_{n-1}|^p\), 즉 \(|e_{n-1}| \approx (|e_n|/C)^{1/p}\)이다. 첫 식에 넣으면 \(|e_n|^p \propto |e_n|\cdot|e_n|^{1/p}\)이므로 지수를 비교해</p>
+      \[p = 1 + \frac1p, \qquad p^2 - p - 1 = 0, \qquad p = \frac{1 + \sqrt5}2.\]
+      <p><span class="qed">∎</span></p>
+    </div>
+
+    <h3><span class="no">1.5.3</span>무엇이 더 빠른가</h3>
+    <p>뉴턴 방법은 한 단계에 \(f\)와 \(f'\)를 둘 다 계산합니다. \(f'\)의 계산 비용이 \(f\)와 비슷하다면, 함숫값 두 번에 차수가 2인 뉴턴 방법은 "계산 한 번당" 차수가 \(\sqrt2 \approx 1.41\)이고, 할선법은 1.618입니다. 그래서 도함수가 비싸면 할선법이 실제로 더 빠릅니다.</p>
+    <div class="tb-env ex"><b>예 1.5.2</b> \(x^2 - 2 = 0\), \(x_0 = 1\), \(x_1 = 2\)이면 할선법의 오차는 \(8.1\times10^{-2}\), \(1.4\times10^{-2}\), \(4.2\times10^{-4}\), \(2.1\times10^{-6}\), \(3.2\times10^{-10}\)으로 뉴턴 방법(\(2.5\times10^{-3}\), \(2.1\times10^{-6}\), \(1.6\times10^{-12}\))보다 단계 수는 많지만, 도함수를 계산하지 않습니다.</div>
+    <p>같은 절의 예제 카드에서 오차 비로 차수를 실제로 추정해 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 차수가 높은 방법이 늘 빠르다고 여긴다. 한 단계의 계산 비용도 함께 봐야 한다. (2) 할선법이 이분법처럼 근을 가둔다고 여긴다. 두 점의 부호가 같아도 진행하므로 근을 가두지 않으며 발산할 수도 있다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>할선법: 도함수 대신 최근 두 점의 할선 기울기, 함숫값은 단계당 1번.</li>
+        <li>차수 \(p\): \(|e_{n+1}| \approx C|e_n|^p\). 할선법은 \(p = \frac{1 + \sqrt5}2\).</li>
+        <li>계산 한 번당 효율은 할선법 1.618, 뉴턴 방법 약 1.41(도함수 비용이 같을 때).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.5.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x) = x^2 - 2\), \(x_0 = 1\), \(x_1 = 2\)에서 할선법으로 \(x_2\)를 구하여라.
+          <details><summary>답</summary><p>\(x_2 = 2 - 2\cdot\frac{2 - 1}{2 - (-1)} = 2 - \frac23 = \frac43\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>오차가 \(10^{-2}\)인 상태에서 차수 1.618, 2인 방법이 각각 몇 단계 뒤 오차 \(10^{-16}\) 아래로 가는지 어림하여라(\(C = 1\)로 가정).
+          <details><summary>답</summary><p>자릿수가 \(2 \to 2p \to 2p^2 \to \cdots\)이 16을 넘으면 된다. \(p = 2\): 2, 4, 8, 16으로 3단계. \(p = 1.618\): 2, 3.2, 5.2, 8.5, 13.7, 22.2로 5단계.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>뉴턴 방법 두 단계를 하나로 묶으면 차수가 4이고 함숫값 계산은 4번이다. 계산 한 번당 차수가 \(\sqrt2\)로 같음을 확인하여라.
+          <details><summary>답</summary><p>\(k\)번 계산에 차수 \(q\)인 방법의 한 번당 차수는 \(q^{1/k}\). \(4^{1/4} = \sqrt2\), \(2^{1/2} = \sqrt2\)로 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
