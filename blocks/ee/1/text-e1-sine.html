@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e1-sine" data-kind="본문" data-std="전전1-04-01">
+  <header class="card-head"><span class="no"></span><h2>사인파 신호를 만들고 그래프로 그리기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>진폭, 주파수, 위상으로 사인파 \(v(t) = A\sin(2\pi ft + \phi)\)를 나타낸다.</li>
+        <li>NumPy로 시간 축을 만들고 배열 계산으로 신호 전체를 한 번에 계산한다.</li>
+        <li>Matplotlib으로 그래프를 그리고, 점의 간격이 그래프 모양에 주는 영향을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>삼각함수와 그래프(고교 수학 I), 리스트와 반복문 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>사인파의 세 숫자</h3>
+    <p>가정용 전기, 소리, 전파는 모두 사인파로 나타낼 수 있습니다. 고교 수학의 \(y = \sin x\)에서 x 자리에 시간을 넣은 꼴입니다.</p>
+    \[ v(t) = A\sin(2\pi ft + \phi) \]
+    <p class="q-term"><b>진폭</b> A: 가장 큰 값. 단위는 신호의 단위(V).</p>
+    <p class="q-term"><b>주파수</b> f: 1초에 반복하는 횟수(Hz). 주기 \(T = 1/f\). 우리나라 가정용 전기는 60 Hz.</p>
+    <p class="q-term"><b>위상</b> φ: 시작 위치를 옮기는 각. −90°이면 사인파가 4분의 1 주기 늦게 시작한다.</p>
+    <p>\(2\pi f\)를 곱하는 이유: t가 한 주기 T만큼 지나면 sin 안의 각이 \(2\pi\)(360°)만큼 늘어 한 바퀴를 돌게 하기 위해서입니다.</p>
+
+    <h3><span class="no">4.1.2</span>NumPy로 계산하기</h3>
+<pre><code>import numpy as np
+t = np.linspace(0, 0.04, 401)          # 0부터 0.04초까지 401개 점
+v = 2.0 * np.sin(2 * np.pi * 50 * t)   # 401개를 한 번에 계산</code></pre>
+    <p><code>np.linspace(a, b, n)</code>은 a부터 b까지 같은 간격의 점 n개를 만듭니다. NumPy 배열에 연산을 하면 원소마다 한꺼번에 계산되어, 반복문 없이 신호 전체를 얻습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>위 코드에서 (가) 점 사이 간격, (나) 그래프에 나타나는 주기 수, (다) t = 5 ms의 값, (라) 실효값을 구하라.</p>
+    </div>
+    <p><i>풀이.</i> (가) 0.04/400 = 0.1 ms. (나) 50 Hz는 주기 20 ms이므로 40 ms 동안 2주기. (다) 5 ms는 4분의 1 주기라 \(2\sin(90°) = 2\) V. (라) 사인파의 실효값 \(A/\sqrt2 \approx 1.414\) V. NumPy로 제곱 평균의 제곱근을 계산해도 같은 값이 나옵니다(이 절의 실습).</p>
+
+    <h3><span class="no">4.1.3</span>그래프는 점을 잇는 것</h3>
+    <p>Matplotlib의 <code>plt.plot(t, v)</code>는 점들을 직선으로 이어 그립니다. 한 주기에 점이 몇 개뿐이면 꺾은선이 되어 사인파처럼 보이지 않습니다. 보통 한 주기에 20개 이상이면 매끄럽게 보입니다. 이 절의 탐구 카드에서 점의 수를 바꿔 볼 수 있습니다. 이 현상은 신호를 띄엄띄엄 재는 표본화(신호및시스템 6단원)와 이어집니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "np.sin에 각도(°)를 넣는다": 라디안을 넣습니다. 90°는 \(\pi/2\). (2) "점을 많이 찍으면 신호가 바뀐다": 신호는 그대로이고 그림의 정밀도만 바뀝니다. (3) <code>np.linspace(0, 0.04, 400)</code>과 <code>401</code>의 간격이 다릅니다. 양 끝을 포함하므로 칸 수는 점 수 − 1입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(A\sin(2\pi ft + \phi)\): 진폭, 주파수(주기 1/f), 위상.</li>
+        <li><code>np.linspace</code>로 시간 축, 배열 연산으로 신호 전체를 계산한다.</li>
+        <li>그래프는 점을 직선으로 잇는다. 한 주기에 충분한 점이 필요하다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>60 Hz, 실효값 220 V인 가정용 전압의 진폭과 주기는?
+          <details><summary>답</summary><p>진폭 \(220\sqrt2 \approx 311\) V, 주기 약 16.7 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>1 kHz 사인파를 한 주기에 50개 점으로 5주기 그리려면 linspace의 끝 시각과 점의 수는?
+          <details><summary>답</summary><p>끝 5 ms, 점 251개(칸 250개).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>v2 = 2 * np.sin(2*np.pi*50*t - np.pi/2)</code>는 v와 비교해 어떤 모양인가? 0 ms에서의 값은?
+          <details><summary>답</summary><p>4분의 1 주기(5 ms) 늦은 사인파로, \(-2\cos(2\pi\cdot50t)\)와 같습니다. 0 ms에서 −2 V.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
