@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-func" data-kind="본문" data-std="전전11-02-02">
+  <header class="card-head"><span class="no"></span><h2>랜덤변수의 함수의 분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Y = g(X)의 누적분포함수(CDF)를 X의 분포로 구한다.</li>
+        <li>단조 함수일 때 밀도의 변환 공식 \(f_Y(y) = f_X(x)/|g'(x)|\)를 쓴다.</li>
+        <li>정류기(\(Y = |X|\)), 제곱 검파기(\(Y = X^2\)) 같은 회로 출력의 분포를 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>대표 분포 (<a href="02-01.html">2.1절</a>), 미분과 합성 함수의 미분(미적분).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>CDF부터</h3>
+    <p>가장 안전한 방법은 누적분포 \(F_Y(y) = P(Y \le y) = P(g(X) \le y)\)를 X의 사건으로 바꿔 구한 뒤 미분하는 것입니다.</p>
+    <p class="q-term"><b>단조 증가 g</b>: \(F_Y(y) = F_X(g^{-1}(y))\), \(f_Y(y) = f_X(x)\left|\dfrac{dx}{dy}\right|\), \(x = g^{-1}(y)\).</p>
+    <p>\(|dx/dy|\)는 x의 작은 구간이 y에서 얼마나 늘어나거나 줄어드는지를 보정합니다. 확률(넓이)은 변하지 않으므로 구간이 늘면 밀도는 줄어듭니다.</p>
+
+    <h3><span class="no">2.2.2</span>예: 선형, 제곱</h3>
+    <ul>
+      <li>Y = aX + b: \(f_Y(y) = \frac{1}{|a|}f_X\left(\frac{y - b}{a}\right)\). 가우시안의 선형 변환은 가우시안.</li>
+      <li>Y = X²(단조가 아님): \(F_Y(y) = P(-\sqrt y \le X \le \sqrt y)\)이므로 \(f_Y(y) = \frac{f_X(\sqrt y) + f_X(-\sqrt y)}{2\sqrt y}\), y &gt; 0.</li>
+    </ul>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>잡음 전압 X ~ N(0, σ²)를 제곱 검파기(Y = X²)에 넣는다. (가) Y의 밀도, (나) E[Y], (다) X가 균일(−1, 1)이면 Y의 밀도와 P(Y ≤ 0.25).</p>
+    </div>
+    <p><i>풀이.</i> (가) \(f_Y(y) = \frac{1}{\sqrt{2\pi\sigma^2 y}}e^{-y/(2\sigma^2)}\), y &gt; 0(자유도 1인 카이제곱의 σ² 배). (나) \(E[Y] = E[X^2] = \sigma^2\): 검파기 출력의 평균이 잡음 전력. (다) \(f_X = 1/2\)이므로 \(f_Y(y) = \frac{1/2 + 1/2}{2\sqrt y} = \frac{1}{2\sqrt y}\), 0 &lt; y &lt; 1. \(P(Y \le 0.25) = P(|X| \le 0.5) = 0.5\). 밀도로 적분해도 \(\int_0^{0.25}\frac{dy}{2\sqrt y} = \sqrt{0.25} = 0.5\).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "\(f_Y(y) = f_X(g^{-1}(y))\)": 기울기 보정 \(|dx/dy|\)를 빠뜨리면 넓이가 1이 아니게 됩니다. (2) 단조가 아닌 함수에서 한 가지 근만 쓰는 실수: X²에서는 ±√y 두 근을 모두 더합니다. (3) \(E[g(X)] \ne g(E[X])\): 예제에서 E[X] = 0이지만 E[X²] = σ².</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>CDF로 바꿔 구하고 미분하는 것이 가장 안전하다.</li>
+        <li>단조: \(f_Y = f_X|dx/dy|\). 여러 근이면 모두 더한다.</li>
+        <li>\(E[g(X)] \ne g(E[X])\) (예: \(E[X^2] = \sigma^2\)).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>X ~ N(0, 1)일 때 Y = 2X + 3의 분포는?
+          <details><summary>답</summary><p>N(3, 4).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>X가 균일(0, 1)일 때 Y = −ln X의 분포는?
+          <details><summary>답</summary><p>\(P(Y \le y) = P(X \ge e^{-y}) = 1 - e^{-y}\): 지수(1). 균일 난수로 지수 난수를 만드는 방법입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>X ~ N(0, σ²)를 반파 정류(Y = max(X, 0))하면 Y의 분포와 E[Y]는?
+          <details><summary>답</summary><p>P(Y = 0) = 1/2인 점 질량과 y &gt; 0의 가우시안 밀도 절반. \(E[Y] = \sigma/\sqrt{2\pi} \approx 0.399\sigma\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

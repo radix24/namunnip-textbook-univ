@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-psd" data-kind="본문" data-std="전전11-05-01">
+  <header class="card-head"><span class="no"></span><h2>Wiener-Khinchin 정리와 전력 스펙트럼 밀도</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>WSS 프로세스의 전력 스펙트럼 밀도(PSD)가 자기상관의 Fourier 변환임을 안다.</li>
+        <li>자기상관에서 PSD를, PSD에서 대역 전력을 계산한다.</li>
+        <li>PSD 넓이가 평균 전력 R(0)과 같음을 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>WSS와 자기상관 (<a href="04-02.html">4.2절</a>), Fourier 변환 (<a href="../6/04-01.html">전전6 4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>정리</h3>
+    <p>랜덤 신호는 표본마다 달라 신호 자체의 Fourier 변환은 의미가 없지만, 주파수별 평균 전력은 의미가 있습니다. Wiener-Khinchin 정리는</p>
+    \[ S_X(f) = \int_{-\infty}^{\infty}R_X(\tau)e^{-j2\pi f\tau}d\tau, \qquad R_X(0) = \int_{-\infty}^{\infty}S_X(f)df = E[X^2]. \]
+    <p>S(f)는 양측(음의 주파수 포함) PSD이며, 실제 신호에서 짝함수이고 0 이상입니다. f₁~f₂ 대역의 전력은 \(2\int_{f_1}^{f_2}S(f)df\)(양·음 주파수 합).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>(가) 무작위 위상 정현파 \(R = \frac{A^2}{2}\cos2\pi f_0\tau\)의 PSD. (나) \(R(\tau) = e^{-a|\tau|}\)(무작위 전신 신호, a = 2α)의 PSD와, |f| ≤ a/(2π) 대역에 든 전력의 비율.</p>
+    </div>
+    <p><i>풀이.</i> (가) \(S(f) = \frac{A^2}{4}[\delta(f - f_0) + \delta(f + f_0)]\). 전력 \(A^2/2\)가 ±f₀에 반씩. (나) \(S(f) = \frac{2a}{a^2 + (2\pi f)^2}\). 넓이는 R(0) = 1. ω = 2πf로 바꿔 \(\frac{1}{2\pi}\int_{-a}^{a}\frac{2a}{a^2 + \omega^2}d\omega = \frac{1}{\pi}\cdot2\arctan1 = 0.5\). 전력의 절반이 |ω| ≤ a에 있습니다. 상관 시간이 짧을수록(a가 클수록) 스펙트럼이 넓습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "PSD는 신호의 Fourier 변환의 크기": 랜덤 신호는 자기상관의 변환입니다(긴 시간 평균한 |X(f)|²/T와는 같아짐). (2) 양측 PSD와 단측 PSD(양의 주파수만, 2배)를 섞는 실수: 잡음 표에서 \(N_0\)와 \(N_0/2\)를 확인하세요. (3) 시간이 짧게 닮을수록(좁은 R) 스펙트럼은 넓습니다. 반대가 아닙니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(S_X(f) = \mathcal F\{R_X(\tau)\}\), 넓이 = R(0) = 평균 전력.</li>
+        <li>정현파 → 델타 한 쌍. \(e^{-a|\tau|}\) → \(2a/(a^2 + (2\pi f)^2)\).</li>
+        <li>좁은 상관 ↔ 넓은 스펙트럼. 양측·단측 PSD 구별.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>R(τ) = 4δ(τ)의 PSD는?
+          <details><summary>답</summary><p>S(f) = 4(모든 주파수에서 일정, 백색).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>R(τ) = e^{−1000|τ|}의 PSD가 f = 0의 절반이 되는 주파수는?
+          <details><summary>답</summary><p>\((2\pi f)^2 = 1000^2\), f ≈ 159 Hz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>S(f) = 1(|f| ≤ B), 0(그 밖)인 프로세스의 자기상관과, 서로 무상관인 시간 간격은?
+          <details><summary>답</summary><p>\(R(\tau) = 2B\,\mathrm{sinc}(2B\tau) = \sin(2\pi B\tau)/(\pi\tau)\). τ = k/(2B)(k ≠ 0)에서 0. 나이퀴스트 간격의 표본이 무상관입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

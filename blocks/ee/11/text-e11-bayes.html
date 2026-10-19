@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-bayes" data-kind="본문" data-std="전전11-01-01">
+  <header class="card-head"><span class="no"></span><h2>Bayes 정리와 통신 채널의 사후 확률</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>조건부 확률과 전확률 정리로 받은 신호의 확률을 구한다.</li>
+        <li>Bayes 정리로 "받은 것이 이것일 때 보낸 것이 저것일 확률"(사후 확률)을 계산한다.</li>
+        <li>사후 확률이 가장 큰 쪽을 고르는 MAP 판정과 오류 확률을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>고교 확률과 통계의 조건부 확률, 공통 과목의 확률 기초.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>통신 채널을 확률로</h3>
+    <p>보낸 비트 X가 잡음 때문에 뒤집혀 받은 비트 Y가 다를 수 있습니다. 가장 단순한 모형은 이진 대칭 채널(BSC)입니다.</p>
+    <p class="q-term"><b>이진 대칭 채널</b>: \(P(Y \ne X) = p\)(교차 확률), \(P(Y = X) = 1 - p\). 0과 1이 같은 확률로 뒤집힌다.</p>
+    <p class="q-term"><b>사전 확률</b> \(P(X = 1) = \pi\): 받기 전에 아는 보낸 비트의 확률.</p>
+    <p class="q-term"><b>사후 확률</b> \(P(X = 1 \mid Y = y)\): 받은 값을 보고 고친 확률.</p>
+
+    <h3><span class="no">1.1.2</span>Bayes 정리</h3>
+    <p>구하려는 것: 1을 받았을 때 실제로 1을 보냈을 확률. 채널은 "보낸 것 → 받은 것"의 확률 \(P(Y \mid X)\)을 주는데, 우리는 반대 방향이 필요합니다. 전확률 정리로 분모를 구하고 Bayes 정리로 뒤집습니다.</p>
+    \[ P(Y = 1) = (1 - p)\pi + p(1 - \pi), \qquad P(X = 1 \mid Y = 1) = \frac{(1 - p)\pi}{(1 - p)\pi + p(1 - \pi)}. \]
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>p = 0.1인 BSC. (가) π = 0.5일 때 \(P(X = 1 \mid Y = 1)\). (나) π = 0.1(1이 드문 신호)일 때. (다) (나)에서 1을 받으면 무엇으로 판정해야 오류가 적은가?</p>
+    </div>
+    <p><i>풀이.</i> (가) \(0.9 \times 0.5/(0.45 + 0.05) = 0.9\). (나) \(0.09/(0.09 + 0.09) = 0.5\). 1을 받아도 실제로 1일 확률이 반밖에 안 됩니다. 원래 1이 드물어서, 0이 뒤집혀 1로 온 경우가 진짜 1과 같은 만큼 많기 때문입니다. (다) 사후 확률이 같으므로 어느 쪽이든 오류 확률이 같습니다. π가 0.1보다 조금만 작아도 1을 받았을 때 0으로 판정하는 것이 유리해집니다.</p>
+    <p class="q-term"><b>MAP 판정</b>: 받은 값마다 사후 확률이 큰 쪽으로 결정한다. 오류 확률을 가장 작게 만드는 판정이다. 사전 확률이 같으면 \(P(Y \mid X)\)가 큰 쪽(최대 우도, ML)과 같다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "\(P(Y = 1 \mid X = 1) = 0.9\)이니 1을 받으면 90% 확률로 1을 보냈다": 사전 확률이 0.5일 때만 그렇습니다(검사 정확도와 실제 양성 확률의 혼동과 같은 실수). (2) "판정은 언제나 받은 비트를 그대로 믿으면 된다": 사전 확률이 크게 치우치면 MAP 판정이 다를 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>BSC: 교차 확률 p. 전확률로 \(P(Y)\), Bayes로 \(P(X \mid Y)\).</li>
+        <li>\(P(X=1 \mid Y=1) = (1-p)\pi/[(1-p)\pi + p(1-\pi)]\).</li>
+        <li>MAP: 사후 확률이 큰 쪽. 사전 확률이 같으면 ML과 같다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>p = 0.01, π = 0.5일 때 \(P(X = 1 \mid Y = 1)\)는?
+          <details><summary>답</summary><p>0.99.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>p = 0.05, π = 0.02일 때 \(P(X = 1 \mid Y = 1)\)와 MAP 판정은?
+          <details><summary>답</summary><p>\(0.019/(0.019 + 0.049) \approx 0.279\). 1을 받아도 0으로 판정하는 것이 오류가 적습니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>같은 비트를 세 번 보내고(반복 부호) 다수결로 판정하면 p = 0.1에서 오류 확률은?
+          <details><summary>답</summary><p>두 번 이상 뒤집힐 확률 \(3p^2(1-p) + p^3 = 0.027 + 0.001 = 0.028\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
