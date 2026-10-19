@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e3-acanalysis" data-kind="본문" data-std="전전3-07-02">
+  <header class="card-head"><span class="no"></span><h2>페이저 영역의 회로 해석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>페이저로 마디 해석을 하고 복소 연립방정식을 푼다.</li>
+        <li>교류 회로의 테브난 등가(복소 임피던스)를 구한다.</li>
+        <li>복소수 계산을 직교형과 극형식 사이에서 바꿔 가며 효율적으로 한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>페이저와 임피던스 (<a href="07-01.html">7.1절</a>), 마디 해석 (<a href="02-02.html">2.2절</a>), 테브난 등가 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>복소수 계산 요령</h3>
+    <p>페이저 해석은 방법은 직류와 같고 계산만 복소수입니다. 실수를 줄이는 요령을 먼저 정리합니다.</p>
+    <p class="q-term"><b>더하기·빼기</b>: 직교형 \(a + jb\)로. \((3 + j4) + (1 - j2) = 4 + j2\).</p>
+    <p class="q-term"><b>곱하기·나누기</b>: 극형식 \(r\angle\theta\)로. 크기는 곱하고(나누고) 각은 더한다(뺀다).</p>
+    <p class="q-term"><b>바꾸기</b>: \(r = \sqrt{a^2 + b^2}\), \(\theta = \arctan(b/a)\)(a가 음수면 180° 더함). \(a = r\cos\theta\), \(b = r\sin\theta\).</p>
+    <p class="q-term"><b>켤레로 나누기</b>: \(\dfrac{1}{a + jb} = \dfrac{a - jb}{a^2 + b^2}\).</p>
+
+    <h3><span class="no">7.2.2</span>페이저 마디 해석</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>\(v_s = 10\cos(1000t)\) V — 10 Ω — 마디 1, 마디 1–기준 \(-j10\ \Omega\)(축전기 100 μF), 마디 1 — \(j5\ \Omega\)(5 mH) — 마디 2, 마디 2–기준 5 Ω. 마디 2 전압 \(v_2(t)\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 마디 1(나가는 합): \(\frac{\mathbf V_1 - 10}{10} + \frac{\mathbf V_1}{-j10} + \frac{\mathbf V_1 - \mathbf V_2}{j5} = 0\). \(\frac{1}{-j10} = j0.1\), \(\frac{1}{j5} = -j0.2\)이므로 \(\mathbf V_1(0.1 + j0.1 - j0.2) + j0.2\mathbf V_2 = 1\), 곧 \((0.1 - j0.1)\mathbf V_1 + j0.2\mathbf V_2 = 1\).</p>
+    <p>마디 2: \(\frac{\mathbf V_2 - \mathbf V_1}{j5} + \frac{\mathbf V_2}{5} = 0\) → \(j0.2\mathbf V_1 + (0.2 - j0.2)\mathbf V_2 = 0\), 곧 \(\mathbf V_1 = \frac{-(0.2 - j0.2)}{j0.2}\mathbf V_2 = (1 + j)\mathbf V_2\).</p>
+    <p>대입: \((0.1 - j0.1)(1 + j)\mathbf V_2 + j0.2\mathbf V_2 = 1\). \((0.1 - j0.1)(1 + j) = 0.1 + j0.1 - j0.1 + 0.1 = 0.2\). 따라서 \((0.2 + j0.2)\mathbf V_2 = 1\), \(\mathbf V_2 = \frac{1}{0.2828\angle45°} = 3.54\angle{-45°}\) V. \(v_2(t) = 3.54\cos(1000t - 45°)\) V.</p>
+    <p>검산: \(\mathbf V_1 = (1 + j)\mathbf V_2 = 1.414\angle45°\times3.54\angle{-45°} = 5\angle0°\) V. 전원 쪽 전류 \((10 - 5)/10 = 0.5\) A, 축전기 전류 \(5/(-j10) = j0.5\), 인덕터 가지 전류 \(\mathbf V_2/5 = 0.707\angle{-45°} = 0.5 - j0.5\). 합 \(j0.5 + 0.5 - j0.5 = 0.5\). KCL이 맞습니다.</p>
+
+    <h3><span class="no">7.2.3</span>교류 테브난 등가</h3>
+    <p>3.2절의 논리는 임피던스로도 그대로 성립합니다. 두 단자로 본 선형 교류 회로는 페이저 전압원 \(\mathbf V_\text{Th}\)와 직렬 임피던스 \(\mathbf Z_\text{Th}\)로 바꿀 수 있습니다. \(\mathbf Z_\text{Th}\)는 독립 전원을 끄고 본 임피던스이고, 종속 전원이 있으면 시험 전원을 씁니다. 다만 \(\mathbf Z_\text{Th}\)는 <b>그 주파수에서만</b> 성립합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>예제 7.2.1에서 5 Ω을 부하로 보고, 나머지 회로를 마디 2–기준 단자에서 본 테브난 등가를 구하여라. 부하 전압이 7.2.1과 같은지 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> 개방(5 Ω 제거)이면 \(j5\)에 전류가 없어 \(\mathbf V_\text{Th} = \mathbf V_1\) = 10을 10 Ω과 \(-j10\)으로 분압: \(10\frac{-j10}{10 - j10} = 10\frac{1\angle{-90°}}{1.414\angle{-45°}} = 7.07\angle{-45°}\) V. 전원을 끄면 \(\mathbf Z_\text{Th} = j5 + 10\parallel(-j10) = j5 + \frac{-j100}{10 - j10} = j5 + (5 - j5) = 5\ \Omega\). 부하 5 Ω 전압 \(7.07\angle{-45°}\times\frac{5}{10} = 3.54\angle{-45°}\) V. 같습니다.</p>
+    <p>테브난 임피던스가 이 주파수에서 우연히 순수 저항 5 Ω이 되었습니다. 인덕터의 리액턴스가 RC 부분의 용량성 리액턴스를 지웠기 때문입니다. 이런 조합을 일부러 만드는 것이 임피던스 정합(8.1절, 전전19)입니다.</p>
+
+    <div class="tb-note"><b>주의</b>교류 회로에서 "직렬 임피던스의 크기는 각 크기의 합"이 아닙니다. \(|10 - j10| = 14.1\)이지 20이 아닙니다. 크기를 더하고 싶어지면 직교형으로 바꿔 더한 뒤 크기를 구하세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>더하기는 직교형, 곱하기·나누기는 극형식으로 한다.</li>
+        <li>페이저 마디 해석은 컨덕턴스 대신 어드미턴스 \(1/\mathbf Z\)로 같은 식을 세운다.</li>
+        <li>교류 테브난 등가 \(\mathbf V_\text{Th}\), \(\mathbf Z_\text{Th}\)는 한 주파수에서만 성립한다. 결과는 KCL로 검산한다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\((3 + j4)(1 - j)\)와 \(\frac{10\angle30°}{2 + j2}\)를 계산하여라.
+          <details><summary>답</summary><p>\(3 - j3 + j4 + 4 = 7 + j\). \(\frac{10\angle30°}{2.83\angle45°} = 3.54\angle{-15°}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 7.2.1에서 \(\omega = 500\) rad/s로 바꾸면 테브난 임피던스는? (같은 소자: 100 μF, 5 mH)
+          <details><summary>답</summary><p>\(\mathbf Z_C = -j20\), \(\mathbf Z_L = j2.5\). \(10\parallel(-j20) = \frac{-j200}{10 - j20} = 8 - j4\). \(\mathbf Z_\text{Th} = 8 - j1.5\ \Omega\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 7.2.1의 회로를 망 해석으로 풀어 \(\mathbf V_2\)가 같음을 확인하여라. 망 1(전원, 10 Ω, \(-j10\)), 망 2(\(-j10\), \(j5\), 5 Ω), 둘 다 시계 방향.
+          <details><summary>힌트</summary><p>망 1: \((10 - j10)\mathbf I_1 + j10\mathbf I_2 = 10\). 망 2: \(j10\mathbf I_1 + (5 - j5)\mathbf I_2 = 0\).</p></details>
+          <details><summary>답</summary><p>망 2에서 \(\mathbf I_1 = -\frac{5 - j5}{j10}\mathbf I_2 = (0.5 + j0.5)\mathbf I_2\). 망 1에 넣으면 \((10 - j10)(0.5 + j0.5)\mathbf I_2 + j10\mathbf I_2 = (10 + j10)\mathbf I_2 = 10\), \(\mathbf I_2 = 0.707\angle{-45°}\) A, \(\mathbf V_2 = 5\mathbf I_2 = 3.54\angle{-45°}\) V. 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
