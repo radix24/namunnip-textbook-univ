@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-04-04",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e18-reuse-ex" data-kind="예제" data-std="전전18-04-04">
+  <header class="card-head"><span class="no"></span><h2>버퍼 크기 정하기</h2><span class="kind">roofline 역산</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>필요한 강도에서 타일 크기, 그다음 버퍼 크기를 정합니다(4.4절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 강도 → T → 버퍼</span>
+      <ol>
+        <li>꺾이는 점 = 최대 연산/대역.</li>
+        <li>2T/(3b) ≥ 꺾이는 점에서 T.</li>
+        <li>버퍼 3T²b.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">최대 10 TFLOPS, 대역 200 GB/s, INT8(b = 1). 연산 한계에 도달하는 최소 T와 버퍼는?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>꺾이는 점 50 OP/B.</div><span class="q-why">10⁴/200.</span></li>
+        <li><div>2T/3 ≥ 50 → T ≥ 75 → 80(정렬).</div><span class="q-why">타일.</span></li>
+        <li class="q-end"><div>버퍼 3 × 80² = 19.2 KB.</div><span class="q-why">크기.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>실제 가속기는 이중 버퍼링(계산 중 다음 타일 읽기)으로 버퍼를 두 배 둡니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>2 × 80/3 = 53.3 ≥ 50.</p>
+    </section>
+  </div>
+</article>

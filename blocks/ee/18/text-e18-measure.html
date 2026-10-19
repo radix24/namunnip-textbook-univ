@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-measure" data-kind="본문" data-std="전전18-05-02">
+  <header class="card-head"><span class="no"></span><h2>성능 측정 방법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>실행 시간을 반복 측정하고 중앙값·백분위로 요약한다.</li>
+        <li>예열(warm-up)과 측정 오버헤드를 처리한다.</li>
+        <li>프로파일러로 시간이 쓰이는 곳을 찾는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>검증 계획 (<a href="01-03.html">1.3절</a>), 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>한 번 재면 안 된다</h3>
+    <p>첫 실행은 캐시가 비어 있고 JIT·드라이버 초기화가 섞여 느립니다. 예열 몇 번 뒤 여러 번 재서 중앙값과 95·99 백분위를 보고합니다. GPU·가속기는 비동기라 동기화한 뒤 시간을 잽니다. 아래는 Python 측정 골격입니다(측정값은 컴퓨터마다 달라 결과는 싣지 않음).</p><pre><code>import time, statistics as st
+def bench(fn, warmup=5, repeat=50):
+    for _ in range(warmup):
+        fn()                                  # 예열: 캐시·초기화
+    ts = []
+    for _ in range(repeat):
+        t0 = time.perf_counter()
+        fn()
+        ts.append((time.perf_counter() - t0) * 1e3)
+    ts.sort()
+    return st.median(ts), ts[int(0.95 * len(ts)) - 1], ts[-1]
+med, p95, worst = bench(lambda: sum(i * i for i in range(100_000)))
+print(f"중앙값 {med:.2f} ms, 95% {p95:.2f} ms, 최악 {worst:.2f} ms")</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>측정값 10, 11, 10, 12, 10, 45, 11, 10 ms를 얻었다. 평균과 중앙값 중 무엇을 보고하고, 45 ms는 어떻게 다루는가?</p>
+    </div>
+    <p><i>풀이.</i> 평균 14.9 ms는 45 ms 하나에 끌려 대표성이 없고, 중앙값 10.5 ms가 전형값입니다. 45 ms는 버리지 말고 최악·백분위로 따로 보고하며, 원인(다른 프로세스, 쓰레기 수집, 열 제한)을 찾습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "가장 빠른 값을 보고": 재현되지 않는 최선값이라 오해를 부릅니다. (2) "측정 코드는 결과에 영향이 없다": 타이머 호출, 출력문이 짧은 작업에서는 상당한 몫입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>예열 → 반복 → 중앙값·백분위.</li>
+        <li>가속기는 동기화 후 측정.</li>
+        <li>이상값은 따로 보고, 원인 조사.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>측정 3, 3, 4, 100의 중앙값은?
+          <details><summary>답</summary><p>3.5.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>한 번 실행이 1 μs인 함수를 재는 좋은 방법은?
+          <details><summary>답</summary><p>1000번을 한 번에 재서 나눕니다(타이머 오버헤드 감소).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>노트북에서 측정이 점점 느려지는 이유 하나는?
+          <details><summary>답</summary><p>발열로 클록이 내려가는 열 제한.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

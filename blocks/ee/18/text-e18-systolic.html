@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-systolic" data-kind="본문" data-std="전전18-04-02">
+  <header class="card-head"><span class="no"></span><h2>시스톨릭 배열로 행렬 곱하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>처리 요소(PE)를 격자로 놓고 자료를 이웃으로 넘기며 곱셈-누산하는 시스톨릭 배열을 안다.</li>
+        <li>N×N 배열로 N×N 행렬 곱의 사이클 수 3N − 2를 계산한다.</li>
+        <li>자료 재사용으로 메모리 접근이 줄어드는 원리를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 곱 가속기 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>심장 박동처럼 흐르는 자료</h3>
+    <p>A의 행은 왼쪽에서 오른쪽으로, B의 열은 위에서 아래로 한 칸씩 흘러가고, 각 PE는 만나는 두 값을 곱해 자기 누산기에 더합니다. 자료가 이웃 PE로만 전달되어 배선이 짧고, 한 번 읽은 값을 N번 재사용합니다. 출력 고정형 N×N 배열은 \(3N - 2\) 사이클에 곱을 끝냅니다(입력을 비스듬히 넣는 시간 포함).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>16×16 배열로 16×16 행렬 곱의 사이클 수와 MAC 수, 1 GHz에서의 실효 처리량은?</p>
+    </div>
+    <p><i>풀이.</i> 3 × 16 − 2 = 46 사이클, MAC 16³ = 4096. 실효 4096/46 = 89 MAC/사이클(최대 256의 35%). 큰 행렬을 연속으로 흘려 넣으면 채우는 시간이 가려져 이용률이 100%에 가까워집니다. 구글 TPU가 이 구조입니다(확인 필요: 세부).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "PE 수만큼 언제나 빠르다": 채우기·비우기 시간과 메모리 대역이 이용률을 깎습니다. (2) "각 PE가 메모리에서 직접 읽는다": 가장자리 PE만 읽고 나머지는 이웃에게 받습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>A는 가로, B는 세로로 흐르며 PE가 MAC.</li>
+        <li>N×N 곱: 3N − 2 사이클, N³ MAC.</li>
+        <li>재사용 N배, 짧은 배선.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8×8 배열의 8×8 곱 사이클 수는?
+          <details><summary>답</summary><p>22.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>128×128 배열, 1 GHz의 최대 MAC/s는?
+          <details><summary>답</summary><p>1.64×10¹³.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>행렬이 배열보다 크면 어떻게 하나?
+          <details><summary>답</summary><p>타일로 나눠 여러 번 계산하고 부분합을 더합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

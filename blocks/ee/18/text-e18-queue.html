@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-queue" data-kind="본문" data-std="전전18-02-04">
+  <header class="card-head"><span class="no"></span><h2>큐잉 모델로 지연 추정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>요청이 무작위로 오는 서버를 M/M/1 큐로 모델링한다.</li>
+        <li>평균 지연 \(W = 1/(\mu - \lambda)\)와 이용률 ρ = λ/μ를 계산한다.</li>
+        <li>이용률이 1에 가까울수록 지연이 급증함을 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>처리량·지연 모델 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>바쁠수록 기다린다</h3>
+    <p>요청이 초당 λ개(Poisson) 오고 서비스가 평균 1/μ초(지수 분포)면, 시스템 안 평균 시간 \(W = 1/(\mu - \lambda)\), 이용률 ρ = λ/μ. ρ가 0.5에서 0.9로 가면 지연이 5배가 됩니다.</p><pre><code>mu = 1000.0                      # 초당 1000개 처리 가능
+for lam in (500, 800, 900, 950, 990):
+    W = 1 / (mu - lam)
+    print(f"λ = {lam:4d}/s, 이용률 {lam / mu:.2f}: 평균 지연 {W * 1000:6.1f} ms")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>λ =  500/s, 이용률 0.50: 평균 지연    2.0 ms
+λ =  800/s, 이용률 0.80: 평균 지연    5.0 ms
+λ =  900/s, 이용률 0.90: 평균 지연   10.0 ms
+λ =  950/s, 이용률 0.95: 평균 지연   20.0 ms
+λ =  990/s, 이용률 0.99: 평균 지연  100.0 ms</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>추론 서버 처리 능력 1000개/s, 요청 800개/s의 평균 지연은? 평균 지연을 2 ms 이하로 하려면 처리 능력은?</p>
+    </div>
+    <p><i>풀이.</i> W = 1/200 = 5 ms. 2 ms 이하: μ − 800 ≥ 500 → μ ≥ 1300개/s. 처리 능력을 30% 늘리면 지연이 60% 줄어, 이용률을 70~80% 아래로 두는 것이 지연에 유리합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "처리 능력이 요청보다 크면 지연은 작다": 이용률이 1에 가까우면 지연이 매우 커집니다. (2) "평균 지연만 보면 된다": 꼬리 지연은 훨씬 커서 따로 봐야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>W = 1/(μ − λ), ρ = λ/μ.</li>
+        <li>ρ → 1이면 지연 급증.</li>
+        <li>예: 800/1000 → 5 ms, 2 ms에는 μ ≥ 1300.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>μ = 100/s, λ = 50/s의 W는?
+          <details><summary>답</summary><p>20 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 μ에서 λ = 90/s면?
+          <details><summary>답</summary><p>100 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>서버를 두 대로 늘려 각각 λ/2를 받으면(μ 같음) λ = 90의 지연은?
+          <details><summary>답</summary><p>1/(100 − 45) = 18.2 ms.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
