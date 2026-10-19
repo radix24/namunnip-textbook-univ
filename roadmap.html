@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>커리큘럼과 졸업 로드맵 — QURI</title>
+  <meta name="description" content="학교와 학과를 고르면 과목을 공부할 순서를 안내하고, 연세대학교는 제1전공·제2전공 요건에 맞춘 8학기 졸업 로드맵을 설계합니다.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f5f5f2">
+  <script>(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\b/.exec(location.search),t=q&&q[1];if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(t==="dark")document.querySelector('meta[name="theme-color"]').content="#12131c"})()</script>
+  <meta name="apple-mobile-web-app-title" content="QURI">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tb.css">
+  <link rel="stylesheet" href="css/quri.css">
+  <link rel="stylesheet" href="css/univ.css">
+  <link rel="stylesheet" href="css/roadmap.css">
+</head>
+<body data-view="roadmap" data-dept="math">
+
+<header class="top">
+  <a class="brand" href="./"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span><span class="q-sub">질문에서 증명까지</span> <small>v0.1 시제품</small></a>
+  <div class="top-right"><a href="./#courses">과목</a><a href="roadmap.html" aria-current="page">로드맵</a><a href="record.html">학습 기록</a><button type="button" class="theme-btn" aria-label="다크 모드" aria-pressed="false" title="다크 모드 켜고 끄기"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</header>
+
+<main class="wrap rm">
+  <section class="rm-intro">
+    <h1>커리큘럼과 <em>졸업 로드맵</em></h1>
+    <p>학교와 학과를 고르면 과목을 어떤 순서로 공부하면 되는지 보여 줍니다. 연세대학교는 전공을 최대 5개까지 골라 8학기 졸업 계획을 짤 수 있습니다.</p>
+  </section>
+
+  <nav class="rm-tabs" role="tablist" aria-label="보기">
+    <button type="button" role="tab" id="tab-guide" aria-controls="guide" aria-selected="true">커리큘럼 안내</button>
+    <button type="button" role="tab" id="tab-plan" aria-controls="plan" aria-selected="false">졸업 로드맵 <small>연세대</small></button>
+  </nav>
+
+  <!-- 1. 커리큘럼 안내 -->
+  <section id="guide" role="tabpanel" aria-labelledby="tab-guide">
+    <div class="rm-pick">
+      <label>학교 <select id="g-school"></select></label>
+      <label>학과 <select id="g-dept"></select></label>
+      <label class="rm-check"><input type="checkbox" id="g-common" checked> 공통 기초 함께 보기</label>
+    </div>
+    <p class="rm-note" id="g-school-note" hidden></p>
+    <div id="g-start" class="rm-start"></div>
+    <div id="g-grid" class="rm-grid" aria-label="학년·학기별 과목"></div>
+    <aside id="g-detail" class="rm-detail" aria-live="polite"></aside>
+    <h2 class="rm-h2">공부할 순서</h2>
+    <p class="rm-sub">선수 과목을 먼저 끝내도록 단계를 나누었습니다. 같은 단계의 과목은 순서를 바꿔도 됩니다.</p>
+    <ol id="g-steps" class="rm-steps"></ol>
+  </section>
+
+  <!-- 2. 연세대 졸업 로드맵 -->
+  <section id="plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <p class="rm-warn"><b>참고용입니다.</b> 연세대학교 2026학년도 대학요람(교과과정·졸업요건)을 읽어 정리했지만 원문과 다를 수 있고, 입학 연도와 학과 사정에 따라 요건이 바뀝니다. 실제 수강 계획은 반드시 소속 학과 사무실과 학사 안내로 확인하세요. 요건마다 출처를 적어 두었습니다.</p>
+
+    <div class="rm-majors">
+      <h2 class="rm-h2">전공 고르기 <small>최대 5개</small></h2>
+      <ol id="p-majors" class="rm-mlist"></ol>
+      <div class="rm-addrow">
+        <select id="p-add" aria-label="추가할 전공"></select>
+        <button type="button" id="p-add-btn" class="rm-btn">전공 추가</button>
+      </div>
+      <div class="rm-opts">
+        <label>학기당 학점 상한 <input type="number" id="p-cap" min="9" max="24" step="1" value="18"></label>
+        <label>학기마다 교양 등에 남길 학점 <input type="number" id="p-rsv" min="0" max="12" step="1" value="3"></label>
+        <button type="button" id="p-auto" class="rm-btn rm-btn-main">자동으로 다시 배치</button>
+        <button type="button" id="p-reset" class="rm-btn">처음으로</button>
+      </div>
+    </div>
+
+    <h2 class="rm-h2">요건 충족 현황</h2>
+    <div id="p-req" class="rm-req"></div>
+    <div id="p-overlap" class="rm-overlap"></div>
+
+    <h2 class="rm-h2">8학기 계획표</h2>
+    <p class="rm-sub">과목을 끌어서 다른 학기로 옮기거나 아래 '배치하지 않은 과목'으로 빼세요. 끌기 어려우면 과목을 누르고 학기를 고르면 됩니다. 계획은 이 브라우저에 저장됩니다.</p>
+    <div id="p-board" class="rm-board"></div>
+    <div id="p-pool" class="rm-pool"></div>
+    <div id="p-src" class="rm-src"></div>
+  </section>
+
+  <footer class="site-foot">
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
+    <p class="mono small dim">v0.1 시제품. 졸업 요건은 연세대학교 2026학년도 대학요람을 QURI가 정리한 것으로, 학교의 공식 안내가 아닙니다.</p>
+  </footer>
+</main>
+
+<div id="rm-menu" class="rm-menu" role="dialog" aria-label="과목 옮기기" hidden></div>
+
+<script src="js/toc.js"></script>
+<script src="js/core.js"></script>
+<script src="js/roadmap.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통3-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s3-reshape" data-kind="본문" data-std="응통3-02-04">
+  <header class="card-head"><span class="no"></span><h2>넓은 형식과 긴 형식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>깔끔한 자료(tidy data)의 원칙을 안다.</li>
+        <li>넓은 형식과 긴 형식 사이를 바꾼다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>그룹 요약 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>같은 자료, 두 모양</h3>
+    <p>학생별 1~3월 점수를 한 행에 세 열로 적을 수도(넓은 형식), 학생-월 조합마다 한 행으로 적을 수도(긴 형식) 있습니다. 사람이 보기에는 넓은 쪽이, 그래프와 모형에는 긴 쪽이 편합니다.</p>
+
+    <h3><span class="no">2.4.1</span>깔끔한 자료</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.4.1</span>
+      <p><b>깔끔한 자료</b>: (1) 변수마다 한 열, (2) 관측마다 한 행, (3) 값마다 한 칸.</p>
+    </div>
+    <p>"1월", "2월"이 열 이름이면 "월"이라는 변수가 열 이름에 숨어 있어 원칙 1을 어깁니다. 긴 형식으로 바꾸면 월과 점수가 각각 한 열이 됩니다.</p>
+
+    <h3><span class="no">2.4.2</span>바꾸기</h3>
+    <pre><code>wide &lt;- data.frame(id = 1:3, m1 = c(70, 80, 65), m2 = c(75, 82, 70), m3 = c(78, 85, 72))
+# tidyr
+long &lt;- tidyr::pivot_longer(wide, cols = m1:m3, names_to = "month", values_to = "score")
+back &lt;- tidyr::pivot_wider(long, names_from = month, values_from = score)
+# 기본 R
+long2 &lt;- reshape(wide, direction = "long", varying = c("m1", "m2", "m3"),
+                 v.names = "score", timevar = "month", times = 1:3, idvar = "id")</code></pre>
+    <p>긴 형식 9행(3명 × 3달). 이렇게 하면 <code>tapply(long$score, long$month, mean)</code>로 월별 평균을, <code>ggplot(long, aes(month, score, group = id)) + geom_line()</code>으로 학생별 추이를 바로 그릴 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>깔끔한 자료: 변수 = 열, 관측 = 행.</li>
+        <li><code>pivot_longer</code> / <code>pivot_wider</code> (또는 <code>reshape</code>).</li>
+        <li>모형과 그래프는 긴 형식, 보고 표는 넓은 형식.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>R 내장 <code>WorldPhones</code>(연도 × 대륙 전화 수 행렬)를 긴 형식 데이터프레임으로 바꾸세요.
+          <details><summary>답</summary><p><code>as.data.frame(as.table(WorldPhones))</code>로 연도, 대륙, 값 세 열의 긴 형식이 됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

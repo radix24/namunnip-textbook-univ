@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-groupby" data-kind="본문" data-std="응통4-05-02">
+  <header class="card-head"><span class="no"></span><h2>그룹 요약, 피벗, 결합</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li><code>groupby</code>로 집단별 요약을 한다.</li>
+        <li>피벗 표를 만들고 넓은·긴 형식을 바꾼다.</li>
+        <li>두 표를 <code>merge</code>로 결합한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>pandas 기초 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>나누고, 적용하고, 합치기</h3>
+    <p>"지역별 평균 매출", "월별 제품별 판매량 표"처럼 집단으로 나누어 요약하는 일이 분석의 대부분입니다. pandas의 <code>groupby</code>는 자료를 집단으로 나누고(split), 함수를 적용하고(apply), 결과를 합칩니다(combine).</p>
+
+    <h3><span class="no">5.2.1</span>groupby</h3>
+    <pre><code>df.groupby("region")["sales"].mean()
+df.groupby(["region", "month"]).agg(total=("sales", "sum"),
+                                    n=("sales", "size"),
+                                    avg=("sales", "mean")).reset_index()
+df["share"] = df["sales"] / df.groupby("region")["sales"].transform("sum")  # 집단 내 비율</code></pre>
+    <p><code>agg</code>는 집단마다 한 행으로 요약하고, <code>transform</code>은 원래 행 수를 유지하며 집단 값을 붙입니다.</p>
+
+    <h3><span class="no">5.2.2</span>피벗과 형식 바꾸기</h3>
+    <pre><code>pd.pivot_table(df, index="region", columns="month", values="sales",
+               aggfunc="sum", margins=True)          # 합계 행·열 포함
+pd.crosstab(df["sex"], df["agegrp"], normalize="index")   # 행별 비율 분할표
+long = df_wide.melt(id_vars="id", var_name="month", value_name="score")  # 넓은 → 긴
+wide = long.pivot(index="id", columns="month", values="score")           # 긴 → 넓은</code></pre>
+
+    <h3><span class="no">5.2.3</span>결합</h3>
+    <pre><code>pd.merge(sales, info, on="store", how="inner")   # how: inner, left, right, outer
+pd.concat([df_2025, df_2026], ignore_index=True)  # 위아래로 이어 붙이기</code></pre>
+    <p>결합 뒤 <code>len()</code>으로 행 수를 확인하고, <code>validate="many_to_one"</code> 인수로 열쇠 중복을 검사할 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>seaborn에 들어 있는 <code>tips</code> 자료(식당 팁)에서 요일·시간대별 평균 팁 비율 표를 만드세요.</p>
+    </div>
+    <pre><code>import seaborn as sns
+tips = sns.load_dataset("tips")
+tips["rate"] = tips["tip"] / tips["total_bill"]
+pd.pivot_table(tips, index="day", columns="time", values="rate", aggfunc="mean").round(3)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>groupby().agg()</code> 요약, <code>transform</code>은 행 유지.</li>
+        <li><code>pivot_table</code>, <code>crosstab</code>, <code>melt</code>/<code>pivot</code>.</li>
+        <li><code>merge</code>, <code>concat</code> 뒤 행 수 확인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>R의 <code>d |&gt; group_by(cyl) |&gt; summarise(m = mean(mpg), n = n())</code>에 해당하는 pandas 코드는?
+          <details><summary>답</summary><p><code>df.groupby("cyl").agg(m=("mpg", "mean"), n=("mpg", "size"))</code>.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-04-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e34-digital.js"]
+}
+-->
+<article class="card q-card" id="lab-e34-debounce" data-kind="실습" data-std="전전34-04-02">
+  <header class="card-head"><span class="no"></span><h2>버튼을 한 번 눌렀는데 카운터가 여러 번 올라간다</h2><span class="kind">실습 · 스위치 바운스와 디바운서</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>기계식 스위치는 누르거나 뗄 때 접점이 몇 ms 동안 붙었다 떨어졌다를 되풀이합니다(바운스). 사람에게는 한 번이지만 디지털 회로에는 여러 번의 0→1로 보입니다. 바운스를 관찰하고, 일정 간격으로 표본을 떠서 같은 값이 여러 번 이어질 때만 인정하는 디바운서를 설계합니다. 성취기준 [전전34-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가상 스위치를 5 ms에 누르고 60 ms에 뗍니다. 누를 때와 뗄 때마다 정한 시간 동안 무작위로 튑니다. "다시 누르기"를 누르면 튀는 모양이 새로 바뀝니다.</p>
+      <p>디바운서(표본·계수 방식): 표본 간격 \(T_s\)마다 스위치 값을 읽고, 직전 표본과 같으면 계수기를 1 올리고 다르면 1로 되돌립니다. 계수기가 N에 닿았을 때만 출력을 그 값으로 바꿉니다. 그러면 \(N\times T_s\)보다 짧은 흔들림은 무시됩니다. 대신 출력이 그만큼 늦게 바뀝니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>바운스 시간 = <b data-show="bounce">5</b> ms</span><input type="range" name="bounce" min="0.5" max="20" step="0.5" value="5" aria-label="바운스 지속 시간"></label>
+        <label><span>표본 간격 T_s = <b data-show="ts" data-fix="1">1.0</b> ms</span><input type="range" name="ts" min="0.1" max="5" step="0.1" value="1" aria-label="표본 간격"></label>
+        <label><span>연속 표본 수 N = <b data-show="n">4</b></span><input type="range" name="n" min="1" max="20" step="1" value="4" aria-label="연속 표본 수"></label>
+      </div>
+      <canvas aria-label="스위치 원신호와 디바운서 출력"></canvas>
+      <div class="btns"><button type="button" class="again">다시 누르기</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>바운스 5 ms, \(T_s\) = 1 ms, N = 4에서 원신호의 상승 모서리 수와 디바운서 출력의 상승 모서리 수를 비교합니다. "다시 누르기"를 몇 번 눌러 봅니다.</li>
+        <li>N을 1로 줄이면 어떻게 되나요?</li>
+        <li>바운스를 15 ms로 키우고, 출력이 한 번만 바뀌게 하는 가장 작은 N을 찾습니다(\(T_s\) = 1 ms).</li>
+        <li>\(T_s\) = 5 ms, N = 20처럼 인정 시간을 100 ms로 크게 하면 무슨 일이 생기나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>바운스 5 ms: 원신호에는 상승 모서리가 14~18개쯤 있습니다(누를 때마다 다름). 디바운서 출력은 1개이고, 누른 뒤 약 6~9 ms, 곧 바운스가 끝나고 몇 ms 더 지나서 바뀝니다.</li>
+        <li>N = 1이면 표본만 뜨고 거르지 않는 것이라 상승 모서리가 4개쯤 남습니다. N = 2~3에서도 2개가 남을 때가 있습니다.</li>
+        <li>인정 시간은 튐 사이의 가장 긴 틈보다 길어야 합니다. 바운스 15 ms에서는 N = 3부터 한 번만 바뀌고, 출력은 누른 뒤 약 11~12 ms에 바뀝니다. 이 가상 스위치는 튐 사이 틈이 짧은 편이라, 실제 회로에서는 여유를 더 둡니다.</li>
+        <li>\(T_s\) = 5 ms, N = 20이면 인정 시간이 100 ms로, 누르고 있는 시간(55 ms)보다 길어서 누른 것을 아예 놓칩니다(상승 모서리 0개).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>인정 시간 \(N\times T_s\)를 정하는 아래 한계와 위 한계를 각각 말해 보세요.</li>
+        <li>아날로그실험의 슈미트 트리거 카드에서 본 RC + 슈미트 트리거 방식과 이 디지털 방식은 어떤 점이 같고 다른가요?</li>
+        <li>FPGA 50 MHz 클록으로 \(T_s\) = 1 ms를 만들려면 몇 분주가 필요할까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>실제 FPGA 보드의 버튼을 4비트 카운터에 바로 물려 한 번 누를 때 몇씩 올라가는지 7세그먼트로 확인한 뒤, 디바운서를 넣고 다시 확인해 보세요. 오실로스코프의 단발 트리거로 실제 바운스 파형을 잡아 보면 이 카드의 가정과 비교할 수 있습니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s20-forecast" data-kind="본문" data-std="응통20-05-01">
+  <header class="card-head"><span class="no"></span><h2>예측값과 예측구간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>ARIMA 모형으로 점예측을 단계적으로 계산한다.</li>
+        <li>예측 오차 분산과 예측구간이 시차에 따라 넓어짐을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>ARIMA (<a href="03-01.html">3.1절</a>), 조건부 기대값 (응통9 1.1절).</li>
+      </ul>
+    </div>
+
+    <h3>모형을 미래로 굴리기</h3>
+    <p>시계열 분석의 가장 큰 쓸모는 예측입니다. 현재까지의 관측이 주어졌을 때 미래 값의 조건부 기대값이 평균제곱오차를 가장 작게 하는 예측입니다.</p>
+
+    <h3><span class="no">5.1.1</span>점예측</h3>
+    <p>시점 \(n\)까지 관측했을 때 \(h\)기 뒤 예측 \(\hat x_{n+h} = E(x_{n+h} \mid x_n, x_{n-1}, \ldots)\). 계산 규칙: 모형식에서 미래 \(x\)는 예측값으로, 미래 \(e\)는 0으로, 과거 \(e\)는 잔차로 바꿉니다.</p>
+    <p>AR(1)(평균 \(\mu\)): \(\hat x_{n+h} = \mu + \phi^h(x_n - \mu)\). 시차가 커지면 평균으로 돌아갑니다. 랜덤워크: \(\hat x_{n+h} = x_n\).</p>
+
+    <h3><span class="no">5.1.2</span>예측구간</h3>
+    <p>정상 ARMA를 \(x_t - \mu = \sum_{j\ge0}\psi_je_{t-j}\)(\(\psi_0 = 1\))로 쓰면 \(h\)기 예측 오차의 분산은</p>
+    \[\sigma^2\sum_{j=0}^{h-1}\psi_j^2.\]
+    <p>AR(1)은 \(\psi_j = \phi^j\)라 \(\sigma^2\frac{1 - \phi^{2h}}{1 - \phi^2}\)로 계열 분산에 다가가고, 랜덤워크는 \(\psi_j = 1\)이라 \(h\sigma^2\)로 끝없이 커집니다. 95% 구간 \(\hat x_{n+h} \pm 1.96\sqrt{\text{분산}}\). 이 구간은 모형이 맞고 모수를 안다고 가정한 것이라 실제보다 좁을 수 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>\(\mu = 50\), \(\phi = 0.6\), \(\sigma = 2\), \(x_n = 60\)인 AR(1)의 1, 2기 뒤 예측과 95% 구간은?</p>
+    </div>
+    <p><i>풀이.</i> \(\hat x_{n+1} = 50 + 0.6\times10 = 56\), 분산 4, 구간 \(56 \pm 3.92\). \(\hat x_{n+2} = 50 + 3.6 = 53.6\), 분산 \(4(1 + 0.36) = 5.44\), 구간 \(53.6 \pm 4.57\).</p>
+    <pre><code>fit &lt;- arima(lh, order = c(1, 0, 0)); predict(fit, n.ahead = 6)</code></pre>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>예측 = 조건부 기대값, 미래 잡음은 0으로.</li>
+        <li>오차 분산 \(\sigma^2\sum_{j&lt;h}\psi_j^2\): 정상이면 상한, 단위근이면 무한히 증가.</li>
+        <li>구간은 모형 불확실성을 빼서 낙관적일 수 있음.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(h \to \infty\)이면 예측과 구간은?
+          <details><summary>답</summary><p>예측 50, 분산 \(4/0.64 = 6.25\), 구간 \(50 \pm 4.9\)(계열의 무조건 분포).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

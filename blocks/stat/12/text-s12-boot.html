@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통12-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s12-boot" data-kind="본문" data-std="응통12-06-02">
+  <header class="card-head"><span class="no"></span><h2>붓스트랩 표준오차와 신뢰구간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>복원 재표집으로 표준오차를 추정한다.</li>
+        <li>백분위수 붓스트랩 신뢰구간을 만들고 한계를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>경험적 분포함수 (<a href="05-01.html">5.1절</a>), 표준오차 (응통5 3.1절).</li>
+      </ul>
+    </div>
+
+    <h3>공식이 없을 때</h3>
+    <p>표본평균의 표준오차는 \(s/\sqrt n\)이라는 공식이 있지만, 중앙값, 상관계수, 두 중앙값의 비 같은 통계량은 공식이 없거나 복잡합니다. 컴퓨터로 표본추출을 흉내 내 그 흔들림을 직접 잴 수 있습니다.</p>
+
+    <h3><span class="no">6.2.1</span>원리</h3>
+    <p>통계량 \(\hat\theta\)의 표준오차는 "모집단 \(F\)에서 표본을 되풀이해 뽑을 때 \(\hat\theta\)의 표준편차"입니다. \(F\)를 모르므로 경험적 분포 \(F_n\)(각 관측에 \(1/n\)씩)으로 바꿉니다. \(F_n\)에서 \(n\)개를 뽑는 것은 원래 표본에서 <b>복원추출</b>하는 것과 같습니다.</p>
+    <ol>
+      <li>원래 표본에서 \(n\)개를 복원추출해 붓스트랩 표본을 만들고 \(\hat\theta^*\)를 계산.</li>
+      <li>\(B\)번(보통 1000~10000) 되풀이.</li>
+      <li>\(\widehat{\mathrm{se}} = \mathrm{sd}(\hat\theta^*_1, \ldots, \hat\theta^*_B)\).</li>
+      <li>백분위수 구간: \(\hat\theta^*\)들의 2.5%점과 97.5%점.</li>
+    </ol>
+
+    <h3><span class="no">6.2.2</span>한계와 개선</h3>
+    <ul>
+      <li>표본이 작으면 \(F_n\)이 \(F\)를 잘 대신하지 못합니다. \(B\)를 늘려도 이 한계는 남습니다.</li>
+      <li>최댓값처럼 분포의 끝에 민감한 통계량에는 잘 맞지 않습니다.</li>
+      <li>통계량이 치우쳤거나 분포가 비대칭이면 백분위수 구간의 덮임률이 떨어지므로 치우침과 가속을 보정한 BCa 구간을 씁니다.</li>
+      <li>자료가 독립이 아니면(시계열) 블록 단위로 재표집해야 합니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>R의 <code>law</code> 자료 대신 내장 <code>faithful</code>의 분출 간격(<code>waiting</code>) 중앙값의 표준오차와 95% 구간을 구하세요.</p>
+    </div>
+    <pre><code>x &lt;- faithful$waiting; set.seed(1)
+b &lt;- replicate(5000, median(sample(x, replace = TRUE)))
+sd(b); quantile(b, c(0.025, 0.975))</code></pre>
+    <p>중앙값 76분, 붓스트랩 표준오차는 1분 안팎이고 구간은 대략 [73.5, 77]입니다(난수에 따라 조금 다름). 분포가 봉우리 둘이라 평균의 정규 근사보다 중앙값 쪽이 해석이 자연스럽습니다. 이 절의 실습 카드에서 \(B\)와 통계량을 바꿔 볼 수 있습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>원래 표본에서 복원추출을 되풀이해 통계량의 흔들림을 잼.</li>
+        <li>표준오차 = 붓스트랩 값들의 표준편차, 구간 = 백분위수.</li>
+        <li>작은 표본, 극단 통계량, 종속 자료에서는 주의.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>크기 \(n\)의 표본에서 특정 관측값이 붓스트랩 표본에 한 번도 뽑히지 않을 확률은? \(n\)이 크면?
+          <details><summary>답</summary><p>\((1 - 1/n)^n \to e^{-1} \approx 0.368\). 붓스트랩 표본은 원래 값의 약 63%만 포함합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

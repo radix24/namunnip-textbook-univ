@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>표본이 작을 때 Fisher 정확 검정을 적용하기 · 비모수통계학 — QURI</title>
-  <meta name="description" content="비모수통계학 3.2 표본이 작을 때 Fisher 정확 검정을 적용하기 — 성취기준: 표본이 작을 때 Fisher 정확 검정을 적용할 수 있다.">
+  <title>피셔 정확 검정 · 비모수통계학 — QURI</title>
+  <meta name="description" content="비모수통계학 3.2 피셔 정확 검정 — 성취기준: 표본이 작을 때 Fisher 정확 검정을 적용할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통12&quot;, &quot;title&quot;: &quot;3.2 표본이 작을 때 Fisher 정확 검정을 적용하기&quot;, &quot;sub&quot;: &quot;비모수통계학&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통12&quot;, &quot;title&quot;: &quot;3.2 피셔 정확 검정&quot;, &quot;sub&quot;: &quot;비모수통계학&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,92 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통12-03-02">
+  <section class="topic-hero u-hero has-text" data-sec="응통12-03-02" data-u="연세대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">비모수통계학</a><span class="mono">/</span><a href="03.html">3. 분할표 분석</a></div>
-    <h1><span class="sec-no mono">3.2</span>표본이 작을 때 Fisher 정확 검정을 적용하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통12-03-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통12-03-02] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통12-03-02" aria-label="할 수 있음"><span class="t">표본이 작을 때 Fisher 정확 검정을 적용할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.2</span>피셔 정확 검정</h1>
+    <p class="sec-std"><span class="mono">[응통12-03-02]</span> 표본이 작을 때 Fisher 정확 검정을 적용할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-2-1"><span class="mono">3.2.1</span><span>초기하분포</span></a></li><li><a href="#s3-2-2"><span class="mono">3.2.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s12-fisher"><span class="mono">본문</span><span>피셔 정확 검정</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s12-fisher" data-kind="본문" data-std="응통12-03-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>여백 합이 주어진 2×2 표가 초기하분포를 따름을 안다.</li>
+        <li>작은 표본에서 정확한 p값을 계산한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>분할표 검정 (<a href="03-01.html">3.1절</a>), 이항계수.</li>
+      </ul>
+    </div>
+
+    <h3>차를 맛보는 여인</h3>
+    <p>피셔의 동료는 밀크티에 우유를 먼저 넣었는지 차를 먼저 넣었는지 맛으로 안다고 주장했습니다. 피셔는 각 방식으로 4잔씩 8잔을 만들어 맞혀 보게 했습니다. 표본이 8이라 카이제곱 근사는 쓸 수 없고 정확한 확률이 필요합니다.</p>
+
+    <h3 id="s3-2-1"><span class="no">3.2.1</span>초기하분포</h3>
+    <p>2×2 표에서 행 합과 열 합을 고정하면 \(H_0\)(독립) 아래 왼쪽 위 칸 \(a\)의 분포는</p>
+    \[P(a) = \frac{\binom{R_1}{a}\binom{R_2}{C_1 - a}}{\binom{N}{C_1}},\]
+    <p>초기하분포입니다. 다른 칸은 \(a\)와 여백으로 정해집니다. p값은 관측한 표만큼 또는 더 극단적인 표들의 확률 합입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>차 맛보기에서 우유 먼저 4잔을 모두 맞혔습니다. p값은?</p>
+    </div>
+    <p><i>풀이.</i> 8잔 중 "우유 먼저"라고 고를 4잔이 모두 맞을 확률은 \(1/\binom84 = 1/70 \approx 0.014\). 3잔만 맞히면 \(P(a \ge 3) = (16 + 1)/70 = 0.243\)으로 증거가 약합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.2</span>
+      <p>치료군 10명 중 8명, 대조군 10명 중 3명이 회복했습니다. 피셔 정확 검정의 양측 p값은?</p>
+    </div>
+    <p><i>풀이.</i> R: <code>fisher.test(matrix(c(8, 2, 3, 7), 2))</code>의 p값은 약 0.070입니다. 기대 도수가 5.5, 4.5라 카이제곱 근사(약 0.025, 보정 없이)는 너무 작은 p값을 줍니다.</p>
+
+    <div class="tb-note">
+      <b>주의</b> 여백을 고정해 이산 분포로 계산하므로 피셔 검정은 보수적입니다(실제 제1종 오류율이 \(\alpha\)보다 작음). 중간 p값(mid-p) 같은 보정이 제안되어 있습니다.
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>여백 고정 → 초기하분포, 정확한 p값.</li>
+        <li>기대 도수가 작은 2×2 표에 씁니다.</li>
+        <li>보수적인 경향이 있습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-2-2"><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>차 맛보기를 6잔씩 12잔으로 하면 모두 맞힐 확률은?
+          <details><summary>답</summary><p>\(1/\binom{12}{6} = 1/924 \approx 0.0011\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s12-fisher" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통12-03-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통12-03-02] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통12-03-02" aria-label="할 수 있음"><span class="t">표본이 작을 때 Fisher 정확 검정을 적용할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-01.html">← 3.1 카이제곱 적합도 검정과 독립성 검정을 수행하기</a></span>
-        <span><a href="04-01.html">4.1 Wilcoxon 부호순위 검정을 수행하기 →</a></span>
+        <span><a href="03-01.html">← 3.1 카이제곱 적합도 검정과 독립성 검정</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

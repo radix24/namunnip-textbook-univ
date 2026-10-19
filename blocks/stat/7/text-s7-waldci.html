@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s7-waldci" data-kind="본문" data-std="응통7-04-02">
+  <header class="card-head"><span class="no"></span><h2>점근 정규성으로 만드는 근사 신뢰구간</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>왈드 구간 \(\hat\theta \pm z\,\widehat{\mathrm{se}}\)을 만든다.</li>
+        <li>변환과 델타 방법으로 더 나은 근사 구간을 만든다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>MLE의 점근 정규성 (<a href="03-02.html">3.2절</a>), 델타 방법 (응통6 7.3절).</li>
+      </ul>
+    </div>
+
+    <h3>추축량이 없을 때</h3>
+    <p>포아송, 로지스틱 회귀처럼 정확한 추축량이 없는 모형이 많습니다. 이때는 큰 표본에서 \((\hat\theta - \theta)/\widehat{\mathrm{se}} \approx N(0,1)\)을 근사 추축량으로 씁니다.</p>
+
+    <h3><span class="no">4.2.1</span>왈드 구간</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 4.2.1</span>
+      <p>근사 \(100(1-\alpha)\%\) 신뢰구간: \(\hat\theta \pm z_{\alpha/2}\,\widehat{\mathrm{se}}(\hat\theta)\), \(\widehat{\mathrm{se}} = 1/\sqrt{nI(\hat\theta)}\).</p>
+    </div>
+    <p>비율의 구간 \(\hat p \pm 1.96\sqrt{\hat p(1-\hat p)/n}\)이 왈드 구간입니다. 계산이 간단하지만 \(p\)가 0이나 1에 가깝거나 \(n\)이 작으면 덮임률이 신뢰수준보다 많이 낮습니다. 예를 들어 \(n = 20\), 성공 0번이면 구간이 [0, 0]이 되어 버립니다.</p>
+
+    <h3><span class="no">4.2.2</span>변환한 척도에서 만들기</h3>
+    <p>모수 \(\theta\)보다 \(g(\theta)\)의 추정량 분포가 더 정규에 가까우면, \(g\) 척도에서 구간을 만들고 \(g^{-1}\)로 되돌립니다. 델타 방법으로 \(\widehat{\mathrm{se}}(g(\hat\theta)) = |g'(\hat\theta)|\widehat{\mathrm{se}}(\hat\theta)\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.2</span>
+      <p>지수분포 \(n = 10\), \(\bar x = 2.5\)일 때 \(\log\lambda\) 척도로 \(\lambda\)의 95% 근사 구간을 만드세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\hat\lambda = 0.4\), \(\widehat{\mathrm{se}}(\hat\lambda) = \hat\lambda/\sqrt{10} = 0.126\). \(g = \log\): \(\widehat{\mathrm{se}}(\log\hat\lambda) = 0.126/0.4 = 1/\sqrt{10} = 0.316\). \(\log 0.4 = -0.916\), 구간 \(-0.916 \pm 0.620\), 곧 \([-1.536, -0.296]\). 지수함수로 되돌리면 \([0.215, 0.744]\). 왈드 구간 [0.152, 0.648]보다 정확한 구간 [0.192, 0.683](4.1절)에 가깝고, 항상 양수입니다.</p>
+
+    <h3><span class="no">4.2.3</span>윌슨 구간</h3>
+    <p>비율에서는 \(|\hat p - p| \le z\sqrt{p(1-p)/n}\)을 \(p\)에 대한 이차부등식으로 풀어 얻는 윌슨(Wilson) 구간이 왈드보다 덮임률이 훨씬 좋습니다. 분모에 \(\hat p\) 대신 미지의 \(p\)를 그대로 둔 것이 차이입니다. R의 <code>prop.test</code>가 (연속성 보정을 한) 이 구간을 줍니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>왈드: \(\hat\theta \pm z\,\widehat{\mathrm{se}}\). 간단하지만 경계 근처에서 나쁩니다.</li>
+        <li>로그·로짓 척도에서 구간을 만들고 되돌리면 개선됩니다.</li>
+        <li>비율에는 윌슨 구간이 좋습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>포아송 표본 \(n = 25\), \(\bar x = 4\)의 \(\lambda\) 왈드 95% 구간은?
+          <details><summary>답</summary><p>\(\widehat{\mathrm{se}} = \sqrt{4/25} = 0.4\), \(4 \pm 0.784\), [3.22, 4.78].</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

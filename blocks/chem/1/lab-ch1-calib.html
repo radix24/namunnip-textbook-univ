@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학1-01-04",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/chemkit.js", "js/cards/chem/ch-anal.js"]
+}
+-->
+<article class="card q-card" id="lab-ch1-calib" data-kind="실습" data-std="화학1-01-04 화학3-04-01 화학3-04-02">
+  <header class="card-head"><span class="no"></span><h2>검량선으로 구한 농도는 얼마나 믿을 수 있나?</h2><span class="kind">실습 · 최소제곱 검량선, 표준물 첨가법</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>표준 용액 여섯 개의 흡광도(가상 자료)로 최소제곱 직선을 긋고, 미지 시료의 농도와 그 불확도를 구합니다. 시료의 다른 성분(매트릭스)이 감도를 바꾸면 검량선법이 틀리고 표준물 첨가법이 맞는 이유를 확인합니다. 성취기준 [화학1-01-04], [화학3-04-01], [화학3-04-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>가상 장치의 참 응답은 흡광도 \(A = 0.0500\,c + 0.010\)입니다(\(c\)는 ppm). 측정마다 "측정 잡음" 크기의 우연 오차가 더해집니다.</p>
+      <p class="q-term"><b>최소제곱 직선</b>: 점들과 직선 사이의 세로 거리 제곱의 합을 가장 작게 하는 기울기 \(m\)과 절편 \(b\).</p>
+      <p class="q-term"><b>\(s_y\)</b>: 점들이 직선에서 보통 벗어난 크기. \(s_y = \sqrt{\sum (y_i - m x_i - b)^2/(n-2)}\).</p>
+      <p class="q-term"><b>미지 농도의 표준 불확도</b>: 미지를 \(k\)번 재어 평균 \(\bar y\)를 얻었을 때</p>
+      <p>\[ s_x = \frac{s_y}{|m|}\sqrt{\frac1k + \frac1n + \frac{(\bar y - \bar y_{표준})^2}{m^2\sum (x_i-\bar x)^2}} \]</p>
+      <p>첫째 항은 미지 측정의 흔들림, 둘째와 셋째 항은 직선 자체의 불확실함입니다. 미지가 표준들의 가운데에 있을수록 셋째 항이 작아집니다.</p>
+      <p class="q-term"><b>매트릭스 감도</b>: 시료 속 다른 물질 때문에 같은 농도에서도 신호가 이 비율로 줄어든다고 가정합니다. 표준 용액은 깨끗한 물에 만들었으므로 영향을 받지 않습니다.</p>
+      <p class="q-term"><b>표준물 첨가법</b>: 시료 자체에 표준을 0, 2, 4, 6, 8 ppm 더해 가며 신호를 잽니다. 직선을 왼쪽으로 늘려 신호가 0이 되는 x절편의 크기가 시료 농도입니다(바탕 흡광도는 빼었다고 가정).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>방법</span><select name="mode" aria-label="정량 방법">
+          <option value="ext" selected>외부 검량선</option>
+          <option value="add">표준물 첨가법</option>
+        </select></label>
+        <label><span>측정 잡음 = <b data-show="noise" data-fix="3">0.005</b></span><input type="range" name="noise" min="0.001" max="0.030" step="0.001" value="0.005" aria-label="측정 잡음"></label>
+        <label><span>미지 참 농도 = <b data-show="cx" data-fix="1">5.0</b> ppm</span><input type="range" name="cx" min="0.5" max="12" step="0.1" value="5" aria-label="미지 시료 참 농도"></label>
+        <label><span>미지 반복 측정 k = <b data-show="k">3</b></span><input type="range" name="k" min="1" max="6" step="1" value="3" aria-label="미지 반복 측정 횟수"></label>
+        <label><span>매트릭스 감도 = <b data-show="mat" data-fix="2">1.00</b></span><input type="range" name="mat" min="0.60" max="1.00" step="0.01" value="1" aria-label="매트릭스에 의한 감도 비"></label>
+      </div>
+      <canvas aria-label="검량선 또는 표준물 첨가 그래프"></canvas>
+      <div class="btns"><button type="button" class="seed">새 가상 자료</button><button type="button" class="seed0">처음 자료로</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>처음 값에서 기울기, 절편, R², 미지 농도 ± s_x를 기록한다. 그림의 빨간 막대는 ±2s_x 범위다.</li>
+        <li>미지 참 농도를 0.5 ppm과 11 ppm으로 옮겨 s_x가 어떻게 바뀌는지 본다.</li>
+        <li>k를 1에서 6으로 바꾸며 s_x를 기록한다.</li>
+        <li>매트릭스 감도를 0.80으로 내린다. 외부 검량선 결과가 참값에서 얼마나 벗어나는지 본다.</li>
+        <li>방법을 표준물 첨가법으로 바꿔 같은 매트릭스 감도에서 결과를 비교한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>처음 자료(1번)에서 기울기 0.05034 ± 0.00092 /ppm, 절편 0.0071 ± 0.0056, R² 0.99866이고, 미지 농도는 5.056 ± 0.108 ppm입니다. 참값 5.00 ppm이 ±s_x 안에 들어옵니다.</li>
+        <li>미지를 0.5 ppm과 11 ppm으로 옮기면 s_x가 0.135, 0.154 ppm으로 커집니다. 직선의 끝일수록 기울기의 불확실함이 크게 작용하기 때문입니다(셋째 항).</li>
+        <li>k = 1이면 s_x 0.165 ppm, k = 6이면 0.088 ppm입니다. 미지를 많이 재면 첫째 항이 줄지만 검량선 자체의 항(1/n과 셋째 항)은 남으므로 √6배만큼 줄지는 않습니다.</li>
+        <li>매트릭스 감도 0.80이면 외부 검량선은 4.063 ppm으로 약 19% 낮게 나옵니다. R²와 s_x는 그대로라서 이 치우침은 출력의 어떤 통계량에도 나타나지 않습니다.</li>
+        <li>표준물 첨가법은 기울기를 시료 안에서 재므로 기울기만 0.0396으로 작아지고 결과는 5.019 ± 0.301 ppm으로 참값에 맞습니다. 대신 불확도가 외부 검량선의 약 세 배입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>R² = 0.9999인 검량선이 틀린 답을 줄 수 있는 경우를 두 가지 들어 보세요.</li>
+        <li>표준물 첨가법의 불확도가 외부 검량선보다 큰 이유를 x절편이 측정 범위 밖에 있다는 점으로 설명해 보세요.</li>
+        <li>바탕 시료(분석물이 없는 시료)를 재는 목적은 무엇인가요? 표준물 첨가법에서 바탕을 빼지 않으면 결과가 어느 쪽으로 치우칠까요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>검출 한계는 보통 바탕 신호의 표준편차 \(s_{바탕}\)으로 \(3s_{바탕}/m\), 정량 한계는 \(10s_{바탕}/m\)로 정합니다. 잡음 0.005를 \(s_{바탕}\)으로 보고 이 장치의 두 한계를 계산해 보세요.</p>
+    </section>
+  </div>
+</article>

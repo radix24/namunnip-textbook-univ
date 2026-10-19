@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EM 알고리즘을 결측 자료 문제에 적용하기 · 통계전산 — QURI</title>
-  <meta name="description" content="통계전산 3.3 EM 알고리즘을 결측 자료 문제에 적용하기 — 성취기준: EM 알고리즘을 결측 자료 문제에 적용할 수 있다.">
+  <title>EM 알고리즘 · 통계전산 — QURI</title>
+  <meta name="description" content="통계전산 3.3 EM 알고리즘 — 성취기준: EM 알고리즘을 결측 자료 문제에 적용할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;3.3 EM 알고리즘을 결측 자료 문제에 적용하기&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통15&quot;, &quot;title&quot;: &quot;3.3 EM 알고리즘&quot;, &quot;sub&quot;: &quot;통계전산&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,89 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통15-03-03">
+  <section class="topic-hero u-hero has-text" data-sec="응통15-03-03" data-u="">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">통계전산</a><span class="mono">/</span><a href="03.html">3. 최적화</a></div>
-    <h1><span class="sec-no mono">3.3</span>EM 알고리즘을 결측 자료 문제에 적용하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통15-03-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-03-03] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통15-03-03" aria-label="할 수 있음"><span class="t">EM 알고리즘을 결측 자료 문제에 적용할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.3</span>EM 알고리즘</h1>
+    <p class="sec-std"><span class="mono">[응통15-03-03]</span> EM 알고리즘을 결측 자료 문제에 적용할 수 있다. <span class="ty mono" data-ty="실습">실습</span> </p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-3-1"><span class="mono">3.3.1</span><span>알고리즘</span></a></li><li><a href="#s3-3-2"><span class="mono">3.3.2</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s15-em"><span class="mono">본문</span><span>EM 알고리즘</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-s15-em" data-kind="본문" data-std="응통15-03-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>E 단계와 M 단계를 결측 자료 문제에 적용한다.</li>
+        <li>EM이 매 단계 가능도를 감소시키지 않음을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최대가능도 (응통7 1.1절), 조건부기대값 (응통6 5.2절).</li>
+      </ul>
+    </div>
+
+    <h3>빠진 값이 있다면 채워 넣고 다시</h3>
+    <p>자료 일부가 빠졌거나, 관측되지 않는 집단 정보(이 사람은 어느 집단 소속인가)가 있으면 가능도가 복잡해집니다. 빠진 것을 알았다면 쉬웠을 문제를, "빠진 것의 기대값으로 채우기"와 "채운 자료로 쉽게 추정하기"를 번갈아 하며 풉니다.</p>
+
+    <h3 id="s3-3-1"><span class="no">3.3.1</span>알고리즘</h3>
+    <p>관측 자료 \(\mathbf y\), 결측(잠재) 자료 \(\mathbf z\), 완전 자료 로그가능도 \(\ell_c(\theta; \mathbf y, \mathbf z)\).</p>
+    <ol>
+      <li><b>E 단계</b>: \(Q(\theta \mid \theta_t) = E_{\mathbf z \mid \mathbf y, \theta_t}[\ell_c(\theta; \mathbf y, \mathbf z)]\).</li>
+      <li><b>M 단계</b>: \(\theta_{t+1} = \arg\max_\theta Q(\theta \mid \theta_t)\).</li>
+    </ol>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.3.1</span>
+      <p>EM의 각 단계에서 관측 자료 로그가능도는 감소하지 않는다: \(\ell(\theta_{t+1}) \ge \ell(\theta_t)\).</p>
+    </div>
+    <p>증명은 \(\ell(\theta) = Q(\theta\mid\theta_t) - H(\theta\mid\theta_t)\)로 쓰고, \(H\) 부분이 \(\theta = \theta_t\)에서 최대라는 사실(젠센 부등식)을 씁니다. 수렴은 안정적이지만 1차 속도라 결측 비율이 크면 느리고, 국소 최대에 갈 수 있어 여러 출발점을 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.2 (두 정규분포 혼합)</span>
+      <p>자료가 확률 \(\pi\)로 \(N(\mu_1, \sigma^2)\), \(1-\pi\)로 \(N(\mu_2, \sigma^2)\)에서 나왔고 어느 쪽인지는 모릅니다. EM 단계를 쓰세요.</p>
+    </div>
+    <p><i>풀이.</i> 잠재 변수 \(z_i\) = 1이면 첫 집단. E 단계: 각 점의 소속 확률(책임도) \(w_i = \frac{\pi\phi_1(x_i)}{\pi\phi_1(x_i) + (1-\pi)\phi_2(x_i)}\). M 단계: 가중 평균으로 갱신. \(\pi = \bar w\), \(\mu_1 = \sum w_ix_i/\sum w_i\), \(\mu_2 = \sum(1-w_i)x_i/\sum(1-w_i)\), \(\sigma^2 = \frac1n\sum[w_i(x_i - \mu_1)^2 + (1-w_i)(x_i - \mu_2)^2]\). R의 <code>faithful$waiting</code>(봉우리 두 개)에 적용하면 평균 약 54.6, 80.1분, \(\pi \approx 0.36\), \(\sigma \approx 5.9\)로 수렴합니다(등분산 가정).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>E: 결측의 조건부 기대로 완전 자료 가능도를 평균. M: 최대화.</li>
+        <li>가능도는 단조 증가, 수렴은 느릴 수 있음.</li>
+        <li>혼합 모형, 결측 자료, 잠재 변수 모형에 씁니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-3-2"><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정규 표본 \(n\)개 중 \(m\)개가 결측(무작위)일 때 \(\mu\)의 EM 반복은 무엇으로 수렴하나요?
+          <details><summary>답</summary><p>E 단계에서 결측값을 현재 \(\mu_t\)로 채우고, M 단계 \(\mu_{t+1} = (\sum_{\text{관측}}x_i + m\mu_t)/n\). 고정점은 관측값의 평균. 수렴 속도는 결측 비율 \(m/n\)배씩 오차가 줄어듭니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s15-em" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통15-03-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통15-03-03] <span class="ty mono" data-ty="실습">실습</span> </span></h2>
+      <ol><li><input type="checkbox" data-std="응통15-03-03" aria-label="할 수 있음"><span class="t">EM 알고리즘을 결측 자료 문제에 적용할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-02.html">← 3.2 Fisher 점수법과 경사하강법을 비교하기</a></span>
-        <span><a href="04-01.html">4.1 구적법으로 적분을 근사하기 →</a></span>
+        <span><a href="03-02.html">← 3.2 피셔 점수법과 경사하강법</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

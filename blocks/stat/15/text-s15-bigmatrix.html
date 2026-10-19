@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-bigmatrix" data-kind="본문" data-std="응통15-02-02">
+  <header class="card-head"><span class="no"></span><h2>큰 행렬 계산을 효율적으로</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>계산 순서, 희소 행렬, 분할 계산으로 큰 행렬 문제를 푼다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>계산 복잡도 (<a href="01-02.html">1.2절</a>), QR (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>메모리에 다 올릴 수 없을 때</h3>
+    <p>설명변수 1000개, 관측 1000만 개의 행렬은 실수 하나 8바이트로 80 GB입니다. 계산 순서를 바꾸고 구조를 활용하면 같은 답을 훨씬 적은 메모리와 시간으로 얻을 수 있습니다.</p>
+
+    <h3><span class="no">2.2.1</span>곱의 순서</h3>
+    <p>\(A\mathbf B\mathbf x\)(\(A\), \(B\)는 \(n\times n\))를 \((AB)\mathbf x\)로 하면 \(O(n^3)\), \(A(B\mathbf x)\)로 하면 \(O(n^2)\)입니다. 모자 행렬 \(H = X(X^\top X)^{-1}X^\top\)(\(n\times n\))를 만들지 않고 \(H\mathbf y = X\hat{\boldsymbol\beta}\)로 계산하는 것도 같은 원리입니다. 지렛값은 \(H\)의 대각만 필요하므로 \(h_{ii} = \|Q_{i\cdot}\|^2\)(QR의 \(Q\) 행)로 구합니다.</p>
+
+    <h3><span class="no">2.2.2</span>희소 행렬</h3>
+    <p>가변수가 많은 계획행렬, 문서-단어 행렬은 대부분이 0입니다. 0이 아닌 값과 위치만 저장하면(희소 저장) 메모리와 계산이 0이 아닌 원소 수에 비례합니다. R의 <code>Matrix</code> 패키지, <code>glmnet</code>이 희소 입력을 받습니다.</p>
+
+    <h3><span class="no">2.2.3</span>나누어 계산하기</h3>
+    <p>\(X^\top X = \sum_{\text{블록}}X_b^\top X_b\), \(X^\top\mathbf y = \sum X_b^\top\mathbf y_b\)이므로 자료를 덩어리로 읽어 누적하면 메모리에는 \(p\times p\)만 있으면 됩니다(조건수가 괜찮을 때). R의 <code>biglm</code>이 이렇게 QR을 갱신합니다. 여러 컴퓨터에서 나눠 계산해 합치는 것도 같은 구조입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>\(n = 10^7\), \(p = 50\) 회귀를 메모리 1 GB로 하려면?</p>
+    </div>
+    <p><i>풀이.</i> 전체 \(X\)는 4 GB라 한 번에 올릴 수 없습니다. 10만 행씩(40 MB) 읽어 \(X_b^\top X_b\)(50×50)와 \(X_b^\top\mathbf y_b\)를 누적한 뒤 마지막에 촐레스키로 풉니다. 잔차 제곱합도 \(\mathbf y^\top\mathbf y - \hat{\boldsymbol\beta}^\top X^\top\mathbf y\)로 누적량에서 얻습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>곱의 순서를 바꿔 \(n\times n\) 행렬을 만들지 않습니다.</li>
+        <li>희소 구조를 저장·계산에 활용합니다.</li>
+        <li>충분통계량(\(X^\top X\), \(X^\top\mathbf y\))을 블록별로 누적합니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(n = 10^5\)일 때 \(H\)를 만들면 메모리가 얼마나 필요한가요?
+          <details><summary>답</summary><p>\(10^{10}\)개 × 8바이트 = 80 GB. 만들지 않아야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

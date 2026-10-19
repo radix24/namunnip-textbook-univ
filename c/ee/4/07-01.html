@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션하기 · 디지털논리회로 — QURI</title>
-  <meta name="description" content="디지털논리회로 7.1 HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션하기 — 성취기준: HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션할 수 있다.">
+  <title>하드웨어 기술 언어(Verilog) 기초 · 디지털논리회로 — QURI</title>
+  <meta name="description" content="디지털논리회로 7.1 하드웨어 기술 언어(Verilog) 기초 — 성취기준: HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전4&quot;, &quot;title&quot;: &quot;7.1 HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션하기&quot;, &quot;sub&quot;: &quot;디지털논리회로&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전4&quot;, &quot;title&quot;: &quot;7.1 하드웨어 기술 언어(Verilog) 기초&quot;, &quot;sub&quot;: &quot;디지털논리회로&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,222 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전4-07-01">
+  <section class="topic-hero u-hero has-text" data-sec="전전4-07-01" data-u="서울대 연세대 POSTECH">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">디지털논리회로</a><span class="mono">/</span><a href="07.html">7. 프로그래머블 논리와 HDL</a></div>
-    <h1><span class="sec-no mono">7.1</span>HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전4-07-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전4-07-01] <span class="ty mono" data-ty="실습">실습</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전4-07-01" aria-label="할 수 있음"><span class="t">HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.1</span>하드웨어 기술 언어(Verilog) 기초</h1>
+    <p class="sec-std"><span class="mono">[전전4-07-01]</span> HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-1-1"><span class="mono">7.1.1</span><span>왜 글로 회로를 적나</span></a></li><li><a href="#s7-1-2"><span class="mono">7.1.2</span><span>모듈과 조합 회로</span></a></li><li><a href="#s7-1-3"><span class="mono">7.1.3</span><span>순차 회로</span></a></li><li><a href="#s7-1-4"><span class="mono">7.1.4</span><span>테스트벤치와 시뮬레이션</span></a></li><li><a href="#s7-1-5"><span class="mono">7.1.5</span><span>래치가 생기는 실수</span></a></li><li><a href="#s7-1-6"><span class="mono">7.1.6</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e4-hdl"><span class="mono">본문</span><span>하드웨어 기술 언어(Verilog) 기초</span></a></li><li><a href="#lab-e4-verilog"><span class="mono">7.1.2</span><span>무료 시뮬레이터로 카운터와 검출기 확인하기</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e4-hdl" data-kind="본문" data-std="전전4-07-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>HDL이 프로그래밍 언어와 무엇이 다른지(동시에 동작하는 회로를 적음) 안다.</li>
+        <li>Verilog로 조합 회로(assign, always @*)와 순차 회로(always @(posedge clk))를 쓴다.</li>
+        <li>테스트벤치로 시뮬레이션하고 파형을 읽는다. 래치가 생기는 실수를 피한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>멀티플렉서와 가산기 (<a href="04-01.html">4.1절</a>, <a href="04-02.html">4.2절</a>), 플립플롭과 FSM (<a href="05-01.html">5.1절</a>, <a href="06-01.html">6.1절</a>).</li>
+        <li>C나 Python 같은 프로그래밍 언어의 기본 문법이 있으면 읽기 쉽습니다(<a href="../../common/10/01-01.html">공통10</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s7-1-1"><span class="no">7.1.1</span>왜 글로 회로를 적나</h3>
+    <p>게이트 수십 개는 그림으로 그릴 수 있지만, 수백만 개가 든 칩은 그릴 수 없습니다. 그래서 회로를 글로 적고, 컴퓨터가 그 글을 게이트로 바꾸게(합성) 합니다. 이 글이 하드웨어 기술 언어(HDL)이고, 대표가 Verilog와 VHDL입니다.</p>
+    <p>HDL은 프로그래밍 언어처럼 보이지만 뜻이 다릅니다. 프로그램은 위에서 아래로 한 줄씩 실행되지만, HDL의 각 문장은 <b>동시에 존재하는 회로 조각</b>입니다. <code>assign y = a &amp; b;</code>는 "y에 a와 b의 AND를 계산해 넣어라"가 아니라 "y는 늘 a AND b인 도선이다"입니다.</p>
+
+    <h3 id="s7-1-2"><span class="no">7.1.2</span>모듈과 조합 회로</h3>
+    <p>회로 하나는 <code>module</code>로 적고, 입력·출력 포트를 선언합니다.</p>
+<pre><code>module mux2 (input  wire a, b, s,
+             output wire y);
+  assign y = s ? b : a;        // s=1이면 b, 0이면 a (4.2절 MUX)
+endmodule
+
+module fa (input wire a, b, cin, output wire s, cout);
+  assign s    = a ^ b ^ cin;              // 4.1절 전가산기
+  assign cout = (a &amp; b) | (cin &amp; (a ^ b));
+endmodule</code></pre>
+    <p>여러 비트는 벡터로: <code>wire [3:0] x;</code>는 4비트입니다. 4비트 가산기는 <code>assign {cout, s} = a + b + cin;</code> 한 줄로도 쓰고, 합성 도구가 알맞은 가산기 구조(리플, 캐리 예측)를 고릅니다.</p>
+    <p>조건이 많은 조합 회로는 <code>always @*</code> 블록에 적습니다. <code>@*</code>는 "블록 안에서 읽는 신호 중 하나라도 바뀌면"이라는 뜻으로, 조합 회로를 나타냅니다.</p>
+<pre><code>module dec7 (input wire [3:0] x, output reg [6:0] seg);
+  always @* begin
+    case (x)
+      4'd0: seg = 7'b1111110;   4'd1: seg = 7'b0110000;
+      4'd2: seg = 7'b1101101;   4'd3: seg = 7'b1111001;
+      // … 4'd9까지
+      default: seg = 7'b0000000;   // 모든 경우에 값을 준다
+    endcase
+  end
+endmodule</code></pre>
+
+    <h3 id="s7-1-3"><span class="no">7.1.3</span>순차 회로</h3>
+    <p>플립플롭은 <code>always @(posedge clk)</code>로 적고, 대입은 <code>&lt;=</code>(비차단 대입)을 씁니다. 비차단 대입은 "모서리 순간의 오른쪽 값들을 모두 읽은 뒤 한꺼번에 저장"이라, 플립플롭 여럿이 동시에 바뀌는 실제 하드웨어와 같습니다.</p>
+<pre><code>module counter4 (input wire clk, rst, output reg [3:0] q);
+  always @(posedge clk) begin
+    if (rst) q &lt;= 4'd0;          // 동기 리셋
+    else     q &lt;= q + 4'd1;      // 5.2절 동기식 카운터
+  end
+endmodule</code></pre>
+    <p>FSM은 "상태 레지스터(순차)"와 "다음 상태·출력 논리(조합)"를 두 블록으로 나누어 적는 것이 관례입니다(6.1절 구조 그대로).</p>
+<pre><code>module det11 (input wire clk, rst, x, output wire z);
+  localparam A = 1'b0, B = 1'b1;
+  reg state, next;
+  always @(posedge clk) state &lt;= rst ? A : next;   // 상태 레지스터
+  always @* begin                                   // 다음 상태
+    case (state)
+      A: next = x ? B : A;
+      B: next = x ? B : A;
+    endcase
+  end
+  assign z = (state == B) &amp;&amp; x;    // 밀리 출력 (6.2절)
+endmodule</code></pre>
+
+    <h3 id="s7-1-4"><span class="no">7.1.4</span>테스트벤치와 시뮬레이션</h3>
+    <p>설계를 확인하려면 입력을 넣고 출력을 보는 또 하나의 모듈, 테스트벤치를 씁니다. 테스트벤치는 합성되지 않는 시뮬레이션 전용 코드라 시간 지연(<code>#10</code>)과 출력문(<code>$display</code>)을 쓸 수 있습니다.</p>
+<pre><code>module tb;
+  reg a = 0, b = 0, cin = 0;  wire s, cout;
+  fa dut (.a(a), .b(b), .cin(cin), .s(s), .cout(cout));
+  integer k;
+  initial begin
+    for (k = 0; k &lt; 8; k = k + 1) begin
+      {a, b, cin} = k;  #10;
+      $display("%b %b %b -&gt; s=%b cout=%b", a, b, cin, s, cout);
+    end
+    $finish;
+  end
+endmodule</code></pre>
+    <p>무료 도구 Icarus Verilog로 <code>iverilog -o sim fa.v tb.v</code>, <code>vvp sim</code>을 실행하면 전가산기 진리표 8줄이 찍힙니다. 파형은 <code>$dumpfile</code>, <code>$dumpvars</code>로 저장해 GTKWave로 봅니다. 이 절의 실습 카드에서 따라 합니다.</p>
+
+    <h3 id="s7-1-5"><span class="no">7.1.5</span>래치가 생기는 실수</h3>
+    <p><code>always @*</code> 블록에서 어떤 경우에 출력에 값을 주지 않으면, 합성 도구는 "그때는 이전 값을 유지하라"는 뜻으로 읽고 <b>래치</b>(5.1절)를 만듭니다. 조합 회로를 의도했는데 기억 소자가 생긴 것이라 타이밍이 망가집니다. 막는 방법: case 문에 <code>default</code>를 두거나, 블록 맨 앞에서 모든 출력에 기본값을 줍니다.</p>
+
+    <div class="tb-note"><b>주의</b>순차 블록에서 <code>=</code>(차단 대입)를 쓰면 위 줄의 결과를 아래 줄이 바로 읽어, 시프트 레지스터가 한 클록에 여러 칸 밀리는 것처럼 시뮬레이션될 수 있습니다. 규칙: 순차 블록은 <code>&lt;=</code>, 조합 블록은 <code>=</code>.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>HDL 문장은 동시에 존재하는 회로다. module, 포트, wire/reg, 벡터.</li>
+        <li>조합: <code>assign</code> 또는 <code>always @*</code>(모든 경우에 값). 순차: <code>always @(posedge clk)</code>와 <code>&lt;=</code>.</li>
+        <li>테스트벤치로 입력을 넣고 결과를 확인한다. 값이 빠진 조합 블록은 래치가 된다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-1-6"><span class="no">7.1.6</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>4비트 비교기(a &gt; b이면 gt = 1)를 assign 한 줄로 써라.
+          <details><summary>답</summary><p><code>assign gt = (a &gt; b);</code> (a, b는 <code>wire [3:0]</code>)</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>다음 코드에서 래치가 생기는 이유와 고치는 방법은? <code>always @* if (en) y = d;</code>
+          <details><summary>답</summary><p>en = 0일 때 y에 값이 없어 이전 값을 유지해야 하므로 래치. <code>else y = 1'b0;</code>를 더하거나 블록 앞에 <code>y = 1'b0;</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>4비트 시프트 레지스터 <code>always @(posedge clk) begin q[0] = d; q[1] = q[0]; q[2] = q[1]; q[3] = q[2]; end</code>를 시뮬레이션하면 무엇이 잘못되는가?
+          <details><summary>답</summary><p>차단 대입이라 한 모서리에 d가 q[0]~q[3]까지 모두 복사된다. <code>&lt;=</code>로 바꾸면 한 칸씩 밀린다(또는 <code>q &lt;= {q[2:0], d};</code>).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e4-hdl" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전4-07-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전4-07-01] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · POSTECH</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전4-07-01" aria-label="할 수 있음"><span class="t">HDL로 조합 회로와 순차 회로를 기술하고 시뮬레이션할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-e4-verilog" data-kind="실습" data-std="전전4-07-01">
+  <header class="card-head"><span class="no">7.1.2</span><h2><span class="q-badge">실습</span>무료 시뮬레이터로 카운터와 검출기 확인하기</h2><span class="kind">실습 · Icarus Verilog와 GTKWave</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-01.html#std">[전전4-07-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>7.1절의 4비트 카운터와 "11" 검출기를 Verilog로 쓰고, 테스트벤치로 시뮬레이션해 파형을 확인합니다. 파형에서 동기 리셋, 카운터의 넘어감(15 → 0), 밀리 출력의 시점(6.2절)을 읽습니다. 성취기준 [전전4-07-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <ul>
+        <li>Icarus Verilog(iverilog, 무료)와 GTKWave(파형 보기, 무료)를 설치합니다. 설치가 어렵다면 웹 브라우저에서 돌리는 무료 온라인 Verilog 시뮬레이터를 써도 됩니다(Icarus 선택).</li>
+        <li>7.1절의 <code>counter4</code>, <code>det11</code> 모듈을 <code>design.v</code>에 저장합니다.</li>
+        <li>아래 테스트벤치를 <code>tb.v</code>로 저장합니다.</li>
+      </ul>
+<pre><code>`timescale 1ns/1ps
+module tb;
+  reg clk = 0, rst = 1, x = 0;
+  wire [3:0] q;  wire z;
+  counter4 c (.clk(clk), .rst(rst), .q(q));
+  det11    d (.clk(clk), .rst(rst), .x(x), .z(z));
+  always #5 clk = ~clk;                 // 10 ns 주기 클록
+  reg [11:0] pat = 12'b0110_1110_0110;  // x로 넣을 비트(왼쪽부터)
+  integer k;
+  initial begin
+    $dumpfile("wave.vcd"); $dumpvars(0, tb);
+    #12 rst = 0;                        // 첫 모서리 뒤 리셋 해제
+    for (k = 11; k &gt;= 0; k = k - 1) begin
+      x = pat[k];  #10;
+      $display("t=%0t x=%b z=%b q=%0d", $time, x, z, q);
+    end
+    #120 $finish;                       // 카운터가 15 → 0으로 넘어가는 것까지
+  end
+endmodule</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li><code>iverilog -o sim design.v tb.v</code>, 이어서 <code>vvp sim</code>을 실행합니다. 명령 창에 12줄이 찍힙니다.</li>
+        <li><code>gtkwave wave.vcd</code>를 열고 clk, rst, x, z, q를 파형 창에 끌어다 놓습니다.</li>
+        <li>z가 1인 구간을 찾고, 그때 x와 직전 x가 모두 1인지 확인합니다.</li>
+        <li>q가 15에서 0으로 넘어가는 시각을 찾습니다.</li>
+        <li><code>det11</code>의 <code>assign z</code>를 <code>assign z = (state == B);</code>로 바꿔(무어 비슷하게) 다시 돌리고 z의 시점을 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>입력 비트 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0 중 "앞 비트가 1이고 지금 비트가 1"인 칸(3, 6, 7, 11번째)에서 z = 1입니다. 밀리 출력이라 x가 1인 그 클록 구간 동안 1입니다.</li>
+        <li>리셋을 푼 첫 모서리(15 ns)부터 q가 1씩 늘고, 0이 된 지 16클록 뒤 15에서 0으로 넘어갑니다.</li>
+        <li>z를 상태만으로 바꾸면 "1이 하나라도 들어온 다음 클록"마다 1이 되어 11 검출이 아니게 됩니다. 무어로 만들려면 6.2절처럼 상태를 하나 더 두어야 합니다.</li>
+      </ul>
+      <p>명령 창에 찍히는 z 값은 <code>#10</code> 뒤, 곧 다음 모서리를 지난 직후의 값이라 파형의 z와 반 칸 어긋나 보일 수 있습니다. 파형을 기준으로 판단하세요. 이 결과는 위 코드로 직접 확인해야 하며, 출력 형식은 시뮬레이터 버전에 따라 조금 다를 수 있습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>밀리 출력 z가 클록 모서리가 아닌 때(x가 바뀌는 순간)에 바뀌는 것을 파형에서 찾을 수 있나요? 이것이 6.2절에서 말한 밀리의 단점과 어떻게 이어지나요?</li>
+        <li>카운터의 <code>q + 4'd1</code>은 합성 도구가 어떤 회로로 만들까요? 5.2절의 \(D_k = Q_k \oplus (Q_{k-1}\cdots Q_0)\)와 비교하세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>FPGA 보드가 있으면 카운터의 최상위 비트를 LED에 연결하고, 50 MHz 클록을 25비트 카운터로 나눠(5.2절 연습 3) 눈으로 보이는 속도로 깜빡이게 해 보세요. 디지털실험(전전34)의 신호등 FSM으로 이어집니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e4-verilog" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="06-02.html">← 6.2 Moore와 Mealy 기계를 비교하기</a></span>
-        <span><a href="07-02.html">7.2 FPGA의 구성 요소(LUT, 플립플롭, 배선)를 설명하기 →</a></span>
+        <span><a href="06-R.html">← 6.R 단원 마무리</a></span>
+        <span><a href="07-02.html">7.2 프로그래머블 논리: ROM, PLA, FPGA →</a></span>
       </nav>
     </div>
   </div>

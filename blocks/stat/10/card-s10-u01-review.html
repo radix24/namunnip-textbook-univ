@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-01-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s10-u01-review" data-kind="연습" data-std="응통10-01-01 응통10-01-02 응통10-01-03">
+  <header class="card-head"><span class="no"></span><h2>단순 선형회귀 단원 마무리 연습</h2><span class="kind">문제 6 · 증명·계산·개념·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">증명</span>단순회귀 \(y_i = \beta_0 + \beta_1x_i + \varepsilon_i\)에서 잔차제곱합 \(Q(\beta_0, \beta_1) = \sum(y_i - \beta_0 - \beta_1x_i)^2\)을 최소로 하는 추정량이 \(\hat\beta_1 = S_{xy}/S_{xx}\), \(\hat\beta_0 = \bar y - \hat\beta_1\bar x\)임을 보이세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(\partial Q/\partial\beta_0 = 0\)과 \(\partial Q/\partial\beta_1 = 0\)을 세웁니다(정규방정식).</p></details>
+        <details><summary>힌트 2</summary><p>첫 식에서 \(\beta_0 = \bar y - \beta_1\bar x\)를 얻어 둘째 식에 넣으세요.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p class="tb-proof">\(\partial Q/\partial\beta_0 = -2\sum(y_i - \beta_0 - \beta_1x_i) = 0\)에서 \(\hat\beta_0 = \bar y - \hat\beta_1\bar x\)입니다. \(\partial Q/\partial\beta_1 = -2\sum x_i(y_i - \beta_0 - \beta_1x_i) = 0\)에 넣으면 \(\sum x_i\{(y_i - \bar y) - \beta_1(x_i - \bar x)\} = 0\), 곧 \(S_{xy} = \beta_1S_{xx}\)입니다. \(Q\)는 볼록한 이차함수이므로 이 점이 최소입니다.</p><p>첫 정규방정식은 "잔차의 합이 0", 둘째는 "잔차와 \(x\)의 내적이 0"이라는 뜻입니다(응통2-03-02의 직교 사영).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>R 내장 자료 <code>cars</code>로 <code>lm(dist ~ speed)</code>를 적합하니 기울기 3.932, 표준오차 0.4155, 잔차 자유도 48, \(R^2 = 0.651\)이었습니다. 기울기의 t 통계량과 95% 신뢰구간(\(t_{0.025,48} = 2.011\))을 구하고 해석하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(t = \hat\beta_1/\mathrm{SE}(\hat\beta_1)\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>속도 단위는 mph, 제동거리 단위는 ft입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(t = 3.932/0.4155 \approx 9.46\)이고, 95% 신뢰구간은 \(3.932 \pm 2.011\times0.4155 \approx [3.10, 4.77]\)입니다.</p><p>속도가 1 mph 빠른 차는 제동거리가 평균 약 3.9 ft(대략 3.1~4.8 ft) 깁니다. 속도가 제동거리 변동의 65%를 설명합니다. 신뢰구간이 0에서 멀리 떨어져 있어 관계가 뚜렷합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>앞 모형에서 속도 21 mph일 때 평균 제동거리의 95% 신뢰구간은 [58.6, 71.4], 95% 예측구간은 [33.4, 96.6]입니다. 두 구간이 각각 무엇에 대한 구간인지 설명하고, 예측구간이 훨씬 넓은 까닭을 쓰세요. <span class="mono small dim">[01-03]</span></p>
+        <details><summary>힌트 1</summary><p>신뢰구간은 "속도 21인 차들의 평균"에 대한 것입니다.</p></details>
+        <details><summary>힌트 2</summary><p>예측구간에는 개별 차의 오차 \(\varepsilon\)이 더해집니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>신뢰구간은 속도 21 mph인 차 <strong>전체의 평균</strong> 제동거리 \(\beta_0 + 21\beta_1\)에 대한 구간이고, 예측구간은 속도 21 mph인 <strong>새 차 한 대</strong>의 제동거리에 대한 구간입니다.</p><p>예측구간의 분산은 \(\hat\sigma^2\big(1 + \frac1n + \frac{(x_0 - \bar x)^2}{S_{xx}}\big)\)로, 평균 추정의 불확실성에 개별 오차 분산 \(\sigma^2\)(앞의 1)이 더해집니다. \(n\)이 커지면 신뢰구간은 0으로 좁아지지만 예측구간은 \(\pm1.96\sigma\) 아래로 좁아지지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>최소제곱 직선의 성질 세 가지(잔차의 합, 지나는 점, 잔차와 적합값의 관계)를 쓰고, 오차가 평균 0이면 \(\hat\beta_1\)이 불편임을 보이세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>정규방정식에서 바로 나옵니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(\hat\beta_1 = \sum(x_i - \bar x)y_i/S_{xx}\)로 쓰면 \(y_i\)의 일차결합입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) 잔차의 합은 0. (2) 직선은 \((\bar x, \bar y)\)를 지난다. (3) 잔차와 적합값(및 \(x\))의 표본 공분산은 0이다.</p><p class="tb-proof">\(\hat\beta_1 = \frac{1}{S_{xx}}\sum(x_i - \bar x)y_i\)이고 \(E(y_i) = \beta_0 + \beta_1x_i\)이므로 \(E(\hat\beta_1) = \frac{1}{S_{xx}}\sum(x_i - \bar x)(\beta_0 + \beta_1x_i) = \frac{\beta_1S_{xx}}{S_{xx}} = \beta_1\)입니다(\(\sum(x_i - \bar x) = 0\) 사용).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>네 자료 묶음(앤스컴 4중주)의 회귀 결과가 모두 기울기 0.5, \(R^2 = 0.67\)로 같습니다. "결과가 같으니 네 자료는 같은 관계를 가진다"는 결론을 평가하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>앤스컴 자료에는 곡선 관계, 이상값 하나에 끌린 직선, 한 점이 기울기를 만드는 경우가 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>요약 숫자는 분포 모양을 알려 주지 않습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>틀렸습니다. 네 자료의 산점도는 각각 직선 관계, 곡선 관계, 이상값 하나가 끌어당긴 직선, 거의 모든 점이 한 \(x\)에 모여 있고 한 점이 기울기를 정하는 경우로 완전히 다릅니다. 직선이 알맞은 것은 첫째뿐입니다.</p><p>회귀 계수와 \(R^2\)만 보고 판단하지 말고 반드시 산점도와 잔차그림을 함께 봐야 합니다(응통10-04-01).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span><code>cars</code> 회귀의 분산분석표에서 회귀제곱합 21186, 잔차제곱합 11354, 잔차 자유도 48입니다. \(R^2\), \(F\) 통계량, \(\hat\sigma\)를 구하고, \(F\)와 기울기 t 통계량의 관계를 확인하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(R^2 = \mathrm{SSR}/\mathrm{SST}\), \(F = \mathrm{MSR}/\mathrm{MSE}\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>설명변수가 하나이면 \(F = t^2\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(\mathrm{SST} = 32540\), \(R^2 = 21186/32540 \approx 0.651\)입니다. \(\mathrm{MSE} = 11354/48 \approx 236.5\), \(F = 21186/236.5 \approx 89.6\), \(\hat\sigma = \sqrt{236.5} \approx 15.4\) ft입니다.</p><p>\(t^2 = 9.46^2 \approx 89.6\)으로 \(F\)와 같습니다. 설명변수가 하나일 때 "모형 전체가 유의한가"와 "기울기가 0인가"는 같은 질문입니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

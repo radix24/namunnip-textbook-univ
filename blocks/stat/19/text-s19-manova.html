@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-manova" data-kind="본문" data-std="응통19-02-02">
+  <header class="card-head"><span class="no"></span><h2>다변량 분산분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>여러 집단의 평균벡터를 비교하는 MANOVA의 제곱합 행렬을 만든다.</li>
+        <li>윌크스 람다 등 검정통계량을 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>호텔링 T² (<a href="02-01.html">2.1절</a>), 응통13 2.1절 일원배치.</li>
+      </ul>
+    </div>
+
+    <h3>분산분석을 행렬로</h3>
+    <p>세 가지 교수법이 국어·영어·수학 점수에 영향을 주는지 보려면 일원 분산분석을 세 번 하는 대신, 세 점수를 한 벡터로 보고 한 번에 검정합니다.</p>
+
+    <h3><span class="no">2.2.1</span>제곱합 행렬</h3>
+    <p>일원배치의 SSB, SSW를 행렬로 바꿉니다.</p>
+    <p class="q-term"><b>집단 간</b>: \(B = \sum_k n_k(\bar{\mathbf x}_k - \bar{\mathbf x})(\bar{\mathbf x}_k - \bar{\mathbf x})^\top\).</p>
+    <p class="q-term"><b>집단 내</b>: \(W = \sum_k\sum_i(\mathbf x_{ki} - \bar{\mathbf x}_k)(\mathbf x_{ki} - \bar{\mathbf x}_k)^\top\).</p>
+    <p>\(T = B + W\)(전체). 일변량에서는 \(F = \frac{SSB/(g-1)}{SSW/(N-g)}\)였지만 행렬은 나눌 수 없어, \(W^{-1}B\)의 고유값 \(\lambda_1, \lambda_2, \ldots\)로 요약합니다.</p>
+
+    <h3><span class="no">2.2.2</span>검정통계량</h3>
+    <table class="tw">
+      <tr><th>이름</th><th>식</th></tr>
+      <tr><td>윌크스 람다</td><td>\(\Lambda = \dfrac{|W|}{|B + W|} = \prod\frac{1}{1 + \lambda_j}\) (작을수록 차이 큼)</td></tr>
+      <tr><td>필라이 대각합</td><td>\(\sum\frac{\lambda_j}{1 + \lambda_j}\) (가정 위반에 가장 강건)</td></tr>
+      <tr><td>호텔링-롤리 대각합</td><td>\(\sum\lambda_j\)</td></tr>
+      <tr><td>로이 최대근</td><td>\(\lambda_1\)</td></tr>
+    </table>
+    <p>각 통계량은 근사 F로 바꿔 p값을 얻습니다. 윌크스 람다는 우도비 검정에서 나오며, 일변량이면 \(SSW/SST = 1 - R^2\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p><code>iris</code> 세 종의 측정값 4개를 MANOVA로 비교하세요.</p>
+    </div>
+    <pre><code>fit &lt;- manova(cbind(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width) ~ Species, data = iris)
+summary(fit, test = "Wilks"); summary(fit, test = "Pillai")
+summary.aov(fit)       # 변수별 일원 분산분석</code></pre>
+    <p>윌크스 람다가 0.023으로 0에 가까워 세 종의 평균벡터가 크게 다릅니다. 변수별 분산분석으로 어느 측정값이 차이를 만드는지 봅니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(B\), \(W\) 제곱합 행렬, \(W^{-1}B\)의 고유값으로 요약.</li>
+        <li>윌크스, 필라이, 호텔링-롤리, 로이.</li>
+        <li>가정: 다변량 정규, 집단 공분산 동일.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(W^{-1}B\)의 고유값이 4, 0.25이면 윌크스 람다는?
+          <details><summary>답</summary><p>\(\frac{1}{5}\cdot\frac{1}{1.25} = 0.16\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

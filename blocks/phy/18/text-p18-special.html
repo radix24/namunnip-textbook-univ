@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리18-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p18-special" data-kind="본문" data-std="물리18-05-02">
+  <header class="card-head"><span class="no"></span><h2>Legendre 다항식과 Bessel 함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Legendre 다항식의 생성 함수와 직교성을 쓴다.</li>
+        <li>Bessel 함수의 모양과 영점, 직교성을 안다.</li>
+        <li>두 함수가 어떤 물리 문제에서 나오는지 연결한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>Legendre 방정식 (<a href="../../common/8/04-02.html">공통8 4.2절</a>), Bessel 방정식 (<a href="../../common/8/04-04.html">공통8 4.4절</a>), 직교 함수 (<a href="../../common/8/06-03.html">공통8 6.3절</a>), Frobenius 방법 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <p>구 모양 문제에서 각도 \(\theta\) 방향은 Legendre 다항식, 원통 모양 문제에서 반지름 방향은 Bessel 함수가 맡습니다. 직교 좌표의 사인·코사인과 같은 역할입니다. 사인·코사인처럼 서로 직교해서, 임의의 함수를 이것들의 합으로 나누고 계수를 적분 하나로 구할 수 있습니다.</p>
+
+    <h3><span class="no">5.2.1</span>용어</h3>
+    <ul class="tb-list">
+      <li><b>Legendre 다항식</b> \(P_\ell(x)\): \(P_0 = 1\), \(P_1 = x\), \(P_2 = \frac12(3x^2 - 1)\), \(P_\ell(1) = 1\). \(x = \cos\theta\)로 쓴다.</li>
+      <li><b>생성 함수</b>: 모든 \(P_\ell\)을 한 함수의 급수 계수로 담은 것. \(\frac1{\sqrt{1 - 2xt + t^2}} = \sum_\ell P_\ell(x)t^\ell\).</li>
+      <li><b>Bessel 함수</b> \(J_m(x)\): \(x^2y'' + xy' + (x^2 - m^2)y = 0\)의 원점에서 유한한 해. 감쇠하며 진동한다.</li>
+      <li><b>영점</b> \(j_{m,n}\): \(J_m\)이 \(n\)번째로 0이 되는 \(x\). \(j_{0,1} \approx 2.405\), \(j_{0,2} \approx 5.520\).</li>
+      <li><b>가중 직교</b>: 적분에 가중치(Bessel은 \(\rho\))를 곱해야 직교하는 것.</li>
+    </ul>
+
+    <h3><span class="no">5.2.2</span>생성 함수가 나오는 곳</h3>
+    <p>목적: 거리의 역수 \(1/|\mathbf r - \mathbf r'|\)을 각도 성분으로 나누기. 점전하의 퍼텐셜, 중력 퍼텐셜에 바로 쓰입니다.</p>
+    <ol class="tb-steps">
+      <li>코사인 법칙: \(|\mathbf r - \mathbf r'|^2 = r^2 - 2rr'\cos\theta + r'^2\). \(r' &lt; r\)이라 하자.</li>
+      <li>\(r\)을 묶으면 \(\frac1{|\mathbf r - \mathbf r'|} = \frac1r\frac1{\sqrt{1 - 2xt + t^2}}\), \(t = r'/r &lt; 1\), \(x = \cos\theta\). 생성 함수 꼴이 되게 한 것이다.</li>
+      <li>따라서 \(\frac1{|\mathbf r - \mathbf r'|} = \sum_\ell\frac{r'^\ell}{r^{\ell+1}}P_\ell(\cos\theta)\). 멀리서 보면 \(\ell = 0\)(전하), \(\ell = 1\)(쌍극자) 순으로 작아진다(다중극 전개).</li>
+    </ol>
+
+    <h3><span class="no">5.2.3</span>직교성</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.2.1</span>
+      \[\int_{-1}^{1}P_\ell P_{\ell'}\,dx = \frac2{2\ell + 1}\delta_{\ell\ell'},\qquad \int_0^aJ_m\!\left(\frac{j_{m,n}\rho}a\right)J_m\!\left(\frac{j_{m,n'}\rho}a\right)\rho\,d\rho = \frac{a^2}2J_{m+1}^2(j_{m,n})\,\delta_{nn'}.\]
+    </div>
+    <p>그래서 \(f(\cos\theta) = \sum a_\ell P_\ell\)이면 \(a_\ell = \frac{2\ell + 1}2\int_{-1}^{1}fP_\ell\,dx\)입니다. Bessel 쪽에 \(\rho\)가 붙는 것은 원판의 넓이 요소가 \(\rho\,d\rho\,d\phi\)이기 때문입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.2</span>
+      <p>반지름 \(a = 0.15\) m인 북의 가죽(가장자리 고정)이 축대칭으로 진동할 때, 가장 낮은 두 모드의 진동수 비는? 파동 속력이 100 m/s이면 기본 진동수는?</p>
+    </div>
+    <p><i>풀이.</i> 가장자리에서 0이어야 하므로 \(J_0(ka) = 0\), \(k = j_{0,n}/a\). 진동수 \(f = \frac{vk}{2\pi}\)이므로 비는 \(5.520/2.405 \approx 2.30\). 정수배가 아니라서 북 소리는 현악기처럼 맑은 음높이가 없습니다. 기본 진동수 \(\frac{100\times2.405}{2\pi\times0.15} \approx 255\) Hz.</p>
+
+    <div class="tb-note"><b>주의</b>Bessel 함수의 영점은 일정한 간격이 아닙니다. 처음 몇 개는 간격이 3.1보다 조금 크고, 멀어질수록 \(\pi\)에 가까워집니다. 사인 함수처럼 \(n\pi\)로 어림하면 첫 영점(2.405)부터 크게 틀립니다. 값은 표나 계산기로 확인하세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>생성 함수 \((1 - 2xt + t^2)^{-1/2} = \sum P_\ell t^\ell\) → \(1/|\mathbf r - \mathbf r'|\)의 다중극 전개.</li>
+        <li>\(\int P_\ell P_{\ell'} = \frac2{2\ell+1}\delta\), Bessel은 가중치 \(\rho\)로 직교.</li>
+        <li>구는 Legendre, 원통·원판은 Bessel.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>생성 함수를 \(t\)에 대해 2차까지 전개해 \(P_0, P_1, P_2\)를 확인하여라.
+          <details><summary>답</summary><p>\(u = 2xt - t^2\), \((1 - u)^{-1/2} = 1 + \frac u2 + \frac38u^2 + \cdots = 1 + xt + \left(-\frac12 + \frac32x^2\right)t^2 + \cdots\).</p></details>
+        </li>
+        <li>\(\int_{-1}^{1}x^2P_2\,dx\)를 구하여라(\(x^2 = \frac13P_0 + \frac23P_2\) 이용).
+          <details><summary>답</summary><p>\(\frac23\cdot\frac25 = \frac4{15}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

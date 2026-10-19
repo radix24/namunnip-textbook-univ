@@ -1,0 +1,70 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-partialf" data-kind="본문" data-std="응통10-02-03">
+  <header class="card-head"><span class="no"></span><h2>부분 F 검정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>개별 계수의 t 검정과 전체 F 검정을 해석한다.</li>
+        <li>축소 모형과 완전 모형을 비교하는 부분 F 검정을 한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 표현 (<a href="02-01.html">2.1절</a>), F 분포 (응통6 6.1절).</li>
+      </ul>
+    </div>
+
+    <h3>변수 묶음이 필요한가</h3>
+    <p>"지역 변수 다섯 개(가변수)가 집값 설명에 도움이 되는가?"는 계수 하나씩의 t 검정으로 답할 수 없습니다. 다섯 개를 한꺼번에 빼도 되는지 묻는 검정이 필요합니다.</p>
+
+    <h3><span class="no">2.3.1</span>개별 t 검정</h3>
+    <p>\(\hat\beta_j\)의 표준오차는 \(s\sqrt{[(X^\top X)^{-1}]_{jj}}\)이고 \(t = \hat\beta_j/\mathrm{se}\)는 \(t_{n-p}\)를 따릅니다. "다른 변수가 모두 들어 있을 때 \(x_j\)를 추가로 넣는 것이 의미 있는가"를 검정합니다.</p>
+
+    <h3><span class="no">2.3.2</span>부분 F 검정</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 2.3.1</span>
+      <p>완전 모형(모수 \(p\)개)과, 그중 \(q\)개 계수를 0으로 둔 축소 모형을 비교한다. \(H_0\): 그 \(q\)개 계수가 모두 0.</p>
+      \[F = \frac{(\mathrm{SSE}_R - \mathrm{SSE}_F)/q}{\mathrm{SSE}_F/(n-p)} \sim F(q, n-p) \quad (H_0 \text{ 아래}).\]
+    </div>
+    <p>축소 모형은 자유가 적으므로 SSE가 항상 크거나 같습니다. 그 증가분이 오차 수준에 비해 크면 빠진 변수들이 필요하다고 판단합니다. \(q = 1\)이면 \(F = t^2\)입니다. 모든 기울기를 0으로 두는 축소 모형(절편만)과 비교하면 전체 F 검정이 됩니다. 우도비 검정(응통7 6.1절)의 정규 회귀판입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.2</span>
+      <p><code>mtcars</code>에서 <code>mpg ~ wt</code>에 <code>hp</code>와 <code>qsec</code>를 함께 넣는 것이 필요한지 검정하세요.</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <pre><code>m0 &lt;- lm(mpg ~ wt, data = mtcars)
+m1 &lt;- lm(mpg ~ wt + hp + qsec, data = mtcars)
+anova(m0, m1)</code></pre>
+    <p>\(\mathrm{SSE}_R = 278.3\), \(\mathrm{SSE}_F = 186.1\), \(q = 2\), \(n - p = 28\). \(F = (92.3/2)/(186.1/28) \approx 6.94\), p값 약 0.0036. 두 변수를 함께 넣는 것이 의미 있습니다.</p>
+
+    <div class="tb-note">
+      <b>주의</b> 개별 t 검정이 모두 유의하지 않아도 묶음 F 검정은 유의할 수 있습니다. 설명변수끼리 상관이 높으면(다중공선성, 04단원) 각 변수의 몫을 가려내기 어렵지만 묶음 전체의 기여는 분명할 수 있기 때문입니다.
+    </div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>t 검정: 다른 변수가 있을 때 한 변수의 추가 기여.</li>
+        <li>부분 F: \([(\mathrm{SSE}_R - \mathrm{SSE}_F)/q]/[\mathrm{SSE}_F/(n-p)]\).</li>
+        <li>범주형 변수의 가변수 묶음 검정에 씁니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(n = 50\), 완전 모형 \(p = 6\), \(\mathrm{SSE}_F = 220\), 3개 변수를 뺀 축소 모형 \(\mathrm{SSE}_R = 280\). F 값과 자유도는?
+          <details><summary>답</summary><p>\(F = (60/3)/(220/44) = 20/5 = 4\), 자유도 (3, 44). \(F_{0.05} \approx 2.82\)보다 커서 기각.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

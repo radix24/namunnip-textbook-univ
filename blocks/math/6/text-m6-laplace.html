@@ -1,0 +1,96 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학6-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m6-laplace" data-kind="본문" data-std="수학6-05-01">
+  <header class="card-head"><span class="no"></span><h2>라플라스 변환으로 초기값 문제 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>라플라스 변환을 정의하고 기본 함수의 변환표를 만든다.</li>
+        <li>미분이 곱셈으로 바뀌는 성질 \(\mathcal L[y'] = sY - y(0)\)으로 초기값 문제를 대수 문제로 바꾼다.</li>
+        <li>계단함수·충격(델타)과 합성곱 정리를 쓴다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이상적분과 부분적분, 부분분수 분해, 상수계수 2계 방정식 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>정의와 변환표</h3>
+    <div class="tb-env">
+      <span class="lb">정의 5.1.1 <span class="nm">(라플라스 변환)</span></span>
+      <p>\(t \ge 0\)에서 정의된 \(f\)에 대해 \(F(s) = \mathcal L[f](s) = \int_0^\infty e^{-st}f(t)\,dt\) (적분이 수렴하는 \(s\)에서).</p>
+    </div>
+    <p>함수 \(f(t)\)를 다른 변수 \(s\)의 함수 \(F(s)\)로 바꾸는 변환입니다. \(f\)가 \(|f| \le Me^{at}\) 정도로만 자라면 \(s &gt; a\)에서 수렴합니다.</p>
+    <ul>
+      <li>\(\mathcal L[1] = \frac1s\), \(\mathcal L[e^{at}] = \frac{1}{s - a}\) (\(s &gt; a\)): \(\int_0^\infty e^{-(s-a)t}dt = \frac1{s - a}\).</li>
+      <li>\(\mathcal L[t^n] = \frac{n!}{s^{n+1}}\).</li>
+      <li>\(\mathcal L[\cos\omega t] = \frac{s}{s^2 + \omega^2}\), \(\mathcal L[\sin\omega t] = \frac{\omega}{s^2 + \omega^2}\) (\(e^{i\omega t}\)의 변환의 실수부·허수부).</li>
+      <li>이동: \(\mathcal L[e^{at}f] = F(s - a)\).</li>
+    </ul>
+
+    <h3><span class="no">5.1.2</span>미분이 곱셈이 된다</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.1.2</span>
+      <p>\(\mathcal L[f'] = sF(s) - f(0)\), \(\mathcal L[f''] = s^2F(s) - sf(0) - f'(0)\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>부분적분: \(\int_0^\infty e^{-st}f'\,dt = [e^{-st}f]_0^\infty + s\int_0^\infty e^{-st}f\,dt = -f(0) + sF\). 둘째는 첫째를 두 번. <span class="qed">∎</span></p>
+    <p>초기값이 공식에 자동으로 들어가는 것이 장점입니다. 절차는 세 단계입니다: (1) 방정식을 변환 → \(Y(s)\)에 대한 일차방정식 (2) \(Y(s)\)를 풀고 부분분수로 쪼갬 (3) 표를 거꾸로 읽어 \(y(t)\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.3</span>
+      <p>\(y'' + 3y' + 2y = 0\), \(y(0) = 1\), \(y'(0) = 0\).</p>
+    </div>
+    <p><i>풀이.</i> \(s^2Y - s + 3(sY - 1) + 2Y = 0\)에서 \(Y = \frac{s + 3}{s^2 + 3s + 2} = \frac{s + 3}{(s + 1)(s + 2)} = \frac{2}{s + 1} - \frac{1}{s + 2}\). 따라서 \(y = 2e^{-t} - e^{-2t}\). 검산: \(y(0) = 1\), \(y'(0) = -2 + 2 = 0\).</p>
+
+    <h3><span class="no">5.1.3</span>계단, 충격, 합성곱</h3>
+    <div class="tb-env">
+      <span class="lb">정의 5.1.4</span>
+      <p class="q-term"><b>계단함수</b> \(u_c(t)\): \(t &lt; c\)에서 0, \(t \ge c\)에서 1. \(\mathcal L[u_c(t)f(t - c)] = e^{-cs}F(s)\).</p>
+      <p class="q-term"><b>충격(디랙 델타)</b> \(\delta(t - c)\): 아주 짧은 시간에 크기 1의 충격을 주는 이상화. \(\mathcal L[\delta(t - c)] = e^{-cs}\).</p>
+      <p class="q-term"><b>합성곱</b> \((f * g)(t) = \int_0^tf(t - \tau)g(\tau)\,d\tau\). \(\mathcal L[f * g] = FG\).</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.5</span>
+      <p>정지한 용수철 \(y'' + y = \delta(t - \pi)\), \(y(0) = y'(0) = 0\)을 \(t = \pi\)에서 망치로 쳤다. \(y\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \((s^2 + 1)Y = e^{-\pi s}\), \(Y = e^{-\pi s}\frac{1}{s^2 + 1}\). 이동 공식으로 \(y = u_\pi(t)\sin(t - \pi) = -u_\pi(t)\sin t\). \(t &lt; \pi\)에서는 가만히 있다가 \(t = \pi\)에 속도 1을 받아 진동합니다. 일반적으로 \(y'' + y = g\)의 해는 합성곱 \(\int_0^t\sin(t - \tau)g(\tau)\,d\tau\)이고(2.3절 연습 3), \(\sin t\)가 "충격 반응"입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(\mathcal L[f'] = sF\)로 초기값을 빠뜨린다. (2) \(\mathcal L[fg] = FG\)로 쓴다: 곱의 변환이 아니라 합성곱의 변환이 \(FG\)이다. (3) 부분분수 분해 전에 거꾸로 읽으려 한다: \(\frac{s+3}{(s+1)(s+2)}\)은 표에 없다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathcal L[e^{at}] = \frac1{s - a}\), \(\mathcal L[\sin\omega t] = \frac{\omega}{s^2 + \omega^2}\), \(\mathcal L[\cos\omega t] = \frac{s}{s^2 + \omega^2}\).</li>
+        <li>\(\mathcal L[y''] = s^2Y - sy(0) - y'(0)\): 미분방정식 → 대수방정식 → 부분분수 → 역변환.</li>
+        <li>계단·충격은 \(e^{-cs}\), 합성곱은 곱 \(FG\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathcal L[te^{2t}]\)과 \(\mathcal L^{-1}\left[\frac{3}{s^2 + 9}\right]\)을 구하여라.
+          <details><summary>답</summary><p>\(\frac{1}{(s - 2)^2}\), \(\sin3t\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y' + y = u_1(t)\), \(y(0) = 0\)을 풀어라.
+          <details><summary>답</summary><p>\(Y = \frac{e^{-s}}{s(s + 1)} = e^{-s}\left(\frac1s - \frac1{s+1}\right)\). \(y = u_1(t)(1 - e^{-(t - 1)})\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>합성곱 정리로 \(\mathcal L^{-1}\left[\frac{1}{s^2(s^2 + 1)}\right]\)을 구하여라.
+          <details><summary>답</summary><p>\(t * \sin t = \int_0^t(t - \tau)\sin\tau\,d\tau = t - \sin t\). (부분분수 \(\frac1{s^2} - \frac1{s^2+1}\)과 일치)</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

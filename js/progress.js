@@ -75,7 +75,7 @@ window.QProgress = (() => {
   function paint() {
     document.querySelectorAll("input[data-std]").forEach((b) => { b.checked = api.done(b.dataset.std); b.closest("li")?.classList.toggle("done", b.checked); });
     document.querySelectorAll(".q-checklist").forEach((box) => {
-      const all = box.querySelectorAll("input[data-std]"), k = [...all].filter((b) => b.checked).length;
+      const all = box.querySelectorAll("li:not(.uni-off) input[data-std]"), k = [...all].filter((b) => b.checked).length;
       const out = box.querySelector(".q-count"); if (out) out.textContent = `${k}/${all.length} 할 수 있음`;
     });
     document.querySelectorAll(".q-seen-btn").forEach((b) => {
@@ -95,7 +95,7 @@ window.QProgress = (() => {
       if (p) p.textContent = `카드 ${links.filter((a) => a.classList.contains("seen")).length}/${links.length} 공부함`;
     }
     /* 대단원 페이지: 절 목록 */
-    const rows = document.querySelectorAll(".s-row");
+    const rows = document.querySelectorAll(".s-row:not(.uni-off)");   // 학교별 보기로 숨긴 것(.uni-off)은 세지 않는다
     if (rows.length) {
       let sd = 0, st = 0, cd = 0, ct = 0;
       rows.forEach((r) => {
@@ -109,12 +109,12 @@ window.QProgress = (() => {
       if (up) up.textContent = `성취기준 ${sd}/${st} 할 수 있음 · 카드 ${cd}/${ct} 공부함`;
     }
     /* 과목 목차: 대단원 막대와 절 표시 */
-    const units = document.querySelectorAll(".c-unit");
+    const units = document.querySelectorAll(".c-unit:not(.uni-off)");
     if (units.length) {
       let SD = 0, ST = 0, CD = 0, CT = 0;
       units.forEach((u) => {
         let sd = 0, st = 0, cd = 0, ct = 0;
-        u.querySelectorAll(".c-secs li").forEach((li) => {
+        u.querySelectorAll(".c-secs li:not(.uni-off)").forEach((li) => {
           const c = ids(li), k = c.filter(api.seen).length;
           const ok = li.dataset.std ? api.done(li.dataset.std) : c.length > 0 && k === c.length;
           li.classList.toggle("done", ok);
@@ -131,7 +131,7 @@ window.QProgress = (() => {
       /* 책 목차형: 카드별 표시, 절의 카드 진도, '이어서 공부하기'는 아직 끝내지 않은 첫 절로 */
       document.querySelectorAll("[data-card]").forEach((li) => li.classList.toggle("done", api.seen(li.dataset.card)));
       let nextSec = null;
-      document.querySelectorAll(".cx-sec").forEach((li) => {
+      document.querySelectorAll(".cx-sec:not(.uni-off)").forEach((li) => {
         const c = ids(li), k = c.filter(api.seen).length, b = li.querySelector(".cx-badge");
         /* 절 완료(✓)는 성취기준 체크로, 카드 진도와 '이어서'는 본 카드 수로 판단한다 */
         if (b && c.length) { b.textContent = k === c.length ? "카드 완료" : `카드 ${k}/${c.length}`; b.classList.toggle("ok", k === c.length); }

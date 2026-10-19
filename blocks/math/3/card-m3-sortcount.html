@@ -1,0 +1,55 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-02-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m3-sortcount.js"]
+}
+-->
+<article class="card q-card" id="card-m3-sortcount" data-kind="탐구" data-std="수학3-02-02">
+  <header class="card-head"><span class="no"></span><h2>정렬하면서 비교를 세어 보면</h2><span class="kind">탐구 · Θ(n²)와 Θ(n log n)의 차이</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>삽입 정렬과 병합 정렬은 실제로 몇 번 비교할까요? 입력이 이미 정렬되어 있거나 거꾸로 되어 있으면 어떻게 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>삽입 정렬은 최악 \(\frac{n(n-1)}2\), 평균 약 \(\frac{n^2}4\), 최선 \(n - 1\)번. 병합 정렬은 약 \(n\log_2n\)번. 비교 정렬의 하한은 \(\log_2n!\) (<a href="02-02.html">2.2절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>입력</span>
+          <select name="kind" aria-label="입력 종류">
+            <option value="rand">무작위</option>
+            <option value="sorted">이미 정렬됨</option>
+            <option value="rev">역순</option>
+          </select></label>
+        <label><span>n = <b data-show="n">256</b></span><input type="range" name="n" min="8" max="512" step="8" value="256" aria-label="배열 크기 n"></label>
+        <button type="button" class="reseed">새로 섞기</button>
+      </div>
+      <canvas aria-label="가로축 n, 세로축 비교 횟수. 빨간 곡선은 삽입 정렬, 파란 곡선은 병합 정렬, 점선은 이론값 참고선, 점은 고른 n의 값"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>무작위 입력에서 빨간 곡선(삽입)은 포물선 \(\frac{n^2}4\)를 따라 휘어 올라가고, 파란 곡선(병합)은 거의 직선처럼 낮게 갑니다. \(n = 256\)이면 대략 16,000번 대 1,700번입니다(섞을 때마다 조금씩 다름).</li>
+        <li>"새로 섞기"를 여러 번 눌러도 곡선 모양은 거의 같습니다. 평균 행동이 안정적이기 때문입니다.</li>
+        <li>"이미 정렬됨"이면 삽입 정렬이 \(n - 1\)번으로 병합 정렬보다 빠릅니다. 거의 정렬된 데이터에는 삽입 정렬이 좋습니다.</li>
+        <li>"역순"이면 삽입 정렬이 최악 \(\frac{n(n-1)}2\)번(\(n = 256\)에서 32,640번)입니다. 병합 정렬은 정렬됨·역순에서 \(\frac n2\log_2n\)(1,024번), 무작위에서 \(n\log_2n\) 가까이(약 1,720번)로, 입력이 바뀌어도 크게 달라지지 않습니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>역전쌍</b><span>삽입 정렬의 비교 횟수는 "순서가 뒤바뀐 쌍"(역전쌍)의 수에 거의 같습니다. 무작위 순열의 역전쌍은 평균 \(\frac{n(n-1)}4\)개입니다(각 쌍이 뒤바뀔 확률 \(\frac12\)).</span></li>
+        <li><b>하한과 비교</b><span>출력의 \(\log_2n!\)은 어떤 비교 정렬도 피할 수 없는 최악의 비교 횟수입니다. 병합 정렬은 이 하한에 가깝습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"\(\Theta(n\log n)\) 정렬이 \(\Theta(n^2)\) 정렬보다 모든 입력에서 빠르다"는 틀립니다. 이미 정렬된 입력에서는 삽입 정렬이 \(n - 1\)번으로 더 적게 비교합니다. 점근 표기는 보통 최악의 경우를 말합니다.</p>
+    </section>
+  </div>
+</article>

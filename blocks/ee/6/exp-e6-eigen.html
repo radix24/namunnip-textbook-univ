@@ -1,0 +1,47 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-03-02",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e6-signals.js"]
+}
+-->
+<article class="card q-card" id="exp-e6-eigen" data-kind="탐구" data-std="전전6-03-02">
+  <header class="card-head"><span class="no"></span><h2>고조파마다 곱셈 한 번: 사각파가 RC 필터를 지나면</h2><span class="kind">탐구 · b_k = H(jkω₀) a_k</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>사각파를 RC 저역 통과 필터에 넣으면 모서리가 둥근 파형이 나옵니다. 컨볼루션 적분 없이, 고조파마다 곱셈만으로 이 출력을 만들 수 있을까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>입력은 주기 \(2\pi\), 듀티 50%인 높이 1 사각파(\(\omega_0 = 1\)), 시스템은 \(H(j\omega) = \frac{1}{1 + j\omega\tau}\)입니다(\(h = \frac1\tau e^{-t/\tau}u(t)\)). 출력은 홀수 고조파 199번까지의 \(b_k = H(jk)a_k\)를 더해 그렸습니다. 아래 그래프는 고조파별 실수 진폭 \(2|a_k|\)(회색)과 \(2|b_k|\)(주황)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>시정수 τ = <b data-show="tau" data-fix="2">1.00</b> s</span><input type="range" name="tau" min="0.05" max="5" step="0.05" value="1" aria-label="시정수 tau"></label>
+      </div>
+      <canvas aria-label="입력 사각파와 출력"></canvas>
+      <canvas aria-label="입력과 출력의 고조파 진폭"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>τ = 1</b><span>기본파(k = 1)에서 \(|H| = 0.707\), \(\angle H = -45°\), 출력 기본파 진폭 \(0.637 \times 0.707 = 0.450\)입니다(3.2절 연습 3). 3고조파는 \(|H| = 0.316\)으로 출력 진폭 0.067, 5고조파는 0.025로 빠르게 사라집니다.</span></li>
+        <li><b>τ = 0.1</b><span>차단 주파수(10 rad/s)가 기본파보다 훨씬 높아 앞쪽 고조파가 거의 그대로 지나갑니다(k = 1에서 0.995, k = 5에서 0.894). 출력은 모서리만 약간 둥근 사각파입니다.</span></li>
+        <li><b>τ = 5</b><span>기본파도 \(|H| = 0.196\)으로 줄고 위상이 −78.7° 늦습니다. 출력은 평균 0.5 주위의 작은 삼각파처럼 보입니다. 3고조파 진폭 0.014는 기본파 0.125의 약 1/9로, 적분기처럼 \(1/k^2\)로 줄어든 결과입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>이 카드는 전전3 9.3절의 "비정현 입력을 고조파로 나눠 회로 응답 구하기"를 신호및시스템의 언어로 다시 쓴 것입니다. 4단원에서는 주기가 아닌 신호에도 같은 일을 하기 위해 급수를 Fourier 변환으로 넓힙니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"필터를 지나면 사각파의 주기가 바뀐다."</b> 출력에는 입력에 있던 주파수(직류와 홀수 고조파)만 있습니다. 모양은 바뀌어도 주기는 그대로 \(2\pi\)입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

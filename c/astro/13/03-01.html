@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>2차원 푸리에 변환으로 영상의 주파수 성분을 해석하기 · 과학영상처리론및실습 — QURI</title>
-  <meta name="description" content="과학영상처리론및실습 3.1 2차원 푸리에 변환으로 영상의 주파수 성분을 해석하기 — 성취기준: 2차원 푸리에 변환으로 영상의 주파수 성분을 해석할 수 있다.">
+  <title>2차원 푸리에 변환으로 영상의 주파수 성분 해석하기 · 과학영상처리론및실습 — QURI</title>
+  <meta name="description" content="과학영상처리론및실습 3.1 2차원 푸리에 변환으로 영상의 주파수 성분 해석하기 — 성취기준: 2차원 푸리에 변환으로 영상의 주파수 성분을 해석할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;천우13&quot;, &quot;title&quot;: &quot;3.1 2차원 푸리에 변환으로 영상의 주파수 성분을 해석하기&quot;, &quot;sub&quot;: &quot;과학영상처리론및실습&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;천우13&quot;, &quot;title&quot;: &quot;3.1 2차원 푸리에 변환으로 영상의 주파수 성분 해석하기&quot;, &quot;sub&quot;: &quot;과학영상처리론및실습&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,160 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="천우13-03-01">
+  <section class="topic-hero u-hero has-text" data-sec="천우13-03-01" data-u="연세대">
     <div class="meta"><a href="../../../?dept=astro#tree">천문우주학과</a><span class="mono">/</span><a href="./">과학영상처리론및실습</a><span class="mono">/</span><a href="03.html">3. 주파수 영역 처리</a></div>
-    <h1><span class="sec-no mono">3.1</span>2차원 푸리에 변환으로 영상의 주파수 성분을 해석하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="천우13-03-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[천우13-03-01] <span class="ty mono" data-ty="계산">계산</span></span></h2>
-      <ol><li><input type="checkbox" data-std="천우13-03-01" aria-label="할 수 있음"><span class="t">2차원 푸리에 변환으로 영상의 주파수 성분을 해석할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.1</span>2차원 푸리에 변환으로 영상의 주파수 성분 해석하기</h1>
+    <p class="sec-std"><span class="mono">[천우13-03-01]</span> 2차원 푸리에 변환으로 영상의 주파수 성분을 해석할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-1-1"><span class="mono">3.1.1</span><span>2차원 DFT</span></a></li><li><a href="#s3-1-2"><span class="mono">3.1.2</span><span>회선 정리</span></a></li><li><a href="#s3-1-3"><span class="mono">3.1.3</span><span>주파수 영역의 응용</span></a></li><li><a href="#s3-1-4"><span class="mono">3.1.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-a13-fft2d"><span class="mono">본문</span><span>2차원 푸리에 변환으로 영상의 주파수 성분 해석하기</span></a></li><li><a href="#exp-a13-fourier"><span class="mono">3.1.2</span><span>줄무늬 영상의 푸리에 변환은 어떻게 생겼을까</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-a13-fft2d" data-kind="본문" data-std="천우13-03-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>2차원 이산 푸리에 변환과 공간 주파수의 뜻을 안다.</li>
+        <li>회선 정리로 회선과 주파수 영역 곱의 관계를 쓴다.</li>
+        <li>FFT로 큰 핵의 회선을 빨리 하고, 주기적 잡음을 지운다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>1차원 푸리에 변환 (<a href="../10/05-03.html">천우10 5.3절</a>), 회선 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
 
+<h3>영상을 물결로 나누기</h3>
+    <p>1차원 신호를 진동수별 사인 곡선의 합으로 나눴듯이, 영상은 방향과 간격이 다른 물결무늬(평면파)의 합으로 나눌 수 있습니다. 넓고 부드러운 구조는 낮은 주파수, 별 같은 작은 점과 잡음은 높은 주파수에 있습니다.</p>
+
+    <h3 id="s3-1-1"><span class="no">3.1.1</span>2차원 DFT</h3>
+    \[ F(u, v) = \sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x, y)\,e^{-2\pi i(ux/M + vy/N)} \]
+    <ul>
+      <li class="q-term">\((u, v)\): 가로·세로 공간 주파수(주기/픽셀 단위로 \(u/M\), \(v/N\)). 가장 높은 주파수는 0.5주기/픽셀(나이퀴스트).</li>
+      <li class="q-term">\(|F|^2\): 파워 스펙트럼. 가운데(\(u = v = 0\))가 평균 밝기.</li>
+      <li class="q-term">2차원 FFT는 가로 FFT 후 세로 FFT로 계산하며 연산량 \(MN\log(MN)\).</li>
+    </ul>
+
+    <h3 id="s3-1-2"><span class="no">3.1.2</span>회선 정리</h3>
+    \[ f \ast k \;\longleftrightarrow\; F\cdot K \]
+    <p>공간 영역의 회선은 주파수 영역의 곱입니다. 가우스 필터의 푸리에 변환도 가우스이므로, 가우스 필터는 높은 주파수를 줄이는 저역 통과 필터입니다. 큰 핵의 회선은 FFT → 곱 → 역 FFT가 훨씬 빠릅니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>4,096×4,096 영상에 31×31 핵을 직접 회선하는 것과 FFT로 하는 것의 연산량을 어림하세요.</p>
+    </div>
+    <p><i>풀이.</i> 직접: \(4096^2\times31^2 = 1.68\times10^7\times961 = 1.6\times10^{10}\)번. FFT: 정변환 둘과 역변환 하나에 각각 약 \(N^2\log_2N^2 = 1.68\times10^7\times24 = 4\times10^8\), 합 약 \(1.2\times10^9\)번으로 13배쯤 빠릅니다. 핵이 클수록 차이가 커집니다.</p>
+
+    <h3 id="s3-1-3"><span class="no">3.1.3</span>주파수 영역의 응용</h3>
+    <ul>
+      <li class="q-term"><b>주기적 잡음 지우기</b>: 전자 회로의 간섭으로 생긴 줄무늬는 파워 스펙트럼에서 몇 개의 밝은 점으로 나타난다. 그 점만 0으로 만들고 역변환하면 줄무늬가 사라진다(노치 필터).</li>
+      <li class="q-term"><b>상관과 정합</b>: 두 영상의 상호상관을 \(F\cdot G^*\)의 역변환으로 계산해, 봉우리 위치에서 영상 사이의 이동량을 찾는다(<a href="04-02.html">4.2절</a>).</li>
+      <li class="q-term"><b>간섭계</b>: 전파 간섭계는 하늘 영상의 푸리에 성분(가시도)을 직접 재고, 역변환해 영상을 만든다.</li>
+    </ul>
+    <div class="tb-note"><b>주의</b> DFT는 영상이 주기적으로 반복된다고 가정하므로, 가장자리가 맞지 않으면 가로·세로 축을 따라 가짜 줄이 생깁니다. 가장자리를 0으로 채우거나(패딩) 창 함수를 곱해 줄입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>2차원 DFT: 영상을 공간 주파수 \((u, v)\)의 물결로 나눈다. 나이퀴스트 0.5주기/픽셀.</li>
+        <li>회선 정리: \(f\ast k \leftrightarrow F\cdot K\). 가우스 필터는 저역 통과.</li>
+        <li>큰 핵은 FFT 회선이 빠르다(4k 영상, 31×31 핵에서 약 13배).</li>
+        <li>노치 필터로 주기적 잡음 제거, 상호상관으로 이동량 측정. 가장자리 효과에 주의.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-1-4"><span class="no">3.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>영상 평균 밝기는 푸리에 변환의 어디에 있습니까?
+          <details><summary>답</summary><p>\(u = v = 0\)(가운데).</p></details>
+        </li>
+        <li>공간 주파수 0.1주기/픽셀의 물결 간격은?
+          <details><summary>답</summary><p>10픽셀.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>가우스 필터(\(\sigma_k\) px)의 주파수 응답은 \(e^{-2\pi^2\sigma_k^2k^2}\)입니다. \(\sigma_k = 1\)이면 0.25주기/픽셀 성분은 몇 배로 줄어듭니까?
+          <details><summary>답</summary><p>\(e^{-2\times9.87\times0.0625} = e^{-1.23} = 0.29\).</p></details>
+        </li>
+        <li>파워 스펙트럼에서 가로축 위 \(u = \pm0.2\)주기/픽셀에 밝은 점 두 개가 있다면 영상에 어떤 무늬가 있습니까?
+          <details><summary>답</summary><p>가로 방향으로 5픽셀 간격(세로줄)으로 반복되는 줄무늬.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-a13-fft2d" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="천우13-03-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[천우13-03-01] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">연세대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="천우13-03-01" aria-label="할 수 있음"><span class="t">2차원 푸리에 변환으로 영상의 주파수 성분을 해석할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/8/06.html"><span class="mono">대단원 6</span><span>고등미적분학(1) <b>푸리에 급수</b></span></a></li><li><a href="../../../c/common/9/01-02.html"><span class="mono">1.2</span><span>고등미적분학(2) <b>푸리에 변환</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="exp-a13-fourier" data-kind="탐구" data-std="천우13-03-01">
+  <header class="card-head"><span class="no">3.1.2</span><h2><span class="q-badge">탐구</span>줄무늬 영상의 푸리에 변환은 어떻게 생겼을까</h2><span class="kind">탐구 · 2차원 푸리에 변환</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="03-01.html#std">[천우13-03-01]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>영상의 푸리에 변환은 추상적으로 느껴집니다. 가장 간단한 영상, 곧 줄무늬 하나의 파워 스펙트럼은 어떻게 생겼을까요? 줄무늬를 촘촘하게 하거나 돌리면 무엇이 바뀔까요?</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>공간 주파수 = <b data-show="k" data-fix="3">0.125</b> 주기/픽셀</span><input type="range" name="k" min="0.03125" max="0.5" step="0.03125" value="0.125" aria-label="공간 주파수"></label>
+        <label><span>방향 = <b data-show="th">0</b> °</span><input type="range" name="th" min="0" max="180" step="5" value="0" aria-label="방향"></label>
+        <label><span>가로줄 무늬 더하기</span><select name="add" aria-label="가로줄 무늬 더하기"><option value="no">아니오</option><option value="yes">예</option></select></label>
+      </div>
+      <canvas aria-label="줄무늬 영상(왼쪽)과 그 파워 스펙트럼(오른쪽)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>2차원 푸리에 변환은 영상을 여러 방향·간격의 줄무늬(물결)의 합으로 나눕니다. 파워 스펙트럼의 한 점 \((u, v)\)는 그 주파수 줄무늬가 얼마나 들어 있는지입니다([천우13-03-01] 본문).</p>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <p>줄무늬 하나는 그 주파수와 방향에 해당하는 점 한 쌍(원점 대칭)으로 나타납니다. 간격이 좁을수록(주파수가 높을수록) 점이 가운데에서 멀어지고, 점은 줄무늬에 수직인 방향에 놓입니다. 두 줄무늬를 더하면 점 쌍이 두 개가 됩니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>주기적인 잡음(전자 간섭 줄무늬)은 스펙트럼에서 밝은 점 몇 개로 드러나 그 점만 지우면 사라집니다(노치 필터). 회선은 스펙트럼의 곱이 되므로 흐림과 역회선을 주파수로 이해할 수 있습니다([천우13-03-02]).</p>
+    </section>
+    <section class="q-sec">
+      <h3>적용</h3>
+      <ol>
+        <li>주파수 0.125(8픽셀 간격), 방향 0°: 가장 센 성분 (4, 0)/32.</li>
+        <li>주파수 0.25로 올리면 (8, 0)으로 두 배 멀어집니다.</li>
+        <li>방향 90°로 돌리면 (0, 4)로 점도 돕니다.</li>
+        <li>가로줄 무늬를 더하면 점 쌍이 하나 더 생깁니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>32×32 영상을 직접 DFT로 계산했습니다. 주파수가 32분의 정수배가 아니면 영상 가장자리에서 줄무늬가 이어지지 않아 점이 주변으로 번져 보입니다(누설). 실제 영상에서는 창 함수로 이를 줄입니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="exp-a13-fourier" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="02-02.html">← 2.2 회선 필터로 잡음을 줄이고 경계를 찾기</a></span>
-        <span><a href="03-02.html">3.2 점 확산 함수와 역회선의 원리를 설명하기 →</a></span>
+        <span><a href="02-R.html">← 2.R 단원 마무리</a></span>
+        <span><a href="03-02.html">3.2 점 확산 함수와 역회선의 원리 →</a></span>
       </nav>
     </div>
   </div>
@@ -68,7 +194,8 @@
 
 <script src="../../../assets/katex/katex.min.js"></script>
 <script src="../../../js/core.js"></script>
-
+<script src="../../../js/cards/common/simkit.js"></script>
+<script src="../../../js/cards/astro/ax-hard.js"></script>
 <script src="../../../js/math.js"></script>
 <script src="../../../js/progress.js"></script>
 </body>
