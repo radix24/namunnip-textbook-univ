@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통14-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s14-propci" data-kind="본문" data-std="응통14-02-03">
+  <header class="card-head"><span class="no"></span><h2>비율의 신뢰구간: Wald와 Wilson</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>교과서의 Wald 구간이 작은 표본과 극단 비율에서 실패하는 이유를 안다.</li>
+        <li>Wilson 구간을 계산하고 해석한다.</li>
+        <li>정확한 포함 확률 계산으로 두 방법을 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>신뢰구간 고르기 (<a href="02-01.html">2.1절</a>), 이항분포 (응통6 4.1절).</li>
+      </ul>
+    </div>
+
+    <h3>가장 유명한 공식의 문제</h3>
+    <p>\(\hat p \pm 1.96\sqrt{\hat p(1 - \hat p)/n}\)(Wald 구간)은 거의 모든 입문 교재에 나오지만, \(n\)이 작거나 \(p\)가 0이나 1에 가까우면 실제 포함 확률이 95%보다 훨씬 낮습니다. 표준오차를 모르는 \(p\) 대신 \(\hat p\)로 계산하고, 이항분포가 치우쳐 있는데 대칭 구간을 쓰기 때문입니다. 0개 성공이면 구간이 [0, 0]으로 줄어드는 것이 극단적인 예입니다.</p>
+
+    <h3><span class="no">2.3.1</span>Wilson 구간</h3>
+    <p>\(|\hat p - p| \le z\sqrt{p(1 - p)/n}\)을 \(\hat p\)가 아니라 \(p\)에 대한 이차부등식으로 풀면 Wilson(점수) 구간이 나옵니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 2.3.1</span>
+      \[\frac{\hat p + \frac{z^2}{2n}}{1 + \frac{z^2}{n}} \pm \frac{z}{1 + \frac{z^2}{n}}\sqrt{\frac{\hat p(1 - \hat p)}{n} + \frac{z^2}{4n^2}}.\]
+    </div>
+    <p>중심이 \(\hat p\)에서 1/2 쪽으로 조금 당겨지고, 구간이 항상 [0, 1] 안에 있습니다. \(z = 1.96\)이면 성공 2개와 실패 2개를 더한 \(\tilde p = (x + 2)/(n + 4)\)로 Wald 구간을 계산하는 Agresti-Coull 구간이 이와 거의 같아 손 계산에 편합니다. R: <code>prop.test(x, n, correct = FALSE)$conf.int</code>가 Wilson 구간입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.2</span>
+      <p>신제품 시험 사용자 20명 가운데 3명이 불량을 신고했습니다. Wald 구간과 Wilson 구간을 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\hat p = 0.15\). Wald: \(0.15 \pm 1.96\sqrt{0.15 \times 0.85/20} = 0.15 \pm 0.156\), [−0.006, 0.306]로 음수가 나옵니다. Wilson: 중심 \((0.15 + 0.096)/1.192 = 0.206\), 반폭 \(1.96 \times \sqrt{0.006375 + 0.0024}/1.192 = 0.154\), [0.052, 0.360]. 오른쪽으로 더 긴 비대칭 구간입니다.</p>
+
+    <h3><span class="no">2.3.2</span>포함 확률 비교</h3>
+    <p>\(n\)과 \(p\)를 정하면 \(x = 0, \ldots, n\)마다 구간이 \(p\)를 포함하는지 확인하고 이항확률로 더해 정확한 포함 확률을 얻습니다.</p>
+    <table class="tw">
+      <tr><th>\(n = 20\)</th><th>\(p = 0.05\)</th><th>\(p = 0.1\)</th><th>\(p = 0.3\)</th></tr>
+      <tr><td>Wald</td><td>0.64</td><td>0.88</td><td>0.95</td></tr>
+      <tr><td>Wilson</td><td>0.92</td><td>0.96</td><td>0.98</td></tr>
+    </table>
+    <p>Wald는 \(p\)가 작을수록 크게 실패하고, Wilson은 대체로 95% 근처를 지킵니다. 표본이 매우 작거나 0건·전부인 경우 보수적인 정확(Clopper-Pearson) 구간도 씁니다(2.1절).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Wald 구간은 작은 \(n\)과 극단 \(p\)에서 포함 확률이 크게 모자랍니다.</li>
+        <li>Wilson 구간: 점수 검정을 뒤집은 구간, 중심이 1/2 쪽으로, [0, 1] 안.</li>
+        <li>손 계산은 \((x + 2)/(n + 4)\)의 Agresti-Coull 구간.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 2.3.2를 Agresti-Coull 방법으로 구하세요.
+          <details><summary>답</summary><p>\(\tilde p = 5/24 = 0.208\), 반폭 \(1.96\sqrt{0.208 \times 0.792/24} = 0.162\), [0.046, 0.371]. Wilson과 비슷합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(n = 1000\), \(\hat p = 0.5\)이면 Wald와 Wilson 구간은 얼마나 다른가요?
+          <details><summary>답</summary><p>Wald 반폭 \(1.96 \times 0.0158 = 0.031\). Wilson은 중심 0.5 그대로, 반폭이 약 0.031로 사실상 같습니다. 두 방법의 차이는 작은 표본과 극단 비율에서만 중요합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
