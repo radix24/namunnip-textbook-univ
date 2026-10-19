@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통12-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s12-normality" data-kind="본문" data-std="응통12-05-02">
+  <header class="card-head"><span class="no"></span><h2>정규성 점검: Q-Q 그림과 Shapiro-Wilk 검정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정규 Q-Q 그림을 그리고 꼬리와 치우침의 모양을 읽는다.</li>
+        <li>Shapiro-Wilk 검정이 Q-Q 그림의 직선성을 재는 통계량임을 이해한다.</li>
+        <li>정규성 검정 결과를 표본 크기와 목적에 맞게 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>KS 검정 (<a href="05-01.html">5.1절</a>), 순서통계량 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>t 검정을 써도 될까</h3>
+    <p>비모수 방법을 고를지 정할 때 가장 먼저 묻는 것이 "자료가 정규분포에 가까운가"입니다. KS 검정(5.1절)은 분포의 모수를 알아야 하고 꼬리의 어긋남에 둔감해, 정규성 점검에는 Q-Q 그림과 정규성 전용 검정을 씁니다.</p>
+
+    <h3><span class="no">5.2.1</span>정규 Q-Q 그림</h3>
+    <p>정렬한 자료 \(x_{(i)}\)를 표준정규분포의 기대 순서통계량(어림 \(q_i = \Phi^{-1}\left(\frac{i - 3/8}{n + 1/4}\right)\))에 대해 그립니다. 자료가 \(N(\mu, \sigma^2)\)이면 \(x_{(i)} \approx \mu + \sigma q_i\)라 점들이 기울기 \(\sigma\), 절편 \(\mu\)인 직선 위에 놓입니다. 어긋나는 모양에 뜻이 있습니다.</p>
+    <table class="tw">
+      <tr><th>모양</th><th>뜻</th></tr>
+      <tr><td>오른쪽 끝이 위로 휨(아래로 볼록)</td><td>오른쪽 꼬리가 긺(양의 치우침), 로그 변환 고려</td></tr>
+      <tr><td>양 끝이 직선에서 바깥으로 벌어지는 S자</td><td>양쪽 꼬리가 두꺼움(이상값이 잦음)</td></tr>
+      <tr><td>양 끝이 안쪽으로 눕는 S자</td><td>꼬리가 얇음(균일분포 같은)</td></tr>
+      <tr><td>계단</td><td>값이 반올림되어 동점이 많음</td></tr>
+    </table>
+    <p>R: <code>qqnorm(x); qqline(x)</code>. 표본이 작으면 정규분포에서도 점들이 꽤 흔들리므로, 같은 크기의 정규 난수로 그린 그림 몇 장과 비교하면 판단이 쉬워집니다.</p>
+
+    <h3><span class="no">5.2.2</span>Shapiro-Wilk 검정</h3>
+    <p>Q-Q 그림이 직선에 가까운지를 하나의 수로 잰 것이 Shapiro-Wilk 통계량입니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 5.2.1</span>
+      <p>\(W = \dfrac{\left(\sum a_ix_{(i)}\right)^2}{\sum(x_i - \bar x)^2}\). 계수 \(a_i\)는 정규 순서통계량의 기대값과 공분산으로 정해진다. \(0 &lt; W \le 1\)이고 작을수록 정규에서 멀다.</p>
+    </div>
+    <p>분자는 정규성 아래 \(\sigma\)의 최선 선형 추정값의 제곱(에 비례)이고 분모는 보통의 분산 추정입니다. 두 추정이 맞으면 \(W\)가 1에 가깝습니다. 간단한 근사인 Shapiro-Francia 통계량은 \(x_{(i)}\)와 \(q_i\)의 상관계수의 제곱입니다. 여러 비교 연구에서 정규성 검정 가운데 검정력이 가장 좋은 편이라 기본으로 씁니다. R: <code>shapiro.test(x)</code>(\(3 \le n \le 5000\)). 꼬리에 더 민감한 앤더슨-달링 검정(<code>nortest::ad.test</code>)도 있습니다.</p>
+
+    <h3><span class="no">5.2.3</span>해석의 주의</h3>
+    <ul>
+      <li><b>작은 표본</b>: 검정력이 낮아 비정규 자료도 통과합니다. "기각 못 함 = 정규"가 아닙니다.</li>
+      <li><b>큰 표본</b>: 아주 작은 어긋남도 기각됩니다. 그런데 표본이 크면 중심극한정리 덕분에 t 검정이 정규성 위반에 강건하므로, 기각이 곧 "t 검정을 쓰면 안 된다"는 뜻이 아닙니다.</li>
+      <li><b>무엇의 정규성인가</b>: 회귀와 분산분석에서 필요한 것은 반응 자체가 아니라 오차(잔차)의 정규성입니다.</li>
+      <li><b>두 단계 절차의 문제</b>: 정규성 검정 결과로 t 검정과 비모수 검정을 갈라 쓰면 전체 제1종 오류가 정확히 유지되지 않습니다. 가능하면 자료 성격(치우침, 이상값)과 그림으로 미리 정합니다(7.2절).</li>
+    </ul>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Q-Q 그림: 정렬한 자료 대 정규 분위수, 직선이면 정규, 휘는 모양으로 꼬리를 읽음.</li>
+        <li>Shapiro-Wilk \(W\): Q-Q 그림의 직선성, 작을수록 비정규.</li>
+        <li>표본이 작으면 둔하고 크면 예민합니다. 그림과 목적을 함께 봅니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(n = 4\)일 때 Q-Q 그림에 쓸 정규 분위수 \(q_i\)를 근사식으로 구하세요.
+          <details><summary>답</summary><p>\((i - 0.375)/4.25\) = 0.147, 0.382, 0.618, 0.853. \(q_i \approx -1.05, -0.30, 0.30, 1.05\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(n = 5000\)인 키 자료의 Shapiro-Wilk p값이 0.001입니다. 평균 키에 대한 t 신뢰구간을 써도 되나요?
+          <details><summary>답</summary><p>대체로 됩니다. 표본이 이 정도로 크면 실무상 무시할 만한 어긋남(반올림, 약한 치우침)도 기각되지만, 표본평균의 분포는 중심극한정리로 거의 정규라 t 구간이 정확합니다. Q-Q 그림으로 극단적인 꼬리가 없는지만 확인합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

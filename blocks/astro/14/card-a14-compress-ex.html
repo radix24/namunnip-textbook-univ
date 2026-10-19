@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우14-06-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a14-compress-ex" data-kind="예제" data-std="천우14-06-03">
+  <header class="card-head"><span class="no"></span><h2>합성 영상 보관소의 양자화 간격 고르기</h2><span class="kind">예제 · 엔트로피 · 양자화 잡음</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 저장량과 잡음의 맞바꿈</span>
+      <ol>
+        <li>\(k\)마다 비트 수 \(\log_2(k\sqrt{2\pi e}) = \log_2k + 2.05\)를 구한다.</li>
+        <li>더해지는 잡음 \(1/(k\sqrt{12})\)과 전체 잡음 증가 \(\sqrt{1 + 1/(12k^2)} - 1\)을 구한다.</li>
+        <li>저장 예산과 허용 잡음 증가를 함께 만족하는 \(k\)를 고른다.</li>
+      </ol>
+    </div>
+    <div class="q-predict"><b>먼저 예상해 보기.</b> 잡음의 4분의 1 간격으로 반올림하면 잡음이 25% 늘어날까요?</div>
+    <p class="q-prob"><b>문제.</b> 32비트 실수 합성 영상 1 PB를 보관해야 하는데 예산은 200 TB입니다. 잡음 증가는 1% 이하여야 합니다. (가) \(k = 2, 4, 8\)에서 비트 수, 압축 비, 잡음 증가는? (나) 어느 \(k\)를 고릅니까?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(k = 2\): 3.05비트, 비 10.5, 더해지는 잡음 0.144σ, 증가 1.04%.</div><span class="q-why">\(\sqrt{1 + 0.144^2} = 1.0104\).</span></li>
+        <li><div>\(k = 4\): 4.05비트, 비 7.9, 0.072σ, 증가 0.26%.</div><span class="q-why">\(\sqrt{1 + 0.072^2} = 1.0026\).</span></li>
+        <li><div>\(k = 8\): 5.05비트, 비 6.3, 0.036σ, 증가 0.07%.</div><span class="q-why">비트 하나 더할 때마다 잡음 증가가 1/4.</span></li>
+        <li class="q-end"><div>(나) 예산은 비 5 이상. \(k = 2\)는 잡음 조건(1%)을 살짝 넘고, \(k = 4\)와 8은 둘 다 만족한다. 여유를 보아 \(k = 4\)(약 127 TB)를 고른다.</div><span class="q-why">1 PB / 7.9.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>잡음의 4분의 1 간격으로 반올림해도 잡음은 0.26%만 늘어납니다. 제곱합으로 더해지기 때문입니다. 그래서 대규모 탐사 자료는 대부분 이런 양자화 압축(FITS 타일 압축의 실수 양자화)으로 저장되며, 32비트 실수를 그대로 두는 것은 잡음 비트를 비싸게 보관하는 셈입니다.</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(k\)를 두 배로 할 때마다 비트가 1씩 늘고(3.05 → 4.05 → 5.05), 더해지는 잡음은 반으로 줄어(0.144 → 0.072 → 0.036) 규칙과 맞습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>잡음 증가 허용치가 0.1%라면 가장 작은 \(k\)(2의 거듭제곱 가운데)는?</p>
+      <details><summary>답</summary><p>\(k = 8\)(0.07%). \(k = 4\)는 0.26%로 넘습니다.</p></details>
+    </section>
+  </div>
+</article>

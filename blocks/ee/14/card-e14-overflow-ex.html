@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-03-03",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e14-overflow-ex" data-kind="예제" data-std="전전14-03-03">
+  <header class="card-head"><span class="no"></span><h2>센서 값의 부호 처리</h2><span class="kind">부호 확장 · 비트 폭</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>12비트 부호 있는 ADC 값을 16비트 변수에 넣을 때 부호 확장이 필요합니다(3.3절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 비트 11 복사</span>
+      <ol>
+        <li>12비트 원값의 최상위 비트(비트 11)를 본다.</li>
+        <li>1이면 위 4비트를 1로 채운다.</li>
+        <li>결과를 10진수로 읽는다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">12비트 ADC가 0xF38을 냈다. 부호 있는 값은? 0 확장으로 잘못 읽으면?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>비트 11 = 1(음수) → 0xFF38.</div><span class="q-why">부호 확장.</span></li>
+        <li><div>0xFF38 = −200.</div><span class="q-why">2의 보수.</span></li>
+        <li class="q-end"><div>0 확장 0x0F38 = 3896으로 큰 양수로 잘못 읽음.</div><span class="q-why">흔한 버그.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>C에서는 (int16_t)(raw << 4) >> 4 같은 산술 시프트로 부호 확장합니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>0xF38 = 3896 − 4096 = −200.</p>
+    </section>
+  </div>
+</article>

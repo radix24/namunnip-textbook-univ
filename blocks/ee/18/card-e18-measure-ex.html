@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-05-02",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e18-measure-ex" data-kind="예제" data-std="전전18-05-02">
+  <header class="card-head"><span class="no"></span><h2>프로파일 결과 읽기</h2><span class="kind">누적 시간 · 호출 수</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>프로파일러는 함수별 자기 시간과 누적 시간을 줍니다(5.2절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 어디를 먼저 고칠까</span>
+      <ol>
+        <li>누적 시간이 큰 함수를 찾는다.</li>
+        <li>자기 시간과 호출 수를 본다.</li>
+        <li>호출당 시간을 계산한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">preprocess 누적 400 ms(호출 1000번), infer 600 ms(호출 1000번, 자기 시간 50 ms, 내부 matmul 550 ms). 개선 대상은?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>호출당 preprocess 0.4 ms, infer 0.6 ms.</div><span class="q-why">평균.</span></li>
+        <li><div>infer 시간의 92%가 matmul.</div><span class="q-why">자기 시간 작음.</span></li>
+        <li class="q-end"><div>matmul 가속이 1순위, 그다음 preprocess.</div><span class="q-why">Amdahl(4.5절).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>측정 없이 짐작으로 고치면 시간을 거의 쓰지 않는 곳을 고치기 쉽습니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>550/600 = 0.92.</p>
+    </section>
+  </div>
+</article>

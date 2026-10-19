@@ -377,7 +377,7 @@
   }
 
   /* ---------- 졸업 로드맵 ---------- */
-  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 0, season: true, seasonOff: [], pins: {}, removed: [] };
+  const P = { cohort: COHORT0, majors: [{ id: "math", track: "single" }], cap: 18, rsv: 0, season: true, seasonOff: [], pins: {}, removed: [], step: 1 };
   let PLAN = null;
 
   function trackOf(i) {
@@ -712,7 +712,7 @@
     if (Ts.length > 1) {
       const rules = [...new Set(Ts.map((T) => T.m.college))].map((c) => REQ.colleges[c].overlap);
       const lim = Ts.filter((T) => T.m.overlapMax).map((T) => ({ T, max: T.m.overlapMax, got: multi.filter((k) => catOf(T, k)).reduce((s, k) => s + PLAN.ctx.items.get(k).cr, 0) }));
-      ov = `<h2 class="rm-h2">여러 전공에 겹치는 과목</h2>
+      ov = `<h3 class="rm-h3">여러 전공에 겹치는 과목</h3>
         ${multi.length ? `<table class="rm-tbl"><thead><tr><th>과목</th><th>학점</th>${Ts.map((T) => `<th>${esc(T.m.name)}</th>`).join("")}</tr></thead><tbody>
         ${multi.map((k) => `<tr><td>${esc(nm(k))}</td><td>${PLAN.ctx.items.get(k).cr}</td>${Ts.map((T) => { const c = catOf(T, k, placedPicks(T)); return `<td>${c ? CAT[c] : ""}</td>`; }).join("")}</tr>`).join("")}</tbody></table>`
         : '<p class="small dim">지금 계획에는 두 전공 이상에 함께 인정되는 과목이 없습니다.</p>'}
@@ -757,19 +757,71 @@
     /* 학번 요람과 지금 교과과정의 과목 대응표: 이 학번 뒤에 바뀐 것만 */
     const depts = new Set(Ts.map((T) => T.m.id));
     const rn = (REQ.renames || []).filter((r) => depts.has(r.dept) && P.cohort < r.since);
-    const rnTbl = `<h2 class="rm-h2">과목 대응표 <small>${P.cohort}학번 요람 → 지금(2026) 교과과정</small></h2>
+    const rnTbl = `<h3 class="rm-h3">과목 대응표 <small>${P.cohort}학번 요람 → 지금(2026) 교과과정</small></h3>
       ${rn.length ? `<div class="rm-tblwrap"><table class="rm-tbl"><thead><tr><th>학정번호</th><th>${P.cohort}학번 요람</th><th>지금</th><th>바뀐 해</th><th>메모</th></tr></thead><tbody>
       ${rn.map((r) => `<tr><td class="mono">${esc(r.code || "—")}</td><td>${esc(r.old || "(없음)")}</td><td>${esc(r.new || "(폐지)")}</td><td>${r.since} 요람</td><td class="small">${esc(r.t || "")}</td></tr>`).join("")}</tbody></table></div>
       <p class="small dim">로드맵의 과목 카드는 지금 이름으로 보이고, 이름이 바뀐 과목은 괄호 안에 학번 요람의 이름을 함께 적었습니다. 폐지된 과목의 대체 인정은 학과에 확인하세요.</p>`
       : '<p class="small dim">고른 전공에서 이 학번 요람 뒤로 이름이나 학정번호가 바뀐 과목을 찾지 못했습니다.</p>'}`;
 
     /* 출처 */
-    $("#p-src").innerHTML = `${rnTbl}<h2 class="rm-h2">출처</h2><ul class="rm-notes">
+    $("#p-rn").innerHTML = rnTbl;
+    $("#p-src").innerHTML = `<h3 class="rm-h3">출처</h3><ul class="rm-notes">
       ${Object.entries(REQ.sources).map(([k, s]) => `<li><span class="mono">${k}</span> <a href="${esc(s.url)}" rel="noopener">${esc(s.title)}</a></li>`).join("")}
       ${REQ.general.map((g) => `<li>${esc(g.t)} <span class="rm-cite">${esc(g.src)}</span></li>`).join("")}
       <li>개설 학기는 ${OFFER_FROM}년 이후 연세대 수강편람 개설 이력으로 판단했습니다(1·2학기). 확인일 ${esc(REQ.checked)}.</li>
       <li>계절학기에는 학기마다 ${SEASON_CR}학점까지, 최근 3년(${esc(SEASON.terms[0] || "")}~${esc(SEASON.terms[SEASON.terms.length - 1] || "")}) 계절학기에 열린 과목만 넣습니다(curricula/univ-season.json, 확인일 ${esc(SEASON.checked || "")}). ${esc(Object.entries(SEASON.lib).map(([k, v]) => `${k}: ${v.t}`).join(" · "))}</li></ul>`;
+    /* 단계 요약 */
+    const boxes = Ts.map((T, i) => ({ T, sum: majorSum(T, placed) }));
+    const met = boxes.filter((b) => b.sum.got >= b.sum.need).length;
+    $("#p-req-sub").textContent = `${P.cohort}학번 대학요람의 졸업요건과 지금 계획을 나란히 봅니다. 막대가 모자라면 3단계에서 과목을 더하거나 학기 설정을 바꾸세요.`;
+    $("#w-s1").textContent = `${P.cohort}학번 · ${Ts.map((T) => `${T.m.name} ${T.key === "single" ? "단일" : T.key === "deep" ? "심화" : T.key === "first" ? "제1" : T.key === "double" ? "복수" : "부"}`).join(" · ")}`;
+    $("#w-s2").textContent = `졸업 ${planCr}/${total} · 전공 ${met}/${Ts.length} 충족`;
+    $("#w-s3").textContent = `${placed.length}과목 배치${unplaced.length ? ` · ${unplaced.length}과목 못 넣음` : ""}`;
+    $("#w-s4").textContent = "링크·인쇄";
+    $("#p-mini").textContent = `졸업 ${planCr}/${total} · ${boxes.map((b) => `${b.T.m.name} ${b.sum.got}/${b.sum.need}`).join(" · ")}`;
+    renderSteps();
     save();
+  }
+  function majorSum(T, placed) {
+    const pp = placedPicks(T);
+    let got = 0, acc = 0;
+    placed.forEach((k) => {
+      const c = catOf(T, k, pp); if (!c) return;
+      const cr = PLAN.ctx.items.get(k).cr;
+      if (c === "elec" && T.accept.includes(k)) { if (acc + cr > T.acceptMax) return; acc += cr; }
+      got += cr;
+    });
+    return { got, need: T.spec.major };
+  }
+  /* 단계: 지금 단계만 펼치고, 나머지는 위쪽 단계 표시줄의 요약으로 */
+  function renderSteps() {
+    const st = [1, 2, 3, 4].includes(P.step) ? P.step : 1;
+    [1, 2, 3, 4].forEach((n) => {
+      $(`#step-${n}`).hidden = n !== st;
+      const b = document.querySelector(`.rm-wiz [data-step="${n}"]`);
+      if (b) { b.setAttribute("aria-current", n === st ? "step" : "false"); b.classList.toggle("is-done", n < st); }
+    });
+  }
+  function goStep(n) {
+    P.step = n; renderSteps(); save();
+    const top = $(".rm-wiz"); if (top && top.scrollIntoView) top.scrollIntoView({ block: "nearest" });
+    const h = $(`#h-step-${n}`); if (h && h.focus) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+  }
+  /* 계획 링크: 계획을 주소 뒤(#plan=)에 담는다 */
+  const PLAN_KEYS = ["cohort", "majors", "cap", "rsv", "season", "seasonOff", "pins", "removed"];
+  function planLink() {
+    const o = {}; PLAN_KEYS.forEach((k) => { o[k] = P[k]; });
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    return `${location.origin}${location.pathname}?tab=plan#plan=${b64}`;
+  }
+  function readLink() {
+    const m = /#plan=([\w-]+)/.exec(location.hash || "");
+    if (!m) return null;
+    try {
+      const o = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/")))));
+      const out = {}; PLAN_KEYS.forEach((k) => { if (k in o) out[k] = o[k]; });
+      return out;
+    } catch (e) { return null; }
   }
 
   function bar(v, max, extra) {
@@ -876,6 +928,7 @@
     const cardEl = e.target.closest(".rm-card");
     if (cardEl) { openMenu(cardEl); return; }
     const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.step != null || b.dataset.go != null) { goStep(+(b.dataset.step || b.dataset.go)); return; }
     if (b.dataset.stog != null) {   // 계절학기 칸 끄기·켜기. 끄면 그 칸에 고정한 과목은 자동 배치로 돌린다
       const p = +b.dataset.stog, off = new Set(P.seasonOff || []);
       if (off.has(p)) off.delete(p); else { off.add(p); Object.keys(P.pins).forEach((k) => { if (P.pins[k] === p) delete P.pins[k]; }); }
@@ -896,6 +949,12 @@
     if (P.majors.length === 2) P.majors[0].track = "first";
     renderPlan();
   });
+  $("#p-link").addEventListener("click", () => {
+    const url = planLink(), msg = $("#p-link-msg");
+    const done = (ok) => { msg.textContent = ok ? "링크를 복사했습니다." : `복사하지 못했습니다. 이 주소를 직접 복사하세요: ${url}`; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => done(true), () => done(false)); else done(false);
+  });
+  $("#p-print").addEventListener("click", () => window.print());
   $("#p-cohort").addEventListener("change", (e) => { P.cohort = YEARS.includes(+e.target.value) ? +e.target.value : COHORT0; renderPlan(); });
   $("#p-cap").addEventListener("change", (e) => { P.cap = Math.max(9, Math.min(24, +e.target.value || 18)); renderPlan(); });
   $("#p-rsv").addEventListener("change", (e) => { P.rsv = Math.max(0, Math.min(12, +e.target.value || 0)); renderPlan(); });
@@ -977,6 +1036,13 @@
     }
     const q = new URLSearchParams(location.search);
     if (q.get("cohort")) P.cohort = +q.get("cohort");
+    const linked = readLink();
+    if (linked) {   // 링크로 받은 계획은 저장된 계획보다 앞선다
+      Object.assign(P, linked, { step: 3 });
+      P.majors = (P.majors || []).filter((x) => x && MAJOR.has(x.id)).slice(0, 5);
+      if (!P.majors.length) P.majors = [{ id: "math", track: "single" }];
+      TAB = "plan";
+    }
     if (!YEARS.includes(P.cohort)) P.cohort = COHORT0;   // 학번을 저장하기 전의 계획은 2026학번으로
     if (q.get("dept") && DEPT.has(q.get("dept"))) G.dept = q.get("dept");
     if (q.get("school")) G.school = normSchool(q.get("school"));

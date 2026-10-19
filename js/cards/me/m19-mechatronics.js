@@ -25,7 +25,7 @@
 /* 기계19 5단원: 표본화 주기와 디지털 위치 제어 (05-02) */
 (() => {
   "use strict";
-  const S = QSim.card("lab-me-sampling"); if (!S) return;
+  const S = QSim.card("lab-me-dsample"); if (!S) return;
   const [cv] = S.$$("canvas");
   const tau = 0.05, K = 10, Kd = 0.04, TEND = 2;
   function sim(T, Kp) {

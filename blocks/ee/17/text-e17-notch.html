@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전17-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e17-notch" data-kind="본문" data-std="전전17-04-04">
+  <header class="card-head"><span class="no"></span><h2>60 Hz 노치 필터 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>단위원 위 영점과 그 안쪽 극점으로 디지털 노치 필터를 설계한다.</li>
+        <li>극점 반지름 r로 노치 폭 ≈ (1 − r)f_s/π를 정한다.</li>
+        <li>노치가 ECG 성분을 왜곡하는 정도를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>극·영점과 주파수 응답 (<a href="../6/07.html">전전6 7단원</a>), 전원 잡음 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>영점은 60 Hz 위에</h3>
+    <p>\(H(z) = \frac{1 - 2\cos\omega_0z^{-1} + z^{-2}}{1 - 2r\cos\omega_0z^{-1} + r^2z^{-2}}\), \(\omega_0 = 2\pi f_0/f_s\). r이 1에 가까울수록 노치가 좁습니다(−3 dB 폭 ≈ (1 − r)f_s/π).</p><pre><code>import numpy as np
+fs, f0, r = 500.0, 60.0, 0.95
+w0 = 2 * np.pi * f0 / fs
+b = [1, -2 * np.cos(w0), 1]
+a = [1, -2 * r * np.cos(w0), r * r]
+for f in (10, 50, 55, 60, 65, 70, 120):
+    z = np.exp(1j * 2 * np.pi * f / fs)
+    H = np.polyval(b[::-1], 1 / z) / np.polyval(a[::-1], 1 / z)
+    print(f"{f:4d} Hz: {20 * np.log10(abs(H) + 1e-15):7.1f} dB")
+print("계수 b =", np.round(b, 4), " a =", np.round(a, 4))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>  10 Hz:     0.4 dB
+  50 Hz:    -0.2 dB
+  55 Hz:    -1.8 dB
+  60 Hz:  -291.4 dB
+  65 Hz:    -1.8 dB
+  70 Hz:    -0.2 dB
+ 120 Hz:     0.4 dB
+계수 b = [ 1.     -1.4579  1.    ]  a = [ 1.     -1.385   0.9025]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1</span>
+      <p>위 필터(f_s = 500 Hz, r = 0.95)의 노치 폭과, 10 Hz와 120 Hz에서의 영향은?</p>
+    </div>
+    <p><i>풀이.</i> 폭 ≈ 0.05 × 500/π ≈ 8 Hz. 실행 결과 60 Hz에서 크게 감쇠하고 10 Hz·120 Hz에서는 0 dB 근처라 ECG 주성분은 거의 그대로입니다. 고조파(120 Hz)는 따로 노치를 더합니다. 전원이 50 Hz인 나라에서는 f₀를 바꿉니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "노치를 좁게 할수록 좋다": 전원 주파수가 조금만 흔들려도 놓치고, 시간 응답(울림)이 길어집니다. (2) "노치 필터가 모든 잡음을 없앤다": 60 Hz 근처만 줄입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>영점 e^{±jω₀}, 극 re^{±jω₀}.</li>
+        <li>폭 ≈ (1 − r)f_s/π.</li>
+        <li>예: r 0.95, 500 Hz → 약 8 Hz 폭.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>f_s = 1000 Hz, f₀ = 50 Hz의 ω₀는?
+          <details><summary>답</summary><p>0.1π rad.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>r = 0.99, f_s = 500 Hz의 노치 폭은?
+          <details><summary>답</summary><p>약 1.6 Hz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>영점을 단위원 안(0.98)에 두면?
+          <details><summary>답</summary><p>60 Hz가 완전히 0이 되지 않고 얕은 노치가 됩니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

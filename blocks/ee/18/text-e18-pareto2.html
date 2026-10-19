@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-pareto2" data-kind="본문" data-std="전전18-03-04">
+  <header class="card-head"><span class="no"></span><h2>파레토 앞쪽을 찾는 프로그램</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>어떤 목표에서도 다른 설계에 지지 않는(지배되지 않는) 설계를 판정한다.</li>
+        <li>후보 목록에서 파레토 앞쪽을 계산하는 코드를 쓴다.</li>
+        <li>앞쪽 위에서 사양에 맞는 설계를 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파레토 곡선 (<a href="03-01.html">3.1절</a>), 설계 공간 탐색 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.4.1</span>지배되지 않는 점</h3>
+    <p>설계 a가 b보다 모든 목표에서 같거나 좋고 하나 이상에서 더 좋으면 a가 b를 지배합니다. 아무에게도 지배되지 않는 설계들이 파레토 앞쪽이며, 그 밖의 설계는 고를 이유가 없습니다.</p><pre><code>designs = {  # 이름: (지연 ms, 전력 W) - 둘 다 작을수록 좋음
+    "A": (10, 2.0), "B": (25, 1.0), "C": (12, 2.5), "D": (15, 1.2),
+    "E": (30, 0.9), "F": (20, 1.5), "G": (8, 3.0),
+}
+def dominates(p, q):
+    return all(a &lt;= b for a, b in zip(p, q)) and p != q
+front = [k for k, p in designs.items()
+         if not any(dominates(q, p) for j, q in designs.items() if j != k)]
+print("파레토 앞쪽:", sorted(front, key=lambda k: designs[k][0]))
+print("전력 1.3 W 이하에서 지연 최소:", min((k for k in front if designs[k][1] &lt;= 1.3), key=lambda k: designs[k][0]))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>파레토 앞쪽: ['G', 'A', 'D', 'B', 'E']
+전력 1.3 W 이하에서 지연 최소: D</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>위 결과에서 C와 F가 앞쪽에 없는 이유는?</p>
+    </div>
+    <p><i>풀이.</i> C(12 ms, 2.5 W)는 A(10 ms, 2.0 W)에 두 목표 모두 집니다. F(20 ms, 1.5 W)는 D(15 ms, 1.2 W)에 집니다. 남은 G, A, D, B, E가 지연-전력 절충의 앞쪽이고, 전력 사양 1.3 W에서는 D가 최선입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "앞쪽 위 설계 중 하나가 늘 최선": 사양(제약)과 우선순위를 더해야 하나를 고릅니다. (2) "앞쪽은 연속 곡선": 실제 후보는 이산적인 점들입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>지배: 모든 목표 ≤, 하나 &lt;.</li>
+        <li>지배되지 않는 설계 = 파레토 앞쪽.</li>
+        <li>예: G, A, D, B, E. 1.3 W 제약 → D.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>(5 ms, 2 W)와 (6 ms, 2 W) 중 지배하는 것은?
+          <details><summary>답</summary><p>(5 ms, 2 W).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>앞쪽 판정의 단순 알고리즘 계산량은(설계 n개)?
+          <details><summary>답</summary><p>O(n²).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>목표가 셋(지연, 전력, 면적)이면 앞쪽은?
+          <details><summary>답</summary><p>3차원 곡면 위 점들이라 더 많은 설계가 지배되지 않습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

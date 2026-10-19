@@ -1,0 +1,46 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-02-03",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e14-callconv-ex" data-kind="예제" data-std="전전14-02-03">
+  <header class="card-head"><span class="no"></span><h2>임베디드 스택 크기 정하기</h2><span class="kind">프레임 × 깊이</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>출발점</h3>
+      <p>스택 사용량은 가장 깊은 호출 경로의 프레임 합입니다(2.3절).</p>
+    </section>
+
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 호출 그래프</span>
+      <ol>
+        <li>함수마다 프레임 크기를 구한다(컴파일러 보고서).</li>
+        <li>가장 깊은 경로를 찾는다.</li>
+        <li>인터럽트 프레임을 더한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob">main(32 B) → task(64 B) → parse(48 B) → 재귀 eval(32 B, 최대 깊이 20). 인터럽트가 128 B를 더 쓴다. 필요한 스택은?</p>
+
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>32 + 64 + 48 = 144 B.</div><span class="q-why">앞부분.</span></li>
+        <li><div>eval 20 × 32 = 640 B.</div><span class="q-why">재귀.</span></li>
+        <li class="q-end"><div>합 144 + 640 + 128 = 912 B → 여유를 둬 1.5 KB.</div><span class="q-why">결론.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>스택이 넘치면 다른 변수를 덮어써 찾기 어려운 버그가 되므로, 재귀 깊이를 제한하거나 반복문으로 바꿉니다.</p>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>912 B × 1.5배 ≈ 1.4 KB.</p>
+    </section>
+  </div>
+</article>

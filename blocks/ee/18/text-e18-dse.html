@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-dse" data-kind="본문" data-std="전전18-03-02">
+  <header class="card-head"><span class="no"></span><h2>설계 공간 탐색</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>설계 변수와 그 범위로 설계 공간을 정의한다.</li>
+        <li>전수 탐색, 무작위 탐색, 탐욕 탐색의 비용과 품질을 비교한다.</li>
+        <li>제약 조건을 만족하는 설계 중 목표가 가장 좋은 것을 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파레토 최적 (<a href="03-01.html">3.1절</a>), 모델 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>얼마나 많이 시험하나</h3>
+    <p>변수 k개가 각각 m개 값을 가지면 설계가 mᵏ개라, 모델이 빨라야 전수 탐색이 가능합니다. 클 때는 무작위 표본, 한 변수씩 바꾸는 탐욕 탐색, 베이지안 최적화를 씁니다.</p><pre><code>import itertools
+best = None
+for pe, buf, f in itertools.product([16, 32, 64, 128], [64, 128, 256], [0.5, 0.8, 1.0]):
+    thr = min(pe * f, buf / 2) * 1.0                 # 처리량(GOPS): 연산 또는 대역 한계
+    power = 0.01 * pe * f + 0.002 * buf + 0.1        # 전력(W)
+    area = 0.05 * pe + 0.01 * buf                    # 면적(mm²)
+    if power &lt;= 1.0 and area &lt;= 6.0:                 # 제약
+        if best is None or thr &gt; best[0]:
+            best = (thr, pe, buf, f, round(power, 3), area)
+print("설계 수:", 4 * 3 * 3)
+print("제약 안 최고 처리량(GOPS, PE, 버퍼 KB, GHz, W, mm²):", best)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>설계 수: 36
+제약 안 최고 처리량(GOPS, PE, 버퍼 KB, GHz, W, mm²): (64.0, 64, 128, 1.0, 0.996, 4.48)</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>위 장난감 모델에서 전수 탐색으로 찾은 설계는? 변수가 6개(값 10개씩)면 전수 탐색이 가능한가?</p>
+    </div>
+    <p><i>풀이.</i> 36개 설계 중 제약을 만족하며 처리량이 가장 큰 것이 실행 결과의 설계입니다. 10⁶개는 모델이 1 ms면 약 17분이라 가능하지만, 시뮬레이션이 1분이면 2년이라 불가능해 표본 탐색을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "모든 조합을 시험해야 최선": 모델이 비싸면 영리한 탐색으로 충분히 좋은 해를 찾습니다. (2) "제약은 나중에 확인": 탐색 중에 걸러야 시간을 아낍니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>설계 수 mᵏ.</li>
+        <li>전수·무작위·탐욕·베이지안 탐색.</li>
+        <li>제약 만족 + 목표 최적.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>변수 3개, 값 5개씩의 설계 수는?
+          <details><summary>답</summary><p>125.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>모델 평가 1초, 하루에 시험할 수 있는 설계 수는?
+          <details><summary>답</summary><p>86 400.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>탐욕 탐색이 놓칠 수 있는 것은?
+          <details><summary>답</summary><p>변수 사이 상호작용 때문에 생기는 더 좋은 조합(국소 최적).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
