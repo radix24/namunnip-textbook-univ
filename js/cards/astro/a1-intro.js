@@ -134,4 +134,92 @@
     S.$(".new").addEventListener("click", () => { seed = (seed * 31 + 5) % 99991; draw(); });
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 7. 연주시차 타원과 측정 오차 (03-01) */
+  (() => {
+    const S = QSim.card("exp-a1-parallax"); if (!S) return;
+    const cv = S.$("canvas");
+    const fmt = (x) => (x >= 100 ? x.toFixed(0) : x >= 1 ? x.toFixed(2) : x.toPrecision(2));
+    function draw() {
+      const c = C(), d = 10 ** S.val("ld"), b = S.val("beta") * deg, day = S.val("day"), sp = +S.val("sp");
+      const p = 1000 / d;                       // 시차 (mas)
+      const L = 2 * Math.PI * day / 365.25;     // 태양에서 본 지구의 방향 (별의 황경 방향에서 잰 각)
+      const at = (u) => [-p * Math.sin(u), -p * Math.sin(b) * Math.cos(u)];   // 하늘에서 본 겉보기 위치 (황경, 황위 방향)
+      const v = QSim.view(cv, 0.5), g = v.g, W = v.W, H = v.H, half = W / 2;
+      // 왼쪽: 위에서 본 지구 궤도 (거리 비율은 실제와 다름)
+      const ox = half * 0.5, oy = H * 0.62, R = Math.min(half * 0.32, H * 0.3);
+      g.strokeStyle = c.rule; g.lineWidth = 1; g.beginPath(); g.arc(ox, oy, R, 0, 7); g.stroke();
+      g.fillStyle = c.acc; g.beginPath(); g.arc(ox, oy, 7, 0, 7); g.fill();
+      const ex = ox + R * Math.sin(L), ey = oy + R * Math.cos(L), sx = ox, sy = H * 0.1;
+      g.strokeStyle = c.main; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(ex, ey); g.lineTo(sx, sy); g.stroke(); g.setLineDash([]);
+      g.fillStyle = c.main; g.beginPath(); g.arc(ex, ey, 5, 0, 7); g.fill();
+      g.fillStyle = c.warn; g.beginPath(); g.arc(sx, sy, 4, 0, 7); g.fill();
+      g.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--f-mono"); g.fillStyle = c.ink2;
+      g.fillText("별", sx + 7, sy + 4); g.fillText("태양", ox + 9, oy + 4); g.fillText("지구", ex + 7, ey + 12);
+      g.fillStyle = c.ink3; g.fillText("위에서 본 공전 궤도", 6, H - 20); g.fillText("(거리 비율은 실제와 다름)", 6, H - 6);
+      // 오른쪽: 하늘에서 본 별의 1년 경로 (mas)
+      const s = Math.max(p, sp) * 1.15, k = Math.min((half - 16) / (2 * s), (H - 40) / (2 * s));
+      const X = (x) => half * 1.5 + x * k, Y = (y) => H / 2 - y * k;
+      g.strokeStyle = c.rule; g.beginPath(); g.moveTo(half, 0); g.lineTo(half, H); g.moveTo(X(-s), Y(0)); g.lineTo(X(s), Y(0)); g.moveTo(X(0), Y(-s)); g.lineTo(X(0), Y(s)); g.stroke();
+      g.strokeStyle = c.main; g.lineWidth = 2; g.beginPath();
+      for (let i = 0; i <= 120; i++) { const [x, y] = at(2 * Math.PI * i / 120); i ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); }
+      g.stroke(); g.lineWidth = 1;
+      const [cx, cy] = at(L), rr = (X(sp) - X(0));
+      g.fillStyle = c.ink3; g.globalAlpha = 0.25; g.beginPath(); g.arc(X(cx), Y(cy), Math.max(rr, 1), 0, 7); g.fill(); g.globalAlpha = 1;
+      g.fillStyle = c.warn; g.beginPath(); g.arc(X(cx), Y(cy), 4, 0, 7); g.fill();
+      g.fillStyle = c.ink3; g.fillText("황경 →", X(s) - 46, Y(0) - 5); g.fillText("황위", X(0) + 4, 12);
+      const bar = 10 ** Math.floor(Math.log10(s)); g.strokeStyle = c.ink; g.lineWidth = 2; g.beginPath(); g.moveTo(X(s) - 8 - (X(bar) - X(0)), H - 10); g.lineTo(X(s) - 8, H - 10); g.stroke(); g.lineWidth = 1;
+      g.fillStyle = c.ink2; g.textAlign = "right"; g.fillText(fmt(bar) + " mas", X(s) - 8, H - 16); g.textAlign = "left";
+      const rel = sp / p, ok = rel <= 0.1 + 1e-9, pc = rel * 100, pcs = pc < 1 ? pc.toPrecision(2) : pc < 10 ? pc.toFixed(1) : pc.toFixed(0);
+      S.out(`거리 ${fmt(d)} pc (${fmt(d * 3.26)}광년) → 시차 p = 1/d = ${fmt(p)} mas = ${(p / 1000).toPrecision(3)}″\n하늘에서 그리는 타원: 긴반지름 ${fmt(p)} mas(황경 방향), 짧은반지름 p sin β = ${fmt(p * Math.sin(b))} mas\n측정 오차 ${sp} mas → 거리 상대 오차 δd/d = δp/p = ${pcs}% (${ok ? "10% 안: 믿을 만한 거리" : rel < 1 ? "10%보다 큼: 거리 불확실" : "오차가 시차보다 큼: 거리를 잴 수 없음"})\n파랑: 1년 동안의 겉보기 경로, 빨간 점: 지금 위치, 회색 원: 측정 오차 범위`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 8. 회절 한계와 시상: 두 별을 가를 수 있는가 (02-02) */
+  (() => {
+    const S = QSim.card("exp-a1-resolve"); if (!S) return;
+    const cv = S.$("canvas");
+    // 에어리 무늬 [2 J1(x)/x]² 표 (x = 0~40)
+    const J1 = (x) => { let s = 0; const n = 64; for (let i = 0; i < n; i++) { const t = Math.PI * (i + 0.5) / n; s += Math.cos(t - x * Math.sin(t)); } return s / n; };
+    const tab = []; for (let i = 0; i <= 4000; i++) { const x = i / 100; tab.push(x === 0 ? 1 : (2 * J1(x) / x) ** 2); }
+    const airy = (x) => { x = Math.abs(x); if (x >= 40) return 0; const i = Math.floor(x * 100), r = x * 100 - i; return tab[i] * (1 - r) + tab[i + 1] * r; };
+    const RAD = 206264.8;
+    function draw() {
+      const c = C(), D = 10 ** S.val("lD"), lam = S.val("lam") * 1e-9, sep = 10 ** S.val("lsep"), see = S.val("see");
+      const thR = 1.22 * lam / D * RAD, fwD = 1.03 * lam / D * RAD;       // 레일리 각, 에어리 반치폭 (″)
+      const fw = see > 0 ? Math.hypot(see, fwD) : 0;                      // 장노출 상의 반치폭 (가우스 어림)
+      const psf = fw > 0 ? (t) => Math.exp(-4 * Math.LN2 * (t / fw) ** 2) : (t) => airy(Math.PI * D * (t / RAD) / lam);
+      const I = (t) => psf(t + sep / 2) + psf(t - sep / 2);
+      const span = Math.max(sep * 1.6, (fw || thR) * 2.6);
+      const v = QSim.view(cv, 0.62), g = v.g, W = v.W, H = v.H, hImg = Math.round(H * 0.42);
+      // 위: 검출기에 맺힌 상 (회색조)
+      const pw = Math.max(2, Math.round(W / 160)), nx = Math.ceil(W / pw), ny = Math.ceil(hImg / pw);
+      let mx = 0; const vals = [];
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        const tx = ((i + 0.5) / nx - 0.5) * 2 * span, ty = ((j + 0.5) / ny - 0.5) * 2 * span * hImg / W;
+        const r1 = Math.hypot(tx + sep / 2, ty), r2 = Math.hypot(tx - sep / 2, ty), val = psf(r1) + psf(r2); vals.push(val); if (val > mx) mx = val;
+      }
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        const q = Math.round(255 * Math.sqrt(vals[j * nx + i] / mx)); g.fillStyle = `rgb(${q},${q},${q})`; g.fillRect(i * pw, j * pw, pw, pw);
+      }
+      // 아래: 두 별을 잇는 선 위의 밝기
+      const f = QSim.frame(v, { x0: -span, x1: span, y0: 0, y1: 1.15 });
+      const Y = (y) => H - 22 - y * (H - hImg - 34), X = f.X;
+      const peak = Math.max(I(sep / 2), I(0), 1e-9);
+      g.strokeStyle = c.rule; g.beginPath(); g.moveTo(X(-span), Y(0)); g.lineTo(X(span), Y(0)); g.stroke();
+      [[(t) => psf(t + sep / 2) / peak, c.ink3, [4, 3]], [(t) => psf(t - sep / 2) / peak, c.ink3, [4, 3]], [(t) => I(t) / peak, c.main, null]].forEach(([fn, col, dash]) => {
+        g.save(); g.strokeStyle = col; g.lineWidth = dash ? 1.2 : 2.2; if (dash) g.setLineDash(dash); g.beginPath();
+        for (let i = 0; i <= 400; i++) { const t = -span + 2 * span * i / 400; i ? g.lineTo(X(t), Y(fn(t))) : g.moveTo(X(t), Y(fn(t))); } g.stroke(); g.restore();
+      });
+      g.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--f-mono"); g.fillStyle = c.ink3;
+      const tick = 10 ** Math.floor(Math.log10(span)); g.fillText(`눈금 한 칸 = ${tick >= 1 ? tick : tick.toPrecision(1)}″`, 6, H - 6);
+      g.strokeStyle = c.ink3; g.beginPath(); for (let t = Math.ceil(-span / tick) * tick; t <= span; t += tick) { g.moveTo(X(t), Y(0)); g.lineTo(X(t), Y(0) + 4); } g.stroke();
+      const dip = I(0) / Math.max(I(sep / 2), I(0));
+      const res = dip < 0.01 ? "둘로 뚜렷이 떨어져 보임(두 상 사이가 거의 깜깜함)" : dip < 0.95 ? `둘로 보임(가운데가 봉우리보다 ${((1 - dip) * 100).toFixed(0)}% 어두움)` : "하나로 보임(가운데 골이 없음)";
+      const lim = see > 0 && see > thR ? `시상 ${see}″이 회절 한계보다 커서 시상이 분해능을 정합니다` : see > 0 ? "회절 한계가 시상보다 커서 회절이 분해능을 정합니다" : "대기가 없는 경우(우주망원경)";
+      S.out(`구경 ${D >= 1 ? D.toPrecision(3) + " m" : (D * 100).toPrecision(3) + " cm"}, 파장 ${S.val("lam")} nm → 레일리 한계 1.22λ/D = ${thR < 0.1 ? thR.toPrecision(2) : thR.toFixed(2)}″\n두 별 간격 ${sep < 0.1 ? sep.toPrecision(2) : sep.toFixed(2)}″ = 레일리 한계의 ${(sep / thR).toFixed(2)}배${fw > 0 ? `, 상의 반치폭 약 ${fw.toFixed(2)}″` : ""}\n${res}. ${lim}\n위: 검출기에 맺힌 상(밝기의 제곱근으로 표시), 아래: 두 별을 잇는 선 위의 밝기(회색 점선은 별 하나씩)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
