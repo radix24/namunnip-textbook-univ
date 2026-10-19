@@ -8,29 +8,6 @@
   const c0 = 2.998e8, mu0 = 4e-7 * Math.PI, e0 = 8.854e-12;
   const eng = (x, u) => { const a = Math.abs(x); return a >= 1 ? f2(x, 3) + " " + u : a >= 1e-3 ? f2(x * 1e3, 3) + " m" + u : f2(x * 1e6, 3) + " μ" + u; };
 
-  /* 1. 손실 매질의 감쇠와 표피 깊이 */
-  (() => {
-    const S = QSim.card("exp-e10-skin"); if (!S) return;
-    const cv = S.$("canvas");
-    const MAT = { cu: ["구리", 5.8e7, 1], al: ["알루미늄", 3.5e7, 1], sea: ["바닷물", 4, 81], soil: ["젖은 흙", 1e-2, 10] };
-    function draw() {
-      const c = C(), [name, sig, er] = MAT[S.val("mat")], f = 10 ** S.val("lf"), w = 2 * Math.PI * f, eps = er * e0;
-      const lt = sig / (w * eps);   // 손실 탄젠트
-      const k = w * Math.sqrt(mu0 * eps / 2);
-      const alpha = k * Math.sqrt(Math.sqrt(1 + lt * lt) - 1), beta = k * Math.sqrt(Math.sqrt(1 + lt * lt) + 1);
-      const delta = 1 / alpha, dgood = 1 / Math.sqrt(Math.PI * f * mu0 * sig);
-      const zmax = 5 * delta;
-      const v = QSim.view(cv, 0.42), fr = QSim.frame(v, { x0: 0, x1: 5, y0: -1.1, y1: 1.1, xl: "깊이 z / δ", yl: "E/E₀" }); fr.axes();
-      fr.fn((u) => Math.exp(-u), c.warn, 1.6, [5, 3]); fr.fn((u) => -Math.exp(-u), c.warn, 1.6, [5, 3]);
-      fr.fn((u) => Math.exp(-u) * Math.cos(beta * u * delta), c.main, 2.4, undefined, 500);
-      S.out(`${name}: σ = ${sig.toExponential(1)} S/m, ε_r = ${er}, f = ${f >= 1e9 ? f2(f / 1e9, 2) + " GHz" : f >= 1e6 ? f2(f / 1e6, 2) + " MHz" : f >= 1e3 ? f2(f / 1e3, 2) + " kHz" : f2(f, 1) + " Hz"}\n` +
-        `손실 탄젠트 σ/(ωε) = ${lt.toExponential(2)} → ${lt > 100 ? "좋은 도체" : lt < 0.01 ? "좋은 유전체(손실 작음)" : "중간"}\n` +
-        `감쇠 상수 α = ${alpha.toExponential(3)} Np/m, 표피 깊이 δ = 1/α = ${eng(delta, "m")}` + (lt > 100 ? ` (좋은 도체 근사 1/√(πfμσ) = ${eng(dgood, "m")})` : "") +
-        `, 매질 속 파장 2π/β = ${eng(2 * Math.PI / beta, "m")}. 한 δ마다 진폭 1/e(−8.69 dB). 파랑: 어느 순간의 전계, 빨강 점선: 포락선 e^(−z/δ)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 2. 편광: 전계 끝의 궤적 */
   (() => {
     const S = QSim.card("exp-e10-pol"); if (!S) return;
