@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-blackscholes" data-kind="본문" data-std="수학21-07-03">
+  <header class="card-head"><span class="no"></span><h2>반사 원리와 블랙-숄즈 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>반사 원리 \(P\left(\max_{s\le t}B(s) \ge a\right) = 2P(B(t) \ge a)\)를 랜덤워크의 대칭으로 설명한다.</li>
+        <li>이항 모형에서 \(u = e^{\sigma\sqrt{\Delta t}}\)로 기간을 잘게 나누면 주가가 기하 브라운 운동이 됨을 안다.</li>
+        <li>블랙-숄즈 콜옵션 가격 공식을 쓰고 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이항 모형 (<a href="07-01.html">7.1절</a>), 브라운 운동 (<a href="07-02.html">7.2절</a>), 표준정규분포표.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.3.1</span>반사 원리</h3>
+    <p>공정한 랜덤워크가 시각 \(n\)까지 한 번이라도 \(a\) (\(a > 0\))에 닿았다고 합시다. 처음 닿은 순간 이후의 경로를 \(a\)를 기준으로 뒤집어도(위아래 대칭) 확률은 같습니다. 그래서 "\(a\)에 닿고 끝에 \(a\)보다 아래"인 경로와 "끝에 \(a\)보다 위"인 경로가 일대일로 대응합니다.</p>
+    <div class="tb-env thm"><b>정리 7.3.1 (반사 원리)</b> \(a > 0\)이면 \(P\left(\max_{s\le t}B(s) \ge a\right) = 2P(B(t) \ge a) = 2\left(1 - \Phi\left(\frac a{\sqrt t}\right)\right)\).</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(\tau\)를 처음 \(a\)에 닿는 시각이라 하자. \(P(\max \ge a) = P(\tau \le t) = P(\tau \le t, B(t) \ge a) + P(\tau \le t, B(t) &lt; a)\). \(\tau\) 이후의 증분은 대칭이라(강한 마르코프 성질) 두 항이 같고, 첫 항은 \(P(B(t) \ge a)\)이다(\(B(t) \ge a\)이면 연속성으로 \(\tau \le t\)). <span class="qed">∎</span></p>
+    </div>
+    <p>예를 들어 \(P\left(\max_{s\le1}B(s) \ge 1\right) = 2(1 - 0.8413) \approx 0.317\)입니다. 끝 값만 보면 1 이상일 확률은 0.159이지만, 중간에 한 번이라도 닿을 확률은 그 두 배입니다. 장벽 옵션(주가가 어떤 값에 닿으면 무효가 되는 옵션)의 가격 계산에 쓰입니다.</p>
+
+    <h3><span class="no">7.3.2</span>이항 모형의 극한</h3>
+    <p>만기 \(T\)를 \(n\)기간으로 나누고 \(\Delta t = \frac Tn\), \(u = e^{\sigma\sqrt{\Delta t}}\), \(d = e^{-\sigma\sqrt{\Delta t}}\), 기간 이자 \(e^{r\Delta t}\)로 둡니다. 로그 주가는 \(\pm\sigma\sqrt{\Delta t}\)씩 걷는 랜덤워크이고, 위험중립 확률 \(q\)는 \(\frac12 + O(\sqrt{\Delta t})\)입니다. 7.2절과 같은 크기 조절로 \(n \to \infty\)이면</p>
+    \[S_T = S_0\exp\left(\left(r - \frac{\sigma^2}2\right)T + \sigma B(T)\right)\]
+    <p>(위험중립 아래)가 됩니다. 이를 <b>기하 브라운 운동</b>이라 하고, \(\sigma\)를 변동성이라 합니다. \(-\frac{\sigma^2}2\)은 \(E[e^{\sigma B(T)}] = e^{\sigma^2T/2}\)를 상쇄해 \(E_q[S_T] = S_0e^{rT}\)가 되도록 하는 항입니다.</p>
+
+    <h3><span class="no">7.3.3</span>블랙-숄즈 공식</h3>
+    <div class="tb-env thm"><b>정리 7.3.2 (블랙-숄즈)</b> 행사가 \(K\), 만기 \(T\)인 유럽형 콜옵션의 가격은
+      \[C = S_0\Phi(d_1) - Ke^{-rT}\Phi(d_2), \qquad d_1 = \frac{\ln(S_0/K) + (r + \sigma^2/2)T}{\sigma\sqrt T}, \quad d_2 = d_1 - \sigma\sqrt T.\]</div>
+    <p>\(C = e^{-rT}E_q[\max(S_T - K, 0)]\)을 위의 \(S_T\)로 계산한 것이며, 7.1절 이항 가격의 극한과 같습니다. \(\Phi(d_2)\)는 위험중립 아래 옵션이 행사될 확률, \(\Phi(d_1)\)은 복제에 필요한 주식 수 \(\Delta\)입니다.</p>
+    <div class="tb-env ex"><b>예 7.3.3</b> \(S_0 = K = 100\), \(r = 0.05\), \(\sigma = 0.2\), \(T = 1\). \(d_1 = \frac{0 + 0.07}{0.2} = 0.35\), \(d_2 = 0.15\), \(\Phi(0.35) \approx 0.6368\), \(\Phi(0.15) \approx 0.5596\). \(C \approx 63.68 - 95.12\cdot0.5596 \approx 10.45\).</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 반사 원리를 끝 값의 확률과 같다고 여긴다. 중간 최댓값의 확률은 두 배다. (2) 블랙-숄즈에 주식의 기대 수익률 \(\mu\)가 들어간다고 여긴다. 이항 모형처럼 \(r\)만 들어가고 \(\mu\)는 없다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>반사 원리: \(P(\max_{s\le t}B \ge a) = 2P(B(t) \ge a)\).</li>
+        <li>\(u = e^{\sigma\sqrt{\Delta t}}\)인 이항 모형의 극한은 기하 브라운 운동.</li>
+        <li>블랙-숄즈: \(C = S_0\Phi(d_1) - Ke^{-rT}\Phi(d_2)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(P\left(\max_{s\le4}B(s) \ge 2\right)\)를 구하여라.
+          <details><summary>답</summary><p>\(2P(B(4) \ge 2) = 2(1 - \Phi(1)) \approx 0.317\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예 7.3.3과 풋-콜 패리티 \(C - P = S_0 - Ke^{-rT}\)로 풋옵션 가격을 구하여라.
+          <details><summary>답</summary><p>\(P = 10.45 - 100 + 95.12 \approx 5.57\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>반사 원리로 최댓값 \(M_t = \max_{s\le t}B(s)\)가 \(|B(t)|\)와 같은 분포임을 보여라.
+          <details><summary>답</summary><p>\(P(M_t \ge a) = 2P(B(t) \ge a) = P(|B(t)| \ge a)\) (\(a > 0\), 대칭). 꼬리 확률이 모두 같다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

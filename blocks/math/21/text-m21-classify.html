@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-classify" data-kind="본문" data-std="수학21-02-02">
+  <header class="card-head"><span class="no"></span><h2>상태의 분류: 재귀, 일시, 주기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>상태 사이의 통신 관계로 연쇄를 류(class)로 나누고 기약 연쇄를 정의한다.</li>
+        <li>재귀와 일시를 정의하고 판정법 \(\sum_np_{ii}^{(n)} = \infty\)를 증명한다.</li>
+        <li>주기를 정의하고, 재귀성과 주기가 류 전체의 성질임을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>전이행렬과 \(P^n\) (<a href="02-01.html">2.1절</a>), 등비급수, 최대공약수.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>통신과 류</h3>
+    <p>어떤 \(n\)에 대해 \(p_{ij}^{(n)} > 0\)이면 "\(i\)에서 \(j\)로 갈 수 있다"(\(i \to j\))고 하고, 서로 갈 수 있으면 <b>통신한다</b>(\(i \leftrightarrow j\))고 합니다. 이는 동치관계라 상태 집합이 류로 나뉩니다. 류가 하나뿐이면 <b>기약</b> 연쇄입니다. 전이 그림(상태를 점, 양의 전이를 화살표로)에서 서로 오갈 수 있는 덩어리가 류입니다.</p>
+
+    <h3><span class="no">2.2.2</span>재귀와 일시</h3>
+    <p>\(X_0 = i\)에서 출발해 언젠가 다시 \(i\)로 돌아올 확률을 \(f_i = P(X_n = i\ \text{for some}\ n \ge 1 \mid X_0 = i)\)라 할 때 \(f_i = 1\)이면 <b>재귀</b>, \(f_i &lt; 1\)이면 <b>일시</b> 상태입니다. 일시 상태에서는 돌아올 때마다 다시 \(1 - f_i\)의 확률로 영영 떠나므로 방문 횟수 \(V_i\)가 기하분포를 따릅니다.</p>
+    <div class="tb-env thm"><b>정리 2.2.1</b> \(i\)가 재귀 ⟺ \(\sum_{n\ge1}p_{ii}^{(n)} = \infty\).</div>
+    <div class="tb-proof"><b>증명</b>
+      <p>\(i\)에서 출발할 때 방문 횟수 \(V_i = \sum_{n\ge1}\mathbf 1[X_n = i]\)의 기대값은 \(\sum_np_{ii}^{(n)}\)이다. 강한 마르코프 성질로 \(P(V_i \ge k) = f_i^k\)이므로 \(E[V_i] = \sum_{k\ge1}f_i^k\)는 \(f_i &lt; 1\)이면 \(\frac{f_i}{1 - f_i} &lt; \infty\), \(f_i = 1\)이면 \(\infty\). <span class="qed">∎</span></p>
+    </div>
+    <p>\(i \leftrightarrow j\)이고 \(i\)가 재귀이면 \(p_{jj}^{(a+n+b)} \ge p_{ji}^{(a)}p_{ii}^{(n)}p_{ij}^{(b)}\)이라 \(j\)도 재귀입니다. 그래서 재귀성은 류의 성질입니다. 상태가 유한한 기약 연쇄는 어딘가를 무한히 방문해야 하므로 모든 상태가 재귀입니다.</p>
+    <div class="tb-env ex"><b>예 2.2.2 (정수 위 랜덤워크)</b> 확률 \(p\)로 +1, \(q\)로 −1. 돌아오려면 짝수 걸음이 필요하고 \(p_{00}^{(2n)} = \binom{2n}n(pq)^n \approx \frac{(4pq)^n}{\sqrt{\pi n}}\) (스털링 공식). \(p = \frac12\)이면 \(4pq = 1\)이라 합이 \(\sum\frac1{\sqrt{\pi n}} = \infty\), 재귀입니다. \(p \ne \frac12\)이면 \(4pq &lt; 1\)이라 수렴, 일시입니다. 2차원 대칭 랜덤워크는 \(\approx\frac1{\pi n}\)로 재귀, 3차원은 \(\approx n^{-3/2}\)로 일시입니다(폴리아).</div>
+
+    <h3><span class="no">2.2.3</span>주기</h3>
+    <p>\(d(i) = \gcd\{n \ge 1 : p_{ii}^{(n)} > 0\}\)을 \(i\)의 <b>주기</b>라 하고, \(d = 1\)이면 비주기입니다. 같은 류의 상태는 주기가 같습니다. 랜덤워크는 주기 2이고, 자기 자신으로 가는 화살표(\(p_{ii} > 0\))가 하나라도 있는 기약 연쇄는 비주기입니다. 주기는 2.3절의 극한 정리에서 수렴을 막는 유일한 장애물입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 무한히 많은 상태가 있는 기약 연쇄도 늘 재귀라고 여긴다. 비대칭 랜덤워크는 기약이지만 일시다. (2) 주기를 "돌아오는 가장 짧은 시간"으로 여긴다. 돌아올 수 있는 모든 시간의 최대공약수다. 길이 2와 3인 고리가 있으면 주기는 1이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>통신 관계로 류를 나누고, 류가 하나면 기약.</li>
+        <li>재귀 ⟺ \(\sum p_{ii}^{(n)} = \infty\), 류의 성질, 유한 기약이면 재귀.</li>
+        <li>주기는 돌아오는 시간들의 최대공약수, 류의 성질.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>상태 \(\{1, 2, 3\}\)에서 \(1 \to 2\), \(2 \to 1\), \(2 \to 3\)이 양이고 3은 흡수 상태다. 류와 재귀·일시를 판정하여라.
+          <details><summary>답</summary><p>류 \(\{1, 2\}\)(일시, 3으로 새어 나감), \(\{3\}\)(재귀).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>상태 \(\{0, 1, 2\}\)가 원 위에 있고 \(0 \to 1 \to 2 \to 0\)으로만 움직이되 0에서는 확률 \(\frac12\)로 2로 바로 간다. 주기를 구하여라.
+          <details><summary>답</summary><p>0에서 돌아오는 길이 3(0→1→2→0)과 2(0→2→0). \(\gcd(2, 3) = 1\), 비주기.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예 2.2.2에서 \(p > \frac12\)이면 0으로 돌아올 확률은 \(f_0 = 2q\)이다. 1.2절의 도달 확률로 이를 설명하여라.
+          <details><summary>답</summary><p>첫 걸음이 −1(확률 \(q\))이면 오른쪽으로 치우쳐 있어 확실히 돌아온다. +1(확률 \(p\))이면 1에서 0에 닿을 확률이 \(\lim_N\left(1 - \frac{1 - r}{1 - r^N}\right) = r = \frac qp\) (\(r &lt; 1\)). \(f_0 = q + p\cdot\frac qp = 2q\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

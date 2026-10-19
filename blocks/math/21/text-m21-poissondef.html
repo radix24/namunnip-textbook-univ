@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-poissondef" data-kind="본문" data-std="수학21-03-02">
+  <header class="card-head"><span class="no"></span><h2>포아송 과정의 세 가지 정의</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>계수 과정 \(N(t)\)와 독립 증분, 정상 증분을 정의한다.</li>
+        <li>포아송 과정을 (가) 증분의 분포, (나) 짧은 시간의 확률, (다) 지수 도착 간격의 세 가지로 정의하고 동치임을 설명한다.</li>
+        <li>(나)에서 (가)로 가는 미분방정식 유도를 따라간다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>포아송 분포 (<a href="../5/index.html">수학5</a>), 지수분포 (<a href="03-01.html">3.1절</a>), 일계 선형 미분방정식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>계수 과정</h3>
+    <p>\(N(t)\)를 시각 \(t\)까지 일어난 사건(도착)의 수라 합니다. \(N(0) = 0\)이고 정수값이며 증가합니다. 겹치지 않는 구간의 증분 \(N(t) - N(s)\)들이 서로 독립이면 <b>독립 증분</b>, \(N(t + h) - N(t)\)의 분포가 \(t\)에 무관하면 <b>정상 증분</b>이라 합니다.</p>
+
+    <h3><span class="no">3.2.2</span>세 정의</h3>
+    <div class="tb-env thm"><b>정리 3.2.1</b> 비율 \(\lambda > 0\)인 계수 과정에 대해 다음은 동치이다.
+      <ol>
+        <li>(가) 독립 증분이고 모든 \(s, t\)에서 \(N(s + t) - N(s) \sim \text{Poisson}(\lambda t)\).</li>
+        <li>(나) 독립·정상 증분이고 \(h \to 0\)일 때 \(P(N(h) = 1) = \lambda h + o(h)\), \(P(N(h) \ge 2) = o(h)\).</li>
+        <li>(다) 도착 간격 \(T_1, T_2, \dots\)가 서로 독립이고 \(\text{Exp}(\lambda)\)를 따른다.</li>
+      </ol>
+    이를 만족하는 \(N\)을 비율 \(\lambda\)인 <b>포아송 과정</b>이라 한다.</div>
+    <p>(나)가 모형을 세울 때의 직관입니다. 아주 짧은 시간에는 사건이 일어날 확률이 시간에 비례하고, 두 번 이상은 거의 일어나지 않으며, 구간마다 서로 영향을 주지 않습니다. (다)는 시뮬레이션하는 방법입니다. 지수분포 난수를 차례로 더해 도착 시각을 만듭니다.</p>
+
+    <h3><span class="no">3.2.3</span>(나)에서 (가)로</h3>
+    <div class="tb-proof"><b>증명 (나 ⟹ 가)</b>
+      <p>\(P_n(t) = P(N(t) = n)\)이라 하자. \([t, t + h]\)에 사건이 0개일 확률은 \(1 - \lambda h + o(h)\)이고 독립 증분이므로 \(P_0(t + h) = P_0(t)(1 - \lambda h) + o(h)\). \(h\)로 나눠 극한을 취하면 \(P_0' = -\lambda P_0\), \(P_0(0) = 1\)에서 \(P_0(t) = e^{-\lambda t}\). \(n \ge 1\)이면 마지막 구간에서 0개 또는 1개가 일어나므로 \(P_n' = -\lambda P_n + \lambda P_{n-1}\). \(Q_n = e^{\lambda t}P_n\)이라 하면 \(Q_n' = \lambda Q_{n-1}\), \(Q_0 = 1\)이라 \(Q_n = \frac{(\lambda t)^n}{n!}\). 따라서 \(P_n(t) = e^{-\lambda t}\frac{(\lambda t)^n}{n!}\). <span class="qed">∎</span></p>
+    </div>
+    <p>(가)와 (다)의 연결은 첫 도착 시각에서 보입니다. \(P(T_1 > t) = P(N(t) = 0) = e^{-\lambda t}\)이라 \(T_1 \sim \text{Exp}(\lambda)\)이고, 독립·정상 증분이라 \(T_1\) 이후는 새로 시작하는 것과 같아 \(T_2, T_3, \dots\)도 독립인 \(\text{Exp}(\lambda)\)입니다. \(n\)번째 도착 시각 \(S_n = T_1 + \cdots + T_n\)은 감마분포 \(\Gamma(n, \lambda)\)를 따르고 평균은 \(\frac n\lambda\)입니다.</p>
+    <div class="tb-env ex"><b>예 3.2.2</b> 고객이 시간당 \(\lambda = 3\)명 비율의 포아송 과정으로 옵니다. 30분 동안 아무도 오지 않을 확률은 \(e^{-1.5} \approx 0.223\), 1시간에 정확히 2명 올 확률은 \(e^{-3}\frac{9}2 \approx 0.224\), 세 번째 손님이 오는 시각의 평균은 1시간입니다.</div>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 도착 간격이 고르게 떨어져 있을 거라 여긴다. 지수 간격은 짧은 간격이 가장 흔해 도착이 뭉쳐 보인다. (2) 독립 증분만으로 포아송이라 여긴다. 한 번에 여러 개가 도착하지 않는다는 조건(\(o(h)\))과 정상성이 필요하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>(가) 증분이 독립이고 \(\text{Poisson}(\lambda t)\).</li>
+        <li>(나) 짧은 시간에 확률 \(\lambda h\)로 하나, 둘 이상은 \(o(h)\).</li>
+        <li>(다) 도착 간격이 독립인 \(\text{Exp}(\lambda)\), \(n\)번째 도착은 \(\Gamma(n, \lambda)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>비율 2인 포아송 과정에서 \(N(1) = 0\)이고 \(N(3) = 2\)일 확률을 구하여라.
+          <details><summary>답</summary><p>독립 증분: \(e^{-2}\cdot e^{-4}\frac{4^2}{2} = 8e^{-6} \approx 0.0198\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\operatorname{Cov}(N(s), N(t))\) (\(s &lt; t\))를 구하여라.
+          <details><summary>답</summary><p>\(N(t) = N(s) + (N(t) - N(s))\), 독립이라 \(\operatorname{Cov} = \operatorname{Var}N(s) = \lambda s\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(P_1' = -\lambda P_1 + \lambda P_0\)를 직접 풀어 \(P_1(t) = \lambda te^{-\lambda t}\)를 확인하여라.
+          <details><summary>답</summary><p>\((e^{\lambda t}P_1)' = \lambda e^{\lambda t}P_0 = \lambda\), \(P_1(0) = 0\)이라 \(e^{\lambda t}P_1 = \lambda t\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
