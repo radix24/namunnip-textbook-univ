@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-power" data-kind="본문" data-std="기계16-03-03">
+  <header class="card-head"><span class="no"></span><h2>거듭제곱법으로 고유값 구하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>고유값 문제가 진동과 좌굴에서 나오는 이유를 안다.</li>
+        <li>거듭제곱법으로 가장 큰 고유값과 고유벡터를 구한다.</li>
+        <li>역거듭제곱법으로 가장 작은 고유값(최저 고유진동수)을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>연립방정식과 LU 분해 (<a href="03-01.html">3.1절</a>), 다자유도 진동과 모드 (<a href="../13/05-01.html">기계진동 5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>고유값 문제</h3>
+    <p>\(A\vec v = \lambda\vec v\)를 만족하는 \(\lambda\)와 \(\vec v\)를 구하는 문제입니다. 다자유도 진동 \(K\vec v = \omega^2M\vec v\)(고유진동수와 모드 모양), 기둥 좌굴, 주응력(<a href="../9/01-01.html">응용고체역학 1.1절</a>)이 모두 고유값 문제입니다. 손으로는 특성방정식을 풀지만 차수가 크면 반복법을 씁니다.</p>
+
+    <h3><span class="no">3.3.2</span>거듭제곱법</h3>
+    <p>아무 벡터나 행렬을 계속 곱하면, 가장 큰 고유값에 해당하는 성분이 다른 성분보다 빨리 자라 결국 그 고유벡터 방향만 남습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">거듭제곱법</span>
+      <p>\(\vec w = A\vec v_k\), \(\lambda_k\) = \(\vec w\)의 가장 큰 성분, \(\vec v_{k+1} = \vec w/\lambda_k\). 수렴 속도는 \(|\lambda_2/\lambda_1|\)(두 번째로 큰 것과의 비)로 정해진다.</p>
+      <p>역거듭제곱법: \(A^{-1}\)에 적용(실제로는 \(A\vec w = \vec v_k\)를 LU로 푼다)하면 가장 작은 고유값의 역수가 나온다.</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1 <span class="nm">(2자유도)</span></span>
+      <p>\(A = \begin{bmatrix}2 & -1\\ -1 & 2\end{bmatrix}\)의 가장 큰 고유값을 \((1, 0)\)에서 시작해 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\lambda\)의 추정값이 2, 2.5, 2.8, 2.929, 2.976, 2.992로 3에 다가가고, 벡터는 \((1, -1)\)로 갑니다(두 질량이 반대로 움직이는 모드). 다른 고유값이 1이라 비 1/3씩 오차가 줄어듭니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 처음 벡터가 원하는 고유벡터 성분을 전혀 갖지 않으면 그 방향을 찾지 못합니다(반올림이 결국 섞어 주지만 느림). (2) 두 고유값의 크기가 비슷하면 매우 느리므로, 실무 프로그램은 이동 역거듭제곱법, Lanczos 방법을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>진동·좌굴·주응력은 고유값 문제.</li>
+        <li>거듭제곱법: 최대 고유값, 속도 \(|\lambda_2/\lambda_1|\).</li>
+        <li>역거듭제곱법: 최소 고유값(최저 고유진동수).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 행렬의 정확한 고유값을 특성방정식으로 구하여라.
+          <details><summary>답</summary><p>\((2 - \lambda)^2 - 1 = 0\), \(\lambda = 1, 3\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 오차가 처음의 \(10^{-6}\)이 되려면 반복이 대략 몇 번 필요한가?
+          <details><summary>답</summary><p>\((1/3)^n = 10^{-6}\), \(n \approx 12.6\), 약 13번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>진동 해석에서 가장 낮은 고유진동수가 중요한 이유와, 그것을 구하는 데 역거듭제곱법이 맞는 이유는?
+          <details><summary>답</summary><p>낮은 모드가 가진 진동수와 겹치기 쉽고 진폭이 커 설계를 지배한다. \(K\vec v = \omega^2M\vec v\)에서 최저 \(\omega^2\)는 가장 작은 고유값이므로, \(K\)를 한 번 LU 분해해 두고 반복마다 앞뒤 대입만 하는 역거듭제곱법이 효율적이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

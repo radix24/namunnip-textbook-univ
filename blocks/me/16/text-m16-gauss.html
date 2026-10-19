@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-gauss" data-kind="본문" data-std="기계16-05-02">
+  <header class="card-head"><span class="no"></span><h2>Gauss 구적법: 점을 잘 고르면 적게 계산한다</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>등간격 공식과 달리 계산 점의 위치도 고르는 Gauss 구적법의 원리를 안다.</li>
+        <li>2점, 3점 Gauss 공식과 구간 변환을 쓴다.</li>
+        <li>유한요소법에서 Gauss 구적이 쓰이는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>사다리꼴과 Simpson 공식 (<a href="05-01.html">5.1절</a>), 다항식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>점과 가중치를 함께 고르기</h3>
+    <p>\(n\)개의 점에서 함수값을 계산하는 적분 공식 \(\int_{-1}^1f\,dx \approx \sum w_if(x_i)\)에는 점 위치 \(n\)개와 가중치 \(n\)개, 모두 \(2n\)개의 자유가 있습니다. 이를 다 써서 \(2n - 1\)차 다항식까지 정확하게 맞춘 것이 Gauss-Legendre 구적법입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Gauss 공식 (구간 \([-1, 1]\))</span>
+      <p>2점: \(x = \pm1/\sqrt3\), \(w = 1\). 3차까지 정확.</p>
+      <p>3점: \(x = 0, \pm\sqrt{0.6}\), \(w = 8/9, 5/9, 5/9\). 5차까지 정확.</p>
+      <p>구간 \([a, b]\): \(x = \frac{a + b}2 + \frac{b - a}2t\), \(\int_a^bf\,dx = \frac{b - a}2\sum w_if(x(t_i))\).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1 <span class="nm">(Simpson과 비교)</span></span>
+      <p>\(\int_0^1x^4dx\)(= 0.2)와 \(\int_0^1e^xdx\)(= 1.71828)를 2점 Gauss로 계산하고 Simpson 2구간(함수 계산 3번)과 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 점 \(x = 0.5 \mp 0.5/\sqrt3 = 0.2113, 0.7887\), 가중치 1/2씩. \(x^4\): \(0.5(0.00199 + 0.38690) = 0.1944\)(오차 2.8%), Simpson 0.2083(4.2%). \(e^x\): 1.71790(오차 0.022%), Simpson 1.71886(0.034%). 함수를 2번만 계산하고도 Simpson(3번)보다 정확합니다.</p>
+
+    <h3><span class="no">5.2.2</span>어디에 쓰는가</h3>
+    <p>함수값을 아무 점에서나 계산할 수 있을 때(식이 주어진 경우) 가장 효율적입니다. 유한요소법은 요소 강성 행렬의 적분을 요소마다 Gauss 점 몇 개로 계산하고, 응력도 Gauss 점에서 가장 정확합니다. 반대로 등간격 측정 자료만 있으면 사다리꼴·Simpson을 씁니다.</p>
+
+    <div class="tb-note"><b>주의</b>끝점에서 무한대가 되는 함수나 꺾인 함수는 높은 차수의 Gauss 공식도 정확하지 않습니다. 꺾이는 점에서 구간을 나눠 각각 적분합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(n\)점 Gauss: \(2n - 1\)차까지 정확.</li>
+        <li>2점 \(\pm1/\sqrt3\), 3점 \(0, \pm\sqrt{0.6}\), 구간 변환.</li>
+        <li>식으로 주어진 함수, FEM 요소 적분에 효율적.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2점 Gauss로 \(\int_{-1}^1x^2dx\)를 계산하여라.
+          <details><summary>답</summary><p>\(1/3 + 1/3 = 2/3\), 정확하다(3차 이하).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>2점 Gauss가 \(\int_0^1x^4dx\)를 정확히 계산하지 못하는 이유는?
+          <details><summary>답</summary><p>4차 다항식은 2점 공식의 정확도(3차)를 넘기 때문이다. 3점 공식이면 정확하다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>FEM의 2차원 사각형 요소 강성 적분을 2 × 2 Gauss 점으로 하면 요소마다 함수 계산이 몇 번인가? 1점만 쓰면 어떤 문제가 생길 수 있는가?
+          <details><summary>답</summary><p>4번. 1점만 쓰면 일부 변형 모드가 에너지 0으로 계산되어(모래시계 모드) 구조가 실제보다 무르게 흔들리는 문제가 생긴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

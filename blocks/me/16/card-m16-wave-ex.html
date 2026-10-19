@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-07-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m16-wave-ex" data-kind="예제" data-std="기계16-07-03">
+  <header class="card-head"><span class="no"></span><h2>CFL 조건을 넘으면 무슨 일이 생기나</h2><span class="kind">예제 · 파동 차분 · 증폭률</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · CFL</span>
+      <ol>
+        <li>파동 속력 \(c\)와 격자 \(\Delta x\)에서 \(\Delta t_{\max} = \Delta x/c\).</li>
+        <li>가장 짧은 파장(절점마다 부호가 바뀌는 톱니)을 넣어 한 걸음 증폭률을 본다.</li>
+        <li>증폭률의 크기가 1을 넘으면 발산한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 길이 1 m, 파동 속력 200 m/s인 줄을 \(\Delta x\) = 1 cm로 나눈다. 최대 시간 간격은? \(\Delta t\) = 60 μs로 하면 \(C\)는 얼마이고, 톱니 모양 오차는 어떻게 되는가?</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>톱니 \(u_i^n = (-1)^iA_n\)을 차분식에 넣으면 \(u_{i+1} - 2u_i + u_{i-1} = -4u_i\)이므로 \(A_{n+1} = (2 - 4C^2)A_n - A_{n-1}\)입니다. 이 점화식의 해가 \(r^n\) 꼴로 커지는지 봅니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(\Delta t_{\max} = 0.01/200 = 50\) μs.</div><span class="q-why">\(C = 1\).</span></li>
+        <li><div>\(\Delta t\) = 60 μs이면 \(C = 200\times6\times10^{-5}/0.01 = 1.2\).</div><span class="q-why">조건을 넘는다.</span></li>
+        <li><div>점화식 \(r^2 - (2 - 4C^2)r + 1 = 0\), \(2 - 4C^2 = -3.76\): \(r = -3.47\) 또는 \(-0.29\).</div><span class="q-why">\(|r| > 1\)인 근이 있다.</span></li>
+        <li class="q-end"><div>톱니 오차가 걸음마다 3.47배씩(부호 바뀌며) 자라 20걸음이면 약 \(6\times10^{10}\)배로 터진다.</div><span class="q-why">반올림 수준의 잡음도 금방 커진다.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(C \le 1\)이면 \(2 - 4C^2 \ge -2\)라 두 근이 크기 1인 복소수(진동, 성장 없음)가 됩니다. \(C = 1\)이면 \(r = -1\)(중근)로 경계입니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>열전도(7.2절)의 톱니 증폭률 \(1 - 4r\)과 같은 방법으로 안정 조건을 찾았습니다. 차분 방식마다 가장 거친 오차 모양의 증폭률을 보는 것이 von Neumann 안정성 해석의 핵심입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>\(\Delta x\)를 5 mm로 줄이면 최대 \(\Delta t\)는 25 μs로 반이 됩니다. 0.01초를 계산하는 걸음 수는 200에서 400으로, 절점 수도 2배라 계산량은 4배입니다(열전도는 8배).</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>\(C = 0.5\)일 때 톱니 오차의 증폭률 크기는?</p>
+      <details><summary>답</summary><p>\(2 - 4C^2 = 1\), \(r^2 - r + 1 = 0\), \(|r| = 1\). 커지지 않고 진동만 한다(안정).</p></details>
+    </section>
+  </div>
+</article>

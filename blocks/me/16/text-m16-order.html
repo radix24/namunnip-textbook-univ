@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-order" data-kind="본문" data-std="기계16-01-03">
+  <header class="card-head"><span class="no"></span><h2>Taylor 급수와 절단 오차의 차수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Taylor 급수로 근사 공식이 버린 항을 찾는다.</li>
+        <li>절단 오차의 차수 \(O(h^p)\)를 읽고 간격을 바꿔 확인한다.</li>
+        <li>오차 차수로 방법을 비교한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>절단 오차 (<a href="01-01.html">1.1절</a>), Taylor 급수(공통 미적분).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>버린 항이 오차</h3>
+    <p>\(f(x + h) = f(x) + hf'(x) + \frac{h^2}2f''(x) + \frac{h^3}6f'''(x) + \cdots\)입니다. 전진 차분 \([f(x + h) - f(x)]/h\)에 넣으면 \(f'(x) + \frac h2f''(x) + \cdots\)이므로 오차의 첫 항이 \(h\)에 비례합니다(1차, \(O(h)\)). 중심 차분 \([f(x + h) - f(x - h)]/(2h)\)는 짝수 차 항이 서로 지워져 \(f'(x) + \frac{h^2}6f'''(x) + \cdots\), 곧 2차(\(O(h^2)\))입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">차수의 뜻</span>
+      <p>오차가 \(O(h^p)\)이면 간격을 반으로 줄일 때 오차가 약 \(1/2^p\)로 준다. 거꾸로 두 간격의 오차 비로 \(p\)를 확인할 수 있다: \(p \approx \log_2(e_h/e_{h/2})\).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1 <span class="nm">(차수 확인)</span></span>
+      <p>\(f = e^x\)의 \(x = 0\)에서 도함수(참값 1)를 전진 차분과 중심 차분으로 \(h = 0.1\), 0.05에서 구하고 차수를 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> 전진: 오차 0.0517, 0.0254 → 비 2.03, \(p \approx 1\). 중심: 오차 0.00167, 0.000417 → 비 4.0, \(p = 2\). 첫 오차항 \(\frac h2f''\) = 0.05, \(\frac{h^2}6f'''\) = 0.00167과도 맞습니다.</p>
+
+    <h3><span class="no">1.3.2</span>차수와 비용</h3>
+    <p>같은 정확도를 얻는 데 필요한 간격은 차수가 높을수록 큽니다. 오차 \(10^{-6}\)을 원하면 1차 방법은 \(h \sim 10^{-6}\), 2차는 \(10^{-3}\), 4차(RK4, Simpson)는 \(3\times10^{-2}\) 정도로, 계산 횟수가 크게 다릅니다. 다만 차수는 \(h\)가 충분히 작을 때의 이야기이고, 함수가 매끄럽지 않으면 기대한 차수가 나오지 않습니다.</p>
+
+    <div class="tb-note"><b>주의</b>격자 수렴 연구(<a href="../22/03-01.html">컴퓨터해석기반설계 3.1절</a>)에서 결과가 기대한 차수로 수렴하는지 보는 것이 프로그램이 맞게 짜였는지 확인하는 강력한 방법입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Taylor 급수에서 버린 첫 항이 절단 오차.</li>
+        <li>전진 차분 \(O(h)\), 중심 차분 \(O(h^2)\).</li>
+        <li>\(p \approx \log_2(e_h/e_{h/2})\)로 차수 확인.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>4차 방법에서 간격을 1/3로 줄이면 오차는?
+          <details><summary>답</summary><p>약 \(1/81\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>후진 차분 \([f(x) - f(x - h)]/h\)의 첫 오차항은?
+          <details><summary>답</summary><p>\(-\frac h2f''(x)\). 크기는 전진 차분과 같고 부호가 반대라, 둘의 평균이 중심 차분이 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>어떤 프로그램의 오차가 간격 0.1, 0.05, 0.025에서 0.08, 0.041, 0.020이었다. 이 방법의 차수와 다음 간격의 예상 오차는?
+          <details><summary>답</summary><p>비가 약 2라서 1차. 간격 0.0125에서 약 0.010.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
