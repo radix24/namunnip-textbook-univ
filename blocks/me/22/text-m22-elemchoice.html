@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-elemchoice" data-kind="본문" data-std="기계22-02-04">
+  <header class="card-head"><span class="no"></span><h2>요소 고르기: 보, 쉘, 솔리드, 축대칭</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>형상의 치수 비로 보, 쉘, 솔리드, 축대칭 요소 가운데 알맞은 것을 고른다.</li>
+        <li>1차와 2차 요소, 사면체와 육면체의 장단점을 안다.</li>
+        <li>요소 선택이 계산량과 정확도에 주는 영향을 어림한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>보 요소와 평면 요소 (<a href="02-01.html">2.1절</a>), 등매개변수 요소 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>형상에 맞는 요소</h3>
+    <table class="tb-table">
+      <thead><tr><th>요소</th><th>쓰는 곳</th><th>판단 기준</th></tr></thead>
+      <tbody>
+        <tr><td>보(빔)</td><td>프레임, 축, 트러스 구조물</td><td>길이가 단면 크기의 약 10배 이상</td></tr>
+        <tr><td>쉘</td><td>판금, 차체, 압력 용기 벽</td><td>면 크기가 두께의 약 10~20배 이상</td></tr>
+        <tr><td>축대칭</td><td>회전체(축, 플랜지, 용기)에 회전 대칭 하중</td><td>형상, 하중, 지지 모두 축대칭</td></tr>
+        <tr><td>솔리드</td><td>두꺼운 주물, 국부 응력 집중</td><td>위 단순화가 안 될 때</td></tr>
+      </tbody>
+    </table>
+    <p>낮은 차원의 요소는 계산량이 훨씬 적고, 얇은 구조에서 오히려 더 정확합니다. 솔리드 요소로 얇은 판을 풀면 두께 방향에 요소를 여러 층 두어야 굽힘을 표현할 수 있어 요소 수가 크게 늘어납니다.</p>
+
+    <h3><span class="no">2.4.2</span>1차와 2차, 사면체와 육면체</h3>
+    <ul>
+      <li><b>1차 사면체(TET4)</b>: 응력이 요소 안에서 일정해 굽힘에 매우 뻣뻣합니다. 응력 결과에 쓰지 않는 것이 원칙입니다.</li>
+      <li><b>2차 사면체(TET10)</b>: 복잡한 형상의 자동 격자에 가장 흔하고, 응력 정확도가 좋습니다.</li>
+      <li><b>육면체(HEX8, HEX20)</b>: 같은 정확도에서 요소 수가 적지만 복잡한 형상에서 격자 만들기가 어렵습니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1 <span class="nm">(얇은 판)</span></span>
+      <p>500 × 500 × 2 mm 강판 덮개를 요소 크기 5 mm로 해석한다. 쉘 요소와, 두께 방향 3층 솔리드 요소의 요소 수를 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 쉘: \(100\times100 = 10^4\)개. 솔리드: 같은 면 분할에 3층이면 \(3\times10^4\)개이고, 요소 두께가 0.67 mm로 면 방향 5 mm와 종횡비가 7.5나 되어 품질도 나쁩니다. 종횡비를 3 이하로 맞추려면 면 방향을 2 mm로 줄여야 해 약 \(1.9\times10^5\)개가 됩니다. 쉘이 약 19배 가볍습니다.</p>
+
+    <div class="tb-note"><b>주의</b>쉘 요소는 판 두께 중앙면에 놓이고 두께는 속성으로 줍니다. 용접부나 리브 이음처럼 두께 방향 응력이 중요한 곳, 응력 집중을 정확히 봐야 하는 곳은 그 부분만 솔리드로 하고 나머지를 쉘로 잇는 혼합 모델을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>치수 비 10배 이상이면 보·쉘, 회전 대칭이면 축대칭.</li>
+        <li>TET4는 피하고 TET10 또는 육면체.</li>
+        <li>낮은 차원 요소가 빠르고 얇은 구조에서 정확.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>내압을 받는 원통 압력 용기(지름 1 m, 두께 10 mm)의 끝판 이음부 응력을 보려 한다. 어떤 요소가 알맞은가?
+          <details><summary>답</summary><p>형상, 하중, 지지가 축대칭이므로 축대칭 요소. 2차원 단면만 격자를 만들면 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 외팔보를 TET4와 TET10으로 각각 거친 격자로 풀었더니 TET4의 끝 처짐이 40% 작게 나왔다. 이유는?
+          <details><summary>답</summary><p>TET4는 요소 안 변형률이 일정해 굽힘 변형을 제대로 표현하지 못하고 지나치게 뻣뻣하다(잠김).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>요소 크기를 절반으로 줄이면 3차원 솔리드 모델의 요소 수와 자유도는 대략 몇 배가 되는가? 쉘 모델은?
+          <details><summary>답</summary><p>솔리드는 \(2^3 = 8\)배, 쉘은 \(2^2 = 4\)배. 풀이 시간은 그보다 더 빨리 늘어난다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

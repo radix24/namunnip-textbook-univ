@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-energy" data-kind="본문" data-std="기계22-01-04">
+  <header class="card-head"><span class="no"></span><h2>최소 퍼텐셜 에너지와 분포 하중</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전체 퍼텐셜 에너지를 최소로 하는 조건이 \(\mathbf{Ku} = \mathbf F\)임을 안다.</li>
+        <li>분포 하중을 일관 절점 하중(consistent nodal load)으로 바꾼다.</li>
+        <li>FEM 해의 성질(절점 변위와 요소 응력의 정확도)을 막대 예로 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>막대 요소 (<a href="01-01.html">1.1절</a>), 변형 에너지(재료역학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.4.1</span>에너지로 본 FEM</h3>
+    <p>탄성체의 전체 퍼텐셜 에너지는 변형 에너지에서 외력이 한 일을 뺀 것입니다. 실제 평형 상태는 가능한 모든 변위 가운데 이 값을 최소로 만드는 변위입니다. 변위를 형상 함수와 절점 값으로 근사하면 \(\Pi\)는 절점 변위의 이차식이 되고, 미분을 0으로 놓으면 강성 방정식이 나옵니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">최소 퍼텐셜 에너지 원리</span>
+      <p>\[\Pi = \tfrac12\mathbf u^{\mathsf T}\mathbf K\mathbf u - \mathbf u^{\mathsf T}\mathbf F,\qquad \frac{\partial\Pi}{\partial\mathbf u} = 0\ \Rightarrow\ \mathbf K\mathbf u = \mathbf F\]</p>
+      <p>막대 요소의 일관 절점 하중 (선형 형상 함수, 균일 분포 하중 \(q\)): 각 절점에 \(qL_e/2\).</p>
+    </div>
+    <p>분포 하중이 하는 일 \(\int qu\,dx\)에 근사 변위를 넣으면 각 절점 하중이 형상 함수로 가중된 적분 \(\int qN_i\,dx\)가 됩니다. 이것이 일관 절점 하중입니다. 보 요소에서는 모멘트 성분도 생깁니다(<a href="02-02.html">2.2절</a>).</p>
+
+    <h3><span class="no">1.4.2</span>FEM 해의 성질</h3>
+    <ul>
+      <li>근사 변위 공간에서 에너지를 최소로 하므로 FEM 구조는 실제보다 약간 뻣뻣합니다(변위는 작게 나오는 쪽).</li>
+      <li>1차원 막대와 보에서는 일관 하중을 쓰면 절점 변위가 정확합니다.</li>
+      <li>응력은 변위를 미분해 얻으므로 변위보다 덜 정확하고, 요소 안 일부 점(막대는 요소 중앙)에서 가장 정확합니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.1 <span class="nm">(요소 하나)</span></span>
+      <p>길이 1 m, \(EA = 10^6\) N 막대가 위 끝에 고정되고 길이 방향 분포 하중 \(q\) = 1000 N/m를 받는다. 요소 하나로 끝 변위와 응력(축력)을 구하고 정확해와 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 끝 절점 하중 \(qL/2 = 500\) N, \(u = 500/10^6 = 0.5\) mm. 정확해 \(u(L) = qL^2/(2EA) = 0.5\) mm로 같습니다. 요소 축력은 \(EA\,u/L = 500\) N으로 일정한데, 정확한 축력은 고정단 1000 N에서 끝 0 N까지 직선이라 요소 중앙값만 맞습니다.</p>
+
+    <div class="tb-note"><b>주의</b>분포 하중을 한 절점에 모두 몰아 주면(일관 하중 대신) 같은 요소 수에서 변위가 틀립니다. 대부분의 FEM 프로그램은 압력, 중력, 열 하중을 자동으로 일관 하중으로 바꿔 주지만, 손 계산이나 직접 만든 코드에서는 주의합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\Pi\) 최소 ⇔ \(\mathbf{Ku} = \mathbf F\).</li>
+        <li>분포 하중 → \(\int qN_i\,dx\) 일관 절점 하중.</li>
+        <li>변위는 정확하거나 약간 작게, 응력은 덜 정확(요소 중앙이 좋음).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>스프링 하나(\(k\))에 힘 \(F\)가 걸릴 때 \(\Pi(u) = \frac12ku^2 - Fu\)를 최소로 하는 \(u\)는?
+          <details><summary>답</summary><p>\(du\)로 미분해 0: \(u = F/k\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제를 요소 두 개로 나누면 절점 하중은? (중간 절점, 끝 절점)
+          <details><summary>답</summary><p>요소 길이 0.5 m, 각 요소가 양 끝에 250 N씩: 중간 500 N, 끝 250 N.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>FEM 변위가 정확해보다 작게(뻣뻣하게) 나오는 이유를 에너지로 설명하여라.
+          <details><summary>답</summary><p>근사 변위는 가능한 변위 가운데 일부만 허용하는 구속과 같다. 구속이 더해진 구조는 같은 하중에서 더 적게 변형되고, 평형에서 \(\Pi = -\frac12\mathbf u^{\mathsf T}\mathbf F\)가 정확해보다 커서 하중 방향 변위가 작다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

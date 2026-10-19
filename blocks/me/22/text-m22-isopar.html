@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-isopar" data-kind="본문" data-std="기계22-02-03">
+  <header class="card-head"><span class="no"></span><h2>등매개변수 사각형 요소와 Gauss 적분</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>자연 좌표 \((\xi, \eta)\)와 형상 함수로 찌그러진 사각형 요소를 나타낸다.</li>
+        <li>Jacobian으로 요소 넓이와 미분을 바꾸고, 요소 찌그러짐을 판단한다.</li>
+        <li>Gauss 적분의 점 수와 정확도를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>형상 함수와 CST 요소 (<a href="02-01.html">2.1절</a>), 행렬식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>등매개변수 사상</h3>
+    <p>정사각형 \(-1 \le \xi, \eta \le 1\)을 실제 요소로 옮기는 사상과 요소 안의 변위를 같은 형상 함수로 나타내는 요소를 등매개변수 요소라 합니다. 4절점 사각형(Q4)의 형상 함수는 쌍일차식입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Q4 요소</span>
+      <p>\[N_i = \tfrac14(1 + \xi\xi_i)(1 + \eta\eta_i),\qquad x = \sum N_ix_i,\quad y = \sum N_iy_i\]</p>
+      <p>\[\mathbf J = \begin{bmatrix}\partial x/\partial\xi &amp; \partial y/\partial\xi\\ \partial x/\partial\eta &amp; \partial y/\partial\eta\end{bmatrix},\qquad dA = \det\mathbf J\,d\xi\,d\eta\]</p>
+    </div>
+    <p>\(\det\mathbf J\)는 자연 좌표의 작은 넓이가 실제로 몇 배가 되는지입니다. 요소가 심하게 찌그러지거나 오목하면 어딘가에서 \(\det\mathbf J \le 0\)이 되어 해석이 실패합니다. 격자 품질 검사의 "Jacobian ratio"가 이것입니다.</p>
+
+    <h3><span class="no">2.3.2</span>Gauss 적분</h3>
+    <p>강성 행렬 \(\int\mathbf B^{\mathsf T}\mathbf D\mathbf B\,dA\)는 해석적으로 적분하기 어려워 Gauss 적분으로 계산합니다. \(n\)점 Gauss 적분은 \(2n - 1\)차 다항식까지 정확합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">1차원 Gauss 적분 (\([-1, 1]\))</span>
+      <p>1점: \(\xi = 0\), 가중치 2. 2점: \(\xi = \pm1/\sqrt3\), 가중치 1. 3점: \(\xi = 0, \pm\sqrt{0.6}\), 가중치 8/9, 5/9.</p>
+      <p>2차원은 두 방향의 곱(2 × 2 = 4점 등).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1 <span class="nm">(요소 넓이)</span></span>
+      <p>절점 (0, 0), (2, 0), (2.5, 1.5), (0, 1)인 Q4 요소의 중심에서 \(\det\mathbf J\)와 2 × 2 Gauss 적분으로 구한 넓이는?</p>
+    </div>
+    <p><i>풀이.</i> 중심(\(\xi = \eta = 0\))에서 \(\partial x/\partial\xi = 1.125\), \(\partial y/\partial\xi = 0.125\), \(\partial x/\partial\eta = 0.125\), \(\partial y/\partial\eta = 0.625\), \(\det\mathbf J = 0.6875\). 네 Gauss 점의 \(\det\mathbf J\)를 더하면(가중치 1) 넓이 2.75로, 신발끈 공식 값과 같습니다. \(\det\mathbf J\)가 쌍일차식이라 2 × 2 적분이 정확합니다.</p>
+
+    <div class="tb-note"><b>주의</b>Q4 요소를 1점 적분(감차 적분)하면 계산은 빠르지만 변형 에너지가 0인 가짜 변형 모드(모래시계 모드)가 생길 수 있습니다. 반대로 완전 적분 Q4는 굽힘에서 너무 뻣뻣해지는 전단 잠김이 있습니다. 프로그램의 요소 옵션(감차 적분 + 모래시계 제어, 비적합 모드)이 이를 다룹니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>같은 형상 함수로 기하와 변위: 등매개변수.</li>
+        <li>\(dA = \det\mathbf J\,d\xi\,d\eta\), \(\det\mathbf J \le 0\)이면 요소 불량.</li>
+        <li>\(n\)점 Gauss → \(2n - 1\)차까지 정확.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Q4 형상 함수 \(N_1\)(\(\xi_1 = \eta_1 = -1\))은 절점 1에서 얼마이고, 나머지 절점에서 얼마인가?
+          <details><summary>답</summary><p>절점 1에서 1, 나머지에서 0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\int_{-1}^{1}\xi^4\,d\xi\)를 2점, 3점 Gauss 적분으로 계산하고 정확해와 비교하여라.
+          <details><summary>답</summary><p>정확해 0.4. 2점: \(2\times(1/\sqrt3)^4 = 0.222\)(틀림, 3차까지만 정확). 3점: \(2\times(5/9)\times0.36 = 0.4\)(정확).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>변의 길이가 1 × 1인 정사각형 요소의 \(\det\mathbf J\)는? 왜 상수인가?
+          <details><summary>답</summary><p>자연 좌표의 2 × 2 정사각형이 1 × 1이 되므로 \(\det\mathbf J = 1/4\). 평행사변형 요소에서는 사상이 일차식이라 \(\det\mathbf J\)가 상수다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

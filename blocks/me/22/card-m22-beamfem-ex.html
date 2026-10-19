@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-02-02",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m22-beamfem-ex" data-kind="예제" data-std="기계22-02-02">
+  <header class="card-head"><span class="no"></span><h2>단순보 중앙 하중을 대칭 절반 모델로</h2><span class="kind">예제 · 보 요소 · 대칭 경계 조건</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 절반 모델</span>
+      <ol>
+        <li>왼쪽 절반(길이 \(L/2\))을 요소 하나로 둔다.</li>
+        <li>왼쪽 지지점: \(v_1 = 0\)(회전 자유), 대칭면: \(\theta_2 = 0\), 하중 \(P/2\).</li>
+        <li>남은 미지수 \(\theta_1\), \(v_2\)로 2 × 2 방정식을 푼다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 길이 2 m, \(EI = 10^5\) N·m² 단순보 중앙에 2 kN이 아래로 걸린다. 대칭 절반 모델(요소 하나, 길이 1 m)로 중앙 처짐과 지지점 회전각을 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>보 강성 행렬에서 \(\theta_1\)과 \(v_2\)에 해당하는 행과 열(2번, 3번)만 남깁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(\dfrac{EI}{L^3}\begin{bmatrix}4L^2 &amp; -6L\\-6L &amp; 12\end{bmatrix}\begin{bmatrix}\theta_1\\v_2\end{bmatrix} = \begin{bmatrix}0\\-1000\end{bmatrix}\), \(L\) = 1 m.</div><span class="q-why">2번, 3번 행·열.</span></li>
+        <li><div>\(10^5(4\theta_1 - 6v_2) = 0\)에서 \(\theta_1 = 1.5v_2\). 둘째 식 \(10^5(-9v_2 + 12v_2) = -1000\).</div><span class="q-why">대입.</span></li>
+        <li class="q-end"><div>\(v_2 = -3.33\) mm, \(\theta_1 = -0.005\) rad.</div><span class="q-why">아래로 처짐.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>정확해 \(PL^3/(48EI) = 2000\times8/(4.8\times10^6) = 3.33\) mm, 끝 회전각 \(PL^2/(16EI) = 0.005\) rad과 같습니다. 집중 하중이 절점에 있으면 보 요소는 요소 하나로도 정확합니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>대칭 경계 조건을 바르게 주면 모델 크기가 절반, 4분의 1, 8분의 1로 줄어 3차원 해석 시간이 크게 줍니다. 하지만 비대칭 좌굴이나 진동 모드처럼 대칭이 깨지는 응답은 놓치므로, 그런 해석에서는 전체 모델을 씁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>대칭면에 \(\theta_2 = 0\)을 빠뜨리고 \(v_2\)만 하중을 주면 절반 모델이 외팔보처럼 회전해 처짐이 크게 틀립니다. 대칭면 경계 조건이 모델의 핵심입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>대칭면 절점에 걸 하중이 \(P\)가 아니라 \(P/2\)인 이유는?</p>
+      <details><summary>답</summary><p>나머지 절반이 하중의 반을 맡기 때문이다(대칭면을 지나는 하중은 둘로 나눈다).</p></details>
+    </section>
+  </div>
+</article>

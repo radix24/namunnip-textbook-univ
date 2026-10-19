@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-truss" data-kind="본문" data-std="기계22-01-03">
+  <header class="card-head"><span class="no"></span><h2>평면 트러스 요소와 좌표 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기울어진 막대 요소의 강성 행렬을 방향 코사인으로 전체 좌표계에 옮긴다.</li>
+        <li>평면 트러스를 조립하고 절점 변위를 구한다.</li>
+        <li>변위에서 부재력(인장, 압축)을 되살린다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>막대 요소와 조립 (<a href="01-01.html">1.1절</a>), 경계 조건 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>기울어진 막대 요소</h3>
+    <p>막대는 축 방향으로만 힘을 받습니다. 축이 \(x\)축과 각 \(\theta\)를 이루면 절점의 두 방향 변위 \((u, v)\) 중 축 방향 성분 \(u\cos\theta + v\sin\theta\)만 늘어남에 기여합니다. 이 투영을 강성에 적용하면 4 × 4 요소 강성 행렬을 얻습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">평면 트러스 요소 (\(c = \cos\theta\), \(s = \sin\theta\))</span>
+      <p>\[\mathbf k = \frac{EA}L\begin{bmatrix}c^2 &amp; cs &amp; -c^2 &amp; -cs\\ cs &amp; s^2 &amp; -cs &amp; -s^2\\ -c^2 &amp; -cs &amp; c^2 &amp; cs\\ -cs &amp; -s^2 &amp; cs &amp; s^2\end{bmatrix}\]</p>
+      <p>부재력 \(N = \dfrac{EA}L\big[c(u_2 - u_1) + s(v_2 - v_1)\big]\) (양수 인장).</p>
+    </div>
+    <p>조립은 막대 요소와 같습니다. 각 요소 행렬의 행과 열을 전체 자유도 번호에 맞춰 더합니다. 절점마다 자유도가 2개이므로 절점 \(n\)개 트러스는 \(2n\) × \(2n\) 행렬이 됩니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1 <span class="nm">(대칭 2부재 트러스)</span></span>
+      <p>지지점 (0, 0), (2, 0) m에서 꼭짓점 (1, 1) m로 두 부재(\(EA = 2\times10^7\) N)가 모인다. 꼭짓점에 아래로 10 kN을 걸 때 처짐과 부재력은?</p>
+    </div>
+    <p><i>풀이.</i> 길이 \(\sqrt2\) m, \(EA/L = 1.414\times10^7\) N/m. 왼쪽 부재 \(c = s = 0.707\), 오른쪽 부재 \(c = -0.707\), \(s = 0.707\). 꼭짓점 자유도만 남기면 두 요소의 \(cs\) 항이 상쇄되어 \(\mathbf K = 1.414\times10^7\,\mathbf I\). 처짐 \(v = -10^4/1.414\times10^7 = -0.707\) mm. 부재력 \(N = 1.414\times10^7\times0.707\times(-0.707\times10^{-3}) = -7071\) N, 즉 두 부재 모두 7.07 kN 압축. 정역학의 \(P/(2\sin45°)\)와 같습니다.</p>
+
+    <div class="tb-note"><b>주의</b>트러스 절점은 핀이라 회전 강성이 없습니다. 모든 부재가 한 직선 위에 있는 절점이나 불안정한 배치(메커니즘)는 강성 행렬이 특이해 풀리지 않습니다. 해석 프로그램이 "singular matrix" 오류를 내면 지지와 배치를 먼저 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>축 방향 투영 \(c\), \(s\)로 4 × 4 요소 강성 행렬.</li>
+        <li>절점당 자유도 2, 같은 방식으로 조립.</li>
+        <li>부재력은 축 방향 늘어남 × \(EA/L\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\theta = 90°\)(수직 부재)이면 요소 강성 행렬에서 0이 아닌 항은 어디인가?
+          <details><summary>답</summary><p>\(c = 0\), \(s = 1\)이라 \(v\) 자유도끼리의 항(\(s^2\))만 남는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 부재 단면을 두 배로 하면 처짐과 부재력은?
+          <details><summary>답</summary><p>처짐은 절반(0.354 mm), 부재력은 그대로(정정 구조).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>요소 강성 행렬이 \(\mathbf T^{\mathsf T}\mathbf k'\mathbf T\) 꼴임을 보여라. 여기서 \(\mathbf k' = (EA/L)\begin{bmatrix}1 &amp; -1\\-1 &amp; 1\end{bmatrix}\), \(\mathbf T = \begin{bmatrix}c &amp; s &amp; 0 &amp; 0\\0 &amp; 0 &amp; c &amp; s\end{bmatrix}\).
+          <details><summary>답</summary><p>\(\mathbf T\)는 전체 변위를 축 방향 변위로 바꾼다. 행렬 곱을 전개하면 각 블록이 \(\pm(EA/L)\begin{bmatrix}c^2 &amp; cs\\cs &amp; s^2\end{bmatrix}\)이 되어 위 식과 같다. 에너지 \(\frac12\mathbf d'^{\mathsf T}\mathbf k'\mathbf d'\)에 \(\mathbf d' = \mathbf T\mathbf d\)를 넣은 결과다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

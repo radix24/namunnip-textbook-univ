@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-03-05",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m22-nonlinear-ex" data-kind="예제" data-std="기계22-03-05">
+  <header class="card-head"><span class="no"></span><h2>멈춤 블록에 닿는 외팔보: 접촉 비선형</h2><span class="kind">예제 · 간격 접촉 · 선형 해석의 오류</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 접촉 상태 가정 후 확인</span>
+      <ol>
+        <li>접촉이 없다고 가정하고 변위를 구한다.</li>
+        <li>변위가 간격을 넘으면 접촉으로 바꿔 다시 푼다.</li>
+        <li>접촉력이 압축(양수)인지 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 끝 강성 50 N/mm인 외팔보 끝 아래 1 mm에 멈춤 블록(접촉 강성 1000 N/mm)이 있다. 끝에 100 N을 걸 때 끝 변위와 접촉력은? 선형 해석(접촉 무시) 결과와 비교하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>접촉은 닿기 전과 후에 강성이 다른 구간별 선형 문제입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>접촉 무시: \(u = 100/50 = 2\) mm &gt; 간격 1 mm. 가정이 틀렸다.</div><span class="q-why">1단계.</span></li>
+        <li><div>접촉: \(50u + 1000(u - 1) = 100\)에서 \(u = 1100/1050 = 1.048\) mm.</div><span class="q-why">2단계.</span></li>
+        <li class="q-end"><div>접촉력 \(1000\times0.048 = 47.6\) N(압축, 양수)이라 가정이 맞다. 보가 받는 하중은 \(50\times1.048 = 52.4\) N.</div><span class="q-why">확인.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>힘 평형 \(52.4 + 47.6 = 100\) N. 선형 해석은 변위 2 mm(약 2배), 보 하중 100 N(약 2배)으로 보 응력을 크게 과대평가하고 멈춤 블록에 걸리는 힘은 전혀 보여 주지 않습니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>FEM 프로그램은 이 "가정 → 확인 → 수정"을 수많은 접촉 절점에서 자동으로 되풀이합니다. 접촉 강성(벌칙 계수)이 너무 작으면 면이 서로 파고들고, 너무 크면 수렴이 어려워집니다. 결과에서 침투량이 요소 크기보다 충분히 작은지 확인합니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>하중이 40 N이면 \(u = 0.8\) mm로 간격보다 작아 접촉하지 않습니다. 하중에 따라 접촉 여부가 바뀌므로 결과를 하중에 비례시킬 수 없습니다(40 N 결과를 2.5배해 100 N을 얻을 수 없음).</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>멈춤 블록이 완전 강체(강성 무한대)라면 끝 변위와 접촉력은?</p>
+      <details><summary>답</summary><p>변위 1 mm, 보 하중 50 N, 접촉력 50 N.</p></details>
+    </section>
+  </div>
+</article>

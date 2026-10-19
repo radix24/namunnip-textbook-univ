@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-05-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m22-doe-ex" data-kind="예제" data-std="기계22-05-03">
+  <header class="card-head"><span class="no"></span><h2>응답 표면으로 가장 가벼운 두께 찾기</h2><span class="kind">예제 · 회귀 모델 · 제약 조건 · 코드 변환</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 모델에서 설계점으로</span>
+      <ol>
+        <li>질량을 줄이려면 두께가 작아야 하므로 응력 제약이 걸리는 경계를 찾는다.</li>
+        <li>다른 변수를 유리한 쪽에 두고 모델을 한 변수에 대해 푼다.</li>
+        <li>코드 값을 실제 치수로 바꾸고 FEM으로 확인한다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 예제 5.3.1 모델 \(\hat y = 172.5 - 27.5x_t - 17.5x_r + 2.5x_tx_r\)을 쓴다. 허용 응력 150 MPa를 만족하는 가장 얇은 두께는? (필렛은 최대 6 mm까지 가능, 두께 코드 −1 = 3 mm, +1 = 5 mm)</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>필렛을 키우면 응력이 줄고 질량에는 거의 영향이 없으므로 \(x_r = +1\)로 둡니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(x_r = 1\): \(\hat y = 155 - 25x_t\).</div><span class="q-why">교호작용 포함.</span></li>
+        <li><div>\(155 - 25x_t = 150\)에서 \(x_t = 0.2\).</div><span class="q-why">제약 경계.</span></li>
+        <li class="q-end"><div>실제 두께 \(t = 4 + 0.2\times1 = 4.2\) mm(중심 4 mm, 반폭 1 mm).</div><span class="q-why">코드 변환.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(t\) = 4.2 mm, \(r\) = 6 mm로 FEM을 다시 돌려 150 MPa 근처인지 확인해야 합니다. 5.3절 연습문제 2처럼 곡률이 있다면 실제 응력은 모델보다 낮을 수 있어, 두께를 더 줄일 여지가 있는지도 봅니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>네 번의 해석으로 만든 간단한 모델이 설계 공간 전체의 감을 주고, 최적점 부근만 정밀하게 다시 해석하면 됩니다. 해석 한 번에 몇 시간이 걸리는 문제에서 특히 효과적이며, 최적화 소프트웨어의 대리 모델(surrogate)도 같은 생각입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>공차 때문에 필렛을 4 mm(\(x_r = 0\))까지만 낼 수 있다면 \(172.5 - 27.5x_t = 150\)에서 \(x_t = 0.82\), 두께 4.82 mm가 필요합니다. 필렛 2 mm 차이가 두께 0.6 mm로 이어집니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>허용 응력이 120 MPa라면 이 모델로 설계점을 정할 수 있는가?</p>
+      <details><summary>답</summary><p>\(x_r = 1\)에서 \(x_t = 1.4\)로 해석 범위(+1) 밖이라 외삽이 된다. 범위를 넓혀 새로 해석해야 한다.</p></details>
+    </section>
+  </div>
+</article>

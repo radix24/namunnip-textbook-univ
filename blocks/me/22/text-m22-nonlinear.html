@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-03-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-nonlinear" data-kind="본문" data-std="기계22-03-05">
+  <header class="card-head"><span class="no"></span><h2>비선형 해석: 재료, 기하, 접촉</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형 해석이 틀리는 세 경우(재료 비선형, 기하 비선형, 접촉)를 구분한다.</li>
+        <li>하중 증분과 Newton-Raphson 반복으로 비선형 방정식을 푸는 원리를 안다.</li>
+        <li>수렴하지 않을 때 점검할 것을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>강성 방정식 (<a href="01-04.html">1.4절</a>), Newton 법(공학수치해석).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.5.1</span>세 가지 비선형</h3>
+    <ul>
+      <li><b>재료</b>: 응력이 항복을 넘어 소성 변형, 고무의 초탄성, 크리프. 응력-변형률 관계가 직선이 아닙니다.</li>
+      <li><b>기하</b>: 변형이 커서 하중 방향이나 강성이 변형에 따라 바뀜(얇은 판의 막 효과, 낚싯대, 좌굴 후 거동).</li>
+      <li><b>접촉</b>: 부품이 닿거나 떨어지면서 경계 조건이 바뀜(볼트 이음, 끼워 맞춤, 기어 맞물림).</li>
+    </ul>
+    <p>선형 해석은 하중을 두 배로 하면 응답도 두 배라는 가정입니다. 위 셋 중 하나라도 해당하면 이 가정이 깨져 결과를 단순히 비례시킬 수 없습니다.</p>
+
+    <h3><span class="no">3.5.2</span>Newton-Raphson 반복</h3>
+    <p>비선형 평형식 \(\mathbf R(\mathbf u) = \mathbf F - \mathbf f_{\text{내력}}(\mathbf u) = 0\)을 풉니다. 현재 위치의 접선 강성 \(\mathbf K_t\)로 잔차를 줄이는 보정량을 구해 되풀이합니다. 큰 하중은 여러 증분으로 나눠 조금씩 올립니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Newton-Raphson</span>
+      <p>\[\mathbf K_t(\mathbf u_i)\,\Delta\mathbf u = \mathbf R(\mathbf u_i),\qquad \mathbf u_{i+1} = \mathbf u_i + \Delta\mathbf u\]</p>
+      <p>수렴 판정: 잔차 크기(힘)와 보정량(변위)이 기준 이하. 해 근처에서는 오차가 매 반복 제곱으로 줄어듭니다.</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.5.1 <span class="nm">(경화 스프링)</span></span>
+      <p>내력 \(f(u) = 1000u + 10^6u^3\)(N, m)인 스프링에 100 N을 걸 때 \(u_0 = 0\)에서 Newton-Raphson으로 변위를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(K_t = 1000 + 3\times10^6u^2\). 1회: \(\Delta u = 100/1000\), \(u = 0.100\) m(잔차 \(-1000\) N로 크게 넘침). 2회 0.0677, 3회 0.0489, 4회 0.0408, 5회 0.0393, 6회 0.0393 m(잔차 0.27 N). 선형 해석 답 0.1 m는 2.5배나 틀립니다. 첫 반복이 크게 넘치는 것은 증분 없이 전 하중을 한 번에 걸었기 때문입니다.</p>
+
+    <div class="tb-note"><b>주의</b>수렴하지 않으면 ① 증분을 더 작게, ② 접촉 면의 초기 간격과 마찰 설정, ③ 구속이 부족해 강체 운동이 생기지 않는지, ④ 재료가 불안정(연화)하거나 좌굴로 하중이 떨어지는지(호장법 필요) 순서로 점검합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>재료·기하·접촉 비선형이면 비례 가정이 깨진다.</li>
+        <li>하중 증분 + Newton-Raphson(\(\mathbf K_t\Delta\mathbf u = \mathbf R\)).</li>
+        <li>수렴 실패: 증분, 접촉, 구속, 불안정 점검.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>볼트로 조인 두 판 사이에 하중이 걸려 판이 벌어질 수 있다. 어떤 비선형인가?
+          <details><summary>답</summary><p>접촉 비선형(닿음·떨어짐에 따라 경계가 바뀜).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제를 50 N, 100 N 두 증분으로 나눠 풀면 첫 증분의 첫 반복 변위는? 왜 더 좋은가?
+          <details><summary>답</summary><p>\(50/1000 = 0.05\) m로, 50 N의 해(약 0.0280 m)를 덜 넘친다. 증분이 작을수록 출발점이 해에 가까워 빨리 안정적으로 수렴한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>Newton-Raphson이 매 반복 접선 강성을 다시 만드는 대신 처음 강성을 계속 쓰는 수정 Newton 법의 장단점은?
+          <details><summary>답</summary><p>행렬 분해를 한 번만 해 반복당 계산이 싸지만, 수렴이 1차라 반복 수가 늘고, 강성이 크게 변하는 문제에서는 수렴하지 않을 수 있다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

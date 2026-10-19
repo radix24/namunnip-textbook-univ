@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-unsteady" data-kind="본문" data-std="기계22-04-03">
+  <header class="card-head"><span class="no"></span><h2>비정상 유동 해석: 시간 간격과 와류 방출</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정상 해석과 비정상 해석이 필요한 경우를 구분한다.</li>
+        <li>CFL 수와 물리 주기로 시간 간격을 정한다.</li>
+        <li>원기둥 와류 방출 진동수(Strouhal 수)로 결과를 검증하고 구조 공진을 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>유한체적법 (<a href="04-01.html">4.1절</a>), 외부 유동 해석 (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>언제 비정상 해석인가</h3>
+    <p>정상 해석은 시간 미분을 빼고 바로 평형 상태를 찾습니다. 그런데 뭉툭한 물체 뒤의 와류 방출, 밸브 개폐, 펌프 시동, 맥동 유동처럼 유동이 본래 시간에 따라 변하면 정상 해석이 수렴하지 않거나(잔차가 진동) 틀린 평균을 줍니다. 이때 비정상 해석으로 시간을 따라 풉니다.</p>
+
+    <h3><span class="no">4.3.2</span>시간 간격 정하기</h3>
+    <div class="tb-env thm">
+      <span class="lb">CFL 수와 물리 주기</span>
+      <p>\[\mathrm{CFL} = \frac{u\,\Delta t}{\Delta x}\]</p>
+      <p>명시적 기법: 안정을 위해 CFL ≤ 1. 암시적 기법: 안정하지만 정확도를 위해 관심 주기에 20~50단계 이상, 중요한 영역에서 CFL 약 1~5.</p>
+    </div>
+    <p>시간 간격이 너무 크면 와류가 흐려져 진동이 사라지거나 진동수가 틀립니다. 처음 과도 구간(초기 조건의 영향)이 지난 뒤 여러 주기를 더 돌려 평균과 진폭을 얻습니다.</p>
+
+    <div class="tb-env thm">
+      <span class="lb">원기둥 와류 방출</span>
+      <p>\[f = \frac{\mathrm{St}\,U}D,\qquad \mathrm{St} \approx 0.2\quad(Re \approx 300 \sim 2\times10^5)\]</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1 <span class="nm">(시간 간격)</span></span>
+      <p>지름 50 mm 원기둥 주위 물 흐름 2 m/s를 해석한다. 와류 방출 진동수, 주기당 20단계일 때의 시간 간격, 원기둥 근처 격자 1 mm에서의 CFL은?</p>
+    </div>
+    <p><i>풀이.</i> \(f = 0.2\times2/0.05 = 8\) Hz, 주기 0.125 s, \(\Delta t = 6.25\) ms. CFL \(= 2\times0.00625/0.001 = 12.5\)로 암시적 기법이라도 근처 와류를 정확히 담기엔 큽니다. 원기둥 근처 CFL을 약 1로 하려면 \(\Delta t = 0.5\) ms, 주기당 250단계가 필요합니다.</p>
+
+    <div class="tb-note"><b>주의</b>2차원 해석은 와류가 축 방향으로 완벽히 맞물려 실제보다 힘의 진동 진폭을 크게 줍니다. 진동 하중으로 구조 설계를 할 때는 3차원 해석이나 실험 상관식과 비교합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>본래 비정상(와류, 시동, 맥동)이면 비정상 해석.</li>
+        <li>\(\Delta t\): 주기당 20~50단계 이상, CFL 고려.</li>
+        <li>와류 방출 \(f = \mathrm{St}\,U/D\), St ≈ 0.2로 검증.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정상 해석의 잔차가 줄지 않고 일정한 주기로 오르내린다. 무엇을 의심해야 하는가?
+          <details><summary>답</summary><p>유동이 본래 비정상(와류 방출 등)일 수 있다. 비정상 해석으로 바꿔 확인한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>명시적 기법에서 격자 0.5 mm, 최대 속도 10 m/s이면 허용 시간 간격은?
+          <details><summary>답</summary><p>CFL ≤ 1: \(\Delta t \le 0.0005/10 = 50\) μs.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제에서 과도 구간 5주기와 통계용 10주기를 \(\Delta t\) = 0.5 ms로 돌리면 몇 단계인가?
+          <details><summary>답</summary><p>15주기 × 0.125 s = 1.875 s, 3750단계.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
