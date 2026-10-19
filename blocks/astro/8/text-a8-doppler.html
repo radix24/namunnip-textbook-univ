@@ -1,0 +1,97 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우8-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a8-doppler" data-kind="본문" data-std="천우8-06-03">
+  <header class="card-head"><span class="no"></span><h2>도플러 곡선으로 위성 추적하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>지상국이 받는 위성 신호의 주파수가 시선속도에 따라 바뀌는 도플러 곡선의 모양을 설명한다.</li>
+        <li>도플러 곡선의 0점에서 가장 가까이 지난 시각을, 기울기에서 최소 거리를 구한다.</li>
+        <li>수신기 주파수 보정(도플러 보정)이 왜 필요한지와 그 크기를 계산한다.</li>
+        <li>도플러 추적이 위성 항법(Transit)과 궤도 결정에 쓰인 역사를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>도플러 효과 (<a href="../3/02-04.html">천우3 2.4절</a>), 지상국에서의 가시 시간 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>도플러 곡선</h3>
+    <p>위성이 송신 주파수 \(f_0\)로 신호를 보내면, 지상국은 \(f = f_0(1 - v_r/c)\)를 받습니다(\(v_r\)은 멀어지는 쪽이 양수인 시선속도). 저궤도 위성이 머리 위를 지나가면 다가올 때는 높은 주파수, 가장 가까울 때는 \(f_0\), 멀어질 때는 낮은 주파수로 바뀌어 S자 곡선을 그립니다.</p>
+    <p>짧은 시간 동안 위성이 속력 \(v\)로 직선 운동하고 최소 거리 \(r_{\min}\)으로 지난다고 하면, 가장 가까운 시각(TCA)을 \(t = 0\)으로 두어 \(v_r = v^2t/\sqrt{v^2t^2 + r_{\min}^2}\)입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 6.3.1</span>
+      <ul>
+        <li>최대 이동: \(|\Delta f|_{\max} \approx f_0v/c\)(멀리 있을 때).</li>
+        <li>0점: \(\Delta f = 0\)인 시각이 TCA.</li>
+        <li>0점에서의 기울기: \(\left.\dfrac{df}{dt}\right|_{0} = -\dfrac{f_0v^2}{c\,r_{\min}}\).</li>
+      </ul>
+    </div>
+    <p>기울기가 가파를수록 가까이 지난 것입니다. 그래서 한 번의 통과에서 도플러 곡선만 재도 위성이 언제, 얼마나 가까이 지났는지 알 수 있고, 여러 통과를 모으면 궤도를 결정할 수 있습니다.</p>
+
+    <h3><span class="no">6.3.2</span>얼마나 바뀌나</h3>
+    <p>437 MHz로 송신하는 초소형 위성(궤도 속력 7.5 km/s)이 최소 거리 600 km로 지나면</p>
+    <div class="tb-table">
+      <table>
+        <thead><tr><th>가장 가까운 시각에서의 시간</th><th>주파수 이동 (Hz)</th></tr></thead>
+        <tbody>
+          <tr><td>−120 s</td><td>+9,096</td></tr>
+          <tr><td>−60 s</td><td>+6,559</td></tr>
+          <tr><td>−30 s</td><td>+3,839</td></tr>
+          <tr><td>0</td><td>0</td></tr>
+          <tr><td>+30 s</td><td>−3,839</td></tr>
+          <tr><td>+60 s</td><td>−6,559</td></tr>
+          <tr><td>+120 s</td><td>−9,096</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>최대 약 ±10.9 kHz, 0점의 기울기 137 Hz/s입니다. 좁은 대역의 수신기는 이 이동을 실시간으로 따라가야(도플러 보정) 신호를 놓치지 않습니다. 주파수가 높을수록 이동이 커서, 145.8 MHz면 최대 ±3.6 kHz, 2 GHz 대역이면 ±50 kHz에 이릅니다.</p>
+
+    <h3><span class="no">6.3.3</span>도플러 항법의 역사</h3>
+    <p>1957년 스푸트니크 1호가 발사되자 미국 존스홉킨스 대학 연구원들은 그 신호의 도플러 곡선만으로 궤도를 정할 수 있음을 보였습니다. 거꾸로 궤도를 아는 위성의 도플러 곡선을 재면 수신자의 위치를 알 수 있다는 생각에서 미 해군의 Transit 위성 항법(1964~1996)이 나왔고, 이는 GPS의 조상이 되었습니다. 지금도 심우주 탐사선의 궤도는 지상국의 도플러와 거리 측정으로 결정합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>같은 위성(437 MHz, 7.5 km/s)의 다른 통과에서 0점의 기울기가 90 Hz/s였습니다. 최소 거리는?</p>
+    </div>
+    <p><i>풀이.</i> \(r_{\min} = f_0v^2/(c\,|df/dt|) = 4.37\times10^8\times(7.5\times10^3)^2/(3.0\times10^8\times90) = 9.1\times10^5\) m ≈ 910 km. 기울기가 완만해 더 멀리(지평선 가까이) 지나간 통과입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>수신 주파수 \(f = f_0(1 - v_r/c)\). 머리 위를 지나면 S자 도플러 곡선.</li>
+        <li>0점 = 가장 가까운 시각, 0점의 기울기 \(f_0v^2/(cr_{\min})\)로 최소 거리.</li>
+        <li>저궤도 437 MHz에서 ±11 kHz. 수신기는 도플러 보정이 필요하다.</li>
+        <li>도플러 추적 → Transit 항법 → GPS. 심우주 궤도 결정에도 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2.2 GHz로 송신하는 저궤도 위성(7.5 km/s)의 최대 도플러 이동은?
+          <details><summary>답</summary><p>\(2.2\times10^9\times7.5\times10^3/3\times10^8 = 55\) kHz.</p></details>
+        </li>
+        <li>도플러 곡선의 0점이 예측보다 4초 늦게 나타났습니다. 무엇을 뜻합니까?
+          <details><summary>답</summary><p>위성이 예측한 궤도보다 약 \(7.5\times4 = 30\) km 뒤처져 있습니다(TLE가 오래되었거나 항력이 예측보다 컸음).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정지궤도 위성의 도플러 이동은 왜 거의 없습니까?
+          <details><summary>답</summary><p>지상국에 대해 거의 멈춰 있어 시선속도가 0에 가깝기 때문입니다(경사각이 있으면 하루 주기로 작은 이동이 생깁니다).</p></details>
+        </li>
+        <li>0점의 기울기만으로는 위성이 지상국의 동쪽으로 지났는지 서쪽으로 지났는지 구별할 수 없습니다. 어떻게 하면 구별할 수 있을까요?
+          <details><summary>답</summary><p>지구 자전이 지상국을 동쪽으로 움직여 두 경우의 곡선이 약간 비대칭이 되는 것을 쓰거나, 여러 지상국 또는 여러 통과의 자료를 함께 씁니다. Transit도 이 모호함을 자전 효과와 여러 통과로 풀었습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
