@@ -1127,6 +1127,12 @@ def main():
     js = "/* tools/build.py가 curricula/univ-*.md와 blocks/에서 만든다. 직접 고치지 않는다. */\n"
     js += "window.UNIV = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n"
     OUT.write_text(js, encoding="utf-8", newline="\n")
+    # 로드맵 등 여러 학과를 한꺼번에 쓰는 화면용 합본: toc.js와 같은 내용(QURI 코드, sub, open, path, unis, s.u …)에
+    # 과목마다 영문 모듈 id를 더한 것. 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
+    for d in out:
+        for c in d["courses"]:
+            c["id"] = place.module_id(c["code"])
+    (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"js/toc.js: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
 
