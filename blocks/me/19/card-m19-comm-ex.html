@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-03-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m19-comm-ex" data-kind="예제" data-std="기계19-03-03">
+  <header class="card-head"><span class="no"></span><h2>I²C 센서 넷을 1 kHz로 읽을 수 있을까</h2><span class="kind">예제 · 버스 시간 예산 · 인터페이스 선택</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 통신 시간 예산</span>
+      <ol>
+        <li>한 번 읽기에 오가는 비트 수(주소, 레지스터, 자료, 확인 비트)를 센다.</li>
+        <li>클록으로 나눠 시간을 구하고 장치 수를 곱한다.</li>
+        <li>제어 주기의 일부(보통 절반 이하)에 들어가는지 본다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 관성 센서 4개를 한 I²C 버스(400 kHz)에 연결해 1 kHz 제어 주기마다 각각 6바이트씩 읽으려 한다. 한 센서 읽기가 약 10바이트분(바이트당 9비트)이라면 가능한가?</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>버스는 한 번에 한 장치만 쓰므로 시간이 더해집니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>한 센서: \(10\times9/400000 = 225\) μs.</div><span class="q-why">주소·레지스터 포함.</span></li>
+        <li><div>네 센서: 0.90 ms.</div><span class="q-why">순서대로.</span></li>
+        <li class="q-end"><div>주기 1 ms의 90%를 통신에 써서 제어 계산 시간이 거의 없다 → 사실상 불가능.</div><span class="q-why">여유 부족.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>1 MHz I²C(Fm+)를 지원하면 0.36 ms로 줄고, SPI 10 MHz면 장치당 약 8 μs, 네 개 약 32 μs입니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>센서를 고를 때 측정 성능뿐 아니라 인터페이스 속도도 시간 예산(<a href="03-02.html">3.2절</a>)에 넣어야 합니다. 빠른 루프의 센서는 SPI, 느린 보조 센서(온도, 습도)는 I²C로 나누는 것이 일반적입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>DMA(직접 메모리 접근)로 통신을 CPU 대신 하드웨어가 처리하게 하면 CPU는 통신 시간 동안 계산을 할 수 있지만, 자료가 한 주기 늦게 도착하는 지연은 그대로입니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>같은 조건에서 제어 주기를 500 Hz로 낮추면 통신이 차지하는 비율은?</p>
+      <details><summary>답</summary><p>주기 2 ms 중 0.9 ms, 45%.</p></details>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-mosfet" data-kind="본문" data-std="기계19-01-04">
+  <header class="card-head"><span class="no"></span><h2>MOSFET 스위치와 발열</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>MOSFET이 게이트 전압으로 켜지는 원리와 로직 레벨 MOSFET을 안다.</li>
+        <li>도통 손실과 스위칭 손실을 계산한다.</li>
+        <li>방열이 필요한지 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>트랜지스터 스위치 (<a href="01-01.html">1.1절</a>), PWM (<a href="04-02.html">4.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.4.1</span>MOSFET 스위치</h3>
+    <p>N채널 MOSFET은 게이트-소스 전압 \(V_{GS}\)가 문턱 전압을 넘으면 드레인-소스 사이가 작은 저항 \(R_{DS(\text{on})}\)(수 mΩ~수백 mΩ)으로 켜집니다. 게이트는 절연되어 정상 상태에서 전류가 거의 흐르지 않으므로 마이크로컨트롤러 핀으로 큰 전류를 쉽게 켭니다. 3.3 V로 완전히 켜지려면 로직 레벨 MOSFET(\(R_{DS(\text{on})}\)이 \(V_{GS}\) = 2.5~4.5 V에서 규정된 것)을 고릅니다.</p>
+
+    <h3><span class="no">1.4.2</span>손실</h3>
+    <div class="tb-env thm">
+      <span class="lb">MOSFET 손실</span>
+      <p>도통 손실 \(P_c = I^2R_{DS(\text{on})}D\)(\(D\): 듀티비).</p>
+      <p>스위칭 손실 \(P_{sw} \approx \frac12V I(t_r + t_f)f_{\text{PWM}}\): 켜지고 꺼지는 짧은 순간 전압과 전류가 함께 있어 생기는 열.</p>
+      <p>온도 상승 \(\Delta T = P\,\theta_{JA}\)(\(\theta_{JA}\): 접합-주위 열저항, °C/W).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.1 <span class="nm">(모터 PWM 스위치)</span></span>
+      <p>12 V, 5 A 모터를 \(R_{DS(\text{on})}\) = 20 mΩ인 MOSFET으로 20 kHz PWM(듀티 100% 근처) 구동한다. 상승·하강 시간 합 200 ns, \(\theta_{JA}\) = 60 °C/W(방열판 없음)일 때 손실과 온도 상승은?</p>
+    </div>
+    <p><i>풀이.</i> 도통 \(25\times0.02 = 0.5\) W, 스위칭 \(0.5\times12\times5\times200\times10^{-9}\times20000 = 0.12\) W, 합 0.62 W. 온도 상승 \(0.62\times60 = 37\) °C로 주위 25 °C면 약 62 °C라 방열판 없이 쓸 수 있습니다. 20 A라면 도통 손실이 16배(8 W)라 방열판이 필요합니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 마이크로컨트롤러 핀은 게이트 정전 용량을 천천히 충전해 스위칭이 느려지므로, 고주파 PWM에서는 게이트 드라이버를 씁니다. (2) 모터 같은 유도성 부하에는 플라이백 경로(다이오드 또는 H 브리지의 반대쪽 스위치)가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>게이트 전압으로 켜짐, 로직 레벨 MOSFET.</li>
+        <li>\(P = I^2R_{DS}D + \frac12VI(t_r + t_f)f\).</li>
+        <li>\(\Delta T = P\theta_{JA}\)로 방열 판단.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(R_{DS(\text{on})}\) = 50 mΩ에 3 A가 계속 흐르면 도통 손실은?
+          <details><summary>답</summary><p>0.45 W.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 PWM을 100 kHz로 올리면 스위칭 손실은?
+          <details><summary>답</summary><p>5배인 0.6 W. 도통 손실보다 커진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 MOSFET으로 20 A를 쓰려면 접합 온도 125 °C 이하(주위 40 °C)를 지키는 데 필요한 \(\theta_{JA}\)는?
+          <details><summary>답</summary><p>손실 8 + 0.48 = 8.5 W. \(\theta_{JA} \le (125 - 40)/8.5 = 10\) °C/W 이하의 방열판이 필요하다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

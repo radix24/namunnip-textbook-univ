@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-profile" data-kind="본문" data-std="기계19-05-03">
+  <header class="card-head"><span class="no"></span><h2>사다리꼴 속도 프로파일 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>목표 위치를 계단 대신 매끄러운 궤적으로 주는 이유를 안다.</li>
+        <li>최대 속도와 가속도로 사다리꼴 프로파일의 구간 시간을 계산한다.</li>
+        <li>짧은 이동에서 삼각형 프로파일이 되는 조건을 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이산 PID (<a href="05-01.html">5.1절</a>), 등가속도 운동(고등학교 물리).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>왜 프로파일인가</h3>
+    <p>위치 제어기에 목표를 계단으로 주면 처음 순간 오차가 커서 출력이 포화되고, 적분이 쌓여 넘치며, 기계에 큰 충격이 갑니다. 그래서 정해진 최대 속도 \(v_{\max}\)와 가속도 \(a\)를 넘지 않는 기준 궤적을 매 주기 계산해 목표로 줍니다. 제어기는 작은 오차만 따라가면 되어 정확하고 부드럽습니다.</p>
+
+    <h3><span class="no">5.3.2</span>사다리꼴 프로파일</h3>
+    <div class="tb-env thm">
+      <span class="lb">사다리꼴 속도 프로파일 (거리 \(D\))</span>
+      <p>가속 시간 \(t_a = v_{\max}/a\), 가속 거리 \(d_a = \frac12at_a^2\).</p>
+      <p>\(D \ge 2d_a\)이면 등속 시간 \(t_c = (D - 2d_a)/v_{\max}\), 전체 \(T = 2t_a + t_c\).</p>
+      <p>\(D &lt; 2d_a\)이면 최고 속도에 못 미치는 삼각형: \(v_p = \sqrt{aD}\), \(T = 2\sqrt{D/a}\).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1 <span class="nm">(200 mm 이동)</span></span>
+      <p>\(v_{\max}\) = 100 mm/s, \(a\) = 500 mm/s²로 200 mm를 움직인다. 구간 시간은? 15 mm만 움직이면?</p>
+    </div>
+    <p><i>풀이.</i> \(t_a = 0.2\) s, \(d_a = 10\) mm. 200 mm: 등속 \((200 - 20)/100 = 1.8\) s, 전체 2.2 s. 15 mm는 \(2d_a = 20\) mm보다 짧아 삼각형: \(v_p = \sqrt{500\times15} = 86.6\) mm/s, \(T = 2\sqrt{15/500} = 0.35\) s.</p>
+
+    <div class="tb-note"><b>주의</b>사다리꼴은 가속도가 계단처럼 바뀌어 저크가 무한대입니다. 진동에 민감한 기계(반도체 장비, 긴 팔 로봇)는 가속도까지 매끄러운 S자 곡선 프로파일을 씁니다(캠 설계의 기본 법칙과 같은 생각, <a href="../17/04-01.html">메카니즘설계 4.1절</a>).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>계단 목표 대신 속도·가속도 제한 궤적.</li>
+        <li>\(t_a = v/a\), \(d_a = at_a^2/2\), \(t_c = (D - 2d_a)/v\).</li>
+        <li>짧은 이동: 삼각형 \(T = 2\sqrt{D/a}\). 진동 민감하면 S자.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 조건에서 사다리꼴이 되는 최소 이동 거리는?
+          <details><summary>답</summary><p>\(2d_a = 20\) mm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 200 mm 이동을 가속도 2000 mm/s²로 하면 전체 시간은?
+          <details><summary>답</summary><p>\(t_a = 0.05\) s, \(d_a = 2.5\) mm, 등속 1.95 s, 전체 2.05 s. 가속도를 4배로 해도 7%만 빨라진다(긴 이동은 최고 속도가 지배).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>주기 1 ms 제어기에서 사다리꼴 프로파일의 목표 위치를 매 주기 어떻게 계산하는가? (가속 구간)
+          <details><summary>답</summary><p>시작부터 시간 \(t\)에서 \(x_r = \frac12at^2\), \(v_r = at\)를 계산해 위치 목표(필요하면 속도 피드포워드)로 준다. 등속 구간은 \(x_r = d_a + v_{\max}(t - t_a)\), 감속 구간은 대칭으로 계산한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
