@@ -127,7 +127,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 6. U(0, θ)의 세 추정량 비교 (응통7-01-02) */
+  /* 6. U(0, θ)의 세 추정량 비교 (응통7-01-03) */
   (() => {
     const S = QSim.card("lab-s7-mse"); if (!S) return;
     const cv = S.$("canvas"); let seed = 7;

@@ -6,13 +6,14 @@
 }
 -->
 <article class="card q-card" id="text-s9-diffusion" data-kind="본문" data-std="응통9-06-03">
-  <header class="card-head"><span class="no"></span><h2>확산 과정과 금융·물리 응용</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>표류 브라운 운동과 기하 브라운 운동</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
         <li>표류가 있는 브라운 운동과 기하 브라운 운동을 정의한다.</li>
-        <li>확산 과정이 물리(열 방정식)와 금융(주가 모형)에 쓰이는 방식을 안다.</li>
+        <li>기하 브라운 운동으로 주가의 중앙값, 평균, 구간 확률을 구한다.</li>
+        <li>표류가 있을 때 어느 경계에 먼저 닿을지 계산한다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
@@ -37,30 +38,38 @@
     </div>
     <p>로그 수익률이 표류 있는 브라운 운동이라, 주가는 항상 양수이고 같은 기간의 수익률(%)은 주가 수준과 무관합니다. \(E[S(t)] = S(0)e^{\mu t}\)입니다(\(E(e^{\sigma B(t)}) = e^{\sigma^2t/2}\)이 \(-\sigma^2/2\) 항을 상쇄). 블랙-숄스 옵션 가격 공식이 이 모형에서 나옵니다. 실제 수익률은 꼬리가 두껍고 변동성이 때에 따라 몰려(응통20의 GARCH) 이 모형은 첫 근사로만 씁니다.</p>
 
-    <h3><span class="no">6.3.3</span>물리: 확산과 열 방정식</h3>
-    <p>잉크 한 방울의 분자들이 각자 브라운 운동을 하면, 시각 \(t\)에 위치 \(x\)의 농도는 \(N(0, \sigma^2t)\)의 밀도 \(u(t, x) = \frac{1}{\sqrt{2\pi\sigma^2t}}e^{-x^2/(2\sigma^2t)}\)에 비례합니다. 이 함수는 확산(열) 방정식 \(\frac{\partial u}{\partial t} = \frac{\sigma^2}{2}\frac{\partial^2u}{\partial x^2}\)을 만족합니다. 아인슈타인(1905)은 이 관계로 분자의 크기를 계산할 수 있음을 보였고, 이는 원자 존재의 증거가 되었습니다.</p>
-
     <div class="tb-env ex">
       <span class="lb">예제 6.3.3</span>
       <p>\(S(0) = 100\), \(\mu = 0.08\), \(\sigma = 0.2\)인 기하 브라운 운동에서 1년 뒤 주가의 중앙값과 평균은?</p>
     </div>
     <p><i>풀이.</i> \(\log S(1) \sim N(\log100 + 0.08 - 0.02, 0.04)\). 중앙값 \(100e^{0.06} \approx 106.2\), 평균 \(100e^{0.08} \approx 108.3\). 오른쪽 꼬리 때문에 평균이 중앙값보다 큽니다.</p>
 
+    <h3><span class="no">6.3.3</span>표류가 있을 때 먼저 닿는 경계</h3>
+    <p>\(X(t) = \mu t + \sigma B(t)\)가 0에서 출발해 \(a &gt; 0\) 또는 \(-b &lt; 0\)에 먼저 닿는 확률은 4.3절의 지수 마팅게일과 같은 방법으로 구합니다. \(\theta = -2\mu/\sigma^2\)로 두면 \(e^{\theta X(t)}\)가 마팅게일이므로(\(E e^{\theta X(t)} = e^{(\theta\mu + \theta^2\sigma^2/2)t} = 1\)) 선택 정지 정리로</p>
+    \[P(a\text{에 먼저}) = \frac{e^{2\mu b/\sigma^2} - 1}{e^{2\mu b/\sigma^2} - e^{-2\mu a/\sigma^2}}.\]
+    <p>\(\mu \to 0\)이면 \(b/(a+b)\)로 돌아가 대칭 랜덤워크의 결과(4.3절)와 같습니다. 예를 들어 \(\mu = 0.1\), \(\sigma = 1\), \(a = b = 5\)이면 0.731로, 작은 표류도 먼 경계에서는 큰 차이를 만듭니다. 손절선과 목표가를 정해 둔 매매, 순차 검정의 기각 경계가 이 계산을 씁니다.</p>
+
     <div class="tb-summary">
       <b>요약</b>
       <ol>
         <li>표류 브라운 운동 \(\mu t + \sigma B(t)\).</li>
         <li>기하 브라운 운동: 로그가 표류 브라운 운동, 주가 모형.</li>
-        <li>브라운 운동의 밀도는 열 방정식의 해.</li>
+        <li>표류 브라운 운동의 경계 도달 확률은 지수 마팅게일 \(e^{-2\mu X/\sigma^2}\)로 구합니다.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <h3><span class="no">6.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(u(t, x) = \frac{1}{\sqrt{2\pi t}}e^{-x^2/(2t)}\)가 \(u_t = \frac12u_{xx}\)를 만족함을 미분으로 확인하세요.
-          <details><summary>답</summary><p>\(u_t = u\left(-\frac{1}{2t} + \frac{x^2}{2t^2}\right)\), \(u_x = -\frac xtu\), \(u_{xx} = u\left(\frac{x^2}{t^2} - \frac1t\right)\). \(\frac12u_{xx} = u_t\).</p></details>
+        <li>예제 6.3.3의 주가가 1년 뒤 100 아래일 확률은?
+          <details><summary>답</summary><p>\(\log(S(1)/100) \sim N(0.06, 0.2^2)\). \(P(Z &lt; -0.06/0.2) = P(Z &lt; -0.3) \approx 0.382\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(\mu = -0.1\), \(\sigma = 1\), \(a = b = 5\)이면 \(a\)에 먼저 닿을 확률은?
+          <details><summary>답</summary><p>대칭성으로 \(1 - 0.731 = 0.269\).</p></details>
         </li>
       </ol>
     </div>
