@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-collatz" data-kind="본문" data-std="수학4-02-01">
+  <header class="card-head"><span class="no"></span><h2>수학 실험: 콜라츠 수열</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>콜라츠 수열을 구현하고 여러 시작값에서 자료를 모은다.</li>
+        <li>관찰에서 추측을 세우고, 실험으로 지지하거나 반박하는 과정을 정리한다.</li>
+        <li>실험 결과와 증명의 차이를 분명히 한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>반복문과 함수, 리스트 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>문제</h3>
+    <p>양의 정수 \(n\)에서 시작해 짝수면 2로 나누고 홀수면 \(3n + 1\)로 바꾸기를 되풀이합니다. 콜라츠 추측: 어떤 \(n\)에서 시작해도 언젠가 1에 도달한다. 규칙은 초등학생도 이해하지만 1937년 이래 아무도 증명하지 못했습니다. 컴퓨터로는 \(2^{68}\) 근처까지 확인되었습니다. 이 절의 목적은 증명이 아니라 <b>실험하는 방법</b>을 익히는 것입니다.</p>
+    <pre class="mono small">def collatz(n):
+    seq = [n]
+    while n != 1:
+        n = n // 2 if n % 2 == 0 else 3 * n + 1
+        seq.append(n)
+    return seq
+
+print(collatz(6))            # [6, 3, 10, 5, 16, 8, 4, 2, 1]
+print(len(collatz(6)) - 1)   # 8 (1에 닿기까지의 단계 수)</pre>
+    <p><code>//</code>는 정수 나눗셈입니다. <code>/</code>를 쓰면 실수가 되어 큰 수에서 정확도를 잃습니다. 또 추측이 틀려 1에 닿지 않는 수가 있다면 이 함수는 끝나지 않습니다. 실험 코드에는 단계 수 상한을 두는 것이 안전합니다.</p>
+
+    <h3><span class="no">2.1.2</span>자료 모으기</h3>
+    <pre class="mono small">print(len(collatz(27)) - 1, max(collatz(27)))   # 111 9232
+
+steps = [len(collatz(n)) - 1 for n in range(1, 10001)]
+best = max(range(1, 10001), key=lambda n: steps[n - 1])
+print(best, steps[best - 1])                     # 6171 261
+print(sum(steps) / len(steps))                   # 84.9666</pre>
+    <p>관찰 1: 27은 작은 수인데 111단계를 거치고 9232까지 올라갑니다. 단계 수는 \(n\)의 크기와 거의 관계없이 들쭉날쭉합니다. 관찰 2: 1만 이하에서 가장 오래 걸리는 수는 6171(261단계)입니다. 관찰 3: 평균 단계 수는 약 85입니다.</p>
+
+    <h3><span class="no">2.1.3</span>추측과 검증</h3>
+    <p>관찰에서 추측을 세우고 더 많은 자료로 시험합니다.</p>
+    <ul>
+      <li><b>추측 A</b>: "단계 수는 \(\log n\)에 비례해 늘어난다." 휴리스틱: 홀수 단계 \(n \to 3n + 1\) 뒤에는 반드시 짝수라 2로 나누므로 한 쌍의 단계에서 대략 \(\times\frac32\), 짝수 단계는 \(\times\frac12\). 평균적으로 \(\frac32\cdot\frac12\cdot\frac12\cdots\) 꼴의 곱이 1보다 작아 로그적으로 줄어든다고 예측합니다. 범위를 10배씩 넓혀 평균 단계 수가 대략 일정량씩 늘어나는지 확인할 수 있습니다.</li>
+      <li><b>추측 B</b>: "\(2^k\)에서 시작하면 정확히 \(k\)단계." 이것은 실험할 필요도 없이 증명됩니다(계속 2로 나뉨).</li>
+      <li><b>반례 찾기</b>: "단계 수는 \(n\)이 커지면 늘어난다"는 \(n = 27\)(111단계)과 \(n = 28\)(18단계)이 바로 반박합니다.</li>
+    </ul>
+    <p>실험은 추측을 만들고 반례를 찾는 데 강력하지만, 유한한 확인은 "모든 \(n\)"에 대한 증명이 될 수 없습니다. 같은 절의 탐구 카드에서 궤적과 단계 수 분포를 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) <code>n / 2</code>를 써서 실수가 된다. (2) 끝나지 않을 가능성을 고려하지 않고 무한 반복을 만든다. (3) "1억까지 확인했으니 참이다"라고 결론낸다: 수학에는 아주 큰 첫 반례를 가진 추측들이 있다(예: 폴리아 추측, 첫 반례가 약 9억).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>규칙을 함수로, 시작값 범위를 리스트 내포로: 자료를 체계적으로 모은다.</li>
+        <li>관찰 → 추측 → 더 큰 자료로 시험 → 반례 또는 증명 시도.</li>
+        <li>실험은 증명이 아니다. 콜라츠 추측은 아직 미해결.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>100 이하에서 단계 수가 가장 많은 수와 그 단계 수는?
+          <details><summary>답</summary><p>97, 118단계.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>규칙을 \(3n - 1\)로 바꾸면 1에 닿지 않는 시작값이 있음을 실험으로 보여라.
+          <details><summary>답</summary><p>5 → 14 → 7 → 20 → 10 → 5로 순환한다. 이미 나온 값을 집합에 저장해 순환을 감지하면 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(n = 4k + 1\) (\(k \ge 1\))이면 \(n\)의 세 단계 뒤가 \(3k + 1\)임을 보이고 그 의미를 말하여라.
+          <details><summary>답</summary><p>\(4k + 1 \to 12k + 4 \to 6k + 2 \to 3k + 1\). 세 단계 만에 처음보다 작아지므로, \(4k + 1\) 꼴은 "더 작은 수로 내려온다"는 것이 증명된다. 이런 경우를 늘려 가는 것이 실제 연구에서 확인 범위를 넓히는 방법이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
