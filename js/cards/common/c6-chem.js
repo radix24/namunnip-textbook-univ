@@ -1,4 +1,4 @@
-/* 공통6 실습 카드 묶음: 반응 속도, 화학 평형, 적정 곡선, 네른스트 식, 방사성 붕괴, 결정장 */
+/* 공통6 실습 카드 묶음: 반응 속도, 화학 평형, 적정 곡선, 방사성 붕괴, 결정장 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -90,29 +90,6 @@
       const peq = pH(Ka, Ca, Cb, Veq), weak = Ka < 1;
       const ok = peq >= ind[0] - 1 && peq <= ind[1] + 1 ? "변색 범위가 당량점의 급변 구간 안에 있어 쓸 만하다" : "변색 범위가 당량점과 떨어져 있어 오차가 크다";
       S.out(`${sub(an)} ${Ca.toFixed(3)} M 25.0 mL + NaOH ${Cb.toFixed(3)} M ${vb.toFixed(2)} mL → pH ${p.toFixed(2)}\n당량점 ${Veq.toFixed(2)} mL, pH ${peq.toFixed(2)}${weak ? ", 반당량점 pH = pKa = " + (-Math.log10(Ka)).toFixed(2) : ""}\n${ind[2]} (${ind[0]}~${ind[1]}): ${ok}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 네른스트 식 (07-03) */
-  (() => {
-    const S = QSim.card("lab-c6-nernst"); if (!S) return;
-    const cv = S.$("canvas");
-    const CELL = {
-      zncu: { n: "Zn | Zn²⁺ ‖ Cu²⁺ | Cu", E0: 1.10, z: 2, an: "Zn²⁺", ca: "Cu²⁺", q: (a, b) => a - b },
-      cuag: { n: "Cu | Cu²⁺ ‖ Ag⁺ | Ag", E0: 0.46, z: 2, an: "Cu²⁺", ca: "Ag⁺", q: (a, b) => a - 2 * b },
-      conc: { n: "Cu | Cu²⁺ ‖ Cu²⁺ | Cu (농도차)", E0: 0, z: 2, an: "Cu²⁺ (왼쪽)", ca: "Cu²⁺ (오른쪽)", q: (a, b) => a - b }
-    };
-    function draw() {
-      const c = C(), ce = CELL[S.val("cell")], la = S.val("la"), lc = S.val("lc"), lq = ce.q(la, lc), sl = 0.0592 / ce.z;
-      const E = ce.E0 - sl * lq;
-      const v = QSim.view(cv, 0.5), x0 = -8, x1 = 8, yl = Math.max(0.6, Math.abs(ce.E0) + sl * 8);
-      const f = QSim.frame(v, { x0, x1, y0: Math.min(-0.3, ce.E0 - sl * 8), y1: yl, xl: "log Q", yl: "E (V)" }); f.axes();
-      f.fn((u) => ce.E0 - sl * u, c.main, 2.5); f.dot(lq, E, c.warn, 6);
-      const lK = ce.z * ce.E0 / 0.0592;
-      if (lK < x1) f.dot(lK, 0, c.acc, 5);
-      const dG = -ce.z * 96485 * E / 1000;
-      S.out(`${ce.n}, E° = ${ce.E0.toFixed(2)} V, n = ${ce.z}\n[${ce.an}] = ${sci(10 ** la, 2)} M, [${ce.ca}] = ${sci(10 ** lc, 2)} M → log Q = ${lq.toFixed(2)}\nE = E° − (0.0592/${ce.z}) log Q = ${E.toFixed(3)} V, ΔG = ${dG.toFixed(1)} kJ → ${E > 0.0005 ? "자발적 (쓰여진 방향으로 전류)" : E < -0.0005 ? "역방향이 자발적" : "평형 (다 닳은 전지)"}\nE = 0이 되는 log K = ${lK.toFixed(1)}${lK < x1 ? " (주황 점)" : ""}`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

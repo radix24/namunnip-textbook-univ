@@ -1,4 +1,4 @@
-/* 공통5 실습 카드 묶음: 한계 반응물, 전자 배치, VSEPR 모양, 기체 분자 운동 */
+/* 공통5 실습 카드 묶음: 전자 배치, VSEPR 모양, 기체 분자 운동 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -6,37 +6,6 @@
   const sup = (n) => String(n).split("").map((d) => SUP[+d]).join("");
   const SUB = "₀₁₂₃₄₅₆₇₈₉";
   const sub = (s) => s.replace(/([A-Za-z)])(\d+)/g, (_, a, n) => a + n.split("").map((d) => SUB[+d]).join(""));
-
-  /* 1. 한계 반응물 (03-02) */
-  (() => {
-    const S = QSim.card("lab-c5-limiting"); if (!S) return;
-    const cv = S.$("canvas");
-    const R = {
-      h2o: { eq: "2H2 + O2 → 2H2O", sp: [["H2", 2, 2.016, -1], ["O2", 1, 32.00, -1], ["H2O", 2, 18.02, 1]] },
-      nh3: { eq: "N2 + 3H2 → 2NH3", sp: [["N2", 1, 28.02, -1], ["H2", 3, 2.016, -1], ["NH3", 2, 17.03, 1]] },
-      fe: { eq: "4Fe + 3O2 → 2Fe2O3", sp: [["Fe", 4, 55.85, -1], ["O2", 3, 32.00, -1], ["Fe2O3", 2, 159.7, 1]] }
-    };
-    function draw() {
-      const c = C(), r = R[S.val("rx")], a = S.val("a"), b = S.val("b");
-      const before = [a, b, 0], x1 = a / r.sp[0][1], x2 = b / r.sp[1][1], xi = Math.min(x1, x2);
-      const after = r.sp.map(([, co, , s], i) => Math.max(0, before[i] + s * co * xi));
-      const top = Math.max(1, ...before, ...after) * 1.2;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: top, yl: "mol" }); f.axes({ noGrid: true });
-      const g = v.g, bw = f.sx * 0.3;
-      r.sp.forEach(([n], i) => {
-        const x = i + 0.5;
-        g.fillStyle = c.soft; g.fillRect(f.X(x) - bw, f.Y(before[i]), bw, f.Y(0) - f.Y(before[i]));
-        g.fillStyle = i === 2 ? c.acc : c.main; g.fillRect(f.X(x), f.Y(after[i]), bw, f.Y(0) - f.Y(after[i]));
-        f.text(sub(n), x, -top * 0.0 + top * 0.93, c.ink, "center");
-        f.text(before[i].toFixed(2), x - 0.15, before[i] + top * 0.02, c.ink3, "center");
-        f.text(after[i].toFixed(2), x + 0.15, after[i] + top * 0.02, c.ink, "center");
-      });
-      const lim = xi === 0 && a === 0 && b === 0 ? "-" : (Math.abs(x1 - x2) < 1e-9 ? "둘 다 (정확한 비율)" : sub(x1 < x2 ? r.sp[0][0] : r.sp[1][0]));
-      const ex = x1 < x2 ? 1 : 0, prod = after[2];
-      S.out(`${sub(r.eq)}   연한 막대: 반응 전, 진한 막대: 반응 후\n반응 진행도 ξ = min(${a.toFixed(2)}/${r.sp[0][1]}, ${b.toFixed(2)}/${r.sp[1][1]}) = ${xi.toFixed(3)} mol\n한계 반응물: ${lim}${Math.abs(x1 - x2) < 1e-9 ? "" : ", 남는 " + sub(r.sp[ex][0]) + " " + after[ex].toFixed(3) + " mol"}\n이론적 수득량: ${sub(r.sp[2][0])} ${prod.toFixed(3)} mol = ${(prod * r.sp[2][2]).toFixed(2)} g`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 2. 전자 배치와 오비탈 채우기 (06-04) */
   (() => {
