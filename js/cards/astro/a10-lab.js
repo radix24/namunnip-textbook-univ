@@ -1,44 +1,10 @@
-/* 천우10 실습 카드: N체 적분기 비교, 확산 방정식의 안정 조건, MCMC 직선 맞춤, Lomb-Scargle 주기도 */
+/* 천우10 실습 카드: 확산 방정식의 안정 조건, MCMC 직선 맞춤, Lomb-Scargle 주기도 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const fx = (x, n = 2) => (+x).toFixed(n);
   const rng = (s) => () => { s = (s * 1664525 + 1013904223) % 4294967296; return (s + 0.5) / 4294967296; };
   const gauss = (r) => Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
-
-  /* 1. 두 천체 궤도로 적분기 비교 (03-02, 03-03) */
-  (() => {
-    const S = QSim.card("lab-a10-nbody"); if (!S) return;
-    const cv = S.$("canvas");
-    function run(meth, e, dt, eps, norb) {
-      // 단위 G(m1+m2) = 1, a = 1, 주기 2π. 원일점에서 출발
-      let x = 1 + e, y = 0, vx = 0, vy = Math.sqrt((1 - e) / (1 + e));
-      const acc = (x, y) => { const q = Math.pow(x * x + y * y + eps * eps, -1.5); return [-x * q, -y * q]; };
-      const En = (x, y, vx, vy) => 0.5 * (vx * vx + vy * vy) - 1 / Math.sqrt(x * x + y * y + eps * eps);
-      const E0 = En(x, y, vx, vy), n = Math.round(norb * 2 * Math.PI / dt), every = Math.max(1, Math.floor(n / 3000)), pts = [[x, y]];
-      let dmax = 0;
-      for (let i = 0; i < n; i++) {
-        if (meth === "euler") { const [ax, ay] = acc(x, y); x += dt * vx; y += dt * vy; vx += dt * ax; vy += dt * ay; }
-        else if (meth === "leap") { let [ax, ay] = acc(x, y); vx += 0.5 * dt * ax; vy += 0.5 * dt * ay; x += dt * vx; y += dt * vy; [ax, ay] = acc(x, y); vx += 0.5 * dt * ax; vy += 0.5 * dt * ay; }
-        else { const f = (s) => { const [ax, ay] = acc(s[0], s[1]); return [s[2], s[3], ax, ay]; }, s0 = [x, y, vx, vy];
-          const k1 = f(s0), k2 = f(s0.map((v, j) => v + dt / 2 * k1[j])), k3 = f(s0.map((v, j) => v + dt / 2 * k2[j])), k4 = f(s0.map((v, j) => v + dt * k3[j]));
-          [x, y, vx, vy] = s0.map((v, j) => v + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j])); }
-        const d = Math.abs((En(x, y, vx, vy) - E0) / E0); if (d > dmax) dmax = d;
-        if (i % every === 0) pts.push([x, y]);
-        if (!isFinite(x) || x * x + y * y > 400) break;
-      }
-      return { pts, n, dE: Math.abs((En(x, y, vx, vy) - E0) / E0), dmax, ang: Math.atan2(y, x) * 180 / Math.PI };
-    }
-    function draw() {
-      const c = C(), meth = S.val("meth"), e = S.val("e"), dt = Math.pow(10, S.val("ldt")), eps = S.val("eps");
-      const R = run(meth, e, dt, eps, 10), L = 2.4;
-      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -L * 1.45, x1: L * 1.45, y0: -L, y1: L, xl: "x (궤도 긴반지름 단위)", yl: "y" }); f.axes();
-      f.path(R.pts, c.main, 1.1); f.dot(0, 0, c.warn, 4); f.dot(1 + e, 0, c.acc, 4);
-      const name = { euler: "오일러", leap: "leapfrog(KDK)", rk4: "4차 Runge-Kutta" }[meth];
-      S.out(`${name}, 이심률 ${fx(e, 2)}, Δt = ${dt.toExponential(1)}, 연화 길이 ε = ${fx(eps, 3)}: 10바퀴에 ${R.n}걸음 (힘 계산 ${meth === "rk4" ? 4 * R.n : R.n}번)\n상대 에너지 오차: 끝 ${R.dE.toExponential(2)}, 최대 ${R.dmax.toExponential(2)}\n마지막 위치의 방위각 ${fx(R.ang, 1)}° (정확한 해는 출발점 0°로 돌아옴)\n파란 선: 궤도, 빨간 점: 질량 중심, 주황 점: 출발점(원일점)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 2. 확산 방정식의 명시적·암시적 차분 (04-01) */
   (() => {

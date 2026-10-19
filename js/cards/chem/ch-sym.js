@@ -1,5 +1,5 @@
 /* 화학과 무기화학 탐구 카드 묶음 (화학9)
-   지표표와 환원 공식: 진동 모드의 대칭과 IR·라만 활성 */
+   지표표와 환원 공식: 진동 모드의 대칭과 IR·라만 활성, 이원자 분자의 MO 채우기, 프로스트 도표 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -95,6 +95,73 @@
       });
       S.out(`${e.n}의 프로스트 도표 (산성, 25 °C)\n가장 낮은 점(가장 안정한 상태): ${d[iMin][1]}\n${lines.join("\n")}`);
     }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 3. 2주기 동핵 이원자 분자의 MO 채우기: 결합 차수와 자기성 (화학9-03-03) */
+  (() => {
+    const S = QSim.card("lab-ch9-mo"); if (!S) return;
+    const cv = S.$("canvas");
+    const EL = { Li: 1, Be: 2, B: 3, C: 4, N: 5, O: 6, F: 7, Ne: 8 };
+    // 실험 결합 길이(pm, 대표값)와 자기성. 표에 있는 화학종만 비교한다
+    const EXP = { "Li2,0": [267, "반자기성"], "B2,0": [159, "상자기성"], "C2,0": [124, "반자기성"], "N2,0": [110, "반자기성"], "N2,1": [112, "상자기성"],
+      "O2,0": [121, "상자기성"], "O2,1": [112, "상자기성"], "O2,-1": [135, "상자기성"], "O2,-2": [149, "반자기성"], "F2,0": [142, "반자기성"] };
+    // [이름, 겹침 수, 결합성(+1)/반결합성(−1), 섞임 있을 때 에너지, 섞임 없을 때 에너지] (그림용 상대 에너지)
+    const MO = [["σ2s", 1, 1, -1.7, -1.7], ["σ*2s", 1, -1, -0.75, -0.75], ["π2p", 2, 1, 0.05, 0.35], ["σ2p", 1, 1, 0.4, -0.05], ["π*2p", 2, -1, 1.25, 1.25], ["σ*2p", 1, -1, 2.0, 2.0]];
+    function draw() {
+      const c = C(), el = S.val("el"), q = S.val("q"), mode = S.val("mode");
+      const ne = Math.max(0, Math.min(16, 2 * EL[el] - q));
+      const mix = mode === "auto" ? EL[el] <= 5 : mode === "mix";
+      const lv = MO.map(([n, d, b, e1, e2]) => ({ n, d, b, e: mix ? e1 : e2, occ: [] })).sort((a, b) => a.e - b.e);
+      // 낮은 준위부터 채우되, 겹친 준위는 하나씩 먼저 넣는다(훈트 규칙)
+      let left = ne;
+      lv.forEach((L) => {
+        const k = Math.min(left, 2 * L.d); left -= k;
+        L.occ = Array.from({ length: L.d }, (_, i) => (k > i ? 1 : 0) + (k > L.d + i ? 1 : 0));
+      });
+      const nb = lv.reduce((s, L) => s + (L.b > 0 ? L.occ.reduce((a, b) => a + b, 0) : 0), 0);
+      const na = ne - nb, bo = (nb - na) / 2, unp = lv.reduce((s, L) => s + L.occ.filter((o) => o === 1).length, 0);
+      const v = QSim.view(cv, 0.72), g = v.g, W = v.W, H = v.H;
+      const Y = (e) => H - 24 - (e + 2.1) / 4.4 * (H - 44), xm = W / 2, xa = W * 0.14, xb = W * 0.86, w = Math.min(46, W * 0.11);
+      const font = getComputedStyle(document.documentElement).getPropertyValue("--f-mono");
+      g.font = "12px " + font; g.textBaseline = "middle";
+      const elec = (x, y, n) => {
+        g.strokeStyle = c.warn; g.lineWidth = 2;
+        const arr = (dx, up) => { const x0 = x + dx; g.beginPath(); g.moveTo(x0, y + 9); g.lineTo(x0, y - 9); g.stroke(); g.beginPath(); const t = up ? y - 9 : y + 9, s = up ? 1 : -1; g.moveTo(x0, t); g.lineTo(x0 - 4, t + 5 * s); g.lineTo(x0 + 4, t + 5 * s); g.closePath(); g.fillStyle = c.warn; g.fill(); };
+        if (n >= 1) arr(n === 2 ? -5 : 0, true);
+        if (n === 2) { g.save(); arr(5, false); g.restore(); }
+      };
+      // 원자 오비탈 (양쪽)
+      const a2s = -1.2, a2p = 0.75, nAt = Math.max(0, Math.min(8, EL[el]));
+      [[xa, "A"], [xb, "B"]].forEach(([x]) => {
+        g.strokeStyle = c.ink2; g.lineWidth = 2;
+        g.beginPath(); g.moveTo(x - w / 2, Y(a2s)); g.lineTo(x + w / 2, Y(a2s)); g.stroke();
+        for (let i = -1; i <= 1; i++) { g.beginPath(); g.moveTo(x + i * (w * 0.75) - w * 0.32, Y(a2p)); g.lineTo(x + i * (w * 0.75) + w * 0.32, Y(a2p)); g.stroke(); }
+        g.fillStyle = c.ink3; g.textAlign = "center"; g.fillText("2s", x, Y(a2s) + 16); g.fillText("2p", x, Y(a2p) + 16);
+        const s2 = Math.min(2, nAt), p = nAt - s2;
+        elec(x, Y(a2s), s2);
+        for (let i = 0; i < 3; i++) elec(x + (i - 1) * (w * 0.75), Y(a2p), (p > i ? 1 : 0) + (p > 3 + i ? 1 : 0));
+      });
+      g.fillStyle = c.ink2; g.textAlign = "center"; g.fillText(el, xa, 12); g.fillText(el, xb, 12); g.fillText(`${el}₂${q ? (q > 0 ? (q === 1 ? "⁺" : "²⁺") : (q === -1 ? "⁻" : "²⁻")) : ""}`, xm, 12);
+      // 분자 오비탈
+      lv.forEach((L) => {
+        const y = Y(L.e), xs = L.d === 1 ? [xm] : [xm - w * 0.6, xm + w * 0.6];
+        g.strokeStyle = L.b > 0 ? c.main : RED_; g.lineWidth = 2.5;
+        xs.forEach((x, i) => { g.beginPath(); g.moveTo(x - w * 0.45, y); g.lineTo(x + w * 0.45, y); g.stroke(); elec(x, y, L.occ[i]); });
+        g.fillStyle = L.b > 0 ? c.main : RED_; g.textAlign = "left"; g.fillText(L.n, xm + w * 1.25, y);
+        g.save(); g.strokeStyle = c.rule; g.setLineDash([3, 4]); g.lineWidth = 1;
+        const ea = L.n.includes("2s") ? a2s : a2p;
+        [[xa + w / 2 + (ea === a2p ? w * 0.75 + w * 0.32 - w / 2 : 0), xm - (L.d === 1 ? w * 0.45 : w * 1.05)], [xb - w / 2 - (ea === a2p ? w * 0.75 + w * 0.32 - w / 2 : 0), xm + (L.d === 1 ? w * 0.45 : w * 1.05)]].forEach(([x0, x1]) => { g.beginPath(); g.moveTo(x0, Y(ea)); g.lineTo(x1, y); g.stroke(); });
+        g.restore();
+      });
+      const conf = lv.filter((L) => L.occ.some((o) => o)).map((L) => `(${L.n})${L.occ.reduce((a, b) => a + b, 0)}`).join(" ");
+      const key = `${el}2,${q}`, ex = EXP[key], mag = unp ? `상자기성 (홀전자 ${unp}개)` : "반자기성";
+      const top = lv.filter((L) => L.occ.some((o) => o)).pop();
+      S.out(`${el}₂${q ? ` (전하 ${q > 0 ? "+" : ""}${q})` : ""}: 원자가 전자 ${ne}개, 순서 ${mix ? "s-p 섞임 있음 (π2p가 σ2p보다 낮음)" : "s-p 섞임 없음 (σ2p가 π2p보다 낮음)"}\n전자 배치: ${conf || "없음"}\n`
+        + `결합성 ${nb}개, 반결합성 ${na}개 → 결합 차수 (${nb} − ${na})/2 = ${bo}${bo <= 0 ? " (안정한 결합 없음)" : ""}\n예측: ${mag}${top ? `, HOMO ${top.n}` : ""}`
+        + (ex ? `\n실험: 결합 길이 약 ${ex[0]} pm, ${ex[1]} → 예측이 ${(ex[1] === "상자기성") === (unp > 0) ? "자기성과 맞음" : "자기성과 맞지 않음"}` : "\n실험: 이 화학종은 비교할 표 값을 넣지 않았습니다"));
+    }
+    const RED_ = "#b5562a";
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 })();

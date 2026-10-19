@@ -1,6 +1,6 @@
 /* 화학과 물리화학 실습 카드 묶음 (화학6 물리화학1, 화학10 물리화학2, 화학15 물리화학실험)
    상자 속 입자와 공액 염료, HCl 진동-회전 스펙트럼, Hückel 분자 오비탈, 연속 반응, 효소 속도론,
-   이성분 증기-액체 평형, Langmuir 흡착, Arrhenius 도시의 불확도 */
+   이성분 증기-액체 평형, Arrhenius 도시의 불확도 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -222,35 +222,8 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 7. Langmuir 흡착과 표면 반응 차수 (화학10-09-01, 09-02) */
-  (() => {
-    const S = QSim.card("lab-ch10-langmuir"); if (!S) return;
-    const cv = S.$("canvas");
-    const PP = [2, 5, 10, 20, 40, 80, 160, 320];   // kPa
-    let seed;
-    function draw() {
-      const c = C(), r = Q.rng(seed() * 911), nm = 2.0, T = S.val("T"), dH = S.val("dH") * 1000, nz = S.val("nz") / 100, lin = S.val("plot") === "lin";
-      const K = 1e-6 * Math.exp(-dH / (Rg * T));   // 1/kPa (K₀ = 10⁻⁶ /kPa)
-      const th = (p) => K * p / (1 + K * p);
-      const data = PP.map((p) => [p, nm * th(p) * (1 + nz * Q.gauss(r))]);
-      const L = linfit(data.map((d) => d[0]), data.map((d) => d[0] / d[1])), nfit = 1 / L.m, Kfit = L.m / L.b;
-      const v = QSim.view(cv, 0.55);
-      if (!lin) {
-        const f = QSim.frame(v, { x0: 0, x1: 340, y0: 0, y1: 2.2, xl: "P (kPa)", yl: "흡착량 n (mmol/g)" }); f.axes();
-        f.fn((p) => nm * th(p), c.main, 2.5); data.forEach(([p, y]) => f.dot(p, y, RED, 4.5));
-        f.fn((p) => nm, c.ink3, 1, [4, 4]);
-      } else {
-        const f = QSim.frame(v, { x0: 0, x1: 340, y0: 0, y1: Math.max(...data.map((d) => d[0] / d[1])) * 1.15, xl: "P (kPa)", yl: "P/n (kPa·g/mmol)", pad: 46 }); f.axes();
-        f.fn((p) => L.m * p + L.b, c.main, 2); data.forEach(([p, y]) => f.dot(p, p / y, RED, 4.5));
-      }
-      const P0 = S.val("Pr"), ord = 1 - th(P0);
-      S.out(`가상 자료 ${seed()}번 · ${T} K, 흡착 엔탈피 ${S.val("dH")} kJ/mol → K = ${sci(K, 3)} /kPa (참 최대 흡착량 2.00 mmol/g)\n직선화 P/n = P/n_max + 1/(K·n_max) 맞춤: n_max = ${nfit.toFixed(3)} mmol/g, K = ${sci(Kfit, 3)} /kPa\n표면 반응 속도 r = kθ: P = ${P0} kPa에서 θ = ${th(P0).toFixed(3)}, 겉보기 차수 d ln r / d ln P = 1 − θ = ${ord.toFixed(2)}`);
-    }
-    seed = Q.seedButton(S, draw);
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
-  /* 8. Arrhenius 도시와 활성화 에너지의 불확도 (화학15-04-01, 화학10-07-04) */
+  /* 7. Arrhenius 도시와 활성화 에너지의 불확도 (화학15-04-01, 화학10-07-04) */
   (() => {
     const S = QSim.card("lab-ch15-arrhenius"); if (!S) return;
     const cv = S.$("canvas");

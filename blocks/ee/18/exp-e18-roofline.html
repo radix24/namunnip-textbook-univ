@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-02-01",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e18-system.js"]
+}
+-->
+<article class="card q-card" id="exp-e18-roofline" data-kind="탐구" data-std="전전18-02-01">
+  <header class="card-head"><span class="no"></span><h2>연산 한계인가, 메모리 한계인가</h2><span class="kind">탐구 · roofline 모형</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>같은 가속기에서 행렬 곱은 거의 최대 성능이 나오는데 벡터 덧셈은 1%도 안 나오는 이유는?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>최대 연산(GFLOP/s)과 메모리 대역(GB/s)으로 roofline(파랑)을 그리고, 작업의 연산 강도(FLOP/byte)에서 도달 가능한 성능(빨간 점)을 표시합니다(2.1절). 행렬 곱은 원소를 캐시에서 재사용한다고 가정해 강도 n/6입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>최대 연산 <b data-show="peak" data-fix="0">1000</b> GFLOP/s</span><input type="range" name="peak" min="100" max="5000" step="100" value="1000" aria-label="최대 연산"></label>
+        <label><span>대역 <b data-show="bw" data-fix="0">100</b> GB/s</span><input type="range" name="bw" min="10" max="1000" step="10" value="100" aria-label="메모리 대역"></label>
+        <label><span>작업</span><select name="kind" aria-label="작업 종류"><option value="vadd">벡터 덧셈</option><option value="mv">행렬-벡터 곱</option><option value="mm" selected>행렬 곱</option></select></label>
+        <label><span>n = 2^<b data-show="ln" data-fix="0">8</b></span><input type="range" name="ln" min="4" max="12" step="1" value="8" aria-label="행렬 크기 지수"></label>
+      </div>
+      <canvas aria-label="roofline과 작업의 위치"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>1000 GFLOP/s, 100 GB/s: ridge 10 FLOP/byte. 행렬 곱 n = 256: 강도 42.67, 연산 한계로 1000 GFLOP/s(예제 2.1.1).</span></li>
+        <li><b>벡터 덧셈</b><span>강도 0.083, 도달 8.3 GFLOP/s로 메모리 한계. 연산기를 늘려도 그대로입니다.</span></li>
+        <li><b>행렬-벡터 곱</b><span>강도 약 0.5, 50 GFLOP/s 근처로 역시 메모리 한계. 신경망 추론에서 묶음(batch) 크기 1일 때 가속기가 놀게 되는 이유입니다.</span></li>
+        <li><b>작은 행렬 곱</b><span>n = 16이면 강도 2.67로 ridge 아래라 267 GFLOP/s, 메모리 한계로 바뀝니다. 대역을 1000 GB/s로 올리면 연산 한계로 돌아옵니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>GPU·NPU 설계에서 연산기와 메모리(HBM) 대역의 비율을 정하고, 소프트웨어에서는 타일링·묶음 처리로 연산 강도를 높여 ridge 오른쪽으로 옮깁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"최대 성능 표시값이 실제 성능이다."</b> 메모리 한계 작업은 표시값의 몇 %만 냅니다.</li>
+        <li><b>"행렬 곱의 강도는 n과 무관하다."</b> 재사용이 n배라 n이 클수록 강도가 커집니다(캐시에 들어가는 한).</li>
+      </ul>
+    </section>
+  </div>
+</article>

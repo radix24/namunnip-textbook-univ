@@ -1,5 +1,5 @@
 /* 화학과 분석화학 실습 카드 묶음 (화학1 분석화학1, 화학3 분석화학실험, 화학8 분석화학2)
-   t 검정, 검량선과 표준물 첨가, 다양성자산, EDTA 적정, 산화환원 적정, 추출, 적정 불확도, 전위차 적정 종말점,
+   t 검정, 검량선과 표준물 첨가, 다양성자산, 일양성자산 적정과 지시약, EDTA 적정, 산화환원 적정, 적정 불확도, 전위차 적정 종말점,
    van Deemter와 분리능, 순환 전압전류 */
 (() => {
   "use strict";
@@ -205,20 +205,47 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 6. 용매 추출: 나누어 추출하기와 pH (화학1-07-01) */
+  /* 6. 일양성자산 적정 곡선과 지시약 고르기 (화학1-03-03) */
   (() => {
-    const S = QSim.card("lab-ch1-extract"); if (!S) return;
+    const S = QSim.card("lab-ch1-titration"); if (!S) return;
     const cv = S.$("canvas");
+    const IND = {
+      mo: { n: "메틸 오렌지", lo: 3.1, hi: 4.4, c0: "#d9412b", c1: "#e8b81e" },
+      mr: { n: "메틸 레드", lo: 4.4, hi: 6.2, c0: "#d9412b", c1: "#e8b81e" },
+      btb: { n: "브로모티몰 블루", lo: 6.0, hi: 7.6, c0: "#e8b81e", c1: "#2f6fd0" },
+      pp: { n: "페놀프탈레인", lo: 8.2, hi: 10.0, c0: "#cfcfcf", c1: "#d63d9a" }
+    };
+    const Va = 25;
+    /* 전하 균형 [H⁺] + [Na⁺] = [OH⁻] + [A⁻]를 넣은 부피에 대해 풀면 닫힌 꼴이 된다 */
+    const volAt = (pH, Ca, Ka) => { const h = 10 ** -pH, a = Ka / (h + Ka), d = Kw / h - h; return Va * (Ca * a + d) / (Ca - d); };
+    /* NaOH 농도가 산과 같으므로 pH는 14 + log Ca를 넘지 못한다(그때 필요한 부피가 무한대) */
+    const pMax = (Ca) => 14 + Math.log10(Ca) - 1e-4;
+    const pHat = (Vb, Ca, Ka) => bisect((p) => volAt(p, Ca, Ka) - Vb, 0, pMax(Ca));
     function draw() {
-      const c = C(), K = S.val("K"), n = S.val("n"), pH = S.val("ph"), pKa = S.val("pka"), Vaq = 100, Vorg = 100;
-      const h = 10 ** -pH, Ka = 10 ** -pKa, D = K * h / (h + Ka);
-      const q1 = Vaq / (Vaq + D * Vorg / n), rem = []; for (let i = 0; i <= n; i++) rem.push(q1 ** i);
-      const one = Vaq / (Vaq + D * Vorg);
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: -0.5, x1: 6.5, y0: 0, y1: 100, xl: "추출 횟수", yl: "물층에 남은 양 (%)" }); f.axes();
+      const c = C(), strong = S.val("acid") === "strong", pKa = S.val("pka"), Ka = strong ? 1e8 : 10 ** -pKa;
+      const Ca = +S.val("ca"), I = IND[S.val("ind")], Vb = S.val("vb");
+      const v = QSim.view(cv, 0.6), f = QSim.frame(v, { x0: 0, x1: 50, y0: 0, y1: 14, xl: "NaOH (mL)", yl: "pH", pad: 30 });
       const g = v.g;
-      rem.forEach((q, i) => { g.fillStyle = i === 0 ? c.ink3 : c.main; const x0 = f.X(i - 0.3), x1 = f.X(i + 0.3); g.fillRect(x0, f.Y(q * 100), x1 - x0, f.Y(0) - f.Y(q * 100)); });
-      f.path([[-0.5, one * 100], [6.5, one * 100]], RED, 1.5, [5, 4]);
-      S.out(`분배 계수 K = ${K.toFixed(1)}, pKa ${pKa.toFixed(1)}, pH ${pH.toFixed(1)} → 분포비 D = K·[H⁺]/([H⁺]+Ka) = ${D.toFixed(3)}\n유기 용매 100 mL를 ${n}번(${(Vorg / n).toFixed(1)} mL씩) 나누어 추출: 물층에 ${(rem[n] * 100).toFixed(2)}% 남음, 추출률 ${((1 - rem[n]) * 100).toFixed(2)}%\n100 mL로 한 번 추출(빨간 점선): ${(one * 100).toFixed(2)}% 남음`);
+      const grad = g.createLinearGradient(0, f.Y(I.lo), 0, f.Y(I.hi));
+      grad.addColorStop(0, I.c0); grad.addColorStop(1, I.c1);
+      g.save(); g.globalAlpha = 0.28; g.fillStyle = grad; g.fillRect(f.X(0), f.Y(I.hi), f.X(50) - f.X(0), f.Y(I.lo) - f.Y(I.hi)); g.restore();
+      f.axes();
+      const curve = (K) => { const pts = []; for (let p = 0.02; p < pMax(Ca); p += 0.01) { const V = volAt(p, Ca, K); if (V >= 0 && V <= 50) pts.push([V, p]); } return pts; };
+      if (!strong) f.path(curve(1e8), c.ink3, 1.5, [5, 4]);
+      f.path(curve(Ka), c.main, 2.5);
+      f.path([[25, 0], [25, 14]], c.ink3, 1, [3, 4]);
+      const p = pHat(Math.max(Vb, 1e-6), Ca, Ka); f.dot(Vb, p, c.warn, 6);
+      const pEq = pHat(25, Ca, Ka), pHalf = pHat(12.5, Ca, Ka);
+      const v1 = volAt(I.lo, Ca, Ka), v2 = volAt(I.hi, Ca, Ka), vm = volAt((I.lo + I.hi) / 2, Ca, Ka);
+      const jump = pHat(25.05, Ca, Ka) - pHat(24.95, Ca, Ka);
+      const err = Math.abs(vm - 25) < 5e-4 ? 0 : (vm - 25) / 25 * 100;
+      const ok = v1 >= 0 && Math.abs(err) < 0.5;
+      f.text(I.n, 49, (I.lo + I.hi) / 2 - 0.2, c.ink2, "right");
+      S.out(`${strong ? "강산 HCl" : `약산 HA (pKa ${pKa.toFixed(2)})`} ${Ca.toFixed(Ca < 0.01 ? 4 : 3)} M 25.00 mL를 같은 농도의 NaOH로 적정, 당량점 25.00 mL\n`
+        + `넣은 부피 ${Vb.toFixed(2)} mL → pH ${p.toFixed(2)}\n`
+        + `반당량점 12.50 mL: pH ${pHalf.toFixed(2)}${strong ? "" : ` (pKa ${pKa.toFixed(2)}와 비교)`} · 당량점: pH ${pEq.toFixed(2)} · 24.95→25.05 mL 사이 pH 변화 ${jump.toFixed(2)}\n`
+        + `${I.n}(pH ${I.lo.toFixed(1)}~${I.hi.toFixed(1)}): ` + (v1 < 0 ? `적정 시작 전부터 이미 변색 범위 위에 있음` : `${v1.toFixed(2)}~${v2.toFixed(2)} mL에서 색이 바뀜, 중간색 ${vm.toFixed(2)} mL (적정 오차 ${err >= 0 ? "+" : ""}${err.toFixed(2)}%)`)
+        + `\n판정: ${ok ? "알맞음. 변색이 급변 구간 안에 있다" : "알맞지 않음. 색이 당량점에서 떨어진 곳이나 넓은 부피에 걸쳐 바뀐다"}`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
