@@ -1,4 +1,4 @@
-/* 전전19~22 탐구 카드: Smith 도표(19-01-01), 경사하강과 Newton(20-04-01), 2차 시스템 계단 응답(22-02-01) */
+/* 전전19~22 탐구 카드: Smith 도표(19-01-01), 경사하강과 Newton(20-04-01), 2차 계단 응답(22-02-01), 상승 코사인 눈 모양(21-02-02) */
 (() => {
   "use strict";
   if (!window.QSim) return;
@@ -79,6 +79,29 @@
       const os = Math.max(0, peak - 1) * 100;
       S.out(`ζ = ${f2(z, 2)}, ω_n = ${f2(wn, 1)} rad/s → 극점 ${z < 1 ? `${f2(-z * wn, 3)} ± j${f2(wn * Math.sqrt(1 - z * z), 3)}` : `실수 ${f2(-wn * (z - Math.sqrt(z * z - 1)), 3)}, ${f2(-wn * (z + Math.sqrt(z * z - 1)), 3)}`}\n` +
         `측정: 넘침 ${f2(os, 1)}%${z < 1 ? `(공식 e^(−πζ/√(1−ζ²)) = ${f2(100 * Math.exp(-Math.PI * z / Math.sqrt(1 - z * z)), 1)}%)` : ""}, 첨두 시간 ${z < 1 ? f2(tp, 3) + " s" : "-"}, 상승 시간(10~90%) ${tr90 && tr10 !== null ? f2(tr90 - tr10, 3) : "-"} s, 2% 정착 시간 ${ts >= tmax * 0.999 ? `${f2(tmax, 1)} s 창 안에 정착하지 않음` : f2(ts, 3) + " s"}(근사 4/(ζω_n) = ${f2(4 / (z * wn), 3)} s)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 4. 상승 코사인 펄스와 눈 모양 그림 */
+  (() => {
+    const S = QSim.card("exp-e21-eye"); if (!S) return;
+    const cv = S.$("canvas");
+    let seed = 2024; const bits = [];
+    for (let i = 0; i < 64; i++) { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; bits.push(seed & 0x10000 ? 1 : -1); }
+    const sinc = (x) => (Math.abs(x) < 1e-9 ? 1 : Math.sin(Math.PI * x) / (Math.PI * x));
+    const p = (t, a) => { const d = 1 - (2 * a * t) ** 2; if (a > 0 && Math.abs(d) < 1e-8) return (Math.PI / 4) * sinc(1 / (2 * a)); return sinc(t) * Math.cos(Math.PI * a * t) / d; };
+    const y = (t, a) => { let s = 0; const k0 = Math.max(0, Math.floor(t) - 10), k1 = Math.min(63, Math.ceil(t) + 10); for (let k = k0; k <= k1; k++) s += bits[k] * p(t - k, a); return s; };
+    function draw() {
+      const c = C(), a = S.val("a"), tau = S.val("tau");
+      const v = QSim.view(cv, 0.55), fr = QSim.frame(v, { x0: -1, x1: 1, y0: -1.8, y1: 1.8, xl: "t / T", yl: "y" }); fr.axes();
+      for (let k = 12; k <= 51; k++) { const pts = []; for (let i = 0; i <= 80; i++) { const u = -1 + i / 40; pts.push([u, y(k + u, a)]); } fr.path(pts, c.main, 1, undefined); }
+      fr.path([[tau, -1.8], [tau, 1.8]], c.warn, 1.6, [4, 3]);
+      let open = Infinity, worst = 0;
+      for (let k = 12; k <= 51; k++) { const s = bits[k] * y(k + tau, a); open = Math.min(open, s); worst = Math.max(worst, Math.abs(y(k + tau, a) - bits[k])); }
+      S.out(`롤오프 α = ${f2(a, 2)} (대역폭 (1 + α)/(2T) = 기호율의 ${f2((1 + a) / 2, 3)}배), 표본 시점 τ = ${f2(tau, 2)}T (빨간 점선)\n` +
+        `무작위 ±1 기호 40개를 겹친 눈 모양: 그 시점의 최소 눈 높이(한쪽) ${f2(open, 3)}, 최대 ISI ${f2(worst, 3)}\n` +
+        (Math.abs(tau) < 1e-9 ? "τ = 0에서는 Nyquist 조건으로 다른 펄스가 모두 0이라 ISI가 0입니다." : "표본 시점이 어긋나면 이웃 펄스 꼬리가 섞입니다. α가 클수록 꼬리가 빨리 줄어 덜 섞입니다."));
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
