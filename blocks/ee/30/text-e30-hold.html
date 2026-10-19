@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-hold" data-kind="본문" data-std="전전30-03-02">
+  <header class="card-head"><span class="no"></span><h2>홀드 제약과 클록 스큐</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>홀드 조건 \(t_{cq,min} + t_{logic,min} \ge t_{hold} + t_{skew}\)를 쓴다.</li>
+        <li>홀드 위반을 찾고 지연 버퍼로 고친다.</li>
+        <li>셋업 위반과 달리 클록을 늦춰도 홀드 위반은 고쳐지지 않음을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>셋업 제약 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>너무 빨라도 문제</h3>
+    <p>새 데이터가 너무 빨리 도착해 같은 클록 가장자리의 앞 값을 덮으면 홀드 위반입니다. 받는 플립플롭 클록이 스큐만큼 늦게 오면 더 불리합니다. 주파수와 무관해 칩이 만들어진 뒤에는 고칠 수 없으므로 설계 때 반드시 확인합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>t_cq,min 50 ps, 최소 논리 지연 20 ps, t_hold 30 ps, 받는 쪽 클록이 50 ps 늦는다(스큐). 홀드 여유와 고치는 방법은?</p>
+    </div>
+    <p><i>풀이.</i> 도착 70 ps, 요구 80 ps → 10 ps 위반. 경로에 지연 버퍼(10 ps 이상)를 넣습니다. 클록 주파수를 낮춰도 해결되지 않는다는 점이 셋업 위반과 다릅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "홀드 위반은 클록을 늦추면 고쳐진다": 주파수와 무관합니다. (2) "스큐는 늘 나쁘다": 셋업에는 도움이 될 수도 있습니다(시간 빌림).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>t_cq,min + t_logic,min ≥ t_hold + t_skew.</li>
+        <li>위반 → 지연 버퍼.</li>
+        <li>주파수와 무관.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>스큐 0이면 예제의 여유는?
+          <details><summary>답</summary><p>+40 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>스큐 100 ps면 필요한 버퍼 지연은?
+          <details><summary>답</summary><p>60 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>시프트 레지스터에서 홀드 위반이 잘 생기는 이유는?
+          <details><summary>답</summary><p>플립플롭 사이 논리가 없어 최소 지연이 매우 짧기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

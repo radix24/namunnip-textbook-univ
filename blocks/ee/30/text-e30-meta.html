@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-meta" data-kind="본문" data-std="전전30-03-03">
+  <header class="card-head"><span class="no"></span><h2>준안정성과 동기화기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>비동기 입력이 셋업·홀드 창에 걸리면 준안정 상태가 됨을 안다.</li>
+        <li>MTBF = \(e^{t_r/\tau}/(T_0f_{clk}f_{data})\)를 계산한다.</li>
+        <li>2단 플립플롭 동기화기의 효과를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>셋업·홀드 (<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>0도 1도 아닌 순간</h3>
+    <p>외부 버튼이나 다른 클록 영역 신호는 언제든 바뀌어, 셋업·홀드 창에 걸리면 플립플롭 출력이 한동안 중간값에 머뭅니다. 해결 시간 t_r 안에 정해지지 않을 확률은 \(e^{-t_r/\tau}\)로 줄어, 둘째 플립플롭이 한 주기를 기다리게 하면 MTBF가 지수적으로 늘어납니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>τ = 20 ps, T₀ = 20 ps(가상 공정값), f_clk = 1 GHz, f_data = 100 MHz. 해결 시간 1 ns(2단 동기화기)의 MTBF는? 0.5 ns면?</p>
+    </div>
+    <p><i>풀이.</i> 1 ns: e⁵⁰/(20×10⁻¹² × 10⁹ × 10⁸) = 2.6×10¹⁵ s(약 8천만 년). 0.5 ns: e²⁵/(2×10⁶) = 3.6×10⁴ s(약 10시간)로 실제 고장이 납니다. 해결 시간을 조금만 줄여도 MTBF가 크게 변합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "동기화기를 쓰면 준안정이 사라진다": 확률을 아주 작게 만들 뿐입니다. (2) "여러 비트 버스를 비트마다 동기화하면 된다": 비트마다 다른 주기에 잡혀 값이 섞여, 그레이 코드나 핸드셰이크를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>MTBF = e^{t_r/τ}/(T₀f_clkf_data).</li>
+        <li>예: 1 ns → 2.6×10¹⁵ s, 0.5 ns → 10시간.</li>
+        <li>2단 동기화기, 다비트는 그레이 코드·FIFO.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>t_r를 τ만큼 늘리면 MTBF는?
+          <details><summary>답</summary><p>e배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>f_data를 10배로 하면?
+          <details><summary>답</summary><p>1/10.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>비동기 FIFO 포인터에 그레이 코드를 쓰는 이유는?
+          <details><summary>답</summary><p>한 번에 한 비트만 바뀌어 잘못 잡혀도 앞이나 뒤 값이 되기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
