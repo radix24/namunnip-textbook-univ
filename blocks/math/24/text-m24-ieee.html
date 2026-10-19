@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-ieee" data-kind="본문" data-std="수학24-04-01">
+  <header class="card-head"><span class="no"></span><h2>IEEE 754 배정밀도 수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>64비트 배정밀도 수가 부호 1비트, 지수 11비트, 가수 52비트로 이루어짐을 안다.</li>
+        <li>\(0.1\), \(1\), \(-2.5\)의 비트 표현을 해석한다.</li>
+        <li>\(0.1 + 0.2 \ne 0.3\)인 이유와 특수값(무한대, NaN, 비정규수)을 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>이진법, 지수 표기. 수학16의 부동소수점 절 (<a href="../math16/01-01.html">수학16 1.1절</a>)과 겹치므로 실습 위주로 본다.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>구조</h3>
+    <p>배정밀도 수는 64비트 \(s\,|\,e_{10}\cdots e_0\,|\,f_1\cdots f_{52}\)로</p>
+    \[x = (-1)^s\times(1.f_1f_2\cdots f_{52})_2\times2^{E - 1023}, \qquad E = (e_{10}\cdots e_0)_2\]
+    <p>입니다(\(1 \le E \le 2046\)). 맨 앞의 1은 늘 있으므로 저장하지 않아 가수가 사실상 53비트이고, 십진수로 약 16자리입니다.</p>
+    <pre><code>&gt;&gt;&gt; import struct
+&gt;&gt;&gt; b = struct.unpack('&gt;Q', struct.pack('&gt;d', 0.1))[0]
+&gt;&gt;&gt; hex(b)
+'0x3fb999999999999a'
+&gt;&gt;&gt; f'{b:064b}'
+'0011111110111001100110011001100110011001100110011001100110011010'</code></pre>
+    <p>부호 0, 지수 \(01111111011_2 = 1019\)라 \(2^{-4}\), 가수 \(1.1001100110011\cdots1010_2\)입니다. \(0.1 = (0.000110011001100\cdots)_2\)는 이진법으로 무한소수라 52비트에서 잘리고 반올림됩니다(끝이 <code>1010</code>으로 올림). 그래서 저장된 값은 \(0.1\)보다 아주 조금 큽니다. \(1.0\)은 <code>0x3ff0000000000000</code>(지수 1023, 가수 0), \(-2.5 = -1.01_2\times2^1\)은 <code>0xc004000000000000</code>입니다.</p>
+
+    <h3><span class="no">4.1.2</span>반올림의 결과</h3>
+    <pre><code>&gt;&gt;&gt; 0.1 + 0.2
+0.30000000000000004
+&gt;&gt;&gt; 0.1 + 0.2 == 0.3
+False</code></pre>
+    <p>\(0.1\), \(0.2\), \(0.3\)이 모두 근삿값이고 더한 뒤 다시 반올림하므로, 결과가 \(0.3\)의 근삿값과 마지막 비트에서 다릅니다. 실수를 <code>==</code>로 비교하지 말고 <code>abs(a - b) &lt; tol</code>처럼 허용 오차로 비교합니다.</p>
+
+    <h3><span class="no">4.1.3</span>특수값</h3>
+    <ul>
+      <li>지수가 모두 1(\(E = 2047\)): 가수 0이면 \(\pm\)<code>inf</code>(넘침, 예: <code>1e308*10</code>), 아니면 <code>nan</code>(예: <code>inf - inf</code>, <code>0/0</code>). <code>nan</code>은 자기 자신과도 같지 않다.</li>
+      <li>지수가 모두 0(\(E = 0\)): \(\pm0\)과 비정규수 \((0.f)_2\times2^{-1022}\). 가장 작은 양수는 \(2^{-1074} \approx 5\times10^{-324}\)이고, 그보다 작으면 0으로 사라진다(언더플로).</li>
+    </ul>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 화면에 <code>0.1</code>로 보이면 저장된 값도 정확히 0.1이라 여긴다. 출력은 가장 짧게 반올림해 보여 줄 뿐이다. (2) <code>nan == nan</code>이 참이라 여긴다. 거짓이다. <code>math.isnan</code>으로 검사한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>부호 1 + 지수 11(편향 1023) + 가수 52비트, 유효숫자 약 16자리.</li>
+        <li>\(0.1\)은 이진 무한소수라 반올림: \(0.1 + 0.2 \ne 0.3\).</li>
+        <li><code>inf</code>, <code>nan</code>, 비정규수, 언더플로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(8.0\)의 지수 필드 값 \(E\)와 가수 필드를 구하여라.
+          <details><summary>답</summary><p>\(8 = 1.0\times2^3\): \(E = 1026\), 가수 0. 16진수 <code>0x4020000000000000</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(0.5\), \(0.25\), \(0.375\)는 정확히 저장되는가? \(0.1\)과 무엇이 다른가?
+          <details><summary>답</summary><p>모두 정확(\(2^{-1}\), \(2^{-2}\), \(2^{-2} + 2^{-3}\)). 분모가 2의 거듭제곱인 분수는 유한 이진소수이고, \(\frac1{10}\)은 분모에 5가 있어 무한소수.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>배정밀도에서 정확히 나타낼 수 있는 가장 큰 정수 \(N\)으로, \(N + 1\)은 나타낼 수 없는 것은? 그 이유를 말하여라.
+          <details><summary>답</summary><p>\(2^{53}\). 가수가 53비트라 \(2^{53}\)부터는 간격이 2가 되어 \(2^{53} + 1\)은 반올림된다. Python에서 <code>2.0**53 + 1 == 2.0**53</code>은 참.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

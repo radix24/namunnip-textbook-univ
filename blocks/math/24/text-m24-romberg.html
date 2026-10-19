@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-romberg" data-kind="본문" data-std="수학24-06-04">
+  <header class="card-head"><span class="no"></span><h2>리처드슨 외삽과 롬베르크 적분</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>오차가 \(Ch^p\) 꼴임을 알 때 두 간격의 결과를 섞어 오차를 지우는 리처드슨 외삽을 이해한다.</li>
+        <li>사다리꼴 결과에 외삽을 거듭 적용하는 롬베르크 표를 구현한다.</li>
+        <li>함수 계산 17번으로 13자리를 얻는 것을 확인한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>사다리꼴 공식과 오차 차수 (<a href="06-03.html">6.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.4.1</span>리처드슨 외삽</h3>
+    <p>근삿값 \(A(h) = A + Ch^2 + O(h^4)\)이면 \(A(h/2) = A + \frac{Ch^2}4 + O(h^4)\)이므로</p>
+    \[\frac{4A(h/2) - A(h)}3 = A + O(h^4).\]
+    <p>오차의 주요 항을 정확히 몰라도 그 꼴(\(h^2\)에 비례)만 알면 두 결과를 섞어 지울 수 있습니다. 6.3절의 사다리꼴 \(T_4 = 1.7272219046\), \(T_8 = 1.7205185922\)를 섞으면 \(\frac{4T_8 - T_4}3 = 1.7182841547\)로, 이는 정확히 심프슨 \(S_8\)입니다(심프슨 = 사다리꼴의 외삽).</p>
+
+    <h3><span class="no">6.4.2</span>롬베르크 표</h3>
+    <p>사다리꼴의 오차는 \(h^2, h^4, h^6, \dots\)의 급수(오일러-매클로린 공식)라 외삽을 거듭할 수 있습니다. \(R_{i,0} = T_{2^i}\), \(R_{i,j} = R_{i,j-1} + \frac{R_{i,j-1} - R_{i-1,j-1}}{4^j - 1}\).</p>
+    <pre><code>def romberg(f, a, b, m):
+    R = [[trap(f, a, b, 1)]]
+    for i in range(1, m + 1):
+        row = [trap(f, a, b, 2**i)]
+        for j in range(1, i + 1):
+            row.append(row[j-1] + (row[j-1] - R[i-1][j-1])/(4**j - 1))
+        R.append(row)
+    return R</code></pre>
+    <pre><code>1.8591409142
+1.7539310925 1.7188611519
+1.7272219046 1.7183188419 1.7182826879
+1.7205185922 1.7182841547 1.7182818422 1.7182818288
+1.7188411286 1.7182819741 1.7182818287 1.7182818285 1.7182818285</code></pre>
+    <p>\(\int_0^1e^xdx\)에서 마지막 대각 원소의 오차는 \(3\times10^{-14}\)입니다. 첫 열(사다리꼴 16구간)은 3자리뿐인데, 같은 함숫값 17개로 13자리를 얻었습니다(사다리꼴 결과를 재사용하면 새 함수 계산이 없음).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 외삽이 아무 근사에나 통한다고 여긴다. 오차가 \(h\)의 거듭제곱 급수라는 가정이 필요하다. 매끄럽지 않은 함수에서는 실패한다. (2) 표를 더 키울수록 늘 좋아진다고 여긴다. 반올림 오차 수준에 이르면 더 나아지지 않는다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>리처드슨: \(\frac{4A(h/2) - A(h)}3\)로 \(h^2\) 항 소거.</li>
+        <li>롬베르크: 사다리꼴에 외삽 반복, 대각선이 빠르게 수렴.</li>
+        <li>매끄러운 함수에서 적은 계산으로 높은 정확도.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(A(h) = A + Ch\) (1차)이면 어떤 조합이 오차를 지우는가?
+          <details><summary>답</summary><p>\(2A(h/2) - A(h)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>6.2절의 중앙 차분 \(D(h)\) (오차 \(\propto h^2\))에 리처드슨 외삽을 쓰는 식을 써라.
+          <details><summary>답</summary><p>\(\frac{4D(h/2) - D(h)}3\), 오차 \(O(h^4)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>롬베르크 표의 \(R_{2,2} = 1.7182826879\)의 오차를 구하고 \(R_{2,1}\)(심프슨)과 비교하여라.
+          <details><summary>답</summary><p>\(8.6\times10^{-7}\), \(R_{2,1} = S_4\)의 오차 \(3.7\times10^{-5}\)보다 약 43배 작다. 같은 함숫값 5개로 얻었다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

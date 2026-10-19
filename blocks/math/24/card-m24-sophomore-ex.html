@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-02-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m24-sophomore-ex" data-kind="예제" data-std="수학24-02-03">
+  <header class="card-head"><span class="no"></span><h2>원시함수가 없는 적분을 두 가지로 계산하기</h2><span class="kind">예제 · 수치적분과 급수의 검산</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(\int_0^1x^xdx\)는 초등함수로 원시함수를 쓸 수 없습니다. 그래도 값을 15자리까지 확신할 수 있을까요?</p>
+      <details><summary>예측 확인</summary><p>있습니다. 전혀 다른 두 방법(수치적분, 급수)이 같은 값을 주면 됩니다.</p></details>
+    </section>
+    <p class="q-prob">\(\int_0^1x^xdx\)를 (1) SymPy의 수치적분으로, (2) 급수 \(\sum_{n=1}^\infty(-1)^{n+1}n^{-n}\)으로 계산해 비교하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>기호 적분이 실패하면 <code>Integral</code>이 그대로 나오고 <code>N</code>으로 수치화합니다(<a href="02-03.html">2.3절</a>). 급수는 \(x^x = e^{x\ln x} = \sum\frac{(x\ln x)^k}{k!}\)를 항별 적분해 얻는 "2학년의 꿈" 공식입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><pre><code>&gt;&gt;&gt; I = integrate(x**x, (x, 0, 1))
+&gt;&gt;&gt; I
+Integral(x**x, (x, 0, 1))
+&gt;&gt;&gt; N(I)
+0.783430510712134</code></pre></div><span class="q-why">기호 계산 실패 → 수치적분.</span></li>
+        <li><div><pre><code>&gt;&gt;&gt; sum((-1)**(n+1) * n**(-n) for n in range(1, 30))
+0.7834305107121344</code></pre></div><span class="q-why">교대급수, 항이 \(n^{-n}\)으로 매우 빨리 줄어든다.</span></li>
+        <li class="q-end"><div>두 값이 15자리 \(0.783430510712134\)까지 일치한다. 급수의 오차는 \(30^{-30}\) 이하라, 남은 차이는 부동소수점 반올림뿐이다.</div><span class="q-why">교대급수의 오차는 첫 생략 항 이하.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(x^x\)는 \([0, 1]\)에서 \(e^{-1/e} \approx 0.692\)과 1 사이이므로 적분값은 그 사이여야 하고, 0.7834는 맞습니다. 직접 짠 심프슨 공식(20만 구간)으로도 \(0.78343051071\)까지 같습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>기호 계산이 답을 못 줄 때도 수치와 급수 같은 다른 길로 신뢰할 수 있는 값을 얻습니다. 서로 독립인 방법으로 교차 검증하는 습관이 과학계산에서 가장 중요합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">급수를 \(n = 5\)까지만 더하면 오차는 대략 얼마 이하인가?</p>
+      <details><summary>답</summary><p>다음 항 \(6^{-6} \approx 2.1\times10^{-5}\) 이하.</p></details>
+    </section>
+  </div>
+</article>

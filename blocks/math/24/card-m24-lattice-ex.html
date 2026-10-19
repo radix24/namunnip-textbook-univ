@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-03-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m24-lattice-ex" data-kind="예제" data-std="수학24-03-02">
+  <header class="card-head"><span class="no"></span><h2>원 안의 격자점 세기를 벡터화하기</h2><span class="kind">예제 · 이중 반복문을 배열 연산으로</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>반지름 100인 원 안(경계 포함)의 정수 격자점은 몇 개쯤일까요?</p>
+      <details><summary>예측 확인</summary><p>넓이 \(\pi\cdot100^2 \approx 31416\)에 가까운 31417개입니다.</p></details>
+    </section>
+    <p class="q-prob">\(x^2 + y^2 \le 100^2\)인 정수점 \((x, y)\)의 개수를 이중 반복문과 벡터화로 각각 세고, \(\pi\)의 근삿값을 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>반복문은 \(201\times201\)번 비교합니다. 벡터화는 <code>meshgrid</code>로 모든 쌍을 배열로 만든 뒤 조건 배열을 합합니다(<a href="03-02.html">3.2절</a>).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div><pre><code>cnt = 0
+for x in range(-100, 101):
+    for y in range(-100, 101):
+        if x*x + y*y &lt;= 10000:
+            cnt += 1</code></pre></div><span class="q-why">반복문 판.</span></li>
+        <li><div><pre><code>X, Y = np.meshgrid(np.arange(-100, 101), np.arange(-100, 101))
+cnt = (X**2 + Y**2 &lt;= 10000).sum()</code></pre></div><span class="q-why">참/거짓 배열의 합 = 참의 개수.</span></li>
+        <li class="q-end"><div>둘 다 31417. \(\pi \approx \frac{31417}{10000} = 3.1417\).</div><span class="q-why">격자점 하나가 넓이 1을 대표.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>가우스 원 문제의 알려진 값 \(N(100) = 31417\)과 같습니다. 반지름을 1000으로 늘리면 반복문은 400만 번 비교로 몇 초, 벡터화는 1초 미만입니다(메모리는 \(2001^2\)개 원소 배열 몇 개, 수십 MB).</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>"모든 쌍에 대해 조건을 검사하고 센다"는 패턴은 반복문 두 겹 대신 격자 배열 + 논리 연산 + 합으로 바뀝니다. 다만 메모리를 그만큼 쓰므로, 매우 큰 문제는 한 줄씩(\(x\)마다 \(y\) 배열) 벡터화하는 절충을 합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">\(x\)마다 \(y\)의 개수를 바로 계산하는 더 빠른 방법은?</p>
+      <details><summary>답</summary><p>\(|y| \le \lfloor\sqrt{10000 - x^2}\rfloor\)이라 \(x\)마다 \(2\lfloor\sqrt{10000 - x^2}\rfloor + 1\)개. <code>(2*np.floor(np.sqrt(10000 - x**2)) + 1).sum()</code> (\(x\) 배열 201개).</p></details>
+    </section>
+  </div>
+</article>

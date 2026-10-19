@@ -1,0 +1,79 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-plot" data-kind="본문" data-std="수학24-03-03">
+  <header class="card-head"><span class="no"></span><h2>그래프 그리기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>matplotlib(또는 gnuplot)로 함수와 자료의 그래프를 그린다.</li>
+        <li>축 이름, 범례, 로그 축을 갖춘 그림을 만들고 파일로 저장한다.</li>
+        <li>오차처럼 여러 자릿수에 걸친 양은 로그-로그 그래프로 그려 기울기로 차수를 읽는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>배열 만들기 (<a href="03-01.html">3.1절</a>), 로그함수.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>기본 그래프</h3>
+    <pre><code>import numpy as np
+import matplotlib.pyplot as plt
+x = np.linspace(0, 2*np.pi, 200)
+plt.plot(x, np.sin(x), label='sin x')
+plt.plot(x, x - x**3/6, '--', label='x - x^3/6')
+plt.xlabel('x'); plt.ylabel('y')
+plt.ylim(-1.5, 1.5); plt.legend(); plt.grid(True)
+plt.savefig('taylor.png', dpi=150)</code></pre>
+    <p>점 200개를 선으로 이어 곡선처럼 보이게 합니다. 점이 너무 적으면 꺾인 선이 됩니다. 테일러 다항식이 0 근처에서만 \(\sin x\)를 잘 따라가고 \(x \approx 2\)부터 벌어지는 것이 한눈에 보입니다. 보고서에 넣을 그림은 축 이름과 범례를 꼭 붙이고 <code>savefig</code>로 저장합니다.</p>
+
+    <h3><span class="no">3.3.2</span>로그 축</h3>
+    <p>오차가 \(10^{-2}\)에서 \(10^{-12}\)까지 변하면 보통 축에서는 작은 값이 모두 0에 붙어 보입니다. 로그-로그 축에서는 \(E = Ch^p\)가 \(\log E = \log C + p\log h\)로 직선이 되고, 기울기가 수렴 차수 \(p\)입니다.</p>
+    <pre><code>h = 10.0**-np.arange(1, 13)
+err = abs((np.sin(1 + h) - np.sin(1)) / h - np.cos(1))
+plt.loglog(h, err, 'o-')
+plt.xlabel('h'); plt.ylabel('error')</code></pre>
+    <p>이 그래프는 6.2절에서 자세히 봅니다. \(h\)가 \(10^{-8}\)까지는 기울기 1로 내려가다가, 그보다 작아지면 반올림 오차 때문에 다시 올라가 V자 모양이 됩니다.</p>
+
+    <h3><span class="no">3.3.3</span>gnuplot</h3>
+    <p>자료 파일을 빠르게 그릴 때는 gnuplot도 편합니다. <code>plot 'data.csv' using 1:2 with linespoints</code>는 쉼표나 빈칸으로 나뉜 첫째 칸을 \(x\), 둘째 칸을 \(y\)로 그립니다(쉼표면 <code>set datafile separator ','</code>). <code>set logscale xy</code>로 로그 축, <code>set terminal png; set output 'a.png'</code>로 파일 저장입니다. 셸 스크립트(1.2절)와 엮어 실험마다 그림을 자동으로 만들 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 0이나 음수가 든 자료를 로그 축에 그린다. 그런 점은 그려지지 않는다(오차가 정확히 0인 점 등). (2) 축 범위를 자동에 맡긴다. 이상값 하나가 축을 늘려 중요한 부분이 납작해질 수 있다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>plot</code>, 축 이름, 범례, <code>savefig</code>.</li>
+        <li>로그-로그 축에서 \(E = Ch^p\)는 기울기 \(p\)의 직선.</li>
+        <li>gnuplot: 자료 파일을 빠르게, 스크립트와 결합.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>로그-로그 그래프에서 점 \((10^{-2}, 10^{-4})\)과 \((10^{-3}, 10^{-6})\)을 잇는 직선의 기울기는?
+          <details><summary>답</summary><p>\(\frac{-6 - (-4)}{-3 - (-2)} = 2\). 2차 수렴.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y = e^{-x}\cos(10x)\)를 \(0 \le x \le 3\)에서 그릴 때 점이 50개면 어떤 문제가 생기는가?
+          <details><summary>답</summary><p>주기가 \(\frac{2\pi}{10} \approx 0.63\)인데 점 간격이 0.06이라 한 주기에 10점뿐, 봉우리가 깎이고 꺾여 보인다. 수백 점이 필요하다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(y = Cx^p\) 꼴의 자료에서 \(p\)를 추정하려면 어떤 그래프를 그리고 무엇을 계산하는가? \(y = Ce^{ax}\)이면?
+          <details><summary>답</summary><p>\(\log y\) 대 \(\log x\)의 직선 기울기(로그-로그). 지수함수는 \(\log y\) 대 \(x\)의 기울기 \(a\) (세로만 로그, <code>semilogy</code>).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

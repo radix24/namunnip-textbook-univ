@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-bisect" data-kind="본문" data-std="수학24-05-01">
+  <header class="card-head"><span class="no"></span><h2>이분법 구현</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>중간값 정리에 기반한 이분법을 구현한다.</li>
+        <li>오차 한계 \(\frac{b - a}{2^n}\)로 필요한 반복 횟수를 미리 계산한다.</li>
+        <li>이분법의 장점(늘 수렴)과 단점(느림)을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>중간값 정리, 로그. 수학16 2장과 같은 내용을 구현 위주로 본다.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>알고리즘</h3>
+    <p>\(f\)가 연속이고 \(f(a)f(b) &lt; 0\)이면 \((a, b)\)에 근이 있습니다(중간값 정리). 가운데 \(m = \frac{a + b}2\)에서 부호를 보고 근이 있는 반쪽을 남기기를 되풀이합니다.</p>
+    <pre><code>def bisect(f, a, b, tol=1e-6):
+    assert f(a)*f(b) &lt; 0
+    n = 0
+    while b - a &gt; tol:
+        m = (a + b)/2
+        if f(a)*f(m) &lt;= 0:
+            b = m
+        else:
+            a = m
+        n += 1
+    return (a + b)/2, n
+
+f = lambda x: x**3 - x - 2
+print(bisect(f, 1, 2))</code></pre>
+    <pre><code>(1.5213799476623535, 20)</code></pre>
+    <p>참값은 \(1.5213797068\cdots\)입니다. 처음 세 가운데 점은 \(1.5, 1.75, 1.625\), 10번째 \(1.5205\)이고, 20번 뒤 구간 길이 \(2^{-20} \approx 9.5\times10^{-7}\)입니다.</p>
+
+    <h3><span class="no">5.1.2</span>반복 횟수</h3>
+    <p>\(n\)번 뒤 구간 길이는 \(\frac{b - a}{2^n}\)이므로 오차를 \(\varepsilon\) 이하로 하려면</p>
+    \[n \ge \log_2\frac{b - a}\varepsilon.\]
+    <p>위에서 \(\log_2(10^6) \approx 19.9\)라 20번입니다. 반복마다 정확한 자리가 약 \(\log_{10}2 \approx 0.3\)자리씩 늘어, 16자리를 얻으려면 50번 넘게 걸립니다. 대신 \(f\)의 미분도, 좋은 시작값도 필요 없고 반드시 수렴합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) <code>f(a)*f(m)</code>을 곱해 부호를 보면 늘 안전하다고 여긴다. 값이 매우 작으면 곱이 언더플로로 0이 될 수 있다. <code>np.sign(f(a)) != np.sign(f(m))</code>이 더 안전하다. (2) 이분법이 모든 근을 찾는다고 여긴다. 부호가 바뀌는 근 하나만 찾고, 중근(\(x^2 = 0\))처럼 부호가 안 바뀌면 시작조차 못 한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>부호가 바뀌는 구간을 반씩 줄임: 늘 수렴.</li>
+        <li>\(n \ge \log_2\frac{b - a}\varepsilon\)번, 반복마다 약 0.3자리.</li>
+        <li>느리지만 튼튼: 뉴턴 방법의 시작값을 찾는 데 쓴다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\([0, 1]\)에서 오차 \(10^{-10}\)까지 이분법으로 구하려면 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(\log_2(10^{10}) \approx 33.2\)이라 34번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\cos x = x\)의 근을 이분법으로 찾을 구간과 함수를 정하여라.
+          <details><summary>답</summary><p>\(f(x) = \cos x - x\), \(f(0) = 1 > 0\), \(f(1) = \cos1 - 1 &lt; 0\). 구간 \([0, 1]\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>tol</code>을 \(10^{-20}\)으로 주면 위 함수는 어떻게 되는가?
+          <details><summary>답</summary><p>근 근처에서 이웃한 부동소수점 수 간격이 \(2^{-52}\cdot1.5 \approx 3\times10^{-16}\)이라 \(b - a\)가 그보다 작아질 수 없다. 가운데 점이 \(a\)나 \(b\)와 같아져 무한 반복한다. 반복 횟수 상한을 함께 둔다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

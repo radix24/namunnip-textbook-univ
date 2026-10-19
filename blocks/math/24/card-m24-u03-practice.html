@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-03-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m24-u03-practice" data-kind="연습" data-std="수학24-03-01 수학24-03-02 수학24-03-03">
+  <header class="card-head"><span class="no"></span><h2>행렬 계산 환경 연습 문제</h2><span class="kind">문제 6 · 실습·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span><code>x = np.arange(12).reshape(3, 4)</code>에서 마지막 열, 둘째 행, 짝수 원소를 꺼내는 표현을 쓰고 결과를 써라. <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>x[:, -1]</code>.</p></details>
+        <details><summary>힌트 2</summary><p>논리 인덱싱 <code>x[x % 2 == 0]</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>x[:, -1]</code> → <code>[3, 7, 11]</code>, <code>x[1]</code> → <code>[4, 5, 6, 7]</code>, <code>x[x % 2 == 0]</code> → <code>[0, 2, 4, 6, 8, 10]</code> (<a href="03-01.html">3.1절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(\begin{pmatrix}2 &amp; 1\\ 1 &amp; 3\end{pmatrix}x = \begin{pmatrix}3\\ 5\end{pmatrix}\)을 NumPy로 푸는 명령과 결과를 써라. <span class="mono small dim">[03-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>np.linalg.solve</code>.</p></details>
+        <details><summary>힌트 2</summary><p>손으로: \(\det = 5\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>np.linalg.solve([[2, 1], [1, 3]], [3, 5])</code> → <code>array([0.8, 1.4])</code>. 확인: \(1.6 + 1.4 = 3\), \(0.8 + 4.2 = 5\).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>다음 반복문을 벡터화하여라: <code>s = 0; for i in range(1, n+1): s += 1/i**2</code>. <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>np.arange(1, n+1)</code>.</p></details>
+        <details><summary>힌트 2</summary><p>정수 제곱이 넘치지 않도록 실수로.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>i = np.arange(1, n+1, dtype=float); s = (1/i**2).sum()</code>. \(n\)이 크면 \(\frac{\pi^2}6\)에 가깝다 (<a href="03-02.html">3.2절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span><code>np.arange(1, n+1)**2</code>를 \(n = 10^5\)에서 정수형 그대로 계산하면 생길 수 있는 문제는? <span class="mono small dim">[03-02]</span></p>
+        <details><summary>힌트 1</summary><p>Windows의 기본 정수형이 32비트일 수 있다.</p></details>
+        <details><summary>힌트 2</summary><p>\(10^{10} > 2^{31}\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>32비트 정수면 \(10^{10}\)이 넘쳐(오버플로) 음수나 엉뚱한 값이 된다. 경고 없이 일어날 수 있어 <code>dtype=float</code>이나 <code>int64</code>를 명시한다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(y = e^{-t}\cos(2\pi t)\)와 포락선 \(\pm e^{-t}\)을 \(0 \le t \le 5\)에서 한 그림에 그리는 코드를 써라. <span class="mono small dim">[03-03]</span></p>
+        <details><summary>힌트 1</summary><p>점은 수백 개.</p></details>
+        <details><summary>힌트 2</summary><p><code>plt.plot</code>을 여러 번, <code>label</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>t = np.linspace(0, 5, 500); plt.plot(t, np.exp(-t)*np.cos(2*np.pi*t), label='y'); plt.plot(t, np.exp(-t), 'k--', label='±e^-t'); plt.plot(t, -np.exp(-t), 'k--'); plt.legend()</code> (<a href="03-03.html">3.3절</a>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>오차 자료 <code>err = [1e-2, 1e-4, 0, 1e-8]</code>을 <code>plt.loglog</code>로 그리면 어떻게 되는가? <span class="mono small dim">[03-03]</span></p>
+        <details><summary>힌트 1</summary><p>\(\log0\).</p></details>
+        <details><summary>힌트 2</summary><p>선이 끊긴다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>0인 점은 로그 축에 그릴 수 없어 빠지고(경고), 선이 그 자리에서 끊긴다. 정확히 0인 오차는 따로 표시하거나 기계 엡실론 수준으로 바닥을 정해 그린다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-symlimits" data-kind="본문" data-std="수학24-02-03">
+  <header class="card-head"><span class="no"></span><h2>기호 계산의 한계와 수치 계산</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>닫힌 꼴의 원시함수가 없는 적분과, 특수함수로 답하는 경우를 알아본다.</li>
+        <li><code>N</code>, <code>nsolve</code>, <code>lambdify</code>로 기호 결과를 수치 계산에 넘긴다.</li>
+        <li>식 단순화가 늘 원하는 꼴을 주지는 않음을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기호 적분과 방정식 (<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>닫힌 꼴이 없는 적분</h3>
+    <p>\(e^{-x^2}\), \(\frac{\sin x}x\), \(x^x\)의 원시함수는 초등함수로 쓸 수 없습니다(리우빌의 정리). 기호 계산은 특수함수로 답하거나 계산하지 못한 채 돌려줍니다.</p>
+    <pre><code>&gt;&gt;&gt; integrate(exp(-x**2), (x, 0, 1))
+sqrt(pi)*erf(1)/2
+&gt;&gt;&gt; N(_)
+0.746824132812427
+&gt;&gt;&gt; integrate(sin(x)/x, x)
+Si(x)
+&gt;&gt;&gt; integrate(x**x, (x, 0, 1))
+Integral(x**x, (x, 0, 1))</code></pre>
+    <p><code>erf</code>(오차함수), <code>Si</code>(사인 적분)는 정의 자체가 이 적분인 특수함수입니다. 마지막처럼 <code>Integral(…)</code>이 그대로 나오면 계산에 실패한 것이고, <code>N(…)</code>으로 수치적분을 시킵니다(\(\int_0^1x^xdx \approx 0.7834\)).</p>
+
+    <h3><span class="no">2.3.2</span>수치로 넘기기</h3>
+    <pre><code>&gt;&gt;&gt; nsolve(cos(x) - x, x, 1)
+0.739085133215161
+&gt;&gt;&gt; f = lambdify(x, diff(x**3*exp(-x), x), 'math')
+&gt;&gt;&gt; f(3.0)
+0.0</code></pre>
+    <p><code>nsolve(식, 변수, 시작값)</code>은 뉴턴 방법으로 수치해를 찾습니다(5장). <code>lambdify</code>는 기호식을 빠른 Python 함수로 바꿉니다. 도함수를 기호로 정확히 구한 뒤 수치 계산에 쓰는 흔한 방식으로, 위에서 \((x^3e^{-x})' = x^2e^{-x}(3 - x)\)이 \(x = 3\)에서 0임을 확인합니다.</p>
+
+    <h3><span class="no">2.3.3</span>단순화</h3>
+    <p><code>simplify(sin(x)**2 + cos(x)**2)</code>는 <code>1</code>이지만, "가장 간단한 꼴"은 정의가 모호해 원하는 꼴이 안 나올 때가 많습니다. <code>expand</code>(전개), <code>factor</code>(인수분해), <code>trigsimp</code>, <code>cancel</code>처럼 목적이 분명한 함수를 쓰는 편이 예측 가능합니다. 또 \(\sqrt{x^2} = |x|\)처럼 변수의 범위를 알려 줘야(<code>symbols('x', positive=True)</code>) 단순화되는 경우가 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 기호 계산이 답을 못 주면 적분값이 없다고 여긴다. 원시함수가 초등함수가 아닐 뿐 값은 있다. (2) <code>simplify</code>가 늘 같은 결과를 준다고 여긴다. 버전과 식에 따라 다르다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>초등 원시함수가 없으면 특수함수(<code>erf</code>, <code>Si</code>)나 미계산 <code>Integral</code>.</li>
+        <li><code>N</code>, <code>nsolve</code>, <code>lambdify</code>로 수치 계산과 결합.</li>
+        <li>목적이 분명한 단순화 함수와 변수 가정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\int_0^\infty e^{-x^2}dx\)를 SymPy로 구하면 무엇이 나오는가?
+          <details><summary>답</summary><p><code>sqrt(pi)/2</code>. 정적분은 원시함수 없이도 정확히 나올 수 있다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li><code>sqrt(x**2)</code>가 <code>x</code>로 단순화되지 않는 이유와 해결법을 말하여라.
+          <details><summary>답</summary><p>\(x\)가 음수일 수 있어 \(|x|\)이다. <code>x = symbols('x', positive=True)</code>로 선언하면 <code>x</code>가 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\tan x = x\)의 양수 해 중 가장 작은 것을 <code>nsolve</code>로 구할 때 시작값을 1로 하면 어떤 문제가 생길 수 있는가? 어떤 시작값이 좋은가?
+          <details><summary>답</summary><p>\(x = 0\)이 자명한 해라 1에서 출발하면 0으로 갈 수 있고, \(\frac\pi2\) 근처의 점근선도 방해한다. 해 \(4.4934\)는 \(\left(\pi, \frac{3\pi}2\right)\)에 있으므로 시작값 4.5 정도가 좋다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

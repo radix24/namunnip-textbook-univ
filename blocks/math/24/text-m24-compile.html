@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-compile" data-kind="본문" data-std="수학24-01-03">
+  <header class="card-head"><span class="no"></span><h2>C 프로그램의 컴파일과 실행</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>원시 코드 → 컴파일 → 실행 파일의 과정과, 인터프리터 언어(Python)와의 차이를 안다.</li>
+        <li><code>gcc</code>로 C 프로그램을 컴파일하고 수학 라이브러리를 연결한다(<code>-lm</code>).</li>
+        <li>컴파일 오류와 실행 시간 오류를 구별하고 메시지를 읽는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>셸 명령 (<a href="01-02.html">1.2절</a>), 반복문과 함수 같은 프로그래밍 기초.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>컴파일</h3>
+    <p>C와 Fortran은 원시 코드를 기계어로 미리 번역(컴파일)한 실행 파일을 만들어 돌립니다. 번역에 시간이 들지만 실행은 빠릅니다. Python은 실행할 때마다 한 줄씩 해석하므로 편하지만, 같은 반복문이 수십 배 느릴 수 있습니다. 그래서 과학계산은 핵심 계산을 C·Fortran으로 짜거나, 그렇게 짜인 라이브러리(NumPy 등)를 부릅니다(3.2절).</p>
+    <pre><code>/* sqrt2.c: 바빌로니아 방법으로 √2 */
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+int main(void) {
+    double x = 1.0;
+    for (int k = 1; k &lt;= 5; k++) {
+        x = 0.5 * (x + 2.0 / x);
+        printf("%d %.15f %.1e\n", k, x, fabs(x - sqrt(2.0)));
+    }
+    return 0;
+}</code></pre>
+    <pre><code>$ gcc -O2 -Wall -o sqrt2 sqrt2.c -lm
+$ ./sqrt2
+1 1.500000000000000 8.6e-02
+2 1.416666666666667 2.5e-03
+3 1.414215686274510 2.1e-06
+4 1.414213562374690 1.6e-12
+5 1.414213562373095 2.2e-16</code></pre>
+    <p><code>-o</code>는 실행 파일 이름, <code>-Wall</code>은 경고를 모두 켜기, <code>-O2</code>는 최적화, <code>-lm</code>은 수학 라이브러리(<code>sqrt</code>, <code>fabs</code>) 연결입니다. 오차가 매번 대략 제곱으로 줄어드는 것은 이 방법이 \(x^2 - 2 = 0\)에 대한 뉴턴 방법이기 때문입니다(5.2절). 마지막 오차 \(2.2\times10^{-16}\)은 배정밀도의 한계라 더 줄지 않습니다(4.2절).</p>
+
+    <h3><span class="no">1.3.2</span>오류 읽기</h3>
+    <ul>
+      <li><b>컴파일 오류</b>: 문법이나 타입이 틀려 실행 파일이 만들어지지 않는다. 메시지 <code>sqrt2.c:6:9: error: expected ';'</code>는 6번째 줄 9번째 글자 근처라는 뜻이다. 첫 오류부터 고친다(뒤 오류는 앞 오류의 여파인 경우가 많다).</li>
+      <li><b>링크 오류</b>: <code>undefined reference to 'sqrt'</code>는 함수 정의를 찾지 못한 것으로, <code>-lm</code>을 빠뜨렸을 때 흔하다.</li>
+      <li><b>실행 시간 오류</b>: 컴파일은 되었지만 실행 중 문제. 배열 범위를 넘으면 <code>Segmentation fault</code>, 0으로 나누면 <code>inf</code>나 <code>nan</code>이 출력된다.</li>
+    </ul>
+    <p>Fortran도 같은 흐름입니다(<code>gfortran -O2 -o prog prog.f90</code>). 여러 파일로 된 프로그램은 <code>make</code>와 <code>Makefile</code>로 바뀐 파일만 다시 컴파일합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 경고는 무시해도 된다고 여긴다. 초기화하지 않은 변수 같은 경고는 실제 버그인 경우가 많다. (2) 컴파일되면 맞는 프로그램이라 여긴다. 문법만 확인한 것이다. 결과를 아는 경우(예: \(\sqrt2\))로 검증해야 한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>컴파일 언어: 미리 번역해 빠름. <code>gcc -O2 -Wall -o 이름 파일.c -lm</code>.</li>
+        <li>컴파일 오류(줄 번호), 링크 오류(<code>-lm</code>), 실행 시간 오류(segfault, nan).</li>
+        <li>알려진 답으로 검증하는 습관.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>gcc prog.c</code>만 치면 실행 파일 이름은 무엇이 되는가?
+          <details><summary>답</summary><p><code>a.out</code> (Windows에서는 <code>a.exe</code>).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 <code>double</code> 대신 <code>float</code>를 쓰면 5번째 줄 오차는 대략 얼마쯤에서 멈추겠는가?
+          <details><summary>답</summary><p><code>float</code>의 기계 엡실론이 약 \(1.2\times10^{-7}\)이라 오차가 \(10^{-7}\) 정도에서 더 줄지 않는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>int a[10]; a[10] = 1;</code>이 컴파일 오류가 아닌 이유와 위험을 설명하여라.
+          <details><summary>답</summary><p>C는 배열 범위를 검사하지 않아 문법상 문제가 없다. 실행하면 다른 변수의 메모리를 덮어써 엉뚱한 결과나 segfault가 난다. <code>-fsanitize=address</code>로 검사할 수 있다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

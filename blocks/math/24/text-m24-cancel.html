@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-cancel" data-kind="본문" data-std="수학24-04-03">
+  <header class="card-head"><span class="no"></span><h2>상쇄 오차와 식 바꾸기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>거의 같은 두 수를 빼면 유효숫자가 사라지는 상쇄 현상을 실험으로 본다.</li>
+        <li>\(1 - \cos x\), \(\sqrt{x + 1} - \sqrt x\), 이차방정식의 작은 근을 안정한 식으로 바꾼다.</li>
+        <li>바꾼 식이 왜 정확한지 상대 오차로 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기계 엡실론 (<a href="04-02.html">4.2절</a>), 삼각함수 반각 공식, 유리화.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>상쇄</h3>
+    <p>\(a\)와 \(b\)가 각각 상대 오차 \(10^{-16}\)으로 저장되어 있어도 \(a - b\)가 \(a\)보다 \(10^{-8}\)배 작으면, 뺀 결과의 상대 오차는 \(10^{-16}\div10^{-8} = 10^{-8}\)으로 불어납니다. 앞자리가 지워지면서 뒤쪽의 반올림 잡음만 남기 때문입니다.</p>
+    <pre><code>&gt;&gt;&gt; x = 1e-8
+&gt;&gt;&gt; 1 - math.cos(x)
+0.0
+&gt;&gt;&gt; 2*math.sin(x/2)**2
+5.0000000000000005e-17</code></pre>
+    <p>참값은 \(\frac{x^2}2 = 5\times10^{-17}\)입니다. \(\cos(10^{-8})\)은 \(1 - 5\times10^{-17}\)인데 이는 \(1\)과의 차가 \(\frac\varepsilon2\)보다 작아 1로 반올림되었고, 빼면 0입니다. 반각 공식 \(1 - \cos x = 2\sin^2\frac x2\)는 뺄셈이 없어 정확합니다.</p>
+
+    <h3><span class="no">4.3.2</span>유리화</h3>
+    <pre><code>&gt;&gt;&gt; x = 1e5
+&gt;&gt;&gt; math.sqrt(x + 1) - math.sqrt(x)
+0.001581134877255863
+&gt;&gt;&gt; 1/(math.sqrt(x + 1) + math.sqrt(x))
+0.0015811348772568783</code></pre>
+    <p>\(\sqrt{x + 1} - \sqrt x = \frac1{\sqrt{x + 1} + \sqrt x}\)로 바꾸면 덧셈만 남습니다. 앞의 결과는 유효숫자 11자리쯤만 맞고(뒤쪽 <code>55863</code>이 틀림), 뒤의 결과는 16자리 맞습니다.</p>
+
+    <h3><span class="no">4.3.3</span>이차방정식</h3>
+    <p>\(x^2 - bx + 1 = 0\) (\(b = 10^8\))의 작은 근 \(\approx 10^{-8}\)을 근의 공식 \(\frac{b - \sqrt{b^2 - 4}}2\)로 구하면 거의 같은 두 수의 차라 상쇄가 생깁니다.</p>
+    <pre><code>&gt;&gt;&gt; b = 1e8
+&gt;&gt;&gt; (b - math.sqrt(b*b - 4))/2
+7.450580596923828e-09
+&gt;&gt;&gt; 2/(b + math.sqrt(b*b - 4))
+1e-08</code></pre>
+    <p>첫 결과는 25%나 틀렸습니다. 근과 계수의 관계 \(x_1x_2 = 1\)을 써서 큰 근(정확)으로 작은 근을 구하면 정확합니다. 일반적으로 \(ax^2 + bx + c = 0\)에서 \(q = -\frac12\left(b + \operatorname{sign}(b)\sqrt{b^2 - 4ac}\right)\), \(x_1 = \frac qa\), \(x_2 = \frac cq\)를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 상쇄가 빼기 연산 자체의 오차라 여긴다. 빼기는 정확에 가깝고, 입력에 이미 있던 작은 오차가 상대적으로 커지는 것이다. (2) 정밀도를 올리면(4배정밀도) 해결된다고 여긴다. 미루는 것일 뿐, 식을 바꾸는 것이 근본 해결이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>상쇄: 거의 같은 수의 차에서 상대 오차가 \(\frac{|a|}{|a - b|}\)배.</li>
+        <li>반각 공식, 유리화로 뺄셈 없애기.</li>
+        <li>이차방정식: 큰 근을 먼저, 작은 근은 \(\frac cq\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(x\)가 작을 때 \(e^x - 1\)을 정확히 계산하는 함수 이름(Python, C 공통)을 말하여라.
+          <details><summary>답</summary><p><code>expm1(x)</code>. 마찬가지로 \(\ln(1 + x)\)는 <code>log1p(x)</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x\)가 클 때 \(\frac1x - \frac1{x + 1}\)을 안정하게 바꿔라.
+          <details><summary>답</summary><p>\(\frac1{x(x + 1)}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\frac{1 - \cos x}{x^2}\)을 \(x = 10^{-4}\)에서 그대로 계산하면 유효숫자가 몇 자리쯤 맞겠는가?
+          <details><summary>답</summary><p>\(1 - \cos x \approx 5\times10^{-9}\)으로 1보다 \(5\times10^{-9}\)배 작아 상대 오차가 \(10^{-16}\div(5\times10^{-9}) \approx 2\times10^{-8}\), 약 7~8자리. 반각 공식이면 16자리.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

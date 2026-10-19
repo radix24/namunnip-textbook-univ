@@ -1,0 +1,91 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학24-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m24-arrays" data-kind="본문" data-std="수학24-03-01">
+  <header class="card-head"><span class="no"></span><h2>배열 만들기, 인덱싱, 행렬 연산</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Matlab식 배열 계산 환경(NumPy, Octave)에서 벡터와 행렬을 만든다.</li>
+        <li>인덱싱, 조각내기, 논리 인덱싱으로 원소를 꺼낸다.</li>
+        <li>원소별 연산과 행렬 곱, 연립방정식 풀이를 구별해 쓴다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬의 곱과 역행렬 (<a href="../math2/index.html">수학2</a>), Python 기초.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>배열 만들기</h3>
+    <pre><code>&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; np.linspace(0, 1, 5)          # 0~1을 5점으로 고르게
+array([0.  , 0.25, 0.5 , 0.75, 1.  ])
+&gt;&gt;&gt; x = np.arange(6).reshape(2, 3)  # 0..5를 2x3으로
+&gt;&gt;&gt; x
+array([[0, 1, 2],
+       [3, 4, 5]])
+&gt;&gt;&gt; np.zeros((2, 2)), np.eye(3)    # 영행렬, 단위행렬</code></pre>
+    <p>Octave(Matlab)에서는 <code>linspace(0, 1, 5)</code>, <code>reshape(0:5, 3, 2)'</code>, <code>zeros(2)</code>, <code>eye(3)</code>로 거의 같습니다. 차이 하나: NumPy는 0번부터, Matlab은 1번부터 셉니다.</p>
+
+    <h3><span class="no">3.1.2</span>인덱싱</h3>
+    <pre><code>&gt;&gt;&gt; x[1, 2]        # 2행 3열 (0부터)
+5
+&gt;&gt;&gt; x[:, 1]        # 둘째 열 전체
+array([1, 4])
+&gt;&gt;&gt; x[x &gt; 2]       # 조건을 만족하는 원소
+array([3, 4, 5])
+&gt;&gt;&gt; x.sum(axis=0)  # 열마다 합
+array([3, 5, 7])</code></pre>
+    <p><code>:</code>은 그 축의 전부, <code>a:b</code>는 a부터 b 직전까지입니다. <code>x &gt; 2</code>는 참/거짓 배열이고, 이를 인덱스로 쓰면 참인 자리만 뽑힙니다(논리 인덱싱). 자료에서 이상값을 고르거나 조건별 평균을 낼 때 반복문 없이 씁니다.</p>
+
+    <h3><span class="no">3.1.3</span>원소별 연산과 행렬 연산</h3>
+    <pre><code>&gt;&gt;&gt; A = np.array([[1, 2], [3, 4]])
+&gt;&gt;&gt; A * A          # 원소별 곱
+array([[ 1,  4],
+       [ 9, 16]])
+&gt;&gt;&gt; A @ A          # 행렬 곱
+array([[ 7, 10],
+       [15, 22]])
+&gt;&gt;&gt; np.linalg.solve(A, [1, 1])   # Ax = (1, 1) 풀기
+array([-1.,  1.])</code></pre>
+    <p>NumPy의 <code>*</code>는 원소별, <code>@</code>는 행렬 곱입니다. Matlab은 반대로 <code>*</code>가 행렬 곱이고 원소별은 <code>.*</code>입니다. 연립방정식은 역행렬을 구해 곱하지 말고 <code>solve</code>(Matlab의 <code>A\b</code>)를 씁니다. 가우스 소거(수학16의 LU 분해)라 더 빠르고 정확합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) NumPy에서 <code>A * B</code>가 행렬 곱이라 여긴다. 원소별 곱이다. (2) <code>inv(A) @ b</code>로 연립방정식을 푼다. 느리고 오차가 크다. <code>solve(A, b)</code>를 쓴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>linspace arange reshape zeros eye</code>로 배열 만들기.</li>
+        <li><code>x[i, j]</code>, <code>x[:, j]</code>, 논리 인덱싱 <code>x[x &gt; 2]</code>.</li>
+        <li><code>*</code> 원소별, <code>@</code> 행렬 곱, <code>solve</code>로 \(Ax = b\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>np.arange(10)[2:7:2]</code>의 결과는?
+          <details><summary>답</summary><p><code>array([2, 4, 6])</code> (2부터 7 직전까지 2칸씩).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(3\times3\) 행렬 <code>M</code>의 대각합을 반복문 없이 구하는 방법 두 가지를 써라.
+          <details><summary>답</summary><p><code>np.trace(M)</code>, <code>M.diagonal().sum()</code> (또는 <code>(M * np.eye(3)).sum()</code>).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>y = x[0]</code>로 꺼낸 행을 바꾸면 <code>x</code>도 바뀌는 이유와, 바뀌지 않게 하는 방법을 말하여라.
+          <details><summary>답</summary><p>NumPy의 조각은 원래 메모리를 공유하는 뷰(view)이다. <code>y = x[0].copy()</code>로 복사한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
