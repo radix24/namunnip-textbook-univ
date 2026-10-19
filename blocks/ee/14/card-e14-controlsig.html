@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-04-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e14-controlsig" data-kind="예제" data-std="전전14-04-01">
+  <header class="card-head"><span class="no"></span><h2>addi와 jal의 제어 신호 정하기</h2><span class="kind">예제 · 표를 확장하기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>4.1절 표에 없는 addi와 jal의 제어 신호는 어떻게 정할까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>각 명령이 데이터패스의 어느 경로를 쓰는지 따라가면 정해집니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">4.1절의 단일 사이클 데이터패스에 jal을 위해 (가) 레지스터 쓰기 값 선택에 PC + 4 입력, (나) PC 선택에 PC + imm(점프) 입력을 추가했다. addi와 jal의 RegWrite, ALUSrc, MemRead, MemWrite, 쓰기 값 선택, PC 선택을 정하라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>addi: rs1 + 상수 → rd.</li>
+        <li>jal: rd ← PC + 4, PC ← PC + imm.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>addi: RegWrite 1, ALUSrc 1(상수), MemRead 0, MemWrite 0, 쓰기 값 = ALU, PC = PC + 4. <span class="q-why">addi</span></li>
+        <li>jal: RegWrite 1, ALUSrc X, MemRead 0, MemWrite 0, 쓰기 값 = PC + 4, PC = PC + imm(점프). <span class="q-why">jal</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>새 명령을 넣으려면 필요한 경로(멀티플렉서 입력)를 더하고 제어 표에 줄을 추가합니다. 하드와이어드 제어에서는 이 표가 곧 조합 회로의 진리표입니다(4.2절).</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>jal의 ALU는 쓰이지 않거나 PC + imm 계산에 따로 쓰는 덧셈기를 씁니다. 메모리는 쓰지 않으므로 MemRead, MemWrite는 0이어야 합니다(X 아님: 쓰면 메모리를 망침).</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>MemWrite를 X로 두면 안 되는 이유는?</p>
+      <details><summary>답</summary><p>X가 1로 정해지면 의도치 않은 메모리 쓰기가 일어나므로, 상태를 바꾸는 신호는 반드시 0으로 정합니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>ALUSrc</h3>
+    <p class="q">lw와 sw의 ALUSrc는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>둘 다 1(상수 오프셋)<span class="why"><b>맞습니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>lw 1, sw 0<span class="why"><b></b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>둘 다 0<span class="why"><b></b> </span></span></button></li>
+    </ol>
+  </div>
+</article>

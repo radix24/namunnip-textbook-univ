@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-encode" data-kind="본문" data-std="전전14-02-02">
+  <header class="card-head"><span class="no"></span><h2>명령어를 기계어로 인코딩</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>RISC-V 명령 형식(R, I, S, B)의 필드 배치를 안다.</li>
+        <li>어셈블리 명령을 32비트 기계어(16진수)로 바꾼다.</li>
+        <li>분기 오프셋이 2바이트 단위로 들어가고 부호 확장되는 것을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>어셈블리 (<a href="02-01.html">2.1절</a>), 2진수·16진수와 2의 보수.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>형식</h3>
+    <table class="tb-table">
+      <tr><th>형식</th><th>31 ← 비트 → 0</th><th>예</th></tr>
+      <tr><td>R</td><td>funct7(7) | rs2(5) | rs1(5) | funct3(3) | rd(5) | opcode(7)</td><td>add, sub</td></tr>
+      <tr><td>I</td><td>imm[11:0](12) | rs1 | funct3 | rd | opcode</td><td>addi, lw, jalr</td></tr>
+      <tr><td>S</td><td>imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode</td><td>sw</td></tr>
+      <tr><td>B</td><td>imm[12|10:5] | rs2 | rs1 | funct3 | imm[4:1|11] | opcode</td><td>beq, bne</td></tr>
+    </table>
+    <p>레지스터 번호 필드(rs1, rs2, rd)의 위치를 모든 형식에서 같게 두어 해독 회로를 단순하게 했습니다. 상수가 S, B 형식에서 쪼개진 것도 같은 이유입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.1</span>
+      <p>(가) <code>add x5, x6, x7</code>, (나) <code>lw x5, 8(x6)</code>, (다) <code>beq x5, x6, +16</code>을 인코딩하라. (opcode: R 0110011, load 0000011, branch 1100011, funct3: add 000, lw 010, beq 000)</p>
+    </div>
+    <p><i>풀이.</i> (가) 0000000 | 00111 | 00110 | 000 | 00101 | 0110011 = <code>0x007302B3</code>. (나) 000000001000 | 00110 | 010 | 00101 | 0000011 = <code>0x00832283</code>. (다) 오프셋 16 = 0 0000000 1000 0(13비트, 맨 아래 0은 저장 안 함): imm[12] = 0, imm[10:5] = 000000, imm[4:1] = 1000, imm[11] = 0. 0 000000 | 00110 | 00101 | 000 | 1000 0 | 1100011 = <code>0x00628863</code>. (sub는 funct7만 0100000으로 달라 <code>0x407302B3</code>.)</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "분기 오프셋은 명령 개수": 바이트 단위이며, 맨 아래 비트가 항상 0이라 저장하지 않습니다(그래서 ±4 KB 범위). (2) "음수 상수는 따로 부호 필드가 있다": 2의 보수로 넣고 가장 위 비트로 부호 확장합니다(<code>addi x5, x6, -1</code>의 imm은 0xFFF).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>R/I/S/B 형식, 레지스터 필드 위치는 같게.</li>
+        <li>add x5,x6,x7 = 0x007302B3, lw x5,8(x6) = 0x00832283, beq x5,x6,+16 = 0x00628863.</li>
+        <li>분기 오프셋은 바이트 단위 13비트(맨 아래 0 생략), 부호 확장.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>sub x5, x6, x7</code>의 기계어는?
+          <details><summary>답</summary><p>0x407302B3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li><code>addi x5, x6, -1</code>의 기계어는?
+          <details><summary>답</summary><p>imm 0xFFF: 0xFFF30293.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>sw x5, 12(x6)</code>(store opcode 0100011, funct3 010)의 기계어는?
+          <details><summary>답</summary><p>imm 12 = 0000000 01100: 0000000 | 00101 | 00110 | 010 | 01100 | 0100011 = 0x00532623.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

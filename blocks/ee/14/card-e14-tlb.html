@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-06-03",
+  "order": 25
+}
+-->
+<article class="card q-card" id="card-e14-tlb" data-kind="예제" data-std="전전14-06-03">
+  <header class="card-head"><span class="no"></span><h2>TLB 적중률과 실효 접근 시간</h2><span class="kind">예제 · 주소 변환 비용</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>TLB 적중률이 99%에서 95%로 떨어지면 메모리 접근이 얼마나 느려질까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>실패 때마다 페이지 표를 한 번 더 읽어야 해서, 4%p 차이로 실효 시간이 약 4% 늘어납니다(캐시 없을 때).</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">TLB 1사이클, 메모리 접근 100사이클, 단일 단계 페이지 표(TLB 실패 시 메모리 한 번 더), 캐시 없음. (가) TLB 적중률 99%와 95%의 실효 접근 시간, (나) 4단계 페이지 표(실패 시 4번 더 읽기)이면 99%에서?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>적중: TLB + 메모리.</li>
+        <li>실패: TLB + 표 읽기 + 메모리.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) 99%: 0.99 × 101 + 0.01 × 201 = 102. 95%: 0.95 × 101 + 0.05 × 201 = 106. <span class="q-why">단일 단계</span></li>
+        <li>(나) 실패 시 1 + 400 + 100 = 501: 0.99 × 101 + 0.01 × 501 = 105. <span class="q-why">4단계</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>다단계 표는 메모리를 아끼지만 TLB 실패가 비싸집니다. 그래서 TLB를 키우고, 큰 페이지(2 MB 등)로 TLB 하나가 덮는 범위를 넓히며, 페이지 표 항목도 캐시에 들어가게 해 실제 손해를 줄입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>99%: 99.99 + 2.01 = 102.0. 95%: 95.95 + 10.05 = 106.0. 4단계: 99.99 + 5.01 = 105.0.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>TLB 없이 단일 단계 표를 매번 읽으면?</p>
+      <details><summary>답</summary><p>200사이클로 두 배.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>TLB</h3>
+    <p class="q">TLB가 담는 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>가상 페이지 번호 → 물리 페이지 번호 변환<span class="why"><b>맞습니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>데이터 블록<span class="why"><b>데이터 캐시의 일입니다.</b> </span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>명령어<span class="why"><b></b> </span></span></button></li>
+    </ol>
+  </div>
+</article>
