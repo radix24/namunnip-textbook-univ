@@ -1,0 +1,56 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-02-02",
+  "order": 45,
+  "scripts": [
+    "js/cards/common/simkit.js",
+    "js/cards/astro/ax-hard.js"
+  ]
+}
+-->
+<article class="card q-card" id="exp-a10-power" data-kind="탐구" data-std="천우10-02-02">
+  <header class="card-head"><span class="no"></span><h2>행렬을 거듭 곱하면 벡터는 어디로 갈까</h2><span class="kind">탐구 · 거듭제곱 방법</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>아무 벡터에 같은 행렬을 거듭 곱하면 벡터의 방향은 어떻게 바뀔까요? 왜 결국 한 방향으로 모이고, 그 방향과 빠르기는 무엇이 정할까요?</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>a (왼쪽 위) = <b data-show="a" data-fix="1">2</b></span><input type="range" name="a" min="-3" max="3" step="0.1" value="2" aria-label="a (왼쪽 위)"></label>
+        <label><span>b (대각 밖) = <b data-show="b" data-fix="1">1</b></span><input type="range" name="b" min="-2" max="2" step="0.1" value="1" aria-label="b (대각 밖)"></label>
+        <label><span>d (오른쪽 아래) = <b data-show="d" data-fix="1">2</b></span><input type="range" name="d" min="-3" max="3" step="0.1" value="2" aria-label="d (오른쪽 아래)"></label>
+        <label><span>처음 벡터 방향 = <b data-show="th">0</b> °</span><input type="range" name="th" min="0" max="180" step="5" value="0" aria-label="처음 벡터 방향"></label>
+        <label><span>곱하는 횟수 = <b data-show="k">2</b> 번</span><input type="range" name="k" min="0" max="15" step="1" value="2" aria-label="곱하는 횟수"></label>
+      </div>
+      <canvas aria-label="곱할 때마다 바뀌는 벡터의 방향과 큰 고유값의 고유벡터 방향"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>행렬 \(A\)의 고유벡터는 \(A\)를 곱해도 방향이 바뀌지 않고 길이만 고유값 \(\lambda\)배가 되는 벡터입니다. 처음 벡터를 고유벡터 성분으로 나누면, 곱할 때마다 각 성분이 자기 고유값만큼 커집니다([천우10-02-02] 본문).</p>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <p>\(k\)번 곱하면 큰 고유값 성분은 \(\lambda_1^k\)배, 작은 성분은 \(\lambda_2^k\)배가 되어 비가 \((\lambda_2/\lambda_1)^k\)로 줄어듭니다. 그래서 벡터는 큰 고유값의 고유벡터 방향(주황 점선)으로 돌아가고, 두 고유값이 비슷할수록 느리게 돌아갑니다. 벡터가 그 방향에 가까워지면 레일리 몫 \(\mathbf v^TA\mathbf v/\mathbf v^T\mathbf v\)가 고유값을 줍니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>구글의 페이지 순위 계산, 별 진동 모드 계산, 주성분 분석이 모두 이 생각을 씁니다. 원하는 값 근처의 고유값은 역행렬에 같은 방법을 쓰는 역반복으로 구합니다([천우10-02-01]의 LU 분해 사용).</p>
+    </section>
+    <section class="q-sec">
+      <h3>적용</h3>
+      <ol>
+        <li>A = [[2, 1], [1, 2]](고유값 3, 1), 처음 방향 0°, 2번 곱하기: 레일리 몫 2.9756(본문 예제의 2.976).</li>
+        <li>곱하는 횟수를 5로 늘리면 3.0000(오차 3.4×10⁻⁵).</li>
+        <li>d를 1.9, b를 0.2로 바꾸면 고유값 2.156과 1.744로 비슷해, 5번에 오차 2.8×10⁻², 15번에도 4.3×10⁻⁴로 느립니다.</li>
+        <li>처음 방향을 바꿔도 같은 방향으로 모이는지 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>처음 벡터에 큰 고유값 성분이 정확히 0이면 이론상 수렴하지 않지만, 반올림 오차가 그 성분을 조금 만들어 결국 수렴합니다. 절댓값이 같은 두 고유값(예: 3과 −3)이 있으면 방향이 번갈아 바뀌며 수렴하지 않습니다.</p>
+    </section>
+  </div>
+</article>
