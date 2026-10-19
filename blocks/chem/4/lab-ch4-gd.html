@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-01-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/chem/ch-ai.js"]
+}
+-->
+<article class="card q-card" id="lab-ch4-gd" data-kind="탐구" data-std="화학4-01-02">
+  <header class="card-head"><span class="no"></span><h2>학습률이 크면 왜 학습이 망가지나?</h2><span class="kind">탐구 · 경사 하강법, 학습률, 수렴과 발산</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>메테인~뷰테인 네 알케인의 끓는점을 탄소 수의 직선 \(\hat y = b + a n_C\)로 맞추는 문제에서, 경사 하강법의 학습률과 반복 횟수를 바꿔 가며 가중치가 최솟값으로 가는 길을 봅니다. 성취기준 [화학4-01-02].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>자료는 실제 끓는점(−161.5, −88.6, −42.1, −0.5 °C)이고, 손실은 평균 제곱 오차입니다. 매 반복마다 \(b \leftarrow b - \eta\,\partial L/\partial b\), \(a \leftarrow a - \eta\,\partial L/\partial a\)로 갱신합니다(η는 학습률, 출발은 b = a = 0). 첫 그림은 (a, b) 평면의 손실 지형으로, 진할수록 손실이 작습니다. 주황 선이 가중치가 지나간 길, 검은 점이 최소제곱 해입니다. 둘째 그림은 반복에 따른 손실(로그 눈금)입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>학습률 η = <b data-show="lr" data-fix="2">0.05</b></span><input type="range" name="lr" min="0.01" max="0.13" step="0.01" value="0.05" aria-label="학습률"></label>
+        <label><span>반복 = <b data-show="st">100</b>번</span><input type="range" name="st" min="0" max="1000" step="10" value="100" aria-label="반복 횟수"></label>
+      </div>
+      <canvas aria-label="손실 지형과 경로"></canvas>
+      <canvas aria-label="반복에 따른 손실"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>학습률을 두 배로 올리면 두 배 빨리 최솟값에 갈까요? 어디까지 올려도 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <ol>
+        <li>η = 0.05로 100번, 1000번 반복한 결과를 읽는다.</li>
+        <li>η = 0.01, 0.10, 0.11로 100번과 1000번을 비교한다.</li>
+        <li>η = 0.12, 0.13으로 올려 본다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <p>η = 0.05는 100번 뒤 b = −161.21, a = 37.87, 손실 395.4로 아직 가는 중이고, 1000번 뒤 최소제곱 해(b = −205.55, a = 52.95, 손실 67.01)에 닿습니다. η = 0.01은 너무 조심스러워 1000번 뒤에도 손실 83.68입니다. η = 0.10은 100번 뒤 82.36, 0.11은 75.28로 빨라집니다.</p>
+      <p>그런데 0.12는 100번 뒤 손실이 4926으로 오히려 커지고, 1000번 뒤에는 7.309×10⁶으로 발산합니다. 0.13은 100번 만에 10¹⁷에 이릅니다. 손실 지형이 a 방향으로 아주 가파른 골짜기라, 걸음이 너무 크면 골짜기 건너편으로 넘어가 더 높은 곳에 떨어지고, 이것이 되풀이되며 커집니다. 이 문제에서 안정한 한계는 손실 곡률(헤세 행렬)의 가장 큰 고윳값 16.70에서 정해지는 η &lt; 2/16.70 = 0.120입니다. 가장 빠른 학습률은 이 한계 바로 아래이지만, 거기서는 진동하며 다가갑니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>연결</h3>
+      <p>기울기 계산은 [화학4-01-01]의 코드와 같습니다. 특성의 크기가 서로 크게 다르면(예: 분자량 수백, 고리 수 0~3) 골짜기가 더 길쭉해져 학습률을 작게 잡아야 하므로, 특성을 표준화한 뒤 학습합니다([화학4-03-01]). 신경망 학습([화학4-04-01])도 같은 갱신 규칙을 씁니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>적용</h3>
+      <p>반복 횟수를 100번으로 고정할 때 손실이 가장 작은 학습률을 장치에서 찾아보세요. 그 값이 안정 한계 0.120과 어떤 관계인지 설명해 보세요.</p>
+    </section>
+    <section class="q-sec">
+      <h3>판단</h3>
+      <p>"손실이 줄지 않으면 반복 횟수를 늘리면 된다." η = 0.12의 결과를 근거로 이 말을 평가해 보세요.</p>
+    </section>
+  </div>
+</article>
