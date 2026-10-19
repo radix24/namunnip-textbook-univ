@@ -279,4 +279,30 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 11. 내적과 정사영: 두 화살표의 각을 바꾸며 (09-03) */
+  (() => {
+    const S = QSim.card("lab-c1-dot"); if (!S) return;
+    const cv = S.$("canvas"), rad = Math.PI / 180;
+    function draw() {
+      const c = C(), la = S.val("la"), ta = S.val("ta"), lb = S.val("lb"), tb = S.val("tb");
+      const a = [la * Math.cos(ta * rad), la * Math.sin(ta * rad)], b = [lb * Math.cos(tb * rad), lb * Math.sin(tb * rad)];
+      const dot = a[0] * b[0] + a[1] * b[1];
+      let th = Math.abs(tb - ta) % 360; if (th > 180) th = 360 - th;
+      const pl = dot / la, P = [(a[0] / la) * pl, (a[1] / la) * pl];
+      const v = QSim.view(cv, 0.7), F = QSim.frame(v, { x0: -5, x1: 5, y0: -3.5, y1: 3.5, equal: true }); F.axes();
+      /* a 방향의 직선(정사영이 놓이는 곳)과, b 끝에서 그 직선으로 내린 수선 */
+      F.path([[-(a[0] / la) * 6, -(a[1] / la) * 6], [(a[0] / la) * 6, (a[1] / la) * 6]], c.rule, 1, [4, 4]);
+      F.path([b, P], c.ink3, 1, [3, 3]);
+      F.path([[0, 0], P], dot >= 0 ? c.acc : c.warn, 6);
+      F.arrow(0, 0, a[0], a[1], c.main, "a"); F.arrow(0, 0, b[0], b[1], c.ink, "b");
+      const pp = (x) => (x < -0.005 ? `(${x.toFixed(2)})` : Math.abs(x).toFixed(2));
+      const sign = Math.abs(dot) < 1e-9 ? "0 (수직)" : dot > 0 ? "양수 (예각)" : "음수 (둔각)";
+      const z = (x) => (Math.abs(x) < 0.005 ? 0 : x).toFixed(2);
+      S.out(`a = (${z(a[0])}, ${z(a[1])}),  b = (${z(b[0])}, ${z(b[1])}),  사잇각 θ = ${th.toFixed(0)}°\n` +
+        `성분으로: a·b = ${pp(a[0])}×${pp(b[0])} + ${pp(a[1])}×${pp(b[1])} = ${z(dot)}\n` +
+        `각으로: |a||b|cosθ = ${la.toFixed(1)} × ${lb.toFixed(1)} × ${Math.cos(th * rad) < 0 ? "(" + Math.cos(th * rad).toFixed(3) + ")" : Math.cos(th * rad).toFixed(3)} = ${(la * lb * Math.cos(th * rad)).toFixed(2)}  → ${sign}\n` +
+        `b의 a 위로의 정사영 길이(부호 포함) = a·b / |a| = ${z(pl)}  (굵은 선)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

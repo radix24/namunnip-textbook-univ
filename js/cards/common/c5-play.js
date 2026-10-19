@@ -89,4 +89,47 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 4. 상평형 그림 읽기: 온도와 압력을 정하면 어떤 상인가 (11-02) */
+  (() => {
+    const S = QSim.card("lab-c5-phase"); if (!S) return;
+    const cv = S.$("canvas");
+    /* 간단한 모형: 승화·증발 곡선은 클라우지우스-클라페이롱 식 ln P = ln Pt − a(1/T − 1/Tt),
+       녹는 곡선은 직선 P = Pt + s(T − Tt). 물은 기울기가 음수(얼음이 물보다 부피가 큼).
+       a값은 물은 1 atm 끓는점(373 K)·승화 곡선, CO₂는 1 atm 승화점(195 K)과 임계점을 지나도록 정했다. 단위: K, atm */
+    const SUB = {
+      h2o: { nm: "물", Tt: 273.16, Pt: 0.00604, Tc: 647.1, Pc: 217.7, aS: 6134, aV: 5214, s: -134, T0: 150, T1: 700 },
+      co2: { nm: "이산화 탄소", Tt: 216.6, Pt: 5.11, Tc: 304.1, Pc: 72.8, aS: 3142, aV: 2000, s: 35, T0: 150, T1: 350 },
+    };
+    const curve = (d, a) => (T) => d.Pt * Math.exp(-a * (1 / T - 1 / d.Tt));
+    function phase(d, T, P) {
+      if (T > d.Tc && P > d.Pc) return "초임계 유체";
+      const Pm = d.Pt + d.s * (T - d.Tt);
+      if (T <= d.Tt) {
+        if (P < curve(d, d.aS)(T)) return "기체";
+        return d.s < 0 && P > Pm ? "액체" : "고체";
+      }
+      if (P < curve(d, d.aV)(T) || T > d.Tc) return "기체";
+      return d.s > 0 && P > Pm ? "고체" : "액체";
+    }
+    function draw() {
+      const c = C(), d = SUB[S.val("m")], T = d.T0 + (S.val("tt") / 100) * (d.T1 - d.T0), lp = S.val("lp"), P = Math.pow(10, lp);
+      const v = QSim.view(cv, 0.6), F = QSim.frame(v, { x0: d.T0, x1: d.T1, y0: -4, y1: 3, xl: "T (K)", yl: "log P (atm)", pad: 36 }); F.axes();
+      const sub = [], vap = [], mel = [];
+      for (let k = 0; k <= 120; k++) { const t = d.T0 + (k / 120) * (d.Tt - d.T0); sub.push([t, Math.log10(curve(d, d.aS)(t))]); }
+      for (let k = 0; k <= 120; k++) { const t = d.Tt + (k / 120) * (d.Tc - d.Tt); vap.push([t, Math.log10(curve(d, d.aV)(t))]); }
+      for (let k = 0; k <= 120; k++) { const Pm = d.Pt * Math.pow(10, (k / 120) * Math.log10(1000 / d.Pt)); mel.push([d.Tt + (Pm - d.Pt) / d.s, Math.log10(Pm)]); }
+      F.path(sub, c.ink, 2); F.path(vap, c.ink, 2); F.path(mel, c.ink, 2);
+      F.path([[d.T0, 0], [d.T1, 0]], c.rule, 1, [4, 4]); F.text("1 atm", d.T1, 0.12, c.ink3, "right");
+      const Pcm = curve(d, d.aV)(d.Tc);
+      F.dot(d.Tt, Math.log10(d.Pt), c.acc, 6); F.text("삼중점", d.Tt + (d.T1 - d.T0) * 0.015, Math.log10(d.Pt) - 0.3, c.ink, "left");
+      F.dot(d.Tc, Math.log10(Pcm), c.warn, 6); F.text("임계점", d.Tc, Math.log10(Pcm) + 0.25, c.ink, "center");
+      F.dot(T, lp, c.main, 7);
+      const ph = phase(d, T, P);
+      const bpHere = P > d.Pt && P < Math.min(Pcm, d.Pc) ? 1 / (1 / d.Tt - Math.log(P / d.Pt) / d.aV) : NaN;
+      S.out(`${d.nm}: T = ${T.toFixed(0)} K (${(T - 273.15).toFixed(0)} °C), P = ${P < 0.01 ? P.toExponential(2) : P.toFixed(P < 10 ? 3 : 1)} atm → ${ph}\n` +
+        `삼중점 ${d.Tt} K, ${d.Pt} atm.  실제 임계점 ${d.Tc} K, ${d.Pc} atm (그림의 증발 곡선은 단순 모형이라 끝점 압력이 조금 다름)\n` +
+        (isNaN(bpHere) ? (P <= d.Pt ? `삼중점 압력보다 낮아 액체 상태가 없습니다. 가열하면 고체가 곧바로 기체가 됩니다(승화).` : `임계 압력보다 높아 끓는 일이 없습니다. 가열하면 액체가 끓지 않고 초임계 유체로 이어집니다.`) : `이 압력에서 끓는점(모형) ≈ ${bpHere.toFixed(0)} K (${(bpHere - 273.15).toFixed(0)} °C)`));
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
