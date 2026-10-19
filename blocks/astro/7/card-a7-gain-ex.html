@@ -1,0 +1,44 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우7-03-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-a7-gain-ex" data-kind="예제" data-std="천우7-03-03 천우7-03-01">
+  <header class="card-head"><span class="no"></span><h2>관측소 CCD의 이득, 읽기 잡음, 포화 전자 수 구하기</h2><span class="kind">예제 · 광자 전달법</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 측정값에서 검출기 특성으로</span>
+      <ol>
+        <li>평탄 두 장의 평균 합에서 바이어스 두 장의 평균 합을 빼 신호를 구한다.</li>
+        <li>평탄 차의 분산에서 바이어스 차의 분산을 빼 광자 잡음 분산(두 장 몫)을 구한다.</li>
+        <li>둘의 비가 이득, 바이어스 차의 표준편차 × 이득 / \(\sqrt2\)가 읽기 잡음이다.</li>
+      </ol>
+    </div>
+    <p class="q-prob"><b>문제.</b> 관측소의 16비트 CCD로 잰 값입니다. 평탄 영상 평균 \(\bar F_1 = 21{,}050\), \(\bar F_2 = 20{,}950\) ADU, 바이어스 평균 \(\bar B_1 = \bar B_2 = 400\) ADU, 평탄 차의 표준편차 175.0 ADU, 바이어스 차의 표준편차 5.66 ADU. 이득, 읽기 잡음, 변환기가 포화되는 전자 수를 구하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>신호: \((21050 + 20950) - (400 + 400) = 41{,}200\) ADU.</div><span class="q-why">두 장의 합(평균 신호의 2배).</span></li>
+        <li><div>잡음 분산: \(175.0^2 - 5.66^2 = 30{,}625 - 32 = 30{,}593\) ADU².</div><span class="q-why">두 장 차의 광자 잡음 분산(평균 신호 분산의 2배).</span></li>
+        <li><div>이득: \(g = 41200/30593 = 1.35\) e⁻/ADU.</div><span class="q-why">결과 3.3.1. 2배끼리 지워진다.</span></li>
+        <li><div>읽기 잡음: \(1.35\times5.66/\sqrt2 = 5.4\) e⁻.</div><span class="q-why">바이어스 차의 분산은 읽기 잡음 분산의 2배.</span></li>
+        <li class="q-end"><div>포화: \((65535 - 400)\times1.347 \approx 87{,}700\) e⁻.</div><span class="q-why">바이어스 몫을 빼고 이득을 곱한다.</span></li>
+      </ol>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>이 평탄 영상에는 화소당 약 \(20{,}600\times1.347 = 27{,}750\)개의 전자가 모였고, 광자 잡음은 약 167 e⁻(0.6%)입니다. 이 정도면 평탄 영상 한 장의 잡음이 0.6%라, 0.1% 정밀도의 평탄화를 하려면 수십 장을 합쳐야 함을 알 수 있습니다(3.2절).</p>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>광자 잡음 분산 = 평균(전자 단위)이어야 합니다. 한 장의 잡음 분산(ADU²)은 \(30593/2 = 15{,}297\), 전자 단위로 \(15297\times1.347^2 = 27{,}750\) e⁻²이고, 한 장의 평균 신호 \(20{,}600\times1.347 = 27{,}750\) e⁻와 같습니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>같은 CCD로 별의 정점 화소가 50,000 ADU가 되도록 찍었습니다. 측광에 써도 됩니까?</p>
+      <details><summary>답</summary><p>변환기 한계(65,535)보다는 작지만, 화소의 선형 한계가 그보다 낮을 수 있으므로 광자 전달 곡선으로 확인한 선형 영역 안인지 봐야 합니다. 보통 포화의 절반~3분의 2 아래로 유지하는 것이 안전합니다.</p></details>
+    </section>
+  </div>
+</article>
