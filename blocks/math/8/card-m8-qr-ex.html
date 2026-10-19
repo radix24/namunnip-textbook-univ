@@ -1,0 +1,45 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학8-01-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m8-qr-ex" data-kind="예제" data-std="수학8-01-02">
+  <header class="card-head"><span class="no"></span><h2>포물선 맞추기를 QR로</h2><span class="kind">예제 · QR 분해로 최소제곱 풀기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>점 \((-1, 1), (0, 0), (1, 1), (2, 3)\)에 \(y = c_0 + c_1x + c_2x^2\)를 맞춘다. \(x^2\)의 계수는 양수일까, 음수일까?</p>
+      <details><summary>예측 확인</summary><p>양수입니다. 점들이 아래로 볼록한 모양으로 놓여 있습니다.</p></details>
+    </section>
+    <p class="q-prob">\(A = \begin{pmatrix}1 &amp; -1 &amp; 1\\1 &amp; 0 &amp; 0\\1 &amp; 1 &amp; 1\\1 &amp; 2 &amp; 4\end{pmatrix}\), \(\mathbf b = (1, 0, 1, 3)^T\)의 최소제곱 해를 QR 분해로 구하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>열에 그람-슈미트를 적용해 \(Q\), \(R\)을 만들고, \(R\hat{\mathbf x} = Q^T\mathbf b\)를 후진 대입으로 풉니다(<a href="01-02.html">1.2절</a>). 각 \(\mathbf q_k\)는 앞의 열과 직교하도록 "중심화"된 다항식 값입니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(\mathbf q_1 = \frac12(1, 1, 1, 1)\), \(r_{11} = 2\).</div><span class="q-why">\(\|\mathbf a_1\| = 2\).</span></li>
+        <li><div>\(r_{12} = \mathbf q_1^T\mathbf a_2 = 1\). \(\mathbf a_2 - \mathbf q_1 = (-1.5, -0.5, 0.5, 1.5)\), 길이 \(\sqrt5\). \(r_{22} = \sqrt5\).</div><span class="q-why">\(x\)에서 평균 0.5를 뺀 것.</span></li>
+        <li><div>\(r_{13} = \mathbf q_1^T\mathbf a_3 = 3\), \(r_{23} = \mathbf q_2^T\mathbf a_3 = \frac{-1.5 + 0.5 + 6}{\sqrt5} = \sqrt5\). \(\mathbf a_3 - 3\mathbf q_1 - \sqrt5\mathbf q_2 = (1, -1, -1, 1)\), 길이 2. \(r_{33} = 2\).</div><span class="q-why">\(\mathbf a_3 = (1, 0, 1, 4)\)에서 \((1.5, 1.5, 1.5, 1.5)\)와 \((-1.5, -0.5, 0.5, 1.5)\)를 뺀다.</span></li>
+        <li><div>\(Q^T\mathbf b = \left(\frac52,\ \frac{-1.5 + 0.5 + 4.5}{\sqrt5},\ \frac{1 - 0 - 1 + 3}2\right) = \left(2.5,\ \frac{3.5}{\sqrt5},\ 1.5\right)\).</div><span class="q-why">\(\mathbf q_3 = \frac12(1, -1, -1, 1)\).</span></li>
+        <li class="q-end"><div>후진 대입: \(2c_2 = 1.5\) → \(c_2 = 0.75\). \(\sqrt5c_1 + \sqrt5(0.75) = 3.5/\sqrt5\) → \(c_1 = 0.7 - 0.75 = -0.05\). \(2c_0 + c_1 + 3c_2 = 2.5\) → \(c_0 = (2.5 + 0.05 - 2.25)/2 = 0.15\).</div><span class="q-why">\(R = \begin{pmatrix}2 &amp; 1 &amp; 3\\0 &amp; \sqrt5 &amp; \sqrt5\\0 &amp; 0 &amp; 2\end{pmatrix}\).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(y = 0.15 - 0.05x + 0.75x^2\)의 값은 \(x = -1, 0, 1, 2\)에서 \(0.95, 0.15, 0.85, 3.05\), 잔차 \((0.05, -0.15, 0.15, -0.05)\). 잔차와 세 열의 내적이 \(0\), \(-0.05 + 0.15 - 0.1 = 0\), \(0.05 + 0.15 - 0.2 = 0\)으로 모두 0입니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>\(\mathbf q_3\)은 \(x^2\)에서 상수와 일차 성분을 뺀 "직교 다항식"의 값입니다. 점이 많고 차수가 높으면 \(1, x, x^2, \dots\)의 열이 거의 평행해져 \(A^TA\)가 거의 특이해지는데, QR은 이 직교화를 안정적으로 해 줍니다. 르장드르 다항식 같은 직교 다항식(수학15)이 같은 생각입니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">같은 점에 직선만 맞추면 계수는? (힌트: \(R\)의 왼쪽 위 \(2\times2\)만 쓴다)</p>
+      <details><summary>답</summary><p>\(\sqrt5c_1 = 3.5/\sqrt5\) → \(c_1 = 0.7\), \(2c_0 + 0.7 = 2.5\) → \(c_0 = 0.9\). \(y = 0.9 + 0.7x\). QR은 차수를 늘릴 때 앞의 계산을 다시 쓸 수 있다.</p></details>
+    </section>
+  </div>
+</article>
