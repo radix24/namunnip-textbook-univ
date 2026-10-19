@@ -58,31 +58,6 @@
     const f = orE(); if (i < s.length) throw new Error(`${i + 1}번째 글자 '${s[i]}'를 읽을 수 없습니다`);
     const vars = [...new Set(s.match(/[A-D]/g) || [])]; return { f, vars };
   }
-  (() => {
-    const S = QSim.card("exp-e4-bool"); if (!S) return;
-    const tb = S.$(".tt");
-    function draw() {
-      let p1, p2, err = "";
-      try { p1 = parseBool(S.$('[name="f1"]').value); } catch (e) { err = "식 1: " + e.message; }
-      try { p2 = parseBool(S.$('[name="f2"]').value); } catch (e) { err += (err ? "\n" : "") + "식 2: " + e.message; }
-      if (err) { S.out(err); tb.innerHTML = ""; return; }
-      const vars = [...new Set([...p1.vars, ...p2.vars])].sort(), n = vars.length, rows = [];
-      let same = true; const m1 = [], m2 = [];
-      for (let k = 0; k < 1 << n; k++) {
-        const e = {}; vars.forEach((v, j) => (e[v] = (k >> (n - 1 - j)) & 1));
-        const y1 = p1.f(e), y2 = p2.f(e); if (y1 !== y2) same = false; if (y1) m1.push(k); if (y2) m2.push(k);
-        rows.push(`<tr${y1 !== y2 ? ' style="background:rgba(217,83,79,.15)"' : ""}><td>${k}</td>${vars.map((v) => `<td>${e[v]}</td>`).join("")}<td><b>${y1}</b></td><td><b>${y2}</b></td></tr>`);
-      }
-      tb.innerHTML = `<table style="border-collapse:collapse;font-family:var(--f-mono);font-size:13px;margin:6px auto"><thead><tr><th>번호</th>${vars.map((v) => `<th>${v}</th>`).join("")}<th>식 1</th><th>식 2</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
-      tb.querySelectorAll("td,th").forEach((x) => (x.style.cssText = "border:1px solid var(--rule);padding:2px 8px;text-align:center"));
-      S.out(`변수 ${vars.join(", ") || "없음"}. 식 1의 최소항 Σm(${m1.join(", ")}), 식 2의 최소항 Σm(${m2.join(", ")})\n` +
-        (same ? "두 식은 모든 입력에서 같습니다(동치)." : "두 식이 다른 줄(빨강)이 있습니다. 동치가 아닙니다."));
-    }
-    S.$$('input[type="text"]').forEach((e) => e.addEventListener("input", draw));
-    S.$$(".preset").forEach((b) => b.addEventListener("click", () => { S.$('[name="f1"]').value = b.dataset.a; S.$('[name="f2"]').value = b.dataset.b; draw(); }));
-    draw();
-  })();
-
   /* 3. 클릭하는 카르노 맵 (4변수, 최소 곱의 합) */
   const bitc = (x) => { let k = 0; while (x) { k += x & 1; x >>= 1; } return k; };
   function qm(ones, dcs) {
