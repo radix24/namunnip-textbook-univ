@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e4-encoder" data-kind="본문" data-std="전전4-04-04">
+  <header class="card-head"><span class="no"></span><h2>디코더와 우선순위 인코더</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>n비트 입력으로 2ⁿ개 출력 중 하나를 켜는 디코더를 설계한다.</li>
+        <li>여러 입력 중 가장 높은 번호를 2진수로 내는 우선순위 인코더를 설계한다.</li>
+        <li>디코더로 임의의 논리 함수와 메모리 주소 선택을 구현한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>멀티플렉서 (<a href="04-02.html">4.2절</a>), 표준형 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>디코더</h3>
+    <p>2-to-4 디코더는 입력 \(A_1A_0\)의 각 조합에서 출력 하나만 1(\(Y_0 = \bar A_1\bar A_0\), …, \(Y_3 = A_1A_0\))입니다. 출력이 곧 최소항이므로, 원하는 최소항 출력을 OR로 묶으면 어떤 함수든 만들 수 있습니다. 메모리에서는 주소를 받아 한 줄(워드)만 선택하는 데 씁니다.</p>
+    <h3><span class="no">4.4.2</span>우선순위 인코더</h3>
+    <p>입력 \(D_3D_2D_1D_0\) 중 1인 가장 높은 번호를 2진수로 내고, 아무것도 1이 아니면 유효 출력 V = 0입니다. \(Y_1 = D_3 + D_2\), \(Y_0 = D_3 + \bar D_2D_1\), \(V = D_3 + D_2 + D_1 + D_0\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1</span>
+      <p>입력 0110이면 출력은? 인터럽트 제어기에서 우선순위 인코더를 쓰는 이유는?</p>
+    </div>
+    <p><i>풀이.</i> 가장 높은 1은 D₂ → Y = 10, V = 1. 검산: \(Y_1 = 0 + 1 = 1\), \(Y_0 = 0 + \bar 1\cdot1 = 0\). 여러 장치가 동시에 요청하면 가장 중요한 요청의 번호를 CPU에 알려야 하기 때문입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "보통 인코더도 여러 입력을 처리한다": 단순 인코더는 입력이 하나만 1이라고 가정해 둘 이상이면 틀린 값을 냅니다. (2) "V 출력은 필요 없다": 입력이 모두 0인 경우와 D₀만 1인 경우가 Y = 00으로 같아 구별에 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>디코더: 출력 = 최소항, OR로 함수 구현, 주소 선택.</li>
+        <li>우선순위 인코더: Y₁ = D₃ + D₂, Y₀ = D₃ + D̄₂D₁, V.</li>
+        <li>인터럽트 우선순위 처리.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>3-to-8 디코더에서 입력 101이면 켜지는 출력은?
+          <details><summary>답</summary><p>Y₅.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>디코더 하나와 OR 게이트로 F = Σm(1, 2, 7)을 만들려면?
+          <details><summary>답</summary><p>3-to-8 디코더의 Y₁, Y₂, Y₇을 OR합니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>입력 0001과 0000을 우선순위 인코더 출력으로 구별하는 방법은?
+          <details><summary>답</summary><p>둘 다 Y = 00이지만 V가 1과 0으로 다릅니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

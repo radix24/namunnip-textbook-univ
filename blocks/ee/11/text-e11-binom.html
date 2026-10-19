@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-binom" data-kind="본문" data-std="전전11-01-03">
+  <header class="card-head"><span class="no"></span><h2>이항 분포와 Poisson 근사</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>독립 시행 n번에서 성공 횟수가 이항 분포를 따름을 안다.</li>
+        <li>n이 크고 p가 작을 때 Poisson 근사 \(e^{-\lambda}\lambda^k/k!\)(λ = np)를 쓴다.</li>
+        <li>패킷의 비트 오류 개수 확률을 계산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>독립과 베르누이 시행 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>몇 개 틀리나</h3>
+    <p>\(P(K = k) = \binom nk p^k(1 - p)^{n-k}\). 비트 오류율 p = 10⁻³, 패킷 1000비트처럼 n이 크고 p가 작으면 λ = np인 Poisson 분포로 근사됩니다.</p><pre><code>from math import comb, exp, factorial
+n, p = 1000, 1e-3
+for k in range(4):
+    b = comb(n, k) * p**k * (1 - p)**(n - k)
+    q = exp(-n * p) * (n * p)**k / factorial(k)
+    print(f"k={k}: 이항 {b:.5f}, Poisson {q:.5f}")</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>k=0: 이항 0.36770, Poisson 0.36788
+k=1: 이항 0.36806, Poisson 0.36788
+k=2: 이항 0.18403, Poisson 0.18394
+k=3: 이항 0.06128, Poisson 0.06131</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1</span>
+      <p>비트 오류율 10⁻³, 1000비트 패킷에서 오류가 없을 확률과, 1비트 정정 부호로 패킷이 살아남을 확률은?</p>
+    </div>
+    <p><i>풀이.</i> P(0) = 0.368, P(1) = 0.368 → 정정하면 P(K ≤ 1) = 0.736. 부호 없이 패킷의 63%를 잃던 것이 26%로 줄어듭니다(더 강한 부호가 필요).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "오류율 10⁻³이면 1000비트에 꼭 하나 틀린다": 평균이 1일 뿐, 0개일 확률도 37%입니다. (2) "Poisson 근사는 언제나 쓸 수 있다": p가 작고 n이 클 때만 정확합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>이항 C(n,k)pᵏ(1 − p)ⁿ⁻ᵏ.</li>
+        <li>n 크고 p 작으면 Poisson(λ = np).</li>
+        <li>예: λ = 1 → P(0) = P(1) = 0.368.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>공정한 동전 4번에서 앞면 2번의 확률은?
+          <details><summary>답</summary><p>6/16 = 0.375.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>λ = 2인 Poisson에서 P(0)은?
+          <details><summary>답</summary><p>e⁻² ≈ 0.135.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>이항 분포의 평균과 분산은?
+          <details><summary>답</summary><p>np, np(1 − p).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -127,7 +127,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 능형 회귀와 라쏘의 계수 경로 (응통10-06-03) */
+  /* 5. 능형 회귀와 라쏘의 계수 경로 (응통10-06-04) */
   (() => {
     const S = QSim.card("lab-s10-ridge"); if (!S) return;
     const cv = S.$("canvas"), u = rng(2718), n = 40, p = 4, X = [], y = [];

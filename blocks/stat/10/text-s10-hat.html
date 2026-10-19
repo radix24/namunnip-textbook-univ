@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-hat" data-kind="본문" data-std="응통10-02-02">
+  <header class="card-head"><span class="no"></span><h2>모자 행렬과 최소제곱의 기하학</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모자 행렬 \(H\)가 직교 사영 행렬임을 확인한다.</li>
+        <li>잔차의 성질(\(X^\top\mathbf e = \mathbf 0\), \(\mathrm{Var}(\mathbf e) = \sigma^2(I - H)\))을 보인다.</li>
+        <li>\(E(\mathrm{SSE}) = (n-p)\sigma^2\)를 대각합으로 증명한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>행렬 표현 (<a href="02-01.html">2.1절</a>), 직교 사영 (응통2 05단원).</li>
+      </ul>
+    </div>
+
+    <h3>가장 가까운 점 찾기</h3>
+    <p>\(\mathbf y\)는 \(n\)차원 공간의 한 점이고, \(X\boldsymbol b\)로 만들 수 있는 벡터들은 \(X\)의 열이 펼치는 \(p\)차원 부분공간을 이룹니다. 최소제곱은 이 부분공간에서 \(\mathbf y\)와 가장 가까운 점을 고르는 일, 곧 수직으로 내린 발을 찾는 일입니다. 이 그림 하나로 1단원의 여러 성질이 한꺼번에 설명됩니다.</p>
+
+    <h3><span class="no">2.2.1</span>모자 행렬</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.2.1</span>
+      <p>\(H = X(X^\top X)^{-1}X^\top\)를 <b>모자 행렬</b>이라 한다. \(\hat{\mathbf y} = X\hat{\boldsymbol\beta} = H\mathbf y\)(\(\mathbf y\)에 모자를 씌움), 잔차 \(\mathbf e = (I - H)\mathbf y\).</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.2</span>
+      <p>\(H^\top = H\), \(H^2 = H\), \(HX = X\), \(\mathrm{tr}(H) = p\). \(I - H\)도 대칭이고 멱등이며 \(\mathrm{tr}(I - H) = n - p\).</p>
+    </div>
+    <p class="tb-proof">대칭은 전치로 바로 확인됩니다. \(H^2 = X(X^\top X)^{-1}X^\top X(X^\top X)^{-1}X^\top = H\). \(\mathrm{tr}(H) = \mathrm{tr}((X^\top X)^{-1}X^\top X) = \mathrm{tr}(I_p) = p\)(대각합의 순환성). <span class="qed">∎</span></p>
+    <p>대칭이고 멱등인 행렬은 직교 사영입니다. 이미 열공간에 있는 벡터는 그대로 두고(\(HX = X\)), 두 번 사영해도 같습니다. 대각원소 \(h_{ii}\)는 <b>지렛값</b>으로, \(\hat y_i\)가 자기 자신의 \(y_i\)에 얼마나 기대는지를 잽니다(4.3절).</p>
+
+    <h3><span class="no">2.2.2</span>잔차의 성질</h3>
+    <ul>
+      <li>\(X^\top\mathbf e = X^\top(I - H)\mathbf y = \mathbf 0\): 잔차는 모든 설명변수 열과 수직. 절편 열이 있으면 \(\sum e_i = 0\)(1.1절 성질의 일반화).</li>
+      <li>\(\hat{\mathbf y}^\top\mathbf e = \mathbf y^\top H(I - H)\mathbf y = 0\): 적합값과 잔차가 수직이라 \(\|\mathbf y\|^2 = \|\hat{\mathbf y}\|^2 + \|\mathbf e\|^2\). 평균을 빼면 SST = SSR + SSE(1.4절)가 이 피타고라스 정리입니다.</li>
+      <li>\(E(\mathbf e) = (I - H)X\boldsymbol\beta = \mathbf 0\), \(\mathrm{Var}(\mathbf e) = \sigma^2(I - H)\). 잔차는 오차와 달리 서로 상관이 있고, \(\mathrm{Var}(e_i) = \sigma^2(1 - h_{ii})\)라 지렛값이 큰 점의 잔차는 작게 나옵니다. 그래서 잔차를 \(\sqrt{1 - h_{ii}}\)로 나눠 표준화합니다(4.1절).</li>
+    </ul>
+
+    <h3><span class="no">2.2.3</span>오차분산의 불편추정</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.3</span>
+      <p>\(E(\mathrm{SSE}) = (n - p)\sigma^2\). 따라서 \(s^2 = \mathrm{SSE}/(n-p)\)는 \(\sigma^2\)의 불편추정량이다.</p>
+    </div>
+    <p class="tb-proof">\(\mathbf e = (I - H)\boldsymbol\varepsilon\)(\((I - H)X = 0\)이므로). \(\mathrm{SSE} = \boldsymbol\varepsilon^\top(I - H)\boldsymbol\varepsilon\)이고 \(E(\boldsymbol\varepsilon^\top A\boldsymbol\varepsilon) = \sigma^2\mathrm{tr}(A)\)이므로 \(E(\mathrm{SSE}) = \sigma^2(n - p)\). <span class="qed">∎</span></p>
+    <p>정규 오차라면 \(\mathrm{SSE}/\sigma^2 \sim \chi^2_{n-p}\)이고 \(\hat{\boldsymbol\beta}\)와 독립입니다(\(H\boldsymbol\varepsilon\)과 \((I - H)\boldsymbol\varepsilon\)이 무상관인 정규벡터). 1.3절에서 미뤄 둔 t 분포의 근거가 이것입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.4</span>
+      <p>\(x = (1, 2, 3)\), \(\mathbf y = (1, 3, 2)\)로 절편이 있는 직선을 적합합니다. \(H\)를 구하고 \(\hat{\mathbf y}\), \(\mathbf e\)와 그 성질을 확인하세요.</p>
+    </div>
+    <p><i>풀이.</i> 단순회귀에서 \(h_{ij} = \frac1n + \frac{(x_i - \bar x)(x_j - \bar x)}{S_{xx}}\), \(\bar x = 2\), \(S_{xx} = 2\).</p>
+    \[H = \begin{pmatrix}5/6 &amp; 1/3 &amp; -1/6\\ 1/3 &amp; 1/3 &amp; 1/3\\ -1/6 &amp; 1/3 &amp; 5/6\end{pmatrix}, \quad \mathrm{tr}H = 2.\]
+    <p>\(\hat{\mathbf y} = H\mathbf y = (1.5, 2, 2.5)\)(직선 \(1 + 0.5x\)), \(\mathbf e = (-0.5, 1, -0.5)\). \(\sum e_i = 0\), \(\sum x_ie_i = -0.5 + 2 - 1.5 = 0\), \(\hat{\mathbf y}^\top\mathbf e = -0.75 + 2 - 1.25 = 0\). SSE = 1.5이고 \(n - p = 1\)이라 \(s^2 = 1.5\).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(H\)는 대칭·멱등인 직교 사영, \(\mathrm{tr}H = p\).</li>
+        <li>잔차는 \(X\)의 열, 적합값과 수직이고 \(\mathrm{Var}(\mathbf e) = \sigma^2(I - H)\).</li>
+        <li>\(E(\mathrm{SSE}) = \sigma^2\mathrm{tr}(I - H) = (n - p)\sigma^2\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>절편만 있는 모형(\(X = \mathbf 1\))의 모자 행렬은? 적합값과 SSE는?
+          <details><summary>답</summary><p>\(H = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top = \frac1nJ\)(모든 원소 \(1/n\)). \(\hat{\mathbf y} = \bar y\mathbf 1\), SSE = SST, \(s^2\)은 표본분산(자유도 \(n - 1\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(0 \le h_{ii} \le 1\)임을 보이세요.
+          <details><summary>답</summary><p>\(H = H^2 = H^\top H\)이므로 \(h_{ii} = \sum_j h_{ij}^2 \ge h_{ii}^2\). 따라서 \(h_{ii}(1 - h_{ii}) \ge 0\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

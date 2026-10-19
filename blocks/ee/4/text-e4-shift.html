@@ -1,0 +1,84 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e4-shift" data-kind="본문" data-std="전전4-05-04">
+  <header class="card-head"><span class="no"></span><h2>시프트 레지스터</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>D 플립플롭을 이어 한 클록마다 비트가 옮겨 가는 시프트 레지스터를 설계한다.</li>
+        <li>직렬 입력-병렬 출력(SIPO)과 병렬 입력-직렬 출력(PISO)의 쓰임을 안다.</li>
+        <li>링 카운터와 존슨 카운터의 상태 순서를 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>D 플립플롭 (<a href="05-01.html">5.1절</a>), 카운터 (<a href="05-02.html">5.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>한 칸씩 옮기기</h3>
+    <p>D 플립플롭 Q₀ → Q₁ → Q₂ → Q₃을 같은 클록으로 이으면, 클록마다 입력 비트가 한 칸씩 이동합니다. 직렬로 들어온 비트를 4클록 뒤에 병렬로 읽으면(SIPO) 직렬 통신 수신, 병렬로 넣고 한 비트씩 내보내면(PISO) 송신에 씁니다(UART, SPI).</p>
+    <pre><code>q = [0, 0, 0, 0]
+for clk, bit in enumerate([1, 0, 1, 1], 1):     # 직렬 입력 1, 0, 1, 1
+    q = [bit] + q[:-1]
+    print(f"클록 {clk}: Q0..Q3 = {q}")
+ring, john = [1, 0, 0, 0], [0, 0, 0, 0]
+rs, js = [], []
+for _ in range(8):
+    rs.append("".join(map(str, ring))); js.append("".join(map(str, john)))
+    ring = [ring[-1]] + ring[:-1]                   # 링: 마지막 비트를 처음으로
+    john = [1 - john[-1]] + john[:-1]               # 존슨: 마지막 비트를 뒤집어 처음으로
+print("링 카운터 :", rs[:4])
+print("존슨 카운터:", js)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>클록 1: Q0..Q3 = [1, 0, 0, 0]
+클록 2: Q0..Q3 = [0, 1, 0, 0]
+클록 3: Q0..Q3 = [1, 0, 1, 0]
+클록 4: Q0..Q3 = [1, 1, 0, 1]
+링 카운터 : ['1000', '0100', '0010', '0001']
+존슨 카운터: ['0000', '1000', '1100', '1110', '1111', '0111', '0011', '0001']</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>4비트 링 카운터와 존슨 카운터는 각각 몇 개의 상태를 도는가?</p>
+    </div>
+    <p><i>풀이.</i> 링 카운터는 1 하나가 도는 4상태(1000, 0100, 0010, 0001), 존슨 카운터는 0000, 1000, 1100, 1110, 1111, 0111, 0011, 0001의 8상태(2n)입니다. 두 경우 모두 상태마다 두 비트 이하만 보면 해독할 수 있어 단계 신호 생성에 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "같은 클록이면 모든 비트가 한꺼번에 첫 칸으로 간다": 각 플립플롭이 클록 직전의 앞 칸 값을 잡으므로 한 칸씩만 이동합니다. (2) "링 카운터는 아무 초기값에서나 시작해도 된다": 1이 정확히 하나 들어 있게 초기화해야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>시프트 레지스터: 클록마다 한 칸 이동.</li>
+        <li>SIPO(수신), PISO(송신).</li>
+        <li>링 카운터 n상태, 존슨 카운터 2n상태.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>SIPO에 1, 1, 0을 넣은 뒤(3비트, 처음 000) 상태는?
+          <details><summary>답</summary><p>Q₀Q₁Q₂ = 011.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>8비트 존슨 카운터의 상태 수는?
+          <details><summary>답</summary><p>16.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>왼쪽 시프트가 2배 곱셈이 되는 이유와 조건은?
+          <details><summary>답</summary><p>자릿값이 하나씩 올라가기 때문이며, 넘치는 비트가 없어야 합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

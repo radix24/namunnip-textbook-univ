@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-06-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-lasso" data-kind="본문" data-std="응통10-06-05">
+  <header class="card-head"><span class="no"></span><h2>라쏘: 축소와 선택을 함께</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>절댓값 벌점이 계수를 정확히 0으로 만드는 이유를 기하와 식으로 이해한다.</li>
+        <li>직교 설계에서 라쏘 해가 연한 문턱값임을 보인다.</li>
+        <li>라쏘 경로와 엘라스틱넷, 라쏘의 한계를 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>능형 회귀 (<a href="06-04.html">6.4절</a>), 교차검증 (<a href="06-03.html">6.3절</a>), 단계적 선택 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>줄이면서 고르기</h3>
+    <p>능형 회귀는 모든 계수를 조금씩 줄이지만 하나도 없애지 않아, 변수가 수백 개면 해석이 어렵습니다. 단계적 선택(6.2절)은 변수를 고르지만 넣거나 빼는 결정이 불연속이라 불안정합니다. 티브시라니(1996)의 라쏘는 벌점 하나로 두 일을 연속적으로 합니다.</p>
+
+    <h3><span class="no">6.5.1</span>정의와 기하</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 6.5.1</span>
+      <p>\(\hat{\boldsymbol\beta}_{\text{lasso}} = \arg\min_{\mathbf b}\left\{\|\mathbf y - X\mathbf b\|^2 + \lambda\sum_{j\ge1}|b_j|\right\}\) (설명변수 표준화, 절편 제외).</p>
+    </div>
+    <p>같은 문제를 "\(\sum|b_j| \le t\)라는 제약 아래 SSE 최소"로 쓸 수 있습니다. 제약 영역이 능형은 원(구)이고 라쏘는 꼭짓점이 축 위에 있는 마름모입니다. SSE의 타원 등고선이 영역에 처음 닿는 점이 해인데, 마름모에서는 꼭짓점에 닿기 쉽고 꼭짓점에서는 일부 좌표가 0입니다. 원에는 꼭짓점이 없어 정확히 0이 되는 일이 드뭅니다.</p>
+
+    <h3><span class="no">6.5.2</span>직교 설계에서의 해: 연한 문턱값</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.5.2</span>
+      <p>\(X^\top X = I\)이면 \(\hat\beta_{j,\text{lasso}} = \mathrm{sign}(\hat\beta_j)\left(|\hat\beta_j| - \lambda/2\right)_+\). 여기서 \(\hat\beta_j\)는 최소제곱 추정값이다.</p>
+    </div>
+    <p class="tb-proof">\(\|\mathbf y - X\mathbf b\|^2 = \|\mathbf y - X\hat{\boldsymbol\beta}\|^2 + \sum_j(b_j - \hat\beta_j)^2\)이므로 좌표마다 \((b - \hat\beta_j)^2 + \lambda|b|\)를 최소화하면 됩니다. \(b &gt; 0\)에서 도함수 \(2(b - \hat\beta_j) + \lambda = 0\)이면 \(b = \hat\beta_j - \lambda/2\)이고 이것이 양수일 때만 해입니다. 음수 쪽도 대칭이고, 그 밖에서는 \(b = 0\)입니다. <span class="qed">∎</span></p>
+    <p>모든 계수를 \(\lambda/2\)만큼 0 쪽으로 옮기고, 0을 넘어가면 0에서 멈춥니다(연한 문턱값). 능형은 비율로 줄이고(\(\hat\beta_j/(1 + \lambda)\)), 최선 부분집합은 작은 계수를 0으로 자르되 큰 계수는 그대로 둡니다(딱딱한 문턱값). 라쏘는 그 중간입니다.</p>
+
+    <h3><span class="no">6.5.3</span>라쏘 경로와 계산</h3>
+    <p>\(\lambda\)를 크게 시작해 줄여 가면 계수가 하나씩 0에서 벗어나 모형에 들어옵니다. 이 <b>라쏘 경로</b>는 구간별로 선형이고(LARS 알고리즘), 실제로는 좌표 하강법으로 여러 \(\lambda\)에서 한꺼번에 계산합니다. \(\lambda\)는 교차검증으로 고르며, 1-SE 규칙을 쓰면 변수가 더 적은 모형이 됩니다.</p>
+    <pre><code>library(glmnet)
+X &lt;- scale(as.matrix(mtcars[, -1])); y &lt;- mtcars$mpg
+cvfit &lt;- cv.glmnet(X, y, alpha = 1)     # alpha = 1: 라쏘
+plot(cvfit$glmnet.fit, xvar = "lambda") # 라쏘 경로
+coef(cvfit, s = "lambda.1se")           # 0이 된 계수 확인</code></pre>
+
+    <h3><span class="no">6.5.4</span>한계와 엘라스틱넷</h3>
+    <ul>
+      <li>서로 강하게 상관된 변수 묶음에서는 그 가운데 하나를 거의 임의로 고르고 나머지를 0으로 만듭니다. 어느 변수가 뽑혔는지 해석하면 안 됩니다.</li>
+      <li>남은 계수도 \(\lambda/2\)만큼 줄어 있어 큰 효과를 과소추정합니다. 선택한 변수로 최소제곱을 다시 맞추는 방법(relaxed lasso)이 있지만, 그 p값은 6.2.3절의 선택 후 추론 문제를 그대로 안습니다.</li>
+      <li><b>엘라스틱넷</b>: 벌점 \(\lambda[\alpha\sum|b_j| + (1 - \alpha)\sum b_j^2/2]\). 상관된 변수를 함께 넣거나 함께 빼며, glmnet의 <code>alpha</code>가 이 \(\alpha\)입니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.5.3</span>
+      <p>\(X^\top X = I\)이고 최소제곱 계수가 \((3, -1.2, 0.4)\)입니다. \(\lambda = 2\)인 라쏘 계수를 구하고 6.4절 예제의 능형 계수 \((1, -0.4, 0.133)\)과 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\lambda/2 = 1\)씩 0 쪽으로: \(3 \to 2\), \(-1.2 \to -0.2\), \(0.4 \to 0\). 라쏘는 \((2, -0.2, 0)\)으로 셋째 변수를 없애고 큰 계수는 덜 줄였습니다. 능형은 모두 1/3로 줄여 셋째도 남기고 첫째를 크게 줄였습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>라쏘: 절댓값 벌점, 마름모 제약의 꼭짓점 때문에 일부 계수가 정확히 0.</li>
+        <li>직교 설계에서 연한 문턱값 \(\mathrm{sign}(\hat\beta)(|\hat\beta| - \lambda/2)_+\).</li>
+        <li>상관된 변수 중 하나만 고르는 경향, 엘라스틱넷으로 보완.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.5.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 6.5.3에서 계수가 모두 0이 되는 가장 작은 \(\lambda\)는? 하나만 남는 \(\lambda\)의 범위는?
+          <details><summary>답</summary><p>가장 큰 \(|\hat\beta_j| = 3\)이 0이 되는 \(\lambda = 6\) 이상. 하나만(첫째) 남는 범위는 \(2.4 \le \lambda &lt; 6\)(둘째는 \(\lambda \ge 2.4\)에서 0).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(n = 50\), 설명변수 1000개인 자료에 라쏘를 쓰면 0이 아닌 계수는 최대 몇 개일 수 있나요? 최소제곱은 왜 쓸 수 없나요?
+          <details><summary>답</summary><p>라쏘 해는 0이 아닌 계수가 최대 \(n = 50\)개입니다. 최소제곱은 \(X^\top X\)(1000×1000)의 계수(rank)가 50 이하라 역행렬이 없어 해가 무수히 많습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통10-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s10-props" data-kind="본문" data-std="응통10-01-02">
+  <header class="card-head"><span class="no"></span><h2>추정량의 평균과 분산, 오차분산의 추정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(\hat\beta_0, \hat\beta_1\)이 불편임을 보이고 분산과 공분산을 구한다.</li>
+        <li>\(s^2 = \mathrm{SSE}/(n-2)\)가 \(\sigma^2\)의 불편추정량인 이유를 안다.</li>
+        <li>분산 공식에서 실험 설계와 중심화의 교훈을 읽는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱 추정량 (<a href="01-01.html">1.1절</a>), 기대값과 분산의 성질 (응통6 3.1, 5.3절).</li>
+      </ul>
+    </div>
+
+    <h3>같은 실험을 다시 하면</h3>
+    <p>같은 \(x\)에서 실험을 다시 하면 오차가 달라져 기울기도 달라집니다. 추정량의 평균은 "평균적으로 참값을 맞히는가", 분산은 "얼마나 흔들리는가"를 답합니다. 이 두 가지가 1.3절의 t 검정과 1.5절의 예측구간을 만드는 재료입니다.</p>
+
+    <h3><span class="no">1.2.1</span>기울기와 절편의 평균, 분산</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.1</span>
+      <p>\(E(\hat\beta_1) = \beta_1\), \(\mathrm{Var}(\hat\beta_1) = \dfrac{\sigma^2}{S_{xx}}\). \(E(\hat\beta_0) = \beta_0\), \(\mathrm{Var}(\hat\beta_0) = \sigma^2\left(\dfrac1n + \dfrac{\bar x^2}{S_{xx}}\right)\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\dfrac{\bar x\sigma^2}{S_{xx}}\).</p>
+    </div>
+    <p class="tb-proof">\(\sum(x_i - \bar x) = 0\)이므로 \(S_{xy} = \sum(x_i - \bar x)Y_i\), 곧 \(\hat\beta_1 = \sum c_iY_i\), \(c_i = (x_i - \bar x)/S_{xx}\). \(\sum c_i = 0\), \(\sum c_ix_i = 1\)이므로 \(E(\hat\beta_1) = \sum c_i(\beta_0 + \beta_1x_i) = \beta_1\). 독립이므로 \(\mathrm{Var}(\hat\beta_1) = \sigma^2\sum c_i^2 = \sigma^2/S_{xx}\). 또 \(\mathrm{Cov}(\bar Y, \hat\beta_1) = \frac{\sigma^2}{n}\sum c_i = 0\)이므로 \(\hat\beta_0 = \bar Y - \hat\beta_1\bar x\)에서 \(\mathrm{Var}(\hat\beta_0) = \frac{\sigma^2}{n} + \bar x^2\frac{\sigma^2}{S_{xx}}\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\bar x\,\mathrm{Var}(\hat\beta_1)\). <span class="qed">∎</span></p>
+    <p>정규성은 쓰지 않았습니다. 오차의 평균 0, 등분산, 무상관만으로 충분합니다. 여기에 정규성을 더하면 \(\hat\beta_1\)이 \(Y_i\)의 일차결합이므로 정확히 정규분포를 따릅니다.</p>
+
+    <h3><span class="no">1.2.2</span>공식이 주는 교훈</h3>
+    <ul>
+      <li><b>\(x\)를 넓게</b>: \(S_{xx}\)가 클수록 기울기가 정확합니다. 같은 비용이면 \(x\)를 넓은 범위에 퍼뜨려 실험합니다.</li>
+      <li><b>표본 크기</b>: \(x\)를 같은 방식으로 늘리면 \(S_{xx}\)가 \(n\)에 비례해 커지고 표준오차는 \(1/\sqrt n\)로 줄어듭니다.</li>
+      <li><b>절편은 \(\bar x\)에서 멀수록 부정확</b>: 절편은 \(x = 0\)에서의 예측이라, 0이 자료에서 멀면 분산이 커집니다. 기울기와 절편은 \(\bar x &gt; 0\)이면 음의 상관을 갖습니다(기울기를 높이면 \((\bar x, \bar y)\)를 지나기 위해 절편이 내려감).</li>
+      <li><b>중심화</b>: \(x\) 대신 \(x - \bar x\)를 쓰면 절편이 \(\bar y\)가 되고 공분산이 0이 됩니다. 계수 해석과 수치 계산이 모두 편해집니다.</li>
+    </ul>
+
+    <h3><span class="no">1.2.3</span>오차분산의 추정</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.2</span>
+      <p>\(\mathrm{SSE} = \sum e_i^2\)에 대해 \(E(\mathrm{SSE}) = (n-2)\sigma^2\). 따라서 \(s^2 = \mathrm{MSE} = \mathrm{SSE}/(n-2)\)는 \(\sigma^2\)의 불편추정량이다.</p>
+    </div>
+    <p>직관: 잔차는 오차와 달리 1.1절의 두 제약(\(\sum e_i = 0\), \(\sum x_ie_i = 0\))을 만족하므로 자유롭게 움직이는 방향이 \(n - 2\)개뿐입니다. \(n\)으로 나누면 \(\sigma^2\)을 체계적으로 작게 추정합니다. 일반 증명은 02단원에서 모자 행렬의 대각합으로 합니다(\(E(\mathrm{SSE}) = \sigma^2\,\mathrm{tr}(I - H) = (n-p)\sigma^2\)). 표준오차는 \(\sigma\)를 \(s\)로 바꿔 \(\mathrm{se}(\hat\beta_1) = s/\sqrt{S_{xx}}\)로 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.3</span>
+      <p>1.1절 연습 자료(\(x\) = 1~5, \(S_{xx} = 10\), SSE = 3.6)에서 \(s^2\)과 두 계수의 표준오차, 두 추정량의 상관계수를 구하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(s^2 = 3.6/3 = 1.2\). \(\mathrm{se}(\hat\beta_1) = \sqrt{1.2/10} = 0.346\), \(\mathrm{se}(\hat\beta_0) = \sqrt{1.2(0.2 + 9/10)} = \sqrt{1.32} = 1.149\). 공분산 \(-3 \times 1.2/10 = -0.36\), 상관 \(-0.36/(0.346 \times 1.149) = -0.905\). \(x\)를 중심화하면 이 강한 음의 상관이 사라집니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\hat\beta_0, \hat\beta_1\)은 불편, \(\mathrm{Var}(\hat\beta_1) = \sigma^2/S_{xx}\).</li>
+        <li>\(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\bar x\sigma^2/S_{xx}\), 중심화하면 0.</li>
+        <li>\(s^2 = \mathrm{SSE}/(n-2)\)는 불편, 자유도 2를 잃는 이유는 잔차의 두 제약.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(x\)를 [0, 10]에서 10개 고를 수 있다면 기울기를 가장 정확히 추정하는 배치는? 1, 2, …, 10에 하나씩 둘 때와 표준오차를 비교하세요.
+          <details><summary>답</summary><p>\(S_{xx}\)를 최대로: 0에 5개, 10에 5개, \(S_{xx} = 250\). 1~10 균등 배치는 \(S_{xx} = 82.5\). 표준오차 비 \(\sqrt{250/82.5} = 1.74\)배 차이. 다만 양 끝에만 두면 직선성을 점검할 수 없으므로 실제로는 가운데에도 몇 개 둡니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(\hat\beta_1\)이 \(\beta_1\)의 선형 불편추정량 가운데 분산이 가장 작음을 보이세요(\(\sum a_iY_i\)가 불편이려면 \(\sum a_i = 0\), \(\sum a_ix_i = 1\)).
+          <details><summary>답</summary><p>\(a_i = c_i + d_i\)로 쓰면 조건에서 \(\sum d_i = 0\), \(\sum d_ix_i = 0\), 따라서 \(\sum c_id_i = 0\). \(\mathrm{Var} = \sigma^2(\sum c_i^2 + \sum d_i^2) \ge \sigma^2\sum c_i^2\). 단순회귀의 가우스-마르코프 정리(2.3절)입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

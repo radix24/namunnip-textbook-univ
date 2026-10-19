@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e1-numpy" data-kind="본문" data-std="전전1-04-03">
+  <header class="card-head"><span class="no"></span><h2>NumPy 배열로 반복 없이 계산하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>NumPy 배열의 원소별 연산(벡터화)을 쓴다.</li>
+        <li>linspace, arange로 시간 축을 만들고 신호를 한 번에 계산한다.</li>
+        <li>반복문과 배열 연산의 속도 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>사인파 그리기 (<a href="04-01.html">4.1절</a>), 리스트 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>원소별 연산</h3>
+    <p>리스트에 2를 곱하면 리스트가 두 번 이어지지만, NumPy 배열에 2를 곱하면 모든 원소가 두 배가 됩니다. 수천만 개 값도 C로 짠 내부 반복이 처리해 빠릅니다.</p>
+    <pre><code>import numpy as np
+R = np.array([100.0, 220.0, 470.0, 1000.0])     # 저항들
+V = 5.0
+I = V / R                                       # 각 저항에 5 V를 걸 때 전류
+P = V * I
+print("전류(mA):", np.round(I * 1000, 2))
+print("전력(mW):", np.round(P * 1000, 1), "합계", round(P.sum() * 1000, 1), "mW")
+t = np.linspace(0, 0.02, 5)                     # 0~20 ms를 5점으로
+print("시간(ms):", t * 1000)
+print("50 Hz 사인:", np.round(np.sin(2 * np.pi * 50 * t), 3))
+print([1, 2] * 2, np.array([1, 2]) * 2)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>전류(mA): [50.   22.73 10.64  5.  ]
+전력(mW): [250.  113.6  53.2  25. ] 합계 441.8 mW
+시간(ms): [ 0.  5. 10. 15. 20.]
+50 Hz 사인: [ 0.  1.  0. -1. -0.]
+[1, 2, 1, 2] [2 4]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>100 Ω 저항에 5 V를 걸 때의 전류와 전력이 위 결과와 맞는지 손으로 확인하라.</p>
+    </div>
+    <p><i>풀이.</i> I = 5/100 = 0.05 A = 50 mA, P = 5 × 0.05 = 0.25 W = 250 mW. 배열 결과의 첫 원소와 같습니다. 50 Hz 사인은 0, 5, 10, 15, 20 ms에서 0, 1, 0, −1, 0(반올림 오차로 −0.0 따위가 보임)입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "리스트와 배열은 연산이 같다": 곱셈과 덧셈의 뜻이 다릅니다(위 마지막 줄). (2) "배열 연산 결과는 정확히 0이 나온다": 부동소수점 오차로 아주 작은 수가 남을 수 있어 반올림해 봅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>배열 연산은 원소별(벡터화), 반복문보다 빠르다.</li>
+        <li>linspace(시작, 끝, 개수)로 시간 축.</li>
+        <li>리스트 * 2는 이어 붙이기, 배열 * 2는 두 배.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>np.arange(0, 1, 0.25)는?
+          <details><summary>답</summary><p>[0, 0.25, 0.5, 0.75].</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>np.array([1, 2, 3]) ** 2의 결과는?
+          <details><summary>답</summary><p>[1, 4, 9].</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>저항 배열 R의 병렬 합성 저항을 한 줄로?
+          <details><summary>답</summary><p>1 / np.sum(1 / R).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
