@@ -1,0 +1,126 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-recur" data-kind="본문" data-std="수학4-01-01">
+  <header class="card-head"><span class="no"></span><h2>반복과 재귀로 수열 계산하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>파이썬의 변수, 리스트, <code>for</code>/<code>while</code>, 함수로 점화식을 계산한다.</li>
+        <li>같은 수열을 반복문과 재귀로 각각 구현하고, 순진한 재귀가 느린 이유(호출 수의 지수적 증가)를 센다.</li>
+        <li>메모이제이션으로 재귀를 빠르게 만들고, 재귀가 자연스러운 문제(하노이 탑)를 푼다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>수열과 점화식 (<a href="../3/03-03.html">수학3 3.3절</a>), 수학적 귀납법.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>점화식을 반복문으로</h3>
+    <p>점화식은 "앞의 항으로 다음 항을 만드는 규칙"이므로 반복문과 잘 맞습니다. 피보나치 수 \(F_0 = 0\), \(F_1 = 1\), \(F_{n+1} = F_n + F_{n-1}\)은 두 변수만 들고 다니면 됩니다.</p>
+    <pre class="mono small">def fib_loop(n):
+    a, b = 0, 1          # (F_0, F_1)
+    for _ in range(n):
+        a, b = b, a + b  # (F_k, F_k+1) -> (F_k+1, F_k+2)
+    return a
+
+print([fib_loop(n) for n in range(11)])
+# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]</pre>
+    <p>핵심은 <b>불변식</b>입니다: 반복이 \(k\)번 끝난 뒤 \((a, b) = (F_k, F_{k+1})\). 귀납법으로 이것이 성립함을 확인하면 반환값 \(a = F_n\)이 옳다는 증명이 됩니다. <code>a, b = b, a + b</code>는 오른쪽을 먼저 모두 계산한 뒤 대입하므로 임시 변수가 필요 없습니다.</p>
+    <p>수치 점화식도 같습니다. \(a_{n+1} = \frac{a_n}2 + \frac1{a_n}\), \(a_0 = 1\)은 \(\sqrt2\)로 빠르게 수렴합니다(뉴턴 방법).</p>
+    <pre class="mono small">a = 1.0
+for i in range(5):
+    a = a / 2 + 1 / a
+    print(i + 1, a)
+# 1 1.5
+# 2 1.4166666666666665
+# 3 1.4142156862745097
+# 4 1.4142135623746899
+# 5 1.414213562373095</pre>
+    <p>맞는 자릿수가 매번 약 두 배가 됩니다(이차 수렴, 수학16).</p>
+
+    <h3><span class="no">1.1.2</span>재귀와 그 비용</h3>
+    <p>점화식을 그대로 옮기면 재귀 함수가 됩니다. 읽기는 쉽지만, 같은 값을 여러 번 다시 계산합니다.</p>
+    <pre class="mono small">calls = 0
+def fib_rec(n):
+    global calls
+    calls += 1
+    if n &lt; 2:
+        return n
+    return fib_rec(n - 1) + fib_rec(n - 2)
+
+for n in (10, 20, 25):
+    calls = 0
+    print(n, fib_rec(n), calls)
+# 10 55 177
+# 20 6765 21891
+# 25 75025 242785</pre>
+    <p>호출 수 \(C(n)\)은 \(C(n) = C(n-1) + C(n-2) + 1\), \(C(0) = C(1) = 1\)을 만족하고 풀면 \(C(n) = 2F_{n+1} - 1\)입니다(\(n = 25\)이면 \(2\cdot121393 - 1 = 242785\)). 곧 호출 수가 피보나치 수처럼 약 \(1.618^n\)배로 늘어 \(n = 50\)이면 수백억 번입니다.</p>
+    <p><b>메모이제이션</b>은 한 번 계산한 값을 저장해 두는 것입니다. 파이썬은 장식자 하나로 됩니다.</p>
+    <pre class="mono small">from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib_memo(n):
+    if n &lt; 2:
+        return n
+    return fib_memo(n - 1) + fib_memo(n - 2)
+
+print(fib_memo(100))   # 354224848179261915075</pre>
+    <p>이제 각 \(n\)을 한 번만 계산하므로 호출이 \(n\)에 비례합니다. 파이썬 정수는 크기 제한이 없어 21자리 수도 정확합니다. 다만 재귀 깊이에는 한계(기본 1000)가 있어 <code>fib_memo(5000)</code>을 바로 부르면 오류가 납니다. 같은 절의 탐구 카드에서 호출 나무를 볼 수 있습니다.</p>
+
+    <h3><span class="no">1.1.3</span>재귀가 자연스러운 문제</h3>
+    <p>하노이 탑: 원판 \(n\)개를 A에서 C로 옮기려면 (1) 위의 \(n - 1\)개를 B로, (2) 가장 큰 원판을 C로, (3) \(n - 1\)개를 B에서 C로. 이 설명 자체가 재귀 함수입니다.</p>
+    <pre class="mono small">def hanoi(n, a="A", b="B", c="C", moves=None):
+    if moves is None:
+        moves = []
+    if n == 0:
+        return moves
+    hanoi(n - 1, a, c, b, moves)   # n-1개를 a에서 b로 (c를 거쳐)
+    moves.append((a, c))           # 가장 큰 원판
+    hanoi(n - 1, b, a, c, moves)   # n-1개를 b에서 c로
+    return moves
+
+print(len(hanoi(3)), hanoi(3)[:4])
+# 7 [('A', 'C'), ('A', 'B'), ('C', 'B'), ('A', 'C')]
+print(len(hanoi(10)))   # 1023</pre>
+    <p>이동 횟수 \(T(n) = 2T(n-1) + 1\), \(T(n) = 2^n - 1\). 반복문으로 쓰기는 훨씬 어렵습니다. 문제가 "같은 꼴의 더 작은 문제"로 나뉘면 재귀가 자연스럽고, 같은 부분 문제가 겹치면 메모이제이션(동적 계획법)이 필요합니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 기저 사례(<code>if n &lt; 2</code>)를 빠뜨려 무한 재귀가 된다. (2) <code>a = b; b = a + b</code>처럼 순서대로 대입해 값이 망가진다. (3) 기본값 인자에 빈 리스트를 쓴다(<code>moves=[]</code>): 호출 사이에 리스트가 공유된다. 위 코드처럼 <code>None</code>으로 둔다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>점화식 = 반복문 + 불변식. 동시 대입 <code>a, b = b, a + b</code>.</li>
+        <li>순진한 재귀의 호출 수는 \(2F_{n+1} - 1\)로 지수적. 메모이제이션으로 선형.</li>
+        <li>문제가 같은 꼴로 쪼개지면 재귀(하노이 \(2^n - 1\)).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(a_0 = 1\), \(a_{n+1} = 3a_n + 2\)의 \(a_{10}\)을 반복문으로 구하고 일반항 \(2\cdot3^n - 1\)과 비교하여라.
+          <details><summary>답</summary><p><code>a = 1; for _ in range(10): a = 3*a + 2</code> → 118097 = \(2\cdot3^{10} - 1\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>순진한 재귀의 호출 수 \(C(n) = 2F_{n+1} - 1\)을 귀납법으로 증명하여라.
+          <details><summary>답</summary><p>\(C(0) = C(1) = 1 = 2F_1 - 1 = 2F_2 - 1\). \(C(n) = C(n-1) + C(n-2) + 1 = (2F_n - 1) + (2F_{n-1} - 1) + 1 = 2F_{n+1} - 1\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>이항계수 \(\binom nk = \binom{n-1}{k-1} + \binom{n-1}k\)를 메모이제이션 재귀로 구현하고 \(\binom{60}{30}\)을 구하여라.
+          <details><summary>답</summary><p>기저 \(k = 0\) 또는 \(k = n\)이면 1. 결과 118264581564861424. (메모 없이는 호출이 \(\binom{60}{30}\)에 가까운 수만큼 일어나 끝나지 않는다.)</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
