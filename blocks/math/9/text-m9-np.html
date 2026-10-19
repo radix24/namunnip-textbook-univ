@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m9-np" data-kind="본문" data-std="수학9-04-02">
+  <header class="card-head"><span class="no"></span><h2>네이만-피어슨 보조정리와 최강력 검정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>단순가설 대 단순가설에서 "같은 \(\alpha\) 중 검정력이 가장 큰" 검정의 뜻을 안다.</li>
+        <li>네이만-피어슨 보조정리(가능도비 검정이 최강력)를 증명한다.</li>
+        <li>정규 평균의 검정에 적용하고 균일 최강력 검정으로 확장한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>검정력과 기각역 (<a href="04-01.html">4.1절</a>), 가능도함수 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>가장 좋은 기각역</h3>
+    <p>제1종 오류를 \(\alpha\) 이하로 묶어 두면서 제2종 오류를 가장 작게 하는 기각역은 무엇일까요? 표본공간의 각 점을 기각역에 넣을지 정하는 문제로 보면, 각 점은 "\(H_0\) 아래 확률"이라는 비용과 "\(H_1\) 아래 확률"이라는 이득을 가집니다. 예산(\(\alpha\)) 안에서 이득을 최대로 하려면 이득/비용 비율이 큰 점부터 넣으면 됩니다. 그 비율이 가능도비입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 4.2.1 <span class="nm">(네이만-피어슨 보조정리)</span></span>
+      <p>단순가설 \(H_0: \theta = \theta_0\) vs \(H_1: \theta = \theta_1\)에서 기각역 \(C^* = \{\mathbf x : L(\theta_1; \mathbf x) \ge kL(\theta_0; \mathbf x)\}\) (\(k > 0\))의 크기가 \(\alpha = P_{\theta_0}(C^*)\)이면, 크기가 \(\alpha\) 이하인 모든 기각역 \(C\)에 대해 \(P_{\theta_1}(C^*) \ge P_{\theta_1}(C)\)이다.</p>
+    </div>
+    <div class="tb-proof">
+      <p>\(L_0, L_1\)을 두 가설 아래 결합밀도라 하자. \(C^*\) 안에서는 \(L_1 - kL_0 \ge 0\), 밖에서는 \(&lt; 0\)이므로 모든 \(\mathbf x\)에서 \((1_{C^*} - 1_C)(L_1 - kL_0) \ge 0\)이다(두 지시함수의 차와 괄호의 부호가 같거나 0). 적분하면</p>
+      <p>\[\int(1_{C^*} - 1_C)L_1 \ge k\int(1_{C^*} - 1_C)L_0,\]</p>
+      <p>곧 \(P_1(C^*) - P_1(C) \ge k(P_0(C^*) - P_0(C)) = k(\alpha - P_0(C)) \ge 0\). <span class="qed">∎</span></p>
+    </div>
+    <p>증명은 "점마다의 부등식을 적분한다"는 한 줄입니다. 기각역은 가능도비 \(L_1/L_0\)가 큰 곳에 놓여야 하고, 그 경계 \(k\)는 크기가 \(\alpha\)가 되도록 정합니다.</p>
+
+    <h3><span class="no">4.2.2</span>정규 평균에의 적용</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.2</span>
+      <p>\(N(\mu, \sigma^2)\) (\(\sigma\) 앎) 표본에서 \(H_0: \mu = \mu_0\) vs \(H_1: \mu = \mu_1\) (\(\mu_1 > \mu_0\))의 최강력 검정을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 가능도비 \(\frac{L_1}{L_0} = \exp\left(\frac1{2\sigma^2}\sum\left[(x_i - \mu_0)^2 - (x_i - \mu_1)^2\right]\right) = \exp\left(\frac{(\mu_1 - \mu_0)}{\sigma^2}\sum x_i - \frac{n(\mu_1^2 - \mu_0^2)}{2\sigma^2}\right)\). \(\mu_1 > \mu_0\)이므로 이것은 \(\bar x\)의 증가함수이고, "\(L_1/L_0 \ge k\)"는 "\(\bar x \ge c\)"와 같습니다. 크기 \(\alpha\)가 되도록 \(c = \mu_0 + z_\alpha\sigma/\sqrt n\). 4.1절에서 직관으로 쓴 기각역이 바로 최강력 검정입니다.</p>
+    <p>기각역 \(\bar x \ge \mu_0 + z_\alpha\sigma/\sqrt n\)이 \(\mu_1\)에 의존하지 않는다는 점이 중요합니다. 따라서 이 검정은 모든 \(\mu_1 > \mu_0\)에 대해 동시에 최강력이고, 이를 <b>균일 최강력(UMP) 검정</b>이라 합니다. 반면 양측 대립가설 \(\mu \ne \mu_0\)에는 UMP 검정이 없습니다(\(\mu_1 > \mu_0\)과 \(\mu_1 &lt; \mu_0\)의 최강력 기각역이 반대쪽에 있음).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.3</span>
+      <p>베르누이(\(p\)) 표본 20개에서 \(H_0: p = 0.5\) vs \(H_1: p = 0.7\)의 최강력 검정을 \(\alpha \approx 0.05\)로 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(L_1/L_0 = (0.7/0.5)^{s}(0.3/0.5)^{20-s}\) (\(s = \sum x_i\))는 \(s\)의 증가함수이므로 기각역은 \(s \ge c\). \(H_0\) 아래 \(S \sim B(20, 0.5)\)에서 \(P(S \ge 15) \approx 0.0207\), \(P(S \ge 14) \approx 0.0577\). 이산 분포라 정확히 0.05인 \(c\)가 없으므로 \(s \ge 15\) (크기 0.021)를 택하고, 검정력은 \(P(S \ge 15 \mid p = 0.7) \approx 0.416\)입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 가능도비의 방향을 거꾸로(\(L_0/L_1\)) 놓는다. (2) 복합가설(\(\mu > \mu_0\))에 보조정리를 직접 쓴다: 각 단순 대립가설에 쓰고 기각역이 같음을 확인해야 한다. (3) 이산 분포에서 크기를 정확히 \(\alpha\)로 맞출 수 있다고 여긴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최강력 기각역 = 가능도비 \(L_1/L_0\)가 큰 곳. 증명은 \((1_{C^*} - 1_C)(L_1 - kL_0) \ge 0\)의 적분.</li>
+        <li>정규 평균의 단측 검정 \(\bar x \ge \mu_0 + z_\alpha\sigma/\sqrt n\)은 균일 최강력.</li>
+        <li>양측 대립에는 UMP가 없다. 이산 분포는 크기를 정확히 맞추기 어렵다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>지수(\(\lambda\)) 표본에서 \(H_0: \lambda = 1\) vs \(H_1: \lambda = 2\)의 최강력 기각역의 꼴은?
+          <details><summary>답</summary><p>\(L_1/L_0 = 2^ne^{-\sum x_i}\)는 \(\sum x_i\)의 감소함수. 기각역 \(\sum x_i \le c\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>문제 1에서 \(n = 5\), \(\alpha = 0.05\)인 \(c\)를 구하여라. (\(H_0\) 아래 \(2\sum X_i \sim \chi^2_{10}\), 5% 분위수 3.940)
+          <details><summary>답</summary><p>\(2c = 3.940\), \(c = 1.97\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 4.2.2에서 \(\sigma = 10\), \(n = 25\), \(\mu_0 = 100\), \(\alpha = 0.05\)일 때 \(\mu_1 = 102, 105, 108\)의 검정력을 구하고 "균일 최강력"의 뜻을 설명하여라.
+          <details><summary>답</summary><p>기각역 \(\bar x > 103.29\). 검정력 \(\Phi((\mu_1 - 103.29)/2)\): 0.259, 0.804, 0.991. 같은 기각역이 세 대립가설 각각에 대해 크기 0.05인 검정 중 검정력이 가장 크다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

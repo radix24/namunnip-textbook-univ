@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-05-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m4-u05-practice" data-kind="연습" data-std="수학4-05-01 수학4-05-02">
+  <header class="card-head"><span class="no"></span><h2>최적화와 경사하강법 연습 문제</h2><span class="kind">문제 6 · 계산·실습·증명·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>\(f(x) = 2x^2\), \(x_0 = 1\)일 때 \(\eta = 0.1, 0.25, 0.5\)로 경사하강법을 2번 하여라. 각각 어떻게 움직이는가? <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(x_{k+1} = (1 - 4\eta)x_k\) (<a href="05-01.html">5.1절</a>).</p></details>
+        <details><summary>힌트 2</summary><p>수축률 \(1 - 4\eta\)의 부호와 크기.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(\eta = 0.1\): 0.6, 0.36 (단조 수렴). \(\eta = 0.25\): 0, 0 (한 번에 도착). \(\eta = 0.5\): \(-1\), 1 (영원히 진동). 수렴 조건은 \(\eta &lt; 0.5\).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(f(x, y) = (x - 1)^2 + 4(y + 2)^2\)을 경사하강법으로 최소화하는 함수를 쓰고, 수렴하는 \(\eta\)의 범위를 미리 계산하여라. <span class="mono small dim">[05-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(\nabla f = (2(x - 1), 8(y + 2))\).</p></details>
+        <details><summary>힌트 2</summary><p>곡률 2와 8. 큰 쪽이 상한을 정한다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>x = x - eta*np.array([2*(x[0]-1), 8*(x[1]+2)])</code>를 반복. 수축률 \(|1 - 2\eta|\), \(|1 - 8\eta|\)가 1보다 작아야 하므로 \(0 &lt; \eta &lt; 0.25\). 가장 빠른 값은 \(\eta = \frac2{2 + 8} = 0.2\)(수축률 0.6). 최솟점 \((1, -2)\).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>다음 중 볼록 함수를 고르고 이유를 써라: (가) \(x^4\), (나) \(\sin x\), (다) \(\ln(1 + e^x)\), (라) \(x^3\). <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>2차 도함수의 부호(<a href="05-02.html">5.2절</a>).</p></details>
+        <details><summary>힌트 2</summary><p>(다)의 2차 도함수는 \(\sigma(x)(1 - \sigma(x))\), \(\sigma\)는 시그모이드.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(가) \(12x^2 \ge 0\): 볼록. (나) \(-\sin x\)가 양수와 음수를 모두 가져 볼록 아님. (다) \(\sigma(1 - \sigma) > 0\): 볼록(6.2절의 로지스틱 손실의 바탕). (라) \(6x\)가 음수일 수 있어 볼록 아님.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">증명</span>볼록 함수의 국소 최솟점은 전역 최솟점임을 볼록성의 정의(현 부등식)만으로 증명하여라. <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>더 작은 값 \(f(\mathbf y) &lt; f(\mathbf x^*)\)이 있다고 가정.</p></details>
+        <details><summary>힌트 2</summary><p>\(\mathbf x^*\)와 \(\mathbf y\)를 잇는 선분 위에서 \(\mathbf x^*\)에 아주 가까운 점.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(f(\mathbf y) &lt; f(\mathbf x^*)\)인 \(\mathbf y\)가 있다고 하자. \(\mathbf z_t = (1 - t)\mathbf x^* + t\mathbf y\) (\(0 &lt; t \le 1\))에서 \(f(\mathbf z_t) \le (1 - t)f(\mathbf x^*) + tf(\mathbf y) &lt; f(\mathbf x^*)\). \(t \to 0\)이면 \(\mathbf z_t\)가 \(\mathbf x^*\)의 어떤 근방에도 들어가므로 국소 최솟점이라는 가정에 모순. ∎</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>\(f(x, y) = \frac12(x^2 + 10y^2)\), \(\eta = 0.1\), \(\mathbf x_0 = (-4, 1.5)\)일 때 정리 5.2.3의 상한으로 \(f(\mathbf x_k) \le 0.01\)이 보장되는 \(k\)는? 실제로는 몇 번이면 되는가? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(L = 10\), \(\|\mathbf x_0\|^2 = 18.25\)이므로 상한 \(91.25/k\).</p></details>
+        <details><summary>힌트 2</summary><p>실제: \(y\)는 한 번에 0이 되고 \(x_k = -4\cdot0.9^k\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>상한: \(91.25/k \le 0.01\)에서 \(k \ge 9125\). 실제: \(f = 8\cdot0.81^k \le 0.01\)에서 \(k \ge \ln 800/(-\ln 0.81) \approx 31.7\), 곧 32번. 상한은 최악의 경우를 위한 것이라 강볼록 함수에서는 매우 느슨하다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>신경망을 학습시키다 손실이 0.35에서 더 줄지 않자 "경사하강법이 수렴했으니 이것이 가장 작은 손실이다"라고 결론 내렸다. 옳은가? <span class="mono small dim">[05-02]</span></p>
+        <details><summary>힌트 1</summary><p>신경망의 손실은 볼록인가?</p></details>
+        <details><summary>힌트 2</summary><p>탐구 카드의 \(x^4 - 3x^2 + x\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>옳지 않다. 손실이 볼록이 아니므로 기울기가 0에 가까운 곳은 국소 최솟점이나 안장점일 수 있다. 또 학습률이 너무 작아 거의 멈춘 것처럼 보일 수도 있다. 다른 출발점(초기값)이나 학습률로 다시 돌려 비교해야 한다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

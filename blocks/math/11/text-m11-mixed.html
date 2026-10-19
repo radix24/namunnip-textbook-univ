@@ -1,0 +1,89 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학11-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-mixed" data-kind="본문" data-std="수학11-01-02">
+  <header class="card-head"><span class="no"></span><h2>혼합 편도함수의 대칭성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>혼합 편도함수의 순서를 바꾸면 값이 달라지는 함수를 계산으로 확인한다.</li>
+        <li>2차 차분을 매개로 슈바르츠(클레로) 정리를 증명한다.</li>
+        <li>\(C^k\) 함수의 뜻과, 고계 도함수가 대칭 다중선형 사상이라는 관점을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>평균값 정리 (<a href="../7/04-01.html">수학7 4.1절</a>), 편도함수와 연속미분가능성 (<a href="../7/08-02.html">수학7 8.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>순서가 중요한 예</h3>
+    <p>\(D_1 = \partial/\partial x\), \(D_2 = \partial/\partial y\)로 쓰고, \(D_{21}f = D_2(D_1f)\) (먼저 \(x\), 다음 \(y\)로 미분)로 약속합니다. 교재마다 \(f_{xy}\)의 순서 약속이 다르므로 이 표기를 씁니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>\(f(x, y) = \frac{xy(x^2 - y^2)}{x^2 + y^2}\) (\((x, y) \ne \mathbf 0\)), \(f(\mathbf 0) = 0\)이면 \(D_{21}f(\mathbf 0) = -1\), \(D_{12}f(\mathbf 0) = 1\)이다.</p>
+    </div>
+    <p><i>풀이.</i> \(y \ne 0\)일 때 \(D_1f(0, y) = \lim_{h\to0}\frac{f(h, y) - f(0, y)}h = \lim_{h\to0}\frac{y(h^2 - y^2)}{h^2 + y^2} = -y\)이고, \(D_1f(0, 0) = 0\)도 \(-y\)에 맞습니다. 따라서 \(D_{21}f(\mathbf 0) = \frac{d}{dy}(-y) = -1\). 같은 방법으로 \(D_2f(x, 0) = x\)이므로 \(D_{12}f(\mathbf 0) = 1\). 수치로 확인해도 중심 차분으로 \(-0.999998\), \(0.999998\)이 나옵니다.</p>
+    <p>이 함수는 \(C^1\)입니다(원점 밖에서 매끄럽고 \(|D_1f|, |D_2f| \le |\mathbf x|\)라 원점에서 연속). 문제는 2계 편도함수가 원점에서 연속이 아니라는 데 있습니다. 극좌표로 쓰면 \(f = \frac{r^2}4\sin 4\theta\)이고, 2계 편도함수는 \(\theta\)만의 함수가 되어 원점으로 다가가는 방향마다 다른 값을 가집니다.</p>
+
+    <h3><span class="no">1.2.2</span>2차 차분</h3>
+    <p>두 순서를 공평하게 다루는 양을 생각합니다.</p>
+    \[\Delta(h, k) = f(a + h, b + k) - f(a + h, b) - f(a, b + k) + f(a, b).\]
+    <p>이 식은 \(x\)와 \(y\)에 대해 대칭인 모양이고, \(\frac{\Delta(h, k)}{hk} = \frac1k\left[\frac{f(a + h, b + k) - f(a, b + k)}h - \frac{f(a + h, b) - f(a, b)}h\right]\)에서 먼저 \(h \to 0\)으로 보내면 대괄호가 \(D_1f(a, b + k) - D_1f(a, b)\)가 되고, 다음 \(k \to 0\)이면 \(D_{21}f(a, b)\)가 나옵니다. 반대 순서이면 \(D_{12}f(a, b)\)입니다(존재한다면). 예제 1.2.1에서 \((a, b) = \mathbf 0\)이면 \(\frac{\Delta(h, k)}{hk} = \frac{h^2 - k^2}{h^2 + k^2}\)로 \((h, k)\)의 방향에만 의존하므로 극한의 순서에 따라 \(\pm1\)이 됩니다. 같은 절의 탐구 카드에서 이 값을 방향별로 봅니다.</p>
+
+    <h3><span class="no">1.2.3</span>슈바르츠 정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.2.2 <span class="nm">(슈바르츠, 클레로)</span></span>
+      <p>\(E \subseteq \mathbb R^2\)이 열린집합이고 \(D_1f\), \(D_2f\), \(D_{21}f\)가 \(E\)에서 존재하며 \(D_{21}f\)가 \((a, b) \in E\)에서 연속이면, \(D_{12}f(a, b)\)가 존재하고 \(D_{12}f(a, b) = D_{21}f(a, b)\)이다.</p>
+    </div>
+    <p><b>생각.</b> \(\Delta(h, k)\)에 평균값 정리를 두 번 써서 근처의 한 점 \((\xi, \eta)\)에서의 값 \(hk\,D_{21}f(\xi, \eta)\)로 만들면, \(D_{21}f\)의 연속성으로 \(\frac{\Delta}{hk}\)가 \(h, k\)를 함께 작게 할 때 \(D_{21}f(a, b)\)에 가까워집니다. 그 뒤에 \(h\)를 고정하고 \(k \to 0\)을 먼저 보내면 \(D_{12}f\)의 정의가 나옵니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(A = D_{21}f(a, b)\), \(\varepsilon > 0\)이라 하자. 연속성으로 \(\delta > 0\)이 있어 \(|x - a|, |y - b| &lt; \delta\)이면 \((x, y) \in E\)이고 \(|D_{21}f(x, y) - A| &lt; \varepsilon\)이다. \(0 &lt; |h|, |k| &lt; \delta\)를 고정하고 \(u(t) = f(t, b + k) - f(t, b)\)라 하면 \(\Delta(h, k) = u(a + h) - u(a)\)이다. \(u\)는 \(D_1f\)가 있으므로 미분 가능하고, 평균값 정리로 \(a\)와 \(a + h\) 사이의 \(\xi\)가 있어 \(\Delta(h, k) = h\,[D_1f(\xi, b + k) - D_1f(\xi, b)]\). 다시 \(y \mapsto D_1f(\xi, y)\)에 평균값 정리를 쓰면(\(D_{21}f\)가 있으므로 미분 가능) \(b\)와 \(b + k\) 사이의 \(\eta\)가 있어</p>
+    \[\Delta(h, k) = hk\,D_{21}f(\xi, \eta).\]
+    <p class="tb-proof">\((\xi, \eta)\)는 \((a, b)\)에서 가로세로 \(\delta\) 이내에 있으므로 \(\left|\frac{\Delta(h, k)}{hk} - A\right| &lt; \varepsilon\)이다(\(0 &lt; |h|, |k| &lt; \delta\)인 모든 \(h, k\)에서). 이제 \(\Delta\)를 거꾸로 묶어</p>
+    \[\frac{\Delta(h, k)}{hk} = \frac1h\left[\frac{f(a + h, b + k) - f(a + h, b)}k - \frac{f(a, b + k) - f(a, b)}k\right]\]
+    <p class="tb-proof">로 쓴다. \(h\)를 고정하고 \(k \to 0\)으로 보내면 \(D_2f\)가 존재하므로 대괄호는 \(D_2f(a + h, b) - D_2f(a, b)\)로 간다. 부등식은 극한에서 \(\le\)로 남으므로 \(0 &lt; |h| &lt; \delta\)이면 \(\left|\frac{D_2f(a + h, b) - D_2f(a, b)}h - A\right| \le \varepsilon\). \(\varepsilon\)이 임의이므로 \(D_{12}f(a, b) = \lim_{h\to0}\frac{D_2f(a + h, b) - D_2f(a, b)}h\)가 존재하고 \(A\)와 같다. <span class="qed">∎</span></p>
+    <p>정리는 \(D_{21}f\) 한쪽의 연속성만 가정하고 다른 쪽의 존재까지 결론으로 얻습니다. 실제로 쓸 때는 대개 "\(f \in C^2\)이면 혼합 편도함수는 순서와 무관하다"로 충분합니다.</p>
+
+    <h3><span class="no">1.2.4</span>고계 도함수</h3>
+    <p class="q-term"><b>\(C^k\) 함수</b>: \(k\)계까지의 모든 편도함수가 존재하고 연속인 함수. 모든 \(k\)에 대해 그러면 \(C^\infty\).</p>
+    <p>정리 1.2.2를 되풀이하면 \(f \in C^k\)일 때 \(k\)계 이하의 편도함수는 미분하는 순서와 무관합니다. 예를 들어 \(D_{112}f = D_{121}f = D_{211}f\). 그래서 다중지표 \(\alpha = (\alpha_1, \dots, \alpha_n)\)로 \(D^\alpha f = D_1^{\alpha_1}\cdots D_n^{\alpha_n}f\)처럼 쓸 수 있습니다.</p>
+    <p>좌표 없이 보면 2계 도함수 \(f''(\mathbf p)\)는 \(\mathbb R^n \times \mathbb R^n \to \mathbb R\)의 쌍선형 사상 \((\mathbf u, \mathbf v) \mapsto \sum_{i,j}D_{ij}f(\mathbf p)u_iv_j = \mathbf u^TH\mathbf v\)이고, 그 행렬 \(H\)가 헤세 행렬입니다. 슈바르츠 정리는 "\(C^2\)이면 헤세 행렬이 대칭"이라는 뜻이며, 대칭 행렬이므로 직교대각화되어 1.3절의 극값 판정에 쓰입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>"편도함수가 모두 존재하면 순서를 바꿔도 된다"는 틀립니다. 예제 1.2.1은 2계 편도함수가 모두 존재하지만(원점 포함) 순서에 따라 값이 다릅니다. 필요한 것은 연속성입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\frac{xy(x^2 - y^2)}{x^2 + y^2}\)은 원점에서 \(D_{21}f = -1 \ne 1 = D_{12}f\).</li>
+        <li>2차 차분 \(\Delta(h, k)\)에 평균값 정리를 두 번: \(\Delta = hk\,D_{21}f(\xi, \eta)\).</li>
+        <li>슈바르츠 정리: \(D_{21}f\)가 연속이면 \(D_{12}f\)도 존재하고 같다. \(C^2\)이면 헤세 행렬은 대칭.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f = x^3y^2 + e^{xy}\)의 \(D_{12}f\)와 \(D_{21}f\)를 직접 계산해 같음을 확인하여라.
+          <details><summary>답</summary><p>\(D_1f = 3x^2y^2 + ye^{xy}\), \(D_{21}f = 6x^2y + e^{xy} + xye^{xy}\). \(D_2f = 2x^3y + xe^{xy}\), \(D_{12}f = 6x^2y + e^{xy} + xye^{xy}\). 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 1.2.1의 \(f\)가 극좌표로 \(\frac{r^2}4\sin4\theta\)임을 보여라.
+          <details><summary>답</summary><p>\(xy = \frac{r^2}2\sin2\theta\), \(\frac{x^2 - y^2}{x^2 + y^2} = \cos2\theta\)이므로 \(f = \frac{r^2}2\sin2\theta\cos2\theta = \frac{r^2}4\sin4\theta\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\mathbf F = (P, Q)\)가 \(C^1\)이고 어떤 \(C^2\) 함수 \(f\)에 대해 \(\mathbf F = \nabla f\)이면 \(D_2P = D_1Q\)임을 보여라. 역은 \(\mathbb R^2 \setminus \{\mathbf 0\}\)에서 성립하는가?
+          <details><summary>답</summary><p>\(P = D_1f\), \(Q = D_2f\)이므로 \(D_2P = D_{21}f\), \(D_1Q = D_{12}f\)이고, \(f \in C^2\)이므로 슈바르츠 정리로 같다. 역은 일반적으로 거짓: \(\mathbf F = \left(\frac{-y}{x^2 + y^2}, \frac{x}{x^2 + y^2}\right)\)은 조건을 만족하지만 단위원을 한 바퀴 도는 선적분이 \(2\pi\)라 그래디언트가 아니다(5단원).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

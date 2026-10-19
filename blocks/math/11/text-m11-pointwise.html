@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학11-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-pointwise" data-kind="본문" data-std="수학11-06-03">
+  <header class="card-head"><span class="no"></span><h2>푸리에 급수의 점별수렴</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>부분합을 디리클레 핵과의 합성곱으로 쓴다.</li>
+        <li>한 점에서 립시츠 조건(또는 디니 조건)이 성립하면 그 점에서 부분합이 수렴함을 리만-르베그 보조정리로 증명한다.</li>
+        <li>불연속점에서는 좌우 극한의 평균으로 수렴하고 깁스 현상이 생긴다는 것, 연속이어도 발산할 수 있다는 것을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>베셀 부등식과 리만-르베그 보조정리 (<a href="06-01.html">6.1절</a>), 평균수렴 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>디리클레 핵</h3>
+    <p>\(f\)를 \(2\pi\)-주기로 확장합니다. 계수의 정의를 부분합에 넣고 삼각함수의 덧셈정리를 쓰면</p>
+    \[S_Nf(x) = \frac1{2\pi}\int_{-\pi}^\pi f(x - t)D_N(t)\,dt, \qquad D_N(t) = 1 + 2\sum_{n=1}^N\cos nt = \frac{\sin\left(N + \frac12\right)t}{\sin\frac t2}.\]
+    <p class="q-term"><b>디리클레 핵</b> \(D_N\): \(\frac1{2\pi}\int_{-\pi}^\pi D_N = 1\)이고 \(t = 0\)에서 높이 \(2N + 1\)인 뾰족한 봉우리를 가지지만, 음수 값도 가지며 \(\int|D_N|\)는 \(\ln N\)처럼 커진다.</p>
+    <p>마지막 등식은 \(2\sin\frac t2\cos nt = \sin(n + \frac12)t - \sin(n - \frac12)t\)를 더하면 망원급수가 되어 나옵니다. 부분합은 "\(f\)를 \(D_N\)으로 가중평균한 것"인데, 가중치가 음수일 수 있다는 것이 점별수렴을 어렵게 합니다.</p>
+
+    <h3><span class="no">6.3.2</span>수렴 판정</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.3.1 <span class="nm">(립시츠 조건에서의 수렴)</span></span>
+      <p>\(f\)가 주기 \(2\pi\)이고 \([-\pi, \pi]\)에서 적분 가능하며, 점 \(x\)에서 상수 \(M\), \(\delta > 0\)이 있어 \(|t| &lt; \delta\)이면 \(|f(x - t) - f(x)| \le M|t|\)라 하자. 그러면 \(S_Nf(x) \to f(x)\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\frac1{2\pi}\int D_N = 1\)이므로</p>
+    \[S_Nf(x) - f(x) = \frac1{2\pi}\int_{-\pi}^\pi\frac{f(x - t) - f(x)}{\sin\frac t2}\sin\left(N + \tfrac12\right)t\,dt.\]
+    <p class="tb-proof">\(g(t) = \frac{f(x - t) - f(x)}{\sin(t/2)}\)로 두면, \(|t| &lt; \delta\)에서 \(|\sin\frac t2| \ge \frac{|t|}\pi\)이므로 \(|g(t)| \le \pi M\)이고, 나머지 \(t\)에서는 분모가 0에서 떨어져 있으므로 \(g\)는 \([-\pi, \pi]\)에서 유계이고 적분 가능하다. \(\sin(N + \frac12)t = \sin Nt\cos\frac t2 + \cos Nt\sin\frac t2\)로 풀면 위 적분은 \(g(t)\cos\frac t2\)와 \(g(t)\sin\frac t2\)의 \(N\)번째 푸리에 계수들의 합이고, 리만-르베그 보조정리로 0으로 간다. <span class="qed">∎</span></p>
+    <p>\(f\)가 \(x\)에서 미분 가능하면 조건이 성립합니다. 더 약한 디니 조건 \(\int_0^\delta\frac{|f(x - t) - f(x)|}t\,dt &lt; \infty\)이어도 같은 증명이 통합니다. 수렴 여부가 \(x\) 근처의 \(f\)에만 달려 있다는 것(국소화 원리)도 같은 논법에서 나옵니다.</p>
+
+    <h3><span class="no">6.3.3</span>불연속점과 깁스 현상</h3>
+    <p>\(f\)가 \(x\)에서 좌극한 \(f(x^-)\)과 우극한 \(f(x^+)\)을 가지고 양쪽에서 각각 립시츠 조건을 만족하면(조각마다 매끄러운 함수), \(D_N\)이 짝함수라는 것을 써서 양쪽을 따로 처리하면</p>
+    \[S_Nf(x) \to \frac{f(x^+) + f(x^-)}2.\]
+    <p>사각파 \(\operatorname{sgn}x\)는 \(x = 0\)에서 0으로 수렴합니다. 그러나 수렴은 균등하지 않습니다. 불연속점 바로 옆에서 부분합은 \(\frac2\pi\operatorname{Si}(\pi) \approx 1.17898\)까지 올라가는데, 이는 점프 크기 2의 약 8.95%를 넘친 값이고 \(N\)을 키워도 넘침의 높이는 줄지 않고 위치만 불연속점으로 다가갑니다. 이것이 <b>깁스 현상</b>입니다. 같은 절의 탐구 카드에서 \(N = 9\)이면 최댓값 약 1.1823, \(N = 199\)이면 약 1.1790인 것을 확인합니다.</p>
+
+    <h3><span class="no">6.3.4</span>연속이어도 발산할 수 있다</h3>
+    <p>뒤 부아-레몽(1873)은 연속인데 한 점에서 푸리에 급수가 발산하는 함수를 만들었습니다. 이유는 \(\int|D_N| \to \infty\) (르베그 상수)에 있으며, 균등유계 원리로 "그런 함수가 존재한다"를 짧게 증명할 수도 있습니다. 반대로 칼레손(1966)은 \(L^2\) 함수의 푸리에 급수가 거의 모든 점에서 수렴함을 증명했습니다. 점별수렴은 평균수렴보다 훨씬 미묘한 문제입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "부분합을 충분히 늘리면 깁스의 넘침이 사라진다": 높이는 남고 폭만 줄어든다. (2) "연속함수의 푸리에 급수는 항상 수렴한다": 거짓. 수렴에는 립시츠·디니 같은 국소 조건이나 유계변동 같은 조건이 필요하다. 체사로 평균(페예르)은 연속함수에서 항상 균등수렴한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(S_Nf = \frac1{2\pi}f * D_N\), \(D_N(t) = \frac{\sin(N + 1/2)t}{\sin(t/2)}\).</li>
+        <li>점 \(x\)에서 립시츠(디니) 조건 ⇒ \(S_Nf(x) \to f(x)\). 증명은 리만-르베그.</li>
+        <li>점프에서는 좌우 극한의 평균으로 수렴하고, 근처에서 약 9%의 넘침(깁스)이 남는다.</li>
+        <li>연속만으로는 점별수렴이 보장되지 않는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>톱니파 \(f(x) = x\) (\(-\pi &lt; x &lt; \pi\))의 푸리에 급수는 \(x = \pi\)에서 어떤 값으로 수렴하는가?
+          <details><summary>답</summary><p>주기 확장의 좌극한 \(\pi\), 우극한 \(-\pi\)의 평균 0. 실제로 \(\sin n\pi = 0\)이라 모든 부분합이 0이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x = \frac\pi2\)에서 \(f(x) = x\)의 급수 \(2\sum\frac{(-1)^{n+1}}n\sin nx\)가 수렴하는 값을 써서 라이프니츠 급수 \(1 - \frac13 + \frac15 - \cdots\)의 합을 구하여라.
+          <details><summary>답</summary><p>\(f\)는 \(\frac\pi2\)에서 미분 가능하므로 \(\frac\pi2 = 2\left(1 - \frac13 + \frac15 - \cdots\right)\)(짝수 \(n\)은 \(\sin\frac{n\pi}2 = 0\)). 합은 \(\frac\pi4\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(D_N(t) = \frac{\sin(N + 1/2)t}{\sin(t/2)}\)를 증명하여라.
+          <details><summary>답</summary><p>\(2\sin\frac t2\left(\frac12 + \sum_{n=1}^N\cos nt\right) = \sin\frac t2 + \sum_{n=1}^N\left[\sin(n + \tfrac12)t - \sin(n - \tfrac12)t\right] = \sin(N + \tfrac12)t\). 양변을 \(\sin\frac t2\)로 나누고 2를 곱하면 \(1 + 2\sum\cos nt = \frac{\sin(N + 1/2)t}{\sin(t/2)}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

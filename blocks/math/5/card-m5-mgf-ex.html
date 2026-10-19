@@ -1,0 +1,45 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-03-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m5-mgf-ex" data-kind="예제" data-std="수학5-03-02">
+  <header class="card-head"><span class="no"></span><h2>예비 부품 셋으로 버틸 시간</h2><span class="kind">예제 · 적률생성함수로 합의 분포 찾기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>수명이 평균 1년인 지수분포 부품을 고장 나면 즉시 갈아 끼운다. 부품이 3개(처음 것 포함)일 때 2년 안에 셋 다 고장 날 확률은 0.1, 0.3, 0.6 중 어디에 가까울까?</p>
+      <details><summary>예측 확인</summary><p>약 0.32입니다. 평균 수명의 합이 3년이므로 2년 안에 끝날 확률은 절반보다 꽤 작습니다.</p></details>
+    </section>
+    <p class="q-prob">독립인 \(X_1, X_2, X_3 \sim \mathrm{Exp}(1)\)에 대해 \(S = X_1 + X_2 + X_3\)의 분포를 적률생성함수로 구하고 \(P(S \le 2)\)를 계산하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>합의 분포를 직접 적분(합성곱, 4.2절)하는 대신, 적률생성함수를 곱하고 표에서 같은 모양을 찾습니다(<a href="03-02.html">3.2절</a> 정리 3.2.2). 확률은 감마분포의 분포함수를 부분적분하거나 포아송 과정의 관점으로 구합니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(M_{X_i}(t) = \frac1{1 - t}\) (\(t &lt; 1\)).</div><span class="q-why">지수분포 \(\lambda/(\lambda - t)\)에 \(\lambda = 1\).</span></li>
+        <li><div>\(M_S(t) = \left(\frac1{1 - t}\right)^3\).</div><span class="q-why">독립이므로 곱.</span></li>
+        <li><div>이것은 \(\Gamma(3, 1)\)의 적률생성함수이므로 \(S \sim \Gamma(3, 1)\), 밀도 \(f(s) = \frac{s^2}{2}e^{-s}\) (\(s > 0\)).</div><span class="q-why">유일성. \(\Gamma(3) = 2! = 2\).</span></li>
+        <li><div>\(P(S \le 2)\)는 "시간 2 동안 고장이 3번 이상" 일어날 확률과 같다. 고장 횟수는 \(\mathrm{Pois}(2)\)이므로</div><span class="q-why">고장 간격이 독립 \(\mathrm{Exp}(1)\)이면 고장 횟수는 포아송 과정(2.2절).</span></li>
+        <li class="q-end"><div>\(P(S \le 2) = 1 - e^{-2}\left(1 + 2 + \frac{2^2}{2}\right) = 1 - 5e^{-2} \approx 0.3233\).</div><span class="q-why">\(P(N \ge 3) = 1 - P(N \le 2)\). 부분적분 두 번으로 \(\int_0^2\frac{s^2}2e^{-s}ds\)를 계산해도 같다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(E[S] = 3\), \(\mathrm{Var}(S) = 3\)이 \(\Gamma(3, 1)\)의 \(\alpha/\lambda\), \(\alpha/\lambda^2\)와 맞습니다. 컴퓨터로 \(S\)를 20만 번 만들어 보면 \(S \le 2\)의 비율이 0.324 근처입니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>"감마분포 = 지수분포의 합"과 "감마의 꼬리 = 포아송의 머리"라는 두 관계가 한 문제에 다 나왔습니다. 대기행렬, 신뢰성 공학, 보험 수리에서 같은 계산을 씁니다. 4.2절에서는 같은 결과를 합성곱으로 다시 얻습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">부품이 2개라면 \(P(S \le 2)\)는?</p>
+      <details><summary>답</summary><p>\(S \sim \Gamma(2, 1)\), \(1 - e^{-2}(1 + 2) = 1 - 3e^{-2} \approx 0.5940\).</p></details>
+    </section>
+  </div>
+</article>

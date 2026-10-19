@@ -1,0 +1,81 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학8-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m8-schur" data-kind="본문" data-std="수학8-03-01">
+  <header class="card-head"><span class="no"></span><h2>슈어 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>대각화가 안 되는 행렬도 유니타리 행렬로 상삼각화할 수 있다는 슈어 정리를 귀납법으로 증명한다.</li>
+        <li>\(2\times2\) 행렬의 슈어 분해를 직접 구한다.</li>
+        <li>슈어 정리에서 대각합·행렬식과 고유값의 관계, 스펙트럼 정리로 가는 길을 본다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>수반과 유니타리 (<a href="02-02.html">2.2절</a>), 그람-슈미트로 정규직교기저 확장 (<a href="../1/07-02.html">수학1 7.2절</a>), 대수학의 기본정리(복소 다항식은 근을 가진다).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>대각화 대신 삼각화</h3>
+    <p>모든 행렬이 대각화되지는 않습니다(\(\begin{pmatrix}1 &amp; 1\\0 &amp; 1\end{pmatrix}\)). 그러나 복소수 위에서는 모든 행렬이 고유값을 가지므로, 고유벡터를 하나씩 "벗겨 내" 상삼각 꼴로 만들 수는 있습니다. 게다가 그 기저 변환을 유니타리(길이를 보존하는) 행렬로 할 수 있다는 것이 슈어 정리입니다. 수치 계산에서 고유값을 구하는 QR 알고리즘이 실제로 계산하는 것이 이 슈어 분해입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 3.1.1 <span class="nm">(슈어)</span></span>
+      <p>모든 \(n\times n\) 복소 행렬 \(A\)에 대해 \(A = UTU^*\)인 유니타리 행렬 \(U\)와 상삼각 행렬 \(T\)가 있다. \(T\)의 대각성분은 \(A\)의 고유값(중복도만큼)이다.</p>
+    </div>
+    <p>증명 전략: 고유벡터 하나를 정규화해 첫 기저로 삼으면 첫 열이 \((\lambda, 0, \dots, 0)^T\)가 됩니다. 나머지 \((n-1)\times(n-1)\) 블록에 귀납 가정을 쓰고, 두 유니타리 행렬을 곱합니다.</p>
+    <div class="tb-proof">
+      <p>\(n\)에 대한 귀납법. \(n = 1\)은 자명하다. \(n - 1\)에서 성립한다고 하자.</p>
+      <p><b>1단계.</b> 특성다항식은 복소수 근 \(\lambda_1\)을 가진다(대수학의 기본정리). 고유벡터 \(\mathbf u_1\)을 \(\|\mathbf u_1\| = 1\)로 잡고 정규직교기저 \(\mathbf u_1, \dots, \mathbf u_n\)으로 확장해 \(U_1 = (\mathbf u_1\ \cdots\ \mathbf u_n)\)이라 한다.</p>
+      <p><b>2단계.</b> \(U_1^*AU_1\)의 첫 열은 \(U_1^*A\mathbf u_1 = \lambda_1U_1^*\mathbf u_1 = \lambda_1\mathbf e_1\)이다. 따라서 \(U_1^*AU_1 = \begin{pmatrix}\lambda_1 &amp; *\\\mathbf 0 &amp; A_1\end{pmatrix}\), \(A_1\)은 \((n-1)\times(n-1)\).</p>
+      <p><b>3단계.</b> 귀납 가정으로 \(A_1 = V_1T_1V_1^*\) (\(V_1\) 유니타리, \(T_1\) 상삼각). \(U_2 = \begin{pmatrix}1 &amp; \mathbf 0\\\mathbf 0 &amp; V_1\end{pmatrix}\)도 유니타리이고 \(U_2^*U_1^*AU_1U_2 = \begin{pmatrix}\lambda_1 &amp; *\\\mathbf 0 &amp; T_1\end{pmatrix}\)은 상삼각이다.</p>
+      <p><b>4단계.</b> \(U = U_1U_2\)는 유니타리의 곱이라 유니타리이다. 상삼각 \(T\)의 특성다항식은 \(\prod(t_{ii} - \lambda)\)이고 닮은 행렬의 특성다항식은 같으므로 대각성분이 고유값이다. <span class="qed">∎</span></p>
+    </div>
+    <p>실행렬이라도 고유값이 복소수이면 \(U\)와 \(T\)가 복소 행렬이 됩니다. 실행렬의 고유값이 모두 실수이면 \(U\)를 실직교 행렬로 잡을 수 있습니다(1단계에서 실고유벡터를 쓰면 됩니다).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2</span>
+      <p>\(A = \begin{pmatrix}1 &amp; 1\\-1 &amp; 3\end{pmatrix}\)의 슈어 분해를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 특성다항식 \(\lambda^2 - 4\lambda + 4 = (\lambda - 2)^2\), 고유값 2(중근). \(A - 2I = \begin{pmatrix}-1 &amp; 1\\-1 &amp; 1\end{pmatrix}\)의 영공간은 \((1, 1)\) 방향 하나뿐이라 대각화가 안 됩니다. \(\mathbf u_1 = \frac1{\sqrt2}(1, 1)\), 직교 보완 \(\mathbf u_2 = \frac1{\sqrt2}(-1, 1)\). \(A\mathbf u_2 = \frac1{\sqrt2}(0, 4)\)이므로 \(\mathbf u_1^TA\mathbf u_2 = 2\), \(\mathbf u_2^TA\mathbf u_2 = 2\). 따라서 \(T = U^TAU = \begin{pmatrix}2 &amp; 2\\0 &amp; 2\end{pmatrix}\). 대각성분에 고유값 2가 두 번 나타납니다.</p>
+
+    <h3><span class="no">3.1.2</span>따름 결과</h3>
+    <p>\(A = UTU^*\)에서 대각합과 행렬식은 닮음에 대해 불변이므로 \(\operatorname{tr}A = \sum\lambda_i\), \(\det A = \prod\lambda_i\)입니다(중복도 포함). 또 \(A\)가 정규이면 \(T\)도 정규인데, 정규인 상삼각 행렬은 대각행렬임을 다음 절에서 보이며, 이것이 스펙트럼 정리입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 슈어 분해를 대각화로 착각한다: \(T\)의 대각선 위 성분은 일반적으로 0이 아니다. (2) \(T\)가 유일하다고 여긴다: 고유값의 순서, \(U\)의 선택에 따라 대각선 위 성분이 달라진다. (3) 실행렬에 대해 항상 실수 슈어 분해가 있다고 여긴다: 고유값이 복소수이면 \(2\times2\) 블록이 남는 "실 슈어 형"이 필요하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>모든 복소 정사각행렬은 \(A = UTU^*\) (유니타리, 상삼각).</li>
+        <li>증명: 고유벡터를 첫 기저로 → 첫 열이 \(\lambda\mathbf e_1\) → 나머지 블록에 귀납.</li>
+        <li>\(T\)의 대각성분 = 고유값. 대각합 = 고유값의 합, 행렬식 = 곱.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix}3 &amp; 1\\0 &amp; 2\end{pmatrix}\)의 슈어 분해는 무엇인가?
+          <details><summary>답</summary><p>이미 상삼각이므로 \(U = I\), \(T = A\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(A = \begin{pmatrix}2 &amp; 1\\1 &amp; 2\end{pmatrix}\)의 슈어 분해를 구하고 \(T\)가 대각임을 확인하여라.
+          <details><summary>답</summary><p>고유값 3, 1, 고유벡터 \(\frac1{\sqrt2}(1, 1)\), \(\frac1{\sqrt2}(1, -1)\). \(U^TAU = \mathrm{diag}(3, 1)\). 대칭이라 정규이기 때문(3.2절).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>슈어 정리로 \(\sum_{i,j}|a_{ij}|^2 \ge \sum_i|\lambda_i|^2\)임을 보여라(슈어 부등식).
+          <details><summary>답</summary><p>\(\sum|a_{ij}|^2 = \operatorname{tr}(A^*A) = \operatorname{tr}(T^*T) = \sum_{i\le j}|t_{ij}|^2 \ge \sum|t_{ii}|^2 = \sum|\lambda_i|^2\). 등호는 \(T\)가 대각, 곧 \(A\)가 정규일 때.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

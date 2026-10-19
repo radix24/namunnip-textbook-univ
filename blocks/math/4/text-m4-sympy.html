@@ -1,0 +1,101 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-sympy" data-kind="본문" data-std="수학4-04-01">
+  <header class="card-head"><span class="no"></span><h2>SymPy로 미적분 결과 검증하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>기호(symbol)를 선언하고 식을 다루는 기호 계산과 부동소수점 수치 계산의 차이를 안다.</li>
+        <li>SymPy로 미분, 적분, 극한, 방정식, 테일러 전개를 계산한다.</li>
+        <li>손으로 구한 답을 기호 계산과 수치 계산 두 방향으로 검증하고, 각 방법의 함정을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파이썬 함수와 반복문 (<a href="01-01.html">1.1절</a>), 수열의 수렴 실험 (<a href="02-02.html">2.2절</a>), 1변수 미적분.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>기호와 식</h3>
+    <p class="q-term"><b>기호 계산</b>(symbolic computation): 수 대신 문자와 식을 그대로 다루어 정확한 결과(분수, \(\sqrt2\), \(\pi\) 등)를 내는 계산.</p>
+    <p class="q-term"><b>수치 계산</b>(numerical computation): 부동소수점 수로 근사값을 내는 계산. 빠르지만 반올림 오차가 따른다.</p>
+    <p>SymPy는 파이썬으로 쓴 기호 계산 라이브러리입니다(<code>pip install sympy</code>). 먼저 문자를 기호로 선언해야 합니다.</p>
+    <pre class="mono small">import sympy as sp
+x = sp.symbols('x')
+expr = (x + 1)**3
+print(sp.expand(expr))          # x**3 + 3*x**2 + 3*x + 1
+print(sp.factor(x**2 - 5*x + 6))  # (x - 3)*(x - 2)
+print(sp.simplify(sp.sin(x)**2 + sp.cos(x)**2))   # 1
+print(sp.Rational(1, 3) + sp.Rational(1, 6))      # 1/2
+print(1/3 + 1/6)                 # 0.5 (부동소수점)</pre>
+    <p>파이썬의 <code>1/3</code>은 이미 부동소수점 수 0.333…이므로, 정확한 분수가 필요하면 <code>sp.Rational(1, 3)</code>을 씁니다. <code>sp.pi</code>, <code>sp.E</code>, <code>sp.oo</code>(무한대)는 정확한 상수이며, <code>.evalf()</code>나 <code>sp.N(expr, 30)</code>으로 원하는 자릿수의 근사값을 얻습니다.</p>
+
+    <h3><span class="no">4.1.2</span>미분과 적분</h3>
+    <pre class="mono small">print(sp.diff(x**2 * sp.sin(x), x))     # x**2*cos(x) + 2*x*sin(x)
+print(sp.diff(sp.exp(x**2), x, 2))      # 2차 도함수
+print(sp.integrate(x * sp.exp(x), x))   # (x - 1)*exp(x)
+print(sp.integrate(sp.exp(-x**2), (x, 0, sp.oo)))   # sqrt(pi)/2</pre>
+    <p>부정적분에는 적분상수 \(C\)가 붙지 않습니다. 정적분은 <code>(x, a, b)</code> 꼴로 구간을 줍니다. 마지막 결과 \(\frac{\sqrt\pi}2 \approx 0.886227\)은 가우스 적분으로, 손으로는 극좌표 변환이 필요한 결과를 한 줄로 확인할 수 있습니다.</p>
+    <p>모든 적분이 닫힌 꼴로 나오지는 않습니다. \(\int e^{-x^2}\,dx\)는 오차함수 <code>erf</code>로, \(\int \frac{\sin x}x\,dx\)는 <code>Si</code>로 답합니다. 기본 함수로 표현할 수 없으면 계산하지 못한 적분 <code>Integral(...)</code>을 그대로 돌려줍니다. 이때는 수치 적분으로 넘어갑니다.</p>
+
+    <h3><span class="no">4.1.3</span>극한, 방정식, 급수</h3>
+    <pre class="mono small">n = sp.symbols('n', positive=True)
+print(sp.limit(sp.sin(x)/x, x, 0))            # 1
+print(sp.limit((1 + 1/n)**n, n, sp.oo))       # E
+print(sp.solve(x**3 - 6*x**2 + 11*x - 6, x))  # [1, 2, 3]
+print(sp.series(sp.exp(x), x, 0, 5))          # 1 + x + x**2/2 + x**3/6 + x**4/24 + O(x**5)
+f = sp.Function('f')
+print(sp.dsolve(f(x).diff(x, 2) + f(x), f(x)))   # Eq(f(x), C1*sin(x) + C2*cos(x))</pre>
+    <p>2.2절에서 \((1 + 1/n)^n\)의 값을 표로 만들어 \(e\)에 다가가는 것을 관찰했는데, <code>limit</code>은 그 극한을 정확히 \(e\)(<code>E</code>)로 돌려줍니다. 테일러 전개 <code>series</code>의 <code>O(x**5)</code>는 버린 고차항을 나타냅니다.</p>
+
+    <h3><span class="no">4.1.4</span>두 방향으로 검증하기</h3>
+    <p>손으로 \(\int x^2e^x\,dx = (x^2 - 2x + 2)e^x + C\)를 얻었다고 합시다. 검증 방법은 두 가지입니다.</p>
+    <ol>
+      <li><b>기호적 검증</b>: 답을 미분해서 피적분함수와의 차를 <code>simplify</code>하면 0이 나와야 합니다. <code>sp.simplify(sp.diff(F, x) - x**2*sp.exp(x))</code> → <code>0</code>.</li>
+      <li><b>수치적 검증</b>: <code>sp.lambdify(x, F)</code>로 파이썬 함수를 만들어 여러 점에서 값을 비교하거나, 정적분 \(F(1) - F(0) = e - 2 \approx 0.718282\)를 심프슨 공식 같은 수치 적분과 비교합니다.</li>
+    </ol>
+    <p>기호적 검증은 정확하지만 <code>simplify</code>가 0을 알아보지 못하는 경우가 있습니다(결과가 0이 아니라고 답이 틀린 것은 아닙니다). 수치적 검증은 언제나 할 수 있지만 몇 점에서의 확인일 뿐이고, 반올림 오차의 영향을 받습니다. 예를 들어 도함수를 차분 \(\frac{f(x + h) - f(x)}h\)로 확인할 때 \(h\)를 너무 작게 잡으면 오차가 오히려 커집니다. 같은 절의 탐구 카드에서 이를 직접 봅니다.</p>
+
+    <div class="tb-env"><span class="lb">주의</span>기호의 가정</div>
+    <p><code>sp.sqrt(x**2)</code>는 <code>x</code>로 줄어들지 않습니다. \(x\)가 음수이면 \(\sqrt{x^2} = -x\)이기 때문입니다. <code>x = sp.symbols('x', positive=True)</code>처럼 가정을 주면 <code>x</code>로 줄어듭니다. 마찬가지로 \(\int_0^\infty e^{-ax}\,dx\)는 \(a\)의 부호를 모르면 조건부 결과(<code>Piecewise</code>)를 돌려줍니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 기호를 선언하지 않고 <code>x</code>를 써서 <code>NameError</code>가 나거나, 전에 수로 쓰던 <code>x</code>가 남아 있다. (2) <code>1/2*x</code>를 정확한 분수로 여긴다(실제로는 0.5). (3) <code>sp.sin</code> 대신 <code>math.sin</code>을 기호에 적용해 <code>TypeError</code>가 난다. (4) <code>simplify</code>가 0을 못 내면 답이 틀렸다고 단정한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>sp.symbols</code>로 기호를 선언하고 <code>Rational</code>, <code>pi</code>, <code>E</code>, <code>oo</code>로 정확한 값을 다룬다.</li>
+        <li><code>diff</code>, <code>integrate</code>, <code>limit</code>, <code>solve</code>, <code>series</code>, <code>dsolve</code>.</li>
+        <li>검증은 기호적(미분해서 차가 0)과 수치적(<code>lambdify</code>, 수치 적분) 두 방향으로 한다.</li>
+        <li>기호의 가정(<code>positive=True</code>)이 결과를 바꾼다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\int_0^\pi x\sin x\,dx\)를 SymPy로 구하고 손 계산(부분적분)과 비교하여라.
+          <details><summary>답</summary><p><code>sp.integrate(x*sp.sin(x), (x, 0, sp.pi))</code> → <code>pi</code>. 손으로: \([-x\cos x + \sin x]_0^\pi = \pi\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\lim_{x\to0}\frac{\sin x - x}{x^3}\)을 <code>limit</code>과 <code>series</code>로 각각 구하여라.
+          <details><summary>답</summary><p>\(-\frac16\). <code>series(sin(x), x, 0, 5)</code> = \(x - \frac{x^3}6 + O(x^5)\)이므로 \(\frac{\sin x - x}{x^3} = -\frac16 + O(x^2)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li><code>sp.solve(x**5 - x - 1, x)</code>는 무엇을 돌려주는가? 실근의 근사값은 어떻게 구하는가?
+          <details><summary>답</summary><p>5차 방정식은 일반적으로 근호로 풀 수 없으므로(갈루아 이론) <code>CRootOf</code> 객체를 돌려준다. <code>sp.nsolve(x**5 - x - 1, x, 1)</code>이나 <code>.evalf()</code>로 실근 약 1.1673을 얻는다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

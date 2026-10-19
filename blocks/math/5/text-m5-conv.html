@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-conv" data-kind="본문" data-std="수학5-04-02">
+  <header class="card-head"><span class="no"></span><h2>독립 확률변수의 합과 합성곱</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>독립 확률변수 합의 질량함수와 밀도를 합성곱 공식으로 구한다.</li>
+        <li>균등분포 둘의 합(삼각분포), 지수분포의 합(감마분포), 주사위 합을 계산한다.</li>
+        <li>여러 개를 더할수록 분포가 종 모양에 가까워짐을 관찰하고 중심극한정리와 연결한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>결합밀도와 독립 (<a href="04-01.html">4.1절</a>), 적률생성함수 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>이산 합성곱</h3>
+    <p>\(S = X + Y\)가 \(s\)가 되는 방법은 "\(X = k\)이고 \(Y = s - k\)"를 모든 \(k\)에 대해 모은 것입니다. 이 사건들은 서로소이고, 독립이면 각 확률이 곱이 됩니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 4.2.1 <span class="nm">(합성곱)</span></span>
+      <p>독립인 정수 값 \(X, Y\)에 대해 \(P(X + Y = s) = \sum_kp_X(k)p_Y(s - k)\). 독립인 연속 \(X, Y\)에 대해 \(S = X + Y\)의 밀도는 \(f_S(s) = \int_{-\infty}^\infty f_X(x)f_Y(s - x)\,dx\).</p>
+    </div>
+    <div class="tb-proof">
+      <p>이산은 위의 설명대로이다. 연속: \(F_S(s) = \iint_{x + y \le s}f_X(x)f_Y(y)\,dy\,dx = \int f_X(x)F_Y(s - x)\,dx\). 적분 기호 아래에서 \(s\)로 미분하면(밀도가 유계일 때 허용) 공식을 얻는다. <span class="qed">∎</span></p>
+    </div>
+    <p>주사위 두 개: \(P(S = 7) = \sum_{k=1}^6\frac16\cdot\frac16 = \frac16\)이고, \(P(S = s)\)는 2부터 7까지 \(1/36\)씩 늘었다가 12까지 줄어드는 삼각형 모양입니다.</p>
+
+    <h3><span class="no">4.2.2</span>연속 합성곱의 예</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.2</span>
+      <p>독립인 \(X, Y \sim U(0, 1)\)의 합 \(S\)의 밀도를 구하고 \(P(S \le 1.5)\)를 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(f_X(x)f_Y(s - x) = 1\)인 것은 \(0 &lt; x &lt; 1\)이고 \(0 &lt; s - x &lt; 1\)일 때, 곧 \(\max(0, s - 1) &lt; x &lt; \min(1, s)\)입니다. 이 구간의 길이가 밀도이므로 \(0 &lt; s \le 1\)이면 \(f_S(s) = s\), \(1 &lt; s &lt; 2\)이면 \(f_S(s) = 2 - s\): 삼각분포입니다. \(P(S \le 1.5) = 1 - \frac12(0.5)^2 = 0.875\). 적분 범위를 정하는 것이 합성곱 계산의 핵심입니다. 그림으로는 직선 \(x + y = s\)가 단위정사각형을 자르는 길이입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.3</span>
+      <p>독립인 \(X, Y \sim \mathrm{Exp}(\lambda)\)의 합의 밀도를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(s > 0\)에서 \(f_S(s) = \int_0^s\lambda e^{-\lambda x}\lambda e^{-\lambda(s - x)}dx = \lambda^2e^{-\lambda s}\int_0^sdx = \lambda^2se^{-\lambda s}\). 이것이 \(\Gamma(2, \lambda)\)이며, 3.2절에서 적률생성함수로 얻은 결과와 같습니다. 피적분함수에서 \(x\)가 사라지는 것은 지수함수의 성질 \(e^{-\lambda x}e^{-\lambda(s-x)} = e^{-\lambda s}\) 덕분입니다. \(\lambda = 1\)이면 \(P(S \le 1) = 1 - 2e^{-1} \approx 0.2642\).</p>
+
+    <h3><span class="no">4.2.3</span>많이 더하면</h3>
+    <p>\(U(0, 1)\)을 3개 더하면 밀도는 이어 붙인 2차식, \(n\)개면 \(n-1\)차 조각다항식(어윈-홀 분포)이 되고, 모양은 빠르게 종 모양에 가까워집니다. \(n = 3\)에서 \(P(S \le 1) = 1/6 \approx 0.1667\)인데, 같은 평균 1.5와 분산 \(3/12\)인 정규분포로 근사하면 \(\Phi(-1) \approx 0.1587\)입니다. \(n = 12\)이면 \(P(S \le 7) = 0.8393\)으로 정규 근사 0.8413과 소수 둘째 자리까지 맞습니다. 기울어진 지수분포는 더 천천히 다가갑니다: \(\Gamma(12, 1)\)에서 \(P(S \le 12 + \sqrt{12}) = 0.8441\). 이 현상의 정리가 중심극한정리입니다(<a href="06-02.html">6.2절</a>). 같은 절의 탐구 카드에서 개수를 바꾸며 볼 수 있습니다.</p>
+
+    <h3><span class="no">4.2.4</span>다변량 정규</h3>
+    <p>독립 정규의 합이 정규라는 사실(3.2절)은 더 일반적으로 "정규 벡터의 일차결합은 정규"로 확장됩니다. \(\mathbf X = A\mathbf Z + \boldsymbol\mu\) (\(\mathbf Z\)는 독립 표준정규 벡터)를 <b>다변량 정규</b>라 하며 공분산행렬은 \(\Sigma = AA^T\)입니다. 4.1절의 이변량 정규는 \(A = \begin{pmatrix}1 &amp; 0\\ \rho &amp; \sqrt{1-\rho^2}\end{pmatrix}\)인 경우입니다. 통계학(수학9)의 회귀분석이 이 구조 위에 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 합성곱 적분 범위를 \((-\infty, \infty)\) 그대로 두고 밀도식을 넣는다: 밀도가 0인 곳을 빼야 한다. (2) 독립이 아닌데 합성곱을 쓴다: 일반적으로는 \(f_S(s) = \int f(x, s - x)\,dx\)로 결합밀도가 필요하다. (3) "균등 둘의 합은 균등"이라 여긴다: 삼각분포이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>독립 합: \(p_S(s) = \sum p_X(k)p_Y(s - k)\), \(f_S(s) = \int f_X(x)f_Y(s - x)dx\).</li>
+        <li>균등 둘은 삼각, 지수 둘은 \(\Gamma(2, \lambda)\). 적분 범위를 정확히 정하는 것이 핵심.</li>
+        <li>많이 더할수록 정규에 가까워진다(중심극한정리의 예고).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>주사위 두 개의 합이 10 이상일 확률은?
+          <details><summary>답</summary><p>(4,6),(5,5),(6,4),(5,6),(6,5),(6,6): \(6/36 = 1/6\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>독립인 \(X \sim \mathrm{Pois}(\lambda)\), \(Y \sim \mathrm{Pois}(\mu)\)의 합이 \(\mathrm{Pois}(\lambda + \mu)\)임을 합성곱으로 보여라.
+          <details><summary>답</summary><p>\(\sum_{k=0}^s e^{-\lambda}\frac{\lambda^k}{k!}e^{-\mu}\frac{\mu^{s-k}}{(s-k)!} = \frac{e^{-(\lambda+\mu)}}{s!}\sum\binom sk\lambda^k\mu^{s-k} = e^{-(\lambda+\mu)}\frac{(\lambda+\mu)^s}{s!}\) (이항정리).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>독립인 \(X, Y \sim U(0, 1)\)에 대해 \(P(|X - Y| \le 1/2)\)를 구하여라.
+          <details><summary>답</summary><p>여사건은 두 모서리 삼각형(각 넓이 \(\frac12\cdot\frac12\cdot\frac12 = \frac18\)). \(1 - \frac14 = \frac34\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

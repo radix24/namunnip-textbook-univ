@@ -1,0 +1,45 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-07-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-m3-regular-ex" data-kind="예제" data-std="수학3-07-02">
+  <header class="card-head"><span class="no"></span><h2>괄호 짝 맞추기는 유한 기계로 안 된다</h2><span class="kind">예제 · 정규 언어인지 판정하기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>(가) 괄호가 올바르게 짝지어진 문자열(예: <code>(()())</code>) (나) 여는 괄호와 닫는 괄호의 개수 차가 늘 2 이하인 올바른 문자열. 둘 중 유한상태 기계로 판정할 수 있는 것은?</p>
+      <details><summary>예측 확인</summary><p>(나)만 됩니다. (가)는 중첩 깊이를 끝없이 세야 해서 정규 언어가 아닙니다.</p></details>
+    </section>
+    <p class="q-prob">(가)의 언어 \(P\)가 정규가 아님을 보이고, (나)의 언어(깊이가 2 이하인 올바른 괄호 문자열)를 인식하는 DFA를 설계하여라.</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>(가)는 정리 7.2.4처럼 상태 수 \(k\)보다 많은 "구별해야 하는 앞부분"을 비둘기집 원리로 겹치게 합니다(<a href="07-02.html">7.2절</a>). (나)는 기억할 것이 "현재 깊이 0, 1, 2"뿐이라 상태 몇 개로 됩니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>(가) 상태 \(k\)개인 DFA가 \(P\)를 인식한다고 하자. 앞부분 \((^0, (^1, \dots, (^k\)를 읽은 뒤의 상태 중 둘이 같다: \((^i\)와 \((^j\), \(i &lt; j\).</div><span class="q-why">\(k + 1\)개를 \(k\)개 상태에 넣는 비둘기집 원리.</span></li>
+        <li><div>두 앞부분 뒤에 \()^i\)를 붙이면 같은 상태로 끝나므로 같이 판정된다. 그런데 \((^i)^i \in P\), \((^j)^i \notin P\). 모순. \(P\)는 정규가 아니다.</div><span class="q-why">\(0^n1^n\)과 같은 논법(\(( = 0\), \() = 1\)).</span></li>
+        <li><div>(나) 상태 \(D_0\)(깊이 0, 시작·받아들임), \(D_1\), \(D_2\), 함정 \(T\).</div><span class="q-why">기억할 정보는 현재 깊이(0–2)와 "이미 틀렸음" 여부.</span></li>
+        <li><div>전이: \(D_0 \xrightarrow{(} D_1\), \(D_1 \xrightarrow{(} D_2\), \(D_2 \xrightarrow{(} T\) (깊이 3 초과), \(D_2 \xrightarrow{)} D_1\), \(D_1 \xrightarrow{)} D_0\), \(D_0 \xrightarrow{)} T\) (짝 없는 닫힘), \(T\)는 어떤 기호든 \(T\).</div><span class="q-why">모든 (상태, 기호)에 전이가 하나씩.</span></li>
+        <li class="q-end"><div><code>(()())</code>: \(D_0 \to D_1 \to D_2 \to D_1 \to D_2 \to D_1 \to D_0\) 받아들임. <code>((()))</code>는 깊이 3에서 \(T\)로 거부.</div><span class="q-why">끝 상태가 \(D_0\)일 때만 받아들임.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>(나)의 DFA는 상태 4개로, 깊이 제한을 \(m\)으로 늘리면 상태 \(m + 2\)개가 됩니다. 제한이 없으면 상태가 무한히 필요하고, 이것이 (가)가 정규가 아닌 이유와 정확히 맞습니다.</p>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>프로그래밍 언어의 괄호나 HTML의 중첩 태그를 정규 표현식만으로 완전히 검사할 수 없는 이유입니다. 실제 파서는 스택(푸시다운 오토마타)을 씁니다. 반대로 깊이가 제한된 구조는 정규 표현식으로 다룰 수 있습니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p class="q-prob">길이가 짝수인 이진 문자열 전체는 정규인가?</p>
+      <details><summary>답</summary><p>정규다. 길이의 짝홀만 기억하면 되어 상태 2개.</p></details>
+    </section>
+  </div>
+</article>
