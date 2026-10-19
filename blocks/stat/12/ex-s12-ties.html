@@ -1,0 +1,37 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통12-01-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s12-ties" data-kind="예제" data-std="응통12-01-03">
+  <header class="card-head"><span class="no"></span><h2>동점이 많은 5점 척도 자료의 맨-휘트니 검정</h2><span class="kind">예제 · 동순위와 정규근사</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>만족도 같은 척도 자료는 동점이 많습니다. 평균 순위로 \(U\)를 구하고, 분산을 동순위로 보정해 정규근사를 쓴 뒤, 표본이 작으면 순열(정확) p값과 비교합니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 7점 척도 만족도가 기존 서비스 \(X\): 3, 4, 4, 5, 새 서비스 \(Y\): 4, 5, 6, 6, 7입니다. \(Y\)가 더 높은지 단측 검정하세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>쌍 비교(동점 1/2): \(X\)=3은 \(Y\) 5개 모두에 짐(5). 4는 각각 4점(동점)에 0.5, 나머지 4개에 짐(4.5씩 두 번 = 9). 5는 5점에 0.5, 6, 6, 7에 짐(3.5). \(U = 17.5\), \(mn = 20\).</div><span class="q-why">\(U/(mn) = 0.875\)가 \(P(X &lt; Y)\)의 추정.</span></li>
+        <li><div>동순위 묶음 크기: 4가 3개, 5가 2개, 6이 2개. \(\sum(t^3 - t) = 24 + 6 + 6 = 36\). \(\mathrm{Var}(U) = \frac{20}{12}\left[10 - \frac{36}{72}\right] = 15.83\)(보정 전 16.67).</div><span class="q-why">1.3.3절, \(N = 9\).</span></li>
+        <li><div>\(z = (17.5 - 10 - 0.5)/\sqrt{15.83} = 7/3.98 = 1.76\), 단측 p값 약 0.039.</div><span class="q-why">연속성 보정 0.5.</span></li>
+        <li class="q-end"><div>평균 순위를 고정한 채 \(\binom95 = 126\)가지 배치를 모두 세면 \(Y\)의 순위합이 관측값 32.5 이상인 배치가 7개, 정확 p값 \(7/126 = 0.056\).</div><span class="q-why">순열 분포(6.1절).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(Y\)의 평균 순위: 4점(순위 2~4, 평균 3) 하나, 5점(5~6, 평균 5.5), 6점(7~8, 평균 7.5) 둘, 7점(9). 합 \(3 + 5.5 + 7.5 + 7.5 + 9 = 32.5\), \(U = 32.5 - 5 \cdot 6/2 = 17.5\)로 쌍 비교와 같습니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>정규근사(0.039)와 정확 값(0.056)이 5% 기준의 양쪽에 걸쳤습니다. 집단마다 4~5개뿐이라 근사를 믿기 어려운 크기이므로 정확 p값을 보고하고 "새 서비스가 높다는 경향은 있으나 5% 수준에서 확정하지 못한다"고 쓰는 것이 정직합니다. 동점이 많은 척도 자료에서는 R의 <code>wilcox.test</code>가 정확 계산을 하지 못한다는 경고를 내므로, <code>coin::wilcox_test(..., distribution = "exact")</code>를 씁니다.</p>
+    </section>
+  </div>
+</article>
