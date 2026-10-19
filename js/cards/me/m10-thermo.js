@@ -85,6 +85,56 @@
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
 
+/* 기계10 6단원: 수렴-확대 노즐의 뒤쪽 압력과 흐름 상태 (06-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-nozzle"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  const k = 1.4;
+  const AR = (M) => (1 / M) * Math.pow((2 / (k + 1)) * (1 + ((k - 1) / 2) * M * M), (k + 1) / (2 * (k - 1)));
+  const pr = (M) => Math.pow(1 + ((k - 1) / 2) * M * M, -k / (k - 1));
+  const bis = (f, lo, hi) => { for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (f(m)) lo = m; else hi = m; } return (lo + hi) / 2; };
+  const Msub = (a) => bis((m) => AR(m) > a, 1e-6, 1), Msup = (a) => bis((m) => AR(m) < a, 1, 20);
+  const p0ratio = (M1) => Math.pow(((k + 1) * M1 * M1) / ((k - 1) * M1 * M1 + 2), k / (k - 1)) * Math.pow((k + 1) / (2 * k * M1 * M1 - (k - 1)), 1 / (k - 1));
+  function draw() {
+    const c = QSim.col(), Me = S.val("Md"), pb = S.val("pb"), Ae = AR(Me);
+    const A = (x) => (x < 0.4 ? 1 + 1.5 * ((0.4 - x) / 0.4) ** 2 : 1 + (Ae - 1) * ((x - 0.4) / 0.6)); // 목 x = 0.4
+    const pSub = pr(Msub(Ae)), pDes = pr(Me);
+    const M1e = Me, pShockExit = pDes * (1 + ((2 * k) / (k + 1)) * (M1e * M1e - 1));
+    const N = 240, xs = [...Array(N + 1)].map((_, i) => i / N);
+    let state, curve, xs_shock = null;
+    if (pb >= pSub) {
+      // 아음속: 출구 압력 = pb가 되는 A* 찾기
+      const MeS = bis((m) => pr(m) > pb, 1e-6, 1), Astar = Ae / AR(MeS);
+      curve = xs.map((x) => [x, pr(Msub(Math.max(A(x) / Astar, 1.0000001)))]);
+      state = pb > 0.999 ? "흐름 없음" : "아음속 (초킹 아님)";
+    } else if (pb > pShockExit) {
+      // 확대부 안 수직 충격파: 출구 압력이 pb가 되는 충격파 위치 As
+      const pex = (As) => { const M1 = Msup(As), r = p0ratio(M1); return r * pr(Msub(Ae * r)); };
+      const As = bis((a) => pex(a) > pb, 1.000001, Ae);
+      const r = p0ratio(Msup(As));
+      xs_shock = 0.4 + (0.6 * (As - 1)) / (Ae - 1);
+      curve = xs.map((x) => [x, x < 0.4 ? pr(Msub(A(x))) : x < xs_shock ? pr(Msup(A(x))) : r * pr(Msub((A(x) * r)))]);
+      state = "초킹, 확대부 안 수직 충격파";
+    } else {
+      curve = xs.map((x) => [x, x < 0.4 ? pr(Msub(A(x))) : pr(Msup(Math.max(A(x), 1.0000001)))]);
+      state = Math.abs(pb - pDes) < 0.005 ? "설계 상태 (출구 압력 = 뒤쪽 압력)" : pb > pDes ? "과팽창 (출구 밖 경사 충격파)" : "부족팽창 (출구 밖 팽창파)";
+    }
+    const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: 0, x1: 1.05, y0: 0, y1: 1.05, xl: "노즐 위치", yl: "P/P₀", pad: 34 });
+    f.axes({ noGrid: true });
+    // 노즐 모양 (위쪽 윤곽을 작게)
+    const sc = 0.12 / Math.sqrt(Ae);
+    f.path(xs.map((x) => [x, 1.02 - sc * Math.sqrt(A(x)) * 0.5]), c.ink3, 1);
+    f.path([[0.4, 0], [0.4, 1.05]], c.ink3, 1, [2, 3]);
+    f.path(curve, c.main, 2.5);
+    if (xs_shock !== null) f.path([[xs_shock, 0], [xs_shock, 1]], c.warn, 1.5, [5, 3]);
+    f.path([[1, pb], [1.05, pb]], c.warn, 3);
+    const choked = pb < pSub;
+    S.out(`설계 마하수 ${Me.toFixed(1)} (면적비 Ae/A* = ${Ae.toFixed(3)}), 뒤쪽 압력 비 Pb/P₀ = ${pb.toFixed(3)} (오른쪽 빨간 막대)\n상태: ${state}${xs_shock !== null ? ` (충격파 위치 빨간 점선)` : ""}\n경계: 아음속 한계 ${pSub.toFixed(3)}, 출구 충격파 ${pShockExit.toFixed(3)}, 설계 ${pDes.toFixed(3)}\n유량: ${choked ? "초킹, 최대 유량 (더 낮춰도 그대로)" : "최대 유량보다 작음"}`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계10 3단원: 습공기 선도 위의 냉각 제습과 재열 (03-02) */
 (() => {
   "use strict";
