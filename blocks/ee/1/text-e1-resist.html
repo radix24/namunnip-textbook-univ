@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-04-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e1-resist" data-kind="본문" data-std="전전1-04-02">
+  <header class="card-head"><span class="no"></span><h2>저항 회로 계산을 코드로 자동화하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>직렬, 병렬, 분압 계산을 함수로 만들어 회로 계산에 조합한다.</li>
+        <li>반복문으로 표준 저항값의 모든 조합을 검사해 원하는 비율에 가장 가까운 것을 찾는다.</li>
+        <li>손 계산과 코드 결과를 서로 검산한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>옴의 법칙과 직렬·병렬 연결(고교 물리학 I), 함수 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.2.1</span>세 가지 기본 계산</h3>
+    <p>저항 \(R_1, R_2, \dots\)를 직렬로 이으면 \(R = R_1 + R_2 + \cdots\), 병렬로 이으면 \(\frac1R = \frac{1}{R_1} + \frac{1}{R_2} + \cdots\)입니다. 전압 \(V_{in}\)을 위 저항 \(R_1\)과 아래 저항 \(R_2\)로 나누면 아래 저항의 전압은</p>
+    \[ V_{out} = V_{in}\frac{R_2}{R_1 + R_2} \quad(\text{분압}). \]
+    <p>이 셋을 함수 <code>series</code>, <code>parallel</code>, <code>divider</code>로 만들면, 사다리 모양의 회로는 함수를 안쪽부터 조합해 계산할 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.1</span>
+      <p>12 V — 1 kΩ — 마디 M — (2 kΩ ∥ (1 kΩ + 1 kΩ)) — 접지. M의 전압과 전체 전류를 손으로 구하고, 함수 조합으로 쓰라.</p>
+    </div>
+    <p><i>풀이.</i> 안쪽부터: 1 kΩ + 1 kΩ = 2 kΩ, 2 kΩ ∥ 2 kΩ = 1 kΩ. 분압 \(12 \times 1/(1 + 1) = 6\) V, 전류 \(12/2\text{ kΩ} = 6\) mA. 코드로는 <code>divider(12, 1000, parallel(2000, series(1000, 1000)))</code>. 손 계산과 같은 6.00 V가 나오는지 실습에서 확인합니다.</p>
+
+    <h3><span class="no">4.2.2</span>컴퓨터에게 고르게 하기</h3>
+    <p>실제 저항은 아무 값이나 살 수 없고 표준값(E12 계열: 1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2에 10의 거듭제곱을 곱한 값)으로 나옵니다. 5 V를 3.3 V로 낮추는 분압기에 쓸 두 저항을 고르려면, 가능한 모든 쌍을 계산해 3.3 V에 가장 가까운 것을 찾으면 됩니다. 1 kΩ~82 kΩ에 24개 값이 있으므로 24 × 24 = 576가지로, 손으로는 힘들지만 컴퓨터에는 순식간입니다.</p>
+    <p>실습 결과는 1.2 kΩ(위)와 2.2 kΩ(아래)로 3.235 V(오차 1.96%)입니다. 비율 \(R_2/(R_1+R_2) = 0.66\)을 E12 두 개로는 정확히 맞출 수 없다는 뜻이고, 더 정확해야 하면 값이 더 촘촘한 E24 계열이나 저항 세 개를 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "분압기 출력에 아무거나 연결해도 전압이 그대로다": 부하가 아래 저항과 병렬로 붙어 전압이 낮아집니다(예제처럼 병렬 계산을 해야 함). (2) "코드가 낸 답이니 맞다": 단위(Ω과 kΩ)를 섞거나 괄호를 잘못 쓰면 틀린 답이 나옵니다. 손으로 풀 수 있는 쉬운 경우로 먼저 검산하세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>직렬은 합, 병렬은 역수의 합의 역수, 분압 \(V_{in}R_2/(R_1+R_2)\).</li>
+        <li>함수를 안쪽부터 조합해 사다리 회로를 계산한다.</li>
+        <li>모든 조합 검사로 표준값 중 최적을 찾는다. 쉬운 경우로 검산.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>parallel(1000, 1000, 1000)</code>의 값은?
+          <details><summary>답</summary><p>약 333.3 Ω.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>9 V를 5 V로 낮추려 한다. 위 4.7 kΩ, 아래 5.6 kΩ이면 출력은?
+          <details><summary>답</summary><p>\(9 \times 5.6/10.3 \approx 4.89\) V.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 회로의 M에 10 kΩ 부하를 더 붙이면 M의 전압은?
+          <details><summary>답</summary><p>아래쪽이 1 kΩ ∥ 10 kΩ = 0.909 kΩ, \(12 \times 0.909/1.909 \approx 5.71\) V.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

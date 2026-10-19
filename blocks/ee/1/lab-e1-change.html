@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-03-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-change" data-kind="실습" data-std="전전1-03-01">
+  <header class="card-head"><span class="no"></span><h2>거스름돈: 빠른 규칙과 모든 경우 확인</h2><span class="kind">실습 · 알고리즘 검증</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>탐욕법과 모든 경우 확인을 구현해 탐욕법이 맞는 경우와 틀리는 경우를 찾습니다. 성취기준 [전전1-03-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>change.py</code>로 저장합니다.</p>
+<pre><code># 거스름돈 문제를 단계로 나누기: 탐욕법과 모든 경우 확인
+from itertools import product
+
+def greedy(amount, coins):
+    """큰 동전부터 가능한 만큼 쓴다"""
+    used = []
+    for c in sorted(coins, reverse=True):
+        while amount &gt;= c:
+            amount -= c
+            used.append(c)
+    return used
+
+def best(amount, coins):
+    """동전마다 개수를 0부터 amount//c까지 모두 시도해 가장 적은 개수"""
+    ranges = [range(amount // c + 1) for c in coins]
+    best_n, best_combo = None, None
+    for counts in product(*ranges):
+        if sum(n * c for n, c in zip(counts, coins)) == amount:
+            n = sum(counts)
+            if best_n is None or n &lt; best_n:
+                best_n, best_combo = n, counts
+    return best_n, dict(zip(coins, best_combo))
+
+for amount, coins in [(760, [500, 100, 50, 10]), (8, [1, 4, 6]), (14, [1, 7, 10])]:
+    g = greedy(amount, coins)
+    n, combo = best(amount, coins)
+    print(f"{amount}원, 동전 {coins}: 탐욕 {len(g)}개 {g} / 최소 {n}개 {combo}")</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>동전 [1, 4, 6]으로 12원을 넣으면 두 방법의 결과는? 예측한 뒤 리스트에 추가해 확인합니다.</li>
+        <li>동전 [500, 100, 50, 10]으로 금액을 바꿔 가며 탐욕법이 틀리는 경우가 있는지 찾아봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>760원, 동전 [500, 100, 50, 10]: 탐욕 5개 [500, 100, 100, 50, 10] / 최소 5개 {500: 1, 100: 2, 50: 1, 10: 1}
+8원, 동전 [1, 4, 6]: 탐욕 3개 [6, 1, 1] / 최소 2개 {1: 0, 4: 2, 6: 0}
+14원, 동전 [1, 7, 10]: 탐욕 5개 [10, 1, 1, 1, 1] / 최소 2개 {1: 0, 7: 2, 10: 0}</code></pre>
+      <ul>
+        <li>760원: 두 방법 모두 5개(500, 100, 100, 50, 10).</li>
+        <li>8원, 동전 1, 4, 6: 탐욕 3개(6 + 1 + 1), 최소 2개(4 + 4). 예제 3.1.1의 반례입니다.</li>
+        <li>14원, 동전 1, 7, 10: 탐욕 5개, 최소 2개(7 + 7).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>best</code>가 시도하는 조합 수를 760원, 동전 4종에서 어림하세요(각 동전의 가능한 개수를 곱함).</li>
+        <li>우리나라 동전에서 탐욕법이 늘 맞는 이유를 "각 동전이 바로 아래 동전들로 만들 수 있는 최소 개수"로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p><code>best</code>는 금액이 커지면 매우 느려집니다. 1원부터 금액까지 차례로 "이 금액의 최소 개수"를 표에 채워 가는 방법(동적 계획법)으로 바꿔 보세요.</p>
+    </section>
+  </div>
+</article>
