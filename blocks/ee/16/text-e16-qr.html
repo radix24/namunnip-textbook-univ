@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전16-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e16-qr" data-kind="본문" data-std="전전16-03-02">
+  <header class="card-head"><span class="no"></span><h2>Gram-Schmidt와 QR 분해</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>Gram-Schmidt 과정으로 일차 독립 벡터에서 정규 직교 기저를 만든다.</li>
+        <li>A = QR(Q는 정규 직교 열, R은 위 삼각)로 쓰고 최소제곱에 쓴다.</li>
+        <li>정규 직교 행렬이 길이와 각을 보존해 수치적으로 안정함을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱과 정사영 (<a href="03-01.html">3.1절</a>), 내적.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>Gram-Schmidt</h3>
+    <p>첫 벡터를 정규화하고, 다음 벡터에서 앞 방향들의 성분(정사영)을 빼고 정규화하기를 반복합니다: \(\mathbf u_2 = \mathbf a_2 - (\mathbf q_1^T\mathbf a_2)\mathbf q_1\), \(\mathbf q_2 = \mathbf u_2/\|\mathbf u_2\|\). 뺀 계수들을 모으면 위 삼각 R이 됩니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>\(\mathbf a_1 = (1, 1, 0)\), \(\mathbf a_2 = (1, 0, 1)\)로 Q와 R을 구하라.</p>
+    </div>
+    <p><i>풀이.</i> \(\|\mathbf a_1\| = \sqrt2\), \(\mathbf q_1 = (1, 1, 0)/\sqrt2\). \(\mathbf q_1^T\mathbf a_2 = 1/\sqrt2\). \(\mathbf u_2 = (1, 0, 1) - \frac12(1, 1, 0) = (\frac12, -\frac12, 1)\), \(\|\mathbf u_2\| = \sqrt{1.5} = 1.2247\), \(\mathbf q_2 = (0.408, -0.408, 0.816)\). \(R = \begin{pmatrix} 1.4142 & 0.7071 \\ 0 & 1.2247 \end{pmatrix}\). (NumPy의 qr은 부호가 반대로 나올 수 있지만 같은 분해입니다.)</p>
+    <p>최소제곱 \(A^TA\hat x = A^Tb\)는 A = QR이면 \(R\hat x = Q^Tb\)로 단순해지고, \(A^TA\)를 만들 때 조건수가 제곱되는 문제를 피합니다. 실제 계산은 수치적으로 더 안정한 Householder 반사로 QR을 만듭니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "Q의 열이 정규 직교면 Q는 정사각이다": m×n(m &gt; n)일 수 있고, 그때 \(Q^TQ = I\)지만 \(QQ^T \ne I\)(정사영). (2) 고전적 Gram-Schmidt는 반올림 오차로 직교성이 무너질 수 있어 수정된 방법을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>Gram-Schmidt: 앞 방향 성분을 빼고 정규화.</li>
+        <li>A = QR, 최소제곱은 \(R\hat x = Q^Tb\).</li>
+        <li>Q는 길이·각 보존 → 수치 안정. 실제는 Householder.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>(3, 4)를 정규화하면?
+          <details><summary>답</summary><p>(0.6, 0.8).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>(1, 0)과 (1, 1)로 Gram-Schmidt를 하면?
+          <details><summary>답</summary><p>q₁ = (1, 0), u₂ = (0, 1), q₂ = (0, 1).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제 A로 b = (1, 2, 3)의 최소제곱 해를 QR로 구하라.
+          <details><summary>답</summary><p>\(Q^Tb = (3/\sqrt2, (0.5 - 1 + 3)/1.2247) = (2.121, 2.041)\). R x̂ = Qᵀb: x₂ = 2.041/1.2247 = 1.667, x₁ = (2.121 − 0.7071 × 1.667)/1.4142 = 0.667.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

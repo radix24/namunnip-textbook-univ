@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전18-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e18-model" data-kind="본문" data-std="전전18-02-01">
+  <header class="card-head"><span class="no"></span><h2>처리량과 지연을 모델로 추정하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>지연(한 작업의 시간)과 처리량(단위 시간 작업 수)을 구별한다.</li>
+        <li>파이프라인과 병렬 처리에서 처리량·지연을 계산하고 병목 단계를 찾는다.</li>
+        <li>roofline 모형으로 연산 한계와 메모리 한계를 판정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>파이프라인 (<a href="../14/05-02.html">전전14 5.2절</a>), 메모리 계층 (<a href="../14/06-02.html">전전14 6.2절</a>), 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>지연과 처리량</h3>
+    <p>단계 시간이 \(t_1, t_2, \dots\)인 파이프라인의 지연은 합, 처리량은 가장 느린 단계로 정해집니다(\(1/\max t_i\)). 같은 단계를 k개 병렬로 두면 그 단계의 처리량이 k배가 됩니다. Little 법칙: 시스템 안 평균 작업 수 = 처리량 × 평균 지연.</p>
+
+    <h3><span class="no">2.1.2</span>Roofline</h3>
+    <p>가속기 성능은 연산 능력(최대 FLOP/s)과 메모리 대역(byte/s) 중 하나에 막힙니다. 작업의 연산 강도 I = 연산 수/메모리 이동 바이트로</p>
+    \[ \text{도달 성능} = \min(\text{최대 연산}, \;\text{대역} \times I). \]
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1</span>
+      <p>최대 1000 GFLOP/s, 대역 100 GB/s 가속기. (가) 꺾이는 점(ridge), (나) 벡터 덧셈(원소당 2개 읽고 1개 씀, 4바이트, 연산 1: I = 1/12), (다) 행렬 곱 n = 256(I ≈ n/6).</p>
+    </div>
+    <p><i>풀이.</i> (가) 1000/100 = 10 FLOP/byte. (나) 100 × 1/12 = 8.3 GFLOP/s로 최대의 0.8%: 메모리 한계. (다) I ≈ 42.7, 대역 × I = 4270 &gt; 1000이라 연산 한계로 1000 GFLOP/s. 신경망의 합성곱·행렬 곱은 재사용이 많아 연산 한계, 원소별 연산은 메모리 한계입니다. 탐구 카드에서 확인합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "연산기를 늘리면 언제나 빨라진다": 메모리 한계 작업은 대역을 늘리거나 재사용(타일링)을 늘려야 합니다. (2) "처리량이 높으면 지연도 짧다": 깊은 파이프라인·묶음 처리는 처리량을 늘리지만 지연을 늘릴 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>지연 = 단계 합, 처리량 = 1/가장 느린 단계. Little 법칙.</li>
+        <li>Roofline: 성능 = min(최대 연산, 대역 × 연산 강도).</li>
+        <li>ridge 왼쪽 = 메모리 한계, 오른쪽 = 연산 한계.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단계 10, 30, 20 ms 파이프라인의 지연과 처리량은?
+          <details><summary>답</summary><p>60 ms, 약 33.3개/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>가운데 단계를 둘로 병렬화하면 처리량은?
+          <details><summary>답</summary><p>가장 느린 단계가 20 ms(15 ms로 나뉜 단계와 20 ms 단계 중) → 50개/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>평균 처리량 50개/s, 평균 지연 0.2 s이면 시스템 안 평균 작업 수는?
+          <details><summary>답</summary><p>Little: 10개.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
