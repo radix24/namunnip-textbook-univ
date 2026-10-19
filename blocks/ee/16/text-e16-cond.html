@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전16-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e16-cond" data-kind="본문" data-std="전전16-01-04">
+  <header class="card-head"><span class="no"></span><h2>조건수와 수치 오차</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>조건수 \(\kappa(A) = \|A\|\|A^{-1}\|\)의 뜻을 안다.</li>
+        <li>자료의 작은 오차가 해에서 κ배까지 커질 수 있음을 수치로 보인다.</li>
+        <li>나쁜 조건의 원인(거의 평행한 열)과 대책을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>역행렬 (<a href="01-03.html">1.3절</a>), 노름.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.4.1</span>작은 흔들림, 큰 변화</h3>
+    <p>\(\frac{\|\delta x\|}{\|x\|} \le \kappa(A)\frac{\|\delta b\|}{\|b\|}\). 두 식이 거의 같은 직선이면(열이 거의 평행) κ가 커서, 측정 오차가 해를 크게 흔듭니다.</p><pre><code>import numpy as np
+A = np.array([[1.0, 1.0], [1.0, 1.0001]])
+print("조건수:", round(np.linalg.cond(A)))
+for b in ([2.0, 2.0001], [2.0, 2.0002]):
+    print("b =", b, "→ x =", np.round(np.linalg.solve(A, b), 6))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>조건수: 40002
+b = [2.0, 2.0001] → x = [1. 1.]
+b = [2.0, 2.0002] → x = [0. 2.]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.1</span>
+      <p>위에서 b의 둘째 성분이 0.0001(상대 0.005%) 바뀌었을 때 해는 얼마나 바뀌었는가?</p>
+    </div>
+    <p><i>풀이.</i> 해가 (1, 1)에서 (0, 2)로 바뀌어 상대 변화가 100% 정도입니다. κ ≈ 4×10⁴이라 0.005% × 4×10⁴ = 200%까지 커질 수 있다는 한계와 맞습니다. 측정 기반 모형(최소제곱)에서 열을 정규화하거나 정규화(전전20 2.1절)로 조건을 개선합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "수치 오차는 컴퓨터 정밀도 문제일 뿐": 문제 자체(κ)가 오차를 키웁니다. (2) "행렬식이 작으면 조건이 나쁘다": 크기 조정에 따라 바뀌어 기준이 아니고, κ로 판단합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>κ = ‖A‖‖A⁻¹‖, 상대 오차 증폭 상한.</li>
+        <li>예: κ 4×10⁴ → 0.005% 변화가 해를 100% 바꿈.</li>
+        <li>원인: 거의 평행한 열. 대책: 정규화·재설계.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단위 행렬의 조건수는?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>κ = 10⁶, 자료 상대 오차 10⁻⁸이면 해의 상대 오차 상한은?
+          <details><summary>답</summary><p>10⁻².</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>대각 행렬 diag(1, 10⁻⁴)의 조건수(2-노름)는?
+          <details><summary>답</summary><p>10⁴.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

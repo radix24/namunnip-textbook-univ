@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전16-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e16-lowrank" data-kind="본문" data-std="전전16-05-04">
+  <header class="card-head"><span class="no"></span><h2>저계수 근사의 오차</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>특이값 k개만 남긴 근사가 가장 좋은 계수 k 근사임(Eckart-Young)을 안다.</li>
+        <li>근사 오차를 버린 특이값으로 계산한다.</li>
+        <li>남긴 에너지 비율로 k를 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>SVD와 영상 압축 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.4.1</span>버린 특이값이 오차</h3>
+    <p>\(A_k = \sum_{i\le k}\sigma_iu_iv_i^T\). 2-노름 오차 \(\sigma_{k+1}\), Frobenius 오차 \(\sqrt{\sum_{i&gt;k}\sigma_i^2}\)이며, 어떤 계수 k 행렬도 이보다 가깝지 않습니다.</p><pre><code>import numpy as np
+rng = np.random.default_rng(0)
+U, _ = np.linalg.qr(rng.standard_normal((6, 3)))
+V, _ = np.linalg.qr(rng.standard_normal((5, 3)))
+A = U @ np.diag([5.0, 2.0, 0.5]) @ V.T             # 특이값 5, 2, 0.5인 6×5 행렬
+s = np.linalg.svd(A, compute_uv=False)
+A1 = np.linalg.svd(A)[0][:, :1] @ np.diag(s[:1]) @ np.linalg.svd(A)[2][:1]
+print("특이값:", np.round(s[:3], 4))
+print("계수 1 근사 Frobenius 오차:", round(np.linalg.norm(A - A1), 4), "공식:", round(np.sqrt(2**2 + 0.5**2), 4))
+print("계수 1이 남긴 에너지 비율:", round(25 / (25 + 4 + 0.25), 4))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>특이값: [5.  2.  0.5]
+계수 1 근사 Frobenius 오차: 2.0616 공식: 2.0616
+계수 1이 남긴 에너지 비율: 0.8547</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>위 행렬을 계수 2로 근사하면 Frobenius 오차와 남긴 에너지 비율은?</p>
+    </div>
+    <p><i>풀이.</i> 버린 특이값 0.5뿐 → 오차 0.5, 에너지 (25 + 4)/29.25 = 99.1%. 계수 1(85.5%)에서 크게 개선됩니다. 영상 압축에서는 에너지 비율 95~99%를 기준으로 k를 고르곤 합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "원소를 버리는 것": 행렬 전체 구조(특이 성분)를 버리는 것입니다. (2) "k를 늘리면 언제나 크게 좋아진다": 버리는 특이값이 작으면 개선이 작습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>A_k = Σ_{i≤k}σ_iu_iv_iᵀ, 최선의 계수 k 근사.</li>
+        <li>오차: 2-노름 σ_{k+1}, Frobenius √(Σσ²).</li>
+        <li>에너지 비율로 k 선택.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>σ = (3, 1)인 행렬의 계수 1 근사 2-노름 오차는?
+          <details><summary>답</summary><p>1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>σ = (10, 3, 1)에서 95% 에너지를 남기는 최소 k는?
+          <details><summary>답</summary><p>2(109/110 = 99.1%, k = 1은 90.9%).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>m×n 행렬을 계수 k로 저장하면 숫자 몇 개가 필요한가?
+          <details><summary>답</summary><p>k(m + n + 1).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
