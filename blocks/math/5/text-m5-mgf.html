@@ -1,0 +1,98 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-03-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-mgf" data-kind="본문" data-std="수학5-03-02">
+  <header class="card-head"><span class="no"></span><h2>적률생성함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>적률생성함수 \(M_X(t) = E[e^{tX}]\)를 정의하고 미분으로 적률을 구한다.</li>
+        <li>대표 분포의 적률생성함수를 계산한다.</li>
+        <li>독립 확률변수 합의 적률생성함수가 곱이 됨을 이용해 합의 분포를 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>기대값과 독립 (<a href="03-01.html">3.1절</a>), 지수함수의 테일러 급수, 대표 분포 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.2.1</span>정의와 적률</h3>
+    <p>\(E[X]\), \(E[X^2]\), \(E[X^3]\), …(적률)을 하나씩 계산하는 대신 한 함수에 모아 두면 편리합니다. \(e^{tX} = \sum_kt^kX^k/k!\)이므로 이 기대값을 취하면 계수에 적률이 나타납니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 3.2.1</span>
+      <p class="q-term"><b>적률생성함수</b>: \(M_X(t) = E[e^{tX}]\). 0을 포함하는 어떤 열린 구간에서 유한할 때 쓴다.</p>
+    </div>
+    <div class="tb-env">
+      <span class="lb">정리 3.2.2</span>
+      <p>(a) \(M_X^{(k)}(0) = E[X^k]\). (b) \(X, Y\)가 독립이면 \(M_{X+Y}(t) = M_X(t)M_Y(t)\). (c) (유일성) 0 근처 열린 구간에서 \(M_X = M_Y\)이면 \(X\)와 \(Y\)의 분포가 같다.</p>
+    </div>
+    <div class="tb-proof">
+      <p>(a) 0 근처에서 미분과 기대값의 순서를 바꿀 수 있음(우세수렴, 여기서는 받아들인다)을 쓰면 \(M^{(k)}(t) = E[X^ke^{tX}]\)이고 \(t = 0\)을 넣는다. (b) 독립이면 \(e^{tX}\)와 \(e^{tY}\)도 독립이라 \(E[e^{tX}e^{tY}] = E[e^{tX}]E[e^{tY}]\). (c)의 증명은 라플라스 변환의 역변환 이론이 필요해 생략한다. <span class="qed">∎</span></p>
+    </div>
+    <p>(b)와 (c)를 합치면 전략이 나옵니다. 합의 분포를 직접 구하는 대신 적률생성함수를 곱하고, 그 곱이 어떤 분포의 적률생성함수인지 알아보면 됩니다.</p>
+
+    <h3><span class="no">3.2.2</span>대표 분포의 적률생성함수</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.3</span>
+      <p>포아송, 지수, 정규분포의 적률생성함수를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 포아송: \(\sum_ke^{tk}e^{-\lambda}\lambda^k/k! = e^{-\lambda}e^{\lambda e^t} = e^{\lambda(e^t - 1)}\). 지수: \(\int_0^\infty e^{tx}\lambda e^{-\lambda x}dx = \frac\lambda{\lambda - t}\) (\(t &lt; \lambda\)). 표준정규: 지수를 완전제곱하면 \(tx - x^2/2 = t^2/2 - (x - t)^2/2\)이므로 \(e^{t^2/2}\). 일반 \(N(\mu, \sigma^2)\)은 \(\sigma Z + \mu\)이므로 \(e^{\mu t}M_Z(\sigma t) = e^{\mu t + \sigma^2t^2/2}\).</p>
+    <p>(a)로 확인하면 지수분포: \(M' = \lambda/(\lambda - t)^2\), \(M'' = 2\lambda/(\lambda - t)^3\)이므로 \(E[X] = 1/\lambda\), \(E[X^2] = 2/\lambda^2\), 분산 \(1/\lambda^2\).</p>
+    <table class="tb-table">
+      <thead><tr><th>분포</th><th>\(M(t)\)</th><th>평균</th><th>분산</th></tr></thead>
+      <tbody>
+        <tr><td>\(B(n, p)\)</td><td>\((1 - p + pe^t)^n\)</td><td>\(np\)</td><td>\(np(1-p)\)</td></tr>
+        <tr><td>\(\mathrm{Pois}(\lambda)\)</td><td>\(e^{\lambda(e^t-1)}\)</td><td>\(\lambda\)</td><td>\(\lambda\)</td></tr>
+        <tr><td>\(\mathrm{Exp}(\lambda)\)</td><td>\(\lambda/(\lambda - t)\)</td><td>\(1/\lambda\)</td><td>\(1/\lambda^2\)</td></tr>
+        <tr><td>\(\Gamma(\alpha, \lambda)\)</td><td>\((\lambda/(\lambda - t))^\alpha\)</td><td>\(\alpha/\lambda\)</td><td>\(\alpha/\lambda^2\)</td></tr>
+        <tr><td>\(N(\mu, \sigma^2)\)</td><td>\(e^{\mu t + \sigma^2t^2/2}\)</td><td>\(\mu\)</td><td>\(\sigma^2\)</td></tr>
+      </tbody>
+    </table>
+
+    <h3><span class="no">3.2.3</span>독립 합의 분포</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.4</span>
+      <p>독립인 \(X \sim \mathrm{Pois}(2)\), \(Y \sim \mathrm{Pois}(3)\)에 대해 \(X + Y\)의 분포와 \(P(X + Y = 2)\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(M_{X+Y} = e^{2(e^t-1)}e^{3(e^t-1)} = e^{5(e^t-1)}\)이므로 유일성으로 \(X + Y \sim \mathrm{Pois}(5)\). \(P(X + Y = 2) = e^{-5}5^2/2 \approx 0.0842\). 한 시간에 오는 전화와 이메일의 수가 독립인 포아송이면 그 합도 포아송이라는 뜻입니다.</p>
+    <p>같은 방법으로 (1) 독립 정규의 합은 정규: \(N(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)\), (2) 독립 \(\mathrm{Exp}(\lambda)\) \(k\)개의 합은 \(\Gamma(k, \lambda)\), (3) 독립 베르누이 \(n\)개의 합은 \(B(n, p)\)입니다. 6단원에서는 표준화한 합의 적률생성함수가 \(e^{t^2/2}\)로 수렴함을 보여 중심극한정리를 얻습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 독립이 아닌데 적률생성함수를 곱한다. (2) 정규분포의 합에서 표준편차를 더한다: 더하는 것은 분산이다. (3) 정의역을 잊는다: 지수분포의 \(M(t)\)는 \(t &lt; \lambda\)에서만 유한하고, 코시분포는 \(t \ne 0\)에서 모두 무한이라 적률생성함수가 없다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(M_X(t) = E[e^{tX}]\), \(M^{(k)}(0) = E[X^k]\).</li>
+        <li>독립이면 \(M_{X+Y} = M_XM_Y\), 그리고 적률생성함수는 분포를 결정한다.</li>
+        <li>포아송끼리, 정규끼리 더하면 같은 족. 지수의 합은 감마.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(M_X(t) = (0.3 + 0.7e^t)^{10}\)이면 \(X\)의 분포와 평균은?
+          <details><summary>답</summary><p>\(B(10, 0.7)\), 평균 7.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>독립인 \(X \sim N(1, 4)\), \(Y \sim N(2, 9)\)에 대해 \(X + Y\)의 분포와 \(P(X + Y > 3)\)을 구하여라.
+          <details><summary>답</summary><p>\(N(3, 13)\). 평균과 같으므로 \(P = 0.5\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>포아송분포의 적률생성함수로 \(E[X(X-1)] = \lambda^2\)임을 보여라.
+          <details><summary>답</summary><p>\(M'' (0) = E[X^2] = \lambda^2 + \lambda\) (\(M' = \lambda e^tM\), \(M'' = \lambda e^tM + \lambda^2e^{2t}M\)). \(E[X(X-1)] = E[X^2] - E[X] = \lambda^2\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
