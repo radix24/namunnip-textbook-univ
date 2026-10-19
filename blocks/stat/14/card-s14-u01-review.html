@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통14-01-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s14-u01-review" data-kind="연습" data-std="응통14-01-01 응통14-01-02">
+  <header class="card-head"><span class="no"></span><h2>표본과 표본분포 단원 마무리 연습</h2><span class="kind">문제 6 · 적용·실습 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>R 내장 자료 <code>ToothGrowth</code>는 기니피그 60마리에게 비타민 C를 두 방법(오렌지 주스, 아스코르브산)과 세 용량으로 주고 치아 세포 길이를 잰 실험입니다. 이 자료로 내린 결론이 적용되는 모집단을 어떻게 정해야 하는지, 그리고 "사람"으로 일반화할 수 있는지 쓰세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>표본이 어떻게 얻어졌는지(무작위 추출인지, 무작위 배정인지)를 구별하세요.</p></details>
+        <details><summary>힌트 2</summary><p>무작위 배정은 인과 추론을, 무작위 추출은 모집단 일반화를 뒷받침합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>기니피그는 실험실에서 구한 개체이고 모집단에서 무작위로 뽑은 것은 아니므로, 엄밀한 모집단은 "이 실험과 비슷한 조건의 실험용 기니피그"입니다. 처리는 무작위로 배정되었으므로 이 개체들 안에서 처리 효과에 대한 인과 결론은 타당합니다.</p><p>사람으로 일반화하는 것은 통계가 아니라 생물학적 근거(대사 경로의 유사성)에 기대는 판단이며, 자료만으로는 정당화되지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>모집단이 지수분포(평균 1)일 때 크기 5와 50인 표본의 중앙값의 표본분포를 각각 10000번 모의실험하는 R 코드를 쓰고, 두 분포가 어떻게 다를지 예측하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p><code>replicate(10000, median(rexp(5)))</code>처럼 씁니다.</p></details>
+        <details><summary>힌트 2</summary><p>지수분포(평균 1)의 모중앙값은 \(\ln 2 \approx 0.693\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>set.seed(1)
+m5  &lt;- replicate(10000, median(rexp(5)))
+m50 &lt;- replicate(10000, median(rexp(50)))
+c(mean(m5), sd(m5), mean(m50), sd(m50))
+par(mfrow = c(1, 2)); hist(m5); hist(m50)</pre><p>두 분포 모두 중심이 모중앙값 0.693 근처지만, \(n = 5\)는 오른쪽으로 치우치고 퍼짐이 크며, \(n = 50\)은 종 모양에 가깝고 표준편차가 약 \(1/\sqrt{10}\)배로 줄어듭니다. 공식이 복잡한 통계량도 모의실험으로 표본분포를 눈으로 확인할 수 있습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>한 학과가 "졸업생 만족도"를 졸업식 당일 참석자에게만 설문했습니다. 이 표본의 결과를 졸업생 전체에 적용할 때의 문제를 쓰세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>졸업식에 오지 않은 졸업생은 어떤 사람들일까요?</p></details>
+        <details><summary>힌트 2</summary><p>표본추출 과정이 관심 변수와 관련되어 있나요?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>졸업식 참석 여부가 만족도와 관련될 수 있습니다. 학과에 만족한 사람이 더 많이 참석했다면 만족도가 과대추정됩니다(선택 편향). 표본이 크더라도 이 편향은 줄지 않습니다. 졸업생 명부에서 무작위로 뽑아 연락하거나, 참석자와 불참자의 특성(학점, 취업 여부)을 비교해 편향 가능성을 점검해야 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span><code>ToothGrowth</code>에서 오렌지 주스 집단(30마리)의 평균 길이는 20.66, 표준편차 6.61입니다. 이 집단에서 크기 10인 표본을 비복원으로 뽑았을 때 표본평균의 표준오차를 이론값과 모의실험으로 비교하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>유한 모집단(30마리)에서 비복원추출하므로 유한 모집단 수정 \(\sqrt{(N-n)/(N-1)}\)이 들어갑니다(\(\sigma\)는 \(n\)으로 나눈 모표준편차).</p></details>
+        <details><summary>힌트 2</summary><p>모의실험은 <code>replicate(10000, mean(sample(oj, 10)))</code>입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>모표준편차(\(N\)으로 나눈 값)는 \(6.61\sqrt{29/30} \approx 6.50\)이므로 이론 표준오차는 \(\frac{6.50}{\sqrt{10}}\sqrt{\frac{20}{29}} \approx 1.71\)입니다(수정 없이는 2.06). 모의실험 값도 1.7 근처로 나옵니다. 표본이 모집단의 1/3이나 되므로 유한 모집단 수정의 효과가 큽니다(응통8-02-02).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">적용</span>병원 기록을 분석해 "입원 환자 가운데 흡연자는 비흡연자보다 질병 A가 적었다"는 결과를 얻었습니다. 입원 환자라는 표본의 특성 때문에 생길 수 있는 편향을 설명하세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>입원하는 이유가 흡연과 질병 A 모두와 관련될 수 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>이런 편향을 버크슨 편향이라고 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>입원은 흡연 관련 질환이나 질병 A 때문에 일어나므로, 입원 환자만 보면 두 요인이 인위적으로 음의 관계를 보일 수 있습니다(버크슨 편향). 흡연으로 입원한 사람은 질병 A가 없어도 표본에 들어오기 때문입니다. 일반 인구에서의 관계를 알려면 지역사회 표본이 필요합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>중심극한정리가 실제로 얼마나 잘 맞는지 확인하려고, 매우 치우친 분포(로그정규, <code>rlnorm(n, 0, 1.5)</code>)에서 \(n = 30\)인 표본평균의 분포를 모의실험했더니 여전히 오른쪽으로 치우쳐 있었습니다. 이 결과가 주는 교훈을 쓰세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>중심극한정리는 "\(n\to\infty\)"에 대한 정리입니다.</p></details>
+        <details><summary>힌트 2</summary><p>"\(n \ge 30\)이면 충분하다"는 규칙은 모집단 모양에 따라 맞지 않을 수 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>"표본이 30이면 정규 근사가 충분하다"는 경험칙은 모집단이 많이 치우치거나 꼬리가 두꺼우면 맞지 않습니다. 이런 자료에서 평균의 t 신뢰구간은 포함 확률이 명목값보다 낮을 수 있습니다. 실제 자료와 비슷한 분포로 모의실험해 근사가 괜찮은지 확인하거나, 로그 변환, 붓스트랩, 중앙값 기반 방법을 고려합니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

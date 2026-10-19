@@ -1,0 +1,71 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-cluster" data-kind="본문" data-std="응통19-06-01">
+  <header class="card-head"><span class="no"></span><h2>계층적 군집과 k-평균 군집</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>거리와 연결 방법을 정해 계층적 군집을 하고 덴드로그램을 읽는다.</li>
+        <li>k-평균 알고리즘을 실행하고 군집 수를 고른다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>평균벡터와 거리 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>이름표 없는 집단 찾기</h3>
+    <p>판별분석은 집단을 알고 규칙을 만들지만, 군집분석은 집단을 모르는 상태에서 비슷한 관측끼리 묶습니다. 고객 세분화, 유전자 발현 패턴 분류에 씁니다.</p>
+
+    <h3><span class="no">6.1.1</span>계층적 군집</h3>
+    <ol>
+      <li>모든 관측을 각자 한 군집으로 시작.</li>
+      <li>가장 가까운 두 군집을 합침.</li>
+      <li>하나가 될 때까지 반복하고, 합친 순서와 거리를 덴드로그램으로 그림.</li>
+    </ol>
+    <p>군집 사이 거리(연결 방법): 단일(가장 가까운 점), 완전(가장 먼 점), 평균, 워드(합칠 때 군집 내 제곱합 증가가 가장 작은 것). 워드는 비슷한 크기의 둥근 군집을, 단일은 길게 이어진 사슬을 만들기 쉽습니다. 덴드로그램을 원하는 높이에서 자르면 군집이 정해집니다.</p>
+
+    <h3><span class="no">6.1.2</span>k-평균</h3>
+    <ol>
+      <li>군집 수 \(k\)와 초기 중심을 정함.</li>
+      <li>각 관측을 가장 가까운 중심에 배정.</li>
+      <li>각 군집의 평균으로 중심을 갱신.</li>
+      <li>배정이 바뀌지 않을 때까지 2~3 반복.</li>
+    </ol>
+    <p>군집 내 제곱합 \(\sum_k\sum_{i\in C_k}\|\mathbf x_i - \bar{\mathbf x}_k\|^2\)을 매 단계 줄이지만 국소 최소에 빠질 수 있어 여러 초기값(<code>nstart</code>)으로 돌립니다. \(k\)는 군집 내 제곱합의 팔꿈치, 실루엣 폭, 해석 가능성으로 고릅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p><code>iris</code>의 측정값 4개(표준화)로 k-평균(\(k = 3\))을 하고 실제 종과 비교하세요.</p>
+    </div>
+    <pre><code>X &lt;- scale(iris[, 1:4]); set.seed(1)
+km &lt;- kmeans(X, centers = 3, nstart = 25); table(km$cluster, iris$Species)
+hc &lt;- hclust(dist(X), method = "ward.D2"); plot(hc); cutree(hc, 3)</code></pre>
+    <p>setosa는 한 군집으로 완벽히 묶이고, versicolor와 virginica는 일부가 섞입니다. 군집은 이름표를 쓰지 않았는데도 실제 종 구조를 상당 부분 되찾습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>계층적: 가까운 군집부터 합침, 연결 방법이 결과를 바꿈.</li>
+        <li>k-평균: 배정과 중심 갱신 반복, 여러 초기값.</li>
+        <li>변수 표준화와 군집 수 선택이 핵심.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>1차원 자료 1, 2, 9, 10, 11에 k-평균(\(k = 2\), 초기 중심 1과 2)을 손으로 하세요.
+          <details><summary>답</summary><p>배정: {1}, {2, 9, 10, 11} → 중심 1, 8. 재배정: {1, 2}, {9, 10, 11} → 중심 1.5, 10. 더 바뀌지 않음.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

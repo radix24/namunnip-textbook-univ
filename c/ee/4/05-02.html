@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>동기식 카운터를 설계하기 · 디지털논리회로 — QURI</title>
-  <meta name="description" content="디지털논리회로 5.2 동기식 카운터를 설계하기 — 성취기준: 동기식 카운터를 설계할 수 있다.">
+  <title>레지스터와 동기식 카운터 설계 · 디지털논리회로 — QURI</title>
+  <meta name="description" content="디지털논리회로 5.2 레지스터와 동기식 카운터 설계 — 성취기준: 동기식 카운터를 설계할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전4&quot;, &quot;title&quot;: &quot;5.2 동기식 카운터를 설계하기&quot;, &quot;sub&quot;: &quot;디지털논리회로&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전4&quot;, &quot;title&quot;: &quot;5.2 레지스터와 동기식 카운터 설계&quot;, &quot;sub&quot;: &quot;디지털논리회로&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,177 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전4-05-02" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="전전4-05-02" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">디지털논리회로</a><span class="mono">/</span><a href="05.html">5. 순차 논리</a></div>
-    <h1><span class="sec-no mono">5.2</span>동기식 카운터를 설계하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전4-05-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전4-05-02] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전4-05-02" aria-label="할 수 있음"><span class="t">동기식 카운터를 설계할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">5.2</span>레지스터와 동기식 카운터 설계</h1>
+    <p class="sec-std"><span class="mono">[전전4-05-02]</span> 동기식 카운터를 설계할 수 있다. <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s5-2-1"><span class="mono">5.2.1</span><span>레지스터</span></a></li><li><a href="#s5-2-2"><span class="mono">5.2.2</span><span>순차 회로 설계 절차</span></a></li><li><a href="#s5-2-3"><span class="mono">5.2.3</span><span>리플 카운터</span></a></li><li><a href="#s5-2-4"><span class="mono">5.2.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e4-counter"><span class="mono">본문</span><span>레지스터와 동기식 카운터 설계</span></a></li><li><a href="#card-e4-counter"><span class="mono">5.2.2</span><span>올리기·내리기를 고르는 카운터</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="05.html">대단원 5 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e4-counter" data-kind="본문" data-std="전전4-05-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>플립플롭 n개로 된 레지스터와 시프트 레지스터를 안다.</li>
+        <li>상태표 → 다음 상태 식 → 회로 순서로 동기식 카운터를 설계한다.</li>
+        <li>리플 카운터와 동기식 카운터의 차이를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>D·T 플립플롭 (<a href="05-01.html">5.1절</a>), 카르노 맵 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s5-2-1"><span class="no">5.2.1</span>레지스터</h3>
+    <p>D 플립플롭 n개가 같은 클록을 받으면 n비트 <b>레지스터</b>입니다. 모서리마다 n비트를 한꺼번에 저장합니다. 각 플립플롭의 D에 이웃 플립플롭의 Q를 이으면 <b>시프트 레지스터</b>가 되어 모서리마다 한 칸씩 밀립니다. 직렬 통신(UART, 디지털실험 카드)에서 비트를 하나씩 받아 바이트로 모으는 장치입니다.</p>
+
+    <h3 id="s5-2-2"><span class="no">5.2.2</span>순차 회로 설계 절차</h3>
+    <p>동기식 순차 회로는 "현재 상태 + 입력 → 다음 상태"를 정하는 조합 논리와, 그 다음 상태를 모서리마다 저장하는 플립플롭으로 이루어집니다. 그래서 설계는 결국 다음 상태를 만드는 조합 회로를 설계하는 일입니다.</p>
+    <ol>
+      <li>상태 순서(또는 상태도)를 정하고 상태마다 2진 번호를 붙인다.</li>
+      <li>상태표: 현재 상태 → 다음 상태.</li>
+      <li>플립플롭 종류에 맞게 입력을 정한다. D면 \(D_i = Q_i^+\) 그대로.</li>
+      <li>각 \(D_i\)를 카르노 맵으로 최소화하고 회로를 그린다. 쓰지 않는 상태는 무관 조건으로 둘 수 있으나, 빠져나올 수 있는지 확인한다.</li>
+    </ol>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1 <span class="nm">(3비트 상향 카운터)</span></span>
+      <p>D 플립플롭 \(Q_2Q_1Q_0\)으로 0, 1, …, 7, 0, …을 세는 동기식 카운터를 설계하여라.</p>
+    </div>
+    <p><i>풀이.</i> 다음 상태는 현재 + 1입니다. 상태표를 비트별로 보면</p>
+    <ul>
+      <li>\(Q_0\)은 매번 뒤집힌다: \(D_0 = Q_0'\).</li>
+      <li>\(Q_1\)은 \(Q_0 = 1\)일 때 뒤집힌다: \(D_1 = Q_1 \oplus Q_0\).</li>
+      <li>\(Q_2\)는 \(Q_1Q_0 = 11\)일 때 뒤집힌다: \(D_2 = Q_2 \oplus Q_1Q_0\).</li>
+    </ul>
+    <p>규칙: "아래 비트가 모두 1이면 뒤집힌다." 이것은 1을 더할 때 올림이 생기는 조건(4.1절 반가산기 연쇄)과 같습니다. n비트로 늘리면 \(D_k = Q_k \oplus (Q_{k-1}\cdots Q_0)\). T 플립플롭이면 \(T_k = Q_{k-1}\cdots Q_0\)로 더 간단합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.2 <span class="nm">(0~5를 세는 카운터)</span></span>
+      <p>\(Q_2Q_1Q_0\)이 0, 1, 2, 3, 4, 5, 0, …을 세게 하라. 6, 7은 쓰지 않는다.</p>
+    </div>
+    <p><i>풀이.</i> 상태표(현재 → 다음): 000 → 001, 001 → 010, 010 → 011, 011 → 100, 100 → 101, 101 → 000, 110·111 → X. 각 비트를 3변수 카르노 맵에 옮겨(X 활용) 최소화합니다.</p>
+    <ul>
+      <li>\(D_0\): 다음 상태의 \(Q_0\)은 현재 0, 2, 4에서 1. → \(D_0 = Q_0'\).</li>
+      <li>\(D_1\): 현재 1, 2에서 1(m1, m2), X: 6, 7. → \(D_1 = Q_2'Q_1'Q_0 + Q_1Q_0'\). (m1은 X와 묶이지 않음)</li>
+      <li>\(D_2\): 현재 3, 4에서 1(m3, m4), X: 6, 7. → \(D_2 = Q_1Q_0 + Q_2Q_0'\).</li>
+    </ul>
+    <p>쓰지 않는 상태 점검: 전원을 켰을 때 110에 있으면 식에 넣어 \(D_0 = 1\), \(D_1 = 0 + 1 = 1\), \(D_2 = 0 + 1 = 1\) → 다음 상태 111. 111이면 \(D_0 = 0\), \(D_1 = 0 + 0 = 0\), \(D_2 = 1 + 0 = 1\) → 100. 100은 정상 상태이므로 두 클록 안에 정상 순환으로 들어옵니다. 빠져나오지 못하고 맴도는 고리(잠김)가 생기면 X를 다르게 정해야 합니다.</p>
+
+    <h3 id="s5-2-3"><span class="no">5.2.3</span>리플 카운터</h3>
+    <p>T 플립플롭(또는 \(Q'\)을 D에 이은 D 플립플롭)의 출력을 다음 플립플롭의 클록으로 쓰면 게이트 없이 카운터가 됩니다. 간단하지만 각 단이 앞 단의 지연을 기다려 바뀌므로, 0111 → 1000에서 0110, 0100, 0000 같은 틀린 값이 잠깐 나타납니다. 디코더로 상태를 읽으면 글리치가 생깁니다. 그래서 큰 회로에서는 모든 플립플롭이 같은 클록을 받는 동기식을 씁니다.</p>
+
+    <div class="tb-note"><b>주의</b>쓰지 않는 상태를 무관 조건으로 두면 식이 짧아지지만, 전원을 켠 직후나 잡음으로 그 상태에 들어갔을 때 어떻게 되는지 반드시 확인하세요. 예제 5.2.2처럼 정상 순환으로 돌아오는지 표로 따라가 봅니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>레지스터 = 같은 클록의 D 플립플롭들. 시프트 레지스터는 이웃 Q를 D로.</li>
+        <li>설계: 상태 번호 → 상태표 → \(D_i = Q_i^+\) → 카르노 맵 → 회로 → 쓰지 않는 상태 점검.</li>
+        <li>2진 상향 카운터: 아래 비트가 모두 1이면 뒤집힘. 리플 카운터는 간단하지만 중간 상태가 잠깐 나타난다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s5-2-4"><span class="no">5.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2비트 하향 카운터(3, 2, 1, 0, 3, …)의 D 입력 식을 구하여라.
+          <details><summary>답</summary><p>\(D_0 = Q_0'\), \(D_1 = Q_1 \oplus Q_0'\)(\(Q_0 = 0\)일 때 뒤집힘).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>3비트 그레이 코드 카운터(000, 001, 011, 010, 110, 111, 101, 100)의 \(D_2\) 식을 구하여라.
+          <details><summary>답</summary><p>다음 \(Q_2\)가 1인 현재 상태: 010, 110, 111, 101 → \(D_2 = Q_1Q_0' + Q_2Q_0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>50 MHz 클록으로 1 Hz 신호를 만들려면 0부터 몇까지 세고 되돌아가는 카운터가 필요한가? 몇 비트인가?
+          <details><summary>답</summary><p>0 ~ 24 999 999에서 되돌아가며 끝에서 출력을 뒤집으면(반주기 25 000 000클록) 1 Hz 구형파. \(2^{25} = 33\,554\,432\)이므로 25비트.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e4-counter" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전4-05-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전4-05-02] <span class="ty mono" data-ty="적용">적용</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전4-05-02" aria-label="할 수 있음"><span class="t">동기식 카운터를 설계할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-e4-counter" data-kind="예제" data-std="전전4-05-02">
+  <header class="card-head"><span class="no">5.2.2</span><h2><span class="q-badge">예제</span>올리기·내리기를 고르는 카운터</h2><span class="kind">예제 · 입력이 있는 순차 회로 설계</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="05-02.html#std">[전전4-05-02]</a></p>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>입력 U가 1이면 1씩 올리고 0이면 1씩 내리는 2비트 카운터에서, \(Q_0\)의 다음 값은 U에 따라 달라질까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>달라지지 않습니다. 올리든 내리든 맨 아래 비트는 매번 뒤집힙니다. 달라지는 것은 \(Q_1\)이 뒤집히는 조건입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">입력 U(1: 올림, 0: 내림)가 있는 2비트 동기식 카운터 \(Q_1Q_0\)을 D 플립플롭으로 설계하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>문제 해결 전략</h3>
+      <ol>
+        <li>입력 U도 다음 상태를 정하므로, 상태표의 입력 열에 U를 넣는다(현재 상태 2비트 + U 1비트 = 8줄).</li>
+        <li>\(D_1\), \(D_0\)을 3변수 카르노 맵으로 최소화한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>상태표(U, \(Q_1Q_0\) → 다음): U = 1: 00 → 01, 01 → 10, 10 → 11, 11 → 00. U = 0: 00 → 11, 01 → 00, 10 → 01, 11 → 10. <span class="q-why">명세</span></li>
+        <li>\(D_0\): 다음 \(Q_0\)이 늘 현재 \(Q_0\)의 반대 → \(D_0 = Q_0'\). <span class="q-why">상태표 비교</span></li>
+        <li>\(D_1\): 올림이면 \(Q_0 = 1\)일 때, 내림이면 \(Q_0 = 0\)일 때 뒤집힌다. 뒤집는 조건 \(T_1 = UQ_0 + U'Q_0' = U \odot Q_0\)(XNOR). 따라서 \(D_1 = Q_1 \oplus (U \odot Q_0)\). <span class="q-why">5.2.2의 "아래 비트" 규칙</span></li>
+        <li>카르노 맵으로 확인: 변수 순서 \(U, Q_1, Q_0\)으로 다음 \(Q_1\)이 1인 줄은 000, 011, 101, 110, 곧 \(D_1 = \Sigma m(0, 3, 5, 6)\). 1의 개수가 짝수인 줄이라 바둑판 모양이고 \(D_1 = (U \oplus Q_1 \oplus Q_0)'\)인데, 이는 \(Q_1 \oplus (U \odot Q_0)\)과 같다. <span class="q-why">3.1절</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>내릴 때는 "아래 비트가 모두 0이면 뒤집힘"(빌림 조건)입니다. 올림과 내림이 같은 구조에 XNOR 하나 차이라는 것이 가감산기(4.1절)와 닮았습니다. 엘리베이터 층 표시, 회전 손잡이(인코더)의 위치 세기가 이런 카운터입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>U = 0, \(Q_1Q_0 = 00\): \(D_0 = 1\), \(T_1 = 0 \odot 0 = 1\), \(D_1 = 0 \oplus 1 = 1\) → 11. 맞음(0에서 내리면 3). U = 1, 01: \(D_0 = 0\), \(T_1 = 1\), \(D_1 = 1\) → 10. 맞음.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>3비트로 늘리면 \(Q_2\)가 뒤집히는 조건은?</p>
+      <details><summary>답</summary><p>올림: \(Q_1Q_0 = 11\). 내림: \(Q_1Q_0 = 00\). \(T_2 = UQ_1Q_0 + U'Q_1'Q_0'\).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>리플 카운터의 약점</h3>
+    <p class="q">4비트 리플 카운터가 0111에서 1000으로 바뀔 때 디코더로 "상태 4(0100)"를 감지하는 회로가 짧은 펄스를 낸다. 이유는?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>비트가 차례로 바뀌며 0100을 잠깐 지나서<span class="why"><b>맞습니다.</b> 0111 → 0110 → 0100 → 0000 → 1000으로 각 단의 지연만큼 늦게 바뀝니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>디코더가 느려서<span class="why"><b>디코더는 입력을 정확히 따랐을 뿐입니다.</b> 문제는 카운터 출력이 순간적으로 틀린 값을 지난다는 것입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>클록이 너무 빨라서<span class="why"><b>클록을 느리게 해도 이 중간 상태는 매번 나타납니다.</b> 동기식 카운터를 써야 없어집니다.</span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-e4-counter" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="05-01.html">← 5.1 SR 래치와 D 플립플롭의 동작을 타이밍 도표로 그리기</a></span>
-        <span><a href="05-03.html">5.3 셋업·홀드 시간으로 최대 클록 주파수를 구하기 →</a></span>
+        <span><a href="05-01.html">← 5.1 래치와 플립플롭</a></span>
+        <span><a href="05-03.html">5.3 타이밍: 셋업, 홀드, 최대 클록 주파수 →</a></span>
       </nav>
     </div>
   </div>

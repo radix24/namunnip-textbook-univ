@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전3-08-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e3-circuits.js"]
+}
+-->
+<article class="card q-card" id="exp-e3-pf" data-kind="탐구" data-std="전전3-08-01">
+  <header class="card-head"><span class="no"></span><h2>전력 삼각형으로 보는 역률 개선</h2><span class="kind">탐구 · 병렬 축전기와 선로 손실</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>전동기 부하에 축전기를 병렬로 달면 전동기가 하는 일(유효 전력)은 그대로인데 전원 전류는 줄어듭니다. 축전기를 얼마나 달아야 하고, 너무 많이 달면 어떻게 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>복소 전력 \(\mathbf S = P + jQ\)를 화살표로 그리면 가로가 유효 전력, 세로가 무효 전력인 전력 삼각형이 됩니다. 병렬 축전기는 \(P\)를 바꾸지 않고 \(Q\)만 \(Q_C = V^2\omega C\)만큼 줄입니다. 전원 전류는 \(|\mathbf S|/V\)이므로 화살표가 짧아질수록 전류가 줄어듭니다. 선로 손실은 선로 저항 0.1 Ω으로 계산합니다(가상).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>P = <b data-show="P">10</b> kW</span><input type="range" name="P" min="1" max="50" step="1" value="10" aria-label="유효 전력"></label>
+        <label><span>부하 역률 = <b data-show="pf" data-fix="2">0.70</b></span><input type="range" name="pf" min="0.4" max="1" step="0.01" value="0.7" aria-label="부하 역률"></label>
+        <label><span>축전기 C = <b data-show="C">0</b> μF</span><input type="range" name="C" min="0" max="1500" step="1" value="0" aria-label="병렬 축전기"></label>
+      </div>
+      <canvas aria-label="전력 삼각형: 개선 전 S, 축전기 무효 전력, 개선 후 S"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>10 kW, 역률 0.7에서 축전기를 379 μF로 하면 역률 약 0.95, 전류 64.9 A → 47.8 A(8.1절 예제 8.1.3). 선로 손실은 약 422 W에서 229 W로 줄어듭니다.</span></li>
+        <li><b>완전 보상</b><span>약 559 μF에서 역률 1, 전류 45.5 A로 가장 작습니다.</span></li>
+        <li><b>과보상</b><span>더 달면(예: 1000 μF) 무효 전력이 음수가 되어 역률이 다시 떨어지고(앞섬) 전류가 늘어납니다. 그래서 보통 0.95 정도까지만 보상합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>전력 회사는 역률이 낮은 대규모 수용가에 요금을 더 받습니다. 공장과 빌딩의 수전 설비에는 역률을 재서 축전기 뭉치를 단계별로 붙였다 떼는 자동 역률 조정기가 있습니다. 전력전자(전전24)의 능동 역률 보정 회로는 컴퓨터 전원 장치 안에서 같은 일을 합니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"축전기를 달면 전동기의 소비 전력이 줄어 전기 요금이 준다."</b> 부하의 유효 전력 P는 그대로입니다. 줄어드는 것은 전류와 선로 손실, 그리고 역률 요금입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

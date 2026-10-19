@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>도함수가 중간값 성질을 가짐(Darboux)을 증명하기 · 해석학(1) — QURI</title>
-  <meta name="description" content="해석학(1) 4.2 도함수가 중간값 성질을 가짐(Darboux)을 증명하기 — 성취기준: 도함수가 중간값 성질을 가짐(Darboux)을 증명할 수 있다.">
+  <title>도함수의 중간값 성질 (다르부 정리) · 해석학(1) — QURI</title>
+  <meta name="description" content="해석학(1) 4.2 도함수의 중간값 성질 (다르부 정리) — 성취기준: 도함수가 중간값 성질을 가짐(Darboux)을 증명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;수학7&quot;, &quot;title&quot;: &quot;4.2 도함수가 중간값 성질을 가짐(Darboux)을 증명하기&quot;, &quot;sub&quot;: &quot;해석학(1)&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;수학7&quot;, &quot;title&quot;: &quot;4.2 도함수의 중간값 성질 (다르부 정리)&quot;, &quot;sub&quot;: &quot;해석학(1)&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,157 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="수학7-04-02" data-u="고려대 KAIST POSTECH 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="수학7-04-02" data-u="고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=math#tree">수학과</a><span class="mono">/</span><a href="./">해석학(1)</a><span class="mono">/</span><a href="04.html">4. 미분</a></div>
-    <h1><span class="sec-no mono">4.2</span>도함수가 중간값 성질을 가짐(Darboux)을 증명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="수학7-04-02">
-      <h2><span>이 절의 성취기준</span><span class="mono">[수학7-04-02] <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="수학7-04-02" aria-label="할 수 있음"><span class="t">도함수가 중간값 성질을 가짐(Darboux)을 증명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">4.2</span>도함수의 중간값 성질 (다르부 정리)</h1>
+    <p class="sec-std"><span class="mono">[수학7-04-02]</span> 도함수가 중간값 성질을 가짐(Darboux)을 증명할 수 있다. <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s4-2-1"><span class="mono">4.2.1</span><span>도함수는 아무 함수나 될 수 있을까</span></a></li><li><a href="#s4-2-2"><span class="mono">4.2.2</span><span>따름정리: 도함수에는 점프가 없다</span></a></li><li><a href="#s4-2-3"><span class="mono">4.2.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-m7-darboux"><span class="mono">본문</span><span>도함수의 중간값 성질 (다르부 정리)</span></a></li><li><a href="#card-m7-darboux-proof"><span class="mono">4.2.2</span><span>도함수는 값을 건너뛰지 않는다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="04.html">대단원 4 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-m7-darboux" data-kind="본문" data-std="수학7-04-02">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>도함수는 연속이 아니어도 중간값 성질을 가짐을 증명한다(다르부 정리).</li>
+        <li>그 결과로 도함수는 점프 불연속을 가질 수 없음을 안다.</li>
+        <li>미분 가능하지만 도함수가 불연속인 예를 다룬다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>페르마 정리, 최대·최소 정리 (<a href="04-01.html">4.1절</a>, <a href="03-02.html">3.2절</a>), 중간값 정리 (<a href="01-04.html">1.4절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s4-2-1"><span class="no">4.2.1</span>도함수는 아무 함수나 될 수 있을까</h3>
+    <p>연속함수는 중간값 성질을 가집니다. 그런데 도함수는 연속이 아닐 수 있습니다. 예를 들어 \(f(x) = x^2\sin\frac1x\) (\(f(0) = 0\))은 모든 점에서 미분 가능하지만 \(f'\)은 0에서 불연속입니다(공통1 3.1절 연습 6). 그렇다면 도함수는 아무렇게나 불연속일 수 있을까요? 예를 들어 계단 함수(\(x &lt; 0\)에서 0, \(x \ge 0\)에서 1)가 어떤 함수의 도함수일 수 있을까요? 다르부 정리는 그럴 수 없다고 답합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.2.1 <span class="nm">(다르부)</span></span>
+      <p>\(f\)가 \([a, b]\)에서 미분 가능하고 \(f'(a) &lt; \lambda &lt; f'(b)\)이면 \(f'(x) = \lambda\)인 \(x \in (a, b)\)가 있다.</p>
+    </div>
+    <p>아이디어: \(g(t) = f(t) - \lambda t\)를 보면 \(g'(a) &lt; 0 &lt; g'(b)\)입니다. 왼쪽 끝에서는 내려가는 중이고 오른쪽 끝에서는 올라가는 중이므로, 최솟값은 끝점이 아니라 안쪽에서 생겨야 합니다. 그 안쪽 최소점에서 페르마 정리로 \(g' = 0\)입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(g(t) = f(t) - \lambda t\)는 \([a, b]\)에서 미분 가능하므로 연속이고, 최대·최소 정리로 최솟값을 갖는 점 \(x\)가 있다. \(g'(a) = f'(a) - \lambda &lt; 0\)이므로 미분계수의 정의에서 \(a\)의 오른쪽 가까이에 \(g(t) &lt; g(a)\)인 \(t\)가 있다(그렇지 않으면 오른쪽 차분몫이 모두 0 이상이라 \(g'(a) \ge 0\)). 따라서 \(x \ne a\). 같은 이유로 \(g'(b) > 0\)에서 \(b\)의 왼쪽 가까이에 \(g(t) &lt; g(b)\)인 \(t\)가 있어 \(x \ne b\). 곧 \(x \in (a, b)\)이고 페르마 정리로 \(g'(x) = 0\), \(f'(x) = \lambda\). <span class="qed">∎</span></p>
+    <p>증명에 \(f'\)의 연속성은 전혀 쓰이지 않았습니다. 쓴 것은 "\(f\)가 미분 가능 ⇒ \(f\)가 연속 ⇒ 최솟값 존재"와 페르마 정리뿐입니다.</p>
+
+    <h3 id="s4-2-2"><span class="no">4.2.2</span>따름정리: 도함수에는 점프가 없다</h3>
+    <div class="tb-env thm">
+      <span class="lb">따름정리 4.2.2</span>
+      <p>도함수 \(f'\)이 어떤 점에서 좌극한과 우극한을 모두 가진다면, 그 두 극한과 함숫값은 모두 같다. 곧 도함수는 점프 불연속(1종 불연속)을 갖지 않는다.</p>
+    </div>
+    <p>예를 들어 \(f'(x) \to 0\) (\(x \to 0^-\)), \(f'(x) \to 1\) (\(x \to 0^+\))이라면 \(0\)과 \(1\) 사이의 값 \(\frac12\)을 0 근처의 작은 구간에서 취하지 못하므로 다르부 정리에 어긋납니다. 그래서 계단 함수는 어떤 함수의 도함수도 아닙니다. 도함수의 불연속은 \(x^2\sin\frac1x\)의 도함수처럼 "진동하는" 형태(2종 불연속)뿐입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.2.3</span>
+      <p>\(f(x) = x^2\sin\frac1x\) (\(x \ne 0\)), \(f(0) = 0\)의 도함수가 0 근처의 아주 작은 구간 \((0, \delta)\)에서 \([-1, 1]\)의 모든 값을 취함을 보여라.</p>
+    </div>
+    <p><i>풀이.</i> \(x \ne 0\)에서 \(f'(x) = 2x\sin\frac1x - \cos\frac1x\), \(f'(0) = 0\)입니다. \(x_k = \frac1{2k\pi}\)에서 \(f'(x_k) = -1\), \(y_k = \frac1{(2k+1)\pi}\)에서 \(f'(y_k) = 1\)이고, 둘 다 큰 \(k\)에서 \((0, \delta)\)에 들어갑니다. \(f\)는 \([y_k, x_k]\)에서 미분 가능하므로 다르부 정리로 \(-1\)과 \(1\) 사이의 모든 값을 그 사이에서 취합니다. 불연속이지만 "건너뛰지는" 않습니다.</p>
+
+    <div class="tb-note"><b>주의</b>"미분 가능한 함수의 도함수는 연속이다"는 틀립니다(예제 4.2.3). 그래서 해석학에서는 "\(C^1\) 함수"(미분 가능하고 도함수가 연속)를 따로 이름 붙입니다. 8단원의 "편도함수가 연속이면 미분 가능" 정리도 이 구별에 기댑니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>다르부: 도함수는 연속이 아니어도 중간값 성질을 가진다.</li>
+        <li>증명은 \(f(t) - \lambda t\)의 최솟값이 안쪽에 있음을 보이고 페르마 정리를 쓴다.</li>
+        <li>그래서 도함수에는 점프 불연속이 없고, 계단 함수는 도함수가 될 수 없다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s4-2-3"><span class="no">4.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>부호 함수 \(\operatorname{sgn}x\)는 어떤 함수의 도함수인가?
+          <details><summary>답</summary><p>아니다. 0에서 점프가 있어 다르부 정리에 어긋난다. (\(|x|\)는 0에서 미분 불가능이라 후보가 아니다.)</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f\)가 미분 가능하고 \(f'(x) \ne 0\)이 모든 \(x\)에서 성립하면 \(f\)는 단조함수임을 보여라.
+          <details><summary>답</summary><p>\(f'\)이 양수인 점과 음수인 점이 모두 있으면 다르부로 그 사이에서 0을 취한다. 따라서 \(f'\)의 부호가 하나라 평균값 정리로 단조.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(f'\)이 존재하고 단조함수이면 \(f'\)은 연속임을 보여라.
+          <details><summary>답</summary><p>단조함수의 불연속은 점프뿐(좌우 극한이 존재)인데, 도함수는 점프를 가질 수 없다(따름정리 4.2.2).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-m7-darboux" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="수학7-04-02">
+      <h2><span>이 절의 성취기준</span><span class="mono">[수학7-04-02] <span class="ty mono" data-ty="증명">증명</span> <span class="unis mono" title="이 내용이 있는 대학">고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="수학7-04-02" aria-label="할 수 있음"><span class="t">도함수가 중간값 성질을 가짐(Darboux)을 증명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/common/1/03-02.html"><span class="mono">3.2</span><span>미분적분학과벡터해석(1) <b>평균값 정리</b></span></a></li><li><a href="../../../c/common/1/03-03.html"><span class="mono">3.3</span><span>미분적분학과벡터해석(1) <b>부정형과 로피탈 법칙</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="card-m7-darboux-proof" data-kind="증명" data-std="수학7-04-02">
+  <header class="card-head"><span class="no">4.2.2</span><h2><span class="q-badge">증명</span>도함수는 값을 건너뛰지 않는다</h2><span class="kind">증명 · 다르부 정리를 한 단계씩</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="04-02.html#std">[수학7-04-02]</a></p>
+  <div class="q-body">
+    <div class="q-thm">
+      <span class="lb">정리</span>
+      <p>\(f\)가 \([a, b]\)에서 미분 가능하고 \(f'(a) &lt; 0 &lt; f'(b)\)이면 \(f'(x) = 0\)인 \(x \in (a, b)\)가 있다.</p>
+    </div>
+    <section class="q-sec">
+      <h3>쓰는 것</h3>
+      <ul>
+        <li><b>미분 가능 ⇒ 연속</b> (공통1 정리 3.1.5).</li>
+        <li><b>최대·최소 정리</b> (<a href="03-02.html">3.2절</a>).</li>
+        <li><b>페르마 정리</b>: 내부 극값에서 도함수는 0 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>아이디어</h3>
+      <p>\(f'(a) &lt; 0\)은 "출발할 때 내려간다", \(f'(b) > 0\)은 "도착할 때 올라간다"는 뜻입니다. 그러면 가장 낮은 곳은 출발점도 도착점도 아닌 안쪽입니다. 안쪽 최저점에서 접선은 수평입니다. 일반 \(\lambda\)는 \(f(t) - \lambda t\)로 바꾸면 이 경우가 됩니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>증명</h3>
+      <ol class="q-proof">
+        <li><div>\(f\)는 \([a, b]\)에서 연속이므로 최솟값을 갖는 점 \(x \in [a, b]\)가 있다.</div><span class="q-why">미분 가능하면 연속, 그리고 최대·최소 정리.</span></li>
+        <li><div>\(f'(a) = \lim_{t\to a^+}\frac{f(t) - f(a)}{t - a} &lt; 0\)이므로, \(a\)에 충분히 가까운 \(t > a\)에서 \(\frac{f(t) - f(a)}{t - a} &lt; 0\), 곧 \(f(t) &lt; f(a)\).</div><span class="q-why">극한이 음수이면 극한에 가까운 값들도 음수(ε = \(|f'(a)|/2\)로 극한의 정의). \(t - a > 0\)을 곱해도 부등호 방향 유지.</span></li>
+        <li><div>따라서 \(f(a)\)는 최솟값이 아니고 \(x \ne a\).</div><span class="q-why">더 작은 값 \(f(t)\)가 있다.</span></li>
+        <li><div>같은 방법으로 \(f'(b) > 0\)에서 \(b\)에 가까운 \(t &lt; b\)는 \(f(t) &lt; f(b)\)이므로 \(x \ne b\).</div><span class="q-why">\(t - b &lt; 0\)이라 차분몫이 양수이려면 \(f(t) - f(b) &lt; 0\).</span></li>
+        <li class="q-end"><div>\(x \in (a, b)\)는 내부 최소점이므로 페르마 정리로 \(f'(x) = 0\).</div><span class="q-why">내부 극값 + 미분 가능.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>되짚기</h3>
+      <ul>
+        <li><b>\(f'\)의 연속성은 어디에도 쓰지 않았습니다.</b> 그래서 결론이 도함수가 불연속이어도 성립합니다. 만약 \(f'\)이 연속이라면 중간값 정리 한 줄이면 끝났을 것입니다.</li>
+        <li><b>\([a, b]\) 전체에서의 미분 가능성</b>이 필요합니다. 한 점에서라도 미분 가능하지 않으면 깨집니다: \(f(x) = |x|\)는 \([-1, 1]\)에서 \(f'(-1) = -1 &lt; 0 &lt; 1 = f'(1)\)이지만 \(f' = 0\)인 점이 없습니다(최소점 0에서 미분 불가능이라 5단계 실패).</li>
+      </ul>
+    </section>
+    <section class="q-sec q-try">
+      <h3>직접 써 보기</h3>
+      <p class="q-prob">위 정리를 써서 일반적인 다르부 정리(\(f'(a) &lt; \lambda &lt; f'(b)\)이면 \(f'(x) = \lambda\)인 \(x\)가 있다)를 증명하여라. \(f'(a) > \lambda > f'(b)\)인 경우도 다뤄라.</p>
+      <details><summary>답안</summary>
+        <p>\(g(t) = f(t) - \lambda t\)는 \([a, b]\)에서 미분 가능하고 \(g'(a) = f'(a) - \lambda &lt; 0 &lt; g'(b)\). 위 정리로 \(g'(x) = 0\), 곧 \(f'(x) = \lambda\). 반대 경우는 \(-f\)에 같은 논증을 쓰거나 최댓값을 쓴다. ∎</p>
+      </details>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="card-m7-darboux-proof" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="04-01.html">← 4.1 평균값 정리와 Taylor 정리를 나머지 항과 함께 증명하기</a></span>
-        <span><a href="05-01.html">5.1 상합과 하합으로 적분 가능성을 판정하기 →</a></span>
+        <span><a href="04-01.html">← 4.1 평균값 정리와 테일러 정리</a></span>
+        <span><a href="04-R.html">4.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

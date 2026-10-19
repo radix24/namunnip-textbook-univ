@@ -1,0 +1,91 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-01-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s4-u01-review" data-kind="연습" data-std="응통4-01-01 응통4-01-02">
+  <header class="card-head"><span class="no"></span><h2>파이썬 기초 문법 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·개념 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>다음 코드의 출력을 예측하고 실행해 확인하세요. 각 연산자가 무엇을 하는지도 쓰세요. <span class="mono small dim">[01-01]</span></p>
+        <pre>print(7 // 2, 7 % 2, 7 / 2, 2 ** 10)
+print([1, 2, 3, 4] * 2)</pre>
+        <details><summary>힌트 1</summary><p><code>//</code>는 몫, <code>%</code>는 나머지, <code>**</code>는 거듭제곱입니다.</p></details>
+        <details><summary>힌트 2</summary><p>리스트에 정수를 곱하면 원소마다 곱하는 것이 아니라 리스트를 이어 붙입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>첫 줄은 <code>3 1 3.5 1024</code>입니다. 파이썬 3에서 <code>/</code>는 정수끼리도 실수 나눗셈입니다.</p><p>둘째 줄은 <code>[1, 2, 3, 4, 1, 2, 3, 4]</code>입니다. 원소마다 2를 곱하려면 <code>[2 * v for v in xs]</code>를 쓰거나 NumPy 배열을 써야 합니다(응통4-03-01). R의 벡터와 가장 크게 다른 점입니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>라이브러리 없이 숫자 리스트의 평균과 표본표준편차를 튜플로 돌려주는 함수 <code>mean_sd(xs)</code>를 작성하고, <code>[2, 4, 4, 5, 7, 8]</code>로 시험하세요. 원소가 2개 미만이면 어떻게 처리할지도 정하세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>평균은 <code>sum(xs) / len(xs)</code>입니다. 표본분산은 편차 제곱합을 <code>n - 1</code>로 나눕니다.</p></details>
+        <details><summary>힌트 2</summary><p>원소가 1개면 <code>n - 1 = 0</code>으로 나누게 되므로, 미리 검사해 <code>ValueError</code>를 일으키는 것이 좋습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>def mean_sd(xs):
+    n = len(xs)
+    if n &lt; 2:
+        raise ValueError("원소가 2개 이상 필요합니다")
+    m = sum(xs) / n
+    ss = sum((x - m) ** 2 for x in xs)
+    return m, (ss / (n - 1)) ** 0.5
+
+print(mean_sd([2, 4, 4, 5, 7, 8]))   # (5.0, 2.1908902300206643)</pre><p>R의 <code>sd()</code>와 같은 값(2.191)이 나옵니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>다음 각 상황에 리스트, 튜플, 딕셔너리, 집합 가운데 무엇이 알맞은지 이유와 함께 쓰세요. (가) 학번으로 이름을 빠르게 찾기 (나) 응답에서 중복을 없앤 지역 목록 (다) 시간 순서대로 쌓이는 측정값 (라) 딕셔너리의 키로 쓸 (위도, 경도) 좌표 <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>순서가 필요한지, 중복을 허용하는지, 값을 바꿀 수 있어야 하는지, 키로 찾는지를 보세요.</p></details>
+        <details><summary>힌트 2</summary><p>딕셔너리의 키는 바꿀 수 없는(해시 가능한) 값이어야 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(가) 딕셔너리: 키(학번)로 값(이름)을 평균적으로 일정한 시간에 찾습니다. (나) 집합: 중복을 자동으로 없애고 소속 여부 확인이 빠릅니다(순서는 보장되지 않음). (다) 리스트: 순서가 있고 <code>append</code>로 뒤에 덧붙이기 쉽습니다. (라) 튜플: 바꿀 수 없어 딕셔너리 키가 될 수 있습니다. 리스트는 키가 될 수 없습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>다음 코드의 출력을 예측하고, <code>a</code>가 바뀌지 않게 고치세요. <span class="mono small dim">[01-02]</span></p>
+        <pre>a = [1, 2]
+b = a
+b.append(3)
+print(a)</pre>
+        <details><summary>힌트 1</summary><p><code>b = a</code>는 리스트를 복사하나요, 같은 리스트에 이름을 하나 더 붙이나요?</p></details>
+        <details><summary>힌트 2</summary><p>복사는 <code>a.copy()</code>, <code>list(a)</code>, <code>a[:]</code>로 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>출력은 <code>[1, 2, 3]</code>입니다. <code>b = a</code>는 같은 리스트 객체를 가리키는 이름을 하나 더 만들 뿐이라, <code>b</code>를 고치면 <code>a</code>도 바뀝니다.</p><p><code>b = a.copy()</code>로 고치면 <code>a</code>는 <code>[1, 2]</code>로 남습니다. 리스트 안에 리스트가 들어 있다면 안쪽까지 복사하는 <code>copy.deepcopy(a)</code>가 필요합니다. 함수에 리스트를 넘겨 안에서 고칠 때도 같은 일이 생깁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>0부터 9까지의 짝수의 제곱을 리스트 내포로 만들고 그 합을 구하세요. 같은 일을 <code>for</code> 반복문으로도 쓰세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>리스트 내포는 <code>[식 for 변수 in 범위 if 조건]</code> 꼴입니다.</p></details>
+        <details><summary>힌트 2</summary><p>짝수 조건은 <code>i % 2 == 0</code>입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>sq = [i * i for i in range(10) if i % 2 == 0]   # [0, 4, 16, 36, 64]
+print(sum(sq))                                  # 120
+
+total = 0
+for i in range(10):
+    if i % 2 == 0:
+        total += i * i</pre><p><code>range(10)</code>은 0부터 9까지이며 10은 포함하지 않습니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>문자열 <code>"a b a c b a"</code>에서 단어별 빈도를 딕셔너리로 세는 코드를 (1) 직접, (2) <code>collections.Counter</code>로 쓰세요. 가장 많이 나온 단어도 구하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>문자열은 <code>split()</code>으로 단어 리스트가 됩니다.</p></details>
+        <details><summary>힌트 2</summary><p><code>d.get(w, 0)</code>은 키가 없으면 0을 돌려줍니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <pre>words = "a b a c b a".split()
+d = {}
+for w in words:
+    d[w] = d.get(w, 0) + 1
+print(d)                           # {'a': 3, 'b': 2, 'c': 1}
+
+from collections import Counter
+c = Counter(words)
+print(c.most_common(1))            # [('a', 3)]</pre><p>가장 많이 나온 단어는 <code>'a'</code>(3번)입니다. 범주형 자료의 빈도표를 만드는 기본 방법입니다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

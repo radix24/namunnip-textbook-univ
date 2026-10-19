@@ -36,7 +36,7 @@
   <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
       <p class="mono small toc-title">이 절의 차례</p>
-      <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>간격을 반으로 줄이면</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>연습문제</span></a></li></ol>
+      <ol class="toc-sub"><li><a href="#s7-2-1"><span class="mono">7.2.1</span><span>간격을 반으로 줄이면</span></a></li><li><a href="#s7-2-2"><span class="mono">7.2.2</span><span>차수를 실험으로 재고, 방법을 비교하기</span></a></li><li><a href="#s7-2-3"><span class="mono">7.2.3</span><span>연습문제</span></a></li></ol>
       <p class="mono small toc-title toc-title-2">이 절의 카드</p>
       <ol id="toc-list"><li><a href="#text-c8-errororder"><span class="mono">본문</span><span>간격과 오차</span></a></li><li><a href="#card-c8-error-order"><span class="mono">7.2.2</span><span>간격을 줄이며 오차 차수 확인하기</span></a></li><li><a href="#lab-c8-numeric"><span class="mono">7.2.3</span><span>간격을 줄이면 오차는 얼마나 줄까</span></a></li></ol>
       <p class="progress mono small"></p>
@@ -44,7 +44,7 @@
     </aside>
     <div class="sec-main">
 <article class="q-card tb-page" id="text-c8-errororder" data-kind="본문" data-std="공통8-07-02">
-  <div class="q-body q-text">
+  <div class="q-body q-text" data-thick="1">
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
@@ -55,6 +55,9 @@
         <li>오일러 방법과 룽게-쿠타 방법 (<a href="07-01.html">7.1절</a>).</li>
       </ul>
     </div>
+
+    <h3>왜 필요한가</h3>
+    <p>컴퓨터로 미분방정식을 풀면 답이 늘 조금씩 틀립니다. 그렇다면 "얼마나 잘게 나누어야 믿을 만한가", "같은 정확도를 얻는 데 어느 방법이 덜 수고로운가"를 물어야 합니다. 오차의 차수는 이 두 질문에 숫자로 답해 줍니다. 정확한 답을 모르는 문제에서도 간격을 바꿔 가며 결과를 비교하면 차수와 오차 크기를 짐작할 수 있습니다.</p>
 
     <h3 id="s7-2-1"><span class="no">7.2.1</span>간격을 반으로 줄이면</h3>
     <p>간격 \(h\)를 줄이면 더 정확해지지만 계산할 걸음 수가 늘어납니다. 얼마나 정확해지는지는 방법에 따라 다릅니다. 정해진 지점에서의 오차가 대략 \(Ch^p\)이면 그 방법을 <b>\(p\)차 방법</b>이라 합니다.</p>
@@ -69,6 +72,28 @@
     <p><i>풀이.</i> 오일러 방법은 \(y_n = (1 + h)^n\)이므로 \(y(1) \approx (1 + h)^{1/h}\)입니다. \(h = 0.1\): 2.5937 (오차 0.1245), \(h = 0.05\): 2.6533 (오차 0.0650), \(h = 0.025\): 2.6851 (오차 0.0332). 오차가 대략 절반씩 줄어 1차임을 확인할 수 있습니다.</p>
     <p>오차를 로그 눈금 그래프에 그리면 기울기가 차수가 됩니다. 이 실험은 공통10·11(전자계산)에서 직접 코드로 해 볼 수 있습니다.</p>
 
+        <h3 id="s7-2-2"><span class="no">7.2.2</span>차수를 실험으로 재고, 방법을 비교하기</h3>
+    <p>오차가 \(E(h) \approx Ch^p\)이면 \(\frac{E(h)}{E(h/2)} \approx 2^p\)이므로 다음 식으로 차수를 잴 수 있습니다.</p>
+    <p>\[p \approx \log_2\frac{E(h)}{E(h/2)}\]</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>같은 문제 \(y' = y\), \(y(0) = 1\)에서 \(y(1)\)의 오차를 세 방법으로 구했다. 각 방법의 차수를 재어라.</p>
+    </div>
+    <table class="tb-table">
+      <thead><tr><th>\(h\)</th><th>오일러</th><th>개선된 오일러(2차 룽게-쿠타)</th><th>4차 룽게-쿠타</th></tr></thead>
+      <tbody>
+        <tr><td>0.1</td><td>0.1245</td><td>\(4.20\times10^{-3}\)</td><td>\(2.08\times10^{-6}\)</td></tr>
+        <tr><td>0.05</td><td>0.0650</td><td>\(1.09\times10^{-3}\)</td><td>\(1.36\times10^{-7}\)</td></tr>
+        <tr><td>0.025</td><td>0.0332</td><td>\(2.78\times10^{-4}\)</td><td>\(8.67\times10^{-9}\)</td></tr>
+      </tbody>
+    </table>
+    <p><i>풀이.</i> 오일러: \(\log_2(0.1245/0.0650) = 0.94\), \(\log_2(0.0650/0.0332) = 0.97\)로 1에 다가갑니다. 개선된 오일러: 비가 3.85, 3.93이라 \(p \approx 1.9, 2.0\). 4차 룽게-쿠타: 비가 15.3, 15.7이라 \(p \approx 3.9, 4.0\). \(h\)가 작아질수록 \(Ch^p\) 어림이 정확해져 차수가 정수에 가까워집니다.</p>
+    <p>수고까지 따져 봅시다. 4차 룽게-쿠타는 한 걸음에 기울기를 네 번 계산하므로 오일러보다 한 걸음이 네 배 비쌉니다. 그래도 \(h = 0.1\)(기울기 계산 40번)로 오차 \(2\times10^{-6}\)을 얻는데, 오일러로 같은 오차를 얻으려면 오차 \(\approx 1.36h\)에서 \(h \approx 1.5\times10^{-6}\), 곧 약 65만 걸음이 필요합니다. 차수가 높은 방법이 대개 훨씬 싸게 정확합니다.</p>
+    <div class="tb-note">
+      <b>흔한 오해</b>
+      <p>"\(h\)를 줄일수록 언제나 더 정확하다"는 틀립니다. 컴퓨터는 수를 유효숫자 약 16자리로만 저장하므로, 걸음마다 아주 작은 반올림 오차가 생기고 걸음 수가 늘면 그것이 쌓입니다. 그래서 \(h\)를 계속 줄이면 어느 지점부터 오차가 다시 커집니다. 차수가 높은 방법은 큰 \(h\)로 충분히 정확해 이 문제도 피하기 쉽습니다.</p>
+    </div>
+
     <div class="tb-summary">
       <b>요약</b>
       <ol>
@@ -78,11 +103,20 @@
     </div>
 
     <div class="tb-exercises">
-      <h3 id="s7-2-2"><span class="no">7.2.2</span>연습문제</h3>
+      <h3 id="s7-2-3"><span class="no">7.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>어떤 방법으로 \(h = 0.1\)일 때 오차가 \(10^{-4}\)였고 \(h = 0.05\)일 때 \(6.25\times10^{-6}\)이었다. 몇 차 방법인가?
           <details><summary>답</summary><p>비 \(16 = 2^4\). 4차.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>2차 방법으로 \(h = 0.02\)일 때 오차가 \(8\times10^{-4}\)이었다. 오차를 \(10^{-5}\) 이하로 하려면 \(h\)를 대략 얼마로 해야 하는가?
+          <details><summary>답</summary><p>오차를 80분의 1로 줄여야 하므로 \(h\)는 \(\sqrt{80} \approx 8.9\)분의 1, 곧 \(h \approx 0.0022\) 이하.</p></details>
+        </li>
+        <li>정확한 답을 모르는 문제에서 \(h, h/2, h/4\)로 얻은 값이 1.2000, 1.2400, 1.2500이었다. 이 방법의 차수는 대략 얼마인가?
+          <details><summary>답</summary><p>연속한 차이가 0.0400, 0.0100으로 비 4이므로 \(p \approx 2\).</p></details>
         </li>
       </ol>
     </div>

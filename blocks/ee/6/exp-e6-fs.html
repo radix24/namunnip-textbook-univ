@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-03-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e6-signals.js"]
+}
+-->
+<article class="card q-card" id="exp-e6-fs" data-kind="탐구" data-std="전전6-03-01">
+  <header class="card-head"><span class="no"></span><h2>고조파를 하나씩 더해 사각파 만들기</h2><span class="kind">탐구 · Fourier 급수 부분합과 Gibbs 현상</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>매끄러운 코사인만 더해서 모서리가 있는 사각파를 만들 수 있을까요? 항을 많이 넣으면 모서리의 오차는 사라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>주기 \(2\pi\)(\(\omega_0 = 1\))인 세 가지 신호의 부분합 \(x_N(t) = \sum_{|k| \le N}a_ke^{jkt}\)를 그립니다. 위: 원래 신호(회색 점선)와 부분합(파랑). 아래: 계수의 크기 \(|a_k|\) (파랑은 부분합에 넣은 항). 듀티는 사각파에만 쓰입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>신호</span><select name="w" aria-label="주기 신호"><option value="square" selected>사각파</option><option value="saw">톱니파</option><option value="tri">삼각파</option></select></label>
+        <label><span>듀티 <b data-show="d">50</b>%</span><input type="range" name="d" min="10" max="90" step="5" value="50" aria-label="사각파 듀티"></label>
+        <label><span>N = <b data-show="n">9</b></span><input type="range" name="n" min="1" max="60" step="1" value="9" aria-label="부분합 항 수"></label>
+      </div>
+      <canvas aria-label="원래 신호와 부분합"></canvas>
+      <canvas aria-label="Fourier 계수의 크기"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 확인</b><span>듀티 50% 사각파: \(a_0 = 0.5\), \(a_1 = 0.318\), \(a_2 = 0\), \(a_3 = -0.106\) (3.1절 예제 3.1.1). N = 1이면 전력의 90.5%가 이미 담깁니다.</span></li>
+        <li><b>Gibbs</b><span>N을 9 → 49로 늘려도 최댓값은 1.091 → 1.090으로 거의 그대로이고, 넘친 부분의 폭만 좁아집니다. 뛰는 크기의 약 9%입니다.</span></li>
+        <li><b>톱니파</b><span>계수가 순허수 \(j(-1)^k/(k\pi)\)입니다(홀함수). 뛰는 크기가 2라 넘침도 두 배(N = 49에서 최댓값 1.159)입니다. N = 9에서 전력 93.6%.</span></li>
+        <li><b>삼각파</b><span>계수가 \(4/(\pi^2k^2)\)로 빨리 줄어듭니다. N = 1에서 이미 전력의 98.6%, N = 9에서 최댓값 0.960으로 넘침이 없습니다. 연속인 신호에는 Gibbs 현상이 없습니다.</span></li>
+        <li><b>듀티</b><span>듀티 25%이면 \(a_k = \sin(k\pi/4)/(k\pi)\)라 짝수 고조파가 살아납니다(4, 8, … 배수만 0). 듀티 50%일 때만 짝수 고조파가 모두 사라집니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>디지털 클록(사각파)이 주변 회로에 높은 주파수 잡음을 퍼뜨리는 이유가 천천히 줄어드는 \(1/k\) 계수입니다. 모서리를 둥글게(상승 시간을 길게) 하면 계수가 빨리 줄어 전자파 간섭이 줄어듭니다. 8단원의 창 함수도 같은 생각입니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"항을 충분히 넣으면 최대 오차가 0이 된다."</b> 불연속점 근처의 최대 오차는 0으로 가지 않습니다. 줄어드는 것은 오차의 에너지(제곱 적분)입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

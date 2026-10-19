@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-glm" data-kind="본문" data-std="응통18-05-01">
+  <header class="card-head"><span class="no"></span><h2>일반화선형모형으로 묶기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>일반화선형모형의 세 요소(확률 분포, 선형 예측식, 연결함수)를 안다.</li>
+        <li>선형·로지스틱·포아송 회귀를 하나의 틀로 이해한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>로지스틱 회귀 (<a href="03-01.html">3.1절</a>), 응통7 2.3절 지수족.</li>
+      </ul>
+    </div>
+
+    <h3>세 회귀는 사촌</h3>
+    <p>정규 반응에는 선형회귀, 이진 반응에는 로지스틱 회귀, 셈 반응에는 포아송 회귀를 씁니다. 넬더와 웨더번(1972)은 이들이 모두 같은 구조임을 보이고 일반화선형모형(GLM)이라는 하나의 틀로 묶었습니다.</p>
+
+    <h3><span class="no">5.1.1</span>세 요소</h3>
+    <ol>
+      <li><b>확률 요소</b>: \(Y_i\)가 지수족 분포(정규, 이항, 포아송, 감마)를 따름.</li>
+      <li><b>체계 요소</b>: 선형 예측식 \(\eta_i = \mathbf x_i^\top\boldsymbol\beta\).</li>
+      <li><b>연결함수</b>: \(g(\mu_i) = \eta_i\), \(\mu_i = E(Y_i)\).</li>
+    </ol>
+    <table class="tw">
+      <tr><th>반응</th><th>분포</th><th>정준 연결</th><th>모형</th></tr>
+      <tr><td>연속</td><td>정규</td><td>항등 \(\mu\)</td><td>선형회귀</td></tr>
+      <tr><td>이진·비율</td><td>이항</td><td>로짓 \(\log\frac{\mu}{1-\mu}\)</td><td>로지스틱 회귀</td></tr>
+      <tr><td>셈</td><td>포아송</td><td>로그 \(\log\mu\)</td><td>포아송 회귀, 로그선형</td></tr>
+      <tr><td>양의 연속(치우침)</td><td>감마</td><td>역수(실무는 로그)</td><td>감마 회귀</td></tr>
+    </table>
+    <p>정준 연결은 지수족의 자연모수 \(\eta(\theta)\)(응통7 2.3절)를 선형 예측식으로 두는 것입니다. 이때 충분통계량이 \(X^\top\mathbf y\)가 되고 피셔 점수법과 뉴턴-랩슨이 같아집니다. 이항 자료에 프로빗 연결 \(\Phi^{-1}(\mu)\)을 쓰는 것처럼 정준이 아닌 연결도 가능합니다.</p>
+
+    <h3><span class="no">5.1.2</span>공통 도구</h3>
+    <p>모든 GLM은 최대가능도(IRLS)로 적합하고, 이탈도로 비교하며, 왈드·우도비 검정과 잔차 진단을 같은 방식으로 합니다. R에서는 <code>glm(y ~ x, family = binomial / poisson / Gamma(link = "log"))</code>로 family만 바꿉니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>보험 청구 금액(양수, 오른쪽 꼬리)을 나이로 설명하려 합니다. 선형회귀와 감마 GLM(로그 연결)의 차이는?</p>
+    </div>
+    <p><i>풀이.</i> 선형회귀는 등분산과 음수 예측 문제가 있습니다. 감마 GLM은 분산이 평균의 제곱에 비례한다고 가정해 큰 금액의 큰 퍼짐을 자연스럽게 다루고, 로그 연결이라 예측이 항상 양수이며 계수를 배수로 해석합니다(나이 1세당 청구액 \(e^{\beta}\)배).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>분포 + 선형 예측식 + 연결함수.</li>
+        <li>정규-항등, 이항-로짓, 포아송-로그가 정준 연결.</li>
+        <li>적합·비교·진단을 같은 틀로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정규 분포와 항등 연결의 GLM 이탈도는 무엇과 같나요?
+          <details><summary>답</summary><p>잔차 제곱합 SSE를 \(\sigma^2\)로 나눈 것(척도 이탈도). 척도를 빼면 SSE 자체.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

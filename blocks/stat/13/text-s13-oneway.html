@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통13-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s13-oneway" data-kind="본문" data-std="응통13-02-01">
+  <header class="card-head"><span class="no"></span><h2>일원배치 분산분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>일원배치 모형 \(y_{ij} = \mu + \tau_i + \varepsilon_{ij}\)를 쓴다.</li>
+        <li>분산분석표와 F 검정, 기대 평균제곱을 안다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통5 5.1절의 일원 분산분석, F 분포 (응통6 6.1절).</li>
+      </ul>
+    </div>
+
+    <h3>완전 랜덤화 설계</h3>
+    <p>처리 \(a\)개를 실험 단위에 완전히 무작위로 배정하는 가장 단순한 설계입니다. 응통5에서 계산법을 배웠고, 여기서는 모형과 그 근거를 정리합니다.</p>
+
+    <h3><span class="no">2.1.1</span>모형</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.1.1</span>
+      <p>\(y_{ij} = \mu + \tau_i + \varepsilon_{ij}\), \(i = 1, \ldots, a\), \(j = 1, \ldots, n\). \(\sum\tau_i = 0\), \(\varepsilon_{ij}\)는 독립 \(N(0, \sigma^2)\).</p>
+    </div>
+    <p>\(\tau_i\)는 처리 \(i\)의 효과(전체 평균에서 벗어난 정도)입니다. 추정량은 \(\hat\mu = \bar y_{\cdot\cdot}\), \(\hat\tau_i = \bar y_{i\cdot} - \bar y_{\cdot\cdot}\)입니다.</p>
+
+    <h3><span class="no">2.1.2</span>기대 평균제곱</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 2.1.2</span>
+      <p>\(E(\mathrm{MSE}) = \sigma^2\), \(E(\mathrm{MS}_{\text{처리}}) = \sigma^2 + \dfrac{n\sum\tau_i^2}{a-1}\).</p>
+    </div>
+    <p>\(H_0: \tau_1 = \cdots = \tau_a = 0\)이면 두 평균제곱이 같은 \(\sigma^2\)를 추정하므로 \(F = \mathrm{MS}_{\text{처리}}/\mathrm{MSE}\)가 1 근처이고, 효과가 있으면 분자만 커집니다. 처리 제곱합과 오차 제곱합이 독립인 카이제곱이라는 사실(코크란 정리)에서 \(F \sim F(a-1, a(n-1))\)이 나옵니다.</p>
+
+    <table class="tw">
+      <tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>F</th></tr>
+      <tr><td>처리</td><td>\(n\sum(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2\)</td><td>\(a - 1\)</td><td>\(\mathrm{SS}/(a-1)\)</td><td>\(\mathrm{MS}_{\text{처리}}/\mathrm{MSE}\)</td></tr>
+      <tr><td>오차</td><td>\(\sum\sum(y_{ij} - \bar y_{i\cdot})^2\)</td><td>\(a(n-1)\)</td><td>MSE</td><td></td></tr>
+      <tr><td>합계</td><td>\(\sum\sum(y_{ij} - \bar y_{\cdot\cdot})^2\)</td><td>\(an - 1\)</td><td></td><td></td></tr>
+    </table>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.3</span>
+      <p>R 내장 <code>PlantGrowth</code>(대조군과 처리 두 가지, 각 10개 식물의 무게)를 분석하세요.</p>
+    </div>
+    <p><i>풀이.</i> <code>summary(aov(weight ~ group, data = PlantGrowth))</code>: 처리 제곱합 3.766(자유도 2), 오차 10.492(27), \(F = 4.85\), p값 0.016. 세 집단 평균(5.03, 4.66, 5.53)이 모두 같지는 않습니다. 어느 쌍이 다른지는 2.2절에서 봅니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(y_{ij} = \mu + \tau_i + \varepsilon_{ij}\).</li>
+        <li>\(E(\mathrm{MS}_{\text{처리}}) = \sigma^2 + n\sum\tau_i^2/(a-1)\), \(E(\mathrm{MSE}) = \sigma^2\).</li>
+        <li>\(H_0\) 아래 \(F \sim F(a-1, a(n-1))\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 MSE와 \(\sigma\)의 추정값은?
+          <details><summary>답</summary><p>\(10.492/27 = 0.389\), \(\hat\sigma = 0.62\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

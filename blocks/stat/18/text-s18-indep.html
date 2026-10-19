@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-indep" data-kind="본문" data-std="응통18-01-03">
+  <header class="card-head"><span class="no"></span><h2>독립성 검정: 카이제곱과 우도비</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>피어슨 카이제곱과 우도비 \(G^2\) 통계량으로 독립성을 검정한다.</li>
+        <li>표준화 잔차로 어느 칸이 독립에서 벗어났는지 찾는다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>응통5 5.2절, 응통7 6.1절 우도비 검정.</li>
+      </ul>
+    </div>
+
+    <h3>표 전체에서 칸 하나까지</h3>
+    <p>독립성 검정은 "관련이 있는가"만 말합니다. 관련이 있다면 어느 칸이 기대보다 많고 적은지를 봐야 해석할 수 있습니다.</p>
+
+    <h3><span class="no">1.3.1</span>두 통계량</h3>
+    <p>기대 도수 \(\hat\mu_{ij} = n_{i+}n_{+j}/n\)에 대해</p>
+    \[X^2 = \sum\frac{(n_{ij} - \hat\mu_{ij})^2}{\hat\mu_{ij}}, \qquad G^2 = 2\sum n_{ij}\log\frac{n_{ij}}{\hat\mu_{ij}}.\]
+    <p>둘 다 독립 가설 아래 근사적으로 \(\chi^2_{(I-1)(J-1)}\)입니다. \(G^2\)는 다항분포 우도비 통계량이고, 모형을 겹쳐 비교할 때 차이가 그대로 카이제곱이 되는 장점이 있습니다(04단원). 표본이 크면 둘은 비슷하고, 기대 도수가 작으면 \(X^2\) 근사가 조금 낫습니다.</p>
+
+    <h3><span class="no">1.3.2</span>표준화 잔차</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.3.1</span>
+      <p>\(r_{ij} = \dfrac{n_{ij} - \hat\mu_{ij}}{\sqrt{\hat\mu_{ij}(1 - p_{i+})(1 - p_{+j})}}\) (\(p_{i+} = n_{i+}/n\)). 독립이면 근사적으로 표준정규.</p>
+    </div>
+    <p>절댓값이 2~3을 넘는 칸이 독립에서 크게 벗어난 칸입니다. R: <code>chisq.test(tab)$stdres</code>.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.2</span>
+      <p>R의 <code>HairEyeColor</code>를 성별로 합친 머리색 × 눈색 표를 검정하고 잔차를 해석하세요.</p>
+    </div>
+    <pre><code>tab &lt;- margin.table(HairEyeColor, c(1, 2))
+ct &lt;- chisq.test(tab); ct$statistic; ct$parameter     # X² 약 138, 자유도 9
+round(ct$stdres, 1)</code></pre>
+    <p>p값은 매우 작습니다. 표준화 잔차에서 금발-파란 눈이 10.0으로 크게 양수(기대보다 훨씬 많음), 금발-갈색 눈이 −8.3으로 크게 음수입니다. 검은 머리-갈색 눈(6.1)도 기대보다 많습니다. 관련의 대부분이 금발에서 나옵니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(X^2\)와 \(G^2\), 자유도 \((I-1)(J-1)\).</li>
+        <li>표준화 잔차로 어느 칸이 다른지 찾음.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>응통5 5.2절 예제(60, 40 / 40, 60)의 \(G^2\)는?
+          <details><summary>답</summary><p>\(2[60\log1.2 + 40\log0.8 + 40\log0.8 + 60\log1.2] = 4[60(0.1823) + 40(-0.2231)] = 8.05\). \(X^2 = 8\)과 비슷합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

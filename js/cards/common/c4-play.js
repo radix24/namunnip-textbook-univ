@@ -30,4 +30,24 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 2. 전지의 내부 저항과 전달 전력 (05-01) */
+  (() => {
+    const S = QSim.card("lab-c4-power"); if (!S) return;
+    const cv = S.$("canvas");
+    function draw() {
+      const c = C(), E = S.val("E"), r = S.val("r"), R = S.val("R");
+      const P = (x) => (E * E * x) / ((x + r) * (x + r));
+      const Pmax = (E * E) / (4 * r);
+      const v = QSim.view(cv, 0.55), F = QSim.frame(v, { x0: 0, x1: 10, y0: 0, y1: Pmax * 1.25, xl: "부하 저항 R (Ω)", yl: "P (W)" }); F.axes();
+      F.fn(P, c.main, 2.5, null, 400);
+      F.path([[r, 0], [r, Pmax]], c.ink3, 1, [4, 4]);
+      F.dot(R, P(R), c.acc, 6);
+      const I = E / (R + r), V = I * R;
+      S.out(`기전력 ε = ${E.toFixed(1)} V, 내부 저항 r = ${r.toFixed(2)} Ω, 부하 R = ${R.toFixed(2)} Ω\n` +
+        `전류 I = ε/(R + r) = ${I.toFixed(3)} A,  단자 전압 V = IR = ε − Ir = ${V.toFixed(3)} V\n` +
+        `부하 전력 P = I²R = ${P(R).toFixed(3)} W,  전지 안에서 열로 잃는 전력 I²r = ${(I * I * r).toFixed(3)} W,  효율 ${((100 * R) / (R + r)).toFixed(1)}%\n` +
+        `P가 가장 큰 것은 R = r = ${r.toFixed(2)} Ω일 때이고 그때 P = ε²/(4r) = ${Pmax.toFixed(3)} W (효율 50%)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

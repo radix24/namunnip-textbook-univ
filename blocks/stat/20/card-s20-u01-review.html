@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통20-01-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-s20-u01-review" data-kind="연습" data-std="응통20-01-01 응통20-01-02">
+  <header class="card-head"><span class="no"></span><h2>시계열과 정상성 단원 마무리 연습</h2><span class="kind">문제 6 · 개념·계산·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>월별 아이스크림 판매량 그림에서 (가) 해마다 조금씩 늘어나는 움직임 (나) 여름마다 솟는 움직임 (다) 그 밖의 들쭉날쭉한 움직임을 각각 무엇이라 부르는지 쓰고, 이 셋을 나누는 R 함수를 쓰세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>시계열 분해의 세 성분입니다.</p></details>
+        <details><summary>힌트 2</summary><p>R의 <code>decompose()</code>와 <code>stl()</code>이 있습니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(가) 추세, (나) 계절성(주기 12개월), (다) 불규칙 변동(잔차)입니다. <code>decompose(ts(y, frequency = 12))</code>는 이동 평균으로 추세를 구하고 계절 평균을 빼는 고전 분해를, <code>stl()</code>은 국소 회귀로 계절 모양이 천천히 바뀌는 것까지 허용하는 분해를 합니다. 계절 진폭이 수준에 비례해 커지면 곱셈 분해(또는 로그 후 덧셈 분해)를 씁니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>약정상 시계열의 세 조건을 쓰고, 추세가 있는 시계열과 계절성이 있는 시계열이 왜 정상이 아닌지 설명하세요. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>평균, 분산, 자기공분산이 시간에 따라 어떠해야 하나요?</p></details>
+        <details><summary>힌트 2</summary><p>계절성이 있으면 평균이 달마다 다릅니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>(1) \(E(X_t) = \mu\)가 시간과 무관, (2) \(\mathrm{Var}(X_t) &lt; \infty\)가 일정, (3) \(\mathrm{Cov}(X_t, X_{t+h}) = \gamma(h)\)가 시차 \(h\)에만 의존. 추세가 있으면 평균이 시간에 따라 변해 (1)이 깨지고, 계절성이 있으면 평균이 달마다 달라 역시 (1)이 깨집니다. 그래서 정상 모형(ARMA)을 쓰기 전에 추세와 계절성을 제거(차분, 회귀)합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">계산</span>시계열 1, 3, 2, 4, 5의 표본 자기상관 \(r_1\), \(r_2\)를 구하세요. \(r_h = c_h/c_0\), \(c_h = \frac1n\sum_{t=1}^{n-h}(x_t - \bar x)(x_{t+h} - \bar x)\)입니다. <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>평균은 3, 편차는 \(-2, 0, -1, 1, 2\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>\(c_0 = 10/5 = 2\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(c_1 = [(-2)(0) + (0)(-1) + (-1)(1) + (1)(2)]/5 = 0.2\), \(c_2 = [(-2)(-1) + (0)(1) + (-1)(2)]/5 = 0\)이므로 \(r_1 = 0.1\), \(r_2 = 0\)입니다(R의 <code>acf</code>와 같음). 표본 자기상관은 \(n\)으로 나누는 것이 관례이며, 이렇게 해야 자기공분산 행렬이 양의 준정치가 됩니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>백색잡음을 정의하고, 길이 100인 백색잡음의 표본 자기상관이 대략 어느 범위 안에 있어야 하는지 쓰세요. 20개 시차 가운데 하나가 이 범위를 넘으면 어떻게 판단하나요? <span class="mono small dim">[01-02]</span></p>
+        <details><summary>힌트 1</summary><p>백색잡음의 표본 자기상관은 근사적으로 \(N(0, 1/n)\)입니다.</p></details>
+        <details><summary>힌트 2</summary><p>95% 범위는 \(\pm1.96/\sqrt n\)입니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>백색잡음은 평균 0, 분산 \(\sigma^2\)이 일정하고 서로 다른 시점끼리 상관이 없는 계열입니다. 표본 자기상관은 대략 \(\pm1.96/\sqrt{100} = \pm0.196\) 안에 있어야 합니다(<code>acf</code> 그림의 파란 점선). 20개 시차를 보면 우연히도 하나쯤(5%) 넘을 수 있으므로, 하나가 살짝 넘었다고 바로 구조가 있다고 보지 말고 융-박스 검정처럼 여러 시차를 함께 검정합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>두 시계열(한 나라의 아이스크림 판매량과 익사 사고 수, 둘 다 추세가 있음)의 상관계수가 0.9였습니다. 이 상관을 어떻게 해석해야 하나요? <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>둘 다 시간에 따라 늘어나면 상관이 커질 수 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>이를 가성 상관(허위 회귀)이라 합니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>두 계열이 모두 추세(또는 계절성)를 가지면 서로 무관해도 상관이 크게 나옵니다(가성 상관). 공통 요인(기온, 인구 증가)이 둘 다 움직일 수도 있습니다. 관계를 보려면 각 계열에서 추세와 계절성을 제거하거나 차분한 뒤 상관(교차상관)을 보고, 공통 요인을 모형에 넣어야 합니다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span>로그 변환과 차분이 시계열의 어떤 비정상성을 각각 해결하는지 설명하세요. <span class="mono small dim">[01-01]</span></p>
+        <details><summary>힌트 1</summary><p>수준이 커질수록 변동 폭도 커지는 계열이 있습니다.</p></details>
+        <details><summary>힌트 2</summary><p>차분은 추세를 없앱니다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>로그 변환은 수준에 비례해 커지는 분산(곱셈적 변동)을 일정하게 만들고, 곱셈 계절성을 덧셈 계절성으로 바꿉니다. 차분 \(\nabla X_t = X_t - X_{t-1}\)은 평균의 추세(확률적 추세 포함)를 없애고, 계절 차분 \(X_t - X_{t-12}\)는 계절성을 없앱니다. 흔히 로그를 먼저 취한 뒤 차분하며, 로그 차분은 근사적인 성장률입니다(응통3-05-01).</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

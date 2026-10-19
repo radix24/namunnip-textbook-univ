@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gram-Schmidt 과정과 QR 분해를 하기 · 선형대수 — QURI</title>
-  <meta name="description" content="선형대수 3.3 Gram-Schmidt 과정과 QR 분해를 하기 — 성취기준: Gram-Schmidt 과정과 QR 분해를 할 수 있다.">
+  <title>그람-슈미트 과정과 QR 분해 · 선형대수 — QURI</title>
+  <meta name="description" content="선형대수 3.3 그람-슈미트 과정과 QR 분해 — 성취기준: Gram-Schmidt 과정과 QR 분해를 할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;응통2&quot;, &quot;title&quot;: &quot;3.3 Gram-Schmidt 과정과 QR 분해를 하기&quot;, &quot;sub&quot;: &quot;선형대수&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;응통2&quot;, &quot;title&quot;: &quot;3.3 그람-슈미트 과정과 QR 분해&quot;, &quot;sub&quot;: &quot;선형대수&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,34 +27,96 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="응통2-03-03" data-u="서강대">
+  <section class="topic-hero u-hero has-text" data-sec="응통2-03-03" data-u="서강대">
     <div class="meta"><a href="../../../?dept=stat#tree">응용통계학과</a><span class="mono">/</span><a href="./">선형대수</a><span class="mono">/</span><a href="03.html">3. 벡터공간과 사영</a></div>
-    <h1><span class="sec-no mono">3.3</span>Gram-Schmidt 과정과 QR 분해를 하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="응통2-03-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[응통2-03-03] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서강대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="응통2-03-03" aria-label="할 수 있음"><span class="t">Gram-Schmidt 과정과 QR 분해를 할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">3.3</span>그람-슈미트 과정과 QR 분해</h1>
+    <p class="sec-std"><span class="mono">[응통2-03-03]</span> Gram-Schmidt 과정과 QR 분해를 할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서강대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s3-3-1"><span class="mono">3.3.1</span><span>그람-슈미트</span></a></li><li><a href="#s3-3-2"><span class="mono">3.3.2</span><span>QR 분해</span></a></li><li><a href="#s3-3-3"><span class="mono">3.3.3</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-s2-qr"><span class="mono">본문</span><span>그람-슈미트 과정과 QR 분해</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="03.html">대단원 3 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-s2-qr" data-kind="본문" data-std="응통2-03-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>그람-슈미트 과정으로 정규직교 기저를 만든다.</li>
+        <li>\(A = QR\) 분해를 구하고 최소제곱에 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>사영 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
 
+    <h3>서로 수직인 축으로 바꾸기</h3>
+    <p>설명변수들이 서로 상관되어 있으면 계수 해석과 계산이 어렵습니다. 같은 열공간을 서로 수직인 단위벡터로 다시 표현하면 사영과 최소제곱이 아주 간단해집니다.</p>
+
+    <h3 id="s3-3-1"><span class="no">3.3.1</span>그람-슈미트</h3>
+    <p>독립인 \(\mathbf a_1, \ldots, \mathbf a_n\)에서</p>
+    <ol>
+      <li>\(\mathbf q_1 = \mathbf a_1/\|\mathbf a_1\|\).</li>
+      <li>\(\mathbf v_k = \mathbf a_k - \sum_{j&lt;k}(\mathbf q_j^\top\mathbf a_k)\mathbf q_j\) (앞의 방향 성분을 빼냄), \(\mathbf q_k = \mathbf v_k/\|\mathbf v_k\|\).</li>
+    </ol>
+    <p>\(\mathbf q\)들은 정규직교(\(\mathbf q_i^\top\mathbf q_j = 0\), 길이 1)이고 처음 \(k\)개가 \(\mathbf a_1, \ldots, \mathbf a_k\)와 같은 공간을 만듭니다. 통계로 읽으면 \(\mathbf v_k\)는 "\(\mathbf a_k\)를 앞의 변수들로 회귀한 잔차"입니다.</p>
+
+    <h3 id="s3-3-2"><span class="no">3.3.2</span>QR 분해</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 3.3.1</span>
+      <p>열이 독립인 \(m\times n\) 행렬 \(A = QR\). \(Q\)는 정규직교 열(\(Q^\top Q = I\)), \(R\)은 대각이 양수인 \(n\times n\) 위삼각행렬(\(r_{jk} = \mathbf q_j^\top\mathbf a_k\)).</p>
+    </div>
+    <p>최소제곱: \(X^\top X\mathbf b = X^\top\mathbf y\)에 \(X = QR\)을 넣으면 \(R^\top R\mathbf b = R^\top Q^\top\mathbf y\), 곧 \(R\mathbf b = Q^\top\mathbf y\)를 뒤에서부터 대입해 풉니다. 사영 행렬은 \(P = QQ^\top\). 이 방법이 수치적으로 안정적이라 R의 <code>lm</code>이 씁니다(응통15 2.1절).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.2</span>
+      <p>\(\mathbf a_1 = (1, 1, 1)\), \(\mathbf a_2 = (2, 4, 6)\)에 그람-슈미트를 적용하세요.</p>
+    </div>
+    <p><i>풀이.</i> \(\mathbf q_1 = (1,1,1)/\sqrt3\). \(\mathbf q_1^\top\mathbf a_2 = 12/\sqrt3\), \(\mathbf v_2 = \mathbf a_2 - 4(1,1,1) = (-2, 0, 2)\), \(\mathbf q_2 = (-1, 0, 1)/\sqrt2\). \(\mathbf v_2\)는 \(x\)의 편차(평균을 뺀 값)입니다. \(R = \begin{pmatrix}\sqrt3 &amp; 4\sqrt3\\ 0 &amp; 2\sqrt2\end{pmatrix}\).</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>그람-슈미트: 앞 방향 성분을 빼고 정규화.</li>
+        <li>\(A = QR\), 최소제곱은 \(R\mathbf b = Q^\top\mathbf y\).</li>
+        <li>각 단계는 앞 변수들에 대한 회귀 잔차.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s3-3-3"><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(\mathbf y = (1, 2, 6)\)의 최소제곱 계수를 \(R\mathbf b = Q^\top\mathbf y\)로 구하세요.
+          <details><summary>답</summary><p>\(Q^\top\mathbf y = (9/\sqrt3, 5/\sqrt2)\). \(2\sqrt2 b_2 = 5/\sqrt2\) → \(b_2 = 1.25\). \(\sqrt3b_1 + 4\sqrt3(1.25) = 9/\sqrt3\) → \(b_1 = 3 - 5 = -2\). \(\hat y = -2 + 1.25x\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-s2-qr" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="응통2-03-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[응통2-03-03] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서강대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="응통2-03-03" aria-label="할 수 있음"><span class="t">Gram-Schmidt 과정과 QR 분해를 할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/stat/2/01.html"><span class="mono">대단원 1</span><span><b>행렬과 연립방정식</b></span></a></li><li><a href="../../../c/common/1/09-03.html"><span class="mono">9.3</span><span>미분적분학과벡터해석(1) <b>내적</b></span></a></li></ul></div></div>
     </aside>
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="03-02.html">← 3.2 직교 사영 행렬을 구하고 최소제곱 해와 연결하기</a></span>
-        <span><a href="04-01.html">4.1 고유값과 고유벡터를 구하기 →</a></span>
+        <span><a href="03-02.html">← 3.2 직교 사영과 최소제곱</a></span>
+        <span><a href="03-R.html">3.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

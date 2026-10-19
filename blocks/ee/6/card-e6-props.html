@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전6-01-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e6-props" data-kind="예제" data-std="전전6-01-02">
+  <header class="card-head"><span class="no"></span><h2>이동 평균 필터와 자동 이득 조절기의 성질</h2><span class="kind">예제 · 정의대로 판정하고 반례 찾기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>소리가 크면 줄이고 작으면 키우는 자동 이득 조절기 \(y(t) = \frac{x(t)}{1 + |x(t)|}\)는 선형일까요? 시불변일까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>시불변이지만 비선형입니다. 이득이 입력 크기에 따라 달라지므로 "두 배 입력 → 두 배 출력"이 성립하지 않습니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">다음 두 시스템의 무기억, 인과, 안정, 시불변, 선형 여부를 판정하여라. (가) 중앙 이동 평균 \(y[n] = \frac13(x[n-1] + x[n] + x[n+1])\) (나) \(y(t) = \frac{x(t)}{1 + |x(t)|}\)</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>무기억·인과: 출력 식에 나타나는 입력의 시각을 본다.</li>
+        <li>안정: \(|x| \le B\)에서 \(|y|\)의 상한을 찾는다.</li>
+        <li>시불변: "입력 먼저 늦추기"와 "출력 나중 늦추기"를 비교한다.</li>
+        <li>선형: 성립하면 일반적으로, 깨지면 반례 하나로.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) \(x[n+1]\)(미래 값)을 쓰므로 비인과이고 기억이 있다. <span class="q-why">정의</span></li>
+        <li>(가) \(|y| \le \frac13(B + B + B) = B\)이므로 안정. <span class="q-why">삼각부등식</span></li>
+        <li>(가) \(x_2[n] = x[n - n_0]\)을 넣으면 \(\frac13(x[n-1-n_0] + x[n-n_0] + x[n+1-n_0]) = y[n - n_0]\). 시불변. 각 항이 입력의 일차식이라 선형. <span class="q-why">정의대로 대입</span></li>
+        <li>(나) 같은 시각만 쓰므로 무기억, 인과. \(|y| = \frac{|x|}{1 + |x|} &lt; 1\)이라 어떤 입력에도 유계, 안정. 식에 t가 따로 없어 시불변. <span class="q-why">정의</span></li>
+        <li>(나) 반례: \(x = 1\)이면 \(y = 0.5\), \(x = 2\)이면 \(y = 2/3 \approx 0.667\). 입력이 두 배인데 출력은 1.33배이므로 동차성이 깨져 비선형. <span class="q-why">반례 하나</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>(가)는 LTI이지만 비인과라서 실시간으로는 쓸 수 없고, 다 녹음한 뒤 처리할 때(사진, 저장된 데이터) 씁니다. 한 표본 늦춘 \(\frac13(x[n-2] + x[n-1] + x[n])\)로 바꾸면 인과가 됩니다. (나)는 출력이 늘 \(\pm1\) 안에 있는 포화(saturation) 특성으로, 증폭기가 전원 전압에 부딪힐 때의 모습과 비슷합니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>(가)에 \(x = \{\dots, 0, 3, 0, \dots\}\)(n = 0에 3)을 넣으면 \(y[-1] = y[0] = y[1] = 1\). 입력보다 한 칸 앞선 \(y[-1]\)이 이미 1이라 비인과가 눈에 보입니다. (나)에 \(x = 0\)이면 \(y = 0\)이지만, 이것만으로는 선형이 아닙니다(필요조건일 뿐).</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>\(y(t) = x(t) + x(t - 1)\cdot x(t - 2)\)는 시불변인가? 선형인가?</p>
+      <details><summary>답</summary><p>시불변(모든 항이 같이 늦춰짐), 비선형(입력끼리의 곱이 있어 두 배 입력이면 둘째 항이 네 배).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>선형의 빠른 점검</h3>
+    <p class="q">\(y(t) = 3x(t) + 2\)에 대한 설명으로 옳은 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>그래프가 직선이므로 선형 시스템이다<span class="why"><b>직선과 선형 시스템은 다릅니다.</b> 입력 0에서 출력이 2라 동차성이 깨집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>입력 0에 출력 2이므로 선형이 아니다<span class="why"><b>맞습니다.</b> 선형이면 입력 0의 출력은 0이어야 합니다. 출력에서 2를 빼면 선형이 되는 '증분 선형' 시스템입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>상수 2 때문에 시변이다<span class="why"><b>상수는 시간에 따라 변하지 않습니다.</b> 이 시스템은 시불변입니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>
