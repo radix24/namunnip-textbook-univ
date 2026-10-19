@@ -54,6 +54,37 @@
   S.on(draw); QSim.redrawOn(draw); draw();
 })();
 
+/* 기계10 5단원: CO₂ 해리 평형과 Gibbs 함수 최소 (05-01) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-equil"); if (!S) return;
+  const [cv1, cv2] = S.$$("canvas");
+  // CO₂ ⇌ CO + ½O₂ : 표의 ln Kp (2000 K −6.635, 3000 K −1.111)를 A − B/T로 맞춘 근사
+  const B = (-1.111 + 6.635) / (1 / 2000 - 1 / 3000), A = -1.111 + B / 3000;
+  const lnK = (T) => A - B / T;
+  const lhs = (a, P) => ((a * Math.sqrt(a / 2)) / (1 - a)) * Math.sqrt(P / (1 + a / 2));
+  const solve = (T, P) => { const K = Math.exp(lnK(T)); let lo = 1e-12, hi = 1 - 1e-12; for (let i = 0; i < 100; i++) { const m = (lo + hi) / 2; if (lhs(m, P) > K) hi = m; else lo = m; } return lo; };
+  // 반응 진행 a에 대한 무차원 Gibbs 함수 G/(RuT) (기준: CO₂ 1 kmol), ΔG°/(RuT) = −ln Kp
+  const Gn = (a, T, P) => { const N = 1 + a / 2, y = [(1 - a) / N, a / N, a / 2 / N], n = [1 - a, a, a / 2]; let g = a * -lnK(T); n.forEach((ni, i) => { if (ni > 0) g += ni * Math.log(y[i] * P); }); return g; };
+  function draw() {
+    const c = QSim.col(), T = S.val("T"), P = S.val("P"), a = solve(T, P);
+    const v1 = QSim.view(cv1, 0.45), f1 = QSim.frame(v1, { x0: 1500, x1: 3500, y0: 0, y1: 1, xl: "T (K)", yl: "해리 비율 a", pad: 34 });
+    f1.axes();
+    f1.fn((t) => solve(t, 1), c.ink3, 1.5, [4, 3]);
+    f1.fn((t) => solve(t, P), c.main, 2.5);
+    f1.dot(T, a, c.warn, 6);
+    const gs = []; for (let i = 1; i < 200; i++) gs.push(Gn(i / 200, T, P));
+    const gmin = Math.min(...gs), gmax = Math.max(Gn(0.005, T, P), Gn(0.995, T, P));
+    const v2 = QSim.view(cv2, 0.4), f2 = QSim.frame(v2, { x0: 0, x1: 1, y0: gmin - 0.05 * (gmax - gmin), y1: gmax, xl: "반응 진행 a", yl: "G/(RuT)", pad: 34 });
+    f2.axes({ noGrid: true });
+    f2.fn((x) => Gn(x, T, P), c.acc, 2, null, 300);
+    f2.dot(a, Gn(a, T, P), c.warn, 6);
+    const N = 1 + a / 2;
+    S.out(`CO₂ ⇌ CO + ½O₂, ${T} K, ${P} atm: ln Kp = ${lnK(T).toFixed(2)} (표 값을 직선으로 맞춘 근사)\n평형 해리 비율 a = ${a.toFixed(3)} (빨간 점), 1 atm이면 ${solve(T, 1).toFixed(3)} (회색 점선)\n몰분율 CO₂ ${((1 - a) / N).toFixed(3)}, CO ${(a / N).toFixed(3)}, O₂ ${(a / 2 / N).toFixed(3)}\n아래 그림: 반응 진행에 따른 Gibbs 함수, 바닥이 평형`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계10 3단원: 습공기 선도 위의 냉각 제습과 재열 (03-02) */
 (() => {
   "use strict";
