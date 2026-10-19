@@ -51,6 +51,33 @@
   QSim.redrawOn(draw); reset(); draw();
 })();
 
+/* 기계12 6단원: 평행류와 대향류 열교환기의 온도 분포 (06-02) */
+(() => {
+  "use strict";
+  const S = QSim.card("lab-me-hx"); if (!S) return;
+  const [cv] = S.$$("canvas");
+  function draw() {
+    const c = QSim.col(), Ch = S.val("mh") * 4.18, Cc = S.val("mc") * 4.18, UA = S.val("UA"), counter = S.val("type") === "counter";
+    const Thi = 90, Tci = 20, Cmin = Math.min(Ch, Cc), Cr = Cmin / Math.max(Ch, Cc), N = UA / Cmin;
+    const eps = counter ? (Math.abs(1 - Cr) < 1e-9 ? N / (1 + N) : (1 - Math.exp(-N * (1 - Cr))) / (1 - Cr * Math.exp(-N * (1 - Cr)))) : (1 - Math.exp(-N * (1 + Cr))) / (1 + Cr);
+    const Q = eps * Cmin * (Thi - Tci), Tho = Thi - Q / Ch, Tco = Tci + Q / Cc;
+    // 길이 방향 분포: 국소 dQ = (UA dx)(Th − Tc)를 작은 칸으로 적분 (대향류는 찬 유체 출구 온도를 이미 알므로 x = 0에서 함께 출발)
+    const n = 200, ph = [], pc = []; let Th = Thi, Tc = counter ? Tco : Tci;
+    for (let i = 0; i <= n; i++) {
+      ph.push([i / n, Th]); pc.push([i / n, Tc]);
+      const dq = (UA / n) * (Th - Tc);
+      Th -= dq / Ch; Tc += counter ? -dq / Cc : dq / Cc;
+    }
+    const v = QSim.view(cv, 0.55), f = QSim.frame(v, { x0: 0, x1: 1, y0: 10, y1: 100, xl: "길이 위치 (0 = 뜨거운 유체 입구)", yl: "T (°C)", pad: 34 });
+    f.axes();
+    f.path(ph, c.warn, 2.5); f.path(pc, c.main, 2.5);
+    f.arrow(0.05, 95, 0.12, 0, c.warn, "뜨거운"); if (counter) f.arrow(0.95, 15, -0.12, 0, c.main, "찬"); else f.arrow(0.05, 15, 0.12, 0, c.main, "찬");
+    const d1 = counter ? Thi - Tco : Thi - Tci, d2 = counter ? Tho - Tci : Tho - Tco, lm = Math.abs(d1 - d2) < 1e-6 ? d1 : (d1 - d2) / Math.log(d1 / d2);
+    S.out(`${counter ? "대향류" : "평행류"}: C_h = ${Ch.toFixed(2)}, C_c = ${Cc.toFixed(2)} kW/K, UA = ${UA} kW/K → NTU = ${N.toFixed(2)}, C_r = ${Cr.toFixed(2)}\n유용도 ε = ${eps.toFixed(3)}, 열전달률 ${Q.toFixed(1)} kW\n뜨거운 유체 90 → ${Tho.toFixed(1)} °C (빨강), 찬 유체 20 → ${Tco.toFixed(1)} °C (파랑), LMTD ${lm.toFixed(1)} °C (UA × LMTD = ${(UA * lm).toFixed(1)} kW)`);
+  }
+  S.on(draw); QSim.redrawOn(draw); draw();
+})();
+
 /* 기계12 열전달: 2차원 정상 전도의 Gauss-Seidel 반복 (03-02) */
 (() => {
   "use strict";
