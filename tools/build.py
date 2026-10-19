@@ -176,6 +176,65 @@ RE_HEAD = re.compile(r"^\s*<!--block\s*(\{.*?\})\s*-->", re.S)
 RE_STYLE = re.compile(r"<style>(.*?)</style>", re.S)
 
 
+DEPT_PREFIX = {"common": "공통", "math": "수학", "phy": "물리", "chem": "화학", "astro": "천우", "stat": "응통", "ee": "전전", "me": "기계"}
+PREFIX_DEPT = {v: k for k, v in DEPT_PREFIX.items()}
+RE_ATTR_URL = re.compile(r'((?:href|src)=")([^"]*)(")')
+
+
+def relink(html, sec):
+    """블록 안의 옛 상대 링크(페이지가 c/<학과>/<번호>/에 있던 때의 꼴)를 새 모듈 주소(c/<모듈 id>/) 기준으로 바꾼다.
+    블록 파일은 고치지 않고 빌드할 때만 바꾼다. 이미 새 꼴(../math13/, ../../assets/…)인 링크는 그대로 둔다.
+      ../13/06-01.html            같은 학과의 다른 과목 → ../me13/06-01.html
+      ../../phy/3/01-04.html       다른 학과의 과목     → ../phy3/01-04.html
+      ../../../c/phy/3/…           사이트 맨 위 기준     → ../phy3/…
+      ../../../assets/…, record.html 등 맨 위 파일      → ../../assets/…"""
+    m = re.match(r"([가-힣]+)\d+", sec or "")
+    here = PREFIX_DEPT.get(m.group(1)) if m else None
+
+    def mid(dept, n):
+        try:
+            return place.module_id(DEPT_PREFIX[dept] + str(int(n)))
+        except (KeyError, ValueError):
+            return None
+
+    def fix(u):
+        if not u or re.match(r"^(?:[a-z]+:|#|/)", u):
+            return u
+        r = re.match(r"^\.\./\.\./\.\./(.*)$", u, re.S)
+        if r:
+            rest = r.group(1)
+            c = re.match(r"^c/([a-z]+)/(\d+)/(.*)$", rest, re.S)
+            if c and c.group(1) in DEPT_PREFIX and mid(c.group(1), c.group(2)):
+                return f"../{mid(c.group(1), c.group(2))}/{c.group(3)}"
+            return "../../" + rest
+        r = re.match(r"^\.\./\.\./([a-z]+)/(\d+)/(.*)$", u, re.S)
+        if r and r.group(1) in DEPT_PREFIX and mid(r.group(1), r.group(2)):
+            return f"../{mid(r.group(1), r.group(2))}/{r.group(3)}"
+        r = re.match(r"^\.\./(\d+)/(.*)$", u, re.S)
+        if r and here and mid(here, r.group(1)):
+            return f"../{mid(here, r.group(1))}/{r.group(2)}"
+        return u
+
+    return RE_ATTR_URL.sub(lambda a: a.group(1) + fix(a.group(2)) + a.group(3), html)
+
+
+def check_links(cdir):
+    """c/ 아래 페이지의 내부 링크(href·src) 가운데 가리키는 파일이 없는 것을 센다(빌드 끝 경고)"""
+    bad, n_links = {}, 0
+    for p in cdir.rglob("*.html"):
+        for a in RE_ATTR_URL.finditer(p.read_text(encoding="utf-8")):
+            u = a.group(2)
+            if not u or re.match(r"^(?:[a-z]+:|#|/)", u) or "${" in u:
+                continue
+            path = re.split(r"[?#]", u, 1)[0]
+            n_links += 1
+            t = (p.parent / path) if path else p
+            if not (t.is_file() or (t.is_dir() and (t / "index.html").is_file())):
+                bad.setdefault(f"{p.relative_to(ROOT).as_posix()} → {u}", 0)
+                bad[f"{p.relative_to(ROOT).as_posix()} → {u}"] += 1
+    return n_links, bad
+
+
 def load_blocks():
     """blocks/**/*.html → {"공통1-02-01": [블록, …], "공통1-02-R": [...]} (절 코드별, order 순)
     머리 JSON의 "sec"는 성취기준 코드(= 절) 또는 "<과목>-<대단원>-R"(단원 마무리)."""
@@ -189,7 +248,7 @@ def load_blocks():
         meta = json.loads(m.group(1))
         body = text[m.end():]
         styles = "\n".join(s.strip() for s in RE_STYLE.findall(body))
-        body = RE_STYLE.sub("", body).strip()
+        body = relink(RE_STYLE.sub("", body).strip(), meta.get("sec"))
         am = re.search(r'<article[^>]*\bid="([^"]+)"', body)
         if not am or am.group(1) != p.stem:
             print(f"경고: 블록 id가 파일 이름과 다름 {p.relative_to(ROOT)}", file=sys.stderr)
@@ -336,7 +395,8 @@ def render_card(b, no, std_href):
     if b["kind"]:
         h = h.replace("<h2>", f'<h2><span class="q-badge">{esc(b["kind"])}</span>', 1)
     if b["std"]:
-        links = " ".join(f'<a href="{std_href(s)}">[{esc(s)}]</a>' for s in b["std"])
+        label = getattr(std_href, "label", None)     # 성취기준 코드는 화면에 쓰지 않고 그 절의 번호(2.1)로 보인다
+        links = " ".join(f'<a href="{std_href(s)}">{esc(label(s)) if label else "성취기준"}</a>' for s in b["std"] if not label or label(s))
         h = re.sub(r"(</header>)", rf'\1\n  <p class="q-stds mono"><span>다루는 성취기준</span> {links}</p>', h, count=1)
     seen = (f'\n  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="{esc(b["id"])}" aria-pressed="false">'
             f'<span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>\n</article>')
@@ -761,6 +821,8 @@ def write_pages(depts, blocks, sidx, links):
             def std_href(code, here=None):
                 f = std_page.get(code)
                 return f"{f}.html#std" if f else "#"
+            std_no = {sc["code"]: sc["no"] for u in c["units"] for sc in u["secs"]}
+            std_href.label = lambda code: std_no.get(code, "")
 
             flat = [(u, sc) for u in c["units"] for sc in u["secs"]]
             for idx, (u, sc) in enumerate(flat):
@@ -792,15 +854,15 @@ def write_pages(depts, blocks, sidx, links):
                     s = sc["std"]
                     std_box = f"""
     <div class="q-checklist q-one" id="std" data-unit="{esc(sc["code"])}">
-      <h2><span>이 절의 성취기준</span><span class="mono">[{esc(s["c"])}] {ty_span(s["ty"])} {uni_span(s["u"])}</span></h2>
+      <h2><span>이 절의 성취기준</span><span class="mono">{ty_span(s["ty"])}</span></h2>
       <ol><li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음"><span class="t">{esc(s["t"])}</span></li></ol>
       <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
     </div>"""
                     lead = ""
                 else:
-                    lis = "".join(f'<li{uni_attr(s["u"])}><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {esc(s["c"])}">'
-                                  f'<span class="code">{esc(s["c"].split("-", 1)[1])}</span><span class="t"><a href="{std_href(s["c"])}">{esc(s["t"])}</a> {ty_span(s["ty"])} {uni_span(s["u"])}</span><span class="cards"></span></li>'
-                                  for s in u["s"])
+                    lis = "".join(f'<li><input type="checkbox" data-std="{esc(s["c"])}" aria-label="할 수 있음: {un}.{k}">'
+                                  f'<span class="code">{un}.{k}</span><span class="t"><a href="{std_href(s["c"])}">{esc(s["t"])}</a> {ty_span(s["ty"])}</span><span class="cards"></span></li>'
+                                  for k, s in enumerate(u["s"], 1))
                     std_box = f"""
     <div class="q-checklist" data-unit="{esc(sc["code"])}">
       <h2><span>대단원 성취기준 점검표</span><span class="mono q-count"></span></h2>
@@ -811,7 +873,7 @@ def write_pages(depts, blocks, sidx, links):
                 lbox = links_box(sc["code"], f'{c["code"]}-{u["n"]}', links, sidx, rel, c["code"]) if sc["std"] else ""
                 if text_b:
                     s = sc["std"]
-                    hero_extra = (f'<p class="sec-std"><span class="mono">[{esc(s["c"])}]</span> {esc(s["t"])} {ty_span(s["ty"])} {uni_span(s["u"])}</p>' if s else "")
+                    hero_extra = (f'<p class="sec-std">{esc(s["t"])} {ty_span(s["ty"])}</p>' if s else "")
                     std_after = std_box.replace('class="q-checklist', 'class="q-checklist after-text', 1).replace(
                         "카드를 공부한 뒤 직접 해 보고", "본문과 연습문제를 마친 뒤 직접 해 보고")
                     hero_inner = f'{hero_extra}'
@@ -896,7 +958,7 @@ def write_pages(depts, blocks, sidx, links):
                     "/* tools/build.py가 exams/의 시험 전용 문항과 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
                     "window.QBANK = " + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + ";\n",
                     encoding="utf-8", newline="\n")
-            if not noexam:
+            if not noexam and (items or not c.get("gone")):    # 최근 미개설 과목은 문항이 있을 때만 시험 연습을 둔다
                 (base / "exam.html").write_text(
                     page(rel, f'시험 연습 · {c["name"]}', f'{c["name"]} 중간고사·기말고사 연습 문제은행', exam_page(c, d, items, rel, dept_link),
                          '\n  <link rel="stylesheet" href="' + rel + 'css/exam.css">', ([c["path"] + "bank.js"] if items else []) + ["js/exam.js"],
@@ -915,7 +977,7 @@ def write_pages(depts, blocks, sidx, links):
                 # 본문 블록은 제목이 절 제목과 같아 목록에서 뺀다(진도에는 data-cards로 들어간다)
                 cards = "".join(f'<li data-card="{esc(x["id"])}"><a href="{sc["file"]}.html#{esc(x["id"])}"><span class="cx-k mono">{esc(x["kind"])}</span>{esc(x["title"])}</a></li>'
                                 for x in sc["cards"] if x["kind"] != "본문")
-                code = f'<span class="cx-code mono">[{esc(sc["std"]["c"])}] {ty_span(sc["std"]["ty"])} {uni_span(sc["std"]["u"])}</span>' if sc["std"] else ""
+                code = f'<span class="cx-code mono">{ty_span(sc["std"]["ty"])}</span>' if sc["std"] and sc["std"]["ty"] else ""
                 return f"""
           <li class="cx-sec"{uni_attr(sc["std"]["u"] if sc["std"] else unit_unis(u))} data-std="{esc(sc["std"]["c"]) if sc["std"] else ""}" data-cards="{esc(" ".join(x["id"] for x in sc["cards"]))}" data-href="{sc["file"]}.html" data-title="{sc["no"]} {esc(sc["title"])}">
             <span class="cx-n mono">{sc["no"]}</span>
@@ -956,13 +1018,13 @@ def write_pages(depts, blocks, sidx, links):
                 f'<p><span class="dim">이어지는 과목</span>{" · ".join(f"<a href=\"{rel}{mpath(x["code"])}\">{esc(x["name"])}</a>" for dd, x in nexts)}</p>' if nexts else "")
             body = f"""  <div class="cx" data-course="{esc(c["code"])}"{uni_attr(c["unis"])}>
     <aside class="cx-side">
-      <div class="meta">{dept_link}<span class="mono" data-place="no">/ {esc(" / ".join(c["sub"])) if c["sub"] else esc(place.module_id(c["code"]))}</span></div>
+      <div class="meta">{dept_link}<span class="mono" data-place="no">{"/ " + esc(" / ".join(c["sub"])) if c["sub"] else ""}</span></div>
       <h1 data-place="course">{esc(c["name"])}</h1>
       {f'<p class="cx-lead">{esc(c["yoram"])}</p>' if c["yoram"] else ""}
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
-      {"" if c["noexam"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{"기말" if EXAM_POLICY.get(c["code"]) == "fin" else "중간·기말"} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
+      {"" if c["noexam"] or (c.get("gone") and not c["bank"]) else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{"기말" if EXAM_POLICY.get(c["code"]) == "fin" else "중간·기말"} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
       <div class="cx-path small" data-place="path"{"" if path_html else " hidden"}>{path_html}</div>
     </aside>
@@ -1108,8 +1170,10 @@ def main():
     for did, name, short, fname, college in DEPTS:
         cs, gone = apply_offered([finish(c) for c in parse(SRC / fname, did)])
         if gone:
-            print(f"{did}: {RECENT_FROM}년 이후 미개설로 뺀 과목 {len(gone)}: {', '.join(c['name'] for c in gone)}")
-        out.append({"id": did, "name": name, "short": short, "college": college, "courses": cs})
+            print(f"{did}: {RECENT_FROM}년 이후 미개설 {len(gone)}(학과 배치에서 빼고 교재 전체 보기에만): {', '.join(c['name'] for c in gone)}")
+        for c in gone:          # 페이지는 만들고, 학과 배치(place.py)·합본(univ.json)에서는 뺀다
+            c["gone"] = True
+        out.append({"id": did, "name": name, "short": short, "college": college, "courses": cs + gone})
         total["courses"] += len(cs)
         total["units"] += sum(len(c["units"]) for c in cs)
         total["stds"] += sum(len(u["s"]) for c in cs for u in c["units"])
@@ -1126,12 +1190,21 @@ def main():
     # 로드맵·학습 기록·check_exams.py가 쓰는 전 학과 합본(옛 js/toc.js의 window.UNIV와 같은 내용):
     # QURI 코드, pre 글, sub, open, path, unis, s.u, 절별 카드 id(s.k, u.r)에 과목마다 영문 모듈 id를 더한 것.
     # 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
+    # 최근 미개설 과목(gone)은 로드맵·학습 기록의 과목 목록에 넣지 않는다(교재 전체 보기의 data/pool.json에만).
     for d in out:
         for c in d["courses"]:
             c["id"] = place.module_id(c["code"])
-    (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    univ = [{**d, "courses": [c for c in d["courses"] if not c.get("gone")]} for d in out]
+    (ROOT / "data" / "univ.json").write_text(json.dumps(univ, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
+    n_links, bad = check_links(ROOT / "c")
+    if bad:
+        print(f"경고: 끊긴 내부 링크 {sum(bad.values())}개(서로 다른 {len(bad)}곳) / 내부 링크 {n_links}개. 예:", file=sys.stderr)
+        for k in sorted(bad)[:15]:
+            print(f"  {k}", file=sys.stderr)
+    else:
+        print(f"내부 링크 {n_links}개: 끊긴 것 없음")
 
 
 if __name__ == "__main__":

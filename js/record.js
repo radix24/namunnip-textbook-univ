@@ -47,7 +47,7 @@ fetch("data/univ.json").then((r) => r.json()).then((U) => {
     $("r-courses").innerHTML = list.length ? list.map((r) => `
       <section class="r-course">
         <div class="r-head">
-          <span class="mono small dim">${esc(r.d.short)} · ${esc(r.c.code)}</span>
+          <span class="mono small dim">${esc(r.d.short)}${(r.c.sub || []).length ? ` · ${esc(r.c.sub.join(" / "))}` : ""}</span>
           <h3><a href="${esc(r.c.path)}">${esc(r.c.name)}</a></h3>
           <p class="mono small"><span class="lp-bar" aria-hidden="true"><i style="--p:${r.sT ? (r.s / r.sT).toFixed(3) : 0}"></i></span>성취기준 ${r.s}/${r.sT}${r.kT ? ` · 카드 ${r.k}/${r.kT}` : ""}</p>
         </div>

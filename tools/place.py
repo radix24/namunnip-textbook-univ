@@ -95,7 +95,7 @@ def build(depts, blocks, policy, out_root=ROOT):
              "no": by_code[code].get("sub") or [],   # 화면에는 내부 코드 대신 학정번호를 보인다
              "units": len(o["units"]), "secs": sum(len(u["secs"]) for u in o["units"]),
              "cards": sum(len(s["cards"]) for u in o["units"] for s in u["secs"]) + sum(len(u["review"]) for u in o["units"]),
-             "q": by_code[code].get("bank", 0)}
+             "q": by_code[code].get("bank", 0), **({"gone": True} if by_code[code].get("gone") else {})}
             for code, o in mods.items()]
     fields = [{"id": d["id"], "name": d["name"]} for d in depts]
     (ddir / "pool.json").write_text(json.dumps({"fields": fields, "modules": pool}, ensure_ascii=False, separators=(",", ":")),
@@ -111,7 +111,8 @@ def build(depts, blocks, policy, out_root=ROOT):
                 continue
             name, no = ov if ov else (c["name"], (c["sub"] or [""])[0])
             rows.append((c, name, no))
-        rows += [(c, c["name"], (c["sub"] or [""])[0]) for c in d["courses"]]
+        # 최근 3년 연세대 미개설 과목(gone)은 학과 배치에 넣지 않는다(교재 전체 보기에만 '최근 미개설'로)
+        rows += [(c, c["name"], (c["sub"] or [""])[0]) for c in d["courses"] if not c.get("gone")]
         known = {c["code"]: module_id(c["code"]) for c, _, _ in rows}
         place = {"school": SCHOOL_NAME, "dept": d["name"], "courses": []}
         data = {"school": SCHOOL_NAME, "id": did, "name": d["name"], "short": d["short"], "college": d["college"], "courses": []}
