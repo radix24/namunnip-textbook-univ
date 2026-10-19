@@ -57,4 +57,44 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+
+  /* 2. 프로스트 도표와 불균등화 (화학9-06-01) */
+  (() => {
+    const S = QSim.card("lab-ch9-frost"); if (!S) return;
+    const cv = S.$("canvas");
+    // 산성 용액(pH 0), 25 °C. [산화수 N, 화학종, N·E°(X(N)/X(0)) in V] — 표준 전위표에서 계산
+    const EL = {
+      mn: { n: "망가니즈", d: [[0, "Mn", 0], [2, "Mn²⁺", -2.36], [3, "Mn³⁺", -0.85], [4, "MnO₂", 0.10], [6, "MnO₄²⁻", 4.62], [7, "MnO₄⁻", 5.18]] },
+      fe: { n: "철", d: [[0, "Fe", 0], [2, "Fe²⁺", -0.88], [3, "Fe³⁺", -0.11], [6, "FeO₄²⁻", 6.49]] },
+      cu: { n: "구리", d: [[0, "Cu", 0], [1, "Cu⁺", 0.521], [2, "Cu²⁺", 0.674]] },
+      o: { n: "산소", d: [[-2, "H₂O", -2.458], [-1, "H₂O₂", -0.695], [0, "O₂", 0]] }
+    };
+    function draw() {
+      const c = C(), e = EL[S.val("el")], d = e.d;
+      const xs = d.map((p) => p[0]), ys = d.map((p) => p[2]);
+      const x0 = Math.min(...xs) - 0.5, x1 = Math.max(...xs) + 0.5, y0 = Math.min(0, ...ys) - 0.8, y1 = Math.max(0, ...ys) + 0.8;
+      const v = QSim.view(cv, 0.56), f = QSim.frame(v, { x0, x1, y0, y1, xl: "산화수 N", yl: "N·E° (V)", pad: 36 });
+      f.axes();
+      f.path(d.map((p) => [p[0], p[2]]), c.main, 2.5);
+      const lines = [];
+      let iMin = 0; ys.forEach((y, i) => { if (y < ys[iMin]) iMin = i; });
+      d.forEach((p, i) => {
+        let col = c.main;
+        if (i > 0 && i < d.length - 1) {
+          const [na, , ya] = d[i - 1], [nb, , yb] = d[i + 1], [nm, sp, ym] = p;
+          const yl = ya + (yb - ya) * (nm - na) / (nb - na);
+          const dG = (nb - nm) * ya + (nm - na) * yb - (nb - na) * ym;   // ΔG°/F of 불균등화
+          if (ym > yl) {
+            col = "#d9534f";
+            f.path([[na, ya], [nb, yb]], "#d9534f", 1.2, [5, 4]);
+            lines.push(`${sp}: 이웃(${d[i - 1][1]}, ${d[i + 1][1]})을 잇는 선보다 ${(ym - yl).toFixed(2)} V 위 → 불균등화, K = 10^${(-dG / 0.05916).toFixed(1)}`);
+          } else lines.push(`${sp}: 이웃을 잇는 선보다 ${(yl - ym).toFixed(2)} V 아래 → 불균등화하지 않음`);
+        }
+        f.dot(p[0], p[2], col, 6);
+        f.text(p[1], p[0] + 0.12, p[2] + (y1 - y0) * 0.04, c.ink2);
+      });
+      S.out(`${e.n}의 프로스트 도표 (산성, 25 °C)\n가장 낮은 점(가장 안정한 상태): ${d[iMin][1]}\n${lines.join("\n")}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
