@@ -1,0 +1,101 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-linreg" data-kind="본문" data-std="수학4-06-01">
+  <header class="card-head"><span class="no"></span><h2>선형회귀: 정규방정식과 경사하강법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형회귀를 "손실함수를 최소로 하는 매개변수 찾기"로 정식화한다.</li>
+        <li>같은 문제를 정규방정식(행렬식)과 경사하강법 두 방법으로 풀고 결과를 비교한다.</li>
+        <li>특성의 표준화가 경사하강법의 속도를 바꾸는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱과 계획행렬 (<a href="03-02.html">3.2절</a>), 경사하강법과 학습률 (<a href="05-01.html">5.1절</a>), 볼록성 (<a href="05-02.html">5.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>모형과 손실</h3>
+    <p>머신러닝의 지도학습은 입력 \(\mathbf x\)와 정답 \(y\)의 쌍 \(n\)개로 규칙을 배우는 일입니다. 선형회귀는 가장 단순한 모형을 씁니다.</p>
+    <p class="q-term"><b>특성</b>(feature): 모형에 넣는 입력 변수. 여기서는 공부 시간 \(x\).</p>
+    <p class="q-term"><b>모형</b>(model): 매개변수를 가진 함수. 선형회귀는 \(\hat y = wx + b\) (특성이 여럿이면 \(\hat y = \mathbf w\cdot\mathbf x + b\)).</p>
+    <p class="q-term"><b>손실함수</b>(loss function): 예측이 정답과 얼마나 다른지를 재는 함수. 선형회귀에서는 평균제곱오차 \(\mathrm{MSE}(w, b) = \frac1n\sum_{i=1}^n(wx_i + b - y_i)^2\).</p>
+    <p>학습은 손실을 최소로 하는 \((w, b)\)를 찾는 최적화 문제입니다. 공부 시간 1~10시간과 점수 자료로 해 봅시다.</p>
+    <table class="tb-table">
+      <tr><th>\(x\) (시간)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+      <tr><th>\(y\) (점수)</th><td>52</td><td>55</td><td>61</td><td>60</td><td>68</td><td>71</td><td>75</td><td>74</td><td>82</td><td>86</td></tr>
+    </table>
+
+    <h3><span class="no">6.1.2</span>방법 1: 정규방정식</h3>
+    <p>계획행렬 \(A\)의 \(i\)행을 \((1, x_i)\)로 두면 손실은 \(\frac1n\|A\boldsymbol\beta - \mathbf y\|^2\) (\(\boldsymbol\beta = (b, w)\))이고, 기울기를 0으로 놓으면 정규방정식 \(A^TA\boldsymbol\beta = A^T\mathbf y\)를 얻습니다(<a href="../8/01-01.html">수학8 1.1절</a>). 직선 하나라면 풀이가 간단합니다. \(\bar x = 5.5\), \(\bar y = 68.4\), \(S_{xx} = \sum(x_i - \bar x)^2 = 82.5\), \(S_{xy} = \sum(x_i - \bar x)(y_i - \bar y) = 304\)이므로</p>
+    <p>\[w = \frac{S_{xy}}{S_{xx}} = \frac{304}{82.5} \approx 3.6848,\qquad b = \bar y - w\bar x \approx 48.1333.\]</p>
+    <pre class="mono small">import numpy as np
+x = np.arange(1, 11, dtype=float)
+y = np.array([52, 55, 61, 60, 68, 71, 75, 74, 82, 86], dtype=float)
+A = np.column_stack([np.ones_like(x), x])      # 열: 1, x
+beta = np.linalg.solve(A.T @ A, A.T @ y)        # 또는 np.linalg.lstsq(A, y, rcond=None)[0]
+print(beta)                                     # 약 [48.1333  3.6848]
+print(np.mean((A @ beta - y)**2))               # MSE 약 3.0206
+print(beta[0] + beta[1] * 12)                   # 12시간 공부하면 약 92.35점</pre>
+    <p>한 시간 더 공부할 때마다 점수가 약 3.68점 오른다는 뜻입니다. 정규방정식은 한 번의 선형 연립방정식으로 끝나지만, 특성이 \(d\)개이면 \(d\times d\) 행렬을 풀어야 하므로 \(d\)가 수만 개 이상이거나 자료가 메모리에 다 들어가지 않으면 부담이 됩니다.</p>
+
+    <h3><span class="no">6.1.3</span>방법 2: 경사하강법</h3>
+    <p>MSE를 편미분하면 \(e_i = wx_i + b - y_i\)로 두어</p>
+    <p>\[\frac{\partial\,\mathrm{MSE}}{\partial w} = \frac2n\sum e_ix_i,\qquad \frac{\partial\,\mathrm{MSE}}{\partial b} = \frac2n\sum e_i.\]</p>
+    <pre class="mono small">def fit_gd(x, y, eta, steps):
+    w, b = 0.0, 0.0
+    for _ in range(steps):
+        e = w * x + b - y
+        w -= eta * 2 * np.mean(e * x)
+        b -= eta * 2 * np.mean(e)
+    return w, b
+
+print(fit_gd(x, y, 0.01, 3000))     # 약 (3.6849, 48.1332): 정규방정식과 같다</pre>
+    <p>MSE는 \((w, b)\)의 볼록 이차함수이므로 경사하강법은 학습률만 알맞으면 유일한 최솟점에 갑니다(<a href="05-02.html">5.2절</a>). 그러나 속도는 실망스럽습니다. \(\eta = 0.01\)이면 MSE가 최소값과 \(10^{-6}\) 이내가 되기까지 2372번이 걸리고, 0.0255를 넘는 학습률에서는 발산합니다. 원인은 5.1절의 길쭉한 골짜기입니다. MSE의 헤세 행렬 \(\begin{pmatrix}77 &amp; 11\\11 &amp; 2\end{pmatrix}\) (\(w\), \(b\) 순서)의 고유값이 약 78.6과 0.42로 비가 187이나 됩니다.</p>
+
+    <h3><span class="no">6.1.4</span>표준화</h3>
+    <p class="q-term"><b>표준화</b>(standardization): 특성을 \(x' = (x - \bar x)/s\) (\(s\)는 표준편차)로 바꾸어 평균 0, 분산 1로 만드는 것.</p>
+    <p>표준화하면 헤세 행렬이 \(2I\)가 되어 골짜기가 둥글어지고, \(\eta = 0.5\)이면 한 번에 최솟점에 도착합니다. 표준화한 기울기 \(w' \approx 10.58\)은 \(w = w'/s\) (\(s = \sqrt{8.25} \approx 2.872\))로 원래 단위의 3.6848로 돌아가며, 모형 자체는 같습니다. 특성이 여럿이고 단위가 다르면(키는 cm, 몸무게는 kg) 표준화의 효과가 더 큽니다. 같은 절의 탐구 카드에서 두 경우를 비교합니다.</p>
+    <p>실제 머신러닝에서는 자료가 매우 많아 매 단계 전체 자료의 기울기를 계산하지 않고, 무작위로 뽑은 일부(미니배치)로 기울기를 어림합니다. 이것이 확률적 경사하강법(SGD)이며, 신경망 학습의 기본 도구입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 기울기에서 2나 \(1/n\)을 빼먹어 학습률의 의미가 달라진다. (2) 표준화의 평균과 표준편차를 검증·시험 자료로 다시 계산한다(훈련 자료의 값을 그대로 써야 한다). (3) 정규방정식을 <code>inv(A.T @ A)</code>로 푼다(<code>solve</code>나 <code>lstsq</code>를 쓴다, <a href="03-01.html">3.1절</a>).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>선형회귀: \(\hat y = \mathbf w\cdot\mathbf x + b\), 손실 MSE.</li>
+        <li>정규방정식 \(A^TA\boldsymbol\beta = A^T\mathbf y\): 한 번에 정확한 해. 이 자료에서 \(w \approx 3.6848\), \(b \approx 48.1333\).</li>
+        <li>경사하강법: 기울기 \(\frac2n\sum e_i(x_i, 1)\). 같은 해에 가지만 조건수가 크면 느리다.</li>
+        <li>표준화로 헤세 행렬을 둥글게 만들면 빨라진다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>위 모형으로 0시간 공부한 학생의 점수를 예측하고, 그 예측을 믿을 수 있는지 말하여라.
+          <details><summary>답</summary><p>약 48.1점(절편). 자료의 범위(1~10시간) 밖이라 외삽이므로 조심해야 한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>특성이 \(d\)개인 선형회귀의 MSE 기울기를 행렬로 쓰면 \(\frac2nA^T(A\boldsymbol\beta - \mathbf y)\)임을 보이고, 이를 NumPy 한 줄로 써라.
+          <details><summary>답</summary><p>\(\mathrm{MSE} = \frac1n(A\boldsymbol\beta - \mathbf y)^T(A\boldsymbol\beta - \mathbf y)\)을 미분하면 \(\frac2nA^T(A\boldsymbol\beta - \mathbf y)\). <code>g = 2 / n * A.T @ (A @ beta - y)</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>표준화한 특성(평균 0, 분산 1)에서 MSE의 헤세 행렬이 \(2I\)임을 보여라.
+          <details><summary>답</summary><p>헤세 행렬은 \(\frac2nA^TA = 2\begin{pmatrix}\overline{x^2} &amp; \bar x\\\bar x &amp; 1\end{pmatrix}\)이고, \(\bar x = 0\), \(\overline{x^2} = 1\)이면 \(2I\)이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

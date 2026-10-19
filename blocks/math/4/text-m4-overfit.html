@@ -1,0 +1,106 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-overfit" data-kind="본문" data-std="수학4-06-03">
+  <header class="card-head"><span class="no"></span><h2>과적합과 교차검증</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>훈련 오차와 검증 오차를 구별하고, 둘의 차이로 과적합과 과소적합을 진단한다.</li>
+        <li>자료를 훈련·검증·시험으로 나누는 이유와 \(k\)-겹 교차검증의 절차를 안다.</li>
+        <li>편향과 분산의 균형, 정칙화가 과적합을 줄이는 원리를 이해한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>다항식 최소제곱 (<a href="03-02.html">3.2절</a>), 선형회귀 (<a href="06-01.html">6.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>외운 것과 배운 것</h3>
+    <p>3.2절에서 차수를 올리면 잔차가 줄기만 한다는 것을 보았습니다. 맞출 때 쓴 자료의 오차로는 모형을 고를 수 없다는 뜻입니다. 우리가 원하는 것은 처음 보는 자료에서 잘 예측하는 모형입니다.</p>
+    <p class="q-term"><b>훈련 오차</b>(training error): 모형을 맞출 때 쓴 자료에서의 손실.</p>
+    <p class="q-term"><b>검증 오차</b>(validation error): 맞출 때 쓰지 않고 떼어 둔 자료에서의 손실. 새 자료에서의 오차(일반화 오차)를 어림한다.</p>
+    <p class="q-term"><b>과적합</b>(overfitting): 훈련 오차는 작은데 검증 오차가 큰 상태. 모형이 자료의 잡음까지 외웠다.</p>
+    <p class="q-term"><b>과소적합</b>(underfitting): 훈련 오차와 검증 오차가 모두 큰 상태. 모형이 너무 단순하다.</p>
+    <p>같은 절의 탐구 카드에서 \(\sin 2\pi x\)에 표준편차 0.3의 잡음을 더한 훈련 자료 12개로 다항식을 맞추면 다음과 같습니다.</p>
+    <table class="tb-table">
+      <tr><th>차수</th><td>0</td><td>1</td><td>3</td><td>7</td><td>9</td><td>11</td></tr>
+      <tr><th>훈련 MSE</th><td>0.565</td><td>0.375</td><td>0.021</td><td>0.0075</td><td>0.0032</td><td>≈ 0</td></tr>
+      <tr><th>검증 MSE</th><td>0.624</td><td>0.349</td><td>0.125</td><td>0.157</td><td>0.203</td><td>1.64</td></tr>
+    </table>
+    <p>훈련 오차는 끝까지 줄지만, 검증 오차는 3차에서 가장 작고 그 뒤로 커집니다. 0차와 1차는 과소적합, 7차 이상은 과적합입니다. 잡음의 분산이 \(0.3^2 = 0.09\)이므로 어떤 모형도 검증 MSE를 0.09보다 크게 낮출 수 없고, 훈련 MSE가 0.09보다 훨씬 작다면 잡음을 외운 것입니다.</p>
+
+    <h3><span class="no">6.3.2</span>편향과 분산</h3>
+    <p>새 자료에서의 기대 제곱오차는 다음 세 부분으로 나뉩니다(자료를 다시 뽑는 것에 대한 기댓값).</p>
+    <p style="text-align:center">기대 오차 = (편향)\(^2\) + 분산 + \(\sigma^2\)</p>
+    <p>편향은 모형이 평균적으로 참 함수에서 벗어난 정도(단순한 모형일수록 큼), 분산은 훈련 자료가 바뀔 때 맞춘 모형이 흔들리는 정도(복잡한 모형일수록 큼), \(\sigma^2\)은 줄일 수 없는 잡음입니다. 차수를 올리면 편향은 줄고 분산은 늘어, 그 합이 U자 모양이 됩니다. 훈련 자료를 늘리면 분산이 줄어 더 복잡한 모형을 쓸 수 있습니다(탐구 카드에서 30개면 가장 좋은 차수가 5로 오른다).</p>
+
+    <h3><span class="no">6.3.3</span>자료 나누기와 교차검증</h3>
+    <p>자료를 세 부분으로 나눕니다.</p>
+    <ol>
+      <li><b>훈련 자료</b>: 매개변수(계수)를 맞춘다.</li>
+      <li><b>검증 자료</b>: 모형의 종류나 차수, 정칙화 세기 같은 <b>초매개변수</b>를 고른다.</li>
+      <li><b>시험 자료</b>: 모든 선택이 끝난 뒤 최종 성능을 한 번만 잰다.</li>
+    </ol>
+    <p>검증 자료로 여러 후보 중 가장 좋은 것을 고르면 검증 오차는 약간 낙관적이 됩니다. 그래서 선택에 쓰지 않은 시험 자료가 따로 필요합니다.</p>
+    <p class="q-term"><b>\(k\)-겹 교차검증</b>(\(k\)-fold cross-validation): 자료를 \(k\)개의 묶음으로 나누고, 각 묶음을 한 번씩 검증용으로, 나머지를 훈련용으로 써서 \(k\)번 맞춘 뒤 검증 오차의 평균을 내는 방법.</p>
+    <pre class="mono small">import numpy as np
+
+def kfold_mse(x, y, deg, k=5, seed=0):
+    idx = np.random.default_rng(seed).permutation(len(x))
+    folds = np.array_split(idx, k)
+    errs = []
+    for f in folds:
+        train = np.setdiff1d(idx, f)
+        c = np.polyfit(x[train], y[train], deg)
+        errs.append(np.mean((np.polyval(c, x[f]) - y[f])**2))
+    return np.mean(errs)
+
+# 차수 0~9 중 교차검증 오차가 가장 작은 것을 고른다
+# best = min(range(10), key=lambda d: kfold_mse(x, y, d))</pre>
+    <p>자료가 적을 때 한 번의 나누기는 운에 크게 좌우되는데, 교차검증은 모든 점을 한 번씩 검증에 써서 그 흔들림을 줄입니다. 대가로 \(k\)번 학습해야 합니다. 시계열 자료처럼 순서가 중요하면 무작위로 섞지 말고 과거로 훈련, 미래로 검증해야 합니다.</p>
+
+    <h3><span class="no">6.3.4</span>정칙화</h3>
+    <p class="q-term"><b>정칙화</b>(regularization): 손실에 매개변수의 크기에 대한 벌점을 더해 모형이 지나치게 출렁이지 않게 하는 것. 예: 릿지 회귀 \(\frac1n\|A\boldsymbol\beta - \mathbf y\|^2 + \lambda\|\boldsymbol\beta\|^2\).</p>
+    <p>릿지 회귀의 해는 \((A^TA + n\lambda I)\boldsymbol\beta = A^T\mathbf y\)로, \(\lambda > 0\)이면 행렬이 항상 가역이고 조건수도 좋아집니다. \(\lambda\)가 크면 과소적합, 작으면 과적합 쪽이므로 \(\lambda\)도 교차검증으로 고르는 초매개변수입니다. 차수를 낮추는 대신 높은 차수를 두고 \(\lambda\)로 복잡도를 조절할 수도 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 시험 자료로 초매개변수를 고르고 그 점수를 최종 성능으로 보고한다. (2) 표준화나 특성 선택을 전체 자료로 한 뒤 나눈다(검증 자료의 정보가 새어 들어간다). (3) 훈련 오차가 0이면 좋은 모형이라 여긴다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>훈련 오차는 복잡도를 올리면 줄기만 한다. 모형은 검증 오차로 고른다.</li>
+        <li>둘 다 크면 과소적합, 훈련만 작으면 과적합. 기대 오차 = 편향² + 분산 + 잡음.</li>
+        <li>훈련·검증·시험으로 나누고, 자료가 적으면 \(k\)-겹 교차검증.</li>
+        <li>정칙화(릿지 등)는 벌점으로 복잡도를 조절하며 그 세기도 교차검증으로 고른다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>훈련 MSE 0.30, 검증 MSE 0.32인 모형과 훈련 MSE 0.01, 검증 MSE 0.45인 모형을 각각 진단하여라(잡음 분산은 약 0.09).
+          <details><summary>답</summary><p>앞의 것은 두 오차가 비슷하지만 잡음 바닥 0.09보다 훨씬 커서 과소적합. 뒤의 것은 훈련 오차가 잡음보다 훨씬 작고 검증 오차가 커서 과적합.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>자료 100개로 5-겹 교차검증을 하여 차수 0~9 중 하나를 고르려 한다. 모두 몇 번 맞추며, 각 맞춤에 쓰는 훈련 자료는 몇 개인가?
+          <details><summary>답</summary><p>차수 10개 × 묶음 5개 = 50번. 각 맞춤은 80개로 훈련하고 20개로 검증한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>릿지 회귀의 해가 \((A^TA + n\lambda I)\boldsymbol\beta = A^T\mathbf y\)를 만족함을 보이고, \(\lambda > 0\)이면 이 행렬이 가역인 이유를 말하여라.
+          <details><summary>답</summary><p>기울기 \(\frac2nA^T(A\boldsymbol\beta - \mathbf y) + 2\lambda\boldsymbol\beta = \mathbf 0\)에 \(n/2\)를 곱하면 된다. \(\mathbf v^T(A^TA + n\lambda I)\mathbf v = \|A\mathbf v\|^2 + n\lambda\|\mathbf v\|^2 > 0\) (\(\mathbf v \ne \mathbf 0\))이므로 양정치, 따라서 가역이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

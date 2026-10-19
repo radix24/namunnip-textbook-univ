@@ -1,0 +1,98 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-logreg" data-kind="본문" data-std="수학4-06-02">
+  <header class="card-head"><span class="no"></span><h2>로지스틱 회귀로 이진 분류하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>시그모이드 함수로 선형 점수를 확률로 바꾸는 로지스틱 회귀 모형을 안다.</li>
+        <li>교차 엔트로피 손실이 최대가능도에서 나오는 것과 그 기울기가 \((\sigma - y)\mathbf x\)인 것을 유도한다.</li>
+        <li>경사하강법으로 모형을 학습하고 결정 경계, 정확도로 결과를 해석한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>선형회귀와 경사하강법 (<a href="06-01.html">6.1절</a>), 볼록성 (<a href="05-02.html">5.2절</a>), 베르누이 분포와 가능도.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.2.1</span>점수를 확률로</h3>
+    <p>정답이 0 또는 1(불합격/합격, 정상/스팸)이면 직선 \(wx + b\)의 값을 그대로 쓸 수 없습니다. 값이 0과 1 사이에 있지 않기 때문입니다.</p>
+    <p class="q-term"><b>시그모이드 함수</b>(sigmoid): \(\sigma(t) = \frac1{1 + e^{-t}}\). 실수 전체를 \((0, 1)\)로 보내는 증가함수이며 \(\sigma(0) = \frac12\), \(\sigma(-t) = 1 - \sigma(t)\), \(\sigma'(t) = \sigma(t)(1 - \sigma(t))\).</p>
+    <p class="q-term"><b>로지스틱 회귀</b>(logistic regression): \(P(y = 1\mid\mathbf x) = \sigma(\mathbf w\cdot\mathbf x + b)\)로 두는 분류 모형.</p>
+    <p class="q-term"><b>결정 경계</b>(decision boundary): 예측 확률이 \(\frac12\)인 점들, 곧 \(\mathbf w\cdot\mathbf x + b = 0\)인 초평면. 그 한쪽을 1, 다른 쪽을 0으로 분류한다.</p>
+    <p>\(\mathbf w\cdot\mathbf x + b = \ln\frac{p}{1 - p}\)이므로, 선형 점수는 "확률의 로그 오즈"입니다. \(w\)가 1 늘면 오즈가 \(e^w\)배가 됩니다.</p>
+
+    <h3><span class="no">6.2.2</span>교차 엔트로피 손실</h3>
+    <p>\(p_i = \sigma(\mathbf w\cdot\mathbf x_i + b)\)이면 관측 \(y_i\)의 확률은 \(p_i^{y_i}(1 - p_i)^{1 - y_i}\)입니다. 자료 전체의 가능도를 최대로 하는 것은 그 로그에 음수를 붙인 평균을 최소로 하는 것과 같습니다.</p>
+    <p class="q-term"><b>교차 엔트로피 손실</b>(cross-entropy loss): \(J(\mathbf w, b) = -\frac1n\sum_{i=1}^n\left[y_i\ln p_i + (1 - y_i)\ln(1 - p_i)\right]\).</p>
+    <div class="tb-env"><span class="lb">정리 6.2.1</span>로지스틱 손실의 기울기</div>
+    <p>\(\nabla_{\mathbf w}J = \frac1n\sum(p_i - y_i)\mathbf x_i\), \(\frac{\partial J}{\partial b} = \frac1n\sum(p_i - y_i)\). 또 \(J\)는 \((\mathbf w, b)\)의 볼록 함수이다.</p>
+    <div class="tb-proof">한 점의 손실 \(\ell = -y\ln\sigma(t) - (1 - y)\ln(1 - \sigma(t))\) (\(t = \mathbf w\cdot\mathbf x + b\))를 \(t\)로 미분하면 \(\sigma' = \sigma(1 - \sigma)\)에서 \(\frac{d\ell}{dt} = -y(1 - \sigma) + (1 - y)\sigma = \sigma - y\). 연쇄법칙으로 \(\nabla_{\mathbf w}\ell = (\sigma - y)\mathbf x\), \(\partial\ell/\partial b = \sigma - y\). 다시 미분하면 \(\frac{d^2\ell}{dt^2} = \sigma(1 - \sigma) \ge 0\)이므로 헤세 행렬은 \(\sigma(1 - \sigma)(\mathbf x, 1)(\mathbf x, 1)^T\)로 양의 준정치이고, 그 평균도 마찬가지이다. <span class="qed"></span></div>
+    <p>기울기의 꼴 "(예측 − 정답) × 입력"은 선형회귀의 \(\frac2n\sum e_i\mathbf x_i\)와 같은 모양입니다. 그러나 \(p_i\)가 매개변수에 대해 비선형이라 정규방정식 같은 닫힌 해는 없고, 반복법으로 풀어야 합니다. 볼록이므로 국소 최솟점에 빠질 걱정은 없습니다.</p>
+
+    <h3><span class="no">6.2.3</span>예: 공부 시간과 합격</h3>
+    <p>8명의 공부 시간 \(x = 1, \dots, 8\)과 합격 여부 \(y = 0, 0, 0, 1, 0, 1, 1, 1\)에 모형을 맞춥니다.</p>
+    <pre class="mono small">import numpy as np
+x = np.arange(1, 9, dtype=float)
+y = np.array([0, 0, 0, 1, 0, 1, 1, 1], dtype=float)
+sig = lambda t: 1 / (1 + np.exp(-t))
+
+w, b, eta = 0.0, 0.0, 0.1
+for k in range(20000):
+    p = sig(w * x + b)
+    w -= eta * np.mean((p - y) * x)
+    b -= eta * np.mean(p - y)
+print(w, b)          # 약 1.2823, -5.7703
+print(-b / w)        # 결정 경계 x = 4.5
+print(sig(w * 6 + b))   # 6시간이면 합격 확률 약 0.873</pre>
+    <p>첫 걸음에서는 \(p_i = \frac12\)이므로 기울기가 \(\frac18\sum(\frac12 - y_i)x_i = -0.875\) (\(w\)), \(\frac18\sum(\frac12 - y_i) = 0\) (\(b\))이고, \(w\)가 0.0875로 커집니다. 최종 모형의 결정 경계는 \(x = 4.5\)이며, 이 자료가 \(x = 4.5\)를 중심으로 대칭(합격·불합격을 바꾸고 \(x \to 9 - x\))이라 정확히 그 값이 나옵니다. 손실은 약 0.3129, 0.5를 기준으로 분류하면 \(x = 4\)(합격인데 불합격 예측)과 \(x = 5\)(반대)를 틀려 정확도 6/8입니다.</p>
+    <p>이 경사하강법은 \(10^4\)번쯤 돌아야 소수 넷째 자리까지 맞습니다(1000번 뒤 \(w \approx 0.997\)). 6.1절처럼 \(x\)를 표준화하면 훨씬 빨라지고, 실무 라이브러리는 헤세 행렬을 쓰는 뉴턴 방법 계열로 수십 번 안에 풉니다.</p>
+
+    <h3><span class="no">6.2.4</span>결과 해석</h3>
+    <ul>
+      <li><b>정확도</b>는 맞게 분류한 비율입니다. 부류의 크기가 매우 다르면(환자 1%) 모두 "정상"이라 해도 99%이므로, 부류별로 맞힌 비율(재현율 등)을 함께 봅니다.</li>
+      <li><b>문턱값</b> 0.5는 바꿀 수 있습니다. 놓치면 위험한 경우(질병 진단)에는 문턱을 낮춰 양성을 더 많이 잡습니다.</li>
+      <li><b>완전 분리</b>: 두 부류를 완벽히 가르는 경계가 있으면 손실의 최솟점이 없어 \(\|\mathbf w\|\)가 끝없이 커집니다. 정칙화 항 \(\lambda\|\mathbf w\|^2\)을 더하면 해결됩니다(같은 절의 탐구 카드).</li>
+    </ul>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) MSE를 손실로 써서 볼록성을 잃는다. (2) \(\ln 0\)이 나와 <code>nan</code>이 된다: \(p\)를 \([10^{-15}, 1 - 10^{-15}]\)로 자르거나 \(\ln\sigma(t) = -\ln(1 + e^{-t})\)로 안정적으로 계산한다. (3) 예측 확률 0.99를 "99% 확실"로 읽는다(모형이 맞다는 가정 아래의 값이다).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(P(y = 1\mid\mathbf x) = \sigma(\mathbf w\cdot\mathbf x + b)\), 결정 경계 \(\mathbf w\cdot\mathbf x + b = 0\).</li>
+        <li>손실: 교차 엔트로피(최대가능도). 기울기 \(\frac1n\sum(p_i - y_i)(\mathbf x_i, 1)\), 볼록.</li>
+        <li>닫힌 해가 없어 경사하강법(또는 뉴턴 방법)으로 푼다.</li>
+        <li>정확도만이 아니라 부류별 성능, 문턱값, 분리 가능성을 함께 본다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>위 모형에서 3시간 공부한 학생의 합격 확률을 구하여라.
+          <details><summary>답</summary><p>\(\sigma(1.2823\cdot3 - 5.7703) = \sigma(-1.9234) \approx 0.127\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\sigma'(t) = \sigma(t)(1 - \sigma(t))\)를 증명하여라.
+          <details><summary>답</summary><p>\(\sigma = (1 + e^{-t})^{-1}\)에서 \(\sigma' = \frac{e^{-t}}{(1 + e^{-t})^2} = \frac1{1 + e^{-t}}\cdot\frac{e^{-t}}{1 + e^{-t}} = \sigma(1 - \sigma)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>자료가 완전히 분리될 때(모든 \(y_i = 1\)인 점에서 \(\mathbf w_0\cdot\mathbf x_i + b_0 > 0\), \(y_i = 0\)인 점에서 \(&lt; 0\)) 손실의 하한이 0이지만 도달되지 않음을 보여라.
+          <details><summary>답</summary><p>\((c\mathbf w_0, cb_0)\)에서 \(c \to \infty\)이면 모든 \(p_i\)가 정답(1 또는 0)으로 가서 손실 \(\to 0\). 그러나 유한한 \((\mathbf w, b)\)에서는 \(0 &lt; p_i &lt; 1\)이라 손실 \(> 0\)이다. 따라서 하한 0에 도달하는 최솟점이 없다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
