@@ -1,0 +1,95 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-bayes" data-kind="본문" data-std="수학5-01-03">
+  <header class="card-head"><span class="no"></span><h2>조건부확률, 전확률 공식, 베이즈 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>조건부확률과 곱셈 법칙을 정의하고, 새 정보가 확률을 어떻게 바꾸는지 계산한다.</li>
+        <li>전확률 공식과 베이즈 정리로 "원인의 확률"을 거꾸로 구한다.</li>
+        <li>사건의 독립을 정의하고, 쌍마다 독립과 상호 독립을 구별한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>확률의 공리 (<a href="01-01.html">1.1절</a>), 고교 확률과 통계의 조건부확률.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>조건부확률</h3>
+    <p>"\(B\)가 일어났다는 것을 알 때 \(A\)의 확률"은 표본공간을 \(B\)로 좁힌 뒤 \(A\)가 차지하는 비율입니다. 전체 확률이 1이 되도록 \(P(B)\)로 나눕니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 1.3.1</span>
+      <p class="q-term"><b>조건부확률</b>: \(P(B) > 0\)일 때 \(P(A \mid B) = \dfrac{P(A\cap B)}{P(B)}\).</p>
+    </div>
+    <p>\(B\)를 고정하면 \(A \mapsto P(A \mid B)\)도 세 공리를 만족하는 확률측도입니다. 그래서 지금까지의 모든 공식(여사건, 포함배제)을 조건부확률에도 그대로 쓸 수 있습니다. 정의를 거꾸로 쓰면 <b>곱셈 법칙</b> \(P(A \cap B) = P(B)P(A \mid B)\)이 되고, 여러 단계로 일어나는 일의 확률을 단계별 조건부확률의 곱으로 계산할 수 있습니다.</p>
+
+    <h3><span class="no">1.3.2</span>전확률 공식과 베이즈 정리</h3>
+    <div class="tb-env">
+      <span class="lb">정리 1.3.2</span>
+      <p>\(B_1, \dots, B_n\)이 \(\Omega\)의 분할(서로소, 합이 \(\Omega\), 각 \(P(B_i) > 0\))이면</p>
+      <p>(a) <b>전확률 공식</b> \(P(A) = \sum_iP(A \mid B_i)P(B_i)\).</p>
+      <p>(b) <b>베이즈 정리</b> \(P(B_j \mid A) = \dfrac{P(A \mid B_j)P(B_j)}{\sum_iP(A \mid B_i)P(B_i)}\) (\(P(A) > 0\)).</p>
+    </div>
+    <div class="tb-proof">
+      <p>(a) \(A = \bigcup_i(A\cap B_i)\)는 서로소 합이므로 \(P(A) = \sum P(A\cap B_i)\)이고, 각 항에 곱셈 법칙을 쓴다. (b) 정의에서 \(P(B_j \mid A) = P(A \cap B_j)/P(A)\). 분자에 곱셈 법칙, 분모에 (a)를 쓴다. <span class="qed">∎</span></p>
+    </div>
+    <p>전확률 공식은 "경우를 나누어 더하기"이고, 베이즈 정리는 "결과를 보고 원인의 확률을 고쳐 쓰기"입니다. \(P(B_j)\)를 <b>사전확률</b>, \(P(B_j \mid A)\)를 <b>사후확률</b>이라 부릅니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.3 <span class="nm">(진단 검사)</span></span>
+      <p>유병률 1%인 병의 검사가 환자를 99% 양성으로, 건강한 사람을 95% 음성으로 판정한다. 양성이 나온 사람이 실제로 환자일 확률은?</p>
+    </div>
+    <p><i>풀이.</i> 무엇을 구하나: \(D\) = 환자, \(T\) = 양성일 때 \(P(D \mid T)\). 전확률 공식으로 \(P(T) = 0.99 \times 0.01 + 0.05 \times 0.99 = 0.0099 + 0.0495 = 0.0594\). 따라서 \(P(D \mid T) = 0.0099/0.0594 = 1/6 \approx 0.167\)입니다.</p>
+    <p>검사가 "99% 정확"한데 양성의 6분의 1만 환자라는 결과는 직관과 어긋납니다. 사람 10000명으로 바꿔 보면 이유가 보입니다. 환자 100명 중 99명이 양성, 건강한 9900명 중 495명이 위양성입니다. 양성 594명 중 환자는 99명입니다. 병이 드물면 위양성이 진양성보다 많아집니다. 첫 검사의 사후확률 \(1/6\)을 사전확률로 두고 두 번째 독립 검사에서도 양성이면 \(\frac{(1/6)(0.99)}{(1/6)(0.99) + (5/6)(0.05)} = 99/124 \approx 0.798\)로 올라갑니다. 같은 절의 탐구 카드에서 유병률과 정확도를 바꿔 볼 수 있습니다.</p>
+
+    <h3><span class="no">1.3.3</span>독립</h3>
+    <div class="tb-env">
+      <span class="lb">정의 1.3.4</span>
+      <p class="q-term"><b>독립</b>: \(P(A \cap B) = P(A)P(B)\). \(P(B) > 0\)이면 \(P(A \mid B) = P(A)\)와 같다.</p>
+      <p class="q-term"><b>상호 독립</b>: 사건 \(A_1, \dots, A_n\) 중 어떤 부분 모임을 골라도 교집합의 확률이 각 확률의 곱이다.</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.5</span>
+      <p>동전 두 개를 던진다. \(A\) = 첫째 앞면, \(B\) = 둘째 앞면, \(C\) = 두 결과가 같음. 둘씩은 독립이지만 셋은 상호 독립이 아님을 보여라.</p>
+    </div>
+    <p><i>풀이.</i> \(P(A) = P(B) = P(C) = 1/2\). \(A\cap C\) = (앞, 앞)이므로 \(1/4 = P(A)P(C)\). \(B\cap C\), \(A\cap B\)도 같다. 그런데 \(A \cap B \cap C\) = (앞, 앞)으로 확률 \(1/4 \ne 1/8\). \(A, B\)를 알면 \(C\)가 정해지기 때문입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(P(A\mid B)\)와 \(P(B \mid A)\)를 혼동한다(검사 정확도 99%를 "양성이면 99% 환자"로 읽음). 이를 "검사의 오류"라 부른다. (2) 서로소와 독립을 혼동한다: 확률이 양수인 서로소 사건은 오히려 독립이 아니다(하나가 일어나면 다른 것은 확률 0). (3) 둘씩 독립이면 상호 독립이라고 여긴다(예제 1.3.5).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(P(A\mid B) = P(A\cap B)/P(B)\). 곱셈 법칙으로 여러 단계의 확률을 곱한다.</li>
+        <li>전확률 공식은 경우 나누기, 베이즈 정리는 사전확률을 사후확률로 고치기.</li>
+        <li>드문 사건의 진단에서는 위양성이 지배한다. 독립은 곱 공식, 상호 독립은 모든 부분 모임에서의 곱 공식.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>주사위를 4번 던질 때 6이 적어도 한 번 나올 확률은? (시행은 독립)
+          <details><summary>답</summary><p>\(1 - (5/6)^4 \approx 0.5177\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>공장 A가 제품의 60%를 만들고 불량률 2%, 공장 B가 40%를 만들고 불량률 5%이다. 불량품 하나가 B에서 왔을 확률은?
+          <details><summary>답</summary><p>불량 사건을 \(F\)라 하면 \(P(F) = 0.012 + 0.020 = 0.032\), \(P(B\mid F) = 0.020/0.032 = 0.625\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(A, B\)가 독립이면 \(A, B^c\)도 독립임을 보여라.
+          <details><summary>답</summary><p>\(P(A\cap B^c) = P(A) - P(A\cap B) = P(A) - P(A)P(B) = P(A)P(B^c)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

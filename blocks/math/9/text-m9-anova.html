@@ -1,0 +1,96 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m9-anova" data-kind="본문" data-std="수학9-06-01">
+  <header class="card-head"><span class="no"></span><h2>일원 분산분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>세 집단 이상의 평균이 모두 같은지 검정하는 일원 분산분석 모형을 세운다.</li>
+        <li>총제곱합 = 처리제곱합 + 잔차제곱합의 분해를 증명한다.</li>
+        <li>분산분석표를 만들고 F 검정을 수행한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>F분포 (<a href="01-02.html">1.2절</a>), 합동분산 (<a href="03-02.html">3.2절</a>), 전분산 공식 (<a href="../5/07-02.html">수학5 7.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.1.1</span>왜 t 검정을 여러 번 하지 않는가</h3>
+    <p>비료 A, B, C의 수확량을 비교할 때 두 개씩 t 검정을 세 번 하면 각각 5%의 제1종 오류가 쌓여 전체 오류율이 5%를 넘습니다(4단원 연습 6). 분산분석은 "모든 평균이 같다"는 가설 하나를 한 번에 검정합니다. 이름과 달리 평균을 비교하는 방법이며, 비교의 도구로 두 가지 분산(변동)을 씁니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 6.1.1</span>
+      <p class="q-term"><b>일원 분산분석 모형</b>: \(Y_{ij} = \mu_i + \varepsilon_{ij}\) (\(i = 1, \dots, k\) 집단, \(j = 1, \dots, n_i\)), \(\varepsilon_{ij} \sim N(0, \sigma^2)\) 독립. \(H_0: \mu_1 = \cdots = \mu_k\).</p>
+      <p class="q-term"><b>제곱합</b>: \(SST = \sum_{i,j}(Y_{ij} - \bar Y)^2\), \(SSB = \sum_in_i(\bar Y_i - \bar Y)^2\) (처리), \(SSW = \sum_{i,j}(Y_{ij} - \bar Y_i)^2\) (잔차). \(N = \sum n_i\).</p>
+    </div>
+
+    <h3><span class="no">6.1.2</span>제곱합 분해</h3>
+    <div class="tb-env">
+      <span class="lb">정리 6.1.2</span>
+      <p>\(SST = SSB + SSW\).</p>
+    </div>
+    <div class="tb-proof">
+      <p>\(Y_{ij} - \bar Y = (Y_{ij} - \bar Y_i) + (\bar Y_i - \bar Y)\)를 제곱해 더하면</p>
+      <p>\[SST = \sum_{i,j}(Y_{ij} - \bar Y_i)^2 + \sum_{i,j}(\bar Y_i - \bar Y)^2 + 2\sum_i(\bar Y_i - \bar Y)\sum_j(Y_{ij} - \bar Y_i).\]</p>
+      <p>안쪽 합 \(\sum_j(Y_{ij} - \bar Y_i)\)는 집단 평균에서의 편차의 합이라 0이다. 둘째 항은 \(j\)에 무관하므로 \(\sum_in_i(\bar Y_i - \bar Y)^2 = SSB\). <span class="qed">∎</span></p>
+    </div>
+    <p>이것은 수학5의 전분산 공식(집단 안 + 집단 사이)의 표본판이고, 기하학적으로는 피타고라스 정리입니다: 편차 벡터 \((Y_{ij} - \bar Y)\)를 "집단 평균이 같은 성분"과 "집단 안 성분"으로 직교 분해한 것입니다.</p>
+
+    <h3><span class="no">6.1.3</span>F 검정</h3>
+    <p>\(H_0\) 아래 \(SSB/\sigma^2 \sim \chi^2_{k-1}\), \(SSW/\sigma^2 \sim \chi^2_{N-k}\)이고 둘은 독립이므로(직교 분해, 1.1절과 같은 논법)</p>
+    <p>\[F = \frac{SSB/(k-1)}{SSW/(N-k)} = \frac{MSB}{MSW} \sim F_{k-1, N-k}.\]</p>
+    <p>\(MSW\)는 \(H_0\)와 상관없이 \(\sigma^2\)을 추정하고(합동분산), \(MSB\)는 \(H_0\)가 참이면 \(\sigma^2\)을, 거짓이면 그보다 큰 값을 추정합니다. 그래서 \(F\)가 크면 기각합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.3</span>
+      <p>비료 A: 20, 22, 19, 21, 23 / B: 25, 24, 26, 23, 27 / C: 22, 20, 23, 21, 24. 평균이 같은지 5%에서 검정하여라.</p>
+    </div>
+    <p><i>풀이.</i> 집단 평균 21, 25, 22, 전체 평균 22.667. \(SSB = 5(1.667^2 + 2.333^2 + 0.667^2) = 43.33\), \(SSW = 10 + 10 + 10 = 30\), \(SST = 73.33\) (분해 확인).</p>
+    <table class="tb-table">
+      <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>F</th></tr></thead>
+      <tbody>
+        <tr><td>처리</td><td>43.33</td><td>2</td><td>21.67</td><td>8.67</td></tr>
+        <tr><td>잔차</td><td>30.00</td><td>12</td><td>2.50</td><td></td></tr>
+        <tr><td>합</td><td>73.33</td><td>14</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p>\(F_{2,12}\)의 95% 분위수 3.89보다 크고 p값은 약 0.0047이므로 평균이 모두 같다는 가설을 기각합니다. 어느 쌍이 다른지는 사후 비교(튜키 방법 등)로 따로 봅니다. 같은 절의 탐구 카드에서 집단 차이와 집단 안 산포를 바꿔 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(SSB\)에 집단 크기 \(n_i\)를 곱하지 않는다. (2) 자유도를 \(k\), \(N\)으로 쓴다: \(k - 1\), \(N - k\). (3) F 검정이 유의하면 모든 평균이 서로 다르다고 결론낸다: 적어도 하나가 다를 뿐이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(SST = SSB + SSW\): 교차항이 집단 안 편차의 합(=0)이라 사라진다.</li>
+        <li>\(F = MSB/MSW \sim F_{k-1, N-k}\) (\(H_0\) 아래). 크면 기각.</li>
+        <li>여러 쌍의 t 검정 대신 한 번의 F 검정으로 전체 오류율을 지킨다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>네 집단, 각 6명일 때 F의 자유도는?
+          <details><summary>답</summary><p>\(k - 1 = 3\), \(N - k = 20\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>두 집단(\(k = 2\))의 분산분석 F가 합동 t 검정 통계량의 제곱임을 보여라.
+          <details><summary>답</summary><p>\(SSB = \frac{n_1n_2}{n_1 + n_2}(\bar Y_1 - \bar Y_2)^2\), \(MSW = s_p^2\). \(F = \frac{(\bar Y_1 - \bar Y_2)^2}{s_p^2(1/n_1 + 1/n_2)} = t^2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(E[MSB] = \sigma^2 + \frac{\sum n_i(\mu_i - \bar\mu)^2}{k-1}\) (\(\bar\mu = \sum n_i\mu_i/N\))임을 보여라.
+          <details><summary>답</summary><p>\(E[\sum n_i(\bar Y_i - \bar Y)^2] = \sum n_i(\mu_i - \bar\mu)^2 + (k-1)\sigma^2\) (각 \(\bar Y_i\)의 분산 \(\sigma^2/n_i\)와 \(\bar Y\)의 분산 \(\sigma^2/N\)을 전개). \(H_0\)이면 둘째 항만 남아 \(\sigma^2\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

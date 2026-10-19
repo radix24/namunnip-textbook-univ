@@ -1,0 +1,37 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-05-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s6-condexp" data-kind="예제" data-std="응통6-05-03">
+  <header class="card-head"><span class="no"></span><h2>보험금 총액의 평균과 분산</h2><span class="kind">예제 · 반복 기대값과 분산 분해</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>개수도 무작위, 크기도 무작위인 합 \(S = X_1 + \cdots + X_N\)(복합 분포)은 \(N\)에 조건을 걸면 고정된 개수의 합이 됩니다. 조건부 평균과 조건부 분산을 먼저 \(N\)의 식으로 쓰고, 반복 기대값과 분산 분해에 넣습니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 한 보험사에 1년 동안 들어오는 청구 건수 \(N\)은 평균 100인 포아송분포를 따르고, 청구 한 건의 금액 \(X_i\)(백만 원)는 \(N\)과 독립이며 서로 독립으로 평균 3, 표준편차 4를 따릅니다. 연간 보험금 총액 \(S = \sum_{i=1}^N X_i\)의 평균과 표준편차를 구하세요. 청구 건수가 매년 정확히 100건이라면 표준편차는 얼마인가요?</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(N = n\)이면 \(S\)는 독립인 \(n\)개의 합이므로 \(E(S \mid N) = 3N\), \(\mathrm{Var}(S \mid N) = 16N\).</div><span class="q-why">고정된 개수의 독립 합: 평균과 분산이 각각 더해집니다.</span></li>
+        <li><div>반복 기대값: \(E(S) = E(3N) = 3 \times 100 = 300\).</div><span class="q-why">정리 5.3.2 (가).</span></li>
+        <li><div>분산 분해: \(\mathrm{Var}(S) = E(16N) + \mathrm{Var}(3N) = 1600 + 9 \times 100 = 2500\), 표준편차 50.</div><span class="q-why">포아송분포는 분산이 평균과 같아 \(\mathrm{Var}(N) = 100\).</span></li>
+        <li class="q-end"><div>\(N\)이 100으로 고정되면 \(\mathrm{Var}(S) = 1600\), 표준편차 40.</div><span class="q-why">분산 분해의 둘째 항(건수 변동에서 오는 900)이 사라집니다.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>일반 공식 \(\mathrm{Var}(S) = E(N)\sigma_X^2 + \mathrm{Var}(N)\mu_X^2\)에 넣으면 \(100 \times 16 + 100 \times 9 = 2500\). 모의실험: <code>S &lt;- replicate(1e5, { n &lt;- rpois(1, 100); sum(rgamma(n, shape = 9/16, scale = 16/3)) }); c(mean(S), sd(S))</code>는 평균 300, 표준편차 50 근처를 줍니다(평균 3, 표준편차 4인 감마분포 사용).</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>총액의 불확실성 2500 가운데 1600은 "한 건 한 건 금액이 다른 것"에서, 900은 "건수가 해마다 다른 것"에서 옵니다. 보험사는 이 분해로 위험의 출처를 나누어 관리합니다. 계약자를 늘려 건수의 상대 변동을 줄이는 것과, 고액 청구에 대비한 재보험으로 금액의 꼬리를 줄이는 것이 각각 다른 항을 겨냥합니다.</p>
+    </section>
+  </div>
+</article>

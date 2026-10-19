@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m4-linreg-gd.js"]
+}
+-->
+<article class="card q-card" id="card-m4-linreg-gd" data-kind="탐구" data-std="수학4-06-01">
+  <header class="card-head"><span class="no"></span><h2>표준화하면 왜 빨라질까</h2><span class="kind">탐구 · 선형회귀의 경사하강법</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>공부 시간 \(x = 1, \dots, 10\)과 점수 자료에 직선을 맞추는 일을 정규방정식은 한 번에 합니다. 경사하강법으로 같은 답에 가려면 몇 번이 필요하고, \(x\)를 표준화하면 무엇이 달라질까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>MSE \(\frac1n\sum(wx_i + b - y_i)^2\)의 기울기 \(\frac2n\sum e_i(x_i, 1)\). 곡률(헤세 행렬의 고유값)이 \(L\)이면 \(\eta &lt; 2/L\) (<a href="06-01.html">6.1절</a>, <a href="05-01.html">5.1절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>x의 표준화</span>
+          <select name="std" aria-label="표준화 여부"><option value="off">하지 않음</option><option value="on">함 (평균 0, 표준편차 1)</option></select></label>
+        <label><span>log₁₀ η = <b data-show="le">-2</b></span><input type="range" name="le" min="-3" max="0" step="0.05" value="-2" aria-label="학습률의 상용로그"></label>
+        <label><span>반복 횟수 = <b data-show="n">300</b></span><input type="range" name="n" min="1" max="3000" step="1" value="300" aria-label="반복 횟수"></label>
+      </div>
+      <canvas aria-label="자료점(빨강), 정규방정식의 직선(회색 점선), 경사하강법이 지금까지 찾은 직선(파랑)"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>표준화하지 않고 \(\eta = 10^{-2}\), 반복 300번이면 파란 직선이 아직 점선과 다릅니다. 반복을 3000으로 올리면 2372번째에 최소에 도달합니다.</li>
+        <li>\(\log_{10}\eta\)를 \(-1.6\) (\(\eta \approx 0.025\))로 올리면 942번으로 줄지만, \(-1.55\) (\(\eta \approx 0.028\))는 상한 0.0255를 넘어 발산합니다.</li>
+        <li>표준화를 켜고 \(\log_{10}\eta = -0.3\) (\(\eta \approx 0.501\))이면 단 2번 만에 도달합니다(정확히 \(\eta = 0.5\)이면 1번).</li>
+        <li>표준화한 상태에서 \(\eta\)를 1 (\(\log_{10}\eta = 0\))로 올리면 반복 횟수가 짝수일 때마다 출발점 \((0, 0)\)으로 되돌아옵니다. 영원히 진동하는 것입니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>곡률의 비</b><span>원래 \(x\)에서 MSE의 헤세 행렬은 \(2\begin{pmatrix}\overline{x^2} &amp; \bar x\\\bar x &amp; 1\end{pmatrix} = \begin{pmatrix}77 &amp; 11\\11 &amp; 2\end{pmatrix}\)이고 고유값은 약 78.6과 0.42입니다. 큰 곡률이 \(\eta &lt; 2/78.6 \approx 0.0255\)를 강요하고, 작은 곡률 방향은 \(1 - 0.42\eta\)배씩 느리게 줄어듭니다. 5.1절의 길쭉한 골짜기와 같습니다.</span></li>
+        <li><b>표준화</b><span>\(x\)를 \((x - \bar x)/s\)로 바꾸면 \(\bar x = 0\), \(\overline{x^2} = 1\)이 되어 헤세 행렬이 \(2I\)입니다. 골짜기가 둥근 그릇이 되므로 \(\eta = \frac12\)이면 한 걸음에 최솟점에 갑니다. \(\eta = 1\)이면 수축률이 \(|1 - 2| = 1\)이라 진동합니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"표준화하면 기울기 값이 달라지므로 모형이 달라진다"는 틀립니다. 표준화한 기울기 \(w'\)은 \(w = w'/s\)로 원래 단위로 돌아가며, 같은 직선을 나타냅니다(이 자료에서 \(w' \approx 10.58\), \(w \approx 3.685\)). 바뀌는 것은 최적화의 쉬움뿐입니다. 다만 새 자료를 예측할 때도 훈련 자료의 평균과 표준편차로 똑같이 변환해야 합니다.</p>
+    </section>
+  </div>
+</article>

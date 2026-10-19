@@ -1,0 +1,95 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-dists" data-kind="본문" data-std="수학5-02-02">
+  <header class="card-head"><span class="no"></span><h2>대표적인 분포와 그 관계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이항, 기하, 포아송, 균등, 지수, 감마, 정규 분포가 어떤 상황을 모형으로 하는지 안다.</li>
+        <li>이항분포에서 포아송분포를 극한으로 유도한다.</li>
+        <li>기하분포와 지수분포의 무기억성, 지수분포와 감마분포의 관계, 이항분포의 정규 근사를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>분포함수와 확률밀도함수 (<a href="02-01.html">2.1절</a>), \(e\)의 정의 \((1 + a/n)^n \to e^a\) (<a href="../7/02-01.html">수학7 2단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>독립 시행에서 나오는 이산 분포</h3>
+    <p>성공 확률 \(p\)인 시행을 독립으로 되풀이하는 상황(베르누이 시행)에서 세 가지 질문이 세 분포가 됩니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 2.2.1</span>
+      <p class="q-term"><b>이항분포</b> \(B(n, p)\): \(n\)번 중 성공 횟수. \(P(X = k) = \binom nkp^k(1-p)^{n-k}\).</p>
+      <p class="q-term"><b>기하분포</b> \(\mathrm{Geom}(p)\): 첫 성공까지의 시행 횟수. \(P(X = k) = (1-p)^{k-1}p\), \(k = 1, 2, \dots\).</p>
+      <p class="q-term"><b>포아송분포</b> \(\mathrm{Pois}(\lambda)\): \(P(X = k) = e^{-\lambda}\lambda^k/k!\), \(k = 0, 1, \dots\).</p>
+    </div>
+    <p>기하분포에서 주사위를 던져 6이 처음 세 번째에 나올 확률은 \((5/6)^2(1/6) \approx 0.1157\)입니다. 포아송분포는 "드물게 일어나는 일의 횟수"(한 시간 동안 걸려 오는 전화, 한 쪽의 오타 수)의 모형이며, 그 이유가 다음 정리입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정리 2.2.2 <span class="nm">(포아송 극한)</span></span>
+      <p>\(np_n \to \lambda > 0\)이면 각 \(k\)에 대해 \(\binom nkp_n^k(1-p_n)^{n-k} \to e^{-\lambda}\lambda^k/k!\).</p>
+    </div>
+    <div class="tb-proof">
+      <p>간단히 \(p_n = \lambda/n\)인 경우를 보인다. 확률을 세 인수로 나누면</p>
+      <p>\[\binom nk\left(\frac\lambda n\right)^k\left(1 - \frac\lambda n\right)^{n-k} = \frac{\lambda^k}{k!}\cdot\frac{n(n-1)\cdots(n-k+1)}{n^k}\cdot\left(1 - \frac\lambda n\right)^n\left(1 - \frac\lambda n\right)^{-k}.\]</p>
+      <p>\(k\)가 고정이므로 둘째 인수는 \(k\)개의 \((n - j)/n \to 1\)의 곱이라 1로, 셋째는 \(e^{-\lambda}\)로, 넷째는 1로 간다. <span class="qed">∎</span></p>
+    </div>
+    <p>수치로 보면 \(B(100, 0.02)\)와 \(\mathrm{Pois}(2)\)에서 \(P(X = 0)\)은 \(0.1326\)과 \(0.1353\)이고, 두 분포 전체의 차이(전변동 거리)는 약 0.0046입니다. \(B(10, 0.2)\)에서는 같은 거리가 0.0522로 커집니다. 평균이 같아도 \(p\)가 작고 \(n\)이 클수록 근사가 좋습니다.</p>
+
+    <h3><span class="no">2.2.2</span>연속 분포</h3>
+    <div class="tb-env">
+      <span class="lb">정의 2.2.3</span>
+      <p class="q-term"><b>균등분포</b> \(U(a, b)\): 밀도 \(1/(b - a)\) (\(a &lt; x &lt; b\)).</p>
+      <p class="q-term"><b>지수분포</b> \(\mathrm{Exp}(\lambda)\): 밀도 \(\lambda e^{-\lambda x}\) (\(x > 0\)), \(P(X > x) = e^{-\lambda x}\).</p>
+      <p class="q-term"><b>감마분포</b> \(\Gamma(\alpha, \lambda)\): 밀도 \(\lambda^\alpha x^{\alpha-1}e^{-\lambda x}/\Gamma(\alpha)\) (\(x > 0\)).</p>
+      <p class="q-term"><b>정규분포</b> \(N(\mu, \sigma^2)\): 밀도 \(\frac1{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/(2\sigma^2)}\).</p>
+    </div>
+
+    <h3><span class="no">2.2.3</span>분포들의 관계</h3>
+    <p>분포를 따로 외우기보다 관계를 알면 기억과 계산이 쉬워집니다.</p>
+    <ul>
+      <li><b>무기억성</b>: 기하분포와 지수분포는 \(P(X > s + t \mid X > s) = P(X > t)\)를 만족하는 유일한 분포입니다. 지수분포에서는 \(e^{-\lambda(s+t)}/e^{-\lambda s} = e^{-\lambda t}\). "이미 오래 기다렸으니 곧 올 것"이 성립하지 않습니다.</li>
+      <li><b>이산과 연속의 짝</b>: 짧은 시간 \(1/n\)마다 확률 \(\lambda/n\)으로 일이 일어난다고 하면, 첫 발생까지의 시간은 기하분포를 \(1/n\)로 줄인 것이고 \(n \to \infty\)에서 \(\mathrm{Exp}(\lambda)\)가 됩니다. 같은 극한에서 시간 \(t\)동안의 발생 횟수는 \(\mathrm{Pois}(\lambda t)\)입니다(포아송 과정, 수학21).</li>
+      <li><b>지수의 합은 감마</b>: 독립인 \(\mathrm{Exp}(\lambda)\) \(k\)개의 합은 \(\Gamma(k, \lambda)\)로, \(k\)번째 발생까지의 시간입니다(<a href="04-02.html">4.2절</a>). 예: \(\lambda = 1\)에서 두 번째 발생이 시간 1 안에 일어날 확률은 \(1 - 2e^{-1} \approx 0.2642\).</li>
+      <li><b>이항의 정규 근사</b>: \(n\)이 크면 \(B(n, p) \approx N(np, np(1-p))\). \(B(100, 0.5)\)에서 \(P(X \le 55)\)의 정확한 값 0.8644를 연속성 보정으로 \(\Phi((55.5 - 50)/5) = 0.8643\)이 잘 근사합니다. 이유는 중심극한정리입니다(<a href="06-03.html">6.3절</a>).</li>
+    </ul>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 기하분포를 "실패 횟수"로 정의한 교재와 섞는다: 그 경우 값이 0부터 시작하고 평균이 \(1/p - 1\)이다. 정의를 먼저 확인할 것. (2) 지수분포의 모수 \(\lambda\)를 평균으로 읽는다: 평균은 \(1/\lambda\). (3) 포아송 근사를 \(p\)가 큰 이항분포에 쓴다(\(B(10, 0.5)\) 등): 이때는 정규 근사가 낫다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>베르누이 시행: 횟수는 이항, 첫 성공까지는 기하. 드문 사건의 횟수는 포아송(이항의 극한).</li>
+        <li>지수분포는 기하분포의 연속판, 무기억성. 지수 \(k\)개의 합은 감마.</li>
+        <li>\(n\)이 크면 이항은 정규로 근사된다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>한 쪽에 평균 0.5개의 오타가 있다(포아송). 한 쪽에 오타가 없을 확률은?
+          <details><summary>답</summary><p>\(e^{-0.5} \approx 0.6065\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>전구의 수명이 평균 1000시간인 지수분포를 따른다. 500시간 쓴 전구가 앞으로 1000시간 더 갈 확률은?
+          <details><summary>답</summary><p>무기억성으로 \(P(X > 1000) = e^{-1} \approx 0.3679\). 이미 쓴 500시간은 상관없다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>기하분포가 무기억성을 가짐을 보이고, 무기억성을 가진 \(\{1, 2, \dots\}\) 값 분포는 기하분포뿐임을 보여라.
+          <details><summary>답</summary><p>\(P(X > k) = (1-p)^k\)이므로 성립. 역으로 \(q = P(X > 1)\)이라 하면 무기억성에서 \(P(X > k + 1) = P(X > k)q\)이므로 \(P(X > k) = q^k\), 곧 \(P(X = k) = q^{k-1}(1 - q)\): 기하분포 \(p = 1 - q\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

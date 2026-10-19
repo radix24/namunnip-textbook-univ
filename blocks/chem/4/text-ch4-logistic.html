@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-ch4-logistic" data-kind="본문" data-std="화학4-03-03">
+  <header class="card-head"><span class="no"></span><h2>로지스틱 회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선형 회귀로 분류하면 생기는 문제를 안다.</li>
+        <li>시그모이드 함수로 확률을 계산하고 로그 오즈를 해석한다.</li>
+        <li>결정 경계와 문턱값을 정한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>선형 회귀 (<a href="03-01.html">3.1절</a>), 교차 엔트로피 (<a href="01-03.html">1.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>왜 선형 회귀로는 안 되나</h3>
+    <p>활성 1, 비활성 0을 그대로 선형 회귀로 맞추면 예측이 1보다 크거나 0보다 작아져 확률로 읽을 수 없고, 아주 활성이 큰 분자 몇 개가 직선을 끌어당겨 경계가 틀어집니다. 출력을 0과 1 사이로 눌러 주는 함수가 필요합니다.</p>
+
+    <h3><span class="no">3.3.2</span>시그모이드와 로그 오즈</h3>
+    <div class="tb-env thm">
+      <span class="lb">식 3.3.1 <span class="nm">(로지스틱 회귀)</span></span>
+      <p>\[ p = \sigma(z) = \frac{1}{1 + e^{-z}}, \qquad z = w_1x_1 + w_2x_2 + \cdots + b \]</p>
+    </div>
+    <p>z가 0이면 p = 0.5, z가 크면 1, 작으면 0에 가까워집니다. 거꾸로 풀면 \(z = \ln\dfrac{p}{1 - p}\)이므로 z는 <b>로그 오즈</b>입니다.</p>
+    <p class="q-term"><b>오즈</b>: \(p/(1 - p)\). 활성일 확률이 비활성일 확률의 몇 배인가.</p>
+    <p>그래서 가중치 \(w_j\)는 "특성 \(x_j\)가 1 늘면 로그 오즈가 \(w_j\)만큼 커진다", 곧 "오즈가 \(e^{w_j}\)배가 된다"로 읽습니다. 학습은 1.3절의 교차 엔트로피를 경사 하강으로 줄입니다.</p>
+
+    <h3><span class="no">3.3.3</span>결정 경계와 문턱값</h3>
+    <p>문턱값 0.5로 판정하면 z = 0인 곳이 활성과 비활성의 경계입니다. 특성이 둘이면 경계는 직선 \(w_1x_1 + w_2x_2 + b = 0\)입니다. 로지스틱 회귀는 이름과 달리 분류기이고, 경계는 늘 직선(초평면)입니다.</p>
+    <p>문턱값은 목적에 따라 바꿉니다. 놓치면 안 되는 독성 선별에서는 0.2처럼 낮추어 재현율을 높이고, 실험 비용이 큰 합성 후보 고르기에서는 0.8처럼 높여 정밀도를 높입니다(5.3절).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>"p = 0.7이면 이 분자가 70% 활성이라는 뜻"은 모형이 잘 보정되어 있을 때만 맞습니다. 훈련 자료의 활성 비율이 실제와 다르거나 과적합되면 확률이 한쪽으로 치우칩니다. 또 로지스틱 회귀는 경계가 직선이라, 활성 영역이 섬처럼 흩어져 있으면 나무 모형(3.4절)이나 신경망이 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>p = σ(z) = 1/(1 + e^{−z}), z = w·x + b.</li>
+        <li>z는 로그 오즈. 가중치 w는 특성 1 증가당 오즈 e^w배.</li>
+        <li>경계는 z = 0인 직선(초평면). 문턱값은 목적에 맞게 바꾼다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>z = 0, 2, −2일 때 p는?
+          <details><summary>답</summary><p>0.500, 0.881, 0.119.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>가중치가 0.69인 특성이 2 늘면 오즈는 몇 배가 되는가?
+          <details><summary>답</summary><p>\(e^{0.69\times2} = e^{1.38} = 3.97\), 약 4배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>z = −3 + 0.8 logP + 1.2 (방향족 고리 수)에서 문턱값 0.5의 결정 경계를 logP와 고리 수로 쓰고, 고리가 둘인 분자는 logP가 얼마 이상이어야 활성으로 판정되는가?
+          <details><summary>답</summary><p>경계 0.8 logP + 1.2n = 3. n = 2면 0.8 logP = 0.6, logP ≥ 0.75.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

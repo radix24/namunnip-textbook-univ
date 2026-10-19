@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학11-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-taylor" data-kind="본문" data-std="수학11-01-03">
+  <header class="card-head"><span class="no"></span><h2>다변수 테일러 정리와 극값 판정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>선분 위로 제한한 일변수 함수에 테일러 정리를 써서 다변수 테일러 정리를 얻는다.</li>
+        <li>임계점에서 헤세 행렬의 고유값(또는 주소행렬식)으로 극대, 극소, 안장점을 판정하고 그 근거를 증명한다.</li>
+        <li>판정이 실패하는 경우(퇴화 임계점)의 예를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>일변수 테일러 정리 (<a href="../7/04-01.html">수학7 4.1절</a>), 연쇄 법칙 (<a href="01-01.html">1.1절</a>), 혼합 편도함수의 대칭 (<a href="01-02.html">1.2절</a>), 대칭 행렬의 대각화.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>선분 위로 줄이기</h3>
+    <p>\(f\)가 \(\mathbf p\)를 포함하는 볼록 열린집합에서 \(C^k\)라 하고 \(\varphi(t) = f(\mathbf p + t\mathbf h)\)로 둡니다. 연쇄 법칙을 되풀이하면</p>
+    \[\varphi'(t) = \sum_i h_iD_if(\mathbf p + t\mathbf h), \qquad \varphi''(t) = \sum_{i,j}h_ih_jD_{ij}f(\mathbf p + t\mathbf h) = \mathbf h^TH(\mathbf p + t\mathbf h)\mathbf h\]
+    <p>입니다. 여기서 \(H = (D_{ij}f)\)는 헤세 행렬이며 \(C^2\)이므로 대칭입니다. 일변수 테일러 정리를 \(\varphi\)에 쓰면 다음을 얻습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.3.1 <span class="nm">(2차 테일러 정리)</span></span>
+      <p>\(f\)가 \(C^2\)이고 선분 \([\mathbf p, \mathbf p + \mathbf h]\)가 정의역 안에 있으면, 어떤 \(c \in (0, 1)\)에 대해</p>
+      \[f(\mathbf p + \mathbf h) = f(\mathbf p) + \nabla f(\mathbf p)\cdot\mathbf h + \tfrac12\mathbf h^TH(\mathbf p + c\mathbf h)\mathbf h.\]
+      <p>또 \(H\)가 \(\mathbf p\)에서 연속이므로 \(f(\mathbf p + \mathbf h) = f(\mathbf p) + \nabla f(\mathbf p)\cdot\mathbf h + \tfrac12\mathbf h^TH(\mathbf p)\mathbf h + o(|\mathbf h|^2)\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>첫 식은 \(\varphi(1) = \varphi(0) + \varphi'(0) + \frac12\varphi''(c)\)이다. 둘째 식은 \(|\mathbf h^T(H(\mathbf p + c\mathbf h) - H(\mathbf p))\mathbf h| \le \|H(\mathbf p + c\mathbf h) - H(\mathbf p)\|\,|\mathbf h|^2\)이고 \(H\)의 연속성으로 노름이 0으로 가기 때문이다. <span class="qed">∎</span></p>
+    <p>예: \(f = e^x\cos y\)의 원점에서 \(\nabla f = (1, 0)\), \(H = \begin{pmatrix}1 &amp; 0\\0 &amp; -1\end{pmatrix}\)이므로 2차 근사는 \(1 + x + \frac12(x^2 - y^2)\)입니다. \((0.1, 0.2)\)에서 참값 1.083141, 근사 1.085이고 차 \(-0.00186\)은 3차 항 \(\frac{x^3}6 - \frac{xy^2}2 = -0.00183\)과 거의 같습니다. 일반적으로 \(C^k\)이면 \(\varphi^{(m)}(0) = (\mathbf h\cdot\nabla)^mf(\mathbf p)\)로 \(k\)차 테일러 다항식을 씁니다.</p>
+
+    <h3><span class="no">1.3.2</span>임계점의 판정</h3>
+    <p>\(\nabla f(\mathbf p) = \mathbf 0\)인 점을 <b>임계점</b>이라 합니다. 미분 가능한 함수의 극값은 임계점에서만 생깁니다(각 좌표 방향의 일변수 함수가 극값을 가지므로). 임계점에서는 테일러 정리의 1차 항이 사라지므로 2차 형식 \(Q(\mathbf h) = \mathbf h^TH(\mathbf p)\mathbf h\)가 모양을 정합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.3.2 <span class="nm">(2계 판정법)</span></span>
+      <p>\(f\)가 \(C^2\)이고 \(\nabla f(\mathbf p) = \mathbf 0\)이라 하자. (a) \(H(\mathbf p)\)가 양정치(고유값이 모두 양수)이면 \(\mathbf p\)는 엄격한 극소점이다. (b) 음정치이면 엄격한 극대점이다. (c) 양수와 음수 고유값이 모두 있으면 안장점(극값이 아님)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>(a) \(\lambda > 0\)을 \(H(\mathbf p)\)의 가장 작은 고유값이라 하면 직교대각화로 \(Q(\mathbf h) \ge \lambda|\mathbf h|^2\)이다. 정리 1.3.1의 둘째 식에서 \(r(\mathbf h) = o(|\mathbf h|^2)\)이므로 \(\delta > 0\)이 있어 \(0 &lt; |\mathbf h| &lt; \delta\)이면 \(|r(\mathbf h)| &lt; \frac\lambda4|\mathbf h|^2\). 그러면 \(f(\mathbf p + \mathbf h) - f(\mathbf p) \ge \frac\lambda2|\mathbf h|^2 - \frac\lambda4|\mathbf h|^2 > 0\). (b)는 \(-f\)에 (a)를 쓴다. (c) 고유값 \(\lambda_1 > 0 > \lambda_2\)의 단위 고유벡터 \(\mathbf u_1\), \(\mathbf u_2\) 방향으로 \(t \mapsto f(\mathbf p + t\mathbf u_i)\)를 보면 각각 \(t = 0\)에서 엄격한 극소, 엄격한 극대를 가지므로(일변수 2계 판정, \(\varphi_i''(0) = \lambda_i\)) \(\mathbf p\) 근방에 \(f(\mathbf p)\)보다 큰 값과 작은 값이 모두 있다. <span class="qed">∎</span></p>
+    <p>2변수에서는 고유값 대신 \(D = f_{xx}f_{yy} - f_{xy}^2 = \det H\)와 \(f_{xx}\)를 봅니다. \(D > 0\)이고 \(f_{xx} > 0\)이면 극소, \(D > 0\)이고 \(f_{xx} &lt; 0\)이면 극대, \(D &lt; 0\)이면 안장점입니다(\(\det H\)는 두 고유값의 곱이므로).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.3</span>
+      <p>\(f(x, y) = x^3 + y^3 - 3xy\)의 임계점을 모두 찾아 판정하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(f_x = 3x^2 - 3y = 0\), \(f_y = 3y^2 - 3x = 0\)에서 \(y = x^2\), \(x = y^2 = x^4\)이므로 \(x = 0\) 또는 \(x = 1\) (실수 범위). 임계점은 \((0, 0)\), \((1, 1)\). \(H = \begin{pmatrix}6x &amp; -3\\-3 &amp; 6y\end{pmatrix}\)이고 \((0, 0)\)에서 \(D = -9 &lt; 0\): 안장점, \((1, 1)\)에서 \(D = 36 - 9 = 27 > 0\), \(f_{xx} = 6 > 0\): 극소점, 극솟값 \(f(1, 1) = -1\). 이 극소는 전역 최소가 아닙니다(\(x \to -\infty\)이면 \(f \to -\infty\)).</p>
+
+    <h3><span class="no">1.3.3</span>판정이 안 될 때</h3>
+    <p>\(H(\mathbf p)\)에 0인 고유값이 있으면(\(D = 0\)) 2차 항만으로는 알 수 없습니다. 예를 들어 원점에서 \(x^2 + y^4\)은 극소, \(x^2 - y^4\)은 안장점, \(x^2 + y^3\)은 안장점인데 세 함수의 헤세 행렬은 모두 \(\begin{pmatrix}2 &amp; 0\\0 &amp; 0\end{pmatrix}\)입니다. 이때는 고차 항이나 직접적인 부등식으로 판단해야 합니다. 또 양의 준정치(고유값 \(\ge 0\))는 극소의 필요조건일 뿐 충분조건이 아닙니다.</p>
+    <p>같은 절의 탐구 카드에서 헤세 행렬의 성분과 고차항을 바꾸며 등고선이 타원(극값), 쌍곡선(안장점), 평행선(퇴화)으로 바뀌는 것을 봅니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "모든 좌표축 방향으로 극소이면 극소"는 틀립니다. \(f = (y - x^2)(y - 3x^2)\)은 원점을 지나는 모든 직선 위에서 원점이 극소이지만, 포물선 \(y = 2x^2\) 위에서는 \(f = -x^4 &lt; 0\)이라 극소가 아닙니다(이때 \(H\)는 퇴화). (2) \(D > 0\)만 보고 극소라 한다(\(f_{xx}\)의 부호도 봐야 한다).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(f(\mathbf p + \mathbf h) = f(\mathbf p) + \nabla f\cdot\mathbf h + \frac12\mathbf h^TH\mathbf h + o(|\mathbf h|^2)\) (\(C^2\)).</li>
+        <li>임계점에서 \(H\)가 양정치면 극소, 음정치면 극대, 부호가 섞이면 안장점.</li>
+        <li>2변수: \(D = \det H\)와 \(f_{xx}\). \(D = 0\)이면 판정 불가.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f = x^2 + xy + y^2 - 3x\)의 임계점을 찾아 판정하여라.
+          <details><summary>답</summary><p>\(2x + y = 3\), \(x + 2y = 0\)에서 \((2, -1)\). \(H = \begin{pmatrix}2 &amp; 1\\1 &amp; 2\end{pmatrix}\), \(D = 3 > 0\), \(f_{xx} > 0\): 극소, \(f(2, -1) = -3\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f = \sin x\sin y\)의 2차 테일러 다항식을 \((\frac\pi2, \frac\pi2)\)에서 구하고 그 점을 판정하여라.
+          <details><summary>답</summary><p>\(\nabla f = (\cos x\sin y, \sin x\cos y) = \mathbf 0\), \(H = \begin{pmatrix}-1 &amp; 0\\0 &amp; -1\end{pmatrix}\). 2차 다항식 \(1 - \frac12(u^2 + v^2)\) (\(u = x - \frac\pi2\), \(v = y - \frac\pi2\)). 극대점.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>흔한 오해 (1)의 \(f = (y - x^2)(y - 3x^2)\)이 원점을 지나는 모든 직선 위에서 원점에 극소를 가짐을 보여라.
+          <details><summary>답</summary><p>\(y\)축 위에서 \(f = y^2\). 직선 \(y = mx\) 위에서 \(f = (mx - x^2)(mx - 3x^2)\)이고 \(m \ne 0\)이면 작은 \(x\)에서 두 인수가 모두 \(mx\)와 같은 부호라 \(f > 0\) (\(x \ne 0\)). \(m = 0\)이면 \(f = 3x^4 > 0\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

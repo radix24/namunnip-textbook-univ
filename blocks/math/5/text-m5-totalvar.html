@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-totalvar" data-kind="본문" data-std="수학5-07-02">
+  <header class="card-head"><span class="no"></span><h2>전분산 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>조건부 분산 \(\mathrm{Var}(Y\mid X)\)를 정의한다.</li>
+        <li>전분산 공식 \(\mathrm{Var}(Y) = E[\mathrm{Var}(Y\mid X)] + \mathrm{Var}(E[Y\mid X])\)를 증명한다.</li>
+        <li>집단 안과 집단 사이의 분산, 무작위 개수의 합의 분산에 적용한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>반복 기대값 법칙 (<a href="07-01.html">7.1절</a>), 분산 \(E[Y^2] - E[Y]^2\) (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>분산을 두 부분으로 나누기</h3>
+    <p>한 학교 학생들의 키가 흩어진 정도는 두 원인으로 나눌 수 있습니다. 같은 학년 안에서의 차이와, 학년마다 평균이 다른 데서 오는 차이입니다. 전분산 공식은 이 직관을 정확한 등식으로 만듭니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 7.2.1</span>
+      <p class="q-term"><b>조건부 분산</b>: \(\mathrm{Var}(Y\mid X) = E\big[(Y - E[Y\mid X])^2\mid X\big] = E[Y^2\mid X] - (E[Y\mid X])^2\). \(X\)의 함수인 확률변수이다.</p>
+    </div>
+    <div class="tb-env">
+      <span class="lb">정리 7.2.2 <span class="nm">(전분산 공식)</span></span>
+      <p>\(E[Y^2] &lt; \infty\)이면 \(\mathrm{Var}(Y) = E[\mathrm{Var}(Y\mid X)] + \mathrm{Var}(E[Y\mid X])\).</p>
+    </div>
+    <p>증명 방향: 두 항을 각각 \(E[Y^2\mid X]\)와 \(E[Y\mid X]\)로 쓰고, 반복 기대값 법칙으로 바깥 기대값을 계산하면 중간 항이 상쇄됩니다.</p>
+    <div class="tb-proof">
+      <p>\(m(X) = E[Y\mid X]\)라 두자. 첫째 항: \(E[\mathrm{Var}(Y\mid X)] = E\big[E[Y^2\mid X]\big] - E[m(X)^2] = E[Y^2] - E[m(X)^2]\). 둘째 항: \(\mathrm{Var}(m(X)) = E[m(X)^2] - (E[m(X)])^2 = E[m(X)^2] - (E[Y])^2\). 더하면 \(E[Y^2] - (E[Y])^2 = \mathrm{Var}(Y)\). <span class="qed">∎</span></p>
+    </div>
+    <p>첫째 항은 "\(X\)를 알아도 남는 불확실성의 평균"(집단 안 분산), 둘째 항은 "\(X\)에 따라 평균이 달라지는 정도"(집단 사이 분산)입니다. 둘 다 0 이상이므로 \(\mathrm{Var}(E[Y\mid X]) \le \mathrm{Var}(Y)\), 곧 조건부 기대값으로 예측하면 퍼짐이 줄어든다는 결론도 나옵니다.</p>
+
+    <h3><span class="no">7.2.2</span>적용</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.3 <span class="nm">(막대 쪼개기의 분산)</span></span>
+      <p>7.1절 예제 7.1.3에서 \(\mathrm{Var}(Y)\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(Y\mid X \sim U(0, X)\)이므로 \(E[Y\mid X] = X/2\), \(\mathrm{Var}(Y\mid X) = X^2/12\). \(E[X^2/12] = \frac1{36}\), \(\mathrm{Var}(X/2) = \frac14\cdot\frac1{12} = \frac1{48}\). 합 \(\frac1{36} + \frac1{48} = \frac7{144} \approx 0.0486\). 직접 계산(\(E[Y^2] = E[X^2/3] = 1/9\)이므로 \(1/9 - 1/16\))과 같습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.4 <span class="nm">(두 집단)</span></span>
+      <p>집단 A(비율 60%)의 키는 평균 160, 표준편차 6, 집단 B(40%)는 평균 175, 표준편차 6이다. 전체의 분산은?</p>
+    </div>
+    <p><i>풀이.</i> \(X\)를 집단이라 하면 집단 안 분산의 평균 \(E[\mathrm{Var}(Y\mid X)] = 36\). 집단 평균은 확률 0.6으로 160, 0.4로 175인 확률변수이므로 분산 \(0.6\times0.4\times15^2 = 54\). 전체 분산 \(36 + 54 = 90\), 표준편차 약 9.49. 전체 분산의 60%가 집단 차이로 설명됩니다(분산분석의 기본 생각, 수학9). 같은 절의 탐구 카드에서 집단 차이를 바꿔 볼 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.5 <span class="nm">(무작위 합의 분산)</span></span>
+      <p>\(S = \sum_{i=1}^NX_i\), \(X_i\)는 독립이고 \(N\)과도 독립, 평균 \(\mu\), 분산 \(\sigma^2\). \(\mathrm{Var}(S)\)는?</p>
+    </div>
+    <p><i>풀이.</i> \(N\)으로 조건을 걸면 \(E[S\mid N] = N\mu\), \(\mathrm{Var}(S\mid N) = N\sigma^2\). 전분산 공식으로 \(\mathrm{Var}(S) = E[N]\sigma^2 + \mu^2\mathrm{Var}(N)\). 7.1절 예제 7.1.5(\(N \sim \mathrm{Pois}(50)\), \(\mu = 20\), \(\sigma = 10\))에서 \(50\cdot100 + 400\cdot50 = 25000\), 표준편차 약 158. 손님 수의 불확실성(둘째 항)이 금액의 불확실성(첫째 항)보다 4배 큰 기여를 합니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) \(\mathrm{Var}(Y) = E[\mathrm{Var}(Y\mid X)]\)로 둘째 항을 빠뜨린다: 집단 평균의 차이를 무시한 것이다. (2) 무작위 합의 분산을 \(E[N]\sigma^2\)로만 쓴다: \(N\)이 고정일 때만 맞다. (3) \(\mathrm{Var}(E[Y\mid X])\)를 \(E[\mathrm{Var}(Y)]\)와 혼동한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Var}(Y) = E[\mathrm{Var}(Y\mid X)] + \mathrm{Var}(E[Y\mid X])\): 집단 안 + 집단 사이.</li>
+        <li>증명은 두 항을 \(E[Y^2\mid X]\), \(E[Y\mid X]\)로 펼쳐 반복 기대값.</li>
+        <li>무작위 합: \(\mathrm{Var}(S) = E[N]\sigma^2 + \mu^2\mathrm{Var}(N)\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 7.2.4에서 두 집단의 평균이 같다면 전체 분산은?
+          <details><summary>답</summary><p>집단 사이 분산이 0이므로 36.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(N \sim \mathrm{Pois}(\lambda)\)이고 각 손님이 독립으로 확률 \(p\)만큼 구매한다. 구매자 수 \(S\)의 평균과 분산을 전분산 공식으로 구하여라.
+          <details><summary>답</summary><p>\(X_i\)는 베르누이: \(\mu = p\), \(\sigma^2 = p(1-p)\). \(E[S] = \lambda p\), \(\mathrm{Var}(S) = \lambda p(1-p) + p^2\lambda = \lambda p\). 실제로 \(S \sim \mathrm{Pois}(\lambda p)\)(포아송 솎아내기).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\mathrm{Var}(E[Y\mid X]) = \mathrm{Var}(Y)\)인 것은 언제인가?
+          <details><summary>답</summary><p>\(E[\mathrm{Var}(Y\mid X)] = 0\), 곧 확률 1로 \(\mathrm{Var}(Y\mid X) = 0\): \(Y\)가 \(X\)의 함수일 때(\(X\)를 알면 \(Y\)가 정해질 때).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

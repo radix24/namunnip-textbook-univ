@@ -1,0 +1,93 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-02-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-converge" data-kind="본문" data-std="수학4-02-02">
+  <header class="card-head"><span class="no"></span><h2>그래프와 수렴의 시각화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>matplotlib로 함수 그래프와 수열을 그린다.</li>
+        <li>오차 \(|a_n - L|\)을 로그 눈금으로 그려 수렴의 빠르기(\(1/n\), 기하급수, 이차)를 구별한다.</li>
+        <li>부동소수점 한계가 그래프에 나타나는 모습을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>반복문 (<a href="01-01.html">1.1절</a>), 수열의 극한 (<a href="../7/02-01.html">수학7 2단원</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.2.1</span>그래프 그리기</h3>
+    <pre class="mono small">import math
+import matplotlib.pyplot as plt
+
+xs = [i / 100 for i in range(-300, 301)]
+plt.plot(xs, [math.sin(x) for x in xs], label="sin x")
+plt.plot(xs, [x - x**3 / 6 for x in xs], "--", label="x - x^3/6")
+plt.ylim(-2, 2); plt.legend(); plt.grid(True)
+plt.show()</pre>
+    <p>점들의 리스트를 만들어 <code>plot</code>에 주면 꺾은선으로 잇습니다. 테일러 다항식이 \(x = 0\) 근처에서만 \(\sin x\)와 겹치는 것이 그림으로 바로 보입니다. NumPy를 쓰면 <code>np.linspace</code>와 배열 연산으로 더 짧아집니다(3단원).</p>
+
+    <h3><span class="no">2.2.2</span>수열의 수렴</h3>
+    <p>세 수열을 비교해 봅니다.</p>
+    <pre class="mono small">import math
+for n in [1, 10, 100, 1000, 10**6]:
+    a = (1 + 1/n) ** n
+    print(n, a, math.e - a)
+# 1        2.0                 0.718...
+# 10       2.5937424601000023  0.1245...
+# 100      2.7048138294215285  0.01347...
+# 1000     2.7169239322355936  0.001358...
+# 1000000  2.7182804690957534  1.359...e-06
+
+s = sum(1 / k**2 for k in range(1, 1001))
+print(s, math.pi**2 / 6 - s)   # 1.6439345666815615 0.0009995...
+
+x = 1.0
+for _ in range(30):
+    x = math.cos(x)
+print(x)                        # 0.7390870426953322</pre>
+    <p>\((1 + 1/n)^n\)의 오차는 \(n\)이 10배가 될 때 약 10분의 1로 줄어듭니다: 오차 \(\approx \frac e{2n}\). \(\sum1/k^2\)의 꼬리도 약 \(1/n\)입니다. 반면 \(x \mapsto \cos x\)의 반복은 매번 일정한 비율(약 0.67)로 오차가 줄어듭니다(기하급수 수렴). 30번이면 고정점 0.7390851…과의 오차가 약 \(2\times10^{-6}\)이고, 반복을 10번 늘릴 때마다 자릿수가 약 1.7개씩 늘어납니다. 1.1절의 뉴턴 반복은 자릿수가 두 배씩 늘었습니다(이차 수렴).</p>
+    <p>이런 차이는 오차를 <b>로그 눈금</b>으로 그리면 한눈에 보입니다: <code>plt.semilogy(ns, errors)</code>. 기하급수 수렴은 직선, \(1/n\) 수렴은 \(\log n\)에 대해 직선(<code>loglog</code>), 이차 수렴은 아래로 꺾여 떨어지는 곡선입니다. 같은 절의 탐구 카드에서 비교할 수 있습니다.</p>
+
+    <h3><span class="no">2.2.3</span>부동소수점의 벽</h3>
+    <p>\((1 + 1/n)^n\)을 \(n = 10^{16}\)으로 계산하면 1이 나옵니다. \(1 + 10^{-16}\)이 컴퓨터에서 정확히 1로 반올림되기 때문입니다(배정밀도의 유효숫자 약 16자리). 오차 그래프가 어느 지점에서 내려가다 멈추거나 다시 올라가면 이 한계를 만난 것입니다. 수렴을 볼 때는 이 벽 이전까지만 믿습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 오차를 보통 눈금으로 그려 "0에 붙어 있다"고만 본다: 로그 눈금이어야 속도가 보인다. (2) 수렴값을 모르는 수열에서 오차 대신 연속한 항의 차 \(|a_{n+1} - a_n|\)를 쓰면서 그것을 오차로 착각한다(조화급수는 차가 0으로 가도 발산). (3) 부동소수점 한계 이후의 값까지 해석한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li><code>plt.plot(xs, ys)</code>: 점 리스트로 그래프. 근사와 원래 함수를 겹쳐 그린다.</li>
+        <li>오차를 로그 눈금으로: 기하급수 수렴은 직선, \(1/n\)은 loglog에서 직선, 이차 수렴은 급강하.</li>
+        <li>배정밀도의 한계(약 \(10^{-16}\)) 아래는 의미가 없다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>라이프니츠 급수 \(4\sum_{k=0}^{999}\frac{(-1)^k}{2k+1}\)의 값과 π와의 오차를 구하여라.
+          <details><summary>답</summary><p>3.140592653839794, 오차 약 0.001 (항 수 \(N\)에 대해 약 \(1/N\)). 아주 느린 수렴이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x_{n+1} = \cos x_n\)의 오차가 매번 약 몇 배로 줄어드는지 이론으로 예측하여라. (고정점 \(x^* \approx 0.739\))
+          <details><summary>답</summary><p>\(|\cos'(x^*)| = \sin(0.739) \approx 0.674\). 오차가 매번 약 0.67배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\((1 + 1/n)^n\)을 <code>math.exp(n * math.log1p(1/n))</code>로 계산하면 \(n = 10^{16}\)에서도 \(e\)에 가까운 값이 나오는 이유는?
+          <details><summary>답</summary><p><code>log1p(x)</code>는 \(\ln(1 + x)\)를 \(1 + x\)를 만들지 않고 계산해 작은 \(x\)에서도 정확하다. 문제는 \(1 + 1/n\)을 먼저 만드는 순간 정보가 사라지는 데 있었다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

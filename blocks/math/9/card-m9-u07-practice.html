@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-07-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m9-u07-practice" data-kind="연습" data-std="수학9-07-01">
+  <header class="card-head"><span class="no"></span><h2>통계 소프트웨어 실습 문제</h2><span class="kind">문제 6 · 실습·해석·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>R이나 Python을 열어 직접 실행해 보세요. 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>자료 12.9, 13.5, 12.2, 14.1, 13.0, 12.6, 13.8, 13.3, 12.4, 13.6으로 평균, 표준편차, \(H_0: \mu = 13\)의 t 검정을 실행하여라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>R: <code>t.test(x, mu = 13)</code>(<a href="07-01.html">7.1절</a>).</p></details>
+        <details><summary>힌트 2</summary><p>Python: <code>scipy.stats.ttest_1samp(x, 13)</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>평균 13.14, 표준편차 0.6257, \(t = 0.7075\), df 9, \(p = 0.497\), 95% 구간 \([12.69, 13.59]\).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>5단원의 회귀 자료로 <code>lm</code>을 실행해 7.1절의 출력과 같은지 확인하고, <code>confint</code>로 기울기의 구간을 구하여라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>fit &lt;- lm(y ~ x); confint(fit)</code>.</p></details>
+        <details><summary>힌트 2</summary><p>Python: <code>ols("y ~ x", df).fit().conf_int()</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>기울기 0.65, 표준오차 0.1299, 구간 \([0.332, 0.968]\).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>분할표 [[40, 50, 10], [30, 45, 25]]의 독립성 검정을 실행하여라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>R: <code>chisq.test(matrix(c(40,30,50,45,10,25), nrow = 2))</code>.</p></details>
+        <details><summary>힌트 2</summary><p>Python: <code>scipy.stats.chi2_contingency</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(X^2 = 8.12\), df 2, \(p = 0.0172\) (6.2절 예제와 같음). \(2\times2\)가 아니라 연속성 보정이 적용되지 않는다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">해석</span>R의 <code>chisq.test</code>를 \(2\times2\) 표 [[30, 20], [15, 35]]에 쓰면 \(X^2 = 7.92\)로 6.2절 연습문제(9.09)와 다른 값이 나온다. 이유는? <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>기본 옵션 <code>correct</code>.</p></details>
+        <details><summary>힌트 2</summary><p>예이츠 연속성 보정 \(\sum(|O - E| - 0.5)^2/E\).</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(2\times2\) 표에서는 기본으로 예이츠 연속성 보정을 한다. 모든 칸에서 \(|O - E| = 7.5\)이므로 0.5를 빼면 \(\sum 7^2/E = 49\cdot2\cdot(1/22.5 + 1/27.5) \approx 7.92\). <code>correct = FALSE</code>로 끄면 9.09.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">해석</span>회귀 잔차 그림에서 잔차가 적합값이 커질수록 넓게 퍼지는 깔때기 모양이다. 어떤 가정이 깨졌고, 출력의 어떤 숫자를 덜 믿어야 하는가? <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>오차의 분산이 일정한가?</p></details>
+        <details><summary>힌트 2</summary><p>표준오차의 공식은 \(\sigma^2\)이 일정하다고 가정.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>등분산 가정이 깨졌다. 추정값 자체는 여전히 불편이지만 표준오차, t, p, 구간을 덜 믿어야 한다. 변수 변환(로그)이나 이분산에 강건한 표준오차를 쓴다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>한 학생이 출력의 "p-value &lt; 2.2e-16"을 보고 "귀무가설이 틀렸을 확률이 100%"라고 썼다. 맞는가? <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>p값의 정의(4.1절).</p></details>
+        <details><summary>힌트 2</summary><p>2.2e-16은 무엇의 한계인가?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>틀렸다. p값은 귀무가설이 틀렸을 확률이 아니고, \(2.2\times10^{-16}\)은 배정밀도 계산의 표시 한계일 뿐이다. 매우 작은 p값도 큰 표본에서 사소한 효과로 생길 수 있으므로 효과 크기를 함께 본다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

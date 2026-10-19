@@ -1,0 +1,99 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학11-01-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-chain" data-kind="본문" data-std="수학11-01-01">
+  <header class="card-head"><span class="no"></span><h2>다변수 연쇄 법칙</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전미분의 정의를 "나머지 함수"의 꼴로 다시 쓰고, 이를 써서 연쇄 법칙을 엄밀히 증명한다.</li>
+        <li>연쇄 법칙을 야코비 행렬의 곱과 편도함수의 합으로 읽고, 극좌표 같은 좌표 변환에 적용한다.</li>
+        <li>그래디언트와 방향도함수의 관계, 평균값 부등식을 연쇄 법칙에서 끌어낸다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>전미분과 야코비 행렬 (<a href="../7/08-02.html">수학7 8.2절</a>), 작용소 노름 (<a href="../7/08-01.html">수학7 8.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.1.1</span>전미분 다시 보기</h3>
+    <p>\(E \subseteq \mathbb R^n\)이 열린집합, \(\mathbf f: E \to \mathbb R^m\)일 때 \(\mathbf f\)가 \(\mathbf p\)에서 미분 가능하다는 것은 선형작용소 \(A = \mathbf f'(\mathbf p)\)가 있어 \(\mathbf f(\mathbf p + \mathbf h) = \mathbf f(\mathbf p) + A\mathbf h + \mathbf r(\mathbf h)\), \(|\mathbf r(\mathbf h)|/|\mathbf h| \to 0\)이라는 것이었습니다. 증명에서는 나눗셈을 피하려고 다음 꼴이 편리합니다.</p>
+    <div class="tb-env">
+      <span class="lb">보조정리 1.1.1 <span class="nm">(나머지의 꼴)</span></span>
+      <p>\(\mathbf f\)가 \(\mathbf p\)에서 미분 가능 \(\iff\) 함수 \(\boldsymbol\varepsilon\)이 \(\mathbf 0\) 근방에서 정의되어 \(\boldsymbol\varepsilon(\mathbf 0) = \mathbf 0\), \(\boldsymbol\varepsilon\)이 \(\mathbf 0\)에서 연속이고 \(\mathbf f(\mathbf p + \mathbf h) = \mathbf f(\mathbf p) + A\mathbf h + |\mathbf h|\,\boldsymbol\varepsilon(\mathbf h)\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\boldsymbol\varepsilon(\mathbf h) = \mathbf r(\mathbf h)/|\mathbf h|\) (\(\mathbf h \ne \mathbf 0\)), \(\boldsymbol\varepsilon(\mathbf 0) = \mathbf 0\)으로 두면 두 조건은 같은 말이다. <span class="qed">∎</span></p>
+
+    <h3><span class="no">1.1.2</span>연쇄 법칙의 증명</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.1.2 <span class="nm">(연쇄 법칙)</span></span>
+      <p>\(E \subseteq \mathbb R^n\), \(F \subseteq \mathbb R^m\)이 열린집합, \(\mathbf f: E \to \mathbb R^m\), \(\mathbf f(E) \subseteq F\), \(\mathbf g: F \to \mathbb R^k\)라 하자. \(\mathbf f\)가 \(\mathbf p\)에서, \(\mathbf g\)가 \(\mathbf q = \mathbf f(\mathbf p)\)에서 미분 가능하면 \(\mathbf g\circ\mathbf f\)는 \(\mathbf p\)에서 미분 가능하고 \((\mathbf g\circ\mathbf f)'(\mathbf p) = \mathbf g'(\mathbf q)\,\mathbf f'(\mathbf p)\)이다.</p>
+    </div>
+    <p><b>생각.</b> \(\mathbf f\)를 일차 근사 \(A\)로, \(\mathbf g\)를 일차 근사 \(B\)로 바꾸면 합성은 \(BA\)입니다. 남는 일은 두 번의 근사에서 생긴 오차가 모두 \(|\mathbf h|\)보다 빨리 작아진다는 것을 확인하는 것입니다. 까다로운 곳은 \(\mathbf g\)의 오차가 \(\mathbf h\)가 아니라 \(\mathbf k = \mathbf f(\mathbf p + \mathbf h) - \mathbf q\)의 함수라는 점인데, \(|\mathbf k|\)가 \(|\mathbf h|\)의 상수배로 눌린다는 것으로 해결합니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(A = \mathbf f'(\mathbf p)\), \(B = \mathbf g'(\mathbf q)\)라 하고 보조정리 1.1.1로 \(\mathbf f(\mathbf p + \mathbf h) = \mathbf q + A\mathbf h + |\mathbf h|\boldsymbol\varepsilon_1(\mathbf h)\), \(\mathbf g(\mathbf q + \mathbf k) = \mathbf g(\mathbf q) + B\mathbf k + |\mathbf k|\boldsymbol\varepsilon_2(\mathbf k)\)로 쓴다. \(\mathbf k(\mathbf h) = A\mathbf h + |\mathbf h|\boldsymbol\varepsilon_1(\mathbf h)\)로 두면 \(\mathbf f(\mathbf p + \mathbf h) = \mathbf q + \mathbf k(\mathbf h)\)이므로</p>
+    \[\mathbf g(\mathbf f(\mathbf p + \mathbf h)) - \mathbf g(\mathbf q) - BA\mathbf h = |\mathbf h|\,B\boldsymbol\varepsilon_1(\mathbf h) + |\mathbf k(\mathbf h)|\,\boldsymbol\varepsilon_2(\mathbf k(\mathbf h)).\]
+    <p class="tb-proof">이제 오른쪽을 \(|\mathbf h|\)로 나눈 것이 0으로 감을 보인다. 첫 항은 \(|B\boldsymbol\varepsilon_1(\mathbf h)| \le \|B\|\,|\boldsymbol\varepsilon_1(\mathbf h)| \to 0\). 둘째 항에서 \(|\mathbf k(\mathbf h)| \le (\|A\| + |\boldsymbol\varepsilon_1(\mathbf h)|)|\mathbf h|\)이므로 \(\frac{|\mathbf k(\mathbf h)|}{|\mathbf h|}\)는 \(\mathbf h\)가 작을 때 \(\|A\| + 1\) 이하로 유계이다. 또 \(\mathbf h \to \mathbf 0\)이면 \(\mathbf k(\mathbf h) \to \mathbf 0\)이고 \(\boldsymbol\varepsilon_2\)가 \(\mathbf 0\)에서 연속이며 \(\boldsymbol\varepsilon_2(\mathbf 0) = \mathbf 0\)이므로 \(\boldsymbol\varepsilon_2(\mathbf k(\mathbf h)) \to \mathbf 0\). (\(\mathbf k(\mathbf h) = \mathbf 0\)인 \(\mathbf h\)에서는 둘째 항이 0이라 문제가 없다.) 유계 × 0으로 가는 것 = 0으로 가는 것이다. <span class="qed">∎</span></p>
+    <p>\(\boldsymbol\varepsilon_2\)를 \(\mathbf 0\)에서도 정의해 둔 것이 요점입니다. 몫 \(\frac{\mathbf r_2(\mathbf k)}{|\mathbf k|}\)로 쓰면 \(\mathbf k = \mathbf 0\)이 되는 \(\mathbf h\)(예: \(\mathbf f\)가 상수인 방향)에서 0으로 나누게 되는데, 보조정리의 꼴은 그 문제를 피합니다. 일변수 미적분에서 연쇄 법칙을 \(\frac{\Delta g}{\Delta f}\cdot\frac{\Delta f}{\Delta x}\)로 "증명"하는 것이 틀린 이유도 같습니다.</p>
+
+    <h3><span class="no">1.1.3</span>성분으로 쓰기</h3>
+    <p>행렬로 쓰면 야코비 행렬의 곱 \(J_{\mathbf g\circ\mathbf f}(\mathbf p) = J_{\mathbf g}(\mathbf q)J_{\mathbf f}(\mathbf p)\)이고, 성분으로는</p>
+    \[\frac{\partial(g_i\circ\mathbf f)}{\partial x_j}(\mathbf p) = \sum_{l=1}^m\frac{\partial g_i}{\partial y_l}(\mathbf q)\,\frac{\partial f_l}{\partial x_j}(\mathbf p).\]
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.3 <span class="nm">(극좌표)</span></span>
+      <p>\(f\)가 미분 가능하고 \(u(r, \theta) = f(r\cos\theta, r\sin\theta)\)일 때 \(u_r\), \(u_\theta\)를 \(f_x\), \(f_y\)로 나타내고, \(f = x^2y\), \((r, \theta) = (2, \pi/3)\)에서 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> 극좌표 사상의 야코비 행렬은 \(\begin{pmatrix}\cos\theta &amp; -r\sin\theta\\\sin\theta &amp; r\cos\theta\end{pmatrix}\)이므로 \(u_r = f_x\cos\theta + f_y\sin\theta\), \(u_\theta = -r\sin\theta\,f_x + r\cos\theta\,f_y\)입니다. \((r, \theta) = (2, \pi/3)\)이면 \((x, y) = (1, \sqrt3)\), \(f_x = 2xy = 2\sqrt3\), \(f_y = x^2 = 1\)이므로 \(u_r = 2\sqrt3\cdot\frac12 + \frac{\sqrt3}2 = \frac{3\sqrt3}2 \approx 2.598\). 직접 계산하면 \(u = r^3\cos^2\theta\sin\theta\), \(u_r = 3r^2\cos^2\theta\sin\theta = 12\cdot\frac14\cdot\frac{\sqrt3}2 = \frac{3\sqrt3}2\)로 같습니다.</p>
+
+    <h3><span class="no">1.1.4</span>그래디언트와 방향도함수</h3>
+    <p>\(f: E \to \mathbb R\)이 \(\mathbf p\)에서 미분 가능하면 \(f'(\mathbf p)\)는 \(1\times n\) 행렬이고, 그 전치를 <b>그래디언트</b> \(\nabla f(\mathbf p)\)라 합니다. 단위벡터 \(\mathbf u\)에 대해 곡선 \(\gamma(t) = \mathbf p + t\mathbf u\)와의 합성에 연쇄 법칙을 쓰면</p>
+    \[D_{\mathbf u}f(\mathbf p) = \frac{d}{dt}f(\mathbf p + t\mathbf u)\Big|_{t=0} = \nabla f(\mathbf p)\cdot\mathbf u.\]
+    <p>코시-슈바르츠 부등식으로 \(|D_{\mathbf u}f| \le |\nabla f|\)이고, 등호는 \(\mathbf u\)가 \(\nabla f\)와 같은 방향일 때입니다. 그래디언트가 가장 가파른 오르막 방향이라는 사실(<a href="../4/05-01.html">수학4 5.1절</a>의 경사하강법의 근거)이 여기서 나옵니다. 또 \(f\)의 등위집합 위의 곡선 \(\gamma\)에서 \(f(\gamma(t))\)가 상수이므로 \(\nabla f\cdot\gamma'(t) = 0\): 그래디언트는 등위면에 수직입니다.</p>
+
+    <h3><span class="no">1.1.5</span>평균값 부등식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.1.4 <span class="nm">(평균값 부등식)</span></span>
+      <p>\(E\)가 볼록 열린집합이고 \(\mathbf f: E \to \mathbb R^m\)이 미분 가능하며 모든 \(\mathbf x \in E\)에서 \(\|\mathbf f'(\mathbf x)\| \le M\)이면, \(\mathbf a, \mathbf b \in E\)에 대해 \(|\mathbf f(\mathbf b) - \mathbf f(\mathbf a)| \le M|\mathbf b - \mathbf a|\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\mathbf u = \mathbf f(\mathbf b) - \mathbf f(\mathbf a)\)로 두고 \(\varphi(t) = \mathbf u\cdot\mathbf f(\mathbf a + t(\mathbf b - \mathbf a))\)에 연쇄 법칙과 일변수 평균값 정리를 쓰면 어떤 \(c \in (0, 1)\)에서 \(|\mathbf u|^2 = \varphi(1) - \varphi(0) = \mathbf u\cdot\mathbf f'(\mathbf c)(\mathbf b - \mathbf a) \le |\mathbf u|\,M\,|\mathbf b - \mathbf a|\) (\(\mathbf c = \mathbf a + c(\mathbf b - \mathbf a)\)). \(\mathbf u \ne \mathbf 0\)이면 \(|\mathbf u|\)로 나눈다. <span class="qed">∎</span></p>
+    <p>벡터값 함수에서는 등식 \(\mathbf f(\mathbf b) - \mathbf f(\mathbf a) = \mathbf f'(\mathbf c)(\mathbf b - \mathbf a)\)가 일반적으로 성립하지 않습니다. 예: \(\mathbf f(t) = (\cos t, \sin t)\), \([0, 2\pi]\)에서 왼쪽은 \(\mathbf 0\)이지만 \(\mathbf f'(c)\)는 길이 1이라 0이 될 수 없습니다. 부등식이 올바른 일반화이며, 2단원의 역함수정리 증명에서 축소사상을 만드는 데 쓰입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 연쇄 법칙의 곱 순서: \(J_{\mathbf g}J_{\mathbf f}\)이지 \(J_{\mathbf f}J_{\mathbf g}\)가 아니다(크기 \(k\times m\)과 \(m\times n\)). (2) 편도함수만 있는 함수에 연쇄 법칙을 쓴다. \(\mathbf g\)가 미분 가능해야 한다. 수학7 8.2절의 \(g = \frac{x^2y}{x^2 + y^2}\)와 \(\gamma(t) = (t, t)\)이면 \(g(\gamma(t)) = t/2\)라 도함수가 \(\frac12\)인데, 편도함수로 계산한 \(\nabla g(\mathbf 0)\cdot\gamma'(0) = 0\)과 다르다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>미분 가능 \(\iff\) \(\mathbf f(\mathbf p + \mathbf h) = \mathbf f(\mathbf p) + A\mathbf h + |\mathbf h|\boldsymbol\varepsilon(\mathbf h)\), \(\boldsymbol\varepsilon\)은 \(\mathbf 0\)에서 연속이고 0.</li>
+        <li>연쇄 법칙 \((\mathbf g\circ\mathbf f)' = \mathbf g'(\mathbf f(\mathbf p))\mathbf f'(\mathbf p)\): 야코비 행렬의 곱.</li>
+        <li>\(D_{\mathbf u}f = \nabla f\cdot\mathbf u\). 그래디언트는 가장 가파른 방향이고 등위면에 수직.</li>
+        <li>평균값 부등식 \(|\mathbf f(\mathbf b) - \mathbf f(\mathbf a)| \le M|\mathbf b - \mathbf a|\) (등식은 일반적으로 거짓).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.1.6</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathbf f(t) = (t^2, e^t)\), \(g(x, y) = xy\)일 때 \((g\circ\mathbf f)'(0)\)과 \((g\circ\mathbf f)'(1)\)을 연쇄 법칙으로 구하여라.
+          <details><summary>답</summary><p>\((y, x)\cdot(2t, e^t) = 2te^t + t^2e^t\). \(t = 0\)에서 0, \(t = 1\)에서 \(3e \approx 8.155\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f\)가 미분 가능하고 \(f(tx, ty) = t^kf(x, y)\) (모든 \(t > 0\))이면 \(xf_x + yf_y = kf\)임을 보여라(오일러의 동차함수 정리).
+          <details><summary>답</summary><p>양변을 \(t\)로 미분하면 연쇄 법칙으로 \(xf_x(tx, ty) + yf_y(tx, ty) = kt^{k-1}f(x, y)\). \(t = 1\)을 넣는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(E\)가 연결 열린집합이고 모든 점에서 \(\mathbf f' = 0\)이면 \(\mathbf f\)는 상수임을 보여라.
+          <details><summary>답</summary><p>각 점의 볼록 근방(공)에서 평균값 부등식(\(M = 0\))으로 \(\mathbf f\)가 상수다. 따라서 \(\{\mathbf x : \mathbf f(\mathbf x) = \mathbf f(\mathbf a)\}\)는 열린집합이고, 연속성으로 닫힌집합이기도 하다(\(E\) 안에서). \(E\)가 연결이므로 \(E\) 전체이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

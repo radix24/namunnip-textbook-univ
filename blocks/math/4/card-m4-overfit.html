@@ -1,0 +1,50 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-06-03",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m4-overfit.js"]
+}
+-->
+<article class="card q-card" id="card-m4-overfit" data-kind="탐구" data-std="수학4-06-03">
+  <header class="card-head"><span class="no"></span><h2>훈련 오차와 검증 오차가 갈라지는 곳</h2><span class="kind">탐구 · 과적합의 진단</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>\(\sin 2\pi x\)에 잡음을 더한 훈련 자료로 다항식을 맞추고, 따로 떼어 둔 검증 자료 30개로 평가합니다. 차수를 올리면 두 오차는 어떻게 움직일까요? 훈련 자료가 많아지면 어떨까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>훈련 오차는 차수를 올리면 줄기만 한다(<a href="03-02.html">3.2절</a>). 검증 오차는 맞출 때 쓰지 않은 자료의 MSE (<a href="06-03.html">6.3절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>차수 d = <b data-show="d">3</b></span><input type="range" name="d" min="0" max="12" step="1" value="3" aria-label="다항식의 차수"></label>
+        <label><span>훈련 자료 수 = <b data-show="nt">12</b></span><input type="range" name="nt" min="6" max="30" step="1" value="12" aria-label="훈련 자료의 수"></label>
+        <label><span>잡음 표준편차 = <b data-show="sg">0.3</b></span><input type="range" name="sg" min="0" max="0.8" step="0.05" value="0.3" aria-label="잡음의 표준편차"></label>
+      </div>
+      <canvas aria-label="왼쪽: 훈련 자료(빨강), 검증 자료(회색), 맞춘 다항식(파랑), 참 곡선(점선). 오른쪽: 차수별 훈련 오차(빨강)와 검증 오차(파랑)의 로그"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>훈련 자료 12개, 잡음 0.3에서 0차와 1차는 훈련 MSE(0.565, 0.375)와 검증 MSE(0.624, 0.349)가 모두 큽니다(과소적합). 3차에서 훈련 0.021, 검증 0.125로 검증 오차가 가장 작습니다.</li>
+        <li>차수를 7, 9, 11로 올리면 훈련 MSE는 0.0075, 0.0032를 거쳐 거의 0이 되지만, 검증 MSE는 0.157, 0.203을 거쳐 1.64로 커집니다. 오른쪽 그림에서 두 곡선이 벌어지는 것이 과적합의 신호입니다.</li>
+        <li>훈련 자료를 30개로 늘리면 가장 좋은 차수가 5로 올라가고(검증 0.0965), 같은 11차의 검증 MSE가 1.64에서 0.165로 줄어듭니다. 자료가 많을수록 복잡한 모형을 감당할 수 있습니다.</li>
+        <li>잡음을 0으로 하면 11차가 가장 좋습니다(검증 MSE 약 \(4\times10^{-13}\)). 외울 잡음이 없으면 과적합도 없습니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>U자 곡선</b><span>차수가 낮으면 모형이 참 곡선을 표현하지 못해 두 오차가 모두 큽니다(과소적합, 편향이 큼). 차수가 높으면 훈련 자료의 잡음까지 따라가 훈련 오차는 작지만 검증 오차가 커집니다(과적합, 분산이 큼). 검증 오차가 가장 작은 곳이 고를 차수입니다.</span></li>
+        <li><b>잡음의 바닥</b><span>새 자료의 잡음은 어떤 모형도 예측할 수 없으므로 검증 MSE는 잡음의 분산 \(\sigma^2\)(표준편차 0.3이면 0.09) 근처보다 크게 낮아질 수 없습니다. 훈련 MSE가 그보다 훨씬 작다면 잡음을 외운 것입니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"검증 오차가 가장 작은 차수를 골랐으니 그 검증 오차가 새 자료에서의 오차다"는 약간 낙관적입니다. 여러 후보 중 검증 자료에서 가장 좋은 것을 골랐으므로 검증 자료에도 조금 맞춰진 셈입니다. 최종 성능은 선택에 쓰지 않은 시험 자료로 따로 잽니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,86 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-regular" data-kind="본문" data-std="수학3-07-02">
+  <header class="card-head"><span class="no"></span><h2>정규 문법과 유한상태 기계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>문법(생성 규칙)을 정의하고 정규 문법을 구별한다.</li>
+        <li>정규 문법과 DFA가 같은 언어(정규 언어)를 정의함을 대응으로 설명한다.</li>
+        <li>펌핑 보조정리의 생각으로 \(\{0^n1^n\}\)이 정규 언어가 아님을 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>유한상태 기계 (<a href="07-01.html">7.1절</a>), 비둘기집 원리 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.2.1</span>문법</h3>
+    <p>오토마타가 문자열을 "읽어서 판정"한다면, 문법은 문자열을 "만들어 내는" 규칙입니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 7.2.1</span>
+      <p class="q-term"><b>문법</b>: 비단말 기호(대문자), 단말 기호(알파벳), 시작 기호 \(S\), 생성 규칙 \(A \to w\)의 묶음. \(S\)에서 규칙을 되풀이해 단말 기호만 남은 문자열 전체가 생성되는 언어.</p>
+      <p class="q-term"><b>정규 문법</b>: 모든 규칙이 \(A \to aB\) 또는 \(A \to a\) 또는 \(A \to \varepsilon\) 꼴(오른쪽에 단말 하나 다음 비단말 많아야 하나).</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>"1이 짝수 개인 문자열"의 정규 문법을 7.1절의 DFA로부터 만들어라.</p>
+    </div>
+    <p><i>풀이.</i> 상태를 비단말로, 전이 \(\delta(P, a) = Q\)를 규칙 \(P \to aQ\)로, 받아들이는 상태 \(P\)에 \(P \to \varepsilon\)을 둡니다. \(E \to 0E \mid 1O \mid \varepsilon\), \(O \to 0O \mid 1E\). 예: \(E \Rightarrow 1O \Rightarrow 10O \Rightarrow 101E \Rightarrow 101\). 유도 과정이 DFA가 "101"을 읽는 경로와 똑같습니다.</p>
+
+    <h3><span class="no">7.2.2</span>같은 힘</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.3</span>
+      <p>언어 \(L\)에 대해 다음은 동치이다. (a) 어떤 DFA가 \(L\)을 인식한다. (b) 어떤 정규 문법이 \(L\)을 생성한다. (c) \(L\)을 정규 표현식으로 쓸 수 있다. 이런 언어를 <b>정규 언어</b>라 한다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">(a)⇔(b)의 생각.</span>(a)⇒(b)는 예제처럼 상태를 비단말로 옮긴다. (b)⇒(a)는 비단말을 상태로 두면 비결정적 오토마타(한 기호에 갈 곳이 여럿일 수 있음)가 되고, 부분집합 구성(상태들의 집합을 새 상태로)으로 DFA로 바꾼다. <span class="qed">∎</span></p>
+    <p>정규 표현식은 프로그래밍에서 쓰는 검색 패턴입니다. 예: <code>(0|1)*01</code>은 "01로 끝나는 문자열"(7.1절 연습 1)이고, 내부적으로 DFA로 바뀌어 실행됩니다.</p>
+
+    <h3><span class="no">7.2.3</span>정규가 아닌 언어</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.4</span>
+      <p>\(L = \{0^n1^n : n \ge 0\}\)은 정규 언어가 아니다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>상태가 \(k\)개인 DFA가 \(L\)을 인식한다고 하자. 문자열 \(0^0, 0^1, \dots, 0^k\) (\(k + 1\)개)을 읽은 뒤의 상태는 \(k\)가지뿐이라, 비둘기집 원리로 \(0^i\)과 \(0^j\) (\(i \ne j\))가 같은 상태에 도착한다. 그 뒤에 \(1^i\)을 읽으면 두 경우 같은 상태로 가므로, \(0^i1^i\)(받아들여야 함)과 \(0^j1^i\)(거부해야 함)을 같이 판정한다. 모순. <span class="qed">∎</span></p>
+    <p>DFA는 "얼마나 많이"를 끝없이 셀 수 없습니다. 괄호 짝 맞추기, 프로그래밍 언어의 중첩 구조도 같은 이유로 정규가 아니고, 스택을 가진 기계(푸시다운 오토마타)와 문맥 자유 문법이 필요합니다. 기억 장치가 무한한 기계가 7.3절의 튜링 기계입니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) "\(0^*1^*\)이 정규이니 \(0^n1^n\)도 정규": \(0^*1^*\)은 개수를 맞출 필요가 없다. (2) 무한 언어는 정규가 아니라고 생각한다: "1이 짝수 개인 문자열"은 무한하지만 정규다. 정규성은 크기가 아니라 필요한 기억의 양이 정한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정규 문법(\(A \to aB \mid a \mid \varepsilon\))과 DFA는 상태 ↔ 비단말로 대응한다.</li>
+        <li>DFA, 정규 문법, 정규 표현식은 같은 언어(정규 언어)를 정의한다.</li>
+        <li>\(\{0^n1^n\}\)은 비둘기집 원리로 정규가 아니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정규 문법 \(S \to 0S \mid 1A\), \(A \to 1A \mid \varepsilon\)이 생성하는 언어를 말하여라.
+          <details><summary>답</summary><p>0이 몇 개 나온 뒤 1이 1개 이상: \(0^*11^*\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>7.1절 예제 (b)(3의 배수) DFA를 정규 문법으로 옮겨라.
+          <details><summary>답</summary><p>\(R_0 \to 0R_0 \mid 1R_1 \mid \varepsilon\), \(R_1 \to 0R_2 \mid 1R_0\), \(R_2 \to 0R_1 \mid 1R_2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>회문(앞뒤로 같은 문자열) 전체 \(\{w : w = w^R\}\)이 정규가 아님을 보여라.
+          <details><summary>답</summary><p>\(0^i1\)과 \(0^j1\) (\(i \ne j\))이 같은 상태에 가면, 뒤에 \(0^i\)을 붙여 \(0^i10^i\)(회문)과 \(0^j10^i\)(회문 아님)을 구별 못 한다. 상태 \(k\)개면 \(i = 0..k\) 중 둘이 겹친다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "화학4-03-06",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-ch4-regularize" data-kind="본문" data-std="화학4-03-06">
+  <header class="card-head"><span class="no"></span><h2>정규화: 릿지와 라소</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>가중치가 커지는 것과 과적합의 관계를 안다.</li>
+        <li>릿지와 라소의 손실 함수를 쓰고 가중치가 어떻게 바뀌는지 계산한다.</li>
+        <li>정규화 세기 λ를 교차검증으로 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>선형 회귀 (<a href="03-01.html">3.1절</a>), 교차검증과 과적합 (<a href="03-02.html">3.2절</a>), 특성 표준화 (<a href="01-04.html">1.4절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.6.1</span>큰 가중치와 과적합</h3>
+    <p>특성이 많고 자료가 적으면 모형은 잡음까지 맞추려고 서로 상쇄하는 큰 가중치(+50, −49처럼)를 만듭니다. 훈련 자료에서는 잘 맞지만 입력이 조금만 달라져도 예측이 크게 흔들립니다. 정규화는 손실에 가중치 크기의 벌점을 더해 이런 해를 막습니다.</p>
+
+    <h3><span class="no">3.6.2</span>릿지와 라소</h3>
+    <div class="tb-env thm">
+      <span class="lb">식 3.6.1 <span class="nm">(릿지와 라소)</span></span>
+      <p>\[ \text{릿지: } \mathcal L = \sum_i (y_i - \hat y_i)^2 + \lambda\sum_j w_j^2, \qquad \text{라소: } \mathcal L = \sum_i (y_i - \hat y_i)^2 + \lambda\sum_j |w_j| \]</p>
+    </div>
+    <ul>
+      <li><b>릿지</b>는 모든 가중치를 0 쪽으로 조금씩 줄입니다. 상관된 특성들에 가중치를 고르게 나눕니다.</li>
+      <li><b>라소</b>는 작은 가중치를 정확히 0으로 만듭니다. 쓸모없는 특성을 스스로 빼므로 특성 선택이 함께 됩니다.</li>
+    </ul>
+    <p>원점을 지나는 특성 하나의 모형 \(\hat y = wx\)에서 릿지의 해는 \(w = \sum x_iy_i/(\sum x_i^2 + \lambda)\)로, λ가 분모에 더해져 가중치가 줄어드는 것이 바로 보입니다. 벌점은 가중치의 크기에 걸리므로, 특성의 단위가 다르면 불공평해집니다. 정규화 전에 특성을 표준화합니다(1.4절). 절편은 보통 벌점에서 뺍니다.</p>
+
+    <h3><span class="no">3.6.3</span>λ 고르기</h3>
+    <p>λ = 0이면 보통 회귀, λ가 매우 크면 모든 가중치가 0(평균만 예측)입니다. 그 사이 어딘가에서 검증 오차가 가장 작습니다. λ를 로그 간격(0.001, 0.01, 0.1, 1, 10, …)으로 바꿔 가며 교차검증 오차를 그리고, 가장 작은 곳(또는 그보다 표준 오차 하나만큼 단순한 쪽)을 고릅니다. 시험 자료는 λ를 고르는 데 쓰지 않습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>"정규화하면 훈련 오차가 줄어든다"가 아닙니다. 훈련 오차는 오히려 늘어납니다. 줄어드는 것은 새 자료에서의 오차입니다. 또 라소가 0으로 만든 특성이 "활성과 관계없다"는 뜻은 아닙니다. 다른 상관된 특성이 같은 정보를 대신 가져갔을 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>큰 상쇄 가중치는 과적합의 신호다.</li>
+        <li>릿지(λΣw²)는 고르게 줄이고, 라소(λΣ|w|)는 일부를 0으로 만든다.</li>
+        <li>표준화 후 정규화하고, λ는 로그 간격의 교차검증으로 고른다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.6.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>특성 하나, 원점을 지나는 모형에서 Σxy = 20, Σx² = 8이다. λ = 0, 2, 8일 때 릿지 가중치는?
+          <details><summary>답</summary><p>2.50, 2.00, 1.25.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>같은 자료에서 라소의 해는 w &gt; 0일 때 \(w = (\sum xy - \lambda/2)/\sum x^2\)이다. λ = 8일 때 w와, w가 0이 되는 λ는?
+          <details><summary>답</summary><p>w = (20 − 4)/8 = 2.00. λ ≥ 40에서 0.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>분자량(단위 g/mol, 값 수백)과 logP(값 수 단위)를 표준화하지 않고 릿지에 넣으면 어느 특성의 가중치가 더 강하게 줄어드는가?
+          <details><summary>답</summary><p>분자량은 값이 커서 같은 효과에 작은 가중치면 되므로 벌점이 거의 걸리지 않고, logP는 큰 가중치가 필요해 벌점을 크게 받아 더 강하게 줄어듭니다. 단위 때문에 벌점이 불공평해지므로 표준화가 필요합니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

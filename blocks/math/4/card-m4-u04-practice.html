@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-04-R",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m4-u04-practice" data-kind="연습" data-std="수학4-04-01">
+  <header class="card-head"><span class="no"></span><h2>기호 계산 실습 문제</h2><span class="kind">문제 6 · 실습·개념·판단 · 힌트 2단계</span></header>
+  <div class="q-body">
+    <p>SymPy를 설치한 파이썬(<code>pip install sympy</code>)에서 <code>import sympy as sp</code>, <code>x = sp.symbols('x')</code>로 시작하세요. 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요.</p>
+    <ol class="q-exlist">
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(\tan x\)의 도함수를 SymPy로 구하고, 교과서의 \(\sec^2 x\)와 같음을 확인하여라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>sp.diff(sp.tan(x), x)</code>(<a href="04-01.html">4.1절</a>).</p></details>
+        <details><summary>힌트 2</summary><p>두 식의 차를 <code>simplify</code>한다.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>출력은 <code>tan(x)**2 + 1</code>. <code>sp.simplify(sp.tan(x)**2 + 1 - sp.sec(x)**2)</code> → <code>0</code>이므로 같다(\(1 + \tan^2x = \sec^2x\)). 겉모양이 다른 같은 식을 낼 수 있다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(\int_0^1 x\ln x\,dx\)를 구하여라. 피적분함수가 \(x = 0\)에서 정의되지 않는데 문제가 없는가? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>sp.integrate(x*sp.log(x), (x, 0, 1))</code>.</p></details>
+        <details><summary>힌트 2</summary><p>\(\lim_{x\to0^+}x\ln x\)를 <code>limit</code>으로.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(-\frac14\). 원시함수 \(\frac{x^2}2\ln x - \frac{x^2}4\)에서 \(x\to0^+\)일 때 \(x^2\ln x \to 0\)이므로 이상적분이 수렴한다. 중점 공식으로도 \(-0.25\)에 가깝다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(x^2 - 2x - 1 = 0\)을 <code>solve</code>로 풀고, 결과를 소수로 바꾸어라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>근의 공식으로 미리 예상.</p></details>
+        <details><summary>힌트 2</summary><p><code>[r.evalf() for r in sols]</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p><code>[1 - sqrt(2), 1 + sqrt(2)]</code>, 소수로 약 \(-0.414214\), \(2.414214\). SymPy는 정확한 근호 꼴로 준다.</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">개념</span><code>sp.simplify(sp.sqrt(x**2))</code>가 <code>x</code>가 아니라 <code>sqrt(x**2)</code>를 내는 이유와 해결법은? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(x = -3\)을 넣어 보라.</p></details>
+        <details><summary>힌트 2</summary><p>기호를 선언할 때의 가정.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(\sqrt{(-3)^2} = 3 \ne -3\)이므로 일반적으로 \(\sqrt{x^2} = |x|\)이지 \(x\)가 아니다. <code>x = sp.symbols('x', positive=True)</code>로 선언하면 <code>x</code>로 줄어든다(실수 가정 <code>real=True</code>만 주면 <code>Abs(x)</code>).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">실습</span>\(\frac1{1 - x}\)의 \(x = 0\)에서의 테일러 전개를 4차까지 구하고, \(x = 0.1\)에서 전개(4차까지)의 값과 참값의 차를 구하여라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>sp.series(1/(1 - x), x, 0, 5)</code>.</p></details>
+        <details><summary>힌트 2</summary><p><code>.removeO()</code>로 \(O\) 항을 떼고 <code>.subs(x, 0.1)</code>.</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>\(1 + x + x^2 + x^3 + x^4 + O(x^5)\). \(x = 0.1\)에서 1.1111, 참값 \(\frac1{0.9} = 1.1111\ldots\)과의 차는 \(\frac{0.1^5}{0.9} \approx 1.11\times10^{-5}\)(버린 등비급수의 합).</p>
+        </details>
+      </li>
+      <li>
+        <p class="q-prob"><span class="q-tag">판단</span>한 학생이 \(\frac{\sin t - t}{t^3}\)을 \(t = 10^{-8}\)에서 계산해 0을 얻고 "극한은 \(-\frac16\)이 아니라 0"이라고 했다. 옳은가? <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>\(t = 10^{-2}, 10^{-4}, 10^{-6}, 10^{-7}\)에서도 계산해 보라.</p></details>
+        <details><summary>힌트 2</summary><p>\(\sin t\)와 \(t\)의 차는 \(t^3/6\) 정도인데, \(t\)에 비해 얼마나 작은가?</p></details>
+        <details class="q-sol"><summary>풀이</summary>
+          <p>틀렸다. \(t = 10^{-2}, 10^{-4}\)에서는 \(-0.1666658\), \(-0.16666666\)으로 \(-\frac16\)에 다가가지만, \(10^{-6}\)에서 \(-0.166654\), \(10^{-7}\)에서 \(-0.172\)로 흔들리고 \(10^{-8}\)에서는 \(\sin t\)와 \(t\)가 부동소수점으로 같은 수가 되어 0이 된다. 자릿수 상쇄 때문이며, <code>sp.limit</code>은 정확히 <code>-1/6</code>을 준다.</p>
+        </details>
+      </li>
+    </ol>
+  </div>
+</article>

@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통6-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s6-gamma" data-kind="본문" data-std="응통6-04-03">
+  <header class="card-head"><span class="no"></span><h2>감마분포와 지수분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>감마 함수로 감마분포의 밀도, 평균, 분산, 적률생성함수를 쓴다.</li>
+        <li>지수분포의 무기억성을 증명하고 그 뜻을 안다.</li>
+        <li>지수분포의 합, 카이제곱 분포와 감마분포의 관계를 쓴다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>감마 함수(응통1 03단원), 적률생성함수 (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>기다림의 분포</h3>
+    <p>콜센터에 다음 전화가 올 때까지, 부품이 고장 날 때까지, 버스가 올 때까지 기다리는 시간은 0보다 크고 위로는 끝이 없는 양입니다. 이런 양의 가장 기본적인 모형이 지수분포이고, 지수분포 여러 개를 더한 "\(\alpha\)번째 사건까지의 시간"이 감마분포입니다. 한 가지 함수(감마 함수)로 두 분포와 카이제곱 분포를 한꺼번에 정리할 수 있습니다.</p>
+
+    <h3><span class="no">4.3.1</span>감마분포</h3>
+    <p>감마 함수 \(\Gamma(\alpha) = \int_0^\infty x^{\alpha-1}e^{-x}dx\) (\(\alpha &gt; 0\))는 부분적분으로 \(\Gamma(\alpha+1) = \alpha\Gamma(\alpha)\)를 만족하고, \(\Gamma(1) = 1\)이므로 \(\Gamma(n) = (n-1)!\), 또 \(\Gamma(1/2) = \sqrt\pi\)입니다. 적분 안의 함수를 \(\Gamma(\alpha)\)로 나누면 넓이가 1인 밀도가 되고, \(x\)를 \(x/\beta\)로 늘이면 척도 모수가 생깁니다.</p>
+    <div class="tb-env def">
+      <span class="lb">정의 4.3.1</span>
+      <p><b>감마분포</b> \(\mathrm{Gamma}(\alpha, \beta)\): \(f(x) = \dfrac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta}\) (\(x &gt; 0\)). \(\alpha\)는 모양 모수, \(\beta\)는 척도 모수.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.3.2</span>
+      <p>\(X \sim \mathrm{Gamma}(\alpha, \beta)\)이면 \(E(X) = \alpha\beta\), \(\mathrm{Var}(X) = \alpha\beta^2\), \(M(t) = (1 - \beta t)^{-\alpha}\) (\(t &lt; 1/\beta\)).</p>
+    </div>
+    <p class="tb-proof">\(M(t) = \frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^\infty x^{\alpha-1}e^{-x(1/\beta - t)}dx\). 적분은 척도가 \(\beta' = \beta/(1 - \beta t)\)인 감마 밀도의 정규화 상수 \(\Gamma(\alpha)\beta'^\alpha\)이므로 \(M(t) = (\beta'/\beta)^\alpha = (1 - \beta t)^{-\alpha}\). 미분하면 \(M'(0) = \alpha\beta\), \(M''(0) = \alpha(\alpha+1)\beta^2\), 분산은 \(\alpha(\alpha+1)\beta^2 - \alpha^2\beta^2 = \alpha\beta^2\). <span class="qed">∎</span></p>
+    <p>모양 모수 \(\alpha\)가 1 이하이면 밀도가 0에서 가장 높고 단조 감소하며, 1보다 크면 봉우리가 \((\alpha - 1)\beta\)에 생기고, \(\alpha\)가 커질수록 정규분포에 가까워집니다. 교재와 R에 따라 척도 \(\beta\) 대신 비율 \(\lambda = 1/\beta\)를 쓰므로(R의 <code>dgamma(x, shape, rate)</code>) 확인합니다.</p>
+
+    <h3><span class="no">4.3.2</span>지수분포와 무기억성</h3>
+    <p>\(\alpha = 1\)인 감마분포가 <b>지수분포</b>입니다. 비율 \(\lambda = 1/\beta\)로 쓰면 \(f(x) = \lambda e^{-\lambda x}\), 평균 \(1/\lambda\), 분산 \(1/\lambda^2\), 생존함수 \(P(X &gt; x) = e^{-\lambda x}\)입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.3.3 (무기억성)</span>
+      <p>\(X \sim \mathrm{Exp}(\lambda)\)이면 모든 \(s, t \ge 0\)에 대해 \(P(X &gt; s + t \mid X &gt; s) = P(X &gt; t)\).</p>
+    </div>
+    <p class="tb-proof">\(P(X &gt; s+t \mid X &gt; s) = \dfrac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda t}\). <span class="qed">∎</span></p>
+    <p>이미 \(s\)시간 동안 고장 나지 않은 부품이 앞으로 \(t\)시간 더 버틸 확률은 새 부품과 같다는 뜻입니다. 노화가 없는 고장(우연한 충격)의 모형이며, 연속분포 가운데 무기억성을 갖는 것은 지수분포뿐입니다(이산에서는 기하분포, 4.1절). 실제 기계는 닳으므로 무기억성이 맞지 않는 경우가 많고, 그때는 와이블분포 같은 모형을 씁니다.</p>
+
+    <h3><span class="no">4.3.3</span>합과 특수한 경우</h3>
+    <ul>
+      <li>\(X_1, \ldots, X_n\)이 독립이고 \(X_i \sim \mathrm{Gamma}(\alpha_i, \beta)\)이면(같은 척도) 적률생성함수의 곱 \((1-\beta t)^{-\sum\alpha_i}\)으로 \(\sum X_i \sim \mathrm{Gamma}(\sum \alpha_i, \beta)\)입니다. 특히 독립인 \(\mathrm{Exp}(\lambda)\) \(n\)개의 합은 \(\mathrm{Gamma}(n, 1/\lambda)\)로, 포아송 과정에서 \(n\)번째 사건까지의 시간입니다(응통9 05단원).</li>
+      <li>\(\alpha = \nu/2\), \(\beta = 2\)이면 자유도 \(\nu\)인 <b>카이제곱 분포</b>입니다(6.1절). 그래서 카이제곱 분포의 평균은 \(\nu\), 분산은 \(2\nu\)입니다.</li>
+      <li>\(X \sim \mathrm{Gamma}(\alpha, \beta)\)이면 \(cX \sim \mathrm{Gamma}(\alpha, c\beta)\) (\(c &gt; 0\)). 척도 모수라는 이름의 뜻입니다.</li>
+    </ul>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.4</span>
+      <p>한 부품의 수명은 평균 500시간인 지수분포입니다. (가) 1000시간 넘게 버틸 확률은? (나) 이미 1000시간 버틴 부품이 앞으로 500시간 더 버틸 확률은? (다) 부품이 고장 나면 즉시 새것으로 바꿀 때, 세 번째 부품이 고장 날 때까지의 시간의 평균과 표준편차는?</p>
+    </div>
+    <p><i>풀이.</i> \(\lambda = 1/500\). (가) \(e^{-1000/500} = e^{-2} \approx 0.135\). (나) 무기억성으로 \(P(X &gt; 500) = e^{-1} \approx 0.368\). (다) 독립인 지수 세 개의 합이라 \(\mathrm{Gamma}(3, 500)\), 평균 1500시간, 분산 \(3 \times 500^2\), 표준편차 \(500\sqrt3 \approx 866\)시간.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\mathrm{Gamma}(\alpha, \beta)\): 평균 \(\alpha\beta\), 분산 \(\alpha\beta^2\), 적률생성함수 \((1-\beta t)^{-\alpha}\).</li>
+        <li>지수분포는 \(\alpha = 1\), 무기억성을 갖는 유일한 연속분포입니다.</li>
+        <li>같은 척도의 독립 감마는 모양 모수가 더해지고, 카이제곱은 \(\mathrm{Gamma}(\nu/2, 2)\)입니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>감마분포의 평균을 적률생성함수 없이 적분으로 직접 구하세요.
+          <details><summary>답</summary><p>\(E(X) = \frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^\infty x^{\alpha}e^{-x/\beta}dx\). \(u = x/\beta\)로 치환하면 적분은 \(\beta^{\alpha+1}\Gamma(\alpha+1)\). 따라서 \(E(X) = \beta\Gamma(\alpha+1)/\Gamma(\alpha) = \alpha\beta\).</p></details>
+        </li>
+        <li>독립인 \(X_i \sim \mathrm{Exp}\)(평균 \(\beta\)), \(i = 1, \ldots, n\)의 합의 분포는?
+          <details><summary>답</summary><p>적률생성함수 \((1-\beta t)^{-n}\), \(\mathrm{Gamma}(n, \beta)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(X \sim \mathrm{Exp}(\lambda)\)의 정수 부분 \(Y = \lfloor X \rfloor\)는 어떤 분포를 따르나요?
+          <details><summary>답</summary><p>\(P(Y = k) = P(k \le X &lt; k+1) = e^{-\lambda k}(1 - e^{-\lambda})\), \(k = 0, 1, 2, \ldots\). 성공 확률 \(p = 1 - e^{-\lambda}\)인 기하분포(실패 횟수)입니다. 지수분포의 무기억성이 기하분포의 무기억성으로 이어집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

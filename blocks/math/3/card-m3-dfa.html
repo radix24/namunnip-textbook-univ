@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-07-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/math/m-kit.js", "js/cards/math/m3-dfa.js"]
+}
+-->
+<article class="card q-card" id="card-m3-dfa" data-kind="탐구" data-std="수학3-07-01">
+  <header class="card-head"><span class="no"></span><h2>상태 세 개로 3의 배수를 가려낸다</h2><span class="kind">탐구 · 유한상태 기계 실행</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>아무리 긴 이진수라도 3의 배수인지 판정하는 데 기억할 것이 몇 가지면 충분할까요? 기계가 문자열을 읽는 동안 상태는 어떻게 움직일까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>복원</h3>
+      <p>DFA는 상태와 전이 함수로 문자열을 한 기호씩 읽고, 끝난 상태가 받아들이는 상태이면 받아들인다. 3의 배수 판정은 \(\delta(r, b) = (2r + b) \bmod 3\) (<a href="07-01.html">7.1절</a>).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>기계</span>
+          <select name="m" aria-label="DFA 선택"><option value="mod3">3의 배수</option><option value="even1">1이 짝수 개</option><option value="end01">01로 끝남</option></select></label>
+        <label><span>입력 (0과 1)</span><input type="text" name="w" value="110" aria-label="입력 문자열" style="width:9em"></label>
+        <label><span>읽은 글자 수 = <b data-show="s">0</b></span><input type="range" name="s" min="0" max="3" step="1" value="0" aria-label="읽은 글자 수"></label>
+      </div>
+      <canvas aria-label="상태 전이도. 파랗게 칠한 원이 현재 상태, 이중 원은 받아들이는 상태, 화살표 위 숫자는 읽는 기호. 위쪽에 입력 문자열, 빨강은 다음에 읽을 글자"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기</h3>
+      <ol>
+        <li>처음 입력 "110"(=6)을 한 글자씩 읽으세요. 상태가 0 → 1 → 0 → 0으로 움직여 받아들입니다.</li>
+        <li>입력을 "111"(=7)로 바꾸면 0 → 1 → 0 → 1로 거부합니다.</li>
+        <li>"10010"(=18)이나 아주 긴 수를 넣어도 상태는 0, 1, 2 세 개 안에서만 움직입니다. 상태가 "지금까지 읽은 수를 3으로 나눈 나머지"이기 때문입니다.</li>
+        <li>"1이 짝수 개" 기계와 "01로 끝남" 기계로 바꿔 같은 입력이 어떻게 판정되는지 비교해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>설명</h3>
+      <ol class="q-read">
+        <li><b>왜 \(2r + b\)인가</b><span>이진수 \(x\) 뒤에 비트 \(b\)를 붙이면 값이 \(2x + b\)가 됩니다. 나머지만 보면 \((2r + b) \bmod 3\)이라 전체 값을 기억할 필요가 없습니다. 같은 원리로 아무 \(n\)의 배수도 상태 \(n\)개로 판정합니다.</span></li>
+        <li><b>상태 = 기억</b><span>DFA의 상태 수는 기계가 가진 기억의 전부입니다. 판정에 필요한 정보가 유한 가지이면 DFA로 만들 수 있습니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec warn">
+      <h3>판단</h3>
+      <p>"긴 수를 판정하려면 수 전체를 저장해야 한다"는 틀립니다. 3의 배수 판정은 상태 세 개면 충분합니다. 무엇을 기억해야 하는지 정확히 아는 것이 기계 설계의 핵심입니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,98 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-joint" data-kind="본문" data-std="수학5-04-01">
+  <header class="card-head"><span class="no"></span><h2>결합분포, 주변분포, 조건부분포</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>두 확률변수의 결합질량함수와 결합밀도함수를 정의하고 영역의 확률을 이중적분으로 구한다.</li>
+        <li>결합밀도에서 주변밀도와 조건부밀도를 구한다.</li>
+        <li>확률변수의 독립을 결합밀도의 분해로 판정하고, 이변량 정규분포의 조건부분포를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>조건부확률과 독립 (<a href="01-03.html">1.3절</a>), 기대값과 공분산 (<a href="03-01.html">3.1절</a>), 이중적분과 적분 순서 바꾸기.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>결합분포</h3>
+    <p>키와 몸무게, 두 주가의 수익률처럼 함께 움직이는 양을 다루려면 각각의 분포만으로는 부족합니다. 두 값이 "함께" 어떤 범위에 들어갈 확률이 필요합니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 4.1.1</span>
+      <p class="q-term"><b>결합질량함수</b>: 이산이면 \(p(x, y) = P(X = x, Y = y)\).</p>
+      <p class="q-term"><b>결합밀도함수</b>: 평면의 (적당한) 영역 \(A\)에 대해 \(P((X, Y) \in A) = \iint_Af(x, y)\,dx\,dy\)인 \(f \ge 0\).</p>
+      <p class="q-term"><b>주변밀도</b>: \(f_X(x) = \int f(x, y)\,dy\), \(f_Y(y) = \int f(x, y)\,dx\).</p>
+    </div>
+    <p>주변밀도는 "\(Y\)가 무엇이든 상관없이" \(X\)만의 분포입니다. 결합밀도의 한 줄을 따라 \(y\)로 모두 더하면 됩니다. 결합분포는 주변분포를 정하지만, 주변분포는 결합분포를 정하지 못합니다: 주변분포가 같은 표준정규라도 두 변수의 상관은 얼마든지 다를 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.2</span>
+      <p>\(f(x, y) = x + y\) (\(0 &lt; x, y &lt; 1\)). (a) 밀도임을 확인하고 \(f_X\)를 구하여라. (b) \(P(X + Y \le 1)\). (c) \(\mathrm{Cov}(X, Y)\).</p>
+    </div>
+    <p><i>풀이.</i> (a) \(\int_0^1(x + y)\,dy = x + \frac12\)이고 \(\int_0^1(x + \frac12)dx = 1\). 따라서 \(f_X(x) = x + \frac12\). (b) 영역은 \(0 &lt; y &lt; 1 - x\)이므로 \(\int_0^1\int_0^{1-x}(x + y)\,dy\,dx = \int_0^1\left[x(1-x) + \frac{(1-x)^2}2\right]dx = \frac16 + \frac16 = \frac13\). (c) \(E[X] = \int_0^1x(x + \frac12)dx = \frac7{12}\)(대칭으로 \(E[Y]\)도 같음), \(E[XY] = \int\!\!\int xy(x + y) = \frac13\). \(\mathrm{Cov} = \frac13 - \frac{49}{144} = -\frac1{144}\). 약한 음의 상관입니다.</p>
+
+    <h3><span class="no">4.1.2</span>조건부분포</h3>
+    <p>\(X = x\)를 알 때 \(Y\)의 분포는 결합밀도의 "\(x\)에서 자른 단면"을 넓이가 1이 되도록 나눈 것입니다. 연속인 경우 \(P(X = x) = 0\)이라 1.3절의 정의를 그대로 쓸 수 없지만, 밀도의 비로 정의하면 같은 직관이 성립합니다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 4.1.3</span>
+      <p class="q-term"><b>조건부밀도</b>: \(f_X(x) > 0\)일 때 \(f_{Y\mid X}(y\mid x) = \dfrac{f(x, y)}{f_X(x)}\).</p>
+      <p class="q-term"><b>독립</b>: 모든 \(x, y\)에서 \(f(x, y) = f_X(x)f_Y(y)\) (이산이면 \(p\)로). 같은 말로 \(f_{Y\mid X}(y\mid x) = f_Y(y)\).</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.4</span>
+      <p>\((X, Y)\)가 삼각형 \(0 &lt; y &lt; x &lt; 1\)에서 균등하다(\(f = 2\)). 주변밀도와 \(X = x\)일 때 \(Y\)의 조건부분포를 구하여라. 독립인가?</p>
+    </div>
+    <p><i>풀이.</i> \(f_X(x) = \int_0^x2\,dy = 2x\), \(f_Y(y) = \int_y^12\,dx = 2(1 - y)\). 조건부밀도 \(f(y\mid x) = 2/(2x) = 1/x\) (\(0 &lt; y &lt; x\)), 곧 \(U(0, x)\)이고 \(E[Y\mid X = x] = x/2\). 독립이 아닙니다: \(f_Xf_Y = 4x(1 - y) \ne 2\). 더 간단한 판정: 결합밀도가 양수인 영역이 직사각형이 아니면 독립일 수 없습니다(\(x\)를 알면 \(y\)의 범위가 바뀌므로).</p>
+
+    <h3><span class="no">4.1.3</span>이변량 정규분포</h3>
+    <div class="tb-env">
+      <span class="lb">정의 4.1.5</span>
+      <p class="q-term"><b>표준 이변량 정규분포</b>(상관계수 \(\rho\), \(|\rho| &lt; 1\)): \(f(x, y) = \dfrac1{2\pi\sqrt{1-\rho^2}}\exp\left(-\dfrac{x^2 - 2\rho xy + y^2}{2(1-\rho^2)}\right)\).</p>
+    </div>
+    <p>지수의 \(y\)에 대한 부분을 완전제곱하면 \(x^2 - 2\rho xy + y^2 = (y - \rho x)^2 + (1 - \rho^2)x^2\)입니다. 그래서 \(f(x, y) = \varphi(x)\cdot\frac1{\sqrt{1-\rho^2}}\varphi\left(\frac{y - \rho x}{\sqrt{1-\rho^2}}\right)\)로 갈라지고, 다음을 바로 읽을 수 있습니다.</p>
+    <ul>
+      <li>주변분포: \(X \sim N(0, 1)\) (대칭으로 \(Y\)도).</li>
+      <li>조건부분포: \(Y \mid X = x \sim N(\rho x, 1 - \rho^2)\). 조건부 평균이 \(x\)의 직선이고(회귀 직선), 조건부 분산은 \(x\)와 무관하게 \(1 - \rho^2\)로 줄어듭니다.</li>
+      <li>\(\rho = 0\)이면 \(f = \varphi(x)\varphi(y)\)로 독립. 정규분포 쌍에서는 "상관 0 ⇔ 독립"입니다(일반적으로는 거짓, 3단원 연습).</li>
+    </ul>
+    <p>예: \(\rho = 0.6\), \(x = 1.5\)이면 \(Y\)의 조건부 평균 0.9, 조건부 표준편차 0.8입니다. 키가 평균보다 1.5 표준편차 큰 아버지의 아들은 평균보다 0.9 표준편차만 큽니다: 골턴이 발견한 "평균으로의 회귀"입니다. 같은 절의 탐구 카드에서 \(\rho\)와 \(x\)를 바꿔 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 주변밀도를 구할 때 적분 범위를 상수로 둔다: 예제 4.1.4처럼 범위가 다른 변수에 따라 바뀐다. (2) 조건부밀도에서 \(f_X(x)\)로 나누는 것을 잊는다: 단면의 넓이가 1이 아니다. (3) 결합밀도가 \(g(x)h(y)\) 꼴이면 영역과 상관없이 독립이라 여긴다: 영역도 직사각형이어야 한다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>결합밀도의 적분이 영역의 확률. 주변밀도는 다른 변수로 적분.</li>
+        <li>조건부밀도 = 결합밀도 ÷ 주변밀도. 독립 ⇔ 결합밀도가 주변밀도의 곱.</li>
+        <li>이변량 정규: \(Y\mid X = x \sim N(\rho x, 1 - \rho^2)\), 상관 0이면 독립.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f(x, y) = 4xy\) (\(0 &lt; x, y &lt; 1\))에서 \(X\), \(Y\)는 독립인가?
+          <details><summary>답</summary><p>\(f_X = 2x\), \(f_Y = 2y\), 곱이 \(4xy\)이고 영역이 정사각형이므로 독립.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 4.1.2에서 \(E[Y\mid X = x]\)를 구하고 \(x = 0\), \(x = 1\)에서의 값을 비교하여라.
+          <details><summary>답</summary><p>\(\int_0^1y\frac{x + y}{x + 1/2}dy = \frac{x/2 + 1/3}{x + 1/2}\). \(x = 0\)에서 \(2/3\), \(x = 1\)에서 \(5/9\). \(x\)가 커질수록 줄어드는 것이 음의 공분산과 맞다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>표준 이변량 정규에서 \(\mathrm{Cov}(X, Y) = \rho\)임을 조건부분포로 보여라.
+          <details><summary>답</summary><p>\(E[XY] = \int x\,E[Y\mid X = x]\varphi(x)\,dx = \int\rho x^2\varphi(x)\,dx = \rho\). 평균이 0이므로 공분산도 \(\rho\). (반복 기대값, 7.1절)</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

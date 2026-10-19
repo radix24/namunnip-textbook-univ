@@ -1,0 +1,95 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-transform" data-kind="본문" data-std="수학5-02-03">
+  <header class="card-head"><span class="no"></span><h2>확률변수의 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>\(Y = g(X)\)의 분포함수를 \(X\)의 분포함수로 구한다(분포함수 방법).</li>
+        <li>\(g\)가 단조이고 미분가능하면 밀도 공식 \(f_Y(y) = f_X(g^{-1}(y))\left|\frac{d}{dy}g^{-1}(y)\right|\)을 쓴다.</li>
+        <li>균등 난수에서 원하는 분포의 난수를 만드는 역변환 방법을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>분포함수와 밀도 (<a href="02-01.html">2.1절</a>), 대표 분포 (<a href="02-02.html">2.2절</a>), 치환적분과 역함수의 미분.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>분포함수 방법</h3>
+    <p>\(X\)의 분포를 알 때 \(Y = g(X)\)의 분포를 구하는 가장 확실한 방법은 사건을 바꿔 쓰는 것입니다. \(\{Y \le y\} = \{g(X) \le y\}\)를 \(X\)에 대한 조건으로 풀어 \(F_X\)로 계산하고, 필요하면 미분해 밀도를 얻습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>\(X \sim U(0, 1)\), \(Y = X^2\)의 분포함수와 밀도를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(0 &lt; y &lt; 1\)에서 \(F_Y(y) = P(X^2 \le y) = P(X \le \sqrt y) = \sqrt y\). 미분하면 \(f_Y(y) = \frac1{2\sqrt y}\). 예를 들어 \(P(Y \le 0.25) = 0.5\)입니다. 0 근처에서 밀도가 무한히 커지는 것은, 제곱하면 작은 수가 더 작아져 0 근처로 몰리기 때문입니다.</p>
+
+    <h3><span class="no">2.3.2</span>단조 변환의 밀도 공식</h3>
+    <div class="tb-env">
+      <span class="lb">정리 2.3.2</span>
+      <p>\(X\)가 밀도 \(f_X\)를 갖고 \(g\)가 \(X\)의 값의 범위에서 순증가 또는 순감소하며 \(g^{-1}\)이 미분가능하면 \(Y = g(X)\)의 밀도는 \(f_Y(y) = f_X(g^{-1}(y))\left|\dfrac{d}{dy}g^{-1}(y)\right|\)이다.</p>
+    </div>
+    <div class="tb-proof">
+      <p>증가하는 경우 \(F_Y(y) = P(X \le g^{-1}(y)) = F_X(g^{-1}(y))\)이고, 연쇄법칙으로 미분하면 \(f_X(g^{-1}(y))\,(g^{-1})'(y)\)이다. 감소하는 경우 \(F_Y(y) = P(X \ge g^{-1}(y)) = 1 - F_X(g^{-1}(y))\)이고 미분하면 \(-f_X(g^{-1}(y))(g^{-1})'(y)\)인데 \((g^{-1})' &lt; 0\)이라 절댓값과 같다. <span class="qed">∎</span></p>
+    </div>
+    <p>절댓값이 붙은 인수는 "\(X\)의 작은 구간이 \(Y\)에서 몇 배로 늘어나는가"의 역수입니다. 구간이 늘어나면 같은 확률이 넓게 퍼지므로 밀도가 낮아집니다. 치환적분의 \(dx = |dx/dy|\,dy\)와 같은 이야기입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.3</span>
+      <p>(a) \(X \sim N(0, 1)\)일 때 \(Y = \sigma X + \mu\) (\(\sigma > 0\)). (b) \(Y = e^X\) (로그정규분포).</p>
+    </div>
+    <p><i>풀이.</i> (a) \(g^{-1}(y) = (y - \mu)/\sigma\), 도함수 \(1/\sigma\). \(f_Y(y) = \frac1\sigma\varphi\left(\frac{y-\mu}\sigma\right)\), 곧 \(N(\mu, \sigma^2)\)입니다. 정규분포는 표준정규분포를 늘리고 옮긴 것뿐입니다. (b) \(g^{-1}(y) = \ln y\), 도함수 \(1/y\). \(f_Y(y) = \frac{1}{y\sqrt{2\pi}}e^{-(\ln y)^2/2}\) (\(y > 0\)). \(P(Y \le 2) = \Phi(\ln 2) \approx 0.7559\)입니다.</p>
+
+    <h3><span class="no">2.3.3</span>단조가 아닌 변환</h3>
+    <p>\(g\)가 단조가 아니면 \(\{g(X) \le y\}\)가 여러 구간으로 나뉩니다. 분포함수 방법은 그대로 쓸 수 있습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.4</span>
+      <p>\(Z \sim N(0, 1)\), \(Y = Z^2\)의 밀도를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(y > 0\)에서 \(F_Y(y) = P(-\sqrt y \le Z \le \sqrt y) = \Phi(\sqrt y) - \Phi(-\sqrt y)\). 미분하면 \(f_Y(y) = \varphi(\sqrt y)\frac1{2\sqrt y}\cdot 2 = \frac1{\sqrt{2\pi y}}e^{-y/2}\). 이것이 자유도 1인 카이제곱분포이며 \(\Gamma(1/2, 1/2)\)과 같습니다. \(P(Y \le 1) = P(|Z| \le 1) \approx 0.6827\).</p>
+
+    <h3><span class="no">2.3.4</span>역변환 방법</h3>
+    <div class="tb-env">
+      <span class="lb">정리 2.3.5</span>
+      <p>\(F\)가 연속이고 순증가인 분포함수이고 \(U \sim U(0, 1)\)이면 \(X = F^{-1}(U)\)의 분포함수는 \(F\)이다.</p>
+    </div>
+    <p>증명은 한 줄입니다: \(P(F^{-1}(U) \le x) = P(U \le F(x)) = F(x)\). 컴퓨터는 균등 난수만 만들 수 있으므로, 모든 분포의 난수는 이렇게 만듭니다. 예: \(F(x) = 1 - e^{-\lambda x}\)의 역함수에서 \(X = -\ln(1 - U)/\lambda\), 그리고 \(1 - U\)도 균등이므로 \(X = -\ln U/\lambda \sim \mathrm{Exp}(\lambda)\). 같은 절의 탐구 카드에서 변환한 난수의 히스토그램과 공식의 밀도를 겹쳐 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 밀도를 그대로 대입해 \(f_Y(y) = f_X(g^{-1}(y))\)로 쓴다: 늘어난 비율 인수를 빠뜨리면 넓이가 1이 되지 않는다. (2) 단조가 아닌 \(g\)에 정리 2.3.2를 쓴다: \(Z^2\)에서 \(\pm\sqrt y\) 두 갈래를 다 더해야 한다. (3) 값의 범위를 빠뜨린다: \(Y = X^2\)의 밀도는 \(0 &lt; y &lt; 1\)에서만 \(1/(2\sqrt y)\)이다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>분포함수 방법: \(\{g(X) \le y\}\)를 \(X\)로 풀어 계산한 뒤 미분. 언제나 쓸 수 있다.</li>
+        <li>단조 변환이면 \(f_Y = f_X(g^{-1})\cdot|(g^{-1})'|\). 절댓값 인수는 구간이 늘어난 비율의 역수.</li>
+        <li>\(F^{-1}(U)\)는 분포 \(F\)를 따른다: 난수 생성의 기본.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X \sim U(0, 1)\), \(Y = \sqrt X\)의 밀도는?
+          <details><summary>답</summary><p>\(F_Y(y) = P(X \le y^2) = y^2\), \(f_Y(y) = 2y\) (\(0 &lt; y &lt; 1\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(X \sim \mathrm{Exp}(1)\), \(Y = 2X + 3\)의 밀도와 \(P(Y > 5)\)를 구하여라.
+          <details><summary>답</summary><p>\(f_Y(y) = \frac12e^{-(y-3)/2}\) (\(y > 3\)). \(P(Y > 5) = P(X > 1) = e^{-1} \approx 0.3679\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(U \sim U(0,1)\)일 때 \(Y = \tan(\pi(U - 1/2))\)의 밀도가 \(\frac1{\pi(1 + y^2)}\)(코시분포)임을 보여라.
+          <details><summary>답</summary><p>\(g^{-1}(y) = \frac12 + \frac1\pi\arctan y\), 도함수 \(\frac1{\pi(1 + y^2)}\), \(f_U = 1\). 이 분포는 평균이 존재하지 않는다(<a href="03-01.html">3단원</a>).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
