@@ -62,4 +62,32 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 3. ΔG = ΔH − TΔS: 온도에 따라 자발성이 바뀌는 지점 (06-02, 06-03) */
+  (() => {
+    const S = QSim.card("lab-c6-gibbs"); if (!S) return;
+    const cv = S.$("canvas"), R = 8.314;
+    /* 미리 정한 반응: [ΔH (kJ/mol), ΔS (J/(mol·K)), 이름] */
+    const PRE = { caco3: [178, 161, "CaCO₃ → CaO + CO₂"], ice: [6.01, 22.0, "얼음 → 물"], nh3: [-92.2, -198.7, "N₂ + 3H₂ → 2NH₃"], free: [null, null, "직접 정하기"] };
+    function draw() {
+      const c = C(), pre = PRE[S.val("m")];
+      const dH = pre[0] ?? S.val("dH"), dS = pre[1] ?? S.val("dS"), T = S.val("T");
+      const G = (t) => dH - (t * dS) / 1000;
+      const v = QSim.view(cv, 0.55);
+      const lo = Math.min(G(0), G(1500), 0), hi = Math.max(G(0), G(1500), 0), pad = (hi - lo) * 0.12 + 1;
+      const F = QSim.frame(v, { x0: 0, x1: 1500, y0: lo - pad, y1: hi + pad, xl: "T (K)", yl: "ΔG (kJ/mol)", pad: 40 }); F.axes();
+      F.path([[0, 0], [1500, 0]], c.ink3, 1);
+      F.fn(G, c.main, 2.5);
+      F.path([[T, lo - pad], [T, hi + pad]], c.rule, 1, [3, 3]);
+      F.dot(T, G(T), c.acc, 6);
+      const g = G(T), K = Math.exp((-g * 1000) / (R * T));
+      const Tx = dS !== 0 ? (dH * 1000) / dS : NaN;
+      if (Tx > 0 && Tx < 1500) { F.dot(Tx, 0, c.warn, 5); F.text(`${Tx.toFixed(0)} K`, Tx, pad * 0.4, c.warn, "center"); }
+      const kind = Math.abs(g) < 0.05 ? "평형 (ΔG ≈ 0)" : g < 0 ? "자발적 (ΔG < 0, 정반응 쪽)" : "비자발적 (ΔG > 0, 역반응 쪽)";
+      const cross = Tx > 0 ? `ΔG = 0이 되는 온도 T = ΔH/ΔS = ${Tx.toFixed(0)} K` : (dH < 0 && dS > 0 ? "모든 온도에서 자발적 (ΔH < 0, ΔS > 0)" : dH > 0 && dS < 0 ? "어느 온도에서도 비자발적 (ΔH > 0, ΔS < 0)" : "");
+      S.out(`${pre[2]}: ΔH = ${dH.toFixed(1)} kJ/mol, ΔS = ${dS.toFixed(1)} J/(mol·K)\n` +
+        `T = ${T.toFixed(0)} K에서 ΔG = ${dH.toFixed(1)} − ${T.toFixed(0)} × ${dS < 0 ? "(" + (dS / 1000).toFixed(4) + ")" : (dS / 1000).toFixed(4)} = ${g.toFixed(1)} kJ/mol → ${kind}\n` +
+        `${cross},  K = e^(−ΔG/RT) = ${K < 1e-3 || K > 1e4 ? K.toExponential(2) : K.toFixed(3)}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();
