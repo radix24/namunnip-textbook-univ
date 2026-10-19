@@ -30,9 +30,16 @@ POLICY = json.loads((ROOT / "exams/policy.json").read_text(encoding="utf-8")) if
 
 
 def units_of():
-    """js/toc.js(빌드 결과)에서 (학과, 과목번호) → (과목 코드, 대단원 번호 목록)"""
-    t = (ROOT / "js" / "toc.js").read_text(encoding="utf-8")
-    data = json.loads(t[t.index("=") + 1:].strip().rstrip(";"))
+    """data/univ.json(빌드 결과, 전 학과 합본)에서 (학과, 과목번호) → (과목 코드, 대단원 번호 목록).
+    없으면 옛 js/toc.js를 읽고, 둘 다 없으면 tools/build.py를 먼저 돌리라고 알린다."""
+    f = ROOT / "data" / "univ.json"
+    if f.exists():
+        data = json.loads(f.read_text(encoding="utf-8"))
+    elif (ROOT / "js" / "toc.js").exists():
+        t = (ROOT / "js" / "toc.js").read_text(encoding="utf-8")
+        data = json.loads(t[t.index("=") + 1:].strip().rstrip(";"))
+    else:
+        sys.exit("data/univ.json이 없습니다. 먼저 python -I -X utf8 tools/build.py를 돌리세요.")
     return {(d["id"], re.sub(r"\D", "", c["code"])): (c["code"], [u["n"] for u in c["units"]]) for d in data for c in d["courses"]}
 
 
@@ -96,7 +103,7 @@ def check(p, U, sim=False):
         errs.append("탭 문자가 있음(\\t가 깨졌을 수 있음)")
     key = (p.parent.name, p.stem)
     if key not in U:
-        return [f"{p.parent.name}/{p.stem}에 해당하는 과목이 toc.js에 없음"], [], None
+        return [f"{p.parent.name}/{p.stem}에 해당하는 과목이 data/univ.json에 없음"], [], None
     code, units = U[key]
     pol = POLICY.get(code, "")
     if pol == "none":

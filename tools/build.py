@@ -1,4 +1,4 @@
-"""curricula/univ-*.md (성취기준 설계 문서) → js/toc.js (window.UNIV)
+"""curricula/univ-*.md (성취기준 설계 문서) + blocks/ → c/<모듈>/ 페이지, data/(univ.json 합본과 학과 요약), outline/, place/
 
 설계 문서의 형식은 curricula/univ-curriculum.md에 있다.
   ### 코드. 과목명 (학정번호)        과목
@@ -20,7 +20,6 @@ import place   # noqa: E402  풀 목차·학과 배치표·학과 요약(tools/p
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "curricula"
-OUT = ROOT / "js" / "toc.js"
 
 # 학과: id, 이름, 짧은 이름, 파일, 소속
 DEPTS = [
@@ -1124,16 +1123,14 @@ def main():
     print(f"연결표: 대상 {len(links['pre'])} · 선수로 쓰인 코드 {len(links['post'])}")
     summ = place.build(out, blocks, EXAM_POLICY)
     print(f"학과 배치: {place.SCHOOL_NAME} " + " · ".join(f"{k} {len(v['courses'])}" for k, v in summ.items()))
-    js = "/* tools/build.py가 curricula/univ-*.md와 blocks/에서 만든다. 직접 고치지 않는다. */\n"
-    js += "window.UNIV = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";\n"
-    OUT.write_text(js, encoding="utf-8", newline="\n")
-    # 로드맵 등 여러 학과를 한꺼번에 쓰는 화면용 합본: toc.js와 같은 내용(QURI 코드, sub, open, path, unis, s.u …)에
-    # 과목마다 영문 모듈 id를 더한 것. 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
+    # 로드맵·학습 기록·check_exams.py가 쓰는 전 학과 합본(옛 js/toc.js의 window.UNIV와 같은 내용):
+    # QURI 코드, pre 글, sub, open, path, unis, s.u, 절별 카드 id(s.k, u.r)에 과목마다 영문 모듈 id를 더한 것.
+    # 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
     for d in out:
         for c in d["courses"]:
             c["id"] = place.module_id(c["code"])
     (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
-    print(f"js/toc.js: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
+    print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
 
 
