@@ -1,4 +1,4 @@
-/* 공통5 체험 카드 묶음 2: 상자 속 입자, 수소 원자의 선 스펙트럼. */
+/* 공통5 체험 카드 묶음 2: 상자 속 입자, 수소 원자의 선 스펙트럼, 결합 쌍극자, 상평형 그림, 오비탈의 단면. */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -129,6 +129,43 @@
       S.out(`${d.nm}: T = ${T.toFixed(0)} K (${(T - 273.15).toFixed(0)} °C), P = ${P < 0.01 ? P.toExponential(2) : P.toFixed(P < 10 ? 3 : 1)} atm → ${ph}\n` +
         `삼중점 ${d.Tt} K, ${d.Pt} atm.  실제 임계점 ${d.Tc} K, ${d.Pc} atm (그림의 증발 곡선은 단순 모형이라 끝점 압력이 조금 다름)\n` +
         (isNaN(bpHere) ? (P <= d.Pt ? `삼중점 압력보다 낮아 액체 상태가 없습니다. 가열하면 고체가 곧바로 기체가 됩니다(승화).` : `임계 압력보다 높아 끓는 일이 없습니다. 가열하면 액체가 끓지 않고 초임계 유체로 이어집니다.`) : `이 압력에서 끓는점(모형) ≈ ${bpHere.toFixed(0)} K (${(bpHere - 273.15).toFixed(0)} °C)`));
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 5. 수소 원자 오비탈의 단면과 마디 (06-03). 단위는 보어 반지름 a₀, 규격화는 하지 않고 최댓값으로 나눈다 */
+  (() => {
+    const S = QSim.card("lab-c5-orbital"); if (!S) return;
+    const [c1, c2] = S.$$("canvas");
+    const R = { /* 지름 방향 부분 (r^l 포함) */
+      "1s": (r) => Math.exp(-r), "2s": (r) => (2 - r) * Math.exp(-r / 2), "2p": (r) => r * Math.exp(-r / 2),
+      "3s": (r) => (27 - 18 * r + 2 * r * r) * Math.exp(-r / 3), "3p": (r) => (6 - r) * r * Math.exp(-r / 3), "3d": (r) => r * r * Math.exp(-r / 3)
+    };
+    const O = { /* 각 부분은 xz 평면(y = 0)에서 θ의 함수, c = cos θ, s = sin θ */
+      "1s": ["1s", () => 1, 0], "2s": ["2s", () => 1, 0], "2pz": ["2p", (c) => c, 1], "2px": ["2p", (c, s) => s, 1],
+      "3s": ["3s", () => 1, 0], "3pz": ["3p", (c) => c, 1], "3dz2": ["3d", (c) => 3 * c * c - 1, 2], "3dxz": ["3d", (c, s) => s * c, 2], "3dx2y2": ["3d", (c, s) => s * s, 2]
+    };
+    const ext = { 1: 6, 2: 14, 3: 24 };
+    function draw() {
+      const c = C(), key = S.val("orb"), [rk, ang, l] = O[key], n = +rk[0], L = ext[n], gam = S.val("g");
+      const psi = (x, z) => { const r = Math.hypot(x, z); if (r < 1e-9) return R[rk](0) * ang(1, 0); return R[rk](r) * ang(z / r, x / r); };
+      const v = QSim.view(c1, 1), f = QSim.frame(v, { x0: -L, x1: L, y0: -L, y1: L, xl: "x (a₀)", yl: "z (a₀)", equal: true, pad: 30 });
+      const g = v.g, st = 3, X0 = f.X(-L), X1 = f.X(L), Y0 = f.Y(L), Y1 = f.Y(-L), vals = [];
+      let mx = 0;
+      for (let px = X0; px < X1; px += st) for (let py = Y0; py < Y1; py += st) {
+        const x = -L + (px + st / 2 - X0) / f.sx, z = L - (py + st / 2 - Y0) / f.sy, p = psi(x, z); vals.push([px, py, p]); mx = Math.max(mx, p * p);
+      }
+      vals.forEach(([px, py, p]) => { const d = Math.pow((p * p) / mx, gam); if (d < 0.004) return; g.fillStyle = p >= 0 ? c.main : c.acc; g.globalAlpha = Math.min(1, d); g.fillRect(px, py, st, st); });
+      g.globalAlpha = 1; f.axes({ noGrid: true });
+      /* 방사 분포 P(r) = r²R(r)² */
+      const v2 = QSim.view(c2, 0.4), rmax = L, P = (r) => (r * R[rk](r)) ** 2;
+      let pm = 0; for (let i = 1; i <= 400; i++) pm = Math.max(pm, P((i / 400) * rmax));
+      const f2 = QSim.frame(v2, { x0: 0, x1: rmax, y0: 0, y1: 1.1, xl: "r (a₀)", yl: "r²R²" }); f2.axes();
+      f2.fn((r) => P(r) / pm, c.main, 2.5);
+      const nodes = []; for (let i = 1; i < 2000; i++) { const a = (i / 2000) * rmax, b = ((i + 1) / 2000) * rmax; if (R[rk](a) * R[rk](b) < 0) nodes.push((a + b) / 2); }
+      nodes.forEach((r) => { f2.path([[r, 0], [r, 1.05]], c.warn, 1.2, [4, 3]); f.path(Array.from({ length: 81 }, (_, i) => [r * Math.cos((i / 40) * Math.PI), r * Math.sin((i / 40) * Math.PI)]), c.warn, 1, [4, 3]); });
+      let peak = 0, pv = 0; for (let i = 1; i <= 2000; i++) { const r = (i / 2000) * rmax; if (P(r) > pv) { pv = P(r); peak = r; } }
+      S.out(`${key.replace("dz2", "d(z²)").replace("dx2y2", "d(x²−y²)")}: n = ${n}, l = ${l}\n방사 마디(빨간 점선 원) ${nodes.length}개${nodes.length ? " — r = " + nodes.map((r) => r.toFixed(2)).join(", ") + " a₀" : ""}, 각 마디(마디면·마디 원뿔) ${l}개, 모두 n − 1 = ${n - 1}개\n전자를 찾을 확률이 가장 큰 거리 r = ${peak.toFixed(2)} a₀  (파랑: ψ > 0, 주황: ψ < 0)`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

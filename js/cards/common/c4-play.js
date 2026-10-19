@@ -29,28 +29,7 @@
         `비교: 점전하로 본 kQ/d² = ${((k * Q) / (d * d)).toFixed(2)},  무한 직선으로 본 2kλ/d = ${((2 * k * Q) / L / d).toFixed(2)} N/C`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-  /* 2. 전지의 내부 저항과 전달 전력 (05-01) */
-  (() => {
-    const S = QSim.card("lab-c4-power"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), E = S.val("E"), r = S.val("r"), R = S.val("R");
-      const P = (x) => (E * E * x) / ((x + r) * (x + r));
-      const Pmax = (E * E) / (4 * r);
-      const v = QSim.view(cv, 0.55), F = QSim.frame(v, { x0: 0, x1: 10, y0: 0, y1: Pmax * 1.25, xl: "부하 저항 R (Ω)", yl: "P (W)" }); F.axes();
-      F.fn(P, c.main, 2.5, null, 400);
-      F.path([[r, 0], [r, Pmax]], c.ink3, 1, [4, 4]);
-      F.dot(R, P(R), c.acc, 6);
-      const I = E / (R + r), V = I * R;
-      S.out(`기전력 ε = ${E.toFixed(1)} V, 내부 저항 r = ${r.toFixed(2)} Ω, 부하 R = ${R.toFixed(2)} Ω\n` +
-        `전류 I = ε/(R + r) = ${I.toFixed(3)} A,  단자 전압 V = IR = ε − Ir = ${V.toFixed(3)} V\n` +
-        `부하 전력 P = I²R = ${P(R).toFixed(3)} W,  전지 안에서 열로 잃는 전력 I²r = ${(I * I * r).toFixed(3)} W,  효율 ${((100 * R) / (R + r)).toFixed(1)}%\n` +
-        `P가 가장 큰 것은 R = r = ${r.toFixed(2)} Ω일 때이고 그때 P = ε²/(4r) = ${Pmax.toFixed(3)} W (효율 50%)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-  /* 3. 가우스 곡면을 지나는 선속을 직접 더해 보기 (02-01) */
+  })();  /* 3. 가우스 곡면을 지나는 선속을 직접 더해 보기 (02-01) */
   (() => {
     const S = QSim.card("lab-c4-gauss"); if (!S) return;
     const cv = S.$("canvas");
@@ -90,30 +69,4 @@
       S.out(`가우스 곡면: 반지름 ${R.toFixed(2)}인 구면 (그림은 가운데 단면)\n${st}\n조각 14400개로 더한 선속 ε₀Φ = ${Phi.toFixed(3)} q,  안에 든 전하의 합 = ${inside.toFixed(3)} q`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-  /* 4. 전자기파: 전기장과 자기장의 진동, 세기와 복사압 (09-02) */
-  (() => {
-    const S = QSim.card("lab-c4-wave"); if (!S) return;
-    const cv = S.$("canvas"), c0 = 2.998e8, e0 = 8.854e-12;
-    function draw() {
-      const c = C(), E = S.val("E"), ph = (S.val("t") / 360) * 2 * Math.PI, refl = S.val("r");
-      const v = QSim.view(cv, 0.5), F = QSim.frame(v, { x0: -0.3, x1: 4.3, y0: -1.5, y1: 1.5, equal: false, pad: 20 });
-      /* 진행 방향 x는 오른쪽, 전기장 y는 위, 자기장 z는 비스듬히 아래(빗금으로 깊이를 나타냄) */
-      const zx = 0.28, zy = -0.45;
-      F.path([[0, 0], [4.2, 0]], c.ink3, 1.5); F.text("진행 방향 x", 4.1, 0.15, c.ink, "right");
-      const Ep = [], Bp = [];
-      for (let k = 0; k <= 200; k++) {
-        const x = (k / 200) * 4, s = Math.sin(2 * Math.PI * (x / 2) - ph);
-        Ep.push([x, s]); Bp.push([x + zx * s, zy * s]);
-        if (k % 8 === 0) { F.path([[x, 0], [x, s]], c.main, 1); F.path([[x, 0], [x + zx * s, zy * s]], c.warn, 1); }
-      }
-      F.path(Ep, c.main, 2.5); F.path(Bp, c.warn, 2.5);
-      F.text("E", 0.5, 1.25, c.main, "center"); F.text("B", 0.62, -0.75, c.warn, "center");
-      const B = E / c0, I = 0.5 * c0 * e0 * E * E, P = (refl ? 2 : 1) * I / c0;
-      S.out(`전기장 최댓값 E = ${E.toFixed(0)} V/m → 자기장 최댓값 B = E/c = ${(B * 1e6).toFixed(3)} μT\n` +
-        `세기(시간 평균) I = ½cε₀E² = ${I.toFixed(1)} W/m²\n` +
-        `복사압 = ${refl ? "2I/c (완전 반사)" : "I/c (완전 흡수)"} = ${P.toExponential(2)} Pa,  1 m²에 미는 힘 ${(P * 1e6).toFixed(2)} μN`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-})();
+  })();})();

@@ -42,25 +42,6 @@
     v.g.drawImage(off, F.X(box.x0), F.Y(box.y1), F.X(box.x1) - F.X(box.x0), F.Y(box.y0) - F.Y(box.y1));
   };
 
-  /* 2. 무한히 긴 막대에서 열이 퍼짐 (02-06) */
-  (() => {
-    const S = QSim.card("lab-c9-heatline"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), t = S.val("t"), cc = S.val("c");
-      /* 처음 온도 f(x) = 1 (|x| < 1), 0 (그 밖).  u(x, t) = ½[erf((1 + x)/(2c√t)) + erf((1 − x)/(2c√t))] */
-      const u = (x) => (t <= 0 ? (Math.abs(x) < 1 ? 1 : 0) : 0.5 * (erf((1 + x) / (2 * cc * Math.sqrt(t))) + erf((1 - x) / (2 * cc * Math.sqrt(t)))));
-      const v = QSim.view(cv, 0.55), F = QSim.frame(v, { x0: -6, x1: 6, y0: 0, y1: 1.15, xl: "x", yl: "u" }); F.axes();
-      F.path([[-6, 0], [-1, 0], [-1, 1], [1, 1], [1, 0], [6, 0]], c.ink3, 1, [4, 4]);
-      F.fn(u, c.main, 2.5, null, 600);
-      let area = 0; for (let k = 0; k < 2400; k++) { const x = -12 + (24 * (k + 0.5)) / 2400; area += u(x) * 0.01; }
-      S.out(`u_t = c²u_xx,  c = ${cc.toFixed(2)},  t = ${t.toFixed(2)}.  처음 온도: |x| < 1에서 1, 밖에서 0 (점선)\n` +
-        `u(0, t) = ${u(0).toFixed(4)},  u(2, t) = ${u(2).toFixed(4)},  열의 총량 ∫u dx = ${area.toFixed(4)} (처음 2, 그대로)\n` +
-        `퍼지는 폭은 c√t = ${(cc * Math.sqrt(t)).toFixed(3)}에 비례한다`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 3. 직사각형 막의 진동 모드 (02-07) */
   (() => {
     const S = QSim.card("lab-c9-membrane"); if (!S) return;
@@ -135,39 +116,4 @@
         `닫힌 꼴 (2T/π) arctan(2r sin θ/(1 − r²)) = ${U(r, th, T).toFixed(4)},  중심 온도 = 경계의 평균 = 0`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-  /* 6. 원을 따라 도는 복소 선적분: 원 안에 특이점이 있느냐가 전부 (04-02, 04-03) */
-  (() => {
-    const S = QSim.card("lab-c9-contour"); if (!S) return;
-    const cv = S.$("canvas");
-    /* f(z)를 실수부와 허수부로: [re, im] = f(x, y). 특이점과 유수도 함께 */
-    const cdiv = (a, b, c2, d) => { const q = c2 * c2 + d * d; return [(a * c2 + b * d) / q, (b * c2 - a * d) / q]; };
-    const FN = {
-      inv: { nm: "1/z", f: (x, y) => cdiv(1, 0, x, y), poles: [[0, 0, [1, 0]]] },
-      inv2: { nm: "1/z²", f: (x, y) => cdiv(1, 0, x * x - y * y, 2 * x * y), poles: [[0, 0, [0, 0]]] },
-      sq: { nm: "z²", f: (x, y) => [x * x - y * y, 2 * x * y], poles: [] },
-      two: { nm: "1/(z(z − 1))", f: (x, y) => cdiv(1, 0, x * (x - 1) - y * y, y * (x - 1) + x * y), poles: [[0, 0, [-1, 0]], [1, 0, [1, 0]]] },
-    };
-    function draw() {
-      const c = C(), fn = FN[S.val("f")], a = S.val("a"), b = S.val("b"), R = S.val("R");
-      const v = QSim.view(cv, 0.62), F = QSim.frame(v, { x0: -2.6, x1: 2.6, y0: -1.6, y1: 1.6, equal: true, xl: "Re", yl: "Im" }); F.axes();
-      const ring = []; for (let k = 0; k <= 120; k++) { const t = (k / 120) * 2 * Math.PI; ring.push([a + R * Math.cos(t), b + R * Math.sin(t)]); }
-      F.path(ring, c.main, 2.5);
-      for (let k = 0; k < 4; k++) { const t = (k / 4) * 2 * Math.PI + 0.4; F.arrow(a + R * Math.cos(t), b + R * Math.sin(t), -0.25 * Math.sin(t), 0.25 * Math.cos(t), c.main); }
-      fn.poles.forEach(([px, py]) => { F.dot(px, py, c.warn, 6); });
-      /* z = a + ib + R e^{it}, dz = iR e^{it} dt */
-      let re = 0, im = 0, near = false; const M = 4000;
-      for (let k = 0; k < M; k++) { const t = ((k + 0.5) / M) * 2 * Math.PI, x = a + R * Math.cos(t), y = b + R * Math.sin(t);
-        fn.poles.forEach(([px, py]) => { if (Math.hypot(x - px, y - py) < 0.02) near = true; });
-        const [fr, fi] = fn.f(x, y), dzr = -R * Math.sin(t), dzi = R * Math.cos(t), dt = (2 * Math.PI) / M;
-        re += (fr * dzr - fi * dzi) * dt; im += (fr * dzi + fi * dzr) * dt; }
-      const ins = fn.poles.filter(([px, py]) => Math.hypot(px - a, py - b) < R);
-      const rs = ins.reduce((s, p) => [s[0] + p[2][0], s[1] + p[2][1]], [0, 0]);
-      const z = (x) => (Math.abs(x) < 5e-4 ? 0 : x).toFixed(3), cx = (r, i) => `${z(r)} ${i < -5e-4 ? "−" : "+"} ${z(Math.abs(i))}i`;
-      S.out(`f(z) = ${fn.nm},  원: 중심 ${a.toFixed(2)} + ${b.toFixed(2)}i, 반지름 ${R.toFixed(2)} (반시계 방향)\n` +
-        `수치로 더한 ∮f(z)dz = ${cx(re, im)}` + (near ? "  (원이 특이점을 거의 지나 값이 불안정)" : "") + `\n` +
-        `원 안의 특이점 ${ins.length}개, 유수의 합 × 2πi = ${cx(-2 * Math.PI * rs[1], 2 * Math.PI * rs[0])}  (2π = ${(2 * Math.PI).toFixed(3)})`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-})();
+  })();})();

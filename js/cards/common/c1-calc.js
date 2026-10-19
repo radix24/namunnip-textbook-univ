@@ -1,4 +1,4 @@
-/* 공통1 실습 카드 묶음: 접선, 평균값 정리, 리만 합, 기본정리, 극곡선, 급수, 테일러 다항식.
+/* 공통1 실습 카드 묶음: 접선, Newton 방법, 리만 합, 기본정리, 극곡선, 급수, 테일러 다항식.
    카드마다 id가 다르고, 이 페이지에 있는 카드만 실행된다. */
 (() => {
   "use strict";
@@ -30,22 +30,36 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 2. 평균값 정리 (03-02) */
+  /* 2. Newton 방법: 접선의 x절편을 되풀이 (02-05) */
   (() => {
-    const S = QSim.card("lab-c1-mvt"); if (!S) return;
+    const S = QSim.card("lab-c1-newton"); if (!S) return;
     const cv = S.$("canvas");
+    const N = {
+      cub: { n: "x³ − 2x − 5", f: (x) => x ** 3 - 2 * x - 5, d: (x) => 3 * x * x - 2, box: [0.5, 3.5, -8, 20], r: 2.0945514815423265 },
+      sq2: { n: "x² − 2", f: (x) => x * x - 2, d: (x) => 2 * x, box: [-3, 3, -3, 7], r: Math.SQRT2 },
+      cos: { n: "cos x − x", f: (x) => Math.cos(x) - x, d: (x) => -Math.sin(x) - 1, box: [-2, 3, -3.5, 3], r: 0.7390851332151607 },
+      atan: { n: "arctan x", f: Math.atan, d: (x) => 1 / (1 + x * x), box: [-6, 6, -2, 2], r: 0 },
+      cbrt: { n: "∛x", f: Math.cbrt, d: (x) => (x === 0 ? NaN : 1 / (3 * Math.cbrt(x) ** 2)), box: [-4, 4, -2, 2], r: 0 }
+    };
     function draw() {
-      const c = C(), fn = F[S.val("fn")]; let a = S.val("a"), b = S.val("b"); if (b - a < 0.2) b = a + 0.2;
-      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -3, x1: 3, y0: -3, y1: 5, xl: "x", yl: "y" }); f.axes();
+      const c = C(), fn = N[S.val("fn")], x0 = S.val("x0"), n = S.val("n");
+      const [a, b, lo, hi] = fn.box;
+      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: a, x1: b, y0: lo, y1: hi, xl: "x", yl: "y" }); f.axes();
       f.fn(fn.f, c.main, 2.5, null, 600);
-      const fa = fn.f(a), fb = fn.f(b), m = (fb - fa) / (b - a);
-      f.path([[a, fa], [b, fb]], c.acc, 2); f.dot(a, fa, c.acc, 5); f.dot(b, fb, c.acc, 5);
-      const cs = [], N = 4000; let prev = fn.d(a + 1e-9) - m;
-      for (let i = 1; i <= N; i++) { const x = a + ((b - a) * i) / N, g = fn.d(x) - m; if (isFinite(g) && isFinite(prev) && (g === 0 || g * prev < 0) && x < b - 1e-9) cs.push(x - ((b - a) / N) * (g / (g - prev || 1))); prev = g; }
-      cs.forEach((x) => { const y = fn.f(x); f.fn((t) => y + m * (t - x), c.ink3, 1.2, [5, 4]); f.dot(x, y, c.warn, 5); });
-      S.out(`[a, b] = [${a.toFixed(2)}, ${b.toFixed(2)}], 평균 변화율 (f(b) − f(a))/(b − a) = ${m.toFixed(4)}\n` +
-        (cs.length ? `f'(c)가 이 값과 같은 c: ${cs.map((x) => x.toFixed(4)).join(", ")} (빨간 점, 점선은 그 점의 접선)` : "f'(c) = 평균 변화율인 c가 없다") +
-        (S.val("fn") === "abs" && a < 0 && b > 0 ? "\n|x|는 x = 0에서 미분 불가능하므로 정리의 가정이 깨진다" : ""));
+      const xs = [x0]; let note = "";
+      for (let k = 0; k < n; k++) {
+        const x = xs[k], y = fn.f(x), m = fn.d(x);
+        if (!isFinite(m) || Math.abs(m) < 1e-12) { note = `x${k}에서 f'(x) = 0이라 접선이 x축과 만나지 않습니다.`; break; }
+        const nx = x - y / m;
+        f.path([[x, 0], [x, y]], c.ink3, 1, [3, 3]);
+        f.path([[x, y], [nx, 0]], c.acc, 2);
+        f.dot(x, y, c.acc, 4);
+        xs.push(nx);
+        if (!isFinite(nx) || Math.abs(nx) > 1e6) { note = "값이 한없이 커져 발산합니다."; break; }
+      }
+      xs.forEach((x, k) => { if (x >= a && x <= b) f.dot(x, 0, k === xs.length - 1 ? c.warn : c.ink, k === xs.length - 1 ? 5 : 3); });
+      const rows = xs.map((x, k) => `x${k} = ${x.toFixed(10)}   |x${k} − r| = ${Math.abs(x - fn.r).toExponential(2)}`);
+      S.out(`f(x) = ${fn.n}, 근 r = ${fn.r.toFixed(10)}\n` + rows.join("\n") + (note ? "\n" + note : ""));
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

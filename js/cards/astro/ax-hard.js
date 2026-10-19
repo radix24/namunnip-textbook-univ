@@ -1,4 +1,4 @@
-/* 어려운 단원 보강 탐구 카드: 등급과 거리, 중력렌즈, 뉴턴의 대포, 조석과 Roche 한계, 광학적 깊이와 흡수선,
+/* 어려운 단원 보강 탐구 카드: 중력렌즈, 뉴턴의 대포, 조석과 Roche 한계, 광학적 깊이와 흡수선,
    세 근점 이각, 대류 조건, 나선팔 감김, 2차원 푸리에 변환, 급팽창과 평탄성 */
 (() => {
   "use strict";
@@ -6,21 +6,6 @@
   const fx = (x, n = 2) => (+x).toFixed(n);
   const deg = Math.PI / 180;
   const circ = (cx, cy, r, n = 120) => { const p = []; for (let k = 0; k <= n; k++) p.push([cx + r * Math.cos(2 * Math.PI * k / n), cy + r * Math.sin(2 * Math.PI * k / n)]); return p; };
-
-  /* 1. 등급과 거리 (천우1-02-03) */
-  (() => {
-    const S = QSim.card("exp-a1-mag"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), M = S.val("M"), ld = S.val("ld"), d = Math.pow(10, ld), m = M + 5 * ld - 5;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 4, y0: -20, y1: 5, xl: "log₁₀ 거리 (pc)", yl: "−(겉보기 등급) : 위로 갈수록 밝음" }); f.axes();
-      f.fn((x) => -(M + 5 * x - 5), c.main, 2); f.path([[0, -6], [4, -6]], c.warn, 1, [4, 3]); f.dot(ld, -m, c.acc, 6);
-      f.text("맨눈 한계 6등급", 0.05, -5.6, c.warn);
-      const ratio = Math.pow(10, -0.4 * (m - 6));
-      S.out(`절대 등급 ${fx(M, 1)}(10 pc에 두었을 때의 밝기), 거리 ${d < 100 ? fx(d, 1) : d.toFixed(0)} pc(${fx(d * 3.26, d < 30 ? 1 : 0)}광년)\n겉보기 등급 m = M + 5 log d − 5 = ${fx(m, 2)}, 거리 지수 m − M = ${fx(m - M, 2)}\n맨눈 한계(6등급)보다 ${m < 6 ? fx(ratio, 1) + "배 밝아 맨눈으로 보인다" : (1 / ratio < 1e5 ? fx(1 / ratio, 1) : (1 / ratio).toExponential(1)) + "배 어두워 맨눈으로는 안 보인다"}\n거리가 10배가 되면 밝기는 1/100, 등급은 5 커진다(파란 선의 기울기). 주황 점: 고른 별`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 2. 중력렌즈 (천우1-06-04) */
   (() => {
@@ -246,20 +231,6 @@
       f.dot(lr, lt, c.warn, 6);
       const p = P(lr, lt), names = ["이상 기체", "복사압", "전자 축퇴압"], m = p.indexOf(Math.max(...p)), tot = p[0] + p[1] + p[2];
       S.out(`밀도 10^${fx(lr, 2)} kg/m³, 온도 10^${fx(lt, 2)} K (평균 입자 질량 μ = 0.6, 전자당 질량 μₑ = 2)\n기체 ${p[0].toExponential(2)} Pa, 복사 ${p[1].toExponential(2)} Pa, 축퇴(완전 축퇴로 계산) ${p[2].toExponential(2)} Pa → ${names[m]}가 가장 크다(${fx(100 * p[m] / tot, 1)}%)\n파랑: 이상 기체, 주황: 복사압, 분홍: 전자 축퇴압이 가장 큰 영역. 경계는 두 압력이 같은 곳\n복사압은 T⁴라 뜨겁고 묽은 곳, 축퇴압은 온도와 무관해 차갑고 조밀한 곳에서 이긴다`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 14. 상대론적 도플러 효과 (천우3-02-05) */
-  (() => {
-    const S = QSim.card("exp-a3-doppler"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), bt = S.val("b"), zc = bt, zr = Math.sqrt((1 + bt) / (1 - bt)) - 1;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: 1, y0: 0, y1: 6, xl: "후퇴 속도 v/c", yl: "적색이동 z" }); f.axes();
-      f.fn((x) => x, c.ink3, 1.6, [5, 3]); f.fn((x) => x < 0.995 ? Math.sqrt((1 + x) / (1 - x)) - 1 : NaN, c.main, 2.2);
-      f.dot(bt, Math.min(zr, 6), c.warn, 5);
-      S.out(`후퇴 속도 v = ${fx(bt, 3)}c (${(bt * 299792).toFixed(0)} km/s)\n고전 도플러 z = v/c = ${fx(zc, 3)}, 상대론 도플러 z = √((1+β)/(1−β)) − 1 = ${fx(zr, 3)} (차이 ${fx(100 * (zr - zc) / Math.max(zc, 1e-9), 1)}%)\nHα(656.3 nm)는 상대론으로 ${(656.3 * (1 + zr)).toFixed(1)} nm에서 관측(고전 공식이면 ${(656.3 * (1 + zc)).toFixed(1)} nm)\nv가 c에 가까워지면 z는 끝없이 커진다(빛보다 빠를 수 없음). 회색 점선: 고전, 파란 선: 상대론`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

@@ -1,4 +1,4 @@
-/* 천우2 실습 카드 묶음: 행성의 평형 온도, 외계행성 신호, 원 궤도 속도와 주기, 지상 궤적, 반작용 휠 자세 제어 */
+/* 천우2 실습 카드 묶음: 행성의 평형 온도, 외계행성 신호, 반작용 휠 자세 제어 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -38,47 +38,6 @@
       const vl = QSim.view(cvL, 0.36), dmax = Math.max(depth * 1.6, 1e-4), fl = QSim.frame(vl, { x0: -0.1, x1: 0.1, y0: 1 - dmax, y1: 1 + dmax * 0.3, xl: "위상(통과 중심 = 0)", yl: "상대 밝기" }); fl.axes({ noGrid: true });
       const half = dur / 24 / P / 2; fl.fn((ph) => (transit && Math.abs(ph) < half ? 1 - depth : 1), c.acc, 2.5, null, 600);
       S.out(`행성 질량 ${Mp} 지구 질량(목성 = 318), 반지름 ${Rp} 지구 반지름, 주기 ${P.toFixed(1)}일, 별 ${Ms} M☉(반지름 약 ${(rs / RS).toFixed(2)} R☉ 가정), 궤도 경사 ${S.val("inc")}°\n시선 속도 진폭 K = ${K < 1 ? K.toFixed(3) : K.toFixed(1)} m/s, 궤도 반지름 ${(a / 1.496e11).toFixed(3)} AU\n${transit ? `통과 깊이 (R_p/R_*)² = ${(depth * 100).toFixed(4)}% (${(depth * 1e6).toFixed(0)} ppm), 지속 약 ${dur.toFixed(1)}시간` : `통과 없음 (충돌 변수 b = ${b.toFixed(2)} > 1, 경사를 90° 가까이 하면 보임)`}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 3. 원 궤도 속도, 주기, 탈출 속도 (04-01, 04-02) */
-  (() => {
-    const S = QSim.card("lab-a2-orbit"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), hkm = 10 ** S.val("lh"), r = RE + hkm * 1e3, vc = Math.sqrt(GM / r), P = 2 * Math.PI * r / vc, ve = Math.SQRT2 * vc;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 2, x1: 5.7, y0: 0, y1: 12, xl: "log₁₀ 고도 (km)", yl: "속도 (km/s)" }); f.axes();
-      f.fn((x) => Math.sqrt(GM / (RE + 10 ** x * 1e3)) / 1000, c.main, 2.5, null, 300); f.fn((x) => Math.SQRT2 * Math.sqrt(GM / (RE + 10 ** x * 1e3)) / 1000, c.acc, 2, [5, 3], 300);
-      [[400, "ISS"], [20200, "GPS"], [35786, "GEO"], [384400 - 6378, "달"]].forEach(([h, n]) => { const x = Math.log10(h); f.path([[x, 0], [x, 12]], c.ink3, 1, [2, 3]); f.text(n, x + 0.02, 11.2, c.ink3); });
-      f.dot(Math.log10(hkm), vc / 1000, c.warn, 6);
-      const ps = P >= 172800 ? (P / 86400).toFixed(3) + "일" : P >= 10800 ? (P / 3600).toFixed(2) + "시간" : (P / 60).toFixed(1) + "분";
-      S.out(`고도 ${hkm < 1e4 ? hkm.toFixed(0) : hkm.toExponential(3)} km (궤도 반지름 ${(r / 1e3).toFixed(0)} km)\n원 궤도 속도 ${(vc / 1000).toFixed(3)} km/s, 주기 ${ps}, 탈출 속도 ${(ve / 1000).toFixed(3)} km/s (주황 점선)\n단위 질량당 궤도 에너지 −GM/2r = ${(-GM / (2 * r) / 1e6).toFixed(2)} MJ/kg`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 원 궤도 위성의 지상 궤적 (04-03) */
-  (() => {
-    const S = QSim.card("lab-a2-track"); if (!S) return;
-    const cv = S.$("canvas"); const we = 2 * Math.PI / 86164.1;
-    function draw() {
-      const c = C(), inc = S.val("inc") * deg, hkm = S.val("h"), nrev = S.val("n"), r = RE + hkm * 1e3, n = Math.sqrt(GM / r ** 3), P = 2 * Math.PI / n;
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: -180, x1: 180, y0: -90, y1: 90, xl: "경도 (°)", yl: "위도 (°)" }); f.axes();
-      const g = v.g; let seg = [], prev = null, cols = [c.main, c.acc, c.warn, c.ink3];
-      const N = 600 * nrev;
-      for (let k = 0; k <= N; k++) {
-        const t = P * nrev * k / N, u = n * t;   // 승교점에서 잰 궤도 각
-        const lat = Math.asin(Math.sin(inc) * Math.sin(u)) / deg;
-        let lon = (Math.atan2(Math.cos(inc) * Math.sin(u), Math.cos(u)) - we * t) / deg;
-        lon = ((lon + 180) % 360 + 360) % 360 - 180;
-        if (prev !== null && Math.abs(lon - prev) > 180) { f.path(seg, cols[Math.floor(t / P) % 4], 2); seg = []; }
-        seg.push([lon, lat]); prev = lon;
-      }
-      f.path(seg, cols[Math.floor(nrev - 1e-9) % 4], 2);
-      f.dot(127, 37.6, c.ink, 4); f.text("서울", 129, 40, c.ink);
-      const shift = we * P / deg;
-      S.out(`궤도 경사 ${S.val("inc")}°, 고도 ${hkm} km → 주기 ${(P / 60).toFixed(1)}분, ${nrev}바퀴 (색이 바퀴마다 바뀜)\n위성이 지나는 위도 범위 ±${Math.min(S.val("inc"), 180 - S.val("inc")).toFixed(1)}°, 한 바퀴마다 궤적이 서쪽으로 ${shift.toFixed(1)}° 옮겨 간다 (지구 자전)\n${S.val("inc") > 90 ? "역행 궤도(경사 > 90°)" : "순행 궤도"}${Math.abs(P - 86164) < 600 ? ". 주기가 항성일과 같아 궤적이 제자리로 돌아옴(정지·지구 동기 궤도)" : ""}`);
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

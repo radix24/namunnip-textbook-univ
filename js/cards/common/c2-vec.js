@@ -1,4 +1,4 @@
-/* 공통2 실습 카드 묶음: 일차변환, 등위선, 기울기 벡터, 라그랑주 승수, 선적분, 그린 정리 */
+/* 공통2 실습 카드 묶음: 일차변환, 야코비안, 등위선, 기울기 벡터, 라그랑주 승수, 선적분, 그린 정리 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -61,6 +61,43 @@
       S.out(`A = [[${A[0]}, ${A[1]}], [${A[2]}, ${A[3]}]]   변환 진행 ${Math.round(t * 100)}%\n행렬식 det A = ${det.toFixed(3)} → 넓이 ${Math.abs(det).toFixed(3)}배${det < 0 ? ", 방향(시계/반시계)이 뒤집힘" : det === 0 ? ", 평면이 직선으로 눌림" : ""}\n${eig}`);
     }
     S.$$(".preset").forEach((b) => b.addEventListener("click", () => { b.dataset.m.split(",").forEach((x, i) => { S.$(`[name=${"abcd"[i]}]`).value = x; }); S.$("[name=t]").value = 1; S.show(); draw(); }));
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* 1-2. 야코비안: 작은 직사각형의 상과 넓이 배율 (06-06) */
+  (() => {
+    const S = QSim.card("lab-c2-jacobian"); if (!S) return;
+    const [c1, c2] = S.$$("canvas");
+    const MP = {
+      polar: { n: "x = u cos v, y = u sin v (극좌표, u = r, v = θ)", T: (u, v) => [u * Math.cos(v), u * Math.sin(v)], J: (u) => u, uv: [0, 2, 0, 2 * Math.PI], xy: [-2.2, 2.2, -2.2, 2.2] },
+      lin: { n: "x = u + v, y = u − v", T: (u, v) => [u + v, u - v], J: () => -2, uv: [-1.5, 1.5, -1.5, 1.5], xy: [-3.2, 3.2, -3.2, 3.2] },
+      sq: { n: "x = u² − v², y = 2uv", T: (u, v) => [u * u - v * v, 2 * u * v], J: (u, v) => 4 * (u * u + v * v), uv: [0, 1.5, 0, 1.5], xy: [-2.4, 2.4, -0.2, 4.6] },
+      exp: { n: "x = eᵘ cos v, y = eᵘ sin v", T: (u, v) => [Math.exp(u) * Math.cos(v), Math.exp(u) * Math.sin(v)], J: (u) => Math.exp(2 * u), uv: [-1, 1, 0, Math.PI], xy: [-2.9, 2.9, -0.2, 2.9] }
+    };
+    const fillPoly = (v, f, pts, color, alpha) => { const g = v.g; g.save(); g.fillStyle = color; g.globalAlpha = alpha; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(f.X(x), f.Y(y)) : g.moveTo(f.X(x), f.Y(y)))); g.closePath(); g.fill(); g.restore(); };
+    function draw() {
+      const c = C(), m = MP[S.val("map")], [ua, ub, va, vb] = m.uv;
+      const u0 = ua + S.val("a") * (ub - ua), v0 = va + S.val("b") * (vb - va), s = S.val("s") / 100, du = s * (ub - ua), dv = s * (vb - va);
+      const v1 = QSim.view(c1, 0.6), f1 = QSim.frame(v1, { x0: ua, x1: ub, y0: va, y1: vb, xl: "u", yl: "v" }); f1.axes();
+      const v2 = QSim.view(c2, 0.75), f2 = QSim.frame(v2, { x0: m.xy[0], x1: m.xy[1], y0: m.xy[2], y1: m.xy[3], xl: "x", yl: "y", equal: true }); f2.axes({ noGrid: true });
+      for (let k = 0; k <= 10; k++) {
+        const u = ua + (k / 10) * (ub - ua), w = va + (k / 10) * (vb - va), Lu = [], Lv = [];
+        for (let i = 0; i <= 60; i++) { Lu.push(m.T(u, va + (i / 60) * (vb - va))); Lv.push(m.T(ua + (i / 60) * (ub - ua), w)); }
+        f2.path(Lu, c.main, 1); f2.path(Lv, c.acc, 1);
+      }
+      const rect = [[u0, v0], [u0 + du, v0], [u0 + du, v0 + dv], [u0, v0 + dv]];
+      fillPoly(v1, f1, rect, c.warn, 0.45); f1.path([...rect, rect[0]], c.warn, 1.5);
+      const edge = [];
+      for (let i = 0; i < 4; i++) { const [pa, pb] = [rect[i], rect[(i + 1) % 4]]; for (let k = 0; k < 40; k++) edge.push(m.T(pa[0] + (k / 40) * (pb[0] - pa[0]), pa[1] + (k / 40) * (pb[1] - pa[1]))); }
+      fillPoly(v2, f2, edge, c.warn, 0.45); f2.path([...edge, edge[0]], c.warn, 1.5);
+      let A = 0; edge.forEach(([x, y], i) => { const [x2, y2] = edge[(i + 1) % edge.length]; A += x * y2 - x2 * y; }); A = Math.abs(A) / 2;
+      const P = m.T(u0, v0), e = 1e-6, Tu = m.T(u0 + e, v0), Tv = m.T(u0, v0 + e);
+      const a = [(Tu[0] - P[0]) / e * du, (Tu[1] - P[1]) / e * du], b = [(Tv[0] - P[0]) / e * dv, (Tv[1] - P[1]) / e * dv];
+      f2.path([P, [P[0] + a[0], P[1] + a[1]], [P[0] + a[0] + b[0], P[1] + a[1] + b[1]], [P[0] + b[0], P[1] + b[1]], P], c.ink, 1.5, [4, 3]);
+      const J = m.J(u0, v0), lin = Math.abs(J) * du * dv;
+      S.out(`${m.n}\n(u, v) = (${u0.toFixed(3)}, ${v0.toFixed(3)}), Δu = ${du.toFixed(3)}, Δv = ${dv.toFixed(3)}, 직사각형 넓이 ΔuΔv = ${(du * dv).toFixed(5)}\n` +
+        `야코비안 J(u, v) = ${J.toFixed(4)} → 어림 넓이 |J|ΔuΔv = ${lin.toFixed(5)} (점선 평행사변형)\n상의 실제 넓이 = ${A.toFixed(5)}, 실제 ÷ 어림 = ${lin > 1e-12 ? (A / lin).toFixed(4) : "정의 안 됨 (J = 0)"}`);
+    }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 

@@ -1,55 +1,11 @@
-/* 물리13 실습 카드 묶음: 맥스웰 속력 분포, 2준위계·상자성체, 페르미 기체, 디바이·아인슈타인 열용량, 2차원 이징 몬테카를로 */
+/* 물리13 실습 카드 묶음: 페르미 기체, 디바이·아인슈타인 열용량, 2차원 이징 몬테카를로 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const rng = (s) => () => { s = (s * 1664525 + 1013904223) % 4294967296; return (s + 0.5) / 4294967296; };
-  const gauss = (r) => Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
-  const kB = 1.380649e-23, U = 1.66054e-27;
   const simpson = (f, a, b, n = 400) => { const h = (b - a) / n; let s = f(a) + f(b); for (let i = 1; i < n; i++) s += (i % 2 ? 4 : 2) * f(a + i * h); return s * h / 3; };
 
-  /* 1. 맥스웰 속력 분포와 표본 (01-01) */
-  (() => {
-    const S = QSim.card("lab-p13-mb"); if (!S) return;
-    const cv = S.$("canvas"); let seed = 13;
-    function draw() {
-      const c = C(), m = Number(S.val("gas")) * U, T = S.val("T"), N = S.val("n"), r = rng(seed), s = Math.sqrt(kB * T / m);
-      const D = (v) => 4 * Math.PI * Math.pow(m / (2 * Math.PI * kB * T), 1.5) * v * v * Math.exp(-m * v * v / (2 * kB * T));
-      const vmax = 4.5 * s * Math.SQRT2, bins = 40, h = Array(bins).fill(0); let sum = 0, sum2 = 0;
-      for (let i = 0; i < N; i++) { const v = s * Math.hypot(gauss(r), gauss(r), gauss(r)); sum += v; sum2 += v * v; const b = Math.floor(v / vmax * bins); if (b < bins) h[b]++; }
-      const dv = vmax / bins, peak = D(Math.SQRT2 * s);
-      const v = QSim.view(cv, 0.5), f = QSim.frame(v, { x0: 0, x1: vmax, y0: 0, y1: peak * 1.3 * 1000, xl: "속력 v (m/s)", yl: "분포 (10⁻³ s/m)" }); f.axes();
-      const g = v.g; h.forEach((cnt, i) => { const y = cnt / (N * dv) * 1000; g.fillStyle = c.soft; g.fillRect(f.X(i * dv), f.Y(y), f.sx * dv - 1, f.Y(0) - f.Y(y)); });
-      f.fn((x) => D(x) * 1000, c.main, 2.5, null, 300);
-      const vp = Math.SQRT2 * s, vb = Math.sqrt(8 / Math.PI) * s, vr = Math.sqrt(3) * s;
-      [[vp, c.warn], [vb, c.acc], [vr, c.ink]].forEach(([x, col]) => f.path([[x, 0], [x, peak * 1.25 * 1000]], col, 1.2, [4, 3]));
-      S.out(`질량 ${S.val("gas")} u, T = ${T} K, 표본 ${N}개 (막대)\n이론: v_p = ${vp.toFixed(0)} (빨강), v̄ = ${vb.toFixed(0)} (주황), v_rms = ${vr.toFixed(0)} m/s (검정)\n표본: 평균 ${(sum / N).toFixed(0)} m/s, rms ${Math.sqrt(sum2 / N).toFixed(0)} m/s`);
-    }
-    S.$(".new").addEventListener("click", () => { seed = (seed * 37 + 11) % 99991; draw(); });
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 2준위계의 쇼트키 열용량과 상자성 자화 (03-02) */
-  (() => {
-    const S = QSim.card("lab-p13-twostate"); if (!S) return;
-    const [cvC, cvM] = S.$$("canvas");
-    function draw() {
-      const c = C(), t = S.val("t"), x = 1 / t;   // t = kT/ε
-      const Cn = (tt) => { const y = 1 / tt; return y * y * Math.exp(y) / (Math.exp(y) + 1) ** 2; };
-      const Sn = (tt) => { const y = 1 / tt; return Math.log(1 + Math.exp(-y)) + y / (Math.exp(y) + 1); };
-      const En = (tt) => 1 / (Math.exp(1 / tt) + 1);
-      const vc = QSim.view(cvC, 0.42), fc = QSim.frame(vc, { x0: 0, x1: 2.5, y0: 0, y1: 0.75, xl: "kT/ε", yl: "C/Nk, S/Nk, E/Nε" }); fc.axes();
-      fc.fn((tt) => (tt < 0.02 ? 0 : Cn(tt)), c.main, 2.5, null, 400); fc.fn((tt) => (tt < 0.02 ? 0 : Sn(tt)), c.acc, 1.8, [5, 3], 400); fc.fn((tt) => (tt < 0.02 ? 0 : En(tt)), c.ink3, 1.5, [2, 3], 400);
-      fc.path([[0, Math.LN2], [2.5, Math.LN2]], c.soft, 1, [2, 4]); fc.dot(t, Cn(t), c.warn, 5);
-      const bt = S.val("bt");   // μB/kT
-      const vm = QSim.view(cvM, 0.36), fm = QSim.frame(vm, { x0: 0, x1: 4, y0: 0, y1: 1.08, xl: "μB/kT", yl: "M/Nμ" }); fm.axes();
-      fm.fn(Math.tanh, c.main, 2.5, null, 300); fm.fn((y) => (y < 1.08 ? y : NaN), c.ink3, 1.2, [4, 3], 300); fm.dot(bt, Math.tanh(bt), c.warn, 5);
-      let best = 0, bc = 0; for (let i = 1; i <= 3000; i++) { const tt = 2.5 * i / 3000, v = Cn(tt); if (v > bc) { bc = v; best = tt; } }
-      S.out(`2준위계 kT/ε = ${t.toFixed(3)}: C/Nk = ${Cn(t).toFixed(4)}, S/Nk = ${Sn(t).toFixed(4)} (최대 ln 2 = 0.693), 위 준위 비율 ${En(t).toFixed(4)}\n쇼트키 봉우리: kT/ε = ${best.toFixed(3)}에서 C/Nk = ${bc.toFixed(4)} (파랑: C, 주황 점선: S, 회색 점선: E)\n상자성체 μB/kT = ${bt.toFixed(2)}: M/Nμ = tanh = ${Math.tanh(bt).toFixed(4)}, 퀴리 근사(회색 점선) ${bt.toFixed(4)}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 3. 페르미 기체: 점유수, μ(T), 열용량 (05-01, 05-02) */
+  /* 1. 페르미 기체: 점유수, μ(T), 열용량 (05-01, 05-02) */
   (() => {
     const S = QSim.card("lab-p13-fermi"); if (!S) return;
     const [cvN, cvC] = S.$$("canvas");
@@ -74,7 +30,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 디바이와 아인슈타인 열용량 (06-02, 03-03) */
+  /* 2. 디바이와 아인슈타인 열용량 (06-02, 03-03) */
   (() => {
     const S = QSim.card("lab-p13-debye"); if (!S) return;
     const cv = S.$("canvas");
@@ -97,7 +53,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. 2차원 이징 모형 메트로폴리스 (07-02, 07-01) */
+  /* 3. 2차원 이징 모형 메트로폴리스 (07-02, 07-01) */
   (() => {
     const S = QSim.card("lab-p13-ising"); if (!S) return;
     const cv = S.$("canvas"); let seed = 7, Lsz = 0, s = null, r = null, swept = 0, lastT = null, stats = null;

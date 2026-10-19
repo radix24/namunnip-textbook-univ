@@ -1,4 +1,4 @@
-/* 공통3 체험 카드 묶음 2: 연속 방정식과 베르누이 방정식, 각운동량 보존(회전하는 사람). */
+/* 공통3 체험 카드 묶음 2: 연속 방정식과 베르누이 방정식, 측정의 표준오차. */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -36,33 +36,6 @@
     }
     const L = QSim.loop((dt) => { phase += dt * 1.5; draw(); }).watch(cv);
     if (!QSim.reduce) L.start();
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 팔을 오므리면 왜 빨리 돌까 (06-04) */
-  (() => {
-    const S = QSim.card("lab-c3-skater"); if (!S) return;
-    const cv = S.$("canvas"), I0 = 1.2, m = 4, r0 = 0.8;
-    let ang = 0;
-    function state() {
-      const w0 = S.val("w0"), r = S.val("r"), Ia = I0 + 2 * m * r0 * r0, Ib = I0 + 2 * m * r * r, Lm = Ia * w0, w = Lm / Ib;
-      return { w0, r, Ia, Ib, Lm, w };
-    }
-    function draw() {
-      const c = C(), s = state();
-      const v = QSim.view(cv, 0.55), F = QSim.frame(v, { x0: -1.2, x1: 1.2, y0: -1.1, y1: 1.1, equal: true });
-      const g = v.g;
-      g.save(); g.strokeStyle = c.rule; g.setLineDash([3, 4]); g.beginPath(); g.arc(F.X(0), F.Y(0), s.r * F.sx, 0, 7); g.stroke(); g.restore();
-      F.dot(0, 0, c.main, 0.22 * F.sx);
-      [0, Math.PI].forEach((d) => { const x = s.r * Math.cos(ang + d), y = s.r * Math.sin(ang + d); F.path([[0, 0], [x, y]], c.main, 5); F.dot(x, y, c.acc, 9); });
-      const K0 = 0.5 * s.Ia * s.w0 * s.w0, K = 0.5 * s.Ib * s.w * s.w;
-      S.out(`몸통 I₀ = 1.2 kg·m², 양손에 든 아령 4 kg씩, 처음 팔 길이 0.80 m, 처음 ω₀ = ${s.w0.toFixed(2)} rad/s\n` +
-        `지금 팔 길이 r = ${s.r.toFixed(2)} m:  I = I₀ + 2mr² = ${s.Ib.toFixed(3)} kg·m²  (처음 ${s.Ia.toFixed(3)})\n` +
-        `각운동량 L = Iω = ${s.Lm.toFixed(3)} kg·m²/s (보존)  →  ω = ${s.w.toFixed(3)} rad/s = ${(s.w / (2 * Math.PI)).toFixed(3)}바퀴/s\n` +
-        `회전 운동 에너지 ½Iω²: 처음 ${K0.toFixed(2)} J → 지금 ${K.toFixed(2)} J (${(K / K0).toFixed(3)}배)`);
-    }
-    const L = QSim.loop((dt) => { ang += state().w * dt; draw(); }).watch(cv);
-    QSim.playButton(S.$(".play"), L);
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
   /* 3. 여러 번 재면 왜 더 정확해질까: 표준오차 (11-01) */

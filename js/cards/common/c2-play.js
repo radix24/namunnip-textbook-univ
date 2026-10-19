@@ -1,4 +1,4 @@
-/* 공통2 체험 카드 묶음 2: 외적과 평행사변형, 극좌표 이중적분. */
+/* 공통2 체험 카드 묶음 2: 외적과 평행사변형, 극좌표 이중적분, 이차곡면의 단면, 벡터장, 스토크스 정리. */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -104,65 +104,6 @@
       F2.path([[-3.2, k], [3.2, k]], c.ink3, 1, [4, 4]);
       F2.text("y = 0으로 자른 곡선", -3.1, 2.15, c.ink2);
       S.out(`${q.n}\n위: 높이 z = ${k.toFixed(1)}인 수평면으로 자른 자취 ${any ? "" : "(이 높이에서는 곡면과 만나지 않음)"}\n아래: xz평면(y = 0)으로 자른 자취, 점선은 지금 높이`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 4. 나선: 공간곡선의 속도, 길이, 곡률 (03-01) */
-  (() => {
-    const S = QSim.card("lab-c2-helix"); if (!S) return;
-    const cv = S.$("canvas");
-    const P = (x, y, z) => [y - 0.55 * x, z - 0.4 * x];
-    function draw() {
-      const c = C(), t = (S.val("t") * Math.PI) / 180, cc = S.val("c");
-      const top = 4 * Math.PI * cc;
-      const v = QSim.view(cv, 0.75), F = QSim.frame(v, { x0: -2.4, x1: 2.4, y0: -1.6, y1: Math.max(2, top + 0.6), equal: true });
-      const L = (p, q, col, w, d) => F.path([P(...p), P(...q)], col, w, d);
-      L([0, 0, 0], [1.8, 0, 0], c.ink3, 1, [3, 3]); L([0, 0, 0], [0, 1.6, 0], c.ink3, 1, [3, 3]); L([0, 0, 0], [0, 0, Math.max(1.4, top)], c.ink3, 1, [3, 3]);
-      const all = [], done = [];
-      for (let k = 0; k <= 600; k++) { const s = (4 * Math.PI * k) / 600; all.push(P(Math.cos(s), Math.sin(s), cc * s)); }
-      for (let k = 0; k <= 400; k++) { const s = (t * k) / 400; done.push(P(Math.cos(s), Math.sin(s), cc * s)); }
-      F.path(all, c.soft, 2); F.path(done, c.main, 2.5);
-      const r = [Math.cos(t), Math.sin(t), cc * t], vel = [-Math.sin(t), Math.cos(t), cc];
-      const [x, y] = P(...r), [ex, ey] = P(r[0] + vel[0], r[1] + vel[1], r[2] + vel[2]);
-      F.arrow(x, y, ex - x, ey - y, c.acc, "r′(t)"); F.dot(x, y, c.ink, 5);
-      const sp = Math.sqrt(1 + cc * cc);
-      S.out(`r(t) = (cos t, sin t, ct),  c = ${cc.toFixed(2)} (한 바퀴에 2πc = ${(2 * Math.PI * cc).toFixed(3)}만큼 올라감),  t = ${t.toFixed(3)}\n` +
-        `r′(t) = (−sin t, cos t, c),  속력 |r′| = √(1 + c²) = ${sp.toFixed(4)} (t와 상관없이 일정)\n` +
-        `0부터 t까지의 길이 = t√(1 + c²) = ${(t * sp).toFixed(4)},  곡률 κ = 1/(1 + c²) = ${(1 / (1 + cc * cc)).toFixed(4)}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 접평면과 선형근사 (04-03) */
-  (() => {
-    const S = QSim.card("lab-c2-tangent"); if (!S) return;
-    const cv = S.$("canvas");
-    const R = {
-      a: { n: "f(x, y) = x² + 3y²", f: (x, y) => x * x + 3 * y * y, fx: (x) => 2 * x, fy: (x, y) => 6 * y },
-      b: { n: "f(x, y) = √(x² + y²)", f: (x, y) => Math.hypot(x, y), fx: (x, y) => x / Math.hypot(x, y), fy: (x, y) => y / Math.hypot(x, y) },
-      c: { n: "f(x, y) = x eʸ", f: (x, y) => x * Math.exp(y), fx: (x, y) => Math.exp(y), fy: (x, y) => x * Math.exp(y) }
-    };
-    function draw() {
-      const c = C(), r = R[S.val("fn")], a = S.val("a"), b = S.val("b"), h = S.val("h");
-      const v = QSim.view(cv, 0.7), F = QSim.frame(v, { x0: -2, x1: 2, y0: -1.5, y1: 1.5, equal: true, xl: "x", yl: "y" });
-      const g = v.g, N = 64;
-      let lo = Infinity, hi = -Infinity; const vals = [];
-      for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) { const x = -2 + (4 * (i + 0.5)) / N, y = -1.5 + (3 * (j + 0.5)) / N, z = r.f(x, y); vals.push([x, y, z]); lo = Math.min(lo, z); hi = Math.max(hi, z); }
-      /* 색 지도는 N×N 픽셀 그림 한 장으로 만들어 늘려 그린다 (사각형을 하나씩 그리면 느림) */
-      const off = document.createElement("canvas"); off.width = N; off.height = N;
-      const og = off.getContext("2d"), img = og.createImageData(N, N), m = /^#?([0-9a-f]{6})$/i.exec(c.main.trim());
-      const [cr, cg, cb] = m ? [0, 2, 4].map((k) => parseInt(m[1].slice(k, k + 2), 16)) : [75, 79, 224];
-      vals.forEach(([x, y, z], idx) => { const i = Math.floor(idx / N), j = idx % N, p = 4 * ((N - 1 - j) * N + i); img.data[p] = cr; img.data[p + 1] = cg; img.data[p + 2] = cb; img.data[p + 3] = Math.round(255 * (0.05 + (0.6 * (z - lo)) / (hi - lo || 1))); });
-      og.putImageData(img, 0, 0);
-      g.imageSmoothingEnabled = true; g.drawImage(off, F.X(-2), F.Y(1.5), F.X(2) - F.X(-2), F.Y(-1.5) - F.Y(1.5));
-      F.axes({ noGrid: true });
-      const fa = r.f(a, b), fx = r.fx(a, b), fy = r.fy(a, b), dx = h * Math.cos(Math.PI / 6), dy = h * Math.sin(Math.PI / 6);
-      F.dot(a, b, c.ink, 5); F.path([[a, b], [a + dx, b + dy]], c.acc, 2); F.dot(a + dx, b + dy, c.acc, 4);
-      const L = fa + fx * dx + fy * dy, ex = r.f(a + dx, b + dy);
-      S.out(`${r.n},  점 (${a.toFixed(2)}, ${b.toFixed(2)}),  f = ${fa.toFixed(4)},  fₓ = ${isFinite(fx) ? fx.toFixed(4) : "없음"},  f_y = ${isFinite(fy) ? fy.toFixed(4) : "없음"}\n` +
-        `접평면 z = f(a, b) + fₓ(x − a) + f_y(y − b)\n(${(a + dx).toFixed(3)}, ${(b + dy).toFixed(3)})로 움직이면:  실제 f = ${ex.toFixed(5)},  선형근사 L = ${isFinite(L) ? L.toFixed(5) : "쓸 수 없음 (원점에서 미분 불가능)"}` +
-        (isFinite(L) ? `,  오차 ${(ex - L).toExponential(2)}` : ""));
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

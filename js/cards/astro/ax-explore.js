@@ -334,23 +334,6 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 13. HII 영역의 Strömgren 구 (천우4-03-02) */
-  (() => {
-    const S = QSim.card("exp-a4-strom"); if (!S) return;
-    const cv = S.$("canvas"), aB = 2.6e-19, pc = 3.086e16, mH = 1.673e-27, Ms = 1.989e30, yr = 3.156e7;
-    function draw() {
-      const c = C(), Q = Math.pow(10, S.val("lq")), n = Math.pow(10, S.val("ln")), R = Math.cbrt(3 * Q / (4 * Math.PI * aB * n * n)), Rpc = R / pc;
-      const span = Math.pow(10, Math.ceil(Math.log10(Rpc * 1.2))), v = QSim.view(cv, 0.6);
-      const f = QSim.frame(v, { x0: -span, x1: span, y0: -span * 0.6, y1: span * 0.6, equal: true, xl: "pc", pad: 22 }); f.axes();
-      const g = v.g; g.save(); g.fillStyle = "#d9483b"; g.globalAlpha = 0.25; g.beginPath(); g.arc(f.X(0), f.Y(0), Rpc * f.sx, 0, 7); g.fill(); g.restore();
-      const circ = []; for (let i = 0; i <= 120; i++) { const t = 2 * Math.PI * i / 120; circ.push([Rpc * Math.cos(t), Rpc * Math.sin(t)]); } f.path(circ, c.warn, 2);
-      f.dot(0, 0, c.main, 5);
-      const M = 4 / 3 * Math.PI * R * R * R * n * mH / Ms, trec = 1 / (n * aB) / yr;
-      S.out(`전리 광자 Q = ${Q.toExponential(1)} s⁻¹ (O7 V 별 약 10⁴⁹, B0 V 약 10⁴⁸), 수소 수 밀도 n = ${n.toExponential(1)} m⁻³ (${(n / 1e6).toPrecision(2)} cm⁻³)\nStrömgren 반지름 R_S = (3Q / 4π α_B n²)^1/3 = ${Rpc.toPrecision(3)} pc\n전리된 수소의 질량 ${M.toPrecision(3)} 태양 질량, 재결합 시간 1/(n α_B) = ${trec.toPrecision(3)} 년\n빨간 원: 전리된 영역(HII), 바깥: 중성 수소. 축 눈금 단위 pc`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
   /* 14. 위성 자료 예산 (천우5-05-02) */
   (() => {
     const S = QSim.card("exp-a5-budget"); if (!S) return;

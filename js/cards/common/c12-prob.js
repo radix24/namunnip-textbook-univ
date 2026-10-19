@@ -1,4 +1,4 @@
-/* 공통12 실습 카드 묶음: 확률밀도와 넓이, 무기억성, 상관과 합의 분산, 변환 난수, 공차 누적 */
+/* 공통12 실습 카드 묶음: 무기억성, 상관과 합의 분산, 변환 난수, 공차 누적 */
 (() => {
   "use strict";
   const C = () => QSim.col();
@@ -8,32 +8,6 @@
   const gauss = (r) => Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
   const hist = (xs, lo, hi, k) => { const w = (hi - lo) / k, c = Array(k).fill(0); xs.forEach((x) => { const i = Math.floor((x - lo) / w); if (i >= 0 && i < k) c[i]++; }); return c.map((n) => n / (xs.length * w)); };
   const bars = (f, g, h, lo, hi, col) => { const k = h.length, w = (hi - lo) / k; g.fillStyle = col; h.forEach((d, i) => { const x0 = f.X(lo + i * w), x1 = f.X(lo + (i + 1) * w); g.fillRect(x0, f.Y(d), Math.max(1, x1 - x0 - 1), f.Y(0) - f.Y(d)); }); };
-
-  /* 1. 확률밀도함수와 넓이 (02-02) */
-  (() => {
-    const S = QSim.card("lab-c12-pdf"); if (!S) return;
-    const [cvF, cvC] = S.$$("canvas");
-    const D = {
-      cx2: { n: "f(x) = 3x²/8, 0 ≤ x ≤ 2", lo: -0.5, hi: 2.5, f: (x) => (x >= 0 && x <= 2 ? 3 * x * x / 8 : 0), F: (x) => (x <= 0 ? 0 : x >= 2 ? 1 : x ** 3 / 8), med: Math.cbrt(4) },
-      exp: { n: "지수분포 λ = 0.5", lo: -0.5, hi: 8, f: (x) => (x >= 0 ? 0.5 * Math.exp(-0.5 * x) : 0), F: (x) => (x <= 0 ? 0 : 1 - Math.exp(-0.5 * x)), med: 2 * Math.LN2 },
-      norm: { n: "표준정규분포 N(0, 1)", lo: -3.5, hi: 3.5, f: (x) => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI), F: Phi, med: 0 },
-      unif: { n: "균일분포 U(0, 2)", lo: -0.5, hi: 2.5, f: (x) => (x >= 0 && x <= 2 ? 0.5 : 0), F: (x) => Math.min(1, Math.max(0, x / 2)), med: 1 }
-    };
-    function draw() {
-      const c = C(), d = D[S.val("dist")]; let a = S.val("a"), b = S.val("b"); if (a > b) [a, b] = [b, a];
-      let top = 0; for (let i = 0; i <= 300; i++) top = Math.max(top, d.f(d.lo + (d.hi - d.lo) * i / 300));
-      const v1 = QSim.view(cvF, 0.42), f1 = QSim.frame(v1, { x0: d.lo, x1: d.hi, y0: 0, y1: top * 1.15, xl: "x", yl: "f(x)" }); f1.axes();
-      const g = v1.g, A = Math.max(d.lo, a), B = Math.min(d.hi, b);
-      if (B > A) { g.fillStyle = c.soft; g.beginPath(); g.moveTo(f1.X(A), f1.Y(0)); for (let i = 0; i <= 120; i++) { const x = A + (B - A) * i / 120; g.lineTo(f1.X(x), f1.Y(d.f(x))); } g.lineTo(f1.X(B), f1.Y(0)); g.closePath(); g.fill(); }
-      f1.fn(d.f, c.main, 2.5, null, 600);
-      const v2 = QSim.view(cvC, 0.32), f2 = QSim.frame(v2, { x0: d.lo, x1: d.hi, y0: 0, y1: 1.08, xl: "x", yl: "F(x)" }); f2.axes();
-      f2.fn(d.F, c.ink2, 2, null, 600);
-      [[a, c.acc], [b, c.warn]].forEach(([x, col]) => { if (x >= d.lo && x <= d.hi) { f2.path([[x, 0], [x, d.F(x)], [d.lo, d.F(x)]], col, 1.5, [4, 3]); f2.dot(x, d.F(x), col, 4); } });
-      const p = d.F(b) - d.F(a);
-      S.out(`${d.n}\nP(${a.toFixed(2)} ≤ X ≤ ${b.toFixed(2)}) = F(${b.toFixed(2)}) − F(${a.toFixed(2)}) = ${d.F(b).toFixed(4)} − ${d.F(a).toFixed(4)} = ${p.toFixed(4)}\n중앙값 ${d.med.toFixed(4)} (F = 0.5),  최대 밀도 ${top.toFixed(3)}${top > 1 ? " (밀도는 1보다 클 수 있다)" : ""}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 2. 무기억성: 살아남은 부품의 남은 수명 (04-02) */
   (() => {

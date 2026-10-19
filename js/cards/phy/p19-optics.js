@@ -1,34 +1,10 @@
-/* 물리19 실습 카드 묶음: 굴절과 전반사, 편광자 사슬, Fabry-Perot 투과, 슬릿·격자 회절, Lorentz 분산 */
+/* 물리19 실습 카드 묶음: 편광자 사슬, Fabry-Perot 투과, 슬릿·격자 회절, Lorentz 분산 */
 (() => {
   "use strict";
   const C = () => QSim.col();
   const D2R = Math.PI / 180;
 
-  /* 1. 경계면의 굴절과 전반사 (01-01) */
-  (() => {
-    const S = QSim.card("lab-p19-snell"); if (!S) return;
-    const cv = S.$("canvas");
-    function draw() {
-      const c = C(), n1 = S.val("n1"), n2 = S.val("n2"), th = S.val("th") * D2R;
-      const v = QSim.view(cv, 0.62), f = QSim.frame(v, { x0: -1.2, x1: 1.2, y0: -1.1, y1: 1.1, equal: true }); f.axes({ noGrid: true });
-      const g = v.g; g.fillStyle = "rgba(90,130,230,0.10)"; g.fillRect(f.X(-1.2), f.Y(0), f.sx * 2.4, f.sy * 1.1);
-      f.path([[0, -1.1], [0, 1.1]], c.ink3, 1, [4, 4]);
-      f.text(`n₁ = ${n1}`, -1.15, 0.95, c.ink2); f.text(`n₂ = ${n2}`, -1.15, -1.0, c.ink2);
-      const ix = -Math.sin(th), iy = Math.cos(th);
-      f.path([[ix, iy], [0, 0]], c.main, 2.5);
-      const s2 = n1 * Math.sin(th) / n2, tir = s2 > 1;
-      const rs = (Math.cos(th) * n1 - n2 * Math.sqrt(Math.max(0, 1 - s2 * s2))) / (n1 * Math.cos(th) + n2 * Math.sqrt(Math.max(0, 1 - s2 * s2)));
-      const R = tir ? 1 : rs * rs;
-      f.path([[0, 0], [Math.sin(th), Math.cos(th)]], c.acc, 1 + 3 * R);
-      let th2 = NaN;
-      if (!tir) { th2 = Math.asin(s2); f.path([[0, 0], [Math.sin(th2), -Math.cos(th2)]], c.main, 1 + 3 * (1 - R)); }
-      const tc = n1 > n2 ? Math.asin(n2 / n1) / D2R : NaN;
-      S.out(`입사각 ${S.val("th")}°, n₁ sin θ₁ = ${(n1 * Math.sin(th)).toFixed(3)}\n${tir ? "전반사: 굴절빛 없음 (sin θ₂ > 1)" : `굴절각 θ₂ = ${(th2 / D2R).toFixed(1)}°`}\n임계각 ${isFinite(tc) ? tc.toFixed(1) + "°" : "없음 (n₁ ≤ n₂)"}, 반사율(s 편광) ${(R * 100).toFixed(1)}% (선 굵기로 표시)`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 2. 편광자 사슬과 λ/4판 (02-01) */
+  /* 1. 편광자 사슬과 λ/4판 (02-01) */
   (() => {
     const S = QSim.card("lab-p19-polar"); if (!S) return;
     const cv = S.$("canvas");
@@ -59,7 +35,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 3. Fabry-Perot 투과 스펙트럼 (03-02) */
+  /* 2. Fabry-Perot 투과 스펙트럼 (03-02) */
   (() => {
     const S = QSim.card("lab-p19-fp"); if (!S) return;
     const cv = S.$("canvas");
@@ -76,7 +52,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 4. 단일 슬릿, 이중 슬릿, 격자의 Fraunhofer 무늬 (04-01) */
+  /* 3. 단일 슬릿, 이중 슬릿, 격자의 Fraunhofer 무늬 (04-01) */
   (() => {
     const S = QSim.card("lab-p19-slit"); if (!S) return;
     const cv = S.$("canvas"), lam = 633e-9;
@@ -93,7 +69,7 @@
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
 
-  /* 5. Lorentz 진동자의 굴절률과 흡수 (05-01) */
+  /* 4. Lorentz 진동자의 굴절률과 흡수 (05-01) */
   (() => {
     const S = QSim.card("lab-p19-lorentz"); if (!S) return;
     const cv = S.$("canvas");
