@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-classify" data-kind="본문" data-std="전전20-05-01">
+  <header class="card-head"><span class="no"></span><h2>최소제곱 분류기와 로지스틱 회귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>±1 레이블에 선형 모델을 최소제곱으로 맞춰 분류하는 방법을 안다.</li>
+        <li>로지스틱 회귀의 확률 모델 \(\sigma(w^Tx + b)\)와 교차 엔트로피 손실을 쓴다.</li>
+        <li>경사하강으로 로지스틱 회귀를 학습하는 갱신식을 유도한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱 (<a href="../16/03-01.html">전전16 3.1절</a>), 경사하강 (<a href="04-01.html">4.1절</a>), 볼록성 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>두 분류기</h3>
+    <p><b>최소제곱 분류기</b>: \(\min\sum(w^Tx_i + b - y_i)^2\), \(y_i = \pm1\). 판정 sign(wᵀx + b). 간단하지만 경계에서 먼 점(이미 맞게 분류된 점)도 벌점을 받아 경계가 끌려갑니다.</p>
+    <p><b>로지스틱 회귀</b>: \(P(y = 1 \mid x) = \sigma(w^Tx + b)\), \(\sigma(z) = 1/(1 + e^{-z})\). 손실 \(-\sum[y_i\log p_i + (1 - y_i)\log(1 - p_i)]\)(y ∈ {0, 1})는 볼록이고, 기울기는 \(\sum(p_i - y_i)x_i\)로 간단합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>1차원 자료 x = 1, 2(레이블 0), x = 3, 4(레이블 1). w = 0, b = 0에서 시작해 보폭 0.5로 경사하강 한 번 한 뒤 (w, b)는?</p>
+    </div>
+    <p><i>풀이.</i> 처음 모든 p = 0.5. 기울기 \(\partial/\partial w = \sum(p_i - y_i)x_i = 0.5(1 + 2) - 0.5(3 + 4) = -2\), \(\partial/\partial b = 0.5 \times 2 - 0.5 \times 2 = 0\). 갱신 w = 0 − 0.5 × (−2) = 1, b = 0. 다음 반복부터 b가 음수로 움직여 경계 −b/w가 2.5 쪽으로 갑니다(분리 가능한 자료는 w가 계속 커짐).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "로지스틱 회귀는 회귀다": 확률을 내는 분류기입니다. (2) "완전히 분리되는 자료면 학습이 끝난다": 가중치가 무한히 커지려 해 정규화(5.2절)가 필요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최소제곱 분류기: 간단, 먼 점에 끌림.</li>
+        <li>로지스틱: σ(wᵀx + b), 교차 엔트로피(볼록), 기울기 Σ(p − y)x.</li>
+        <li>분리 가능 자료는 정규화 필요.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>σ(0)과 σ(2)는?
+          <details><summary>답</summary><p>0.5, 약 0.881.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>w = 1, b = −2.5에서 x = 3의 확률은?
+          <details><summary>답</summary><p>σ(0.5) ≈ 0.622.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>로지스틱 손실의 헤세가 양의 준정부호인 이유는?
+          <details><summary>답</summary><p>\(\sum p_i(1 - p_i)x_ix_i^T\)로 각 항이 양의 준정부호입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

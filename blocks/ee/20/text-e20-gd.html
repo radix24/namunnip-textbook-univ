@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-gd" data-kind="본문" data-std="전전20-04-01">
+  <header class="card-head"><span class="no"></span><h2>경사하강법과 Newton 방법</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>경사하강 \(x_{k+1} = x_k - \alpha\nabla f\)와 보폭의 수렴 조건을 안다.</li>
+        <li>Newton 방법 \(x_{k+1} = x_k - (\nabla^2f)^{-1}\nabla f\)의 빠른(이차) 수렴과 비용을 안다.</li>
+        <li>조건수가 경사하강을 느리게 하는 이유를 수치로 보인다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>볼록 함수와 헤세 (<a href="03-01.html">3.1절</a>), 이 절의 탐구 카드.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>이차 함수에서</h3>
+    <p>\(f = x^2 + \kappa y^2\)에서 경사하강은 방향마다 \(x \leftarrow (1 - 2\alpha)x\), \(y \leftarrow (1 - 2\kappa\alpha)y\). 둘 다 줄어들려면 \(\alpha &lt; 1/\kappa\)(곡률이 큰 방향이 보폭을 제한)이고, 곡률이 작은 방향은 느리게 줄어듭니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>κ = 10, 시작 (10, 1)에서 거리가 10⁻⁶ 아래로 가는 반복 수를 보폭 0.01, 0.05, 0.09, 0.1에 대해, 그리고 Newton 방법으로.</p>
+    </div>
+    <p><i>풀이.</i> 계산하면 798, 153, 82번이고, 0.1에서는 y 방향 비가 |1 − 2| = 1이라 영원히 진동(수렴 안 함), 더 크면 발산합니다. Newton은 헤세(diag(2, 20))로 나눠 한 번에 (0, 0)입니다. 탐구 카드에서 경로를 봅니다.</p>
+    <p>최적 보폭에서도 경사하강의 수축 비는 \((\kappa - 1)/(\kappa + 1)\)이라 κ가 크면(길쭉한 등고선) 느립니다. Newton은 반복마다 헤세를 풀어야 해 변수가 많으면 비싸므로, 준-Newton(BFGS)이나 모멘텀 방법을 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "보폭은 클수록 빨리 간다": 1/κ 이상이면 진동·발산합니다. (2) "Newton은 언제나 낫다": 비볼록 함수에서는 최대·안장점으로 갈 수 있고, 헤세 계산 비용이 큽니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>경사하강: α &lt; 1/κ(최대 곡률)에서 수렴, 수축 비 (κ−1)/(κ+1)(최적).</li>
+        <li>Newton: 헤세로 보정, 이차 함수는 한 번, 비용 큼.</li>
+        <li>예(κ = 10): 보폭 0.09에 82번, 0.1은 진동.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>f = 3x²에서 경사하강이 수렴하는 보폭 범위는?
+          <details><summary>답</summary><p>0 &lt; α &lt; 1/3.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>κ = 100이면 최적 보폭에서 한 번에 오차가 몇 배로 줄어드는가?
+          <details><summary>답</summary><p>99/101 ≈ 0.98배(매우 느림).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>f = x⁴에서 Newton 방법의 반복식은?
+          <details><summary>답</summary><p>\(x \leftarrow x - 4x^3/(12x^2) = \frac23x\): 선형 수렴(최소점에서 헤세가 0이라 이차 수렴을 잃음).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
