@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계16-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m16-diffint" data-kind="본문" data-std="기계16-05-01">
+  <header class="card-head"><span class="no"></span><h2>수치 미분과 적분: 차분 공식과 Simpson 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전진·후진·중심 차분 공식과 그 정확도 차수를 안다.</li>
+        <li>사다리꼴 공식과 Simpson 1/3 공식으로 측정 자료를 적분한다.</li>
+        <li>잡음이 있는 자료에서 미분은 위험하고 적분은 안전한 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>절단 오차 (<a href="01-01.html">1.1절</a>), 정적분과 넓이(고등학교 미적분).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.1.1</span>차분 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">1차 도함수 근사 (간격 \(h\))</span>
+      <p>전진 \(\dfrac{f_{i+1} - f_i}{h}\), 후진 \(\dfrac{f_i - f_{i-1}}{h}\): 오차 \(O(h)\). 중심 \(\dfrac{f_{i+1} - f_{i-1}}{2h}\): 오차 \(O(h^2)\).</p>
+      <p>2차 도함수 중심 \(\dfrac{f_{i+1} - 2f_i + f_{i-1}}{h^2}\): 오차 \(O(h^2)\).</p>
+    </div>
+    <p>중심 차분은 앞뒤 대칭이라 오차의 1차 항이 상쇄되어 같은 간격에서 훨씬 정확합니다. 자료 끝점에서는 전진·후진을 씁니다.</p>
+
+    <h3><span class="no">5.1.2</span>적분 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">등간격 자료의 적분</span>
+      <p>사다리꼴: \(I \approx h\left[\dfrac{f_0}{2} + f_1 + \cdots + f_{n-1} + \dfrac{f_n}{2}\right]\), 오차 \(O(h^2)\).</p>
+      <p>Simpson 1/3 (\(n\) 짝수): \(I \approx \dfrac h3[f_0 + 4f_1 + 2f_2 + 4f_3 + \cdots + 4f_{n-1} + f_n]\), 오차 \(O(h^4)\), 3차 다항식까지 정확.</p>
+    </div>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1 <span class="nm">(속도 기록에서 이동 거리)</span></span>
+      <p>1초마다 잰 속도가 0, 3, 8, 15, 24 m/s(실제 \(v = t^2 + 2t\))이다. 0~4 s 이동 거리를 사다리꼴과 Simpson으로, \(t = 2\) s의 가속도를 중심 차분으로 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 사다리꼴 \(1\times(0 + 3 + 8 + 15 + 12) = 38.0\) m. Simpson \(\frac13(0 + 12 + 16 + 60 + 24) = 37.33\) m로 정확한 값 \(64/3 + 16 = 37.33\)과 같습니다(2차식이라 정확). 가속도 \((15 - 3)/2 = 6\) m/s²로 정확한 \(2t + 2 = 6\)과 같습니다.</p>
+
+    <h3><span class="no">5.1.3</span>잡음과 미분</h3>
+    <p>측정값에 잡음 \(\pm\delta\)가 있으면 차분은 잡음을 \(\delta/h\) 크기로 키웁니다. 간격을 줄일수록 잡음이 커지는 것입니다. 반대로 적분은 잡음을 평균해 줄입니다. 그래서 위치 기록에서 가속도를 구할 때는 먼저 매끈하게 맞춘(회귀, 필터) 뒤 미분하거나, 가속도계를 직접 씁니다.</p>
+
+    <div class="tb-note"><b>주의</b>(1) 간격이 고르지 않은 자료는 구간별 사다리꼴이나 스플라인 적분을 씁니다. (2) Simpson 1/3은 구간 수가 짝수여야 하며, 홀수면 마지막 세 구간에 Simpson 3/8을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>중심 차분 \(O(h^2)\)이 전진·후진 \(O(h)\)보다 정확.</li>
+        <li>사다리꼴 \(O(h^2)\), Simpson \(O(h^4)\)(3차까지 정확).</li>
+        <li>미분은 잡음을 키우고 적분은 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 자료로 \(t = 0\)의 가속도를 전진 차분으로 구하면? 참값과 비교하여라.
+          <details><summary>답</summary><p>\((3 - 0)/1 = 3\), 참값 2. 오차가 크다(\(O(h)\)).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\int_0^\pi\sin x\,dx = 2\)를 4구간 사다리꼴과 Simpson으로 계산하여라.
+          <details><summary>답</summary><p>\(h = \pi/4\), 값 0, 0.7071, 1, 0.7071, 0. 사다리꼴 \(0.7854\times2.4142 = 1.896\)(5.2% 오차), Simpson \(0.2618\times(4\times0.7071 + 2 + 4\times0.7071) = 2.0046\)(0.23% 오차).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>위치를 0.01 s마다 ±1 mm 잡음으로 잰다. 중심 차분 속도의 잡음 크기와, 그 속도를 다시 차분한 가속도의 잡음 크기를 어림하여라.
+          <details><summary>답</summary><p>속도 잡음 \(\approx\sqrt2\times1/(2\times0.01) = 71\) mm/s. 가속도(\(f_{i+1} - 2f_i + f_{i-1}\)) 잡음 \(\approx\sqrt6\times1/0.01^2 = 2.4\times10^4\) mm/s² = 24 m/s², 쓸 수 없을 만큼 크다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
