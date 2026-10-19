@@ -1,0 +1,78 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우11-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a11-covariance" data-kind="본문" data-std="천우11-05-02">
+  <header class="card-head"><span class="no"></span><h2>관측 오차가 궤도 예측 오차로 전파되는 방식</h2><span class="kind">본문 · 5.2절</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>공분산을 상태 전이 행렬로 전파하는 식 \(P(t) = \Phi P_0\Phi^T\)를 안다.</li>
+        <li>Clohessy-Wiltshire 방정식으로 위치 오차가 진행 방향으로 자라는 까닭을 설명한다.</li>
+        <li>긴반지름(에너지) 오차가 표류를 만든다는 것을 계산으로 보인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>최소제곱 궤도 결정 (<a href="05-01.html">5.1절</a>), 케플러 제3법칙.</li>
+      </ul>
+    </div>
+
+<h3>오차는 어느 쪽으로 자라는가</h3>
+    <p>궤도 결정이 끝나면 처음 상태에 공분산 \(P_0\)라는 불확도가 남습니다. 이 궤도로 며칠 뒤를 예측할 때 오차는 어떻게 변할까요? 결론부터 말하면, 오차는 모든 방향으로 고르게 자라지 않고 주로 진행 방향(앞뒤)으로 길게 늘어납니다.</p>
+
+    <h3><span class="no">5.2.1</span>공분산의 전파</h3>
+    <p>처음 상태의 작은 오차 \(\delta\mathbf x_0\)는 상태 전이 행렬로 \(\delta\mathbf x(t) = \Phi(t, t_0)\,\delta\mathbf x_0\)만큼 바뀌므로, 공분산은</p>
+    \[ P(t) = \Phi(t, t_0)\,P_0\,\Phi(t, t_0)^T \]
+    <p>로 전파됩니다(섭동 모형의 불확실성을 더하는 항 \(Q\)는 생략). 위성 충돌 위험 평가(두 위성 공분산을 합쳐 충돌 확률 계산)가 이 식으로 이루어집니다.</p>
+
+    <h3><span class="no">5.2.2</span>Clohessy-Wiltshire 방정식</h3>
+    <p>원 궤도 근처의 오차(또는 상대 운동)를 반지름 방향 \(x\), 진행 방향 \(y\)로 쓰면, 선형화한 운동은 Clohessy-Wiltshire(CW) 방정식을 따르고 해가 식으로 나옵니다(\(n\)은 평균 운동, \(z\)는 생략).</p>
+    \[ x(t) = (4 - 3\cos nt)x_0 + \frac{\dot x_0}{n}\sin nt + \frac2n(1 - \cos nt)\dot y_0 \]
+    \[ y(t) = y_0 + 6(\sin nt - nt)x_0 - \frac2n(1 - \cos nt)\dot x_0 + \frac{4\sin nt - 3nt}{n}\dot y_0 \]
+    <p>\(nt\)에 비례하는 항(영년 항)이 \(y\)에만 있습니다. 한 바퀴(\(nt = 2\pi\))마다 진행 방향 표류는</p>
+    \[ \Delta y = -2\pi\left(6x_0 + \frac{3\dot y_0}{n}\right) = -(6nx_0 + 3\dot y_0)T \]
+    <p>입니다. 반지름 오차나 진행 방향 속도 오차는 긴반지름(곧 주기)을 바꾸므로, 주기가 다른 위성은 바퀴마다 앞서거나 뒤처집니다. \(\dot y_0 = -2nx_0\)이면 두 효과가 상쇄되어(긴반지름이 같음) 표류가 없습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1 <span class="nm">(아래 실습 카드 결과)</span></span>
+      <p>고도 400 km(주기 92.6분) 위성에서 반지름 방향 오차 1 m와 진행 방향 속도 오차 1 mm/s는 한 바퀴에 각각 진행 방향으로 얼마의 오차를 만듭니까?</p>
+    </div>
+    <p><i>풀이.</i> 반지름 오차: \(-12\pi\times1 = -37.7\) m/바퀴(고도와 무관). 속도 오차: \(-3\times0.001\times5{,}556 = -16.7\) m/바퀴. 하루(15.5바퀴)면 각각 584 m, 259 m로, 처음의 m 수준 오차가 하루 만에 수백 m가 됩니다. 반면 반지름 방향 오차는 \((4 - 3\cos nt)x_0\)로 1~7 m 사이에서 오르내리기만 합니다.</p>
+    <div class="tb-note"><b>주의</b> CW 방정식은 원 궤도, 짧은 거리, 섭동 없음을 가정한 선형 근사입니다. 오차가 수 km를 넘거나 며칠 이상 예측하면 공분산 타원이 궤도를 따라 휘어지는 '바나나' 모양이 되어 직교 좌표의 가우스 분포로 나타내기 어렵고, 항력 밀도 예측의 오차가 지배하게 됩니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(P(t) = \Phi P_0\Phi^T\): 상태 전이 행렬로 공분산을 전파한다.</li>
+        <li>CW 해에서 영년 항은 진행 방향(\(y\))에만 있다: 오차는 앞뒤로 길게 자란다.</li>
+        <li>바퀴당 표류 \(-(6nx_0 + 3\dot y_0)T\): 반지름 1 m → 37.7 m, 400 km에서 1 mm/s → 16.7 m.</li>
+        <li>긴반지름 오차가 표류의 원인이다(\(\dot y_0 = -2nx_0\)이면 상쇄).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>CW 해에서 시간에 비례해 자라는 항은 어느 방향에 있습니까?
+          <details><summary>답</summary><p>진행 방향(\(y\)).</p></details>
+        </li>
+        <li>반지름 방향 오차 5 m의 바퀴당 진행 방향 표류는?
+          <details><summary>답</summary><p>\(-12\pi\times5 = -188\) m.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>400 km 위성의 반지름 오차 10 m가 10바퀴 뒤 만드는 진행 방향 오차는?
+          <details><summary>답</summary><p>\(-377\times10 = -3{,}770\) m.</p></details>
+        </li>
+        <li>반지름 오차 10 m를 상쇄하는 진행 방향 속도 오차는(400 km, \(n = 1.131\times10^{-3}\) rad/s)?
+          <details><summary>답</summary><p>\(\dot y_0 = -2nx_0 = -22.6\) mm/s.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
