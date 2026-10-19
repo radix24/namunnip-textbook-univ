@@ -1,0 +1,108 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-05-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-sensor" data-kind="실습" data-std="전전1-05-01">
+  <header class="card-head"><span class="no"></span><h2>온도 기록 요약하기: 미니 프로젝트 연습</h2><span class="kind">실습 · CSV, 이상값, 이동 평균</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>CSV 형식의 하루 온도 기록(가상 자료)을 읽어 이상값을 찾아 처리하고 요약합니다. 성취기준 [전전1-05-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>sensor_project.py</code>로 저장합니다.</p>
+<pre><code># 미니 프로젝트: 온도 센서 기록(가상 자료)을 읽어 요약하기
+import csv, io
+
+DATA = """시각,온도
+0,18.2
+1,17.9
+2,17.6
+3,17.4
+4,17.3
+5,17.5
+6,18.4
+7,19.8
+8,21.5
+9,23.0
+10,24.6
+11,25.9
+12,45.0
+13,27.4
+14,27.8
+15,27.5
+16,26.6
+17,25.1
+18,23.4
+19,21.9
+20,20.8
+21,19.9
+22,19.2
+23,18.7
+"""
+
+rows = list(csv.DictReader(io.StringIO(DATA)))      # 실제 파일이면 open("temp.csv")
+hours = [int(r["시각"]) for r in rows]
+temps = [float(r["온도"]) for r in rows]
+
+# 1) 이상값 찾기: 앞 값과 뒤 값 모두와 5 °C 넘게, 같은 방향으로 튀면 의심
+def spike(i):
+    a, b = temps[i] - temps[i - 1], temps[i] - temps[i + 1]
+    return (a &gt; 5 and b &gt; 5) or (a &lt; -5 and b &lt; -5)
+
+odd = [hours[i] for i in range(1, len(temps) - 1) if spike(i)]
+print("이상값 의심 시각:", odd)
+
+# 2) 이상값은 앞뒤 평균으로 바꾼다
+clean = temps[:]
+for h in odd:
+    clean[h] = (temps[h - 1] + temps[h + 1]) / 2
+
+# 3) 요약
+print(f"평균 {sum(clean) / len(clean):.2f} °C (이상값 그대로면 {sum(temps) / len(temps):.2f})")
+hi = max(range(24), key=lambda i: clean[i])
+lo = min(range(24), key=lambda i: clean[i])
+print(f"최고 {clean[hi]:.1f} °C ({hi}시), 최저 {clean[lo]:.1f} °C ({lo}시), 일교차 {clean[hi] - clean[lo]:.1f} °C")
+
+# 4) 3시간 이동 평균(가운데 기준)
+ma = [round(sum(clean[i - 1:i + 2]) / 3, 2) for i in range(1, 23)]
+print("이동 평균 12~14시:", ma[11:14])</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>이상값 처리 전후의 최고 기온과 시각을 비교합니다.</li>
+        <li><code>DATA</code>의 3시 값을 10.0으로 바꾸면 무엇이 잡히는지 예측하고 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>이상값 의심 시각: [12]
+평균 21.84 °C (이상값 그대로면 22.60)
+최고 27.8 °C (14시), 최저 17.3 °C (4시), 일교차 10.5 °C
+이동 평균 12~14시: [26.65, 27.28, 27.57]</code></pre>
+      <ul>
+        <li>이상값 의심: 12시(45.0 °C). 앞뒤 평균 26.65 °C로 바꿉니다.</li>
+        <li>평균 21.84 °C(이상값 그대로면 22.60), 최고 27.8 °C(14시), 최저 17.3 °C(4시), 일교차 10.5 °C. 이상값을 그대로 두면 최고 45.0 °C(12시)가 되어 결론이 달라집니다(예제 5.1.1).</li>
+        <li>12~14시 3시간 이동 평균 26.65, 27.28, 27.57.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>이상값 기준 "5 °C"를 2 °C로 낮추면 무엇이 잡힐까요? 너무 낮은 기준의 문제는?</li>
+        <li>실제 센서 파일을 읽으려면 어느 줄을 바꾸나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>Matplotlib으로 원자료(점)와 처리한 자료(선), 이동 평균(굵은 선)을 한 그래프에 그리고, 발표용 그림 한 장과 세 문장 요약을 만들어 보세요.</p>
+    </section>
+  </div>
+</article>

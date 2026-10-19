@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-02-01",
+  "order": 25
+}
+-->
+<article class="card q-card" id="lab-e1-bill" data-kind="실습" data-std="전전1-02-01">
+  <header class="card-head"><span class="no"></span><h2>가전제품 전력량과 전기 요금 계산기</h2><span class="kind">실습 · 변수, 딕셔너리, 반복문, 조건문</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>딕셔너리에 제품 정보를 담고, 반복문으로 한 달 전력량을 더하고, 조건문으로 구간 요금을 계산합니다. 요금표는 가상입니다. 성취기준 [전전1-02-01].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 설치 없음). 아래 코드를 <code>power_bill.py</code>로 저장합니다.</p>
+<pre><code># 가전제품의 한 달 전력량과 요금(가상 요금표) 계산
+appliances = {            # 이름: (소비 전력 W, 하루 사용 시간 h)
+    "냉장고": (40, 24),
+    "에어컨": (1500, 4),
+    "노트북": (60, 6),
+    "전등": (10, 5),
+}
+days = 30
+
+total_kwh = 0
+for name, (watt, hours) in appliances.items():
+    kwh = watt * hours * days / 1000      # W × h = Wh, 1000 Wh = 1 kWh
+    total_kwh += kwh
+    print(f"{name:4s} {watt:5d} W × {hours:2d} h × {days}일 = {kwh:6.1f} kWh")
+print(f"합계 {total_kwh:.1f} kWh")
+
+# 구간별 요금(가상): 200 kWh까지 100원, 400 kWh까지 200원, 그 이상 300원 (1 kWh당)
+if total_kwh &lt;= 200:
+    bill = total_kwh * 100
+elif total_kwh &lt;= 400:
+    bill = 200 * 100 + (total_kwh - 200) * 200
+else:
+    bill = 200 * 100 + 200 * 200 + (total_kwh - 400) * 300
+print(f"요금 {bill:,.0f}원")
+
+biggest = max(appliances, key=lambda n: appliances[n][0] * appliances[n][1])
+print("가장 많이 쓰는 제품:", biggest)</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>에어컨 사용 시간을 4시간에서 8시간으로 바꾸면 합계와 요금이 어떻게 되는지 예측한 뒤 확인합니다.</li>
+        <li>제품을 하나 더 넣어(예: <code>"세탁기": (500, 1)</code>) 결과를 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>냉장고     40 W × 24 h × 30일 =   28.8 kWh
+에어컨   1500 W ×  4 h × 30일 =  180.0 kWh
+노트북     60 W ×  6 h × 30일 =   10.8 kWh
+전등      10 W ×  5 h × 30일 =    1.5 kWh
+합계 221.1 kWh
+요금 24,220원
+가장 많이 쓰는 제품: 에어컨</code></pre>
+      <ul>
+        <li>전력량 = 전력(W) × 시간(h) × 일수 ÷ 1000(kWh). 에어컨 180 kWh가 전체 221.1 kWh의 81%를 차지합니다.</li>
+        <li>221.1 kWh는 둘째 구간: 200 × 100 + 21.1 × 200 = 24,220원.</li>
+        <li>절차 2: 에어컨 360 kWh, 합계 401.1 kWh → 셋째 구간 20,000 + 40,000 + 1.1 × 300 = 60,330원. 사용량 1.8배에 요금 약 2.5배입니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>for name, (watt, hours) in appliances.items()</code>에서 괄호가 하는 일을 설명하세요.</li>
+        <li>구간 요금 계산을 if-elif-else 대신 반복문으로 바꾸면 구간이 늘어날 때 무엇이 좋은가요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>요금표를 리스트 <code>[(200, 100), (400, 200), (None, 300)]</code>처럼 바꿔 구간 수와 관계없이 동작하게 고쳐 보세요.</p>
+    </section>
+  </div>
+</article>
