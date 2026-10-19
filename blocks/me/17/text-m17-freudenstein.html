@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계17-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m17-freudenstein" data-kind="본문" data-std="기계17-03-03">
+  <header class="card-head"><span class="no"></span><h2>Freudenstein 식으로 함수 생성 링크 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>4절 링크의 입력각-출력각 관계를 Freudenstein 식으로 쓴다.</li>
+        <li>세 정밀점으로 \(K_1, K_2, K_3\)의 연립 1차방정식을 세워 푼다.</li>
+        <li>\(K\)에서 링크 길이를 되찾는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>벡터 루프 (<a href="02-01.html">2.1절</a>), 연립 1차방정식 (<a href="../16/03-01.html">공학수치해석 3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>Freudenstein 식</h3>
+    <p>벡터 루프의 두 성분 식에서 커플러 각 \(\theta_3\)를 지우면(제곱해 더함) 입력각 \(\theta_2\)와 출력각 \(\theta_4\)만의 관계가 남습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Freudenstein 식</span>
+      <p>\[ K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_2 - \theta_4) \]</p>
+      <p>\[ K_1 = \frac da, \quad K_2 = \frac dc, \quad K_3 = \frac{a^2 - b^2 + c^2 + d^2}{2ac} \]</p>
+    </div>
+    <p>원하는 입력-출력 관계에서 정밀점 세 쌍 \((\theta_2, \theta_4)\)를 고르면, 미지수 \(K_1, K_2, K_3\)에 대한 연립 1차방정식이 됩니다. 풀어서 \(d\)를 정하면 \(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1 <span class="nm">(입력 30°, 60°, 90°)</span></span>
+      <p>입력각 30°, 60°, 90°에서 출력각이 77.4°, 82.7°, 95.5°가 되는 4절 링크를 \(d = 4\)로 설계하여라.</p>
+    </div>
+    <p><i>풀이.</i> 세 식의 계수(\(\cos\theta_4\), \(-\cos\theta_2\), 1 | \(\cos(\theta_2 - \theta_4)\)): (0.2181, −0.8660, 1 | 0.6769), (0.1271, −0.5, 1 | 0.9225), (−0.0958, 0, 1 | 0.9954). 풀면 \(K_1 = 2.667\), \(K_2 = 1.335\), \(K_3 = 1.251\). \(a = 1.50\), \(c = 3.00\), \(b = 4.00\). 1.2절의 크랭크-로커를 되찾았습니다(정밀점을 그 링크에서 뽑았기 때문).</p>
+
+    <div class="tb-note"><b>주의</b>(1) 정밀점 사이에서는 원하는 함수와 어긋나는 구조 오차가 생깁니다. 구간의 Chebyshev 점에 정밀점을 두면 최대 오차가 작아집니다. (2) 결과 길이가 음수이거나 \(b^2 &lt; 0\)이면 그 정밀점으로는 링크가 없으므로 점이나 각도 기준을 바꿉니다. (3) Grashof 조건과 분기도 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_2 - \theta_4)\).</li>
+        <li>세 정밀점 → 3 × 3 연립 1차방정식.</li>
+        <li>\(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(d = 10\), \(a = 2\), \(b = 8\), \(c = 6\)인 링크의 \(K_1, K_2, K_3\)는?
+          <details><summary>답</summary><p>\(K_1 = 5\), \(K_2 = 1.667\), \(K_3 = (4 - 64 + 36 + 100)/24 = 3.167\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 링크의 \(\theta_2 = 60°\), \(\theta_4 = 82.7°\)를 Freudenstein 식에 넣어 성립하는지 확인하여라.
+          <details><summary>답</summary><p>\(2.667\times0.1271 - 1.333\times0.5 + 1.25 = 0.922\), \(\cos(-22.7°) = 0.923\). 성립한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>정밀점을 네 개 주면 어떻게 되는가?
+          <details><summary>답</summary><p>미지수 셋에 식이 넷이라 일반적으로 정확한 해가 없다. 최소제곱으로 가장 잘 맞는 \(K\)를 찾거나(<a href="../16/04-02.html">공학수치해석 4.2절</a>), 각도 기준(\(\theta_2\), \(\theta_4\)의 출발각)을 추가 미지수로 두어 비선형 문제로 푼다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

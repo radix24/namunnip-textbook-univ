@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-pipecpu" data-kind="본문" data-std="전전32-06-03">
+  <header class="card-head"><span class="no"></span><h2>파이프라인 프로세서로 확장</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>5단계 파이프라인의 클록 주기를 단계 지연과 레지스터 오버헤드로 구한다.</li>
+        <li>해저드로 늘어난 CPI를 넣어 단일 사이클과 성능을 비교한다.</li>
+        <li>전달 경로와 멈춤 논리의 필요를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>단일 사이클 경로 (<a href="06-02.html">6.2절</a>), 파이프라이닝 (<a href="03-03.html">3.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>다섯 명령을 동시에</h3>
+    <p>IF, ID, EX, MEM, WB 단계 사이에 레지스터를 두면 주기는 가장 긴 단계 + 레지스터 오버헤드입니다. 해저드로 CPI가 1보다 커지므로 성능 비 = (단일 주기 × 1)/(파이프라인 주기 × CPI)입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>단계 지연 200, 100, 150, 200, 50 ps(6.2절), 레지스터 오버헤드 20 ps, CPI 1.2. 주기와 단일 사이클(700 ps) 대비 가속은?</p>
+    </div>
+    <p><i>풀이.</i> 주기 220 ps, 가속 700/(1.2 × 220) = 2.65배. 이상적인 5배에 못 미치는 이유는 단계 불균형(50~200 ps), 레지스터 오버헤드, 해저드입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "5단계면 5배 빠르다": 불균형·오버헤드·해저드로 줄어듭니다. (2) "파이프라인은 명령 하나의 실행 시간을 줄인다": 1100 ps로 오히려 깁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>주기 = max(단계) + t_reg.</li>
+        <li>가속 = T_single/(T_pipe × CPI).</li>
+        <li>예: 220 ps, 2.65배.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>CPI 1.0이면 가속은?
+          <details><summary>답</summary><p>약 3.18배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>명령 하나의 지연은?
+          <details><summary>답</summary><p>1100 ps.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>적재-사용 해저드에 전달만으로 부족한 이유는?
+          <details><summary>답</summary><p>데이터가 MEM 단계 끝에 나와 다음 명령 EX에 한 클록 늦기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-bist" data-kind="본문" data-std="전전32-05-03">
+  <header class="card-head"><span class="no"></span><h2>내장 자체 시험(BIST)과 LFSR</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>LFSR로 의사 무작위 시험 패턴을 만드는 원리를 안다.</li>
+        <li>최대 길이 LFSR의 주기 2ⁿ − 1과 시험 시간을 계산한다.</li>
+        <li>MISR 서명 압축과 별칭 확률을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>스캔 체인 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>칩이 스스로 시험</h3>
+    <p>BIST는 칩 안에 패턴 생성기(LFSR)와 응답 압축기(MISR)를 두어 외부 장비 없이 시험합니다. 원시 다항식으로 되먹임한 n비트 LFSR은 0을 뺀 2ⁿ − 1개 상태를 모두 돕니다. 응답은 MISR이 n비트 서명으로 압축하며, 틀린 응답이 같은 서명이 될 확률은 약 2⁻ⁿ입니다.</p><pre><code>s, seen = 0b1000, []
+for _ in range(16):
+    seen.append(s)
+    bit = ((s &gt;&gt; 3) ^ (s &gt;&gt; 2)) &amp; 1      # x^4 + x^3 + 1
+    s = ((s &lt;&lt; 1) | bit) &amp; 0xF
+print("상태:", [format(x, "04b") for x in seen[:6]], "...")
+print("주기:", seen[1:].index(seen[0]) + 1)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>상태: ['1000', '0001', '0010', '0100', '1001', '0011'] ...
+주기: 15</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>위 4비트 LFSR의 주기는? 16비트 최대 길이 LFSR로 100 MHz에서 모든 패턴을 돌리는 시간과 16비트 MISR 별칭 확률은?</p>
+    </div>
+    <p><i>풀이.</i> 실행 결과 주기 15(= 2⁴ − 1). 16비트: 65535개, 0.66 ms. 별칭 확률 2⁻¹⁶ ≈ 1.5×10⁻⁵. 메모리 BIST는 정해진 March 패턴을, 논리 BIST는 LFSR 패턴을 주로 씁니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "LFSR은 모든 2ⁿ 상태를 돈다": 0 상태에 빠지면 머무르므로 0은 빠집니다. (2) "BIST면 외부 시험이 필요 없다": 검출률이 낮은 고장은 외부 패턴으로 보완합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최대 길이 LFSR 주기 2ⁿ − 1.</li>
+        <li>시간 = 패턴 수/클록.</li>
+        <li>MISR 별칭 ≈ 2⁻ⁿ.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>8비트 최대 길이 LFSR의 주기는?
+          <details><summary>답</summary><p>255.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>32비트 MISR 별칭 확률은?
+          <details><summary>답</summary><p>약 2.3×10⁻¹⁰.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>자동차 칩이 켜질 때마다 BIST를 하는 이유는?
+          <details><summary>답</summary><p>사용 중 생긴 고장을 안전 기능 동작 전에 찾기 위해.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-syscost" data-kind="본문" data-std="전전31-01-02">
+  <header class="card-head"><span class="no"></span><h2>시스템 호출 비용과 버퍼링</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사용자 모드와 커널 모드 전환에 드는 비용을 안다.</li>
+        <li>작은 입출력을 버퍼로 모아 시스템 호출 수를 줄이는 효과를 계산한다.</li>
+        <li>표준 입출력 라이브러리가 버퍼를 두는 이유를 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>시스템 호출 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>경계를 넘는 값</h3>
+    <p>시스템 호출은 트랩으로 커널 모드에 들어가 레지스터를 저장하고, 검사하고, 돌아오는 과정이라 함수 호출보다 수십~수백 배 비쌉니다. 그래서 C의 <code>fwrite</code>나 <code>printf</code>는 사용자 공간 버퍼에 모았다가 가득 차면 <code>write</code>를 한 번 부릅니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>시스템 호출 한 번 200 ns(가상), 1 MB를 1바이트씩 write로 쓰면 호출 비용만 얼마인가? 4 KB 버퍼로 모으면?</p>
+    </div>
+    <p><i>풀이.</i> 1바이트씩: 2²⁰ × 200 ns = 0.21 s. 4 KB 버퍼: 256번 × 200 ns = 51 μs로 약 4000배 줄어듭니다. 대신 프로그램이 갑자기 끝나면 버퍼에 남은 내용이 사라질 수 있어 <code>fflush</code>가 필요합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "시스템 호출은 일반 함수와 비용이 같다": 모드 전환과 검사 때문에 훨씬 비쌉니다. (2) "printf는 바로 화면에 쓴다": 버퍼링되어 줄바꿈이나 flush 때 나갈 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>모드 전환 비용이 큼.</li>
+        <li>버퍼로 호출 수를 줄임: 1 MB/4 KB = 256번.</li>
+        <li>flush로 버퍼 비우기.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>1 MB를 64 KB 버퍼로 쓰면 호출 수는?
+          <details><summary>답</summary><p>16번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>호출 1 μs, 10만 번이면 비용은?
+          <details><summary>답</summary><p>0.1 s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>버퍼링이 대화형 프로그램에서 문제가 되는 경우는?
+          <details><summary>답</summary><p>프롬프트가 늦게 보이는 경우라 줄 단위 버퍼나 flush를 씁니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통19-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s19-condmvn" data-kind="본문" data-std="응통19-01-03">
+  <header class="card-head"><span class="no"></span><h2>다변량 정규분포의 조건부분포와 편상관</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다변량 정규 벡터를 나눴을 때 한 부분의 조건부분포를 구한다.</li>
+        <li>조건부 평균이 회귀식, 조건부 분산이 잔차 분산임을 안다.</li>
+        <li>다른 변수를 고정한 상관인 편상관계수를 계산하고 해석한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>다변량 정규분포 (<a href="01-02.html">1.2절</a>), 회귀계수 해석 (응통10 2.4절).</li>
+      </ul>
+    </div>
+
+    <h3>하나를 알면 다른 하나는</h3>
+    <p>키와 몸무게가 이변량 정규분포를 따를 때, 키가 180 cm인 사람의 몸무게 분포는 무엇일까요? 다변량 정규분포는 일부 변수를 고정해도 나머지가 다시 정규분포를 따르는 특별한 성질이 있고, 그 평균과 분산이 회귀분석의 공식 그대로입니다.</p>
+
+    <h3><span class="no">1.3.1</span>조건부분포</h3>
+    <div class="tb-env thm">
+      <span class="lb">결과 1.3.1</span>
+      <p>\(\mathbf X = (\mathbf X_1, \mathbf X_2) \sim N_p\left(\begin{pmatrix}\boldsymbol\mu_1\\ \boldsymbol\mu_2\end{pmatrix}, \begin{pmatrix}\Sigma_{11} &amp; \Sigma_{12}\\ \Sigma_{21} &amp; \Sigma_{22}\end{pmatrix}\right)\)이면 \(\mathbf X_2 \mid \mathbf X_1 = \mathbf x_1 \sim N\left(\boldsymbol\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(\mathbf x_1 - \boldsymbol\mu_1),\ \Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\right)\).</p>
+    </div>
+    <ul>
+      <li>조건부 평균은 \(\mathbf x_1\)의 일차식, 곧 회귀식이고 계수 행렬 \(\Sigma_{21}\Sigma_{11}^{-1}\)이 모집단 회귀계수입니다.</li>
+      <li>조건부 분산은 \(\mathbf x_1\)의 값과 무관합니다(등분산성). 정규분포라서 선형회귀의 가정이 자연스럽게 성립하는 것입니다.</li>
+      <li>이변량이면 \(E(X_2 \mid x_1) = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x_1 - \mu_1)\), \(\mathrm{Var} = \sigma_2^2(1 - \rho^2)\). 응통10 1.6절의 평균으로의 회귀와 같은 식입니다.</li>
+    </ul>
+
+    <h3><span class="no">1.3.2</span>편상관</h3>
+    <p>\(X_3\)를 고정했을 때 \(X_1\)과 \(X_2\)의 조건부 상관을 편상관계수 \(r_{12\cdot3}\)이라 합니다.</p>
+    \[r_{12\cdot3} = \frac{r_{12} - r_{13}r_{23}}{\sqrt{(1 - r_{13}^2)(1 - r_{23}^2)}}.\]
+    <p>\(X_1\)과 \(X_2\)를 각각 \(X_3\)로 회귀한 잔차의 상관과 같습니다. 두 변수가 모두 \(X_3\)와 상관이 크면 겉보기 상관 \(r_{12}\)가 커도 편상관은 작을 수 있습니다. 공분산 행렬의 역행렬 \(\Sigma^{-1}\)의 비대각 원소가 0이면 나머지를 고정한 편상관이 0이고, 이것이 그래프 모형(가우스 그래프)의 기초입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.2</span>
+      <p>키 \(X_1\)(평균 170, 표준편차 7)과 몸무게 \(X_2\)(평균 65, 표준편차 10)의 상관이 0.6입니다. 키 180인 사람의 몸무게 분포는?</p>
+    </div>
+    <p><i>풀이.</i> 평균 \(65 + 0.6 \times \frac{10}{7} \times 10 = 73.6\) kg, 분산 \(100(1 - 0.36) = 64\), 표준편차 8 kg. \(N(73.6, 8^2)\). 키를 알면 몸무게의 표준편차가 10에서 8로 줄어듭니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>정규 벡터의 조건부분포도 정규, 평균은 회귀식, 분산은 \(\Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\).</li>
+        <li>편상관은 다른 변수를 걸러낸 잔차끼리의 상관.</li>
+        <li>\(\Sigma^{-1}\)의 0은 조건부 독립을 뜻합니다(정규일 때).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(r_{12} = 0.5\), \(r_{13} = 0.6\), \(r_{23} = 0.7\)일 때 \(r_{12\cdot3}\)은?
+          <details><summary>답</summary><p>\((0.5 - 0.42)/\sqrt{0.64 \times 0.51} = 0.08/0.571 = 0.14\). 겉보기 상관 0.5의 대부분이 \(X_3\)를 통한 것입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>정규분포가 아니어도 편상관을 "잔차의 상관"으로 계산할 수 있습니다. 그때 편상관 0이 조건부 독립을 뜻하나요?
+          <details><summary>답</summary><p>아닙니다. 정규가 아니면 편상관 0은 선형 관계가 없다는 뜻일 뿐, 조건부 독립은 아닙니다. 비선형 관계가 남아 있을 수 있습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

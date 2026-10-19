@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-axi" data-kind="본문" data-std="전전32-01-02">
+  <header class="card-head"><span class="no"></span><h2>온칩 버스 핸드셰이크</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>valid-ready 핸드셰이크에서 전송이 일어나는 조건을 안다.</li>
+        <li>버스 대역폭을 폭과 클록으로 계산한다.</li>
+        <li>IP 재사용에 표준 버스(AMBA AXI 등)가 필요한 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>SoC 구성 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>둘 다 준비됐을 때</h3>
+    <p>AXI 같은 버스는 채널마다 보내는 쪽의 valid와 받는 쪽의 ready를 두고, 클록 가장자리에서 둘 다 1일 때만 한 번 전송합니다. 어느 쪽도 상대를 기다리며 자유롭게 멈출 수 있어, 서로 다른 회사가 만든 IP도 같은 규칙으로 연결됩니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>5클록 동안 valid = 1, 1, 0, 1, 1, ready = 0, 1, 1, 1, 0이면 전송은 몇 번, 몇째 클록인가? 64비트, 500 MHz 버스의 최대 대역폭은?</p>
+    </div>
+    <p><i>풀이.</i> 둘 다 1인 2, 4클록에서 2번. 최대 대역폭 8바이트 × 500 MHz = 4 GB/s. 읽기·쓰기 채널이 따로라 동시에 쓰면 합이 두 배가 됩니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "valid를 올리면 바로 전송된다": ready도 1이어야 합니다. (2) "valid가 ready를 기다려도 된다": AXI는 valid가 ready에 의존하면 교착 위험이 있어 금지합니다(확인 필요).</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>전송 = valid ∧ ready(클록마다).</li>
+        <li>대역폭 = 폭 × 클록.</li>
+        <li>표준 버스 → IP 재사용.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>32비트, 200 MHz 최대 대역폭은?
+          <details><summary>답</summary><p>800 MB/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>ready가 평균 75%만 1이면 실효 대역폭(예제 버스)은?
+          <details><summary>답</summary><p>3 GB/s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>버스 대신 NoC를 쓰는 이유는?
+          <details><summary>답</summary><p>코어가 많으면 공유 버스가 병목이 되어 패킷 망으로 동시 전송을 늘립니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

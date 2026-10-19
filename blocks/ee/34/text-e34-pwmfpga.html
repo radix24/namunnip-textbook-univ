@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-04-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e34-pwmfpga" data-kind="본문" data-std="전전34-04-05">
+  <header class="card-head"><span class="no"></span><h2>FPGA로 PWM 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>N비트 카운터와 비교기로 PWM을 만든다.</li>
+        <li>PWM 주파수와 듀티 분해능을 계산한다.</li>
+        <li>LED 밝기와 서보 제어에 맞는 설정을 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>카운터 (<a href="02-01.html">2.1절</a>), 클록 분주기 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.5.1</span>카운터와 비교</h3>
+    <p>N비트 카운터가 0~2ᴺ − 1을 돌고, 카운터 &lt; duty일 때 출력 1이면 듀티 = duty/2ᴺ, 주파수 = f_clk/2ᴺ입니다. 비트를 늘리면 분해능이 좋아지고 주파수는 낮아집니다.</p><pre><code>reg [7:0] cnt;
+always @(posedge clk) cnt &lt;= cnt + 1;
+assign pwm = (cnt &lt; duty);    // duty: 0..255</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.5.1</span>
+      <p>50 MHz, 8비트의 PWM 주파수와 분해능은? duty = 64의 듀티비는?</p>
+    </div>
+    <p><i>풀이.</i> 195.3 kHz, 1/256 단계, 64/256 = 25%. LED 밝기에는 충분하지만 서보(50 Hz, 1~2 ms)에는 분주기로 카운터 속도를 낮추고 비트를 늘려야 합니다(전전25 4.4절).</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "duty = 255면 100%": 이 구조에서는 255/256이 최대입니다. (2) "PWM 주파수는 높을수록 좋다": 구동 소자 스위칭 손실이 커집니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>f_PWM = f_clk/2ᴺ, 듀티 = duty/2ᴺ.</li>
+        <li>예: 50 MHz, 8비트 → 195 kHz, 25%.</li>
+        <li>비트 ↑ 분해능 ↑ 주파수 ↓.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>50 MHz, 10비트의 주파수는?
+          <details><summary>답</summary><p>약 48.8 kHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>100% 듀티를 내려면?
+          <details><summary>답</summary><p>비교를 ≤로 바꾸거나 별도 조건을 둡니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>LED 밝기 단계가 낮은 쪽에서 거칠게 보이는 이유는?
+          <details><summary>답</summary><p>눈의 밝기 감각이 로그적이라 낮은 듀티 단계 차이가 크게 느껴집니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

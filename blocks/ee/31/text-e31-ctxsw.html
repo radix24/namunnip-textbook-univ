@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전31-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e31-ctxsw" data-kind="본문" data-std="전전31-02-03">
+  <header class="card-head"><span class="no"></span><h2>문맥 교환 비용과 시간 할당량</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>문맥 교환에 드는 직접·간접 비용을 안다.</li>
+        <li>시간 할당량과 문맥 교환 시간으로 오버헤드 비율을 계산한다.</li>
+        <li>할당량을 정할 때 응답성과 효율의 절충을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>CPU 스케줄링 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>갈아타는 비용</h3>
+    <p>문맥 교환은 레지스터 저장·복원과 커널 코드 실행(직접 비용)에, 캐시·TLB가 새 프로세스로 바뀌며 생기는 실패(간접 비용)가 더해집니다. 라운드 로빈 할당량 q, 교환 시간 s이면 오버헤드는 s/(q + s)입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p>s = 0.1 ms. q = 10 ms와 q = 1 ms의 오버헤드는? 실행 가능한 프로세스가 10개면 각 프로세스가 다시 차례를 받기까지 최대 대기는?</p>
+    </div>
+    <p><i>풀이.</i> 10 ms: 0.99%, 1 ms: 9.1%. 대기는 9 × (q + s): 10 ms면 90.9 ms, 1 ms면 9.9 ms. 할당량이 작으면 반응은 빠르지만 오버헤드가 크고, 크면 FCFS처럼 됩니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "할당량은 작을수록 공평하고 좋다": 오버헤드가 커집니다. (2) "문맥 교환 비용은 레지스터 저장뿐": 캐시 오염이 더 클 때가 많습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>오버헤드 = s/(q + s).</li>
+        <li>최대 대기 ≈ (n − 1)(q + s).</li>
+        <li>응답성 vs 효율.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>q = 5 ms, s = 0.05 ms의 오버헤드는?
+          <details><summary>답</summary><p>약 1%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>n = 5, q = 20 ms, s = 0.1 ms의 최대 대기는?
+          <details><summary>답</summary><p>80.4 ms.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>스레드 교환이 프로세스 교환보다 싼 이유는?
+          <details><summary>답</summary><p>같은 주소 공간이라 페이지 테이블·TLB를 바꾸지 않기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

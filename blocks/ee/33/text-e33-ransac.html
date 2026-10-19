@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-02-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-ransac" data-kind="본문" data-std="전전33-02-05">
+  <header class="card-head"><span class="no"></span><h2>호모그래피와 RANSAC</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>평면이나 회전 카메라에서 두 영상을 잇는 호모그래피를 안다.</li>
+        <li>잘못된 정합이 섞일 때 RANSAC 반복 횟수를 계산한다.</li>
+        <li>파노라마 이어 붙이기에 적용한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>특징점 정합 (<a href="02-02.html">2.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.5.1</span>틀린 짝을 견디는 추정</h3>
+    <p>호모그래피 H(3×3, 자유도 8)는 정합 4쌍으로 구할 수 있습니다. 정합에 틀린 짝(이상치)이 섞이면 RANSAC이 무작위로 4쌍을 뽑아 H를 만들고 맞는 짝 수를 세는 일을 반복합니다. 정상치 비율 w, 성공 확률 p에 필요한 반복 \(N = \log(1 - p)/\log(1 - w^s)\).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.5.1</span>
+      <p>정상치 50%, s = 4, p = 0.99의 반복 횟수는? 정상치 70%면?</p>
+    </div>
+    <p><i>풀이.</i> N = ln0.01/ln(1 − 0.0625) = 71.4 → 72번. 70%면 17번. 정상치 비율이 낮으면 반복이 급격히 늘어, 정합 단계에서 비율 검사로 틀린 짝을 미리 줄입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "점이 많을수록 RANSAC이 느려진다": 반복 수는 표본 크기 s와 w로 정해집니다. (2) "RANSAC 결과는 늘 같다": 무작위라 실행마다 조금 다를 수 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>H: 8자유도, 4쌍.</li>
+        <li>N = log(1 − p)/log(1 − w^s).</li>
+        <li>예: w 0.5 → 72, 0.7 → 17.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>직선(s = 2), w = 0.5, p = 0.99의 N은?
+          <details><summary>답</summary><p>약 17.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>w = 0.5, s = 8(기본 행렬 8점)의 N은?
+          <details><summary>답</summary><p>약 1177.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>호모그래피가 맞지 않는 경우는?
+          <details><summary>답</summary><p>평면이 아니고 카메라가 이동해 시차가 생길 때.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

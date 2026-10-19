@@ -1,0 +1,65 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전34-05-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e34-la" data-kind="본문" data-std="전전34-05-03">
+  <header class="card-head"><span class="no"></span><h2>로직 분석기로 디버깅하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>신호 속도에 맞는 표본화 주파수를 정한다.</li>
+        <li>메모리 깊이와 표본화 주파수로 기록 시간을 계산한다.</li>
+        <li>트리거 조건으로 원하는 순간을 잡는다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>UART (<a href="04-01.html">4.1절</a>), 설계 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.3.1</span>보이지 않는 신호를 보기</h3>
+    <p>로직 분석기(또는 FPGA 내장 ILA)는 여러 디지털 신호를 표본화해 기록합니다. 비트 시간보다 충분히 짧게(보통 4~10배 이상) 표본화해야 가장자리 위치를 정확히 봅니다. 기록 시간 = 메모리 깊이/표본화 주파수이므로, 빠르게 찍으면 짧게만 볼 수 있어 트리거로 관심 순간을 잡습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>UART 115200 bps의 비트 시간과 8배 표본화 주파수는? 메모리 1 M표본에서 그 주파수로 기록할 수 있는 시간과 바이트 수(10비트 프레임)는?</p>
+    </div>
+    <p><i>풀이.</i> 비트 8.68 μs, 표본화 약 0.92 MHz(1 MHz로 설정). 기록 1 s → 약 11,520바이트. 50 MHz 내부 신호를 ILA로 보면 1024표본이 20 μs뿐이라 트리거가 필수입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "표본화는 신호 주파수와 같으면 된다": 가장자리를 놓치거나 위치가 크게 틀립니다. (2) "메모리가 깊으면 다 해결": 빠른 신호에서는 깊이도 금방 찹니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>표본화 ≥ 4~10 × 신호 속도.</li>
+        <li>기록 시간 = 깊이/표본화 주파수.</li>
+        <li>트리거로 순간 포착.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>9600 bps의 비트 시간은?
+          <details><summary>답</summary><p>약 104 μs.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>4 M표본(2²²), 10 MHz의 기록 시간은?
+          <details><summary>답</summary><p>약 0.42 s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>ILA가 FPGA 자원을 쓰는 이유는?
+          <details><summary>답</summary><p>기록용 BRAM과 트리거 논리를 설계 안에 넣기 때문입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
