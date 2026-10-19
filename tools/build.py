@@ -224,7 +224,7 @@ THEME_BTN = ('<button type="button" class="theme-btn" aria-label="다크 모드"
              '<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>')
 
 
-def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None):
+def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None, body_attrs=""):
     head_js = ('(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\\b/.exec(location.search),t=q&&q[1];'
                'if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";'
                'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c"})()')
@@ -251,7 +251,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <link rel="stylesheet" href="{rel}css/qtext.css">
   <link rel="stylesheet" href="{rel}assets/katex/katex.min.css">{extra_head}
 </head>
-<body{rec}>
+<body{rec}{body_attrs}>
 
 <header class="top">
   <a class="brand" href="{rel}"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -475,12 +475,196 @@ def collect(blist):
     return (f"\n  <style>\n{styles}\n  </style>" if styles else ""), scripts
 
 
+# ───── 문제은행(시험 연습) ─────
+# 이미 있는 문제를 과목별로 모은다. 출처 세 가지:
+#   R  단원 마무리 연습 카드(<과목>-<대단원>-R)의 ol.q-exlist > li  (p.q-prob, 힌트 1·2, details.q-sol)
+#   ex 절의 예제 카드: p.q-prob, 힌트 1 = 출발점·전략 구역, 힌트 2 = 풀이 첫 단계, 풀이 = 풀이 구역 + 검산
+#   tb 본문 끝의 div.tb-exercises > ol > li  (p.tb-lv = 기본·응용·심화, 힌트, 답)
+# 마크업이 조금씩 달라도 받아 준다: 요약 이름이 '힌트…'면 힌트, '풀이·답·답안'이거나 q-sol이면 풀이.
+RE_DET = re.compile(r"<details\b([^>]*)>\s*<summary>(.*?)</summary>(.*)</details>\s*$", re.S)
+EX_HINT_H3 = ("출발점", "전략", "아이디어", "근거", "생각", "핵심 생각", "방법", "방법과 근거", "도구", "쓰는 것", "모형과 가정", "모형")
+EX_SOL_H3 = ("풀이", "증명", "정리된 증명", "유도")
+BANK_TAGS = ("개념", "계산", "증명", "판단", "도전", "적용", "모형")
+
+
+def top_elems(html, tag):
+    """html 안에서 바깥쪽(중첩되지 않은) <tag …>…</tag> 들의 (시작, 끝, 여는 태그, 안쪽 html)"""
+    out, depth, start, open_tag, inner0 = [], 0, 0, "", 0
+    for m in re.finditer(rf"<(/?){tag}\b[^>]*>", html):
+        if not m.group(1):
+            if depth == 0:
+                start, open_tag, inner0 = m.start(), m.group(0), m.end()
+            depth += 1
+        elif depth:
+            depth -= 1
+            if depth == 0:
+                out.append((start, m.end(), open_tag, html[inner0:m.start()]))
+    return out
+
+
+def find_elem(html, tag, cls):
+    """class에 cls가 든 첫 <tag> 요소(중첩을 세어서)의 (여는 태그, 안쪽 html) 또는 None"""
+    m = re.search(rf'<{tag}\b[^>]*class="[^"]*\b{cls}\b[^"]*"[^>]*>', html)
+    if not m:
+        return None
+    for s, e, ot, inner in top_elems(html[m.start():], tag):
+        return ot, inner
+    return None
+
+
+def split_li(inner):
+    """연습 문제 한 칸 → (문제 html, [힌트 html], 풀이 html). 풀이가 없으면 None"""
+    dets = top_elems(inner, "details")
+    if not dets:
+        return None
+    prob = inner[:dets[0][0]].strip()
+    hints, sol = [], None
+    for s, e, ot, _ in dets:
+        m = RE_DET.match(inner[s:e])
+        if not m:
+            continue
+        summ = re.sub(r"<[^>]+>", "", m.group(2)).strip()
+        body = m.group(3).strip()
+        if "q-sol" in m.group(1) or summ.startswith(("풀이", "답")):
+            sol = body if sol is None else sol + body
+        elif summ.startswith("힌트"):
+            hints.append(body)
+    return (prob, hints, sol) if sol and prob else None
+
+
+def take_tag(prob):
+    """문제 html의 <span class="q-tag">계산</span> → ("계산", 태그를 뺀 html)"""
+    tags = re.findall(r'<span class="q-tag[^"]*">([^<]+)</span>', prob)
+    prob = re.sub(r'<span class="q-tag[^"]*">[^<]+</span>\s*', "", prob)
+    return [t.strip() for t in tags if t.strip()], prob
+
+
+def fix_links(h, file):
+    """같은 절 페이지 안의 앵커(#s3-1-2)를 그 절 파일로 잇는다(시험 연습 페이지는 같은 폴더)"""
+    return re.sub(r'href="#', f'href="{file}.html#', h)
+
+
+def bank_items(u, sc, b, html):
+    """블록 하나에서 문제를 뽑는다"""
+    base = {"u": u["n"], "s": sc["no"], "card": b["id"], "href": f'{sc["file"]}.html#{b["id"]}', "ct": b["title"]}
+    sty = [sc["std"]["ty"]] if sc.get("std") and sc["std"].get("ty") else []
+    out = []
+    if b["kind"] == "연습":
+        ol = find_elem(html, "ol", "q-exlist")
+        for k, (_, _, _, li) in enumerate(top_elems(ol[1], "li") if ol else [], 1):
+            got = split_li(li)
+            if not got:
+                continue
+            prob, hints, sol = got
+            tags, prob = take_tag(prob)
+            ty = [t for t in tags if t in BANK_TAGS] or sty
+            out.append({**base, "id": f'{b["id"]}:{k}', "src": "R" if sc["code"].endswith("-R") else "ex",
+                        "ty": ty[0] if ty else "", "lv": "심화" if "도전" in tags else "",
+                        "q": prob, "h": hints[:2], "a": sol})
+    elif b["kind"] == "예제":
+        probs = re.findall(r'<p class="q-prob[^"]*">(.*?)</p>', html, re.S)
+        secs = {}
+        for m in re.finditer(r'<section class="([^"]*)">\s*<h3>([^<]+)</h3>', html):
+            el = top_elems(html[m.start():], "section")
+            if el:
+                secs.setdefault(re.sub(r"\s*\(.*\)$", "", m.group(2).strip()),   # '풀이 (10000명으로 세기)' → '풀이'
+(m.group(1), re.sub(r"^\s*<h3>[^<]+</h3>", "", el[0][3]).strip()))
+        sol = next((secs[h][1] for h in EX_SOL_H3 if h in secs), None)
+        if probs and sol:
+            prob = "".join(f'<p class="q-prob">{re.sub(r"^<b>문제\.?</b>\s*", "", p.strip())}</p>' for p in probs)
+            tags, prob = take_tag(prob)
+            hints = []
+            h1 = next((secs[h][1] for h in EX_HINT_H3 if h in secs), None)
+            if not h1:
+                st = find_elem(html, "div", "q-strategy")
+                h1 = st[1] if st else None
+            if h1:
+                hints.append(h1)
+            step = find_elem(sol, "ol", "q-proof")
+            if step:
+                first = top_elems(step[1], "li")
+                if first:
+                    hints.append(f'<p class="dim small">풀이의 첫 단계</p><ol class="q-proof"><li>{first[0][3]}</li></ol>')
+            chk = next((v for k, v in secs.items() if "q-check" in v[0]), None)
+            if chk:
+                sol += f'<div class="q-check"><h3>검산</h3>{chk[1]}</div>'
+            ty = [t for t in tags if t in BANK_TAGS] or sty
+            out.append({**base, "id": b["id"], "src": "ex", "ty": ty[0] if ty else "", "lv": "",
+                        "q": prob, "h": hints[:2], "a": sol})
+    elif b["kind"] == "본문":
+        box = find_elem(html, "div", "tb-exercises")
+        if box:
+            k = 0
+            lvs = [(m.start(), m.group(1).strip()) for m in re.finditer(r'<p class="tb-lv">([^<]*)</p>', box[1])]
+            for s, _, _, ol in top_elems(box[1], "ol"):
+                lv = next((t for p, t in reversed(lvs) if p < s), "")
+                for _, _, _, item in top_elems(ol, "li"):
+                    k += 1
+                    got = split_li(item)
+                    if not got:
+                        continue
+                    prob, hints, sol = got
+                    tags, prob = take_tag(prob)
+                    ty = [t for t in tags if t in BANK_TAGS] or sty
+                    out.append({**base, "id": f'{b["id"]}:{k}', "src": "tb", "ty": ty[0] if ty else "",
+                                "lv": lv if lv in ("기본", "응용", "심화") else "",
+                                "q": f'<div class="q-prob">{prob}</div>', "h": hints[:2], "a": sol})
+    for it in out:
+        for f in ("q", "a"):
+            it[f] = fix_links(it[f], sc["file"])
+        it["h"] = [fix_links(h, sc["file"]) for h in it["h"]]
+    return out
+
+
+def course_bank(c):
+    """과목의 모든 절에서 문제를 모은다(본문 번호는 절 번호로 다시 매긴 뒤)"""
+    items = []
+    for u in c["units"]:
+        for sc in u["secs"]:
+            for b in sc["blocks"]:
+                html = b["html"]
+                if b["kind"] == "본문" and b is next((x for x in sc["blocks"] if x["kind"] == "본문"), None):
+                    html = renumber(html, sc["no"])[0]
+                items += bank_items(u, sc, b, html)
+    seen = set()
+    for it in items:
+        if it["id"] in seen:
+            print(f"경고: 문제은행 id 겹침 {it['id']}", file=sys.stderr)
+        seen.add(it["id"])
+    return items
+
+
+EXAM_SRC = {"R": "단원 마무리 연습", "ex": "예제", "tb": "본문 연습문제"}
+
+
+def exam_page(c, d, items, rel, dept_link):
+    """과목의 시험 연습 페이지 본문(문제는 bank.js에서 js/exam.js가 그린다)"""
+    units = [{"n": u["n"], "t": u["t"], "k": sum(1 for it in items if it["u"] == u["n"])} for u in c["units"]]
+    cnt = {k: sum(1 for it in items if it["src"] == k) for k in EXAM_SRC}
+    conf = {"course": c["code"], "name": c["name"], "units": units, "src": EXAM_SRC, "cnt": cnt}
+    if not items:
+        inner = ('<p class="u-empty">이 과목의 문제은행은 준비 중입니다. 단원 마무리 연습과 예제 카드가 채워지면 '
+                 '여기서 중간고사·기말고사 연습 세트를 뽑을 수 있습니다.</p>')
+    else:
+        inner = ('<div id="exam" class="ex-app" aria-live="polite"><p class="dim small">문제를 불러오는 중입니다…</p></div>'
+                 '<noscript><p class="u-empty">시험 연습은 자바스크립트가 켜져 있어야 합니다.</p></noscript>')
+    return f"""  <section class="topic-hero u-hero ex-hero">
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./">{esc(c["name"])}</a><span class="mono">시험 연습</span></div>
+    <h1>시험 연습</h1>
+    {f'<p class="lead">{esc(c["name"])}의 단원 마무리 연습, 예제, 본문 연습문제 {len(items)}개에서 중간고사·기말고사 범위로 한 세트를 뽑아 풉니다. 힌트와 풀이를 보고 스스로 채점하면, 틀린 문제는 학습 기록에 남아 다시 풀 수 있습니다.</p>' if items else ""}
+  </section>
+  <script type="application/json" id="exam-conf">{json.dumps(conf, ensure_ascii=False).replace("</", "<\\/")}</script>
+  {inner}
+"""
+
+
 def write_pages(depts, blocks, sidx, links):
     cdir = ROOT / "c"
     if cdir.exists():
         for p in sorted(cdir.rglob("*"), reverse=True):
             p.unlink() if p.is_file() else p.rmdir()
     n_pages = n_cards = 0
+    n_bank = [0, 0]   # 문제 수, 문제은행이 있는 과목 수
     used = set()
     for d in depts:
         for c in d["courses"]:
@@ -646,8 +830,25 @@ def write_pages(depts, blocks, sidx, links):
                 (base / f'{u["n"]}.html').write_text(page(rel, f'{u["t"]} · {c["name"]}', desc, body), encoding="utf-8", newline="\n")
                 n_pages += 1
 
+            # 2-1) 시험 연습: 문제은행(bank.js)과 연습 페이지(exam.html)
+            items = course_bank(c)
+            c["bank"] = len(items)
+            if items:
+                (base / "bank.js").write_text(
+                    "/* tools/build.py가 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
+                    "window.QBANK = " + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + ";\n",
+                    encoding="utf-8", newline="\n")
+            (base / "exam.html").write_text(
+                page(rel, f'시험 연습 · {c["name"]}', f'{c["name"]} 중간고사·기말고사 연습 문제은행', exam_page(c, d, items, rel, dept_link),
+                     '\n  <link rel="stylesheet" href="' + rel + 'css/exam.css">', (["c/" + f'{d["id"]}/{num(c["code"])}/bank.js'] if items else []) + ["js/exam.js"],
+                     body_attrs=f' data-dept="{d["id"]}"'),
+                encoding="utf-8", newline="\n")
+            n_pages += 1
+            n_bank[0] += len(items)
+            n_bank[1] += 1 if items else 0
+
             # 3) 과목 목차(책 목차형): 왼쪽에 과목 정보·진도·선수/다음 과목, 오른쪽에 대단원 → 절 → 카드
-            nstd = sum(len(u["s"]) for u in c["units"])
+            nstd =sum(len(u["s"]) for u in c["units"])
             ncard = sum(u["cards"] for u in c["units"])
             nsec = sum(len(u["secs"]) for u in c["units"])
 
@@ -701,6 +902,7 @@ def write_pages(depts, blocks, sidx, links):
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
+      {f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
       {f'<div class="cx-path small">{path_html}</div>' if path_html else ""}
     </aside>
@@ -720,6 +922,7 @@ def write_pages(depts, blocks, sidx, links):
     for k in blocks:
         if k not in used:
             print(f"경고: 없는 절에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
+    print(f"문제은행: 문제 {n_bank[0]} · 과목 {n_bank[1]}")
     return n_pages, n_cards
 
 
