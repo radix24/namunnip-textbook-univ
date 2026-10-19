@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-03-02",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs4.js"]
+}
+-->
+<article class="card q-card" id="lab-s7-asymp" data-kind="실습" data-std="응통7-03-02">
+  <header class="card-head"><span class="no"></span><h2>MLE는 언제부터 정규분포처럼 보이는가?</h2><span class="kind">실습 · 점근 정규성</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>지수분포 비율 \(\lambda\)의 MLE \(\hat\lambda = 1/\bar X\)를 수천 번 만들어, 그 분포가 표본 크기 \(n\)에 따라 점근 근사 \(N(\lambda, 1/(nI(\lambda))) = N(\lambda, \lambda^2/n)\)에 다가가는 모습을 봅니다. 근사로 만든 95% 구간이 실제로 몇 %를 덮는지도 셉니다. 성취기준 [응통7-03-02].</p>
+      <p class="q-term"><b>점근 정규성</b>: \(\sqrt n(\hat\theta_n - \theta) \xrightarrow{D} N(0, 1/I(\theta))\). 큰 \(n\)에서만 보장되는 성질입니다.</p>
+      <p class="q-term"><b>포함률</b>: 같은 방법으로 구간을 많이 만들 때 참값을 덮는 구간의 비율. 근사가 좋으면 95%에 가깝습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>참값은 예제 3.2.2와 같은 \(\lambda = 0.4\)(검은 세로선)입니다. 히스토그램은 크기 \(n\)인 가상 표본 4000개에서 구한 \(\hat\lambda\), 빨간 곡선은 점근 근사입니다. 출력의 마지막 줄은 근사 95% Wald 구간 "추정값 ± 1.96 × 표준오차"의 실제 포함률입니다. 같은 표본으로 \(\lambda\)에 대한 구간 \(\hat\lambda \pm 1.96\hat\lambda/\sqrt n\)과, 평균 \(\mu = 1/\lambda\)(MLE \(\bar x\), 표준오차 \(\bar x/\sqrt n\))에 대한 구간 \(\bar x \pm 1.96\bar x/\sqrt n\)을 함께 셉니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>표본 크기 n = <b data-show="n">5</b></span><input type="range" name="n" min="3" max="200" step="1" value="5" aria-label="표본 크기"></label>
+      </div>
+      <canvas aria-label="MLE의 히스토그램과 정규 근사"></canvas>
+      <div class="btns"><button type="button" class="new">새 표본</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(n = 5\)에서 히스토그램과 빨간 곡선을 비교하고, 출력의 평균·왜도·포함률을 적습니다.</li>
+        <li>\(n\)을 20, 50, 200으로 늘리며 같은 값들을 적습니다.</li>
+        <li>두 Wald 구간의 포함률이 95%에 다가가는 속도를 비교합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(n = 5\): 히스토그램이 오른쪽으로 긴 꼬리를 가져 빨간 곡선과 많이 다릅니다. 평균은 정확한 값 \(n\lambda/(n-1) = 0.5\) 근처로 참값보다 25% 크고, 표준편차는 0.28로 점근값 0.18보다 훨씬 크며, 왜도는 3 안팎입니다.</li>
+        <li>\(n = 5\)의 포함률: \(\lambda\)에 대한 Wald 구간은 95% 근처인데, 같은 자료로 만든 \(\mu\)에 대한 Wald 구간은 약 87%로 크게 모자랍니다. 같은 MLE에서 나온 "같은 방법"의 구간도 어떤 모수로 쓰느냐에 따라 정확도가 다릅니다.</li>
+        <li>\(n = 20\): 왜도 0.9 안팎, \(\mu\) 구간 포함률 약 93%. \(n = 50\): 평균 0.408 근처, 표준편차가 점근값 0.057에 가깝고 왜도는 0.5 안팎, 두 구간 모두 94~95%입니다.</li>
+        <li>\(n = 200\): 히스토그램이 빨간 곡선과 거의 겹칩니다. 다만 왜도가 정확히 0이 되지는 않고(0.3 안팎) \(1/\sqrt n\) 속도로 천천히 줄어듭니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>\(\hat\lambda = 1/\bar X\)가 오른쪽으로 치우치는 까닭을 함수 \(1/x\)의 모양(볼록성)과 옌센 부등식으로 설명해 보세요.</li>
+        <li>MLE는 변환에 대해 불변(\(\hat\mu = 1/\hat\lambda\))이지만 Wald 구간은 그렇지 않습니다. \(\lambda\) 구간의 양 끝을 \(1/x\)로 옮긴 구간과 \(\bar x \pm 1.96\bar x/\sqrt n\)이 어떻게 다른지 \(n = 5\), \(\bar x = 2.5\)로 계산해 보세요. 변환에 불변인 우도비 구간(6단원)과 연결됩니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R: <code>lh &lt;- replicate(4000, 1 / mean(rexp(5, 0.4))); mean(abs(lh - 0.4) &lt;= 1.96 * lh / sqrt(5))</code>. 정확한 구간은 \(2n\lambda\bar X \sim \chi^2_{2n}\)를 이용해 만들 수 있습니다(4단원).</p>
+    </section>
+  </div>
+</article>
