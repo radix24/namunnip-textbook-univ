@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계4-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-sheetmetal" data-kind="본문" data-std="기계4-02-04">
+  <header class="card-head"><span class="no"></span><h2>판금 모델링과 전개 길이</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>판금 굽힘에서 중립면이 판 두께 안 어디에 있는지(K 인자) 안다.</li>
+        <li>굽힘 여유(bend allowance)로 전개 길이를 계산한다.</li>
+        <li>CAD 판금 기능의 설정값(굽힘 반지름, K 인자, 릴리프)의 뜻을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>스케치와 피처 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.4.1</span>중립면과 K 인자</h3>
+    <p>판을 굽히면 바깥쪽은 늘어나고 안쪽은 줄어듭니다. 길이가 변하지 않는 중립면은 판 두께 한가운데가 아니라 안쪽으로 치우쳐 있습니다. 안쪽 면에서 중립면까지 거리를 두께로 나눈 값이 K 인자입니다(보통 0.3~0.5).</p>
+    <div class="tb-env thm">
+      <span class="lb">굽힘 여유와 전개 길이</span>
+      <p>\[BA = \theta\,(R + Kt)\qquad(\theta: \text{굽힘 각, rad})\]</p>
+      <p>바깥 치수 \(L_1\), \(L_2\)인 90° 굽힘 하나: \(L_{\text{전개}} = (L_1 - R - t) + (L_2 - R - t) + BA\)</p>
+    </div>
+    <p>바깥 치수에서 굽힘 부분(\(R + t\))을 빼 곧은 부분 길이를 구하고, 굽은 부분은 중립면 호 길이(BA)로 더합니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1 <span class="nm">(L 브래킷)</span></span>
+      <p>두께 2 mm 강판을 안쪽 반지름 2 mm로 90° 굽혀 바깥 치수 40 × 30 mm L 브래킷을 만든다. K = 0.44일 때 전개 길이는?</p>
+    </div>
+    <p><i>풀이.</i> \(BA = (\pi/2)(2 + 0.44\times2) = 4.52\) mm. 곧은 부분 \((40 - 4) + (30 - 4) = 62\) mm. 전개 길이 66.52 mm. 바깥 치수를 그냥 더한 70 mm보다 3.5 mm 짧습니다.</p>
+
+    <h3><span class="no">2.4.2</span>CAD 판금 기능</h3>
+    <ul>
+      <li><b>굽힘 반지름</b>: 공장 금형(펀치 끝 반지름)에 맞춘다. 보통 두께와 같거나 크게.</li>
+      <li><b>K 인자 또는 굽힘 표</b>: 공장이 시험 굽힘으로 정한 값이 가장 정확하다.</li>
+      <li><b>굽힘 릴리프</b>: 굽힘 끝이 판 가장자리와 만나는 곳에 작은 홈을 내 찢어짐을 막는다.</li>
+      <li><b>전개도</b>: 레이저 절단용 평면 형상을 자동으로 내보낸다(<a href="05-01.html">5.1절</a>).</li>
+    </ul>
+
+    <div class="tb-note"><b>주의</b>굽힘선 가까이(두께의 약 2.5배 + 반지름 이내)에 구멍이 있으면 굽힐 때 구멍이 찌그러집니다. 모델링 단계에서 구멍 위치를 굽힘선에서 띄웁니다. 굽힘 후 되돌아옴(스프링백)은 생산공학 2.3절에서 다룹니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>중립면은 안쪽으로 치우침, K = 0.3~0.5.</li>
+        <li>\(BA = \theta(R + Kt)\), 전개 = 곧은 부분 + BA.</li>
+        <li>반지름, K, 릴리프는 공장 기준값으로.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 K = 0.5로 하면 BA는?
+          <details><summary>답</summary><p>\((\pi/2)(2 + 1) = 4.71\) mm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>두께 2, 반지름 2, K 0.44로 바깥 치수 30 × 50 × 30 mm U 채널(90° 굽힘 2개)의 전개 길이는?
+          <details><summary>답</summary><p>곧은 부분 \((30 - 4) + (50 - 8) + (30 - 4) = 94\), BA 두 개 9.05, 합 103.05 mm.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>K 인자를 0.3으로 잘못 넣으면 예제 전개 길이는 얼마나 틀리며, 완성품 치수에는 어떻게 나타나는가?
+          <details><summary>답</summary><p>BA = \((\pi/2)(2.6) = 4.08\)로 0.44 mm 짧은 판을 자르게 된다. 굽힌 뒤 한쪽 플랜지가 약 0.44 mm 짧아진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
