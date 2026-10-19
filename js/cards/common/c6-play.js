@@ -1,39 +1,9 @@
-/* 공통6 체험 카드 묶음 2: 르샤틀리에 원리(평형 이동 계산), 완충 용액. */
+/* 공통6 체험 카드 묶음 2: 완충 용액, 자발성의 네 경우, 약산의 pH 근사. */
 (() => {
   "use strict";
   const C = () => QSim.col();
   /* f(x) = 0의 근을 [lo, hi]에서 이분법으로 */
   const bisect = (f, lo, hi) => { let a = lo, b = hi, fa = f(a); for (let i = 0; i < 200; i++) { const m = (a + b) / 2, fm = f(m); if ((fm < 0) === (fa < 0)) { a = m; fa = fm; } else b = m; } return (a + b) / 2; };
-
-  /* 1. H2 + I2 ⇌ 2HI에 물질을 더하면 평형은 얼마나 움직일까 (03-03) */
-  (() => {
-    const S = QSim.card("lab-c6-shift"); if (!S) return;
-    const cv = S.$("canvas");
-    /* 처음 평형: K = 50.5에서 [H2] = [I2] = 0.22, [HI] = 1.56 (예제 3.3.1과 같음) */
-    function draw() {
-      const c = C(), aH = S.val("h2"), aI = S.val("i2"), aHI = S.val("hi"), K = S.val("K");
-      const h0 = 0.22 + aH, i0 = 0.22 + aI, hi0 = 1.56 + aHI;
-      const Q = (hi0 * hi0) / (h0 * i0);
-      /* 정반응으로 x만큼(음수면 역반응): (hi0 + 2x)² = K(h0 − x)(i0 − x) */
-      const g = (x) => (hi0 + 2 * x) ** 2 - K * (h0 - x) * (i0 - x);
-      const x = Q < K ? bisect(g, 0, Math.min(h0, i0) - 1e-12) : bisect(g, -hi0 / 2 + 1e-12, 0);
-      const after = [h0 - x, i0 - x, hi0 + 2 * x], before = [h0, i0, hi0], first = [0.22, 0.22, 1.56];
-      const top = Math.max(2.4, ...before, ...after) * 1.1;
-      const v = QSim.view(cv, 0.5), F = QSim.frame(v, { x0: 0, x1: 3, y0: 0, y1: top, yl: "M" }); F.axes({ noGrid: true });
-      const gg = v.g, bw = F.sx * 0.22, names = ["H₂", "I₂", "HI"];
-      names.forEach((nm, i) => {
-        const xc = i + 0.5;
-        [[first[i], c.rule, -1.5], [before[i], c.soft, -0.5], [after[i], c.main, 0.5]].forEach(([val, col, off]) => { gg.fillStyle = col; gg.fillRect(F.X(xc) + off * bw, F.Y(val), bw * 0.95, F.Y(0) - F.Y(val)); });
-        F.text(nm, xc, top * 0.93, c.ink, "center");
-        F.text(after[i].toFixed(3), xc + 0.12, after[i] + top * 0.02, c.ink, "center");
-      });
-      const dir = Math.abs(Q - K) < 1e-9 ? "평형 그대로" : Q < K ? "Q < K: 정반응 쪽(HI 생성)" : "Q > K: 역반응 쪽(HI 분해)";
-      S.out(`넣은 양: H₂ +${aH.toFixed(2)}, I₂ +${aI.toFixed(2)}, HI +${aHI.toFixed(2)} M,  K = ${K.toFixed(1)}  (회색: 처음 평형, 연보라: 넣은 직후, 보라: 새 평형)\n` +
-        `넣은 직후 Q = ${Q.toFixed(2)} → ${dir},  반응한 양 x = ${x.toFixed(4)} M\n` +
-        `새 평형: [H₂] = ${after[0].toFixed(3)}, [I₂] = ${after[1].toFixed(3)}, [HI] = ${after[2].toFixed(3)} M,  확인 Q = ${((after[2] ** 2) / (after[0] * after[1])).toFixed(2)}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
 
   /* 2. 완충 용액에 산이나 염기를 넣으면 (05-01) */
   (() => {
@@ -62,7 +32,7 @@
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
-  /* 3. ΔH와 ΔS의 부호로 나누는 자발성의 네 경우 (06-02). 같은 절의 lab-c6-gibbs(c56-exp.js)는 특정 반응의 경계 온도를 다룬다 */
+  /* 3. ΔH와 ΔS의 부호로 나누는 자발성의 네 경우 (06-02). */
   (() => {
     const S = QSim.card("lab-c6-gibbs-play"); if (!S) return;
     const cv = S.$("canvas"), R = 8.314;
@@ -111,33 +81,6 @@
       S.out(`${pre[1]} (pKa = ${pKa.toFixed(2)}, Ka = ${Ka.toExponential(2)}),  C = ${Cc.toExponential(2)} M\n` +
         `정확한 pH = ${pe.toFixed(3)}  (보라 실선),  근사식 pH = −½log(KaC) = ${pa.toFixed(3)}  (주황 점선),  차이 ${err.toFixed(3)}\n` +
         `이온화한 비율 = ${alpha.toFixed(2)}%  → ${alpha >= 5 ? "5%를 넘어 근사(C − x ≈ C)가 틀리기 시작함" : err > 0.05 ? "이온화 비율은 작지만 산이 너무 묽어 물이 내놓는 H⁺를 무시할 수 없음(근사가 틀림)" : "5% 미만이고 물의 H⁺도 무시할 만해 근사가 잘 맞음"}`);
-    }
-    S.on(draw); QSim.redrawOn(draw); draw();
-  })();
-
-  /* 5. 어는점 내림과 끓는점 오름, 그리고 몰질량 거꾸로 구하기 (01-02) */
-  (() => {
-    const S = QSim.card("lab-c6-colli"); if (!S) return;
-    const cv = S.$("canvas"), Kf = 1.86, Kb = 0.512;
-    /* [몰질량 g/mol, 반트호프 인자 i, 이름] */
-    const PRE = { glu: [180.16, 1, "포도당"], suc: [342.30, 1, "설탕"], urea: [60.06, 1, "요소"], nacl: [58.44, 2, "염화 나트륨"], cacl2: [110.98, 3, "염화 칼슘"] };
-    function draw() {
-      const c = C(), [M, i, nm] = PRE[S.val("m")], g = S.val("g"), w = S.val("w");
-      const mol = g / M, m = mol / (w / 1000), dTf = i * Kf * m, dTb = i * Kb * m;
-      const v = QSim.view(cv, 0.45), F = QSim.frame(v, { x0: 0, x1: 4, y0: -12, y1: 108, yl: "°C", pad: 36 }); F.axes({ noGrid: true });
-      const gg = v.g, bw = F.sx * 0.5;
-      const bar = (xc, top, col) => { gg.fillStyle = col; gg.fillRect(F.X(xc) - bw / 2, F.Y(top), bw, F.Y(-12) - F.Y(top)); };
-      bar(1, 0, c.rule); bar(1.8, -dTf, c.main); bar(2.6, 100, c.rule); bar(3.4, 100 + dTb, c.warn);
-      F.text("물 어는점", 1, -10, c.ink, "center"); F.text("용액", 1.8, -10, c.ink, "center");
-      F.text("물 끓는점", 2.6, 104, c.ink, "center"); F.text("용액", 3.4, 104, c.ink, "center");
-      F.text(`−${dTf.toFixed(2)}`, 1.8, -dTf + 4, c.ink, "center");
-      /* 같은 용액의 어는점 내림을 측정했다고 보고 몰질량을 거꾸로 구한다(i를 1로 잘못 두면 어떻게 되는지도) */
-      const Mback = (i * Kf * g) / (dTf * (w / 1000)), Mwrong = (Kf * g) / (dTf * (w / 1000));
-      const pi = i * m * 0.08206 * 298;
-      S.out(`${nm} ${g.toFixed(1)} g (몰질량 ${M} g/mol) → ${mol.toFixed(4)} mol을 물 ${w.toFixed(0)} g에 녹임: 몰랄 농도 ${m.toFixed(3)} mol/kg, 입자 수 배율 i = ${i}\n` +
-        `어는점 내림 ΔTf = i·Kf·m = ${i} × 1.86 × ${m.toFixed(3)} = ${dTf.toFixed(2)} °C → 어는점 −${dTf.toFixed(2)} °C,  끓는점 오름 ΔTb = ${dTb.toFixed(3)} °C\n` +
-        `삼투압(묽어서 몰농도 ≈ 몰랄 농도로 봄, 25 °C) π = iMRT ≈ ${pi.toFixed(2)} atm\n` +
-        `거꾸로: ΔTf ${dTf.toFixed(2)} °C를 측정했다면 몰질량 = i·Kf·(질량)/(ΔTf·kg) = ${Mback.toFixed(1)} g/mol` + (i > 1 ? ` (i를 1로 잘못 두면 ${Mwrong.toFixed(1)} g/mol로 틀림)` : ""));
     }
     S.on(draw); QSim.redrawOn(draw); draw();
   })();

@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통2-06-06",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/common/c2-vec.js"]
+}
+-->
+<article class="card q-card" id="lab-c2-jacobian" data-kind="실습" data-std="공통2-06-06">
+  <header class="card-head"><span class="no"></span><h2>작은 직사각형은 변환 뒤에 넓이가 몇 배가 될까?</h2><span class="kind">실습 · 야코비안과 넓이 배율</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>변환 \((u, v) \mapsto (x, y)\)가 \(uv\)평면의 작은 직사각형을 \(xy\)평면의 휘어진 사각형으로 옮길 때, 그 넓이가 \(|J|\,\Delta u\,\Delta v\)에 가까워지는 것을 직접 확인합니다. 직사각형을 줄일수록 어림이 정확해지는 것이 변수변환 공식 \(dA = |J|\,du\,dv\)의 뜻입니다. 성취기준 [공통2-06-06].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>야코비안은 편도함수 네 개로 만든 \(2\times2\) 행렬식입니다.</p>
+      \[J = \det\begin{pmatrix} x_u & x_v \\ y_u & y_v \end{pmatrix} = x_u y_v - x_v y_u\]
+      <p>\(2\times2\) 행렬식 \(ad - bc\)는 두 벡터 \((a, c)\), \((b, d)\)가 만드는 평행사변형의 넓이(부호 포함)입니다. 직사각형의 두 변 \(\Delta u\), \(\Delta v\)는 변환 뒤 대략 벡터 \((x_u, y_u)\Delta u\)와 \((x_v, y_v)\Delta v\)가 되므로, 상의 넓이는 대략 \(|J|\,\Delta u\,\Delta v\)입니다.</p>
+      <p>위 그림은 \(uv\)평면, 아래 그림은 \(xy\)평면입니다. 아래 그림의 파란 곡선은 \(u\)가 일정한 선, 주황 곡선은 \(v\)가 일정한 선의 상입니다. 빨간 영역이 고른 직사각형과 그 상이고, 검은 점선이 야코비안으로 만든 평행사변형입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>변환</span><select name="map" aria-label="변환"><option value="polar">극좌표 (r, θ)</option><option value="lin">x = u + v, y = u − v</option><option value="sq">x = u² − v², y = 2uv</option><option value="exp">x = eᵘ cos v, y = eᵘ sin v</option></select></label>
+        <label><span>직사각형의 u 위치</span><input type="range" name="a" min="0" max="0.95" step="0.01" value="0.5" aria-label="u 위치"></label>
+        <label><span>직사각형의 v 위치</span><input type="range" name="b" min="0" max="0.95" step="0.01" value="0.1" aria-label="v 위치"></label>
+        <label><span>크기 (범위의 %) = <b data-show="s">20</b></span><input type="range" name="s" min="1" max="40" step="1" value="20" aria-label="직사각형 크기"></label>
+      </div>
+      <canvas aria-label="uv평면의 직사각형"></canvas>
+      <canvas aria-label="xy평면으로 옮긴 격자와 직사각형의 상"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>극좌표에서 크기를 20%, 10%, 2%로 줄이며 "실제 ÷ 어림"이 1에 다가가는지 본다.</li>
+        <li>극좌표에서 \(u\) 위치(곧 \(r\))만 바꾸며 같은 크기의 직사각형의 상이 원점에서 멀수록 커지는 것을 본다.</li>
+        <li>\(x = u + v,\ y = u - v\)로 바꿔 크기와 위치에 관계없이 비가 정확히 1인지 확인한다.</li>
+        <li>\(x = u^2 - v^2,\ y = 2uv\)에서 원점 가까이와 멀리에서 \(J\)를 비교한다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>극좌표: \(J = r\). 크기를 줄일수록 비가 1에 가까워진다. 같은 \(\Delta r\,\Delta\theta\)라도 \(r\)이 클수록 상이 넓어서 \(dA = r\,dr\,d\theta\)가 된다.</li>
+        <li>\(x = u + v,\ y = u - v\): 일차변환이라 직사각형이 정확히 평행사변형으로 가고, \(|J| = 2\)가 넓이 배율 그대로다. 비는 언제나 1이다.</li>
+        <li>\(x = u^2 - v^2,\ y = 2uv\): \(J = 4(u^2 + v^2)\). 원점 근처에서는 상이 아주 작고, 멀어질수록 크게 부푼다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>극좌표에서 \(u = r = 0\)인 곳에 직사각형을 두면 상은 어떤 모양인가요? 그때 \(J = 0\)인 것과 연결해 설명해 보세요.</li>
+        <li>\(x = u + v,\ y = u - v\)의 \(J\)는 \(-2\)입니다. 음수 부호는 넓이가 아니라 무엇을 알려 주나요? (힌트: 직사각형을 반시계 방향으로 돌 때 상은 어느 방향으로 도는지)</li>
+      </ol>
+    </section>
+  </div>
+</article>
