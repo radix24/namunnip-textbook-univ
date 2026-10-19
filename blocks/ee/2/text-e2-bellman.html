@@ -1,0 +1,99 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-07-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e2-bellman" data-kind="본문" data-std="전전2-07-05">
+  <header class="card-head"><span class="no"></span><h2>Bellman-Ford와 음의 간선</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모든 간선을 V − 1번 완화하는 Bellman-Ford 알고리즘을 구현한다.</li>
+        <li>음의 간선이 있을 때 Dijkstra가 틀리는 예를 계산으로 보인다.</li>
+        <li>음의 순환을 한 번 더 완화해 찾아낸다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>Dijkstra 알고리즘 (<a href="07-03.html">7.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">7.5.1</span>완화를 반복하기</h3>
+    <p>최단 경로는 간선을 많아야 V − 1개 지나므로, 모든 간선에 대해 \(d[v] \leftarrow \min(d[v], d[u] + w)\)(완화)를 V − 1번 반복하면 음의 간선이 있어도 정확합니다. 시간 O(VE)로 Dijkstra보다 느리지만, V번째 반복에서도 값이 줄면 음의 순환이 있다고 판정할 수 있습니다.</p>
+    <pre><code>import heapq
+E = [("s", "a", 4), ("s", "b", 5), ("b", "a", -3), ("a", "c", 3), ("c", "t", 2), ("b", "t", 6)]
+V = ["s", "a", "b", "c", "t"]
+INF = float("inf")
+
+def bellman(src):
+    d = {v: INF for v in V}; d[src] = 0
+    for _ in range(len(V) - 1):
+        for u, v, w in E:
+            if d[u] + w &lt; d[v]:
+                d[v] = d[u] + w
+    neg = any(d[u] + w &lt; d[v] for u, v, w in E)
+    return d, neg
+
+def dijkstra(src):
+    adj = {v: [] for v in V}
+    for u, v, w in E:
+        adj[u].append((v, w))
+    d = {v: INF for v in V}; d[src] = 0; done = set(); pq = [(0, src)]
+    while pq:
+        du, u = heapq.heappop(pq)
+        if u in done:
+            continue
+        done.add(u)
+        for v, w in adj[u]:
+            if v not in done and du + w &lt; d[v]:   # 확정된 노드는 다시 고치지 않음
+                d[v] = du + w; heapq.heappush(pq, (d[v], v))
+    return d
+
+print("Bellman-Ford:", bellman("s"))
+print("Dijkstra    :", dijkstra("s"))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>Bellman-Ford: ({'s': 0, 'a': 2, 'b': 5, 'c': 5, 't': 7}, False)
+Dijkstra    : {'s': 0, 'a': 4, 'b': 5, 'c': 7, 't': 9}</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.5.1</span>
+      <p>위 그래프에서 Dijkstra가 a의 거리를 틀리게 구하는 과정을 설명하라.</p>
+    </div>
+    <p><i>풀이.</i> s에서 a(4)와 b(5)가 후보이고, 더 가까운 a를 먼저 확정합니다. 나중에 b를 지나 a로 가는 경로 5 + (−3) = 2를 발견해도 a는 이미 확정되어 고치지 않습니다. 그래서 a 4, c 7, t 9로 틀리고, Bellman-Ford는 a 2, c 5, t 7로 맞힙니다. Dijkstra의 "확정한 노드보다 더 짧은 길은 나중에 나오지 않는다"는 가정이 음의 간선에서 깨지기 때문입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "모든 간선에 같은 수를 더해 음수를 없애면 Dijkstra를 쓸 수 있다": 간선 수가 다른 경로끼리 더해진 양이 달라 최단 경로가 바뀝니다. (2) "음의 순환이 있어도 최단 거리가 정해진다": 순환을 돌수록 계속 작아져 정의되지 않습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>모든 간선을 V − 1번 완화, O(VE).</li>
+        <li>음의 간선에서 Dijkstra는 확정 때문에 틀릴 수 있다.</li>
+        <li>V번째 완화에서 값이 줄면 음의 순환.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>노드 5, 간선 6개의 Bellman-Ford 완화 횟수는?
+          <details><summary>답</summary><p>(5 − 1) × 6 = 24번.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 b → a의 가중치를 −1로 바꾸면 a의 최단 거리는?
+          <details><summary>답</summary><p>min(4, 5 − 1) = 4.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>통화 환율 그래프에서 음의 순환은 무엇을 뜻하는가?
+          <details><summary>답</summary><p>가중치를 −log(환율)로 두면 음의 순환은 돌수록 돈이 늘어나는 차익 거래 기회입니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
