@@ -1,8 +1,9 @@
-/* 내 학습 기록 페이지: QProgress(js/progress.js)의 기록을 과목별로 모아 보여 주고, 내보내기·가져오기·지우기를 한다 */
-(() => {
+/* 내 학습 기록 페이지: QProgress(js/progress.js)의 기록을 과목별로 모아 보여 주고, 내보내기·가져오기·지우기를 한다.
+   과목·대단원·성취기준·카드 목록은 빌드가 만든 data/univ.json(전 학과 합본)에서 읽는다 */
+fetch("data/univ.json").then((r) => r.json()).then((U) => {
   "use strict";
-  const U = window.UNIV, P = window.QProgress;
-  if (!U || !P) return;
+  const P = window.QProgress;
+  if (!P) return;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const $ = (id) => document.getElementById(id);
   let showAll = false;
@@ -77,4 +78,4 @@
   });
   P.onChange(draw);
   draw();
-})();
+}).catch((e) => { const el = document.getElementById("r-courses"); if (el) el.innerHTML = `<p class="dim small">과목 목록을 불러오지 못했습니다(${e.message}).</p>`; });

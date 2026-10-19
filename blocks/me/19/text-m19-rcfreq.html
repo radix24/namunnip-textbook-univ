@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-rcfreq" data-kind="본문" data-std="기계19-01-03">
+  <header class="card-head"><span class="no"></span><h2>RC 필터의 주파수 응답</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>사인파 입력에 대한 RC 저역 통과 필터의 크기 비와 위상을 계산한다.</li>
+        <li>차단 주파수와 −20 dB/decade 기울기를 Bode 선도로 읽는다.</li>
+        <li>필터가 신호를 늦추는 위상 지연을 제어에 연결한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>RC 회로 (<a href="01-01.html">1.1절</a>), Bode 선도 (<a href="../15/05-01.html">기계시스템제어 5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>크기 비와 위상</h3>
+    <p>RC 저역 통과 필터의 전달함수는 \(V_o/V_i = 1/(RCs + 1)\)입니다. \(s = j\omega\)를 넣으면 사인파에 대한 응답이 나옵니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">1차 저역 통과 필터</span>
+      <p>\[|H| = \frac1{\sqrt{1 + (f/f_c)^2}}\]</p>
+      <p>\[\angle H = -\tan^{-1}\frac f{f_c}\]</p>
+      <p>\[f_c = \frac1{2\pi RC}\]</p>
+      <p>\(f = f_c\)에서 크기 0.707(−3 dB), 위상 −45°. \(f \gg f_c\)에서 10배 주파수마다 크기 1/10(−20 dB/decade).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1 <span class="nm">(잡음 걸러내기)</span></span>
+      <p>\(R\) = 10 kΩ, \(C\) = 100 nF 필터의 차단 주파수는? 1.59 kHz 잡음은 얼마나 줄어들고 위상은 얼마나 늦는가?</p>
+    </div>
+    <p><i>풀이.</i> \(f_c = 1/(2\pi\times10^4\times10^{-7}) = 159\) Hz. 1.59 kHz는 \(f_c\)의 10배라 \(|H| = 1/\sqrt{101} = 0.0996\)(−20 dB), 위상 −84°. 잡음은 10분의 1로 줄었습니다. 반대로 10 Hz 신호는 크기 0.998, 위상 −3.6°로 거의 그대로 통과합니다.</p>
+
+    <h3><span class="no">1.3.2</span>위상 지연의 대가</h3>
+    <p>필터는 잡음을 줄이는 대신 통과 대역 신호도 늦춥니다. 제어 루프의 측정 신호에 필터를 넣으면 그 위상 지연만큼 위상 여유가 줄어(<a href="05-02.html">5.2절</a>) 오버슈트가 커집니다. 그래서 차단 주파수를 제어 대역폭의 5~10배 이상에 둡니다. 더 가파른 차단이 필요하면 2차 이상(Sallen-Key, Butterworth) 필터를 씁니다.</p>
+
+    <div class="tb-note"><b>주의</b>dB는 크기 비의 20 log입니다. −3 dB가 0.707, −20 dB가 0.1, −40 dB가 0.01입니다. 전력 비는 10 log를 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(|H| = 1/\sqrt{1 + (f/f_c)^2}\), \(f_c = 1/(2\pi RC)\).</li>
+        <li>\(f_c\)에서 −3 dB, −45°. 위로 −20 dB/decade.</li>
+        <li>위상 지연이 제어 위상 여유를 깎음.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(R\) = 1 kΩ, \(C\) = 1 μF의 차단 주파수는?
+          <details><summary>답</summary><p>159 Hz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 필터에서 159 Hz와 50 Hz 신호의 위상 지연은?
+          <details><summary>답</summary><p>159 Hz: −45°, 50 Hz: \(-\tan^{-1}(0.314) = -17.4°\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>교차 주파수 20 Hz인 제어 루프의 측정단에 \(f_c\) = 100 Hz 필터를 넣으면 위상 여유가 얼마나 줄어드는가?
+          <details><summary>답</summary><p>\(\tan^{-1}(20/100) = 11.3°\). 위상 여유 60°였다면 약 49°가 된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

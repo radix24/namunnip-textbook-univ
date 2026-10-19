@@ -1,0 +1,36 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-03-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s4-mask" data-kind="예제" data-std="응통4-03-03">
+  <header class="card-head"><span class="no"></span><h2>IQR 규칙으로 이상값 표시하기</h2><span class="kind">예제 · 마스크로 거르기</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>사분위수를 구해 울타리 \(Q_1 - 1.5\,\mathrm{IQR}\), \(Q_3 + 1.5\,\mathrm{IQR}\)을 만들고, 마스크 하나로 바깥 값을 고릅니다(응통17 2.3절의 기준).</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> <code>x = np.array([12, 15, 14, 10, 13, 40, 11, 16])</code>에서 NumPy 기본 방식(선형 보간)의 사분위수로 이상값을 찾으세요.</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>정렬 10, 11, 12, 13, 14, 15, 16, 40. <code>np.percentile(x, [25, 75])</code> = 11.75, 15.25(위치 1.75, 5.25에서 보간).</div><span class="q-why">\(n = 8\), 위치 \(p(n-1)\).</span></li>
+        <li><div>IQR 3.5, 울타리 \(11.75 - 5.25 = 6.5\), \(15.25 + 5.25 = 20.5\).</div><span class="q-why">1.5배.</span></li>
+        <li class="q-end"><div><code>x[(x &lt; 6.5) | (x &gt; 20.5)]</code> → <code>array([40])</code>. <code>np.where(...)[0]</code>로 위치 5.</div><span class="q-why">마스크.</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>위치 1.75의 값: 11 + 0.75 × (12 − 11) = 11.75. 위치 5.25: 15 + 0.25 × (16 − 15) = 15.25. 사분위수 계산 방식은 소프트웨어마다 달라(R의 <code>quantile</code> 기본값은 같은 방식) 울타리가 조금 다를 수 있지만 40은 어느 방식으로도 이상값입니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>마스크를 변수로 저장해 두면 이상값을 지우지 않고 표시만 해서 결과를 두 가지로(포함, 제외) 비교할 수 있습니다. 이상값은 지울 대상이 아니라 조사할 대상이라는 원칙(응통17 2.3절)을 코드로 지키는 방법입니다.</p>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-04-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-servo" data-kind="본문" data-std="기계19-04-04">
+  <header class="card-head"><span class="no"></span><h2>서보 모터와 감속비 선정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>부하 관성을 모터축으로 옮겨 보는 반사 관성을 계산한다.</li>
+        <li>가속에 필요한 토크로 모터와 감속비를 고른다.</li>
+        <li>관성 정합(최적 감속비)의 뜻을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>DC 모터 특성 (<a href="04-01.html">4.1절</a>), 기어열 (<a href="../17/05-02.html">메카니즘설계 5.2절</a>), 회전 운동 방정식.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.4.1</span>반사 관성</h3>
+    <p>감속비 \(n\)(모터가 \(n\)바퀴 돌 때 부하 1바퀴)의 기어를 거치면, 부하 관성 \(J_L\)은 모터에서 \(J_L/n^2\)으로 보이고 부하 토크 \(T_L\)은 \(T_L/n\)으로 보입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">모터에 필요한 토크</span>
+      <p>\[ T_m = \left(J_m + \frac{J_L}{n^2}\right)n\alpha_L + \frac{T_L}{n\eta} \]</p>
+      <p>\(\alpha_L\): 부하 각가속도, \(\eta\): 기어 효율. 마찰이 없을 때 부하 가속을 최대로 하는 감속비는 \(n = \sqrt{J_L/J_m}\)(관성 정합).</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.4.1 <span class="nm">(회전 테이블)</span></span>
+      <p>관성 0.01 kg·m²인 회전 테이블을 관성 \(1\times10^{-4}\) kg·m²인 서보 모터로 돌린다. 테이블을 50 rad/s²로 가속하려면 감속비 5, 10, 20에서 모터 토크가 각각 얼마인가? (마찰·부하 토크 없음)</p>
+    </div>
+    <p><i>풀이.</i> \(T_m = (J_m + J_L/n^2)n\alpha_L\). \(n = 5\): \((10^{-4} + 4\times10^{-4})\times5\times50 = 0.125\) N·m. \(n = 10\): \((10^{-4} + 10^{-4})\times500 = 0.100\) N·m. \(n = 20\): \((10^{-4} + 0.25\times10^{-4})\times1000 = 0.125\) N·m. 관성 정합인 \(n = \sqrt{100} = 10\)에서 토크가 가장 작습니다.</p>
+
+    <h3><span class="no">4.4.2</span>실제 선정</h3>
+    <p>감속비가 크면 모터가 빨리 돌아야 하므로 모터 최고 속도가 제한이 되고, 작으면 토크가 모자랍니다. 실무에서는 부하 관성/모터 관성 비를 서보 제품이 권하는 범위(보통 10배 이하)로 맞추고, 가감속 토크, 연속 운전 토크(RMS), 최고 속도를 모두 확인합니다.</p>
+
+    <div class="tb-note"><b>주의</b>관성 비가 너무 크면 기어의 백래시와 탄성 때문에 위치 제어가 진동하기 쉽습니다. 관성 정합은 응답과 안정성 두 면에서 중요합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>반사 관성 \(J_L/n^2\), 반사 토크 \(T_L/n\).</li>
+        <li>\(T_m = (J_m + J_L/n^2)n\alpha_L + T_L/(n\eta)\).</li>
+        <li>관성 정합 \(n = \sqrt{J_L/J_m}\), 속도 한계와 함께 판단.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>부하 관성 0.04 kg·m²을 감속비 20으로 보면 모터에서 얼마인가?
+          <details><summary>답</summary><p>\(0.04/400 = 10^{-4}\) kg·m².</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 테이블 최고 속도가 30 rad/s이면 감속비 10일 때 모터 회전수는?
+          <details><summary>답</summary><p>300 rad/s = 2865 rpm. 모터 최고 속도(예: 3000 rpm) 안인지 확인한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제에 마찰 토크 2 N·m(테이블축), 기어 효율 0.9가 더해지면 감속비 10에서 필요한 모터 토크는?
+          <details><summary>답</summary><p>\(0.100 + 2/(10\times0.9) = 0.322\) N·m.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
