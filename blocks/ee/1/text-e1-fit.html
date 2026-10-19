@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e1-fit" data-kind="본문" data-std="전전1-05-02">
+  <header class="card-head"><span class="no"></span><h2>측정 자료에 직선 맞추기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>측정점에 가장 잘 맞는 직선을 최소제곱으로 구하는 뜻을 안다.</li>
+        <li>np.polyfit으로 기울기와 절편을 구하고 물리량(저항)을 읽는다.</li>
+        <li>잔차로 맞춤의 좋고 나쁨을 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>일차함수(고교 수학), NumPy (<a href="04-03.html">4.3절</a>), 미니 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>최소제곱 직선</h3>
+    <p>측정값에는 잡음이 있어 점이 정확히 한 직선 위에 있지 않습니다. 각 점과 직선의 세로 차이(잔차)를 제곱해 더한 값이 가장 작은 직선을 고르는 것이 최소제곱법입니다.</p>
+    <pre><code>import numpy as np
+V = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])               # 건 전압(V)
+I = np.array([0.02, 0.98, 2.05, 2.96, 4.03, 5.01]) / 1000    # 잰 전류(A)
+a, b = np.polyfit(V, I, 1)                                  # I = a V + b
+print(f"기울기 {a * 1000:.4f} mA/V, 절편 {b * 1000:.4f} mA")
+print(f"저항 R = 1/기울기 = {1 / a:.1f} 옴")
+res = I - (a * V + b)
+print("잔차(mA):", np.round(res * 1000, 3))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>기울기 1.0003 mA/V, 절편 0.0076 mA
+저항 R = 1/기울기 = 999.7 옴
+잔차(mA): [ 0.012 -0.028  0.042 -0.048  0.021  0.001]</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>위 결과에서 저항값을 읽고, 직선 모형이 맞는지 잔차로 판단하라.</p>
+    </div>
+    <p><i>풀이.</i> 기울기 약 1.0 mA/V → R ≈ 1 kΩ(실행 결과의 값). 잔차가 ±0.05 mA 안에서 부호가 섞여 고르게 흩어져 있어 옴의 법칙(직선)이 잘 맞습니다. 잔차가 한쪽으로 휘어지는 모양이면 다이오드처럼 직선이 아닌 관계를 의심합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "두 점만 이으면 충분": 잡음이 그대로 결과에 들어가 여러 점을 맞추는 것이 정확합니다. (2) "잔차가 작으면 모형이 옳다": 잔차의 모양(패턴)도 봐야 합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>최소제곱: 잔차 제곱합 최소.</li>
+        <li>np.polyfit(x, y, 1) → 기울기, 절편.</li>
+        <li>잔차의 크기와 모양으로 모형 판단.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>I-V 직선의 기울기가 2 mA/V면 저항은?
+          <details><summary>답</summary><p>500 Ω.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>절편이 0이 아니게 나오는 실험적 이유 하나는?
+          <details><summary>답</summary><p>전류계의 영점 오차나 측정 잡음.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>곡선 관계(예: 지수)를 직선 맞춤으로 다루는 방법은?
+          <details><summary>답</summary><p>로그를 취해 직선으로 바꾼 뒤 맞춥니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

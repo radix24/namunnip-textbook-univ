@@ -1,0 +1,88 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전1-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e1-recur" data-kind="본문" data-std="전전1-03-03">
+  <header class="card-head"><span class="no"></span><h2>재귀로 문제를 나누어 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>함수가 자기 자신을 부르는 재귀의 구조(기저 사례, 재귀 단계)를 안다.</li>
+        <li>계승, 거듭제곱, 하노이 탑을 재귀로 쓴다.</li>
+        <li>재귀 호출 수가 폭발하는 경우(피보나치)와 메모이제이션을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>함수 (<a href="02-02.html">2.2절</a>), 문제 분해 (<a href="03-01.html">3.1절</a>), 수학적 귀납법(고교 수학).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>두 부분</h3>
+    <p>재귀 함수는 (1) 바로 답할 수 있는 가장 작은 경우(기저 사례)와 (2) 문제를 한 단계 작게 만들어 자기 자신을 부르는 경우로 이루어집니다. 수학적 귀납법과 같은 구조입니다.</p>
+    <pre><code>def hanoi(n, a="A", b="B", c="C", moves=None):
+    if moves is None:
+        moves = []
+    if n == 0:                       # 기저 사례
+        return moves
+    hanoi(n - 1, a, c, b, moves)     # 위의 n-1개를 B로
+    moves.append((a, c))             # 가장 큰 원판을 C로
+    hanoi(n - 1, b, a, c, moves)     # n-1개를 C로
+    return moves
+
+print("3개:", hanoi(3))
+print("원판 수별 이동 횟수:", [len(hanoi(n)) for n in range(1, 8)])
+
+calls = 0
+def fib(n):
+    global calls
+    calls += 1
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+print("fib(20) =", fib(20), "호출 수", calls)</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>3개: [('A', 'C'), ('A', 'B'), ('C', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('A', 'C')]
+원판 수별 이동 횟수: [1, 3, 7, 15, 31, 63, 127]
+fib(20) = 6765 호출 수 21891</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1</span>
+      <p>하노이 탑의 이동 횟수가 \(2^n - 1\)임을 재귀 구조로 설명하라.</p>
+    </div>
+    <p><i>풀이.</i> n개를 옮기려면 n−1개를 두 번 옮기고 큰 원판을 한 번 옮기므로 \(M_n = 2M_{n-1} + 1\), \(M_1 = 1\). 풀면 \(2^n - 1\): 실행 결과 1, 3, 7, 15, …, 127과 같습니다. 피보나치는 같은 값을 여러 번 다시 계산해 fib(20)에 21 891번이나 호출되므로, 한 번 구한 값을 딕셔너리에 저장하는 메모이제이션으로 약 40번(n마다 두 번 이내)으로 줄입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "기저 사례가 없어도 언젠가 멈춘다": 끝없이 불러 RecursionError가 납니다. (2) "재귀가 언제나 느리다": 하노이처럼 구조가 자연스러운 문제는 재귀가 가장 명확하고, 느린 것은 같은 계산을 반복할 때입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>재귀 = 기저 사례 + 한 단계 작은 자기 호출.</li>
+        <li>하노이 이동 수 2ⁿ − 1.</li>
+        <li>중복 계산은 메모이제이션으로 줄인다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>n! 재귀 함수의 기저 사례는?
+          <details><summary>답</summary><p>n == 0이면 1을 돌려준다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>원판 10개의 이동 횟수는?
+          <details><summary>답</summary><p>1023.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>power(x, n)을 n이 짝수면 power(x, n//2)²로 쓰면 곱셈 횟수는 대략?
+          <details><summary>답</summary><p>log₂ n 정도로 줄어듭니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
