@@ -1,0 +1,82 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통5-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s5-boxplot" data-kind="본문" data-std="응통5-02-04">
+  <header class="card-head"><span class="no"></span><h2>상자그림과 집단 비교</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>다섯 숫자 요약으로 상자그림을 그린다.</li>
+        <li>1.5 IQR 규칙으로 이상값 후보를 찾는다.</li>
+        <li>나란한 상자그림으로 여러 집단의 중심, 퍼짐, 치우침을 비교한다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>사분위수와 IQR (<a href="02-02.html">2.2절</a>), 히스토그램 (<a href="02-03.html">2.3절</a>).</li>
+      </ul>
+    </div>
+
+    <h3>세 반의 성적을 한 그림에</h3>
+    <p>히스토그램 세 개를 나란히 놓으면 세로축 눈금도 다르고 한눈에 비교하기 어렵습니다. 집단마다 "가운데, 가운데 절반의 폭, 양 끝"만 뽑아 같은 축 위에 나란히 그리면 비교가 훨씬 쉬워집니다. 그것이 상자그림입니다.</p>
+
+    <h3><span class="no">2.4.1</span>다섯 숫자 요약과 상자그림</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 2.4.1</span>
+      <p><b>다섯 숫자 요약</b>: 최솟값, \(Q_1\), 중앙값, \(Q_3\), 최댓값.</p>
+    </div>
+    <div class="tb-env def">
+      <span class="lb">정의 2.4.2</span>
+      <p><b>상자그림</b>: \(Q_1\)에서 \(Q_3\)까지 상자를 그리고, 상자 안에 중앙값 선을 긋고, 상자 양끝에서 \(1.5 \times \mathrm{IQR}\) 안에 있는 가장 먼 자료까지 수염을 그린 그림. 수염 밖의 점은 따로 찍어 이상값 후보로 표시합니다.</p>
+    </div>
+    <p>경계 \(Q_1 - 1.5\,\mathrm{IQR}\)과 \(Q_3 + 1.5\,\mathrm{IQR}\)을 <b>울타리</b>라고 부릅니다. 수염은 울타리까지 긋는 것이 아니라 울타리 <b>안쪽에 있는 가장 먼 실제 자료</b>까지 긋습니다. 정규분포라면 울타리 밖으로 나가는 자료가 약 0.7%이므로, 그보다 훨씬 많이 찍히면 꼬리가 두껍거나 치우친 분포입니다.</p>
+
+    <h3><span class="no">2.4.2</span>상자그림 읽기</h3>
+    <ul>
+      <li><b>중심</b>: 중앙값 선의 높이.</li>
+      <li><b>퍼짐</b>: 상자 길이(IQR)와 전체 길이.</li>
+      <li><b>치우침</b>: 중앙값이 상자 안에서 한쪽으로 쏠렸거나 한쪽 수염이 더 길면 그쪽으로 꼬리가 깁니다.</li>
+      <li><b>이상값 후보</b>: 따로 찍힌 점. 실제 값인지, 입력 실수인지 확인합니다.</li>
+    </ul>
+    <p>상자그림은 봉우리 수를 보여 주지 못합니다. 봉우리가 둘인 자료도 상자 하나로 그려지므로, 집단이 적을 때는 히스토그램이나 점그림을 함께 봅니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.3</span>
+      <p>R에 들어 있는 <code>mtcars</code> 자료에서 기통 수(4, 6, 8)별 연비(<code>mpg</code>)를 상자그림으로 비교하세요.</p>
+    </div>
+    <p><i>풀이.</i></p>
+    <pre><code>boxplot(mpg ~ cyl, data = mtcars, xlab = "기통 수", ylab = "연비 (mpg)")
+tapply(mtcars$mpg, mtcars$cyl, median)
+tapply(mtcars$mpg, mtcars$cyl, IQR)</code></pre>
+    <p>중앙값은 4기통 26.0, 6기통 19.7, 8기통 15.2로, 기통 수가 많을수록 연비가 낮습니다. 4기통의 상자가 가장 길어 차종 사이 연비 차이가 가장 크고, 8기통에는 아래쪽에 이상값 후보가 찍힙니다. 세 상자가 거의 겹치지 않으므로 기통 수에 따른 차이는 분명해 보이며, 이 차이를 검정으로 확인하는 방법이 5.1절의 분산분석입니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>상자는 \(Q_1\)~\(Q_3\), 선은 중앙값, 수염은 울타리 안 가장 먼 자료까지.</li>
+        <li>울타리 \(Q_1 - 1.5\,\mathrm{IQR}\), \(Q_3 + 1.5\,\mathrm{IQR}\) 밖은 이상값 후보입니다.</li>
+        <li>나란한 상자그림은 집단 비교에 좋지만 봉우리 수는 보여 주지 않습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(Q_1 = 20\), \(Q_3 = 30\)일 때 이상값 후보가 되는 경계는?
+          <details><summary>답</summary><p>IQR = 10. 아래 울타리 \(20 - 15 = 5\), 위 울타리 \(30 + 15 = 45\). 5보다 작거나 45보다 큰 값입니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>상자그림에서는 보이지 않고 히스토그램에서만 보이는 특징을 하나 들어 보세요.
+          <details><summary>답</summary><p>봉우리가 둘인 분포. 상자그림은 봉우리 수를 보여 주지 않습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
