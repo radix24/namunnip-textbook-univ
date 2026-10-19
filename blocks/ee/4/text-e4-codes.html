@@ -1,0 +1,83 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전4-01-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e4-codes" data-kind="본문" data-std="전전4-01-02">
+  <header class="card-head"><span class="no"></span><h2>BCD와 그레이 코드</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>10진 자리마다 4비트를 쓰는 BCD로 수를 나타낸다.</li>
+        <li>이웃한 수가 한 비트만 다른 그레이 코드를 만들고 2진수와 서로 바꾼다.</li>
+        <li>그레이 코드가 회전 인코더와 카르노 맵에 쓰이는 이유를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>2진수와 2의 보수 (<a href="01-01.html">1.1절</a>), XOR.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.2.1</span>두 코드</h3>
+    <p><b>BCD</b>: 10진수 각 자리를 0000~1001로 따로 씁니다. 2026 → 0010 0000 0010 0110. 7세그먼트 표시와 계산기처럼 10진 자리를 다루는 곳에 편하지만 1010~1111을 쓰지 않아 비트를 낭비합니다.</p>
+    <p><b>그레이 코드</b>: \(g = b \oplus (b \gg 1)\). 이웃한 수가 한 비트만 다르므로, 회전 인코더처럼 여러 비트를 동시에 읽을 때 경계에서 엉뚱한 값을 읽는 일이 없습니다.</p>
+    <pre><code>for b in range(8):
+    g = b ^ (b &gt;&gt; 1)
+    back, x = 0, g
+    while x:                       # 그레이 → 2진: 위쪽 비트를 차례로 XOR
+        back ^= x; x &gt;&gt;= 1
+    print(b, format(b, "03b"), "→ 그레이", format(g, "03b"), "→ 되돌림", back)
+print("BCD 2026:", " ".join(format(int(c), "04b") for c in "2026"))</code></pre>
+    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+<pre><code>0 000 → 그레이 000 → 되돌림 0
+1 001 → 그레이 001 → 되돌림 1
+2 010 → 그레이 011 → 되돌림 2
+3 011 → 그레이 010 → 되돌림 3
+4 100 → 그레이 110 → 되돌림 4
+5 101 → 그레이 111 → 되돌림 5
+6 110 → 그레이 101 → 되돌림 6
+7 111 → 그레이 100 → 되돌림 7
+BCD 2026: 0010 0000 0010 0110</code></pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>2진수로 3(011)에서 4(100)로 넘어갈 때 센서가 세 비트를 조금씩 다른 순간에 읽으면 어떤 값이 잠깐 보일 수 있는가? 그레이 코드는?</p>
+    </div>
+    <p><i>풀이.</i> 세 비트가 모두 바뀌므로 000~111 어느 값이든 잠깐 보일 수 있습니다(예: 111 = 7). 그레이 코드는 010 → 110으로 한 비트만 바뀌어 3 또는 4만 보입니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "BCD 1001 + 0001 = 1010이 답": BCD에서는 10이 넘으면 6(0110)을 더해 자리올림을 맞춥니다(0001 0000). (2) "그레이 코드로 바로 더할 수 있다": 산술에는 2진수로 바꿔 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>BCD: 10진 자리마다 4비트, 7세그먼트·계산기.</li>
+        <li>그레이: g = b ⊕ (b ≫ 1), 이웃 수가 한 비트 차이.</li>
+        <li>회전 인코더와 카르노 맵 배치에 쓰임.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.2.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>59의 BCD는?
+          <details><summary>답</summary><p>0101 1001.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>2진 1011의 그레이 코드는?
+          <details><summary>답</summary><p>1011 ⊕ 0101 = 1110.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>그레이 1101을 2진수로 바꾸라.
+          <details><summary>답</summary><p>1, 1⊕1 = 0, 0⊕0 = 0, 0⊕1 = 1 → 1001.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
