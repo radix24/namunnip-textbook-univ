@@ -1,0 +1,48 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계7-06-01",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/me/m7-fit.js"]
+}
+-->
+<article class="card q-card" id="lab-me-fit" data-kind="실습" data-std="기계7-06-01 기계7-01-02">
+  <header class="card-head"><span class="no"></span><h2>직선 맞춤 결과를 믿어도 될까: 잔차 읽기</h2><span class="kind">실습 · 최소제곱 · 기울기 불확도 · 잔차</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>참 기울기 4.00 mm/N인 가상 용수철 실험 자료에 잡음, 곡률(비선형), 잘못 읽은 점 하나를 넣을 수 있습니다. 최소제곱 직선(초록)과 기울기의 95% 구간, 그리고 오른쪽 아래 잔차 그림을 보고 결과를 믿을 수 있는지 판단합니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>점 수 = <b data-show="n">6</b></span><input type="range" name="n" min="3" max="30" step="1" value="6" aria-label="측정점 수"></label>
+        <label><span>잡음 σ = <b data-show="sig" data-fix="2">0.15</b> mm</span><input type="range" name="sig" min="0" max="1" step="0.05" value="0.15" aria-label="잡음"></label>
+        <label><span>곡률 = <b data-show="cv" data-fix="2">0.00</b> mm/N²</span><input type="range" name="cv" min="-0.3" max="0.3" step="0.02" value="0" aria-label="비선형 곡률"></label>
+        <label><span>잘못 읽은 점</span><select name="out" aria-label="잘못 읽은 점"><option value="off">없음</option><option value="on">있음 (+2 mm)</option></select></label>
+      </div>
+      <canvas aria-label="측정점, 맞춤 직선, 잔차 그림"></canvas>
+      <div class="btns"><button type="button" class="reset">다시 재기</button></div>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>정상 자료</b><span>잡음만 있으면 잔차가 0 둘레에 무작위로 흩어지고, 다시 재기를 여러 번 눌러도 대부분(약 95%)의 구간이 참 기울기 4.00을 품습니다.</span></li>
+        <li><b>점을 늘리기</b><span>점을 6개에서 24개로 늘리면 구간이 좁아집니다. 점이 3개뿐이면 자유도가 1이라 t = 12.7로 구간이 매우 넓습니다.</span></li>
+        <li><b>곡률</b><span>곡률을 0.1로 넣으면 R²는 여전히 0.99 이상이지만 잔차가 활 모양(양 끝 +, 가운데 −)이 되고, 점을 늘릴수록 구간이 좁아지며 참 기울기를 놓칩니다. 6.1절 연습문제 3의 상황입니다.</span></li>
+        <li><b>잘못 읽은 점</b><span>가운데 점 하나가 2 mm 튀면 잔차 그림에서 한 점만 크게 벗어나 바로 보입니다. 원인을 실험 노트에서 확인한 뒤에만 제외하고, 제외한 사실을 보고서에 씁니다.</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>엑셀의 LINEST, 파이썬의 numpy.polyfit(cov=True), 계산기의 선형 회귀가 같은 기울기와 불확도를 줍니다. 탄성계수(2.1절), 열전대 보정(3.1절), 용수철 상수처럼 기울기로 결과를 얻는 실험의 보고서에 이 분석을 넣습니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"R²가 0.99 이상이면 직선 모형이 맞다."</b> 곡률이 있어도 R²는 높을 수 있습니다. 잔차의 모양을 보세요.</li>
+        <li><b>"맞지 않는 점은 지우면 된다."</b> 근거 없이 지우면 결과를 조작한 것이 됩니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
