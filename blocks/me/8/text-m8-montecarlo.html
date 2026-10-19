@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계8-04-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m8-montecarlo" data-kind="본문" data-std="기계8-04-05">
+  <header class="card-head"><span class="no"></span><h2>몬테카를로 불확도 전파</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>입력 값을 확률 분포에서 많이 뽑아 결과의 분포를 얻는 몬테카를로 방법을 안다.</li>
+        <li>선형 불확도 전파와 결과를 비교한다.</li>
+        <li>식이 복잡하거나 비선형이 클 때 몬테카를로가 필요한 경우를 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>불확도 전파(기계공학실험(1) 1.2절), 불확도 예산 (<a href="04-01.html">4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.5.1</span>방법</h3>
+    <ol>
+      <li>각 입력의 분포(정규, 균일 등)와 표준 불확도를 정한다.</li>
+      <li>난수로 입력 값 한 벌을 뽑아 결과를 계산한다.</li>
+      <li>수만~수십만 번 되풀이해 결과의 평균, 표준 편차, 2.5~97.5% 구간을 구한다.</li>
+    </ol>
+    <div class="tb-env thm">
+      <span class="lb">선형 전파와 비교 (곱·나눗셈 꼴)</span>
+      <p>\(y = c\,x_1^ax_2^b\)이면 \(\dfrac{u_y}{y} \approx \sqrt{\left(a\dfrac{u_1}{x_1}\right)^2 + \left(b\dfrac{u_2}{x_2}\right)^2}\)</p>
+      <p>불확도가 작고 식이 거의 선형이면 두 방법이 같은 값을 준다. 불확도가 크거나 식이 크게 굽으면(분모가 0 근처, 큰 지수) 몬테카를로가 정확하다.</p>
+    </div>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.5.1 <span class="nm">(진자로 g 재기)</span></span>
+      <p>\(g = 4\pi^2L/T^2\), \(L = 1.000 \pm 0.002\) m, \(T = 2.006 \pm 0.010\) s(표준 불확도, 정규 분포). 선형 전파와 몬테카를로(20만 번)의 상대 불확도는?</p>
+    </div>
+    <p><i>풀이.</i> 선형: \(\sqrt{0.002^2 + (2\times0.010/2.006)^2} = 1.02\)%. 몬테카를로: 평균 9.812, 표준 편차 0.0998 m/s², 1.02%. 공칭값 \(4\pi^2/2.006^2 = 9.811\)과 평균도 거의 같습니다. 이 정도 불확도에서는 두 방법이 일치합니다.</p>
+
+    <div class="tb-note"><b>주의</b>입력들이 서로 상관되어 있으면(같은 자로 잰 두 길이처럼) 따로 뽑으면 안 되고 함께 움직이게 뽑아야 합니다. 난수 개수가 적으면 결과 자체가 흔들리므로, 개수를 두 배로 해도 결과가 변하지 않는지 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>입력을 분포에서 뽑아 결과 분포를 얻는다.</li>
+        <li>작고 선형적인 불확도에서는 선형 전파와 같다.</li>
+        <li>비선형·큰 불확도·상관 입력에서 몬테카를로가 유리.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.5.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 \(T\)의 불확도를 절반(0.005 s)으로 줄이면 선형 상대 불확도는?
+          <details><summary>답</summary><p>\(\sqrt{0.002^2 + (2\times0.005/2.006)^2} = 0.54\)%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(y = 1/(x - 1)\)에서 \(x = 1.10 \pm 0.05\)일 때 선형 전파가 왜 믿기 어려운가?
+          <details><summary>답</summary><p>분모가 0에 가까워 \(x\)가 1.05~1.15 사이에서 \(y\)가 20~6.7로 크게, 비대칭으로 변한다. 결과 분포가 한쪽으로 길게 늘어져 선형 근사가 맞지 않으므로 몬테카를로를 쓴다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>몬테카를로 결과의 2.5~97.5% 구간이 평균 ± 2σ와 다르게 비대칭이면 무엇을 뜻하는가?
+          <details><summary>답</summary><p>결과 분포가 정규가 아니다(비선형 때문). 보고할 때 대칭 ±가 아니라 구간(하한, 상한)으로 적는다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
