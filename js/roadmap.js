@@ -249,7 +249,14 @@
     const c = G.sel && COURSE.get(G.sel);
     if (!c) { box.innerHTML = '<p class="dim small">과목을 누르면 먼저 들을 과목과 다음에 열리는 과목을 보여 줍니다.</p>'; return; }
     const p = PRE.get(c.code);
-    const hard = [...new Set(p.hard.flat())], nexts = [...(NEXT.get(c.code) || [])];
+    const hard = [...new Set(p.hard.flat())];
+    /* 화면의 '다음에 열리는 과목'은 로드맵의 바로 다음 학기만(없으면 그 뒤 가장 가까운 학기). 공통 기초 뒤에는 2학년부터.
+       build.py next_courses와 같은 규칙이고, 졸업 로드맵 배치 계산은 NEXT 전체를 그대로 쓴다 */
+    const term0 = (x) => { const s = String(x.sem).match(/[12]/g) || ["1"]; return Math.min(...s.map((v) => (x.y - 1) * 2 + +v - 1)); };
+    const later = [...(NEXT.get(c.code) || [])].map((k) => COURSE.get(k)).filter(Boolean)
+      .filter((x) => (c.dept !== "common" || x.y >= 2) && term0(x) > term0(c));
+    const near = Math.min(...later.map(term0));
+    const nexts = later.filter((x) => term0(x) === near).map((x) => x.code);
     const mark = (codes, cls) => codes.forEach((k) => document.querySelectorAll(`.rm-chip[data-code="${k}"]`).forEach((b) => b.classList.add(cls)));
     mark([c.code], "is-sel"); mark(hard, "is-pre"); mark(p.co, "is-pre"); mark(p.soft, "is-soft"); mark(nexts, "is-next");
     const link = (k) => { const x = COURSE.get(k); return x ? `<button type="button" class="rm-link" data-code="${k}">${esc(x.name)}</button>` : esc(k); };

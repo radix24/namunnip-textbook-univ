@@ -101,6 +101,14 @@
   });
   const NEXT = new Map();
   ALL.forEach((c) => preCodes(c.pre).forEach((k) => { if (k !== c.code) (NEXT.get(k) || NEXT.set(k, []).get(k)).push(c); }));
+  /* 이어지는 과목은 로드맵의 바로 다음 학기만(없으면 그 뒤 가장 가까운 학기). 공통 기초 뒤에는 2학년 과목부터 (build.py next_courses와 같은 규칙) */
+  const terms = (c) => { const s = String(c.sem).match(/[12]/g) || ["1"]; return Math.min(...s.map((x) => (c.y - 1) * 2 + +x - 1)); };
+  NEXT.forEach((list, k) => {
+    const c = ALL.get(k), base = terms(c);
+    const later = list.filter((x) => (c.dept !== "common" || x.y >= 2) && terms(x) > base);
+    const near = Math.min(...later.map(terms));
+    if (later.length) NEXT.set(k, later.filter((x) => terms(x) === near)); else NEXT.delete(k);
+  });
   function drawList(d0) {
     const d = view(d0);
     host.innerHTML = d.courses.map((c) => {
