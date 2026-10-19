@@ -171,3 +171,53 @@
     build(); draw();
   })();
 })();
+
+/* 기계4 3단원: 끼워맞춤 (03-01), 공차 누적의 최악 조건과 통계 (03-03) */
+(() => {
+  "use strict";
+  /* ── 구멍 기준 끼워맞춤: 기준 치수 18~30 mm 구간의 ISO 286 값 (μm) ── */
+  (() => {
+    const S = QSim.card("lab-me-fitclass"); if (!S) return;
+    const [cv] = S.$$("canvas");
+    const HOLE = { H7: [0, 21], H8: [0, 33], H6: [0, 13] };
+    const SHAFT = { f7: [-41, -20], g6: [-20, -7], h6: [-13, 0], js6: [-6.5, 6.5], k6: [2, 15], n6: [15, 28], p6: [22, 35], s6: [35, 48] };
+    function draw() {
+      const c = QSim.col(), hn = S.val("h"), sn = S.val("s"), [hl, hu] = HOLE[hn], [sl, su] = SHAFT[sn];
+      const cmax = hu - sl, cmin = hl - su;
+      const kind = cmin > 0 ? "헐거운 끼워맞춤 (언제나 틈새)" : cmax < 0 ? "억지 끼워맞춤 (언제나 죔새)" : "중간 끼워맞춤 (틈새 또는 죔새)";
+      const v = QSim.view(cv, 0.45), G = v.g, f = QSim.frame(v, { x0: 0, x1: 10, y0: -50, y1: 55, yl: "기준 치수에서 벗어남 (μm)", pad: 40 });
+      f.axes({ noGrid: true }); f.path([[0, 0], [10, 0]], c.ink2, 1.5); f.text("기준 치수 Ø25", 7.2, 2, c.ink2);
+      const bar = (x0, x1, lo, hi, col, lb) => { G.fillStyle = col; G.fillRect(f.X(x0), f.Y(hi), f.X(x1) - f.X(x0), f.Y(lo) - f.Y(hi)); f.text(lb, (x0 + x1) / 2, hi + 3, c.ink2, "center"); };
+      bar(1.5, 3.5, hl, hu, "rgba(75,79,224,.5)", `구멍 ${hn}`);
+      bar(5, 7, sl, su, "rgba(214,120,60,.55)", `축 ${sn}`);
+      S.out(`Ø25 ${hn} 구멍: ${hl >= 0 ? "+" : ""}${hl} ~ +${hu} μm, ${sn} 축: ${sl >= 0 ? "+" : ""}${sl} ~ ${su >= 0 ? "+" : ""}${su} μm (ISO 286, 18~30 mm 구간)\n최대 틈새 = 구멍 최대 − 축 최소 = ${cmax} μm, 최소 틈새 = 구멍 최소 − 축 최대 = ${cmin} μm (음수는 죔새)\n→ ${kind}`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+
+  /* ── 공차 누적: 틈 = H − (a + b + c), 정규분포 가상 생산 ── */
+  (() => {
+    const S = QSim.card("lab-me-stack"); if (!S) return;
+    const [cv] = S.$$("canvas");
+    const rng = (seed) => () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const gauss = (r) => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+    function draw() {
+      const c = QSim.col(), tH = S.val("tH"), tp = S.val("tp"), n = S.val("n"), gmin = S.val("gmin");
+      const nomH = 16 * n + 2, gap0 = 2; // 기준 틈 2 mm
+      const worst = tH + n * tp, rss = Math.sqrt(tH * tH + n * tp * tp);
+      // 가상 생산 20000개: 각 치수 σ = 공차/3
+      const r = rng(11), N = 20000, gs = [];
+      for (let k = 0; k < N; k++) { let g = nomH + (tH / 3) * gauss(r); for (let i = 0; i < n; i++) g -= 16 + (tp / 3) * gauss(r); gs.push(g); }
+      const bad = gs.filter((g) => g < gmin).length;
+      const lo = gap0 - worst * 1.1, hi = gap0 + worst * 1.1, nb = 50, bw = (hi - lo) / nb, hist = new Array(nb).fill(0);
+      gs.forEach((g) => { const i = Math.floor((g - lo) / bw); if (i >= 0 && i < nb) hist[i]++; });
+      const hm = Math.max(...hist), v = QSim.view(cv, 0.45), G = v.g, f = QSim.frame(v, { x0: lo, x1: hi, y0: 0, y1: hm * 1.15, xl: "틈 (mm)", pad: 30 });
+      f.axes({ noGrid: true });
+      hist.forEach((h, i) => { const x = lo + i * bw; G.fillStyle = x + bw / 2 < gmin ? "rgba(214,80,60,.6)" : "rgba(75,79,224,.45)"; G.fillRect(f.X(x) + 1, f.Y(h), bw * f.sx - 1, f.Y(0) - f.Y(h)); });
+      [[gap0 - worst, c.warn], [gap0 + worst, c.warn], [gap0 - rss, c.acc], [gap0 + rss, c.acc]].forEach(([x, col]) => f.path([[x, 0], [x, hm * 1.1]], col, 1.5, [5, 4]));
+      f.path([[gmin, 0], [gmin, hm * 1.1]], c.ink, 2);
+      S.out(`하우징 ${nomH} ± ${tH.toFixed(2)}, 부품 ${n}개 각 16 ± ${tp.toFixed(3)} mm → 기준 틈 2.000 mm\n최악 조건: 2 ± ${worst.toFixed(3)} (빨간 점선), 통계적(±3σ): 2 ± ${rss.toFixed(3)} (초록 점선)\n가상 생산 20000개 중 틈 < ${gmin.toFixed(2)} mm: ${bad}개 (${((100 * bad) / N).toFixed(2)}%)`);
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
+})();
