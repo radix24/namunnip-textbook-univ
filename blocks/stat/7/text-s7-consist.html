@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s7-consist" data-kind="본문" data-std="응통7-01-04">
+  <header class="card-head"><span class="no"></span><h2>일치성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>일치추정량을 확률수렴으로 정의한다.</li>
+        <li>MSE가 0으로 가면 일치한다는 판정법과 연속함수 성질을 쓴다.</li>
+        <li>불편성과 일치성이 서로 다른 성질임을 예로 보인다.</li>
+      </ul>
+      <b>먼저 알아야 할 것</b>
+      <ul>
+        <li>평균제곱오차 (<a href="01-03.html">1.3절</a>), 확률수렴과 대수의 법칙 (응통6 7.1절, 7.2절).</li>
+      </ul>
+    </div>
+
+    <h3>자료가 많으면 맞아야 한다</h3>
+    <p>불편성은 "평균적으로 맞음"이라는 한 표본 크기에서의 성질입니다. 그런데 자료를 아무리 모아도 참값에 다가가지 않는 추정량이라면 쓸모가 없습니다. 표본이 커질수록 참값 근처에 몰리는 성질이 일치성이며, 추정량에 요구하는 가장 기본적인 조건입니다.</p>
+
+    <h3><span class="no">1.4.1</span>정의와 판정</h3>
+    <div class="tb-env def">
+      <span class="lb">정의 1.4.1</span>
+      <p>추정량의 열 \(\hat\theta_n\)이 모든 \(\theta\)에서 \(\hat\theta_n \xrightarrow{P}\theta\), 곧 모든 \(\varepsilon &gt; 0\)에 대해 \(P(|\hat\theta_n - \theta| \ge \varepsilon) \to 0\)이면 <b>일치추정량</b>이라 합니다.</p>
+    </div>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.4.2</span>
+      <p>(가) \(\mathrm{MSE}(\hat\theta_n) \to 0\)이면 \(\hat\theta_n\)은 일치추정량이다. 따라서 치우침과 분산이 모두 0으로 가면 일치한다. (나) \(\hat\theta_n\)이 \(\theta\)의 일치추정량이고 \(g\)가 \(\theta\)에서 연속이면 \(g(\hat\theta_n)\)은 \(g(\theta)\)의 일치추정량이다.</p>
+    </div>
+    <p class="tb-proof">(가) 마르코프 부등식을 \((\hat\theta_n - \theta)^2\)에 쓰면 \(P(|\hat\theta_n - \theta| \ge \varepsilon) \le \mathrm{MSE}/\varepsilon^2 \to 0\). (나) 연속성에서 \(|g(\hat\theta_n) - g(\theta)| \ge \varepsilon\)이면 어떤 \(\delta\)에 대해 \(|\hat\theta_n - \theta| \ge \delta\)이어야 하므로, 그 확률이 0으로 갑니다. <span class="qed">∎</span></p>
+    <p>(가)의 역은 성립하지 않습니다. 확률이 \(1/n\)인 작은 사건에서 \(\hat\theta_n\)이 \(n^2\)처럼 튀면 일치하지만 MSE는 커질 수 있습니다. 일치성은 "대부분의 표본에서 가까움"이고 MSE는 "평균적인 제곱 거리"이기 때문입니다.</p>
+
+    <h3><span class="no">1.4.2</span>예</h3>
+    <ul>
+      <li>표본평균: 분산이 유한하면 \(\mathrm{Var}(\bar X) = \sigma^2/n \to 0\)이고 불편이므로 일치(대수의 법칙).</li>
+      <li>MLE \(\hat\sigma^2 = \frac{n-1}nS^2\): 치우침 \(-\sigma^2/n \to 0\), 분산 \(\to 0\)이므로 치우쳤지만 일치.</li>
+      <li>\(U(0, \theta)\)의 \(X_{(n)}\): \(P(X_{(n)} \le \theta - \varepsilon) = (1 - \varepsilon/\theta)^n \to 0\)이므로 일치.</li>
+      <li>첫 관측값 \(X_1\)로 \(\mu\)를 추정: 불편이지만 \(n\)이 커져도 분포가 그대로이므로 일치하지 않습니다.</li>
+      <li>적률추정량: 표본 적률이 일치하고 역함수가 연속이므로 (나)에 의해 일치합니다. 정규 표본에서 \(S = \sqrt{S^2}\), 지수분포의 \(1/\bar X\)도 같은 이유로 일치합니다.</li>
+    </ul>
+    <p>정칙 조건 아래에서 MLE는 일치하며(3.3절), 이것이 MLE를 쓰는 첫째 이유입니다. 반대로 모수의 개수가 표본과 함께 늘어나는 문제(예: 짝마다 다른 평균을 가진 쌍 자료에서 공통 분산을 추정)에서는 MLE도 일치하지 않을 수 있습니다(네이만-스콧 문제).</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.3</span>
+      <p>지수분포 표본으로 생존확률 \(S(t) = P(X &gt; t) = e^{-\lambda t}\)를 두 가지 방법으로 추정합니다. (가) \(e^{-t/\bar X}\), (나) 경험 비율 \(\frac1n\#\{X_i &gt; t\}\). 둘 다 일치함을 보이세요.</p>
+    </div>
+    <p><i>풀이.</i> (가) \(\bar X \xrightarrow{P} 1/\lambda\)(대수의 법칙)이고 \(g(x) = e^{-t/x}\)는 \(x &gt; 0\)에서 연속이므로 정리 (나)로 \(e^{-t/\bar X} \xrightarrow{P} e^{-\lambda t}\). (나) 지시변수 \(1\{X_i &gt; t\}\)의 평균이므로 대수의 법칙으로 \(P(X &gt; t)\)에 수렴합니다. (나)는 지수분포라는 가정 없이도 일치하지만, 가정이 맞으면 (가)가 분산이 더 작습니다.</p>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>일치성: \(\hat\theta_n \xrightarrow{P}\theta\). 자료가 많아지면 참값에 몰림.</li>
+        <li>MSE → 0이면 일치. 일치추정량의 연속함수는 일치.</li>
+        <li>불편이지만 일치하지 않는 것(\(X_1\)), 치우쳤지만 일치하는 것(\(\hat\sigma^2\))이 모두 있습니다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\hat\theta_n = \bar X + 1/n\)은 \(\mu\)의 일치추정량인가요? 불편인가요?
+          <details><summary>답</summary><p>치우침 \(1/n \to 0\), 분산 \(\sigma^2/n \to 0\)이므로 일치합니다. 치우침이 0이 아니라 불편은 아닙니다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>\(U(0, \theta)\)에서 \(X_{(n)}\)의 MSE를 구해 0으로 감을 보이세요(\(X_{(n)}/\theta\)의 밀도 \(nu^{n-1}\)).
+          <details><summary>답</summary><p>\(E(X_{(n)}) = \frac{n}{n+1}\theta\), \(E(X_{(n)}^2) = \frac{n}{n+2}\theta^2\). MSE \(= E(X_{(n)}^2) - 2\theta E(X_{(n)}) + \theta^2 = \theta^2\left(\frac{n}{n+2} - \frac{2n}{n+1} + 1\right) = \frac{2\theta^2}{(n+1)(n+2)} \to 0\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

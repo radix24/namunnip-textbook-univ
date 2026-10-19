@@ -11,59 +11,62 @@
     <div class="tb-goal">
       <b>이 절에서 배울 것</b>
       <ul>
-        <li>복합가설에서 우도비 통계량을 정의하고 계산한다.</li>
-        <li>윌크스 정리로 근사 기각역을 정한다.</li>
+        <li>제약 있는 MLE와 제약 없는 MLE로 우도비 통계량을 만든다.</li>
+        <li>정규 평균의 우도비 검정이 t 검정과 같음을 보인다.</li>
+        <li>복합 가설에서 우도비 검정의 기각값을 정하는 방법을 안다.</li>
       </ul>
       <b>먼저 알아야 할 것</b>
       <ul>
-        <li>최대가능도법 (<a href="01-01.html">1.1절</a>), 네이만-피어슨 (<a href="05-02.html">5.2절</a>).</li>
+        <li>최대가능도추정량 (<a href="01-02.html">1.2절</a>), 네이만-피어슨 보조정리 (<a href="05-02.html">5.2절</a>).</li>
       </ul>
     </div>
 
     <h3>모든 상황에 쓸 수 있는 검정 만들기</h3>
-    <p>UMP 검정은 특별한 경우에만 있습니다. 가설이 복잡해도 쓸 수 있는 일반적인 방법은 "\(H_0\) 안에서 가장 그럴듯한 설명"과 "전체에서 가장 그럴듯한 설명"을 비교하는 것입니다.</p>
+    <p>균일최강력 검정은 일모수의 단측 가설처럼 특별한 경우에만 있습니다. 모수가 여럿이고 일부만 검정하거나(\(\sigma\)를 모른 채 \(\mu\) 검정), 양측 가설인 경우가 훨씬 많습니다. 일반적인 처방은 네이만-피어슨의 "가능도의 비"를 넓혀, "\(H_0\) 안에서 가장 그럴듯한 설명"과 "전체에서 가장 그럴듯한 설명"을 비교하는 것입니다.</p>
 
     <h3><span class="no">6.1.1</span>정의</h3>
     <div class="tb-env def">
       <span class="lb">정의 6.1.1</span>
-      <p><b>우도비 통계량</b>: \(\Lambda = \dfrac{\sup_{\theta\in\Theta_0}L(\theta)}{\sup_{\theta \in \Theta}L(\theta)} = \dfrac{L(\hat\theta_0)}{L(\hat\theta)}\). \(0 \le \Lambda \le 1\)이고, 작으면 \(H_0\)를 기각한다.</p>
+      <p><b>우도비 통계량</b>: \(\Lambda = \dfrac{\sup_{\theta\in\Theta_0}L(\theta)}{\sup_{\theta \in \Theta}L(\theta)} = \dfrac{L(\hat\theta_0)}{L(\hat\theta)}\). \(0 \le \Lambda \le 1\)이고, 작으면 \(H_0\)를 기각한다. 크기 \(\alpha\)가 되도록 \(c\)를 정해 \(\Lambda \le c\)이면 기각한다.</p>
     </div>
-    <p>\(\hat\theta_0\)는 \(H_0\) 제약 아래 MLE, \(\hat\theta\)는 제약 없는 MLE입니다.</p>
+    <p>\(\hat\theta_0\)는 \(H_0\) 제약 아래 MLE, \(\hat\theta\)는 제약 없는 MLE입니다. 분모가 분자보다 작을 수 없으므로 \(\Lambda \le 1\)이고, \(H_0\)가 자료를 거의 전체만큼 잘 설명하면 1에 가깝습니다. 단순 가설 대 단순 가설이면 네이만-피어슨 검정과 같은 꼴입니다.</p>
 
-    <h3><span class="no">6.1.2</span>윌크스 정리</h3>
-    <div class="tb-env thm">
-      <span class="lb">정리 6.1.2</span>
-      <p>정칙 조건 아래, \(H_0\)가 참이면 \(-2\log\Lambda \xrightarrow D \chi^2_r\). \(r\)은 \(H_0\)가 고정하는 모수의 수(전체 모수 차원 − \(H_0\) 아래 모수 차원).</p>
+    <h3><span class="no">6.1.2</span>정확한 분포로 바꾸기</h3>
+    <p>\(\Lambda\)가 분포를 아는 통계량의 단조함수이면 그 분포로 정확한 기각값을 정합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.2</span>
+      <p>정규 \(N(\mu, \sigma^2)\)에서 \(H_0: \mu = \mu_0\) (\(\sigma\) 모름)의 우도비 검정이 t 검정과 같음을 보이세요.</p>
     </div>
-    <p>일모수에서 \(-2\log\Lambda = 2[\ell(\hat\theta) - \ell(\theta_0)] \approx nI(\theta_0)(\hat\theta - \theta_0)^2\)(로그가능도의 2차 전개)이고, 3.2절에서 \(\sqrt{nI}(\hat\theta - \theta_0) \approx N(0,1)\)이므로 그 제곱은 \(\chi^2_1\)입니다.</p>
+    <p><i>풀이.</i> 제약 없는 MLE \(\hat\mu = \bar x\), \(\hat\sigma^2 = \frac1n\sum(x_i - \bar x)^2\). 제약 아래 \(\hat\sigma_0^2 = \frac1n\sum(x_i - \mu_0)^2 = \hat\sigma^2 + (\bar x - \mu_0)^2\). 정규 가능도의 최댓값은 \((2\pi\hat\sigma^2)^{-n/2}e^{-n/2}\) 꼴이므로 \(\Lambda = (\hat\sigma^2/\hat\sigma_0^2)^{n/2}\). 따라서 \(\Lambda^{-2/n} = 1 + \frac{(\bar x - \mu_0)^2}{\hat\sigma^2} = 1 + \frac{t^2}{n-1}\)이고(\(t = \frac{\bar x - \mu_0}{s/\sqrt n}\)), \(\Lambda\)가 작음 ⟺ \(|t|\)가 큼. 기각값은 \(t_{n-1}\) 분포로 정합니다.</p>
+    <p>같은 방식으로 일원 분산분석의 F 검정(응통5 5.1절), 두 정규 분산의 F 검정, 분할표의 독립성 검정도 우도비 검정에서 나옵니다. 정확한 분포를 알 수 없을 때는 다음 절의 윌크스 정리로 근사합니다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 6.1.3</span>
-      <p>포아송 표본 \(n = 20\), \(\sum x_i = 52\)로 \(H_0: \lambda = 2\)를 우도비 검정하세요.</p>
+      <p>지수분포 \(\mathrm{Exp}(\lambda)\)에서 \(H_0: \lambda = \lambda_0\)의 우도비 통계량을 \(\bar x\)로 쓰고, 기각역의 모양을 말하세요.</p>
     </div>
-    <p><i>풀이.</i> \(\hat\lambda = 2.6\). \(\ell(\lambda) = -n\lambda + \sum x_i\log\lambda + c\). \(-2\log\Lambda = 2[(-52 + 52\log 2.6) - (-40 + 52\log 2)] = 2[-12 + 52\log 1.3] = 2[-12 + 13.643] = 3.286\). \(\chi^2_1\)의 95%점 3.84보다 작으므로 \(\alpha = 0.05\)에서 기각하지 않습니다(p값 약 0.070).</p>
-
-    <div class="tb-env ex">
-      <span class="lb">예제 6.1.4</span>
-      <p>정규 \(N(\mu, \sigma^2)\)에서 \(H_0: \mu = \mu_0\) (\(\sigma\) 모름)의 우도비 검정이 t 검정과 같음을 보이세요.</p>
-    </div>
-    <p><i>풀이.</i> 두 MLE에서 \(\Lambda = (\hat\sigma^2/\hat\sigma_0^2)^{n/2}\), \(\hat\sigma_0^2 = \frac1n\sum(x_i - \mu_0)^2 = \hat\sigma^2 + (\bar x - \mu_0)^2\). 따라서 \(\Lambda^{-2/n} = 1 + \frac{t^2}{n-1}\)이고, \(\Lambda\)가 작음 ⟺ \(|t|\)가 큼. 정확한 분포를 아는 경우에는 윌크스 근사 대신 그 분포를 씁니다.</p>
+    <p><i>풀이.</i> \(\ell(\lambda) = n\log\lambda - \lambda n\bar x\), \(\hat\lambda = 1/\bar x\). \(\log\Lambda = n\log(\lambda_0\bar x) - n\lambda_0\bar x + n\). \(u = \lambda_0\bar x\)로 두면 \(\log\Lambda = n(\log u - u + 1)\)이고, 이 함수는 \(u = 1\)에서 최대(0)이며 양쪽으로 감소합니다. 따라서 \(\Lambda \le c\) ⟺ \(u \le c_1\) 또는 \(u \ge c_2\): 양측 기각역입니다. \(2n\lambda_0\bar X \sim \chi^2_{2n}\)으로 \(c_1, c_2\)를 정할 수 있지만, 양쪽 꼬리 확률을 같게 잡는 관례적 구간과는 조금 다릅니다.</p>
 
     <div class="tb-summary">
       <b>요약</b>
       <ol>
         <li>\(\Lambda = L(\hat\theta_0)/L(\hat\theta)\), 작으면 기각.</li>
-        <li>\(-2\log\Lambda \approx \chi^2_r\), \(r\) = 제약의 수.</li>
-        <li>t 검정, 분산분석, 카이제곱 검정도 우도비 검정의 특수한 경우입니다.</li>
+        <li>\(\Lambda\)가 분포를 아는 통계량의 단조함수이면 정확한 검정이 됩니다(t, F 검정).</li>
+        <li>정확한 분포가 없으면 윌크스 근사(6.2절)를 씁니다.</li>
       </ol>
     </div>
 
     <div class="tb-exercises">
-      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <h3><span class="no">6.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>베르누이 \(n = 100\), 앞면 60에서 \(H_0: p = 0.5\)의 \(-2\log\Lambda\)는?
-          <details><summary>답</summary><p>\(2[60\log1.2 + 40\log0.8] = 2[10.939 - 8.926] = 4.03\). 3.84보다 커서 기각.</p></details>
+        <li>베르누이 \(n\)번 중 \(k\)번 성공일 때 \(H_0: p = p_0\)의 \(\Lambda\)를 쓰세요.
+          <details><summary>답</summary><p>\(\Lambda = \dfrac{p_0^k(1-p_0)^{n-k}}{\hat p^k(1-\hat p)^{n-k}}\), \(\hat p = k/n\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol>
+        <li>두 독립 정규 표본(분산 같음)에서 \(H_0: \mu_1 = \mu_2\)의 우도비 검정이 합동분산 t 검정과 같음을 보이는 흐름을 쓰세요.
+          <details><summary>답</summary><p>제약 없는 MLE의 분산은 집단 안 제곱합/\(N\), 제약 아래는 전체 제곱합/\(N\). \(\Lambda^{-2/N} = \frac{\text{전체 SS}}{\text{집단 안 SS}} = 1 + \frac{\text{집단 간 SS}}{\text{집단 안 SS}} = 1 + \frac{t^2}{N-2}\). 따라서 \(|t|\)가 클 때 기각.</p></details>
         </li>
       </ol>
     </div>

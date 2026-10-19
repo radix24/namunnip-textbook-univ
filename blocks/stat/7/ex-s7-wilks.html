@@ -1,0 +1,37 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통7-06-02",
+  "order": 20
+}
+-->
+<article class="card q-card" id="ex-s7-wilks" data-kind="예제" data-std="응통7-06-02">
+  <header class="card-head"><span class="no"></span><h2>세 공장의 불량률이 같은가: 우도비 검정의 자유도 세기</h2><span class="kind">예제 · 윌크스 정리</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>먼저 읽는 법</h3>
+      <p>우도비 검정은 두 번의 최대화(제약 없이, 제약 아래)와 한 번의 빼기로 끝납니다. 자유도는 "전체 모형의 자유 모수 수 − 귀무가설 모형의 자유 모수 수"입니다. 모수 이름이 아니라 개수를 셉니다.</p>
+    </section>
+
+    <p class="q-prob"><b>문제.</b> 세 공장에서 부품을 각각 200개씩 검사해 불량이 10, 18, 26개였습니다. 세 공장의 불량률이 같다는 가설을 우도비 검정으로 \(\alpha = 0.05\)에서 검정하세요(\(\chi^2_{0.05,2} = 5.99\)).</p>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>전체 모형: 공장별 \(p_1, p_2, p_3\) (모수 3개), MLE \(\hat p_j = x_j/200\) = 0.05, 0.09, 0.13.</div><span class="q-why">이항 가능도의 곱을 공장마다 따로 최대화합니다.</span></li>
+        <li><div>귀무 모형: 공통 \(p\) (모수 1개), MLE \(\hat p_0 = 54/600 = 0.09\). 자유도 \(r = 3 - 1 = 2\).</div><span class="q-why">\(H_0\)가 고정하는 것은 "두 개의 차이"입니다.</span></li>
+        <li><div>\(-2\log\Lambda = 2\sum_j\left[x_j\log\frac{\hat p_j}{\hat p_0} + (n - x_j)\log\frac{1 - \hat p_j}{1 - \hat p_0}\right]\). 공장 1: \(10\log\frac{0.05}{0.09} + 190\log\frac{0.95}{0.91} = -5.878 + 8.173 = 2.295\). 공장 2: 0. 공장 3: \(26\log\frac{0.13}{0.09} + 174\log\frac{0.87}{0.91} = 9.561 - 7.822 = 1.739\). 합 4.034, 2배 하면 8.07.</div><span class="q-why">로그가능도의 차이를 공장별로 계산해 더합니다.</span></li>
+        <li class="q-end"><div>8.07 &gt; 5.99이므로 기각합니다(p값 약 0.018). 세 공장의 불량률이 같다고 보기 어렵습니다.</div><span class="q-why">\(P(\chi^2_2 &gt; 8.07) = e^{-8.07/2} \approx 0.0177\).</span></li>
+      </ol>
+    </section>
+
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>같은 자료의 피어슨 카이제곱 통계량(응통5 5.3절)은 기대 도수 18, 182로 \(\sum(O-E)^2/E = (64 + 0 + 64)/18 + (64 + 0 + 64)/182 \approx 7.11 + 0.70 = 7.82\)이고 자유도 2입니다. 우도비 통계량 8.07과 가까우며, 두 통계량은 표본이 크면 같은 극한을 가집니다.</p>
+    </section>
+
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>공장마다 따로 비율 검정을 세 번 하면 다중 비교 문제가 생기지만(응통5 4.5절), 우도비 검정은 "모두 같다"는 하나의 가설을 한 번에 검정합니다. 기각한 뒤에는 어느 공장이 다른지 사후 비교로 살핍니다. 로지스틱 회귀(응통18)의 모형 비교도 같은 계산입니다.</p>
+    </section>
+  </div>
+</article>
