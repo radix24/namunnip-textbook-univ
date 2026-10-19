@@ -1,0 +1,77 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통1-02-03",
+  "order": 30,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/stat/stat-labs2.js"]
+}
+-->
+<article class="card q-card" id="lab-s1-taylor" data-kind="실습" data-std="응통1-02-03">
+  <header class="card-head"><span class="no"></span><h2>다항식 몇 개 항이면 함수를 충분히 흉내 낼까?</h2><span class="kind">실습 · 테일러 근사</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>\(e^x\), \(\ln(1+x)\), \(\sin x\)를 0 둘레의 테일러 다항식으로 근사하면서, 차수와 점 \(x\)에 따라 오차가 어떻게 달라지는지 봅니다. 라그랑주 나머지로 구한 오차 상한이 실제 오차보다 항상 크거나 같은지도 확인합니다. 성취기준 [응통1-02-03].</p>
+      <p class="q-term"><b>\(n\)차 테일러 다항식</b>: \(T_n(x) = \sum_{k=0}^{n}\frac{f^{(k)}(0)}{k!}x^k\). 0에서의 값과 미분계수 \(n\)개를 원래 함수와 똑같이 맞춘 다항식입니다.</p>
+      <p class="q-term"><b>라그랑주 나머지</b>: 0과 \(x\) 사이 어떤 \(c\)에 대해 \(f(x) - T_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!}x^{n+1}\). \(|f^{(n+1)}|\)의 최댓값으로 오차 상한을 얻습니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>회색 실선이 원래 함수, 파란 점선이 테일러 다항식입니다. 검은 점은 \(f(x)\), 빨간 점은 \(T_n(x)\)입니다. 계산은 모두 정해진 식이라 같은 설정이면 언제나 같은 값이 나옵니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>함수</span><select name="fn" aria-label="함수">
+          <option value="exp" selected>e^x</option>
+          <option value="log">ln(1 + x)</option>
+          <option value="sin">sin x</option>
+        </select></label>
+        <label><span>차수 n = <b data-show="deg">2</b></span><input type="range" name="deg" min="0" max="12" step="1" value="2" aria-label="차수"></label>
+        <label><span>평가점 x = <b data-show="x" data-fix="2">1.00</b></span><input type="range" name="x" min="-3" max="3" step="0.05" value="1" aria-label="평가점"></label>
+      </div>
+      <canvas aria-label="함수와 테일러 다항식"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>\(e^x\), \(x = 1\)에서 차수를 0부터 6까지 올리며 \(T_n(1)\)과 실제 오차를 적습니다.</li>
+        <li>각 차수에서 출력의 오차 상한과 실제 오차를 비교합니다.</li>
+        <li>차수를 4로 두고 \(x\)를 0.5, 1, 2, 3으로 바꿉니다. 0에서 멀어질수록 오차가 어떻게 되나요?</li>
+        <li>\(\ln(1+x)\)로 바꾸어 \(x = 0.5\)와 \(x = 1.5\)에서 차수를 2, 4, 8, 12로 올려 봅니다.</li>
+        <li>\(\sin x\)에서 \(x = 3\)을 두고, 그래프가 언제부터 원래 곡선과 겹치는지 봅니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <ul>
+        <li>\(e^1 = 2.718282\)에 대해 \(T_2(1) = 2.5\), \(T_4(1) = 2.708333\)(오차 약 0.00995), \(T_6(1) = 2.718056\)(오차 약 0.000226)으로, 차수를 2 올릴 때마다 오차가 수십 분의 1로 줄어듭니다.</li>
+        <li>오차 상한(예: \(n = 4\)에서 \(e/5! \approx 0.0227\))은 언제나 실제 오차 이상입니다. 상한은 보장이지 정확한 값은 아닙니다.</li>
+        <li>같은 차수에서 \(x\)가 0에서 멀어질수록 오차가 빠르게 커집니다(\(|x|^{n+1}\)에 비례). \(x = 3\), \(n = 4\)이면 \(T_4(3) = 16.375\)인데 \(e^3 \approx 20.09\)라 오차가 3.7이나 됩니다.</li>
+        <li>\(\ln(1+x)\)는 \(x = 0.5\)에서 차수를 올리면 오차가 줄지만(\(n = 4\)에서 약 0.0044), \(x = 1.5\)에서는 차수를 올릴수록 오히려 크게 빗나갑니다. 이 급수의 수렴 반지름이 1이기 때문입니다.</li>
+        <li>\(\sin x\)는 모든 \(x\)에서 수렴하지만, \(x = 3\)처럼 멀면 차수가 7~9쯤은 되어야 그림에서 거의 겹칩니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li>통계에서 \(\ln(1+x) \approx x\)(1차 근사)를 쓰는 경우를 떠올리고, 어느 범위의 \(x\)에서 믿을 만한지 이 실습 결과로 정해 보세요.</li>
+        <li>델타 방법(응통6-07-03)은 1차 테일러 근사입니다. 근사가 나빠지는 상황은 무엇일까요?</li>
+        <li>\(\ln(1+x)\)의 급수가 \(|x| > 1\)에서 발산하는 것을 \(k\)번째 항 \((-1)^{k+1}x^k/k\)의 크기로 설명해 보세요.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>R로 확인하려면 <code>sum(1 / factorial(0:4))</code>(\(T_4(1)\))와 <code>exp(1)</code>을 비교합니다. 응통1-02-03 본문의 오차 추정 예제와 같은 숫자가 나옵니다.</p>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>오차 상한의 뜻</h3>
+    <p class="q">\(e^x\)의 4차 테일러 다항식으로 \(e^{0.1}\)을 근사할 때 라그랑주 나머지로 구한 상한이 \(9.2\times10^{-8}\)입니다. 옳은 말은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>실제 오차는 정확히 \(9.2\times10^{-8}\)이다.<span class="why"><b>상한일 뿐입니다.</b> 실제 오차는 이보다 작거나 같습니다(이 경우 약 \(8.5\times10^{-8}\)).</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>실제 오차는 \(9.2\times10^{-8}\)을 넘지 않는다.<span class="why"><b>맞습니다.</b> \(|f^{(5)}(c)| \le e^{0.1}\)을 써서 만든 보장입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>차수를 높여도 상한은 그대로다.<span class="why"><b>아닙니다.</b> 상한에는 \(|x|^{n+1}/(n+1)!\)이 들어 있어 차수를 높이면 빠르게 작아집니다.</span></span></button></li>
+    </ol>
+  </div>
+</article>
