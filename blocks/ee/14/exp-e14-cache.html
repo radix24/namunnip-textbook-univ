@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-06-02",
+  "order": 22,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e14-arch.js"]
+}
+-->
+<article class="card q-card" id="exp-e14-cache" data-kind="탐구" data-std="전전14-06-02">
+  <header class="card-head"><span class="no"></span><h2>접근 패턴과 캐시 적중률</h2><span class="kind">탐구 · 직접 사상과 집합 연관</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>같은 크기 캐시인데 배열을 읽는 방법에 따라 적중률이 75%도 되고 0%도 될까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>32비트 주소의 캐시를 LRU 교체로 모의 실험합니다. 접근 패턴: 순차(int 배열 1024개), 64바이트 간격(256곳을 네 번), 충돌(4 KB 떨어진 두 int 배열을 번갈아). 적중 1사이클, 실패 벌점 100사이클로 AMAT를 계산합니다(6.1절, 6.2절).</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>캐시 2^<b data-show="lsz" data-fix="0">10</b> B</span><input type="range" name="lsz" min="8" max="15" step="1" value="10" aria-label="캐시 크기 지수"></label>
+        <label><span>블록 2^<b data-show="lbl" data-fix="0">4</b> B</span><input type="range" name="lbl" min="2" max="7" step="1" value="4" aria-label="블록 크기 지수"></label>
+        <label><span>연관도</span><select name="ways" aria-label="연관도"><option value="1" selected>직접 사상</option><option value="2">2-way</option><option value="4">4-way</option></select></label>
+        <label><span>패턴</span><select name="kind" aria-label="접근 패턴"><option value="seq" selected>순차</option><option value="stride">64 B 간격</option><option value="conflict">충돌</option></select></label>
+      </div>
+      <canvas aria-label="접근별 적중과 실패"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>처음 화면</b><span>1 KB, 16 B 블록, 직접 사상, 순차: 주소 분할 22 | 6 | 4, 적중 768/1024 = 75%, AMAT 26사이클. 블록 하나에 int 4개라 넷 중 하나만 실패(강제 실패)입니다.</span></li>
+        <li><b>블록 키우기</b><span>블록 64 B(2^6)면 적중 93.75%, AMAT 7.25. 공간 지역성을 더 잘 씁니다.</span></li>
+        <li><b>64 B 간격</b><span>1 KB, 16 B 블록이면 적중 0%: 블록마다 한 번만 쓰고(16 B 중 4 B), 256곳 × 16 B = 4 KB가 캐시보다 커서 다음 바퀴에 다 사라졌습니다. 캐시를 16 KB(2^14)로 키우면 첫 바퀴만 실패해 75%.</span></li>
+        <li><b>충돌</b><span>직접 사상 1 KB면 두 배열이 같은 집합을 번갈아 차지해 0%. 2-way로 바꾸면 75%로 회복됩니다(충돌 실패 제거).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>행렬을 행 순서로 읽느냐 열 순서로 읽느냐, 배열 크기를 2의 거듭제곱으로 잡느냐에 따라 같은 계산이 몇 배 느려질 수 있습니다. 고성능 프로그램은 블록 단위로 나눠(타일링) 캐시에 맞춥니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"캐시가 크면 패턴은 상관없다."</b> 충돌 실패는 크기가 아니라 사상 방식 때문에 생깁니다.</li>
+        <li><b>"실패 하나는 사이클 하나 손해다."</b> 메모리까지 가면 수십~수백 사이클입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-03-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-mult" data-kind="본문" data-std="전전14-03-01">
+  <header class="card-head"><span class="no"></span><h2>곱셈기와 나눗셈기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>이진 곱셈을 더하고 자리 옮기기(shift-add)로 수행하는 순서를 따라간다.</li>
+        <li>레지스터 구성(곱수와 곱의 아래 절반 공유)으로 하드웨어를 줄이는 방법을 안다.</li>
+        <li>복원 나눗셈의 빼기-비교-되돌리기 순서를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>2진 덧셈과 자리 옮김 (<a href="../4/04-01.html">전전4 4.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.1.1</span>shift-add 곱셈</h3>
+    <p>손으로 하는 곱셈처럼, 곱수의 각 비트가 1이면 피승수를 그 자리만큼 옮겨 더합니다. n비트 × n비트는 n번의 "검사-더하기-옮기기"로 2n비트 곱을 만듭니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>4비트 0110(6) × 0101(5)를 곱수의 아래 비트부터 처리하라.</p>
+    </div>
+    <p><i>풀이.</i> 곱 = 0. 비트0 = 1: 곱 += 0110 → 0000 0110. 비트1 = 0: 더하지 않음. 비트2 = 1: 곱 += 0110을 2자리 옮긴 0001 1000 → 0001 1110. 비트3 = 0. 결과 0001 1110 = 30. 하드웨어는 피승수를 옮기는 대신 곱 레지스터를 오른쪽으로 옮겨, 2n비트 덧셈기 대신 n비트 덧셈기 하나로 합니다. 곱수를 곱 레지스터의 아래 절반에 넣으면 레지스터 하나를 아낍니다.</p>
+    <p>빠른 곱셈기는 모든 부분곱을 한꺼번에 만들어 덧셈기 나무(Wallace 나무)로 더하거나, Booth 부호화로 부분곱 수를 줄입니다.</p>
+
+    <h3><span class="no">3.1.2</span>복원 나눗셈</h3>
+    <p>나머지에서 제수를 빼 보고, 결과가 음수면 다시 더해 되돌리고(복원) 몫 비트 0, 아니면 몫 비트 1. 매 단계 나머지를 왼쪽으로 옮깁니다. 예: 7 ÷ 2 → 몫 3, 나머지 1. 나눗셈은 다음 단계가 이전 결과(부호)에 의존해 곱셈보다 병렬화하기 어렵고 느립니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "n비트 곱은 n비트에 들어간다": 2n비트가 필요합니다(4비트 × 4비트 최대 225는 8비트). (2) "곱셈은 덧셈 한 번만큼 빠르다": 순차 곱셈기는 n사이클, 병렬 곱셈기도 덧셈기 여러 단의 지연이 있습니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>shift-add: 곱수 비트마다 검사·더하기·옮기기, n번에 2n비트 곱.</li>
+        <li>곱 레지스터를 옮겨 n비트 덧셈기 하나로, 곱수와 레지스터 공유.</li>
+        <li>복원 나눗셈: 빼고 음수면 되돌리기. 순차적이라 느리다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>0111 × 0011을 shift-add로 구하라.
+          <details><summary>답</summary><p>0111 + 01110 = 10101(21).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>8비트 × 8비트 순차 곱셈기는 몇 번 반복하는가? 곱은 몇 비트인가?
+          <details><summary>답</summary><p>8번, 16비트.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>부호 있는 수의 곱셈을 부호 없는 곱셈기로 하려면?
+          <details><summary>답</summary><p>절댓값으로 곱하고 부호를 XOR로 정해 필요하면 2의 보수를 취합니다(또는 Booth 알고리즘).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

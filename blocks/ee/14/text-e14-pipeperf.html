@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전14-05-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e14-pipeperf" data-kind="본문" data-std="전전14-05-02">
+  <header class="card-head"><span class="no"></span><h2>파이프라인의 성능 향상</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>파이프라인의 처리율(명령/시간)과 지연(명령 하나의 시간)을 구별한다.</li>
+        <li>단계 불균형과 파이프라인 레지스터 지연이 가속을 줄이는 것을 계산한다.</li>
+        <li>해저드로 늘어난 CPI를 넣어 실제 가속을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>데이터패스 지연 (<a href="04-01.html">4.1절</a>), 해저드 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">5.2.1</span>이상적 가속</h3>
+    <p>k단계로 고르게 나누면 클록 주기가 1/k이 되고, 매 사이클 명령 하나가 끝나므로 처리율이 k배입니다. 명령 n개의 시간은 \((k + n - 1)\)사이클이라 n이 크면 가속이 k에 가까워집니다. 명령 하나의 지연은 오히려 조금 늘어납니다(레지스터 지연).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>4.1절의 단계 지연(200, 100, 200, 200, 100 ps), 파이프라인 레지스터 지연 20 ps. (가) 파이프라인 클록 주기, (나) 단일 사이클(800 ps) 대비 가속(명령이 많을 때), (다) 해저드로 CPI가 1.2가 되면?</p>
+    </div>
+    <p><i>풀이.</i> (가) 가장 긴 단계 200 + 20 = 220 ps. (나) 800/220 = 3.64배(5단계지만 불균형과 레지스터 지연으로 5배 못 미침). (다) 800/(220 × 1.2) = 3.03배.</p>
+    <p>단계를 더 잘게 나누면(깊은 파이프라인) 클록이 빨라지지만, 레지스터 지연의 비중과 분기 손해가 커져 어느 정도 이상은 이득이 줄어듭니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "파이프라인은 명령 하나를 빠르게 한다": 하나의 지연은 그대로이거나 늘고, 처리율이 늘어납니다. (2) "k단계면 k배": 불균형, 레지스터 지연, 해저드로 줄어듭니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>처리율 k배(이상적), 명령 하나의 지연은 줄지 않는다.</li>
+        <li>주기 = 가장 긴 단계 + 레지스터 지연.</li>
+        <li>실제 가속 = 단일 주기 / (파이프 주기 × CPI).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>5단계, 명령 100개의 사이클 수(멈춤 없음)는?
+          <details><summary>답</summary><p>104.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>모든 단계 160 ps, 레지스터 20 ps, 단일 사이클 800 ps이면 이상적 가속은?
+          <details><summary>답</summary><p>800/180 = 4.44배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제에서 MEM 단계를 둘로 나눠(각 100 ps) 6단계로 하면 주기와 가속(CPI 1.2 유지 가정)은?
+          <details><summary>답</summary><p>가장 긴 단계 200 ps(IF, EX)라 주기 그대로 220 ps, 가속 변화 없음. 가장 긴 단계를 나눠야 효과가 있습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
