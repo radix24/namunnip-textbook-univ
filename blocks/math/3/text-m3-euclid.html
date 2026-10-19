@@ -1,0 +1,87 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-04-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-euclid" data-kind="본문" data-std="수학3-04-01">
+  <header class="card-head"><span class="no"></span><h2>확장 유클리드 호제법과 모듈러 역원</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>합동식 \(a \equiv b \pmod n\)과 모듈러 연산을 정의한다.</li>
+        <li>유클리드 호제법으로 최대공약수를 구하고 단계 수가 \(O(\log n)\)임을 안다.</li>
+        <li>확장 유클리드 호제법으로 베주 계수와 모듈러 역원을 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>나눗셈 정리 (<a href="../2/01-03.html">수학2 1.3절 연습</a>), 고등학교의 최대공약수.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.1.1</span>합동</h3>
+    <div class="tb-env">
+      <span class="lb">정의 4.1.1</span>
+      <p class="q-term"><b>합동</b> \(a \equiv b \pmod n\): \(n \mid a - b\). 곧 \(n\)으로 나눈 나머지가 같다.</p>
+      <p class="q-term"><b>모듈러 역원</b>: \(ax \equiv 1 \pmod n\)인 \(x\). \(a^{-1} \bmod n\)으로 쓴다.</p>
+    </div>
+    <p>합동은 덧셈·곱셈과 잘 어울립니다: \(a \equiv b\), \(c \equiv d\)이면 \(a + c \equiv b + d\), \(ac \equiv bd\). 그래서 큰 수의 계산을 나머지만으로 할 수 있습니다. 예: \(7^{100} \bmod 6\)은 \(7 \equiv 1\)이라 1. 그러나 나눗셈은 그대로 되지 않습니다. \(2\cdot3 \equiv 2\cdot0 \pmod 6\)인데 \(3 \not\equiv 0\). 나누려면 역원이 있어야 합니다.</p>
+
+    <h3><span class="no">4.1.2</span>유클리드 호제법</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.1.2</span>
+      <p>\(a = qb + r\)이면 \(\gcd(a, b) = \gcd(b, r)\). 이를 되풀이하면 나머지가 0이 되기 직전의 나머지가 \(\gcd(a, b)\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(d\)가 \(a, b\)를 나누면 \(r = a - qb\)도 나누고, \(b, r\)을 나누면 \(a = qb + r\)도 나눈다. 공약수의 집합이 같다. 나머지는 줄어드는 음이 아닌 정수라 유한 번에 0이 된다. <span class="qed">∎</span></p>
+    <p>단계 수: 두 단계마다 나머지가 절반 이하로 줄어(\(r_{i+2} &lt; \frac{r_i}2\)) 단계는 \(O(\log b)\)입니다. 100자리 수도 수백 번이면 끝나며, 이것이 RSA 같은 암호가 실용적인 이유 중 하나입니다. 최악은 연속한 피보나치 수입니다.</p>
+
+    <h3><span class="no">4.1.3</span>확장 호제법</h3>
+    <p>호제법의 각 나머지를 \(a\)와 \(b\)의 일차결합으로 기록해 두면, 마지막에 \(\gcd(a, b) = ax + by\)를 얻습니다(베주 항등식).</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.3</span>
+      <p>\(\gcd(240, 46)\)과 \(240x + 46y = \gcd\)인 \(x, y\)를 구하고, \(46^{-1} \bmod 240\)이 있는지 말하여라. 또 \(17^{-1} \bmod 43\)을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(240 = 5\cdot46 + 10\), \(46 = 4\cdot10 + 6\), \(10 = 1\cdot6 + 4\), \(6 = 1\cdot4 + 2\), \(4 = 2\cdot2\). \(\gcd = 2\). 거꾸로 대입하면 \(2 = 6 - 4 = 6 - (10 - 6) = 2\cdot6 - 10 = 2(46 - 4\cdot10) - 10 = 2\cdot46 - 9\cdot10 = 2\cdot46 - 9(240 - 5\cdot46) = 47\cdot46 - 9\cdot240\). \(\gcd = 2 \ne 1\)이라 \(46\)의 역원은 \(\bmod 240\)에서 없습니다.</p>
+    <p>\(43 = 2\cdot17 + 9\), \(17 = 1\cdot9 + 8\), \(9 = 1\cdot8 + 1\). \(1 = 9 - 8 = 9 - (17 - 9) = 2\cdot9 - 17 = 2(43 - 2\cdot17) - 17 = 2\cdot43 - 5\cdot17\). 따라서 \(-5\cdot17 \equiv 1\), \(17^{-1} \equiv -5 \equiv 38 \pmod{43}\). 검산: \(17\cdot38 = 646 = 15\cdot43 + 1\).</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 4.1.4</span>
+      <p>\(a^{-1} \bmod n\)이 있을 필요충분조건은 \(\gcd(a, n) = 1\)이다. 있으면 \(\bmod n\)에서 하나뿐이다.</p>
+    </div>
+    <p>같은 절의 탐구 카드에서 호제법의 표를 단계별로 볼 수 있습니다.</p>
+
+    <div class="tb-note"><b>흔한 실수</b>(1) 합동식의 양변을 아무 수로나 나눈다: \(\gcd\)가 1인 수로만 나눌 수 있다. (2) 역원을 음수로 구한 뒤 \(\bmod n\)으로 바꾸지 않는다: \(-5\)는 \(38\)과 같다. (3) 거꾸로 대입할 때 나머지와 몫을 혼동한다: 각 줄을 "나머지 = 피제수 − 몫 × 제수"로 써 두면 안전하다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>합동은 \(+\), \(\times\)와 호환, 나눗셈은 역원이 있을 때만.</li>
+        <li>호제법 \(\gcd(a, b) = \gcd(b, a \bmod b)\), 단계 \(O(\log n)\).</li>
+        <li>확장 호제법으로 \(ax + by = \gcd\), \(\gcd(a, n) = 1\)이면 \(x = a^{-1} \bmod n\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(7^{-1} \bmod 26\)을 구하여라.
+          <details><summary>답</summary><p>\(26 = 3\cdot7 + 5\), \(7 = 5 + 2\), \(5 = 2\cdot2 + 1\). \(1 = 5 - 2\cdot2 = 5 - 2(7 - 5) = 3\cdot5 - 2\cdot7 = 3(26 - 3\cdot7) - 2\cdot7 = 3\cdot26 - 11\cdot7\). \(7^{-1} \equiv -11 \equiv 15\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(5x \equiv 3 \pmod{17}\)을 풀어라.
+          <details><summary>답</summary><p>\(5^{-1} \equiv 7\) (\(35 = 2\cdot17 + 1\)). \(x \equiv 21 \equiv 4\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>\(\gcd(F_{n+1}, F_n)\)을 호제법으로 구할 때 단계가 \(n - 1\)번 정도임을 보이고, 이것이 최악인 이유를 설명하여라.
+          <details><summary>답</summary><p>\(F_{n+1} = 1\cdot F_n + F_{n-1}\)이라 몫이 매번 1이고 피보나치를 한 칸씩 내려간다. 몫이 1이면 나머지가 가장 천천히 줄어든다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

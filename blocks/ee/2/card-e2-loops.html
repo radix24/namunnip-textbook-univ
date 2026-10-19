@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-01-01",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e2-loops" data-kind="예제" data-std="전전2-01-01">
+  <header class="card-head"><span class="no"></span><h2>행렬 곱과 거듭제곱의 연산 횟수</h2><span class="kind">예제 · 반복문과 재귀를 세기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>\(x^{1000}\)을 계산할 때 x를 999번 곱하는 대신 더 적은 곱셈으로 할 수 있을까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>제곱을 되풀이하면 약 15번으로 됩니다. \(x^{1000} = (x^{500})^2\)처럼 지수를 반으로 줄이기 때문입니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">(가) n × n 행렬 두 개를 정의대로 곱하는 세 겹 반복문의 곱셈 횟수, (나) 아래 재귀 거듭제곱의 곱셈 횟수 점화식과 그 해를 구하라. n = 1000일 때 (나)의 곱셈 수는?</p>
+<pre><code>def power(x, n):
+    if n == 0:
+        return 1
+    half = power(x, n // 2)
+    return half * half if n % 2 == 0 else half * half * x</code></pre>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>(가) 각 칸 \(c_{ij} = \sum_ka_{ik}b_{kj}\)에 곱셈 n번, 칸이 n²개.</li>
+        <li>(나) 한 번 호출에 곱셈 1~2번 + 크기 n//2 호출 하나: \(T(n) = T(n/2) + c\).</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(가) \(n \cdot n \cdot n = n^3\)번, Θ(n³). n = 1000이면 10⁹번. <span class="q-why">세 겹 반복</span></li>
+        <li>(나) 짝수면 곱셈 1번, 홀수면 2번. 지수가 매번 반 이하로 줄어 호출이 \(\lfloor\log_2n\rfloor + 1\)번(마지막 n = 0 호출은 곱셈 없음). <span class="q-why">펼치기</span></li>
+        <li>n = 1000(이진수 1111101000, 10자리, 1이 6개): 곱셈 = 10(제곱) + 6(홀수일 때 추가) = 16번. 처음 n = 1인 호출의 제곱(1 × 1)까지 세었으므로 의미 있는 곱셈은 약 15번. <span class="q-why">이진수로 세기</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>지수를 반씩 줄이는 거듭제곱은 999번을 약 15번으로 줄입니다. 공개 키 암호(RSA)는 수백 자리 지수의 거듭제곱을 이 방법(나머지 연산과 함께)으로 계산합니다. 행렬 곱의 n³도 분할 정복으로 줄일 수 있어 Strassen 알고리즘은 약 \(n^{2.81}\)입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>n = 8: 8 → 4 → 2 → 1 → 0. 곱셈은 n = 8, 4, 2에서 각 1번, n = 1에서 2번(1 × 1 × x) = 5번. 공식: 이진수 1000은 4자리, 1이 1개 → 4 + 1 = 5. 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p><code>for i in range(n): for j in range(i): for k in range(j): x += 1</code>의 횟수는 어떤 Θ인가?</p>
+      <details><summary>답</summary><p>\(\sum_i\sum_{j&lt;i}j = \sum_i\frac{i(i - 1)}{2} = \binom{n}{3} \approx n^3/6\), Θ(n³).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>재귀의 비용</h3>
+    <p class="q">위 <code>power</code>를 <code>return power(x, n // 2) * power(x, n // 2)</code>처럼 같은 호출을 두 번 하도록 바꾸면 곱셈 횟수는?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>그대로 Θ(log n)<span class="why"><b>호출이 매번 둘로 갈라집니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>Θ(n)<span class="why"><b>맞습니다.</b> \(T(n) = 2T(n/2) + c\)이고 재귀 트리의 잎이 n개라 Θ(n). 결과를 변수에 저장해 한 번만 부르는 것이 핵심입니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>Θ(2ⁿ)<span class="why"><b>깊이가 log n이라 잎은 \(2^{\log n} = n\)개입니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

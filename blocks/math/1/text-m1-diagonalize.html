@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학1-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m1-diagonalize" data-kind="본문" data-std="수학1-06-03">
+  <header class="card-head"><span class="no"></span><h2>중복도와 대각화 판정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>고유값의 대수적 중복도와 기하적 중복도를 정의하고, 기하적 ≤ 대수적임을 안다.</li>
+        <li>대각화 가능 ⇔ 특성다항식이 일차식으로 인수분해되고 모든 고유값에서 두 중복도가 같다.</li>
+        <li>대각화 \(A = QDQ^{-1}\)을 실제로 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>고유공간 (<a href="06-01.html">6.1절</a>), 고유공간의 합은 직합 (<a href="06-02.html">6.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">6.3.1</span>두 가지 "몇 겹"</h3>
+    <p>6.1절의 예제 6.1.4에서 고유값 2는 특성다항식의 이중근이었지만 고유공간은 1차원이었습니다. 반면 \(2I_2\)에서는 고유값 2가 이중근이고 고유공간도 평면 전체(2차원)입니다. 두 행렬의 차이를 재는 두 수가 필요합니다.</p>
+    <p class="q-term"><b>대수적 중복도</b> \(m_a(\lambda)\): 특성다항식에서 \((\lambda_0 - \lambda)\)가 몇 번 곱해져 있는가(근의 중복도).</p>
+    <p class="q-term"><b>기하적 중복도</b> \(m_g(\lambda) = \dim E_\lambda = \dim N(A - \lambda I)\): 그 고유값에 대한 독립인 고유벡터가 몇 개인가.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.3.1</span>
+      <p>모든 고유값에 대해 \(1 \le m_g(\lambda) \le m_a(\lambda)\).</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(m_g = k\)라 하고 \(E_\lambda\)의 기저 \(\mathbf v_1, \dots, \mathbf v_k\)를 \(\mathbb R^n\)의 기저로 확장해 열로 세운 행렬을 \(Q\)라 하자. \(A\mathbf v_i = \lambda\mathbf v_i\)이므로 \(Q^{-1}AQ = \begin{pmatrix} \lambda I_k & B \\ 0 & C\end{pmatrix}\) 꼴이다(앞의 \(k\)열이 \(\lambda\mathbf e_i\)). 닮은 행렬은 특성다항식이 같고, 블록 삼각행렬의 행렬식(5.2절)으로 \(f(t) = (\lambda - t)^k\det(C - tI)\)이다. 따라서 \(\lambda\)는 적어도 \(k\)중근이다. 고유값이면 고유벡터가 있으므로 \(m_g \ge 1\). <span class="qed">∎</span></p>
+
+    <h3><span class="no">6.3.2</span>대각화 판정</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.3.2 <span class="nm">(대각화 판정)</span></span>
+      <p>\(n\times n\) 행렬 \(A\)가 (실수 범위에서) 대각화 가능하다 ⇔ (1) 특성다항식이 실수 범위에서 일차식들의 곱으로 인수분해되고, (2) 모든 고유값에서 \(m_g(\lambda) = m_a(\lambda)\)이다.</p>
+    </div>
+    <p>이유는 셈입니다. 대각화 가능 ⇔ 독립인 고유벡터가 \(n\)개 ⇔ \(\sum m_g = n\)(고유공간들의 합이 직합이라 기저를 모으면 독립, 6.2절). 한편 \(\sum m_g \le \sum m_a \le n\)이고, \(\sum m_a = n\)은 (1)과 같습니다. 그러니 \(\sum m_g = n\)이려면 두 부등식이 모두 등호, 곧 (1)과 (2)입니다.</p>
+    <p>실제 판정 순서: (a) 특성다항식을 인수분해한다. 실근이 아닌 근이 있으면 실수 대각화 불가. (b) 중근인 고유값만 골라 \(\dim N(A - \lambda I) = n - \operatorname{rank}(A - \lambda I)\)를 계산해 \(m_a\)와 비교한다. 단순근은 늘 \(m_g = m_a = 1\)이라 볼 필요가 없습니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.3</span>
+      <p>\(A = \begin{pmatrix} 3 & 0 & 0 \\ 0 & 2 & 1 \\ 0 & 1 & 2\end{pmatrix}\), \(B = \begin{pmatrix} 3 & 1 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 1\end{pmatrix}\)의 대각화 가능성을 판정하고, 가능하면 \(A = QDQ^{-1}\)을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(A\): 첫 행으로 전개해 \(f(\lambda) = (3 - \lambda)[(2 - \lambda)^2 - 1] = (3 - \lambda)(1 - \lambda)(3 - \lambda)\). 고유값 3(이중), 1. \(A - 3I = \begin{pmatrix} 0 & 0 & 0 \\ 0 & -1 & 1 \\ 0 & 1 & -1\end{pmatrix}\)은 rank 1이라 \(m_g(3) = 2 = m_a(3)\). 대각화 가능. \(E_3 = \operatorname{span}\{(1, 0, 0), (0, 1, 1)\}\), \(E_1 = \operatorname{span}\{(0, 1, -1)\}\).</p>
+    \[Q = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 1 & -1\end{pmatrix},\quad D = \operatorname{diag}(3, 3, 1),\quad A = QDQ^{-1}.\]
+    <p>\(B\): 삼각행렬이라 고유값 3(이중), 1. \(B - 3I = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & -2\end{pmatrix}\)은 rank 2라 \(m_g(3) = 1 &lt; 2\). 대각화 불가능합니다. \(B\)의 왼쪽 위 블록 \(\begin{pmatrix} 3 & 1 \\ 0 & 3\end{pmatrix}\)이 층밀림 성분을 갖고 있기 때문입니다.</p>
+    <p>\(Q\)의 열 순서와 \(D\)의 대각선 순서는 맞춰야 합니다. \(Q\)의 \(j\)째 열이 고유값 \(\lambda_j\)의 고유벡터이면 \(D\)의 \(j\)째 대각 성분이 \(\lambda_j\)입니다. 검산은 \(AQ = QD\)(열마다 \(A\mathbf q_j = \lambda_j\mathbf q_j\))로 하면 역행렬을 구하지 않아도 됩니다.</p>
+
+    <h3><span class="no">6.3.3</span>대각화가 안 되면</h3>
+    <p>대각화가 안 되는 행렬도 "거의 대각"인 모양으로는 바꿀 수 있습니다. \(\begin{pmatrix} 3 & 1 \\ 0 & 3\end{pmatrix}\)처럼 대각선 바로 위에 1이 붙은 블록(조르당 블록)들로 이루어진 조르당 표준형이 그것이며, 선형대수(2) 5단원에서 다룹니다. 또 대칭행렬은 늘 대각화 가능하고 고유벡터를 서로 수직으로 고를 수 있다는 것(스펙트럼 정리)이 선형대수(2) 3단원의 주제입니다. 예제 6.3.3의 \(A\)가 대칭이라 대각화가 된 것이 우연이 아닙니다.</p>
+
+    <div class="tb-note"><b>주의</b>"고유값이 중근이면 대각화 불가능"은 틀립니다. \(2I\)나 예제 6.3.3의 \(A\)처럼 중근이어도 고유공간이 충분히 크면 가능합니다. 중근은 "확인해 봐야 한다"는 신호일 뿐입니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(1 \le m_g(\lambda) \le m_a(\lambda)\).</li>
+        <li>대각화 가능 ⇔ 특성다항식이 실수에서 완전히 인수분해되고, 모든 고유값에서 \(m_g = m_a\).</li>
+        <li>단순근은 확인할 필요가 없고, 중근에서 \(n - \operatorname{rank}(A - \lambda I)\)를 계산한다.</li>
+        <li>\(A = QDQ^{-1}\): \(Q\)의 열은 고유벡터, \(D\)의 대각선은 대응하는 고유값. 검산은 \(AQ = QD\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\begin{pmatrix} 5 & 0 \\ 2 & 5\end{pmatrix}\)은 대각화 가능한가?
+          <details><summary>답</summary><p>고유값 5(이중), \(A - 5I\)는 rank 1이라 \(m_g = 1\). 불가능.</p></details>
+        </li>
+        <li>\(\begin{pmatrix} 2 & 3 \\ 3 & 2\end{pmatrix}\)을 대각화하여라.
+          <details><summary>답</summary><p>고유값 5, \(-1\). \(Q = \begin{pmatrix} 1 & 1 \\ 1 & -1\end{pmatrix}\), \(D = \operatorname{diag}(5, -1)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(\begin{pmatrix} 1 & a \\ 0 & 1\end{pmatrix}\)이 대각화 가능한 \(a\)를 모두 구하여라.
+          <details><summary>답</summary><p>\(a = 0\)뿐. \(a \ne 0\)이면 \(m_g(1) = 1 &lt; 2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>대각화 가능한 \(A\)가 고유값을 하나(\(\lambda\))만 가지면 \(A = \lambda I\)임을 보여라.
+          <details><summary>답</summary><p>\(A = Q(\lambda I)Q^{-1} = \lambda QQ^{-1} = \lambda I\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

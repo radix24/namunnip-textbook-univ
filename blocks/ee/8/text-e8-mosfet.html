@@ -1,0 +1,90 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-02-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e8-mosfet" data-kind="본문" data-std="전전8-02-01">
+  <header class="card-head"><span class="no"></span><h2>MOSFET의 구조와 동작 영역</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>n채널 증가형 MOSFET의 구조와 채널이 생기는 원리를 안다.</li>
+        <li>차단, 트라이오드, 포화 세 영역의 조건과 전류식(제곱 법칙)을 쓴다.</li>
+        <li>회로에서 영역을 가정하고 풀어 조건을 확인하는 방법으로 드레인 전류를 구한다.</li>
+        <li>채널 길이 변조 \(\lambda\)와 p채널 소자의 부호 규칙을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>도핑과 운반자 (<a href="../5/04-01.html">전전5 4.1절</a>), 축전기의 전하 \(Q = CV\) (<a href="../3/05-01.html">전전3 5.1절</a>), 다이오드 회로 푸는 법 (<a href="01-01.html">1.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.1.1</span>전압으로 조절하는 스위치와 증폭기</h3>
+    <p>MOSFET(금속-산화막-반도체 전계 효과 트랜지스터)은 오늘날 가장 많이 만들어지는 소자입니다. 휴대폰 칩 하나에 수십억 개가 들어 있습니다. 세 단자 중 게이트(G)의 전압이 다른 두 단자, 드레인(D)과 소스(S) 사이의 전류를 조절합니다. 게이트는 얇은 산화막으로 절연되어 있어 직류 게이트 전류가 0입니다. 이 성질 덕분에 디지털 회로에서는 전력을 거의 쓰지 않는 스위치로, 아날로그 회로에서는 증폭기로 씁니다.</p>
+    <p class="q-term"><b>구조(n채널)</b>: p형 기판 위에 n+ 소스와 드레인, 그 사이 기판 위에 얇은 산화막(SiO₂ 등)과 게이트 전극. 채널 길이 L, 폭 W.</p>
+    <p class="q-term"><b>문턱 전압</b> \(V_t\): 게이트-소스 전압이 이보다 커야 산화막 아래에 전자가 모인 얇은 n형 층(반전층, 채널)이 생겨 소스와 드레인이 이어진다. 보통 0.3~1 V.</p>
+    <p class="q-term"><b>과구동 전압</b> \(v_{OV} = v_{GS} - V_t\): 문턱을 넘은 만큼. 채널의 전하량이 이것에 비례한다(산화막 축전기 \(Q = C_{ox}WLv_{OV}\)).</p>
+    <p class="q-term"><b>공정 전달 변수</b> \(k_n' = \mu_nC_{ox}\), <b>소자 전달 변수</b> \(k_n = k_n'(W/L)\) [A/V²]. W/L을 키우면 같은 전압에서 전류가 커진다.</p>
+
+    <h3><span class="no">2.1.2</span>세 영역과 전류식</h3>
+    <p class="q-term"><b>차단</b>: \(v_{GS} &lt; V_t\). 채널이 없어 \(i_D = 0\).</p>
+    <p class="q-term"><b>트라이오드(선형)</b>: \(v_{GS} \ge V_t\)이고 \(v_{DS} &lt; v_{OV}\). \(i_D = k_n\left(v_{OV}v_{DS} - \tfrac12v_{DS}^2\right)\). \(v_{DS}\)가 작으면 \(i_D \approx k_nv_{OV}v_{DS}\)로 저항 \(r_{DS} = 1/(k_nv_{OV})\)처럼 동작한다(스위치의 켜짐 저항).</p>
+    <p class="q-term"><b>포화</b>: \(v_{GS} \ge V_t\)이고 \(v_{DS} \ge v_{OV}\). \(i_D = \tfrac12k_nv_{OV}^2\). 드레인 전압과 거의 무관하고 게이트 전압의 제곱으로 정해진다(제곱 법칙). 증폭기는 이 영역에서 동작한다.</p>
+    <p><b>왜 포화되는가.</b> 드레인 전압이 오르면 드레인 쪽 채널의 게이트-채널 전압 \(v_{GD} = v_{GS} - v_{DS}\)가 줄어 채널이 얇아집니다. \(v_{GD} = V_t\), 곧 \(v_{DS} = v_{OV}\)에서 드레인 끝의 채널이 사라지고(핀치오프), 그 뒤로 \(v_{DS}\)를 더 올려도 남은 전압은 짧은 공핍 구간에 걸릴 뿐 전류는 거의 늘지 않습니다. 트라이오드 식에 \(v_{DS} = v_{OV}\)를 넣으면 포화 식과 같아져 두 식이 경계에서 이어집니다.</p>
+    <p class="q-term"><b>채널 길이 변조</b>: 포화에서도 \(v_{DS}\)가 오르면 실효 채널이 조금 짧아져 전류가 늘어난다. \(i_D = \tfrac12k_nv_{OV}^2(1 + \lambda v_{DS})\). \(\lambda\)는 L에 반비례(짧은 소자일수록 큼).</p>
+    <p class="q-term"><b>p채널(PMOS)</b>: 모든 부호가 반대. \(v_{SG} \ge |V_{tp}|\)이면 켜지고, \(v_{SD} \ge v_{SG} - |V_{tp}|\)이면 포화. 전류는 소스에서 드레인으로 흐른다. 정공의 이동도가 작아 같은 크기의 NMOS보다 \(k_p'\)가 2~4배 작다.</p>
+
+    <h3><span class="no">2.1.3</span>회로에서 영역 판정하기</h3>
+    <p>다이오드 회로와 같은 방법입니다: (1) 영역을 가정하고 → (2) 그 영역의 식으로 풀고 → (3) 조건을 확인합니다. 증폭기 회로에서는 보통 포화를 먼저 가정합니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1</span>
+      <p>\(k_n = 2\) mA/V², \(V_t = 0.5\) V, \(\lambda = 0\)인 NMOS. 소스는 접지, 게이트 1.0 V, 드레인은 \(R_D\)를 거쳐 \(V_{DD} = 3\) V. (가) \(R_D = 6\) kΩ, (나) \(R_D = 12\) kΩ일 때 \(I_D\)와 \(V_{DS}\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(V_{OV} = 0.5\) V.</p>
+    <ul>
+      <li>(가) 포화 가정: \(I_D = \frac12 \cdot 2 \cdot 0.25 = 0.25\) mA. \(V_{DS} = 3 - 0.25 \times 6 = 1.5\) V ≥ 0.5 V로 가정이 맞습니다.</li>
+      <li>(나) 포화 가정: \(I_D = 0.25\) mA이면 \(V_{DS} = 3 - 3 = 0\) V &lt; 0.5 V로 모순. 트라이오드로 다시: \(2(0.5V_{DS} - 0.5V_{DS}^2) = (3 - V_{DS})/12\) (mA, kΩ 단위). 정리하면 \(12V_{DS}^2 - 13V_{DS} + 3 = 0\), \(V_{DS} = \frac{13 \pm \sqrt{169 - 144}}{24} = \frac{13 \pm 5}{24}\). 0.75 V는 0.5 V보다 커서 트라이오드 조건에 맞지 않으므로 \(V_{DS} = 1/3 \approx 0.333\) V, \(I_D = (3 - 0.333)/12 \approx 0.222\) mA.</li>
+    </ul>
+    <p>(나)에서 소자는 거의 켜진 스위치처럼 동작합니다(드레인 전압이 0.33 V로 낮음). 같은 소자, 같은 게이트 전압이어도 바깥 회로가 영역을 정합니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "포화"라는 이름 때문에 BJT의 포화(3단원)와 같은 뜻으로 생각하기 쉽지만, MOSFET 포화는 전류가 \(v_{DS}\)에 대해 포화된 것으로 증폭에 쓰는 영역이고, BJT 포화는 스위치가 꽉 켜진 영역입니다. 이름이 거꾸로 대응합니다. (2) 포화 조건을 \(v_{DS} \ge v_{GS}\)로 잘못 쓰는 실수: 기준은 \(v_{OV} = v_{GS} - V_t\)입니다. (3) 트라이오드 이차방정식의 두 근 중 하나는 영역 조건에 맞지 않으므로 반드시 버립니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(v_{OV} = v_{GS} - V_t\), \(k_n = \mu_nC_{ox}W/L\). 게이트 전류 0.</li>
+        <li>차단 \(i_D = 0\). 트라이오드(\(v_{DS} &lt; v_{OV}\)) \(k_n(v_{OV}v_{DS} - v_{DS}^2/2)\). 포화(\(v_{DS} \ge v_{OV}\)) \(\frac12k_nv_{OV}^2(1 + \lambda v_{DS})\).</li>
+        <li>영역을 가정 → 풀기 → 조건 확인. PMOS는 부호를 모두 뒤집는다.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(k_n = 4\) mA/V², \(V_t = 0.4\) V, \(V_{GS} = 0.7\) V, \(V_{DS} = 1\) V일 때 \(I_D\)는?
+          <details><summary>답</summary><p>포화(1 ≥ 0.3). \(I_D = 2 \times 0.09 = 0.18\) mA.</p></details>
+        </li>
+        <li>같은 소자를 \(V_{GS} = 2.4\) V, 작은 \(V_{DS}\)에서 스위치로 쓸 때 켜짐 저항은?
+          <details><summary>답</summary><p>\(1/(4\text{ m} \times 2) = 125\) Ω.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>예제 2.1.1에서 포화가 유지되는 \(R_D\)의 최댓값은?
+          <details><summary>답</summary><p>\(V_{DS} = 0.5\) V까지: \((3 - 0.5)/0.25\text{ mA} = 10\) kΩ.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(\lambda = 0.1\) V⁻¹이면 예제 2.1.1 (가)의 \(I_D\)와 \(V_{DS}\)는 어떻게 바뀌는가?
+          <details><summary>힌트</summary><p>\(I_D = 0.25(1 + 0.1V_{DS})\), \(V_{DS} = 3 - 6I_D\)를 연립.</p></details>
+          <details><summary>답</summary><p>\(V_{DS} = 3 - 1.5(1 + 0.1V_{DS})\) → \(1.15V_{DS} = 1.5\), \(V_{DS} \approx 1.304\) V, \(I_D \approx 0.283\) mA.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

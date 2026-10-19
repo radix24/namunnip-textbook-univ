@@ -47,4 +47,37 @@
     S.$(".reroll").addEventListener("click", () => { seed++; draw(); });
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 2. 내 자료로 기술통계와 그래프 만들기 (02-03) */
+  (() => {
+    const S = QSim.card("lab-c7-desc"); if (!S) return;
+    const cv = S.$("canvas"), ta = S.$("textarea");
+    /* 사분위수: R의 기본(type 7)과 엑셀의 QUARTILE.INC와 같은 선형 보간 */
+    const q = (a, p) => { const h = (a.length - 1) * p, lo = Math.floor(h); return a[lo] + (h - lo) * ((a[lo + 1] ?? a[lo]) - a[lo]); };
+    function draw() {
+      const c = C(), bins = S.val("bins");
+      const xs = (ta.value.match(/-?\d+(\.\d+)?/g) || []).map(Number);
+      const v = QSim.view(cv, 0.6);
+      if (xs.length < 2) { S.out("수를 두 개 이상 넣으세요 (쉼표, 띄어쓰기, 줄바꿈 아무거나로 나눔)"); return; }
+      const a = [...xs].sort((p, r) => p - r), n = a.length, mean = a.reduce((s, x) => s + x, 0) / n;
+      const sd = Math.sqrt(a.reduce((s, x) => s + (x - mean) ** 2, 0) / (n - 1));
+      const Q1 = q(a, 0.25), Q2 = q(a, 0.5), Q3 = q(a, 0.75), iqr = Q3 - Q1, lo = a[0], hi = a[n - 1];
+      const w = (hi - lo) / bins || 1, cnt = new Array(bins).fill(0);
+      a.forEach((x) => cnt[Math.min(bins - 1, Math.floor((x - lo) / w))]++);
+      const top = Math.max(...cnt) * 1.35;
+      const F = QSim.frame(v, { x0: lo - w * 0.5, x1: hi + w * 0.5, y0: -top * 0.35, y1: top, xl: "값", yl: "도수" }); F.axes({ noGrid: true });
+      const g = v.g;
+      cnt.forEach((k, i) => { const x = lo + i * w; g.fillStyle = c.soft; g.fillRect(F.X(x), F.Y(k), F.X(x + w) - F.X(x) - 1, F.Y(0) - F.Y(k)); g.strokeStyle = c.main; g.strokeRect(F.X(x), F.Y(k), F.X(x + w) - F.X(x) - 1, F.Y(0) - F.Y(k)); });
+      /* 상자 그림: 수염은 1.5×IQR 안의 가장 먼 값까지, 그 밖은 이상값 점 */
+      const yb = -top * 0.18, hb = top * 0.08, inF = a.filter((x) => x >= Q1 - 1.5 * iqr && x <= Q3 + 1.5 * iqr), out = a.filter((x) => !inF.includes(x));
+      F.path([[inF[0], yb], [Q1, yb]], c.ink, 1.5); F.path([[Q3, yb], [inF[inF.length - 1], yb]], c.ink, 1.5);
+      g.strokeStyle = c.ink; g.lineWidth = 1.5; g.strokeRect(F.X(Q1), F.Y(yb + hb), F.X(Q3) - F.X(Q1), F.Y(yb - hb) - F.Y(yb + hb));
+      F.path([[Q2, yb - hb], [Q2, yb + hb]], c.acc, 2.5);
+      out.forEach((x) => F.dot(x, yb, c.warn, 4));
+      F.path([[mean, 0], [mean, top * 0.95]], c.acc, 1.2, [4, 3]);
+      S.out(`n = ${n},  평균 ${mean.toFixed(3)},  표준편차(n − 1로 나눔) ${sd.toFixed(3)}\n최솟값 ${lo},  Q1 ${Q1.toFixed(2)},  중앙값 ${Q2.toFixed(2)},  Q3 ${Q3.toFixed(2)},  최댓값 ${hi},  IQR ${iqr.toFixed(2)}\n` +
+        (out.length ? `이상값(1.5×IQR 밖): ${out.join(", ")}` : "1.5×IQR 밖의 이상값 없음"));
+    }
+    ta.addEventListener("input", draw);
+    S.on(draw); QSim.redrawOn(draw); draw();
+  })();
 })();

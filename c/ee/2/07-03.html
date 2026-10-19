@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명하기 · 데이터구조 — QURI</title>
-  <meta name="description" content="데이터구조 7.3 Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명하기 — 성취기준: Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명할 수 있다.">
+  <title>Dijkstra 최단 경로와 음의 간선 · 데이터구조 — QURI</title>
+  <meta name="description" content="데이터구조 7.3 Dijkstra 최단 경로와 음의 간선 — 성취기준: Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;7.3 Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명하기&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전2&quot;, &quot;title&quot;: &quot;7.3 Dijkstra 최단 경로와 음의 간선&quot;, &quot;sub&quot;: &quot;데이터구조&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,29 +27,287 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전2-07-03" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="전전2-07-03" data-u="서울대 연세대 고려대 KAIST 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">데이터구조</a><span class="mono">/</span><a href="07.html">7. 그래프</a></div>
-    <h1><span class="sec-no mono">7.3</span>Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전2-07-03">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-07-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전2-07-03" aria-label="할 수 있음"><span class="t">Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">7.3</span>Dijkstra 최단 경로와 음의 간선</h1>
+    <p class="sec-std"><span class="mono">[전전2-07-03]</span> Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명할 수 있다. <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <p class="small dim">준비 중</p>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s7-3-1"><span class="mono">7.3.1</span><span>완화</span></a></li><li><a href="#s7-3-2"><span class="mono">7.3.2</span><span>Dijkstra 알고리즘</span></a></li><li><a href="#s7-3-3"><span class="mono">7.3.3</span><span>음의 간선에서 실패하는 이유</span></a></li><li><a href="#s7-3-4"><span class="mono">7.3.4</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e2-dijkstra"><span class="mono">본문</span><span>Dijkstra 최단 경로와 음의 간선</span></a></li><li><a href="#lab-e2-graph"><span class="mono">7.3.2</span><span>BFS, DFS, 최소 신장 트리, Dijkstra 한 번에</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="07.html">대단원 7 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
-<p class="u-empty">이 절의 카드는 준비 중입니다. 위의 성취기준과 대단원의 학습 요소를 길잡이로, 과목 목차의 추천 교재에서 해당 부분을 공부하세요.</p>
+<article class="q-card tb-page" id="text-e2-dijkstra" data-kind="본문" data-std="전전2-07-03">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>가중 그래프의 단일 출발점 최단 경로 문제와 완화(relaxation) 연산을 안다.</li>
+        <li>Dijkstra 알고리즘을 힙으로 구현하고 O((V + E) log V)임을 보인다.</li>
+        <li>음의 간선이 있으면 Dijkstra가 틀리는 이유를 반례로 보이고, Bellman-Ford가 해결하는 방식을 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>BFS (<a href="07-01.html">7.1절</a>), 힙과 우선순위 큐 (<a href="03-03.html">3.3절</a>), Prim 알고리즘 (<a href="07-02.html">7.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s7-3-1"><span class="no">7.3.1</span>완화</h3>
+    <p>BFS는 간선 무게가 모두 같을 때의 최단 거리입니다. 무게가 다르면 간선 수가 적다고 짧지 않습니다. 내비게이션, 네트워크 라우팅(OSPF), 칩 배선 경로 찾기가 이 문제입니다.</p>
+    <p class="q-term"><b>거리 추정값</b> d[v]: 지금까지 찾은 s → v 경로 중 가장 짧은 길이. 처음에는 d[s] = 0, 나머지 ∞.</p>
+    <p class="q-term"><b>완화</b>: 간선 u → v(무게 w)에 대해 d[u] + w &lt; d[v]이면 d[v]를 d[u] + w로 줄인다. 모든 최단 경로 알고리즘은 완화를 어떤 순서로 하느냐의 차이다.</p>
+
+    <h3 id="s7-3-2"><span class="no">7.3.2</span>Dijkstra 알고리즘</h3>
+    <p>아직 확정하지 않은 정점 중 d가 가장 작은 것을 꺼내 확정하고, 그 정점에서 나가는 간선을 모두 완화합니다. 가장 작은 것을 꺼내는 데 힙을 씁니다.</p>
+<pre><code>import heapq
+def dijkstra(adj, s):
+    dist, pq = {s: 0}, [(0, s)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d &gt; dist[u]:
+            continue                    # 더 짧은 길을 이미 찾은 낡은 항목
+        for v, w in adj.get(u, []):
+            if d + w &lt; dist.get(v, float("inf")):
+                dist[v] = d + w
+                heapq.heappush(pq, (dist[v], v))
+    return dist</code></pre>
+    <p>각 간선이 힙에 많아야 한 번 들어가므로 힙 연산 O(E)번, 각각 O(log E) = O(log V): 전체 O((V + E) log V).</p>
+    <p><b>왜 맞는가(무게가 모두 0 이상일 때).</b> 꺼낸 정점 u의 d[u]가 진짜 최단 거리보다 크다고 가정해 봅시다. 진짜 최단 경로는 어딘가에서 아직 확정하지 않은 정점 x를 처음 지나야 하고, x까지의 부분 경로는 확정된 정점들만 지나므로 d[x]는 이미 그 길이로 완화되어 있습니다. 무게가 음수가 아니면 x 다음 구간의 길이가 0 이상이라 d[x] ≤ 진짜 거리 &lt; d[u]인데, 그러면 u가 아니라 x가 먼저 꺼내졌어야 하므로 모순입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>7.1·7.2절의 가중 그래프(A–B 4, A–C 1, B–C 2, B–D 5, C–D 8, D–E 3)에서 A로부터의 최단 거리를 구하라.</p>
+    </div>
+    <p><i>풀이.</i> A(0) 확정 → C = 1, B = 4. C(1) 확정 → B = min(4, 1 + 2) = 3, D = 9. B(3) 확정 → D = min(9, 3 + 5) = 8. D(8) 확정 → E = 11. 결과 A 0, C 1, B 3, D 8, E 11. 간선 수로는 A–B가 한 번이지만 A–C–B(3)가 더 짧습니다.</p>
+
+    <h3 id="s7-3-3"><span class="no">7.3.3</span>음의 간선에서 실패하는 이유</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.2</span>
+      <p>방향 그래프 S → A(2), S → B(5), A → C(4), B → A(−4)에서 S로부터의 최단 거리를 구하라. 꺼낸 정점을 다시 고치지 않는 Dijkstra는 무엇을 내놓는가?</p>
+    </div>
+    <p><i>풀이.</i> 진짜 최단 거리: A는 S → B → A로 5 − 4 = 1, C는 1 + 4 = 5. Dijkstra는 S를 꺼내 A = 2, B = 5로 둔 뒤, 가장 작은 A(2)를 확정하고 C = 6을 만듭니다. 그다음 C(6)보다 작은 B(5)를 꺼내 A를 1로 줄일 수 있지만 A는 이미 확정되어 고치지 않습니다. 결과 A 2, C 6으로 틀립니다. 위 증명의 "x 다음 구간 ≥ 0"이 음의 간선 때문에 깨진 것입니다.</p>
+    <p class="q-term"><b>Bellman-Ford</b>: 모든 간선의 완화를 V − 1번 되풀이한다. 최단 경로는 간선이 많아야 V − 1개이므로 음의 간선이 있어도 맞는다. O(VE). 한 번 더 했을 때 줄어드는 값이 있으면 음의 고리(돌수록 짧아지는 고리)가 있다는 뜻이다. 예제에 쓰면 A 1, C 5를 올바르게 얻습니다.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) "음의 간선은 모든 무게에 상수를 더해 없애면 된다": 간선 수가 다른 경로마다 다른 양이 더해져 최단 경로가 바뀝니다(MST와 다른 점). (2) 힙에서 꺼낸 항목이 낡았는지(<code>d &gt; dist[u]</code>) 확인하지 않으면 같은 정점을 여러 번 처리합니다(결과는 맞아도 느려짐). (3) Dijkstra는 무가중 그래프에서도 맞지만 BFS(O(V + E))보다 느립니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>완화: d[u] + w &lt; d[v]이면 줄인다.</li>
+        <li>Dijkstra: 가장 작은 d를 힙으로 꺼내 확정. 무게 ≥ 0에서 정확, O((V + E) log V).</li>
+        <li>음의 간선이면 확정이 틀릴 수 있다 → Bellman-Ford(O(VE)), 음의 고리 검출.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s7-3-4"><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 7.3.1에서 A → E 최단 경로를 정점 순서로 쓰라.
+          <details><summary>답</summary><p>A → C → B → D → E(1 + 2 + 5 + 3 = 11).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>최단 경로 자체를 얻으려면 Dijkstra 코드를 어떻게 고치는가?
+          <details><summary>답</summary><p>d[v]를 줄일 때 prev[v] = u를 기록. 도착점에서 prev를 거꾸로 따라가면 경로.</p></details>
+        </li>
+        <li>정점 10만, 간선 50만인 도로망에서 Dijkstra(힙)와 배열로 최솟값을 매번 찾는 O(V²) 버전의 연산 수를 어림하라.
+          <details><summary>답</summary><p>힙: \((V + E)\log_2V \approx 6\times10^5 \times 17 \approx 10^7\). 배열: \(V^2 = 10^{10}\). 약 천 배 차이.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>환율 그래프(간선 무게 \(-\log(\text{환율})\))에서 음의 고리가 있다는 것은 무엇을 뜻하는가?
+          <details><summary>답</summary><p>고리를 한 바퀴 돌며 환전하면 원래 통화가 늘어나는 차익 거래 기회. Bellman-Ford의 음의 고리 검출로 찾을 수 있습니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e2-dijkstra" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전2-07-03">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전2-07-03] <span class="ty mono" data-ty="실습">실습</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전2-07-03" aria-label="할 수 있음"><span class="t">Dijkstra 알고리즘을 힙으로 구현하고 음의 간선에서 실패하는 이유를 설명할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
+<article class="card q-card" id="lab-e2-graph" data-kind="실습" data-std="전전2-07-03">
+  <header class="card-head"><span class="no">7.3.2</span><h2><span class="q-badge">실습</span>BFS, DFS, 최소 신장 트리, Dijkstra 한 번에</h2><span class="kind">실습 · 인접 리스트 그래프</span></header>
+  <p class="q-stds mono"><span>다루는 성취기준</span> <a href="07-03.html#std">[전전2-07-03]</a></p>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>목표</h3>
+      <p>7단원의 알고리즘을 같은 그래프에 모두 적용하고, 음의 간선에서 Dijkstra가 틀리는 것을 Bellman-Ford와 비교해 확인합니다. 성취기준 [전전2-07-03].</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>Python 3만 있으면 됩니다(추가 라이브러리 없음). 아래 코드를 <code>graph_lab.py</code>로 저장합니다.</p>
+<pre><code>import heapq
+from collections import deque
+
+# 무방향 가중 그래프: (u, v, 무게)
+edges = [("A", "B", 4), ("A", "C", 1), ("B", "C", 2), ("B", "D", 5),
+         ("C", "D", 8), ("D", "E", 3), ("F", "G", 6)]
+adj = {}
+for u, v, w in edges:
+    adj.setdefault(u, []).append((v, w))
+    adj.setdefault(v, []).append((u, w))
+for x in adj:
+    adj[x].sort()                       # 이웃을 이름 순으로(결과를 정해진 순서로)
+
+def bfs(s):
+    dist, q = {s: 0}, deque([s])
+    while q:
+        u = q.popleft()
+        for v, _ in adj[u]:
+            if v not in dist:
+                dist[v] = dist[u] + 1
+                q.append(v)
+    return dist
+
+def dfs(s, seen, order):
+    seen.add(s); order.append(s)
+    for v, _ in adj[s]:
+        if v not in seen:
+            dfs(v, seen, order)
+    return order
+
+print("BFS 간선 수 거리(A에서):", bfs("A"))
+print("DFS 방문 순서(A에서):", dfs("A", set(), []))
+seen, comps = set(), []
+for x in sorted(adj):
+    if x not in seen:
+        comps.append(dfs(x, seen, []))
+print("연결 성분:", comps)
+
+def kruskal():
+    parent = {x: x for x in adj}
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    tree = []
+    for u, v, w in sorted(edges, key=lambda e: e[2]):
+        ru, rv = find(u), find(v)
+        if ru != rv:                    # 고리를 만들지 않으면 채택
+            parent[ru] = rv
+            tree.append((u, v, w))
+    return tree
+
+def prim(s):
+    seen, tree, pq = {s}, [], [(w, s, v) for v, w in adj[s]]
+    heapq.heapify(pq)
+    while pq:
+        w, u, v = heapq.heappop(pq)
+        if v in seen:
+            continue
+        seen.add(v); tree.append((u, v, w))
+        for x, wx in adj[v]:
+            if x not in seen:
+                heapq.heappush(pq, (wx, v, x))
+    return tree
+
+k = kruskal()
+print("Kruskal:", k, "합", sum(w for *_, w in k))
+p = prim("A")
+print("Prim(A 성분):", p, "합", sum(w for *_, w in p))
+
+def dijkstra(g, s):
+    dist, pq = {s: 0}, [(0, s)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d &gt; dist[u]:
+            continue                    # 이미 더 짧은 길을 찾은 낡은 항목
+        for v, w in g.get(u, []):
+            if d + w &lt; dist.get(v, float("inf")):
+                dist[v] = d + w
+                heapq.heappush(pq, (dist[v], v))
+    return dist
+
+print("Dijkstra(A):", dijkstra(adj, "A"))
+
+# 음의 간선이 있는 방향 그래프
+neg = {"S": [("A", 2), ("B", 5)], "A": [("C", 4)], "B": [("A", -4)], "C": []}
+def dijkstra_once(g, s):                 # 꺼낸 정점은 다시 고치지 않는 교과서형
+    dist, done, pq = {s: 0}, set(), [(0, s)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if u in done:
+            continue
+        done.add(u)
+        for v, w in g[u]:
+            if v not in done and d + w &lt; dist.get(v, float("inf")):
+                dist[v] = d + w
+                heapq.heappush(pq, (dist[v], v))
+    return dist
+
+def bellman_ford(g, s):
+    dist = {x: float("inf") for x in g}; dist[s] = 0
+    for _ in range(len(g) - 1):
+        for u in g:
+            for v, w in g[u]:
+                if dist[u] + w &lt; dist[v]:
+                    dist[v] = dist[u] + w
+    return dist
+
+print("음의 간선, Dijkstra:", dijkstra_once(neg, "S"))
+print("음의 간선, Bellman-Ford:", bellman_ford(neg, "S"))</code></pre>
+    </section>
+    <section class="q-sec">
+      <h3>절차</h3>
+      <ol>
+        <li>실행해 출력을 적습니다.</li>
+        <li>Dijkstra 결과의 각 거리가 어떤 경로에서 나왔는지 종이에 표시합니다(7.3절 예제 7.3.1).</li>
+        <li>음의 간선 그래프에서 <code>B → A</code>의 무게를 −2로 바꾸면 두 알고리즘의 결과가 어떻게 되는지 예측하고 확인합니다.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>기대 결과</h3>
+      <p>Python 3.12에서 실행한 출력입니다.</p>
+<pre><code>BFS 간선 수 거리(A에서): {'A': 0, 'B': 1, 'C': 1, 'D': 2, 'E': 3}
+DFS 방문 순서(A에서): ['A', 'B', 'C', 'D', 'E']
+연결 성분: [['A', 'B', 'C', 'D', 'E'], ['F', 'G']]
+Kruskal: [('A', 'C', 1), ('B', 'C', 2), ('D', 'E', 3), ('B', 'D', 5), ('F', 'G', 6)] 합 17
+Prim(A 성분): [('A', 'C', 1), ('C', 'B', 2), ('B', 'D', 5), ('D', 'E', 3)] 합 11
+Dijkstra(A): {'A': 0, 'B': 3, 'C': 1, 'D': 8, 'E': 11}
+음의 간선, Dijkstra: {'S': 0, 'A': 2, 'B': 5, 'C': 6}
+음의 간선, Bellman-Ford: {'S': 0, 'A': 1, 'B': 5, 'C': 5}</code></pre>
+      <ul>
+        <li>BFS(간선 수): A 0, B·C 1, D 2, E 3. DFS 순서 A, B, C, D, E. 연결 성분 {A, B, C, D, E}, {F, G}.</li>
+        <li>Kruskal: A–C, B–C, D–E, B–D, F–G, 합 17(최소 신장 숲). Prim(A에서): 같은 성분만, 합 11.</li>
+        <li>Dijkstra(A): B 3, C 1, D 8, E 11.</li>
+        <li>음의 간선: Dijkstra는 A 2, C 6으로 틀리고 Bellman-Ford는 A 1, C 5로 맞습니다(예제 7.3.2).</li>
+        <li>절차 3: −2이면 S → B → A가 3으로 S → A(2)보다 길어져 두 알고리즘이 같은 답(A 2, C 6)을 냅니다. 음의 간선이 있다고 늘 틀리는 것은 아닙니다.</li>
+      </ul>
+    </section>
+    <section class="q-sec">
+      <h3>분석</h3>
+      <ol>
+        <li><code>dijkstra</code>의 <code>if d &gt; dist[u]: continue</code> 줄을 지우면 결과와 실행 횟수는 어떻게 되나요?</li>
+        <li>Kruskal의 <code>find</code>에 있는 <code>parent[x] = parent[parent[x]]</code>(경로 절반 줄이기)는 무엇을 빠르게 하나요?</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>더 해 보기</h3>
+      <p>도로망 공개 자료나 직접 만든 지하철 노선도(역은 정점, 구간 시간은 무게)로 Dijkstra를 돌려 두 역 사이 최단 시간을 구해 보세요. 이때 경로를 출력하려면 prev 사전을 추가합니다.</p>
+    </section>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="lab-e2-graph" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
+</article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="07-02.html">← 7.2 Kruskal과 Prim 알고리즘으로 최소 신장 트리를 구하기</a></span>
-        <span></span>
+        <span><a href="07-02.html">← 7.2 최소 신장 트리: Kruskal과 Prim</a></span>
+        <span><a href="07-R.html">7.R 단원 마무리 →</a></span>
       </nav>
     </div>
   </div>

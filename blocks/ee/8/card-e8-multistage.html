@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-06-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e8-multistage" data-kind="예제" data-std="전전8-06-03">
+  <header class="card-head"><span class="no"></span><h2>세 단 증폭기의 이득 배분</h2><span class="kind">예제 · 이득 1000을 어디서 얻을 것인가</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>차동 입력단(능동 부하), 이득단(능동 부하), 폴로어 출력단으로 된 증폭기가 1 kΩ 부하를 구동합니다. 전체 이득 1000의 대부분은 어느 단에서 나올까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>입력단과 이득단이 수십씩 나눠 갖고, 폴로어는 1보다 조금 작습니다. 단 사이 분압이 없도록 설계하는 것이 중요합니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">(1) 능동 부하 차동 입력단: \(g_{m1} = 0.5\) mA/V, 출력 저항 \(R_{o1} = 100\) kΩ, 한쪽 출력 이득 \(g_{m1}R_{o1}\). (2) 능동 부하 CS 이득단: \(g_{m2} = 1\) mA/V, \(R_{o2} = 50\) kΩ. (3) 소스 폴로어: \(g_{m3} = 10\) mA/V. 부하 \(R_L = 1\) kΩ. (가) 전체 이득을 구하라. (나) 폴로어를 빼고 \(R_L\)을 이득단에 직접 달면? (다) 셋째 단을 BJT 이미터 폴로어(β = 100, \(I_C\) = 2.5 mA, \(r_e = 10\) Ω)로 바꾸면?</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>각 단을 \((R_{in}, A_{vo}, R_{out})\)로 정리한다.</li>
+        <li>단 사이 분압을 곱한다. MOS 입력의 \(R_{in}\)은 무한대.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>(1) \(A_{vo1} = 0.5 \times 100 = 50\), \(R_{out1} = 100\) kΩ. (2) \(R_{in2} = \infty\), \(A_{vo2} = -50\), \(R_{out2} = 50\) kΩ. (3) \(R_{in3} = \infty\), \(A_{vo3} = 1\), \(R_{out3} = 100\) Ω. <span class="q-why">정리</span></li>
+        <li>(가) \(G_v = 50 \times (-50) \times 1 \times \frac{1000}{1100} \approx -2273\). <span class="q-why">분압은 마지막 한 번</span></li>
+        <li>(나) \(50 \times (-50) \times \frac{1}{51} \approx -49\). <span class="q-why">\(R_{out2} = 50\) kΩ과 1 kΩ의 분압</span></li>
+        <li>(다) 폴로어 입력 저항 \(R_{in3} = (\beta + 1)(r_e + R_L) = 101 \times 1010 \approx 102\) kΩ. 이득단 출력과의 분압 \(\frac{102}{102 + 50} = 0.671\), 폴로어 이득 \(\frac{1000}{1010} = 0.990\). 곱 0.664. \(G_v = 50 \times (-50) \times 0.664 \approx -1661\). <span class="q-why">MOS 폴로어와 달리 입력 저항이 유한</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>BJT 폴로어는 출력 저항이 작지만(\(r_e + 50\) kΩ/101 \(\approx 505\) Ω) 입력 저항이 102 kΩ으로 유한해, 출력 저항 50 kΩ인 이득단 뒤에서 이득의 약 1/3을 잃습니다. 같은 결과를 "이득단 출력 저항이 폴로어 출력에 \(1/(\beta + 1)\)로 반사된다"로 보아 \(\frac{1000}{1000 + 505} = 0.664\)로도 얻습니다. 두 방법 중 하나만 써야 이중 계산을 피합니다(6.3절 흔한 오해 (2)). 실제 연산증폭기는 출력단 앞에 버퍼를 하나 더 두거나 출력단을 푸시풀로 만들어 이 손실을 줄입니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>(가)의 이득 2273은 이상 연산증폭기에 비하면 작지만, 비반전 이득 10으로 되먹임하면 폐루프 이득 \(2273/(1 + 227.3) \approx 9.96\)으로 오차 0.4%입니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>(가)에서 이득단의 출력 저항을 캐스코드로 2 MΩ으로 키우면(\(g_{m2}\) 그대로) 폴로어 포함 전체 이득은?</p>
+      <details><summary>답</summary><p>\(A_{vo2} = -2000\), \(G_v = 50 \times (-2000) \times 0.909 \approx -90{,}900\).</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>출력단의 역할</h3>
+    <p class="q">세 단 증폭기에서 폴로어 출력단을 빼면 가장 크게 나빠지는 것은?</p>
+    <ol>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄱ</span><span>작은 부하를 달았을 때의 전체 이득<span class="why"><b>맞습니다.</b> 이득단의 큰 출력 저항이 부하와 분압됩니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄴ</span><span>CMRR<span class="why"><b>CMRR은 주로 입력단이 정합니다.</b></span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>입력 저항<span class="why"><b>입력 저항은 입력단(MOS 게이트)이 정합니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

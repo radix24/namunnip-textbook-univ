@@ -1,0 +1,60 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-02-03",
+  "order": 20
+}
+-->
+<article class="card q-card" id="card-e8-gm" data-kind="예제" data-std="전전8-02-03">
+  <header class="card-head"><span class="no"></span><h2>같은 전류, 다른 과구동 전압: gm 설계</h2><span class="kind">예제 · 이득 사양에서 W/L과 V_OV 정하기</span></header>
+  <div class="q-body">
+    <section class="q-sec q-predict">
+      <h3>먼저 예측</h3>
+      <p>전류 0.2 mA만 쓸 수 있는 센서 증폭기에서 공통 소스 이득 −20을 얻으려 합니다. \(R_D\)를 키우는 것 말고, 트랜지스터 쪽에서 바꿀 수 있는 것은 무엇일까요?</p>
+      <details><summary>생각해 본 뒤 열기</summary><p>\(V_{OV}\)를 낮추면(W/L을 키우면) 같은 전류에서 \(g_m = 2I_D/V_{OV}\)가 커집니다.</p></details>
+    </section>
+    <section class="q-sec">
+      <h3>문제</h3>
+      <p class="q-prob">\(V_{DD} = 1.8\) V, \(I_D = 0.2\) mA, 공통 소스 증폭기의 이득 \(|A_v| = g_mR_D = 20\)이 목표이다. \(k_n' = 400\) μA/V², \(V_t = 0.4\) V, \(\lambda = 0\). 드레인 직류 전압은 0.9 V로 둔다. (가) \(R_D\), (나) 필요한 \(g_m\)과 \(V_{OV}\), (다) W/L, (라) 포화 여유를 확인하여라.</p>
+    </section>
+    <section class="q-sec q-strategy">
+      <h3>전략</h3>
+      <ol>
+        <li>\(R_D\)는 직류 조건(\(V_D\))에서 정해진다.</li>
+        <li>이득에서 \(g_m\), 전류에서 \(V_{OV} = 2I_D/g_m\).</li>
+        <li>\(k_n = 2I_D/V_{OV}^2\)에서 W/L.</li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li>\(R_D = (1.8 - 0.9)/0.2\text{ mA} = 4.5\) kΩ. <span class="q-why">직류 KVL</span></li>
+        <li>\(g_m = 20/4.5\text{ k} = 4.44\) mA/V, \(V_{OV} = 2 \times 0.2/4.44 = 0.09\) V. <span class="q-why">\(g_m = 2I_D/V_{OV}\)</span></li>
+        <li>\(k_n = 2 \times 0.2/0.09^2 = 49.4\) mA/V², \(W/L = 49.4/0.4 \approx 123\). <span class="q-why">\(k_n = k_n'W/L\)</span></li>
+        <li>\(V_{DS} = 0.9\) V ≥ \(V_{OV} = 0.09\) V로 포화 여유가 충분하다. 소신호 조건으로 입력 첨두는 약 \(0.2V_{OV} = 18\) mV 이하, 그때 출력 첨두 약 0.36 V. <span class="q-why">확인</span></li>
+      </ol>
+    </section>
+    <section class="q-sec q-meaning">
+      <h3>의미</h3>
+      <p>같은 전류에서 이득을 얻으려면 \(V_{OV}\)를 작게, 소자를 크게 만듭니다. 그러나 \(V_{OV}\)가 0.1 V보다 작아지면 제곱 법칙이 잘 맞지 않고(약반전 영역, 지수 법칙에 가까워짐) \(g_m\)은 \(I_D/(nV_T)\) 근처에서 더 늘지 않습니다(확인 필요: n은 1.2~1.5 정도로 공정마다 다름). 또 W/L이 커지면 입력 정전 용량이 커져 고주파 성능이 나빠집니다(전전13). 이 예제의 \(V_{OV} = 0.09\) V는 그 경계에 있으므로 실제 설계에서는 시뮬레이터로 확인해야 합니다.</p>
+    </section>
+    <section class="q-sec q-check">
+      <h3>검산</h3>
+      <p>\(g_m = \sqrt{2k_nI_D} = \sqrt{2 \times 49.4 \times 0.2} = 4.44\) mA/V. \(g_mR_D = 4.44 \times 4.5 = 20\). 일치합니다.</p>
+    </section>
+    <section class="q-sec q-try">
+      <h3>이해 확인</h3>
+      <p>같은 회로에서 \(V_{OV} = 0.2\) V로 설계하면 이득은?</p>
+      <details><summary>답</summary><p>\(g_m = 2\) mA/V, \(|A_v| = 9\). 대신 소신호 범위가 두 배 넓고 W/L은 25로 작아집니다.</p></details>
+    </section>
+  </div>
+  <div class="quiz">
+    <h3><span class="mono">확인</span>gm의 의존성</h3>
+    <p class="q">W/L을 고정한 MOSFET의 드레인 전류를 4배로 늘리면 \(g_m\)은?</p>
+    <ol>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄱ</span><span>4배<span class="why"><b>그것은 \(V_{OV}\)를 고정했을 때입니다.</b> W/L 고정이면 \(V_{OV}\)도 함께 커집니다.</span></span></button></li>
+      <li><button class="opt" data-ok="1"><span class="mono">ㄴ</span><span>2배<span class="why"><b>맞습니다.</b> \(g_m = \sqrt{2k_nI_D}\)이므로 전류의 제곱근에 비례합니다.</span></span></button></li>
+      <li><button class="opt" data-ok="0"><span class="mono">ㄷ</span><span>변하지 않는다<span class="why"><b>\(g_m\)은 동작점에 따라 달라집니다.</b></span></span></button></li>
+    </ol>
+  </div>
+</article>

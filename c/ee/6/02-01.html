@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>컨볼루션 합과 적분을 그래프와 식으로 계산하기 · 신호및시스템 — QURI</title>
-  <meta name="description" content="신호및시스템 2.1 컨볼루션 합과 적분을 그래프와 식으로 계산하기 — 성취기준: 컨볼루션 합과 적분을 그래프와 식으로 계산할 수 있다.">
+  <title>임펄스 응답과 컨볼루션 · 신호및시스템 — QURI</title>
+  <meta name="description" content="신호및시스템 2.1 임펄스 응답과 컨볼루션 — 성취기준: 컨볼루션 합과 적분을 그래프와 식으로 계산할 수 있다.">
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../../../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../../../manifest.webmanifest">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../../css/qtext.css">
   <link rel="stylesheet" href="../../../assets/katex/katex.min.css">
 </head>
-<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;2.1 컨볼루션 합과 적분을 그래프와 식으로 계산하기&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
+<body data-rec='{&quot;course&quot;: &quot;전전6&quot;, &quot;title&quot;: &quot;2.1 임펄스 응답과 컨볼루션&quot;, &quot;sub&quot;: &quot;신호및시스템&quot;}'>
 
 <header class="top">
   <a class="brand" href="../../../"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
@@ -27,32 +27,133 @@
 </header>
 
 <main class="wrap">
-  <section class="topic-hero u-hero" data-sec="전전6-02-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
+  <section class="topic-hero u-hero has-text" data-sec="전전6-02-01" data-u="서울대 연세대 고려대 KAIST POSTECH 서강대 성균관대 한양대">
     <div class="meta"><a href="../../../?dept=ee#tree">전기전자공학부</a><span class="mono">/</span><a href="./">신호및시스템</a><span class="mono">/</span><a href="02.html">2. LTI 시스템과 컨볼루션</a></div>
-    <h1><span class="sec-no mono">2.1</span>컨볼루션 합과 적분을 그래프와 식으로 계산하기</h1>
-    
-    <div class="q-checklist q-one" id="std" data-unit="전전6-02-01">
-      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-02-01] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
-      <ol><li><input type="checkbox" data-std="전전6-02-01" aria-label="할 수 있음"><span class="t">컨볼루션 합과 적분을 그래프와 식으로 계산할 수 있다.</span></li></ol>
-      <p class="note">카드를 공부한 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
-    </div>
+    <h1><span class="sec-no mono">2.1</span>임펄스 응답과 컨볼루션</h1>
+    <p class="sec-std"><span class="mono">[전전6-02-01]</span> 컨볼루션 합과 적분을 그래프와 식으로 계산할 수 있다. <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></p>
   </section>
 
-  <div class="topic-layout">
+  <div class="topic-layout with-text">
     <aside class="toc" aria-label="이 절의 차례">
-      <p class="mono small toc-title">이 절의 카드</p>
-      <ol id="toc-list"><li><a href="#exp-e6-conv"><span class="mono">2.1.1</span><span>뒤집고, 밀고, 곱하고, 넓이를 잰다</span></a></li></ol>
+      <p class="mono small toc-title">이 절의 차례</p>
+      <ol class="toc-sub"><li><a href="#s2-1-1"><span class="mono">2.1.1</span><span>임펄스 하나만 알면 된다: 컨볼루션 합의 유도</span></a></li><li><a href="#s2-1-2"><span class="mono">2.1.2</span><span>컨볼루션 합을 표로 계산하기</span></a></li><li><a href="#s2-1-3"><span class="mono">2.1.3</span><span>컨볼루션 적분: 구간 나누기</span></a></li><li><a href="#s2-1-4"><span class="mono">2.1.4</span><span>컨볼루션의 성질</span></a></li><li><a href="#s2-1-5"><span class="mono">2.1.5</span><span>연습문제</span></a></li></ol>
+      <p class="mono small toc-title toc-title-2">이 절의 카드</p>
+      <ol id="toc-list"><li><a href="#text-e6-convolution"><span class="mono">본문</span><span>임펄스 응답과 컨볼루션</span></a></li><li><a href="#exp-e6-conv"><span class="mono">2.1.2</span><span>뒤집고, 밀고, 곱하고, 넓이를 잰다</span></a></li></ol>
       <p class="progress mono small"></p>
       <p class="toc-links mono small"><a href="02.html">대단원 2 절 목록</a><br><a href="../../../record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
+<article class="q-card tb-page" id="text-e6-convolution" data-kind="본문" data-std="전전6-02-01">
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>LTI 시스템의 출력이 입력과 임펄스 응답의 컨볼루션임을 유도한다.</li>
+        <li>컨볼루션 합(이산)을 표로, 컨볼루션 적분(연속)을 "뒤집기-밀기-곱하기-넓이"로 계산한다.</li>
+        <li>교환·결합·분배 법칙과 그 시스템적 의미(직렬·병렬 연결)를 안다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>임펄스와 체 성질 (<a href="01-01.html">1.1절</a>), 선형·시불변 (<a href="01-02.html">1.2절</a>).</li>
+      </ul>
+    </div>
 
+    <h3 id="s2-1-1"><span class="no">2.1.1</span>임펄스 하나만 알면 된다: 컨볼루션 합의 유도</h3>
+    <p>구하려는 것: LTI 시스템에 임의의 입력 \(x[n]\)을 넣었을 때의 출력. 이산시간에서 먼저 보입니다. 이산이 더 직관적이기 때문입니다.</p>
+    <p class="q-term"><b>임펄스 응답</b> \(h[n]\): 입력이 \(\delta[n]\)일 때의 출력.</p>
+    <p>1단계(입력 쪼개기). 어떤 수열이든 크기가 다른 임펄스를 줄 세운 것입니다: \(x[n] = \sum_k x[k]\,\delta[n - k]\). 예를 들어 \(x = \{2, 1\}\)(n = 0, 1)은 \(2\delta[n] + 1\delta[n - 1]\)입니다.</p>
+    <p>2단계(시불변). \(\delta[n - k]\)를 넣으면 \(h[n - k]\)가 나옵니다.</p>
+    <p>3단계(선형). 계수 \(x[k]\)를 곱하고 더한 입력에는 같은 계수로 곱하고 더한 출력이 나옵니다.</p>
+    \[ y[n] = \sum_{k=-\infty}^{\infty}x[k]\,h[n - k] \equiv (x * h)[n]. \]
+    <p>각 단계가 LTI의 어느 성질을 썼는지가 중요합니다. 선형만, 또는 시불변만 성립하면 이 식이 성립하지 않습니다. 연속시간에서는 체 성질 \(x(t) = \int x(\tau)\delta(t - \tau)d\tau\)로 같은 논리를 따라 컨볼루션 적분을 얻습니다.</p>
+    \[ y(t) = \int_{-\infty}^{\infty}x(\tau)\,h(t - \tau)\,d\tau = (x * h)(t). \]
+
+    <h3 id="s2-1-2"><span class="no">2.1.2</span>컨볼루션 합을 표로 계산하기</h3>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1</span>
+      <p>\(x[n] = \{1, 2, 3\}\)(n = 0, 1, 2), \(h[n] = \{1, 1\}\)(n = 0, 1)일 때 \(y = x * h\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 2.1.1의 생각대로, 각 입력 표본이 h를 자기 위치에 자기 크기로 한 번씩 내놓고 그것을 더합니다.</p>
+    <table class="tb-table">
+      <tr><th></th><th>n = 0</th><th>1</th><th>2</th><th>3</th></tr>
+      <tr><td>\(x[0]h[n]\) = 1·{1,1}</td><td>1</td><td>1</td><td></td><td></td></tr>
+      <tr><td>\(x[1]h[n-1]\) = 2·{1,1}</td><td></td><td>2</td><td>2</td><td></td></tr>
+      <tr><td>\(x[2]h[n-2]\) = 3·{1,1}</td><td></td><td></td><td>3</td><td>3</td></tr>
+      <tr><td><b>y[n]</b></td><td><b>1</b></td><td><b>3</b></td><td><b>5</b></td><td><b>3</b></td></tr>
+    </table>
+    <p>확인 두 가지: 길이는 \(3 + 2 - 1 = 4\), 합은 \((\sum x)(\sum h) = 6 \times 2 = 12 = 1 + 3 + 5 + 3\). 이 방법은 다항식 곱셈 \((1 + 2z + 3z^2)(1 + z)\)과 똑같습니다(7단원 Z-변환의 예고).</p>
+
+    <h3 id="s2-1-3"><span class="no">2.1.3</span>컨볼루션 적분: 구간 나누기</h3>
+    <p>연속시간에서는 같은 일을 적분으로 합니다. 이 절의 탐구 카드로 그림을 먼저 보고 오면 좋습니다. 핵심은 t의 범위에 따라 두 그래프가 겹치는 구간이 바뀌므로 경우를 나누는 것입니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.2</span>
+      <p>\(x(t) = u(t)\), \(h(t) = e^{-at}u(t)\) (\(a &gt; 0\))일 때 \(y = x * h\)를 구하여라. (RC 회로의 계단 응답)</p>
+    </div>
+    <p><i>풀이.</i> \(y(t) = \int x(\tau)h(t - \tau)d\tau\)에서 \(x(\tau) = u(\tau)\)는 \(\tau &gt; 0\)에서만, \(h(t - \tau)\)는 \(t - \tau &gt; 0\), 곧 \(\tau &lt; t\)에서만 0이 아닙니다.</p>
+    <ul>
+      <li>\(t &lt; 0\): 두 조건 \(\tau &gt; 0\), \(\tau &lt; t\)를 동시에 만족하는 \(\tau\)가 없으므로 \(y = 0\).</li>
+      <li>\(t &gt; 0\): 겹치는 구간은 \(0 &lt; \tau &lt; t\). \(y(t) = \int_0^t e^{-a(t - \tau)}d\tau = e^{-at}\cdot\frac{e^{at} - 1}{a} = \frac{1}{a}(1 - e^{-at})\).</li>
+    </ul>
+    <p>따라서 \(y(t) = \frac1a(1 - e^{-at})u(t)\). 수치 확인: \(a = 1\)이면 \(y(1) = 1 - e^{-1} \approx 0.632\), \(y(\infty) = 1\). RC 회로(\(a = 1/RC\))의 계단 응답 \(1 - e^{-t/RC}\)와 같은 모양입니다(크기 \(1/a\)는 h의 넓이). 이 결과는 \(h = dy_{\text{step}}/dt\), 곧 임펄스 응답이 계단 응답의 미분이라는 일반 관계도 보여 줍니다.</p>
+
+    <h3 id="s2-1-4"><span class="no">2.1.4</span>컨볼루션의 성질</h3>
+    <p class="q-term"><b>교환</b> \(x * h = h * x\): 입력과 시스템의 역할을 바꿔도 출력이 같다. 계산할 때 더 간단한 쪽을 뒤집는다.</p>
+    <p class="q-term"><b>결합</b> \((x * h_1) * h_2 = x * (h_1 * h_2)\): 직렬로 이은 두 LTI 시스템은 임펄스 응답 \(h_1 * h_2\)인 시스템 하나와 같고, 순서를 바꿔도 된다.</p>
+    <p class="q-term"><b>분배</b> \(x * (h_1 + h_2) = x * h_1 + x * h_2\): 병렬 연결은 임펄스 응답을 더한 것.</p>
+    <p class="q-term"><b>항등</b> \(x * \delta = x\), \(x * \delta(t - t_0) = x(t - t_0)\): 임펄스는 컨볼루션의 1, 늦춘 임펄스는 지연기.</p>
+
+    <div class="tb-note"><b>흔한 오해</b>(1) 컨볼루션을 "두 신호를 곱한 것"으로 착각하는 경우가 있습니다. 곱은 각 시각끼리, 컨볼루션은 겹친 넓이입니다. (2) 적분 변수와 시간을 섞어 \(\int x(t)h(t - \tau)d\tau\)로 쓰는 실수가 흔합니다. 적분 안에서 t는 고정된 상수, 움직이는 것은 \(\tau\)입니다. (3) 경우를 나눌 때 경계(\(t = 0\), \(t = 1\) 같은 곳)를 빠뜨리지 않도록, 그래프를 그려 겹치기 시작·끝나는 순간을 먼저 찾으세요.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>입력을 임펄스의 합으로 쪼개고, 시불변과 선형을 차례로 쓰면 \(y = x * h\).</li>
+        <li>이산: 표(다항식 곱셈), 길이 \(N_x + N_h - 1\), 합의 곱 확인. 연속: 뒤집기-밀기-곱하기-넓이, 겹치는 구간별로 경우를 나눈다.</li>
+        <li>교환·결합(직렬)·분배(병렬), \(x * \delta = x\).</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3 id="s2-1-5"><span class="no">2.1.5</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\{1, -1\} * \{1, 1, 1\}\)을 구하여라(둘 다 n = 0에서 시작).
+          <details><summary>답</summary><p>\(\{1, 0, 0, -1\}\). 합 확인 \(0 \times 3 = 0\).</p></details>
+        </li>
+        <li>\(x(t) * \delta(t - 3)\)은?
+          <details><summary>답</summary><p>\(x(t - 3)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="3">
+        <li>\(x(t) = h(t) = u(t) - u(t - 1)\)일 때 \(y = x * h\)를 구간별로 구하여라.
+          <details><summary>답</summary><p>\(t &lt; 0\): 0, \(0 \le t &lt; 1\): t, \(1 \le t &lt; 2\): \(2 - t\), \(t \ge 2\): 0. 높이 1, 밑변 0~2인 삼각형(탐구 카드의 직사각형 * 직사각형).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="4">
+        <li>\(e^{-at}u(t) * e^{-bt}u(t)\)를 \(a \ne b\)와 \(a = b\)인 경우로 나눠 구하여라.
+          <details><summary>답</summary><p>\(a \ne b\): \(\frac{e^{-at} - e^{-bt}}{b - a}u(t)\). \(a = b\): \(te^{-at}u(t)\)(앞 식에서 \(b \to a\) 극한과 같음).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="q-seen"><button type="button" class="q-seen-btn" data-card="text-e6-convolution" data-kind="본문" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 절의 본문을 끝까지 읽었어요</span></button></div>
+</article>
+    
+    <div class="q-checklist after-text q-one" id="std" data-unit="전전6-02-01">
+      <h2><span>이 절의 성취기준</span><span class="mono">[전전6-02-01] <span class="ty mono" data-ty="계산">계산</span> <span class="unis mono" title="이 내용이 있는 대학">서울대 · 연세대 · 고려대 · KAIST · POSTECH · 서강대 · 성균관대 · 한양대</span></span></h2>
+      <ol><li><input type="checkbox" data-std="전전6-02-01" aria-label="할 수 있음"><span class="t">컨볼루션 합과 적분을 그래프와 식으로 계산할 수 있다.</span></li></ol>
+      <p class="note">본문과 연습문제를 마친 뒤 직접 해 보고, 할 수 있으면 표시하세요. 기록은 이 브라우저에만 저장됩니다.</p>
+    </div>
     <aside class="q-links" aria-label="선수와 후속">
       <p class="q-links-title">이 절의 앞과 뒤</p>
       <div class="q-links-cols"><div><h3>먼저 볼 것</h3><ul><li><a href="../../../c/ee/6/01.html"><span class="mono">대단원 1</span><span><b>신호와 시스템의 기초</b></span></a></li><li><a href="../../../c/common/1/05-05.html"><span class="mono">5.5</span><span>미분적분학과벡터해석(1) <b>이상적분</b></span></a></li><li><a href="../../../c/common/8/05-05.html"><span class="mono">5.5</span><span>고등미적분학(1) <b>합성곱과 적분방정식</b></span></a></li></ul></div></div>
     </aside>
+<div class="supp-head"><h2>보충 카드</h2><p>본문의 내용을 다른 각도에서 다시 보는 카드입니다. 예제를 더 풀어 보고 싶거나 증명을 단계별로 따라가고 싶을 때 펼쳐 보세요.</p></div>
 <article class="card q-card" id="exp-e6-conv" data-kind="탐구" data-std="전전6-02-01">
-  <header class="card-head"><span class="no">2.1.1</span><h2><span class="q-badge">탐구</span>뒤집고, 밀고, 곱하고, 넓이를 잰다</h2><span class="kind">탐구 · 그래프로 하는 컨볼루션 적분</span></header>
+  <header class="card-head"><span class="no">2.1.2</span><h2><span class="q-badge">탐구</span>뒤집고, 밀고, 곱하고, 넓이를 잰다</h2><span class="kind">탐구 · 그래프로 하는 컨볼루션 적분</span></header>
   <p class="q-stds mono"><span>다루는 성취기준</span> <a href="02-01.html#std">[전전6-02-01]</a></p>
   <div class="q-body">
     <section class="q-sec">
@@ -104,8 +205,8 @@
   <div class="q-seen"><button type="button" class="q-seen-btn" data-card="exp-e6-conv" aria-pressed="false"><span class="box" aria-hidden="true"></span><span class="lb">이 카드를 끝까지 공부했어요</span></button></div>
 </article>
       <nav class="u-pager" aria-label="절 이동">
-        <span><a href="01-02.html">← 1.2 시스템의 선형성, 시불변성, 인과성, 안정성을 판정하기</a></span>
-        <span><a href="02-02.html">2.2 임펄스 응답으로 인과성과 안정성을 판정하기 →</a></span>
+        <span><a href="01-R.html">← 1.R 단원 마무리</a></span>
+        <span><a href="02-02.html">2.2 임펄스 응답으로 읽는 인과성과 안정성 →</a></span>
       </nav>
     </div>
   </div>

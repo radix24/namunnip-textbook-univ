@@ -1,0 +1,49 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전8-02-01",
+  "order": 20,
+  "scripts": ["js/cards/common/simkit.js", "js/cards/ee/e8-electronics.js"]
+}
+-->
+<article class="card q-card" id="exp-e8-mosiv" data-kind="탐구" data-std="전전8-02-01">
+  <header class="card-head"><span class="no"></span><h2>출력 특성 곡선 위의 동작점</h2><span class="kind">탐구 · 포화와 트라이오드를 가르는 부하선</span></header>
+  <div class="q-body">
+    <section class="q-sec">
+      <h3>질문</h3>
+      <p>같은 MOSFET, 같은 게이트 전압이어도 드레인 저항을 바꾸면 동작 영역이 바뀝니다. 그 경계는 그래프에서 어디일까요?</p>
+    </section>
+    <section class="q-sec">
+      <h3>준비</h3>
+      <p>2.1절 예제 2.1.1의 회로입니다(\(k_n = 2\) mA/V², \(V_t = 0.5\) V, \(V_{DD} = 3\) V). 곡선은 \(v_{GS} = 0.7\)~1.2 V의 \(i_D\)-\(v_{DS}\) 특성, 점선 포물선 \(i_D = \frac12k_nv_{DS}^2\)는 트라이오드와 포화의 경계(\(v_{DS} = v_{OV}\)), 주황 점선은 부하선 \(i_D = (V_{DD} - v_{DS})/R_D\)입니다. 교점(빨간 점)이 동작점입니다.</p>
+    </section>
+    <div class="q-sim">
+      <div class="ctl">
+        <label><span>v_GS = <b data-show="vgs" data-fix="1">1.0</b> V</span><input type="range" name="vgs" min="0.4" max="1.2" step="0.1" value="1.0" aria-label="게이트-소스 전압"></label>
+        <label><span>R_D = <b data-show="rd" data-fix="1">6.0</b> kΩ</span><input type="range" name="rd" min="2" max="20" step="1" value="6" aria-label="드레인 저항"></label>
+        <label><span>λ = <b data-show="lam" data-fix="2">0.00</b> V⁻¹</span><input type="range" name="lam" min="0" max="0.2" step="0.05" value="0" aria-label="채널 길이 변조 계수"></label>
+      </div>
+      <canvas aria-label="출력 특성 곡선과 부하선"></canvas>
+      <p class="out"></p>
+    </div>
+    <section class="q-sec">
+      <h3>해 보기와 설명</h3>
+      <ol class="q-read">
+        <li><b>예제 (가)</b><span>처음 화면: \(V_{DS} = 1.5\) V, \(I_D = 0.25\) mA, 포화. 동작점이 곡선의 평평한 부분에 있습니다.</span></li>
+        <li><b>예제 (나)</b><span>\(R_D = 12\) kΩ: 부하선이 누워 교점이 경계 포물선 왼쪽(트라이오드)으로 갑니다. \(V_{DS} = 0.333\) V, \(I_D = 0.222\) mA.</span></li>
+        <li><b>게이트 전압</b><span>\(R_D = 6\) kΩ에서 \(v_{GS} = 1.2\) V이면 \(I_D = 0.426\) mA, \(V_{DS} = 0.446\) V로 트라이오드, 0.8 V이면 0.090 mA, 2.46 V로 포화입니다. 0.4 V에서는 차단입니다.</span></li>
+        <li><b>λ</b><span>λ = 0.1이면 포화 곡선이 오른쪽으로 올라가 기울어지고, 동작점이 \(V_{DS} = 1.304\) V, \(I_D = 0.283\) mA로 바뀝니다(2.1절 연습 4).</span></li>
+      </ol>
+    </section>
+    <section class="q-sec">
+      <h3>연결과 적용</h3>
+      <p>증폭기로 쓰려면 동작점이 포화 영역의 가운데쯤에 있어야 신호가 오르내려도 트라이오드나 차단으로 넘어가지 않습니다(4단원). 디지털 스위치로 쓸 때는 반대로 트라이오드 깊숙이(낮은 \(V_{DS}\))와 차단 두 점만 씁니다.</p>
+    </section>
+    <section class="q-sec warn">
+      <h3>흔한 오해</h3>
+      <ul>
+        <li><b>"게이트 전압을 올리면 언제나 증폭이 잘 된다."</b> 전류가 늘어 \(R_D\)의 전압 강하가 커지면 \(V_{DS}\)가 줄어 트라이오드로 들어갑니다. 위 3번에서 1.2 V가 그 예입니다.</li>
+      </ul>
+    </section>
+  </div>
+</article>
