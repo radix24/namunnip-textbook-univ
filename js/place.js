@@ -29,10 +29,10 @@ window.QPlace = (() => {
   load(d).then((dept) => {
     if (chip) { chip.hidden = false; chip.textContent = `${SCHOOL_NAME} · ${dept.name}`; chip.title = "학과 바꾸기"; }
     const deptHref = new URL(`./?d=${d}`, ROOT).href;
-    document.querySelectorAll("[data-place=dept]").forEach((a) => { a.textContent = dept.name; a.href = deptHref; });
+    const c = mod ? dept.courses.find((x) => x.id === mod) : null;
+    if (!mod || c) document.querySelectorAll("[data-place=dept]").forEach((a) => { a.textContent = dept.name; a.href = deptHref; });
     if (!mod) return;
-    const c = dept.courses.find((x) => x.id === mod);
-    if (!c) {   // 이 학과 배치에 없는 모듈: 내용은 그대로 보이고, 알림만 한다
+    if (!c) {   // 이 학과 배치에 없는 모듈: 경로는 교재의 분야 그대로 두고, 알림만 한다
       const meta = document.querySelector(".topic-hero .meta, .cx-side .meta");
       if (meta && !meta.querySelector(".place-off")) meta.insertAdjacentHTML("beforeend", `<span class="place-off mono">${dept.name} 교과과정 밖의 교재</span>`);
       return;
