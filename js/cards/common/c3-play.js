@@ -65,4 +65,26 @@
     QSim.playButton(S.$(".play"), L);
     S.on(draw); QSim.redrawOn(draw); draw();
   })();
+  /* 3. 여러 번 재면 왜 더 정확해질까: 표준오차 (11-01) */
+  (() => {
+    const S = QSim.card("lab-c3-measure"); if (!S) return;
+    const cv = S.$("canvas"); let seed = 7;
+    const rng = (sd) => () => { sd |= 0; sd = (sd + 0x6d2b79f5) | 0; let t = Math.imul(sd ^ (sd >>> 15), 1 | sd); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const T0 = 2 * Math.PI * Math.sqrt(1 / 9.8);  /* 길이 1 m 진자의 주기 */
+    function draw() {
+      const c = C(), n = Math.round(S.val("n")), sg = S.val("sg"), u = rng(seed);
+      const gauss = () => Math.sqrt(-2 * Math.log(u() + 1e-12)) * Math.cos(2 * Math.PI * u());
+      const xs = Array.from({ length: n }, () => T0 + sg * gauss());
+      const m = xs.reduce((a, b) => a + b, 0) / n, s = n > 1 ? Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / (n - 1)) : NaN, se = s / Math.sqrt(n);
+      const v = QSim.view(cv, 0.42), F = QSim.frame(v, { x0: T0 - 0.5, x1: T0 + 0.5, y0: 0, y1: 3, xl: "주기 (s)", pad: 30 }); F.axes({ noGrid: true });
+      F.path([[T0, 0], [T0, 3]], c.acc, 2, [5, 4]); F.text("참값", T0, 2.85, c.acc, "center");
+      xs.forEach((x, i) => F.dot(x, 0.4 + ((i * 0.618) % 1) * 1.2, c.soft, 4));
+      if (n > 1) { F.path([[m - 2 * se, 2.2], [m + 2 * se, 2.2]], c.main, 4); F.dot(m, 2.2, c.main, 6); F.path([[m - s, 1.95], [m + s, 1.95]], c.ink3, 1.5); }
+      S.out(`가상 측정 ${seed}번째 묶음: 길이 1 m 진자의 주기를 ${n}번 잼 (참값 ${T0.toFixed(4)} s, 한 번 잴 때 오차 크기 ${sg.toFixed(2)} s)\n` +
+        (n > 1 ? `평균 ${m.toFixed(4)} s,  표준편차 s = ${s.toFixed(4)} s (회색 선: 한 번 잰 값이 흩어지는 폭)\n평균의 표준오차 s/√n = ${se.toFixed(4)} s → 결과 ${m.toFixed(3)} ± ${(2 * se).toFixed(3)} s (보라 선, 약 95%)  ${Math.abs(m - T0) <= 2 * se ? "참값이 구간 안" : "참값이 구간 밖"}`
+          : `한 번만 재면 흩어짐의 크기를 알 수 없습니다. 두 번 이상 재 보세요.`));
+    }
+    S.on(draw); QSim.redrawOn(draw); draw();
+    S.$(".reroll").addEventListener("click", () => { seed++; draw(); });
+  })();
 })();
