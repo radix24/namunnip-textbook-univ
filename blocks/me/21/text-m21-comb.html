@@ -1,0 +1,80 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계21-01-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-comb" data-kind="본문" data-std="기계21-01-03">
+  <header class="card-head"><span class="no"></span><h2>정전 에너지와 MEMS 정전 액추에이터</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>정전 에너지 \(W = CV^2/2\)를 가상 일로 미분해 정전기력을 구한다.</li>
+        <li>평행판 액추에이터의 풀인(pull-in) 불안정을 이해한다.</li>
+        <li>빗살(comb) 구동기의 힘이 변위와 무관한 이유를 보이고 설계한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>평행판 정전 용량과 정전기력 (<a href="01-01.html">1.1절</a>), 스프링 강성.</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">1.3.1</span>가상 일로 힘 구하기</h3>
+    <p>축전기에 저장된 에너지는 \(W = CV^2/2\)입니다. 전압원에 연결한 채 전극이 \(dx\)만큼 움직이면 \(C\)가 바뀌고, 전원이 하는 일과 저장 에너지 변화를 함께 세면 전극이 받는 힘은 다음과 같습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정전기력 (전압 고정)</span>
+      <p>\[F = \frac12V^2\frac{dC}{dx}\]</p>
+      <p>평행판(간격 \(g\)이 줄어드는 방향): \(F = \dfrac{\varepsilon_0AV^2}{2g^2}\). 빗살(겹침 길이 \(x\)가 늘어나는 방향, 움직이는 손가락 \(n\)개, 두께 \(t\)): \(C = 2n\varepsilon_0tx/g\)이므로 \(F = \dfrac{n\varepsilon_0tV^2}{g}\).</p>
+    </div>
+    <p>빗살 구동기는 손가락이 옆으로 미끄러져 겹치므로 간격 \(g\)이 그대로이고, 힘이 겹침 길이와 무관하게 일정합니다.</p>
+
+    <h3><span class="no">1.3.2</span>평행판의 풀인</h3>
+    <p>평행판 전극을 스프링(강성 \(k\))으로 받치면 간격이 줄수록 정전기력이 \(1/g^2\)로 커집니다. 처음 간격 \(g_0\)의 1/3만큼 움직이면 스프링 복원력이 더 이상 따라가지 못해 전극이 갑자기 붙습니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">풀인 전압</span>
+      <p>\[V_{\text{PI}} = \sqrt{\frac{8kg_0^3}{27\varepsilon_0A}},\qquad x_{\text{PI}} = \frac{g_0}3\]</p>
+    </div>
+    <p>그래서 평행판은 간격의 1/3 이내에서만 안정하게 쓰고, 큰 변위가 필요하면 빗살 구동기를 씁니다. 반대로 풀인을 일부러 이용하는 것이 RF MEMS 스위치입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 1.3.1 <span class="nm">(빗살 구동기)</span></span>
+      <p>움직이는 손가락 100개, 두께 20 μm, 간격 2 μm인 빗살 구동기에 50 V를 건다. 힘과, 강성 1 N/m인 스프링에서의 변위는?</p>
+    </div>
+    <p><i>풀이.</i> \(F = 100\times8.854\times10^{-12}\times20\times10^{-6}\times2500/(2\times10^{-6}) = 2.2\times10^{-5}\) N = 22 μN. 변위 \(F/k = 22\) μm. 힘은 작지만 MEMS 구조가 아주 가벼워 충분합니다.</p>
+
+    <div class="tb-note"><b>주의</b>빗살 손가락은 옆 방향으로도 양쪽에서 당겨지는데, 가운데에 있으면 힘이 상쇄되지만 조금만 치우치면 한쪽으로 끌려 붙는 옆 방향 불안정이 생깁니다. 옆 방향 스프링 강성을 운동 방향보다 훨씬 크게 설계합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(F = \frac12V^2\,dC/dx\) (가상 일).</li>
+        <li>평행판: \(1/g^2\) 힘, 간격의 1/3에서 풀인.</li>
+        <li>빗살: \(F = n\varepsilon_0tV^2/g\), 변위와 무관, 큰 행정.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>정전기력이 \(V^2\)에 비례한다는 것은 전압 부호와 관련해 무엇을 뜻하는가?
+          <details><summary>답</summary><p>+V든 −V든 같은 방향(당기는 힘)이다. 정전 액추에이터는 밀지 못하고 당기기만 한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>한 변 200 μm 정사각 평행판, 간격 2 μm, 강성 1 N/m의 풀인 전압은?
+          <details><summary>답</summary><p>\(\sqrt{8\times1\times(2\times10^{-6})^3/(27\times8.854\times10^{-12}\times4\times10^{-8})} = 2.6\) V.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>풀인이 \(g_0/3\)에서 일어남을 보여라.
+          <details><summary>답</summary><p>평형 \(kx = \varepsilon_0AV^2/(2(g_0 - x)^2)\). 정전기력의 기울기 \(\varepsilon_0AV^2/(g_0 - x)^3\)이 \(k\)와 같아지는 점이 안정 한계다. 두 식을 나누면 \(x = (g_0 - x)/2\), 즉 \(x = g_0/3\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

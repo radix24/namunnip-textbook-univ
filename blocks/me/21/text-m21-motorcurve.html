@@ -1,0 +1,76 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계21-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-motorcurve" data-kind="본문" data-std="기계21-03-03">
+  <header class="card-head"><span class="no"></span><h2>DC 모터의 토크-속도 특성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>전압 방정식 \(V = IR + K\omega\)와 토크 \(T = KI\)로 토크-속도 직선을 그린다.</li>
+        <li>정지 토크, 무부하 속도, 최대 출력점, 효율을 구한다.</li>
+        <li>부하 토크에서 동작점을 찾고 모터를 고른다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>역기전력 (<a href="03-01.html">3.1절</a>), 토크 상수 \(K_t = K_e\) (<a href="03-02.html">3.2절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>토크-속도 직선</h3>
+    <p>정상 상태에서 인덕턴스는 영향이 없으므로 전원 전압은 권선 저항 강하와 역기전력으로 나뉩니다. 토크 상수와 역기전력 상수가 같으므로(SI 단위) 하나의 \(K\)로 씁니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">DC 모터 정상 상태</span>
+      <p>\[V = IR + K\omega,\qquad T = KI\]</p>
+      <p>\[\omega = \frac VK - \frac{R}{K^2}T\]</p>
+      <p>정지 토크 \(T_s = KV/R\), 무부하 속도 \(\omega_0 = V/K\), 최대 기계 출력 \(T_s\omega_0/4 = V^2/(4R)\)(\(\omega = \omega_0/2\)에서).</p>
+    </div>
+    <p>속도는 토크에 대해 직선으로 떨어집니다. 전압을 바꾸면 직선이 평행 이동하므로, PWM으로 평균 전압을 바꿔 속도를 제어합니다.</p>
+
+    <h3><span class="no">3.3.2</span>효율과 동작점</h3>
+    <p>입력 \(VI\), 출력 \(T\omega\), 손실 \(I^2R\)(구리 손실, 마찰 무시)입니다. 효율 \(\eta = T\omega/(VI) = K\omega/V\)는 무부하 근처에서 크고 정지 쪽으로 갈수록 0이 됩니다. 최대 출력점은 효율이 50%라 연속 운전에는 맞지 않고, 보통 무부하 속도의 70~90% 구간에서 씁니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1 <span class="nm">(특성값)</span></span>
+      <p>\(V\) = 24 V, \(R\) = 1 Ω, \(K\) = 0.05 N·m/A인 모터의 정지 토크, 무부하 속도, 최대 출력은?</p>
+    </div>
+    <p><i>풀이.</i> \(T_s = 0.05\times24/1 = 1.2\) N·m(정지 전류 24 A), \(\omega_0 = 24/0.05 = 480\) rad/s = 4584 rpm, 최대 출력 \(24^2/4 = 144\) W(240 rad/s, 0.6 N·m에서).</p>
+
+    <div class="tb-note"><b>주의</b>정지 전류는 정격의 수 배라, 모터가 걸려 멈춘 채 전원이 들어가면 권선이 몇 초 안에 탈 수 있습니다. 드라이버의 전류 제한과 과열 보호가 필요합니다. 실제 모터는 마찰과 철손 때문에 무부하 전류가 0이 아닙니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\omega = V/K - RT/K^2\): 직선, 전압으로 평행 이동.</li>
+        <li>\(T_s = KV/R\), \(\omega_0 = V/K\), \(P_{\max} = V^2/(4R)\).</li>
+        <li>효율 \(K\omega/V\): 고속 쪽에서 운전.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 모터를 12 V로 구동하면 무부하 속도와 정지 토크는?
+          <details><summary>답</summary><p>240 rad/s, 0.6 N·m. 둘 다 절반.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 모터가 0.3 N·m 부하를 돌릴 때 전류, 속도, 출력, 효율은?
+          <details><summary>답</summary><p>6 A, \((24 - 6)/0.05 = 360\) rad/s(3438 rpm), 108 W, \(108/144 = 75\)%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>최대 출력이 \(\omega_0/2\)에서 나옴을 보이고, 그때 효율이 50%인 이유를 말하여라.
+          <details><summary>답</summary><p>\(P = T\omega\)에 \(T = (K/R)(V - K\omega)\)를 넣으면 \(\omega\)의 이차식이고 꼭짓점이 \(\omega_0/2\)다. 이때 역기전력이 \(V/2\)라 전원 전압의 절반이 저항에서 열로 사라진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
