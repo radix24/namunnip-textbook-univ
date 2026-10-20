@@ -96,7 +96,7 @@ window.NM = (() => {
   const setTerms = (v) => {
     html.dataset.terms = v;
     document.querySelectorAll(".terms-btn").forEach((b) => {
-      b.textContent = v === "ko" ? "용어 한글" : "용어 EN";
+      b.innerHTML = v === "ko" ? '<span class="lb-long">용어 </span>한글' : '<span class="lb-long">용어 </span>EN';
       b.setAttribute("aria-label", v === "ko" ? "학술 용어를 영어로 보기" : "학술 용어를 한글로 보기");
     });
   };
