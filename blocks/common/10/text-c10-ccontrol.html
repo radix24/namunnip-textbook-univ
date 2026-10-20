@@ -2,41 +2,40 @@
 {
   "type": "card",
   "sec": "공통10-04-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-ccontrol" data-kind="본문" data-std="공통10-04-02">
   <header class="card-head"><span class="no"></span><h2>C의 선택문과 반복문: 파이썬과 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>C의 <code>if</code>, <code>switch</code>, <code>for</code>, <code>while</code>을 쓴다.</li>
-        <li>같은 프로그램을 파이썬과 C로 써서 문법의 차이를 정리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬의 if와 반복문 (<a href="01-02.html">1.2절</a>, <a href="02-03.html">2.3절</a>), C 자료형 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">파이썬의 <code>for i in range(10, 0, -2):</code> 한 줄을 C로 옮기면 <code>for (int i = 10; i &gt; 0; i -= 2)</code>처럼 괄호 안에 세 부분이 생긴다. 이 세 부분은 각각 언제 실행될까? 그리고 같은 알고리즘을 두 언어로 쓰면 무엇이 같고 무엇이 다를까?</p>
+    <figure class="q-fig" data-q="c10-cfor">
+      <svg viewBox="0 0 520 220" role="img" aria-label="C for 문의 초기화, 조건, 몸체, 증감이 실행되는 순서"></svg>
+      <div class="q-ctl"><label>단계 <input type="range" data-k="s" min="0" max="16" step="1" value="3"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. <code>for (int i = 10; i &gt; 0; i -= 2)</code>가 실행되는 순서. 초기화는 처음 한 번, 그 뒤로 조건, 몸체, 증감이 되풀이되고, 조건이 거짓(빨강)이 되면 끝난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬의 if와 반복문(<a href="01-02.html">1.2절</a>, <a href="02-03.html">2.3절</a>)과 C 자료형(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>선택문</h3>
-<pre><code>if (pH &lt; 7) {
+    <p>C의 <code>if</code>는 조건을 괄호로 감싸고, 묶음을 중괄호로 나타낸다.</p>
+    <pre><code>if (pH &lt; 7) {
     printf("산성\n");
 } else if (pH == 7) {
     printf("중성\n");
 } else {
     printf("염기성\n");
 }</code></pre>
-    <p>조건을 괄호로 감싸고, 묶음은 중괄호로 나타냅니다. 정수 값 하나로 여러 갈래를 나눌 때는 <code>switch</code>를 쓸 수 있습니다. 각 <code>case</code> 끝에 <code>break</code>를 빠뜨리면 다음 <code>case</code>까지 이어서 실행되니 주의합니다.</p>
-<pre><code>switch (grade) {
+    <p>또 정수 값 하나로 여러 갈래를 나눌 때는 <code>switch</code>를 쓸 수 있다. 다만 각 <code>case</code> 끝에 <code>break</code>를 빠뜨리면 다음 <code>case</code>까지 이어서 실행되니 주의한다.</p>
+    <pre><code>switch (grade) {
     case 1:  printf("1학년\n"); break;
     case 2:  printf("2학년\n"); break;
     default: printf("기타\n");
 }</code></pre>
 
     <h3><span class="no">4.2.2</span>반복문</h3>
-    <p>C의 <code>for</code>는 괄호 안에 <b>초기화; 조건; 증감</b>을 씁니다.</p>
+    <p>처음 질문의 세 부분은 <em>초기화; 조건; 증감</em>이다. 초기화는 처음 한 번만 실행되고, 그 뒤로 조건을 검사해 참이면 몸체를 실행한 다음 증감을 실행하고 다시 조건으로 돌아간다. 그림 1에서 단계를 넘기면 이 순서를 볼 수 있다. 가령 <code>i</code>가 10, 8, 6, 4, 2일 때 몸체가 한 번씩 실행되고, <code>i</code>가 0이 되는 순간 조건이 거짓이 되어 반복이 끝나므로 몸체는 모두 다섯 번 실행된다. 두 언어의 반복문을 나란히 놓으면 표와 같다.</p>
     <table class="tb-table">
       <thead><tr><th>할 일</th><th>파이썬</th><th>C</th></tr></thead>
       <tbody>
@@ -52,7 +51,8 @@
       <span class="lb">예제 4.2.1</span>
       <p>2부터 50까지의 소수를 출력하는 프로그램을 두 언어로 써라.</p>
     </div>
-<pre><code># 파이썬
+    <p><i>풀이.</i> \(d^2 \le n\)인 \(d\)로 나누어떨어지는지 확인하면 된다. 파이썬과 C로 쓰면 다음과 같다.</p>
+    <pre><code># 파이썬
 for n in range(2, 51):
     is_prime = True
     d = 2
@@ -63,7 +63,7 @@ for n in range(2, 51):
         d += 1
     if is_prime:
         print(n, end=" ")</code></pre>
-<pre><code>/* C */
+    <pre><code>/* C */
 #include &lt;stdio.h&gt;
 int main(void) {
     for (int n = 2; n &lt;= 50; n++) {
@@ -76,15 +76,9 @@ int main(void) {
     printf("\n");
     return 0;
 }</code></pre>
-    <p>둘 다 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47을 출력합니다. 알고리즘은 같고 문법만 다릅니다. C에는 불 자료형 대신 정수 1과 0을 썼습니다(<code>stdbool.h</code>를 쓰면 <code>bool</code>도 가능).</p>
+    <p>둘 다 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47을 출력한다. 즉 처음 질문의 둘째 물음에 답하면 알고리즘은 같고 문법만 다르다. 한편 C에는 불 자료형 대신 정수 1과 0을 썼다(<code>stdbool.h</code>를 쓰면 <code>bool</code>도 가능).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>C: 조건은 괄호, 묶음은 중괄호. <code>switch</code>는 <code>break</code>를 잊지 말 것.</li>
-        <li><code>for (초기화; 조건; 증감)</code>, <code>while</code>, <code>do-while</code>.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>C의 선택문은 조건을 괄호로, 묶음을 중괄호로 쓰며, <code>switch</code>는 <code>break</code>를 잊지 않아야 한다. 처음 질문의 <code>for (초기화; 조건; 증감)</code>은 초기화 한 번 뒤에 조건, 몸체, 증감을 되풀이하며, 같은 알고리즘은 두 언어에서 문법만 다르다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>

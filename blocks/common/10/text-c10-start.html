@@ -2,41 +2,32 @@
 {
   "type": "card",
   "sec": "공통10-01-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-start" data-kind="본문" data-std="공통10-01-01">
   <header class="card-head"><span class="no"></span><h2>파이썬으로 숫자와 문자열 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>파이썬 프로그램을 실행하고 <code>print</code>로 결과를 본다.</li>
-        <li>정수, 실수, 문자열 자료형과 변수, 산술 연산자를 쓴다.</li>
-        <li><code>input</code>으로 값을 받아 자료형을 바꿔 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>없음. 컴퓨터에 파이썬을 설치하거나 웹에서 실행할 수 있는 환경만 있으면 됩니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">계산기로 \(\frac12gt^2\)을 구할 때는 숫자를 하나하나 다시 눌러야 한다. 그런데 시간 \(t\)만 바꿔 같은 계산을 백 번 해야 한다면? 컴퓨터에게 계산 순서를 글로 적어 맡기면 되는데, 그 글에서 \(g\)와 \(t\) 같은 이름은 어떻게 값을 기억하고, <code>x = x + 1</code>처럼 수학에서는 말이 안 되는 식은 무엇을 뜻할까?</p>
+    <figure class="q-fig" data-q="c10-assign">
+      <svg viewBox="0 0 520 230" role="img" aria-label="다섯 줄짜리 프로그램을 한 줄씩 실행할 때 변수 상자의 값"></svg>
+      <div class="q-ctl"><label>실행한 줄 수 <input type="range" data-k="s" min="0" max="5" step="1" value="3"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 다섯 줄을 한 줄씩 실행할 때 변수 상자(오른쪽)의 값. 방금 바뀐 상자가 파랗게 칠해지며, <code>t = t + 1</code>은 오른쪽을 계산해 같은 상자에 다시 넣는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>없다. 컴퓨터에 파이썬을 설치하거나 웹에서 실행할 수 있는 환경만 있으면 된다.</div>
 
     <h3><span class="no">1.1.1</span>프로그램과 파이썬</h3>
-    <p>프로그램은 컴퓨터가 차례로 실행할 명령을 적은 글입니다. 컴퓨터가 직접 이해하는 것은 0과 1로 된 기계어뿐이라, 사람이 읽기 쉬운 언어로 쓴 뒤 번역해서 실행합니다. 파이썬은 한 줄씩 읽어 바로 실행하는 <b>인터프리터</b> 방식이고, 4단원의 C는 전체를 미리 기계어로 바꾸는 <b>컴파일러</b> 방식입니다.</p>
-    <p>파이썬을 설치하면 함께 오는 IDLE이나 VS Code 같은 편집기에서 파일(<code>.py</code>)을 만들어 실행합니다. 첫 프로그램은 화면에 글자를 내보내는 것입니다.</p>
-<pre><code>print("Hello, world!")
+    <p><em>프로그램</em>은 컴퓨터가 차례로 실행할 명령을 적은 글이다. 컴퓨터가 직접 이해하는 것은 0과 1로 된 기계어뿐이라, 사람이 읽기 쉬운 언어로 쓴 뒤 번역해서 실행한다. 파이썬은 한 줄씩 읽어 바로 실행하는 <em>인터프리터</em> 방식이고, 4단원의 C는 전체를 미리 기계어로 바꾸는 <em>컴파일러</em> 방식이다.</p>
+    <p>파이썬을 설치하면 함께 오는 IDLE이나 VS Code 같은 편집기에서 파일(<code>.py</code>)을 만들어 실행한다. 첫 프로그램은 화면에 글자를 내보내는 것이다.</p>
+    <pre><code>print("Hello, world!")
 print(3 + 4)          # 7
 print("3" + "4")      # 34  (문자열은 이어 붙인다)</code></pre>
-    <p><code>#</code> 뒤는 주석이라 실행되지 않습니다.</p>
+    <p>여기서 <code>#</code> 뒤는 주석이라 실행되지 않는다.</p>
 
     <h3><span class="no">1.1.2</span>자료형</h3>
-    <ul class="tb-list">
-      <li><b>정수</b>(<code>int</code>): <code>7</code>, <code>-3</code>. 파이썬의 정수는 아무리 커도 정확하다.</li>
-      <li><b>실수</b>(<code>float</code>): <code>3.14</code>, <code>2e-3</code>(= 0.002). 유효숫자가 약 16자리로 제한된다(6.1절).</li>
-      <li><b>문자열</b>(<code>str</code>): 따옴표로 감싼 글자들. <code>"화학"</code>, <code>'H2O'</code>.</li>
-      <li><b>불</b>(<code>bool</code>): <code>True</code>, <code>False</code>(1.2절).</li>
-    </ul>
-    <p><code>type(값)</code>으로 자료형을 확인할 수 있습니다.</p>
+    <p>값에는 종류, 곧 <em>자료형</em>이 있다. <code>7</code>, <code>-3</code> 같은 정수는 <code>int</code>이며, 파이썬의 정수는 아무리 커도 정확하다. <code>3.14</code>, <code>2e-3</code>(= 0.002) 같은 실수는 <code>float</code>이며, 유효숫자가 약 16자리로 제한된다(6.1절). 따옴표로 감싼 글자들 <code>"화학"</code>, <code>'H2O'</code>는 문자열 <code>str</code>이다. 그리고 <code>True</code>와 <code>False</code>는 불 <code>bool</code>이다(1.2절). 값의 자료형은 <code>type(값)</code>으로 확인할 수 있다.</p>
 
     <h3><span class="no">1.1.3</span>연산자와 변수</h3>
     <table class="tb-table">
@@ -49,34 +40,23 @@ print("3" + "4")      # 34  (문자열은 이어 붙인다)</code></pre>
         <tr><td><code>**</code></td><td>거듭제곱</td><td><code>2 ** 10</code></td><td>1024</td></tr>
       </tbody>
     </table>
-    <p><b>변수</b>는 값에 붙이는 이름입니다. <code>=</code>는 "같다"가 아니라 "오른쪽 값을 왼쪽 이름에 넣는다(대입)"는 뜻이라 <code>x = x + 1</code>처럼 쓸 수 있습니다(<code>x += 1</code>로 줄여 씀).</p>
-<pre><code>g = 9.8           # 중력 가속도 (m/s^2)
+    <p><em>변수</em>는 값에 붙이는 이름이다. 처음 질문의 답이 여기 있다. <code>=</code>는 "같다"가 아니라 "오른쪽 값을 계산해 왼쪽 이름에 넣는다(대입)"는 뜻이다. 그래서 <code>x = x + 1</code>처럼 쓸 수 있으며, <code>x += 1</code>로 줄여 쓴다. 그림 1에서 넷째 줄 <code>t = t + 1</code>을 실행하면 상자 t의 3이 4로 바뀐다.</p>
+    <pre><code>g = 9.8           # 중력 가속도 (m/s^2)
 t = 3
 h = 0.5 * g * t ** 2
 print("떨어진 거리:", h, "m")      # 떨어진 거리: 44.1 m
 print(f"떨어진 거리: {h:.1f} m")   # f-문자열로 소수 첫째 자리까지</code></pre>
-    <p>거듭제곱은 곱하기보다 먼저 계산합니다. 헷갈리면 괄호를 씁니다.</p>
+    <p>거듭제곱은 곱하기보다 먼저 계산한다. 헷갈리면 괄호를 쓴다.</p>
 
     <h3><span class="no">1.1.4</span>문자열 다루기와 입력</h3>
-    <ul class="tb-list">
-      <li><code>len(s)</code>: 길이.</li>
-      <li><code>s[0]</code>: 첫 글자(번호는 0부터), <code>s[-1]</code>: 마지막 글자, <code>s[1:3]</code>: 1번부터 3번 앞까지(2.1절).</li>
-      <li><code>s.upper()</code>, <code>s.replace("a", "b")</code>, <code>s.split()</code>: 대문자로, 바꾸기, 쪼개기.</li>
-    </ul>
-    <p><code>input()</code>은 키보드로 입력한 내용을 <b>언제나 문자열로</b> 돌려줍니다. 계산하려면 <code>int()</code>나 <code>float()</code>로 바꿔야 합니다.</p>
-<pre><code>r = float(input("반지름(cm)? "))
+    <p>문자열에는 쓸모 있는 도구가 많다. <code>len(s)</code>는 길이이다. <code>s[0]</code>은 첫 글자(번호는 0부터), <code>s[-1]</code>은 마지막 글자, <code>s[1:3]</code>은 1번부터 3번 앞까지이다(2.1절). 또 <code>s.upper()</code>, <code>s.replace("a", "b")</code>, <code>s.split()</code>은 각각 대문자로 바꾸기, 바꿔 넣기, 쪼개기이다.</p>
+    <p>한편 <code>input()</code>은 키보드로 입력한 내용을 언제나 문자열로 돌려준다. 그러므로 계산하려면 <code>int()</code>나 <code>float()</code>로 바꿔야 한다.</p>
+    <pre><code>r = float(input("반지름(cm)? "))
 area = 3.14159 * r ** 2
 print(f"넓이 {area:.2f} cm^2")</code></pre>
-    <div class="tb-note"><b>자주 하는 실수.</b> <code>input()</code>으로 받은 값을 그대로 더하면 <code>"3" + "4"</code>처럼 이어 붙어 <code>"34"</code>가 됩니다. 문자열과 숫자를 <code>+</code>로 더하면 <code>TypeError</code>가 납니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>input()</code>으로 받은 값을 숫자로 여기고 그대로 더하기 쉽다. 하지만 <code>"3" + "4"</code>처럼 이어 붙어 <code>"34"</code>가 된다. 또 문자열과 숫자를 <code>+</code>로 더하면 <code>TypeError</code>가 난다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>자료형: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>.</li>
-        <li><code>/</code>는 실수 나누기, <code>//</code>는 몫, <code>%</code>는 나머지, <code>**</code>는 거듭제곱.</li>
-        <li><code>=</code>는 대입. <code>input()</code>은 문자열을 돌려주므로 <code>int()</code>, <code>float()</code>로 바꾼다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이썬의 기본 자료형은 <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>이며, <code>/</code>는 실수 나누기, <code>//</code>는 몫, <code>%</code>는 나머지, <code>**</code>는 거듭제곱이다. 처음 질문의 <code>=</code>는 오른쪽을 계산해 이름에 넣는 대입이고, <code>input()</code>은 문자열을 돌려주므로 <code>int()</code>나 <code>float()</code>로 바꿔 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.5</span>연습문제</h3>

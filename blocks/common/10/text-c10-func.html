@@ -2,65 +2,50 @@
 {
   "type": "card",
   "sec": "공통10-03-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-func" data-kind="본문" data-std="공통10-03-01">
   <header class="card-head"><span class="no"></span><h2>함수와 재귀</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>매개변수와 반환값이 있는 함수를 정의하고 호출한다.</li>
-        <li>지역 변수의 범위를 안다.</li>
-        <li>재귀 함수가 호출되고 돌아오는 과정을 설명한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>반복문 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">이상 기체의 압력 \(P = \frac{nRT}{V}\)를 프로그램 여기저기서 계산한다면, 같은 식을 매번 다시 쓰다가 한 곳에서 오타가 날 수 있다. 계산을 한 번만 써 두고 이름으로 부를 수는 없을까? 그리고 \(5! = 5\times4!\)처럼 문제를 같은 모양의 더 작은 문제로 줄여 가는 계산은 프로그램으로 어떻게 쓸까?</p>
+    <figure class="q-fig" data-q="c10-stack">
+      <svg viewBox="0 0 520 260" role="img" aria-label="재귀 함수 fact의 호출 스택이 쌓이고 풀리는 모습"></svg>
+      <div class="q-ctl">
+        <label>\(n\) <input type="range" data-k="n" min="2" max="6" step="1" value="5"><output data-k="n"></output></label>
+        <label>단계 <input type="range" data-k="s" min="0" max="11" step="1" value="4"><output data-k="s"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. <code>fact(n)</code>의 호출 스택. 호출할 때마다 새 칸(파랑)이 위에 쌓이고, 기저 사례에 닿으면 값을 돌려주며(주황) 위에서부터 하나씩 사라진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>반복문(<a href="02-03.html">2.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>함수 정의</h3>
-    <p>같은 계산을 여러 번 쓰면 함수로 묶습니다. 프로그램이 짧아지고, 이름이 있어 읽기 쉽고, 고칠 곳이 한 군데가 됩니다.</p>
-<pre><code>def ideal_P(n, T, V, R=0.08206):
+    <p>처음 질문의 첫째 물음에 대한 답이 <em>함수</em>이다. 같은 계산을 여러 번 쓰면 함수로 묶는다. 그러면 프로그램이 짧아지고, 이름이 있어 읽기 쉽고, 고칠 곳이 한 군데가 된다.</p>
+    <pre><code>def ideal_P(n, T, V, R=0.08206):
     """이상 기체 압력 (atm). n mol, T K, V L"""
     return n * R * T / V
 
 print(ideal_P(1, 273.15, 22.414))   # 약 1.0
 print(ideal_P(2, 300, V=10))        # 키워드로 넘기기</code></pre>
-    <ul class="tb-list">
-      <li><b>매개변수</b>: 함수가 받는 값의 이름(<code>n, T, V</code>). <code>R=0.08206</code>처럼 기본값을 줄 수 있다.</li>
-      <li><b>인수</b>: 호출할 때 실제로 넘기는 값.</li>
-      <li><b>반환값</b>: <code>return</code> 뒤의 값. <code>return</code>이 없으면 <code>None</code>을 돌려준다.</li>
-      <li>여러 값은 <code>return a, b</code>로 돌려주면 튜플이 된다.</li>
-    </ul>
+    <p>함수가 받는 값의 이름(<code>n, T, V</code>)을 <em>매개변수</em>라 하며, <code>R=0.08206</code>처럼 기본값을 줄 수 있다. 호출할 때 실제로 넘기는 값은 <em>인수</em>라 한다. 그리고 <code>return</code> 뒤의 값을 <em>반환값</em>이라 하며, <code>return</code>이 없으면 <code>None</code>을 돌려준다. 여러 값은 <code>return a, b</code>로 돌려주면 튜플이 된다.</p>
 
     <h3><span class="no">3.1.2</span>지역 변수</h3>
-    <p>함수 안에서 만든 변수는 함수가 끝나면 사라지고 바깥에서는 보이지 않습니다(지역 변수). 함수 밖의 같은 이름 변수와는 서로 다른 변수입니다. 함수가 바깥 값을 쓰려면 매개변수로 받고, 결과는 <code>return</code>으로 돌려주는 것이 깔끔합니다.</p>
+    <p>함수 안에서 만든 변수는 함수가 끝나면 사라지고 바깥에서는 보이지 않는다. 이것을 <em>지역 변수</em>라 한다. 함수 밖의 같은 이름 변수와는 서로 다른 변수이다. 그러므로 함수가 바깥 값을 쓰려면 매개변수로 받고, 결과는 <code>return</code>으로 돌려주는 것이 깔끔하다.</p>
 
     <h3><span class="no">3.1.3</span>재귀</h3>
-    <p>함수가 자기 자신을 부르는 것을 <b>재귀</b>라 합니다. 문제를 같은 모양의 더 작은 문제로 줄이고, 더 줄일 수 없는 경우(<b>기저 사례</b>)는 바로 답합니다.</p>
-<pre><code>def fact(n):
+    <p>처음 질문의 둘째 물음, 곧 함수가 자기 자신을 부르는 것을 <em>재귀</em>라 한다. 문제를 같은 모양의 더 작은 문제로 줄이고, 더 줄일 수 없는 경우(<em>기저 사례</em>)는 바로 답한다.</p>
+    <pre><code>def fact(n):
     if n &lt;= 1:            # 기저 사례
         return 1
     return n * fact(n - 1)
 
 print(fact(5))   # 120</code></pre>
-    <p><code>fact(5)</code>는 <code>fact(4)</code>를 부르고 기다리며, 이것이 <code>fact(1)</code>까지 이어집니다. 호출될 때마다 컴퓨터는 그 호출의 <code>n</code>을 따로 기억해 두고(호출 스택), <code>fact(1)</code>이 1을 돌려주면 거꾸로 1·2·3·4·5를 곱하며 돌아옵니다.</p>
-    <ul class="tb-list">
-      <li>기저 사례가 없거나 도달하지 못하면 끝없이 부르다 <code>RecursionError</code>가 난다(파이썬 기본 한도 약 1000단계).</li>
-      <li>피보나치 \(F(n) = F(n-1) + F(n-2)\)를 그대로 재귀로 쓰면 같은 값을 수없이 다시 계산해 호출 수가 지수적으로 는다. 반복문이나 이미 구한 값을 저장해 두는 방법(메모이제이션)으로 고친다. 아래 실습에서 호출 수를 세어 볼 수 있다.</li>
-    </ul>
+    <p><code>fact(5)</code>는 <code>fact(4)</code>를 부르고 기다리며, 이것이 <code>fact(1)</code>까지 이어진다. 호출될 때마다 컴퓨터는 그 호출의 <code>n</code>을 따로 기억해 두는데, 이것을 호출 스택이라 한다. 그리고 <code>fact(1)</code>이 1을 돌려주면 거꾸로 1·2·3·4·5를 곱하며 돌아온다. 그림 1에서 단계를 넘기면 스택이 다섯 칸까지 쌓였다가 하나씩 풀리는 것을 볼 수 있다.</p>
+    <p>재귀를 쓸 때는 두 가지를 조심한다. 기저 사례가 없거나 도달하지 못하면 끝없이 부르다 <code>RecursionError</code>가 난다(파이썬 기본 한도 약 1000단계). 또 피보나치 \(F(n) = F(n-1) + F(n-2)\)를 그대로 재귀로 쓰면 같은 값을 수없이 다시 계산해 호출 수가 지수적으로 는다. 그래서 반복문이나 이미 구한 값을 저장해 두는 방법(메모이제이션)으로 고친다. 아래 실습에서 호출 수를 세어 볼 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>def 이름(매개변수):</code> ... <code>return 값</code>.</li>
-        <li>함수 안의 변수는 지역 변수.</li>
-        <li>재귀 = 기저 사례 + 더 작은 문제로 자기 호출. 호출 스택에 쌓였다가 거꾸로 돌아온다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>함수는 <code>def 이름(매개변수):</code>로 정의하고 <code>return 값</code>으로 결과를 돌려주며, 함수 안의 변수는 지역 변수이다. 처음 질문의 작은 문제로 줄이는 계산은 재귀로 쓰며, 기저 사례와 더 작은 문제로의 자기 호출로 이루어지고 호출 스택에 쌓였다가 거꾸로 돌아온다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.4</span>연습문제</h3>

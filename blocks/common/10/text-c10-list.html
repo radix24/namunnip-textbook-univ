@@ -2,43 +2,46 @@
 {
   "type": "card",
   "sec": "공통10-02-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-list" data-kind="본문" data-std="공통10-02-01">
   <header class="card-head"><span class="no"></span><h2>리스트</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>리스트를 만들고 인덱스와 슬라이스로 값을 꺼낸다.</li>
-        <li>요소를 추가, 삭제, 변경하고 자주 쓰는 함수를 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>문자열 인덱스 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">온도를 다섯 번 쟀다면 변수 다섯 개 <code>T1</code>부터 <code>T5</code>를 만들어야 할까? 백 번 쟀다면? 여러 값을 한 이름으로 묶고, 그 가운데 몇 번째 값이나 앞의 몇 개만 꺼내 쓰려면 어떻게 해야 할까?</p>
+    <figure class="q-fig" data-q="c10-slice">
+      <svg viewBox="0 0 520 210" role="img" aria-label="리스트의 인덱스와 슬라이스로 고른 원소"></svg>
+      <div class="q-ctl">
+        <label>시작 <input type="range" data-k="s" min="0" max="6" step="1" value="1"><output data-k="s"></output></label>
+        <label>끝 <input type="range" data-k="e" min="0" max="6" step="1" value="4"><output data-k="e"></output></label>
+        <label>간격 <select data-k="k"><option value="1" selected>1</option><option value="2">2</option><option value="-1">−1 (거꾸로)</option></select></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 리스트 <code>a</code>의 칸과 인덱스(위), 음수 인덱스(아래, 빨강). 슬라이스는 시작(주황 막대)부터 끝(빨간 막대) 바로 앞까지를 고른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>문자열 인덱스(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>리스트 만들기와 인덱스</h3>
-    <p>실험값 여러 개를 변수 하나로 다루려면 리스트를 씁니다. 대괄호 안에 쉼표로 값을 늘어놓습니다.</p>
-<pre><code>T = [20.1, 20.5, 21.3, 22.0, 22.8]   # 온도 측정값
+    <p>처음 질문의 묶음이 <em>리스트</em>이다. 대괄호 안에 쉼표로 값을 늘어놓으며, 몇 번째 값은 대괄호 안의 번호, 곧 <em>인덱스</em>로 꺼낸다.</p>
+    <pre><code>T = [20.1, 20.5, 21.3, 22.0, 22.8]   # 온도 측정값
 print(T[0])      # 20.1  첫째 (번호는 0부터)
 print(T[-1])     # 22.8  마지막
 print(len(T))    # 5
 T[1] = 20.6      # 값 바꾸기</code></pre>
-    <p>길이가 5이면 쓸 수 있는 인덱스는 0~4(또는 −5~−1)이고, <code>T[5]</code>는 <code>IndexError</code>입니다.</p>
+    <p>길이가 5이면 쓸 수 있는 인덱스는 0~4(또는 −5~−1)이고, <code>T[5]</code>는 <code>IndexError</code>이다.</p>
 
     <h3><span class="no">2.1.2</span>슬라이스</h3>
-    <p><code>a[시작:끝:간격]</code>은 시작부터 <b>끝 바로 앞까지</b> 간격마다 골라 새 리스트를 만듭니다. 생략하면 처음, 마지막, 1로 봅니다.</p>
-<pre><code>a = [0, 10, 20, 30, 40, 50]
+    <p>앞의 몇 개만 꺼내는 것은 <em>슬라이스</em>로 한다. <code>a[시작:끝:간격]</code>은 시작부터 끝 바로 앞까지 간격마다 골라 새 리스트를 만든다. 생략하면 시작은 처음, 끝은 마지막, 간격은 1로 본다.</p>
+    <pre><code>a = [0, 10, 20, 30, 40, 50]
 a[1:4]     # [10, 20, 30]
 a[:3]      # [0, 10, 20]
 a[::2]     # [0, 20, 40]
 a[::-1]    # [50, 40, 30, 20, 10, 0]  거꾸로</code></pre>
-    <p>끝을 빼는 규칙 덕분에 <code>a[:k]</code>와 <code>a[k:]</code>를 이으면 원래 리스트가 되고, <code>a[i:j]</code>의 길이는 <code>j - i</code>입니다.</p>
+    <p>끝을 빼는 규칙 덕분에 <code>a[:k]</code>와 <code>a[k:]</code>를 이으면 원래 리스트가 되고, <code>a[i:j]</code>의 길이는 <code>j - i</code>이다. 그림 1에서 시작과 끝을 바꿔 보면 빨간 막대 칸은 언제나 빠진다.</p>
 
     <h3><span class="no">2.1.3</span>추가, 삭제, 함수</h3>
+    <p>리스트는 만든 뒤에도 늘리고 줄일 수 있으며, 자주 쓰는 도구는 아래 표와 같다.</p>
     <table class="tb-table">
       <thead><tr><th>쓰는 법</th><th>하는 일</th></tr></thead>
       <tbody>
@@ -51,19 +54,12 @@ a[::-1]    # [50, 40, 30, 20, 10, 0]  거꾸로</code></pre>
         <tr><td><code>a.sort()</code>, <code>sorted(a)</code></td><td>제자리 정렬 / 정렬된 새 리스트</td></tr>
       </tbody>
     </table>
-<pre><code>T.append(23.5)
+    <pre><code>T.append(23.5)
 mean = sum(T) / len(T)
 print(f"평균 {mean:.2f}")</code></pre>
-    <div class="tb-note"><b>같은 리스트를 가리키는 두 이름.</b> <code>b = a</code>는 리스트를 복사하지 않고 같은 리스트에 이름을 하나 더 붙입니다. <code>b[0] = 99</code>를 하면 <code>a[0]</code>도 바뀝니다. 복사하려면 <code>b = a[:]</code>나 <code>b = a.copy()</code>를 씁니다. 이것은 5.2절의 포인터와 비슷한 생각입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>b = a</code>가 리스트를 복사한다고 생각하기 쉽다. 하지만 이것은 같은 리스트에 이름을 하나 더 붙일 뿐이다. 그래서 <code>b[0] = 99</code>를 하면 <code>a[0]</code>도 바뀐다. 복사하려면 <code>b = a[:]</code>나 <code>b = a.copy()</code>를 쓴다. 이것은 5.2절의 포인터와 비슷한 생각이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>인덱스는 0부터, 음수는 뒤에서부터.</li>
-        <li>슬라이스 <code>a[시작:끝:간격]</code>은 끝을 포함하지 않는다.</li>
-        <li><code>append</code>, <code>insert</code>, <code>pop</code>, <code>remove</code>, <code>sum</code>, <code>sorted</code>.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>리스트는 여러 값을 한 이름으로 묶으며, 인덱스는 0부터, 음수는 뒤에서부터 센다. 처음 질문처럼 일부만 꺼낼 때는 끝을 포함하지 않는 슬라이스 <code>a[시작:끝:간격]</code>을 쓰고, <code>append</code>, <code>insert</code>, <code>pop</code>, <code>remove</code>, <code>sum</code>, <code>sorted</code>로 늘리고 줄이고 계산한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>

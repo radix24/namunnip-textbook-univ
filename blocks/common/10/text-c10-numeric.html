@@ -2,28 +2,29 @@
 {
   "type": "card",
   "sec": "공통10-06-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-numeric" data-kind="본문" data-std="공통10-06-02">
   <header class="card-head"><span class="no"></span><h2>사다리꼴 공식과 이분법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>사다리꼴 공식으로 정적분의 근삿값을 구하는 프로그램을 쓰고 오차가 줄어드는 빠르기를 안다.</li>
-        <li>이분법으로 방정식의 근을 구하는 프로그램을 쓰고 반복 횟수를 예측한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>정적분 (<a href="../1/04-02.html">공통1 4.2절</a>), 중간값 정리 (<a href="../1/01-04.html">공통1 1.4절</a>), 함수와 반복문 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(\int_0^\pi\sin x\,dx = 2\)는 손으로 구할 수 있지만, \(\int e^{-x^2}dx\)처럼 부정적분을 식으로 쓸 수 없는 적분도 많다. 또 \(x^2 = 2\)의 근은 알지만, 일반적인 방정식의 근은 공식이 없는 경우가 대부분이다. 이런 값을 컴퓨터로 원하는 만큼 정확하게 구하려면 어떤 계산을 몇 번 되풀이해야 할까?</p>
+    <figure class="q-fig" data-q="c10-trap">
+      <svg viewBox="0 0 520 250" role="img" aria-label="사다리꼴 공식과 이분법"></svg>
+      <div class="q-ctl">
+        <label>방법 <select data-k="m"><option value="0" selected>사다리꼴 공식</option><option value="1">이분법</option></select></label>
+        <label>\(n\) (조각 수 또는 반복 횟수) <input type="range" data-k="n" min="1" max="20" step="1" value="4"><output data-k="n"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 사다리꼴 공식은 곡선 아래를 사다리꼴 \(n\)개(파랑)로 덮고, 이분법은 근이 있는 구간을 \(n\)번 절반으로 줄인다(아래로 쌓인 파란 막대).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정적분(<a href="../1/04-02.html">미분적분학(1) 4.2절</a>), 중간값 정리(<a href="../1/01-04.html">미분적분학(1) 1.4절</a>), 함수와 반복문(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>사다리꼴 공식</h3>
-    <p>구간 \([a, b]\)를 폭 \(h = \frac{b-a}{n}\)인 \(n\)개로 나누고, 각 조각의 넓이를 사다리꼴로 어림합니다.</p>
-    \[\int_a^b f(x)\,dx \approx h\left[\frac{f(x_0)}{2} + f(x_1) + \cdots + f(x_{n-1}) + \frac{f(x_n)}{2}\right], \quad x_i = a + ih.\]
-<pre><code>import math
+    <p>처음 질문의 적분은 구간 \([a, b]\)를 폭 \(h = \frac{b-a}{n}\)인 \(n\)개로 나누고, 각 조각의 넓이를 사다리꼴로 어림해 구한다. 이것이 <em>사다리꼴 공식</em>이다.</p>
+    \[\int_a^b f(x)\,dx \approx h\left[\frac{f(x_0)}{2} + f(x_1) + \cdots + f(x_{n-1}) + \frac{f(x_n)}{2}\right], \quad x_i = a + ih\]
+    <pre><code>import math
 
 def trapezoid(f, a, b, n):
     h = (b - a) / n
@@ -44,11 +45,11 @@ for n in [4, 8, 16, 32]:
         <tr><td>32</td><td>1.998393</td><td>0.00161</td></tr>
       </tbody>
     </table>
-    <p>\(n\)을 두 배로 하면 오차가 약 \(\frac14\)이 됩니다. 사다리꼴 공식의 오차는 \(h^2\)에 비례합니다(\(f''\)이 연속일 때). 곡선을 직선으로 이었기 때문이며, 포물선으로 잇는 심프슨 공식은 \(h^4\)에 비례해 훨씬 빠르게 줄어듭니다.</p>
+    <p>\(n\)을 두 배로 하면 오차가 약 \(\frac14\)이 된다. 즉 사다리꼴 공식의 오차는 \(h^2\)에 비례한다(\(f''\)이 연속일 때). 곡선을 직선으로 이었기 때문이며, 포물선으로 잇는 심프슨 공식은 \(h^4\)에 비례해 훨씬 빠르게 줄어든다. 그림 1에서 \(n\)을 4에서 8, 16으로 늘리면 사다리꼴이 곡선에 점점 붙는다.</p>
 
     <h3><span class="no">6.2.2</span>이분법</h3>
-    <p>연속 함수 \(f\)가 \(f(a)\)와 \(f(b)\)의 부호가 다르면 \([a, b]\) 안에 근이 있습니다(중간값 정리). 가운데 \(m = \frac{a+b}{2}\)에서 부호를 보고 근이 있는 절반을 남기는 일을 되풀이합니다.</p>
-<pre><code>def bisect(f, a, b, tol=1e-6):
+    <p>처음 질문의 방정식은 <em>이분법</em>으로 푼다. 연속 함수 \(f\)가 \(f(a)\)와 \(f(b)\)의 부호가 다르면 \([a, b]\) 안에 근이 있다(중간값 정리). 그러므로 가운데 \(m = \frac{a+b}{2}\)에서 부호를 보고 근이 있는 절반을 남기는 일을 되풀이한다.</p>
+    <pre><code>def bisect(f, a, b, tol=1e-6):
     if f(a) * f(b) &gt; 0:
         raise ValueError("양 끝의 부호가 같습니다")
     steps = 0
@@ -62,16 +63,10 @@ for n in [4, 8, 16, 32]:
     return (a + b) / 2, steps
 
 print(bisect(lambda x: x * x - 2, 1, 2))   # (1.41421..., 20)</code></pre>
-    <p>한 번에 구간이 절반이 되므로, 길이 \(L\)인 구간을 허용 오차 \(\varepsilon\) 아래로 줄이는 데 \(\lceil\log_2(L/\varepsilon)\rceil\)번이면 됩니다. \(L = 1\), \(\varepsilon = 10^{-6}\)이면 20번입니다. 느리지만 부호만 바뀌면 반드시 수렴하는 튼튼한 방법이라, 빠른 뉴턴 방법(공통1 3단원)의 출발점을 잡는 데도 씁니다. <code>lambda x: ...</code>는 이름 없는 짧은 함수입니다.</p>
-    <div class="tb-note">아래 실습 카드에서 \(n\)을 바꾸며 사다리꼴이 곡선을 덮는 모습과 이분법의 구간이 줄어드는 모습을 볼 수 있습니다.</div>
+    <p>한 번에 구간이 절반이 되므로, 길이 \(L\)인 구간을 허용 오차 \(\varepsilon\) 아래로 줄이는 데 \(\lceil\log_2(L/\varepsilon)\rceil\)번이면 된다. 가령 \(L = 1\), \(\varepsilon = 10^{-6}\)이면 20번이다. 그림 1에서 이분법을 고르고 \(n\)을 20까지 올리면 구간이 \(\sqrt2\) 둘레로 좁혀진다. 이분법은 느리지만 부호만 바뀌면 반드시 수렴하는 튼튼한 방법이라, 빠른 뉴턴 방법(미분적분학(1) 3단원)의 출발점을 잡는 데도 쓴다. 한편 <code>lambda x: ...</code>는 이름 없는 짧은 함수이다.</p>
+    <div class="tb-aside">아래 실습 카드에서 \(n\)을 바꾸며 사다리꼴이 곡선을 덮는 모습과 이분법의 구간이 줄어드는 모습을 더 자세히 볼 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사다리꼴: \(h[\frac{f_0}{2} + f_1 + \cdots + \frac{f_n}{2}]\), 오차 \(\propto h^2\).</li>
-        <li>이분법: 부호가 바뀌는 절반을 남긴다. \(\lceil\log_2(L/\varepsilon)\rceil\)번.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사다리꼴 공식은 \(h[\frac{f_0}{2} + f_1 + \cdots + \frac{f_n}{2}]\)으로 적분을 어림하며 오차가 \(h^2\)에 비례한다. 이분법은 부호가 바뀌는 절반을 남기며 \(\lceil\log_2(L/\varepsilon)\rceil\)번이면 끝난다. 처음 질문처럼 공식이 없는 값도 이렇게 되풀이 횟수를 미리 알고 계산할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.3</span>연습문제</h3>

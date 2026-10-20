@@ -2,27 +2,25 @@
 {
   "type": "card",
   "sec": "공통10-04-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-cfunc" data-kind="본문" data-std="공통10-04-03">
   <header class="card-head"><span class="no"></span><h2>C의 함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>반환형과 매개변수형을 밝혀 C 함수를 정의하고 호출한다.</li>
-        <li>함수 원형 선언과 값에 의한 전달을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬 함수 (<a href="03-01.html">3.1절</a>), C 제어문 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">변수를 두 배로 만드는 C 함수 <code>twice(a)</code>를 불렀는데, 부른 뒤에도 <code>a</code>는 그대로 5였다. 함수 안에서는 분명히 두 배를 했다. 함수에 넘긴 값은 어디로 가며, 왜 원래 변수가 바뀌지 않았을까?</p>
+    <figure class="q-fig" data-q="c10-byval">
+      <svg viewBox="0 0 520 240" role="img" aria-label="값에 의한 전달에서 main의 a와 twice의 x"></svg>
+      <div class="q-ctl"><label>단계 <input type="range" data-k="s" min="0" max="4" step="1" value="2"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. <code>twice(a)</code>를 부를 때 <code>a</code>의 값이 새 칸 <code>x</code>로 복사된다. 함수 안에서 바뀌는 것은 <code>x</code>뿐이고, 함수가 끝나면 그 칸은 사라진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬 함수(<a href="03-01.html">3.1절</a>)와 C 제어문(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>함수 정의</h3>
-    <p>C 함수는 돌려줄 값의 자료형(반환형), 이름, 매개변수의 자료형과 이름을 모두 적습니다. 돌려줄 값이 없으면 반환형을 <code>void</code>로 씁니다.</p>
-<pre><code>#include &lt;stdio.h&gt;
+    <p>C 함수는 돌려줄 값의 자료형(반환형), 이름, 매개변수의 자료형과 이름을 모두 적는다. 돌려줄 값이 없으면 반환형을 <code>void</code>로 쓴다.</p>
+    <pre><code>#include &lt;stdio.h&gt;
 #include &lt;math.h&gt;
 
 double distance(double x1, double y1, double x2, double y2);   /* 원형 선언 */
@@ -36,33 +34,26 @@ double distance(double x1, double y1, double x2, double y2) {
     double dx = x2 - x1, dy = y2 - y1;
     return sqrt(dx * dx + dy * dy);
 }</code></pre>
-    <p>C 컴파일러는 위에서 아래로 읽기 때문에, 함수를 <code>main</code>보다 뒤에 정의하려면 앞에 <b>원형</b>(머리 부분과 세미콜론)을 먼저 적어 둡니다. 수학 함수를 쓰는 프로그램은 컴파일할 때 <code>-lm</code>을 붙여야 하는 환경도 있습니다.</p>
+    <p>C 컴파일러는 위에서 아래로 읽기 때문에, 함수를 <code>main</code>보다 뒤에 정의하려면 앞에 <em>원형</em>(머리 부분과 세미콜론)을 먼저 적어 둔다. 또 수학 함수를 쓰는 프로그램은 컴파일할 때 <code>-lm</code>을 붙여야 하는 환경도 있다.</p>
 
     <h3><span class="no">4.3.2</span>값에 의한 전달</h3>
-    <p>C는 함수를 부를 때 인수의 <b>값을 복사해서</b> 넘깁니다. 함수 안에서 매개변수를 바꿔도 부른 쪽의 변수는 그대로입니다.</p>
-<pre><code>void twice(int x) { x = 2 * x; }
+    <p>처음 질문의 답이 여기 있다. C는 함수를 부를 때 인수의 값을 복사해서 넘긴다. 그러므로 함수 안에서 매개변수를 바꿔도 부른 쪽의 변수는 그대로이다.</p>
+    <pre><code>void twice(int x) { x = 2 * x; }
 
 int a = 5;
 twice(a);
 printf("%d\n", a);     /* 5  (바뀌지 않음) */</code></pre>
-    <p>부른 쪽의 변수를 함수가 바꾸게 하려면 변수의 주소를 넘깁니다. <code>scanf("%d", &amp;a)</code>에 <code>&amp;</code>를 붙이는 이유가 이것이며, 5.2절 포인터에서 다룹니다.</p>
+    <p>그림 1에서 단계를 넘기면, <code>a</code>의 5가 <code>x</code>로 복사되고 <code>x</code>만 10이 된 뒤 사라진다. 부른 쪽의 변수를 함수가 바꾸게 하려면 변수의 주소를 넘긴다. <code>scanf("%d", &amp;a)</code>에 <code>&amp;</code>를 붙이는 까닭이 이것이며, 5.2절 포인터에서 다룬다.</p>
 
     <h3><span class="no">4.3.3</span>재귀</h3>
-    <p>C 함수도 자기 자신을 부를 수 있습니다. 3.1절의 계승을 C로 쓰면</p>
-<pre><code>long long fact(int n) {
+    <p>C 함수도 자기 자신을 부를 수 있다. 3.1절의 계승을 C로 쓰면 다음과 같다.</p>
+    <pre><code>long long fact(int n) {
     if (n &lt;= 1) return 1;
     return n * fact(n - 1);
 }</code></pre>
-    <p><code>int</code>로 쓰면 <code>fact(13)</code>부터 범위(약 21억)를 넘어 틀린 값이 나옵니다. <code>long long</code>은 <code>fact(20)</code>까지 담습니다.</p>
+    <p>그런데 <code>int</code>로 쓰면 <code>fact(13)</code>부터 범위(약 21억)를 넘어 틀린 값이 나온다. 반면 <code>long long</code>은 <code>fact(20)</code>까지 담는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>반환형 이름(자료형 매개변수, ...) { ... return 값; }</code>, 없으면 <code>void</code>.</li>
-        <li>뒤에 정의하면 앞에 원형 선언.</li>
-        <li>인수는 값이 복사되어 넘어간다. 바꾸게 하려면 주소를 넘긴다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>C 함수는 <code>반환형 이름(자료형 매개변수, ...) { ... return 값; }</code>으로 쓰고, 돌려줄 값이 없으면 <code>void</code>, 뒤에 정의하면 앞에 원형을 선언한다. 처음 질문처럼 인수는 값이 복사되어 넘어가므로, 원래 변수를 바꾸게 하려면 주소를 넘긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.4</span>연습문제</h3>

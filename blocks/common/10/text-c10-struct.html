@@ -2,27 +2,25 @@
 {
   "type": "card",
   "sec": "공통10-05-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c10-body.js"]
 }
 -->
 <article class="card q-card" id="text-c10-struct" data-kind="본문" data-std="공통10-05-03">
   <header class="card-head"><span class="no"></span><h2>구조체와 C++ 클래스</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>C 구조체로 서로 다른 자료형의 값을 한 덩어리로 묶는다.</li>
-        <li>C++ 클래스로 자료와 함수를 묶고, 공개와 비공개를 나눈다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬 클래스 (<a href="03-03.html">3.3절</a>), 포인터 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">원소마다 기호(문자열), 원자 번호(정수), 원자량(실수)을 담으려면 배열 세 개를 따로 만들어야 할까? 배열은 같은 자료형만 담을 수 있다. 자료형이 다른 값들을 한 덩어리로 묶고, 3.3절의 파이썬 클래스처럼 자료와 함수를 함께 묶는 방법은 C와 C++에서 어떻게 쓸까?</p>
+    <figure class="q-fig" data-q="c10-struct">
+      <svg viewBox="0 0 520 230" role="img" aria-label="구조체 배열과 구조체 포인터"></svg>
+      <div class="q-ctl"><label><code>p = &amp;e[k]</code>의 \(k\) <input type="range" data-k="k" min="0" max="2" step="1" value="1"><output data-k="k"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 구조체 <code>Element</code> 세 개의 배열 <code>e</code>. 각 원소 안에 자료형이 다른 멤버 셋이 함께 들어 있고, 포인터 <code>p</code>(주황)로 가리킨 원소의 멤버는 <code>-&gt;</code>로 꺼낸다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬 클래스(<a href="03-03.html">3.3절</a>)와 포인터(<a href="05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>구조체</h3>
-    <p>원소 기호(문자열), 원자 번호(정수), 원자량(실수)처럼 자료형이 다른 값들을 하나로 묶을 때 구조체를 씁니다.</p>
-<pre><code>#include &lt;stdio.h&gt;
+    <p>처음 질문처럼 원소 기호, 원자 번호, 원자량같이 자료형이 다른 값들을 하나로 묶을 때 <em>구조체</em>를 쓴다.</p>
+    <pre><code>#include &lt;stdio.h&gt;
 struct Element {
     char symbol[3];
     int Z;
@@ -37,15 +35,11 @@ int main(void) {
     printf("%s\n", p-&gt;symbol);       /* C   (*p).symbol과 같음 */
     return 0;
 }</code></pre>
-    <ul class="tb-list">
-      <li>멤버는 점(<code>.</code>)으로 쓴다: <code>e[i].Z</code>.</li>
-      <li>구조체 포인터는 화살표(<code>-&gt;</code>)로 쓴다: <code>p-&gt;mass</code>.</li>
-      <li><code>typedef struct { ... } Element;</code>로 이름을 줄일 수 있다.</li>
-    </ul>
+    <p>구조체의 멤버는 점(<code>.</code>)으로 쓴다. 가령 <code>e[i].Z</code>이다. 반면 구조체 포인터는 화살표(<code>-&gt;</code>)로 쓰며, <code>p-&gt;mass</code>는 <code>(*p).mass</code>와 같다. 그림 1에서 <code>p</code>가 가리키는 원소를 바꾸면 <code>p-&gt;symbol</code>이 그 원소의 기호가 된다. 또 <code>typedef struct { ... } Element;</code>로 이름을 줄일 수 있다.</p>
 
     <h3><span class="no">5.3.2</span>C++ 클래스</h3>
-    <p>C++는 C에 클래스를 더한 언어입니다(C 코드 대부분이 그대로 컴파일됨). 구조체처럼 자료를 묶고, 그 자료를 다루는 함수(멤버 함수)도 함께 넣습니다.</p>
-<pre><code>#include &lt;iostream&gt;
+    <p>C++는 C에 클래스를 더한 언어이며, C 코드 대부분이 그대로 컴파일된다. 구조체처럼 자료를 묶고, 그 자료를 다루는 함수(멤버 함수)도 함께 넣는다.</p>
+    <pre><code>#include &lt;iostream&gt;
 using namespace std;
 
 class Particle {
@@ -64,22 +58,10 @@ int main() {
     cout &lt;&lt; p.pos() &lt;&lt; " " &lt;&lt; p.kinetic() &lt;&lt; endl;    // 1.5 9
     return 0;
 }</code></pre>
-    <p>3.3절의 파이썬 <code>Particle</code>과 같은 일을 합니다. 차이는 다음과 같습니다.</p>
-    <ul class="tb-list">
-      <li>C++는 멤버의 자료형을 선언한다.</li>
-      <li><code>self</code> 대신 멤버 이름을 바로 쓴다(필요하면 <code>this-&gt;x</code>).</li>
-      <li>생성자는 클래스와 같은 이름의 함수다(파이썬의 <code>__init__</code>).</li>
-      <li><code>private</code>로 감춘 자료는 멤버 함수를 통해서만 바꿀 수 있다(캡슐화). 잘못된 값이 들어가는 것을 막는다.</li>
-    </ul>
-    <p>입출력은 <code>printf</code> 대신 <code>cout &lt;&lt;</code>을 많이 씁니다.</p>
+    <p>이 코드는 3.3절의 파이썬 <code>Particle</code>과 같은 일을 한다. 차이는 넷이다. 먼저 C++는 멤버의 자료형을 선언한다. 다음으로 <code>self</code> 대신 멤버 이름을 바로 쓰며, 필요하면 <code>this-&gt;x</code>로 쓴다. 또 생성자는 클래스와 같은 이름의 함수로, 파이썬의 <code>__init__</code>에 해당한다. 끝으로 <code>private</code>로 감춘 자료는 멤버 함수를 통해서만 바꿀 수 있으며, 이것을 캡슐화라 한다. 그래서 잘못된 값이 들어가는 것을 막는다.</p>
+    <p>한편 입출력은 <code>printf</code> 대신 <code>cout &lt;&lt;</code>을 많이 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>struct</code>: 서로 다른 자료형을 묶는다. <code>.</code>과 <code>-&gt;</code>.</li>
-        <li>C++ <code>class</code>: 자료 + 멤버 함수, 생성자, <code>public</code>/<code>private</code>.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문처럼 자료형이 다른 값들은 <code>struct</code>로 묶고, 멤버는 <code>.</code>으로, 구조체 포인터의 멤버는 <code>-&gt;</code>로 꺼낸다. C++의 <code>class</code>는 자료와 멤버 함수를 함께 묶으며, 생성자와 <code>public</code>/<code>private</code>로 객체를 만들고 감춘다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
