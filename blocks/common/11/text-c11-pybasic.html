@@ -2,28 +2,25 @@
 {
   "type": "card",
   "sec": "공통11-03-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-pybasic" data-kind="본문" data-std="공통11-03-01">
   <header class="card-head"><span class="no"></span><h2>파이썬 자료형과 조건문: 포트란과 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>파이썬의 동적 자료형을 포트란의 선언과 비교한다.</li>
-        <li>같은 계산 프로그램을 두 언어로 써서 문법의 차이를 정리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬 기초 (<a href="../10/01-01.html">공통10 1.1절</a>, <a href="../10/01-02.html">1.2절</a>), 포트란 기초 (<a href="01-01.html">1.1절</a>, <a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <p>공통10에서 파이썬을 배웠다면 이 절은 복습입니다. 여기서는 포트란과 나란히 놓고 차이를 정리합니다.</p>
+    <p class="q-ask">포트란으로 짠 이차방정식 풀이를 파이썬으로 옮기면 선언이 사라지고 줄 수도 줄어든다. 그런데 옮기다 보면 정수 나눗셈처럼 두 언어가 정반대로 동작하는 곳에서 틀리기 쉽다. 두 언어는 무엇이 같고 무엇이 다를까? 또 근의 공식을 그대로 옮기면 생기는 숨은 문제는 없을까?</p>
+    <figure class="q-fig" data-q="c11-quadroot">
+      <svg viewBox="0 0 520 230" role="img" aria-label="x² + bx + 1 = 0의 작은 근을 구할 때 상대 오차"></svg>
+      <div class="q-ctl"><label>\(\log_{10} b\) <input type="range" data-k="k" min="1" max="8" step="0.5" value="4"><output data-k="k"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(x^2 + bx + 1 = 0\)의 작은 근을 근의 공식 그대로(주황) 구하면 \(b\)가 클수록 상대 오차가 커진다. 근과 계수의 관계로 구하면(파랑) 오차가 반올림 수준에 머문다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬 기초(<a href="../10/01-01.html">전자계산(1) 1.1절</a>, <a href="../10/01-02.html">1.2절</a>)와 포트란 기초(<a href="01-01.html">1.1절</a>, <a href="01-02.html">1.2절</a>)를 쓴다.</div>
+    <p>전자계산(1)에서 파이썬을 배웠다면 이 절은 복습이다. 여기서는 포트란과 나란히 놓고 차이를 정리한다.</p>
 
     <h3><span class="no">3.1.1</span>동적 자료형</h3>
-    <p>포트란과 C는 변수를 쓰기 전에 자료형을 선언하고, 그 변수에는 그 자료형만 넣습니다(정적 자료형). 파이썬은 선언 없이 값을 대입하면 변수가 생기고, 같은 이름에 다른 자료형의 값을 넣어도 됩니다(동적 자료형). 편하지만 오타나 자료형 실수가 실행해 보기 전까지 드러나지 않습니다.</p>
+    <p>포트란과 C는 변수를 쓰기 전에 자료형을 선언하고, 그 변수에는 그 자료형만 넣는다. 이것을 <em>정적 자료형</em>이라 한다. 반면 파이썬은 선언 없이 값을 대입하면 변수가 생기고, 같은 이름에 다른 자료형의 값을 넣어도 된다. 이것이 <em>동적 자료형</em>이다. 편하지만 오타나 자료형 실수가 실행해 보기 전까지 드러나지 않는다. 두 언어를 나란히 놓으면 다음과 같다.</p>
     <table class="tb-table">
       <thead><tr><th>항목</th><th>포트란</th><th>파이썬</th></tr></thead>
       <tbody>
@@ -39,14 +36,15 @@
         <tr><td>실행</td><td>컴파일 후 실행</td><td>인터프리터가 바로 실행</td></tr>
       </tbody>
     </table>
-    <p>특히 정수 나눗셈은 두 언어가 정반대라 옮겨 쓸 때 가장 많이 틀리는 곳입니다.</p>
+    <p>처음 질문의 정반대인 곳이 바로 정수 나눗셈이다. 포트란에서 <code>7/2</code>는 3이지만 파이썬에서는 3.5이므로, 옮겨 쓸 때 가장 많이 틀린다.</p>
 
     <h3><span class="no">3.1.2</span>같은 프로그램, 두 언어</h3>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
       <p>이차방정식 \(ax^2 + bx + c = 0\)의 근을 판별식에 따라 구하여라.</p>
     </div>
-<pre><code>program quad
+    <p><i>풀이.</i> 판별식 \(D = b^2 - 4ac\)의 부호로 세 갈래를 나눈다. 포트란과 파이썬으로 쓰면 다음과 같다.</p>
+    <pre><code>program quad
   implicit none
   integer, parameter :: dp = kind(1.0d0)
   real(dp) :: a, b, c, D
@@ -60,7 +58,7 @@
     print *, "실근 없음"
   end if
 end program quad</code></pre>
-<pre><code>import math
+    <pre><code>import math
 a, b, c = map(float, input().split())
 D = b**2 - 4*a*c
 if D &gt; 0:
@@ -69,15 +67,10 @@ elif D == 0:
     print(-b/(2*a))
 else:
     print("실근 없음")</code></pre>
-    <p>포트란의 <code>4*a*c</code>에서 정수 4는 실수 <code>a</code>와 곱해지며 실수로 바뀌므로 괜찮습니다. 그러나 <code>1/2*a</code>처럼 정수끼리 먼저 나누면 0이 됩니다. 또 \(b^2 \gg 4ac\)이면 \(-b + \sqrt D\)에서 상쇄 오차가 생기므로(공통10 6.1절) 정밀한 계산에서는 근과 계수의 관계 \(x_1x_2 = c/a\)로 작은 근을 따로 구합니다.</p>
+    <p>포트란의 <code>4*a*c</code>에서 정수 4는 실수 <code>a</code>와 곱해지며 실수로 바뀌므로 괜찮다. 그러나 <code>1/2*a</code>처럼 정수끼리 먼저 나누면 0이 된다.</p>
+    <p>처음 질문의 숨은 문제는 \(b^2 \gg 4ac\)일 때 나타난다. 이때 \(\sqrt D\)가 \(|b|\)와 거의 같아 \(-b + \sqrt D\)에서 앞자리가 지워지는 상쇄 오차가 생긴다(전자계산(1) 6.1절). 그림 1에서 \(b = 10^4\)이면 근의 공식으로 구한 작은 근의 상대 오차가 이미 \(10^{-9}\) 수준이고, \(b = 10^8\)에서는 \(-7.45\times10^{-9}\)이 나와 참값 \(-1\times10^{-8}\)과 25 % 넘게 어긋난다. 그래서 정밀한 계산에서는 큰 근을 먼저 구한 뒤 근과 계수의 관계 \(x_1x_2 = c/a\)로 작은 근을 따로 구한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>포트란은 정적 자료형, 파이썬은 동적 자료형.</li>
-        <li>정수 나눗셈, <code>/=</code>와 <code>!=</code>, 대소문자 구별이 다르다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>포트란은 정적 자료형, 파이썬은 동적 자료형이며, 정수 나눗셈, <code>/=</code>와 <code>!=</code>, 대소문자 구별이 다르다. 처음 질문처럼 같은 알고리즘은 두 언어에서 짜임이 같지만, 정수 나눗셈은 정반대라 옮길 때 조심해야 한다. 근의 공식은 \(b^2 \gg 4ac\)에서 상쇄 오차가 생기므로 작은 근은 \(x_1x_2 = c/a\)로 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.3</span>연습문제</h3>

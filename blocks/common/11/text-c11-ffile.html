@@ -2,27 +2,25 @@
 {
   "type": "card",
   "sec": "공통11-02-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-ffile" data-kind="본문" data-std="공통11-02-02">
   <header class="card-head"><span class="no"></span><h2>포트란 파일 입출력</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li><code>open</code>, <code>read</code>, <code>write</code>, <code>close</code>로 자료 파일을 읽고 쓴다.</li>
-        <li>형식 지정으로 열을 맞춰 출력하고, 파일 끝과 오류를 <code>iostat</code>으로 처리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬 파일 처리 (<a href="../10/03-02.html">공통10 3.2절</a>), 포트란 배열 (<a href="01-03.html">1.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실험실 기록계가 시각과 온도를 수천 줄 담은 파일을 남겼다. 이 파일을 포트란으로 끝까지 읽고, 켈빈으로 바꾼 결과를 열을 맞춰 새 파일에 쓰려면 어떻게 해야 할까? 몇 줄인지 모를 때 "파일 끝"은 어떻게 알아챌까?</p>
+    <figure class="q-fig" data-q="c11-format">
+      <svg viewBox="0 0 520 190" role="img" aria-label="형식 지정에 따라 값이 칸에 찍히는 모습"></svg>
+      <div class="q-ctl"><label>형식 <select data-k="f"><option value="0">I5, 42</option><option value="1" selected>F8.3, 3.14159</option><option value="2">ES12.4, 0.000123</option><option value="3">F8.2, 300.15</option><option value="4">F4.1, 300.15</option></select></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 형식 지정은 값을 몇 칸에 어떻게 찍을지 정한다. 칸이 모자라면 값 대신 별표(빨강)가 찍힌다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬 파일 처리(<a href="../10/03-02.html">전자계산(1) 3.2절</a>)와 포트란 배열(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>장치 번호</h3>
-    <p>포트란은 파일을 <b>장치 번호</b>(unit)에 연결해 다룹니다. <code>print *</code>와 <code>read *</code>는 화면과 키보드에 연결된 기본 장치입니다. <code>newunit=</code>을 쓰면 비어 있는 번호를 저절로 골라 줍니다.</p>
-<pre><code>integer :: u, ios, n
+    <p>포트란은 파일을 <em>장치 번호</em>(unit)에 연결해 다룬다. <code>print *</code>와 <code>read *</code>는 화면과 키보드에 연결된 기본 장치이다. 그리고 <code>newunit=</code>을 쓰면 비어 있는 번호를 저절로 골라 준다.</p>
+    <pre><code>integer :: u, ios, n
 real(dp) :: t, T_c
 real(dp) :: tarr(1000), tcarr(1000)
 
@@ -38,11 +36,12 @@ do
 end do
 close(u)
 print *, n, "줄을 읽었습니다"</code></pre>
-    <p><code>read(u, *)</code>의 <code>*</code>는 목록 지향 입력이라, 공백이나 쉼표로 나뉜 수를 차례로 읽습니다. <code>status</code>는 <code>"old"</code>(있어야 함), <code>"new"</code>(없어야 함), <code>"replace"</code>(있으면 덮어씀)입니다.</p>
-    <p>포트란에서는 변수 이름의 대소문자를 구별하지 않으므로 <code>t</code>와 <code>T</code>는 같은 변수입니다. 그래서 위에서는 온도를 <code>T_c</code>로, 배열을 <code>tarr</code>, <code>tcarr</code>로 썼습니다. <code>ts</code>와 <code>Ts</code>를 함께 선언하면 같은 이름이라 컴파일 오류가 납니다.</p>
+    <p>처음 질문의 "파일 끝"은 <code>iostat</code>이 알려 준다. 읽기에 성공하면 0, 파일 끝이면 음수, 읽기 오류면 양수가 들어오므로, 조건 없는 <code>do</code> 안에서 0이 아니면 <code>exit</code>한다. 또 <code>read(u, *)</code>의 <code>*</code>는 목록 지향 입력이라, 공백이나 쉼표로 나뉜 수를 차례로 읽는다. 한편 <code>status</code>는 <code>"old"</code>(있어야 함), <code>"new"</code>(없어야 함), <code>"replace"</code>(있으면 덮어씀) 가운데 하나이다.</p>
+    <p>포트란에서는 변수 이름의 대소문자를 구별하지 않으므로 <code>t</code>와 <code>T</code>는 같은 변수이다. 그래서 위에서는 온도를 <code>T_c</code>로, 배열을 <code>tarr</code>, <code>tcarr</code>로 썼다. 가령 <code>ts</code>와 <code>Ts</code>를 함께 선언하면 같은 이름이라 컴파일 오류가 난다.</p>
 
     <h3><span class="no">2.2.2</span>형식을 정한 출력</h3>
-<pre><code>open(newunit=u, file="result.txt", status="replace", action="write")
+    <p>처음 질문의 둘째 일, 곧 열을 맞춘 출력은 <code>write</code>에 형식을 주어 한다.</p>
+    <pre><code>open(newunit=u, file="result.txt", status="replace", action="write")
 write(u, '(A8, A10)') "t(s)", "T(K)"
 do i = 1, n
   write(u, '(F8.1, F10.2)') tarr(i), tcarr(i) + 273.15_dp
@@ -58,16 +57,10 @@ close(u)</code></pre>
         <tr><td><code>3F8.2</code>, <code>2X</code></td><td>같은 형식 3번, 빈칸 2개</td><td></td></tr>
       </tbody>
     </table>
-    <p>칸이 모자라면 별표(<code>********</code>)가 찍힙니다. 이렇게 열을 맞춘 파일은 파이썬이나 표 계산 프로그램에서 바로 읽을 수 있어, 계산은 포트란으로 하고 그래프는 파이썬(5.3절)으로 그리는 식으로 나누어 쓰기 좋습니다.</p>
+    <p>그림 1에서 형식을 하나씩 골라 보면 각 형식이 몇 칸을 차지하는지 보인다. 가령 <code>F8.3</code>은 3.14159를 소수 셋째 자리로 반올림해 8칸에 오른쪽 맞춤으로 찍는다. 그런데 <code>F4.1</code>로 300.15를 찍으면 300.2에 5칸이 필요해 별표 <code>****</code>가 찍힌다. 즉 출력에 별표가 보이면 값이 틀린 것이 아니라 칸이 모자란 것이다.</p>
+    <p>이렇게 열을 맞춘 파일은 파이썬이나 표 계산 프로그램에서 바로 읽을 수 있다. 그래서 계산은 포트란으로 하고 그래프는 파이썬(5.3절)으로 그리는 식으로 나누어 쓰기 좋다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>open(newunit=u, file=..., status=..., iostat=...)</code>, <code>read(u, *)</code>, <code>write(u, 형식)</code>, <code>close(u)</code>.</li>
-        <li>파일 끝까지 읽기: <code>do</code> 안에서 <code>iostat</code>이 0이 아니면 <code>exit</code>.</li>
-        <li>형식 <code>I</code>, <code>F</code>, <code>ES</code>, <code>A</code>, <code>X</code>. 칸이 모자라면 별표.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>포트란은 <code>open(newunit=u, file=..., status=..., iostat=...)</code>으로 파일을 장치 번호에 잇고 <code>read(u, *)</code>, <code>write(u, 형식)</code>, <code>close(u)</code>로 다룬다. 처음 질문의 파일 끝은 <code>do</code> 안에서 <code>iostat</code>이 0이 아니면 <code>exit</code>하는 것으로 처리한다. 형식 <code>I</code>, <code>F</code>, <code>ES</code>, <code>A</code>, <code>X</code>로 열을 맞추며, 칸이 모자라면 별표가 찍힌다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>

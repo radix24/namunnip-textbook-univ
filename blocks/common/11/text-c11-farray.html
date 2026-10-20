@@ -2,71 +2,62 @@
 {
   "type": "card",
   "sec": "공통11-01-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-farray" data-kind="본문" data-std="공통11-01-03">
   <header class="card-head"><span class="no"></span><h2>포트란 배열</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>1차원, 2차원 배열을 선언하고 원소와 구간을 다룬다.</li>
-        <li>배열 전체 연산과 내장 배열 함수를 쓴다.</li>
-        <li>열 우선 저장과 할당 배열을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>DO 반복문 (<a href="01-02.html">1.2절</a>), C 배열 (<a href="../10/05-01.html">공통10 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(1000 \times 1000\) 행렬의 모든 원소를 이중 반복문으로 채우는데, 바깥과 안쪽 반복의 순서만 바꿨더니 실행 시간이 몇 배나 달라졌다. 계산은 똑같은데 왜 그럴까? 그리고 포트란은 C나 파이썬과 배열을 어떻게 다르게 다룰까?</p>
+    <figure class="q-fig" data-q="c11-order">
+      <svg viewBox="0 0 520 210" role="img" aria-label="3×3 배열이 메모리에 놓이는 순서, 열 우선과 행 우선"></svg>
+      <div class="q-ctl">
+        <label>저장 방식 <select data-k="o"><option value="0" selected>열 우선 (포트란)</option><option value="1">행 우선 (C·NumPy)</option></select></label>
+        <label>메모리 칸 <input type="range" data-k="p" min="0" max="8" step="1" value="4"><output data-k="p"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(3\times3\) 배열 <code>A</code>의 원소가 메모리에 놓이는 순서(주황 화살표). 포트란은 열을 따라, C와 NumPy는 행을 따라 차례로 놓는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>DO 반복문(<a href="01-02.html">1.2절</a>)과 C 배열(<a href="../10/05-01.html">전자계산(1) 5.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>선언과 인덱스</h3>
-<pre><code>real(dp) :: T(5), A(3, 3)
+    <p>포트란 배열은 선언할 때 이름 뒤 괄호에 크기를 적는다.</p>
+    <pre><code>real(dp) :: T(5), A(3, 3)
 integer :: i
 T = [20.1_dp, 20.6_dp, 21.3_dp, 22.0_dp, 22.8_dp]
 print *, T(1), T(5)       ! 첫째와 마지막: 인덱스는 1부터
 print *, T(2:4)           ! 구간: 2, 3, 4번 (끝 포함)
 print *, T(5:1:-1)        ! 거꾸로</code></pre>
-    <p>포트란 배열은 괄호를 쓰고, 인덱스는 <b>기본이 1부터</b>입니다(C, 파이썬은 0부터). <code>real(dp) :: B(0:10)</code>처럼 시작 번호를 정할 수도 있습니다. 구간 <code>T(2:4)</code>는 끝을 포함합니다.</p>
+    <p>원소도 괄호로 꺼내며, 인덱스는 기본이 1부터이다(C, 파이썬은 0부터). <code>real(dp) :: B(0:10)</code>처럼 시작 번호를 정할 수도 있다. 또 구간 <code>T(2:4)</code>는 끝을 포함한다.</p>
 
     <h3><span class="no">1.3.2</span>배열 전체 연산</h3>
-    <p>포트란의 큰 장점은 반복문 없이 배열 전체를 한꺼번에 계산할 수 있다는 것입니다.</p>
-<pre><code>real(dp) :: x(101), y(101)
+    <p>포트란의 큰 장점은 반복문 없이 배열 전체를 한꺼번에 계산할 수 있다는 것이다.</p>
+    <pre><code>real(dp) :: x(101), y(101)
 x = [(0.01_dp * i, i = 0, 100)]   ! 0, 0.01, ..., 1 (암시적 do)
 y = sin(x)**2 + x                  ! 원소마다 계산
 print *, sum(y) / size(y)          ! 평균
 print *, maxval(y), maxloc(y)      ! 최댓값과 그 위치
 where (y &gt; 1.0_dp) y = 1.0_dp       ! 조건에 맞는 원소만 바꾸기</code></pre>
-    <ul class="tb-list">
-      <li><code>sum</code>, <code>product</code>, <code>maxval</code>, <code>minval</code>, <code>size</code>.</li>
-      <li><code>dot_product(u, v)</code>: 내적.</li>
-      <li><code>matmul(A, B)</code>: 행렬 곱. <code>transpose(A)</code>: 전치.</li>
-    </ul>
+    <p>이 밖에 <code>sum</code>, <code>product</code>, <code>maxval</code>, <code>minval</code>, <code>size</code> 같은 내장 배열 함수가 있다. 또 <code>dot_product(u, v)</code>는 내적, <code>matmul(A, B)</code>는 행렬 곱, <code>transpose(A)</code>는 전치 행렬을 준다.</p>
 
     <h3><span class="no">1.3.3</span>열 우선 저장과 할당 배열</h3>
-    <p>2차원 배열 <code>A(i, j)</code>는 메모리에 <b>열 우선</b>으로, 곧 <code>A(1,1), A(2,1), A(3,1), A(1,2), ...</code> 순서로 놓입니다(C는 행 우선). 메모리를 차례로 읽을 때 빠르므로, 이중 반복문에서는 <b>첫째 인덱스를 안쪽 반복</b>에 둡니다.</p>
-<pre><code>do j = 1, n          ! 바깥: 열
+    <p>처음 질문의 답이 여기 있다. 2차원 배열 <code>A(i, j)</code>는 메모리에 열 우선으로, 곧 <code>A(1,1), A(2,1), A(3,1), A(1,2), ...</code> 순서로 놓인다(C는 행 우선). 그림 1에서 메모리 칸을 하나씩 넘기면 첫째 인덱스가 가장 빨리 바뀐다. 컴퓨터는 메모리를 차례로 읽을 때 빠르므로, 이중 반복문에서는 첫째 인덱스를 안쪽 반복에 둔다.</p>
+    <pre><code>do j = 1, n          ! 바깥: 열
   do i = 1, n        ! 안쪽: 행 (메모리 순서대로)
     A(i, j) = 1.0_dp / (i + j - 1)
   end do
 end do</code></pre>
-    <p>크기를 실행 중에 정하려면 할당 배열을 씁니다.</p>
-<pre><code>real(dp), allocatable :: data(:)
+    <p>반복 순서를 거꾸로 하면 안쪽 반복이 한 걸음마다 한 열 길이만큼 메모리를 건너뛴다. 그래서 같은 계산이 몇 배 느려질 수 있다. 그림 1에서 저장 방식을 "행 우선"으로 바꾸면, 같은 배열을 C나 NumPy로 다룰 때는 반대로 둘째 인덱스를 안쪽에 두어야 한다는 것을 볼 수 있다.</p>
+    <p>한편 크기를 실행 중에 정하려면 할당 배열을 쓴다.</p>
+    <pre><code>real(dp), allocatable :: data(:)
 read *, n
 allocate(data(n))
 ! ... 사용 ...
 deallocate(data)</code></pre>
-    <p>아래 실습 카드에서 행 우선과 열 우선의 메모리 순서를 비교해 볼 수 있습니다.</p>
+    <p>아래 실습 카드에서 행 우선과 열 우선의 메모리 순서를 더 비교해 볼 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>인덱스는 1부터, 구간 <code>a(i:j)</code>는 끝 포함.</li>
-        <li>배열 전체 연산, <code>sum</code>, <code>matmul</code>, <code>where</code>.</li>
-        <li>열 우선 저장: 첫째 인덱스를 안쪽 반복에. 크기를 나중에 정하면 <code>allocatable</code>.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>포트란 배열은 괄호로 쓰고 인덱스는 1부터이며, 구간 <code>a(i:j)</code>는 끝을 포함한다. 반복문 없는 배열 전체 연산과 <code>sum</code>, <code>matmul</code>, <code>where</code>가 편리하다. 처음 질문의 시간 차이는 열 우선 저장 때문이므로 첫째 인덱스를 안쪽 반복에 두고, 크기를 나중에 정하는 배열은 <code>allocatable</code>로 선언한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.4</span>연습문제</h3>

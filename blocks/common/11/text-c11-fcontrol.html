@@ -2,32 +2,32 @@
 {
   "type": "card",
   "sec": "공통11-01-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-fcontrol" data-kind="본문" data-std="공통11-01-02">
   <header class="card-head"><span class="no"></span><h2>포트란의 IF 문과 DO 반복문</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비교 연산자와 논리 연산자, <code>if</code> 구문을 쓴다.</li>
-        <li><code>do</code>, <code>do while</code>, <code>exit</code>, <code>cycle</code>로 반복한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>포트란 변수 (<a href="01-01.html">1.1절</a>), C의 제어문 (<a href="../10/04-02.html">공통10 4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(\cos x = x\)는 손으로 풀 수 없는 방정식이다. 그런데 계산기에 아무 수나 넣고 cos 단추를 계속 누르면 값이 0.739…에 멈춘다. 이 "같은 일을 되풀이하다가 충분히 가까워지면 멈추기"를 포트란으로 쓰려면 조건과 반복을 어떻게 적어야 할까?</p>
+    <figure class="q-fig" data-q="c11-cobweb">
+      <svg viewBox="0 0 520 250" role="img" aria-label="고정점 반복 x 다음 = cos x의 거미줄 그림"></svg>
+      <div class="q-ctl"><label>반복 횟수 \(k\) <input type="range" data-k="k" min="0" max="12" step="1" value="3"><output data-k="k"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 고정점 반복 \(x_{k+1} = \cos x_k\)의 거미줄 그림. 곡선 \(y = \cos x\)(파랑)와 직선 \(y = x\) 사이를 오가며(주황) 두 그래프의 교점으로 좁혀 든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>포트란 변수(<a href="01-01.html">1.1절</a>)와 C의 제어문(<a href="../10/04-02.html">전자계산(1) 4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>IF 구문</h3>
-<pre><code>if (pH &lt; 7.0_dp) then
+    <p>포트란의 조건문은 <code>if (조건) then</code>으로 시작해 <code>end if</code>로 끝난다. 갈래가 여럿이면 <code>else if</code>와 <code>else</code>를 끼워 넣는다.</p>
+    <pre><code>if (pH &lt; 7.0_dp) then
   print *, "산성"
 else if (pH == 7.0_dp) then
   print *, "중성"
 else
   print *, "염기성"
 end if</code></pre>
+    <p>비교와 논리 연산자는 새 표기와 옛 표기가 있다.</p>
     <table class="tb-table">
       <thead><tr><th>뜻</th><th>새 표기</th><th>옛 표기</th></tr></thead>
       <tbody>
@@ -37,10 +37,11 @@ end if</code></pre>
         <tr><td>그리고, 또는, 아님</td><td colspan="2"><code>.and.</code>, <code>.or.</code>, <code>.not.</code></td></tr>
       </tbody>
     </table>
-    <p>"다르다"가 <code>/=</code>인 점이 C, 파이썬(<code>!=</code>)과 다릅니다. 옛 프로그램에는 점으로 감싼 표기가 많이 남아 있어 둘 다 읽을 수 있어야 합니다. 한 줄짜리는 <code>if (x &lt; 0) x = -x</code>처럼 <code>then</code> 없이 씁니다.</p>
+    <p>"다르다"가 <code>/=</code>인 점이 C, 파이썬(<code>!=</code>)과 다르다. 옛 프로그램에는 점으로 감싼 표기가 많이 남아 있어 둘 다 읽을 수 있어야 한다. 한편 한 줄짜리는 <code>if (x &lt; 0) x = -x</code>처럼 <code>then</code> 없이 쓴다.</p>
 
     <h3><span class="no">1.2.2</span>DO 반복문</h3>
-<pre><code>integer :: i
+    <p>정해진 횟수만큼 되풀이할 때는 <code>do i = 시작, 끝, 간격</code>을 쓴다.</p>
+    <pre><code>integer :: i
 real(dp) :: s
 s = 0.0_dp
 do i = 1, 100          ! i = 1, 2, ..., 100 (끝을 포함한다)
@@ -51,18 +52,14 @@ print *, s             ! 1.6349839... (π²/6 = 1.6449...에 다가감)
 do i = 10, 1, -2       ! 10, 8, 6, 4, 2
   print *, i
 end do</code></pre>
-    <p>파이썬 <code>range</code>와 달리 <b>끝값을 포함합니다</b>. 반복 변수 <code>i</code>는 정수로 선언하고, 몸체 안에서 바꾸면 안 됩니다.</p>
-    <ul class="tb-list">
-      <li><code>do while (조건)</code> ... <code>end do</code>: 조건이 참인 동안.</li>
-      <li><code>exit</code>: 반복을 끝낸다(C의 <code>break</code>).</li>
-      <li><code>cycle</code>: 다음 차례로 건너뛴다(C의 <code>continue</code>).</li>
-      <li>조건 없이 <code>do</code> ... <code>end do</code>로 쓰고 안에서 <code>exit</code>으로 나오는 꼴도 흔하다.</li>
-    </ul>
+    <p>파이썬 <code>range</code>와 달리 끝값을 포함한다는 점에 주의한다. 반복 변수 <code>i</code>는 정수로 선언하고, 몸체 안에서 바꾸면 안 된다.</p>
+    <p>조건이 참인 동안 되풀이하려면 <code>do while (조건)</code> … <code>end do</code>를 쓴다. 또 <code>exit</code>은 반복을 끝내고(C의 <code>break</code>), <code>cycle</code>은 다음 차례로 건너뛴다(C의 <code>continue</code>). 그래서 조건 없이 <code>do</code> … <code>end do</code>로 쓰고 안에서 <code>exit</code>으로 나오는 꼴도 흔하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>\(\cos x = x\)의 근을 고정점 반복 \(x_{k+1} = \cos x_k\)로 \(10^{-10}\)까지 구하여라.</p>
     </div>
-<pre><code>real(dp) :: x, xnew
+    <p><i>풀이.</i> 처음 질문의 "cos 단추 되풀이"를 그대로 옮기면 된다. 고친 양 \(|x_{k+1} - x_k|\)이 \(10^{-10}\)보다 작아지면 <code>exit</code>으로 나온다.</p>
+    <pre><code>real(dp) :: x, xnew
 integer :: k
 x = 1.0_dp
 do k = 1, 1000
@@ -71,15 +68,9 @@ do k = 1, 1000
   x = xnew
 end do
 print *, k, xnew        ! 58번, 0.7390851332...</code></pre>
-    <p>반복 횟수에 상한(1000)을 두면 수렴하지 않을 때 무한 반복을 막을 수 있습니다.</p>
+    <p>58번 반복해 0.7390851332…를 얻는다. 그림 1에서 \(k\)를 늘리면 거미줄이 교점 둘레를 돌며 좁혀지는데, 곡선의 기울기 \(-\sin x\)의 크기가 교점에서 약 0.67로 1보다 작아 한 번에 오차가 약 0.67배씩 줄기 때문이다. 이렇게 천천히 줄어드는 반복이라 58번이 필요하다. 또 반복 횟수에 상한(1000)을 두면 수렴하지 않을 때 무한 반복을 막을 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>if (...) then</code> / <code>else if</code> / <code>else</code> / <code>end if</code>. 다르다는 <code>/=</code>.</li>
-        <li><code>do i = 시작, 끝, 간격</code>은 끝을 포함. <code>do while</code>, <code>exit</code>, <code>cycle</code>.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>포트란의 조건문은 <code>if (...) then</code>, <code>else if</code>, <code>else</code>, <code>end if</code>이고 "다르다"는 <code>/=</code>이다. 반복은 끝을 포함하는 <code>do i = 시작, 끝, 간격</code>과 <code>do while</code>을 쓰며, <code>exit</code>과 <code>cycle</code>로 흐름을 바꾼다. 처음 질문의 되풀이는 상한을 둔 <code>do</code> 안에서 고친 양이 충분히 작으면 <code>exit</code>하는 꼴로 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>

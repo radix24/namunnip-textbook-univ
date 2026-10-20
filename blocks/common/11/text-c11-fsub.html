@@ -2,33 +2,26 @@
 {
   "type": "card",
   "sec": "공통11-02-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-fsub" data-kind="본문" data-std="공통11-02-01">
   <header class="card-head"><span class="no"></span><h2>서브루틴과 함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>값 하나를 돌려주는 함수와 여러 값을 바꾸는 서브루틴을 만든다.</li>
-        <li><code>intent</code>로 인수의 쓰임을 밝히고, 참조에 의한 전달을 이해한다.</li>
-        <li>모듈에 부프로그램을 모아 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>포트란 배열 (<a href="01-03.html">1.3절</a>), C 함수와 포인터 (<a href="../10/04-03.html">공통10 4.3절</a>, <a href="../10/05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">직교 좌표 \((x, y)\)를 극좌표 \((r, \theta)\)로 바꾸는 계산은 결과가 둘이다. 값을 하나만 돌려주는 함수로는 부족한데, 포트란에서는 결과 두 개를 어떻게 받아 올까? 전자계산(1)에서 C 함수는 인수의 복사본만 받았는데, 포트란도 그럴까?</p>
+    <figure class="q-fig" data-q="c11-byref">
+      <svg viewBox="0 0 520 230" role="img" aria-label="서브루틴 polar의 인수가 main의 변수를 가리키는 모습"></svg>
+      <div class="q-ctl"><label>단계 <input type="range" data-k="s" min="0" max="4" step="1" value="2"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. <code>call polar(1.0_dp, 1.0_dp, r, th)</code>에서 서브루틴의 인수 이름(파랑 화살표)은 main의 변수 자리를 그대로 가리킨다. 그래서 서브루틴이 쓴 값이 main에 남는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>포트란 배열(<a href="01-03.html">1.3절</a>)과 C 함수와 포인터(<a href="../10/04-03.html">전자계산(1) 4.3절</a>, <a href="../10/05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>함수와 서브루틴</h3>
-    <p>포트란의 부프로그램은 두 가지입니다.</p>
-    <ul class="tb-list">
-      <li><b>함수</b>(<code>function</code>): 값 하나를 돌려준다. 식 안에서 <code>y = f(x)</code>처럼 쓴다.</li>
-      <li><b>서브루틴</b>(<code>subroutine</code>): 돌려주는 값 없이 인수를 바꾼다. <code>call</code>로 부른다.</li>
-    </ul>
-    <p>둘을 <b>모듈</b>에 넣고 <code>use</code>로 불러 쓰면, 컴파일러가 인수의 개수와 자료형을 검사해 주어 실수를 줄일 수 있습니다.</p>
-<pre><code>module physics
+    <p>포트란의 부프로그램은 두 가지이다. <em>함수</em>(<code>function</code>)는 값 하나를 돌려주며, 식 안에서 <code>y = f(x)</code>처럼 쓴다. 반면 <em>서브루틴</em>(<code>subroutine</code>)은 돌려주는 값 없이 인수를 바꾸며, <code>call</code>로 부른다. 처음 질문의 극좌표 변환처럼 결과가 여럿이면 서브루틴이 알맞다.</p>
+    <p>둘을 <em>모듈</em>에 넣고 <code>use</code>로 불러 쓰면, 컴파일러가 인수의 개수와 자료형을 검사해 주어 실수를 줄일 수 있다.</p>
+    <pre><code>module physics
   implicit none
   integer, parameter :: dp = kind(1.0d0)
 contains
@@ -56,26 +49,15 @@ program main
 end program main</code></pre>
 
     <h3><span class="no">2.1.2</span>intent와 참조에 의한 전달</h3>
-    <p>포트란은 인수를 넘길 때 값을 복사하지 않고 <b>변수 자체(주소)</b>를 넘깁니다. 그래서 서브루틴이 인수를 바꾸면 부른 쪽의 변수가 바뀝니다(C에서 포인터를 넘긴 것과 같은 효과). 의도하지 않게 바꾸는 것을 막기 위해 <code>intent</code>를 적습니다.</p>
-    <ul class="tb-list">
-      <li><code>intent(in)</code>: 읽기만 한다. 바꾸려 하면 컴파일 오류.</li>
-      <li><code>intent(out)</code>: 결과를 써서 돌려준다.</li>
-      <li><code>intent(inout)</code>: 읽고 바꾼다.</li>
-    </ul>
-    <p>배열도 그대로 넘어갑니다. <code>real(dp), intent(in) :: a(:)</code>처럼 쓰면(형태 가정 배열) 크기를 따로 넘기지 않아도 안에서 <code>size(a)</code>로 알 수 있습니다. 이렇게 쓰려면 부프로그램이 모듈 안에 있어야 합니다.</p>
-<pre><code>subroutine normalize(v)
+    <p>처음 질문의 둘째 물음에 답하면, 포트란은 C와 다르다. 포트란은 인수를 넘길 때 값을 복사하지 않고 변수 자체(주소)를 넘긴다. 이것을 <em>참조에 의한 전달</em>이라 한다. 그래서 서브루틴이 인수를 바꾸면 부른 쪽의 변수가 바뀌며, C에서 포인터를 넘긴 것과 같은 효과이다. 그림 1에서 단계를 넘기면 서브루틴의 <code>r</code>과 <code>theta</code>가 main의 <code>r</code>과 <code>th</code> 자리에 값을 쓰는 것을 볼 수 있다.</p>
+    <p>그런데 이 성질 때문에 의도하지 않게 인수를 바꿀 위험도 있다. 그래서 <code>intent</code>로 인수의 쓰임을 밝힌다. <code>intent(in)</code>은 읽기만 하는 인수로, 바꾸려 하면 컴파일 오류가 난다. <code>intent(out)</code>은 결과를 써서 돌려주는 인수이고, <code>intent(inout)</code>은 읽고 바꾸는 인수이다.</p>
+    <p>배열도 그대로 넘어간다. <code>real(dp), intent(in) :: a(:)</code>처럼 쓰면(형태 가정 배열) 크기를 따로 넘기지 않아도 안에서 <code>size(a)</code>로 알 수 있다. 다만 이렇게 쓰려면 부프로그램이 모듈 안에 있어야 한다.</p>
+    <pre><code>subroutine normalize(v)
   real(dp), intent(inout) :: v(:)
   v = v / sqrt(sum(v**2))
 end subroutine normalize</code></pre>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>function</code>은 값 하나, <code>subroutine</code>은 <code>call</code>로 부르며 인수를 바꾼다.</li>
-        <li>인수는 참조로 넘어간다. <code>intent(in/out/inout)</code>을 적는다.</li>
-        <li><code>module</code> ... <code>contains</code>에 모으고 <code>use</code>로 쓴다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p><code>function</code>은 값 하나를 돌려주고, <code>subroutine</code>은 <code>call</code>로 불러 인수를 바꾼다. 처음 질문처럼 포트란은 인수를 참조로 넘기므로 서브루틴이 결과 여러 개를 부른 쪽 변수에 직접 써 줄 수 있으며, 실수를 막으려고 <code>intent(in/out/inout)</code>을 적는다. 부프로그램은 <code>module</code> … <code>contains</code>에 모으고 <code>use</code>로 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>

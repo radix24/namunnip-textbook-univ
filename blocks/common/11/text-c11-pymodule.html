@@ -2,27 +2,28 @@
 {
   "type": "card",
   "sec": "공통11-04-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c11-body.js"]
 }
 -->
 <article class="card q-card" id="text-c11-pymodule" data-kind="본문" data-std="공통11-04-02">
   <header class="card-head"><span class="no"></span><h2>모듈과 클래스로 프로그램 정리하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>자주 쓰는 함수를 내 모듈로 만들어 여러 프로그램에서 불러 쓴다.</li>
-        <li>클래스로 상태와 동작을 묶어 시뮬레이션을 정리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>모듈과 클래스 (<a href="../10/03-03.html">공통10 3.3절</a>), 포트란 모듈 (<a href="02-01.html">2.1절</a>), 함수로 나누기 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">평균과 표준편차를 구하는 함수를 실험마다 새 파일에 다시 베껴 쓰고 있다면, 한 곳을 고칠 때 모든 파일을 고쳐야 한다. 함수를 한 곳에 모아 두고 불러 쓰려면 어떻게 할까? 또 용수철 진동자처럼 상태가 계속 바뀌는 시뮬레이션은 어떤 꼴로 정리하면 조건을 바꿔 비교하기 쉬울까?</p>
+    <figure class="q-fig" data-q="c11-osc">
+      <svg viewBox="0 0 520 250" role="img" aria-label="용수철 진동자의 위상 공간 궤적, 오일러-크로머와 오일러"></svg>
+      <div class="q-ctl">
+        <label>방법 <select data-k="m"><option value="0" selected>오일러-크로머 (속도 먼저)</option><option value="1">오일러 (위치 먼저)</option></select></label>
+        <label><code>dt</code> × 100 <input type="range" data-k="d" min="1" max="20" step="1" value="10"><output data-k="d"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. <code>Oscillator</code>를 \(t = 10\)까지 돌린 \((x, v)\) 궤적. <code>step</code>에서 속도를 먼저 바꾸면(파랑) 참 궤적인 원 둘레에 머물고, 위치를 먼저 바꾸면(주황) 바깥으로 소용돌이친다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>모듈과 클래스(<a href="../10/03-03.html">전자계산(1) 3.3절</a>), 포트란 모듈(<a href="02-01.html">2.1절</a>), 함수로 나누기(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>내 모듈 만들기</h3>
-    <p>4.1절의 함수들을 <code>labtools.py</code> 한 파일에 모으면, 같은 폴더의 다른 프로그램에서 불러 쓸 수 있습니다. 포트란의 <code>module</code>과 <code>use</code>에 해당합니다.</p>
-<pre><code># labtools.py
+    <p>처음 질문의 첫째 답은 모듈이다. 4.1절의 함수들을 <code>labtools.py</code> 한 파일에 모으면, 같은 폴더의 다른 프로그램에서 불러 쓸 수 있다. 포트란의 <code>module</code>과 <code>use</code>에 해당한다.</p>
+    <pre><code># labtools.py
 """실험 자료 처리용 함수 모음"""
 R = 8.314
 
@@ -36,15 +37,15 @@ def stdev(xs):
 if __name__ == "__main__":       # 직접 실행할 때만: 간단한 시험
     assert abs(mean([1, 2, 3]) - 2) &lt; 1e-12
     print("labtools 시험 통과")</code></pre>
-<pre><code># analyze.py
+    <pre><code># analyze.py
 import labtools as lt
 g = [9.71, 9.85, 9.78, 9.80, 9.83]
 print(lt.mean(g), lt.stdev(g))</code></pre>
-    <p>모듈 아래에 <code>if __name__ == "__main__":</code>으로 시험 코드를 넣어 두면, 함수를 고친 뒤 그 파일만 실행해서 바로 확인할 수 있습니다. 파일이 많아지면 폴더(패키지)로 묶습니다.</p>
+    <p>모듈 아래에 <code>if __name__ == "__main__":</code>으로 시험 코드를 넣어 두면, 함수를 고친 뒤 그 파일만 실행해서 바로 확인할 수 있다. 한편 파일이 많아지면 폴더(패키지)로 묶는다.</p>
 
     <h3><span class="no">4.2.2</span>클래스로 시뮬레이션 정리하기</h3>
-    <p>시뮬레이션의 상태(위치, 속도, 시간)와 동작(한 걸음 나아가기, 에너지 계산)을 클래스로 묶으면, 여러 개를 따로 돌리거나 조건을 바꿔 비교하기 쉽습니다.</p>
-<pre><code>class Oscillator:
+    <p>처음 질문의 둘째 답은 클래스이다. 시뮬레이션의 상태(위치, 속도, 시간)와 동작(한 걸음 나아가기, 에너지 계산)을 클래스로 묶으면, 여러 개를 따로 돌리거나 조건을 바꿔 비교하기 쉽다.</p>
+    <pre><code>class Oscillator:
     """용수철 진동자 x'' = -(k/m) x 를 오일러-크로머 방법으로 푼다"""
     def __init__(self, k=1.0, m=1.0, x=1.0, v=0.0):
         self.k, self.m, self.x, self.v, self.t = k, m, x, v, 0.0
@@ -61,15 +62,9 @@ osc = Oscillator()
 for _ in range(1000):
     osc.step(0.01)
 print(osc.t, osc.x, osc.energy())    # t = 10에서 x ≈ cos(10), 에너지 ≈ 0.5</code></pre>
-    <p>새 기능(감쇠, 바깥 힘)을 넣고 싶으면 이 클래스를 물려받아(상속) <code>step</code>만 고친 클래스를 만들 수 있습니다. <code>step</code>에서 위치를 먼저 바꾸면 보통의 오일러 방법이 되어 에너지가 점점 늘어납니다. 이 차이는 5.2절에서 다룹니다.</p>
+    <p>새 기능(감쇠, 바깥 힘)을 넣고 싶으면 이 클래스를 물려받아(상속) <code>step</code>만 고친 클래스를 만들 수 있다. 그런데 <code>step</code>의 두 줄 순서가 결과를 크게 바꾼다. 위치를 먼저 바꾸면 보통의 오일러 방법이 되어 에너지가 점점 늘어난다. 그림 1에서 방법을 "오일러"로 바꾸면 \(dt = 0.1\)에서 궤적이 바깥으로 풀려 나가고, \(t = 10\)에서 에너지가 처음 0.5의 약 2.7배가 된다. 하지만 오일러-크로머는 에너지가 0.5 둘레에서 조금씩 오르내릴 뿐이다. 이 차이는 5.2절에서 다시 다룬다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>함수 모음을 <code>.py</code> 파일로 두고 <code>import</code>한다. 아래쪽에 시험 코드.</li>
-        <li>클래스로 상태와 동작을 묶으면 여러 조건을 나란히 돌리기 쉽다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문처럼 자주 쓰는 함수는 <code>.py</code> 파일 하나에 모아 <code>import</code>하고, 아래쪽에 <code>if __name__ == "__main__":</code>으로 시험 코드를 둔다. 상태가 바뀌는 시뮬레이션은 상태와 동작을 클래스로 묶으면 여러 조건을 나란히 돌리기 쉽다. 그림 1처럼 <code>step</code> 안의 순서 하나가 에너지 보존을 가르므로, 방법을 바꾼 결과는 늘 에너지 같은 양으로 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
