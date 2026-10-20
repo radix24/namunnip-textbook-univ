@@ -178,7 +178,7 @@ RE_STYLE = re.compile(r"<style>(.*?)</style>", re.S)
 
 DEPT_PREFIX = {"common": "공통", "math": "수학", "phy": "물리", "chem": "화학", "astro": "천우", "stat": "응통", "ee": "전전", "me": "기계"}
 PREFIX_DEPT = {v: k for k, v in DEPT_PREFIX.items()}
-RE_ATTR_URL = re.compile(r'((?:href|src)=")([^"]*)(")')
+RE_ATTR_URL = re.compile(r'''((?:href|src)=)(["'])(.*?)\2''')   # 큰따옴표·작은따옴표 모두(시험 문항은 작은따옴표를 쓴다)
 
 
 def relink(html, sec):
@@ -215,15 +215,17 @@ def relink(html, sec):
             return f"../{mid(here, r.group(1))}/{r.group(2)}"
         return u
 
-    return RE_ATTR_URL.sub(lambda a: a.group(1) + fix(a.group(2)) + a.group(3), html)
+    return RE_ATTR_URL.sub(lambda a: a.group(1) + a.group(2) + fix(a.group(3)) + a.group(2), html)
 
 
 def check_links(cdir, codes=None):
     """c/ 아래 페이지의 내부 링크(href·src) 가운데 가리키는 파일이 없는 것을 센다(빌드 끝 경고).
     codes에 dict를 주면 보이는 글자(태그·속성·스크립트·스타일 밖) 속에 남은 내부 코드(QURI 코드, 영문 모듈 id)도 센다."""
     bad, n_links = {}, 0
-    for p in cdir.rglob("*.html"):
+    for p in [*cdir.rglob("*.html"), *cdir.rglob("bank.js")]:
         html = p.read_text(encoding="utf-8")
+        if p.suffix == ".js":
+            html = html.replace('\\"', '"')   # JSON 안의 href=\"…\"
         if codes is not None:
             vis = re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", " ", html, flags=re.S)
             for m in CODE_RX.finditer(vis):
@@ -233,7 +235,7 @@ def check_links(cdir, codes=None):
                 for m in MOD_RX[0].finditer(vis):
                     codes[f"{p.relative_to(ROOT).as_posix()}: {m.group(1)}"] = codes.get(f"{p.relative_to(ROOT).as_posix()}: {m.group(1)}", 0) + 1
         for a in RE_ATTR_URL.finditer(html):
-            u = a.group(2)
+            u = a.group(3)
             if not u or re.match(r"^(?:[a-z]+:|#|/)", u) or "${" in u:
                 continue
             path = re.split(r"[?#]", u, 1)[0]
@@ -789,14 +791,15 @@ def exam_items(c):
             continue
         u = units[m.group(1)]
         sc = next((s for s in u["secs"] if s["code"] == std), None) if m.group(2) else None
-        sol = it.get("sol", "")
+        sol = relink(it.get("sol", ""), std)   # 문항 속 옛 상대 링크(../1/05-06.html)도 블록처럼 모듈 주소로
         if it["type"] != "mc" and it.get("answer"):
             sol = f'<p class="ex-ans"><b>답</b> {it["answer"]}</p>{sol}'
         row = {"u": u["n"], "s": sc["no"] if sc else "", "href": f'{sc["file"] if sc else u["n"]}.html',
                "ct": sc["title"] if sc else u["t"], "id": it["id"], "src": "x",
-               "ty": it.get("ty", ""), "lv": it.get("lv", ""), "q": it["q"], "h": it.get("hints", [])[:2], "a": sol}
+               "ty": it.get("ty", ""), "lv": it.get("lv", ""), "q": relink(it["q"], std),
+               "h": [relink(h, std) for h in it.get("hints", [])[:2]], "a": sol}
         if it["type"] == "mc":
-            row["ch"], row["ans"] = it["choices"], int(it["answer"])
+            row["ch"], row["ans"] = [relink(x, std) for x in it["choices"]], int(it["answer"])
         if it.get("rubric"):
             row["rb"] = it["rubric"]
         out.append(row)
