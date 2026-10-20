@@ -747,10 +747,14 @@
     const lost = unplaced.reduce((s, k) => s + PLAN.ctx.items.get(k).cr, 0);
     const shown = Array.from({ length: NP }, (_, p) => p).filter((p) => !isSeason(p) || P.season || placed.some((k) => at.get(k) === p));
     const rowOf = (p) => { const r = p % 4; return P.season ? r + 1 : r === 0 ? 1 : 2; };   // 1학기, 여름, 2학기, 겨울
-    $("#p-board").innerHTML = (unplaced.length ? `<p class="rm-alert rm-lost">${unplaced.length}과목(${lost}학점)을 8학기${P.season ? "와 계절학기" : ""} 안에 넣지 못했습니다. 학기당 학점 상한을 올리거나, 일반선택에 남길 학점을 줄이거나, 전공 수를 줄여 보세요. 아래 '넣지 못한 과목'에서 직접 학기를 골라 넣을 수도 있습니다.</p>` : "") + shown.map((p) => {
+    /* 넣지 못한 과목이 졸업요건을 깎을 때만 2·3단계 위쪽에 알린다 */
+    const short = shortfalls(placed, total, est);
+    $("#p-note").hidden = true;
+    ["#p-short-2", "#p-short-3"].forEach((s) => { const el = $(s); el.hidden = !short.length; el.innerHTML = short.length ? shortHtml(short) : ""; });
+    $("#p-board").innerHTML = shown.map((p) => {
       const ids = placed.filter((k) => at.get(k) === p).sort((a, b) => (PLAN.prio.get(a) - PLAN.prio.get(b)) || codeNum(a) - codeNum(b));
       const lim = PLAN.cap(p), over = used[p] > lim, se = isSeason(p), off = se && !seasonOn(p);
-      return `<section class="rm-sem${over ? " is-over" : ""}${se ? " is-season" : ""}${off ? " is-off" : ""}" data-s="${p}" style="--col:${yearOfP(p)};--row:${rowOf(p) + (unplaced.length ? 1 : 0)}" aria-label="${semName(p)}">
+      return `<section class="rm-sem${over ? " is-over" : ""}${se ? " is-season" : ""}${off ? " is-off" : ""}" data-s="${p}" style="--col:${yearOfP(p)};--row:${rowOf(p)}" aria-label="${semName(p)}">
         <h3>${semName(p)} <span class="mono">${off ? "" : `${used[p]}<small>/${lim}</small>`}${se ? ` <button type="button" class="rm-btn sm rm-stog" data-stog="${p}" aria-pressed="${!off}" aria-label="${semName(p)} ${off ? "켜기" : "끄기"}">${off ? "켜기" : "끄기"}</button>` : ""}</span></h3>
         <div class="rm-drop">${ids.map((k) => card(k, "board")).join("") || `<p class="rm-hint">${off ? "꺼 둔 계절학기입니다" : se ? "최근 3년 계절학기에 열린 과목만" : "여기로 끌어 놓기"}</p>`}</div>
         ${over ? `<p class="rm-alert small">${se ? `계절학기 상한 ${SEASON_CR}학점` : `학기 상한 ${P.cap}학점 − 일반선택 ${P.rsv}학점`}을 넘었습니다</p>` : ""}</section>`;
@@ -771,7 +775,11 @@
     });
     $("#p-pool").innerHTML = `<section class="rm-sem rm-poolzone" data-s="-1" aria-label="배치하지 않은 과목">
       <h3>배치하지 않은 과목 <small class="dim">여기로 끌어 놓으면 계획에서 빠집니다</small></h3>
-      ${unplaced.length ? `<h4>넣지 못한 과목</h4><div class="rm-drop">${unplaced.map((k) => card(k) .replace("</button>", `<span class="warn">${esc(reasons(k))}</span></button>`)).join("")}</div>` : ""}
+      ${unplaced.length ? (() => {
+        const cards = `<div class="rm-drop">${unplaced.map((k) => card(k).replace("</button>", `<span class="warn">${esc(reasons(k))}</span></button>`)).join("")}</div>`;
+        return short.length ? `<h4>넣지 못한 과목</h4>${cards}`   // 요건이 모자라면 펼쳐 두고, 요건을 이미 채웠으면 접어 둔다
+          : `<details class="rm-lostfold"><summary>넣지 못한 선택 과목 ${unplaced.length}개(${lost}학점) · 졸업요건은 이미 채웠습니다</summary>${cards}</details>`;
+      })() : ""}
       ${P.removed.length ? `<h4>뺀 과목</h4><div class="rm-drop">${P.removed.filter((k) => itemOf(k, PLAN.ctx)).map((k) => card(k)).join("")}</div>` : ""}
       ${extra.map(({ T, ids }) => `<h4>${esc(T.m.name)}에서 더 고를 수 있는 과목</h4><div class="rm-drop">${ids.sort((a, b) => (PLAN.ctx.items.get(a).y - PLAN.ctx.items.get(b).y) || codeNum(a) - codeNum(b)).map((k) => card(k)).join("")}</div>`).join("")}
       </section>`;
@@ -798,22 +806,71 @@
     $("#p-req-sub").textContent = `${P.cohort}학번 대학요람의 졸업요건과 지금 계획을 나란히 봅니다. 막대가 모자라면 3단계에서 과목을 더하거나 학기 설정을 바꾸세요.`;
     $("#w-s1").textContent = `${P.cohort}학번 · ${Ts.map((T) => `${T.m.name} ${T.key === "single" ? "단일" : T.key === "deep" ? "심화" : T.key === "first" ? "제1" : T.key === "double" ? "복수" : "부"}`).join(" · ")}`;
     $("#w-s2").textContent = `졸업 ${planCr}/${total} · 전공 ${met}/${Ts.length} 충족`;
-    $("#w-s3").textContent = `${placed.length}과목 배치${unplaced.length ? ` · ${unplaced.length}과목 못 넣음` : ""}`;
+    $("#w-s3").textContent = `${placed.length}과목 배치${short.length ? " · 요건 미달" : ""}`;
     $("#w-s4").textContent = "링크·인쇄";
     $("#p-mini").textContent = `졸업 ${planCr}/${total} · ${boxes.map((b) => `${b.T.m.name} ${b.sum.got}/${b.sum.need}`).join(" · ")}`;
     renderSteps();
     save();
   }
-  function majorSum(T, placed) {
+  function majorGot(T, placed) {
     const pp = placedPicks(T);
-    let got = 0, acc = 0;
+    const got = { basic: 0, req: 0, elec: 0 };
+    let acc = 0;
     placed.forEach((k) => {
       const c = catOf(T, k, pp); if (!c) return;
       const cr = PLAN.ctx.items.get(k).cr;
       if (c === "elec" && T.accept.includes(k)) { if (acc + cr > T.acceptMax) return; acc += cr; }
-      got += cr;
+      got[c] += cr;
     });
-    return { got, need: T.spec.major };
+    return { got, pp };
+  }
+  function majorSum(T, placed) {
+    const { got } = majorGot(T, placed);
+    return { got: got.basic + got.req + got.elec, need: T.spec.major };
+  }
+  function libGot(placed) {
+    const { col, ctx, Ts } = PLAN;
+    const got = { basic: 0, rc: 0, area: 0, must: 0 };
+    const mustIds = [...(col.lib || []), ...(col.libOutside || []).map((o) => o.id || "@" + o.name), ...Ts[0].libExtra];
+    placed.forEach((k) => { const it = ctx.items.get(k); if (it.out && it.out.libCat) got[it.out.libCat] += it.cr; else if (mustIds.includes(k)) got.must += it.cr; });
+    const mustCr = mustIds.reduce((s, k) => s + ((itemOf(k, ctx) || {}).cr || 0), 0);
+    return { got, mustCr };
+  }
+  /* 넣지 못한 과목 때문에 졸업요건을 채우지 못하는 곳: 넣지 못한 과목이 있을 때만 따진다 */
+  function shortfalls(placed, total, est) {
+    const { Ts, LIB, unplaced, used } = PLAN;
+    if (!unplaced.length) return [];
+    const out = [];
+    const ord = (i) => (i === 0 ? "제1전공" : `제${i + 1}전공`);
+    Ts.forEach((T, i) => {
+      const { got, pp } = majorGot(T, placed), sp = T.spec, who = `${ord(i)} ${T.m.name}(${sp.label})`;
+      const parts = [];
+      [["basic", "전공기초"], ["req", "전공필수"], ["elec", "전공선택"]].forEach(([c, lab]) => { if (sp[c] && got[c] < sp[c]) parts.push(`${lab} ${sp[c] - got[c]}학점`); });
+      const sum = got.basic + got.req + got.elec;
+      if (sum < sp.major) parts.push(`전공 소계 ${sp.major - sum}학점`);
+      const miss = [...T.basicList, ...T.reqList, ...T.outside.filter((o) => !o.optional).map((o) => o.id)].filter((k) => !PLAN.at.has(k));
+      if (miss.length) parts.push(`필수 과목 ${miss.map(nm).join(", ")}`);
+      T.pick.forEach((g, gi) => { if (pp[gi].length < g.n) parts.push(`${g.label} ${g.n - pp[gi].length}과목`); });
+      if (parts.length) out.push(`${who}: ${parts.join(" · ")} 모자람`);
+    });
+    const { got, mustCr } = libGot(placed);
+    const lp = [["basic", "교양기초", LIB.basic], ["rc", "RC", LIB.rc], ["must", "대학교양 필수", mustCr], ["area", "대학교양 영역", LIB.area]]
+      .filter(([c, , need]) => got[c] < need).map(([c, lab, need]) => `${lab} ${need - got[c]}학점`);
+    if (lp.length) out.push(`교양: ${lp.join(" · ")} 모자람`);
+    let room = 0;   // 일반선택으로 졸업 총학점을 채울 빈 자리
+    for (let p = 0; p < NP; p++) if (!isSeason(p) || seasonOn(p)) room += Math.max(0, PLAN.cap(p) - used[p]);
+    if (est + room < total) out.push(`졸업 총학점: 빈 자리를 일반선택으로 다 채워도 ${total - est - room}학점 모자람`);
+    return out;
+  }
+  function shortHtml(list) {
+    const ways = [`학기당 학점 상한 올리기(지금 ${P.cap}학점)`];
+    if (P.rsv) ways.push(`학기마다 남길 일반선택 줄이기(지금 ${P.rsv}학점)`);
+    if (!P.season) ways.push("계절학기 켜기");
+    else if ((P.seasonOff || []).length) ways.push("꺼 둔 계절학기 켜기");
+    if (PLAN.Ts.length > 1) ways.push("전공 수 줄이기");
+    return `<h3>넣지 못한 과목 때문에 졸업요건을 채우지 못합니다</h3>
+      <ul>${list.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      <p class="small">바꿀 수 있는 방법: ${ways.map(esc).join(" · ")}. 3단계 아래 '넣지 못한 과목'에서 직접 학기를 골라 넣을 수도 있습니다.</p>`;
   }
   /* 단계: 지금 단계만 펼치고, 나머지는 위쪽 단계 표시줄의 요약으로 */
   function renderSteps() {
@@ -852,11 +909,8 @@
   }
   /* 교양 요건: 교양기초(채플·글쓰기·기독교의이해), RC, 대학교양 필수 과목(이과 공통필수·공학수학 등), 대학교양 영역 */
   function libBox(placed) {
-    const { LIB, col, ctx, Ts } = PLAN;
-    const got = { basic: 0, rc: 0, area: 0, must: 0 };
-    const mustIds = [...(col.lib || []), ...(col.libOutside || []).map((o) => o.id || "@" + o.name), ...Ts[0].libExtra];
-    placed.forEach((k) => { const it = ctx.items.get(k); if (it.out && it.out.libCat) got[it.out.libCat] += it.cr; else if (mustIds.includes(k)) got.must += it.cr; });
-    const mustCr = mustIds.reduce((s, k) => s + ((itemOf(k, ctx) || {}).cr || 0), 0);
+    const { LIB, col, Ts } = PLAN;
+    const { got, mustCr } = libGot(placed);
     const row = (lab, v, max) => `<div class="rm-row"><span>${lab}</span>${bar(v, max)}<span class="mono">${v}/${max}</span></div>`;
     const area = Math.ceil(LIB.area / 3) * 3;
     return `<div class="rm-rq rm-lib"><h3>교양 <small>${P.cohort}학번 ${esc(Ts[0].m.name)} 기준 · 교양기초 ${LIB.basic} · RC ${LIB.rc} · 대학교양 필수 ${mustCr} · 영역 ${LIB.area}</small></h3>
@@ -867,15 +921,7 @@
         <li>${esc(LIB.srcs.join(" · "))}${LIB.englishSrc ? " · " + esc(LIB.englishSrc) : ""}</li></ul></details></div>`;
   }
   function reqBox(T, i, placed) {
-    const pp = placedPicks(T);
-    const got = { basic: 0, req: 0, elec: 0 };
-    let acc = 0;
-    placed.forEach((k) => {
-      const c = catOf(T, k, pp); if (!c) return;
-      const cr = PLAN.ctx.items.get(k).cr;
-      if (c === "elec" && T.accept.includes(k)) { if (acc + cr > T.acceptMax) return; acc += cr; }
-      got[c] += cr;
-    });
+    const { got, pp } = majorGot(T, placed);
     const sp = T.spec;
     const row = (lab, cat) => sp[cat] || got[cat] ? `<div class="rm-row"><span>${lab}</span>${bar(got[cat], sp[cat] || got[cat])}<span class="mono">${got[cat]}/${sp[cat]}</span></div>` : "";
     const sum = got.basic + got.req + got.elec;
@@ -898,7 +944,8 @@
     const it = PLAN.ctx.items.get(id) || itemOf(id, PLAN.ctx);
     if (s >= 0 && isSeason(s) && !seasonOn(s)) return;   // 꺼 둔 계절학기
     if (s >= 0 && isSeason(s) && !(it && it.season.has(seasonName(s)))) {   // 최근 3년 계절학기에 열리지 않은 과목은 계절학기에 넣지 않는다
-      const note = $("#p-board").querySelector(".rm-season-no") || $("#p-board").insertAdjacentElement("afterbegin", Object.assign(document.createElement("p"), { className: "rm-alert rm-lost rm-season-no" }));
+      const note = $("#p-note");
+      note.hidden = false;
       note.textContent = `${it ? it.name : id}은(는) 최근 3년 ${seasonName(s)}학기에 열린 기록이 없어 ${semName(s)}에 넣지 않았습니다.`;
       return;
     }
