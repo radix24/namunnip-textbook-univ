@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-04-01",
+  "order": 80
+}
+-->
+<article class="card q-card" id="tip-c11-return-not-global" data-kind="요령" data-std="공통11-04-01">
+  <header class="card-head"><span class="no"></span><h2>함수 안에서 바꾸는 값은 전역 변수로 두지 말고 인자로 받아 반환한다</h2><span class="kind">요령 · 함수와 변수 범위</span></header>
+  <div class="q-body">
+    <section class="q-sec q-when">
+      <h3>언제 쓰는가</h3>
+      <p>함수 안에서 바깥 변수를 바꾸다 <code>UnboundLocalError</code>가 나거나, 어떤 함수는 바깥 리스트를 바꾸는데 어떤 함수는 못 바꾸는 이유가 궁금할 때입니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>요령</h3>
+      <ol class="q-tip">
+        <li><b>대입하면 지역 변수</b><div>함수 안에서 <code>x = …</code>나 <code>x += …</code>처럼 대입하면 그 이름은 함수의 지역 변수가 됩니다. 대입 전에 읽으면 오류가 납니다.</div></li>
+        <li><b>고치는 것은 대입이 아니다</b><div><code>items.append(x)</code>는 바깥 리스트 객체를 고칠 뿐 이름을 대입하지 않아서 동작합니다.</div></li>
+        <li><b>인자로 받고 반환</b><div><code>def add(total, x): return total + x</code>처럼 값을 받아 새 값을 돌려주면 함수만 봐도 무엇이 바뀌는지 알 수 있습니다.</div></li>
+        <li><b><code>global</code>은 마지막 수단</b><div><code>global</code>로 고칠 수는 있지만, 어디서 값이 바뀌는지 찾기 어려워집니다.</div></li>
+      </ol>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 실수</h3>
+      <ul>
+        <li><code>UnboundLocalError</code>를 보고 무작정 <code>global</code>을 붙이는 것.</li>
+        <li>함수가 리스트를 바꾸지 않는다고 생각하고 원본을 그대로 넘기는 것.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>바로 풀어보기</h3>
+      <p class="q-prob"><code>items = []</code>, <code>total = 0</code>을 바깥에 두고 함수 안에서 <code>items.append(x)</code>와 <code>total += x</code>를 실행했습니다. 왜 첫째는 되고 둘째는 오류가 나나요? 둘째를 고치세요.</p>
+      <details class="q-sol"><summary>답과 풀이</summary>
+        <div>
+          <p>답: 첫째는 객체를 고치는 것이라 이름이 지역이 되지 않고, 둘째는 대입이라 <code>total</code>이 지역 변수가 됩니다. <code>total = add(total, x)</code>처럼 반환으로 고칩니다.</p>
+          <p>파이썬은 함수 안에 대입문이 있는 이름을 지역 변수로 정합니다. <code>total += x</code>는 '지역 <code>total</code>을 읽고 더해 넣기'인데 지역 <code>total</code>은 아직 값이 없어 <code>UnboundLocalError</code>입니다.</p>
+          <pre><code>def add(total, x):
+    return total + x
+
+total = add(total, 5)</code></pre>
+        </div>
+      </details>
+    </section>
+
+    <section class="q-sec q-links">
+      <h3>이 요령으로 풀리는 문제</h3>
+      <ul>
+        <li><a href="04-R.html#card-c11-u04-practice">파이썬 함수와 모듈 단원 연습</a> 1번, 3번, 6번</li>
+      </ul>
+    </section>
+
+    <details class="q-board"><summary>영상 콘티 · 40초</summary>
+      <ol>
+        <li><b>0~5초</b><span class="scr">바깥에 상자 items와 total, 함수 상자 안에 두 줄의 코드가 있습니다.</span><span class="cap">둘 중 하나만 오류가 납니다.</span></li>
+        <li><b>5~14초</b><span class="scr"><code>items.append(x)</code>가 바깥 리스트 상자에 손을 뻗어 원소를 넣습니다. 이름표는 그대로입니다.</span><span class="cap">객체를 고치는 것은 됩니다.</span></li>
+        <li><b>14~23초</b><span class="scr"><code>total += x</code>가 실행되자 함수 안에 빈 'total' 이름표가 새로 생기고, 비어 있는 것을 읽으려다 오류가 뜹니다.</span><span class="cap">대입하면 지역 변수가 생깁니다.</span></li>
+        <li><b>23~33초</b><span class="scr">함수 입구로 total 값이 들어가고, 출구로 새 값이 나와 바깥 상자에 담깁니다.</span><span class="cap">인자로 받고 반환합니다.</span></li>
+        <li><b>33~40초</b><span class="scr"><code>global</code> 표지판이 나오지만 여러 함수가 같은 상자를 마구 고치는 장면에 '추적 어려움' 경고가 붙습니다.</span><span class="cap"><code>global</code>은 마지막 수단.</span></li>
+      </ol>
+    </details>
+  </div>
+</article>

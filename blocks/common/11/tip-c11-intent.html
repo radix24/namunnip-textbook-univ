@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-02-01",
+  "order": 80
+}
+-->
+<article class="card q-card" id="tip-c11-intent" data-kind="요령" data-std="공통11-02-01">
+  <header class="card-head"><span class="no"></span><h2>서브루틴의 인자에는 <code>intent</code>를 적어 들어오는 값과 나가는 값을 컴파일러가 지키게 한다</h2><span class="kind">요령 · 서브루틴 인자</span></header>
+  <div class="q-body">
+    <section class="q-sec q-when">
+      <h3>언제 쓰는가</h3>
+      <p>서브루틴과 함수를 만들 때, 인자가 함수 안에서 바뀌어 호출한 쪽 값까지 바뀌는 문제가 생길 때입니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>요령</h3>
+      <ol class="q-tip">
+        <li><b>인자를 셋으로 나눈다</b><div>읽기만 하면 <code>intent(in)</code>, 결과를 돌려주면 <code>intent(out)</code>, 읽고 고치면 <code>intent(inout)</code>입니다.</div></li>
+        <li><b>포트란은 참조로 넘긴다</b><div>포트란 인자는 기본적으로 원래 변수 자체가 넘어가므로, 서브루틴 안에서 바꾸면 밖의 값도 바뀝니다.</div></li>
+        <li><b>컴파일러가 막아 준다</b><div><code>intent(in)</code> 인자에 값을 넣으면 컴파일 오류가 나므로 실수로 입력을 망치지 않습니다.</div></li>
+        <li><b>상수를 넘기지 않는다</b><div><code>intent(inout)</code>이나 <code>intent(out)</code> 자리에 상수(<code>1.0_dp</code>)를 넘기면 고칠 곳이 없어 오류나 이상한 동작이 납니다.</div></li>
+      </ol>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 실수</h3>
+      <ul>
+        <li><code>intent</code>를 생략해 입력 배열이 함수 안에서 몰래 바뀌는 것.</li>
+        <li><code>intent(out)</code> 인자를 읽어서 쓰는 것. 들어올 때 값이 정해져 있지 않습니다.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>바로 풀어보기</h3>
+      <p class="q-prob">배열 <code>x</code>의 모든 원소에 <code>c</code>를 곱하는 서브루틴 <code>scale(x, c)</code>의 선언부를 쓰세요. <code>call scale(x, 2.0_dp)</code>와 <code>call scale([1.0_dp, 2.0_dp], 2.0_dp)</code>는 각각 괜찮은가요?</p>
+      <details class="q-sol"><summary>답과 풀이</summary>
+        <div>
+          <p>답: <code>x</code>는 <code>intent(inout)</code>, <code>c</code>는 <code>intent(in)</code>. 첫째는 괜찮고, 둘째는 바꿀 수 없는 상수 배열을 넘겨 안 됩니다.</p>
+          <pre><code>subroutine scale(x, c)
+  real(dp), intent(inout) :: x(:)
+  real(dp), intent(in)    :: c
+  x = c * x
+end subroutine scale</code></pre>
+          <code>c</code>는 상수로 넘겨도 읽기만 하므로 괜찮습니다. 둘째 호출의 배열 상수는 고칠 수 있는 변수가 아니라서, <code>intent(inout)</code> 인자에 넘기면 컴파일러가 막거나 실행 중 오류가 납니다.
+        </div>
+      </details>
+    </section>
+
+    <section class="q-sec q-links">
+      <h3>이 요령으로 풀리는 문제</h3>
+      <ul>
+        <li><a href="02-R.html#card-c11-u02-practice">포트란 부프로그램과 파일 단원 연습</a> 1번, 2번, 3번, 6번</li>
+      </ul>
+    </section>
+
+    <details class="q-board"><summary>영상 콘티 · 40초</summary>
+      <ol>
+        <li><b>0~5초</b><span class="scr">주 프로그램의 배열 x 상자와 서브루틴 scale이 화살표로 이어집니다.</span><span class="cap">넘겨준 배열은 바뀔까요?</span></li>
+        <li><b>5~13초</b><span class="scr">화살표가 복사본이 아니라 원래 상자를 그대로 가리키고, 서브루틴 안에서 값이 두 배가 되자 바깥 상자도 두 배가 됩니다.</span><span class="cap">포트란은 원래 변수를 넘깁니다.</span></li>
+        <li><b>13~22초</b><span class="scr">인자 이름 옆에 문 표지판 'in', 'out', 'inout'이 붙습니다. c에는 'in' 표지판.</span><span class="cap">들어오는지 나가는지 적습니다.</span></li>
+        <li><b>22~31초</b><span class="scr">서브루틴 안에서 c에 값을 넣으려 하자 컴파일러가 빨간 경고로 막습니다.</span><span class="cap">컴파일러가 약속을 지키게 합니다.</span></li>
+        <li><b>31~40초</b><span class="scr">상수 배열이 'inout' 문으로 들어가려다 '바꿀 수 없음' 표시에 튕겨 납니다.</span><span class="cap">고칠 인자에는 변수를 넘깁니다.</span></li>
+      </ol>
+    </details>
+  </div>
+</article>

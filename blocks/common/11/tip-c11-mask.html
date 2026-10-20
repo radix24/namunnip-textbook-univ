@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통11-03-03",
+  "order": 80
+}
+-->
+<article class="card q-card" id="tip-c11-mask" data-kind="요령" data-std="공통11-03-03">
+  <header class="card-head"><span class="no"></span><h2>NumPy에서 조건에 맞는 원소를 고를 때는 반복문 대신 조건 → 참거짓 배열 → 인덱싱 순서로 쓴다</h2><span class="kind">요령 · NumPy 조건 마스크</span></header>
+  <div class="q-body">
+    <section class="q-sec q-when">
+      <h3>언제 쓰는가</h3>
+      <p>배열에서 조건을 만족하는 원소의 개수, 평균, 값 바꾸기를 하는 문제입니다. 반복문이 길어지거나 느릴 때 씁니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>요령</h3>
+      <ol class="q-tip">
+        <li><b>조건을 배열에 바로</b><div><code>m = t &gt;= 30</code>은 원소마다 비교한 참거짓 배열을 만듭니다.</div></li>
+        <li><b>개수는 합</b><div><code>m.sum()</code>은 참의 개수입니다(참이 1로 셈).</div></li>
+        <li><b>고르기는 인덱싱</b><div><code>t[m]</code>은 조건을 만족하는 원소만 모은 새 배열입니다. 평균은 <code>t[m].mean()</code>.</div></li>
+        <li><b>조건이 둘이면 괄호와 <code>&amp;</code></b><div><code>(t &gt;= 30) &amp; (t &lt; 33)</code>처럼 괄호로 감싸고 <code>and</code> 대신 <code>&amp;</code>를 씁니다. 값을 바꿀 때는 <code>np.where(m, a, b)</code>.</div></li>
+      </ol>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 실수</h3>
+      <ul>
+        <li><code>t &gt;= 30 and t &lt; 33</code>처럼 <code>and</code>를 써서 <code>ValueError</code>가 나는 것.</li>
+        <li>괄호 없이 <code>t &gt;= 30 &amp; t &lt; 33</code>을 써 연산 순서가 꼬이는 것.</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>바로 풀어보기</h3>
+      <p class="q-prob"><code>t = np.array([28.5, 31.2, 33.0, 29.8, 34.1, 30.5])</code>에서 30 이상인 날의 수와 평균을 반복문 없이 구하고, 30 미만인 값을 30으로 바꾼 배열을 만드세요.</p>
+      <details class="q-sol"><summary>답과 풀이</summary>
+        <div>
+          <p>답: 4일, 평균 32.2. <code>np.where(t &lt; 30, 30, t)</code></p>
+          <pre><code>m = t &gt;= 30
+print(m.sum(), t[m].mean())   # 4 32.2
+u = np.where(t &lt; 30, 30.0, t)</code></pre>
+          <code>m</code>은 [F, T, T, F, T, T]이고, 고른 값 31.2, 33.0, 34.1, 30.5의 평균은 \(\frac{128.8}{4} = 32.2\)입니다.
+        </div>
+      </details>
+    </section>
+
+    <section class="q-sec q-links">
+      <h3>이 요령으로 풀리는 문제</h3>
+      <ul>
+        <li><a href="03-R.html#card-c11-u03-practice">파이썬 기초 단원 연습</a> 7번</li>
+        <li><a href="04-R.html#card-c11-u04-practice">파이썬 함수와 모듈 단원 연습</a> 5번</li>
+      </ul>
+    </section>
+
+    <details class="q-board"><summary>영상 콘티 · 40초</summary>
+      <ol>
+        <li><b>0~5초</b><span class="scr">온도 여섯 개가 한 줄 상자에 들어 있습니다.</span><span class="cap">30도 이상인 날만 고르려면?</span></li>
+        <li><b>5~13초</b><span class="scr"><code>t &gt;= 30</code>이 실행되자 상자 아래에 T/F 전구 여섯 개가 켜지고 꺼집니다.</span><span class="cap">조건을 배열에 바로 겁니다.</span></li>
+        <li><b>13~21초</b><span class="scr">켜진 전구의 개수가 세어져 4가 뜹니다.</span><span class="cap">참의 개수는 합.</span></li>
+        <li><b>21~30초</b><span class="scr">켜진 칸의 상자만 위로 떠올라 새 배열을 이루고 평균 32.2가 계산됩니다.</span><span class="cap">참인 칸으로 인덱싱합니다.</span></li>
+        <li><b>30~40초</b><span class="scr"><code>and</code>로 두 조건을 이으려다 빨간 오류가 뜨고, 괄호와 <code>&amp;</code>로 바꾸자 전구가 다시 켜집니다.</span><span class="cap">조건 두 개는 괄호와 <code>&amp;</code>.</span></li>
+      </ol>
+    </details>
+  </div>
+</article>

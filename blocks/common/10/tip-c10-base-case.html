@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "공통10-03-01",
+  "order": 80
+}
+-->
+<article class="card q-card" id="tip-c10-base-case" data-kind="요령" data-std="공통10-03-01">
+  <header class="card-head"><span class="no"></span><h2>재귀 함수는 멈추는 경우부터 쓰고, 한 단계 작은 문제의 답은 맞다고 믿고 쓴다</h2><span class="kind">요령 · 재귀 함수</span></header>
+  <div class="q-body">
+    <section class="q-sec q-when">
+      <h3>언제 쓰는가</h3>
+      <p>재귀 함수를 직접 만들거나, 재귀 함수가 몇 번 호출되는지와 결과를 예측하는 문제입니다.</p>
+    </section>
+
+    <section class="q-sec">
+      <h3>요령</h3>
+      <ol class="q-tip">
+        <li><b>기저 사례</b><div>더 쪼갤 수 없는 가장 작은 입력(<code>n == 0</code> 등)에서 바로 답을 돌려주는 줄을 맨 위에 씁니다.</div></li>
+        <li><b>한 단계만 믿는다</b><div><code>f(n)</code>을 쓸 때 <code>f(n - 1)</code>이나 <code>f(n // 2)</code>의 답이 이미 맞다고 보고, 그것으로 <code>f(n)</code>을 만드는 식만 씁니다.</div></li>
+        <li><b>입력이 줄어드는지</b><div>재귀 호출의 인자가 반드시 기저 사례 쪽으로 줄어드는지 확인합니다. 아니면 끝없이 호출합니다.</div></li>
+        <li><b>호출 나무</b><div>호출 횟수는 나무 그림으로 셉니다. 한 번에 둘씩 부르면(피보나치) 나무가 빠르게 불어납니다.</div></li>
+      </ol>
+    </section>
+
+    <section class="q-sec warn">
+      <h3>흔한 실수</h3>
+      <ul>
+        <li>기저 사례를 빠뜨려 <code>RecursionError</code>가 나는 것.</li>
+        <li>같은 재귀 호출을 두 번 써서 계산량을 크게 늘리는 것(<code>power(b, n//2) * power(b, n//2)</code>).</li>
+      </ul>
+    </section>
+
+    <section class="q-sec">
+      <h3>바로 풀어보기</h3>
+      <p class="q-prob">\(b^n\)을 계산하는 재귀 함수를 '절반으로 줄이기'로 쓰고, <code>power(2, 10)</code>을 부를 때 함수가 몇 번 호출되는지 세세요.</p>
+      <details class="q-sol"><summary>답과 풀이</summary>
+        <div>
+          <p>답: 5번(\(n\) = 10, 5, 2, 1, 0), 결과 1024</p>
+          <pre><code>def power(b, n):
+    if n == 0:
+        return 1
+    h = power(b, n // 2)
+    return h * h if n % 2 == 0 else h * h * b</code></pre>
+          <p>\(n\)이 10, 5, 2, 1, 0으로 줄어들어 5번 호출됩니다. \(n\)을 1씩 줄였다면 11번이 필요합니다. 반쪽 결과를 변수 <code>h</code>에 받아 두어 호출이 한 번씩만 일어납니다.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="q-sec q-links">
+      <h3>이 요령으로 풀리는 문제</h3>
+      <ul>
+        <li><a href="03-R.html#card-c10-u03-practice">파이썬 함수, 파일, 모듈, 클래스 단원 연습</a> 2번</li>
+      </ul>
+    </section>
+
+    <details class="q-board"><summary>영상 콘티 · 45초</summary>
+      <ol>
+        <li><b>0~5초</b><span class="scr"><code>power(2, 10)</code> 상자 하나가 화면에 놓입니다.</span><span class="cap">재귀는 어디서부터 쓸까요?</span></li>
+        <li><b>5~13초</b><span class="scr">맨 아래에 '\(n = 0\) → 1' 바닥판이 먼저 깔립니다.</span><span class="cap">멈추는 경우부터 씁니다.</span></li>
+        <li><b>13~22초</b><span class="scr">상자가 아래로 <code>power(2, 5)</code>, <code>power(2, 2)</code>, <code>power(2, 1)</code>, <code>power(2, 0)</code>을 차례로 내려보내며 계단이 생깁니다.</span><span class="cap">입력이 바닥 쪽으로 줄어드는지 봅니다.</span></li>
+        <li><b>22~33초</b><span class="scr">바닥에서 1이 올라오며 계단마다 제곱되거나 \(b\)가 곱해져 2, 4, 32, 1024가 됩니다.</span><span class="cap">한 단계 작은 답을 믿고 조립합니다.</span></li>
+        <li><b>33~45초</b><span class="scr"><code>h</code> 없이 두 번 부르는 버전의 호출 나무가 옆에 펼쳐지며 가지가 두 갈래씩 불어납니다.</span><span class="cap">같은 호출을 두 번 하지 않습니다.</span></li>
+      </ol>
+    </details>
+  </div>
+</article>
