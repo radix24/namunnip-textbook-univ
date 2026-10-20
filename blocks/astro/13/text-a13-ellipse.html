@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a13-ellipse" data-kind="본문" data-std="천우13-07-01">
+  <header class="card-head"><span class="no"></span><h2>등광도 타원 맞춤과 천체 목록 만들기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">은하 영상 한 장에서 무엇을 숫자로 뽑아낼까? 은하가 얼마나 밝은지, 중심에서 바깥으로 밝기가 어떻게 줄어드는지, 얼마나 납작한지가 은하를 분류하는 기본 정보이다. 그리고 넓은 영상에는 은하와 별 수천 개가 함께 찍혀 있어, 이것을 자동으로 찾아 목록으로 만들어야 한다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="은하 영상 위의 등광도 타원들과 반지름에 따른 표면 밝기 곡선">
+        <g fill="none" stroke="var(--forest, #4b4fe0)"><ellipse cx="110" cy="100" rx="20" ry="12" transform="rotate(-25 110 100)"/><ellipse cx="110" cy="100" rx="45" ry="27" transform="rotate(-25 110 100)"/><ellipse cx="110" cy="100" rx="75" ry="45" transform="rotate(-25 110 100)"/></g>
+        <circle cx="110" cy="100" r="3" fill="currentColor"/>
+        <line x1="240" y1="170" x2="420" y2="170" stroke="var(--ink-3, #888)"/>
+        <line x1="240" y1="170" x2="240" y2="20" stroke="var(--ink-3, #888)"/>
+        <path d="M250 30 C 280 60, 320 90, 410 150" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <g font-size="12" fill="currentColor"><text x="40" y="186">등광도 타원</text><text x="360" y="186">반지름 a</text><text x="246" y="18">μ (mag/arcsec²)</text></g>
+      </svg>
+      <figcaption>그림 1. 은하의 등광도 타원(왼쪽)과 긴반지름에 따른 표면 밝기(오른쪽). 타원마다 중심, 이심률, 방향각을 함께 맞춘다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>천체 검출과 위치(<a href="04-01.html">4.1절</a>), 문턱값과 연결 요소(<a href="02-03.html">2.3절</a>), 기초천체물리학(2)의 <a href="../4/05-04.html">은하의 표면 밝기 법칙</a>을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>등광도 타원 맞춤</h3>
+    <p>은하 영상에서 같은 밝기의 점을 이으면 대략 타원이 된다. 등광도 타원 맞춤(IRAF ellipse, photutils의 isophote)은 긴반지름 \(a\)를 조금씩 늘리며 각 \(a\)에서 타원의 중심, 이심률, 방향각을 맞춘다. 방법은 이렇다. 처음 타원 위의 밝기를 방위각 \(\theta\)의 함수로 읽어 \(I(\theta) = I_0 + A_1\sin\theta + B_1\cos\theta + A_2\sin2\theta + B_2\cos2\theta\)로 전개한다. 타원이 맞으면 1차·2차 계수가 0이어야 한다. 그러므로 남은 계수의 크기만큼 중심과 모양을 고치기를 되풀이한다. 그 결과 반지름별 표면 밝기, 이심률, 방향각의 곡선을 얻고, 4차 계수 \(B_4\)로 상자 모양(boxy)과 원반 모양(disky) 타원은하를 가른다.</p>
+
+    <h3><span class="no">7.1.2</span>SExtractor로 천체 목록 만들기</h3>
+    <p>넓은 영상의 천체는 SExtractor(또는 파이썬 sep)로 자동 검출한다. 먼저 영상을 격자로 나누어 각 칸의 배경과 잡음을 어림하고 배경을 뺀다. 그다음 배경 잡음의 몇 배(보통 1.5σ) 넘는 화소가 몇 개 이상 이어진 영역을 천체로 잡는다. 이어서 겹친 천체는 밝기 단계별로 나누어 분리(deblending)한다. 각 천체에 대해 중심, 모양, 여러 종류의 등급(구경 등급, Kron 등급 MAG_AUTO)과 별·은하 구별 지표(CLASS_STAR)를 출력한다. 따라서 수만 개 천체의 측광 목록을 몇 초 만에 만들 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>등광도 타원 맞춤에서 긴반지름 20″의 타원이 짧은반지름 12″였다. 이심률(편평도) \(\epsilon = 1 - b/a\)와, 은하가 둥근 원반이라면 기울기를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\epsilon = 1 - 12/20 = 0.40\)이다. 얇은 원반이 기울기 \(i\)로 보이면 \(b/a = \cos i\)이므로 \(i = \arccos0.60 \approx 53^\circ\)이다. 실제 원반은 두께가 있어 \(\cos^2i = [(b/a)^2 - q_0^2]/(1 - q_0^2)\)로 고쳐 쓰고, \(q_0 \approx 0.2\)이면 \(i \approx 55^\circ\)이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>등광도 타원 맞춤은 반지름을 늘리며 타원 위 밝기의 Fourier 계수가 0이 되도록 중심, 이심률, 방향각을 맞춰 표면 밝기 곡선과 모양 정보를 얻는다. SExtractor는 배경을 빼고 문턱값 이상 이어진 화소를 천체로 잡은 뒤 분리하고, 위치, 등급, 모양, 별·은하 구별을 목록으로 내놓는다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>검출 문턱을 1.5σ에서 5σ로 올리면 목록의 천체 수와 가짜 검출은 어떻게 바뀌는가?
+          <details><summary>답</summary><p>어두운 천체가 빠져 수가 줄고, 잡음에 의한 가짜 검출도 크게 준다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>타원 맞춤 결과 방향각이 반지름에 따라 크게 돌면 무엇을 뜻할 수 있는가?
+          <details><summary>답</summary><p>막대나 나선팔 같은 비대칭 구조, 또는 삼축 타원체를 기울여 본 효과(등광도 꼬임)이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

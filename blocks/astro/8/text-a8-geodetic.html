@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우8-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a8-geodetic" data-kind="본문" data-std="천우8-07-01">
+  <header class="card-head"><span class="no"></span><h2>지구 모형: 측지 위도와 지심 위도</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">지구는 자전 때문에 적도 반지름이 극 반지름보다 21 km 길다. 그래서 "위도"에도 두 가지가 있다. 지도와 GPS가 쓰는 측지 위도와, 지구 중심에서 잰 지심 위도이다. 지상국의 위치 벡터를 잘못 쓰면 위성 관측 방향이 어긋난다. 둘은 얼마나 다르고, 지상국 위치는 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="기준 타원체 위의 한 점에서 측지 위도는 표면 법선과 적도면의 각, 지심 위도는 중심을 잇는 선과 적도면의 각">
+        <ellipse cx="200" cy="110" rx="160" ry="140" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <line x1="20" y1="110" x2="400" y2="110" stroke="var(--ink-3, #888)"/>
+        <circle cx="320" cy="20" r="0" fill="none"/>
+        <line x1="200" y1="110" x2="335" y2="40" stroke="var(--ink-3, #888)" stroke-dasharray="4 3"/>
+        <line x1="270" y1="110" x2="360" y2="26" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <circle cx="331" cy="52" r="4" fill="currentColor"/>
+        <g font-size="12" fill="currentColor"><text x="232" y="104">φ′ 지심</text><text x="290" y="104">φ 측지</text><text x="338" y="56">지상국</text><text x="364" y="30">법선</text></g>
+      </svg>
+      <figcaption>그림 1. 기준 타원체(납작함은 과장). 측지 위도 \(\varphi\)는 표면 법선이 적도면과 이루는 각이고, 지심 위도 \(\varphi'\)는 중심과 잇는 선의 각이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>지구 중심 관성 좌표와 지상 좌표 사이의 변환(<a href="03-03.html">3.3절</a>), 지상국 가시 시간(<a href="06-02.html">6.2절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>기준 타원체</h3>
+    <p>WGS-84 기준 타원체는 적도 반지름 \(R_\oplus = 6378.137\) km, 편평도 \(f = 1/298.257\)인 회전 타원체이다. 이심률은 \(e^2 = 2f - f^2 \approx 0.006694\)이다. 지표의 한 점에서 표면에 수직인 법선은 지구 중심을 지나지 않는다. 그러므로 법선이 적도면과 이루는 측지 위도 \(\varphi\)와 중심선이 이루는 지심 위도 \(\varphi'\)가 다르고, 둘의 관계는 \(\tan\varphi' = (1 - e^2)\tan\varphi\)이다. 차이는 위도 45°에서 가장 커 약 0.19°이다.</p>
+
+    <h3><span class="no">7.1.2</span>지상국의 위치 벡터</h3>
+    <p>측지 위도 \(\varphi\), 경도 \(\lambda\), 타원체 높이 \(h\)인 지상국의 지구 고정 좌표(ECEF)는 다음과 같다.</p>
+    \[\mathbf r = \begin{pmatrix}(N + h)\cos\varphi\cos\lambda\\(N + h)\cos\varphi\sin\lambda\\(N(1 - e^2) + h)\sin\varphi\end{pmatrix}, \qquad N = \frac{R_\oplus}{\sqrt{1 - e^2\sin^2\varphi}}.\]
+    <p>\(N\)은 그 위도에서 법선 방향 곡률 반지름이다. 이 벡터를 항성시로 회전하면 관성 좌표의 지상국 위치가 된다. 그러면 위성 위치와의 차로 지상국에서 본 방향(방위각, 고도)과 거리를 구할 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>측지 위도 37.5°, 높이 0인 지상국의 지심 위도와 지구 중심 거리를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\tan\varphi' = 0.993306\times\tan37.5^\circ = 0.993306\times0.76733 = 0.76219\)이므로 \(\varphi' \approx 37.31^\circ\)이다. \(N = 6378.137/\sqrt{1 - 0.006694\sin^237.5^\circ} \approx 6386.3\) km이다. 그러면 \(\rho = N\cos\varphi \approx 5066.5\) km, \(z = N(1 - e^2)\sin\varphi \approx 3861.8\) km이고, 중심 거리는 \(\sqrt{\rho^2 + z^2} \approx 6370.4\) km이다. 지심 위도를 측지 위도로 착각하면 지상국 위치가 약 21 km 어긋난다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>지구는 편평도 1/298의 회전 타원체로 나타내며, 표면 법선의 각인 측지 위도와 중심선의 각인 지심 위도는 최대 0.19° 다르다. 지상국의 지구 고정 좌표는 곡률 반지름 \(N\)을 써서 측지 위도, 경도, 높이로 계산하고, 항성시로 회전해 관성 좌표로 바꾼다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>극과 적도에서 지심 위도와 측지 위도의 차이는?
+          <details><summary>답</summary><p>둘 다 0. 법선이 중심을 지난다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위도 0.19°의 차이가 지표에서 몇 km인지 어림하여라.
+          <details><summary>답</summary><p>\(6371\times0.19\times\pi/180 \approx 21\) km.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

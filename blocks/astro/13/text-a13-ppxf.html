@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a13-ppxf" data-kind="본문" data-std="천우13-07-03">
+  <header class="card-head"><span class="no"></span><h2>pPXF와 Galfit</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">은하 스펙트럼의 흡수선은 수많은 별 스펙트럼이 별들의 운동 때문에 조금씩 어긋난 채 겹친 것이다. 그래서 흡수선이 별 하나보다 넓다. 그 넓이로 별들의 속도 분산을 잴 수 있다. 은하 영상도 마찬가지이다. 밝기 분포를 모형으로 맞추면 크기와 집중도, 원반과 팽대부의 비율을 숫자로 얻는다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="별 템플릿 스펙트럼을 시선속도 분포와 합성곱하면 넓어진 은하 스펙트럼이 된다">
+        <line x1="40" y1="60" x2="160" y2="60" stroke="var(--ink-3, #888)"/>
+        <path d="M40 40 L 80 40 L 85 80 L 90 40 L 120 40 L 124 70 L 128 40 L 160 40" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <path d="M190 80 C 210 80, 215 40, 230 40 C 245 40, 250 80, 270 80" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <path d="M300 40 L 330 40 C 338 40, 340 85, 345 85 C 350 85, 352 40, 360 40 L 370 40 C 376 40, 378 70, 382 70 C 386 70, 388 40, 394 40 L 420 40" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <g font-size="14" fill="currentColor"><text x="168" y="64">⊗</text><text x="280" y="64">=</text></g>
+        <g font-size="12" fill="currentColor"><text x="50" y="110">별 템플릿</text><text x="190" y="110">시선속도 분포 (V, σ)</text><text x="320" y="110">은하 스펙트럼</text></g>
+      </svg>
+      <figcaption>그림 1. pPXF의 모형. 별 템플릿 스펙트럼들의 합을 시선속도 분포(평균 \(V\), 분산 \(\sigma\))와 합성곱해 관측 스펙트럼에 맞춘다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>분광 영상의 1차원 추출(<a href="07-02.html">7.2절</a>), 점 확산 함수(<a href="03-02.html">3.2절</a>), 등광도 타원 맞춤(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.3.1</span>pPXF로 항성 운동학 구하기</h3>
+    <p>pPXF(penalized pixel fitting)는 은하 스펙트럼 \(G(x)\)를 별 템플릿 \(T_k\)의 선형 결합을 시선속도 분포 \(\mathcal L(v)\)와 합성곱한 모형으로 맞춘다. 파장을 로그 간격 \(x = \ln\lambda\)로 다시 표본화하면 Doppler 이동이 \(x\) 방향의 단순한 평행 이동 \(v/c\)가 되어 합성곱을 쓸 수 있다. 시선속도 분포는 가우스 함수에 Gauss-Hermite 항 \(h_3, h_4\)를 더해 비대칭과 뾰족함까지 나타낸다. 그러므로 맞춤 결과로 평균 속도 \(V\), 속도 분산 \(\sigma\), \(h_3\), \(h_4\)와 템플릿 무게(항성 종족)를 함께 얻는다. 이때 분광기의 기기 분해능만큼 템플릿을 먼저 넓혀 두어야 \(\sigma\)가 바르게 나온다.</p>
+
+    <h3><span class="no">7.3.2</span>Galfit로 은하 구조 맞추기</h3>
+    <p>Galfit은 은하 영상을 해석 함수 모형과 PSF의 합성곱으로 맞춘다. 가장 많이 쓰는 성분은 Sérsic 윤곽 \(I(r) = I_e\exp\{-b_n[(r/r_e)^{1/n} - 1]\}\)이다. \(r_e\)는 빛의 절반이 든 유효 반지름이고, Sérsic 지수 \(n\)은 집중도이다. \(n = 1\)이면 지수 원반, \(n = 4\)이면 de Vaucouleurs 윤곽이다. 여러 성분(팽대부 + 원반 + 막대)을 함께 맞추면 팽대부 대 전체 광도비 B/T를 얻는다. 맞춤은 화소별 잡음으로 가중한 카이제곱을 Levenberg-Marquardt 방법으로 최소화한다. 잔차 영상에서 나선팔이나 먼지 띠 같은 구조가 드러나는 것도 쓸모 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>분광기의 기기 분해능이 \(\sigma_{\text{inst}} = 60\) km/s이고, 템플릿을 넓히지 않고 맞춘 은하의 겉보기 분산이 180 km/s였다. 실제 속도 분산을 어림하여라.</p>
+    </div>
+    <p><i>풀이.</i> 가우스 넓어짐은 제곱으로 더해지므로 \(\sigma = \sqrt{180^2 - 60^2} \approx 170\) km/s이다. 그러므로 기기 넓이를 빼지 않으면 약 6% 크게 잰다. 분산이 기기 분해능에 가까운 작은 은하에서는 이 보정이 훨씬 중요하다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>pPXF는 로그 파장 격자에서 별 템플릿과 시선속도 분포의 합성곱을 은하 스펙트럼에 맞춰 평균 속도, 속도 분산, 고차 모멘트, 항성 종족을 구한다. Galfit은 PSF와 합성곱한 Sérsic 등의 해석 모형을 영상에 맞춰 유효 반지름, 집중도, 팽대부·원반 비를 구한다. 두 방법 모두 기기의 넓어짐(분해능, PSF)을 모형에 넣어야 바른 값이 나온다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Sérsic 지수가 \(n = 1\)인 성분과 \(n = 4\)인 성분은 각각 무엇에 해당하는가?
+          <details><summary>답</summary><p>지수 원반, 타원은하나 고전적 팽대부.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>pPXF에서 파장을 로그 간격으로 바꾸는 이유를 Doppler 이동의 꼴로 설명하여라.
+          <details><summary>답</summary><p>\(\lambda' = \lambda(1 + v/c)\)는 \(\ln\lambda' = \ln\lambda + \ln(1 + v/c)\)라, 로그 격자에서 모든 파장이 같은 양만큼 평행 이동한다. 그래서 속도 분포와의 합성곱으로 쓸 수 있다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

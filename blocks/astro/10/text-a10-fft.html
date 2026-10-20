@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우10-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a10-fft" data-kind="본문" data-std="천우10-06-03">
+  <header class="card-head"><span class="no"></span><h2>고속 Fourier 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">자료 100만 개의 이산 Fourier 변환을 정의대로 계산하면 곱셈이 \(10^{12}\)번 든다. 그런데 FFT를 쓰면 약 \(2\times10^7\)번이면 된다. 5만 배 빨라진다. 어떻게 이런 일이 가능하고, 결과 스펙트럼을 읽을 때 무엇을 조심해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="나비 연산. 길이 N 변환을 짝수 번째와 홀수 번째 두 개의 길이 N/2 변환으로 나누고 회전 인자로 합친다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="30" y="30" width="110" height="40"/><rect x="30" y="120" width="110" height="40"/><rect x="300" y="30" width="110" height="40"/><rect x="300" y="120" width="110" height="40"/></g>
+        <g stroke="currentColor"><line x1="140" y1="50" x2="300" y2="50"/><line x1="140" y1="140" x2="300" y2="140"/><line x1="140" y1="50" x2="300" y2="140"/><line x1="140" y1="140" x2="300" y2="50"/></g>
+        <g font-size="12" fill="currentColor"><text x="40" y="54">짝수 E_k (N/2)</text><text x="40" y="144">홀수 O_k (N/2)</text><text x="306" y="54">F_k = E_k + w O_k</text><text x="306" y="144">F_(k+N/2) = E_k − w O_k</text><text x="180" y="100">w = e^(−2πik/N)</text></g>
+      </svg>
+      <figcaption>그림 1. Cooley-Tukey 나비 연산. 짝수·홀수 번째 자료의 반 길이 변환 두 개를 회전 인자 \(w\)로 합치면 길이 \(N\) 변환의 두 성분이 한꺼번에 나온다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>주기도로 주기 찾기(<a href="05-03.html">5.3절</a>), 과학영상처리론의 <a href="../13/03-01.html">2차원 Fourier 변환</a>을 쓴다.</div>
+
+    <h3><span class="no">6.3.1</span>Cooley-Tukey 알고리즘</h3>
+    <p>이산 Fourier 변환은 \(F_k = \sum_{j=0}^{N-1}f_je^{-2\pi ijk/N}\)이다. \(N\)이 짝수이면 합을 짝수 번째와 홀수 번째로 나눌 수 있다.</p>
+    \[F_k = \underbrace{\sum_{m}f_{2m}e^{-2\pi imk/(N/2)}}_{E_k} + e^{-2\pi ik/N}\underbrace{\sum_mf_{2m+1}e^{-2\pi imk/(N/2)}}_{O_k}.\]
+    <p>\(E_k\)와 \(O_k\)는 길이 \(N/2\)의 변환이고 주기가 \(N/2\)이다. 그러므로 \(F_{k+N/2} = E_k - wO_k\)가 되어 한 번의 곱으로 두 성분을 얻는다. 이것을 되풀이해 나누면 \(N = 2^p\)일 때 단계가 \(\log_2N\)개이고 단계마다 곱셈이 \(N/2\)번이다. 따라서 연산량은 \(N^2\)에서 \(\frac N2\log_2N\)으로 준다.</p>
+
+    <h3><span class="no">6.3.2</span>앨리어싱과 창 함수</h3>
+    <p>간격 \(\Delta t\)로 표본을 얻으면 Nyquist 진동수 \(f_N = 1/2\Delta t\)보다 높은 진동수는 구별되지 않고 낮은 진동수로 접혀 들어온다. 이것이 앨리어싱이다. 그래서 표본화 전에 신호를 거르거나, 표본 간격을 충분히 좁힌다. 또 유한한 길이의 자료는 무한한 신호에 사각형 창을 곱한 것과 같다. 그러면 스펙트럼이 sinc 함수와 합성곱되어, 강한 봉우리 옆에 곁엽이 생기고 에너지가 이웃 진동수로 샌다. Hann 창 \(w_j = \frac12[1 - \cos(2\pi j/N)]\)처럼 양 끝을 부드럽게 줄이면 곁엽이 크게 줄고, 대신 봉우리가 조금 넓어진다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>변광성을 10분 간격으로 30일 동안 연속 관측했다. Nyquist 진동수와 진동수 분해능을 구하고, 주기 8분인 맥동이 어떤 주기로 잘못 보일지 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(f_N = 1/(2\times10\text{ 분}) = 72\) /일이고, 분해능은 \(1/30\) /일이다. 주기 8분은 180 /일로, 표본화 진동수 144 /일보다 크다. 그러므로 \(|180 - 144| = 36\) /일, 곧 주기 40분의 신호로 접혀 보인다. 이런 신호를 놓치지 않으려면 관측 간격을 4분보다 짧게 해야 한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>FFT는 이산 Fourier 변환을 짝수·홀수 번째 반 길이 변환으로 되풀이해 나누어, 연산량을 \(N^2\)에서 \(\frac N2\log_2N\)으로 줄인다. 표본 간격이 Nyquist 진동수를 정하고, 그보다 높은 진동수는 앨리어싱으로 접힌다. 유한 길이 자료는 창 함수 때문에 곁엽이 생기므로, Hann 같은 창으로 누출을 줄이고 분해능과 맞바꾼다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(N = 2^{20}\)일 때 직접 계산과 FFT의 곱셈 횟수 비를 구하여라.
+          <details><summary>답</summary><p>\(N^2/(\frac N2\cdot20) = 2N/20 \approx 1.05\times10^5\)배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>자료 수가 \(2^p\)가 아닐 때 0을 덧붙이는 것(zero padding)이 분해능을 높이지 않는 이유를 말하여라.
+          <details><summary>답</summary><p>0을 덧붙이면 같은 스펙트럼을 더 촘촘히 보간해 보여 줄 뿐, 분해능은 실제 관측 길이 \(1/T\)로 정해진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

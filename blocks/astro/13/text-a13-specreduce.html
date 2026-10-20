@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "천우13-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-a13-specreduce" data-kind="본문" data-std="천우13-07-02">
+  <header class="card-head"><span class="no"></span><h2>분광 영상의 전처리와 1차원 추출</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">긴 슬릿 분광기의 CCD 영상은 한쪽 축이 파장, 다른 쪽 축이 슬릿을 따른 위치이다. 천체의 스펙트럼은 가운데 가는 띠로 찍히고, 그 위아래에는 하늘의 방출선이 슬릿 전체에 걸친 줄로 찍힌다. 이 2차원 영상에서 천체만의 1차원 스펙트럼을 어떻게 뽑아낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="2차원 분광 영상. 가로는 파장, 세로는 공간. 가운데 천체 띠와 세로로 그어진 하늘 방출선, 위아래 하늘 창">
+        <rect x="40" y="30" width="360" height="130" fill="var(--sprout, #c9cbf7)" opacity="0.4" stroke="var(--ink-3, #888)"/>
+        <rect x="40" y="88" width="360" height="14" fill="var(--forest, #4b4fe0)" opacity="0.7"/>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="2"><line x1="120" y1="30" x2="120" y2="160"/><line x1="210" y1="30" x2="210" y2="160"/><line x1="300" y1="30" x2="300" y2="160"/></g>
+        <g stroke="currentColor" stroke-dasharray="4 3"><rect x="40" y="45" width="360" height="20" fill="none"/><rect x="40" y="125" width="360" height="20" fill="none"/></g>
+        <g font-size="12" fill="currentColor"><text x="300" y="186">파장 →</text><text x="2" y="98">공간</text><text x="320" y="84">천체 띠</text><text x="330" y="60">하늘 창</text><text x="124" y="24">하늘 방출선</text></g>
+      </svg>
+      <figcaption>그림 1. 긴 슬릿 분광 영상. 천체 띠 위아래의 하늘 창에서 하늘 스펙트럼을 재어 빼고, 천체 띠를 공간 방향으로 더해 1차원 스펙트럼을 얻는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>CCD 영상 전처리(천체관측법의 <a href="../7/03-02.html">바이어스·암전류·평탄화 보정</a>), 비교 광원으로 파장 보정(<a href="../7/05-02.html">천체관측법 5.2절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>2차원 보정</h3>
+    <p>먼저 영상 측광과 같이 바이어스와 암전류를 빼고, 분광 평탄 영상(할로젠 램프)으로 화소 감도 차이를 나눈다. 이때 램프 스펙트럼 자체의 모양은 파장 방향으로 매끄러운 함수를 맞춰 나누어 없애고, 화소 사이의 차이만 남긴다. 그다음 비교 광원(He, Ne, Ar 램프) 영상의 방출선 위치로 화소와 파장의 관계를 다항식으로 맞춘다. 슬릿을 따라 이 관계가 조금씩 다르므로, 위치마다 맞춘 2차원 해로 영상을 파장 격자에 다시 표본화한다. 그러면 하늘 방출선이 슬릿 전체에서 곧은 세로줄이 된다.</p>
+
+    <h3><span class="no">7.2.2</span>하늘 빼기와 추출</h3>
+    <p>천체 띠 위아래의 하늘 창에서 파장마다 하늘 세기를 공간 방향 저차 함수로 맞추고, 천체 띠 자리에 내삽해 뺀다. 하늘 방출선이 강한 적색 영역에서는 이 단계가 결과를 좌우한다. 이제 천체 띠를 공간 방향으로 더하면 1차원 스펙트럼이 된다. 단순 합 대신 띠의 공간 윤곽 \(P\)를 무게로 쓰는 최적 추출(Horne 방법) \(f = \sum P_iD_i/V_i\big/\sum P_i^2/V_i\)을 쓰면, 어두운 천체에서 신호 대 잡음비가 크게 좋아진다(\(V_i\)는 화소 분산). 마지막으로 분광 표준성으로 구한 감도 함수로 나누어 플럭스 단위로 바꾼다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>천체 띠가 공간 방향으로 화소 5개에 걸쳐 각각 신호 10, 40, 100, 40, 10 전자를 받고, 화소마다 하늘과 읽기 잡음의 분산이 100이다. 5개를 단순히 더할 때와 가운데 3개만 더할 때의 신호 대 잡음비를 비교하여라(천체 자신의 광자 잡음은 무시).</p>
+    </div>
+    <p><i>풀이.</i> 5개 합은 신호 200, 잡음 \(\sqrt{500} \approx 22.4\)라 S/N ≈ 8.9이다. 가운데 3개는 신호 180, 잡음 \(\sqrt{300} \approx 17.3\)이라 S/N ≈ 10.4이다. 따라서 신호가 약한 가장자리 화소는 잡음만 더한다. 최적 추출은 화소마다 무게를 달리해 이 손익을 자동으로 맞춘다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>분광 영상은 바이어스·암전류를 빼고 분광 평탄 영상으로 나눈 뒤, 비교 광원으로 2차원 파장 해를 맞춰 파장 격자로 바꾼다. 천체 띠 양옆의 하늘 창으로 하늘을 맞춰 빼고, 공간 윤곽을 무게로 쓰는 최적 추출로 1차원 스펙트럼을 얻는다. 마지막에 감도 함수로 플럭스를 보정한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>하늘 창을 천체 띠에 너무 가깝게 잡으면 어떤 문제가 생기는가?
+          <details><summary>답</summary><p>천체 빛의 날개가 하늘 창에 들어가 하늘로 빼지므로 천체 플럭스가 줄어든다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>파장 보정 다항식의 잔차가 0.05 Å일 때, 5000 Å에서 시선속도 오차를 어림하여라.
+          <details><summary>답</summary><p>\(c\times0.05/5000 = 3\) km/s.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
