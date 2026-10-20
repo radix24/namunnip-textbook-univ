@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-05-03",
+  "order": 10
+}
+-->
+<article class="card q-card" id="card-m15-delay-ex" data-kind="예제" data-std="기계15-05-03">
+  <header class="card-head"><span class="no"></span><h2>원격 제어의 통신 지연과 이득 낮추기</h2><span class="kind">예제 · 위상 여유 회복 · 수치 탐색</span></header>
+  <div class="q-body">
+    <div class="q-strategy">
+      <span class="lb">문제 해결 전략 · 교차 주파수를 내린다</span>
+      <ol>
+        <li>지연으로 줄어든 위상 여유를 구한다.</li>
+        <li>이득 \(K\)를 낮추면 \(\omega_c\)가 내려가 플랜트 위상과 지연 위상이 함께 줄어든다.</li>
+        <li>원래 위상 여유가 되는 \(K\)를 수치로 찾는다.</li>
+      </ol>
+    </div>
+
+    <p class="q-prob"><b>문제.</b> 예제 5.3.1 서보(\(L = K/(s(s + 2))\), \(K\) = 10)를 무선망으로 원격 제어해 왕복 지연 0.05 s가 생겼다. 위상 여유는 얼마로 떨어지며, 원래 위상 여유 34.9°를 되찾으려면 \(K\)를 얼마로 낮춰야 하는가?</p>
+    <section class="q-sec">
+      <h3>전략</h3>
+      <p>\(\omega_c^2(\omega_c^2 + 4) = K^2\), \(\phi_m = 90° - \tan^{-1}(\omega_c/2) - 57.3°\omega_c\tau\).</p>
+    </section>
+    <section class="q-sec">
+      <h3>풀이</h3>
+      <ol class="q-proof">
+        <li><div>\(K\) = 10: \(\omega_c\) = 2.86, \(\phi_m = 34.9 - 8.2 = 26.7°\).</div><span class="q-why">지연 위상 8.2°.</span></li>
+        <li><div>\(K\)를 바꿔 가며 \(\phi_m\)을 계산하면 \(K \approx 6.85\)에서 \(\omega_c\) = 2.27 rad/s, \(\phi_m\) = 34.9°.</div><span class="q-why">이분법.</span></li>
+        <li class="q-end"><div>\(K\)를 약 30% 낮춘다. 교차 주파수(대략 대역폭)는 2.86 → 2.27 rad/s로 21% 느려진다.</div><span class="q-why">속도를 내주고 안정을 얻음.</span></li>
+      </ol>
+    </section>
+    <section class="q-check">
+      <h3>검산</h3>
+      <p>\(\omega_c\) = 2.27: \(2.27^2\times(2.27^2 + 4) = 5.15\times9.15 = 47.1\), \(\sqrt{47.1} = 6.86 \approx K\). 위상 \(90 - 48.6 - 6.5 = 34.9°\)로 맞습니다.</p>
+    </section>
+    <section class="q-meaning">
+      <h3>의미</h3>
+      <p>지연은 보상기로 완전히 되돌릴 수 없어서, 결국 느린 제어를 받아들이는 것이 가장 단순한 해결책입니다. 지연을 모델에 넣어 예측하는 Smith 예측기 같은 구조는 지연 모델이 정확할 때 이 손해를 줄여 줍니다.</p>
+    </section>
+    <section class="q-sec">
+      <h3>바꿔 보기</h3>
+      <p>지연이 0.213 s(예제 5.3.1의 최대 지연)가 되면 \(K\) = 10에서 위상 여유가 0°로 지속 진동합니다. 지연이 조금만 커져도 불안정하므로 실제 설계는 최대 지연의 절반 이하로 운전합니다.</p>
+    </section>
+    <section class="q-try">
+      <h3>이해 확인</h3>
+      <p>\(K\) = 6.85, 지연 0.05 s에서 견딜 수 있는 추가 지연은?</p>
+      <details><summary>답</summary><p>\(0.609/2.27 = 0.268\) s, 이미 있는 0.05 s를 빼면 약 0.22 s 더.</p></details>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-04-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-zn" data-kind="본문" data-std="기계15-04-03">
+  <header class="card-head"><span class="no"></span><h2>PID 실전 튜닝: Ziegler-Nichols와 적분 와인드업</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>모델 없이 실험으로 PID 이득을 정하는 Ziegler-Nichols 방법 두 가지를 안다.</li>
+        <li>한계 이득과 한계 주기에서 PID 이득을 계산한다.</li>
+        <li>구동기 포화 때 생기는 적분 와인드업과 그 방지법을 설명한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>근궤적과 PID (<a href="04-01.html">4.1절</a>), Routh 판별법 (<a href="03-01.html">3.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">4.3.1</span>Ziegler-Nichols 방법</h3>
+    <p>현장에서는 정확한 모델이 없을 때가 많습니다. Ziegler-Nichols는 간단한 실험 하나로 첫 이득을 정해 주는 경험 규칙입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">두 가지 방법 (\(u = K_p[e + \tfrac1{T_i}\int e\,dt + T_d\dot e]\))</span>
+      <p>한계 감도법: 비례 제어만으로 이득을 올려 지속 진동이 생기는 \(K_u\)와 주기 \(P_u\)를 잰다. PID: \(K_p = 0.6K_u\), \(T_i = P_u/2\), \(T_d = P_u/8\). PI: \(K_p = 0.45K_u\), \(T_i = P_u/1.2\).</p>
+      <p>계단 응답법: 개루프 계단 응답에서 이득 \(K\), 지연 \(L\), 시정수 \(T\)를 읽는다. PID: \(K_p = 1.2T/(KL)\), \(T_i = 2L\), \(T_d = 0.5L\).</p>
+    </div>
+    <p>이 규칙은 감쇠비 약 0.2(1/4 감쇠비)를 목표로 해서 오버슈트가 큰 편입니다. 출발점으로 쓰고 \(K_p\)를 줄이거나 \(T_i\)를 늘려 다듬습니다.</p>
+
+    <h3><span class="no">4.3.2</span>적분 와인드업</h3>
+    <p>밸브가 완전히 열리거나 모터 전압이 한계에 닿으면(포화) 출력은 더 빨리 따라가지 못하는데, 적분기는 오차를 계속 쌓습니다. 오차가 반대가 되어도 쌓인 적분이 풀릴 때까지 구동기가 포화에 머물러 큰 오버슈트가 생깁니다. 포화 중에는 적분을 멈추거나(조건부 적분), 포화 초과분을 적분기에 되먹임(역계산)해 막습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1 <span class="nm">(3중 지연 공정)</span></span>
+      <p>\(G = 1/(s + 1)^3\)의 한계 이득과 한계 주기를 구하고 Ziegler-Nichols PID 이득을 정하여라.</p>
+    </div>
+    <p><i>풀이.</i> 특성식 \(s^3 + 3s^2 + 3s + 1 + K = 0\). Routh에서 \(9 = 1 + K\)일 때 경계라 \(K_u\) = 8, 진동수 \(\omega_u = \sqrt3\), \(P_u = 2\pi/\sqrt3 = 3.63\) s. PID: \(K_p = 4.8\), \(T_i = 1.81\) s, \(T_d = 0.45\) s.</p>
+
+    <div class="tb-note"><b>주의</b>한계 감도 실험은 실제 설비를 안정 경계까지 몰고 가므로 위험할 수 있습니다. 큰 설비에서는 계단 응답법이나 릴레이 되먹임 실험(진폭이 제한된 진동)을 씁니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>한계 감도: \(0.6K_u\), \(P_u/2\), \(P_u/8\).</li>
+        <li>계단 응답: \(1.2T/(KL)\), \(2L\), \(0.5L\).</li>
+        <li>포화 + 적분 = 와인드업 → 조건부 적분·역계산.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(K_u\) = 10, \(P_u\) = 2 s일 때 ZN PI 이득은?
+          <details><summary>답</summary><p>\(K_p = 4.5\), \(T_i = 1.67\) s.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 PID를 \(K_p + K_i/s + K_ds\) 꼴로 바꿔라.
+          <details><summary>답</summary><p>\(K_i = K_p/T_i = 2.65\), \(K_d = K_pT_d = 2.18\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>온도 제어에서 히터가 최대 출력으로 30분간 포화되는 동안 적분기가 계속 쌓이면 무슨 일이 생기는가? 조건부 적분은 이를 어떻게 막는가?
+          <details><summary>답</summary><p>목표 온도에 닿은 뒤에도 쌓인 적분 때문에 히터가 한동안 최대로 남아 크게 넘친다. 조건부 적분은 출력이 포화이고 오차가 같은 방향일 때 적분을 멈춰, 목표 근처에서 적분이 거의 0에서 시작하게 한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

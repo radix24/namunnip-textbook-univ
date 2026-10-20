@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계15-02-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-mason" data-kind="본문" data-std="기계15-02-03">
+  <header class="card-head"><span class="no"></span><h2>신호 흐름도와 Mason 이득 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>블록선도를 마디와 가지로 된 신호 흐름도로 바꾼다.</li>
+        <li>전방 경로, 루프, 비접촉 루프를 찾는다.</li>
+        <li>Mason 이득 공식으로 전달함수를 한 번에 구한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>블록선도 간략화 (<a href="02-01.html">2.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">2.3.1</span>신호 흐름도</h3>
+    <p>신호 흐름도는 변수를 마디(점)로, 블록을 화살표 가지(이득)로 나타냅니다. 마디의 값은 들어오는 가지들의 합이고, 피드백의 빼기는 가지 이득에 음수로 넣습니다. 루프가 여럿 얽힌 블록선도는 하나씩 간략화하기보다 Mason 공식이 빠릅니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Mason 이득 공식</span>
+      <p>\[T = \frac{\sum_k P_k\Delta_k}{\Delta},\qquad \Delta = 1 - \sum L_i + \sum L_iL_j - \sum L_iL_jL_k + \cdots\]</p>
+      <p>\(P_k\): \(k\)번째 전방 경로 이득, \(L_i\): 루프 이득, \(L_iL_j\): 서로 닿지 않는 루프 쌍의 곱, \(\Delta_k\): 경로 \(k\)에 닿지 않는 루프만으로 만든 \(\Delta\).</p>
+    </div>
+    <p>두 루프가 마디를 하나라도 공유하면 "닿는다"고 합니다. 모든 루프가 경로에 닿으면 \(\Delta_k = 1\)입니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1 <span class="nm">(지역 루프 두 개)</span></span>
+      <p>\(G_1\), \(G_2\), \(G_3\)가 직렬이고 \(G_1\) 둘레에 지역 피드백 \(H_1\), \(G_3\) 둘레에 \(H_2\)가 있다(둘 다 음). 전달함수는?</p>
+    </div>
+    <p><i>풀이.</i> 경로 \(P_1 = G_1G_2G_3\). 루프 \(L_1 = -G_1H_1\), \(L_2 = -G_3H_2\)는 서로 닿지 않습니다. \(\Delta = 1 + G_1H_1 + G_3H_2 + G_1H_1G_3H_2 = (1 + G_1H_1)(1 + G_3H_2)\), 두 루프 모두 경로에 닿아 \(\Delta_1 = 1\). \(T = G_1G_2G_3/[(1 + G_1H_1)(1 + G_3H_2)]\)로, 각 지역 루프를 따로 줄여 곱한 것과 같습니다.</p>
+
+    <div class="tb-note"><b>주의</b>가장 흔한 실수는 서로 닿는 루프의 곱을 \(\Delta\)에 넣는 것입니다. 루프를 모두 적은 뒤 쌍마다 공유 마디가 있는지 하나씩 확인합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>마디 = 변수, 가지 = 이득.</li>
+        <li>\(T = \sum P_k\Delta_k/\Delta\).</li>
+        <li>\(\Delta\)의 곱 항은 비접촉 루프만.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>단일 루프 \(G\), 피드백 \(H\)(음)를 Mason 공식으로 풀어라.
+          <details><summary>답</summary><p>\(P_1 = G\), \(L_1 = -GH\), \(\Delta = 1 + GH\), \(T = G/(1 + GH)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(G_1G_2\) 직렬에 전체 피드백 \(H\)와 \(G_2\) 둘레 지역 피드백 \(H_2\)가 있다. 전달함수는?
+          <details><summary>답</summary><p>두 루프 \(-G_1G_2H\), \(-G_2H_2\)는 \(G_2\)를 공유해 닿는다. \(T = G_1G_2/(1 + G_1G_2H + G_2H_2)\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>예제에서 \(G_1 = G_3 = 10\), \(H_1 = H_2 = 1\), \(G_2 = 1\)이면 \(T\)는? 지역 피드백이 \(G_1\), \(G_3\)의 변동에 대한 민감도를 어떻게 바꾸는가?
+          <details><summary>답</summary><p>\(T = 100/121 = 0.826\). 각 지역 루프의 이득이 \(10/11 \approx 1/H\)라 \(G_1\), \(G_3\)가 크게 변해도 \(T\)는 거의 바뀌지 않는다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
