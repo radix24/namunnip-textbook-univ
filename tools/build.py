@@ -992,7 +992,7 @@ def write_pages(depts, blocks, sidx, links):
           {f'<span class="s-std small">{esc(sc["std"]["t"])}</span>' if sc["std"] else ""}
         </li>""" for sc in u["secs"])
                 body = f"""  <section class="topic-hero u-hero"{uni_attr(unit_unis(u))}>
-    <div class="meta">{dept_link}<span class="mono">/</span><a href="./" data-place="course">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}{" · " + esc(u["src"]) if u["src"] else ""}</span></div>
+    <div class="meta">{dept_link}<span class="mono">/</span><a href="./" data-place="course">{esc(c["name"])}</a><span class="mono">대단원 {u["n"]}</span></div>
     <h1>{esc(u["t"])}</h1>
     {f'<p class="u-els"><b>학습 요소</b>{esc(u["el"])}</p>' if u["el"] else ""}
     <p class="u-prog mono small"></p>
@@ -1021,7 +1021,7 @@ def write_pages(depts, blocks, sidx, links):
                     "/* tools/build.py가 exams/의 시험 전용 문항과 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
                     "window.QBANK = " + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + ";\n",
                     encoding="utf-8", newline="\n")
-            if not noexam and (items or not c.get("gone")):    # 최근 미개설 과목은 문항이 있을 때만 시험 연습을 둔다
+            if not noexam:
                 (base / "exam.html").write_text(
                     page(rel, f'시험 연습 · {c["name"]}', f'{c["name"]} 중간고사·기말고사 연습 문제은행', exam_page(c, d, items, rel, dept_link),
                          '\n  <link rel="stylesheet" href="' + rel + 'css/exam.css">', ([c["path"] + "bank.js"] if items else []) + ["js/exam.js"],
@@ -1074,7 +1074,7 @@ def write_pages(depts, blocks, sidx, links):
             nexts = next_courses(c, [(dd, x) for dd in depts for x in dd["courses"] if x is not c and c["code"] in pre_codes(x.get("pre"))])
             first = next((sc for u in c["units"] for sc in u["secs"] if sc["cards"]), None)
             info = [("학기", f'{c["y"]}학년 {c["sem"]}학기 · {c["kind"]} · {c["cr"]}학점'), ("구성", f'대단원 {len(c["units"])} · 절 {nsec} · 카드 {ncard}'),
-                    ("연세대 개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
+                    ("개설", c.get("offered") or (c["open"] if c["sub"] else "")), ("학습", c["hours"]), ("교재", c["books"])]
             term_attr = ' data-place="term"'   # 학기·이수구분·학점은 학과마다 다르다(js/place.js가 바꿈)
             info_html = "".join(f'<div><dt>{k}</dt><dd{term_attr if k == "학기" else ""}>{md(v)}</dd></div>' for k, v in info if v)
             path_html = (f'<p><span class="dim">먼저 공부할 내용</span>{pre_html(c["pre"])}</p>' if c["pre"] else "") + (
@@ -1087,7 +1087,7 @@ def write_pages(depts, blocks, sidx, links):
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
-      {"" if c["noexam"] or (c.get("gone") and not c["bank"]) else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{ {"fin": "기말", "mid": "중간"}.get(EXAM_POLICY.get(c["code"]), "중간·기말")} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
+      {"" if c["noexam"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{ {"fin": "기말", "mid": "중간"}.get(EXAM_POLICY.get(c["code"]), "중간·기말")} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
       <div class="cx-path small" data-place="path"{"" if path_html else " hidden"}>{path_html}</div>
     </aside>
@@ -1105,7 +1105,7 @@ def write_pages(depts, blocks, sidx, links):
                 u.pop("secs", None)
             c.pop("unisT", None)
     for k in blocks:
-        if k not in used:
+        if k not in used and k.split("-")[0] not in HIDDEN:   # 개설되지 않아 뺀 과목의 블록은 원본에만 남는다
             print(f"경고: 없는 절에 배치된 블록 {k}: {[b['id'] for b in blocks[k]]}", file=sys.stderr)
     print(f"문제은행: 문제 {n_bank[0]} · 과목 {n_bank[1]}")
     return n_pages, n_cards
@@ -1129,6 +1129,7 @@ def next_courses(c, cands):
 
 OFFERED = SRC / "univ-offered.json"   # 연세대학교 수강편람에서 모은 학정번호별 개설 학기 {"terms": [...], "codes": {"MAT1001": ["2023-1", …]}}
 RECENT_FROM = 2024                     # 이 해부터 한 번도 열리지 않은 과목(3년 이상 미개설)은 목록에서 뺀다
+HIDDEN = set()                         # 개설되지 않아 사이트에서 뺀 과목 코드(main이 채운다)
 
 
 def offered_text(terms):
@@ -1146,24 +1147,23 @@ def offered_text(terms):
 
 
 def apply_offered(cs):
-    """연세대 개설 이력을 붙이고, 최근 3년(RECENT_FROM년부터) 동안 연세대 정규학기에 한 번도 열리지 않은 과목은 뺀다.
+    """개설 이력을 붙이고, 지금 학교에서 열리지 않는 과목은 사이트에서 뺀다(페이지도 만들지 않는다. 원본 교재는 그대로 둔다).
     기준 자료는 curricula/univ-offered.json 한 곳이다(수강편람 개설 기록을 다시 모으면 다시 계산된다). 자료가 없으면 그대로 둔다.
-    - 다른 대학에도 표시된 과목이라도 연세대에서 안 열리면 뺀다(2026-10-20 사용자 결정: 요람에만 있는 과목은 숨김).
-    - 학정번호가 없는 과목(다른 대학에만 있는 과목)은 이력을 붙이지 않고 남긴다."""
+    - 학정번호가 없는 과목(이 학교에 없고 다른 대학에만 있는 과목)은 뺀다.
+    - 최근 3년(RECENT_FROM년부터) 정규학기에 한 번도 열리지 않은 과목은 다른 대학 표시와 관계없이 뺀다.
+    (2026-10-20 사용자 결정: 학교에서 개설되지 않는 과목은 어디에도 보이지 않게)"""
     if not OFFERED.exists():
         return cs, []
     data = json.loads(OFFERED.read_text(encoding="utf-8"))
-    keep, gone = [], []
+    keep, hidden = [], []
     for c in cs:
         if not c["sub"]:
-            if not c.get("unis"):
-                print(f"경고: {c['code']} 학정번호도 개설 대학 표시도 없음", file=sys.stderr)
-            keep.append(c)
+            hidden.append(c)
             continue
         terms = sorted({t for s in c["sub"] for t in data["codes"].get(s, [])})
         c["offered"] = offered_text(terms)
-        (keep if any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
-    return keep, gone
+        (keep if any(int(t[:4]) >= RECENT_FROM for t in terms) else hidden).append(c)
+    return keep, hidden
 
 
 def selftest():
@@ -1215,9 +1215,10 @@ def selftest():
     with tempfile.TemporaryDirectory() as tmp:
         OFFERED = Path(tmp) / "o.json"
         OFFERED.write_text(json.dumps({"codes": {"MAT2001": ["2025-1"], "MAT9999": ["2010-1"], "MAT9998": ["2010-2"], "MAT2002": ["2026-2"]}}), encoding="utf-8")
-        keep, gone = apply_offered(cs)
+        keep, hidden = apply_offered(cs)
     OFFERED = keep_off
-    assert [c["code"] for c in gone] == ["수학2", "수학3"], gone                         # 연세대에서 오래 안 열린 과목은 다른 대학 표시와 관계없이 빠진다
+    assert [c["code"] for c in hidden] == ["수학2", "수학3", "수학4"], hidden           # 오래 안 열린 과목과 학정번호가 없는 과목은 빠진다
+    assert [c["code"] for c in keep] == ["수학1", "수학5"], keep
     assert "offered" not in other and "2010" in b["offered"], (other, b)
     print("자체 시험 통과")
 
@@ -1231,12 +1232,11 @@ def main():
         SRC = Path(sys.argv[sys.argv.index("--src") + 1]).resolve()
     out, total = [], {"courses": 0, "units": 0, "stds": 0}
     for did, name, short, fname, college in DEPTS:
-        cs, gone = apply_offered([finish(c) for c in parse(SRC / fname, did)])
-        if gone:
-            print(f"{did}: {RECENT_FROM}년 이후 미개설 {len(gone)}(학과 배치에서 빼고 교재 전체 보기에만): {', '.join(c['name'] for c in gone)}")
-        for c in gone:          # 페이지는 만들고, 학과 배치(place.py)·합본(univ.json)에서는 뺀다
-            c["gone"] = True
-        out.append({"id": did, "name": name, "short": short, "college": college, "courses": cs + gone})
+        cs, hidden = apply_offered([finish(c) for c in parse(SRC / fname, did)])
+        HIDDEN.update(c["code"] for c in hidden)
+        if hidden:
+            print(f"{did}: 개설되지 않아 뺀 과목 {len(hidden)}: {', '.join(c['name'] for c in hidden)}")
+        out.append({"id": did, "name": name, "short": short, "college": college, "courses": cs})
         total["courses"] += len(cs)
         total["units"] += sum(len(c["units"]) for c in cs)
         total["stds"] += sum(len(u["s"]) for c in cs for u in c["units"])
@@ -1253,12 +1253,10 @@ def main():
     # 로드맵·학습 기록·check_exams.py가 쓰는 전 학과 합본(옛 js/toc.js의 window.UNIV와 같은 내용):
     # QURI 코드, pre 글, sub, open, path, unis, s.u, 절별 카드 id(s.k, u.r)에 과목마다 영문 모듈 id를 더한 것.
     # 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
-    # 최근 미개설 과목(gone)은 로드맵·학습 기록의 과목 목록에 넣지 않는다(교재 전체 보기의 data/pool.json에만).
     for d in out:
         for c in d["courses"]:
             c["id"] = place.module_id(c["code"])
-    univ = [{**d, "courses": [c for c in d["courses"] if not c.get("gone")]} for d in out]
-    (ROOT / "data" / "univ.json").write_text(json.dumps(univ, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
     codes = {}

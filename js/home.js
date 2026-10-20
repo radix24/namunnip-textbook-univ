@@ -1,4 +1,4 @@
-/* 메인 화면: 학과 고르기(연세대 고정) → 그 학과의 학년·학기 배치도와 과목 목록.
+/* 메인 화면: 학과 고르기 → 그 학과의 학년·학기 배치도와 과목 목록.
    자료는 tools/place.py가 만든 data/yonsei.json(학과 목록), data/yonsei-<학과>.json(학과 요약), data/pool.json(교재 전체).
    학과는 js/place.js(QPlace)가 기억한다. ?pick = 학과 다시 고르기, ?all = 교재 전체 보기, ?d=<학과> = 그 학과로 보기(저장 안 함) */
 (() => {
@@ -19,13 +19,13 @@
   /* ───── 학과 고르기 ───── */
   function drawPick(list, cur, open) {
     if (!open && cur) {
-      pick.innerHTML = `<div class="pick-line"><span class="mono">${esc(Q.SCHOOL_NAME)}</span><b>${esc(list.find((x) => x.id === cur).name)}</b>
+      pick.innerHTML = `<div class="pick-line"><b>${esc(list.find((x) => x.id === cur).name)}</b>
         <button type="button" class="pick-change">학과 바꾸기</button><a class="pick-all" href="?all">교재 전체 보기</a></div>`;
       return;
     }
     pick.innerHTML = `
       <div class="pick-box">
-        <h2>${esc(Q.SCHOOL_NAME)} 학과를 고르세요</h2>
+        <h2>학과를 고르세요</h2>
         <p class="small dim">학과마다 듣는 과목, 과목 이름, 학기 배치가 다릅니다. 고른 학과는 이 브라우저에 기억되고, 어느 페이지에서든 위쪽의 학과 이름을 눌러 바꿀 수 있습니다.</p>
         <div class="pick-grid" role="list">${list.map((x) => `
           <button type="button" role="listitem" class="pick-dept" data-d="${x.id}" aria-pressed="${x.id === cur}"><b>${esc(x.name)}</b><span class="mono small">${esc(x.college)} · ${x.courses}과목</span></button>`).join("")}
@@ -53,7 +53,7 @@
     const n = d.courses.reduce((a, c) => { a.u += c.units.length; a.s += nStd(c); return a; }, { u: 0, s: 0 });
     const nx = d.courses.filter((c) => c.extra).length;
     tree.innerHTML = `
-      <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.school)} ${esc(d.college)}</span></h2>
+      <div class="tree-head"><h2>${esc(d.name)} <span class="mono small dim">${esc(d.college)}</span></h2>
         <div class="tree-ctl">
         ${nx ? `<div class="scope-seg" role="group" aria-label="보기 범위"><button type="button" data-scope="main">주요 과목만</button><button type="button" data-scope="all">모든 과목 <span class="dim">+${nx}</span></button></div>` : ""}</div>
         <p class="mono small dim">과목 ${d.courses.length} · 대단원 ${n.u} · 성취기준 ${n.s}. 행은 학년·학기 순서이고, 1학년 공통 과목도 ${esc(d.name)}에서 쓰는 이름으로 보입니다. 점선 상자는 카드 준비 중입니다.${nx ? " '모든 과목'을 고르면 교과과정 표에는 없고 수강편람에서 최근에 열린 과목도 보입니다." : ""}</p></div>
@@ -124,7 +124,7 @@
       ${p.fields.map((f) => {
         const ms = p.modules.filter((m) => m.field === f.id).sort((a, b) => a.y - b.y || a.code.localeCompare(b.code, "ko", { numeric: true }));
         return ms.length ? `<section class="pool-field"><h3>${esc(f.name)} <span class="mono small dim">${ms.length}</span></h3><div class="sem-boxes">${ms.map((m) => `
-          <a class="tbox${m.cards ? "" : " soon"}" href="c/${esc(m.id)}/"><span class="lv mono">${m.y}학년${m.no && m.no.length ? ` · ${esc(m.no.join(" / "))}` : ""}${m.gone ? ` · <span class="pool-gone">최근 미개설</span>` : ""}</span><b>${esc(m.title)}</b><span class="pg mono">${m.cards ? `카드 ${m.cards} · ` : ""}절 ${m.secs}</span></a>`).join("")}</div></section>` : "";
+          <a class="tbox${m.cards ? "" : " soon"}" href="c/${esc(m.id)}/"><span class="lv mono">${m.y}학년${m.no && m.no.length ? ` · ${esc(m.no.join(" / "))}` : ""}</span><b>${esc(m.title)}</b><span class="pg mono">${m.cards ? `카드 ${m.cards} · ` : ""}절 ${m.secs}</span></a>`).join("")}</div></section>` : "";
       }).join("")}`;
     host.innerHTML = "";
     bar.hidden = true; empty.style.display = "none";
@@ -176,7 +176,7 @@
       bar.hidden = false;
       drawTree(data); drawList(data); apply();
       const chip = document.querySelector(".place-chip");
-      if (chip) { chip.hidden = false; chip.textContent = `${Q.SCHOOL_NAME} · ${data.name}`; }
+      if (chip) { chip.hidden = false; chip.textContent = data.name; }
     }).catch((e) => { tree.innerHTML = `<p class="u-empty">학과 자료를 불러오지 못했습니다(${esc(e.message)}).</p>`; });
   }
   const cur = Q.get();
@@ -205,7 +205,7 @@
   Q.pool().then((p) => {
     const t = p.modules.reduce((a, m) => ({ u: a.u + m.units, s: a.s + m.secs, b: a.b + m.cards, q: a.q + (m.q || 0) }), { u: 0, s: 0, b: 0, q: 0 });
     const nf = (n) => n.toLocaleString("ko-KR");
-    document.getElementById("figs").innerHTML = [["학과", `${Q.DEPTS.length}<small> · ${esc(Q.SCHOOL_NAME)}</small>`], ["교재", nf(p.modules.length)], ["대단원", nf(t.u)],
+    document.getElementById("figs").innerHTML = [["학과", `${Q.DEPTS.length}`], ["교재", nf(p.modules.length)], ["대단원", nf(t.u)],
       ["성취기준", nf(t.s)], ["카드", nf(t.b)], ["문항", nf(t.q)]]
       .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
   }).catch(() => {});

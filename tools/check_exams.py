@@ -102,8 +102,8 @@ def check(p, U, sim=False):
     if "\t" in raw:
         errs.append("탭 문자가 있음(\\t가 깨졌을 수 있음)")
     key = (p.parent.name, p.stem)
-    if key not in U:
-        return [f"{p.parent.name}/{p.stem}에 해당하는 과목이 data/univ.json에 없음"], [], None
+    if key not in U:   # 개설되지 않아 사이트에서 뺀 과목(tools/build.py apply_offered). 다시 열리면 쓰이므로 지우지 않는다
+        return [], [f"{p.parent.name}/{p.stem}: 개설되지 않아 사이트에서 뺀 과목의 문항 파일 — 빌드에 쓰이지 않음"], None
     code, units = U[key]
     pol = POLICY.get(code, "")
     if pol == "none":

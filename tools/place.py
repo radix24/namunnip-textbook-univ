@@ -80,7 +80,7 @@ SYLLABUS_OUT = {"공통1": ["10"], "공통2": ["02"], "공통4": ["12"], "공통
                 "전전2": ["04", "07"], "전전3": ["09"], "전전5": ["05"], "전전11": ["06"], "전전13": ["06"], "전전24": ["05"]}
 # 학과마다 다른 '보충'(위 표 대신 쓴다). 공학수학(3)은 연립 상미분방정식(공통8-03)을 다루지 않는다(행렬·고유값 일부만 7~8장에서).
 SUP_BY_DEPT = {(d, "공통8"): ["03", "07"] for d in ("ee", "me")}
-# 연세대 학과(메인의 학과 고르기에 이 순서로 보인다)
+# 학과(메인의 학과 고르기에 이 순서로 보인다)
 DEPT_ORDER = ["math", "phy", "chem", "astro", "stat", "ee", "me"]
 
 
@@ -135,7 +135,7 @@ def build(depts, blocks, policy, out_root=ROOT):
              "no": by_code[code].get("sub") or [],   # 화면에는 내부 코드 대신 학정번호를 보인다
              "units": len(o["units"]), "secs": sum(len(u["secs"]) for u in o["units"]),
              "cards": sum(len(s["cards"]) for u in o["units"] for s in u["secs"]) + sum(len(u["review"]) for u in o["units"]),
-             "q": by_code[code].get("bank", 0), **({"gone": True} if by_code[code].get("gone") else {})}
+             "q": by_code[code].get("bank", 0)}
             for code, o in mods.items()]
     fields = [{"id": d["id"], "name": d["name"]} for d in depts]
     (ddir / "pool.json").write_text(json.dumps({"fields": fields, "modules": pool}, ensure_ascii=False, separators=(",", ":")),
@@ -151,8 +151,7 @@ def build(depts, blocks, policy, out_root=ROOT):
                 continue
             name, no = ov if ov else (c["name"], (c["sub"] or [""])[0])
             rows.append((c, name, no))
-        # 최근 3년 연세대 미개설 과목(gone)은 학과 배치에 넣지 않는다(교재 전체 보기에만 '최근 미개설'로)
-        rows += [(c, c["name"], (c["sub"] or [""])[0]) for c in d["courses"] if not c.get("gone")]
+        rows += [(c, c["name"], (c["sub"] or [""])[0]) for c in d["courses"]]   # 개설되지 않는 과목은 build.py가 이미 뺐다
         known = {c["code"]: module_id(c["code"]) for c, _, _ in rows}
         names_in_dept = {c["code"]: name for c, name, _ in rows}
         place = {"school": SCHOOL_NAME, "dept": d["name"], "courses": []}

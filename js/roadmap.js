@@ -1,8 +1,9 @@
 /* QURI 커리큘럼 안내와 졸업 로드맵 (roadmap.html)
    - 과목: data/univ.json (tools/build.py가 만드는 전 학과 합본, 예전 js/toc.js의 window.UNIV와 같은 꼴)
-   - 졸업 요건: curricula/univ-requirements.json (연세대 2020~2026 요람을 옮긴 것. 2026학번이 기본이고 학번별 차이는 byCohort,
+   - 졸업 요건: curricula/univ-requirements.json (학교의 2020~2026 요람을 옮긴 것. 2026학번이 기본이고 학번별 차이는 byCohort,
      QURI에 카드가 없는 4학년 과목은 fourth)
-   - 연세대 개설 이력: curricula/univ-offered.json */
+   - 개설 이력: curricula/univ-offered.json
+   화면에는 학교 이름을 쓰지 않는다. 자료가 있는 학교가 하나뿐이라 SCHOOL은 자료의 키로만 쓴다. */
 (() => {
   "use strict";
 
@@ -19,7 +20,7 @@
   const yearOfP = (p) => Math.floor(p / 4) + 1;
   const OFFER_FROM = 2024;   // 이 해부터의 개설 이력으로 1·2학기를 판단한다
   const PREFIX = "공통|수학|물리|화학|천우|응통|전전|기계";
-  const SCHOOLS = ["연세대", "서울대", "고려대", "KAIST", "POSTECH", "서강대", "성균관대", "한양대", "경희대"];
+  const SCHOOL = "연세대";   // 과목 자료(개설 대학 표시)에서 이 학교를 찾는 키
   const semName = (p) => `${yearOfP(p)}학년 ${isSeason(p) ? seasonName(p) + "학기" : termOf(p) + "학기"}`;
   const semShort = (p) => `${yearOfP(p)}-${isSeason(p) ? seasonName(p) : termOf(p)}`;
 
@@ -38,7 +39,7 @@
     indexPre();
   }
   const codeNum = (code) => parseInt(String(code).replace(/\D+/g, ""), 10) || 0;
-  /* 화면에 보이는 과목 번호는 연세대 학정번호(c.sub의 첫 번호). 학정번호가 없는 과목만 QURI 코드로 둔다 */
+  /* 화면에 보이는 과목 번호는 학정번호(c.sub의 첫 번호). 학정번호가 없는 과목만 QURI 코드로 둔다 */
   const hak = (c) => (c.sub && c.sub[0]) || c.code;
   /* 학과에서 실제로 쓰는 과목명·학정번호(data/yonsei-<학과>.json, 예: 공대의 공통1 = 공학수학(1) MAT1011). 보이는 곳에만 쓴다 */
   const DNAMES = new Map();
@@ -142,7 +143,7 @@
   }
   function inSchool(c, school) {
     const cs = courseSchools(c);
-    if (school === "연세대") return !cs.size || cs.has("연세대");
+    if (school === SCHOOL) return !cs.size || cs.has(SCHOOL);
     return cs.has(school) || stdSchools(c).has(school);
   }
 
@@ -250,15 +251,7 @@
   }
 
   /* ---------- 커리큘럼 안내 ---------- */
-  const G = { school: "연세대", dept: "math", common: true, sel: null };
-
-  function schoolList() {
-    return SCHOOLS.map((s) => {
-      let n = 0;
-      COURSE.forEach((c) => { if (c.dept !== "common" && inSchool(c, s)) n++; });
-      return { s, n };
-    });
-  }
+  const G = { school: SCHOOL, dept: "math", common: true, sel: null };
   function guideSet() {
     const d = DEPT.get(G.dept);
     if (!d) return [];
@@ -274,7 +267,7 @@
     };
     own.forEach((c) => walk(c.code));
     const m = REQ && majorFor(G.dept, P.cohort);
-    if (m && G.school === "연세대") {
+    if (m) {
       (REQ.colleges[m.college].lib || []).forEach((k) => want.add(k));
       [...(m.basicList || []), ...(m.libExtra || [])].forEach((k) => k.startsWith("공통") && want.add(k));
     }
@@ -300,20 +293,12 @@
   const kindShort = (k) => ({ "전공기초": "기초", "전공필수": "필수", "전공선택": "선택", "대학교양": "교양" }[k] || k || "");
 
   function renderGuide() {
-    NAME_DEPT = G.school === "연세대" ? G.dept : "";
+    NAME_DEPT = G.dept;
     needNames(NAME_DEPT, () => { if (TAB === "guide") renderGuide(); });
     document.body.dataset.dept = G.dept;
-    const list = schoolList();
-    $("#g-school").innerHTML = list.map(({ s, n }) => `<option value="${esc(s)}"${s === G.school ? " selected" : ""}${n ? "" : " disabled"}>${esc(s)}${n ? "" : " (준비 중)"}</option>`).join("");
     $("#g-dept").innerHTML = UNIV.map((d) => `<option value="${d.id}"${d.id === G.dept ? " selected" : ""}>${esc(d.name)}</option>`).join("");
     $("#g-common").checked = G.common;
     $("#g-common").disabled = G.dept === "common";
-    const note = $("#g-school-note");
-    if (G.school !== "연세대") {
-      note.hidden = false;
-      note.textContent = `${G.school}에도 있는 내용의 과목만 보여 줍니다. 학년·학기와 선수 관계는 연세대 교과과정 기준이고, 다른 대학 정보는 학과별로 채우는 중입니다.`;
-    } else note.hidden = true;
-
     const items = guideSet();
     const codes = items.map((c) => c.code);
     const LV = levels(codes);
@@ -326,9 +311,9 @@
     const minY = first.length ? first[0].y : 1;
     const starts = first.filter((c) => c.y === minY);
     let sum = "";
-    if (m && G.school === "연세대") {
+    if (m) {
       const t = m.tracks.single, col = REQ.colleges[m.college];
-      sum = `<p class="rm-sum">연세대 ${P.cohort}학번 ${esc(m.name)} 단일전공은 전공 <b>${t.major}학점</b>(${[t.basic ? `전공기초 ${t.basic}` : "", t.req ? `전공필수 ${t.req}` : "", `전공선택 ${t.elec}`].filter(Boolean).join(" · ")}), 졸업 총 <b>${m.total || col.total}학점</b>입니다. 학번은 졸업 로드맵 탭에서 바꿀 수 있습니다. <span class="rm-cite">${esc([t.src, ...m.cohortSrc].join(" · "))}</span></p>`;
+      sum = `<p class="rm-sum">${P.cohort}학번 ${esc(m.name)} 단일전공은 전공 <b>${t.major}학점</b>(${[t.basic ? `전공기초 ${t.basic}` : "", t.req ? `전공필수 ${t.req}` : "", `전공선택 ${t.elec}`].filter(Boolean).join(" · ")}), 졸업 총 <b>${m.total || col.total}학점</b>입니다. 학번은 졸업 로드맵 탭에서 바꿀 수 있습니다. <span class="rm-cite">${esc([t.src, ...m.cohortSrc].join(" · "))}</span></p>`;
     }
     $("#g-start").innerHTML = items.length ? `<div class="rm-start-box"><h2 class="rm-h2">여기서 시작하세요</h2>
       <p>${esc(d.name)} 과목 ${items.length}개${nOut ? `(요람의 4학년·3·4학년 공통 과목 중 QURI에 카드가 없는 ${nOut}개 포함)` : ""} 가운데 선수 과목 없이 시작할 수 있는 ${minY}학년 과목입니다.</p>
@@ -340,7 +325,7 @@
       .sort((a, b) => (a.dept === "common") - (b.dept === "common") || !!a.out - !!b.out || LV.get(a.code) - LV.get(b.code) || codeNum(a.code) - codeNum(b.code));
     $("#g-grid").innerHTML = items.length ? years.map((y) => `<div class="rm-yr"><h3>${y}학년</h3>
       ${[1, 2].map((t) => `<div class="rm-cell"><h4>${t}학기</h4><div class="rm-chips">${cell(y, t).map((c) => chip(c)).join("") || '<span class="dim small">—</span>'}</div></div>`).join("")}</div>`).join("")
-      : `<p class="rm-empty">${esc(G.school)}의 ${esc(d.name)} 과목 정보가 아직 없습니다.</p>`;
+      : `<p class="rm-empty">${esc(d.name)} 과목 정보가 아직 없습니다.</p>`;
 
     /* 공부 순서 */
     const maxL = Math.max(0, ...LV.values());
@@ -354,9 +339,8 @@
   }
   function chip(c, withSem) {
     const req = /필수|기초/.test(c.kind) && c.dept !== "common";
-    const alt = G.school !== "연세대" ? courseSchools(c).get(G.school) : "";
     return `<button type="button" class="rm-chip${req ? " is-req" : ""}${c.dept === "common" ? " is-common" : ""}${c.out ? " is-out" : ""}" data-code="${c.code}">
-      <span class="mono">${esc(noOf(c))}</span> ${esc(alt || nameOf(c))}${withSem ? ` <small>${esc(c.yr || c.y)}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}${c.out ? " · QURI 밖" : ""}</small></button>`;
+      <span class="mono">${esc(noOf(c))}</span> ${esc(nameOf(c))}${withSem ? ` <small>${esc(c.yr || c.y)}-${esc(String(c.sem))}</small>` : ""}<small class="k">${kindShort(c.kind)}${c.out ? " · QURI 밖" : ""}</small></button>`;
   }
   function renderDetail() {
     const box = $("#g-detail");
@@ -377,8 +361,7 @@
     const link = (k) => { const x = COURSE.get(k); return x ? `<button type="button" class="rm-link" data-code="${k}">${esc(x.name)}</button>` : esc(k); };
     const orText = p.hard.filter((g) => g.length > 1).map((g) => g.map(link).join(" 또는 "));
     const off = offeredTerms(c.sub || []);
-    const offTxt = off.known ? (off.t.size ? `연세대 ${[...off.t].sort().join("·")}학기 (${OFFER_FROM}년 이후 개설 이력)` : `${OFFER_FROM}년 이후 연세대 개설 기록 없음`) : (c.open || "");
-    const schools = [...courseSchools(c).entries()].map(([s, n]) => n ? `${s}(${n})` : s);
+    const offTxt = off.known ? (off.t.size ? `${[...off.t].sort().join("·")}학기 개설 (${OFFER_FROM}년 이후 이력)` : `${OFFER_FROM}년 이후 개설 기록 없음`) : (c.open || "");
     const old = REQ ? oldName(c, P.cohort) : "";
     box.innerHTML = `<h3><span class="mono">${esc(noOf(c))}</span> ${esc(nameOf(c))}${nameOf(c) !== c.name ? ` <small class="dim">QURI 교재: ${esc(c.name)}</small>` : ""}</h3>
       <p class="small dim">${esc(c.yr || c.y)}학년 ${esc(String(c.sem))}학기 · ${esc(c.kind)} · ${c.cr}학점${c.sub && c.sub.length > 1 ? ` · 학정번호 ${c.sub.join(", ")}` : ""}${offTxt ? ` · ${esc(offTxt)}` : ""}</p>
@@ -391,7 +374,6 @@
         ${p.co.length ? `<dt>같은 학기까지</dt><dd>${p.co.map(link).join(", ")}</dd>` : ""}
         ${p.soft.length ? `<dt>있으면 좋은 과목</dt><dd>${p.soft.map(link).join(", ")}</dd>` : ""}
         ${nexts.length ? `<dt>다음에 열리는 과목</dt><dd>${nexts.map(link).join(", ")}</dd>` : ""}
-        ${schools.length ? `<dt>개설 대학</dt><dd>${esc(schools.join(", "))}</dd>` : ""}
       </dl>
       ${c.path ? `<p><a class="rm-go" href="${esc(c.path)}">과목 페이지로</a></p>` : ""}`;
   }
@@ -657,8 +639,8 @@
     const it = ctx.items.get(id), s = at.get(id), out = [];
     if (s == null) return out;
     if (isSeason(s)) { if (!it.season.has(seasonName(s))) out.push(`최근 3년 ${seasonName(s)}학기 개설 기록이 없습니다`); }
-    else if (!it.terms.size) out.push(`${OFFER_FROM}년 이후 연세대 개설 기록이 없습니다`);
-    else if (!it.terms.has(termOf(s))) out.push(`연세대에서 주로 ${[...it.terms].join("·")}학기에 열립니다`);
+    else if (!it.terms.size) out.push(`${OFFER_FROM}년 이후 개설 기록이 없습니다`);
+    else if (!it.terms.has(termOf(s))) out.push(`주로 ${[...it.terms].join("·")}학기에 열립니다`);
     it.hard.forEach((g) => {
       const inPlan = g.filter((k) => prio.has(k));
       if (!inPlan.length) { if (g.every((k) => PLAN.removed.has(k))) out.push(`선수 ${g.map(nm).join(" 또는 ")}을(를) 계획에서 뺐습니다`); return; }
@@ -798,7 +780,7 @@
     $("#p-src").innerHTML = `<h3 class="rm-h3">출처</h3><ul class="rm-notes">
       ${Object.entries(REQ.sources).map(([k, s]) => `<li><span class="mono">${k}</span> <a href="${esc(s.url)}" rel="noopener">${esc(s.title)}</a></li>`).join("")}
       ${REQ.general.map((g) => `<li>${esc(g.t)} <span class="rm-cite">${esc(g.src)}</span></li>`).join("")}
-      <li>개설 학기는 ${OFFER_FROM}년 이후 연세대 수강편람 개설 이력으로 판단했습니다(1·2학기). 확인일 ${esc(REQ.checked)}.</li>
+      <li>개설 학기는 ${OFFER_FROM}년 이후 수강편람 개설 이력으로 판단했습니다(1·2학기). 확인일 ${esc(REQ.checked)}.</li>
       <li>계절학기에는 학기마다 ${SEASON_CR}학점까지, 최근 3년(${esc(SEASON.terms[0] || "")}~${esc(SEASON.terms[SEASON.terms.length - 1] || "")}) 계절학기에 열린 과목만 넣습니다(curricula/univ-season.json, 확인일 ${esc(SEASON.checked || "")}). ${esc(Object.entries(SEASON.lib).map(([k, v]) => `${k}: ${v.t}`).join(" · "))}</li></ul>`;
     /* 단계 요약 */
     const boxes = Ts.map((T, i) => ({ T, sum: majorSum(T, placed) }));
@@ -963,7 +945,7 @@
     const id = btn.dataset.id;
     const it = PLAN.ctx.items.get(id);
     const cur = PLAN.at.get(id);
-    menu.innerHTML = `<p><b>${esc(it.name)}</b> <span class="small dim">${it.cr}학점${it.terms.size ? ` · 연세대 ${[...it.terms].join("·")}학기` : ""}</span></p>
+    menu.innerHTML = `<p><b>${esc(it.name)}</b> <span class="small dim">${it.cr}학점${it.terms.size ? ` · ${[...it.terms].join("·")}학기 개설` : ""}</span></p>
       <div class="rm-menu-g">${Array.from({ length: SEMS }, (_, s) => 2 * s).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}>${semShort(p)}${it.terms.has(termOf(p)) ? "" : " ·미개설"}</button>`).join("")}</div>
       ${P.season ? `<p class="small dim">계절학기 ${it.season.size ? `(최근 3년 ${[...it.season].join("·")}학기 개설)` : "(최근 3년 개설 기록 없음)"}</p><div class="rm-menu-g">${Array.from({ length: SEMS - 1 }, (_, s) => 2 * s + 1).map((p) => `<button type="button" class="rm-btn sm" data-to="${p}"${p === cur ? ' aria-current="true"' : ""}${it.season.has(seasonName(p)) && seasonOn(p) ? "" : " disabled"}>${semShort(p)}${seasonOn(p) ? "" : " ·끔"}</button>`).join("")}</div>` : ""}
       <div class="rm-menu-a">
@@ -1054,7 +1036,7 @@
   });
 
   /* ---------- 저장과 탭 ---------- */
-  function save() { store.set({ v: 2, guide: { school: G.school, dept: G.dept, common: G.common }, plan: P, tab: TAB }); }
+  function save() { store.set({ v: 2, guide: { dept: G.dept, common: G.common }, plan: P, tab: TAB }); }
   let TAB = "guide";
   function setTab(t) {
     TAB = t;
@@ -1070,8 +1052,7 @@
     const n = TAB === "guide" ? "plan" : "guide"; setTab(n); $(`#tab-${n}`).focus();
   });
 
-  $("#g-school").addEventListener("change", (e) => { G.school = e.target.value; G.sel = null; renderGuide(); save(); });
-  $("#g-dept").addEventListener("change", (e) => { G.dept = e.target.value; G.sel = null; if (G.school === "연세대") setPlace(G.dept); renderGuide(); save(); });
+  $("#g-dept").addEventListener("change", (e) => { G.dept = e.target.value; G.sel = null; setPlace(G.dept); renderGuide(); save(); });
   $("#g-common").addEventListener("change", (e) => { G.common = e.target.checked; renderGuide(); save(); });
   $("#guide").addEventListener("click", (e) => {
     const b = e.target.closest("[data-code]"); if (!b) return;
@@ -1096,7 +1077,7 @@
     addFourth();
     const saved = store.get();
     if (saved && (saved.v === 1 || saved.v === 2)) {
-      Object.assign(G, saved.guide || {});
+      Object.assign(G, saved.guide || {}, { school: SCHOOL });
       if (saved.plan) Object.assign(P, saved.plan);
       if (saved.v === 1) {   // v1은 정규학기 번호(0~7)로 고정했고, 남길 학점에 교양을 넣었다
         Object.keys(P.pins).forEach((k) => { P.pins[k] *= 2; });
@@ -1124,7 +1105,6 @@
     }
     if (!YEARS.includes(P.cohort)) P.cohort = COHORT0;   // 학번을 저장하기 전의 계획은 2026학번으로
     if (q.get("dept") && DEPT.has(q.get("dept"))) G.dept = q.get("dept");
-    if (q.get("school")) G.school = normSchool(q.get("school"));
     if (q.get("tab") === "plan" || q.get("tab") === "guide") TAB = q.get("tab");
     if (!DEPT.has(G.dept)) G.dept = "math";
     setTab(TAB);

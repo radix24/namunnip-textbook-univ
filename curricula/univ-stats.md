@@ -350,7 +350,7 @@
 **독학 안내**
 - 선수: 공통7
 - 학습 시간: 약 135시간
-- 추천 교재 (설계자 추천): Diez, Çetinkaya-Rundel & Barr, *OpenIntro Statistics* (무료 공개). 고려대·성균관대 입문 과목처럼 개념 위주로 읽을 때는 Moore 외, *Introduction to the Practice of Statistics*
+- 추천 교재 (설계자 추천): Diez, Çetinkaya-Rundel & Barr, *OpenIntro Statistics* (무료 공개). 개념 위주로 읽을 때는 Moore 외, *Introduction to the Practice of Statistics*
 - 상용 패키지 대신 R로 실습해도 됩니다.
 
 #### 01. 자료와 연구 설계 〔보완〕

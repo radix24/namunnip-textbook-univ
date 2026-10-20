@@ -2,7 +2,7 @@
    절·대단원·과목·시험 페이지는 풀 모듈 하나에 한 장(c/<모듈 id>/…)이라 학과와 무관하게 만들어진다.
    여기서 고른 학과의 요약(data/yonsei-<학과>.json, tools/place.py)을 읽어
    - 위쪽 경로의 학과 이름과 과목 이름을 그 학과에서 쓰는 이름으로 바꾸고(공통1 → 공학수학(1) 등)
-   - 상단바에 '연세대 · 물리학과' 칩을 단다(누르면 메인의 학과 고르기).
+   - 상단바에 '물리학과' 칩을 단다(누르면 메인의 학과 고르기). 학교 이름은 화면에 쓰지 않는다(자료의 키로만).
    주소의 ?d=<학과>는 그 학과로 보이되 저장값은 바꾸지 않는다(공유 주소). */
 window.QPlace = (() => {
   "use strict";
@@ -27,7 +27,7 @@ window.QPlace = (() => {
     return api;
   }
   load(d).then((dept) => {
-    if (chip) { chip.hidden = false; chip.textContent = `${SCHOOL_NAME} · ${dept.name}`; chip.title = "학과 바꾸기"; }
+    if (chip) { chip.hidden = false; chip.textContent = dept.name; chip.title = "학과 바꾸기"; }
     const deptHref = new URL(`./?d=${d}`, ROOT).href;
     const c = mod ? dept.courses.find((x) => x.id === mod) : null;
     if (!mod || c) document.querySelectorAll("[data-place=dept]").forEach((a) => { a.textContent = dept.name; a.href = deptHref; });
