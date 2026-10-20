@@ -841,6 +841,30 @@ def exam_page(c, d, items, rel, dept_link):
 """
 
 
+def load_reading():
+    """curricula/univ-reading.json: {"수학11-01": [문헌, …]} (3학년 이상 과목 대단원의 더 읽을거리, STYLE.md 6절)"""
+    p = SRC / "univ-reading.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def reading_box(items):
+    """더 읽을거리 상자(div.tb-read). 서지는 DOI·arXiv 조회로 확인한 값이다"""
+    if not items:
+        return ""
+    lis = []
+    for it in items:
+        free = f' <a class="free" href="{esc(it["free"])}" rel="noopener">무료로 읽기</a>' if it.get("free") else ""
+        lis.append(f'<li><p class="ref">{esc(it["au"])} ({it["y"]}). <a href="{esc(it["url"])}" rel="noopener">{esc(it["t"])}</a>. '
+                   f'{esc(it["v"])}.<span class="lv">{esc(it["lv"])}</span>{free}</p>'
+                   f'<p class="why">{esc(it["why"])}</p><p class="on">이 단원에서 이어지는 곳 · {esc(it["on"])}</p></li>')
+    return ('\n    <div class="tb-read"><h2>더 읽을거리</h2>'
+            '<p class="tb-read-lead">이 대단원과 이어지는 논문과 해설입니다. 제목을 누르면 원문(DOI·arXiv)으로 갑니다.</p>'
+            f'<ol>{"".join(lis)}</ol></div>')
+
+
+READING = {}
+
+
 def write_pages(depts, blocks, sidx, links):
     cdir = ROOT / "c"
     if cdir.exists():
@@ -947,6 +971,9 @@ def write_pages(depts, blocks, sidx, links):
     </div>"""
                     lead = '<p class="lead">대단원 전체를 아우르는 연습 문제입니다. 앞 절들의 카드를 마친 뒤 푸세요.</p>'
                 lbox = links_box(sc["code"], f'{c["code"]}-{u["n"]}', links, sidx, rel, c["code"]) if sc["std"] else ""
+                # 대단원의 마지막 절 끝에 그 대단원의 더 읽을거리
+                rbox = reading_box(READING.get(f'{c["code"]}-{u["n"]}')) if sc is u["secs"][-1] else ""
+                cards_html += rbox
                 if text_b:
                     s = sc["std"]
                     hero_extra = (f'<p class="sec-std">{esc(s["t"])} {ty_span(s["ty"])}</p>' if s else "")
@@ -1012,7 +1039,7 @@ def write_pages(depts, blocks, sidx, links):
     <p class="u-prog mono small"></p>
   </section>{links_box(f'{c["code"]}-{u["n"]}', None, links, sidx, rel, c["code"])}
   <ol class="s-list">{rows}
-  </ol>
+  </ol>{reading_box(READING.get(f'{c["code"]}-{u["n"]}'))}
   <nav class="u-pager" aria-label="대단원 이동">
     <span>{f'<a href="{prev_u["n"]}.html">← {int(prev_u["n"])}. {esc(prev_u["t"])}</a>' if prev_u else ""}</span>
     <span>{f'<a href="{next_u["n"]}.html">{int(next_u["n"])}. {esc(next_u["t"])} →</a>' if next_u else ""}</span>
@@ -1266,6 +1293,13 @@ def main():
         if bad:
             print(f"경고: {did} 학년을 못 읽은 과목 {bad}", file=sys.stderr)
     blocks = load_blocks()
+    READING.update(load_reading())
+    ukeys = {f'{c["code"]}-{u["n"]}' for d in out for c in d["courses"] for u in c["units"]}
+    lost = sorted(k for k in READING if k not in ukeys and k.rsplit("-", 1)[0] not in HIDDEN)
+    if lost:
+        print(f"경고: 없는 대단원의 더 읽을거리 {lost}", file=sys.stderr)
+    need = sorted(k for d in out for c in d["courses"] if c["y"] >= 3 for u in c["units"] if not READING.get(k := f'{c["code"]}-{u["n"]}'))
+    print(f"더 읽을거리: 대단원 {len(READING)} · 문헌 {sum(map(len, READING.values()))} · 3학년 이상인데 빈 대단원 {len(need)}")
     idx = build_index(out, blocks)
     links = load_links(idx)
     n_pages, n_cards = write_pages(out, blocks, idx, links)
