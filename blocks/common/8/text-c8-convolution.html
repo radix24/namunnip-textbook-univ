@@ -2,26 +2,24 @@
 {
   "type": "card",
   "sec": "공통8-05-05",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-convolution" data-kind="본문" data-std="공통8-05-05">
   <header class="card-head"><span class="no"></span><h2>합성곱과 적분방정식</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>합성곱 \(f * g\)를 정의하고 \(\mathcal L\{f * g\} = FG\)를 쓴다.</li>
-        <li>곱의 꼴인 변환의 역변환과 적분방정식을 푼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>라플라스 변환과 역변환 (<a href="05-01.html">5.1절</a>, <a href="05-04.html">5.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">역변환을 하다 보면 \(\frac{1}{s(s - a)}\)처럼 두 변환의 곱이 나온다. \(\frac1s\)과 \(\frac{1}{s - a}\)의 역변환은 각각 알지만, 곱의 역변환이 두 함수의 곱일 것 같지는 않다. 변환의 곱은 원래 세계에서 어떤 연산에 해당할까?</p>
+    <figure class="q-fig" data-q="c8-conv">
+      <svg viewBox="0 0 520 250" role="img" aria-label="합성곱의 적분 넓이와 그 결과 함수"></svg>
+      <div class="q-ctl"><label>\(t\) <input type="range" data-k="t" min="0.2" max="5" step="0.1" value="1.5"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 왼쪽은 \(f(\tau) = 1\)(주황)과 뒤집어 옮긴 \(g(t - \tau) = e^{-(t - \tau)}\)(파랑)의 곱을 \(0\)부터 \(t\)까지 적분한 넓이(청록)이다. 오른쪽은 그 넓이를 \(t\)마다 모은 \((1 * g)(t) = 1 - e^{-t}\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>라플라스 변환과 역변환(<a href="05-01.html">5.1절</a>, <a href="05-04.html">5.4절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.5.1</span>곱의 역변환</h3>
-    <p>\(\mathcal L^{-1}\{FG\}\)는 \(\mathcal L^{-1}\{F\}\cdot\mathcal L^{-1}\{G\}\)가 <b>아닙니다</b>. 변환의 곱에 해당하는 것은 함수의 보통 곱이 아니라 다음의 합성곱입니다.</p>
+    <p>\(\mathcal L^{-1}\{FG\}\)는 \(\mathcal L^{-1}\{F\}\cdot\mathcal L^{-1}\{G\}\)가 아니다. 처음 질문의 답으로, 변환의 곱에 해당하는 것은 함수의 보통 곱이 아니라 다음의 합성곱이다.</p>
     <div class="tb-env">
       <span class="lb">정의 5.5.1 <span class="nm">(합성곱)</span></span>
       \[(f * g)(t) = \int_0^t f(\tau)\,g(t - \tau)\,d\tau.\]
@@ -34,24 +32,18 @@
       <span class="lb">예제 5.5.3</span>
       <p>\(\mathcal L^{-1}\left\{\dfrac{1}{s(s - a)}\right\}\)을 합성곱으로 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\frac1s \to 1\), \(\frac{1}{s - a} \to e^{at}\). \(1 * e^{at} = \int_0^te^{a\tau}d\tau = \frac1a(e^{at} - 1)\). (부분분수로 구한 결과와 같습니다.)</p>
-    <p class="tb-aside">합성곱의 뜻: 계의 충격 응답이 \(g\)이면, 입력 \(f\)를 시각 \(\tau\)마다 크기 \(f(\tau)\)인 작은 충격들의 연속으로 보고, 각 충격이 시각 \(t\)까지 남긴 효과 \(f(\tau)g(t - \tau)\)를 모두 더한 것이 응답입니다. 그래서 응답 = 입력 * 충격 응답입니다.</p>
+    <p><i>풀이.</i> \(\frac1s\)의 역변환은 1, \(\frac{1}{s - a}\)의 역변환은 \(e^{at}\)이다. 그러므로 \(1 * e^{at} = \int_0^te^{a\tau}d\tau = \frac1a(e^{at} - 1)\)이며, 부분분수로 구한 결과와 같다. 그림 1은 \(a = -1\)인 경우로, 합성곱의 정의대로 \(1\cdot e^{-(t - \tau)}\)를 적분한 넓이가 \(1 - e^{-t}\)이 된다.</p>
+    <div class="tb-aside">합성곱의 뜻은 이렇다. 계의 충격 응답이 \(g\)이면, 입력 \(f\)를 시각 \(\tau\)마다 크기 \(f(\tau)\)인 작은 충격들의 연속으로 본다. 그리고 각 충격이 시각 \(t\)까지 남긴 효과 \(f(\tau)g(t - \tau)\)를 모두 더한 것이 응답이다. 그래서 응답은 입력과 충격 응답의 합성곱이다.</div>
 
     <h3><span class="no">5.5.2</span>적분방정식</h3>
-    <p>미지 함수가 적분 안에 들어 있는 식을 적분방정식이라 합니다. 그 적분이 합성곱 꼴이면 라플라스 변환으로 쉽게 풉니다.</p>
+    <p>미지 함수가 적분 안에 들어 있는 식을 <em>적분방정식</em>이라 한다. 지금까지 다룬 미분방정식은 도함수가 들어 있었지만, 이번에는 과거의 값들이 적분으로 쌓여 현재에 영향을 준다. 그 적분이 합성곱 꼴이면 라플라스 변환으로 쉽게 푼다. 변환하면 적분이 곱셈으로 바뀌기 때문이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.5.4</span>
       <p>\(y(t) - \int_0^ty(\tau)\sin(t - \tau)\,d\tau = t\)를 풀어라.</p>
     </div>
-    <p><i>풀이.</i> 적분은 \(y * \sin t\)입니다. 변환하면 \(Y - Y\frac{1}{s^2 + 1} = \frac{1}{s^2}\), 곧 \(Y\frac{s^2}{s^2 + 1} = \frac{1}{s^2}\), \(Y = \frac{s^2 + 1}{s^4} = \frac{1}{s^2} + \frac{1}{s^4}\). 따라서 \(y = t + \frac{t^3}{6}\).</p>
+    <p><i>풀이.</i> 적분은 \(y * \sin t\)이다. 변환하면 \(Y - Y\frac{1}{s^2 + 1} = \frac{1}{s^2}\), 곧 \(Y\frac{s^2}{s^2 + 1} = \frac{1}{s^2}\)이므로 \(Y = \frac{s^2 + 1}{s^4} = \frac{1}{s^2} + \frac{1}{s^4}\)이다. 따라서 \(y = t + \frac{t^3}{6}\)이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(f * g = \int_0^tf(\tau)g(t - \tau)d\tau\), \(\mathcal L\{f * g\} = FG\).</li>
-        <li>변환이 곱이면 역변환은 합성곱. 적분방정식도 변환으로 푼다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>합성곱은 \(f * g = \int_0^tf(\tau)g(t - \tau)\,d\tau\)이고 \(\mathcal L\{f * g\} = FG\)이다. 처음 질문처럼 변환이 곱이면 역변환은 합성곱이며, 합성곱 꼴의 적분방정식도 변환으로 푼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.5.3</span>연습문제</h3>

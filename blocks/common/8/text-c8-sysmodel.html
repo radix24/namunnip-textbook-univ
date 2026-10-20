@@ -2,46 +2,37 @@
 {
   "type": "card",
   "sec": "공통8-03-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-sysmodel" data-kind="본문" data-std="공통8-03-02">
   <header class="card-head"><span class="no"></span><h2>연립 미분방정식 모델</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>서로 얽힌 양의 변화를 연립 미분방정식 \(\mathbf y' = A\mathbf y\)로 세운다.</li>
-        <li>2계 방정식 하나를 1계 연립방정식으로 바꾼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>혼합 문제 (<a href="01-02.html">1.2절</a>), 행렬과 벡터 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">탱크 두 개가 관으로 이어져 물이 오간다. 한쪽에만 비료를 녹여 두면, 비료는 다른 쪽으로 흘러갔다가 일부가 되돌아오기도 한다. 두 탱크의 비료 양이 서로를 바꾸는 이런 상황은 어떤 식으로 세울까? 그리고 용수철 하나의 2계 방정식도 같은 꼴로 쓸 수 있을까?</p>
+    <figure class="q-fig" data-q="c8-tanks">
+      <svg viewBox="0 0 520 250" role="img" aria-label="이어진 두 탱크의 비료 양의 시간 변화"></svg>
+      <div class="q-ctl"><label>시간 \(t\) (분) <input type="range" data-k="t" min="0" max="120" step="1" value="20"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 탱크 T1(파랑)과 T2(주황)의 비료 양. 두 양의 합은 그대로이고, 비료가 오가며 두 탱크가 같은 양으로 다가간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>혼합 문제(<a href="01-02.html">1.2절</a>)와 행렬과 벡터(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>두 탱크의 혼합</h3>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>탱크 T1, T2에 물이 각각 100 L 있고, 처음 T1에는 비료 150 kg이 녹아 있고 T2는 맑은 물이다. 물이 T1에서 T2로 분당 2 L, T2에서 T1로 분당 2 L 흐르며 잘 섞인다. 각 탱크의 비료 양 \(y_1(t), y_2(t)\)의 식을 세워라.</p>
     </div>
-    <p><i>풀이.</i> 1.2절과 같이 "변화율 = 들어옴 − 나감"을 탱크마다 씁니다. T1에서 나가는 비료는 \(2\cdot\frac{y_1}{100} = 0.02y_1\), 들어오는 비료는 \(0.02y_2\).</p>
-    \[y_1' = -0.02y_1 + 0.02y_2, \qquad y_2' = 0.02y_1 - 0.02y_2.\]
-    <p>행렬로 쓰면 \(\mathbf y' = A\mathbf y\), \(A = \begin{bmatrix}-0.02 &amp; 0.02\\ 0.02 &amp; -0.02\end{bmatrix}\)입니다. 3.3절에서 고유값으로 풉니다.</p>
-    <p>전기 회로에서도 고리가 둘 이상이면 각 고리의 전류가 연립 미분방정식을 만족합니다(교재 4.1절 예제 2).</p>
+    <p><i>풀이.</i> 1.2절과 같이 "변화율 = 들어옴 − 나감"을 탱크마다 쓴다. T1에서 나가는 비료는 \(2\cdot\frac{y_1}{100} = 0.02y_1\)이고, 들어오는 비료는 \(0.02y_2\)이다. T2도 마찬가지이므로 다음을 얻는다.</p>
+    \[y_1' = -0.02y_1 + 0.02y_2, \qquad y_2' = 0.02y_1 - 0.02y_2\]
+    <p>이것을 행렬로 쓰면 \(\mathbf y' = A\mathbf y\), \(A = \begin{bmatrix}-0.02 &amp; 0.02\\ 0.02 &amp; -0.02\end{bmatrix}\)이며, 처음 질문의 식이 이것이다. 3.3절에서 고유값으로 풀며, 그림 1은 그 해를 미리 그린 것이다. 한편 전기 회로에서도 고리가 둘 이상이면 각 고리의 전류가 연립 미분방정식을 만족한다(교재 4.1절 예제 2).</p>
 
     <h3><span class="no">3.2.2</span>2계 방정식을 연립방정식으로</h3>
-    <p>\(y'' + ay' + by = 0\)에서 \(y_1 = y\), \(y_2 = y'\)으로 놓으면 \(y_1' = y_2\), \(y_2' = y'' = -by_1 - ay_2\)입니다.</p>
-    \[\mathbf y' = \begin{bmatrix}0 &amp; 1\\ -b &amp; -a\end{bmatrix}\mathbf y.\]
-    <p>이 행렬의 특성방정식은 \(\lambda^2 + a\lambda + b = 0\)으로 2.2절의 특성방정식과 같습니다. 고계 방정식을 1계 연립방정식으로 바꿀 수 있다는 것은 중요합니다. 3.4절의 상평면 그림, 그리고 컴퓨터로 푸는 수치해법(7단원)이 모두 1계 연립방정식을 다루기 때문입니다. 용수철의 경우 \(y_1\)은 위치, \(y_2\)는 속도입니다.</p>
+    <p>처음 질문의 둘째 물음에 답하면, \(y'' + ay' + by = 0\)에서 \(y_1 = y\), \(y_2 = y'\)으로 놓으면 된다. 그러면 \(y_1' = y_2\), \(y_2' = y'' = -by_1 - ay_2\)이므로 다음과 같다.</p>
+    \[\mathbf y' = \begin{bmatrix}0 &amp; 1\\ -b &amp; -a\end{bmatrix}\mathbf y\]
+    <p>이 행렬의 특성방정식은 \(\lambda^2 + a\lambda + b = 0\)으로, 2.2절의 특성방정식과 같다. 용수철이라면 \(y_1\)은 위치, \(y_2\)는 속도이다. 고계 방정식을 1계 연립방정식으로 바꿀 수 있다는 것은 중요하다. 3.4절의 상평면 그림, 그리고 컴퓨터로 푸는 수치해법(7단원)이 모두 1계 연립방정식을 다루기 때문이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>얽힌 양마다 "변화율 = 들어옴 − 나감"을 쓰면 \(\mathbf y' = A\mathbf y\).</li>
-        <li>\(y'' + ay' + by = 0\)은 \(y_1 = y\), \(y_2 = y'\)으로 1계 연립방정식이 된다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>서로 얽힌 양마다 "변화율 = 들어옴 − 나감"을 쓰면 처음 질문의 두 탱크는 \(\mathbf y' = A\mathbf y\) 꼴이 된다. 2계 방정식 \(y'' + ay' + by = 0\)도 \(y_1 = y\), \(y_2 = y'\)으로 놓으면 같은 꼴의 1계 연립방정식이 되며, 그 특성방정식은 원래와 같다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.3</span>연습문제</h3>

@@ -2,48 +2,42 @@
 {
   "type": "card",
   "sec": "공통8-05-06",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-transdiff" data-kind="본문" data-std="공통8-05-06">
   <header class="card-head"><span class="no"></span><h2>변환의 미분과 적분</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\mathcal L\{tf(t)\} = -F'(s)\), \(\mathcal L\{f(t)/t\} = \int_s^\infty F\,d\sigma\)로 새 변환을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>라플라스 변환표 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">2.7절의 공명에서 해 \(t\sin\omega t\)가 나왔다. 변환표에는 \(\sin\omega t\)는 있어도 \(t\sin\omega t\)는 없다. 표에 있는 함수에 \(t\)를 곱하거나 \(t\)로 나누면, 그 변환은 원래 변환과 어떻게 이어질까?</p>
+    <figure class="q-fig" data-q="c8-tmul">
+      <svg viewBox="0 0 520 250" role="img" aria-label="t sin ωt와 그 변환, sin ωt의 변환"></svg>
+      <div class="q-ctl"><label>\(\omega\) <input type="range" data-k="w" min="0.5" max="3" step="0.1" value="1"><output data-k="w"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 왼쪽은 공명의 해 \(t\sin\omega t\), 오른쪽은 \(\sin\omega t\)의 변환(주황)과 \(t\sin\omega t\)의 변환(파랑)이다. 파랑은 주황을 \(s\)로 미분해 부호를 바꾼 것이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>라플라스 변환표(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.6.1</span>두 공식</h3>
-    <p>변환의 정의 \(F(s) = \int_0^\infty e^{-st}f(t)dt\)를 \(s\)로 미분하면 적분 안에서 \(e^{-st}\)가 \(-te^{-st}\)로 바뀌므로</p>
+    <p>변환의 정의 \(F(s) = \int_0^\infty e^{-st}f(t)dt\)를 \(s\)로 미분하면, 적분 안에서 \(e^{-st}\)가 \(-te^{-st}\)로 바뀐다. 그러므로 처음 질문의 답은 다음과 같다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 5.6.1</span>
       \[\mathcal L\{tf(t)\} = -F'(s), \qquad \mathcal L\left\{\frac{f(t)}{t}\right\} = \int_s^\infty F(\sigma)\,d\sigma.\]
     </div>
-    <p>(둘째 식은 \(f(t)/t\)가 \(t \to 0\)에서 유한할 때 성립합니다.) \(t\)를 곱하면 \(s\)쪽에서 미분하고, \(t\)로 나누면 \(s\)쪽에서 적분합니다.</p>
+    <p>둘째 식은 \(f(t)/t\)가 \(t \to 0\)에서 유한할 때 성립한다. 즉 \(t\)를 곱하면 \(s\)쪽에서 미분하고, \(t\)로 나누면 \(s\)쪽에서 적분한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.6.2</span>
       <p>\(\mathcal L\{t\sin\omega t\}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(-\dfrac{d}{ds}\dfrac{\omega}{s^2 + \omega^2} = \dfrac{2\omega s}{(s^2 + \omega^2)^2}\). 이 변환은 공명(2.7절)의 해 \(t\sin\omega t\)를 라플라스 변환으로 풀 때 나타납니다.</p>
+    <p><i>풀이.</i> \(-\dfrac{d}{ds}\dfrac{\omega}{s^2 + \omega^2} = \dfrac{2\omega s}{(s^2 + \omega^2)^2}\)이다. 이 변환은 공명(2.7절)의 해 \(t\sin\omega t\)를 라플라스 변환으로 풀 때 나타난다. 그림 1에서 \(\omega\)를 바꾸면 주황 곡선의 기울기가 클수록 파랑 곡선이 높아지는 것을 볼 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.6.3</span>
       <p>\(\mathcal L^{-1}\left\{\ln\left(1 + \dfrac{\omega^2}{s^2}\right)\right\}\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(F = \ln(s^2 + \omega^2) - 2\ln s\)이므로 \(-F' = -\frac{2s}{s^2 + \omega^2} + \frac2s\)이고, 이것의 역변환은 \(2 - 2\cos\omega t\)입니다. \(-F' = \mathcal L\{tf\}\)이므로 \(f = \dfrac{2(1 - \cos\omega t)}{t}\).</p>
-    <p class="tb-aside">이 공식들은 계수가 \(t\)를 포함한 미분방정식(예: \(ty'' + y' + ty = 0\), 베셀 방정식)을 변환으로 풀 때도 쓰입니다(교재 6.6절).</p>
+    <p><i>풀이.</i> \(F = \ln(s^2 + \omega^2) - 2\ln s\)이므로 \(-F' = -\frac{2s}{s^2 + \omega^2} + \frac2s\)이고, 이것의 역변환은 \(2 - 2\cos\omega t\)이다. 그런데 \(-F' = \mathcal L\{tf\}\)이므로 \(f = \dfrac{2(1 - \cos\omega t)}{t}\)이다.</p>
+    <div class="tb-aside">이 공식들은 계수가 \(t\)를 포함한 미분방정식, 가령 \(ty'' + y' + ty = 0\)이나 베셀 방정식을 변환으로 풀 때도 쓰인다(교재 6.6절).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(t\) 곱하기 ↔ \(-\frac{d}{ds}\), \(t\)로 나누기 ↔ \(\int_s^\infty\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답으로, \(t\)를 곱하는 것은 \(s\)쪽에서 \(-\frac{d}{ds}\)이고, \(t\)로 나누는 것은 \(s\)쪽에서 \(\int_s^\infty\)이다. 이 두 공식으로 변환표에 없는 \(t\sin\omega t\) 같은 함수의 변환과 역변환을 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.6.2</span>연습문제</h3>

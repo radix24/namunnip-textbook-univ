@@ -2,51 +2,43 @@
 {
   "type": "card",
   "sec": "공통8-03-05",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-nonlinear" data-kind="본문" data-std="공통8-03-05">
   <header class="card-head"><span class="no"></span><h2>비선형 연립방정식의 정성적 방법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비선형 연립방정식의 임계점을 찾고, 그 근처에서 선형 연립방정식으로 근사(선형화)한다.</li>
-        <li>진자와 포식자-피식자 모델의 임계점을 판정한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>임계점의 판정 (<a href="03-04.html">3.4절</a>), 선형근사 (<a href="../1/02-05.html">공통1 2.5절</a>), 편도함수 (공통2 4.2절).</li>
-      </ul>
-    </div>
+    <p class="q-ask">진자의 정확한 식 \(\theta'' + \frac gL\sin\theta = 0\)은 비선형이라 공식으로 풀 수 없다. 그래도 아래로 매달린 진자는 흔들리기만 하고, 거꾸로 세운 진자는 조금만 건드려도 쓰러진다는 것은 누구나 안다. 해를 구하지 않고도 이런 성질을 식에서 읽어 낼 수 있을까?</p>
+    <figure class="q-fig" data-q="c8-pend">
+      <svg viewBox="0 0 520 260" role="img" aria-label="진자의 상그림과 에너지 등고선"></svg>
+      <div class="q-ctl"><label>에너지 \(E\) <input type="range" data-k="E" min="-0.9" max="2.5" step="0.1" value="0.3"><output data-k="E"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 진자 \(\theta'' + \sin\theta = 0\)의 상그림. 아래 평형(청록 점)은 닫힌 궤적에 둘러싸인 중심이고, 거꾸로 선 평형(빨간 점)은 분리선(주황 점선)이 만나는 안장점이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>임계점의 판정(<a href="03-04.html">3.4절</a>), 선형근사(<a href="../1/02-05.html">미분적분학(1) 2.5절</a>), 편도함수(미분적분학(2) 4.2절)를 쓴다.</div>
 
     <h3><span class="no">3.5.1</span>풀 수 없어도 알 수 있는 것</h3>
-    <p>진자의 정확한 식 \(\theta'' + \frac gL\sin\theta = 0\)은 비선형이라 공식으로 풀 수 없습니다. 그래도 "어떤 상태가 평형인가", "그 평형은 안정한가" 같은 질문에는 답할 수 있습니다. 해를 구하지 않고 성질을 알아내는 방법을 <b>정성적 방법</b>이라 합니다.</p>
+    <p>처음 질문처럼 "어떤 상태가 평형인가", "그 평형은 안정한가" 같은 물음에는 해를 구하지 않고도 답할 수 있다. 이렇게 해를 구하지 않고 성질을 알아내는 방법을 <em>정성적 방법</em>이라 한다.</p>
 
     <h3><span class="no">3.5.2</span>선형화</h3>
-    <p>임계점 근처에서는 비선형 함수도 직선(평면)처럼 보입니다(공통1의 선형근사). \(y_1' = f_1(y_1, y_2)\), \(y_2' = f_2(y_1, y_2)\)의 임계점 \(P\)에서 편도함수를 모아 만든 행렬</p>
+    <p>임계점 근처에서는 비선형 함수도 평면처럼 보인다(미분적분학(1)의 선형근사). 그래서 \(y_1' = f_1(y_1, y_2)\), \(y_2' = f_2(y_1, y_2)\)의 임계점 \(P\)에서 편도함수를 모아 행렬을 만든다.</p>
     \[A = \begin{bmatrix}\partial f_1/\partial y_1 &amp; \partial f_1/\partial y_2\\ \partial f_2/\partial y_1 &amp; \partial f_2/\partial y_2\end{bmatrix}_P\]
-    <p>로 \(\mathbf y' \approx A(\mathbf y - P)\)라 근사합니다. 이 선형 연립방정식의 임계점이 마디, 안장점, 나선점이면 원래 비선형 계도 같은 종류입니다(중심일 때는 선형화만으로 판정할 수 없습니다).</p>
+    <p>그리고 \(\mathbf y' \approx A(\mathbf y - P)\)로 근사한다. 이 선형 연립방정식의 임계점이 마디, 안장점, 나선점이면 원래 비선형 계도 같은 종류이다. 다만 중심일 때는 선형화만으로 판정할 수 없다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.5.1 <span class="nm">(진자)</span></span>
       <p>\(\theta'' + k\sin\theta = 0\) (\(k > 0\))의 임계점 \((0, 0)\)과 \((\pi, 0)\)을 판정하여라.</p>
     </div>
-    <p><i>풀이.</i> \(y_1 = \theta\), \(y_2 = \theta'\)으로 놓으면 \(y_1' = y_2\), \(y_2' = -k\sin y_1\). 임계점은 \(y_2 = 0\), \(\sin y_1 = 0\)인 \((n\pi, 0)\)입니다.</p>
-    <p>\((0, 0)\): \(A = \begin{bmatrix}0 &amp; 1\\ -k\cos0 &amp; 0\end{bmatrix} = \begin{bmatrix}0 &amp; 1\\ -k &amp; 0\end{bmatrix}\), 고유값 \(\pm i\sqrt k\). 중심(선형화로는 중심이고, 실제로도 아래에 매달린 진자는 흔들리기만 하는 안정 평형입니다).</p>
-    <p>\((\pi, 0)\): \(\cos\pi = -1\)이므로 \(A = \begin{bmatrix}0 &amp; 1\\ k &amp; 0\end{bmatrix}\), 고유값 \(\pm\sqrt k\). 안장점, 불안정. 거꾸로 세운 진자는 조금만 건드려도 쓰러집니다.</p>
+    <p><i>풀이.</i> \(y_1 = \theta\), \(y_2 = \theta'\)으로 놓으면 \(y_1' = y_2\), \(y_2' = -k\sin y_1\)이다. 임계점은 \(y_2 = 0\), \(\sin y_1 = 0\)인 \((n\pi, 0)\)이다.</p>
+    <p>\((0, 0)\)에서는 \(A = \begin{bmatrix}0 &amp; 1\\ -k\cos0 &amp; 0\end{bmatrix} = \begin{bmatrix}0 &amp; 1\\ -k &amp; 0\end{bmatrix}\)이므로 고유값은 \(\pm i\sqrt k\)이고 중심이다. 선형화로는 중심이며, 실제로도 아래에 매달린 진자는 흔들리기만 하는 안정 평형이다. 한편 \((\pi, 0)\)에서는 \(\cos\pi = -1\)이므로 \(A = \begin{bmatrix}0 &amp; 1\\ k &amp; 0\end{bmatrix}\), 고유값 \(\pm\sqrt k\)이다. 그러므로 안장점이고 불안정하다. 처음 질문의 두 직관이 이렇게 식에서 나온다.</p>
+    <p>그림 1에서 에너지를 1보다 작게 하면 궤적이 청록 점 둘레의 닫힌 곡선이 되어 진자가 흔들리고, 1보다 크게 하면 진자가 꼭대기를 넘어 계속 돈다. 그 경계인 분리선이 빨간 안장점을 지난다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.5.2 <span class="nm">(포식자-피식자)</span></span>
       <p>토끼 \(y_1\), 여우 \(y_2\)에 대해 \(y_1' = ay_1 - by_1y_2\), \(y_2' = ky_1y_2 - ly_2\) (모든 상수 양수)의 임계점을 판정하여라.</p>
     </div>
-    <p><i>풀이.</i> 임계점은 \((0, 0)\)과 \(\left(\frac lk, \frac ab\right)\). \((0, 0)\)에서 \(A = \begin{bmatrix}a &amp; 0\\ 0 &amp; -l\end{bmatrix}\), 안장점(불안정): 둘 다 없는 상태에서 토끼가 조금 생기면 늘어납니다. 두 번째 점에서 \(A = \begin{bmatrix}0 &amp; -bl/k\\ ak/b &amp; 0\end{bmatrix}\), 고유값 \(\pm i\sqrt{al}\): 중심. 토끼와 여우의 수가 엇갈리며 주기적으로 오르내립니다(로트카-볼테라 모델).</p>
+    <p><i>풀이.</i> 임계점은 \((0, 0)\)과 \(\left(\frac lk, \frac ab\right)\)이다. \((0, 0)\)에서 \(A = \begin{bmatrix}a &amp; 0\\ 0 &amp; -l\end{bmatrix}\)이므로 안장점이며 불안정하다. 즉 둘 다 없는 상태에서 토끼가 조금 생기면 늘어난다. 두 번째 점에서는 \(A = \begin{bmatrix}0 &amp; -bl/k\\ ak/b &amp; 0\end{bmatrix}\), 고유값 \(\pm i\sqrt{al}\)이므로 중심이다. 즉 토끼와 여우의 수가 엇갈리며 주기적으로 오르내린다(로트카-볼테라 모델).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>임계점: \(f_1 = f_2 = 0\)인 점.</li>
-        <li>선형화: 편도함수 행렬로 근사한 뒤 3.4절로 판정. 중심은 선형화만으로는 확정하지 못한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>비선형 연립방정식의 임계점은 \(f_1 = f_2 = 0\)인 점이며, 그 근처에서는 편도함수 행렬로 선형화한 뒤 3.4절의 방법으로 판정한다. 처음 질문의 진자는 이렇게 아래 평형이 중심, 거꾸로 선 평형이 안장점으로 판정되며, 중심은 선형화만으로는 확정하지 못한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.5.3</span>연습문제</h3>

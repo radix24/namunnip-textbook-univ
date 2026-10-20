@@ -2,51 +2,43 @@
 {
   "type": "card",
   "sec": "공통8-05-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-delta" data-kind="본문" data-std="공통8-05-04">
   <header class="card-head"><span class="no"></span><h2>짧은 충격과 디랙 델타 함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>망치로 치는 것 같은 순간적인 충격을 델타 함수로 나타낸다.</li>
-        <li>델타 함수 입력에 대한 응답을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>단위 계단 함수와 t-이동 (<a href="05-03.html">5.3절</a>), 충격량 (공통3 5.1절).</li>
-      </ul>
-    </div>
+    <p class="q-ask">야구방망이로 공을 치거나 망치로 용수철을 때리면, 힘이 아주 짧은 시간에만 크게 작용한다. 그 시간이 0.01초인지 0.001초인지는 잘 모르지만, 결과는 거의 같다. 전체 효과를 정하는 것은 충격량이기 때문이다. 이렇게 "한 순간의 충격"을 입력으로 하는 미분방정식은 어떻게 쓰고 풀까?</p>
+    <figure class="q-fig" data-q="c8-delta">
+      <svg viewBox="0 0 520 250" role="img" aria-label="폭이 줄어드는 펄스에 대한 응답과 충격 응답"></svg>
+      <div class="q-ctl"><label>펄스 폭 \(k\) <input type="range" data-k="k" min="0.05" max="2" step="0.05" value="1"><output data-k="k"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 폭 \(k\), 높이 \(1/k\)인 펄스(회색, 높이는 줄여 그림)를 \(y'' + 3y' + 2y\)에 넣은 응답(파랑). 폭을 줄일수록 델타 함수에 대한 응답(주황 점선)에 다가간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>단위 계단 함수와 t-이동(<a href="05-03.html">5.3절</a>)과 충격량(일반물리학(1) 5.1절)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>아주 짧고 아주 센 힘</h3>
-    <p>야구방망이로 공을 치거나 망치로 용수철을 때리면, 힘이 아주 짧은 시간에만 크게 작용합니다. 전체 효과는 충격량(힘 × 시간)으로 정해집니다. 폭 \(k\), 높이 \(\frac1k\)인 직사각형 펄스는 넓이(충격량)가 1이고, \(k\)를 0으로 보내면 "한 순간에 충격량 1을 주는 입력"이 됩니다. 이 극한을 <b>디랙 델타 함수</b> \(\delta(t - a)\)라 부릅니다.</p>
+    <p>폭 \(k\), 높이 \(\frac1k\)인 직사각형 펄스는 넓이, 곧 충격량이 1이다. 여기서 \(k\)를 0으로 보내면 "한 순간에 충격량 1을 주는 입력"이 된다. 처음 질문의 입력이 이것이며, 이 극한을 <em>디랙 델타 함수</em> \(\delta(t - a)\)라 부른다.</p>
     <div class="tb-env">
       <span class="lb">정의 5.4.1 <span class="nm">(디랙 델타 함수)</span></span>
       <p>\(t \ne a\)에서 0이고 \(\int_0^\infty\delta(t - a)\,dt = 1\)인 "함수". 연속함수 \(g\)에 대해 \(\int_0^\infty g(t)\delta(t - a)\,dt = g(a)\)이다.</p>
     </div>
-    <p>보통의 함수는 아니지만(한 점에서 무한대), 적분 안에서 이렇게 행동하는 대상으로 다룹니다. 펄스의 변환 \(\frac{e^{-as}(1 - e^{-ks})}{ks}\)에서 \(k \to 0\)으로 보내면</p>
-    \[\mathcal L\{\delta(t - a)\} = e^{-as}, \qquad \mathcal L\{\delta(t)\} = 1.\]
+    <p>보통의 함수는 아니지만, 적분 안에서 이렇게 행동하는 대상으로 다룬다. 펄스의 변환 \(\frac{e^{-as}(1 - e^{-ks})}{ks}\)에서 \(k \to 0\)으로 보내면 다음을 얻는다.</p>
+    \[\mathcal L\{\delta(t - a)\} = e^{-as}, \qquad \mathcal L\{\delta(t)\} = 1\]
 
     <h3><span class="no">5.4.2</span>충격에 대한 응답</h3>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.2</span>
       <p>정지해 있던 용수철 계 \(y'' + 3y' + 2y = \delta(t - 1)\), \(y(0) = y'(0) = 0\)의 응답을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \((s^2 + 3s + 2)Y = e^{-s}\), \(Y = e^{-s}\left(\frac{1}{s + 1} - \frac{1}{s + 2}\right)\). t-이동으로</p>
-    \[y = \left[e^{-(t - 1)} - e^{-2(t - 1)}\right]u(t - 1).\]
-    <p>\(t = 1\)까지는 가만히 있다가, 충격을 받은 순간 속도가 갑자기 1이 되어 튀어 올랐다가 감쇠하며 돌아옵니다(위치는 연속, 속도는 불연속).</p>
-    <p class="tb-aside">\(\delta(t)\)에 대한 응답 \(g(t)\)를 <b>충격 응답</b>이라 합니다. 계의 성질은 충격 응답에 모두 담겨 있고, 다른 입력에 대한 응답은 다음 절의 합성곱으로 구할 수 있습니다. 신호및시스템 과목의 출발점입니다.</p>
-    <p>부분분수 분해가 이 단원에서 계속 쓰입니다. 분모에 같은 인수가 거듭 있거나 복소근이 있는 경우도 공통1 5.4절의 방법 그대로입니다.</p>
+    <p><i>풀이.</i> 변환하면 \((s^2 + 3s + 2)Y = e^{-s}\)이므로 \(Y = e^{-s}\left(\frac{1}{s + 1} - \frac{1}{s + 2}\right)\)이다. 따라서 t-이동으로 다음을 얻는다.</p>
+    \[y = \left[e^{-(t - 1)} - e^{-2(t - 1)}\right]u(t - 1)\]
+    <p>계는 \(t = 1\)까지 가만히 있다가, 충격을 받은 순간 속도가 갑자기 1이 되어 튀어 올랐다가 감쇠하며 돌아온다. 즉 위치는 연속이고 속도만 불연속이다. 그림 1에서 펄스 폭을 1에서 0.05로 줄이면 응답이 이 곡선에 겹쳐 간다. 처음 질문에서 충격 시간을 몰라도 결과가 같았던 까닭이 이것이다.</p>
+    <div class="tb-aside">\(\delta(t)\)에 대한 응답 \(g(t)\)를 <em>충격 응답</em>이라 한다. 계의 성질은 충격 응답에 모두 담겨 있고, 다른 입력에 대한 응답은 다음 절의 합성곱으로 구할 수 있다. 신호및시스템 과목의 출발점이다.</div>
+    <p>한편 부분분수 분해가 이 단원에서 계속 쓰인다. 분모에 같은 인수가 거듭 있거나 복소근이 있는 경우도 미분적분학(1) 5.4절의 방법 그대로이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\delta(t - a)\): \(a\)에서 충격량 1을 주는 순간적 입력. \(\int g\delta(t - a) = g(a)\).</li>
-        <li>\(\mathcal L\{\delta(t - a)\} = e^{-as}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(\delta(t - a)\)는 \(a\)에서 충격량 1을 주는 순간적 입력이며, \(\int g\,\delta(t - a) = g(a)\)이고 변환은 \(e^{-as}\)이다. 처음 질문처럼 충격의 길이를 몰라도 충격량이 같으면 응답이 같으며, 그 응답은 변환과 t-이동으로 바로 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.3</span>연습문제</h3>

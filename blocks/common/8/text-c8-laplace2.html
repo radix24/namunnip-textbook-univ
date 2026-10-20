@@ -2,58 +2,52 @@
 {
   "type": "card",
   "sec": "공통8-05-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-laplace2" data-kind="본문" data-std="공통8-05-02">
   <header class="card-head"><span class="no"></span><h2>도함수의 변환과 초기값 문제</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\mathcal L\{f'\} = sF - f(0)\)을 알고 초기값 문제를 라플라스 변환으로 푼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>변환표와 s-이동 (<a href="05-01.html">5.1절</a>), 부분분수 (<a href="../1/05-04.html">공통1 5.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">2단원에서 초기값 문제를 풀 때는 먼저 일반해를 구하고, 그다음 초기 조건으로 상수 두 개를 맞추는 연립방정식을 따로 풀었다. 라플라스 변환으로 옮기면 미분이 무엇으로 바뀌고, 이 두 단계를 한 번에 끝낼 수 있을까?</p>
+    <figure class="q-fig" data-q="c8-ivp">
+      <svg viewBox="0 0 520 250" role="img" aria-label="초기값에 따라 달라지는 감쇠 진동의 해"></svg>
+      <div class="q-ctl">
+        <label>\(y(0)\) <input type="range" data-k="y0" min="-0.3" max="0.3" step="0.02" value="0.16"><output data-k="y0"></output></label>
+        <label>\(y'(0)\) <input type="range" data-k="v0" min="-1" max="1" step="0.1" value="0"><output data-k="v0"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(y'' + y' + 9y = 0\)의 해(파랑). 변환하면 초기값이 \(Y(s)\)의 분자에 바로 들어가므로, 초기값을 바꾸면 역변환한 해가 곧바로 바뀐다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>변환표와 s-이동(<a href="05-01.html">5.1절</a>)과 부분분수(<a href="../1/05-04.html">미분적분학(1) 5.4절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>미분이 곱셈으로</h3>
     <div class="tb-env thm">
       <span class="lb">정리 5.2.1</span>
       \[\mathcal L\{f'\} = sF(s) - f(0), \qquad \mathcal L\{f''\} = s^2F(s) - sf(0) - f'(0).\]
     </div>
-    <p>부분적분으로 얻습니다: \(\int_0^\infty e^{-st}f'\,dt = [e^{-st}f]_0^\infty + s\int_0^\infty e^{-st}f\,dt = -f(0) + sF\). 미분이 "\(s\)를 곱하기"로 바뀌고, 초기값이 식 안에 자동으로 들어온다는 것이 핵심입니다. 그래서 일반해를 구한 뒤 상수를 맞추는 단계가 필요 없습니다.</p>
+    <p>이것은 부분적분으로 얻는다. \(\int_0^\infty e^{-st}f'\,dt = [e^{-st}f]_0^\infty + s\int_0^\infty e^{-st}f\,dt = -f(0) + sF\)이기 때문이다. 처음 질문의 답이 여기 있다. 미분이 "\(s\)를 곱하기"로 바뀌고, 초기값이 식 안에 저절로 들어온다. 그래서 일반해를 구한 뒤 상수를 맞추는 단계가 필요 없다.</p>
+    <p>가령 \(y(0)\)과 \(y'(0)\)이 모두 0이면 \(\mathcal L\{y''\} = s^2Y\)가 되어, 미분이 순수하게 \(s^2\)의 곱셈으로 바뀐다. 처음에 정지해 있던 계에 입력을 넣는 문제가 공학에서 아주 많으므로, 이 단순한 꼴이 자주 쓰인다. 반대로 초기값이 0이 아니면 그 값들이 마치 또 하나의 입력처럼 \(Y\)의 분자에 더해진다. 그림 1에서 \(y(0)\)과 \(y'(0)\)을 바꾸면 바로 그 분자가 바뀌는 것이다.</p>
 
     <h3><span class="no">5.2.2</span>세 단계로 풀기</h3>
-    <ol class="tb-steps">
-      <li><b>변환</b>: 방정식 양변을 변환해 \(Y(s)\)에 대한 대수방정식(보조방정식)을 만든다.</li>
-      <li><b>풀기</b>: \(Y(s)\)에 대해 푼다. 보통 부분분수로 나눈다.</li>
-      <li><b>역변환</b>: \(y = \mathcal L^{-1}\{Y\}\).</li>
-    </ol>
+    <p>먼저 방정식 양변을 변환해 \(Y(s)\)에 대한 대수방정식, 곧 보조방정식을 만든다. 다음으로 \(Y(s)\)에 대해 풀며, 보통 부분분수로 나눈다. 끝으로 역변환해 \(y = \mathcal L^{-1}\{Y\}\)를 얻는다. 가운데 단계는 미분도 적분도 없는 순수한 대수 계산이므로, 실수가 생기더라도 찾아 고치기가 쉽다. 그리고 마지막 단계에서는 5.1절의 변환표와 s-이동을 거꾸로 읽는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.2</span>
       <p>\(y'' - y = t\), \(y(0) = 1\), \(y'(0) = 1\)을 풀어라.</p>
     </div>
-    <p><i>풀이.</i> 변환: \(s^2Y - s - 1 - Y = \frac{1}{s^2}\). 풀기: \((s^2 - 1)Y = s + 1 + \frac{1}{s^2}\), 따라서</p>
-    \[Y = \frac{s + 1}{s^2 - 1} + \frac{1}{s^2(s^2 - 1)} = \frac{1}{s - 1} + \left(\frac{1}{s^2 - 1} - \frac{1}{s^2}\right).\]
-    <p>역변환: \(y = e^t + \sinh t - t\).</p>
-    <p>검산: \(y'' = e^t + \sinh t\), \(y'' - y = t\) ✓. \(y(0) = 1\), \(y'(0) = 1 + 1 - 1 = 1\) ✓.</p>
+    <p><i>풀이.</i> 변환하면 \(s^2Y - s - 1 - Y = \frac{1}{s^2}\)이다. \(Y\)에 대해 풀면 \((s^2 - 1)Y = s + 1 + \frac{1}{s^2}\)이므로 다음과 같다.</p>
+    \[Y = \frac{s + 1}{s^2 - 1} + \frac{1}{s^2(s^2 - 1)} = \frac{1}{s - 1} + \left(\frac{1}{s^2 - 1} - \frac{1}{s^2}\right)\]
+    <p>역변환하면 \(y = e^t + \sinh t - t\)이다. 검산하면 \(y'' = e^t + \sinh t\)이므로 \(y'' - y = t\)이고, \(y(0) = 1\), \(y'(0) = 1 + 1 - 1 = 1\)로 모두 맞는다.</p>
+    <p>같은 문제를 2단원 방법으로 풀어 비교해 보자. 먼저 특성방정식 \(\lambda^2 - 1 = 0\)에서 동차 일반해 \(c_1e^t + c_2e^{-t}\)를 구한다. 다음으로 미정계수법으로 특수해 \(-t\)를 찾고, 마지막에 초기 조건 두 개로 \(c_1, c_2\)를 정하는 연립방정식을 푼다. 그러면 \(c_1 = \frac32\), \(c_2 = -\frac12\)이 나와 같은 답이 된다. 즉 2단원 방법은 세 단계를 따로 밟지만, 라플라스 변환은 초기값을 처음부터 넣어 이 과정을 한 번의 대수 계산으로 묶는다. 차이는 입력이 계단 함수나 충격일 때 더 커지며, 5.3절과 5.4절에서 그런 입력을 다룬다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.3</span>
       <p>감쇠 진동 \(y'' + y' + 9y = 0\), \(y(0) = 0.16\), \(y'(0) = 0\)을 풀어라.</p>
     </div>
-    <p><i>풀이.</i> \(s^2Y - 0.16s + sY - 0.16 + 9Y = 0\), \(Y = \dfrac{0.16(s + 1)}{s^2 + s + 9} = \dfrac{0.16(s + \frac12) + 0.08}{(s + \frac12)^2 + \frac{35}{4}}\). s-이동으로</p>
-    \[y = e^{-t/2}\left(0.16\cos\tfrac{\sqrt{35}}{2}t + \tfrac{0.16}{\sqrt{35}}\sin\tfrac{\sqrt{35}}{2}t\right).\]
+    <p><i>풀이.</i> 변환하면 \(s^2Y - 0.16s + sY - 0.16 + 9Y = 0\)이므로 \(Y = \dfrac{0.16(s + 1)}{s^2 + s + 9} = \dfrac{0.16(s + \frac12) + 0.08}{(s + \frac12)^2 + \frac{35}{4}}\)이다. 따라서 s-이동으로 다음을 얻는다.</p>
+    \[y = e^{-t/2}\left(0.16\cos\tfrac{\sqrt{35}}{2}t + \tfrac{0.16}{\sqrt{35}}\sin\tfrac{\sqrt{35}}{2}t\right)\]
+    <p>그림 1의 처음 상태가 이 예제이다. \(y'(0)\)을 바꾸면 \(Y\)의 분자만 바뀌고, 해는 그에 맞춰 바로 달라진다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\mathcal L\{y'\} = sY - y(0)\), \(\mathcal L\{y''\} = s^2Y - sy(0) - y'(0)\).</li>
-        <li>변환 → \(Y\)에 대해 풀기(부분분수) → 역변환. 초기값이 처음부터 들어간다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(\mathcal L\{y'\} = sY - y(0)\), \(\mathcal L\{y''\} = s^2Y - sy(0) - y'(0)\)이므로 미분이 \(s\)의 곱셈으로 바뀐다. 처음 질문처럼 초기값이 처음부터 들어가므로, 변환하고 \(Y\)에 대해 풀고(부분분수) 역변환하는 세 단계로 초기값 문제가 끝난다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.3</span>연습문제</h3>

@@ -2,26 +2,24 @@
 {
   "type": "card",
   "sec": "공통8-03-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-syssolve" data-kind="본문" data-std="공통8-03-03">
   <header class="card-head"><span class="no"></span><h2>상수계수 연립방정식의 풀이</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\mathbf y' = A\mathbf y\)의 해가 \(\mathbf x e^{\lambda t}\) (고유벡터 × 지수함수) 꼴임을 안다.</li>
-        <li>고유값·고유벡터로 일반해를 쓰고 초기 조건을 맞춘다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>고유값과 고유벡터 (<a href="03-01.html">3.1절</a>), 연립 모델 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">두 탱크의 비료 양은 서로 얽혀 있어서 \(y_1\)만 따로 풀 수 없다. 그런데 3.1절에서 행렬을 곱해도 방향이 그대로인 고유벡터를 보았다. 해가 고유벡터 방향으로만 움직인다면, 얽힌 두 양을 따로따로 풀리는 두 문제로 나눌 수 있지 않을까?</p>
+    <figure class="q-fig" data-q="c8-modes">
+      <svg viewBox="0 0 520 260" role="img" aria-label="두 탱크 문제를 상평면에 그린 궤적과 고유벡터 방향"></svg>
+      <div class="q-ctl"><label>시간 \(t\) (분) <input type="range" data-k="t" min="0" max="150" step="1" value="20"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 두 탱크의 비료 양 \((y_1, y_2)\)를 한 점으로 그린 궤적. 점은 고유벡터 \((1, -1)\) 방향(주황 점선)으로만 움직여, 고유벡터 \((1, 1)\) 방향(청록 점선) 위의 균형점으로 다가간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고유값과 고유벡터(<a href="03-01.html">3.1절</a>)와 연립 모델(<a href="03-02.html">3.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>고유벡터 방향으로 움직이는 해</h3>
-    <p>1계 방정식 \(y' = ay\)의 해가 \(ce^{at}\)였던 것처럼, \(\mathbf y' = A\mathbf y\)에도 \(\mathbf y = \mathbf xe^{\lambda t}\)를 넣어 봅니다. 왼쪽은 \(\lambda\mathbf xe^{\lambda t}\), 오른쪽은 \(A\mathbf xe^{\lambda t}\)이므로 \(A\mathbf x = \lambda\mathbf x\)이면 해입니다. 곧 고유값과 고유벡터가 해를 줍니다.</p>
+    <p>1계 방정식 \(y' = ay\)의 해가 \(ce^{at}\)였던 것처럼, \(\mathbf y' = A\mathbf y\)에도 \(\mathbf y = \mathbf xe^{\lambda t}\)를 넣어 본다. 왼쪽은 \(\lambda\mathbf xe^{\lambda t}\), 오른쪽은 \(A\mathbf xe^{\lambda t}\)이므로 \(A\mathbf x = \lambda\mathbf x\)이면 해이다. 즉 처음 질문의 예상대로 고유값과 고유벡터가 해를 준다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 3.3.1</span>
       <p>2×2 행렬 \(A\)가 서로 다른 고유값 \(\lambda_1, \lambda_2\)와 고유벡터 \(\mathbf x^{(1)}, \mathbf x^{(2)}\)를 가지면 \(\mathbf y' = A\mathbf y\)의 일반해는</p>
@@ -31,20 +29,13 @@
       <span class="lb">예제 3.3.2</span>
       <p>3.2절의 두 탱크 문제 \(y_1' = -0.02y_1 + 0.02y_2\), \(y_2' = 0.02y_1 - 0.02y_2\), \(y_1(0) = 150\), \(y_2(0) = 0\)을 풀어라.</p>
     </div>
-    <p><i>풀이.</i> \(\det(A - \lambda I) = (-0.02 - \lambda)^2 - 0.0004 = \lambda(\lambda + 0.04) = 0\). 고유값 0, \(-0.04\). \(\lambda = 0\)의 고유벡터 \(\begin{bmatrix}1\\1\end{bmatrix}\), \(\lambda = -0.04\)의 고유벡터 \(\begin{bmatrix}1\\-1\end{bmatrix}\).</p>
-    \[\mathbf y = c_1\begin{bmatrix}1\\1\end{bmatrix} + c_2\begin{bmatrix}1\\-1\end{bmatrix}e^{-0.04t}.\]
-    <p>\(t = 0\): \(c_1 + c_2 = 150\), \(c_1 - c_2 = 0\)이므로 \(c_1 = c_2 = 75\). \(y_1 = 75 + 75e^{-0.04t}\), \(y_2 = 75 - 75e^{-0.04t}\).</p>
-    <p>시간이 지나면 두 탱크 모두 75 kg으로 같아집니다. 고유값 0의 고유벡터 \(\begin{bmatrix}1\\1\end{bmatrix}\)이 "최종 균형 상태", 고유값 \(-0.04\)가 "균형으로 다가가는 빠르기"를 나타냅니다. 처음 차이 150 kg이 \(e^{-0.04t}\)로 줄어듭니다.</p>
-    <p class="tb-aside">고유값이 복소수이면 해에 \(e^{\alpha t}(\cos\omega t, \sin\omega t)\)가 나타나고(2.2절과 같은 원리), 고유값이 중근이고 고유벡터가 하나뿐이면 \(te^{\lambda t}\)가 포함된 해가 필요합니다. 계산 방법은 교재 4.3절을 보세요.</p>
+    <p><i>풀이.</i> \(\det(A - \lambda I) = (-0.02 - \lambda)^2 - 0.0004 = \lambda(\lambda + 0.04) = 0\)이므로 고유값은 0, \(-0.04\)이다. \(\lambda = 0\)의 고유벡터는 \(\begin{bmatrix}1\\1\end{bmatrix}\), \(\lambda = -0.04\)의 고유벡터는 \(\begin{bmatrix}1\\-1\end{bmatrix}\)이다. 따라서 일반해는 다음과 같다.</p>
+    \[\mathbf y = c_1\begin{bmatrix}1\\1\end{bmatrix} + c_2\begin{bmatrix}1\\-1\end{bmatrix}e^{-0.04t}\]
+    <p>\(t = 0\)에서 \(c_1 + c_2 = 150\), \(c_1 - c_2 = 0\)이므로 \(c_1 = c_2 = 75\)이다. 그러므로 \(y_1 = 75 + 75e^{-0.04t}\), \(y_2 = 75 - 75e^{-0.04t}\)이다.</p>
+    <p>시간이 지나면 두 탱크 모두 75 kg으로 같아진다. 여기서 고유값 0의 고유벡터 \(\begin{bmatrix}1\\1\end{bmatrix}\)이 "최종 균형 상태"를, 고유값 \(-0.04\)가 "균형으로 다가가는 빠르기"를 나타낸다. 즉 처음 차이 150 kg이 \(e^{-0.04t}\)로 줄어든다. 그림 1에서 시간을 움직이면 점이 주황 점선을 따라서만 미끄러진다.</p>
+    <div class="tb-aside">고유값이 복소수이면 해에 \(e^{\alpha t}(\cos\omega t, \sin\omega t)\)가 나타난다(2.2절과 같은 원리). 또 고유값이 중근이고 고유벡터가 하나뿐이면 \(te^{\lambda t}\)가 포함된 해가 필요하다. 계산 방법은 교재 4.3절을 본다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\mathbf y = \mathbf xe^{\lambda t}\)가 해 \(\iff\) \(A\mathbf x = \lambda\mathbf x\).</li>
-        <li>일반해 \(c_1\mathbf x^{(1)}e^{\lambda_1t} + c_2\mathbf x^{(2)}e^{\lambda_2t}\). 초기 조건으로 \(c_1, c_2\)를 정한다.</li>
-        <li>음의 고유값은 줄어드는 모드, 0은 변하지 않는 모드, 양수는 커지는 모드.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(\mathbf y = \mathbf xe^{\lambda t}\)가 해일 필요충분조건은 \(A\mathbf x = \lambda\mathbf x\)이므로, 일반해는 \(c_1\mathbf x^{(1)}e^{\lambda_1t} + c_2\mathbf x^{(2)}e^{\lambda_2t}\)이고 초기 조건으로 \(c_1, c_2\)를 정한다. 처음 질문처럼 얽힌 양이 고유벡터 방향의 모드로 나뉘며, 음의 고유값은 줄어드는 모드, 0은 변하지 않는 모드, 양수는 커지는 모드이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>

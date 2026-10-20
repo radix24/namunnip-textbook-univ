@@ -2,55 +2,41 @@
 {
   "type": "card",
   "sec": "공통8-04-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-frobenius" data-kind="본문" data-std="공통8-04-03">
   <header class="card-head"><span class="no"></span><h2>프로베니우스 방법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>계수가 \(x = 0\)에서 무한히 커지는 방정식에 \(y = x^r\sum a_mx^m\)을 넣어 푼다.</li>
-        <li>지표방정식으로 \(r\)을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>거듭제곱급수 방법 (<a href="04-01.html">4.1절</a>), 오일러-코시 방정식 (<a href="02-04.html">2.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(2xy'' + y' + y = 0\)을 표준형으로 바꾸면 계수에 \(\frac1x\)이 생겨 \(x = 0\)에서 무한히 커진다. 그러면 4.1절의 거듭제곱급수가 통하지 않는다. 실제로 해는 \(\sqrt x\)처럼 원점에서 기울기가 무한한 모양으로 시작하는데, 그런 해는 어떤 꼴로 찾아야 할까?</p>
+    <figure class="q-fig" data-q="c8-frob">
+      <svg viewBox="0 0 520 260" role="img" aria-label="프로베니우스 해 √x 곱하기 급수의 부분합"></svg>
+      <div class="q-ctl"><label>마지막 차수 \(N\) <input type="range" data-k="N" min="0" max="12" step="1" value="2"><output data-k="N"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 예제 4.3.2의 해 \(y_1 = \sqrt x(1 - \frac x3 + \frac{x^2}{30} - \cdots)\). 급수 부분이 차수를 높일수록 해(주황)에 다가가고, 앞의 \(\sqrt x\)가 원점 근처의 모양을 정한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>거듭제곱급수 방법(<a href="04-01.html">4.1절</a>)과 오일러-코시 방정식(<a href="02-04.html">2.4절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>왜 \(x^r\)을 곱하는가</h3>
-    <p>오일러-코시 방정식 \(x^2y'' + axy' + by = 0\)을 표준형으로 바꾸면 \(y'' + \frac axy' + \frac{b}{x^2}y = 0\)이 되어 계수가 \(x = 0\)에서 무한히 커집니다. 그 해는 \(x^m\)처럼 \(m\)이 정수가 아닐 수도 있는 거듭제곱이었습니다. 그래서 이런 방정식에는 보통의 거듭제곱급수 대신 \(x^r\)을 곱한 급수를 넣습니다.</p>
+    <p>오일러-코시 방정식 \(x^2y'' + axy' + by = 0\)을 표준형으로 바꾸면 \(y'' + \frac axy' + \frac{b}{x^2}y = 0\)이 되어 계수가 \(x = 0\)에서 무한히 커진다. 그런데 그 해는 \(x^m\)처럼 \(m\)이 정수가 아닐 수도 있는 거듭제곱이었다. 그래서 처음 질문의 답으로, 이런 방정식에는 보통의 거듭제곱급수 대신 \(x^r\)을 곱한 급수를 넣는다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 4.3.1 <span class="nm">(프로베니우스 방법)</span></span>
       <p>\(y'' + \frac{b(x)}{x}y' + \frac{c(x)}{x^2}y = 0\)에서 \(b, c\)가 \(x = 0\)에서 테일러 급수로 전개되면, 적어도 하나의 해가</p>
       \[y = x^r\sum_{m=0}^\infty a_mx^m = x^r(a_0 + a_1x + a_2x^2 + \cdots), \quad a_0 \ne 0\]
       <p>꼴로 있다. \(r\)은 정수가 아니어도 된다.</p>
     </div>
-    <p>가장 낮은 거듭제곱 \(x^r\)의 계수를 0으로 놓으면 \(r\)에 대한 이차방정식이 나옵니다.</p>
-    \[r(r - 1) + b_0r + c_0 = 0 \qquad (b_0 = b(0),\ c_0 = c(0)).\]
-    <p>이것을 <b>지표방정식</b>이라 합니다. 오일러-코시 방정식의 보조방정식과 같은 모양입니다. 두 근 \(r_1, r_2\)의 관계에 따라 두 번째 해의 꼴이 달라집니다.</p>
-    <ul class="tb-list">
-      <li>두 근의 차가 정수가 아니면: 두 해 모두 \(x^{r}\sum a_mx^m\) 꼴.</li>
-      <li>중근이면: 두 번째 해에 \(\ln x\)가 들어간다.</li>
-      <li>차가 0이 아닌 정수이면: 두 번째 해에 \(\ln x\)가 들어갈 수도, 아닐 수도 있다.</li>
-    </ul>
+    <p>가장 낮은 거듭제곱 \(x^r\)의 계수를 0으로 놓으면 \(r\)에 대한 이차방정식이 나오며, 이것을 <em>지표방정식</em>이라 한다.</p>
+    \[r(r - 1) + b_0r + c_0 = 0 \qquad (b_0 = b(0),\ c_0 = c(0))\]
+    <p>오일러-코시 방정식의 보조방정식과 같은 모양이다. 그리고 두 근 \(r_1, r_2\)의 관계에 따라 두 번째 해의 꼴이 달라진다. 두 근의 차가 정수가 아니면 두 해 모두 \(x^{r}\sum a_mx^m\) 꼴이다. 반면 중근이면 두 번째 해에 \(\ln x\)가 들어가고, 차가 0이 아닌 정수이면 \(\ln x\)가 들어갈 수도, 아닐 수도 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.2</span>
       <p>\(2xy'' + y' + y = 0\)의 지표방정식과 첫 번째 해의 처음 몇 항을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(2x\)로 나누어 \(x^2\) 꼴로 맞추면 \(x^2y'' + \frac12xy' + \frac x2y = 0\)이므로 \(b_0 = \frac12\), \(c_0 = 0\). 지표방정식 \(r(r - 1) + \frac12r = r\left(r - \frac12\right) = 0\), \(r = 0, \frac12\). 차가 정수가 아니므로 두 해 모두 급수 꼴입니다.</p>
-    <p>\(r = \frac12\): \(y = \sum a_mx^{m + 1/2}\)을 넣으면 점화식 \(a_m = -\dfrac{a_{m-1}}{(2m + 1)m}\). \(a_1 = -\frac{a_0}{3}\), \(a_2 = \frac{a_0}{30}\). \(y_1 = \sqrt x\left(1 - \frac x3 + \frac{x^2}{30} - \cdots\right)\).</p>
+    <p><i>풀이.</i> 양변에 \(\frac x2\)를 곱해 \(x^2\) 꼴로 맞추면 \(x^2y'' + \frac12xy' + \frac x2y = 0\)이므로 \(b_0 = \frac12\), \(c_0 = 0\)이다. 지표방정식은 \(r(r - 1) + \frac12r = r\left(r - \frac12\right) = 0\)이므로 \(r = 0, \frac12\)이다. 차가 정수가 아니므로 두 해 모두 급수 꼴이다.</p>
+    <p>\(r = \frac12\)이면 \(y = \sum a_mx^{m + 1/2}\)을 넣어 점화식 \(a_m = -\dfrac{a_{m-1}}{(2m + 1)m}\)을 얻는다. 따라서 \(a_1 = -\frac{a_0}{3}\), \(a_2 = \frac{a_0}{30}\)이고 \(y_1 = \sqrt x\left(1 - \frac x3 + \frac{x^2}{30} - \cdots\right)\)이다. 그림 1의 처음 상태가 이 세 항이며, \(x\)가 커질수록 더 많은 항이 있어야 해와 겹친다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>계수가 \(\frac bx\), \(\frac{c}{x^2}\) 꼴로 무한히 커지면 \(y = x^r\sum a_mx^m\)을 넣는다.</li>
-        <li>지표방정식 \(r(r - 1) + b_0r + c_0 = 0\)으로 \(r\)을 구한다.</li>
-        <li>근이 같거나 정수만큼 차이 나면 두 번째 해에 \(\ln x\)가 생길 수 있다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>계수가 \(\frac bx\), \(\frac{c}{x^2}\) 꼴로 무한히 커지면 처음 질문처럼 \(y = x^r\sum a_mx^m\)을 넣고, 지표방정식 \(r(r - 1) + b_0r + c_0 = 0\)으로 \(r\)을 구한다. 두 근이 같거나 정수만큼 차이 나면 두 번째 해에 \(\ln x\)가 생길 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>

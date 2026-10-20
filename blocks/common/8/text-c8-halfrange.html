@@ -2,61 +2,51 @@
 {
   "type": "card",
   "sec": "공통8-06-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-halfrange" data-kind="본문" data-std="공통8-06-02">
   <header class="card-head"><span class="no"></span><h2>임의 주기, 우함수와 기함수, 반구간 전개</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>주기 \(2L\)인 함수의 푸리에 급수를 구한다.</li>
-        <li>\([0, L]\)에서만 주어진 함수를 코사인 급수나 사인 급수로 전개한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>푸리에 급수 (<a href="06-01.html">6.1절</a>), 우함수·기함수의 적분 (공통1 4단원 보충).</li>
-      </ul>
-    </div>
+    <p class="q-ask">양 끝을 고정한 줄의 처음 모양이나 막대의 처음 온도는 \([0, L]\)에서만 주어진다. 주기 함수도 아니고 \(-L\)부터의 값도 없는데, 푸리에 급수로 나타낼 수 있을까? 나타낸다면 어떤 급수를 골라야 할까?</p>
+    <figure class="q-fig" data-q="c8-halfr">
+      <svg viewBox="0 0 520 260" role="img" aria-label="f(x) = x의 반구간 사인 급수와 코사인 급수"></svg>
+      <div class="q-ctl">
+        <label>넓히는 방식 <select data-k="e"><option value="0" selected>기함수 (사인 급수)</option><option value="1">우함수 (코사인 급수)</option></select></label>
+        <label>항의 수 \(N\) <input type="range" data-k="N" min="1" max="30" step="1" value="5"><output data-k="N"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \([0, 1]\)(회색 띠)에서만 주어진 \(f(x) = x\)를 넓힌 주기 함수(주황 점선)와 그 푸리에 부분합(파랑). 회색 띠 안에서는 두 급수 모두 \(x\)에 다가간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>푸리에 급수(<a href="06-01.html">6.1절</a>)와 우함수·기함수의 적분(미분적분학(1) 4단원 보충)을 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>주기 \(2L\)</h3>
-    <p>실제 신호의 주기는 \(2\pi\)가 아닌 경우가 대부분입니다. \(x\)를 \(\frac{\pi x}{L}\)로 바꾸면 주기 \(2L\)인 함수를 다룰 수 있습니다.</p>
+    <p>실제 신호의 주기는 \(2\pi\)가 아닌 경우가 대부분이다. 그러므로 \(x\)를 \(\frac{\pi x}{L}\)로 바꾸어 주기 \(2L\)인 함수를 다룬다.</p>
     \[f(x) = a_0 + \sum_{n=1}^\infty\left(a_n\cos\frac{n\pi x}{L} + b_n\sin\frac{n\pi x}{L}\right),\]
-    \[a_0 = \frac{1}{2L}\int_{-L}^Lf\,dx, \quad a_n = \frac1L\int_{-L}^Lf\cos\frac{n\pi x}{L}dx, \quad b_n = \frac1L\int_{-L}^Lf\sin\frac{n\pi x}{L}dx.\]
+    \[a_0 = \frac{1}{2L}\int_{-L}^Lf\,dx, \quad a_n = \frac1L\int_{-L}^Lf\cos\frac{n\pi x}{L}dx, \quad b_n = \frac1L\int_{-L}^Lf\sin\frac{n\pi x}{L}dx\]
 
     <h3><span class="no">6.2.2</span>우함수와 기함수</h3>
-    <p>\(f\)가 우함수이면 \(b_n = 0\)이고 <b>푸리에 코사인 급수</b>, 기함수이면 \(a_0 = a_n = 0\)이고 <b>푸리에 사인 급수</b>가 됩니다. 이때 적분을 \([0, L]\)에서 두 배로 계산하면 됩니다: 예를 들어 기함수이면 \(b_n = \frac2L\int_0^Lf\sin\frac{n\pi x}{L}dx\).</p>
+    <p>\(f\)가 우함수이면 \(b_n = 0\)이고 <em>푸리에 코사인 급수</em>가 된다. 기함수이면 \(a_0 = a_n = 0\)이고 <em>푸리에 사인 급수</em>가 된다. 이때 적분은 \([0, L]\)에서 두 배로 계산하면 된다. 가령 기함수이면 \(b_n = \frac2L\int_0^Lf\sin\frac{n\pi x}{L}dx\)이다.</p>
 
     <h3><span class="no">6.2.3</span>반구간 전개</h3>
-    <p>양 끝을 고정한 줄의 처음 모양이나 막대의 처음 온도처럼, 함수가 \([0, L]\)에서만 주어질 때가 많습니다(고등미적분학(2)의 편미분방정식). 이때는 함수를 \([-L, 0]\)으로 원하는 방식으로 넓혀서 푸리에 급수를 씁니다.</p>
-    <ul class="tb-list">
-      <li><b>우함수로 넓히면</b>(\(y\)축 대칭) 코사인 급수: \(a_0 = \frac1L\int_0^Lf\,dx\), \(a_n = \frac2L\int_0^Lf\cos\frac{n\pi x}{L}dx\).</li>
-      <li><b>기함수로 넓히면</b>(원점 대칭) 사인 급수: \(b_n = \frac2L\int_0^Lf\sin\frac{n\pi x}{L}dx\).</li>
-    </ul>
+    <p>처음 질문의 답은 함수를 \([-L, 0]\)으로 원하는 방식으로 넓혀서 푸리에 급수를 쓰는 것이다. 이 문제는 고등미적분학(2)의 편미분방정식에서 자주 나온다. \(y\)축 대칭으로, 곧 우함수로 넓히면 코사인 급수가 되며 \(a_0 = \frac1L\int_0^Lf\,dx\), \(a_n = \frac2L\int_0^Lf\cos\frac{n\pi x}{L}dx\)이다. 반면 원점 대칭으로, 곧 기함수로 넓히면 사인 급수가 되며 \(b_n = \frac2L\int_0^Lf\sin\frac{n\pi x}{L}dx\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
       <p>\(f(x) = x\) (\(0 &lt; x &lt; L\))의 반구간 사인 급수를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(b_n = \frac2L\int_0^Lx\sin\frac{n\pi x}{L}dx\). 부분적분하면 \(b_n = \frac{2L}{n\pi}(-1)^{n+1}\). 따라서</p>
-    \[x = \frac{2L}{\pi}\left(\sin\frac{\pi x}{L} - \frac12\sin\frac{2\pi x}{L} + \frac13\sin\frac{3\pi x}{L} - \cdots\right) \quad (0 &lt; x &lt; L).\]
-    <p>양 끝에서 0이 되는 사인 급수는 "양 끝이 고정된" 경계 조건에 잘 맞습니다. 그래서 줄의 진동 문제에서는 사인 급수를 씁니다.</p>
+    <p><i>풀이.</i> \(b_n = \frac2L\int_0^Lx\sin\frac{n\pi x}{L}dx\)를 부분적분하면 \(b_n = \frac{2L}{n\pi}(-1)^{n+1}\)이다. 따라서 다음과 같다.</p>
+    \[x = \frac{2L}{\pi}\left(\sin\frac{\pi x}{L} - \frac12\sin\frac{2\pi x}{L} + \frac13\sin\frac{3\pi x}{L} - \cdots\right) \quad (0 &lt; x &lt; L)\]
+    <p>양 끝에서 0이 되는 사인 급수는 "양 끝이 고정된" 경계 조건에 잘 맞는다. 그래서 줄의 진동 문제에서는 사인 급수를 쓴다. 그림 1의 처음 상태가 \(L = 1\)인 이 급수이다. 한편 코사인 급수로 바꾸면, 넓힌 함수가 연속이 되어 같은 항 수에서 오차가 훨씬 작다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주기 \(2L\): \(nx\) 대신 \(\frac{n\pi x}{L}\), 계수 앞의 \(\frac1\pi\) 대신 \(\frac1L\).</li>
-        <li>우함수는 코사인 급수, 기함수는 사인 급수.</li>
-        <li>\([0, L]\)의 함수는 우함수 또는 기함수로 넓혀 전개한다(반구간 전개).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>주기 \(2L\)이면 \(nx\) 대신 \(\frac{n\pi x}{L}\)을, 계수 앞의 \(\frac1\pi\) 대신 \(\frac1L\)을 쓴다. 우함수는 코사인 급수, 기함수는 사인 급수가 되며, 처음 질문처럼 \([0, L]\)에서만 주어진 함수는 우함수나 기함수로 넓혀 전개한다(반구간 전개).</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(f(x) = 1\) (\(0 &lt; x &lt; L\))의 반구간 코사인 급수와 사인 급수를 구하여라.
-          <details><summary>답</summary><p>코사인 급수: \(1\) (상수 하나). 사인 급수: \(\frac4\pi\left(\sin\frac{\pi x}{L} + \frac13\sin\frac{3\pi x}{L} + \cdots\right)\).</p></details>
+          <details><summary>답</summary><p>코사인 급수는 \(1\)(상수 하나)이고, 사인 급수는 \(\frac4\pi\left(\sin\frac{\pi x}{L} + \frac13\sin\frac{3\pi x}{L} + \cdots\right)\).</p></details>
         </li>
       </ol>
     </div>

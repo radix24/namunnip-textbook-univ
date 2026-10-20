@@ -2,46 +2,42 @@
 {
   "type": "card",
   "sec": "공통8-06-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c8-body.js"]
 }
 -->
 <article class="card q-card" id="text-c8-orthoseries" data-kind="본문" data-std="공통8-06-04">
   <header class="card-head"><span class="no"></span><h2>직교 급수와 일반화된 푸리에 급수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>직교 함수 \(y_0, y_1, \dots\)로 함수를 \(\sum a_my_m\)으로 전개하고 계수를 구한다.</li>
-        <li>르장드르 다항식으로 함수를 전개해 본다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>스투름-리우빌 문제와 직교성 (<a href="06-03.html">6.3절</a>), 르장드르 다항식 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">푸리에 급수의 계수를 적분 하나로 구할 수 있었던 것은 사인과 코사인이 서로 직교하기 때문이었다. 그렇다면 르장드르 다항식이나 베셀 함수처럼 다른 직교 함수들로도 함수를 쪼갤 수 있지 않을까? 구 모양 문제에서는 사인보다 르장드르 다항식이 더 자연스러울 것이다.</p>
+    <figure class="q-fig" data-q="c8-legexp">
+      <svg viewBox="0 0 520 260" role="img" aria-label="르장드르 다항식으로 전개한 부분합"></svg>
+      <div class="q-ctl">
+        <label>\(f\) <select data-k="k"><option value="0">|x|</option><option value="1" selected>x²</option><option value="2">eˣ</option></select></label>
+        <label>마지막 차수 \(N\) <input type="range" data-k="N" min="0" max="8" step="1" value="2"><output data-k="N"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(f\)(주황)와 \(P_0\)부터 \(P_N\)까지로 전개한 부분합(파랑). 계수는 직교성으로 하나씩 따로 구하며, 차수를 높일수록 오차 제곱 적분이 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>스투름-리우빌 문제와 직교성(<a href="06-03.html">6.3절</a>)과 르장드르 다항식(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.4.1</span>사인·코사인 대신 다른 직교 함수로</h3>
-    <p>푸리에 급수의 계수를 구할 수 있었던 이유는 직교성 하나였습니다. 그러므로 직교하는 함수의 모임 \(\{y_m\}\)만 있으면 같은 방법이 통합니다.</p>
+    <p>처음 질문의 예상대로, 직교하는 함수의 모임 \(\{y_m\}\)만 있으면 푸리에 급수와 같은 방법이 통한다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 6.4.1 <span class="nm">(일반화된 푸리에 급수)</span></span>
       <p>\(\{y_m\}\)이 \([a, b]\)에서 가중함수 \(r\)에 대해 직교하면, \(f = \sum a_my_m\)의 계수는</p>
       \[a_m = \frac{\int_a^brfy_m\,dx}{\int_a^bry_m^2\,dx}.\]
     </div>
-    <p>양변에 \(ry_n\)을 곱해 적분하면 \(m \ne n\)인 항이 모두 0이 되기 때문입니다. 분모 \(\|y_m\|^2 = \int ry_m^2\)은 \(y_m\)의 "길이의 제곱"입니다. 사인·코사인이면 6.1절의 공식이 됩니다.</p>
+    <p>양변에 \(ry_n\)을 곱해 적분하면 \(m \ne n\)인 항이 모두 0이 되기 때문이다. 분모 \(\|y_m\|^2 = \int ry_m^2\)은 \(y_m\)의 "길이의 제곱"이다. 그리고 사인·코사인이면 6.1절의 공식이 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.2 <span class="nm">(푸리에-르장드르 급수)</span></span>
       <p>\(f(x) = x^2\)을 \([-1, 1]\)에서 르장드르 다항식으로 전개하여라.</p>
     </div>
-    <p><i>풀이.</i> 르장드르 다항식은 \(r = 1\)로 직교하고 \(\int_{-1}^1P_m^2dx = \frac{2}{2m + 1}\)입니다. \(x^2\)은 2차이므로 \(P_0, P_1, P_2\)까지만 필요합니다. \(a_0 = \frac12\int_{-1}^1x^2dx = \frac13\), \(a_1 = 0\) (기함수), \(a_2 = \frac52\int_{-1}^1x^2\cdot\frac12(3x^2 - 1)dx = \frac54\left(\frac65 - \frac23\right) = \frac23\). 따라서 \(x^2 = \frac13P_0 + \frac23P_2\). (확인: \(\frac13 + \frac23\cdot\frac12(3x^2 - 1) = x^2\).)</p>
-    <p class="tb-aside">일반화된 푸리에 급수는 \(f\)를 가장 잘 근사합니다. 처음 \(N\)개 항만 쓴다면, 그 계수를 위 공식으로 고를 때 오차의 제곱 적분이 가장 작아집니다(최소제곱 근사). 무한히 더해 오차가 0으로 가는 함수 모임을 "완전하다"고 합니다.</p>
+    <p><i>풀이.</i> 르장드르 다항식은 \(r = 1\)로 직교하고 \(\int_{-1}^1P_m^2dx = \frac{2}{2m + 1}\)이다. 그런데 \(x^2\)은 2차이므로 \(P_0, P_1, P_2\)까지만 필요하다. \(a_0 = \frac12\int_{-1}^1x^2dx = \frac13\)이고, \(x^2P_1\)이 기함수이므로 \(a_1 = 0\)이다. 또 \(a_2 = \frac52\int_{-1}^1x^2\cdot\frac12(3x^2 - 1)dx = \frac54\left(\frac65 - \frac23\right) = \frac23\)이다. 따라서 \(x^2 = \frac13P_0 + \frac23P_2\)이며, 실제로 \(\frac13 + \frac23\cdot\frac12(3x^2 - 1) = x^2\)이다. 그림 1의 처음 상태에서 오차가 0인 것이 이 때문이다.</p>
+    <div class="tb-aside">일반화된 푸리에 급수는 \(f\)를 가장 잘 근사한다. 처음 \(N\)개 항만 쓴다면, 그 계수를 위 공식으로 고를 때 오차의 제곱 적분이 가장 작아진다(최소제곱 근사). 무한히 더해 오차가 0으로 가는 함수 모임을 "완전하다"고 한다.</div>
+    <p>그림 1에서 \(|x|\)를 고르면 꺾인 점 때문에 오차가 천천히 줄고, \(e^x\)를 고르면 몇 항만으로도 거의 겹친다. 매끄러운 함수일수록 적은 항으로 잘 근사된다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>직교 함수로 \(f = \sum a_my_m\), \(a_m = \frac{\int rfy_m}{\int ry_m^2}\).</li>
-        <li>사인·코사인이면 푸리에 급수, 르장드르 다항식이면 푸리에-르장드르 급수.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>직교 함수 \(\{y_m\}\)이 있으면 처음 질문처럼 \(f = \sum a_my_m\)으로 전개하고, 계수는 \(a_m = \frac{\int rfy_m}{\int ry_m^2}\)로 하나씩 구한다. 사인·코사인이면 푸리에 급수, 르장드르 다항식이면 푸리에-르장드르 급수이며, 이렇게 고른 계수가 최소제곱 근사를 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.4.2</span>연습문제</h3>
