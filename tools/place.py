@@ -40,6 +40,16 @@ COMMON_USE = {
     "ee": dict(ENG),
     "me": {**ENG, "공통12": None},
 }
+# 학과 배치에 넣는 공통 과목의 대단원(강의계획서 기준. 근거: curricula/univ-syllabi.md 주차별 진도).
+# 없으면 모듈 전체. 고등미적분학(2) MAT2002는 복소해석(03~06)을, 공학수학(4) MAT2017은 수치 선형대수·그래프(07·08)를 배운다.
+COMMON_UNITS = {
+    ("astro", "공통9"): ["01", "02", "03", "04", "05", "06"],
+    ("ee", "공통9"): ["01", "02", "07", "08", "09"],
+    ("me", "공통9"): ["01", "02", "07", "08", "09"],
+}
+# 강의계획서 진도에 없는 대단원: 배치에는 남기되 '보충'으로 표시한다(요람 개요에서 왔거나 다음 과목으로 잇는 단원).
+SYLLABUS_OUT = {"공통1": ["10"], "공통2": ["02"], "공통4": ["12"], "공통7": ["10"], "공통8": ["07"],
+                "공통9": ["09"], "공통10": ["06"], "공통11": ["05"], "공통12": ["07"]}
 # 연세대 학과(메인의 학과 고르기에 이 순서로 보인다)
 DEPT_ORDER = ["math", "phy", "chem", "astro", "stat", "ee", "me"]
 
@@ -120,15 +130,21 @@ def build(depts, blocks, policy, out_root=ROOT):
             mid = module_id(c["code"])
             exam = {"fin": "fin", "none": "none"}.get(policy.get(c["code"], ""), "mid+fin")
             pre = pre_ids(c.get("pre"), known)
-            place["courses"].append({"id": mid, "name": name, "no": no, "y": c["y"], "sem": c["sem"], "kind": c["kind"],
-                                     "cr": c["cr"], "units": [{"from": c["code"]}], "pre": pre, "exam": exam})
             o = mods[c["code"]]
+            pick = COMMON_UNITS.get((did, c["code"]))
+            sup = SYLLABUS_OUT.get(c["code"], [])
+            units = [u for u in o["units"] if not pick or u["n"] in pick]
+            place["courses"].append({"id": mid, "name": name, "no": no, "y": c["y"], "sem": c["sem"], "kind": c["kind"],
+                                     "cr": c["cr"], "units": [{"from": c["code"], **({"n": pick} if pick else {})}],
+                                     **({"sup": [n for n in sup if not pick or n in pick]} if sup else {}),
+                                     "pre": pre, "exam": exam})
             data["courses"].append({
                 "id": mid, "code": c["code"], "name": name, "no": no, "y": c["y"], "sem": c["sem"], "kind": c["kind"], "cr": c["cr"],
                 "extra": bool(c.get("onlyU")), "pre": pre, "preT": c.get("pre", ""), "hours": c.get("hours", ""), "books": c.get("books", ""),
                 "exam": exam, "bank": c.get("bank", 0),
                 "units": [{"n": u["n"], "t": u["t"], "el": u["el"], "s": [s["code"] for s in u["secs"]], "st": [s["t"] for s in u["secs"]],
-                           "cards": sum(len(s["cards"]) for s in u["secs"]) + len(u["review"])} for u in o["units"]],
+                           "cards": sum(len(s["cards"]) for s in u["secs"]) + len(u["review"]),
+                           **({"sup": True} if u["n"] in sup else {})} for u in units],
             })
         (pdir / f"{did}.json").write_text(json.dumps(place, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
         (ddir / f"{SCHOOL}-{did}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
