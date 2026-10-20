@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계22-06-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m22-acausal" data-kind="본문" data-std="기계22-06-03">
+  <header class="card-head"><span class="no"></span><h2>비인과 모델링과 전기기계 계통</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">DC 모터로 플라이휠을 돌리는 장치를 시뮬레이션하려면 보통 전압 식과 운동 방정식을 손으로 정리해 블록선도로 옮긴다. 그런데 부하에 스프링을 하나 더하거나 모터를 발전기로 쓰려고 하면 식을 처음부터 다시 정리해야 한다. 부품을 그림처럼 이어 붙이기만 하면 식은 도구가 알아서 세우게 할 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="전압원, 저항, 인덕터, 기전력 변환기, 관성 부하, 감쇠기를 선으로 이은 비인과 모델">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="20" y="70" width="50" height="40"/><rect x="95" y="70" width="50" height="40"/><rect x="170" y="70" width="50" height="40"/><rect x="245" y="65" width="60" height="50"/><rect x="330" y="70" width="50" height="40"/><rect x="330" y="130" width="50" height="35"/></g>
+        <g stroke="currentColor" stroke-width="1.5" fill="none"><line x1="70" y1="90" x2="95" y2="90"/><line x1="145" y1="90" x2="170" y2="90"/><line x1="220" y1="90" x2="245" y2="90"/><line x1="305" y1="90" x2="330" y2="90"/><polyline points="380,90 400,90 400,147 380,147"/></g>
+        <g fill="currentColor" font-size="12"><text x="30" y="94">전압</text><text x="108" y="94">R</text><text x="183" y="94">L</text><text x="250" y="94">기전 변환</text><text x="340" y="94">관성 J</text><text x="340" y="152">감쇠 b</text><text x="40" y="40">전기 쪽 (전압, 전류)</text><text x="260" y="40">기계 쪽 (각, 토크)</text></g>
+      </svg>
+      <figcaption>그림 1. 비인과 모델. 각 부품은 자기 식만 갖고, 연결선은 접점의 퍼텐셜(전압, 회전각)이 같고 흐름(전류, 토크)의 합이 0이라는 조건이 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>DC 모터의 토크-속도 특성과 전달함수(<a href="../19/04-01.html">메카트로닉스 4.1절</a>), 기계·전기기계 시스템 모델링(<a href="../15/01-01.html">기계시스템제어 1.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">6.3.1</span>인과 모델과 비인과 모델</h3>
+    <p>블록선도는 인과 모델이다. 각 블록은 입력을 받아 출력을 내므로, 무엇이 원인이고 무엇이 결과인지 미리 정해야 한다. 가령 저항 블록을 "전류를 넣으면 전압을 낸다"로 만들면, 전압원에 바로 이을 때는 반대 방향 블록이 필요하다. 비인과 모델링은 부품을 방정식 그 자체(\(v = Ri\))로 두고 방향을 정하지 않는다. 부품은 단자(포트)를 가지며, 각 단자에는 퍼텐셜 변수와 흐름 변수가 짝으로 있다. 전기 단자는 전압과 전류, 회전 단자는 각과 토크, 열 단자는 온도와 열류이다. 부품을 선으로 이으면 도구가 연결 조건을 자동으로 쓴다. 곧 이어진 단자들의 퍼텐셜은 같고 흐름의 합은 0이다. 전기에서 이것은 Kirchhoff 법칙이고, 기계에서는 같은 축의 각이 같고 토크가 평형이라는 조건이다. 그다음 도구가 모든 식을 모아 정리하고 상미분-대수 방정식을 수치 적분한다. Modelica가 이런 방식의 대표적인 언어이다.</p>
+
+    <h3><span class="no">6.3.2</span>DC 모터와 관성 부하</h3>
+    <p>그림 1의 계통에서 기전 변환 부품은 전기 쪽과 기계 쪽을 잇는다. 그 식은 역기전력 \(v_b = K\omega\)와 토크 \(\tau = Ki\) 두 개이다. 이때 전기 쪽이 받은 전력 \(v_bi\)와 기계 쪽이 내는 \(\tau\omega\)가 같으므로 에너지가 보존된다. 그러면 도구는 전압원, 저항, 인덕터의 식과 합쳐 \(L\,di/dt + Ri + K\omega = V\)를, 관성과 감쇠의 식과 합쳐 \(J\,d\omega/dt + b\omega = Ki\)를 얻는다. 손으로 쓰던 모터 방정식이 연결만으로 나온 것이다. 이 모델에 기어나 스프링을 더하려면 부품을 끼워 넣기만 하면 되고, 전압원을 저항 부하로 바꾸면 같은 모델이 발전기가 된다. 그래서 전기차 구동계, 로봇 관절처럼 여러 물리 영역이 섞인 계통의 설계 검토에 많이 쓴다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.3.1</span>
+      <p>\(R = 2\ \Omega\), \(K = 0.1\) N·m/A, \(b = 10^{-4}\) N·m·s, \(L\)은 무시한다. 12 V를 걸었을 때 정상 상태 각속도와 전류를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 정상 상태에서 \(d\omega/dt = 0\)이므로 \(b\omega = Ki\), \(Ri + K\omega = 12\)이다. 첫 식에서 \(i = b\omega/K = 10^{-3}\omega\)를 둘째 식에 넣으면 \((2 \times 10^{-3} + 0.1)\omega = 12\)이다. 따라서 \(\omega \approx 117.6\) rad/s(약 1120 rpm), \(i \approx 0.118\) A이다. 이때 관성 \(J\)는 정상값에 영향을 주지 않고, 그 값에 도달하는 시간만 바꾼다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>비인과 모델링은 부품을 방향 없는 방정식과 퍼텐셜·흐름 변수 짝을 가진 단자로 표현하고, 연결선을 퍼텐셜이 같고 흐름의 합이 0이라는 조건으로 바꿔 계통 식을 자동으로 세운다. DC 모터는 \(v_b = K\omega\), \(\tau = Ki\)인 변환 부품으로 전기와 기계 영역을 이으며, 부품 교체만으로 모델을 고쳐 여러 영역이 섞인 계통을 검토할 수 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>열 영역 단자의 퍼텐셜 변수와 흐름 변수는 무엇인가?
+          <details><summary>답</summary><p>온도와 열류.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 모터의 축을 잠가 \(\omega = 0\)으로 만들면 전류와 토크는 얼마인가?
+          <details><summary>답</summary><p>역기전력이 0이라 \(i = 12/2 = 6\) A, 토크는 \(0.1 \times 6 = 0.6\) N·m이다(기동 토크).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

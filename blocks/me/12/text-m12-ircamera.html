@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계12-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m12-ircamera" data-kind="본문" data-std="기계12-07-03">
+  <header class="card-head"><span class="no"></span><h2>적외선 카메라로 온도 재기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">적외선 카메라를 반짝이는 알루미늄 냄비와 검게 칠한 냄비에 대면, 둘 다 100 °C 물이 들어 있는데도 알루미늄 냄비가 훨씬 차갑게 나온다. 카메라는 온도를 직접 재는 것이 아니라 들어오는 복사를 잰다. 그렇다면 화면의 숫자를 실제 온도로 고치려면 무엇을 알아야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="카메라에 들어오는 복사는 표면이 방사한 복사, 표면이 반사한 주위 복사, 대기를 지나는 동안의 감쇠로 이루어진다">
+        <rect x="30" y="40" width="30" height="110" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <rect x="360" y="75" width="50" height="35" fill="none" stroke="currentColor"/>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="2" fill="none"><line x1="60" y1="80" x2="360" y2="85"/><polyline points="200,20 62,110 360,100"/></g>
+        <g fill="currentColor" font-size="12"><text x="20" y="168">표면 T_s, ε</text><text x="364" y="128">카메라</text><text x="160" y="72">방사 εσT_s⁴</text><text x="205" y="24">주위 T_r</text><text x="150" y="130">반사 (1 − ε)σT_r⁴</text></g>
+      </svg>
+      <figcaption>그림 1. 불투명한 회색 표면에서 카메라로 오는 복사는 표면이 방사한 몫과 주위 복사를 반사한 몫의 합이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Stefan-Boltzmann 법칙(<a href="01-01.html">1.1절</a>), 방사율과 흡수율(<a href="07-02.html">7.2절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.3.1</span>측정 원리</h3>
+    <p>적외선 카메라는 렌즈로 모은 적외선(대개 파장 8~14 μm)을 검출기 배열에 비추고, 화소마다 받은 복사를 온도로 바꿔 보여 준다. 불투명한 회색 표면에서 카메라로 오는 복사는 두 몫으로 되어 있다. 하나는 표면이 스스로 내는 \(\varepsilon\sigma T_s^4\)이고, 다른 하나는 주위 물체의 복사 \(\sigma T_r^4\)를 반사한 \((1 - \varepsilon)\sigma T_r^4\)이다. 왜냐하면 불투명 표면의 반사율이 \(1 - \varepsilon\)이기 때문이다. 카메라는 받은 복사를 흑체(\(\varepsilon = 1\))의 온도로 바꾼 겉보기 온도 \(T_a\)를 낸다. 그러므로 \(\sigma T_a^4 = \varepsilon\sigma T_s^4 + (1 - \varepsilon)\sigma T_r^4\)이다. 실제 카메라는 좁은 파장대만 재므로 \(T^4\) 대신 그 파장대의 Planck 적분을 쓰지만, 생각하는 방식은 같다.</p>
+
+    <h3><span class="no">7.3.2</span>방사율과 반사 보정</h3>
+    <p>위 식을 \(T_s\)에 대해 풀면 \(T_s^4 = [T_a^4 - (1 - \varepsilon)T_r^4]/\varepsilon\)이다. 따라서 정확히 재려면 표면 방사율 \(\varepsilon\)과 반사되는 주위 온도 \(T_r\)를 알아야 한다. 방사율이 0.9 이상인 페인트, 피부, 산화된 금속은 반사 몫이 작아 보정이 쉽다. 하지만 광택 금속은 방사율이 0.05~0.2로 작아, 카메라가 받는 복사의 대부분이 반사된 주위 복사이다. 이때는 방사율을 조금만 틀려도 온도 오차가 매우 크다. 그래서 광택 표면에는 방사율을 아는 검은 테이프나 페인트를 붙이고 그 위를 잰다. 또 열전대로 한 점의 온도를 함께 재어 카메라의 방사율 설정을 맞추는 방법도 쓴다. 이 밖에 시야각에 따라 방사율이 바뀌므로 표면에 거의 수직으로 찍고, 거리가 멀면 대기 흡수도 보정한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>산화된 강판(\(\varepsilon = 0.80\))을 적외선 카메라로 찍었더니 방사율을 1로 둔 겉보기 온도가 77 °C였다. 주위 온도는 20 °C이다. 회색 표면이라 보고 실제 표면 온도를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 절대 온도로 \(T_a = 350\) K, \(T_r = 293\) K이다. 그러면 \(T_s^4 = (350^4 - 0.2 \times 293^4)/0.8 = (1.5006 - 0.1474) \times 10^{10}/0.8 \approx 1.6915 \times 10^{10}\)이므로 \(T_s \approx 360.6\) K, 곧 약 87.5 °C이다. 방사율 보정을 하지 않으면 10 °C 넘게 낮게 읽는다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>적외선 카메라는 표면이 방사한 복사와 반사한 주위 복사의 합을 흑체 온도로 바꿔 보여 준다. 실제 온도는 \(T_s^4 = [T_a^4 - (1 - \varepsilon)T_r^4]/\varepsilon\)로 보정하며, 방사율이 작은 광택 표면은 반사 몫이 커서 오차가 크므로 검은 테이프나 열전대 비교로 방사율을 정한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>흑체 표면(\(\varepsilon = 1\))이면 겉보기 온도와 실제 온도의 관계는?
+          <details><summary>답</summary><p>반사 몫이 0이므로 두 온도가 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>광택 알루미늄(\(\varepsilon = 0.1\))을 방사율 1로 두고 쟀더니 겉보기 온도가 주위 온도와 거의 같았다. 이유를 설명하여라.
+          <details><summary>답</summary><p>받은 복사의 90%가 반사된 주위 복사이고 표면 방사는 10%뿐이다. 그래서 겉보기 온도가 주위 온도 쪽으로 크게 끌려간다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

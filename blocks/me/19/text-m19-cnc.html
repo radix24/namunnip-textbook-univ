@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계19-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m19-cnc" data-kind="본문" data-std="기계19-05-04">
+  <header class="card-head"><span class="no"></span><h2>CNC 제어기의 보간과 윤곽 오차</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">CNC 밀링 머신은 x축과 y축 모터를 따로 돌리는데도 공구가 비스듬한 직선과 매끄러운 원호를 그린다. 두 축이 정확히 맞춰 움직여야 하는데, 각 축의 위치 제어에는 늘 약간의 지연이 있다. 그 지연이 가공한 모양을 어떻게 일그러뜨릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="보간기가 경로를 축별 지령으로 나누고, 각 축 위치 루프가 서보 모터를 구동하는 CNC 제어 구조">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="20" y="70" width="80" height="40"/><rect x="140" y="30" width="90" height="36"/><rect x="140" y="114" width="90" height="36"/><rect x="270" y="30" width="70" height="36"/><rect x="270" y="114" width="70" height="36"/></g>
+        <g stroke="currentColor" stroke-width="1.5" fill="none"><polyline points="100,90 120,90 120,48 140,48"/><polyline points="120,90 120,132 140,132"/><line x1="230" y1="48" x2="270" y2="48"/><line x1="230" y1="132" x2="270" y2="132"/><polyline points="340,48 370,48 370,10 185,10 185,30"/><polyline points="340,132 370,132 370,175 185,175 185,150"/></g>
+        <g fill="currentColor" font-size="12"><text x="36" y="94">보간기</text><text x="150" y="52">x 위치 루프</text><text x="150" y="136">y 위치 루프</text><text x="280" y="52">x 서보</text><text x="280" y="136">y 서보</text><text x="376" y="96">엔코더 되먹임</text></g>
+      </svg>
+      <figcaption>그림 1. 보간기는 매 보간 주기마다 경로 위의 다음 점을 축별 위치 지령으로 나누고, 축마다 독립된 위치 루프가 서보 모터를 구동한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>엔코더 피드백 위치 PID 제어(<a href="05-01.html">5.1절</a>), 사다리꼴 속도 프로파일(<a href="05-03.html">5.3절</a>)을 쓴다.</div>
+
+    <h3><span class="no">5.4.1</span>보간</h3>
+    <p>CNC 프로그램은 "이 점까지 이 이송 속도로 직선으로" 또는 "이 중심으로 이 점까지 원호로" 같은 경로 명령이다. 보간기는 이 명령을 짧은 보간 주기(대개 0.1~1 ms)마다 경로 위의 다음 목표점으로 쪼갠다. 직선 보간에서는 이송 속도 \(F\)로 한 주기에 \(F\Delta t\)만큼 경로를 따라 나아가고, 이것을 축 방향 성분으로 나눠 각 축 지령을 만든다. 원호 보간에서는 중심각을 일정하게 늘리며 \(x = x_c + r\cos\theta\), \(y = y_c + r\sin\theta\)를 계산한다. 또 시작과 끝에서 갑자기 속도가 바뀌면 기계가 흔들리므로, 보간 전이나 후에 가감속 프로파일을 넣어 속도를 부드럽게 바꾼다.</p>
+
+    <h3><span class="no">5.4.2</span>추종 오차와 윤곽 오차</h3>
+    <p>각 축의 위치 루프는 비례 이득 \(K_v\)(단위 1/s)로 지령을 따라간다. 이 루프가 일정한 속도 \(v\)를 따라갈 때는 늘 \(e = v/K_v\)만큼 뒤처진다. 이것을 추종 오차라 한다. 그런데 가공 정밀도를 정하는 것은 축별 추종 오차가 아니라, 공구가 원하는 경로에서 수직으로 벗어난 거리인 윤곽 오차이다. 두 축의 \(K_v\)가 같으면 직선 경로에서는 두 축이 같은 비율로 늦으므로 공구가 경로 위에서 조금 뒤처질 뿐 윤곽 오차는 0이다. 하지만 두 축 이득이 다르면 한 축이 더 늦어, 공구가 원하는 직선에서 옆으로 평행하게 밀린 채 움직인다. 원호에서는 이득이 같아도 지연 때문에 반지름이 줄어드는데, 그 크기는 대략 \(\Delta r \approx v^2/(2K_v^2r)\)이다. 그래서 고속 가공에서는 위치 루프 이득을 높이고 두 축 이득을 맞추며, 지령 속도를 미리 더해 주는 속도 피드포워드로 추종 오차 자체를 줄인다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>두 축의 위치 루프 이득이 모두 \(K_v = 30\ \mathrm{s^{-1}}\)인 CNC가 반지름 10 mm 원호를 이송 속도 3 m/min으로 가공한다. 축별 최대 추종 오차와 반지름 감소를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(v = 3/60 = 0.05\) m/s이므로 추종 오차는 \(0.05/30 \approx 1.67\) mm이다. 반지름 감소는 \(0.05^2/(2 \times 30^2 \times 0.01) \approx 1.4 \times 10^{-4}\) m, 곧 0.14 mm이다. 즉 각 축은 1.7 mm나 뒤처지지만 둘이 같이 늦으므로 윤곽 오차는 그보다 훨씬 작다. 그래도 정밀 가공에는 0.14 mm가 크므로 피드포워드를 쓰거나 속도를 낮춘다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>CNC 보간기는 직선·원호 명령을 보간 주기마다 축별 위치 지령으로 나누고, 축마다 위치 루프가 서보를 구동한다. 비례 위치 루프의 추종 오차는 \(v/K_v\)이며, 가공 정밀도는 경로에서 수직으로 벗어난 윤곽 오차가 정한다. 두 축 이득이 다르면 직선 경로가 옆으로 밀리고, 원호에서는 반지름이 \(v^2/(2K_v^2r)\)쯤 줄어든다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>이송 속도를 두 배로 하면 원호의 반지름 감소는 몇 배가 되는가?
+          <details><summary>답</summary><p>속도의 제곱에 비례하므로 4배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>x축 이득이 30, y축 이득이 20 s⁻¹일 때 45° 직선을 가공하면 어떤 오차가 생기는가?
+          <details><summary>답</summary><p>y축 추종 오차가 x축의 1.5배라 공구가 경로보다 x 쪽으로 치우친다. 따라서 직선에 평행하게 밀린 일정한 윤곽 오차 \(v/120\)(\(v\)는 m/s, 결과는 m)가 생긴다. 두 축 이득을 맞추어 없앤다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
