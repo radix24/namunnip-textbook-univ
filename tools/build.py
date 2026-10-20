@@ -218,11 +218,21 @@ def relink(html, sec):
     return RE_ATTR_URL.sub(lambda a: a.group(1) + fix(a.group(2)) + a.group(3), html)
 
 
-def check_links(cdir):
-    """c/ 아래 페이지의 내부 링크(href·src) 가운데 가리키는 파일이 없는 것을 센다(빌드 끝 경고)"""
+def check_links(cdir, codes=None):
+    """c/ 아래 페이지의 내부 링크(href·src) 가운데 가리키는 파일이 없는 것을 센다(빌드 끝 경고).
+    codes에 dict를 주면 보이는 글자(태그·속성·스크립트·스타일 밖) 속에 남은 내부 코드(QURI 코드, 영문 모듈 id)도 센다."""
     bad, n_links = {}, 0
     for p in cdir.rglob("*.html"):
-        for a in RE_ATTR_URL.finditer(p.read_text(encoding="utf-8")):
+        html = p.read_text(encoding="utf-8")
+        if codes is not None:
+            vis = re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", " ", html, flags=re.S)
+            for m in CODE_RX.finditer(vis):
+                if m.group(1) in NAMES:
+                    codes[f"{p.relative_to(ROOT).as_posix()}: {m.group(0)}"] = codes.get(f"{p.relative_to(ROOT).as_posix()}: {m.group(0)}", 0) + 1
+            if MOD_RX[0]:
+                for m in MOD_RX[0].finditer(vis):
+                    codes[f"{p.relative_to(ROOT).as_posix()}: {m.group(1)}"] = codes.get(f"{p.relative_to(ROOT).as_posix()}: {m.group(1)}", 0) + 1
+        for a in RE_ATTR_URL.finditer(html):
             u = a.group(2)
             if not u or re.match(r"^(?:[a-z]+:|#|/)", u) or "${" in u:
                 continue
@@ -285,7 +295,54 @@ THEME_BTN = ('<button type="button" class="theme-btn" aria-label="다크 모드"
              '<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>')
 
 
+CODE_RX = re.compile(r"(?<![가-힣A-Za-z0-9])((?:공통|수학|물리|화학|천우|응통|전전|기계)\d+)(?:-(\d+))?(?:-(\d+|R))?(?!\d)")
+NAMES = {}     # QURI 과목 코드 → 교재(과목) 이름 (write_pages에서 채운다)
+MOD_RX = [None]   # 영문 모듈 id(calc1, math10 …)를 찾는 식 (write_pages에서 만든다)
+MOD_NAMES = {}    # 모듈 id → 교재 이름
+CUR = [None]   # 지금 쓰는 페이지의 과목 코드
+
+
+def _code_rep(m):
+    code, u, s = m.groups()
+    if code not in NAMES:
+        return m.group(0)
+    pre = "" if code == CUR[0] else NAMES[code] + " "
+    if u is None:
+        return NAMES[code]
+    if s is None:
+        return f"{pre}{int(u)}단원"
+    return f"{pre}{int(u)}단원 마무리" if s == "R" else f"{pre}{int(u)}.{int(s)}"
+
+
+def hide_text(t):
+    t = CODE_RX.sub(_code_rep, t)
+    if MOD_RX[0]:
+        t = MOD_RX[0].sub(lambda m: MOD_NAMES[m.group(1)], t)
+    return t
+
+
+def hide_codes(html):
+    """화면에 보이는 글자 속 내부 코드를 사람이 읽는 이름으로 바꾼다(사용자 원칙: 내부 과목 코드가 화면에 보이지 않게).
+    QURI 코드: 공통1 → 교재 이름, 공통1-02 → 2단원(다른 과목이면 '교재 이름 2단원'), 공통1-02-01 → 2.1, …-R → 단원 마무리.
+    영문 모듈 id(calc1, math10): 교재 이름. 태그 속성과 <script>·<style> 안은 그대로 둔다(스크립트·링크가 코드를 쓴다)."""
+    parts = re.split(r"(<script\b.*?</script>|<style\b.*?</style>)", html, flags=re.S)
+    return "".join(p if p.startswith(("<script", "<style")) else
+                   re.sub(r">([^<]+)<", lambda m: ">" + hide_text(m.group(1)) + "<", p) for p in parts)
+
+
+def hide_item(it):
+    """문제은행 문항의 글(문제·보기·힌트·풀이) 속 내부 코드도 같은 방식으로"""
+    for k, v in list(it.items()):
+        if k in ("q", "a", "ct", "sol") and isinstance(v, str):
+            it[k] = hide_codes(f"<i>{v}</i>")[3:-4]
+        elif k in ("h", "ch") and isinstance(v, list):
+            it[k] = [hide_codes(f"<i>{x}</i>")[3:-4] if isinstance(x, str) else x for x in v]
+    return it
+
+
 def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None, body_attrs="", module=""):
+    body = hide_codes(body)
+    title, desc = hide_text(title), hide_text(desc)
     head_js = ('(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\\b/.exec(location.search),t=q&&q[1];'
                'if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";'
                'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c"})()')
@@ -778,9 +835,14 @@ def write_pages(depts, blocks, sidx, links):
     n_pages = n_cards = 0
     n_bank = [0, 0]   # 문제 수, 문제은행이 있는 과목 수
     used = set()
+    # 화면 글자 속 내부 코드를 바꿀 이름표(hide_codes): QURI 코드와 영문 모듈 id → 교재 이름
+    NAMES.update({x["code"]: x["name"] for dd in depts for x in dd["courses"]})
+    MOD_NAMES.update({place.module_id(x["code"]): x["name"] for dd in depts for x in dd["courses"]})
+    MOD_RX[0] = re.compile(r"(?<![A-Za-z0-9_/.#-])(" + "|".join(sorted(map(re.escape, MOD_NAMES), key=len, reverse=True)) + r")(?![A-Za-z0-9_])")
     for d in depts:
         for c in d["courses"]:
             mid = place.module_id(c["code"])
+            CUR[0] = c["code"]
             base = cdir / mid
             base.mkdir(parents=True, exist_ok=True)
             rel = "../../"
@@ -950,6 +1012,7 @@ def write_pages(depts, blocks, sidx, links):
             noexam = EXAM_POLICY.get(c["code"]) == "none"    # 강의계획서에 중간·기말이 모두 없는 과목: 시험 연습을 두지 않는다
             xs = [] if noexam else exam_items(c)
             items = [] if noexam else xs + course_bank(c)
+            items = [hide_item(it) for it in items]
             c["bank"], c["xbank"], c["noexam"] = len(items), len(xs), noexam
             if noexam:
                 pass
@@ -1198,7 +1261,14 @@ def main():
     (ROOT / "data" / "univ.json").write_text(json.dumps(univ, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
-    n_links, bad = check_links(ROOT / "c")
+    codes = {}
+    n_links, bad = check_links(ROOT / "c", codes)
+    if codes:
+        print(f"경고: 보이는 글자 속 내부 코드 {sum(codes.values())}개(서로 다른 {len(codes)}곳). 예:", file=sys.stderr)
+        for k in sorted(codes)[:15]:
+            print(f"  {k}", file=sys.stderr)
+    else:
+        print("보이는 글자 속 내부 코드: 0개")
     if bad:
         print(f"경고: 끊긴 내부 링크 {sum(bad.values())}개(서로 다른 {len(bad)}곳) / 내부 링크 {n_links}개. 예:", file=sys.stderr)
         for k in sorted(bad)[:15]:
