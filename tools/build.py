@@ -20,6 +20,7 @@ import place   # noqa: E402  풀 목차·학과 배치표·학과 요약(tools/p
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "curricula"
+SITE_URL = "https://radix24.github.io/namunnip-textbook-univ/"   # 공유 미리보기(og:image)와 sitemap.xml의 절대 주소
 
 # 학과: id, 이름, 짧은 이름, 파일, 소속
 DEPTS = [
@@ -360,6 +361,12 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{esc(title)} — QURI</title>
   <meta name="description" content="{esc(desc)}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="QURI 큐리">
+  <meta property="og:title" content="{esc(title)} — QURI">
+  <meta property="og:description" content="{esc(desc)}">
+  <meta property="og:image" content="{SITE_URL}assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="{rel}assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="{rel}assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="{rel}manifest.webmanifest">
@@ -1260,8 +1267,16 @@ def main():
         for c in d["courses"]:
             c["id"] = place.module_id(c["code"])
     (ROOT / "data" / "univ.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    # 로드맵은 대단원·성취기준·카드 목록을 쓰지 않는다: 과목 정보만 담은 가벼운 합본(univ.json의 약 1/10)
+    road = [{**d, "courses": [{k: v for k, v in c.items() if k != "units"} for c in d["courses"]]} for d in out]
+    (ROOT / "data" / "roadmap.json").write_text(json.dumps(road, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
+    # 검색 엔진용 사이트맵(빌드 산출물). robots.txt는 radix24.github.io 저장소에 있다
+    pages = ["", "roadmap.html"] + sorted(p.relative_to(ROOT).as_posix().removesuffix("index.html") for p in (ROOT / "c").rglob("*.html"))
+    (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                                      + "".join(f"<url><loc>{SITE_URL}{u}</loc></url>\n" for u in pages) + "</urlset>\n",
+                                      encoding="utf-8", newline="\n")
     codes = {}
     n_links, bad = check_links(ROOT / "c", codes)
     if codes:

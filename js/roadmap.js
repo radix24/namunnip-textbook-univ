@@ -1,5 +1,5 @@
 /* QURI 커리큘럼 안내와 졸업 로드맵 (roadmap.html)
-   - 과목: data/univ.json (tools/build.py가 만드는 전 학과 합본, 예전 js/toc.js의 window.UNIV와 같은 꼴)
+   - 과목: data/roadmap.json (tools/build.py가 만드는 전 학과 합본 data/univ.json에서 대단원·카드 목록을 뺀 것)
    - 졸업 요건: curricula/univ-requirements.json (학교의 2020~2026 요람을 옮긴 것. 2026학번이 기본이고 학번별 차이는 byCohort,
      QURI에 카드가 없는 4학년 과목은 fourth)
    - 개설 이력: curricula/univ-offered.json
@@ -32,7 +32,7 @@
   /* ---------- 과목 색인 ---------- */
   const COURSE = new Map();
   const DEPT = new Map();
-  function loadUniv(U) {   // data/univ.json을 받은 뒤 색인을 만든다
+  function loadUniv(U) {   // data/roadmap.json을 받은 뒤 색인을 만든다
     UNIV = U || [];
     COURSE.clear(); DEPT.clear();
     UNIV.forEach((d) => { DEPT.set(d.id, d); d.courses.forEach((c) => COURSE.set(c.code, c)); });
@@ -1066,7 +1066,7 @@
   const placeDept = () => { try { const v = localStorage.getItem("quri-place") || ""; const m = /^yonsei\/(\w+)$/.exec(v); return m ? m[1] : ""; } catch (e) { return ""; } };
   const setPlace = (id) => { try { if (id && id !== "common") localStorage.setItem("quri-place", "yonsei/" + id); } catch (e) { /* 저장소를 막은 브라우저 */ } };
   Promise.all([
-    fetch("data/univ.json").then((r) => { if (!r.ok) throw new Error("data/univ.json " + r.status); return r.json(); }),
+    fetch("data/roadmap.json").then((r) => { if (!r.ok) throw new Error("data/roadmap.json " + r.status); return r.json(); }),
     fetch("curricula/univ-requirements.json").then((r) => r.json()),
     fetch("curricula/univ-offered.json").then((r) => r.json()).catch(() => ({ codes: {} })),
     fetch("curricula/univ-season.json").then((r) => r.json()).catch(() => ({ codes: {}, lib: {}, terms: [] })),
@@ -1111,7 +1111,7 @@
   }).catch((err) => {
     console.error(err);
     $("#tab-plan").disabled = true;
-    $("#guide").insertAdjacentHTML("afterbegin", '<p class="rm-alert">과목 자료(data/univ.json)나 졸업 요건 자료(curricula/univ-requirements.json)를 읽지 못했습니다. 이 폴더를 웹 서버(python -m http.server)로 열었는지, tools/build.py를 한 번 돌렸는지 확인하세요.</p>');
+    $("#guide").insertAdjacentHTML("afterbegin", '<p class="rm-alert">과목 자료(data/roadmap.json)나 졸업 요건 자료(curricula/univ-requirements.json)를 읽지 못했습니다. 이 폴더를 웹 서버(python -m http.server)로 열었는지, tools/build.py를 한 번 돌렸는지 확인하세요.</p>');
     TAB = "guide";
     if (UNIV.length) renderGuide();
   });
