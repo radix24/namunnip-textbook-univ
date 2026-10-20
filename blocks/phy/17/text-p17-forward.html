@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리17-05-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p17-forward" data-kind="본문" data-std="물리17-05-01">
+  <header class="card-head"><span class="no"></span><h2>신경망의 순전파</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">곡선 적합에서는 모형의 꼴을 물리에서 정했다. 꼴을 모를 때 "아무 함수나 흉내 낼 수 있는" 모형이 있다면 편할 것이다. 신경망은 간단한 선형 변환과 비선형 함수를 겹겹이 쌓아 그런 모형을 만든다. 그 계산은 행렬 곱 몇 번이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="입력 2개, 은닉층 4개, 출력 1개인 신경망의 층 구조">
+        <g stroke="var(--ink-3, #888)">
+          <line x1="80" y1="70" x2="220" y2="35"/><line x1="80" y1="70" x2="220" y2="75"/><line x1="80" y1="70" x2="220" y2="115"/><line x1="80" y1="70" x2="220" y2="155"/>
+          <line x1="80" y1="120" x2="220" y2="35"/><line x1="80" y1="120" x2="220" y2="75"/><line x1="80" y1="120" x2="220" y2="115"/><line x1="80" y1="120" x2="220" y2="155"/>
+          <line x1="220" y1="35" x2="360" y2="95"/><line x1="220" y1="75" x2="360" y2="95"/><line x1="220" y1="115" x2="360" y2="95"/><line x1="220" y1="155" x2="360" y2="95"/>
+        </g>
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><circle cx="80" cy="70" r="12"/><circle cx="80" cy="120" r="12"/></g>
+        <g fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"><circle cx="220" cy="35" r="12"/><circle cx="220" cy="75" r="12"/><circle cx="220" cy="115" r="12"/><circle cx="220" cy="155" r="12"/></g>
+        <circle cx="360" cy="95" r="12" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <g font-size="12" fill="currentColor"><text x="56" y="180">입력 x</text><text x="186" y="186">은닉 h = σ(W₁x + b₁)</text><text x="340" y="130">출력 ŷ</text></g>
+      </svg>
+      <figcaption>그림 1. 은닉층이 하나인 신경망. 선마다 가중치가 하나씩 있고, 한 층의 계산은 행렬 곱에 치우침을 더하고 활성화 함수를 성분마다 씌우는 것이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱 곡선 적합(<a href="02-01.html">2.1절</a>), 회귀와 분류(<a href="04-01.html">4.1절</a>), NumPy 배열 연산(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">5.1.1</span>층의 계산</h3>
+    <p>입력 \(\mathbf x \in \mathbb R^{d}\)에서 은닉층 \(\mathbf h \in \mathbb R^{m}\)을 거쳐 출력 \(\hat y\)를 내는 신경망은</p>
+    \[\mathbf h = \sigma(W_1\mathbf x + \mathbf b_1), \qquad \hat y = W_2\mathbf h + b_2\]
+    <p>이다. \(W_1\)은 \(m\times d\) 행렬, \(\mathbf b_1\)은 치우침 벡터, \(\sigma\)는 성분마다 씌우는 비선형 함수이다. 흔히 \(\mathrm{ReLU}(z) = \max(0, z)\)나 \(\tanh\)를 쓴다. 만약 \(\sigma\)가 없다면 두 층을 합쳐도 \(W_2W_1\mathbf x\)로 선형 모형 하나와 같다. 비선형 함수가 있어야 층을 쌓는 의미가 생긴다. 실제로 은닉층 하나에 뉴런을 충분히 두면 유계 구간의 연속 함수를 원하는 정확도로 근사할 수 있다(보편 근사 정리).</p>
+    <p>자료 \(N\)개를 한꺼번에 계산하려면 입력을 \(N\times d\) 행렬 \(X\)로 쌓는다. 그러면 \(H = \sigma(XW_1^{\mathsf T} + \mathbf b_1)\)이고, 브로드캐스팅이 치우침을 각 행에 더한다. 다음은 NumPy로 쓴 순전파이다.</p>
+<pre class="mono small">import numpy as np
+rng = np.random.default_rng(0)
+d, m = 1, 16
+W1 = rng.normal(0, 1, (m, d)); b1 = np.zeros(m)
+W2 = rng.normal(0, 1/np.sqrt(m), (1, m)); b2 = 0.0
+
+def forward(X)&#58;
+    H = np.tanh(X @ W1.T + b1)    # (N, m)
+    return H @ W2.T + b2, H        # (N, 1)
+
+def loss(yhat, y)&#58;
+    return np.mean((yhat - y)**2)</pre>
+
+    <h3><span class="no">5.1.2</span>물리 자료에 맞추기</h3>
+    <p>손실 함수는 회귀에서 평균 제곱 오차 \(L = \frac1N\sum(\hat y_i - y_i)^2\)를 쓴다. 측정 오차 \(\sigma_i\)가 다르면 곡선 적합처럼 \(\sigma_i^2\)로 나눈 카이제곱을 쓸 수 있다. 학습은 \(L\)을 가중치에 대해 최소화하는 것이고, 기울기는 다음 절의 역전파로 구한다. 이때 입력과 출력을 평균 0, 표준편차 1로 맞추어 두면 학습이 안정된다. 활성화 함수가 \(|z|\)가 큰 곳에서 포화해 기울기가 0이 되는 것을 막기 위해서이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>감쇠 진동 자료 \(y = e^{-t/2}\cos 3t\)를 \(t \in [0, 5]\)에서 200개 만들어 위 신경망(은닉 뉴런 16개)에 맞추었다. 매개변수는 몇 개이고, 학습 구간 밖 \(t = 8\)에서의 예측은 믿을 만한가?</p>
+    </div>
+    <p><i>풀이.</i> \(W_1\) 16개, \(\mathbf b_1\) 16개, \(W_2\) 16개, \(b_2\) 1개로 49개이다. 물리 모형 \(Ae^{-t/\tau}\cos(\omega t + \phi)\)의 매개변수 4개보다 훨씬 많다. 그런데 \(\tanh\) 뉴런은 \(t\)가 커지면 포화하므로 학습 구간 밖에서 신경망의 출력은 상수에 가까워진다. 따라서 \(t = 8\)의 예측은 진동을 재현하지 못한다. 신경망은 보간에는 강하지만 외삽에는 물리 모형을 대신할 수 없다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>신경망의 한 층은 행렬 곱, 치우침 더하기, 비선형 활성화로 이루어지고, 자료를 행렬로 쌓으면 순전파 전체가 행렬 연산 몇 번이다. 비선형 함수가 있어야 층을 쌓는 의미가 있으며, 은닉층 하나로도 연속 함수를 근사할 수 있다. 물리 자료에 맞출 때는 입출력을 표준화하고, 매개변수가 많은 모형은 외삽에 약하다는 점을 기억한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>입력 3개, 은닉층 두 개(각 32개), 출력 2개인 신경망의 매개변수 수를 구하여라.
+          <details><summary>답</summary><p>\((3\cdot32 + 32) + (32\cdot32 + 32) + (32\cdot2 + 2) = 128 + 1056 + 66 = 1250\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>활성화 함수를 \(\sigma(z) = z\)로 바꾸면 은닉층이 몇 개이든 모형이 선형 회귀와 같아짐을 보여라.
+          <details><summary>답</summary><p>\(W_L\cdots W_1\mathbf x + (\text{상수 벡터})\)로 행렬 하나와 치우침 하나로 합쳐진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

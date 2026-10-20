@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "물리6-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-p6-schmitt" data-kind="본문" data-std="물리6-07-03">
+  <header class="card-head"><span class="no"></span><h2>Schmitt 트리거</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">잡음 섞인 느린 신호를 비교기에 넣으면, 문턱을 지나는 순간 출력이 여러 번 덜컥거린다. 문턱을 하나가 아니라 두 개로 만들면, 곧 올라갈 때와 내려갈 때 다른 문턱을 쓰면 이 덜컥거림을 없앨 수 있다. 어떻게 만들고, 문턱은 어떻게 정하는가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="입력-출력 전달 특성: 상승 문턱과 하강 문턱이 다른 히스테리시스 고리">
+        <line x1="40" y1="100" x2="420" y2="100" stroke="var(--ink-3, #888)"/>
+        <line x1="220" y1="20" x2="220" y2="180" stroke="var(--ink-3, #888)"/>
+        <path d="M60 40 L260 40 L260 160 L400 160" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <path d="M400 160 L180 160 L180 40" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2" stroke-dasharray="6 3"/>
+        <g font-size="12" fill="currentColor"><text x="250" y="116">V_TH</text><text x="160" y="116">V_TL</text><text x="60" y="34">+V_sat</text><text x="360" y="176">−V_sat</text><text x="400" y="94">V_in</text></g>
+      </svg>
+      <figcaption>그림 1. 반전 Schmitt 트리거의 전달 특성. 입력이 \(V_{TH}\)를 넘어야 출력이 낮아지고, \(V_{TL}\) 아래로 내려가야 다시 높아진다. 두 문턱의 차가 히스테리시스이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연산증폭기의 포화와 비교기 동작, 전압 분배를 쓴다.</div>
+
+    <h3><span class="no">7.3.1</span>양의 궤환으로 문턱 만들기</h3>
+    <p>지금까지의 연산증폭기 회로는 음의 궤환으로 출력을 입력에 맞췄다. Schmitt 트리거는 반대로 출력을 저항 분배기 \(R_1, R_2\)로 비반전 입력에 되먹인다(양의 궤환). 신호는 반전 입력에 넣는다. 출력이 \(+V_{\text{sat}}\)이면 비반전 입력은 \(V_{TH} = \frac{R_1}{R_1 + R_2}V_{\text{sat}}\)이고, 입력이 이 값을 넘는 순간 출력이 \(-V_{\text{sat}}\)로 넘어간다. 그런데 넘어가자마자 비반전 입력도 \(V_{TL} = -\frac{R_1}{R_1 + R_2}V_{\text{sat}}\)로 바뀐다. 그러면 입력이 \(V_{TH}\) 근처에서 잡음으로 조금 흔들려도 새 문턱 \(V_{TL}\)까지 내려가지 않는 한 출력은 다시 바뀌지 않는다.</p>
+    <p>양의 궤환은 전환을 스스로 가속하기도 한다. 출력이 조금 내려가면 비반전 입력도 내려가 차이가 더 커지므로, 전환이 연산증폭기의 슬루율이 허락하는 만큼 빠르게 일어난다. 느린 입력을 깔끔한 사각파로 바꾸는 이유이다.</p>
+
+    <h3><span class="no">7.3.2</span>설계</h3>
+    <p>히스테리시스 폭은 \(\Delta V = V_{TH} - V_{TL} = \frac{2R_1}{R_1 + R_2}V_{\text{sat}}\)이다. 잡음의 첨두 간 진폭보다 크게 잡으면 덜컥거림이 없어진다. 문턱의 중심을 0이 아닌 \(V_{\text{ref}}\)로 옮기려면 \(R_1\)의 아래쪽 끝을 접지 대신 \(V_{\text{ref}}\)에 연결한다. 그러면 두 문턱이 \(\frac{R_2}{R_1 + R_2}V_{\text{ref}}\)만큼 함께 옮겨진다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>\(V_{\text{sat}} = \pm13\) V일 때 문턱 \(\pm0.5\) V인 Schmitt 트리거를 설계하여라. 첨두 간 0.4 V 잡음이 섞인 신호를 넣으면 어떻게 되는가?</p>
+    </div>
+    <p><i>풀이.</i> \(\frac{R_1}{R_1 + R_2}\cdot13 = 0.5\)에서 \(\frac{R_1}{R_1 + R_2} = \frac{1}{26}\)이다. \(R_1 = 1\) kΩ, \(R_2 = 25\) kΩ로 고르면 된다. 히스테리시스 폭은 1 V이고 잡음 0.4 V보다 크므로, 출력은 신호가 문턱을 지날 때 한 번만 바뀐다. 문턱이 하나인 비교기였다면 문턱 근처에서 잡음이 문턱을 여러 번 넘나들어 출력이 여러 번 바뀐다. 오실로스코프의 XY 모드로 입력과 출력을 함께 그리면 그림 1의 고리를 직접 볼 수 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Schmitt 트리거는 출력을 비반전 입력에 되먹이는 양의 궤환으로, 출력 상태에 따라 다른 두 문턱을 만든다. 히스테리시스 폭 \(\frac{2R_1}{R_1 + R_2}V_{\text{sat}}\)을 잡음보다 크게 잡으면 느리고 잡음 섞인 신호도 깔끔한 사각파가 된다. 기준 전압으로 문턱의 중심을 옮길 수 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(R_1 = 2\) kΩ, \(R_2 = 18\) kΩ, \(V_{\text{sat}} = \pm12\) V일 때 두 문턱을 구하여라.
+          <details><summary>답</summary><p>\(\pm1.2\) V.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>Schmitt 트리거의 출력을 RC 회로로 반전 입력에 되먹이면 이완 발진기가 된다. 주기가 \(2RC\ln\frac{1 + \beta}{1 - \beta}\)(\(\beta = \frac{R_1}{R_1 + R_2}\))임을 설명하여라.
+          <details><summary>답</summary><p>축전기가 \(\pm V_{\text{sat}}\)을 향해 지수적으로 충전되다 문턱 \(\pm\beta V_{\text{sat}}\)에서 출력이 바뀐다. 한쪽 충전 시간이 \(RC\ln\frac{1 + \beta}{1 - \beta}\)이고 두 번이면 한 주기이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
