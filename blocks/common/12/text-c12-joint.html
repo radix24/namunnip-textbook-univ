@@ -2,39 +2,32 @@
 {
   "type": "card",
   "sec": "공통12-05-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c12-body.js"]
 }
 -->
 <article class="card q-card" id="text-c12-joint" data-kind="본문" data-std="공통12-05-01">
   <header class="card-head"><span class="no"></span><h2>결합분포, 주변분포, 조건부분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>두 확률변수의 결합 pmf와 결합 pdf를 쓴다.</li>
-        <li>결합분포에서 주변분포와 조건부분포를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>조건부확률 (<a href="01-02.html">1.2절</a>), pmf와 pdf (<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>), 이중적분 (<a href="../2/06-01.html">공통2 6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">어떤 기계가 하루에 멈춘 횟수와 그날 나온 불량 수를 함께 기록했다. 멈춘 날에는 불량이 더 많이 나올까? 두 양을 따로 보면 답할 수 없다. 두 확률변수를 한 표에 담고, 그 표에서 한 변수만의 분포와 "한쪽을 알 때 다른 쪽"의 분포를 어떻게 꺼낼까?</p>
+    <figure class="q-fig" data-q="c12-joint">
+      <svg viewBox="0 0 520 210" role="img" aria-label="결합 확률표와 조건부분포"></svg>
+      <div class="q-ctl"><label>보기 <select data-k="c"><option value="0" selected>주변분포</option><option value="1">X = 0일 때 Y</option><option value="2">X = 1일 때 Y</option></select></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 정지 횟수 \(X\)와 불량 수 \(Y\)의 결합 확률표. 가장자리의 합이 주변분포이고, 한 행만 골라 그 행의 합으로 나누면 조건부분포(오른쪽 막대)가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>조건부확률(<a href="01-02.html">1.2절</a>), pmf와 pdf(<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>), 이중적분(<a href="../2/06-01.html">미분적분학(2) 6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>결합분포</h3>
-    <p>한 부품의 길이와 무게, 한 날의 주문 수와 반품 수처럼 두 양을 함께 다룰 때 결합분포를 씁니다.</p>
-    <ul class="tb-list">
-      <li>이산: 결합 pmf \(p(x, y) = P(X = x, Y = y)\), \(\sum_x\sum_y p(x, y) = 1\).</li>
-      <li>연속: 결합 pdf \(f(x, y) \ge 0\), \(P((X, Y) \in A) = \iint_A f(x, y)\,dx\,dy\), 전체 적분 1.</li>
-    </ul>
+    <p>처음 질문처럼 한 부품의 길이와 무게, 한 날의 주문 수와 반품 수 같은 두 양을 함께 다룰 때 <em>결합분포</em>를 쓴다. 이산이면 결합 pmf \(p(x, y) = P(X = x, Y = y)\)이고 \(\sum_x\sum_y p(x, y) = 1\)이다. 연속이면 결합 pdf \(f(x, y) \ge 0\)이고, \(P((X, Y) \in A) = \iint_A f(x, y)\,dx\,dy\)이며 전체 적분은 1이다.</p>
 
     <h3><span class="no">5.1.2</span>주변분포</h3>
-    <p>한 변수만의 분포는 다른 변수에 대해 모두 더하거나 적분해서 얻습니다.</p>
+    <p>한 변수만의 분포는 다른 변수에 대해 모두 더하거나 적분해서 얻으며, 이것을 <em>주변분포</em>라 한다.</p>
     \[p_X(x) = \sum_y p(x, y), \qquad f_X(x) = \int_{-\infty}^{\infty} f(x, y)\,dy.\]
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
       <p>어떤 기계의 하루 정지 횟수 \(X\)(0 또는 1)와 불량 수 \(Y\)(0, 1, 2)의 결합 pmf가 아래와 같다. 주변분포와 \(X = 1\)일 때 \(Y\)의 조건부분포를 구하여라.</p>
-    </div>
-    <table class="tb-table">
+      <table class="tb-table">
       <thead><tr><th></th><th>\(Y = 0\)</th><th>\(Y = 1\)</th><th>\(Y = 2\)</th><th>\(p_X\)</th></tr></thead>
       <tbody>
         <tr><td>\(X = 0\)</td><td>0.10</td><td>0.20</td><td>0.10</td><td>0.40</td></tr>
@@ -42,25 +35,20 @@
         <tr><td>\(p_Y\)</td><td>0.25</td><td>0.45</td><td>0.30</td><td>1</td></tr>
       </tbody>
     </table>
-    <p>주변분포는 표의 가장자리(행 합, 열 합)에 적힌다는 데서 이름이 왔습니다.</p>
+    </div>
+    <p><i>풀이.</i> 행을 더하면 \(p_X\)가 0.40, 0.60이고, 열을 더하면 \(p_Y\)가 0.25, 0.45, 0.30이다. 주변분포라는 이름은 이렇게 표의 가장자리(행 합, 열 합)에 적힌다는 데서 왔다. 조건부분포는 다음 절에서 구한다.</p>
 
     <h3><span class="no">5.1.3</span>조건부분포</h3>
+    <p>한쪽 값을 알 때 다른 쪽의 분포는 조건부확률의 정의를 그대로 쓴 <em>조건부분포</em>이다.</p>
     \[p_{Y \mid X}(y \mid x) = \frac{p(x, y)}{p_X(x)}, \qquad f_{Y \mid X}(y \mid x) = \frac{f(x, y)}{f_X(x)}.\]
-    <p>위 예에서 \(X = 1\)일 때 \(Y\)의 분포는 \(\frac{0.15}{0.6}, \frac{0.25}{0.6}, \frac{0.20}{0.6} = 0.25, 0.417, 0.333\)입니다. 정지가 있던 날의 조건부 평균 불량 수는 \(0.417 + 2(0.333) \approx 1.08\)로, 전체 평균 \(E[Y] = 0.45 + 0.6 = 1.05\)보다 조금 큽니다.</p>
+    <p>위 예에서 \(X = 1\)일 때 \(Y\)의 분포는 \(\frac{0.15}{0.6}, \frac{0.25}{0.6}, \frac{0.20}{0.6} = 0.25, 0.417, 0.333\)이다. 따라서 정지가 있던 날의 조건부 평균 불량 수는 \(0.417 + 2(0.333) \approx 1.08\)로, 전체 평균 \(E[Y] = 0.45 + 0.6 = 1.05\)보다 조금 크다. 처음 질문에 답하면, 멈춘 날 불량이 조금 더 많지만 차이는 작다. 그림 1에서 보기를 "X = 0일 때 Y"로 바꾸면 조건부 평균이 1.0으로 오히려 작아지는 것을 볼 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.2</span>
       <p>\(f(x, y) = 2\) (\(0 \le y \le x \le 1\))일 때 \(f_X\), \(f_Y\), \(f_{Y \mid X}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(f_X(x) = \int_0^x 2\,dy = 2x\) (\(0 \le x \le 1\)). \(f_Y(y) = \int_y^1 2\,dx = 2(1 - y)\). \(f_{Y \mid X}(y \mid x) = \frac2{2x} = \frac1x\) (\(0 \le y \le x\)): \(X = x\)가 주어지면 \(Y\)는 \([0, x]\)에서 균일. 적분 범위를 그림(삼각형 영역)으로 확인하는 것이 핵심입니다.</p>
+    <p><i>풀이.</i> \(f_X(x) = \int_0^x 2\,dy = 2x\) (\(0 \le x \le 1\))이고 \(f_Y(y) = \int_y^1 2\,dx = 2(1 - y)\)이다. 그러면 \(f_{Y \mid X}(y \mid x) = \frac2{2x} = \frac1x\) (\(0 \le y \le x\))이다. 즉 \(X = x\)가 주어지면 \(Y\)는 \([0, x]\)에서 균일하다. 적분 범위는 영역이 삼각형 \(0 \le y \le x \le 1\)이라는 것을 그림으로 그려 정하면 틀리지 않는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>결합 pmf/pdf, 전체 합/적분 1.</li>
-        <li>주변: 다른 변수에 대해 합하거나 적분.</li>
-        <li>조건부: 결합 ÷ 주변.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>두 확률변수는 결합 pmf나 결합 pdf로 함께 나타내며 전체 합이나 적분은 1이다. 한 변수만의 주변분포는 다른 변수에 대해 합하거나 적분해 얻고, 조건부분포는 결합을 주변으로 나눠 얻는다. 처음 질문의 기계는 멈춘 날의 조건부 평균 불량 수가 1.08로 전체 평균 1.05보다 조금 크다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.4</span>연습문제</h3>

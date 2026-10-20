@@ -2,59 +2,50 @@
 {
   "type": "card",
   "sec": "공통12-04-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c12-body.js"]
 }
 -->
 <article class="card q-card" id="text-c12-expo" data-kind="본문" data-std="공통12-04-02">
   <header class="card-head"><span class="no"></span><h2>균일, 지수, 감마 분포와 무기억성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>균일분포와 지수분포의 pdf, cdf, 평균, 분산을 쓴다.</li>
-        <li>지수분포의 무기억성을 증명하고 수명 문제로 해석한다.</li>
-        <li>감마분포를 지수분포의 합으로 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pdf (<a href="02-02.html">2.2절</a>), 조건부확률 (<a href="01-02.html">1.2절</a>), 포아송분포 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">평균 수명 1000시간인 전자 부품이 이미 1500시간을 버텼다. 이 부품은 "늙어서" 곧 고장 날까, 아니면 새 부품과 다를 바 없을까? 예방 교체가 쓸모 있는지는 부품 수명의 분포에 달려 있다. 마모 없이 우연히 고장 나는 부품의 수명은 어떤 분포를 따를까?</p>
+    <figure class="q-fig" data-q="c12-memless">
+      <svg viewBox="0 0 520 230" role="img" aria-label="지수분포의 생존 곡선과 s시간 뒤의 조건부 생존 곡선"></svg>
+      <div class="q-ctl"><label>이미 작동한 시간 \(s\) <input type="range" data-k="s" min="0" max="2000" step="100" value="1500"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 평균 수명 1000시간인 지수분포의 생존 곡선 \(P(T > t)\)(파랑)와, \(s\)시간 살아남은 부품의 조건부 생존 곡선(주황). 주황 곡선은 파랑 곡선을 \(s\)만큼 옆으로 옮긴 것과 똑같다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pdf(<a href="02-02.html">2.2절</a>), 조건부확률(<a href="01-02.html">1.2절</a>), 포아송분포(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>균일분포</h3>
-    <p>\(X \sim U(a, b)\)는 \([a, b]\)의 어느 곳이든 똑같이 일어날 법한 분포입니다. \(f(x) = \frac1{b-a}\), 평균 \(\frac{a+b}2\), 분산 \(\frac{(b-a)^2}{12}\). 반올림 오차, 무작위 위상 등에 씁니다. 컴퓨터의 난수 생성기는 \(U(0, 1)\)을 흉내 내고, 다른 분포의 난수는 이것을 변환해 만듭니다(6.1절).</p>
+    <p>\(X \sim U(a, b)\)는 \([a, b]\)의 어느 곳이든 똑같이 일어날 법한 분포이다. 밀도는 \(f(x) = \frac1{b-a}\)이고, 평균은 \(\frac{a+b}2\), 분산은 \(\frac{(b-a)^2}{12}\)이다. 반올림 오차나 무작위 위상 등에 쓴다. 또 컴퓨터의 난수 생성기는 \(U(0, 1)\)을 흉내 내고, 다른 분포의 난수는 이것을 변환해 만든다(6.1절).</p>
 
     <h3><span class="no">4.2.2</span>지수분포</h3>
-    <p>\(T \sim \text{Exp}(\lambda)\)의 pdf와 cdf는 (\(t \ge 0\))</p>
-    \[f(t) = \lambda e^{-\lambda t}, \qquad F(t) = 1 - e^{-\lambda t}, \qquad P(T > t) = e^{-\lambda t},\]
-    <p>평균 \(\frac1\lambda\), 분산 \(\frac1{\lambda^2}\)입니다. 사건이 단위 시간당 평균 \(\lambda\)번인 포아송 과정에서 다음 사건까지의 대기 시간이 지수분포를 따릅니다(시간 \(t\) 동안 사건이 0번일 확률이 \(e^{-\lambda t}\)이므로). 전자 부품처럼 마모 없이 우연한 원인으로만 고장 나는 부품의 수명 모형으로 씁니다.</p>
+    <p>처음 질문의 수명 분포가 <em>지수분포</em>이다. \(T \sim \text{Exp}(\lambda)\)의 pdf와 cdf는 (\(t \ge 0\)) 다음과 같다.</p>
+    \[f(t) = \lambda e^{-\lambda t}, \qquad F(t) = 1 - e^{-\lambda t}, \qquad P(T > t) = e^{-\lambda t}\]
+    <p>평균은 \(\frac1\lambda\), 분산은 \(\frac1{\lambda^2}\)이다. 사건이 단위 시간당 평균 \(\lambda\)번인 포아송 과정에서 다음 사건까지의 대기 시간이 지수분포를 따른다. 시간 \(t\) 동안 사건이 0번일 확률이 \(e^{-\lambda t}\)이기 때문이다. 그래서 전자 부품처럼 마모 없이 우연한 원인으로만 고장 나는 부품의 수명 모형으로 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>평균 수명 1000시간인 지수분포 부품이 500시간 넘게 작동할 확률은? 평균 수명보다 오래 갈 확률은?</p>
     </div>
-    <p><i>풀이.</i> \(\lambda = 0.001\)/h. \(P(T > 500) = e^{-0.5} \approx 0.607\). \(P(T > 1000) = e^{-1} \approx 0.368\). 평균보다 오래 가는 부품이 절반이 안 됩니다(오른쪽 꼬리가 길어 평균이 중앙값 \(693\) h보다 큼).</p>
+    <p><i>풀이.</i> \(\lambda = 0.001\)/h이므로 \(P(T > 500) = e^{-0.5} \approx 0.607\), \(P(T > 1000) = e^{-1} \approx 0.368\)이다. 즉 평균보다 오래 가는 부품이 절반이 안 된다. 오른쪽 꼬리가 길어 평균이 중앙값 \(693\) h보다 크기 때문이다.</p>
 
     <h3><span class="no">4.2.3</span>무기억성</h3>
     <div class="tb-env thm">
       <span class="lb">정리 4.2.2</span>
       <p>\(T \sim \text{Exp}(\lambda)\)이면 모든 \(s, t \ge 0\)에 대해 \(P(T > s + t \mid T > s) = P(T > t)\).</p>
     </div>
-    <p><i>증명.</i> \(\{T > s + t\} \subset \{T > s\}\)이므로 \(P(T > s + t \mid T > s) = \frac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda t}\). ∎</p>
-    <p>이미 \(s\)시간 작동한 부품의 남은 수명 분포가 새 부품과 같다는 뜻입니다. 지수분포를 따르는 부품은 "늙지 않으므로", 고장 나기 전에 미리 바꾸는 예방 교체가 쓸모없습니다. 반대로 베어링, 타이어처럼 마모되는 부품은 오래될수록 고장 나기 쉬워 지수분포가 맞지 않고, 와이블분포 같은 다른 모형을 씁니다. 연속 분포 가운데 무기억성을 가진 것은 지수분포뿐입니다. 아래 실습 카드에서 살아남은 부품의 남은 수명을 모아 확인할 수 있습니다.</p>
+    <p><i>증명.</i> \(\{T > s + t\} \subset \{T > s\}\)이므로 \(P(T > s + t \mid T > s) = \frac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda t}\)이다. ∎</p>
+    <p>이미 \(s\)시간 작동한 부품의 남은 수명 분포가 새 부품과 같다는 뜻이다. 처음 질문의 1500시간 버틴 부품이 500시간 더 갈 확률은 \(e^{-2}/e^{-1.5} = e^{-0.5} \approx 0.607\)로, 새 부품과 똑같다. 그림 1에서 \(s\)를 바꿔도 주황 곡선은 파랑 곡선을 옮긴 모양 그대로이다.</p>
+    <p>따라서 지수분포를 따르는 부품은 "늙지 않으므로", 고장 나기 전에 미리 바꾸는 예방 교체가 쓸모없다. 반대로 베어링, 타이어처럼 마모되는 부품은 오래될수록 고장 나기 쉬워 지수분포가 맞지 않고, 와이블분포 같은 다른 모형을 쓴다. 연속 분포 가운데 무기억성을 가진 것은 지수분포뿐이다. 아래 실습 카드에서 살아남은 부품의 남은 수명을 모아 확인할 수 있다.</p>
 
     <h3><span class="no">4.2.4</span>감마분포</h3>
-    <p>독립인 \(\text{Exp}(\lambda)\) 확률변수 \(k\)개의 합, 곧 포아송 과정에서 \(k\)번째 사건까지의 시간은 감마분포(얼랑분포)를 따릅니다.</p>
+    <p>독립인 \(\text{Exp}(\lambda)\) 확률변수 \(k\)개의 합, 곧 포아송 과정에서 \(k\)번째 사건까지의 시간은 <em>감마분포</em>(얼랑분포)를 따른다.</p>
     \[f(t) = \frac{\lambda^k t^{k-1}e^{-\lambda t}}{(k-1)!} \quad (t \ge 0), \qquad \text{평균 } \frac k\lambda, \quad \text{분산 } \frac k{\lambda^2}.\]
-    <p>mgf로 확인하면 \(\left(\frac\lambda{\lambda - t}\right)^k\)입니다. 예비 부품 \(k-1\)개를 가진 시스템의 총 수명이 그 예입니다. \(k\)가 정수가 아닐 때는 \((k-1)!\) 대신 감마 함수 \(\Gamma(k)\)를 씁니다.</p>
+    <p>mgf로 확인하면 \(\left(\frac\lambda{\lambda - t}\right)^k\)이다(3.2절). 예비 부품 \(k-1\)개를 가진 시스템의 총 수명이 그 예이다. 한편 \(k\)가 정수가 아닐 때는 \((k-1)!\) 대신 감마 함수 \(\Gamma(k)\)를 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>균일: 평균 \((a+b)/2\), 분산 \((b-a)^2/12\).</li>
-        <li>지수: \(P(T > t) = e^{-\lambda t}\), 평균 \(1/\lambda\). 무기억성.</li>
-        <li>감마: 지수 \(k\)개의 합, 평균 \(k/\lambda\), 분산 \(k/\lambda^2\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>균일분포 \(U(a, b)\)는 평균 \((a+b)/2\), 분산 \((b-a)^2/12\)이다. 지수분포는 \(P(T > t) = e^{-\lambda t}\), 평균 \(1/\lambda\)이며, 처음 질문처럼 이미 버틴 시간과 상관없이 남은 수명의 분포가 같은 무기억성을 가지므로 예방 교체가 쓸모없다. 지수분포 \(k\)개의 합은 평균 \(k/\lambda\), 분산 \(k/\lambda^2\)인 감마분포이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.5</span>연습문제</h3>

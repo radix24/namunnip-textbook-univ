@@ -2,61 +2,57 @@
 {
   "type": "card",
   "sec": "공통12-03-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c12-body.js"]
 }
 -->
 <article class="card q-card" id="text-c12-expect" data-kind="본문" data-std="공통12-03-01">
   <header class="card-head"><span class="no"></span><h2>기댓값과 분산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이산·연속 확률변수의 기댓값과 분산을 계산한다.</li>
-        <li>기댓값의 선형성과 \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\)를 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pmf와 pdf (<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">주사위를 아주 많이 던지면 눈의 평균은 어디로 다가갈까? 그리고 평균만으로는 값이 얼마나 흩어지는지 알 수 없다. 분포의 "가운데"와 "퍼짐"을 하나의 수로 나타내고, 분포의 모양을 몰라도 평균에서 크게 벗어날 확률을 어림할 수 있을까?</p>
+    <figure class="q-fig" data-q="c12-cheb">
+      <svg viewBox="0 0 520 230" role="img" aria-label="분포의 무게중심과 평균에서 kσ 넘게 벗어날 확률"></svg>
+      <div class="q-ctl">
+        <label>분포 <select data-k="d"><option value="0" selected>주사위 눈</option><option value="1">f(x) = 3x²/8</option></select></label>
+        <label>\(k\) <input type="range" data-k="k" min="1" max="3" step="0.1" value="1.4"><output data-k="k"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 평균 \(\mu\)(삼각형)는 분포의 무게중심이다. 평균에서 \(k\sigma\) 넘게 떨어진 부분(주황)의 확률은 분포가 무엇이든 \(1/k^2\)을 넘지 않는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pmf와 pdf(<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>기댓값</h3>
     <div class="tb-env thm">
       <span class="lb">정의 3.1.1</span>
       \[E[X] = \sum_x x\,p(x) \quad (\text{이산}), \qquad E[X] = \int_{-\infty}^{\infty} x\,f(x)\,dx \quad (\text{연속}).\]
-      <p>더 일반적으로 \(E[g(X)] = \sum g(x)p(x)\) 또는 \(\int g(x)f(x)\,dx\).</p>
+      <p>더 일반적으로 \(E[g(X)] = \sum g(x)p(x)\) 또는 \(\int g(x)f(x)\,dx\)이다.</p>
     </div>
-    <p>기댓값(평균) \(\mu\)는 분포의 무게중심이고, 같은 실험을 많이 되풀이했을 때 평균값이 다가가는 값입니다. 합이나 적분이 절댓값으로 수렴할 때만 정의됩니다.</p>
+    <p>처음 질문의 "가운데"가 <em>기댓값</em>(평균) \(\mu\)이다. 기댓값은 분포의 무게중심이고, 같은 실험을 많이 되풀이했을 때 평균값이 다가가는 값이다. 그림 1의 삼각형 받침 위에 분포를 올려놓으면 균형이 맞는다. 다만 합이나 적분이 절댓값으로 수렴할 때만 정의된다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 3.1.2 (선형성)</span>
       <p>\(E[aX + b] = aE[X] + b\), \(E[g(X) + h(X)] = E[g(X)] + E[h(X)]\).</p>
     </div>
 
     <h3><span class="no">3.1.2</span>분산과 표준편차</h3>
+    <p>처음 질문의 "퍼짐"은 평균에서 떨어진 거리의 제곱을 평균한 <em>분산</em>으로 잰다.</p>
     \[\mathrm{Var}(X) = E[(X - \mu)^2] = E[X^2] - \mu^2, \qquad \sigma = \sqrt{\mathrm{Var}(X)}.\]
-    <p>둘째 식은 첫째 식을 전개하고 선형성을 쓰면 나오며, 계산에는 이쪽이 편합니다. 그리고</p>
+    <p>둘째 식은 첫째 식을 전개하고 선형성을 쓰면 나오며, 계산에는 이쪽이 편하다. 여기서 \(\sigma\)를 <em>표준편차</em>라 한다. 그리고 다음이 성립한다.</p>
     \[\mathrm{Var}(aX + b) = a^2\,\mathrm{Var}(X).\]
-    <p>더하는 상수 \(b\)는 분포를 옮길 뿐 퍼짐을 바꾸지 않습니다. 단위를 바꾸면(mm → cm, \(a = 0.1\)) 분산은 \(a^2\)배입니다.</p>
+    <p>더하는 상수 \(b\)는 분포를 옮길 뿐 퍼짐을 바꾸지 않는다. 반면 단위를 바꾸면(mm → cm, \(a = 0.1\)) 분산은 \(a^2\)배가 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.3</span>
       <p>(가) 공정한 주사위 눈 \(X\)의 평균과 분산. (나) 2.2절의 \(f(x) = \frac38x^2\) (\(0 \le x \le 2\))의 평균과 분산.</p>
     </div>
-    <p><i>풀이.</i> (가) \(E[X] = 3.5\), \(E[X^2] = \frac{91}{6}\), \(\mathrm{Var} = \frac{91}6 - 12.25 = \frac{35}{12} \approx 2.917\). (나) \(E[X] = \int_0^2 \frac38x^3dx = \frac38\cdot4 = 1.5\), \(E[X^2] = \int_0^2\frac38x^4dx = \frac38\cdot\frac{32}5 = 2.4\), \(\mathrm{Var} = 2.4 - 2.25 = 0.15\).</p>
-    <div class="tb-note"><b>주의.</b> 일반적으로 \(E[g(X)] \ne g(E[X])\)입니다. 예를 들어 \(E[X^2] \ne (E[X])^2\)이고, 그 차이가 바로 분산입니다.</div>
+    <p><i>풀이.</i> (가) \(E[X] = 3.5\), \(E[X^2] = \frac{91}{6}\)이므로 \(\mathrm{Var} = \frac{91}6 - 12.25 = \frac{35}{12} \approx 2.917\)이다. (나) \(E[X] = \int_0^2 \frac38x^3dx = \frac38\cdot4 = 1.5\), \(E[X^2] = \int_0^2\frac38x^4dx = \frac38\cdot\frac{32}5 = 2.4\)이므로 \(\mathrm{Var} = 2.4 - 2.25 = 0.15\)이다.</p>
+    <p>즉 처음 질문의 주사위 평균은 3.5로 다가가며, 이 값은 주사위에 실제로 나오는 눈이 아니라 무게중심이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>평균의 함수가 함수의 평균과 같다고 생각하기 쉽다. 하지만 일반적으로 \(E[g(X)] \ne g(E[X])\)이다. 예를 들어 \(E[X^2] \ne (E[X])^2\)이고, 그 차이가 바로 분산이다.</div>
 
     <h3><span class="no">3.1.3</span>체비쇼프 부등식</h3>
-    <p>분포의 모양을 몰라도 평균과 분산만으로</p>
+    <p>처음 질문의 셋째 물음에 답하는 것이 다음 부등식이다. 분포의 모양을 몰라도 평균과 분산만으로 다음이 성립한다.</p>
     \[P(|X - \mu| \ge k\sigma) \le \frac1{k^2}\]
-    <p>입니다. 평균에서 \(2\sigma\) 넘게 벗어날 확률은 어떤 분포든 25% 이하입니다. 정규분포라면 약 4.6%로 훨씬 작습니다(4.3절).</p>
+    <p>가령 평균에서 \(2\sigma\) 넘게 벗어날 확률은 어떤 분포든 25% 이하이다. 정규분포라면 약 4.6%로 훨씬 작다(4.3절). 그림 1에서 \(k\)를 바꿔 보면, 주사위에서 \(k = 1.4\)일 때 1과 6이 \(1.4\sigma \approx 2.39\)보다 멀어 주황이 되고 그 확률 \(\frac13\)은 한계 \(\frac1{1.96} \approx 0.51\)보다 작다. 즉 체비쇼프 부등식은 늘 성립하지만 넉넉한 한계이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(E[X] = \sum xp(x)\) 또는 \(\int xf(x)dx\), 선형성.</li>
-        <li>\(\mathrm{Var}(X) = E[X^2] - \mu^2\), \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\).</li>
-        <li>체비쇼프: \(P(|X - \mu| \ge k\sigma) \le 1/k^2\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>기댓값 \(E[X] = \sum xp(x)\) 또는 \(\int xf(x)dx\)는 분포의 무게중심이고 선형성을 가지며, 처음 질문의 주사위 평균은 3.5이다. 퍼짐은 분산 \(\mathrm{Var}(X) = E[X^2] - \mu^2\)으로 재고 \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\)이다. 분포를 몰라도 체비쇼프 부등식 \(P(|X - \mu| \ge k\sigma) \le 1/k^2\)으로 크게 벗어날 확률을 어림한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.4</span>연습문제</h3>

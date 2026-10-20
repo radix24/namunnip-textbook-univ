@@ -2,55 +2,44 @@
 {
   "type": "card",
   "sec": "공통12-04-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c12-body.js"]
 }
 -->
 <article class="card q-card" id="text-c12-normal" data-kind="본문" data-std="공통12-04-03">
   <header class="card-head"><span class="no"></span><h2>정규분포와 이항분포의 정규 근사</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>표준화와 표준정규분포표로 정규분포의 확률과 분위수를 구한다.</li>
-        <li>연속성 보정으로 이항 확률을 정규분포로 어림한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pdf와 분위수 (<a href="02-02.html">2.2절</a>), 이항분포 (<a href="04-01.html">4.1절</a>). 정규분포의 기초 (<a href="../7/05-03.html">공통7 5.3절</a>)를 보았다면 빠르게 읽어도 됩니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">축의 지름이 평균 25.00 mm, 표준편차 0.02 mm인 종 모양 분포를 따르고, 규격은 \(25.00 \pm 0.03\) mm이다. 불량은 몇 %일까? 불량을 1% 이하로 줄이려면 가공 정밀도(표준편차)를 얼마나 높여야 할까?</p>
+    <figure class="q-fig" data-q="c12-spec">
+      <svg viewBox="0 0 520 230" role="img" aria-label="정규분포와 규격 한계 밖의 불량 넓이"></svg>
+      <div class="q-ctl"><label>\(\sigma\) (µm) <input type="range" data-k="s" min="8" max="30" step="1" value="20"><output data-k="s"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 지름의 분포 \(N(25.00, \sigma^2)\)와 규격 한계(빨간 점선). 한계 밖의 넓이(주황)가 불량률이다. \(\sigma\)를 줄이면 분포가 좁아져 한계가 더 많은 표준편차만큼 떨어진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pdf와 분위수(<a href="02-02.html">2.2절</a>)와 이항분포(<a href="04-01.html">4.1절</a>)를 쓴다. 정규분포의 기초(<a href="../7/05-03.html">통계학입문 5.3절</a>)를 보았다면 빠르게 읽어도 된다.</div>
 
     <h3><span class="no">4.3.1</span>정규분포</h3>
-    <p>\(X \sim N(\mu, \sigma^2)\)의 pdf는</p>
+    <p>\(X \sim N(\mu, \sigma^2)\)의 pdf는 다음과 같다.</p>
     \[f(x) = \frac1{\sigma\sqrt{2\pi}}\exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right).\]
-    <p>측정 오차, 가공 치수처럼 작은 원인이 많이 더해진 양이 이 분포를 따르는 경우가 많습니다(중심극한정리, 6.3절). 이 pdf의 부정적분은 초등함수로 나타낼 수 없어 표나 계산기로 구합니다.</p>
-    <p>\(Z = \frac{X - \mu}{\sigma}\)로 표준화하면 \(Z \sim N(0, 1)\)이고, 그 cdf를 \(\Phi(z)\)로 씁니다. \(\Phi(-z) = 1 - \Phi(z)\).</p>
-    <ul class="tb-list">
-      <li>\(P(|Z| \le 1) \approx 0.683\), \(P(|Z| \le 2) \approx 0.954\), \(P(|Z| \le 3) \approx 0.997\).</li>
-      <li>자주 쓰는 분위수: \(z_{0.05} = 1.645\), \(z_{0.025} = 1.960\), \(z_{0.005} = 2.576\) (오른쪽 꼬리 넓이).</li>
-    </ul>
+    <p>측정 오차, 가공 치수처럼 작은 원인이 많이 더해진 양이 이 분포를 따르는 경우가 많다(중심극한정리, 6.3절). 그런데 이 pdf의 부정적분은 초등함수로 나타낼 수 없어 표나 계산기로 구한다.</p>
+    <p>그래서 \(Z = \frac{X - \mu}{\sigma}\)로 표준화하면 \(Z \sim N(0, 1)\)이 되어 표 하나로 충분하다. 그 cdf를 \(\Phi(z)\)로 쓰며, 대칭이므로 \(\Phi(-z) = 1 - \Phi(z)\)이다. 자주 쓰는 값으로 \(P(|Z| \le 1) \approx 0.683\), \(P(|Z| \le 2) \approx 0.954\), \(P(|Z| \le 3) \approx 0.997\)이 있다. 또 오른쪽 꼬리 넓이로 정한 분위수는 \(z_{0.05} = 1.645\), \(z_{0.025} = 1.960\), \(z_{0.005} = 2.576\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>축의 지름이 \(N(25.00, 0.02^2)\) mm를 따른다. 규격 \(25.00 \pm 0.03\) mm 안에 들 확률은? 불량을 1% 이하로 하려면 \(\sigma\)가 얼마 이하여야 하는가?</p>
     </div>
-    <p><i>풀이.</i> \(P(|Z| \le 1.5) = 2\Phi(1.5) - 1 \approx 0.866\). 불량 13%로 많습니다. \(P(|Z| > 0.03/\sigma) \le 0.01\)이려면 \(0.03/\sigma \ge 2.576\), \(\sigma \le 0.0116\) mm.</p>
+    <p><i>풀이.</i> 규격 한계 ±0.03은 \(0.03/0.02 = 1.5\) 표준편차이므로 \(P(|Z| \le 1.5) = 2\Phi(1.5) - 1 \approx 0.866\)이다. 즉 처음 질문의 불량은 13%로 많다. 그리고 \(P(|Z| > 0.03/\sigma) \le 0.01\)이려면 \(0.03/\sigma \ge 2.576\)이어야 하므로 \(\sigma \le 0.0116\) mm이다.</p>
+    <p>그림 1에서 \(\sigma\)를 20 µm에서 12 µm로 줄이면 한계가 2.5 표준편차가 되어 불량이 약 1.2%로, 11 µm에서는 약 0.6%로 떨어진다. 즉 처음 질문의 둘째 물음에 답하면, 표준편차를 지금의 절반 남짓으로 줄여야 한다.</p>
 
     <h3><span class="no">4.3.2</span>이항분포의 정규 근사</h3>
-    <p>\(X \sim B(n, p)\)에서 \(np\)와 \(n(1-p)\)가 충분히 크면(대략 각각 5 또는 10 이상) \(X\)는 근사적으로 \(N(np, np(1-p))\)입니다. 이산 분포를 연속 분포로 어림하므로, 막대 하나가 \([k - 0.5, k + 0.5]\)를 차지한다고 보고 경계를 0.5 옮깁니다(<b>연속성 보정</b>).</p>
+    <p>\(X \sim B(n, p)\)에서 \(np\)와 \(n(1-p)\)가 충분히 크면(대략 각각 5 또는 10 이상) \(X\)는 근사적으로 \(N(np, np(1-p))\)이다. 다만 이산 분포를 연속 분포로 어림하므로, 막대 하나가 \([k - 0.5, k + 0.5]\)를 차지한다고 보고 경계를 0.5 옮긴다. 이것을 <em>연속성 보정</em>이라 한다.</p>
     \[P(X \le k) \approx \Phi\left(\frac{k + 0.5 - np}{\sqrt{np(1-p)}}\right).\]
     <div class="tb-env ex">
       <span class="lb">예제 4.3.2</span>
       <p>불량률 10%인 공정에서 100개를 뽑을 때 불량이 15개 이하일 확률은?</p>
     </div>
-    <p><i>풀이.</i> \(\mu = 10\), \(\sigma = 3\). 보정하면 \(\Phi\left(\frac{15.5 - 10}3\right) = \Phi(1.83) \approx 0.967\). 정확한 이항 확률은 0.960이고, 보정하지 않은 \(\Phi(5/3) \approx 0.952\)보다 보정한 쪽이 가깝습니다.</p>
+    <p><i>풀이.</i> \(\mu = 10\), \(\sigma = 3\)이다. 보정하면 \(\Phi\left(\frac{15.5 - 10}3\right) = \Phi(1.83) \approx 0.967\)이다. 정확한 이항 확률은 0.960이므로, 보정하지 않은 \(\Phi(5/3) \approx 0.952\)보다 보정한 쪽이 가깝다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(Z = (X - \mu)/\sigma\), \(\Phi\)로 확률, 분위수 1.645, 1.960, 2.576.</li>
-        <li>이항 ≈ \(N(np, np(1-p))\), 연속성 보정 ±0.5.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>정규분포는 \(Z = (X - \mu)/\sigma\)로 표준화해 \(\Phi\)로 확률을 구하고, 분위수 1.645, 1.960, 2.576을 자주 쓴다. 처음 질문의 축은 규격이 ±1.5σ라 불량이 약 13%이고, 1% 이하로 하려면 \(\sigma \le 0.0116\) mm로 줄여야 한다. 이항분포는 \(N(np, np(1-p))\)로 어림하되 경계를 0.5 옮기는 연속성 보정을 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.3</span>연습문제</h3>

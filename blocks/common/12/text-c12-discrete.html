@@ -2,25 +2,27 @@
 {
   "type": "card",
   "sec": "공통12-04-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c12-body.js"]
 }
 -->
 <article class="card q-card" id="text-c12-discrete" data-kind="본문" data-std="공통12-04-01">
   <header class="card-head"><span class="no"></span><h2>베르누이, 이항, 기하, 포아송 분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>주요 이산 분포가 어떤 상황에서 나오는지 알고 알맞은 분포를 고른다.</li>
-        <li>각 분포의 pmf, 평균, 분산으로 확률을 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pmf (<a href="02-01.html">2.1절</a>), 기댓값과 mgf (<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">"100개 가운데 불량 몇 개", "처음 불량이 나올 때까지 몇 개", "웨이퍼 한 장의 결함 몇 개"는 모두 개수를 세는 문제이지만, 따르는 분포가 다르다. 상황을 보고 어떤 분포를 골라야 할까? 그리고 불량률이 아주 작고 개수가 아주 많을 때 계산을 쉽게 하는 방법은 없을까?</p>
+    <figure class="q-fig" data-q="c12-binpois">
+      <svg viewBox="0 0 520 230" role="img" aria-label="이항분포와 포아송분포의 비교"></svg>
+      <div class="q-ctl">
+        <label>\(n\) <input type="range" data-k="n" min="5" max="200" step="5" value="20"><output data-k="n"></output></label>
+        <label>\(\lambda = np\) × 10 <input type="range" data-k="l" min="5" max="50" step="1" value="23"><output data-k="l"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 평균 \(np\)를 같게 둔 이항분포 \(B(n, p)\)(파랑 막대)와 포아송분포(주황 점). \(n\)을 키우고 \(p\)를 줄이면 두 분포가 거의 겹친다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pmf(<a href="02-01.html">2.1절</a>)와 기댓값과 mgf(<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>분포 고르기</h3>
+    <p>주요 이산 분포 네 가지를 상황과 함께 정리하면 다음과 같다.</p>
     <table class="tb-table">
       <thead><tr><th>분포</th><th>상황</th><th>pmf</th><th>평균</th><th>분산</th></tr></thead>
       <tbody>
@@ -30,36 +32,24 @@
         <tr><td>포아송 \((\lambda)\)</td><td>일정한 시간·면적에 드물게 일어나는 사건 수</td><td>\(\frac{e^{-\lambda}\lambda^x}{x!}\)</td><td>\(\lambda\)</td><td>\(\lambda\)</td></tr>
       </tbody>
     </table>
-    <ul class="tb-list">
-      <li>"\(n\)개 가운데 불량 몇 개"는 이항(각 부품이 독립이고 불량률이 같을 때).</li>
-      <li>"처음 불량이 나올 때까지 몇 개 검사"는 기하.</li>
-      <li>"웨이퍼 한 장의 결함 수", "1시간에 도착하는 주문 수"처럼 상한이 뚜렷하지 않고 드문 사건의 수는 포아송.</li>
-      <li>작은 모집단에서 되돌려 놓지 않고 뽑으면 초기하분포(1.1절 연습문제 2)이지만, 모집단이 크면 이항으로 어림한다.</li>
-    </ul>
+    <p>처음 질문의 세 상황에 맞추면 이렇다. "\(n\)개 가운데 불량 몇 개"는 이항분포이며, 각 부품이 독립이고 불량률이 같을 때 쓴다. 또 "처음 불량이 나올 때까지 몇 개 검사"는 기하분포이다. 그리고 "웨이퍼 한 장의 결함 수", "1시간에 도착하는 주문 수"처럼 상한이 뚜렷하지 않고 드문 사건의 수는 포아송분포이다. 한편 작은 모집단에서 되돌려 놓지 않고 뽑으면 초기하분포(1.4절)이지만, 모집단이 크면 이항으로 어림한다.</p>
 
     <h3><span class="no">4.1.2</span>예제</h3>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>웨이퍼 한 장의 결함 수가 평균 2.3인 포아송분포를 따른다. 결함이 없을 확률, 2개 이상일 확률은?</p>
     </div>
-    <p><i>풀이.</i> \(P(0) = e^{-2.3} \approx 0.100\). \(P(X \ge 2) = 1 - e^{-2.3}(1 + 2.3) \approx 0.669\).</p>
+    <p><i>풀이.</i> \(P(0) = e^{-2.3} \approx 0.100\)이다. 그리고 2개 이상은 0개와 1개의 여사건이므로 \(P(X \ge 2) = 1 - e^{-2.3}(1 + 2.3) \approx 0.669\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.2</span>
       <p>불량률 20%인 공정에서 처음 불량이 셋째 검사에서 나올 확률과, 평균 몇 번째에 처음 나오는지 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(0.8^2 \times 0.2 = 0.128\). 평균 \(\frac1{0.2} = 5\)번째. 기하분포도 무기억성을 가집니다(이미 10개가 양호였어도 앞으로의 분포는 처음과 같음). 4.2절의 지수분포가 그 연속판입니다.</p>
+    <p><i>풀이.</i> 앞의 둘이 양호하고 셋째가 불량이므로 \(0.8^2 \times 0.2 = 0.128\)이다. 평균은 \(\frac1{0.2} = 5\)번째이다. 기하분포도 무기억성을 가진다. 즉 이미 10개가 양호였어도 앞으로의 분포는 처음과 같다. 4.2절의 지수분포가 그 연속판이다.</p>
 
     <h3><span class="no">4.1.3</span>포아송 근사</h3>
-    <p>이항분포에서 \(n\)이 크고 \(p\)가 작으면(대략 \(n \ge 50\), \(np \le 5\)) \(\lambda = np\)인 포아송분포로 어림할 수 있습니다. 증명은 \(\binom nx p^x(1-p)^{n-x}\)에서 \(p = \lambda/n\)으로 두고 \(n \to \infty\)로 보내면 \((1 - \lambda/n)^n \to e^{-\lambda}\)인 것을 씁니다. 공통7의 이항분포 실습 카드(<a href="../7/04-02.html">공통7 4.2절</a>)에서 두 분포가 겹치는 모습을 볼 수 있습니다.</p>
+    <p>처음 질문의 셋째 물음에 답하면, 이항분포에서 \(n\)이 크고 \(p\)가 작으면(대략 \(n \ge 50\), \(np \le 5\)) \(\lambda = np\)인 포아송분포로 어림할 수 있다. 그 까닭은 \(\binom nx p^x(1-p)^{n-x}\)에서 \(p = \lambda/n\)으로 두고 \(n \to \infty\)로 보내면 \((1 - \lambda/n)^n \to e^{-\lambda}\)이기 때문이다. 그림 1에서 \(\lambda = 2.3\)을 그대로 두고 \(n\)을 20에서 200으로 늘리면 막대와 점의 가장 큰 차이가 약 10분의 1로 준다. 통계학입문의 이항분포 실습 카드(<a href="../7/04-02.html">통계학입문 4.2절</a>)에서도 두 분포가 겹치는 모습을 볼 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>성공 수는 이항, 첫 성공까지는 기하, 드문 사건의 수는 포아송.</li>
-        <li>평균·분산: \(np, np(1-p)\) / \(1/p, (1-p)/p^2\) / \(\lambda, \lambda\).</li>
-        <li>\(n\) 크고 \(p\) 작으면 이항 ≈ 포아송(\(\lambda = np\)).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 세 상황처럼 독립 시행의 성공 수는 이항, 첫 성공까지의 시행 수는 기하, 드문 사건의 수는 포아송분포를 고른다. 평균과 분산은 차례로 \(np, np(1-p)\), \(1/p, (1-p)/p^2\), \(\lambda, \lambda\)이다. \(n\)이 크고 \(p\)가 작으면 이항분포를 \(\lambda = np\)인 포아송분포로 어림한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.4</span>연습문제</h3>
