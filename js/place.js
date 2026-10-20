@@ -19,6 +19,19 @@ window.QPlace = (() => {
   const pool = () => cache._p || (cache._p = fetch(new URL("data/pool.json", ROOT)).then((r) => r.json()));
   const api = { KEY, SCHOOL, SCHOOL_NAME, DEPTS, ROOT, get, set, saved, load, index, pool };
 
+  /* 과목 목차의 과목명(.cx-side h1)은 한 줄로: 칸보다 길면 글자 크기를 줄인다. 18px로도 넘치면 줄바꿈을 허용한다 */
+  const fitTitle = () => document.querySelectorAll(".cx-side h1").forEach((h) => {
+    h.style.fontSize = ""; h.style.whiteSpace = "";
+    const w = h.clientWidth;
+    if (!w || h.scrollWidth <= w) return;
+    const fs = parseFloat(getComputedStyle(h).fontSize) * w / h.scrollWidth - 0.5;
+    if (fs >= 18) h.style.fontSize = `${fs}px`; else h.style.whiteSpace = "normal";
+  });
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fitTitle); else fitTitle();
+  if (document.fonts) document.fonts.ready.then(fitTitle);
+  addEventListener("resize", fitTitle);
+  api.fitTitle = fitTitle;
+
   /* 풀 모듈 페이지: 학과 틀 채우기 */
   const mod = document.body.dataset.module, d = get();
   const chip = document.querySelector(".place-chip");
@@ -41,6 +54,7 @@ window.QPlace = (() => {
       const pool = el.textContent;
       if (pool !== c.name) { el.textContent = c.name; el.title = `교재 이름: ${pool}`; document.title = document.title.replace(pool, c.name); }
     });
+    fitTitle();
     /* 과목 목차: 학기·이수구분·학점, 학정번호, 선수·이어지는 과목을 이 학과의 배치로 */
     const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
     const term = document.querySelector("[data-place=term]");
