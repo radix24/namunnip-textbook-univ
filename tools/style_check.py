@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TAG = re.compile(r"<script\b.*?</script>|<style\b.*?</style>|<!--.*?-->", re.S)
+TAG = re.compile(r"<script\b.*?</script>|<style\b.*?</style>|<!--.*?-->|<pre\b.*?</pre>|<code\b.*?</code>", re.S)   # 코드는 문장이 아니므로 재지 않는다
 ALLTAG = re.compile(r"<[^>]+>")
 MATH = re.compile(r"\\\(.+?\\\)|\\\[.+?\\\]", re.S)
 CONN = ("그러므로", "따라서", "즉", "하지만", "그런데", "그렇다면", "다시 말해", "바꿔 말하면", "여기서", "이제", "한편",
