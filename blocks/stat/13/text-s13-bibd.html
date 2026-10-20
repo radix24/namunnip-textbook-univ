@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통13-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s13-bibd" data-kind="본문" data-std="응통13-03-04">
+  <header class="card-head"><span class="no"></span><h2>균형 불완비 블록 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">음료 7종을 맛보게 하는 실험에서, 한 사람이 7잔을 다 마시면 혀가 둔해진다. 한 사람에게 3잔씩만 주면 사람(블록)마다 모든 처리를 볼 수 없다. 그래도 공정하게 비교하려면 어떤 짝으로 나누어 주어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="처리 7개, 블록 7개, 블록 크기 3인 균형 불완비 블록 설계 표. 모든 처리 쌍이 정확히 한 블록에서 함께 나온다">
+        <g font-size="12" fill="currentColor">
+          <text x="40" y="30">블록</text><text x="100" y="30">1</text><text x="140" y="30">2</text><text x="180" y="30">3</text><text x="220" y="30">4</text><text x="260" y="30">5</text><text x="300" y="30">6</text><text x="340" y="30">7</text>
+          <text x="40" y="60">처리</text>
+          <text x="96" y="60">1 2 4</text><text x="136" y="60">2 3 5</text><text x="176" y="60">3 4 6</text><text x="216" y="60">4 5 7</text><text x="256" y="60">5 6 1</text><text x="296" y="60">6 7 2</text><text x="336" y="60">7 1 3</text>
+        </g>
+        <g stroke="var(--ink-3, #888)"><line x1="30" y1="40" x2="390" y2="40"/></g>
+        <g font-size="12" fill="currentColor"><text x="40" y="110">a = 7, b = 7, k = 3, r = 3, λ = 1</text><text x="40" y="140">λ(a − 1) = r(k − 1) → 1 × 6 = 3 × 2</text><text x="40" y="170">모든 처리 쌍이 정확히 한 블록에 함께 있다</text></g>
+      </svg>
+      <figcaption>그림 1. 처리 7개, 블록 크기 3의 균형 불완비 블록 설계(Fano 평면). 각 처리는 3번 나오고, 어느 두 처리도 정확히 한 블록에서 함께 나온다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>랜덤화 블록 설계(<a href="03-01.html">3.1절</a>), 대비와 다중 비교(<a href="02-02.html">2.2절</a>, <a href="02-03.html">2.3절</a>)를 쓴다.</div>
+
+    <h3><span class="no">3.4.1</span>균형의 조건</h3>
+    <p>처리 \(a\)개를 크기 \(k &lt; a\)인 블록 \(b\)개에 나눈다. 각 처리가 \(r\)번 나오고, 어느 두 처리도 정확히 \(\lambda\)개의 블록에서 함께 나오면 균형 불완비 블록 설계(BIBD)라 한다. 관측 수를 두 가지로 세면 \(N = ar = bk\)이다. 그리고 한 처리가 들어 있는 \(r\)개 블록에서 그 처리와 함께 나오는 다른 처리 자리를 세면 \(\lambda(a - 1) = r(k - 1)\)이다. 그러므로 \(\lambda = r(k - 1)/(a - 1)\)이 정수여야 설계가 존재할 수 있다. 모든 처리 쌍이 같은 횟수로 만나므로 처리 비교의 정밀도가 모두 같다.</p>
+
+    <h3><span class="no">3.4.2</span>처리 효과의 보정</h3>
+    <p>처리마다 들어간 블록이 다르므로 처리 합계를 단순 비교하면 블록 효과가 섞인다. 그래서 처리 \(i\)의 합계 \(y_{i\cdot}\)에서 그 처리가 들어간 블록들의 평균을 뺀 보정 합계</p>
+    \[Q_i = y_{i\cdot} - \frac1k\sum_{j:\,i\in j}y_{\cdot j}\]
+    <p>를 쓴다. 그러면 보정된 처리 효과는 \(\hat\tau_i = kQ_i/(\lambda a)\)이고, 보정 처리 제곱합은 \(SS_{\text{처리(보정)}} = k\sum Q_i^2/(\lambda a)\)이다. 이것을 블록 제곱합(보정 전)과 함께 분산분석표에 넣어 F 검정을 한다. 두 처리 차의 분산은 \(2k\sigma^2/(\lambda a)\)로 모든 쌍에서 같다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>처리 4개, 블록 크기 3인 BIBD에서 \(b\), \(r\), \(\lambda\)를 구하고 설계를 하나 쓰시오.</p>
+    </div>
+    <p><i>풀이.</i> 모든 3개 조합을 블록으로 쓰면 \(b = \binom43 = 4\)이다. 그러면 \(r = bk/a = 3\), \(\lambda = r(k - 1)/(a - 1) = 2\)이다. 블록은 {1,2,3}, {1,2,4}, {1,3,4}, {2,3,4}이고, 어느 두 처리도 두 블록에서 함께 나온다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>균형 불완비 블록 설계는 블록이 모든 처리를 담지 못할 때, 모든 처리 쌍이 같은 횟수 \(\lambda\)로 만나도록 배치한 설계이다. 존재하려면 \(ar = bk\)와 \(\lambda(a - 1) = r(k - 1)\)을 만족해야 한다. 분석에서는 처리가 들어간 블록의 평균을 뺀 보정 합계로 처리 효과를 추정하고, 모든 처리 쌍의 비교 정밀도가 같다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(a = 6\), \(k = 3\), \(r = 5\)인 BIBD의 \(b\)와 \(\lambda\)는?
+          <details><summary>답</summary><p>\(b = 6\times5/3 = 10\), \(\lambda = 5\times2/5 = 2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(a = 5\), \(k = 3\), \(r = 3\)인 BIBD가 존재하지 않는 이유는?
+          <details><summary>답</summary><p>\(b = ar/k = 5\)는 정수지만 \(\lambda = 3\times2/4 = 1.5\)가 정수가 아니다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

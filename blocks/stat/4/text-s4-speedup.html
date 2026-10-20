@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통4-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s4-speedup" data-kind="본문" data-std="응통4-07-02">
+  <header class="card-head"><span class="no"></span><h2>파이썬 연산을 빠르게 하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">부트스트랩 10만 번을 파이썬 for 문으로 돌렸더니 몇 분이 걸린다. 같은 계산을 NumPy 배열 연산으로 바꾸면 몇 초이다. 파이썬 반복문은 왜 느리고, 어디를 고치면 가장 효과가 클까? 먼저 재고, 그다음에 고친다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="같은 계산의 실행 시간 막대. 순수 파이썬 반복문이 가장 길고, NumPy 벡터화와 Numba가 훨씬 짧다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="140" y="30" width="270" height="26"/><rect x="140" y="80" width="12" height="26"/><rect x="140" y="130" width="8" height="26"/></g>
+        <g font-size="12" fill="currentColor"><text x="20" y="48">파이썬 반복문</text><text x="20" y="98">NumPy 벡터화</text><text x="20" y="148">Numba JIT</text><text x="300" y="48">1 (기준)</text><text x="160" y="98">약 1/50</text><text x="156" y="148">약 1/80</text></g>
+      </svg>
+      <figcaption>그림 1. 같은 계산(수백만 개 수의 제곱합)의 상대 실행 시간(개략). 비율은 계산과 환경에 따라 다르다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy 배열 계산(<a href="03-01.html">3.1절</a>), 붓스트랩과 순열 검정(<a href="06-03.html">6.3절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>먼저 재기</h3>
+    <p>프로그램의 대부분 시간은 몇 줄에서 쓰인다. 그러므로 짐작으로 고치지 말고 먼저 잰다. 작은 부분은 <code>timeit</code>으로 여러 번 실행해 평균 시간을 재고, 프로그램 전체는 <code>cProfile</code>로 함수별 누적 시간을 본다. 줄 단위로 보려면 <code>line_profiler</code>를 쓴다. 가장 오래 걸리는 곳을 고친 뒤 다시 재어 효과를 확인한다.</p>
+
+    <h3><span class="no">7.2.2</span>벡터화와 Numba</h3>
+    <p>파이썬 반복문이 느린 것은 원소마다 자료형을 확인하고 객체를 만드는 해석 비용 때문이다. NumPy 배열 연산은 이 반복을 C로 짠 내부 코드가 한꺼번에 처리한다. 따라서 반복문을 배열 연산, 브로드캐스팅, <code>np.sum</code> 같은 축 연산으로 바꾸는 벡터화가 첫 번째 방법이다. 예를 들어 부트스트랩은 표본 첨자를 \(B\times n\) 배열로 한 번에 뽑아 행마다 평균을 구하면 된다.</p>
+<pre class="mono small">import numpy as np
+rng = np.random.default_rng(1)
+x = rng.normal(size=200)
+B = 100000
+idx = rng.integers(0, len(x), size=(B, len(x)))
+boot_means = x[idx].mean(axis=1)          # 반복문 없이 B개
+se = boot_means.std(ddof=1)</pre>
+    <p>그런데 이전 값에 의존하는 점화식처럼 벡터화가 어려운 반복도 있다. 이때는 Numba의 <code>@njit</code> 장식자를 붙이면 함수가 처음 실행될 때 기계어로 번역되어(JIT), 반복문도 C에 가까운 속도로 돈다. 또 메모리를 아끼려면 \(B\times n\) 배열이 너무 클 때 몇 묶음으로 나누어 계산한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>위 부트스트랩에서 첨자 배열은 몇 MB인가(정수 8바이트)? 메모리가 1 GB로 제한되면 어떻게 나누어야 하는가?</p>
+    </div>
+    <p><i>풀이.</i> \(100\,000\times200\times8\) 바이트 = 160 MB이다. 여기에 \(x[\text{idx}]\)의 실수 배열 160 MB가 더해져 약 320 MB가 든다. 1 GB 안에 들어가므로 한 번에 해도 된다. \(B\)가 10배라면 묶음 4개쯤으로 나누어 평균을 따로 구한 뒤 이어 붙인다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>속도 개선은 <code>timeit</code>, <code>cProfile</code>로 느린 곳을 먼저 재는 데서 시작한다. 파이썬 반복문의 해석 비용은 NumPy 벡터화로 없애고, 벡터화가 어려운 점화식은 Numba JIT으로 컴파일한다. 큰 배열은 메모리를 계산해 묶음으로 나누어 처리한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>sum(v**2 for v in x)</code>를 벡터화한 식으로 바꾸어라.
+          <details><summary>답</summary><p><code>np.sum(x**2)</code> 또는 <code>x @ x</code>.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>AR(1) 과정 \(y_t = \phi y_{t-1} + \varepsilon_t\)의 모의실험을 벡터화하기 어려운 이유와 대안을 말하여라.
+          <details><summary>답</summary><p>각 값이 바로 앞 값에 의존해 원소별로 동시에 계산할 수 없다. Numba로 반복문을 컴파일하거나 <code>scipy.signal.lfilter</code>를 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

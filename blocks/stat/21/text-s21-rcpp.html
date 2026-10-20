@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통21-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s21-rcpp" data-kind="본문" data-std="응통21-07-01">
+  <header class="card-head"><span class="no"></span><h2>MCMC를 빠르게: Rcpp와 병렬 체인</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">Gibbs 표집기는 각 반복이 바로 앞 반복에 의존하므로 R의 벡터화로 빠르게 만들 수 없다. 10만 번 반복에 몇 분씩 걸리면 모형을 바꿔 가며 시험하기 어렵다. 반복문을 C++로 옮기고, 여러 체인을 동시에 돌리면 얼마나 빨라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="네 개의 체인이 서로 다른 코어에서 동시에 돌고 끝에 모아 수렴 진단을 한다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="30" y="20" width="270" height="24"/><rect x="30" y="56" width="270" height="24"/><rect x="30" y="92" width="270" height="24"/><rect x="30" y="128" width="270" height="24"/></g>
+        <rect x="330" y="60" width="90" height="56" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <g stroke="currentColor"><line x1="300" y1="32" x2="330" y2="80"/><line x1="300" y1="68" x2="330" y2="85"/><line x1="300" y1="104" x2="330" y2="92"/><line x1="300" y1="140" x2="330" y2="98"/></g>
+        <g font-size="12" fill="currentColor"><text x="40" y="37">코어 1 체인 1</text><text x="40" y="73">코어 2 체인 2</text><text x="40" y="109">코어 3 체인 3</text><text x="40" y="145">코어 4 체인 4</text><text x="340" y="84">모으기</text><text x="340" y="102">R̂, ESS</text></g>
+      </svg>
+      <figcaption>그림 1. 병렬 체인. 서로 다른 출발점과 독립 난수 흐름으로 체인 여러 개를 동시에 돌리고, 끝에 모아 수렴을 진단한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>깁스 표집(<a href="06-01.html">6.1절</a>), 통계전산의 <a href="../15/05-03.html">수렴 진단</a>과 <a href="../15/06-03.html">병렬 계산과 난수 흐름</a>을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>Rcpp와 RcppArmadillo</h3>
+    <p>R의 반복문은 원소마다 해석 비용이 든다. Rcpp는 C++ 함수를 R 함수처럼 부를 수 있게 해 주고, RcppArmadillo는 행렬 연산 라이브러리 Armadillo를 함께 쓰게 해 준다. 그러므로 Gibbs 표집기의 반복문 전체를 C++로 쓰고 R에서는 결과만 받는다. 이때 난수는 R의 난수 생성기(<code>R::rnorm</code> 등)를 C++에서 불러야 <code>set.seed</code>로 재현할 수 있다. 회귀 계수를 뽑는 단계처럼 행렬 분해가 들어가는 곳은 Armadillo의 Cholesky 분해를 쓴다. 보통 R 반복문보다 수십 배 빨라진다.</p>
+
+    <h3><span class="no">7.1.2</span>병렬 체인</h3>
+    <p>체인 하나의 반복은 순서대로 해야 하지만, 독립인 체인 여러 개는 동시에 돌릴 수 있다. 따라서 코어마다 체인 하나를 맡기면(<code>parallel::mclapply</code>, <code>future</code>) 같은 시간에 표본이 코어 수만큼 모인다. 게다가 서로 다른 출발점에서 시작한 체인들을 비교하면 수렴 진단 \(\hat R\)을 계산할 수 있다. 다만 각 체인은 서로 겹치지 않는 난수 흐름(L'Ecuyer-CMRG 등)을 써야 한다. 또 체인마다 번인을 버려야 하므로, 체인 수를 늘릴수록 버리는 몫도 커진다는 점을 고려해 체인 수와 길이를 정한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>체인 하나에 번인 2000번, 표본 8000번이 필요하고 한 번 반복에 R로 1 ms, Rcpp로 0.03 ms가 걸린다. R 체인 1개, Rcpp 체인 4개(코어 4개)의 소요 시간과 얻는 표본 수를 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> R 체인 하나는 \(10\,000\times1\) ms = 10초에 표본 8000개를 준다. Rcpp 체인 4개를 병렬로 돌리면 \(10\,000\times0.03\) ms = 0.3초에 표본 32 000개를 준다. 그러므로 표본 하나당 시간은 약 130분의 1이고, 체인이 넷이라 \(\hat R\)로 수렴도 진단할 수 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>MCMC의 반복은 순서대로 해야 해서 벡터화가 어렵지만, Rcpp로 반복문을 C++로 옮기면 해석 비용이 사라져 수십 배 빨라진다. 독립인 체인 여러 개는 코어마다 병렬로 돌려 표본을 늘리고 수렴 진단에도 쓴다. 이때 R의 난수 생성기와 겹치지 않는 난수 흐름을 써서 재현성과 독립성을 지킨다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>C++ 안에서 <code>std::rand</code>를 쓰면 생기는 문제는?
+          <details><summary>답</summary><p>R의 <code>set.seed</code>로 재현할 수 없고, 난수 품질도 낮을 수 있다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>모든 병렬 체인을 같은 출발점에서 시작하면 수렴 진단에 어떤 문제가 생기는가?
+          <details><summary>답</summary><p>체인들이 같은 영역에 머물러 \(\hat R\)이 1에 가깝게 나와도 다봉 분포의 다른 봉우리를 놓쳤을 수 있다. 출발점을 흩어 놓아야 한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

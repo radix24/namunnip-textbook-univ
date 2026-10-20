@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통8-06-07",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s8-replication" data-kind="본문" data-std="응통8-06-07">
+  <header class="card-head"><span class="no"></span><h2>재표집으로 하는 복합 표본 분산 추정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">층화와 집락, 가중치가 섞인 전국 조사에서 중위 소득이나 두 비율의 비 같은 복잡한 통계량의 표준오차가 필요하다. 선형화로 공식을 유도할 수도 있지만 통계량마다 따로 해야 한다. 표본을 일정한 규칙으로 여러 번 다시 나누어 같은 계산을 되풀이하면, 공식 없이 분산을 얻을 수 있다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="층 안의 집락을 하나씩 빼고 가중치를 조정한 복제 표본들로 추정값을 다시 계산한다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="30" y="40" width="40" height="30"/><rect x="80" y="40" width="40" height="30"/><rect x="130" y="40" width="40" height="30"/><rect x="230" y="40" width="40" height="30"/><rect x="280" y="40" width="40" height="30"/></g>
+        <rect x="80" y="40" width="40" height="30" fill="var(--card, #fff)" stroke="var(--qed, #f2b33d)" stroke-width="2" stroke-dasharray="4 3"/>
+        <g font-size="12" fill="currentColor"><text x="70" y="30">층 1 (집락 3개)</text><text x="240" y="30">층 2 (집락 2개)</text><text x="40" y="100">복제 r: 층 1의 집락 하나를 빼고 나머지 가중치를 3/2배</text><text x="40" y="130">θ̂(1), θ̂(2), ..., θ̂(R)를 다시 계산</text><text x="40" y="160">v(θ̂) = Σ (n_h − 1)/n_h Σ (θ̂(hj) − θ̂)²</text></g>
+      </svg>
+      <figcaption>그림 1. 층별 잭나이프(JK2·JKn). 층 안의 집락을 하나씩 빼고 남은 집락의 가중치를 키워 추정값을 다시 계산하고, 그 흩어짐으로 분산을 구한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>설계 가중치(<a href="06-01.html">6.1절</a>), 선형화 분산(<a href="06-06.html">6.6절</a>), 집락추출의 설계 효과(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
+
+    <h3><span class="no">6.7.1</span>잭나이프와 균형 반복 복제</h3>
+    <p>층 \(h\)에 1차 추출 단위(집락) \(n_h\)개가 있다고 하자. 층별 잭나이프는 한 번에 집락 하나를 빼고, 같은 층의 나머지 집락 가중치를 \(n_h/(n_h - 1)\)배 해 복제 표본을 만든다. 그다음 복제마다 통계량 \(\hat\theta_{(hj)}\)를 다시 계산해 분산을</p>
+    \[v_{JK}(\hat\theta) = \sum_h\frac{n_h - 1}{n_h}\sum_j\left(\hat\theta_{(hj)} - \hat\theta\right)^2\]
+    <p>로 추정한다. 선형 통계량에서는 선형화 분산과 같고, 비나 회귀 계수 같은 매끄러운 통계량에서도 잘 맞는다. 층마다 집락이 2개인 설계에서는 균형 반복 복제(BRR)를 쓴다. 각 층에서 반쪽을 고르는 \(R\)개의 조합을 Hadamard 행렬로 균형 있게 정해, 적은 복제 수로 분산을 효율적으로 추정한다.</p>
+
+    <h3><span class="no">6.7.2</span>부트스트랩과 쓸 때 주의점</h3>
+    <p>복합 표본의 부트스트랩은 관측값이 아니라 집락을 층 안에서 복원 추출한다. Rao-Wu 방법은 층마다 \(n_h - 1\)개를 뽑고 가중치를 그만큼 보정한다. 그러면 독립성 가정이 성립하는 1차 추출 단위 수준에서 재표집하므로 집락 안의 상관이 보존된다. 반면 잭나이프는 중위수 같은 매끄럽지 않은 통계량에서 분산을 잘못 추정하므로, 분위수에는 BRR이나 부트스트랩이 낫다. 한편 공개 자료에서는 응답자 신원을 보호하려고 층과 집락 대신 복제 가중치 열을 함께 배포하는 경우가 많다. 이때 사용자는 복제 가중치로 같은 계산을 \(R\)번 되풀이하기만 하면 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.7.1</span>
+      <p>층이 하나이고 집락 4개의 합계가 10, 14, 8, 12인 표본에서 집락 평균의 평균 \(\hat\theta = 11\)의 잭나이프 분산을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 하나씩 뺀 평균은 \(34/3, 30/3, 36/3, 32/3\), 곧 11.33, 10, 12, 10.67이다. 편차 제곱합은 \(0.111 + 1 + 1 + 0.111 = 2.222\)이므로 \(v = \frac34\times2.222 \approx 1.67\)이다. 그러므로 표준오차는 약 1.29이다. 집락 합계의 표본분산 \(6.67\)을 4로 나눈 값과 같아, 선형 통계량에서는 공식과 일치한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>재표집 분산 추정은 표본에서 1차 추출 단위를 규칙적으로 빼거나 다시 뽑아 만든 복제 가중치로 통계량을 되풀이 계산하고, 그 흩어짐으로 분산을 구한다. 층별 잭나이프는 매끄러운 통계량에, BRR과 Rao-Wu 부트스트랩은 분위수 같은 통계량에도 쓴다. 재표집은 늘 집락 수준에서 해야 집락 안의 상관이 보존된다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.7.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>집락 대신 개별 응답자를 단위로 잭나이프하면 분산은 대개 어떻게 되는가?
+          <details><summary>답</summary><p>집락 안 양의 상관을 무시해 분산을 작게(과소) 추정한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>층이 40개이고 층마다 집락이 2개일 때, BRR이 층별 잭나이프(복제 40개)보다 나은 경우를 말하여라.
+          <details><summary>답</summary><p>중위수 같은 매끄럽지 않은 통계량의 분산을 구할 때. BRR은 반 표본 전체를 바꾸어 잭나이프의 불안정성이 없다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

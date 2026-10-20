@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통18-01-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s18-threeway" data-kind="본문" data-std="응통18-01-05">
+  <header class="card-head"><span class="no"></span><h2>3원 분할표와 Simpson 역설</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">두 병원의 수술 생존율을 비교했더니 병원 A가 더 높았다. 그런데 환자를 중증과 경증으로 나누어 보니 두 경우 모두 병원 B가 더 높았다. 어떻게 이런 일이 생길까? 세 번째 변수를 무시하고 두 변수만 보면 결론이 뒤집힐 수 있다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="Simpson 역설. 층마다 B의 생존율이 높지만, 합친 표에서는 A가 높다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="60" y="60" width="30" height="80"/><rect x="180" y="40" width="30" height="100"/><rect x="300" y="50" width="30" height="90"/></g>
+        <g fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"><rect x="95" y="50" width="30" height="90"/><rect x="215" y="30" width="30" height="110"/><rect x="335" y="70" width="30" height="70"/></g>
+        <line x1="40" y1="140" x2="400" y2="140" stroke="var(--ink-3, #888)"/>
+        <g font-size="12" fill="currentColor"><text x="66" y="160">중증</text><text x="186" y="160">경증</text><text x="306" y="160">합계</text><text x="60" y="186">파랑 A, 노랑 B (생존율)</text></g>
+      </svg>
+      <figcaption>그림 1. 층마다 B의 생존율이 높지만(왼쪽 두 묶음), 중증 환자가 B에 몰려 있어 합친 표에서는 A가 높아 보인다(개략).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>오즈비와 상대위험도(<a href="01-02.html">1.2절</a>), 독립성 검정(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
+
+    <h3><span class="no">1.5.1</span>조건부 연관과 주변 연관</h3>
+    <p>설명변수 \(X\), 반응 \(Y\), 그리고 제3의 변수 \(Z\)로 \(2\times2\times K\) 분할표를 만든다. \(Z\)의 각 수준에서 본 \(X\)-\(Y\) 연관을 조건부 연관, \(Z\)를 무시하고 합친 표의 연관을 주변 연관이라 한다. 두 연관은 다를 수 있다. \(Z\)가 \(X\)와도 \(Y\)와도 관련이 있으면, 합친 표에는 \(Z\)의 효과가 섞이기 때문이다. 극단적으로 방향까지 뒤집히는 것이 Simpson 역설이다. 그러므로 관찰 연구에서는 혼동 변수로 층을 나누어 조건부 연관을 본다. 모든 층에서 조건부 오즈비가 1이면 \(X\)와 \(Y\)는 \(Z\)가 주어질 때 조건부 독립이다.</p>
+
+    <h3><span class="no">1.5.2</span>Cochran-Mantel-Haenszel 검정</h3>
+    <p>층마다 오즈비가 비슷하다면 공통 오즈비를 하나로 요약하고 "모든 층에서 조건부 독립"을 검정한다. 층 \(k\)의 표가 \(\begin{pmatrix}n_{11k} & n_{12k}\\n_{21k} & n_{22k}\end{pmatrix}\)이고 합이 \(n_{++k}\)이면, Mantel-Haenszel 공통 오즈비는</p>
+    \[\hat\theta_{MH} = \frac{\sum_kn_{11k}n_{22k}/n_{++k}}{\sum_kn_{12k}n_{21k}/n_{++k}}\]
+    <p>이다. CMH 검정 통계량은 각 층의 \(n_{11k}\)에서 독립일 때의 기댓값을 뺀 편차를 층에 걸쳐 합해 분산으로 나눈 꼴이며, 자유도 1의 카이제곱 분포를 따른다. 따라서 층마다 표본이 작아도 정보를 모아 검정할 수 있다. 다만 층마다 오즈비의 방향이 다르면 편차가 상쇄되어 연관을 놓치므로, Breslow-Day 검정으로 오즈비의 동질성을 먼저 확인한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.5.1</span>
+      <p>중증 환자에서 A는 100명 중 20명, B는 300명 중 90명이 생존했고, 경증 환자에서 A는 300명 중 270명, B는 100명 중 95명이 생존했다. 층별 생존율, 합친 생존율, Mantel-Haenszel 공통 오즈비(B 대 A 생존 오즈)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 중증에서 A 20%, B 30%이고 경증에서 A 90%, B 95%로 두 층 모두 B가 높다. 그런데 합치면 A는 290/400 = 72.5%, B는 185/400 = 46.3%로 A가 높다. 중증 환자가 B에 몰렸기 때문이다. 공통 오즈비는 중증에서 \(90\times80/400 = 18\), \(20\times210/400 = 10.5\), 경증에서 \(95\times30/400 = 7.125\), \(270\times5/400 = 3.375\)이므로 \(\hat\theta_{MH} = (18 + 7.125)/(10.5 + 3.375) \approx 1.81\)이다. 그러므로 중증도를 보정하면 B의 생존 오즈가 약 1.8배이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>3원 분할표에서 제3의 변수로 나눈 조건부 연관과 합친 표의 주변 연관은 다를 수 있고, 방향이 뒤집히는 것이 Simpson 역설이다. 혼동 변수가 있으면 층별로 연관을 보고, 층마다 오즈비가 비슷하면 Mantel-Haenszel 공통 오즈비로 요약해 CMH 검정으로 조건부 독립을 검정한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 Simpson 역설이 생긴 직접적인 이유를 한 문장으로 말하여라.
+          <details><summary>답</summary><p>병원 B 환자의 75%가 중증, 병원 A 환자의 75%가 경증이라 중증도가 병원과 생존 모두와 관련되었기 때문이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>두 층의 오즈비가 각각 3과 1/3이면 CMH 검정은 어떤 결과를 줄 가능성이 큰가?
+          <details><summary>답</summary><p>편차가 상쇄되어 연관이 없다고 나오기 쉽다. 이질성(교호작용)이 있으므로 층별로 따로 보고해야 한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

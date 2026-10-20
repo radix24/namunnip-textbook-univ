@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통15-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s15-copula" data-kind="본문" data-std="응통15-07-01">
+  <header class="card-head"><span class="no"></span><h2>다변량 정규 난수와 코퓰라</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">주식 두 종목의 수익률을 함께 모의하려면 각각의 분포뿐 아니라 둘이 함께 움직이는 정도도 맞춰야 한다. 상관이 있는 정규 난수는 어떻게 만들까? 그리고 주변분포가 정규가 아닐 때, 예컨대 꼬리가 두꺼운 분포끼리 의존 구조만 따로 정해 붙일 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="독립 표준정규 점들이 Cholesky 변환으로 기울어진 타원 모양의 상관된 점구름이 된다">
+        <rect x="30" y="20" width="160" height="160" fill="none" stroke="var(--ink-3, #888)"/>
+        <rect x="250" y="20" width="160" height="160" fill="none" stroke="var(--ink-3, #888)"/>
+        <g fill="var(--forest, #4b4fe0)"><circle cx="90" cy="80" r="2"/><circle cx="130" cy="110" r="2"/><circle cx="110" cy="60" r="2"/><circle cx="70" cy="120" r="2"/><circle cx="140" cy="70" r="2"/><circle cx="100" cy="140" r="2"/><circle cx="60" cy="90" r="2"/><circle cx="150" cy="130" r="2"/><circle cx="120" cy="95" r="2"/><circle cx="85" cy="105" r="2"/></g>
+        <g fill="var(--qed, #f2b33d)"><circle cx="300" cy="140" r="2"/><circle cx="330" cy="110" r="2"/><circle cx="350" cy="80" r="2"/><circle cx="310" cy="125" r="2"/><circle cx="370" cy="60" r="2"/><circle cx="340" cy="100" r="2"/><circle cx="290" cy="150" r="2"/><circle cx="360" cy="75" r="2"/><circle cx="320" cy="120" r="2"/><circle cx="345" cy="88" r="2"/></g>
+        <line x1="200" y1="100" x2="240" y2="100" stroke="currentColor"/><polygon points="240,95 250,100 240,105" fill="currentColor"/>
+        <g font-size="12" fill="currentColor"><text x="70" y="196">독립 Z</text><text x="290" y="196">X = μ + LZ (ρ = 0.8)</text><text x="200" y="90">L</text></g>
+      </svg>
+      <figcaption>그림 1. 독립인 표준정규 벡터 \(Z\)에 공분산 행렬의 Cholesky 인수 \(L\)을 곱하면 원하는 상관을 가진 다변량 정규 벡터가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>역변환법과 기각법(<a href="04-02.html">4.2절</a>), Cholesky 분해(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>다변량 정규 난수</h3>
+    <p>공분산 행렬 \(\Sigma\)가 양정치이면 \(\Sigma = LL^{\mathsf T}\)인 하삼각 행렬 \(L\)이 있다(Cholesky 분해). 독립인 표준정규 난수 벡터 \(Z\)를 만들어 \(X = \mu + LZ\)라 하면 \(\operatorname{Cov}(X) = L\operatorname{Cov}(Z)L^{\mathsf T} = LL^{\mathsf T} = \Sigma\)이다. 그러므로 원하는 평균과 공분산을 가진 다변량 정규 난수가 된다. 2차원에서 표준편차 1, 상관 \(\rho\)이면 \(X_1 = Z_1\), \(X_2 = \rho Z_1 + \sqrt{1 - \rho^2}Z_2\)이다. 계산량은 분해에 \(O(d^3)\), 난수 하나에 \(O(d^2)\)이다.</p>
+
+    <h3><span class="no">7.1.2</span>코퓰라</h3>
+    <p>Sklar 정리에 따르면 연속인 결합 분포함수는 주변분포 \(F_1, \ldots, F_d\)와 코퓰라 \(C\)로 \(F(x_1, \ldots, x_d) = C(F_1(x_1), \ldots, F_d(x_d))\)처럼 나뉜다. 코퓰라는 [0, 1]의 균등 주변분포를 가진 결합 분포로, 의존 구조만 담는다. 따라서 주변분포와 의존 구조를 따로 고를 수 있다. 가우스 코퓰라로 모의하는 순서는 다음과 같다. 먼저 상관 행렬로 다변량 정규 \(X\)를 만들고, 각 성분을 \(U_j = \Phi(X_j)\)로 균등하게 바꾼다. 그다음 원하는 주변분포의 역함수로 \(Y_j = F_j^{-1}(U_j)\)를 얻는다. 한편 가우스 코퓰라는 극단값이 함께 일어나는 꼬리 의존이 없어, 금융 위기처럼 동시에 크게 떨어지는 일을 과소평가한다. 그럴 때는 t 코퓰라나 Clayton 코퓰라를 쓴다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>\(\Sigma = \begin{pmatrix}4 & 2\\2 & 5\end{pmatrix}\)의 Cholesky 인수 \(L\)을 구하고, \(Z = (1, -1)^{\mathsf T}\)일 때 \(X = LZ\)를 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(L_{11} = 2\), \(L_{21} = 2/2 = 1\), \(L_{22} = \sqrt{5 - 1} = 2\)이므로 \(L = \begin{pmatrix}2 & 0\\1 & 2\end{pmatrix}\)이다. 그러면 \(X = (2, 1 - 2)^{\mathsf T} = (2, -1)^{\mathsf T}\)이다. 확인하면 \(LL^{\mathsf T} = \begin{pmatrix}4 & 2\\2 & 5\end{pmatrix}\)이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>다변량 정규 난수는 공분산 행렬의 Cholesky 인수를 독립 표준정규 벡터에 곱해 만든다. Sklar 정리는 결합 분포를 주변분포와 코퓰라로 나누어, 의존 구조와 주변분포를 따로 고를 수 있게 한다. 가우스 코퓰라는 정규 난수를 균등으로 바꾼 뒤 원하는 주변분포의 역함수에 넣어 모의하며, 꼬리 의존이 필요하면 t 코퓰라 등을 쓴다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>상관 0.6인 표준 이변량 정규 난수를 \(Z_1, Z_2\)로 만드는 식을 쓰시오.
+          <details><summary>답</summary><p>\(X_1 = Z_1\), \(X_2 = 0.6Z_1 + 0.8Z_2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>가우스 코퓰라에서 주변분포를 바꾸면 Pearson 상관은 바뀌지만 Spearman 순위 상관은 바뀌지 않는 이유를 말하여라.
+          <details><summary>답</summary><p>순위 상관은 단조 변환에 불변이고, 주변분포를 바꾸는 \(F_j^{-1}\)는 단조 증가 변환이라 순위를 보존한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

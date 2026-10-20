@@ -1,0 +1,69 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통17-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s17-shiny" data-kind="본문" data-std="응통17-07-01">
+  <header class="card-head"><span class="no"></span><h2>Shiny로 만드는 탐색용 앱</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">히스토그램의 막대 폭을 바꾸어 보고, 변환을 로그로 했다가 제곱근으로 바꾸고, 특정 집단만 골라 본다. 탐색적 분석은 이런 시도를 수십 번 되풀이한다. 매번 코드를 고쳐 다시 그리는 대신, 슬라이더와 선택 상자를 움직이면 그림이 바로 바뀌는 앱을 만들면 어떨까? R의 Shiny가 그런 도구이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="Shiny 앱 구조. 왼쪽 입력 패널의 슬라이더와 선택 상자, 오른쪽 출력 그림, 서버가 입력에 반응해 출력을 다시 그린다">
+        <rect x="20" y="20" width="400" height="150" fill="none" stroke="var(--ink-3, #888)"/>
+        <rect x="30" y="30" width="120" height="130" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <rect x="170" y="30" width="240" height="130" fill="none" stroke="var(--forest, #4b4fe0)"/>
+        <line x1="45" y1="70" x2="135" y2="70" stroke="currentColor"/><circle cx="90" cy="70" r="6" fill="var(--qed, #f2b33d)"/>
+        <rect x="45" y="100" width="90" height="20" fill="var(--card, #fff)" stroke="currentColor"/>
+        <g fill="var(--forest, #4b4fe0)" opacity="0.7"><rect x="200" y="110" width="20" height="40"/><rect x="225" y="80" width="20" height="70"/><rect x="250" y="60" width="20" height="90"/><rect x="275" y="90" width="20" height="60"/><rect x="300" y="120" width="20" height="30"/></g>
+        <g font-size="12" fill="currentColor"><text x="45" y="55">막대 수</text><text x="50" y="114">변환 ▾</text><text x="290" y="50">출력 그림</text><text x="40" y="184">ui (입력과 배치)</text><text x="250" y="184">server (반응해서 다시 그림)</text></g>
+      </svg>
+      <figcaption>그림 1. Shiny 앱의 구조. ui가 입력 위젯과 출력 자리를 정하고, server가 입력이 바뀔 때마다 출력을 다시 계산한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>일변량 분포의 표현(<a href="02-01.html">2.1절</a>), 자료 변환(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>ui와 server</h3>
+    <p>Shiny 앱은 두 부분으로 이루어진다. <code>ui</code>는 화면 배치로, 슬라이더(<code>sliderInput</code>), 선택 상자(<code>selectInput</code>) 같은 입력과 그림 자리(<code>plotOutput</code>)를 정한다. <code>server</code>는 입력 값 <code>input$bins</code> 등을 읽어 출력을 만드는 함수이다. 출력은 <code>renderPlot({...})</code> 안에서 계산하는데, Shiny는 그 안에서 읽은 입력을 자동으로 추적한다. 따라서 해당 입력이 바뀌면 그 출력만 다시 계산된다. 이것을 반응형 프로그래밍이라 한다.</p>
+<pre class="mono small">library(shiny)
+ui &lt;- fluidPage(
+  sliderInput("bins", "막대 수", 5, 50, 20),
+  selectInput("tf", "변환", c("없음", "로그", "제곱근")),
+  plotOutput("hist"))
+server &lt;- function(input, output) {
+  output$hist &lt;- renderPlot({
+    x &lt;- faithful$waiting
+    if (input$tf == "로그") x &lt;- log(x)
+    if (input$tf == "제곱근") x &lt;- sqrt(x)
+    hist(x, breaks = input$bins)
+  })
+}
+shinyApp(ui, server)</pre>
+
+    <h3><span class="no">7.1.2</span>반응식과 공유</h3>
+    <p>여러 출력이 같은 중간 계산(예를 들어 필터링한 자료)을 쓰면 <code>reactive({...})</code>로 한 번만 계산해 두고 함께 쓴다. 그러면 입력이 바뀌어도 필요한 계산만 되풀이된다. 무거운 계산은 버튼을 눌렀을 때만 하도록 <code>eventReactive</code>를 쓴다. 완성한 앱은 shinyapps.io나 사내 서버에 올려 코드를 모르는 사람도 자료를 탐색하게 할 수 있다. 다만 앱은 탐색과 전달의 도구이다. 그래서 앱에서 찾은 패턴은 재현 가능한 스크립트로 다시 확인해야 한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>위 앱에서 막대 수를 바꾸면 다시 계산되는 것과 그렇지 않은 것을 구별하여라. 자료를 읽는 데 10초가 걸린다면 어떻게 고쳐야 하는가?</p>
+    </div>
+    <p><i>풀이.</i> <code>renderPlot</code>이 <code>input$bins</code>와 <code>input$tf</code>를 읽으므로 둘 중 하나가 바뀌면 그림 전체가 다시 그려지고, ui 배치는 그대로이다. 자료 읽기가 <code>renderPlot</code> 안에 있으면 슬라이더를 움직일 때마다 10초씩 걸린다. 그러므로 자료 읽기는 server 함수 밖(앱 시작 때 한 번)으로 옮기고, 변환은 <code>reactive</code>로 분리한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Shiny 앱은 입력과 출력 배치를 정하는 ui와, 입력에 반응해 출력을 계산하는 server로 이루어진다. 출력 안에서 읽은 입력이 자동으로 추적되어 바뀐 입력에 관련된 출력만 다시 계산되며, 공통 계산은 reactive로 묶는다. 앱은 탐색과 공유를 쉽게 하지만, 찾은 결과는 스크립트로 재현해 확인한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>집단을 고르는 <code>selectInput</code>을 더해 히스토그램을 그 집단만으로 그리려면 server에서 무엇을 바꾸는가?
+          <details><summary>답</summary><p><code>x</code>를 만들 때 <code>input$group</code>으로 자료를 거른다(<code>subset</code> 또는 <code>dplyr::filter</code>).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>앱으로 막대 수와 변환을 여러 번 바꾸다 "두 봉우리"를 찾았다. 이 발견을 보고하기 전에 할 일을 말하여라.
+          <details><summary>답</summary><p>여러 막대 폭과 밀도 추정에서 일관되게 보이는지, 다른 자료나 표본에서도 나타나는지 스크립트로 확인한다. 여러 시도 끝에 고른 그림은 우연을 과장할 수 있다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

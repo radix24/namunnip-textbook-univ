@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "응통5-06-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-s5-multreg" data-kind="본문" data-std="응통5-06-04">
+  <header class="card-head"><span class="no"></span><h2>다중회귀분석</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">집값을 넓이 하나로 설명하면 부족하다. 방 수, 역까지 거리, 지은 해도 영향을 준다. 설명변수를 여럿 넣으면 계수는 어떻게 해석하고, 모형 전체가 쓸모 있는지는 무엇으로 판단할까? 변수를 많이 넣을수록 결정계수가 커지기만 하는 문제도 있다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="두 설명변수의 다중회귀는 3차원에서 자료점에 평면을 맞춘다">
+        <polygon points="80,140 300,170 380,90 160,60" fill="var(--sprout, #c9cbf7)" opacity="0.6" stroke="var(--forest, #4b4fe0)"/>
+        <g fill="currentColor"><circle cx="150" cy="90" r="3"/><circle cx="230" cy="80" r="3"/><circle cx="290" cy="130" r="3"/><circle cx="200" cy="140" r="3"/><circle cx="330" cy="100" r="3"/></g>
+        <g stroke="var(--qed, #f2b33d)"><line x1="150" y1="90" x2="150" y2="105"/><line x1="230" y1="80" x2="230" y2="92"/><line x1="290" y1="130" x2="290" y2="118"/><line x1="200" y1="140" x2="200" y2="128"/></g>
+        <g font-size="12" fill="currentColor"><text x="300" y="186">x₁</text><text x="390" y="90">x₂</text><text x="60" y="40">y = b₀ + b₁x₁ + b₂x₂</text></g>
+      </svg>
+      <figcaption>그림 1. 설명변수가 둘이면 자료점에 평면을 맞춘다. 노란 선이 잔차이고, 잔차 제곱합을 가장 작게 하는 평면이 최소제곱 해이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱 직선(<a href="06-02.html">6.2절</a>), 결정계수와 잔차 그림(<a href="06-03.html">6.3절</a>)을 쓴다.</div>
+
+    <h3><span class="no">6.4.1</span>계수의 해석</h3>
+    <p>모형 \(y = \beta_0 + \beta_1x_1 + \cdots + \beta_px_p + \varepsilon\)에서 \(\beta_j\)는 다른 설명변수를 모두 그대로 둘 때 \(x_j\)가 1 늘면 \(y\)의 평균이 얼마나 바뀌는지이다. 그러므로 같은 변수라도 단순회귀의 기울기와 다를 수 있다. 예를 들어 집값을 방 수만으로 회귀하면 기울기가 크지만, 넓이를 함께 넣으면 "같은 넓이에서 방이 하나 더 많은" 효과가 되어 작아지거나 음수가 될 수 있다. 각 계수의 t 검정은 다른 변수가 이미 들어 있을 때 그 변수를 더할 가치가 있는지를 본다.</p>
+
+    <h3><span class="no">6.4.2</span>F 검정과 수정 결정계수</h3>
+    <p>모형 전체의 유의성은 "모든 \(\beta_j = 0\)"이라는 귀무가설을 F 검정으로 본다. 회귀 제곱합과 잔차 제곱합으로 \(F = \frac{SSR/p}{SSE/(n - p - 1)}\)를 계산해 자유도 \((p, n - p - 1)\)의 F 분포와 비교한다. 결정계수 \(R^2 = SSR/SST\)는 변수를 더하면 쓸모없는 변수라도 줄지 않는다. 따라서 자유도를 반영한 수정 결정계수</p>
+    \[R^2_{\text{adj}} = 1 - \frac{SSE/(n - p - 1)}{SST/(n - 1)}\]
+    <p>로 모형을 비교한다. 쓸모없는 변수를 넣으면 \(R^2_{\text{adj}}\)는 오히려 준다. 한편 설명변수끼리 상관이 강하면(다중공선성) 계수의 표준오차가 커져 개별 t 검정은 유의하지 않은데 F 검정은 유의한 일이 생긴다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.4.1</span>
+      <p>\(n = 30\), \(p = 3\)인 회귀에서 \(SST = 500\), \(SSE = 150\)이었다. \(R^2\), \(R^2_{\text{adj}}\), F 통계량을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(R^2 = 1 - 150/500 = 0.70\)이다. \(R^2_{\text{adj}} = 1 - (150/26)/(500/29) = 1 - 5.77/17.24 \approx 0.665\)이다. \(F = (350/3)/(150/26) \approx 116.7/5.77 \approx 20.2\)이고, \(F_{0.05}(3, 26) \approx 2.98\)보다 훨씬 크므로 모형은 유의하다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>다중회귀 계수는 다른 설명변수를 고정했을 때의 효과이므로 단순회귀 기울기와 다를 수 있다. 모형 전체의 유의성은 F 검정으로, 개별 변수의 기여는 t 검정으로 본다. 결정계수는 변수를 더하면 늘기만 하므로 수정 결정계수로 비교하고, 다중공선성이 계수의 불확실성을 키우는 점에 주의한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>변수를 하나 더해 \(SSE\)가 150에서 148로 줄었다(\(n = 30\)). \(R^2_{\text{adj}}\)는 늘었는가?
+          <details><summary>답</summary><p>\(1 - (148/25)/17.24 \approx 0.657\)로 0.665보다 줄었다. 넣을 가치가 없다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>두 설명변수의 상관이 0.98일 때 생길 수 있는 문제를 말하여라.
+          <details><summary>답</summary><p>계수 추정이 불안정하고 표준오차가 커져, 부호가 뒤집히거나 개별 계수가 유의하지 않게 나온다. 변수 하나를 빼거나 합친다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
