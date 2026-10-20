@@ -1,27 +1,3 @@
-/* 기계19 메카트로닉스: 표본화와 에일리어싱 (03-01) */
-(() => {
-  "use strict";
-  const S = QSim.card("lab-me-alias"); if (!S) return;
-  const [cv] = S.$$("canvas");
-  function draw() {
-    const c = QSim.col(), f = S.val("f"), fs = S.val("fs");
-    // 표본화된 신호가 보이는 주파수: f를 fs의 배수만큼 옮겨 0 ~ fs/2로 접음
-    let fa = f % fs; if (fa > fs / 2) fa = fs - fa;
-    const Tw = 0.02, v = QSim.view(cv, 0.5), fr = QSim.frame(v, { x0: 0, x1: Tw * 1000, y0: -1.3, y1: 1.3, xl: "시간 (ms)", yl: "신호", pad: 32 });
-    fr.axes();
-    fr.fn((tm) => Math.sin(2 * Math.PI * f * tm / 1000), c.ink3, 1.2, null, 2000);
-    const n = Math.floor(Tw * fs), pts = [];
-    for (let k = 0; k <= n; k++) { const t = k / fs; pts.push([t * 1000, Math.sin(2 * Math.PI * f * t)]); }
-    // 표본을 지나는 가장 낮은 주파수 사인(에일리어스)
-    const sgn = f % fs > fs / 2 ? -1 : 1;
-    fr.fn((tm) => sgn * Math.sin(2 * Math.PI * fa * tm / 1000), c.warn, 2, [5, 3], 800);
-    pts.forEach(([x, y]) => fr.dot(x, y, c.main, 3.5));
-    const ok = fs > 2 * f;
-    S.out(`신호 ${f} Hz, 표본화 ${fs} Hz (Nyquist 주파수 ${fs / 2} Hz), 20 ms 동안 표본 ${n + 1}개\n${ok ? `fs > 2f: 표본으로 원래 주파수 ${f} Hz를 되살릴 수 있음` : `fs ≤ 2f: 에일리어싱. 표본은 ${fa.toFixed(0)} Hz 신호와 구별되지 않음`}\n빨간 점선 = 표본을 지나는 가장 낮은 주파수 사인 (${fa.toFixed(0)} Hz)`);
-  }
-  S.on(draw); QSim.redrawOn(draw); draw();
-})();
-
 /* 기계19 5단원: 표본화 주기와 디지털 위치 제어 (05-02) */
 (() => {
   "use strict";
