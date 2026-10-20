@@ -2,25 +2,27 @@
 {
   "type": "card",
   "sec": "공통7-08-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c7-body.js"]
 }
 -->
 <article class="card q-card" id="text-c7-errors" data-kind="본문" data-std="공통7-08-02">
   <header class="card-head"><span class="no"></span><h2>제1종 오류, 제2종 오류, 검정력</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가설검정의 두 가지 오류를 구별한다.</li>
-        <li>검정력을 계산하고 무엇이 검정력을 정하는지 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>가설검정 (<a href="08-01.html">8.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">재판에서 무고한 사람을 유죄로 판결하는 것과 범인을 풀어 주는 것은 둘 다 잘못이지만, 성격이 다르다. 가설검정도 마찬가지로 두 방향으로 틀릴 수 있다. 한쪽 잘못을 줄이면 다른 쪽은 어떻게 될까? 그리고 실제로 차이가 있을 때 그것을 찾아낼 가능성은 무엇이 정할까?</p>
+    <figure class="q-fig" data-q="c7-power">
+      <svg viewBox="0 0 520 250" role="img" aria-label="귀무가설 분포와 실제 분포, 기각역과 검정력"></svg>
+      <div class="q-ctl">
+        <label>실제 평균 (g) <input type="range" data-k="m" min="490" max="500" step="0.5" value="494"><output data-k="m"></output></label>
+        <label>표본 크기 \(n\) <input type="range" data-k="n" min="9" max="144" step="1" value="36"><output data-k="n"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 검정 곡선(\(H_0\) 아래 \(\bar X\)의 분포)과 파란 곡선(실제 분포). 기각역에 든 검정 곡선의 넓이(주황)가 제1종 오류 확률 \(\alpha\)이고, 파란 곡선의 넓이(연한 파랑)가 검정력이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가설검정(<a href="08-01.html">8.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">8.2.1</span>두 가지 오류</h3>
+    <p>검정의 결정과 실제 상태를 맞대면 네 경우가 생긴다.</p>
     <table class="tb-table">
       <thead><tr><th></th><th>실제로 \(H_0\)이 참</th><th>실제로 \(H_1\)이 참</th></tr></thead>
       <tbody>
@@ -28,35 +30,19 @@
         <tr><td>\(H_0\) 유지</td><td>바른 결정</td><td>제2종 오류 (확률 \(\beta\))</td></tr>
       </tbody>
     </table>
-    <ul class="tb-list">
-      <li><b>제1종 오류</b>: 차이가 없는데 있다고 하는 것. 무고한 사람을 유죄로, 효과 없는 약을 효과 있다고.</li>
-      <li><b>제2종 오류</b>: 차이가 있는데 못 찾는 것. 범인을 놓침, 효과 있는 약을 버림.</li>
-      <li><b>검정력</b>: 실제로 차이가 있을 때 그것을 찾아낼 확률.</li>
-    </ul>
-    <p>유의수준 \(\alpha\)는 제1종 오류의 확률을 미리 정해 둔 것입니다. \(\alpha\)를 줄이면 기각하기 어려워져 \(\beta\)가 커집니다. 표본 크기가 정해져 있으면 두 오류를 동시에 줄일 수 없습니다.</p>
+    <p>차이가 없는데 있다고 하는 것이 <em>제1종 오류</em>이다. 무고한 사람을 유죄로 하거나, 효과 없는 약을 효과 있다고 하는 것이 그렇다. 반대로 차이가 있는데 못 찾는 것이 <em>제2종 오류</em>이며, 범인을 놓치거나 효과 있는 약을 버리는 것이 그렇다. 그리고 실제로 차이가 있을 때 그것을 찾아낼 확률을 <em>검정력</em>이라 한다.</p>
+    <p>유의수준 \(\alpha\)는 제1종 오류의 확률을 미리 정해 둔 것이다. 그런데 \(\alpha\)를 줄이면 기각하기 어려워져 \(\beta\)가 커진다. 즉 처음 질문의 답으로, 표본 크기가 정해져 있으면 두 오류를 동시에 줄일 수 없다.</p>
 
     <h3><span class="no">8.2.2</span>검정력 계산</h3>
     <div class="tb-env ex">
       <span class="lb">예제 8.2.1</span>
       <p>8.1절 예제(\(\sigma = 12\), \(n = 36\), \(\alpha = 0.05\) 양측)에서 실제 평균이 494 g이면 검정력은?</p>
     </div>
-    <p><i>풀이.</i> \(\text{SE} = 2\). 기각역은 \(\bar x &lt; 500 - 1.96\times2 = 496.08\) 또는 \(\bar x > 503.92\). 실제 \(\mu = 494\)일 때 \(P(\bar X &lt; 496.08) = P\!\left(Z &lt; \frac{2.08}{2}\right) = P(Z &lt; 1.04) \approx 0.85\). 검정력 약 85%, \(\beta \approx 15\%\)입니다.</p>
-    <p>검정력을 키우는 방법:</p>
-    <ul class="tb-list">
-      <li>표본 크기를 늘린다(표준오차가 줄어 분포가 좁아짐).</li>
-      <li>찾고 싶은 차이가 크면 검정력이 크다.</li>
-      <li>자료의 퍼짐(\(\sigma\))을 줄인다(측정을 정밀하게, 짝지은 설계 9.3절).</li>
-      <li>\(\alpha\)를 키운다(대신 제1종 오류가 늘어남).</li>
-    </ul>
-    <p>연구를 시작하기 전에 원하는 검정력(보통 80%)을 얻기 위한 표본 크기를 계산합니다.</p>
+    <p><i>풀이.</i> \(\text{SE} = 2\)이므로 기각역은 \(\bar x &lt; 500 - 1.96\times2 = 496.08\) 또는 \(\bar x > 503.92\)이다. 실제 \(\mu = 494\)일 때 \(P(\bar X &lt; 496.08) = P\!\left(Z &lt; \frac{2.08}{2}\right) = P(Z &lt; 1.04) \approx 0.85\)이다. 따라서 검정력은 약 85%이고 \(\beta \approx 15\%\)이다. 그림 1의 처음 상태가 이 예제이다.</p>
+    <p>처음 질문의 둘째 물음에 답하면, 검정력을 키우는 방법은 넷이다. 표본 크기를 늘리면 표준오차가 줄어 두 분포가 좁아지고 덜 겹친다. 찾고 싶은 차이가 크면 두 분포가 멀어져 검정력이 크다. 측정을 정밀하게 하거나 짝지은 설계(9.3절)를 써서 자료의 퍼짐 \(\sigma\)를 줄여도 된다. 끝으로 \(\alpha\)를 키우면 검정력이 커지지만, 대신 제1종 오류가 늘어난다. 그림 1에서 실제 평균을 500 쪽으로 옮기거나 \(n\)을 줄이면 검정력이 떨어지는 것을 볼 수 있다.</p>
+    <p>그래서 연구를 시작하기 전에 원하는 검정력(보통 80%)을 얻기 위한 표본 크기를 계산한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>제1종 오류(없는데 있다) 확률 \(\alpha\), 제2종 오류(있는데 못 찾음) 확률 \(\beta\).</li>
-        <li>검정력 \(1 - \beta\): \(n\), 효과 크기, \(\sigma\), \(\alpha\)에 따라 정해진다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>제1종 오류는 차이가 없는데 있다고 하는 것(확률 \(\alpha\)), 제2종 오류는 있는 차이를 놓치는 것(확률 \(\beta\))이며, 표본 크기가 정해지면 둘을 함께 줄일 수 없다. 검정력 \(1 - \beta\)는 표본 크기, 차이의 크기, 퍼짐, \(\alpha\)가 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.2.3</span>연습문제</h3>

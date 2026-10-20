@@ -2,46 +2,42 @@
 {
   "type": "card",
   "sec": "공통7-05-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c7-body.js"]
 }
 -->
 <article class="card q-card" id="text-c7-exponential" data-kind="본문" data-std="공통7-05-03">
   <header class="card-head"><span class="no"></span><h2>지수분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>다음 사건까지 기다리는 시간을 지수분포로 계산한다.</li>
-        <li>지수분포의 무기억성과 포아송 분포와의 관계를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>포아송 분포 (<a href="04-03.html">4.3절</a>), 확률밀도함수 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">손님이 평균 2분에 한 명꼴로 오는 가게에서 5분째 아무도 오지 않았다. 이제 곧 올 때가 되었다고 느끼기 쉽지만, 손님들이 서로 상관없이 띄엄띄엄 온다면 사정이 다르다. 다음 사건까지 기다리는 시간은 어떤 분포를 따르며, 이미 기다린 시간은 앞으로의 대기에 영향을 줄까?</p>
+    <figure class="q-fig" data-q="c7-expo">
+      <svg viewBox="0 0 520 250" role="img" aria-label="지수분포의 밀도함수와 무기억성"></svg>
+      <div class="q-ctl">
+        <label>\(\lambda\) (1/분) <input type="range" data-k="l" min="0.2" max="2" step="0.1" value="0.5"><output data-k="l"></output></label>
+        <label>이미 기다린 시간 \(s\) <input type="range" data-k="s" min="0" max="5" step="0.5" value="0"><output data-k="s"></output></label>
+        <label>더 기다릴 시간 \(t\) <input type="range" data-k="t" min="0.5" max="5" step="0.5" value="3"><output data-k="t"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 지수분포의 밀도함수. 파란 넓이가 \(s + t\)분 넘게 기다릴 확률이고, \(s\)를 늘려도 조건부확률 \(P(X > s + t \mid X > s)\)는 \(e^{-\lambda t}\) 그대로이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>포아송 분포(<a href="04-03.html">4.3절</a>)와 확률밀도함수(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>지수분포</h3>
-    <p>사건이 평균적으로 단위 시간에 \(\lambda\)번 일어날 때(포아송), 다음 사건까지 기다리는 시간 \(X\)는 지수분포를 따릅니다.</p>
-    \[f(x) = \lambda e^{-\lambda x}\ (x \ge 0), \qquad P(X > t) = e^{-\lambda t}, \qquad \mu = \sigma = \frac1\lambda.\]
-    <p>관계: "\(t\)까지 기다려도 사건이 없음" = "길이 \(t\)인 구간에서 포아송 횟수가 0" \(= e^{-\lambda t}\).</p>
+    <p>사건이 평균적으로 단위 시간에 \(\lambda\)번 일어난다고 하자(포아송). 그러면 다음 사건까지 기다리는 시간 \(X\)는 <em>지수분포</em>를 따른다.</p>
+    \[f(x) = \lambda e^{-\lambda x}\ (x \ge 0), \qquad P(X > t) = e^{-\lambda t}, \qquad \mu = \sigma = \frac1\lambda\]
+    <p>포아송 분포와의 관계는 이렇다. "\(t\)까지 기다려도 사건이 없음"은 "길이 \(t\)인 구간에서 포아송 횟수가 0"과 같으므로, 그 확률이 \(e^{-\lambda t}\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>손님이 평균 2분에 한 명꼴로 온다(\(\lambda = 0.5\)/분). 다음 손님이 3분 넘게 오지 않을 확률과 1분 안에 올 확률은?</p>
     </div>
-    <p><i>풀이.</i> \(P(X > 3) = e^{-1.5} \approx 0.223\). \(P(X \le 1) = 1 - e^{-0.5} \approx 0.393\).</p>
+    <p><i>풀이.</i> \(P(X > 3) = e^{-1.5} \approx 0.223\)이다. 또 \(P(X \le 1) = 1 - e^{-0.5} \approx 0.393\)이다. 그림 1의 처음 상태에서 파란 넓이가 0.223이다.</p>
 
     <h3><span class="no">5.3.2</span>무기억성</h3>
-    <p>지수분포는 이미 기다린 시간을 "기억하지 않습니다".</p>
-    \[P(X > s + t \mid X > s) = \frac{e^{-\lambda(s + t)}}{e^{-\lambda s}} = e^{-\lambda t} = P(X > t).\]
-    <p>5분을 기다렸어도 앞으로 3분 더 기다릴 확률은 처음부터 3분 기다릴 확률과 같습니다. 방사성 원자의 붕괴처럼 낡지 않는 것의 수명에 맞고, 닳는 부품(오래 쓸수록 고장 나기 쉬움)에는 맞지 않습니다. 이 분포는 오른쪽으로 크게 치우쳐 있어 중심극한정리 실험(6.2절 카드)에 씁니다.</p>
+    <p>처음 질문의 둘째 물음에 답하면, 지수분포는 이미 기다린 시간을 "기억하지 않는다".</p>
+    \[P(X > s + t \mid X > s) = \frac{e^{-\lambda(s + t)}}{e^{-\lambda s}} = e^{-\lambda t} = P(X > t)\]
+    <p>즉 5분을 기다렸어도 앞으로 3분 더 기다릴 확률은 처음부터 3분 기다릴 확률과 같다. 그림 1에서 \(s\)를 5로 올리면 회색으로 지나간 부분이 생기지만 읽은 값은 0.223 그대로이다. 이 성질은 방사성 원자의 붕괴처럼 낡지 않는 것의 수명에 맞는다. 반면 오래 쓸수록 고장 나기 쉬운 닳는 부품에는 맞지 않는다. 또 이 분포는 오른쪽으로 크게 치우쳐 있어 중심극한정리 실험(6.2절)에 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(P(X > t) = e^{-\lambda t}\), 평균과 표준편차 \(1/\lambda\).</li>
-        <li>무기억성. 포아송 과정의 대기 시간.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>단위 시간에 평균 \(\lambda\)번 일어나는 사건의 대기 시간은 지수분포를 따르며, \(P(X > t) = e^{-\lambda t}\), 평균과 표준편차는 \(1/\lambda\)이다. 처음 질문의 이미 기다린 시간은 앞으로의 대기에 영향을 주지 않으며, 이것이 지수분포의 무기억성이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>

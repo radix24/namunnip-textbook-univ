@@ -2,42 +2,35 @@
 {
   "type": "card",
   "sec": "공통7-09-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c7-body.js"]
 }
 -->
 <article class="card q-card" id="text-c7-twomeans" data-kind="본문" data-std="공통7-09-01">
   <header class="card-head"><span class="no"></span><h2>두 집단의 평균 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>독립인 두 표본의 평균 차이를 검정하고 신뢰구간을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>가설검정 (<a href="08-01.html">8.1절</a>), 독립인 변수의 분산의 합 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">A반의 평균은 75점, B반은 70점이다. 5점 차이면 A반이 더 잘한 것 같지만, 반마다 점수가 넓게 퍼져 있고 학생 수도 많지 않다면 이 차이는 우연일 수도 있다. 두 집단의 평균 차이가 진짜인지는 어떻게 판단할까?</p>
+    <figure class="q-fig" data-q="c7-twomean">
+      <svg viewBox="0 0 520 260" role="img" aria-label="두 평균의 차이에 대한 귀무가설 분포, 관측 차이, 신뢰구간"></svg>
+      <div class="q-ctl"><label>표본 크기 배율 <input type="range" data-k="k" min="1" max="8" step="1" value="4"><output data-k="k"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(H_0: \mu_1 = \mu_2\) 아래 \(\bar x_1 - \bar x_2\)의 분포(파랑)와 관측 차이 5점(빨강), 차이의 95% 신뢰구간(청록). 표본이 작아지면 분포가 넓어져 같은 5점도 우연으로 설명된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가설검정(<a href="08-01.html">8.1절</a>)과 독립인 변수의 분산의 합(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">9.1.1</span>차이의 표준오차</h3>
-    <p>두 반, 두 공정, 약과 위약처럼 서로 다른 두 집단의 평균을 비교합니다. \(\bar X_1 - \bar X_2\)의 분산은 두 분산의 합이므로(독립)</p>
-    \[\text{SE} = \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}, \qquad z = \frac{(\bar x_1 - \bar x_2) - 0}{\text{SE}}.\]
-    <p>귀무가설은 \(H_0: \mu_1 = \mu_2\)입니다. 표본이 크면 \(z\)를 표준정규분포로, 작으면 t 분포로 판단합니다(두 모분산이 같다고 보고 합쳐서 추정하는 방법과 같다고 보지 않는 웰치 방법이 있으며, 소프트웨어가 자유도를 계산해 줍니다).</p>
+    <p>두 반, 두 공정, 약과 위약처럼 서로 다른 두 집단의 평균을 비교한다. 열쇠는 차이 \(\bar X_1 - \bar X_2\)의 흔들림이다. 두 표본이 독립이면 차이의 분산은 두 분산의 합이므로, 표준오차와 검정통계량은 다음과 같다.</p>
+    \[\text{SE} = \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}, \qquad z = \frac{(\bar x_1 - \bar x_2) - 0}{\text{SE}}\]
+    <p>귀무가설은 \(H_0: \mu_1 = \mu_2\)이다. 표본이 크면 \(z\)를 표준정규분포로, 작으면 t 분포로 판단한다. 이때 두 모분산이 같다고 보고 합쳐서 추정하는 방법과 같다고 보지 않는 웰치 방법이 있으며, 자유도는 소프트웨어가 계산해 준다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 9.1.1</span>
       <p>A반 40명은 평균 75점(표준편차 10), B반 50명은 평균 70점(표준편차 12)이다. 두 반의 모평균이 다른지 유의수준 5%로 검정하고, 차이의 95% 신뢰구간을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\text{SE} = \sqrt{\frac{100}{40} + \frac{144}{50}} = \sqrt{5.38} \approx 2.32\). \(z = \frac{5}{2.32} \approx 2.16\), 양측 p값 \(\approx 0.031\). 기각: 두 반 평균이 다르다는 증거가 있습니다. 신뢰구간 \(5 \pm 1.96\times2.32 = [0.45, 9.55]\)점. 0을 포함하지 않아 검정 결과와 일치합니다.</p>
-    <p>엑셀 <code>T.TEST(범위1, 범위2, 2, 3)</code>(양측, 등분산 가정 없음), R <code>t.test(x, y)</code>.</p>
-    <p class="tb-aside">두 집단의 차이를 원인 때문이라고 말하려면 무작위 배정이 필요합니다. 두 반은 처음부터 다를 수 있습니다(교란 변수, 10.1절).</p>
+    <p><i>풀이.</i> \(\text{SE} = \sqrt{\frac{100}{40} + \frac{144}{50}} = \sqrt{5.38} \approx 2.32\)이다. 따라서 \(z = \frac{5}{2.32} \approx 2.16\)이고 양측 p값 \(\approx 0.031\)이다. 그러므로 \(H_0\)을 기각하며, 두 반 평균이 다르다는 증거가 있다. 신뢰구간은 \(5 \pm 1.96\times2.32 = [0.45, 9.55]\)점이고, 0을 포함하지 않아 검정 결과와 일치한다. 그림 1의 처음 상태가 이 예제이며, 배율을 1로 내려 반을 10명, 12명으로 줄이면 같은 5점 차이가 유의하지 않게 된다.</p>
+    <p>프로그램으로는 엑셀 <code>T.TEST(범위1, 범위2, 2, 3)</code>(양측, 등분산 가정 없음), R <code>t.test(x, y)</code>를 쓴다.</p>
+    <div class="tb-aside">두 집단의 차이를 원인 때문이라고 말하려면 무작위 배정이 필요하다. 두 반은 처음부터 다를 수 있기 때문이다(교란 변수, 10.1절).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\text{SE} = \sqrt{s_1^2/n_1 + s_2^2/n_2}\), \(z = (\bar x_1 - \bar x_2)/\text{SE}\).</li>
-        <li>신뢰구간이 0을 포함하지 않으면 양측 검정에서 기각.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>독립인 두 집단의 평균 차이는 표준오차 \(\sqrt{s_1^2/n_1 + s_2^2/n_2}\)로 나눈 검정통계량으로 검정하고, 같은 표준오차로 신뢰구간을 만든다. 처음 질문의 5점 차이가 진짜인지는 퍼짐과 표본 크기가 함께 정하며, 원인이라고 말하려면 무작위 배정이 필요하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">9.1.2</span>연습문제</h3>
