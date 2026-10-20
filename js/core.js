@@ -90,6 +90,31 @@ window.NM = (() => {
     if (!savedTheme() && !/[?&]theme=/.test(location.search)) setTheme(e.matches ? "dark" : "light");
   });
 
+  /* 학술 용어 표시: 영어(기본) ↔ 한글. 빌드가 용어마다 두 형태를 넣어 두고(tools/terms.py) html[data-terms]로 하나만 보인다.
+     <head>의 짧은 스크립트가 첫 그리기 전에 저장 값(localStorage "quri-terms")을 읽는다. 버튼은 다크 모드 버튼 앞에 붙인다. */
+  const TERMS_KEY = "quri-terms";
+  const setTerms = (v) => {
+    html.dataset.terms = v;
+    document.querySelectorAll(".terms-btn").forEach((b) => {
+      b.textContent = v === "ko" ? "용어 한글" : "용어 EN";
+      b.setAttribute("aria-label", v === "ko" ? "학술 용어를 영어로 보기" : "학술 용어를 한글로 보기");
+    });
+  };
+  if (document.querySelector(".tm") || document.body.dataset.view === "exam" || /exam\.html$/.test(location.pathname)) {
+    document.querySelectorAll(".theme-btn").forEach((tb) => {
+      if (tb.parentElement.querySelector(".terms-btn")) return;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "terms-btn mono"; b.title = "학술 용어를 영어·한글로 바꿔 보기";
+      tb.before(b);
+      b.addEventListener("click", () => {
+        const v = html.dataset.terms === "ko" ? "en" : "ko";
+        try { localStorage.setItem(TERMS_KEY, v); } catch (e) { console.warn("용어 표시를 저장하지 못함", e); }
+        setTerms(v);
+      });
+    });
+  }
+  setTerms(html.dataset.terms === "ko" ? "ko" : "en");
+
   /* 확인 문제: 고르면 맞든 틀리든 '왜'를 보여 준다 */
   document.querySelectorAll(".quiz").forEach((q) => {
     const opts = [...q.querySelectorAll("button.opt")];

@@ -17,6 +17,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import place   # noqa: E402  풀 목차·학과 배치표·학과 요약(tools/place.py)
+import terms   # noqa: E402  학술 용어 영어·한글 표시(tools/terms.py, 사전 curricula/univ-terms.tsv)
+
+TERMS, TERM_USED = [], {}   # main()이 사전을 읽는다. TERM_USED: 용어별 표시 횟수(빌드 끝 보고)
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "curricula"
@@ -344,11 +347,12 @@ def hide_item(it):
 
 
 def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과목 목차"), record=None, body_attrs="", module=""):
-    body = hide_codes(body)
+    body = terms.mark(hide_codes(body), TERMS, TERM_USED)
     title, desc = hide_text(title), hide_text(desc)
     head_js = ('(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\\b/.exec(location.search),t=q&&q[1];'
                'if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";'
-               'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c"})()')
+               'd.dataset.theme=t;if(t==="dark")document.querySelector(\'meta[name="theme-color"]\').content="#12131c";'
+               'try{if(localStorage.getItem("quri-terms")==="ko")d.dataset.terms="ko"}catch(e){}})()')
     js = "\n".join(f'<script src="{rel}{s}"></script>' for s in scripts)
     rec = f" data-rec='{esc(json.dumps(record, ensure_ascii=False))}'" if record else ""
     if module:
@@ -1027,6 +1031,13 @@ def write_pages(depts, blocks, sidx, links):
             if noexam:
                 pass
             elif items:
+                for it in items:   # 시험 문항도 본문과 같이 학술 용어를 영어·한글 두 형태로
+                    for k in ("q", "a"):
+                        if isinstance(it.get(k), str):
+                            it[k] = terms.mark(it[k], TERMS, TERM_USED)
+                    for k in ("h", "ch"):
+                        if isinstance(it.get(k), list):
+                            it[k] = [terms.mark(x, TERMS, TERM_USED) if isinstance(x, str) else x for x in it[k]]
                 (base / "bank.js").write_text(
                     "/* tools/build.py가 exams/의 시험 전용 문항과 blocks/의 연습·예제·본문 연습문제에서 모은 문제은행. 직접 고치지 않는다. */\n"
                     "window.QBANK = " + json.dumps(items, ensure_ascii=False, separators=(",", ":")) + ";\n",
@@ -1240,6 +1251,7 @@ def main():
         return
     if "--src" in sys.argv:
         SRC = Path(sys.argv[sys.argv.index("--src") + 1]).resolve()
+    TERMS[:] = terms.load(SRC / "univ-terms.tsv")
     out, total = [], {"courses": 0, "units": 0, "stds": 0}
     for did, name, short, fname, college in DEPTS:
         cs, hidden = apply_offered([finish(c) for c in parse(SRC / fname, did)])
@@ -1285,6 +1297,7 @@ def main():
             print(f"  {k}", file=sys.stderr)
     else:
         print("보이는 글자 속 내부 코드: 0개")
+    print(f"학술 용어: 사전 {len(TERMS)}개 중 {len(TERM_USED)}개가 {sum(TERM_USED.values())}곳에 영어·한글 두 형태로 표시됨")
     if bad:
         print(f"경고: 끊긴 내부 링크 {sum(bad.values())}개(서로 다른 {len(bad)}곳) / 내부 링크 {n_links}개. 예:", file=sys.stderr)
         for k in sorted(bad)[:15]:
