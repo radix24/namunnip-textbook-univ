@@ -108,7 +108,8 @@ def check(p, U, sim=False):
     pol = POLICY.get(code, "")
     if pol == "none":
         warns.append("시험 방식이 none(중간·기말 없음)이라 빌드에 쓰이지 않는 문항 파일 — 삭제 대상")
-    half = len(units) if pol == "fin" else (len(units) + 1) // 2
+    one = pol in ("fin", "mid")             # 전 범위 시험 하나(기말만·중간만)
+    half = len(units) if one else (len(units) + 1) // 2
     items = data.get("items", [])
     seen, n_lv, mid, scope = set(), {k: 0 for k in LV}, 0, {"mid": [], "fin": []}
     for it in items:
@@ -172,7 +173,7 @@ def check(p, U, sim=False):
         errs.append(f"문항 {n}개 (최소 {MIN_N})")
     if hard < MIN_HARD:
         errs.append(f"응용·심화 {hard:.0%} (최소 {MIN_HARD:.0%})")
-    if pol != "fin" and n and not 0.4 <= mid / n <= 0.6:
+    if not one and n and not 0.4 <= mid / n <= 0.6:
         warns.append(f"중간 범위 {mid}/{n}: 반씩이 아님")
     need = quotas(SET_MAX, MIX, [99, 99, 99])
     sims = {}
@@ -182,7 +183,7 @@ def check(p, U, sim=False):
         have = [sum(1 for it in lst if it.get("lv") == l) for l in LV]
         short = [f"{LV[j]} {have[j]}/{need[j]}" for j in range(3) if have[j] < need[j]]
         if short:
-            warns.append(f"{'기말' if pol == 'fin' else {'mid': '중간', 'fin': '기말'}[k]} 범위: {SET_MAX}문제 세트의 층별 몫이 모자람 ({', '.join(short)})")
+            warns.append(f"{({'fin': '기말', 'mid': '중간'}[pol] if one else {'mid': '중간', 'fin': '기말'}[k])} 범위: {SET_MAX}문제 세트의 층별 몫이 모자람 ({', '.join(short)})")
         if sim:
             sims[k] = simulate(lst)
     return errs, warns, {"course": code, "n": n, "mid": mid, "fin": n - mid, **n_lv, "hard": hard, "pol": pol, "sim": sims}
@@ -200,7 +201,7 @@ def main():
         if st:
             tot[0] += st["n"]
             tot[1] += st["응용"] + st["심화"]
-            split = "전 범위 기말" if st["pol"] == "fin" else f'중간 {st["mid"]} · 기말 {st["fin"]}'
+            split = {"fin": "전 범위 기말", "mid": "전 범위 중간"}.get(st["pol"]) or f'중간 {st["mid"]} · 기말 {st["fin"]}'
             print(f'{rel}: {st["course"]} {st["n"]}문항 ({split}) 기본 {st["기본"]} · 응용 {st["응용"]} · 심화 {st["심화"]} → 응용·심화 {st["hard"]:.0%}')
             for k, ((ms, ss), (mf, sf)) in st["sim"].items():
                 print(f"  모의 12문제×2000 [{k}] 평균 난이도 층별 {ms:.2f}±{ss:.2f} / 무작위 {mf:.2f}±{sf:.2f}")

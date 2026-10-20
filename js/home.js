@@ -105,7 +105,7 @@
         <div class="course-head">
           <span class="mono">${esc(c.no)}</span>
           <h2><a href="${esc(path(c))}">${esc(c.name)}</a></h2>
-          <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점${c.exam === "none" ? " · 시험 없음" : c.exam === "fin" ? " · 기말만" : ""}</p>
+          <p class="count mono dim">${c.y}학년 ${esc(c.sem)}학기 · ${esc(c.kind)} · ${c.cr}학점${c.exam === "none" ? " · 시험 없음" : c.exam === "fin" ? " · 기말만" : c.exam === "mid" ? " · 중간만" : ""}</p>
           <p class="count mono dim">대단원 ${c.units.length} · 성취기준 ${nStd(c)}</p>
           ${pre.length ? `<p class="small u-path"><b>먼저 공부할 과목</b> ${pre.map(cLink).join(", ")}</p>` : c.preT ? `<p class="small u-path"><b>먼저 공부할 내용</b> ${esc(c.preT)}</p>` : ""}
           ${nx.length ? `<p class="small u-path"><b>이어지는 과목</b> ${nx.map(cLink).join(", ")}</p>` : ""}

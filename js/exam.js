@@ -19,9 +19,10 @@
   const P = () => window.QProgress;
   const math = (el) => { try { window.NMMath?.render(el); window.NMMath?.fit(); } catch (e) { console.error(e); } };
 
-  /* 시험 방식(conf.exam, 수강편람 강의계획서 기준): "fin"이면 전 범위 기말만 둔다. 시험이 없는 과목은 이 페이지가 만들어지지 않는다 */
-  const SCOPES = conf.exam === "fin" ? {
-    fin: { t: "기말고사", d: `전 범위 · 대단원 1–${UNITS.length}`, u: UNITS.map((u) => u.n) },
+  /* 시험 방식(conf.exam, 수강편람 강의계획서 기준): "fin"이면 전 범위 기말만, "mid"이면 전 범위 중간만 둔다.
+     시험이 없는 과목은 이 페이지가 만들어지지 않는다 */
+  const SCOPES = conf.exam === "fin" || conf.exam === "mid" ? {
+    [conf.exam]: { t: conf.exam === "mid" ? "중간고사" : "기말고사", d: `전 범위 · 대단원 1–${UNITS.length}`, u: UNITS.map((u) => u.n) },
   } : {
     mid: { t: "중간고사", d: `대단원 1–${half}`, u: UNITS.slice(0, half).map((u) => u.n) },
     fin: { t: "기말고사", d: half < UNITS.length ? `대단원 ${half + 1}–${UNITS.length}` : "전 범위", u: (half < UNITS.length ? UNITS.slice(half) : UNITS).map((u) => u.n) },

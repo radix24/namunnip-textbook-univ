@@ -766,8 +766,8 @@ def course_bank(c):
 #     "q", "choices"(mc), "answer"(mc는 1부터 센 번호 문자열), "alt"(short 다른 허용 답), "hints": [힌트 1, 힌트 2], "sol",
 #     "rubric": [{"pt", "t"}](free 채점 기준, 선택)}]}   (다른 최상위 키는 읽지 않는다)
 # 시험 연습은 이 문항을 기본으로 쓰고, 블록에서 모은 복습 문항(R·ex·tb)은 고를 때만 섞는다.
-# exams/policy.json: {"과목 코드": "fin" | "none"} — 수강편람 강의계획서의 시험 방식. 없으면 중간·기말 모두.
-#   "fin"이면 시험 연습이 전 범위 기말만 두고, "none"이면 시험 연습 페이지와 문제은행을 만들지 않는다.
+# exams/policy.json: {"과목 코드": "fin" | "mid" | "none"} — 수강편람 강의계획서의 시험 방식. 없으면 중간·기말 모두.
+#   "fin"("mid")이면 시험 연습이 전 범위 기말(중간)만 두고, "none"이면 시험 연습 페이지와 문제은행을 만들지 않는다.
 EXAMS = ROOT / "exams"
 EXAM_TYPES = ("mc", "short", "free")
 EXAM_POLICY = json.loads((EXAMS / "policy.json").read_text(encoding="utf-8")) if (EXAMS / "policy.json").exists() else {}
@@ -1087,7 +1087,7 @@ def write_pages(depts, blocks, sidx, links):
       {f'<p class="cx-lead small">{esc(c["handb"])}</p>' if c["handb"] else ""}
       <p class="c-prog mono small"></p>
       {f'<a class="cx-go" href="{first["file"]}.html">처음부터 공부하기 · {first["no"]} {esc(first["title"])}</a>' if first else ""}
-      {"" if c["noexam"] or (c.get("gone") and not c["bank"]) else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{"기말" if EXAM_POLICY.get(c["code"]) == "fin" else "중간·기말"} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
+      {"" if c["noexam"] or (c.get("gone") and not c["bank"]) else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">{ {"fin": "기말", "mid": "중간"}.get(EXAM_POLICY.get(c["code"]), "중간·기말")} · 시험 전용 {c["xbank"]}문항</span></a>' if c["xbank"] else f'<a class="cx-exam" href="exam.html"><b>시험 연습</b><span class="mono">중간·기말 문제은행 · {c["bank"]}문제</span></a>' if c["bank"] else '<a class="cx-exam is-off" href="exam.html"><b>시험 연습</b><span class="mono">문제은행 준비 중</span></a>'}
       <dl class="cx-info">{info_html}</dl>
       <div class="cx-path small" data-place="path"{"" if path_html else " hidden"}>{path_html}</div>
     </aside>
@@ -1146,15 +1146,15 @@ def offered_text(terms):
 
 
 def apply_offered(cs):
-    """연세대 개설 이력을 붙이고, 최근 3년 동안 연세대에서 한 번도 열리지 않은 과목은 뺀다. 자료가 없으면 그대로 둔다.
-    - 다른 대학(연세대 밖)에도 표시된 과목은 연세대에서 안 열려도 남긴다.
+    """연세대 개설 이력을 붙이고, 최근 3년(RECENT_FROM년부터) 동안 연세대 정규학기에 한 번도 열리지 않은 과목은 뺀다.
+    기준 자료는 curricula/univ-offered.json 한 곳이다(수강편람 개설 기록을 다시 모으면 다시 계산된다). 자료가 없으면 그대로 둔다.
+    - 다른 대학에도 표시된 과목이라도 연세대에서 안 열리면 뺀다(2026-10-20 사용자 결정: 요람에만 있는 과목은 숨김).
     - 학정번호가 없는 과목(다른 대학에만 있는 과목)은 이력을 붙이지 않고 남긴다."""
     if not OFFERED.exists():
         return cs, []
     data = json.loads(OFFERED.read_text(encoding="utf-8"))
     keep, gone = [], []
     for c in cs:
-        other = any(x != "연세대" for x in c.get("unis", []))
         if not c["sub"]:
             if not c.get("unis"):
                 print(f"경고: {c['code']} 학정번호도 개설 대학 표시도 없음", file=sys.stderr)
@@ -1162,7 +1162,7 @@ def apply_offered(cs):
             continue
         terms = sorted({t for s in c["sub"] for t in data["codes"].get(s, [])})
         c["offered"] = offered_text(terms)
-        (keep if other or any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
+        (keep if any(int(t[:4]) >= RECENT_FROM for t in terms) else gone).append(c)
     return keep, gone
 
 
@@ -1217,7 +1217,7 @@ def selftest():
         OFFERED.write_text(json.dumps({"codes": {"MAT2001": ["2025-1"], "MAT9999": ["2010-1"], "MAT9998": ["2010-2"], "MAT2002": ["2026-2"]}}), encoding="utf-8")
         keep, gone = apply_offered(cs)
     OFFERED = keep_off
-    assert [c["code"] for c in gone] == ["수학3"], gone                                  # 연세대에만 있고 오래 안 열린 과목만 빠진다
+    assert [c["code"] for c in gone] == ["수학2", "수학3"], gone                         # 연세대에서 오래 안 열린 과목은 다른 대학 표시와 관계없이 빠진다
     assert "offered" not in other and "2010" in b["offered"], (other, b)
     print("자체 시험 통과")
 
