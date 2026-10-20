@@ -2,60 +2,49 @@
 {
   "type": "card",
   "sec": "공통4-08-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c4-body.js"]
 }
 -->
 <article class="card q-card" id="text-c4-ac" data-kind="본문" data-std="공통4-08-01">
   <header class="card-head"><span class="no"></span><h2>교류 회로, 임피던스, 공명</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>저항, 인덕터, 축전기의 교류 전압과 전류의 관계(리액턴스, 위상)를 안다.</li>
-        <li>RLC 직렬 회로의 임피던스와 공명 진동수, 평균 전력을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>발전기의 교류 기전력 (<a href="07-01.html">7.1절</a>), LC 진동 (<a href="07-03.html">7.3절</a>), 삼각함수의 미분 (공통1).</li>
-      </ul>
-    </div>
+    <p class="q-ask">라디오의 다이얼을 돌리면 수많은 방송 가운데 하나만 골라 들린다. 안테나에는 모든 방송의 전파가 한꺼번에 들어오는데, 회로는 어떻게 원하는 진동수만 골라낼까?</p>
+    <figure class="q-fig" data-q="c4-reso">
+      <svg viewBox="0 0 520 270" role="img" aria-label="RLC 직렬 회로의 진동수에 따른 전류 크기(공명 곡선)"></svg>
+      <div class="q-ctl">
+        <label>전원 진동수 \(f\) (Hz) <input type="range" data-k="f" min="10" max="160" step="1" value="60"><output data-k="f"></output></label>
+        <label>저항 \(R\) (Ω) <select data-k="R"><option value="100" selected>100</option><option value="40">40</option><option value="15">15</option></select></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(L = 0.50\) H, \(C = 10\) μF, 120 V(실효)인 RLC 직렬 회로의 전류. 공명 진동수 \(f_0\)에서 전류가 가장 크고, 저항이 작을수록 봉우리가 뾰족해져 한 진동수만 골라낸다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>발전기의 교류 기전력(<a href="07-01.html">7.1절</a>), LC 진동(<a href="07-03.html">7.3절</a>), 삼각함수의 미분(미분적분학(1))을 쓴다.</div>
 
     <h3><span class="no">8.1.1</span>교류와 실효값</h3>
-    <p>전압이 \(v = V\sin\omega t\)처럼 사인 모양으로 변하는 전원을 교류라 합니다. 가정용 전기는 한국에서 60 Hz입니다. 평균 전력을 계산할 때는 제곱 평균의 제곱근인 실효값을 씁니다: \(V_{\text{rms}} = \frac{V}{\sqrt2}\). "220 V"는 실효값이고 최댓값은 약 311 V입니다.</p>
+    <p>전압이 \(v = V\sin\omega t\)처럼 사인 모양으로 변하는 전원을 <em>교류</em>라 하며, 한국의 가정용 전기는 60 Hz이다. 평균 전력을 계산할 때는 제곱 평균의 제곱근인 <em>실효값</em> \(V_{\text{rms}} = \frac{V}{\sqrt2}\)를 쓴다. 가령 "220 V"는 실효값이고, 최댓값은 약 311 V이다.</p>
 
     <h3><span class="no">8.1.2</span>세 소자</h3>
-    <p>전류를 \(i = I\sin\omega t\)라 하면 각 소자의 전압은 다음과 같습니다.</p>
-    <ul class="tb-list">
-      <li>저항: \(v = IR\sin\omega t\). 전압과 전류가 같은 위상.</li>
-      <li>인덕터: \(v = L\frac{di}{dt} = I\omega L\cos\omega t\). 전압이 전류보다 90° 앞선다. 크기 비 \(X_L = \omega L\) (유도 리액턴스).</li>
-      <li>축전기: \(v = \frac qC\), \(q = -\frac{I}{\omega}\cos\omega t\). 전압이 전류보다 90° 늦다. 크기 비 \(X_C = \frac{1}{\omega C}\) (용량 리액턴스).</li>
-    </ul>
-    <p>리액턴스의 단위는 Ω입니다. 인덕터는 진동수가 높을수록 전류를 막고, 축전기는 낮을수록 막습니다. 스피커의 고음·저음 분리 회로가 이 성질을 씁니다.</p>
+    <p>전류를 \(i = I\sin\omega t\)라 하고 세 소자의 전압을 차례로 보자. 저항의 전압은 \(v = IR\sin\omega t\)로 전류와 같은 위상이다. 인덕터의 전압은 \(v = L\frac{di}{dt} = I\omega L\cos\omega t\)이므로 전류보다 90° 앞서고, 크기의 비 \(X_L = \omega L\)을 유도 리액턴스라 한다. 축전기는 \(q = -\frac{I}{\omega}\cos\omega t\)이고 \(v = \frac qC\)이므로 전압이 전류보다 90° 늦으며, 크기의 비 \(X_C = \frac{1}{\omega C}\)를 용량 리액턴스라 한다.</p>
+    <p>리액턴스의 단위는 Ω이다. 인덕터는 진동수가 높을수록 전류를 막고, 축전기는 낮을수록 막는다. 스피커의 고음·저음 분리 회로가 이 성질을 쓴다.</p>
 
     <h3><span class="no">8.1.3</span>RLC 직렬 회로</h3>
-    <p>위상이 다른 전압들은 그냥 더할 수 없고, 회전하는 화살표(페이저)로 더합니다. 저항 전압은 전류와 같은 방향, \(L\)과 \(C\)의 전압은 서로 반대 방향(수직)이므로</p>
-    \[Z = \sqrt{R^2 + (X_L - X_C)^2}, \qquad I = \frac VZ, \qquad \tan\phi = \frac{X_L - X_C}{R}.\]
-    <p>\(Z\)를 임피던스, \(\phi\)를 전압과 전류의 위상차라 합니다.</p>
+    <p>위상이 다른 전압들은 그냥 더할 수 없고, 회전하는 화살표(페이저)로 더한다. 저항 전압은 전류와 같은 방향이고, \(L\)과 \(C\)의 전압은 서로 반대 방향이면서 저항 전압에 수직이다. 그러므로 다음을 얻는다.</p>
+    \[Z = \sqrt{R^2 + (X_L - X_C)^2}, \qquad I = \frac VZ, \qquad \tan\phi = \frac{X_L - X_C}{R}\]
+    <p>여기서 \(Z\)를 <em>임피던스</em>, \(\phi\)를 전압과 전류의 위상차라 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.1.1</span>
       <p>\(R = 100\) Ω, \(L = 0.50\) H, \(C = 10\) μF가 직렬이고 120 V(실효), 60 Hz 전원에 연결되었다. 임피던스, 실효 전류, 위상차는?</p>
     </div>
-    <p><i>풀이.</i> \(\omega = 377\) rad/s. \(X_L = 188.5\) Ω, \(X_C = 265.3\) Ω. \(Z = \sqrt{100^2 + 76.8^2} \approx 126\) Ω. \(I_{\text{rms}} = \frac{120}{126} \approx 0.95\) A. \(\phi = \tan^{-1}(-0.768) \approx -37.5^\circ\) (전류가 앞섬).</p>
+    <p><i>풀이.</i> \(\omega = 2\pi\times60 = 377\) rad/s이므로 \(X_L = 188.5\) Ω, \(X_C = 265.3\) Ω이다. 따라서 \(Z = \sqrt{100^2 + 76.8^2} \approx 126\) Ω이고, \(I_{\text{rms}} = \frac{120}{126} \approx 0.95\) A이다. 위상차는 \(\phi = \tan^{-1}(-0.768) \approx -37.5^\circ\)로 전류가 앞선다. 그림 1의 처음 상태가 이 예제이다.</p>
 
     <h3><span class="no">8.1.4</span>공명과 전력</h3>
-    <p>\(X_L = X_C\)이면 임피던스가 \(R\)로 가장 작아져 전류가 최대가 됩니다. 이 진동수가 <b>공명 진동수</b>입니다.</p>
-    \[\omega_0 = \frac{1}{\sqrt{LC}}.\]
-    <p>LC 회로의 고유 진동수와 같습니다. 그네를 고유 진동수에 맞춰 밀면 크게 흔들리는 것과 같습니다. 예제 8.1.1에서 \(f_0 = \frac{1}{2\pi\sqrt{0.50\times10^{-5}}} \approx 71\) Hz입니다. \(R\)이 작을수록 공명 봉우리가 뾰족해져, 라디오는 원하는 진동수만 골라 받습니다.</p>
-    <p>평균 전력은 저항에서만 소모됩니다: \(P = I_{\text{rms}}V_{\text{rms}}\cos\phi = I_{\text{rms}}^2R\). \(\cos\phi\)를 역률이라 합니다. 인덕터와 축전기는 에너지를 받았다 돌려줄 뿐 소모하지 않습니다.</p>
+    <p>\(X_L = X_C\)이면 임피던스가 \(R\)로 가장 작아져 전류가 최대가 된다. 이 진동수를 <em>공명 진동수</em>라 한다.</p>
+    \[\omega_0 = \frac{1}{\sqrt{LC}}\]
+    <p>이것은 LC 회로의 고유 진동수와 같다. 그네를 고유 진동수에 맞춰 밀면 크게 흔들리는 것과 같은 현상이다. 예제 8.1.1의 회로에서는 \(f_0 = \frac{1}{2\pi\sqrt{0.50\times10^{-5}}} \approx 71\) Hz이다. 또 \(R\)이 작을수록 공명 봉우리가 뾰족해진다. 처음 질문의 답이 이것이다. 라디오는 \(C\)를 바꿔 \(f_0\)를 원하는 방송에 맞추고, 뾰족한 봉우리로 그 진동수만 골라 받는다.</p>
+    <p>한편 평균 전력은 저항에서만 소모되며 \(P = I_{\text{rms}}V_{\text{rms}}\cos\phi = I_{\text{rms}}^2R\)이다. 여기서 \(\cos\phi\)를 역률이라 한다. 인덕터와 축전기는 에너지를 받았다 돌려줄 뿐 소모하지 않는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(X_L = \omega L\) (전압이 90° 앞섬), \(X_C = 1/\omega C\) (90° 늦음).</li>
-        <li>\(Z = \sqrt{R^2 + (X_L - X_C)^2}\), \(\tan\phi = (X_L - X_C)/R\).</li>
-        <li>공명 \(\omega_0 = 1/\sqrt{LC}\), \(P = I_{\text{rms}}^2R\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>리액턴스는 \(X_L = \omega L\)(전압이 90° 앞섬)과 \(X_C = \frac{1}{\omega C}\)(90° 늦음)이고, RLC 직렬 회로의 임피던스는 \(Z = \sqrt{R^2 + (X_L - X_C)^2}\)이다. 처음 질문의 라디오는 공명 진동수 \(\omega_0 = \frac{1}{\sqrt{LC}}\)에서 전류가 최대인 성질로 방송을 고르며, 평균 전력은 \(I_{\text{rms}}^2R\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.1.5</span>연습문제</h3>
