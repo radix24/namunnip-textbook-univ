@@ -40,16 +40,24 @@ COMMON_USE = {
     "ee": dict(ENG),
     "me": {**ENG, "공통12": None},
 }
-# 학과 배치에 넣는 공통 과목의 대단원(강의계획서 기준. 근거: curricula/univ-syllabi.md 주차별 진도).
-# 없으면 모듈 전체. 고등미적분학(2) MAT2002는 복소해석(03~06)을, 공학수학(4) MAT2017은 수치 선형대수·그래프(07·08)를 배운다.
-COMMON_UNITS = {
-    ("astro", "공통9"): ["01", "02", "03", "04", "05", "06"],
-    ("ee", "공통9"): ["01", "02", "07", "08", "09"],
-    ("me", "공통9"): ["01", "02", "07", "08", "09"],
+# 학과 배치에 넣는 공통 과목의 대단원(강의계획서 기준. 근거: curricula/univ-syllabi.md 주차별 진도와
+# 2026 변형 과목 강의계획서 MAT1011·1012·2016). 없으면 모듈 전체. "02"는 그 모듈의 대단원, "공통2-02"는 다른 모듈의 대단원.
+# - 고등미적분학(2) MAT2002는 복소해석(03~06), 공학수학(4) MAT2017은 푸리에 급수(Kreyszig 11.1~11.6)와 수치 선형대수·그래프(07·08).
+# - 공학수학(1) MAT1011은 14주에 외적·직선과 평면·이차곡면까지(공통2-01). 공학수학(2) MAT1012도 11장(공통2-01)부터 다시 시작한다.
+# - 공학수학(3) MAT2016은 Kreyszig 7장 선형대수(일차독립·계수·벡터공간 → 공통2-02)로 시작하고 연립 상미분방정식(4장)·푸리에 급수는 없다.
+_ENG = {
+    "공통1": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "공통2-01", "10"],
+    "공통2": ["01", "03", "04", "05", "06", "07", "08"],
+    "공통8": ["공통2-02", "01", "02", "04", "05", "03", "07"],
+    "공통9": ["공통8-06", "01", "02", "07", "08", "09"],
 }
+COMMON_UNITS = {("astro", "공통9"): ["01", "02", "03", "04", "05", "06"],
+                **{(d, k): v for d in ("ee", "me") for k, v in _ENG.items()}}
 # 강의계획서 진도에 없는 대단원: 배치에는 남기되 '보충'으로 표시한다(요람 개요에서 왔거나 다음 과목으로 잇는 단원).
 SYLLABUS_OUT = {"공통1": ["10"], "공통2": ["02"], "공통4": ["12"], "공통7": ["10"], "공통8": ["07"],
                 "공통9": ["09"], "공통10": ["06"], "공통11": ["05"], "공통12": ["07"]}
+# 학과마다 다른 '보충'(위 표 대신 쓴다). 공학수학(3)은 연립 상미분방정식(공통8-03)을 다루지 않는다(행렬·고유값 일부만 7~8장에서).
+SUP_BY_DEPT = {(d, "공통8"): ["03", "07"] for d in ("ee", "me")}
 # 연세대 학과(메인의 학과 고르기에 이 순서로 보인다)
 DEPT_ORDER = ["math", "phy", "chem", "astro", "stat", "ee", "me"]
 
@@ -124,19 +132,28 @@ def build(depts, blocks, policy, out_root=ROOT):
         # 최근 3년 연세대 미개설 과목(gone)은 학과 배치에 넣지 않는다(교재 전체 보기에만 '최근 미개설'로)
         rows += [(c, c["name"], (c["sub"] or [""])[0]) for c in d["courses"] if not c.get("gone")]
         known = {c["code"]: module_id(c["code"]) for c, _, _ in rows}
+        names_in_dept = {c["code"]: name for c, name, _ in rows}
         place = {"school": SCHOOL_NAME, "dept": d["name"], "courses": []}
         data = {"school": SCHOOL_NAME, "id": did, "name": d["name"], "short": d["short"], "college": d["college"], "courses": []}
         for c, name, no in rows:
             mid = module_id(c["code"])
             exam = {"fin": "fin", "none": "none"}.get(policy.get(c["code"], ""), "mid+fin")
             pre = pre_ids(c.get("pre"), known)
-            o = mods[c["code"]]
-            pick = COMMON_UNITS.get((did, c["code"]))
-            sup = SYLLABUS_OUT.get(c["code"], [])
-            units = [u for u in o["units"] if not pick or u["n"] in pick]
+            pick = COMMON_UNITS.get((did, c["code"])) or [u["n"] for u in mods[c["code"]]["units"]]
+            sup = SUP_BY_DEPT.get((did, c["code"]), SYLLABUS_OUT.get(c["code"], []))
+            units, groups = [], []                  # groups: 배치표의 {"from", "n"} 묶음(모듈이 바뀔 때마다 새 묶음)
+            for key in pick:
+                src, n = key.rsplit("-", 1) if "-" in key else (c["code"], key)
+                u = next(x for x in mods[src]["units"] if x["n"] == n)
+                units.append((u, src))
+                if not groups or groups[-1]["from"] != src:
+                    groups.append({"from": src, "n": []})
+                groups[-1]["n"].append(n)
+            if len(groups) == 1 and len(units) == len(mods[c["code"]]["units"]):
+                del groups[0]["n"]                  # 모듈 전체
+            sup = [n for n in sup if n in pick]
             place["courses"].append({"id": mid, "name": name, "no": no, "y": c["y"], "sem": c["sem"], "kind": c["kind"],
-                                     "cr": c["cr"], "units": [{"from": c["code"], **({"n": pick} if pick else {})}],
-                                     **({"sup": [n for n in sup if not pick or n in pick]} if sup else {}),
+                                     "cr": c["cr"], "units": groups, **({"sup": sup} if sup else {}),
                                      "pre": pre, "exam": exam})
             data["courses"].append({
                 "id": mid, "code": c["code"], "name": name, "no": no, "y": c["y"], "sem": c["sem"], "kind": c["kind"], "cr": c["cr"],
@@ -144,7 +161,9 @@ def build(depts, blocks, policy, out_root=ROOT):
                 "exam": exam, "bank": c.get("bank", 0),
                 "units": [{"n": u["n"], "t": u["t"], "el": u["el"], "s": [s["code"] for s in u["secs"]], "st": [s["t"] for s in u["secs"]],
                            "cards": sum(len(s["cards"]) for s in u["secs"]) + len(u["review"]),
-                           **({"sup": True} if u["n"] in sup else {})} for u in units],
+                           # 다른 모듈의 대단원이면 그 모듈 id와 이 학과에서의 과목 이름(화면의 링크와 '○○ 단원' 표시)
+                           **({"m": module_id(src), "mn": names_in_dept.get(src, mods[src]["title"])} if src != c["code"] else {}),
+                           **({"sup": True} if src == c["code"] and u["n"] in sup else {})} for u, src in units],
             })
         (pdir / f"{did}.json").write_text(json.dumps(place, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
         (ddir / f"{SCHOOL}-{did}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")

@@ -96,7 +96,7 @@
         const dn = P ? u.s.filter((s) => P.done(s)).length : 0, n = u.s.length;
         const hay = [u.t, u.el, ...u.st].join(" ").toLowerCase();
         return `
-          <li class="unit${n && dn === n ? " done" : ""}" data-hay="${esc(hay)}"><a href="${esc(path(c))}${u.n}.html"><span class="mono">${u.n}</span><span class="t">${esc(u.t)}${u.sup ? ` <span class="u-extra mono" title="강의계획서 진도에는 없는 보충 단원">보충</span>` : ""}</span>
+          <li class="unit${n && dn === n ? " done" : ""}" data-hay="${esc(hay)}"><a href="${esc(u.m ? `c/${u.m}/` : path(c))}${u.n}.html"><span class="mono">${u.n}</span><span class="t">${esc(u.t)}${u.m ? ` <span class="u-extra mono" title="다른 과목 교재의 대단원을 이 과목에서 배웁니다">${esc(u.mn)} 단원</span>` : ""}${u.sup ? ` <span class="u-extra mono" title="강의계획서 진도에는 없는 보충 단원">보충</span>` : ""}</span>
             <span class="u-pg" title="성취기준 ${dn}/${n} 할 수 있음${u.cards ? ` · 카드 ${u.cards}` : ""}"><span class="lp" aria-hidden="true"><i style="--p:${n ? (dn / n).toFixed(3) : 0}"></i></span><span class="mono">${dn}/${n}</span></span></a></li>`;
       }).join("");
       const pre = c.pre.map((k) => byId.get(k)).filter(Boolean), nx = next(c);
