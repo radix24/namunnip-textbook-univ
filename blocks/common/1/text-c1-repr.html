@@ -2,32 +2,30 @@
 {
   "type": "card",
   "sec": "공통1-08-07",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c1-body.js"]
 }
 -->
 <article class="card q-card" id="text-c1-repr" data-kind="본문" data-std="공통1-08-07">
   <header class="card-head"><span class="no"></span><h2>함수의 거듭제곱급수 표현</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\frac{1}{1 - x}\)의 급수에서 출발해 여러 함수를 거듭제곱급수로 나타낸다.</li>
-        <li>거듭제곱급수를 항별로 미분, 적분한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>거듭제곱급수와 수렴 반지름 (<a href="08-06.html">8.6절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(\frac{1}{1 - x} = 1 + x + x^2 + \cdots\)라는 식 하나에서 \(\ln(1 + x)\)나 \(\arctan x\) 같은 함수의 급수를 얻을 수 있을까? 그리고 그 급수로 \(\pi\)를 계산할 수 있을까?</p>
+    <figure class="q-fig" data-q="c1-arctanser">
+      <svg viewBox="0 0 520 250" role="img" aria-label="arctan x와 급수 x − x³/3 + x⁵/5 − …의 부분합"></svg>
+      <div class="q-ctl"><label>마지막 항의 차수 <input type="range" data-k="n" min="1" max="21" step="2" value="5"><output data-k="n"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(\arctan x\)(점선)의 급수 \(x - \frac{x^3}{3} + \frac{x^5}{5} - \cdots\)는 항을 늘릴수록 \(-1 \le x \le 1\)에서 곡선에 붙지만, \(|x| > 1\)에서는 위아래로 달아난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>거듭제곱급수와 수렴 반지름(<a href="08-06.html">8.6절</a>), 그리고 교대급수의 오차(<a href="08-04.html">8.4절</a>)를 쓴다.</div>
 
     <h3><span class="no">8.7.1</span>등비급수에서 시작하기</h3>
-    <p>\(\dfrac{1}{1 - x} = 1 + x + x^2 + \cdots\) (\(|x| &lt; 1\))의 \(x\) 자리에 다른 식을 넣으면 새로운 급수가 바로 나옵니다.</p>
+    <p>\(\dfrac{1}{1 - x} = 1 + x + x^2 + \cdots\) (\(|x| &lt; 1\))의 \(x\) 자리에 다른 식을 넣으면 새로운 급수가 바로 나온다. 이 등식은 \(|x| &lt; 1\)인 모든 수에서 성립하므로, 그 범위에 들어가는 식이면 무엇을 넣어도 되기 때문이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.7.1</span>
       <p>\(\dfrac{1}{1 + x^2}\)과 \(\dfrac{1}{x + 2}\)을 거듭제곱급수로 나타내어라.</p>
     </div>
-    <p><i>풀이.</i> \(x\) 대신 \(-x^2\)을 넣으면 \(\dfrac{1}{1 + x^2} = 1 - x^2 + x^4 - x^6 + \cdots\), \(|x| &lt; 1\).</p>
-    <p>\(\dfrac{1}{x + 2} = \dfrac12\cdot\dfrac{1}{1 + x/2}\)이므로 \(x\) 대신 \(-\frac x2\): \(\dfrac12\sum\left(-\dfrac x2\right)^n = \sum\dfrac{(-1)^nx^n}{2^{n+1}}\), \(|x| &lt; 2\).</p>
+    <p><i>풀이.</i> \(x\) 대신 \(-x^2\)을 넣으면 \(\dfrac{1}{1 + x^2} = 1 - x^2 + x^4 - x^6 + \cdots\)이고, \(|-x^2| &lt; 1\), 곧 \(|x| &lt; 1\)에서 성립한다.</p>
+    <p>\(\dfrac{1}{x + 2} = \dfrac12\cdot\dfrac{1}{1 + x/2}\)이므로 \(x\) 대신 \(-\frac x2\)를 넣으면 \(\dfrac12\sum\left(-\dfrac x2\right)^n = \sum\dfrac{(-1)^nx^n}{2^{n+1}}\)이고, \(\left|\frac x2\right| &lt; 1\), 곧 \(|x| &lt; 2\)에서 성립한다. 분모가 0이 되는 \(x = -2\)까지의 거리가 수렴 반지름이 된 셈이다.</p>
 
     <h3><span class="no">8.7.2</span>항별 미분과 적분</h3>
     <div class="tb-env thm">
@@ -36,30 +34,23 @@
       \[f'(x) = \sum nc_nx^{n-1}, \qquad \int f(x)\,dx = C + \sum\frac{c_nx^{n+1}}{n + 1}\]
       <p>이고, 두 급수의 수렴 반지름도 \(R\)이다.</p>
     </div>
-    <p>다항식처럼 한 항씩 미분하고 적분해도 된다는 뜻입니다. (끝점에서의 수렴은 바뀔 수 있습니다.)</p>
+    <p>즉 거듭제곱급수는 다항식처럼 한 항씩 미분하고 적분해도 된다. 다만 끝점에서의 수렴은 바뀔 수 있다. 이 정리 덕분에 미분이나 적분으로 이어진 함수들의 급수를 등비급수 하나에서 차례로 얻을 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.7.3</span>
       <p>\(\ln(1 + x)\)와 \(\arctan x\)를 거듭제곱급수로 나타내어라.</p>
     </div>
-    <p><i>풀이.</i> \(\dfrac{1}{1 + t} = 1 - t + t^2 - \cdots\)를 0부터 \(x\)까지 항별로 적분하면</p>
-    \[\ln(1 + x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \cdots, \quad |x| &lt; 1.\]
-    <p>예제 8.7.1의 \(\frac{1}{1 + t^2}\)을 적분하면</p>
-    \[\arctan x = x - \frac{x^3}{3} + \frac{x^5}{5} - \cdots, \quad |x| \le 1.\]
-    <p>\(x = 1\)을 넣으면 \(\frac\pi4 = 1 - \frac13 + \frac15 - \cdots\)라는 유명한 식(라이프니츠 급수)이 나옵니다. \(x = 1\)에서도 성립하는 것은 끝점에서 교대급수로 수렴하기 때문입니다(이 부분의 엄밀한 확인은 해석학 과목).</p>
+    <p><i>풀이.</i> \((\ln(1 + t))' = \frac{1}{1 + t}\)이므로 \(\dfrac{1}{1 + t} = 1 - t + t^2 - \cdots\)를 0부터 \(x\)까지 항별로 적분하면</p>
+    \[\ln(1 + x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \cdots, \quad |x| &lt; 1\]
+    <p>이다. 같은 방법으로 예제 8.7.1의 \(\frac{1}{1 + t^2}\)을 적분하면, \((\arctan t)' = \frac{1}{1 + t^2}\)이므로</p>
+    \[\arctan x = x - \frac{x^3}{3} + \frac{x^5}{5} - \cdots, \quad |x| \le 1\]
+    <p>이다. 여기에 \(x = 1\)을 넣으면 \(\frac\pi4 = 1 - \frac13 + \frac15 - \cdots\)라는 식(라이프니츠 급수)이 나오고, 이것이 처음 질문의 답이다. \(x = 1\)에서도 성립하는 것은 끝점에서 교대급수로 수렴하기 때문이다. 하지만 그림 1에서 \(x = 1\) 근처를 보면 21차까지 더해도 곡선과 조금 떨어져 있다. 교대급수의 오차가 다음 항 \(\frac{1}{2n + 1}\) 정도이므로, 이 급수로 \(\pi\)를 소수 셋째 자리까지 얻으려면 수천 항을 더해야 한다.</p>
+    <p class="tb-aside">급수가 끝점에서 수렴하면 그 값이 함숫값과 같다는 사실은 아벨의 정리라 하며, 엄밀한 확인은 3학년 해석학에서 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.7.4 <span class="nm">(적분 어림)</span></span>
       <p>\(\int_0^{0.5}\frac{dx}{1 + x^4}\)를 소수 넷째 자리까지 어림하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\frac{1}{1 + x^4} = 1 - x^4 + x^8 - \cdots\)를 항별 적분하면 \(\left[x - \frac{x^5}{5} + \frac{x^9}{9} - \cdots\right]_0^{0.5} = 0.5 - 0.00625 + 0.000217 - \cdots\). 교대급수이므로 넷째 항(\(\frac{0.5^{13}}{13} \approx 9.4\times10^{-6}\))보다 오차가 작습니다. 따라서 약 0.4940입니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\frac{1}{1 - x} = \sum x^n\)의 \(x\)에 다른 식을 넣어 새 급수를 만든다.</li>
-        <li>수렴 반지름 안에서 항별로 미분·적분할 수 있다.</li>
-        <li>\(\ln(1 + x) = \sum\frac{(-1)^{n-1}x^n}{n}\), \(\arctan x = \sum\frac{(-1)^nx^{2n+1}}{2n + 1}\).</li>
-      </ol>
-    </div>
+    <p><i>풀이.</i> \(\frac{1}{1 + x^4} = 1 - x^4 + x^8 - \cdots\)를 항별 적분하면 \(\left[x - \frac{x^5}{5} + \frac{x^9}{9} - \cdots\right]_0^{0.5} = 0.5 - 0.00625 + 0.000217 - \cdots\)이다. 교대급수이므로 오차는 넷째 항 \(\frac{0.5^{13}}{13} \approx 9.4\times10^{-6}\)보다 작다. 따라서 값은 약 0.4940이다. 원시함수를 기본 함수로 쓰기 어려운 적분도 이렇게 급수로 원하는 정확도까지 구할 수 있다.</p>
+    <div class="tb-summary"><span class="lb">마무리</span><p>등비급수 \(\frac{1}{1 - x} = \sum x^n\)의 \(x\)에 다른 식을 넣고, 수렴 반지름 안에서 항별로 미분하거나 적분하면 여러 함수의 거듭제곱급수를 얻는다. 그래서 처음 질문의 \(\ln(1 + x) = \sum\frac{(-1)^{n-1}x^n}{n}\)과 \(\arctan x = \sum\frac{(-1)^nx^{2n+1}}{2n + 1}\)이 나오고, 후자에 \(x = 1\)을 넣으면 \(\frac\pi4 = 1 - \frac13 + \frac15 - \cdots\)이다. 다만 이 급수는 느리게 수렴하므로 실제 계산에는 더 빠른 급수를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.7.3</span>연습문제</h3>

@@ -2,57 +2,49 @@
 {
   "type": "card",
   "sec": "공통1-07-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c1-body.js"]
 }
 -->
 <article class="card q-card" id="text-c1-paramcalc" data-kind="본문" data-std="공통1-07-02">
   <header class="card-head"><span class="no"></span><h2>매개변수 곡선의 넓이와 길이</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>매개변수 곡선 아래의 넓이와 곡선의 길이를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>매개변수 곡선 (<a href="07-01.html">7.1절</a>), 곡선의 길이 (<a href="06-03.html">6.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">굴러가는 바퀴의 한 점이 그리는 아치 하나는 바퀴 자체와 비교해 넓이가 얼마나 되고, 길이는 얼마나 될까? 곡선이 매개변수로만 주어져도 넓이와 길이를 적분으로 구할 수 있을까?</p>
+    <figure class="q-fig" data-q="c1-cycarea">
+      <svg viewBox="0 0 520 200" role="img" aria-label="사이클로이드 아치 아래 넓이와 바퀴 세 개의 넓이 비교"></svg>
+      <figcaption>그림 1. 사이클로이드 아치 하나 아래의 넓이는 바퀴 넓이의 꼭 세 배이고, 아치의 길이는 바퀴 지름의 네 배이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>매개변수 곡선과 사이클로이드(<a href="07-01.html">7.1절</a>), 곡선의 길이(<a href="06-03.html">6.3절</a>), 치환적분과 반각 공식(<a href="05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>넓이</h3>
-    <p>곡선 아래의 넓이 \(\int y\,dx\)에서 \(x = f(t)\)로 치환하면 \(dx = f'(t)\,dt\)이므로 넓이는 \(\int g(t)f'(t)\,dt\)입니다. 적분 구간은 \(x\)의 양 끝에 해당하는 \(t\) 값입니다.</p>
+    <p>곡선 아래의 넓이는 \(\int y\,dx\)였다. 곡선이 \(x = f(t)\), \(y = g(t)\)로 주어지면 \(x = f(t)\)로 치환하면 된다. 그러면 \(dx = f'(t)\,dt\)이므로 넓이는 \(\int g(t)f'(t)\,dt\)이고, 적분 구간은 \(x\)의 양 끝에 해당하는 \(t\) 값이다. 다시 말해 높이 \(y\)에 가로 폭 \(dx\)를 곱해 더한다는 생각은 그대로이고, 폭을 \(t\)로 재었을 뿐이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.1</span>
       <p>사이클로이드 \(x = r(\theta - \sin\theta)\), \(y = r(1 - \cos\theta)\)의 아치 하나 아래의 넓이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(dx = r(1 - \cos\theta)\,d\theta\), \(0 \le \theta \le 2\pi\).</p>
-    \[A = \int_0^{2\pi}r^2(1 - \cos\theta)^2d\theta = r^2\int_0^{2\pi}\left(1 - 2\cos\theta + \frac{1 + \cos2\theta}{2}\right)d\theta = r^2\cdot3\pi = 3\pi r^2.\]
-    <p>바퀴 넓이의 정확히 세 배입니다(갈릴레이가 종이를 오려 무게를 재서 짐작한 결과라고 전해집니다).</p>
+    <p><i>풀이.</i> \(dx = r(1 - \cos\theta)\,d\theta\)이고 아치 하나는 \(0 \le \theta \le 2\pi\)이다. 반각 공식 \(\cos^2\theta = \frac{1 + \cos2\theta}{2}\)를 쓰면</p>
+    \[A = \int_0^{2\pi}r^2(1 - \cos\theta)^2d\theta = r^2\int_0^{2\pi}\left(1 - 2\cos\theta + \frac{1 + \cos2\theta}{2}\right)d\theta = r^2\cdot3\pi = 3\pi r^2\]
+    <p>이다. 즉 아치 아래 넓이는 바퀴 넓이 \(\pi r^2\)의 정확히 세 배이다. 갈릴레이가 종이를 오려 무게를 재서 이 비를 짐작했다고 전해진다. 그림 1에서 아치 아래에 바퀴 세 개를 늘어놓은 것과 넓이가 같다. 적분 안의 세 항 가운데 \(\cos\theta\)와 \(\cos2\theta\)는 한 주기 동안 적분하면 0이 되므로, 남는 것은 상수 \(1 + \frac12\)이고 여기에 \(2\pi\)를 곱해 \(3\pi\)가 나온다.</p>
 
     <h3><span class="no">7.2.2</span>곡선의 길이</h3>
-    <p>6.3절의 \(ds^2 = dx^2 + dy^2\)을 \(dt\)로 묶으면 됩니다.</p>
+    <p>길이는 6.3절의 \(ds^2 = dx^2 + dy^2\)을 \(dt\)로 묶으면 된다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 7.2.2</span>
       <p>곡선 \(x = f(t)\), \(y = g(t)\) (\(\alpha \le t \le \beta\))가 한 번만 지나가면 길이는</p>
       \[L = \int_\alpha^\beta\sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt.\]
     </div>
-    <p>\(t\)를 시간으로 보면 근호 안은 속력의 제곱이고, 길이는 "속력을 시간으로 적분한 것", 곧 이동 거리입니다.</p>
+    <p>\(t\)를 시간으로 보면 근호 안은 속력의 제곱이다. 따라서 길이는 속력을 시간으로 적분한 것, 곧 이동 거리이다. 자동차의 주행 거리계가 하는 일이 바로 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.3</span>
       <p>사이클로이드(반지름 \(r\)) 아치 하나의 길이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\left(\frac{dx}{d\theta}\right)^2 + \left(\frac{dy}{d\theta}\right)^2 = r^2(1 - \cos\theta)^2 + r^2\sin^2\theta = 2r^2(1 - \cos\theta) = 4r^2\sin^2\frac\theta2\) (반각 공식). \(0 \le \theta \le 2\pi\)에서 \(\sin\frac\theta2 \ge 0\)이므로</p>
-    \[L = \int_0^{2\pi}2r\sin\frac\theta2\,d\theta = 2r\left[-2\cos\frac\theta2\right]_0^{2\pi} = 8r.\]
+    <p><i>풀이.</i> 속력의 제곱은 \(\left(\frac{dx}{d\theta}\right)^2 + \left(\frac{dy}{d\theta}\right)^2 = r^2(1 - \cos\theta)^2 + r^2\sin^2\theta = 2r^2(1 - \cos\theta)\)이고, 반각 공식으로 \(4r^2\sin^2\frac\theta2\)이다. \(0 \le \theta \le 2\pi\)에서 \(\sin\frac\theta2 \ge 0\)이므로</p>
+    \[L = \int_0^{2\pi}2r\sin\frac\theta2\,d\theta = 2r\left[-2\cos\frac\theta2\right]_0^{2\pi} = 8r\]
+    <p>이다. 바퀴가 한 바퀴 구르는 동안 중심은 둘레 \(2\pi r \approx 6.28r\)만큼 가지만, 테두리의 점은 위로 올라갔다 내려오느라 그보다 긴 \(8r\)을 움직인다. 또 속력 \(2r\sin\frac\theta2\)는 꼭대기(\(\theta = \pi\))에서 \(2r\)로 가장 빠르고 바닥에서 0이다. 굴러가는 바퀴의 맨 위는 중심보다 두 배 빠르게 움직이고, 땅에 닿은 점은 잠깐 멈춘다는 뜻이다.</p>
 
-    <div class="tb-note"><b>주의</b>곡선이 같은 부분을 두 번 지나가면(예: \(x = \sin2t\), \(y = \cos2t\), \(0 \le t \le 2\pi\)) 공식은 두 번 센 길이를 줍니다. 곡선을 한 번만 지나는 \(t\)의 범위를 고르세요.</div>
+    <div class="tb-note"><span class="lb">주의</span>곡선이 같은 부분을 두 번 지나가면, 가령 \(x = \sin2t\), \(y = \cos2t\), \(0 \le t \le 2\pi\)이면, 공식은 두 번 센 길이를 준다. 곡선을 한 번만 지나는 \(t\)의 범위를 고른다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>넓이: \(\int y\,dx = \int g(t)f'(t)\,dt\).</li>
-        <li>길이: \(\int\sqrt{x'(t)^2 + y'(t)^2}\,dt\) (속력의 적분).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>매개변수 곡선 아래의 넓이는 \(\int y\,dx = \int g(t)f'(t)\,dt\)로, 길이는 속력을 적분한 \(\int\sqrt{x'(t)^2 + y'(t)^2}\,dt\)로 구한다. 그래서 처음 질문의 사이클로이드 아치는 넓이가 바퀴의 세 배인 \(3\pi r^2\)이고, 길이는 지름의 네 배인 \(8r\)이다. 곡선을 두 번 지나는 범위로 적분하지 않도록 \(t\)의 범위를 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.3</span>연습문제</h3>

@@ -2,116 +2,104 @@
 {
   "type": "card",
   "sec": "공통1-01-03",
-  "order": 7
+  "order": 7,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c1-body.js"]
 }
 -->
 <article class="card q-card" id="text-c1-limitlaws" data-kind="본문" data-std="공통1-01-03">
   <header class="card-head"><span class="no"></span><h2>극한 법칙과 압축 정리 (보충)</h2><span class="kind">보충 본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>극한의 합·곱·몫 법칙을 정의로 증명하고 계산에 쓴다.</li>
-        <li>\(\frac00\) 꼴을 인수분해, 유리화로 정리해 극한을 구한다.</li>
-        <li>압축 정리로 \(\lim_{x\to0}\frac{\sin x}{x} = 1\)을 증명한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>ε-δ 정의와 "작은 쪽 δ를 잡는" 기법 (<a href="01-03.html">1.3절</a>).</li>
-        <li>호도법과 부채꼴의 넓이 \(\frac12r^2\theta\), 삼각함수의 정의 (고교 수학I).</li>
-        <li>극한 계산의 경험 (고교 수학II). 이 절은 그 계산 규칙이 왜 맞는지 보입니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(x^2\sin\frac1x\)은 0 근처에서 끝없이 출렁여서 대입도 약분도 통하지 않는다. 그래도 \(x \to 0\)일 때 이 함수가 0으로 간다고 말할 수 있을까? 그리고 고등학교에서 "그냥 대입"하던 계산은 왜 맞았을까?</p>
+    <figure class="q-fig" data-q="c1-squeeze">
+      <svg viewBox="0 0 520 260" role="img" aria-label="y = x² sin(1/x)이 y = x²과 y = −x² 사이에 끼어 0으로 가는 그림"></svg>
+      <div class="q-ctl"><label>보는 폭 \(w\) <input type="range" data-k="w" min="0.02" max="1" step="0.01" value="0.6"><output data-k="w"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 출렁이는 곡선 \(x^2\sin\frac1x\)은 위아래의 \(\pm x^2\) 사이에 갇혀 있다. 보는 폭을 줄여 확대해도 두 벽이 함께 0으로 좁아지므로 곡선도 0으로 간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>ε-δ 정의와 "두 δ 가운데 작은 쪽을 잡는" 기법(<a href="01-03.html">1.3절</a>), 고교 수학I의 호도법과 부채꼴의 넓이 \(\frac12r^2\theta\), 삼각함수의 정의를 쓴다. 고교 수학II에서 극한을 계산해 본 경험이 있으면 좋다. 이 절은 그 계산 규칙이 왜 맞는지 보인다.</div>
 
     <h3><span class="no">2.2.1</span>매번 ε-δ를 쓸 수는 없다</h3>
-    <p>1.3절에서 \(\lim_{x\to3}x^2 = 9\) 하나를 증명하는 데도 한 문단이 들었습니다. \(\lim_{x\to2}\frac{x^3 + 5x}{x^2 - 1}\) 같은 것을 매번 정의로 증명할 수는 없습니다. 그래서 간단한 극한 몇 개와 "극한끼리 더하고 곱해도 된다"는 규칙을 한 번 증명해 두고, 그다음부터는 규칙으로 계산합니다. 고등학교에서 쓰던 규칙이 바로 이것인데, 이제 그 근거를 봅니다.</p>
+    <p>1.3절에서 \(\lim_{x\to3}x^2 = 9\) 하나를 증명하는 데도 한 문단이 들었다. 그렇다면 \(\lim_{x\to2}\frac{x^3 + 5x}{x^2 - 1}\) 같은 것을 매번 정의로 증명할 수는 없다. 그래서 간단한 극한 몇 개와 "극한끼리 더하고 곱해도 된다"는 규칙을 한 번 증명해 두고, 그다음부터는 규칙으로 계산한다. 고등학교에서 쓰던 규칙이 바로 이것이며, 이 절에서는 그 근거를 본다.</p>
 
     <h3><span class="no">2.2.2</span>극한 법칙</h3>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.1 <span class="nm">(극한 법칙)</span></span>
-      <p>\(\lim_{x\to a}f(x) = L\), \(\lim_{x\to a}g(x) = M\)이고 \(c\)가 상수이면</p>
-      <ol>
-        <li>\(\lim_{x\to a}[f(x) + g(x)] = L + M\)</li>
-        <li>\(\lim_{x\to a}cf(x) = cL\)</li>
-        <li>\(\lim_{x\to a}f(x)g(x) = LM\)</li>
-        <li>\(M \ne 0\)이면 \(\lim_{x\to a}\frac{f(x)}{g(x)} = \frac LM\)</li>
-      </ol>
+      <p>\(\lim_{x\to a}f(x) = L\), \(\lim_{x\to a}g(x) = M\)이고 \(c\)가 상수이면 (1) \(\lim_{x\to a}[f(x) + g(x)] = L + M\), (2) \(\lim_{x\to a}cf(x) = cL\), (3) \(\lim_{x\to a}f(x)g(x) = LM\), (4) \(M \ne 0\)이면 \(\lim_{x\to a}\frac{f(x)}{g(x)} = \frac LM\)이다.</p>
     </div>
-    <p>모든 법칙에 "<b>두 극한이 존재하면</b>"이라는 가정이 붙어 있다는 점이 중요합니다. 예를 들어 \(\lim_{x\to0}\left[\frac1x + \left(-\frac1x\right)\right] = 0\)이지만, 각각의 극한은 존재하지 않으므로 "\(\lim\frac1x + \lim\left(-\frac1x\right)\)"로 나누어 쓸 수 없습니다.</p>
-    <p>합의 법칙만 증명하겠습니다. 나머지도 같은 생각으로 증명할 수 있습니다(곱의 법칙은 연습문제 6).</p>
-    <p class="tb-proof"><span class="lb">증명 (1).</span>\(\varepsilon > 0\)이 주어졌다고 하자. 핵심은 허용 오차를 반씩 나누는 것이다. \(\lim f = L\)이므로 \(0 &lt; |x - a| &lt; \delta_1\)이면 \(|f(x) - L| &lt; \frac\varepsilon2\)인 \(\delta_1\)이 있다(정의에서 "\(\varepsilon\)" 자리에 \(\frac\varepsilon2\)을 넣었다). 마찬가지로 \(0 &lt; |x - a| &lt; \delta_2\)이면 \(|g(x) - M| &lt; \frac\varepsilon2\)인 \(\delta_2\)가 있다. \(\delta = \min(\delta_1, \delta_2)\)로 놓으면 \(0 &lt; |x - a| &lt; \delta\)일 때 두 부등식이 모두 성립하고, 삼각부등식(1.1절)에 의해</p>
-    \[|(f + g)(x) - (L + M)| \le |f(x) - L| + |g(x) - M| &lt; \tfrac\varepsilon2 + \tfrac\varepsilon2 = \varepsilon.\]
+    <p>모든 법칙에는 두 극한이 존재한다는 가정이 붙어 있다. 가령 \(\lim_{x\to0}\left[\frac1x + \left(-\frac1x\right)\right] = 0\)이지만, 각각의 극한은 존재하지 않으므로 "\(\lim\frac1x + \lim\left(-\frac1x\right)\)"로 나누어 쓸 수 없다.</p>
+    <p>여기서는 합의 법칙만 증명한다. 나머지도 같은 생각으로 증명할 수 있다(곱의 법칙은 연습문제 6). 증명의 생각은 허용 오차를 반씩 나누는 것이다. \(f\)와 \(g\)가 각각 \(\frac\varepsilon2\) 안에 들어오면, 둘을 더한 것은 \(\varepsilon\) 안에 들어온다.</p>
+    <p class="tb-proof"><span class="lb">증명 (1).</span>\(\varepsilon > 0\)이 주어졌다고 하자. \(\lim f = L\)이므로 \(0 &lt; |x - a| &lt; \delta_1\)이면 \(|f(x) - L| &lt; \frac\varepsilon2\)인 \(\delta_1\)이 있다(정의의 \(\varepsilon\) 자리에 \(\frac\varepsilon2\)을 넣었다). 마찬가지로 \(0 &lt; |x - a| &lt; \delta_2\)이면 \(|g(x) - M| &lt; \frac\varepsilon2\)인 \(\delta_2\)가 있다. \(\delta = \min(\delta_1, \delta_2)\)로 놓으면 \(0 &lt; |x - a| &lt; \delta\)일 때 두 부등식이 모두 성립하고, 삼각부등식(1.1절)에 의해</p>
+    \[|(f + g)(x) - (L + M)| \le |f(x) - L| + |g(x) - M| &lt; \tfrac\varepsilon2 + \tfrac\varepsilon2 = \varepsilon\]
     <p class="tb-proof">이다. <span class="qed">∎</span></p>
-    <p>이 법칙들과 두 가지 기본 극한 \(\lim_{x\to a}c = c\), \(\lim_{x\to a}x = a\)를 합치면 다음을 얻습니다.</p>
+    <p>이 법칙들과 두 가지 기본 극한 \(\lim_{x\to a}c = c\), \(\lim_{x\to a}x = a\)를 합치면 다음을 얻는다.</p>
     <div class="tb-env thm">
       <span class="lb">따름정리 2.2.2 <span class="nm">(대입 법칙)</span></span>
       <p>\(p\)가 다항함수이면 \(\lim_{x\to a}p(x) = p(a)\)이다. \(r = \frac pq\)가 유리함수이고 \(q(a) \ne 0\)이면 \(\lim_{x\to a}r(x) = r(a)\)이다.</p>
     </div>
-    <p>\(x^2 = x\cdot x\)이므로 곱의 법칙에서 \(\lim x^2 = a^2\), 같은 방식으로 \(\lim x^n = a^n\)이고, 상수배와 합의 법칙으로 다항식 전체가 처리됩니다. 고교에서 "그냥 대입"하던 것이 이렇게 정당화됩니다.</p>
+    <p>\(x^2 = x\cdot x\)이므로 곱의 법칙에서 \(\lim x^2 = a^2\)이고, 같은 방식으로 \(\lim x^n = a^n\)이다. 여기에 상수배와 합의 법칙을 쓰면 다항식 전체가 처리된다. 즉 처음 질문의 "그냥 대입"은 극한 법칙 네 개를 한꺼번에 쓴 것이다.</p>
 
     <h3><span class="no">2.2.3</span>\(\frac00\) 꼴 정리하기</h3>
-    <p>대입했을 때 분모가 0이면 몫의 법칙을 쓸 수 없습니다. 분자도 0이면(\(\frac00\) 꼴) 극한이 있을 수도 없을 수도 있어서 식을 정리해야 합니다. 정리하는 근거는 다음 사실입니다.</p>
+    <p>대입했을 때 분모가 0이면 몫의 법칙을 쓸 수 없다. 분자도 0인 \(\frac00\) 꼴이면 극한이 있을 수도 없을 수도 있어서 식을 정리해야 한다. 그때 정리해도 되는 근거는 다음 사실이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.3</span>
       <p>\(a\) 근처에서 \(x \ne a\)인 모든 \(x\)에 대해 \(f(x) = g(x)\)이고 \(\lim_{x\to a}g(x)\)가 존재하면, \(\lim_{x\to a}f(x) = \lim_{x\to a}g(x)\)이다.</p>
     </div>
-    <p>정의 2.1.1이 \(x = a\)를 빼고 보기 때문에 당연히 성립합니다. 그래서 \(x \ne a\)일 때만 성립하는 약분을 해도 극한은 변하지 않습니다.</p>
+    <p>정의 2.1.1이 \(x = a\)를 빼고 보기 때문에 이 정리는 정의에서 곧바로 나온다. 따라서 \(x \ne a\)일 때만 성립하는 약분을 해도 극한은 변하지 않는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.4</span>
       <p>(가) \(\lim_{x\to2}\frac{x^3 - 8}{x^2 - 4}\) (나) \(\lim_{h\to0}\frac{\sqrt{9 + h} - 3}{h}\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) 분자와 분모에 공통인수 \(x - 2\)가 있습니다. \(x \ne 2\)이면</p>
+    <p><i>풀이.</i> (가) 분자와 분모에 공통인수 \(x - 2\)가 있다. \(x \ne 2\)이면</p>
     \[\frac{x^3 - 8}{x^2 - 4} = \frac{(x - 2)(x^2 + 2x + 4)}{(x - 2)(x + 2)} = \frac{x^2 + 2x + 4}{x + 2}\]
-    <p>이고, 오른쪽은 \(x = 2\)에서 분모가 4이므로 대입할 수 있어 극한은 \(\frac{12}{4} = 3\)입니다.</p>
-    <p>(나) 근호가 있으면 분자를 유리화합니다. \(h \ne 0\)이면</p>
-    \[\frac{\sqrt{9 + h} - 3}{h} = \frac{(9 + h) - 9}{h(\sqrt{9 + h} + 3)} = \frac{1}{\sqrt{9 + h} + 3} \to \frac16.\]
-    <p>마지막 단계에서 \(\sqrt{9 + h} \to 3\)을 썼는데, 이는 \(\sqrt{\ }\)가 연속이라는 사실(1.4절)입니다.</p>
+    <p>이고, 오른쪽은 \(x = 2\)에서 분모가 4이므로 대입할 수 있다. 따라서 극한은 \(\frac{12}{4} = 3\)이다.</p>
+    <p>(나) 근호가 있으면 분자를 유리화한다. \(h \ne 0\)이면</p>
+    \[\frac{\sqrt{9 + h} - 3}{h} = \frac{(9 + h) - 9}{h(\sqrt{9 + h} + 3)} = \frac{1}{\sqrt{9 + h} + 3} \to \frac16\]
+    <p>이다. 마지막 단계에서 \(\sqrt{9 + h} \to 3\)을 썼는데, 이는 \(\sqrt{\ }\)가 연속이라는 사실(1.4절)이다. 수치로 확인하면 \(h = 0.01\)일 때 \(\frac{\sqrt{9.01} - 3}{0.01} \approx 0.16662\)로 \(\frac16 \approx 0.16667\)에 가깝다.</p>
 
     <h3><span class="no">2.2.4</span>압축 정리</h3>
-    <p>대입도 약분도 안 되는 극한이 있습니다. \(x^2\sin\frac1x\)은 \(x \to 0\)일 때 \(\sin\frac1x\)이 \(-1\)과 1 사이를 끝없이 오가서 극한 법칙을 쓸 수 없습니다(\(\lim\sin\frac1x\)이 없으니까요). 하지만 \(-x^2 \le x^2\sin\frac1x \le x^2\)이고 양쪽이 모두 0으로 가므로, 가운데도 0으로 갈 수밖에 없어 보입니다. 이것을 정리로 만든 것이 압축 정리입니다.</p>
+    <p>그런데 대입도 약분도 안 되는 극한이 있다. 처음 질문의 \(x^2\sin\frac1x\)은 \(x \to 0\)일 때 \(\sin\frac1x\)이 \(-1\)과 1 사이를 끝없이 오가므로, \(\lim\sin\frac1x\)이 없어 곱의 법칙을 쓸 수 없다. 하지만 \(-x^2 \le x^2\sin\frac1x \le x^2\)이고 양쪽 벽이 모두 0으로 간다. 그림 1에서 보는 폭 \(w\)를 1에서 0.02까지 줄여 보면 곡선은 계속 출렁이지만 두 벽 사이를 벗어나지 못하고, 벽과 함께 0으로 좁아진다. 이것을 정리로 만든 것이 압축 정리이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.5 <span class="nm">(압축 정리)</span></span>
       <p>\(a\) 근처에서 (\(a\) 제외) \(g(x) \le f(x) \le h(x)\)이고 \(\lim_{x\to a}g(x) = \lim_{x\to a}h(x) = L\)이면 \(\lim_{x\to a}f(x) = L\)이다.</p>
     </div>
     <p class="tb-proof"><span class="lb">증명.</span>\(\varepsilon > 0\)이 주어졌다고 하자. 가정에 의해 \(0 &lt; |x - a| &lt; \delta_1\)이면 \(L - \varepsilon &lt; g(x)\), \(0 &lt; |x - a| &lt; \delta_2\)이면 \(h(x) &lt; L + \varepsilon\)인 \(\delta_1, \delta_2\)가 있다. 또 부등식 \(g \le f \le h\)가 성립하는 범위를 \(0 &lt; |x - a| &lt; \delta_3\)이라 하자. \(\delta = \min(\delta_1, \delta_2, \delta_3)\)이면 \(0 &lt; |x - a| &lt; \delta\)일 때 \(L - \varepsilon &lt; g(x) \le f(x) \le h(x) &lt; L + \varepsilon\)이므로 \(|f(x) - L| &lt; \varepsilon\)이다. <span class="qed">∎</span></p>
-    <p>압축 정리를 쓸 때 할 일은 하나입니다. 같은 극한을 갖는 두 함수 사이에 원하는 함수를 끼워 넣는 부등식을 찾는 것입니다. 진동하는 인수가 있으면 \(|\sin(\cdots)| \le 1\), \(|\cos(\cdots)| \le 1\)이 대개 그 부등식을 줍니다.</p>
+    <p>그러므로 압축 정리를 쓸 때 할 일은 같은 극한을 갖는 두 함수 사이에 원하는 함수를 끼워 넣는 부등식을 찾는 것이다. 진동하는 인수가 있으면 대개 \(|\sin(\cdots)| \le 1\), \(|\cos(\cdots)| \le 1\)이 그 부등식을 준다.</p>
 
     <h3><span class="no">2.2.5</span>\(\frac{\sin x}{x}\)의 극한</h3>
-    <p>삼각함수의 미분(2.2절)은 모두 다음 극한 하나에 기댑니다. 고교 미적분에서 이 극한을 배웠다면 그 증명을 여기서 다시 확인하고, 배우지 않았다면 처음부터 따라오면 됩니다.</p>
+    <p>삼각함수의 미분은 모두 다음 극한 하나에 기댄다. 고교 미적분에서 이 극한을 배웠다면 증명을 여기서 다시 확인하고, 배우지 않았다면 처음부터 따라오면 된다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.6</span>
       \[\lim_{x\to0}\frac{\sin x}{x} = 1 \qquad (x\text{는 라디안}).\]
     </div>
-    <p>먼저 수치로 확인합니다. \(x = 0.1\)이면 \(\frac{\sin 0.1}{0.1} = 0.99833\), \(x = 0.01\)이면 \(0.9999833\)입니다. 분자와 분모가 모두 0으로 가는데 그 비가 1로 갑니다. 곧 작은 \(x\)에서 \(\sin x \approx x\)입니다.</p>
-    <p class="tb-proof"><span class="lb">증명.</span>먼저 \(0 &lt; x &lt; \frac\pi2\)인 경우를 보자. 반지름 1인 원에서 중심 \(O\), 점 \(A = (1, 0)\), 각 \(x\)만큼 돌린 점 \(P = (\cos x, \sin x)\)를 잡고, 직선 \(OP\)가 \(A\)에서의 접선 \(x = 1\)과 만나는 점을 \(T = (1, \tan x)\)라 하자. 그림에서 세 도형이 차례로 포함된다: 삼각형 \(OAP\) ⊂ 부채꼴 \(OAP\) ⊂ 삼각형 \(OAT\). 넓이를 비교하면</p>
-    \[\frac12\sin x \;&lt;\; \frac12x \;&lt;\; \frac12\tan x.\]
-    <p class="tb-proof">가운데는 부채꼴의 넓이 \(\frac12r^2\theta\)(\(r = 1\), \(\theta = x\))이고, 양쪽은 밑변 \(OA = 1\)과 높이 \(\sin x\), \(\tan x\)인 삼각형의 넓이이다. 각 변을 \(\frac12\sin x > 0\)으로 나누면 \(1 &lt; \frac{x}{\sin x} &lt; \frac{1}{\cos x}\), 역수를 취하면(양수이므로 부등호가 뒤집힌다)</p>
-    \[\cos x &lt; \frac{\sin x}{x} &lt; 1.\]
-    <p class="tb-proof">\(-\frac\pi2 &lt; x &lt; 0\)이면 \(x\)를 \(-x\)로 바꿔도 \(\frac{\sin x}{x}\)과 \(\cos x\)가 변하지 않으므로 같은 부등식이 성립한다. \(x \to 0\)일 때 \(\cos x \to 1\)이므로(아래 참고), 압축 정리에 의해 \(\frac{\sin x}{x} \to 1\)이다. <span class="qed">∎</span></p>
-    <p>증명에서 \(\cos x \to 1\)을 썼습니다. 이것도 같은 그림에서 나옵니다. 호 \(AP\)의 길이는 \(|x|\)이고 현 \(AP\)는 그보다 짧으므로, \(P\)와 \(A\)의 가로 거리 \(1 - \cos x\)와 세로 거리 \(|\sin x|\)는 모두 \(|x|\) 이하입니다. 압축 정리로 \(x \to 0\)일 때 \(\sin x \to 0\), \(\cos x \to 1\)입니다.</p>
-    <p class="tb-aside">라디안이라는 조건이 왜 중요할까요? 각을 도(°)로 재면 부채꼴 넓이가 \(\frac{\pi}{360}r^2\theta\)가 되어, 극한이 \(\frac{\pi}{180} \approx 0.01745\)로 바뀝니다. 미적분에서 각을 언제나 라디안으로 재는 것은 이 극한을 1로 만들기 위해서입니다.</p>
+    <p>먼저 수치로 확인해 보자. \(x = 0.1\)이면 \(\frac{\sin 0.1}{0.1} = 0.99833\)이고, \(x = 0.01\)이면 \(0.9999833\)이다. 분자와 분모가 모두 0으로 가는데 그 비는 1로 간다. 다시 말해 작은 \(x\)에서 \(\sin x \approx x\)이다. 증명은 그림 2의 세 도형의 넓이를 비교하는 데서 나온다.</p>
+    <figure class="q-fig" data-q="c1-sinx">
+      <svg viewBox="0 0 520 280" role="img" aria-label="단위원에서 삼각형 OAP, 부채꼴 OAP, 삼각형 OAT의 넓이 비교"></svg>
+      <div class="q-ctl"><label>각 \(x\) <input type="range" data-k="x" min="0.05" max="1.4" step="0.01" value="0.8"><output data-k="x"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 2. 삼각형 \(OAP\)는 부채꼴 \(OAP\) 안에, 부채꼴은 삼각형 \(OAT\) 안에 들어 있다. 각 \(x\)를 줄이면 세 넓이의 비가 모두 1에 다가간다.</figcaption>
+    </figure>
+    <p class="tb-proof"><span class="lb">증명.</span>먼저 \(0 &lt; x &lt; \frac\pi2\)인 경우를 보자. 반지름 1인 원에서 중심 \(O\), 점 \(A = (1, 0)\), 각 \(x\)만큼 돌린 점 \(P = (\cos x, \sin x)\)를 잡고, 직선 \(OP\)가 \(A\)에서의 접선 \(x = 1\)과 만나는 점을 \(T = (1, \tan x)\)라 하자. 그림 2에서 삼각형 \(OAP\), 부채꼴 \(OAP\), 삼각형 \(OAT\)가 차례로 포함되므로 넓이를 비교하면</p>
+    \[\frac12\sin x \;&lt;\; \frac12x \;&lt;\; \frac12\tan x\]
+    <p class="tb-proof">이다. 가운데는 부채꼴의 넓이 \(\frac12r^2\theta\)(\(r = 1\), \(\theta = x\))이고, 양쪽은 밑변 \(OA = 1\)과 높이 \(\sin x\), \(\tan x\)인 삼각형의 넓이이다. 각 변을 \(\frac12\sin x > 0\)으로 나누면 \(1 &lt; \frac{x}{\sin x} &lt; \frac{1}{\cos x}\)이고, 양수끼리 역수를 취하면 부등호가 뒤집혀</p>
+    \[\cos x &lt; \frac{\sin x}{x} &lt; 1\]
+    <p class="tb-proof">이 된다. \(-\frac\pi2 &lt; x &lt; 0\)이면 \(x\)를 \(-x\)로 바꿔도 \(\frac{\sin x}{x}\)과 \(\cos x\)가 변하지 않으므로 같은 부등식이 성립한다. \(x \to 0\)일 때 \(\cos x \to 1\)이므로, 압축 정리에 의해 \(\frac{\sin x}{x} \to 1\)이다. <span class="qed">∎</span></p>
+    <p>증명에서 \(\cos x \to 1\)을 썼는데, 이것도 같은 그림에서 나온다. 호 \(AP\)의 길이는 \(|x|\)이고 현 \(AP\)는 그보다 짧으므로, \(P\)와 \(A\)의 가로 거리 \(1 - \cos x\)와 세로 거리 \(|\sin x|\)는 모두 \(|x|\) 이하이다. 따라서 압축 정리로 \(x \to 0\)일 때 \(\sin x \to 0\), \(\cos x \to 1\)이다.<sup class="fn"><a href="#fn-text-c1-limitlaws-1">1</a></sup></p>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.2.7</span>
       <p>(가) \(\lim_{x\to0}\frac{\sin 3x}{x}\) (나) \(\lim_{x\to0}\frac{1 - \cos x}{x^2}\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) \(u = 3x\)로 놓으면 \(x \to 0\)일 때 \(u \to 0\)이고 \(\frac{\sin 3x}{x} = 3\cdot\frac{\sin u}{u} \to 3\)입니다.</p>
-    <p>(나) 분자와 분모에 \(1 + \cos x\)를 곱해 \(\sin^2x + \cos^2x = 1\)을 씁니다.</p>
-    \[\frac{1 - \cos x}{x^2} = \frac{1 - \cos^2x}{x^2(1 + \cos x)} = \left(\frac{\sin x}{x}\right)^2\cdot\frac{1}{1 + \cos x} \to 1^2\cdot\frac12 = \frac12.\]
-    <p>마지막에 곱의 법칙을 썼고, 각 인수의 극한이 존재하므로 쓸 수 있습니다. 이 결과는 작은 \(x\)에서 \(\cos x \approx 1 - \frac{x^2}{2}\)라는 뜻이고, 8.8절의 Taylor 다항식에서 다시 나옵니다. 공통3에서 진자의 주기를 구할 때 쓰는 "작은 각 근사"가 바로 \(\sin x \approx x\)와 이 식입니다.</p>
+    <p><i>풀이.</i> (가) \(u = 3x\)로 놓으면 \(x \to 0\)일 때 \(u \to 0\)이고 \(\frac{\sin 3x}{x} = 3\cdot\frac{\sin u}{u} \to 3\)이다.</p>
+    <p>(나) 분자와 분모에 \(1 + \cos x\)를 곱해 \(\sin^2x + \cos^2x = 1\)을 쓴다.</p>
+    \[\frac{1 - \cos x}{x^2} = \frac{1 - \cos^2x}{x^2(1 + \cos x)} = \left(\frac{\sin x}{x}\right)^2\cdot\frac{1}{1 + \cos x} \to 1^2\cdot\frac12 = \frac12\]
+    <p>마지막에 곱의 법칙을 썼는데, 각 인수의 극한이 존재하므로 쓸 수 있다. 이 결과는 작은 \(x\)에서 \(\cos x \approx 1 - \frac{x^2}{2}\)라는 뜻이고, 8.8절의 테일러 다항식에서 다시 나온다. 일반물리에서 진자의 주기를 구할 때 쓰는 작은 각 근사가 바로 \(\sin x \approx x\)와 이 식이다.</p>
 
-    <div class="tb-note"><b>주의</b>\(\lim_{x\to0}x\sin\frac1x\)을 "\(\lim x\cdot\lim\sin\frac1x = 0\cdot(\text{무엇})= 0\)"으로 계산하면 결과는 맞아도 논리는 틀립니다. \(\lim\sin\frac1x\)이 존재하지 않으므로 곱의 법칙을 쓸 수 없습니다. 올바른 근거는 \(-|x| \le x\sin\frac1x \le |x|\)와 압축 정리입니다.</div>
+    <div class="tb-note"><b>주의</b>\(\lim_{x\to0}x\sin\frac1x\)을 "\(\lim x\cdot\lim\sin\frac1x = 0\cdot(\text{무엇})= 0\)"으로 계산하면 결과는 맞아도 논리는 틀린다. \(\lim\sin\frac1x\)이 존재하지 않으므로 곱의 법칙을 쓸 수 없다. 올바른 근거는 \(-|x| \le x\sin\frac1x \le |x|\)와 압축 정리이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>두 극한이 존재하면 합, 상수배, 곱, 몫(분모의 극한 ≠ 0)의 극한은 극한의 합, 상수배, 곱, 몫이다.</li>
-        <li>다항함수와 (분모 ≠ 0인) 유리함수는 대입으로 극한을 구한다.</li>
-        <li>\(\frac00\) 꼴은 \(x \ne a\)에서 약분·유리화로 정리한 뒤 대입한다.</li>
-        <li>압축 정리: \(g \le f \le h\)이고 \(g, h \to L\)이면 \(f \to L\). 진동하는 인수에는 \(|\sin| \le 1\).</li>
-        <li>\(\lim_{x\to0}\frac{\sin x}{x} = 1\), \(\lim_{x\to0}\frac{1 - \cos x}{x^2} = \frac12\) (라디안).</li>
-      </ol>
-    </div>
+    <ol class="fn-list">
+      <li id="fn-text-c1-limitlaws-1">라디안이라는 조건은 여기서 쓰였다. 각을 도(°)로 재면 부채꼴 넓이가 \(\frac{\pi}{360}r^2\theta\)가 되어 극한이 \(\frac{\pi}{180} \approx 0.01745\)로 바뀐다. 미적분에서 각을 늘 라디안으로 재는 것은 이 극한을 1로 만들기 위해서이다.</li>
+    </ol>
+    <div class="tb-summary"><span class="lb">마무리</span><p>두 극한이 존재하면 그 합·곱·몫의 극한은 극한의 합·곱·몫이고, 그래서 다항함수와 분모가 0이 아닌 유리함수는 대입으로 극한을 구한다. \(\frac00\) 꼴은 \(x \ne a\)에서 약분하거나 유리화해 정리하며, 정리해도 극한이 변하지 않는 까닭은 정의가 \(x = a\)를 빼고 보기 때문이다. 처음의 \(x^2\sin\frac1x\)처럼 출렁이는 함수는 \(\pm x^2\) 사이에 끼워 압축 정리로 0임을 보이고, 같은 방법으로 \(\lim_{x\to0}\frac{\sin x}{x} = 1\)도 얻는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.6</span>연습문제</h3>
