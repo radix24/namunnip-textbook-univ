@@ -1,0 +1,72 @@
+<!--block
+{
+  "type": "card",
+  "sec": "기계12-03-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m12-heatsink" data-kind="본문" data-std="기계12-03-03">
+  <header class="card-head"><span class="no"></span><h2>핀 배열과 히트싱크 설계</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <div class="tb-goal">
+      <b>이 절에서 배울 것</b>
+      <ul>
+        <li>여러 핀과 바닥면을 합친 히트싱크의 전체 열전달률을 구한다.</li>
+        <li>전체 표면 효율 \(\eta_o\)와 히트싱크 열저항을 계산한다.</li>
+        <li>핀 수, 두께, 높이가 성능에 주는 영향을 판단한다.</li>
+      </ul>
+      <b style="margin-top:10px">먼저 알아야 할 것</b>
+      <ul>
+        <li>핀 효율 (<a href="03-01.html">3.1절</a>), 강제 대류 (<a href="05-01.html">5.1절</a>).</li>
+      </ul>
+    </div>
+
+    <h3><span class="no">3.3.1</span>전체 효율과 열저항</h3>
+    <p>히트싱크는 바닥면(핀 사이로 드러난 부분)과 핀으로 열을 냅니다. 바닥면은 효율 1, 핀은 핀 효율 \(\eta_f\)로 계산해 더합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">핀 배열</span>
+      <p>직사각 핀(끝 단열 보정): \(m = \sqrt{2h/(kt)}\), \(L_c = H + t/2\), \(\eta_f = \tanh(mL_c)/(mL_c)\)</p>
+      <p>\(\dot Q = h(\eta_fA_f + A_b)\Delta T\), \(\eta_o = 1 - \dfrac{A_f}{A_t}(1 - \eta_f)\), \(R = \dfrac1{h\eta_oA_t}\)</p>
+    </div>
+    <p>핀을 촘촘히 하면 넓이가 늘지만 핀 사이 틈이 좁아져 공기 흐름이 막혀 \(h\)가 줄어듭니다. 핀을 너무 높게 하면 끝부분 효율이 떨어집니다. 그래서 핀 수와 높이에는 최적값이 있습니다.</p>
+
+    <div class="tb-env ex">
+      <span class="lb">예제 3.3.1 <span class="nm">(알루미늄 히트싱크)</span></span>
+      <p>바닥 50 × 50 mm, 핀 20장(두께 1 mm, 높이 30 mm, 길이 50 mm), 알루미늄(\(k\) = 200), 팬 바람 \(h\) = 20 W/m²·K. 핀 효율, 열저항, 10 W 부품의 온도 상승은?</p>
+    </div>
+    <p><i>풀이.</i> \(m = \sqrt{40/0.2} = 14.1\) m⁻¹, \(mL_c = 0.431\), \(\eta_f = 0.942\). \(A_f = 20\times2\times0.05\times0.0305 = 0.061\) m², \(A_b = 0.0025 - 20\times0.05\times0.001 = 0.0015\) m². \(hA_{\text{유효}} = 20\times(0.942\times0.061 + 0.0015) = 1.18\) W/K → \(R = 0.85\) K/W, 10 W에서 8.5 K. 핀 없는 판(0.0025 m²)이면 \(R = 20\) K/W로 200 K가 올라 쓸 수 없습니다.</p>
+
+    <div class="tb-note"><b>주의</b>부품과 히트싱크 사이 접촉 저항(서멀 패드, 그리스)이 0.1~1 K/W 정도로 히트싱크 저항과 비슷할 수 있습니다. 전체 저항 = 접합부-케이스 + 접촉 + 히트싱크로 더해 판단합니다.</div>
+
+    <div class="tb-summary">
+      <b>요약</b>
+      <ol>
+        <li>\(\dot Q = h(\eta_fA_f + A_b)\Delta T\).</li>
+        <li>열저항 \(1/(h\eta_oA_t)\)로 부품 온도 어림.</li>
+        <li>핀 간격·높이는 흐름과 효율의 맞바꿈.</li>
+      </ol>
+    </div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.3.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제 히트싱크에서 열의 몇 %가 핀으로 나가는가?
+          <details><summary>답</summary><p>\(0.942\times0.061/(0.942\times0.061 + 0.0015) = 97\)%.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>팬을 끄면 \(h\) = 5로 줄어든다(핀 효율은 더 커짐, 약 0.98). 열저항은?
+          <details><summary>답</summary><p>\(1/(5\times(0.98\times0.061 + 0.0015)) = 3.3\) K/W.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">심화</p>
+      <ol start="3">
+        <li>같은 무게로 핀을 0.5 mm 두께 40장으로 바꾸면 무엇이 좋아지고 무엇이 걱정인가?
+          <details><summary>답</summary><p>넓이가 약 두 배라 \(hA\)가 커지지만, 핀 간격이 약 0.75 mm로 좁아 공기가 잘 흐르지 못해 \(h\)가 크게 줄 수 있고, 얇은 핀은 효율도 떨어진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
