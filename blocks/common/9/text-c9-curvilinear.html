@@ -2,55 +2,42 @@
 {
   "type": "card",
   "sec": "공통9-09-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-curvilinear" data-kind="본문" data-std="공통9-09-01">
   <header class="card-head"><span class="no"></span><h2>기울기, 발산, 회전과 곡선좌표</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>기울기, 발산, 회전, 라플라시안을 직교좌표에서 다시 정리한다.</li>
-        <li>원통좌표와 구면좌표에서의 공식을 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>기울기 벡터 (<a href="../2/04-05.html">공통2 4.5절</a>), 회전과 발산 (<a href="../2/07-05.html">7.5절</a>), 극좌표 (<a href="../1/07-03.html">공통1 7.3절</a>).</li>
-      </ul>
-    </div>
-    <p class="tb-note">이 단원은 요람의 과목 개요에 있지만 2026학년도 진도표에는 없습니다. 2–6단원에서 쓰는 도구를 복습하는 용도로 둡니다.</p>
+    <p class="q-ask">원형 막(2.7절)이나 원판(6.5절), 공 모양의 문제는 직교좌표 \(x, y, z\)보다 원통좌표나 구면좌표가 훨씬 편하다. 그런데 좌표를 바꾸면 기울기, 발산, 라플라시안의 공식에 \(\frac1r\) 같은 인수가 붙는다. 그 인수들은 왜 붙으며, 공식이 맞는지는 어떻게 확인할까?</p>
+    <figure class="q-fig" data-q="c9-div">
+      <svg viewBox="0 0 520 270" role="img" aria-label="벡터장과 작은 원을 지나는 선속으로 잰 발산"></svg>
+      <div class="q-ctl">
+        <label>벡터장 <select data-k="k"><option value="0" selected>r e_r</option><option value="1">e_r</option><option value="2">e_r / r</option></select></label>
+        <label>점의 거리 \(r\) <input type="range" data-k="r0" min="0.6" max="2.4" step="0.2" value="1.2"><output data-k="r0"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 평면의 방사형 벡터장(회색 화살표)과 점 둘레의 작은 원(주황). 원을 지나 나가는 선속을 넓이로 나눈 값이 원통좌표의 발산 공식과 일치한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기울기 벡터(<a href="../2/04-05.html">미분적분학(2) 4.5절</a>), 회전과 발산(<a href="../2/07-05.html">7.5절</a>), 극좌표(<a href="../1/07-03.html">미분적분학(1) 7.3절</a>)를 쓴다.</div>
+    <div class="tb-aside">이 단원은 요람의 과목 개요에 있지만 2026학년도 진도표에는 없다. 2–6단원에서 쓰는 도구를 복습하는 용도로 둔다.</div>
 
     <h3><span class="no">9.1.1</span>직교좌표 복습</h3>
-    <p>\(\nabla = \left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)\)로 쓰면 다음과 같습니다.</p>
-    <ul class="tb-list">
-      <li>기울기 \(\nabla f\): 가장 빨리 증가하는 방향과 그 비율. 스칼라 → 벡터.</li>
-      <li>발산 \(\nabla\cdot\mathbf F = P_x + Q_y + R_z\): 한 점에서 퍼져 나가는 양. 벡터 → 스칼라.</li>
-      <li>회전 \(\nabla\times\mathbf F\): 한 점에서 소용돌이치는 정도와 축. 벡터 → 벡터.</li>
-      <li>라플라시안 \(\nabla^2f = \nabla\cdot\nabla f = f_{xx} + f_{yy} + f_{zz}\).</li>
-    </ul>
+    <p>\(\nabla = \left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)\)로 쓰면 네 연산을 한꺼번에 정리할 수 있다. <em>기울기</em> \(\nabla f\)는 가장 빨리 증가하는 방향과 그 비율로, 스칼라를 벡터로 바꾼다. <em>발산</em> \(\nabla\cdot\mathbf F = P_x + Q_y + R_z\)는 한 점에서 퍼져 나가는 양으로, 벡터를 스칼라로 바꾼다. <em>회전</em> \(\nabla\times\mathbf F\)는 한 점에서 소용돌이치는 정도와 축으로, 벡터를 벡터로 바꾼다. 그리고 <em>라플라시안</em>은 \(\nabla^2f = \nabla\cdot\nabla f = f_{xx} + f_{yy} + f_{zz}\)이다.</p>
 
     <h3><span class="no">9.1.2</span>원통좌표와 구면좌표</h3>
-    <p>원형 막(2.7절), 원판(6.5절), 공 모양의 문제는 원통좌표 \((r, \theta, z)\)나 구면좌표 \((\rho, \theta, \phi)\)가 편합니다. 이때 공식에 \(r\)이나 \(\rho\) 같은 인수가 붙는 이유는, 각도가 \(d\theta\) 변할 때 실제로 움직이는 거리가 \(r\,d\theta\)이기 때문입니다.</p>
-    <p>원통좌표 (단위벡터 \(\mathbf e_r, \mathbf e_\theta, \mathbf e_z\)):</p>
-    \[\nabla f = f_r\mathbf e_r + \frac1rf_\theta\mathbf e_\theta + f_z\mathbf e_z,\]
-    \[\nabla\cdot\mathbf F = \frac1r(rF_r)_r + \frac1r\frac{\partial F_\theta}{\partial\theta} + \frac{\partial F_z}{\partial z},\]
-    \[\nabla^2f = \frac1r(rf_r)_r + \frac{1}{r^2}f_{\theta\theta} + f_{zz}.\]
-    <p>구면좌표에서 \(f\)가 \(\rho\)에만 의존하면</p>
-    \[\nabla^2f = \frac{1}{\rho^2}\left(\rho^2f_\rho\right)_\rho.\]
+    <p>처음 질문의 인수가 붙는 까닭은, 각도가 \(d\theta\) 변할 때 실제로 움직이는 거리가 \(r\,d\theta\)이기 때문이다. 원통좌표의 단위벡터를 \(\mathbf e_r, \mathbf e_\theta, \mathbf e_z\)라 하면 공식은 다음과 같다.</p>
+    \[\nabla f = f_r\mathbf e_r + \frac1rf_\theta\mathbf e_\theta + f_z\mathbf e_z, \qquad \nabla\cdot\mathbf F = \frac1r(rF_r)_r + \frac1r\frac{\partial F_\theta}{\partial\theta} + \frac{\partial F_z}{\partial z}\]
+    \[\nabla^2f = \frac1r(rf_r)_r + \frac{1}{r^2}f_{\theta\theta} + f_{zz}\]
+    <p>또 구면좌표 \((\rho, \theta, \phi)\)에서 \(f\)가 \(\rho\)에만 의존하면 \(\nabla^2f = \frac{1}{\rho^2}\left(\rho^2f_\rho\right)_\rho\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 9.1.1</span>
       <p>(가) \(\mathbf F = r\mathbf e_r\)(원통좌표)의 발산 (나) \(f = \ln r\)의 라플라시안 (다) \(f = \frac1\rho\)의 라플라시안을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) \(\frac1r(r^2)_r = 2\). 직교좌표로 \(\mathbf F = (x, y, 0)\)이고 발산 2와 같습니다. (나) \(\frac1r\left(r\cdot\frac1r\right)_r = 0\). 6.4절에서 쓴 동심원 사이의 퍼텐셜입니다. (다) \(\frac{1}{\rho^2}\left(\rho^2\cdot\left(-\frac{1}{\rho^2}\right)\right)_\rho = 0\) (\(\rho \ne 0\)). 점전하의 퍼텐셜 \(\frac1\rho\)이 라플라스 방정식을 만족한다는 뜻입니다.</p>
+    <p><i>풀이.</i> (가) \(\frac1r(r^2)_r = 2\)이다. 직교좌표로는 \(\mathbf F = (x, y, 0)\)이고 발산 2와 같다. 그림 1의 처음 상태에서 작은 원으로 잰 값도 2이다. (나) \(\frac1r\left(r\cdot\frac1r\right)_r = 0\)이며, 6.4절에서 쓴 동심원 사이의 퍼텐셜이다. (다) \(\rho \ne 0\)이면 \(\frac{1}{\rho^2}\left(\rho^2\cdot\left(-\frac{1}{\rho^2}\right)\right)_\rho = 0\)이다. 즉 점전하의 퍼텐셜 \(\frac1\rho\)이 라플라스 방정식을 만족한다.</p>
+    <p>처음 질문의 확인 방법은 발산의 뜻으로 돌아가는 것이다. 작은 원을 지나 나가는 선속을 넓이로 나누면 발산이 된다. 그림 1에서 \(\mathbf e_r\)을 고르면 그 값이 \(\frac1r\)을, \(\frac{\mathbf e_r}{r}\)을 고르면 0을 따라간다. 화살표가 바깥으로 갈수록 짧아져 들어오는 양과 나가는 양이 맞기 때문이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>기울기·발산·회전·라플라시안은 \(\nabla\)로 쓴다.</li>
-        <li>곡선좌표 공식에는 거리 인수 \(r\), \(\rho\)가 붙는다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>기울기·발산·회전·라플라시안은 \(\nabla\) 하나로 쓴다. 처음 질문의 인수 \(r\)이나 \(\rho\)는 각도 변화가 실제 거리 \(r\,d\theta\)이기 때문에 붙으며, 공식은 작은 영역의 선속으로 확인할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">9.1.3</span>연습문제</h3>

@@ -2,57 +2,48 @@
 {
   "type": "card",
   "sec": "공통9-05-05",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-realint" data-kind="본문" data-std="공통9-05-05">
   <header class="card-head"><span class="no"></span><h2>유수 정리로 실수 적분 계산하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\cos\theta, \sin\theta\)의 유리함수를 0부터 \(2\pi\)까지 적분한다.</li>
-        <li>\(-\infty\)부터 \(\infty\)까지의 유리함수 이상적분을 반원 경로로 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>유수 정리 (<a href="05-04.html">5.4절</a>), 이상적분 (공통1 6단원).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(\int_0^{2\pi}\frac{d\theta}{\sqrt2 - \cos\theta}\)이나 \(\int_{-\infty}^\infty\frac{\cos x}{1 + x^2}dx\)처럼 실수만 나오는 적분인데도, 부정적분을 구하기 어렵거나 아예 기본 함수로 쓸 수 없는 경우가 많다. 이런 실수 적분을 복소평면으로 옮겨 유수 정리로 계산할 수 있을까?</p>
+    <figure class="q-fig" data-q="c9-semi">
+      <svg viewBox="0 0 520 250" role="img" aria-label="실수축과 위쪽 반원으로 이루어진 닫힌 경로와 각 부분의 적분값"></svg>
+      <div class="q-ctl"><label>반원의 반지름 \(R\) <input type="range" data-k="R" min="1.5" max="6" step="0.5" value="3"><output data-k="R"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 실수축의 구간 \([-R, R]\)과 위쪽 반원을 이은 경로(파랑). 안에 든 극 \(i\)(빨강)의 유수로 전체 값은 늘 \(\pi\)이고, \(R\)을 키우면 반원 부분이 0으로 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>유수 정리(<a href="05-04.html">5.4절</a>)와 이상적분(미분적분학(1) 6단원)을 쓴다.</div>
 
     <h3><span class="no">5.5.1</span>삼각함수의 적분</h3>
-    <p>\(\int_0^{2\pi}F(\cos\theta, \sin\theta)\,d\theta\)는 \(z = e^{i\theta}\)로 놓으면 단위원 위의 적분이 됩니다.</p>
-    \[\cos\theta = \frac12\left(z + \frac1z\right), \quad \sin\theta = \frac{1}{2i}\left(z - \frac1z\right), \quad d\theta = \frac{dz}{iz}.\]
+    <p>처음 질문의 첫째 적분처럼 \(\int_0^{2\pi}F(\cos\theta, \sin\theta)\,d\theta\) 꼴은 \(z = e^{i\theta}\)로 놓으면 단위원 위의 적분이 된다.</p>
+    \[\cos\theta = \frac12\left(z + \frac1z\right), \quad \sin\theta = \frac{1}{2i}\left(z - \frac1z\right), \quad d\theta = \frac{dz}{iz}\]
     <div class="tb-env ex">
       <span class="lb">예제 5.5.1</span>
       <p>\(\displaystyle\int_0^{2\pi}\frac{d\theta}{\sqrt2 - \cos\theta}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 대입하고 정리하면</p>
-    \[\oint\frac{1}{\sqrt2 - \frac12\left(z + \frac1z\right)}\cdot\frac{dz}{iz} = \frac{-2}{i}\oint\frac{dz}{z^2 - 2\sqrt2z + 1}.\]
-    <p>분모의 근은 \(z = \sqrt2 \pm 1\)이고, 단위원 안에 있는 것은 \(\sqrt2 - 1\)뿐입니다. 유수는 \(\frac{1}{2z - 2\sqrt2}\Big|_{\sqrt2 - 1} = -\frac12\). 따라서</p>
-    \[\frac{-2}{i}\cdot2\pi i\cdot\left(-\frac12\right) = 2\pi.\]
+    <p><i>풀이.</i> 대입하고 정리하면 다음과 같다.</p>
+    \[\oint\frac{1}{\sqrt2 - \frac12\left(z + \frac1z\right)}\cdot\frac{dz}{iz} = \frac{-2}{i}\oint\frac{dz}{z^2 - 2\sqrt2z + 1}\]
+    <p>분모의 근은 \(z = \sqrt2 \pm 1\)이고, 단위원 안에 있는 것은 \(\sqrt2 - 1\)뿐이다. 그 유수는 \(\frac{1}{2z - 2\sqrt2}\Big|_{\sqrt2 - 1} = -\frac12\)이다. 따라서 적분은 \(\frac{-2}{i}\cdot2\pi i\cdot\left(-\frac12\right) = 2\pi\)이다.</p>
 
     <h3><span class="no">5.5.2</span>무한 구간의 적분</h3>
-    <p>\(\int_{-\infty}^\infty f(x)\,dx\)는 실수축의 구간 \([-R, R]\)과 위쪽 반원 \(S_R\)을 이은 닫힌 경로에서 유수 정리를 쓰고 \(R \to \infty\)로 보냅니다. \(f = \frac{p}{q}\)에서 분모의 차수가 분자보다 2 이상 높으면 반원 위의 적분은 0으로 가므로</p>
+    <p>\(\int_{-\infty}^\infty f(x)\,dx\)는 실수축의 구간 \([-R, R]\)과 위쪽 반원 \(S_R\)을 이은 닫힌 경로에서 유수 정리를 쓰고 \(R \to \infty\)로 보낸다. \(f = \frac{p}{q}\)에서 분모의 차수가 분자보다 2 이상 높으면 반원 위의 적분은 0으로 가므로, 다음 정리를 얻는다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 5.5.2</span>
       \[\int_{-\infty}^\infty f(x)\,dx = 2\pi i\sum(\text{위쪽 반평면에 있는 극의 유수}).\]
+      <p>(실수축 위에는 극이 없어야 한다.)</p>
     </div>
-    <p>(실수축 위에는 극이 없어야 합니다.)</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.5.3</span>
       <p>\(\displaystyle\int_{-\infty}^\infty\frac{dx}{1 + x^2}\)을 유수로 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 위쪽 반평면의 극은 \(i\)뿐이고 유수는 \(\frac{1}{2i}\) (5.4절). \(2\pi i\cdot\frac{1}{2i} = \pi\). 공통1에서 \(\arctan\)으로 구한 값과 같습니다. 유수 방법은 부정적분을 모를 때도 쓸 수 있다는 것이 장점입니다.</p>
-    <p class="tb-aside">\(\int_{-\infty}^\infty\frac{\cos x}{1 + x^2}dx\) 같은 푸리에 적분(1단원)도 \(\frac{e^{iz}}{1 + z^2}\)의 유수로 계산합니다. \(i\)에서의 유수는 \(\frac{e^{-1}}{2i}\)이므로 값은 \(\frac\pi e\)입니다.</p>
+    <p><i>풀이.</i> 위쪽 반평면의 극은 \(i\)뿐이고, 유수는 \(\frac{1}{2i}\)이다(5.4절). 따라서 적분은 \(2\pi i\cdot\frac{1}{2i} = \pi\)이며, 미분적분학(1)에서 \(\arctan\)으로 구한 값과 같다. 그림 1에서 \(R\)을 1.5에서 6으로 키우면 실수축 부분 \(2\arctan R\)이 \(\pi\)에 다가가고 반원 부분이 사라진다. 유수 방법은 부정적분을 모를 때도 쓸 수 있다는 것이 장점이다.</p>
+    <div class="tb-aside">처음 질문의 둘째 적분 \(\int_{-\infty}^\infty\frac{\cos x}{1 + x^2}dx\) 같은 푸리에 적분(1단원)도 \(\frac{e^{iz}}{1 + z^2}\)의 유수로 계산한다. \(i\)에서의 유수는 \(\frac{e^{-1}}{2i}\)이므로 값은 \(\frac\pi e\)이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\int_0^{2\pi}\): \(z = e^{i\theta}\)로 단위원 적분으로 바꾼다.</li>
-        <li>\(\int_{-\infty}^\infty\frac pq\) (차수 차 2 이상): 위쪽 반평면 유수의 합 \(\times2\pi i\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 실수 적분은 복소평면의 닫힌 경로로 옮겨 유수 정리로 계산한다. \(\int_0^{2\pi}\)는 \(z = e^{i\theta}\)로 단위원 적분이 되고, 분모 차수가 2 이상 높은 유리함수의 \(\int_{-\infty}^\infty\)는 위쪽 반평면 유수의 합에 \(2\pi i\)를 곱한 것이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.5.3</span>연습문제</h3>

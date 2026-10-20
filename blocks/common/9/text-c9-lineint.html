@@ -2,52 +2,46 @@
 {
   "type": "card",
   "sec": "공통9-04-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-lineint" data-kind="본문" data-std="공통9-04-01">
   <header class="card-head"><span class="no"></span><h2>복소평면의 선적분</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>경로를 \(z(t)\)로 나타내 복소 선적분 \(\int_Cf(z)\,dz\)를 계산한다.</li>
-        <li>가장 중요한 적분 \(\oint\frac{dz}{z - z_0} = 2\pi i\)를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>선적분 (<a href="../2/07-02.html">공통2 7.2절</a>), 매개변수 곡선 (<a href="../1/07-01.html">공통1 7.1절</a>), 복소 지수 (<a href="03-05.html">3.5절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실수 적분 \(\int_a^bf\,dx\)는 \(x\)축 위의 구간을 따라 더한다. 그런데 복소평면에서는 두 점을 잇는 길이 수없이 많다. 복소함수의 적분은 어떤 길을 따라 하며, 같은 두 점을 잇더라도 길에 따라 값이 달라질까? 그리고 원을 한 바퀴 돌아 제자리로 오면 적분은 언제나 0일까?</p>
+    <figure class="q-fig" data-q="c9-lint">
+      <svg viewBox="0 0 520 260" role="img" aria-label="단위원을 따라 쌓이는 선적분 값"></svg>
+      <div class="q-ctl">
+        <label>\(f\) <select data-k="m"><option value="1" selected>1/z</option><option value="2">1/z²</option><option value="3">1/z³</option><option value="0">1</option></select></label>
+        <label>돈 각 (°) <input type="range" data-k="th" min="0" max="360" step="5" value="270"><output data-k="th"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 왼쪽 단위원을 따라 적분할 때(파랑), 오른쪽은 그때까지 쌓인 적분값(주황)이다. \(\frac1z\)만은 한 바퀴를 다 돌아도 0으로 돌아오지 않고 \(2\pi i\)에 닿는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>선적분(<a href="../2/07-02.html">미분적분학(2) 7.2절</a>), 매개변수 곡선(<a href="../1/07-01.html">미분적분학(1) 7.1절</a>), 복소 지수(<a href="03-05.html">3.5절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>정의와 계산</h3>
-    <p>복소평면의 곡선 \(C\)를 \(z(t) = x(t) + iy(t)\), \(a \le t \le b\)로 나타내면, 복소 선적분은 공통2의 선적분처럼 곡선을 잘게 나누어 \(f(z)\Delta z\)를 더한 것의 극한입니다. 계산은 매개변수로 바꾸어 합니다.</p>
+    <p>복소평면의 곡선 \(C\)를 \(z(t) = x(t) + iy(t)\), \(a \le t \le b\)로 나타내면, 복소 선적분은 미분적분학(2)의 선적분처럼 곡선을 잘게 나누어 \(f(z)\Delta z\)를 더한 것의 극한이다. 즉 처음 질문의 "길"은 곡선 \(C\)이며, 계산은 매개변수로 바꾸어 한다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 4.1.1</span>
       \[\int_Cf(z)\,dz = \int_a^bf(z(t))\,\dot z(t)\,dt, \qquad \dot z = \frac{dz}{dt}.\]
     </div>
-    <p>또 \(f\)가 해석적이고 \(F' = f\)인 \(F\)가 있으면, 기본정리처럼 \(\int_Cf\,dz = F(z_1) - F(z_0)\)으로 끝점만 보면 됩니다(경로와 무관).</p>
+    <p>또 \(f\)가 해석적이고 \(F' = f\)인 \(F\)가 있으면, 기본정리처럼 \(\int_Cf\,dz = F(z_1) - F(z_0)\)이므로 끝점만 보면 된다. 이때는 경로와 무관하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.2 <span class="nm">(가장 중요한 적분)</span></span>
       <p>단위원 \(C\)를 시계 반대 방향으로 한 바퀴 도는 경로에서 \(\oint_C\frac{dz}{z}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(z(t) = e^{it}\), \(0 \le t \le 2\pi\), \(\dot z = ie^{it}\).</p>
-    \[\oint_C\frac{dz}{z} = \int_0^{2\pi}\frac{ie^{it}}{e^{it}}dt = \int_0^{2\pi}i\,dt = 2\pi i.\]
-    <p>0이 아닙니다! \(\frac1z\)의 "부정적분" \(\ln z\)는 한 바퀴 돌면 \(2\pi i\)만큼 다른 값이 되기 때문입니다(3.6절). 같은 계산으로, 중심이 \(z_0\)인 원에서 \(\oint\frac{dz}{(z - z_0)^m}\)은 \(m = 1\)이면 \(2\pi i\), 다른 정수 \(m\)이면 0입니다. 이 결과가 4단원과 5단원 전체의 바탕입니다.</p>
+    <p><i>풀이.</i> \(z(t) = e^{it}\)(\(0 \le t \le 2\pi\))이므로 \(\dot z = ie^{it}\)이고, 다음과 같다.</p>
+    \[\oint_C\frac{dz}{z} = \int_0^{2\pi}\frac{ie^{it}}{e^{it}}dt = \int_0^{2\pi}i\,dt = 2\pi i\]
+    <p>처음 질문의 셋째 물음에 대한 답은 "아니다"이다. \(\frac1z\)의 "부정적분" \(\ln z\)는 한 바퀴 돌면 \(2\pi i\)만큼 다른 값이 되기 때문이다(3.6절). 같은 계산으로, 중심이 \(z_0\)인 원에서 \(\oint\frac{dz}{(z - z_0)^m}\)은 \(m = 1\)이면 \(2\pi i\), 다른 정수 \(m\)이면 0이다. 그림 1에서 \(\frac{1}{z^2}\)을 고르면 쌓인 값이 원을 그리며 0으로 돌아온다. 이 결과가 4단원과 5단원 전체의 바탕이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.3</span>
       <p>\(\int_C\bar z\,dz\)를 (가) 0에서 \(1 + i\)까지의 선분 (나) 0 → 1 → \(1 + i\)를 따라 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) \(z = t + it\), \(\dot z = 1 + i\). \(\int_0^1(t - it)(1 + i)dt = \int_0^12t\,dt = 1\). (나) 0→1: \(z = t\), \(\int_0^1t\,dt = \frac12\). 1→\(1 + i\): \(z = 1 + it\), \(\int_0^1(1 - it)i\,dt = i + \frac12\). 합 \(1 + i\). 경로에 따라 값이 다릅니다. \(\bar z\)가 해석적이지 않기 때문입니다.</p>
+    <p><i>풀이.</i> (가) \(z = t + it\), \(\dot z = 1 + i\)이므로 \(\int_0^1(t - it)(1 + i)dt = \int_0^12t\,dt = 1\)이다. (나) 0에서 1까지는 \(z = t\)이므로 \(\int_0^1t\,dt = \frac12\)이고, 1에서 \(1 + i\)까지는 \(z = 1 + it\)이므로 \(\int_0^1(1 - it)i\,dt = i + \frac12\)이다. 합은 \(1 + i\)이다. 즉 처음 질문의 둘째 물음처럼 경로에 따라 값이 다르며, \(\bar z\)가 해석적이지 않기 때문이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\int_Cf\,dz = \int f(z(t))\dot z\,dt\).</li>
-        <li>\(\oint\frac{dz}{z - z_0} = 2\pi i\), 다른 거듭제곱은 0.</li>
-        <li>해석적이지 않으면 경로에 따라 값이 달라질 수 있다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>복소 선적분은 \(\int_Cf\,dz = \int f(z(t))\dot z\,dt\)로 계산한다. \(\oint\frac{dz}{z - z_0} = 2\pi i\)이고 다른 정수 거듭제곱은 0이므로, 처음 질문처럼 닫힌 경로의 적분이 늘 0인 것은 아니다. 해석적이지 않은 함수는 경로에 따라 값이 달라질 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>

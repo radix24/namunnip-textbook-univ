@@ -2,37 +2,31 @@
 {
   "type": "card",
   "sec": "공통9-05-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-residuethm" data-kind="본문" data-std="공통9-05-04">
   <header class="card-head"><span class="no"></span><h2>유수와 유수 정리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>극에서 유수를 빠르게 구하는 공식을 쓴다.</li>
-        <li>유수 정리로 닫힌 경로의 적분을 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>로랑 급수 (<a href="05-02.html">5.2절</a>), 극의 위수 (<a href="05-03.html">5.3절</a>), \(\oint\frac{dz}{(z - z_0)^m}\) (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">닫힌 경로 안에 특이점이 여러 개 있으면 코시 적분 공식 하나로는 계산이 어렵다. 그런데 로랑 급수를 경로를 따라 적분하면 거의 모든 항이 0이 되고 단 하나의 계수만 살아남는다. 그 계수만 알면 적분이 끝난다면, 그것을 어떻게 빨리 구할 수 있을까?</p>
+    <figure class="q-fig" data-q="c9-resid">
+      <svg viewBox="0 0 520 270" role="img" aria-label="원 |z| = ρ와 그 안의 극, 적분값"></svg>
+      <div class="q-ctl"><label>반지름 \(\rho\) <input type="range" data-k="rho" min="0.3" max="2.4" step="0.3" value="2.1"><output data-k="rho"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 원 \(|z| = \rho\)(파랑)를 따라 \(\frac{4 - 3z}{z^2 - z}\)를 적분한 값. 원 안에 든 극(빨강)의 유수만 더해지므로, 반지름이 1을 넘는 순간 값이 \(-8\pi i\)에서 \(-6\pi i\)로 바뀐다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>로랑 급수(<a href="05-02.html">5.2절</a>), 극의 위수(<a href="05-03.html">5.3절</a>), \(\oint\frac{dz}{(z - z_0)^m}\)(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>유수</h3>
-    <p>\(z_0\) 둘레의 작은 원에서 로랑 급수를 항별로 적분하면, 4.1절의 결과에 의해 \(\frac{b_1}{z - z_0}\) 항만 \(2\pi ib_1\)을 남기고 나머지는 모두 0입니다. 그래서 \(b_1\)을 \(z_0\)에서의 <b>유수</b> \(\text{Res}_{z=z_0}f\)라 합니다. "적분하고 남는 것"이라는 뜻입니다.</p>
-    <p>극에서는 로랑 급수를 다 구하지 않고도 유수를 구할 수 있습니다.</p>
-    <ul class="tb-list">
-      <li>단순극: \(\text{Res} = \lim_{z\to z_0}(z - z_0)f(z)\).</li>
-      <li>단순극, \(f = \frac{p}{q}\) (\(p(z_0) \ne 0\), \(q(z_0) = 0\), \(q'(z_0) \ne 0\)): \(\text{Res} = \frac{p(z_0)}{q'(z_0)}\).</li>
-      <li>\(m\)위 극: \(\text{Res} = \frac{1}{(m - 1)!}\lim_{z\to z_0}\frac{d^{m-1}}{dz^{m-1}}\left[(z - z_0)^mf(z)\right]\).</li>
-    </ul>
+    <p>\(z_0\) 둘레의 작은 원에서 로랑 급수를 항별로 적분하면, 4.1절의 결과에 의해 \(\frac{b_1}{z - z_0}\) 항만 \(2\pi ib_1\)을 남기고 나머지는 모두 0이다. 그래서 처음 질문의 살아남는 계수 \(b_1\)을 \(z_0\)에서의 <em>유수</em> \(\text{Res}_{z=z_0}f\)라 하며, "적분하고 남는 것"이라는 뜻이다. 다른 항들은 한 바퀴를 돌면 모두 제자리로 돌아오지만, 이 항만은 4.1절의 \(\ln z\)처럼 한 바퀴마다 같은 양을 쌓기 때문이다.</p>
+    <p>그런데 로랑 급수를 매번 구하기는 번거롭다. 다행히 극에서는 로랑 급수를 다 구하지 않고도 유수를 구할 수 있다. 극의 위수만 알면 되므로, 먼저 5.3절의 방법으로 위수를 판정하는 것이 첫 단계이다. 단순극이면 \(\text{Res} = \lim_{z\to z_0}(z - z_0)f(z)\)이다. 특히 \(f = \frac{p}{q}\)이고 \(p(z_0) \ne 0\), \(q(z_0) = 0\), \(q'(z_0) \ne 0\)이면 \(\text{Res} = \frac{p(z_0)}{q'(z_0)}\)이다. 그리고 \(m\)위 극이면 다음 공식을 쓴다.</p>
+    \[\text{Res}_{z=z_0}f = \frac{1}{(m - 1)!}\lim_{z\to z_0}\frac{d^{m-1}}{dz^{m-1}}\left[(z - z_0)^mf(z)\right]\]
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
       <p>\(\frac{1}{z^2 + 1}\)의 \(z = i\)에서의 유수와 \(\frac{e^z}{z^2}\)의 \(z = 0\)에서의 유수를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 첫째는 단순극: \(\frac{p}{q'} = \frac{1}{2z}\Big|_{z=i} = \frac{1}{2i} = -\frac i2\). 둘째는 2위 극: \(\frac{d}{dz}\left[z^2\cdot\frac{e^z}{z^2}\right] = e^z \to 1\). (5.2절의 전개에서 \(\frac1z\)의 계수가 1인 것과 같습니다.)</p>
+    <p><i>풀이.</i> 첫째는 단순극이므로 \(\frac{p}{q'} = \frac{1}{2z}\Big|_{z=i} = \frac{1}{2i} = -\frac i2\)이다. 둘째는 2위 극이므로 \(\frac{d}{dz}\left[z^2\cdot\frac{e^z}{z^2}\right] = e^z \to 1\)이다. 이것은 5.2절의 전개에서 \(\frac1z\)의 계수가 1인 것과 같다.</p>
 
     <h3><span class="no">5.4.2</span>유수 정리</h3>
     <div class="tb-env thm">
@@ -40,25 +34,14 @@
       <p>\(f\)가 닫힌 경로 \(C\)의 안쪽과 위에서 유한개의 특이점 \(z_1, \dots, z_k\)(모두 안쪽)를 빼고 해석적이면</p>
       \[\oint_Cf(z)\,dz = 2\pi i\sum_{j=1}^k\text{Res}_{z=z_j}f.\]
     </div>
-    <p>이유: 경로 변형(4.2절)으로 \(C\)를 각 특이점 둘레의 작은 원들로 쪼개면, 각 원의 적분이 \(2\pi i\times\)유수입니다. 코시 적분 공식과 도함수 공식은 이 정리의 특별한 경우입니다.</p>
+    <p>까닭은 경로 변형(4.2절)이다. \(C\)를 각 특이점 둘레의 작은 원들로 쪼개면, 각 원의 적분이 \(2\pi i\times\)유수이다. 그러므로 코시 적분 공식과 도함수 공식은 이 정리의 특별한 경우이다. 즉 4단원에서 따로 배운 공식들이 "안쪽 유수를 더한다"는 한 문장으로 묶인다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.3</span>
       <p>원 \(|z| = 2\)에서 \(\displaystyle\oint\frac{4 - 3z}{z^2 - z}dz\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(z^2 - z = z(z - 1)\). 단순극 0과 1이 모두 원 안에 있습니다.</p>
-    <ul class="tb-list">
-      <li>\(z = 0\): \(\frac{4 - 3z}{z - 1}\Big|_0 = -4\).</li>
-      <li>\(z = 1\): \(\frac{4 - 3z}{z}\Big|_1 = 1\).</li>
-    </ul>
-    <p>따라서 \(2\pi i(-4 + 1) = -6\pi i\). 원이 \(|z| = \frac12\)이었다면 0만 안에 있으므로 \(-8\pi i\)입니다.</p>
+    <p><i>풀이.</i> \(z^2 - z = z(z - 1)\)이므로 단순극 0과 1이 모두 원 안에 있다. \(z = 0\)에서의 유수는 \(\frac{4 - 3z}{z - 1}\Big|_0 = -4\)이고, \(z = 1\)에서의 유수는 \(\frac{4 - 3z}{z}\Big|_1 = 1\)이다. 따라서 적분은 \(2\pi i(-4 + 1) = -6\pi i\)이다. 한편 원이 \(|z| = \frac12\)이었다면 0만 안에 있으므로 \(-8\pi i\)이다. 그림 1에서 반지름을 0.9와 1.2 사이로 오가면 이 두 값이 바뀐다. 경로가 극을 하나 더 품을 때마다 그 극의 유수만큼 값이 더해지는 것이다. 반대로 극이 경로 밖으로 나가면 그 몫이 빠진다. 그래서 유수 정리로 적분할 때 가장 먼저 할 일은, 각 극이 경로 안에 있는지 밖에 있는지 확인하는 것이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>유수 = 로랑 급수의 \(\frac{1}{z - z_0}\) 계수. 단순극은 \(\frac{p}{q'}\).</li>
-        <li>\(\oint_Cf\,dz = 2\pi i\times\)(안쪽 유수의 합).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>유수는 로랑 급수의 \(\frac{1}{z - z_0}\) 계수이며, 단순극이면 \(\frac{p}{q'}\)처럼 급수를 구하지 않고도 계산한다. 처음 질문의 적분은 \(\oint_Cf\,dz = 2\pi i\times\)(안쪽 유수의 합)으로 끝난다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.3</span>연습문제</h3>

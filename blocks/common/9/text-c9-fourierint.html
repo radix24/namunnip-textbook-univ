@@ -2,28 +2,24 @@
 {
   "type": "card",
   "sec": "공통9-01-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-fourierint" data-kind="본문" data-std="공통9-01-01">
   <header class="card-head"><span class="no"></span><h2>푸리에 적분</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>주기가 없는 함수를 연속적인 진동수의 사인·코사인으로 나타내는 푸리에 적분을 이해한다.</li>
-        <li>간단한 함수의 푸리에 적분을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>푸리에 급수, 임의 주기 (<a href="../8/06-01.html">공통8 6.1절</a>, <a href="../8/06-02.html">6.2절</a>).</li>
-        <li>이상적분 (<a href="../1/05-05.html">공통1 5.5절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">푸리에 급수는 주기 함수에만 쓸 수 있다. 그런데 한 번 치고 끝나는 소리, 한 번만 지나가는 펄스처럼 되풀이되지 않는 신호가 오히려 더 많다. 주기가 없는 신호도 사인과 코사인으로 쪼갤 수 있을까? 쪼갠다면 어떤 진동수들이 필요할까?</p>
+    <figure class="q-fig" data-q="c9-fint">
+      <svg viewBox="0 0 520 250" role="img" aria-label="사각 펄스와 그 푸리에 적분 계수 A(w)"></svg>
+      <div class="q-ctl"><label>반폭 \(a\) <input type="range" data-k="a" min="0.2" max="2.5" step="0.1" value="1"><output data-k="a"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 폭 \(2a\)인 사각 펄스(왼쪽, 주황)와 그 진동수별 성분 \(A(w)\)(오른쪽, 파랑). 펄스를 좁히면 \(A(w)\)의 봉우리가 넓게 퍼진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>푸리에 급수와 임의 주기(<a href="../8/06-01.html">고등미적분학(1) 6.1절</a>, <a href="../8/06-02.html">6.2절</a>)와 이상적분(<a href="../1/05-05.html">미분적분학(1) 5.5절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>주기를 무한히 늘리면</h3>
-    <p>푸리에 급수는 주기 함수에만 쓸 수 있습니다. 그런데 한 번 치고 끝나는 소리, 한 번만 지나가는 펄스처럼 되풀이되지 않는 신호도 많습니다. 이런 신호는 "주기가 무한히 긴 함수"로 볼 수 있습니다.</p>
-    <p>주기 \(2L\)의 푸리에 급수에서 진동수는 \(w_n = \frac{n\pi}{L}\)으로 띄엄띄엄 놓여 있고 간격은 \(\frac\pi L\)입니다. \(L\)을 무한히 키우면 간격이 0으로 줄어 진동수가 연속적으로 퍼지고, 합 \(\sum\)이 적분 \(\int dw\)로 바뀝니다. 그 결과가 푸리에 적분입니다.</p>
+    <p>처음 질문의 되풀이되지 않는 신호는 "주기가 무한히 긴 함수"로 볼 수 있다. 주기 \(2L\)의 푸리에 급수에서 진동수는 \(w_n = \frac{n\pi}{L}\)으로 띄엄띄엄 놓여 있고 간격은 \(\frac\pi L\)이다. 그런데 \(L\)을 무한히 키우면 간격이 0으로 줄어 진동수가 연속적으로 퍼지고, 합 \(\sum\)이 적분 \(\int dw\)로 바뀐다. 그 결과가 <em>푸리에 적분</em>이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 1.1.1 <span class="nm">(푸리에 적분)</span></span>
       <p>\(f\)가 구간별로 매끄럽고 \(\int_{-\infty}^\infty|f|\,dx\)가 수렴하면</p>
@@ -31,24 +27,17 @@
       \[A(w) = \frac1\pi\int_{-\infty}^\infty f(v)\cos wv\,dv, \qquad B(w) = \frac1\pi\int_{-\infty}^\infty f(v)\sin wv\,dv.\]
       <p>불연속점에서는 왼쪽·오른쪽 극한의 평균과 같다.</p>
     </div>
-    <p>푸리에 급수의 계수 \(a_n, b_n\)이 진동수 \(w\)의 함수 \(A(w), B(w)\)로 바뀌었습니다. \(A(w)\)와 \(B(w)\)는 "진동수 \(w\) 성분이 얼마나 들어 있는가"를 나타냅니다. 우함수이면 \(B = 0\)(푸리에 코사인 적분), 기함수이면 \(A = 0\)(푸리에 사인 적분)입니다.</p>
+    <p>즉 푸리에 급수의 계수 \(a_n, b_n\)이 진동수 \(w\)의 함수 \(A(w), B(w)\)로 바뀌었다. \(A(w)\)와 \(B(w)\)는 "진동수 \(w\) 성분이 얼마나 들어 있는가"를 나타낸다. 또 우함수이면 \(B = 0\)이고(푸리에 코사인 적분), 기함수이면 \(A = 0\)이다(푸리에 사인 적분).</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.2 <span class="nm">(사각 펄스)</span></span>
       <p>\(f(x) = 1\) (\(|x| &lt; 1\)), \(0\) (\(|x| > 1\))의 푸리에 적분을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 우함수이므로 \(B = 0\), \(A(w) = \frac1\pi\int_{-1}^1\cos wv\,dv = \frac{2\sin w}{\pi w}\). 따라서</p>
-    \[f(x) = \frac2\pi\int_0^\infty\frac{\cos wx\,\sin w}{w}\,dw.\]
-    <p>\(x = 0\)을 넣으면 \(\int_0^\infty\frac{\sin w}{w}dw = \frac\pi2\)라는 유명한 적분값이 나옵니다(디리클레 적분). 이 값은 보통의 부정적분으로는 구할 수 없는데, 푸리에 적분이 계산을 대신해 준 셈입니다.</p>
-    <p>\(A(w) = \frac{2\sin w}{\pi w}\)의 그래프를 보면 \(w = 0\) 근처에 큰 봉우리가 있고 진동하며 줄어듭니다. 펄스를 좁게 만들수록(폭 \(2a\)에서 \(a\)를 줄이면) 봉우리가 넓게 퍼집니다. 짧은 신호일수록 많은 진동수가 필요하다는 뜻으로, 불확정성 원리와 같은 수학적 사실입니다.</p>
+    <p><i>풀이.</i> 우함수이므로 \(B = 0\)이고 \(A(w) = \frac1\pi\int_{-1}^1\cos wv\,dv = \frac{2\sin w}{\pi w}\)이다. 따라서 다음과 같다.</p>
+    \[f(x) = \frac2\pi\int_0^\infty\frac{\cos wx\,\sin w}{w}\,dw\]
+    <p>여기에 \(x = 0\)을 넣으면 \(\int_0^\infty\frac{\sin w}{w}dw = \frac\pi2\)라는 유명한 적분값이 나온다(디리클레 적분). 이 값은 보통의 부정적분으로는 구할 수 없는데, 푸리에 적분이 계산을 대신해 준 셈이다.</p>
+    <p>처음 질문의 둘째 물음은 \(A(w)\)의 그래프가 답한다. \(w = 0\) 근처에 큰 봉우리가 있고 진동하며 줄어든다. 그런데 그림 1에서 펄스를 좁게 만들수록, 곧 폭 \(2a\)에서 \(a\)를 줄일수록 봉우리가 넓게 퍼진다. 짧은 신호일수록 많은 진동수가 필요하다는 뜻이며, 불확정성 원리와 같은 수학적 사실이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주기를 무한히 늘리면 푸리에 급수의 합이 적분이 된다.</li>
-        <li>\(f = \int_0^\infty(A\cos wx + B\sin wx)dw\), \(A, B\)는 진동수별 성분.</li>
-        <li>짧은 신호일수록 진동수 성분이 넓게 퍼진다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>주기를 무한히 늘리면 푸리에 급수의 합이 적분이 되어, 처음 질문의 되풀이되지 않는 신호도 \(f = \int_0^\infty(A\cos wx + B\sin wx)\,dw\)로 쪼갤 수 있다. \(A, B\)는 진동수별 성분이며, 짧은 신호일수록 진동수 성분이 넓게 퍼진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>

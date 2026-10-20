@@ -2,56 +2,43 @@
 {
   "type": "card",
   "sec": "공통9-01-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c9-body.js"]
 }
 -->
 <article class="card q-card" id="text-c9-fouriertrans" data-kind="본문" data-std="공통9-01-02">
   <header class="card-head"><span class="no"></span><h2>푸리에 변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>복소 지수 꼴의 푸리에 변환과 역변환을 정의하고 계산한다.</li>
-        <li>도함수의 변환 공식을 알고, 변환이 주파수 성분을 나타낸다는 뜻을 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>푸리에 적분 (<a href="01-01.html">1.1절</a>), 오일러 공식 (<a href="../1/08-08.html">공통1 8.8절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">음향 장비의 화면에는 소리가 낮은 음에서 높은 음까지 얼마나 들어 있는지가 막대로 춤춘다. 1.1절의 푸리에 적분은 코사인 성분과 사인 성분을 따로 구해야 해서 번거롭다. 이 둘을 하나로 묶어 "진동수 \(w\) 성분의 세기"를 한 번에 구할 수는 없을까?</p>
+    <figure class="q-fig" data-q="c9-ftrans">
+      <svg viewBox="0 0 520 250" role="img" aria-label="한쪽으로 꺼지는 지수함수와 그 푸리에 변환의 크기"></svg>
+      <div class="q-ctl"><label>\(a\) <input type="range" data-k="a" min="0.3" max="4" step="0.1" value="1"><output data-k="a"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(f(x) = e^{-ax}\) (\(x > 0\))(왼쪽, 주황)와 그 푸리에 변환의 크기 \(|\hat f(w)|\)(오른쪽, 파랑). 낮은 진동수 성분이 가장 크고, 높은 진동수로 갈수록 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>푸리에 적분(<a href="01-01.html">1.1절</a>)과 오일러 공식(<a href="../1/08-08.html">미분적분학(1) 8.8절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>복소 지수로 한 줄에</h3>
-    <p>오일러 공식 \(e^{iwx} = \cos wx + i\sin wx\)를 쓰면 1.1절의 코사인·사인 두 적분을 하나로 묶을 수 있습니다.</p>
+    <p>처음 질문의 열쇠는 오일러 공식 \(e^{iwx} = \cos wx + i\sin wx\)이다. 이것을 쓰면 1.1절의 코사인·사인 두 적분을 하나로 묶을 수 있다.</p>
     <div class="tb-env">
       <span class="lb">정의 1.2.1 <span class="nm">(푸리에 변환)</span></span>
       \[\hat f(w) = \mathcal F\{f\} = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty f(x)e^{-iwx}dx, \qquad f(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty\hat f(w)e^{iwx}dw.\]
     </div>
-    <p>앞의 것이 변환, 뒤의 것이 역변환입니다. 앞의 상수 \(\frac{1}{\sqrt{2\pi}}\)는 교재마다 다르게 두는 관습(Kreyszig의 방식)이니, 다른 책을 볼 때 상수 위치를 확인하세요. \(\hat f(w)\)는 대개 복소수이고, 그 크기 \(|\hat f(w)|\)가 진동수 \(w\) 성분의 세기입니다. 소리를 "주파수 스펙트럼"으로 보여 주는 음향 장비가 바로 이 계산을 합니다.</p>
+    <p>앞의 것이 변환, 뒤의 것이 역변환이다. 앞의 상수 \(\frac{1}{\sqrt{2\pi}}\)는 교재마다 다르게 두는 관습(Kreyszig의 방식)이므로, 다른 책을 볼 때 상수 위치를 확인해야 한다. \(\hat f(w)\)는 대개 복소수이고, 그 크기 \(|\hat f(w)|\)가 진동수 \(w\) 성분의 세기이다. 소리를 주파수 스펙트럼으로 보여 주는 음향 장비가 바로 이 계산을 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.2</span>
       <p>\(f(x) = e^{-ax}\) (\(x > 0\)), \(0\) (\(x &lt; 0\))의 푸리에 변환을 구하여라(\(a > 0\)).</p>
     </div>
-    <p><i>풀이.</i></p>
-    \[\hat f(w) = \frac{1}{\sqrt{2\pi}}\int_0^\infty e^{-(a + iw)x}dx = \frac{1}{\sqrt{2\pi}(a + iw)}.\]
-    <p>크기는 \(\frac{1}{\sqrt{2\pi}\sqrt{a^2 + w^2}}\)로, 낮은 진동수 성분이 크고 높은 진동수로 갈수록 줄어듭니다.</p>
+    <p><i>풀이.</i> 정의대로 적분하면 다음과 같다.</p>
+    \[\hat f(w) = \frac{1}{\sqrt{2\pi}}\int_0^\infty e^{-(a + iw)x}dx = \frac{1}{\sqrt{2\pi}(a + iw)}\]
+    <p>즉 크기는 \(\frac{1}{\sqrt{2\pi}\sqrt{a^2 + w^2}}\)이므로, 낮은 진동수 성분이 크고 높은 진동수로 갈수록 줄어든다. 그림 1의 처음 상태가 \(a = 1\)이며, \(a\)를 키워 신호를 빨리 꺼지게 하면 곡선이 낮고 넓어진다.</p>
 
     <h3><span class="no">1.2.2</span>성질</h3>
-    <ul class="tb-list">
-      <li><b>선형성</b>: \(\mathcal F\{af + bg\} = a\hat f + b\hat g\).</li>
-      <li><b>도함수의 변환</b>: \(\mathcal F\{f'\} = iw\,\hat f\), \(\mathcal F\{f''\} = -w^2\hat f\) (\(|x| \to \infty\)일 때 \(f \to 0\)이면). 라플라스 변환처럼 미분이 곱셈으로 바뀐다.</li>
-      <li><b>합성곱</b>: \(\mathcal F\{f * g\} = \sqrt{2\pi}\,\hat f\hat g\) (여기서 \(f * g = \int_{-\infty}^\infty f(p)g(x - p)dp\)).</li>
-      <li><b>가우스 함수</b>: \(\mathcal F\{e^{-ax^2}\} = \frac{1}{\sqrt{2a}}e^{-w^2/4a}\). 종 모양은 변환해도 종 모양이다.</li>
-    </ul>
-    <p>도함수 공식 덕분에, 무한히 긴 막대의 열방정식 같은 편미분방정식을 푸리에 변환으로 풀 수 있습니다(2.6절).</p>
-    <p class="tb-aside">컴퓨터는 연속 적분 대신 띄엄띄엄 측정한 자료에 이산 푸리에 변환(DFT)을 쓰고, 이를 빠르게 계산하는 고속 푸리에 변환(FFT)이 음성·영상 처리의 기본 도구입니다(공학수학(4)의 교재 11.9절 뒷부분, 신호및시스템 과목).</p>
+    <p>푸리에 변환은 선형이므로 \(\mathcal F\{af + bg\} = a\hat f + b\hat g\)이다. 가장 중요한 성질은 도함수의 변환이다. \(|x| \to \infty\)일 때 \(f \to 0\)이면 \(\mathcal F\{f'\} = iw\,\hat f\), \(\mathcal F\{f''\} = -w^2\hat f\)이다. 즉 라플라스 변환처럼 미분이 곱셈으로 바뀐다. 또 합성곱 \(f * g = \int_{-\infty}^\infty f(p)g(x - p)dp\)에 대해 \(\mathcal F\{f * g\} = \sqrt{2\pi}\,\hat f\hat g\)이다. 끝으로 가우스 함수는 \(\mathcal F\{e^{-ax^2}\} = \frac{1}{\sqrt{2a}}e^{-w^2/4a}\)로, 종 모양은 변환해도 종 모양이다.</p>
+    <p>따라서 도함수 공식 덕분에, 무한히 긴 막대의 열방정식 같은 편미분방정식을 푸리에 변환으로 풀 수 있다(2.6절).</p>
+    <div class="tb-aside">컴퓨터는 연속 적분 대신 띄엄띄엄 측정한 자료에 이산 푸리에 변환(DFT)을 쓴다. 그리고 이를 빠르게 계산하는 고속 푸리에 변환(FFT)이 음성·영상 처리의 기본 도구이다(공학수학(4)의 교재 11.9절 뒷부분, 신호및시스템 과목).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\hat f(w) = \frac{1}{\sqrt{2\pi}}\int f e^{-iwx}dx\): 진동수 \(w\) 성분. 역변환은 부호만 바꾼다.</li>
-        <li>\(\mathcal F\{f'\} = iw\hat f\): 미분이 곱셈이 된다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>푸리에 변환 \(\hat f(w) = \frac{1}{\sqrt{2\pi}}\int fe^{-iwx}dx\)는 처음 질문의 진동수 \(w\) 성분을 복소수 하나로 주며, 역변환은 지수의 부호만 바꾼다. \(\mathcal F\{f'\} = iw\hat f\)로 미분이 곱셈이 되므로 편미분방정식을 푸는 데 쓰인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
