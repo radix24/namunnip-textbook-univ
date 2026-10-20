@@ -2,54 +2,45 @@
 {
   "type": "card",
   "sec": "공통2-02-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-independence" data-kind="본문" data-std="공통2-02-01">
   <header class="card-head"><span class="no"></span><h2>일차결합과 일차독립</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>벡터의 일차결합을 만들고, 일차독립과 일차종속을 구별한다.</li>
-        <li>행렬식으로 일차독립을 판정한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>벡터의 덧셈과 실수배 (<a href="../1/09-02.html">공통1 9.2절</a>), 행렬식 (<a href="01-04.html">1.4절</a>).</li>
-      </ul>
-    </div>
-    <p class="tb-note">이 단원(2단원)은 요람 개요의 "선형벡터 공간"에 해당하며 2026학년도 진도표에는 없습니다. 공통8(고등미적분학)의 연립미분방정식과 2학년 전공의 선형대수를 읽기 위한 다리로 둡니다.</p>
+    <p class="q-ask">공간의 세 벡터 \(\langle1, 2, 3\rangle\), \(\langle4, 5, 6\rangle\), \(\langle7, 8, 9\rangle\)은 서로 달라 보인다. 그런데 그중 하나가 나머지 둘로 만들어진다면, 세 벡터는 공간의 세 방향을 제대로 가리키지 못하는 것이 아닐까? 그것을 어떻게 알아낼까?</p>
+    <figure class="q-fig" data-q="c2-indep">
+      <svg viewBox="0 0 520 280" role="img" aria-label="세 벡터가 만드는 평행육면체와, 셋째 벡터가 평면으로 내려올 때 납작해지는 모습"></svg>
+      <div class="q-ctl">
+        <label>셋째 벡터의 높이 \(h\) <input type="range" data-k="h" min="-1.5" max="1.5" step="0.05" value="1"><output data-k="h"></output></label>
+        <label>보는 방향 <input type="range" data-k="az" min="-80" max="80" step="2" value="-30"><output data-k="az"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 셋째 벡터 \(\mathbf w\)가 \(\mathbf u, \mathbf v\)의 평면 밖에 있으면 세 벡터는 부피가 있는 평행육면체를 만든다(일차독립). \(h = 0\)으로 내리면 \(\mathbf w\)가 평면 위에 놓여 부피가 0이 된다(일차종속).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>벡터의 덧셈과 실수배(<a href="../1/09-02.html">미분적분학(1) 9.2절</a>), 행렬식과 부피(<a href="01-04.html">1.4절</a>)를 쓴다.</div>
+    <p class="tb-aside">이 단원은 대학 요람 개요의 "선형벡터 공간"에 해당하며 2026학년도 진도표에는 없다. 고등미적분학의 연립미분방정식과 2학년 전공의 선형대수를 읽기 위한 다리로 둔다.</p>
 
     <h3><span class="no">2.1.1</span>일차결합</h3>
-    <p>벡터 \(\mathbf v_1, \dots, \mathbf v_k\)에 실수를 곱해 더한 \(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k\)를 <b>일차결합</b>이라 합니다. 예를 들어 평면의 모든 벡터는 \(\langle a, b\rangle = a\mathbf i + b\mathbf j\)로 \(\mathbf i, \mathbf j\)의 일차결합입니다.</p>
+    <p>벡터 \(\mathbf v_1, \dots, \mathbf v_k\)에 실수를 곱해 더한 \(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k\)를 <em>일차결합</em>이라 한다. 가령 평면의 모든 벡터는 \(\langle a, b\rangle = a\mathbf i + b\mathbf j\)로 \(\mathbf i, \mathbf j\)의 일차결합이다. 일차결합으로 만들 수 있는 벡터의 범위가 넓을수록 처음 벡터들이 가리키는 방향이 다양하다는 뜻이다.</p>
 
     <h3><span class="no">2.1.2</span>일차독립</h3>
     <div class="tb-env">
       <span class="lb">정의 2.1.1 <span class="nm">(일차독립, 일차종속)</span></span>
-      <p>\(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k = \mathbf 0\)이 되는 경우가 \(c_1 = \cdots = c_k = 0\)뿐이면 <b>일차독립</b>, 그렇지 않으면 <b>일차종속</b>이라 한다.</p>
+      <p>\(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k = \mathbf 0\)이 되는 경우가 \(c_1 = \cdots = c_k = 0\)뿐이면 <em>일차독립</em>, 그렇지 않으면 일차종속이라 한다.</p>
     </div>
-    <p>일차종속이면 계수 하나가 0이 아니므로, 그 벡터를 나머지의 일차결합으로 쓸 수 있습니다. 곧 "쓸모없는 벡터가 끼어 있다"는 뜻입니다. 일차독립은 어느 벡터도 다른 벡터들로 만들어지지 않는다는 뜻입니다.</p>
-    <ul class="tb-list">
-      <li>두 벡터: 일차종속 ⟺ 평행 (한쪽이 다른 쪽의 실수배).</li>
-      <li>공간의 세 벡터: 일차종속 ⟺ 한 평면 위에 있음 ⟺ 행렬식 = 0 (1.4절).</li>
-    </ul>
+    <p>일차종속이면 0이 아닌 계수가 하나 있으므로, 그 벡터를 나머지의 일차결합으로 쓸 수 있다. 즉 쓸모없는 벡터가 끼어 있다는 뜻이다. 반대로 일차독립은 어느 벡터도 다른 벡터들로 만들어지지 않는다는 뜻이다.</p>
+    <p>그림으로 보면 판정이 쉬워진다. 두 벡터가 일차종속인 것은 평행할 때, 곧 한쪽이 다른 쪽의 실수배일 때이다. 공간의 세 벡터가 일차종속인 것은 한 평면 위에 있을 때이고, 1.4절에 따르면 이것은 세 벡터의 행렬식이 0일 때이다. 그림 1에서 \(h\)를 1에서 0으로 내리면 평행육면체의 부피가 줄어 0이 되는데, 그 순간 \(\mathbf w\)는 \(\mathbf u\)와 \(\mathbf v\)의 일차결합이 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.2</span>
-      <p>다음 벡터들이 일차독립인지 판정하여라.</p>
-      <p>(가) \(\langle1, 2\rangle, \langle2, 4\rangle\) (나) \(\langle1, 0, 1\rangle, \langle0, 1, 1\rangle, \langle1, 1, 0\rangle\) (다) \(\langle1, 2, 3\rangle, \langle4, 5, 6\rangle, \langle7, 8, 9\rangle\)</p>
+      <p>다음 벡터들이 일차독립인지 판정하여라. (가) \(\langle1, 2\rangle, \langle2, 4\rangle\) (나) \(\langle1, 0, 1\rangle, \langle0, 1, 1\rangle, \langle1, 1, 0\rangle\) (다) \(\langle1, 2, 3\rangle, \langle4, 5, 6\rangle, \langle7, 8, 9\rangle\)</p>
     </div>
-    <p><i>풀이.</i> (가) 둘째가 첫째의 2배이므로 종속. (나) 행렬식 \(1(0 - 1) - 0 + 1(0 - 1) = -2 \ne 0\)이므로 독립. (다) 행렬식이 0이므로 종속. 실제로 \(\mathbf v_1 - 2\mathbf v_2 + \mathbf v_3 = \mathbf 0\)입니다.</p>
-    <p>정의를 직접 쓰는 방법도 알아 둡니다. (나)에서 \(c_1\langle1, 0, 1\rangle + c_2\langle0, 1, 1\rangle + c_3\langle1, 1, 0\rangle = \mathbf 0\)이면 \(c_1 + c_3 = 0\), \(c_2 + c_3 = 0\), \(c_1 + c_2 = 0\)입니다. 셋을 더하면 \(c_1 + c_2 + c_3 = 0\)이고, 여기서 각 식을 빼면 \(c_1 = c_2 = c_3 = 0\)입니다.</p>
-    <p class="tb-aside">공간에서 네 개 이상의 벡터는 언제나 일차종속입니다. 공간의 "방향의 자유도"가 3이기 때문입니다(2.2절의 차원).</p>
+    <p><i>풀이.</i> (가) 둘째가 첫째의 2배이므로 종속이다. (나) 행렬식이 \(1(0 - 1) - 0 + 1(0 - 1) = -2 \ne 0\)이므로 독립이다. (다) 행렬식이 0이므로 종속이고, 실제로 \(\mathbf v_1 - 2\mathbf v_2 + \mathbf v_3 = \mathbf 0\)이다. 처음 질문의 세 벡터가 바로 이것이다. 서로 달라 보여도 셋째가 \(2\mathbf v_2 - \mathbf v_1\)로 만들어지므로 세 벡터는 한 평면 위에 놓인다.</p>
+    <p>정의를 직접 쓰는 방법도 알아 두자. (나)에서 \(c_1\langle1, 0, 1\rangle + c_2\langle0, 1, 1\rangle + c_3\langle1, 1, 0\rangle = \mathbf 0\)이면 성분마다 \(c_1 + c_3 = 0\), \(c_2 + c_3 = 0\), \(c_1 + c_2 = 0\)이다. 셋을 더하면 \(c_1 + c_2 + c_3 = 0\)이고, 여기서 각 식을 빼면 \(c_1 = c_2 = c_3 = 0\)이다. 따라서 계수가 모두 0일 수밖에 없고, 행렬식으로 판정한 결과와 같다.</p>
+    <p class="tb-aside">공간에서 네 개 이상의 벡터는 언제나 일차종속이다. 공간에는 서로 독립인 방향이 셋까지만 있기 때문이다(2.2절의 차원).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>일차독립: \(\sum c_j\mathbf v_j = \mathbf 0\)이면 모든 \(c_j = 0\).</li>
-        <li>정사각 배열이면 행렬식 ≠ 0 ⟺ 일차독립.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>일차독립은 \(\sum c_j\mathbf v_j = \mathbf 0\)이 되는 경우가 모든 계수가 0일 때뿐이라는 뜻이고, 어느 벡터도 나머지로 만들어지지 않는다는 말과 같다. 벡터가 정사각 배열을 이루면 행렬식이 0이 아닌 것과 일차독립이 같으므로, 처음 질문의 세 벡터는 행렬식이 0이라 일차종속이고 한 평면 위에 납작하게 놓인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>

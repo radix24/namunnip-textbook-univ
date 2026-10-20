@@ -2,67 +2,55 @@
 {
   "type": "card",
   "sec": "공통2-04-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-chain" data-kind="본문" data-std="공통2-04-04">
   <header class="card-head"><span class="no"></span><h2>다변수함수의 연쇄법칙</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>변수가 다른 변수에 의존할 때 연쇄법칙으로 미분한다.</li>
-        <li>음함수의 도함수를 편도함수로 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>일변수 연쇄법칙 (공통1 2단원), 편도함수와 전미분 (<a href="04-02.html">4.2절</a>, <a href="04-03.html">4.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">등산로를 걷는 사람의 위치가 시간에 따라 바뀌면, 그가 있는 곳의 높이도 시간에 따라 바뀐다. 그 높이가 오르는 빠르기는 지형의 기울기와 걷는 속도로 어떻게 정해질까?</p>
+    <figure class="q-fig" data-q="c2-chain">
+      <svg viewBox="0 0 520 280" role="img" aria-label="높이 지도 위를 움직이는 점과 그 속도, 기울기 벡터"></svg>
+      <div class="q-ctl"><label>시각 \(t\) <input type="range" data-k="t" min="0" max="6.28" step="0.02" value="0"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 높이 \(z = x^2y + 3xy^4\)을 색으로 칠한 지도 위에서 점이 \((\sin2t, \cos t)\)를 따라 움직인다. 높이의 변화율은 기울기 벡터(청록)와 속도(주황)의 내적이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>일변수 연쇄법칙(<a href="../1/02-02.html">미분적분학(1) 2.2절</a>), 편도함수와 전미분(<a href="04-02.html">4.2절</a>, <a href="04-03.html">4.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>경우 1: 변수가 하나의 매개변수에 의존</h3>
-    <p>산을 오르는 사람의 위치가 시간에 따라 \((x(t), y(t))\)이면, 그가 있는 곳의 높이 \(z = f(x(t), y(t))\)는 \(t\)의 함수입니다. 4.3절의 전미분 \(dz = f_x\,dx + f_y\,dy\)를 \(dt\)로 나누면 다음을 얻습니다.</p>
+    <p>사람의 위치가 시간에 따라 \((x(t), y(t))\)이면, 그가 있는 곳의 높이 \(z = f(x(t), y(t))\)는 \(t\)의 함수이다. 짧은 시간 \(dt\) 동안 위치가 \(dx\), \(dy\)만큼 바뀌면, 4.3절의 전미분에 따라 높이는 \(dz = f_x\,dx + f_y\,dy\)만큼 바뀐다. 양변을 \(dt\)로 나누면 다음을 얻는다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 4.4.1 <span class="nm">(연쇄법칙)</span></span>
       \[\frac{dz}{dt} = \frac{\partial z}{\partial x}\frac{dx}{dt} + \frac{\partial z}{\partial y}\frac{dy}{dt}.\]
     </div>
+    <p>식을 읽으면 동쪽 기울기에 동쪽으로 가는 빠르기를 곱한 것과, 북쪽 기울기에 북쪽으로 가는 빠르기를 곱한 것을 더한 것이다. 다시 말해 기울기 벡터 \(\langle f_x, f_y\rangle\)와 속도 \(\langle x', y'\rangle\)의 내적이고, 이것이 처음 질문의 답이다. 그래서 지형이 가팔라도 등고선을 따라 걸으면 높이가 변하지 않는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.2</span>
       <p>\(z = x^2y + 3xy^4\), \(x = \sin2t\), \(y = \cos t\)일 때 \(t = 0\)에서 \(\frac{dz}{dt}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(t = 0\)에서 \(x = 0\), \(y = 1\).</p>
-    <ul class="tb-list">
-      <li>\(z_x = 2xy + 3y^4 = 3\), \(z_y = x^2 + 12xy^3 = 0\).</li>
-      <li>\(x' = 2\cos2t = 2\), \(y' = -\sin t = 0\).</li>
-    </ul>
-    <p>\(\frac{dz}{dt} = 3\cdot2 + 0\cdot0 = 6\).</p>
+    <p><i>풀이.</i> \(t = 0\)에서 \(x = 0\), \(y = 1\)이다. 편도함수는 \(z_x = 2xy + 3y^4 = 3\), \(z_y = x^2 + 12xy^3 = 0\)이고, 속도는 \(x' = 2\cos2t = 2\), \(y' = -\sin t = 0\)이다. 따라서 \(\frac{dz}{dt} = 3\cdot2 + 0\cdot0 = 6\)이다. 그림 1의 처음 화면이 이 순간이다. 점은 동쪽으로 빠르기 2로 움직이고, 그쪽 기울기가 3이므로 높이가 1초에 6의 비율로 오른다.</p>
 
     <h3><span class="no">4.4.2</span>경우 2: 변수가 여러 변수에 의존</h3>
-    <p>\(z = f(x, y)\)이고 \(x, y\)가 각각 \(s, t\)의 함수이면</p>
-    \[\frac{\partial z}{\partial s} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial s} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial s}, \qquad \frac{\partial z}{\partial t} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial t} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial t}.\]
-    <p>헷갈리면 나무 그림을 그립니다. 위에 \(z\), 그 아래 \(x, y\), 각각 아래에 \(s, t\)를 놓고, \(z\)에서 \(s\)까지 가는 모든 길마다 편도함수를 곱해 더합니다.</p>
+    <p>\(z = f(x, y)\)이고 \(x, y\)가 각각 \(s, t\)의 함수이면, \(s\)만 움직일 때와 \(t\)만 움직일 때를 따로 계산한다. 그러면 각각 경우 1과 같은 꼴이 되어 다음을 얻는다.</p>
+    \[\frac{\partial z}{\partial s} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial s} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial s}, \qquad \frac{\partial z}{\partial t} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial t} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial t}\]
+    <p>헷갈리면 나무 그림을 그린다. 맨 위에 \(z\), 그 아래 \(x, y\), 각각 아래에 \(s, t\)를 놓고, \(z\)에서 \(s\)까지 가는 모든 길마다 편도함수를 곱해 더한다. 길이 두 갈래이므로 항이 두 개이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.3</span>
       <p>극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)에서 \(z = f(x, y)\)의 \(\frac{\partial z}{\partial r}\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\frac{\partial z}{\partial r} = f_x\cos\theta + f_y\sin\theta\). 원점에서 바깥쪽(반지름 방향)으로 갈 때의 변화율입니다. 4.5절의 방향도함수와 연결됩니다.</p>
+    <p><i>풀이.</i> \(\frac{\partial x}{\partial r} = \cos\theta\), \(\frac{\partial y}{\partial r} = \sin\theta\)이므로 \(\frac{\partial z}{\partial r} = f_x\cos\theta + f_y\sin\theta\)이다. 이것은 원점에서 바깥쪽, 곧 반지름 방향으로 갈 때의 변화율이고, 4.5절의 방향도함수와 이어진다.</p>
 
     <h3><span class="no">4.4.3</span>음함수의 미분</h3>
-    <p>\(F(x, y) = 0\)이 \(y\)를 \(x\)의 함수로 정할 때, 양변을 \(x\)로 미분하면 연쇄법칙으로 \(F_x + F_y\frac{dy}{dx} = 0\)입니다.</p>
-    \[\frac{dy}{dx} = -\frac{F_x}{F_y}\quad(F_y \ne 0).\]
+    <p>\(F(x, y) = 0\)이 \(y\)를 \(x\)의 함수로 정할 때, 양변을 \(x\)로 미분하면 연쇄법칙으로 \(F_x + F_y\frac{dy}{dx} = 0\)이다. 여기서 \(x\)는 자기 자신에, \(y\)는 \(x\)에 의존한다고 보았다. 따라서 다음을 얻는다.</p>
+    \[\frac{dy}{dx} = -\frac{F_x}{F_y}\quad(F_y \ne 0)\]
     <div class="tb-env ex">
       <span class="lb">예제 4.4.4</span>
       <p>\(x^3 + y^3 = 6xy\)에서 \(\frac{dy}{dx}\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(F = x^3 + y^3 - 6xy\). \(\frac{dy}{dx} = -\frac{3x^2 - 6y}{3y^2 - 6x} = -\frac{x^2 - 2y}{y^2 - 2x}\). 공통1의 음함수 미분과 같은 결과를 공식으로 바로 얻습니다.</p>
+    <p><i>풀이.</i> \(F = x^3 + y^3 - 6xy\)로 놓으면 \(\frac{dy}{dx} = -\frac{3x^2 - 6y}{3y^2 - 6x} = -\frac{x^2 - 2y}{y^2 - 2x}\)이다. 미분적분학(1)에서 양변을 미분해 모아 정리한 음함수 미분과 같은 결과를 공식으로 바로 얻는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\frac{dz}{dt} = z_xx' + z_yy'\). 여러 변수면 나무 그림의 모든 길을 더한다.</li>
-        <li>음함수: \(\frac{dy}{dx} = -F_x/F_y\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>위치가 시간에 따라 움직일 때 높이의 변화율은 \(\frac{dz}{dt} = z_xx' + z_yy'\), 곧 기울기 벡터와 속도의 내적이다. 그래서 처음 질문의 등산객은 가파른 쪽으로 빠르게 걸을수록 높이가 빨리 오르고, 등고선을 따라 걸으면 높이가 그대로이다. 변수가 여러 단계로 얽히면 나무 그림의 모든 길을 더하며, 음함수의 도함수는 \(-\frac{F_x}{F_y}\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.4</span>연습문제</h3>

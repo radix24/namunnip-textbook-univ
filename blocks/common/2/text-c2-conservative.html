@@ -2,23 +2,24 @@
 {
   "type": "card",
   "sec": "공통2-07-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-conservative" data-kind="본문" data-std="공통2-07-03">
   <header class="card-head"><span class="no"></span><h2>선적분의 기본정리와 보존 벡터장</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>보존장의 선적분은 끝점의 퍼텐셜 차이임을 쓴다.</li>
-        <li>보존장인지 판정하고 퍼텐셜 함수를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>미적분의 기본정리 (<a href="../1/04-02.html">공통1 4.2절</a>), 선적분 (<a href="07-02.html">7.2절</a>), 기울기 벡터장 (<a href="07-01.html">7.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">산 아래에서 꼭대기까지 오를 때 곧은 길로 가든 구불구불한 길로 가든, 중력이 한 일은 높이 차이로만 정해진다. 그렇다면 어떤 힘이 이런 성질을 가질까? 길이 아무리 복잡해도 끝점만 보고 선적분을 구할 수 있을까?</p>
+    <figure class="q-fig" data-q="c2-cons">
+      <svg viewBox="0 0 520 280" role="img" aria-label="같은 두 점을 잇는 두 경로와 벡터장, 경로별 선적분"></svg>
+      <div class="q-ctl">
+        <label>벡터장 <select data-k="f"><option value="0" selected>⟨3 + 2xy, x² − 3y²⟩</option><option value="1">⟨−y, x⟩/(x² + y²)</option></select></label>
+        <label>경로 <select data-k="p"><option value="0" selected>위로 가는 길</option><option value="1">아래로 가는 길</option></select></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \((1, 0)\)에서 \((-1, 0)\)까지 두 경로로 선적분을 계산했다. 첫째 벡터장은 보존장이라 두 값이 같고, 둘째 벡터장은 원점의 구멍 때문에 위로 도는 길과 아래로 도는 길의 값이 다르다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>미적분의 기본정리(<a href="../1/04-02.html">미분적분학(1) 4.2절</a>), 선적분(<a href="07-02.html">7.2절</a>), 기울기 벡터장(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.3.1</span>기본정리</h3>
     <div class="tb-env thm">
@@ -26,16 +27,11 @@
       <p>곡선 \(C\)가 점 \(A\)에서 \(B\)로 가면</p>
       \[\int_C\nabla f\cdot d\mathbf r = f(B) - f(A).\]
     </div>
-    <p>이유: 연쇄법칙으로 \(\frac{d}{dt}f(\mathbf r(t)) = \nabla f\cdot\mathbf r'(t)\)이므로, 공통1의 기본정리로 \(\int_a^b\frac{d}{dt}f(\mathbf r(t))\,dt = f(\mathbf r(b)) - f(\mathbf r(a))\)입니다.</p>
-    <p>결과는 중요합니다. 보존장에서는</p>
-    <ul class="tb-list">
-      <li>선적분이 경로에 무관하고 끝점에만 의존한다.</li>
-      <li>닫힌 곡선을 한 바퀴 돌면 선적분이 0이다.</li>
-      <li>힘이 보존장이면 운동 에너지 증가 = 퍼텐셜 에너지 감소. 곧 역학적 에너지가 보존된다(공통3).</li>
-    </ul>
+    <p>이유는 연쇄법칙에 있다. \(\frac{d}{dt}f(\mathbf r(t)) = \nabla f\cdot\mathbf r'(t)\)이므로, 미분적분학(1)의 기본정리로 \(\int_a^b\frac{d}{dt}f(\mathbf r(t))\,dt = f(\mathbf r(b)) - f(\mathbf r(a))\)이다. 즉 미적분의 기본정리를 곡선 위로 옮긴 것이다.</p>
+    <p>이 결과에서 세 가지가 나온다. 보존장에서는 선적분이 경로에 무관하고 끝점에만 달려 있다. 닫힌 곡선을 한 바퀴 돌면 출발점과 도착점이 같으므로 선적분이 0이다. 그리고 힘이 보존장이면 운동 에너지가 늘어난 만큼 퍼텐셜 에너지가 줄어서, 역학적 에너지가 보존된다(일반물리). 처음 질문의 중력이 바로 이런 힘이다.</p>
 
     <h3><span class="no">7.3.2</span>판정과 퍼텐셜 구하기</h3>
-    <p>\(\mathbf F = \langle P, Q\rangle = \nabla f\)이면 \(P = f_x\), \(Q = f_y\)이고 클레로 정리(4.2절)에 의해 \(P_y = f_{xy} = f_{yx} = Q_x\)입니다. 거꾸로도 거의 성립합니다.</p>
+    <p>그러면 주어진 벡터장이 보존장인지 어떻게 알까? \(\mathbf F = \langle P, Q\rangle = \nabla f\)이면 \(P = f_x\), \(Q = f_y\)이고, 클레로 정리(4.2절)에 의해 \(P_y = f_{xy} = f_{yx} = Q_x\)이다. 거꾸로도 거의 성립한다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 7.3.2</span>
       <p>구멍이 없는 영역(단순연결 영역)에서 \(P, Q\)의 편도함수가 연속이고 \(\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}\)이면 \(\mathbf F = \langle P, Q\rangle\)는 보존장이다.</p>
@@ -44,25 +40,13 @@
       <span class="lb">예제 7.3.3</span>
       <p>\(\mathbf F = \langle3 + 2xy, x^2 - 3y^2\rangle\)이 보존장임을 보이고 퍼텐셜을 구하여라. 또 \(\mathbf r(t) = \langle e^t\sin t, e^t\cos t\rangle\), \(0 \le t \le \pi\)를 따른 선적분을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(P_y = 2x = Q_x\). 퍼텐셜은 다음처럼 구합니다.</p>
-    <ol class="tb-steps">
-      <li>\(f_x = 3 + 2xy\)를 \(x\)로 적분: \(f = 3x + x^2y + g(y)\). (\(y\)만의 함수가 상수 역할)</li>
-      <li>\(y\)로 미분해 \(Q\)와 비교: \(f_y = x^2 + g'(y) = x^2 - 3y^2\), \(g = -y^3\).</li>
-      <li>\(f = 3x + x^2y - y^3\).</li>
-    </ol>
-    <p>끝점: \(\mathbf r(0) = (0, 1)\), \(\mathbf r(\pi) = (0, -e^\pi)\). 선적분 \(= f(0, -e^\pi) - f(0, 1) = e^{3\pi} - (-1) = e^{3\pi} + 1\). 복잡한 경로를 매개화할 필요가 없습니다.</p>
+    <p><i>풀이.</i> \(P_y = 2x = Q_x\)이고 영역은 평면 전체라 구멍이 없으므로 보존장이다. 퍼텐셜은 세 단계로 구한다. 먼저 \(f_x = 3 + 2xy\)를 \(x\)로 적분해 \(f = 3x + x^2y + g(y)\)를 얻는데, \(y\)만의 함수 \(g(y)\)가 적분상수 역할을 한다. 다음으로 이것을 \(y\)로 미분해 \(Q\)와 비교하면 \(f_y = x^2 + g'(y) = x^2 - 3y^2\)이므로 \(g = -y^3\)이다. 따라서 \(f = 3x + x^2y - y^3\)이다.</p>
+    <p>끝점은 \(\mathbf r(0) = (0, 1)\), \(\mathbf r(\pi) = (0, -e^\pi)\)이다. 그러므로 선적분은 \(f(0, -e^\pi) - f(0, 1) = e^{3\pi} - (-1) = e^{3\pi} + 1\)이다. 나선 모양의 복잡한 경로를 매개화해 적분할 필요가 없었다. 그림 1의 첫째 벡터장이 이 \(\mathbf F\)이며, 위로 가는 길과 아래로 가는 길 모두 \(f(-1, 0) - f(1, 0) = -6\)을 준다.</p>
 
     <h3><span class="no">7.3.3</span>구멍이 있으면</h3>
-    <p>\(\mathbf F = \left\langle\frac{-y}{x^2 + y^2}, \frac{x}{x^2 + y^2}\right\rangle\)은 원점을 뺀 곳에서 \(P_y = Q_x\)가 성립합니다(직접 확인해 보십시오). 그러나 단위원을 한 바퀴 돌면 \(\mathbf r = \langle\cos t, \sin t\rangle\)에서 \(\mathbf F\cdot\mathbf r' = \sin^2t + \cos^2t = 1\)이므로 선적분은 \(2\pi \ne 0\)입니다. 원점이라는 구멍 때문에 정리 7.3.2의 가정이 깨진 것입니다. 이 예는 공통9(고등미적분학(2))의 복소 적분 \(\oint\frac{dz}{z} = 2\pi i\)와 같은 현상입니다.</p>
+    <p>\(\mathbf F = \left\langle\frac{-y}{x^2 + y^2}, \frac{x}{x^2 + y^2}\right\rangle\)은 원점을 뺀 곳에서 \(P_y = Q_x\)가 성립한다. 그런데 단위원을 한 바퀴 돌면 \(\mathbf r = \langle\cos t, \sin t\rangle\)에서 \(\mathbf F\cdot\mathbf r' = \sin^2t + \cos^2t = 1\)이므로 선적분은 \(2\pi \ne 0\)이다. 원점이라는 구멍 때문에 정리 7.3.2의 가정이 깨진 것이다. 그림 1에서 둘째 벡터장을 고르면, 위쪽 반원으로 가는 길은 \(\pi\), 아래쪽 반원으로 도는 길은 \(-\pi\)를 주어 차이가 \(2\pi\)이다. 이 예는 고등미적분학(2)의 복소 적분 \(\oint\frac{dz}{z} = 2\pi i\)와 같은 현상이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\int_C\nabla f\cdot d\mathbf r = f(B) - f(A)\): 경로 무관, 닫힌 곡선이면 0.</li>
-        <li>판정: 구멍 없는 영역에서 \(P_y = Q_x\).</li>
-        <li>퍼텐셜: 한 변수로 적분하고 다른 변수로 미분해 맞춘다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>보존장 \(\nabla f\)의 선적분은 끝점의 퍼텐셜 차이 \(f(B) - f(A)\)이므로, 처음 질문처럼 어느 길로 가든 같고 닫힌 곡선이면 0이다. 구멍 없는 영역에서는 \(P_y = Q_x\)로 보존장인지 판정하고, 한 변수로 적분한 뒤 다른 변수로 미분해 맞추어 퍼텐셜을 구한다. 영역에 구멍이 있으면 이 판정이 맞지 않을 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.3.4</span>연습문제</h3>

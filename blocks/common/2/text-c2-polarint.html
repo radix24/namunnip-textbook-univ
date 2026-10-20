@@ -2,26 +2,24 @@
 {
   "type": "card",
   "sec": "공통2-06-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-polarint" data-kind="본문" data-std="공통2-06-03">
   <header class="card-head"><span class="no"></span><h2>극좌표로 계산하는 이중적분</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>원 모양 영역의 이중적분을 \(dA = r\,dr\,d\theta\)로 바꾸어 계산한다.</li>
-        <li>가우스 적분 \(\int_{-\infty}^\infty e^{-x^2}dx = \sqrt\pi\)를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>극좌표 (<a href="../1/07-03.html">공통1 7.3절</a>), 일반 영역의 이중적분 (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">원판 위에서 적분할 때는 극좌표가 편하다. 그런데 반지름과 각으로 나눈 작은 조각들은 크기가 모두 같을까? 같지 않다면 \(dA\)는 \(dr\,d\theta\)에 무엇을 곱해야 할까?</p>
+    <figure class="q-fig" data-q="c2-polar">
+      <svg viewBox="0 0 520 280" role="img" aria-label="극좌표 그물의 한 조각, 가로 dr와 세로 r dθ"></svg>
+      <div class="q-ctl"><label>조각의 반지름 \(r\) <input type="range" data-k="r" min="0.2" max="1.8" step="0.05" value="1.2"><output data-k="r"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 같은 \(dr\), 같은 \(d\theta\)로 나눈 조각이라도 바깥쪽 조각일수록 넓다. 조각은 가로 \(dr\), 세로 \(r\,d\theta\)인 직사각형에 가까워서 넓이가 \(r\,dr\,d\theta\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>극좌표(<a href="../1/07-03.html">미분적분학(1) 7.3절</a>)와 일반 영역의 이중적분(<a href="06-02.html">6.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>넓이 요소 \(r\,dr\,d\theta\)</h3>
-    <p>원판, 고리, 부채꼴 같은 영역은 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)로 나타내면 범위가 상수가 되어 간단합니다. 이때 작은 조각의 넓이가 \(dr\,d\theta\)가 아니라는 점에 주의합니다. 반지름이 \(r\)에서 \(r + dr\), 각이 \(\theta\)에서 \(\theta + d\theta\)인 조각은 거의 직사각형이고, 가로가 \(dr\), 세로(호의 길이)가 \(r\,d\theta\)입니다. 바깥쪽 조각일수록 넓습니다.</p>
+    <p>원판, 고리, 부채꼴 같은 영역은 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)로 나타내면 범위가 상수가 되어 간단하다. 이때 작은 조각의 넓이가 \(dr\,d\theta\)가 아니라는 점에 주의한다. 반지름이 \(r\)에서 \(r + dr\), 각이 \(\theta\)에서 \(\theta + d\theta\)인 조각은 거의 직사각형이고, 가로가 \(dr\), 세로가 호의 길이 \(r\,d\theta\)이다. 그림 1에서 조각을 바깥으로 옮기면 세로가 길어져, 반지름에 비례해 넓어진다. 처음 질문의 답은 \(r\)을 곱해야 한다는 것이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 6.3.1</span>
       \[\iint_Df(x, y)\,dA = \int_\alpha^\beta\int_a^bf(r\cos\theta, r\sin\theta)\,r\,dr\,d\theta.\]
@@ -30,27 +28,21 @@
       <span class="lb">예제 6.3.2</span>
       <p>포물면 \(z = 1 - x^2 - y^2\)과 \(xy\)평면으로 둘러싸인 입체의 부피를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(z = 0\)이면 \(x^2 + y^2 = 1\)이므로 밑면은 단위원판, 높이는 \(1 - r^2\).</p>
-    \[\int_0^{2\pi}\int_0^1(1 - r^2)\,r\,dr\,d\theta = 2\pi\left(\frac12 - \frac14\right) = \frac\pi2.\]
-    <p>직교좌표로 하면 \(\int_{-1}^1\int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}}\)처럼 범위가 복잡해집니다.</p>
+    <p><i>풀이.</i> \(z = 0\)이면 \(x^2 + y^2 = 1\)이므로 밑면은 단위원판이고, 높이는 \(1 - r^2\)이다. 따라서</p>
+    \[\int_0^{2\pi}\int_0^1(1 - r^2)\,r\,dr\,d\theta = 2\pi\left(\frac12 - \frac14\right) = \frac\pi2\]
+    <p>이다. 직교좌표로 하면 \(\int_{-1}^1\int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}}\)처럼 범위가 복잡해진다. 결과를 크기로 확인하면, 같은 밑면과 높이 1인 원기둥의 부피 \(\pi\)의 절반이다. 포물면 입체가 원기둥에서 위쪽 가장자리를 둥글게 깎아 낸 모양이니 그럴듯하다.</p>
 
     <h3><span class="no">6.3.2</span>가우스 적분</h3>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.3</span>
       <p>\(\displaystyle\int_{-\infty}^\infty e^{-x^2}dx = \sqrt\pi\)임을 보여라.</p>
     </div>
-    <p><i>풀이.</i> \(e^{-x^2}\)의 부정적분은 기본 함수로 쓸 수 없습니다. 대신 이 적분을 \(I\)라 하고 제곱하면 이중적분이 됩니다.</p>
-    \[I^2 = \int_{-\infty}^\infty e^{-x^2}dx\int_{-\infty}^\infty e^{-y^2}dy = \iint_{\mathbb R^2}e^{-(x^2+y^2)}dA.\]
-    <p>반지름 \(a\)인 원판에서 극좌표로 계산하면 \(\int_0^{2\pi}\int_0^ae^{-r^2}r\,dr\,d\theta = \pi(1 - e^{-a^2})\)이고 (\(r\)이 붙어서 치환이 됩니다), \(a \to \infty\)이면 \(\pi\). 따라서 \(I^2 = \pi\), \(I = \sqrt\pi\).</p>
-    <p>이 값은 통계학의 정규분포 밀도함수에 \(\frac{1}{\sqrt{2\pi}}\)이 붙는 이유입니다(공통7). 극좌표의 \(r\) 덕분에 계산할 수 없던 적분이 풀렸습니다.</p>
+    <p><i>풀이.</i> \(e^{-x^2}\)의 부정적분은 기본 함수로 쓸 수 없다. 그래서 이 적분을 \(I\)라 하고 제곱해 이중적분으로 만든다.</p>
+    \[I^2 = \int_{-\infty}^\infty e^{-x^2}dx\int_{-\infty}^\infty e^{-y^2}dy = \iint_{\mathbb R^2}e^{-(x^2+y^2)}dA\]
+    <p>이 적분을 반지름 \(a\)인 원판에서 극좌표로 계산하면 \(\int_0^{2\pi}\int_0^ae^{-r^2}r\,dr\,d\theta = \pi(1 - e^{-a^2})\)이다. 여기서 넓이 요소의 \(r\)이 붙어 \(u = r^2\)으로 치환할 수 있게 되었다. \(a \to \infty\)이면 이 값은 \(\pi\)로 가므로 \(I^2 = \pi\), 곧 \(I = \sqrt\pi\)이다.</p>
+    <p>이 값이 통계학입문의 정규분포 밀도함수에 \(\frac{1}{\sqrt{2\pi}}\)이 붙는 이유이다. 처음 질문의 \(r\)은 귀찮은 덧붙임이 아니라, 오히려 계산할 수 없던 적분을 풀어 준 열쇠였다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(dA = r\,dr\,d\theta\). \(r\)을 빠뜨리지 않는다.</li>
-        <li>원 모양 영역, \(x^2 + y^2\)이 들어간 함수는 극좌표로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>극좌표의 작은 조각은 가로 \(dr\), 세로 \(r\,d\theta\)이므로 넓이 요소는 \(dA = r\,dr\,d\theta\)이고, 바깥쪽 조각일수록 넓다. 원 모양의 영역이나 \(x^2 + y^2\)이 들어간 함수는 극좌표로 바꾸면 범위가 상수가 되어 간단해지며, 그때 붙는 \(r\) 덕분에 가우스 적분 \(\int_{-\infty}^\infty e^{-x^2}dx = \sqrt\pi\)도 계산된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.3</span>연습문제</h3>

@@ -2,61 +2,51 @@
 {
   "type": "card",
   "sec": "공통2-06-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-triple" data-kind="본문" data-std="공통2-06-04">
   <header class="card-head"><span class="no"></span><h2>삼중적분, 질량과 질량중심</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>입체 영역에서 삼중적분을 반복적분으로 계산한다.</li>
-        <li>밀도가 고르지 않은 물체의 질량과 질량중심을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>이중적분 (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">밀도가 자리마다 다른 쇳덩이의 질량은 어떻게 구할까? 한쪽이 더 무거운 물체를 손가락 하나로 받쳐 균형을 잡으려면 어디를 받쳐야 할까? 부피 위에서 적분하는 방법이 필요하지 않을까?</p>
+    <figure class="q-fig" data-q="c2-tetra">
+      <svg viewBox="0 0 520 290" role="img" aria-label="사면체를 x = 일정한 평면으로 자른 삼각형 단면"></svg>
+      <div class="q-ctl">
+        <label>자르는 위치 \(x\) <input type="range" data-k="x" min="0" max="0.95" step="0.01" value="0.3"><output data-k="x"></output></label>
+        <label>보는 방향 <input type="range" data-k="az" min="-80" max="80" step="2" value="-40"><output data-k="az"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 사면체 \(x + y + z \le 1\)을 \(x\)가 일정한 평면으로 자르면 직각삼각형 단면이 나온다. 단면의 넓이 \(\frac{(1 - x)^2}{2}\)를 \(x\)로 적분하면 부피 \(\frac16\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이중적분과 적분 범위 읽기(<a href="06-02.html">6.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.4.1</span>삼중적분</h3>
-    <p>입체 \(E\)를 작은 상자로 나누고 \(f\times\)(상자 부피)를 더한 극한이 삼중적분 \(\iiint_Ef\,dV\)입니다. 4차원 그림은 그릴 수 없으므로, \(f\)를 밀도로 생각하면 이해가 쉽습니다. 밀도를 부피에 대해 적분하면 질량입니다. \(f = 1\)이면 \(E\)의 부피입니다.</p>
-    <p>계산은 한 변수씩 차례로 합니다. 상자 \([a, b]\times[c, d]\times[r, s]\)이면 범위가 상수이고, 일반 입체는 6.2절처럼 바깥 변수에 따라 안쪽 범위를 정합니다.</p>
+    <p>입체 \(E\)를 작은 상자로 나누고 \(f\times\)(상자 부피)를 더한 극한이 <em>삼중적분</em> \(\iiint_Ef\,dV\)이다. 이중적분은 곡면 아래 부피로 그릴 수 있었지만, 삼중적분은 4차원 그림이 필요해 그릴 수 없다. 그래서 \(f\)를 밀도로 생각하면 이해가 쉽다. 밀도를 부피에 대해 적분하면 질량이고, \(f = 1\)이면 \(E\)의 부피이다.</p>
+    <p>계산은 이중적분처럼 한 변수씩 차례로 한다. 상자 \([a, b]\times[c, d]\times[r, s]\)이면 범위가 모두 상수이고, 일반 입체는 6.2절처럼 바깥 변수에 따라 안쪽 범위를 정한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.1</span>
       <p>상자 \(B = [0, 1]\times[-1, 2]\times[0, 3]\)에서 \(\iiint_Bxyz^2\,dV\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 변수가 나뉘므로 \(\int_0^1x\,dx\cdot\int_{-1}^2y\,dy\cdot\int_0^3z^2\,dz = \frac12\cdot\frac32\cdot9 = \frac{27}{4}\).</p>
+    <p><i>풀이.</i> 변수가 곱으로 나뉘므로 세 적분을 따로 계산해 곱한다. \(\int_0^1x\,dx\cdot\int_{-1}^2y\,dy\cdot\int_0^3z^2\,dz = \frac12\cdot\frac32\cdot9 = \frac{27}{4}\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.2</span>
       <p>좌표평면들과 평면 \(x + y + z = 1\)로 둘러싸인 사면체의 부피를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 바닥은 삼각형 \(x \ge 0\), \(y \ge 0\), \(x + y \le 1\)이고 높이는 \(0 \le z \le 1 - x - y\).</p>
-    \[\int_0^1\int_0^{1-x}(1 - x - y)\,dy\,dx = \int_0^1\frac{(1 - x)^2}{2}dx = \frac16.\]
-    <p>밑넓이 \(\frac12\), 높이 1인 뿔의 부피 \(\frac13\cdot\frac12\cdot1\)과 같습니다.</p>
+    <p><i>풀이.</i> 바닥은 삼각형 \(x \ge 0\), \(y \ge 0\), \(x + y \le 1\)이고, 그 위에서 높이는 \(0 \le z \le 1 - x - y\)이다. 따라서</p>
+    \[\int_0^1\int_0^{1-x}(1 - x - y)\,dy\,dx = \int_0^1\frac{(1 - x)^2}{2}dx = \frac16\]
+    <p>이다. 가운데 식의 \(\frac{(1 - x)^2}{2}\)는 그림 1의 삼각형 단면의 넓이이다. \(x\)를 0에서 1로 옮기면 단면이 직각을 낀 두 변 \(1 - x\)인 삼각형으로 줄어든다. 결과는 밑넓이 \(\frac12\), 높이 1인 뿔의 부피 \(\frac13\cdot\frac12\cdot1\)과 같다.</p>
 
     <h3><span class="no">6.4.2</span>질량과 질량중심</h3>
-    <p>밀도가 \(\rho(x, y, z)\)인 물체에서</p>
-    <ul class="tb-list">
-      <li>질량: \(m = \iiint_E\rho\,dV\).</li>
-      <li>질량중심: \(\bar x = \frac1m\iiint_Ex\rho\,dV\), \(\bar y\), \(\bar z\)도 같은 방법.</li>
-      <li>\(z\)축에 대한 관성 모멘트: \(I_z = \iiint_E(x^2 + y^2)\rho\,dV\).</li>
-    </ul>
-    <p>질량중심은 위치를 질량으로 가중평균한 것입니다. 관성 모멘트는 회전시키기 어려운 정도로, 물리(공통3)의 강체 회전에서 씁니다.</p>
+    <p>밀도가 \(\rho(x, y, z)\)인 물체의 질량은 \(m = \iiint_E\rho\,dV\)이다. 질량중심은 \(\bar x = \frac1m\iiint_Ex\rho\,dV\)이고, \(\bar y\), \(\bar z\)도 같은 방법으로 구한다. 또 \(z\)축에 대한 관성 모멘트는 \(I_z = \iiint_E(x^2 + y^2)\rho\,dV\)이다.</p>
+    <p>질량중심은 위치를 질량으로 가중평균한 것이다. 처음 질문의 손가락은 이 점을 받쳐야 한다. 관성 모멘트는 회전시키기 어려운 정도로, 축에서 먼 곳의 질량일수록 거리의 제곱만큼 크게 센다. 일반물리의 강체 회전에서 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.3</span>
       <p>단위정육면체 \([0, 1]^3\)의 밀도가 \(\rho = x + y + z\)일 때 질량과 \(\bar x\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(m = \iiint(x + y + z)\,dV = \frac12 + \frac12 + \frac12 = \frac32\). \(\iiint x(x + y + z)\,dV = \frac13 + \frac14 + \frac14 = \frac56\). \(\bar x = \frac{5/6}{3/2} = \frac59\). 밀도가 큰 쪽(꼭짓점 \((1, 1, 1)\) 쪽)으로 중심 \(\frac12\)에서 조금 옮겨졌습니다.</p>
+    <p><i>풀이.</i> 질량은 \(m = \iiint(x + y + z)\,dV = \frac12 + \frac12 + \frac12 = \frac32\)이다. 다음으로 \(\iiint x(x + y + z)\,dV = \frac13 + \frac14 + \frac14 = \frac56\)이므로 \(\bar x = \frac{5/6}{3/2} = \frac59\)이다. 밀도가 고르면 중심이 \(\frac12\)이었을 텐데, 밀도가 큰 쪽, 곧 꼭짓점 \((1, 1, 1)\) 쪽으로 \(\frac{1}{18}\)만큼 옮겨졌다. 대칭이므로 \(\bar y = \bar z = \frac59\)이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>삼중적분은 한 변수씩 차례로. 범위는 입체를 그려 정한다.</li>
-        <li>질량 \(\iiint\rho\), 질량중심 \(\frac1m\iiint x\rho\), 관성 모멘트 \(\iiint(x^2 + y^2)\rho\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>삼중적분은 입체를 작은 상자로 나누어 \(f\times\)부피를 더한 극한이고, 한 변수씩 차례로 적분하며 범위는 입체를 그려 정한다. 처음 질문의 쇳덩이는 밀도를 적분해 질량 \(\iiint\rho\,dV\)를 얻고, 위치를 질량으로 가중평균한 질량중심 \(\frac1m\iiint x\rho\,dV\)를 받치면 균형이 잡힌다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.4.3</span>연습문제</h3>

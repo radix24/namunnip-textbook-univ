@@ -2,82 +2,61 @@
 {
   "type": "card",
   "sec": "공통2-01-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-cross" data-kind="본문" data-std="공통2-01-01">
   <header class="card-head"><span class="no"></span><h2>외적</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>두 벡터에 동시에 수직인 벡터를 외적으로 구한다.</li>
-        <li>외적의 크기가 평행사변형의 넓이임을 알고, 넓이와 돌림힘 계산에 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>벡터의 성분과 크기 (<a href="../1/09-02.html">공통1 9.2절</a>), 내적과 사잇각 (<a href="../1/09-03.html">9.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">렌치로 볼트를 돌릴 때 볼트는 렌치도 힘도 아닌, 그 둘에 모두 수직인 방향으로 나아간다. 두 벡터에서 둘 모두에 수직인 세 번째 벡터를 계산으로 얻을 수 있을까? 그리고 그 벡터의 길이는 무엇을 뜻할까?</p>
+    <figure class="q-fig" data-q="c2-cross">
+      <svg viewBox="0 0 520 280" role="img" aria-label="두 벡터 a, b와 외적 a × b, 평행사변형"></svg>
+      <div class="q-ctl">
+        <label>사잇각 \(\theta\) (도) <input type="range" data-k="t" min="0" max="180" step="2" value="60"><output data-k="t"></output></label>
+        <label>보는 방향 <input type="range" data-k="az" min="-80" max="80" step="2" value="-30"><output data-k="az"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(\mathbf a\times\mathbf b\)는 \(\mathbf a\)와 \(\mathbf b\)가 만드는 평면에 수직이고, 길이는 두 벡터가 만드는 평행사변형의 넓이와 같다. 사잇각이 0°나 180°이면 넓이도 외적도 0이 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>벡터의 성분과 크기(<a href="../1/09-02.html">미분적분학(1) 9.2절</a>), 내적과 사잇각(<a href="../1/09-03.html">미분적분학(1) 9.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>정의</h3>
-    <p>내적은 두 벡터에서 수 하나를 만들었습니다. 외적은 두 벡터에서 새 벡터를 만듭니다. 먼저 계산에 쓸 기호 하나를 정합니다. 네 수를 정사각형으로 배열한 것에 대해</p>
+    <p>내적은 두 벡터에서 수 하나를 만들었다. 이번에는 두 벡터에서 새 벡터를 만드는 곱을 정의한다. 먼저 계산에 쓸 기호 하나를 약속하자. 네 수를 정사각형으로 배열한 것에 대해 다음과 같이 쓰고, 이것을 2차 행렬식이라 부른다(1.4절에서 자세히 다룬다).</p>
     \[\begin{vmatrix}a &amp; b\\ c &amp; d\end{vmatrix} = ad - bc\]
-    <p>로 약속합니다(이것을 2차 행렬식이라 하며, 1.4절에서 자세히 다룹니다).</p>
     <div class="tb-env">
       <span class="lb">정의 1.1.1 <span class="nm">(외적)</span></span>
       <p>\(\mathbf a = \langle a_1, a_2, a_3\rangle\), \(\mathbf b = \langle b_1, b_2, b_3\rangle\)일 때</p>
       \[\mathbf a\times\mathbf b = \langle a_2b_3 - a_3b_2,\ a_3b_1 - a_1b_3,\ a_1b_2 - a_2b_1\rangle.\]
     </div>
-    <p>외우는 요령: 첫째 성분은 \(\mathbf a, \mathbf b\)에서 첫째 성분을 가리고 남은 \(\begin{vmatrix}a_2 &amp; a_3\\ b_2 &amp; b_3\end{vmatrix}\), 둘째 성분은 둘째를 가리고 남은 것에 부호를 바꾼 것, 셋째 성분은 셋째를 가리고 남은 것입니다.</p>
+    <p>식을 외우는 요령이 있다. 첫째 성분은 \(\mathbf a, \mathbf b\)에서 첫째 성분을 가리고 남은 2차 행렬식 \(\begin{vmatrix}a_2 &amp; a_3\\ b_2 &amp; b_3\end{vmatrix}\)이다. 둘째 성분은 둘째를 가리고 남은 것의 부호를 바꾼 것이고, 셋째 성분은 셋째를 가리고 남은 것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.2</span>
       <p>\(\mathbf a = \langle1, 3, 4\rangle\), \(\mathbf b = \langle2, 7, -5\rangle\)일 때 \(\mathbf a\times\mathbf b\)를 구하고, 이것이 \(\mathbf a\)에 수직임을 확인하여라.</p>
     </div>
-    <p><i>풀이.</i></p>
-    <ul class="tb-list">
-      <li>첫째: \(3\cdot(-5) - 4\cdot7 = -43\).</li>
-      <li>둘째: \(4\cdot2 - 1\cdot(-5) = 13\).</li>
-      <li>셋째: \(1\cdot7 - 3\cdot2 = 1\).</li>
-    </ul>
-    <p>\(\mathbf a\times\mathbf b = \langle-43, 13, 1\rangle\). 내적 \(\langle1, 3, 4\rangle\cdot\langle-43, 13, 1\rangle = -43 + 39 + 4 = 0\)이므로 수직입니다.</p>
+    <p><i>풀이.</i> 첫째 성분은 \(3\cdot(-5) - 4\cdot7 = -43\), 둘째 성분은 \(4\cdot2 - 1\cdot(-5) = 13\), 셋째 성분은 \(1\cdot7 - 3\cdot2 = 1\)이다. 따라서 \(\mathbf a\times\mathbf b = \langle-43, 13, 1\rangle\)이다. 내적 \(\langle1, 3, 4\rangle\cdot\langle-43, 13, 1\rangle = -43 + 39 + 4 = 0\)이므로 수직이다. 같은 방법으로 \(\mathbf b\)와의 내적도 \(-86 + 91 - 5 = 0\)이다.</p>
 
     <h3><span class="no">1.1.2</span>기하학적 뜻</h3>
+    <p>예제에서 본 수직은 우연이 아니다. 외적의 성분을 \(\mathbf a\)와 내적하면 항들이 둘씩 지워져 언제나 0이 되기 때문이다. 그러면 남은 것은 방향이 두 쪽 가운데 어느 쪽이며 길이가 얼마인가이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 1.1.3</span>
-      <ol>
-        <li>\(\mathbf a\times\mathbf b\)는 \(\mathbf a\)와 \(\mathbf b\)에 모두 수직이다.</li>
-        <li>방향은 오른손 법칙: 오른손 네 손가락을 \(\mathbf a\)에서 \(\mathbf b\) 쪽으로 감을 때 엄지가 가리키는 쪽.</li>
-        <li>크기는 \(|\mathbf a\times\mathbf b| = |\mathbf a||\mathbf b|\sin\theta\) (\(\theta\)는 사잇각). 곧 \(\mathbf a, \mathbf b\)가 만드는 평행사변형의 넓이.</li>
-      </ol>
+      <p>\(\mathbf a\times\mathbf b\)는 \(\mathbf a\)와 \(\mathbf b\)에 모두 수직이다. 방향은 오른손 네 손가락을 \(\mathbf a\)에서 \(\mathbf b\) 쪽으로 감을 때 엄지가 가리키는 쪽이다. 크기는 \(|\mathbf a\times\mathbf b| = |\mathbf a||\mathbf b|\sin\theta\) (\(\theta\)는 사잇각)이고, 곧 \(\mathbf a, \mathbf b\)가 만드는 평행사변형의 넓이이다.</p>
     </div>
-    <p>여기서 바로 나오는 사실들이 있습니다.</p>
-    <ul class="tb-list">
-      <li>두 벡터가 평행하면(\(\theta = 0\) 또는 \(\pi\)) 외적은 \(\mathbf 0\).</li>
-      <li>순서를 바꾸면 방향이 반대: \(\mathbf b\times\mathbf a = -\mathbf a\times\mathbf b\). 곱셈의 교환법칙이 성립하지 않는다.</li>
-      <li>\(\mathbf i\times\mathbf j = \mathbf k\), \(\mathbf j\times\mathbf k = \mathbf i\), \(\mathbf k\times\mathbf i = \mathbf j\).</li>
-    </ul>
+    <p>그림 1에서 사잇각을 60°에서 90°로 늘리면 평행사변형이 직사각형이 되어 넓이가 가장 크고, 외적의 화살표도 가장 길다. 반대로 0°나 180°로 보내면 평행사변형이 납작해져 외적이 사라진다. 여기서 바로 나오는 사실이 몇 가지 있다. 두 벡터가 평행하면(\(\theta = 0\) 또는 \(\pi\)) 외적은 \(\mathbf 0\)이다. 순서를 바꾸면 오른손을 반대로 감게 되므로 \(\mathbf b\times\mathbf a = -\mathbf a\times\mathbf b\)이고, 즉 외적에는 교환법칙이 성립하지 않는다. 또 축 방향 단위벡터 사이에는 \(\mathbf i\times\mathbf j = \mathbf k\), \(\mathbf j\times\mathbf k = \mathbf i\), \(\mathbf k\times\mathbf i = \mathbf j\)가 성립한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.4</span>
       <p>세 점 \(P(1, 4, 6)\), \(Q(-2, 5, -1)\), \(R(1, -1, 1)\)을 꼭짓점으로 하는 삼각형의 넓이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\overrightarrow{PQ} = \langle-3, 1, -7\rangle\), \(\overrightarrow{PR} = \langle0, -5, -5\rangle\).</p>
-    \[\overrightarrow{PQ}\times\overrightarrow{PR} = \langle-40, -15, 15\rangle.\]
-    <p>크기는 \(\sqrt{1600 + 225 + 225} = \sqrt{2050} = 5\sqrt{82}\). 삼각형은 평행사변형의 절반이므로 넓이는 \(\frac{5\sqrt{82}}{2} \approx 22.6\).</p>
+    <p><i>풀이.</i> 두 변을 벡터로 쓰면 \(\overrightarrow{PQ} = \langle-3, 1, -7\rangle\), \(\overrightarrow{PR} = \langle0, -5, -5\rangle\)이고 그 외적은 다음과 같다.</p>
+    \[\overrightarrow{PQ}\times\overrightarrow{PR} = \langle-40, -15, 15\rangle\]
+    <p>크기는 \(\sqrt{1600 + 225 + 225} = \sqrt{2050} = 5\sqrt{82}\)이다. 삼각형은 두 변이 만드는 평행사변형의 절반이므로 넓이는 \(\frac{5\sqrt{82}}{2} \approx 22.6\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.5 <span class="nm">(돌림힘)</span></span>
       <p>길이 0.25 m인 렌치 끝에 렌치와 75°를 이루는 방향으로 40 N의 힘을 준다. 돌림힘의 크기는?</p>
     </div>
-    <p><i>풀이.</i> 물리에서 돌림힘은 \(\boldsymbol\tau = \mathbf r\times\mathbf F\)입니다. 크기 \(0.25\cdot40\cdot\sin75^\circ \approx 9.66\) N·m. 힘이 렌치에 수직일 때(\(\sin90^\circ = 1\)) 가장 크고, 렌치 방향으로 밀면 0입니다.</p>
+    <p><i>풀이.</i> 물리에서 돌림힘은 \(\boldsymbol\tau = \mathbf r\times\mathbf F\)이다. 따라서 크기는 \(0.25\cdot40\cdot\sin75^\circ \approx 9.66\) N·m이다. 힘이 렌치에 수직일 때(\(\sin90^\circ = 1\)) 가장 크고, 렌치 방향으로 밀면 0이다. 처음 질문의 볼트가 나아가는 방향이 이 돌림힘 벡터의 방향이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\mathbf a\times\mathbf b\)는 \(\mathbf a, \mathbf b\) 모두에 수직, 오른손 법칙 방향.</li>
-        <li>\(|\mathbf a\times\mathbf b| = |\mathbf a||\mathbf b|\sin\theta\) = 평행사변형 넓이.</li>
-        <li>\(\mathbf b\times\mathbf a = -\mathbf a\times\mathbf b\). 평행이면 \(\mathbf 0\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>외적 \(\mathbf a\times\mathbf b\)는 성분으로 계산하는 벡터로, \(\mathbf a\)와 \(\mathbf b\)에 모두 수직이고 방향은 오른손 법칙을 따른다. 그 크기 \(|\mathbf a||\mathbf b|\sin\theta\)는 두 벡터가 만드는 평행사변형의 넓이이므로, 삼각형의 넓이와 돌림힘을 계산하는 데 쓰인다. 순서를 바꾸면 부호가 바뀌고, 두 벡터가 평행하면 외적은 \(\mathbf 0\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.3</span>연습문제</h3>
@@ -93,7 +72,7 @@
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(\mathbf a\times\mathbf a = \mathbf 0\)임을 정의와 기하학적 뜻 두 가지로 설명하여라.
-          <details><summary>답</summary><p>정의: 각 성분이 \(a_2a_3 - a_3a_2 = 0\) 꼴. 기하: 사잇각 0이라 \(\sin0 = 0\).</p></details>
+          <details><summary>답</summary><p>정의로 보면 각 성분이 \(a_2a_3 - a_3a_2 = 0\) 꼴이다. 기하로 보면 사잇각이 0이라 \(\sin0 = 0\)이다.</p></details>
         </li>
       </ol>
     </div>

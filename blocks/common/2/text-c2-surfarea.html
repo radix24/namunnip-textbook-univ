@@ -2,59 +2,47 @@
 {
   "type": "card",
   "sec": "공통2-08-01",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-surfarea" data-kind="본문" data-std="공통2-08-01">
   <header class="card-head"><span class="no"></span><h2>매개곡면과 곡면의 넓이</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>두 매개변수로 곡면을 나타낸다.</li>
-        <li>\(|\mathbf r_u\times\mathbf r_v|\)를 적분해 곡면의 넓이를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>외적과 평행사변형의 넓이 (<a href="01-01.html">1.1절</a>), 구면좌표 (<a href="06-05.html">6.5절</a>), 극좌표 이중적분 (<a href="06-03.html">6.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">곡선의 길이는 곡선을 짧은 선분으로 잘라 더해서 구했다. 둥근 곡면의 넓이도 작은 조각으로 잘라 더할 수 있을 것이다. 그런데 휘어진 작은 조각 하나의 넓이는 무엇으로 어림할까?</p>
+    <figure class="q-fig" data-q="c2-patch">
+      <svg viewBox="0 0 520 290" role="img" aria-label="구면 위의 작은 조각과 그것을 어림하는 평행사변형"></svg>
+      <div class="q-ctl"><label>조각의 위치 \(\phi\) <input type="range" data-k="p" min="15" max="150" step="5" value="45"><output data-k="p"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 매개변수 평면의 작은 직사각형은 구면 위의 작은 조각(진한 테두리)으로 옮겨지고, 그 조각은 두 벡터 \(\mathbf r_\phi\Delta\phi\), \(\mathbf r_\theta\Delta\theta\)가 만드는 평행사변형(채운 부분)과 거의 같다. 극에 가까울수록 조각이 좁아진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>외적과 평행사변형의 넓이(<a href="01-01.html">1.1절</a>), 구면좌표(<a href="06-05.html">6.5절</a>), 극좌표 이중적분(<a href="06-03.html">6.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">8.1.1</span>매개곡면</h3>
-    <p>곡선은 매개변수 하나 \(\mathbf r(t)\)로 나타냈습니다. 곡면은 두 개가 필요합니다: \(\mathbf r(u, v) = \langle x(u, v), y(u, v), z(u, v)\rangle\).</p>
-    <ul class="tb-list">
-      <li>반지름 \(a\)인 구면: \(\mathbf r(\phi, \theta) = \langle a\sin\phi\cos\theta, a\sin\phi\sin\theta, a\cos\phi\rangle\), \(0 \le \phi \le \pi\), \(0 \le \theta \le 2\pi\).</li>
-      <li>원기둥 \(x^2 + y^2 = a^2\): \(\mathbf r(\theta, z) = \langle a\cos\theta, a\sin\theta, z\rangle\).</li>
-      <li>그래프 \(z = f(x, y)\): \(\mathbf r(x, y) = \langle x, y, f(x, y)\rangle\).</li>
-    </ul>
+    <p>곡선은 매개변수 하나로 \(\mathbf r(t)\)처럼 나타냈다. 곡면은 두 개가 필요하므로 \(\mathbf r(u, v) = \langle x(u, v), y(u, v), z(u, v)\rangle\)로 쓰고, 이것을 <em>매개곡면</em>이라 한다. 가령 반지름 \(a\)인 구면은 6.5절의 구면좌표에서 \(\rho = a\)로 고정한 것이므로 \(\mathbf r(\phi, \theta) = \langle a\sin\phi\cos\theta, a\sin\phi\sin\theta, a\cos\phi\rangle\), \(0 \le \phi \le \pi\), \(0 \le \theta \le 2\pi\)이다. 원기둥 \(x^2 + y^2 = a^2\)은 각과 높이를 매개변수로 하여 \(\mathbf r(\theta, z) = \langle a\cos\theta, a\sin\theta, z\rangle\)이다. 또 그래프 \(z = f(x, y)\)는 \(x, y\) 자신을 매개변수로 하여 \(\mathbf r(x, y) = \langle x, y, f(x, y)\rangle\)로 쓴다.</p>
 
     <h3><span class="no">8.1.2</span>넓이</h3>
-    <p>\(uv\)평면의 작은 직사각형 \(\Delta u\times\Delta v\)는 곡면 위의 작은 조각으로 옮겨지고, 그 조각은 두 벡터 \(\mathbf r_u\Delta u\)와 \(\mathbf r_v\Delta v\)가 만드는 평행사변형에 가깝습니다. 평행사변형의 넓이는 외적의 크기이므로(1.1절)</p>
+    <p>처음 질문으로 돌아가자. \(uv\)평면의 작은 직사각형 \(\Delta u\times\Delta v\)는 곡면 위의 작은 조각으로 옮겨진다. 그 조각의 두 변은 대략 \(\mathbf r_u\Delta u\)와 \(\mathbf r_v\Delta v\)이므로, 조각은 이 두 벡터가 만드는 평행사변형에 가깝다(그림 1). 평행사변형의 넓이는 외적의 크기이므로(1.1절) 조각의 넓이는 \(|\mathbf r_u\times\mathbf r_v|\Delta u\Delta v\)이고, 이것을 모두 더한 극한이 곡면의 넓이이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 8.1.1</span>
       \[\text{넓이}(S) = \iint_D|\mathbf r_u\times\mathbf r_v|\,du\,dv.\]
-      <p>그래프 \(z = f(x, y)\)이면 \(\displaystyle\iint_D\sqrt{1 + f_x^2 + f_y^2}\,dA\).</p>
+      <p>그래프 \(z = f(x, y)\)이면 \(\displaystyle\iint_D\sqrt{1 + f_x^2 + f_y^2}\,dA\)이다.</p>
     </div>
-    <p>\(\mathbf r_u\times\mathbf r_v\)는 곡면에 수직인 벡터(법선)이기도 하며, 8.2절의 선속에서 다시 씁니다.</p>
+    <p>그래프의 경우는 \(\mathbf r_x = \langle1, 0, f_x\rangle\), \(\mathbf r_y = \langle0, 1, f_y\rangle\)의 외적이 \(\langle-f_x, -f_y, 1\rangle\)인 데서 나온다. 한편 \(\mathbf r_u\times\mathbf r_v\)는 곡면에 수직인 벡터(법선)이기도 하며, 8.2절의 선속에서 다시 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.1.2</span>
       <p>반지름 \(a\)인 구면의 넓이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 계산하면 \(|\mathbf r_\phi\times\mathbf r_\theta| = a^2\sin\phi\)입니다(6.5절의 부피 요소에서 \(d\rho\)를 뺀 것과 같습니다). \(\int_0^{2\pi}\int_0^\pi a^2\sin\phi\,d\phi\,d\theta = 4\pi a^2\).</p>
+    <p><i>풀이.</i> 계산하면 \(|\mathbf r_\phi\times\mathbf r_\theta| = a^2\sin\phi\)이다. 6.5절의 부피 요소 \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\)에서 두께 \(d\rho\)를 뺀 것과 같다. 따라서 넓이는 \(\int_0^{2\pi}\int_0^\pi a^2\sin\phi\,d\phi\,d\theta = 4\pi a^2\)이다. 그림 1에서 \(\phi\)를 극 쪽으로 옮기면 \(\sin\phi\)가 작아져 조각이 좁아지는 것이 보인다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.1.3</span>
       <p>포물면 \(z = x^2 + y^2\)의 \(z \le 9\)인 부분의 넓이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\sqrt{1 + 4x^2 + 4y^2} = \sqrt{1 + 4r^2}\), 영역은 \(r \le 3\). 극좌표로</p>
-    \[\int_0^{2\pi}\int_0^3\sqrt{1 + 4r^2}\,r\,dr\,d\theta = 2\pi\cdot\frac{1}{12}\left[(1 + 4r^2)^{3/2}\right]_0^3 = \frac\pi6\left(37\sqrt{37} - 1\right) \approx 117.3.\]
+    <p><i>풀이.</i> \(\sqrt{1 + f_x^2 + f_y^2} = \sqrt{1 + 4x^2 + 4y^2} = \sqrt{1 + 4r^2}\)이고, 영역은 \(r \le 3\)인 원판이다. 그러면 극좌표로 다음을 얻는다.</p>
+    \[\int_0^{2\pi}\int_0^3\sqrt{1 + 4r^2}\,r\,dr\,d\theta = 2\pi\cdot\frac{1}{12}\left[(1 + 4r^2)^{3/2}\right]_0^3 = \frac\pi6\left(37\sqrt{37} - 1\right) \approx 117.3\]
+    <p>바닥 원판의 넓이 \(9\pi \approx 28.3\)보다 네 배쯤 크다. 가장자리로 갈수록 곡면이 가파르게 서서 같은 바닥 넓이 위에 더 넓은 곡면이 놓이기 때문이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>곡면 = 매개변수 두 개 \(\mathbf r(u, v)\).</li>
-        <li>넓이 \(= \iint|\mathbf r_u\times\mathbf r_v|\,du\,dv\). 그래프는 \(\sqrt{1 + f_x^2 + f_y^2}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>곡면은 매개변수 두 개로 \(\mathbf r(u, v)\)처럼 나타낸다. 처음 질문의 작은 조각은 \(\mathbf r_u\Delta u\)와 \(\mathbf r_v\Delta v\)가 만드는 평행사변형으로 어림하므로, 넓이는 \(\iint|\mathbf r_u\times\mathbf r_v|\,du\,dv\)이다. 그래프 \(z = f(x, y)\)이면 피적분 함수가 \(\sqrt{1 + f_x^2 + f_y^2}\)이 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.1.3</span>연습문제</h3>

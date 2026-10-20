@@ -2,40 +2,38 @@
 {
   "type": "card",
   "sec": "공통2-03-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-arclength" data-kind="본문" data-std="공통2-03-03">
   <header class="card-head"><span class="no"></span><h2>곡선의 길이와 곡률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>공간곡선의 길이를 적분으로 구한다.</li>
-        <li>곡선이 얼마나 급히 휘는지를 곡률로 나타내고, 가속도를 접선·법선 성분으로 나눈다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>평면곡선의 길이 (<a href="../1/06-03.html">공통1 6.3절</a>), 접선벡터와 속력 (<a href="03-02.html">3.2절</a>), 외적 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 커브를 두 배 빠르게 돌면 옆으로 쏠리는 느낌은 몇 배가 될까? 곡선이 얼마나 급하게 휘는지를 수 하나로 잴 수 있다면, 그 수와 속력으로 쏠림을 계산할 수 있지 않을까?</p>
+    <figure class="q-fig" data-q="c2-osc">
+      <svg viewBox="0 0 520 270" role="img" aria-label="y = x² 위의 점에서 곡선에 가장 잘 맞는 원(곡률원)"></svg>
+      <div class="q-ctl"><label>점의 위치 \(x\) <input type="range" data-k="x" min="-1.6" max="1.6" step="0.02" value="0"><output data-k="x"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 곡선 \(y = x^2\) 위의 한 점에서 곡선과 가장 잘 맞는 원의 반지름은 \(\frac1\kappa\)이다. 원점에서는 반지름 \(\frac12\)인 작은 원이 맞고, 멀어질수록 곡선이 펴져 원이 커진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>평면곡선의 길이(<a href="../1/06-03.html">미분적분학(1) 6.3절</a>), 접선벡터와 속력(<a href="03-02.html">3.2절</a>), 외적(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>곡선의 길이</h3>
-    <p>속력을 시간에 대해 적분하면 움직인 거리입니다.</p>
-    \[L = \int_a^b|\mathbf r'(t)|\,dt = \int_a^b\sqrt{f'(t)^2 + g'(t)^2 + h'(t)^2}\,dt.\]
+    <p>속력을 시간에 대해 적분하면 움직인 거리이므로, 공간곡선의 길이는 다음과 같다. 미분적분학(1) 7.2절의 매개변수 곡선의 길이에 성분 하나가 더해진 것이다.</p>
+    \[L = \int_a^b|\mathbf r'(t)|\,dt = \int_a^b\sqrt{f'(t)^2 + g'(t)^2 + h'(t)^2}\,dt\]
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>나선 \(\langle\cos t, \sin t, t\rangle\)의 한 바퀴(\(0 \le t \le 2\pi\)) 길이는?</p>
     </div>
-    <p><i>풀이.</i> 속력이 \(\sqrt2\)로 일정하므로 \(L = 2\pi\sqrt2\). 원기둥을 펼치면 나선은 밑변 \(2\pi\), 높이 \(2\pi\)인 직각삼각형의 빗변이 되므로 같은 답입니다.</p>
+    <p><i>풀이.</i> 속력이 \(\sqrt2\)로 일정하므로 \(L = 2\pi\sqrt2 \approx 8.89\)이다. 다른 방법으로도 확인할 수 있다. 원기둥을 세로로 잘라 펼치면 나선 한 바퀴는 밑변 \(2\pi\), 높이 \(2\pi\)인 직각삼각형의 빗변이 되므로 같은 답이 나온다.</p>
 
     <h3><span class="no">3.3.2</span>곡률</h3>
-    <p>곡선이 얼마나 급히 휘는지는 "단위 길이를 갈 때 진행 방향 \(\mathbf T\)가 얼마나 빨리 바뀌는가"로 잽니다. 직선은 방향이 안 바뀌므로 0, 작은 원은 크게 바뀝니다.</p>
+    <p>곡선이 얼마나 급히 휘는지는 단위 길이를 갈 때 진행 방향 \(\mathbf T\)가 얼마나 빨리 바뀌는가로 잰다. 직선은 방향이 바뀌지 않으므로 0이고, 작은 원은 짧은 거리에서 방향이 크게 바뀌므로 큰 값이다. 시간 대신 길이로 재는 까닭은, 같은 곡선을 빠르게 지나든 느리게 지나든 휜 정도는 같아야 하기 때문이다.</p>
     <div class="tb-env">
       <span class="lb">정의 3.3.2 <span class="nm">(곡률)</span></span>
       \[\kappa = \left|\frac{d\mathbf T}{ds}\right| = \frac{|\mathbf T'(t)|}{|\mathbf r'(t)|}\quad(s\text{는 곡선의 길이}).\]
     </div>
-    <p>계산에는 다음 공식이 편리합니다.</p>
+    <p>계산에는 다음 공식이 편리하다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 3.3.3</span>
       \[\kappa = \frac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^3}, \qquad \text{평면곡선}\ y = f(x)\text{이면}\ \kappa = \frac{|f''(x)|}{(1 + f'(x)^2)^{3/2}}.\]
@@ -44,23 +42,16 @@
       <span class="lb">예제 3.3.4</span>
       <p>(가) 반지름 \(a\)인 원 (나) 나선 \(\langle\cos t, \sin t, t\rangle\) (다) \(y = x^2\)의 원점에서 곡률을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) \(\mathbf r = \langle a\cos t, a\sin t, 0\rangle\), \(|\mathbf r'| = a\), \(\mathbf T = \langle-\sin t, \cos t, 0\rangle\), \(|\mathbf T'| = 1\). \(\kappa = \frac1a\). 작은 원일수록 많이 휩니다.</p>
-    <p>(나) \(\mathbf r' = \langle-\sin t, \cos t, 1\rangle\), \(\mathbf r'' = \langle-\cos t, -\sin t, 0\rangle\), \(\mathbf r'\times\mathbf r'' = \langle\sin t, -\cos t, 1\rangle\), 크기 \(\sqrt2\). \(\kappa = \frac{\sqrt2}{(\sqrt2)^3} = \frac12\).</p>
-    <p>(다) \(f' = 0\), \(f'' = 2\)이므로 \(\kappa = 2\). 원점 근처에서 반지름 \(\frac12\)인 원처럼 휩니다.</p>
+    <p><i>풀이.</i> (가) \(\mathbf r = \langle a\cos t, a\sin t, 0\rangle\)이면 \(|\mathbf r'| = a\), \(\mathbf T = \langle-\sin t, \cos t, 0\rangle\), \(|\mathbf T'| = 1\)이다. 따라서 \(\kappa = \frac1a\)이고, 작은 원일수록 많이 휜다.</p>
+    <p>(나) \(\mathbf r' = \langle-\sin t, \cos t, 1\rangle\), \(\mathbf r'' = \langle-\cos t, -\sin t, 0\rangle\)이고 \(\mathbf r'\times\mathbf r'' = \langle\sin t, -\cos t, 1\rangle\)의 크기는 \(\sqrt2\)이다. 그러므로 \(\kappa = \frac{\sqrt2}{(\sqrt2)^3} = \frac12\)이다. 반지름 1인 원보다 덜 휘는 것은 나선이 원을 돌면서 위로도 나아가 휜 정도가 길게 펴지기 때문이다.</p>
+    <p>(다) \(f' = 0\), \(f'' = 2\)이므로 \(\kappa = 2\)이다. 즉 원점 근처에서 곡선은 반지름 \(\frac12\)인 원처럼 휜다. 그림 1의 처음 화면이 이 원이고, 점을 \(x = 1\)로 옮기면 \(\kappa = \frac{2}{5^{3/2}} \approx 0.18\)이 되어 반지름 약 5.6인 큰 원이 맞는다.</p>
 
     <h3><span class="no">3.3.3</span>가속도의 두 성분</h3>
-    <p>\(\mathbf T\)가 바뀌는 방향의 단위벡터 \(\mathbf N = \frac{\mathbf T'}{|\mathbf T'|}\)를 <b>주법선벡터</b>라 합니다. 속력을 \(v\)라 하면 가속도는 다음처럼 나뉩니다.</p>
-    \[\mathbf a = v'\,\mathbf T + \kappa v^2\,\mathbf N.\]
-    <p>앞 항은 속력의 변화(가속 페달), 뒤 항은 방향의 변화(핸들)입니다. 같은 커브를 두 배 빠르게 돌면 옆으로 받는 가속도가 네 배가 되는 이유가 \(v^2\)에 있습니다. 원운동에서는 \(\kappa = \frac1r\)이므로 \(\frac{v^2}{r}\), 물리의 구심가속도입니다.</p>
+    <p>\(\mathbf T\)가 바뀌는 방향의 단위벡터 \(\mathbf N = \frac{\mathbf T'}{|\mathbf T'|}\)를 <em>주법선벡터</em>라 한다. 속력을 \(v\)라 하면 가속도는 다음처럼 두 성분으로 나뉜다.</p>
+    \[\mathbf a = v'\,\mathbf T + \kappa v^2\,\mathbf N\]
+    <p>앞 항은 속력의 변화로 자동차의 가속 페달에 해당하고, 뒤 항은 방향의 변화로 핸들에 해당한다. 처음 질문의 답이 뒤 항에 있다. 같은 커브를 두 배 빠르게 돌면 \(v^2\) 때문에 옆으로 받는 가속도가 네 배가 된다. 원운동에서는 \(\kappa = \frac1r\)이므로 이 항이 \(\frac{v^2}{r}\), 곧 물리의 구심가속도이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(L = \int|\mathbf r'|\,dt\).</li>
-        <li>\(\kappa = |\mathbf r'\times\mathbf r''|/|\mathbf r'|^3\). 원은 \(1/a\).</li>
-        <li>\(\mathbf a = v'\mathbf T + \kappa v^2\mathbf N\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>공간곡선의 길이는 속력을 적분한 \(\int|\mathbf r'|\,dt\)이고, 곡선이 휜 정도는 길이당 진행 방향이 바뀌는 빠르기인 곡률 \(\kappa = \frac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^3}\)로 잰다. 가속도는 \(v'\mathbf T + \kappa v^2\mathbf N\)으로 나뉘므로, 처음 질문처럼 같은 커브를 두 배 빠르게 돌면 옆으로 쏠리는 가속도는 네 배가 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.4</span>연습문제</h3>

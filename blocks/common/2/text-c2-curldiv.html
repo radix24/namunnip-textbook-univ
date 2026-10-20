@@ -2,69 +2,53 @@
 {
   "type": "card",
   "sec": "공통2-07-05",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-curldiv" data-kind="본문" data-std="공통2-07-05">
   <header class="card-head"><span class="no"></span><h2>회전과 발산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>공간 벡터장의 회전 \(\nabla\times\mathbf F\)와 발산 \(\nabla\cdot\mathbf F\)를 계산한다.</li>
-        <li>회전은 소용돌이, 발산은 퍼져 나감을 나타낸다는 뜻을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>외적과 행렬식 (<a href="01-04.html">1.4절</a>), 편도함수 (<a href="04-02.html">4.2절</a>), 그린 정리 (<a href="07-04.html">7.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">흐르는 물에 작은 바람개비를 꽂으면 어떤 곳에서는 돌고 어떤 곳에서는 돌지 않는다. 또 어떤 곳에서는 물이 솟아나고 어떤 곳에서는 빨려 들어간다. 벡터장의 이 두 가지 성질을 각각 수 하나로 잴 수 있을까?</p>
+    <figure class="q-fig" data-q="c2-curl">
+      <svg viewBox="0 0 520 280" role="img" aria-label="벡터장 위에 놓은 바람개비와 회전, 발산의 값"></svg>
+      <div class="q-ctl">
+        <label>벡터장 <select data-k="k"><option value="0" selected>소용돌이 ⟨−y, x⟩</option><option value="1">퍼져 나감 ⟨x, y⟩</option><option value="2">층 흐름 ⟨y, 0⟩</option></select></label>
+        <label>바람개비의 \(x\) <input type="range" data-k="x" min="-1.5" max="1.5" step="0.1" value="0.8"><output data-k="x"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 바람개비 둘레를 도는 흐름이 한쪽으로 치우치면 바람개비가 돈다(회전). 작은 원을 빠져나가는 흐름이 들어오는 흐름보다 많으면 그곳은 샘이다(발산). 층 흐름은 곧게 흐르는데도 바람개비를 돌린다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>외적(<a href="01-01.html">1.1절</a>)과 행렬식(<a href="01-04.html">1.4절</a>), 편도함수(<a href="04-02.html">4.2절</a>), 그린 정리(<a href="07-04.html">7.4절</a>)를 쓴다.</div>
 
     <h3><span class="no">7.5.1</span>정의</h3>
-    <p>미분 연산자를 벡터처럼 \(\nabla = \left\langle\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right\rangle\)로 쓰고, \(\mathbf F = \langle P, Q, R\rangle\)과 외적·내적을 하는 것으로 기억합니다.</p>
+    <p>미분 연산자를 벡터처럼 \(\nabla = \left\langle\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right\rangle\)로 쓰고, \(\mathbf F = \langle P, Q, R\rangle\)과 외적이나 내적을 하는 것으로 기억한다.</p>
     <div class="tb-env">
       <span class="lb">정의 7.5.1 <span class="nm">(회전, 발산)</span></span>
       \[\nabla\times\mathbf F = \begin{vmatrix}\mathbf i &amp; \mathbf j &amp; \mathbf k\\ \partial_x &amp; \partial_y &amp; \partial_z\\ P &amp; Q &amp; R\end{vmatrix} = \langle R_y - Q_z,\ P_z - R_x,\ Q_x - P_y\rangle,\]
       \[\nabla\cdot\mathbf F = P_x + Q_y + R_z.\]
     </div>
-    <p>회전(curl)은 벡터, 발산(divergence)은 수입니다. 회전의 셋째 성분 \(Q_x - P_y\)가 그린 정리의 피적분 함수입니다.</p>
+    <p>회전(curl) \(\nabla\times\mathbf F\)는 벡터이고, 발산(divergence) \(\nabla\cdot\mathbf F\)는 수이다. 회전의 셋째 성분 \(Q_x - P_y\)는 7.4절 그린 정리의 피적분 함수와 같다. 즉 그린 정리는 회전의 \(z\) 성분을 평면 위에서 적분한 것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.5.2</span>
       <p>\(\mathbf F = \langle xz, xyz, -y^2\rangle\)의 회전과 발산을 구하여라.</p>
     </div>
-    <p><i>풀이.</i></p>
-    <ul class="tb-list">
-      <li>\(R_y - Q_z = -2y - xy\).</li>
-      <li>\(P_z - R_x = x - 0 = x\).</li>
-      <li>\(Q_x - P_y = yz - 0 = yz\).</li>
-    </ul>
-    <p>\(\nabla\times\mathbf F = \langle-y(2 + x), x, yz\rangle\). \(\nabla\cdot\mathbf F = z + xz + 0 = z(1 + x)\).</p>
+    <p><i>풀이.</i> 회전의 성분을 차례로 구하면 \(R_y - Q_z = -2y - xy\), \(P_z - R_x = x - 0 = x\), \(Q_x - P_y = yz - 0 = yz\)이다. 따라서 \(\nabla\times\mathbf F = \langle-y(2 + x), x, yz\rangle\)이다. 발산은 \(\nabla\cdot\mathbf F = z + xz + 0 = z(1 + x)\)이다.</p>
 
     <h3><span class="no">7.5.2</span>뜻</h3>
-    <ul class="tb-list">
-      <li><b>회전</b>: 흐르는 물에 작은 바람개비를 꽂으면 도는 정도와 축 방향. \(\langle-y, x, 0\rangle\)의 회전은 \(\langle0, 0, 2\rangle\)로, \(z\)축 둘레로 돈다. 회전이 \(\mathbf 0\)이면 소용돌이가 없다(비회전).</li>
-      <li><b>발산</b>: 한 점에서 단위 부피당 흘러나가는 양. 양수면 샘(source), 음수면 빨려 들어가는 곳(sink). \(\langle x, y, z\rangle\)의 발산은 3. 0이면 압축되지 않는 흐름.</li>
-    </ul>
+    <p>회전은 처음 질문의 바람개비로 읽는다. 흐르는 물에 작은 바람개비를 꽂았을 때 도는 정도와 그 축의 방향이 회전 벡터이다. 가령 \(\langle-y, x, 0\rangle\)의 회전은 \(\langle0, 0, 2\rangle\)이므로 바람개비가 \(z\)축 둘레로 돈다. 그림 1에서 소용돌이를 고르면 바람개비를 어디에 두어도 같은 빠르기로 돈다. 회전이 \(\mathbf 0\)이면 소용돌이가 없고, 이런 벡터장을 비회전이라 한다.</p>
+    <p>발산은 한 점에서 단위 부피당 흘러나가는 양이다. 양수이면 물이 솟아나는 샘이고, 음수이면 빨려 들어가는 곳이다. 가령 \(\langle x, y, z\rangle\)의 발산은 3이고, 평면의 \(\langle x, y\rangle\)이면 2이다. 발산이 0이면 압축되지 않는 흐름이다.</p>
+    <p>그런데 회전은 흐름이 원을 그리는지와는 다르다. 그림 1의 층 흐름 \(\langle y, 0\rangle\)은 곧게 오른쪽으로만 흐르지만, 위쪽이 아래쪽보다 빠르므로 바람개비의 위 날개가 더 세게 밀려 시계 방향으로 돈다. 실제로 회전은 \(Q_x - P_y = 0 - 1 = -1\)이다. 반대로 소용돌이 모양이라도 회전이 0일 수 있는데, 7.3절의 \(\frac{\langle-y, x\rangle}{x^2 + y^2}\)이 그 예이다.</p>
 
     <h3><span class="no">7.5.3</span>두 항등식</h3>
     <div class="tb-env thm">
       <span class="lb">정리 7.5.3</span>
-      <ol>
-        <li>\(\nabla\times(\nabla f) = \mathbf 0\). 기울기 벡터장은 소용돌이가 없다.</li>
-        <li>\(\nabla\cdot(\nabla\times\mathbf F) = 0\).</li>
-      </ol>
+      <p>\(\nabla\times(\nabla f) = \mathbf 0\)이다. 곧 기울기 벡터장은 소용돌이가 없다. 또 \(\nabla\cdot(\nabla\times\mathbf F) = 0\)이다.</p>
     </div>
-    <p>모두 클레로 정리(\(f_{xy} = f_{yx}\) 등)로 확인됩니다. (1)의 역으로, 구멍 없는 영역에서 \(\nabla\times\mathbf F = \mathbf 0\)이면 \(\mathbf F\)는 보존장입니다. 7.3절의 판정 \(P_y = Q_x\)를 공간으로 넓힌 것입니다.</p>
-    <p>또 \(\nabla\cdot\nabla f = f_{xx} + f_{yy} + f_{zz}\)를 \(\nabla^2f\)(라플라시안)라 씁니다. \(\nabla^2f = 0\)(라플라스 방정식)은 정상 상태 온도와 전기 퍼텐셜을 나타내며, 공통9에서 다룹니다.</p>
+    <p>두 식 모두 클레로 정리(\(f_{xy} = f_{yx}\) 등)로 확인된다. 가령 \(\nabla\times(\nabla f)\)의 셋째 성분은 \(f_{yx} - f_{xy} = 0\)이다. 앞의 식의 역으로, 구멍 없는 영역에서 \(\nabla\times\mathbf F = \mathbf 0\)이면 \(\mathbf F\)는 보존장이다. 7.3절의 판정 \(P_y = Q_x\)를 공간으로 넓힌 것이다.</p>
+    <p>또 \(\nabla\cdot\nabla f = f_{xx} + f_{yy} + f_{zz}\)를 \(\nabla^2f\)라 쓰고 라플라시안이라 한다. \(\nabla^2f = 0\)인 라플라스 방정식은 정상 상태의 온도와 전기 퍼텐셜을 나타내며, 고등미적분학(2)에서 다룬다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>회전 \(\nabla\times\mathbf F\): 소용돌이(벡터). 발산 \(\nabla\cdot\mathbf F\): 퍼져 나감(수).</li>
-        <li>\(\nabla\times\nabla f = \mathbf 0\), \(\nabla\cdot(\nabla\times\mathbf F) = 0\).</li>
-        <li>구멍 없는 영역에서 회전 = \(\mathbf 0\) ⟺ 보존장.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>회전 \(\nabla\times\mathbf F\)는 처음 질문의 바람개비가 도는 정도와 축을 나타내는 벡터이고, 발산 \(\nabla\cdot\mathbf F\)는 한 점에서 흘러나가는 양을 나타내는 수이다. 기울기 벡터장은 회전이 언제나 \(\mathbf 0\)이고, 거꾸로 구멍 없는 영역에서 회전이 \(\mathbf 0\)이면 보존장이다. 또 어떤 벡터장의 회전이든 발산은 0이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.5.4</span>연습문제</h3>

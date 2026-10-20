@@ -2,26 +2,27 @@
 {
   "type": "card",
   "sec": "공통2-06-06",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-jacobian" data-kind="본문" data-std="공통2-06-06">
   <header class="card-head"><span class="no"></span><h2>중적분의 변수변환과 야코비안</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>변수를 바꿀 때 넓이가 몇 배가 되는지를 야코비안으로 구한다.</li>
-        <li>영역에 맞는 새 변수를 골라 이중적분을 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬식과 넓이 (<a href="01-04.html">1.4절</a>), 일차변환의 넓이 배율 (<a href="02-03.html">2.3절</a>), 극좌표 이중적분 (<a href="06-03.html">6.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">기울어진 정사각형 영역 위의 적분은 범위가 여러 조각으로 갈라져 번거롭다. 변수를 바꾸어 영역을 반듯한 정사각형으로 만들 수 있다면, 그 대가로 적분 안에 무엇을 곱해야 할까?</p>
+    <figure class="q-fig" data-q="c2-jac">
+      <svg viewBox="0 0 520 260" role="img" aria-label="uv평면의 정사각형 그물과 xy평면으로 옮겨진 기울어진 그물"></svg>
+      <div class="q-ctl">
+        <label>칸의 \(u\) 위치 <input type="range" data-k="u" min="0" max="1.75" step="0.25" value="0.75"><output data-k="u"></output></label>
+        <label>칸의 \(v\) 위치 <input type="range" data-k="v" min="0" max="1.75" step="0.25" value="0.5"><output data-k="v"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 왼쪽 \(uv\)평면의 정사각형은 \(x = \frac{u + v}{2}\), \(y = \frac{u - v}{2}\)에 의해 오른쪽 \(xy\)평면의 기울어진 정사각형으로 옮겨진다. 어느 칸이든 넓이가 \(\frac12\)배가 되는데, 이 배율이 야코비안의 절댓값이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬식과 넓이(<a href="01-04.html">1.4절</a>), 일차변환의 넓이 배율(<a href="02-03.html">2.3절</a>), 극좌표 이중적분(<a href="06-03.html">6.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.6.1</span>야코비안</h3>
-    <p>일변수 치환적분에서 \(x = g(u)\)이면 \(dx = g'(u)\,du\)였습니다. \(g'\)은 "\(u\)를 조금 바꿀 때 \(x\)가 몇 배 바뀌는가"입니다. 이변수에서 \(x = x(u, v)\), \(y = y(u, v)\)이면 \(uv\)평면의 작은 직사각형 \(du\times dv\)가 \(xy\)평면의 작은 평행사변형으로 옮겨지고, 그 넓이 배율이 행렬식입니다(2.3절).</p>
+    <p>일변수 치환적분에서 \(x = g(u)\)이면 \(dx = g'(u)\,du\)였다. 여기서 \(g'\)은 \(u\)를 조금 바꿀 때 \(x\)가 몇 배 바뀌는가였다. 이변수에서 \(x = x(u, v)\), \(y = y(u, v)\)이면 \(uv\)평면의 작은 직사각형 \(du\times dv\)가 \(xy\)평면의 작은 평행사변형으로 옮겨진다. 그 두 변은 \(\langle x_u, y_u\rangle du\)와 \(\langle x_v, y_v\rangle dv\)이므로, 2.3절에 따라 넓이 배율은 행렬식이다.</p>
     <div class="tb-env">
       <span class="lb">정의 6.6.1 <span class="nm">(야코비안)</span></span>
       \[\frac{\partial(x, y)}{\partial(u, v)} = \begin{vmatrix}x_u &amp; x_v\\ y_u &amp; y_v\end{vmatrix} = x_uy_v - x_vy_u.\]
@@ -30,30 +31,24 @@
       <span class="lb">정리 6.6.2 <span class="nm">(변수변환)</span></span>
       \[\iint_Rf(x, y)\,dx\,dy = \iint_Sf(x(u, v), y(u, v))\left|\frac{\partial(x, y)}{\partial(u, v)}\right|du\,dv.\]
     </div>
-    <p>확인: 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)이면 야코비안은 \(\cos\theta\cdot r\cos\theta - (-r\sin\theta)\sin\theta = r\). 6.3절의 \(r\,dr\,d\theta\)가 이것입니다. 구면좌표의 \(\rho^2\sin\phi\)도 3차 야코비안으로 나옵니다.</p>
+    <p>극좌표로 확인해 보자. \(x = r\cos\theta\), \(y = r\sin\theta\)이면 야코비안은 \(\cos\theta\cdot r\cos\theta - (-r\sin\theta)\sin\theta = r\)이다. 즉 6.3절의 \(r\,dr\,d\theta\)가 바로 이것이다. 구면좌표의 \(\rho^2\sin\phi\)도 3차 야코비안으로 나온다. 다시 말해 지금까지 그림으로 구한 넓이 요소와 부피 요소는 모두 야코비안의 특별한 경우였다.</p>
 
     <h3><span class="no">6.6.2</span>예제</h3>
     <div class="tb-env ex">
       <span class="lb">예제 6.6.3</span>
       <p>타원 \(\frac{x^2}{a^2} + \frac{y^2}{b^2} \le 1\)의 넓이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(x = au\), \(y = bv\)로 놓으면 영역은 단위원판 \(u^2 + v^2 \le 1\)이 되고 야코비안은 \(ab\). 넓이는 \(ab\times\pi = \pi ab\).</p>
+    <p><i>풀이.</i> \(x = au\), \(y = bv\)로 놓으면 영역은 단위원판 \(u^2 + v^2 \le 1\)이 되고, 야코비안은 \(\begin{vmatrix}a &amp; 0\\ 0 &amp; b\end{vmatrix} = ab\)이다. 따라서 넓이는 단위원판의 넓이에 \(ab\)를 곱한 \(\pi ab\)이다. 원을 가로로 \(a\)배, 세로로 \(b\)배 늘이면 넓이가 \(ab\)배가 된다는 직관과 맞는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.6.4</span>
       <p>직선 \(x + y = 0\), \(x + y = 2\), \(x - y = 0\), \(x - y = 2\)로 둘러싸인 영역 \(R\)에서 \(\iint_R(x + y)(x - y)\,dA\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(u = x + y\), \(v = x - y\)로 놓으면 \(R\)은 \(0 \le u \le 2\), \(0 \le v \le 2\)인 정사각형이 됩니다. 거꾸로 풀면 \(x = \frac{u + v}{2}\), \(y = \frac{u - v}{2}\).</p>
-    \[\frac{\partial(x, y)}{\partial(u, v)} = \begin{vmatrix}\frac12 &amp; \frac12\\ \frac12 &amp; -\frac12\end{vmatrix} = -\frac12.\]
-    <p>절댓값 \(\frac12\)을 붙여 \(\int_0^2\int_0^2uv\cdot\frac12\,du\,dv = \frac12\cdot2\cdot2 = 2\).</p>
-    <p>새 변수를 고르는 요령: 경계를 이루는 식(여기서는 \(x + y\), \(x - y\))을 새 변수로 삼으면 영역이 직사각형이 됩니다.</p>
+    <p><i>풀이.</i> 경계의 식을 그대로 새 변수로 삼아 \(u = x + y\), \(v = x - y\)로 놓으면 \(R\)은 \(0 \le u \le 2\), \(0 \le v \le 2\)인 정사각형이 된다. 거꾸로 풀면 \(x = \frac{u + v}{2}\), \(y = \frac{u - v}{2}\)이고, 야코비안은 다음과 같다.</p>
+    \[\frac{\partial(x, y)}{\partial(u, v)} = \begin{vmatrix}\frac12 &amp; \frac12\\ \frac12 &amp; -\frac12\end{vmatrix} = -\frac12\]
+    <p>절댓값 \(\frac12\)을 붙이면 \(\int_0^2\int_0^2uv\cdot\frac12\,du\,dv = \frac12\cdot2\cdot2 = 2\)이다. 그림 1에서 칸을 어디로 옮겨도 넓이가 \(\frac12\)배인 것은 이 변환이 일차변환이라 배율이 어디서나 같기 때문이다. 극좌표처럼 일차변환이 아니면 배율이 자리마다 달라진다.</p>
+    <p>새 변수를 고르는 요령은 경계를 이루는 식을 새 변수로 삼는 것이다. 처음 질문의 기울어진 정사각형도 경계가 \(x + y\)와 \(x - y\)로 주어졌으므로, 그 둘을 새 변수로 삼자 반듯한 정사각형이 되었다. 그 대가로 곱한 것이 야코비안의 절댓값 \(\frac12\)이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(dx\,dy = \left|\frac{\partial(x, y)}{\partial(u, v)}\right|du\,dv\). 야코비안 = 넓이 배율.</li>
-        <li>극좌표 \(r\), 구면좌표 \(\rho^2\sin\phi\)는 야코비안의 특별한 경우.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>변수를 바꾸면 작은 직사각형이 작은 평행사변형으로 옮겨지고, 그 넓이 배율이 야코비안 \(\frac{\partial(x, y)}{\partial(u, v)}\)이므로 \(dx\,dy = \left|\frac{\partial(x, y)}{\partial(u, v)}\right|du\,dv\)이다. 극좌표의 \(r\)과 구면좌표의 \(\rho^2\sin\phi\)는 그 특별한 경우이다. 경계를 이루는 식을 새 변수로 삼으면 처음 질문처럼 기울어진 영역도 직사각형이 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.6.3</span>연습문제</h3>

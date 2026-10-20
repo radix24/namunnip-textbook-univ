@@ -2,31 +2,32 @@
 {
   "type": "card",
   "sec": "공통2-02-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-linearmap" data-kind="본문" data-std="공통2-02-03">
   <header class="card-head"><span class="no"></span><h2>행렬의 곱과 일차변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬과 벡터, 행렬과 행렬의 곱을 계산한다.</li>
-        <li>행렬을 평면의 회전, 대칭, 확대 같은 변환으로 해석한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>내적 (<a href="../1/09-03.html">공통1 9.3절</a>), 행렬식 (<a href="01-04.html">1.4절</a>), 기저 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">사진을 돌리거나 뒤집거나 비스듬히 밀면 그림이 바뀐다. 이런 변환을 네 수짜리 표 하나로 나타낼 수 있을까? 두 변환을 잇달아 하면 그 표는 어떻게 바뀔까?</p>
+    <figure class="q-fig" data-q="c2-linmap">
+      <svg viewBox="0 0 520 280" role="img" aria-label="일차변환이 단위정사각형과 글자 F를 옮기는 모습"></svg>
+      <div class="q-ctl">
+        <label>변환 <select data-k="k"><option value="0" selected>회전</option><option value="1">x축 대칭</option><option value="2">확대</option><option value="3">층밀림</option></select></label>
+        <label>값 \(s\) <input type="range" data-k="s" min="-2" max="2" step="0.05" value="0.6"><output data-k="s"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 일차변환은 \(\mathbf i\)와 \(\mathbf j\)를 각각 행렬의 두 열로 옮기고, 단위정사각형은 두 열이 만드는 평행사변형이 된다. 글자 F를 보면 회전인지 뒤집기인지 알 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>내적(<a href="../1/09-03.html">미분적분학(1) 9.3절</a>), 행렬식(<a href="01-04.html">1.4절</a>), 기저(<a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>행렬과 벡터의 곱</h3>
-    <p>벡터를 세로로 세워 쓰고, 행렬 \(A\)와 벡터 \(\mathbf x\)의 곱을 "\(A\)의 각 행과 \(\mathbf x\)의 내적"으로 정합니다.</p>
-    \[\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix}\begin{pmatrix}x\\ y\end{pmatrix} = \begin{pmatrix}ax + by\\ cx + dy\end{pmatrix}.\]
-    <p>연립방정식 \(ax + by = p\), \(cx + dy = q\)를 \(A\mathbf x = \mathbf b\)로 짧게 쓸 수 있습니다. 또 위 식은 \(x\begin{pmatrix}a\\ c\end{pmatrix} + y\begin{pmatrix}b\\ d\end{pmatrix}\)로 쓸 수도 있어서, \(A\mathbf x\)는 \(A\)의 열들의 일차결합입니다.</p>
+    <p>벡터를 세로로 세워 쓰고, 행렬 \(A\)와 벡터 \(\mathbf x\)의 곱을 "\(A\)의 각 행과 \(\mathbf x\)의 내적"으로 정한다.</p>
+    \[\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix}\begin{pmatrix}x\\ y\end{pmatrix} = \begin{pmatrix}ax + by\\ cx + dy\end{pmatrix}\]
+    <p>그러면 연립방정식 \(ax + by = p\), \(cx + dy = q\)를 \(A\mathbf x = \mathbf b\)로 짧게 쓸 수 있다. 또 위 식은 \(x\begin{pmatrix}a\\ c\end{pmatrix} + y\begin{pmatrix}b\\ d\end{pmatrix}\)로 쓸 수도 있으므로, \(A\mathbf x\)는 \(A\)의 열들의 일차결합이다. 즉 같은 곱을 행으로 읽으면 내적이고, 열로 읽으면 일차결합이다.</p>
 
     <h3><span class="no">2.3.2</span>일차변환</h3>
-    <p>\(\mathbf x\)를 \(A\mathbf x\)로 보내는 함수 \(T(\mathbf x) = A\mathbf x\)를 <b>일차변환</b>(선형변환)이라 합니다. \(T(\mathbf x + \mathbf y) = T(\mathbf x) + T(\mathbf y)\), \(T(c\mathbf x) = cT(\mathbf x)\)가 성립합니다. 특히 \(A\mathbf i\)는 \(A\)의 첫째 열, \(A\mathbf j\)는 둘째 열이므로 다음이 성립합니다.</p>
+    <p>\(\mathbf x\)를 \(A\mathbf x\)로 보내는 함수 \(T(\mathbf x) = A\mathbf x\)를 <em>일차변환</em>(선형변환)이라 한다. 이 함수는 \(T(\mathbf x + \mathbf y) = T(\mathbf x) + T(\mathbf y)\), \(T(c\mathbf x) = cT(\mathbf x)\)를 만족한다. 특히 \(A\mathbf i\)는 \(A\)의 첫째 열이고 \(A\mathbf j\)는 둘째 열이다. 그러면 평면의 모든 벡터는 \(\mathbf i, \mathbf j\)의 일차결합이므로, 두 열만 알면 변환 전체가 정해진다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.3.1</span>
       <p>일차변환의 행렬은 \(\mathbf i\)와 \(\mathbf j\)가 옮겨 간 곳을 차례로 열로 쓴 것이다.</p>
@@ -40,27 +41,20 @@
         <tr><td>가로 밀기(층밀림)</td><td>\(\begin{pmatrix}1 &amp; k\\ 0 &amp; 1\end{pmatrix}\)</td></tr>
       </tbody>
     </table>
-    <p>회전 행렬은 \(\mathbf i\)가 \(\langle\cos\theta, \sin\theta\rangle\)로, \(\mathbf j\)가 \(\langle-\sin\theta, \cos\theta\rangle\)로 가는 것에서 바로 나옵니다.</p>
+    <p>가령 회전 행렬은 \(\mathbf i\)가 \(\langle\cos\theta, \sin\theta\rangle\)로, \(\mathbf j\)가 \(\langle-\sin\theta, \cos\theta\rangle\)로 가는 것에서 바로 나온다. 그림 1에서 변환을 바꾸어 가며 값 \(s\)를 움직여 보면, 단위정사각형의 두 변이 언제나 행렬의 두 열로 옮겨진다.</p>
 
     <h3><span class="no">2.3.3</span>행렬의 곱과 합성</h3>
-    <p>변환 \(B\)를 한 뒤 \(A\)를 하는 합성 \(A(B\mathbf x)\)의 행렬을 \(AB\)라 정합니다. 계산은 "\(AB\)의 \((i, j)\) 성분 = \(A\)의 \(i\)행과 \(B\)의 \(j\)열의 내적"입니다.</p>
+    <p>변환 \(B\)를 한 뒤 \(A\)를 하는 합성 \(A(B\mathbf x)\)의 행렬을 \(AB\)라 정한다. 계산은 \(AB\)의 \((i, j)\) 성분을 \(A\)의 \(i\)행과 \(B\)의 \(j\)열의 내적으로 구한다. 이렇게 정하면 \(AB\)의 각 열이 \(B\)의 각 열을 \(A\)로 옮긴 것이 되어, 정리 2.3.1과 맞는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.2</span>
       <p>\(R\) = 90° 회전, \(F\) = \(x\)축 대칭일 때 \(FR\)과 \(RF\)를 구하고 뜻을 말하여라.</p>
     </div>
-    <p><i>풀이.</i> \(R = \begin{pmatrix}0 &amp; -1\\ 1 &amp; 0\end{pmatrix}\), \(F = \begin{pmatrix}1 &amp; 0\\ 0 &amp; -1\end{pmatrix}\).</p>
-    \[FR = \begin{pmatrix}0 &amp; -1\\ -1 &amp; 0\end{pmatrix}, \qquad RF = \begin{pmatrix}0 &amp; 1\\ 1 &amp; 0\end{pmatrix}.\]
-    <p>\(FR\)(회전 후 대칭)은 직선 \(y = -x\)에 대한 대칭, \(RF\)(대칭 후 회전)는 직선 \(y = x\)에 대한 대칭입니다. 순서를 바꾸면 결과가 다릅니다. 행렬의 곱은 일반적으로 \(AB \ne BA\)입니다.</p>
-    <p>행렬식의 뜻도 다시 보입니다. 단위정사각형은 \(A\)에 의해 두 열이 만드는 평행사변형으로 옮겨지므로, \(|\det A|\)는 변환이 넓이를 몇 배로 바꾸는지를 나타냅니다. 회전과 대칭은 \(|\det| = 1\)로 넓이를 바꾸지 않습니다. 이 사실이 6.6절 변수변환의 핵심입니다.</p>
+    <p><i>풀이.</i> \(R = \begin{pmatrix}0 &amp; -1\\ 1 &amp; 0\end{pmatrix}\), \(F = \begin{pmatrix}1 &amp; 0\\ 0 &amp; -1\end{pmatrix}\)이므로 다음과 같다.</p>
+    \[FR = \begin{pmatrix}0 &amp; -1\\ -1 &amp; 0\end{pmatrix}, \qquad RF = \begin{pmatrix}0 &amp; 1\\ 1 &amp; 0\end{pmatrix}\]
+    <p>\(FR\)(회전 후 대칭)은 직선 \(y = -x\)에 대한 대칭이고, \(RF\)(대칭 후 회전)는 직선 \(y = x\)에 대한 대칭이다. 즉 순서를 바꾸면 결과가 다르다. 처음 질문의 사진으로 말하면, 돌린 다음 뒤집은 사진과 뒤집은 다음 돌린 사진은 서로 다르다. 그래서 행렬의 곱은 일반적으로 \(AB \ne BA\)이다.</p>
+    <p>행렬식의 뜻도 다시 보인다. 단위정사각형은 \(A\)에 의해 두 열이 만드는 평행사변형으로 옮겨지므로, \(|\det A|\)는 변환이 넓이를 몇 배로 바꾸는지를 나타낸다. 회전과 대칭은 \(|\det| = 1\)로 넓이를 바꾸지 않고, 층밀림도 \(\det = 1\)이라 모양만 기울일 뿐 넓이는 그대로이다. 대칭처럼 \(\det &lt; 0\)이면 그림 1의 글자 F가 거울에 비친 모양으로 뒤집힌다. 이 사실이 6.6절 변수변환의 핵심이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(A\mathbf x\): 각 행과의 내적 = 열들의 일차결합.</li>
-        <li>변환의 행렬은 \(\mathbf i, \mathbf j\)의 상을 열로 쓴 것.</li>
-        <li>\(AB\) = \(B\) 다음 \(A\). \(AB \ne BA\). \(|\det A|\) = 넓이 배율.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>행렬과 벡터의 곱 \(A\mathbf x\)는 행으로 읽으면 내적, 열로 읽으면 열들의 일차결합이고, 일차변환의 행렬은 \(\mathbf i, \mathbf j\)가 옮겨 간 곳을 열로 쓴 것이다. 그래서 처음 질문의 회전, 대칭, 확대, 층밀림은 모두 네 수짜리 행렬로 쓰인다. 두 변환을 잇달아 하면 행렬을 곱하며, 순서에 따라 결과가 다르고, \(|\det A|\)는 넓이가 몇 배로 바뀌는지를 알려 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.4</span>연습문제</h3>

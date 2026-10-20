@@ -2,73 +2,56 @@
 {
   "type": "card",
   "sec": "공통2-01-04",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/common/c2-body.js"]
 }
 -->
 <article class="card q-card" id="text-c2-determinant" data-kind="본문" data-std="공통2-01-04">
   <header class="card-head"><span class="no"></span><h2>행렬식과 부피</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>2차와 3차 행렬식을 계산한다.</li>
-        <li>행렬식을 넓이와 부피로 해석하고, 세 벡터가 한 평면 위에 있는지 판정한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>외적 (<a href="01-01.html">1.1절</a>). 고교에서 행렬을 배우지 않았어도 읽을 수 있습니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">두 벡터 \(\langle a, b\rangle\), \(\langle c, d\rangle\)이 만드는 평행사변형의 넓이는 얼마일까? 넓이를 네 수만으로 바로 계산하는 식이 있다면, 그 식이 0이 된다는 것은 무슨 뜻일까?</p>
+    <figure class="q-fig" data-q="c2-det">
+      <svg viewBox="0 0 520 280" role="img" aria-label="두 벡터가 만드는 평행사변형과 행렬식"></svg>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 두 화살표의 끝을 끌어 보자. 행렬식 \(ad - bc\)의 절댓값은 평행사변형의 넓이이고, 부호는 두 번째 벡터가 첫 번째 벡터의 왼쪽에 있으면 양, 오른쪽에 있으면 음이다. 두 벡터가 한 직선 위에 놓이면 0이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>외적(<a href="01-01.html">1.1절</a>)을 쓴다. 고교에서 행렬을 배우지 않았어도 읽을 수 있다.</div>
 
     <h3><span class="no">1.4.1</span>행렬과 행렬식</h3>
-    <p>수를 직사각형 모양으로 늘어놓은 것을 <b>행렬</b>이라 합니다. 가로줄을 행, 세로줄을 열이라 합니다. 행과 열의 수가 같은 정사각행렬에는 <b>행렬식</b>이라는 수 하나가 정해집니다.</p>
+    <p>수를 직사각형 모양으로 늘어놓은 것을 <em>행렬</em>이라 한다. 가로줄을 행, 세로줄을 열이라 한다. 행과 열의 수가 같은 정사각행렬에는 <em>행렬식</em>이라는 수 하나가 정해진다.</p>
     <div class="tb-env">
       <span class="lb">정의 1.4.1 <span class="nm">(2차, 3차 행렬식)</span></span>
       \[\begin{vmatrix}a &amp; b\\ c &amp; d\end{vmatrix} = ad - bc,\]
       \[\begin{vmatrix}a_1 &amp; a_2 &amp; a_3\\ b_1 &amp; b_2 &amp; b_3\\ c_1 &amp; c_2 &amp; c_3\end{vmatrix} = a_1\begin{vmatrix}b_2 &amp; b_3\\ c_2 &amp; c_3\end{vmatrix} - a_2\begin{vmatrix}b_1 &amp; b_3\\ c_1 &amp; c_3\end{vmatrix} + a_3\begin{vmatrix}b_1 &amp; b_2\\ c_1 &amp; c_2\end{vmatrix}.\]
     </div>
-    <p>3차는 첫 행의 각 원소에, 그 원소의 행과 열을 지우고 남은 2차 행렬식을 곱하고 부호를 \(+, -, +\)로 번갈아 붙여 더합니다. 이렇게 보면 1.1절의 외적은 첫 행에 \(\mathbf i, \mathbf j, \mathbf k\)를 넣은 3차 행렬식입니다.</p>
-    \[\mathbf a\times\mathbf b = \begin{vmatrix}\mathbf i &amp; \mathbf j &amp; \mathbf k\\ a_1 &amp; a_2 &amp; a_3\\ b_1 &amp; b_2 &amp; b_3\end{vmatrix}.\]
+    <p>3차 행렬식은 첫 행의 각 원소에, 그 원소의 행과 열을 지우고 남은 2차 행렬식을 곱하고, 부호를 \(+, -, +\)로 번갈아 붙여 더한 것이다. 이렇게 보면 1.1절의 외적은 첫 행에 \(\mathbf i, \mathbf j, \mathbf k\)를 넣은 3차 행렬식이다.</p>
+    \[\mathbf a\times\mathbf b = \begin{vmatrix}\mathbf i &amp; \mathbf j &amp; \mathbf k\\ a_1 &amp; a_2 &amp; a_3\\ b_1 &amp; b_2 &amp; b_3\end{vmatrix}\]
     <div class="tb-env ex">
       <span class="lb">예제 1.4.2</span>
       <p>\(\begin{vmatrix}1 &amp; 2 &amp; 0\\ 0 &amp; 1 &amp; 3\\ 2 &amp; 0 &amp; 1\end{vmatrix}\)을 계산하여라.</p>
     </div>
-    <p><i>풀이.</i> \(1(1\cdot1 - 3\cdot0) - 2(0\cdot1 - 3\cdot2) + 0 = 1 + 12 = 13\).</p>
+    <p><i>풀이.</i> 첫 행으로 전개하면 \(1(1\cdot1 - 3\cdot0) - 2(0\cdot1 - 3\cdot2) + 0 = 1 + 12 = 13\)이다. 첫 행의 셋째 원소가 0이어서 마지막 항은 계산할 필요가 없었다. 그래서 0이 많은 행으로 전개하면 계산이 줄어든다.</p>
 
     <h3><span class="no">1.4.2</span>넓이와 부피</h3>
     <div class="tb-env thm">
       <span class="lb">정리 1.4.3</span>
-      <ol>
-        <li>평면벡터 \(\langle a, b\rangle\), \(\langle c, d\rangle\)이 만드는 평행사변형의 넓이는 \(\left|\begin{vmatrix}a &amp; b\\ c &amp; d\end{vmatrix}\right|\).</li>
-        <li>공간벡터 \(\mathbf a, \mathbf b, \mathbf c\)가 만드는 평행육면체의 부피는 \(|\mathbf a\cdot(\mathbf b\times\mathbf c)|\)이고, 이것은 세 벡터를 행으로 쓴 3차 행렬식의 절댓값이다.</li>
-      </ol>
+      <p>평면벡터 \(\langle a, b\rangle\), \(\langle c, d\rangle\)이 만드는 평행사변형의 넓이는 \(\left|\begin{vmatrix}a &amp; b\\ c &amp; d\end{vmatrix}\right|\)이다. 공간벡터 \(\mathbf a, \mathbf b, \mathbf c\)가 만드는 평행육면체의 부피는 \(|\mathbf a\cdot(\mathbf b\times\mathbf c)|\)이고, 이것은 세 벡터를 행으로 쓴 3차 행렬식의 절댓값이다.</p>
     </div>
-    <p>이유(2): 밑면은 \(\mathbf b, \mathbf c\)가 만드는 평행사변형으로 넓이 \(|\mathbf b\times\mathbf c|\), 높이는 \(\mathbf a\)를 밑면의 법선 \(\mathbf b\times\mathbf c\) 방향으로 정사영한 길이입니다. 둘을 곱하면 \(|\mathbf a\cdot(\mathbf b\times\mathbf c)|\)입니다. \(\mathbf a\cdot(\mathbf b\times\mathbf c)\)를 <b>스칼라 삼중곱</b>이라 합니다.</p>
+    <p>앞의 것은 처음 질문의 답이다. 평면벡터에 셋째 성분 0을 붙여 외적을 계산하면 \(\langle0, 0, ad - bc\rangle\)이 나오고, 그 크기가 1.1절에서 본 평행사변형의 넓이이다. 그림 1에서 \(\mathbf u = \langle3, 1\rangle\), \(\mathbf v = \langle1, 2\rangle\)이면 넓이는 \(3\cdot2 - 1\cdot1 = 5\)이다. \(\mathbf v\)를 끌어 \(\mathbf u\)와 같은 직선에 놓으면 평행사변형이 납작해져 넓이가 0이 된다.</p>
+    <p>뒤의 것도 같은 생각이다. 밑면은 \(\mathbf b, \mathbf c\)가 만드는 평행사변형으로 넓이가 \(|\mathbf b\times\mathbf c|\)이고, 높이는 \(\mathbf a\)를 밑면의 법선 \(\mathbf b\times\mathbf c\) 방향으로 정사영한 길이이다. 둘을 곱하면 \(|\mathbf a\cdot(\mathbf b\times\mathbf c)|\)이다. 이 \(\mathbf a\cdot(\mathbf b\times\mathbf c)\)를 <em>스칼라 삼중곱</em>이라 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.4</span>
       <p>\(\mathbf a = \langle1, 4, -7\rangle\), \(\mathbf b = \langle2, -1, 4\rangle\), \(\mathbf c = \langle0, -9, 18\rangle\)이 한 평면 위에 있음을 보여라.</p>
     </div>
-    <p><i>풀이.</i></p>
-    \[\begin{vmatrix}1 &amp; 4 &amp; -7\\ 2 &amp; -1 &amp; 4\\ 0 &amp; -9 &amp; 18\end{vmatrix} = 1(-18 + 36) - 4(36 - 0) - 7(-18 - 0) = 18 - 144 + 126 = 0.\]
-    <p>부피가 0이므로 평행육면체가 납작합니다. 곧 세 벡터는 한 평면 위에 있습니다.</p>
+    <p><i>풀이.</i> 세 벡터를 행으로 쓴 행렬식을 첫 행으로 전개한다.</p>
+    \[\begin{vmatrix}1 &amp; 4 &amp; -7\\ 2 &amp; -1 &amp; 4\\ 0 &amp; -9 &amp; 18\end{vmatrix} = 1(-18 + 36) - 4(36 - 0) - 7(-18 - 0) = 18 - 144 + 126 = 0\]
+    <p>부피가 0이므로 평행육면체가 납작하다. 즉 세 벡터는 한 평면 위에 있다. 실제로 \(\mathbf c = -2\mathbf a + \mathbf b\)인데, 이런 관계를 미리 짐작하지 않아도 행렬식 하나로 판정된다.</p>
 
     <h3><span class="no">1.4.3</span>성질</h3>
-    <ul class="tb-list">
-      <li>두 행을 바꾸면 부호가 바뀐다.</li>
-      <li>한 행을 \(k\)배 하면 행렬식도 \(k\)배.</li>
-      <li>한 행에 다른 행의 몇 배를 더해도 값이 같다.</li>
-      <li>두 행이 같거나 비례하면 0.</li>
-    </ul>
-    <p>행렬식이 0인지 아닌지는 이후 계속 중요합니다. 2.1절의 일차독립 판정, 6.6절의 변수변환(야코비안), 공통8의 연립미분방정식이 모두 행렬식을 씁니다.</p>
+    <p>행렬식에는 계산을 줄여 주는 성질이 있다. 두 행을 바꾸면 부호가 바뀌고, 한 행을 \(k\)배 하면 행렬식도 \(k\)배가 된다. 한 행에 다른 행의 몇 배를 더해도 값이 같으며, 두 행이 같거나 비례하면 0이다. 넓이로 읽으면 모두 자연스럽다. 한 벡터를 \(k\)배 늘리면 평행사변형도 \(k\)배가 되고, 한 벡터에 다른 벡터의 몇 배를 더하면 평행사변형이 밑변을 따라 밀릴 뿐 높이는 그대로이다.</p>
+    <p>행렬식이 0인지 아닌지는 이후 계속 중요하다. 2.1절의 일차독립 판정, 6.6절의 변수변환(야코비안), 고등미적분학의 연립미분방정식이 모두 행렬식을 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>2차: \(ad - bc\). 3차: 첫 행으로 전개.</li>
-        <li>|행렬식| = 평행사변형 넓이 / 평행육면체 부피.</li>
-        <li>0이면 벡터들이 납작하다(한 직선 / 한 평면 위).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>2차 행렬식은 \(ad - bc\)이고 3차 행렬식은 첫 행으로 전개해 계산한다. 그 절댓값은 행으로 쓴 벡터들이 만드는 평행사변형의 넓이 또는 평행육면체의 부피이므로, 처음 질문의 넓이는 \(|ad - bc|\)이다. 행렬식이 0이면 넓이나 부피가 0이어서, 벡터들이 한 직선이나 한 평면 위에 납작하게 놓여 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.4</span>연습문제</h3>
