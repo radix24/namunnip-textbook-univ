@@ -3,7 +3,8 @@
    출처 x(시험 전용, exams/*.json)가 있으면 기본으로 그것만 쓰고, 복습 문항(R·ex·tb)은 '복습 문항 포함'을 고를 때 섞는다.
    객관식(q.ch, q.ans)은 보기를 고르고 '정답 확인'을 누르면 바로 채점한다.
    틀린 문제는 학습 기록(js/progress.js, "quri-progress"의 wrong)에 남겨 '틀린 문제만 다시 풀기'에 쓴다.
-   풀던 세트는 sessionStorage에 두어 새로 고침해도 이어서 푼다. */
+   풀던 세트는 sessionStorage에 두어 새로 고침해도 이어서 푼다.
+   뽑기: 시험 시작마다 층별 비율(기본 30 · 응용 45 · 심화 25)과 대단원 균형으로 새로 뽑고, 최근 세트에 나온 문항은 뒤로 미룬다(draw·pickTier). */
 (() => {
   "use strict";
   const root = document.getElementById("exam");
@@ -68,10 +69,30 @@
     while (out.length < k && keys.some((u) => by.get(u).length)) keys.forEach((u) => { if (out.length < k && by.get(u).length) out.push(by.get(u).pop()); });
     return out;
   }
+  /* 최근에 본 문항은 덜 뽑는다: 세트를 시작할 때마다 번호(seq)를 올리고 문항마다 마지막으로 나온 번호를 적어 둔다
+     (localStorage "quri-exam-seen:<과목>" = { seq, at: { id: seq } }). 층마다 안 본 문항에서 먼저 대단원별로 고르게 뽑고,
+     모자라면 가장 오래전에 본 문항부터 채운다. 안 본 문항이 세트 크기만큼 남아 있는 동안에는 층별 몫도 안 본 문항 수로 정하므로,
+     범위 문항이 세트 k개분이면 k번 연달아 겹치지 않는다(한 층이 먼저 바닥나면 그 뒤 세트는 이웃 층 비율이 조금 커진다) */
+  const RKEY = "quri-exam-seen:" + conf.course;
+  const seenGet = () => { try { const r = JSON.parse(localStorage.getItem(RKEY) || "null"); return r && r.at ? r : { seq: 0, at: {} }; } catch (e) { return { seq: 0, at: {} }; } };
+  function seenPut(ids) {
+    const r = seenGet(); r.seq++;
+    ids.forEach((id) => { r.at[id] = r.seq; });
+    Object.keys(r.at).forEach((id) => { if (r.seq - r.at[id] >= 40 || !byId.has(id)) delete r.at[id]; });   // 오래된 기록은 지운다
+    try { localStorage.setItem(RKEY, JSON.stringify(r)); } catch (e) { /* 저장 못 해도 뽑기는 된다 */ }
+  }
+  function pickTier(l, k, at) {
+    const fresh = l.filter((q) => !at[q.id]), out = spread(fresh, k);
+    if (out.length < k) out.push(...shuffle(l.filter((q) => at[q.id])).sort((a, b) => at[a.id] - at[b.id]).slice(0, k - out.length));
+    return out;
+  }
   function draw(list, n) {
     const by = LV.map((_, i) => list.filter((q) => tier(q) === i));
-    const want = quotas(Math.min(n, list.length), MIX(opt.hard), by.map((l) => l.length));
-    const out = by.flatMap((l, i) => spread(l, want[i]));
+    const at = seenGet().at;
+    // 안 본 문항이 세트 크기만큼 남아 있으면 층별 몫을 안 본 문항 수로 정한다(한 층이 먼저 바닥나면 이웃 층의 새 문항으로 채움)
+    const fresh = by.map((l) => l.filter((q) => !at[q.id]).length), N = Math.min(n, list.length);
+    const want = quotas(N, MIX(opt.hard), fresh.reduce((a, b) => a + b, 0) >= N ? fresh : by.map((l) => l.length));
+    const out = by.flatMap((l, i) => pickTier(l, want[i], at));
     const pos = new Map(BANK.map((q, i) => [q.id, i]));
     return out.sort((a, b) => uorder(a.u) - uorder(b.u) || pos.get(a.id) - pos.get(b.id));
   }
@@ -114,7 +135,7 @@
         </section>
         <div class="ex-go">
           <button type="button" class="btn ex-start" ${avail ? "" : "disabled"}>시험 시작 · ${Math.min(opt.n, avail)}문제</button>
-          <span class="small dim">${avail ? `범위 안의 문제 ${avail}개에서 ${opt.hard ? "응용 64% · 심화 36%" : "기본 30% · 응용 45% · 심화 25%"} 비율로, 대단원별로 고르게 뽑습니다.${avail < opt.n ? " 범위의 문제가 모자라 모두 냅니다." : ""}` : "고른 범위에 문제가 없습니다. 대단원이나 출처를 더 고르세요."}</span>
+          <span class="small dim">${avail ? `범위 안의 문제 ${avail}개에서 ${opt.hard ? "응용 64% · 심화 36%" : "기본 30% · 응용 45% · 심화 25%"} 비율로, 대단원별로 고르게 뽑습니다.${avail < opt.n ? " 범위의 문제가 모자라 모두 냅니다." : " 최근 세트에 나온 문제는 뒤로 미룹니다."}` :"고른 범위에 문제가 없습니다. 대단원이나 출처를 더 고르세요."}</span>
         </div>
         <section class="ex-box ex-retry">
           <h2><span class="ex-step mono">↺</span>틀린 문제 다시 풀기</h2>
@@ -140,6 +161,7 @@
     if (t.classList.contains("ex-start")) {
       const set = draw(pool(), opt.n);
       const label = opt.scope === "pick" ? `직접 고른 범위(대단원 ${[...opt.units].map(Number).sort((a, b) => a - b).join("·")})` : SCOPES[opt.scope].t;
+      seenPut(set.map((q) => q.id));
       start(set.map((q) => q.id), label); return;
     }
     if (t.classList.contains("ex-wrong")) {
