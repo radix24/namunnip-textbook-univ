@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전21-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e21-equalizer" data-kind="본문" data-std="전전21-07-01">
+  <header class="card-head"><span class="no"></span><h2>다중경로 채널과 등화</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">도시에서 휴대폰 신호는 기지국에서 곧장 오기도 하고, 건물에 반사되어 조금 늦게 오기도 한다. 늦게 온 신호가 다음 심볼과 겹치면 심볼 사이 간섭(ISI)이 생긴다. 전송 속도를 높일수록 심볼이 짧아져 간섭이 심해진다. 수신기는 이 겹침을 어떻게 풀까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="다중경로 채널의 임펄스 응답. 직접파와 지연된 반사파가 이어져 심볼 사이 간섭을 만든다">
+        <line x1="40" y1="160" x2="420" y2="160" stroke="var(--ink-3, #888)"/>
+        <g stroke="var(--forest, #4b4fe0)" stroke-width="4"><line x1="80" y1="160" x2="80" y2="40"/><line x1="160" y1="160" x2="160" y2="100"/><line x1="240" y1="160" x2="240" y2="130"/></g>
+        <g stroke="var(--ink-3, #888)" stroke-dasharray="4 3"><line x1="80" y1="30" x2="80" y2="170"/><line x1="160" y1="30" x2="160" y2="170"/><line x1="240" y1="30" x2="240" y2="170"/></g>
+        <g font-size="12" fill="currentColor"><text x="60" y="26">h₀ 직접파</text><text x="150" y="92">h₁</text><text x="232" y="122">h₂</text><text x="300" y="100">심볼 간격 T마다</text><text x="300" y="118">앞 심볼이 겹친다</text><text x="380" y="180">t</text></g>
+      </svg>
+      <figcaption>그림 1. 다중경로 채널의 이산 임펄스 응답 \(h_0, h_1, h_2\). 수신 신호 \(r_k = h_0s_k + h_1s_{k-1} + h_2s_{k-2} + n_k\)에 앞 심볼이 섞인다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>검출 이론(<a href="03-01.html">3.1절</a>), 펄스 정형과 기저대역 전송(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>선형 등화기</h3>
+    <p>심볼 간격으로 표본화한 수신 신호는 \(r_k = \sum_lh_ls_{k-l} + n_k\)이다. 선형 등화기는 \(r_k\)에 FIR 필터 \(w\)를 걸어 \(\hat s_k = \sum_jw_jr_{k-j}\)로 심볼을 어림한다. 영강제(ZF) 등화기는 채널과 필터를 합친 응답이 임펄스가 되도록 \(W(z) = 1/H(z)\)로 고른다. 그러면 ISI는 사라지지만, 채널 주파수 응답이 작은 곳에서 필터 이득이 커져 잡음이 크게 증폭된다. MMSE 등화기는 ISI와 잡음을 합친 평균제곱오차를 최소화한다. 잡음이 크면 ISI를 조금 남기는 대신 잡음 증폭을 줄여, 대개 ZF보다 오류율이 낮다.</p>
+
+    <h3><span class="no">7.1.2</span>최대우도 수열 추정과 Viterbi 알고리즘</h3>
+    <p>가장 좋은 검출은 심볼을 하나씩이 아니라 수열 전체로 정하는 것이다. 가우시안 잡음에서 최대우도 수열 추정(MLSD)은 \(\sum_k|r_k - \sum_lh_ls_{k-l}|^2\)이 가장 작은 심볼 수열을 고른다. 모든 수열을 시험하면 수가 지수적으로 늘지만, 채널 메모리가 \(L\)이면 앞 \(L\)개 심볼이 상태가 되는 격자(trellis)로 나타낼 수 있다. Viterbi 알고리즘은 각 시각 각 상태로 들어오는 경로 가운데 거리가 가장 짧은 것만 남겨, 계산량을 \(M^L\)(상태 수)에 비례하게 줄인다. 따라서 짧은 메모리 채널에서는 최적 검출을 실시간으로 할 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>채널 \(h = (1, 0.5)\)에 BPSK(\(s = \pm1\))를 보낸다. 잡음이 없을 때 가능한 수신값을 모두 구하고, \(r_k = 0.5\)를 받았다면 무엇을 알 수 있는지 말하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(r_k = s_k + 0.5s_{k-1}\)이므로 가능한 값은 \(\pm1.5\)(같은 부호)와 \(\pm0.5\)(다른 부호)이다. 그러므로 \(r_k = 0.5\)이면 \(s_k = +1\), \(s_{k-1} = -1\)이다. 따라서 ISI는 앞 심볼 정보를 담고 있어, Viterbi 알고리즘은 이것을 버리지 않고 이용한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>다중경로 채널은 지연된 반사파로 심볼 사이 간섭을 만든다. 선형 등화기 가운데 ZF는 ISI를 없애는 대신 잡음을 증폭하고, MMSE는 둘의 합을 줄인다. 최적 검출인 MLSD는 채널 메모리를 상태로 한 격자에서 Viterbi 알고리즘으로 효율적으로 풀린다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>채널 메모리가 3이고 QPSK(\(M = 4\))이면 Viterbi 격자의 상태 수는?
+          <details><summary>답</summary><p>\(4^3 = 64\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>채널 \(H(e^{j\omega})\)이 어떤 주파수에서 0에 가까우면 ZF 등화기가 왜 나빠지는지 말하여라.
+          <details><summary>답</summary><p>\(1/H\)가 그 주파수에서 매우 커져 잡음을 크게 증폭하기 때문이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

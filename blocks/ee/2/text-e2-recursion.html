@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전2-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e2-recursion" data-kind="본문" data-std="전전2-02-04">
+  <header class="card-head"><span class="no"></span><h2>재귀</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">폴더 안에 폴더가 있고 그 안에 또 폴더가 있다. 모든 파일의 크기를 더하려면 몇 겹으로 들어가야 할지 미리 모른다. 그런데 "이 폴더의 크기 = 안의 파일 크기 + 안의 각 폴더의 크기"라고 쓰면 끝난다. 자기 자신을 부르는 함수, 재귀이다. 재귀는 어떻게 동작하고 비용은 어떻게 셀까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="fib(4)의 재귀 호출 나무. 같은 fib(2)가 여러 번 계산된다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="190" y="10" width="60" height="24"/><rect x="100" y="60" width="60" height="24"/><rect x="280" y="60" width="60" height="24"/><rect x="50" y="110" width="60" height="24"/><rect x="150" y="110" width="60" height="24"/><rect x="250" y="110" width="60" height="24"/><rect x="330" y="110" width="60" height="24"/><rect x="20" y="160" width="60" height="24"/><rect x="90" y="160" width="60" height="24"/></g>
+        <g fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"><rect x="50" y="110" width="60" height="24"/><rect x="280" y="60" width="60" height="24"/></g>
+        <g stroke="currentColor"><line x1="220" y1="34" x2="130" y2="60"/><line x1="220" y1="34" x2="310" y2="60"/><line x1="130" y1="84" x2="80" y2="110"/><line x1="130" y1="84" x2="180" y2="110"/><line x1="310" y1="84" x2="280" y2="110"/><line x1="310" y1="84" x2="360" y2="110"/><line x1="80" y1="134" x2="50" y2="160"/><line x1="80" y1="134" x2="120" y2="160"/></g>
+        <g font-size="12" fill="currentColor"><text x="200" y="27">fib(4)</text><text x="110" y="77">fib(3)</text><text x="290" y="77">fib(2)</text><text x="60" y="127">fib(2)</text><text x="160" y="127">fib(1)</text><text x="260" y="127">fib(1)</text><text x="340" y="127">fib(0)</text><text x="30" y="177">fib(1)</text><text x="100" y="177">fib(0)</text></g>
+      </svg>
+      <figcaption>그림 1. <code>fib(4)</code>의 호출 나무. 노란 상자처럼 같은 계산이 되풀이되어, 단순 재귀는 호출 수가 지수적으로 늘어난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>복잡도 분석(<a href="01-01.html">1.1절</a>), 스택(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
+
+    <h3><span class="no">2.4.1</span>기저 사례와 호출 스택</h3>
+    <p>재귀 함수에는 두 부분이 있어야 한다. 더 나누지 않고 바로 답하는 기저 사례, 그리고 문제를 더 작은 같은 꼴로 줄여 자기를 부르는 재귀 사례이다. 기저 사례가 없거나 문제가 작아지지 않으면 호출이 끝없이 쌓인다. 함수를 부를 때마다 인자와 지역 변수가 호출 스택에 올라가고, 돌아오면 내려온다. 그러므로 재귀 깊이만큼 메모리를 쓰고, 파이썬은 깊이가 약 1000을 넘으면 <code>RecursionError</code>를 낸다.</p>
+<pre class="mono small">def total_size(folder)&#58;
+    s = sum(f.size for f in folder.files)        # 기저 사례, 파일만
+    for sub in folder.subfolders&#58;
+        s += total_size(sub)                       # 재귀 사례, 하위 폴더
+    return s</pre>
+
+    <h3><span class="no">2.4.2</span>점화식으로 비용 세기</h3>
+    <p>재귀의 실행 시간은 점화식으로 쓴다. 이진 탐색은 반으로 줄이고 상수 일을 하므로 \(T(n) = T(n/2) + c\), 곧 \(O(\log n)\)이다. 병합 정렬은 둘로 나누어 각각 정렬하고 \(O(n)\)으로 합치므로 \(T(n) = 2T(n/2) + cn\), 곧 \(O(n\log n)\)이다. 반면 피보나치를 정의대로 재귀하면 \(T(n) = T(n - 1) + T(n - 2) + c\)라 \(O(\phi^n)\)으로 지수적이다. 같은 값을 되풀이해 계산하기 때문이다. 이때 한 번 구한 값을 사전에 저장하는 메모이제이션을 쓰면 각 \(n\)을 한 번씩만 계산해 \(O(n)\)이 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>정의대로 재귀한 <code>fib(n)</code>의 호출 수를 \(C(n)\)이라 하면 \(C(n) = C(n - 1) + C(n - 2) + 1\), \(C(0) = C(1) = 1\)이다. \(C(10)\)을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 차례로 \(C(2) = 3\), \(C(3) = 5\), \(C(4) = 9\), \(C(5) = 15\), \(C(6) = 25\), \(C(7) = 41\), \(C(8) = 67\), \(C(9) = 109\), \(C(10) = 177\)이다. 따라서 답 55를 얻으려고 함수를 177번 부른다. 메모이제이션을 쓰면 11번이면 된다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>재귀 함수는 기저 사례와 더 작은 문제로 줄이는 재귀 사례로 이루어지고, 호출마다 스택에 상태가 쌓인다. 실행 시간은 점화식으로 세며, 반으로 나누는 재귀는 \(\log n\)이나 \(n\log n\)이지만 겹치는 부분 문제를 되풀이하면 지수적이 된다. 메모이제이션은 같은 부분 문제를 한 번만 풀게 한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(T(n) = T(n - 1) + c\)인 재귀의 복잡도는?
+          <details><summary>답</summary><p>\(O(n)\). 예를 들어 리스트 합을 재귀로 구할 때이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>하노이 탑 원판 \(n\)개를 옮기는 횟수의 점화식과 해를 구하여라.
+          <details><summary>답</summary><p>\(M(n) = 2M(n - 1) + 1\), \(M(1) = 1\)이라 \(M(n) = 2^n - 1\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

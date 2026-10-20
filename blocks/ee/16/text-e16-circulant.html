@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전16-05-05",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e16-circulant" data-kind="본문" data-std="전전16-05-05">
+  <header class="card-head"><span class="no"></span><h2>순환 행렬과 Hadamard 행렬</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">주기 신호에 필터를 거는 순환 합성곱은 행렬로 쓰면 각 행이 앞 행을 한 칸씩 돌린 순환 행렬이 된다. 이 행렬은 크기와 상관없이 언제나 같은 고유벡터를 가진다. 바로 DFT의 기저 벡터이다. 그래서 FFT가 합성곱을 빠르게 한다. 한편 성분이 ±1뿐이면서 열끼리 직교하는 Hadamard 행렬은 CDMA 확산 부호에 쓰인다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="4×4 순환 행렬의 각 행이 앞 행을 오른쪽으로 한 칸 돌린 모양">
+        <g font-size="14" fill="currentColor">
+          <text x="60" y="50">c₀ c₃ c₂ c₁</text><text x="60" y="80">c₁ c₀ c₃ c₂</text><text x="60" y="110">c₂ c₁ c₀ c₃</text><text x="60" y="140">c₃ c₂ c₁ c₀</text>
+          <text x="260" y="50">+1 +1 +1 +1</text><text x="260" y="80">+1 −1 +1 −1</text><text x="260" y="110">+1 +1 −1 −1</text><text x="260" y="140">+1 −1 −1 +1</text>
+        </g>
+        <g font-size="12" fill="currentColor"><text x="60" y="170">순환 행렬 C</text><text x="260" y="170">Hadamard 행렬 H₄</text></g>
+      </svg>
+      <figcaption>그림 1. 순환 행렬(왼쪽)은 첫 열을 한 칸씩 돌려 만든다. Hadamard 행렬(오른쪽)은 성분이 ±1이고 서로 다른 행이 직교한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>대각화(<a href="04-01.html">4.1절</a>), 직교 행렬(<a href="03-04.html">3.4절</a>)을 쓴다.</div>
+
+    <h3><span class="no">5.5.1</span>순환 행렬과 DFT</h3>
+    <p>첫 열이 \((c_0, c_1, \ldots, c_{n-1})\)인 순환 행렬 \(C\)는 \(C\mathbf x = \mathbf c \circledast \mathbf x\), 곧 순환 합성곱이다. 이제 \(\omega = e^{2\pi i/n}\)으로 \(\mathbf f_k = (1, \omega^k, \omega^{2k}, \ldots, \omega^{(n-1)k})^{\mathsf T}\)를 놓자. 그러면 \((C\mathbf f_k)_j = \sum_mc_m\omega^{k(j - m)} = \omega^{kj}\sum_mc_m\omega^{-km}\)이므로 \(C\mathbf f_k = \lambda_k\mathbf f_k\), \(\lambda_k = \sum_mc_m\omega^{-km}\)이다. 따라서 모든 순환 행렬은 같은 고유벡터(DFT 기저)를 가지고, 고유값은 첫 열의 DFT이다. 다시 말해 \(C = F^{-1}\Lambda F\)이다. 그러므로 합성곱은 FFT로 변환해 성분끼리 곱하고 역변환하면 \(O(n\log n)\)에 계산된다.</p>
+
+    <h3><span class="no">5.5.2</span>Hadamard 행렬</h3>
+    <p>성분이 ±1이고 \(H^{\mathsf T}H = nI\)인 \(n\times n\) 행렬을 Hadamard 행렬이라 한다. 행들이 서로 직교하므로 \(H/\sqrt n\)은 직교 행렬이다. Sylvester 구성 \(H_{2n} = \begin{pmatrix}H_n & H_n\\H_n & -H_n\end{pmatrix}\)로 \(2^k\) 크기를 만들 수 있다. 행렬식은 \(|\det H| = n^{n/2}\)으로, 성분이 ±1인 행렬 가운데 가장 크다. 통신에서는 각 행을 사용자별 확산 부호(Walsh 부호)로 쓴다. 부호가 서로 직교하므로 같은 대역에서 동시에 보내도 수신기가 내적으로 자기 신호만 꺼낸다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.5.1</span>
+      <p>첫 열이 \((2, 1, 0, 1)\)인 4×4 순환 행렬의 고유값을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\lambda_k = \sum_mc_m\omega^{-km}\), \(\omega = i\)이다. \(k = 0\)이면 \(2 + 1 + 0 + 1 = 4\), \(k = 1\)이면 \(2 + (-i) + 0 + i = 2\), \(k = 2\)이면 \(2 - 1 + 0 - 1 = 0\), \(k = 3\)이면 \(2 + i + 0 - i = 2\)이다. 따라서 고유값은 4, 2, 0, 2이고, 0이 있으므로 이 행렬은 가역이 아니다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>순환 행렬은 순환 합성곱을 나타내며, 크기와 상관없이 DFT 기저 벡터를 고유벡터로 가지고 고유값은 첫 열의 DFT이다. 그래서 FFT로 합성곱을 빠르게 계산한다. Hadamard 행렬은 성분이 ±1인 직교 행렬(배율 \(\sqrt n\))로, Sylvester 구성으로 만들고 직교 확산 부호에 쓴다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.5.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(H_2 = \begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}\)에서 Sylvester 구성으로 \(H_4\)를 쓰고 그림 1과 비교하여라.
+          <details><summary>답</summary><p>\(\begin{pmatrix}H_2 & H_2\\H_2 & -H_2\end{pmatrix}\)로, 행 순서만 다를 뿐 그림 1과 같은 행들로 이루어진다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>순환 행렬 두 개의 곱이 교환 가능한 이유를 고유벡터로 설명하여라.
+          <details><summary>답</summary><p>둘 다 \(F^{-1}\Lambda F\) 꼴이라 \(C_1C_2 = F^{-1}\Lambda_1\Lambda_2F = C_2C_1\)이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전32-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e32-automotive" data-kind="본문" data-std="전전32-05-04">
+  <header class="card-head"><span class="no"></span><h2>차량용 반도체와 기능 안전</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">스마트폰 칩이 가끔 멈추면 다시 켜면 된다. 하지만 자동 긴급 제동을 맡은 칩이 고속도로에서 멈추면 사고가 난다. 차량용 반도체는 −40 °C에서 150 °C까지, 15년 넘게 동작해야 하고, 고장이 나더라도 안전하게 실패해야 한다. 설계에서 무엇이 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="잠금 단계 이중 코어. 두 코어가 같은 계산을 하고 비교기가 결과가 다르면 오류를 알린다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="60" y="30" width="100" height="40"/><rect x="60" y="110" width="100" height="40"/></g>
+        <rect x="250" y="70" width="80" height="40" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <g stroke="currentColor"><line x1="20" y1="90" x2="40" y2="90"/><line x1="40" y1="50" x2="40" y2="130"/><line x1="40" y1="50" x2="60" y2="50"/><line x1="40" y1="130" x2="60" y2="130"/><line x1="160" y1="50" x2="250" y2="80"/><line x1="160" y1="130" x2="250" y2="100"/><line x1="330" y1="90" x2="400" y2="90"/></g>
+        <g font-size="12" fill="currentColor"><text x="84" y="55">코어 A</text><text x="84" y="135">코어 B</text><text x="266" y="94">비교기</text><text x="340" y="84">오류 신호</text><text x="10" y="84">입력</text></g>
+      </svg>
+      <figcaption>그림 1. 잠금 단계(lockstep) 이중 코어. 두 코어가 같은 입력으로 같은 계산을 하고, 결과가 다르면 비교기가 즉시 오류를 알려 시스템이 안전 상태로 간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>테스트 용이화 설계(<a href="05-01.html">5.1절</a>), 합성과 타이밍(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">5.4.1</span>ISO 26262와 ASIL</h3>
+    <p>차량 전자 장치의 기능 안전 표준이 ISO 26262이다. 먼저 위험 분석으로 각 기능이 고장 났을 때의 심각도, 노출 빈도, 운전자의 통제 가능성을 평가해 안전 등급 ASIL A~D를 정한다. 제동이나 조향처럼 가장 위험한 기능은 ASIL D이다. 등급이 높을수록 설계 과정, 검증, 고장 대응 요구가 엄격하다. 반도체에는 우연한 하드웨어 고장에 대한 수치 목표가 있다. 단일점 고장 지표(SPFM)가 ASIL D에서 99% 이상이어야 한다. 다시 말해 고장의 99% 넘게를 안전 장치가 감지하거나 막아야 한다. 또 위험한 고장률이 10 FIT(\(10^{-8}\)/시간) 아래여야 한다.</p>
+
+    <h3><span class="no">5.4.2</span>설계 대응</h3>
+    <p>안전 장치는 고장을 감지해 시스템을 안전 상태로 보내는 것이 목적이다. 그림 1의 잠금 단계 이중 코어는 계산 오류를 바로 잡아낸다. 메모리에는 오류 정정 부호(ECC)를 넣어 방사선으로 뒤집힌 비트를 고치고, 버스와 레지스터에는 패리티를 둔다. 또 동작 중에 스스로 고장을 찾는 내장 자체 시험(BIST)을 켤 때와 주기적으로 실행한다. 감시 타이머(watchdog)는 소프트웨어가 멈추면 시스템을 재시동한다. 제조 측면에서는 AEC-Q100 기준으로 고온 수명, 온도 순환, 정전기 시험을 통과해야 하고, 불량률을 ppm 아래로 낮추려 테스트 범위를 넓힌다. 이런 장치는 면적과 전력을 늘리므로, 위험 분석으로 꼭 필요한 곳에만 넣는다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.1</span>
+      <p>어떤 칩의 고장률이 100 FIT이고, 안전 장치가 그 가운데 99.5%를 감지한다. 감지되지 않는 위험 고장률은 얼마이며 ASIL D 목표(10 FIT)를 만족하는가?</p>
+    </div>
+    <p><i>풀이.</i> 감지되지 않는 고장률은 \(100\times0.005 = 0.5\) FIT이다. 그러므로 10 FIT 목표를 만족한다. 1 FIT은 \(10^9\)시간에 한 번이라, 0.5 FIT은 차 한 대가 20억 시간 운행할 때 한 번꼴이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>차량용 반도체는 넓은 온도와 긴 수명, 그리고 고장 시 안전한 동작을 요구받는다. ISO 26262는 위험 분석으로 ASIL 등급을 정하고, 반도체에는 고장 감지율과 위험 고장률의 수치 목표를 준다. 잠금 단계 코어, ECC, 내장 자체 시험, 감시 타이머 같은 안전 장치로 고장을 감지해 안전 상태로 보낸다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>SRAM 비트 하나가 방사선으로 뒤집히는 소프트 오류를 막는 대표적 방법은?
+          <details><summary>답</summary><p>ECC(예를 들어 단일 오류 정정·이중 오류 검출 부호).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>잠금 단계 이중 코어가 두 코어에 같은 원인으로 생기는 고장(공통 원인 고장)에 약한 이유와 대책을 말하여라.
+          <details><summary>답</summary><p>전원 잡음이나 클록 문제로 두 코어가 똑같이 틀리면 비교기가 감지하지 못한다. 두 코어 사이에 몇 클록 시간차를 두거나 배치를 떨어뜨려 같은 교란을 동시에 받지 않게 한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,56 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e9-timer" data-kind="본문" data-std="전전9-07-02">
+  <header class="card-head"><span class="no"></span><h2>이완 발진기와 555 타이머 실험</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">LED를 1초마다 깜빡이거나 부저를 울리는 데는 사인파가 필요 없다. 축전기를 충전했다가 어떤 전압에 이르면 방전시키는 일을 되풀이하면 사각파가 나온다. 이런 이완 발진기는 저항과 축전기 값만으로 주기가 정해진다. 어떻게 계산하고, 측정값은 왜 계산과 조금 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="555 비안정 발진기의 축전기 전압과 출력. 축전기 전압이 1/3과 2/3 Vcc 사이를 오가고 출력은 사각파">
+        <line x1="40" y1="90" x2="420" y2="90" stroke="var(--ink-3, #888)"/>
+        <line x1="40" y1="180" x2="420" y2="180" stroke="var(--ink-3, #888)"/>
+        <g stroke="var(--ink-3, #888)" stroke-dasharray="4 3"><line x1="40" y1="30" x2="420" y2="30"/><line x1="40" y1="60" x2="420" y2="60"/></g>
+        <path d="M50 60 C 80 45, 100 34, 120 30 C 135 40, 150 52, 165 60 C 195 45, 215 34, 235 30 C 250 40, 265 52, 280 60 C 310 45, 330 34, 350 30 C 365 40, 380 52, 395 60" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <polyline points="50,120 120,120 120,170 165,170 165,120 235,120 235,170 280,170 280,120 350,120 350,170 395,170" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <g font-size="12" fill="currentColor"><text x="400" y="26">⅔Vcc</text><text x="400" y="56">⅓Vcc</text><text x="6" y="50">v_C</text><text x="6" y="150">출력</text><text x="70" y="114">t_H</text><text x="130" y="164">t_L</text></g>
+      </svg>
+      <figcaption>그림 1. 555 비안정 발진기. 축전기가 \(R_A + R_B\)로 충전되는 동안 출력은 높고, \(R_B\)로 방전되는 동안 낮다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>수동 회로와 RC 시상수(<a href="02-01.html">2.1절</a>), 연산증폭기 응용(<a href="05-01.html">5.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>슈미트 트리거 이완 발진기</h3>
+    <p>슈미트 트리거 인버터의 출력을 저항 \(R\)로 입력의 축전기 \(C\)에 되먹이면 발진기가 된다. 출력이 높으면 축전기가 충전되어 입력이 위 문턱 \(V_{T+}\)에 이르고, 그 순간 출력이 낮아져 방전이 시작된다. 입력이 아래 문턱 \(V_{T-}\)까지 내려가면 다시 출력이 높아진다. 그러므로 축전기 전압은 두 문턱 사이를 오가고, 한 번 충전에 걸리는 시간은 RC 충전식에서 \(t = RC\ln\frac{V_{DD} - V_{T-}}{V_{DD} - V_{T+}}\)이다. 문턱 전압이 칩마다 흩어져 주기도 ±20% 정도 흩어진다.</p>
+
+    <h3><span class="no">7.2.2</span>555 비안정 발진기</h3>
+    <p>555 타이머는 비교기 두 개가 \(\frac13V_{CC}\)과 \(\frac23V_{CC}\)를 기준으로 플립플롭을 켜고 끈다. 비안정 연결에서 축전기는 \(R_A + R_B\)를 통해 \(\frac13V_{CC}\)에서 \(\frac23V_{CC}\)까지 충전되고, 방전 트랜지스터가 켜지면 \(R_B\)를 통해 다시 \(\frac13V_{CC}\)까지 방전된다. 두 경우 모두 지수 곡선의 비가 2이므로</p>
+    \[t_H = \ln2\,(R_A + R_B)C, \qquad t_L = \ln2\,R_BC, \qquad f = \frac{1.44}{(R_A + 2R_B)C}\]
+    <p>이다. 문턱이 전원 전압의 비로 정해져 주기가 전원 전압에 거의 무관하다는 것이 장점이다. 그런데 듀티비는 늘 50%보다 크다. 50%에 가깝게 하려면 \(R_B \gg R_A\)로 하거나 \(R_B\)에 다이오드를 병렬로 단다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>\(R_A = 1\) kΩ, \(R_B = 10\) kΩ, \(C = 10\) μF인 555 비안정 회로의 주파수와 듀티비를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(t_H = 0.693\times11\times10^3\times10^{-5} \approx 76\) ms, \(t_L = 0.693\times10^4\times10^{-5} \approx 69\) ms이다. 따라서 주기는 145 ms, 주파수는 약 6.9 Hz, 듀티비는 \(76/145 \approx 52\%\)이다. 전해 축전기의 용량 오차가 ±20%라 측정 주파수도 그만큼 흩어질 수 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>이완 발진기는 축전기를 두 문턱 전압 사이에서 충전·방전시키며 사각파를 만들고, 주기는 RC 충전식의 로그로 정해진다. 555 비안정 회로는 \(\frac13V_{CC}\)과 \(\frac23V_{CC}\) 문턱으로 \(f = 1.44/(R_A + 2R_B)C\)를 주며 전원 전압에 거의 무관하다. 측정값은 축전기와 문턱 전압의 오차만큼 계산과 다르다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(C = 0.1\) μF, \(R_A = R_B = 4.7\) kΩ일 때 555의 주파수는?
+          <details><summary>답</summary><p>\(1.44/(14.1\times10^3\times10^{-7}) \approx 1.0\) kHz.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>555 비안정 회로에서 듀티비가 50%보다 작아질 수 없는 이유를 식으로 설명하여라.
+          <details><summary>답</summary><p>\(t_H/t_L = (R_A + R_B)/R_B &gt; 1\)이라 높은 시간이 늘 더 길다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

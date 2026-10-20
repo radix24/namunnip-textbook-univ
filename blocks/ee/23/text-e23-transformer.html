@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-04-06",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-transformer" data-kind="본문" data-std="전전23-04-06">
+  <header class="card-head"><span class="no"></span><h2>자기 주의와 Transformer</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">순환 신경망(RNN)은 문장을 한 단어씩 차례로 읽으며 기억을 넘겨준다. 그래서 문장이 길면 앞의 정보가 흐려지고, 계산을 병렬로 할 수 없다. 모든 단어가 다른 모든 단어를 한꺼번에 보고, 누구에게 얼마나 주의를 기울일지 스스로 정하면 어떨까? 이것이 자기 주의이고, Transformer의 핵심이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="자기 주의. 각 토큰의 질의가 모든 토큰의 키와 내적되어 가중치가 되고, 값들을 가중 평균한다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="30" y="140" width="60" height="26"/><rect x="130" y="140" width="60" height="26"/><rect x="230" y="140" width="60" height="26"/><rect x="330" y="140" width="60" height="26"/></g>
+        <rect x="230" y="30" width="60" height="26" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <g stroke="var(--qed, #f2b33d)"><line x1="260" y1="56" x2="60" y2="140" stroke-width="1"/><line x1="260" y1="56" x2="160" y2="140" stroke-width="4"/><line x1="260" y1="56" x2="260" y2="140" stroke-width="2"/><line x1="260" y1="56" x2="360" y2="140" stroke-width="1"/></g>
+        <g font-size="12" fill="currentColor"><text x="40" y="158">고양이</text><text x="146" y="158">가</text><text x="242" y="158">그것</text><text x="346" y="158">을</text><text x="234" y="48">"그것" 출력</text><text x="20" y="110">선 굵기 = 주의 가중치</text></g>
+      </svg>
+      <figcaption>그림 1. 자기 주의(개략). "그것"의 질의가 모든 토큰의 키와 비교되어 가중치를 정하고, 가중치가 큰 토큰의 값을 많이 섞어 문맥을 반영한 표현을 만든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>역전파(<a href="04-01.html">4.1절</a>), 시계열 자료의 모델 구조(<a href="04-03.html">4.3절</a>)를 쓴다.</div>
+
+    <h3><span class="no">4.6.1</span>자기 주의</h3>
+    <p>입력 토큰 \(n\)개의 표현을 행으로 쌓은 행렬 \(X\)(\(n\times d\))에 학습되는 행렬을 곱해 질의 \(Q = XW_Q\), 키 \(K = XW_K\), 값 \(V = XW_V\)를 만든다. 그다음</p>
+    \[\operatorname{Attention}(Q, K, V) = \operatorname{softmax}\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}\right)V\]
+    <p>를 계산한다. \(QK^{\mathsf T}\)의 \((i, j)\) 성분은 토큰 \(i\)의 질의와 토큰 \(j\)의 키의 닮음이고, softmax가 이것을 합이 1인 가중치로 바꾼다. 그러므로 각 출력은 모든 토큰의 값을 가중 평균한 것이다. \(\sqrt{d_k}\)로 나누는 것은 차원이 크면 내적이 커져 softmax가 한 곳에 몰리는 것을 막기 위해서이다. 여러 개의 주의를 따로 계산해 이어 붙이는 다중 헤드 주의는 서로 다른 관계(문법, 지시 대상 등)를 함께 잡는다.</p>
+
+    <h3><span class="no">4.6.2</span>Transformer 구조와 연산량</h3>
+    <p>Transformer의 한 층은 다중 헤드 자기 주의와 토큰별 2층 신경망(피드포워드)으로 이루어지고, 각각 잔차 연결과 층 정규화를 거친다. 자기 주의는 순서를 모르므로 위치 부호화를 입력에 더해 순서 정보를 준다. 연산량은 주의 행렬 때문에 길이 \(n\)에 대해 \(O(n^2d)\)이다. 반면 RNN은 \(O(nd^2)\)이지만 \(n\)단계를 차례로 계산해야 한다. 따라서 Transformer는 GPU에서 병렬로 빠르지만, 아주 긴 입력에서는 \(n^2\) 메모리가 부담이 된다. 대규모 자료로 미리 학습한 뒤 과제에 맞게 미세 조정하는 방식이 언어와 영상 모두에서 쓰인다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.6.1</span>
+      <p>토큰 2개, \(d_k = 2\)에서 \(Q = K = \begin{pmatrix}1 & 0\\1 & 1\end{pmatrix}\), \(V = \begin{pmatrix}2 & 0\\0 & 2\end{pmatrix}\)일 때 첫 토큰의 출력을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 첫 행의 점수는 \(QK^{\mathsf T}\)의 첫 행 \((1, 1)\)을 \(\sqrt2\)로 나눈 \((0.707, 0.707)\)이다. 그러면 softmax 가중치는 \((0.5, 0.5)\)이다. 따라서 출력은 \(0.5(2, 0) + 0.5(0, 2) = (1, 1)\)이다. 두 토큰의 키가 첫 질의와 똑같이 닮아 값을 반반 섞었다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>자기 주의는 질의와 키의 내적을 softmax로 가중치로 바꾸어 값들을 가중 평균하며, 모든 토큰이 다른 모든 토큰을 한 번에 참조한다. Transformer는 다중 헤드 주의와 피드포워드 층을 잔차 연결로 쌓고 위치 부호화로 순서를 준다. 길이에 대해 연산이 \(n^2\)이지만 병렬 계산이 쉬워 대규모 사전 학습에 알맞다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.6.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>입력 길이를 2배로 하면 주의 행렬의 크기는 몇 배가 되는가?
+          <details><summary>답</summary><p>4배.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위치 부호화 없이 자기 주의만 쓰면 "개가 사람을 물었다"와 "사람이 개를 물었다"를 구별하지 못하는 이유를 말하여라.
+          <details><summary>답</summary><p>자기 주의는 토큰 집합에 대해 순서를 바꾸어도 같은 결과를 주므로(순열 등변), 단어 순서 정보가 없다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

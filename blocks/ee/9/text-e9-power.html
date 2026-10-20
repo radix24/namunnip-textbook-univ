@@ -1,0 +1,55 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e9-power" data-kind="본문" data-std="전전9-07-03">
+  <header class="card-head"><span class="no"></span><h2>전원 회로 실험: 정류, 레귤레이터, DC-DC</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">벽 콘센트의 교류를 회로가 쓸 깨끗한 5 V로 바꾸려면 몇 단계를 거쳐야 할까? 그리고 배터리 12 V에서 5 V를 만들 때, 선형 레귤레이터는 왜 손이 데일 만큼 뜨거워지고 DC-DC 컨버터는 그렇지 않을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 170" role="img" aria-label="교류에서 직류 전원까지의 단계. 변압기, 브리지 정류, 평활 축전기, 레귤레이터">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="20" y="60" width="70" height="40"/><rect x="110" y="60" width="70" height="40"/><rect x="200" y="60" width="70" height="40"/><rect x="290" y="60" width="70" height="40"/></g>
+        <g stroke="currentColor"><line x1="90" y1="80" x2="110" y2="80"/><line x1="180" y1="80" x2="200" y2="80"/><line x1="270" y1="80" x2="290" y2="80"/><line x1="360" y1="80" x2="400" y2="80"/></g>
+        <g font-size="12" fill="currentColor"><text x="30" y="84">변압기</text><text x="120" y="84">정류</text><text x="210" y="84">평활 C</text><text x="294" y="84">레귤레이터</text><text x="400" y="74">5 V</text></g>
+        <path d="M30 140 C 40 120, 50 120, 60 140 C 70 160, 80 160, 90 140" fill="none" stroke="var(--ink-3, #888)"/>
+        <path d="M120 140 C 130 120, 140 120, 150 140 C 160 120, 170 120, 180 140" fill="none" stroke="var(--ink-3, #888)"/>
+        <path d="M210 128 L 225 124 L 240 128 L 255 124 L 270 128" fill="none" stroke="var(--qed, #f2b33d)"/>
+        <line x1="300" y1="126" x2="360" y2="126" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+      </svg>
+      <figcaption>그림 1. 교류에서 안정된 직류까지. 정류가 음의 반주기를 뒤집고, 평활 축전기가 리플을 줄이고, 레귤레이터가 남은 리플과 부하 변동을 없앤다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>다이오드 회로(<a href="03-01.html">3.1절</a>), 측정 장비(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
+
+    <h3><span class="no">7.3.1</span>정류와 선형 레귤레이터</h3>
+    <p>브리지 정류기는 다이오드 네 개로 교류의 음의 반주기를 뒤집어 전파 정류한다. 평활 축전기 \(C\)를 달면 출력은 첨두 근처에서 머물고, 리플은 \(\Delta V \approx I/(2fC)\)이다(전원 주파수 \(f\)). 그다음 선형 레귤레이터(7805, LDO)는 트랜지스터를 가변 저항처럼 써서 출력을 일정하게 유지한다. 그러므로 입력과 출력의 전압 차에 전류를 곱한 만큼이 그대로 열이 된다. 또 입력이 출력보다 최소 전압 차(드롭아웃)만큼 높아야 한다.</p>
+
+    <h3><span class="no">7.3.2</span>DC-DC 컨버터</h3>
+    <p>강압(buck) 컨버터는 스위치를 빠르게 켰다 끄고 인덕터와 축전기로 평균을 낸다. 이상적으로 출력은 \(V_{out} = DV_{in}\)이고(\(D\)는 듀티비), 스위치가 켜지거나 꺼진 상태에서는 전압이나 전류 하나가 거의 0이라 손실이 작다. 따라서 효율이 85~95%이다. 대신 스위칭 주파수의 리플과 잡음이 생겨, 아날로그 센서 회로에는 DC-DC 뒤에 LDO를 한 단 더 두기도 한다. 실험에서는 부하 전류를 바꾸어 가며 입력·출력 전력으로 효율을 재고, 오실로스코프로 리플을 AC 결합해 본다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>12 V에서 5 V, 1 A를 만든다. 선형 레귤레이터와 효율 90% 강압 컨버터의 손실 전력을 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 선형 레귤레이터의 손실은 \((12 - 5)\times1 = 7\) W이고 효율은 \(5/12 \approx 42\%\)이다. 강압 컨버터는 입력 전력이 \(5/0.9 \approx 5.56\) W이므로 손실은 0.56 W이다. 그러므로 선형 레귤레이터에는 7 W를 버릴 큰 방열판이 필요하고, 강압 컨버터는 거의 데워지지 않는다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>교류 전원은 정류, 평활, 조정의 단계를 거쳐 직류가 되고, 평활 리플은 \(I/2fC\)이다. 선형 레귤레이터는 깨끗하지만 전압 차와 전류의 곱만큼 열로 버려 효율이 낮다. 강압 컨버터는 스위칭으로 \(V_{out} = DV_{in}\)을 만들어 효율이 높지만 스위칭 리플이 있어, 민감한 회로 앞에는 LDO를 덧붙인다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>60 Hz 전파 정류, 부하 0.5 A, 리플 1 V 이하가 되려면 평활 축전기는 최소 얼마인가?
+          <details><summary>답</summary><p>\(C \ge 0.5/(2\times60\times1) \approx 4200\) μF.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>입력 12 V, 출력 3.3 V인 이상적 강압 컨버터의 듀티비는?
+          <details><summary>답</summary><p>\(D = 3.3/12 = 0.275\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

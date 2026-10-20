@@ -1,0 +1,53 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전29-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e29-wireless" data-kind="본문" data-std="전전29-06-01">
+  <header class="card-head"><span class="no"></span><h2>무선 LAN과 이동성 관리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">유선 이더넷은 보내면서 충돌을 들을 수 있지만, 무선에서는 자기 신호가 너무 세서 다른 신호를 듣지 못한다. 또 서로 보이지 않는 두 노트북이 같은 공유기에 동시에 보내면 공유기에서만 충돌이 난다. 무선은 다른 규칙이 필요하다. 그리고 버스에서 영상 통화를 하는 동안 기지국이 몇 번 바뀌어도 통화가 끊기지 않는 것은 어떻게 가능할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="숨은 단말 문제. A와 C는 서로의 전파 범위 밖이지만 둘 다 B에 닿는다">
+        <g fill="none" stroke="var(--ink-3, #888)" stroke-dasharray="5 4"><circle cx="130" cy="95" r="90"/><circle cx="310" cy="95" r="90"/></g>
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><circle cx="130" cy="95" r="14"/><circle cx="310" cy="95" r="14"/></g>
+        <circle cx="220" cy="95" r="14" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <g font-size="13" fill="currentColor"><text x="125" y="100">A</text><text x="215" y="100">B</text><text x="305" y="100">C</text></g>
+        <g font-size="12" fill="currentColor"><text x="20" y="186">A와 C는 서로 못 듣지만 B에서 충돌</text></g>
+      </svg>
+      <figcaption>그림 1. 숨은 단말 문제. A와 C는 서로의 신호를 듣지 못해 동시에 보내고, 둘 다 닿는 B에서 충돌이 일어난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>링크 계층과 다중 접속(<a href="05-01.html">5.1절</a>), 네트워크 계층(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">6.1.1</span>CSMA/CA</h3>
+    <p>Wi-Fi(802.11)는 충돌을 감지하는 대신 피하는 CSMA/CA를 쓴다. 보내기 전에 채널이 일정 시간(DIFS) 비어 있는지 듣고, 비어 있으면 임의의 백오프 시간을 더 기다린 뒤 보낸다. 받는 쪽은 프레임을 잘 받으면 짧은 간격(SIFS) 뒤 확인 응답(ACK)을 보낸다. ACK가 오지 않으면 충돌로 보고 백오프 범위를 두 배로 늘려 다시 시도한다. 숨은 단말 문제를 줄이려면 큰 프레임 앞에 짧은 RTS를 보내고, 공유기가 CTS로 답하게 한다. 그러면 CTS를 들은 모든 단말이 그 시간 동안 조용히 한다. 이런 대기와 응답 때문에 실제 처리량은 물리 계층 속도의 절반 남짓이 된다.</p>
+
+    <h3><span class="no">6.1.2</span>셀룰러 이동성과 핸드오버</h3>
+    <p>셀룰러 망에서 단말은 기지국(eNB/gNB)에 무선으로 붙고, 기지국은 코어망을 거쳐 인터넷과 이어진다. 단말이 움직여 이웃 기지국의 신호가 일정 차이 이상 세지면, 망이 핸드오버를 결정한다. 이전 기지국은 새 기지국에 단말의 상태를 넘기고, 넘기는 동안 도착한 패킷은 새 기지국으로 전달한다. 그러면 단말의 IP 주소와 연결이 그대로 유지된다. 코어망의 이동성 관리 기능은 단말이 어느 위치 영역에 있는지 기억해 두었다가, 착신이 오면 그 영역에서만 호출(paging)한다. 따라서 무선 구간의 이동성은 단말이 아니라 망이 관리해, 상위 계층에는 끊김이 보이지 않는다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>물리 계층 속도 54 Mbps인 Wi-Fi에서 1500바이트 프레임을 보내는 데 DIFS 34 μs, 평균 백오프 67 μs, 프레임 전송, SIFS 16 μs, ACK 30 μs가 든다(프리앰블 등 무시). 실효 처리량을 어림하여라.</p>
+    </div>
+    <p><i>풀이.</i> 프레임 전송은 \(12\,000/54\times10^6 \approx 222\) μs이다. 전체 시간은 \(34 + 67 + 222 + 16 + 30 = 369\) μs이므로 처리량은 \(12\,000/369\times10^{-6} \approx 32.5\) Mbps이다. 그러므로 물리 속도의 약 60%이고, 프리앰블과 충돌을 넣으면 더 낮아진다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>무선 LAN은 충돌을 감지할 수 없어 CSMA/CA로 피한다. 채널이 빈 것을 확인하고 임의 백오프 뒤 보내며, ACK로 성공을 확인하고 RTS/CTS로 숨은 단말 문제를 줄인다. 셀룰러 망은 신호 세기에 따라 망이 핸드오버를 결정하고 상태와 패킷을 넘겨, 단말이 움직여도 연결이 이어진다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>무선에서 CSMA/CD(충돌 감지)를 쓰기 어려운 이유는?
+          <details><summary>답</summary><p>송신 중인 자기 신호가 수신 신호보다 훨씬 세서 다른 신호와의 충돌을 들을 수 없기 때문이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 프레임이 150바이트로 작아지면 처리량 비율은 어떻게 되는가?
+          <details><summary>답</summary><p>전송 22 μs, 전체 169 μs라 \(1200/169 \approx 7\) Mbps, 물리 속도의 약 13%. 작은 프레임일수록 고정 오버헤드의 비중이 커진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

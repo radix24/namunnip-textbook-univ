@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전27-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e27-memory" data-kind="본문" data-std="전전27-06-01">
+  <header class="card-head"><span class="no"></span><h2>DRAM과 NAND 플래시</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">컴퓨터의 주기억장치 DRAM은 전원을 끄면 내용이 사라지고, 켜 둔 채로도 수십 ms마다 다시 써 주어야 한다. 반면 SSD의 NAND 플래시는 전원 없이 10년을 기억한다. 둘 다 전하를 저장하는데 무엇이 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="DRAM 셀은 트랜지스터 하나와 축전기 하나, NAND 플래시 셀은 부유 게이트에 전자를 가둔 트랜지스터">
+        <g stroke="currentColor" fill="none" stroke-width="1.5">
+          <line x1="40" y1="60" x2="100" y2="60"/><line x1="100" y1="40" x2="100" y2="80"/><line x1="110" y1="40" x2="110" y2="80"/><line x1="110" y1="50" x2="150" y2="50"/><line x1="110" y1="70" x2="150" y2="70"/>
+          <line x1="150" y1="70" x2="150" y2="110"/><line x1="135" y1="110" x2="165" y2="110"/><line x1="135" y1="118" x2="165" y2="118"/><line x1="150" y1="118" x2="150" y2="140"/>
+          <line x1="150" y1="50" x2="150" y2="20"/>
+        </g>
+        <rect x="260" y="120" width="140" height="20" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <rect x="290" y="95" width="80" height="10" fill="none" stroke="currentColor"/>
+        <rect x="290" y="75" width="80" height="14" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <rect x="290" y="45" width="80" height="22" fill="none" stroke="currentColor"/>
+        <g fill="var(--qed, #f2b33d)"><circle cx="310" cy="82" r="3"/><circle cx="330" cy="82" r="3"/><circle cx="350" cy="82" r="3"/></g>
+        <g font-size="12" fill="currentColor"><text x="20" y="54">워드선</text><text x="156" y="24">비트선</text><text x="172" y="118">C_s</text><text x="40" y="170">DRAM (1T1C)</text><text x="380" y="60">제어 게이트</text><text x="380" y="86">부유 게이트</text><text x="380" y="104">터널 산화막</text><text x="270" y="170">NAND 플래시 셀</text></g>
+      </svg>
+      <figcaption>그림 1. DRAM 셀(왼쪽)은 축전기에 전하를 담고 트랜지스터로 꺼내며, 플래시 셀(오른쪽)은 절연막에 둘러싸인 부유 게이트에 전자를 가둔다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전기전자재료의 <a href="../26/05-01.html">MOS 구조와 MOSFET</a>, pn 다이오드(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
+
+    <h3><span class="no">6.1.1</span>DRAM</h3>
+    <p>DRAM 셀은 트랜지스터 하나와 축전기 하나(1T1C)이다. 축전기에 전하가 있으면 1, 없으면 0이다. 읽을 때는 트랜지스터를 켜서 셀 축전기 \(C_s\)를 길고 용량이 큰 비트선 \(C_B\)에 잇는다. 그러면 비트선 전압이 \(\Delta V = \frac{V_s - V_{pre}}{1 + C_B/C_s}\)만큼만 조금 바뀌고, 감지 증폭기가 이것을 키워 읽는다. 그런데 읽기가 셀 전하를 흐트러뜨리므로 읽은 뒤 다시 써 넣는다. 또 축전기 전하는 누설 전류로 조금씩 빠지므로 64 ms 안에 모든 셀을 다시 써 주는 리프레시가 필요하다. 셀을 작게 할수록 \(C_s\)를 유지하기 어려워, 깊은 원통형 축전기와 고유전율 막을 쓴다.</p>
+
+    <h3><span class="no">6.1.2</span>NAND 플래시</h3>
+    <p>플래시 셀은 MOSFET의 게이트 아래에 절연막으로 완전히 둘러싸인 부유 게이트(또는 전하 포획층)가 있다. 제어 게이트에 높은 전압(약 20 V)을 걸면 얇은 터널 산화막을 지나 전자가 부유 게이트로 들어간다(Fowler-Nordheim 터널링). 이때 갇힌 전자는 문턱 전압을 높이므로, 읽을 때 정해진 전압에서 셀이 켜지는지 보고 0과 1을 가린다. 절연막이 전자를 10년 넘게 가두므로 비휘발성이다. 문턱 전압을 여러 단계로 나누면 셀 하나에 2~4비트를 저장한다(MLC, TLC, QLC). NAND는 셀을 직렬로 이어 집적도를 높이고, 요즘은 셀을 수백 층 수직으로 쌓는다(3D NAND). 다만 쓰고 지우기를 되풀이하면 산화막이 손상되어 수명이 수천~수만 회로 제한된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>셀 축전기 25 fF, 비트선 용량 250 fF, 셀 전압 1.2 V, 비트선 미리 충전 0.6 V이다. 1을 읽을 때 비트선 전압 변화를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\Delta V = (1.2 - 0.6)/(1 + 10) \approx 55\) mV이다. 0을 읽으면 −55 mV이다. 감지 증폭기는 이 작은 차이를 전원 전압까지 키우며, 이 신호가 너무 작아지지 않도록 셀 용량을 수십 fF로 유지해야 한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>DRAM은 축전기 하나에 전하를 담는 1T1C 셀로 빠르지만, 읽기가 파괴적이고 누설 때문에 리프레시가 필요한 휘발성 메모리이다. NAND 플래시는 절연된 부유 게이트에 터널링으로 전자를 가두어 문턱 전압으로 정보를 저장하는 비휘발성 메모리로, 다중 비트와 3D 적층으로 집적도를 높이지만 쓰기 횟수에 수명이 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>TLC 셀은 문턱 전압 상태를 몇 개 구별해야 하는가?
+          <details><summary>답</summary><p>\(2^3 = 8\)개.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>셀당 비트 수를 늘리면 쓰기 수명과 속도가 나빠지는 이유를 말하여라.
+          <details><summary>답</summary><p>문턱 전압 상태 사이 간격이 좁아져 작은 전하 누설이나 산화막 손상도 오류가 되고, 정밀하게 쓰려고 프로그램-확인을 여러 번 되풀이해야 하기 때문이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

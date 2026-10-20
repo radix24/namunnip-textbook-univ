@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-variability" data-kind="본문" data-std="전전30-07-02">
+  <header class="card-head"><span class="no"></span><h2>변동성, 신뢰성, 스케일링</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">같은 웨이퍼에서 나온 칩이라도 어떤 것은 3 GHz로 돌고 어떤 것은 2.6 GHz에서 오류가 난다. 같은 칩도 더운 여름날이나 배터리가 약할 때 느려진다. 그리고 10년쯤 쓰면 서서히 느려진다. 설계자는 이 모든 경우에 칩이 동작하도록 해야 한다. 변동과 노화는 어디서 오고, 미세화는 이것을 어떻게 바꾸었을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="공정 모서리. 느린 NMOS와 PMOS, 빠른 NMOS와 PMOS 조합의 다섯 모서리 점">
+        <line x1="60" y1="170" x2="400" y2="170" stroke="var(--ink-3, #888)"/>
+        <line x1="60" y1="170" x2="60" y2="20" stroke="var(--ink-3, #888)"/>
+        <rect x="100" y="40" width="260" height="110" fill="none" stroke="var(--ink-3, #888)" stroke-dasharray="4 3"/>
+        <g fill="var(--forest, #4b4fe0)"><circle cx="100" cy="150" r="5"/><circle cx="360" cy="40" r="5"/><circle cx="230" cy="95" r="5"/></g>
+        <g fill="var(--qed, #f2b33d)"><circle cx="100" cy="40" r="5"/><circle cx="360" cy="150" r="5"/></g>
+        <g font-size="12" fill="currentColor"><text x="80" y="166">SS</text><text x="366" y="40">FF</text><text x="236" y="92">TT</text><text x="70" y="36">SF</text><text x="366" y="160">FS</text><text x="300" y="186">NMOS 속도</text><text x="66" y="18">PMOS 속도</text></g>
+      </svg>
+      <figcaption>그림 1. 공정 모서리. NMOS와 PMOS가 각각 느림(S)·빠름(F)인 조합의 모서리에서 회로를 검증해, 공정 변동 범위 안의 모든 칩이 동작하게 한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>CMOS 인버터(<a href="01-01.html">1.1절</a>), 셋업·홀드 제약(<a href="03-01.html">3.1절</a>), 배선 지연(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>PVT 변동</h3>
+    <p>회로 성능은 공정(P), 전압(V), 온도(T)에 따라 변한다. 공정 변동에는 웨이퍼나 칩 전체가 함께 치우치는 전역 변동과, 바로 옆 트랜지스터끼리도 다른 국부 변동이 있다. 국부 변동의 큰 원인은 채널 속 도펀트 원자 수의 무작위 요동으로, 문턱 전압의 표준편차가 \(\sigma_{V_t} \propto 1/\sqrt{WL}\)이다(Pelgrom 법칙). 그러므로 트랜지스터가 작을수록 요동이 커진다. 전압이 떨어지면 구동 전류가 줄어 느려지고, 온도가 오르면 이동도가 줄어 대개 느려진다. 설계에서는 모서리(SS, FF, SF, FS)와 최저 전압, 최고 온도 조합에서 타이밍을 확인하고, 통계적 타이밍 해석으로 수율을 어림한다.</p>
+
+    <h3><span class="no">7.2.2</span>신뢰성과 스케일링</h3>
+    <p>칩은 쓰면서 늙는다. 게이트에 전압이 오래 걸리면 계면 결함이 생겨 문턱 전압이 오르는 BTI, 빠른 운반자가 산화막을 손상시키는 핫 캐리어 효과, 큰 전류 밀도의 구리 원자 이동으로 배선이 끊어지는 전자 이동(electromigration)이 대표적이다. 그래서 수명 동안의 열화만큼 여유를 두고 설계한다. 한편 Dennard 스케일링은 크기와 전압을 함께 \(1/\kappa\)로 줄이면 전력 밀도가 일정하다고 했다. 그런데 2000년대 중반 이후 누설 전류 때문에 문턱 전압과 전원 전압을 더 줄이지 못하게 되었다. 따라서 트랜지스터 수는 계속 늘었지만 클록 주파수는 멈추고, 칩의 일부만 동시에 켤 수 있는 "다크 실리콘"과 멀티코어, 전용 가속기로 방향이 바뀌었다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>Pelgrom 계수 \(A_{V_t} = 2\) mV·μm일 때 \(W\times L = 0.1\times0.05\) μm²인 트랜지스터의 문턱 전압 표준편차를 구하여라. 넓이를 4배로 하면?</p>
+    </div>
+    <p><i>풀이.</i> \(\sigma_{V_t} = A_{V_t}/\sqrt{WL} = 2/\sqrt{0.005} \approx 28\) mV이다. 넓이를 4배로 하면 14 mV로 절반이 된다. 그러므로 SRAM 셀이나 감지 증폭기처럼 짝 트랜지스터의 정합이 중요한 회로는 일부러 크게 만든다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>회로 성능은 공정, 전압, 온도에 따라 변하며, 국부 문턱 전압 변동은 Pelgrom 법칙에 따라 트랜지스터가 작을수록 커진다. 설계는 공정 모서리와 극한 전압·온도에서 검증한다. BTI, 핫 캐리어, 전자 이동은 수명 동안 성능을 떨어뜨린다. 전압 스케일링이 멈추며 주파수 대신 병렬성과 가속기로 성능을 높이는 시대가 되었다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Dennard 스케일링에서 크기와 전압을 1/2로 줄이면 게이트 하나의 동적 전력은 몇 배가 되는가(주파수 2배)?
+          <details><summary>답</summary><p>\(CV^2f\)에서 \(\frac12\cdot\frac14\cdot2 = \frac14\)배. 넓이도 1/4이라 전력 밀도는 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>최저 전압과 최고 온도 모서리가 늘 최악은 아닌 이유를 말하여라(온도 역전).
+          <details><summary>답</summary><p>낮은 전압에서는 온도가 오를 때 문턱 전압이 내려가는 효과가 이동도 감소보다 커서, 오히려 낮은 온도에서 더 느려질 수 있다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

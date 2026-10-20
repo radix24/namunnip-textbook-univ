@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전11-03-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e11-limit" data-kind="본문" data-std="전전11-03-04">
+  <header class="card-head"><span class="no"></span><h2>부등식, 큰 수의 법칙, 모수 추정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">잡음 섞인 신호를 여러 번 재어 평균을 내면 참값에 가까워진다는 것은 경험으로 안다. 그런데 몇 번 재면 충분할까? 분포를 모르더라도 "틀릴 확률이 이보다 크지 않다"고 말할 수 있을까? 그리고 측정값에서 분포의 모수를 가장 그럴듯하게 정하는 방법은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="표본 수가 늘수록 표본 평균의 분포가 참값 주위로 좁아진다">
+        <line x1="40" y1="170" x2="420" y2="170" stroke="var(--ink-3, #888)"/>
+        <line x1="230" y1="20" x2="230" y2="170" stroke="var(--ink-3, #888)" stroke-dasharray="4 3"/>
+        <path d="M60 168 C 140 160, 180 110, 230 110 C 280 110, 320 160, 400 168" fill="none" stroke="var(--ink-3, #888)" stroke-width="2"/>
+        <path d="M130 168 C 180 162, 205 60, 230 60 C 255 60, 280 162, 330 168" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <path d="M180 168 C 210 164, 220 25, 230 25 C 240 25, 250 164, 280 168" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <g font-size="12" fill="currentColor"><text x="300" y="130">n = 1</text><text x="270" y="70">n = 10</text><text x="244" y="30">n = 100</text><text x="220" y="186">μ</text></g>
+      </svg>
+      <figcaption>그림 1. 표본 평균의 분포. 표준편차가 \(\sigma/\sqrt n\)으로 줄어 \(n\)이 커질수록 참값 \(\mu\) 근처에 몰린다(큰 수의 법칙).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기대값과 분산(<a href="02-01.html">2.1절</a>), 중심극한정리(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
+
+    <h3><span class="no">3.4.1</span>Markov·Chebyshev 부등식</h3>
+    <p>음이 아닌 확률변수 \(X\)에 대해 Markov 부등식 \(P(X \ge a) \le E[X]/a\)가 성립한다. 평균이 작으면 큰 값이 나올 확률도 작다는 뜻이다. 여기에 \(X = (Y - \mu)^2\)을 넣으면 Chebyshev 부등식 \(P(|Y - \mu| \ge k\sigma) \le 1/k^2\)를 얻는다. 분포를 몰라도 평균에서 \(k\) 표준편차 넘게 벗어날 확률의 상한을 준다. 이제 독립 동일 분포 표본의 평균 \(\bar X_n\)은 분산이 \(\sigma^2/n\)이므로, Chebyshev 부등식에서 \(P(|\bar X_n - \mu| \ge \epsilon) \le \sigma^2/(n\epsilon^2) \to 0\)이다. 이것이 약한 큰 수의 법칙이다.</p>
+
+    <h3><span class="no">3.4.2</span>최대우도 추정</h3>
+    <p>관측값 \(x_1, \ldots, x_n\)이 모수 \(\theta\)인 분포에서 독립으로 나왔다면, 가능도 \(L(\theta) = \prod f(x_i;\theta)\)를 가장 크게 하는 \(\theta\)를 추정값으로 삼는다. 로그를 씌운 \(\ell(\theta) = \sum\ln f(x_i;\theta)\)를 미분해 0으로 놓으면 편하다. 예를 들어 잡음이 가우시안 \(N(\mu, \sigma^2)\)이면 \(\hat\mu = \bar x\), \(\hat\sigma^2 = \frac1n\sum(x_i - \bar x)^2\)이다. 지수 분포(평균 \(1/\lambda\))이면 \(\hat\lambda = 1/\bar x\)이다. 따라서 가우시안 잡음에서는 표본 평균이 최대우도 추정량이고, 큰 수의 법칙으로 참값에 수렴한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.4.1</span>
+      <p>잡음 표준편차가 2 mV인 전압을 재어 평균을 낸다. 평균이 참값에서 0.5 mV 넘게 벗어날 확률이 5% 이하가 되려면 측정이 몇 번 필요한지 Chebyshev 부등식과 중심극한정리로 각각 어림하여라.</p>
+    </div>
+    <p><i>풀이.</i> Chebyshev로는 \(4/(n\times0.25) \le 0.05\)에서 \(n \ge 320\)이다. 중심극한정리로는 \(0.5/(2/\sqrt n) \ge 1.96\)에서 \(n \ge 61.5\), 곧 62번이다. Chebyshev는 분포를 가정하지 않는 대신 보수적이라 5배쯤 많이 요구한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Markov 부등식은 평균으로, Chebyshev 부등식은 분산으로 꼬리 확률의 상한을 주며 분포를 몰라도 쓸 수 있다. 표본 평균의 분산이 \(\sigma^2/n\)이므로 Chebyshev 부등식에서 큰 수의 법칙이 나온다. 최대우도 추정은 로그 가능도를 최대화해 모수를 정하며, 가우시안 잡음에서 평균의 추정량은 표본 평균이다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">3.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>평균에서 3σ 넘게 벗어날 확률의 Chebyshev 상한과 정규분포의 실제 값을 비교하여라.
+          <details><summary>답</summary><p>상한 1/9 ≈ 0.11, 정규분포는 약 0.0027.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>Poisson 분포(평균 \(\lambda\))에서 관측값 3, 5, 4, 6의 최대우도 추정값을 구하여라.
+          <details><summary>답</summary><p>\(\hat\lambda = \bar x = 4.5\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

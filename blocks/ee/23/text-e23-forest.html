@@ -1,0 +1,56 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-forest" data-kind="본문" data-std="전전23-07-01">
+  <header class="card-head"><span class="no"></span><h2>결정 트리와 랜덤 포레스트</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">"나이가 30보다 많은가? 그렇다면 소득이 5천만 원보다 많은가?"처럼 질문을 이어 가며 분류하는 결정 트리는 사람이 읽기 쉽다. 그런데 트리 하나는 자료가 조금만 바뀌어도 모양이 크게 달라진다. 여러 트리를 만들어 투표시키면 이 불안정성을 줄일 수 있다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="두 특성 평면을 축에 나란한 선으로 나누는 결정 트리와 그 트리 구조">
+        <rect x="30" y="20" width="180" height="160" fill="none" stroke="var(--ink-3, #888)"/>
+        <line x1="110" y1="20" x2="110" y2="180" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <line x1="110" y1="90" x2="210" y2="90" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <g fill="var(--forest, #4b4fe0)"><circle cx="60" cy="60" r="3"/><circle cx="80" cy="130" r="3"/><circle cx="50" cy="150" r="3"/><circle cx="150" cy="140" r="3"/><circle cx="180" cy="160" r="3"/></g>
+        <g fill="var(--qed, #f2b33d)"><circle cx="140" cy="50" r="3"/><circle cx="180" cy="40" r="3"/><circle cx="160" cy="70" r="3"/></g>
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="290" y="20" width="80" height="24"/><rect x="250" y="90" width="60" height="24"/><rect x="330" y="90" width="80" height="24"/><rect x="310" y="155" width="50" height="24"/><rect x="380" y="155" width="50" height="24"/></g>
+        <g stroke="currentColor"><line x1="330" y1="44" x2="280" y2="90"/><line x1="330" y1="44" x2="370" y2="90"/><line x1="370" y1="114" x2="335" y2="155"/><line x1="370" y1="114" x2="405" y2="155"/></g>
+        <g font-size="11" fill="currentColor"><text x="298" y="36">x₁ &lt; 0.4 ?</text><text x="262" y="106">파랑</text><text x="336" y="106">x₂ &lt; 0.55 ?</text><text x="318" y="171">파랑</text><text x="384" y="171">노랑</text><text x="60" y="196">x₁</text><text x="10" y="100">x₂</text></g>
+      </svg>
+      <figcaption>그림 1. 결정 트리는 특성 공간을 축에 나란한 선으로 차례로 나눈다(왼쪽). 각 갈림은 트리의 마디이고, 잎이 분류 결과이다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>학습의 기본 틀과 과적합(<a href="01-01.html">1.1절</a>), 평가와 교차 검증(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>결정 트리 만들기</h3>
+    <p>트리는 위에서부터 탐욕적으로 자란다. 각 마디에서 모든 특성과 모든 경계값을 시험해, 나눈 뒤 두 자식 마디의 불순도 가중 평균이 가장 작아지는 갈림을 고른다. 분류에서 쓰는 불순도는 Gini 지수 \(G = 1 - \sum_kp_k^2\)나 엔트로피 \(-\sum_kp_k\log p_k\)이다. 회귀에서는 분산을 쓴다. 그런데 끝까지 자라게 두면 훈련 자료를 외워 과적합한다. 그래서 최대 깊이, 잎의 최소 표본 수를 정하거나, 다 키운 뒤 검증 오차가 늘지 않는 범위에서 가지를 친다.</p>
+
+    <h3><span class="no">7.1.2</span>배깅과 랜덤 포레스트</h3>
+    <p>배깅(bootstrap aggregating)은 훈련 자료에서 복원 추출로 부트스트랩 표본을 여러 개 만들고, 표본마다 트리를 키워 예측을 평균(회귀)하거나 투표(분류)한다. 서로 상관 \(\rho\), 분산 \(\sigma^2\)인 예측 \(B\)개를 평균하면 분산이 \(\rho\sigma^2 + (1 - \rho)\sigma^2/B\)가 된다. 따라서 트리끼리 상관이 작을수록 효과가 크다. 랜덤 포레스트는 각 갈림에서 특성 일부(예를 들어 \(\sqrt p\)개)만 무작위로 후보로 삼아 트리들을 더 다르게 만든다. 또 부트스트랩에 뽑히지 않은 표본(OOB)으로 별도 검증 자료 없이 오차를 어림하고, 갈림마다 줄어든 불순도를 더해 특성 중요도를 얻는다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>한 마디에 양성 6개, 음성 4개가 있다. 어떤 갈림으로 왼쪽(양성 5, 음성 1), 오른쪽(양성 1, 음성 3)이 되었다. Gini 불순도의 감소를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 부모는 \(1 - 0.6^2 - 0.4^2 = 0.48\)이다. 왼쪽은 \(1 - (5/6)^2 - (1/6)^2 \approx 0.278\), 오른쪽은 \(1 - 0.25^2 - 0.75^2 = 0.375\)이다. 가중 평균은 \(0.6\times0.278 + 0.4\times0.375 \approx 0.317\)이므로 감소량은 약 0.163이다. 다른 후보 갈림과 이 값을 비교해 가장 큰 것을 고른다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>결정 트리는 불순도(Gini, 엔트로피, 분산)를 가장 많이 줄이는 갈림을 탐욕적으로 골라 자라고, 깊이 제한과 가지치기로 과적합을 막는다. 배깅은 부트스트랩 표본마다 키운 트리를 평균해 분산을 줄이고, 랜덤 포레스트는 갈림마다 특성을 무작위로 골라 트리 사이 상관을 낮춘다. OOB 오차와 특성 중요도를 함께 얻는다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>부트스트랩 표본에 특정 관측이 한 번도 뽑히지 않을 확률은 \(n\)이 클 때 약 얼마인가?
+          <details><summary>답</summary><p>\((1 - 1/n)^n \to e^{-1} \approx 0.37\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>트리 수 \(B\)를 아무리 늘려도 랜덤 포레스트의 분산이 0이 되지 않는 이유를 식으로 설명하여라.
+          <details><summary>답</summary><p>분산이 \(\rho\sigma^2 + (1 - \rho)\sigma^2/B\)라 \(B \to \infty\)에서도 \(\rho\sigma^2\)이 남는다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,59 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전12-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e12-cellular" data-kind="본문" data-std="전전12-07-01">
+  <header class="card-head"><span class="no"></span><h2>셀룰러 시스템과 5G</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">한 나라가 쓸 수 있는 이동통신 주파수는 몇백 MHz뿐인데, 수천만 명이 동시에 전화하고 영상을 본다. 같은 주파수를 어떻게 여러 번 쓸까? 그리고 5G는 무엇을 바꾸어 수 Gbps의 속도를 낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="육각형 셀 배치. 같은 주파수 묶음을 쓰는 셀이 일정 거리를 두고 되풀이된다">
+        <g stroke="var(--forest, #4b4fe0)" fill="none">
+          <polygon points="200,60 230,77 230,111 200,128 170,111 170,77"/>
+          <polygon points="260,60 290,77 290,111 260,128 230,111 230,77"/>
+          <polygon points="140,60 170,77 170,111 140,128 110,111 110,77"/>
+          <polygon points="230,11 260,28 260,62 230,79 200,62 200,28"/>
+          <polygon points="170,11 200,28 200,62 170,79 140,62 140,28"/>
+          <polygon points="230,109 260,126 260,160 230,177 200,160 200,126"/>
+          <polygon points="170,109 200,126 200,160 170,177 140,160 140,126"/>
+        </g>
+        <g font-size="14" fill="currentColor"><text x="195" y="99">1</text><text x="255" y="99">2</text><text x="135" y="99">3</text><text x="225" y="50">4</text><text x="165" y="50">5</text><text x="225" y="148">6</text><text x="165" y="148">7</text></g>
+        <g font-size="12" fill="currentColor"><text x="310" y="80">묶음 크기 N = 7</text><text x="310" y="100">같은 번호 셀이</text><text x="310" y="118">같은 주파수 사용</text></g>
+      </svg>
+      <figcaption>그림 1. 묶음 크기 7의 셀 배치. 일곱 셀이 전체 주파수를 나누어 쓰고, 이 묶음이 평면을 덮으며 되풀이되어 같은 주파수가 멀리 떨어진 셀에서 다시 쓰인다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>표본화와 디지털 통신 기초(<a href="06-01.html">6.1절</a>), 통신시스템의 <a href="../21/04-01.html">반송파 디지털 변조</a>를 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>셀과 주파수 재사용</h3>
+    <p>셀룰러 시스템은 지역을 작은 셀로 나누고 셀마다 기지국을 둔다. 이웃한 셀은 서로 간섭하지 않게 다른 주파수를 쓰지만, 충분히 떨어진 셀은 같은 주파수를 다시 쓴다. 묶음 크기 \(N\)인 배치에서 같은 주파수 셀 사이 거리는 \(D = R\sqrt{3N}\)이다(\(R\)은 셀 반지름). 그러므로 \(N\)이 크면 간섭이 줄지만 셀마다 쓸 주파수가 \(1/N\)로 준다. 셀을 작게 쪼개면 같은 주파수를 더 여러 번 쓸 수 있어 전체 용량이 늘어난다. 한편 사용자가 움직이면 신호가 더 센 이웃 셀로 연결을 넘기는 핸드오버가 일어난다. 현대 시스템(4G, 5G)은 간섭 제어 기술 덕분에 모든 셀이 같은 주파수를 쓰기도 한다(\(N = 1\)).</p>
+
+    <h3><span class="no">7.1.2</span>OFDM과 5G NR</h3>
+    <p>4G와 5G는 OFDM으로 넓은 대역을 수많은 좁은 부반송파로 나누고, 사용자마다 부반송파와 시간 칸을 나누어 준다(OFDMA). 5G NR은 부반송파 간격을 \(15\times2^\mu\) kHz로 바꿀 수 있다(뉴머롤로지). 간격이 넓으면 심볼이 짧아 지연이 줄고, 높은 주파수의 위상 잡음에도 강하다. 이때 5G는 밀리미터파(28 GHz 등)의 넓은 대역, 수십 개 안테나로 빔을 모으는 대규모 MIMO, 여러 데이터 흐름을 동시에 보내는 공간 다중화로 속도를 높인다. 전송률은 대략 \(\text{부반송파 수}\times\text{심볼률}\times\text{변조 비트}\times\text{부호율}\times\text{층 수}\)이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>대역폭 100 MHz, 부반송파 간격 30 kHz로 부반송파 3276개를 쓰고, 256-QAM(8비트), 부호율 0.9, MIMO 4층이다. 심볼률을 부반송파당 28 000 심볼/초로 놓고 최대 전송률을 어림하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(3276\times28\,000\times8\times0.9\times4 \approx 2.6\times10^9\) 비트/초, 약 2.6 Gbps이다. 실제로는 제어 신호와 기준 신호에 자원의 10~20%를 쓰므로 2 Gbps 남짓이 된다. 따라서 넓은 대역, 높은 변조 차수, 다중 안테나가 함께 속도를 만든다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>셀룰러 시스템은 지역을 셀로 나누어 충분히 떨어진 셀에서 같은 주파수를 다시 쓰고, 셀을 작게 할수록 용량이 늘며 이동하는 사용자는 핸드오버로 셀을 바꾼다. 4G·5G는 OFDMA로 부반송파와 시간을 나누어 주고, 5G는 유연한 부반송파 간격, 밀리미터파, 대규모 MIMO로 수 Gbps의 전송률을 낸다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>셀 반지름 2 km, 묶음 크기 7일 때 같은 주파수 셀 사이 거리는?
+          <details><summary>답</summary><p>\(2\sqrt{21} \approx 9.2\) km.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>5G에서 부반송파 간격을 15 kHz에서 120 kHz로 넓히면 OFDM 심볼 길이와 지연은 어떻게 바뀌는가?
+          <details><summary>답</summary><p>심볼 길이가 1/8로 짧아져 같은 데이터를 보내는 시간 단위가 짧아지고 지연이 줄어든다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

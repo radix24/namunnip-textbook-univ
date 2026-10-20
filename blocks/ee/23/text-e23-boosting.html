@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전23-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e23-boosting" data-kind="본문" data-std="전전23-07-02">
+  <header class="card-head"><span class="no"></span><h2>부스팅</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">랜덤 포레스트는 깊은 트리들을 따로 키워 평균한다. 부스팅은 반대로 얕은 트리(약한 학습기)를 하나씩 차례로 더하는데, 매번 앞의 모형이 틀린 부분을 집중해서 고친다. 표 형식 자료의 경진대회에서 XGBoost, LightGBM 같은 부스팅이 자주 이기는 이유를 원리부터 보자.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="부스팅 단계마다 잔차가 줄어든다. 첫 모형의 큰 잔차를 다음 트리가 맞추고, 더할수록 잔차가 작아진다">
+        <line x1="40" y1="170" x2="420" y2="170" stroke="var(--ink-3, #888)"/>
+        <line x1="40" y1="170" x2="40" y2="20" stroke="var(--ink-3, #888)"/>
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="70" y="40" width="40" height="130"/><rect x="140" y="80" width="40" height="90"/><rect x="210" y="110" width="40" height="60"/><rect x="280" y="130" width="40" height="40"/><rect x="350" y="142" width="40" height="28"/></g>
+        <g font-size="12" fill="currentColor"><text x="70" y="186">1</text><text x="140" y="186">2</text><text x="210" y="186">3</text><text x="280" y="186">4</text><text x="350" y="186">5</text><text x="250" y="40">더한 트리 수</text><text x="46" y="18">훈련 손실</text></g>
+      </svg>
+      <figcaption>그림 1. 부스팅 단계마다 줄어드는 훈련 손실(개략). 새 트리가 지금까지의 잔차(또는 손실의 기울기)를 맞추어 모형에 더해진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>결정 트리와 랜덤 포레스트(<a href="07-01.html">7.1절</a>), 경사하강법(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>AdaBoost</h3>
+    <p>AdaBoost는 표본마다 무게를 두고 시작한다. 처음에는 모두 같다. 매 단계 무게를 반영해 약한 분류기 \(h_t\)(예를 들어 갈림 하나짜리 트리)를 학습시키고, 가중 오류율 \(\epsilon_t\)에서 그 분류기의 발언권 \(\alpha_t = \frac12\ln\frac{1 - \epsilon_t}{\epsilon_t}\)을 정한다. 그다음 틀린 표본의 무게를 \(e^{\alpha_t}\)배로 키우고 맞힌 표본은 줄인다. 그러면 다음 분류기는 어려운 표본에 집중한다. 최종 분류는 \(\operatorname{sign}(\sum_t\alpha_th_t(x))\)이다. 오류율이 0.5보다 조금만 작아도 단계가 쌓이며 훈련 오류가 지수적으로 줄어든다.</p>
+
+    <h3><span class="no">7.2.2</span>그래디언트 부스팅</h3>
+    <p>그래디언트 부스팅은 이 생각을 일반 손실 함수로 넓힌다. 현재 모형 \(F_{t-1}\)에서 손실 \(L(y, F)\)의 기울기 \(g_i = \partial L/\partial F(x_i)\)를 구하고, 새 트리 \(h_t\)가 \(-g_i\)를 맞추도록 학습시킨 뒤 \(F_t = F_{t-1} + \eta h_t\)로 더한다. 제곱 손실이면 \(-g_i\)가 잔차 \(y_i - F_{t-1}(x_i)\)이므로, 매 단계 남은 잔차를 맞추는 셈이다. 다시 말해 함수 공간에서의 경사하강법이다. 학습률 \(\eta\)를 작게(0.05~0.1) 하고 트리를 많이 쓰면 일반화가 좋아지지만, 너무 많으면 과적합하므로 검증 오차로 조기 종료한다. XGBoost와 LightGBM은 이계도함수와 정칙화 항, 빠른 히스토그램 분할로 이것을 효율적으로 구현한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>AdaBoost 첫 단계에서 가중 오류율이 0.2였다. 발언권 \(\alpha_1\)과, 틀린 표본과 맞힌 표본의 무게 비가 얼마로 바뀌는지 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\alpha_1 = \frac12\ln(0.8/0.2) = \frac12\ln4 \approx 0.693\)이다. 틀린 표본은 \(e^{0.693} = 2\)배, 맞힌 표본은 \(e^{-0.693} = 0.5\)배가 되어 무게 비가 4배 벌어진다. 정규화하면 틀린 표본들의 무게 합이 0.5가 된다. 그러므로 다음 분류기에게 지금 분류기는 정확히 동전 던지기 수준이 된다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>부스팅은 약한 학습기를 차례로 더하며 앞 모형의 약점을 고친다. AdaBoost는 틀린 표본의 무게를 키우고 분류기마다 \(\frac12\ln\frac{1 - \epsilon}{\epsilon}\)의 발언권을 준다. 그래디언트 부스팅은 손실의 음의 기울기(제곱 손실에서는 잔차)를 새 트리가 맞추는 함수 공간의 경사하강법이며, 작은 학습률과 조기 종료로 과적합을 막는다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>오류율이 0.5인 약한 분류기의 발언권은?
+          <details><summary>답</summary><p>\(\frac12\ln1 = 0\). 무작위 추측은 도움이 되지 않는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>배깅은 분산을, 부스팅은 주로 편향을 줄인다고 하는 이유를 말하여라.
+          <details><summary>답</summary><p>배깅은 서로 비슷한(낮은 편향, 높은 분산) 트리를 평균해 흩어짐을 줄이고, 부스팅은 단순한(높은 편향) 학습기를 차례로 더해 맞추지 못한 부분을 줄여 가기 때문이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

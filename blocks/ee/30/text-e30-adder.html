@@ -1,0 +1,51 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전30-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e30-adder" data-kind="본문" data-std="전전30-07-03">
+  <header class="card-head"><span class="no"></span><h2>덧셈기와 자리올림 예측</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">손으로 덧셈을 하면 오른쪽 끝에서부터 자리올림을 하나씩 넘긴다. 하드웨어도 그렇게 하면 64비트 덧셈은 자리올림이 64단을 지나야 끝난다. 프로세서의 핵심 경로에 있는 덧셈기를 이렇게 느리게 둘 수는 없다. 자리올림을 미리 계산할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="리플 자리올림 덧셈기. 전가산기들이 자리올림을 차례로 넘긴다">
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="320" y="60" width="60" height="50"/><rect x="230" y="60" width="60" height="50"/><rect x="140" y="60" width="60" height="50"/><rect x="50" y="60" width="60" height="50"/></g>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="2"><line x1="320" y1="85" x2="290" y2="85"/><line x1="230" y1="85" x2="200" y2="85"/><line x1="140" y1="85" x2="110" y2="85"/><line x1="50" y1="85" x2="20" y2="85"/><line x1="410" y1="85" x2="380" y2="85"/></g>
+        <g font-size="12" fill="currentColor"><text x="336" y="90">FA0</text><text x="246" y="90">FA1</text><text x="156" y="90">FA2</text><text x="66" y="90">FA3</text><text x="392" y="78">c₀</text><text x="20" y="78">c₄</text><text x="330" y="50">a₀ b₀</text><text x="240" y="50">a₁ b₁</text><text x="330" y="130">s₀</text><text x="240" y="130">s₁</text><text x="120" y="160">자리올림이 한 단씩 전파 (지연 ∝ n)</text></g>
+      </svg>
+      <figcaption>그림 1. 4비트 리플 자리올림 덧셈기. 각 전가산기는 앞 자리의 자리올림을 기다려야 하므로 지연이 비트 수에 비례한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정적 CMOS 게이트와 논리적 노력(<a href="02-01.html">2.1절</a>, <a href="02-02.html">2.2절</a>), 배선 지연(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
+
+    <h3><span class="no">7.3.1</span>생성과 전파</h3>
+    <p>각 자리에서 생성 신호 \(g_i = a_ib_i\)와 전파 신호 \(p_i = a_i \oplus b_i\)를 정한다. \(g_i = 1\)이면 그 자리가 자리올림을 만들고, \(p_i = 1\)이면 들어온 자리올림을 그대로 넘긴다. 그러면 \(c_{i+1} = g_i + p_ic_i\), 합은 \(s_i = p_i \oplus c_i\)이다. 리플 자리올림 덧셈기는 이 식을 차례로 계산하므로 지연이 \(O(n)\)이다. 그런데 식을 펼치면 \(c_2 = g_1 + p_1g_0 + p_1p_0c_0\)처럼 모든 자리올림을 입력만으로 쓸 수 있다. 다만 비트가 늘수록 항이 많아져 게이트가 커진다.</p>
+
+    <h3><span class="no">7.3.2</span>자리올림 예측과 병렬 접두 덧셈기</h3>
+    <p>자리올림 예측(CLA) 덧셈기는 4비트씩 묶어 묶음의 생성 \(G\)와 전파 \(P\)를 계산하고, 묶음 사이에서 다시 같은 식을 쓴다. 이 계층을 되풀이하면 지연이 \(O(\log n)\)이 된다. 일반화하면 \((g, p)\) 쌍에 결합 법칙을 따르는 연산 \((g_h, p_h)\circ(g_l, p_l) = (g_h + p_hg_l, p_hp_l)\)을 정의해, 모든 접두 \((G_{i:0}, P_{i:0})\)을 병렬로 구하는 병렬 접두 덧셈기가 된다. Kogge-Stone 구조는 \(\log_2n\)단으로 가장 빠르지만 배선과 게이트가 많고, Brent-Kung 구조는 단이 약 두 배이지만 면적과 배선이 적다. 따라서 설계 목표(속도, 면적, 전력)에 따라 고른다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>한 단 지연이 \(\tau\)일 때 64비트 리플 덧셈기와 Kogge-Stone 덧셈기의 자리올림 경로 지연을 어림하여라(생성·전파 계산과 합 계산에 각 1단).</p>
+    </div>
+    <p><i>풀이.</i> 리플은 \(g, p\) 1단 + 자리올림 64단 + 합 1단으로 약 \(66\tau\)이다. Kogge-Stone은 \(g, p\) 1단 + 접두 \(\log_264 = 6\)단 + 합 1단으로 약 \(8\tau\)이다. 그러므로 8배쯤 빠르다. 대신 접두 단마다 긴 배선이 늘어나, 7.1절의 배선 지연까지 고려해 설계한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>덧셈의 자리올림은 생성 \(g = ab\)와 전파 \(p = a \oplus b\)로 \(c_{i+1} = g_i + p_ic_i\)를 따른다. 리플 덧셈기는 이를 차례로 계산해 지연이 비트 수에 비례한다. 자리올림 예측과 병렬 접두 덧셈기는 결합 법칙을 이용해 자리올림을 계층적으로 미리 구해 지연을 \(\log n\)으로 줄이며, 구조마다 속도와 면적·배선의 교환이 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(a = 1011\), \(b = 0110\)일 때 각 자리의 \(g\)와 \(p\)를 구하여라(오른쪽이 0번 자리).
+          <details><summary>답</summary><p>\(g = 0010\), \(p = 1101\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>연산 \(\circ\)가 결합 법칙을 만족하는 것이 병렬 접두 계산에 왜 중요한지 말하여라.
+          <details><summary>답</summary><p>결합 법칙이 있어야 묶는 순서를 마음대로 바꾸어 트리 모양으로 동시에 계산할 수 있기 때문이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

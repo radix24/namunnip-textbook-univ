@@ -1,0 +1,54 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-06-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-vit" data-kind="본문" data-std="전전33-06-01">
+  <header class="card-head"><span class="no"></span><h2>Vision Transformer</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">합성곱 신경망(CNN)은 작은 창을 미끄러뜨리며 가까운 화소부터 차례로 본다. 멀리 떨어진 두 물체의 관계를 보려면 층을 많이 쌓아야 한다. 언어 모델의 Transformer처럼 영상의 모든 부분이 처음부터 서로를 볼 수 있다면 어떨까? 영상을 단어처럼 조각으로 나누는 것이 출발점이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="Vision Transformer. 영상을 16×16 패치로 나누어 각 패치를 벡터로 바꾸고 분류 토큰과 함께 Transformer에 넣는다">
+        <g stroke="var(--forest, #4b4fe0)" fill="var(--sprout, #c9cbf7)"><rect x="20" y="30" width="40" height="40"/><rect x="60" y="30" width="40" height="40"/><rect x="20" y="70" width="40" height="40"/><rect x="60" y="70" width="40" height="40"/></g>
+        <g fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"><rect x="150" y="130" width="30" height="30"/></g>
+        <g fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"><rect x="190" y="130" width="30" height="30"/><rect x="230" y="130" width="30" height="30"/><rect x="270" y="130" width="30" height="30"/><rect x="310" y="130" width="30" height="30"/></g>
+        <rect x="150" y="40" width="190" height="60" fill="none" stroke="currentColor"/>
+        <g stroke="currentColor"><line x1="110" y1="70" x2="150" y2="140"/><line x1="245" y1="130" x2="245" y2="100"/><line x1="165" y1="40" x2="165" y2="20"/></g>
+        <g font-size="12" fill="currentColor"><text x="24" y="130">패치로 나눔</text><text x="186" y="74">Transformer 층 × L</text><text x="146" y="176">[CLS] + 패치 임베딩 + 위치</text><text x="170" y="18">분류</text></g>
+      </svg>
+      <figcaption>그림 1. Vision Transformer의 흐름. 영상을 패치로 나누어 각각을 벡터로 바꾸고, 분류 토큰([CLS])과 위치 부호화를 더해 Transformer에 넣는다. 분류 토큰의 출력으로 범주를 정한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>딥러닝 기반 비전(<a href="04-01.html">4.1절</a>), 머신러닝의 <a href="../23/04-06.html">자기 주의와 Transformer</a>를 쓴다.</div>
+
+    <h3><span class="no">6.1.1</span>패치 임베딩</h3>
+    <p>ViT는 \(H\times W\) 영상을 \(P\times P\) 패치 \(N = HW/P^2\)개로 나눈다. 예를 들어 224×224 영상을 16×16 패치로 나누면 196개이다. 각 패치를 일렬로 펴서 선형 층으로 \(D\)차원 벡터로 바꾸면, 패치가 문장의 단어 같은 토큰이 된다. 그다음 학습되는 분류 토큰 하나를 앞에 붙이고, 패치의 위치를 알려 주는 위치 임베딩을 더한다. 이 \(N + 1\)개 토큰을 Transformer 부호기 층에 통과시키면, 자기 주의로 모든 패치가 서로의 정보를 섞는다. 그러므로 첫 층부터 영상 전체의 관계를 볼 수 있다.</p>
+
+    <h3><span class="no">6.1.2</span>CNN과의 비교</h3>
+    <p>CNN은 "가까운 화소끼리 관련이 깊다"(국소성)와 "같은 무늬는 어디에 있어도 같다"(평행 이동 불변)는 가정을 구조에 담고 있다. 이런 귀납적 편향 덕분에 적은 자료로도 잘 배운다. 반면 ViT는 이런 가정이 약해 자료가 적으면 CNN보다 못하지만, 수억 장 규모로 미리 학습하면 더 좋은 성능을 낸다. 또 자기 주의 지도로 모델이 어디를 보는지 들여다볼 수 있다. 연산량은 토큰 수의 제곱에 비례하므로, 고해상도 영상에서는 창 안에서만 주의를 계산하는 Swin Transformer 같은 변형을 쓴다. 검출과 분할에도 같은 백본을 쓰며, 이 백본이 영상 생성과 다중 모달 모델의 바탕이 되었다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.1.1</span>
+      <p>384×384 영상을 16×16 패치로 나눌 때 토큰 수를 구하고, 224×224일 때와 비교해 주의 행렬 크기가 몇 배인지 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 패치는 \((384/16)^2 = 576\)개, 분류 토큰을 더해 577개이다. 224×224는 197개이다. 그러면 주의 행렬은 \(577^2/197^2 \approx 8.6\)배이다. 해상도를 1.7배 올리면 주의 계산이 약 8.6배 늘어나므로, 고해상도에서는 창 주의나 토큰 줄이기를 쓴다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Vision Transformer는 영상을 패치로 나누어 각 패치를 토큰 벡터로 바꾸고, 분류 토큰과 위치 임베딩을 더해 Transformer에 넣는다. 자기 주의로 첫 층부터 영상 전체의 관계를 본다. CNN보다 귀납적 편향이 약해 큰 자료로 미리 학습할 때 강하고, 토큰 수의 제곱에 비례하는 연산 때문에 고해상도에서는 창 주의 같은 변형을 쓴다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.1.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>224×224 RGB 영상의 16×16 패치 하나를 일렬로 펴면 몇 차원인가?
+          <details><summary>답</summary><p>\(16\times16\times3 = 768\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위치 임베딩이 없으면 ViT가 영상을 어떻게 보게 되는가?
+          <details><summary>답</summary><p>패치들의 순서를 섞어도 같은 결과가 나와, 패치의 내용은 알지만 배치(어디에 무엇이 있는지)를 모르는 "패치 주머니"로 보게 된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

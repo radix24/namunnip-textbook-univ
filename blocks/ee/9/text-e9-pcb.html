@@ -1,0 +1,55 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전9-07-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e9-pcb" data-kind="본문" data-std="전전9-07-04">
+  <header class="card-head"><span class="no"></span><h2>PCB 설계 기초</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">브레드보드에서 잘 되던 회로를 PCB로 만들었더니 잡음이 생기고, 레귤레이터가 발진하고, 배선이 뜨거워졌다. 회로도는 같은데 무엇이 달라졌을까? PCB 위의 배선은 이상적인 도선이 아니라 저항, 인덕턴스, 용량을 가진 소자이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="바이패스 축전기 배치. IC 전원 핀 가까이 둔 경우와 먼 경우의 전류 고리 넓이 비교">
+        <rect x="30" y="40" width="70" height="50" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <rect x="250" y="40" width="70" height="50" fill="var(--sprout, #c9cbf7)" stroke="var(--forest, #4b4fe0)"/>
+        <rect x="110" y="55" width="14" height="22" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <rect x="400" y="55" width="14" height="22" fill="var(--hl, #fbe0a0)" stroke="var(--qed, #f2b33d)"/>
+        <path d="M100 55 L 110 55 L 110 77 L 100 77" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <path d="M320 55 L 400 55 L 400 130 L 300 130 L 300 90" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <g font-size="12" fill="currentColor"><text x="40" y="70">IC</text><text x="260" y="70">IC</text><text x="30" y="120">가까운 바이패스</text><text x="30" y="138">작은 전류 고리</text><text x="250" y="160">먼 바이패스, 큰 고리</text><text x="250" y="178">(인덕턴스, 잡음 증가)</text></g>
+      </svg>
+      <figcaption>그림 1. 바이패스 축전기의 위치. 전원 핀 바로 옆에 두면 순간 전류가 도는 고리가 작아 배선 인덕턴스와 방사 잡음이 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전원 회로(<a href="07-03.html">7.3절</a>), 디버깅과 보고서(<a href="06-01.html">6.1절</a>)를 쓴다.</div>
+
+    <h3><span class="no">7.4.1</span>설계 흐름</h3>
+    <p>PCB 설계는 회로도 입력, 부품 풋프린트 지정, 배치, 배선, 설계 규칙 검사(DRC), 제조 파일(거버) 출력의 순서로 한다. 배치가 가장 중요하다. 신호가 흐르는 순서대로 부품을 놓고, 전원부·디지털부·아날로그부를 나누어 서로 간섭하지 않게 한다. 그다음 배선 폭은 전류에 맞춘다. 1 oz 구리(35 μm) 외층에서 1 A를 온도 상승 10 °C 안으로 흘리려면 폭이 약 0.3 mm 이상 필요하다. 배선 저항은 구리의 비저항으로 \(R = \rho L/(wt)\)이다.</p>
+
+    <h3><span class="no">7.4.2</span>접지와 바이패스</h3>
+    <p>전류는 반드시 접지로 돌아오므로, 신호선 아래에 끊기지 않은 접지면을 두면 귀환 전류가 바로 아래로 흘러 고리가 작아진다. 고리 넓이가 작을수록 인덕턴스와 방사 잡음이 준다. 디지털 IC가 스위칭할 때 순간 전류는 바이패스 축전기(보통 0.1 μF 세라믹)에서 나와야 한다. 따라서 바이패스 축전기는 전원 핀 바로 옆에, 짧은 배선과 비아로 접지면에 잇는다(그림 1). 또 큰 전류가 흐르는 전원 귀환 경로가 민감한 아날로그 접지를 지나지 않게, 접지를 한 점에서 만나게 하는 것도 요령이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.4.1</span>
+      <p>폭 0.25 mm, 두께 35 μm, 길이 100 mm인 구리 배선(\(\rho = 1.7\times10^{-8}\) Ω·m)에 2 A가 흐른다. 전압 강하와 발열을 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(R = 1.7\times10^{-8}\times0.1/(0.25\times10^{-3}\times35\times10^{-6}) \approx 0.19\) Ω이다. 그러면 전압 강하는 0.39 V, 발열은 \(I^2R \approx 0.78\) W이다. 5 V 전원이면 8% 가까이 떨어지므로, 전원 배선은 1 mm 이상으로 넓히거나 전원면을 쓴다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>PCB 설계는 회로도, 풋프린트, 배치, 배선, DRC, 거버 출력의 순서이고, 신호 흐름과 기능 블록을 따른 배치가 성능을 좌우한다. 배선 폭은 전류와 허용 온도 상승에 맞추고 저항으로 전압 강하를 확인한다. 끊기지 않은 접지면과 전원 핀 옆 바이패스 축전기로 전류 고리를 작게 해 잡음을 줄인다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>예제에서 폭을 1 mm로 넓히면 발열은 얼마인가?
+          <details><summary>답</summary><p>저항이 1/4이라 약 0.19 W.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>신호선이 접지면의 갈라진 틈을 가로지르면 생기는 문제를 귀환 전류로 설명하여라.
+          <details><summary>답</summary><p>귀환 전류가 틈을 돌아가야 해 전류 고리가 커지고, 인덕턴스와 방사 잡음, 다른 회로와의 결합이 늘어난다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

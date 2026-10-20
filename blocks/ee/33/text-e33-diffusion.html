@@ -1,0 +1,52 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전33-06-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e33-diffusion" data-kind="본문" data-std="전전33-06-02">
+  <header class="card-head"><span class="no"></span><h2>확산 모형으로 하는 영상 생성</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">"노을 진 바닷가의 고양이"라고 쓰면 그 장면의 사진 같은 영상이 나온다. 이런 생성형 AI의 중심에는 확산 모형이 있다. 영상에 잡음을 조금씩 더해 완전히 망가뜨리는 과정은 쉽다. 그 과정을 거꾸로 되돌리는 법을 배우면, 잡음에서 영상을 만들어 낼 수 있다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="확산 과정. 영상에 잡음을 더해 가는 정방향과, 잡음을 지워 가는 역방향">
+        <g stroke="var(--forest, #4b4fe0)"><rect x="30" y="50" width="60" height="60" fill="var(--sprout, #c9cbf7)"/><rect x="130" y="50" width="60" height="60" fill="var(--sprout, #c9cbf7)" opacity="0.7"/><rect x="230" y="50" width="60" height="60" fill="var(--sprout, #c9cbf7)" opacity="0.4"/><rect x="330" y="50" width="60" height="60" fill="var(--ink-3, #888)" opacity="0.4"/></g>
+        <g stroke="currentColor"><line x1="95" y1="40" x2="125" y2="40"/><line x1="195" y1="40" x2="225" y2="40"/><line x1="295" y1="40" x2="325" y2="40"/></g>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="2"><line x1="325" y1="125" x2="295" y2="125"/><line x1="225" y1="125" x2="195" y2="125"/><line x1="125" y1="125" x2="95" y2="125"/></g>
+        <g font-size="12" fill="currentColor"><text x="44" y="84">x₀</text><text x="150" y="84">x_t</text><text x="246" y="84">…</text><text x="350" y="84">x_T</text><text x="130" y="30">정방향 (잡음 더하기, 고정)</text><text x="110" y="150">역방향 (잡음 예측해 빼기, 학습)</text><text x="330" y="170">순수 잡음</text></g>
+      </svg>
+      <figcaption>그림 1. 확산 모형. 정방향은 영상에 가우시안 잡음을 조금씩 더해 순수 잡음으로 만들고, 신경망은 각 단계에서 더해진 잡음을 예측해 빼는 역방향을 배운다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Vision Transformer(<a href="06-01.html">6.1절</a>), 머신러닝의 <a href="../23/08-01.html">생성 모형</a>을 쓴다.</div>
+
+    <h3><span class="no">6.2.1</span>잡음 예측으로 학습하기</h3>
+    <p>정방향 과정에서 \(t\)단계 영상은 \(\mathbf x_t = \sqrt{\bar\alpha_t}\mathbf x_0 + \sqrt{1 - \bar\alpha_t}\boldsymbol\epsilon\)로 한 번에 만들 수 있다. 여기서 \(\boldsymbol\epsilon\)은 표준 가우시안 잡음이고, \(\bar\alpha_t\)는 \(t\)가 커질수록 1에서 0으로 줄어든다. 학습은 단순하다. 훈련 영상 \(\mathbf x_0\)와 임의의 \(t\), 잡음 \(\boldsymbol\epsilon\)을 뽑아 \(\mathbf x_t\)를 만들고, 신경망 \(\boldsymbol\epsilon_\theta(\mathbf x_t, t)\)가 \(\boldsymbol\epsilon\)을 맞추도록 제곱 오차를 줄인다. 영상 크기를 유지하는 U-Net이나 Transformer(DiT)가 이 망으로 쓰인다.</p>
+
+    <h3><span class="no">6.2.2</span>생성과 조건 주기</h3>
+    <p>생성할 때는 순수 잡음 \(\mathbf x_T\)에서 시작한다. 매 단계 망이 예측한 잡음을 빼고 약간의 잡음을 다시 더해 \(\mathbf x_{t-1}\)을 얻기를 \(T\)번(수십~1000번) 되풀이하면 영상이 나온다. 처음 단계에서는 큰 구도가, 뒤 단계에서는 세부가 정해진다. 글로 조건을 주려면 문장을 부호화한 벡터를 교차 주의로 망에 넣는다. 조건이 있을 때와 없을 때의 잡음 예측 차이를 키워 조건을 더 따르게 하는 분류기 없는 안내(guidance)를 쓴다. 또 고해상도 영상을 직접 다루면 비싸므로, 부호기로 영상을 작은 잠재 공간으로 줄인 뒤 거기서 확산하는 잠재 확산 모형을 쓴다. 영상을 시간 축으로 넓히면 동영상 생성이 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>512×512 RGB 영상을 8배 줄인 4채널 잠재 공간(64×64×4)에서 확산하면, 화소 공간에 비해 다루는 수가 몇 분의 1인가?</p>
+    </div>
+    <p><i>풀이.</i> 화소 공간은 \(512\times512\times3 = 786\,432\)개, 잠재 공간은 \(64\times64\times4 = 16\,384\)개이다. 그러므로 48분의 1이다. 망의 매 단계 계산이 그만큼 가벼워져 일반 GPU에서도 수초 안에 영상을 만든다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>확산 모형은 영상에 잡음을 더하는 정방향 과정을 고정하고, 각 단계에서 더해진 잡음을 예측하는 신경망을 제곱 오차로 학습한다. 생성은 순수 잡음에서 예측한 잡음을 조금씩 빼는 역방향을 되풀이해 이루어진다. 글 조건은 교차 주의와 분류기 없는 안내로 넣고, 잠재 공간에서 확산해 계산을 줄인다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">6.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>확산 모형의 생성이 GAN보다 느린 이유는?
+          <details><summary>답</summary><p>GAN은 망을 한 번 통과하면 영상이 나오지만, 확산 모형은 잡음 제거를 수십~수백 번 되풀이해야 하기 때문이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>안내 세기를 너무 크게 하면 생성 영상에 어떤 일이 생기는가?
+          <details><summary>답</summary><p>글 조건은 더 강하게 따르지만 다양성이 줄고 색이 과포화되거나 부자연스러운 영상이 된다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

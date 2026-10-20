@@ -1,0 +1,55 @@
+<!--block
+{
+  "type": "card",
+  "sec": "전전20-04-06",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-e20-kktcond" data-kind="본문" data-std="전전20-04-06">
+  <header class="card-head"><span class="no"></span><h2>KKT 조건</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">등식 제약만 있으면 Lagrange 승수법으로 최솟점을 찾는다. 그런데 "전력은 1 W를 넘지 않는다"처럼 부등식 제약이 있으면, 제약이 최솟점에서 꽉 차 있는지(활성) 아닌지 미리 모른다. 두 경우를 한꺼번에 다루는 조건이 Karush-Kuhn-Tucker(KKT) 조건이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="부등식 제약 최적화. 제약 경계에서 목적 함수의 기울기와 제약의 기울기가 반대 방향으로 나란하다">
+        <g fill="none" stroke="var(--ink-3, #888)"><circle cx="300" cy="70" r="30"/><circle cx="300" cy="70" r="60"/><circle cx="300" cy="70" r="90"/></g>
+        <path d="M40 190 L 40 40 C 120 60, 180 110, 230 190 Z" fill="var(--sprout, #c9cbf7)" opacity="0.6" stroke="var(--forest, #4b4fe0)"/>
+        <circle cx="190" cy="125" r="5" fill="var(--qed, #f2b33d)"/>
+        <g stroke="currentColor" stroke-width="1.5"><line x1="190" y1="125" x2="230" y2="100"/><line x1="190" y1="125" x2="150" y2="150"/></g>
+        <g font-size="12" fill="currentColor"><text x="234" y="98">∇g</text><text x="120" y="160">−∇f</text><text x="60" y="110">허용 영역 g ≤ 0</text><text x="290" y="74">f 최소</text><text x="196" y="140">x*</text></g>
+      </svg>
+      <figcaption>그림 1. 제약 없는 최솟점이 허용 영역 밖에 있으면, 최적점 \(x^*\)는 경계 위에 있고 \(-\nabla f\)가 \(\nabla g\)와 같은 방향이다(\(\nabla f + \mu\nabla g = 0\), \(\mu \ge 0\)).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>라그랑주 쌍대 문제(<a href="04-02.html">4.2절</a>), 볼록 최적화 표준형(<a href="03-02.html">3.2절</a>)을 쓴다.</div>
+
+    <h3><span class="no">4.6.1</span>KKT 조건</h3>
+    <p>문제 \(\min f(\mathbf x)\), 제약 \(g_i(\mathbf x) \le 0\), \(h_j(\mathbf x) = 0\)에서 Lagrange 함수 \(L = f + \sum\mu_ig_i + \sum\lambda_jh_j\)를 만든다. 적당한 정칙 조건 아래 최적점 \(\mathbf x^*\)에서 다음 네 조건이 성립한다.</p>
+    <p>정상성 \(\nabla f + \sum\mu_i\nabla g_i + \sum\lambda_j\nabla h_j = 0\), 그리고 원문제 허용성 \(g_i \le 0\), \(h_j = 0\).이 성립하고, 쌍대 허용성 \(\mu_i \ge 0\), 그리고 상보 여유 \(\mu_ig_i(\mathbf x^*) = 0\).이 성립한다.</p>
+    <p>상보 여유가 핵심 장치이다. 제약이 비활성(\(g_i &lt; 0\))이면 \(\mu_i = 0\)이라 그 제약은 없는 것과 같고, 활성(\(g_i = 0\))이면 \(\mu_i \ge 0\)이 기울기를 맞춘다. 문제가 볼록이면 KKT 조건은 최적성의 충분조건이기도 하다. 따라서 볼록 문제에서는 KKT 조건을 만족하는 점을 찾으면 그것이 전역 최적점이다.</p>
+
+    <h3><span class="no">4.6.2</span>예: 워터필링</h3>
+    <p>병렬 채널 \(n\)개에 총 전력 \(P\)를 나누어 용량 \(\sum\log(1 + p_i/N_i)\)를 최대화하는 문제를 생각하자. 제약은 \(p_i \ge 0\), \(\sum p_i = P\)이다. KKT 조건을 풀면 \(p_i = \max(0, \nu - N_i)\) 꼴이 된다. 잡음 \(N_i\)를 바닥 높이로 보고 그 위에 물(전력)을 수위 \(\nu\)까지 붓는 것과 같아 워터필링이라 한다. 잡음이 너무 큰 채널은 수위보다 바닥이 높아 전력을 받지 못한다. 이것이 상보 여유가 하는 일이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.6.1</span>
+      <p>잡음 \(N = (1, 2, 4)\)인 세 채널에 총 전력 \(P = 4\)를 워터필링으로 나누어라.</p>
+    </div>
+    <p><i>풀이.</i> 세 채널 모두 쓰면 \(3\nu - 7 = 4\), \(\nu = 11/3 \approx 3.67\)이다. 그런데 셋째 채널은 \(N_3 = 4 &gt; \nu\)라 \(p_3 &lt; 0\)이 되어 허용되지 않는다. 그러므로 셋째를 빼고 \(2\nu - 3 = 4\), \(\nu = 3.5\)로 다시 풀면 \(p = (2.5, 1.5, 0)\)이다. 셋째 채널은 \(\nu - N_3 &lt; 0\)이라 \(\mu_3 &gt; 0\)인 활성 제약이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>KKT 조건은 정상성, 원문제 허용성, 쌍대 허용성(\(\mu \ge 0\)), 상보 여유(\(\mu_ig_i = 0\))로 이루어진다. 상보 여유가 비활성 제약의 승수를 0으로 만들어 활성 여부를 자동으로 가린다. 볼록 문제에서는 KKT 조건이 최적성의 필요충분조건이며, 워터필링 전력 배분이 대표적인 예이다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">4.6.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\min x^2\), 제약 \(x \ge 1\)의 KKT 해와 승수를 구하여라.
+          <details><summary>답</summary><p>\(g = 1 - x \le 0\). \(2x - \mu = 0\), \(\mu(1 - x) = 0\)에서 \(x = 1\), \(\mu = 2\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 총 전력이 \(P = 10\)이면 세 채널 모두 전력을 받는가?
+          <details><summary>답</summary><p>\(3\nu - 7 = 10\), \(\nu = 17/3 \approx 5.67 &gt; 4\)이라 모두 받는다. \(p = (4.67, 3.67, 1.67)\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
