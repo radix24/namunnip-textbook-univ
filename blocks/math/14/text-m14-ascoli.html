@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학14-01-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m14-ascoli" data-kind="본문" data-std="수학14-01-04">
+  <header class="card-head"><span class="no"></span><h2>함수공간의 위상과 Ascoli 정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">실수열에서는 유계이면 수렴하는 부분수열이 있다. 연속함수의 수열에서도 그럴까? \(\sin nx\)는 모두 \([-1, 1]\) 안에 있지만 어떤 부분수열도 균등수렴하지 않는다. 함수열이 수렴하는 부분수열을 가지려면 유계성 말고 무엇이 더 필요한가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="왼쪽은 점점 빨리 진동하는 sin nx, 오른쪽은 기울기가 고르게 제한된 함수들">
+        <line x1="20" y1="95" x2="200" y2="95" stroke="var(--ink-3, #888)"/>
+        <path d="M20 95 Q 35 40 50 95 T 80 95 T 110 95 T 140 95 T 170 95 T 200 95" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="1.5"/>
+        <path d="M20 95 Q 27 40 35 95 T 50 95 T 65 95 T 80 95 T 95 95 T 110 95 T 125 95 T 140 95 T 155 95 T 170 95 T 185 95 T 200 95" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="1" opacity="0.6"/>
+        <text x="40" y="180" font-size="12" fill="currentColor">sin nx는 동등연속 아님</text>
+        <line x1="240" y1="95" x2="420" y2="95" stroke="var(--ink-3, #888)"/>
+        <path d="M240 120 C 290 60, 350 140, 420 80" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5"/>
+        <path d="M240 70 C 300 120, 360 60, 420 110" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5" opacity="0.6"/>
+        <path d="M240 100 C 290 90, 360 100, 420 95" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5" opacity="0.4"/>
+        <text x="270" y="180" font-size="12" fill="currentColor">기울기 ≤ L이면 동등연속</text>
+      </svg>
+      <figcaption>그림 1. \(\sin nx\)는 \(n\)이 커질수록 같은 간격 안에서 더 크게 출렁여 동등연속이 아니다. 기울기가 한 상수 \(L\)로 고르게 제한된 함수족은 동등연속이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>거리공간의 연속과 컴팩트성(<a href="01-01.html">1.1절</a>, <a href="05-02.html">5.2절</a>), 곱위상(<a href="03-01.html">3.1절</a>)을 쓴다. Munkres 7장 45~47절을 따른다.</div>
+
+    <h3><span class="no">1.4.1</span>함수공간의 세 위상</h3>
+    <p>공간 \(X\)에서 거리공간 \(Y\)로 가는 함수들의 공간에는 위상을 여러 방법으로 줄 수 있다. 점별수렴 위상은 곱위상 \(Y^X\)과 같고, 함수열이 각 점에서 수렴하면 수렴한다. 균등 위상은 거리 \(\bar\rho(f, g) = \sup_x\min(d(f(x), g(x)), 1)\)으로 정하고 균등수렴과 같다. 그 사이에 콤팩트 수렴 위상이 있다. 함수열이 \(X\)의 모든 콤팩트 부분집합 위에서 균등수렴하면 수렴하는 위상이다.</p>
+    <p>세 위상은 점별 \(\subseteq\) 콤팩트 수렴 \(\subseteq\) 균등의 순서로 열린집합이 많아진다. \(X\)가 콤팩트이면 뒤의 둘이 같다. 가령 \(\mathbb R\) 위에서 \(f_n(x) = x/n\)은 모든 유계 구간에서 0으로 균등수렴하므로 콤팩트 수렴 위상에서 0으로 가지만, 전체에서는 \(\sup|x/n| = \infty\)라 균등수렴하지 않는다. 연속함수 공간 \(C(X, Y)\)에서는 콤팩트 수렴 위상이 콤팩트-열린 위상과 같다.</p>
+
+    <h3><span class="no">1.4.2</span>동등연속과 Ascoli 정리</h3>
+    <div class="tb-env">
+      <span class="lb">정의 1.4.1 <span class="nm">(동등연속)</span></span>
+      <p>함수족 \(\mathcal F \subseteq C(X, Y)\)가 각 점 \(x_0\)과 각 \(\varepsilon &gt; 0\)에 대해, \(x_0\)의 근방 \(U\)를 하나 골라 모든 \(f \in \mathcal F\)와 모든 \(x \in U\)에서 \(d(f(x), f(x_0)) &lt; \varepsilon\)이 되게 할 수 있으면 동등연속이라고 한다.</p>
+    </div>
+    <p>보통의 연속성에서는 근방 \(U\)가 함수마다 달라도 된다. 동등연속에서는 하나의 \(U\)가 족 전체에 통한다. 그림 1의 \(\sin nx\)는 \(n\)이 커지면 필요한 근방이 0으로 줄어들어 이 조건을 어긴다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 1.4.2 <span class="nm">(Ascoli)</span></span>
+      <p>\(X\)가 콤팩트 공간이고 \(\mathcal F \subseteq C(X, \mathbb R^n)\)이면, \(\mathcal F\)의 폐포가 균등 위상에서 콤팩트인 것은 \(\mathcal F\)가 동등연속이고 각 점에서 점별 유계인 것과 동치이다.</p>
+    </div>
+    <p>증명의 한 방향은 이렇다. 동등연속이고 점별 유계이면, 먼저 Tychonoff 정리로 \(\mathcal F\)의 점별 폐포가 곱공간에서 콤팩트임을 얻는다. 다음으로 동등연속성 덕분에 이 폐포 위에서 점별수렴 위상과 균등 위상이 일치함을 보인다. \(X\)를 유한 개의 작은 근방으로 덮으면, 각 근방의 대표점에서 가까운 두 함수는 근방 전체에서 가깝기 때문이다. 해석학에서 배운 Arzelà-Ascoli 정리(동등연속, 균등 유계인 열은 균등수렴 부분수열을 갖는다)는 이 정리를 거리공간과 수열로 옮긴 것이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.4.3</span>
+      <p>\(\mathcal F = \{f \in C^1[0, 1] : |f(0)| \le 1,\ |f'| \le 1\}\)의 폐포가 \(C[0, 1]\)에서 콤팩트임을 보여라.</p>
+    </div>
+    <p><i>풀이.</i> 평균값 정리로 \(|f(x) - f(y)| \le |x - y|\)이므로 \(\varepsilon\)에 대해 근방 반지름 \(\delta = \varepsilon\)이 모든 \(f\)에 통한다. 곧 동등연속이다. 또 \(|f(x)| \le |f(0)| + x \le 2\)이므로 점별 유계이다. 따라서 Ascoli 정리로 폐포가 콤팩트이다. 이 사실은 미분방정식의 해의 존재(Peano 정리)를 근사해의 부분수열 극한으로 얻을 때 쓰인다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>함수공간에는 점별, 콤팩트 수렴, 균등의 세 위상이 있고, 정의역이 콤팩트이면 뒤의 둘이 같다. 콤팩트 공간 위의 연속함수족이 균등 위상에서 상대 콤팩트인 것은 동등연속이고 점별 유계인 것과 같다(Ascoli). 유계성만으로 부족한 이유는 \(\sin nx\)처럼 함수들이 점점 빨리 출렁일 수 있기 때문이다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">1.4.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(f_n(x) = x^n\)이 \([0, 1]\)에서 동등연속이 아님을 보여라.
+          <details><summary>답</summary><p>\(x_0 = 1\)에서 어떤 근방을 잡아도 \(n\)이 크면 근방 안의 \(x &lt; 1\)에서 \(x^n\)이 0에 가까워져 \(|f_n(x) - f_n(1)|\)이 1에 가깝다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\mathbb R\) 위에서 \(f_n(x) = \sin(x/n)\)은 콤팩트 수렴 위상에서 0으로 수렴하지만 균등 위상에서는 그렇지 않음을 보여라.
+          <details><summary>답</summary><p>\([-M, M]\)에서 \(|\sin(x/n)| \le M/n \to 0\). 하지만 \(x = n\pi/2\)에서 값이 1이라 전체의 상한은 1이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

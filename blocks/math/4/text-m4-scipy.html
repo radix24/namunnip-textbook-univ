@@ -1,0 +1,74 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-07-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-scipy" data-kind="본문" data-std="수학4-07-01">
+  <header class="card-head"><span class="no"></span><h2>SciPy로 적분, 최적화, 미분방정식 풀기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">\(\int_0^\infty e^{-x^2}dx\), \(x^4 - 3x + 1\)의 최솟값, 진자의 운동 방정식. 손으로 풀거나 직접 수치해석 코드를 짤 수도 있지만, 검증된 라이브러리로 풀고 그 답을 믿을 만한지 확인하는 것도 중요한 능력이다. 어떻게 하는가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="감쇠 진자의 각도가 시간에 따라 줄어드는 진동 그래프">
+        <line x1="30" y1="95" x2="420" y2="95" stroke="var(--ink-3, #888)"/>
+        <line x1="30" y1="20" x2="30" y2="170" stroke="var(--ink-3, #888)"/>
+        <path d="M30 30 C 50 30, 60 160, 80 160 S 110 45, 130 45 S 160 145, 180 145 S 210 60, 230 60 S 260 130, 280 130 S 310 72, 330 72 S 360 118, 380 118 S 405 82, 420 84" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <text x="390" y="112" font-size="12" fill="currentColor">t</text>
+        <text x="36" y="28" font-size="12" fill="currentColor">θ(t)</text>
+      </svg>
+      <figcaption>그림 1. <code>solve_ivp</code>로 푼 감쇠 진자 \(\theta'' + 0.3\theta' + \sin\theta = 0\)의 해. 진폭이 시간에 따라 지수적으로 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy 배열(<a href="03-01.html">3.1절</a>), 함수 그래프 그리기(<a href="02-02.html">2.2절</a>), 2계 미분방정식을 1계 연립으로 바꾸는 법을 쓴다.</div>
+
+    <h3><span class="no">7.1.1</span>정적분</h3>
+    <p><code>scipy.integrate.quad</code>는 적응형 구적법으로 정적분 값과 오차 어림을 함께 돌려준다. 오차 어림을 버리지 말고 함께 보아야 한다. 그러면 그 숫자를 얼마나 믿어도 되는지 알 수 있다.</p>
+    <pre class="mono small">import numpy as np
+from scipy import integrate, optimize
+
+val, err = integrate.quad(lambda x&#58; np.exp(-x**2), 0, np.inf)
+print(val, err, np.sqrt(np.pi) / 2)   # 0.886226925452758  1.4e-08  0.886226925452758</pre>
+    <p>무한 구간도 받는다. 결과를 정확한 값 \(\frac{\sqrt\pi}{2}\)와 비교해 보면 15자리까지 맞는다. 이렇게 답을 아는 문제로 먼저 도구를 확인하고 나서 답을 모르는 문제에 쓰는 것이 좋은 습관이다.</p>
+
+    <h3><span class="no">7.1.2</span>최적화와 근 찾기</h3>
+    <p><code>optimize.minimize_scalar</code>는 한 변수 함수의 최솟값을, <code>optimize.brentq</code>는 부호가 바뀌는 구간에서 근을 찾는다. 여러 변수 함수는 <code>optimize.minimize</code>로 한다.</p>
+    <pre class="mono small">f = lambda x&#58; x**4 - 3*x + 1
+res = optimize.minimize_scalar(f)
+print(res.x, res.fun)                  # 0.9085602964  -1.044...
+print(optimize.brentq(lambda x&#58; 4*x**3 - 3, 0, 2))   # 같은 x</pre>
+    <p>둘째 줄은 검증이다. 최솟값에서는 도함수 \(4x^3 - 3\)이 0이어야 하므로, 그 근을 따로 구해 같은 값이 나오는지 본다. 실제로 \(x = (3/4)^{1/3} \approx 0.9086\)이다. 다만 <code>minimize_scalar</code>는 국소 최솟값 하나를 찾을 뿐이므로, 그래프를 먼저 그려 최솟값이 하나인지 확인해야 한다.</p>
+
+    <h3><span class="no">7.1.3</span>미분방정식</h3>
+    <p><code>integrate.solve_ivp</code>는 \(\mathbf y' = F(t, \mathbf y)\) 꼴의 1계 연립방정식을 푼다. 진자 방정식 \(\theta'' + 0.3\theta' + \sin\theta = 0\)은 \(\mathbf y = (\theta, \theta')\)로 두어 1계로 바꾼다.</p>
+    <pre class="mono small">def F(t, y)&#58;
+    th, om = y
+    return [om, -0.3*om - np.sin(th)]
+
+sol = integrate.solve_ivp(F, [0, 30], [1.5, 0], rtol=1e-8, dense_output=True)
+t = np.linspace(0, 30, 600)
+theta = sol.sol(t)[0]</pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.1.1</span>
+      <p>감쇠가 없을 때(\(0.3\)을 \(0\)으로) 에너지 \(E = \frac12\theta'^2 - \cos\theta\)가 보존되는지 수치해로 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> 해를 구한 뒤 <code>E = 0.5*om**2 - np.cos(th)</code>를 계산하면 처음 값 \(-\cos1.5 \approx -0.0707\)에서 <code>rtol=1e-8</code>일 때 \(10^{-7}\) 정도만 변한다. 허용 오차를 <code>1e-3</code>으로 느슨하게 하면 에너지가 눈에 띄게 줄어든다. 따라서 수치해의 정확도는 보존량으로 점검할 수 있고, 이 점검이 그림 1 같은 그래프를 믿는 근거가 된다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>SciPy의 <code>quad</code>, <code>minimize_scalar</code>, <code>brentq</code>, <code>solve_ivp</code>로 적분, 최적화, 근 찾기, 미분방정식을 짧게 풀 수 있다. 결과는 오차 어림, 정확한 답이 있는 문제, 도함수의 근, 보존량 같은 독립된 방법으로 반드시 검증한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li><code>quad</code>로 \(\int_0^1\frac{4}{1 + x^2}dx\)를 계산하고 \(\pi\)와 비교하여라.
+          <details><summary>답</summary><p>3.141592653589793. 정확한 값이 \(4\arctan1 = \pi\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li><code>solve_ivp</code>로 \(y' = y\), \(y(0) = 1\)을 \([0, 1]\)에서 풀고 <code>rtol</code>을 바꿔 가며 \(y(1)\)과 \(e\)의 차이를 비교하여라.
+          <details><summary>답</summary><p>차이는 대략 <code>rtol</code>에 비례해 줄어든다. 기본값 \(10^{-3}\)에서는 \(10^{-4}\)쯤 차이가 난다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

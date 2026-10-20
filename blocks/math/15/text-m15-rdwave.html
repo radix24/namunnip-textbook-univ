@@ -1,0 +1,68 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-05-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-rdwave" data-kind="본문" data-std="수학15-05-04">
+  <header class="card-head"><span class="no"></span><h2>고차원 Fourier 변환, 파동방정식, Radon 변환</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">3차원 공간에서 소리는 날카로운 펄스로 퍼져 나가 지나가면 조용해진다. 그런데 2차원 수면파는 지나간 뒤에도 잔물결이 남는다. 같은 파동방정식인데 왜 차원에 따라 다를까? 그리고 CT 촬영은 몸을 통과한 X선의 세기로 어떻게 단면을 복원하는가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 200" role="img" aria-label="왼쪽은 반지름 t인 구면 위의 평균, 오른쪽은 한 방향 직선들 위의 적분인 Radon 변환">
+        <circle cx="110" cy="100" r="70" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <circle cx="110" cy="100" r="3" fill="currentColor"/>
+        <line x1="110" y1="100" x2="160" y2="51" stroke="var(--ink-3, #888)"/>
+        <text x="138" y="70" font-size="12" fill="currentColor">t</text>
+        <text x="50" y="190" font-size="12" fill="currentColor">구면 평균 M_t f(x)</text>
+        <ellipse cx="320" cy="100" rx="55" ry="40" fill="var(--sprout, #c9cbf7)" opacity="0.6"/>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="1.5"><line x1="240" y1="40" x2="400" y2="120"/><line x1="240" y1="70" x2="400" y2="150"/><line x1="240" y1="100" x2="400" y2="180"/><line x1="240" y1="10" x2="400" y2="90"/></g>
+        <text x="260" y="190" font-size="12" fill="currentColor">Radon 변환: 직선 위 적분</text>
+      </svg>
+      <figcaption>그림 1. 3차원 파동방정식의 해는 초기값의 구면 평균으로 쓰인다(왼쪽). Radon 변환은 함수를 모든 직선(고차원에서는 초평면) 위에서 적분한 값의 모음이다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>실수선의 Fourier 변환과 역변환(<a href="04-02.html">4.2절</a>), 1차원 파동방정식(<a href="05-02.html">5.2절</a>)을 쓴다. Stein-Shakarchi 6장을 따른다.</div>
+
+    <h3><span class="no">5.4.1</span>R^d의 Fourier 변환</h3>
+    <p>\(\hat f(\xi) = \int_{\mathbb R^d}f(x)e^{-2\pi ix\cdot\xi}dx\)로 정의하면 1차원의 성질이 그대로 간다. 미분은 곱셈으로 바뀌어 \(\widehat{\partial_jf} = 2\pi i\xi_j\hat f\)이고, 라플라시안은 \(-4\pi^2|\xi|^2\)을 곱하는 것이 된다. 가우스 함수 \(e^{-\pi|x|^2}\)은 자기 자신으로 가고, 역변환과 Plancherel 정리도 같다. 새로 생기는 것은 회전이다. 회전 \(R\)에 대해 \(\widehat{f\circ R} = \hat f\circ R\)이므로, 지름 방향 함수의 Fourier 변환은 다시 지름 방향 함수이다. 2차원에서 그 계산은 Bessel 함수 \(J_0\)을 낳는다.</p>
+
+    <h3><span class="no">5.4.2</span>파동방정식</h3>
+    <p>\(\partial_t^2u = \Delta u\), \(u(x, 0) = f\), \(\partial_tu(x, 0) = g\)를 Fourier 변환하면 각 \(\xi\)에서 상미분방정식 \(\partial_t^2\hat u = -4\pi^2|\xi|^2\hat u\)가 되고</p>
+    \[\hat u(\xi, t) = \hat f(\xi)\cos(2\pi|\xi|t) + \hat g(\xi)\frac{\sin(2\pi|\xi|t)}{2\pi|\xi|}\]
+    <p>이다. 이 식을 공간으로 되돌리려면 \(\frac{\sin(2\pi|\xi|t)}{2\pi|\xi|}\)의 역변환을 알아야 한다. 3차원에서는 이것이 반지름 \(t\)인 구면 위의 균일한 측도를 \(t\)배 한 것이다. 그러면 \(f = 0\)일 때 해는</p>
+    \[u(x, t) = tM_tg(x), \qquad M_tg(x) = \frac{1}{4\pi}\int_{|\gamma|=1}g(x - t\gamma)\,d\sigma(\gamma)\]
+    <p>이다. 그림 1의 구면 평균이 바로 \(M_t\)이다. 이 공식은 Huygens 원리를 보여 준다. \(g\)가 원점 근처에서만 0이 아니면, 점 \(x\)에서 \(u\)는 \(|x| \approx t\)인 짧은 시간 동안만 0이 아니다. 2차원에서는 해가 원판 전체의 평균으로 쓰여, 펄스가 지나간 뒤에도 꼬리가 남는다. 처음 질문의 차이가 이것이다.</p>
+
+    <h3><span class="no">5.4.3</span>Radon 변환</h3>
+    <p>\(\mathbb R^2\)의 함수 \(f\)를 단위벡터 \(\gamma\)와 수 \(t\)로 정한 직선 \(\{x \cdot \gamma = t\}\) 위에서 적분한 값을 \(\mathcal Rf(t, \gamma)\)라 한다. CT 촬영은 X선이 각 직선을 지나며 받는 감쇠, 곧 감쇠 계수의 직선 적분을 잰다. 따라서 문제는 \(\mathcal Rf\)에서 \(f\)를 되찾는 것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 5.4.1 <span class="nm">(Fourier 단면 정리)</span></span>
+      <p>\(\mathcal Rf(\cdot, \gamma)\)를 \(t\)에 대해 1차원 Fourier 변환하면 \(\hat f(s\gamma)\), 곧 \(f\)의 2차원 Fourier 변환을 \(\gamma\) 방향 직선 위로 제한한 것이 된다.</p>
+    </div>
+    <p>\(\int\mathcal Rf(t, \gamma)e^{-2\pi ist}dt\)에서 \(x\cdot\gamma = t\)로 두면 이중적분이 \(\int f(x)e^{-2\pi isx\cdot\gamma}dx = \hat f(s\gamma)\)로 합쳐진다. 그러면 모든 방향에서 잰 자료는 \(\hat f\)를 평면 전체에서 주고, 역 Fourier 변환으로 \(f\)를 되찾는다. 실제 CT의 여과 역투영 알고리즘이 이 정리를 수치적으로 구현한 것이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.4.2</span>
+      <p>\(f(x) = e^{-\pi|x|^2}\)(\(\mathbb R^2\))의 Radon 변환을 구하고 단면 정리를 확인하여라.</p>
+    </div>
+    <p><i>풀이.</i> 회전 대칭이므로 \(\gamma = (1, 0)\)으로 두면 \(\mathcal Rf(t) = \int e^{-\pi(t^2 + y^2)}dy = e^{-\pi t^2}\)이다. 이것의 1차원 Fourier 변환은 \(e^{-\pi s^2}\)이다. 한편 \(\hat f(\xi) = e^{-\pi|\xi|^2}\)이므로 \(\hat f(s\gamma) = e^{-\pi s^2}\)이고, 두 값이 같다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>고차원 Fourier 변환은 미분을 곱셈으로, 회전을 회전으로 보낸다. 파동방정식을 변환해 풀면 3차원 해는 초기값의 구면 평균으로 쓰이고, 그래서 3차원에서는 펄스가 꼬리 없이 지나간다. 직선 적분의 모음인 Radon 변환은 1차원 Fourier 변환을 거치면 2차원 Fourier 변환의 단면이 되어, 그 자료로 함수를 복원할 수 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">5.4.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\mathbb R^d\)에서 \(\widehat{\Delta f} = -4\pi^2|\xi|^2\hat f\)임을 보여라.
+          <details><summary>답</summary><p>각 \(\partial_j^2\)가 \((2\pi i\xi_j)^2 = -4\pi^2\xi_j^2\)을 곱하므로 더하면 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>3차원에서 \(g\)가 반지름 1인 공 밖에서 0이면, 원점에서 거리 5인 점의 \(u\)가 0이 아닐 수 있는 시간 범위를 구하여라.
+          <details><summary>답</summary><p>반지름 \(t\)인 구면이 공과 만나야 하므로 \(4 \le t \le 6\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

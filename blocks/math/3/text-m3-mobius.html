@@ -1,0 +1,67 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-11-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-mobius" data-kind="본문" data-std="수학3-11-02">
+  <header class="card-head"><span class="no"></span><h2>격자와 Möbius 반전</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">포함배제 원리와 정수론의 Möbius 반전 공식은 생김새가 닮았다. 하나는 부분집합을, 다른 하나는 약수를 다룬다. 두 공식이 사실 같은 공식이라면, 그 공통의 틀은 무엇인가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 210" role="img" aria-label="12의 약수 격자와 각 원소에 적힌 Möbius 함수 값">
+        <g stroke="var(--ink-3, #888)" stroke-width="1.5">
+          <line x1="220" y1="190" x2="140" y2="140"/><line x1="220" y1="190" x2="300" y2="140"/>
+          <line x1="140" y1="140" x2="100" y2="90"/><line x1="140" y1="140" x2="220" y2="90"/><line x1="300" y1="140" x2="220" y2="90"/>
+          <line x1="100" y1="90" x2="180" y2="40"/><line x1="220" y1="90" x2="180" y2="40"/>
+        </g>
+        <g font-size="13" fill="currentColor" text-anchor="middle">
+          <text x="220" y="205">1 (μ=1)</text><text x="120" y="145">2 (−1)</text><text x="330" y="145">3 (−1)</text>
+          <text x="70" y="95">4 (0)</text><text x="250" y="95">6 (1)</text><text x="180" y="30">12 (0)</text>
+        </g>
+      </svg>
+      <figcaption>그림 1. 12의 약수들이 나누어떨어짐으로 격자를 이룬다. 각 원소의 Möbius 함수 값 \(\mu(1, d)\)는 제곱수로 나누어지면 0, 아니면 소인수 개수의 홀짝에 따라 \(\pm1\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>부분순서집합(<a href="11-01.html">11.1절</a>)과 포함배제 원리(<a href="03-05.html">3.5절</a>)를 쓴다.</div>
+
+    <h3><span class="no">11.2.1</span>격자</h3>
+    <p>부분순서집합에서 어느 두 원소 \(x, y\)도 최소 상계 \(x \vee y\)와 최대 하계 \(x \wedge y\)를 가지면 격자라고 한다. 부분집합들은 합집합과 교집합으로, 약수들은 최소공배수와 최대공약수로, 벡터공간의 부분공간들은 합과 교로 격자를 이룬다. 그림 1이 12의 약수 격자이다. 격자는 "두 대상을 합치고 겹치는" 연산이 있는 순서 구조를 한 말로 부르는 이름이다.</p>
+
+    <h3><span class="no">11.2.2</span>Möbius 함수</h3>
+    <p>유한 부분순서집합에서 \(x \le y\)인 쌍에 정수 \(\mu(x, y)\)를 다음과 같이 재귀로 정한다.</p>
+    \[\mu(x, x) = 1, \qquad \mu(x, y) = -\sum_{x \le z &lt; y}\mu(x, z)\quad(x &lt; y).\]
+    <p>곧 \(x\)에서 \(y\)까지의 값을 모두 더하면 \(x = y\)일 때만 1이고 아니면 0이 되도록 정한 것이다. 가령 그림 1에서 \(\mu(1, 2) = -1\), \(\mu(1, 4) = -(1 - 1) = 0\), \(\mu(1, 6) = -(1 - 1 - 1) = 1\)이다. 정수론의 Möbius 함수가 바로 약수 격자에서의 \(\mu(1, n)\)이다. 부분집합 격자에서는 \(\mu(A, B) = (-1)^{|B \setminus A|}\)가 된다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 11.2.1 <span class="nm">(Möbius 반전)</span></span>
+      <p>함수 \(f, g\)가 모든 \(y\)에서 \(g(y) = \sum_{x \le y}f(x)\)를 만족하면 \(f(y) = \sum_{x \le y}\mu(x, y)g(x)\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>오른쪽에 \(g\)의 정의를 넣고 합의 순서를 바꾼다. \(\sum_{x \le y}\mu(x, y)\sum_{z \le x}f(z) = \sum_{z \le y}f(z)\sum_{z \le x \le y}\mu(x, y)\)이다. 안쪽 합은 \(z = y\)일 때 1, 아니면 0이다(정의를 위쪽 끝에서 쓴 쌍대 꼴, \(\sum_{z \le x \le y}\mu(x, y) = \delta_{zy}\)도 같은 재귀로 성립한다). 따라서 \(f(y)\)만 남는다. <span class="qed">∎</span></p>
+
+    <h3><span class="no">11.2.3</span>포함배제는 부분집합 격자의 반전이다</h3>
+    <p>성질 \(1, \dots, m\)이 있고, 집합 \(S \subseteq \{1, \dots, m\}\)에 대해 \(f(S)\) = "정확히 \(S\)의 성질만 갖는 원소 수", \(g(S)\) = "\(S\) 밖의 성질은 갖지 않는 원소 수"로 두자. 그러면 \(g(S) = \sum_{T \subseteq S}f(T)\)이다. 반전하면 \(f(S) = \sum_{T \subseteq S}(-1)^{|S \setminus T|}g(T)\)인데, \(S\)를 전체로 두고 여집합으로 고쳐 쓰면 바로 포함배제 공식이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 11.2.2</span>
+      <p>약수 격자의 반전으로 \(\varphi(n) = \sum_{d \mid n}\mu(d)\frac nd\)를 보이고 \(n = 12\)에서 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(1, \dots, n\)을 \(\gcd\)로 나누면 \(\gcd(k, n) = d\)인 \(k\)는 \(\varphi(n/d)\)개이므로 \(n = \sum_{d \mid n}\varphi(d)\)이다. 이것이 \(g(n) = n\)인 반전 꼴이므로 \(\varphi(n) = \sum_{d\mid n}\mu(n/d)d = \sum_{d\mid n}\mu(d)\frac nd\)이다. 그림 1의 값을 쓰면 \(\varphi(12) = 12 - 6 - 4 + 0 + 2 + 0 = 4\)이고, 실제로 \(1, 5, 7, 11\)의 네 개이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>격자는 두 원소의 상한과 하한이 늘 있는 부분순서집합이다. 부분순서집합의 Möbius 함수는 구간 위의 합이 0이 되도록 재귀로 정하며, "아래로 누적한 합"을 원래 값으로 되돌리는 반전 공식을 준다. 부분집합 격자에서 이 공식이 포함배제 원리이고, 약수 격자에서는 정수론의 Möbius 반전이다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">11.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>사슬 \(0 &lt; 1 &lt; \dots &lt; n\)의 Möbius 함수를 구하여라.
+          <details><summary>답</summary><p>\(\mu(i, i) = 1\), \(\mu(i, i + 1) = -1\), 나머지 0. 반전은 차분 \(f(n) = g(n) - g(n - 1)\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>부분집합 격자에서 \(\mu(\varnothing, B) = (-1)^{|B|}\)임을 이항정리로 보여라.
+          <details><summary>답</summary><p>귀납 가정으로 \(\sum_{A \subsetneq B}(-1)^{|A|} = (1 - 1)^{|B|} - (-1)^{|B|} = -(-1)^{|B|}\)이므로 정의에서 \(\mu(\varnothing, B) = (-1)^{|B|}\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

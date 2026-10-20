@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학9-07-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m9-python" data-kind="본문" data-std="수학9-07-03">
+  <header class="card-head"><span class="no"></span><h2>파이썬으로 자료 요약하기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">앞 대단원에서 손으로 한 요약 통계와 그래프를 수백 개의 자료로 하려면 도구가 필요하다. 이 과목의 첫 주에 배우는 파이썬으로 자료를 읽고, 요약하고, 그래프를 그리는 최소한의 순서는 무엇인가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="파일 읽기, 살펴보기, 요약, 그래프의 네 단계 흐름">
+        <g fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2">
+          <rect x="15" y="70" width="90" height="40"/><rect x="125" y="70" width="90" height="40"/><rect x="235" y="70" width="90" height="40"/><rect x="345" y="70" width="80" height="40"/>
+        </g>
+        <g font-size="12" fill="currentColor"><text x="25" y="95">read_csv</text><text x="138" y="95">head·info</text><text x="243" y="95">describe</text><text x="355" y="95">plot</text></g>
+        <g stroke="var(--ink-3, #888)"><line x1="105" y1="90" x2="125" y2="90"/><line x1="215" y1="90" x2="235" y2="90"/><line x1="325" y1="90" x2="345" y2="90"/></g>
+        <text x="40" y="150" font-size="12" fill="currentColor">읽기 → 확인하기 → 숫자로 요약 → 그림으로 보기</text>
+      </svg>
+      <figcaption>그림 1. 자료 분석은 읽기, 확인하기, 요약하기, 그리기의 순서로 한다. 둘째 단계에서 빠진 값과 자료형을 먼저 확인해야 뒤의 숫자를 믿을 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>자료 요약(<a href="08-01.html">8.1절</a>)과 회귀선(<a href="08-03.html">8.3절</a>)을 쓴다. 통계 소프트웨어 출력 읽기는 <a href="07-01.html">7.1절</a>에 있다.</div>
+
+    <h3><span class="no">7.3.1</span>읽기와 확인하기</h3>
+    <p>표 자료는 Pandas로 읽는다. 그런데 읽은 다음에는 바로 계산하지 말고 처음 몇 줄과 열마다의 자료형, 빠진 값의 개수를 본다. 그러면 숫자여야 할 열이 문자로 읽혔거나 빈칸이 있는 것을 계산 전에 찾을 수 있다.</p>
+    <pre class="mono small">import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("students.csv")     # 열 혈액형, 키, 공부시간, 점수
+print(df.head())
+df.info()                            # 열마다 자료형과 빠지지 않은 값의 수</pre>
+
+    <h3><span class="no">7.3.2</span>요약하기</h3>
+    <p>이제 양적 변수는 <code>describe</code>로 다섯 수치와 평균, 표준편차를 한 번에 본다. 범주형 변수는 <code>value_counts</code>로 도수를 세고, 두 범주형 변수는 <code>crosstab</code>으로 분할표를 만든다. 상관계수는 <code>corr</code>이다.</p>
+    <pre class="mono small">print(df["키"].describe())
+print(df["혈액형"].value_counts(normalize=True))   # 상대도수
+print(df[["공부시간", "점수"]].corr())</pre>
+
+    <h3><span class="no">7.3.3</span>그리기</h3>
+    <p>다음으로 그래프는 자료의 종류에 맞게 고른다. 양적 변수 하나는 히스토그램이나 상자그림, 범주형 변수는 막대그래프, 두 양적 변수는 산점도이다. 한편 회귀선은 <code>numpy.polyfit</code>으로 기울기와 절편을 구해 산점도 위에 겹쳐 그린다.</p>
+    <pre class="mono small">import numpy as np
+b1, b0 = np.polyfit(df["공부시간"], df["점수"], 1)
+plt.scatter(df["공부시간"], df["점수"])
+xs = np.linspace(df["공부시간"].min(), df["공부시간"].max(), 50)
+plt.plot(xs, b0 + b1 * xs)
+plt.xlabel("공부 시간"); plt.ylabel("점수")
+plt.show()</pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.3.1</span>
+      <p>위 코드에서 <code>np.polyfit</code>이 준 기울기가 \(r s_y/s_x\)와 같은지 확인하는 코드를 써라.</p>
+    </div>
+    <pre class="mono small">r = df["공부시간"].corr(df["점수"])
+print(b1, r * df["점수"].std() / df["공부시간"].std())   # 두 값이 같다</pre>
+    <p><i>풀이.</i> 두 값은 반올림 오차 안에서 같다. 이렇게 공식으로 구한 값과 도구가 준 값을 맞춰 보면 도구를 바르게 썼는지와 공식을 바르게 이해했는지를 함께 확인할 수 있다. 표준편차를 \(n - 1\)로 나누든 \(n\)으로 나누든 비율에서는 약분되어 결과가 같다는 것도 알 수 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이썬 자료 분석은 <code>read_csv</code>로 읽고 <code>head</code>와 <code>info</code>로 확인한 뒤, <code>describe</code>, <code>value_counts</code>, <code>corr</code>로 요약하고 자료 종류에 맞는 그래프를 그리는 순서로 한다. 도구가 준 숫자는 손으로 한 공식과 맞춰 확인한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>혈액형별로 키의 평균을 구하는 코드를 써라.
+          <details><summary>답</summary><p><code>df.groupby("혈액형")["키"].mean()</code></p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>혈액형별 키의 상자그림을 나란히 그리는 방법을 설명하여라.
+          <details><summary>답</summary><p><code>df.boxplot(column="키", by="혈액형")</code>를 쓰거나, 그룹마다 값을 모은 리스트를 <code>plt.boxplot</code>에 넘긴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

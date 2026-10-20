@@ -1,0 +1,58 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-10-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-gbmou" data-kind="본문" data-std="수학21-10-02">
+  <header class="card-head"><span class="no"></span><h2>기하 브라운 운동과 Ornstein-Uhlenbeck 과정</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">주가는 음수가 되지 않고 대략 비율로 변한다. 반면 마찰을 받는 입자의 속도는 0 근처로 끌려가며 흔들린다. 두 현상을 나타내는 가장 간단한 확률미분방정식은 무엇이고, 그 해를 정확히 적을 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="왼쪽은 지수적으로 자라며 흔들리는 기하 브라운 운동, 오른쪽은 0 근처로 되돌아오는 OU 과정">
+        <line x1="20" y1="170" x2="210" y2="170" stroke="var(--ink-3, #888)"/>
+        <polyline points="20,150 40,146 60,150 80,138 100,140 120,124 140,128 160,104 180,96 200,70 210,62" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5"/>
+        <text x="40" y="186" font-size="12" fill="currentColor">기하 브라운 운동</text>
+        <line x1="240" y1="100" x2="420" y2="100" stroke="var(--ink-3, #888)"/>
+        <polyline points="240,30 260,55 280,70 300,90 320,108 340,96 360,110 380,92 400,104 420,98" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="1.5"/>
+        <text x="270" y="186" font-size="12" fill="currentColor">Ornstein-Uhlenbeck</text>
+      </svg>
+      <figcaption>그림 1. 기하 브라운 운동은 비율로 흔들리며 지수적으로 변하고(왼쪽), Ornstein-Uhlenbeck 과정은 평균 쪽으로 끌려가며 일정한 폭으로 흔들린다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Itô 공식(<a href="09-02.html">9.2절</a>), 해의 존재와 유일성(<a href="10-01.html">10.1절</a>), 일계 선형 상미분방정식의 적분인자를 쓴다. Evans 5장 1~2절을 따른다.</div>
+
+    <h3><span class="no">10.2.1</span>기하 브라운 운동</h3>
+    <p>\(dS = \mu S\,dt + \sigma S\,dW\)는 수익률 \(dS/S\)이 평균 \(\mu\,dt\)에 잡음 \(\sigma\,dW\)를 더한 것이라는 모형이다. 보통의 미적분이라면 \(\log S\)를 미분해 \(d\log S = dS/S\)로 풀었을 것이다. 그런데 Itô 공식에서는 \(f(x) = \log x\)의 2차 항이 남는다.</p>
+    \[d\log S = \frac{dS}{S} - \frac{1}{2}\frac{(dS)^2}{S^2} = \left(\mu - \tfrac12\sigma^2\right)dt + \sigma\,dW.\]
+    <p>오른쪽은 계수가 상수라 바로 적분된다. 따라서 \(S(t) = S_0\exp\left((\mu - \frac12\sigma^2)t + \sigma W(t)\right)\)이다. 이 해는 언제나 양수이고, \(\log S(t)\)는 정규분포를 따른다. 그런데 평균은 \(E[S(t)] = S_0e^{\mu t}\)인 반면, 전형적인 경로는 \(e^{(\mu - \sigma^2/2)t}\)로 자란다. \(\mu &lt; \frac12\sigma^2\)이면 평균은 늘어나는데 거의 모든 경로는 0으로 간다.</p>
+
+    <h3><span class="no">10.2.2</span>Ornstein-Uhlenbeck 과정</h3>
+    <p>\(dY = -bY\,dt + \sigma\,dW\)(\(b &gt; 0\))는 마찰 \(-bY\)와 일정한 잡음을 받는 속도의 Langevin 방정식이다. 상미분방정식의 적분인자 \(e^{bt}\)를 그대로 쓰자. Itô 공식에서 \(e^{bt}Y\)는 \(x\)에 대해 일차라 2차 항이 없으므로 \(d(e^{bt}Y) = e^{bt}(dY + bY\,dt) = \sigma e^{bt}dW\)이다. 적분하면</p>
+    \[Y(t) = e^{-bt}Y_0 + \sigma\int_0^te^{-b(t - s)}dW(s)\]
+    <p>이다. 둘째 항은 결정론적 함수의 Itô 적분이라 평균 0인 정규분포이고, 등거리로 분산이 \(\sigma^2\int_0^te^{-2b(t-s)}ds = \frac{\sigma^2}{2b}(1 - e^{-2bt})\)이다. 그러면 \(t \to \infty\)에서 \(Y(t)\)는 \(N(0, \frac{\sigma^2}{2b})\)로 수렴하고, 이것이 정상분포이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 10.2.1</span>
+      <p>주가가 \(\mu = 0.05\), \(\sigma = 0.4\)(연 단위)인 기하 브라운 운동일 때, 10년 뒤 주가의 평균과 중앙값을 처음 값과 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 평균은 \(e^{0.05\times10} = e^{0.5} \approx 1.65\)배이다. 중앙값은 \(\log S\)의 중앙값 \((\mu - \frac12\sigma^2)t = (0.05 - 0.08)\times10 = -0.3\)에서 \(e^{-0.3} \approx 0.74\)배이다. 그러면 평균은 65% 오르는데, 절반 이상의 경로에서는 26% 넘게 떨어진다. 변동성이 크면 소수의 큰 상승이 평균을 끌어올린다는 것이 \(-\frac12\sigma^2\) 보정의 뜻이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>기하 브라운 운동 \(dS = \mu S\,dt + \sigma S\,dW\)는 \(\log S\)를 Itô 공식으로 미분해 \(S = S_0e^{(\mu - \sigma^2/2)t + \sigma W}\)로 풀리고, \(-\frac12\sigma^2\) 보정 때문에 평균과 전형적인 경로가 다르게 자란다. Ornstein-Uhlenbeck 과정은 적분인자로 풀리는 가우스 과정이며, 정상분포 \(N(0, \sigma^2/2b)\)로 수렴한다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">10.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>기하 브라운 운동에서 \(E[S(t)] = S_0e^{\mu t}\)임을 해의 식과 정규분포의 적률생성함수로 보여라.
+          <details><summary>답</summary><p>\(E[e^{\sigma W_t}] = e^{\sigma^2t/2}\)이 \(e^{-\sigma^2t/2}\)를 상쇄한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>OU 과정에서 \(s &lt; t\)일 때 \(\operatorname{Cov}(Y_s, Y_t)\)를 정상 상태에서 구하여라.
+          <details><summary>답</summary><p>\(\frac{\sigma^2}{2b}e^{-b(t - s)}\). 시간 차가 커질수록 지수적으로 상관이 사라진다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

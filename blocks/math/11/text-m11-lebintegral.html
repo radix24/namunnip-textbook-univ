@@ -1,0 +1,63 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학11-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m11-lebintegral" data-kind="본문" data-std="수학11-07-02">
+  <header class="card-head"><span class="no"></span><h2>Lebesgue 적분</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">Riemann 적분은 정의역을 잘게 나누어 직사각형을 쌓는다. Lebesgue는 반대로 함숫값을 잘게 나누고, 각 값의 층이 차지하는 집합의 측도를 곱해 더했다. 이렇게 바꾸면 무엇을 얻는가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="왼쪽은 정의역을 나누는 Riemann 합, 오른쪽은 치역을 나누는 Lebesgue 합">
+        <line x1="20" y1="170" x2="200" y2="170" stroke="var(--ink-3, #888)"/>
+        <path d="M20 140 C 60 40, 120 160, 200 60" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <g fill="var(--sprout, #c9cbf7)" opacity="0.6"><rect x="20" y="130" width="30" height="40"/><rect x="50" y="80" width="30" height="90"/><rect x="80" y="100" width="30" height="70"/><rect x="110" y="125" width="30" height="45"/><rect x="140" y="110" width="30" height="60"/><rect x="170" y="75" width="30" height="95"/></g>
+        <text x="60" y="186" font-size="12" fill="currentColor">Riemann은 x를 나눈다</text>
+        <line x1="240" y1="170" x2="420" y2="170" stroke="var(--ink-3, #888)"/>
+        <path d="M240 140 C 280 40, 340 160, 420 60" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <g stroke="var(--qed, #f2b33d)" stroke-width="1" stroke-dasharray="3 3"><line x1="240" y1="130" x2="420" y2="130"/><line x1="240" y1="100" x2="420" y2="100"/><line x1="240" y1="70" x2="420" y2="70"/></g>
+        <path d="M262 100 L262 170 M318 100 L318 170 M392 100 L392 170" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <text x="270" y="186" font-size="12" fill="currentColor">Lebesgue는 y를 나눈다</text>
+      </svg>
+      <figcaption>그림 1. Lebesgue 합은 함숫값의 구간 \([y_k, y_{k+1})\)마다 그 값을 갖는 점들의 집합 \(\{y_k \le f &lt; y_{k+1}\}\)의 측도를 \(y_k\)에 곱해 더한다. 그 집합이 여러 조각이어도 측도만 있으면 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Lebesgue 측도(<a href="07-01.html">7.1절</a>), Riemann 적분(<a href="04-01.html">4.1절</a>), 해석학(1)의 균등수렴과 적분의 교환을 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>정의</h3>
+    <p>함수 \(f\)가 모든 \(c\)에서 \(\{f &gt; c\}\)가 가측이면 가측함수라고 한다. 그러면 그림 1의 층 집합들이 모두 가측이라 측도를 잴 수 있다. 정의는 세 단계로 한다. 유한 개의 값만 갖는 단순함수 \(\sum a_i\mathbf 1_{E_i}\)의 적분은 \(\sum a_im(E_i)\)이다. 음이 아닌 가측함수 \(f\)의 적분은 \(f\) 아래 단순함수의 적분의 상한이다. 일반 \(f\)는 \(f = f^+ - f^-\)로 나누어 두 적분이 유한하면 그 차로 정한다.</p>
+    <p>이 정의는 Riemann 적분을 넓힌다. 유계 함수가 \([a, b]\)에서 Riemann 적분 가능하면 Lebesgue 적분도 가능하고 값이 같다. 거꾸로는 아니다. 유리수의 지시함수 \(\mathbf 1_{\mathbb Q}\)는 모든 점에서 불연속이라 Riemann 적분이 없지만, 유리수 집합의 측도가 0이므로 Lebesgue 적분은 \(1\cdot m(\mathbb Q \cap [0,1]) = 0\)이다.</p>
+
+    <h3><span class="no">7.2.2</span>수렴 정리</h3>
+    <p>Lebesgue 적분의 진짜 이득은 극한과의 교환이다. Riemann 적분에서는 균등수렴을 요구했지만 Lebesgue 적분에서는 점별 수렴과 간단한 조건이면 된다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.1</span>
+      <p>(가) 단조수렴정리. \(0 \le f_n \uparrow f\)이면 \(\int f_n \to \int f\). (나) 지배수렴정리. \(f_n \to f\)가 점별로(측도 0 집합 밖에서) 성립하고 \(|f_n| \le g\), \(\int g &lt; \infty\)이면 \(\int f_n \to \int f\).</p>
+    </div>
+    <p>증명은 (가)를 측도의 연속성에서 얻고, Fatou 보조정리를 거쳐 (나)로 간다. 이 정리들이 Riemann 적분에서는 성립하지 않는 이유를 보자. \([0, 1]\)의 유리수를 \(q_1, q_2, \dots\)로 늘어놓고 \(f_n = \mathbf 1_{\{q_1, \dots, q_n\}}\)이라 하면 각 \(f_n\)은 Riemann 적분이 0이고 \(f_n\)은 \(\mathbf 1_{\mathbb Q}\)로 증가한다. 그런데 극한은 Riemann 적분이 없다. 따라서 Riemann 적분 가능한 함수들의 공간은 단조 극한에 닫혀 있지 않고, Lebesgue 적분은 바로 그 구멍을 메운다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>\(\lim_{n\to\infty}\int_0^1\frac{n\sqrt x}{1 + n^2x^2}dx\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(x &gt; 0\)이면 피적분함수는 \(\frac{n\sqrt x}{1 + n^2x^2} \le \frac{n\sqrt x}{n^2x^2} = \frac{1}{nx^{3/2}} \to 0\)이므로 점별로 0으로 간다. 지배함수가 필요하다. 산술-기하 평균으로 \(1 + n^2x^2 \ge 2nx\)이므로 피적분함수는 \(\frac{\sqrt x}{2x} = \frac{1}{2\sqrt x}\) 이하이고, \(\int_0^1\frac{dx}{2\sqrt x} = 1\)로 유한하다. 따라서 지배수렴정리로 극한은 0이다. 이 수열은 \(x = 0\) 근처에서 균등수렴하지 않으므로 Riemann 적분의 정리로는 바로 결론을 낼 수 없다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Lebesgue 적분은 함숫값을 나누고 각 층 집합의 측도를 곱해 더하는 적분이다. Riemann 적분 가능한 함수에서는 같은 값을 주면서, 유리수의 지시함수처럼 Riemann 적분이 없는 함수도 다룬다. 단조수렴정리와 지배수렴정리 덕분에 균등수렴 없이도 극한과 적분의 순서를 바꿀 수 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\int_0^1x^n\,dx \to 0\)을 지배수렴정리로 보여라.
+          <details><summary>답</summary><p>\([0, 1)\)에서 \(x^n \to 0\)이고 \(x = 1\)은 측도 0이다. 지배함수는 1.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f_n = n\mathbf 1_{(0, 1/n)}\)에서 지배수렴정리의 결론이 깨지는 이유를 지배함수로 설명하여라.
+          <details><summary>답</summary><p>\(\sup_nf_n\)은 \((\frac1{n+1}, \frac1n)\)에서 \(n\)이라 적분이 \(\sum\frac{1}{n+1}\)로 발산한다. 적분 가능한 지배함수가 없다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

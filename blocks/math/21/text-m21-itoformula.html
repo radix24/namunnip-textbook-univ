@@ -1,0 +1,62 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-09-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-itoformula" data-kind="본문" data-std="수학21-09-02">
+  <header class="card-head"><span class="no"></span><h2>Itô 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">보통의 연쇄법칙은 \(df(x(t)) = f'(x)\,dx\)이다. 브라운 운동에 이 규칙을 쓰면 \(d(W^2) = 2W\,dW\)가 되어야 하는데, 앞 절에서 \(\int W\,dW = \frac12W^2 - \frac12t\)였다. 사라진 \(\frac12t\)는 어디에서 오고, 일반적인 연쇄법칙은 어떤 모양인가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="볼록 함수 f 위에서 브라운 운동이 좌우로 흔들릴 때 f의 평균이 2차 항만큼 위로 치우치는 그림">
+        <path d="M40 40 C 120 160, 320 160, 400 40" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <circle cx="220" cy="130" r="4" fill="currentColor"/>
+        <circle cx="160" cy="118" r="4" fill="var(--qed, #f2b33d)"/>
+        <circle cx="280" cy="118" r="4" fill="var(--qed, #f2b33d)"/>
+        <line x1="160" y1="118" x2="280" y2="118" stroke="var(--qed, #f2b33d)" stroke-dasharray="4 3"/>
+        <text x="190" y="110" font-size="12" fill="currentColor">평균이 위로</text>
+        <text x="150" y="160" font-size="12" fill="currentColor">x − √Δt</text><text x="270" y="160" font-size="12" fill="currentColor">x + √Δt</text>
+      </svg>
+      <figcaption>그림 1. 볼록한 \(f\) 위에서 \(x\)가 \(\pm\sqrt{\Delta t}\)만큼 흔들리면 \(f\)의 평균은 \(f(x)\)보다 \(\frac12f''(x)\Delta t\)만큼 위에 있다. 이 치우침이 Itô 공식의 추가 항이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Itô 적분(<a href="09-01.html">9.1절</a>), 이차변분(<a href="08-02.html">8.2절</a>), Taylor 정리를 쓴다. Evans 4장 4절을 따른다.</div>
+
+    <h3><span class="no">9.2.1</span>Taylor 전개에서 남는 항</h3>
+    <p>\(f\)가 두 번 연속 미분 가능하다고 하자. 칸마다 Taylor 전개하면 \(f(W_{k+1}) - f(W_k) = f'(W_k)\Delta_k + \frac12f''(W_k)\Delta_k^2 + (\text{나머지})\)이다. 보통의 함수라면 \(\Delta_k^2\)이 칸 길이의 제곱 정도라 합이 0으로 갔다. 그런데 브라운 운동에서는 \(\Delta_k^2 \approx \delta_k\)이고, 이차변분 정리처럼 \(\sum f''(W_k)\Delta_k^2\)은 \(\int f''(W)\,dt\)로 수렴한다. 나머지 항은 \(|\Delta_k|^3\) 정도라 합이 0으로 간다. 그러면 다음을 얻는다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 9.2.1 <span class="nm">(Itô 공식)</span></span>
+      <p>\(f \in C^2\)이면 \(f(W(t)) = f(0) + \int_0^tf'(W)\,dW + \frac12\int_0^tf''(W)\,ds\)이다. 미분 꼴로 \(df(W) = f'(W)\,dW + \frac12f''(W)\,dt\)이다.</p>
+    </div>
+    <p>더 일반적으로 \(dX = F\,dt + G\,dW\)인 Itô 과정과 \(u(x, t) \in C^{2,1}\)에서</p>
+    \[du(X, t) = \left(u_t + Fu_x + \tfrac12G^2u_{xx}\right)dt + Gu_x\,dW\]
+    <p>이다. 기억하는 방법은 두 번째 차수까지 Taylor 전개한 뒤 곱셈표 \(dW\cdot dW = dt\), \(dW\cdot dt = dt\cdot dt = 0\)을 쓰는 것이다. 이 표가 이차변분 \((\Delta W)^2 \approx \Delta t\)를 미분 기호로 적은 것이다.</p>
+
+    <h3><span class="no">9.2.2</span>계산</h3>
+    <p>\(f(x) = x^2\)이면 \(d(W^2) = 2W\,dW + dt\)이고, 적분하면 \(\int_0^tW\,dW = \frac12W_t^2 - \frac12t\)가 다시 나온다. 따라서 처음 질문의 \(\frac12t\)는 \(\frac12f''\,dt\) 항이다. 그림 1처럼 \(x^2\)이 볼록이라 흔들림이 평균을 위로 밀어 올리는 몫이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 9.2.2</span>
+      <p>\(Y(t) = e^{\lambda W(t) - \frac12\lambda^2t}\)가 \(dY = \lambda Y\,dW\)를 만족함을 보이고 \(E[e^{\lambda W(t)}]\)를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(u(x, t) = e^{\lambda x - \frac12\lambda^2t}\)이면 \(u_t = -\frac12\lambda^2u\), \(u_x = \lambda u\), \(u_{xx} = \lambda^2u\)이다. Itô 공식(\(F = 0\), \(G = 1\))으로 \(dY = \left(-\frac12\lambda^2 + \frac12\lambda^2\right)Y\,dt + \lambda Y\,dW = \lambda Y\,dW\)이다. 그러면 \(Y\)는 \(dt\) 항이 없는 Itô 적분이라 평균이 \(Y(0) = 1\)로 유지된다. 따라서 \(E[e^{\lambda W(t)}] = e^{\frac12\lambda^2t}\)이고, 이것은 \(N(0, t)\)의 적률생성함수와 같다. 보통의 미적분이었다면 \(e^{\lambda W}\)가 \(dY = \lambda Y\,dW\)를 만족했을 텐데, 확률미적분에서는 \(-\frac12\lambda^2t\)라는 보정이 필요하다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>브라운 운동은 \((\Delta W)^2 \approx \Delta t\)라서 Taylor 전개의 2차 항이 사라지지 않는다. 그래서 확률미적분의 연쇄법칙은 \(df(W) = f'(W)\,dW + \frac12f''(W)\,dt\)이고, 일반 Itô 과정에서는 \(\frac12G^2u_{xx}\,dt\) 항이 붙는다. 곱셈표 \(dW^2 = dt\)로 계산하면 \(\int W\,dW\)와 지수 마팅게일 \(e^{\lambda W - \lambda^2t/2}\)이 바로 나온다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">9.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(d(W^3)\)을 구하고 \(E[W_t^3] = 0\)을 확인하여라.
+          <details><summary>답</summary><p>\(d(W^3) = 3W^2dW + 3W\,dt\). 기대값을 취하면 \(\frac{d}{dt}E[W^3] = 3E[W] = 0\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>Itô 공식으로 \(E[W_t^4] = 3t^2\)을 보여라.
+          <details><summary>답</summary><p>\(d(W^4) = 4W^3dW + 6W^2dt\)이므로 \(E[W_t^4] = 6\int_0^ts\,ds = 3t^2\).</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

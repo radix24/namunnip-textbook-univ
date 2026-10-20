@@ -1,0 +1,73 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학4-07-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m4-pandas" data-kind="본문" data-std="수학4-07-02">
+  <header class="card-head"><span class="no"></span><h2>Pandas로 표 자료 다루기</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">반별 시험 점수가 담긴 CSV 파일이 있다. 반마다 평균과 표준편차를 구하고, 70점 미만인 학생만 골라 보고 싶다. 리스트와 반복문으로도 할 수 있지만, 표 모양의 자료를 다루는 전용 도구를 쓰면 한두 줄이면 된다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="DataFrame 표를 반 열로 묶어 그룹마다 평균을 계산하는 그림">
+        <g stroke="var(--ink-3, #888)">
+          <rect x="20" y="20" width="180" height="150" fill="none"/>
+          <line x1="20" y1="45" x2="200" y2="45"/><line x1="80" y1="20" x2="80" y2="170"/><line x1="140" y1="20" x2="140" y2="170"/>
+        </g>
+        <g font-size="12" fill="currentColor">
+          <text x="30" y="38">이름</text><text x="95" y="38">반</text><text x="150" y="38">점수</text>
+          <text x="30" y="65">a</text><text x="100" y="65">1</text><text x="150" y="65">82</text>
+          <text x="30" y="90">b</text><text x="100" y="90">2</text><text x="150" y="90">65</text>
+          <text x="30" y="115">c</text><text x="100" y="115">1</text><text x="150" y="115">74</text>
+          <text x="30" y="140">d</text><text x="100" y="140">2</text><text x="150" y="140">91</text>
+        </g>
+        <text x="215" y="100" font-size="16" fill="currentColor">→ groupby("반")</text>
+        <rect x="330" y="60" width="90" height="70" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <text x="340" y="85" font-size="12" fill="currentColor">1반 78.0</text>
+        <text x="340" y="110" font-size="12" fill="currentColor">2반 78.0</text>
+      </svg>
+      <figcaption>그림 1. DataFrame은 열마다 이름이 붙은 표이다. <code>groupby</code>로 한 열의 값에 따라 행을 묶으면 묶음마다 요약 통계를 낼 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy 배열(<a href="03-01.html">3.1절</a>)과 딕셔너리(<a href="01-03.html">1.3절</a>), 평균과 표준편차를 쓴다.</div>
+
+    <h3><span class="no">7.2.1</span>DataFrame</h3>
+    <p>Pandas의 <code>DataFrame</code>은 행과 이름 붙은 열로 된 표이다. 각 열은 NumPy 배열처럼 한 자료형을 갖는다. 파일에서 읽을 때는 <code>read_csv</code>를 쓰고, 첫 몇 줄과 요약을 먼저 보는 것이 순서이다.</p>
+    <pre class="mono small">import pandas as pd
+df = pd.read_csv("scores.csv")       # 열 이름, 반, 점수
+print(df.head())                     # 첫 다섯 줄
+print(df.describe())                 # 개수, 평균, 표준편차, 사분위수</pre>
+    <p><code>describe</code>는 수치 열마다 개수, 평균, 표준편차, 최솟값, 사분위수, 최댓값을 한 번에 낸다. 여기서 개수가 행 수보다 적으면 빠진 값(NaN)이 있다는 뜻이므로, 계산 전에 <code>df.isna().sum()</code>으로 확인한다.</p>
+
+    <h3><span class="no">7.2.2</span>골라내기와 새 열</h3>
+    <p>열 하나는 <code>df["점수"]</code>로 꺼내고, 조건은 불 배열로 쓴다. 가령 <code>df[df["점수"] &lt; 70]</code>은 70점 미만인 행만 남긴다. 조건 두 개는 <code>&amp;</code>(그리고)와 <code>|</code>(또는)로 묶고 각 조건을 괄호로 감싼다. 새 열은 배열 연산으로 만든다. 예를 들어 표준점수는 <code>df["z"] = (df["점수"] - df["점수"].mean()) / df["점수"].std()</code>이다. 반복문 없이 열 전체에 한 번에 계산된다는 점이 NumPy와 같다.</p>
+
+    <h3><span class="no">7.2.3</span>그룹별 요약</h3>
+    <p>그림 1처럼 <code>groupby</code>는 한 열의 값이 같은 행끼리 묶는다. 묶은 뒤에 <code>mean</code>, <code>std</code>, <code>count</code>를 부르면 묶음마다 계산한다. 여러 통계를 한 번에 보려면 <code>agg</code>를 쓴다.</p>
+    <pre class="mono small">summary = df.groupby("반")["점수"].agg(["count", "mean", "std"])
+print(summary.round(1))</pre>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.1</span>
+      <p>그림 1의 네 행으로 반별 평균과 표준편차(표본 표준편차)를 손으로 계산하고 <code>agg</code>의 결과와 맞춰 보아라.</p>
+    </div>
+    <p><i>풀이.</i> 1반은 82와 74이므로 평균 78, 편차 \(\pm4\)라 표본분산 \(\frac{16 + 16}{2 - 1} = 32\), 표준편차 약 5.7이다. 2반은 65와 91이라 평균 78, 편차 \(\pm13\)이고 표준편차 약 18.4이다. 평균은 같지만 퍼짐이 크게 다르다. Pandas의 <code>std</code>는 기본으로 \(n - 1\)로 나누는 표본 표준편차이므로 같은 값이 나온다. NumPy의 <code>np.std</code>는 기본이 \(n\)으로 나누기라 값이 다르다는 점에 주의하자.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>DataFrame은 이름 붙은 열로 된 표이고, <code>read_csv</code>로 읽어 <code>head</code>, <code>describe</code>, <code>isna</code>로 먼저 살핀다. 불 배열로 행을 골라내고 배열 연산으로 새 열을 만들며, <code>groupby</code>와 <code>agg</code>로 묶음마다 요약한다. 표준편차가 \(n\)과 \(n - 1\) 가운데 무엇으로 나눈 것인지는 도구마다 기본값이 다르다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">7.2.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>2반 학생 가운데 80점 이상인 행만 고르는 식을 써라.
+          <details><summary>답</summary><p><code>df[(df["반"] == 2) &amp; (df["점수"] &gt;= 80)]</code></p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>점수를 10점 구간으로 나누어 반별 도수표를 만드는 방법을 설명하여라.
+          <details><summary>답</summary><p><code>pd.cut(df["점수"], range(0, 101, 10))</code>로 구간 열을 만든 뒤 <code>pd.crosstab(df["반"], 구간)</code>을 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

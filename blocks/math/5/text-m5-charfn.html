@@ -1,0 +1,66 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-10-01",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-charfn" data-kind="본문" data-std="수학5-10-01">
+  <header class="card-head"><span class="no"></span><h2>특성함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">적률생성함수 \(E[e^{tX}]\)는 독립인 합을 다루기 좋지만, Cauchy 분포처럼 꼬리가 두꺼우면 \(t \ne 0\)에서 무한대가 되어 쓸 수 없다. 지수를 \(itX\)로 바꾸면 어떤 분포에서나 값이 있는 함수가 생긴다. 그 함수는 분포를 완전히 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 180" role="img" aria-label="표준정규분포의 특성함수 e^(-t²/2)와 Cauchy 분포의 특성함수 e^(-|t|)의 그래프">
+        <line x1="30" y1="150" x2="420" y2="150" stroke="var(--ink-3, #888)"/>
+        <line x1="225" y1="160" x2="225" y2="20" stroke="var(--ink-3, #888)"/>
+        <path d="M30 149 C 140 148, 175 40, 225 30 C 275 40, 310 148, 420 149" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <path d="M30 147 C 130 143, 190 110, 225 30 C 260 110, 320 143, 420 147" fill="none" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <text x="290" y="70" font-size="12" fill="currentColor">e^(−t²/2) 정규</text>
+        <text x="250" y="120" font-size="12" fill="currentColor">e^(−|t|) Cauchy</text>
+      </svg>
+      <figcaption>그림 1. 특성함수는 모든 분포에서 정의되고 \(|\varphi(t)| \le 1\), \(\varphi(0) = 1\)이다. Cauchy 분포의 특성함수는 원점에서 꺾여 있는데, 이것은 평균이 없다는 것과 같은 정보이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>적률생성함수(<a href="03-02.html">3.2절</a>), Fubini 정리(<a href="09-03.html">9.3절</a>), 지배수렴정리(<a href="09-01.html">9.1절</a>), 오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\)를 쓴다.</div>
+
+    <h3><span class="no">10.1.1</span>정의와 기본 성질</h3>
+    <div class="tb-env">
+      <span class="lb">정의 10.1.1 <span class="nm">(특성함수)</span></span>
+      <p>확률변수 \(X\)의 특성함수는 \(\varphi_X(t) = E[e^{itX}] = E[\cos tX] + iE[\sin tX]\)(\(t \in \mathbb R\))이다.</p>
+    </div>
+    <p>\(|e^{itX}| = 1\)이므로 이 기대값은 언제나 있고 \(|\varphi(t)| \le 1\)이다. 따라서 적률생성함수와 달리 어떤 분포에도 쓸 수 있다. 또 지배수렴정리로 \(\varphi\)는 연속이다. 독립인 합에서는 \(e^{it(X + Y)} = e^{itX}e^{itY}\)이고 Fubini로 기대값이 곱이 되어 \(\varphi_{X+Y} = \varphi_X\varphi_Y\)이다. 일차변환은 \(\varphi_{aX + b}(t) = e^{ibt}\varphi_X(at)\)이다.</p>
+    <p>적률은 원점 근처에서 읽힌다. \(E|X|^k &lt; \infty\)이면 \(\varphi\)는 \(k\)번 미분 가능하고 \(\varphi^{(k)}(0) = i^kE[X^k]\)이다. 그러면 평균이 0이고 분산이 \(\sigma^2\)이면 \(\varphi(t) = 1 - \frac{\sigma^2t^2}{2} + o(t^2)\)이다. 이 전개가 중심극한정리 증명의 출발점이 된다.</p>
+
+    <h3><span class="no">10.1.2</span>예</h3>
+    <p>정규분포 \(N(0, 1)\)에서 \(\varphi(t) = \frac1{\sqrt{2\pi}}\int e^{itx - x^2/2}dx\)이다. 이 적분을 \(t\)에 대해 미분하고 부분적분하면 \(\varphi'(t) = -t\varphi(t)\)를 얻으므로, \(\varphi(0) = 1\)과 함께 \(\varphi(t) = e^{-t^2/2}\)이다. 정규분포의 특성함수는 같은 꼴의 가우스 함수이다. 한편 표준 Cauchy 분포(밀도 \(\frac{1}{\pi(1 + x^2)}\))는 유수 계산으로 \(\varphi(t) = e^{-|t|}\)이다. 그림 1처럼 원점에서 미분 불가능하고, 이것은 \(E|X| = \infty\)와 맞는다.</p>
+
+    <h3><span class="no">10.1.3</span>반전 공식과 유일성</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 10.1.2 <span class="nm">(반전 공식)</span></span>
+      <p>\(a &lt; b\)가 분포의 원자가 아니면 \(P(a &lt; X \le b) = \lim_{T\to\infty}\frac{1}{2\pi}\int_{-T}^{T}\frac{e^{-ita} - e^{-itb}}{it}\varphi(t)\,dt\)이다. 특히 \(\int|\varphi| &lt; \infty\)이면 \(X\)는 밀도 \(f(x) = \frac1{2\pi}\int e^{-itx}\varphi(t)\,dt\)를 가진다.</p>
+    </div>
+    <p>증명은 \(\varphi\)의 정의를 넣고 Fubini로 적분 순서를 바꾸어 \(\int_{-T}^{T}\frac{\sin t(x - a)}{t}dt\) 꼴의 적분을 계산하는 것이다. 이 적분은 \(T \to \infty\)에서 \(\pi\operatorname{sgn}(x - a)\)로 가고 유계이므로 지배수렴정리를 쓸 수 있다. 반전 공식에서 바로 다음이 나온다. 두 분포의 특성함수가 같으면 원자가 아닌 모든 구간에서 확률이 같고, π-λ 정리로 분포가 같다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 10.1.3</span>
+      <p>독립인 표준 Cauchy 변수 \(X_1, \dots, X_n\)의 표본평균 \(\bar X\)의 분포를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(\varphi_{\bar X}(t) = \prod_k\varphi_{X_k}(t/n) = (e^{-|t|/n})^n = e^{-|t|}\)이다. 유일성 정리로 \(\bar X\)는 다시 표준 Cauchy 분포이다. 표본을 아무리 많이 모아도 표본평균의 분포가 줄어들지 않는다. 평균이 없는 분포에서는 대수의 법칙이 성립하지 않는다는 것을 특성함수가 한 줄로 보여 준다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>특성함수 \(E[e^{itX}]\)는 모든 분포에서 정의되는 유계 연속 함수이고, 독립인 합을 곱으로 바꾸며, 원점 근처의 전개에 적률을 담는다. 반전 공식으로 특성함수에서 분포를 되살릴 수 있으므로 특성함수가 같으면 분포가 같다. Cauchy 분포의 표본평균이 다시 Cauchy라는 사실이 이 유일성에서 나온다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">10.1.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>Poisson\((\lambda)\) 분포의 특성함수가 \(\exp(\lambda(e^{it} - 1))\)임을 보여라.
+          <details><summary>답</summary><p>\(\sum_ke^{itk}e^{-\lambda}\lambda^k/k! = e^{-\lambda}e^{\lambda e^{it}}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\varphi_X\)가 실수값이면 \(X\)와 \(-X\)의 분포가 같음을 보여라.
+          <details><summary>답</summary><p>\(\varphi_{-X}(t) = \varphi_X(-t) = \overline{\varphi_X(t)} = \varphi_X(t)\)이고 유일성 정리를 쓴다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

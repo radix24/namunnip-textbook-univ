@@ -1,0 +1,64 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학21-10-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m21-feynmankac" data-kind="본문" data-std="수학21-10-03">
+  <header class="card-head"><span class="no"></span><h2>확률미분방정식과 편미분방정식: Feynman-Kac 공식</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">열방정식 \(u_t = \frac12u_{xx}\)의 해를 구하는 데 브라운 운동을 쓸 수 있을까? 거꾸로, 브라운 운동이 처음으로 어떤 경계에 닿을 확률을 편미분방정식으로 계산할 수 있을까? 두 세계를 잇는 다리가 Itô 공식이다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="점 x에서 출발한 여러 브라운 경로가 시각 t에 도달한 점의 g값을 평균내면 열방정식의 해가 된다는 그림">
+        <line x1="40" y1="170" x2="40" y2="20" stroke="var(--ink-3, #888)"/>
+        <line x1="380" y1="170" x2="380" y2="20" stroke="var(--qed, #f2b33d)" stroke-width="2"/>
+        <circle cx="40" cy="95" r="4" fill="currentColor"/>
+        <polyline points="40,95 80,85 120,100 160,70 200,80 240,55 280,65 320,40 380,48" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5"/>
+        <polyline points="40,95 80,105 120,98 160,120 200,110 240,135 280,128 320,150 380,142" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5" opacity="0.6"/>
+        <polyline points="40,95 80,92 120,80 160,96 200,90 240,100 280,88 320,95 380,90" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="1.5" opacity="0.4"/>
+        <text x="20" y="100" font-size="12" fill="currentColor">x</text>
+        <text x="388" y="30" font-size="12" fill="currentColor">시각 t에서 g(·)</text>
+        <text x="120" y="185" font-size="12" fill="currentColor">u(x, t) = E[g(x + W_t)]</text>
+      </svg>
+      <figcaption>그림 1. 점 \(x\)에서 출발한 브라운 경로들이 시각 \(t\)에 도착한 점에서 \(g\)를 재어 평균을 내면, 그 값이 초기값 \(g\)를 가진 열방정식의 해이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Itô 공식(<a href="09-02.html">9.2절</a>), 마팅게일과 선택 정지 정리(<a href="06-02.html">6.2절</a>)를 쓴다. Evans 6장을 따른다.</div>
+
+    <h3><span class="no">10.3.1</span>열방정식</h3>
+    <p>\(u(x, t)\)가 \(u_t = \frac12u_{xx}\), \(u(x, 0) = g(x)\)를 만족한다고 하자. 고정한 \(t\)에서 \(M(s) = u(x + W_s, t - s)\)(\(0 \le s \le t\))를 Itô 공식으로 미분하면</p>
+    \[dM = \left(-u_t + \tfrac12u_{xx}\right)ds + u_x\,dW = u_x\,dW\]
+    <p>이다. \(ds\) 항이 열방정식 때문에 사라진다. 그러면 \(M\)은 마팅게일이고 \(E[M(t)] = M(0)\), 곧 \(u(x, t) = E[g(x + W_t)]\)이다. 그림 1이 이 공식이다. \(x + W_t \sim N(x, t)\)이므로 이것은 열핵과의 합성곱 \(\int g(y)\frac{1}{\sqrt{2\pi t}}e^{-(y - x)^2/2t}dy\)와 같다.</p>
+
+    <h3><span class="no">10.3.2</span>Feynman-Kac 공식</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 10.3.1 <span class="nm">(Feynman-Kac)</span></span>
+      <p>\(u_t = \frac12u_{xx} - c(x)u\), \(u(x, 0) = g(x)\)(\(c \ge 0\))의 유계 해는 \(u(x, t) = E\left[g(x + W_t)\exp\left(-\int_0^tc(x + W_s)\,ds\right)\right]\)이다.</p>
+    </div>
+    <p>증명은 앞 소절과 같은 방법이다. \(M(s) = u(x + W_s, t - s)\exp(-\int_0^sc(x + W_r)dr)\)에 Itô 공식을 쓰면 \(-cu\) 항이 지수 인수의 미분과 상쇄되어 \(ds\) 항이 사라진다. 뜻을 풀면, \(c\)는 경로가 지나는 곳마다 일정한 비율로 "죽는" 확률이고, 해는 시각 \(t\)까지 살아남은 경로들만의 \(g\)의 평균이다. 양자역학의 경로적분과 같은 꼴이라 이 이름이 붙었다.</p>
+    <p>같은 생각을 경계값 문제에 쓰면 정지 시각이 나온다. 영역 \(U\)에서 \(\frac12\Delta u = 0\)이고 경계에서 \(u = g\)이면, \(x\)에서 출발한 브라운 운동이 처음 경계에 닿는 시각 \(\tau\)에서 \(u(x) = E[g(x + W_\tau)]\)이다. 선택 정지 정리가 \(E[M(\tau)] = M(0)\)을 준다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 10.3.2</span>
+      <p>\(0 &lt; x &lt; 1\)에서 출발한 브라운 운동이 0보다 1에 먼저 닿을 확률을 조화함수로 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(u'' = 0\), \(u(0) = 0\), \(u(1) = 1\)의 해는 \(u(x) = x\)이다. 따라서 확률은 \(x\)이다. 이것은 공정한 도박에서 파산 확률이 출발 자산에 비례한다는 이산 결과(6단원)의 연속판이다. 같은 방법으로 \(\frac12u'' = -1\), \(u(0) = u(1) = 0\)을 풀면 \(u = x(1 - x)\)이고, 이것이 경계에 닿을 때까지의 기대 시간이다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>편미분방정식의 해에 브라운 운동을 넣고 Itô 공식을 쓰면, 방정식 때문에 \(dt\) 항이 사라져 마팅게일이 된다. 그래서 열방정식의 해는 \(E[g(x + W_t)]\)이고, 퍼텐셜 항 \(-cu\)가 있으면 경로를 \(e^{-\int c}\)로 가중한 평균이 된다(Feynman-Kac). 경계값 문제에서는 처음 닿는 시각의 기대값이 해를 준다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">10.3.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(g(x) = x^2\)일 때 \(u(x, t) = E[(x + W_t)^2]\)를 계산하고 열방정식을 확인하여라.
+          <details><summary>답</summary><p>\(u = x^2 + t\). \(u_t = 1 = \frac12u_{xx}\).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(c\)가 상수이면 Feynman-Kac 해가 열방정식 해에 \(e^{-ct}\)를 곱한 것임을 보여라.
+          <details><summary>답</summary><p>지수 인수가 \(e^{-ct}\)로 상수라 기대값 밖으로 나온다. \(v = e^{-ct}u\)는 \(v_t = \frac12v_{xx} - cv\)를 만족한다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,75 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학3-08-03",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m3-partition" data-kind="본문" data-std="수학3-08-03">
+  <header class="card-head"><span class="no"></span><h2>정수의 분할</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">6을 서로 다른 자연수의 합으로 쓰는 방법(6, 5+1, 4+2, 3+2+1)과 홀수만의 합으로 쓰는 방법(5+1, 3+3, 3+1+1+1, 1+…+1)은 둘 다 네 가지이다. 우연일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 170" role="img" aria-label="분할 5+3+1의 Ferrers 도표와 그 켤레 3+2+2+1+1">
+        <g fill="var(--forest, #4b4fe0)">
+          <circle cx="40" cy="40" r="7"/><circle cx="62" cy="40" r="7"/><circle cx="84" cy="40" r="7"/><circle cx="106" cy="40" r="7"/><circle cx="128" cy="40" r="7"/>
+          <circle cx="40" cy="62" r="7"/><circle cx="62" cy="62" r="7"/><circle cx="84" cy="62" r="7"/>
+          <circle cx="40" cy="84" r="7"/>
+        </g>
+        <text x="30" y="120" font-size="13" fill="currentColor">5 + 3 + 1</text>
+        <text x="170" y="70" font-size="18" fill="currentColor">↔</text>
+        <g fill="var(--qed, #f2b33d)">
+          <circle cx="240" cy="40" r="7"/><circle cx="262" cy="40" r="7"/><circle cx="284" cy="40" r="7"/>
+          <circle cx="240" cy="62" r="7"/><circle cx="262" cy="62" r="7"/>
+          <circle cx="240" cy="84" r="7"/><circle cx="262" cy="84" r="7"/>
+          <circle cx="240" cy="106" r="7"/><circle cx="240" cy="128" r="7"/>
+        </g>
+        <text x="300" y="120" font-size="13" fill="currentColor">3 + 2 + 2 + 1 + 1</text>
+      </svg>
+      <figcaption>그림 1. 분할을 점의 줄로 그린 Ferrers 도표. 대각선에 대해 뒤집으면 행과 열이 바뀌어 켤레 분할이 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>생성함수(<a href="08-02.html">8.2절</a>)와 등비급수 \(\frac1{1 - x} = 1 + x + x^2 + \cdots\)를 쓴다.</div>
+
+    <h3><span class="no">8.3.1</span>분할과 Ferrers 도표</h3>
+    <p>자연수 \(n\)을 순서를 따지지 않고 자연수들의 합으로 쓴 것을 \(n\)의 분할이라 하고, 그 개수를 \(p(n)\)이라 한다. \(p(1), \dots, p(6) = 1, 2, 3, 5, 7, 11\)이다. 집합의 분할(앞 절)과 달리 여기서는 원소에 이름이 없어 크기만 남는다.</p>
+    <p>이제 그림 1의 도표를 보자. 이 도표는 분할을 다루는 기본 도구이다. 큰 부분부터 한 줄에 점을 그만큼 찍는다. 그런데 도표를 대각선으로 뒤집으면 다른 분할이 나오는데, 원래 분할의 "부분의 개수"가 새 분할의 "가장 큰 부분"이 된다. 따라서 부분이 \(k\)개인 분할의 수와 가장 큰 부분이 \(k\)인 분할의 수가 같다.</p>
+
+    <h3><span class="no">8.3.2</span>분할의 생성함수</h3>
+    <p>분할은 "1을 몇 번, 2를 몇 번, 3을 몇 번 …" 쓰는지를 정하는 것이다. 부분 \(k\)를 \(m_k\)번 쓰는 것을 \(x^{km_k}\)로 적으면, \(k\)마다 \(1 + x^k + x^{2k} + \cdots = \frac{1}{1 - x^k}\)에서 항 하나를 골라 곱하는 것이 분할 하나에 해당한다.</p>
+    \[\sum_{n\ge0}p(n)x^n = \prod_{k\ge1}\frac{1}{1 - x^k}.\]
+    <p>그러면 조건이 붙은 분할도 같은 방식으로 센다. 서로 다른 부분의 분할은 각 \(k\)를 많아야 한 번 쓰므로 \(\prod_k(1 + x^k)\)이고, 홀수 부분의 분할은 홀수 \(k\)만 쓰므로 \(\prod_{k\text{ 홀수}}\frac{1}{1 - x^k}\)이다.</p>
+
+    <h3><span class="no">8.3.3</span>Euler 정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.3.1 <span class="nm">(Euler)</span></span>
+      <p>\(n\)을 서로 다른 부분으로 분할하는 방법의 수와 홀수 부분으로 분할하는 방법의 수는 같다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(1 + x^k = \frac{1 - x^{2k}}{1 - x^k}\)이므로</p>
+    \[\prod_{k\ge1}(1 + x^k) = \prod_{k\ge1}\frac{1 - x^{2k}}{1 - x^k}.\]
+    <p class="tb-proof">분자의 \(1 - x^{2k}\)는 분모의 짝수 지수 인수 \(1 - x^{2}, 1 - x^4, \dots\)와 하나씩 약분된다. 남는 것은 분모의 홀수 지수 인수뿐이므로 오른쪽은 \(\prod_{k\text{ 홀수}}\frac{1}{1 - x^k}\)이다. 두 생성함수가 같으므로 계수가 같다. <span class="qed">∎</span></p>
+    <p>한편 약분 계산 뒤에는 전단사가 숨어 있다. 홀수 부분 \(k\)가 \(m\)번 나오면 \(m\)을 2진법으로 \(2^{a_1} + 2^{a_2} + \cdots\)로 쓰고, 그 \(m\)개의 \(k\)를 서로 다른 부분 \(2^{a_1}k, 2^{a_2}k, \dots\)로 합친다. 거꾸로 서로 다른 부분은 \(2^ak\)(\(k\) 홀수) 꼴로 쪼개어 \(k\)를 \(2^a\)번 쓰면 된다. 모든 자연수가 2의 거듭제곱과 홀수의 곱으로 하나뿐인 방법으로 쓰이기 때문에 이 대응이 일대일이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.3.2</span>
+      <p>홀수 분할 \(3 + 3 + 1 + 1 + 1\)(합 9)에 위 전단사를 적용하여라.</p>
+    </div>
+    <p><i>풀이.</i> 3이 2번, 1이 3번 나온다. \(2 = 2^1\)이므로 두 3은 \(2\cdot3 = 6\)이 되고, \(3 = 2^0 + 2^1\)이므로 세 1은 \(1\)과 \(2\)가 된다. 결과는 \(6 + 2 + 1 = 9\)로 서로 다른 부분의 분할이다. 거꾸로 6을 \(2\cdot3\)으로, 2를 \(2\cdot1\)로 쪼개면 원래 분할로 돌아온다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>분할은 각 부분을 몇 번 쓰는지 정하는 것이어서 생성함수가 \(\prod\frac{1}{1 - x^k}\)라는 곱이 된다. 서로 다른 부분의 생성함수 \(\prod(1 + x^k)\)를 \(\frac{1 - x^{2k}}{1 - x^k}\)로 바꾸어 약분하면 홀수 부분의 생성함수가 남고, 이것이 Euler 정리이다. 같은 결과를 2진 전개로 부분을 합치고 쪼개는 전단사로도 볼 수 있다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.3.4</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(p(7)\)을 직접 세어라.
+          <details><summary>답</summary><p>15.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>부분이 모두 3 이하인 \(n\)의 분할의 수를 생성함수로 쓰고, 부분이 많아야 3개인 분할의 수와 같음을 Ferrers 도표로 설명하여라.
+          <details><summary>답</summary><p>\(\frac{1}{(1-x)(1-x^2)(1-x^3)}\). 켤레를 취하면 가장 큰 부분 \(\le 3\)이 부분의 개수 \(\le 3\)으로 바뀐다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

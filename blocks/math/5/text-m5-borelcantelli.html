@@ -1,0 +1,61 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학5-08-02",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m5-borelcantelli" data-kind="본문" data-std="수학5-08-02">
+  <header class="card-head"><span class="no"></span><h2>Borel-Cantelli 보조정리</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">동전을 끝없이 던질 때, 앞면이 연달아 \(\log_2n\)번 나오는 일이 \(n\)번째 근처에서 무한히 자주 일어날까? 사건 \(E_n\)들 가운데 무한히 많은 것이 일어날 확률은 언제 0이고 언제 1인가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 170" role="img" aria-label="사건 E_n이 일어나는 시각을 점으로 찍은 두 경우: 결국 멈추는 경우와 끝없이 이어지는 경우">
+        <line x1="30" y1="60" x2="420" y2="60" stroke="var(--ink-3, #888)"/>
+        <line x1="30" y1="130" x2="420" y2="130" stroke="var(--ink-3, #888)"/>
+        <g fill="var(--forest, #4b4fe0)"><circle cx="45" cy="60" r="4"/><circle cx="60" cy="60" r="4"/><circle cx="90" cy="60" r="4"/><circle cx="150" cy="60" r="4"/></g>
+        <g fill="var(--qed, #f2b33d)"><circle cx="45" cy="130" r="4"/><circle cx="80" cy="130" r="4"/><circle cx="130" cy="130" r="4"/><circle cx="190" cy="130" r="4"/><circle cx="260" cy="130" r="4"/><circle cx="340" cy="130" r="4"/><circle cx="410" cy="130" r="4"/></g>
+        <text x="200" y="48" font-size="12" fill="currentColor">Σ P(E_n) &lt; ∞: 결국 멈춘다</text>
+        <text x="150" y="155" font-size="12" fill="currentColor">독립이고 Σ P(E_n) = ∞: 끝없이 일어난다</text>
+      </svg>
+      <figcaption>그림 1. 확률의 합이 유한하면 사건은 거의 확실히 유한 번만 일어난다(위). 사건들이 독립이고 합이 무한이면 거의 확실히 무한 번 일어난다(아래).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>σ-대수와 측도(<a href="08-01.html">8.1절</a>), 확률의 연속성(<a href="01-02.html">1.2절</a>), 부등식 \(1 - x \le e^{-x}\)를 쓴다.</div>
+
+    <h3><span class="no">8.2.1</span>limsup 사건</h3>
+    <p>"\(E_n\)이 무한히 자주 일어난다"는 사건은 집합으로 쓸 수 있다. 어떤 \(m\)을 잡든 그 뒤에 \(E_n\)이 하나 더 일어난다는 뜻이므로</p>
+    \[\limsup_n E_n = \bigcap_{m \ge 1}\bigcup_{n \ge m}E_n\]
+    <p>이다. 가산 합과 가산 교로 만들었으니 σ-대수 안의 사건이다. 따라서 확률을 물을 수 있다. 그 여사건은 "어떤 \(m\) 뒤로는 \(E_n\)이 하나도 일어나지 않는다", 곧 유한 번만 일어난다는 사건이다.</p>
+
+    <h3><span class="no">8.2.2</span>두 보조정리</h3>
+    <div class="tb-env thm">
+      <span class="lb">정리 8.2.1 <span class="nm">(Borel-Cantelli)</span></span>
+      <p>(가) \(\sum_nP(E_n) &lt; \infty\)이면 \(P(\limsup E_n) = 0\)이다. (나) \(E_n\)들이 독립이고 \(\sum_nP(E_n) = \infty\)이면 \(P(\limsup E_n) = 1\)이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>(가) 모든 \(m\)에서 \(\limsup E_n \subseteq \bigcup_{n \ge m}E_n\)이므로 \(P(\limsup E_n) \le \sum_{n \ge m}P(E_n)\)이다. 이 꼬리합은 수렴하는 급수의 꼬리라서 \(m \to \infty\)이면 0으로 간다. (나) 여사건을 보자. \(P\left(\bigcap_{n=m}^{r}E_n^c\right) = \prod_{n=m}^{r}(1 - P(E_n)) \le \exp\left(-\sum_{n=m}^rP(E_n)\right)\)이고, \(r \to \infty\)이면 합이 무한이라 0으로 간다. 그러면 연속성으로 \(P(\bigcap_{n \ge m}E_n^c) = 0\)이고, 이것을 \(m\)에 대해 가산 개 합해도 0이므로 \(P(\liminf E_n^c) = 0\), 곧 \(P(\limsup E_n) = 1\)이다. <span class="qed">∎</span></p>
+    <p>(가)는 독립성이 필요 없다. 반면 (나)에서 독립성을 빼면 거짓이다. 가령 하나의 사건 \(E\)(\(P(E) = 1/2\))를 \(E_n = E\)로 되풀이하면 합은 무한이지만 \(P(\limsup E_n) = 1/2\)이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 8.2.2</span>
+      <p>공정한 동전을 독립적으로 던진다. \(n\)번째부터 \(r_n\)번 연달아 앞면이 나오는 사건을 \(A_n\)이라 하자. \(r_n = \lceil2\log_2n\rceil\)이면 \(A_n\)은 유한 번만 일어나고, \(r_n = \lfloor\log_2n\rfloor\)이면 무한히 자주 일어남을 보여라.</p>
+    </div>
+    <p><i>풀이.</i> \(P(A_n) = 2^{-r_n}\)이다. 앞의 경우 \(2^{-r_n} \le n^{-2}\)이고 \(\sum n^{-2} &lt; \infty\)이므로 (가)로 거의 확실히 유한 번이다. 뒤의 경우 \(A_n\)들은 겹치는 던지기를 써서 독립이 아니다. 그러면 서로 겹치지 않는 구간만 고르자. \(n_1 = 1\), \(n_{k+1} = n_k + r_{n_k}\)로 블록을 이어 붙이면 \(A_{n_k}\)들은 서로 다른 던지기를 보므로 독립이다. 또 \(P(A_{n_k}) = 2^{-r_{n_k}} \ge \frac{1}{n_k}\)이고, 블록 길이가 \(\log_2 n_k\) 정도라 \(n_k\)는 대략 \(k\log_2k\)로 자란다. 따라서 \(\sum_k\frac{1}{n_k}\)은 \(\sum\frac{1}{k\log k}\)처럼 발산하고, (나)로 무한히 자주 일어난다. 연속 앞면의 최장 길이가 대략 \(\log_2n\)이라는 사실이 이 두 계산 사이에 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>"무한히 자주 일어난다"는 사건은 \(\bigcap_m\bigcup_{n\ge m}E_n\)이다. 확률의 합이 유한하면 이 사건의 확률은 0이고, 사건들이 독립이며 합이 무한이면 1이다. 독립이 아닌 사건은 겹치지 않는 부분열을 골라 독립으로 만든 뒤 둘째 보조정리를 쓴다.</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">8.2.3</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(X_n\)이 독립이고 \(P(X_n = 1) = 1/n\), \(P(X_n = 0) = 1 - 1/n\)이면 \(X_n \to 0\)이 거의 확실히 성립하지 않음을 보여라.
+          <details><summary>답</summary><p>\(\sum1/n = \infty\)이고 독립이므로 \(X_n = 1\)이 무한히 자주 일어난다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(P(|X_n| &gt; \varepsilon)\)의 합이 모든 \(\varepsilon &gt; 0\)에서 유한하면 \(X_n \to 0\)이 거의 확실히 성립함을 보여라.
+          <details><summary>답</summary><p>\(\varepsilon = 1/k\)마다 (가)로 \(|X_n| &gt; 1/k\)는 결국 멈춘다. 가산 개 \(k\)의 확률 0 사건을 합쳐도 0이다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,57 @@
+<!--block
+{
+  "type": "card",
+  "sec": "수학15-02-04",
+  "order": 5
+}
+-->
+<article class="card q-card" id="text-m15-divergence" data-kind="본문" data-std="수학15-02-04">
+  <header class="card-head"><span class="no"></span><h2>Fourier 급수가 발산하는 연속함수</h2><span class="kind">본문</span></header>
+  <div class="q-body q-text">
+    <p class="q-ask">미분 가능한 점에서는 Fourier 급수가 함숫값으로 수렴한다. 그렇다면 연속이기만 하면 충분할까? Dirichlet 이후 50년 가까이 많은 사람이 그렇다고 믿었다. 1873년 du Bois-Reymond가 반례를 만들었다. 연속함수의 Fourier 급수는 어떻게 한 점에서 발산할 수 있는가?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 440 190" role="img" aria-label="Dirichlet 핵 D_N의 그래프: 원점에서 높이 2N+1의 봉우리와 천천히 줄어드는 진동">
+        <line x1="20" y1="140" x2="420" y2="140" stroke="var(--ink-3, #888)"/>
+        <line x1="220" y1="20" x2="220" y2="170" stroke="var(--ink-3, #888)"/>
+        <path d="M20 140 C 40 130, 50 150, 70 140 C 90 128, 100 152, 120 140 C 140 124, 150 156, 170 140 C 185 115, 195 160, 205 140 C 210 60, 215 25, 220 25 C 225 25, 230 60, 235 140 C 245 160, 255 115, 270 140 C 290 156, 300 124, 320 140 C 340 152, 350 128, 370 140 C 390 150, 400 130, 420 140" fill="none" stroke="var(--forest, #4b4fe0)" stroke-width="2"/>
+        <text x="228" y="22" font-size="12" fill="currentColor">2N + 1</text>
+        <text x="300" y="175" font-size="12" fill="currentColor">∫|D_N| ≈ (4/π²) log N</text>
+      </svg>
+      <figcaption>그림 1. Dirichlet 핵 \(D_N\)은 적분이 1이지만, 절댓값의 적분(Lebesgue 상수)은 \(\log N\)처럼 끝없이 커진다. 부분합이 함수를 제어하지 못하는 원인이 여기 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>부분합과 좋은 핵(<a href="01-03.html">1.3절</a>), 점별수렴 정리(<a href="02-02.html">2.2절</a>)를 쓴다. Stein-Shakarchi 3장 2.2절을 따른다.</div>
+
+    <h3><span class="no">2.4.1</span>부분합은 Dirichlet 핵과의 합성곱이다</h3>
+    <p>부분합 \(S_Nf(x) = \sum_{|n| \le N}\hat f(n)e^{inx}\)은 \(D_N(t) = \sum_{|n|\le N}e^{int} = \frac{\sin((N + \frac12)t)}{\sin(t/2)}\)과의 합성곱 \(\frac{1}{2\pi}\int f(x - t)D_N(t)\,dt\)이다. 그러면 \(|f| \le 1\)인 함수에서 \(|S_Nf(0)|\)는 많아야 \(L_N = \frac1{2\pi}\int|D_N|\)이고, \(f\)를 \(D_N\)의 부호에 가깝게 고르면 그 값에 다가간다.</p>
+    <p>문제는 \(L_N\)의 크기이다. \(|D_N(t)| \ge \frac{|\sin((N + \frac12)t)|}{|t|/2}\)이므로 각 반 주기 위의 적분이 \(\frac{1}{k}\) 정도를 주고, 그것을 \(k = 1, \dots, N\)에 대해 더하면 조화급수가 된다. 따라서 \(L_N \ge c\log N\)이다. 이것이 좋은 핵(Fejér 핵)과 Dirichlet 핵의 차이이다. 좋은 핵은 \(\int|K_N|\)이 유계였다.</p>
+
+    <h3><span class="no">2.4.2</span>반례의 구성</h3>
+    <p>\(L_N\)이 커진다는 것을 연속함수 하나에 모아 담으면 된다. Stein-Shakarchi의 구성을 따라가 보자. 먼저 톱니 함수와 닮은 다항식 \(f_N(\theta) = \sum_{1 \le |n| \le N}\frac{e^{in\theta}}{n}\)과 그 "반쪽" \(\tilde f_N(\theta) = \sum_{-N \le n \le -1}\frac{e^{in\theta}}{n}\)을 본다. 두 가지 사실이 있다. \(f_N\)은 \(N\)과 \(\theta\)에 대해 균등하게 유계이다(톱니 함수 \(i(\pi - \theta)\)의 부분합이기 때문이다). 반면 \(|\tilde f_N(0)| = \sum_{n=1}^N\frac1n \ge \log N\)이다.</p>
+    <p>이제 \(P_N(\theta) = e^{2iN\theta}f_N(\theta)\)로 주파수를 \(N\)에서 \(3N\) 사이로 옮긴다. 그러면 \(P_N\)도 균등 유계이고, \(P_N\)의 부분합을 주파수 \(2N\)에서 자르면 바로 \(e^{2iN\theta}\tilde f_N\)이 남아 0에서 \(\log N\) 이상이 된다. 마지막으로 \(N_k = 3^{2^k}\)처럼 빠르게 늘어나는 수와 계수 \(\alpha_k = 1/k^2\)으로</p>
+    \[f(\theta) = \sum_k\alpha_kP_{N_k}(\theta)\]
+    <p>를 만든다. 계수의 합이 수렴하므로 \(f\)는 연속함수의 균등수렴 극한이라 연속이다. 각 \(P_{N_k}\)의 주파수 띠 \([N_k, 3N_k]\)가 서로 겹치지 않으므로, 부분합을 \(2N_k\)에서 자르면 \(k\)번째 조각만 반으로 잘리고 나머지 조각은 통째로 들어가거나 빠진다. 그러면 \(|S_{2N_k}f(0)| \ge \alpha_k\log N_k - C = \frac{2^k\log3}{k^2} - C \to \infty\)이다. 따라서 \(f\)의 Fourier 급수는 0에서 발산한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>\(L_N\)이 커진다는 사실만으로 "발산하는 연속함수가 있다"를 얻는 함수해석학적 논법을 설명하여라.</p>
+    </div>
+    <p><i>풀이.</i> 연속함수 공간 \(C(\mathbb T)\)에서 범함수 \(\Lambda_N(f) = S_Nf(0)\)의 노름이 정확히 \(L_N\)이다. 모든 \(f\)에서 \(\sup_N|\Lambda_Nf| &lt; \infty\)라면 균등 유계 원리(Banach-Steinhaus)에 따라 \(\sup_N\|\Lambda_N\| &lt; \infty\)여야 한다. 그런데 \(L_N \to \infty\)이므로 그렇지 않은 \(f\)가 있다. 게다가 Baire 범주 정리로 그런 \(f\)는 \(C(\mathbb T)\)의 "대부분"을 차지한다. 그래도 Carleson의 정리(1966)에 따르면 연속함수, 나아가 제곱적분 가능한 함수의 Fourier 급수는 거의 모든 점에서 수렴한다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>부분합은 Dirichlet 핵과의 합성곱이고, 그 핵의 절댓값 적분이 \(\log N\)처럼 커지므로 부분합은 연속함수를 제어하지 못한다. 주파수 띠가 겹치지 않게 옮긴 톱니 다항식들을 빠르게 줄어드는 계수로 더하면, 한 점에서 부분합이 끝없이 커지는 연속함수가 생긴다. 다만 발산하는 점들의 집합은 측도가 0이다(Carleson).</p></div>
+
+    <div class="tb-exercises">
+      <h3><span class="no">2.4.2</span>연습문제</h3>
+      <p class="tb-lv">기본</p>
+      <ol>
+        <li>\(\frac{1}{2\pi}\int_{-\pi}^{\pi}D_N(t)\,dt = 1\)임을 보여라.
+          <details><summary>답</summary><p>\(e^{int}\)의 적분은 \(n = 0\)일 때만 \(2\pi\)이고 나머지는 0이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>구성에서 \(N_k\)를 빠르게 늘리는 이유를 설명하여라.
+          <details><summary>답</summary><p>주파수 띠 \([N_k, 3N_k]\)가 서로 겹치지 않아야 하고, \(\alpha_k\log N_k\)가 무한대로 가야 하기 때문이다. \(\log N_k = 2^k\log3\)이 \(k^2\)보다 빨리 자란다.</p></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article>
