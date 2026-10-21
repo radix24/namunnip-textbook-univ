@@ -8,49 +8,52 @@
 <article class="card q-card" id="text-m4-knn" data-kind="본문" data-std="수학4-06-05">
   <header class="card-head"><span class="no"></span><h2>k-최근접 이웃 분류</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>새 점과 가장 가까운 훈련 점 \(k\)개의 다수결로 분류하는 \(k\)-최근접 이웃(k-NN)을 구현한다.</li>
-        <li>\(k\)가 작으면 결정 경계가 복잡해지고(과적합), 크면 단순해짐(과소적합)을 이해한다.</li>
-        <li>교차검증으로 \(k\)를 고르고, 특성의 크기(단위)를 맞춰야 하는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>두 점 사이의 거리(고등학교), 교차검증 (<a href="06-04.html">6.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">새로 이사 온 사람이 어느 동아리를 좋아할지 맞히려면, 그와 가장 비슷한 이웃들이 무엇을 좋아하는지 보면 된다. 이 생각을 그대로 분류 알고리즘으로 만들 수 있을까? 이웃을 몇 명이나 보아야 하고, "비슷함"은 무엇으로 잴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 210" role="img" aria-label="두 범주의 점들과 새 점 q의 가장 가까운 이웃 1개와 3개">
+        <circle cx="195.4" cy="90.8" r="44.7" class="lc" style="stroke:var(--fc);stroke-dasharray:4 4"/>
+        <circle cx="195.4" cy="90.8" r="26.0" style="fill:none;stroke:var(--ink-3)"/>
+        <circle cx="82.0" cy="149.6" r="5" class="fa"/>
+        <circle cx="103.0" cy="99.2" r="5" class="fa"/>
+        <circle cx="132.4" cy="132.8" r="5" class="fa"/>
+        <circle cx="149.2" cy="74.0" r="5" class="fa"/>
+        <circle cx="90.4" cy="65.6" r="5" class="fa"/>
+        <circle cx="166.0" cy="158.0" r="5" class="fa"/>
+        <circle cx="182.8" cy="107.6" r="5" class="fa"/>
+        <rect x="228.2" y="43.8" width="10" height="10" class="fd"/>
+        <rect x="253.4" y="94.2" width="10" height="10" class="fd"/>
+        <rect x="203.0" y="10.2" width="10" height="10" class="fd"/>
+        <rect x="270.2" y="27.0" width="10" height="10" class="fd"/>
+        <rect x="219.8" y="111.0" width="10" height="10" class="fd"/>
+        <rect x="186.2" y="60.6" width="10" height="10" class="fd"/>
+        <rect x="287.0" y="69.0" width="10" height="10" class="fd"/>
+        <path d="M189.4 90.8 L201.4 90.8 M195.4 84.8 L195.4 96.8" class="k" style="stroke-width:2.4"/>
+        <text x="203" y="83" class="s">q</text>
+        <text x="370" y="50" class="ta">● 범주 A</text><text x="370" y="72" class="td">■ 범주 B</text>
+        <text x="370" y="104" class="s">안쪽 원(k = 1)은 A</text><text x="370" y="122" class="tc">점선 원(k = 3)은 B</text>
+      </svg>
+      <figcaption>그림 1. 새 점 q에 가장 가까운 이웃 하나는 범주 A이지만, 가까운 셋 가운데 둘은 범주 B이다. 그래서 k-최근접 이웃 분류는 \(k = 1\)이면 A, \(k = 3\)이면 B로 답하며, \(k\)에 따라 답이 바뀔 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>교차검증(<a href="06-04.html">6.4절</a>), 표준화(<a href="06-01.html">6.1절</a>), 거리의 뜻을 쓴다.</div>
 
     <h3><span class="no">6.5.1</span>알고리즘</h3>
-    <p>훈련 자료 \((\mathbf x_i, c_i)\) (\(c_i\)는 범주)가 있을 때 새 점 \(\mathbf q\)의 범주를 다음처럼 정합니다.</p>
-    <ol>
-      <li>모든 훈련 점과 \(\mathbf q\) 사이의 거리를 잰다.</li>
-      <li>가장 가까운 \(k\)개를 고른다.</li>
-      <li>그 \(k\)개의 범주 가운데 가장 많은 것을 답한다(\(k\)는 홀수로 하면 두 범주의 동점이 없다).</li>
-    </ol>
+    <p>훈련 자료 \((\mathbf x_i, c_i)\)가 있고 \(c_i\)가 범주일 때, 새 점 \(\mathbf q\)의 범주는 다음처럼 정한다. 먼저 모든 훈련 점과 \(\mathbf q\) 사이의 거리를 재고, 그다음 가장 가까운 \(k\)개를 고르고, 끝으로 그 \(k\)개의 범주 가운데 가장 많은 것을 답한다. 두 범주라면 \(k\)를 홀수로 하여 동점을 피한다.</p>
     <pre class="mono small">import math
 def knn(train, q, k):
     near = sorted(train, key=lambda p: math.dist(q, p[0]))[:k]
     labels = [c for _, c in near]
     return max(set(labels), key=labels.count)</pre>
-    <p>학습 단계가 따로 없고 자료를 저장해 두기만 합니다. 대신 예측할 때마다 모든 점과의 거리를 계산합니다.</p>
+    <p>이 방법에는 학습 단계가 따로 없고 자료를 저장해 두기만 한다. 대신 예측할 때마다 모든 점과의 거리를 계산하므로, 훈련 점이 \(n\)개이고 특성이 \(m\)개이면 예측 하나에 약 \(nm\)번의 연산이 든다.</p>
 
     <h3><span class="no">6.5.2</span>\(k\)의 역할</h3>
-    <p>\(k = 1\)이면 가장 가까운 점 하나를 그대로 따라 하므로, 잡음이 섞인 점 하나 때문에 그 주변이 통째로 다른 범주가 됩니다. 결정 경계가 들쭉날쭉하고 훈련 오차는 0이지만 새 자료에는 약합니다(과적합). \(k\)가 크면 경계가 매끈해지다가, 너무 크면 자료 전체의 다수 범주로만 답하게 됩니다(과소적합). 6.4절처럼 교차검증 오차가 가장 작은 \(k\)를 고릅니다.</p>
+    <p>\(k = 1\)이면 가장 가까운 점 하나를 그대로 따라 하므로, 잡음이 섞인 점 하나 때문에 그 주변이 통째로 다른 범주가 된다. 그래서 결정 경계가 들쭉날쭉하고, 훈련 오차는 0이지만 새 자료에는 약한 과적합이 된다. 반대로 \(k\)가 크면 경계가 매끈해지다가, 너무 크면 자료 전체의 다수 범주로만 답하는 과소적합이 된다. 그림 1처럼 \(k\)에 따라 답이 바뀌므로, 6.4절처럼 교차검증 오차가 가장 작은 \(k\)를 고른다.</p>
 
     <h3><span class="no">6.5.3</span>단위를 맞추기</h3>
-    <p>거리는 모든 특성을 똑같이 섞습니다. 키(cm, 150~190)와 시력(0.1~2.0)을 그대로 쓰면 키의 차이가 거리를 거의 다 결정합니다. 각 특성에서 평균을 빼고 표준편차로 나누는 표준화(6.1절)를 먼저 합니다.</p>
+    <p>거리는 모든 특성을 똑같이 섞는다. 그러므로 150~190 범위의 키(cm)와 0.1~2.0 범위의 시력을 그대로 쓰면 키의 차이가 거리를 거의 다 결정한다. 따라서 각 특성에서 평균을 빼고 표준편차로 나누는 표준화(6.1절)를 먼저 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) \(k = 1\)이 훈련 오차 0이니 가장 좋다고 여긴다. 훈련 점은 자기 자신이 가장 가까운 이웃이라 늘 맞힐 뿐이다. (2) 특성의 단위를 그대로 둔다. 단위가 큰 특성이 거리를 지배한다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(k = 1\)이 훈련 오차 0이니 가장 좋다고 여기기 쉽지만, 훈련 점은 자기 자신이 가장 가까운 이웃이라 늘 맞힐 뿐이다. 또 특성의 단위를 그대로 두면 단위가 큰 특성이 거리를 지배한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>k-NN: 가까운 \(k\)개의 다수결.</li>
-        <li>작은 \(k\) 과적합, 큰 \(k\) 과소적합, 교차검증으로 선택.</li>
-        <li>거리 전에 특성을 표준화.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 "만들 수 있다"이다. k-최근접 이웃 분류는 새 점에 가장 가까운 \(k\)개 훈련 점의 다수결로 범주를 정한다. 작은 \(k\)는 과적합, 큰 \(k\)는 과소적합으로 이어지므로 \(k\)는 교차검증으로 고르고, 비슷함은 거리로 재되 그 전에 특성을 표준화해 단위의 영향을 없앤다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.5.4</span>연습문제</h3>

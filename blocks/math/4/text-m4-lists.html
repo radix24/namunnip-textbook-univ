@@ -8,51 +8,46 @@
 <article class="card q-card" id="text-m4-lists" data-kind="본문" data-std="수학4-01-03">
   <header class="card-head"><span class="no"></span><h2>리스트, 딕셔너리, 리스트 내포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>리스트 내포 <code>[식 for 변수 in 범위 if 조건]</code>로 수열표를 한 줄에 만든다.</li>
-        <li>딕셔너리로 "값마다 몇 번 나왔는지"를 세는 빈도표를 만든다.</li>
-        <li>집합으로 중복 없는 결과(예: 제곱수의 나머지)를 모은다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>반복문과 함수 (<a href="01-01.html">1.1절</a>), 고등학교의 수열과 나머지.</li>
-      </ul>
-    </div>
+    <p class="q-ask">어떤 정수를 제곱해서 7로 나누면 나머지가 3이 될 수 있을까? 제곱수의 일의 자리에 7이 나올 수 있을까? 몇 줄의 코드로 표를 만들어 보면 이런 질문에 금방 답할 수 있는데, 그 표를 어떻게 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 170" role="img" aria-label="0부터 6까지의 제곱을 7로 나눈 나머지로 보내는 대응">
+        <text x="20" y="44" class="s">n</text><text x="20" y="144" class="s">n² mod 7</text>
+        <g class="fk"><circle cx="110" cy="40" r="4"/><circle cx="170" cy="40" r="4"/><circle cx="230" cy="40" r="4"/><circle cx="290" cy="40" r="4"/><circle cx="350" cy="40" r="4"/><circle cx="410" cy="40" r="4"/><circle cx="470" cy="40" r="4"/></g>
+        <text x="110" y="28" text-anchor="middle">0</text><text x="170" y="28" text-anchor="middle">1</text><text x="230" y="28" text-anchor="middle">2</text><text x="290" y="28" text-anchor="middle">3</text><text x="350" y="28" text-anchor="middle">4</text><text x="410" y="28" text-anchor="middle">5</text><text x="470" y="28" text-anchor="middle">6</text>
+        <line x1="110" y1="44" x2="110" y2="126" class="a"/><line x1="170" y1="44" x2="170" y2="126" class="a"/><line x1="230" y1="44" x2="350" y2="126" class="a"/><line x1="290" y1="44" x2="230" y2="126" class="a"/><line x1="350" y1="44" x2="230" y2="126" class="a"/><line x1="410" y1="44" x2="350" y2="126" class="a"/><line x1="470" y1="44" x2="170" y2="126" class="a"/>
+        <g><circle cx="110" cy="130" r="5" class="fa"/><circle cx="170" cy="130" r="5" class="fa"/><circle cx="230" cy="130" r="5" class="fa"/><circle cx="290" cy="130" r="5" class="fd"/><circle cx="350" cy="130" r="5" class="fa"/><circle cx="410" cy="130" r="5" class="fd"/><circle cx="470" cy="130" r="5" class="fd"/></g>
+        <text x="110" y="152" text-anchor="middle">0</text><text x="170" y="152" text-anchor="middle">1</text><text x="230" y="152" text-anchor="middle">2</text><text x="290" y="152" text-anchor="middle" class="td">3</text><text x="350" y="152" text-anchor="middle">4</text><text x="410" y="152" text-anchor="middle" class="td">5</text><text x="470" y="152" text-anchor="middle" class="td">6</text>
+      </svg>
+      <figcaption>그림 1. 0부터 6까지의 제곱을 7로 나눈 나머지는 0, 1, 2, 4뿐이다. 3, 5, 6(빨강)으로는 화살표가 오지 않으므로, 어떤 정수의 제곱도 7로 나누어 3이 남지 않는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>반복문과 함수(<a href="01-01.html">1.1절</a>), 고등학교의 수열과 나머지를 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>리스트 내포</h3>
-    <p>"1부터 10까지의 제곱"처럼 규칙으로 만드는 목록은 반복문 대신 한 줄로 씁니다.</p>
+    <p>1부터 10까지의 제곱처럼 규칙으로 만드는 목록은 반복문 대신 한 줄로 쓴다.</p>
     <pre class="mono small">sq = [n*n for n in range(1, 11)]
 print(sq)          # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 even = [n for n in range(1, 21) if n % 2 == 0]
 print(sum(even))   # 110</pre>
-    <p>수학의 집합 기호 \(\{n^2 : 1 \le n \le 10\}\)과 모양이 같습니다. <code>if</code> 뒤의 조건으로 원소를 거릅니다.</p>
+    <p>이 모양은 수학의 집합 기호 \(\{n^2 \mid 1 \le n \le 10\}\)과 같다. <code>if</code> 뒤의 조건으로 원소를 거른다. 예를 들어 <code>[n for n in range(1, 101) if n % 7 == 3]</code>은 7로 나누어 3이 남는 100 이하의 수 14개를 모은다. 반복문으로 쓰면 빈 리스트를 만들고, 조건을 검사하고, 원소를 덧붙이는 세 줄이 필요한 일을 한 줄로 쓰는 셈이며, 읽는 사람도 무엇을 모으는지 바로 알 수 있다.</p>
 
     <h3><span class="no">1.3.2</span>딕셔너리로 세기</h3>
-    <p>딕셔너리는 "열쇠 → 값"의 표입니다. 제곱수의 일의 자리가 각각 몇 번 나오는지 셉니다.</p>
+    <p>딕셔너리는 열쇠와 값을 짝지은 표이다. 제곱수의 일의 자리가 각각 몇 번 나오는지 세어 보자.</p>
     <pre class="mono small">freq = {}
 for s in sq:
     d = s % 10
     freq[d] = freq.get(d, 0) + 1
 print(freq)        # {1: 2, 4: 2, 9: 2, 6: 2, 5: 1, 0: 1}</pre>
-    <p><code>freq.get(d, 0)</code>은 열쇠가 없으면 0을 돌려줍니다. 제곱수의 일의 자리에는 2, 3, 7, 8이 절대 나오지 않는다는 사실이 표에서 보입니다(일의 자리는 일의 자리끼리의 곱으로 정해지기 때문).</p>
+    <p>여기서 <code>freq.get(d, 0)</code>은 열쇠가 없으면 0을 돌려준다. 표를 보면 제곱수의 일의 자리에는 2, 3, 7, 8이 절대 나오지 않는다. 제곱의 일의 자리는 일의 자리끼리의 곱으로 정해지고, 0부터 9까지를 제곱한 일의 자리가 0, 1, 4, 5, 6, 9뿐이기 때문이다.</p>
+    <p>같은 일을 표준 라이브러리의 <code>collections.Counter</code>로 하면 <code>Counter(s % 10 for s in sq)</code> 한 줄로 끝난다. 그래도 딕셔너리로 직접 세어 보는 것은 의미가 있다. 빈도표는 확률과 통계에서 도수분포표로, 정수론에서 나머지의 분포를 살피는 실험으로 거듭 나오며, 그때마다 열쇠가 무엇이고 값이 무엇인지 정하는 것이 문제를 정리하는 첫걸음이기 때문이다.</p>
 
     <h3><span class="no">1.3.3</span>집합</h3>
     <pre class="mono small">r = {n*n % 7 for n in range(7)}
 print(r)           # {0, 1, 2, 4}</pre>
-    <p>중괄호 내포는 집합을 만들고 중복을 자동으로 없앱니다. 7로 나눈 나머지 가운데 제곱수의 나머지는 0, 1, 2, 4뿐입니다. 그래서 어떤 정수의 제곱도 7로 나누어 3이 남지 않습니다(이차잉여, 수학10).</p>
+    <p>중괄호 내포는 집합을 만들고 중복을 자동으로 없앤다. 결과를 보면 7로 나눈 나머지 가운데 제곱수의 나머지는 0, 1, 2, 4뿐이며, 그림 1이 이 대응이다. 그래서 어떤 정수의 제곱도 7로 나누어 3이 남지 않는다. 이런 나머지를 이차잉여라 하며 정수론에서 자세히 다룬다. 0부터 6까지만 확인하면 충분한 이유는 \(n \equiv m \pmod 7\)이면 \(n^2 \equiv m^2 \pmod 7\)이기 때문이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) <code>range(1, 10)</code>이 10을 포함한다고 여긴다. 끝은 포함하지 않는다. (2) 딕셔너리에 없는 열쇠를 <code>freq[d] += 1</code>로 바로 올린다. 처음에는 열쇠가 없어 오류가 난다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>range(1, 10)</code>이 10을 포함한다고 여기기 쉽지만, 끝은 포함하지 않는다. 또 딕셔너리에 없는 열쇠를 <code>freq[d] += 1</code>로 바로 올리는 실수가 있다. 처음에는 열쇠가 없어 오류가 나므로 <code>get</code>을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>리스트 내포: <code>[식 for … if …]</code>.</li>
-        <li>딕셔너리로 빈도 세기: <code>get(열쇠, 0) + 1</code>.</li>
-        <li>집합 내포로 중복 없는 결과 모으기.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 둘 다 "없다"이다. 집합 내포로 제곱을 7로 나눈 나머지를 모으면 0, 1, 2, 4뿐이고, 딕셔너리로 일의 자리 빈도를 세면 7은 한 번도 나오지 않는다. 이런 표는 리스트 내포 <code>[식 for … if …]</code>로 수열을 만들고, 딕셔너리의 <code>get(열쇠, 0) + 1</code>로 빈도를 세고, 집합 내포로 중복 없는 결과를 모아 만든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.4</span>연습문제</h3>

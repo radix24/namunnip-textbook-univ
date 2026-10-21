@@ -8,25 +8,28 @@
 <article class="card q-card" id="text-m4-gd" data-kind="본문" data-std="수학4-05-01">
   <header class="card-head"><span class="no"></span><h2>경사하강법과 학습률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>목적함수, 기울기(그래디언트), 학습률의 뜻을 알고 경사하강법을 구현한다.</li>
-        <li>이차함수에서 학습률에 따라 수렴, 진동, 발산이 갈리는 이유를 계산으로 설명한다.</li>
-        <li>멈춤 조건과 기울기 검증 같은 실용적인 구현 요령을 익힌다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>편미분과 그래디언트, NumPy 배열 (<a href="03-01.html">3.1절</a>), 수치 미분 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">안개 낀 산에서 골짜기 바닥을 찾으려면 발밑이 가장 가파르게 내려가는 쪽으로 한 걸음씩 가면 된다. 이 방법으로 함수의 최솟값을 찾을 수 있을까? 한 걸음을 얼마나 크게 디뎌야 할까? 너무 크게 디디면 어떻게 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 570 200" role="img" aria-label="길쭉한 골짜기 등고선 위에서 두 학습률의 경사하강법 경로">
+        <ellipse cx="190.0" cy="100.0" rx="37.8" ry="11.9" class="gd" style="fill:none;stroke:var(--ink-3)"/>
+        <ellipse cx="190.0" cy="100.0" rx="75.6" ry="23.7" class="gd" style="fill:none;stroke:var(--ink-3)"/>
+        <ellipse cx="190.0" cy="100.0" rx="119.5" ry="37.5" class="gd" style="fill:none;stroke:var(--ink-3)"/>
+        <ellipse cx="190.0" cy="100.0" rx="179.2" ry="56.2" class="gd" style="fill:none;stroke:var(--ink-3)"/>
+        <ellipse cx="190.0" cy="100.0" rx="238.9" ry="75.0" class="gd" style="fill:none;stroke:var(--ink-3)"/>
+        <path d="M38.9 43.8 L66.1 145.0 L88.4 64.0 L106.7 128.8 L121.7 77.0 L134.0 118.4 L144.1 85.3 L152.3 111.8 L159.1 90.6 L164.7 107.5 L169.2 94.0 L173.0 104.8 L176.0 96.1 L178.5 103.1 L180.6 97.5 L182.3 102.0 L183.7 98.4 L184.8 101.3 L185.8 99.0 L186.5 100.8 L187.1 99.4 L187.7 100.5 L188.1 99.6 L188.4 100.3 L188.7 99.7 L188.9 100.2" class="d" style="fill:none"/>
+        <circle cx="38.9" cy="43.8" r="2" class="fd"/><circle cx="66.1" cy="145.0" r="2" class="fd"/><circle cx="88.4" cy="64.0" r="2" class="fd"/><circle cx="106.7" cy="128.8" r="2" class="fd"/><circle cx="121.7" cy="77.0" r="2" class="fd"/><circle cx="134.0" cy="118.4" r="2" class="fd"/><circle cx="144.1" cy="85.3" r="2" class="fd"/><circle cx="152.3" cy="111.8" r="2" class="fd"/><circle cx="159.1" cy="90.6" r="2" class="fd"/><circle cx="164.7" cy="107.5" r="2" class="fd"/><circle cx="169.2" cy="94.0" r="2" class="fd"/><circle cx="173.0" cy="104.8" r="2" class="fd"/>
+        <path d="M38.9 43.8 L46.4 71.9 L53.6 85.9 L60.4 93.0 L66.9 96.5 L73.1 98.2 L78.9 99.1 L84.5 99.6 L89.7 99.8 L94.8 99.9 L99.5 99.9 L104.0 100.0 L108.3 100.0 L112.4 100.0 L116.3 100.0 L120.0 100.0 L123.5 100.0 L126.8 100.0 L130.0 100.0 L133.0 100.0 L135.8 100.0 L138.5 100.0 L141.1 100.0 L143.6 100.0 L145.9 100.0 L148.1 100.0 L150.2 100.0 L152.2 100.0 L154.1 100.0 L155.9 100.0 L157.6 100.0 L159.2 100.0 L160.7 100.0 L162.2 100.0 L163.6 100.0 L164.9 100.0 L166.2 100.0 L167.3 100.0 L168.5 100.0 L169.6 100.0 L170.6 100.0" class="a" style="fill:none"/>
+        <circle cx="38.9" cy="43.8" r="2" class="fa"/><circle cx="46.4" cy="71.9" r="2" class="fa"/><circle cx="53.6" cy="85.9" r="2" class="fa"/><circle cx="60.4" cy="93.0" r="2" class="fa"/><circle cx="66.9" cy="96.5" r="2" class="fa"/><circle cx="73.1" cy="98.2" r="2" class="fa"/><circle cx="78.9" cy="99.1" r="2" class="fa"/><circle cx="84.5" cy="99.6" r="2" class="fa"/><circle cx="89.7" cy="99.8" r="2" class="fa"/><circle cx="94.8" cy="99.9" r="2" class="fa"/><circle cx="99.5" cy="99.9" r="2" class="fa"/><circle cx="104.0" cy="100.0" r="2" class="fa"/>
+        <circle cx="38.9" cy="43.8" r="4" class="fk"/><text x="33" y="36" class="s">출발 (−4, 1.5)</text>
+        <text x="372" y="60" class="ta">η = 0.05, 곧게 느리게</text><text x="372" y="86" class="td">η = 0.18, 골짜기를 가로질러</text><text x="372" y="104" class="td">지그재그</text><text x="372" y="140" class="s">등고선 f = ½(x² + 10y²)</text>
+      </svg>
+      <figcaption>그림 1. \(f = \frac12(x^2 + 10y^2)\)의 등고선 위에서 같은 점에서 출발한 경사하강법의 경로이다. 학습률이 작으면(파랑) 곧게 가지만 느리고, 0.2에 가까우면(빨강) 가파른 \(y\) 방향으로 넘나들며 지그재그로 골짜기를 가로지른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>편도함수와 기울기 벡터, 테일러 다항식(<a href="04-03.html">4.3절</a>), NumPy(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>내리막으로 한 걸음씩</h3>
-    <p class="q-term"><b>목적함수</b>(objective function): 최소로 만들고 싶은 함수 \(f:\mathbb R^n \to \mathbb R\). 머신러닝에서는 손실함수라고 부른다.</p>
-    <p class="q-term"><b>기울기</b>(gradient): 편도함수를 모은 벡터 \(\nabla f = (\partial f/\partial x_1, \dots, \partial f/\partial x_n)\). 함수가 가장 빨리 증가하는 방향을 가리킨다.</p>
-    <p class="q-term"><b>경사하강법</b>(gradient descent): 점화식 \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\)로 기울기의 반대 방향으로 조금씩 움직이는 반복법.</p>
-    <p class="q-term"><b>학습률</b>(learning rate, 보폭): 위 식의 양수 \(\eta\). 한 번에 얼마나 멀리 움직일지 정한다.</p>
-    <p>기울기의 반대 방향이 가장 가파른 내리막이므로, 충분히 작게 움직이면 함수값이 줄어듭니다. 테일러 전개로 쓰면 \(f(\mathbf x - \eta\nabla f) \approx f(\mathbf x) - \eta\|\nabla f\|^2\)입니다. 기울기가 0이 아닌 한 줄어들지만, "\(\approx\)"가 성립할 만큼 \(\eta\)가 작아야 합니다.</p>
+    <p>최소로 만들고 싶은 함수 \(f:\mathbb R^n \to \mathbb R\)를 <em>목적함수</em>라 하며, 머신러닝에서는 손실함수라고 부른다. 편도함수를 모은 벡터 \(\nabla f = (\partial f/\partial x_1, \dots, \partial f/\partial x_n)\)를 <em>기울기</em>라 하며, 함수가 가장 빨리 증가하는 방향을 가리킨다. 점화식 \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\)로 기울기의 반대 방향으로 조금씩 움직이는 반복법을 <em>경사하강법</em>이라 하고, 한 번에 얼마나 멀리 움직일지 정하는 양수 \(\eta\)를 <em>학습률</em>(보폭)이라 한다.</p>
+    <p>기울기의 반대 방향이 가장 가파른 내리막이므로, 충분히 작게 움직이면 함수값이 줄어든다. 테일러 전개로 쓰면 \(f(\mathbf x - \eta\nabla f) \approx f(\mathbf x) - \eta\|\nabla f\|^2\)이다. 따라서 기울기가 0이 아닌 한 함수값이 줄지만, 근사식이 성립할 만큼 \(\eta\)가 작아야 한다.</p>
     <pre class="mono small">import numpy as np
 
 def grad_descent(grad, x0, eta, steps=1000, tol=1e-8):
@@ -44,41 +47,23 @@ x, k = grad_descent(grad, [-4, 1.5], eta=0.1)
 print(x, k)</pre>
 
     <h3><span class="no">5.1.2</span>1차원에서 정확히 계산하기</h3>
-    <p>\(f(x) = x^2\)이면 \(f'(x) = 2x\)이므로 \(x_{k+1} = x_k - 2\eta x_k = (1 - 2\eta)x_k\), 곧 \(x_k = (1 - 2\eta)^kx_0\)입니다. 이는 \(|1 - 2\eta| &lt; 1\), 즉 \(0 &lt; \eta &lt; 1\)일 때만 0으로 수렴합니다.</p>
-    <ul>
-      <li>\(0 &lt; \eta &lt; \frac12\): 같은 쪽에서 단조롭게 다가갑니다.</li>
-      <li>\(\eta = \frac12\): 한 번에 최솟점에 도착합니다.</li>
-      <li>\(\frac12 &lt; \eta &lt; 1\): 최솟점을 넘나들며(부호가 바뀌며) 다가갑니다.</li>
-      <li>\(\eta = 1\): \(x_k = (-1)^kx_0\)로 영원히 진동합니다. \(\eta > 1\)이면 발산합니다.</li>
-    </ul>
-    <p>일반적으로 \(f''(x^*) = L\)이면 최솟점 근처에서 \(x_{k+1} - x^* \approx (1 - \eta L)(x_k - x^*)\)이므로, 수렴 조건은 대략 \(\eta &lt; 2/L\)입니다. 곡률이 클수록 보폭을 작게 잡아야 합니다.</p>
+    <p>\(f(x) = x^2\)이면 \(f'(x) = 2x\)이므로 \(x_{k+1} = x_k - 2\eta x_k = (1 - 2\eta)x_k\), 곧 \(x_k = (1 - 2\eta)^kx_0\)이다. 이것은 \(|1 - 2\eta| &lt; 1\), 즉 \(0 &lt; \eta &lt; 1\)일 때만 0으로 수렴한다. 자세히 보면 \(0 &lt; \eta &lt; \frac12\)이면 같은 쪽에서 단조롭게 다가가고, \(\eta = \frac12\)이면 한 번에 최솟점에 도착한다. \(\frac12 &lt; \eta &lt; 1\)이면 부호가 바뀌며 최솟점을 넘나들면서 다가가고, \(\eta = 1\)이면 \(x_k = (-1)^kx_0\)로 영원히 진동하며, \(\eta &gt; 1\)이면 발산한다.</p>
+    <p>일반적으로 \(f''(x^*) = L\)이면 최솟점 근처에서 \(x_{k+1} - x^* \approx (1 - \eta L)(x_k - x^*)\)이므로, 수렴 조건은 대략 \(\eta &lt; 2/L\)이다. 즉 곡률이 클수록 보폭을 작게 잡아야 한다.</p>
 
-    <h3><span class="no">5.1.3</span>2차원: 가장 가파른 방향이 문제</h3>
-    <p>\(f(x, y) = \frac12(x^2 + 10y^2)\)이면 갱신은 \(x \leftarrow (1 - \eta)x\), \(y \leftarrow (1 - 10\eta)y\)로 좌표별로 나뉩니다. \(y\) 방향의 곡률 10이 크므로 \(|1 - 10\eta| &lt; 1\), 곧 \(\eta &lt; 0.2\)여야 합니다. 그런데 \(\eta\)를 0.2 가까이 키우면 \(x\) 방향은 \(1 - \eta \approx 0.8\)배씩 천천히 줄어듭니다. \((-4, 1.5)\)에서 출발해 \(f &lt; 10^{-6}\)이 될 때까지의 반복 횟수는 다음과 같습니다(파이썬으로 확인한 값).</p>
+    <h3><span class="no">5.1.3</span>2차원에서는 가장 가파른 방향이 문제</h3>
+    <p>\(f(x, y) = \frac12(x^2 + 10y^2)\)이면 갱신은 \(x \leftarrow (1 - \eta)x\), \(y \leftarrow (1 - 10\eta)y\)로 좌표별로 나뉜다. \(y\) 방향의 곡률 10이 크므로 \(|1 - 10\eta| &lt; 1\), 곧 \(\eta &lt; 0.2\)여야 한다. 그런데 \(\eta\)를 0.2 가까이 키우면 \(x\) 방향은 \(1 - \eta \approx 0.8\)배씩 천천히 줄어든다. \((-4, 1.5)\)에서 출발해 \(f &lt; 10^{-6}\)이 될 때까지의 반복 횟수를 파이썬으로 세면 다음과 같다.</p>
     <table class="tb-table">
       <tr><th>\(\eta\)</th><td>0.01</td><td>0.05</td><td>0.1</td><td>\(2/11 \approx 0.182\)</td><td>0.19</td><td>0.2</td><td>0.21</td></tr>
       <tr><th>반복 횟수</th><td>791</td><td>155</td><td>76</td><td>42</td><td>78</td><td>수렴 안 함</td><td>발산</td></tr>
     </table>
-    <p>\(\eta = 0.2\)에서는 \(y\)가 \(1.5, -1.5, 1.5, \dots\)로 진동하여 \(f\)가 11.25에 머물고, 0.21에서는 진동 폭이 커져 발산합니다. 가장 빠른 \(\eta = \frac2{1 + 10}\)은 두 방향의 수축률 \(|1 - \eta|\)와 \(|1 - 10\eta|\)를 같게(\(\frac9{11}\)) 만드는 값입니다. 곡률의 비(조건수) \(\kappa = 10\)이 클수록 수렴이 느려지며, 경로가 골짜기를 가로질러 지그재그로 움직입니다. 같은 절의 탐구 카드에서 경로를 직접 봅니다.</p>
+    <p>\(\eta = 0.2\)에서는 \(y\)가 \(1.5, -1.5, 1.5, \dots\)로 진동하여 \(f\)가 11.25에 머물고, 0.21에서는 진동 폭이 커져 발산한다. 가장 빠른 \(\eta = \frac2{1 + 10}\)은 두 방향의 수축률 \(|1 - \eta|\)와 \(|1 - 10\eta|\)를 같게(\(\frac9{11}\)) 만드는 값이다. 그러므로 곡률의 비, 곧 조건수 \(\kappa = 10\)이 클수록 수렴이 느려지며, 그림 1처럼 경로가 골짜기를 가로질러 지그재그로 움직인다.</p>
 
     <h3><span class="no">5.1.4</span>구현 요령</h3>
-    <ol>
-      <li><b>멈춤 조건</b>: 최대 반복 횟수, 기울기 크기 \(\|\nabla f\| &lt; \varepsilon\), 함수값의 변화가 작아짐 중 하나 이상을 씁니다.</li>
-      <li><b>기울기 검증</b>: 손으로 구한 기울기를 중심 차분 \(\frac{f(\mathbf x + h\mathbf e_i) - f(\mathbf x - h\mathbf e_i)}{2h}\) (\(h \approx 10^{-6}\))과 비교합니다(<a href="04-01.html">4.1절</a>). 기울기 공식의 실수는 가장 흔한 버그입니다.</li>
-      <li><b>학습률 고르기</b>: 함수값이 커지면 \(\eta\)를 줄이고, 너무 느리면 키웁니다. 몇 배씩(1, 0.1, 0.01, …) 바꿔 보는 것이 보통입니다.</li>
-    </ol>
+    <p>멈춤 조건으로는 최대 반복 횟수, 기울기의 크기 \(\|\nabla f\| &lt; \varepsilon\), 함수값의 변화가 작아짐 가운데 하나 이상을 쓴다. 또 손으로 구한 기울기를 중심 차분 \(\frac{f(\mathbf x + h\mathbf e_i) - f(\mathbf x - h\mathbf e_i)}{2h}\) (\(h \approx 10^{-6}\))과 비교해 검증한다(<a href="04-01.html">4.1절</a>). 기울기 공식의 실수가 가장 흔한 버그이기 때문이다. 학습률은 함수값이 커지면 줄이고 너무 느리면 키우며, 1, 0.1, 0.01처럼 몇 배씩 바꿔 보는 것이 보통이다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 기울기 방향으로 더해서(\(+\eta\nabla f\)) 최대화를 한다. (2) 함수값이 진동하거나 커지는데도 반복 횟수만 늘린다. (3) 반복 안에서 <code>x</code>를 제자리 수정(<code>x -= ...</code>)하면서 이전 값을 기록한 리스트까지 바뀌게 한다(배열은 참조로 저장된다).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>기울기 방향으로 더해서(\(+\eta\nabla f\)) 최소화 대신 최대화를 하는 실수가 있다. 또 함수값이 진동하거나 커지는데도 반복 횟수만 늘리기 쉬운데, 그때는 학습률을 줄여야 한다. 반복 안에서 <code>x</code>를 제자리 수정(<code>x -= ...</code>)하면서 이전 값을 리스트에 기록하면, 배열이 참조로 저장되어 기록까지 바뀌는 것도 조심한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>경사하강법: \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\).</li>
-        <li>\(f = x^2\)에서 \(x_k = (1 - 2\eta)^kx_0\): \(\eta &lt; 1\)이면 수렴, \(\eta = 1\)이면 진동, 그보다 크면 발산.</li>
-        <li>곡률 \(L\)이면 대략 \(\eta &lt; 2/L\). 곡률의 비가 크면 지그재그로 느리게 수렴한다.</li>
-        <li>기울기는 중심 차분으로 검증하고, 멈춤 조건을 둔다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 가장 가파른 내리막인 기울기의 반대 방향으로 \(\mathbf x_{k+1} = \mathbf x_k - \eta\nabla f(\mathbf x_k)\)처럼 걸으면 최솟값을 찾을 수 있다. 보폭은 곡률 \(L\)에 대해 대략 \(\eta &lt; 2/L\)이어야 하며, 너무 크면 \(f = x^2\)에서처럼 진동하거나 발산한다. 방향마다 곡률이 크게 다르면 가장 가파른 방향이 보폭을 제한해 지그재그로 느리게 수렴한다. 기울기는 중심 차분으로 검증하고 멈춤 조건을 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.5</span>연습문제</h3>
