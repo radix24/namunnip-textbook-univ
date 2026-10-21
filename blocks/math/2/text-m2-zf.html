@@ -8,64 +8,49 @@
 <article class="card q-card" id="text-m2-zf" data-kind="본문" data-std="수학2-07-02">
   <header class="card-head"><span class="no"></span><h2>체르멜로-프렝켈 공리계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>ZF 공리 아홉 개를 진술하고 각각이 무엇을 만드는지 설명한다.</li>
-        <li>지금까지 쓴 구성(순서쌍, 곱집합, 함수, 집합족의 합)이 어느 공리에서 나오는지 확인한다.</li>
-        <li>ZFC와 선택공리의 위치를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>러셀의 역설과 분리 공리 (<a href="07-01.html">7.1절</a>), 순서수 (<a href="05-02.html">5.2절</a>), 선택공리 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">러셀의 역설 때문에 아무 조건으로나 집합을 모을 수는 없게 되었다. 그렇다면 순서쌍, 곱집합, 함수, 자연수 전체처럼 지금까지 써 온 집합들은 무엇을 근거로 "있다"고 할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="공집합에서 출발해 ZF 공리로 새 집합을 만들어 가는 흐름">
+        <rect x="20" y="85" width="60" height="34" class="lk"/><text x="50" y="107" text-anchor="middle">∅</text>
+        <rect x="130" y="30" width="90" height="34" class="la"/><text x="175" y="52" text-anchor="middle">{a, b}</text>
+        <rect x="130" y="140" width="90" height="34" class="la"/><text x="175" y="162" text-anchor="middle">ω</text>
+        <rect x="270" y="30" width="90" height="34" class="lb"/><text x="315" y="52" text-anchor="middle">A ∪ B</text>
+        <rect x="270" y="85" width="90" height="34" class="lb"/><text x="315" y="107" text-anchor="middle">𝒫(A ∪ B)</text>
+        <rect x="410" y="85" width="90" height="34" class="lc"/><text x="455" y="107" text-anchor="middle">A × B</text>
+        <rect x="410" y="140" width="90" height="34" class="lc"/><text x="455" y="162" text-anchor="middle">B^A</text>
+        <line x1="80" y1="96" x2="130" y2="52" class="k"/><text x="100" y="66" class="s" text-anchor="middle">짝</text>
+        <line x1="80" y1="110" x2="130" y2="155" class="k"/><text x="100" y="146" class="s" text-anchor="middle">무한</text>
+        <line x1="220" y1="47" x2="270" y2="47" class="k"/><text x="245" y="40" class="s" text-anchor="middle">합집합</text>
+        <line x1="315" y1="64" x2="315" y2="85" class="k"/><text x="345" y="79" class="s" text-anchor="middle">멱집합</text>
+        <line x1="360" y1="102" x2="410" y2="102" class="k"/><text x="385" y="95" class="s" text-anchor="middle">분리</text>
+        <line x1="455" y1="119" x2="455" y2="140" class="k"/><text x="425" y="134" class="s" text-anchor="middle">멱집합·분리</text>
+      </svg>
+      <figcaption>그림 1. ZF에서는 집합을 무제한으로 모으지 않고, 공리가 허락한 방법으로만 있는 집합에서 새 집합을 만든다. 곱집합과 함수 전체도 짝·합집합·멱집합·분리를 차례로 써서 얻는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>러셀의 역설과 분리 공리(<a href="07-01.html">7.1절</a>), 순서쌍과 곱집합(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>공리 목록</h3>
-    <p>ZF에서 모든 대상은 집합이고, 기본 관계는 \(\in\) 하나뿐입니다. 공리는 "어떤 집합이 있고, 있는 집합으로 어떤 새 집합을 만들 수 있는가"를 정합니다. 무제한으로 모으는 대신, 허락된 방법으로만 만듭니다.</p>
+    <p>ZF에서 모든 대상은 집합이고 기본 관계는 \(\in\) 하나뿐이다. 공리는 어떤 집합이 있고, 있는 집합으로 어떤 새 집합을 만들 수 있는지를 정한다.</p>
     <div class="tb-env">
       <span class="lb">ZF 공리</span>
-      <p class="q-term"><b>외연</b>: 원소가 같은 두 집합은 같다. (\(\forall z\,(z \in x \leftrightarrow z \in y) \Rightarrow x = y\)) 집합은 원소만으로 정해진다.</p>
-      <p class="q-term"><b>공집합</b>: 원소가 없는 집합 \(\varnothing\)이 있다. (무한 공리에서 끌어낼 수도 있음)</p>
-      <p class="q-term"><b>짝</b>: \(x, y\)가 있으면 \(\{x, y\}\)가 있다.</p>
-      <p class="q-term"><b>합집합</b>: 집합 \(F\)가 있으면 \(\bigcup F = \{z : \exists x \in F,\ z \in x\}\)가 있다.</p>
-      <p class="q-term"><b>멱집합</b>: \(x\)가 있으면 \(\mathcal P(x)\)가 있다.</p>
-      <p class="q-term"><b>분리(도식)</b>: \(\{z \in x : P(z)\}\)가 있다.</p>
-      <p class="q-term"><b>치환(도식)</b>: \(x\)의 각 원소에 집합을 하나씩 대응시키는 규칙 \(F\)가 있으면 \(\{F(z) : z \in x\}\)가 있다.</p>
-      <p class="q-term"><b>무한</b>: \(\varnothing\)을 포함하고 \(y \mapsto y \cup \{y\}\)에 닫힌 집합이 있다.</p>
-      <p class="q-term"><b>정칙(기초)</b>: 공집합이 아닌 모든 집합 \(x\)에는 \(x\)와 서로소인 원소가 있다. (따라서 \(x \in x\)나 \(x_1 \ni x_2 \ni \cdots\) 무한 하강이 없다)</p>
+      <p>(1) <em>외연 공리</em>는 원소가 같은 두 집합은 같다. 곧 \(\forall z\,(z \in x \leftrightarrow z \in y) \Rightarrow x = y\)이며, 집합은 원소만으로 정해진다. (2) <em>공집합 공리</em>는 원소가 없는 집합 \(\varnothing\)이 있다. (3) <em>짝 공리</em>는 \(x, y\)가 있으면 \(\{x, y\}\)가 있다. (4) <em>합집합 공리</em>는 집합 \(F\)가 있으면 \(\bigcup F = \{z \mid \exists x \in F,\ z \in x\}\)가 있다. (5) <em>멱집합 공리</em>는 \(x\)가 있으면 \(\mathcal P(x)\)가 있다. (6) <em>분리 공리 도식</em>은 \(\{z \in x \mid P(z)\}\)가 있다. (7) <em>치환 공리 도식</em>은 \(x\)의 각 원소에 집합을 하나씩 대응시키는 규칙 \(F\)가 있으면 \(\{F(z) \mid z \in x\}\)가 있다. (8) <em>무한 공리</em>는 \(\varnothing\)을 포함하고 \(y \mapsto y \cup \{y\}\)에 닫힌 집합이 있다. (9) <em>정칙 공리</em>는 공집합이 아닌 모든 집합 \(x\)에는 \(x\)와 서로소인 원소가 있다. 따라서 \(x \in x\)나 \(x_1 \ni x_2 \ni \cdots\) 같은 무한 하강은 없다.</p>
     </div>
-    <p>여기에 선택공리(6.1절)를 더한 것이 <b>ZFC</b>이고, 현대 수학의 표준 기반입니다.</p>
+    <p>여기에 선택공리(6.1절)를 더한 것이 <em>ZFC</em>이고, 현대 수학의 표준 기반이다. 공집합 공리는 무한 공리와 분리 공리에서 끌어낼 수도 있다.</p>
 
     <h3><span class="no">7.2.2</span>지금까지 쓴 것들의 출처</h3>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.1</span>
-      <p>다음이 어느 공리로 집합이 되는지 말하여라. (a) \(\{a\}\) (b) \(A \cup B\) (c) 순서쌍 \((a, b) = \{\{a\}, \{a, b\}\}\) (d) \(A\times B\) (e) 함수 전체 \(B^A\) (f) \(\omega\)</p>
+      <p>다음이 어느 공리로 집합이 되는지 말하여라. (1) \(\{a\}\) (2) \(A \cup B\) (3) 순서쌍 \((a, b) = \{\{a\}, \{a, b\}\}\) (4) \(A\times B\) (5) 함수 전체 \(B^A\) (6) \(\omega\)</p>
     </div>
-    <p><i>풀이.</i></p>
-    <ul>
-      <li>(a) 짝 공리에서 \(x = y = a\).</li>
-      <li>(b) 짝으로 \(\{A, B\}\), 합집합 공리로 \(\bigcup\{A, B\}\).</li>
-      <li>(c) 짝 공리를 세 번.</li>
-      <li>(d) \((a, b) \in \mathcal P(\mathcal P(A \cup B))\)이므로 멱집합 두 번, 그 안에서 분리로 "\(a \in A\), \(b \in B\)인 순서쌍"만 골라낸다.</li>
-      <li>(e) 함수는 \(A\times B\)의 부분집합이라 \(\mathcal P(A\times B)\) 안에서 분리.</li>
-      <li>(f) 무한 공리의 집합에서 "\(\varnothing\)을 포함하고 후속에 닫힌 모든 집합에 속하는 것"을 분리로 골라낸 가장 작은 것(다음 절).</li>
-    </ul>
-    <p>순서쌍의 정의 \(\{\{a\}, \{a, b\}\}\)는 \((a, b) = (c, d) \iff a = c, b = d\)를 만족하도록 고안된 것입니다(연습 2). 치환 공리는 5.2절에서 정렬순서를 순서수로 보낼 때, 그리고 \(\omega + \omega\)처럼 큰 순서수를 만들 때 필요합니다.</p>
+    <p><i>풀이.</i> (1)은 짝 공리에서 \(x = y = a\)로 둔 것이다. (2)는 짝 공리로 \(\{A, B\}\)를 만든 뒤 합집합 공리로 \(\bigcup\{A, B\}\)를 얻는다. (3)은 짝 공리를 세 번 쓴다. (4)는 \((a, b) \in \mathcal P(\mathcal P(A \cup B))\)이므로 멱집합 공리를 두 번 쓰고, 그 안에서 분리 공리로 \(a \in A\), \(b \in B\)인 순서쌍만 골라낸다. (5)의 함수는 \(A\times B\)의 부분집합이므로 \(\mathcal P(A\times B)\) 안에서 분리한다. (6)은 무한 공리가 주는 집합에서 "\(\varnothing\)을 포함하고 후속에 닫힌 모든 집합에 속하는 것"을 분리로 골라낸 가장 작은 집합이며, 다음 절에서 자세히 본다.</p>
+    <p>순서쌍의 정의 \(\{\{a\}, \{a, b\}\}\)는 \((a, b) = (c, d) \iff a = c, b = d\)를 만족하도록 고안된 것이다(연습문제 2). 한편 치환 공리는 5.2절에서 정렬순서를 순서수로 보낼 때, 그리고 \(\omega + \omega\)처럼 큰 순서수를 만들 때 필요하다.</p>
 
     <h3><span class="no">7.2.3</span>공리가 하는 일과 하지 않는 일</h3>
-    <p>ZF는 집합이 "무엇인지"를 정의하지 않고, 집합이 "어떻게 행동하는지"만 정합니다. 기하학의 공리가 점과 직선이 무엇인지 말하지 않는 것과 같습니다. 또 괴델의 불완전성 정리에 따라 ZF가 모순이 없다는 것을 ZF 안에서 증명할 수는 없습니다. 지금까지 알려진 모순이 없다는 것이 우리가 ZF를 믿는 근거입니다.</p>
+    <p>ZF는 집합이 무엇인지 정의하지 않고, 집합이 어떻게 행동하는지만 정한다. 기하학의 공리가 점과 직선이 무엇인지 말하지 않는 것과 같다. 또 괴델의 불완전성 정리에 따라 ZF에 모순이 없다는 것을 ZF 안에서 증명할 수는 없다. 그러므로 우리가 ZF를 믿는 근거는 지금까지 알려진 모순이 없다는 것이다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) "공리가 많을수록 강하다"를 의식하지 않고 무제한 내포를 다시 쓴다: \(\{x : P(x)\}\)를 쓸 때는 늘 어떤 집합 안에서 고르는지 밝혀야 한다. (2) 짝 공리로 무한집합을 만들 수 있다고 생각한다: 짝·합집합·멱집합은 유한에서 유한을 만든다. 무한집합은 무한 공리가 있어야 생긴다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(\{x \mid P(x)\}\)를 쓸 때 어떤 집합 안에서 고르는지 밝히지 않고 무제한 내포를 다시 쓰기 쉽다. 또 짝 공리로 무한집합을 만들 수 있다고 생각하는 실수가 있다. 그러나 짝·합집합·멱집합 공리는 유한에서 유한을 만들 뿐이고, 무한집합은 무한 공리가 있어야 생긴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>외연, 공집합, 짝, 합집합, 멱집합, 분리, 치환, 무한, 정칙 + 선택 = ZFC.</li>
-        <li>순서쌍·곱집합·함수는 짝·멱집합·분리로, \(\omega\)는 무한 공리로 만든다.</li>
-        <li>공리는 집합을 무제한 모으지 않고 허락된 방법으로만 만든다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 지금까지 써 온 집합들은 ZF 공리가 허락한 방법으로 만들어지기 때문에 있다. 순서쌍·곱집합·함수 전체는 짝·합집합·멱집합·분리 공리로, \(\omega\)는 무한 공리로 얻는다. ZF의 공리는 외연, 공집합, 짝, 합집합, 멱집합, 분리, 치환, 무한, 정칙이고, 여기에 선택공리를 더하면 ZFC이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.4</span>연습문제</h3>
@@ -84,7 +69,7 @@
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>정칙 공리로 \(x \in y \in x\)인 집합 \(x, y\)가 없음을 보여라.
-          <details><summary>답</summary><p>\(\{x, y\}\)에 정칙 공리: 서로소인 원소가 있어야 하는데 \(y \in x \cap \{x, y\}\), \(x \in y \cap \{x, y\}\)라 둘 다 서로소가 아니다.</p></details>
+          <details><summary>답</summary><p>\(\{x, y\}\)에 정칙 공리를 쓰면 서로소인 원소가 있어야 하는데 \(y \in x \cap \{x, y\}\), \(x \in y \cap \{x, y\}\)라 둘 다 서로소가 아니다.</p></details>
         </li>
       </ol>
     </div>
