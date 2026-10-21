@@ -8,67 +8,61 @@
 <article class="card q-card" id="text-m5-condexp" data-kind="본문" data-std="수학5-07-01">
   <header class="card-head"><span class="no"></span><h2>조건부 기대값과 반복 기대값 법칙</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>조건부 기대값 \(E[Y\mid X = x]\)와 확률변수 \(E[Y\mid X]\)를 구별해 정의한다.</li>
-        <li>반복 기대값 법칙 \(E[E[Y\mid X]] = E[Y]\)를 증명한다.</li>
-        <li>경우를 나누는 "첫 단계 분석"과 무작위 개수의 합에 이 법칙을 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>조건부분포 (<a href="04-01.html">4.1절</a>), 기대값의 선형성 (<a href="03-01.html">3.1절</a>), 전확률 공식 (<a href="01-03.html">1.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">갱도에 갇힌 광부 앞에 문이 셋 있다. 1번 문은 3시간 뒤 밖으로 이어지고, 2번과 3번 문은 각각 5시간, 7시간 뒤 제자리로 돌아온다. 광부가 매번 문을 무작위로 고른다면, 밖으로 나가기까지 평균 몇 시간이 걸릴까? 경우가 끝없이 이어지는데 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 210" role="img" aria-label="광부가 세 문 가운데 하나를 골라 밖으로 나가거나 제자리로 돌아오는 그림">
+        <circle cx="70" cy="100" r="26" class="la" style="stroke:var(--fa);stroke-width:2"/><text x="70" y="105" text-anchor="middle">시작</text>
+        <line x1="96" y1="100" x2="210" y2="40" class="ax"/><rect x="210" y="24" width="70" height="32" class="lk" style="stroke:var(--ink-3)"/><text x="245" y="45" text-anchor="middle">1번 문</text>
+        <text x="150" y="64" text-anchor="middle" class="s">1/3</text><line x1="280" y1="40" x2="330" y2="40" class="ax"/><text x="336" y="44" class="tb">3시간 뒤 밖으로</text>
+        <line x1="96" y1="100" x2="210" y2="100" class="ax"/><rect x="210" y="84" width="70" height="32" class="lk" style="stroke:var(--ink-3)"/><text x="245" y="105" text-anchor="middle">2번 문</text>
+        <text x="150" y="94" text-anchor="middle" class="s">1/3</text><line x1="280" y1="100" x2="330" y2="100" class="ax"/><text x="336" y="104" class="tc">5시간 뒤 제자리</text>
+        <line x1="96" y1="100" x2="210" y2="160" class="ax"/><rect x="210" y="144" width="70" height="32" class="lk" style="stroke:var(--ink-3)"/><text x="245" y="165" text-anchor="middle">3번 문</text>
+        <text x="150" y="124" text-anchor="middle" class="s">1/3</text><line x1="280" y1="160" x2="330" y2="160" class="ax"/><text x="336" y="164" class="tc">7시간 뒤 제자리</text>
+        <path d="M330 100 Q 380 210 70 128" class="c dsh" style="fill:none"/><path d="M330 160 Q 400 230 80 130" class="c dsh" style="fill:none"/>
+        <text x="430" y="40" class="s">E[T] = ⅓(3)</text><text x="430" y="58" class="s">+ ⅓(5 + E[T])</text><text x="430" y="76" class="s">+ ⅓(7 + E[T])</text><text x="430" y="104" class="ta">E[T] = 15</text>
+      </svg>
+      <figcaption>그림 1. 첫 선택으로 경우를 나누면, 2번과 3번 문은 시간을 쓴 뒤 처음과 같은 상황으로 돌아온다(점선). 그래서 \(E[T]\)가 식의 양쪽에 나타나는 방정식 하나로 무한히 이어지는 경우를 모두 처리한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>조건부분포(<a href="04-01.html">4.1절</a>), 기대값(<a href="03-01.html">3.1절</a>), 전확률 공식(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.1.1</span>두 가지 조건부 기대값</h3>
-    <p>\(X = x\)를 알 때 \(Y\)의 평균은 조건부분포의 평균입니다. 이것은 \(x\)마다 하나의 수이므로 \(x\)의 함수 \(h(x) = E[Y\mid X = x]\)입니다. 그 함수에 확률변수 \(X\)를 넣은 \(h(X)\)를 \(E[Y\mid X]\)로 씁니다. "아직 \(X\)를 모를 때, \(X\)를 알게 되면 내놓을 예측"이라는 확률변수입니다.</p>
+    <p>\(X = x\)를 알 때 \(Y\)의 평균은 조건부분포의 평균이다. 이것은 \(x\)마다 하나의 수이므로 \(x\)의 함수 \(h(x) = E[Y\mid X = x]\)이다. 그 함수에 확률변수 \(X\)를 넣은 \(h(X)\)를 \(E[Y\mid X]\)로 쓰며, 아직 \(X\)를 모를 때 \(X\)를 알게 되면 내놓을 예측이라는 확률변수이다.</p>
     <div class="tb-env">
       <span class="lb">정의 7.1.1</span>
-      <p class="q-term"><b>조건부 기대값</b>(값): \(E[Y\mid X = x] = \sum_yy\,p_{Y\mid X}(y\mid x)\) 또는 \(\int yf_{Y\mid X}(y\mid x)\,dy\).</p>
-      <p class="q-term"><b>조건부 기대값</b>(확률변수): \(h(x) = E[Y\mid X = x]\)일 때 \(E[Y\mid X] = h(X)\).</p>
+      <p>\(E[Y\mid X = x] = \sum_yy\,p_{Y\mid X}(y\mid x)\) 또는 \(\int yf_{Y\mid X}(y\mid x)\,dy\)를 \(X = x\)일 때 \(Y\)의 <em>조건부 기대값</em>이라 한다. \(h(x) = E[Y\mid X = x]\)일 때 확률변수 \(E[Y\mid X] = h(X)\)도 조건부 기대값이라 한다.</p>
     </div>
-    <p>예: 4.1절 예제 4.1.4에서 \(E[Y\mid X = x] = x/2\)이므로 \(E[Y\mid X] = X/2\)입니다. 이변량 정규에서는 \(E[Y\mid X] = \rho X\)입니다.</p>
+    <p>예를 들어 4.1절 예제 4.1.4에서 \(E[Y\mid X = x] = x/2\)이므로 \(E[Y\mid X] = X/2\)이다. 이변량 정규분포에서는 \(E[Y\mid X] = \rho X\)이다.</p>
 
     <h3><span class="no">7.1.2</span>반복 기대값 법칙</h3>
-    <div class="tb-env">
+    <div class="tb-env thm">
       <span class="lb">정리 7.1.2 <span class="nm">(반복 기대값 법칙)</span></span>
-      <p>\(E[|Y|] &lt; \infty\)이면 \(E\big[E[Y\mid X]\big] = E[Y]\). 이산이면 \(E[Y] = \sum_xE[Y\mid X = x]P(X = x)\).</p>
+      <p>\(E[|Y|] &lt; \infty\)이면 \(E\big[E[Y\mid X]\big] = E[Y]\)이다. 이산이면 \(E[Y] = \sum_xE[Y\mid X = x]P(X = x)\)이다.</p>
     </div>
-    <div class="tb-proof">
-      <p>연속인 경우: \(E[h(X)] = \int h(x)f_X(x)\,dx = \int\left(\int y\frac{f(x, y)}{f_X(x)}dy\right)f_X(x)\,dx = \iint yf(x, y)\,dy\,dx = E[Y]\). 적분 순서는 절대적분가능성으로 바꿀 수 있다. 이산은 합으로 같다. <span class="qed">∎</span></p>
-    </div>
-    <p>이것은 전확률 공식의 기대값 판입니다. "경우마다 평균을 구하고, 경우의 확률로 가중평균한다." 직접 구하기 어려운 \(E[Y]\)를, 무언가를 알고 나면 쉬워지는 조건부 평균으로 쪼개서 구합니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>연속인 경우 \(E[h(X)] = \int h(x)f_X(x)\,dx = \int\left(\int y\frac{f(x, y)}{f_X(x)}dy\right)f_X(x)\,dx = \iint yf(x, y)\,dy\,dx = E[Y]\)이다. 적분 순서는 절대적분가능성 덕분에 바꿀 수 있다. 이산인 경우는 합으로 같다. <span class="qed">∎</span></p>
+    <p>이것은 전확률 공식의 기대값 판이다. 경우마다 평균을 구하고, 경우의 확률로 가중평균한다. 그래서 직접 구하기 어려운 \(E[Y]\)를, 무언가를 알고 나면 쉬워지는 조건부 평균으로 쪼개서 구한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.3 <span class="nm">(막대 쪼개기)</span></span>
-      <p>길이 1인 막대에서 균등하게 한 점 \(X\)를 골라 왼쪽 조각 \([0, X]\)을 남기고, 다시 균등하게 한 점 \(Y\)를 골라 \([0, Y]\)를 남긴다. \(E[Y]\)는?</p>
+      <p>길이 1인 막대에서 균등하게 한 점 \(X\)를 골라 왼쪽 조각 \([0, X]\)을 남기고, 다시 균등하게 한 점 \(Y\)를 골라 \([0, Y]\)를 남긴다. \(E[Y]\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(Y\mid X = x \sim U(0, x)\)이므로 \(E[Y\mid X] = X/2\). 반복 기대값으로 \(E[Y] = E[X/2] = 1/4\). \(Y\)의 분포(밀도 \(-\ln y\))를 구하지 않고도 평균이 나옵니다.</p>
+    <p><i>풀이.</i> \(Y\mid X = x \sim U(0, x)\)이므로 \(E[Y\mid X] = X/2\)이다. 반복 기대값으로 \(E[Y] = E[X/2] = 1/4\)이다. 즉 밀도 \(-\ln y\)라는 \(Y\)의 분포를 구하지 않고도 평균이 나온다.</p>
 
     <h3><span class="no">7.1.3</span>첫 단계 분석</h3>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.4 <span class="nm">(갇힌 광부)</span></span>
-      <p>광부가 문 셋 중 하나를 무작위로 고른다. 1번은 3시간 뒤 밖으로, 2번은 5시간, 3번은 7시간 뒤 제자리로 돌아온다(돌아오면 다시 무작위로 고름). 밖으로 나갈 때까지 걸리는 시간 \(T\)의 기대값은?</p>
+      <p>처음 질문에서 밖으로 나갈 때까지 걸리는 시간 \(T\)의 기대값을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 첫 선택 \(D\)로 조건을 겁니다. \(E[T\mid D = 1] = 3\), \(E[T\mid D = 2] = 5 + E[T]\) (돌아온 뒤는 처음과 같은 상황), \(E[T\mid D = 3] = 7 + E[T]\). 반복 기대값으로 \(E[T] = \frac13(3 + 5 + E[T] + 7 + E[T])\), 곧 \(\frac13E[T] = 5\), \(E[T] = 15\)시간. 상황이 "처음으로 돌아가는" 구조를 이용해 무한한 경우를 방정식 하나로 처리했습니다. 마르코프 연쇄의 도달 시간 계산(수학21)이 같은 방법입니다.</p>
+    <p><i>풀이.</i> 첫 선택 \(D\)로 조건을 건다. \(E[T\mid D = 1] = 3\)이고, 돌아온 뒤는 처음과 같은 상황이므로 \(E[T\mid D = 2] = 5 + E[T]\), \(E[T\mid D = 3] = 7 + E[T]\)이다. 반복 기대값으로 \(E[T] = \frac13(3 + 5 + E[T] + 7 + E[T])\), 곧 \(\frac13E[T] = 5\)이므로 \(E[T] = 15\)시간이다. 그림 1처럼 상황이 처음으로 돌아가는 구조를 이용해 무한한 경우를 방정식 하나로 처리했다. 확률과정론에서 마르코프 연쇄의 도달 시간을 계산하는 것도 같은 방법이다.</p>
 
     <h3><span class="no">7.1.4</span>무작위 개수의 합</h3>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.5</span>
-      <p>하루 손님 수 \(N \sim \mathrm{Pois}(50)\), 손님마다 쓰는 금액 \(X_i\)는 평균 20(천 원)이고 \(N\)과 독립이다. 하루 매출 \(S = \sum_{i=1}^NX_i\)의 기대값은?</p>
+      <p>하루 손님 수 \(N \sim \mathrm{Pois}(50)\)이고, 손님마다 쓰는 금액 \(X_i\)는 평균 20(천 원)이며 \(N\)과 독립이다. 하루 매출 \(S = \sum_{i=1}^NX_i\)의 기대값을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(E[S\mid N = n] = 20n\)이므로 \(E[S\mid N] = 20N\), \(E[S] = 20E[N] = 1000\). 일반적으로 \(E[S] = E[N]E[X]\) (왈드 항등식의 간단한 형태). 분산은 다음 절의 전분산 공식이 필요합니다. 같은 절의 탐구 카드에서 \(N\)의 분포를 바꿔 볼 수 있습니다.</p>
+    <p><i>풀이.</i> \(E[S\mid N = n] = 20n\)이므로 \(E[S\mid N] = 20N\)이고 \(E[S] = 20E[N] = 1000\)이다. 일반적으로 \(E[S] = E[N]E[X]\)이며, 이것이 왈드 항등식의 간단한 형태이다. 분산은 다음 절의 전분산 공식이 필요하다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) \(E[Y\mid X]\)를 수로 여긴다: \(X\)의 함수인 확률변수이다. (2) 광부 문제에서 \(E[T\mid D = 2] = 5\)로 둔다: 돌아온 뒤에 더 걸리는 시간을 빠뜨렸다. (3) 무작위 합에서 \(N\)과 \(X_i\)가 독립이 아닌데 \(E[N]E[X]\)를 쓴다(예: 지출이 많은 날 손님이 적은 경우).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(E[Y\mid X]\)를 수로 여기기 쉽지만, \(X\)의 함수인 확률변수이다. 또 광부 문제에서 \(E[T\mid D = 2] = 5\)로 두는 실수가 있는데, 돌아온 뒤에 더 걸리는 시간을 빠뜨린 것이다. 지출이 많은 날 손님이 적은 경우처럼 \(N\)과 \(X_i\)가 독립이 아닌데 \(E[N]E[X]\)를 쓰는 것도 틀렸다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(E[Y\mid X = x]\)는 수, \(E[Y\mid X]\)는 \(X\)의 함수인 확률변수.</li>
-        <li>\(E[E[Y\mid X]] = E[Y]\): 경우별 평균의 가중평균.</li>
-        <li>첫 단계 분석은 자기 자신으로 돌아오는 방정식, 무작위 합은 \(E[S] = E[N]E[X]\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 15시간이다. 첫 선택으로 경우를 나누어 반복 기대값 법칙 \(E[E[T\mid D]] = E[T]\)를 쓰면, 제자리로 돌아오는 경우에 \(E[T]\)가 다시 나타나 방정식 하나로 풀린다. 조건부 기대값 \(E[Y\mid X = x]\)는 수이고 \(E[Y\mid X]\)는 \(X\)의 함수인 확률변수이며, 반복 기대값 법칙은 경우별 평균의 가중평균이다. 무작위 개수의 합에서는 \(E[S] = E[N]E[X]\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.1.5</span>연습문제</h3>
