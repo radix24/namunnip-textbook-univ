@@ -674,5 +674,32 @@
     });
   });
 
+  // 8.1 고계 상수계수 방정식: 특성근(복소평면)과 기저 함수
+  Q.def("c8-higher", (fig, svg) => {
+    const g = el("g", {}, svg), read = fig.querySelector(".q-read");
+    const E = [
+      { eq: "y‴ − y″ − y′ + y = 0", ch: "(λ − 1)²(λ + 1)", roots: [[1, 0, 2], [-1, 0, 1]], basis: [["eˣ", (x) => Math.exp(x)], ["x eˣ", (x) => x * Math.exp(x)], ["e⁻ˣ", (x) => Math.exp(-x)]], sol: (x) => (2 - x) * Math.exp(x), say: "중근 1에서 eˣ와 x eˣ, 단순근 −1에서 e⁻ˣ를 얻는다. 굵은 곡선은 예제 8.1.1의 해 (2 − x)eˣ이다." },
+      { eq: "y‴ − y′ = 0", ch: "λ(λ − 1)(λ + 1)", roots: [[0, 0, 1], [1, 0, 1], [-1, 0, 1]], basis: [["1", () => 1], ["eˣ", (x) => Math.exp(x)], ["e⁻ˣ", (x) => Math.exp(-x)]], say: "서로 다른 실근 0, 1, −1이 기저 1, eˣ, e⁻ˣ를 하나씩 준다." },
+      { eq: "y‴ + y′ = 0", ch: "λ(λ² + 1)", roots: [[0, 0, 1], [0, 1, 1], [0, -1, 1]], basis: [["1", () => 1], ["cos x", Math.cos], ["sin x", Math.sin]], say: "복소근 ±i 한 쌍이 cos x와 sin x 두 기저를 주고, 실근 0이 상수 1을 준다." },
+      { eq: "y⁗ = 0", ch: "λ⁴", roots: [[0, 0, 4]], basis: [["1", () => 1], ["x", (x) => x], ["x²", (x) => x * x], ["x³", (x) => x * x * x]], say: "4중근 0이므로 e⁰ˣ에 x의 거듭제곱 1, x, x², x³을 곱한 넷이 기저이다. 보의 처짐 방정식 EIy⁗ = w의 동차해가 이것이다." },
+    ];
+    const C = Q.frame(-1.8, 1.8, -1.8, 1.8, 20, 180, 30, 190), F = Q.frame(-1.5, 1.5, -2.5, 4, 230, 505, 15, 215);
+    const cls = ["a", "c", "b", "d"];
+    Q.bind(fig, ({ e }) => {
+      clear(g);
+      const P = E[e];
+      Q.line(g, C.X0, C.y(0), C.X1, C.y(0), "ax"); Q.line(g, C.x(0), C.Y0, C.x(0), C.Y1, "ax");
+      txt(g, C.X1 - 2, C.y(0) + 16, "Re", "i", "end"); txt(g, C.x(0) + 5, C.Y0 + 10, "Im", "i");
+      [-1, 1].forEach((v) => { txt(g, C.x(v), C.y(0) + 14, num(v), "s", "middle"); txt(g, C.x(0) - 5, C.y(v) + 4, v > 0 ? "i" : "−i", "s", "end"); });
+      P.roots.forEach(([re, im, m]) => { Q.dot(g, C.x(re), C.y(im), "fc", 6); if (m > 1) txt(g, C.x(re) + 9, C.y(im) - 9, `×${m}`, "tc", "start"); });
+      txt(g, 100, 18, `특성다항식 ${P.ch}`, "s", "middle");
+      Q.line(g, F.X0, F.y(0), F.X1, F.y(0), "ax"); Q.line(g, F.x(0), F.Y0, F.x(0), F.Y1, "ax");
+      [-1, 1].forEach((v) => txt(g, F.x(v), F.y(0) + 14, num(v), "s", "middle")); [2, 4].forEach((v) => txt(g, F.x(0) - 5, F.y(v) + 4, num(v), "s", "end"));
+      P.basis.forEach(([name, f], i) => { Q.plot(g, F, f, cls[i], -1.5, 1.5, 200); txt(g, F.X1 - 4, F.Y0 + 14 + i * 16, name, "t" + cls[i], "end"); });
+      if (P.sol) Q.plot(g, F, P.sol, "k", -1.5, 1.5, 200).setAttribute("style", "stroke-width:2.5");
+      read.textContent = `${P.eq}: 특성다항식 ${P.ch}. ${P.say} 근의 중복도의 합은 방정식의 계와 같은 ${P.basis.length}이다.`;
+    });
+  });
+
   // ── 새 그림은 이 위에 ──
 })();

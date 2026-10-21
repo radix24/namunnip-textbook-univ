@@ -2,70 +2,58 @@
 {
   "type": "card",
   "sec": "수학1-07-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/math/m1-body.js"]
 }
 -->
 <article class="card q-card" id="text-m1-gramschmidt" data-kind="본문" data-std="수학1-07-02">
   <header class="card-head"><span class="no"></span><h2>정규직교기저와 그람-슈미트 과정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>정규직교기저에서는 좌표를 내적 한 번으로 구함을 안다.</li>
-        <li>그람-슈미트(Gram-Schmidt) 과정으로 일차독립 집합을 직교 집합으로 바꾼다.</li>
-        <li>다항식 공간에서 직교 다항식(르장드르 다항식)을 만든다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>내적, 직교, 정사영 공식 (<a href="07-01.html">7.1절</a>과 그 탐구 카드).</li>
-      </ul>
-    </div>
+    <p class="q-ask">일반 기저에서 벡터의 좌표를 구하려면 연립방정식을 풀어야 했다. 그런데 표준기저처럼 서로 수직이고 길이가 1인 기저에서는 좌표를 내적 한 번으로 읽는다. 아무 기저나 주어졌을 때 이런 좋은 기저로 바꿀 수 있을까? 다항식 \(1, x, x^2\)처럼 함수로 된 기저에도 같은 일을 할 수 있을까?</p>
+    <figure class="q-fig" data-q="m1-gs">
+      <svg viewBox="0 0 520 250" role="img" aria-label="그람-슈미트 과정에서 정사영을 빼 수직인 벡터를 만드는 그림"></svg>
+      <div class="q-ctl"><label>\(\mathbf w_2\)의 각도 <input type="range" data-k="t" min="25" max="160" step="5" value="65"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 그람-슈미트 과정의 한 걸음. \(\mathbf w_2\)에서 \(\mathbf v_1\) 방향의 정사영(주황)을 빼면 \(\mathbf v_1\)과 수직인 \(\mathbf v_2\)(청록)가 남고, 두 벡터의 생성은 그대로이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>내적, 직교, 정사영 공식(<a href="07-01.html">7.1절</a>과 그 탐구 카드)을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>직교하는 기저가 좋은 이유</h3>
-    <p>일반 기저에서 벡터의 좌표를 구하려면 연립방정식을 풀어야 했습니다(3.2절). 기저 벡터들이 서로 직교하면 사정이 달라집니다. \(\mathbf v = c_1\mathbf u_1 + \dots + c_n\mathbf u_n\)의 양변을 \(\mathbf u_j\)와 내적하면, 직교성 때문에 \(j\)째 항만 남아 \(\langle\mathbf v, \mathbf u_j\rangle = c_j\|\mathbf u_j\|^2\)입니다.</p>
-    <p class="q-term"><b>직교 집합</b>: 서로 다른 두 벡터의 내적이 모두 0인 집합(영벡터 제외). 직교 집합은 일차독립입니다(위 계산에서 \(\mathbf v = \mathbf 0\)이면 모든 \(c_j = 0\)).</p>
-    <p class="q-term"><b>정규직교 집합</b>: 직교 집합이면서 모든 벡터의 길이가 1인 것. 이때 \(c_j = \langle\mathbf v, \mathbf u_j\rangle\)입니다.</p>
+    <p>기저 벡터들이 서로 직교하면 사정이 달라진다. \(\mathbf v = c_1\mathbf u_1 + \dots + c_n\mathbf u_n\)의 양변을 \(\mathbf u_j\)와 내적하면, 직교성 때문에 \(j\)째 항만 남아 \(\langle\mathbf v, \mathbf u_j\rangle = c_j\|\mathbf u_j\|^2\)이다.</p>
+    <p>서로 다른 두 벡터의 내적이 모두 0인 집합(영벡터 제외)을 <em>직교 집합</em>이라 한다. 직교 집합은 일차독립이다. 위 계산에서 \(\mathbf v = \mathbf 0\)이면 모든 \(c_j = 0\)이기 때문이다. 그리고 직교 집합이면서 모든 벡터의 길이가 1인 것을 <em>정규직교 집합</em>이라 하며, 이때 \(c_j = \langle\mathbf v, \mathbf u_j\rangle\)이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 7.2.1</span>
       <p>\(\{\mathbf u_1, \dots, \mathbf u_n\}\)이 정규직교기저이면 모든 \(\mathbf v\)에 대해 \(\mathbf v = \sum_j\langle\mathbf v, \mathbf u_j\rangle\mathbf u_j\)이고 \(\|\mathbf v\|^2 = \sum_j\langle\mathbf v, \mathbf u_j\rangle^2\)이다.</p>
     </div>
-    <p>둘째 식은 \(n\)차원 피타고라스 정리이고, 무한차원으로 넓힌 것이 푸리에 급수의 파스발 정리(수학15 2단원)입니다.</p>
+    <p>둘째 식은 \(n\)차원 피타고라스 정리이고, 무한차원으로 넓힌 것이 푸리에 급수의 파스발 정리(푸리에해석및응용 2단원)이다.</p>
 
     <h3><span class="no">7.2.2</span>그람-슈미트 과정</h3>
-    <p>주어진 기저는 대개 직교하지 않습니다. 각 벡터에서 앞서 만든 직교 벡터 방향의 성분(정사영)을 빼면 나머지는 그것들과 직교합니다. 이 일을 차례로 합니다.</p>
+    <p>처음 질문처럼 주어진 기저는 대개 직교하지 않는다. 그러므로 각 벡터에서 앞서 만든 직교 벡터 방향의 성분(정사영)을 빼서, 나머지가 그것들과 직교하게 한다. 이 일을 차례로 하는 것이 그람-슈미트 과정이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 7.2.2 <span class="nm">(그람-슈미트 과정)</span></span>
       <p>\(\{\mathbf w_1, \dots, \mathbf w_n\}\)이 일차독립이면 다음으로 정한 \(\mathbf v_1, \dots, \mathbf v_n\)은 직교 집합이고, 각 \(k\)에 대해 \(\operatorname{span}\{\mathbf v_1, \dots, \mathbf v_k\} = \operatorname{span}\{\mathbf w_1, \dots, \mathbf w_k\}\)이다.</p>
-      \[\mathbf v_1 = \mathbf w_1,\qquad \mathbf v_k = \mathbf w_k - \sum_{j=1}^{k-1}\frac{\langle\mathbf w_k, \mathbf v_j\rangle}{\|\mathbf v_j\|^2}\mathbf v_j.\]
+      \[\mathbf v_1 = \mathbf w_1,\qquad \mathbf v_k = \mathbf w_k - \sum_{j=1}^{k-1}\frac{\langle\mathbf w_k, \mathbf v_j\rangle}{\|\mathbf v_j\|^2}\mathbf v_j\]
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(k\)에 대한 귀납법. \(\mathbf v_1, \dots, \mathbf v_{k-1}\)이 직교하고 생성이 같다고 하자. \(i &lt; k\)이면 \(\langle\mathbf v_k, \mathbf v_i\rangle = \langle\mathbf w_k, \mathbf v_i\rangle - \frac{\langle\mathbf w_k, \mathbf v_i\rangle}{\|\mathbf v_i\|^2}\|\mathbf v_i\|^2 = 0\)이다(합에서 \(j = i\)인 항만 남음, 직교성). \(\mathbf v_k \ne \mathbf 0\)인 이유: \(\mathbf v_k = \mathbf 0\)이면 \(\mathbf w_k\)가 \(\mathbf v_1, \dots, \mathbf v_{k-1}\), 곧 \(\mathbf w_1, \dots, \mathbf w_{k-1}\)의 일차결합이 되어 일차독립에 어긋난다. 정의식에서 \(\mathbf v_k \in \operatorname{span}\{\mathbf w_1, \dots, \mathbf w_k\}\)이고 \(\mathbf w_k \in \operatorname{span}\{\mathbf v_1, \dots, \mathbf v_k\}\)이므로 생성이 같다. <span class="qed">∎</span></p>
-    <p>마지막에 각 \(\mathbf v_k\)를 길이로 나누면 정규직교기저가 됩니다. 따라서 모든 유한차원 내적공간에는 정규직교기저가 있습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(k\)에 대한 귀납법을 쓴다. \(\mathbf v_1, \dots, \mathbf v_{k-1}\)이 직교하고 생성이 같다고 하자. \(i &lt; k\)이면 합에서 직교성으로 \(j = i\)인 항만 남아 \(\langle\mathbf v_k, \mathbf v_i\rangle = \langle\mathbf w_k, \mathbf v_i\rangle - \frac{\langle\mathbf w_k, \mathbf v_i\rangle}{\|\mathbf v_i\|^2}\|\mathbf v_i\|^2 = 0\)이다. 그리고 \(\mathbf v_k \ne \mathbf 0\)이다. \(\mathbf v_k = \mathbf 0\)이면 \(\mathbf w_k\)가 \(\mathbf v_1, \dots, \mathbf v_{k-1}\), 곧 \(\mathbf w_1, \dots, \mathbf w_{k-1}\)의 일차결합이 되어 일차독립에 어긋나기 때문이다. 끝으로 정의식에서 \(\mathbf v_k \in \operatorname{span}\{\mathbf w_1, \dots, \mathbf w_k\}\)이고 \(\mathbf w_k \in \operatorname{span}\{\mathbf v_1, \dots, \mathbf v_k\}\)이므로 생성이 같다. <span class="qed">∎</span></p>
+    <p>마지막에 각 \(\mathbf v_k\)를 길이로 나누면 정규직교기저가 된다. 따라서 모든 유한차원 내적공간에는 정규직교기저가 있으며, 처음 질문의 첫째 답이다. 그림 1에서 \(\mathbf w_2\)를 돌려 보면 정사영의 크기는 바뀌어도 남은 \(\mathbf v_2\)는 늘 \(\mathbf v_1\)과 수직이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.3</span>
       <p>\(\mathbf w_1 = (1, 1, 0)\), \(\mathbf w_2 = (1, 0, 1)\), \(\mathbf w_3 = (0, 1, 1)\)에 그람-슈미트 과정을 적용하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\mathbf v_1 = (1, 1, 0)\), \(\|\mathbf v_1\|^2 = 2\). \(\langle\mathbf w_2, \mathbf v_1\rangle = 1\)이므로 \(\mathbf v_2 = (1, 0, 1) - \frac12(1, 1, 0) = (\frac12, -\frac12, 1)\), \(\|\mathbf v_2\|^2 = \frac32\). \(\langle\mathbf w_3, \mathbf v_1\rangle = 1\), \(\langle\mathbf w_3, \mathbf v_2\rangle = \frac12\)이므로</p>
-    \[\mathbf v_3 = (0, 1, 1) - \frac12(1, 1, 0) - \frac{1/2}{3/2}\left(\tfrac12, -\tfrac12, 1\right) = \left(-\tfrac23, \tfrac23, \tfrac23\right).\]
-    <p>검산: \(\mathbf v_1\cdot\mathbf v_3 = -\frac23 + \frac23 = 0\), \(\mathbf v_2\cdot\mathbf v_3 = -\frac13 - \frac13 + \frac23 = 0\). 길이로 나누면 \(\frac1{\sqrt2}(1,1,0)\), \(\frac1{\sqrt6}(1,-1,2)\), \(\frac1{\sqrt3}(-1,1,1)\).</p>
+    <p><i>풀이.</i> \(\mathbf v_1 = (1, 1, 0)\)이고 \(\|\mathbf v_1\|^2 = 2\)이다. \(\langle\mathbf w_2, \mathbf v_1\rangle = 1\)이므로 \(\mathbf v_2 = (1, 0, 1) - \frac12(1, 1, 0) = (\frac12, -\frac12, 1)\)이고 \(\|\mathbf v_2\|^2 = \frac32\)이다. 또 \(\langle\mathbf w_3, \mathbf v_1\rangle = 1\), \(\langle\mathbf w_3, \mathbf v_2\rangle = \frac12\)이므로 다음을 얻는다.</p>
+    \[\mathbf v_3 = (0, 1, 1) - \frac12(1, 1, 0) - \frac{1/2}{3/2}\left(\tfrac12, -\tfrac12, 1\right) = \left(-\tfrac23, \tfrac23, \tfrac23\right)\]
+    <p>검산하면 \(\mathbf v_1\cdot\mathbf v_3 = -\frac23 + \frac23 = 0\), \(\mathbf v_2\cdot\mathbf v_3 = -\frac13 - \frac13 + \frac23 = 0\)이다. 그리고 길이로 나누면 \(\frac1{\sqrt2}(1,1,0)\), \(\frac1{\sqrt6}(1,-1,2)\), \(\frac1{\sqrt3}(-1,1,1)\)이다.</p>
 
-    <h3><span class="no">7.2.3</span>함수에도: 르장드르 다항식</h3>
+    <h3><span class="no">7.2.3</span>함수에도, 르장드르 다항식</h3>
+    <p>처음 질문의 둘째 물음에 답하자. 내적만 있으면 같은 과정을 함수에도 쓸 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.4</span>
       <p>\(P_2\)에 \(\langle f, g\rangle = \int_{-1}^1 fg\,dx\)를 주고 \(1, x, x^2\)에 그람-슈미트 과정을 적용하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\mathbf v_1 = 1\). \(\langle x, 1\rangle = 0\)이므로 \(\mathbf v_2 = x\). \(\langle x^2, 1\rangle = \frac23\), \(\|1\|^2 = 2\), \(\langle x^2, x\rangle = 0\)이므로 \(\mathbf v_3 = x^2 - \frac{2/3}{2}\cdot1 = x^2 - \frac13\). 이것들의 상수배가 르장드르 다항식 \(P_0 = 1\), \(P_1 = x\), \(P_2 = \frac12(3x^2 - 1)\)입니다. 물리학의 전기 다중극 전개, 수치적분의 가우스 구적법에 쓰이고, 상미분방정식(수학6 4단원)의 르장드르 방정식의 해이기도 합니다.</p>
+    <p><i>풀이.</i> \(\mathbf v_1 = 1\)이다. \(\langle x, 1\rangle = 0\)이므로 \(\mathbf v_2 = x\)이다. 또 \(\langle x^2, 1\rangle = \frac23\), \(\|1\|^2 = 2\), \(\langle x^2, x\rangle = 0\)이므로 \(\mathbf v_3 = x^2 - \frac{2/3}{2}\cdot1 = x^2 - \frac13\)이다. 이것들의 상수배가 르장드르 다항식 \(P_0 = 1\), \(P_1 = x\), \(P_2 = \frac12(3x^2 - 1)\)이다. 물리학의 전기 다중극 전개와 수치적분의 가우스 구적법에 쓰이고, 상미분방정식 4단원의 르장드르 방정식의 해이기도 하다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>그람-슈미트 과정의 결과는 하나로 정해진다고 생각하기 쉽다. 하지만 순서에 따라 결과가 다르다. \(\mathbf w_1, \mathbf w_2\)의 순서를 바꾸면 첫 벡터가 \(\mathbf w_2\)가 되어 다른 직교기저가 나온다. 또 컴퓨터로 계산하면 반올림 오차 때문에 뒤쪽 벡터들의 직교성이 깨지기 쉬워, 실제로는 한 번에 한 방향씩 빼는 수정된 그람-슈미트나 하우스홀더 변환(수치해석)을 쓴다.</div>
 
-    <div class="tb-note"><b>주의</b>그람-슈미트 과정은 순서에 따라 결과가 다릅니다. \(\mathbf w_1, \mathbf w_2\)의 순서를 바꾸면 첫 벡터가 \(\mathbf w_2\)가 되어 다른 직교기저가 나옵니다. 또 컴퓨터로 계산하면 반올림 오차 때문에 뒤쪽 벡터들의 직교성이 깨지기 쉬워, 실제로는 한 번에 한 방향씩 빼는 수정된 그람-슈미트나 하우스홀더 변환(수학16)을 씁니다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정규직교기저에서 좌표는 내적 \(\langle\mathbf v, \mathbf u_j\rangle\)이고, 길이의 제곱은 좌표의 제곱합이다.</li>
-        <li>그람-슈미트: 각 벡터에서 앞선 직교 벡터들로의 정사영을 빼서 직교화하고, 끝에 길이로 나눈다.</li>
-        <li>생성은 단계마다 보존되고, 일차독립이면 영벡터가 나오지 않는다.</li>
-        <li>적분 내적에서 \(1, x, x^2, \dots\)를 직교화하면 르장드르 다항식이 나온다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>정규직교기저에서 좌표는 내적 \(\langle\mathbf v, \mathbf u_j\rangle\)이고, 길이의 제곱은 좌표의 제곱합이다. 처음 질문처럼 아무 기저나 그람-슈미트 과정으로 바꿀 수 있으며, 각 벡터에서 앞선 직교 벡터들로의 정사영을 빼서 직교화하고 끝에 길이로 나눈다. 생성은 단계마다 보존되고 일차독립이면 영벡터가 나오지 않으며, 적분 내적에서 \(1, x, x^2, \dots\)를 직교화하면 르장드르 다항식이 나온다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.4</span>연습문제</h3>

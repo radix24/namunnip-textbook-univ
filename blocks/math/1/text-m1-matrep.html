@@ -2,76 +2,70 @@
 {
   "type": "card",
   "sec": "수학1-03-02",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/math/m1-body.js"]
 }
 -->
 <article class="card q-card" id="text-m1-matrep" data-kind="본문" data-std="수학1-03-02">
   <header class="card-head"><span class="no"></span><h2>순서기저와 행렬표현</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>순서기저에 대한 좌표 벡터 \([\mathbf v]_\beta\)를 구한다.</li>
-        <li>일차변환의 행렬표현 \([T]_\beta^\gamma\)를 "기저의 상의 좌표를 열로 세운 것"으로 구한다.</li>
-        <li>\([T\mathbf v]_\gamma = [T]_\beta^\gamma[\mathbf v]_\beta\)와 \([UT] = [U][T]\)를 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>기저와 표현의 유일성 (<a href="02-03.html">2.3절</a>), 일차변환은 기저의 값으로 정해짐 (<a href="03-01.html">3.1절</a>), 행렬의 곱 (<a href="01-03.html">1.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">미분 \(D: P_3 \to P_2\)나 평면의 회전 같은 일차변환을 컴퓨터로 계산하려면, 다항식과 화살표를 수의 목록으로, 변환을 행렬로 바꿔야 한다. 그 행렬은 어떻게 만들고, 변환을 두 번 하는 것은 행렬로 무엇에 해당할까?</p>
+    <figure class="q-fig" data-q="m1-rot">
+      <svg viewBox="0 0 520 250" role="img" aria-label="회전 두 번과 회전 행렬의 곱"></svg>
+      <div class="q-ctl">
+        <label>\(\beta\) <input type="range" data-k="b" min="0" max="180" step="5" value="30"><output data-k="b"></output></label>
+        <label>\(\alpha\) <input type="range" data-k="a" min="0" max="180" step="5" value="45"><output data-k="a"></output></label>
+      </div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(\mathbf e_1\)을 \(\beta\)만큼 돌린 뒤(파랑) 다시 \(\alpha\)만큼 돌리면(주황) \(\alpha + \beta\)만큼 한 번에 돌린 것과 같다. 두 회전 행렬의 곱이 \(R_{\alpha+\beta}\)가 되는 것이 삼각함수의 덧셈정리이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기저와 표현의 유일성(<a href="02-03.html">2.3절</a>), 일차변환은 기저의 값으로 정해진다는 사실(<a href="03-01.html">3.1절</a>), 행렬의 곱(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>좌표</h3>
-    <p>미분 \(D: P_2 \to P_2\)를 컴퓨터로 계산하려면 다항식을 수의 목록으로 바꿔야 합니다. 기저를 하나 정하고 "그 기저로 쓸 때의 계수"를 목록으로 삼으면 됩니다. 계수의 순서가 중요하므로 기저에 순서를 붙입니다.</p>
+    <p>처음 질문처럼 다항식을 수의 목록으로 바꾸려면 기저를 하나 정하고 "그 기저로 쓸 때의 계수"를 목록으로 삼으면 된다. 그런데 계수의 순서가 중요하므로 기저에 순서를 붙인다.</p>
     <div class="tb-env">
       <span class="lb">정의 3.2.1 <span class="nm">(좌표 벡터)</span></span>
-      <p>\(\beta = (\mathbf v_1, \dots, \mathbf v_n)\)이 \(V\)의 순서기저이고 \(\mathbf v = a_1\mathbf v_1 + \dots + a_n\mathbf v_n\)이면, \(\mathbf v\)의 \(\beta\)에 대한 <b>좌표 벡터</b>는 \([\mathbf v]_\beta = (a_1, \dots, a_n)^{\mathsf T} \in \mathbb R^n\)이다.</p>
+      <p>\(\beta = (\mathbf v_1, \dots, \mathbf v_n)\)이 \(V\)의 순서기저이고 \(\mathbf v = a_1\mathbf v_1 + \dots + a_n\mathbf v_n\)이면, \(\mathbf v\)의 \(\beta\)에 대한 <em>좌표 벡터</em>는 \([\mathbf v]_\beta = (a_1, \dots, a_n)^{\mathsf T} \in \mathbb R^n\)이다.</p>
     </div>
-    <p>계수가 하나뿐이라는 기저의 성질(2.3절) 때문에 좌표가 잘 정의됩니다. \(P_2\)의 표준 순서기저 \((1, x, x^2)\)에서 \([3 - x + 2x^2] = (3, -1, 2)\)이고, 순서기저 \((x^2, x, 1)\)에서는 \((2, -1, 3)\)입니다. 같은 벡터라도 기저와 순서에 따라 좌표가 다릅니다.</p>
+    <p>계수가 하나뿐이라는 기저의 성질(2.3절) 때문에 좌표가 잘 정의된다. 가령 \(P_2\)의 표준 순서기저 \((1, x, x^2)\)에서 \([3 - x + 2x^2] = (3, -1, 2)\)이고, 순서기저 \((x^2, x, 1)\)에서는 \((2, -1, 3)\)이다. 즉 같은 벡터라도 기저와 순서에 따라 좌표가 다르다.</p>
 
     <h3><span class="no">3.2.2</span>행렬표현</h3>
-    <p>일차변환은 기저의 상으로 정해집니다. 그러니 기저의 상들의 좌표를 모아 두면 \(T\)의 정보가 모두 담깁니다.</p>
+    <p>일차변환은 기저의 상으로 정해진다. 그러니 기저의 상들의 좌표를 모아 두면 \(T\)의 정보가 모두 담긴다.</p>
     <div class="tb-env">
       <span class="lb">정의 3.2.2 <span class="nm">(행렬표현)</span></span>
-      <p>\(T: V \to W\), \(\beta = (\mathbf v_1, \dots, \mathbf v_n)\), \(\gamma\)가 \(W\)의 순서기저일 때, \(j\)째 열이 \([T\mathbf v_j]_\gamma\)인 행렬을 \(T\)의 \(\beta, \gamma\)에 대한 <b>행렬표현</b> \([T]_\beta^\gamma\)라 한다. \(V = W\), \(\beta = \gamma\)이면 \([T]_\beta\)로 쓴다.</p>
+      <p>\(T: V \to W\), \(\beta = (\mathbf v_1, \dots, \mathbf v_n)\), \(\gamma\)가 \(W\)의 순서기저일 때, \(j\)째 열이 \([T\mathbf v_j]_\gamma\)인 행렬을 \(T\)의 \(\beta, \gamma\)에 대한 <em>행렬표현</em> \([T]_\beta^\gamma\)라 한다. \(V = W\), \(\beta = \gamma\)이면 \([T]_\beta\)로 쓴다.</p>
     </div>
-    <p>열을 하나씩 만드는 순서는 늘 같습니다. (1) 정의역 기저의 \(j\)째 벡터에 \(T\)를 적용하고, (2) 결과를 공역 기저로 표현해 계수를 읽고, (3) 그것을 \(j\)째 열에 씁니다.</p>
+    <p>열을 하나씩 만드는 순서는 늘 같다. 먼저 정의역 기저의 \(j\)째 벡터에 \(T\)를 적용하고, 다음으로 결과를 공역 기저로 표현해 계수를 읽고, 끝으로 그것을 \(j\)째 열에 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.3</span>
       <p>\(D: P_3 \to P_2\), \(Dp = p'\)의 표준 순서기저 \(\beta = (1, x, x^2, x^3)\), \(\gamma = (1, x, x^2)\)에 대한 행렬표현을 구하고, \(p = 2 - x + 4x^3\)의 도함수를 행렬 곱으로 계산하여라.</p>
     </div>
-    <p><i>풀이.</i> \(D1 = 0\), \(Dx = 1\), \(Dx^2 = 2x\), \(Dx^3 = 3x^2\)의 \(\gamma\)-좌표는 \((0,0,0), (1,0,0), (0,2,0), (0,0,3)\)이므로</p>
-    \[[D]_\beta^\gamma = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3\end{pmatrix}.\]
-    <p>\([p]_\beta = (2, -1, 0, 4)\)이므로 \([D]_\beta^\gamma[p]_\beta = (-1, 0, 12)\), 곧 \(p' = -1 + 12x^2\). 직접 미분한 결과와 같습니다.</p>
+    <p><i>풀이.</i> \(D1 = 0\), \(Dx = 1\), \(Dx^2 = 2x\), \(Dx^3 = 3x^2\)의 \(\gamma\)-좌표는 \((0,0,0), (1,0,0), (0,2,0), (0,0,3)\)이므로 다음을 얻는다.</p>
+    \[[D]_\beta^\gamma = \begin{pmatrix} 0 &amp; 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 2 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 3\end{pmatrix}\]
+    <p>\([p]_\beta = (2, -1, 0, 4)\)이므로 \([D]_\beta^\gamma[p]_\beta = (-1, 0, 12)\), 곧 \(p' = -1 + 12x^2\)이다. 직접 미분한 결과와 같다.</p>
+    <p>이 행렬에서 3.1절의 핵과 상도 읽을 수 있다. 첫째 열이 모두 0인 것은 상수 1이 0으로 간다는 뜻이므로 핵이 \(\operatorname{span}\{1\}\)이다. 또 나머지 세 열에 피벗이 하나씩 있어 계수가 3이므로 상은 \(P_2\) 전체이다. 그러므로 행렬표현을 한 번 만들어 두면, 일차변환에 대한 질문을 모두 1단원의 소거법으로 바꿔 풀 수 있다. 다만 행렬의 크기가 \(3 \times 4\)인 것은 정의역과 공역의 차원이 각각 4와 3이기 때문이며, 열의 수가 정의역의 차원, 행의 수가 공역의 차원이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 3.2.4</span>
       <p>모든 \(\mathbf v \in V\)에 대해 \([T\mathbf v]_\gamma = [T]_\beta^\gamma\,[\mathbf v]_\beta\).</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(\mathbf v = \sum a_j\mathbf v_j\)이면 \(T\mathbf v = \sum a_jT\mathbf v_j\). 좌표를 잡는 일도 선형이므로 \([T\mathbf v]_\gamma = \sum a_j[T\mathbf v_j]_\gamma\)이고, 이것은 열이 \([T\mathbf v_j]_\gamma\)인 행렬에 \((a_1, \dots, a_n)\)을 곱한 것(1.2절의 열 읽기)이다. <span class="qed">∎</span></p>
-    <p>그래서 "추상적인" 일차변환의 계산이 행렬과 수의 목록의 곱으로 바뀝니다. 컴퓨터가 미분, 적분, 회전을 행렬로 처리하는 원리입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\mathbf v = \sum a_j\mathbf v_j\)이면 \(T\mathbf v = \sum a_jT\mathbf v_j\)이다. 좌표를 잡는 일도 선형이므로 \([T\mathbf v]_\gamma = \sum a_j[T\mathbf v_j]_\gamma\)이고, 이것은 열이 \([T\mathbf v_j]_\gamma\)인 행렬에 \((a_1, \dots, a_n)\)을 곱한 것(1.2절의 열 읽기)이다. <span class="qed">∎</span></p>
+    <p>그래서 "추상적인" 일차변환의 계산이 행렬과 수의 목록의 곱으로 바뀐다. 컴퓨터가 미분, 적분, 회전을 행렬로 처리하는 원리이며, 처음 질문의 첫째 답이다.</p>
 
     <h3><span class="no">3.2.3</span>합성은 행렬의 곱</h3>
     <div class="tb-env thm">
       <span class="lb">정리 3.2.5</span>
       <p>\(T: V \to W\), \(U: W \to Z\)이고 \(\alpha, \beta, \gamma\)가 각각 \(V, W, Z\)의 순서기저이면 \([UT]_\alpha^\gamma = [U]_\beta^\gamma\,[T]_\alpha^\beta\).</p>
     </div>
-    <p>정리 3.2.4를 두 번 쓰면 \([UT\mathbf v]_\gamma = [U]_\beta^\gamma[T\mathbf v]_\beta = [U]_\beta^\gamma[T]_\alpha^\beta[\mathbf v]_\alpha\)이고, 이것이 모든 \(\mathbf v\)에 대해 성립하므로(특히 기저 벡터를 넣으면 열마다 같으므로) 두 행렬이 같습니다. 1.3절에서 행렬의 곱을 "차례로 적용하기"가 되도록 정의한 보람이 여기서 나옵니다. 위첨자와 아래첨자의 기저가 사슬처럼 이어지는 것도 기억해 두면 좋습니다(\(\gamma \leftarrow \beta \leftarrow \alpha\)).</p>
+    <p>정리 3.2.4를 두 번 쓰면 \([UT\mathbf v]_\gamma = [U]_\beta^\gamma[T\mathbf v]_\beta = [U]_\beta^\gamma[T]_\alpha^\beta[\mathbf v]_\alpha\)이다. 이것이 모든 \(\mathbf v\)에 대해 성립하므로, 특히 기저 벡터를 넣으면 열마다 같아 두 행렬이 같다. 즉 처음 질문의 둘째 답은 행렬의 곱이며, 1.3절에서 행렬의 곱을 "차례로 적용하기"가 되도록 정의한 보람이 여기서 나온다. 위첨자와 아래첨자의 기저가 사슬처럼 이어지는 것(\(\gamma \leftarrow \beta \leftarrow \alpha\))도 기억해 두면 좋다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.6</span>
       <p>\(\mathbb R^2\)에서 \(R_\theta\)를 각 \(\theta\)만큼의 회전이라 하자. 표준기저에 대한 행렬로 \(R_\alpha R_\beta = R_{\alpha+\beta}\)를 확인하여라.</p>
     </div>
-    <p><i>풀이.</i> \(R_\theta\mathbf e_1 = (\cos\theta, \sin\theta)\), \(R_\theta\mathbf e_2 = (-\sin\theta, \cos\theta)\)이므로 \([R_\theta] = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta\end{pmatrix}\). 곱의 \((1,1)\) 성분은 \(\cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha + \beta)\), \((2,1)\) 성분은 \(\sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha + \beta)\)이고 나머지도 마찬가지입니다. 고교에서 외운 삼각함수의 덧셈정리가 "회전 두 번 = 한 번에 회전"이라는 사실의 행렬 표현입니다.</p>
+    <p><i>풀이.</i> \(R_\theta\mathbf e_1 = (\cos\theta, \sin\theta)\), \(R_\theta\mathbf e_2 = (-\sin\theta, \cos\theta)\)이므로 \([R_\theta] = \begin{pmatrix} \cos\theta &amp; -\sin\theta \\ \sin\theta &amp; \cos\theta\end{pmatrix}\)이다. 곱의 \((1,1)\) 성분은 \(\cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha + \beta)\), \((2,1)\) 성분은 \(\sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha + \beta)\)이고 나머지도 마찬가지이다. 즉 고교에서 외운 삼각함수의 덧셈정리는 "회전 두 번 = 한 번에 회전"이라는 사실의 행렬 표현이다. 그림 1에서 \(\alpha\), \(\beta\)를 움직이면 곱의 성분이 늘 \(\cos(\alpha + \beta)\), \(\sin(\alpha + \beta)\)와 같다.</p>
+    <p>순서를 바꿔 \(R_\beta R_\alpha\)를 계산해도 같은 행렬이 나온다. 평면의 회전끼리는 교환이 되기 때문이다. 그런데 일반적인 일차변환의 합성은 그렇지 않다. 가령 \(x\)축 대칭 뒤에 \(90^\circ\) 회전을 하는 것과, \(90^\circ\) 회전 뒤에 \(x\)축 대칭을 하는 것은 \(\mathbf e_1\)을 각각 \((0, 1)\)과 \((0, -1)\)로 보내 서로 다르다. 즉 1.3절에서 본 행렬 곱의 교환법칙 실패는, 변환을 하는 순서가 결과를 바꾼다는 기하적 사실의 다른 얼굴이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"미분의 행렬은 이것이다"처럼 기저 없이 말하기 쉽다. 하지만 행렬표현은 기저를 바꾸면 바뀌므로, 반드시 어느 기저에 대한 것인지 함께 말해야 한다. 기저를 바꾸면 행렬이 어떻게 바뀌는지가 다음 절의 주제이다.</div>
 
-    <div class="tb-note"><b>주의</b>행렬표현은 기저를 바꾸면 바뀝니다. "미분의 행렬은 이것이다"라고 말할 때는 반드시 어느 기저에 대한 것인지 함께 말해야 합니다. 기저를 바꾸면 행렬이 어떻게 바뀌는지가 다음 절의 주제입니다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>좌표 \([\mathbf v]_\beta\)는 순서기저에 대한 계수의 목록이다.</li>
-        <li>\([T]_\beta^\gamma\)의 \(j\)째 열은 \([T\mathbf v_j]_\gamma\): 기저에 \(T\)를 적용하고 공역 기저로 좌표를 읽는다.</li>
-        <li>\([T\mathbf v]_\gamma = [T]_\beta^\gamma[\mathbf v]_\beta\), \([UT] = [U][T]\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>좌표 \([\mathbf v]_\beta\)는 순서기저에 대한 계수의 목록이고, 행렬표현 \([T]_\beta^\gamma\)의 \(j\)째 열은 기저 벡터에 \(T\)를 적용해 공역 기저로 읽은 좌표 \([T\mathbf v_j]_\gamma\)이다. 처음 질문처럼 그러면 \([T\mathbf v]_\gamma = [T]_\beta^\gamma[\mathbf v]_\beta\)로 변환이 행렬 곱이 되고, 변환을 두 번 하는 것은 \([UT] = [U][T]\), 곧 행렬의 곱이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.4</span>연습문제</h3>

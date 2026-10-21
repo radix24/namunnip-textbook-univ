@@ -2,52 +2,46 @@
 {
   "type": "card",
   "sec": "수학1-02-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/math/m1-body.js"]
 }
 -->
 <article class="card q-card" id="text-m1-basis" data-kind="본문" data-std="수학1-02-03">
   <header class="card-head"><span class="no"></span><h2>일차독립과 기저</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>일차독립과 일차종속을 정의하고 소거법으로 판정한다.</li>
-        <li>기저를 "군더더기 없이 공간 전체를 생성하는 집합"으로 이해한다.</li>
-        <li>유한차원 공간에서 일차독립 집합을 기저로 확장할 수 있음을 증명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>일차결합과 생성 (<a href="02-02.html">2.2절</a>), 동차 방정식의 해 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(\operatorname{span}\{(1, 0), (0, 1), (1, 1)\}\)은 평면 전체이다. 그런데 \((1, 1) = (1, 0) + (0, 1)\)이라 셋째 벡터는 빼도 생성은 그대로이다. 공간 전체를 만들되 군더더기가 하나도 없는 벡터 모음은 어떤 조건으로 알아볼까? 그런 모음이 있으면 각 벡터에 "좌표"를 붙일 수 있을까?</p>
+    <figure class="q-fig" data-q="m1-basis">
+      <svg viewBox="0 0 520 240" role="img" aria-label="두 벡터가 만드는 좌표 격자와 한 벡터의 좌표"></svg>
+      <div class="q-ctl"><label>\(\mathbf v_2\)의 각도 <input type="range" data-k="t" min="0" max="180" step="2" value="100"><output data-k="t"></output></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. 일차독립인 \(\mathbf v_1\)(파랑), \(\mathbf v_2\)(주황)는 평면에 비스듬한 좌표 격자(청록)를 깔아, 점 \(\mathbf w\)를 \(c_1\mathbf v_1 + c_2\mathbf v_2\)로 쓰는 방법이 꼭 하나 있다. 두 벡터가 한 직선에 놓이면 격자가 무너진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>일차결합과 생성(<a href="02-02.html">2.2절</a>)과 동차 방정식의 해(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>군더더기가 있는 생성 집합</h3>
-    <p>\(\operatorname{span}\{(1, 0), (0, 1), (1, 1)\}\)은 평면 전체입니다. 그런데 \((1, 1) = (1, 0) + (0, 1)\)이라 셋째 벡터는 빼도 생성은 그대로입니다. 셋째 벡터는 군더더기입니다. 반대로 \(\{(1, 0), (0, 1)\}\)에서는 어느 것을 빼도 생성이 줄어듭니다. 이 차이를 식으로 나타낸 것이 일차독립입니다.</p>
+    <p>처음 질문의 \(\{(1, 0), (0, 1), (1, 1)\}\)에서는 셋째 벡터가 군더더기이다. 반대로 \(\{(1, 0), (0, 1)\}\)에서는 어느 것을 빼도 생성이 줄어든다. 이 차이를 식으로 나타낸 것이 일차독립이다.</p>
     <div class="tb-env">
       <span class="lb">정의 2.3.1 <span class="nm">(일차독립)</span></span>
-      <p>벡터 \(\mathbf v_1, \dots, \mathbf v_k\)에 대해 \(c_1\mathbf v_1 + \dots + c_k\mathbf v_k = \mathbf 0\)이면 반드시 \(c_1 = \dots = c_k = 0\)일 때, 이 벡터들을 <b>일차독립</b>이라 한다. 그렇지 않으면, 곧 모두 0은 아닌 계수로 \(\mathbf 0\)을 만들 수 있으면 <b>일차종속</b>이라 한다.</p>
+      <p>벡터 \(\mathbf v_1, \dots, \mathbf v_k\)에 대해 \(c_1\mathbf v_1 + \dots + c_k\mathbf v_k = \mathbf 0\)이면 반드시 \(c_1 = \dots = c_k = 0\)일 때, 이 벡터들을 <em>일차독립</em>이라 한다. 그렇지 않으면, 곧 모두 0은 아닌 계수로 \(\mathbf 0\)을 만들 수 있으면 <em>일차종속</em>이라 한다.</p>
     </div>
-    <p>왜 이 식이 "군더더기 없음"인지 봅시다. 일차종속이면 0이 아닌 계수가 있는 식 \(c_1\mathbf v_1 + \dots + c_k\mathbf v_k = \mathbf 0\)이 있고, 예를 들어 \(c_k \ne 0\)이면 \(\mathbf v_k = -\frac{1}{c_k}(c_1\mathbf v_1 + \dots + c_{k-1}\mathbf v_{k-1})\)로 다른 벡터들의 일차결합이 됩니다. 곧 일차종속 ⇔ 어떤 벡터가 나머지의 일차결합 ⇔ 그 벡터를 빼도 생성이 그대로입니다.</p>
-    <p>또 일차독립이면 일차결합의 표현이 하나뿐입니다. \(\sum a_i\mathbf v_i = \sum b_i\mathbf v_i\)이면 \(\sum(a_i - b_i)\mathbf v_i = \mathbf 0\)이라 \(a_i = b_i\)이기 때문입니다.</p>
-    <p>\(\mathbb R^n\)에서 판정은 1단원 그대로입니다. 벡터들을 열로 세운 행렬 \(A\)에 대해 \(A\mathbf c = \mathbf 0\)의 해가 \(\mathbf 0\)뿐인지, 곧 모든 열에 피벗이 있는지 보면 됩니다.</p>
+    <p>왜 이 식이 "군더더기 없음"일까? 일차종속이면 0이 아닌 계수가 있는 식 \(c_1\mathbf v_1 + \dots + c_k\mathbf v_k = \mathbf 0\)이 있다. 가령 \(c_k \ne 0\)이면 \(\mathbf v_k = -\frac{1}{c_k}(c_1\mathbf v_1 + \dots + c_{k-1}\mathbf v_{k-1})\)로 다른 벡터들의 일차결합이 된다. 즉 일차종속은 어떤 벡터가 나머지의 일차결합이라는 것과 같고, 그 벡터를 빼도 생성이 그대로라는 것과 같다.</p>
+    <p>또 일차독립이면 일차결합의 표현이 하나뿐이다. \(\sum a_i\mathbf v_i = \sum b_i\mathbf v_i\)이면 \(\sum(a_i - b_i)\mathbf v_i = \mathbf 0\)이라 \(a_i = b_i\)이기 때문이다. 그리고 \(\mathbb R^n\)에서 판정은 1단원 그대로이다. 벡터들을 열로 세운 행렬 \(A\)에 대해 \(A\mathbf c = \mathbf 0\)의 해가 \(\mathbf 0\)뿐인지, 곧 모든 열에 피벗이 있는지 보면 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.2</span>
       <p>\((1, 2, 1), (2, 1, 0), (1, -4, -3)\)은 일차독립인가?</p>
     </div>
-    <p><i>풀이.</i> 열로 세워 소거합니다. \(R_2 - 2R_1\), \(R_3 - R_1\) 뒤 \(\begin{pmatrix} 1 & 2 & 1 \\ 0 & -3 & -6 \\ 0 & -2 & -4\end{pmatrix}\), 셋째 행에서 둘째 행의 \(\frac23\)배를 빼면 0인 행이 생겨 셋째 열에 피벗이 없습니다. 일차종속입니다. 실제로 \(c_3 = 1\)로 두고 풀면 \(c_2 = -2, c_1 = 3\)이고, \(3(1,2,1) - 2(2,1,0) + (1,-4,-3) = (0, 0, 0)\)입니다.</p>
+    <p><i>풀이.</i> 열로 세워 소거한다. \(R_2 - 2R_1\), \(R_3 - R_1\) 뒤 \(\begin{pmatrix} 1 &amp; 2 &amp; 1 \\ 0 &amp; -3 &amp; -6 \\ 0 &amp; -2 &amp; -4\end{pmatrix}\)이고, 셋째 행에서 둘째 행의 \(\frac23\)배를 빼면 0인 행이 생겨 셋째 열에 피벗이 없다. 따라서 일차종속이다. 실제로 \(c_3 = 1\)로 두고 풀면 \(c_2 = -2, c_1 = 3\)이고, \(3(1,2,1) - 2(2,1,0) + (1,-4,-3) = (0, 0, 0)\)이다.</p>
 
     <h3><span class="no">2.3.2</span>기저</h3>
     <div class="tb-env">
       <span class="lb">정의 2.3.3 <span class="nm">(기저)</span></span>
-      <p>\(V\)의 부분집합 \(\beta\)가 일차독립이고 \(\operatorname{span}\beta = V\)이면 \(\beta\)를 \(V\)의 <b>기저</b>라 한다.</p>
+      <p>\(V\)의 부분집합 \(\beta\)가 일차독립이고 \(\operatorname{span}\beta = V\)이면 \(\beta\)를 \(V\)의 <em>기저</em>라 한다.</p>
     </div>
-    <p>두 조건이 맡는 역할이 다릅니다. "생성"은 모든 벡터를 \(\beta\)로 <b>쓸 수 있다</b>(존재), "일차독립"은 그 표현이 <b>하나뿐</b>이다(유일성)를 보장합니다. 그래서 기저를 정하면 각 벡터에 계수의 목록, 곧 좌표가 하나씩 붙습니다. 3단원에서 이 좌표로 모든 유한차원 공간을 \(\mathbb R^n\)처럼 다룹니다.</p>
-    <p class="q-term"><b>\(\mathbb R^n\)의 표준기저</b>: \(\mathbf e_1 = (1, 0, \dots, 0), \dots, \mathbf e_n = (0, \dots, 0, 1)\).</p>
-    <p class="q-term"><b>\(P_n\)의 표준기저</b>: \(1, x, x^2, \dots, x^n\). 다항식의 계수가 곧 좌표입니다.</p>
-    <p class="q-term"><b>\(M_{2\times2}\)의 표준기저</b>: 한 성분만 1이고 나머지가 0인 행렬 4개.</p>
+    <p>두 조건이 맡는 역할이 다르다. 생성은 모든 벡터를 \(\beta\)로 쓸 수 있다는 것(존재)을, 일차독립은 그 표현이 하나뿐이라는 것(유일성)을 보장한다. 그래서 처음 질문에 답하면, 기저를 정하면 각 벡터에 계수의 목록, 곧 좌표가 하나씩 붙는다. 그림 1에서 \(\mathbf v_2\)의 각도를 바꾸면 격자가 기울면서 \(\mathbf w\)의 좌표가 바뀌고, 각도가 0°나 180°에 이르면 두 벡터가 한 직선에 놓여 좌표를 붙일 수 없다. 3단원에서는 이 좌표로 모든 유한차원 공간을 \(\mathbb R^n\)처럼 다룬다.</p>
+    <p>자주 쓰는 기저는 셋이다. \(\mathbb R^n\)의 <em>표준기저</em>는 \(\mathbf e_1 = (1, 0, \dots, 0), \dots, \mathbf e_n = (0, \dots, 0, 1)\)이다. \(P_n\)의 표준기저는 \(1, x, x^2, \dots, x^n\)이며, 다항식의 계수가 곧 좌표이다. 그리고 \(M_{2\times2}\)의 표준기저는 한 성분만 1이고 나머지가 0인 행렬 4개이다.</p>
 
     <h3><span class="no">2.3.3</span>기저로 확장하기</h3>
-    <p>일차독립인 벡터 몇 개를 이미 가지고 있을 때, 거기에 벡터를 더 보태서 기저를 만들 수 있을까요? 생성하지 못하는 방향의 벡터를 하나씩 보태면 됩니다. 핵심은 "생성 밖의 벡터를 보태도 일차독립이 깨지지 않는다"는 것입니다.</p>
+    <p>일차독립인 벡터 몇 개를 이미 가지고 있을 때, 거기에 벡터를 더 보태서 기저를 만들 수 있을까? 생성하지 못하는 방향의 벡터를 하나씩 보태면 된다. 그 근거는 "생성 밖의 벡터를 보태도 일차독립이 깨지지 않는다"는 것이다.</p>
     <div class="tb-env thm">
       <span class="lb">보조정리 2.3.4</span>
       <p>\(S\)가 일차독립이고 \(\mathbf v \notin \operatorname{span}S\)이면 \(S \cup \{\mathbf v\}\)도 일차독립이다.</p>
@@ -57,25 +51,16 @@
       <span class="lb">정리 2.3.5 <span class="nm">(기저로의 확장)</span></span>
       <p>\(V\)가 유한 집합 \(G\)로 생성된다고 하자. 그러면 \(V\)의 일차독립 집합 \(S\)는 \(G\)의 원소를 보태서 \(V\)의 기저로 확장할 수 있다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(G = \{\mathbf g_1, \dots, \mathbf g_m\}\)의 원소를 차례로 본다. \(S_0 = S\)로 두고, \(\mathbf g_j \notin \operatorname{span}S_{j-1}\)이면 \(S_j = S_{j-1} \cup \{\mathbf g_j\}\), 아니면 \(S_j = S_{j-1}\)로 둔다. 보조정리 2.3.4에 따라 모든 \(S_j\)는 일차독립이다. 또 각 \(\mathbf g_j\)는 \(S_j\)의 원소이거나 \(\operatorname{span}S_{j-1} \subseteq \operatorname{span}S_j\)에 속하므로 \(\mathbf g_j \in \operatorname{span}S_m\)이다. 따라서 \(V = \operatorname{span}G \subseteq \operatorname{span}S_m\)이고(\(\operatorname{span}S_m\)은 \(G\)를 포함하는 부분공간, 정리 2.2.4), \(S_m\)은 \(V\)의 기저이다. <span class="qed">∎</span></p>
-    <p>\(S = \varnothing\)로 두면 "유한 집합으로 생성되는 공간은 기저가 있다"가 나옵니다. 또 같은 생각을 거꾸로 하면, 생성 집합에서 군더더기를 하나씩 빼서 기저를 얻을 수도 있습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(G = \{\mathbf g_1, \dots, \mathbf g_m\}\)의 원소를 차례로 본다. \(S_0 = S\)로 두고, \(\mathbf g_j \notin \operatorname{span}S_{j-1}\)이면 \(S_j = S_{j-1} \cup \{\mathbf g_j\}\), 아니면 \(S_j = S_{j-1}\)로 둔다. 보조정리 2.3.4에 따라 모든 \(S_j\)는 일차독립이다. 또 각 \(\mathbf g_j\)는 \(S_j\)의 원소이거나 \(\operatorname{span}S_{j-1} \subseteq \operatorname{span}S_j\)에 속하므로 \(\mathbf g_j \in \operatorname{span}S_m\)이다. 따라서 \(\operatorname{span}S_m\)은 \(G\)를 포함하는 부분공간이라(정리 2.2.4) \(V = \operatorname{span}G \subseteq \operatorname{span}S_m\)이고, \(S_m\)은 \(V\)의 기저이다. <span class="qed">∎</span></p>
+    <p>여기서 \(S = \varnothing\)로 두면 "유한 집합으로 생성되는 공간은 기저가 있다"가 나온다. 또 같은 생각을 거꾸로 하면, 생성 집합에서 군더더기를 하나씩 빼서 기저를 얻을 수도 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.6</span>
       <p>\(\{(1, 1, 0)\}\)을 \(\mathbb R^3\)의 기저로 확장하여라.</p>
     </div>
-    <p><i>풀이.</i> 표준기저 \(G = \{\mathbf e_1, \mathbf e_2, \mathbf e_3\}\)을 차례로 봅니다. \(\mathbf e_1 \notin \operatorname{span}\{(1,1,0)\}\)이라 보탭니다. \(\mathbf e_2 = (1,1,0) - \mathbf e_1\)은 이미 생성에 있어 건너뜁니다. \(\mathbf e_3\)은 셋째 성분이 0이 아니라 생성 밖이므로 보탭니다. 기저 \(\{(1,1,0), \mathbf e_1, \mathbf e_3\}\).</p>
+    <p><i>풀이.</i> 표준기저 \(G = \{\mathbf e_1, \mathbf e_2, \mathbf e_3\}\)을 차례로 본다. 먼저 \(\mathbf e_1 \notin \operatorname{span}\{(1,1,0)\}\)이라 보탠다. 다음으로 \(\mathbf e_2 = (1,1,0) - \mathbf e_1\)은 이미 생성에 있어 건너뛴다. 끝으로 \(\mathbf e_3\)은 셋째 성분이 0이 아니라 생성 밖이므로 보탠다. 따라서 기저는 \(\{(1,1,0), \mathbf e_1, \mathbf e_3\}\)이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>벡터들이 쌍마다 서로 평행하지 않으면 일차독립이라고 생각하기 쉽다. 하지만 예제 2.3.2의 세 벡터는 어느 둘도 평행하지 않은데 셋이 한 평면에 있어 일차종속이다. 일차독립은 벡터 전체를 한꺼번에 보는 조건이다.</div>
 
-    <div class="tb-note"><b>주의</b>"벡터들이 쌍마다 서로 평행하지 않으면 일차독립이다"는 틀립니다. 예제 2.3.2의 세 벡터는 어느 둘도 평행하지 않지만 일차종속입니다(셋이 한 평면에 있음). 일차독립은 벡터 전체를 한꺼번에 보는 조건입니다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>일차독립 ⇔ \(\mathbf 0\)을 만드는 일차결합은 모든 계수가 0인 것뿐 ⇔ 어떤 벡터도 나머지의 일차결합이 아님.</li>
-        <li>\(\mathbb R^n\)에서는 벡터를 열로 세운 행렬의 모든 열에 피벗이 있는지로 판정한다.</li>
-        <li>기저 = 일차독립 + 생성. 기저가 있으면 각 벡터의 좌표가 하나로 정해진다.</li>
-        <li>생성 밖의 벡터를 하나씩 보태면 일차독립 집합을 기저로 확장할 수 있다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>일차독립은 \(\mathbf 0\)을 만드는 일차결합이 모든 계수가 0인 것뿐이라는 조건이며, 어떤 벡터도 나머지의 일차결합이 아니라는 것과 같다. \(\mathbb R^n\)에서는 벡터를 열로 세운 행렬의 모든 열에 피벗이 있는지로 판정한다. 처음 질문의 "군더더기 없이 공간 전체를 만드는 모음"이 기저(일차독립 + 생성)이며, 기저가 있으면 각 벡터의 좌표가 하나로 정해지고, 생성 밖의 벡터를 하나씩 보태 일차독립 집합을 기저로 확장할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.4</span>연습문제</h3>

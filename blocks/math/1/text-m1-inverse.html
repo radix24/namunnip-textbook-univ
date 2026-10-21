@@ -2,87 +2,69 @@
 {
   "type": "card",
   "sec": "수학1-01-03",
-  "order": 5
+  "order": 5,
+  "scripts": ["js/lib/qfig.js", "js/cards/math/m1-body.js"]
 }
 -->
 <article class="card q-card" id="text-m1-inverse" data-kind="본문" data-std="수학1-01-03">
   <header class="card-head"><span class="no"></span><h2>기본 행렬과 역행렬</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬의 곱을 정의하고, 기본 행 연산이 기본 행렬을 왼쪽에 곱하는 것과 같음을 안다.</li>
-        <li>\((A \mid I)\)를 소거해 역행렬을 구한다.</li>
-        <li>정사각행렬이 가역이라는 것과 동치인 조건들을 정리하고 증명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>기본 행 연산과 기약 행사다리꼴 (<a href="01-01.html">1.1절</a>), \(A\mathbf x\)의 정의와 해집합의 구조 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">수의 방정식 \(ax = b\)는 \(a \ne 0\)이면 양변을 \(a\)로 나눠 \(x = b/a\)로 푼다. 행렬 방정식 \(A\mathbf x = \mathbf b\)도 "\(\mathbf x = A^{-1}\mathbf b\)"처럼 나눗셈으로 풀 수 있을까? 그렇다면 \(A^{-1}\)은 어떻게 구하고, 어떤 행렬이 "0이 아닌 수"의 역할을 할까?</p>
+    <figure class="q-fig" data-q="m1-inverse">
+      <svg viewBox="0 0 520 240" role="img" aria-label="행렬 A와 역행렬이 단위정사각형을 바꾸는 모습"></svg>
+      <div class="q-ctl"><label>보기 <select data-k="m"><option value="0" selected>A</option><option value="1">A⁻¹</option><option value="2">A⁻¹A</option></select></label></div>
+      <p class="q-read"></p>
+      <figcaption>그림 1. \(A = \begin{pmatrix} 2 &amp; 1 \\ 5 &amp; 3\end{pmatrix}\)는 단위정사각형(회색)을 두 열이 만드는 평행사변형(파랑)으로 바꾸고, \(A^{-1}\)은 그 일을 되돌린다. 둘을 차례로 하면 제자리로 돌아온다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기본 행 연산과 기약 행사다리꼴(<a href="01-01.html">1.1절</a>)과 \(A\mathbf x\)의 정의와 해집합의 구조(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>행렬의 곱</h3>
-    <p>\(A\mathbf x = \mathbf b\)를 "\(\mathbf x = A^{-1}\mathbf b\)"처럼 나눗셈으로 풀 수 있으면 편할 것입니다. 그러려면 먼저 행렬끼리의 곱이 필요합니다. 곱은 "차례로 적용하기"가 되도록 정합니다. \(\mathbf x\)에 \(B\)를 곱한 다음 \(A\)를 곱한 결과 \(A(B\mathbf x)\)를 한 행렬 \(AB\)로 나타내고 싶은 것입니다.</p>
+    <p>처음 질문의 나눗셈을 하려면 먼저 행렬끼리의 곱이 필요하다. 곱은 "차례로 적용하기"가 되도록 정한다. 즉 \(\mathbf x\)에 \(B\)를 곱한 다음 \(A\)를 곱한 결과 \(A(B\mathbf x)\)를 한 행렬 \(AB\)로 나타내고 싶은 것이다.</p>
     <div class="tb-env">
       <span class="lb">정의 1.3.1 <span class="nm">(행렬의 곱)</span></span>
       <p>\(A\)가 \(m\times n\), \(B\)가 \(n\times p\)이면 \(AB\)는 \(m\times p\) 행렬이고, \((i, j)\) 성분은 \(\displaystyle (AB)_{ij} = \sum_{k=1}^{n} a_{ik}b_{kj}\)이다.</p>
     </div>
-    <p>열로 읽으면 \(AB\)의 \(j\)째 열은 \(A\mathbf b_j\)입니다(\(\mathbf b_j\)는 \(B\)의 \(j\)째 열). 이렇게 정하면 \((AB)\mathbf x = A(B\mathbf x)\)가 성립하고, 결합법칙 \((AB)C = A(BC)\)도 성립합니다. 그러나 교환법칙은 성립하지 않습니다. \(A = \begin{pmatrix} 0 & 1\\0 & 0\end{pmatrix}\), \(B = \begin{pmatrix} 0 & 0\\1 & 0\end{pmatrix}\)이면 \(AB = \begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}\)인데 \(BA = \begin{pmatrix} 0 & 0\\0 & 1\end{pmatrix}\)입니다.</p>
-    <p>대각선 성분이 1이고 나머지가 0인 \(n\times n\) 행렬을 <b>단위행렬</b> \(I_n\)(또는 \(I\))이라 하며, 모든 \(A\)에 대해 \(AI = IA = A\)입니다. 수의 1과 같은 역할입니다.</p>
+    <p>열로 읽으면 \(AB\)의 \(j\)째 열은 \(A\mathbf b_j\)이다(\(\mathbf b_j\)는 \(B\)의 \(j\)째 열). 이렇게 정하면 \((AB)\mathbf x = A(B\mathbf x)\)가 성립하고, 결합법칙 \((AB)C = A(BC)\)도 성립한다. 그러나 교환법칙은 성립하지 않는다. 가령 \(A = \begin{pmatrix} 0 &amp; 1\\0 &amp; 0\end{pmatrix}\), \(B = \begin{pmatrix} 0 &amp; 0\\1 &amp; 0\end{pmatrix}\)이면 \(AB = \begin{pmatrix} 1 &amp; 0\\0 &amp; 0\end{pmatrix}\)인데 \(BA = \begin{pmatrix} 0 &amp; 0\\0 &amp; 1\end{pmatrix}\)이다.</p>
+    <p>대각선 성분이 1이고 나머지가 0인 \(n\times n\) 행렬을 <em>단위행렬</em> \(I_n\)(또는 \(I\))이라 하며, 모든 \(A\)에 대해 \(AI = IA = A\)이다. 수의 1과 같은 역할이다.</p>
 
-    <h3><span class="no">1.3.2</span>기본 행렬: 행 연산을 곱셈으로</h3>
-    <p>기본 행 연산 하나를 단위행렬에 적용해 얻은 행렬을 <b>기본 행렬</b>이라고 합니다. 예를 들어 \(3\times3\)에서 \(R_2 \to R_2 - 2R_1\)에 해당하는 기본 행렬은</p>
-    \[E = \begin{pmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 0 & 0 & 1\end{pmatrix}.\]
+    <h3><span class="no">1.3.2</span>기본 행렬, 행 연산을 곱셈으로</h3>
+    <p>기본 행 연산 하나를 단위행렬에 적용해 얻은 행렬을 <em>기본 행렬</em>이라 한다. 예를 들어 \(3\times3\)에서 \(R_2 \to R_2 - 2R_1\)에 해당하는 기본 행렬은 다음과 같다.</p>
+    \[E = \begin{pmatrix} 1 &amp; 0 &amp; 0 \\ -2 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1\end{pmatrix}\]
     <div class="tb-env thm">
       <span class="lb">정리 1.3.2</span>
       <p>\(E\)가 어떤 기본 행 연산에 해당하는 기본 행렬이면, 임의의 \(A\)(행 수가 맞는)에 대해 \(EA\)는 \(A\)에 그 행 연산을 한 결과와 같다.</p>
     </div>
-    <p>이유는 곱의 정의에 있습니다. \(EA\)의 \(i\)째 행은 "\(E\)의 \(i\)째 행의 성분을 계수로 한 \(A\)의 행들의 일차결합"입니다. 위의 \(E\)에서 둘째 행은 \((-2, 1, 0)\)이므로 \(EA\)의 둘째 행은 \(-2R_1 + R_2\)이고, 나머지 행은 그대로입니다. 교환과 상수배도 같은 방식으로 확인됩니다.</p>
-    <p>기본 행 연산은 되돌릴 수 있었으므로 기본 행렬은 모두 역행렬이 있고, 역행렬도 기본 행렬입니다. 위 \(E\)의 역행렬은 \(R_2 \to R_2 + 2R_1\)에 해당하는 행렬입니다.</p>
+    <p>이유는 곱의 정의에 있다. \(EA\)의 \(i\)째 행은 "\(E\)의 \(i\)째 행의 성분을 계수로 한 \(A\)의 행들의 일차결합"이다. 위의 \(E\)에서 둘째 행은 \((-2, 1, 0)\)이므로 \(EA\)의 둘째 행은 \(-2R_1 + R_2\)이고, 나머지 행은 그대로이다. 교환과 상수배도 같은 방식으로 확인된다.</p>
+    <p>또 기본 행 연산은 되돌릴 수 있었으므로 기본 행렬은 모두 역행렬이 있고, 그 역행렬도 기본 행렬이다. 가령 위 \(E\)의 역행렬은 \(R_2 \to R_2 + 2R_1\)에 해당하는 행렬이다.</p>
 
     <h3><span class="no">1.3.3</span>역행렬과 그 계산</h3>
     <div class="tb-env">
       <span class="lb">정의 1.3.3 <span class="nm">(가역 행렬)</span></span>
-      <p>\(n\times n\) 행렬 \(A\)에 대해 \(AB = BA = I\)인 \(B\)가 있으면 \(A\)를 <b>가역</b>이라 하고, \(B\)를 \(A\)의 <b>역행렬</b> \(A^{-1}\)이라 한다.</p>
+      <p>\(n\times n\) 행렬 \(A\)에 대해 \(AB = BA = I\)인 \(B\)가 있으면 \(A\)를 <em>가역</em>이라 하고, \(B\)를 \(A\)의 <em>역행렬</em> \(A^{-1}\)이라 한다.</p>
     </div>
-    <p>역행렬은 있으면 하나뿐입니다. \(B, C\)가 모두 역행렬이면 \(B = BI = B(AC) = (BA)C = IC = C\)이기 때문입니다(결합법칙을 썼습니다). 역행렬이 있으면 \(A\mathbf x = \mathbf b\)의 양변에 \(A^{-1}\)을 곱해 \(\mathbf x = A^{-1}\mathbf b\)로 해가 하나로 정해집니다.</p>
-    <p>계산 방법은 소거의 기록입니다. \(A\)를 기본 행 연산 \(E_1, E_2, \dots, E_k\)로 \(I\)까지 줄였다면 \(E_k\cdots E_2E_1A = I\)이고, 그러면 \(A^{-1} = E_k\cdots E_1 = E_k\cdots E_1 I\)입니다. 곧 <b>같은 연산을 \(I\)에 하면 \(A^{-1}\)이 나옵니다</b>. 두 일을 한꺼번에 하려고 \((A \mid I)\)를 소거합니다.</p>
+    <p>역행렬은 있으면 하나뿐이다. \(B, C\)가 모두 역행렬이면 결합법칙으로 \(B = BI = B(AC) = (BA)C = IC = C\)이기 때문이다. 그리고 역행렬이 있으면 \(A\mathbf x = \mathbf b\)의 양변에 \(A^{-1}\)을 곱해 \(\mathbf x = A^{-1}\mathbf b\)로 해가 하나로 정해진다. 이것이 처음 질문의 나눗셈이다.</p>
+    <p>계산 방법은 소거의 기록이다. \(A\)를 기본 행 연산 \(E_1, E_2, \dots, E_k\)로 \(I\)까지 줄였다면 \(E_k\cdots E_2E_1A = I\)이고, 그러면 \(A^{-1} = E_k\cdots E_1 = E_k\cdots E_1 I\)이다. 즉 같은 연산을 \(I\)에 하면 \(A^{-1}\)이 나온다. 그래서 두 일을 한꺼번에 하려고 \((A \mid I)\)를 소거한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.4</span>
-      <p>\(A = \begin{pmatrix} 2 & 1 \\ 5 & 3\end{pmatrix}\)의 역행렬을 구하여라.</p>
+      <p>\(A = \begin{pmatrix} 2 &amp; 1 \\ 5 &amp; 3\end{pmatrix}\)의 역행렬을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \((A \mid I)\)에 \(R_1 \to \frac12R_1\), \(R_2 \to R_2 - 5R_1\), \(R_2 \to 2R_2\), \(R_1 \to R_1 - \frac12R_2\)를 차례로 합니다.</p>
-    \[\left(\begin{array}{cc|cc} 2 & 1 & 1 & 0 \\ 5 & 3 & 0 & 1\end{array}\right) \to \left(\begin{array}{cc|cc} 1 & \tfrac12 & \tfrac12 & 0 \\ 0 & \tfrac12 & -\tfrac52 & 1\end{array}\right) \to \left(\begin{array}{cc|cc} 1 & 0 & 3 & -1 \\ 0 & 1 & -5 & 2\end{array}\right).\]
-    <p>따라서 \(A^{-1} = \begin{pmatrix} 3 & -1 \\ -5 & 2\end{pmatrix}\). 검산: \(AA^{-1} = \begin{pmatrix} 6 - 5 & -2 + 2 \\ 15 - 15 & -5 + 6\end{pmatrix} = I\).</p>
-    <p>왼쪽이 \(I\)가 되지 않고 0인 행이 생기면 \(A\)는 가역이 아닙니다. 아래 정리가 그 이유입니다.</p>
+    <p><i>풀이.</i> \((A \mid I)\)에 \(R_1 \to \frac12R_1\), \(R_2 \to R_2 - 5R_1\), \(R_2 \to 2R_2\), \(R_1 \to R_1 - \frac12R_2\)를 차례로 한다.</p>
+    \[\left(\begin{array}{cc|cc} 2 &amp; 1 &amp; 1 &amp; 0 \\ 5 &amp; 3 &amp; 0 &amp; 1\end{array}\right) \to \left(\begin{array}{cc|cc} 1 &amp; \tfrac12 &amp; \tfrac12 &amp; 0 \\ 0 &amp; \tfrac12 &amp; -\tfrac52 &amp; 1\end{array}\right) \to \left(\begin{array}{cc|cc} 1 &amp; 0 &amp; 3 &amp; -1 \\ 0 &amp; 1 &amp; -5 &amp; 2\end{array}\right)\]
+    <p>따라서 \(A^{-1} = \begin{pmatrix} 3 &amp; -1 \\ -5 &amp; 2\end{pmatrix}\)이다. 검산하면 \(AA^{-1} = \begin{pmatrix} 6 - 5 &amp; -2 + 2 \\ 15 - 15 &amp; -5 + 6\end{pmatrix} = I\)이다. 그림 1에서 \(A\)는 단위정사각형을 \((2, 5)\)와 \((1, 3)\)이 만드는 평행사변형으로 늘이고, \(A^{-1}\)은 \((3, -5)\)와 \((-1, 2)\)로 거꾸로 되돌린다. 그래서 둘을 차례로 하면 정사각형이 제자리로 돌아온다.</p>
+    <p>한편 소거에서 왼쪽이 \(I\)가 되지 않고 0인 행이 생기면 \(A\)는 가역이 아니다. 아래 정리가 그 이유이다.</p>
 
     <h3><span class="no">1.3.4</span>가역성의 동치 조건</h3>
+    <p>처음 질문의 둘째 물음, 곧 "0이 아닌 수"에 해당하는 행렬은 다음 정리로 여러 얼굴을 갖는다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 1.3.5 <span class="nm">(가역 행렬 정리, 첫 판)</span></span>
-      <p>\(n\times n\) 행렬 \(A\)에 대해 다음은 모두 동치이다.</p>
-      <ol type="a">
-        <li>\(A\)는 가역이다.</li>
-        <li>\(A\mathbf x = \mathbf 0\)의 해는 \(\mathbf x = \mathbf 0\)뿐이다.</li>
-        <li>\(A\)의 기약 행사다리꼴은 \(I\)이다.</li>
-        <li>\(A\)는 기본 행렬들의 곱이다.</li>
-        <li>모든 \(\mathbf b\)에 대해 \(A\mathbf x = \mathbf b\)는 해가 있다.</li>
-      </ol>
+      <p>\(n\times n\) 행렬 \(A\)에 대해 다음은 모두 동치이다. (a) \(A\)는 가역이다. (b) \(A\mathbf x = \mathbf 0\)의 해는 \(\mathbf x = \mathbf 0\)뿐이다. (c) \(A\)의 기약 행사다리꼴은 \(I\)이다. (d) \(A\)는 기본 행렬들의 곱이다. (e) 모든 \(\mathbf b\)에 대해 \(A\mathbf x = \mathbf b\)는 해가 있다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>(a)⇒(b): \(A\mathbf x = \mathbf 0\)에 \(A^{-1}\)을 곱하면 \(\mathbf x = \mathbf 0\). (b)⇒(c): 동차 해가 \(\mathbf 0\)뿐이면 자유변수가 없으므로(1.2절) \(n\)개의 열 모두에 피벗이 있고, 정사각행렬이라 기약 행사다리꼴은 \(I\)이다. (c)⇒(d): \(E_k\cdots E_1A = I\)이면 기본 행렬의 역행렬을 차례로 곱해 \(A = E_1^{-1}\cdots E_k^{-1}\)이고, 각 \(E_i^{-1}\)도 기본 행렬이다. (d)⇒(a): 가역 행렬의 곱은 가역이다(\((PQ)^{-1} = Q^{-1}P^{-1}\)). 마지막으로 (c)⇒(e)는 \((A \mid \mathbf b)\)를 소거하면 왼쪽이 \(I\)가 되어 상수 열에 피벗이 설 수 없기 때문이고, (e)⇒(c)는 다음과 같다. 기약 행사다리꼴 \(R\)에 0인 행이 있으면, \(R\mathbf x = \mathbf e_n\)(마지막 성분만 1)은 해가 없다. \(R = EA\)(\(E\)는 기본 행렬들의 곱)이므로 \(\mathbf b = E^{-1}\mathbf e_n\)에 대해 \(A\mathbf x = \mathbf b\)도 해가 없어 (e)에 어긋난다. <span class="qed">∎</span></p>
-    <p>이 정리는 앞으로 계속 길어집니다. 3단원에서 "핵이 0", "상이 전체", 5단원에서 "\(\det A \ne 0\)", 6단원에서 "0은 고유값이 아님"이 같은 목록에 붙습니다.</p>
-    <p class="tb-aside">정의 1.3.3은 \(AB = I\)와 \(BA = I\)를 모두 요구하지만, 정사각행렬에서는 한쪽만 확인해도 됩니다. \(BA = I\)이면 \(A\mathbf x = \mathbf 0\)에서 \(\mathbf x = BA\mathbf x = \mathbf 0\)이므로 (b)가 성립하고, 따라서 \(A\)는 가역이며 \(B = A^{-1}\)입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>(a)⇒(b)를 보이자. \(A\mathbf x = \mathbf 0\)에 \(A^{-1}\)을 곱하면 \(\mathbf x = \mathbf 0\)이다. (b)⇒(c)를 보이자. 동차 해가 \(\mathbf 0\)뿐이면 자유변수가 없으므로(1.2절) \(n\)개의 열 모두에 피벗이 있고, 정사각행렬이라 기약 행사다리꼴은 \(I\)이다. (c)⇒(d)를 보이자. \(E_k\cdots E_1A = I\)이면 기본 행렬의 역행렬을 차례로 곱해 \(A = E_1^{-1}\cdots E_k^{-1}\)이고, 각 \(E_i^{-1}\)도 기본 행렬이다. (d)⇒(a)를 보이자. 가역 행렬의 곱은 가역이다(\((PQ)^{-1} = Q^{-1}P^{-1}\)). 끝으로 (c)⇒(e)는 \((A \mid \mathbf b)\)를 소거하면 왼쪽이 \(I\)가 되어 상수 열에 피벗이 설 수 없기 때문이다. 그리고 (e)⇒(c)는 다음과 같다. 기약 행사다리꼴 \(R\)에 0인 행이 있으면, \(R\mathbf x = \mathbf e_n\)(마지막 성분만 1)은 해가 없다. \(R = EA\)(\(E\)는 기본 행렬들의 곱)이므로 \(\mathbf b = E^{-1}\mathbf e_n\)에 대해 \(A\mathbf x = \mathbf b\)도 해가 없어 (e)에 어긋난다. <span class="qed">∎</span></p>
+    <p>이 정리는 앞으로 계속 길어진다. 3단원에서 "핵이 0", "상이 전체", 5단원에서 "\(\det A \ne 0\)", 6단원에서 "0은 고유값이 아님"이 같은 목록에 붙는다.</p>
+    <div class="tb-aside">정의 1.3.3은 \(AB = I\)와 \(BA = I\)를 모두 요구하지만, 정사각행렬에서는 한쪽만 확인해도 된다. \(BA = I\)이면 \(A\mathbf x = \mathbf 0\)에서 \(\mathbf x = BA\mathbf x = \mathbf 0\)이므로 (b)가 성립하고, 따라서 \(A\)는 가역이며 \(B = A^{-1}\)이다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>곱의 역행렬이 \((AB)^{-1} = A^{-1}B^{-1}\)이라고 쓰기 쉽다. 하지만 바른 식은 \(B^{-1}A^{-1}\)이다. 양말을 신고 신발을 신었으면, 벗을 때는 신발부터 벗는다. 교환법칙이 없으므로 순서가 중요하다.</div>
 
-    <div class="tb-note"><b>주의</b>\((AB)^{-1} = A^{-1}B^{-1}\)이 아니라 \(B^{-1}A^{-1}\)입니다. 양말을 신고 신발을 신었으면, 벗을 때는 신발부터 벗습니다. 교환법칙이 없으므로 순서가 중요합니다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>행렬의 곱은 "차례로 적용하기"이고, 결합법칙은 성립하지만 교환법칙은 성립하지 않는다.</li>
-        <li>기본 행 연산은 기본 행렬을 왼쪽에 곱하는 것과 같다.</li>
-        <li>\((A \mid I)\)를 소거해 왼쪽이 \(I\)가 되면 오른쪽이 \(A^{-1}\)이다.</li>
-        <li>가역 ⇔ 동차 해가 0뿐 ⇔ 기약 행사다리꼴이 \(I\) ⇔ 기본 행렬의 곱 ⇔ 모든 \(\mathbf b\)에 해가 있음.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>행렬의 곱은 "차례로 적용하기"이고 결합법칙은 성립하지만 교환법칙은 성립하지 않으며, 기본 행 연산은 기본 행렬을 왼쪽에 곱하는 것과 같다. 처음 질문의 나눗셈은 역행렬로 하며, \((A \mid I)\)를 소거해 왼쪽이 \(I\)가 되면 오른쪽이 \(A^{-1}\)이다. "0이 아닌 수"의 역할을 하는 가역 행렬은 동차 해가 0뿐인 행렬, 기약 행사다리꼴이 \(I\)인 행렬, 기본 행렬의 곱, 모든 \(\mathbf b\)에 해가 있는 행렬과 같다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.5</span>연습문제</h3>
