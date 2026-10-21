@@ -18,7 +18,8 @@ P_ALT = "|".join(sorted({p for pair in PARTICLES for p in pair}, key=len, revers
 HANGUL = "가-힣"
 # 받침과 관계없이 그대로 붙는 말(서술격 조사 '이다'의 활용, 격조사·보조사, 복수 '들')
 FREE = "이다|이며|이고|이므로|이면|이어서|이었|인|일|임|입니다|이지|의|에서|에게|에|도|만|까지|부터|보다|처럼|마다|조차|뿐|들|끼리|만큼|대로"
-SKIP_BLOCK = re.compile(r"<(script|style|code|pre|textarea)\b.*?</\1>|<([a-z0-9]+)\b[^>]*(?:data-place=\"(?:course|dept|no|term)\"|class=\"[^\"]*\bno-term\b)[^>]*>.*?</\2>", re.S | re.I)
+# svg: 그림 속 <text>에 HTML span을 넣으면 브라우저가 그리지 않아 글자가 사라진다
+SKIP_BLOCK = re.compile(r"<(script|style|code|pre|textarea|svg)\b.*?</\1>|<([a-z0-9]+)\b[^>]*(?:data-place=\"(?:course|dept|no|term)\"|class=\"[^\"]*\bno-term\b)[^>]*>.*?</\2>", re.S | re.I)
 MATH = re.compile(r"\\\(.+?\\\)|\\\[.+?\\\]", re.S)
 TAG = re.compile(r"<[^>]+>")
 
@@ -114,6 +115,7 @@ def selftest():
         "\\(고윳값\\)": None,
         "고유값분해": None,
         "3차원 공간": None,
+        "<svg><text>고윳값</text></svg>": None,
     }
     for src, want in cases.items():
         got = mark(src, rows)
