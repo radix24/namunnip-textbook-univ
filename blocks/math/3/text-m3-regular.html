@@ -8,65 +8,60 @@
 <article class="card q-card" id="text-m3-regular" data-kind="본문" data-std="수학3-07-02">
   <header class="card-head"><span class="no"></span><h2>정규 문법과 유한상태 기계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>문법(생성 규칙)을 정의하고 정규 문법을 구별한다.</li>
-        <li>정규 문법과 DFA가 같은 언어(정규 언어)를 정의함을 대응으로 설명한다.</li>
-        <li>펌핑 보조정리의 생각으로 \(\{0^n1^n\}\)이 정규 언어가 아님을 보인다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>유한상태 기계 (<a href="07-01.html">7.1절</a>), 비둘기집 원리 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">"0이 몇 개 나온 뒤 1이 정확히 같은 개수만큼 나오는" 문자열, 곧 01, 0011, 000111, …만 받아들이는 유한 오토마타를 만들고 싶다. 상태를 아무리 많이 두어도 실패한다면, 그 이유는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 170" role="img" aria-label="상태가 k개인 오토마타에서 서로 다른 0의 개수가 같은 상태에 도착하는 그림">
+        <text x="20" y="40">0ⁱ</text><text x="20" y="130">0ʲ</text>
+        <line x1="45" y1="36" x2="200" y2="78" class="a"/><line x1="45" y1="126" x2="200" y2="92" class="b"/>
+        <circle cx="220" cy="85" r="22" class="lc" style="stroke:var(--fc);stroke-width:2"/><text x="220" y="90" text-anchor="middle">q</text>
+        <line x1="242" y1="85" x2="360" y2="85" class="k"/><text x="300" y="76" text-anchor="middle">1ⁱ</text>
+        <circle cx="382" cy="85" r="22" class="lk" style="stroke:var(--ink);stroke-width:1.6"/><text x="382" y="90" text-anchor="middle">q′</text>
+        <text x="300" y="40" class="ta">0ⁱ1ⁱ은 받아들여야 함</text>
+        <text x="300" y="130" class="td">0ʲ1ⁱ은 거부해야 함</text>
+        <text x="20" y="165" class="s">0을 0, 1, …, k개 읽은 k + 1가지 경우가 상태 k개에 들어가므로 둘이 겹친다</text>
+      </svg>
+      <figcaption>그림 1. 상태가 \(k\)개인 오토마타에 \(0^0, 0^1, \dots, 0^k\)을 넣으면 비둘기집 원리로 \(0^i\)과 \(0^j\)가 같은 상태 \(q\)에 도착한다. 그 뒤로 \(1^i\)을 읽으면 둘 다 같은 상태 \(q'\)에 이르러, 받아들여야 할 것과 거부해야 할 것을 구별하지 못한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>결정적 유한 오토마타(<a href="07-01.html">7.1절</a>)와 비둘기집 원리(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>문법</h3>
-    <p>오토마타가 문자열을 "읽어서 판정"한다면, 문법은 문자열을 "만들어 내는" 규칙입니다.</p>
+    <p>오토마타가 문자열을 읽어서 판정한다면, 문법은 문자열을 만들어 내는 규칙이다.</p>
     <div class="tb-env">
       <span class="lb">정의 7.2.1</span>
-      <p class="q-term"><b>문법</b>: 비단말 기호(대문자), 단말 기호(알파벳), 시작 기호 \(S\), 생성 규칙 \(A \to w\)의 묶음. \(S\)에서 규칙을 되풀이해 단말 기호만 남은 문자열 전체가 생성되는 언어.</p>
-      <p class="q-term"><b>정규 문법</b>: 모든 규칙이 \(A \to aB\) 또는 \(A \to a\) 또는 \(A \to \varepsilon\) 꼴(오른쪽에 단말 하나 다음 비단말 많아야 하나).</p>
+      <p>대문자로 쓰는 비단말 기호, 알파벳의 단말 기호, 시작 기호 \(S\), 생성 규칙 \(A \to w\)의 묶음을 <em>문법</em>이라 한다. \(S\)에서 규칙을 되풀이해 단말 기호만 남은 문자열 전체가 문법이 생성하는 언어이다. 모든 규칙이 \(A \to aB\), \(A \to a\), \(A \to \varepsilon\) 가운데 한 꼴, 곧 오른쪽에 단말 하나와 그 뒤의 비단말 많아야 하나만 오는 문법을 <em>정규 문법</em>이라 한다.</p>
     </div>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.2</span>
       <p>"1이 짝수 개인 문자열"의 정규 문법을 7.1절의 DFA로부터 만들어라.</p>
     </div>
-    <p><i>풀이.</i> 상태를 비단말로, 전이 \(\delta(P, a) = Q\)를 규칙 \(P \to aQ\)로, 받아들이는 상태 \(P\)에 \(P \to \varepsilon\)을 둡니다. \(E \to 0E \mid 1O \mid \varepsilon\), \(O \to 0O \mid 1E\). 예: \(E \Rightarrow 1O \Rightarrow 10O \Rightarrow 101E \Rightarrow 101\). 유도 과정이 DFA가 "101"을 읽는 경로와 똑같습니다.</p>
+    <p><i>풀이.</i> 상태를 비단말로, 전이 \(\delta(P, a) = Q\)를 규칙 \(P \to aQ\)로 옮기고, 받아들이는 상태 \(P\)에는 \(P \to \varepsilon\)을 둔다. 그러면 \(E \to 0E \mid 1O \mid \varepsilon\), \(O \to 0O \mid 1E\)이다. 예를 들어 \(E \Rightarrow 1O \Rightarrow 10O \Rightarrow 101E \Rightarrow 101\)인데, 이 유도 과정은 DFA가 "101"을 읽는 경로와 똑같다.</p>
 
     <h3><span class="no">7.2.2</span>같은 힘</h3>
     <div class="tb-env thm">
       <span class="lb">정리 7.2.3</span>
-      <p>언어 \(L\)에 대해 다음은 동치이다. (a) 어떤 DFA가 \(L\)을 인식한다. (b) 어떤 정규 문법이 \(L\)을 생성한다. (c) \(L\)을 정규 표현식으로 쓸 수 있다. 이런 언어를 <b>정규 언어</b>라 한다.</p>
+      <p>언어 \(L\)에 대해 다음은 동치이다. (1) 어떤 DFA가 \(L\)을 인식한다. (2) 어떤 정규 문법이 \(L\)을 생성한다. (3) \(L\)을 정규 표현식으로 쓸 수 있다. 이런 언어를 <em>정규 언어</em>라 한다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">(a)⇔(b)의 생각.</span>(a)⇒(b)는 예제처럼 상태를 비단말로 옮긴다. (b)⇒(a)는 비단말을 상태로 두면 비결정적 오토마타(한 기호에 갈 곳이 여럿일 수 있음)가 되고, 부분집합 구성(상태들의 집합을 새 상태로)으로 DFA로 바꾼다. <span class="qed">∎</span></p>
-    <p>정규 표현식은 프로그래밍에서 쓰는 검색 패턴입니다. 예: <code>(0|1)*01</code>은 "01로 끝나는 문자열"(7.1절 연습 1)이고, 내부적으로 DFA로 바뀌어 실행됩니다.</p>
+    <p class="tb-proof"><span class="lb">(1)과 (2)가 동치인 이유.</span>(1)에서 (2)로는 예제처럼 상태를 비단말로 옮긴다. 거꾸로 (2)에서 비단말을 상태로 두면 한 기호에 갈 곳이 여럿일 수 있는 비결정적 오토마타가 되는데, 상태들의 집합을 새 상태로 삼는 부분집합 구성으로 이것을 DFA로 바꾼다. <span class="qed">∎</span></p>
+    <p>정규 표현식은 프로그래밍에서 쓰는 검색 패턴이다. 예를 들어 <code>(0|1)*01</code>은 "01로 끝나는 문자열"을 뜻하며, 내부적으로 DFA로 바뀌어 실행된다.</p>
 
     <h3><span class="no">7.2.3</span>정규가 아닌 언어</h3>
     <div class="tb-env thm">
       <span class="lb">정리 7.2.4</span>
-      <p>\(L = \{0^n1^n : n \ge 0\}\)은 정규 언어가 아니다.</p>
+      <p>\(L = \{0^n1^n \mid n \ge 0\}\)은 정규 언어가 아니다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>상태가 \(k\)개인 DFA가 \(L\)을 인식한다고 하자. 문자열 \(0^0, 0^1, \dots, 0^k\) (\(k + 1\)개)을 읽은 뒤의 상태는 \(k\)가지뿐이라, 비둘기집 원리로 \(0^i\)과 \(0^j\) (\(i \ne j\))가 같은 상태에 도착한다. 그 뒤에 \(1^i\)을 읽으면 두 경우 같은 상태로 가므로, \(0^i1^i\)(받아들여야 함)과 \(0^j1^i\)(거부해야 함)을 같이 판정한다. 모순. <span class="qed">∎</span></p>
-    <p>DFA는 "얼마나 많이"를 끝없이 셀 수 없습니다. 괄호 짝 맞추기, 프로그래밍 언어의 중첩 구조도 같은 이유로 정규가 아니고, 스택을 가진 기계(푸시다운 오토마타)와 문맥 자유 문법이 필요합니다. 기억 장치가 무한한 기계가 7.3절의 튜링 기계입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>상태가 \(k\)개인 DFA가 \(L\)을 인식한다고 하자. 문자열 \(0^0, 0^1, \dots, 0^k\) (\(k + 1\)개)을 읽은 뒤의 상태는 \(k\)가지뿐이므로, 비둘기집 원리로 \(0^i\)과 \(0^j\) (\(i \ne j\))가 같은 상태에 도착한다. 그 뒤에 \(1^i\)을 읽으면 두 경우가 같은 상태로 가므로, 받아들여야 할 \(0^i1^i\)과 거부해야 할 \(0^j1^i\)을 같게 판정한다. 이것은 모순이다. <span class="qed">∎</span></p>
+    <p>즉 DFA는 "얼마나 많이"를 끝없이 셀 수 없다. 괄호 짝 맞추기나 프로그래밍 언어의 중첩 구조도 같은 이유로 정규가 아니며, 스택을 가진 푸시다운 오토마타와 문맥 자유 문법이 필요하다. 기억 장치가 무한한 기계가 7.3절의 튜링 기계이다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) "\(0^*1^*\)이 정규이니 \(0^n1^n\)도 정규": \(0^*1^*\)은 개수를 맞출 필요가 없다. (2) 무한 언어는 정규가 아니라고 생각한다: "1이 짝수 개인 문자열"은 무한하지만 정규다. 정규성은 크기가 아니라 필요한 기억의 양이 정한다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"\(0^*1^*\)이 정규이니 \(0^n1^n\)도 정규"라고 생각하기 쉽지만, \(0^*1^*\)은 개수를 맞출 필요가 없다. 또 무한 언어는 정규가 아니라고 여기는 실수가 있다. "1이 짝수 개인 문자열"은 무한하지만 정규이다. 정규성을 정하는 것은 언어의 크기가 아니라 필요한 기억의 양이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정규 문법(\(A \to aB \mid a \mid \varepsilon\))과 DFA는 상태 ↔ 비단말로 대응한다.</li>
-        <li>DFA, 정규 문법, 정규 표현식은 같은 언어(정규 언어)를 정의한다.</li>
-        <li>\(\{0^n1^n\}\)은 비둘기집 원리로 정규가 아니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 상태가 \(k\)개뿐이면 0을 \(0, 1, \dots, k\)개 읽은 \(k + 1\)가지 경우 가운데 둘이 같은 상태에 들어가, 이후로는 두 경우를 구별할 수 없기 때문이다. 그래서 \(\{0^n1^n\}\)은 정규 언어가 아니다. 정규 언어는 DFA, 정규 문법(\(A \to aB \mid a \mid \varepsilon\)), 정규 표현식이 똑같이 정의하는 언어이며, DFA의 상태와 정규 문법의 비단말은 서로 대응한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>정규 문법 \(S \to 0S \mid 1A\), \(A \to 1A \mid \varepsilon\)이 생성하는 언어를 말하여라.
-          <details><summary>답</summary><p>0이 몇 개 나온 뒤 1이 1개 이상: \(0^*11^*\).</p></details>
+          <details><summary>답</summary><p>0이 몇 개 나온 뒤 1이 1개 (이상) \(0^*11^*\).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>

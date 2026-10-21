@@ -8,50 +8,55 @@
 <article class="card q-card" id="text-m3-sorting" data-kind="본문" data-std="수학3-02-02">
   <header class="card-head"><span class="no"></span><h2>탐색과 정렬의 복잡도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>선형 탐색과 이진 탐색의 최악 비교 횟수를 구한다.</li>
-        <li>삽입 정렬(\(\Theta(n^2)\))과 병합 정렬(\(\Theta(n\log n))\)의 비교 횟수를 분석한다.</li>
-        <li>비교 정렬은 최악의 경우 \(\Omega(n\log n)\)번 비교가 필요함을 결정 트리로 보인다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>점근 표기 (<a href="02-01.html">2.1절</a>), 등차수열의 합, \(\log(n!) = \Theta(n\log n)\) (2.1절 연습 1).</li>
-      </ul>
-    </div>
+    <p class="q-ask">원소 1024개를 정렬할 때 삽입 정렬은 최악 52만 번 넘게 비교하고, 병합 정렬은 9천 번 남짓 비교한다. 그렇다면 더 영리한 방법으로 비교 횟수를 얼마든지 줄일 수 있을까? 아니면 비교만으로 정렬하는 한 넘을 수 없는 벽이 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 220" role="img" aria-label="원소 세 개를 정렬하는 비교 결정 나무">
+        <rect x="225" y="10" width="70" height="26" class="la"/><text x="260" y="28" text-anchor="middle">a : b</text>
+        <line x1="240" y1="36" x2="130" y2="70" class="k"/><line x1="280" y1="36" x2="390" y2="70" class="k"/>
+        <text x="175" y="50" class="s">a &lt; b</text><text x="340" y="50" class="s">a &gt; b</text>
+        <rect x="95" y="70" width="70" height="26" class="la"/><text x="130" y="88" text-anchor="middle">b : c</text>
+        <rect x="355" y="70" width="70" height="26" class="la"/><text x="390" y="88" text-anchor="middle">a : c</text>
+        <line x1="110" y1="96" x2="60" y2="130" class="k"/><line x1="150" y1="96" x2="200" y2="130" class="k"/>
+        <line x1="370" y1="96" x2="320" y2="130" class="k"/><line x1="410" y1="96" x2="460" y2="130" class="k"/>
+        <rect x="25" y="130" width="70" height="26" class="lb"/><text x="60" y="148" text-anchor="middle" class="s">a b c</text>
+        <rect x="165" y="130" width="70" height="26" class="la"/><text x="200" y="148" text-anchor="middle">a : c</text>
+        <rect x="285" y="130" width="70" height="26" class="lb"/><text x="320" y="148" text-anchor="middle" class="s">b a c</text>
+        <rect x="425" y="130" width="70" height="26" class="la"/><text x="460" y="148" text-anchor="middle">b : c</text>
+        <line x1="185" y1="156" x2="150" y2="185" class="k"/><line x1="215" y1="156" x2="250" y2="185" class="k"/>
+        <line x1="445" y1="156" x2="410" y2="185" class="k"/><line x1="475" y1="156" x2="500" y2="185" class="k"/>
+        <rect x="115" y="185" width="70" height="26" class="lb"/><text x="150" y="203" text-anchor="middle" class="s">a c b</text>
+        <rect x="215" y="185" width="70" height="26" class="lb"/><text x="250" y="203" text-anchor="middle" class="s">c a b</text>
+        <rect x="375" y="185" width="70" height="26" class="lb"/><text x="410" y="203" text-anchor="middle" class="s">b c a</text>
+        <rect x="470" y="185" width="46" height="26" class="lb"/><text x="493" y="203" text-anchor="middle" class="s">c b a</text>
+      </svg>
+      <figcaption>그림 1. 원소 세 개를 비교로 정렬하는 과정을 나무로 그렸다. 가능한 순서 \(3! = 6\)가지가 서로 다른 잎(청록)에 닿아야 하는데, 높이 2인 이진 나무의 잎은 4개뿐이라 최악 3번의 비교가 꼭 필요하다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>점근 표기(<a href="02-01.html">2.1절</a>)와 수학적 귀납법(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>탐색</h3>
-    <p><b>선형 탐색</b>은 앞에서부터 하나씩 비교해 최악 \(n\)번, \(\Theta(n)\)입니다. 정렬된 배열이면 <b>이진 탐색</b>을 씁니다: 가운데와 비교해 찾는 값이 작으면 왼쪽 절반, 크면 오른쪽 절반으로 범위를 줄입니다. 한 번 비교할 때마다 범위가 절반이 되므로 최악 \(\lfloor\log_2n\rfloor + 1\)번, \(\Theta(\log n)\)입니다. \(n = 10^6\)이면 선형 탐색 100만 번, 이진 탐색 20번입니다.</p>
+    <p><em>선형 탐색</em>은 앞에서부터 하나씩 비교하므로 최악 \(n\)번, 곧 \(\Theta(n)\)이다. 배열이 정렬되어 있으면 <em>이진 탐색</em>을 쓴다. 가운데 값과 비교해 찾는 값이 작으면 왼쪽 절반으로, 크면 오른쪽 절반으로 범위를 줄인다. 한 번 비교할 때마다 범위가 절반이 되므로 최악 \(\lfloor\log_2n\rfloor + 1\)번, 곧 \(\Theta(\log n)\)이다. 예를 들어 \(n = 10^6\)이면 선형 탐색은 100만 번, 이진 탐색은 20번이다.</p>
 
     <h3><span class="no">2.2.2</span>삽입 정렬</h3>
-    <p>카드를 손에 하나씩 끼우듯, 앞부분이 정렬된 상태에서 다음 원소를 왼쪽으로 옮기며 제자리를 찾습니다. \(k\)번째 원소는 최악 \(k - 1\)번 비교하므로 최악 비교 횟수는</p>
+    <p>카드를 손에 하나씩 끼우듯, 앞부분이 정렬된 상태에서 다음 원소를 왼쪽으로 옮기며 제자리를 찾는다. \(k\)번째 원소는 최악 \(k - 1\)번 비교하므로 최악 비교 횟수는 다음과 같다.</p>
     \[1 + 2 + \dots + (n - 1) = \frac{n(n - 1)}{2} = \Theta(n^2).\]
-    <p>최악은 거꾸로 정렬된 입력, 최선은 이미 정렬된 입력(\(n - 1\)번)입니다. 무작위 입력의 평균은 약 \(\frac{n^2}{4}\)번입니다.</p>
+    <p>최악은 거꾸로 정렬된 입력이고, 최선은 이미 정렬된 입력으로 \(n - 1\)번이면 된다. 무작위 입력의 평균은 약 \(\frac{n^2}{4}\)번이다.</p>
 
     <h3><span class="no">2.2.3</span>병합 정렬</h3>
-    <p>배열을 반으로 나눠 각각 정렬하고(재귀), 정렬된 두 반을 앞에서부터 비교하며 합칩니다. 합치는 데 최대 \(n - 1\)번 비교하므로 비교 횟수 \(T(n)\)은</p>
+    <p>배열을 반으로 나눠 각각 재귀로 정렬하고, 정렬된 두 반을 앞에서부터 비교하며 합친다. 합치는 데 최대 \(n - 1\)번 비교하므로 비교 횟수 \(T(n)\)은 다음 점화식을 만족한다.</p>
     \[T(n) = 2T\!\left(\frac n2\right) + (n - 1), \qquad T(1) = 0.\]
-    <p>\(n = 2^m\)이면 재귀 나무의 각 층에서 합 \(\approx n\)번, 층이 \(m = \log_2n\)개라 \(T(n) \approx n\log_2n\), 정확히는 \(n\log_2n - n + 1\)입니다(3.4절의 마스터 정리). \(n = 1024\)이면 삽입 정렬 최악 523,776번, 병합 정렬 최악 9,217번입니다.</p>
+    <p>\(n = 2^m\)이면 재귀 나무의 각 층에서 합치는 비교가 약 \(n\)번이고 층이 \(m = \log_2n\)개이므로 \(T(n) \approx n\log_2n\)이며, 정확히는 \(n\log_2n - n + 1\)이다(3.4절의 마스터 정리). 그래서 \(n = 1024\)이면 삽입 정렬은 최악 523,776번, 병합 정렬은 최악 9,217번 비교한다.</p>
 
     <h3><span class="no">2.2.4</span>비교 정렬의 하한</h3>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.1</span>
       <p>원소끼리의 비교만 쓰는 정렬 알고리즘은 최악의 경우 적어도 \(\lceil\log_2(n!)\rceil = \Omega(n\log n)\)번 비교한다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>알고리즘의 비교 과정을 나무로 그린다(각 마디에서 비교 결과에 따라 두 갈래). 입력의 순서 \(n!\)가지는 서로 다른 잎에 도달해야 한다(아니면 두 입력을 같은 방식으로 재배열해 하나는 틀림). 높이 \(h\)인 이진 나무의 잎은 \(2^h\)개 이하라 \(2^h \ge n!\), \(h \ge \log_2n!\). <span class="qed">∎</span></p>
-    <p>그래서 병합 정렬은 (상수배를 빼면) 최선입니다. \(n = 1024\)이면 하한이 약 8,770번이라 병합 정렬의 9,217번과 가깝습니다. 같은 절의 탐구 카드에서 두 정렬의 비교 횟수를 무작위 입력으로 세어 볼 수 있습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>알고리즘의 비교 과정을 그림 1처럼 나무로 그린다. 각 마디에서는 비교 결과에 따라 두 갈래로 나뉜다. 입력의 순서 \(n!\)가지는 서로 다른 잎에 닿아야 한다. 그렇지 않으면 두 입력을 같은 방식으로 재배열하게 되어 하나는 틀리기 때문이다. 높이 \(h\)인 이진 나무의 잎은 \(2^h\)개 이하이므로 \(2^h \ge n!\), 곧 \(h \ge \log_2n!\)이다. <span class="qed">∎</span></p>
+    <p>그래서 병합 정렬은 상수배를 빼면 최선이다. \(n = 1024\)이면 하한이 약 8,770번이라 병합 정렬의 9,217번과 가깝다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 이진 탐색을 정렬되지 않은 배열에 쓴다. (2) 최악과 평균을 혼동한다: 퀵 정렬은 평균 \(\Theta(n\log n)\)이지만 최악 \(\Theta(n^2)\)이다. (3) 하한 정리를 모든 정렬에 적용한다: 계수 정렬처럼 비교하지 않고 값의 범위를 쓰는 방법은 \(\Theta(n)\)도 가능하다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>이진 탐색을 정렬되지 않은 배열에 쓰는 실수가 흔하다. 또 최악과 평균을 혼동하기 쉬운데, 퀵 정렬은 평균 \(\Theta(n\log n)\)이지만 최악 \(\Theta(n^2)\)이다. 하한 정리를 모든 정렬에 적용해서도 안 된다. 계수 정렬처럼 비교하지 않고 값의 범위를 쓰는 방법은 \(\Theta(n)\)도 가능하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>선형 탐색 \(\Theta(n)\), 이진 탐색 \(\Theta(\log n)\) (정렬된 배열).</li>
-        <li>삽입 정렬 최악 \(\frac{n(n-1)}2 = \Theta(n^2)\), 병합 정렬 \(T(n) = 2T(n/2) + n - 1 = \Theta(n\log n)\).</li>
-        <li>비교 정렬의 최악은 \(\log_2n! = \Omega(n\log n)\) 이상(결정 트리).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 "벽이 있다"이다. 비교만 쓰는 정렬은 \(n!\)가지 순서를 구별해야 하므로 최악 \(\log_2n! = \Omega(n\log n)\)번 이상 비교해야 하고, 병합 정렬은 이 하한에 상수배까지 맞는다. 삽입 정렬은 최악 \(\frac{n(n-1)}2 = \Theta(n^2)\)번, 병합 정렬은 \(T(n) = 2T(n/2) + n - 1 = \Theta(n\log n)\)번 비교한다. 탐색에서는 선형 탐색이 \(\Theta(n)\), 정렬된 배열의 이진 탐색이 \(\Theta(\log n)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.5</span>연습문제</h3>

@@ -8,54 +8,47 @@
 <article class="card q-card" id="text-m3-boolean" data-kind="본문" data-std="수학3-06-01">
   <header class="card-head"><span class="no"></span><h2>불 함수와 카르노 맵</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>불 대수의 연산(\(+\), \(\cdot\), \(\bar{\ }\))과 법칙을 명제 논리와 대응시킨다.</li>
-        <li>불 함수를 최소항의 합(곱의 합 표준형)으로 쓴다.</li>
-        <li>카르노 맵에서 이웃한 1을 묶어 식을 간단히 한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>진리표와 DNF (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">입력 세 개 가운데 다섯 경우에 1을 내는 불 함수를 진리표대로 회로로 만들면, 세 입력짜리 곱 다섯 개를 더해야 한다. 같은 함수를 훨씬 적은 부품으로 만들 수 있을까? 어떤 항들을 합칠 수 있는지 한눈에 알아보는 방법이 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 170" role="img" aria-label="세 변수 카르노 맵에서 1인 칸을 직사각형으로 묶은 그림">
+        <text x="70" y="40" text-anchor="end" class="s">x \ yz</text>
+        <text x="115" y="40" text-anchor="middle">00</text><text x="175" y="40" text-anchor="middle">01</text><text x="235" y="40" text-anchor="middle">11</text><text x="295" y="40" text-anchor="middle">10</text>
+        <text x="70" y="82" text-anchor="end">0</text><text x="70" y="142" text-anchor="end">1</text>
+        <rect x="85" y="50" width="60" height="60" class="lk"/><rect x="145" y="50" width="60" height="60" class="lk"/><rect x="205" y="50" width="60" height="60" class="lk"/><rect x="265" y="50" width="60" height="60" class="lk"/>
+        <rect x="85" y="110" width="60" height="60" class="lk"/><rect x="145" y="110" width="60" height="60" class="lk"/><rect x="205" y="110" width="60" height="60" class="lk"/><rect x="265" y="110" width="60" height="60" class="lk"/>
+        <text x="115" y="86" text-anchor="middle">0</text><text x="175" y="86" text-anchor="middle">1</text><text x="235" y="86" text-anchor="middle">1</text><text x="295" y="86" text-anchor="middle">0</text>
+        <text x="115" y="146" text-anchor="middle">0</text><text x="175" y="146" text-anchor="middle">1</text><text x="235" y="146" text-anchor="middle">1</text><text x="295" y="146" text-anchor="middle">1</text>
+        <rect x="151" y="56" width="108" height="108" class="la" style="stroke:var(--fa);stroke-width:2"/>
+        <rect x="213" y="118" width="106" height="44" class="ld" style="stroke:var(--fd);stroke-width:2"/>
+        <text x="350" y="80" class="ta">2×2 묶음 → z</text>
+        <text x="350" y="146" class="td">1×2 묶음 → xy</text>
+        <text x="350" y="112">f = z + xy</text>
+      </svg>
+      <figcaption>그림 1. 열을 00, 01, 11, 10 순서로 놓으면 이웃한 칸은 변수 하나만 다르다. 1이 든 칸을 크게 묶을수록 변수가 많이 사라져, 최소항 다섯 개가 \(z + xy\)로 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>진리표와 논리 동치, 표준형(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>불 대수</h3>
-    <p>회로에서는 참·거짓 대신 1·0을 쓰고, 그리고·또는·아니다를 곱·합·윗줄로 씁니다.</p>
+    <p>회로에서는 참·거짓 대신 1·0을 쓰고, 그리고·또는·아니다를 곱·합·윗줄로 쓴다.</p>
     <div class="tb-env">
       <span class="lb">정의 6.1.1</span>
-      <p class="q-term"><b>불 연산</b>: \(\{0, 1\}\)에서 \(x + y\) (OR, 둘 중 하나라도 1이면 1), \(xy\) (AND), \(\bar x\) (NOT, \(1 - x\)).</p>
-      <p class="q-term"><b>불 함수</b>: \(\{0, 1\}^n \to \{0, 1\}\). 변수가 \(n\)개이면 \(2^{2^n}\)개.</p>
-      <p class="q-term"><b>최소항</b>: 모든 변수가 원래 꼴이나 윗줄 꼴로 한 번씩 들어간 곱. 예: \(x\bar yz\)는 \((1, 0, 1)\)에서만 1.</p>
+      <p>\(\{0, 1\}\)에서 \(x + y\)는 둘 중 하나라도 1이면 1인 OR, \(xy\)는 AND, \(\bar x = 1 - x\)는 NOT이다. 이 연산들을 <em>불 연산</em>이라 한다. 함수 \(\{0, 1\}^n \to \{0, 1\}\)을 <em>불 함수</em>라 하며, 변수가 \(n\)개이면 \(2^{2^n}\)개 있다. 모든 변수가 원래 꼴이나 윗줄 꼴로 한 번씩 들어간 곱을 <em>최소항</em>이라 하며, 예를 들어 \(x\bar yz\)는 \((1, 0, 1)\)에서만 1이다.</p>
     </div>
-    <p>법칙은 명제 논리와 같습니다: 드모르간 \(\overline{x + y} = \bar x\bar y\), 흡수 \(x + xy = x\), 보수 \(x + \bar x = 1\). 보통 대수와 다른 것도 있습니다: \(x + x = x\), \(x + 1 = 1\), 그리고 분배가 양쪽으로 \(x + yz = (x + y)(x + z)\).</p>
-    <p>모든 불 함수는 함숫값이 1인 입력의 최소항을 더한 꼴(곱의 합 표준형, 1.1절의 DNF)로 쓸 수 있습니다. 그러나 이 식은 대개 깁니다. 회로의 부품 수를 줄이려면 식을 간단히 해야 합니다.</p>
+    <p>법칙은 명제 논리와 같아서 드모르간 법칙 \(\overline{x + y} = \bar x\bar y\), 흡수법칙 \(x + xy = x\), 보수법칙 \(x + \bar x = 1\)이 성립한다. 하지만 보통의 대수와 다른 것도 있다. \(x + x = x\), \(x + 1 = 1\)이고, 분배법칙이 양쪽으로 성립해 \(x + yz = (x + y)(x + z)\)이다.</p>
+    <p>모든 불 함수는 함숫값이 1인 입력의 최소항을 더한 꼴, 곧 곱의 합 표준형(1.1절의 DNF)으로 쓸 수 있다. 그러나 이 식은 대개 길다. 그래서 회로의 부품 수를 줄이려면 식을 간단히 해야 한다.</p>
 
     <h3><span class="no">6.1.2</span>카르노 맵</h3>
-    <p>핵심 관찰: 변수 하나만 다른 두 최소항은 합치면 그 변수가 사라집니다. \(xyz + xy\bar z = xy(z + \bar z) = xy\). 카르노 맵은 진리표를 칸에 배치하되, <b>이웃한 칸이 변수 하나만 다르도록</b> 순서를 00, 01, 11, 10(그레이 코드)으로 정한 표입니다. 그러면 1이 든 이웃 칸들을 직사각형으로 묶어 한꺼번에 합칠 수 있습니다.</p>
-    <ul>
-      <li>묶음의 크기는 1, 2, 4, 8(2의 거듭제곱)이고, 직사각형이어야 한다.</li>
-      <li>맵의 왼쪽 끝과 오른쪽 끝(위·아래 끝)도 이웃이다(감싸기).</li>
-      <li>크기 \(2^k\)인 묶음은 변수 \(k\)개가 사라진 곱 하나가 된다.</li>
-      <li>모든 1을 덮되, 묶음은 되도록 크고 적게. 겹쳐도 된다.</li>
-    </ul>
+    <p>출발점은 변수 하나만 다른 두 최소항을 합치면 그 변수가 사라진다는 관찰이다. 예를 들어 \(xyz + xy\bar z = xy(z + \bar z) = xy\)이다. <em>카르노 맵</em>은 진리표를 칸에 배치하되, 이웃한 칸이 변수 하나만 다르도록 순서를 00, 01, 11, 10(그레이 코드)으로 정한 표이다. 그러면 1이 든 이웃 칸들을 직사각형으로 묶어 한꺼번에 합칠 수 있다.</p>
+    <p>묶을 때는 몇 가지 규칙을 지킨다. 묶음은 크기가 1, 2, 4, 8처럼 2의 거듭제곱인 직사각형이어야 하고, 맵의 왼쪽 끝과 오른쪽 끝, 위와 아래 끝도 이웃으로 본다. 크기 \(2^k\)인 묶음은 변수 \(k\)개가 사라진 곱 하나가 된다. 그리고 모든 1을 덮되 묶음은 되도록 크고 적게 잡으며, 묶음끼리 겹쳐도 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.2</span>
       <p>\(f(x, y, z) = 1\)인 입력이 \((0,0,1), (0,1,1), (1,0,1), (1,1,1), (1,1,0)\)일 때 간단히 하여라.</p>
     </div>
-    <p><i>풀이.</i> 행을 \(x\), 열을 \(yz\) (00, 01, 11, 10)로 놓으면 \(z = 1\)인 네 칸(열 01, 11의 두 행)이 2×2 묶음이라 \(z\), 그리고 \((1,1,0)\)은 이웃 \((1,1,1)\)과 묶어 \(xy\). 따라서 \(f = z + xy\). 최소항 5개(곱 5개, 각 3변수)가 곱 하나와 변수 하나로 줄었습니다. 같은 절의 탐구 카드에서 칸을 눌러 맵을 만들어 볼 수 있습니다.</p>
+    <p><i>풀이.</i> 행을 \(x\), 열을 \(yz\) (00, 01, 11, 10)로 놓은 것이 그림 1이다. \(z = 1\)인 네 칸, 곧 열 01과 11의 두 행이 2×2 묶음을 이루어 \(z\)가 되고, \((1,1,0)\)은 이웃 \((1,1,1)\)과 묶어 \(xy\)가 된다. 따라서 \(f = z + xy\)이다. 변수 세 개짜리 곱 다섯 개가 곱 하나와 변수 하나로 줄었다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 열 순서를 00, 01, 10, 11로 쓴다: 그러면 01과 10이 이웃해 두 변수가 다르다. (2) 3칸이나 6칸을 묶는다: 묶음 크기는 2의 거듭제곱이다. (3) 감싸기를 잊는다: 열 00과 10은 이웃이라 \(\bar z\) 꼴로 묶을 수 있다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>열 순서를 00, 01, 10, 11로 쓰기 쉬운데, 그러면 01과 10이 이웃하면서 두 변수가 다르다. 또 3칸이나 6칸을 묶는 실수가 있는데, 묶음 크기는 2의 거듭제곱이어야 한다. 감싸기도 잊기 쉽다. 열 00과 10은 이웃이라 \(\bar z\) 꼴로 묶을 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>불 대수: \(+\)=OR, \(\cdot\)=AND, 윗줄=NOT. \(x + x = x\), \(x + 1 = 1\).</li>
-        <li>모든 불 함수는 최소항의 합으로 쓸 수 있다.</li>
-        <li>카르노 맵(그레이 코드 순서)에서 1을 크게 묶으면 변수가 사라져 식이 짧아진다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 "만들 수 있다"이다. 카르노 맵에서 1이 든 이웃 칸을 크게 묶으면 변수가 사라져, 최소항 다섯 개의 합이 \(z + xy\)로 줄어든다. 불 대수는 \(+\)를 OR, 곱을 AND, 윗줄을 NOT으로 쓰며 \(x + x = x\), \(x + 1 = 1\)처럼 보통 대수와 다른 법칙이 있다. 모든 불 함수는 최소항의 합으로 쓸 수 있고, 그레이 코드 순서의 카르노 맵이 그 식을 짧게 만든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.3</span>연습문제</h3>
@@ -74,7 +67,7 @@
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>변수 4개인 다수결 함수(1이 3개 이상이면 1)의 최소 곱의 합을 구하여라.
-          <details><summary>답</summary><p>세 변수의 곱 4개: \(xyz + xyw + xzw + yzw\).</p></details>
+          <details><summary>답</summary><p>세 변수의 곱 4개인 \(xyz + xyw + xzw + yzw\).</p></details>
         </li>
       </ol>
     </div>

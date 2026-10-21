@@ -8,53 +8,47 @@
 <article class="card q-card" id="text-m3-circuit" data-kind="본문" data-std="수학3-06-02">
   <header class="card-head"><span class="no"></span><h2>논리회로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>AND, OR, NOT, NAND, XOR 게이트로 불 식을 회로로 나타낸다.</li>
-        <li>반가산기와 전가산기를 설계해 이진수 덧셈 회로를 만든다.</li>
-        <li>NAND 하나로 모든 회로를 만들 수 있음(기능적 완비성)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>불 함수와 카르노 맵 (<a href="06-01.html">6.1절</a>), 이진법.</li>
-      </ul>
-    </div>
+    <p class="q-ask">컴퓨터는 0과 1만 다루는 작은 스위치들로 \(6 + 7 = 13\) 같은 덧셈을 해낸다. 한 자리 덧셈을 하는 회로는 어떻게 생겼고, 그것을 이어 붙여 여러 자리 덧셈을 하려면 무엇이 필요할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 180" role="img" aria-label="XOR와 AND 게이트로 만든 반가산기">
+        <text x="30" y="64">a</text><text x="30" y="124">b</text>
+        <line x1="45" y1="60" x2="200" y2="60" class="k"/><line x1="45" y1="120" x2="200" y2="120" class="k"/>
+        <circle cx="100" cy="60" r="3" class="fk"/><circle cx="130" cy="120" r="3" class="fk"/>
+        <line x1="100" y1="60" x2="100" y2="140" class="k"/><line x1="100" y1="140" x2="250" y2="140" class="k"/>
+        <line x1="130" y1="120" x2="130" y2="160" class="k"/><line x1="130" y1="160" x2="250" y2="160" class="k"/>
+        <rect x="200" y="45" width="80" height="90" class="la"/><text x="240" y="95" text-anchor="middle" class="ta">XOR</text>
+        <rect x="250" y="135" width="80" height="35" class="lb"/><text x="290" y="158" text-anchor="middle" class="tb">AND</text>
+        <line x1="280" y1="90" x2="420" y2="90" class="a"/><text x="430" y="94" class="ta">합 s = a ⊕ b</text>
+        <line x1="330" y1="152" x2="420" y2="152" class="b"/><text x="430" y="156" class="tb">올림 c = ab</text>
+        <text x="200" y="28" class="s">1 + 1 = 10 → s = 0, c = 1</text>
+      </svg>
+      <figcaption>그림 1. 한 자리 이진수 두 개를 더하는 반가산기는 합을 내는 XOR 하나와 올림을 내는 AND 하나로 이루어진다. 올림 입력까지 받는 전가산기를 자리마다 이어 붙이면 여러 자리 덧셈기가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>불 대수와 카르노 맵(<a href="06-01.html">6.1절</a>), 이진법을 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>게이트</h3>
-    <p>컴퓨터의 계산은 전압이 높음(1)·낮음(0)인 신호를 게이트가 처리하는 것입니다. 각 게이트는 간단한 불 함수 하나를 계산합니다.</p>
-    <ul>
-      <li>NOT \(\bar x\), AND \(xy\), OR \(x + y\).</li>
-      <li>NAND \(\overline{xy}\), NOR \(\overline{x + y}\).</li>
-      <li>XOR \(x \oplus y = x\bar y + \bar xy\) (둘이 다르면 1).</li>
-    </ul>
-    <p>불 식을 회로로 옮길 때는 연산 하나가 게이트 하나입니다. \(f = z + xy\)는 AND 하나와 OR 하나로, 표준형 그대로 쓰면 3입력 AND 5개와 5입력 OR 하나가 필요했을 것입니다. 6.1절의 간단히 하기가 곧 부품 절약입니다.</p>
+    <p>컴퓨터의 계산은 전압이 높음(1)·낮음(0)인 신호를 게이트가 처리하는 것이다. 각 게이트는 간단한 불 함수 하나를 계산한다. 기본 게이트는 NOT \(\bar x\), AND \(xy\), OR \(x + y\)이고, 여기에 NAND \(\overline{xy}\), NOR \(\overline{x + y}\), 그리고 둘이 다르면 1인 XOR \(x \oplus y = x\bar y + \bar xy\)를 함께 쓴다.</p>
+    <p>불 식을 회로로 옮길 때는 연산 하나가 게이트 하나이다. 예를 들어 \(f = z + xy\)는 AND 하나와 OR 하나로 되지만, 표준형 그대로 쓰면 3입력 AND 다섯 개와 5입력 OR 하나가 필요했을 것이다. 즉 6.1절의 간단히 하기가 곧 부품 절약이다.</p>
 
     <h3><span class="no">6.2.2</span>가산기</h3>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1 <span class="nm">(반가산기, 전가산기)</span></span>
-      <p>(a) 한 자리 이진수 \(a, b\)를 더해 합 \(s\)와 올림 \(c\)를 내는 회로. (b) 올림 입력 \(c_{in}\)까지 세 비트를 더하는 회로.</p>
+      <p>(1) 한 자리 이진수 \(a, b\)를 더해 합 \(s\)와 올림 \(c\)를 내는 회로를 만들어라. (2) 올림 입력 \(c_{in}\)까지 세 비트를 더하는 회로를 만들어라.</p>
     </div>
-    <p><i>풀이.</i> (a) 진리표 \(0 + 0 = 00\), \(0 + 1 = 01\), \(1 + 0 = 01\), \(1 + 1 = 10\)에서 \(s = a \oplus b\), \(c = ab\). XOR 하나, AND 하나. (b) 세 비트의 합: \(s = a \oplus b \oplus c_{in}\), 올림은 셋 중 둘 이상이 1일 때(다수결) \(c_{out} = ab + c_{in}(a \oplus b)\). 반가산기 두 개와 OR 하나로 만듭니다. 전가산기를 \(n\)개 이어 붙이면(올림을 다음 자리로) \(n\)비트 덧셈기입니다. 예: \(0110 + 0111\)은 자리마다 올림이 넘어가 \(1101\) (6 + 7 = 13). 같은 절의 탐구 카드에서 입력 스위치를 눌러 확인할 수 있습니다.</p>
+    <p><i>풀이.</i> (1) 진리표 \(0 + 0 = 00\), \(0 + 1 = 01\), \(1 + 0 = 01\), \(1 + 1 = 10\)에서 \(s = a \oplus b\), \(c = ab\)이다. 그래서 그림 1처럼 XOR 하나와 AND 하나면 된다. (2) 세 비트의 합 비트는 \(s = a \oplus b \oplus c_{in}\)이고, 올림은 셋 가운데 둘 이상이 1일 때, 곧 다수결로 \(c_{out} = ab + c_{in}(a \oplus b)\)이다. 이것은 반가산기 두 개와 OR 하나로 만든다.</p>
+    <p>전가산기를 \(n\)개 이어 붙여 올림을 다음 자리로 넘기면 \(n\)비트 덧셈기가 된다. 처음 질문의 \(0110 + 0111\)은 자리마다 올림이 넘어가 \(1101\), 곧 \(6 + 7 = 13\)이 된다.</p>
 
     <h3><span class="no">6.2.3</span>NAND만으로</h3>
     <div class="tb-env thm">
       <span class="lb">정리 6.2.2</span>
       <p>모든 불 함수는 NAND 게이트만으로 만들 수 있다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>모든 불 함수는 AND, OR, NOT으로 쓸 수 있다(곱의 합 표준형). 그리고 \(\bar x = \overline{xx}\), \(xy = \overline{\overline{xy}\,\overline{xy}}\), \(x + y = \overline{\bar x\,\bar y}\) (드모르간)이므로 세 연산이 모두 NAND로 만들어진다. <span class="qed">∎</span></p>
-    <p>반도체 공정에서는 NAND가 트랜지스터 4개로 가장 싸게 만들어져, 실제 칩은 NAND(또는 NOR) 위주로 설계됩니다. 곱의 합 \(xy + zw\)는 드모르간으로 \(\overline{\overline{xy}\cdot\overline{zw}}\)라 NAND 세 개로 바로 옮겨집니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>모든 불 함수는 곱의 합 표준형으로 AND, OR, NOT을 써서 나타낼 수 있다. 그런데 \(\bar x = \overline{xx}\), \(xy = \overline{\overline{xy}\,\overline{xy}}\)이고, 드모르간 법칙으로 \(x + y = \overline{\bar x\,\bar y}\)이므로 세 연산이 모두 NAND로 만들어진다. <span class="qed">∎</span></p>
+    <p>반도체 공정에서는 NAND가 트랜지스터 4개로 가장 싸게 만들어지므로, 실제 칩은 NAND나 NOR 위주로 설계한다. 예를 들어 곱의 합 \(xy + zw\)는 드모르간 법칙으로 \(\overline{\overline{xy}\cdot\overline{zw}}\)이라 NAND 세 개로 바로 옮겨진다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 전가산기 올림을 \(ab + bc_{in}\)으로 빠뜨린다: 셋 중 아무 둘이 1이면 올림이 생기므로 \(ab + bc_{in} + ac_{in}\)이다(위의 \(ab + c_{in}(a \oplus b)\)와 같음). (2) XOR를 OR로 쓴다: \(1 + 1\)의 합 비트는 0이다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전가산기의 올림을 \(ab + bc_{in}\)으로 쓰며 항 하나를 빠뜨리기 쉽다. 셋 가운데 아무 둘이 1이면 올림이 생기므로 \(ab + bc_{in} + ac_{in}\)이어야 하며, 이것은 위의 \(ab + c_{in}(a \oplus b)\)와 같다. 또 XOR를 OR로 쓰는 실수가 있는데, \(1 + 1\)의 합 비트는 0이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>불 식의 연산 하나 = 게이트 하나. 식을 간단히 하면 회로가 작아진다.</li>
-        <li>반가산기 \(s = a \oplus b\), \(c = ab\). 전가산기 \(s = a \oplus b \oplus c_{in}\), \(c_{out}\) = 다수결.</li>
-        <li>NAND 하나로 NOT, AND, OR을 모두 만든다(기능적 완비).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 한 자리 덧셈 회로인 반가산기는 합 \(s = a \oplus b\)를 내는 XOR와 올림 \(c = ab\)를 내는 AND로 이루어진다. 여러 자리 덧셈에는 올림 입력까지 더하는 전가산기(\(s = a \oplus b \oplus c_{in}\), 올림은 다수결)를 이어 붙인다. 회로에서는 연산 하나가 게이트 하나이므로 식을 간단히 할수록 회로가 작아지고, NAND 하나만으로도 모든 불 함수를 만들 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
