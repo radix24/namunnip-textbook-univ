@@ -8,62 +8,70 @@
 <article class="card q-card" id="text-s12-boot" data-kind="본문" data-std="응통12-06-02">
   <header class="card-head"><span class="no"></span><h2>붓스트랩 표준오차와 신뢰구간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>복원 재표집으로 표준오차를 추정한다.</li>
-        <li>백분위수 붓스트랩 신뢰구간을 만들고 한계를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>경험적 분포함수 (<a href="05-01.html">5.1절</a>), 표준오차 (응통5 3.1절).</li>
-      </ul>
-    </div>
-
-    <h3>공식이 없을 때</h3>
-    <p>표본평균의 표준오차는 \(s/\sqrt n\)이라는 공식이 있지만, 중앙값, 상관계수, 두 중앙값의 비 같은 통계량은 공식이 없거나 복잡합니다. 컴퓨터로 표본추출을 흉내 내 그 흔들림을 직접 잴 수 있습니다.</p>
+    <p class="q-ask">표본평균의 표준오차는 \(s/\sqrt n\)이라는 공식이 있다. 그런데 중앙값, 상관계수, 두 중앙값의 비 같은 통계량은 공식이 없거나 복잡하다. 모집단에서 표본을 다시 뽑을 수도 없는데, 이런 통계량이 얼마나 흔들리는지는 어떻게 잴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="붓스트랩 절차의 흐름도. 원래 표본에서 복원추출로 붓스트랩 표본 1, 2, …, B를 만들고, 각각에서 통계량 θ̂*를 계산한다. B개의 θ̂* 분포에서 표준편차가 표준오차, 2.5%와 97.5%점이 신뢰구간이 된다">
+        <rect x="20" y="85" width="110" height="46" class="la a"/><text x="75.0" y="105.0" text-anchor="middle" class="s">원래 표본</text>
+        <text x="75.0" y="120.0" text-anchor="middle" class="s">x₁, …, xₙ</text>
+        <rect x="185" y="20" width="120" height="40" class="lk k"/><text x="245.0" y="37.0" text-anchor="middle" class="s">붓스트랩 표본 1</text>
+        <text x="245.0" y="52.0" text-anchor="middle" class="s">복원추출 n개</text>
+        <path d="M130 108 L183 40 M181.2 46.8 L183 40 L176.9 43.4" class="ax"/>
+        <text x="345" y="44" text-anchor="middle" class="s">θ̂*(1)</text>
+        <path d="M305 40 L328 40 M321.6 42.7 L328 40 L321.6 37.3" class="ax"/>
+        <rect x="185" y="75" width="120" height="40" class="lk k"/><text x="245.0" y="92.0" text-anchor="middle" class="s">붓스트랩 표본 2</text>
+        <text x="245.0" y="107.0" text-anchor="middle" class="s">복원추출 n개</text>
+        <path d="M130 108 L183 95 M177.4 99.2 L183 95 L176.1 93.9" class="ax"/>
+        <text x="345" y="99" text-anchor="middle" class="s">θ̂*(2)</text>
+        <path d="M305 95 L328 95 M321.6 97.7 L328 95 L321.6 92.3" class="ax"/>
+        <rect x="185" y="150" width="120" height="40" class="lk k"/><text x="245.0" y="167.0" text-anchor="middle" class="s">붓스트랩 표본 B</text>
+        <text x="245.0" y="182.0" text-anchor="middle" class="s">복원추출 n개</text>
+        <path d="M130 108 L183 170 M176.7 166.9 L183 170 L180.9 163.3" class="ax"/>
+        <text x="345" y="174" text-anchor="middle" class="s">θ̂*(B)</text>
+        <path d="M305 170 L328 170 M321.6 172.7 L328 170 L321.6 167.3" class="ax"/>
+        <text x="245" y="134" text-anchor="middle" class="s">⋮</text>
+        <rect x="385" y="70" width="125" height="76" class="lc c"/><text x="447.5" y="112.0" text-anchor="middle" class="s"></text>
+        <text x="447" y="96" text-anchor="middle" class="s">θ̂* B개의 분포</text>
+        <text x="447" y="120" text-anchor="middle" class="s">sd → 표준오차</text><text x="447" y="136" text-anchor="middle" class="s">2.5%, 97.5%점 → 구간</text>
+        <path d="M362 40 L383 108 M378.5 102.6 L383 108 L383.7 101.0" class="ax"/>
+        <path d="M362 95 L383 108 M376.1 106.9 L383 108 L379.0 102.3" class="ax"/>
+        <path d="M362 170 L383 108 M383.5 115.0 L383 108 L378.3 113.2" class="ax"/>
+        <text x="20" y="200" class="s">Fₙ에서 뽑기 = 원래 표본에서 복원추출</text>
+      </svg>
+      <figcaption>그림 1. 붓스트랩의 흐름. 모르는 모집단 대신 원래 표본에서 복원추출을 되풀이해 통계량의 흔들림(주황)을 잰다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>경험적 분포함수(<a href="05-01.html">5.1절</a>)와 표준오차(응통5 3.1절)를 쓴다.</div>
+    <p>처음 질문의 답은 컴퓨터로 표본추출을 흉내 내는 것이다. 모집단 대신 표본 자체를 모집단으로 삼아 표본을 되풀이해 뽑으면, 통계량이 얼마나 흔들리는지를 직접 잴 수 있다(그림 1). 이 방법을 붓스트랩이라 한다.</p>
 
     <h3><span class="no">6.2.1</span>원리</h3>
-    <p>통계량 \(\hat\theta\)의 표준오차는 "모집단 \(F\)에서 표본을 되풀이해 뽑을 때 \(\hat\theta\)의 표준편차"입니다. \(F\)를 모르므로 경험적 분포 \(F_n\)(각 관측에 \(1/n\)씩)으로 바꿉니다. \(F_n\)에서 \(n\)개를 뽑는 것은 원래 표본에서 <b>복원추출</b>하는 것과 같습니다.</p>
-    <ol>
-      <li>원래 표본에서 \(n\)개를 복원추출해 붓스트랩 표본을 만들고 \(\hat\theta^*\)를 계산.</li>
-      <li>\(B\)번(보통 1000~10000) 되풀이.</li>
-      <li>\(\widehat{\mathrm{se}} = \mathrm{sd}(\hat\theta^*_1, \ldots, \hat\theta^*_B)\).</li>
-      <li>백분위수 구간: \(\hat\theta^*\)들의 2.5%점과 97.5%점.</li>
-    </ol>
-
-    <h3><span class="no">6.2.2</span>한계와 개선</h3>
-    <ul>
-      <li>표본이 작으면 \(F_n\)이 \(F\)를 잘 대신하지 못합니다. \(B\)를 늘려도 이 한계는 남습니다.</li>
-      <li>최댓값처럼 분포의 끝에 민감한 통계량에는 잘 맞지 않습니다.</li>
-      <li>통계량이 치우쳤거나 분포가 비대칭이면 백분위수 구간의 덮임률이 떨어지므로 치우침과 가속을 보정한 BCa 구간을 씁니다.</li>
-      <li>자료가 독립이 아니면(시계열) 블록 단위로 재표집해야 합니다.</li>
-    </ul>
-
+    <p>통계량 \(\hat\theta\)의 표준오차는 모집단 \(F\)에서 표본을 되풀이해 뽑을 때 \(\hat\theta\)의 표준편차이다. \(F\)를 모르므로 각 관측에 \(1/n\)씩 확률을 주는 경험적 분포 \(F_n\)으로 바꾼다. 그런데 \(F_n\)에서 \(n\)개를 뽑는 것은 원래 표본에서 복원추출하는 것과 같다.</p>
+    <p>그러므로 절차는 단순하다. 원래 표본에서 \(n\)개를 복원추출해 붓스트랩 표본을 만들고 \(\hat\theta^*\)를 계산한다. 이를 \(B\)번(보통 1,000~10,000) 되풀이한 뒤, \(\hat\theta^*_1, \ldots, \hat\theta^*_B\)의 표준편차를 표준오차 추정값으로 쓴다. 또 \(\hat\theta^*\)들의 2.5%점과 97.5%점을 잇는 것이 백분위수 신뢰구간이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
-      <p>R의 <code>law</code> 자료 대신 내장 <code>faithful</code>의 분출 간격(<code>waiting</code>) 중앙값의 표준오차와 95% 구간을 구하세요.</p>
+      <p>R의 내장 자료 <code>faithful</code>에서 분출 간격(<code>waiting</code>)의 중앙값의 표준오차와 95% 구간을 구하라.</p>
     </div>
     <pre><code>x &lt;- faithful$waiting; set.seed(1)
 b &lt;- replicate(5000, median(sample(x, replace = TRUE)))
 sd(b); quantile(b, c(0.025, 0.975))</code></pre>
-    <p>중앙값 76분, 붓스트랩 표준오차는 1분 안팎이고 구간은 대략 [73.5, 77]입니다(난수에 따라 조금 다름). 분포가 봉우리 둘이라 평균의 정규 근사보다 중앙값 쪽이 해석이 자연스럽습니다. 이 절의 실습 카드에서 \(B\)와 통계량을 바꿔 볼 수 있습니다.</p>
+    <p><i>풀이.</i> 중앙값은 76분이고, 붓스트랩 표준오차는 1분 안팎, 구간은 대략 [73.5, 77]이다. 구체적인 값은 난수에 따라 조금 다르다. 이 자료는 분포의 봉우리가 둘이라 평균의 정규근사보다 중앙값이 해석하기 자연스럽다. 이 절의 실습 카드에서 \(B\)와 통계량을 바꿔 볼 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>원래 표본에서 복원추출을 되풀이해 통계량의 흔들림을 잼.</li>
-        <li>표준오차 = 붓스트랩 값들의 표준편차, 구간 = 백분위수.</li>
-        <li>작은 표본, 극단 통계량, 종속 자료에서는 주의.</li>
-      </ol>
-    </div>
+    <h3><span class="no">6.2.2</span>한계와 개선</h3>
+    <p>붓스트랩은 \(F_n\)이 \(F\)를 잘 대신한다는 데 기대고 있다. 그러므로 표본이 작으면 결과를 믿기 어렵고, \(B\)를 아무리 늘려도 이 한계는 남는다. 또 최댓값처럼 분포의 끝에 민감한 통계량에는 잘 맞지 않는다. 표본 최댓값은 붓스트랩 표본에서 원래 최댓값을 넘을 수 없기 때문이다.</p>
+    <p>한편 통계량이 치우쳤거나 분포가 비대칭이면 백분위수 구간의 덮임률이 떨어진다. 이때는 치우침과 가속을 보정한 BCa 구간을 쓴다. 자료가 시계열처럼 독립이 아니면, 관측 하나씩이 아니라 연속된 블록 단위로 재표집해야 의존 구조가 보존된다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>붓스트랩은 원래 표본에서 복원추출을 되풀이해 통계량의 흔들림을 잰다. 표준오차는 붓스트랩 값들의 표준편차이고, 백분위수 구간은 그 2.5%점과 97.5%점이다. 작은 표본, 극단 통계량, 종속 자료에서는 주의하고 필요하면 BCa나 블록 붓스트랩을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>크기 \(n\)의 표본에서 특정 관측값이 붓스트랩 표본에 한 번도 뽑히지 않을 확률은? \(n\)이 크면?
-          <details><summary>답</summary><p>\((1 - 1/n)^n \to e^{-1} \approx 0.368\). 붓스트랩 표본은 원래 값의 약 63%만 포함합니다.</p></details>
+        <li>크기 \(n\)의 표본에서 특정 관측값이 붓스트랩 표본에 한 번도 뽑히지 않을 확률은 얼마인가? \(n\)이 크면 어떻게 되는가?
+          <details><summary>답</summary><p>\((1 - 1/n)^n\)이고 \(n\)이 크면 \(e^{-1} \approx 0.368\)로 간다. 즉 붓스트랩 표본은 원래 값의 약 63%만 포함한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>표본 최댓값의 붓스트랩 분포에서 원래 최댓값이 나올 확률은 얼마인가? 이것이 왜 문제인가?
+          <details><summary>답</summary><p>최댓값이 한 번이라도 뽑히면 붓스트랩 최댓값이 원래 최댓값과 같으므로, 확률은 \(1 - (1 - 1/n)^n \approx 0.632\)이다. 붓스트랩 분포의 63%가 한 점에 몰려 연속인 참 분포를 전혀 흉내 내지 못한다.</p></details>
         </li>
       </ol>
     </div>
