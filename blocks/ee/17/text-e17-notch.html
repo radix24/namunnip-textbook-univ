@@ -8,21 +8,28 @@
 <article class="card q-card" id="text-e17-notch" data-kind="본문" data-std="전전17-04-04">
   <header class="card-head"><span class="no"></span><h2>60 Hz 노치 필터 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>단위원 위 영점과 그 안쪽 극점으로 디지털 노치 필터를 설계한다.</li>
-        <li>극점 반지름 r로 노치 폭 ≈ (1 − r)f_s/π를 정한다.</li>
-        <li>노치가 ECG 성분을 왜곡하는 정도를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>극·영점과 주파수 응답 (<a href="../6/07.html">전전6 7단원</a>), 전원 잡음 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">다른 대책을 다 써도 심전도에 60 Hz 잡음이 조금 남았다. 이 한 주파수만 골라 없애고 나머지 신호는 그대로 두는 디지털 필터를 만들 수 있을까? 노치의 폭은 무엇이 정하고, 너무 좁거나 넓으면 어떻게 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.4.1 디지털 노치 필터(f_s = 500 Hz, f₀ = 60 Hz, r = 0.95)의 z 평면 극·영점 배치(개형). 영점은 단위원 위 e^(±jω₀)에, 극은 그 안쪽 반지름 0.95에 놓인다. 영점이 60 Hz를 0으로 만들고, 바로 옆의 극이 다른 주파수에서 영점의 효과를 상쇄해 노치 폭이 약 (1 − r)f_s/π ≈ 8 Hz로 좁다">
+        <circle cx="200" cy="100" r="70" class="k" fill="none"/>
+        <line x1="110" y1="100" x2="290" y2="100" class="ax"/><line x1="200" y1="20" x2="200" y2="180" class="ax"/>
+        <circle cx="247.6" cy="48.7" r="5" class="a" fill="none" stroke-width="2"/><circle cx="247.6" cy="151.3" r="5" class="a" fill="none" stroke-width="2"/>
+        <path d="M241 42 L250 51 M250 42 L241 51" class="d" stroke-width="2" transform="translate(-0.8,4.6)"/>
+        <path d="M241 145 L250 154 M250 145 L241 154" class="d" stroke-width="2" transform="translate(-0.8,-4.6)"/>
+        <text x="254" y="44" class="ta">영점 e^(jω₀)</text><text x="254" y="160" class="ta">영점</text>
+        <text x="206" y="66" class="td">극 0.95e^(jω₀)</text>
+        <text x="280" y="96" class="s">Re</text><text x="206" y="28" class="s">Im</text>
+        <g class="s"><text x="330" y="70">ω₀ = 2π × 60/500 = 0.754 rad</text><text x="330" y="92">폭 ≈ (1 − r)f_s/π ≈ 8 Hz</text><text x="330" y="114">60 Hz −291 dB, 50·70 Hz −0.2 dB</text></g>
+      </svg>
+      <figcaption>그림 1. 단위원 위의 영점이 60 Hz 성분을 정확히 0으로 만들고 바로 안쪽의 극이 다른 주파수에서 그 효과를 상쇄하므로, 극이 단위원에 가까울수록 노치가 좁아진다(예제 4.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>극·영점과 주파수 응답(<a href="../6/07.html">전전6 7단원</a>), 전원 잡음(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>영점은 60 Hz 위에</h3>
-    <p>\(H(z) = \frac{1 - 2\cos\omega_0z^{-1} + z^{-2}}{1 - 2r\cos\omega_0z^{-1} + r^2z^{-2}}\), \(\omega_0 = 2\pi f_0/f_s\). r이 1에 가까울수록 노치가 좁습니다(−3 dB 폭 ≈ (1 − r)f_s/π).</p><pre><code>import numpy as np
+    <p>디지털 필터의 주파수 응답은 단위원 위 \(e^{j\omega}\)에서의 전달 함수 값이다. 그래서 60 Hz에 해당하는 각 \(\omega_0 = 2\pi f_0/f_s\)의 단위원 위에 영점을 두면, 그 주파수 성분이 정확히 0이 된다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그런데 영점만 두면 주변 주파수도 크게 깎인다. 그래서 같은 각도, 반지름 r인 곳에 극을 두어 영점에서 조금만 떨어져도 영점의 효과를 상쇄하게 한다(그림 1). 이렇게 만든 전달 함수가 다음 식이다.</p>
+    \[H(z) = \frac{1 - 2\cos\omega_0z^{-1} + z^{-2}}{1 - 2r\cos\omega_0z^{-1} + r^2z^{-2}},\qquad \omega_0 = \frac{2\pi f_0}{f_s}\]
+    <p>r이 1에 가까울수록 극이 영점에 붙어 노치가 좁아지며, −3 dB 폭은 약 \((1 - r)f_s/\pi\)이다. 처음 질문의 둘째 답이 이것이다. 아래 코드는 이 필터의 주파수별 감쇠를 계산한다.</p><pre><code>import numpy as np
 fs, f0, r = 500.0, 60.0, 0.95
 w0 = 2 * np.pi * f0 / fs
 b = [1, -2 * np.cos(w0), 1]
@@ -32,7 +39,7 @@ for f in (10, 50, 55, 60, 65, 70, 120):
     H = np.polyval(b[::-1], 1 / z) / np.polyval(a[::-1], 1 / z)
     print(f"{f:4d} Hz: {20 * np.log10(abs(H) + 1e-15):7.1f} dB")
 print("계수 b =", np.round(b, 4), " a =", np.round(a, 4))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>  10 Hz:     0.4 dB
   50 Hz:    -0.2 dB
   55 Hz:    -1.8 dB
@@ -45,37 +52,31 @@ print("계수 b =", np.round(b, 4), " a =", np.round(a, 4))</code></pre>
       <span class="lb">예제 4.4.1</span>
       <p>위 필터(f_s = 500 Hz, r = 0.95)의 노치 폭과, 10 Hz와 120 Hz에서의 영향은?</p>
     </div>
-    <p><i>풀이.</i> 폭 ≈ 0.05 × 500/π ≈ 8 Hz. 실행 결과 60 Hz에서 크게 감쇠하고 10 Hz·120 Hz에서는 0 dB 근처라 ECG 주성분은 거의 그대로입니다. 고조파(120 Hz)는 따로 노치를 더합니다. 전원이 50 Hz인 나라에서는 f₀를 바꿉니다.</p>
+    <p><i>풀이.</i> 폭은 ≈ 0.05 × 500/π ≈ 8 Hz이다. 실행 결과를 보면 60 Hz에서 크게 감쇠하고, 10 Hz와 120 Hz에서는 0 dB 근처여서 ECG 주성분은 거의 그대로이다.</p>
+    <p>다만 고조파(120 Hz)는 이 필터로 지워지지 않으므로 따로 노치를 더한다. 또 전원이 50 Hz인 나라에서는 f₀를 바꾼다. 노치가 너무 좁으면 전원 주파수가 조금만 흔들려도 잡음이 빠져나가고, 너무 넓으면 신호까지 깎는다. 처음 질문의 셋째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "노치를 좁게 할수록 좋다": 전원 주파수가 조금만 흔들려도 놓치고, 시간 응답(울림)이 길어집니다. (2) "노치 필터가 모든 잡음을 없앤다": 60 Hz 근처만 줄입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>노치를 좁게 하려고 r을 1에 아주 가깝게 하는 실수가 흔하다. 극이 단위원에 붙으면 필터가 오래 울려 갑작스러운 신호(QRS) 뒤에 60 Hz 꼬리가 남고, 계수의 반올림 오차로 불안정해질 수도 있다. 그래서 r은 0.9~0.98 정도에서 신호 왜곡과 잡음 제거를 맞바꿔 고른다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>영점 e^{±jω₀}, 극 re^{±jω₀}.</li>
-        <li>폭 ≈ (1 − r)f_s/π.</li>
-        <li>예: r 0.95, 500 Hz → 약 8 Hz 폭.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>노치 필터는 영점을 \(e^{\pm j\omega_0}\)에, 극을 \(re^{\pm j\omega_0}\)에 둔다. 노치 폭은 약 \((1 - r)f_s/\pi\)이다. 예를 들어 r = 0.95, f_s = 500 Hz이면 폭은 약 8 Hz이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f_s = 1000 Hz, f₀ = 50 Hz의 ω₀는?
-          <details><summary>답</summary><p>0.1π rad.</p></details>
+          <details><summary>답</summary><p>2π × 50/1000 = 0.1π rad이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>r = 0.99, f_s = 500 Hz의 노치 폭은?
-          <details><summary>답</summary><p>약 1.6 Hz.</p></details>
+          <details><summary>답</summary><p>0.01 × 500/π = 약 1.6 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>영점을 단위원 안(0.98)에 두면?
-          <details><summary>답</summary><p>60 Hz가 완전히 0이 되지 않고 얕은 노치가 됩니다.</p></details>
+          <details><summary>답</summary><p>60 Hz가 완전히 0이 되지 않고 얕은 노치가 된다.</p></details>
         </li>
       </ol>
     </div>

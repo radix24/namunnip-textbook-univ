@@ -8,65 +8,58 @@
 <article class="card q-card" id="text-e17-noise" data-kind="본문" data-std="전전17-04-02">
   <header class="card-head"><span class="no"></span><h2>전원 잡음을 줄이는 방법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>60 Hz 전원 잡음이 몸에 결합되는 경로(변위 전류, 자기 유도)를 안다.</li>
-        <li>공통 모드와 전극 불평형에 의한 차동 변환을 계산한다.</li>
-        <li>구동 우측 다리(DRL), 차폐, 노치 필터, 배터리 절연 등 대책을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>계측 증폭기와 CMRR (<a href="04-01.html">4.1절</a>), 전극 임피던스 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전원선 근처에서 심전도를 재면 60 Hz 물결이 신호를 덮어 버린다. 몸이 전원선에 닿지도 않았는데 이 잡음은 어떤 길로 들어올까? 잡음을 지우는 방법은 여러 가지인데, 무엇부터 해야 하고 60 Hz 노치 필터는 왜 마지막 수단일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="전원 잡음의 결합 경로와 대책(개형). 전력선과 몸 사이 수 pF의 정전 용량으로 변위 전류가 흘러 몸 전체에 공통 모드 전압이 생기고, 전극 선 고리에는 자기장이 전압을 유도한다. 예제 4.2.1에서 공통 모드 1 V, 전극 임피던스 차 20 kΩ, 입력 임피던스 100 MΩ이면 차동 잡음 0.2 mV로 ECG의 20%이다">
+        <path d="M60 40 H500" class="d" stroke-width="3"/><text x="70" y="32" class="td">전력선 60 Hz</text>
+        <rect x="160" y="90" width="80" height="70" class="lk"/><rect x="160" y="90" width="80" height="70" class="k" fill="none"/>
+        <text x="200" y="130" text-anchor="middle" class="s">몸</text>
+        <path d="M200 45 V58 M188 58 H212 M188 64 H212 M200 64 V88" class="d" fill="none" stroke-width="2"/>
+        <text x="216" y="70" class="s">수 pF</text>
+        <path d="M240 110 C300 100, 320 160, 380 140" class="a" fill="none" stroke-width="2"/><path d="M240 140 C300 150, 320 120, 380 130" class="a" fill="none" stroke-width="2"/>
+        <rect x="380" y="115" width="60" height="40" class="la"/><rect x="380" y="115" width="60" height="40" class="a"/><text x="410" y="140" text-anchor="middle" class="ta">증폭기</text>
+        <text x="270" y="90" class="s">선 고리 → 자기 유도</text>
+        <g class="s"><text x="60" y="186">V_d ≈ V_cm ΔZ/Z_cm = 1 V × 20 kΩ/100 MΩ = 0.2 mV</text></g>
+      </svg>
+      <figcaption>그림 1. 전원선과 몸 사이 정전 용량이 몸 전체를 공통 모드 전압으로 띄우고, 전극 선이 이루는 고리가 자기장을 받아들이므로, 잡음은 증폭기에 닿기 전부터 섞인다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>계측 증폭기와 CMRR(<a href="04-01.html">4.1절</a>), 전극 임피던스(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>결합 경로</h3>
-    <p>전력선과 몸 사이 작은 정전 용량(수 pF)으로 변위 전류가 흘러 몸 전체가 접지에 대해 수십 mV~수 V의 60 Hz 공통 모드 전압을 갖습니다. 또 전극 선이 만드는 고리에 자기장이 전압을 유도합니다.</p>
+    <p>전력선과 몸 사이에는 작은 정전 용량(수 pF)이 있다. 그래서 60 Hz 변위 전류가 흘러, 몸 전체가 접지에 대해 수십 mV~수 V의 60 Hz 공통 모드 전압을 갖는다. 또 전극 선이 만드는 고리에는 전원선 주변의 자기장이 전압을 유도한다(그림 1). 처음 질문의 첫째 답이 이 두 경로이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>몸의 공통 모드 전압 1 V(60 Hz), 두 전극 임피던스 차이 ΔZ = 20 kΩ, 증폭기 공통 모드 입력 임피던스 \(Z_{cm}\) = 100 MΩ. 전극 불평형이 만드는 차동 전압은? ECG 1 mV와 비교하라.</p>
     </div>
-    <p><i>풀이.</i> 각 입력이 전극 임피던스와 \(Z_{cm}\)의 분압이므로 차동 전압 ≈ \(V_{cm}\Delta Z/Z_{cm}\) = 1 × 20k/100M = 0.2 mV. ECG의 20%로, 증폭기 CMRR이 아무리 좋아도 이미 차동이 된 잡음은 지울 수 없습니다. \(Z_{cm}\)을 10 GΩ으로 키우면 2 μV로 줄어듭니다.</p>
+    <p><i>풀이.</i> 각 입력이 전극 임피던스와 \(Z_{cm}\)의 분압이므로 차동 전압은 ≈ \(V_{cm}\Delta Z/Z_{cm}\) = 1 × 20k/100M = 0.2 mV이다. ECG의 20%이며, 이미 차동이 된 잡음은 증폭기 CMRR이 아무리 좋아도 지울 수 없다(3.2절). 반면 \(Z_{cm}\)을 10 GΩ으로 키우면 2 μV로 준다.</p>
 
     <h3><span class="no">4.2.2</span>대책</h3>
-    <ul>
-      <li><b>구동 우측 다리(DRL)</b>: 공통 모드 전압을 감지해 반전·증폭한 전압을 셋째 전극(오른쪽 다리)으로 몸에 되돌려 공통 모드 자체를 줄인다(음의 궤환).</li>
-      <li><b>입력 임피던스 키우기, 전극 피부 준비</b>: 불평형 변환 감소.</li>
-      <li><b>차폐 선, 꼬인 선</b>: 정전·자기 결합 감소. 선 고리 면적 줄이기.</li>
-      <li><b>노치 필터(60 Hz)</b>: 최후 수단. 신호 성분도 깎고 위상이 바뀐다.</li>
-      <li><b>배터리 구동, 절연</b>: 전원 접지 경로를 끊어 결합을 줄이고 환자 안전도 확보.</li>
-    </ul>
+    <p>대책은 잡음이 들어오는 길을 막는 것부터 시작한다. 처음 질문의 둘째 답이 이 순서이다. 첫째로 구동 우측 다리(DRL)는 공통 모드 전압을 감지해 반전·증폭한 전압을 셋째 전극(오른쪽 다리)으로 몸에 되돌려, 공통 모드 자체를 줄이는 음의 되먹임이다.</p>
+    <p>둘째로 입력 임피던스를 키우고 전극과 피부를 잘 준비하면 불평형 변환이 준다. 셋째로 차폐 선과 꼬인 선을 쓰고 선 고리 면적을 줄이면 정전·자기 결합이 준다. 또 배터리 구동과 절연은 전원 접지 경로를 끊어 결합을 줄이고 환자 안전도 확보한다.</p>
+    <p>마지막 수단이 60 Hz 노치 필터이다(4.4절). 노치는 잡음뿐 아니라 그 주파수의 신호 성분도 깎고 주변의 위상을 바꾸므로, 앞의 대책으로 잡음을 줄인 뒤 남은 것만 지울 때 쓴다. 처음 질문의 셋째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "CMRR만 높으면 60 Hz는 해결된다": 전극 불평형으로 생긴 차동 잡음은 CMRR로 못 지웁니다. (2) "노치 필터면 충분하다": 고조파(120, 180 Hz)와 신호 왜곡이 남습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>잡음은 증폭한 뒤 필터로 지우면 된다고 여기기 쉽다. 하지만 잡음이 신호보다 수백 배 크면 첫 단에서 먼저 포화해 신호가 잘리고, 잘린 신호는 필터로 되살릴 수 없다. 그래서 잡음은 전극과 배선, 입력단에서 들어오기 전에 막는 것이 원칙이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>결합: 변위 전류(공통 모드), 자기 유도(선 고리).</li>
-        <li>불평형 변환 ≈ V_cm ΔZ/Z_cm → Z_cm을 크게.</li>
-        <li>DRL, 차폐·꼬인 선, 노치, 배터리 절연.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전원 잡음은 변위 전류에 의한 공통 모드와 선 고리의 자기 유도로 들어온다. 불평형 변환은 약 V_cm ΔZ/Z_cm이므로 Z_cm을 크게 한다. 대책은 DRL, 차폐·꼬인 선, 배터리 절연을 먼저 하고 노치는 마지막에 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>V_cm = 0.5 V, ΔZ = 10 kΩ, Z_cm = 1 GΩ의 차동 변환은?
-          <details><summary>답</summary><p>5 μV.</p></details>
+          <details><summary>답</summary><p>0.5 × 10k/1G = 5 μV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>DRL 루프 이득이 40 dB면 공통 모드 전압은 몇 분의 1로 주는가?
-          <details><summary>답</summary><p>약 1/101.</p></details>
+          <details><summary>답</summary><p>약 1/101로 준다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>전극 선 고리 면적 100 cm², 60 Hz 자기장 1 μT(정점)이면 유도 전압 정점은?
-          <details><summary>답</summary><p>\(\omega BA = 377 \times 10^{-6} \times 0.01 = 3.8\) μV.</p></details>
+          <details><summary>답</summary><p>\(\omega BA = 377 \times 10^{-6} \times 0.01 = 3.8\) μV이다.</p></details>
         </li>
       </ol>
     </div>

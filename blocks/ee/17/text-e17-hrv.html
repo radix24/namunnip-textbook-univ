@@ -8,21 +8,25 @@
 <article class="card q-card" id="text-e17-hrv" data-kind="본문" data-std="전전17-06-03">
   <header class="card-head"><span class="no"></span><h2>심박 변이도 지표 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RR 간격 열에서 평균 심박수, SDNN, RMSSD를 계산한다.</li>
-        <li>시간 영역 지표의 의미(전체 변동, 박동 간 변동)를 안다.</li>
-        <li>측정 길이와 이상 박동 제거의 필요를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>R 피크 검출 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">심박수가 분당 72회라고 해서 심장이 0.833초마다 정확히 뛰는 것은 아니다. 박동 간격은 숨을 들이쉬고 내쉴 때마다 조금씩 늘었다 줄었다 한다. 이 흔들림을 어떤 숫자로 나타낼 수 있을까? 그리고 그 숫자를 믿으려면 무엇을 먼저 걸러야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.3.1의 RR 간격 10개(812, 798, 845, 870, 822, 790, 805, 860, 885, 830 ms). 평균 831.7 ms(평균 심박수 72.1 bpm) 둘레로 흔들리며, 평균에서 벗어난 정도인 SDNN은 32.2 ms(음영 띠), 이웃 간격 차이의 RMS인 RMSSD는 38.4 ms이다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <rect x="80" y="79" width="400" height="69.9" class="la"/>
+        <path d="M80 114 H480" class="a dsh"/>
+        <polyline points="100,135.3 140,150.5 180,99.6 220,72.5 260,124.4 300,159.2 340,142.9 380,83.3 420,56.3 460,116.2" class="k" fill="none"/>
+        <g class="fd"><circle cx="100" cy="135.3" r="4"/><circle cx="140" cy="150.5" r="4"/><circle cx="180" cy="99.6" r="4"/><circle cx="220" cy="72.5" r="4"/><circle cx="260" cy="124.4" r="4"/><circle cx="300" cy="159.2" r="4"/><circle cx="340" cy="142.9" r="4"/><circle cx="380" cy="83.3" r="4"/><circle cx="420" cy="56.3" r="4"/><circle cx="460" cy="116.2" r="4"/></g>
+        <g text-anchor="end" class="s"><text x="74" y="174">780</text><text x="74" y="118">832</text><text x="74" y="44">900 ms</text></g>
+        <g text-anchor="middle" class="s"><text x="100" y="186">1</text><text x="460" y="186">10</text><text x="280" y="186">박동 번호</text></g>
+        <text x="486" y="110" class="ta">평균 831.7 ms</text><text x="486" y="84" class="ta">±SDNN 32.2</text>
+        <text x="180" y="40" class="s">RMSSD 38.4 ms (이웃 차이)</text>
+      </svg>
+      <figcaption>그림 1. RR 간격은 평균 둘레로 흔들리며, 그 전체 폭을 SDNN이, 박동마다 바뀌는 빠른 변동을 RMSSD가 나타낸다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>R 피크 검출(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>간격의 흔들림</h3>
-    <p>SDNN은 RR 간격의 표준편차(전체 변동), RMSSD는 이웃 간격 차이의 제곱 평균 제곱근(박동 간 빠른 변동, 부교감 신경 활동 반영)입니다.</p><pre><code>import statistics as st, math
+    <p>R 피크로 얻은 RR 간격 열에서 두 가지 시간 영역 지표를 구한다. SDNN은 RR 간격의 표준편차로, 기록 전체에서 간격이 얼마나 퍼져 있는지를 나타낸다. 반면 RMSSD는 이웃한 간격 차이의 제곱 평균 제곱근으로, 박동마다 바뀌는 빠른 변동을 나타내며 부교감 신경 활동을 반영한다. 처음 질문의 첫째 답이 이 두 지표이다(그림 1). 아래 코드는 RR 간격 10개로 두 지표를 계산한다.</p><pre><code>import statistics as st, math
 rr = [812, 798, 845, 870, 822, 790, 805, 860, 885, 830]      # ms
 hr = 60000 / st.mean(rr)
 sdnn = st.stdev(rr)
@@ -30,44 +34,39 @@ d = [b - a for a, b in zip(rr, rr[1:])]
 rmssd = math.sqrt(sum(x * x for x in d) / len(d))
 print(f"평균 RR {st.mean(rr):.1f} ms, 평균 심박수 {hr:.1f} bpm")
 print(f"SDNN {sdnn:.1f} ms, RMSSD {rmssd:.1f} ms")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>평균 RR 831.7 ms, 평균 심박수 72.1 bpm
 SDNN 32.2 ms, RMSSD 38.4 ms</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>위 결과에서 평균 심박수와 두 지표는? 이상 박동 하나(RR 400 ms)가 섞이면 어떻게 되는가?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과의 값이 각 지표입니다. 400 ms 같은 조기 박동이 섞이면 SDNN과 RMSSD가 크게 부풀어 해석이 틀리므로, 이상 박동을 먼저 걸러 냅니다(NN 간격). 짧은 기록(수십 박동)은 장기 기록(24시간)과 직접 비교하지 않습니다.</p>
+    <p><i>풀이.</i> 실행 결과를 보면 평균 심박수는 72.1 bpm, SDNN은 32.2 ms, RMSSD는 38.4 ms이다. 그런데 400 ms 같은 조기 박동이 섞이면 그 앞뒤 차이가 수백 ms가 되어 SDNN과 RMSSD가 크게 부풀고, 해석이 틀린다.</p>
+    <p>그래서 이상 박동을 먼저 걸러 정상 박동 사이의 간격(NN 간격)만으로 계산한다. 처음 질문의 둘째 답이 이것이다. 또 지표는 기록 길이에 따라 값이 달라지므로, 수십 박동의 짧은 기록과 24시간 기록을 직접 비교하지 않는다. 같은 사람이라도 앉았는지 누웠는지, 숨을 어떻게 쉬는지에 따라 달라지므로 측정 조건도 함께 적는다.</p>
+    <p>한편 RR 간격 열을 주파수로 바꿔 보는 방법도 있다. 호흡과 같은 주기의 고주파 성분(약 0.15~0.4 Hz)은 RMSSD와 비슷하게 부교감 활동을 반영하고, 더 느린 성분은 혈압 조절과 얽혀 있다. 다만 이런 분석은 간격이 고르지 않은 자료를 다시 표본화해야 하므로, 시간 영역 지표를 먼저 익힌다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "HRV가 크면 나쁘다": 휴식 시 큰 HRV는 대체로 건강한 자율 신경 조절을 뜻합니다(확인 필요: 상황별). (2) "심박수와 HRV는 같은 정보": 평균과 변동은 다른 정보입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>심박 변이도가 크면 심장 리듬이 불규칙해 나쁘다고 여기기 쉽다. 하지만 휴식 중의 큰 변이도는 대체로 자율 신경이 호흡과 상황에 맞춰 심박을 잘 조절한다는 뜻이다(상황별 해석은 확인 필요). 또 심박수와 변이도는 평균과 변동이라는 서로 다른 정보이므로, 하나로 다른 하나를 대신할 수 없다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>SDNN = RR 표준편차, RMSSD = 이웃 차이의 RMS.</li>
-        <li>평균 심박수 = 60000/평균 RR(ms).</li>
-        <li>이상 박동 제거 후 계산.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>SDNN은 RR 간격의 표준편차이고, RMSSD는 이웃 간격 차이의 RMS이다. 평균 심박수는 60000/평균 RR(ms)로 구한다. 계산은 이상 박동을 걸러 낸 NN 간격으로 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>평균 RR 750 ms의 심박수는?
-          <details><summary>답</summary><p>80 bpm.</p></details>
+          <details><summary>답</summary><p>60000/750 = 80 bpm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>RR 800, 810, 790의 RMSSD는?
-          <details><summary>답</summary><p>√((100 + 400)/2) ≈ 15.8 ms.</p></details>
+          <details><summary>답</summary><p>√((100 + 400)/2) ≈ 15.8 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>RMSSD가 SDNN보다 빠른 변동에 민감한 이유는?
-          <details><summary>답</summary><p>이웃 간격의 차이만 보아 느린 추세가 빠지기 때문입니다.</p></details>
+          <details><summary>답</summary><p>이웃 간격의 차이만 보아 느린 추세가 빠지기 때문이다.</p></details>
         </li>
       </ol>
     </div>

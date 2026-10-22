@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e17-sampling" data-kind="본문" data-std="전전17-02-03">
   <header class="card-head"><span class="no"></span><h2>생체 신호의 표본화율과 분해능</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>신호 대역으로 표본화율을 정한다(Nyquist + 여유).</li>
-        <li>증폭 이득과 ADC 비트 수로 입력 환산 분해능을 계산한다.</li>
-        <li>동적 범위와 직류 오프셋을 고려한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>생체 신호 대역 (<a href="02-01.html">2.1절</a>), 표본화 (<a href="../6/06.html">전전6 6단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">심전도를 디지털로 저장하려면 1초에 몇 번 재고, 한 번에 몇 비트로 적어야 할까? 12비트 ADC 앞에 이득 1000을 주면 마이크로볼트 단위까지 읽을 수 있을 것 같은데, 실제로는 왜 신호가 잘려 버릴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1의 이득 선택. 이득 1000이면 3.3 V 12비트 ADC의 입력 환산 분해능은 0.81 μV로 충분하지만, 전극 직류 오프셋 300 mV도 1000배가 되어 300 V로 ADC 범위(3.3 V)를 훨씬 넘어 포화한다. 첫 단 이득을 10으로 두면 오프셋이 3 V로 범위 안에 들어온다">
+        <line x1="80" y1="170" x2="500" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <rect x="80" y="125" width="420" height="45" class="lb"/><text x="290" y="152" text-anchor="middle" class="tb">ADC 범위 3.3 V</text>
+        <path d="M80 136 H500" class="a" stroke-width="2.5"/><text x="300" y="132" class="ta">오프셋 × 10 = 3 V</text>
+        <path d="M80 40 H500" class="d dsh" stroke-width="2.5"/><text x="240" y="34" class="td">오프셋 × 1000 = 300 V → 포화</text>
+        <g class="s"><text x="100" y="70">ECG 1 mV, 오프셋 최대 300 mV</text><text x="100" y="90">이득 1000 → LSB 0.81 μV, 그러나 포화</text><text x="100" y="110">첫 단 10 → 고역 통과 → 나머지 증폭</text></g>
+      </svg>
+      <figcaption>그림 1. 전극의 직류 오프셋이 신호보다 수백 배 커서, 첫 단 이득을 크게 하면 오프셋이 ADC 범위를 넘어 신호까지 잘리므로 이득은 직류를 없앤 뒤에 나눠 준다(예제 2.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>생체 신호 대역(<a href="02-01.html">2.1절</a>), 표본화(<a href="../6/06.html">전전6 6단원</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>얼마나 자주, 얼마나 촘촘히</h3>
-    <p>진단용 ECG는 0.05~150 Hz라 보통 500 Hz 이상으로 표본화합니다. 입력 환산 분해능 = (ADC 전범위/2ᴺ)/이득. 전극 오프셋(수백 mV까지)이 있어 이득을 무작정 키우면 포화합니다.</p>
+    <p>얼마나 자주 잴지는 신호 대역이 정한다. 진단용 ECG는 0.05~150 Hz여서 보통 500 Hz 이상으로 표본화한다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>얼마나 촘촘히 잴지는 입력 환산 분해능으로 본다. 입력 환산 분해능은 (ADC 전범위/2ᴺ)/이득으로, 이득을 키울수록 작아진다. 그런데 전극 오프셋이 수백 mV까지 있어, 이득을 무작정 키우면 오프셋이 먼저 ADC 범위를 넘어 포화한다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>이득 1000, 3.3 V 12비트 ADC의 입력 환산 분해능은? 전극 직류 오프셋 300 mV가 있으면?</p>
     </div>
-    <p><i>풀이.</i> 3.3/4096/1000 = 0.81 μV로 ECG(약 1 mV)에 충분합니다. 그러나 오프셋 300 mV × 1000 = 300 V로 포화하므로, 첫 단 이득을 작게(예: 10) 하고 고역 통과로 직류를 없앤 뒤 증폭하거나, 24비트 ADC로 이득 없이 받습니다.</p>
+    <p><i>풀이.</i> 3.3/4096/1000 = 0.81 μV로 ECG(약 1 mV)에 충분하다. 그러나 오프셋 300 mV × 1000 = 300 V로 포화한다. 그러므로 첫 단 이득을 작게(예를 들어 10) 하고 고역 통과로 직류를 없앤 뒤 증폭하거나, 24비트 ADC로 이득 없이 받는다.</p>
+    <p>24비트 ADC는 LSB가 아주 작아 이득 없이도 μV 이하를 읽을 수 있으므로, 오프셋을 그대로 받아 디지털에서 지운다. 요즘 ECG 전용 칩이 이 방식을 많이 쓰는 이유이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "표본화율은 높을수록 좋다": 저장량과 전력이 늘고 이득은 작아집니다. (2) "이득을 키우면 분해능이 좋다": 오프셋과 동적 범위 때문에 한계가 있습니다.</div>
+    <p>표본화율은 시간 정밀도와도 이어진다. 250 Hz로 표본화하면 R 피크의 시각을 4 ms 간격으로만 알 수 있어, 박동 간격의 작은 흔들림을 재는 심박 변이도 분석에는 거칠다. 그래서 감시용은 250 Hz로도 되지만, 진단이나 변이도 분석에는 500 Hz 이상을 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>표본화 ≥ 2 × 대역 + 여유(ECG 500 Hz).</li>
-        <li>입력 환산 LSB = 전범위/(2ᴺ × 이득).</li>
-        <li>직류 오프셋 → 첫 단 이득 제한.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>비트 수가 많을수록 언제나 더 정밀하게 잰다고 여기기 쉽다. 하지만 증폭기와 전극의 잡음이 LSB보다 크면, 비트를 늘려도 잡음만 더 촘촘히 적을 뿐 신호의 정밀도는 늘지 않는다. 그래서 ADC 분해능은 앞단 잡음 수준과 맞춰 고른다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>표본화율은 대역의 두 배에 여유를 더해 정하며, ECG는 500 Hz 이상이다. 입력 환산 LSB는 전범위/(2ᴺ × 이득)이다. 전극의 직류 오프셋 때문에 첫 단 이득은 작게 제한한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>EEG 대역 0.5~100 Hz의 최소 표본화율은?
-          <details><summary>답</summary><p>200 Hz(실제 250~500 Hz).</p></details>
+          <details><summary>답</summary><p>200 Hz이다(실제 250~500 Hz).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>24비트, 2.4 V 전범위, 이득 1의 LSB는?
-          <details><summary>답</summary><p>약 0.14 μV.</p></details>
+          <details><summary>답</summary><p>2.4/2²⁴ ≈ 0.14 μV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>웨어러블에서 표본화율을 낮추고 싶을 때의 제약은?
-          <details><summary>답</summary><p>R 피크 시간 정밀도(HRV)와 QRS 모양이 나빠집니다.</p></details>
+          <details><summary>답</summary><p>R 피크 시간 정밀도(HRV)와 QRS 모양이 나빠진다.</p></details>
         </li>
       </ol>
     </div>
