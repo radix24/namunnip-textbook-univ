@@ -8,68 +8,65 @@
 <article class="card q-card" id="text-m12-modes" data-kind="본문" data-std="기계12-01-01">
   <header class="card-head"><span class="no"></span><h2>열전달의 세 방식: 전도, 대류, 복사</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>열역학이 "얼마나"를 다룬다면 열전달은 "얼마나 빨리"를 다룬다는 차이를 안다.</li>
-        <li>Fourier 법칙, Newton 냉각 법칙, Stefan-Boltzmann 법칙으로 열전달률을 구한다.</li>
-        <li>표면의 에너지 평형으로 미지의 표면 온도를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>열과 에너지 보존 (<a href="../me3/01-01.html">열역학 1단원</a>), 고등학교 물리의 열 전달.</li>
-      </ul>
-    </div>
+    <p class="q-ask">열역학은 80 °C 판이 식어 20 °C가 될 때 열이 얼마나 빠져나가는지 알려 준다. 하지만 그 일이 1분 만에 끝나는지 1시간이 걸리는지는 말해 주지 않는다. 열이 흐르는 빠르기는 무엇이 정할까? 바람 없는 방에 놓인 뜨거운 판은 공기로 열을 더 많이 잃을까, 아니면 눈에 보이지 않는 복사로 더 많이 잃을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1에서 80 °C 판(0.5 m², 방사율 0.9)이 20 °C 정지 공기와 20 °C 벽으로 잃는 열. 대류는 300 W, 복사는 208 W로 복사가 대류에 맞먹고, 합은 508 W이다">
+        <line x1="120" y1="40" x2="120" y2="160" class="ax"/><line x1="120" y1="160" x2="500" y2="160" class="ax"/>
+        <rect x="120" y="55" width="300" height="28" class="la"/><rect x="120" y="55" width="300" height="28" class="a"/>
+        <rect x="120" y="100" width="208" height="28" class="lc"/><rect x="120" y="100" width="208" height="28" class="c"/>
+        <g text-anchor="end" class="s"><text x="112" y="74">대류</text><text x="112" y="119">복사</text></g>
+        <text x="270" y="74" text-anchor="middle" class="ta">hAΔT, h = 10</text><text x="224" y="119" text-anchor="middle" class="tc">ε = 0.9</text>
+        <g class="s"><text x="428" y="74">300 W</text><text x="336" y="119">208 W (h_r = 6.9)</text></g>
+        <g text-anchor="middle" class="s"><text x="120" y="176">0</text><text x="220" y="176">100</text><text x="320" y="176">200</text><text x="420" y="176">300 W</text></g>
+      </svg>
+      <figcaption>그림 1. 정지 공기의 대류 계수가 작아서, 80 °C 정도의 보통 온도에서도 복사가 대류의 3분의 2 넘게 열을 내보낸다(예제 1.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>열과 에너지 보존(<a href="../me3/01-01.html">열역학 1단원</a>), 고등학교 물리의 열 전달을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>열역학과 열전달</h3>
-    <p>열역학은 상태가 바뀔 때 열이 얼마나 오가는지 알려 주지만, 그 일이 1초에 일어나는지 1시간에 일어나는지는 말해 주지 않습니다. 열전달은 온도 차가 있을 때 열이 흐르는 빠르기(열전달률, W)를 다룹니다. 전자 칩의 냉각, 건물 단열, 열교환기의 크기가 모두 이 빠르기의 문제입니다.</p>
+    <p>열역학은 상태가 바뀔 때 열이 얼마나 오가는지 알려 주지만, 그 일이 1초에 일어나는지 1시간에 일어나는지는 말해 주지 않는다. 열전달은 온도 차가 있을 때 열이 흐르는 빠르기, 곧 열전달률(W)을 다룬다. 전자 칩의 냉각, 건물 단열, 열교환기의 크기가 모두 이 빠르기의 문제이다.</p>
 
     <h3><span class="no">1.1.2</span>세 방식</h3>
+    <p>열은 세 가지 방식으로 흐르며, 방식마다 빠르기를 정하는 법칙이 따로 있다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">세 가지 열전달 법칙</span>
-      <p><b>전도</b>(Fourier 법칙): 물질 안에서 분자·전자의 충돌로 전해지는 열. 두께 \(L\), 넓이 \(A\)인 벽의 양면 온도 차 \(\Delta T\)에서 \(\dot Q = kA\dfrac{\Delta T}{L}\) (\(k\): 열전도도, W/(m·K)).</p>
-      <p><b>대류</b>(Newton 냉각 법칙): 표면과 그 위를 흐르는 유체 사이의 열. \(\dot Q = hA(T_s - T_\infty)\) (\(h\): 대류 열전달 계수, W/(m²·K)).</p>
-      <p><b>복사</b>(Stefan-Boltzmann 법칙): 전자기파로 전해지는 열, 매질이 필요 없음. 큰 주위에 둘러싸인 작은 표면: \(\dot Q = \varepsilon\sigma A(T_s^4 - T_{sur}^4)\) (\(\sigma = 5.67\times10^{-8}\) W/(m²·K⁴), 절대 온도).</p>
+      <p>전도(Fourier 법칙)는 물질 안에서 분자와 전자의 충돌로 전해지는 열이다. 두께 \(L\), 넓이 \(A\)인 벽의 양면 온도 차가 \(\Delta T\)이면 \(\dot Q = kA\dfrac{\Delta T}{L}\)이다(\(k\)는 열전도도, W/(m·K)).</p>
+      <p>대류(Newton 냉각 법칙)는 표면과 그 위를 흐르는 유체 사이의 열이다. \(\dot Q = hA(T_s - T_\infty)\)이며, \(h\)는 대류 열전달 계수(W/(m²·K))이다.</p>
+      <p>복사(Stefan-Boltzmann 법칙)는 전자기파로 전해지는 열이어서 매질이 필요 없다. 큰 주위에 둘러싸인 작은 표면은 \(\dot Q = \varepsilon\sigma A(T_s^4 - T_{sur}^4)\)이다(\(\sigma = 5.67\times10^{-8}\) W/(m²·K⁴), 온도는 절대 온도).</p>
     </div>
-    <p class="q-term"><b>대표 크기</b>: \(k\)는 구리 400, 강 50, 유리 0.8, 물 0.6, 공기 0.026 W/(m·K). \(h\)는 정지 공기의 자연 대류 5~25, 강제 공기 25~250, 물 강제 대류 수백~수천, 끓음·응축 수천~수만 W/(m²·K).</p>
+    <p class="q-term">대표 크기를 알아 두면 어림이 쉽다. \(k\)는 구리 400, 강 50, 유리 0.8, 물 0.6, 공기 0.026 W/(m·K)이다. \(h\)는 정지 공기의 자연 대류가 5~25, 강제 공기가 25~250, 물의 강제 대류가 수백~수천, 끓음과 응축이 수천~수만 W/(m²·K)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1 <span class="nm">(뜨거운 판의 대류와 복사)</span></span>
       <p>80 °C 판(넓이 0.5 m², 방사율 0.9)이 20 °C 정지 공기(\(h = 10\) W/(m²·K))와 20 °C 벽에 둘러싸여 있다. 대류와 복사로 잃는 열은?</p>
     </div>
-    <p><i>풀이.</i> 대류 \(10\times0.5\times60 = 300\) W. 복사 \(0.9\times5.67\times10^{-8}\times0.5\times(353.15^4 - 293.15^4) = 208\) W. 정지 공기에서는 복사가 대류에 맞먹습니다. 복사를 \(h_r(T_s - T_{sur})\)로 쓰면 \(h_r = 208/(0.5\times60) = 6.9\) W/(m²·K)입니다.</p>
+    <p><i>풀이.</i> 대류는 \(10\times0.5\times60 = 300\) W이다. 복사는 절대 온도로 \(0.9\times5.67\times10^{-8}\times0.5\times(353.15^4 - 293.15^4) = 208\) W이다. 즉 정지 공기에서는 복사가 대류에 맞먹으며, 처음 질문의 둘째 답이 이것이다(그림 1).</p>
+    <p>복사를 대류처럼 \(h_r(T_s - T_{sur})\)로 쓰면 \(h_r = 208/(0.5\times60) = 6.9\) W/(m²·K)이다. 이 복사 열전달 계수가 정지 공기의 \(h\)와 비슷하므로, 자연 대류 문제에서 복사를 빼면 열 손실을 크게 과소평가한다.</p>
 
     <h3><span class="no">1.1.3</span>표면 에너지 평형</h3>
-    <p>표면은 두께가 없어 에너지를 저장하지 못하므로, 들어온 열 = 나간 열입니다. 벽 안에서 전도로 온 열이 바깥 공기로 대류와 복사로 나가는 경우를 식으로 쓰고 미지의 표면 온도를 구할 수 있습니다(연습문제 심화).</p>
+    <p>표면은 두께가 없어 에너지를 저장하지 못하므로, 들어온 열과 나간 열이 같다. 예를 들어 벽 안에서 전도로 온 열이 바깥 공기로 대류와 복사로 나가는 경우를 식으로 쓰면, 미지의 표면 온도를 구할 수 있다(연습문제 3).</p>
 
-    <div class="tb-note"><b>주의</b>(1) 복사 식의 온도는 반드시 켈빈입니다. (2) \(h\)는 물성값이 아니라 흐름 조건에 따라 바뀌는 값입니다(5단원). (3) 전도의 \(\Delta T/L\)는 온도 분포가 직선일 때(평면 벽, 정상, 열 발생 없음)만 쓸 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>복사 식에 섭씨 온도를 넣는 실수가 흔하다. \(T^4\)은 절대 온도로만 의미가 있어서, 80 °C와 20 °C를 그대로 넣으면 복사가 수십 배 작게 나온다. 또 전도와 대류 식의 온도 차는 섭씨로 계산해도 켈빈과 같지만, 복사는 네제곱의 차이므로 반드시 켈빈으로 바꾼 뒤 계산한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전도 \(kA\Delta T/L\), 대류 \(hA(T_s - T_\infty)\), 복사 \(\varepsilon\sigma A(T_s^4 - T_{sur}^4)\).</li>
-        <li>정지 공기에서는 복사도 대류만큼 중요하다.</li>
-        <li>표면 에너지 평형: 들어온 열 = 나간 열.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전도는 \(kA\Delta T/L\), 대류는 \(hA(T_s - T_\infty)\), 복사는 \(\varepsilon\sigma A(T_s^4 - T_{sur}^4)\)로 열전달률을 구한다. 정지 공기에서는 복사도 대류만큼 중요하다. 표면에서는 들어온 열과 나간 열이 같다는 에너지 평형을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>두께 5 mm, 넓이 1.2 m² 유리창(\(k = 0.78\))의 안쪽 표면 15 °C, 바깥 5 °C일 때 전도 열전달률은?
-          <details><summary>답</summary><p>\(0.78\times1.2\times10/0.005 = 1872\) W.</p></details>
+          <details><summary>답</summary><p>\(0.78\times1.2\times10/0.005 = 1872\) W이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>전기 히터선(지름 2 mm, 길이 1 m)에 500 W를 넣었다. 공기 \(h = 100\) W/(m²·K), 20 °C이고 복사를 무시하면 선의 표면 온도는?
-          <details><summary>답</summary><p>\(A = \pi\times0.002\times1 = 0.00628\) m². \(T_s = 20 + 500/(100\times0.00628) = 816\) °C. 실제로는 이 온도에서 복사가 커서 더 낮아진다.</p></details>
+          <details><summary>답</summary><p>\(A = \pi\times0.002\times1 = 0.00628\) m²이므로 \(T_s = 20 + 500/(100\times0.00628) = 816\) °C. 실제로는 이 온도에서 복사가 커서 더 낮아진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>두께 0.1 m 벽(\(k = 1\))의 안쪽 표면이 50 °C이고 바깥 표면은 20 °C 공기(\(h = 20\))로 대류만 한다. 바깥 표면 온도와 열유속은?
-          <details><summary>답</summary><p>표면 평형 \(k(50 - T_s)/0.1 = 20(T_s - 20)\): \(10(50 - T_s) = 20(T_s - 20)\) → \(T_s = 30\) °C, 열유속 200 W/m².</p></details>
+          <details><summary>답</summary><p>표면 평형 \(k(50 - T_s)/0.1 = 20(T_s - 20)\), 곧 \(10(50 - T_s) = 20(T_s - 20)\)에서 \(T_s = 30\) °C이고 열유속은 200 W/m²이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,67 +8,63 @@
 <article class="card q-card" id="text-m12-forced" data-kind="본문" data-std="기계12-05-01">
   <header class="card-head"><span class="no"></span><h2>강제 대류 상관식: 평판과 원관의 열전달 계수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Nusselt 수, Reynolds 수, Prandtl 수의 뜻을 안다.</li>
-        <li>평판 외부 유동과 원관 내부 유동의 상관식으로 \(h\)를 구한다.</li>
-        <li>물성값을 어떤 온도에서 읽는지, 상관식의 적용 범위를 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>경계층과 Reynolds 수 (<a href="../me11/03-01.html">응용유체역학 3.1절</a>), 대류 법칙 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">대류 열전달 계수 \(h\)는 공기냐 물이냐, 빠르냐 느리냐, 판이냐 관이냐에 따라 수백 배씩 달라진다. 설계할 때마다 실험을 새로 할 수는 없는데, 다른 크기와 다른 유체에서 얻은 실험 결과를 어떻게 우리 문제에 옮겨 쓸 수 있을까? 같은 관이라도 물이 층류로 흐를 때와 난류로 흐를 때 \(h\)는 얼마나 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.1.1에서 구한 평균 대류 열전달 계수(로그 눈금). 10 m/s 공기가 지나는 0.5 m 평판은 17 W/(m²·K), 같은 지름 20 mm 관의 물이 층류라면 115, 1 m/s 난류라면 5030 W/(m²·K)이다. 물의 난류가 공기 평판보다 수백 배, 같은 관의 층류보다 약 40배 크다">
+        <line x1="120" y1="40" x2="120" y2="160" class="ax"/><line x1="120" y1="160" x2="500" y2="160" class="ax"/>
+        <rect x="120" y="50" width="27.7" height="26" class="la"/><rect x="120" y="50" width="27.7" height="26" class="a"/>
+        <rect x="120" y="88" width="127.3" height="26" class="lc"/><rect x="120" y="88" width="127.3" height="26" class="c"/>
+        <rect x="120" y="126" width="324.2" height="26" class="lb"/><rect x="120" y="126" width="324.2" height="26" class="b"/>
+        <g text-anchor="end" class="s"><text x="112" y="68">공기 평판</text><text x="112" y="106">물 관 층류</text><text x="112" y="144">물 관 난류</text></g>
+        <g class="s"><text x="156" y="68">17</text><text x="256" y="106">115</text><text x="452" y="144">5030</text></g>
+        <g text-anchor="middle" class="s"><text x="120" y="176">10</text><text x="240" y="176">100</text><text x="360" y="176">1000</text><text x="480" y="176">10⁴ W/(m²·K)</text></g>
+      </svg>
+      <figcaption>그림 1. 대류 계수는 유체의 열전도도와 흐름이 얼마나 잘 섞이는지에 크게 좌우되어서, 물의 난류는 공기 평판보다 수백 배, 같은 관의 층류보다 약 40배 큰 대류 계수를 준다(예제 5.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>경계층과 Reynolds 수(<a href="../me11/03-01.html">응용유체역학 3.1절</a>), 대류 법칙(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>무차원수</h3>
-    <p>대류 열전달 계수 \(h\)는 유체의 종류, 속도, 크기, 흐름 상태에 따라 달라집니다. 실험 결과를 무차원수로 묶으면 다른 크기와 유체에도 쓸 수 있습니다.</p>
-    <p class="q-term"><b>Nusselt 수</b> \(\text{Nu} = hL/k_f\): 대류가 같은 두께 유체층의 순수 전도보다 몇 배 열을 잘 옮기는가(\(k_f\): 유체의 열전도도).</p>
-    <p class="q-term"><b>Prandtl 수</b> \(\text{Pr} = \nu/\alpha\): 운동량이 퍼지는 빠르기와 열이 퍼지는 빠르기의 비. 공기 0.7, 물 2~7, 기름 수백.</p>
-    <p>강제 대류는 \(\text{Nu} = f(\text{Re}, \text{Pr})\) 꼴이며, 실험으로 정한 상관식을 씁니다.</p>
+    <p>대류 열전달 계수 \(h\)는 유체의 종류, 속도, 크기, 흐름 상태에 따라 달라진다. 하지만 실험 결과를 무차원수로 묶으면, 무차원수가 같은 다른 크기와 다른 유체에도 그대로 쓸 수 있다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p class="q-term">Nusselt 수 \(\text{Nu} = hL/k_f\)는 대류가 같은 두께 유체층의 순수 전도보다 몇 배 열을 잘 옮기는지를 나타낸다(\(k_f\)는 유체의 열전도도).</p>
+    <p class="q-term">Prandtl 수 \(\text{Pr} = \nu/\alpha\)는 운동량이 퍼지는 빠르기와 열이 퍼지는 빠르기의 비이다. 공기는 0.7, 물은 2~7, 기름은 수백이다.</p>
+    <p>강제 대류에서 Nu는 Re와 Pr만의 함수, 곧 \(\text{Nu} = f(\text{Re}, \text{Pr})\) 꼴이며, 이 함수는 실험으로 정한 상관식으로 쓴다.</p>
     <div class="tb-env thm">
       <span class="lb">대표 상관식</span>
-      <p>평판 층류(평균, \(\text{Re}_L &lt; 5\times10^5\)): \(\overline{\text{Nu}}_L = 0.664\,\text{Re}_L^{1/2}\text{Pr}^{1/3}\)</p>
-      <p>평판 난류(평균, 앞전부터 난류 가정): \(\overline{\text{Nu}}_L = 0.037\,\text{Re}_L^{4/5}\text{Pr}^{1/3}\)</p>
-      <p>원관 층류 완전 발달: \(\text{Nu}_D = 3.66\)(벽 온도 일정), 4.36(열유속 일정)</p>
-      <p>원관 난류(Dittus-Boelter, \(\text{Re}_D &gt; 10^4\)): \(\text{Nu}_D = 0.023\,\text{Re}_D^{0.8}\text{Pr}^n\), 가열 \(n = 0.4\), 냉각 \(n = 0.3\)</p>
+      <p>평판 층류(평균, \(\text{Re}_L &lt; 5\times10^5\))는 \(\overline{\text{Nu}}_L = 0.664\,\text{Re}_L^{1/2}\text{Pr}^{1/3}\)이다.</p>
+      <p>평판 난류(평균, 앞전부터 난류 가정)는 \(\overline{\text{Nu}}_L = 0.037\,\text{Re}_L^{4/5}\text{Pr}^{1/3}\)이다.</p>
+      <p>원관 층류 완전 발달은 \(\text{Nu}_D = 3.66\)(벽 온도 일정), 4.36(열유속 일정)이다.</p>
+      <p>원관 난류(Dittus-Boelter, \(\text{Re}_D &gt; 10^4\))는 \(\text{Nu}_D = 0.023\,\text{Re}_D^{0.8}\text{Pr}^n\)이며, 가열이면 \(n = 0.4\), 냉각이면 \(n = 0.3\)이다.</p>
     </div>
-    <p>평판은 경계층 바깥과 벽 평균 온도(막 온도), 관은 유체 평균 온도에서 물성을 읽습니다.</p>
+    <p>물성은 평판이면 경계층 바깥과 벽의 평균 온도인 막 온도에서, 관이면 유체 평균 온도에서 읽는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1 <span class="nm">(공기 평판과 물 관)</span></span>
       <p>(가) 공기(\(\nu = 1.6\times10^{-5}\), \(k = 0.026\), Pr = 0.71)가 10 m/s로 길이 0.5 m 평판을 지날 때 평균 \(h\)는? (나) 40 °C 물(\(\nu = 0.658\times10^{-6}\), \(k = 0.631\), Pr = 4.32)이 안지름 20 mm 관을 1 m/s로 흐르며 가열될 때 \(h\)는?</p>
     </div>
-    <p><i>풀이.</i> (가) \(\text{Re}_L = 3.1\times10^5\) 층류, \(\text{Nu} = 0.664\times559\times0.892 = 331\), \(h = 331\times0.026/0.5 = 17\) W/(m²·K). (나) \(\text{Re}_D = 30{,}400\) 난류, \(\text{Nu} = 0.023\times30400^{0.8}\times4.32^{0.4} = 159\), \(h = 159\times0.631/0.02 = 5030\) W/(m²·K). 같은 크기라도 물의 \(h\)가 공기보다 수백 배 큽니다. 같은 관에서 흐름이 층류였다면 \(\text{Nu} = 3.66\), \(h = 115\)로 40분의 1입니다.</p>
+    <p><i>풀이.</i> (가) \(\text{Re}_L = 3.1\times10^5\)으로 층류이므로 \(\text{Nu} = 0.664\times559\times0.892 = 331\)이고, \(h = 331\times0.026/0.5 = 17\) W/(m²·K)이다. (나) \(\text{Re}_D = 30{,}400\)으로 난류이므로 \(\text{Nu} = 0.023\times30400^{0.8}\times4.32^{0.4} = 159\)이고, \(h = 159\times0.631/0.02 = 5030\) W/(m²·K)이다.</p>
+    <p>즉 비슷한 크기라도 물의 \(h\)가 공기보다 수백 배 크다(그림 1). 또 같은 관에서 흐름이 층류였다면 \(\text{Nu} = 3.66\), \(h = 115\)로 난류의 40분의 1이다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 상관식의 오차는 보통 ±10~25%입니다. (2) 관 입구 근처는 경계층이 발달 중이라 \(h\)가 더 큽니다(짧은 관). (3) 층류·난류 판단을 먼저 하고 알맞은 식을 고릅니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>상관식을 적용 범위 밖에서 쓰는 실수가 흔하다. Dittus-Boelter 식은 \(\text{Re}_D &gt; 10^4\)인 완전 발달 난류에서 만든 식이어서, 층류나 천이 영역에 넣으면 \(h\)를 크게 틀린다. 또 Nu의 \(k\)는 유체의 열전도도인데 벽 재료의 값을 넣는 실수도 자주 나온다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\text{Nu} = hL/k_f\), 강제 대류 \(\text{Nu} = f(\text{Re}, \text{Pr})\).</li>
-        <li>평판 층류 \(0.664\text{Re}^{1/2}\text{Pr}^{1/3}\), 관 난류 \(0.023\text{Re}^{0.8}\text{Pr}^{0.4}\), 관 층류 3.66/4.36.</li>
-        <li>물성 온도와 적용 범위를 확인한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>대류는 \(\text{Nu} = hL/k_f\)로 무차원화하고, 강제 대류는 \(\text{Nu} = f(\text{Re}, \text{Pr})\)의 상관식을 쓴다. 평판 층류는 \(0.664\text{Re}^{1/2}\text{Pr}^{1/3}\), 관 난류는 \(0.023\text{Re}^{0.8}\text{Pr}^{0.4}\), 관 층류는 3.66 또는 4.36이다. 물성 온도와 적용 범위를 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 (나)에서 유속을 두 배로 하면 \(h\)는 몇 배인가?
-          <details><summary>답</summary><p>\(2^{0.8} = 1.74\)배, 약 8750 W/(m²·K).</p></details>
+          <details><summary>답</summary><p>\(2^{0.8} = 1.74\)배인 약 8750 W/(m²·K)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 (가) 평판 0.5 m × 1 m에서 판이 60 °C, 공기 20 °C이면 한 면의 열 손실은?
-          <details><summary>답</summary><p>\(17.2\times0.5\times40 = 344\) W.</p></details>
+          <details><summary>답</summary><p>\(17.2\times0.5\times40 = 344\) W이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>층류 평판에서 \(h\)는 길이 \(L\)에 어떻게 의존하는가? 같은 넓이라면 흐름 방향으로 짧고 넓은 판과 길고 좁은 판 중 어느 쪽이 열을 많이 잃는가?
-          <details><summary>답</summary><p>\(\overline{h} \propto \text{Re}_L^{1/2}/L \propto L^{-1/2}\). 앞전 근처의 경계층이 얇아 \(h\)가 크므로 흐름 방향으로 짧은 판이 유리하다(방열판 핀을 흐름 방향으로 짧게 끊는 이유).</p></details>
+          <details><summary>답</summary><p>\(\overline{h} \propto \text{Re}_L^{1/2}/L \propto L^{-1/2}\)이다. 앞전 근처의 경계층이 얇아 \(h\)가 크므로 흐름 방향으로 짧은 판이 유리하다(방열판 핀을 흐름 방향으로 짧게 끊는 이유).</p></details>
         </li>
       </ol>
     </div>

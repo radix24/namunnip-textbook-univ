@@ -8,57 +8,56 @@
 <article class="card q-card" id="text-m12-internal" data-kind="본문" data-std="기계12-05-03">
   <header class="card-head"><span class="no"></span><h2>관 내부 대류와 출구 온도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>관 내부 흐름의 층류·난류 Nusselt 수를 고른다.</li>
-        <li>벽 온도가 일정할 때 유체 온도가 지수적으로 벽 온도에 다가감을 안다.</li>
-        <li>출구 온도와 전달 열량을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>강제 대류 무차원수 (<a href="05-01.html">5.1절</a>), 관 유동(유체역학 7.1절).</li>
-      </ul>
-    </div>
+    <p class="q-ask">80 °C로 유지되는 관 속으로 20 °C 물을 흘려 데운다. 관을 두 배로 길게 하면 출구 온도도 두 배만큼 오를까? 관이 아무리 길어도 넘을 수 없는 온도가 있다면 그것은 무엇이고, 물이 관을 따라가며 데워지는 모양은 어떤 꼴일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 물 가열관(안지름 10 mm, 길이 2 m, 벽 80 °C)에서 관을 따라간 물의 평균 온도 T = 80 − 60e^(−1.11x/2). 입구 20 °C에서 출구 60.2 °C까지 오르며, 벽과의 온도 차가 줄어 오르는 빠르기가 점점 느려지고 벽 온도 80 °C에 다가간다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="40" x2="80" y2="170" class="ax"/>
+        <path d="M80 74 H500" class="d dsh"/>
+        <path d="M80.0 146.0 L90.0 144.0 L100.0 142.1 L110.0 140.2 L120.0 138.4 L130.0 136.7 L140.0 135.0 L150.0 133.3 L160.0 131.7 L170.0 130.1 L180.0 128.6 L190.0 127.1 L200.0 125.6 L210.0 124.2 L220.0 122.8 L230.0 121.5 L240.0 120.2 L250.0 118.9 L260.0 117.7 L270.0 116.5 L280.0 115.3 L290.0 114.2 L300.0 113.1 L310.0 112.0 L320.0 111.0 L330.0 110.0 L340.0 109.0 L350.0 108.0 L360.0 107.1 L370.0 106.2 L380.0 105.3 L390.0 104.5 L400.0 103.6 L410.0 102.8 L420.0 102.0 L430.0 101.3 L440.0 100.5 L450.0 99.8 L460.0 99.1 L470.0 98.4 L480.0 97.7" class="b" stroke-width="2.5"/>
+        <circle cx="80" cy="146" r="4" class="fb"/><circle cx="480" cy="97.8" r="4" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0 (입구)</text><text x="280" y="186">1</text><text x="480" y="186">2 m (출구)</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="78">80 °C</text><text x="74" y="150">20</text><text x="74" y="174">0</text></g>
+        <text x="300" y="68" class="td">벽 온도 80 °C</text>
+        <text x="420" y="116" class="tb">출구 60.2 °C</text>
+        <text x="120" y="140" class="s">입구 20 °C</text>
+      </svg>
+      <figcaption>그림 1. 물이 데워질수록 벽과의 온도 차가 줄어 열이 덜 들어오므로, 물 온도는 직선이 아니라 지수함수로 벽 온도에 다가갈 뿐 넘지 못한다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>강제 대류 무차원수(<a href="05-01.html">5.1절</a>), 관 유동(유체역학 7.1절)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>Nusselt 수와 출구 온도</h3>
+    <p>관 속 대류는 먼저 \(h\)를 구하고, 그다음 관을 따라 에너지 평형을 세워 출구 온도를 구한다. 관 길이 \(dx\)를 지나며 벽에서 들어온 열은 유체 온도를 올리는 데 쓰이므로, 벽 온도가 일정하면 유체와 벽의 온도 차가 지수적으로 줄어든다.</p>
     <div class="tb-env thm">
       <span class="lb">관 내부 대류 (완전 발달)</span>
-      <p>층류(\(Re &lt; 2300\)): 벽 온도 일정 \(Nu = 3.66\), 열유속 일정 \(Nu = 4.36\).</p>
-      <p>난류: Dittus-Boelter \(Nu = 0.023Re^{0.8}Pr^n\) (가열 \(n = 0.4\), 냉각 0.3).</p>
-      <p>벽 온도 일정: \(\dfrac{T_s - T_o}{T_s - T_i} = \exp\!\left(-\dfrac{hPL}{\dot mc_p}\right)\), \(\dot Q = \dot mc_p(T_o - T_i)\)</p>
+      <p>층류(\(Re &lt; 2300\))는 벽 온도 일정이면 \(Nu = 3.66\), 열유속 일정이면 \(Nu = 4.36\)이다.</p>
+      <p>난류는 Dittus-Boelter 식 \(Nu = 0.023Re^{0.8}Pr^n\)을 쓴다(가열 \(n = 0.4\), 냉각 0.3).</p>
+      <p>벽 온도가 일정하면 \(\dfrac{T_s - T_o}{T_s - T_i} = \exp\!\left(-\dfrac{hPL}{\dot mc_p}\right)\)이고, \(\dot Q = \dot mc_p(T_o - T_i)\)이다.</p>
     </div>
-    <p>유체가 관을 따라 데워지며 벽과의 온도 차가 줄어 열전달이 점점 약해집니다. 관이 길어도 출구 온도는 벽 온도를 넘지 못합니다. 층류에서 \(Nu\)가 일정하다는 것은 \(h\)가 지름에 반비례한다는 뜻이라, 가는 관(마이크로 채널)이 열전달에 유리합니다.</p>
-
+    <p>유체가 관을 따라 데워지면 벽과의 온도 차가 줄어 열전달이 점점 약해진다. 그래서 관을 두 배로 늘려도 출구 온도는 두 배만큼 오르지 않고, 아무리 길어도 벽 온도를 넘지 못한다(그림 1). 처음 질문의 답이 이것이다.</p>
+    <p>또 층류에서 \(Nu\)가 일정하다는 것은 \(h = Nu\,k/D\)가 지름에 반비례한다는 뜻이다. 그래서 가는 관, 곧 마이크로 채널이 열전달에 유리하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1 <span class="nm">(물 가열관)</span></span>
       <p>안지름 10 mm, 길이 2 m 관 벽이 80 °C이고, 20 °C 물이 0.05 kg/s로 흐른다(\(\mu = 8\times10^{-4}\), \(k\) = 0.62, Pr = 5.4). 출구 온도와 열량은?</p>
     </div>
-    <p><i>풀이.</i> \(Re = 4\dot m/(\pi D\mu) = 7960\)(난류). \(Nu = 0.023\times7960^{0.8}\times5.4^{0.4} = 59.6\), \(h = 59.6\times0.62/0.01 = 3700\) W/m²·K. 지수 \(hPL/(\dot mc_p) = 3700\times0.0314\times2/209 = 1.11\), 비 0.33. 출구 \(80 - 60\times0.33 = 60.2\) °C, 열량 \(209\times40.2 = 8.4\) kW.</p>
+    <p><i>풀이.</i> \(Re = 4\dot m/(\pi D\mu) = 7960\)이므로 난류로 본다. \(Nu = 0.023\times7960^{0.8}\times5.4^{0.4} = 59.6\)이고, \(h = 59.6\times0.62/0.01 = 3700\) W/m²·K이다.</p>
+    <p>지수는 \(hPL/(\dot mc_p) = 3700\times0.0314\times2/209 = 1.11\)이므로 온도 차의 비는 0.33이다. 따라서 출구는 \(80 - 60\times0.33 = 60.2\) °C이고, 열량은 \(209\times40.2 = 8.4\) kW이다.</p>
 
-    <div class="tb-note"><b>주의</b>Dittus-Boelter 식은 \(Re &gt; 10000\)에서 만들어져 \(Re\) = 8000 근처(천이 영역)에서는 오차가 클 수 있습니다(Gnielinski 식이 더 정확). 입구 근처는 경계층이 얇아 \(h\)가 더 크므로 짧은 관에서는 입구 효과를 고려합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>입구와 출구 온도의 산술 평균으로 벽과의 온도 차를 잡아 \(\dot Q = hA\Delta T\)를 계산하는 실수가 흔하다. 온도 차는 관을 따라 지수적으로 줄므로 평균 온도 차는 로그 평균이어야 하며, 산술 평균을 쓰면 열량을 크게 잡는다. 또 Re가 2300과 10⁴ 사이인 천이 영역에서는 Dittus-Boelter 식의 오차가 커진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>층류 \(Nu\) = 3.66/4.36, 난류 \(0.023Re^{0.8}Pr^n\).</li>
-        <li>벽 온도 일정: 지수적으로 \(T_s\)에 접근.</li>
-        <li>\(\dot Q = \dot mc_p(T_o - T_i)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>관 속 대류의 Nu는 층류가 3.66 또는 4.36, 난류가 \(0.023Re^{0.8}Pr^n\)이다. 벽 온도가 일정하면 유체 온도는 지수적으로 벽 온도에 다가간다. 열량은 \(\dot Q = \dot mc_p(T_o - T_i)\)로 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>안지름 2 mm 층류 관(벽 온도 일정)에 물(\(k\) = 0.6)이 흐르면 \(h\)는?
-          <details><summary>답</summary><p>\(3.66\times0.6/0.002 = 1100\) W/m²·K.</p></details>
+          <details><summary>답</summary><p>\(3.66\times0.6/0.002 = 1100\) W/m²·K이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 관을 4 m로 늘리면 출구 온도는?
-          <details><summary>답</summary><p>지수 2.22, 비 0.108, 출구 \(80 - 6.5 = 73.5\) °C.</p></details>
+          <details><summary>답</summary><p>지수가 2.22, 비가 0.108이므로 출구는 \(80 - 6.5 = 73.5\) °C이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
