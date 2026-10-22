@@ -8,20 +8,21 @@
 <article class="card q-card" id="text-e25-serial" data-kind="본문" data-std="전전25-04-01">
   <header class="card-head"><span class="no"></span><h2>UART, SPI, I2C 비교와 센서 연결</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>세 직렬 방식의 선 수, 동기 방식, 속도, 주소 지정을 비교한다.</li>
-        <li>프레임 구조로 실제 전송 시간을 계산한다.</li>
-        <li>센서 데이터시트를 보고 연결 방식을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>디지털 신호와 클록 (<a href="../4/05.html">전전4 5단원</a>), 버스 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">온도 센서, 가속도 센서, 디스플레이, PC 로그 출력을 마이크로컨트롤러 하나에 모두 연결해야 한다. 핀 수는 한정되어 있고, 장치마다 필요한 속도도 다르다. UART, SPI, I2C는 각각 어떤 선으로 어떻게 통신할까? 그리고 어떤 장치에 어느 방식을 골라야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1 세 직렬 방식의 전송 시간(개형). UART 115200 bps 8N1은 바이트당 10비트라 초당 11 520바이트, I2C 400 kHz로 레지스터 2바이트를 읽으면 48비트로 120 μs, SPI 10 MHz로 3바이트는 24비트로 2.4 μs이다">
+        <g class="s"><text x="30" y="50">UART</text><text x="30" y="100">I2C</text><text x="30" y="150">SPI</text></g>
+        <rect x="100" y="34" width="80" height="24" class="b" fill="none" stroke-width="2"/>
+        <rect x="100" y="84" width="300" height="24" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="100" y="134" width="12" height="24" class="d" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="190" y="52" class="tb">2선, 바이트당 10비트, 11 520 B/s</text><text x="410" y="102" class="ta">120 μs</text><text x="120" y="152" class="td">2.4 μs (3바이트)</text><text x="120" y="126">2선 주소, 48비트</text><text x="260" y="152">4선 고속</text></g>
+      </svg>
+      <figcaption>그림 1. I2C는 두 선으로 여러 장치를 주소로 고르는 대신 느리고, SPI는 장치마다 선택 선이 필요한 대신 수십 배 빠르다(예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>디지털 신호와 클록(<a href="../4/05.html">전전4 5단원</a>), 버스(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>세 방식</h3>
+    <p>세 방식은 선의 수, 동기 방식, 속도, 장치 선택 방법이 다르다. 처음 질문의 첫째 답이 아래 표이다.</p>
     <table class="tb-table">
       <tr><th></th><th>UART</th><th>SPI</th><th>I2C</th></tr>
       <tr><td>선</td><td>TX, RX(+GND)</td><td>SCLK, MOSI, MISO, CS(장치마다)</td><td>SCL, SDA(풀업)</td></tr>
@@ -29,41 +30,37 @@
       <tr><td>속도(흔한 값)</td><td>9600~수 Mbps</td><td>수~수십 MHz</td><td>100 k, 400 k, 1 MHz</td></tr>
       <tr><td>장치 선택</td><td>1 : 1</td><td>CS 선</td><td>7비트 주소</td></tr>
     </table>
+    <p>즉 UART는 클록선 없이 양쪽이 같은 보율을 약속하고, SPI와 I2C는 마스터가 클록을 낸다. 그리고 I2C는 장치마다 주소가 있어 두 선에 여러 장치를 걸 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
-      <p>(가) UART 115200 bps, 8N1로 초당 보낼 수 있는 바이트 수. (나) I2C 400 kHz로 센서 레지스터 2바이트를 읽는 시간(시작, 주소+쓰기, 레지스터 번호, 재시작, 주소+읽기, 데이터 2바이트, 정지; 바이트마다 ACK 1비트). (다) SPI 10 MHz로 3바이트.</p>
+      <p>(가) UART 115200 bps, 8N1로 초당 보낼 수 있는 바이트 수. (나) I2C 400 kHz로 센서 레지스터 2바이트를 읽는 시간(시작, 주소+쓰기, 레지스터 번호, 재시작, 주소+읽기, 데이터 2바이트, 정지이며 바이트마다 ACK 1비트). (다) SPI 10 MHz로 3바이트.</p>
     </div>
-    <p><i>풀이.</i> (가) 바이트당 10비트(시작 1 + 데이터 8 + 정지 1) → 11 520 B/s. (나) 1 + 9 + 9 + 1 + 9 + 18 + 1 = 48비트 × 2.5 μs = 120 μs. (다) 24비트 × 0.1 μs = 2.4 μs. 여러 저속 센서를 두 선으로 묶을 때는 I2C, 고속 ADC·디스플레이에는 SPI, PC와의 로그 출력에는 UART가 흔합니다.</p>
+    <p><i>풀이.</i> (가) 바이트당 시작 1, 데이터 8, 정지 1로 10비트이므로 11 520 B/s이다. (나) 1 + 9 + 9 + 1 + 9 + 18 + 1 = 48비트이고 비트당 2.5 μs이므로 120 μs이다. (다) 24비트 × 0.1 μs = 2.4 μs이다(그림 1).</p>
+    <p>따라서 여러 저속 센서를 두 선으로 묶을 때는 I2C, 고속 ADC나 디스플레이에는 SPI, PC와의 로그 출력에는 UART가 흔하다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>한편 I2C의 120 μs는 대부분 주소와 레지스터 번호를 보내는 데 쓰인다. 그래서 여러 레지스터를 읽을 때는 시작 레지스터만 한 번 주고 연속으로 읽어, 바이트당 부담을 줄인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "I2C는 풀업 없이 동작한다": 열린 드레인이라 풀업 저항이 필요하고, 선 정전 용량과 함께 속도를 정합니다. (2) "UART는 클록이 없으니 아무 속도나 된다": 양쪽 보율 차이가 대략 2~3% 이내여야 합니다(확인 필요).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>I2C는 풀업 없이 동작한다고 여기기 쉽다. 열린 드레인이라 풀업 저항이 필요하고, 선의 정전 용량과 함께 속도를 정한다. 또 UART는 클록이 없으니 아무 속도나 된다고 생각하기 쉬운데, 양쪽 보율 차이가 대략 2~3% 이내여야 한다(확인 필요).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>UART 비동기 2선, SPI 4선 고속, I2C 2선 주소.</li>
-        <li>8N1: 바이트당 10비트. I2C 레지스터 읽기 ≈ 48비트.</li>
-        <li>속도·선 수·장치 수로 선택.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>UART는 비동기 2선, SPI는 4선 고속, I2C는 2선 주소 방식이다. 8N1은 바이트당 10비트이고, I2C 레지스터 읽기는 약 48비트이다. 속도, 선 수, 장치 수로 방식을 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>9600 bps 8N1의 초당 바이트 수는?
-          <details><summary>답</summary><p>960.</p></details>
+          <details><summary>답</summary><p>960이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>I2C 100 kHz로 예제 (나)의 시간은?
-          <details><summary>답</summary><p>480 μs.</p></details>
+          <details><summary>답</summary><p>480 μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>SPI에 장치 4개를 달려면 CS 선이 몇 개 필요한가?
-          <details><summary>답</summary><p>4개(또는 디코더/데이지 체인).</p></details>
+          <details><summary>답</summary><p>4개(또는 디코더/데이지 체인)이다.</p></details>
         </li>
       </ol>
     </div>

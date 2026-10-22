@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e25-memmap" data-kind="본문" data-std="전전25-01-03">
   <header class="card-head"><span class="no"></span><h2>메모리 맵과 엔디언</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>32비트 주소 공간이 코드·SRAM·주변 장치 영역으로 나뉘는 메모리 맵을 읽는다.</li>
-        <li>주변 장치 레지스터를 주소로 읽고 쓰는 메모리 맵 입출력을 안다.</li>
-        <li>리틀·빅 엔디언의 바이트 배치를 구별한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>프로그래밍 모델 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러 데이터시트를 펴면 플래시, SRAM, 타이머, UART가 모두 주소 표 하나에 나란히 적혀 있다. 프로그램이 0x2000_0000에 쓰면 메모리가 바뀌고 0x4000_0000 근처에 쓰면 장치가 움직이는 셈이다. 주소 공간은 어떻게 나뉘어 있을까? 그리고 4바이트 값은 그 주소들에 어떤 순서로 놓일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.3.1 리틀 엔디언 배치(개형). 0x1234_5678을 0x2000_0000에 리틀 엔디언으로 쓰면 낮은 주소부터 78, 56, 34, 12가 놓이고, 빅 엔디언이면 12, 34, 56, 78 순서이다. 64 KB SRAM의 마지막 주소는 0x2000_FFFF이다">
+        <g class="s"><text x="40" y="40">주소</text><text x="40" y="90" class="ta">리틀</text><text x="40" y="150" class="tb">빅</text></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="110" y="65" width="80" height="40"/><rect x="190" y="65" width="80" height="40"/><rect x="270" y="65" width="80" height="40"/><rect x="350" y="65" width="80" height="40"/></g>
+        <g class="b" fill="none" stroke-width="2"><rect x="110" y="125" width="80" height="40"/><rect x="190" y="125" width="80" height="40"/><rect x="270" y="125" width="80" height="40"/><rect x="350" y="125" width="80" height="40"/></g>
+        <g class="s" text-anchor="middle"><text x="150" y="40">…00</text><text x="230" y="40">…01</text><text x="310" y="40">…02</text><text x="390" y="40">…03</text><text x="150" y="91">78</text><text x="230" y="91">56</text><text x="310" y="91">34</text><text x="390" y="91">12</text><text x="150" y="151">12</text><text x="230" y="151">34</text><text x="310" y="151">56</text><text x="390" y="151">78</text></g>
+        <g class="s"><text x="110" y="190" class="td">0x1234_5678을 0x2000_0000에 쓰기</text></g>
+      </svg>
+      <figcaption>그림 1. 리틀 엔디언은 낮은 바이트를 낮은 주소에, 빅 엔디언은 높은 바이트를 낮은 주소에 놓는다(예제 1.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로그래밍 모델(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>모든 것은 주소</h3>
-    <p>Cortex-M 계열은 4 GiB 주소 공간을 정해진 구역으로 나눕니다: 0x0000_0000부터 코드(플래시), 0x2000_0000부터 SRAM, 0x4000_0000부터 주변 장치. 주변 장치 레지스터도 주소이므로 포인터로 읽고 쓰며(C에서는 <code>volatile</code>), 여러 바이트 값은 리틀 엔디언이면 낮은 바이트가 낮은 주소에 놓입니다.</p>
+    <p>Cortex-M 계열은 4 GiB 주소 공간을 정해진 구역으로 나눈다. 0x0000_0000부터 코드(플래시), 0x2000_0000부터 SRAM, 0x4000_0000부터 주변 장치이다. 처음 질문의 첫째 답이 이 구역 나눔이다.</p>
+    <p>주변 장치 레지스터도 주소이므로 포인터로 읽고 쓰며, C에서는 <code>volatile</code>을 붙인다. 그리고 여러 바이트 값은 리틀 엔디언이면 낮은 바이트가 낮은 주소에 놓인다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1</span>
       <p>SRAM 64 KB가 0x2000_0000에서 시작할 때 마지막 주소는? 0x1234_5678을 0x2000_0000에 리틀 엔디언으로 쓰면 각 주소의 바이트는?</p>
     </div>
-    <p><i>풀이.</i> 마지막 주소 0x2000_FFFF(64 K = 0x1_0000). 바이트는 0x2000_0000: 78, 0x…01: 56, 0x…02: 34, 0x…03: 12. 빅 엔디언이면 12 34 56 78 순서이며, 네트워크 바이트 순서가 빅 엔디언이라 통신 코드에서 변환합니다.</p>
+    <p><i>풀이.</i> 64 K = 0x1_0000이므로 마지막 주소는 0x2000_FFFF이다. 그리고 바이트는 0x2000_0000에 78, 0x…01에 56, 0x…02에 34, 0x…03에 12가 놓인다. 한편 빅 엔디언이면 12 34 56 78 순서이다. 그런데 네트워크 바이트 순서가 빅 엔디언이므로, 통신 코드에서는 바이트 순서를 변환한다.</p>
+    <p>즉 같은 메모리 덤프라도 엔디언을 모르면 값을 거꾸로 읽게 된다. 그래서 디버거에서 메모리를 볼 때는 바이트 단위로 보는지 워드 단위로 보는지를 먼저 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "레지스터 접근에 volatile은 필요 없다": 빼면 컴파일러가 읽기·쓰기를 없애거나 합칠 수 있습니다. (2) "엔디언은 비트 순서": 바이트 순서입니다.</div>
+    <p>예를 들어 데이터시트의 레지스터 표에 '기준 주소 + 오프셋'으로 적힌 값이 곧 프로그램이 쓰는 포인터 주소이다. 그러므로 제조사가 주는 헤더 파일은 이 주소들을 구조체와 매크로로 묶어, 주소를 손으로 적는 실수를 줄여 준다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>코드 0x0, SRAM 0x2000_0000, 주변 장치 0x4000_0000(Cortex-M).</li>
-        <li>메모리 맵 입출력 + volatile.</li>
-        <li>리틀 엔디언: 낮은 바이트가 낮은 주소.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>레지스터 접근에 volatile은 필요 없다고 여기기 쉽다. 빼면 컴파일러가 읽기나 쓰기를 없애거나 합칠 수 있다. 또 엔디언을 비트 순서로 생각하기 쉬운데, 엔디언은 바이트 순서이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Cortex-M은 코드 0x0, SRAM 0x2000_0000, 주변 장치 0x4000_0000으로 주소 공간을 나눈다. 주변 장치는 메모리 맵 입출력과 volatile로 다룬다. 리틀 엔디언은 낮은 바이트가 낮은 주소에 놓인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>32비트 주소 공간의 크기는?
-          <details><summary>답</summary><p>4 GiB.</p></details>
+          <details><summary>답</summary><p>4 GiB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>0xAABBCCDD를 리틀 엔디언으로 쓸 때 첫 바이트는?
-          <details><summary>답</summary><p>0xDD.</p></details>
+          <details><summary>답</summary><p>0xDD이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>주변 장치 영역을 캐시하면 안 되는 이유는?
-          <details><summary>답</summary><p>장치가 값을 바꿔도 캐시의 옛 값을 읽게 되기 때문입니다.</p></details>
+          <details><summary>답</summary><p>장치가 값을 바꿔도 캐시의 옛 값을 읽게 되기 때문이다.</p></details>
         </li>
       </ol>
     </div>

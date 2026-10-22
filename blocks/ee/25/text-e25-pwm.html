@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e25-pwm" data-kind="본문" data-std="전전25-04-04">
   <header class="card-head"><span class="no"></span><h2>타이머로 PWM 만들기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>타이머 클록, 분주비, 자동 재장전 값으로 PWM 주파수를 정한다.</li>
-        <li>비교 값으로 듀티비를 정하고 듀티 분해능을 계산한다.</li>
-        <li>서보 모터처럼 정해진 펄스 폭 신호를 만든다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>타이머 인터럽트 (<a href="02-02.html">2.2절</a>), 주변 장치 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러의 디지털 핀은 0 V와 3.3 V 두 값만 낼 수 있다. 그런데도 LED 밝기를 부드럽게 바꾸고 모터 속도를 조절할 수 있는 것은, 핀을 빠르게 켰다 껐다 하며 켜진 시간의 비율을 바꾸기 때문이다. 타이머로 이런 PWM 신호를 만들려면 어떤 값을 설정할까? 그리고 주파수와 세밀함은 어떻게 맞바뀔까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.4.1 타이머 PWM(개형). 72 MHz 클록에서 카운터가 0부터 ARR = 3599까지 세면 PWM 주파수는 20 kHz이고, 카운터가 CCR = 900보다 작은 동안 출력이 1이라 듀티는 25%이며, 단계 수 3600은 약 11.8비트 분해능이다">
+        <path d="M40 120 L140 40 V120 L240 40 V120 L340 40 V120" class="b" fill="none" stroke-width="2"/>
+        <path d="M40 100 H360" class="k dsh"/>
+        <path d="M40 170 V145 H65 V170 H140 V145 H165 V170 H240 V145 H265 V170 H340" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="370" y="44" class="tb">ARR 3599</text><text x="370" y="104">CCR 900</text><text x="370" y="164" class="ta">듀티 25%</text><text x="150" y="30">20 kHz</text><text x="400" y="190" class="td">3600단계 ≈ 11.8비트</text></g>
+      </svg>
+      <figcaption>그림 1. 카운터가 ARR까지 세는 주기가 PWM 주파수를, 카운터가 CCR보다 작은 구간의 비율이 듀티를 정한다(예제 4.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>타이머 인터럽트(<a href="02-02.html">2.2절</a>), 주변 장치(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>세고, 비교하고</h3>
-    <p>카운터가 0부터 ARR까지 세고 다시 시작하면 PWM 주파수 \(f = f_{clk}/((PSC + 1)(ARR + 1))\). 카운터가 비교 값 CCR보다 작을 때 출력 1이면 듀티 = CCR/(ARR + 1). 단계 수 ARR + 1이 듀티 분해능입니다.</p>
+    <p>카운터가 0부터 ARR까지 세고 다시 시작하면, PWM 주파수는 \(f = f_{clk}/((PSC + 1)(ARR + 1))\)이다. 그리고 카운터가 비교 값 CCR보다 작을 때 출력이 1이면, 듀티는 CCR/(ARR + 1)이다(그림 1). 처음 질문의 첫째 답이 이 두 값이다.</p>
+    <p>즉 단계 수 ARR + 1이 듀티 분해능이다. 그런데 클록이 정해져 있으면 주파수를 높일수록 단계 수가 준다. 처음 질문의 둘째 답이 이 맞바꿈이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1</span>
       <p>타이머 클록 72 MHz, 분주 없음, PWM 20 kHz의 ARR과 듀티 분해능은? 듀티 25%의 CCR은?</p>
     </div>
-    <p><i>풀이.</i> ARR + 1 = 3600 → ARR = 3599, 분해능 약 11.8비트. CCR = 900. 주파수를 높이면 단계 수가 줄어 분해능이 떨어지는 절충이 있습니다(200 kHz면 360단계).</p>
+    <p><i>풀이.</i> ARR + 1 = 72 MHz/20 kHz = 3600이므로 ARR = 3599이고, 분해능은 log₂3600 ≈ 11.8비트이다. 그리고 듀티 25%의 CCR은 900이다. 따라서 주파수를 높이면 단계 수가 줄어 분해능이 떨어지며, 200 kHz면 360단계뿐이다.</p>
+    <p>한편 모터 구동에서는 PWM 주파수를 사람이 듣는 범위(약 20 kHz) 위로 올려 소음을 줄인다. 그러나 주파수가 너무 높으면 스위칭 손실이 커지므로, 전력전자 설계와 함께 정한다.</p>
+    <p>그리고 듀티를 바꿀 때 CCR을 주기 중간에 고치면 한 주기가 찌그러질 수 있다. 그래서 타이머는 새 값을 다음 주기 시작에 반영하는 미리 적재 기능을 둔다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "PWM 주파수와 분해능을 따로 정할 수 있다": 클록이 정해져 있으면 서로 반비례합니다. (2) "ARR은 주기 카운트 수": 0부터 세므로 주기는 ARR + 1입니다.</div>
+    <p>또한 여러 채널이 같은 카운터를 쓰면 주파수는 같고 듀티만 채널마다 다르게 줄 수 있다. 예를 들어 RGB LED의 세 색은 한 타이머의 세 채널로 각각 밝기를 정한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>f = f_clk/((PSC + 1)(ARR + 1)).</li>
-        <li>듀티 = CCR/(ARR + 1).</li>
-        <li>예: 72 MHz, 20 kHz → ARR 3599, 11.8비트.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>PWM 주파수와 분해능을 따로 정할 수 있다고 여기기 쉽다. 클록이 정해져 있으면 둘은 서로 반비례한다. 또 ARR이 곧 주기의 카운트 수라고 생각하기 쉬운데, 0부터 세므로 주기는 ARR + 1이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>PWM 주파수는 f = f_clk/((PSC + 1)(ARR + 1))이다. 듀티는 CCR/(ARR + 1)이다. 72 MHz에서 20 kHz는 ARR 3599, 약 11.8비트이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>72 MHz, ARR 999, PSC 0의 PWM 주파수는?
-          <details><summary>답</summary><p>72 kHz.</p></details>
+          <details><summary>답</summary><p>72 kHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 설정에서 듀티 40%의 CCR은?
-          <details><summary>답</summary><p>400.</p></details>
+          <details><summary>답</summary><p>400이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>LED 밝기 PWM 주파수를 몇 Hz 이상으로 하나?
-          <details><summary>답</summary><p>깜빡임이 안 보이도록 수백 Hz 이상(확인 필요: 기준마다).</p></details>
+          <details><summary>답</summary><p>깜빡임이 안 보이도록 수백 Hz 이상이다(기준마다 다르므로 확인 필요).</p></details>
         </li>
       </ol>
     </div>

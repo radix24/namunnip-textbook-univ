@@ -8,23 +8,24 @@
 <article class="card q-card" id="text-e25-cache" data-kind="본문" data-std="전전25-03-02">
   <header class="card-head"><span class="no"></span><h2>메모리 계층과 캐시 성능</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>레지스터·캐시·SRAM·플래시·외부 메모리의 속도 계층을 안다.</li>
-        <li>평균 메모리 접근 시간(AMAT)을 계산한다.</li>
-        <li>플래시 대기 상태와 명령 캐시(가속기)의 효과를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>버스 타이밍 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">코어 클록을 두 배로 올렸는데 프로그램은 두 배만큼 빨라지지 않았다. 명령어와 데이터를 가져오는 메모리가 코어를 따라오지 못하기 때문이다. 느린 메모리 앞에 작은 캐시를 두면 평균 접근 시간은 얼마나 줄어들까? 그리고 캐시가 가끔 실패하는 것이 성능에 얼마나 큰 영향을 줄까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 실패율과 평균 메모리 접근 시간(개형). 히트 1클록, 실패 벌칙 50클록이면 실패율 1%에서 1.5클록, 5%에서 3.5클록, 10%에서 6.0클록으로, 실패율이 조금만 올라도 평균 접근 시간이 크게 늘어난다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <g class="a" fill="none" stroke-width="2.5"><rect x="130" y="149" width="50" height="21"/><rect x="250" y="121" width="50" height="49"/><rect x="370" y="86" width="50" height="84"/></g>
+        <path d="M80 156 H460" class="k dsh"/>
+        <g class="s" text-anchor="middle"><text x="155" y="186">1%</text><text x="275" y="186">5%</text><text x="395" y="186">10%</text><text x="155" y="142">1.5</text><text x="275" y="114" class="ta">3.5</text><text x="395" y="80">6.0</text></g>
+        <g class="s"><text x="90" y="26">AMAT (클록)</text><text x="300" y="50" class="td">AMAT = 1 + m × 50</text><text x="470" y="160">히트만 1</text></g>
+      </svg>
+      <figcaption>그림 1. 실패 벌칙이 히트 시간보다 훨씬 크므로, 실패율이 몇 %만 바뀌어도 평균 메모리 접근 시간은 몇 배씩 달라진다(예제 3.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>버스 타이밍(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>가까운 곳에 두기</h3>
-    <p>\(\mathrm{AMAT} = t_{hit} + m\cdot t_{miss}\). 마이크로컨트롤러에서도 플래시가 코어보다 느려 대기 상태가 생기므로, 미리 읽기 버퍼와 작은 명령 캐시로 대부분의 접근을 0 대기로 만듭니다.</p><pre><code>for m in (0.01, 0.05, 0.10):
+    <p>평균 메모리 접근 시간은 \(\mathrm{AMAT} = t_{hit} + m\cdot t_{miss}\)이다. 처음 질문의 첫째 답이 이 식이다. 그리고 마이크로컨트롤러에서도 플래시가 코어보다 느려 대기 상태가 생긴다. 그래서 미리 읽기 버퍼와 작은 명령 캐시로 대부분의 접근을 0 대기로 만든다. 아래 코드는 실패율에 따른 AMAT를 계산한다.</p>
+    <pre><code>for m in (0.01, 0.05, 0.10):
     print(f"실패율 {m:.0%}: AMAT = 1 + {m} x 50 = {1 + m * 50:.1f} 클록")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>실패율 1%: AMAT = 1 + 0.01 x 50 = 1.5 클록
 실패율 5%: AMAT = 1 + 0.05 x 50 = 3.5 클록
 실패율 10%: AMAT = 1 + 0.1 x 50 = 6.0 클록</code></pre>
@@ -32,37 +33,36 @@
       <span class="lb">예제 3.2.1</span>
       <p>히트 1클록, 실패 벌칙 50클록, 실패율 5%의 AMAT는?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 3.5클록으로 히트만 할 때의 3.5배입니다. 실패율 1%면 1.5클록이라, 반복문을 작게 유지해 캐시에 들어가게 하는 것이 성능에 큽니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 3.5클록으로, 히트만 할 때의 3.5배이다. 그런데 실패율 1%면 1.5클록이다(그림 1). 따라서 반복문을 작게 유지해 캐시에 들어가게 하는 것이 성능에 크며, 처음 질문의 둘째 답이 이것이다.</p>
+    <p>즉 실패 벌칙이 히트 시간의 50배이므로, 실패율 1%p의 차이가 평균 시간을 0.5클록씩 바꾼다. 그래서 캐시 성능을 말할 때는 히트율보다 실패율로 비교하는 편이 차이를 잘 드러낸다.</p>
+    <p>한편 실시간 제어에서는 평균보다 최악이 중요하다. 그러므로 시간이 엄격한 코드는 캐시 대신 대기 없는 SRAM이나 밀착 메모리(TCM)에 두어 실행 시간을 일정하게 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "클록이 빠르면 프로그램도 그만큼 빠르다": 메모리 대기가 늘면 효과가 줄어듭니다. (2) "캐시는 고성능 CPU에만 있다": 많은 마이크로컨트롤러에도 플래시 가속기가 있습니다.</div>
+    <p>그런데 캐시가 있으면 같은 코드도 처음 실행할 때와 두 번째 실행할 때 시간이 다르다. 그래서 실행 시간을 잴 때는 여러 번 돌려 첫 실행의 실패를 따로 보고, 평균과 최댓값을 함께 기록한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>AMAT = t_hit + m·t_miss.</li>
-        <li>예: 1 + 0.05 × 50 = 3.5클록.</li>
-        <li>플래시 대기 → 미리 읽기·명령 캐시.</li>
-      </ol>
-    </div>
+    <p>또한 데이터 캐시가 있는 칩에서는 DMA나 다른 코어가 바꾼 메모리를 캐시가 모를 수 있다. 이 문제는 4.2절과 5.2절에서 다시 다룬다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>클록이 빠르면 프로그램도 그만큼 빠르다고 여기기 쉽다. 메모리 대기가 늘면 효과가 줄어든다. 또 캐시는 고성능 CPU에만 있다고 생각하기 쉬운데, 많은 마이크로컨트롤러에도 플래시 가속기가 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>평균 메모리 접근 시간은 AMAT = t_hit + m·t_miss이다. 예제에서는 1 + 0.05 × 50 = 3.5클록이다. 플래시 대기는 미리 읽기 버퍼와 명령 캐시로 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>실패율 2%, 벌칙 100클록, 히트 1클록의 AMAT는?
-          <details><summary>답</summary><p>3클록.</p></details>
+          <details><summary>답</summary><p>3클록이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>2단계 캐시: L1 히트 1, L1 실패 10% → L2 10클록, L2 실패 20% → 100클록. AMAT는?
-          <details><summary>답</summary><p>1 + 0.1 × (10 + 0.2 × 100) = 4클록.</p></details>
+          <details><summary>답</summary><p>1 + 0.1 × (10 + 0.2 × 100) = 4클록이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>공간 지역성을 살리는 코드 습관은?
-          <details><summary>답</summary><p>배열을 메모리 순서대로 차례로 접근합니다.</p></details>
+          <details><summary>답</summary><p>배열을 메모리 순서대로 차례로 접근한다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e25-dma" data-kind="본문" data-std="전전25-04-02">
   <header class="card-head"><span class="no"></span><h2>DMA가 CPU 부담을 줄이는 원리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>DMA 제어기가 CPU 대신 주변 장치와 메모리 사이 전송을 하는 구조를 안다.</li>
-        <li>인터럽트마다 복사하는 방식과 DMA의 CPU 점유율을 비교 계산한다.</li>
-        <li>반 버퍼·원형 버퍼(이중 버퍼링)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>인터럽트 비용 (<a href="02-01.html">2.1절</a>), 버스 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">ADC가 초당 10만 개의 표본을 내놓을 때마다 CPU가 인터럽트로 하나씩 옮겨 담으면, 정작 신호 처리에 쓸 시간이 줄어든다. 데이터를 옮기는 단순한 일은 CPU 말고 다른 하드웨어에 맡길 수 없을까? DMA는 어떻게 CPU 없이 데이터를 옮길까? 그리고 CPU 부담은 얼마나 줄어들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1 DMA 반 버퍼 방식(개형). ADC 100 kS/s를 표본마다 인터럽트로 받으면 CPU 점유율 5%이지만, DMA가 512표본 원형 버퍼를 채우고 반이 찰 때마다 인터럽트하면 초당 약 391번으로 0.04%가 되며, DMA가 뒷부분을 채우는 동안 CPU는 앞부분을 처리한다">
+        <defs><marker id="ah-e25dma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="30" y="70" width="70" height="40" class="k" fill="none" stroke-width="2"/>
+        <rect x="140" y="70" width="70" height="40" class="b" fill="none" stroke-width="2.5"/>
+        <rect x="250" y="70" width="120" height="40" class="a" fill="none" stroke-width="2"/>
+        <rect x="370" y="70" width="120" height="40" class="a" fill="none" stroke-width="2"/>
+        <g class="k" stroke-width="2"><line x1="100" y1="90" x2="138" y2="90" marker-end="url(#ah-e25dma)"/><line x1="210" y1="90" x2="248" y2="90" marker-end="url(#ah-e25dma)"/></g>
+        <g class="s" text-anchor="middle"><text x="65" y="95">ADC</text><text x="175" y="95" class="tb">DMA</text><text x="310" y="95">앞 256</text><text x="430" y="95">뒤 256</text><text x="310" y="140" class="ta">CPU 처리</text><text x="430" y="140" class="tb">DMA 채움</text></g>
+        <g class="s"><text x="40" y="180" class="td">표본마다 IRQ 5% → 반 버퍼 IRQ 0.04%</text></g>
+      </svg>
+      <figcaption>그림 1. DMA가 트리거마다 데이터를 옮기고 버퍼가 반쯤 찰 때만 CPU에 알리므로, CPU는 한쪽 절반을 처리하는 동안 다른 절반이 채워진다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>인터럽트 비용(<a href="02-01.html">2.1절</a>), 버스(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>원리</h3>
-    <p>DMA 제어기에 원본 주소, 목적 주소, 개수, 트리거(예: ADC 변환 완료)를 설정하면, 트리거마다 버스를 빌려 한 항목을 옮깁니다. CPU는 전송이 끝났다는(또는 절반 찼다는) 인터럽트만 받습니다.</p>
+    <p>DMA 제어기에 원본 주소, 목적 주소, 개수, 트리거(ADC 변환 완료 등)를 설정하면, 트리거마다 버스를 빌려 한 항목을 옮긴다. 그리고 CPU는 전송이 끝났다는(또는 절반 찼다는) 인터럽트만 받는다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>즉 DMA는 주소를 늘려 가며 읽고 쓰기만 하는 작은 전용 하드웨어이다. 그래서 계산은 못 하지만, 메모리와 주변 장치 사이의 단순한 복사는 CPU보다 효율적으로 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1(가상 사이클 수)</span>
       <p>100 MHz 코어로 ADC 100 kS/s를 받는다. (가) 표본마다 인터럽트(50 사이클). (나) DMA로 512표본 원형 버퍼, 반 찰 때마다 인터럽트(처리 준비 100 사이클). CPU 점유율은?</p>
     </div>
-    <p><i>풀이.</i> (가) 50 × 10⁵ = 5 × 10⁶ 사이클/s → 5%. (나) 초당 10⁵/256 ≈ 391번 × 100 = 3.9 × 10⁴ → 0.04%. 남은 시간에 신호 처리를 하고, 반 버퍼 방식이라 DMA가 뒷부분을 채우는 동안 CPU는 앞부분을 처리합니다.</p>
+    <p><i>풀이.</i> (가) 50 × 10⁵ = 5 × 10⁶ 사이클/s이므로 5%이다. (나) 초당 10⁵/256 ≈ 391번이고 × 100 = 3.9 × 10⁴ 사이클이므로 0.04%이다. 처음 질문의 둘째 답이 이 차이이다.</p>
+    <p>따라서 남은 시간에 신호 처리를 한다. 그리고 반 버퍼 방식이라 DMA가 뒷부분을 채우는 동안 CPU는 앞부분을 처리한다(그림 1).</p>
+    <p>한편 버퍼 크기는 처리 시간과 지연의 균형으로 정한다. 버퍼가 크면 인터럽트가 드물어 부담이 줄지만, 표본이 들어온 뒤 처리될 때까지의 지연이 길어진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "DMA는 공짜": 버스를 함께 써서 CPU의 메모리 접근이 잠시 늦어질 수 있습니다. (2) "캐시가 있는 프로세서에서도 그냥 읽으면 된다": DMA가 쓴 메모리가 캐시에 옛 값으로 남을 수 있어 캐시 무효화가 필요합니다.</div>
+    <p>그런데 DMA 채널은 몇 개뿐이고 주변 장치마다 쓸 수 있는 채널이 정해져 있는 경우가 많다. 그래서 설계 초기에 ADC, 통신, 오디오처럼 데이터가 많은 장치부터 채널을 배정해 둔다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>DMA: 트리거마다 하드웨어가 전송, CPU는 완료만 통보받음.</li>
-        <li>예: 5% → 0.04%.</li>
-        <li>반 버퍼(이중 버퍼링), 캐시 일관성 주의.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>DMA는 공짜라고 여기기 쉽다. 버스를 함께 써서 CPU의 메모리 접근이 잠시 늦어질 수 있다. 또 캐시가 있는 프로세서에서도 그냥 읽으면 된다고 생각하기 쉬운데, DMA가 쓴 메모리가 캐시에 옛 값으로 남을 수 있어 캐시 무효화가 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>DMA는 트리거마다 하드웨어가 전송하고, CPU는 완료만 통보받는다. 예제에서 CPU 점유율은 5%에서 0.04%로 준다. 반 버퍼(이중 버퍼링)를 쓰고 캐시 일관성에 주의한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>DMA 설정에 필요한 네 가지는?
-          <details><summary>답</summary><p>원본, 목적, 개수, 트리거.</p></details>
+          <details><summary>답</summary><p>원본, 목적, 개수, 트리거이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>48 kHz 스테레오 오디오를 256프레임 반 버퍼로 받으면 인터럽트 빈도는?
-          <details><summary>답</summary><p>48000/128 = 375 Hz.</p></details>
+          <details><summary>답</summary><p>48000/128 = 375 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>DMA 전송이 끝나기 전에 CPU가 그 버퍼를 읽으면?
-          <details><summary>답</summary><p>일부 옛 자료를 읽습니다. 완료(반 완료) 인터럽트 뒤 읽습니다.</p></details>
+          <details><summary>답</summary><p>일부 옛 자료를 읽게 된다. 따라서 완료(반 완료) 인터럽트 뒤에 읽는다.</p></details>
         </li>
       </ol>
     </div>

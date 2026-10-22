@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e25-latency" data-kind="본문" data-std="전전25-02-03">
   <header class="card-head"><span class="no"></span><h2>인터럽트 지연과 우선순위</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>인터럽트 진입 지연(클록 수)을 시간으로 바꾼다.</li>
-        <li>선점 우선순위와 꼬리 물기(tail-chaining)를 안다.</li>
-        <li>최악 응답 시간을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>인터럽트 처리 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">모터 과전류를 감지하면 수 마이크로초 안에 출력을 꺼야 하는데, 그 순간 프로세서는 통신 인터럽트를 처리하고 있을 수도 있다. 인터럽트 요청이 들어온 뒤 처리 함수가 시작되기까지는 얼마나 걸릴까? 그리고 여러 인터럽트가 겹치면 누가 먼저 처리될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 인터럽트 지연과 선점(개형). 72 MHz에서 진입 지연 12클록은 167 ns이고, 우선순위가 높은 5 μs ISR이 실행 중이면 낮은 인터럽트는 그 ISR이 끝날 때까지 기다려 약 5 μs와 진입 지연이 최악 응답이 된다">
+        <line x1="40" y1="160" x2="520" y2="160" class="ax"/>
+        <rect x="80" y="60" width="60" height="30" class="k" fill="none" stroke-width="2"/>
+        <rect x="140" y="60" width="240" height="30" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="380" y="110" width="20" height="30" class="k" fill="none" stroke-width="2"/>
+        <rect x="400" y="110" width="100" height="30" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M100 40 V160 M180 30 V160" class="d dsh"/>
+        <g class="s"><text x="84" y="80">12클록</text><text x="200" y="80" class="ta">높은 ISR 5 μs</text><text x="410" y="130" class="tb">낮은 ISR</text><text x="60" y="34">높은 요청</text><text x="186" y="24" class="td">낮은 요청</text><text x="200" y="186">최악 응답 ≈ 5 μs + 진입 지연</text></g>
+      </svg>
+      <figcaption>그림 1. 낮은 우선순위 인터럽트는 실행 중인 높은 ISR이 끝날 때까지 기다리므로, 최악 응답 시간은 진입 지연보다 높은 ISR의 길이가 좌우한다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>인터럽트 처리(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>얼마나 빨리 반응하나</h3>
-    <p>Cortex-M3/M4는 인터럽트 진입에 약 12클록(레지스터 8개 자동 저장)이 걸립니다. 우선순위가 더 높은 인터럽트는 실행 중인 ISR을 선점하고, 같은 우선순위는 기다립니다. ISR이 끝날 때 다음 인터럽트가 대기 중이면 복원·저장을 건너뛰고 바로 넘어갑니다(꼬리 물기, 약 6클록).</p>
+    <p>Cortex-M3/M4는 인터럽트 진입에 약 12클록이 걸리며, 그동안 레지스터 8개를 자동 저장한다. 처음 질문의 첫째 답이 이것이다. 그리고 우선순위가 더 높은 인터럽트는 실행 중인 ISR을 선점하고, 같은 우선순위는 기다린다. 처음 질문의 둘째 답이 이 규칙이다.</p>
+    <p>한편 ISR이 끝날 때 다음 인터럽트가 대기 중이면, 복원과 저장을 건너뛰고 바로 넘어간다. 이것을 꼬리 물기라 하며, 약 6클록이 걸린다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>72 MHz에서 진입 지연 12클록은 몇 ns인가? 우선순위가 높은 ISR(5 μs)이 실행 중일 때 낮은 인터럽트의 최악 응답은?</p>
     </div>
-    <p><i>풀이.</i> 12/72 MHz = 167 ns. 낮은 인터럽트는 높은 ISR이 끝날 때까지 기다려 약 5 μs + 진입 지연이 최악 응답입니다(높은 인터럽트가 또 오면 더 길어짐). 그래서 ISR은 짧게 쓰고 긴 처리는 메인 루프나 낮은 우선순위 작업으로 넘깁니다.</p>
+    <p><i>풀이.</i> 12/72 MHz = 167 ns이다. 그런데 낮은 인터럽트는 높은 ISR이 끝날 때까지 기다리므로, 약 5 μs에 진입 지연을 더한 것이 최악 응답이다(그림 1). 높은 인터럽트가 또 오면 더 길어진다. 그래서 ISR은 짧게 쓰고, 긴 처리는 메인 루프나 낮은 우선순위 작업으로 넘긴다.</p>
+    <p>즉 응답 시간을 정할 때는 진입 지연 수백 ns보다 다른 ISR의 길이가 훨씬 크게 작용한다. 따라서 과전류 차단처럼 급한 일은 가장 높은 우선순위에 두고, 통신처럼 조금 늦어도 되는 일은 낮게 둔다.</p>
+    <p>그리고 주 루프가 인터럽트를 잠시 금지하는 구간도 응답을 늦춘다. 그러므로 인터럽트 금지 구간은 몇 줄의 짧은 코드로 한정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "우선순위 숫자가 크면 높다": Cortex-M은 숫자가 작을수록 높습니다. (2) "ISR 안에서 오래 계산해도 된다": 다른 인터럽트 응답을 늦춥니다.</div>
+    <p>한편 꼬리 물기 같은 하드웨어 최적화는 인터럽트가 몰릴 때 효과가 크다. 예를 들어 통신 수신과 타이머가 거의 동시에 오면, 두 ISR 사이의 불필요한 저장과 복원을 줄여 전체 처리 시간이 짧아진다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>진입 약 12클록(Cortex-M3/M4).</li>
-        <li>높은 우선순위가 선점, 같은 순위는 대기.</li>
-        <li>꼬리 물기로 연속 처리 단축.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>우선순위 숫자가 크면 우선순위가 높다고 여기기 쉽다. Cortex-M은 숫자가 작을수록 높다. 또 ISR 안에서 오래 계산해도 된다고 생각하기 쉬운데, 그러면 다른 인터럽트의 응답이 늦어진다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Cortex-M3/M4의 인터럽트 진입은 약 12클록이다. 높은 우선순위가 선점하고, 같은 순위는 기다린다. 꼬리 물기로 연속 처리 시간을 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>168 MHz에서 12클록은?
-          <details><summary>답</summary><p>약 71 ns.</p></details>
+          <details><summary>답</summary><p>약 71 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>꼬리 물기 6클록을 쓰면 72 MHz에서 아끼는 시간(진입 12클록 대비)은?
-          <details><summary>답</summary><p>약 83 ns.</p></details>
+          <details><summary>답</summary><p>약 83 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>공유 변수를 ISR과 메인에서 같이 쓸 때 필요한 것은?
-          <details><summary>답</summary><p>volatile과 임계 구역(잠시 인터럽트 금지).</p></details>
+          <details><summary>답</summary><p>volatile과 임계 구역(잠시 인터럽트 금지)이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,57 +8,54 @@
 <article class="card q-card" id="text-e25-coherence" data-kind="본문" data-std="전전25-05-02">
   <header class="card-head"><span class="no"></span><h2>멀티코어의 캐시 일관성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>코어마다 캐시가 있을 때 같은 주소의 값이 어긋나는 문제를 설명한다.</li>
-        <li>MESI 프로토콜의 네 상태와 쓰기 무효화를 안다.</li>
-        <li>거짓 공유가 성능을 떨어뜨리는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>캐시 (<a href="../14/06.html">전전14 6단원</a>), 비순차 실행 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">코어 두 개가 각자 캐시를 갖고 같은 변수를 읽고 쓰면, 한 코어가 바꾼 값을 다른 코어는 자기 캐시의 옛 값으로 계속 읽을 수 있다. 하드웨어는 이 문제를 어떻게 막을까? 그런데 서로 다른 변수를 쓰는 두 코어가 오히려 크게 느려지는 일이 있다고 한다. 왜 그럴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 거짓 공유(개형). 두 코어가 서로 다른 변수 cntA와 cntB를 증가시키지만 두 변수가 같은 64바이트 캐시 줄에 있으면, 한 코어가 쓸 때마다 다른 코어의 사본이 무효화되어 줄이 두 코어 사이를 계속 오가며, 64바이트 경계로 떨어뜨리면 해결된다">
+        <defs><marker id="ah-e25co" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="40" y="40" width="120" height="50" class="b" fill="none" stroke-width="2"/>
+        <rect x="380" y="40" width="120" height="50" class="b" fill="none" stroke-width="2"/>
+        <rect x="170" y="130" width="200" height="34" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M270 130 V164" class="a" stroke-width="1.5"/>
+        <g class="d" stroke-width="2"><line x1="160" y1="60" x2="378" y2="60" marker-end="url(#ah-e25co)"/><line x1="380" y1="76" x2="162" y2="76" marker-end="url(#ah-e25co)"/></g>
+        <g class="s" text-anchor="middle"><text x="100" y="70">코어 A</text><text x="440" y="70">코어 B</text><text x="220" y="152" class="ta">cntA</text><text x="320" y="152" class="ta">cntB</text><text x="270" y="50" class="td">줄이 계속 오감</text><text x="270" y="186">같은 64바이트 줄</text></g>
+      </svg>
+      <figcaption>그림 1. 일관성 프로토콜은 줄 단위로 사본을 무효화하므로, 다른 변수라도 같은 줄에 있으면 두 코어가 쓸 때마다 줄을 서로 빼앗는다(예제 5.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>캐시(<a href="../14/06.html">전전14 6단원</a>), 비순차 실행(<a href="05-01.html">5.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>문제와 해결</h3>
-    <p>코어 A, B가 변수 x를 각자 캐시에 두었는데 A가 x를 바꾸면, B는 옛 값을 계속 읽을 수 있습니다. 일관성 프로토콜은 "한 주소에 대해 모든 코어가 같은 순서의 쓰기를 본다"를 보장합니다.</p>
-    <p class="q-term"><b>MESI</b>: Modified(나만 갖고 바꿈), Exclusive(나만 갖고 메모리와 같음), Shared(여럿이 읽기 전용으로 가짐), Invalid(무효). 쓰려면 다른 코어의 사본을 무효화하고 M이 됩니다.</p>
+    <p>코어 A, B가 변수 x를 각자 캐시에 두었는데 A가 x를 바꾸면, B는 옛 값을 계속 읽을 수 있다. 그래서 일관성 프로토콜은 "한 주소에 대해 모든 코어가 같은 순서의 쓰기를 본다"를 보장한다.</p>
+    <p class="q-term">대표적인 MESI 프로토콜은 줄마다 네 상태를 둔다. Modified는 나만 갖고 바꾼 상태, Exclusive는 나만 갖고 메모리와 같은 상태, Shared는 여럿이 읽기 전용으로 가진 상태, Invalid는 무효 상태이다. 그리고 쓰려면 다른 코어의 사본을 무효화하고 M이 된다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>즉 쓰기는 언제나 한 코어만 가진 줄에서 일어나므로, 다른 코어가 옛 값을 읽을 수 없다. 대신 무효화된 코어가 다시 읽으려면 줄을 새로 가져와야 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
       <p>두 코어가 서로 다른 변수 cntA, cntB를 각자 1억 번 증가시킨다. 두 변수가 같은 64바이트 캐시 줄에 있으면 무슨 일이 생기는가?</p>
     </div>
-    <p><i>풀이.</i> 논리적으로 공유하지 않는데도 같은 줄이라, 한 코어가 쓸 때마다 다른 코어의 사본이 무효화되어 줄이 두 코어 사이를 계속 오갑니다(거짓 공유). 따로 둘 때보다 몇 배 느려질 수 있습니다. 변수를 64바이트 경계로 떨어뜨려(패딩, alignas(64)) 해결합니다.</p>
+    <p><i>풀이.</i> 논리적으로 공유하지 않는데도 같은 줄이라, 한 코어가 쓸 때마다 다른 코어의 사본이 무효화된다. 그러면 줄이 두 코어 사이를 계속 오가며(거짓 공유), 따로 둘 때보다 몇 배 느려질 수 있다(그림 1). 처음 질문의 둘째 답이 이것이다. 따라서 변수를 64바이트 경계로 떨어뜨려(패딩, alignas(64)) 해결한다.</p>
+    <p>한편 거짓 공유는 코드만 봐서는 드러나지 않는다. 그래서 멀티코어에서 코어를 늘렸는데 성능이 오히려 떨어지면, 성능 계수기로 캐시 줄 이동 횟수를 재어 원인을 찾는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "캐시 일관성이 있으면 락이 필요 없다": 일관성은 한 주소의 값만 맞출 뿐, 여러 단계 연산의 원자성(읽고-더하고-쓰기)은 원자 명령이나 락이 보장합니다. (2) "일관성과 메모리 순서 모델은 같다": 여러 주소 사이의 순서는 별개 문제(메모리 장벽)입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>캐시 일관성이 있으면 락이 필요 없다고 여기기 쉽다. 일관성은 한 주소의 값만 맞출 뿐, 읽고-더하고-쓰기처럼 여러 단계 연산의 원자성은 원자 명령이나 락이 보장한다. 또 일관성과 메모리 순서 모델이 같다고 생각하기 쉬운데, 여러 주소 사이의 순서는 별개 문제(메모리 장벽)이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>코어별 캐시 → 옛 값 문제.</li>
-        <li>MESI: 쓰기 전 다른 사본 무효화.</li>
-        <li>거짓 공유는 패딩으로 해결, 원자성은 별개.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>코어마다 캐시가 있으면 옛 값 문제가 생긴다. MESI는 쓰기 전에 다른 사본을 무효화한다. 거짓 공유는 패딩으로 해결하며, 원자성은 별개 문제이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>MESI에서 메모리보다 새로운 값을 가진 상태는?
-          <details><summary>답</summary><p>M.</p></details>
+          <details><summary>답</summary><p>M이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>S 상태 줄에 쓰려면 무엇이 일어나는가?
-          <details><summary>답</summary><p>다른 코어 사본을 무효화(I)하고 M이 됩니다.</p></details>
+          <details><summary>답</summary><p>다른 코어 사본을 무효화(I)하고 M이 된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>두 스레드가 같은 카운터를 x++하면 일관성만으로 정확한가?
-          <details><summary>답</summary><p>아닙니다. 원자적 증가나 락이 필요합니다.</p></details>
+          <details><summary>답</summary><p>아니다. 원자적 증가나 락이 필요하다.</p></details>
         </li>
       </ol>
     </div>

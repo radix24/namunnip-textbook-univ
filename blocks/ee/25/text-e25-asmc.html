@@ -8,21 +8,21 @@
 <article class="card q-card" id="text-e25-asmc" data-kind="본문" data-std="전전25-01-02">
   <header class="card-head"><span class="no"></span><h2>어셈블리와 C로 마이크로컨트롤러 프로그래밍</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>C 코드가 어떤 어셈블리 명령으로 바뀌는지 읽는다.</li>
-        <li>배열 합을 C와 Thumb 어셈블리로 각각 작성한다.</li>
-        <li>비트 연산으로 레지스터의 특정 비트를 설정·해제·검사한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>프로그래밍 모델 (<a href="01-01.html">1.1절</a>), C 기초(공통 프로그래밍).</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러 펌웨어는 대부분 C로 쓰지만, 시동 코드나 디버거 화면에서는 어셈블리를 만나게 된다. C의 for 문 하나는 실제로 어떤 명령어 몇 개로 바뀔까? 그리고 하드웨어 레지스터의 특정 비트만 켜고 끄는 일은 C로 어떻게 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="배열 합 루프의 C와 어셈블리 대응(개형). s += a[i]는 LDR 사후 증가와 ADDS로, i < n 검사와 감소는 CBZ와 SUBS로, 루프 반복은 B로 바뀌어 원소 하나에 명령어 다섯 개가 돈다">
+        <rect x="30" y="40" width="200" height="120" class="b" fill="none" stroke-width="2"/>
+        <g class="s"><text x="44" y="70">for (i &lt; n)</text><text x="44" y="100" class="tb">s += a[i]</text><text x="44" y="130">return s</text></g>
+        <path d="M232 70 L300 60 M232 100 L300 95 M232 130 L300 150" class="k" stroke-width="1.5"/>
+        <rect x="300" y="30" width="220" height="140" class="a" fill="none" stroke-width="2"/>
+        <g class="s"><text x="314" y="56">CBZ r1, done</text><text x="314" y="80" class="ta">LDR r3, [r0], #4</text><text x="314" y="104" class="ta">ADDS r2, r2, r3</text><text x="314" y="128">SUBS r1 / B loop</text><text x="314" y="156">MOV r0, r2 / BX lr</text><text x="300" y="190" class="td">원소당 명령어 5개</text></g>
+      </svg>
+      <figcaption>그림 1. 배열 합 루프는 적재와 덧셈, 개수 감소와 분기로 바뀌어 원소 하나에 명령어 다섯 개가 돈다(개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로그래밍 모델(<a href="01-01.html">1.1절</a>), C 기초(공통 프로그래밍)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>같은 일을 두 언어로</h3>
-    <p>배열 a의 n개 원소 합을 구하는 C 함수와, 이를 손으로 옮긴 Thumb-2 어셈블리입니다(R0 = 주소, R1 = 개수, 결과 R0).</p>
+    <p>배열 a의 n개 원소 합을 구하는 C 함수와, 이를 손으로 옮긴 Thumb-2 어셈블리이다. 여기서 R0은 주소, R1은 개수이며 결과는 R0에 담긴다.</p>
     <pre><code>int sum(const int *a, int n) {
     int s = 0;
     for (int i = 0; i &lt; n; i++) s += a[i];
@@ -35,42 +35,40 @@ loop:   CBZ   r1, done        @ n == 0이면 끝
         B     loop
 done:   MOV   r0, r2          @ 반환값
         BX    lr</code></pre>
-    <p>원소 하나에 명령어 다섯 개(LDR, ADDS, SUBS, B, CBZ)가 돕니다. 컴파일러 최적화(-O2)는 루프를 펼치거나 비교를 줄여 더 빠른 코드를 만들기도 합니다. 대부분은 C로 쓰고, 시동 코드나 시간이 엄격한 부분만 어셈블리로 씁니다.</p>
+    <p>원소 하나에 명령어 다섯 개(LDR, ADDS, SUBS, B, CBZ)가 돈다(그림 1). 처음 질문의 첫째 답이 이것이다. 그런데 컴파일러 최적화(-O2)는 루프를 펼치거나 비교를 줄여 더 빠른 코드를 만들기도 한다. 그래서 대부분은 C로 쓰고, 시동 코드나 시간이 엄격한 부분만 어셈블리로 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>32비트 레지스터 reg에서 비트 3을 1로, 비트 7을 0으로, 비트 4를 검사하는 C 식은?</p>
     </div>
-    <p><i>풀이.</i> <code>reg |= (1u &lt;&lt; 3);</code> <code>reg &amp;= ~(1u &lt;&lt; 7);</code> <code>if (reg &amp; (1u &lt;&lt; 4))</code>. 읽고-바꾸고-쓰기 중간에 인터럽트가 같은 레지스터를 바꾸면 값이 덮어써질 수 있어, 비트 설정 전용 레지스터(SET/RESET)나 인터럽트 금지 구간을 씁니다.</p>
+    <p><i>풀이.</i> 차례로 <code>reg |= (1u &lt;&lt; 3);</code>, <code>reg &amp;= ~(1u &lt;&lt; 7);</code>, <code>if (reg &amp; (1u &lt;&lt; 4))</code>이다. 처음 질문의 둘째 답이 이 세 식이다.</p>
+    <p>그런데 읽고-바꾸고-쓰기 중간에 인터럽트가 같은 레지스터를 바꾸면 값이 덮어써질 수 있다. 따라서 비트 설정 전용 레지스터(SET/RESET)나 인터럽트 금지 구간을 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "어셈블리가 언제나 C보다 빠르다": 현대 컴파일러가 대부분 더 낫습니다. (2) "int는 언제나 32비트": 플랫폼마다 달라 고정 폭 형식(uint32_t)을 씁니다.</div>
+    <p>즉 어셈블리를 읽을 줄 알면 컴파일러가 만든 코드가 의도대로인지, 루프 안에 불필요한 메모리 접근이 남았는지를 디버거에서 바로 확인할 수 있다. 그래서 C로 쓰더라도 시간이 중요한 함수는 디스어셈블 결과를 한 번 보는 습관이 도움이 된다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>C ↔ 어셈블리 대응(LDR 사후 증가, CBZ, BX lr).</li>
-        <li>비트 설정 |=, 해제 &amp;= ~, 검사 &amp;.</li>
-        <li>읽고-바꾸고-쓰기의 경쟁 조건 주의.</li>
-      </ol>
-    </div>
+    <p>한편 비트 연산에서 1u처럼 부호 없는 상수를 쓰는 이유도 있다. 부호 있는 1을 31비트만큼 밀면 부호 비트에 닿아 C 표준에서 정의되지 않은 동작이 되므로, 레지스터 비트를 다룰 때는 언제나 부호 없는 형식으로 계산한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>어셈블리가 언제나 C보다 빠르다고 여기기 쉽다. 현대 컴파일러가 대부분 더 낫다. 또 int가 언제나 32비트라고 생각하기 쉬운데, 플랫폼마다 다르므로 고정 폭 형식(uint32_t)을 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>C와 어셈블리는 LDR 사후 증가, CBZ, BX lr처럼 대응한다. 비트 설정은 |=, 해제는 &amp;= ~, 검사는 &amp;로 한다. 읽고-바꾸고-쓰기의 경쟁 조건에 주의한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>reg의 비트 0~3을 모두 0으로 만드는 식은?
-          <details><summary>답</summary><p>reg &amp;= ~0xFu;</p></details>
+          <details><summary>답</summary><p><code>reg &amp;= ~0xFu;</code>로 쓴다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>LDR r3, [r0], #4 뒤 r0는 얼마나 바뀌는가?
-          <details><summary>답</summary><p>4 증가(다음 int).</p></details>
+          <details><summary>답</summary><p>4만큼 증가한다(다음 int).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>위 어셈블리에서 n = 0으로 호출하면 결과는?
-          <details><summary>답</summary><p>CBZ로 바로 done, 0 반환.</p></details>
+          <details><summary>답</summary><p>CBZ로 바로 done으로 가서 0을 반환한다.</p></details>
         </li>
       </ol>
     </div>

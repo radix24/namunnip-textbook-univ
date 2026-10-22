@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e25-stack" data-kind="본문" data-std="전전25-01-04">
   <header class="card-head"><span class="no"></span><h2>스택 프레임과 함수 호출 규약</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>함수 호출 때 인자·반환 주소·보존 레지스터가 어디에 놓이는지 안다(AAPCS).</li>
-        <li>스택 프레임 크기와 재귀 깊이로 스택 사용량을 계산한다.</li>
-        <li>스택 넘침의 증상과 대책을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>프로그래밍 모델 (<a href="01-01.html">1.1절</a>), ARM 어셈블리 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">따로 컴파일한 두 함수, 심지어 C와 어셈블리로 쓴 두 함수가 서로를 문제없이 부를 수 있는 것은 인자와 반환값을 어디에 둘지 미리 약속했기 때문이다. 그 약속은 무엇일까? 그리고 함수를 부를 때마다 쌓이는 스택은 얼마나 커지며, 넘치면 어떤 일이 생길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.4.1 스택 프레임(개형). PUSH {r4-r7, lr}로 레지스터 5개 20바이트와 지역 변수 4바이트를 더한 24바이트 프레임이 재귀 100단계에서 2400바이트가 되어, 스택 1 KB를 넘쳐 아래의 다른 변수를 덮어쓴다">
+        <rect x="60" y="20" width="160" height="40" class="b" fill="none" stroke-width="2"/>
+        <rect x="60" y="60" width="160" height="40" class="b" fill="none" stroke-width="2"/>
+        <rect x="60" y="100" width="160" height="40" class="b" fill="none" stroke-width="2"/>
+        <rect x="60" y="150" width="160" height="34" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M40 145 H240" class="d dsh"/>
+        <g class="s"><text x="72" y="44">lr, r4~r7 20 B</text><text x="72" y="84">지역 4 B</text><text x="72" y="124">다음 프레임 …</text><text x="72" y="172" class="ta">다른 변수</text><text x="250" y="149" class="td">스택 한계 1 KB</text></g>
+        <g class="s"><text x="300" y="60">프레임 24 B (8의 배수)</text><text x="300" y="90">재귀 100단계 = 2400 B</text><text x="300" y="120" class="td">1 KB를 넘쳐 덮어씀</text></g>
+      </svg>
+      <figcaption>그림 1. 함수가 불릴 때마다 저장 레지스터와 지역 변수의 프레임이 스택에 쌓이고, 깊은 재귀는 작은 스택을 넘어 다른 메모리를 덮어쓴다(예제 1.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로그래밍 모델(<a href="01-01.html">1.1절</a>), ARM 어셈블리(<a href="06-01.html">6.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>약속된 자리</h3>
-    <p>ARM 호출 규약(AAPCS)에서 앞 인자 4개는 r0~r3, 나머지는 스택, 반환값은 r0입니다. 호출된 함수는 r4~r11을 쓰려면 저장했다 복원해야 하고, 반환 주소는 lr에 들어 있습니다. 스택은 공개 인터페이스에서 8바이트 정렬을 지킵니다.</p>
+    <p>ARM 호출 규약(AAPCS)에서 앞 인자 4개는 r0~r3에, 나머지는 스택에 두며, 반환값은 r0에 담는다. 그리고 호출된 함수가 r4~r11을 쓰려면 저장했다가 복원해야 하고, 반환 주소는 lr에 들어 있다. 한편 스택은 공개 인터페이스에서 8바이트 정렬을 지킨다. 처음 질문의 첫째 답이 이 약속이다.</p>
+    <p>즉 호출하는 쪽은 r0~r3과 r12가 바뀌어도 되는 값이라고 보고, 필요하면 호출 전에 스스로 저장한다. 그래서 짧은 말단 함수는 r0~r3만 쓰고 스택을 전혀 건드리지 않아 빠르다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
       <p>함수가 PUSH {r4-r7, lr}을 하고 지역 변수 4바이트를 쓴다. 프레임 크기(8바이트 정렬)와 이 함수를 100단계 재귀할 때 스택 사용량은?</p>
     </div>
-    <p><i>풀이.</i> 레지스터 5개 20바이트 + 지역 4바이트 = 24바이트(8의 배수). 100단계면 2400바이트로, SRAM이 작은 마이크로컨트롤러에서 스택 1 KB를 주었다면 넘칩니다. 넘치면 다른 변수를 덮어써 엉뚱한 곳에서 오류가 나므로, 재귀를 반복문으로 바꾸거나 스택 끝에 감시 값을 둡니다.</p>
+    <p><i>풀이.</i> 레지스터 5개 20바이트와 지역 4바이트를 더하면 24바이트로, 8의 배수이다. 그러면 100단계에서 2400바이트이므로, SRAM이 작은 마이크로컨트롤러에서 스택을 1 KB 주었다면 넘친다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 넘치면 다른 변수를 덮어써 엉뚱한 곳에서 오류가 난다. 따라서 재귀를 반복문으로 바꾸거나, 스택 끝에 감시 값을 두고 주기적으로 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "인자는 모두 스택으로 간다": 앞 4개는 레지스터입니다. (2) "스택 넘침은 바로 멈춘다": 보호 장치가 없으면 조용히 다른 메모리를 망가뜨립니다.</div>
+    <p>한편 지역 배열이 큰 함수는 프레임 하나만으로도 스택을 크게 차지한다. 그래서 작은 마이크로컨트롤러에서는 큰 버퍼를 지역 변수 대신 정적 변수로 두고, 링커가 만든 지도 파일이나 컴파일러의 스택 사용량 보고로 최악의 깊이를 미리 어림한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>인자 r0~r3, 반환 r0, 반환 주소 lr.</li>
-        <li>r4~r11은 호출된 쪽이 보존.</li>
-        <li>예: 24바이트 × 100 = 2.4 KB.</li>
-      </ol>
-    </div>
+    <p>그리고 인터럽트도 스택을 쓴다. 즉 ISR이 진입할 때 하드웨어가 레지스터를 스택에 쌓으므로(2.1절), 스택 크기는 가장 깊은 함수 호출에 인터럽트 중첩까지 더해 잡아야 한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>인자는 모두 스택으로 간다고 여기기 쉽다. 앞 4개는 레지스터로 간다. 또 스택 넘침은 바로 멈춘다고 생각하기 쉬운데, 보호 장치가 없으면 조용히 다른 메모리를 망가뜨린다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>인자는 r0~r3, 반환값은 r0, 반환 주소는 lr에 둔다. r4~r11은 호출된 쪽이 보존한다. 예제의 프레임은 24바이트이고 100단계 재귀면 2.4 KB이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>인자 6개 함수에서 스택으로 가는 인자 수는?
-          <details><summary>답</summary><p>2개.</p></details>
+          <details><summary>답</summary><p>2개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>PUSH {r4-r11, lr}은 몇 바이트(정렬 전)?
-          <details><summary>답</summary><p>36바이트.</p></details>
+          <details><summary>답</summary><p>36바이트이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>Cortex-M에서 스택 넘침을 잡는 하드웨어 방법은?
-          <details><summary>답</summary><p>MPU로 스택 아래 구역을 접근 금지로 둡니다.</p></details>
+          <details><summary>답</summary><p>MPU로 스택 아래 구역을 접근 금지로 둔다.</p></details>
         </li>
       </ol>
     </div>
