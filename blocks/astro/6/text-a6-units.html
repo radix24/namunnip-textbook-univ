@@ -6,44 +6,44 @@
 }
 -->
 <article class="card q-card" id="text-a6-units" data-kind="본문" data-std="천우6-01-04">
-  <header class="card-head"><span class="no"></span><h2>단위와 물리 상수를 코드에서 다루기</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>단위와 물리 상수를 코드에서 다루기</h2><span class="kind">본문 · 1.4절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>천문학에서 함께 쓰이는 SI, cgs, 천문 단위를 구별한다.</li>
-        <li>상수를 한곳에 모으고, 계산은 SI로 한 뒤 출력할 때만 바꾸는 규칙을 쓴다.</li>
-        <li>변수와 함수 이름에 단위를 붙여 단위 실수를 줄인다.</li>
-        <li>상수를 반올림한 정도가 결과에 주는 영향을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>함수 (<a href="01-01.html">1.1절</a>), 검산하는 습관 (<a href="01-03.html">1.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">한 논문에는 별의 광도가 \(3.8\times10^{33}\)으로, 다른 표에는 \(3.8\times10^{26}\)으로 적혀 있다. 둘 다 태양이다. 하나는 erg/s, 하나는 W이기 때문이다. 숫자를 코드로 옮기다가 단위를 착각하면 결과가 1000만 배 어긋난다. 이런 실수를 코드 짜임으로 미리 막을 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 180" role="img" aria-label="단위 없이 옮긴 숫자 3.8e33을 erg/s로 읽으면 태양 하나, W로 읽으면 태양 1000만 개가 되는 갈림길 그림">
+        <rect x="15" y="70" width="120" height="40" class="lk k"/><text x="75.0" y="87.0" text-anchor="middle" class="s">광도 3.8e33</text>
+        <text x="75.0" y="102.0" text-anchor="middle" class="s">단위 없는 숫자</text>
+        <rect x="210" y="20" width="140" height="40" class="lb b"/><text x="280.0" y="37.0" text-anchor="middle" class="s">erg/s로 읽으면</text>
+        <text x="280.0" y="52.0" text-anchor="middle" class="s">3.8e26 W</text>
+        <rect x="210" y="120" width="140" height="40" class="ld d"/><text x="280.0" y="137.0" text-anchor="middle" class="s">W로 읽으면</text>
+        <text x="280.0" y="152.0" text-anchor="middle" class="s">3.8e33 W</text>
+        <rect x="400" y="20" width="105" height="40" class="lb b"/><text x="452.5" y="37.0" text-anchor="middle" class="s">1 L☉</text>
+        <text x="452.5" y="52.0" text-anchor="middle" class="s">태양 하나</text>
+        <rect x="400" y="120" width="105" height="40" class="ld d"/><text x="452.5" y="137.0" text-anchor="middle" class="s">1e7 L☉</text>
+        <text x="452.5" y="152.0" text-anchor="middle" class="s">태양 1000만 개</text>
+        <path d="M135 85 L208 42 M203.8 47.6 L208 42 L201.1 42.9" class="ax"/>
+        <path d="M135 95 L208 138 M201.1 137.1 L208 138 L203.8 132.4" class="ax"/>
+        <path d="M350 40 L398 40 M391.6 42.7 L398 40 L391.6 37.3" class="ax"/>
+        <path d="M350 140 L398 140 M391.6 142.7 L398 140 L391.6 137.3" class="ax"/>
+        <text x="374" y="85" text-anchor="middle" class="s">÷ 3.828e26 W</text>
+      </svg>
+      <figcaption>그림 1. 단위 없는 숫자의 갈림길. 같은 \(3.8\times10^{33}\)도 erg/s로 읽으면 태양 광도 하나(청록), W로 읽으면 태양 1000만 개(빨강)가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>함수(<a href="01-01.html">1.1절</a>)와 검산하는 습관(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>세 가지 단위 체계</h3>
-    <p>천문학 논문과 자료에는 세 단위 체계가 섞여 나옵니다.</p>
-    <div class="tb-table">
-      <table>
-        <thead><tr><th>체계</th><th>예</th><th>주로 쓰는 곳</th></tr></thead>
-        <tbody>
-          <tr><td>SI</td><td>m, kg, s, J, W</td><td>교과서, 공학, 위성</td></tr>
-          <tr><td>cgs</td><td>cm, g, s, erg(\(10^{-7}\) J), erg/s</td><td>천체물리학 논문(광도 erg/s, 밀도 g/cm³, 기둥 밀도 cm⁻²)</td></tr>
-          <tr><td>천문 단위</td><td>AU, pc, \(M_\odot\), \(L_\odot\), \(R_\odot\), 년, Jy, mag</td><td>관측 자료, 목록, 결과 보고</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>광도 \(3.8\times10^{33}\)이라는 숫자는 erg/s이면 태양 하나지만, W로 읽으면 태양의 1,000만 배입니다. 숫자만 옮기다가 단위가 바뀌는 실수가 가장 흔합니다.</p>
+    <p>먼저 단위 체계부터 보자. 천문학 논문과 자료에는 세 단위 체계가 섞여 나온다.</p>
+    <table class="tw">
+      <tr><th>체계</th><th>예</th><th>주로 쓰는 곳</th></tr>
+      <tr><td>SI</td><td>m, kg, s, J, W</td><td>교과서, 공학, 위성</td></tr>
+      <tr><td>cgs</td><td>cm, g, s, erg(\(10^{-7}\) J), erg/s</td><td>천체물리학 논문(광도 erg/s, 밀도 g/cm³, 기둥 밀도 cm⁻²)</td></tr>
+      <tr><td>천문 단위</td><td>AU, pc, \(M_\odot\), \(L_\odot\), \(R_\odot\), 년, Jy, mag</td><td>관측 자료, 목록, 결과 보고</td></tr>
+    </table>
+    <p>그래서 그림 1의 실수, 곧 숫자만 옮기다가 단위가 바뀌는 실수가 가장 흔하다.</p>
 
     <h3><span class="no">1.4.2</span>세 가지 규칙</h3>
-    <ol>
-      <li><b>상수는 한곳에</b>: 파일 맨 위에 대문자 이름으로 모으고, 옆에 단위를 주석으로 적습니다.</li>
-      <li><b>안에서는 SI</b>: 입력을 받자마자 SI로 바꾸고, 계산은 모두 SI로 한 뒤, 출력할 때만 사람이 읽기 쉬운 단위로 바꿉니다.</li>
-      <li><b>이름에 단위를</b>: <code>R_m</code>, <code>v_kms</code>, <code>luminosity_Lsun</code>처럼 이름만 보고 단위를 알 수 있게 합니다.</li>
-    </ol>
-    <pre><code>import math
-
+    <p>처음 질문의 답은 코드를 짜는 세 가지 규칙이다. 첫째, 상수는 한곳에 둔다. 파일 맨 위에 대문자 이름으로 모으고 옆에 단위를 주석으로 적는다. 둘째, 안에서는 SI로 계산한다. 입력을 받자마자 SI로 바꾸고 계산은 모두 SI로 한 뒤, 출력할 때만 사람이 읽기 쉬운 단위로 바꾼다. 셋째, 이름에 단위를 붙인다. <code>R_m</code>, <code>v_kms</code>, <code>luminosity_Lsun</code>처럼 이름만 보고 단위를 알 수 있게 한다.</p>
+<pre><code>import math
 # SI 상수
 G = 6.674e-11        # m^3 kg^-1 s^-2
 SIGMA = 5.670e-8     # W m^-2 K^-4
@@ -69,48 +69,42 @@ print(f"지구 표면 탈출 속력 = {v_escape_kms(5.972e24, 6.371e6):.2f} km/s
 print(f"태양 광도 검산      = {luminosity_Lsun(1.0, 5772):.3f} L_sun")
 print(f"베텔게우스(R=800, T=3600) = {luminosity_Lsun(800, 3600):.3e} L_sun")
 print(f"1 pc = {PC / AU:.0f} AU = {PC / 9.461e15:.3f} 광년")</code></pre>
-    <pre><code>태양 표면 탈출 속력 = 617.8 km/s
+<pre><code>태양 표면 탈출 속력 = 617.8 km/s
 지구 표면 탈출 속력 = 11.19 km/s
 태양 광도 검산      = 1.000 L_sun
 베텔게우스(R=800, T=3600) = 9.684e+04 L_sun
 1 pc = 206283 AU = 3.262 광년</code></pre>
+    <p>여기서 함수 이름과 인자 이름이 단위를 말해 주므로, 부르는 쪽에서 무엇을 넣어야 하는지 헷갈리지 않는다. 또 태양 광도가 1.000으로 나오는 줄은 1.3절의 답을 아는 경우 검산이다.</p>
 
     <h3><span class="no">1.4.3</span>반올림한 상수의 흔적</h3>
-    <p>마지막 줄에서 1 pc가 206,265 AU가 아니라 206,283 AU로 나왔습니다. 1 pc와 1 AU를 각각 네 자리로 반올림했기 때문에 비가 0.009% 어긋난 것입니다. 정의상 1 pc = 206,264.8 AU이므로, 정확도가 중요하면 pc를 AU에서 계산해(\(\text{PC} = 206264.8\times\text{AU}\)) 정의 관계를 지키는 것이 좋습니다. 실제 연구에서는 <code>astropy.constants</code>와 <code>astropy.units</code> 같은 라이브러리가 최신 값과 단위 변환을 함께 관리해 이런 실수를 막아 줍니다.</p>
-
+    <p>그런데 마지막 줄에서 1 pc가 206,265 AU가 아니라 206,283 AU로 나왔다. 1 pc와 1 AU를 각각 네 자리로 반올림했기 때문에 비가 0.009% 어긋난 것이다. 하지만 정의상 1 pc = 206,264.8 AU이므로, 정확도가 중요하면 <code>PC = 206264.8 * AU</code>처럼 pc를 AU에서 계산해 정의 관계를 지킨다. 물론 실제 연구에서는 <code>astropy.constants</code>와 <code>astropy.units</code> 같은 라이브러리가 최신 값과 단위 변환을 함께 관리해 이런 실수를 막아 준다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
-      <p>어떤 논문에 은하 X선 광도가 \(L_X = 10^{42}\) erg/s로 적혀 있습니다. W와 \(L_\odot\)로는?</p>
+      <p>어떤 논문에 은하의 X선 광도가 \(L_X = 10^{42}\) erg/s로 적혀 있다. W와 \(L_\odot\)로는 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> \(10^{42}\times10^{-7} = 10^{35}\) W, \(10^{35}/3.828\times10^{26} = 2.6\times10^8L_\odot\). erg/s를 W로 착각하면 1,000만 배 큰 값을 쓰게 됩니다.</p>
+    <p><i>풀이.</i> \(10^{42}\times10^{-7} = 10^{35}\) W이고, \(10^{35}/(3.828\times10^{26}) = 2.6\times10^8\,L_\odot\)이다. 만약 erg/s를 W로 착각하면 그림 1처럼 1000만 배 큰 값을 쓰게 된다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>cgs 논문의 밀도 g/cm³을 SI 코드에 그대로 넣으면 1000배 어긋난다(1 g/cm³ = 1000 kg/m³). 따라서 입력을 받는 줄에서 곧바로 SI로 바꾸고, 바꾼 변수에 <code>_si</code>나 단위 이름을 붙이자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>SI, cgs(erg, cm, g), 천문 단위(AU, pc, \(M_\odot\), Jy)가 섞여 쓰인다.</li>
-        <li>상수는 한곳에, 계산은 SI로, 출력할 때만 바꾸기, 이름에 단위 붙이기.</li>
-        <li>상수의 반올림이 정의 관계를 깨뜨릴 수 있다. 라이브러리(astropy)를 쓰면 편하다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>천문학에는 SI, cgs(erg, cm, g), 천문 단위(AU, pc, \(M_\odot\), Jy)가 섞여 쓰이므로, 숫자만 옮기면 단위 착각으로 몇 자릿수씩 어긋난다. 상수는 한곳에 모으고, 계산은 SI로 하고 출력할 때만 바꾸며, 이름에 단위를 붙이는 규칙으로 이를 막는다. 상수를 반올림하면 정의 관계가 깨질 수 있으므로, 정확도가 중요하면 정의에서 계산하거나 astropy 같은 라이브러리를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>밀도 1.41 g/cm³(태양 평균)를 kg/m³로 바꾸세요.
-          <details><summary>답</summary><p>1 g/cm³ = 1,000 kg/m³이므로 1,410 kg/m³.</p></details>
+        <li>밀도 1.41 g/cm³(태양 평균)를 kg/m³로 바꾸어라.
+          <details><summary>답</summary><p>1 g/cm³ = 1,000 kg/m³이므로 1,410 kg/m³이다.</p></details>
         </li>
-        <li>1 Jy = \(10^{-26}\) W m⁻² Hz⁻¹을 cgs(erg s⁻¹ cm⁻² Hz⁻¹)로 바꾸세요.
-          <details><summary>답</summary><p>1 W = \(10^7\) erg/s, 1 m² = \(10^4\) cm²이므로 \(10^{-26}\times10^7/10^4 = 10^{-23}\) erg s⁻¹ cm⁻² Hz⁻¹.</p></details>
+        <li>1 Jy = \(10^{-26}\) W m⁻² Hz⁻¹을 cgs(erg s⁻¹ cm⁻² Hz⁻¹)로 바꾸어라.
+          <details><summary>답</summary><p>1 W = \(10^7\) erg/s, 1 m² = \(10^4\) cm²이므로 \(10^{-26}\times10^7/10^4 = 10^{-23}\) erg s⁻¹ cm⁻² Hz⁻¹이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li><code>luminosity_Lsun</code>에서 <code>R_m = R_Rsun * R_SUN</code> 줄을 빼먹으면 태양의 결과는 얼마가 나옵니까? 어떤 검산이 잡아냅니까?
-          <details><summary>답</summary><p>\(4\pi\times1\times5.67\times10^{-8}\times5772^4/3.828\times10^{26} \approx 2\times10^{-18}\). '답을 아는 경우'(태양 = 1) 검산이 잡아냅니다.</p></details>
+      <ol start="3">
+        <li><code>luminosity_Lsun</code>에서 <code>R_m = R_Rsun * R_SUN</code> 줄을 빼먹으면 태양의 결과는 얼마가 나오는가? 어떤 검산이 잡아내는가?
+          <details><summary>답</summary><p>\(4\pi\times1\times5.67\times10^{-8}\times5772^4/(3.828\times10^{26}) \approx 2\times10^{-18}\)이다. 태양이 1이어야 한다는 답을 아는 경우 검산이 잡아낸다.</p></details>
         </li>
-        <li>중성자별(1.4 \(M_\odot\), 반지름 12 km)의 표면 탈출 속력을 위 함수로 구하고 빛의 속력과 비교하세요.
-          <details><summary>답</summary><p>\(\sqrt{2\times6.674\times10^{-11}\times2.78\times10^{30}/1.2\times10^4}/10^3 \approx 1.76\times10^5\) km/s, 빛의 속력의 약 59%. 이 정도면 일반 상대론 보정이 필요합니다.</p></details>
+        <li>중성자별(1.4 \(M_\odot\), 반지름 12 km)의 표면 탈출 속력을 위 함수로 구하고 빛의 속력과 비교하여라.
+          <details><summary>답</summary><p>\(\sqrt{2\times6.674\times10^{-11}\times2.78\times10^{30}/(1.2\times10^4)}/10^3 \approx 1.76\times10^5\) km/s로 빛의 속력의 약 59%이다. 이 정도면 일반 상대론 보정이 필요하다.</p></details>
         </li>
       </ol>
     </div>

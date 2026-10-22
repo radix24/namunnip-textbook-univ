@@ -8,87 +8,88 @@
 <article class="card q-card" id="text-a6-python" data-kind="본문" data-std="천우6-01-01">
   <header class="card-head"><span class="no"></span><h2>변수, 배열, 반복문, 함수로 계산 프로그램 짜기</h2><span class="kind">본문 · 1.1절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Python으로 변수에 값을 넣고 계산한다.</li>
-        <li>리스트와 반복문으로 여러 천체를 한꺼번에 계산한다.</li>
-        <li>되풀이하는 계산을 함수로 묶는다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>프로그래밍 기초 (<a href="../../common/10/01.html">공통10 1단원</a>), 거리 지수 (<a href="../3/01-03.html">천우3 1.3절</a>).</li>
-      </ul>
-    </div>
-
-<h3>왜 프로그램을 짜는가</h3>
-    <p>별 세 개의 거리는 계산기로 구할 수 있지만, 관측 목록의 별 10만 개는 그럴 수 없습니다. 천문학은 자료가 많고 계산이 반복되는 학문이라 프로그래밍이 기본 도구입니다. 많은 천문학과가 Python을 기본 언어로 씁니다. 이 절에서는 Python의 가장 기본적인 네 가지, 곧 변수, 리스트, 반복문, 함수를 천문 계산 하나로 익힙니다.</p>
+    <p class="q-ask">별 세 개의 거리는 계산기로 거리 지수를 풀어 구할 수 있다. 그런데 가이아 목록에는 별이 10억 개 넘게 있다. 같은 식을 10억 번 손으로 계산할 수는 없다. 천문학자는 이런 되풀이 계산을 어떻게 맡길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 205" role="img" aria-label="시리우스, 베가, 리겔, 데네브의 거리를 로그 눈금 막대로 그린 그래프. 시리우스 2.6, 베가 7.8, 리겔 392.6, 데네브 843 pc">
+        <line x1="110" y1="170" x2="480" y2="170" class="ax"/>
+        <text x="110" y="185" text-anchor="middle" class="s">1</text><path d="M110 170 L110 20" class="gd"/>
+        <text x="222.1" y="185" text-anchor="middle" class="s">10</text><path d="M222.1 170 L222.1 20" class="gd"/>
+        <text x="334.2" y="185" text-anchor="middle" class="s">100</text><path d="M334.2 170 L334.2 20" class="gd"/>
+        <text x="446.3" y="185" text-anchor="middle" class="s">1000</text><path d="M446.3 170 L446.3 20" class="gd"/>
+        <text x="480" y="199" text-anchor="end" class="s">거리 d (pc, 로그 눈금)</text>
+        <text x="100" y="47" text-anchor="end" class="s">시리우스</text>
+        <rect x="110" y="32" width="47.3" height="22" class="la a"/>
+        <text x="163.3" y="47" class="s">2.6</text>
+        <text x="100" y="82" text-anchor="end" class="s">베가</text>
+        <rect x="110" y="67" width="99.8" height="22" class="la a"/>
+        <text x="215.8" y="82" class="s">7.8</text>
+        <text x="100" y="117" text-anchor="end" class="s">리겔</text>
+        <rect x="110" y="102" width="290.8" height="22" class="la a"/>
+        <text x="406.8" y="117" class="s">392.6</text>
+        <text x="100" y="152" text-anchor="end" class="s">데네브</text>
+        <rect x="110" y="137" width="328" height="22" class="lc c"/>
+        <text x="444" y="152" class="s">843.3</text>
+      </svg>
+      <figcaption>그림 1. 거리 지수로 구한 네 별의 거리(로그 눈금). 같은 함수를 별마다 부르기만 하면 되므로, 목록에 데네브(주황) 한 줄을 더하면 막대가 하나 더 생긴다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로그래밍 기초(공통10 1단원)와 거리 지수(천우3 1.3절)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>준비</h3>
-    <p>python.org에서 Python 3을 내려받아 설치하거나, 설치 없이 웹 브라우저에서 쓰는 Google Colab, Jupyter를 씁니다. 아래 코드는 표준 라이브러리만 쓰므로 어디서나 그대로 실행됩니다. 코드를 파일(예: <code>dist.py</code>)로 저장하고 명령창에서 <code>python dist.py</code>로 실행합니다.</p>
+    <p>천문학은 자료가 많고 계산이 되풀이되는 학문이라 프로그래밍이 기본 도구이며, 많은 천문학과가 Python을 기본 언어로 쓴다. 그래서 이 절에서는 Python의 가장 기본적인 네 가지, 곧 변수, 리스트, 반복문, 함수를 천문 계산 하나로 익힌다. 먼저 python.org에서 Python 3을 설치하거나, 설치 없이 웹 브라우저에서 쓰는 Google Colab이나 Jupyter를 쓴다. 한편 아래 코드는 표준 라이브러리만 쓰므로 어디서나 그대로 돌아간다. 코드를 파일(예를 들어 <code>dist.py</code>)로 저장하고 명령창에서 <code>python dist.py</code>로 실행한다.</p>
 
     <h3><span class="no">1.1.2</span>예제 프로그램</h3>
-    <p>거리 지수 \(m - M = 5\log_{10}(d/10\text{ pc}) + A\)를 \(d\)에 대해 풀면 \(d = 10^{(m - M - A + 5)/5}\) pc입니다. 별 세 개에 적용하는 프로그램입니다.</p>
-    <pre><code>import math
+    <p>거리 지수 \(m - M = 5\log_{10}(d/10\text{ pc}) + A\)를 \(d\)에 대해 풀면 다음과 같다.</p>
+    \[d = 10^{(m - M - A + 5)/5}\ \text{pc}\]
+    <p>이제 이 식을 별 세 개에 적용하는 프로그램이다.</p>
+<pre><code>import math
 
 def distance_pc(m, M, A=0.0):
-    &quot;&quot;&quot;겉보기 등급 m, 절대 등급 M, 소광 A로 거리(pc)를 구한다.&quot;&quot;&quot;
+    """겉보기 등급 m, 절대 등급 M, 소광 A로 거리(pc)를 구한다."""
     return 10 ** ((m - M - A + 5) / 5)
 
-stars = [(&quot;시리우스&quot;, -1.46, 1.43), (&quot;베가&quot;, 0.03, 0.58), (&quot;리겔&quot;, 0.13, -7.84)]
+stars = [("시리우스", -1.46, 1.43), ("베가", 0.03, 0.58), ("리겔", 0.13, -7.84)]
 for name, m, M in stars:
     d = distance_pc(m, M)
-    print(f&quot;{name:5s} m={m:6.2f} M={M:6.2f}  d = {d:8.1f} pc&quot;)
+    print(f"{name:5s} m={m:6.2f} M={M:6.2f}  d = {d:8.1f} pc")
 
 total = 0.0
 for name, m, M in stars:
     total += distance_pc(m, M)
-print(&quot;평균 거리:&quot;, round(total / len(stars), 1), &quot;pc&quot;)</code></pre>
-    <p>실행 결과:</p>
-    <pre><code>시리우스  m= -1.46 M=  1.43  d =      2.6 pc
+print("평균 거리", round(total / len(stars), 1), "pc")</code></pre>
+    <p>그러면 실행 결과는 다음과 같다.</p>
+<pre><code>시리우스  m= -1.46 M=  1.43  d =      2.6 pc
 베가    m=  0.03 M=  0.58  d =      7.8 pc
 리겔    m=  0.13 M= -7.84  d =    392.6 pc
-평균 거리: 134.3 pc</code></pre>
-    <h3><span class="no">1.1.3</span>한 줄씩 읽기</h3>
-    <ul>
-      <li class="q-term"><b>import math</b>: 수학 함수 모음을 불러온다. 이 예제에서는 쓰지 않았지만 log, sin 등을 쓸 때 필요하다.</li>
-      <li class="q-term"><b>def distance_pc(m, M, A=0.0):</b> 함수를 정의한다. 들여쓴 줄이 함수의 몸체이고, <code>return</code>이 결과를 돌려준다. <code>A=0.0</code>은 값을 주지 않으면 0을 쓰는 기본값이다.</li>
-      <li class="q-term"><b>10 ** x</b>: 거듭제곱. <code>^</code>는 거듭제곱이 아니니 주의한다.</li>
-      <li class="q-term"><b>stars = [ … ]</b>: 리스트. 여기서는 (이름, m, M) 묶음(튜플) 세 개를 담았다.</li>
-      <li class="q-term"><b>for name, m, M in stars:</b> 리스트의 원소를 하나씩 꺼내 세 변수에 나눠 담고 들여쓴 줄을 되풀이한다.</li>
-      <li class="q-term"><b>f"…{d:8.1f}…"</b>: f-문자열. 중괄호 안의 값을 지정한 형식(전체 8칸, 소수 한 자리)으로 끼워 넣는다.</li>
-    </ul>
-    <p>함수로 묶으면 같은 계산을 여러 곳에서 다시 쓰고, 고칠 때 한 곳만 고치면 됩니다. 소광을 넣으려면 <code>distance_pc(m, M, A=0.5)</code>처럼 부르기만 하면 됩니다.</p>
-    <div class="tb-note"><b>흔한 실수</b> Python은 들여쓰기로 블록을 구분합니다. <code>for</code> 아래 줄의 들여쓰기가 하나라도 어긋나면 반복에서 빠지거나 오류가 납니다. 또 정수끼리의 나눗셈 <code>7 / 2</code>는 3.5이지만 <code>7 // 2</code>는 3입니다.</div>
+평균 거리 134.3 pc</code></pre>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>변수에 값을 넣고, 리스트로 여러 값을 묶는다.</li>
-        <li><code>for</code> 반복문으로 리스트의 원소마다 같은 계산을 한다.</li>
-        <li><code>def</code>로 함수를 만들어 계산을 재사용한다.</li>
-        <li>f-문자열로 결과를 보기 좋게 출력한다.</li>
-      </ol>
+    <h3><span class="no">1.1.3</span>한 줄씩 읽기</h3>
+    <p>맨 위의 <code>import math</code>는 수학 함수 모음을 불러온다. 이 예제에서는 쓰지 않았지만 <code>log</code>, <code>sin</code> 등을 쓸 때 필요하다. 다음으로 <code>def distance_pc(m, M, A=0.0)</code>는 함수를 정의한다. 들여쓴 줄이 함수의 몸체이고 <code>return</code>이 결과를 돌려주며, <code>A=0.0</code>은 값을 주지 않으면 0을 쓰는 기본값이다. 몸체의 <code>10 ** x</code>는 거듭제곱인데, <code>^</code>는 거듭제곱이 아니니 주의한다.</p>
+    <p>이어서 <code>stars</code>는 리스트이며, 여기에는 (이름, \(m\), \(M\)) 묶음, 곧 튜플 세 개를 담았다. 그리고 <code>for name, m, M in stars:</code>는 리스트의 원소를 하나씩 꺼내 세 변수에 나누어 담고 들여쓴 줄을 되풀이한다. 끝으로 <code>f"...{d:8.1f}..."</code>는 f-문자열로, 중괄호 안의 값을 지정한 형식(전체 8칸, 소수 한 자리)으로 끼워 넣는다.</p>
+    <p>처음 질문의 답이 바로 이 짜임이다. 계산을 함수로 묶어 두면 별이 10억 개여도 반복문이 함수를 그만큼 부를 뿐이고, 고칠 때도 한 곳만 고치면 된다. 소광을 넣으려면 <code>distance_pc(m, M, A=0.5)</code>처럼 부르기만 하면 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>위 프로그램의 목록에 데네브(\(m = 1.25\), \(M = -8.38\))를 더하면 거리는 얼마인가?</p>
     </div>
+    <p><i>풀이.</i> \(10^{(1.25 + 8.38 + 5)/5} = 10^{2.926} = 843\) pc이다. 목록에 <code>("데네브", 1.25, -8.38)</code> 한 줄을 더하는 것 말고는 코드를 바꿀 필요가 없다(그림 1).</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>Python은 들여쓰기로 블록을 나눈다. <code>for</code> 아래 줄의 들여쓰기가 하나라도 어긋나면 반복에서 빠지거나 오류가 난다. 또 나눗셈 <code>7 / 2</code>는 3.5이지만 <code>7 // 2</code>는 몫인 3이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>계산 프로그램은 변수에 값을 넣고, 여러 값을 리스트로 묶고, <code>for</code> 반복문으로 원소마다 같은 계산을 하는 짜임이다. 되풀이하는 계산은 <code>def</code>로 함수로 만들어 다시 쓰며, 기본값으로 선택적인 입력(소광)을 받는다. 결과는 f-문자열로 보기 좋게 출력한다. 이렇게 짜 두면 별의 수가 늘어나도 목록만 길어질 뿐이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>위 프로그램에 데네브(m = 1.25, M = −8.38)를 추가하면 거리는?
-          <details><summary>답</summary><p>\(10^{(1.25 + 8.38 + 5)/5} = 10^{2.926} = 843\) pc.</p></details>
-        </li>
-        <li>함수를 바꿔 거리(pc)를 받아 광년으로 돌려주는 <code>pc_to_ly(d)</code>를 쓰세요(1 pc = 3.2616 ly).
-          <details><summary>답</summary><p><code>def pc_to_ly(d): return d * 3.2616</code></p></details>
+        <li>거리(pc)를 받아 광년으로 돌려주는 함수 <code>pc_to_ly(d)</code>를 써라(1 pc = 3.2616 ly).
+          <details><summary>답</summary><p><code>def pc_to_ly(d): return d * 3.2616</code>이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>리스트의 별 가운데 거리가 10 pc보다 가까운 별의 이름만 출력하도록 고치세요.
-          <details><summary>답</summary><p>반복문 안에 <code>if distance_pc(m, M) &lt; 10: print(name)</code>를 넣습니다. 시리우스와 베가가 나옵니다.</p></details>
+      <ol start="2">
+        <li>목록의 별 가운데 거리가 10 pc보다 가까운 별의 이름만 출력하도록 고쳐라.
+          <details><summary>답</summary><p>반복문 안에 <code>if distance_pc(m, M) &lt; 10: print(name)</code>를 넣는다. 시리우스와 베가가 나온다.</p></details>
         </li>
-        <li>평균 거리를 구하는 부분을 <code>sum</code>과 리스트 내포로 한 줄로 쓰세요.
-          <details><summary>답</summary><p><code>sum(distance_pc(m, M) for _, m, M in stars) / len(stars)</code></p></details>
+        <li>평균 거리를 구하는 부분을 <code>sum</code>과 생성식으로 한 줄로 써라.
+          <details><summary>답</summary><p><code>sum(distance_pc(m, M) for _, m, M in stars) / len(stars)</code>이다.</p></details>
         </li>
       </ol>
     </div>
