@@ -8,35 +8,54 @@
 <article class="card q-card" id="text-m9-software" data-kind="본문" data-std="수학9-07-01">
   <header class="card-head"><span class="no"></span><h2>통계 소프트웨어로 검정과 회귀하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>R 또는 Python으로 자료를 요약하고 t 검정과 회귀분석을 실행한다.</li>
-        <li>출력의 각 숫자(추정값, 표준오차, t, p, \(R^2\), F)가 앞 단원의 어떤 식에서 나왔는지 대응시킨다.</li>
-        <li>잔차 그림으로 모형 가정을 점검한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>t 검정 (<a href="04-01.html">4.1절</a>), 두 표본 비교 (<a href="03-02.html">3.2절</a>), 회귀 추론 (<a href="05-02.html">5.2절</a>), 프로그래밍 기초 (<a href="../math4/01-01.html">수학4</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실제 자료 분석은 손 계산이 아니라 통계 소프트웨어로 한다. 회귀분석 한 줄을 실행하면 숫자가 화면 가득 나온다. 그 숫자들은 각각 무엇이고, 앞 단원에서 배운 어떤 식에서 나온 것일까? 그리고 출력의 p값을 그대로 믿어도 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="회귀분석의 잔차 대 적합값 그림">
+        <line x1="50" y1="95.0" x2="360" y2="95.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <line x1="50.0" y1="95.0" x2="360.0" y2="95.0" class="k dsh"/>
+        <circle cx="70.5" cy="97.7" r="4" class="fa"/>
+        <circle cx="108.5" cy="116.3" r="4" class="fa"/>
+        <circle cx="146.5" cy="55.0" r="4" class="fa"/>
+        <circle cx="184.5" cy="137.7" r="4" class="fa"/>
+        <circle cx="222.5" cy="55.0" r="4" class="fa"/>
+        <circle cx="260.6" cy="127.0" r="4" class="fa"/>
+        <circle cx="298.6" cy="33.7" r="4" class="fa"/>
+        <circle cx="336.6" cy="137.7" r="4" class="fa"/>
+        <text x="79" y="190" text-anchor="middle" class="s">3</text>
+        <text x="138" y="190" text-anchor="middle" class="s">4</text>
+        <text x="196" y="190" text-anchor="middle" class="s">5</text>
+        <text x="255" y="190" text-anchor="middle" class="s">6</text>
+        <text x="313" y="190" text-anchor="middle" class="s">7</text>
+        <text x="44" y="152" text-anchor="end" class="s">-1</text>
+        <text x="44" y="99" text-anchor="end" class="s">0</text>
+        <text x="44" y="46" text-anchor="end" class="s">1</text>
+        <text x="205" y="207" text-anchor="middle" class="s">적합값 ŷ</text>
+        <text x="362" y="40" class="ta">점 = 잔차</text>
+        <text x="362" y="60" class="s">0 둘레에 고르게 흩어지고</text>
+        <text x="362" y="80" class="s">곡선이나 깔때기 모양이</text>
+        <text x="362" y="100" class="s">없어야 가정이 맞는다</text>
+      </svg>
+      <figcaption>그림 1. 5단원 회귀 자료의 잔차를 적합값에 대해 그렸다. 잔차가 0(점선) 둘레에 뚜렷한 모양 없이 흩어져 있으므로 직선 모형과 등분산 가정에 큰 문제가 없다. 이런 그림을 보고 나서야 출력의 p값을 해석한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>t 검정(<a href="04-01.html">4.1절</a>), 두 표본 비교(<a href="03-02.html">3.2절</a>), 회귀 추론(<a href="05-02.html">5.2절</a>), 프로그래밍 기초(<a href="../math4/01-01.html">수학4</a>)를 쓴다.</div>
 
     <h3><span class="no">7.1.1</span>도구 고르기</h3>
-    <p>요람은 SAS, SPSS를 적었지만 독학에는 무료인 R이나 Python이 알맞습니다. R은 통계 전용 언어라 검정과 모형 함수가 기본으로 들어 있고, Python은 <code>scipy.stats</code>와 <code>statsmodels</code> 패키지를 씁니다. 어느 쪽이든 핵심은 같습니다: 자료를 읽고, 그림으로 먼저 보고, 모형을 맞추고, 출력의 숫자를 해석합니다.</p>
+    <p>요람은 SAS와 SPSS를 적었지만 독학에는 무료인 R이나 Python이 알맞다. R은 통계 전용 언어라 검정과 모형 함수가 기본으로 들어 있고, Python은 <code>scipy.stats</code>와 <code>statsmodels</code> 패키지를 쓴다. 어느 쪽이든 순서는 같다. 자료를 읽고, 그림으로 먼저 보고, 모형을 맞춘 뒤, 출력의 숫자를 해석한다.</p>
 
     <h3><span class="no">7.1.2</span>t 검정</h3>
-    <p>3.2절의 교수법 자료(A 10명, B 12명)는 요약값만 주어졌지만, 원자료가 있다면 R에서는 다음 한 줄입니다.</p>
+    <p>3.2절의 교수법 자료는 요약값만 주어졌지만, 원자료가 있다면 R에서는 다음 한 줄이다.</p>
     <pre class="mono small">t.test(A, B)                    # 웰치 (기본값)
 t.test(A, B, var.equal = TRUE)  # 합동 분산</pre>
-    <p>Python에서는 <code>scipy.stats.ttest_ind(A, B, equal_var=False)</code>입니다. 요약값으로 계산하면 웰치 검정은 \(t = 6/2.384 = 2.517\), 자유도 17.61, 양측 \(p \approx 0.022\), 95% 신뢰구간 \([0.98, 11.02]\)이고, 합동 검정은 \(t = 2.561\), 자유도 20, \(p \approx 0.019\)입니다. 소프트웨어 출력에서 이 숫자들(t, df, p-value, confidence interval)을 찾아 대응시킬 수 있어야 합니다. R의 <code>t.test</code>가 등분산을 기본으로 가정하지 않는다는 점(3.2절의 이유)도 기억해 둡니다.</p>
+    <p>Python에서는 <code>scipy.stats.ttest_ind(A, B, equal_var=False)</code>이다. 요약값으로 계산하면 웰치 검정은 \(t = 6/2.384 = 2.517\), 자유도 17.61, 양측 \(p \approx 0.022\), 95% 신뢰구간 \([0.98, 11.02]\)이고, 합동 검정은 \(t = 2.561\), 자유도 20, \(p \approx 0.019\)이다. 그러므로 소프트웨어 출력에서 t, df, p-value, confidence interval을 찾아 이 숫자들과 대응시킬 수 있어야 한다. 또 R의 <code>t.test</code>가 등분산을 기본으로 가정하지 않는다는 점, 곧 3.2절에서 본 이유로 웰치를 기본으로 쓴다는 점도 기억해 둔다.</p>
 
     <h3><span class="no">7.1.3</span>회귀분석</h3>
-    <p>5단원의 자료로 R에서 회귀를 하면 다음과 같습니다.</p>
+    <p>5단원의 자료로 R에서 회귀를 하면 다음과 같다.</p>
     <pre class="mono small">x &lt;- 1:8
 y &lt;- c(2.8, 3.1, 4.9, 4.0, 6.2, 5.5, 7.9, 6.6)
 fit &lt;- lm(y ~ x)
 summary(fit)</pre>
-    <p>출력의 주요 부분(값은 직접 계산과 같음):</p>
+    <p>출력의 주요 부분은 다음과 같으며, 값은 직접 계산한 것과 같다.</p>
     <pre class="mono small">Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)
 (Intercept)   2.2000     0.6558   3.355  0.01533
@@ -45,29 +64,15 @@ x             0.6500     0.1299   5.005  0.00244
 Residual standard error: 0.8416 on 6 degrees of freedom
 Multiple R-squared:  0.8068,  Adjusted R-squared:  0.7746
 F-statistic: 25.05 on 1 and 6 DF,  p-value: 0.00244</pre>
-    <ul>
-      <li><b>Estimate</b>: \(\hat\beta_0 = 2.2\), \(\hat\beta_1 = 0.65\) (5.1절).</li>
-      <li><b>Std. Error</b>: \(\hat\sigma\sqrt{1/n + \bar x^2/S_{xx}}\), \(\hat\sigma/\sqrt{S_{xx}}\).</li>
-      <li><b>t value, Pr(&gt;|t|)</b>: \(H_0: \beta = 0\)의 t 통계량과 양측 p값(자유도 \(n - 2 = 6\)).</li>
-      <li><b>Residual standard error</b>: \(\hat\sigma = \sqrt{SSE/(n-2)}\).</li>
-      <li><b>R-squared</b>: \(1 - SSE/S_{yy}\). 수정 \(R^2 = 1 - (1 - R^2)\frac{n-1}{n-p-1}\)은 설명변수 수 \(p\)에 대한 벌점을 준 것.</li>
-      <li><b>F-statistic</b>: 회귀 분산분석의 F. 단순회귀에서는 기울기 t의 제곱(\(5.005^2 = 25.05\)).</li>
-    </ul>
-    <p>신뢰구간과 예측구간은 <code>confint(fit)</code>, <code>predict(fit, data.frame(x = 9), interval = "prediction")</code>으로 얻으며 5.2절의 값 \([0.332, 0.968]\), \([5.44, 10.66]\)과 같습니다. Python에서는 <code>statsmodels.formula.api.ols("y ~ x", data).fit().summary()</code>가 같은 정보를 줍니다.</p>
+    <p>각 숫자를 앞 단원의 식에 대응시켜 보자. Estimate는 \(\hat\beta_0 = 2.2\)과 \(\hat\beta_1 = 0.65\)이다(5.1절). Std. Error는 각각 \(\hat\sigma\sqrt{1/n + \bar x^2/S_{xx}}\)와 \(\hat\sigma/\sqrt{S_{xx}}\)이다. t value와 Pr(&gt;|t|)는 \(H_0: \beta = 0\)의 t 통계량과 자유도 \(n - 2 = 6\)의 양측 p값이다. Residual standard error는 \(\hat\sigma = \sqrt{SSE/(n-2)}\)이다. R-squared는 \(1 - SSE/S_{yy}\)이고, 수정 \(R^2 = 1 - (1 - R^2)\frac{n-1}{n-p-1}\)은 설명변수 수 \(p\)에 대한 벌점을 준 것이다. 끝으로 F-statistic은 회귀 분산분석의 F이며, 단순회귀에서는 기울기 t의 제곱 \(5.005^2 = 25.05\)이다.</p>
+    <p>신뢰구간과 예측구간은 <code>confint(fit)</code>와 <code>predict(fit, data.frame(x = 9), interval = "prediction")</code>으로 얻으며, 5.2절의 값 \([0.332, 0.968]\), \([5.44, 10.66]\)과 같다. Python에서는 <code>statsmodels.formula.api.ols("y ~ x", data).fit().summary()</code>가 같은 정보를 준다.</p>
 
     <h3><span class="no">7.1.4</span>가정 점검</h3>
-    <p>출력의 p값은 모형 가정(독립, 등분산, 정규 오차, 직선 관계)이 맞을 때만 의미가 있습니다. <code>plot(fit)</code>은 잔차 대 적합값 그림(패턴이 없어야 함), 정규 QQ 그림(직선에 가까워야 함) 등을 그려 줍니다. 잔차가 곡선 모양이면 직선 모형이 틀렸고, 깔때기 모양이면 등분산이 깨진 것입니다. 숫자만 보고 그림을 보지 않는 것이 가장 흔한 실수입니다. 같은 절의 예제 카드에서 출력을 읽는 연습을 합니다.</p>
+    <p>출력의 p값은 독립, 등분산, 정규 오차, 직선 관계라는 모형 가정이 맞을 때만 의미가 있다. <code>plot(fit)</code>은 잔차 대 적합값 그림과 정규 QQ 그림 등을 그려 준다. 잔차 대 적합값 그림에는 패턴이 없어야 하고, QQ 그림은 직선에 가까워야 한다. 예를 들어 잔차가 곡선 모양이면 직선 모형이 틀렸고, 깔때기 모양이면 등분산이 깨진 것이다. 그림 1은 문제가 없는 경우이며, 같은 절의 예제 카드에서 출력을 읽는 연습을 한다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 기본 옵션이 무엇인지 모르고 쓴다(R의 <code>t.test</code>는 웰치, 단측/양측 기본값 등). (2) p값이 \(2.2\times10^{-16}\) 미만으로 나오면 "확률 0"이라 쓴다: 표시 한계일 뿐이다. (3) 출력의 유의성 별표만 보고 효과 크기와 신뢰구간을 보지 않는다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>기본 옵션이 무엇인지 모르고 쓰기 쉽다. R의 <code>t.test</code>는 웰치가 기본이고, 단측과 양측의 기본값도 확인해야 한다. 또 p값이 \(2.2\times10^{-16}\) 미만으로 나오면 확률이 0이라 쓰는 실수가 있는데, 이것은 표시 한계일 뿐이다. 출력의 유의성 별표만 보고 효과 크기와 신뢰구간을 보지 않는 것도 흔한 잘못이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>R: <code>t.test</code>, <code>lm</code>, <code>summary</code>, <code>confint</code>, <code>predict</code>. Python: <code>scipy.stats</code>, <code>statsmodels</code>.</li>
-        <li>출력의 모든 숫자는 앞 단원의 식에 대응한다: 추정값, 표준오차, t, p, \(\hat\sigma\), \(R^2\), F.</li>
-        <li>잔차 그림으로 가정을 확인한 뒤에 p값을 해석한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 출력의 모든 숫자는 앞 단원의 식에 대응한다. 추정값, 표준오차, t, p, \(\hat\sigma\), \(R^2\), F가 각각 최소제곱 추정량, \(\hat\sigma/\sqrt{S_{xx}}\) 같은 표준오차, 기울기 검정, 잔차 표준오차, 결정계수, 회귀 F 검정이다. 다만 p값은 모형 가정이 맞을 때만 의미가 있으므로, 잔차 그림으로 가정을 확인한 뒤에 해석한다. R에서는 <code>t.test</code>, <code>lm</code>, <code>summary</code>, <code>confint</code>, <code>predict</code>를, Python에서는 <code>scipy.stats</code>와 <code>statsmodels</code>를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.1.5</span>연습문제</h3>
