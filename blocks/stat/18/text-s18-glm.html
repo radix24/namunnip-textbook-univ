@@ -8,60 +8,69 @@
 <article class="card q-card" id="text-s18-glm" data-kind="본문" data-std="응통18-05-01">
   <header class="card-head"><span class="no"></span><h2>일반화선형모형으로 묶기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>일반화선형모형의 세 요소(확률 분포, 선형 예측식, 연결함수)를 안다.</li>
-        <li>선형·로지스틱·포아송 회귀를 하나의 틀로 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>로지스틱 회귀 (<a href="03-01.html">3.1절</a>), 응통7 2.4절 지수족.</li>
-      </ul>
-    </div>
-
-    <h3>세 회귀는 사촌</h3>
-    <p>정규 반응에는 선형회귀, 이진 반응에는 로지스틱 회귀, 셈 반응에는 포아송 회귀를 씁니다. 넬더와 웨더번(1972)은 이들이 모두 같은 구조임을 보이고 일반화선형모형(GLM)이라는 하나의 틀로 묶었습니다.</p>
+    <p class="q-ask">키 같은 연속 반응에는 선형회귀, 합격 여부 같은 이진 반응에는 로지스틱 회귀, 사고 건수 같은 셈 반응에는 포아송 회귀를 쓴다. 세 모형은 이름도 공식도 달라 보인다. 그런데 R에서는 <code>glm</code> 함수 하나에 family만 바꿔 셋을 모두 적합한다. 셋은 무엇을 공유하고 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="일반화선형모형의 세 요소. 선형 예측식 η = xᵀβ(주황)가 연결함수 g(μ) = η(청록)를 거쳐 확률 분포 Y ~ 지수족(μ)(파랑)의 평균과 이어진다. 아래 표는 정규-항등-선형회귀, 이항-로짓-로지스틱 회귀, 포아송-로그-포아송 회귀, 감마-로그-감마 회귀이다">
+        <rect x="15" y="70" width="130" height="50" class="lc c"/><text x="80.0" y="92.0" text-anchor="middle" class="s">선형 예측식</text>
+        <text x="80.0" y="107.0" text-anchor="middle" class="s">η = xᵀβ</text>
+        <rect x="195" y="70" width="130" height="50" class="lb b"/><text x="260.0" y="92.0" text-anchor="middle" class="s">연결함수</text>
+        <text x="260.0" y="107.0" text-anchor="middle" class="s">g(μ) = η</text>
+        <rect x="375" y="70" width="130" height="50" class="la a"/><text x="440.0" y="92.0" text-anchor="middle" class="s">확률 분포</text>
+        <text x="440.0" y="107.0" text-anchor="middle" class="s">Y ~ 지수족(μ)</text>
+        <path d="M147 95 L193 95 M186.6 97.7 L193 95 L186.6 92.3" class="k"/>
+        <path d="M327 95 L373 95 M366.6 97.7 L373 95 L366.6 92.3" class="k"/>
+        <text x="30" y="150" class="s">분포</text><text x="150" y="150" class="s">정준 또는 흔한 연결</text><text x="370" y="150" class="s">모형</text>
+        <text x="30" y="168" class="s ta">정규</text><text x="150" y="168" class="s tb">항등 μ</text><text x="370" y="168" class="s">선형회귀</text>
+        <text x="30" y="181" class="s ta">이항</text><text x="150" y="181" class="s tb">로짓 log(μ/(1−μ))</text><text x="370" y="181" class="s">로지스틱 회귀</text>
+        <text x="30" y="194" class="s ta">포아송</text><text x="150" y="194" class="s tb">로그 log μ</text><text x="370" y="194" class="s">포아송 회귀</text>
+        <text x="30" y="207" class="s ta">감마</text><text x="150" y="207" class="s tb">로그 (실무)</text><text x="370" y="207" class="s">감마 회귀</text>
+        <text x="260" y="40" text-anchor="middle" class="s">R에서는 glm(y ~ x, family = ...)의 family만 바꾼다</text>
+      </svg>
+      <figcaption>그림 1. 일반화선형모형의 세 요소. 분포와 연결함수만 바꾸면 선형, 로지스틱, 포아송, 감마 회귀가 모두 같은 틀에 들어간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>로지스틱 회귀(<a href="03-01.html">3.1절</a>)와 지수족(응통7 2.4절)을 쓴다.</div>
+    <p>처음 질문의 답은 세 요소이다. 반응의 분포, 설명변수의 선형 예측식, 그리고 둘을 잇는 연결함수가 그것이다(그림 1). 넬더와 웨더번은 1972년에 선형, 로지스틱, 포아송 회귀가 모두 이 구조임을 보이고 일반화선형모형(GLM)이라는 하나의 틀로 묶었다. 그래서 적합, 비교, 진단도 같은 방식으로 한다.</p>
 
     <h3><span class="no">5.1.1</span>세 요소</h3>
-    <ol>
-      <li><b>확률 요소</b>: \(Y_i\)가 지수족 분포(정규, 이항, 포아송, 감마)를 따름.</li>
-      <li><b>체계 요소</b>: 선형 예측식 \(\eta_i = \mathbf x_i^\top\boldsymbol\beta\).</li>
-      <li><b>연결함수</b>: \(g(\mu_i) = \eta_i\), \(\mu_i = E(Y_i)\).</li>
-    </ol>
+    <p>확률 요소는 \(Y_i\)가 정규, 이항, 포아송, 감마 같은 지수족 분포를 따른다는 것이다. 체계 요소는 선형 예측식 \(\eta_i = \mathbf x_i^\top\boldsymbol\beta\)이다. 그리고 연결함수는 평균 \(\mu_i = E(Y_i)\)와 선형 예측식을 \(g(\mu_i) = \eta_i\)로 잇는다. 반응에 따른 흔한 조합은 표 1과 같다.</p>
     <table class="tw">
-      <tr><th>반응</th><th>분포</th><th>정준 연결</th><th>모형</th></tr>
-      <tr><td>연속</td><td>정규</td><td>항등 \(\mu\)</td><td>선형회귀</td></tr>
-      <tr><td>이진·비율</td><td>이항</td><td>로짓 \(\log\frac{\mu}{1-\mu}\)</td><td>로지스틱 회귀</td></tr>
-      <tr><td>셈</td><td>포아송</td><td>로그 \(\log\mu\)</td><td>포아송 회귀, 로그선형</td></tr>
-      <tr><td>양의 연속(치우침)</td><td>감마</td><td>역수(실무는 로그)</td><td>감마 회귀</td></tr>
+      <caption>표 1. 흔한 일반화선형모형</caption>
+      <thead><tr><th>반응</th><th>분포</th><th>연결</th><th>모형</th></tr></thead>
+      <tbody>
+        <tr><td>연속</td><td>정규</td><td>항등 \(\mu\)</td><td>선형회귀</td></tr>
+        <tr><td>이진, 비율</td><td>이항</td><td>로짓 \(\log\frac{\mu}{1 - \mu}\)</td><td>로지스틱 회귀</td></tr>
+        <tr><td>셈</td><td>포아송</td><td>로그 \(\log\mu\)</td><td>포아송 회귀, 로그선형</td></tr>
+        <tr><td>양의 연속(치우침)</td><td>감마</td><td>역수(실무는 로그)</td><td>감마 회귀</td></tr>
+      </tbody>
     </table>
-    <p>정준 연결은 지수족의 자연모수 \(\eta(\theta)\)(응통7 2.4절)를 선형 예측식으로 두는 것입니다. 이때 충분통계량이 \(X^\top\mathbf y\)가 되고 피셔 점수법과 뉴턴-랩슨이 같아집니다. 이항 자료에 프로빗 연결 \(\Phi^{-1}(\mu)\)을 쓰는 것처럼 정준이 아닌 연결도 가능합니다.</p>
+    <p>여기서 정준 연결은 지수족의 자연모수(응통7 2.4절)를 선형 예측식으로 두는 것이다. 이때 충분통계량이 \(X^\top\mathbf y\)가 되고, 피셔 점수법과 뉴턴-랩슨이 같아진다. 물론 이항 자료에 프로빗 연결 \(\Phi^{-1}(\mu)\)를 쓰는 것처럼 정준이 아닌 연결도 가능하다.</p>
 
     <h3><span class="no">5.1.2</span>공통 도구</h3>
-    <p>모든 GLM은 최대가능도(IRLS)로 적합하고, 이탈도로 비교하며, 왈드·우도비 검정과 잔차 진단을 같은 방식으로 합니다. R에서는 <code>glm(y ~ x, family = binomial / poisson / Gamma(link = "log"))</code>로 family만 바꿉니다.</p>
-
+    <p>모든 GLM은 반복 재가중 최소제곱(IRLS)으로 최대가능도 추정값을 구하고, 이탈도(<a href="03-03.html">3.3절</a>)로 비교하며, 왈드와 우도비 검정과 잔차 진단을 같은 방식으로 한다. 그래서 R에서는 <code>glm(y ~ x, family = binomial)</code>, <code>poisson</code>, <code>Gamma(link = "log")</code>처럼 family만 바꾼다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
-      <p>보험 청구 금액(양수, 오른쪽 꼬리)을 나이로 설명하려 합니다. 선형회귀와 감마 GLM(로그 연결)의 차이는?</p>
+      <p>양수이고 오른쪽 꼬리가 긴 보험 청구 금액을 나이로 설명하려 한다. 선형회귀와 감마 GLM(로그 연결)은 무엇이 다른가?</p>
     </div>
-    <p><i>풀이.</i> 선형회귀는 등분산과 음수 예측 문제가 있습니다. 감마 GLM은 분산이 평균의 제곱에 비례한다고 가정해 큰 금액의 큰 퍼짐을 자연스럽게 다루고, 로그 연결이라 예측이 항상 양수이며 계수를 배수로 해석합니다(나이 1세당 청구액 \(e^{\beta}\)배).</p>
+    <p><i>풀이.</i> 선형회귀는 등분산을 가정하고 음수를 예측할 수 있다. 반면 감마 GLM은 분산이 평균의 제곱에 비례한다고 가정하므로, 큰 금액의 큰 퍼짐을 자연스럽게 다룬다. 또 로그 연결이라 예측이 항상 양수이고, 계수를 배수로 해석한다. 예를 들어 나이 1세당 청구액이 \(e^{\beta}\)배가 된다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>반응에 로그를 취해 선형회귀하는 것과 로그 연결 GLM은 같지 않다. 앞의 것은 \(E(\log Y)\)를, 뒤의 것은 \(\log E(Y)\)를 모형화하므로, 되돌린 예측값이 기하평균과 산술평균만큼 다르다(응통17 3.2절).</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>분포 + 선형 예측식 + 연결함수.</li>
-        <li>정규-항등, 이항-로짓, 포아송-로그가 정준 연결.</li>
-        <li>적합·비교·진단을 같은 틀로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>일반화선형모형은 지수족 분포, 선형 예측식, 연결함수의 세 요소로 이루어진다. 정규-항등, 이항-로짓, 포아송-로그가 정준 연결의 대표이다. 모든 GLM은 IRLS로 적합하고 이탈도로 비교하며 같은 방식으로 진단한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>정규 분포와 항등 연결의 GLM 이탈도는 무엇과 같나요?
-          <details><summary>답</summary><p>잔차 제곱합 SSE를 \(\sigma^2\)로 나눈 것(척도 이탈도). 척도를 빼면 SSE 자체.</p></details>
+        <li>정규 분포와 항등 연결의 GLM에서 이탈도는 무엇과 같은가?
+          <details><summary>답</summary><p>잔차 제곱합 SSE를 \(\sigma^2\)으로 나눈 것(척도 이탈도)이며, 척도를 빼면 SSE 자체이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>감마 GLM(로그 연결)에서 나이 계수가 0.02이다. 나이가 10세 많으면 기대 청구액은 몇 배인가?
+          <details><summary>답</summary><p>\(e^{0.2} = 1.22\)배이다.</p></details>
+        </li>
+        <li>이항 자료에 로짓 대신 프로빗 연결을 쓰면 계수는 대략 어떻게 달라지는가?
+          <details><summary>답</summary><p>로지스틱 분포의 표준편차가 \(\pi/\sqrt3 \approx 1.8\)이라, 로짓 계수가 프로빗 계수의 약 1.6~1.8배이다. 예측 확률은 거의 같다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,68 +8,75 @@
 <article class="card q-card" id="text-s18-roc" data-kind="본문" data-std="응통18-03-04">
   <header class="card-head"><span class="no"></span><h2>분류표와 ROC 곡선</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>예측 확률에 문턱값을 정해 분류표를 만들고 민감도·특이도를 구한다.</li>
-        <li>문턱값을 바꿔 가며 ROC 곡선을 그리고 AUC를 해석한다.</li>
-        <li>문턱값을 오분류 비용으로 고른다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>로지스틱 회귀의 적합 (<a href="03-02.html">3.2절</a>), 이탈도 (<a href="03-03.html">3.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>확률을 결정으로</h3>
-    <p>로지스틱 회귀는 확률 \(\hat p\)를 주지만, 실무에서는 "검사를 더 할지", "대출을 승인할지"처럼 예/아니요를 정해야 합니다. 문턱값 \(c\)를 정해 \(\hat p \ge c\)이면 양성으로 분류합니다. 이탈도(3.3절)가 확률의 적합을 본다면, 이 절은 분류의 정확성을 봅니다.</p>
+    <p class="q-ask">로지스틱 회귀는 환자마다 질병일 확률을 준다. 그런데 의사는 추가 검사를 할지 말지를 정해야 한다. 확률이 0.5를 넘으면 검사하는 것이 자연스러워 보이지만, 놓친 환자의 비용이 헛검사의 비용보다 훨씬 크다면 어떨까? 확률을 결정으로 바꾸는 기준은 어떻게 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="왼쪽은 예제 자료의 ROC 계단 곡선(파랑, 아래 넓이 AUC 0.88)과 대각선(점선)이며, 문턱값 0.5(1 − 특이도 0.2, 민감도 0.8)와 0.35(0.4, 1.0)가 주황 점이다. 오른쪽은 예측 확률 10개를 크기순으로 늘어놓은 점으로 양성은 파랑, 음성은 빨강이며, 양성이 음성보다 높은 쌍이 25쌍 가운데 22쌍이다">
+        <line x1="60" y1="195" x2="240" y2="195" class="ax"/>
+        <line x1="60" y1="195" x2="60" y2="15" class="ax"/>
+        <text x="60" y="210" text-anchor="middle" class="s">0</text>
+        <text x="150" y="210" text-anchor="middle" class="s">0.5</text>
+        <text x="240" y="210" text-anchor="middle" class="s">1</text>
+        <text x="55" y="199" text-anchor="end" class="s">0</text>
+        <text x="55" y="109" text-anchor="end" class="s">0.5</text>
+        <text x="55" y="19" text-anchor="end" class="s">1</text>
+        <text x="240" y="224" text-anchor="end" class="s">1 − 특이도</text>
+        <text x="66" y="19" class="s">민감도</text>
+        <path d="M60 195 L60 195 L60 159 L60 123 L60 87 L96 87 L96 51 L132 51 L132 15 L168 15 L204 15 L240 15 L240 195 Z" class="la"/>
+        <path d="M60 195 L60 159 L60 123 L60 87 L96 87 L96 51 L132 51 L132 15 L168 15 L204 15 L240 15" class="a"/>
+        <path d="M60 195 L240 15" class="k dsh"/>
+        <circle cx="96" cy="51" r="4.5" class="fc"/><text x="104" y="65" class="s tc">c = 0.5</text>
+        <circle cx="132" cy="15" r="4.5" class="fc"/><text x="140" y="29" class="s tc">c = 0.35</text>
+        <text x="171.6" y="141" text-anchor="middle" class="s ta">AUC 0.88</text>
+        <text x="270" y="40" class="s">예측 확률 (양성 5명, 음성 5명)</text>
+        <circle cx="278" cy="70" r="7" class="fa"/><text x="278" y="92" text-anchor="middle" class="s">0.9</text>
+        <circle cx="302" cy="70" r="7" class="fa"/><text x="302" y="92" text-anchor="middle" class="s">0.8</text>
+        <circle cx="326" cy="70" r="7" class="fa"/><text x="326" y="92" text-anchor="middle" class="s">0.7</text>
+        <circle cx="350" cy="70" r="7" class="fd"/><text x="350" y="92" text-anchor="middle" class="s">0.6</text>
+        <circle cx="374" cy="70" r="7" class="fa"/><text x="374" y="92" text-anchor="middle" class="s">0.55</text>
+        <circle cx="398" cy="70" r="7" class="fd"/><text x="398" y="92" text-anchor="middle" class="s">0.45</text>
+        <circle cx="422" cy="70" r="7" class="fa"/><text x="422" y="92" text-anchor="middle" class="s">0.4</text>
+        <circle cx="446" cy="70" r="7" class="fd"/><text x="446" y="92" text-anchor="middle" class="s">0.3</text>
+        <circle cx="470" cy="70" r="7" class="fd"/><text x="470" y="92" text-anchor="middle" class="s">0.2</text>
+        <circle cx="494" cy="70" r="7" class="fd"/><text x="494" y="92" text-anchor="middle" class="s">0.1</text>
+        <text x="270" y="120" class="s ta">파랑 양성</text><text x="350" y="120" class="s td">빨강 음성</text><text x="270" y="150" class="s">양성이 음성보다 높은 쌍</text><text x="270" y="166" class="s">25쌍 가운데 22쌍</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.4.1의 ROC 곡선. 문턱값을 내릴수록 곡선을 따라 오른쪽 위로 가며, 아래 넓이 AUC는 양성이 음성보다 높은 쌍의 비율 22/25이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>로지스틱 회귀의 적합(<a href="03-02.html">3.2절</a>)과 이탈도(<a href="03-03.html">3.3절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 문턱값을 오분류의 비용으로 정하는 것이다. 문턱값 \(c\)를 정해 \(\hat p \ge c\)이면 양성으로 분류하는데, 0.5가 기본값일 이유는 없다. 문턱값을 바꿀 때 민감도와 특이도가 어떻게 맞바뀌는지는 ROC 곡선이 보여 주고(그림 1), 그 가운데 어디를 고를지는 비용이 정한다. 즉 이탈도(<a href="03-03.html">3.3절</a>)가 확률의 적합을 본다면, 이 절은 분류의 정확성을 본다.</p>
 
     <h3><span class="no">3.4.1</span>분류표</h3>
-    <table class="tw">
-      <tr><th></th><th>실제 양성</th><th>실제 음성</th></tr>
-      <tr><td>양성으로 분류</td><td>참 양성 TP</td><td>거짓 양성 FP</td></tr>
-      <tr><td>음성으로 분류</td><td>거짓 음성 FN</td><td>참 음성 TN</td></tr>
-    </table>
-    <ul>
-      <li><b>민감도</b> TP/(TP + FN): 실제 양성 가운데 잡아낸 비율.</li>
-      <li><b>특이도</b> TN/(TN + FP): 실제 음성 가운데 맞게 거른 비율.</li>
-      <li><b>양성 예측도</b> TP/(TP + FP): 양성 판정 가운데 진짜 양성 비율. 유병률에 크게 좌우됩니다.</li>
-    </ul>
-    <p>정확도(전체 맞힌 비율)는 한 범주가 드물 때 쓸모가 없습니다. 유병률 1%면 모두 음성이라고만 해도 정확도 99%입니다.</p>
+    <p>분류 결과를 실제와 교차하면 참 양성 TP, 거짓 양성 FP, 거짓 음성 FN, 참 음성 TN의 네 칸이 나온다. 여기서 민감도 TP/(TP + FN)는 실제 양성 가운데 잡아낸 비율이고, 특이도 TN/(TN + FP)는 실제 음성 가운데 맞게 거른 비율이다. 또 양성 예측도 TP/(TP + FP)는 양성 판정 가운데 진짜 양성의 비율이며 유병률에 크게 좌우된다. 한편 전체를 맞힌 비율인 정확도는 한 범주가 드물 때 쓸모가 없다. 유병률 1%면 모두 음성이라고만 해도 정확도가 99%이기 때문이다.</p>
 
     <h3><span class="no">3.4.2</span>ROC 곡선과 AUC</h3>
-    <p>문턱값을 1에서 0으로 내리면 민감도는 오르고 특이도는 내려갑니다. 가로축 1 − 특이도, 세로축 민감도로 그 경로를 그린 것이 ROC 곡선이고, 아래 넓이가 AUC입니다. AUC는 "무작위로 고른 양성 하나가 무작위로 고른 음성 하나보다 높은 점수를 받을 확률"로, 맨-휘트니 통계량(응통12 4.2절)을 \(mn\)으로 나눈 값과 같습니다. 0.5는 동전 던지기, 1은 완벽한 구별입니다. R: <code>pROC::roc(y, phat)</code>.</p>
-
-    <h3><span class="no">3.4.3</span>문턱값 고르기</h3>
-    <p>0.5가 기본값일 이유는 없습니다. 거짓 음성 비용 \(C_{FN}\)과 거짓 양성 비용 \(C_{FP}\)가 있고 확률이 잘 보정되어 있으면, 기대 비용을 최소로 하는 문턱값은 \(c = C_{FP}/(C_{FP} + C_{FN})\)입니다. 암 선별처럼 놓치는 비용이 크면 문턱값을 낮춥니다. 성능은 학습에 쓰지 않은 자료(교차검증, 응통10 6.3절)로 평가해야 낙관적이지 않습니다.</p>
-
+    <p>문턱값을 1에서 0으로 내리면 민감도는 오르고 특이도는 내려간다. 그 경로를 가로축 1 − 특이도, 세로축 민감도로 그린 것이 ROC 곡선이고, 아래 넓이가 AUC이다. 그러면 AUC는 무작위로 고른 양성 하나가 무작위로 고른 음성 하나보다 높은 점수를 받을 확률로, 맨-휘트니 통계량(응통12 4.2절)을 \(mn\)으로 나눈 값과 같다. 0.5는 동전 던지기, 1은 완벽한 구별이며, R에서는 <code>pROC::roc(y, phat)</code>을 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
-      <p>양성 5명의 예측 확률 0.9, 0.8, 0.7, 0.55, 0.4, 음성 5명의 0.6, 0.45, 0.3, 0.2, 0.1. 문턱값 0.5와 0.35의 민감도·특이도, 그리고 AUC를 구하세요.</p>
+      <p>양성 5명의 예측 확률이 0.9, 0.8, 0.7, 0.55, 0.4이고 음성 5명은 0.6, 0.45, 0.3, 0.2, 0.1이다. 문턱값 0.5와 0.35의 민감도와 특이도, 그리고 AUC를 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(c = 0.5\): 양성 4명(0.4 제외) → 민감도 0.8, 음성 중 0.6 하나만 양성 판정 → 특이도 0.8. \(c = 0.35\): 민감도 1.0, 특이도 0.6(0.6, 0.45가 양성 판정). AUC: 양성-음성 25쌍 중 양성이 높은 쌍 22개(0.55 &lt; 0.6, 0.4 &lt; 0.6, 0.4 &lt; 0.45의 3쌍 제외), \(22/25 = 0.88\).</p>
+    <p><i>풀이.</i> \(c = 0.5\)에서는 양성 4명(0.4 제외)을 잡아 민감도 0.8이고, 음성 가운데 0.6 하나만 양성으로 판정해 특이도 0.8이다. \(c = 0.35\)에서는 민감도 1.0, 특이도 0.6(0.6과 0.45가 양성 판정)이다. 한편 양성-음성 25쌍 가운데 양성이 높은 쌍은 22개(0.55 &lt; 0.6, 0.4 &lt; 0.6, 0.4 &lt; 0.45의 3쌍 제외)이므로 AUC = 22/25 = 0.88이다(그림 1).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>민감도, 특이도, 양성 예측도. 드문 사건에서 정확도는 속입니다.</li>
-        <li>ROC = 문턱값을 바꾼 민감도 대 1 − 특이도, AUC = 양성이 음성보다 높을 확률.</li>
-        <li>문턱값은 비용으로 \(C_{FP}/(C_{FP} + C_{FN})\), 평가는 새 자료로.</li>
-      </ol>
-    </div>
+    <h3><span class="no">3.4.3</span>문턱값 고르기</h3>
+    <p>거짓 음성 비용 \(C_{FN}\)과 거짓 양성 비용 \(C_{FP}\)가 있고 확률이 잘 보정되어 있으면, 기대 비용을 최소로 하는 문턱값은 \(c = C_{FP}/(C_{FP} + C_{FN})\)이다. 그래서 암 선별처럼 놓치는 비용이 크면 문턱값을 낮춘다. 또한 성능은 학습에 쓰지 않은 자료, 곧 교차검증(응통10 6.3절)으로 평가해야 낙관적이지 않다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p>민감도와 특이도가 0.9인 검사라면 양성 판정의 90%가 진짜라고 생각하기 쉽다. 그러나 유병률 1%인 집단에서 1만 명을 검사하면 TP 90, FP 990이라 양성 예측도는 8.3%에 그친다.</p></div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>분류표에서 민감도, 특이도, 양성 예측도를 구하며, 드문 사건에서 정확도는 속인다. ROC 곡선은 문턱값을 바꿀 때의 민감도 대 1 − 특이도이고, AUC는 양성이 음성보다 높은 점수를 받을 확률이다. 문턱값은 비용으로 \(C_{FP}/(C_{FP} + C_{FN})\)에서 정하고, 평가는 새 자료로 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>거짓 음성 비용이 거짓 양성의 9배이면 최적 문턱값은?
-          <details><summary>답</summary><p>\(1/(1 + 9) = 0.1\). 예측 확률이 10%만 넘어도 양성으로 분류합니다.</p></details>
+        <li>거짓 음성 비용이 거짓 양성의 9배이면 최적 문턱값은 얼마인가?
+          <details><summary>답</summary><p>\(1/(1 + 9) = 0.1\)이다. 예측 확률이 10%만 넘어도 양성으로 분류한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>민감도 0.9, 특이도 0.9인 검사를 유병률 1%인 집단에 쓰면 양성 예측도는?
-          <details><summary>답</summary><p>1만 명 중 양성 100명에서 TP 90, 음성 9900명에서 FP 990. 양성 예측도 \(90/1080 = 8.3\%\). 양성 판정의 열에 아홉은 거짓 양성입니다.</p></details>
+      <ol start="2">
+        <li>예제 3.4.1에서 문턱값 0.65의 민감도와 특이도를 구하라.
+          <details><summary>답</summary><p>양성 가운데 0.9, 0.8, 0.7의 3명만 잡으므로 민감도 0.6, 음성은 모두 거르므로 특이도 1.0이다.</p></details>
+        </li>
+        <li>민감도 0.9, 특이도 0.9인 검사를 유병률 10%인 집단에 쓰면 양성 예측도는 얼마인가?
+          <details><summary>답</summary><p>1만 명 가운데 TP 900, FP 900이므로 50%이다. 유병률이 1%일 때(8.3%)보다 훨씬 높다.</p></details>
         </li>
       </ol>
     </div>
