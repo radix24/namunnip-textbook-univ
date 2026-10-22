@@ -8,66 +8,73 @@
 <article class="card q-card" id="text-s6-joint" data-kind="본문" data-std="응통6-05-01">
   <header class="card-head"><span class="no"></span><h2>결합, 주변, 조건부 분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>결합 밀도에서 주변 밀도와 조건부 밀도를 구한다.</li>
-        <li>확률변수의 독립을 밀도의 곱으로 판정한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>이중적분 (응통1 06단원), 조건부확률 (<a href="01-03.html">1.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>두 변수를 함께 보기</h3>
-    <p>키와 몸무게, 공부 시간과 점수처럼 두 양을 함께 다루려면 \(P(X \le x, Y \le y)\) 같은 결합 확률이 필요합니다.</p>
+    <p class="q-ask">0과 1 사이에서 두 점을 골라 작은 값을 \(X\), 큰 값을 \(Y\)라 하자. \((X, Y)\)는 \(0 &lt; x &lt; y &lt; 1\)인 삼각형 위에 고르게 퍼져 있으므로 결합 밀도는 상수 2이다. 밀도가 상수이니 \(X\)와 \(Y\)는 서로 무관할 것 같다. 정말 그럴까? 두 변수를 함께 다룰 때 한 변수만의 분포, 한 변수를 알 때 다른 변수의 분포는 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="단위 정사각형에서 y = x 위쪽 삼각형이 칠해져 있고 결합 밀도가 2이다. x = 0.3에서 세로로 자른 선분이 y = 0.3부터 1까지 굵게 그려져 있다">
+        <line x1="150" y1="180" x2="320" y2="180" class="ax"/>
+        <line x1="150" y1="180" x2="150" y2="10" class="ax"/>
+        <text x="150" y="195" text-anchor="middle" class="s">0</text>
+        <text x="235" y="195" text-anchor="middle" class="s">0.5</text>
+        <text x="320" y="195" text-anchor="middle" class="s">1</text>
+        <text x="145" y="184" text-anchor="end" class="s">0</text>
+        <text x="145" y="99" text-anchor="end" class="s">0.5</text>
+        <text x="145" y="14" text-anchor="end" class="s">1</text>
+        <text x="320" y="209" text-anchor="end" class="s">x</text>
+        <text x="156" y="14" class="s">y</text>
+        <path d="M150 180 L150 10 L320 10 Z" class="la"/>
+        <path d="M150 180 L320 10" class="k dsh"/>
+        <path d="M320 180 L320 10" class="gd"/>
+        <path d="M201 129 L201 10" class="c" style="stroke-width:3"/>
+        <text x="158.5" y="52.5" class="ta">f = 2</text>
+        <text x="243.5" y="112" class="s">y = x</text>
+        <text x="334" y="40.6" class="s tc">x = 0.3으로 자른 선분</text>
+        <text x="334" y="55.6" class="s tc">위에서 Y는 (0.3, 1)의 균일분포</text>
+        <text x="334" y="103.5" class="s">값을 가지는 영역이 삼각형이라</text>
+        <text x="334" y="118.5" class="s">x에 따라 y의 범위가 바뀐다</text>
+      </svg>
+      <figcaption>그림 1. 결합 밀도 \(f(x, y) = 2\) (\(0 &lt; x &lt; y &lt; 1\)). \(X = 0.3\)으로 자르면 \(Y\)가 놓일 수 있는 곳은 굵은 선분 \((0.3, 1)\)뿐이다. \(X\)의 값이 \(Y\)의 범위를 바꾸므로 밀도가 상수여도 두 변수는 독립이 아니다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이중적분(응통1 6단원)과 조건부확률(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>결합 분포와 주변 분포</h3>
+    <p>키와 몸무게, 공부 시간과 점수처럼 두 양을 함께 다루려면 \(P(X \le x, Y \le y)\) 같은 결합 확률이 필요하다. 한 변수의 밀도가 구간 위의 넓이로 확률을 주었듯, 두 변수의 결합 밀도는 평면 영역 위의 부피로 확률을 준다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 5.1.1</span>
-      <p><b>결합 밀도</b> \(f(x, y) \ge 0\): 평면의 영역 \(A\)에 대해 \(P((X, Y) \in A) = \iint_A f(x,y)\,dx\,dy\). <b>주변 밀도</b>: \(f_X(x) = \int f(x, y)\,dy\), \(f_Y(y) = \int f(x,y)\,dx\). 이산형은 적분 대신 합.</p>
+      <span class="lb">정의 5.1.1 <span class="nm">(결합 밀도와 주변 밀도)</span></span>
+      <p>평면의 모든 영역 \(A\)에 대해 \(P((X, Y) \in A) = \iint_A f(x,y)\,dx\,dy\)인 \(f(x, y) \ge 0\)을 <em>결합 밀도</em>라 한다. 또 \(f_X(x) = \int f(x, y)\,dy\)와 \(f_Y(y) = \int f(x,y)\,dx\)를 <em>주변 밀도</em>라 한다. 이산형은 적분 대신 합을 쓴다.</p>
     </div>
-    <p>주변 밀도는 다른 변수를 "적분해 없앤" 것입니다. 분할표에서 행 합, 열 합을 구하는 것과 같습니다.</p>
+    <p>즉 주변 밀도는 다른 변수를 적분해 없앤 것이다. 분할표에서 행 합과 열 합을 구해 표 가장자리(주변)에 적는 것과 같아서 이런 이름이 붙었다.</p>
 
     <h3><span class="no">5.1.2</span>조건부 분포와 독립</h3>
     <div class="tb-env def">
-      <span class="lb">정의 5.1.2</span>
-      <p>\(f_X(x) &gt; 0\)일 때 \(X = x\)가 주어진 \(Y\)의 <b>조건부 밀도</b>: \(f(y \mid x) = \dfrac{f(x, y)}{f_X(x)}\).</p>
+      <span class="lb">정의 5.1.2 <span class="nm">(조건부 밀도)</span></span>
+      <p>\(f_X(x) &gt; 0\)일 때, \(X = x\)가 주어진 \(Y\)의 <em>조건부 밀도</em>는 \(f(y \mid x) = f(x, y)/f_X(x)\)이다.</p>
     </div>
-    <p>\(P(X = x) = 0\)인데도 이렇게 정의할 수 있는 이유는, 조건 \(x \le X \le x + h\)로 계산한 조건부확률에서 \(h \to 0\)으로 보낸 극한이 이 식이기 때문입니다.</p>
+    <p>그런데 연속형에서는 \(P(X = x) = 0\)이므로 1.3절의 정의를 그대로 쓸 수 없다. 그래도 이렇게 정의할 수 있는 것은, 조건을 \(x \le X \le x + h\)로 두고 계산한 조건부확률에서 \(h \to 0\)으로 보낸 극한이 이 식이기 때문이다. 그림으로는 결합 밀도를 \(X = x\)인 세로선으로 잘라 낸 단면을, 넓이가 1이 되도록 \(f_X(x)\)로 나눈 것이다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 5.1.3</span>
-      <p>\(X\)와 \(Y\)가 독립 \(\iff\) 모든 \(x, y\)에서 \(f(x, y) = f_X(x)f_Y(y)\) \(\iff\) \(f(x,y) = g(x)h(y)\)로 인수분해되고 값을 가지는 영역이 직사각형.</p>
+      <span class="lb">정리 5.1.3 <span class="nm">(독립의 판정)</span></span>
+      <p>\(X\)와 \(Y\)가 독립인 것은 모든 \(x, y\)에서 \(f(x, y) = f_X(x)f_Y(y)\)인 것과 같다. 또 이는 \(f(x,y) = g(x)h(y)\)로 인수분해되고 밀도가 양수인 영역이 직사각형인 것과 같다.</p>
     </div>
-
+    <p>두 번째 판정법에서 영역 조건을 빠뜨리면 안 된다. 영역이 직사각형이 아니면 한 변수의 값이 다른 변수가 가질 수 있는 범위를 바꾸므로, 식이 아무리 깔끔하게 나뉘어도 독립이 아니다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 5.1.4</span>
-      <p>\(f(x, y) = 2\) (\(0 &lt; x &lt; y &lt; 1\)). 주변 밀도, \(f(y \mid x)\), 독립 여부를 구하세요.</p>
+      <span class="lb">예제 5.1.1</span>
+      <p>처음 질문의 \(f(x, y) = 2\) (\(0 &lt; x &lt; y &lt; 1\))에서 주변 밀도, \(f(y \mid x)\), 독립 여부를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(f_X(x) = \int_x^1 2\,dy = 2(1 - x)\), \(f_Y(y) = \int_0^y 2\,dx = 2y\). \(f(y \mid x) = \frac{2}{2(1-x)} = \frac{1}{1-x}\) (\(x &lt; y &lt; 1\)), 곧 \(X = x\)이면 \(Y\)는 \((x, 1)\)의 균일분포입니다. \(f_Xf_Y = 4y(1-x) \ne 2\)이므로 독립이 아닙니다. 밀도가 상수인데도 영역이 삼각형이라 종속입니다.</p>
+    <p><i>풀이.</i> \(f_X(x) = \int_x^1 2\,dy = 2(1 - x)\), \(f_Y(y) = \int_0^y 2\,dx = 2y\)이다. 작은 값은 0 쪽에, 큰 값은 1 쪽에 몰린다. 조건부 밀도는 \(f(y \mid x) = \frac{2}{2(1-x)} = \frac{1}{1-x}\) (\(x &lt; y &lt; 1\))이므로, \(X = x\)이면 \(Y\)는 \((x, 1)\)의 균일분포이다(그림 1). 그런데 \(f_Xf_Y = 4y(1-x) \ne 2\)이므로 독립이 아니다. 처음 질문의 직관과 달리, 밀도가 상수여도 영역이 삼각형이라 두 변수는 종속이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주변 밀도는 다른 변수에 대해 적분.</li>
-        <li>조건부 밀도 = 결합 / 주변.</li>
-        <li>독립은 결합 밀도 = 주변 밀도의 곱. 영역 모양도 확인합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>결합 밀도는 평면 영역 위의 부피로 확률을 주며, 주변 밀도는 다른 변수를 적분해 없애 얻는다. 조건부 밀도는 결합 밀도를 한 변수의 값으로 자른 단면을 주변 밀도로 나눈 것이다. 두 변수가 독립인 것은 결합 밀도가 주변 밀도의 곱인 것과 같고, 인수분해로 판정할 때는 값을 가지는 영역이 직사각형인지도 확인해야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 \(P(Y &gt; 2X)\)는?
-          <details><summary>답</summary><p>\(\int_0^{1/2}\int_{2x}^1 2\,dy\,dx = \int_0^{1/2}2(1 - 2x)dx = 1/2\).</p></details>
+        <li>예제 5.1.1에서 \(P(Y &gt; 2X)\)는 얼마인가?
+          <details><summary>답</summary><p>\(\int_0^{1/2}\int_{2x}^1 2\,dy\,dx = \int_0^{1/2}2(1 - 2x)\,dx = 1/2\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(f(x, y) = e^{-x-y}\) (\(x, y &gt; 0\))이면 \(X, Y\)는 독립인가요? \(P(X &lt; Y)\)는?
-          <details><summary>답</summary><p>\(e^{-x}e^{-y}\)이고 영역이 사분면이라 독립. 대칭이므로 \(P(X &lt; Y) = 1/2\).</p></details>
+      <ol start="2">
+        <li>\(f(x, y) = e^{-x-y}\) (\(x, y &gt; 0\))이면 \(X\)와 \(Y\)는 독립인가? \(P(X &lt; Y)\)는 얼마인가?
+          <details><summary>답</summary><p>\(e^{-x}e^{-y}\)로 나뉘고 영역이 사분면(직사각형)이므로 독립이다. 두 변수의 분포가 같고 대칭이므로 \(P(X &lt; Y) = 1/2\)이다.</p></details>
         </li>
       </ol>
     </div>
