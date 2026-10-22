@@ -8,20 +8,22 @@
 <article class="card q-card" id="text-e32-gating" data-kind="본문" data-std="전전32-05-02">
   <header class="card-head"><span class="no"></span><h2>클록 게이팅과 전력 게이팅의 효과와 비용</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>클록 게이팅(동적 전력)과 전력 게이팅(누설 전력)의 대상이 다름을 안다.</li>
-        <li>전력 게이팅의 비용(스위치 면적, 깨어나는 시간, 상태 보존)을 설명한다.</li>
-        <li>손익 분기 시간으로 끄는 것이 이득인 쉬는 시간을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>동적 전력과 클록 게이팅 (<a href="../30/04-01.html">전전30 4.1절</a>, <a href="../30/04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">스마트폰 칩의 블록 대부분은 대부분의 시간 동안 쉰다. 쉬는 블록의 클록만 멈추면 될까, 아니면 전원까지 끊어야 할까? 두 방법은 줄이는 전력의 종류도, 다시 켜는 데 드는 시간과 에너지도 다르다. 언제 어느 쪽을 써야 이득일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 전력 게이팅의 손익 분기(개형). 블록 누설 10 mW, 끄고 켜는 데 드는 에너지 2 μJ이면 쉬는 시간이 2 μJ/10 mW = 200 μs 이상일 때 전력 게이팅이 이득이고, 그보다 짧은 쉼에는 클록 게이팅만 쓴다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 150 L460 50" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M80 100 H460" class="a" stroke-width="2.5"/>
+        <path d="M270 30 V170" class="k dsh"/>
+        <circle cx="270" cy="100" r="5" class="fd"/>
+        <g class="s"><text x="380" y="46" class="tb">아낀 누설 에너지</text><text x="380" y="94" class="ta">전환 에너지 2 μJ</text><text x="240" y="186" class="td">200 μs</text><text x="440" y="186">쉬는 시간</text></g>
+      </svg>
+      <figcaption>그림 1. 전원을 끄면 쉬는 시간에 비례해 누설 에너지를 아끼지만, 끄고 켜는 데 고정 에너지가 들므로 쉬는 시간이 손익 분기를 넘어야 이득이다(예제 5.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>동적 전력과 클록 게이팅(<a href="../30/04-01.html">전전30 4.1절</a>, <a href="../30/04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>비교</h3>
+    <p>두 방법은 아래 표처럼 다르다. 처음 질문의 첫째 답이 이 비교이다.</p>
     <table class="tb-table">
       <tr><th></th><th>클록 게이팅</th><th>전력 게이팅</th></tr>
       <tr><td>줄이는 것</td><td>동적 전력</td><td>누설(+동적) 전력</td></tr>
@@ -30,41 +32,39 @@
       <tr><td>상태</td><td>유지</td><td>사라짐(보존 레지스터 필요)</td></tr>
       <tr><td>추가 회로</td><td>작음</td><td>스위치, 격리 셀, 전원 제어기</td></tr>
     </table>
+    <p>즉 클록 게이팅은 가볍고 빨라 짧은 쉼에 맞고, 전력 게이팅은 무겁지만 누설까지 없애 긴 쉼에 맞는다. 그래서 둘을 함께 쓰며, 쉬는 시간의 길이에 따라 고른다. 처음 질문의 둘째 답이 이 기준이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1(가상 값)</span>
       <p>블록 누설 10 mW, 끄고 켜는 데 드는 에너지 2 μJ(내부 축전기 재충전 등). 쉬는 시간이 얼마 이상이어야 전력 게이팅이 이득인가?</p>
     </div>
-    <p><i>풀이.</i> 끄면 쉬는 동안 10 mW를 아끼므로, 2 μJ/10 mW = 200 μs 이상 쉴 때 이득입니다. 그보다 짧은 쉼에는 클록 게이팅만 씁니다. 전원 관리 장치는 이런 손익 분기와 깨어나는 시간 제약을 보고 상태를 고릅니다.</p>
+    <p><i>풀이.</i> 끄면 쉬는 동안 10 mW를 아끼므로, 2 μJ/10 mW = 200 μs 이상 쉴 때 이득이다(그림 1). 그러므로 그보다 짧은 쉼에는 클록 게이팅만 쓴다. 그리고 전원 관리 장치는 이런 손익 분기와 깨어나는 시간 제약을 보고 상태를 고른다.</p>
+    <p>한편 전원을 켤 때 큰 블록이 한꺼번에 충전되면 순간 전류가 커져, 이웃 블록의 전원 전압이 흔들린다. 따라서 전원 스위치를 여러 개로 나눠 차례로 켜, 돌입 전류를 줄인다.</p>
+    <p>그리고 전력 게이팅을 쓰면 설계와 검증도 복잡해진다. 예를 들어 어느 블록이 어떤 순서로 꺼지고 켜지는지를 전원 의도 파일에 따로 적고, 도구가 그대로 구현했는지 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "꺼 두면 언제나 이득": 짧게 쉬면 전환 에너지가 더 큽니다. (2) "꺼진 블록의 출력은 0": 떠 있는 값이 켜진 블록에 들어가지 않도록 격리 셀로 고정합니다.</div>
+    <p>그래서 스마트폰 칩은 화면이 꺼진 동안 대부분의 블록을 전력 게이팅으로 끄고, 깨어나는 데 필요한 작은 블록만 켜 둔다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>클록 게이팅: 동적, 빠름, 상태 유지.</li>
-        <li>전력 게이팅: 누설, 느림, 상태 보존·격리 필요.</li>
-        <li>손익 분기 시간 = 전환 에너지/절약 전력(예: 200 μs).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>꺼 두면 언제나 이득이라고 여기기 쉽다. 짧게 쉬면 전환 에너지가 더 크다. 또 꺼진 블록의 출력은 0이라고 생각하기 쉬운데, 떠 있는 값이 켜진 블록에 들어가지 않도록 격리 셀로 고정한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>클록 게이팅은 동적 전력을 줄이고 빠르며 상태를 유지한다. 전력 게이팅은 누설을 줄이지만 느리고, 상태 보존과 격리가 필요하다. 손익 분기 시간은 전환 에너지/절약 전력이며, 예제에서 200 μs이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>전환 에너지 5 μJ, 누설 1 mW의 손익 분기 시간은?
-          <details><summary>답</summary><p>5 ms.</p></details>
+          <details><summary>답</summary><p>5 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>보존 레지스터가 필요한 이유는?
-          <details><summary>답</summary><p>전원을 끄면 상태가 사라지므로 켤 때 이어서 하려면 저장해야 합니다.</p></details>
+          <details><summary>답</summary><p>전원을 끄면 상태가 사라지므로 켤 때 이어서 하려면 저장해야 한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>격리 셀이 없으면 생길 수 있는 문제는?
-          <details><summary>답</summary><p>꺼진 블록의 떠 있는 출력이 켜진 블록에 단락 전류와 오동작을 일으킵니다.</p></details>
+          <details><summary>답</summary><p>꺼진 블록의 떠 있는 출력이 켜진 블록에 단락 전류와 오동작을 일으킨다.</p></details>
         </li>
       </ol>
     </div>

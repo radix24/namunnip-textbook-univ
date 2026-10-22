@@ -8,58 +8,57 @@
 <article class="card q-card" id="text-e32-sdc" data-kind="본문" data-std="전전32-04-03">
   <header class="card-head"><span class="no"></span><h2>타이밍 제약 작성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>클록 정의, 입력·출력 지연 제약의 의미를 안다.</li>
-        <li>입출력 지연으로 내부 논리 예산을 계산한다.</li>
-        <li>거짓 경로와 다중 사이클 경로 지정을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>타이밍 보고서 (<a href="04-01.html">4.1절</a>), 셋업 여유 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">합성 도구는 칩 안의 회로만 볼 뿐, 칩 바깥에서 신호가 언제 들어오고 언제까지 나가야 하는지는 모른다. 그 사정을 알려 주지 않으면 도구는 입출력 경로를 아무렇게나 만들 수 있다. 바깥의 타이밍은 어떤 제약으로 알려 줄까? 그리고 그 제약은 칩 안 논리에 시간을 얼마나 남길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 입출력 타이밍 제약(개형). 클록 10 ns에서 입력 지연 2.0 ns와 셋업 0.2 ns를 빼면 입력 포트에서 첫 레지스터까지의 예산은 7.8 ns이고, 출력 지연 3.0 ns와 t_cq 0.3 ns를 빼면 레지스터에서 출력 포트까지의 예산은 6.7 ns이다">
+        <rect x="140" y="40" width="280" height="120" class="k" fill="none" stroke-width="1.5"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="220" y="80" width="30" height="40"/><rect x="310" y="80" width="30" height="40"/></g>
+        <path d="M40 100 H140 M140 100 H220 M250 100 H310 M340 100 H420 M420 100 H520" class="k" stroke-width="1.5"/>
+        <g class="s"><text x="40" y="90">din</text><text x="500" y="90">dout</text><text x="40" y="130" class="td">입력 지연 2.0</text><text x="430" y="130" class="td">출력 지연 3.0</text><text x="150" y="70" class="ta">입력 예산 7.8 ns</text><text x="320" y="70" class="ta">출력 예산 6.7 ns</text><text x="200" y="180">create_clock -period 10</text></g>
+      </svg>
+      <figcaption>그림 1. 칩 바깥에서 쓴 시간을 입력 지연과 출력 지연으로 알려 주면, 도구는 남은 시간을 칩 안 입출력 논리의 예산으로 삼는다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>타이밍 보고서(<a href="04-01.html">4.1절</a>), 셋업 여유(<a href="04-02.html">4.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>바깥 사정을 알려 주기</h3>
-    <p>합성 도구는 칩 바깥을 모르므로 <code>create_clock</code>으로 주기를, <code>set_input_delay</code>로 입력이 클록 뒤 언제 도착하는지, <code>set_output_delay</code>로 출력이 언제까지 준비돼야 하는지 알려 줍니다. 입력 포트에서 첫 레지스터까지 예산 = T − 입력 지연 − t_setup입니다.</p><pre><code>create_clock -period 10 [get_ports clk]
+    <p>합성 도구는 칩 바깥을 모르므로, <code>create_clock</code>으로 주기를 알려 준다. 그리고 <code>set_input_delay</code>로 입력이 클록 뒤 언제 도착하는지, <code>set_output_delay</code>로 출력이 언제까지 준비돼야 하는지 알려 준다. 처음 질문의 첫째 답이 이 세 제약이다.</p>
+    <p>그러면 입력 포트에서 첫 레지스터까지의 예산은 T − 입력 지연 − t_setup이다(그림 1). 처음 질문의 둘째 답이 이 식이며, 아래가 제약의 예이다.</p>
+    <pre><code>create_clock -period 10 [get_ports clk]
 set_input_delay  2.0 -clock clk [get_ports din]
 set_output_delay 3.0 -clock clk [get_ports dout]</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>위 제약과 t_setup 0.2 ns, t_cq 0.3 ns에서 입력 경로와 출력 경로의 논리 예산은?</p>
     </div>
-    <p><i>풀이.</i> 입력: 10 − 2 − 0.2 = 7.8 ns. 출력: 10 − 3 − 0.3 = 6.7 ns(레지스터 출력에서 포트까지). 제약을 빠뜨리면 도구가 그 경로를 검사하지 않아 실제 칩에서 실패할 수 있습니다.</p>
+    <p><i>풀이.</i> 입력은 10 − 2 − 0.2 = 7.8 ns이다. 그리고 출력은 10 − 3 − 0.3 = 6.7 ns이다(레지스터 출력에서 포트까지). 그런데 제약을 빠뜨리면 도구가 그 경로를 검사하지 않아, 실제 칩에서 실패할 수 있다.</p>
+    <p>즉 입력 지연은 앞 칩의 출력 지연과 기판 배선 지연을 더한 값이고, 출력 지연은 다음 칩의 셋업 시간과 배선 지연을 더한 값이다. 그러므로 이 값들은 칩을 둘러싼 시스템 설계자와 함께 정한다.</p>
+    <p>한편 클록 자체의 불완전함도 제약으로 알려 준다. 예를 들어 클록 가장자리의 흔들림(지터)과 칩 안 도착 시각의 차이(스큐)를 불확실성으로 주면, 도구는 그만큼 요구 시간을 줄여 더 엄격하게 검사한다.</p>
+    <p>그리고 이런 제약 파일은 합성부터 배치, 배선, 사인오프까지 모든 단계가 함께 쓴다. 따라서 제약이 틀리면 모든 단계의 결과가 함께 틀린다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "클록만 정의하면 충분": 입출력 경로는 따로 제약해야 합니다. (2) "거짓 경로를 많이 지정하면 편하다": 실제 경로를 빼면 위반을 놓칩니다.</div>
+    <p>즉 제약을 잘 쓰는 일은 회로를 잘 쓰는 일만큼 중요하다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>입력 예산 = T − 입력 지연 − t_setup.</li>
-        <li>출력 예산 = T − 출력 지연 − t_cq.</li>
-        <li>거짓·다중 사이클 경로는 신중히.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>클록만 정의하면 충분하다고 여기기 쉽다. 입출력 경로는 따로 제약해야 한다. 또 거짓 경로를 많이 지정하면 편하다고 생각하기 쉬운데, 실제 경로를 빼면 위반을 놓친다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>입력 예산은 T − 입력 지연 − t_setup이다. 출력 예산은 T − 출력 지연 − t_cq이다. 거짓 경로와 다중 사이클 경로는 신중히 지정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>T 5 ns, 입력 지연 1.5, t_setup 0.1의 예산은?
-          <details><summary>답</summary><p>3.4 ns.</p></details>
+          <details><summary>답</summary><p>3.4 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>다중 사이클 2를 지정하면 그 경로의 셋업 요구는?
-          <details><summary>답</summary><p>2주기 안에 도착하면 됩니다.</p></details>
+          <details><summary>답</summary><p>2주기 안에 도착하면 된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>서로 다른 비동기 클록 사이 경로를 어떻게 다루나?
-          <details><summary>답</summary><p>동기화기로 연결하고 그 경로는 거짓 경로나 클록 그룹으로 지정합니다.</p></details>
+          <details><summary>답</summary><p>동기화기로 연결하고 그 경로는 거짓 경로나 클록 그룹으로 지정한다.</p></details>
         </li>
       </ol>
     </div>

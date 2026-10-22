@@ -8,21 +8,25 @@
 <article class="card q-card" id="text-e32-fsmd" data-kind="본문" data-std="전전32-03-01">
   <header class="card-head"><span class="no"></span><h2>데이터패스와 FSM 제어기로 나누어 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>알고리즘을 레지스터·연산기(데이터패스)와 제어 상태 기계(FSM)로 나눈다.</li>
-        <li>GCD 예로 상태 전이와 제어 신호를 정의한다.</li>
-        <li>클록 수 모형으로 성능을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>FSM (<a href="../4/06.html">전전4 6단원</a>), HDL (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">소프트웨어로는 몇 줄이면 되는 최대공약수 계산을 전용 하드웨어로 만들고 싶다. while 반복과 if 판단은 하드웨어에서 어떤 부품이 맡을까? 계산하는 부분과 순서를 정하는 부분을 어떻게 나누어 설계할까? 그리고 그 하드웨어는 몇 클록 만에 답을 낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.1.1 GCD의 데이터패스와 FSM(개형). 데이터패스는 레지스터 a, b, 뺄셈기, 비교기, 멀티플렉서로, 제어기는 IDLE, CALC, DONE 세 상태로 이루어지며, 비교기 결과가 FSM으로 가고 FSM이 선택 신호를 데이터패스로 보낸다. gcd(48, 18)은 7클록, gcd(17, 5)는 9클록이 걸린다">
+        <rect x="40" y="40" width="240" height="120" class="b" fill="none" stroke-width="2"/>
+        <g class="k" fill="none" stroke-width="2"><rect x="60" y="60" width="40" height="30"/><rect x="120" y="60" width="40" height="30"/><rect x="180" y="60" width="80" height="30"/><rect x="60" y="110" width="200" height="30"/></g>
+        <g class="s" text-anchor="middle"><text x="80" y="80">a</text><text x="140" y="80">b</text><text x="220" y="80">뺄셈기</text><text x="160" y="130">비교기 a = b, a &gt; b</text></g>
+        <g class="a" fill="none" stroke-width="2"><circle cx="360" cy="70" r="24"/><circle cx="440" cy="70" r="24"/><circle cx="400" cy="140" r="24"/></g>
+        <g class="s" text-anchor="middle"><text x="360" y="74">IDLE</text><text x="440" y="74" class="ta">CALC</text><text x="400" y="144">DONE</text></g>
+        <path d="M280 125 H330 M330 90 H280" class="d" stroke-width="1.5"/>
+        <g class="s"><text x="40" y="34" class="tb">데이터패스</text><text x="340" y="34" class="ta">FSM 제어기</text><text x="290" y="186" class="td">gcd(48, 18) 7클록</text></g>
+      </svg>
+      <figcaption>그림 1. 연산은 데이터패스가, 다음에 무엇을 할지는 FSM이 정하며, 둘은 상태 신호와 제어 신호로 서로를 이끈다(예제 3.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>FSM(<a href="../4/06.html">전전4 6단원</a>), HDL(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>GCD</h3>
-    <p>while (a ≠ b) { if (a &gt; b) a −= b; else b −= a; }를 하드웨어로 만듭니다. 데이터패스: 레지스터 a, b, 뺄셈기, 비교기(a = b, a &gt; b), 멀티플렉서. 제어기: IDLE(입력 적재) → CALC(비교 결과에 따라 a 또는 b 갱신) → DONE. 아래 Python 모형은 클록마다 상태와 레지스터를 갱신해 클록 수를 셉니다.</p>
+    <p>while (a ≠ b) { if (a &gt; b) a −= b; else b −= a; }를 하드웨어로 만든다. 먼저 데이터패스에는 레지스터 a, b와 뺄셈기, 비교기(a = b, a &gt; b), 멀티플렉서를 둔다. 처음 질문의 첫째 답은 반복과 판단을 이 부품들과 아래 제어기가 나눠 맡는 것이다.</p>
+    <p>그리고 제어기는 IDLE(입력 적재) → CALC(비교 결과에 따라 a 또는 b 갱신) → DONE의 세 상태를 가진 FSM이다(그림 1). 즉 비교기 결과가 FSM으로 가고, FSM은 어느 레지스터를 고칠지 정하는 제어 신호를 데이터패스로 보낸다. 처음 질문의 둘째 답이 이 나눔이다.</p>
+    <p>아래 Python 모형은 클록마다 상태와 레지스터를 갱신해 클록 수를 센다.</p>
     <pre><code># 뺄셈 GCD 데이터패스 + FSM 제어기를 클록 단위로 흉내 낸 모형
 def gcd_hw(a_in, b_in):
     state, a, b, cyc = "IDLE", 0, 0, 0
@@ -39,45 +43,40 @@ def gcd_hw(a_in, b_in):
 for x, y in [(48, 18), (21, 6), (17, 5)]:
     g, c = gcd_hw(x, y)
     print(f"gcd({x}, {y}) = {g}, 클록 {c}개")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>gcd(48, 18) = 6, 클록 7개
 gcd(21, 6) = 3, 클록 7개
 gcd(17, 5) = 1, 클록 9개</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
-      <p>gcd(48, 18)의 7클록을 상태별로 나눠라. 뺄셈을 줄이는 개선은?</p>
+      <p>gcd(48, 18)의 7클록을 상태별로 나누어라. 뺄셈을 줄이는 개선은?</p>
     </div>
-    <p><i>풀이.</i> IDLE 1, CALC에서 뺄셈 4번(30, 12, 12/6, 6/6)과 같음 판정 1, DONE 1. 뺄셈 대신 나머지 연산(유클리드)이나 2의 거듭제곱을 이용하는 이진 GCD는 몇 번에 끝나지만 데이터패스가 커집니다. 면적과 클록 수의 절충입니다.</p>
+    <p><i>풀이.</i> IDLE이 1클록, CALC에서 뺄셈 4번(30, 12, 12/6, 6/6)과 같음 판정 1클록, DONE이 1클록이다. 처음 질문의 셋째 답이 이 클록 수이다. 그리고 뺄셈 대신 나머지 연산(유클리드)이나 2의 거듭제곱을 이용하는 이진 GCD는 몇 번에 끝나지만, 데이터패스가 커진다. 따라서 면적과 클록 수의 절충이다.</p>
+    <p>즉 데이터패스와 FSM을 나누면 각각을 따로 검증하고 바꿀 수 있다. 그래서 같은 데이터패스에 다른 FSM을 붙여 다른 알고리즘을 실행하거나, 같은 FSM으로 폭이 다른 데이터패스를 제어할 수 있다.</p>
+    <p>한편 이런 구조는 CPU의 축소판이기도 하다. 그러므로 6장의 프로세서 설계도 레지스터와 ALU로 된 데이터패스와, 명령어에 따라 제어 신호를 내는 제어기로 나누어 만든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "FSM에 연산을 넣으면 된다": 연산은 데이터패스에, 제어는 FSM에 두어야 재사용과 타이밍 분석이 쉽습니다. (2) "클록 수가 적으면 빠르다": 한 클록의 지연(임계 경로)도 함께 봐야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>FSM에 연산을 넣으면 된다고 여기기 쉽다. 연산은 데이터패스에, 제어는 FSM에 두어야 재사용과 타이밍 분석이 쉽다. 또 클록 수가 적으면 빠르다고 생각하기 쉬운데, 한 클록의 지연(임계 경로)도 함께 봐야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>데이터패스(레지스터, 연산기, mux) + FSM(제어 신호).</li>
-        <li>GCD: IDLE → CALC → DONE.</li>
-        <li>예: gcd(48, 18) 7클록(실제 모형 실행).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>설계는 데이터패스(레지스터, 연산기, mux)와 FSM(제어 신호)으로 나눈다. GCD의 FSM은 IDLE → CALC → DONE이다. 예제의 gcd(48, 18)은 7클록이다(실제 모형 실행).</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>gcd(10, 10)의 클록 수는(같은 모형)?
-          <details><summary>답</summary><p>IDLE 1, CALC 1, DONE 1 = 3.</p></details>
+          <details><summary>답</summary><p>IDLE 1, CALC 1, DONE 1 = 3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>FSM의 출력이 아닌 데이터패스의 출력은?
-          <details><summary>답</summary><p>비교기 결과(a = b, a &gt; b)는 데이터패스에서 FSM으로 가는 상태 신호.</p></details>
+          <details><summary>답</summary><p>비교기 결과(a = b, a &gt; b)는 데이터패스에서 FSM으로 가는 상태 신호이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>GCD 블록을 버스에 달려면 무엇이 더 필요한가?
-          <details><summary>답</summary><p>입력·결과 레지스터와 start/done 상태 레지스터, 버스 인터페이스.</p></details>
+          <details><summary>답</summary><p>입력·결과 레지스터와 start/done 상태 레지스터, 버스 인터페이스이다.</p></details>
         </li>
       </ol>
     </div>

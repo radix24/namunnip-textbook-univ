@@ -8,20 +8,21 @@
 <article class="card q-card" id="text-e32-tb" data-kind="본문" data-std="전전32-02-02">
   <header class="card-head"><span class="no"></span><h2>테스트벤치로 설계 검증</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>클록 생성, 자극 입력, 기대값 비교를 하는 테스트벤치를 쓴다.</li>
-        <li>자기 검사(self-checking)로 사람 눈 대신 비교를 자동화한다.</li>
-        <li>경계값과 무작위 시험, 커버리지의 뜻을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>HDL (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">설계한 회로를 칩으로 만들기 전에, 그 회로가 정말 의도대로 동작하는지 시뮬레이션으로 확인해야 한다. 파형을 눈으로 하나하나 보는 것은 수십 클록이면 몰라도 수백만 클록이면 불가능하다. 시뮬레이션이 스스로 맞고 틀림을 판단하게 하려면 테스트벤치를 어떻게 만들까? 그리고 통과했다고 해서 안심해도 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 자기 검사 테스트벤치(개형). 테스트벤치는 100 MHz 클록을 만들고, 무작위 사용 가능 신호로 계수기를 300클록 동안 구동하며, 같은 입력을 받는 기대값 모형과 출력을 매 클록 비교해 다르면 시각과 값을 출력하고 마지막에 PASS 또는 FAIL을 알린다">
+        <rect x="40" y="40" width="480" height="130" class="k" fill="none" stroke-width="1.5"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="60" y="70" width="90" height="40"/><rect x="200" y="60" width="110" height="60"/><rect x="200" y="130" width="110" height="30"/><rect x="380" y="80" width="100" height="40"/></g>
+        <path d="M150 90 H200 M150 90 V145 H200 M310 90 H380 M310 145 H430 V120" class="k" fill="none" stroke-width="1.5"/>
+        <g class="s" text-anchor="middle"><text x="105" y="94">clk, en(무작위)</text><text x="255" y="94" class="ta">DUT 계수기</text><text x="255" y="150">기대값 모형</text><text x="430" y="104" class="td">비교 → PASS</text></g>
+        <g class="s"><text x="50" y="34">테스트벤치(합성하지 않음)</text></g>
+      </svg>
+      <figcaption>그림 1. 테스트벤치는 설계와 기대값 모형에 같은 자극을 주고 두 출력을 매 클록 자동으로 비교해, 사람이 파형을 보지 않아도 오류를 잡는다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>HDL(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>자기 검사 테스트벤치</h3>
+    <p>자기 검사 테스트벤치는 클록을 만들고, 자극을 주고, 기대값 모형을 계산해, 설계의 출력과 자동으로 비교한다(그림 1). 처음 질문의 첫째 답이 이 네 부분이다. 아래는 2.1절 계수기를 시험하는 예이다.</p>
     <pre><code>`timescale 1ns/1ps
 module tb_counter;
   reg clk = 0, rst_n = 0, en = 0;
@@ -47,42 +48,38 @@ module tb_counter;
     $finish;
   end
 endmodule</code></pre>
-    <p>테스트벤치는 합성하지 않는 코드라 지연(#), 무작위 함수, 출력문을 자유롭게 씁니다. 300클록 동안 무작위 en으로 255 → 0 넘침도 거치게 되고, 기대값 모형과 다르면 시각과 값을 출력합니다. (이 교재 환경에는 Verilog 시뮬레이터가 없어 실행 결과는 싣지 않았습니다. Icarus Verilog 등에서 <code>iverilog tb.v counter.v</code>로 돌려 봅니다.)</p>
+    <p>테스트벤치는 합성하지 않는 코드라 지연(#), 무작위 함수, 출력문을 자유롭게 쓴다. 그리고 300클록 동안 무작위 en으로 255 → 0 넘침도 거치게 되며, 기대값 모형과 다르면 시각과 값을 출력한다. (이 교재 환경에는 Verilog 시뮬레이터가 없어 실행 결과는 싣지 않았다. Icarus Verilog 등에서 <code>iverilog tb.v counter.v</code>로 돌려 본다.)</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>위 테스트벤치가 PASS를 내도 놓칠 수 있는 버그의 예는?</p>
     </div>
-    <p><i>풀이.</i> 리셋을 동작 중에 다시 거는 경우를 시험하지 않으므로, 리셋 중 en의 처리 버그를 놓칠 수 있습니다. 어떤 상황을 시험했는지 재는 기능 커버리지(예: 넘침, 리셋 중 en)를 정해 빈 곳을 채웁니다.</p>
+    <p><i>풀이.</i> 리셋을 동작 중에 다시 거는 경우를 시험하지 않으므로, 리셋 중 en의 처리 버그를 놓칠 수 있다. 그래서 어떤 상황을 시험했는지 재는 기능 커버리지(넘침, 리셋 중 en 등)를 정해 빈 곳을 채운다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>즉 PASS는 시험한 경우에서 틀린 곳을 찾지 못했다는 뜻일 뿐이다. 그러므로 검증 계획에서는 어떤 기능과 경계 상황을 꼭 시험할지 목록을 만들고, 그 목록이 다 채워졌는지를 함께 본다.</p>
+    <p>한편 기대값 모형은 설계와 다른 방식으로 써야 효과가 있다. 예를 들어 설계를 그대로 복사해 모형으로 쓰면, 같은 실수가 양쪽에 들어가 비교가 언제나 맞게 나온다.</p>
+    <p>그리고 큰 설계의 검증에는 설계보다 더 많은 시간과 인력이 든다. 따라서 업계는 무작위 자극과 커버리지 측정을 체계화한 검증 방법론과 전용 언어를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "파형을 눈으로 보면 충분": 길고 복잡한 시험은 자동 비교가 필수입니다. (2) "!==와 !=는 같다": !==는 X, Z까지 비교해 초기화 안 된 값을 잡습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>파형을 눈으로 보면 충분하다고 여기기 쉽다. 길고 복잡한 시험은 자동 비교가 필수이다. 또 !==와 !=가 같다고 생각하기 쉬운데, !==는 X와 Z까지 비교해 초기화되지 않은 값을 잡는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>클록 생성 + 자극 + 기대값 모형 + 자동 비교.</li>
-        <li>무작위·경계값 시험, 커버리지.</li>
-        <li>!==로 X/Z까지 검사.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>테스트벤치는 클록 생성, 자극, 기대값 모형, 자동 비교로 이루어진다. 무작위와 경계값 시험을 하고 커버리지를 잰다. !==로 X와 Z까지 검사한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>always #5 clk = ~clk의 클록 주파수(1 ns 단위)는?
-          <details><summary>답</summary><p>100 MHz.</p></details>
+          <details><summary>답</summary><p>100 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>en이 항상 1이면 300클록 뒤 q는(리셋 해제 직후 0)?
-          <details><summary>답</summary><p>300 mod 256 = 44.</p></details>
+          <details><summary>답</summary><p>300 mod 256 = 44이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>테스트벤치에서 입력을 클록 가장자리와 같은 시각에 바꾸면 생기는 문제는?
-          <details><summary>답</summary><p>경쟁 조건으로 시뮬레이터마다 결과가 달라질 수 있어, #1처럼 조금 비켜 줍니다.</p></details>
+          <details><summary>답</summary><p>경쟁 조건으로 시뮬레이터마다 결과가 달라질 수 있어, #1처럼 조금 비켜 준다.</p></details>
         </li>
       </ol>
     </div>

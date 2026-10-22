@@ -8,61 +8,53 @@
 <article class="card q-card" id="text-e32-scan" data-kind="본문" data-std="전전32-05-01">
   <header class="card-head"><span class="no"></span><h2>스캔 체인이 순차 회로 테스트를 쉽게 하는 원리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>플립플롭을 멀티플렉서로 이어 시프트 레지스터로 바꾸는 스캔 구조를 안다.</li>
-        <li>시험 모드(shift → capture → shift)의 순서를 설명한다.</li>
-        <li>체인 수와 시험 시간을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>고착 고장 (<a href="../30/06-02.html">전전30 6.2절</a>), 플립플롭.</li>
-      </ul>
-    </div>
+    <p class="q-ask">조합 회로는 입력을 넣고 출력을 보면 시험할 수 있지만, 순차 회로는 내부 플립플롭의 상태가 출력에 섞여 있어 그렇게 하기 어렵다. 원하는 상태를 만들려면 수많은 클록을 돌려야 하고, 내부 값은 밖에서 보이지도 않는다. 이 문제를 어떻게 풀까? 그리고 그 방법으로 시험하는 데 시간은 얼마나 걸릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.1.1 스캔 시험(개형). 각 플립플롭 입력에 멀티플렉서를 달아 시험 모드에서 한 줄의 시프트 레지스터로 만들고, shift로 상태를 밀어 넣고 capture로 한 클록 정상 동작한 뒤 다시 shift로 결과를 밀어 낸다. 플립플롭 1000개, 패턴 500개, 50 MHz에서 체인 1개는 10 ms, 체인 10개는 1.0 ms가 걸린다">
+        <defs><marker id="ah-e32sc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="b" fill="none" stroke-width="2"><rect x="60" y="60" width="90" height="40"/><rect x="200" y="60" width="90" height="40"/><rect x="340" y="60" width="90" height="40"/></g>
+        <g class="k" stroke-width="1.5"><line x1="150" y1="80" x2="198" y2="80" marker-end="url(#ah-e32sc)"/><line x1="290" y1="80" x2="338" y2="80" marker-end="url(#ah-e32sc)"/></g>
+        <g class="s" text-anchor="middle"><text x="105" y="84" class="tb">shift in</text><text x="245" y="84" class="ta">capture</text><text x="385" y="84" class="tb">shift out</text></g>
+        <g class="s"><text x="60" y="140">1000 FF, 500 패턴, 50 MHz</text><text x="60" y="166" class="td">체인 1개 10 ms, 체인 10개 1.0 ms</text></g>
+      </svg>
+      <figcaption>그림 1. 시험 모드에서 플립플롭을 한 줄로 이어 상태를 밀어 넣고 한 클록 결과를 잡아 밀어 내면, 순차 회로를 조합 회로처럼 시험할 수 있다(예제 5.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고착 고장(<a href="../30/06-02.html">전전30 6.2절</a>), 플립플롭을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>원리</h3>
-    <p>순차 회로는 내부 상태를 원하는 값으로 만들거나 관찰하기 어렵습니다. 각 플립플롭 입력에 멀티플렉서를 달아, 시험 모드에서는 플립플롭들이 한 줄의 시프트 레지스터(스캔 체인)가 되게 합니다.</p>
-    <ol>
-      <li><b>shift</b>: 원하는 상태를 직렬로 밀어 넣는다(동시에 이전 결과를 밀어 낸다).</li>
-      <li><b>capture</b>: 정상 모드로 한 클록 돌려 조합 회로의 출력을 플립플롭에 잡는다.</li>
-      <li><b>shift</b>: 잡힌 값을 밀어 내며 기대값과 비교한다.</li>
-    </ol>
+    <p>순차 회로는 내부 상태를 원하는 값으로 만들거나 관찰하기 어렵다. 그래서 각 플립플롭 입력에 멀티플렉서를 달아, 시험 모드에서는 플립플롭들이 한 줄의 시프트 레지스터(스캔 체인)가 되게 한다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>시험은 세 단계이다. 먼저 shift로 원하는 상태를 직렬로 밀어 넣으며, 동시에 이전 결과를 밀어 낸다. 그다음 capture로 정상 모드에서 한 클록 돌려, 조합 회로의 출력을 플립플롭에 잡는다. 마지막으로 다시 shift로 잡힌 값을 밀어 내며 기대값과 비교한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
       <p>플립플롭 1000개, 테스트 패턴 500개, 시험 클록 50 MHz. 체인 1개와 10개(각 100개)의 시험 시간은?</p>
     </div>
-    <p><i>풀이.</i> 체인 1개: 패턴마다 1000 shift + 1 capture → 약 500 × 1001 = 5.0 × 10⁵ 클록 = 10 ms. 체인 10개: 500 × 101 클록 ≈ 1.0 ms. 시험기 시간은 비용이라 체인을 여러 개로 나누고, 입력 패턴을 압축하는 기법도 씁니다.</p>
+    <p><i>풀이.</i> 체인 1개이면 패턴마다 1000 shift와 1 capture이므로, 약 500 × 1001 = 5.0 × 10⁵ 클록, 곧 10 ms이다. 그리고 체인 10개이면 500 × 101 클록 ≈ 1.0 ms이다. 처음 질문의 둘째 답이 이 시간이다. 따라서 시험기 사용 시간이 비용이므로, 체인을 여러 개로 나누고 입력 패턴을 압축하는 기법도 쓴다.</p>
+    <p>즉 시험 시간은 체인 길이에 거의 비례한다. 그러므로 플립플롭이 수백만 개인 큰 칩은 체인을 수백 개로 나누고, 적은 핀으로 받은 패턴을 칩 안에서 여러 체인으로 풀어 준다.</p>
+    <p>한편 스캔 체인은 설계 도구가 합성 뒤에 자동으로 만든다. 그래서 설계자는 스캔 삽입 뒤에도 타이밍이 맞는지, 특히 시험 모드의 홀드 조건을 다시 확인한다.</p>
+    <p>그리고 같은 체인은 고장 분석에도 쓰인다. 예를 들어 불량 칩의 내부 상태를 밀어 내 읽으면, 어느 부분에서 값이 틀어졌는지 좁혀 갈 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "스캔은 공짜": 멀티플렉서만큼 면적과 지연(셋업 경로)이 늘어납니다. (2) "스캔이면 모든 고장을 잡는다": 조합 부분의 고착 고장에 효과적이며, 지연 고장은 두 클록 시험(at-speed)이 필요합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>스캔은 공짜라고 여기기 쉽다. 멀티플렉서만큼 면적과 지연(셋업 경로)이 는다. 또 스캔이면 모든 고장을 잡는다고 생각하기 쉬운데, 조합 부분의 고착 고장에 효과적이며 지연 고장은 두 클록 시험(at-speed)이 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>플립플롭 + mux → 시프트 레지스터.</li>
-        <li>shift → capture → shift.</li>
-        <li>예: 1000 FF, 500 패턴: 체인 1개 10 ms, 10개 1 ms.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>스캔은 플립플롭에 mux를 달아 시프트 레지스터로 만든다. 시험은 shift, capture, shift의 순서이다. 예제의 1000 FF, 500 패턴은 체인 1개에 10 ms, 10개에 1 ms이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>체인 길이 200, 패턴 1000, 100 MHz의 시험 시간은?
-          <details><summary>답</summary><p>약 2 ms.</p></details>
+          <details><summary>답</summary><p>약 2 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>스캔으로 면적이 느는 이유는?
-          <details><summary>답</summary><p>플립플롭마다 멀티플렉서가 추가되기 때문입니다.</p></details>
+          <details><summary>답</summary><p>플립플롭마다 멀티플렉서가 추가되기 때문이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>체인을 너무 많이 나누면 생기는 제약은?
-          <details><summary>답</summary><p>칩의 시험용 핀(스캔 입출력) 수가 늘어야 합니다.</p></details>
+          <details><summary>답</summary><p>칩의 시험용 핀(스캔 입출력) 수가 늘어야 한다.</p></details>
         </li>
       </ol>
     </div>

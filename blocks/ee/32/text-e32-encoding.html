@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e32-encoding" data-kind="본문" data-std="전전32-03-02">
   <header class="card-head"><span class="no"></span><h2>FSM 상태 부호화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이진, 그레이, 원-핫 부호화의 플립플롭 수를 계산한다.</li>
-        <li>원-핫이 FPGA에서 빠르고 단순한 이유를 안다.</li>
-        <li>부호화에 따른 출력 글리치와 전력 차이를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>데이터패스와 FSM (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">FSM의 상태 이름은 설계자가 IDLE, CALC처럼 붙이지만, 하드웨어 안에서는 결국 플립플롭의 0과 1로 적어야 한다. 상태 10개를 적는 데 플립플롭은 몇 개가 필요할까? 적는 방식을 바꾸면 속도나 전력, 출력의 깨끗함은 어떻게 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 상태 부호화(개형). 상태 10개는 이진 부호로 플립플롭 4개, 원-핫으로 10개가 필요하고, 이진 상태 0111에서 1000으로 바뀔 때 네 비트가 동시에 바뀌어 디코딩 출력에 순간적인 글리치가 생길 수 있으며, 그레이 부호는 차례 전이마다 한 비트만 바뀐다">
+        <g class="s"><text x="40" y="50">이진</text><text x="40" y="100">원-핫</text><text x="40" y="150">그레이</text></g>
+        <g class="b" fill="none" stroke-width="2"><rect x="110" y="34" width="24" height="24"/><rect x="138" y="34" width="24" height="24"/><rect x="166" y="34" width="24" height="24"/><rect x="194" y="34" width="24" height="24"/></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="110" y="84" width="20" height="24"/><rect x="132" y="84" width="20" height="24"/><rect x="154" y="84" width="20" height="24"/><rect x="176" y="84" width="20" height="24"/><rect x="198" y="84" width="20" height="24"/><rect x="220" y="84" width="20" height="24"/><rect x="242" y="84" width="20" height="24"/><rect x="264" y="84" width="20" height="24"/><rect x="286" y="84" width="20" height="24"/><rect x="308" y="84" width="20" height="24"/></g>
+        <g class="s"><text x="240" y="52" class="tb">4개, 0111 → 1000 네 비트 변화</text><text x="340" y="102" class="ta">10개, 다음 상태 논리 단순</text><text x="110" y="152" class="td">차례 전이마다 한 비트만 변화</text></g>
+      </svg>
+      <figcaption>그림 1. 이진 부호는 플립플롭이 가장 적고, 원-핫은 다음 상태 논리가 가장 단순하며, 그레이 부호는 차례로 지나는 상태 사이에 한 비트만 바꾼다(예제 3.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>데이터패스와 FSM(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>상태를 어떻게 적을까</h3>
-    <p>N개 상태를 이진으로 쓰면 ⌈log₂N⌉개, 원-핫이면 N개 플립플롭이 필요합니다. 원-핫은 다음 상태 논리가 단순해(입력 몇 개의 OR) 빠르고 FPGA처럼 플립플롭이 많은 구조에 맞습니다. 그레이는 차례로 지나는 상태 사이에 한 비트만 바뀌어 전력과 글리치가 줄어듭니다.</p>
+    <p>N개 상태를 이진으로 적으면 ⌈log₂N⌉개, 원-핫으로 적으면 N개의 플립플롭이 필요하다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그런데 원-핫은 다음 상태 논리가 단순해(입력 몇 개의 OR) 빠르고, FPGA처럼 플립플롭이 많은 구조에 맞는다. 한편 그레이 부호는 차례로 지나는 상태 사이에 한 비트만 바뀌어, 전력과 글리치가 준다. 처음 질문의 둘째 답이 이 차이이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>상태 10개 FSM의 이진·원-핫 플립플롭 수는? 이진 상태 0111 → 1000 전이에서 일어날 수 있는 문제는?</p>
     </div>
-    <p><i>풀이.</i> 이진 4개, 원-핫 10개. 0111 → 1000은 네 비트가 동시에 바뀌어, 디코딩 출력이 순간적으로 다른 상태(예: 1111)를 거치는 글리치가 생길 수 있습니다. 출력이 중요하면 출력을 레지스터로 받거나 그레이 부호를 씁니다.</p>
+    <p><i>풀이.</i> 이진은 4개, 원-핫은 10개이다. 그리고 0111 → 1000은 네 비트가 동시에 바뀌므로, 디코딩 출력이 순간적으로 다른 상태(1111 등)를 거치는 글리치가 생길 수 있다. 그래서 출력이 중요하면 출력을 레지스터로 받거나, 그레이 부호를 쓴다.</p>
+    <p>즉 비트들이 정확히 같은 순간에 바뀌지 않으므로, 여러 비트가 함께 바뀌는 전이는 잠깐 엉뚱한 값을 지난다. 그러므로 그 출력이 다른 블록의 클록이나 비동기 리셋에 쓰이면 오동작할 수 있다.</p>
+    <p>한편 합성 도구는 설계자가 적은 부호를 그대로 쓰지 않고, 목표(속도나 면적)에 맞게 다시 부호화하기도 한다. 따라서 상태 부호가 중요한 회로라면 합성 옵션으로 원하는 방식을 지정한다.</p>
+    <p>그리고 쓰지 않는 부호, 곧 불법 상태로 빠지는 경우도 대비한다. 예를 들어 방사선으로 비트가 뒤집히는 우주용 회로는 불법 상태에서 IDLE로 돌아오는 논리를 반드시 둔다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "플립플롭이 적은 이진이 늘 낫다": 다음 상태 논리가 커져 느릴 수 있습니다. (2) "원-핫은 잘못된 상태가 없다": 두 비트가 1인 불법 상태로 빠지지 않게 복구 논리가 필요합니다.</div>
+    <p>즉 부호화 방식은 회로 기능을 바꾸지 않고 속도, 면적, 전력, 안정성의 균형만 바꾼다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>이진 ⌈log₂N⌉, 원-핫 N.</li>
-        <li>원-핫: 빠름·FPGA, 그레이: 한 비트 전이.</li>
-        <li>출력 글리치 → 레지스터 출력.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>플립플롭이 적은 이진 부호가 늘 낫다고 여기기 쉽다. 다음 상태 논리가 커져 느릴 수 있다. 또 원-핫은 잘못된 상태가 없다고 생각하기 쉬운데, 두 비트가 1인 불법 상태로 빠지지 않게 복구 논리가 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>플립플롭 수는 이진 ⌈log₂N⌉, 원-핫 N이다. 원-핫은 빠르고 FPGA에 맞으며, 그레이는 한 비트씩 바뀐다. 출력 글리치는 레지스터 출력으로 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>상태 20개의 이진 플립플롭 수는?
-          <details><summary>답</summary><p>5개.</p></details>
+          <details><summary>답</summary><p>5개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>원-핫 상태 8개의 불법 상태 수는?
-          <details><summary>답</summary><p>2⁸ − 8 = 248개.</p></details>
+          <details><summary>답</summary><p>2⁸ − 8 = 248개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>그레이 부호가 카운터 형태 FSM에 유리한 이유는?
-          <details><summary>답</summary><p>차례 전이마다 한 비트만 바뀌기 때문입니다.</p></details>
+          <details><summary>답</summary><p>차례 전이마다 한 비트만 바뀌기 때문이다.</p></details>
         </li>
       </ol>
     </div>

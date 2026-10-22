@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e32-pipecpu" data-kind="본문" data-std="전전32-06-03">
   <header class="card-head"><span class="no"></span><h2>파이프라인 프로세서로 확장</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>5단계 파이프라인의 클록 주기를 단계 지연과 레지스터 오버헤드로 구한다.</li>
-        <li>해저드로 늘어난 CPI를 넣어 단일 사이클과 성능을 비교한다.</li>
-        <li>전달 경로와 멈춤 논리의 필요를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>단일 사이클 경로 (<a href="06-02.html">6.2절</a>), 파이프라이닝 (<a href="03-03.html">3.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">단일 사이클 프로세서의 긴 경로를 다섯 단계로 자르면, 다섯 명령을 동시에 처리하는 파이프라인 프로세서가 된다. 이론으로는 다섯 배 빨라질 것 같다. 실제 클록 주기는 무엇이 정할까? 그리고 가속은 왜 다섯 배에 못 미칠까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.3.1 파이프라인 프로세서(개형). IF 200, ID 100, EX 150, MEM 200, WB 50 ps에 레지스터 오버헤드 20 ps를 더하면 주기는 가장 긴 단계로 220 ps이고, CPI 1.2이면 단일 사이클 700 ps 대비 가속은 700/(1.2 × 220) = 2.65배이다">
+        <g class="s" text-anchor="middle"><text x="80" y="40">IF</text><text x="160" y="40">ID</text><text x="240" y="40">EX</text><text x="320" y="40">MEM</text><text x="400" y="40">WB</text></g>
+        <g class="b" fill="none" stroke-width="2"><rect x="50" y="50" width="60" height="100"/><rect x="130" y="100" width="60" height="50"/><rect x="210" y="75" width="60" height="75"/><rect x="290" y="50" width="60" height="100"/><rect x="370" y="125" width="60" height="25"/></g>
+        <path d="M40 50 H440" class="d dsh"/>
+        <g class="s" text-anchor="middle"><text x="80" y="170">200</text><text x="160" y="170">100</text><text x="240" y="170">150</text><text x="320" y="170">200</text><text x="400" y="170">50</text></g>
+        <g class="s"><text x="450" y="54" class="td">주기 220 ps</text><text x="450" y="90" class="ta">가속 2.65배</text><text x="450" y="116">CPI 1.2</text></g>
+      </svg>
+      <figcaption>그림 1. 단계마다 지연이 달라 가장 긴 단계가 주기를 정하고, 짧은 단계는 그 주기 동안 쉬어 이상적인 가속에 못 미친다(예제 6.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>단일 사이클 경로(<a href="06-02.html">6.2절</a>), 파이프라이닝(<a href="03-03.html">3.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>다섯 명령을 동시에</h3>
-    <p>IF, ID, EX, MEM, WB 단계 사이에 레지스터를 두면 주기는 가장 긴 단계 + 레지스터 오버헤드입니다. 해저드로 CPI가 1보다 커지므로 성능 비 = (단일 주기 × 1)/(파이프라인 주기 × CPI)입니다.</p>
+    <p>IF, ID, EX, MEM, WB 단계 사이에 레지스터를 두면, 주기는 가장 긴 단계에 레지스터 오버헤드를 더한 값이다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그리고 해저드 때문에 CPI가 1보다 커지므로, 성능 비는 (단일 주기 × 1)/(파이프라인 주기 × CPI)이다. 처음 질문의 둘째 답은 이 식에 들어 있는 단계 불균형, 오버헤드, 해저드이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>단계 지연 200, 100, 150, 200, 50 ps(6.2절), 레지스터 오버헤드 20 ps, CPI 1.2. 주기와 단일 사이클(700 ps) 대비 가속은?</p>
     </div>
-    <p><i>풀이.</i> 주기 220 ps, 가속 700/(1.2 × 220) = 2.65배. 이상적인 5배에 못 미치는 이유는 단계 불균형(50~200 ps), 레지스터 오버헤드, 해저드입니다.</p>
+    <p><i>풀이.</i> 주기는 200 + 20 = 220 ps이고, 가속은 700/(1.2 × 220) = 2.65배이다. 그런데 이상적인 5배에 못 미치는 이유는 단계 불균형(50~200 ps), 레지스터 오버헤드, 해저드이다.</p>
+    <p>즉 단계를 고르게 나누는 것이 단계 수만큼 중요하다. 예를 들어 메모리 단계를 둘로 나누면 주기를 줄일 수 있지만, 단계가 늘어 해저드 손실이 커지므로 그 절충을 따진다.</p>
+    <p>한편 해저드는 앞 명령의 결과가 아직 나오지 않았는데 뒤 명령이 그 값을 쓰려 할 때 생긴다. 그래서 결과를 레지스터에 쓰기 전에 다음 단계로 바로 넘겨주는 전달(포워딩) 회로를 둔다.</p>
+    <p>그리고 분기는 다음에 가져올 명령을 늦게 알게 해 파이프라인을 비운다. 따라서 실제 프로세서는 분기 예측으로 다음 명령을 미리 짐작해 가져오며, 틀리면 그만큼 손해를 본다(6.1절 예제의 분기 손실).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "5단계면 5배 빠르다": 불균형·오버헤드·해저드로 줄어듭니다. (2) "파이프라인은 명령 하나의 실행 시간을 줄인다": 1100 ps로 오히려 깁니다.</div>
+    <p>결국 파이프라인 프로세서의 성능은 주기, CPI, 명령 수의 곱으로 보며, 세 값을 함께 줄이는 것이 설계 목표이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주기 = max(단계) + t_reg.</li>
-        <li>가속 = T_single/(T_pipe × CPI).</li>
-        <li>예: 220 ps, 2.65배.</li>
-      </ol>
-    </div>
+    <p>그러므로 파이프라인을 설계할 때는 단계 지연을 먼저 재고, 가장 긴 단계부터 다듬어 주기를 줄인다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>5단계면 5배 빠르다고 여기기 쉽다. 불균형, 오버헤드, 해저드로 준다. 또 파이프라인은 명령 하나의 실행 시간을 줄인다고 생각하기 쉬운데, 1100 ps로 오히려 길다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이프라인의 주기는 max(단계) + t_reg이다. 가속은 T_single/(T_pipe × CPI)이다. 예제에서는 220 ps, 2.65배이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>CPI 1.0이면 가속은?
-          <details><summary>답</summary><p>약 3.18배.</p></details>
+          <details><summary>답</summary><p>약 3.18배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>명령 하나의 지연은?
-          <details><summary>답</summary><p>1100 ps.</p></details>
+          <details><summary>답</summary><p>1100 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>적재-사용 해저드에 전달만으로 부족한 이유는?
-          <details><summary>답</summary><p>데이터가 MEM 단계 끝에 나와 다음 명령 EX에 한 클록 늦기 때문입니다.</p></details>
+          <details><summary>답</summary><p>데이터가 MEM 단계 끝에 나와 다음 명령 EX에 한 클록 늦기 때문이다.</p></details>
         </li>
       </ol>
     </div>

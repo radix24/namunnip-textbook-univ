@@ -8,20 +8,22 @@
 <article class="card q-card" id="text-e32-hdl" data-kind="본문" data-std="전전32-02-01">
   <header class="card-head"><span class="no"></span><h2>HDL로 조합과 순차 회로 기술</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Verilog의 assign·always @(*)로 조합 회로를, always @(posedge clk)로 순차 회로를 기술한다.</li>
-        <li>블로킹(=)과 논블로킹(&lt;=) 대입을 구별해 쓴다.</li>
-        <li>래치가 의도치 않게 생기는 경우를 피한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>디지털 논리 (<a href="../4/05.html">전전4 5단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">수백만 개의 게이트로 된 회로를 회로도로 그리는 사람은 없다. 대신 Verilog 같은 하드웨어 기술 언어로 회로의 동작을 글로 쓰고, 합성 도구가 그것을 게이트로 바꾼다. 조합 회로와 순차 회로는 각각 어떻게 기술할까? 그리고 소프트웨어 코드처럼 보이는 이 글이 실제 하드웨어와 어긋나지 않으려면 무엇을 지켜야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 HDL의 조합과 순차 기술(개형). 4:1 멀티플렉서는 always @(*) 블록에서 블로킹 대입으로, 8비트 계수기는 always @(posedge clk) 블록에서 논블로킹 대입으로 기술하며, 순차 블록에 b <= a; c <= b;를 쓰면 a → b → c 두 단 시프트 레지스터가, b = a; c = b;를 쓰면 b와 c가 같은 값인 한 단이 된다">
+        <rect x="40" y="40" width="200" height="50" class="b" fill="none" stroke-width="2"/>
+        <rect x="300" y="40" width="220" height="50" class="a" fill="none" stroke-width="2"/>
+        <g class="s"><text x="50" y="62" class="tb">always @(*), 블로킹 =</text><text x="50" y="82">조합(mux4)</text><text x="310" y="62" class="ta">always @(posedge clk), &lt;=</text><text x="310" y="82">순차(counter)</text></g>
+        <g class="k" fill="none" stroke-width="2"><rect x="300" y="120" width="40" height="30"/><rect x="380" y="120" width="40" height="30"/></g>
+        <path d="M270 135 H300 M340 135 H380 M420 135 H450" class="k" stroke-width="1.5"/>
+        <g class="s"><text x="276" y="128">a</text><text x="350" y="128">b</text><text x="430" y="128">c</text><text x="270" y="180" class="td">b &lt;= a; c &lt;= b; → 두 단 시프트</text></g>
+      </svg>
+      <figcaption>그림 1. 순차 블록의 논블로킹 대입은 모든 플립플롭이 같은 클록 가장자리에 옛 값으로 동시에 바뀌는 하드웨어를 그대로 나타낸다(예제 2.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>디지털 논리(<a href="../4/05.html">전전4 5단원</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>두 예</h3>
+    <p>아래 코드의 위쪽은 조합 회로인 4:1 멀티플렉서이고, 아래쪽은 순차 회로인 사용 가능 신호가 있는 8비트 계수기이다. 처음 질문의 첫째 답이 이 두 가지 기술 방식이다.</p>
     <pre><code>// 4:1 멀티플렉서(조합)
 module mux4 (input [1:0] sel, input [7:0] a, b, c, d, output reg [7:0] y);
   always @(*) begin
@@ -41,42 +43,38 @@ module counter (input clk, rst_n, en, output reg [7:0] q);
     else if (en) q &lt;= q + 8'd1;   // 논블로킹 대입
   end
 endmodule</code></pre>
-    <p>조합 always 블록은 블로킹(=), 순차 블록은 논블로킹(&lt;=)이 원칙입니다. 논블로킹은 같은 클록 가장자리의 대입을 모두 오른쪽 값으로 계산한 뒤 한꺼번에 바꿔, 하드웨어 플립플롭과 같이 동작합니다.</p>
+    <p>조합 always 블록은 블로킹(=), 순차 블록은 논블로킹(&lt;=)이 원칙이다. 즉 논블로킹은 같은 클록 가장자리의 대입을 모두 오른쪽 값으로 계산한 뒤 한꺼번에 바꾸므로, 하드웨어 플립플롭과 같이 동작한다(그림 1). 처음 질문의 둘째 답이 이 원칙이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
       <p>순차 블록에 <code>b = a; c = b;</code>(블로킹)와 <code>b &lt;= a; c &lt;= b;</code>(논블로킹)를 쓰면 각각 어떤 회로가 되는가?</p>
     </div>
-    <p><i>풀이.</i> 블로킹은 c가 새 b(= a)를 받아 플립플롭 하나 거리(b, c가 같은 값)가 되고, 논블로킹은 c가 옛 b를 받아 a → b → c 두 단 시프트 레지스터가 됩니다. 시프트 레지스터를 의도했다면 논블로킹이 맞습니다.</p>
+    <p><i>풀이.</i> 블로킹은 c가 새 b(= a)를 받으므로, b와 c가 같은 값을 가진 플립플롭 하나 거리가 된다. 그런데 논블로킹은 c가 옛 b를 받으므로, a → b → c의 두 단 시프트 레지스터가 된다. 따라서 시프트 레지스터를 의도했다면 논블로킹이 맞다.</p>
+    <p>즉 HDL 코드를 읽을 때는 문장의 순서가 아니라, 어떤 신호가 언제 바뀌는 회로인지를 그려 보아야 한다. 그래서 숙련된 설계자는 코드를 쓰기 전에 블록도와 타이밍을 먼저 정한다.</p>
+    <p>한편 조합 블록에서 어떤 경우에 출력값을 정하지 않으면, 합성 도구는 이전 값을 기억하는 래치를 만든다. 그러므로 case에는 default를, if에는 else를 두어 모든 경우에 값을 준다.</p>
+    <p>그리고 합성할 수 있는 코드와 시뮬레이션에만 쓰는 코드는 다르다. 예를 들어 지연(#)이나 출력문은 테스트벤치에서만 쓰고, 설계 코드에는 넣지 않는다(2.2절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "HDL은 소프트웨어처럼 위에서부터 실행된다": 모든 always 블록이 동시에 동작하는 하드웨어 기술입니다. (2) "if에 else가 없어도 된다": 조합 블록에서 값이 정해지지 않는 경우가 있으면 래치가 생깁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>HDL은 소프트웨어처럼 위에서부터 실행된다고 여기기 쉽다. 모든 always 블록이 동시에 동작하는 하드웨어 기술이다. 또 if에 else가 없어도 된다고 생각하기 쉬운데, 조합 블록에서 값이 정해지지 않는 경우가 있으면 래치가 생긴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>조합: assign, always @(*), 블로킹.</li>
-        <li>순차: always @(posedge clk), 논블로킹.</li>
-        <li>모든 경우에 값 지정해 래치 방지.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>조합 회로는 assign이나 always @(*)와 블로킹으로 기술한다. 순차 회로는 always @(posedge clk)와 논블로킹으로 기술한다. 모든 경우에 값을 지정해 래치를 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>8비트 계수기가 255 다음에 갖는 값은?
-          <details><summary>답</summary><p>0(넘침).</p></details>
+          <details><summary>답</summary><p>0(넘침)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>case에서 default를 빼고 sel = 3을 처리하지 않으면?
-          <details><summary>답</summary><p>y를 유지해야 해 래치가 생깁니다.</p></details>
+          <details><summary>답</summary><p>y를 유지해야 해 래치가 생긴다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>비동기 리셋과 동기 리셋의 Verilog 차이는?
-          <details><summary>답</summary><p>민감도 목록에 negedge rst_n이 있으면 비동기, clk만 있으면 동기.</p></details>
+          <details><summary>답</summary><p>민감도 목록에 negedge rst_n이 있으면 비동기, clk만 있으면 동기이다.</p></details>
         </li>
       </ol>
     </div>

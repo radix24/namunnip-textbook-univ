@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e32-pipeline" data-kind="본문" data-std="전전32-03-03">
   <header class="card-head"><span class="no"></span><h2>파이프라이닝으로 처리량 높이기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>긴 조합 경로를 레지스터로 나누어 클록을 높인다.</li>
-        <li>단계 수, 레지스터 오버헤드로 처리량과 지연을 계산한다.</li>
-        <li>단계를 고르게 나누는 것이 중요함을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>데이터패스 설계 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">세탁소에서 세탁, 건조, 다림질을 한 사람이 한 벌씩 끝까지 하면, 다른 손님은 한참 기다린다. 세 사람이 단계마다 하나씩 맡으면 한 벌에 걸리는 시간은 같아도 같은 시간에 훨씬 많은 옷을 처리한다. 회로도 이렇게 나눠서 동시에 처리하면 얼마나 빨라질까? 그리고 대가로 무엇이 늘어날까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 파이프라이닝(개형). 조합 지연 10 ns, 레지스터 오버헤드 0.5 ns이면 파이프라인 없이 클록 10.5 ns(95 MHz), 지연 10.5 ns이고, 4단계로 나누면 클록 3 ns(333 MHz), 지연 12 ns로 처리량이 3.5배가 된다. 가장 긴 단계가 4 ns이면 250 MHz로 떨어진다">
+        <rect x="40" y="40" width="300" height="30" class="b" fill="none" stroke-width="2"/>
+        <g class="s"><text x="50" y="60">조합 10 ns + 레지스터 0.5 → 95 MHz</text></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="40" y="100" width="75" height="30"/><rect x="120" y="100" width="75" height="30"/><rect x="200" y="100" width="75" height="30"/><rect x="280" y="100" width="75" height="30"/></g>
+        <g class="k" stroke-width="3"><path d="M117 96 V134 M197 96 V134 M277 96 V134"/></g>
+        <g class="s"><text x="40" y="156" class="ta">4단계: 2.5 + 0.5 = 3 ns → 333 MHz</text><text x="40" y="180" class="td">지연 12 ns, 처리량 3.5배</text><text x="370" y="120">레지스터로 나눔</text></g>
+      </svg>
+      <figcaption>그림 1. 긴 조합 회로를 레지스터로 잘라 단계를 나누면 각 단계가 짧아져 클록을 높일 수 있고, 매 클록 결과 하나가 나온다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>데이터패스 설계(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>나눠서 동시에</h3>
-    <p>조합 지연 T를 k단계로 고르게 나누면 클록 주기는 T/k + t_reg(레지스터 오버헤드)이고, 한 클록마다 결과가 하나씩 나와 처리량이 늘어납니다. 대신 한 자료가 지나는 지연(latency)은 k(T/k + t_reg)로 조금 늘어납니다.</p>
+    <p>조합 지연 T를 k단계로 고르게 나누면, 클록 주기는 T/k + t_reg(레지스터 오버헤드)이다. 그리고 한 클록마다 결과가 하나씩 나오므로 처리량이 는다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그런데 한 자료가 처음부터 끝까지 지나는 지연(latency)은 k(T/k + t_reg)로 조금 는다. 처음 질문의 둘째 답이 이 대가이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>조합 지연 10 ns, 레지스터 오버헤드 0.5 ns. 파이프라인 없을 때와 4단계일 때 클록·처리량·지연은?</p>
     </div>
-    <p><i>풀이.</i> 없음: 10.5 ns, 95 MHz, 지연 10.5 ns. 4단계: 3 ns, 333 MHz, 지연 12 ns. 처리량 3.5배. 단계가 고르지 않아 가장 긴 단계가 4 ns면 250 MHz로 떨어집니다.</p>
+    <p><i>풀이.</i> 파이프라인이 없으면 10.5 ns, 95 MHz, 지연 10.5 ns이다. 그리고 4단계이면 3 ns, 333 MHz, 지연 12 ns이므로 처리량이 3.5배이다. 그런데 단계가 고르지 않아 가장 긴 단계가 4 ns이면 250 MHz로 떨어진다.</p>
+    <p>즉 클록은 가장 느린 단계가 정하므로, 단계를 고르게 나누는 일이 단계 수만큼 중요하다. 그래서 설계자는 레지스터를 어디에 둘지 정할 때 각 단계의 조합 지연이 비슷해지도록 논리를 옮긴다.</p>
+    <p>한편 파이프라인은 자료가 계속 흘러 들어올 때 효과가 있다. 예를 들어 앞 결과가 나와야 다음 계산을 시작할 수 있는 되먹임 경로는 파이프라인으로 빨라지지 않는다.</p>
+    <p>그리고 단계마다 레지스터가 더해지므로 면적과 클록 전력도 는다. 따라서 단계 수는 처리량 목표, 면적, 전력을 함께 보고 정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "단계를 k배로 하면 처리량도 k배": 레지스터 오버헤드와 불균형 때문에 덜 늡니다. (2) "파이프라인은 지연도 줄인다": 지연은 조금 늘어납니다.</div>
+    <p>예를 들어 CPU는 명령어 하나를 가져오기, 해독, 실행, 메모리, 쓰기의 단계로 나눠 동시에 여러 명령어를 처리한다(6.3절). 그러므로 명령어 하나의 지연은 늘어도 초당 처리하는 명령어 수가 크게 는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주기 = T/k + t_reg.</li>
-        <li>처리량 = 1/주기, 지연 = k × 주기.</li>
-        <li>예: 4단계 333 MHz, 12 ns.</li>
-      </ol>
-    </div>
+    <p>한편 레지스터 오버헤드에는 플립플롭의 지연과 셋업 시간, 클록 스큐가 함께 들어간다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>단계를 k배로 하면 처리량도 k배라고 여기기 쉽다. 레지스터 오버헤드와 불균형 때문에 덜 는다. 또 파이프라인은 지연도 줄인다고 생각하기 쉬운데, 지연은 조금 는다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이프라인의 주기는 T/k + t_reg이다. 처리량은 1/주기, 지연은 k × 주기이다. 예제의 4단계는 333 MHz, 12 ns이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>8단계면 주기는(예제)?
-          <details><summary>답</summary><p>1.75 ns.</p></details>
+          <details><summary>답</summary><p>1.75 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>그때 처리량 이득(대 파이프라인 없음)은?
-          <details><summary>답</summary><p>6배.</p></details>
+          <details><summary>답</summary><p>6배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>단계를 무한히 늘리면 주기 한계는?
-          <details><summary>답</summary><p>t_reg(0.5 ns).</p></details>
+          <details><summary>답</summary><p>t_reg(0.5 ns)이다.</p></details>
         </li>
       </ol>
     </div>

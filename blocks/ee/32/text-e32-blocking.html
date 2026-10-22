@@ -8,21 +8,23 @@
 <article class="card q-card" id="text-e32-blocking" data-kind="본문" data-std="전전32-02-03">
   <header class="card-head"><span class="no"></span><h2>블로킹과 논블로킹 할당</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>블로킹(=)과 논블로킹(&lt;=) 할당의 평가 순서 차이를 안다.</li>
-        <li>순차 블록에서 논블로킹을 써야 하는 이유를 시프트 레지스터로 보인다.</li>
-        <li>조합 블록의 래치 추론을 피하는 규칙을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>HDL 기술 (<a href="02-01.html">2.1절</a>), 테스트벤치 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">Verilog의 대입에는 =와 &lt;= 두 가지가 있다. 둘 다 값을 넣는 것처럼 보여 아무거나 써도 될 것 같지만, 잘못 고르면 시뮬레이션은 맞는데 실제 칩은 다르게 동작하는 일이 생긴다. 두 대입은 무엇이 다를까? 그리고 어느 블록에 어느 것을 써야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 블로킹과 논블로킹(개형). 처음 d = 1, q1 = q2 = q3 = 0에서 논블로킹 q1 <= d; q2 <= q1; q3 <= q2;는 한 클록 뒤 q1 = 1, q2 = 0, q3 = 0으로 시프트하지만, 블로킹으로 바꾸면 q1, q2, q3가 모두 1이 되어 플립플롭 하나처럼 합성된다">
+        <g class="s"><text x="40" y="50" class="ta">논블로킹 &lt;=</text><text x="40" y="130" class="td">블로킹 =</text></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="180" y="30" width="60" height="34"/><rect x="260" y="30" width="60" height="34"/><rect x="340" y="30" width="60" height="34"/></g>
+        <g class="d" fill="none" stroke-width="2"><rect x="180" y="110" width="60" height="34"/><rect x="260" y="110" width="60" height="34"/><rect x="340" y="110" width="60" height="34"/></g>
+        <g class="s" text-anchor="middle"><text x="210" y="52">q1 1</text><text x="290" y="52">q2 0</text><text x="370" y="52">q3 0</text><text x="210" y="132">q1 1</text><text x="290" y="132">q2 1</text><text x="370" y="132">q3 1</text></g>
+        <g class="s"><text x="420" y="52">시프트</text><text x="420" y="132">1단처럼</text><text x="180" y="180">처음 d = 1, q = 0, 한 클록 뒤</text></g>
+      </svg>
+      <figcaption>그림 1. 논블로킹은 모든 대입을 옛 값으로 계산해 동시에 바꾸므로 값이 한 칸씩 밀리고, 블로킹은 차례로 바꾸므로 새 값이 끝까지 흘러간다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>HDL 기술(<a href="02-01.html">2.1절</a>), 테스트벤치(<a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>동시에 바뀌는가, 차례로 바뀌는가</h3>
-    <p>블로킹 할당은 문장마다 즉시 값을 바꾸고, 논블로킹은 오른쪽을 모두 먼저 평가한 뒤 블록 끝에서 한꺼번에 바꿉니다. 플립플롭은 같은 클록에 동시에 바뀌므로 <code>always @(posedge clk)</code>에는 논블로킹을, 조합 논리 <code>always @*</code>에는 블로킹을 씁니다.</p><pre><code>// 3단 시프트 레지스터
+    <p>블로킹 할당은 문장마다 즉시 값을 바꾼다. 그런데 논블로킹은 오른쪽을 모두 먼저 평가한 뒤, 블록 끝에서 한꺼번에 바꾼다. 처음 질문의 첫째 답이 이 차이이다.</p>
+    <p>그리고 플립플롭은 같은 클록에 동시에 바뀐다. 그러므로 <code>always @(posedge clk)</code>에는 논블로킹을, 조합 논리 <code>always @*</code>에는 블로킹을 쓴다. 처음 질문의 둘째 답이 이 규칙이며, 아래 3단 시프트 레지스터가 그 예이다.</p>
+    <pre><code>// 3단 시프트 레지스터
 always @(posedge clk) begin
   q1 &lt;= d;
   q2 &lt;= q1;
@@ -32,37 +34,33 @@ end</code></pre>
       <span class="lb">예제 2.3.1</span>
       <p>위 코드를 블로킹(=)으로 바꾸면 한 클록 뒤 q1, q2, q3는? 처음 d = 1, q1 = q2 = q3 = 0.</p>
     </div>
-    <p><i>풀이.</i> 논블로킹: q1 = 1, q2 = 0, q3 = 0(시프트). 블로킹: q1 = 1 → q2 = q1 = 1 → q3 = q2 = 1로 세 값이 모두 1이 되어 플립플롭 하나처럼 합성됩니다. 시뮬레이션과 합성이 어긋나는 흔한 원인입니다.</p>
+    <p><i>풀이.</i> 논블로킹이면 q1 = 1, q2 = 0, q3 = 0으로 한 칸씩 밀린다(시프트). 그런데 블로킹이면 q1 = 1 → q2 = q1 = 1 → q3 = q2 = 1로 세 값이 모두 1이 되어, 플립플롭 하나처럼 합성된다(그림 1). 따라서 시뮬레이션과 합성이 어긋나는 흔한 원인이 된다.</p>
+    <p>즉 순차 블록에서 블로킹을 쓰면 문장 순서에 따라 회로가 달라진다. 예를 들어 같은 세 줄을 거꾸로 쓰면 블로킹으로도 시프트가 되지만, 이런 순서 의존은 실수를 부르므로 처음부터 논블로킹을 쓴다.</p>
+    <p>한편 조합 블록에서 논블로킹을 쓰면, 같은 블록 안의 중간 결과가 다음 문장에 바로 반영되지 않아 시뮬레이션이 여러 번 다시 돌거나 잘못된 값을 보인다. 그래서 조합 블록에는 블로킹을 쓴다.</p>
+    <p>그리고 한 블록 안에서 두 가지를 섞어 쓰지 않는 것이 안전하다. 따라서 많은 설계 팀은 이 규칙을 검사 도구로 자동 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "=와 &lt;=는 취향 차이": 순서 의존 동작이 달라 회로가 바뀝니다. (2) "조합 블록에서 일부 경우에 값을 안 줘도 된다": 래치가 추론됩니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>=와 &lt;=는 취향 차이라고 여기기 쉽다. 순서에 따른 동작이 달라 회로가 바뀐다. 또 조합 블록에서 일부 경우에 값을 주지 않아도 된다고 생각하기 쉬운데, 래치가 추론된다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>순차: &lt;=, 조합: =.</li>
-        <li>블로킹 시프트 레지스터 → 1단으로 합성.</li>
-        <li>조합 블록 모든 경우에 값 → 래치 방지.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>순차 블록에는 &lt;=, 조합 블록에는 =를 쓴다. 블로킹으로 쓴 시프트 레지스터는 1단으로 합성된다. 조합 블록의 모든 경우에 값을 주어 래치를 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>논블로킹으로 a &lt;= b; b &lt;= a;의 효과는?
-          <details><summary>답</summary><p>두 값이 맞바뀝니다.</p></details>
+          <details><summary>답</summary><p>두 값이 맞바뀐다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>블로킹으로 a = b; b = a;의 효과는?
-          <details><summary>답</summary><p>둘 다 b 값이 됩니다.</p></details>
+          <details><summary>답</summary><p>둘 다 b 값이 된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>case에 default가 없으면 조합 블록에서 생기는 일은?
-          <details><summary>답</summary><p>빠진 경우 이전 값을 유지하는 래치가 생깁니다.</p></details>
+          <details><summary>답</summary><p>빠진 경우 이전 값을 유지하는 래치가 생긴다.</p></details>
         </li>
       </ol>
     </div>

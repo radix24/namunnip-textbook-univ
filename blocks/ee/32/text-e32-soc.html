@@ -8,57 +8,54 @@
 <article class="card q-card" id="text-e32-soc" data-kind="본문" data-std="전전32-01-01">
   <header class="card-head"><span class="no"></span><h2>SoC의 구성 블록과 버스 구조</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>SoC의 구성(CPU, 메모리 제어기, 가속기, 주변 장치, 상호 연결)을 안다.</li>
-        <li>고속 버스(AXI)와 저속 버스(APB)를 나누는 이유를 설명한다.</li>
-        <li>버스 대역폭을 폭과 클록으로 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>버스 (<a href="../25/03-01.html">전전25 3.1절</a>), 컴퓨터 구조 (<a href="../14/01.html">전전14 1단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">스마트폰의 두뇌인 AP 칩 하나에는 CPU만 있는 것이 아니다. 그래픽, 인공지능, 카메라 영상, 통신 모뎀까지 수십 개의 블록이 손톱만 한 칩 위에 함께 들어 있다. 이 블록들은 무엇이며 서로 어떻게 이어질까? 그리고 그 연결은 영상 같은 큰 데이터를 감당할 만큼 빠를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 SoC 구성(개형). CPU, GPU, NPU, 영상 처리기, 모뎀, DRAM 제어기가 고성능 AXI 상호 연결에, 저속 주변 장치가 브리지를 거친 APB에 연결된다. 128비트 AXI 500 MHz는 한 방향 8 GB/s이고, 4K 60 fps 영상은 읽기와 쓰기에 각 약 2 GB/s가 필요하다">
+        <path d="M40 90 H520" class="a" stroke-width="4"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="40" y="30" width="70" height="36"/><rect x="120" y="30" width="70" height="36"/><rect x="200" y="30" width="70" height="36"/><rect x="280" y="30" width="70" height="36"/><rect x="360" y="30" width="70" height="36"/><rect x="440" y="30" width="80" height="36"/></g>
+        <g class="s" text-anchor="middle"><text x="75" y="52">CPU</text><text x="155" y="52">GPU</text><text x="235" y="52">NPU</text><text x="315" y="52">영상</text><text x="395" y="52">모뎀</text><text x="480" y="52">DRAM 제어</text></g>
+        <rect x="200" y="110" width="80" height="26" class="d" fill="none" stroke-width="2"/>
+        <path d="M240 90 V110 M240 136 V150 M100 150 H420" class="k" stroke-width="2"/>
+        <g class="s"><text x="210" y="128" class="td">브리지</text><text x="430" y="154">APB 저속 주변 장치</text><text x="40" y="104" class="ta">AXI 128비트 500 MHz = 8 GB/s</text><text x="40" y="184">4K60 영상 ≈ 2 GB/s(읽기·쓰기 각각)</text></g>
+      </svg>
+      <figcaption>그림 1. 빠른 블록들은 고성능 상호 연결에, 느린 주변 장치는 브리지 너머 저속 버스에 달아 서로 발목을 잡지 않게 한다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>버스(<a href="../25/03-01.html">전전25 3.1절</a>), 컴퓨터 구조(<a href="../14/01.html">전전14 1단원</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>구성</h3>
-    <p>스마트폰 AP 한 칩에 CPU 묶음, GPU, NPU(신경망 가속기), 영상·오디오 처리기, 모뎀, DRAM 제어기, USB·카메라·디스플레이 인터페이스, 전원·클록 관리가 들어갑니다. 이들을 상호 연결(버스 또는 NoC)이 잇습니다.</p>
-    <p>ARM AMBA 규격에서 AXI는 주소·데이터 채널이 분리되어 여러 거래를 겹쳐(아웃스탠딩) 처리하는 고성능 버스이고, APB는 단순한 저속 레지스터 접근용입니다. 브리지로 둘을 이어, 느린 주변 장치가 빠른 버스를 붙잡지 않게 합니다.</p>
+    <p>스마트폰 AP 한 칩에는 CPU 묶음, GPU, NPU(신경망 가속기), 영상과 오디오 처리기, 모뎀, DRAM 제어기, USB와 카메라와 디스플레이 인터페이스, 전원과 클록 관리가 들어간다. 그리고 이들을 상호 연결(버스 또는 NoC)이 잇는다(그림 1). 처음 질문의 첫째 답이 이 구성이다.</p>
+    <p>ARM AMBA 규격에서 AXI는 주소와 데이터 채널이 분리되어, 여러 거래를 겹쳐(아웃스탠딩) 처리하는 고성능 버스이다. 한편 APB는 단순한 저속 레지스터 접근용이다. 그래서 브리지로 둘을 이어, 느린 주변 장치가 빠른 버스를 붙잡지 않게 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
-      <p>128비트 AXI, 500 MHz의 한 방향 최대 대역폭은? 4K 60 fps 영상(픽셀당 4바이트)을 읽고 쓰는 데 필요한 대역폭과 비교하라.</p>
+      <p>128비트 AXI, 500 MHz의 한 방향 최대 대역폭은? 4K 60 fps 영상(픽셀당 4바이트)을 읽고 쓰는 데 필요한 대역폭과 비교하여라.</p>
     </div>
-    <p><i>풀이.</i> 16 B × 500 MHz = 8 GB/s(읽기·쓰기 채널 각각). 4K: 3840 × 2160 × 4 × 60 = 1.99 GB/s, 읽기와 쓰기 각 약 2 GB/s로 한 버스의 4분의 1 정도. 여러 블록이 함께 쓰면 DRAM 대역폭이 병목이 되어 압축, 캐시, 우선순위 제어를 씁니다.</p>
+    <p><i>풀이.</i> 16 B × 500 MHz = 8 GB/s이다(읽기와 쓰기 채널 각각). 그리고 4K는 3840 × 2160 × 4 × 60 = 1.99 GB/s이므로, 읽기와 쓰기에 각 약 2 GB/s로 한 버스의 4분의 1 정도이다. 처음 질문의 둘째 답이 이것이다. 그런데 여러 블록이 함께 쓰면 DRAM 대역폭이 병목이 되어, 압축, 캐시, 우선순위 제어를 쓴다.</p>
+    <p>즉 SoC 설계는 블록마다의 성능보다 블록들이 메모리를 어떻게 나눠 쓰는지가 전체 성능을 정하는 경우가 많다. 그러므로 설계 초기에 각 블록의 대역폭 요구를 모아 상호 연결과 메모리 용량을 정한다.</p>
+    <p>한편 블록들은 대부분 처음부터 만들지 않고, 검증된 설계 자산(IP)을 사서 붙인다. 따라서 표준 버스 규격이 있어야 서로 다른 회사의 IP를 한 칩에 쉽게 모을 수 있다.</p>
+    <p>그리고 한 칩에 모으면 칩 사이 배선이 사라져 전력과 지연이 크게 준다. 그래서 휴대 기기는 여러 칩을 기판에 늘어놓는 대신 하나의 SoC를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "모든 블록을 하나의 빠른 버스에 달면 된다": 느린 장치 접근이 버스를 점유하고 면적·전력이 낭비됩니다. (2) "SoC는 CPU가 전부": 면적의 상당 부분이 가속기, 메모리, 인터페이스입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모든 블록을 하나의 빠른 버스에 달면 된다고 여기기 쉽다. 느린 장치 접근이 버스를 점유하고 면적과 전력이 낭비된다. 또 SoC는 CPU가 전부라고 생각하기 쉬운데, 면적의 상당 부분이 가속기, 메모리, 인터페이스이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>CPU, GPU, NPU, 메모리 제어기, 주변 장치, 상호 연결.</li>
-        <li>AXI(고성능, 채널 분리), APB(저속), 브리지.</li>
-        <li>예: 128비트 500 MHz → 8 GB/s, 4K60 ≈ 2 GB/s.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>SoC는 CPU, GPU, NPU, 메모리 제어기, 주변 장치를 상호 연결로 잇는다. AXI는 채널이 분리된 고성능 버스, APB는 저속 버스이며 브리지로 잇는다. 예제의 128비트 500 MHz는 8 GB/s이고, 4K60 영상은 약 2 GB/s이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>64비트, 1 GHz 버스의 한 방향 대역폭은?
-          <details><summary>답</summary><p>8 GB/s.</p></details>
+          <details><summary>답</summary><p>8 GB/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>1080p 30 fps, 픽셀당 2바이트의 대역폭은?
-          <details><summary>답</summary><p>약 124 MB/s.</p></details>
+          <details><summary>답</summary><p>약 124 MB/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>NoC가 큰 SoC에서 버스보다 나은 이유는?
-          <details><summary>답</summary><p>여러 전송을 동시에 다른 경로로 보내 확장성이 좋기 때문입니다.</p></details>
+          <details><summary>답</summary><p>여러 전송을 동시에 다른 경로로 보내 확장성이 좋기 때문이다.</p></details>
         </li>
       </ol>
     </div>

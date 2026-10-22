@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e32-multivdd" data-kind="본문" data-std="전전32-05-04">
   <header class="card-head"><span class="no"></span><h2>다중 전압 영역과 레벨 시프터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>블록마다 다른 전원 전압을 쓰는 다중 전압 설계를 안다.</li>
-        <li>전압을 낮춘 블록의 동적 전력 절감을 계산한다.</li>
-        <li>영역 경계의 레벨 시프터와 절연 셀의 역할을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>클록·전력 게이팅 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">SoC 안의 모든 블록이 최고 속도로 달릴 필요는 없다. CPU는 빨라야 하지만, 타이머나 저속 주변 장치는 천천히 돌아도 된다. 블록마다 다른 전원 전압을 주면 전력을 얼마나 줄일 수 있을까? 그리고 전압이 다른 블록끼리 신호를 주고받을 때는 무엇을 조심해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.4.1 다중 전압 영역(개형). 동적 전력 1 W 가운데 40%를 쓰는 주변 장치 블록을 1.0 V에서 0.8 V로 낮추면 그 블록 전력이 0.4 × 0.64 = 0.256 W가 되어 전체 0.856 W로 14% 준다. 낮은 전압 블록에서 높은 전압 블록으로 가는 신호에는 레벨 시프터를, 꺼진 블록의 출력에는 절연 셀을 둔다">
+        <rect x="40" y="50" width="180" height="100" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="320" y="50" width="180" height="100" class="b" fill="none" stroke-width="2.5"/>
+        <rect x="245" y="85" width="50" height="30" class="d" fill="none" stroke-width="2"/>
+        <path d="M220 100 H245 M295 100 H320" class="k" stroke-width="2"/>
+        <g class="s"><text x="60" y="80" class="ta">주변 장치 0.8 V</text><text x="60" y="110">0.4 W × 0.64</text><text x="340" y="80" class="tb">CPU 1.0 V</text><text x="248" y="104" class="td">LS</text><text x="200" y="180">전체 1 W → 0.856 W(14% 절감)</text></g>
+      </svg>
+      <figcaption>그림 1. 속도가 덜 필요한 블록만 낮은 전압으로 돌리면 전력이 전압의 제곱으로 줄고, 전압 영역의 경계에는 레벨 시프터를 둔다(예제 5.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>클록·전력 게이팅(<a href="05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>필요한 만큼만 빠르게</h3>
-    <p>성능이 덜 필요한 블록은 낮은 전압에서 돌려 동적 전력을 V²만큼 줄입니다. 낮은 전압 블록 출력이 높은 전압 블록 입력에 들어가면 1이 충분히 높지 않아 pMOS가 덜 꺼지므로 레벨 시프터를 넣고, 꺼진 블록의 출력이 떠다니지 않게 절연 셀로 고정합니다.</p>
+    <p>성능이 덜 필요한 블록은 낮은 전압에서 돌려, 동적 전력을 V²만큼 줄인다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그런데 낮은 전압 블록의 출력이 높은 전압 블록의 입력에 들어가면, 1이 충분히 높지 않아 pMOS가 덜 꺼진다. 그래서 레벨 시프터를 넣는다(그림 1). 그리고 꺼진 블록의 출력이 떠다니지 않게 절연 셀로 고정한다. 처음 질문의 둘째 답이 이 두 셀이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
       <p>SoC 동적 전력 1 W 중 40%를 쓰는 주변 장치 블록을 1.0 V에서 0.8 V로(같은 주파수) 낮추면 전체 전력은?</p>
     </div>
-    <p><i>풀이.</i> 블록 0.4 W × 0.64 = 0.256 W → 전체 0.856 W(14% 절감). 0.8 V에서 그 블록의 최대 주파수가 필요 주파수 이상인지 타이밍 분석으로 확인해야 합니다.</p>
+    <p><i>풀이.</i> 블록은 0.4 W × 0.64 = 0.256 W가 되어, 전체는 0.856 W(14% 절감)이다. 그런데 0.8 V에서 그 블록의 최대 주파수가 필요한 주파수 이상인지 타이밍 분석으로 확인해야 한다.</p>
+    <p>즉 다중 전압 설계는 블록마다 다른 타이밍 조건을 갖게 한다. 그러므로 타이밍 분석도 전압 영역마다 그 영역의 셀 지연으로 따로 하고, 경계를 지나는 경로에는 레벨 시프터의 지연을 더한다.</p>
+    <p>한편 전압 영역마다 전원 배선과 조정기가 따로 필요하므로, 영역 수를 너무 늘리면 면적과 설계 복잡도가 커진다. 따라서 보통 몇 개의 영역으로 묶어 쓴다.</p>
+    <p>그리고 같은 영역의 전압을 실행 중에 바꾸는 방법(DVFS, 전전30 4.4절)과 함께 쓰면 효과가 더 크다. 예를 들어 CPU 영역은 작업량에 따라 전압을 바꾸고, 주변 장치 영역은 낮은 전압에 고정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "전압 영역 사이에 그냥 선을 이으면 된다": 낮은→높은 방향에는 레벨 시프터가 필요합니다. (2) "전압을 낮추면 공짜로 절약": 지연이 늘어 주파수 여유가 있어야 합니다.</div>
+    <p>그래서 저전력 SoC의 전원 구조는 설계 초기에 정하며, 이후 모든 단계가 그 구조를 따른다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P ∝ V²: 0.8/1.0 → 0.64배.</li>
-        <li>레벨 시프터(낮은→높은), 절연 셀(꺼진 블록).</li>
-        <li>예: 1 W → 0.856 W.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전압 영역 사이에 그냥 선을 이으면 된다고 여기기 쉽다. 낮은 쪽에서 높은 쪽으로 가는 신호에는 레벨 시프터가 필요하다. 또 전압을 낮추면 공짜로 절약된다고 생각하기 쉬운데, 지연이 늘어 주파수 여유가 있어야 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>동적 전력은 V²에 비례하므로 0.8/1.0 V면 0.64배이다. 낮은 쪽에서 높은 쪽으로는 레벨 시프터를, 꺼진 블록에는 절연 셀을 둔다. 예제의 SoC는 1 W에서 0.856 W가 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>0.9 V로 낮추면 그 블록 전력 비는?
-          <details><summary>답</summary><p>0.81배.</p></details>
+          <details><summary>답</summary><p>0.81배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 블록을 0.7 V로 하면 전체 전력은?
-          <details><summary>답</summary><p>0.796 W.</p></details>
+          <details><summary>답</summary><p>0.796 W이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>높은→낮은 방향에도 레벨 시프터가 필요한가?
-          <details><summary>답</summary><p>보통 필요 없거나 간단합니다(입력 내압 확인).</p></details>
+          <details><summary>답</summary><p>보통 필요 없거나 간단하다(입력 내압 확인).</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e32-axi" data-kind="본문" data-std="전전32-01-02">
   <header class="card-head"><span class="no"></span><h2>온칩 버스 핸드셰이크</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>valid-ready 핸드셰이크에서 전송이 일어나는 조건을 안다.</li>
-        <li>버스 대역폭을 폭과 클록으로 계산한다.</li>
-        <li>IP 재사용에 표준 버스(AMBA AXI 등)가 필요한 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>SoC 구성 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">칩 안의 블록들은 서로 다른 속도로 일하고, 각자 바쁠 때가 따로 있다. 보내는 쪽이 아무 때나 데이터를 내밀면 받는 쪽이 놓칠 수 있고, 받는 쪽이 아무 때나 가져가면 아직 준비되지 않은 값을 받는다. 두 블록은 언제 데이터를 넘겼다고 약속할까? 그리고 그 약속 아래에서 버스는 얼마나 빨리 데이터를 옮길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 valid-ready 핸드셰이크(개형). 5클록 동안 valid가 1, 1, 0, 1, 1이고 ready가 0, 1, 1, 1, 0이면 둘 다 1인 둘째와 넷째 클록에서 두 번 전송된다. 64비트, 500 MHz 버스의 최대 대역폭은 4 GB/s이다">
+        <g class="s"><text x="20" y="54">CLK</text><text x="20" y="94">valid</text><text x="20" y="134">ready</text></g>
+        <path d="M80 60 H100 V40 H140 V60 H180 V40 H220 V60 H260 V40 H300 V60 H340 V40 H380 V60 H420 V40 H460 V60 H480" class="k" fill="none" stroke-width="1.5"/>
+        <path d="M80 80 H260 V100 H340 V80 H480" class="b" fill="none" stroke-width="2"/>
+        <path d="M80 140 H180 V120 H420 V140 H480" class="d" fill="none" stroke-width="2"/>
+        <g class="a" fill="none" stroke-width="2.5"><rect x="180" y="74" width="80" height="72"/><rect x="340" y="74" width="80" height="72"/></g>
+        <g class="s"><text x="196" y="170" class="ta">전송 1</text><text x="356" y="170" class="ta">전송 2</text><text x="420" y="190">64비트 × 500 MHz = 4 GB/s</text></g>
+      </svg>
+      <figcaption>그림 1. 보내는 쪽의 valid와 받는 쪽의 ready가 같은 클록에 함께 1일 때만 데이터 한 묶음이 넘어간다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>SoC 구성(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>둘 다 준비됐을 때</h3>
-    <p>AXI 같은 버스는 채널마다 보내는 쪽의 valid와 받는 쪽의 ready를 두고, 클록 가장자리에서 둘 다 1일 때만 한 번 전송합니다. 어느 쪽도 상대를 기다리며 자유롭게 멈출 수 있어, 서로 다른 회사가 만든 IP도 같은 규칙으로 연결됩니다.</p>
+    <p>AXI 같은 버스는 채널마다 보내는 쪽의 valid와 받는 쪽의 ready를 두고, 클록 가장자리에서 둘 다 1일 때만 한 번 전송한다(그림 1). 처음 질문의 첫째 답이 이 핸드셰이크이다.</p>
+    <p>즉 어느 쪽도 상대를 기다리며 자유롭게 멈출 수 있다. 그래서 서로 다른 회사가 만든 IP도 같은 규칙으로 연결된다.</p>
+    <p>그리고 최대 대역폭은 폭 × 클록이다. 처음 질문의 둘째 답이 이 식이며, 실제 대역폭은 둘 다 준비된 클록의 비율만큼 준다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>5클록 동안 valid = 1, 1, 0, 1, 1, ready = 0, 1, 1, 1, 0이면 전송은 몇 번, 몇째 클록인가? 64비트, 500 MHz 버스의 최대 대역폭은?</p>
     </div>
-    <p><i>풀이.</i> 둘 다 1인 2, 4클록에서 2번. 최대 대역폭 8바이트 × 500 MHz = 4 GB/s. 읽기·쓰기 채널이 따로라 동시에 쓰면 합이 두 배가 됩니다.</p>
+    <p><i>풀이.</i> 둘 다 1인 둘째와 넷째 클록에서 2번이다. 그리고 최대 대역폭은 8바이트 × 500 MHz = 4 GB/s이다. 한편 읽기와 쓰기 채널이 따로이므로, 동시에 쓰면 합이 두 배가 된다.</p>
+    <p>즉 첫째 클록에서는 보내는 쪽이 준비됐지만 받는 쪽이 아니어서, valid를 1로 유지한 채 기다린다. 그러므로 보내는 쪽은 전송이 끝날 때까지 데이터와 valid를 바꾸지 않아야 한다.</p>
+    <p>한편 이 핸드셰이크는 채널마다 독립이다. 따라서 주소를 먼저 보내고 데이터는 나중에 보내거나, 여러 주소를 연달아 보내 놓고 응답을 차례로 받는 식의 겹친 거래가 가능해진다.</p>
+    <p>그리고 같은 valid-ready 규칙은 칩 안의 데이터 흐름 회로 곳곳에도 쓰인다. 예를 들어 파이프라인 단 사이에 이 신호를 두면, 뒷단이 막힐 때 앞단이 자동으로 멈춘다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "valid를 올리면 바로 전송된다": ready도 1이어야 합니다. (2) "valid가 ready를 기다려도 된다": AXI는 valid가 ready에 의존하면 교착 위험이 있어 금지합니다(확인 필요).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>valid를 올리면 바로 전송된다고 여기기 쉽다. ready도 1이어야 한다. 또 valid가 ready를 기다려도 된다고 생각하기 쉬운데, AXI는 valid가 ready에 의존하면 교착 위험이 있어 금지한다(확인 필요).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전송 = valid ∧ ready(클록마다).</li>
-        <li>대역폭 = 폭 × 클록.</li>
-        <li>표준 버스 → IP 재사용.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전송은 클록마다 valid ∧ ready일 때 일어난다. 대역폭은 폭 × 클록이다. 표준 버스 규칙 덕분에 IP를 재사용한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>32비트, 200 MHz 최대 대역폭은?
-          <details><summary>답</summary><p>800 MB/s.</p></details>
+          <details><summary>답</summary><p>800 MB/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>ready가 평균 75%만 1이면 실효 대역폭(예제 버스)은?
-          <details><summary>답</summary><p>3 GB/s.</p></details>
+          <details><summary>답</summary><p>3 GB/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>버스 대신 NoC를 쓰는 이유는?
-          <details><summary>답</summary><p>코어가 많으면 공유 버스가 병목이 되어 패킷 망으로 동시 전송을 늘립니다.</p></details>
+          <details><summary>답</summary><p>코어가 많으면 공유 버스가 병목이 되어 패킷 망으로 동시 전송을 늘린다.</p></details>
         </li>
       </ol>
     </div>

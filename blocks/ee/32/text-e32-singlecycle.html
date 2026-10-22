@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e32-singlecycle" data-kind="본문" data-std="전전32-06-02">
   <header class="card-head"><span class="no"></span><h2>단일 사이클 프로세서의 임계 경로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>단일 사이클 데이터패스에서 명령마다 지나는 블록을 안다.</li>
-        <li>가장 긴 명령(lw)의 경로로 클록 주기를 계산한다.</li>
-        <li>단일 사이클 설계의 비효율을 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>RISC 프로세서 설계 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">단일 사이클 프로세서는 모든 명령어를 한 클록에 끝내므로, 명령어 하나에 클록 하나로 단순하다. 그런데 명령어마다 지나는 회로가 다르다. 덧셈은 금방 끝나지만 메모리를 읽는 명령은 오래 걸린다. 그렇다면 클록 주기는 무엇이 정할까? 그리고 그 결과 어떤 낭비가 생길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.2.1 단일 사이클 임계 경로(개형). 명령 메모리 200, 레지스터 읽기 100, ALU 150, 데이터 메모리 200, 쓰기 전 MUX와 셋업 50 ps이면 적재(lw) 경로가 700 ps로 가장 길고 R형은 500 ps이며, 클록은 700 ps(1.43 GHz)로 정해져 R형도 700 ps를 기다린다">
+        <g fill="none" stroke-width="2.5"><rect x="40" y="50" width="120" height="30" class="b"/><rect x="160" y="50" width="60" height="30" class="k"/><rect x="220" y="50" width="90" height="30" class="a"/><rect x="310" y="50" width="120" height="30" class="d"/><rect x="430" y="50" width="30" height="30" class="k"/></g>
+        <g fill="none" stroke-width="2.5"><rect x="40" y="110" width="120" height="30" class="b"/><rect x="160" y="110" width="60" height="30" class="k"/><rect x="220" y="110" width="90" height="30" class="a"/><rect x="310" y="110" width="30" height="30" class="k"/></g>
+        <path d="M460 30 V160" class="d dsh"/>
+        <g class="s"><text x="40" y="44">lw 700 ps</text><text x="40" y="104">R형 500 ps</text><text x="340" y="130" class="td">200 ps 낭비</text><text x="420" y="176">클록 700 ps</text><text x="320" y="70">데이터 메모리</text></g>
+      </svg>
+      <figcaption>그림 1. 모든 명령이 한 클록에 끝나야 하므로 가장 긴 적재 명령의 경로가 클록을 정하고, 짧은 명령도 그만큼 기다린다(예제 6.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>RISC 프로세서 설계(<a href="06-01.html">6.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>모든 명령이 가장 느린 명령을 기다린다</h3>
-    <p>단일 사이클 프로세서는 모든 명령을 한 클록에 끝내므로 주기가 가장 긴 명령 경로로 정해집니다. 적재(lw)는 명령 메모리 → 레지스터 읽기 → ALU(주소) → 데이터 메모리 → 레지스터 쓰기를 모두 지나 보통 가장 깁니다.</p>
+    <p>단일 사이클 프로세서는 모든 명령을 한 클록에 끝내므로, 주기는 가장 긴 명령 경로로 정해진다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그리고 적재(lw)는 명령 메모리 → 레지스터 읽기 → ALU(주소) → 데이터 메모리 → 레지스터 쓰기를 모두 지나므로, 보통 가장 길다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
       <p>명령 메모리 200, 레지스터 읽기 100, ALU 150, 데이터 메모리 200, 쓰기 전 MUX·셋업 50 ps. lw와 R형(데이터 메모리 없음) 경로, 클록은?</p>
     </div>
-    <p><i>풀이.</i> lw 700 ps, R형 500 ps. 클록 700 ps(1.43 GHz). R형도 700 ps를 기다려 낭비가 생기며, 이를 줄이려 다중 사이클이나 파이프라인으로 갑니다.</p>
+    <p><i>풀이.</i> lw는 700 ps, R형은 500 ps이므로 클록은 700 ps(1.43 GHz)이다. 그런데 R형도 700 ps를 기다리므로 낭비가 생긴다. 처음 질문의 둘째 답이 이 낭비이다. 그래서 이를 줄이려고 다중 사이클이나 파이프라인 구조로 간다.</p>
+    <p>즉 단일 사이클 구조는 CPI가 1이지만 주기가 길어, 전체 실행 시간은 주기 × 명령 수로 정해진다. 그러므로 프로세서의 성능은 CPI와 주기를 함께 보아야 한다.</p>
+    <p>한편 메모리가 경로의 두 곳에 들어간다는 점도 중요하다. 따라서 명령 메모리와 데이터 메모리의 접근 시간이 단일 사이클 프로세서의 속도를 거의 정하며, 실제 칩에서는 캐시가 이 시간을 줄인다.</p>
+    <p>그리고 다중 사이클 구조는 명령을 여러 짧은 단계로 나눠 명령마다 필요한 단계만 거치게 한다. 즉 R형은 적은 단계로, lw는 많은 단계로 끝나 평균 시간이 준다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "단일 사이클이면 CPI 1이라 가장 빠르다": 주기가 길어 전체는 느립니다. (2) "모든 명령의 경로가 같다": 명령마다 쓰는 블록이 다릅니다.</div>
+    <p>결국 단일 사이클 구조는 이해하기 쉬워 설계의 출발점으로 좋고, 이를 바탕으로 파이프라인을 얹는다(6.3절).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>주기 = 가장 긴 명령 경로(lw).</li>
-        <li>예: 700 ps → 1.43 GHz.</li>
-        <li>짧은 명령도 같은 주기.</li>
-      </ol>
-    </div>
+    <p>그러므로 단일 사이클 구조에서 클록을 높이려면 가장 긴 경로, 곧 메모리를 거치는 경로부터 줄여야 한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>단일 사이클이면 CPI 1이라 가장 빠르다고 여기기 쉽다. 주기가 길어 전체는 느리다. 또 모든 명령의 경로가 같다고 생각하기 쉬운데, 명령마다 쓰는 블록이 다르다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>단일 사이클 프로세서의 주기는 가장 긴 명령 경로(lw)가 정한다. 예제에서는 700 ps, 1.43 GHz이다. 짧은 명령도 같은 주기를 기다린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>sw 경로(레지스터 쓰기 없음)는?
-          <details><summary>답</summary><p>650 ps.</p></details>
+          <details><summary>답</summary><p>650 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>beq(데이터 메모리 없음, 쓰기 없음)는?
-          <details><summary>답</summary><p>450 ps.</p></details>
+          <details><summary>답</summary><p>450 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>명령 섞임이 lw 25%라면 주기를 명령별로 다르게 할 수 있을 때 평균은(나머지 500 ps 가정)?
-          <details><summary>답</summary><p>550 ps.</p></details>
+          <details><summary>답</summary><p>550 ps이다.</p></details>
         </li>
       </ol>
     </div>
