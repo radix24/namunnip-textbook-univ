@@ -8,33 +8,27 @@
 <article class="card q-card" id="text-p17-ml" data-kind="본문" data-std="물리17-04-01">
   <header class="card-head"><span class="no"></span><h2>지도 학습: 회귀와 분류</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>지도 학습의 회귀와 분류를 구별하고 scikit-learn으로 모형을 학습시킨다.</li>
-        <li>물리 모형 적합과 기계학습 모형의 차이(일반화, 외삽)를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱 회귀 (<a href="../../common/12/07-03.html">공통12 7.3절</a>), 곡선 적합 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">검출기에 들어온 신호가 찾는 입자인지 배경 잡음인지 하나하나 판정해야 하는데, 사건이 수백만 개이고 판정에 쓸 수 있는 양이 수십 가지이다. 사람이 기준을 정하기 어려울 때, 정답이 붙은 예시들로 컴퓨터가 판정 규칙을 배우게 할 수 있을까? 그렇게 배운 규칙은 물리 모형을 맞춘 것과 무엇이 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 205" role="img" aria-label="왼쪽은 연속값을 예측하는 회귀 직선, 오른쪽은 두 범주를 가르는 분류 경계">
+        <path d="M30 180 H260 M30 180 V30 M300 180 H530 M300 180 V30" class="ax"/><circle cx="82.1" cy="132.8" r="3" class="fa"/><circle cx="251.3" cy="60.3" r="3" class="fa"/><circle cx="59.1" cy="140.1" r="3" class="fa"/><circle cx="192.1" cy="58.8" r="3" class="fa"/><circle cx="49.6" cy="130.8" r="3" class="fa"/><circle cx="86.9" cy="122.9" r="3" class="fa"/><circle cx="259.8" cy="69.6" r="3" class="fa"/><circle cx="78.2" cy="121.9" r="3" class="fa"/><circle cx="177.6" cy="99.5" r="3" class="fa"/><circle cx="135.6" cy="97.0" r="3" class="fa"/><circle cx="134.2" cy="122.3" r="3" class="fa"/><circle cx="143.8" cy="105.3" r="3" class="fa"/><circle cx="74.2" cy="123.0" r="3" class="fa"/><circle cx="221.0" cy="82.2" r="3" class="fa"/><circle cx="50.6" cy="139.9" r="3" class="fa"/><circle cx="83.9" cy="126.4" r="3" class="fa"/><circle cx="34.6" cy="138.4" r="3" class="fa"/><circle cx="91.4" cy="129.5" r="3" class="fa"/><circle cx="123.8" cy="105.8" r="3" class="fa"/><circle cx="237.5" cy="48.4" r="3" class="fa"/><path d="M30.0 150.0 L260.0 60.0" class="k"/><text x="145" y="22" text-anchor="middle" class="ta">회귀 (y가 연속값)</text><circle cx="433.2" cy="70.7" r="3" class="fa"/><circle cx="502.6" cy="137.2" r="3" class="fa"/><circle cx="382.0" cy="48.3" r="3" class="fa"/><circle cx="461.5" cy="37.5" r="3" class="fa"/><circle cx="494.0" cy="104.5" r="3" class="fa"/><circle cx="416.7" cy="74.8" r="3" class="fa"/><circle cx="386.7" cy="54.9" r="3" class="fa"/><circle cx="452.5" cy="33.8" r="3" class="fa"/><circle cx="475.8" cy="128.7" r="3" class="fa"/><circle cx="382.8" cy="58.8" r="3" class="fa"/><circle cx="416.1" cy="73.8" r="3" class="fa"/><circle cx="471.1" cy="127.3" r="3" class="fa"/><circle cx="522.0" cy="66.1" r="3" class="fa"/><circle cx="527.8" cy="93.0" r="3" class="fa"/><circle cx="340.9" cy="34.5" r="3" class="fa"/><circle cx="439.2" cy="105.4" r="3" class="fa"/><circle cx="401.1" cy="71.2" r="3" class="fa"/><circle cx="464.6" cy="109.3" r="3" class="fa"/><circle cx="331.0" cy="65.4" r="3" class="fb"/><circle cx="322.5" cy="76.5" r="3" class="fb"/><circle cx="345.5" cy="157.5" r="3" class="fb"/><circle cx="350.6" cy="143.4" r="3" class="fb"/><circle cx="302.7" cy="128.5" r="3" class="fb"/><circle cx="361.4" cy="116.5" r="3" class="fb"/><circle cx="391.1" cy="155.1" r="3" class="fb"/><circle cx="369.0" cy="178.0" r="3" class="fb"/><circle cx="339.1" cy="114.7" r="3" class="fb"/><circle cx="353.3" cy="118.5" r="3" class="fb"/><circle cx="402.6" cy="117.3" r="3" class="fb"/><circle cx="435.4" cy="136.7" r="3" class="fb"/><circle cx="321.9" cy="167.2" r="3" class="fb"/><circle cx="324.5" cy="101.9" r="3" class="fb"/><circle cx="303.9" cy="158.9" r="3" class="fb"/><circle cx="501.3" cy="175.0" r="3" class="fb"/><circle cx="401.6" cy="167.5" r="3" class="fb"/><circle cx="408.8" cy="156.8" r="3" class="fb"/><path d="M300.0 30.0 L530.0 180.0" class="k dsh"/><text x="415" y="22" text-anchor="middle" class="tb">분류 (y가 범주)</text><text x="260" y="196" text-anchor="end" class="i">x</text><text x="530" y="196" text-anchor="end" class="i">x₁</text><text x="296" y="40" text-anchor="end" class="i">x₂</text>
+      </svg>
+      <figcaption>그림 1. 지도 학습의 두 갈래(모의 자료). 회귀는 입력에서 연속값을 예측하는 함수를 배우고(왼쪽), 분류는 입력 공간을 범주별로 나누는 경계를 배운다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱 회귀(<a href="../../common/12/07-03.html">공통12 7.3절</a>), 곡선 적합(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>지도 학습</h3>
-    <p>입력 \(\mathbf x\)(특징)와 정답 \(y\)(목표)가 짝지어진 자료로 \(\mathbf x\)에서 \(y\)를 예측하는 함수를 배우는 것이 지도 학습입니다.</p>
-    <ul class="tb-list">
-      <li><b>회귀</b>: \(y\)가 연속값. 예: 실험 조건에서 측정값 예측. 선형 회귀, 다항 회귀, 결정 나무, 신경망.</li>
-      <li><b>분류</b>: \(y\)가 범주. 예: 검출기 신호가 신호인지 배경인지. 로지스틱 회귀, k-최근접 이웃, 결정 나무.</li>
-    </ul>
-    <p>물리 모형을 맞추는 2.1절과 달리, 기계학습 모형은 물리적 의미가 없는 많은 매개변수를 자료에 맞춥니다. 그래서 "자료를 얼마나 잘 맞추나"보다 "처음 보는 자료를 얼마나 잘 예측하나"(일반화)가 중요합니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>회귀(연속)와 분류(범주). 목표는 일반화.</li>
-        <li>기계학습 모형은 자료 범위 밖에서 근거가 없다. 평가 방법은 4.2절.</li>
-      </ol>
+    <p>입력 \(\mathbf x\)와 정답 \(y\)가 짝지어진 자료로, \(\mathbf x\)에서 \(y\)를 예측하는 함수를 배우는 것을 <em>지도 학습</em>이라 한다. 입력의 각 성분을 특징, 정답을 목표라 부른다. 처음 질문에서 특징은 신호의 에너지, 모양, 시간 같은 양이고, 목표는 신호인지 배경인지이다.</p>
+    <p>목표가 연속값이면 <em>회귀</em>, 범주이면 <em>분류</em>라 한다(그림 1). 실험 조건에서 측정값을 예측하는 것은 회귀이고 선형 회귀, 다항 회귀, 결정 나무, 신경망을 쓴다. 반면 검출기 신호를 신호와 배경으로 나누는 것은 분류이고 로지스틱 회귀, k-최근접 이웃, 결정 나무를 쓴다. 파이썬에서는 scikit-learn이 이 모형들을 같은 방식으로 쓰게 해 준다. 모형을 만들고 <code>fit(X, y)</code>로 학습시킨 뒤 <code>predict(X_new)</code>로 예측한다.</p>
+    <p>그런데 2.1절에서 물리 모형을 맞출 때와는 목적이 다르다. 물리 모형은 \(\tau\), \(\omega\)처럼 매개변수 하나하나에 물리적 의미가 있고, 매개변수 몇 개로 자료를 설명한다. 반면 기계학습 모형은 의미가 없는 수많은 매개변수를 자료에 맞춘다. 그래서 자료를 얼마나 잘 맞추는지보다 처음 보는 자료를 얼마나 잘 예측하는지가 중요하며, 이것을 <em>일반화</em>라 한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.1.1</span>
+      <p>진자 길이 0.2~1.0 m에서 잰 주기 자료로 (가) \(T = 2\pi\sqrt{L/g}\)를 맞춘 모형과 (나) 결정 나무 회귀 모형을 만들었다. 두 모형으로 \(L = 3\) m의 주기를 예측하면 어떻게 되는가?</p>
     </div>
+    <p><i>풀이.</i> (가)는 물리 법칙이므로 \(L = 3\) m에서도 \(2\pi\sqrt{3/9.8} \approx 3.5\) s를 준다. 반면 (나)의 결정 나무는 자료 범위 밖에서 가장 가까운 잎의 값을 그대로 내므로, \(L = 1.0\) m 근처의 값인 약 2.0 s를 예측한다. 기계학습 모형은 자료 범위 안의 보간에는 강하지만, 범위 밖의 외삽에는 근거가 없다. 그러므로 쓰려는 조건이 학습 자료의 범위 안인지 늘 확인한다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>기계학습이 자료에서 물리 법칙을 찾아 준다고 생각하기 쉽다. 그러나 대부분의 모형은 입력과 출력 사이의 관계를 흉내 낼 뿐, 그 관계가 왜 성립하는지는 알려 주지 않는다. 또 예측을 잘한다고 해서 원인을 안 것도 아니다(<a href="04-05.html">4.5절</a>).</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>지도 학습은 정답이 붙은 자료로 입력에서 목표를 예측하는 함수를 배우며, 목표가 연속값이면 회귀, 범주이면 분류이다. 처음 질문의 신호와 배경 판정은 분류이고, 사람이 정하기 어려운 판정 규칙을 예시에서 배운다. 물리 모형과 달리 기계학습 모형은 매개변수에 의미가 없으므로 일반화가 목표이고, 자료 범위 밖에서는 근거가 없으며, 일반화를 평가하는 방법은 <a href="04-02.html">4.2절</a>에서 다룬다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>

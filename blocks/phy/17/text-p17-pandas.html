@@ -8,20 +8,17 @@
 <article class="card q-card" id="text-p17-pandas" data-kind="본문" data-std="물리17-01-01">
   <header class="card-head"><span class="no"></span><h2>NumPy 배열로 실험 자료 계산하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>NumPy 배열 연산과 브로드캐스팅으로 반복문 없이 계산한다.</li>
-        <li>축 연산과 불리언 마스크로 조건에 맞는 자료를 골라 요약한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>파이썬과 NumPy 기초 (<a href="../../common/11/03-02.html">공통11 3.2절</a>, <a href="../../common/11/04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">감쇠 진동을 1000개 시각에서 계산하려고 for 문을 썼더니 코드가 길고 느리다. 같은 계산을 한 줄로, 수십 배 빠르게 할 수는 없을까? 그리고 반지름 3개와 각도 5개의 모든 짝에 대해 \(r\cos\theta\)를 구할 때도 이중 반복문이 꼭 필요할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 240" role="img" aria-label="모양 (3,1)과 (1,5)인 배열이 브로드캐스팅되어 (3,5) 격자가 됨">
+        <rect x="40" y="50" width="24" height="24" class="la"/><rect x="40" y="76" width="24" height="24" class="la"/><rect x="40" y="102" width="24" height="24" class="la"/><text x="52" y="40" text-anchor="middle" class="ta">r (3, 1)</text><text x="95" y="92" text-anchor="middle">×</text><rect x="120" y="50" width="24" height="24" class="lb"/><rect x="146" y="50" width="24" height="24" class="lb"/><rect x="172" y="50" width="24" height="24" class="lb"/><rect x="198" y="50" width="24" height="24" class="lb"/><rect x="224" y="50" width="24" height="24" class="lb"/><text x="185" y="40" text-anchor="middle" class="tb">θ (1, 5)</text><path d="M270 89 H310" class="k"/><path d="M302 84 l8 5 -8 5" class="k"/><rect x="330" y="50" width="24" height="24" class="lc"/><rect x="356" y="50" width="24" height="24" class="lc"/><rect x="382" y="50" width="24" height="24" class="lc"/><rect x="408" y="50" width="24" height="24" class="lc"/><rect x="434" y="50" width="24" height="24" class="lc"/><rect x="330" y="76" width="24" height="24" class="lc"/><rect x="356" y="76" width="24" height="24" class="lc"/><rect x="382" y="76" width="24" height="24" class="lc"/><rect x="408" y="76" width="24" height="24" class="lc"/><rect x="434" y="76" width="24" height="24" class="lc"/><rect x="330" y="102" width="24" height="24" class="lc"/><rect x="356" y="102" width="24" height="24" class="lc"/><rect x="382" y="102" width="24" height="24" class="lc"/><rect x="408" y="102" width="24" height="24" class="lc"/><rect x="434" y="102" width="24" height="24" class="lc"/><text x="395" y="40" text-anchor="middle" class="tc">X (3, 5)</text><rect x="40" y="128" width="24" height="24" class="la"/><rect x="66" y="128" width="24" height="24" class="la"/><rect x="92" y="128" width="24" height="24" class="la"/><rect x="118" y="128" width="24" height="24" class="la"/><rect x="144" y="128" width="24" height="24" class="la"/><rect x="40" y="154" width="24" height="24" class="la"/><rect x="66" y="154" width="24" height="24" class="la"/><rect x="92" y="154" width="24" height="24" class="la"/><rect x="118" y="154" width="24" height="24" class="la"/><rect x="144" y="154" width="24" height="24" class="la"/><rect x="40" y="180" width="24" height="24" class="la"/><rect x="66" y="180" width="24" height="24" class="la"/><rect x="92" y="180" width="24" height="24" class="la"/><rect x="118" y="180" width="24" height="24" class="la"/><rect x="144" y="180" width="24" height="24" class="la"/><rect x="330" y="128" width="24" height="24" class="lb"/><rect x="356" y="128" width="24" height="24" class="lb"/><rect x="382" y="128" width="24" height="24" class="lb"/><rect x="408" y="128" width="24" height="24" class="lb"/><rect x="434" y="128" width="24" height="24" class="lb"/><rect x="330" y="154" width="24" height="24" class="lb"/><rect x="356" y="154" width="24" height="24" class="lb"/><rect x="382" y="154" width="24" height="24" class="lb"/><rect x="408" y="154" width="24" height="24" class="lb"/><rect x="434" y="154" width="24" height="24" class="lb"/><rect x="330" y="180" width="24" height="24" class="lb"/><rect x="356" y="180" width="24" height="24" class="lb"/><rect x="382" y="180" width="24" height="24" class="lb"/><rect x="408" y="180" width="24" height="24" class="lb"/><rect x="434" y="180" width="24" height="24" class="lb"/><text x="110" y="222" text-anchor="middle" class="s">열 방향으로 늘린 r</text><text x="395" y="222" text-anchor="middle" class="s">행 방향으로 늘린 θ</text><text x="230" y="170" text-anchor="middle" class="s">길이 1인 축을</text><text x="230" y="186" text-anchor="middle" class="s">상대 길이에 맞춰 늘림</text>
+      </svg>
+      <figcaption>그림 1. 브로드캐스팅. 모양이 (3, 1)인 배열과 (1, 5)인 배열을 곱하면, 길이가 1인 축이 상대 배열의 길이에 맞춰 늘어나 (3, 5) 격자 전체가 반복문 없이 계산된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파이썬과 NumPy 기초(<a href="../../common/11/03-02.html">공통11 3.2절</a>, <a href="../../common/11/04-01.html">4.1절</a>)를 쓴다.</div>
 
-    <h3><span class="no">1.1.1</span>NumPy</h3>
-    <p>NumPy 배열은 같은 자료형의 값을 메모리에 이어 담고, 원소별 연산을 컴파일된 코드로 처리합니다. 핵심은 반복문 대신 배열 전체에 식을 쓰는 것(벡터화)입니다.</p>
+    <h3><span class="no">1.1.1</span>배열 전체에 식을 쓴다</h3>
+    <p>NumPy 배열은 같은 자료형의 값을 메모리에 이어 담고, 원소마다 하는 연산을 컴파일된 코드로 한꺼번에 처리한다. 그래서 반복문으로 원소를 하나씩 꺼내는 대신 배열 전체에 식을 쓰면 짧고 빠르다. 이렇게 쓰는 방식을 <em>벡터화</em>라 한다. 처음 질문의 감쇠 진동은 아래 둘째 줄처럼 한 줄이면 되고, 파이썬 반복문보다 보통 수십 배 빠르다.</p>
 <pre><code>import numpy as np
 t = np.linspace(0, 10, 1001)              # 0~10 s, 1001점
 x = np.exp(-0.2 * t) * np.cos(2 * t)      # 감쇠 진동 전체를 한 줄로
@@ -33,15 +30,16 @@ print(t[mask].max())                       # 진폭이 0.5보다 큰 마지막 �
 r = np.array([1.0, 2.0, 3.0])[:, None]     # (3, 1)
 theta = np.linspace(0, np.pi, 5)[None, :]  # (1, 5)
 X = r * np.cos(theta)                      # (3, 5) 격자</code></pre>
-    <p>원소별 연산, 축(axis)에 따른 합·평균(<code>x.mean(axis=0)</code>), 불리언 마스크, 브로드캐스팅을 익히면 대부분의 자료 처리를 짧고 빠르게 쓸 수 있습니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>NumPy: 벡터화, 축 연산, 마스크, 브로드캐스팅.</li>
-        <li>중간 배열의 모양과 메모리를 먼저 어림한다. 표 자료는 1.2절의 pandas로.</li>
-      </ol>
+    <p>코드에는 자주 쓰는 연산이 네 가지 들어 있다. 먼저 <code>np.exp</code>, <code>np.cos</code> 같은 원소별 함수와 사칙연산은 배열의 모든 원소에 같은 계산을 한다. 다음으로 <code>x.mean(axis=0)</code>처럼 축을 정해 합이나 평균을 내면, 행렬의 열마다 또는 행마다 요약할 수 있다. 또 <code>np.abs(x) &gt; 0.5</code>는 참과 거짓으로 된 배열, 곧 <em>불리언 마스크</em>를 만들고, <code>t[mask]</code>는 조건이 참인 원소만 고른다. 예를 들어 코드의 다섯째 줄은 진폭이 0.5보다 큰 마지막 시각을 반복문 없이 찾는다.</p>
+    <p>넷째가 처음 질문의 둘째 답인 <em>브로드캐스팅</em>이다. 모양이 다른 두 배열을 연산하면, NumPy는 뒤쪽 축부터 맞춰 보면서 길이가 1인 축을 상대 길이만큼 늘린 것처럼 계산한다(그림 1). 그래서 반지름을 (3, 1) 모양으로, 각도를 (1, 5) 모양으로 세워 두면 <code>r * np.cos(theta)</code> 한 줄이 15개 짝을 모두 계산한다. 이때 실제로 값을 복사하지는 않으므로 메모리도 아낀다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>입자 2000개의 위치 \(\mathbf r_i\)(모양 (2000, 3))에서 모든 쌍 사이 거리를 브로드캐스팅으로 구하려 한다. 중간 배열의 모양과 메모리는 얼마인가?</p>
     </div>
+    <p><i>풀이.</i> <code>r[:, None, :] - r[None, :, :]</code>는 (2000, 1, 3)과 (1, 2000, 3)이 늘어나 (2000, 2000, 3) 배열이 된다. 원소가 \(1.2\times10^7\)개이고 8바이트 실수이므로 약 96 MB이다. 계산은 한 줄이지만 입자가 2만 개면 9.6 GB가 되어 메모리가 모자란다. 따라서 큰 문제에서는 덩어리로 나누어 계산하거나 <code>scipy.spatial</code>의 전용 함수를 쓴다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모양이 다르면 늘 오류가 난다고 생각하기 쉽지만, 길이가 1인 축이 있으면 조용히 늘어난다. 그래서 (3,)과 (3, 1)을 더하면 오류 대신 (3, 3) 배열이 나와, 의도하지 않은 결과를 모르고 지나칠 수 있다. 계산 뒤에 <code>.shape</code>를 찍어 보는 습관이 이런 실수를 막는다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>NumPy에서는 반복문 대신 배열 전체에 식을 쓰는 벡터화가 기본이며, 처음 질문의 감쇠 진동도 한 줄로 계산된다. 축을 정한 요약, 불리언 마스크로 고르기, 길이 1인 축이 늘어나는 브로드캐스팅을 익히면 대부분의 자료 처리를 짧고 빠르게 쓸 수 있다. 다만 브로드캐스팅이 만드는 중간 배열의 모양과 메모리를 먼저 어림해야 하며, 열마다 이름과 자료형이 다른 표 자료는 <a href="01-02.html">1.2절</a>의 pandas로 다룬다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>

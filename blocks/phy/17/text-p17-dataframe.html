@@ -8,20 +8,17 @@
 <article class="card q-card" id="text-p17-dataframe" data-kind="본문" data-std="물리17-01-02">
   <header class="card-head"><span class="no"></span><h2>pandas 데이터프레임으로 표 자료 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>pandas 데이터프레임으로 표 자료를 읽고, 열을 만들고, 조건으로 거른다.</li>
-        <li>groupby로 조건별 평균과 표준오차를 구하고, 가중 평균이 필요한 경우를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>NumPy 배열 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">세 조가 진자로 중력 가속도를 재어 길이, 주기, 조 이름을 한 파일에 모았다. 조마다 측정 횟수도 다르다. 조별 평균과 그 불확도를 구하고 셋을 합쳐 하나의 \(g\)를 내려면 어떻게 해야 할까? 조 평균 셋을 그냥 평균하면 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="조 이름이 같은 행끼리 묶여 조마다 평균, 표준편차, 개수 한 줄로 요약됨">
+        <text x="110" y="28" text-anchor="middle">df (행 7개)</text><rect x="40" y="38" width="140" height="20" class="la"/><text x="70" y="53" text-anchor="middle" class="s">A</text><text x="140" y="53" text-anchor="middle" class="s">g = 9.79</text><rect x="40" y="60" width="140" height="20" class="lb"/><text x="70" y="75" text-anchor="middle" class="s">B</text><text x="140" y="75" text-anchor="middle" class="s">g = 9.83</text><rect x="40" y="82" width="140" height="20" class="la"/><text x="70" y="97" text-anchor="middle" class="s">A</text><text x="140" y="97" text-anchor="middle" class="s">g = 9.81</text><rect x="40" y="104" width="140" height="20" class="lc"/><text x="70" y="119" text-anchor="middle" class="s">C</text><text x="140" y="119" text-anchor="middle" class="s">g = 9.76</text><rect x="40" y="126" width="140" height="20" class="lb"/><text x="70" y="141" text-anchor="middle" class="s">B</text><text x="140" y="141" text-anchor="middle" class="s">g = 9.85</text><rect x="40" y="148" width="140" height="20" class="la"/><text x="70" y="163" text-anchor="middle" class="s">A</text><text x="140" y="163" text-anchor="middle" class="s">g = 9.80</text><rect x="40" y="170" width="140" height="20" class="lc"/><text x="70" y="185" text-anchor="middle" class="s">C</text><text x="140" y="185" text-anchor="middle" class="s">g = 9.78</text><path d="M200 115 H250" class="k"/><path d="M242 110 l8 5 -8 5" class="k"/><text x="225" y="100" text-anchor="middle" class="s">groupby</text><text x="410" y="28" text-anchor="middle">summary (조마다 한 줄)</text><rect x="280" y="60" width="260" height="28" class="la"/><text x="300" y="79" text-anchor="middle" class="s">A</text><text x="420" y="79" text-anchor="middle" class="s">mean 9.800  std 0.010  n 3</text><rect x="280" y="94" width="260" height="28" class="lb"/><text x="300" y="113" text-anchor="middle" class="s">B</text><text x="420" y="113" text-anchor="middle" class="s">mean 9.840  std 0.014  n 2</text><rect x="280" y="128" width="260" height="28" class="lc"/><text x="300" y="147" text-anchor="middle" class="s">C</text><text x="420" y="147" text-anchor="middle" class="s">mean 9.770  std 0.014  n 2</text>
+      </svg>
+      <figcaption>그림 1. groupby의 동작. 조 이름이 같은 행끼리 묶은 뒤 묶음마다 같은 계산(평균, 표준편차, 개수)을 해서, 조마다 한 줄인 요약표를 만든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy 배열(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>데이터프레임</h3>
-    <p>열마다 이름과 자료형이 다른 표(측정 일지, 여러 조건의 결과)는 pandas의 데이터프레임이 편합니다. 열 하나는 NumPy 배열처럼 계산할 수 있습니다(<code>df["T_s"].to_numpy()</code>).</p>
+    <p>측정 일지처럼 열마다 이름과 자료형이 다른 표는 pandas의 <em>데이터프레임</em>으로 다루면 편하다. 열 하나는 이름으로 꺼내 NumPy 배열처럼 계산할 수 있고, <code>df["T_s"].to_numpy()</code>로 배열 자체를 얻을 수도 있다. 아래 코드는 파일을 읽고, 내용을 훑어보고, 새 열을 만들고, 조건으로 행을 거른다.</p>
 <pre><code>import numpy as np
 import pandas as pd
 df = pd.read_csv("pendulum.csv")       # 열: L_m, T_s, group
@@ -29,26 +26,22 @@ df.head()                              # 앞 다섯 줄
 df.describe()                          # 요약 통계
 df["g"] = 4 * np.pi**2 * df["L_m"] / df["T_s"]**2   # 새 열
 long = df[df["L_m"] &gt; 0.5]             # 조건으로 거르기</code></pre>
+    <p>여기서 <code>describe()</code>는 열마다 개수, 평균, 표준편차, 최솟값, 사분위수, 최댓값을 보여 주어 값의 범위가 말이 되는지 빨리 확인하게 해 준다. 또 새 열 <code>g</code>는 \(g = 4\pi^2L/T^2\)을 모든 행에 한 번에 계산한 것이다. 열 이름에 단위를 붙여 <code>L_m</code>, <code>T_s</code>처럼 쓰면 나중에 단위를 헷갈리지 않는다.</p>
 
     <h3><span class="no">1.2.2</span>묶어서 요약하기</h3>
+    <p>같은 값을 가진 행끼리 묶어 각 묶음에 같은 계산을 하는 것이 <code>groupby</code>이다(그림 1). 조, 날짜, 장비처럼 조건이 여럿인 자료를 정리할 때 가장 많이 쓴다.</p>
 <pre><code>summary = df.groupby("group")["g"].agg(["mean", "std", "count"])
 summary["sem"] = summary["std"] / np.sqrt(summary["count"])
 print(summary)</code></pre>
-    <p><code>groupby</code>는 같은 값(조, 날짜, 장비)을 가진 행끼리 묶어 각 묶음에 같은 계산을 합니다. 표준편차를 측정 수의 제곱근으로 나누면 평균의 표준오차가 됩니다.</p>
+    <p>표준편차를 측정 수의 제곱근으로 나누면 <em>평균의 표준오차</em>가 된다. 측정을 많이 한 조일수록 평균이 더 정확하다는 뜻이다. 그렇다면 처음 질문처럼 조 평균 셋을 합칠 때 측정 수가 다른 것을 어떻게 반영할까?</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>위 코드에서 조마다 측정 횟수가 다르다. 전체 평균 \(g\)를 조 평균의 단순 평균으로 구하면 어떤 문제가 있는가?</p>
     </div>
-    <p><i>풀이.</i> 측정이 적은 조와 많은 조가 같은 무게를 받습니다. 개별 측정을 모두 평균하거나, 조 평균을 표준오차의 역제곱으로 가중 평균(\(w_i = 1/\sigma_i^2\), 2.1절)해야 합니다.</p>
+    <p><i>풀이.</i> 측정이 3번인 조와 30번인 조가 같은 무게를 받는다. 따라서 개별 측정을 모두 모아 평균하거나, 조 평균을 표준오차의 역제곱 \(w_i = 1/\sigma_i^2\)로 가중 평균해야 한다(<a href="02-01.html">2.1절</a>). 가중 평균의 표준오차는 \(1/\sqrt{\sum w_i}\)이다. 가령 조 평균의 표준오차가 0.02, 0.02, 0.04이면 무게는 2500, 2500, 625이고 합친 평균의 표준오차는 \(1/\sqrt{5625} \approx 0.013\)이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>std()</code>가 돌려주는 값을 평균의 불확도로 쓰기 쉽지만, 그것은 측정 하나하나가 흩어진 정도이다. 평균의 불확도는 그것을 \(\sqrt n\)으로 나눈 표준오차이다. 또 pandas의 <code>std()</code>는 \(n - 1\)로 나누고 NumPy의 <code>np.std()</code>는 기본값이 \(n\)으로 나누므로, 측정 수가 적을 때 둘이 다르게 나온다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>데이터프레임: 이름 붙은 열, 열 단위 계산, 조건 거르기.</li>
-        <li>groupby → 조건별 평균, 표준편차, 개수 → 표준오차.</li>
-        <li>조 평균을 합칠 때는 가중 평균.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>데이터프레임은 이름 붙은 열로 표 자료를 담고, 열 단위 계산과 조건 거르기를 한 줄로 해 준다. groupby로 조건별 평균, 표준편차, 개수를 구하고 표준편차를 \(\sqrt n\)으로 나누어 표준오차를 얻는다. 처음 질문처럼 측정 수가 다른 조 평균을 합칠 때는 단순 평균 대신 표준오차의 역제곱으로 가중 평균한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>

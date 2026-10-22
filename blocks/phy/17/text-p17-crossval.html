@@ -8,19 +8,17 @@
 <article class="card q-card" id="text-p17-crossval" data-kind="본문" data-std="물리17-04-02">
   <header class="card-head"><span class="no"></span><h2>교차검증과 평가 지표</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>훈련·검증·시험 자료를 나누는 까닭을 알고 k겹 교차검증으로 성능을 평가한다.</li>
-        <li>회귀와 분류의 평가 지표, 특히 범주가 불균형할 때의 정밀도와 재현율을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>지도 학습 (<a href="04-01.html">4.1절</a>), 베이즈 정리 (<a href="../../common/7/03-02.html">공통7 3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">신호 판정 모형을 학습시키고 같은 자료로 채점했더니 정확도가 99%였다. 그런데 새로 잰 자료에서는 훨씬 못했다. 학습에 쓴 자료로 채점한 것이 잘못일까? 그리고 신호가 전체의 1%뿐인 자료에서 정확도 99%라는 숫자는 정말 좋은 성적일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 210" role="img" aria-label="훈련 자료를 다섯 조각으로 나눠 한 조각씩 검증에 쓰고 시험 자료는 따로 둠">
+        <rect x="90" y="30" width="62" height="24" class="lb"/><rect x="154" y="30" width="62" height="24" class="la"/><rect x="218" y="30" width="62" height="24" class="la"/><rect x="282" y="30" width="62" height="24" class="la"/><rect x="346" y="30" width="62" height="24" class="la"/><text x="80" y="47" text-anchor="end" class="s">1회</text><text x="420" y="47" class="s">점수 s1</text><rect x="90" y="60" width="62" height="24" class="la"/><rect x="154" y="60" width="62" height="24" class="lb"/><rect x="218" y="60" width="62" height="24" class="la"/><rect x="282" y="60" width="62" height="24" class="la"/><rect x="346" y="60" width="62" height="24" class="la"/><text x="80" y="77" text-anchor="end" class="s">2회</text><text x="420" y="77" class="s">점수 s2</text><rect x="90" y="90" width="62" height="24" class="la"/><rect x="154" y="90" width="62" height="24" class="la"/><rect x="218" y="90" width="62" height="24" class="lb"/><rect x="282" y="90" width="62" height="24" class="la"/><rect x="346" y="90" width="62" height="24" class="la"/><text x="80" y="107" text-anchor="end" class="s">3회</text><text x="420" y="107" class="s">점수 s3</text><rect x="90" y="120" width="62" height="24" class="la"/><rect x="154" y="120" width="62" height="24" class="la"/><rect x="218" y="120" width="62" height="24" class="la"/><rect x="282" y="120" width="62" height="24" class="lb"/><rect x="346" y="120" width="62" height="24" class="la"/><text x="80" y="137" text-anchor="end" class="s">4회</text><text x="420" y="137" class="s">점수 s4</text><rect x="90" y="150" width="62" height="24" class="la"/><rect x="154" y="150" width="62" height="24" class="la"/><rect x="218" y="150" width="62" height="24" class="la"/><rect x="282" y="150" width="62" height="24" class="la"/><rect x="346" y="150" width="62" height="24" class="lb"/><text x="80" y="167" text-anchor="end" class="s">5회</text><text x="420" y="167" class="s">점수 s5</text><rect x="490" y="30" width="50" height="144" class="lc"/><text x="515" y="106" text-anchor="middle" class="tc">시험</text><text x="250" y="200" text-anchor="middle" class="s">훈련 자료를 다섯 조각으로 나눔</text><text x="130" y="22" text-anchor="middle" class="ta">학습</text><text x="220" y="22" text-anchor="middle" class="tb">검증</text>
+      </svg>
+      <figcaption>그림 1. 5겹 교차검증. 시험 자료를 먼저 떼어 둔 뒤, 훈련 자료를 다섯 조각으로 나누어 한 조각씩 돌아가며 검증에 쓰고 나머지 넷으로 학습한다. 점수 다섯 개의 평균과 표준편차로 성능과 그 불확도를 본다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>지도 학습(<a href="04-01.html">4.1절</a>), 베이즈 정리(<a href="../../common/7/03-02.html">공통7 3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>나누어 평가하기</h3>
+    <p>학습에 쓴 자료로 채점하면 모형이 답을 외운 만큼 성적이 부풀려진다. 그래서 자료를 나누어, 학습에 쓰지 않은 자료로 평가한다. 아래 코드는 자료의 25%를 시험 자료로 떼어 두고 나머지로 k-최근접 이웃 분류기를 학습시킨 뒤, 훈련 정확도와 시험 정확도를 비교한다.</p>
 <pre><code>from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.25, random_state=0)
@@ -28,28 +26,24 @@ clf = KNeighborsClassifier(n_neighbors=5).fit(X_tr, y_tr)
 print("훈련 정확도", clf.score(X_tr, y_tr), "시험 정확도", clf.score(X_te, y_te))
 scores = cross_val_score(KNeighborsClassifier(n_neighbors=5), X, y, cv=5)
 print(scores.mean(), scores.std())</code></pre>
-    <ul class="tb-list">
-      <li><b>훈련/시험 분할</b>: 시험 자료는 모형을 고르고 조정하는 데 쓰지 않고 마지막에 한 번만 쓴다. 시험 자료로 모형을 고르면 시험 성적이 낙관적으로 부풀려진다.</li>
-      <li><b>k겹 교차검증</b>: 훈련 자료를 k조각으로 나눠, 한 조각씩 돌아가며 검증용으로 두고 나머지로 학습한다. 자료가 적을 때 평가의 흔들림을 줄이고, 평균과 표준편차로 성능의 불확도를 함께 본다. 모형의 설정(\(k\), 차수, 정칙화 세기)은 이 검증 점수로 고른다.</li>
-    </ul>
+    <p>이때 시험 자료는 모형을 고르고 조정하는 데 쓰지 않고, 마지막에 한 번만 쓴다. 여러 설정을 시험 자료로 비교해 가장 좋은 것을 고르면, 시험 자료에 우연히 잘 맞는 설정이 뽑혀 시험 성적도 낙관적으로 부풀려진다. 그렇다면 이웃 수 \(k\), 다항식 차수, 정칙화 세기 같은 설정은 무엇으로 고를까?</p>
+    <p>훈련 자료를 다시 나누어 고른다. <em>k겹 교차검증</em>은 훈련 자료를 \(k\)조각으로 나눈 뒤 한 조각씩 돌아가며 검증용으로 두고 나머지로 학습해, 점수 \(k\)개를 얻는다(그림 1). 자료가 적을 때 한 번 나눈 것보다 평가의 흔들림이 작고, 점수의 평균과 표준편차로 성능의 불확도도 함께 볼 수 있다. 코드의 마지막 두 줄이 5겹 교차검증이다.</p>
 
     <h3><span class="no">4.2.2</span>평가 지표</h3>
-    <p>회귀는 평균 제곱 오차와 \(R^2\)를 씁니다. 분류는 정확도가 기본이지만, 범주 비율이 치우치면 혼동 행렬(참 양성 TP, 거짓 양성 FP, 거짓 음성 FN, 참 음성 TN)에서</p>
-    \[\text{정밀도} = \frac{TP}{TP + FP}, \qquad \text{재현율} = \frac{TP}{TP + FN}\]
-    <p>을 함께 봅니다. 정밀도는 신호라고 판정한 것 가운데 진짜 신호의 비율, 재현율은 진짜 신호 가운데 찾아낸 비율입니다. 공통7 3.2절 베이즈 정리의 진단 문제와 같은 구조입니다.</p>
+    <p>회귀는 평균 제곱 오차와 결정계수 \(R^2\)로 평가한다. 분류는 맞힌 비율인 정확도가 기본이지만, 범주 비율이 크게 치우치면 정확도만으로는 판단할 수 없다. 이때는 판정 결과를 <em>혼동 행렬</em>로 정리한다. 신호를 신호로 맞힌 참 양성 TP, 배경을 신호로 잘못 판정한 거짓 양성 FP, 신호를 놓친 거짓 음성 FN, 배경을 배경으로 맞힌 참 음성 TN의 네 칸이다. 여기서 두 지표를 정의한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">식 4.2.1 <span class="nm">(정밀도와 재현율)</span></span>
+      \[\text{정밀도} = \frac{TP}{TP + FP}, \qquad \text{재현율} = \frac{TP}{TP + FN}\]
+    </div>
+    <p><em>정밀도</em>는 신호라고 판정한 것 가운데 진짜 신호의 비율이고, <em>재현율</em>은 진짜 신호 가운데 찾아낸 비율이다. 공통7 3.2절에서 베이즈 정리로 푼 진단 검사 문제와 같은 구조이다. 판정 기준을 느슨하게 하면 재현율은 오르지만 정밀도는 떨어지므로, 둘을 함께 보고한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
-      <p>신호 1%, 배경 99%인 자료에서 "모두 배경"이라고 답하는 분류기의 정확도는? 이것이 좋은 분류기인가?</p>
+      <p>신호 1%, 배경 99%인 자료에서 모든 사건을 배경이라고 답하는 분류기의 정확도는? 이것이 좋은 분류기인가?</p>
     </div>
-    <p><i>풀이.</i> 정확도 99%이지만 신호를 하나도 찾지 못합니다(재현율 0). 범주가 불균형하면 정확도만으로 판단하면 안 됩니다.</p>
+    <p><i>풀이.</i> 배경 99%를 모두 맞히므로 정확도는 99%이다. 하지만 신호를 하나도 찾지 못해 재현율이 0이다. 처음 질문의 둘째 답이 이것이다. 범주가 불균형하면 정확도는 아무것도 하지 않는 분류기도 높게 나오므로, 정밀도와 재현율로 판단해야 한다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>교차검증으로 고른 설정의 검증 점수를 최종 성능으로 보고하기 쉽다. 그러나 그 점수는 여러 설정 가운데 가장 좋은 것을 고른 결과여서 조금 낙관적이다. 최종 성능은 끝까지 떼어 둔 시험 자료로 한 번만 잰다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>시험 자료는 마지막에 한 번만. 설정은 k겹 교차검증으로 고른다.</li>
-        <li>불균형 분류: 정밀도 TP/(TP+FP), 재현율 TP/(TP+FN).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>학습에 쓴 자료로 채점하면 성적이 부풀려지므로, 처음 질문의 99%는 믿을 수 없다. 시험 자료는 따로 두었다가 마지막에 한 번만 쓰고, 모형 설정은 훈련 자료 안의 k겹 교차검증으로 고르며 점수의 평균과 표준편차를 함께 본다. 범주가 불균형한 분류에서는 정확도 대신 정밀도 TP/(TP + FP)와 재현율 TP/(TP + FN)으로 평가한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
