@@ -8,44 +8,37 @@
 <article class="card q-card" id="text-m22-truss" data-kind="본문" data-std="기계22-01-03">
   <header class="card-head"><span class="no"></span><h2>평면 트러스 요소와 좌표 변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>기울어진 막대 요소의 강성 행렬을 방향 코사인으로 전체 좌표계에 옮긴다.</li>
-        <li>평면 트러스를 조립하고 절점 변위를 구한다.</li>
-        <li>변위에서 부재력(인장, 압축)을 되살린다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>막대 요소와 조립 (<a href="01-01.html">1.1절</a>), 경계 조건 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">철교와 크레인의 붐은 여러 방향으로 기울어진 막대를 핀으로 이어 만든 트러스이다. 막대 하나는 축 방향으로만 늘고 줄지만, 절점은 가로와 세로 두 방향으로 움직인다. 기울어진 막대의 강성을 절점의 두 방향 변위로 어떻게 나타낼까? 그러면 트러스 전체의 처짐과 부재력도 행렬로 풀 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.3.1 대칭 2부재 트러스(개형). 지지점 (0, 0), (2, 0) m에서 꼭짓점 (1, 1) m로 두 부재(EA = 2×10⁷ N)가 모이고, 꼭짓점에 아래로 10 kN을 걸면 처짐은 0.707 mm, 두 부재는 모두 7.07 kN 압축이다. 정역학의 P/(2 sin 45°)와 같다">
+        <defs><marker id="ah-m22tr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M80 160 L180 60 L280 160" class="a" fill="none" stroke-width="3"/>
+        <g class="k" fill="none" stroke-width="2"><path d="M70 170 L90 170 L80 160 Z"/><path d="M270 170 L290 170 L280 160 Z"/><circle cx="180" cy="60" r="6"/></g>
+        <line x1="180" y1="66" x2="180" y2="110" class="d" stroke-width="2.5" marker-end="url(#ah-m22tr)"/>
+        <g class="s"><text x="190" y="104" class="td">10 kN</text><text x="40" y="190">(0, 0)</text><text x="260" y="190">(2, 0)</text><text x="190" y="50">(1, 1)</text><text x="90" y="110" class="ta">−7.07 kN</text><text x="230" y="110" class="ta">−7.07 kN</text></g>
+        <g class="s"><text x="330" y="60">c = cos θ, s = sin θ</text><text x="330" y="86">EA/L = 1.414×10⁷ N/m</text><text x="330" y="112" class="td">처짐 0.707 mm</text><text x="330" y="138">P/(2 sin 45°)와 같음</text></g>
+      </svg>
+      <figcaption>그림 1. 기울어진 막대는 절점 변위 가운데 축 방향 성분만큼 늘어나므로, 방향 코사인으로 투영해 4×4 요소 행렬을 만들고 조립하면 트러스 전체를 같은 방식으로 풀 수 있다(예제 1.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>막대 요소와 조립(<a href="01-01.html">1.1절</a>), 경계 조건(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>기울어진 막대 요소</h3>
-    <p>막대는 축 방향으로만 힘을 받습니다. 축이 \(x\)축과 각 \(\theta\)를 이루면 절점의 두 방향 변위 \((u, v)\) 중 축 방향 성분 \(u\cos\theta + v\sin\theta\)만 늘어남에 기여합니다. 이 투영을 강성에 적용하면 4 × 4 요소 강성 행렬을 얻습니다.</p>
+    <p>막대는 축 방향으로만 힘을 받는다. 그런데 축이 x축과 각 θ를 이루면, 절점의 두 방향 변위 (u, v) 가운데 축 방향 성분 u cos θ + v sin θ만 늘어남에 기여한다. 그래서 이 투영을 막대 강성에 적용하면 4 × 4 요소 강성 행렬을 얻는다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
-      <span class="lb">평면 트러스 요소 (\(c = \cos\theta\), \(s = \sin\theta\))</span>
+      <span class="lb">평면 트러스 요소 (c = cos θ, s = sin θ)</span>
       <p>\[\mathbf k = \frac{EA}L\begin{bmatrix}c^2 &amp; cs &amp; -c^2 &amp; -cs\\ cs &amp; s^2 &amp; -cs &amp; -s^2\\ -c^2 &amp; -cs &amp; c^2 &amp; cs\\ -cs &amp; -s^2 &amp; cs &amp; s^2\end{bmatrix}\]</p>
-      <p>부재력 \(N = \dfrac{EA}L\big[c(u_2 - u_1) + s(v_2 - v_1)\big]\) (양수 인장).</p>
+      <p>부재력은 \(N = \dfrac{EA}L\big[c(u_2 - u_1) + s(v_2 - v_1)\big]\)이며, 양수가 인장이다.</p>
     </div>
-    <p>조립은 막대 요소와 같습니다. 각 요소 행렬의 행과 열을 전체 자유도 번호에 맞춰 더합니다. 절점마다 자유도가 2개이므로 절점 \(n\)개 트러스는 \(2n\) × \(2n\) 행렬이 됩니다.</p>
-
+    <p>조립은 막대 요소와 같다. 즉 각 요소 행렬의 행과 열을 전체 자유도 번호에 맞춰 더한다. 다만 절점마다 자유도가 2개이므로, 절점 n개인 트러스는 2n × 2n 행렬이 된다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1 <span class="nm">(대칭 2부재 트러스)</span></span>
       <p>지지점 (0, 0), (2, 0) m에서 꼭짓점 (1, 1) m로 두 부재(\(EA = 2\times10^7\) N)가 모인다. 꼭짓점에 아래로 10 kN을 걸 때 처짐과 부재력은?</p>
     </div>
-    <p><i>풀이.</i> 길이 \(\sqrt2\) m, \(EA/L = 1.414\times10^7\) N/m. 왼쪽 부재 \(c = s = 0.707\), 오른쪽 부재 \(c = -0.707\), \(s = 0.707\). 꼭짓점 자유도만 남기면 두 요소의 \(cs\) 항이 상쇄되어 \(\mathbf K = 1.414\times10^7\,\mathbf I\). 처짐 \(v = -10^4/1.414\times10^7 = -0.707\) mm. 부재력 \(N = 1.414\times10^7\times0.707\times(-0.707\times10^{-3}) = -7071\) N, 즉 두 부재 모두 7.07 kN 압축. 정역학의 \(P/(2\sin45°)\)와 같습니다.</p>
+    <p><i>풀이.</i> 길이는 \(\sqrt2\) m이므로 \(EA/L = 1.414\times10^7\) N/m이다. 왼쪽 부재는 c = s = 0.707, 오른쪽 부재는 c = −0.707, s = 0.707이다. 그러면 꼭짓점 자유도만 남겼을 때 두 요소의 cs 항이 상쇄되어 \(\mathbf K = 1.414\times10^7\,\mathbf I\)이다. 따라서 처짐은 \(v = -10^4/1.414\times10^7 = -0.707\) mm이다. 부재력은 \(N = 1.414\times10^7\times0.707\times(-0.707\times10^{-3}) = -7071\) N, 즉 두 부재 모두 7.07 kN 압축이며, 정역학의 P/(2 sin 45°)와 같다(그림 1).</p>
 
-    <div class="tb-note"><b>주의</b>트러스 절점은 핀이라 회전 강성이 없습니다. 모든 부재가 한 직선 위에 있는 절점이나 불안정한 배치(메커니즘)는 강성 행렬이 특이해 풀리지 않습니다. 해석 프로그램이 "singular matrix" 오류를 내면 지지와 배치를 먼저 확인합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>트러스 절점에도 회전 강성이 있다고 여기기 쉽다. 트러스 절점은 핀이라 회전 강성이 없다. 그래서 모든 부재가 한 직선 위에 있는 절점이나 불안정한 배치(메커니즘)는 강성 행렬이 특이해 풀리지 않는다. 해석 프로그램이 "singular matrix" 오류를 내면 지지와 배치부터 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>축 방향 투영 \(c\), \(s\)로 4 × 4 요소 강성 행렬.</li>
-        <li>절점당 자유도 2, 같은 방식으로 조립.</li>
-        <li>부재력은 축 방향 늘어남 × \(EA/L\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평면 트러스 요소는 방향 코사인 c, s로 막대 강성을 투영한 4×4 행렬이다. 부재력은 N = (EA/L)[c(u₂ − u₁) + s(v₂ − v₁)]이다. 조립과 경계 조건은 막대 요소와 같고, 절점마다 자유도가 2개이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.3</span>연습문제</h3>
@@ -58,7 +51,7 @@
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 부재 단면을 두 배로 하면 처짐과 부재력은?
-          <details><summary>답</summary><p>처짐은 절반(0.354 mm), 부재력은 그대로(정정 구조).</p></details>
+          <details><summary>답</summary><p>처짐은 절반(0.354 mm), 부재력은 그대로(정정 구조)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

@@ -8,51 +8,43 @@
 <article class="card q-card" id="text-m22-buckling" data-kind="본문" data-std="기계22-03-04">
   <header class="card-head"><span class="no"></span><h2>선형 좌굴 해석</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>기하 강성 행렬과 좌굴 고유값 문제 \((\mathbf K + \lambda\mathbf K_G)\boldsymbol\phi = 0\)을 안다.</li>
-        <li>좌굴 하중 배수 \(\lambda\)를 Euler 식으로 검증한다.</li>
-        <li>선형 좌굴 결과의 한계(초기 결함, 소성)를 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>보 요소 (<a href="02-02.html">2.2절</a>), 모드 해석의 고유값 문제 (<a href="03-03.html">3.3절</a>), Euler 좌굴(재료역학).</li>
-      </ul>
-    </div>
+    <p class="q-ask">빈 알루미늄 캔 위에 조심스럽게 올라서면 한동안 버티다가 어느 순간 갑자기 찌그러진다. 캔의 벽에 걸린 응력은 항복 강도보다 한참 낮았는데도 그렇다. 응력 해석만으로는 왜 이런 파손을 놓칠까? 그리고 유한요소로 이 좌굴 하중을 어떻게 구하며, 그 결과를 얼마나 믿을 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1 외팔 기둥의 좌굴(개형). 압축력이 휜 기둥을 더 휘게 하는 효과를 기하 강성 행렬로 나타내며, 외팔 기둥을 보 요소 하나로 풀면 P_cr = 2.486 EI/L²로 정확해 2.467 EI/L²보다 0.8% 높다">
+        <defs><marker id="ah-m22bk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M100 180 H200" class="k" stroke-width="5"/>
+        <path d="M150 176 V50" class="k dsh"/>
+        <path d="M150 176 C150 120 165 80 190 50" class="a" fill="none" stroke-width="3"/>
+        <line x1="190" y1="10" x2="190" y2="44" class="d" stroke-width="2.5" marker-end="url(#ah-m22bk)"/>
+        <g class="s"><text x="200" y="30" class="td">P</text><text x="80" y="110">외팔 K = 2</text></g>
+        <g class="s"><text x="290" y="60">(K + λK_G)φ = 0</text><text x="290" y="90" class="ta">FEM 요소 1: 2.486 EI/L²</text><text x="290" y="116">정확해: 2.467 EI/L²</text><text x="290" y="142" class="td">0.8% 높음</text></g>
+      </svg>
+      <figcaption>그림 1. 압축력이 휜 기둥을 더 휘게 하는 효과가 전체 강성을 줄이며, 강성이 0이 되는 하중 배수가 좌굴 하중이다(예제 3.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>보 요소(<a href="02-02.html">2.2절</a>), 모드 해석의 고유값 문제(<a href="03-03.html">3.3절</a>), Euler 좌굴(재료역학)을 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>기하 강성</h3>
-    <p>압축력을 받는 부재는 옆으로 휘면 압축력이 휨을 더 키우는 방향으로 작용합니다. 이 효과를 행렬로 나타낸 것이 기하 강성 행렬 \(\mathbf K_G\)이며, 압축력에 비례해 전체 강성을 줄입니다. 기준 하중의 \(\lambda\)배에서 전체 강성이 특이해지면 좌굴입니다.</p>
+    <p>압축력을 받는 부재가 옆으로 휘면, 압축력이 휨을 더 키우는 방향으로 작용한다. 이 효과를 행렬로 나타낸 것이 기하 강성 행렬 \(\mathbf K_G\)이며, 압축력에 비례해 전체 강성을 줄인다. 그래서 기준 하중의 \(\lambda\)배에서 전체 강성이 특이해지면 좌굴이다. 처음 질문의 첫째 답이 이것으로, 좌굴은 응력이 아니라 강성이 사라지는 현상이다.</p>
     <div class="tb-env thm">
       <span class="lb">선형 좌굴 해석</span>
       <p>\[(\mathbf K + \lambda\mathbf K_G)\boldsymbol\phi = 0,\qquad P_{cr} = \lambda P_{\text{기준}}\]</p>
-      <p>Euler: \(P_{cr} = \dfrac{\pi^2EI}{(KL)^2}\), 양단 핀 \(K = 1\), 외팔 \(K = 2\), 양단 고정 \(K = 0.5\).</p>
+      <p>Euler 식은 \(P_{cr} = \dfrac{\pi^2EI}{(KL)^2}\)이며, 양단 핀은 \(K = 1\), 외팔은 \(K = 2\), 양단 고정은 \(K = 0.5\)이다.</p>
     </div>
-    <p>해석 프로그램은 기준 하중(예: 설계 하중)에 대한 배수 \(\lambda\)를 줍니다. \(\lambda\)가 1보다 크면 그만큼 여유가 있다는 뜻이지만, 실제 설계는 결함과 불확실성 때문에 큰 안전 계수를 둡니다.</p>
-
+    <p>해석 프로그램은 기준 하중(설계 하중 등)에 대한 배수 \(\lambda\)를 준다. 그런데 실제 설계는 결함과 불확실성 때문에 큰 안전 계수를 둔다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1 <span class="nm">(요소 하나 외팔 기둥)</span></span>
       <p>외팔 기둥을 보 요소 하나로 좌굴 해석하면 \(P_{cr} = 2.486EI/L^2\)이 나온다. 정확해와 비교하여라.</p>
     </div>
-    <p><i>풀이.</i> 정확해 \(\pi^2EI/(2L)^2 = 2.467EI/L^2\). 요소 하나로도 0.8% 높게 나옵니다. 모드 해석처럼 FEM은 좌굴 하중을 약간 높게(위험한 쪽으로) 주므로 요소 수를 늘려 수렴을 확인합니다.</p>
+    <p><i>풀이.</i> 정확해는 \(\pi^2EI/(2L)^2 = 2.467EI/L^2\)이므로, 요소 하나로도 0.8% 높게 나온다(그림 1). 그런데 모드 해석처럼 FEM은 좌굴 하중을 약간 높게, 즉 위험한 쪽으로 준다. 그러므로 요소 수를 늘려 수렴을 확인한다.</p>
 
     <h3><span class="no">3.4.2</span>선형 좌굴의 한계</h3>
-    <ul>
-      <li><b>초기 결함</b>: 실제 기둥과 얇은 쉘은 처음부터 조금 휘어 있습니다. 특히 원통 쉘은 결함 때문에 실제 좌굴 하중이 선형 해석의 20~50%로 떨어질 수 있습니다(감소 계수).</li>
-      <li><b>소성</b>: 좌굴 응력 \(P_{cr}/A\)가 항복 강도에 가까우면 짧은 기둥이라 Euler 식이 맞지 않고, 비선형 해석이나 Johnson 식을 씁니다.</li>
-      <li><b>모드 형상</b>: 좌굴 모드는 정규화 값이라 처짐 크기는 의미가 없습니다. 첫 모드 형상을 초기 결함으로 넣어 비선형 해석을 하는 것이 정석입니다.</li>
-    </ul>
+    <p>처음 질문의 둘째 답은 선형 결과가 상한이라는 점이다. 먼저 초기 결함이 있다. 실제 기둥과 얇은 쉘은 처음부터 조금 휘어 있으며, 특히 원통 쉘은 결함 때문에 실제 좌굴 하중이 선형 해석의 20~50%로 떨어질 수 있다(감소 계수).</p>
+    <p>한편 소성도 있다. 좌굴 응력 \(P_{cr}/A\)가 항복 강도에 가까운 짧은 기둥이면 Euler 식이 맞지 않으므로, 비선형 해석이나 Johnson 식을 쓴다.</p>
+    <p>그리고 좌굴 모드는 정규화 값이라 처짐 크기에 의미가 없다. 그래서 첫 모드 형상을 초기 결함으로 넣어 비선형 해석을 하는 것이 정석이다.</p>
 
-    <div class="tb-note"><b>주의</b>압축 부재가 있는 구조물에서 응력 해석만 하고 "응력이 항복보다 낮으니 안전"이라고 판단하면 좌굴을 놓칩니다. 가늘고 긴 압축 부재, 얇은 판의 압축·전단 구간이 있으면 좌굴 해석을 따로 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>압축 부재가 있는 구조물에서 응력 해석만 하고 "응력이 항복보다 낮으니 안전"이라고 판단하기 쉽다. 그러면 좌굴을 놓친다. 가늘고 긴 압축 부재, 얇은 판의 압축이나 전단 구간이 있으면 좌굴 해석을 따로 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\((\mathbf K + \lambda\mathbf K_G)\boldsymbol\phi = 0\), \(P_{cr} = \lambda P_{\text{기준}}\).</li>
-        <li>Euler 식으로 검증, FEM은 약간 높게.</li>
-        <li>결함·소성 때문에 선형 결과는 상한, 큰 안전 계수.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>선형 좌굴 해석은 (K + λK_G)φ = 0을 풀어 P_cr = λP_기준을 얻는다. Euler 식으로 검증하며, FEM은 약간 높게 나온다. 결함과 소성 때문에 선형 결과는 상한이므로 큰 안전 계수를 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.3</span>연습문제</h3>
@@ -65,12 +57,12 @@
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 기둥의 지지를 외팔에서 양단 핀으로 바꾸면 좌굴 하중은 몇 배인가?
-          <details><summary>답</summary><p>\((KL)^2\)이 \(4L^2\)에서 \(L^2\)로: 4배.</p></details>
+          <details><summary>답</summary><p>\((KL)^2\)이 \(4L^2\)에서 \(L^2\)로 바뀌므로 4배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>기하 강성 행렬이 하중에 비례하는 이유와, 인장력이 걸린 부재(예: 팽팽한 줄)에서는 어떻게 되는지 말하여라.
+        <li>기하 강성 행렬이 하중에 비례하는 이유와, 인장력이 걸린 부재(팽팽한 줄 등)에서는 어떻게 되는지 말하여라.
           <details><summary>답</summary><p>휨에 따른 축력의 수평 성분이 축력 크기에 비례하기 때문이다. 인장이면 부호가 반대라 강성을 키운다(줄의 장력이 클수록 옆으로 덜 처지고 고유 진동수가 오른다).</p></details>
         </li>
       </ol>

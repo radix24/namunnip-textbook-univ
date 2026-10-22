@@ -8,24 +8,27 @@
 <article class="card q-card" id="text-m22-beamcst" data-kind="본문" data-std="기계22-02-01">
   <header class="card-head"><span class="no"></span><h2>보 요소와 삼각형 평면 응력 요소</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>형상 함수로 요소 안의 변위를 절점 값에서 보간한다는 것을 안다.</li>
-        <li>보 요소의 자유도와 강성 행렬 구조를 설명한다.</li>
-        <li>3절점 삼각형(CST) 요소의 원리와 한계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>막대 요소 (<a href="01-01.html">1.1절</a>), 보의 처짐(기계2 고체역학), 평면 응력 (<a href="../me9/01-01.html">응용고체역학</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">막대 요소는 늘고 줄 뿐이지만, 실제 부품은 휘기도 하고 얇은 판처럼 평면 안에서 두 방향으로 변형하기도 한다. 절점에서만 변위를 아는데, 요소 안 한가운데의 변위는 어떻게 알 수 있을까? 휘는 보와 얇은 판에는 각각 어떤 요소를 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="보 요소와 CST 요소(개형). 보 요소는 절점마다 처짐 v와 회전각 θ를 가져 4×4 강성 행렬을 갖고 3차 Hermite 형상 함수로 휜 모양을 그린다. 3절점 삼각형(CST)은 절점마다 u, v를 가져 요소당 6자유도이고 변위가 1차식이라 요소 안에서 응력이 일정하다">
+        <path d="M40 60 H240" class="k dsh"/>
+        <path d="M40 60 C110 60 170 80 240 110" class="a" fill="none" stroke-width="2.5"/>
+        <g class="k" fill="none" stroke-width="2"><circle cx="40" cy="60" r="6"/><circle cx="240" cy="110" r="6"/></g>
+        <path d="M220 101 L262 120" class="d" stroke-width="2"/>
+        <g class="s"><text x="30" y="40">v₁, θ₁</text><text x="200" y="140">v₂, θ₂</text><text x="60" y="170" class="ta">보 요소: 3차 Hermite, 4×4</text></g>
+        <path d="M330 150 L480 150 L390 40 Z" class="b" fill="none" stroke-width="2.5"/>
+        <g class="k" fill="none" stroke-width="2"><circle cx="330" cy="150" r="6"/><circle cx="480" cy="150" r="6"/><circle cx="390" cy="40" r="6"/></g>
+        <g class="s"><text x="400" y="118" class="tb">σ 일정</text><text x="300" y="175">CST: 절점마다 u, v, 요소당 6</text></g>
+      </svg>
+      <figcaption>그림 1. 형상 함수가 절점 값으로 요소 안의 변위를 보간하며, 보 요소는 3차식이라 휜 모양을 그리고 CST는 1차식이라 요소 안 응력이 일정하다(개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>막대 요소(<a href="01-01.html">1.1절</a>), 보의 처짐(기계2 고체역학), 평면 응력(<a href="../me9/01-01.html">응용고체역학</a>)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>형상 함수</h3>
-    <p>요소 안의 변위를 절점 변위의 가중 합으로 나타냅니다: \(u(x) = N_1(x)u_1 + N_2(x)u_2\). 막대 요소는 \(N_1 = 1 - x/L\), \(N_2 = x/L\)인 직선 보간이라 변형률(기울기)이 요소 안에서 일정합니다. 형상 함수가 어떤 다항식이냐가 요소의 정확도를 정합니다.</p>
+    <p>요소 안의 변위는 절점 변위의 가중 합 \(u(x) = N_1(x)u_1 + N_2(x)u_2\)로 나타낸다. 이 가중치 \(N_i\)가 형상 함수이며, 처음 질문의 첫째 답이다. 예를 들어 막대 요소는 \(N_1 = 1 - x/L\), \(N_2 = x/L\)인 직선 보간이라 변형률(기울기)이 요소 안에서 일정하다. 즉 형상 함수가 어떤 다항식이냐가 요소의 정확도를 정한다.</p>
 
     <h3><span class="no">2.1.2</span>보 요소</h3>
-    <p>보는 휘므로 절점마다 처짐 \(v\)와 회전각 \(\theta\) 두 자유도를 갖고, 요소 하나는 4 × 4 강성 행렬을 갖습니다. 형상 함수는 3차 다항식(Hermite)입니다.</p>
+    <p>보는 휘므로 절점마다 처짐 \(v\)와 회전각 \(\theta\) 두 자유도를 갖고, 요소 하나는 4 × 4 강성 행렬을 갖는다. 그리고 형상 함수는 3차 다항식(Hermite)이다(그림 1).</p>
     <div class="tb-env thm">
       <span class="lb">보 요소 강성 행렬 (자유도 \(v_1, \theta_1, v_2, \theta_2\))</span>
       <p>\[ [k] = \frac{EI}{L^3}\begin{bmatrix}12 & 6L & -12 & 6L\\ 6L & 4L^2 & -6L & 2L^2\\ -12 & -6L & 12 & -6L\\ 6L & 2L^2 & -6L & 4L^2\end{bmatrix} \]</p>
@@ -34,34 +37,29 @@
       <span class="lb">예제 2.1.1 <span class="nm">(외팔보, 요소 하나)</span></span>
       <p>길이 1 m, 100 × 100 mm 정사각 강 단면(\(E\) = 200 GPa) 외팔보 끝에 1 kN을 가했다. 요소 하나로 끝 처짐을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 절점 1 고정(\(v_1 = \theta_1 = 0\))이면 남는 식은 \(\frac{EI}{L^3}\begin{bmatrix}12 & -6L\\ -6L & 4L^2\end{bmatrix}\begin{Bmatrix}v_2\\ \theta_2\end{Bmatrix} = \begin{Bmatrix}P\\ 0\end{Bmatrix}\). 풀면 \(v_2 = PL^3/(3EI)\)로 정확한 해와 같습니다. \(I = 8.33\times10^{-6}\) m⁴이므로 \(v_2 = 0.20\) mm. 끝 하중의 정확한 처짐이 3차식이라 3차 형상 함수가 그대로 표현합니다. 분포 하중이면 요소를 나눠야 내부가 정확해집니다.</p>
+    <p><i>풀이.</i> 절점 1을 고정(\(v_1 = \theta_1 = 0\))하면 남는 식은 \(\frac{EI}{L^3}\begin{bmatrix}12 & -6L\\ -6L & 4L^2\end{bmatrix}\begin{Bmatrix}v_2\\ \theta_2\end{Bmatrix} = \begin{Bmatrix}P\\ 0\end{Bmatrix}\)이다. 풀면 \(v_2 = PL^3/(3EI)\)로 정확한 해와 같다. 그리고 \(I = 8.33\times10^{-6}\) m⁴이므로 \(v_2 = 0.20\) mm이다.</p>
+    <p>끝 하중의 정확한 처짐이 3차식이므로, 3차 형상 함수가 그대로 표현한다. 그런데 분포 하중이면 요소를 나눠야 내부가 정확해진다.</p>
 
     <h3><span class="no">2.1.3</span>삼각형 평면 응력 요소(CST)</h3>
-    <p>얇은 판은 평면 응력 상태로 보고 삼각형으로 나눕니다. 3절점 삼각형은 절점마다 \(u\), \(v\) 두 자유도(요소당 6)를 갖고 변위를 1차식으로 보간하므로 요소 안에서 변형률과 응력이 일정합니다(Constant Strain Triangle). 형상을 자유롭게 채울 수 있지만, 굽힘처럼 응력이 두께 방향으로 직선 변하는 문제에서는 지나치게 단단하게 나오고(잠김) 많은 요소가 필요합니다. 그래서 실무에서는 6절점 삼각형이나 4·8절점 사각형 요소를 더 많이 씁니다.</p>
+    <p>얇은 판은 평면 응력 상태로 보고 삼각형으로 나눈다. 3절점 삼각형은 절점마다 \(u\), \(v\) 두 자유도를 갖고 변위를 1차식으로 보간한다. 그래서 요소 안에서 변형률과 응력이 일정하며, 이름도 Constant Strain Triangle이다. 처음 질문의 둘째 답이 보 요소와 이 CST이다.</p>
+    <p>CST는 형상을 자유롭게 채울 수 있다. 그러나 굽힘처럼 응력이 두께 방향으로 직선 변하는 문제에서는 지나치게 단단하게 나오고(잠김), 많은 요소가 필요하다. 따라서 실무에서는 6절점 삼각형이나 4·8절점 사각형 요소를 더 많이 쓴다.</p>
 
-    <div class="tb-note"><b>주의</b>요소 안에서 응력이 일정하거나 직선이므로, 해석 프로그램이 보여 주는 매끄러운 응력 색은 절점 평균으로 다듬은 것입니다. 요소마다의 응력 차이가 크면 격자가 거칠다는 신호입니다(3.1절).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>해석 프로그램이 보여 주는 매끄러운 응력 색이 요소 안의 실제 응력이라고 여기기 쉽다. 요소 안에서 응력은 일정하거나 직선이므로, 매끄러운 색은 절점 평균으로 다듬은 것이다. 요소마다의 응력 차이가 크면 격자가 거칠다는 신호이다(3.1절).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>형상 함수로 보간, 그 차수가 정확도 결정.</li>
-        <li>보 요소: 절점당 \(v, \theta\), 3차 Hermite, 4 × 4 행렬. 끝 하중 외팔보는 요소 하나로 정확.</li>
-        <li>CST: 응력 일정, 굽힘에 약함 → 고차 요소.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>형상 함수로 요소 안의 변위를 보간하며, 그 차수가 정확도를 정한다. 보 요소는 절점마다 v와 θ를 갖고 3차 Hermite 함수와 4×4 행렬을 쓰며, 끝 하중 외팔보는 요소 하나로 정확하다. CST는 응력이 일정해 굽힘에 약하므로 고차 요소를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>2차원 판을 CST 요소 200개(절점 121개)로 나누었다. 전체 자유도는?
-          <details><summary>답</summary><p>절점당 2개, 242개(경계 조건 전).</p></details>
+          <details><summary>답</summary><p>절점당 2개, 242개(경계 조건 전)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 2.1.1의 끝 회전각 \(\theta_2\)를 구하여라.
-          <details><summary>답</summary><p>둘째 식 \(-6Lv_2 + 4L^2\theta_2 = 0\)에서 \(\theta_2 = 1.5v_2/L = PL^2/(2EI) = 3\times10^{-4}\) rad.</p></details>
+          <details><summary>답</summary><p>둘째 식 \(-6Lv_2 + 4L^2\theta_2 = 0\)에서 \(\theta_2 = 1.5v_2/L = PL^2/(2EI) = 3\times10^{-4}\) rad이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

@@ -8,64 +8,54 @@
 <article class="card q-card" id="text-m22-thermalcfd" data-kind="본문" data-std="기계22-04-04">
   <header class="card-head"><span class="no"></span><h2>열유동 해석과 상관식 검증</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>열유동 CFD에서 에너지 방정식과 열 경계 조건(온도, 열유속, 대류)을 설정한다.</li>
-        <li>CFD 열전달 계수를 Nusselt 수 상관식으로 검증한다.</li>
-        <li>차이가 클 때 점검할 것(벽 격자, 물성, 경계 조건)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>CFD 도구 사용 (<a href="04-02.html">4.2절</a>), 대류 열전달 상관식(열전달).</li>
-      </ul>
-    </div>
+    <p class="q-ask">노트북의 히트싱크나 엔진 냉각수 관을 설계하려면 벽이 얼마나 뜨거워지는지 알아야 한다. CFD로 속도장을 구할 수 있다면 온도장도 함께 구할 수 있을 것 같다. 열이 흐르는 유동을 해석할 때는 무엇을 더 설정해야 할까? 그리고 나온 열전달 계수가 맞는지는 무엇으로 확인할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.4.1 냉각수 관 검증(개형). 안지름 20 mm 관에 물이 1 m/s로 흐르면 Re = 20000, Dittus-Boelter 상관식으로 Nu = 138, h = 4150 W/m²·K이고, CFD 값 4600 W/m²·K는 11% 높아 상관식 불확실성 ±10~25% 안에 있다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <rect x="180" y="52" width="80" height="118" class="b" fill="none" stroke-width="1.5"/>
+        <path d="M150 90 H290" class="k dsh"/>
+        <circle cx="220" cy="90" r="6" class="fd"/>
+        <circle cx="220" cy="70" r="6" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="300" y="94">상관식 4150</text><text x="300" y="70" class="ta">CFD 4600 (+11%)</text><text x="300" y="54" class="tb">±10~25% 띠</text><text x="90" y="26">h (W/m²·K)</text><text x="120" y="190">Re = 20000, Pr = 7, Nu = 138</text></g>
+      </svg>
+      <figcaption>그림 1. 단순 형상에서 CFD 열전달 계수가 상관식의 불확실성 띠 안에 들면, 격자와 난류 모델 설정이 대체로 맞다고 볼 수 있다(예제 4.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>CFD 도구 사용(<a href="04-02.html">4.2절</a>), 대류 열전달 상관식(열전달)을 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>열유동 해석 설정</h3>
-    <p>속도장과 함께 에너지 방정식을 풀어 온도장을 얻습니다. 고체와 유체를 함께 푸는 공액 열전달(CHT)은 히트싱크나 냉각 채널처럼 고체 안 전도가 중요한 문제에 씁니다.</p>
-    <ul>
-      <li><b>벽 경계 조건</b>: 온도 고정, 열유속 고정, 단열, 또는 바깥쪽 대류 계수와 온도.</li>
-      <li><b>물성</b>: 온도에 따라 점도와 밀도가 변하면 온도 의존 물성을 넣고, 자연 대류는 부력(밀도 차)을 켭니다.</li>
-      <li><b>벽 격자</b>: 열경계층은 속도 경계층보다 얇을 수 있어(Pr &gt; 1인 물, 기름) 벽 근처 격자가 더 촘촘해야 합니다.</li>
-    </ul>
+    <p>속도장과 함께 에너지 방정식을 풀어 온도장을 얻는다. 그리고 고체와 유체를 함께 푸는 공액 열전달(CHT)은 히트싱크나 냉각 채널처럼 고체 안 전도가 중요한 문제에 쓴다. 처음 질문의 첫째 답은 아래 세 가지 설정이다.</p>
+    <p>벽 경계 조건으로는 온도 고정, 열유속 고정, 단열, 또는 바깥쪽 대류 계수와 온도를 준다. 한편 온도에 따라 점도와 밀도가 변하면 온도 의존 물성을 넣고, 자연 대류는 부력(밀도 차)을 켠다.</p>
+    <p>벽 격자도 중요하다. 열경계층은 속도 경계층보다 얇을 수 있으므로(Pr &gt; 1인 물, 기름), 벽 근처 격자가 더 촘촘해야 한다.</p>
 
     <h3><span class="no">4.4.2</span>상관식으로 검증</h3>
+    <p>처음 질문의 둘째 답은 단순 형상의 Nusselt 수 상관식과 비교하는 것이다.</p>
     <div class="tb-env thm">
       <span class="lb">대표 상관식</span>
-      <p>관 속 난류 (Dittus-Boelter, 가열): \(\mathrm{Nu} = 0.023Re^{0.8}Pr^{0.4}\)</p>
-      <p>평판 층류 평균: \(\mathrm{Nu}_L = 0.664Re_L^{1/2}Pr^{1/3}\)</p>
-      <p>\(h = \mathrm{Nu}\,k/L_c\). 상관식 자체의 불확실성은 약 ±10~25%.</p>
+      <p>관 속 난류(Dittus-Boelter, 가열)는 \(\mathrm{Nu} = 0.023Re^{0.8}Pr^{0.4}\), 평판 층류 평균은 \(\mathrm{Nu}_L = 0.664Re_L^{1/2}Pr^{1/3}\)이다.</p>
+      <p>열전달 계수는 \(h = \mathrm{Nu}\,k/L_c\)이며, 상관식 자체의 불확실성은 약 ±10~25%이다.</p>
     </div>
-
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1 <span class="nm">(냉각수 관)</span></span>
       <p>안지름 20 mm 관에 물(\(\nu = 10^{-6}\) m²/s, \(k\) = 0.6 W/m·K, Pr = 7)이 1 m/s로 흐르며 가열된다. 상관식 열전달 계수는? CFD가 4600 W/m²·K를 주었다면?</p>
     </div>
-    <p><i>풀이.</i> \(Re = 1\times0.02/10^{-6} = 20000\), \(\mathrm{Nu} = 0.023\times20000^{0.8}\times7^{0.4} = 138\), \(h = 138\times0.6/0.02 = 4150\) W/m²·K. CFD 값은 11% 높아 상관식 불확실성 안에 있습니다. 이 정도면 격자와 난류 모델 설정이 대체로 맞다고 봅니다.</p>
+    <p><i>풀이.</i> \(Re = 1\times0.02/10^{-6} = 20000\)이므로 \(\mathrm{Nu} = 0.023\times20000^{0.8}\times7^{0.4} = 138\)이고, \(h = 138\times0.6/0.02 = 4150\) W/m²·K이다. 그러면 CFD 값은 11% 높아 상관식 불확실성 안에 있다(그림 1). 따라서 이 정도면 격자와 난류 모델 설정이 대체로 맞다고 본다.</p>
 
-    <div class="tb-note"><b>주의</b>상관식과 맞는다고 해석 전체가 옳은 것은 아닙니다. 상관식은 단순 형상의 평균값이라, 실제 관심인 국부 열점(굽은 관 바깥쪽, 박리 영역)은 검증하지 못합니다. 단순화한 형상으로 먼저 검증하고 같은 설정을 실제 형상에 적용합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>상관식과 맞으니 해석 전체가 옳다고 여기기 쉽다. 상관식은 단순 형상의 평균값이라, 실제 관심인 국부 열점(굽은 관 바깥쪽, 박리 영역)은 검증하지 못한다. 그래서 단순화한 형상으로 먼저 검증하고, 같은 설정을 실제 형상에 적용한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>에너지 방정식, 열 경계 조건, 온도 의존 물성, 부력.</li>
-        <li>단순 형상에서 Nu 상관식과 비교(±10~25%).</li>
-        <li>벽 격자는 열경계층까지, 국부값은 따로 신중히.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>열유동 해석은 에너지 방정식, 열 경계 조건, 온도 의존 물성, 부력을 설정한다. 단순 형상에서 Nu 상관식과 비교하며, 불확실성은 ±10~25%이다. 벽 격자는 열경계층까지 담고, 국부값은 따로 신중히 본다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>CFD 열전달 계수가 상관식의 2배로 나왔다. 가장 먼저 확인할 것 두 가지는?
-          <details><summary>답</summary><p>벽 근처 격자(첫 셀 크기, 벽 함수 사용 조건)와 물성·경계 조건(열유속인지 온도인지, 단위).</p></details>
+          <details><summary>답</summary><p>벽 근처 격자(첫 셀 크기, 벽 함수 사용 조건)와 물성·경계 조건(열유속인지 온도인지, 단위)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 유속을 2 m/s로 올리면 상관식 \(h\)는 몇 배인가?
-          <details><summary>답</summary><p>\(Re^{0.8}\)에 비례하므로 \(2^{0.8} = 1.74\)배, 약 7200 W/m²·K.</p></details>
+          <details><summary>답</summary><p>\(Re^{0.8}\)에 비례하므로 \(2^{0.8} = 1.74\)배, 약 7200 W/m²·K이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

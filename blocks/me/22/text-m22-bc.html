@@ -8,61 +8,57 @@
 <article class="card q-card" id="text-m22-bc" data-kind="본문" data-std="기계22-01-02">
   <header class="card-head"><span class="no"></span><h2>경계 조건, 변위, 반력</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>고정 경계와 하중 경계를 강성 방정식에 넣는다.</li>
-        <li>축소된 방정식으로 미지 변위를 구하고, 원래 방정식으로 반력을 구한다.</li>
-        <li>요소 변위에서 응력을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>강성 행렬 조립 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">조립한 강성 행렬로 연립방정식을 풀려 했더니 컴퓨터가 "행렬이 특이하다"며 답을 내지 않는다. 구조를 어딘가에 붙잡아 두지 않았기 때문이다. 고정된 곳과 하중이 걸린 곳은 방정식에 어떻게 넣을까? 그리고 지지점이 구조를 받치는 반력은 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 경계 조건과 반력(개형). 절점 1을 고정하고 절점 3에 600 N을 가하면, 1행과 1열을 지운 축소 방정식에서 u₂ = 3 mm, u₃ = 9 mm를 얻고, 지운 1행에 변위를 넣어 반력 R₁ = −600 N을 구한다">
+        <defs><marker id="ah-m22bc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M40 40 V100" class="k" stroke-width="5"/>
+        <path d="M44 70 L70 70 L80 58 L95 82 L110 58 L125 82 L140 58 L150 70 L192 70" class="a" fill="none" stroke-width="2"/>
+        <path d="M208 70 L230 70 L240 58 L255 82 L270 58 L285 82 L300 58 L310 70 L332 70" class="b" fill="none" stroke-width="2"/>
+        <g class="k" fill="none" stroke-width="2"><circle cx="200" cy="70" r="8"/><circle cx="340" cy="70" r="8"/></g>
+        <line x1="350" y1="70" x2="400" y2="70" class="d" stroke-width="2.5" marker-end="url(#ah-m22bc)"/>
+        <g class="s"><text x="30" y="120">고정</text><text x="190" y="100">u₂ = 3 mm</text><text x="320" y="100">u₃ = 9 mm</text><text x="404" y="74" class="td">600 N</text><text x="30" y="150" class="ta">반력 R₁ = −600 N</text></g>
+        <g class="s"><text x="230" y="150">고정 자유도의 행·열을 지우고 풀기</text></g>
+      </svg>
+      <figcaption>그림 1. 고정된 절점의 변위를 0으로 정하면 그 행과 열을 지운 작은 방정식만으로 나머지 변위를 풀 수 있고, 지웠던 행에 변위를 다시 넣으면 그 절점이 받치는 반력이 나온다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>강성 행렬 조립(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>경계 조건 넣기</h3>
-    <p>각 절점에서는 변위나 힘 중 하나만 알고 있습니다. 고정 절점은 변위가 0(반력은 모름), 자유 절점은 하중을 알고 변위를 모릅니다. 변위를 아는 행과 열을 지우면 미지 변위만의 축소된 방정식이 남습니다.</p>
+    <p>각 절점에서는 변위와 힘 가운데 하나만 알고 있다. 고정 절점은 변위가 0이고 반력을 모르며, 자유 절점은 하중을 알고 변위를 모른다. 그러므로 변위를 아는 자유도의 행과 열을 지우면, 미지 변위만의 축소된 방정식이 남는다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">풀이 순서</span>
-      <p>① 변위가 정해진 자유도의 행과 열을 지운다. ② 남은 \([K_{ff}]\{u_f\} = \{F_f\}\)를 푼다. ③ 지운 행에 \(\{u\}\)를 넣어 반력을 구한다. ④ 요소마다 변위 차로 변형률 \(\varepsilon = (u_j - u_i)/L\), 응력 \(\sigma = E\varepsilon\)를 구한다.</p>
+      <p>먼저 변위가 정해진 자유도의 행과 열을 지운다. 그다음 남은 \([K_{ff}]\{u_f\} = \{F_f\}\)를 푼다.</p>
+      <p>그리고 지운 행에 {u}를 넣어 반력을 구한다. 마지막으로 요소마다 변위 차로 변형률 \(\varepsilon = (u_j - u_i)/L\)와 응력 \(\sigma = E\varepsilon\)를 구한다.</p>
     </div>
-
+    <p>처음 질문의 둘째 답은 셋째 단계이다. 즉 반력은 지웠던 행이 말해 주는, 지지점에서 구조를 붙잡는 데 필요한 힘이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1 <span class="nm">(1.1절 스프링, 끝에 하중)</span></span>
       <p>1.1절 예제에서 절점 1을 고정하고 절점 3에 600 N을 가했다. 변위와 반력은?</p>
     </div>
-    <p><i>풀이.</i> 1행·1열을 지우면 \(\begin{bmatrix}300 & -100\\ -100 & 100\end{bmatrix}\begin{Bmatrix}u_2\\ u_3\end{Bmatrix} = \begin{Bmatrix}0\\ 600\end{Bmatrix}\). 둘째 식에서 \(u_3 = u_2 + 6\), 첫째에 넣으면 \(200u_2 = 600\), \(u_2 = 3\) mm, \(u_3 = 9\) mm. 반력은 1행: \(R_1 = -200\times3 = -600\) N으로 하중과 평형입니다. 직렬 스프링으로 손 계산(\(600/200 + 600/100\))한 값과 같습니다.</p>
-
+    <p><i>풀이.</i> 1행과 1열을 지우면 \(\begin{bmatrix}300 & -100\\ -100 & 100\end{bmatrix}\begin{Bmatrix}u_2\\ u_3\end{Bmatrix} = \begin{Bmatrix}0\\ 600\end{Bmatrix}\)이다. 둘째 식에서 \(u_3 = u_2 + 6\)이고, 첫째 식에 넣으면 \(200u_2 = 600\)이므로 \(u_2 = 3\) mm, \(u_3 = 9\) mm이다. 반력은 1행에서 \(R_1 = -200\times3 = -600\) N으로 하중과 평형이다. 따라서 직렬 스프링 손 계산(600/200 + 600/100)과 같은 답이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.2 <span class="nm">(양 끝 고정 막대)</span></span>
-      <p>양 끝이 벽에 고정된 강 막대(\(E\) = 200 GPa)가 길이 500 mm씩 두 구간으로 되어 있고, 왼쪽 단면 200 mm², 오른쪽 100 mm²이다. 가운데 절점에 오른쪽으로 10 kN을 가하면 변위, 반력, 응력은?</p>
+      <p>양 끝이 벽에 고정된 강 막대(E = 200 GPa)가 길이 500 mm씩 두 구간으로 되어 있고, 왼쪽 단면 200 mm², 오른쪽 100 mm²이다. 가운데 절점에 오른쪽으로 10 kN을 가하면 변위, 반력, 응력은?</p>
     </div>
-    <p><i>풀이.</i> \(k_1 = 200000\times200/500 = 80000\), \(k_2 = 40000\) N/mm. 절점 1, 3 고정 → \(120000u_2 = 10000\), \(u_2 = 0.0833\) mm. \(R_1 = -80000u_2 = -6667\) N, \(R_3 = -40000u_2 = -3333\) N(합 −10 kN). 응력: 왼쪽 \(6667/200 = 33.3\) MPa(인장), 오른쪽 \(-3333/100 = -33.3\) MPa(압축). 강한 쪽이 더 많은 하중을 받습니다.</p>
+    <p><i>풀이.</i> \(k_1 = 200000\times200/500 = 80000\) N/mm, \(k_2 = 40000\) N/mm이다. 절점 1과 3을 고정하면 \(120000u_2 = 10000\)이므로 \(u_2 = 0.0833\) mm이다. 그러면 \(R_1 = -80000u_2 = -6667\) N, \(R_3 = -40000u_2 = -3333\) N으로 합이 −10 kN이다. 응력은 왼쪽이 6667/200 = 33.3 MPa(인장), 오른쪽이 −3333/100 = −33.3 MPa(압축)이다. 즉 강한 쪽이 더 많은 하중을 받는다.</p>
 
-    <div class="tb-note"><b>주의</b>구속이 부족하면(강체 운동 가능) 행렬이 특이해 풀리지 않거나 터무니없는 결과가 나옵니다. 3차원 해석에서는 이동 3개, 회전 3개를 모두 막았는지 확인합니다. 반대로 실제보다 과하게 고정하면 강성이 과대 평가되고 응력이 틀립니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>구속을 빠뜨려 강체 운동이 가능하게 두기 쉽다. 그러면 행렬이 특이해 풀리지 않거나 터무니없는 결과가 나오므로, 3차원 해석에서는 이동 3개와 회전 3개를 모두 막았는지 확인한다. 반대로 실제보다 과하게 고정하면 강성이 과대 평가되고 응력이 틀린다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>변위 아는 자유도 행·열 제거 → 축소 방정식.</li>
-        <li>변위 → 지운 행으로 반력 → 요소 응력.</li>
-        <li>반력 합 = 하중 합으로 검산.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>경계 조건은 변위가 정해진 자유도의 행과 열을 지워 넣는다. 축소된 방정식을 풀어 변위를 얻고, 지운 행에 넣어 반력을 구한다. 요소마다 변위 차로 변형률과 응력을 계산한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 1.2.1에서 하중을 절점 2에 가하면 \(u_2\), \(u_3\)는?
-          <details><summary>답</summary><p>스프링 2에는 힘이 없으므로 \(u_2 = u_3 = 600/200 = 3\) mm.</p></details>
+          <details><summary>답</summary><p>스프링 2에는 힘이 없으므로 \(u_2 = u_3 = 600/200 = 3\) mm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 1.2.2에서 오른쪽 단면도 200 mm²로 바꾸면 반력은?
-          <details><summary>답</summary><p>대칭이므로 각각 5 kN, 응력은 ±25 MPa.</p></details>
+          <details><summary>답</summary><p>대칭이므로 각각 5 kN, 응력은 ±25 MPa이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

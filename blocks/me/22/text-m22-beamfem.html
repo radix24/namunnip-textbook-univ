@@ -8,47 +8,40 @@
 <article class="card q-card" id="text-m22-beamfem" data-kind="본문" data-std="기계22-02-02">
   <header class="card-head"><span class="no"></span><h2>보 요소로 처짐 구하기와 등가 절점 하중</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>보 요소 강성 행렬로 외팔보와 단순보의 처짐과 회전각을 구한다.</li>
-        <li>분포 하중을 등가 절점 힘과 모멘트로 바꾼다.</li>
-        <li>대칭 조건으로 모델을 절반으로 줄인다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>보 요소의 형상 함수와 강성 행렬 (<a href="02-01.html">2.1절</a>), 일관 절점 하중 (<a href="01-04.html">1.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">선반이나 발코니처럼 한쪽만 붙은 보에 짐이 고르게 실리면 끝이 얼마나 처질까? 보 요소는 절점의 처짐과 회전각만 다루는데, 보 전체에 퍼진 하중을 절점에 어떻게 옮겨야 처짐이 맞게 나올까? 그리고 좌우가 똑같은 구조라면 절반만 계산해도 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 균일 하중 외팔보(개형). 길이 1 m, EI = 2×10⁴ N·m² 외팔보에 1000 N/m가 걸리면 등가 절점 하중은 힘 wL/2와 모멘트 ±wL²/12이고, 요소 하나로 끝 처짐 6.25 mm와 회전각 0.00833 rad를 얻어 정확해와 같다">
+        <path d="M60 50 V150" class="k" stroke-width="5"/>
+        <path d="M64 100 H300" class="k dsh"/>
+        <path d="M64 100 C150 100 230 115 300 140" class="a" fill="none" stroke-width="3"/>
+        <g class="b" stroke-width="1.5"><path d="M90 60 V92"/><path d="M130 60 V92"/><path d="M170 60 V92"/><path d="M210 60 V92"/><path d="M250 60 V92"/><path d="M290 60 V92"/><path d="M90 60 H290"/></g>
+        <g class="s"><text x="150" y="50" class="tb">w = 1000 N/m</text><text x="310" y="146" class="td">v₂ = 6.25 mm</text></g>
+        <g class="s"><text x="340" y="60">등가 절점 하중</text><text x="340" y="86">wL/2, wL²/12, wL/2, −wL²/12</text><text x="340" y="112" class="ta">θ₂ = 0.00833 rad</text><text x="340" y="138">정확해 wL⁴/(8EI)와 같음</text></g>
+      </svg>
+      <figcaption>그림 1. 분포 하중을 절점 힘과 모멘트로 함께 옮기면 보 요소 하나로도 외팔보 끝의 처짐과 회전각이 정확해와 같게 나온다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>보 요소의 형상 함수와 강성 행렬(<a href="02-01.html">2.1절</a>), 일관 절점 하중(<a href="01-04.html">1.4절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>보 요소 강성 행렬</h3>
-    <p>보 요소는 절점마다 처짐 \(v\)와 회전각 \(\theta\) 두 자유도를 가집니다. 3차 Hermite 형상 함수에서 얻은 강성 행렬은 다음과 같습니다.</p>
+    <p>보 요소는 절점마다 처짐 \(v\)와 회전각 \(\theta\) 두 자유도를 가진다. 그리고 3차 Hermite 형상 함수에서 얻은 강성 행렬은 다음과 같다.</p>
     <div class="tb-env thm">
       <span class="lb">보 요소 (자유도 \(v_1, \theta_1, v_2, \theta_2\))</span>
       <p>\[\mathbf k = \frac{EI}{L^3}\begin{bmatrix}12 &amp; 6L &amp; -12 &amp; 6L\\ 6L &amp; 4L^2 &amp; -6L &amp; 2L^2\\ -12 &amp; -6L &amp; 12 &amp; -6L\\ 6L &amp; 2L^2 &amp; -6L &amp; 4L^2\end{bmatrix}\]</p>
-      <p>균일 분포 하중 \(w\)의 등가 절점 하중: \(\left[\dfrac{wL}2,\ \dfrac{wL^2}{12},\ \dfrac{wL}2,\ -\dfrac{wL^2}{12}\right]\).</p>
+      <p>균일 분포 하중 \(w\)의 등가 절점 하중은 \(\left[\dfrac{wL}2,\ \dfrac{wL^2}{12},\ \dfrac{wL}2,\ -\dfrac{wL^2}{12}\right]\)이다.</p>
     </div>
-    <p>모멘트 성분이 빠지면 처짐이 틀립니다. 절점 하중은 형상 함수로 가중한 적분이라 회전 자유도에도 일이 생기기 때문입니다.</p>
-
+    <p>처음 질문의 첫째 답이 이 등가 절점 하중이다. 즉 절점 하중은 형상 함수로 가중한 적분이라 회전 자유도에도 일이 생기므로, 힘뿐 아니라 모멘트 성분도 넣어야 한다. 모멘트 성분이 빠지면 처짐이 틀린다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1 <span class="nm">(외팔보, 요소 하나)</span></span>
       <p>길이 1 m, \(EI = 2\times10^4\) N·m² 외팔보에 균일 하중 1000 N/m가 걸린다. 요소 하나로 끝 처짐과 회전각을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 고정단 \(v_1 = \theta_1 = 0\)을 지우면 \(\dfrac{EI}{L^3}\begin{bmatrix}12 &amp; -6\\-6 &amp; 4\end{bmatrix}\begin{bmatrix}v_2\\\theta_2\end{bmatrix} = \begin{bmatrix}500\\-83.3\end{bmatrix}\). 풀면 \(v_2 = 6.25\) mm, \(\theta_2 = 0.00833\) rad. 정확해 \(wL^4/(8EI) = 6.25\) mm, \(wL^3/(6EI) = 0.00833\)과 같습니다.</p>
+    <p><i>풀이.</i> 고정단 \(v_1 = \theta_1 = 0\)을 지우면 \(\dfrac{EI}{L^3}\begin{bmatrix}12 &amp; -6\\-6 &amp; 4\end{bmatrix}\begin{bmatrix}v_2\\\theta_2\end{bmatrix} = \begin{bmatrix}500\\-83.3\end{bmatrix}\)이다. 풀면 \(v_2 = 6.25\) mm, \(\theta_2 = 0.00833\) rad이다. 따라서 정확해 \(wL^4/(8EI) = 6.25\) mm, \(wL^3/(6EI) = 0.00833\)과 같다(그림 1).</p>
 
     <h3><span class="no">2.2.2</span>대칭 이용하기</h3>
-    <p>형상, 재료, 하중, 지지가 모두 대칭이면 대칭면에서 기울기(회전각)가 0입니다. 절반만 모델링하고 대칭면 절점에 \(\theta = 0\)을 주고 하중도 절반만 걸면, 미지수가 줄어듭니다. 3차원 해석에서는 대칭면에 수직 변위를 0으로 둡니다.</p>
+    <p>형상, 재료, 하중, 지지가 모두 대칭이면 대칭면에서 기울기(회전각)가 0이다. 그래서 절반만 모델링하고 대칭면 절점에 \(\theta = 0\)을 주고 하중도 절반만 걸면 미지수가 줄어든다. 처음 질문의 둘째 답이 이것이다. 한편 3차원 해석에서는 대칭면에 수직 변위를 0으로 둔다.</p>
 
-    <div class="tb-note"><b>주의</b>보 요소는 단면이 평면을 유지한다는 가정(Euler-Bernoulli)이라 짧고 두꺼운 보(길이/높이 &lt; 약 10)에서는 전단 변형을 무시해 처짐이 작게 나옵니다. 이때는 Timoshenko 보 요소나 솔리드 요소를 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>보 요소가 어떤 보에나 맞는다고 여기기 쉽다. 보 요소는 단면이 평면을 유지한다는 Euler-Bernoulli 가정에 기댄다. 그래서 짧고 두꺼운 보(길이/높이 &lt; 약 10)에서는 전단 변형을 무시해 처짐이 작게 나오므로, Timoshenko 보 요소나 솔리드 요소를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>절점당 \(v\), \(\theta\), 4 × 4 강성 행렬.</li>
-        <li>분포 하중은 힘 \(wL/2\)과 모멘트 \(\pm wL^2/12\)로.</li>
-        <li>대칭면: 회전각 0, 하중 절반.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>보 요소는 절점마다 v와 θ를 갖고 4×4 강성 행렬을 쓴다. 분포 하중은 힘 wL/2와 모멘트 ±wL²/12로 옮긴다. 대칭면에서는 회전각을 0으로 두고 하중을 절반만 건다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>

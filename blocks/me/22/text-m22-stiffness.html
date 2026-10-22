@@ -8,64 +8,56 @@
 <article class="card q-card" id="text-m22-stiffness" data-kind="본문" data-std="기계22-01-01">
   <header class="card-head"><span class="no"></span><h2>스프링·막대 요소의 강성 행렬과 조립</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>유한요소법의 흐름(요소 분할 → 요소 강성 → 조립 → 경계 조건 → 풀이)을 안다.</li>
-        <li>스프링과 막대 요소의 2 × 2 강성 행렬을 유도한다.</li>
-        <li>절점 번호에 따라 요소 행렬을 전체 강성 행렬로 조립한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>축하중 부재의 변형 (기계2 고체역학), 행렬과 연립방정식 (<a href="../me16/03-01.html">공학수치해석 3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자동차 차체나 교량처럼 복잡한 구조는 손으로 처짐과 응력을 풀 수 없다. 그런데 유한요소 해석 프로그램은 이런 구조를 수백만 개의 작은 조각으로 나눠 금세 답을 낸다. 작은 조각 하나하나는 어떻게 식으로 나타내고, 그 조각들을 어떻게 이어 붙여 전체를 풀까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 스프링 두 개의 조립(개형). 절점 1-2 사이 k₁ = 200 N/mm, 2-3 사이 k₂ = 100 N/mm인 직렬 스프링의 요소 행렬을 전체 행렬의 해당 자리에 더하면, 절점 2의 대각 항에 두 강성이 쌓여 300이 된다">
+        <g class="k" fill="none" stroke-width="2"><circle cx="60" cy="60" r="8"/><circle cx="200" cy="60" r="8"/><circle cx="340" cy="60" r="8"/></g>
+        <path d="M68 60 L90 60 L100 48 L115 72 L130 48 L145 72 L160 48 L170 60 L192 60" class="a" fill="none" stroke-width="2"/>
+        <path d="M208 60 L230 60 L240 48 L255 72 L270 48 L285 72 L300 48 L310 60 L332 60" class="b" fill="none" stroke-width="2"/>
+        <g class="s" text-anchor="middle"><text x="60" y="90">1</text><text x="200" y="90">2</text><text x="340" y="90">3</text><text x="130" y="36" class="ta">k₁ 200</text><text x="270" y="36" class="tb">k₂ 100</text></g>
+        <g class="s"><text x="80" y="130">[K] = [ 200  −200   0 ]</text><text x="80" y="152">      [ −200   300  −100 ]</text><text x="80" y="174">      [   0   −100   100 ]</text><text x="360" y="152" class="td">300 = 200 + 100</text></g>
+      </svg>
+      <figcaption>그림 1. 요소마다 두 절점 사이의 2×2 강성 행렬을 만든 뒤 전체 행렬에서 그 절점 번호 자리에 더하므로, 여러 요소가 만나는 절점의 대각 항에는 강성이 쌓인다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>축하중 부재의 변형(기계2 고체역학), 행렬과 연립방정식(<a href="../me16/03-01.html">공학수치해석 3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>유한요소법의 생각</h3>
-    <p>복잡한 구조를 손으로 풀 수 있는 작은 조각(요소)으로 나누고, 조각들이 절점에서 만나 힘의 평형과 변위의 연속을 만족하도록 이어 붙입니다. 결과는 \([K]\{u\} = \{F\}\) 꼴의 큰 연립 1차방정식입니다. \([K]\)는 강성 행렬, \(\{u\}\)는 절점 변위, \(\{F\}\)는 절점 하중입니다.</p>
+    <p>유한요소법은 복잡한 구조를 손으로 풀 수 있는 작은 조각, 곧 요소로 나눈다. 그리고 요소들이 절점에서 만나 힘의 평형과 변위의 연속을 만족하도록 이어 붙인다. 처음 질문의 답의 큰 틀이 이것이다. 결과는 \([K]\{u\} = \{F\}\) 꼴의 큰 연립 1차방정식이며, [K]는 강성 행렬, {u}는 절점 변위, {F}는 절점 하중이다.</p>
 
     <h3><span class="no">1.1.2</span>스프링 요소</h3>
-    <p>강성 \(k\)인 스프링의 두 끝 절점 \(i\), \(j\)의 변위를 \(u_i\), \(u_j\)라 하면 늘어난 양은 \(u_j - u_i\), 스프링 힘은 \(k(u_j - u_i)\)입니다. 절점 \(i\)에는 \(-k(u_j - u_i)\), \(j\)에는 \(+k(u_j - u_i)\)의 힘이 필요하므로</p>
+    <p>강성 k인 스프링의 두 끝 절점 i, j의 변위를 \(u_i\), \(u_j\)라 하면, 늘어난 양은 \(u_j - u_i\)이고 스프링 힘은 \(k(u_j - u_i)\)이다. 그러므로 절점 i에는 \(-k(u_j - u_i)\), j에는 \(+k(u_j - u_i)\)의 힘이 필요하다. 처음 질문의 첫째 답이 아래 요소 행렬이다.</p>
     <div class="tb-env thm">
       <span class="lb">스프링·막대 요소의 강성 행렬</span>
-      <p>\[\begin{bmatrix}k & -k\\ -k & k\end{bmatrix}\begin{Bmatrix}u_i\\ u_j\end{Bmatrix} = \begin{Bmatrix}f_i\\ f_j\end{Bmatrix}\]</p>
-      <p>\[\text{막대: } k = \frac{EA}{L}\]</p>
+      <p>\[\begin{bmatrix}k & -k\\ -k & k\end{bmatrix}\begin{Bmatrix}u_i\\ u_j\end{Bmatrix} = \begin{Bmatrix}f_i\\ f_j\end{Bmatrix}, \qquad \text{막대는 } k = \frac{EA}{L}\]</p>
     </div>
-    <p>막대는 축 방향 힘만 받으므로 등가 스프링 \(k = EA/L\)인 스프링 요소와 같습니다.</p>
+    <p>막대는 축 방향 힘만 받으므로, 등가 강성 \(k = EA/L\)인 스프링 요소와 같다.</p>
 
     <h3><span class="no">1.1.3</span>조립</h3>
-    <p>각 요소 행렬의 네 항을 전체 행렬에서 그 요소의 절점 번호에 해당하는 자리에 더합니다. 한 절점에 여러 요소가 붙으면 그 대각 항에 강성이 쌓입니다.</p>
+    <p>각 요소 행렬의 네 항을, 전체 행렬에서 그 요소의 절점 번호에 해당하는 자리에 더한다(그림 1). 그러면 한 절점에 여러 요소가 붙을 때 그 대각 항에 강성이 쌓인다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1 <span class="nm">(스프링 두 개)</span></span>
       <p>절점 1-2 사이에 \(k_1\) = 200 N/mm, 2-3 사이에 \(k_2\) = 100 N/mm가 직렬로 있다. 전체 강성 행렬을 조립하여라.</p>
     </div>
-    <p><i>풀이.</i> 요소 1은 (1, 2) 자리, 요소 2는 (2, 3) 자리에 더합니다.</p>
+    <p><i>풀이.</i> 요소 1은 (1, 2) 자리에, 요소 2는 (2, 3) 자리에 더한다.</p>
     <p>\[ [K] = \begin{bmatrix}200 & -200 & 0\\ -200 & 200 + 100 & -100\\ 0 & -100 & 100\end{bmatrix} \]</p>
-    <p>절점 2의 대각 항 300은 두 스프링이 함께 붙어 있기 때문입니다. 행렬은 대칭이고, 각 행의 합이 0입니다(전체가 함께 움직이면 힘이 0). 그래서 경계 조건 없이는 풀 수 없습니다(다음 절).</p>
+    <p>즉 절점 2의 대각 항 300은 두 스프링이 함께 붙어 있기 때문이다. 그리고 행렬은 대칭이며, 각 행의 합이 0이다. 그래서 경계 조건을 넣기 전에는 이 방정식을 풀 수 없다(1.2절).</p>
 
-    <div class="tb-note"><b>주의</b>실제 구조의 강성 행렬은 수만~수백만 차수지만 대부분 0인 성긴 행렬입니다. 절점 번호를 잘 매겨 0이 아닌 항을 대각선 근처에 모으면 풀이가 빨라집니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>강성 행렬은 차수만큼 꽉 찬 행렬이라 풀기 어렵다고 여기기 쉽다. 실제 구조의 강성 행렬은 수만에서 수백만 차수이지만, 각 절점이 이웃 절점과만 이어져 대부분이 0인 성긴 행렬이다. 그러므로 절점 번호를 잘 매겨 0이 아닌 항을 대각선 근처에 모으면 풀이가 빨라진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>요소 분할 → 요소 강성 → 조립 → 경계 조건 → \([K]\{u\} = \{F\}\).</li>
-        <li>스프링·막대: \(k\begin{bmatrix}1 & -1\\ -1 & 1\end{bmatrix}\), \(k = EA/L\).</li>
-        <li>조립: 절점 번호 자리에 더함. 대칭, 행의 합 0.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>유한요소법은 구조를 요소로 나눠 [K]{u} = {F}를 세운다. 스프링과 막대의 요소 행렬은 k[1 −1; −1 1]이고, 막대는 k = EA/L이다. 요소 행렬을 절점 번호 자리에 더해 전체 행렬을 조립한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>강 막대(\(E\) = 200 GPa, \(A\) = 100 mm², \(L\) = 1 m)의 강성은?
-          <details><summary>답</summary><p>\(200000\times100/1000 = 20000\) N/mm.</p></details>
+          <details><summary>답</summary><p>\(200000\times100/1000 = 20000\) N/mm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에 절점 1-3 사이 스프링 \(k_3\) = 50 N/mm를 더하면 전체 행렬은?
-          <details><summary>답</summary><p>\(\begin{bmatrix}250 & -200 & -50\\ -200 & 300 & -100\\ -50 & -100 & 150\end{bmatrix}\).</p></details>
+          <details><summary>답</summary><p>\(\begin{bmatrix}250 & -200 & -50\\ -200 & 300 & -100\\ -50 & -100 & 150\end{bmatrix}\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
