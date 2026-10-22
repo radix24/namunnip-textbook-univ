@@ -6,92 +6,95 @@
 }
 -->
 <article class="card q-card" id="text-a8-tle" data-kind="본문" data-std="천우8-03-04">
-  <header class="card-head"><span class="no"></span><h2>두 줄 궤도 요소(TLE) 읽기</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>두 줄 궤도 요소(TLE) 읽기</h2><span class="kind">본문 · 3.4절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>TLE 두 줄에 들어 있는 기준 시각, 궤도 요소, 항력 항의 위치와 뜻을 안다.</li>
-        <li>평균 운동(하루 회전 수)에서 긴반지름, 고도, 주기를 계산한다.</li>
-        <li>TLE의 요소가 SGP4 모형용 '평균 요소'라 고전 궤도 요소로 그대로 쓰면 안 되는 까닭을 안다.</li>
-        <li>체크섬으로 TLE가 깨지지 않았는지 확인한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>고전 궤도 요소 (<a href="03-01.html">3.1절</a>), J2 섭동 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">지구 둘레의 위성과 우주 쓰레기 수만 개의 궤도는 69자짜리 두 줄로 공개된다. 숫자가 빽빽하게 늘어선 이 두 줄에서 위성의 고도와 주기를 어떻게 읽어 낼까? 그리고 거기 적힌 궤도요소를 3.2절의 공식에 바로 넣어도 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="국제우주정거장과 비슷한 TLE 두 줄과 각 칸의 뜻. 1행에는 위성 번호, 기준 시각, 평균 운동 변화율, B* 항력 항이, 2행에는 경사각, 승교점 적경, 이심률, 근지점 인수, 평균 근점 이각, 평균 운동, 체크섬이 있다">
+        <text x="12" y="40" style="font-family:monospace;font-size:12px" textLength="496.8" lengthAdjust="spacing">1&#160;25544U&#160;98067A&#160;&#160;&#160;24001.50000000&#160;&#160;.00016717&#160;&#160;00000-0&#160;&#160;30059-3&#160;0&#160;&#160;9994</text>
+        <text x="12" y="120" style="font-family:monospace;font-size:12px" textLength="496.8" lengthAdjust="spacing">2&#160;25544&#160;&#160;51.6416&#160;247.4627&#160;0006703&#160;130.5360&#160;325.0288&#160;15.50377579432164</text>
+        <path d="M26.4 44 L62.4 44" class="a" style="stroke-width:3"/>
+        <text x="26.4" y="60" class="s ta">위성 번호</text>
+        <path d="M141.6 44 L242.4 44" class="c" style="stroke-width:3"/>
+        <text x="141.6" y="74" class="s tc">기준 시각</text>
+        <path d="M249.6 44 L321.6 44" class="b" style="stroke-width:3"/>
+        <text x="249.6" y="88" class="s tb">평균 운동 변화율/2</text>
+        <path d="M393.6 44 L451.2 44" class="d" style="stroke-width:3"/>
+        <text x="393.6" y="60" class="s td">B* (항력)</text>
+        <path d="M69.6 124 L127.2 124" class="a" style="stroke-width:3"/>
+        <text x="69.6" y="140" class="s ta">경사각 i</text>
+        <path d="M134.4 124 L192 124" class="b" style="stroke-width:3"/>
+        <text x="134.4" y="154" class="s tb">승교점 적경 Ω</text>
+        <path d="M199.2 124 L249.6 124" class="c" style="stroke-width:3"/>
+        <text x="199.2" y="168" class="s tc">이심률 e</text>
+        <path d="M256.8 124 L314.4 124" class="d" style="stroke-width:3"/>
+        <text x="256.8" y="140" class="s td">근지점 인수 ω</text>
+        <path d="M321.6 124 L379.2 124" class="a" style="stroke-width:3"/>
+        <text x="321.6" y="154" class="s ta">평균 근점 이각 M</text>
+        <path d="M386.4 124 L465.6 124" class="b" style="stroke-width:3"/>
+        <text x="386.4" y="168" class="s tb">평균 운동 n (회/일)</text>
+        <path d="M501.6 124 L508.8 124" class="d" style="stroke-width:3"/>
+        <text x="508.8" y="140" text-anchor="end" class="s td">체크섬</text>
+      </svg>
+      <figcaption>그림 1. TLE 두 줄의 짜임(국제우주정거장과 비슷하게 만든 예시). 1행에는 기준 시각과 항력 항이, 2행에는 궤도요소 여섯 개가 있으며, 긴반지름 대신 평균 운동(하루 회전 수)이 적혀 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고전 궤도요소(<a href="03-01.html">3.1절</a>)와 J2 섭동(<a href="05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>TLE의 모양</h3>
-    <p>지구 둘레의 위성과 우주 쓰레기 수만 개의 궤도는 미국 우주군이 추적해 TLE 형식으로 공개합니다(CelesTrak, Space-Track). 69자짜리 두 줄입니다. 아래는 국제우주정거장과 비슷하게 만든 예시입니다.</p>
-    <pre><code>1 25544U 98067A   24001.50000000  .00016717  00000-0  30059-3 0  9994
+    <p>지구 둘레 물체의 궤도는 미국 우주군이 추적해 <em>두 줄 궤도 요소</em>(TLE) 형식으로 공개하며, CelesTrak이나 Space-Track에서 받을 수 있다. 그림 1의 예시를 칸별로 풀면 표 1과 같다.</p>
+<pre><code>1 25544U 98067A   24001.50000000  .00016717  00000-0  30059-3 0  9994
 2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.50377579432164</code></pre>
-    <div class="tb-table">
-      <table>
-        <thead><tr><th>위치</th><th>값</th><th>뜻</th></tr></thead>
-        <tbody>
-          <tr><td>1행 3~7열</td><td>25544</td><td>위성 번호</td></tr>
-          <tr><td>1행 19~32열</td><td>24001.50000000</td><td>기준 시각: 2024년의 1.5번째 날 = 1월 1일 12시 UT</td></tr>
-          <tr><td>1행 54~61열</td><td>30059-3</td><td>B*(항력 항) = \(0.30059\times10^{-3}\) (지구 반지름⁻¹)</td></tr>
-          <tr><td>2행 9~16열</td><td>51.6416</td><td>경사각 \(i\) (°)</td></tr>
-          <tr><td>2행 18~25열</td><td>247.4627</td><td>승교점 적경 \(\Omega\) (°)</td></tr>
-          <tr><td>2행 27~33열</td><td>0006703</td><td>이심률 \(e = 0.0006703\) (소수점 생략)</td></tr>
-          <tr><td>2행 35~42열</td><td>130.5360</td><td>근지점 편각 \(\omega\) (°)</td></tr>
-          <tr><td>2행 44~51열</td><td>325.0288</td><td>평균 근점 이각 \(M\) (°)</td></tr>
-          <tr><td>2행 53~63열</td><td>15.50377579</td><td>평균 운동 \(n\) (하루 회전 수)</td></tr>
-          <tr><td>2행 64~68열, 69열</td><td>43216, 4</td><td>누적 회전 수, 체크섬</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="tw">
+      <caption>표 1. TLE 각 칸의 뜻</caption>
+      <tr><th>위치</th><th>값</th><th>뜻</th></tr>
+      <tr><td>1행 3~7열</td><td>25544</td><td>위성 번호</td></tr>
+      <tr><td>1행 19~32열</td><td>24001.50000000</td><td>기준 시각. 2024년의 1.5번째 날, 곧 1월 1일 12시 UT</td></tr>
+      <tr><td>1행 54~61열</td><td>30059-3</td><td>B*(항력 항) \(= 0.30059\times10^{-3}\) (지구 반지름⁻¹)</td></tr>
+      <tr><td>2행 9~16열</td><td>51.6416</td><td>경사각 \(i\) (°)</td></tr>
+      <tr><td>2행 18~25열</td><td>247.4627</td><td>승교점 적경 \(\Omega\) (°)</td></tr>
+      <tr><td>2행 27~33열</td><td>0006703</td><td>이심률 \(e = 0.0006703\) (소수점 생략)</td></tr>
+      <tr><td>2행 35~42열</td><td>130.5360</td><td>근지점 인수 \(\omega\) (°)</td></tr>
+      <tr><td>2행 44~51열</td><td>325.0288</td><td>평균 근점 이각 \(M\) (°)</td></tr>
+      <tr><td>2행 53~63열</td><td>15.50377579</td><td>평균 운동 \(n\) (하루 회전 수)</td></tr>
+      <tr><td>2행 64~68열, 69열</td><td>43216, 4</td><td>누적 회전 수, 체크섬</td></tr>
+    </table>
 
     <h3><span class="no">3.4.2</span>평균 운동에서 궤도 크기로</h3>
-    <p>긴반지름 대신 하루 회전 수를 적어 둡니다. 케플러 제3법칙으로 바꾸면</p>
+    <p>처음 질문의 첫째 부분은 평균 운동을 케플러 제3법칙으로 바꾸면 풀린다. TLE에는 긴반지름 대신 하루 회전 수가 적혀 있기 때문이다.</p>
     <div class="tb-env thm">
-      <span class="lb">결과 3.4.1</span>
-      \[n\ [\text{rad/s}] = \frac{2\pi\,n_{\text{rev/day}}}{86400}, \qquad a = \left(\frac{\mu}{n^2}\right)^{1/3}, \qquad P = \frac{1440}{n_{\text{rev/day}}}\ \text{분}.\]
+      <span class="lb">결과 3.4.1 <span class="nm">(평균 운동과 궤도 크기)</span></span>
+      \[n\ [\text{rad/s}] = \frac{2\pi\,n_{\text{rev/day}}}{86400}, \qquad a = \left(\frac{\mu}{n^2}\right)^{1/3}, \qquad P = \frac{1440}{n_{\text{rev/day}}}\ \text{분}\]
     </div>
-    <p>위 예시는 \(n = 15.5038\)회/일 → \(a = 6{,}793.8\) km, 평균 고도 약 416 km, 주기 92.9분입니다. 이심률을 넣으면 근지점 고도 411 km, 원지점 고도 420 km로 거의 원 궤도입니다.</p>
+    <p>위 예시는 \(n = 15.5038\)회/일이므로 \(a = 6{,}793.8\) km이고, 평균 고도는 약 416 km, 주기는 92.9분이다. 이심률을 넣으면 근지점 고도 411 km, 원지점 고도 420 km로 거의 원 궤도이다.</p>
 
     <h3><span class="no">3.4.3</span>평균 요소와 SGP4</h3>
-    <p>TLE의 요소는 J2와 대기 항력의 주기적 흔들림을 평균으로 걷어 낸 '평균 요소'로, SGP4라는 정해진 해석 모형으로 만든 것입니다. 그래서 TLE로 위치를 구할 때는 반드시 SGP4로 전파해야 하고, 이 요소를 고전 궤도 요소처럼 2체 공식에 넣으면 수 km 오차가 납니다. SGP4의 저궤도 위치 정확도는 기준 시각에서 1 km 안팎이고, 항력 예측의 불확도 때문에 하루에 수 km씩 나빠집니다. 그래서 TLE는 며칠마다 새로 받습니다.</p>
+    <p>처음 질문의 둘째 부분에 대한 답은 "안 된다"이다. TLE의 요소는 J2와 대기 항력에 의한 주기적인 흔들림을 평균으로 걷어 낸 <em>평균 요소</em>이며, SGP4라는 정해진 해석 모형에 맞춰 만든 것이다. 그래서 TLE로 위치를 구할 때는 반드시 SGP4로 전파해야 하고, 이 요소를 고전 궤도요소처럼 2체 공식에 넣으면 수 km의 오차가 난다. 또 SGP4의 저궤도 위치 정확도는 기준 시각에서 1 km 안팎이지만, 항력 예측의 불확도 때문에 하루에 수 km씩 나빠진다. 그러므로 TLE는 며칠마다 새로 받는다.</p>
 
     <h3><span class="no">3.4.4</span>체크섬</h3>
-    <p>각 줄의 마지막 숫자는 앞 68자의 숫자를 모두 더하고, 빼기표(−)는 1로 세고, 나머지 문자는 0으로 센 합의 일의 자리입니다. 옮겨 적다 숫자 하나가 바뀌면 대개 체크섬이 맞지 않아 알아챌 수 있습니다.</p>
-
+    <p>각 줄의 마지막 숫자는 체크섬이다. 앞 68자에서 숫자는 그 값으로, 빼기표(−)는 1로, 나머지 문자는 0으로 세어 모두 더한 합의 일의 자리이다. 그래서 옮겨 적다 숫자 하나가 바뀌면 대개 체크섬이 맞지 않아 알아챌 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
-      <p>B* 항이 클수록 위성의 고도는 빨리 낮아집니까? 위 예시의 1행 34~43열 <code>.00016717</code>은 무엇입니까?</p>
+      <p>B* 항이 클수록 위성의 고도는 빨리 낮아지는가? 위 예시의 1행 34~43열 <code>.00016717</code>은 무엇인가?</p>
     </div>
-    <p><i>풀이.</i> B*는 \(\rho_0 C_DA/(2m)\)에 비례하는 항력 매개변수라, 클수록 넓이 대 질량 비가 커 빨리 낮아집니다(천우2 4.4절). <code>.00016717</code>은 평균 운동의 시간 변화율의 절반(회/일²)으로, 항력 때문에 위성이 빨라지고 있음(궤도가 낮아짐)을 보여 줍니다.</p>
+    <p><i>풀이.</i> B*는 \(\rho_0 C_DA/(2m)\)에 비례하는 항력 매개변수라, 클수록 넓이 대 질량 비가 커서 빨리 낮아진다(<a href="05-03.html">5.3절</a>). <code>.00016717</code>은 평균 운동의 시간 변화율의 절반(회/일²)이다. 이 값이 양수인 것은 항력 때문에 궤도가 낮아지면서 위성이 오히려 빨라지고 있음을 보여 준다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>TLE: 1행에 기준 시각과 항력 항, 2행에 \(i, \Omega, e, \omega, M, n\).</li>
-        <li>\(a = (\mu/n^2)^{1/3}\), \(P = 1440/n\) 분.</li>
-        <li>평균 요소이므로 SGP4로 전파한다. 정확도는 km 수준, 며칠마다 갱신.</li>
-        <li>체크섬 = 숫자 합(− = 1)의 일의 자리.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>TLE의 1행에는 기준 시각과 항력 항이, 2행에는 \(i\), \(\Omega\), \(e\), \(\omega\), \(M\), \(n\)이 있다. 평균 운동에서 \(a = (\mu/n^2)^{1/3}\), 주기 \(P = 1440/n\)분을 얻는다. TLE의 요소는 SGP4용 평균 요소이므로 반드시 SGP4로 전파해야 하고, 정확도가 km 수준이라 며칠마다 갱신하며, 각 줄의 끝자리 체크섬으로 깨진 줄을 찾는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>평균 운동이 1.0027회/일이면 어떤 궤도입니까?
-          <details><summary>답</summary><p>하루(항성일)에 한 바퀴, 정지궤도(또는 경사가 있으면 지구동기궤도).</p></details>
+        <li>평균 운동이 1.0027회/일이면 어떤 궤도인가?
+          <details><summary>답</summary><p>하루(항성일)에 한 바퀴 도는 궤도이므로 정지궤도이고, 경사가 있으면 지구동기궤도이다.</p></details>
         </li>
-        <li>기준 시각 <code>26292.75000000</code>은 언제입니까?
-          <details><summary>답</summary><p>2026년의 292번째 날(10월 19일) 18시 UT.</p></details>
+        <li>기준 시각 <code>26292.75000000</code>은 언제인가?
+          <details><summary>답</summary><p>2026년의 292번째 날인 10월 19일의 18시 UT이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>TLE를 2체 공식에 바로 넣어 위치를 구했더니 SGP4 결과와 5 km 차이가 났습니다. 어느 쪽을 믿어야 합니까?
-          <details><summary>답</summary><p>SGP4입니다. TLE는 SGP4 모형에 맞춘 평균 요소라, 그 모형으로 풀어야 관측과 맞습니다.</p></details>
-        </li>
-        <li>평균 운동이 15.5038에서 15.5048회/일로 늘었다면 평균 고도는 대략 얼마나 낮아졌습니까?
-          <details><summary>답</summary><p>\(a \propto n^{-2/3}\)이므로 \(\Delta a/a = -\tfrac23\Delta n/n = -4.3\times10^{-5}\), \(\Delta a \approx -0.29\) km.</p></details>
+      <ol start="3">
+        <li>평균 운동이 15.5038에서 15.5048회/일로 늘었다면 평균 고도는 대략 얼마나 낮아졌는가?
+          <details><summary>답</summary><p>\(a \propto n^{-2/3}\)이므로 \(\Delta a/a = -\tfrac23\Delta n/n = -4.3\times10^{-5}\)이고, \(\Delta a \approx -0.29\) km이다.</p></details>
         </li>
       </ol>
     </div>
