@@ -6,38 +6,52 @@
 }
 -->
 <article class="card q-card" id="text-a11-kalman" data-kind="본문" data-std="천우11-05-03">
-  <header class="card-head"><span class="no"></span><h2>칼만 필터: 예측하고, 측정으로 고치고, 되풀이하기</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>칼만 필터의 예측과 갱신</h2><span class="kind">본문 · 5.3절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>측정이 들어올 때마다 추정을 고치는 순차 추정의 '예측-갱신' 구조를 안다.</li>
-        <li>1차원 칼만 필터의 이득 \(K = P/(P + R)\)가 '예측과 측정 가운데 무엇을 더 믿을지'를 정함을 이해한다.</li>
-        <li>과정 잡음 \(q\)를 너무 작게 잡으면 추정이 실제 변화를 따라가지 못함을 확인한다.</li>
-        <li>궤도 결정에서 배치 최소제곱과 칼만 필터의 쓰임을 비교한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱 궤도 결정 (<a href="05-01.html">5.1절</a>), 공분산의 전파 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">위성의 GPS 수신기는 1초마다 위치를 잰다. 측정 하나하나에는 수 m의 오차가 있다. 지금까지의 추정을 버리지 않으면서 새 측정이 들어올 때마다 조금씩 고치려면, 새 측정을 얼마나 믿어야 할까? 너무 믿으면 잡음에 흔들리고, 너무 안 믿으면 실제 변화를 놓친다.</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="참값이 10에서 14.95로 천천히 오르는 양을 오차 1로 100번 잰 측정점과, 과정 잡음 q가 0인 필터와 0.01인 필터의 추정. q가 0이면 추정이 마지막에 12.22로 뒤처지고, q가 0.01이면 14.66으로 참값을 따라간다">
+        <line x1="55" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="55" y="195" text-anchor="middle" class="s">0</text>
+        <text x="136.2" y="195" text-anchor="middle" class="s">25</text>
+        <text x="217.5" y="195" text-anchor="middle" class="s">50</text>
+        <text x="298.8" y="195" text-anchor="middle" class="s">75</text>
+        <text x="380" y="195" text-anchor="middle" class="s">100</text>
+        <text x="50" y="184" text-anchor="end" class="s">6</text>
+        <text x="50" y="144" text-anchor="end" class="s">9</text>
+        <text x="50" y="104" text-anchor="end" class="s">12</text>
+        <text x="50" y="64" text-anchor="end" class="s">15</text>
+        <text x="50" y="24" text-anchor="end" class="s">18</text>
+        <text x="380" y="209" text-anchor="end" class="s">측정 번호 k</text>
+        <text x="61" y="24" class="s">값</text>
+        <circle cx="55" cy="95.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="58.2" cy="134.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="61.5" cy="120.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="64.8" cy="122.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="68" cy="112.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="71.2" cy="142" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="74.5" cy="128.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="77.8" cy="132" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="81" cy="135.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="84.2" cy="131.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="87.5" cy="126.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="90.8" cy="123.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="94" cy="130.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="97.2" cy="112.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="100.5" cy="124.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="103.8" cy="159.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="107" cy="100.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="110.2" cy="120.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="113.5" cy="124.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="116.8" cy="110.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="120" cy="110.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="123.2" cy="112" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="126.5" cy="123.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="129.8" cy="108.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="133" cy="131.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="136.2" cy="90.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="139.5" cy="126.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="142.8" cy="111.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="146" cy="107.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="149.2" cy="104.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="152.5" cy="110" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="155.8" cy="99.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="159" cy="153.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="162.2" cy="107.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="165.5" cy="107.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="168.8" cy="110.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="172" cy="84" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="175.2" cy="116.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="178.5" cy="104.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="181.8" cy="129.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="185" cy="98.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="188.2" cy="122.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="191.5" cy="121.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="194.8" cy="68.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="198" cy="89.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="201.2" cy="98.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="204.5" cy="95.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="207.8" cy="116.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="211" cy="110.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="214.2" cy="90.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="217.5" cy="123.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="220.8" cy="90.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="224" cy="117.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="227.2" cy="91.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="230.5" cy="107.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="233.8" cy="68.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="237" cy="77.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="240.2" cy="97.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="243.5" cy="115.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="246.8" cy="99.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="250" cy="89.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="253.2" cy="101.2" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="256.5" cy="83.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="259.8" cy="73" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="263" cy="86.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="266.2" cy="91" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="269.5" cy="73.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="272.8" cy="87.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="276" cy="71.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="279.2" cy="86.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="282.5" cy="59.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="285.8" cy="84.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="289" cy="94.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="292.2" cy="78.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="295.5" cy="87.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="298.8" cy="91.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="302" cy="79.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="305.2" cy="66.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="308.5" cy="105.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="311.8" cy="76.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="315" cy="77.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="318.2" cy="76.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="321.5" cy="62.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="324.8" cy="90.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="328" cy="63.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="331.2" cy="74.8" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="334.5" cy="69.5" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="337.8" cy="73.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="341" cy="74.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="344.2" cy="76.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="347.5" cy="62.7" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="350.8" cy="39.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="354" cy="52.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="357.2" cy="54.6" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="360.5" cy="57.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="363.8" cy="71.3" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="367" cy="55.9" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="370.2" cy="35.4" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="373.5" cy="80.1" r="2" class="lk k" style="stroke-width:0.8"/><circle cx="376.8" cy="50.8" r="2" class="lk k" style="stroke-width:0.8"/>
+        <path d="M55 126.7 L58.2 126 L61.5 125.3 L64.8 124.7 L68 124 L71.2 123.3 L74.5 122.7 L77.8 122 L81 121.3 L84.2 120.7 L87.5 120 L90.8 119.3 L94 118.7 L97.2 118 L100.5 117.3 L103.8 116.7 L107 116 L110.2 115.3 L113.5 114.7 L116.8 114 L120 113.3 L123.2 112.7 L126.5 112 L129.8 111.3 L133 110.7 L136.2 110 L139.5 109.3 L142.8 108.7 L146 108 L149.2 107.3 L152.5 106.7 L155.8 106 L159 105.3 L162.2 104.7 L165.5 104 L168.8 103.3 L172 102.7 L175.2 102 L178.5 101.3 L181.8 100.7 L185 100 L188.2 99.3 L191.5 98.7 L194.8 98 L198 97.3 L201.2 96.7 L204.5 96 L207.8 95.3 L211 94.7 L214.2 94 L217.5 93.3 L220.8 92.7 L224 92 L227.2 91.3 L230.5 90.7 L233.8 90 L237 89.3 L240.2 88.7 L243.5 88 L246.8 87.3 L250 86.7 L253.2 86 L256.5 85.3 L259.8 84.7 L263 84 L266.2 83.3 L269.5 82.7 L272.8 82 L276 81.3 L279.2 80.7 L282.5 80 L285.8 79.3 L289 78.7 L292.2 78 L295.5 77.3 L298.8 76.7 L302 76 L305.2 75.3 L308.5 74.7 L311.8 74 L315 73.3 L318.2 72.7 L321.5 72 L324.8 71.3 L328 70.7 L331.2 70 L334.5 69.3 L337.8 68.7 L341 68 L344.2 67.3 L347.5 66.7 L350.8 66 L354 65.3 L357.2 64.7 L360.5 64 L363.8 63.3 L367 62.7 L370.2 62 L373.5 61.3 L376.8 60.7" class="k dsh"/>
+        <path d="M58.2 115.9 L61.5 117.3 L64.8 118.6 L68 117.5 L71.2 121.6 L74.5 122.5 L77.8 123.7 L81 125 L84.2 125.7 L87.5 125.8 L90.8 125.6 L94 126 L97.2 125 L100.5 125 L103.8 127.1 L107 125.5 L110.2 125.3 L113.5 125.2 L116.8 124.5 L120 123.8 L123.2 123.3 L126.5 123.3 L129.8 122.7 L133 123 L136.2 121.8 L139.5 121.9 L142.8 121.6 L146 121.1 L149.2 120.5 L152.5 120.2 L155.8 119.5 L159 120.6 L162.2 120.2 L165.5 119.9 L168.8 119.6 L172 118.6 L175.2 118.6 L178.5 118.2 L181.8 118.5 L185 118 L188.2 118.1 L191.5 118.2 L194.8 117.1 L198 116.5 L201.2 116.1 L204.5 115.6 L207.8 115.6 L211 115.5 L214.2 115 L217.5 115.2 L220.8 114.7 L224 114.8 L227.2 114.3 L230.5 114.2 L233.8 113.4 L237 112.8 L240.2 112.5 L243.5 112.5 L246.8 112.3 L250 112 L253.2 111.8 L256.5 111.3 L259.8 110.7 L263 110.4 L266.2 110.1 L269.5 109.5 L272.8 109.2 L276 108.7 L279.2 108.3 L282.5 107.7 L285.8 107.3 L289 107.2 L292.2 106.8 L295.5 106.5 L298.8 106.3 L302 106 L305.2 105.5 L308.5 105.5 L311.8 105.1 L315 104.8 L318.2 104.4 L321.5 103.9 L324.8 103.8 L328 103.3 L331.2 103 L334.5 102.6 L337.8 102.2 L341 101.9 L344.2 101.6 L347.5 101.2 L350.8 100.5 L354 100 L357.2 99.5 L360.5 99.1 L363.8 98.8 L367 98.4 L370.2 97.7 L373.5 97.5 L376.8 97.1" class="c"/>
+        <path d="M58.2 116 L61.5 117.4 L64.8 118.7 L68 117.5 L71.2 121.9 L74.5 122.9 L77.8 124.3 L81 125.8 L84.2 126.6 L87.5 126.6 L90.8 126.2 L94 126.7 L97.2 125.2 L100.5 125.1 L103.8 128.7 L107 125.7 L110.2 125.2 L113.5 125.2 L116.8 123.7 L120 122.4 L123.2 121.4 L126.5 121.6 L129.8 120.3 L133 121.4 L136.2 118.4 L139.5 119.2 L142.8 118.4 L146 117.4 L149.2 116.2 L152.5 115.6 L155.8 114 L159 117.8 L162.2 116.9 L165.5 116 L168.8 115.5 L172 112.5 L175.2 112.9 L178.5 112.1 L181.8 113.8 L185 112.3 L188.2 113.3 L191.5 114 L194.8 109.7 L198 107.8 L201.2 106.9 L204.5 105.8 L207.8 106.8 L211 107.2 L214.2 105.6 L217.5 107.3 L220.8 105.7 L224 106.8 L227.2 105.3 L230.5 105.5 L233.8 102 L237 99.6 L240.2 99.4 L243.5 100.9 L246.8 100.8 L250 99.7 L253.2 99.8 L256.5 98.3 L259.8 95.9 L263 95 L266.2 94.6 L269.5 92.6 L272.8 92.2 L276 90.2 L279.2 89.9 L282.5 87 L285.8 86.8 L289 87.6 L292.2 86.7 L295.5 86.8 L298.8 87.2 L302 86.5 L305.2 84.6 L308.5 86.6 L311.8 85.6 L315 84.8 L318.2 84 L321.5 82 L324.8 82.8 L328 81 L331.2 80.4 L334.5 79.4 L337.8 78.8 L341 78.3 L344.2 78.1 L347.5 76.6 L350.8 73.1 L354 71.1 L357.2 69.6 L360.5 68.5 L363.8 68.7 L367 67.5 L370.2 64.4 L373.5 65.9 L376.8 64.5" class="a"/>
+        <text x="395" y="44" class="s">○ 측정 (오차 1)</text><text x="395" y="62" class="s">점선 참값</text><text x="395" y="88" class="s tc">q = 0, 마지막 12.22</text><text x="395" y="106" class="s ta">q = 0.01, 마지막 14.66</text><text x="395" y="140" class="s">참값 14.95</text><text x="395" y="164" class="s">q = 0은 변화에</text><text x="395" y="180" class="s">뒤처진다</text>
+      </svg>
+      <figcaption>그림 1. 천천히 변하는 양을 따라가는 1차원 칼만 필터(5.3.2절 실험의 결과). 과정 잡음 \(q = 0\)(주황)은 모든 측정을 평균해 뒤처지고, \(q = 0.01\)(파랑)은 최근 측정을 계속 반영해 참값(점선)을 따라간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱 궤도 결정(<a href="05-01.html">5.1절</a>)과 공분산의 전파(<a href="05-02.html">5.2절</a>)를 쓴다.</div>
+    <p>배치 최소제곱은 관측을 모두 모은 뒤 한꺼번에 맞춘다. 반면 측정이 계속 들어오는 실시간 항법에서는 지금의 추정 \(x\)와 그 분산 \(P\)를 들고 다니며 새 측정 하나로 고치는 편이 낫다. 처음 질문의 답은 두 분산의 비, 곧 칼만 이득이 정한다.</p>
 
     <h3><span class="no">5.3.1</span>예측과 갱신</h3>
-    <p>배치 최소제곱(5.1절)은 관측을 모두 모은 뒤 한꺼번에 맞춥니다. 위성 자세 제어나 실시간 궤도 결정처럼 측정이 계속 들어오는 상황에서는, 지금까지의 추정 \(x\)와 그 분산 \(P\)를 들고 다니며 새 측정 하나로 고치는 편이 좋습니다.</p>
-    <div class="tb-env thm">
-      <span class="lb">정의 5.3.1 (1차원 칼만 필터)</span>
-      <ol>
-        <li><b>예측</b>: 운동 모형으로 다음 시각의 상태를 내다보고, 모형이 완벽하지 않은 만큼 분산을 키운다. 상태가 그대로라 보면 \(x^- = x\), \(P^- = P + q\).</li>
-        <li><b>갱신</b>: 측정 \(z\)(분산 \(R\))가 들어오면
-          \[K = \frac{P^-}{P^- + R}, \qquad x = x^- + K(z - x^-),\]
-          \[P = (1 - K)P^-.\]</li>
-      </ol>
+    <div class="tb-env def">
+      <span class="lb">정의 5.3.1 <span class="nm">(1차원 칼만 필터)</span></span>
+      <p>예측 단계에서는 운동 모형으로 다음 시각의 상태를 내다보고, 모형이 완벽하지 않은 만큼 분산을 키운다. 상태가 그대로라고 보면 \(x^- = x\), \(P^- = P + q\)이다. 갱신 단계에서는 분산이 \(R\)인 측정 \(z\)로 다음과 같이 고친다.</p>
+      \[ K = \frac{P^-}{P^- + R}, \qquad x = x^- + K(z - x^-), \qquad P = (1 - K)P^- \]
     </div>
-    <p>이득 \(K\)는 0과 1 사이입니다. 예측이 불확실하면(\(P^- \gg R\)) \(K \approx 1\)로 측정을 거의 그대로 믿고, 예측이 정확하면(\(P^- \ll R\)) \(K \approx 0\)으로 측정을 조금만 반영합니다. 갱신 뒤의 분산은 늘 줄어듭니다.</p>
+    <p>이득 \(K\)는 0과 1 사이이다. 예측이 불확실하면(\(P^- \gg R\)) \(K \approx 1\)이어서 측정을 거의 그대로 믿는다. 거꾸로 예측이 정확하면(\(P^- \ll R\)) \(K \approx 0\)이어서 측정을 조금만 반영한다. 그리고 \(1/P = 1/P^- + 1/R\)이므로 갱신 뒤의 분산은 예측과 측정 어느 쪽보다도 작다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>예측 분산 \(P^- = 4\), 측정 분산 \(R = 1\), 예측 \(x^- = 20\), 측정 \(z = 22\)이다. 갱신된 추정과 분산은 얼마인가?</p>
+    </div>
+    <p><i>풀이.</i> \(K = 4/5 = 0.8\)이므로 \(x = 20 + 0.8\times2 = 21.6\), \(P = 0.2\times4 = 0.8\)이다. 측정이 예측보다 정확하므로 측정 쪽으로 많이 옮겼다. 또 분산 0.8은 4와 1 어느 것보다도 작다.</p>
 
-    <h3><span class="no">5.3.2</span>실험: 천천히 변하는 양 따라가기</h3>
-    <p>참값이 \(10 + 0.05k\)로 천천히 변하는 양을 오차 1로 100번 잽니다. \(q = 0\)(그대로 있다고 믿음)과 \(q = 0.01\)을 비교합니다.</p>
-    <pre><code>import random
+    <h3><span class="no">5.3.2</span>천천히 변하는 양을 따라가는 실험</h3>
+    <p>참값이 \(10 + 0.05k\)로 천천히 변하는 양을 오차 1로 100번 잰다. 그리고 값이 그대로 있다고 믿는 \(q = 0\)과 \(q = 0.01\)을 비교한다.</p>
+<pre><code>import random
 
 random.seed(2)
 R = 1.0**2                        # 측정 분산
@@ -60,46 +74,34 @@ for q in (0.0, 0.01):
     err = sum(abs(res[k][0] - truth[k]) for k in range(50, 100)) / 50
     print(f"q = {q:4}: 이득 K는 1번째 {res[0][2]:.3f}, 10번째 {res[9][2]:.3f}, 100번째 {res[99][2]:.3f}; "
           f"마지막 추정 {res[99][0]:.2f} (참값 {truth[99]:.2f}), 뒤 50개 평균 오차 {err:.2f}")</code></pre>
-    <pre><code>q =  0.0: 이득 K는 1번째 0.990, 10번째 0.100, 100번째 0.010; 마지막 추정 12.22 (참값 14.95), 뒤 50개 평균 오차 2.21
+<pre><code>q =  0.0: 이득 K는 1번째 0.990, 10번째 0.100, 100번째 0.010; 마지막 추정 12.22 (참값 14.95), 뒤 50개 평균 오차 2.21
 q = 0.01: 이득 K는 1번째 0.990, 10번째 0.126, 100번째 0.095; 마지막 추정 14.66 (참값 14.95), 뒤 50개 평균 오차 0.74</code></pre>
-    <p>\(q = 0\)이면 이득이 \(1/k\)로 계속 줄어 필터는 '모든 측정의 평균'이 됩니다. 값이 그대로라면 가장 좋은 추정이지만, 참값이 변하고 있어 추정이 뒤처집니다(마지막 오차 2.7). \(q = 0.01\)은 이득이 0.1 근처에서 멈춰 최근 측정을 계속 반영하므로 변화를 따라갑니다. 과정 잡음 \(q\)는 '모형이 얼마나 틀릴 수 있는가'를 필터에 알려 주는 조절 손잡이입니다.</p>
+    <p>\(q = 0\)이면 이득이 \(1/k\)로 계속 줄어, 필터는 모든 측정의 평균이 된다. 값이 정말 그대로라면 이것이 가장 좋은 추정이다. 그런데 참값이 변하고 있으므로 추정이 뒤처져, 마지막에 2.7만큼 틀린다(그림 1). 한편 \(q = 0.01\)은 이득이 0.1 근처에서 멈춰 최근 측정을 계속 반영하므로 변화를 따라간다. 다시 말해 과정 잡음 \(q\)는 모형이 얼마나 틀릴 수 있는지를 필터에 알려 주는 조절 손잡이이다.</p>
 
     <h3><span class="no">5.3.3</span>궤도 결정에서</h3>
-    <p>실제 궤도용 칼만 필터는 상태가 위치·속도 6개(때로는 항력 계수 등 추가)인 벡터이고, 예측 단계에서 궤도를 적분하며 공분산 행렬을 함께 전파합니다(5.2절). 궤도가 비선형이라 매 단계 선형화하는 확장 칼만 필터를 씁니다. 배치 최소제곱은 사후 정밀 궤도, 칼만 필터는 실시간 항법(위성 GNSS 수신기, 자세 결정)에 주로 씁니다.</p>
+    <p>실제 궤도용 칼만 필터의 상태는 위치와 속도 6개, 때로는 항력 계수까지 더한 벡터이다. 예측 단계에서 궤도를 적분하며 공분산 행렬을 함께 전파한다(<a href="05-02.html">5.2절</a>). 궤도가 비선형이라 단계마다 선형화하는데, 이를 확장 칼만 필터라 한다. 그래서 배치 최소제곱은 사후 정밀 궤도에, 칼만 필터는 위성 GNSS 수신기나 자세 결정 같은 실시간 항법에 주로 쓴다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>필터가 내는 분산 \(P\)는 작은데 실제 오차가 훨씬 크면, \(q\)나 \(R\)을 너무 작게 잡아 필터가 자신을 과신하는 것이다. 이를 필터 발산이라 한다. 측정과 예측의 차, 곧 혁신이 \(\sqrt{P^- + R}\)보다 늘 크게 나오는지 확인하면 알아챌 수 있다.</div>
 
-    <div class="tb-env ex">
-      <span class="lb">예제 5.3.1</span>
-      <p>예측 분산 \(P^- = 4\), 측정 분산 \(R = 1\), 예측 \(x^- = 20\), 측정 \(z = 22\)입니다. 갱신된 추정과 분산은?</p>
-    </div>
-    <p><i>풀이.</i> \(K = 4/5 = 0.8\), \(x = 20 + 0.8\times2 = 21.6\), \(P = 0.2\times4 = 0.8\). 측정이 예측보다 정확해 측정 쪽으로 많이 옮겼고, 분산은 둘 어느 것보다도 작아졌습니다(\(1/P = 1/4 + 1/1\)).</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>예측: \(x^- \), \(P^- = P + q\). 갱신: \(K = P^-/(P^- + R)\), \(x = x^- + K(z - x^-)\), \(P = (1 - K)P^-\).</li>
-        <li>\(K\)는 예측과 측정의 신뢰도 비. 갱신하면 분산은 늘 준다.</li>
-        <li>\(q\)가 너무 작으면 실제 변화를 못 따라간다. 궤도에는 확장 칼만 필터.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>칼만 필터는 예측(\(P^- = P + q\))과 갱신(\(K = P^-/(P^- + R)\), \(x = x^- + K(z - x^-)\), \(P = (1 - K)P^-\))을 되풀이한다. 이득 \(K\)는 예측과 측정의 신뢰도 비이며, 갱신하면 분산은 늘 줄어든다. 과정 잡음 \(q\)가 너무 작으면 실제 변화를 따라가지 못하고, 궤도에는 확장 칼만 필터를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(P^- = R\)이면 이득은? 갱신된 추정은 예측과 측정의 어디에 놓입니까?
-          <details><summary>답</summary><p>\(K = 0.5\), 정확히 가운데.</p></details>
+        <li>\(P^- = R\)이면 이득은 얼마인가? 갱신된 추정은 예측과 측정 사이 어디에 놓이는가?
+          <details><summary>답</summary><p>\(K = 0.5\)이므로 정확히 가운데에 놓인다.</p></details>
         </li>
-        <li>\(q = 0\)이고 처음 분산이 아주 크면 \(k\)번째 이득은 대략?
-          <details><summary>답</summary><p>\(1/k\). 필터가 누적 평균과 같아집니다.</p></details>
+        <li>\(q = 0\)이고 처음 분산이 아주 크면 \(k\)번째 이득은 대략 얼마인가?
+          <details><summary>답</summary><p>\(1/k\)이다. 필터가 누적 평균과 같아진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(q\)를 지나치게 크게(예: 10) 잡으면 어떻게 됩니까?
-          <details><summary>답</summary><p>이득이 거의 1이 되어 매 측정을 그대로 믿으므로, 추정이 측정 잡음만큼 흔들려 평균하는 이점을 잃습니다.</p></details>
+      <ol start="3">
+        <li>\(q\)를 지나치게 크게, 예컨대 10으로 잡으면 어떻게 되는가?
+          <details><summary>답</summary><p>이득이 거의 1이 되어 측정마다 그대로 믿으므로, 추정이 측정 잡음만큼 흔들려 평균하는 이점을 잃는다.</p></details>
         </li>
-        <li>필터가 내는 분산 \(P\)는 작은데 실제 오차가 그보다 훨씬 크다면, 무엇을 의심해야 합니까?
-          <details><summary>답</summary><p>모형이 틀렸거나 \(q\)(또는 \(R\))를 너무 작게 잡아 필터가 자신을 과신하는 것입니다(필터 발산). 측정과 예측의 차(혁신)가 \(\sqrt{P^- + R}\)보다 늘 크게 나오는지 확인합니다.</p></details>
+        <li>\(q = 0\)일 때 \(P^- = 1\), \(R = 1\)에서 시작해 측정 두 번을 받으면 분산은 얼마가 되는가?
+          <details><summary>답</summary><p>첫 갱신에서 \(1/P = 1 + 1 = 2\), 둘째에서 \(1/P = 3\)이므로 \(P = 1/3\)이다.</p></details>
         </li>
       </ol>
     </div>
