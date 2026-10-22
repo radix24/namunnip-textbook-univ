@@ -8,65 +8,63 @@
 <article class="card q-card" id="text-m13-model" data-kind="본문" data-std="기계13-01-01">
   <header class="card-head"><span class="no"></span><h2>진동 모델링: 질량, 스프링, 감쇠기로 기계를 나타내기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>진동을 일으키는 세 요소(관성, 복원력, 에너지 소산)를 질량·스프링·감쇠기로 나타낸다.</li>
-        <li>자유 물체도와 Newton 법칙으로 1자유도 운동 방정식 \(m\ddot x + c\dot x + kx = F(t)\)를 유도한다.</li>
-        <li>중력이 있을 때 정적 평형점을 기준으로 잡으면 중력이 사라지는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Newton 운동 법칙과 단진동(고등학교 물리), 동역학의 자유 물체도 (<a href="../me6/02-01.html">동역학 2단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자동차가 과속 방지턱을 넘으면 차체가 몇 번 출렁이다 멈춘다. 차체, 바퀴, 스프링, 쇼크 업소버, 타이어가 모두 얽힌 이 움직임을 계산하려면 어디서부터 시작해야 할까? 복잡한 기계를 몇 개의 단순한 요소로 줄여도 출렁임의 빠르기를 맞힐 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 자동차 1/4 모델. 바퀴 하나가 받치는 차체 질량 400 kg이 서스펜션 스프링 20 kN/m와 쇼크 업소버 1500 N·s/m 위에 얹혀 있다. 운동 방정식은 400ẍ + 1500ẋ + 20000x = F(t)이고, 고유진동수 1.13 Hz, 감쇠비 0.27, 정적 처짐 0.196 m이다">
+        <rect x="150" y="40" width="140" height="44" class="la"/><rect x="150" y="40" width="140" height="44" class="a"/>
+        <text x="220" y="67" text-anchor="middle" class="ta">m = 400 kg</text>
+        <path d="M185 84 V96 L175 101 L195 111 L175 121 L195 131 L175 141 L185 146 V160" class="k" fill="none" stroke-width="2"/>
+        <path d="M255 84 V110 M243 110 H267 M243 110 V136 M267 110 V136 M249 122 H261 M255 122 V160" class="k" fill="none" stroke-width="2"/>
+        <path d="M130 160 H310" class="k" stroke-width="3"/>
+        <path d="M130 160 l-8 8 M150 160 l-8 8 M170 160 l-8 8 M190 160 l-8 8 M210 160 l-8 8 M230 160 l-8 8 M250 160 l-8 8 M270 160 l-8 8 M290 160 l-8 8 M310 160 l-8 8" class="k"/>
+        <g class="s"><text x="120" y="126" text-anchor="end">k = 20 kN/m</text><text x="276" y="126">c = 1500 N·s/m</text></g>
+        <path d="M310 62 H340" class="d"/><path d="M335 56 L340 62 L335 68" class="d" fill="none"/><text x="346" y="58" class="td">x (정적 평형점에서)</text>
+        <g class="s"><text x="346" y="96">ω_n = 7.07 rad/s (1.13 Hz)</text><text x="346" y="114">ζ = 0.27</text><text x="346" y="132">δ_st = 0.196 m</text></g>
+      </svg>
+      <figcaption>그림 1. 차체를 질량 하나, 서스펜션을 스프링과 감쇠기 하나로 줄이면 출렁임의 빠르기(고유진동수)와 잦아드는 정도(감쇠비)를 식 하나로 얻는다(예제 1.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Newton 운동 법칙과 단진동(고등학교 물리), 동역학의 자유 물체도(<a href="../me6/02-01.html">동역학 2단원</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>세 요소</h3>
-    <p>진동은 위치 에너지(스프링)와 운동 에너지(질량)가 서로 주고받으며 생기고, 그 사이 에너지가 조금씩 빠져나가며(감쇠) 줄어듭니다. 실제 기계는 모든 부분이 질량과 탄성을 함께 가지지만, 관심 있는 운동만 남기고 단순화합니다.</p>
-    <p class="q-term"><b>질량</b> \(m\): 가속도에 저항하는 관성. 힘 \(m\ddot x\).</p>
-    <p class="q-term"><b>스프링</b> \(k\): 변위에 비례하는 복원력 \(kx\). 코일 스프링뿐 아니라 보, 축, 고무 받침의 탄성.</p>
-    <p class="q-term"><b>점성 감쇠기</b> \(c\): 속도에 비례하는 저항력 \(c\dot x\). 쇼크 업소버, 재료 내부 마찰, 공기 저항을 이것으로 근사.</p>
-    <p class="q-term"><b>자유도</b>: 계의 위치를 정하는 데 필요한 독립 좌표의 수. 질량 하나가 한 방향으로만 움직이면 1자유도.</p>
+    <p>진동은 스프링에 저장된 위치 에너지와 질량의 운동 에너지가 서로 주고받으며 생기고, 그 사이 에너지가 조금씩 빠져나가며 줄어든다. 실제 기계는 모든 부분이 질량과 탄성을 함께 가지지만, 관심 있는 운동만 남기고 이 세 요소로 단순화한다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p class="q-term">질량 \(m\)은 가속도에 저항하는 관성으로, 힘 \(m\ddot x\)를 만든다.</p>
+    <p class="q-term">스프링 \(k\)는 변위에 비례하는 복원력 \(kx\)를 낸다. 코일 스프링뿐 아니라 보, 축, 고무 받침의 탄성도 스프링으로 본다.</p>
+    <p class="q-term">점성 감쇠기 \(c\)는 속도에 비례하는 저항력 \(c\dot x\)를 낸다. 쇼크 업소버, 재료 내부 마찰, 공기 저항을 이것으로 근사한다.</p>
+    <p class="q-term">자유도는 계의 위치를 정하는 데 필요한 독립 좌표의 수이다. 질량 하나가 한 방향으로만 움직이면 1자유도이다.</p>
 
     <h3><span class="no">1.1.2</span>운동 방정식</h3>
-    <p>질량을 평형 위치에서 \(x\)만큼 움직이고 속도 \(\dot x\)로 움직인다고 하면, 스프링은 \(-kx\), 감쇠기는 \(-c\dot x\)의 힘을 질량에 줍니다. 외력 \(F(t)\)까지 Newton 제2법칙에 넣으면</p>
+    <p>질량이 평형 위치에서 \(x\)만큼 벗어나 속도 \(\dot x\)로 움직인다고 하자. 그러면 스프링은 \(-kx\), 감쇠기는 \(-c\dot x\)의 힘을 질량에 준다. 여기에 외력 \(F(t)\)까지 Newton 제2법칙에 넣으면 다음 식을 얻는다.</p>
     \[m\ddot x + c\dot x + kx = F(t)\]
-    <p>입니다. 세로로 매단 질량은 중력 \(mg\)도 받지만, 스프링이 이미 \(\delta_{st} = mg/k\)만큼 늘어나 중력과 균형을 이룬 정적 평형점에서 \(x\)를 재면, \(k(\delta_{st} + x) - mg = kx\)가 되어 중력이 식에서 사라집니다.</p>
+    <p>그런데 세로로 매단 질량은 중력 \(mg\)도 받는다. 하지만 스프링이 이미 \(\delta_{st} = mg/k\)만큼 늘어나 중력과 균형을 이룬 정적 평형점에서 \(x\)를 재면, \(k(\delta_{st} + x) - mg = kx\)가 되어 중력이 식에서 사라진다. 그래서 진동 문제에서는 늘 정적 평형점을 원점으로 잡는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1 <span class="nm">(자동차 1/4 모델)</span></span>
       <p>자동차 바퀴 하나가 받치는 차체 질량 400 kg, 서스펜션 스프링 20 kN/m, 쇼크 업소버 1500 N·s/m이다. 운동 방정식, 고유진동수, 감쇠비, 정적 처짐은?</p>
     </div>
-    <p><i>풀이.</i> \(400\ddot x + 1500\dot x + 20000x = F(t)\). \(\omega_n = \sqrt{k/m} = 7.07\) rad/s(1.13 Hz). 감쇠비 \(\zeta = c/(2\sqrt{km}) = 0.27\). 정적 처짐 \(mg/k = 0.196\) m. 승용차 차체의 고유진동수는 보통 1~1.5 Hz로, 사람이 걸을 때 몸이 흔들리는 진동수와 비슷해 편안하게 느껴집니다(2단원).</p>
+    <p><i>풀이.</i> 운동 방정식은 \(400\ddot x + 1500\dot x + 20000x = F(t)\)이다. 고유진동수는 \(\omega_n = \sqrt{k/m} = 7.07\) rad/s, 곧 1.13 Hz이고, 감쇠비는 \(\zeta = c/(2\sqrt{km}) = 0.27\)이다. 정적 처짐은 \(mg/k = 0.196\) m이다(그림 1).</p>
+    <p>즉 질량, 스프링, 감쇠기 하나씩으로도 출렁임의 빠르기와 잦아드는 정도를 얻으며, 처음 질문의 둘째 답이 이것이다. 실제로 승용차 차체의 고유진동수는 보통 1~1.5 Hz로, 사람이 걸을 때 몸이 흔들리는 진동수와 비슷해 편안하게 느껴진다(2단원).</p>
 
-    <div class="tb-note"><b>주의</b>(1) 모델이 단순할수록 계산은 쉽지만 놓치는 운동이 생깁니다. 바퀴의 진동까지 보려면 2자유도(5단원)가 필요합니다. (2) 실제 감쇠는 점성이 아닌 경우가 많아(마찰, 재료 내부) 등가 점성 감쇠로 근사합니다. (3) 질량과 강성은 1.2절처럼 실제 구조에서 "등가값"으로 구합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>세로 진동에서 중력을 따로 더해 \(m\ddot x + kx = mg\)로 두고 진동수를 바꾸는 실수가 흔하다. 중력은 평형 위치만 옮길 뿐 고유진동수를 바꾸지 않으므로, 정적 평형점에서 재면 식에서 사라진다. 또 1/4 모델은 타이어 강성과 바퀴 질량을 뺀 것이어서, 바퀴가 크게 튀는 높은 진동수 운동은 설명하지 못한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>질량(관성), 스프링(복원), 감쇠기(소산) → \(m\ddot x + c\dot x + kx = F(t)\).</li>
-        <li>정적 평형점에서 재면 중력은 식에서 사라진다.</li>
-        <li>\(\omega_n = \sqrt{k/m}\), \(\zeta = c/(2\sqrt{km})\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>질량(관성), 스프링(복원), 감쇠기(소산)로 운동 방정식 \(m\ddot x + c\dot x + kx = F(t)\)를 세운다. 정적 평형점에서 변위를 재면 중력은 식에서 사라진다. 고유진동수는 \(\omega_n = \sqrt{k/m}\), 감쇠비는 \(\zeta = c/(2\sqrt{km})\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제에서 승객 4명(300 kg, 바퀴 하나당 75 kg)이 타면 고유진동수는?
-          <details><summary>답</summary><p>\(\sqrt{20000/475}/(2\pi) = 1.03\) Hz.</p></details>
+          <details><summary>답</summary><p>\(\sqrt{20000/475}/(2\pi) = 1.03\) Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>정적 처짐 \(\delta_{st}\)만 알면 고유진동수를 구할 수 있음을 보이고, 예제 값으로 확인하여라.
-          <details><summary>답</summary><p>\(k/m = g/\delta_{st}\)이므로 \(\omega_n = \sqrt{g/\delta_{st}} = \sqrt{9.81/0.196} = 7.07\) rad/s.</p></details>
+          <details><summary>답</summary><p>\(k/m = g/\delta_{st}\)이므로 \(\omega_n = \sqrt{g/\delta_{st}} = \sqrt{9.81/0.196} = 7.07\) rad/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>길이 \(l\)인 단진자(작은 각)의 운동 방정식을 \(\theta\)로 세우고 1자유도 질량-스프링 꼴과 대응시켜라.
-          <details><summary>답</summary><p>\(ml^2\ddot\theta + mgl\theta = 0\). "질량" \(ml^2\)(관성 모멘트), "강성" \(mgl\), \(\omega_n = \sqrt{g/l}\).</p></details>
+          <details><summary>답</summary><p>\(ml^2\ddot\theta + mgl\theta = 0\)이다. "질량"은 \(ml^2\)(관성 모멘트), "강성"은 \(mgl\)이고 \(\omega_n = \sqrt{g/l}\)이다.</p></details>
         </li>
       </ol>
     </div>

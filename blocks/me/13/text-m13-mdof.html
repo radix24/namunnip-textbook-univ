@@ -8,58 +8,57 @@
 <article class="card q-card" id="text-m13-mdof" data-kind="본문" data-std="기계13-05-04">
   <header class="card-head"><span class="no"></span><h2>3자유도 이상의 고유진동수와 모드</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>질량-스프링 사슬의 질량·강성 행렬을 세운다.</li>
-        <li>특성 방정식(행렬 고유값 문제)을 풀어 3개 고유진동수와 모드 형상을 구한다.</li>
-        <li>건물 층 모델처럼 많은 자유도 계에서 낮은 모드가 중요한 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2자유도계 (<a href="05-01.html">5.1절</a>), 모드 좌표 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">3층 건물이 지진에 흔들릴 때 층마다 움직임이 다르다. 2자유도계에서 진동수 방정식을 풀었듯 3층 건물도 같은 방법으로 풀 수 있을까? 고유진동수는 몇 개이고, 각 모드에서 층들은 어떤 모양으로 움직일까? 수백 층, 수백만 자유도 구조물에서도 모든 모드를 다 구해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.4.1 3층 전단 건물(층 질량 10⁴ kg, 층 강성 10⁷ N/m)의 세 모드 형상(꼭대기 층을 1로 맞춤). 1차(2.24 Hz)는 0.445, 0.802, 1로 세 층이 같은 방향이고 위로 갈수록 크다. 2차(6.28 Hz)는 −1.247, −0.555, 1로 방향이 한 번 바뀌고, 3차(9.07 Hz)는 1.802, −2.247, 1로 두 번 바뀐다">
+        <path d="M100 160 H180 M240 160 H320 M380 160 H460" class="k" stroke-width="3"/>
+        <path d="M140 40 V160 M280 40 V160 M420 40 V160" class="k dsh"/>
+        <path d="M140 160 L153.4 120 L164.1 80 L170 40" class="a" stroke-width="2.5"/>
+        <path d="M280 160 L242.6 120 L263.4 80 L310 40" class="b" stroke-width="2.5"/>
+        <path d="M420 160 L474.1 120 L352.6 80 L450 40" class="c" stroke-width="2.5"/>
+        <g class="fa"><circle cx="153.4" cy="120" r="4"/><circle cx="164.1" cy="80" r="4"/><circle cx="170" cy="40" r="4"/></g>
+        <g class="fb"><circle cx="242.6" cy="120" r="4"/><circle cx="263.4" cy="80" r="4"/><circle cx="310" cy="40" r="4"/></g>
+        <g class="fc"><circle cx="474.1" cy="120" r="4"/><circle cx="352.6" cy="80" r="4"/><circle cx="450" cy="40" r="4"/></g>
+        <g text-anchor="middle"><text x="140" y="180" class="ta">1차 2.24 Hz</text><text x="280" y="180" class="tb">2차 6.28 Hz</text><text x="420" y="180" class="tc">3차 9.07 Hz</text></g>
+        <g class="s"><text x="40" y="124">1층</text><text x="40" y="84">2층</text><text x="40" y="44">3층</text></g>
+      </svg>
+      <figcaption>그림 1. 자유도가 n개이면 모드도 n개이고, 차수가 높을수록 층의 움직임이 방향을 더 자주 바꾸어 진동수가 높다(예제 5.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2자유도계(<a href="05-01.html">5.1절</a>), 모드 좌표(<a href="05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>사슬 모델</h3>
-    <p>질량 \(m\)이 같은 강성 \(k\) 스프링으로 줄지어 있고 한쪽 끝이 고정된 계(층마다 질량이 같은 건물)의 운동 방정식은 \(\mathbf M\ddot{\mathbf x} + \mathbf K\mathbf x = 0\)입니다. \(\mathbf x = \boldsymbol\phi\sin\omega t\)를 넣으면 고유값 문제가 됩니다.</p>
+    <p>질량 \(m\)이 같은 강성 \(k\) 스프링으로 줄지어 있고 한쪽 끝이 고정된 계는, 층마다 질량과 강성이 같은 건물의 모델이다. 운동 방정식은 \(\mathbf M\ddot{\mathbf x} + \mathbf K\mathbf x = 0\)이고, \(\mathbf x = \boldsymbol\phi\sin\omega t\)를 넣으면 2자유도와 같은 고유값 문제가 된다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">3자유도 고정-자유 사슬 (\(\lambda = \omega^2m/k\))</span>
       <p>\[\mathbf K = k\begin{bmatrix}2 &amp; -1 &amp; 0\\-1 &amp; 2 &amp; -1\\0 &amp; -1 &amp; 1\end{bmatrix},\qquad \det(\mathbf K - \omega^2m\mathbf I) = 0\]</p>
-      <p>\(\lambda^3 - 5\lambda^2 + 6\lambda - 1 = 0\) → \(\lambda = 0.198,\ 1.555,\ 3.247\).</p>
-      <p>1차 모드 \((0.445, 0.802, 1)\): 모두 같은 방향, 위로 갈수록 크게.</p>
+      <p>이 식은 \(\lambda^3 - 5\lambda^2 + 6\lambda - 1 = 0\)이 되어 \(\lambda = 0.198,\ 1.555,\ 3.247\)이다.</p>
+      <p>1차 모드는 \((0.445, 0.802, 1)\)로, 모두 같은 방향이고 위로 갈수록 크다.</p>
     </div>
-    <p>자유도가 많아지면 손으로 풀기 어렵고 수치 고유값 해법(QR, 부분 공간 반복)을 씁니다. 지진이나 바람 응답에서는 대개 낮은 몇 개 모드가 응답 대부분을 차지해, 모든 모드를 구할 필요는 없습니다.</p>
-
+    <p>즉 3자유도계에는 고유진동수와 모드가 세 개씩 있다. 차수가 올라갈수록 층의 움직임이 방향을 더 자주 바꾸는데, 2차는 한 번, 3차는 두 번 바꾼다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 자유도가 더 많아지면 손으로 풀기 어려워 QR법이나 부분 공간 반복 같은 수치 고유값 해법을 쓴다. 게다가 지진이나 바람 응답에서는 대개 낮은 몇 개 모드가 응답 대부분을 차지해, 모든 모드를 구할 필요는 없다. 처음 질문의 셋째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1 <span class="nm">(3층 건물)</span></span>
       <p>층 질량 \(10^4\) kg, 층 강성 \(10^7\) N/m인 3층 전단 건물 모델의 고유진동수는?</p>
     </div>
-    <p><i>풀이.</i> \(k/m = 1000\) s⁻². \(\omega = \sqrt{1000\lambda}\) = 14.1, 39.4, 57.0 rad/s → 2.24, 6.28, 9.07 Hz. 1차 모드는 세 층이 같은 방향으로 움직이고 꼭대기가 가장 크게 흔들립니다.</p>
+    <p><i>풀이.</i> \(k/m = 1000\) s⁻²이므로 \(\omega = \sqrt{1000\lambda}\) = 14.1, 39.4, 57.0 rad/s, 곧 2.24, 6.28, 9.07 Hz이다. 1차 모드는 세 층이 같은 방향으로 움직이고 꼭대기가 가장 크게 흔들린다.</p>
+    <p>그러므로 이 건물에서 지진 성분 가운데 2 Hz 근처가 가장 위험하고, 꼭대기 층의 흔들림을 먼저 살펴야 한다. 고층 건물일수록 1차 고유진동수가 낮아져 지진의 장주기 성분에 민감해진다.</p>
 
-    <div class="tb-note"><b>주의</b>전단 건물 모델은 바닥 슬래브가 강체이고 기둥만 휜다는 단순화입니다. 실제 건물은 전체 굽힘, 비틀림, 지반 유연성이 더해져 고유진동수가 낮아지므로 측정이나 FEM으로 확인합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>모드 형상을 구할 때 고유값을 아무 식에나 넣고 나머지 성분을 모두 그 식 하나로 정하는 실수가 흔하다. 3자유도에서는 한 식으로 두 성분의 비만 정해지므로, 이웃한 식을 차례로 써서 나머지를 정하고 마지막 식으로 검산한다. 또 모드 형상의 부호나 크기를 바꿔도 같은 모드이므로, 비교할 때는 같은 기준(꼭대기 층 1)으로 맞춘다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\det(\mathbf K - \omega^2\mathbf M) = 0\)으로 \(n\)개 고유진동수.</li>
-        <li>고정-자유 3사슬: \(\lambda = 0.198, 1.555, 3.247\).</li>
-        <li>응답은 낮은 모드가 지배.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(n\)자유도계는 \(\det(\mathbf K - \omega^2\mathbf M) = 0\)에서 고유진동수 \(n\)개를 얻는다. 고정-자유 3사슬은 \(\lambda = 0.198, 1.555, 3.247\)이다. 실제 응답은 낮은 몇 개 모드가 지배한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 건물의 층 강성을 두 배로 하면 1차 고유진동수는?
-          <details><summary>답</summary><p>\(\sqrt2\)배인 3.17 Hz.</p></details>
+          <details><summary>답</summary><p>\(\sqrt2\)배인 3.17 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>1차 모드 형상 \((0.445, 0.802, 1)\)이 \(\lambda = 0.198\)에서 첫 번째 식 \((2 - \lambda)\phi_1 - \phi_2 = 0\)을 만족함을 확인하여라.
-          <details><summary>답</summary><p>\(1.802\times0.445 = 0.802\). 성립한다.</p></details>
+          <details><summary>답</summary><p>\(1.802\times0.445 = 0.802\)이므로 성립한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
