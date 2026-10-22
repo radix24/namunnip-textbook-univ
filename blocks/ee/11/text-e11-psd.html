@@ -8,58 +8,56 @@
 <article class="card q-card" id="text-e11-psd" data-kind="본문" data-std="전전11-05-01">
   <header class="card-head"><span class="no"></span><h2>Wiener-Khinchin 정리와 전력 스펙트럼 밀도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>WSS 프로세스의 전력 스펙트럼 밀도(PSD)가 자기상관의 Fourier 변환임을 안다.</li>
-        <li>자기상관에서 PSD를, PSD에서 대역 전력을 계산한다.</li>
-        <li>PSD 넓이가 평균 전력 R(0)과 같음을 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>WSS와 자기상관 (<a href="04-02.html">4.2절</a>), Fourier 변환 (<a href="../6/04-01.html">전전6 4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">잡음 전압을 스펙트럼 분석기에 넣으면 주파수마다 높이가 다른 곡선이 나온다. 그런데 잡음은 잴 때마다 파형이 달라서, 파형 하나의 Fourier 변환은 매번 다르다. 그렇다면 분석기가 보여 주는 곡선은 무엇이며, 시간 영역의 어떤 양에서 나온 것일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="자기상관 e^(−a|τ|)인 무작위 전신 신호의 전력 스펙트럼 밀도 2a/(a² + ω²)(예제 5.1.1, a = 1). ω = 0에서 가장 높고 |ω| = a에서 절반으로 떨어지며, |ω| ≤ a 구간에 전체 전력의 절반이 들어 있다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="260" y1="40" x2="260" y2="170" class="ax"/>
+        <path d="M220 170 L220 110.0 L224 103.7 L228 96.8 L232 89.5 L236 81.8 L240 74.0 L244 66.6 L248 59.9 L252 54.6 L256 51.2 L260 50.0 L264 51.2 L268 54.6 L272 59.9 L276 66.6 L280 74.0 L284 81.8 L288 89.5 L292 96.8 L296 103.7 L300 110.0 L300 170 Z" class="la"/>
+        <path d="M60 165.4 L70 164.9 L80 164.4 L90 163.7 L100 162.9 L110 162.0 L120 160.9 L130 159.6 L140 158.0 L150 156.0 L160 153.4 L170 150.2 L180 146.0 L190 140.5 L200 133.1 L210 123.2 L220 110.0 L230 93.2 L240 74.0 L250 57.1 L260 50.0 L270 57.1 L280 74.0 L290 93.2 L300 110.0 L310 123.2 L320 133.1 L330 140.5 L340 146.0 L350 150.2 L360 153.4 L370 156.0 L380 158.0 L390 159.6 L400 160.9 L410 162.0 L420 162.9 L430 163.7 L440 164.4 L450 164.9 L460 165.4" class="a" stroke-width="2.5"/>
+        <path d="M300 110 H340" class="k dsh"/>
+        <g text-anchor="middle" class="s"><text x="220" y="186">−a</text><text x="260" y="186">0</text><text x="300" y="186">a</text><text x="460" y="186">ω</text></g>
+        <text x="266" y="44" class="ta">S = 2/a</text>
+        <text x="344" y="114" class="s">|ω| = a에서 절반</text>
+        <text x="236" y="150" class="ta">전력 50%</text>
+        <text x="350" y="70" class="s">넓이 = R(0) = 평균 전력</text>
+      </svg>
+      <figcaption>그림 1. 전력 스펙트럼 밀도는 자기상관의 Fourier 변환이어서 넓이가 평균 전력과 같고, 상관이 빨리 사라지는 신호일수록 스펙트럼이 넓게 퍼진다(예제 5.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>WSS와 자기상관(<a href="04-02.html">4.2절</a>), Fourier 변환(<a href="../6/04-01.html">전전6 4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>정리</h3>
-    <p>랜덤 신호는 표본마다 달라 신호 자체의 Fourier 변환은 의미가 없지만, 주파수별 평균 전력은 의미가 있습니다. Wiener-Khinchin 정리는</p>
+    <p>랜덤 신호는 표본마다 달라 신호 자체의 Fourier 변환은 의미가 없지만, 주파수별 평균 전력은 의미가 있다. Wiener-Khinchin 정리는 이 주파수별 전력, 곧 전력 스펙트럼 밀도(PSD)가 자기상관의 Fourier 변환이라고 말한다. 처음 질문의 답이 이것이다.</p>
     \[ S_X(f) = \int_{-\infty}^{\infty}R_X(\tau)e^{-j2\pi f\tau}d\tau, \qquad R_X(0) = \int_{-\infty}^{\infty}S_X(f)df = E[X^2]. \]
-    <p>S(f)는 양측(음의 주파수 포함) PSD이며, 실제 신호에서 짝함수이고 0 이상입니다. f₁~f₂ 대역의 전력은 \(2\int_{f_1}^{f_2}S(f)df\)(양·음 주파수 합).</p>
+    <p>여기서 \(S(f)\)는 음의 주파수까지 포함한 양측 PSD이며, 실제 신호에서는 짝함수이고 0 이상이다. 그래서 \(f_1\)~\(f_2\) 대역의 전력은 양·음 주파수를 합쳐 \(2\int_{f_1}^{f_2}S(f)df\)이다. 스펙트럼 분석기는 긴 기록의 \(|X(f)|^2/T\)를 평균해 이 값을 어림한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
       <p>(가) 무작위 위상 정현파 \(R = \frac{A^2}{2}\cos2\pi f_0\tau\)의 PSD. (나) \(R(\tau) = e^{-a|\tau|}\)(무작위 전신 신호, a = 2α)의 PSD와, |f| ≤ a/(2π) 대역에 든 전력의 비율.</p>
     </div>
-    <p><i>풀이.</i> (가) \(S(f) = \frac{A^2}{4}[\delta(f - f_0) + \delta(f + f_0)]\). 전력 \(A^2/2\)가 ±f₀에 반씩. (나) \(S(f) = \frac{2a}{a^2 + (2\pi f)^2}\). 넓이는 R(0) = 1. ω = 2πf로 바꿔 \(\frac{1}{2\pi}\int_{-a}^{a}\frac{2a}{a^2 + \omega^2}d\omega = \frac{1}{\pi}\cdot2\arctan1 = 0.5\). 전력의 절반이 |ω| ≤ a에 있습니다. 상관 시간이 짧을수록(a가 클수록) 스펙트럼이 넓습니다.</p>
+    <p><i>풀이.</i> (가) \(S(f) = \frac{A^2}{4}[\delta(f - f_0) + \delta(f + f_0)]\)이므로, 전력 \(A^2/2\)가 ±f₀에 반씩 놓인다. (나) \(S(f) = \frac{2a}{a^2 + (2\pi f)^2}\)이고 넓이는 R(0) = 1이다. ω = 2πf로 바꾸면 \(\frac{1}{2\pi}\int_{-a}^{a}\frac{2a}{a^2 + \omega^2}d\omega = \frac{1}{\pi}\cdot2\arctan1 = 0.5\)이다. 즉 전력의 절반이 |ω| ≤ a에 있다(그림 1). 상관 시간 1/a가 짧을수록 스펙트럼이 넓다.</p>
+    <p>이 반비례 관계는 Fourier 변환의 일반 성질에서 온다. 시간 영역에서 폭이 좁은 함수는 주파수 영역에서 넓게 퍼지므로, 빠르게 뒤집히는 전신 신호는 고주파 성분을 많이 품는다. 극단으로 상관이 τ = 0에서만 있는 \(R = \delta(\tau)\)는 모든 주파수에 고른 백색 스펙트럼이 된다(5.3절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "PSD는 신호의 Fourier 변환의 크기": 랜덤 신호는 자기상관의 변환입니다(긴 시간 평균한 |X(f)|²/T와는 같아짐). (2) 양측 PSD와 단측 PSD(양의 주파수만, 2배)를 섞는 실수: 잡음 표에서 \(N_0\)와 \(N_0/2\)를 확인하세요. (3) 시간이 짧게 닮을수록(좁은 R) 스펙트럼은 넓습니다. 반대가 아닙니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>PSD를 신호의 Fourier 변환의 크기로 여기기 쉽지만, 랜덤 신호의 PSD는 자기상관의 변환이다. 다만 긴 시간 평균한 \(|X(f)|^2/T\)와는 같아진다. 양측 PSD와, 양의 주파수만 쓰고 2배 한 단측 PSD를 섞는 실수도 흔하므로 잡음 표에서 \(N_0\)와 \(N_0/2\)를 확인한다. 또 시간이 짧게 닮을수록, 곧 R이 좁을수록 스펙트럼은 넓으며 그 반대가 아니다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(S_X(f) = \mathcal F\{R_X(\tau)\}\), 넓이 = R(0) = 평균 전력.</li>
-        <li>정현파 → 델타 한 쌍. \(e^{-a|\tau|}\) → \(2a/(a^2 + (2\pi f)^2)\).</li>
-        <li>좁은 상관 ↔ 넓은 스펙트럼. 양측·단측 PSD 구별.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>PSD는 자기상관의 Fourier 변환 \(S_X(f) = \mathcal F\{R_X(\tau)\}\)이고, 그 넓이가 R(0), 곧 평균 전력이다. 정현파는 델타 한 쌍, \(e^{-a|\tau|}\)는 \(2a/(a^2 + (2\pi f)^2)\)이 된다. 좁은 상관은 넓은 스펙트럼에 대응하며, 양측과 단측 PSD를 구별해야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>R(τ) = 4δ(τ)의 PSD는?
-          <details><summary>답</summary><p>S(f) = 4(모든 주파수에서 일정, 백색).</p></details>
+          <details><summary>답</summary><p>S(f) = 4로 모든 주파수에서 일정한 백색이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>R(τ) = e^{−1000|τ|}의 PSD가 f = 0의 절반이 되는 주파수는?
-          <details><summary>답</summary><p>\((2\pi f)^2 = 1000^2\), f ≈ 159 Hz.</p></details>
+          <details><summary>답</summary><p>\((2\pi f)^2 = 1000^2\)이므로 f ≈ 159 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>S(f) = 1(|f| ≤ B), 0(그 밖)인 프로세스의 자기상관과, 서로 무상관인 시간 간격은?
-          <details><summary>답</summary><p>\(R(\tau) = 2B\,\mathrm{sinc}(2B\tau) = \sin(2\pi B\tau)/(\pi\tau)\). τ = k/(2B)(k ≠ 0)에서 0. 나이퀴스트 간격의 표본이 무상관입니다.</p></details>
+          <details><summary>답</summary><p>\(R(\tau) = 2B\,\mathrm{sinc}(2B\tau) = \sin(2\pi B\tau)/(\pi\tau)\)이고, τ = k/(2B)(k ≠ 0)에서 0이다. 즉 나이퀴스트 간격의 표본이 서로 무상관이다.</p></details>
         </li>
       </ol>
     </div>

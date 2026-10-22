@@ -8,58 +8,56 @@
 <article class="card q-card" id="text-e11-lti" data-kind="본문" data-std="전전11-05-02">
   <header class="card-head"><span class="no"></span><h2>LTI 시스템을 지난 랜덤 신호</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>WSS 입력이 LTI 시스템을 지나면 출력도 WSS이고 평균이 \(\mu H(0)\)임을 안다.</li>
-        <li>출력 PSD \(S_Y(f) = |H(f)|^2S_X(f)\)로 출력 전력을 계산한다.</li>
-        <li>RC 저역 통과 필터가 백색 잡음을 거르는 양을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>PSD (<a href="05-01.html">5.1절</a>), 주파수 응답 (<a href="../6/04-03.html">전전6 4.3절</a>), RC 필터 (<a href="../3/08-02.html">전전3 8.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">증폭기 입력에 넓은 대역의 잡음이 섞여 들어오고, 그 뒤에 RC 저역 통과 필터를 달았다. 필터를 지난 잡음의 실효값은 몇 mV일까? 필터의 위상 특성도 잡음 전력에 영향을 줄까, 아니면 크기 응답만 따지면 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="양측 PSD N₀/2인 백색 잡음이 RC 저역 통과 필터를 지난 출력 PSD(예제 5.2.1). 입력은 모든 주파수에서 평평하고, 출력은 (N₀/2)/(1 + (f/f_c)²)로 f_c에서 절반이 된다. 출력 전력은 폭 ±(π/2)f_c인 직사각형의 넓이와 같다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="260" y1="40" x2="260" y2="170" class="ax"/>
+        <path d="M60 70 H460" class="k dsh"/>
+        <rect x="197.2" y="70" width="125.6" height="100" class="lb"/>
+        <path d="M197.2 170 V70 M322.8 70 V170" class="b dsh"/>
+        <path d="M60 166.2 L70 165.8 L80 165.3 L90 164.8 L100 164.1 L110 163.4 L120 162.5 L130 161.4 L140 160.0 L150 158.3 L160 156.2 L170 153.5 L180 150.0 L190 145.4 L200 139.2 L210 131.0 L220 120.0 L230 106.0 L240 90.0 L250 75.9 L260 70.0 L270 75.9 L280 90.0 L290 106.0 L300 120.0 L310 131.0 L320 139.2 L330 145.4 L340 150.0 L350 153.5 L360 156.2 L370 158.3 L380 160.0 L390 161.4 L400 162.5 L410 163.4 L420 164.1 L430 164.8 L440 165.3 L450 165.8 L460 166.2" class="a" stroke-width="2.5"/>
+        <g text-anchor="middle" class="s"><text x="220" y="186">−f_c</text><text x="260" y="186">0</text><text x="300" y="186">f_c</text><text x="460" y="186">f</text></g>
+        <text x="340" y="64" class="s">입력 백색 N₀/2</text>
+        <text x="330" y="118" class="ta">출력 |H|²N₀/2</text>
+        <text x="330" y="100" class="tb">같은 넓이 ±(π/2)f_c</text>
+      </svg>
+      <figcaption>그림 1. 필터는 입력 PSD에 크기 응답의 제곱을 곱할 뿐이어서, 백색 잡음이 RC 필터를 지나면 f_c 너머가 깎이고 출력 전력은 폭 πf_c인 평평한 띠의 넓이와 같아진다(예제 5.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>PSD(<a href="05-01.html">5.1절</a>), 주파수 응답(<a href="../6/04-03.html">전전6 4.3절</a>), RC 필터(<a href="../3/08-02.html">전전3 8.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>입출력 관계</h3>
-    <p>출력 \(Y(t) = \int h(s)X(t - s)ds\)의 평균은 \(\mu_Y = \mu_X\int h = \mu_XH(0)\)이고, 자기상관을 계산해 Fourier 변환하면</p>
+    <p>WSS 입력 \(X(t)\)가 임펄스 응답 \(h\)인 LTI 시스템을 지나면 출력 \(Y(t) = \int h(s)X(t - s)ds\)도 WSS이다. 이때 출력 평균은 \(\mu_Y = \mu_X\int h = \mu_XH(0)\)으로, 직류 이득만 곱해진다. 한편 출력의 자기상관을 계산해 Fourier 변환하면 다음 관계를 얻는다.</p>
     \[ S_Y(f) = |H(f)|^2S_X(f). \]
-    <p>위상은 전력에 영향이 없고 크기 응답의 제곱만 들어갑니다. 출력 전력은 \(\int|H(f)|^2S_X(f)df\).</p>
+    <p>즉 위상은 전력에 영향이 없고 크기 응답의 제곱만 들어가며, 처음 질문의 둘째 답이 이것이다. 출력 전력은 \(\int|H(f)|^2S_X(f)df\)이다. 위상은 서로 다른 주파수 성분이 언제 도착하는지만 바꾸고, 각 성분의 전력은 그대로 두기 때문이다.</p>
+    <p>필터는 스펙트럼의 모양뿐 아니라 시간 영역의 상관도 바꾼다. 백색 잡음은 아무리 가까운 두 시각도 무상관이지만, RC 필터를 지나면 출력 자기상관이 \(R_Y(\tau) = \frac{N_0}{4RC}e^{-|\tau|/RC}\)가 되어 시간 상수 RC 정도까지 값들이 서로 닮는다. 그래서 필터 출력은 입력보다 매끄럽게 보인다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
       <p>양측 PSD \(N_0/2\)인 백색 잡음을 RC 저역 통과 필터(\(|H|^2 = 1/(1 + (f/f_c)^2)\), \(f_c = 1/(2\pi RC)\))에 넣는다. 출력 전력은? \(N_0/2 = 5\times10^{-9}\) V²/Hz, \(f_c\) = 10 kHz이면 출력 잡음의 실효값은?</p>
     </div>
-    <p><i>풀이.</i> \(P = \frac{N_0}{2}\int\frac{df}{1 + (f/f_c)^2} = \frac{N_0}{2}\cdot\pi f_c = \frac{N_0}{4RC}\). 수치: \(5\times10^{-9} \times \pi \times 10^4 = 1.571\times10^{-4}\) V², 실효값 12.5 mV. 차단 주파수를 반으로 줄이면 전력도 반, 실효값은 \(1/\sqrt2\)배입니다.</p>
+    <p><i>풀이.</i> \(P = \frac{N_0}{2}\int\frac{df}{1 + (f/f_c)^2} = \frac{N_0}{2}\cdot\pi f_c = \frac{N_0}{4RC}\)이다. 수치를 넣으면 \(5\times10^{-9} \times \pi \times 10^4 = 1.571\times10^{-4}\) V²이고, 실효값은 12.5 mV이다(그림 1). 처음 질문의 첫째 답이 이것이다. 그래서 차단 주파수를 반으로 줄이면 전력도 반, 실효값은 \(1/\sqrt2\)배가 된다. 가우시안 잡음은 순간값이 대개 ±3σ 안에 있으므로, 오실로스코프에서는 이 잡음이 피크 사이 약 75 mV의 흔들림으로 보인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "\(S_Y = H(f)S_X(f)\)": 전력이므로 |H|²입니다. (2) "필터의 −3 dB 대역폭으로 잡음 전력을 계산하면 된다": 1차 RC는 −3 dB 대역보다 π/2배 넓은 잡음 등가 대역폭을 써야 정확합니다(5.3절). (3) 출력 평균은 직류 이득 H(0)만 곱해집니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(S_Y = H(f)S_X(f)\)로 쓰는 실수가 흔하지만, 전력이므로 \(|H|^2\)을 곱한다. 필터의 −3 dB 대역폭으로 잡음 전력을 계산하는 것도 부정확하다. 1차 RC는 −3 dB 대역보다 π/2배 넓은 잡음 등가 대역폭을 써야 정확하다(5.3절). 또 출력 평균에는 직류 이득 \(H(0)\)만 곱해진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>WSS 입력 → WSS 출력, \(\mu_Y = \mu_XH(0)\).</li>
-        <li>\(S_Y = |H|^2S_X\). 위상은 전력과 무관.</li>
-        <li>RC + 백색: 출력 전력 \(N_0/(4RC)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>WSS 입력이 LTI 시스템을 지나면 출력도 WSS이고, 평균은 \(\mu_Y = \mu_XH(0)\)이다. 출력 PSD는 \(S_Y = |H|^2S_X\)여서 위상은 전력과 무관하다. 백색 잡음이 RC 필터를 지나면 출력 전력은 \(N_0/(4RC)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>이득 10인 이상 증폭기(모든 주파수)에 PSD 1e−9 V²/Hz 백색 잡음을 넣으면 출력 PSD는?
-          <details><summary>답</summary><p>1e−7 V²/Hz(|H|² = 100).</p></details>
+          <details><summary>답</summary><p>|H|² = 100이므로 1e−7 V²/Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 RC를 두 배로 하면 출력 실효값은?
-          <details><summary>답</summary><p>\(1/\sqrt2\)배, 약 8.86 mV.</p></details>
+          <details><summary>답</summary><p>\(1/\sqrt2\)배인 약 8.86 mV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>평균 2 V, 공분산 무시할 수 있는 입력을 H(0) = 0인 고역 통과 필터에 넣으면 출력 평균은?
-          <details><summary>답</summary><p>0. 직류 성분이 걸러집니다(결합 축전기).</p></details>
+          <details><summary>답</summary><p>0이다. 결합 축전기처럼 직류 성분이 걸러진다.</p></details>
         </li>
       </ol>
     </div>

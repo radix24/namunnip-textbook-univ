@@ -8,56 +8,63 @@
 <article class="card q-card" id="text-e11-total" data-kind="본문" data-std="전전11-01-02">
   <header class="card-head"><span class="no"></span><h2>전확률 정리와 시스템 신뢰도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>전확률 정리로 경우를 나누어 확률을 계산한다.</li>
-        <li>독립 부품의 직렬·병렬 시스템 신뢰도를 계산한다.</li>
-        <li>여분(중복)이 신뢰도를 높이는 정도를 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>조건부 확률과 Bayes 정리 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">서버 한 대가 하루를 버틸 확률이 0.9라고 하자. 같은 서버 세 대를 줄줄이 이어 모두 동작해야 하는 시스템과, 셋 중 하나만 살아 있으면 되는 시스템은 얼마나 다를까? 부품을 늘리면 시스템은 언제 더 믿을 만해지고 언제 오히려 약해질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="신뢰도 0.9인 부품으로 만든 세 가지 시스템(예제 1.2.1). 세 개 직렬은 0.729, 세 개 병렬은 0.999, 두 개 직렬에 하나를 병렬로 둔 시스템은 0.981이다">
+        <rect x="20" y="70" width="40" height="28" class="la"/><rect x="20" y="70" width="40" height="28" class="a"/>
+        <rect x="76" y="70" width="40" height="28" class="la"/><rect x="76" y="70" width="40" height="28" class="a"/>
+        <rect x="132" y="70" width="40" height="28" class="la"/><rect x="132" y="70" width="40" height="28" class="a"/>
+        <path d="M10 84 H20 M60 84 H76 M116 84 H132 M172 84 H182" class="k"/>
+        <rect x="240" y="40" width="40" height="28" class="lb"/><rect x="240" y="40" width="40" height="28" class="b"/>
+        <rect x="240" y="80" width="40" height="28" class="lb"/><rect x="240" y="80" width="40" height="28" class="b"/>
+        <rect x="240" y="120" width="40" height="28" class="lb"/><rect x="240" y="120" width="40" height="28" class="b"/>
+        <path d="M215 94 H225 V54 H240 M225 94 H240 M225 94 V134 H240 M280 54 H295 V134 H280 M280 94 H305" class="k"/>
+        <rect x="380" y="56" width="40" height="28" class="lc"/><rect x="380" y="56" width="40" height="28" class="c"/>
+        <rect x="436" y="56" width="40" height="28" class="lc"/><rect x="436" y="56" width="40" height="28" class="c"/>
+        <rect x="408" y="104" width="40" height="28" class="lc"/><rect x="408" y="104" width="40" height="28" class="c"/>
+        <path d="M355 94 H365 V70 H380 M420 70 H436 M476 70 H491 V118 H448 M365 94 V118 H408 M491 94 H501" class="k"/>
+        <g text-anchor="middle" class="s"><text x="40" y="88">0.9</text><text x="96" y="88">0.9</text><text x="152" y="88">0.9</text><text x="260" y="58">0.9</text><text x="260" y="98">0.9</text><text x="260" y="138">0.9</text><text x="400" y="74">0.9</text><text x="456" y="74">0.9</text><text x="428" y="122">0.9</text></g>
+        <text x="96" y="130" text-anchor="middle" class="ta">직렬 0.729</text>
+        <text x="260" y="176" text-anchor="middle" class="tb">병렬 0.999</text>
+        <text x="428" y="166" text-anchor="middle" class="tc">섞음 0.981</text>
+      </svg>
+      <figcaption>그림 1. 모두 동작해야 하는 직렬은 부품이 늘수록 신뢰도가 곱으로 줄고, 하나만 동작하면 되는 병렬은 고장 확률이 곱으로 줄어서, 중요한 경로만 이중화해도 시스템 신뢰도가 크게 오른다(예제 1.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>조건부 확률과 Bayes 정리(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>나누어 더하기</h3>
-    <p>사건 B₁, …, B_n이 표본 공간을 겹치지 않게 나누면 \(P(A) = \sum P(A\mid B_i)P(B_i)\). 독립 부품의 신뢰도(동작 확률)가 p일 때, 직렬(모두 동작해야 함)은 \(p^n\), 병렬(하나만 동작하면 됨)은 \(1 - (1 - p)^n\)입니다.</p>
+    <p>사건 \(B_1, \dots, B_n\)이 표본 공간을 겹치지 않게 나누면 \(P(A) = \sum P(A\mid B_i)P(B_i)\)이다. 이것이 전확률 정리로, 복잡한 사건을 경우로 나눠 각각의 확률을 더하는 방법이다. 가령 부품을 여러 공장에서 들여올 때 전체 불량률은 공장별 불량률을 공장 비율로 가중해 더한 값이다.</p>
+    <p>시스템 신뢰도에도 같은 생각을 쓴다. 독립 부품의 신뢰도(동작 확률)가 \(p\)일 때, 모두 동작해야 하는 직렬은 \(p^n\)이다. 하나만 동작하면 되는 병렬은 모두 고장 날 확률을 뺀 \(1 - (1 - p)^n\)이다. 즉 직렬은 동작 확률을 곱하고, 병렬은 고장 확률을 곱한다. 처음 질문의 답이 이 두 식이다.</p>
+    <p>두 식은 부품 수가 늘 때 반대로 움직인다. 직렬에서는 \(p\)가 1보다 작은 한 \(p^n\)이 계속 줄어, 아주 믿을 만한 부품도 수백 개를 이으면 시스템이 약해진다. 병렬에서는 \((1 - p)^n\)이 빠르게 0으로 가서, 평범한 부품 몇 개로도 높은 신뢰도를 얻는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>신뢰도 0.9인 부품 3개의 직렬과 병렬 신뢰도는? 두 개를 직렬로 묶은 것과 하나를 병렬로 둔 시스템은?</p>
     </div>
-    <p><i>풀이.</i> 직렬 0.9³ = 0.729, 병렬 1 − 0.1³ = 0.999. (0.9 × 0.9)와 0.9의 병렬: 1 − (1 − 0.81)(1 − 0.1) = 0.981. 중요한 부분(전원, 통신 경로)을 이중화하는 이유입니다.</p>
+    <p><i>풀이.</i> 직렬은 0.9³ = 0.729이고 병렬은 1 − 0.1³ = 0.999이다. (0.9 × 0.9)와 0.9의 병렬은 1 − (1 − 0.81)(1 − 0.1) = 0.981이다(그림 1). 그래서 전원이나 통신 경로처럼 중요한 부분을 이중화한다.</p>
+    <p>섞인 시스템은 안쪽부터 묶어 계산한다. 직렬로 묶인 두 부품을 신뢰도 0.81인 부품 하나로 보고, 그것과 남은 0.9의 병렬을 구하면 된다. 복잡한 망도 이렇게 직렬과 병렬 묶음을 차례로 줄여 가면 대부분 풀 수 있다. 다리처럼 이 방법으로 줄지 않는 연결에서는, 가운데 부품이 동작하는 경우와 고장 난 경우로 나눠 전확률 정리를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "부품이 많을수록 믿을 만하다": 직렬이면 오히려 떨어집니다. (2) "병렬 여분은 서로 독립이라고 늘 가정해도 된다": 같은 원인(같은 전원)으로 함께 고장 나면 이득이 크게 줄어듭니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>부품이 많을수록 믿을 만하다고 여기기 쉽지만, 직렬이면 오히려 신뢰도가 떨어진다. 병렬 여분이 늘 서로 독립이라고 가정하는 것도 위험하다. 같은 전원처럼 공통 원인으로 함께 고장 나면 이중화의 이득이 크게 줄어든다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P(A) = ΣP(A|B_i)P(B_i).</li>
-        <li>직렬 pⁿ, 병렬 1 − (1 − p)ⁿ.</li>
-        <li>예: 0.9 셋 → 0.729, 0.999.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전확률 정리는 \(P(A) = \sum P(A\mid B_i)P(B_i)\)로, 경우를 나눠 더한다. 독립 부품의 직렬 신뢰도는 \(p^n\), 병렬 신뢰도는 \(1 - (1 - p)^n\)이다. 신뢰도 0.9인 부품 셋이면 직렬 0.729, 병렬 0.999이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>신뢰도 0.99 부품 100개 직렬의 신뢰도는?
-          <details><summary>답</summary><p>약 0.366.</p></details>
+          <details><summary>답</summary><p>약 0.366이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>공장 A(60%, 불량 2%), B(40%, 불량 5%)의 전체 불량률은?
-          <details><summary>답</summary><p>0.6×0.02 + 0.4×0.05 = 3.2%.</p></details>
+          <details><summary>답</summary><p>0.6×0.02 + 0.4×0.05 = 3.2%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>병렬 두 부품이 공통 원인으로 함께 고장 날 확률이 1%면 병렬 신뢰도의 상한은?
-          <details><summary>답</summary><p>약 0.99.</p></details>
+          <details><summary>답</summary><p>약 0.99이다.</p></details>
         </li>
       </ol>
     </div>

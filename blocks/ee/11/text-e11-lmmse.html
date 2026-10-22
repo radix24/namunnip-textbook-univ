@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e11-lmmse" data-kind="본문" data-std="전전11-06-03">
   <header class="card-head"><span class="no"></span><h2>최소 평균제곱 선형 추정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>관측 Y로 X를 \(\hat X = aY + b\)로 추정할 때 평균제곱오차를 최소화하는 a, b를 구한다.</li>
-        <li>직교 원리(오차와 관측이 무상관)를 안다.</li>
-        <li>잡음 섞인 측정에서 신호를 추정한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>공분산 (<a href="03-03.html">3.3절</a>), Wiener 필터 (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">온도 센서의 읽음 Y에는 잡음이 섞여 있고, 우리는 그것으로 실제 온도 X를 추정하려 한다. 추정을 aY + b 꼴의 직선으로 제한할 때 가장 좋은 a와 b는 무엇일까? 그 최적 추정의 오차에는 어떤 특별한 성질이 있어서, 그 성질만으로 답을 곧바로 얻을 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="직교 원리의 기하학적 그림(예제 6.3.1). 랜덤변수를 벡터로, E[XY]를 내적으로 보면 최적 추정 aY는 X를 Y 방향으로 정사영한 것이고, 오차 X − aY는 Y에 수직이다. Var X = 1, Var Y = 1.25, Cov = 1이면 a = 0.8, 오차 분산은 0.2이다">
+        <path d="M100 150 H340" class="b" stroke-width="2.5"/><path d="M332 145 L342 150 L332 155 Z" class="fb"/>
+        <path d="M100 150 L278.9 60.6" class="a" stroke-width="2.5"/><path d="M269.5 61.2 L278.9 60.6 L273.9 68.9 Z" class="fa"/>
+        <path d="M278.9 150 V60.6" class="d" stroke-width="2.5"/>
+        <path d="M100 150 H278.9" class="c" stroke-width="5" opacity="0.6"/>
+        <path d="M268.9 150 V140 H278.9" class="k"/>
+        <text x="350" y="154" class="tb">Y, |Y|² = Var Y = 1.25</text>
+        <text x="150" y="88" class="ta">X, Var X = 1</text>
+        <text x="190" y="170" class="tc">X̂ = aY, a = 0.8</text>
+        <text x="286" y="100" class="td">오차 X − X̂, 분산 0.2</text>
+        <text x="286" y="118" class="s">Y에 수직, E[(X − X̂)Y] = 0</text>
+      </svg>
+      <figcaption>그림 1. 랜덤변수를 벡터로, E[XY]를 내적으로 보면 최적 선형 추정은 X를 관측 Y 위로 내린 정사영이어서, 오차가 관측과 수직, 곧 무상관이 되고 그 길이가 가장 짧다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>공분산(<a href="03-03.html">3.3절</a>), Wiener 필터(<a href="06-02.html">6.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>직교 원리</h3>
-    <p>\(E[(X - aY - b)^2]\)를 a, b로 미분해 0으로 두면 \(a = \text{Cov}(X, Y)/\text{Var}Y\), \(b = E[X] - aE[Y]\). 최적일 때 오차 \(X - \hat X\)는 관측 Y와 무상관(직교)입니다. Wiener 필터는 이것을 신호 전체로 넓힌 것입니다.</p>
+    <p>평균 제곱 오차 \(E[(X - aY - b)^2]\)를 \(a\), \(b\)로 각각 미분해 0으로 두면 처음 질문의 첫째 답을 얻는다. 기울기는 \(a = \mathrm{Cov}(X, Y)/\mathrm{Var}Y\)이고, 절편은 \(b = E[X] - aE[Y]\)이다. 이것이 선형 최소 평균 제곱 오차(LMMSE) 추정이다.</p>
+    <p>이때 오차 \(X - \hat X\)는 관측 \(Y\)와 무상관, 곧 직교한다. 처음 질문의 둘째 답이 이것으로, 미분 대신 "오차는 관측과 직교한다"는 조건 하나만 세워도 같은 \(a\)가 나온다. 기하학적으로는 \(E[XY]\)를 내적으로 보고 \(X\)를 \(Y\) 위로 정사영한 것이며, 수선이 가장 짧은 거리이므로 오차가 최소이다(그림 1). 6.2절의 Wiener 필터는 이 원리를 신호 전체로 넓힌 것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>Y = X + N, X와 N은 독립, 평균 0, Var X = 1, Var N = 0.25. 최적 a와 최소 평균제곱오차는?</p>
     </div>
-    <p><i>풀이.</i> Cov(X, Y) = 1, Var Y = 1.25 → a = 0.8. 오차 분산 = Var X − a·Cov = 1 − 0.8 = 0.2. 측정값을 그대로 쓰면(a = 1) 오차 0.25인데, 신호와 잡음의 비에 맞춰 조금 줄여 쓰면 0.2로 작아집니다.</p>
+    <p><i>풀이.</i> Cov(X, Y) = 1, Var Y = 1.25이므로 a = 0.8이다. 오차 분산은 Var X − a·Cov = 1 − 0.8 = 0.2이다. 측정값을 그대로 쓰면(a = 1) 오차가 0.25인데, 신호와 잡음의 비에 맞춰 조금 줄여 쓰면 0.2로 작아진다.</p>
+    <p>오차 분산 0.2는 피타고라스 정리로도 읽을 수 있다. 그림 1의 직각 삼각형에서 빗변 \(X\)의 길이 제곱 1은 정사영 \(aY\)의 길이 제곱 \(0.8^2 \times 1.25 = 0.8\)과 오차의 길이 제곱의 합이다. 그러므로 오차의 길이 제곱은 1 − 0.8 = 0.2이다. 일반적으로는 최소 오차 분산이 \((1 - \rho^2)\mathrm{Var}X\)이며, 여기서 \(\rho^2 = 1/1.25 = 0.8\)이다(3.3절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "측정값을 그대로 쓰는 것이 최선": 잡음이 있으면 줄여(축소) 쓰는 것이 낫습니다. (2) "선형 추정이 언제나 최적": 가우시안일 때만 모든 추정 중 최적입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>측정값을 그대로 쓰는 것이 최선이라고 여기기 쉽지만, 잡음이 있으면 줄여 쓰는 축소 추정이 낫다. 선형 추정이 언제나 최적이라는 생각도 틀리다. 선형 추정은 직선 중에서만 최적이며, X와 Y가 결합 가우시안일 때만 모든 추정 가운데 최적이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>a = Cov(X, Y)/Var Y, b = E[X] − aE[Y].</li>
-        <li>오차 ⟂ 관측(직교 원리).</li>
-        <li>예: SNR 4 → a = 0.8, 오차 0.2.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>LMMSE 추정의 기울기는 \(a = \mathrm{Cov}(X, Y)/\mathrm{Var}Y\), 절편은 \(b = E[X] - aE[Y]\)이다. 최적일 때 오차는 관측과 직교하며, 기하학적으로는 정사영이다. 신호 대 잡음 비가 4이면 a = 0.8, 오차 분산은 0.2이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Var N = 0이면 a는?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>Var X = Var N = 1이면 a와 오차는?
-          <details><summary>답</summary><p>0.5, 0.5.</p></details>
+          <details><summary>답</summary><p>a = 0.5, 오차 분산 0.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>SNR이 매우 낮으면 추정은?
-          <details><summary>답</summary><p>a → 0으로 평균 E[X]에 가까워집니다.</p></details>
+          <details><summary>답</summary><p>a → 0이 되어 추정값이 평균 E[X]에 가까워진다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,27 +8,34 @@
 <article class="card q-card" id="text-e11-thermal" data-kind="본문" data-std="전전11-05-04">
   <header class="card-head"><span class="no"></span><h2>저항의 열잡음</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>저항의 열잡음 전압 \(v_{rms} = \sqrt{4kTRB}\)를 계산한다.</li>
-        <li>열잡음이 백색이고 가우시안임을 안다.</li>
-        <li>정합된 저항이 내놓는 잡음 전력 kTB를 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>백색 잡음과 잡음 등가 대역폭 (<a href="05-03.html">5.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">1 μV짜리 센서 신호를 증폭하려고 1 kΩ 입력 저항에 대역 1 MHz인 증폭기를 붙였다. 증폭기가 완벽해 잡음을 하나도 더하지 않는다면 깨끗한 신호를 얻을 수 있을까? 아무것도 연결하지 않은 저항 하나에서도 잡음이 나온다면, 그 크기는 얼마일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="290 K, 대역 1 MHz에서 저항의 열잡음 실효 전압(예제 5.4.1, 로그 눈금). 잡음 전압은 √R에 비례해 1 kΩ에서 4.0 μV, 1 MΩ에서 127 μV이며, 1 kΩ에서 이미 1 μV 신호보다 4배 크다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <path d="M60 137.5 H460" class="k dsh"/>
+        <path d="M60 150.4 L460 52.9" class="a" stroke-width="2.5"/>
+        <circle cx="193.3" cy="117.9" r="4" class="fd"/><circle cx="393.3" cy="69.2" r="4" class="fa"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">10 Ω</text><text x="193.3" y="186">1 kΩ</text><text x="393.3" y="186">1 MΩ</text><text x="460" y="186">R</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="141">1 μV</text><text x="54" y="109">10 μV</text><text x="54" y="76">100 μV</text></g>
+        <text x="200" y="110" class="td">4.0 μV</text>
+        <text x="310" y="62" class="ta">127 μV</text>
+        <text x="300" y="152" class="s">신호 1 μV</text>
+        <text x="90" y="56" class="s">v_rms = √(4kTRB), B = 1 MHz</text>
+      </svg>
+      <figcaption>그림 1. 저항 속 전자의 열운동만으로 √(4kTRB)의 잡음 전압이 생기므로, 1 kΩ과 1 MHz 대역에서는 증폭기가 완벽해도 4 μV의 잡음이 1 μV 신호를 덮는다(예제 5.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>백색 잡음과 잡음 등가 대역폭(<a href="05-03.html">5.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>4kTRB</h3>
-    <p>저항 속 전자의 열운동이 만드는 잡음 전압의 PSD는 4kTR(V²/Hz)로 주파수에 거의 무관합니다. 정합 부하에 전달되는 잡음 전력은 kTB로 저항값과 무관하며, 290 K에서 −174 dBm/Hz입니다.</p><pre><code>import math
+    <p>저항 속 전자는 온도에 따라 쉼 없이 무작위로 움직이고, 그 결과 단자 사이에 잡음 전압이 생긴다. 이 열잡음 전압의 단측 PSD는 \(4kTR\)(V²/Hz)로 주파수에 거의 무관하다. 그래서 대역 B에서 실효 전압은 \(\sqrt{4kTRB}\)이며, 처음 질문의 둘째 답이 이것이다.</p>
+    <p>한편 정합 부하에 전달되는 잡음 전력은 \(kTB\)로 저항값과 무관하며, 290 K에서 −174 dBm/Hz이다. 저항이 커지면 개방 전압은 \(\sqrt R\)로 커지지만, 내부 저항도 함께 커져 꺼낼 수 있는 전력은 같기 때문이다. 실제로 최대 전력 전달 조건에서 부하가 받는 전력은 \(v_{rms}^2/(4R) = 4kTRB/(4R) = kTB\)로, R이 약분되어 사라진다. 아래 계산이 몇 가지 경우를 비교한다.</p>
+<pre><code>import math
 k, T = 1.381e-23, 290
 for R, B in [(1e3, 1e6), (1e6, 1e6), (50, 20e3)]:
     v = math.sqrt(4 * k * T * R * B)
     print(f"R = {R:g} Ω, B = {B:g} Hz: v_rms = {v * 1e6:.3f} μV")
 print("kTB(1 Hz) =", round(10 * math.log10(k * T * 1 / 1e-3), 1), "dBm")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다(그림 1).</p>
 <pre><code>R = 1000 Ω, B = 1e+06 Hz: v_rms = 4.002 μV
 R = 1e+06 Ω, B = 1e+06 Hz: v_rms = 126.569 μV
 R = 50 Ω, B = 20000 Hz: v_rms = 0.127 μV
@@ -37,37 +44,31 @@ kTB(1 Hz) = -174.0 dBm</code></pre>
       <span class="lb">예제 5.4.1</span>
       <p>1 kΩ 저항, 대역 1 MHz의 열잡음 실효 전압은? 1 μV 신호를 증폭할 때 의미는?</p>
     </div>
-    <p><i>풀이.</i> √(4 × 1.381×10⁻²³ × 290 × 10³ × 10⁶) = 4.0 μV. 1 μV 신호보다 잡음이 4배 커서, 대역을 줄이거나 신호원 저항을 낮춰야 합니다.</p>
+    <p><i>풀이.</i> √(4 × 1.381×10⁻²³ × 290 × 10³ × 10⁶) = 4.0 μV이다. 즉 1 μV 신호보다 잡음이 4배 커서, 증폭기가 완벽해도 신호가 묻힌다. 처음 질문의 첫째 답이 이것이다. 그래서 대역을 신호에 필요한 만큼으로 줄이거나, 신호원 저항을 낮추거나, 소자를 냉각해야 한다. 가령 대역을 1 kHz로 줄이면 잡음은 √1000배 작은 0.13 μV가 된다.</p>
+    <p>잡음이 온도에 비례한다는 점도 실용적으로 중요하다. 전파 망원경이나 위성 수신기의 첫 증폭단을 액체 질소나 헬륨으로 냉각하는 것은 이 kT를 줄이기 위해서이다. 또 수신기의 잡음을 "잡음 온도"라는 등가 온도로 나타내는 관습도 kTB에서 나왔다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "잡음은 증폭기만 만든다": 저항 하나도 잡음원입니다. (2) "저항을 키우면 잡음 전력이 커진다": 전압은 √R로 커지지만 정합 전달 전력 kTB는 같습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>잡음은 증폭기만 만든다고 여기기 쉽지만, 저항 하나도 잡음원이다. 저항을 키우면 잡음 전력이 커진다는 생각도 틀리다. 전압은 √R로 커지지만, 정합 부하로 전달되는 전력 kTB는 같다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>v_rms = √(4kTRB).</li>
-        <li>정합 잡음 전력 kTB, −174 dBm/Hz(290 K).</li>
-        <li>예: 1 kΩ, 1 MHz → 4.0 μV.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>저항의 열잡음 실효 전압은 \(\sqrt{4kTRB}\)이다. 정합 부하로 가는 잡음 전력은 kTB로, 290 K에서 −174 dBm/Hz이다. 1 kΩ, 1 MHz이면 4.0 μV로, μV 수준 신호를 다룰 때는 대역과 신호원 저항부터 따져야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>R를 4배로 하면 잡음 전압은?
-          <details><summary>답</summary><p>2배.</p></details>
+          <details><summary>답</summary><p>2배가 된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>50 Ω, 20 kHz의 잡음 전압은?
-          <details><summary>답</summary><p>약 0.13 μV.</p></details>
+          <details><summary>답</summary><p>약 0.13 μV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>냉각해 T를 77 K로 하면 잡음 전력은?
-          <details><summary>답</summary><p>77/290 ≈ 0.27배.</p></details>
+          <details><summary>답</summary><p>77/290 ≈ 0.27배가 된다.</p></details>
         </li>
       </ol>
     </div>

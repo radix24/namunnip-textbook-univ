@@ -8,24 +8,28 @@
 <article class="card q-card" id="text-e11-dist" data-kind="본문" data-std="전전11-02-01">
   <header class="card-head"><span class="no"></span><h2>대표 분포의 평균과 분산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이산 분포(베르누이, 이항, 기하, 포아송)와 연속 분포(균일, 지수, 가우시안)의 평균과 분산을 안다.</li>
-        <li>공학 문제(비트 오류 개수, 도착 간격, 잡음)에 맞는 분포를 고른다.</li>
-        <li>평균과 분산의 성질 \(E[aX + b] = aE[X] + b\), \(\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)\)을 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Bayes 정리 (<a href="01-01.html">1.1절</a>), 고교 확률과 통계의 이항분포·정규분포, 적분(미적분).</li>
-      </ul>
-    </div>
+    <p class="q-ask">ADC는 연속인 전압을 간격 Δ의 계단으로 잘라 기록하므로, 매 샘플에 −Δ/2에서 Δ/2 사이의 오차가 생긴다. 이 오차는 평균적으로 얼마나 클까? 또 오류율 1000분의 1인 링크로 만 비트를 보내면 오류는 대략 몇 개이고, 그 개수는 얼마나 흔들릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="양자화 오차의 균일 분포(예제 2.1.1). 밀도는 −Δ/2에서 Δ/2까지 1/Δ로 일정하고, 평균은 0, 표준 편차(실효값)는 Δ/√12 ≈ 0.289Δ이다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="260" y1="40" x2="260" y2="170" class="ax"/>
+        <rect x="160" y="80" width="200" height="90" class="la"/>
+        <path d="M60 170 H160 V80 H360 V170 H460" class="a" stroke-width="2.5"/>
+        <path d="M202.3 120 H317.7" class="d" stroke-width="2"/><path d="M202.3 114 V126 M317.7 114 V126" class="d"/>
+        <g text-anchor="middle" class="s"><text x="160" y="186">−Δ/2</text><text x="260" y="186">0</text><text x="360" y="186">Δ/2</text><text x="460" y="186">오차 e</text></g>
+        <text x="370" y="84" class="ta">밀도 1/Δ</text>
+        <text x="260" y="142" text-anchor="middle" class="td">±σ, σ = Δ/√12 ≈ 0.289Δ</text>
+        <text x="380" y="120" class="s">평균 0, 분산 Δ²/12</text>
+      </svg>
+      <figcaption>그림 1. 양자화 오차가 한 간격 안에서 고르게 퍼져 있으면 평균은 0이지만 분산은 Δ²/12이므로, 평균만 보아서는 알 수 없는 오차의 크기를 분산과 표준 편차가 알려 준다(예제 2.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Bayes 정리(<a href="01-01.html">1.1절</a>), 고교 확률과 통계의 이항분포·정규분포, 적분(미적분)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>정의</h3>
-    <p class="q-term"><b>평균</b> \(E[X] = \sum x\,p(x)\) 또는 \(\int x f(x)dx\).</p>
-    <p class="q-term"><b>분산</b> \(\mathrm{Var}(X) = E[(X - \mu)^2] = E[X^2] - \mu^2\). 퍼진 정도. 표준편차는 그 제곱근.</p>
+    <p>랜덤변수의 평균은 값마다 그 확률을 가중치로 곱해 더한 것이다. 이산이면 \(E[X] = \sum x\,p(x)\), 연속이면 \(E[X] = \int x f(x)dx\)이다. 분산은 평균에서 얼마나 퍼져 있는지를 재며, \(\mathrm{Var}(X) = E[(X - \mu)^2] = E[X^2] - \mu^2\)이다. 그래서 분산의 제곱근인 표준 편차를 함께 쓰며, 표준 편차는 원래 양과 단위가 같다.</p>
+    <p>평균과 분산은 선형 변환에 대해 간단히 바뀐다. 즉 \(E[aX+b] = aE[X]+b\)이고, \(\mathrm{Var}(aX+b) = a^2\mathrm{Var}(X)\)이다. 다시 말해 상수를 더하면 분포가 옮겨 갈 뿐 퍼짐은 그대로이고, \(a\)배 하면 퍼짐이 \(|a|\)배가 된다.</p>
 
     <h3><span class="no">2.1.2</span>분포 표</h3>
+    <p>이제 전기전자에서 자주 만나는 분포는 몇 가지로 정리된다. 비트 오류는 베르누이와 이항으로, 패킷 도착은 Poisson과 지수로, 양자화 오차와 무작위 위상은 균일로, 열잡음은 가우시안으로 나타낸다.</p>
     <table class="tb-table">
       <tr><th>분포</th><th>쓰임</th><th>평균</th><th>분산</th></tr>
       <tr><td>베르누이(p)</td><td>비트 하나의 오류 여부</td><td>p</td><td>p(1 − p)</td></tr>
@@ -40,37 +44,30 @@
       <span class="lb">예제 2.1.1</span>
       <p>(가) 비트 오류율 \(10^{-3}\)인 링크로 10,000비트를 보낼 때 오류 개수의 평균과 표준편차, 포아송 근사로 오류가 하나도 없을 확률. (나) 양자화 간격 Δ인 ADC의 양자화 오차가 균일(−Δ/2, Δ/2)일 때 오차의 실효값.</p>
     </div>
-    <p><i>풀이.</i> (가) 평균 np = 10, 분산 \(10 \times 0.999 = 9.99\), 표준편차 약 3.16. n이 크고 p가 작으므로 포아송(λ = 10) 근사로 \(P(0) = e^{-10} \approx 4.5\times10^{-5}\). (나) 평균 0, 분산 \(\Delta^2/12\), 실효값 \(\Delta/\sqrt{12} \approx 0.289\Delta\). 이 값으로 ADC의 신호 대 양자화 잡음비 약 6.02N + 1.76 dB(N비트, 사인파 기준)가 나옵니다.</p>
+    <p><i>풀이.</i> (가) 평균은 np = 10, 분산은 \(10 \times 0.999 = 9.99\)이고, 표준 편차는 약 3.16이다. n이 크고 p가 작으므로 포아송(λ = 10) 근사로 \(P(0) = e^{-10} \approx 4.5\times10^{-5}\)이다. (나) 평균은 0, 분산은 \(\Delta^2/12\)이므로 실효값은 \(\Delta/\sqrt{12} \approx 0.289\Delta\)이다(그림 1). 이 값에서 ADC의 신호 대 양자화 잡음비 약 6.02N + 1.76 dB(N비트, 사인파 기준)가 나온다. 처음 질문의 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "분산의 단위는 원래 양과 같다": 제곱 단위입니다(V²). 같은 단위는 표준편차. (2) "평균이 같으면 같은 분포다": 이항(10000, 0.001)과 포아송(10)처럼 비슷한 경우도 있지만, 분산과 모양까지 봐야 합니다. (3) 기하 분포는 "첫 성공 전 실패 횟수(0부터)"로 정의하는 책도 있어 평균이 \((1-p)/p\)가 됩니다. 정의를 확인하세요.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>분산의 단위가 원래 양과 같다고 여기기 쉽지만, 분산은 V²처럼 제곱 단위이고 같은 단위는 표준 편차이다. 평균이 같으면 같은 분포라는 생각도 틀리다. 이항(10000, 0.001)과 포아송(10)처럼 비슷한 경우도 있지만, 분산과 모양까지 봐야 한다. 또 기하 분포를 "첫 성공 전 실패 횟수(0부터)"로 정의하는 책도 있어 그때는 평균이 \((1-p)/p\)가 되므로, 정의를 먼저 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>평균 = 가중 합, 분산 = \(E[X^2] - \mu^2\).</li>
-        <li>이항 np, np(1−p). 포아송 λ, λ. 균일 \((b-a)^2/12\). 지수 1/λ, 1/λ².</li>
-        <li>\(E[aX+b] = aE[X]+b\), \(\mathrm{Var}(aX+b) = a^2\mathrm{Var}(X)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평균은 확률로 가중한 합이고, 분산은 \(E[X^2] - \mu^2\)이다. 이항은 평균 np와 분산 np(1−p), 포아송은 둘 다 λ, 균일은 분산 \((b-a)^2/12\), 지수는 평균 1/λ과 분산 1/λ²이다. 선형 변환에서는 \(E[aX+b] = aE[X]+b\), \(\mathrm{Var}(aX+b) = a^2\mathrm{Var}(X)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>지수 분포(λ = 2 /s)의 평균과 표준편차는?
-          <details><summary>답</summary><p>0.5 s, 0.5 s.</p></details>
+          <details><summary>답</summary><p>평균 0.5 s, 표준 편차 0.5 s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>X가 균일(0, 1)일 때 Y = 3X − 1의 평균과 분산은?
-          <details><summary>답</summary><p>평균 0.5, 분산 9/12 = 0.75.</p></details>
+          <details><summary>답</summary><p>평균 0.5, 분산 9/12 = 0.75이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>패킷이 초당 평균 4개 포아송 도착한다. 1초에 하나도 안 올 확률과 두 패킷 사이 간격이 0.5초를 넘을 확률은?
-          <details><summary>답</summary><p>\(e^{-4} \approx 0.0183\), 간격은 지수(4)라 \(e^{-2} \approx 0.135\).</p></details>
+          <details><summary>답</summary><p>\(e^{-4} \approx 0.0183\)이다. 간격은 지수(4)를 따르므로 \(e^{-2} \approx 0.135\)이다.</p></details>
         </li>
       </ol>
     </div>

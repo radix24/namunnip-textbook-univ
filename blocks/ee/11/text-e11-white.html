@@ -8,63 +8,59 @@
 <article class="card q-card" id="text-e11-white" data-kind="본문" data-std="전전11-05-03">
   <header class="card-head"><span class="no"></span><h2>백색 잡음과 잡음 등가 대역폭</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>백색 잡음(일정한 PSD)과 그 자기상관(델타 함수)의 뜻을 안다.</li>
-        <li>열잡음 \(4kTRB\)의 크기를 계산한다.</li>
-        <li>필터의 잡음 등가 대역폭 \(B_N\)을 정의하고 RC 필터에서 \(B_N = 1/(4RC)\)를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>LTI 시스템과 PSD (<a href="05-02.html">5.2절</a>), 이 절의 예제는 5.2절 탐구 카드와 이어집니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">차단 주파수 10 kHz인 RC 필터 뒤에서 저항의 열잡음을 재려 한다. 대역폭을 10 kHz로 두고 \(\sqrt{4kTRB}\)에 넣으면 될까? RC 필터는 10 kHz에서 딱 끊기지 않고 완만하게 줄어드는데, 그 위로 새어 나오는 잡음은 어떻게 셈에 넣을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="1차 RC 저역 통과 필터의 |H|²와 잡음 등가 대역폭(예제 5.3.1). |H|²는 f_c에서 0.5로 떨어진 뒤 완만하게 줄고, 같은 백색 잡음 전력을 통과시키는 이상적인 사각 필터의 폭 B_N은 (π/2)f_c = 1.57f_c로 −3 dB 대역폭보다 넓다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <rect x="60" y="50" width="125.7" height="120" class="lb"/>
+        <path d="M185.7 50 V170" class="b dsh"/>
+        <path d="M140 110 V170 M60 110 H140" class="k dsh"/>
+        <path d="M60 50.0 L70 51.8 L80 57.1 L90 64.8 L100 74.0 L110 83.7 L120 93.2 L130 102.0 L140 110.0 L150 117.0 L160 123.2 L170 128.5 L180 133.1 L190 137.0 L200 140.5 L210 143.4 L220 146.0 L230 148.2 L240 150.2 L250 151.9 L260 153.4 L270 154.8 L280 156.0 L290 157.0 L300 158.0 L310 158.9 L320 159.6 L330 160.3 L340 160.9 L350 161.5 L360 162.0 L370 162.5 L380 162.9 L390 163.3 L400 163.7 L410 164.0 L420 164.4 L430 164.6 L440 164.9 L450 165.2 L460 165.4" class="a" stroke-width="2.5"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">0</text><text x="140" y="186">f_c</text><text x="186" y="186">1.57f_c</text><text x="460" y="186">f</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="54">1</text><text x="54" y="114">0.5</text></g>
+        <text x="194" y="64" class="tb">B_N = (π/2)f_c, 같은 넓이</text>
+        <text x="250" y="140" class="ta">|H(f)|² = 1/(1 + (f/f_c)²)</text>
+        <text x="146" y="104" class="s">−3 dB</text>
+      </svg>
+      <figcaption>그림 1. RC 필터는 차단 주파수 위에서도 잡음을 꽤 통과시키므로, 출력 잡음 전력과 넓이가 같은 사각 필터로 바꿔 보면 그 폭이 −3 dB 대역폭의 1.57배가 된다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>LTI 시스템과 PSD(<a href="05-02.html">5.2절</a>)를 쓰며, 이 절의 예제는 5.2절 탐구 카드와 이어진다.</div>
 
     <h3><span class="no">5.3.1</span>백색 잡음</h3>
-    <p class="q-term"><b>백색 잡음</b>: 모든 주파수에서 PSD가 같은 \(N_0/2\)(양측). 자기상관 \(R(\tau) = \frac{N_0}{2}\delta(\tau)\): 아무리 가까운 두 시각도 무상관.</p>
-    <p>전력이 무한대라 실제로는 존재하지 않지만, 관심 대역보다 훨씬 넓은 대역에서 평평한 잡음을 다루는 이상화입니다. 저항의 열잡음은 수 THz까지 거의 평평합니다(확인 필요).</p>
-    <p class="q-term"><b>열잡음</b>: 저항 R의 개방 전압 잡음 단측 PSD \(4kTR\) V²/Hz, 대역 B에서 실효값 \(\sqrt{4kTRB}\).</p>
-    <p>290 K, 1 kΩ, 1 MHz이면 \(\sqrt{4 \times 1.38\times10^{-23} \times 290 \times 10^3 \times 10^6} \approx 4.0\) μV. 정합된 부하에 전달되는 잡음 전력은 kTB(대역 1 Hz당 −174 dBm).</p>
+    <p>백색 잡음은 모든 주파수에서 PSD가 같은 \(N_0/2\)(양측)인 잡음이다. 그 자기상관은 \(R(\tau) = \frac{N_0}{2}\delta(\tau)\)이므로, 아무리 가까운 두 시각의 값도 서로 무상관이다. 물론 전력이 무한대라 실제로는 존재하지 않는다. 하지만 관심 대역보다 훨씬 넓은 대역에서 평평한 잡음을 다룰 때 아주 편리한 이상화이며, 저항의 열잡음은 수 THz까지 거의 평평하다(확인 필요).</p>
+    <p>열잡음은 저항 R의 개방 전압 잡음이 단측 PSD \(4kTR\) V²/Hz인 백색 잡음이다. 그래서 대역 B에서 실효값은 \(\sqrt{4kTRB}\)이다. 가령 290 K, 1 kΩ, 1 MHz이면 \(\sqrt{4 \times 1.38\times10^{-23} \times 290 \times 10^3 \times 10^6} \approx 4.0\) μV이다. 정합된 부하에 전달되는 잡음 전력은 kTB로, 대역 1 Hz당 −174 dBm이다.</p>
 
     <h3><span class="no">5.3.2</span>잡음 등가 대역폭</h3>
-    <p>필터의 잡음 등가 대역폭은 "같은 백색 잡음을 넣었을 때 같은 출력 전력을 내는 이상적인 사각 필터의 대역폭"입니다.</p>
+    <p>필터의 잡음 등가 대역폭은 같은 백색 잡음을 넣었을 때 같은 출력 전력을 내는 이상적인 사각 필터의 대역폭이다. 즉 \(|H|^2\) 곡선 아래 넓이를 최댓값 높이의 직사각형으로 바꾼 폭이다. 처음 질문의 답이 이 대역폭이다.</p>
     \[ B_N = \frac{1}{|H_{max}|^2}\int_0^\infty|H(f)|^2df. \]
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>RC 저역 통과(\(f_c\) = 10 kHz)의 \(B_N\)을 구하고 −3 dB 대역폭과 비교하라. 이 필터 뒤 1 kΩ 열잡음의 실효값은?</p>
     </div>
-    <p><i>풀이.</i> \(\int_0^\infty\frac{df}{1 + (f/f_c)^2} = \frac{\pi}{2}f_c\), \(B_N = 15.7\) kHz로 −3 dB 대역폭의 1.57배입니다. RC 필터의 감쇠가 완만해 차단 주파수 위의 잡음도 상당히 통과하기 때문입니다. 열잡음 실효값 \(\sqrt{4kTR \cdot B_N} = \sqrt{1.6\times10^{-17} \times 1.57\times10^4} \approx 0.50\) μV(290 K, 1 kΩ). 차수가 높은 필터일수록 \(B_N\)이 −3 dB 대역폭에 가까워집니다.</p>
+    <p><i>풀이.</i> \(\int_0^\infty\frac{df}{1 + (f/f_c)^2} = \frac{\pi}{2}f_c\)이므로 \(B_N = 15.7\) kHz로, −3 dB 대역폭의 1.57배이다(그림 1). RC 필터의 감쇠가 완만해 차단 주파수 위의 잡음도 상당히 통과하기 때문이다. 열잡음 실효값은 \(\sqrt{4kTR \cdot B_N} = \sqrt{1.6\times10^{-17} \times 1.57\times10^4} \approx 0.50\) μV이다(290 K, 1 kΩ). 차수가 높은 필터일수록 경사가 가팔라져 \(B_N\)이 −3 dB 대역폭에 가까워진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "백색 잡음은 가우시안이다": 백색은 스펙트럼, 가우시안은 진폭 분포에 관한 성질로 서로 다릅니다. 열잡음은 둘 다(백색 가우시안). (2) "저항을 키우면 잡음 전력이 커진다": 개방 전압은 커지지만 정합 부하로의 잡음 전력 kTB는 R과 무관합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>백색 잡음은 가우시안이라고 여기기 쉽지만, 백색은 스펙트럼에, 가우시안은 진폭 분포에 관한 성질로 서로 다르다. 열잡음은 둘 다를 갖춘 백색 가우시안 잡음이다. 저항을 키우면 잡음 전력이 커진다는 생각도 틀리다. 개방 전압은 커지지만, 정합 부하로 가는 잡음 전력 kTB는 R과 무관하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>백색: \(S = N_0/2\), \(R = (N_0/2)\delta(\tau)\).</li>
-        <li>열잡음 실효값 \(\sqrt{4kTRB}\). kTB = −174 dBm/Hz.</li>
-        <li>\(B_N = \int|H|^2df/|H_{max}|^2\). 1차 RC: \((\pi/2)f_c = 1/(4RC)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>백색 잡음은 PSD가 \(N_0/2\)로 평평하고 자기상관이 \((N_0/2)\delta(\tau)\)이다. 열잡음의 실효값은 \(\sqrt{4kTRB}\)이고, 정합 잡음 전력 kTB는 −174 dBm/Hz이다. 잡음 등가 대역폭은 \(B_N = \int|H|^2df/|H_{max}|^2\)이며, 1차 RC에서는 \((\pi/2)f_c = 1/(4RC)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>290 K, 50 Ω, 10 MHz 대역의 열잡음 실효 전압은?
-          <details><summary>답</summary><p>\(\sqrt{4 \times 1.38\times10^{-23} \times 290 \times 50 \times 10^7} \approx 2.83\) μV.</p></details>
+          <details><summary>답</summary><p>\(\sqrt{4 \times 1.38\times10^{-23} \times 290 \times 50 \times 10^7} \approx 2.83\) μV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>대역 1 MHz에서 kTB는 몇 dBm인가?
-          <details><summary>답</summary><p>−174 + 60 = −114 dBm.</p></details>
+          <details><summary>답</summary><p>−174 + 60 = −114 dBm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>이상적인 사각 대역 통과 필터의 \(B_N\)은? 2차 버터워스 저역 통과(\(|H|^2 = 1/(1 + (f/f_c)^4)\))는?
-          <details><summary>답</summary><p>사각은 대역폭 그대로. 2차 버터워스는 \(\int_0^\infty\frac{df}{1 + (f/f_c)^4} = \frac{\pi}{2\sqrt2}f_c \approx 1.11f_c\).</p></details>
+          <details><summary>답</summary><p>사각 필터는 대역폭 그대로이다. 2차 버터워스는 \(\int_0^\infty\frac{df}{1 + (f/f_c)^4} = \frac{\pi}{2\sqrt2}f_c \approx 1.11f_c\)이다.</p></details>
         </li>
       </ol>
     </div>
