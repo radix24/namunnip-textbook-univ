@@ -8,59 +8,53 @@
 <article class="card q-card" id="text-m19-dpid" data-kind="본문" data-std="기계19-05-01">
   <header class="card-head"><span class="no"></span><h2>엔코더 피드백과 이산 PID 구현</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>연속 PID를 차분식으로 바꿔 코드로 구현한다.</li>
-        <li>엔코더 카운트로 위치와 속도를 계산하고 그 한계를 안다.</li>
-        <li>적분 와인드업, 미분 잡음 같은 구현 문제를 처리한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>PID와 근궤적 (<a href="../me15/04-01.html">기계시스템제어 4.1절</a>), 엔코더 (<a href="02-01.html">2.1절</a>), 제어 루프 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">교과서의 PID는 적분과 미분이 들어간 연속 시간의 식이다. 그런데 마이크로컨트롤러는 1 ms마다 엔코더 숫자 하나를 읽을 뿐이다. 이 식을 코드 몇 줄로 어떻게 바꿀까? 그리고 식을 그대로 옮기기만 하면 실제 모터에서 어떤 문제가 생길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="엔코더 피드백 위치 제어 루프(개형). 목표 위치와 엔코더로 잰 위치의 차인 오차 e_k로 이산 PID가 u_k를 계산하고, 이를 PWM 듀티로 바꿔 H 브리지와 모터를 구동한다. 예제 5.1.1에서 2000카운트/회전 엔코더를 1 ms마다 읽으면 1카운트가 30 rpm에 해당한다">
+        <defs><marker id="ah-m19pd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <circle cx="90" cy="80" r="12" class="lk"/><circle cx="90" cy="80" r="12" class="k" fill="none"/>
+        <rect x="130" y="60" width="100" height="40" class="la"/><rect x="130" y="60" width="100" height="40" class="a" fill="none"/>
+        <rect x="270" y="60" width="90" height="40" class="lb"/><rect x="270" y="60" width="90" height="40" class="b" fill="none"/>
+        <rect x="400" y="60" width="80" height="40" class="lk"/><rect x="400" y="60" width="80" height="40" class="k" fill="none"/>
+        <rect x="270" y="130" width="90" height="36" class="lc"/><rect x="270" y="130" width="90" height="36" class="c" fill="none"/>
+        <g marker-end="url(#ah-m19pd)" class="k" stroke-width="2"><line x1="40" y1="80" x2="76" y2="80"/><line x1="102" y1="80" x2="128" y2="80"/><line x1="230" y1="80" x2="268" y2="80"/><line x1="360" y1="80" x2="398" y2="80"/><path d="M480 80 H510 V148 H362" fill="none"/><path d="M270 148 H90 V94" fill="none"/></g>
+        <g class="s" text-anchor="middle"><text x="180" y="85" class="ta">이산 PID</text><text x="315" y="85" class="tb">PWM, H 브리지</text><text x="440" y="85">모터</text><text x="315" y="153" class="tc">엔코더</text><text x="90" y="85">Σ</text></g>
+        <g class="s"><text x="30" y="70">목표</text><text x="104" y="60">e_k</text><text x="236" y="60">u_k</text><text x="370" y="186" class="td">1카운트/1 ms = 30 rpm</text></g>
+      </svg>
+      <figcaption>그림 1. 제어기는 주기마다 엔코더 카운트로 오차를 구해 합과 차분으로 PID 출력을 계산하고 PWM으로 내보내므로, 연속 시간의 적분과 미분이 덧셈과 뺄셈으로 바뀐다(예제 5.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>PID와 근궤적(<a href="../me15/04-01.html">기계시스템제어 4.1절</a>), 엔코더(<a href="02-01.html">2.1절</a>), 제어 루프(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>위치 제어 구성</h3>
-    <p>모터 축의 엔코더로 위치를 재고, 목표와의 차(오차)로 제어 입력(PWM 듀티)을 계산합니다. 모터의 전압-위치 전달함수는 \(\Theta/V = K/\{s(\tau_ms + 1)\}\)로, 적분기가 하나 있어 비례 제어만으로도 계단 목표에 정상 오차가 없습니다(1형 시스템). 미분 항이 감쇠를 주어 오버슈트를 줄입니다.</p>
+    <p>모터 축의 엔코더로 위치를 재고, 목표와의 차(오차)로 제어 입력인 PWM 듀티를 계산한다(그림 1). 모터의 전압-위치 전달함수는 \(\Theta/V = K/\{s(\tau_ms + 1)\}\)이다. 적분기가 하나 있는 1형 시스템이라, 비례 제어만으로도 계단 목표에 정상 오차가 없다. 그리고 미분 항이 감쇠를 주어 오버슈트를 줄인다.</p>
 
     <h3><span class="no">5.1.2</span>이산 PID</h3>
-    <p>주기 \(T\)마다 오차 \(e_k\)를 얻으면, 적분은 합으로, 미분은 차분으로 바꿉니다.</p>
+    <p>주기 T마다 오차 \(e_k\)를 얻으면, 적분은 합으로, 미분은 차분으로 바꾼다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">이산 PID (위치형)</span>
       <p>\[ u_k = K_pe_k + K_iT\sum_{j=0}^{k}e_j + K_d\frac{e_k - e_{k-1}}{T} \]</p>
     </div>
-    <p>코드로는 적분 합을 변수 하나에 누적하고, 이전 오차를 저장해 두면 됩니다. 실무 보완 세 가지:</p>
-    <ul>
-      <li><b>적분 와인드업 방지</b>: 출력이 ±100% 듀티에 막혀 있는 동안에도 적분이 계속 쌓이면, 목표에 이른 뒤 크게 넘칩니다. 출력이 포화되면 적분을 멈춥니다.</li>
-      <li><b>측정값 미분</b>: 목표가 계단으로 바뀌면 \(e_k - e_{k-1}\)이 순간 커져 출력이 튑니다. 오차 대신 측정값의 차분 \(-(y_k - y_{k-1})/T\)를 씁니다.</li>
-      <li><b>미분 필터</b>: 미분은 양자화 잡음을 키우므로 1차 저역 통과 필터를 거칩니다.</li>
-    </ul>
+    <p>코드로는 적분 합을 변수 하나에 누적하고, 이전 오차를 저장해 두면 된다. 그런데 식을 그대로 옮기면 실제 모터에서 세 가지 문제가 생긴다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>첫째는 적분 와인드업이다. 출력이 ±100% 듀티에 막혀 있는 동안에도 적분이 계속 쌓이면, 목표에 이른 뒤 크게 넘친다. 그래서 출력이 포화된 동안에는 적분이 더 쌓이지 않게 막는다. 둘째로 목표가 계단으로 바뀌면 \(e_k - e_{k-1}\)이 순간 커져 출력이 튄다. 이때는 오차 대신 측정값의 차분 \(-(y_k - y_{k-1})/T\)를 미분 항에 쓴다. 셋째로 미분은 양자화 잡음을 키우므로, 미분 항에 1차 저역 통과 필터를 건다(3.4절).</p>
 
     <h3><span class="no">5.1.3</span>엔코더로 속도 구하기</h3>
+    <p>미분 항이나 속도 루프에는 속도가 필요한데, 엔코더는 위치만 준다. 그러므로 한 주기 동안 늘어난 카운트로 속도를 구한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1 <span class="nm">(속도 분해능)</span></span>
       <p>2000카운트/회전 엔코더를 1 ms마다 읽는다. 한 주기에 3카운트 늘었다면 속도는? 속도 분해능은?</p>
     </div>
-    <p><i>풀이.</i> \(3/2000\) 회전/1 ms = 1.5 rev/s = 90 rpm. 1카운트 차이가 30 rpm이므로 저속에서는 값이 0, 30, 60 rpm으로 계단처럼 튑니다. 저속 정밀 제어에는 여러 주기의 카운트를 평균하거나(지연 증가), 펄스 사이 시간을 재는 방법, 더 높은 분해능 엔코더를 씁니다.</p>
+    <p><i>풀이.</i> \(3/2000\) 회전/1 ms = 1.5 rev/s = 90 rpm이다. 그런데 1카운트 차이가 30 rpm이므로, 저속에서는 값이 0, 30, 60 rpm으로 계단처럼 튄다. 따라서 저속 정밀 제어에는 여러 주기의 카운트를 평균하거나(지연 증가), 펄스 사이 시간을 재거나, 더 높은 분해능의 엔코더를 쓴다.</p>
 
-    <div class="tb-note"><b>주의</b>계산한 \(u_k\)를 PWM 듀티로 바꿀 때 전원 전압으로 나눠 비율로 만들고, 부호로 H 브리지 방향을 정합니다. 마찰 때문에 작은 듀티에서는 모터가 돌지 않는 불감대가 있어, 작은 오차가 남거나 진동(한계 순환)이 생길 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>계산한 \(u_k\)를 그대로 PWM 레지스터에 넣기 쉽다. \(u_k\)는 전원 전압으로 나눠 듀티 비율로 만들고, 부호로 H 브리지 방향을 정한다. 또 마찰 때문에 작은 듀티에서는 모터가 돌지 않는 불감대가 있어, 작은 오차가 남거나 한계 순환이라는 작은 진동이 생길 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(u_k = K_pe_k + K_iT\sum e + K_d\Delta e/T\).</li>
-        <li>와인드업 방지, 측정값 미분, 미분 필터.</li>
-        <li>엔코더 속도 분해능 = 1카운트/주기. 저속에서 거칠다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>이산 PID는 \(u_k = K_pe_k + K_iT\sum e + K_d\Delta e/T\)이다. 실제 구현에는 와인드업 방지, 측정값 미분, 미분 필터를 더한다. 엔코더 속도 분해능은 1카운트/주기라 저속에서 거칠다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(K_p\) = 2, \(K_i\) = 1, \(K_d\) = 0.05, \(T\) = 0.01 s. 오차가 0.5, 0.4(이전 0.5)로 이어졌고 이전까지 적분 합 \(\sum e\)가 0.5였다. 두 번째 시점의 \(u\)는?
-          <details><summary>답</summary><p>적분 합 0.9: \(u = 0.8 + 1\times0.01\times0.9 + 0.05\times(-0.1)/0.01 = 0.8 + 0.009 - 0.5 = 0.309\).</p></details>
+          <details><summary>답</summary><p>적분 합이 0.9이므로 \(u = 0.8 + 1\times0.01\times0.9 + 0.05\times(-0.1)/0.01 = 0.8 + 0.009 - 0.5 = 0.309\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>

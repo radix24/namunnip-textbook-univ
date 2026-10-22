@@ -8,59 +8,54 @@
 <article class="card q-card" id="text-m19-profile" data-kind="본문" data-std="기계19-05-03">
   <header class="card-head"><span class="no"></span><h2>사다리꼴 속도 프로파일 만들기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>목표 위치를 계단 대신 매끄러운 궤적으로 주는 이유를 안다.</li>
-        <li>최대 속도와 가속도로 사다리꼴 프로파일의 구간 시간을 계산한다.</li>
-        <li>짧은 이동에서 삼각형 프로파일이 되는 조건을 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>이산 PID (<a href="05-01.html">5.1절</a>), 등가속도 운동(고등학교 물리).</li>
-      </ul>
-    </div>
+    <p class="q-ask">위치 제어기에 "200 mm 앞으로"를 한 번에 목표로 주면, 모터가 덜컹 튀어 나가며 기계가 흔들리고 목표를 지나쳤다가 돌아온다. 같은 거리를 부드럽고 정확하게 가게 하려면 목표를 어떻게 주어야 할까? 짧은 거리를 갈 때는 무엇이 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 사다리꼴 속도 프로파일(개형). 최대 속도 100 mm/s, 가속도 500 mm/s²로 200 mm를 가면 0.2 s 가속, 1.8 s 등속, 0.2 s 감속으로 전체 2.2 s이다. 15 mm만 가면 최고 속도에 못 미치는 삼각형이 되어 최고 86.6 mm/s, 0.35 s가 걸린다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 170 L120 50 H400 L440 170" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 170 L101 106 L122 170" class="b" fill="none" stroke-width="2.5"/>
+        <g text-anchor="middle" class="s"><text x="120" y="186">0.2</text><text x="400" y="186">2.0</text><text x="440" y="186">2.2 s</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">100 mm/s</text></g>
+        <g class="s"><text x="200" y="44" class="ta">200 mm, 등속 1.8 s</text><text x="130" y="110" class="tb">15 mm, 삼각형 86.6 mm/s, 0.35 s</text><text x="250" y="130">넓이 = 이동 거리</text></g>
+      </svg>
+      <figcaption>그림 1. 속도를 일정한 가속도로 올렸다가 최고 속도로 달리고 다시 내리면 기계에 무리가 없고, 속도 그래프 아래 넓이가 이동 거리이므로 짧은 이동은 최고 속도에 닿기 전에 감속하는 삼각형이 된다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이산 PID(<a href="05-01.html">5.1절</a>), 등가속도 운동(고등학교 물리)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>왜 프로파일인가</h3>
-    <p>위치 제어기에 목표를 계단으로 주면 처음 순간 오차가 커서 출력이 포화되고, 적분이 쌓여 넘치며, 기계에 큰 충격이 갑니다. 그래서 정해진 최대 속도 \(v_{\max}\)와 가속도 \(a\)를 넘지 않는 기준 궤적을 매 주기 계산해 목표로 줍니다. 제어기는 작은 오차만 따라가면 되어 정확하고 부드럽습니다.</p>
+    <p>위치 제어기에 목표를 계단으로 주면, 처음 순간 오차가 커서 출력이 포화되고 적분이 쌓여 넘치며 기계에 큰 충격이 간다. 그래서 정해진 최대 속도 \(v_{\max}\)와 가속도 a를 넘지 않는 기준 궤적을 매 주기 계산해 목표로 준다. 그러면 제어기는 작은 오차만 따라가면 되어 정확하고 부드럽다. 처음 질문의 첫째 답이 이것이다.</p>
 
     <h3><span class="no">5.3.2</span>사다리꼴 프로파일</h3>
     <div class="tb-env thm">
-      <span class="lb">사다리꼴 속도 프로파일 (거리 \(D\))</span>
-      <p>가속 시간 \(t_a = v_{\max}/a\), 가속 거리 \(d_a = \frac12at_a^2\).</p>
-      <p>\(D \ge 2d_a\)이면 등속 시간 \(t_c = (D - 2d_a)/v_{\max}\), 전체 \(T = 2t_a + t_c\).</p>
-      <p>\(D &lt; 2d_a\)이면 최고 속도에 못 미치는 삼각형: \(v_p = \sqrt{aD}\), \(T = 2\sqrt{D/a}\).</p>
+      <span class="lb">사다리꼴 속도 프로파일 (거리 D)</span>
+      <p>가속 시간은 \(t_a = v_{\max}/a\), 가속 거리는 \(d_a = \frac12at_a^2\)이다.</p>
+      <p>\(D \ge 2d_a\)이면 등속 시간은 \(t_c = (D - 2d_a)/v_{\max}\), 전체 시간은 \(T = 2t_a + t_c\)이다.</p>
+      <p>\(D &lt; 2d_a\)이면 최고 속도에 못 미치는 삼각형이 되어 \(v_p = \sqrt{aD}\), \(T = 2\sqrt{D/a}\)이다.</p>
     </div>
-
+    <p>속도 그래프 아래의 넓이가 이동 거리이므로, 가속과 감속에 쓰는 거리 \(2d_a\)보다 짧은 이동은 등속 구간이 없다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1 <span class="nm">(200 mm 이동)</span></span>
-      <p>\(v_{\max}\) = 100 mm/s, \(a\) = 500 mm/s²로 200 mm를 움직인다. 구간 시간은? 15 mm만 움직이면?</p>
+      <p>\(v_{\max}\) = 100 mm/s, a = 500 mm/s²로 200 mm를 움직인다. 구간 시간은? 15 mm만 움직이면?</p>
     </div>
-    <p><i>풀이.</i> \(t_a = 0.2\) s, \(d_a = 10\) mm. 200 mm: 등속 \((200 - 20)/100 = 1.8\) s, 전체 2.2 s. 15 mm는 \(2d_a = 20\) mm보다 짧아 삼각형: \(v_p = \sqrt{500\times15} = 86.6\) mm/s, \(T = 2\sqrt{15/500} = 0.35\) s.</p>
+    <p><i>풀이.</i> \(t_a = 0.2\) s, \(d_a = 10\) mm이다. 200 mm에서는 등속이 \((200 - 20)/100 = 1.8\) s이므로 전체 2.2 s이다. 한편 15 mm는 \(2d_a\) = 20 mm보다 짧아 삼각형이 된다. 따라서 \(v_p = \sqrt{500\times15} = 86.6\) mm/s, \(T = 2\sqrt{15/500} = 0.35\) s이다.</p>
+    <p>실제 제어기는 이 프로파일을 매 주기 시간의 함수로 계산해 위치 목표로 준다. 그리고 속도 목표를 함께 피드포워드로 더하면, 피드백은 남은 작은 오차만 맡게 되어 추종이 더 정확해진다.</p>
 
-    <div class="tb-note"><b>주의</b>사다리꼴은 가속도가 계단처럼 바뀌어 저크가 무한대입니다. 진동에 민감한 기계(반도체 장비, 긴 팔 로봇)는 가속도까지 매끄러운 S자 곡선 프로파일을 씁니다(캠 설계의 기본 법칙과 같은 생각, <a href="../me17/04-01.html">메카니즘설계 4.1절</a>).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>사다리꼴 프로파일이면 진동이 전혀 없다고 여기기 쉽다. 사다리꼴은 가속도가 계단처럼 바뀌어 저크(가속도의 변화율)가 무한대이다. 그래서 반도체 장비나 긴 팔 로봇처럼 진동에 민감한 기계는 가속도까지 매끄러운 S자 곡선 프로파일을 쓴다. 이것은 캠 설계의 기본 법칙과 같은 생각이다(<a href="../me17/04-01.html">메카니즘설계 4.1절</a>).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>계단 목표 대신 속도·가속도 제한 궤적.</li>
-        <li>\(t_a = v/a\), \(d_a = at_a^2/2\), \(t_c = (D - 2d_a)/v\).</li>
-        <li>짧은 이동: 삼각형 \(T = 2\sqrt{D/a}\). 진동 민감하면 S자.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>계단 목표 대신 속도와 가속도를 제한한 궤적을 준다. 사다리꼴은 \(t_a = v/a\), \(d_a = at_a^2/2\), \(t_c = (D - 2d_a)/v\)로 계산한다. 짧은 이동은 삼각형 \(T = 2\sqrt{D/a}\)이 되고, 진동에 민감하면 S자 곡선을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 조건에서 사다리꼴이 되는 최소 이동 거리는?
-          <details><summary>답</summary><p>\(2d_a = 20\) mm.</p></details>
+          <details><summary>답</summary><p>\(2d_a = 20\) mm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 200 mm 이동을 가속도 2000 mm/s²로 하면 전체 시간은?
-          <details><summary>답</summary><p>\(t_a = 0.05\) s, \(d_a = 2.5\) mm, 등속 1.95 s, 전체 2.05 s. 가속도를 4배로 해도 7%만 빨라진다(긴 이동은 최고 속도가 지배).</p></details>
+          <details><summary>답</summary><p>\(t_a = 0.05\) s, \(d_a = 2.5\) mm, 등속 1.95 s로 전체 2.05 s이다. 가속도를 4배로 해도 7%만 빨라진다(긴 이동은 최고 속도가 지배).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

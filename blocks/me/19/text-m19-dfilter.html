@@ -8,66 +8,64 @@
 <article class="card q-card" id="text-m19-dfilter" data-kind="본문" data-std="기계19-03-04">
   <header class="card-head"><span class="no"></span><h2>디지털 필터: 이동 평균과 1차 IIR</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이동 평균 필터로 잡음을 줄이고 그 지연을 안다.</li>
-        <li>1차 IIR(지수 평활) 필터를 RC 필터와 연결해 계수를 정한다.</li>
-        <li>필터 선택이 제어 지연에 주는 영향을 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>RC 필터 (<a href="01-03.html">1.3절</a>), A/D 변환과 표본화 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">A/D로 읽은 센서 값이 끝자리에서 계속 떨린다. 아날로그 RC 필터를 다시 달지 않고, 프로그램 몇 줄로 이 떨림을 줄일 수 있을까? 그렇게 다듬은 값을 제어에 쓰면 아무 문제가 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1 1차 IIR 필터의 계단 응답(개형). 1 kHz로 읽는 센서에 차단 10 Hz 필터를 쓰면 계수 a = 0.939이고, 계단 입력에 출력이 1 − a^k로 올라 약 16표본(16 ms) 뒤 63%에 이른다. 잡음은 줄지만 출력이 늦어진다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 170 H110 V50 H440" class="k dsh" fill="none"/>
+        <path d="M110 170 C150 110, 190 80, 250 64 S360 52, 440 51" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 94 H160 V170" class="d dsh"/>
+        <circle cx="160" cy="94" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="110" y="186">0</text><text x="160" y="186">16표본</text><text x="420" y="186">표본 k</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">1</text><text x="74" y="98">0.63</text></g>
+        <text x="170" y="90" class="td">16 ms</text><text x="260" y="90" class="ta">y = 0.939y + 0.061x</text><text x="260" y="40" class="s">입력(계단)</text>
+      </svg>
+      <figcaption>그림 1. 지난 출력에 새 입력을 조금씩 섞으면 빠른 떨림은 평균되어 사라지지만 갑작스러운 변화도 천천히 따라가므로, 다듬는 정도와 늦어지는 정도는 함께 커진다(예제 3.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>RC 필터(<a href="01-03.html">1.3절</a>), A/D 변환과 표본화(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>이동 평균</h3>
-    <p>최근 \(N\)개 표본의 평균 \(y_k = \frac1N\sum_{i=0}^{N-1}x_{k-i}\)를 출력합니다. 서로 독립인 잡음은 표준편차가 \(1/\sqrt N\)로 줄어듭니다. 대신 출력이 평균 \((N - 1)/2\) 표본만큼 늦습니다. 계산이 간단해 센서 값 다듬기에 가장 많이 씁니다.</p>
+    <p>이동 평균 필터는 최근 N개 표본의 평균 \(y_k = \frac1N\sum_{i=0}^{N-1}x_{k-i}\)를 출력한다. 서로 독립인 잡음은 표준편차가 \(1/\sqrt N\)로 줄어든다. 대신 출력이 평균 \((N - 1)/2\) 표본만큼 늦다. 계산이 간단해 센서 값 다듬기에 가장 많이 쓴다. 처음 질문의 첫째 답의 하나가 이것이다.</p>
 
     <h3><span class="no">3.4.2</span>1차 IIR 필터</h3>
-    <p>RC 필터를 표본화 주기 \(T\)로 이산화하면 지난 출력과 새 입력을 섞는 식이 됩니다.</p>
+    <p>RC 필터를 표본화 주기 T로 이산화하면, 지난 출력과 새 입력을 섞는 식이 된다. 이동 평균과 달리 지난 표본을 모두 저장할 필요가 없다.</p>
     <div class="tb-env thm">
       <span class="lb">1차 IIR(지수 평활) 필터</span>
       <p>\[y_k = a\,y_{k-1} + (1 - a)x_k\]</p>
       <p>\[a = e^{-T/\tau}, \quad \tau = \frac1{2\pi f_c}\]</p>
-      <p>\(a\)가 1에 가까울수록 더 많이 다듬고 더 늦다. 메모리는 변수 하나뿐.</p>
+      <p>a가 1에 가까울수록 더 많이 다듬고 더 늦다. 메모리는 변수 하나뿐이다.</p>
     </div>
-
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1 <span class="nm">(차단 10 Hz)</span></span>
-      <p>1 kHz로 읽는 센서에 차단 주파수 10 Hz인 1차 IIR 필터를 쓰려 한다. 계수 \(a\)는? 계단 입력에 63%까지 오르는 데 몇 표본이 걸리는가?</p>
+      <p>1 kHz로 읽는 센서에 차단 주파수 10 Hz인 1차 IIR 필터를 쓰려 한다. 계수 a는? 계단 입력에 63%까지 오르는 데 몇 표본이 걸리는가?</p>
     </div>
-    <p><i>풀이.</i> \(\tau = 1/(2\pi\times10) = 15.9\) ms, \(a = e^{-1/15.9} = 0.939\). 63% 도달은 시정수 \(\tau\), 곧 약 16표본(16 ms) 뒤입니다. 코드로는 <span class="mono">y = 0.939*y + 0.061*x</span> 한 줄입니다.</p>
+    <p><i>풀이.</i> \(\tau = 1/(2\pi\times10) = 15.9\) ms이므로 \(a = e^{-1/15.9} = 0.939\)이다. 63% 도달은 시정수 τ, 곧 약 16표본(16 ms) 뒤이다(그림 1). 코드로는 <span class="mono">y = 0.939*y + 0.061*x</span> 한 줄이다.</p>
+    <p>즉 이동 평균은 정해진 창 안의 표본을 똑같이 섞고, IIR은 오래된 표본일수록 a의 거듭제곱만큼 가볍게 섞는다. 그래서 같은 정도로 다듬을 때 IIR은 메모리와 계산이 적고, 이동 평균은 창 길이가 지나면 옛 값의 영향이 완전히 사라진다는 장점이 있다.</p>
 
-    <div class="tb-note"><b>주의</b>제어 루프의 피드백 신호를 강하게 다듬으면 지연 때문에 위상 여유가 줄어 불안정해질 수 있습니다(1.3절). 미분 항에만 약한 필터를 걸고, 표시용 값은 강하게 다듬는 식으로 용도를 나눕니다.</div>
+    <p>필터 계수는 고정소수점으로도 쉽게 구현한다. 예를 들어 a를 15/16처럼 2의 거듭제곱 분수로 고르면 곱셈 대신 자리 이동과 뺄셈만으로 계산되어, 부동소수점 장치가 없는 작은 칩에서도 빠르게 돈다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>이동 평균: 잡음 \(1/\sqrt N\), 지연 \((N - 1)/2\) 표본.</li>
-        <li>1차 IIR: \(y_k = ay_{k-1} + (1 - a)x_k\), \(a = e^{-T/\tau}\).</li>
-        <li>다듬을수록 늦어진다 → 제어에는 약하게.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>다듬을수록 좋은 피드백 신호가 된다고 여기기 쉽다. 제어 루프의 피드백 신호를 강하게 다듬으면 지연 때문에 위상 여유가 줄어 불안정해질 수 있다(1.3절). 처음 질문의 둘째 답이 이것이다. 그래서 미분 항에만 약한 필터를 걸고, 표시용 값은 강하게 다듬는 식으로 용도를 나눈다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>이동 평균은 잡음을 \(1/\sqrt N\)로 줄이고 \((N - 1)/2\) 표본 늦는다. 1차 IIR은 \(y_k = ay_{k-1} + (1 - a)x_k\), \(a = e^{-T/\tau}\)이다. 다듬을수록 늦어지므로 제어에는 약하게 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>잡음 표준편차를 1/4로 줄이려면 이동 평균 길이는?
-          <details><summary>답</summary><p>\(N = 16\).</p></details>
+          <details><summary>답</summary><p>\(N = 16\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>\(N\) = 16 이동 평균을 1 kHz에서 쓰면 지연은?
-          <details><summary>답</summary><p>7.5표본 = 7.5 ms.</p></details>
+          <details><summary>답</summary><p>7.5표본, 곧 7.5 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>\(a = 0.9\)인 IIR 필터에 입력이 0에서 1로 바뀌었다. 세 표본 뒤 출력은?
-          <details><summary>답</summary><p>0.1, 0.19, 0.271. 일반식 \(1 - 0.9^k\).</p></details>
+          <details><summary>답</summary><p>0.1, 0.19, 0.271이고, 일반식은 \(1 - 0.9^k\)이다.</p></details>
         </li>
       </ol>
     </div>

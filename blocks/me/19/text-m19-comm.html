@@ -8,59 +8,51 @@
 <article class="card q-card" id="text-m19-comm" data-kind="본문" data-std="기계19-03-03">
   <header class="card-head"><span class="no"></span><h2>통신 인터페이스: UART, I²C, SPI</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>직렬 통신 세 방식의 배선, 속도, 장치 수를 비교한다.</li>
-        <li>전송 시간을 계산해 제어 주기 안에 들어가는지 판단한다.</li>
-        <li>센서와 장치에 맞는 인터페이스를 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>마이크로컨트롤러와 제어 루프 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">제어기가 매 주기의 상태를 PC로 보내 그래프로 그리려 했더니, 몇 초 만에 자료가 밀리고 뒤엉켰다. 선 두 개로 보내는 방식, 여러 센서를 한 줄에 매다는 방식, 빠르지만 선이 많은 방식은 각각 언제 쓸까? 내 자료가 한 주기 안에 다 보내지는지는 어떻게 따질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 전송 시간과 제어 주기(개형). 1 kHz 루프마다 20바이트를 보낼 때 UART 115200 baud는 1.74 ms로 주기 1 ms를 넘어 밀리고, 921600 baud는 0.22 ms, SPI 10 MHz는 16 μs로 여유가 있다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <line x1="80" y1="90" x2="440" y2="90" class="d dsh" stroke-width="2"/>
+        <rect x="120" y="31" width="60" height="139" class="fa"/><rect x="220" y="152" width="60" height="18" class="fb"/><rect x="320" y="168" width="60" height="2" class="fc"/>
+        <g text-anchor="middle" class="s"><text x="150" y="186">UART 115200</text><text x="250" y="186">UART 921600</text><text x="350" y="186">SPI 10 MHz</text></g>
+        <g text-anchor="middle" class="s"><text x="150" y="26" class="ta">1.74 ms</text><text x="250" y="146" class="tb">0.22 ms</text><text x="350" y="160" class="tc">16 μs</text></g>
+        <text x="300" y="84" class="td">주기 1 ms</text>
+      </svg>
+      <figcaption>그림 1. 한 주기에 보낼 자료의 전송 시간이 주기보다 길면 보내지 못한 자료가 계속 쌓이므로, 통신 방식과 속도는 전송 시간을 제어 주기와 견주어 고른다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>마이크로컨트롤러와 제어 루프(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>세 방식</h3>
-    <ul>
-      <li><b>UART</b>: 송신(TX)·수신(RX) 두 선, 정해진 속도(baud)로 비동기 전송. 바이트마다 시작·정지 비트가 붙어 10비트. PC 디버그, GPS, 블루투스 모듈. 일대일.</li>
-      <li><b>I²C</b>: 데이터(SDA)·클록(SCL) 두 선에 여러 장치를 주소로 연결. 100 kHz~1 MHz로 느리지만 배선이 간단해 온도·가속도 센서, EEPROM에 씁니다.</li>
-      <li><b>SPI</b>: 클록, 송신, 수신, 장치 선택(CS) 네 선. 수~수십 MHz로 빠르고 동시 송수신. A/D 변환기, 디스플레이, 메모리. 장치마다 CS 선이 하나씩 더 필요합니다.</li>
-    </ul>
+    <p>UART는 송신(TX)과 수신(RX) 두 선으로, 미리 정한 속도(baud)에 맞춰 클록 없이 비동기로 보낸다. 그리고 바이트마다 시작 비트와 정지 비트가 붙어 10비트가 된다. 또 일대일 연결이라 PC 디버그, GPS, 블루투스 모듈에 쓴다.</p>
+    <p>I²C는 데이터(SDA)와 클록(SCL) 두 선에 여러 장치를 주소로 매단다. 속도는 100 kHz에서 1 MHz로 느리다. 그러나 배선이 간단해 온도 센서, 가속도 센서, EEPROM에 쓴다. 반면 SPI는 클록, 송신, 수신, 장치 선택(CS)의 네 선을 쓴다. 수 MHz에서 수십 MHz로 빠르고 동시에 주고받으므로 A/D 변환기, 디스플레이, 메모리에 쓴다. 다만 장치마다 CS 선이 하나씩 더 필요하다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">전송 시간</span>
-      <p>UART: \(t = N_{\text{byte}}\times10/\text{baud}\). SPI: \(t \approx N_{\text{byte}}\times8/f_{\text{SCK}}\). I²C: 바이트마다 9비트 + 주소·시작·정지 비트.</p>
+      <p>UART는 \(t = N_{\text{byte}}\times10/\text{baud}\)이다.</p>
+      <p>SPI는 \(t \approx N_{\text{byte}}\times8/f_{\text{SCK}}\)이다.</p>
+      <p>I²C는 바이트마다 9비트에 주소, 시작, 정지 비트가 더해진다.</p>
     </div>
-
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1 <span class="nm">(1 kHz 루프에서 자료 보내기)</span></span>
       <p>1 kHz 제어 루프마다 20바이트 상태를 PC로 보내려 한다. UART 115200 baud면 충분한가? SPI 10 MHz라면?</p>
     </div>
-    <p><i>풀이.</i> UART: \(20\times10/115200 = 1.74\) ms로 주기 1 ms보다 길어 따라가지 못합니다(쌓이다 넘침). 921600 baud로 올리면 0.22 ms로 가능합니다. SPI: \(20\times8/10^7 = 16\) μs로 여유가 큽니다. 다만 PC는 보통 SPI가 없으므로, 고속 기록은 USB를 쓰거나 몇 주기마다 묶어 보냅니다.</p>
+    <p><i>풀이.</i> UART는 \(20\times10/115200 = 1.74\) ms로 주기 1 ms보다 길어 따라가지 못한다. 즉 자료가 쌓이다 넘친다. 그래서 921600 baud로 올리면 0.22 ms로 가능하다. 한편 SPI는 \(20\times8/10^7 = 16\) μs로 여유가 크다(그림 1). 처음 질문의 둘째 답이 이것이다. 다만 PC에는 보통 SPI가 없으므로, 고속 기록에는 USB를 쓰거나 몇 주기마다 묶어 보낸다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) I²C는 풀업 저항이 필요하고 배선 정전 용량 때문에 긴 선(수십 cm 이상)에 약합니다. (2) 모터 주변은 잡음이 커서 긴 거리 통신에는 차동 신호(RS-485, CAN)를 씁니다. 자동차와 로봇 관절은 CAN 버스가 표준입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>I²C 선을 길게 늘여도 된다고 여기기 쉽다. I²C는 풀업 저항이 필요하고 배선 정전 용량 때문에 수십 cm 이상의 긴 선에 약하다. 또 모터 주변은 잡음이 커서, 긴 거리 통신에는 두 선의 전압 차로 신호를 보내는 차동 방식(RS-485, CAN)을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>UART(2선, 일대일), I²C(2선, 주소, 느림), SPI(4선+, 빠름).</li>
-        <li>전송 시간을 제어 주기와 비교.</li>
-        <li>잡음 많은 긴 선: RS-485, CAN.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>UART는 2선 일대일, I²C는 2선에 주소로 여러 장치를 매달지만 느리고, SPI는 4선 이상으로 빠르다. 전송 시간을 제어 주기와 비교해 방식과 속도를 고른다. 잡음이 많은 긴 선에는 RS-485나 CAN 같은 차동 방식을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>UART 9600 baud로 1초에 보낼 수 있는 최대 바이트 수는?
-          <details><summary>답</summary><p>960바이트.</p></details>
+          <details><summary>답</summary><p>960바이트이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>I²C 400 kHz로 가속도계에서 6바이트를 읽는 데 대략 얼마 걸리는가? (주소·레지스터 지정 포함 약 10바이트분, 바이트당 9비트)
-          <details><summary>답</summary><p>\(10\times9/400000 = 225\) μs.</p></details>
+          <details><summary>답</summary><p>\(10\times9/400000 = 225\) μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

@@ -8,64 +8,59 @@
 <article class="card q-card" id="text-m19-motor" data-kind="본문" data-std="기계19-04-01">
   <header class="card-head"><span class="no"></span><h2>DC 모터의 토크-속도 특성과 전달함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>DC 모터의 토크 상수와 역기전력 상수를 안다.</li>
-        <li>토크-속도 직선에서 정지 토크, 무부하 속도, 최대 출력을 구한다.</li>
-        <li>전압-속도 전달함수와 기계적 시정수를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>DC 모터 모델링 (<a href="../me15/01-01.html">기계시스템제어 1.1절</a>), 회전 운동 방정식.</li>
-      </ul>
-    </div>
+    <p class="q-ask">DC 모터에 12 V를 걸면 빈손으로는 빠르게 돌지만, 손으로 축을 잡으면 느려지면서 더 세게 버틴다. 같은 전압인데 왜 부하에 따라 속도와 토크가 저절로 바뀔까? 그리고 축을 꽉 잡아 세워 두면 왜 모터가 뜨거워질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1 DC 모터의 토크-속도 직선(개형). 12 V, R = 2 Ω, K_t = K_e = 0.05인 모터는 정지 토크 0.3 N·m(전류 6 A)에서 무부하 속도 240 rad/s까지 직선으로 내려간다. 기계 출력은 그 가운데인 120 rad/s, 0.15 N·m에서 최대 18 W이다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 40 L420 170" class="a" stroke-width="2.5"/>
+        <path d="M80 170 C170 60, 330 60, 420 170" class="b dsh" fill="none" stroke-width="2"/>
+        <circle cx="250" cy="105" r="5" class="fd"/><circle cx="80" cy="40" r="5" class="fa"/><circle cx="420" cy="170" r="5" class="fa"/>
+        <g text-anchor="middle" class="s"><text x="250" y="186">120</text><text x="420" y="186">240 rad/s</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="44">0.3 N·m</text><text x="74" y="109">0.15</text></g>
+        <text x="260" y="100" class="td">최대 출력 18 W</text><text x="300" y="70" class="tb">출력 T·ω</text><text x="120" y="60" class="ta">T = (K_t/R)(V − K_eω)</text>
+      </svg>
+      <figcaption>그림 1. 모터가 빨리 돌수록 역기전력이 공급 전압을 깎아 전류와 토크가 줄어들므로, 토크는 속도에 대해 직선으로 내려가고 기계 출력은 그 가운데에서 가장 크다(예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>DC 모터 모델링(<a href="../me15/01-01.html">기계시스템제어 1.1절</a>), 회전 운동 방정식을 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>두 상수</h3>
-    <p>DC 모터는 자기장 속 코일에 전류가 흐르면 토크가 생기고(\(T = K_ti\)), 코일이 돌면 전압이 유도됩니다(역기전력 \(e = K_e\omega\)). SI 단위에서 \(K_t\)(N·m/A)와 \(K_e\)(V·s/rad)는 같은 값입니다. 코일 저항 \(R\)에서 전압 식은 \(V = Ri + K_e\omega\)입니다(인덕턴스 무시).</p>
+    <p>DC 모터는 자기장 속 코일에 전류가 흐르면 토크 \(T = K_ti\)가 생기고, 코일이 돌면 역기전력 \(e = K_e\omega\)가 유도된다. SI 단위에서 \(K_t\)(N·m/A)와 \(K_e\)(V·s/rad)는 같은 값이다. 코일 저항을 R이라 하고 인덕턴스를 무시하면, 전압 식은 \(V = Ri + K_e\omega\)이다.</p>
 
     <h3><span class="no">4.1.2</span>토크-속도 직선</h3>
-    <p>전압 식에서 \(i = (V - K_e\omega)/R\)를 토크 식에 넣으면</p>
+    <p>전압 식에서 \(i = (V - K_e\omega)/R\)를 토크 식에 넣으면 아래 관계가 나온다.</p>
     <div class="tb-env thm">
       <span class="lb">토크-속도 특성 (일정 전압)</span>
       <p>\[ T = \frac{K_t}{R}(V - K_e\omega) \]</p>
-      <p>정지 토크 \(T_s = K_tV/R\), 무부하 속도 \(\omega_0 = V/K_e\), 최대 기계 출력 \(T_s\omega_0/4\)(속도 \(\omega_0/2\)에서).</p>
+      <p>정지 토크는 \(T_s = K_tV/R\), 무부하 속도는 \(\omega_0 = V/K_e\)이다. 최대 기계 출력은 속도 \(\omega_0/2\)에서 \(T_s\omega_0/4\)이다.</p>
     </div>
-    <p>속도가 오르면 역기전력이 커져 전류와 토크가 줄어듭니다. 부하 토크와 이 직선의 교점이 운전점입니다. 전압을 바꾸면 직선이 평행 이동하므로 전압으로 속도를 조절할 수 있습니다(4.2절 PWM).</p>
+    <p>속도가 오르면 역기전력이 커져 전류와 토크가 줄어든다(그림 1). 그래서 부하 토크와 이 직선의 교점이 운전점이 된다. 처음 질문의 첫째 답이 이것이다. 또 전압을 바꾸면 직선이 평행 이동하므로, 전압으로 속도를 조절할 수 있다(4.2절 PWM).</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1 <span class="nm">(모터 특성)</span></span>
-      <p>12 V, \(R\) = 2 Ω, \(K_t = K_e = 0.05\)인 모터의 정지 토크, 정지 전류, 무부하 속도, 최대 출력은?</p>
+      <p>12 V, R = 2 Ω, \(K_t = K_e = 0.05\)인 모터의 정지 토크, 정지 전류, 무부하 속도, 최대 출력은?</p>
     </div>
-    <p><i>풀이.</i> 정지 전류 6 A, 정지 토크 0.3 N·m, 무부하 속도 240 rad/s(2290 rpm), 최대 출력 \(0.3\times240/4 = 18\) W(120 rad/s, 0.15 N·m). 정지 상태 입력은 72 W가 모두 코일 열이 되므로 오래 멈춰 있으면 코일이 탑니다.</p>
+    <p><i>풀이.</i> 정지 전류는 12/2 = 6 A, 정지 토크는 0.3 N·m이다. 무부하 속도는 240 rad/s(2290 rpm)이고, 최대 출력은 \(0.3\times240/4 = 18\) W(120 rad/s, 0.15 N·m)이다. 한편 정지 상태에서는 입력 72 W가 모두 코일 열이 되므로, 오래 멈춰 있으면 코일이 탄다. 처음 질문의 둘째 답이 이것이다.</p>
 
     <h3><span class="no">4.1.3</span>전달함수</h3>
-    <p>회전자 관성 \(J\), 점성 마찰 \(b\)를 넣은 운동 방정식 \(J\dot\omega = K_ti - b\omega\)와 전압 식을 Laplace 변환으로 합치면(\(L\) 무시)</p>
+    <p>회전자 관성 J, 점성 마찰 b를 넣은 운동 방정식 \(J\dot\omega = K_ti - b\omega\)와 전압 식을 Laplace 변환으로 합치면(L 무시) 아래 전달함수가 된다.</p>
     <p>\[ \frac{\Omega(s)}{V(s)} = \frac{K_t}{JRs + bR + K_tK_e} \]</p>
-    <p>1차 시스템이며, \(b\)를 무시하면 기계적 시정수 \(\tau_m = JR/(K_tK_e)\)입니다. 예제 모터에 \(J = 1\times10^{-5}\) kg·m²이면 \(\tau_m = 8\) ms로, 전압을 바꾸면 약 \(4\tau_m\) = 32 ms 만에 새 속도에 이릅니다. 위치는 속도의 적분이므로 위치 전달함수는 \(1/s\)가 하나 더 붙습니다(5.1절).</p>
+    <p>즉 1차 시스템이며, b를 무시하면 기계적 시정수는 \(\tau_m = JR/(K_tK_e)\)이다. 예제 모터에 \(J = 1\times10^{-5}\) kg·m²이면 \(\tau_m = 8\) ms이다. 그래서 전압을 바꾸면 약 \(4\tau_m\) = 32 ms 만에 새 속도에 이른다. 그리고 위치는 속도의 적분이므로 위치 전달함수에는 1/s가 하나 더 붙는다(5.1절).</p>
 
-    <div class="tb-note"><b>주의</b>역기전력은 전기적 감쇠처럼 작용해 \(K_tK_e/R\)가 마찰 \(b\)보다 대개 훨씬 큽니다. 그래서 모터는 전압을 주면 저절로 일정한 속도로 수렴합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모터의 속도를 정하는 감쇠는 주로 마찰이라고 여기기 쉽다. 역기전력은 전기적 감쇠처럼 작용해, \(K_tK_e/R\)가 마찰 b보다 대개 훨씬 크다. 그래서 모터는 전압만 주면 저절로 일정한 속도로 수렴한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(T = K_ti\), \(e = K_e\omega\), \(V = Ri + K_e\omega\).</li>
-        <li>토크-속도 직선: \(T_s = K_tV/R\), \(\omega_0 = V/K_e\), 최대 출력 \(T_s\omega_0/4\).</li>
-        <li>\(\Omega/V\)는 1차, \(\tau_m = JR/(K_tK_e)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>DC 모터는 \(T = K_ti\), \(e = K_e\omega\), \(V = Ri + K_e\omega\)로 나타낸다. 토크-속도 직선의 정지 토크는 \(K_tV/R\), 무부하 속도는 \(V/K_e\), 최대 출력은 \(T_s\omega_0/4\)이다. 전달함수 Ω/V는 1차이고 시정수는 \(\tau_m = JR/(K_tK_e)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 모터에 0.1 N·m 부하를 걸면 속도와 전류는?
-          <details><summary>답</summary><p>\(0.1 = 0.025(12 - 0.05\omega)\)에서 \(\omega = 160\) rad/s, \(i = 2\) A.</p></details>
+          <details><summary>답</summary><p>\(0.1 = 0.025(12 - 0.05\omega)\)에서 \(\omega = 160\) rad/s, \(i = 2\) A이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>1번 운전점의 효율은?
-          <details><summary>답</summary><p>출력 \(0.1\times160 = 16\) W, 입력 \(12\times2 = 24\) W, 효율 67%. 나머지 8 W는 코일 열(\(i^2R\)).</p></details>
+          <details><summary>답</summary><p>출력은 \(0.1\times160 = 16\) W, 입력은 \(12\times2 = 24\) W이므로 효율은 67%이다. 나머지 8 W는 코일 열(\(i^2R\))이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
