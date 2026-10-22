@@ -8,60 +8,74 @@
 <article class="card q-card" id="text-s13-software" data-kind="본문" data-std="응통13-07-01">
   <header class="card-head"><span class="no"></span><h2>통계 소프트웨어로 실험 자료 분석하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>R로 설계를 만들고(랜덤화) 분석하는 흐름을 익힌다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>이 과목 02~06단원.</li>
-      </ul>
-    </div>
-
-    <h3>설계부터 분석까지 코드로</h3>
-    <p>실험의 랜덤화 순서를 손으로 정하면 실수하기 쉽고 기록이 남지 않습니다. 설계표를 코드로 만들고, 같은 표에 결과를 채워 분석하면 처음부터 끝까지 재현할 수 있습니다.</p>
+    <p class="q-ask">실험 16번의 순서를 손으로 섞어 종이에 적었다가 잃어버렸다. 나중에 분석 결과가 이상할 때 실험 순서와 처리를 맞춰 볼 방법이 없다. 설계부터 분석까지 처음부터 끝까지 다시 할 수 있게 하려면 어떻게 해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="실험 자료 처리 흐름도. 설계표 만들기(expand.grid, sample)에서 design.csv 저장, 현장 실험, 결과 채우기, 분석(lm, aov, anova), 진단과 그림(잔차, 교호작용)으로 이어진다">
+        <rect x="25" y="30" width="135" height="50" class="la a"/><text x="92.5" y="52.0" text-anchor="middle" class="s">설계표 만들기</text>
+        <text x="92.5" y="67.0" text-anchor="middle" class="s">expand.grid, sample</text>
+        <path d="M160 55 L188 55 M181.6 57.7 L188 55 L181.6 52.3" class="ax"/>
+        <rect x="190" y="30" width="135" height="50" class="lk k"/><text x="257.5" y="52.0" text-anchor="middle" class="s">design.csv 저장</text>
+        <text x="257.5" y="67.0" text-anchor="middle" class="s">랜덤화 순서 기록</text>
+        <path d="M325 55 L353 55 M346.6 57.7 L353 55 L346.6 52.3" class="ax"/>
+        <rect x="355" y="30" width="135" height="50" class="lc c"/><text x="422.5" y="52.0" text-anchor="middle" class="s">현장 실험</text>
+        <text x="422.5" y="67.0" text-anchor="middle" class="s">이 순서대로</text>
+        <path d="M422 80 L422 128 M419.3 121.6 L422 128 L424.7 121.6" class="ax"/>
+        <rect x="355" y="130" width="135" height="50" class="lk k"/><text x="422.5" y="152.0" text-anchor="middle" class="s">결과 채우기</text>
+        <text x="422.5" y="167.0" text-anchor="middle" class="s">y 열 추가</text>
+        <path d="M355 155 L327 155 M333.4 152.3 L327 155 L333.4 157.7" class="ax"/>
+        <rect x="190" y="130" width="135" height="50" class="la a"/><text x="257.5" y="152.0" text-anchor="middle" class="s">분석</text>
+        <text x="257.5" y="167.0" text-anchor="middle" class="s">lm, aov, anova</text>
+        <path d="M190 155 L162 155 M168.4 152.3 L162 155 L168.4 157.7" class="ax"/>
+        <rect x="25" y="130" width="135" height="50" class="lb b"/><text x="92.5" y="152.0" text-anchor="middle" class="s">진단과 그림</text>
+        <text x="92.5" y="167.0" text-anchor="middle" class="s">잔차, 교호작용</text>
+        <text x="25" y="205" class="s">같은 표에 설계와 결과가 함께 있어 처음부터 끝까지 재현할 수 있다</text>
+      </svg>
+      <figcaption>그림 1. 코드로 하는 실험의 흐름. 랜덤화 순서를 담은 설계표(파랑)를 저장하고, 같은 표에 결과를 채워 분석한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이 과목 2~6단원의 설계와 분석을 쓴다.</div>
+    <p>실험의 랜덤화 순서를 손으로 정하면 실수하기 쉽고 기록이 남지 않는다. 처음 질문의 답은 설계표를 코드로 만들고, 같은 표에 결과를 채워 분석하는 것이다(그림 1). 그러면 난수 씨앗 하나로 배정과 순서를 언제든 다시 만들 수 있다.</p>
 
     <h3><span class="no">7.1.1</span>설계표 만들기</h3>
+    <p>다음은 \(2^3\) 요인계획을 2번 반복하며 실험 순서를 랜덤화하는 R 코드이다.</p>
     <pre><code># 2^3 요인계획, 반복 2, 실험 순서 랜덤화
 d &lt;- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1), rep = 1:2)
 set.seed(2026); d$run &lt;- sample(nrow(d))
 d &lt;- d[order(d$run), ]
 write.csv(d, "design.csv", row.names = FALSE)   # 현장에서 이 순서로 실험</code></pre>
-    <p>랜덤화 블록이면 블록마다 따로 <code>sample</code>을 합니다. 일부실시법과 중심합성계획은 <code>FrF2</code>, <code>rsm</code> 패키지가 설계표를 만들어 줍니다.</p>
+    <p>랜덤화 블록이면 블록마다 따로 <code>sample</code>을 한다. 한편 일부실시법과 중심합성계획은 FrF2, rsm 패키지가 설계표를 만들어 준다.</p>
 
     <h3><span class="no">7.1.2</span>분석</h3>
+    <p>결과를 채운 표를 읽어 모든 효과를 넣은 모형을 적합하고, 잔차와 교호작용을 그림으로 본다.</p>
     <pre><code>d &lt;- read.csv("design_with_y.csv")
 fit &lt;- lm(y ~ A * B * C, data = d)      # 모든 효과
 anova(fit)
 2 * coef(fit)[-1]                      # ±1 부호화이면 효과 = 2 × 계수
 par(mfrow = c(2, 2)); plot(fit)        # 잔차 진단
 with(d, interaction.plot(A, B, y))</code></pre>
-    <p>±1 부호화에서 회귀계수는 효과의 절반입니다(5.1절의 효과는 −1에서 +1로 2단위 움직인 변화).</p>
-
+    <p>±1 부호화에서 회귀계수는 효과의 절반이다. <a href="05-01.html">5.1절</a>의 효과는 −1에서 +1로 2단위 움직일 때의 변화이기 때문이다. 그러므로 코드에서 계수에 2를 곱해 효과를 얻는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.1</span>
-      <p>랜덤화 블록 설계 자료(<code>y</code>, <code>trt</code>, <code>block</code>)를 분석하는 코드를 쓰세요.</p>
+      <p>랜덤화 블록 설계 자료(y, trt, block)를 분석하는 코드를 써라.</p>
     </div>
+    <p><i>풀이.</i> 설계 구조인 블록을 모형식에 그대로 넣고, 처리 쌍은 튜키 방법으로 비교한다.</p>
     <pre><code>fit &lt;- aov(y ~ trt + block, data = d)   # 블록을 모형에 넣음
 summary(fit)
 TukeyHSD(fit, "trt")</code></pre>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>설계표와 랜덤화 순서를 코드로 만들고 저장.</li>
-        <li>설계 구조(블록, 요인, 교호작용)를 모형식에 그대로.</li>
-        <li>±1 부호화에서 효과 = 2 × 계수.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>설계표와 랜덤화 순서를 코드로 만들어 저장한다. 블록, 요인, 교호작용 같은 설계 구조는 모형식에 그대로 넣는다. ±1 부호화에서 효과는 계수의 두 배이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>블록을 빼고 <code>aov(y ~ trt)</code>로 분석하면 무엇이 달라지나요?
-          <details><summary>답</summary><p>블록 변동이 오차에 섞여 MSE가 커지고 처리 F 값이 작아집니다(3.1절 예제).</p></details>
+        <li>블록을 빼고 <code>aov(y ~ trt)</code>로 분석하면 무엇이 달라지는가?
+          <details><summary>답</summary><p>블록 변동이 오차에 섞여 MSE가 커지고 처리 F 값이 작아진다(<a href="03-01.html">3.1절</a> 예제).</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>7.1.1의 코드에서 <code>set.seed(2026)</code>을 빼면 어떤 문제가 생기는가?
+          <details><summary>답</summary><p>코드를 다시 돌릴 때마다 실험 순서가 바뀌어, 저장한 design.csv와 코드가 만드는 설계표가 달라진다. 그러면 나중에 어느 순서로 실험했는지 코드로 재현할 수 없다.</p></details>
         </li>
       </ol>
     </div>
