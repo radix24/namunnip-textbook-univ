@@ -8,21 +8,28 @@
 <article class="card q-card" id="text-s16-pipeobj" data-kind="본문" data-std="응통16-02-04">
   <header class="card-head"><span class="no"></span><h2>파이프라인 객체</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>전처리와 모형을 하나의 파이프라인 객체로 묶는다.</li>
-        <li>열의 종류마다 다른 전처리를 적용한다.</li>
-        <li>학습한 파이프라인을 저장해 새 자료에 그대로 적용한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>정보 누수 (<a href="02-03.html">2.3절</a>), 파이썬 객체 (응통4 2장).</li>
-      </ul>
-    </div>
-
-    <h3>학습 때와 운영 때의 전처리가 다르면</h3>
-    <p>학습 노트북에서는 결측을 중앙값으로 채우고 범주를 원핫 인코딩했는데, 운영 코드를 다른 사람이 다시 짜면서 중앙값을 새 자료에서 다시 계산하거나 범주 순서가 바뀌면 예측이 조용히 틀어집니다. 파이프라인 객체는 전처리의 "학습된 값"까지 모형과 함께 저장해 이 문제를 없앱니다.</p>
+    <p class="q-ask">학습 노트북에서는 결측을 중앙값으로 채우고 범주를 원핫 인코딩했다. 그런데 운영 코드를 다른 사람이 다시 짜면서 중앙값을 새 자료에서 다시 계산했고, 범주 순서도 바뀌었다. 오류는 하나도 나지 않았다. 예측은 맞게 나오고 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="파이프라인 객체의 구조. 자료 X가 ColumnTransformer(점선 상자)로 들어가, 수치 열 income, tenure는 중앙값 대치와 표준화(파랑)를, 범주 열 plan, region은 원핫 인코딩(주황)을 거친 뒤 로지스틱 회귀(청록)로 합쳐진다">
+        <rect x="10" y="85" width="70" height="40" class="lk k"/><text x="45.0" y="109.0" text-anchor="middle" class="s">X 자료</text>
+        <rect x="120" y="40" width="100" height="40" class="la a"/><text x="170.0" y="57.0" text-anchor="middle" class="s">중앙값 대치</text>
+        <text x="170.0" y="72.0" text-anchor="middle" class="s">income, tenure</text>
+        <rect x="240" y="40" width="90" height="40" class="la a"/><text x="285.0" y="64.0" text-anchor="middle" class="s">표준화</text>
+        <rect x="120" y="135" width="210" height="40" class="lc c"/><text x="225.0" y="152.0" text-anchor="middle" class="s">원핫 인코딩</text>
+        <text x="225.0" y="167.0" text-anchor="middle" class="s">plan, region</text>
+        <rect x="380" y="85" width="120" height="40" class="lb b"/><text x="440.0" y="109.0" text-anchor="middle" class="s">로지스틱 회귀</text>
+        <path d="M82 98 L118 62 M115.4 68.5 L118 62 L111.5 64.6" class="k"/>
+        <path d="M82 112 L118 152 M111.7 149.0 L118 152 L115.7 145.4" class="k"/>
+        <path d="M222 60 L238 60 M231.6 62.7 L238 60 L231.6 57.3" class="k"/>
+        <path d="M332 62 L378 98 M371.2 96.2 L378 98 L374.6 91.9" class="k"/>
+        <path d="M332 152 L378 112 M374.9 118.3 L378 112 L371.3 114.2" class="k"/>
+        <rect x="105" y="28" width="240" height="160" class="dsh k" fill="none"/><text x="225" y="22" text-anchor="middle" class="s">ColumnTransformer (prep)</text>
+        <text x="260" y="208" text-anchor="middle" class="s">fit은 중앙값, 평균, 범주 목록을 학습 자료로 계산하고, predict는 그 값을 그대로 쓴다</text>
+      </svg>
+      <figcaption>그림 1. 예제의 파이프라인 객체. 열 종류마다 다른 전처리(파랑, 주황)를 거쳐 모형(청록)으로 들어가며, 전체가 한 객체로 저장된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정보 누수(<a href="02-03.html">2.3절</a>)와 파이썬 객체(응통4 2장)를 쓴다.</div>
+    <p>처음 질문의 답은 조용히 틀리고 있다는 것이다. 중앙값과 범주 목록은 모형의 일부인데 코드 밖에 흩어져 있었기 때문이다. 파이프라인 객체는 전처리의 학습된 값까지 모형과 함께 한 객체로 묶어 저장해 이 문제를 없앤다(그림 1).</p>
 
     <h3><span class="no">2.4.1</span>scikit-learn의 파이프라인</h3>
     <pre><code>from sklearn.pipeline import Pipeline
@@ -40,38 +47,34 @@ model = Pipeline([("prep", prep), ("clf", LogisticRegression())])
 
 model.fit(X_train, y_train)        # 중앙값, 평균, 범주 목록을 학습 자료로 계산
 p = model.predict_proba(X_new)     # 같은 값으로 변환 후 예측</code></pre>
-    <p><code>fit</code>은 각 단계의 값을 학습 자료로 계산하고, <code>predict</code>는 그 값을 그대로 씁니다. 교차검증에 파이프라인 전체를 넣으면 겹마다 전처리가 다시 학습되어 2.3절의 누수도 막힙니다. R에서는 <code>recipes</code>와 <code>workflows</code> 패키지가 같은 역할을 합니다.</p>
+    <p><code>fit</code>은 각 단계의 값을 학습 자료로 계산하고, <code>predict</code>는 그 값을 그대로 쓴다. 또 열 종류마다 다른 전처리는 <code>ColumnTransformer</code>로 지정한다. 그리고 교차검증에 파이프라인 전체를 넣으면 겹마다 전처리가 다시 학습되므로 <a href="02-03.html">2.3절</a>의 전처리 누수도 막힌다. R에서는 <code>recipes</code>와 <code>workflows</code> 패키지가 같은 역할을 한다.</p>
 
     <h3><span class="no">2.4.2</span>저장과 재사용</h3>
-    <p>학습한 파이프라인을 <code>joblib.dump(model, "model.joblib")</code>로 저장하면 운영 코드는 불러와 <code>predict</code>만 하면 됩니다. 패키지 버전이 다르면 불러오지 못하거나 결과가 달라질 수 있으므로 버전도 함께 기록합니다.</p>
-
+    <p>학습한 파이프라인을 <code>joblib.dump(model, "model.joblib")</code>로 저장하면, 운영 코드는 불러와 <code>predict</code>만 하면 된다. 다만 패키지 버전이 다르면 불러오지 못하거나 결과가 달라질 수 있으므로 버전도 함께 기록한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.4.1</span>
-      <p>학습 자료의 <code>plan</code>은 basic, pro 두 범주였는데 운영에서 새 범주 premium이 들어왔습니다. <code>handle_unknown="ignore"</code>이면 어떻게 처리되나요?</p>
+      <p>학습 자료의 plan은 basic과 pro 두 범주였는데, 운영에서 새 범주 premium이 들어왔다. <code>handle_unknown="ignore"</code>이면 어떻게 처리되는가?</p>
     </div>
-    <p><i>풀이.</i> basic, pro 두 열이 모두 0인 행으로 변환되어 오류 없이 예측합니다. 기본값("error")이면 예측이 실패합니다. 다만 새 범주가 많아지면 성능이 떨어지므로 4.4절의 감시 항목에 넣습니다.</p>
+    <p><i>풀이.</i> basic과 pro 두 열이 모두 0인 행으로 변환되어 오류 없이 예측한다. 반면 기본값 <code>"error"</code>이면 예측이 실패한다. 그런데 새 범주가 많아지면 성능이 떨어지므로, 새 범주의 비율을 <a href="04-04.html">4.4절</a>의 감시 항목에 넣는다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>교차검증 전에 전체 자료에 <code>StandardScaler().fit_transform</code>을 먼저 적용하면 각 겹의 검증 자료가 평균과 표준편차 계산에 들어가 누수가 생긴다. 그러므로 파이프라인을 <code>cross_val_score</code>에 넣어 겹마다 학습시킨다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전처리와 모형을 한 객체로: <code>fit</code>은 학습 자료로, <code>predict</code>는 그 값으로.</li>
-        <li>열 종류별 전처리는 <code>ColumnTransformer</code>.</li>
-        <li>파이프라인 전체를 저장하고 버전을 기록합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이프라인 객체는 전처리와 모형을 한 객체로 묶어, <code>fit</code>은 학습 자료로 값을 계산하고 <code>predict</code>는 그 값을 쓰게 한다. 열 종류별 전처리는 <code>ColumnTransformer</code>로 지정하고, 파이프라인 전체를 저장하며 패키지 버전을 기록한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>교차검증 전에 전체 자료에 <code>StandardScaler().fit_transform</code>을 먼저 적용하면 어떤 문제가 있나요?
-          <details><summary>답</summary><p>각 겹의 검증 자료가 평균과 표준편차 계산에 들어가 누수가 생깁니다. 파이프라인을 <code>cross_val_score</code>에 넣어 겹마다 학습시킵니다.</p></details>
+        <li>파이프라인을 <code>fit</code>한 뒤 중앙값 대치 단계가 기억하는 값은 무엇인가?
+          <details><summary>답</summary><p>학습 자료에서 계산한 income과 tenure의 중앙값이다. 새 자료의 결측은 이 값으로 채운다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>"로그 변환 후 표준화"를 파이프라인에 넣으려면 어떻게 하나요?
-          <details><summary>답</summary><p><code>FunctionTransformer(np.log1p)</code>를 <code>StandardScaler</code> 앞 단계로 넣습니다. 로그 변환은 학습할 값이 없지만 파이프라인 안에 두어야 운영에서도 빠짐없이 적용됩니다.</p></details>
+      <ol start="2">
+        <li>로그 변환 뒤 표준화를 파이프라인에 넣으려면 어떻게 하는가?
+          <details><summary>답</summary><p><code>FunctionTransformer(np.log1p)</code>를 <code>StandardScaler</code> 앞 단계로 넣는다. 로그 변환은 학습할 값이 없지만 파이프라인 안에 두어야 운영에서도 빠짐없이 적용된다.</p></details>
+        </li>
+        <li>운영 서버의 scikit-learn 버전이 학습 때와 다르다는 경고가 떴다. 어떻게 하는가?
+          <details><summary>답</summary><p>학습 때의 버전을 기록해 둔 대로 운영 환경을 맞추거나, 새 버전에서 다시 학습해 검증한 뒤 함께 배포한다. 경고를 무시하면 예측이 조용히 달라질 수 있다.</p></details>
         </li>
       </ol>
     </div>

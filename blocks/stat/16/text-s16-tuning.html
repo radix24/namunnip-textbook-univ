@@ -8,63 +8,85 @@
 <article class="card q-card" id="text-s16-tuning" data-kind="본문" data-std="응통16-03-03">
   <header class="card-head"><span class="no"></span><h2>교차검증으로 하이퍼파라미터 조정하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>격자 탐색과 무작위 탐색으로 후보를 정한다.</li>
-        <li>\(k\)겹 교차검증 오차와 그 표준오차로 후보를 비교한다.</li>
-        <li>1-표준오차 규칙과 중첩 교차검증을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>검증 자료로 평가 (<a href="03-01.html">3.1절</a>), 파이프라인 객체 (2.4절).</li>
-      </ul>
-    </div>
-
-    <h3>학습이 정하지 못하는 값</h3>
-    <p>계수는 학습이 정하지만, 규제 강도 \(\lambda\), 나무 깊이, 이웃 수 \(k\) 같은 값은 사람이 정해야 합니다. 이런 하이퍼파라미터는 학습 자료에 대한 오차가 아니라 새 자료에 대한 오차로 골라야 하므로 교차검증을 씁니다.</p>
+    <p class="q-ask">릿지 회귀의 규제 강도 \(\lambda\)를 17개 후보 가운데 고르려 한다. 5겹 교차검증 오차가 가장 작은 후보는 \(\lambda = 17.8\)이었지만, 오차 막대가 서로 크게 겹친다. 오차가 가장 작은 것을 그대로 고르면 될까? 그리고 그 최소 오차를 이 모형의 성능이라고 보고해도 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="모의 자료의 릿지 회귀에서 규제 강도 λ(0.1~1000, 로그)에 따른 5겹 교차검증 오차(파랑)와 ±1 표준오차 막대. 최소는 λ = 17.8에서 4.42 ± 0.94(주황)이고, 최소 + 표준오차 5.35(점선) 안에 드는 가장 단순한 후보는 λ = 100, 5.31(청록)이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0.1</text>
+        <text x="135" y="195" text-anchor="middle" class="s">1</text>
+        <text x="210" y="195" text-anchor="middle" class="s">10</text>
+        <text x="285" y="195" text-anchor="middle" class="s">100</text>
+        <text x="360" y="195" text-anchor="middle" class="s">1000</text>
+        <text x="55" y="184" text-anchor="end" class="s">3</text>
+        <text x="55" y="130.7" text-anchor="end" class="s">5</text>
+        <text x="55" y="77.3" text-anchor="end" class="s">7</text>
+        <text x="55" y="24" text-anchor="end" class="s">9</text>
+        <text x="360" y="209" text-anchor="end" class="s">규제 강도 λ (클수록 단순)</text>
+        <text x="66" y="24" class="s">교차검증 오차</text>
+        <path d="M60 117.2 L360 117.2" class="k dsh"/>
+        <path d="M60 116.8 L78.8 117.4 L97.5 118.5 L116.2 120.3 L135 123.1 L153.8 127.1 L172.5 132.2 L191.2 137.5 L210 141.4 L228.8 142.3 L247.5 139 L266.2 130.9 L285 118.3 L303.8 102.6 L322.5 86.9 L341.2 73.8 L360 64.2" class="a"/>
+        <path d="M60 141.3 L60 92.2" class="a" style="stroke-width:1.2"/><circle cx="60" cy="116.8" r="2.5" class="fa"/>
+        <path d="M78.8 141.9 L78.8 92.9" class="a" style="stroke-width:1.2"/><circle cx="78.8" cy="117.4" r="2.5" class="fa"/>
+        <path d="M97.5 142.9 L97.5 94" class="a" style="stroke-width:1.2"/><circle cx="97.5" cy="118.5" r="2.5" class="fa"/>
+        <path d="M116.2 144.6 L116.2 95.9" class="a" style="stroke-width:1.2"/><circle cx="116.2" cy="120.3" r="2.5" class="fa"/>
+        <path d="M135 147.3 L135 98.9" class="a" style="stroke-width:1.2"/><circle cx="135" cy="123.1" r="2.5" class="fa"/>
+        <path d="M153.8 151.3 L153.8 103" class="a" style="stroke-width:1.2"/><circle cx="153.8" cy="127.1" r="2.5" class="fa"/>
+        <path d="M172.5 156.5 L172.5 108" class="a" style="stroke-width:1.2"/><circle cx="172.5" cy="132.2" r="2.5" class="fa"/>
+        <path d="M191.2 162.1 L191.2 113" class="a" style="stroke-width:1.2"/><circle cx="191.2" cy="137.5" r="2.5" class="fa"/>
+        <path d="M210 166.2 L210 116.6" class="a" style="stroke-width:1.2"/><circle cx="210" cy="141.4" r="2.5" class="fa"/>
+        <path d="M228.8 167.3 L228.8 117.2" class="c" style="stroke-width:1.2"/><circle cx="228.8" cy="142.3" r="4.5" class="fc"/>
+        <path d="M247.5 164.6 L247.5 113.3" class="a" style="stroke-width:1.2"/><circle cx="247.5" cy="139" r="2.5" class="fa"/>
+        <path d="M266.2 158.2 L266.2 103.7" class="a" style="stroke-width:1.2"/><circle cx="266.2" cy="130.9" r="2.5" class="fa"/>
+        <path d="M285 148 L285 88.5" class="b" style="stroke-width:1.2"/><circle cx="285" cy="118.3" r="4.5" class="fb"/>
+        <path d="M303.8 135.4 L303.8 69.9" class="a" style="stroke-width:1.2"/><circle cx="303.8" cy="102.6" r="2.5" class="fa"/>
+        <path d="M322.5 122.5 L322.5 51.3" class="a" style="stroke-width:1.2"/><circle cx="322.5" cy="86.9" r="2.5" class="fa"/>
+        <path d="M341.2 111.5 L341.2 36" class="a" style="stroke-width:1.2"/><circle cx="341.2" cy="73.8" r="2.5" class="fa"/>
+        <path d="M360 103.4 L360 25" class="a" style="stroke-width:1.2"/><circle cx="360" cy="64.2" r="2.5" class="fa"/>
+        <text x="375" y="44" class="s tc">최소 오차 λ = 17.8</text><text x="375" y="62" class="s tc">4.42 ± 0.94</text><text x="375" y="94" class="s tb">1-표준오차 규칙</text><text x="375" y="112" class="s tb">λ = 100, 5.31</text><text x="375" y="144" class="s">점선은 최소 + 표준오차</text><text x="375" y="162" class="s">모의 자료, 릿지, 5겹</text>
+      </svg>
+      <figcaption>그림 1. 교차검증 곡선과 1-표준오차 규칙. 최소 오차(주황)와 겹 사이 변동 안에서 구별되지 않는 가장 단순한 후보(청록)를 고른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>검증 자료로 평가(<a href="03-01.html">3.1절</a>)와 파이프라인 객체(<a href="02-04.html">2.4절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 둘 다 조심해야 한다는 것이다. 겹 사이 변동이 크면 가장 작은 오차는 우연히 좋아 보인 것일 수 있으므로, 변동 안에서 구별되지 않는 후보 가운데 더 단순한 것을 고르는 편이 안전하다(그림 1). 또 여러 후보 가운데 가장 좋은 값은 낙관적이므로 최종 성능은 따로 잰다. 계수는 학습이 정하지만 규제 강도, 나무 깊이, 이웃 수 같은 하이퍼파라미터는 새 자료에 대한 오차로 골라야 하기 때문에 교차검증을 쓴다.</p>
 
     <h3><span class="no">3.3.1</span>탐색 방법</h3>
-    <p>격자 탐색은 후보 조합을 모두 시도합니다. 규제 강도처럼 범위가 넓은 값은 0.01, 0.1, 1, 10처럼 로그 간격으로 둡니다. 하이퍼파라미터가 여럿이면 조합이 폭증하므로 무작위 탐색(정해진 횟수만큼 무작위 조합)이 같은 비용으로 더 넓게 살핍니다.</p>
+    <p>격자 탐색은 후보 조합을 모두 시도한다. 규제 강도처럼 범위가 넓은 값은 0.01, 0.1, 1, 10처럼 로그 간격으로 둔다. 그런데 하이퍼파라미터가 여럿이면 조합이 폭증하므로, 정해진 횟수만큼 무작위 조합을 시도하는 무작위 탐색이 같은 비용으로 더 넓게 살핀다.</p>
     <pre><code>from sklearn.model_selection import GridSearchCV
 grid = GridSearchCV(model, {"clf__C": [0.01, 0.1, 1, 10]},
                     cv=5, scoring="roc_auc")
 grid.fit(X_train, y_train)</code></pre>
-    <p>파이프라인 전체(2.4절)를 넣어야 겹마다 전처리도 다시 학습됩니다. 시간 자료라면 <code>TimeSeriesSplit</code>으로 2.3절의 확장 창을 씁니다.</p>
+    <p>이때 파이프라인 전체(<a href="02-04.html">2.4절</a>)를 넣어야 겹마다 전처리도 다시 학습된다. 시간 자료라면 <code>TimeSeriesSplit</code>으로 <a href="02-03.html">2.3절</a>의 확장 창을 쓴다.</p>
 
     <h3><span class="no">3.3.2</span>1-표준오차 규칙</h3>
-    <p>\(k\)겹의 오차 평균이 가장 작은 후보를 고르면 겹 사이 변동 때문에 우연히 좋아 보인 복잡한 모형을 고르기 쉽습니다. 최소 오차 + 그 표준오차(겹 오차의 표준편차 / \(\sqrt{k}\)) 안에 드는 후보 가운데 가장 단순한 모형을 고르는 것이 1-표준오차 규칙입니다.</p>
-
-    <h3><span class="no">3.3.3</span>중첩 교차검증</h3>
-    <p>교차검증으로 고른 후보의 교차검증 오차는 "여러 후보 중 가장 좋은 값"이라 낙관적입니다. 최종 성능은 조정에 쓰지 않은 시험 자료로 재거나, 바깥 교차검증 안에서 안쪽 교차검증으로 조정을 반복하는 중첩 교차검증으로 추정합니다.</p>
-
+    <p>\(k\)겹 오차의 평균이 가장 작은 후보를 고르면, 겹 사이 변동 때문에 우연히 좋아 보인 복잡한 모형을 고르기 쉽다. 그래서 최소 오차에 그 표준오차(겹 오차의 표준편차 / \(\sqrt k\))를 더한 값 안에 드는 후보 가운데 가장 단순한 모형을 고르는데, 이것이 1-표준오차 규칙이다. 그림 1에서는 최소 + 표준오차가 5.35이므로, 그 안에 드는 가장 큰 \(\lambda = 100\)을 고른다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
-      <p>5겹 교차검증의 한 후보에서 겹 오차가 0.20, 0.22, 0.19, 0.21, 0.23입니다. 평균과 표준오차는?</p>
+      <p>5겹 교차검증의 한 후보에서 겹 오차가 0.20, 0.22, 0.19, 0.21, 0.23이다. 평균과 표준오차를 구하라.</p>
     </div>
-    <p><i>풀이.</i> 평균 \(1.05/5 = 0.210\). 표준편차 \(\sqrt{(0.0001 + 0.0001 + 0.0004 + 0 + 0.0004)/4} = \sqrt{0.00025} = 0.0158\), 표준오차 \(0.0158/\sqrt 5 = 0.0071\).</p>
+    <p><i>풀이.</i> 평균은 \(1.05/5 = 0.210\)이다. 표준편차는 \(\sqrt{(0.0001 + 0.0001 + 0.0004 + 0 + 0.0004)/4} = \sqrt{0.00025} = 0.0158\)이므로, 표준오차는 \(0.0158/\sqrt 5 = 0.0071\)이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>로그 간격 격자나 무작위 탐색, 파이프라인 전체를 교차검증.</li>
-        <li>1-표준오차 규칙으로 단순한 모형을 선호.</li>
-        <li>최종 성능은 시험 자료나 중첩 교차검증으로.</li>
-      </ol>
-    </div>
+    <h3><span class="no">3.3.3</span>중첩 교차검증</h3>
+    <p>교차검증으로 고른 후보의 교차검증 오차는 여러 후보 가운데 가장 좋은 값이라 낙관적이다. 따라서 최종 성능은 조정에 쓰지 않은 시험 자료로 재거나, 바깥 교차검증 안에서 안쪽 교차검증으로 조정을 반복하는 중첩 교차검증으로 추정한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>가장 좋은 후보가 격자의 끝값, 예컨대 \(C = 10\)이면 최적값이 격자 밖에 있을 수 있다. 그러므로 범위를 \(C = 100, 1000\)까지 넓혀 다시 탐색한다.</p></div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>하이퍼파라미터는 로그 간격 격자나 무작위 탐색으로 후보를 정하고, 파이프라인 전체를 교차검증해 고른다. 1-표준오차 규칙은 변동 안에서 구별되지 않는 더 단순한 모형을 고르게 한다. 고른 후보의 교차검증 오차는 낙관적이므로 최종 성능은 시험 자료나 중첩 교차검증으로 잰다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>하이퍼파라미터 3개에 각각 후보 5개를 두고 5겹 교차검증 격자 탐색을 하면 모형을 몇 번 학습하나요?
-          <details><summary>답</summary><p>\(5^3 \times 5 = 625\)번(최종 재학습 1번 제외).</p></details>
+        <li>하이퍼파라미터 3개에 각각 후보 5개를 두고 5겹 교차검증 격자 탐색을 하면 모형을 몇 번 학습하는가?
+          <details><summary>답</summary><p>최종 재학습 1번을 빼면 \(5^3 \times 5 = 625\)번이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>가장 좋은 후보가 격자의 끝값(예: \(C = 10\))이었습니다. 어떻게 하나요?
-          <details><summary>답</summary><p>최적값이 격자 밖에 있을 수 있으므로 범위를 넓혀(\(C = 100, 1000\)) 다시 탐색합니다.</p></details>
+      <ol start="2">
+        <li>같은 비용(학습 625번)으로 무작위 탐색을 하면 조합을 몇 개 시도할 수 있는가? 격자 탐색보다 나은 점은 무엇인가?
+          <details><summary>답</summary><p>5겹이므로 125개 조합이다. 격자는 각 하이퍼파라미터의 값을 5개씩만 보지만, 무작위 탐색은 각 축에서 125개의 서로 다른 값을 본다. 중요한 하이퍼파라미터가 하나뿐일 때 특히 유리하다.</p></details>
+        </li>
+        <li>예제 3.3.1의 후보가 최소 오차였고, 다른 단순한 후보의 평균 오차가 0.215였다. 1-표준오차 규칙으로는 무엇을 고르는가?
+          <details><summary>답</summary><p>\(0.210 + 0.0071 = 0.217\) 안에 0.215가 들므로 더 단순한 후보를 고른다.</p></details>
         </li>
       </ol>
     </div>

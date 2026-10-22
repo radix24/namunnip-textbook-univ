@@ -8,63 +8,65 @@
 <article class="card q-card" id="text-s16-imbalance" data-kind="본문" data-std="응통16-03-04">
   <header class="card-head"><span class="no"></span><h2>불균형 자료 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>양성이 드문 자료에서 정확도가 왜 쓸모없는지 안다.</li>
-        <li>정밀도, 재현율, PR 곡선으로 평가한다.</li>
-        <li>가중치, 표본 조정, 비용에 맞춘 임계값으로 학습과 결정을 조정한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>업무 지표로 해석 (<a href="03-02.html">3.2절</a>), 교차검증 (3.3절).</li>
-      </ul>
-    </div>
-
-    <h3>99% 정확한 쓸모없는 모형</h3>
-    <p>사기 거래가 1%인 자료에서 "모두 정상"이라고 답하는 모형의 정확도는 99%입니다. 그러나 사기는 하나도 잡지 못합니다. 양성이 드문 자료에서는 양성을 얼마나 잡는지와, 잡았다고 한 것 중 얼마나 맞는지를 따로 봐야 합니다.</p>
+    <p class="q-ask">거래 1만 건 가운데 사기는 100건이다. 새 사기 탐지 모형의 정확도는 99.1%인데, 모든 거래를 정상이라고 답하는 모형도 정확도가 99.0%이다. 그렇다면 새 모형은 0.1%p만큼만 나은 것일까? 양성이 드문 자료에서는 무엇을 봐야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="사기 탐지 모형(파랑)과 모두 정상이라 답하는 모형(회색)의 지표 막대. 정확도는 0.991과 0.990으로 거의 같지만, 정밀도는 0.533과 0, 재현율은 0.8과 0으로 크게 다르다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="147.6" text-anchor="end" class="s">0.25</text>
+        <text x="55" y="111.3" text-anchor="end" class="s">0.5</text>
+        <text x="55" y="74.9" text-anchor="end" class="s">0.75</text>
+        <text x="55" y="38.5" text-anchor="end" class="s">1</text>
+        <rect x="76" y="35.9" width="32" height="144.1" class="la a"/><text x="92" y="30.9" text-anchor="middle" class="s">0.991</text>
+        <rect x="112" y="36" width="32" height="144" class="lk k"/><text x="128" y="31" text-anchor="middle" class="s">0.99</text>
+        <text x="110" y="198" text-anchor="middle" class="s">정확도</text>
+        <rect x="176" y="102.5" width="32" height="77.5" class="la a"/><text x="192" y="97.5" text-anchor="middle" class="s">0.533</text>
+        <rect x="212" y="180" width="32" height="1" class="lk k"/><text x="228" y="175" text-anchor="middle" class="s">0</text>
+        <text x="210" y="198" text-anchor="middle" class="s">정밀도</text>
+        <rect x="276" y="63.6" width="32" height="116.4" class="la a"/><text x="292" y="58.6" text-anchor="middle" class="s">0.8</text>
+        <rect x="312" y="180" width="32" height="1" class="lk k"/><text x="328" y="175" text-anchor="middle" class="s">0</text>
+        <text x="310" y="198" text-anchor="middle" class="s">재현율</text>
+        <rect x="375" y="40" width="14" height="12" class="la a"/><text x="395" y="50" class="s">모형</text><rect x="375" y="62" width="14" height="12" class="lk k"/><text x="395" y="72" class="s">모두 정상</text><text x="375" y="108" class="s">사기 100건 / 1만 건</text><text x="375" y="126" class="s">정확도는 0.1%p 차이,</text><text x="375" y="144" class="s">재현율은 0.8 차이</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.4.1의 지표 비교. 정확도(왼쪽)는 두 모형을 구별하지 못하지만, 정밀도와 재현율은 차이를 분명히 보여 준다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>업무 지표로 해석(<a href="03-02.html">3.2절</a>)과 교차검증(<a href="03-03.html">3.3절</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 그렇지 않다는 것이다. 모두 정상이라 답하는 모형은 사기를 하나도 잡지 못하지만, 새 모형은 사기의 80%를 잡는다(그림 1). 양성이 드문 자료에서는 정확도가 거의 음성 비율로 정해지므로, 양성을 얼마나 잡는지와 잡았다고 한 것 가운데 얼마나 맞는지를 따로 봐야 한다.</p>
 
     <h3><span class="no">3.4.1</span>평가 지표</h3>
-    <ul>
-      <li>재현율(참양성률) = TP / (TP + FN): 실제 양성 중 잡은 비율.</li>
-      <li>정밀도 = TP / (TP + FP): 양성이라 한 것 중 맞은 비율.</li>
-      <li>PR 곡선과 그 아래 넓이(평균 정밀도): 임계값을 바꿀 때의 정밀도-재현율 관계. ROC AUC는 음성이 많으면 거짓양성률이 작게 보여 낙관적일 수 있습니다. 무작위 모형의 평균 정밀도는 양성 비율(여기서는 0.01)입니다.</li>
-    </ul>
-
-    <h3><span class="no">3.4.2</span>학습 조정</h3>
-    <p>소수 집단에 큰 가중치를 주거나(<code>class_weight="balanced"</code>), 다수 집단을 줄이거나 소수 집단을 늘려 학습합니다. 표본을 조정하면 예측 확률이 실제 비율과 달라지므로, 확률 자체가 필요하면 보정해야 합니다. 표본 조정은 학습 자료에만 하고 검증 자료는 원래 비율을 유지합니다.</p>
-
-    <h3><span class="no">3.4.3</span>비용에 맞춘 임계값</h3>
-    <p>양성을 놓치는 비용 \(C_{FN}\)과 잘못 경보하는 비용 \(C_{FP}\)가 다르면, 보정된 확률 \(p\)에 대해 \(p \cdot C_{FN} &gt; (1 - p) C_{FP}\)일 때 양성으로 판정합니다. 곧 임계값은</p>
-    \[p^* = \frac{C_{FP}}{C_{FP} + C_{FN}}.\]
-
+    <p>재현율(참양성률) TP/(TP + FN)은 실제 양성 가운데 잡은 비율이고, 정밀도 TP/(TP + FP)는 양성이라 한 것 가운데 맞은 비율이다. 임계값을 바꿀 때의 정밀도와 재현율의 관계를 그린 것이 PR 곡선이며, 그 아래 넓이를 평균 정밀도라 한다. 무작위 모형의 평균 정밀도는 양성 비율, 여기서는 0.01이다. 반면 ROC AUC는 음성이 많으면 거짓양성률이 작게 보여 낙관적일 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
-      <p>거래 10000건 중 사기 100건. 모형이 150건을 사기로 판정했고 그중 80건이 실제 사기입니다. 정확도, 정밀도, 재현율은?</p>
+      <p>거래 10000건 가운데 사기가 100건이다. 모형이 150건을 사기로 판정했고 그 가운데 80건이 실제 사기였다. 정확도, 정밀도, 재현율을 구하라.</p>
     </div>
-    <p><i>풀이.</i> TP 80, FP 70, FN 20, TN 9830. 정확도 \(9910/10000 = 99.1\%\), 정밀도 \(80/150 = 0.533\), 재현율 \(80/100 = 0.80\). 정확도는 "모두 정상" 모형(99.0%)과 거의 같아 차이를 보여 주지 못합니다.</p>
+    <p><i>풀이.</i> TP 80, FP 70, FN 20, TN 9830이다. 정확도는 \(9910/10000 = 99.1\%\), 정밀도는 \(80/150 = 0.533\), 재현율은 \(80/100 = 0.80\)이다. 즉 정확도는 모두 정상인 모형의 99.0%와 거의 같아 차이를 보여 주지 못한다(그림 1).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>불균형 자료에서는 정밀도, 재현율, PR 곡선.</li>
-        <li>가중치나 표본 조정은 학습 자료에만, 확률은 보정.</li>
-        <li>임계값 \(p^* = C_{FP}/(C_{FP} + C_{FN})\).</li>
-      </ol>
-    </div>
+    <h3><span class="no">3.4.2</span>학습 조정</h3>
+    <p>소수 집단에 큰 가중치를 주거나(<code>class_weight="balanced"</code>), 다수 집단을 줄이거나 소수 집단을 늘려 학습한다. 그런데 표본을 조정하면 예측 확률이 실제 비율과 달라지므로, 확률 자체가 필요하면 보정해야 한다. 또 표본 조정은 학습 자료에만 하고, 검증 자료는 원래 비율을 유지한다.</p>
+
+    <h3><span class="no">3.4.3</span>비용에 맞춘 임계값</h3>
+    <p>양성을 놓치는 비용 \(C_{FN}\)과 잘못 경보하는 비용 \(C_{FP}\)가 다르면, 보정된 확률 \(p\)에 대해 \(p \cdot C_{FN} &gt; (1 - p)C_{FP}\)일 때 양성으로 판정한다. 따라서 임계값은 다음과 같다.</p>
+    \[ p^* = \frac{C_{FP}}{C_{FP} + C_{FN}} \]
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>소수 집단을 복제해 늘린 뒤 교차검증을 하면, 같은 양성 사례가 학습 겹과 검증 겹에 동시에 들어가 누수가 생긴다. 그러므로 표본 조정은 파이프라인 안에 넣어 겹마다 학습 부분에만 적용한다.</p></div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>불균형 자료에서는 정확도 대신 정밀도, 재현율, PR 곡선과 평균 정밀도로 평가한다. 가중치나 표본 조정은 학습 자료에만 적용하고 확률이 필요하면 보정한다. 판정 임계값은 비용에 맞춰 \(p^* = C_{FP}/(C_{FP} + C_{FN})\)으로 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 F1 점수(정밀도와 재현율의 조화평균)는?
-          <details><summary>답</summary><p>\(2 \times 0.533 \times 0.8/(0.533 + 0.8) = 0.64\).</p></details>
+        <li>예제 3.4.1에서 정밀도와 재현율의 조화평균인 F1 점수는 얼마인가?
+          <details><summary>답</summary><p>\(2 \times 0.533 \times 0.8/(0.533 + 0.8) = 0.64\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>학습 자료에서 소수 집단을 복제해 늘린 뒤 교차검증을 했더니 성능이 매우 좋게 나왔습니다. 무엇이 문제인가요?
-          <details><summary>답</summary><p>복제를 분할 전에 하면 같은 양성 사례가 학습 겹과 검증 겹에 동시에 들어가 누수가 생깁니다. 표본 조정을 파이프라인 안에 넣어 겹마다 학습 부분에만 적용해야 합니다.</p></details>
+      <ol start="2">
+        <li>사기 하나를 놓치면 50만 원, 정상 거래를 막으면 1만 원의 손해이다. 임계값은 얼마인가?
+          <details><summary>답</summary><p>\(p^* = 1/(1 + 50) = 0.0196\)이다. 사기일 확률이 2%만 넘어도 막는 것이 이익이다.</p></details>
+        </li>
+        <li>사기를 50%로 늘린 표본으로 학습한 모형이 어떤 거래에 확률 0.6을 주었다. 이 값을 실제 사기 확률로 읽어도 되는가?
+          <details><summary>답</summary><p>안 된다. 학습 때의 사기 비율이 실제(1%)보다 훨씬 높아 확률이 부풀려져 있다. 원래 비율로 보정한 뒤 임계값과 비교해야 한다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,68 +8,75 @@
 <article class="card q-card" id="text-s16-deploy" data-kind="본문" data-std="응통16-04-03">
   <header class="card-head"><span class="no"></span><h2>배치 예측과 실시간 API</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>배치 예측과 실시간 API의 차이를 안다.</li>
-        <li>신선도, 지연 시간, 비용으로 배포 방식을 고른다.</li>
-        <li>배포 전 점검 항목을 정리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>회고 (<a href="04-02.html">4.2절</a>), 파이프라인 객체 (2.4절), 정기 실행 (2.5절).</li>
-      </ul>
-    </div>
-
-    <h3>모형이 노트북 밖으로 나가는 두 길</h3>
-    <p>학습한 모형이 쓰이려면 예측이 업무 시스템에 전달되어야 합니다. 정해진 때에 대상 전체를 한꺼번에 예측해 표로 넘기는 <b>배치 예측</b>과, 요청이 올 때마다 하나씩 예측해 바로 돌려주는 <b>실시간 API</b>가 있습니다.</p>
+    <p class="q-ask">이탈 점수 모형과 사기 탐지 모형을 함께 배포해야 한다. 이탈 점수는 매일 밤 한꺼번에 계산해 두면 되는데, 사기 탐지도 그렇게 해도 될까? 카드 결제 요청이 들어온 순간에 판정해야 하는 모형은 무엇이 달라야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="두 배포 방식의 흐름. 배치 예측(파랑)은 매일 새벽 2시 정기 실행, 200만 명 예측(약 7분), 업무 시스템이 읽는 점수 표로 이어지며 신선도가 하루이고 운영 부담이 작다. 실시간 API(주황)는 새 거래 요청, 파이프라인 객체를 쓰는 예측 서버, 수십 ms 안의 승인 또는 차단으로 이어지며 신선도가 요청 시점이고 운영 부담이 크다">
+        <text x="10" y="22" class="s ta">배치 예측</text>
+        <text x="10" y="122" class="s tc">실시간 API</text>
+        <rect x="10" y="32" width="100" height="44" class="la a"/><text x="60.0" y="51.0" text-anchor="middle" class="s">매일 새벽 2시</text>
+        <text x="60.0" y="66.0" text-anchor="middle" class="s">정기 실행</text>
+        <rect x="140" y="32" width="110" height="44" class="la a"/><text x="195.0" y="51.0" text-anchor="middle" class="s">200만 명 예측</text>
+        <text x="195.0" y="66.0" text-anchor="middle" class="s">약 7분</text>
+        <rect x="280" y="32" width="110" height="44" class="la a"/><text x="335.0" y="51.0" text-anchor="middle" class="s">점수 표</text>
+        <text x="335.0" y="66.0" text-anchor="middle" class="s">업무 시스템이 읽음</text>
+        <path d="M112 54 L138 54 M131.6 56.7 L138 54 L131.6 51.3" class="k"/>
+        <path d="M252 54 L278 54 M271.6 56.7 L278 54 L271.6 51.3" class="k"/>
+        <text x="410" y="50" class="s">신선도 하루</text><text x="410" y="66" class="s">운영 부담 작음</text>
+        <rect x="10" y="132" width="100" height="44" class="lc c"/><text x="60.0" y="158.0" text-anchor="middle" class="s">새 거래 요청</text>
+        <rect x="140" y="132" width="110" height="44" class="lc c"/><text x="195.0" y="151.0" text-anchor="middle" class="s">예측 서버</text>
+        <text x="195.0" y="166.0" text-anchor="middle" class="s">파이프라인 객체</text>
+        <rect x="280" y="132" width="110" height="44" class="lc c"/><text x="335.0" y="151.0" text-anchor="middle" class="s">승인 또는 차단</text>
+        <text x="335.0" y="166.0" text-anchor="middle" class="s">수십 ms 안에</text>
+        <path d="M112 154 L138 154 M131.6 156.7 L138 154 L131.6 151.3" class="k"/>
+        <path d="M252 154 L278 154 M271.6 156.7 L278 154 L271.6 151.3" class="k"/>
+        <text x="410" y="150" class="s">신선도 요청 시점</text><text x="410" y="166" class="s">운영 부담 큼</text>
+        <text x="10" y="204" class="s">두 길 모두 같은 파이프라인 객체(2.4절)와 패키지 버전을 쓴다</text>
+      </svg>
+      <figcaption>그림 1. 배치 예측(파랑)과 실시간 API(주황). 결정의 주기와 필요한 입력 신선도에 따라 고른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>회고(<a href="04-02.html">4.2절</a>), 파이프라인 객체(<a href="02-04.html">2.4절</a>), 정기 실행(<a href="02-05.html">2.5절</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 그렇게 할 수 없다는 것이다. 사기 탐지는 예측 대상인 거래가 요청 순간에야 생기므로, 미리 계산해 둘 것이 없다. 학습한 모형이 쓰이려면 예측이 업무 시스템에 전달되어야 하는데, 그 길은 둘이다(그림 1). 정해진 때에 대상 전체를 한꺼번에 예측해 표로 넘기는 배치 예측과, 요청이 올 때마다 하나씩 예측해 바로 돌려주는 실시간 API이다.</p>
 
     <h3><span class="no">4.3.1</span>비교</h3>
     <table class="tw">
-      <tr><th></th><th>배치 예측</th><th>실시간 API</th></tr>
-      <tr><td>예측 시점</td><td>매일 밤 등 정기</td><td>요청 즉시</td></tr>
-      <tr><td>입력 신선도</td><td>마지막 실행 시점</td><td>요청 시점</td></tr>
-      <tr><td>지연 시간 요구</td><td>느슨함(몇 시간)</td><td>엄격함(수십~수백 ms)</td></tr>
-      <tr><td>운영 부담</td><td>작음(2.5절의 정기 작업)</td><td>큼(서버, 확장, 장애 대응)</td></tr>
-      <tr><td>예</td><td>이탈 위험 명단, 수요 예측</td><td>사기 탐지, 실시간 추천</td></tr>
+      <caption>표 1. 배치 예측과 실시간 API</caption>
+      <thead><tr><th></th><th>배치 예측</th><th>실시간 API</th></tr></thead>
+      <tbody>
+        <tr><td>예측 시점</td><td>매일 밤 등 정기</td><td>요청 즉시</td></tr>
+        <tr><td>입력 신선도</td><td>마지막 실행 시점</td><td>요청 시점</td></tr>
+        <tr><td>지연 시간 요구</td><td>느슨함(몇 시간)</td><td>엄격함(수십~수백 ms)</td></tr>
+        <tr><td>운영 부담</td><td>작음(2.5절의 정기 작업)</td><td>큼(서버, 확장, 장애 대응)</td></tr>
+        <tr><td>예</td><td>이탈 위험 명단, 수요 예측</td><td>사기 탐지, 실시간 추천</td></tr>
+      </tbody>
     </table>
-    <p>결정이 하루 단위로 이루어지면 배치로 충분합니다. 예측 대상이 요청 순간에야 정해지거나(새 거래), 몇 초 전의 행동이 예측에 중요하면 실시간이 필요합니다.</p>
-
-    <h3><span class="no">4.3.2</span>배포 전 점검</h3>
-    <ul>
-      <li>학습과 운영에서 같은 파이프라인 객체와 패키지 버전을 쓰는가.</li>
-      <li>운영 입력으로 계산한 예측이 오프라인 예측과 같은가(같은 사례 몇 개로 대조).</li>
-      <li>입력이 비거나 이상할 때의 동작(기본값, 오류 응답)이 정해져 있는가.</li>
-      <li>이전 모형으로 되돌리는 방법이 있는가.</li>
-    </ul>
-
+    <p>따라서 결정이 하루 단위로 이루어지면 배치로 충분하다. 반면 예측 대상이 새 거래처럼 요청 순간에야 정해지거나, 몇 초 전의 행동이 예측에 중요하면 실시간이 필요하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
-      <p>고객 200만 명의 이탈 점수를 매일 계산합니다. 초당 5000건을 예측할 수 있다면 배치 실행에 몇 분이 걸리나요?</p>
+      <p>고객 200만 명의 이탈 점수를 매일 계산한다. 초당 5000건을 예측할 수 있다면 배치 실행에 몇 분이 걸리는가?</p>
     </div>
-    <p><i>풀이.</i> \(2\,000\,000/5000 = 400\)초, 약 6.7분. 매일 밤 실행해도 아침 업무 전에 충분히 끝나므로 이탈 점수에는 배치가 알맞습니다.</p>
+    <p><i>풀이.</i> \(2{,}000{,}000/5000 = 400\)초, 곧 약 6.7분이다. 그러므로 매일 밤 실행해도 아침 업무 전에 충분히 끝나, 이탈 점수에는 배치가 알맞다(그림 1).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>배치: 정기적, 단순. 실시간: 즉시, 복잡.</li>
-        <li>결정의 주기와 필요한 입력 신선도로 고릅니다.</li>
-        <li>배포 전 대조, 예외 처리, 되돌리기를 준비합니다.</li>
-      </ol>
-    </div>
+    <h3><span class="no">4.3.2</span>배포 전 점검</h3>
+    <p>배포 전에는 몇 가지를 점검한다. 먼저 학습과 운영에서 같은 파이프라인 객체와 패키지 버전을 쓰는지 확인한다. 다음으로 같은 사례 몇 개를 골라, 운영 입력으로 계산한 예측이 오프라인 예측과 같은지 대조한다. 그리고 입력이 비거나 이상할 때 기본값을 쓸지 오류를 돌려줄지 정해 두고, 이전 모형으로 되돌리는 방법을 마련한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>배포 뒤 운영 예측과 오프라인 예측이 일부 고객에서 다르면, 가장 먼저 학습과 운영의 전처리나 변수 계산 방식의 차이를 의심한다. 이를 training-serving skew라 하며, 같은 고객의 입력 변수를 두 경로에서 뽑아 열마다 비교해 찾는다.</p></div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>배치 예측은 정기적으로 전체를 계산해 단순하고, 실시간 API는 요청 즉시 예측하지만 운영 부담이 크다. 그러므로 결정의 주기와 필요한 입력 신선도로 고르며, 배포 전에는 같은 파이프라인과 버전, 오프라인 대조, 예외 처리, 되돌리기를 준비한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>상품 추천을 하루 한 번 배치로 계산하면 어떤 한계가 있나요?
-          <details><summary>답</summary><p>오늘 방금 본 상품이 추천에 반영되지 않고, 오늘 가입한 신규 고객에게는 추천이 없습니다. 기본 추천은 배치로, 최근 행동 반영은 가벼운 실시간 보정으로 나누는 절충도 가능합니다.</p></details>
+        <li>상품 추천을 하루 한 번 배치로 계산하면 어떤 한계가 있는가?
+          <details><summary>답</summary><p>오늘 방금 본 상품이 추천에 반영되지 않고, 오늘 가입한 신규 고객에게는 추천이 없다. 기본 추천은 배치로, 최근 행동은 가벼운 실시간 보정으로 나누는 절충도 가능하다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>배포 후 운영 예측과 오프라인 예측이 일부 고객에서 다릅니다. 가장 먼저 의심할 원인은?
-          <details><summary>답</summary><p>학습과 운영의 전처리나 입력 변수 계산 방식의 차이(training-serving skew)입니다. 같은 고객의 입력 변수 값을 두 경로에서 뽑아 열마다 비교합니다.</p></details>
+      <ol start="2">
+        <li>사기 탐지 API가 결제 승인 전 50 ms 안에 답해야 한다. 예측 하나에 30 ms, 변수 조회에 40 ms가 걸린다. 어떻게 하는가?
+          <details><summary>답</summary><p>합이 70 ms라 기준을 넘는다. 자주 쓰는 고객 변수를 미리 계산해 빠른 저장소에 두어 조회 시간을 줄이고, 기준을 넘으면 규칙 기반 판정으로 대신하는 기본 동작을 정한다.</p></details>
+        </li>
+        <li>예제 4.3.1에서 고객이 2000만 명으로 늘면 배치 실행은 얼마나 걸리는가?
+          <details><summary>답</summary><p>4000초, 약 67분이다. 여전히 밤사이에 끝나지만, 늘어날 것에 대비해 병렬 실행을 검토한다.</p></details>
         </li>
       </ol>
     </div>
