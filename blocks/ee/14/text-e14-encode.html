@@ -8,20 +8,27 @@
 <article class="card q-card" id="text-e14-encode" data-kind="본문" data-std="전전14-02-02">
   <header class="card-head"><span class="no"></span><h2>명령어를 기계어로 인코딩</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RISC-V 명령 형식(R, I, S, B)의 필드 배치를 안다.</li>
-        <li>어셈블리 명령을 32비트 기계어(16진수)로 바꾼다.</li>
-        <li>분기 오프셋이 2바이트 단위로 들어가고 부호 확장되는 것을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>어셈블리 (<a href="02-01.html">2.1절</a>), 2진수·16진수와 2의 보수.</li>
-      </ul>
-    </div>
+    <p class="q-ask">어셈블리 명령 <code>add x5, x6, x7</code>은 메모리에 0x007302B3이라는 32비트 숫자로 저장된다. 이 숫자의 어느 비트가 "덧셈"이고 어느 비트가 "x6"일까? 또 RISC-V는 왜 상수를 명령 여기저기에 쪼개 넣는 이상해 보이는 짜임을 골랐을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="R 형식으로 인코딩한 add x5, x6, x7(예제 2.2.1). 왼쪽부터 funct7 0000000(7비트), rs2 00111(x7), rs1 00110(x6), funct3 000, rd 00101(x5), opcode 0110011(7비트)이며, 이어 붙이면 0x007302B3이다. rs1, rs2, rd 필드는 모든 형식에서 같은 자리에 있다">
+        <rect x="40" y="70" width="105" height="40" class="lk"/><rect x="40" y="70" width="105" height="40" class="k"/>
+        <rect x="145" y="70" width="75" height="40" class="lb"/><rect x="145" y="70" width="75" height="40" class="b"/>
+        <rect x="220" y="70" width="75" height="40" class="lb"/><rect x="220" y="70" width="75" height="40" class="b"/>
+        <rect x="295" y="70" width="45" height="40" class="lk"/><rect x="295" y="70" width="45" height="40" class="k"/>
+        <rect x="340" y="70" width="75" height="40" class="lc"/><rect x="340" y="70" width="75" height="40" class="c"/>
+        <rect x="415" y="70" width="105" height="40" class="la"/><rect x="415" y="70" width="105" height="40" class="a"/>
+        <g text-anchor="middle" class="s"><text x="92" y="60">funct7</text><text x="182" y="60">rs2</text><text x="257" y="60">rs1</text><text x="317" y="60">funct3</text><text x="377" y="60">rd</text><text x="467" y="60">opcode</text></g>
+        <g text-anchor="middle" font-family="monospace" class="s"><text x="92" y="95">0000000</text><text x="182" y="95">00111</text><text x="257" y="95">00110</text><text x="317" y="95">000</text><text x="377" y="95">00101</text><text x="467" y="95">0110011</text></g>
+        <g text-anchor="middle"><text x="92" y="130" class="s">add (sub는 0100000)</text><text x="182" y="130" class="tb">x7</text><text x="257" y="130" class="tb">x6</text><text x="317" y="130" class="s">add</text><text x="377" y="130" class="tc">x5</text><text x="467" y="130" class="ta">R형 연산</text></g>
+        <g class="s"><text x="40" y="40">31</text><text x="510" y="40">0</text></g>
+        <text x="280" y="170" text-anchor="middle" class="td">0000 0000 0111 0011 0000 0010 1011 0011 = 0x007302B3</text>
+      </svg>
+      <figcaption>그림 1. 명령의 각 비트 묶음이 연산 종류와 레지스터 번호를 나타내며, 레지스터 필드를 모든 형식에서 같은 자리에 둬서 해독기가 형식을 알기 전에도 레지스터를 읽기 시작할 수 있다(예제 2.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>어셈블리(<a href="02-01.html">2.1절</a>), 2진수·16진수와 2의 보수를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>형식</h3>
+    <p>RISC-V의 명령은 모두 32비트이고, 맨 아래 7비트 opcode가 명령의 형식을 알려 준다. 자주 쓰는 네 형식은 아래와 같은 필드로 나뉜다.</p>
     <table class="tb-table">
       <tr><th>형식</th><th>31 ← 비트 → 0</th><th>예</th></tr>
       <tr><td>R</td><td>funct7(7) | rs2(5) | rs1(5) | funct3(3) | rd(5) | opcode(7)</td><td>add, sub</td></tr>
@@ -29,42 +36,37 @@
       <tr><td>S</td><td>imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode</td><td>sw</td></tr>
       <tr><td>B</td><td>imm[12|10:5] | rs2 | rs1 | funct3 | imm[4:1|11] | opcode</td><td>beq, bne</td></tr>
     </table>
-    <p>레지스터 번호 필드(rs1, rs2, rd)의 위치를 모든 형식에서 같게 두어 해독 회로를 단순하게 했습니다. 상수가 S, B 형식에서 쪼개진 것도 같은 이유입니다.</p>
+    <p>여기서 눈여겨볼 것은 레지스터 번호 필드 rs1, rs2, rd의 위치가 모든 형식에서 같다는 점이다. 그래서 해독 회로는 형식을 가리기 전에 레지스터부터 읽기 시작할 수 있고, 회로도 단순해진다. 상수가 S와 B 형식에서 쪼개진 것도 같은 이유로, 레지스터 필드를 제자리에 두려고 남는 자리에 상수를 나눠 넣은 것이다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>(가) <code>add x5, x6, x7</code>, (나) <code>lw x5, 8(x6)</code>, (다) <code>beq x5, x6, +16</code>을 인코딩하라. (opcode: R 0110011, load 0000011, branch 1100011, funct3: add 000, lw 010, beq 000)</p>
     </div>
-    <p><i>풀이.</i> (가) 0000000 | 00111 | 00110 | 000 | 00101 | 0110011 = <code>0x007302B3</code>. (나) 000000001000 | 00110 | 010 | 00101 | 0000011 = <code>0x00832283</code>. (다) 오프셋 16 = 0 0000000 1000 0(13비트, 맨 아래 0은 저장 안 함): imm[12] = 0, imm[10:5] = 000000, imm[4:1] = 1000, imm[11] = 0. 0 000000 | 00110 | 00101 | 000 | 1000 0 | 1100011 = <code>0x00628863</code>. (sub는 funct7만 0100000으로 달라 <code>0x407302B3</code>.)</p>
+    <p><i>풀이.</i> (가)는 0000000 | 00111 | 00110 | 000 | 00101 | 0110011 = <code>0x007302B3</code>이다(그림 1). 처음 질문의 첫째 답이 이것으로, rs2 자리의 00111이 x7, rs1 자리의 00110이 x6이다. 또 sub는 funct7만 0100000으로 달라 <code>0x407302B3</code>이 된다.</p>
+    <p>(나)는 I 형식이어서 000000001000 | 00110 | 010 | 00101 | 0000011 = <code>0x00832283</code>이다.</p>
+    <p>(다)의 오프셋 16은 13비트로 0 0000000 1000 0인데, 분기 목표는 늘 짝수이므로 맨 아래 0은 저장하지 않는다. 그러면 imm[12] = 0, imm[10:5] = 000000, imm[4:1] = 1000, imm[11] = 0이다. 이것을 제자리에 넣으면 0 000000 | 00110 | 00101 | 000 | 1000 0 | 1100011 = <code>0x00628863</code>이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "분기 오프셋은 명령 개수": 바이트 단위이며, 맨 아래 비트가 항상 0이라 저장하지 않습니다(그래서 ±4 KB 범위). (2) "음수 상수는 따로 부호 필드가 있다": 2의 보수로 넣고 가장 위 비트로 부호 확장합니다(<code>addi x5, x6, -1</code>의 imm은 0xFFF).</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>어셈블리에 쓴 순서대로 rs1, rs2를 필드에 넣는 실수가 흔하다. <code>add x5, x6, x7</code>에서 x6은 rs1, x7은 rs2이지만, 비트 자리로는 rs2가 rs1보다 왼쪽(높은 비트)에 온다. 또 분기 오프셋은 바이트 단위로 세며, 저장할 때 맨 아래 비트를 빼고 부호 확장된다는 점도 놓치기 쉽다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>R/I/S/B 형식, 레지스터 필드 위치는 같게.</li>
-        <li>add x5,x6,x7 = 0x007302B3, lw x5,8(x6) = 0x00832283, beq x5,x6,+16 = 0x00628863.</li>
-        <li>분기 오프셋은 바이트 단위 13비트(맨 아래 0 생략), 부호 확장.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>RISC-V 명령은 R, I, S, B 형식으로 나뉘며, 레지스터 필드의 위치는 모든 형식에서 같다. 예를 들어 add x5,x6,x7은 0x007302B3, lw x5,8(x6)은 0x00832283, beq x5,x6,+16은 0x00628863이다. 분기 오프셋은 바이트 단위 13비트로, 맨 아래 0을 생략하고 부호 확장한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li><code>sub x5, x6, x7</code>의 기계어는?
-          <details><summary>답</summary><p>0x407302B3.</p></details>
+          <details><summary>답</summary><p>0x407302B3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li><code>addi x5, x6, -1</code>의 기계어는?
-          <details><summary>답</summary><p>imm 0xFFF: 0xFFF30293.</p></details>
+          <details><summary>답</summary><p>imm이 0xFFF이므로 0xFFF30293이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li><code>sw x5, 12(x6)</code>(store opcode 0100011, funct3 010)의 기계어는?
-          <details><summary>답</summary><p>imm 12 = 0000000 01100: 0000000 | 00101 | 00110 | 010 | 01100 | 0100011 = 0x00532623.</p></details>
+          <details><summary>답</summary><p>imm 12 = 0000000 01100을 나눠 넣으면 0000000 | 00101 | 00110 | 010 | 01100 | 0100011 = 0x00532623이다.</p></details>
         </li>
       </ol>
     </div>

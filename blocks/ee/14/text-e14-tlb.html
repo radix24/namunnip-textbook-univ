@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e14-tlb" data-kind="본문" data-std="전전14-06-05">
   <header class="card-head"><span class="no"></span><h2>TLB와 실효 메모리 접근 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>TLB가 페이지 테이블 접근을 줄이는 원리를 안다.</li>
-        <li>TLB 적중률로 실효 접근 시간을 계산한다.</li>
-        <li>TLB가 감당하는 메모리 범위(reach)를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>가상 주소 변환 (<a href="06-03.html">6.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">가상 메모리를 쓰면 데이터를 읽을 때마다 먼저 페이지 테이블을 읽어 물리 주소를 알아내야 한다. 페이지 테이블이 2단계라면 메모리 접근 한 번이 세 번으로 늘어나는 셈인데, 그러면 컴퓨터가 세 배 느려질까? 이 비용을 거의 없애는 방법은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.5.1의 실효 메모리 접근 시간. TLB가 없으면 2단계 페이지 테이블 두 번과 데이터 한 번으로 300 ns이다. TLB가 있으면 98%는 적중해 1 + 100 = 101 ns, 2%는 실패해 1 + 200 + 100 = 301 ns이고, 평균은 105 ns로 TLB가 없을 때의 약 1/3이다">
+        <line x1="130" y1="40" x2="130" y2="160" class="ax"/><line x1="130" y1="160" x2="520" y2="160" class="ax"/>
+        <rect x="130" y="50" width="240" height="26" class="lk"/><rect x="370" y="50" width="120" height="26" class="ld"/><rect x="130" y="50" width="360" height="26" class="d"/>
+        <rect x="130" y="90" width="121" height="26" class="la"/><rect x="130" y="90" width="121" height="26" class="a"/>
+        <rect x="130" y="125" width="126" height="26" class="lb"/><rect x="130" y="125" width="126" height="26" class="b"/>
+        <path d="M370 50 V76" class="k"/>
+        <g text-anchor="end" class="s"><text x="122" y="68">TLB 없음</text><text x="122" y="108">TLB 적중 98%</text><text x="122" y="143">TLB 평균</text></g>
+        <g text-anchor="middle" class="s"><text x="250" y="68">페이지 테이블 2번</text><text x="430" y="68">데이터</text><text x="190" y="108">데이터</text></g>
+        <g class="s"><text x="496" y="68">300 ns</text><text x="258" y="108">101 ns</text><text x="264" y="143">105 ns</text></g>
+        <text x="390" y="108" class="s">실패 2%면 301 ns</text>
+        <g text-anchor="middle" class="s"><text x="130" y="176">0</text><text x="250" y="176">100</text><text x="370" y="176">200</text><text x="490" y="176">300 ns</text></g>
+      </svg>
+      <figcaption>그림 1. 최근 변환을 기억하는 TLB가 대부분의 접근에서 페이지 테이블 읽기를 없애므로, 드문 실패가 300 ns를 넘게 써도 평균은 데이터 접근 한 번에 가까운 105 ns이다(예제 6.5.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가상 주소 변환(<a href="06-03.html">6.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.5.1</span>주소 변환도 캐시한다</h3>
-    <p>가상 주소마다 페이지 테이블(다단계면 여러 번)을 읽으면 메모리 접근이 몇 배가 됩니다. 최근 변환을 저장하는 작은 연관 캐시 TLB가 적중하면 바로 물리 주소를 얻습니다.</p>
+    <p>가상 주소마다 페이지 테이블을 읽으면, 다단계 테이블에서는 단계 수만큼 메모리를 더 읽어 접근이 몇 배로 느려진다. 그런데 프로그램은 같은 페이지를 짧은 시간 안에 여러 번 쓰므로, 최근에 한 변환을 기억해 두면 대부분 다시 쓸 수 있다.</p>
+    <p>이 일을 하는 작은 연관 캐시가 TLB(translation lookaside buffer)이다. TLB가 적중하면 페이지 테이블을 읽지 않고 바로 물리 주소를 얻는다. 처음 질문의 둘째 답이 이것이다. TLB가 실패할 때만 페이지 테이블을 \(k\)단계 읽어 변환을 TLB에 채운다. 그래서 적중률을 \(h\)라 하면 실효 접근 시간은 다음과 같다.</p>
+    \[ t_{\text{실효}} = h(t_{TLB} + t_{mem}) + (1 - h)(t_{TLB} + k\,t_{mem} + t_{mem}) \]
     <div class="tb-env ex">
       <span class="lb">예제 6.5.1</span>
       <p>TLB 조회 1 ns, 메모리 접근 100 ns, 2단계 페이지 테이블(실패 시 2번 더 읽음). TLB 적중률 98%의 실효 접근 시간은?</p>
     </div>
-    <p><i>풀이.</i> 적중: 1 + 100 = 101 ns. 실패: 1 + 200 + 100 = 301 ns. 실효 0.98 × 101 + 0.02 × 301 = 105 ns로, TLB가 없을 때(300 ns)의 약 1/3입니다.</p>
+    <p><i>풀이.</i> 적중하면 1 + 100 = 101 ns이고, 실패하면 페이지 테이블을 두 번 더 읽어 1 + 200 + 100 = 301 ns이다. 따라서 실효 시간은 0.98 × 101 + 0.02 × 301 = 105 ns이다. TLB가 없을 때의 300 ns와 비교하면 약 1/3이다(그림 1). 처음 질문의 첫째 답이 이것으로, TLB가 있으면 세 배 느려지지 않는다.</p>
+    <p>이때 TLB가 한 번에 덮는 메모리 범위를 TLB reach라 하며, 항목 수 × 페이지 크기이다. 프로그램이 쓰는 데이터가 reach보다 크면 TLB 실패가 잦아지므로, 큰 페이지를 써서 reach를 넓히기도 한다(연습문제 2).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "TLB는 데이터 캐시의 일부": 주소 변환만 저장하는 별도 구조입니다. (2) "적중률 98%면 충분히 작은 손해": 실패 비용이 커서 2%가 4%의 시간 증가를 만듭니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>TLB가 실패하면 페이지 부재가 난다고 여기는 실수가 흔하다. TLB 실패는 변환이 TLB에 없을 뿐이어서 페이지 테이블을 읽으면 해결되고, 페이지 부재는 페이지 자체가 메모리에 없어 디스크에서 읽어야 하는 훨씬 드물고 비싼 사건이다. 또 실패한 경우에도 데이터 접근 한 번은 여전히 필요하다는 점을 빠뜨리기 쉽다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>실효 = h(t_TLB + t_mem) + (1 − h)(t_TLB + k·t_mem + t_mem).</li>
-        <li>예: 98% → 105 ns.</li>
-        <li>TLB reach = 항목 수 × 페이지 크기.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>실효 접근 시간은 \(h(t_{TLB} + t_{mem}) + (1 - h)(t_{TLB} + k\,t_{mem} + t_{mem})\)이다. 예제에서 적중률 98%이면 105 ns로, TLB가 없을 때의 약 1/3이다. TLB reach는 항목 수 × 페이지 크기이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>TLB 64항목, 4 KB 페이지의 reach는?
-          <details><summary>답</summary><p>256 KB.</p></details>
+          <details><summary>답</summary><p>64 × 4 KB = 256 KB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 TLB에 2 MB 큰 페이지를 쓰면 reach는?
-          <details><summary>답</summary><p>128 MB.</p></details>
+          <details><summary>답</summary><p>64 × 2 MB = 128 MB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>적중률 99.5%면 예제의 실효 시간은?
-          <details><summary>답</summary><p>약 102 ns.</p></details>
+          <details><summary>답</summary><p>0.995 × 101 + 0.005 × 301 = 약 102 ns이다.</p></details>
         </li>
       </ol>
     </div>

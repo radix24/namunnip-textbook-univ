@@ -8,56 +8,58 @@
 <article class="card q-card" id="text-e14-overflow" data-kind="본문" data-std="전전14-03-03">
   <header class="card-head"><span class="no"></span><h2>오버플로 검출과 부호 확장</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>2의 보수 덧셈에서 오버플로를 부호 비트로 검출한다.</li>
-        <li>부호 있는 수와 없는 수의 오버플로 차이를 안다.</li>
-        <li>부호 확장과 0 확장을 구별한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2의 보수 (<a href="../4/01-01.html">전전4 1.1절</a>), 정수 산술 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">8비트 정수 100에 50을 더했더니 150이 아니라 −106이 나왔다. 덧셈기가 고장 난 것일까? 같은 8비트 패턴 10010110을 부호 없는 수로 읽으면 150이 맞는데, 하드웨어는 언제 결과가 틀렸다고 알려 줘야 할까? 또 8비트 값을 32비트 레지스터에 넣을 때 빈 비트는 무엇으로 채울까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="8비트 부호 있는 수의 범위 −128~127을 수직선으로 나타냈다. 100에서 50만큼 오른쪽으로 가면 127을 넘어서 −128 쪽으로 돌아 들어가 −106에 닿는다. 결과 비트 10010110은 부호 없는 수로는 150이지만 부호 있는 수로는 −106이고, 양수 + 양수가 음수가 되었으므로 오버플로이다">
+        <defs><marker id="ah-e14of" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <line x1="40" y1="110" x2="520" y2="110" class="ax"/>
+        <g class="k"><line x1="40" y1="104" x2="40" y2="116"/><line x1="280" y1="104" x2="280" y2="116"/><line x1="520" y1="104" x2="520" y2="116"/></g>
+        <g text-anchor="middle" class="s"><text x="40" y="132">−128</text><text x="280" y="132">0</text><text x="520" y="132">127</text></g>
+        <circle cx="468" cy="110" r="5" class="fa"/><text x="468" y="132" text-anchor="middle" class="ta">100</text>
+        <circle cx="80" cy="110" r="5" class="fd"/><text x="80" y="132" text-anchor="middle" class="td">−106</text>
+        <path d="M468 100 Q494 70 520 80" class="d" stroke-width="2"/>
+        <path d="M520 80 H540 V40 H20 V80 Q50 70 78 100" class="d dsh" marker-end="url(#ah-e14of)"/>
+        <text x="280" y="34" text-anchor="middle" class="td">+50: 127을 넘어 −128 쪽으로 돌아 들어감</text>
+        <text x="280" y="164" text-anchor="middle" font-family="monospace" class="s">01100100 + 00110010 = 10010110</text>
+        <text x="280" y="184" text-anchor="middle" class="s">부호 없으면 150, 부호 있으면 −106 (양 + 양 → 음: 오버플로)</text>
+      </svg>
+      <figcaption>그림 1. 8비트 부호 있는 수는 −128~127밖에 담지 못해서, 범위를 넘은 결과는 반대쪽 끝으로 돌아 들어가 부호가 뒤집힌 값이 된다(예제 3.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2의 보수(<a href="../4/01-01.html">전전4 1.1절</a>), 정수 산술(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>같은 비트, 다른 해석</h3>
-    <p>부호 있는 덧셈의 오버플로: 두 피연산자 부호가 같은데 결과 부호가 다를 때. 부호 없는 덧셈: 최상위 자리올림이 날 때. 하드웨어는 같은 덧셈기를 쓰고, 플래그로 둘을 구별합니다. 8비트 값을 32비트로 넓힐 때 부호 있는 수는 부호 비트를 복사하고(부호 확장), 부호 없는 수는 0을 채웁니다.</p>
+    <p>덧셈기는 비트를 더할 뿐, 그 비트가 부호 있는 수인지 부호 없는 수인지 알지 못한다. 2의 보수 덕분에 두 해석 모두 같은 덧셈 회로로 맞는 비트를 얻기 때문이다. 다만 결과가 범위를 넘었는지 판단하는 기준은 해석마다 다르다.</p>
+    <p>부호 있는 덧셈은 두 피연산자의 부호가 같은데 결과의 부호가 다를 때 오버플로이다. 반면 부호 없는 덧셈은 최상위 비트에서 자리올림이 날 때 범위를 넘는다. 그래서 하드웨어는 같은 덧셈기를 쓰고, 두 경우를 서로 다른 플래그로 알려 준다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>또 8비트 값을 32비트로 넓힐 때도 해석이 갈린다. 부호 있는 수는 부호 비트를 위쪽에 복사해 채우는데 이를 부호 확장이라 하고, 부호 없는 수는 0을 채우는데 이를 0 확장이라 한다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>8비트 100 + 50과 −100 + (−50)은? 0xF0을 32비트로 부호 확장, 0 확장하면?</p>
     </div>
-    <p><i>풀이.</i> 100 + 50 = 150은 8비트 부호 있는 범위(−128~127) 밖: 결과 비트 10010110 = −106(양 + 양 → 음, 오버플로). −150도 범위 밖: 01101010 = +106(오버플로). 0xF0(−16) 부호 확장 0xFFFFFFF0, 0 확장 0x000000F0(240).</p>
+    <p><i>풀이.</i> 100 + 50 = 150은 8비트 부호 있는 범위(−128~127) 밖이다. 결과 비트 10010110은 −106으로 읽혀, 양수 + 양수가 음수가 된 오버플로이다(그림 1). 마찬가지로 −150도 범위 밖이어서 결과 01101010은 +106이 되고, 음수 + 음수가 양수가 된 오버플로이다.</p>
+    <p>0xF0은 부호 있는 수로 −16이다. 부호 확장하면 위 24비트를 1로 채워 0xFFFFFFF0(여전히 −16)이 되고, 0 확장하면 0x000000F0, 곧 240이 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "자리올림이 나면 늘 오버플로": 부호 있는 연산에서는 부호 비교로 판정합니다. (2) "C의 정수 오버플로는 감싸서 돈다": 부호 있는 정수 오버플로는 정의되지 않은 동작입니다(부호 없는 것만 감쌈).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>최상위 자리올림이 나면 늘 오버플로라고 여기기 쉽다. 하지만 부호 있는 덧셈에서 −1 + 1 = 0은 자리올림이 나도 결과가 맞다. 부호 있는 오버플로는 자리올림이 아니라 부호의 변화로 판단하며, 부호 비트로 들어오는 자리올림과 나가는 자리올림이 다를 때와 같다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>부호 있는 오버플로: 같은 부호 + → 다른 부호.</li>
-        <li>부호 없는: 최상위 자리올림.</li>
-        <li>부호 확장(부호 복사) 대 0 확장.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>부호 있는 덧셈은 같은 부호끼리 더해 부호가 바뀌면 오버플로이다. 부호 없는 덧셈은 최상위 자리올림이 나면 범위를 넘는다. 값을 넓힐 때 부호 있는 수는 부호 비트를 복사하는 부호 확장을, 부호 없는 수는 0 확장을 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>8비트 127 + 1의 부호 있는 결과는?
-          <details><summary>답</summary><p>−128(오버플로).</p></details>
+          <details><summary>답</summary><p>−128이 되어 오버플로이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>8비트 200 + 100(부호 없음)의 결과와 오버플로 여부는?
-          <details><summary>답</summary><p>44, 자리올림 → 오버플로.</p></details>
+          <details><summary>답</summary><p>결과는 44이고, 최상위 자리올림이 나므로 오버플로이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>lb와 lbu 명령의 차이는?
-          <details><summary>답</summary><p>바이트를 읽어 부호 확장(lb)과 0 확장(lbu).</p></details>
+          <details><summary>답</summary><p>둘 다 바이트를 읽지만 lb는 부호 확장, lbu는 0 확장을 한다.</p></details>
         </li>
       </ol>
     </div>

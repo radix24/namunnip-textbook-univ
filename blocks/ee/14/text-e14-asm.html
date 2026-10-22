@@ -8,27 +8,33 @@
 <article class="card q-card" id="text-e14-asm" data-kind="본문" data-std="전전14-02-01">
   <header class="card-head"><span class="no"></span><h2>고급 언어를 어셈블리로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RISC-V의 레지스터, 산술·메모리·분기 명령의 꼴을 안다.</li>
-        <li>대입, 배열 접근, if, 반복문을 어셈블리로 옮긴다.</li>
-        <li>함수 호출 규약(인자 x10~, 반환 주소 x1)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2진수와 2의 보수 (<a href="../4/01-01.html">전전4 1.1절</a>), C 같은 고급 언어의 반복문.</li>
-      </ul>
-    </div>
+    <p class="q-ask">C로 쓴 한 줄짜리 반복문 <code>for (i = 0; i &lt; n; i++) s += a[i];</code>를 CPU는 그대로 알아듣지 못한다. CPU가 실제로 실행하는 명령은 어떤 모양이고, 이 한 줄은 명령 몇 개로 바뀔까? 같은 일을 더 적은 명령으로 할 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="배열 합 반복문의 어셈블리 흐름(예제 2.1.1). i = 0으로 시작해 bge로 i ≥ n인지 검사하고, 아니면 주소 계산(slli, add), 읽기(lw), 더하기(add), i 증가(addi)의 몸체 다섯 명령을 실행한 뒤 jal로 검사로 돌아간다. 반복마다 7개 명령을 실행한다">
+        <defs><marker id="ah-e14asm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="20" y="80" width="80" height="36" class="lk"/><rect x="20" y="80" width="80" height="36" class="k"/>
+        <rect x="140" y="80" width="90" height="36" class="lb"/><rect x="140" y="80" width="90" height="36" class="b"/>
+        <rect x="270" y="70" width="170" height="56" class="la"/><rect x="270" y="70" width="170" height="56" class="a"/>
+        <rect x="470" y="150" width="70" height="32" class="lk"/><rect x="470" y="150" width="70" height="32" class="k"/>
+        <path d="M100 98 H138" class="k" marker-end="url(#ah-e14asm)"/>
+        <path d="M230 98 H268" class="k" marker-end="url(#ah-e14asm)"/>
+        <path d="M355 70 V40 H185 V78" class="c" marker-end="url(#ah-e14asm)"/>
+        <path d="M185 116 V166 H468" class="d" marker-end="url(#ah-e14asm)"/>
+        <g text-anchor="middle"><text x="60" y="102" class="s">i = 0</text><text x="185" y="96" class="tb">bge x5, x11</text><text x="185" y="110" class="s">i ≥ n?</text>
+        <text x="355" y="90" class="ta">slli, add (주소)</text><text x="355" y="106" class="ta">lw, add, addi</text><text x="355" y="120" class="s">몸체 5개</text>
+        <text x="505" y="170" class="s">done</text></g>
+        <text x="200" y="34" class="tc">jal x0, loop (되돌아감)</text>
+        <text x="250" y="160" class="td">예: 끝으로</text>
+        <text x="240" y="92" class="s">아니오</text>
+      </svg>
+      <figcaption>그림 1. 고급 언어의 반복문은 조건 분기 하나, 몸체, 되돌아가는 무조건 점프 하나로 바뀌어서, 이 예에서는 한 번 돌 때마다 명령 7개를 실행한다(예제 2.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2진수와 2의 보수(<a href="../4/01-01.html">전전4 1.1절</a>), C 같은 고급 언어의 반복문을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>RISC-V 기본</h3>
-    <p>RISC-V(RV32I)는 32비트 레지스터 32개(x0은 언제나 0)를 쓰고, 연산은 레지스터끼리만, 메모리는 load/store로만 접근합니다(load-store 구조).</p>
-    <ul>
-      <li>산술: <code>add rd, rs1, rs2</code>, <code>sub</code>, <code>addi rd, rs1, imm</code>(12비트 상수).</li>
-      <li>메모리: <code>lw rd, off(rs1)</code>(주소 rs1 + off의 32비트 읽기), <code>sw rs2, off(rs1)</code>.</li>
-      <li>분기: <code>beq rs1, rs2, L</code>(같으면 L로), <code>bne</code>, <code>blt</code>, <code>bge</code>. 점프 <code>jal rd, L</code>, <code>jalr</code>.</li>
-      <li>자리 옮김: <code>slli rd, rs1, k</code>(왼쪽 k비트 = 2ᵏ 곱).</li>
-    </ul>
+    <p>RISC-V(RV32I)는 32비트 레지스터 32개를 쓰며, 그 가운데 x0은 언제나 0이다. 연산은 레지스터끼리만 하고 메모리는 load와 store로만 접근하는데, 이런 짜임을 load-store 구조라 한다. 처음 질문의 첫째 답, 곧 CPU가 실제로 실행하는 명령은 이런 단순한 명령들이다.</p>
+    <p>산술 명령으로는 <code>add rd, rs1, rs2</code>와 <code>sub</code>가 있고, <code>addi rd, rs1, imm</code>은 12비트 상수를 더한다. 메모리 명령 <code>lw rd, off(rs1)</code>는 주소 rs1 + off에서 32비트를 읽고, <code>sw rs2, off(rs1)</code>는 그 주소에 쓴다.</p>
+    <p>이제 흐름을 바꾸는 명령을 보자. 분기 명령 <code>beq rs1, rs2, L</code>은 두 값이 같으면 L로 가며, <code>bne</code>, <code>blt</code>, <code>bge</code>도 같은 꼴이다. 무조건 점프로는 <code>jal rd, L</code>과 <code>jalr</code>이 있다. 한편 자리 옮김 <code>slli rd, rs1, k</code>는 왼쪽으로 k비트 옮겨 2ᵏ을 곱한다.</p>
 
     <h3><span class="no">2.1.2</span>배열 합 반복문</h3>
     <div class="tb-env ex">
@@ -44,37 +50,31 @@ loop: bge  x5, x11, done    # i &gt;= n 이면 끝
       addi x5, x5, 1        # i++
       jal  x0, loop         # 반복
 done:</code></pre>
-    <p>반복마다 7개 명령, n = 100이면 반복 부분 약 700개 + 마지막 검사. 주소를 i × 4로 매번 계산하는 대신 포인터를 4씩 늘리면 두 명령을 줄일 수 있습니다(컴파일러 최적화).</p>
+    <p><i>풀이.</i> 반복문은 조건 분기, 몸체, 되돌아가는 점프로 바뀐다(그림 1). 여기서 int는 4바이트이므로 a[i]의 주소는 시작 주소에 i × 4를 더한 값이고, 이 곱셈을 slli 2로 한다. 반복마다 7개 명령을 실행하므로 n = 100이면 반복 부분이 약 700개이고, 여기에 마지막 검사가 더해진다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 주소를 매번 i × 4로 계산할 필요는 없다. 포인터를 4씩 늘려 가면 slli와 주소 덧셈 두 명령을 줄일 수 있으며, 컴파일러의 최적화가 바로 이런 일을 한다. 처음 질문의 셋째 답이 이것이다(연습문제 3).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "배열 a[i]의 주소는 a + i": 바이트 주소라 a + 4i(int)입니다. (2) "x0에 값을 쓸 수 있다": 써도 무시되고 늘 0입니다. 그래서 <code>jal x0, L</code>은 반환 주소를 버리는 단순 점프입니다. (3) 레지스터 수가 적어 지역 변수가 많으면 메모리(스택)에 넣고 빼야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>배열 주소를 시작 주소 + i로 계산하는 실수가 흔하다. 메모리 주소는 바이트 단위여서 int 배열이면 i에 4를 곱해야 한다. 그리고 레지스터에 쓴 값을 x0에 넣으면 버려진다는 점을 잊고 x0을 임시 레지스터로 쓰면 결과가 늘 0이 된다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>RV32I: 레지스터 32개(x0 = 0), load-store 구조.</li>
-        <li>배열 주소 = 시작 + 크기 × i(int는 slli 2).</li>
-        <li>반복문 = 조건 분기 + 몸체 + 무조건 점프.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>RV32I는 레지스터 32개(x0 = 0)와 load-store 구조를 쓴다. 배열 원소의 주소는 시작 주소에 원소 크기 × i를 더한 값이며, int는 slli 2로 4를 곱한다. 반복문은 조건 분기, 몸체, 무조건 점프로 옮긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li><code>f = g + h - 5</code>(g x5, h x6, f x7)를 옮겨라.
-          <details><summary>답</summary><p><code>add x7, x5, x6</code> / <code>addi x7, x7, -5</code>.</p></details>
+          <details><summary>답</summary><p><code>add x7, x5, x6</code> / <code>addi x7, x7, -5</code>의 두 명령이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li><code>if (a == b) c = 1; else c = 2;</code>(a x5, b x6, c x7)를 옮겨라.
-          <details><summary>답</summary><p><code>bne x5, x6, else</code> / <code>addi x7, x0, 1</code> / <code>jal x0, end</code> / <code>else: addi x7, x0, 2</code> / <code>end:</code>.</p></details>
+          <details><summary>답</summary><p><code>bne x5, x6, else</code> / <code>addi x7, x0, 1</code> / <code>jal x0, end</code> / <code>else: addi x7, x0, 2</code> / <code>end:</code>로 옮긴다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제를 포인터 방식으로 바꿔 반복당 명령 수를 줄여라.
-          <details><summary>답</summary><p>x6 = x10, 끝 주소 x13 = x10 + 4n을 미리 계산. 반복: <code>bge x6, x13, done</code> / <code>lw x7, 0(x6)</code> / <code>add x12, x12, x7</code> / <code>addi x6, x6, 4</code> / <code>jal x0, loop</code>. 5개.</p></details>
+          <details><summary>답</summary><p>x6 = x10과 끝 주소 x13 = x10 + 4n을 미리 계산해 두고, 반복은 <code>bge x6, x13, done</code> / <code>lw x7, 0(x6)</code> / <code>add x12, x12, x7</code> / <code>addi x6, x6, 4</code> / <code>jal x0, loop</code>의 5개 명령이다.</p></details>
         </li>
       </ol>
     </div>

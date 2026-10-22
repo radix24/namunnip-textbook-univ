@@ -8,21 +8,35 @@
 <article class="card q-card" id="text-e14-bpred" data-kind="본문" data-std="전전14-05-03">
   <header class="card-head"><span class="no"></span><h2>분기 예측기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>1비트와 2비트 포화 카운터 분기 예측기의 동작을 안다.</li>
-        <li>반복문 분기에서 두 예측기의 정확도를 계산한다.</li>
-        <li>예측 실패 비용이 CPI에 주는 영향을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>제어 해저드 (<a href="05-01.html">5.1절</a>), 파이프라인 성능 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">10번 도는 반복문의 끝에 있는 분기는 9번은 "되돌아감", 마지막 1번은 "빠져나감"이다. 지난번 결과를 그대로 따라 하는 예측기는 이 반복문에서 몇 번 틀릴까? 한 번 틀렸다고 바로 마음을 바꾸지 않는 예측기를 만들면 무엇이 나아질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="2비트 포화 카운터의 네 상태. 왼쪽부터 11 강한 분기함, 10 약한 분기함, 01 약한 안 함, 00 강한 안 함이다. 분기를 안 하면(N) 오른쪽으로, 분기하면(T) 왼쪽으로 한 칸 옮기며, 왼쪽 두 상태는 분기함, 오른쪽 두 상태는 안 함으로 예측한다. 그래서 강한 상태에서 한 번 틀려도 예측이 바뀌지 않는다">
+        <defs><marker id="ah-e14bp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="40" y="80" width="90" height="40" class="la"/><rect x="40" y="80" width="90" height="40" class="a"/>
+        <rect x="170" y="80" width="90" height="40" class="la"/><rect x="170" y="80" width="90" height="40" class="a"/>
+        <rect x="300" y="80" width="90" height="40" class="lb"/><rect x="300" y="80" width="90" height="40" class="b"/>
+        <rect x="430" y="80" width="90" height="40" class="lb"/><rect x="430" y="80" width="90" height="40" class="b"/>
+        <g text-anchor="middle"><text x="85" y="98" class="ta">11</text><text x="85" y="113" class="s">강한 분기함</text>
+        <text x="215" y="98" class="ta">10</text><text x="215" y="113" class="s">약한 분기함</text>
+        <text x="345" y="98" class="tb">01</text><text x="345" y="113" class="s">약한 안 함</text>
+        <text x="475" y="98" class="tb">00</text><text x="475" y="113" class="s">강한 안 함</text></g>
+        <path d="M130 88 H168" class="d" marker-end="url(#ah-e14bp)"/><path d="M260 88 H298" class="d" marker-end="url(#ah-e14bp)"/><path d="M390 88 H428" class="d" marker-end="url(#ah-e14bp)"/>
+        <path d="M170 112 H132" class="c" marker-end="url(#ah-e14bp)"/><path d="M300 112 H262" class="c" marker-end="url(#ah-e14bp)"/><path d="M430 112 H392" class="c" marker-end="url(#ah-e14bp)"/>
+        <g text-anchor="middle"><text x="150" y="82" class="td">N</text><text x="280" y="82" class="td">N</text><text x="410" y="82" class="td">N</text>
+        <text x="150" y="128" class="tc">T</text><text x="280" y="128" class="tc">T</text><text x="410" y="128" class="tc">T</text></g>
+        <path d="M280 40 V70" class="k dsh"/><path d="M280 136 V160" class="k dsh"/>
+        <text x="150" y="52" text-anchor="middle" class="ta">분기함으로 예측</text><text x="410" y="52" text-anchor="middle" class="tb">안 함으로 예측</text>
+        <text x="85" y="150" text-anchor="middle" class="s">T면 그대로</text><text x="475" y="150" text-anchor="middle" class="s">N이면 그대로</text>
+        <text x="280" y="182" text-anchor="middle" class="s">T: 분기함, N: 분기 안 함</text>
+      </svg>
+      <figcaption>그림 1. 2비트 카운터는 분기 결과에 따라 한 칸씩만 옮겨 가므로, 강한 상태에서 한 번 틀리면 약한 상태로 내려갈 뿐 예측은 그대로이고 두 번 연속 틀려야 예측이 바뀐다(5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>제어 해저드(<a href="05-01.html">5.1절</a>), 파이프라인 성능(<a href="05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>한 번 틀려도 바로 바꾸지 않기</h3>
-    <p>1비트 예측기는 지난번 결과를 그대로 예측합니다. 2비트 포화 카운터는 강한·약한 "분기함", 약한·강한 "분기 안 함"의 네 상태를 두어 두 번 연속 틀려야 예측을 바꿉니다.</p><pre><code>def simulate(outcomes, bits):
+    <p>파이프라인은 분기 결과가 나오기 전에 다음 명령을 가져와야 하므로, 분기가 어느 쪽으로 갈지 미리 맞히는 분기 예측기를 둔다. 가장 단순한 1비트 예측기는 지난번 결과를 그대로 다음 예측으로 쓴다.</p>
+    <p>그런데 반복문 끝의 분기는 거의 늘 되돌아가다가 마지막에 한 번만 빠져나간다. 1비트 예측기는 이 한 번 때문에 예측을 바꿔 버려, 다음 실행의 첫 분기까지 틀린다. 이를 막는 것이 2비트 포화 카운터이다. 강한·약한 "분기함"과 약한·강한 "분기 안 함"의 네 상태를 두고 결과에 따라 한 칸씩 옮겨 가므로, 두 번 연속 틀려야 예측이 바뀐다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>아래 코드는 두 예측기를 같은 분기 결과열에 돌려 실패 수를 센다. 상태를 0부터 \(2^{bits} - 1\)까지의 정수로 두고, 절반 이상이면 분기함으로 예측한다.</p><pre><code>def simulate(outcomes, bits):
     state = (1 &lt;&lt; bits) - 1            # 처음엔 '분기함' 쪽으로
     th = 1 &lt;&lt; (bits - 1); miss = 0
     for t in outcomes:
@@ -34,44 +48,39 @@ loop = ([True] * 9 + [False]) * 100     # 10번 도는 반복문을 100번 실�
 for b in (1, 2):
     m = simulate(loop, b)
     print(f"{b}비트 예측기: 예측 실패 {m}번 / {len(loop)}번, 정확도 {100 * (1 - m / len(loop)):.1f}%")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>1비트 예측기: 예측 실패 199번 / 1000번, 정확도 80.1%
 2비트 예측기: 예측 실패 100번 / 1000번, 정확도 90.0%</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>위 반복문(분기 9번 함, 1번 안 함)에서 1비트와 2비트 예측기의 반복문 한 번당 실패 수는?</p>
     </div>
-    <p><i>풀이.</i> 1비트: 마지막 '안 함'에서 한 번, 다음 실행 첫 '함'에서 또 한 번 → 2번(정확도 약 80%). 2비트: 마지막 한 번만 틀리고 약한 상태로만 내려가 다음 첫 분기는 맞힘 → 1번(약 90%). 실행 결과와 같습니다.</p>
+    <p><i>풀이.</i> 1비트 예측기는 마지막 "안 함"에서 한 번 틀리고, 그 결과를 따라 예측을 바꾸므로 다음 실행의 첫 "함"에서 또 한 번 틀린다. 따라서 반복문 한 번에 2번 틀려 정확도가 약 80%이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>반면 2비트 예측기는 마지막 한 번만 틀리고 강한 상태에서 약한 상태로만 내려가므로, 다음 첫 분기는 여전히 분기함으로 예측해 맞힌다. 그래서 1번만 틀려 약 90%이며, 실행 결과와 같다. 1000번 가운데 1비트가 199번인 것은 맨 처음 실행에는 앞선 "안 함"이 없어 한 번 덜 틀리기 때문이다.</p>
+    <p>예측 실패는 CPI에 (분기 비율) × (실패율) × (벌점)만큼 더해진다. 파이프라인이 깊어 벌점이 클수록 예측기의 정확도가 성능을 크게 좌우한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "예측기는 비트가 많을수록 좋다": 2비트 이상은 이득이 작고, 분기 이력을 쓰는 상관 예측기가 더 효과적입니다. (2) "예측 실패는 한 클록 손해": 파이프라인이 깊으면 10~20클록을 버립니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>비트를 늘리면 어떤 분기든 더 잘 맞힌다고 여기기 쉽다. 하지만 결과가 함과 안 함으로 번갈아 나오는 분기에서는 1비트 예측기가 매번 틀리고, 2비트 카운터도 이런 규칙적인 패턴을 배우지 못한다. 이런 분기는 최근 분기 이력을 함께 보는 상관 예측기가 다룬다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>1비트: 지난 결과, 2비트: 두 번 틀려야 바꿈.</li>
-        <li>반복문: 1비트 2번, 2비트 1번 실패.</li>
-        <li>CPI += 분기 비율 × 실패율 × 벌점.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>1비트 예측기는 지난 결과를 따르고, 2비트 카운터는 두 번 연속 틀려야 예측을 바꾼다. 그래서 반복문에서 1비트는 한 번에 2번, 2비트는 1번 틀린다. 예측 실패는 CPI를 분기 비율 × 실패율 × 벌점만큼 늘린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>2비트 카운터의 상태 수는?
-          <details><summary>답</summary><p>4.</p></details>
+          <details><summary>답</summary><p>4개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>분기 20%, 실패율 10%, 벌점 15클록의 CPI 증가는?
-          <details><summary>답</summary><p>0.3.</p></details>
+          <details><summary>답</summary><p>0.2 × 0.1 × 15 = 0.3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>분기 결과가 함/안 함으로 번갈아 나오면 1비트 예측기 정확도는?
-          <details><summary>답</summary><p>0%.</p></details>
+          <details><summary>답</summary><p>매번 지난 결과와 반대로 나오므로 정확도는 0%이다.</p></details>
         </li>
       </ol>
     </div>

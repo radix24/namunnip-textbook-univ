@@ -8,60 +8,62 @@
 <article class="card q-card" id="text-e14-amat" data-kind="본문" data-std="전전14-06-02">
   <header class="card-head"><span class="no"></span><h2>평균 메모리 접근 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>AMAT = 적중 시간 + 실패율 × 실패 벌점을 계산한다.</li>
-        <li>다단계 캐시(L1, L2)의 AMAT를 계산한다.</li>
-        <li>메모리 접근 지연이 CPI에 주는 영향을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>캐시 구조 (<a href="06-01.html">6.1절</a>), CPU 성능 식 (<a href="01-01.html">1.1절</a>), 이 절의 탐구 카드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">캐시 적중률이 95%라면 메모리가 거의 캐시만큼 빠르다고 말해도 될까? 적중하면 1사이클, 실패하면 100사이클이 걸린다면 평균은 얼마일까? 그리고 L1과 메모리 사이에 L2를 하나 더 두면 프로그램이 얼마나 빨라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.2.1의 평균 메모리 접근 시간 구성. L1만 있으면 적중 1사이클에 실패 몫 0.05 × 100 = 5사이클이 더해져 6사이클이다. L2를 넣으면 적중 1, L2 접근 몫 0.05 × 10 = 0.5, 메모리 몫 0.05 × 0.2 × 100 = 1로 2.5사이클이다">
+        <line x1="120" y1="40" x2="120" y2="160" class="ax"/><line x1="120" y1="160" x2="510" y2="160" class="ax"/>
+        <rect x="120" y="60" width="60" height="30" class="la"/><rect x="120" y="60" width="60" height="30" class="a"/>
+        <rect x="180" y="60" width="300" height="30" class="ld"/><rect x="180" y="60" width="300" height="30" class="d"/>
+        <rect x="120" y="115" width="60" height="30" class="la"/><rect x="120" y="115" width="60" height="30" class="a"/>
+        <rect x="180" y="115" width="30" height="30" class="lb"/><rect x="180" y="115" width="30" height="30" class="b"/>
+        <rect x="210" y="115" width="60" height="30" class="ld"/><rect x="210" y="115" width="60" height="30" class="d"/>
+        <g text-anchor="end" class="s"><text x="112" y="80">L1만</text><text x="112" y="135">L1 + L2</text></g>
+        <g text-anchor="middle"><text x="150" y="80" class="ta">적중 1</text><text x="330" y="80" class="td">실패 몫 0.05 × 100 = 5</text><text x="150" y="135" class="ta">적중 1</text><text x="240" y="135" class="td">1</text></g>
+        <text x="195" y="108" text-anchor="middle" class="tb">0.5</text>
+        <text x="488" y="80" class="s">6</text><text x="278" y="135" class="s">2.5사이클</text>
+        <g text-anchor="middle" class="s"><text x="120" y="176">0</text><text x="240" y="176">2</text><text x="360" y="176">4</text><text x="480" y="176">6사이클</text></g>
+      </svg>
+      <figcaption>그림 1. 적중률 95%여도 드문 실패가 100사이클씩 걸려 평균 시간의 대부분을 차지하므로, 실패 벌점을 줄이는 L2가 평균을 6사이클에서 2.5사이클로 낮춘다(예제 6.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>캐시 구조(<a href="06-01.html">6.1절</a>), CPU 성능 식(<a href="01-01.html">1.1절</a>), 이 절의 탐구 카드를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>AMAT</h3>
+    <p>메모리 접근 한 번에 평균 몇 사이클이 걸리는지를 평균 메모리 접근 시간(AMAT)이라 한다. 모든 접근은 먼저 캐시를 보는 적중 시간 \(t_{hit}\)를 쓰고, 그 가운데 비율 \(m\)만큼 실패하면 아래 단계에서 가져오는 실패 벌점 \(t_{penalty}\)가 더해진다.</p>
     \[ \text{AMAT} = t_{hit} + m \times t_{penalty}. \]
-    <p>L2가 있으면 L1의 실패 벌점이 다시 L2의 AMAT입니다: \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\)(\(m_2\)는 L2 지역 실패율).</p>
+    <p>L2가 있으면 L1의 실패 벌점이 곧 L2의 AMAT가 된다. 그래서 AMAT는 \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\)이고, 여기서 \(m_2\)는 L2에 온 접근 가운데 실패한 비율인 지역 실패율이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
       <p>(가) 적중 1사이클, 실패율 5%, 벌점 100사이클의 AMAT. (나) L2(적중 10사이클, 지역 실패율 20%)를 넣으면? (다) load/store가 명령의 30%, 기본 CPI 1일 때 (가)와 (나)의 CPI.</p>
     </div>
-    <p><i>풀이.</i> (가) 1 + 0.05 × 100 = 6사이클. (나) 1 + 0.05 × (10 + 0.2 × 100) = 2.5사이클. (다) 명령 인출도 메모리 접근이지만 L1 명령 캐시 적중을 가정하면, 데이터 접근의 추가 지연만 더해 (가) 1 + 0.3 × 5 = 2.5, (나) 1 + 0.3 × 1.5 = 1.45. L2 하나로 1.7배 빨라집니다.</p>
+    <p><i>풀이.</i> (가)는 1 + 0.05 × 100 = 6사이클이다. 처음 질문의 첫째 답이 이것으로, 적중률 95%여도 평균은 적중 시간의 6배이다. (나)는 1 + 0.05 × (10 + 0.2 × 100) = 2.5사이클이다(그림 1).</p>
+    <p>(다)에서 명령 인출도 메모리 접근이지만, L1 명령 캐시가 늘 적중한다고 가정하면 데이터 접근의 추가 지연만 더하면 된다. 그러면 (가)의 CPI는 1 + 0.3 × 5 = 2.5, (나)의 CPI는 1 + 0.3 × 1.5 = 1.45이다. 즉 L2 하나로 프로그램이 1.7배 빨라지며, 처음 질문의 둘째 답이 이것이다.</p>
 
     <h3><span class="no">6.2.2</span>실패의 세 종류(3C)</h3>
-    <p>처음 접근하는 강제 실패(compulsory), 캐시가 작아 생기는 용량 실패(capacity), 같은 집합에 몰려 생기는 충돌 실패(conflict). 블록 크기, 캐시 크기, 연관도가 각각에 영향을 줍니다. 탐구 카드에서 접근 패턴을 바꿔 봅니다.</p>
+    <p>실패는 원인에 따라 세 가지로 나눈다. 처음 접근하는 블록이라 생기는 것이 강제 실패(compulsory)이고, 캐시가 작아 필요한 블록을 다 담지 못해 생기는 것이 용량 실패(capacity)이다. 또 캐시에 빈자리가 있어도 같은 집합에 블록이 몰려 서로 쫓아내면 충돌 실패(conflict)가 생긴다.</p>
+    <p>세 실패는 서로 다른 설계 변수에 반응한다. 블록을 키우면 이웃 데이터를 미리 가져와 강제 실패가 줄고, 캐시를 키우면 용량 실패가, 연관도를 높이면 충돌 실패가 준다. 탐구 카드에서 접근 패턴을 바꿔 가며 어떤 실패가 늘고 주는지 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "적중률 95%면 거의 메모리 속도다": 벌점이 100이면 AMAT가 6배입니다. (2) "L2 실패율은 전체 접근 대비다": 보통 L2에 온 접근 대비(지역 실패율)로 정의하며, 전역 실패율은 \(m_1m_2\)입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>적중률 95%면 거의 메모리가 캐시 속도라고 여기기 쉽다. 하지만 벌점이 100사이클이면 AMAT가 적중 시간의 6배가 된다. 또 L2 실패율을 전체 접근 대비 비율로 오해하기 쉬운데, 보통은 L2에 온 접근 대비(지역 실패율)로 정의하며 전체 접근 대비인 전역 실패율은 \(m_1m_2\)이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>AMAT = 적중 + 실패율 × 벌점.</li>
-        <li>L2: \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\).</li>
-        <li>CPI += (메모리 접근 비율) × (AMAT − 1).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>AMAT는 적중 시간에 실패율과 실패 벌점의 곱을 더한 값이다. L2가 있으면 \(t_{L1} + m_1(t_{L2} + m_2t_{mem})\)으로 L1의 벌점이 줄어든다. 메모리 지연은 CPI에 (메모리 접근 비율) × (AMAT − 1)만큼 더해진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>적중 2, 실패율 2%, 벌점 200의 AMAT는?
-          <details><summary>답</summary><p>6사이클.</p></details>
+          <details><summary>답</summary><p>2 + 0.02 × 200 = 6사이클이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 (나)의 전역 L2 실패율은?
-          <details><summary>답</summary><p>0.05 × 0.2 = 1%.</p></details>
+          <details><summary>답</summary><p>0.05 × 0.2 = 1%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>AMAT 6을 3으로 줄이려면 실패율을 얼마로(벌점 100, 적중 1)?
-          <details><summary>답</summary><p>2%.</p></details>
+          <details><summary>답</summary><p>1 + m × 100 = 3에서 실패율을 2%로 줄여야 한다.</p></details>
         </li>
       </ol>
     </div>

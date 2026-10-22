@@ -8,21 +8,30 @@
 <article class="card q-card" id="text-e14-datapath" data-kind="본문" data-std="전전14-04-01">
   <header class="card-head"><span class="no"></span><h2>단일 사이클 데이터패스와 제어 신호</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>명령 인출, 레지스터 읽기, ALU, 메모리, 쓰기로 이루어진 단일 사이클 데이터패스의 경로를 안다.</li>
-        <li>R형, lw, sw, beq의 제어 신호(RegWrite, ALUSrc, MemRead, MemWrite, MemtoReg, Branch)를 정한다.</li>
-        <li>단일 사이클의 클록 주기가 가장 긴 명령(lw)에 묶이는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>명령 형식 (<a href="02-02.html">2.2절</a>), 멀티플렉서와 레지스터 (<a href="../4/04-02.html">전전4 4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">명령 하나를 한 클록에 끝내는 가장 단순한 CPU를 만들려 한다. 명령은 메모리에서 읽혀 레지스터, ALU, 데이터 메모리를 차례로 지나는데, 덧셈과 load가 지나는 길은 같지 않다. 하나의 회로가 여러 명령을 처리하려면 무엇이 길을 골라 줘야 할까? 그리고 클록은 얼마나 빨리 돌릴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1의 명령별 필요 시간. 명령 메모리 200, 레지스터 읽기 100, ALU 200, 데이터 메모리 200, 레지스터 쓰기 100 ps이다. R형은 600, lw는 다섯 단계를 모두 거쳐 800, sw는 700, beq는 500 ps이고, 단일 사이클의 클록 주기는 가장 긴 lw에 맞춘 800 ps이다">
+        <g class="s" text-anchor="end"><text x="92" y="55">R형</text><text x="92" y="85">lw</text><text x="92" y="115">sw</text><text x="92" y="145">beq</text></g>
+        <rect x="100" y="40" width="100" height="22" class="la"/><rect x="200" y="40" width="50" height="22" class="lb"/><rect x="250" y="40" width="100" height="22" class="lc"/><rect x="350" y="40" width="50" height="22" class="lb"/>
+        <rect x="100" y="70" width="100" height="22" class="la"/><rect x="200" y="70" width="50" height="22" class="lb"/><rect x="250" y="70" width="100" height="22" class="lc"/><rect x="350" y="70" width="100" height="22" class="ld"/><rect x="450" y="70" width="50" height="22" class="lb"/>
+        <rect x="100" y="100" width="100" height="22" class="la"/><rect x="200" y="100" width="50" height="22" class="lb"/><rect x="250" y="100" width="100" height="22" class="lc"/><rect x="350" y="100" width="100" height="22" class="ld"/>
+        <rect x="100" y="130" width="100" height="22" class="la"/><rect x="200" y="130" width="50" height="22" class="lb"/><rect x="250" y="130" width="100" height="22" class="lc"/>
+        <path d="M100 40 H400 V62 H100 Z M100 70 H500 V92 H100 Z M100 100 H450 V122 H100 Z M100 130 H350 V152 H100 Z" class="k" fill="none"/>
+        <g text-anchor="middle" class="s"><text x="150" y="55">명령 메모리</text><text x="225" y="55">읽기</text><text x="300" y="55">ALU</text><text x="375" y="55">쓰기</text>
+        <text x="400" y="85">데이터 메모리</text><text x="475" y="85">쓰기</text></g>
+        <g class="s"><text x="406" y="55">600</text><text x="456" y="115">700</text><text x="356" y="145">500 ps</text></g>
+        <path d="M500 30 V160" class="d dsh"/><text x="500" y="24" text-anchor="middle" class="td">주기 800 ps</text>
+        <line x1="100" y1="160" x2="500" y2="160" class="ax"/>
+        <g text-anchor="middle" class="s"><text x="100" y="176">0</text><text x="200" y="176">200</text><text x="300" y="176">400</text><text x="400" y="176">600</text><text x="500" y="176">800 ps</text></g>
+      </svg>
+      <figcaption>그림 1. 모든 명령이 한 클록에 끝나야 하므로 클록 주기는 가장 긴 lw에 맞춰야 하고, 그만큼 짧은 명령은 남는 시간을 놀게 된다(예제 4.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>명령 형식(<a href="02-02.html">2.2절</a>), 멀티플렉서와 레지스터(<a href="../4/04-02.html">전전4 4.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>경로</h3>
-    <p>PC → 명령 메모리 → 레지스터 파일(rs1, rs2 읽기) → ALU(두 번째 입력은 레지스터 또는 상수: ALUSrc) → 데이터 메모리(lw/sw) → 레지스터에 쓸 값 선택(ALU 결과 또는 메모리: MemtoReg) → 레지스터 쓰기(RegWrite). PC는 PC + 4 또는 분기 목표(Branch AND Zero).</p>
+    <p>명령은 다음 길을 따라 흐른다. PC가 가리키는 명령을 명령 메모리에서 읽고, 레지스터 파일에서 rs1과 rs2를 읽는다. 그다음 ALU가 계산하는데, ALU의 두 번째 입력은 레지스터 값일 수도, 명령 안의 상수일 수도 있어서 이를 ALUSrc 신호가 고른다.</p>
+    <p>이어서 lw와 sw는 데이터 메모리에 접근한다. 레지스터에 쓸 값은 ALU 결과이거나 메모리에서 읽은 값인데, 이 선택이 MemtoReg이고 실제로 쓸지 말지는 RegWrite가 정한다. 마지막으로 PC는 보통 PC + 4가 되고, 분기 명령이면서 ALU의 Zero가 1일 때(Branch AND Zero)만 분기 목표가 된다.</p>
+    <p>즉 하나의 회로가 여러 명령을 처리하려면, 길이 갈리는 곳마다 멀티플렉서를 두고 제어 신호로 고르면 된다. 처음 질문의 첫째 답이 이것이다. 명령마다 신호 값은 다음 표와 같다.</p>
     <table class="tb-table">
       <tr><th>명령</th><th>RegWrite</th><th>ALUSrc</th><th>MemRead</th><th>MemWrite</th><th>MemtoReg</th><th>Branch</th><th>ALU 연산</th></tr>
       <tr><td>R형(add)</td><td>1</td><td>0(레지스터)</td><td>0</td><td>0</td><td>0(ALU)</td><td>0</td><td>funct로 정함</td></tr>
@@ -30,42 +39,36 @@
       <tr><td>sw</td><td>0</td><td>1</td><td>0</td><td>1</td><td>X</td><td>0</td><td>덧셈</td></tr>
       <tr><td>beq</td><td>0</td><td>0</td><td>0</td><td>0</td><td>X</td><td>1</td><td>뺄셈(Zero 검사)</td></tr>
     </table>
-    <p>X는 무관(그 값이 결과에 쓰이지 않음). 제어 장치는 opcode(와 funct)를 입력으로 이 표를 만드는 조합 회로입니다.</p>
+    <p>X는 무관을 뜻한다. 그 값이 결과에 쓰이지 않으므로 0이든 1이든 상관없다. 제어 장치는 opcode(와 funct)를 입력으로 받아 이 표를 만들어 내는 조합 회로이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>단계 지연이 명령 메모리 200, 레지스터 읽기 100, ALU 200, 데이터 메모리 200, 레지스터 쓰기 100 ps일 때 각 명령의 필요 시간과 단일 사이클 클록 주기는?</p>
     </div>
-    <p><i>풀이.</i> R형 200 + 100 + 200 + 100 = 600, lw 800, sw 700, beq 500 ps. 모든 명령이 한 사이클이므로 주기는 가장 긴 lw의 800 ps(1.25 GHz). beq는 300 ps를 놀고 있습니다. 이 낭비를 없애는 것이 파이프라이닝(5단원)입니다.</p>
+    <p><i>풀이.</i> R형은 200 + 100 + 200 + 100 = 600 ps이고, lw는 데이터 메모리까지 거쳐 800 ps, sw는 레지스터 쓰기가 없어 700 ps, beq는 500 ps이다. 그런데 모든 명령이 한 사이클이므로 주기는 가장 긴 lw의 800 ps(1.25 GHz)여야 한다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그 결과 beq는 한 사이클 가운데 300 ps를 놀고 있다(그림 1). 이 낭비를 없애려고 명령을 단계로 나눠 겹쳐 실행하는 것이 파이프라이닝(5단원)이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "sw는 레지스터에 쓰니 RegWrite = 1": 메모리에 쓰고 레지스터는 쓰지 않습니다. (2) "X는 0과 같다": 아무 값이어도 되는 것이라 회로를 단순하게 만드는 데 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>무관(X) 신호를 아무렇게나 둬도 된다고 해서 MemWrite나 RegWrite까지 무관으로 두는 실수가 흔하다. 상태를 바꾸는 쓰기 신호는 쓰지 않을 명령에서 반드시 0이어야 하며, 무관이 될 수 있는 것은 결과를 고르기만 하는 멀티플렉서 신호뿐이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>경로: PC → 명령 메모리 → 레지스터 → ALU → 데이터 메모리 → 쓰기.</li>
-        <li>제어 신호표(R, lw, sw, beq).</li>
-        <li>단일 사이클 주기 = 가장 긴 명령(lw).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>명령은 PC, 명령 메모리, 레지스터, ALU, 데이터 메모리를 거쳐 레지스터에 쓰인다. 길이 갈리는 곳은 ALUSrc, MemtoReg 같은 제어 신호가 고르며, 제어 장치는 opcode로 이 신호표를 만든다. 단일 사이클의 클록 주기는 가장 긴 명령인 lw에 맞춰야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>addi의 ALUSrc와 MemtoReg는?
-          <details><summary>답</summary><p>ALUSrc 1(상수), MemtoReg 0(ALU).</p></details>
+          <details><summary>답</summary><p>ALUSrc는 1(상수), MemtoReg는 0(ALU)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 프로그램의 명령 비율이 lw 25%, sw 10%, R형 50%, beq 15%라면 명령마다 필요 시간만큼만 쓰는 이상적 가변 주기와 단일 사이클의 평균 시간 비는?
-          <details><summary>답</summary><p>가변 0.25×800 + 0.1×700 + 0.5×600 + 0.15×500 = 645 ps. 단일 800 ps. 1.24배 차이.</p></details>
+          <details><summary>답</summary><p>가변 주기의 평균은 0.25×800 + 0.1×700 + 0.5×600 + 0.15×500 = 645 ps이고 단일 사이클은 800 ps이므로 1.24배 차이이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>jal(점프 후 반환 주소를 rd에 저장)을 지원하려면 데이터패스에 무엇을 더해야 하는가?
-          <details><summary>답</summary><p>PC + 4를 레지스터 쓰기 값으로 고를 수 있게 MemtoReg 멀티플렉서에 입력 추가, PC에 점프 목표(PC + imm)를 넣는 경로와 제어 신호(Jump).</p></details>
+          <details><summary>답</summary><p>PC + 4를 레지스터 쓰기 값으로 고를 수 있게 MemtoReg 멀티플렉서에 입력을 더하고, PC에 점프 목표(PC + imm)를 넣는 경로와 제어 신호(Jump)를 더한다.</p></details>
         </li>
       </ol>
     </div>

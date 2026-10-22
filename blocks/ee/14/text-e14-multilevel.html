@@ -8,56 +8,63 @@
 <article class="card q-card" id="text-e14-multilevel" data-kind="본문" data-std="전전14-06-04">
   <header class="card-head"><span class="no"></span><h2>다단계 캐시의 평균 접근 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>L1, L2 캐시가 있을 때 평균 메모리 접근 시간(AMAT)을 계산한다.</li>
-        <li>지역 실패율과 전역 실패율을 구별한다.</li>
-        <li>L2 크기를 키우는 효과를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>AMAT (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">L1 캐시를 크게 키우면 실패는 줄지만 적중 시간이 늘어난다. 그래서 실제 CPU는 작고 빠른 L1 뒤에 더 크고 느린 L2를 둔다. L1에서 실패한 접근을 L2가 받아 주면 평균 접근 시간은 얼마나 줄까? 또 L2의 실패율은 무엇을 기준으로 재야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.4.1에서 메모리 접근 100번이 나뉘는 모습. 100번 모두 L1을 1클록 보고, 그 가운데 95번은 적중한다. 실패한 5번은 L2를 10클록 보고, 그 가운데 4번은 적중, 1번(L2 지역 실패율 20%, 전역 1%)은 메모리까지 가서 100클록이 더 든다. 평균은 (100 + 50 + 100)/100 = 2.5클록이다">
+        <defs><marker id="ah-e14ml" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="20" y="80" width="90" height="40" class="lk"/><rect x="20" y="80" width="90" height="40" class="k"/>
+        <rect x="160" y="80" width="100" height="40" class="la"/><rect x="160" y="80" width="100" height="40" class="a"/>
+        <rect x="310" y="80" width="100" height="40" class="lb"/><rect x="310" y="80" width="100" height="40" class="b"/>
+        <rect x="450" y="80" width="90" height="40" class="ld"/><rect x="450" y="80" width="90" height="40" class="d"/>
+        <g text-anchor="middle"><text x="65" y="105" class="s">접근 100번</text>
+        <text x="210" y="98" class="ta">L1</text><text x="210" y="113" class="s">1클록 × 100</text>
+        <text x="360" y="98" class="tb">L2</text><text x="360" y="113" class="s">10클록 × 5</text>
+        <text x="495" y="98" class="td">메모리</text><text x="495" y="113" class="s">100클록 × 1</text></g>
+        <path d="M110 100 H158" class="k" marker-end="url(#ah-e14ml)"/>
+        <path d="M260 100 H308" class="k" marker-end="url(#ah-e14ml)"/><text x="284" y="92" text-anchor="middle" class="s">실패 5</text>
+        <path d="M410 100 H448" class="k" marker-end="url(#ah-e14ml)"/><text x="429" y="92" text-anchor="middle" class="s">실패 1</text>
+        <path d="M210 120 V150" class="a" marker-end="url(#ah-e14ml)"/><text x="210" y="166" text-anchor="middle" class="ta">적중 95</text>
+        <path d="M360 120 V150" class="b" marker-end="url(#ah-e14ml)"/><text x="360" y="166" text-anchor="middle" class="tb">적중 4</text>
+        <text x="280" y="40" text-anchor="middle" class="s">총 100 + 50 + 100 = 250클록, 평균 2.5클록</text>
+        <text x="429" y="60" text-anchor="middle" class="s">지역 1/5 = 20%, 전역 1/100 = 1%</text>
+      </svg>
+      <figcaption>그림 1. L1에서 실패한 5번 가운데 4번을 L2가 10클록에 처리해 주므로, 100클록짜리 메모리 접근은 1번만 남고 평균 접근 시간이 6클록에서 2.5클록으로 준다(예제 6.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>AMAT(<a href="06-02.html">6.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.4.1</span>실패 비용도 캐시로</h3>
-    <p>\(\text{AMAT} = t_{L1} + m_{L1}(t_{L2} + m_{L2}t_{mem})\). 여기서 m_L2는 L1에서 실패한 접근 중 L2에서도 실패한 비율(지역 실패율)이고, 전역 실패율은 \(m_{L1}m_{L2}\)입니다.</p>
+    <p>L1에서 실패하면 원래는 메모리까지 가야 한다. 그런데 그 사이에 L2가 있으면 L1의 실패 벌점은 메모리 접근 시간이 아니라 L2의 평균 접근 시간이 된다. 그래서 AMAT 식에 L2의 AMAT를 그대로 넣는다.</p>
+    \[ \text{AMAT} = t_{L1} + m_{L1}(t_{L2} + m_{L2}t_{mem}) \]
+    <p>여기서 \(m_{L2}\)는 L1에서 실패해 L2로 온 접근 가운데 L2에서도 실패한 비율로, 지역 실패율이라 한다. 반면 전체 접근 가운데 메모리까지 간 비율은 전역 실패율이라 하며 \(m_{L1}m_{L2}\)이다. 처음 질문의 둘째 답이 이것으로, 식에 넣는 것은 지역 실패율이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.1</span>
       <p>L1 1클록, 실패율 5%. L2 10클록, 지역 실패율 20%. 메모리 100클록. AMAT는? L2가 없으면?</p>
     </div>
-    <p><i>풀이.</i> AMAT = 1 + 0.05(10 + 0.2 × 100) = 2.5클록. L2가 없으면 1 + 0.05 × 100 = 6클록. 전역 실패율은 1%입니다. L2는 L1 실패의 비용을 100클록에서 평균 30클록으로 줄입니다.</p>
+    <p><i>풀이.</i> AMAT = 1 + 0.05(10 + 0.2 × 100) = 2.5클록이다. L2가 없으면 1 + 0.05 × 100 = 6클록이므로, L2가 평균을 절반 아래로 줄인다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>접근 100번으로 바꿔 보면 뜻이 분명하다(그림 1). 100번 모두 L1을 보고, 실패한 5번이 L2를 보며, 그 가운데 1번만 메모리까지 간다. 즉 전역 실패율은 1%이고, L2는 L1 실패 한 번의 비용을 100클록에서 평균 10 + 0.2 × 100 = 30클록으로 줄인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "L2 실패율 20%는 나쁘다": L1에서 걸러진 어려운 접근에 대한 비율이라 전역으로는 1%입니다. (2) "L1을 크게 하면 된다": L1이 커지면 접근 시간이 늘어 클록을 늦추므로 작고 빠르게 둡니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>L2의 지역 실패율 20%를 보고 L2가 쓸모없다고 여기기 쉽다. 하지만 L2에 오는 접근은 L1이 이미 걸러 낸 어려운 접근이어서 지역 실패율이 높게 나오는 것이 정상이며, 성능을 정하는 것은 전역 실패율 1%이다. 반대로 식에 전역 실패율을 넣으면 L1 실패율을 두 번 곱하게 되어 AMAT를 과소평가한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>AMAT = t₁ + m₁(t₂ + m₂t_mem).</li>
-        <li>전역 실패율 = m₁m₂.</li>
-        <li>예: 2.5클록(L2 없으면 6).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>다단계 캐시의 AMAT는 \(t_1 + m_1(t_2 + m_2t_{mem})\)이며, \(m_2\)는 지역 실패율이다. 전역 실패율은 \(m_1m_2\)이다. 예제에서 L2는 AMAT를 6클록에서 2.5클록으로 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제의 전역 실패율은?
-          <details><summary>답</summary><p>1%.</p></details>
+          <details><summary>답</summary><p>0.05 × 0.2 = 1%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>L2 지역 실패율을 10%로 줄이면 AMAT는?
-          <details><summary>답</summary><p>1 + 0.05 × 20 = 2.0.</p></details>
+          <details><summary>답</summary><p>1 + 0.05 × (10 + 0.1 × 100) = 2.0클록이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>L3(30클록, 지역 실패율 50%)을 더하면 AMAT는?
-          <details><summary>답</summary><p>1 + 0.05(10 + 0.2(30 + 0.5 × 100)) = 2.3.</p></details>
+          <details><summary>답</summary><p>1 + 0.05(10 + 0.2(30 + 0.5 × 100)) = 2.3클록이다.</p></details>
         </li>
       </ol>
     </div>

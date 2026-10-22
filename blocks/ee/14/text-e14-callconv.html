@@ -8,21 +8,33 @@
 <article class="card q-card" id="text-e14-callconv" data-kind="본문" data-std="전전14-02-03">
   <header class="card-head"><span class="no"></span><h2>함수 호출 규약과 스택 프레임</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RISC-V 호출 규약(인자 a0~a7, 반환 a0, 피호출자 보존 s0~s11, ra)을 안다.</li>
-        <li>함수 진입·종료 코드(프롤로그·에필로그)를 쓴다.</li>
-        <li>재귀 호출에서 스택 프레임 크기와 최대 깊이를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>어셈블리 변환 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">함수 fact가 자기 자신을 부르면, 안쪽 호출도 같은 레지스터 a0, s0, ra를 쓴다. 그런데도 안쪽 호출이 끝나고 돌아왔을 때 바깥 호출의 n과 복귀 주소가 멀쩡히 남아 있는 것은 어떻게 가능할까? fact(10)을 부르면 그 대가로 메모리를 얼마나 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="fact(10)을 불렀을 때 가장 깊은 순간의 스택. 위쪽 높은 주소에서부터 fact(10), fact(9), fact(8), …, fact(1)의 16바이트 프레임이 아래로 쌓이고 sp는 맨 아래 프레임을 가리킨다. 프레임 하나에는 12(sp)에 ra, 8(sp)에 s0가 저장되고 나머지 8바이트는 16바이트 정렬을 위한 빈칸이다. 모두 10 × 16 = 160바이트이다">
+        <defs><marker id="ah-e14cc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="80" y="30" width="120" height="30" class="la"/><rect x="80" y="30" width="120" height="30" class="a"/>
+        <rect x="80" y="60" width="120" height="30" class="la"/><rect x="80" y="60" width="120" height="30" class="a"/>
+        <rect x="80" y="90" width="120" height="30" class="la"/><rect x="80" y="90" width="120" height="30" class="a"/>
+        <rect x="80" y="140" width="120" height="30" class="lb"/><rect x="80" y="140" width="120" height="30" class="b"/>
+        <path d="M80 120 V140 M200 120 V140" class="k dsh"/>
+        <g text-anchor="middle"><text x="140" y="50" class="ta">fact(10)</text><text x="140" y="80" class="ta">fact(9)</text><text x="140" y="110" class="ta">fact(8)</text><text x="140" y="134" class="s">…</text><text x="140" y="160" class="tb">fact(1)</text></g>
+        <path d="M30 170 H78" class="d" marker-end="url(#ah-e14cc)"/><text x="30" y="164" class="td">sp</text>
+        <text x="30" y="40" class="s">높은 주소</text><text x="30" y="190" class="s">낮은 주소</text>
+        <path d="M210 30 H220 V170 H210" class="k" fill="none"/><text x="228" y="104" class="s">160바이트</text>
+        <rect x="330" y="40" width="160" height="30" class="lc"/><rect x="330" y="40" width="160" height="30" class="c"/>
+        <rect x="330" y="70" width="160" height="30" class="lc"/><rect x="330" y="70" width="160" height="30" class="c"/>
+        <rect x="330" y="100" width="160" height="60" class="lk"/><rect x="330" y="100" width="160" height="60" class="k"/>
+        <g text-anchor="middle"><text x="410" y="60" class="tc">ra (복귀 주소)</text><text x="410" y="90" class="tc">s0 (바깥의 n)</text><text x="410" y="134" class="s">빈칸 (16바이트 정렬)</text></g>
+        <g text-anchor="end" class="s"><text x="324" y="60">12(sp)</text><text x="324" y="90">8(sp)</text><text x="324" y="134">0~7(sp)</text></g>
+        <text x="410" y="180" text-anchor="middle" class="s">프레임 하나 16바이트</text>
+      </svg>
+      <figcaption>그림 1. 호출마다 스택에 자기 프레임을 새로 쌓고 덮어쓰일 ra와 s0를 거기 저장해 두므로, 안쪽 호출이 같은 레지스터를 써도 돌아올 때 바깥 값을 되살릴 수 있다(예제 2.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>어셈블리 변환(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>누가 무엇을 저장하나</h3>
-    <p>호출자는 인자를 a 레지스터에 넣고 jal로 부르며, 복귀 주소는 ra에 들어갑니다. 피호출자는 쓸 s 레지스터와(다른 함수를 부르면) ra를 스택에 저장했다가 돌려놓습니다. 스택 포인터 sp는 16바이트 정렬을 지킵니다.</p><pre><code>fact:  addi sp, sp, -16      # 프레임 확보
+    <p>함수를 부르는 쪽(호출자)과 불리는 쪽(피호출자)은 레지스터를 어떻게 나눠 쓸지 미리 약속하는데, 이 약속이 호출 규약이다. RISC-V에서 호출자는 인자를 a0~a7 레지스터에 넣고 jal로 부르며, 복귀 주소는 ra에 들어간다. 반환값은 a0로 돌려준다.</p>
+    <p>피호출자는 s0~s11 가운데 자기가 쓸 레지스터를 스택에 저장했다가, 돌아가기 전에 원래 값으로 돌려놓아야 한다. 또 다른 함수를 부를 함수라면 jal이 ra를 덮어쓰므로 ra도 저장한다. 이때 스택 포인터 sp는 16바이트 정렬을 지킨다. 아래는 재귀 함수 fact이다.</p><pre><code>fact:  addi sp, sp, -16      # 프레임 확보
        sw   ra, 12(sp)       # 복귀 주소 저장
        sw   s0, 8(sp)        # 쓸 레지스터 저장
        mv   s0, a0           # n 보관
@@ -37,41 +49,35 @@ done:  lw   s0, 8(sp)
        lw   ra, 12(sp)
        addi sp, sp, 16
        ret</code></pre>
+    <p>호출마다 sp를 16만큼 내려 새 프레임을 만들고, 거기에 ra와 s0를 저장한다. 그래서 안쪽 호출이 s0에 자기 n을 넣고 ra를 덮어써도, 바깥 호출의 값은 바깥 프레임에 그대로 남아 있다가 done에서 되살아난다. 처음 질문의 첫째 답이 이것이다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>fact(10)을 부르면 스택이 최대 몇 바이트 쓰이는가? ra를 저장하지 않으면?</p>
     </div>
-    <p><i>풀이.</i> 호출 깊이 10, 프레임 16바이트 → 160바이트. ra를 저장하지 않으면 안쪽 jal이 ra를 덮어써 바깥 함수가 엉뚱한 곳으로 돌아가 무한 반복하거나 멈춥니다.</p>
+    <p><i>풀이.</i> 호출 깊이가 10이고 프레임이 16바이트이므로 가장 깊은 순간에 160바이트를 쓴다. 처음 질문의 둘째 답이 이것이다. 만약 ra를 저장하지 않으면 안쪽 jal이 ra를 덮어써, 바깥 함수가 엉뚱한 곳으로 돌아가 무한 반복하거나 멈춘다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "t 레지스터는 호출 뒤에도 남는다": 호출자 보존이라 피호출 함수가 바꿀 수 있습니다. (2) "스택은 위로 자란다": RISC-V와 대부분 시스템에서 낮은 주소 쪽으로 자랍니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>t 레지스터에 둔 값이 함수 호출 뒤에도 남아 있을 것이라 여기는 실수가 흔하다. t0~t6은 피호출자가 마음대로 써도 되는 레지스터여서, 호출 뒤에도 필요한 값은 s 레지스터에 두거나 호출자가 직접 스택에 저장해야 한다. 또 재귀 깊이가 커지면 스택이 정해진 크기를 넘어 넘침(stack overflow)이 생긴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>인자 a0~a7, 반환 a0, ra에 복귀 주소.</li>
-        <li>피호출자 보존 s0~s11, sp 16바이트 정렬.</li>
-        <li>예: fact(10) → 160바이트.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>인자는 a0~a7, 반환값은 a0로 넘기고, 복귀 주소는 ra에 담긴다. 피호출자는 s0~s11과 필요한 ra를 스택 프레임에 저장했다 되돌리며, sp는 16바이트 정렬을 지킨다. 예를 들어 fact(10)은 프레임 10개, 160바이트를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>인자 9개 이상이면 어디로 넘기는가?
-          <details><summary>답</summary><p>스택.</p></details>
+          <details><summary>답</summary><p>9번째 인자부터는 스택으로 넘긴다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>프레임 32바이트, 깊이 1000 재귀의 스택 사용량은?
-          <details><summary>답</summary><p>32 KB.</p></details>
+          <details><summary>답</summary><p>32 × 1000 = 32,000바이트, 약 32 KB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>잎 함수가 ra를 저장하지 않아도 되는 이유는?
-          <details><summary>답</summary><p>다른 함수를 부르지 않아 ra가 바뀌지 않기 때문입니다.</p></details>
+          <details><summary>답</summary><p>다른 함수를 부르지 않아 ra가 바뀌지 않기 때문이다.</p></details>
         </li>
       </ol>
     </div>

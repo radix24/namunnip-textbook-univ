@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e14-multicycle" data-kind="본문" data-std="전전14-04-03">
   <header class="card-head"><span class="no"></span><h2>다중 사이클 데이터패스의 CPI</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>명령어를 여러 단계(인출, 해독, 실행, 메모리, 쓰기)로 나눠 단계마다 한 클록을 쓰는 다중 사이클 구조를 안다.</li>
-        <li>명령어 구성 비율로 평균 CPI를 계산한다.</li>
-        <li>단일 사이클과 성능을 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>단일 사이클 데이터패스 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">단일 사이클 CPU는 가장 느린 load에 클록을 맞추느라, 금방 끝나는 분기 명령도 load만큼 시간을 쓴다. 그렇다면 명령을 짧은 단계로 나누고 명령마다 필요한 단계만 쓰게 하면 더 빨라질까? 평균적으로 명령 하나에 몇 클록이 들고, 실제로 얼마나 빨라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1에서 명령 하나에 걸리는 시간. 단일 사이클은 모든 명령이 800 ps이다. 다중 사이클(200 ps 주기)은 load 5단계 1000 ps, store와 R형 4단계 800 ps, 분기와 점프 3단계 600 ps이고, 명령 비율로 평균하면 CPI 4.05, 810 ps로 단일 사이클과 비슷하다">
+        <line x1="120" y1="30" x2="120" y2="170" class="ax"/><line x1="120" y1="170" x2="520" y2="170" class="ax"/>
+        <path d="M440 30 V170" class="k dsh"/>
+        <rect x="120" y="40" width="400" height="18" class="ld"/><rect x="120" y="40" width="400" height="18" class="d"/>
+        <rect x="120" y="66" width="320" height="18" class="la"/><rect x="120" y="66" width="320" height="18" class="a"/>
+        <rect x="120" y="92" width="320" height="18" class="la"/><rect x="120" y="92" width="320" height="18" class="a"/>
+        <rect x="120" y="118" width="240" height="18" class="la"/><rect x="120" y="118" width="240" height="18" class="a"/>
+        <rect x="120" y="144" width="324" height="18" class="lb"/><rect x="120" y="144" width="324" height="18" class="b"/>
+        <g text-anchor="end" class="s"><text x="112" y="53">load (25%)</text><text x="112" y="79">store (10%)</text><text x="112" y="105">R형 (45%)</text><text x="112" y="131">분기·점프 (20%)</text><text x="112" y="157">평균</text></g>
+        <g class="s"><text x="456" y="53">5 × 200 = 1000</text><text x="366" y="131">600</text><text x="452" y="157">810 ps</text></g>
+        <text x="444" y="24" text-anchor="middle" class="s">단일 사이클 800 ps</text>
+        <g text-anchor="middle" class="s"><text x="120" y="186">0</text><text x="280" y="186">400</text><text x="440" y="186">800 ps</text></g>
+      </svg>
+      <figcaption>그림 1. 짧은 명령은 시간을 아끼지만 load는 오히려 단일 사이클보다 오래 걸려서, 명령 비율로 평균하면 이득이 거의 남지 않는다(예제 4.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>단일 사이클 데이터패스(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>필요한 단계만</h3>
-    <p>단일 사이클은 가장 긴 명령(load)에 클록을 맞춰야 하지만, 다중 사이클은 짧은 단계에 클록을 맞추고 명령마다 필요한 단계 수만큼만 씁니다(load 5, store 4, R형 4, 분기 3).</p>
+    <p>단일 사이클 구현은 가장 긴 명령인 load에 클록 주기를 맞춰야 한다. 반면 다중 사이클 구현은 명령 실행을 인출, 해독, 실행, 메모리, 쓰기 같은 짧은 단계로 나누고, 가장 긴 단계에 클록을 맞춘다. 그리고 명령마다 필요한 단계 수만큼만 클록을 쓴다.</p>
+    <p>예를 들어 load는 5단계, store와 R형은 4단계, 분기는 3단계를 쓴다. 그러므로 명령 하나의 평균 클록 수 CPI는 명령 종류별 비율에 단계 수를 곱해 더한 값이다. 처음 질문의 둘째 답, 곧 평균 클록 수는 이렇게 구한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>load 25%, store 10%, R형 45%, 분기 15%, 점프 5%(3단계). 평균 CPI는? 단일 사이클 주기 800 ps, 다중 사이클 주기 200 ps면 어느 쪽이 빠른가?</p>
     </div>
-    <p><i>풀이.</i> CPI = 0.25×5 + 0.1×4 + 0.45×4 + 0.15×3 + 0.05×3 = 4.05. 다중 사이클 명령당 4.05 × 200 = 810 ps로 단일 사이클 800 ps와 비슷합니다. 단계 사이 레지스터 지연을 넣으면 더 불리해, 실제로는 파이프라인(5장)이 답입니다.</p>
+    <p><i>풀이.</i> CPI = 0.25×5 + 0.1×4 + 0.45×4 + 0.15×3 + 0.05×3 = 4.05이다. 따라서 다중 사이클의 명령당 시간은 4.05 × 200 = 810 ps로, 단일 사이클의 800 ps와 거의 같다(그림 1). 짧은 명령에서 아낀 시간을 load가 1000 ps를 쓰며 도로 잃기 때문이다.</p>
+    <p>게다가 실제로는 단계 사이에 값을 붙잡아 두는 레지스터의 지연이 더해져 다중 사이클이 더 불리해진다. 즉 단계를 나누는 것만으로는 크게 빨라지지 않으며, 처음 질문의 첫째 답이 이것이다. 나눈 단계를 여러 명령이 겹쳐 쓰게 하는 파이프라인(5단원)이 진짜 답이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "다중 사이클은 언제나 빠르다": 단계 나누기가 고르지 않거나 레지스터 오버헤드가 있으면 이득이 없습니다. (2) "CPI 4면 4배 느리다": 클록이 짧아져 실행 시간은 CPI × 주기로 비교해야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>다중 사이클은 클록이 4배 빠르니 4배 빨라진다고 여기기 쉽다. 하지만 명령 하나가 여러 클록을 쓰므로, 비교할 것은 클록 주파수가 아니라 CPI × 클록 주기인 명령당 시간이다. 다중 사이클의 진짜 장점은 속도보다 ALU나 메모리 같은 장치를 단계마다 다시 쓸 수 있어 하드웨어가 줄어드는 데 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>단계마다 한 클록, 명령마다 단계 수 다름.</li>
-        <li>평균 CPI = Σ비율 × 단계 수.</li>
-        <li>예: CPI 4.05 × 200 ps ≈ 단일 사이클 800 ps.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>다중 사이클 구현은 단계마다 한 클록을 쓰고, 명령마다 단계 수가 다르다. 평균 CPI는 Σ(비율 × 단계 수)이다. 예제에서는 CPI 4.05 × 200 ps = 810 ps로 단일 사이클 800 ps와 비슷하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>모든 명령이 4단계면 CPI는?
-          <details><summary>답</summary><p>4.</p></details>
+          <details><summary>답</summary><p>CPI는 4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>load 비율이 50%로 늘면(나머지 R형) CPI는?
-          <details><summary>답</summary><p>0.5×5 + 0.5×4 = 4.5.</p></details>
+          <details><summary>답</summary><p>0.5×5 + 0.5×4 = 4.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>클록 200 ps에서 CPI 4.05의 MIPS는?
-          <details><summary>답</summary><p>약 1235.</p></details>
+          <details><summary>답</summary><p>1/(4.05 × 200 ps) = 약 1235 MIPS이다.</p></details>
         </li>
       </ol>
     </div>

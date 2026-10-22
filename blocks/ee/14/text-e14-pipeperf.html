@@ -8,57 +8,58 @@
 <article class="card q-card" id="text-e14-pipeperf" data-kind="본문" data-std="전전14-05-02">
   <header class="card-head"><span class="no"></span><h2>파이프라인의 성능 향상</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>파이프라인의 처리율(명령/시간)과 지연(명령 하나의 시간)을 구별한다.</li>
-        <li>단계 불균형과 파이프라인 레지스터 지연이 가속을 줄이는 것을 계산한다.</li>
-        <li>해저드로 늘어난 CPI를 넣어 실제 가속을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>데이터패스 지연 (<a href="04-01.html">4.1절</a>), 해저드 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">세탁기, 건조기, 다림질을 한 사람이 빨래 한 바구니씩 차례로 다 끝내는 것보다, 첫 바구니가 건조기에 들어가는 순간 다음 바구니를 세탁기에 넣으면 훨씬 빨리 끝난다. CPU도 명령을 5단계로 나눠 이렇게 겹치면 5배 빨라질까? 명령 하나가 끝나는 데 걸리는 시간도 줄어들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="명령 세 개의 실행. 단일 사이클은 명령마다 800 ps씩 차례로 써서 2400 ps가 걸린다. 5단계 파이프라인(주기 220 ps)은 명령이 한 주기씩 늦게 시작해 겹쳐 실행되며, 세 번째 명령이 7주기, 1540 ps에 끝난다. 명령 하나의 지연은 5 × 220 = 1100 ps로 오히려 늘지만, 명령이 많으면 220 ps마다 하나씩 끝난다">
+        <g class="s" text-anchor="end"><text x="92" y="48">단일 사이클</text><text x="92" y="98">파이프라인</text></g>
+        <rect x="100" y="34" width="140" height="20" class="la"/><rect x="240" y="34" width="140" height="20" class="lb"/><rect x="380" y="34" width="140" height="20" class="lc"/>
+        <path d="M100 34 H520 V54 H100 Z M240 34 V54 M380 34 V54" class="k" fill="none"/>
+        <g text-anchor="middle"><text x="170" y="48" class="ta">명령 1</text><text x="310" y="48" class="tb">명령 2</text><text x="450" y="48" class="tc">명령 3</text></g>
+        <rect x="100" y="84" width="192.5" height="20" class="la"/><rect x="100" y="84" width="192.5" height="20" class="a"/>
+        <rect x="138.5" y="110" width="192.5" height="20" class="lb"/><rect x="138.5" y="110" width="192.5" height="20" class="b"/>
+        <rect x="177" y="136" width="192.5" height="20" class="lc"/><rect x="177" y="136" width="192.5" height="20" class="c"/>
+        <g text-anchor="middle" class="s"><text x="196" y="98">IF ID EX MEM WB</text><text x="235" y="124">IF ID EX MEM WB</text><text x="273" y="150">IF ID EX MEM WB</text></g>
+        <path d="M369.5 70 V160" class="d dsh"/><text x="376" y="150" class="td">1540 ps</text>
+        <text x="526" y="48" class="s">2400</text>
+        <line x1="100" y1="170" x2="520" y2="170" class="ax"/>
+        <g text-anchor="middle" class="s"><text x="100" y="186">0</text><text x="240" y="186">800</text><text x="380" y="186">1600</text><text x="520" y="186">2400 ps</text></g>
+      </svg>
+      <figcaption>그림 1. 파이프라인은 명령 하나의 지연을 줄이지 않고 오히려 조금 늘리지만, 여러 명령을 겹쳐 매 주기 하나씩 끝내므로 명령이 많을수록 전체 시간이 크게 준다(예제 5.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>데이터패스 지연(<a href="04-01.html">4.1절</a>), 해저드(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>이상적 가속</h3>
-    <p>k단계로 고르게 나누면 클록 주기가 1/k이 되고, 매 사이클 명령 하나가 끝나므로 처리율이 k배입니다. 명령 n개의 시간은 \((k + n - 1)\)사이클이라 n이 크면 가속이 k에 가까워집니다. 명령 하나의 지연은 오히려 조금 늘어납니다(레지스터 지연).</p>
+    <p>명령 실행을 \(k\)단계로 고르게 나누면 클록 주기는 원래의 \(1/k\)이 된다. 그리고 단계마다 다른 명령이 들어 있어 매 사이클 명령 하나가 끝나므로, 처리율이 \(k\)배가 된다. 명령 \(n\)개를 실행하는 데는 \((k + n - 1)\)사이클이 걸리므로, \(n\)이 크면 가속이 \(k\)에 가까워진다.</p>
+    <p>하지만 명령 하나가 처음부터 끝까지 걸리는 지연은 줄지 않는다. 오히려 단계 사이마다 값을 붙잡는 파이프라인 레지스터의 지연이 더해져 조금 늘어난다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
       <p>4.1절의 단계 지연(200, 100, 200, 200, 100 ps), 파이프라인 레지스터 지연 20 ps. (가) 파이프라인 클록 주기, (나) 단일 사이클(800 ps) 대비 가속(명령이 많을 때), (다) 해저드로 CPI가 1.2가 되면?</p>
     </div>
-    <p><i>풀이.</i> (가) 가장 긴 단계 200 + 20 = 220 ps. (나) 800/220 = 3.64배(5단계지만 불균형과 레지스터 지연으로 5배 못 미침). (다) 800/(220 × 1.2) = 3.03배.</p>
-    <p>단계를 더 잘게 나누면(깊은 파이프라인) 클록이 빨라지지만, 레지스터 지연의 비중과 분기 손해가 커져 어느 정도 이상은 이득이 줄어듭니다.</p>
+    <p><i>풀이.</i> (가) 주기는 가장 긴 단계에 맞춰야 하므로 200 + 20 = 220 ps이다. (나) 가속은 800/220 = 3.64배이다. 5단계인데도 5배에 못 미치는 것은 단계 길이가 고르지 않고 레지스터 지연이 더해지기 때문이다. (다) 해저드로 CPI가 1.2가 되면 800/(220 × 1.2) = 3.03배이다. 처음 질문의 첫째 답이 이것으로, 5배가 아니라 3배 남짓이다.</p>
+    <p>그렇다면 단계를 더 잘게 나누면 어떨까? 깊은 파이프라인은 클록이 빨라지지만, 주기에서 레지스터 지연이 차지하는 비중이 커지고 분기 예측이 틀렸을 때 버리는 명령도 많아진다. 그래서 어느 정도를 넘으면 단계를 늘려도 이득이 줄어든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "파이프라인은 명령 하나를 빠르게 한다": 하나의 지연은 그대로이거나 늘고, 처리율이 늘어납니다. (2) "k단계면 k배": 불균형, 레지스터 지연, 해저드로 줄어듭니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>파이프라인이 명령 하나를 빨리 끝내 준다고 여기기 쉽다. 하지만 파이프라인이 늘리는 것은 단위 시간당 끝나는 명령 수인 처리율이며, 명령 하나의 지연은 레지스터 지연만큼 오히려 늘어난다. 또 주기는 평균 단계가 아니라 가장 긴 단계가 정하므로, 짧은 단계를 나눠 봐야 효과가 없다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>처리율 k배(이상적), 명령 하나의 지연은 줄지 않는다.</li>
-        <li>주기 = 가장 긴 단계 + 레지스터 지연.</li>
-        <li>실제 가속 = 단일 주기 / (파이프 주기 × CPI).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이프라인은 처리율을 이상적으로 \(k\)배 높이지만, 명령 하나의 지연은 줄이지 않는다. 주기는 가장 긴 단계에 레지스터 지연을 더한 값이다. 실제 가속은 단일 사이클 주기 / (파이프라인 주기 × CPI)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>5단계, 명령 100개의 사이클 수(멈춤 없음)는?
-          <details><summary>답</summary><p>104.</p></details>
+          <details><summary>답</summary><p>5 + 100 − 1 = 104사이클이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>모든 단계 160 ps, 레지스터 20 ps, 단일 사이클 800 ps이면 이상적 가속은?
-          <details><summary>답</summary><p>800/180 = 4.44배.</p></details>
+          <details><summary>답</summary><p>800/180 = 4.44배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제에서 MEM 단계를 둘로 나눠(각 100 ps) 6단계로 하면 주기와 가속(CPI 1.2 유지 가정)은?
-          <details><summary>답</summary><p>가장 긴 단계 200 ps(IF, EX)라 주기 그대로 220 ps, 가속 변화 없음. 가장 긴 단계를 나눠야 효과가 있습니다.</p></details>
+          <details><summary>답</summary><p>가장 긴 단계가 여전히 200 ps(IF, EX)이므로 주기는 220 ps 그대로이고 가속도 변하지 않는다. 가장 긴 단계를 나눠야 효과가 있다.</p></details>
         </li>
       </ol>
     </div>
