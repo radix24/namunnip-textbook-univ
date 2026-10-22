@@ -6,68 +6,70 @@
 }
 -->
 <article class="card q-card" id="text-s14-abtest" data-kind="본문" data-std="응통14-03-04">
-  <header class="card-head"><span class="no"></span><h2>A/B 테스트: 두 비율의 비교</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>A/B 테스트, 두 비율의 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>A/B 테스트를 무작위 실험으로 설계한다.</li>
-        <li>두 비율의 차이를 z 검정과 신뢰구간으로 분석한다.</li>
-        <li>필요한 표본 크기를 계산하고 중간 확인(엿보기)의 위험을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>연구 질문과 가설 (<a href="03-01.html">3.1절</a>), 효과 크기와 검정력 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>웹에서 하는 무작위 실험</h3>
-    <p>버튼 색, 가격 문구, 추천 방식 가운데 어느 쪽이 나은지 묻는 A/B 테스트는 응통13의 완전 랜덤화 설계를 웹에 옮긴 것입니다. 방문자를 무작위로 두 화면에 나누므로 다른 차이가 고르게 섞여, 전환율 차이를 화면의 효과로 해석할 수 있습니다.</p>
+    <p class="q-ask">쇼핑몰이 새 구매 버튼을 시험하며 날마다 결과를 들여다보다가, p값이 처음 0.05 아래로 내려간 날 "새 버튼이 낫다"고 발표했다. 버튼에 정말 효과가 있었을까? 매일 확인하는 것이 무엇을 망가뜨릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="효과가 없는 A/B 테스트에서 결과를 들여다본 횟수(로그)에 따라, 한 번이라도 5% 유의로 멈출 확률(모의실험). 1번이면 0.05, 2번 0.086, 5번 0.143, 10번 0.194, 20번 0.253, 50번 0.318로 늘어난다. 0.05에 점선이 있다">
+        <line x1="55" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="70.8" y="195" text-anchor="middle" class="s">1</text>
+        <text x="119.7" y="195" text-anchor="middle" class="s">2</text>
+        <text x="184.5" y="195" text-anchor="middle" class="s">5</text>
+        <text x="233.4" y="195" text-anchor="middle" class="s">10</text>
+        <text x="282.4" y="195" text-anchor="middle" class="s">20</text>
+        <text x="347.1" y="195" text-anchor="middle" class="s">50</text>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="161.1" text-anchor="end" class="s">0.05</text>
+        <text x="50" y="138.3" text-anchor="end" class="s">0.1</text>
+        <text x="50" y="92.6" text-anchor="end" class="s">0.2</text>
+        <text x="50" y="46.9" text-anchor="end" class="s">0.3</text>
+        <text x="360" y="209" text-anchor="end" class="s">결과를 들여다본 횟수</text>
+        <text x="61" y="24" class="s">효과가 없어도 유의로 멈출 확률</text>
+        <path d="M55 157.1 L360 157.1" class="k dsh"/>
+        <path d="M70.8 157.1 L119.7 140.7 L184.5 114.6 L233.4 91.3 L282.4 64.3 L347.1 34.6" class="d"/>
+        <circle cx="70.8" cy="157.1" r="4.5" class="fd"/><text x="70.8" y="148.1" text-anchor="middle" class="s">0.05</text>
+        <circle cx="119.7" cy="140.7" r="4.5" class="fd"/><text x="119.7" y="131.7" text-anchor="middle" class="s">0.09</text>
+        <circle cx="184.5" cy="114.6" r="4.5" class="fd"/><text x="184.5" y="105.6" text-anchor="middle" class="s">0.14</text>
+        <circle cx="233.4" cy="91.3" r="4.5" class="fd"/><text x="233.4" y="82.3" text-anchor="middle" class="s">0.19</text>
+        <circle cx="282.4" cy="64.3" r="4.5" class="fd"/><text x="282.4" y="55.3" text-anchor="middle" class="s">0.25</text>
+        <circle cx="347.1" cy="34.6" r="4.5" class="fd"/><text x="347.1" y="25.6" text-anchor="middle" class="s">0.32</text>
+        <text x="375" y="44" class="s">귀무가설이 참인</text><text x="375" y="60" class="s">A/B 테스트에서</text><text x="375" y="76" class="s">볼 때마다 5% 검정</text><text x="375" y="108" class="s td">매일 20번 보면</text><text x="375" y="124" class="s td">약 25%가 거짓 양성</text><text x="375" y="156" class="s">(모의실험)</text>
+      </svg>
+      <figcaption>그림 1. 엿보기의 위험(모의실험). 효과가 없어도 결과를 자주 들여다볼수록 한 번은 유의하게 나올 확률이 커져, 20번이면 약 25%이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연구 질문과 가설(<a href="03-01.html">3.1절</a>)과 효과 크기와 검정력(<a href="03-02.html">3.2절</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 효과가 없었을 수도 있다는 것이다. 매일 들여다보다가 처음 유의한 날 멈추면, 효과가 없어도 유의할 확률이 5%를 훨씬 넘는다(그림 1). A/B 테스트는 응통13의 완전 랜덤화 설계를 웹에 옮긴 것이므로, 실험처럼 미리 설계하고 그 설계대로 분석해야 한다. 방문자를 무작위로 두 화면에 나누면 다른 차이가 고르게 섞여, 전환율 차이를 화면의 효과로 해석할 수 있다.</p>
 
     <h3><span class="no">3.4.1</span>설계에서 정할 것</h3>
-    <ul>
-      <li><b>무작위화 단위</b>: 방문(세션)이 아니라 사용자 단위로 나눠야 같은 사람이 두 화면을 보지 않습니다. 분석 단위도 그에 맞춥니다.</li>
-      <li><b>주 지표 하나</b>: 전환율 같은 주 지표를 미리 정합니다. 지표를 여럿 보고 유의한 것을 고르면 3.5절의 다중 검정 문제가 생깁니다.</li>
-      <li><b>표본 크기와 기간</b>: 미리 계산하고, 요일 효과를 고려해 주 단위로 잡습니다.</li>
-    </ul>
+    <p>먼저 무작위화 단위를 정한다. 방문, 곧 세션이 아니라 사용자 단위로 나눠야 같은 사람이 두 화면을 보지 않으며, 분석 단위도 그에 맞춘다. 또 전환율 같은 주 지표 하나를 미리 정한다. 지표를 여럿 보고 유의한 것을 고르면 <a href="03-05.html">3.5절</a>의 다중 검정 문제가 생기기 때문이다. 그리고 표본 크기와 기간을 미리 계산하되, 요일 효과를 고려해 주 단위로 잡는다.</p>
 
     <h3><span class="no">3.4.2</span>분석</h3>
-    <p>전환 \(x_1/n_1\), \(x_2/n_2\)에 대해 귀무가설(같은 비율) 아래 합동 비율 \(\hat p = (x_1 + x_2)/(n_1 + n_2)\)로</p>
-    \[z = \frac{\hat p_2 - \hat p_1}{\sqrt{\hat p(1 - \hat p)(1/n_1 + 1/n_2)}}\]
-    <p>를 구합니다(2×2 표의 카이제곱 검정과 같음, \(z^2 = \chi^2\)). 신뢰구간은 합동하지 않은 표준오차 \(\sqrt{\hat p_1\hat q_1/n_1 + \hat p_2\hat q_2/n_2}\)로 만듭니다.</p>
-    <p>필요한 표본 크기(그룹마다)는 \(\bar p = (p_1 + p_2)/2\)로</p>
-    \[n \approx \frac{\left(z_{\alpha/2}\sqrt{2\bar p\bar q} + z_\beta\sqrt{p_1q_1 + p_2q_2}\right)^2}{(p_2 - p_1)^2}.\]
-    <div class="tb-note">
-      <b>주의</b> 결과를 매일 보다가 처음 p &lt; 0.05가 나온 날 멈추면, 효과가 없어도 유의할 확률이 5%를 훨씬 넘습니다(엿보기). 정해 둔 표본까지 기다리거나, 중간 분석을 허용하는 순차 검정 방법(알파 소비 함수)을 미리 정해 씁니다.
-    </div>
-
+    <p>전환 \(x_1/n_1\), \(x_2/n_2\)에 대해, 같은 비율이라는 귀무가설 아래 합동 비율 \(\hat p = (x_1 + x_2)/(n_1 + n_2)\)로 다음을 구한다.</p>
+    \[ z = \frac{\hat p_2 - \hat p_1}{\sqrt{\hat p(1 - \hat p)(1/n_1 + 1/n_2)}} \]
+    <p>이것은 2×2 표의 카이제곱 검정과 같으며, \(z^2 = \chi^2\)이다. 한편 신뢰구간은 합동하지 않은 표준오차 \(\sqrt{\hat p_1\hat q_1/n_1 + \hat p_2\hat q_2/n_2}\)로 만든다. 그룹마다 필요한 표본 크기는 \(\bar p = (p_1 + p_2)/2\)로 다음과 같이 계산한다.</p>
+    \[ n \approx \frac{\left(z_{\alpha/2}\sqrt{2\bar p\bar q} + z_\beta\sqrt{p_1q_1 + p_2q_2}\right)^2}{(p_2 - p_1)^2} \]
+    <div class="tb-note"><span class="lb">주의</span><p>결과를 매일 보다가 처음 p &lt; 0.05가 나온 날 멈추면 거짓 양성이 크게 늘어난다(그림 1). 그러므로 정해 둔 표본까지 기다리거나, 중간 분석을 허용하는 순차 검정 방법(알파 소비 함수)을 미리 정해 쓴다.</p></div>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
-      <p>기존 화면 5000명 중 200명(4%), 새 화면 5000명 중 250명(5%)이 구매했습니다. 검정과 95% 신뢰구간을 구하세요.</p>
+      <p>기존 화면은 5,000명 가운데 200명(4%), 새 화면은 5,000명 가운데 250명(5%)이 구매했다. 검정과 95% 신뢰구간을 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(\hat p = 450/10000 = 0.045\), 표준오차 \(\sqrt{0.045 \times 0.955 \times 0.0004} = 0.00415\), \(z = 0.01/0.00415 = 2.41\), 양측 p값 0.016. 신뢰구간 표준오차 \(\sqrt{0.04 \cdot 0.96/5000 + 0.05 \cdot 0.95/5000} = 0.00413\), \(0.010 \pm 0.0081\), [0.19%p, 1.81%p]. 상대적으로는 전환율이 5%에서 45% 사이로 높아졌다고 말할 수 있습니다.</p>
+    <p><i>풀이.</i> \(\hat p = 450/10000 = 0.045\)이므로 표준오차는 \(\sqrt{0.045 \times 0.955 \times 0.0004} = 0.00415\)이고, \(z = 0.01/0.00415 = 2.41\), 양측 p값은 0.016이다. 신뢰구간의 표준오차는 \(\sqrt{0.04 \cdot 0.96/5000 + 0.05 \cdot 0.95/5000} = 0.00413\)이므로 구간은 \(0.010 \pm 0.0081\), 곧 [0.19%p, 1.81%p]이다. 즉 상대적으로는 전환율이 5%에서 45% 사이로 높아졌다고 말할 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사용자 단위로 무작위화하고 주 지표와 표본 크기를 미리 정합니다.</li>
-        <li>두 비율 z 검정(합동 표준오차)과 신뢰구간(비합동 표준오차).</li>
-        <li>중간에 엿보고 멈추지 않습니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>A/B 테스트는 사용자 단위로 무작위화하고, 주 지표와 표본 크기를 미리 정한다. 검정은 합동 표준오차의 두 비율 z 검정으로, 신뢰구간은 비합동 표준오차로 만든다. 중간에 엿보고 멈추지 않는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제 3.4.1의 \(\chi^2\) 통계량은?
-          <details><summary>답</summary><p>\(z^2 = 2.41^2 = 5.82\)(자유도 1).</p></details>
+        <li>예제 3.4.1의 \(\chi^2\) 통계량은 얼마인가?
+          <details><summary>답</summary><p>\(z^2 = 2.41^2 = 5.82\)이고 자유도는 1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>예제 3.4.1의 신뢰구간 하한이 0.19%p입니다. 새 화면 개발 비용을 회수하려면 전환율이 최소 0.5%p 올라야 한다면 어떻게 결정하나요?
-          <details><summary>답</summary><p>통계적으로는 효과가 있지만 구간이 0.5%p 아래도 포함하므로 비용을 회수한다고 확신할 수 없습니다. 점추정 1%p는 기준을 넘으므로 도입의 기대 이익은 양수지만, 확신이 필요하면 표본을 늘려 구간을 좁힙니다(2.2절의 해석).</p></details>
+      <ol start="2">
+        <li>예제 3.4.1의 신뢰구간 하한은 0.19%p이다. 새 화면 개발 비용을 회수하려면 전환율이 최소 0.5%p 올라야 한다면 어떻게 결정하는가?
+          <details><summary>답</summary><p>통계적으로는 효과가 있지만 구간이 0.5%p 아래도 포함하므로, 비용을 회수한다고 확신할 수 없다. 점추정 1%p는 기준을 넘으므로 도입의 기대 이익은 양수이다. 그러나 확신이 필요하면 표본을 늘려 구간을 좁힌다(<a href="02-02.html">2.2절</a>의 해석).</p></details>
         </li>
       </ol>
     </div>
