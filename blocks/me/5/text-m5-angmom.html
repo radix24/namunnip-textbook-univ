@@ -8,82 +8,83 @@
 <article class="card q-card" id="text-m5-angmom" data-kind="본문" data-std="기계5-04-03">
   <header class="card-head"><span class="no"></span><h2>각운동량 방정식과 터보기계의 토크</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RTT에 각운동량을 넣어 검사체적의 토크 식을 얻는다.</li>
-        <li>회전 스프링클러의 토크와 회전 속도를 구한다.</li>
-        <li>펌프·터빈의 Euler 터보기계 식으로 토크, 동력, 이론 양정을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>선형운동량 방정식 (<a href="04-02.html">4.2절</a>).</li>
-        <li>돌림힘과 각운동량 (<a href="../genphy1/06-02.html">일반물리학및실험(1) 6.2절</a>, <a href="../genphy1/06-04.html">6.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">잔디밭 스프링클러는 모터가 없는데도 물만 틀면 빙글빙글 돈다. 팔을 손으로 잡으면 얼마나 세게 버텨야 할까? 그리고 손을 놓으면 끝없이 빨라지지 않고 어느 속도에서 멈춰 고르게 도는 이유는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="회전 스프링클러(예제 4.3.1). 왼쪽은 위에서 본 두 팔과 반대 방향으로 나가는 분류이다. 오른쪽은 축 마찰 토크와 회전 속도의 관계로, 붙잡으면 1.27 N·m, 마찰이 없으면 53 rad/s, 마찰 0.55 N·m이면 30 rad/s로 직선 관계이다">
+        <defs><marker id="ah-am1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M70 100 H290" class="k"/><circle cx="180" cy="100" r="7" class="lk"/><circle cx="180" cy="100" r="7" class="k"/>
+        <g class="a" marker-end="url(#ah-am1)"><path d="M290 100 V150"/><path d="M70 100 V50"/></g>
+        <path d="M222 48 A60 60 0 0 0 132 60" class="d" marker-end="url(#ah-am1)"/>
+        <text x="186" y="36" class="td">ω</text>
+        <text x="296" y="140" class="ta">V_r = 10.6 m/s</text>
+        <text x="180" y="122" text-anchor="middle" class="s">R = 0.2 m</text>
+        <text x="180" y="190" text-anchor="middle" class="s">위에서 본 모습</text>
+        <line x1="360" y1="170" x2="530" y2="170" class="ax"/><line x1="360" y1="40" x2="360" y2="170" class="ax"/>
+        <path d="M360 51.8 L510.3 170" class="b"/>
+        <path d="M360 118.9 H445.3 V170" class="gd dsh"/>
+        <circle cx="360" cy="51.8" r="4" class="fd"/><circle cx="445.3" cy="118.9" r="4" class="fb"/><circle cx="510.3" cy="170" r="4" class="fa"/>
+        <text x="366" y="46" class="td">붙잡음 1.27 N·m</text>
+        <text x="450" y="112" class="tb">0.55 N·m, 30 rad/s</text>
+        <text x="506" y="160" text-anchor="end" class="ta">53</text>
+        <text x="530" y="186" text-anchor="end" class="s">ω (rad/s)</text>
+        <text x="366" y="186" class="s">0</text>
+        <text x="354" y="122" text-anchor="end" class="s">T</text>
+      </svg>
+      <figcaption>그림 1. 분류가 팔 끝에서 회전 방향과 반대로 각운동량을 가지고 나가므로 팔은 반작용 토크를 받고, 팔이 빨라질수록 땅에서 본 분류의 원주 속도가 줄어 토크가 직선으로 줄다가 마찰 토크와 같아지는 속도에서 고르게 돈다(예제 4.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>선형운동량 방정식(<a href="04-02.html">4.2절</a>), 돌림힘과 각운동량(<a href="../genphy1/06-02.html">일반물리학및실험(1) 6.2절</a>, <a href="../genphy1/06-04.html">6.4절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>방정식</h3>
-    <p>회전하는 기계에서 알고 싶은 것은 힘보다 <b>토크</b>입니다. 일반물리에서 축에 대한 각운동량은 질량 × 회전 방향 속도 성분 × 축까지 거리였고, 그 변화율이 외부 토크였습니다. 4.1절의 RTT에 \(b = rV_t\)(단위 질량당 축에 대한 각운동량)를 넣으면 정상 상태에서</p>
+    <p>회전하는 기계에서 알고 싶은 것은 힘보다 토크이다. 일반물리에서 축에 대한 각운동량은 질량에 회전 방향 속도 성분과 축까지 거리를 곱한 것이었고, 그 변화율이 외부 토크였다. 그래서 4.1절의 RTT에 단위 질량당 축에 대한 각운동량 \(b = rV_t\)를 넣으면 정상 상태에서 다음을 얻는다.</p>
     <div class="tb-env thm">
       <span class="lb">각운동량 방정식 (축에 대해, 정상)</span>
       \[\sum T = \sum_{\text{out}}\dot m\,rV_t - \sum_{\text{in}}\dot m\,rV_t\]
-      <p>\(V_t\)는 속도의 회전 방향(원주 방향) 성분, \(r\)은 축까지의 거리. 반지름 방향 성분과 축 방향 성분은 축에 대한 토크를 만들지 않는다.</p>
+      <p>\(V_t\)는 속도의 회전 방향(원주 방향) 성분, \(r\)은 축까지의 거리이다. 반지름 방향 성분과 축 방향 성분은 축에 대한 토크를 만들지 않는다.</p>
     </div>
-    <p>4.2절 식에서 각 항에 "축까지의 팔 길이"를 곱한 것으로 보아도 됩니다. 회전 방향의 부호(예: 반시계 +)를 먼저 정하세요.</p>
+    <p>즉 4.2절 식의 각 항에 축까지의 팔 길이를 곱한 것으로 보아도 된다. 풀기 전에 회전 방향의 부호(예를 들어 반시계 방향을 +)를 먼저 정해 두자.</p>
 
     <h3><span class="no">4.3.2</span>회전 스프링클러</h3>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1 <span class="nm">(잔디 스프링클러)</span></span>
       <p>길이 \(R = 0.2\) m인 두 팔 끝의 지름 6 mm 노즐에서, 팔에 수직하고 서로 반대 방향으로 물이 나간다. 전체 유량 0.6 L/s. (가) 팔을 붙잡아 멈출 때 토크는? (나) 마찰 없이 자유롭게 돌면 회전 속도는? (다) 축 마찰 토크 0.55 N·m를 받으면?</p>
     </div>
-    <p><i>풀이.</i> 노즐마다 \(Q = 0.3\times10^{-3}\) m³/s, \(a = 2.83\times10^{-5}\) m², 노즐에 대한 분출 속도 \(V_r = Q/a = 10.6\) m/s. 물은 축에서 들어올 때(\(r = 0\)) 각운동량이 없습니다.</p>
-    <ol>
-      <li>(가) 멈춘 팔: 땅에서 본 \(V_t = V_r\)(분출 방향, 팔 회전 방향의 반대). 붙잡는 토크 \(T = \dot m RV_r = 0.6\times0.2\times10.6 = 1.27\) N·m.</li>
-      <li>(나) 팔이 \(\omega\)로 돌면 노즐도 \(\omega R\)로 움직여, 땅에서 본 분출 속도는 \(V_r - \omega R\). 토크가 0이 되려면 \(V_r = \omega R\), \(\omega = 53\) rad/s(507 rpm).</li>
-      <li>(다) \(\dot mR(V_r - \omega R) = 0.55\)에서 \(V_r - \omega R = 4.58\), \(\omega = 30\) rad/s.</li>
-    </ol>
-    <p>마찰이 없으면 물은 땅에서 보아 회전 방향 속도 없이(반지름 방향으로만) 떨어져 나갑니다. 마찰이 있을수록 느리게 돌고 물이 더 멀리 날아갑니다.</p>
+    <p><i>풀이.</i> 노즐마다 \(Q = 0.3\times10^{-3}\) m³/s, \(a = 2.83\times10^{-5}\) m²이므로 노즐에 대한 분출 속도는 \(V_r = Q/a = 10.6\) m/s이다. 물은 축(\(r = 0\))에서 들어오므로 들어올 때 각운동량이 없다.</p>
+    <p>(가) 팔이 멈춰 있으면 땅에서 본 \(V_t\)는 분출 방향, 곧 팔 회전 방향의 반대로 \(V_r\)이다. 그래서 붙잡는 토크는 \(T = \dot m RV_r = 0.6\times0.2\times10.6 = 1.27\) N·m이다. (나) 팔이 \(\omega\)로 돌면 노즐도 \(\omega R\)로 움직이므로, 땅에서 본 분출 속도는 \(V_r - \omega R\)이다. 토크가 0이 되려면 \(V_r = \omega R\)이어야 하므로 \(\omega = 53\) rad/s(507 rpm)이다. (다) \(\dot mR(V_r - \omega R) = 0.55\)에서 \(V_r - \omega R = 4.58\)이므로 \(\omega = 30\) rad/s이다.</p>
+    <p>처음 질문의 답이 (나)이다. 팔이 빨라질수록 땅에서 본 분류의 원주 속도가 줄어 토크가 직선으로 줄고, 마찰이 없으면 물이 회전 방향 속도 없이 반지름 방향으로만 떨어져 나가는 속도에서 멈춘다(그림 1). 따라서 마찰이 있을수록 느리게 돌고 물은 더 멀리 날아간다.</p>
 
     <h3><span class="no">4.3.3</span>Euler 터보기계 식</h3>
-    <p>원심 펌프의 회전차(임펠러)는 반지름 \(r_1\)에서 물을 받아 \(r_2\)로 내보내며 회전 방향 속도를 키웁니다. 회전차가 물에 주는 토크는</p>
+    <p>원심 펌프의 회전차(임펠러)는 반지름 \(r_1\)에서 물을 받아 \(r_2\)로 내보내며 회전 방향 속도를 키운다. 각운동량 방정식을 회전차에 쓰면 다음과 같다.</p>
     <div class="tb-env thm">
       <span class="lb">Euler 터보기계 식</span>
       \[T = \dot m(r_2V_{t2} - r_1V_{t1})\]
       \[\dot W = T\omega = \dot m(U_2V_{t2} - U_1V_{t1})\]
       \[h_{\text{이론}} = \frac{U_2V_{t2} - U_1V_{t1}}{g}\]
-      <p>\(U = r\omega\)는 날개 끝의 원주 속도. 터빈은 부호가 반대(유체가 회전차에 일을 한다).</p>
+      <p>\(U = r\omega\)는 날개 끝의 원주 속도이다. 터빈은 유체가 회전차에 일을 하므로 부호가 반대이다.</p>
     </div>
-    <p>입구에서 소용돌이 없이 들어오면(\(V_{t1} = 0\)) 식이 \(U_2V_{t2}/g\)로 간단해집니다. 양정은 회전 속도와 지름의 제곱에 비례해 커지는데, 6.2절 상사 법칙의 출발점입니다.</p>
+    <p>입구에서 소용돌이 없이 들어오면(\(V_{t1} = 0\)) 식이 \(U_2V_{t2}/g\)로 간단해진다. 또 양정은 회전 속도와 지름의 제곱에 비례해 커지는데, 이것이 6.2절 상사 법칙의 출발점이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 4.3.2 <span class="nm">(원심 펌프)</span></span>
       <p>바깥 반지름 0.15 m인 회전차가 1750 rpm으로 돌며 물 0.05 m³/s를 보낸다. 출구의 원주 방향 속도 성분이 20 m/s이고 입구에 소용돌이가 없다. 토크, 동력, 이론 양정은?</p>
     </div>
-    <p><i>풀이.</i> \(\omega = 1750\times2\pi/60 = 183.3\) rad/s, \(U_2 = 27.5\) m/s. \(T = 50\times0.15\times20 = 150\) N·m. \(\dot W = 150\times183.3 = 27.5\) kW. \(h = 27.5\times20/9.81 = 56.0\) m. 실제 양정은 날개 수가 유한하고 손실이 있어 이보다 작습니다(효율 70~85%).</p>
+    <p><i>풀이.</i> \(\omega = 1750\times2\pi/60 = 183.3\) rad/s이므로 \(U_2 = 27.5\) m/s이다. 토크는 \(T = 50\times0.15\times20 = 150\) N·m, 동력은 \(\dot W = 150\times183.3 = 27.5\) kW, 이론 양정은 \(h = 27.5\times20/9.81 = 56.0\) m이다. 그러나 실제 양정은 날개 수가 유한하고 손실이 있어 이보다 작으며, 효율은 70에서 85% 정도이다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) \(V_t\)는 <b>땅(고정 좌표)에서 본</b> 속도의 원주 성분입니다. 회전하는 날개에 대한 상대 속도와 구별하세요. (2) 반지름 방향 성분은 토크에 기여하지 않습니다. (3) 축에서 들어오는 흐름은 \(r = 0\)이므로 각운동량이 0입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(V_t\)는 땅(고정 좌표)에서 본 속도의 원주 성분이다. 회전하는 날개에 대한 상대 속도와 구별해야 한다. 또 반지름 방향 성분은 토크에 기여하지 않고, 축에서 들어오는 흐름은 \(r = 0\)이므로 각운동량이 0이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\sum T = \sum\dot m\,rV_t\big|_{\text{out}} - \sum\dot m\,rV_t\big|_{\text{in}}\).</li>
-        <li>스프링클러: 토크 \(\dot mR(V_r - \omega R)\), 마찰 없으면 \(\omega = V_r/R\).</li>
-        <li>펌프: \(T = \dot m(r_2V_{t2} - r_1V_{t1})\), 이론 양정 \((U_2V_{t2} - U_1V_{t1})/g\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>축에 대한 각운동량 방정식은 \(\sum T = \sum\dot m\,rV_t\big|_{\text{out}} - \sum\dot m\,rV_t\big|_{\text{in}}\)이고, 원주 방향 성분만 토크를 만든다. 스프링클러의 토크는 \(\dot mR(V_r - \omega R)\)로 회전이 빨라질수록 줄며, 마찰이 없으면 \(\omega = V_r/R\)에서 고르게 돈다. 펌프 회전차의 토크는 \(T = \dot m(r_2V_{t2} - r_1V_{t1})\), 이론 양정은 \((U_2V_{t2} - U_1V_{t1})/g\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 4.3.2에서 회전 속도를 3500 rpm으로 올리고 \(V_{t2}\)도 두 배가 되면 이론 양정은?
-          <details><summary>답</summary><p>\(U_2\)와 \(V_{t2}\)가 모두 두 배라 양정은 4배, 224 m.</p></details>
+          <details><summary>답</summary><p>\(U_2\)와 \(V_{t2}\)가 모두 두 배라 양정은 4배인 224 m이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 4.3.1의 스프링클러 노즐을 팔에 수직이 아니라 팔 방향에서 30°만 기울여 내면 멈춘 상태의 토크는?
-          <details><summary>답</summary><p>원주 성분 \(V_r\sin30°\)만 토크를 만든다: \(1.27\times0.5 = 0.64\) N·m.</p></details>
+          <details><summary>답</summary><p>원주 성분 \(V_r\sin30°\)만 토크를 만들므로 \(1.27\times0.5 = 0.64\) N·m이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
