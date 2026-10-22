@@ -8,57 +8,63 @@
 <article class="card q-card" id="text-s2-ginverse" data-kind="본문" data-std="응통2-06-03">
   <header class="card-head"><span class="no"></span><h2>일반화 역행렬과 계수가 부족한 최소제곱</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>무어-펜로즈 일반화 역행렬을 SVD로 구한다.</li>
-        <li>계수가 부족한 최소제곱에서 최소 노름 해를 구하고 추정 가능한 함수를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>특이값 분해 (<a href="06-01.html">6.1절</a>), 사영 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>역행렬이 없을 때의 차선</h3>
-    <p>설명변수가 중복되면 \(X^\top X\)의 역행렬이 없어 최소제곱 해가 무수히 많습니다(1.2절 예제). 그래도 적합값은 하나로 정해지고, 해들 가운데 길이가 가장 짧은 것을 고를 수 있습니다.</p>
+    <p class="q-ask">설명변수가 중복되면 \(X^\top X\)의 역행렬이 없어 최소제곱 해가 무수히 많다(1.2절 예제). 그렇다면 회귀는 아무것도 알려 주지 못하는 것일까? 해가 많아도 하나로 정해지는 것이 있을까? 그리고 그중 하나를 고른다면 어떤 해가 자연스러울까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="계수 평면에서 모든 최소제곱 해가 이루는 직선 b1+b2=3과, 원점에서 그 직선에 수직으로 내린 가장 짧은 해 (1.5, 1.5)">
+        <path d="M150 164 L330 164" class="ax"/>
+        <path d="M186 200 L186 20" class="ax"/>
+        <path d="M157.2 27.2 L322.8 192.8" class="b"/>
+        <path d="M186 164 L240 110" class="d dsh"/>
+        <circle cx="240" cy="110" r="5" class="fd"/>
+        <circle cx="186" cy="56" r="3.5" class="fb"/>
+        <circle cx="294" cy="164" r="3.5" class="fb"/>
+        <circle cx="276" cy="146" r="3.5" class="fb"/>
+        <text x="248" y="102" class="td s">X⁺y = (1.5, 1.5)</text>
+        <text x="301.2" y="194.4" class="tb s">b₁ + b₂ = 3 (모든 최소제곱 해)</text>
+        <text x="334" y="168.0" class="s">b₁</text><text x="192.0" y="24" class="s">b₂</text>
+        <text x="345" y="60" class="s">원점에서 해의 직선까지</text><text x="345" y="78" class="s">수직으로 내린 점이</text><text x="345" y="96" class="s">길이가 가장 짧은 해</text>
+      </svg>
+      <figcaption>그림 1. 예제 6.3.3의 최소제곱 해는 직선 \(b_1 + b_2 = 3\) 위의 모든 점이다(파란 점은 그 예). 원점에서 수직으로 내린 점 \((1.5, 1.5)\)이 길이가 가장 짧은 해이며, 이것이 \(X^+\mathbf y\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>특이값 분해(<a href="06-01.html">6.1절</a>), 직교 사영(<a href="03-02.html">3.2절</a>), 영공간(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>무어-펜로즈 역행렬</h3>
+    <p>역행렬은 특이값 분해로 \(A^{-1} = V\Sigma^{-1}U^\top\)이다. 특이값이 0이면 뒤집을 수 없으니, 0이 아닌 것만 뒤집으면 어떨까? 이것이 일반화 역행렬의 생각이다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 6.3.1</span>
-      <p>\(A = U\Sigma V^\top\)일 때 \(A^+ = V\Sigma^+U^\top\). \(\Sigma^+\)는 0이 아닌 특이값의 역수를 대각에 놓고 전치한 것.</p>
+      <span class="lb">정의 6.3.1 <span class="nm">(무어-펜로즈 역행렬)</span></span>
+      <p>\(A = U\Sigma V^\top\)일 때 \(A^+ = V\Sigma^+U^\top\)를 <em>무어-펜로즈 역행렬</em>이라 한다. \(\Sigma^+\)는 0이 아닌 특이값의 역수를 대각에 놓고 전치한 행렬이다.</p>
     </div>
-    <p>성질: \(AA^+A = A\), \(A^+AA^+ = A^+\), \(AA^+\)와 \(A^+A\)는 대칭. \(A\)가 가역이면 \(A^+ = A^{-1}\), 열이 독립이면 \(A^+ = (A^\top A)^{-1}A^\top\). \(AA^+\)는 \(C(A)\)로의 사영입니다.</p>
+    <p>이 행렬은 \(AA^+A = A\), \(A^+AA^+ = A^+\)를 만족하고 \(AA^+\)와 \(A^+A\)는 대칭이다. \(A\)가 가역이면 \(A^+ = A^{-1}\)이고, 열이 독립이면 \(A^+ = (A^\top A)^{-1}A^\top\)이다. 또 \(AA^+ = \sum_{i\le r}\mathbf u_i\mathbf u_i^\top\)는 열공간 \(C(A)\)로의 사영이다.</p>
 
-    <h3><span class="no">6.3.2</span>계수 부족 최소제곱</h3>
+    <h3><span class="no">6.3.2</span>계수가 부족한 최소제곱</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 6.3.2</span>
-      <p>\(\hat{\mathbf b} = X^+\mathbf y\)는 \(\|\mathbf y - X\mathbf b\|\)를 최소화하는 해 가운데 \(\|\mathbf b\|\)가 가장 작은 것이다. 모든 최소제곱 해는 \(\hat{\mathbf b} + N(X)\)의 원소이고, 적합값 \(X\hat{\mathbf b}\)는 모두 같다.</p>
+      <span class="lb">정리 6.3.2 <span class="nm">(최소 노름 최소제곱 해)</span></span>
+      <p>\(\hat{\mathbf b} = X^+\mathbf y\)는 \(\|\mathbf y - X\mathbf b\|\)를 최소로 하는 해 가운데 \(\|\mathbf b\|\)가 가장 작은 것이다. 모든 최소제곱 해는 \(\hat{\mathbf b}\)에 \(N(X)\)의 벡터를 더한 것이고, 적합값 \(X\hat{\mathbf b}\)는 모두 같다.</p>
     </div>
-    <p>계수 자체는 정해지지 않지만 \(\mathbf c^\top\boldsymbol\beta\)에서 \(\mathbf c\)가 \(X\)의 행공간에 있으면(어떤 \(\mathbf a\)에 대해 \(\mathbf c = X^\top\mathbf a\)) 모든 해에서 같은 값을 줍니다. 이런 함수를 <b>추정 가능한 함수</b>라 합니다. 분산분석에서 처리 효과 \(\tau_i\) 각각은 추정할 수 없어도 차이 \(\tau_1 - \tau_2\)는 추정 가능합니다.</p>
-
+    <p>처음 질문의 첫째 답이 마지막 문장이다. 해는 많아도 적합값은 \(\mathbf y\)의 열공간 사영 하나로 정해진다(3.2절). 그리고 해의 집합은 영공간 방향으로 뻗은 직선이나 평면이므로, 그림 1처럼 원점에서 수직으로 내린 점이 가장 짧은 해이다. \(X^+\mathbf y\)는 행공간(영공간에 수직인 공간) 안에 있으므로 바로 그 점이다.</p>
+    <p>계수 하나하나는 정해지지 않지만 정해지는 조합이 있다. \(\mathbf c^\top\boldsymbol\beta\)에서 \(\mathbf c\)가 \(X\)의 행공간에 있으면, 곧 어떤 \(\mathbf a\)에 대해 \(\mathbf c = X^\top\mathbf a\)이면, 모든 해에서 같은 값을 준다. 영공간 방향으로 움직여도 \(\mathbf c^\top\mathbf v = \mathbf a^\top X\mathbf v = 0\)이기 때문이다. 이런 함수를 <em>추정 가능한 함수</em>라 한다. 예를 들어 분산분석에서 처리 효과 \(\tau_i\) 각각은 추정할 수 없어도, 차이 \(\tau_1 - \tau_2\)는 추정할 수 있다(응통13).</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.3</span>
-      <p>\(X = \begin{pmatrix}1 &amp; 1\\ 1 &amp; 1\end{pmatrix}\), \(\mathbf y = (2, 4)\)의 최소 노름 최소제곱 해는?</p>
+      <p>\(X = \begin{pmatrix}1 &amp; 1\\ 1 &amp; 1\end{pmatrix}\), \(\mathbf y = (2, 4)\)의 최소 노름 최소제곱 해를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 적합값은 평균 \((3, 3)\)이어야 하므로 \(b_1 + b_2 = 3\)인 모든 \(\mathbf b\)가 해입니다. 그중 길이가 가장 짧은 것은 \((1.5, 1.5)\). SVD: \(\sigma_1 = 2\), \(\mathbf u_1 = \mathbf v_1 = (1,1)/\sqrt2\), \(X^+ = \frac14\begin{pmatrix}1 &amp; 1\\1 &amp; 1\end{pmatrix}\), \(X^+\mathbf y = (1.5, 1.5)\). \(b_1 + b_2\)는 추정 가능, \(b_1\) 자체는 아닙니다.</p>
-    <pre><code>MASS::ginv(matrix(1, 2, 2)) %*% c(2, 4)</code></pre>
+    <p><i>풀이.</i> 적합값은 평균 \((3, 3)\)이어야 하므로 \(b_1 + b_2 = 3\)인 모든 \(\mathbf b\)가 해이고, 그중 가장 짧은 것은 \((1.5, 1.5)\)이다. 특이값 분해로 확인하면 \(\sigma_1 = 2\), \(\mathbf u_1 = \mathbf v_1 = (1, 1)/\sqrt2\)이므로 \(X^+ = \frac14\begin{pmatrix}1 &amp; 1\\ 1 &amp; 1\end{pmatrix}\)이고 \(X^+\mathbf y = (1.5, 1.5)\)이다. 여기서 \(b_1 + b_2\)는 추정 가능하지만 \(b_1\) 자체는 아니다.</p>
+<pre><code>MASS::ginv(matrix(1, 2, 2)) %*% c(2, 4)</code></pre>
+    <div class="tb-note"><span class="lb">주의</span>최소 노름 해는 여러 해 가운데 하나를 고르는 약속일 뿐, 참 계수를 맞힌다는 보장은 없다. 해석은 추정 가능한 함수에만 해야 한다. R의 <code>lm</code>은 대신 중복된 열을 빼고 NA를 내놓는 다른 약속을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(A^+ = V\Sigma^+U^\top\): 0 아닌 특이값만 뒤집음.</li>
-        <li>\(X^+\mathbf y\)는 최소 노름 최소제곱 해, 적합값은 유일.</li>
-        <li>행공간의 선형결합만 추정 가능.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>무어-펜로즈 역행렬 \(A^+ = V\Sigma^+U^\top\)는 0이 아닌 특이값만 뒤집은 역행렬이다. 계수가 부족한 회귀에서도 적합값은 하나로 정해지고, \(X^+\mathbf y\)는 무수히 많은 최소제곱 해 가운데 원점에 가장 가까운 해이다. 계수 각각은 정해지지 않아도 행공간에 놓인 조합 \(\mathbf c^\top\boldsymbol\beta\)는 모든 해에서 같아 추정할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 \(2b_1 + 2b_2\)와 \(b_1 - b_2\) 중 추정 가능한 것은?
-          <details><summary>답</summary><p>\(2b_1 + 2b_2\)(값 6). \(b_1 - b_2\)는 해마다 달라 추정할 수 없습니다.</p></details>
+        <li>예제 6.3.3에서 \(2b_1 + 2b_2\)와 \(b_1 - b_2\) 가운데 추정 가능한 것은 무엇인가?
+          <details><summary>답</summary><p>\(2b_1 + 2b_2\)이고 값은 6이다. \(b_1 - b_2\)는 해마다 달라 추정할 수 없다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>열이 독립인 \(X\)에서 \(X^+ = (X^\top X)^{-1}X^\top\)이 \(XX^+X = X\)를 만족함을 확인하여라.
+          <details><summary>답</summary><p>\(XX^+X = X(X^\top X)^{-1}X^\top X = X\)이다. 이때 \(X^+\mathbf y\)는 보통의 최소제곱 해와 같다.</p></details>
         </li>
       </ol>
     </div>

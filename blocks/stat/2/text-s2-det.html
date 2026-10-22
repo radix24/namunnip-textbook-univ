@@ -8,59 +8,55 @@
 <article class="card q-card" id="text-s2-det" data-kind="본문" data-std="응통2-02-01">
   <header class="card-head"><span class="no"></span><h2>행렬식의 성질과 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬식의 성질(행 연산, 곱, 전치)로 계산한다.</li>
-        <li>행렬식의 기하학적 뜻(부피 배율)을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>가우스 소거 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>행렬 하나를 수 하나로</h3>
-    <p>다변량 정규 밀도에는 \(|\Sigma|^{1/2}\)가, 변수 변환에는 야코비안 행렬식이 나옵니다. 행렬식은 행렬이 공간을 얼마나 늘이거나 줄이는지를 나타내는 수입니다.</p>
+    <p class="q-ask">다변량 정규분포의 밀도에는 공분산 행렬 \(\Sigma\)의 행렬식 \(|\Sigma|^{1/2}\)이 나오고, 변수를 바꿀 때는 야코비안 행렬식이 나온다. 행렬 전체를 수 하나로 줄인 이 값은 무엇을 재는 것일까? 그리고 큰 행렬에서는 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="단위 정사각형이 행렬 A로 넓이 2.5인 평행사변형으로 바뀌는 모습을 그린 그림">
+        <path d="M60 160 L300 160" class="ax"/>
+        <path d="M90 190 L90 10" class="ax"/>
+        <path d="M90 160 L150 160 L150 100 L90 100 L90 160" class="k lk"/>
+        <path d="M90 160 L210 130 L270 40 L150 70 L90 160" class="a la"/>
+        <text x="120" y="134" text-anchor="middle" class="s">넓이 1</text>
+        <text x="222" y="82" text-anchor="middle" class="ta s">넓이 2.5</text>
+        <text x="214" y="144" class="ta s">Ae₁ = (2, 0.5)</text>
+        <text x="146" y="64" text-anchor="end" class="ta s">Ae₂ = (1, 1.5)</text>
+        <text x="330" y="70" class="s">A의 행은 (2, 1)과 (0.5, 1.5)</text><text x="330" y="92" class="s">det A = 2×1.5 − 1×0.5 = 2.5</text><text x="330" y="114" class="s">단위 정사각형의 넓이가</text><text x="330" y="132" class="s">2.5배가 된다</text>
+      </svg>
+      <figcaption>그림 1. 행렬 \(A\)는 단위 정사각형을 두 열 \(A\mathbf e_1\), \(A\mathbf e_2\)가 만드는 평행사변형으로 보낸다. 그 넓이가 \(|\det A| = 2.5\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가우스 소거(<a href="01-02.html">1.2절</a>)와 LU 분해(<a href="01-03.html">1.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>정의와 성질</h3>
-    <p>\(2\times2\): \(\det\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix} = ad - bc\). 일반적으로는 여인수 전개로 정의합니다: \(\det A = \sum_j(-1)^{i+j}a_{ij}M_{ij}\)(\(M_{ij}\)는 \(i\)행 \(j\)열을 지운 소행렬식).</p>
+    <p>\(2\times2\) 행렬의 행렬식은 \(\det\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix} = ad - bc\)이다. 더 큰 행렬은 여인수 전개 \(\det A = \sum_j(-1)^{i+j}a_{ij}M_{ij}\)로 정의한다. 여기서 \(M_{ij}\)는 \(i\)행과 \(j\)열을 지운 작은 행렬의 행렬식이다. 그런데 이 정의대로 계산하면 \(n\times n\) 행렬에서 \(n!\)개의 항이 나와, \(n = 20\)만 되어도 계산할 수 없다. 다행히 행렬식에는 다음 성질이 있다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 2.1.1</span>
-      <ol>
-        <li>두 행을 바꾸면 부호가 바뀐다.</li>
-        <li>한 행에 \(c\)를 곱하면 \(c\)배.</li>
-        <li>한 행의 배수를 다른 행에 더해도 그대로.</li>
-        <li>삼각행렬의 행렬식은 대각 원소의 곱.</li>
-        <li>\(\det(AB) = \det A\det B\), \(\det A^\top = \det A\), \(\det(cA) = c^n\det A\).</li>
-      </ol>
+      <span class="lb">정리 2.1.1 <span class="nm">(행렬식의 성질)</span></span>
+      <p>두 행을 바꾸면 부호가 바뀌고, 한 행에 \(c\)를 곱하면 행렬식도 \(c\)배가 되며, 한 행의 배수를 다른 행에 더해도 그대로이다. 삼각행렬의 행렬식은 대각 원소의 곱이다. 또 \(\det(AB) = \det A\det B\), \(\det A^\top = \det A\), \(\det(cA) = c^n\det A\)이다.</p>
     </div>
-    <p>그래서 실제 계산은 가우스 소거로 삼각행렬을 만들고 대각을 곱합니다(행 바꾸기 횟수만큼 부호 조정).</p>
+    <p>따라서 실제 계산은 가우스 소거로 삼각행렬을 만들고 대각을 곱하면 된다. 소거의 더하기 연산은 행렬식을 바꾸지 않으므로, 행을 바꾼 횟수만큼 부호만 고치면 된다. 1.3절의 LU 분해로 말하면 \(\det A = \det L\det U\)이고 \(\det L = 1\)이므로 \(U\)의 대각 곱이 답이다. 계산량은 \(n^3\)에 비례한다.</p>
 
     <h3><span class="no">2.1.2</span>기하학적 뜻</h3>
-    <p>\(|\det A|\)는 \(A\)의 열벡터들이 만드는 평행육면체의 부피이고, 변환 \(\mathbf x \mapsto A\mathbf x\)가 부피를 몇 배로 바꾸는지입니다. \(\det A = 0\)이면 공간을 낮은 차원으로 납작하게 만듭니다. 공분산 행렬의 행렬식(일반화 분산)이 0에 가까우면 변수들이 거의 일차종속입니다.</p>
-
+    <p>이제 처음 질문의 첫째 부분으로 가자. \(|\det A|\)는 \(A\)의 열벡터들이 만드는 평행사변형(3차원 이상에서는 평행육면체)의 부피이다. 단위 정사각형의 두 변 \(\mathbf e_1, \mathbf e_2\)가 \(A\)의 두 열로 가기 때문이다. 다시 말해 \(|\det A|\)는 변환 \(\mathbf x \mapsto A\mathbf x\)가 부피를 몇 배로 바꾸는지를 잰다. 그림 1에서는 넓이 1이 2.5가 되었다. 부호는 방향이 뒤집혔는지를 알려 준다.</p>
+    <p>그래서 변수 변환의 야코비안은 작은 부피가 몇 배로 늘어나는지를 보정하는 인자이다. 또 \(\det A = 0\)이면 \(A\)가 공간을 낮은 차원으로 납작하게 만든다. 공분산 행렬의 행렬식을 일반화 분산이라 부르는데, 이것이 0에 가까우면 자료가 낮은 차원에 몰려 있어 변수들이 거의 일차종속이라는 뜻이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.2</span>
-      <p>\(\Sigma = \begin{pmatrix}4 &amp; 2\rho\\ 2\rho &amp; 1\end{pmatrix}\)(표준편차 2, 1, 상관 \(\rho\))의 행렬식은?</p>
+      <p>표준편차가 2와 1이고 상관계수가 \(\rho\)인 두 변수의 공분산 행렬 \(\Sigma = \begin{pmatrix}4 &amp; 2\rho\\ 2\rho &amp; 1\end{pmatrix}\)의 행렬식을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(4 - 4\rho^2 = 4(1 - \rho^2)\). \(|\rho| \to 1\)이면 0으로 가서, 두 변수가 사실상 하나의 직선 위에 놓입니다.</p>
+    <p><i>풀이.</i> \(\det\Sigma = 4 - 4\rho^2 = 4(1 - \rho^2)\)이다. \(|\rho| \to 1\)이면 0으로 가는데, 두 변수가 사실상 한 직선 위에 놓여 자료가 만드는 넓이가 사라지는 것이다. 다변량 정규 밀도의 \(|\Sigma|^{1/2}\)은 이 넓이로 확률을 나누어 전체 확률을 1로 맞추는 역할을 한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(\det(A + B) = \det A + \det B\)라고 쓰기 쉽지만 일반적으로 틀리다. 곱에 대해서만 \(\det(AB) = \det A\det B\)가 성립한다. 또 \(\det(cA)\)는 \(c\det A\)가 아니라 \(c^n\det A\)이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>행 연산의 효과, 곱의 행렬식 = 행렬식의 곱.</li>
-        <li>계산은 소거로 삼각행렬을 만들어.</li>
-        <li>\(|\det|\) = 부피 배율, 0이면 차원이 무너짐.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>행렬식은 변환 \(\mathbf x \mapsto A\mathbf x\)가 부피를 몇 배로 바꾸는지를 재는 수이며, 0이면 공간이 낮은 차원으로 납작해진다. 그래서 다변량 정규 밀도와 변수 변환에 부피 보정 인자로 나타난다. 계산은 정의 대신 행 연산의 성질을 써서, 가우스 소거로 삼각행렬을 만들고 대각을 곱한 뒤 행 교환 횟수만큼 부호를 고친다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\det\begin{pmatrix}2 &amp; 1 &amp; 3\\ 0 &amp; 4 &amp; 1\\ 0 &amp; 0 &amp; 5\end{pmatrix}\)와 \(\det(2A)\)(3×3)는?
-          <details><summary>답</summary><p>삼각행렬이므로 \(2 \cdot 4 \cdot 5 = 40\). \(\det(2A) = 8 \times 40 = 320\).</p></details>
+        <li>\(A = \begin{pmatrix}2 &amp; 1 &amp; 3\\ 0 &amp; 4 &amp; 1\\ 0 &amp; 0 &amp; 5\end{pmatrix}\)의 행렬식과 \(\det(2A)\)를 구하여라.
+          <details><summary>답</summary><p>삼각행렬이므로 \(\det A = 2\cdot4\cdot5 = 40\)이고, \(\det(2A) = 2^3\times40 = 320\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\det A = 3\)인 \(3\times3\) 행렬에서 \(\det(A^\top A)\)와 \(\det(A^{-1})\)을 구하여라.
+          <details><summary>답</summary><p>\(\det(A^\top A) = \det A^\top\det A = 9\)이고, \(\det A\det A^{-1} = \det I = 1\)이므로 \(\det A^{-1} = 1/3\)이다.</p></details>
         </li>
       </ol>
     </div>

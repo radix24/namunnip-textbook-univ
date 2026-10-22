@@ -8,54 +8,77 @@
 <article class="card q-card" id="text-s2-idempotent" data-kind="본문" data-std="응통2-05-03">
   <header class="card-head"><span class="no"></span><h2>멱등 행렬과 대각합</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>멱등 행렬의 고유값과 "계수 = 대각합"을 보인다.</li>
-        <li>모자 행렬의 대각합으로 회귀의 자유도를 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>사영 (<a href="03-02.html">3.2절</a>), 고유값 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">회귀분석에서 잔차 제곱합 SSE를 \(n - p\)로 나누면 \(\sigma^2\)의 불편추정량이 된다. 또 각 관측값의 지렛값 \(h_{ii}\)은 평균이 언제나 정확히 \(p/n\)이다. 두 사실 모두 행렬 하나의 대각합에서 나온다. 어떤 행렬이고, 왜 그럴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="단순회귀에서 설명변수 값마다 지렛값을 막대로 그리고, 평균 p/n을 점선으로 표시하며 멀리 떨어진 점의 지렛값이 큰 모습">
+        <line x1="55" y1="175" x2="490" y2="175" class="ax"/>
+        <line x1="55" y1="175" x2="55" y2="20" class="ax"/>
+        <text x="55" y="190" text-anchor="middle" class="s">0</text>
+        <text x="158.6" y="190" text-anchor="middle" class="s">5</text>
+        <text x="262.1" y="190" text-anchor="middle" class="s">10</text>
+        <text x="365.7" y="190" text-anchor="middle" class="s">15</text>
+        <text x="469.3" y="190" text-anchor="middle" class="s">20</text>
+        <text x="50" y="179" text-anchor="end" class="s">0</text>
+        <text x="50" y="142.5" text-anchor="end" class="s">0.2</text>
+        <text x="50" y="106.1" text-anchor="end" class="s">0.4</text>
+        <text x="50" y="69.6" text-anchor="end" class="s">0.6</text>
+        <text x="50" y="33.1" text-anchor="end" class="s">0.8</text>
+        <text x="490" y="204" text-anchor="end" class="s">설명변수 x</text>
+        <text x="61" y="24" class="s">지렛값 hᵢᵢ</text>
+        <rect x="69.7" y="135.9" width="12" height="39.1" class="la" style="stroke:none"/>
+        <rect x="90.4" y="143" width="12" height="32" class="la" style="stroke:none"/>
+        <rect x="111.1" y="148.7" width="12" height="26.3" class="la" style="stroke:none"/>
+        <rect x="131.9" y="153.1" width="12" height="21.9" class="la" style="stroke:none"/>
+        <rect x="152.6" y="156.2" width="12" height="18.8" class="la" style="stroke:none"/>
+        <rect x="173.3" y="158" width="12" height="17" class="la" style="stroke:none"/>
+        <rect x="194" y="158.4" width="12" height="16.6" class="la" style="stroke:none"/>
+        <rect x="214.7" y="157.5" width="12" height="17.5" class="la" style="stroke:none"/>
+        <rect x="235.4" y="155.3" width="12" height="19.7" class="la" style="stroke:none"/>
+        <rect x="256.1" y="151.7" width="12" height="23.3" class="la" style="stroke:none"/>
+        <rect x="463.3" y="42.6" width="12" height="132.4" class="ld" style="stroke:none"/>
+        <path d="M55 141.8 L490 141.8" class="d dsh"/>
+        <text x="293.2" y="135.8" class="td s">평균 p/n = 2/11 = 0.18</text>
+        <text x="461.3" y="36.6" text-anchor="end" class="s">x = 20, h = 0.73</text>
+      </svg>
+      <figcaption>그림 1. \(x = 1, \ldots, 10\)과 \(x = 20\)인 단순회귀의 지렛값 \(h_{ii}\). 멀리 떨어진 \(x = 20\)의 지렛값이 크지만, 모두 더하면 언제나 \(\mathrm{tr}(H) = p = 2\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>사영 행렬(<a href="03-02.html">3.2절</a>), 고유값(<a href="04-01.html">4.1절</a>), 스펙트럼 분해(<a href="04-02.html">4.2절</a>)를 쓴다.</div>
 
-    <h3>두 번 해도 같은 변환</h3>
-    <p>사영을 한 번 한 벡터를 다시 사영해도 그대로입니다. \(P^2 = P\)인 행렬, 곧 멱등 행렬은 통계에서 "적합값을 만드는 행렬", "평균을 빼는 행렬"로 계속 나옵니다.</p>
-
-    <h3><span class="no">5.3.1</span>성질</h3>
+    <h3><span class="no">5.3.1</span>멱등 행렬의 성질</h3>
+    <p>사영을 한 번 한 벡터를 다시 사영해도 그대로이다. 이미 평면 위에 있으니 더 내려갈 곳이 없기 때문이다. 그래서 \(P^2 = P\)인 행렬을 <em>멱등 행렬</em>이라 한다. 통계에서는 적합값을 만드는 모자 행렬, 평균을 빼는 행렬로 계속 나온다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 5.3.1</span>
-      <p>대칭 멱등 행렬 \(P\)는 (가) 고유값이 0 또는 1 (나) \(\mathrm{rank}(P) = \mathrm{tr}(P)\) (다) \(I - P\)도 대칭 멱등이고 \(P(I - P) = 0\).</p>
+      <span class="lb">정리 5.3.1 <span class="nm">(대칭 멱등 행렬)</span></span>
+      <p>대칭 멱등 행렬 \(P\)의 고유값은 0 또는 1이고, \(\mathrm{rank}(P) = \mathrm{tr}(P)\)이다. 또 \(I - P\)도 대칭 멱등이고 \(P(I - P) = 0\)이다.</p>
     </div>
-    <p class="tb-proof">(가) \(P\mathbf v = \lambda\mathbf v\)이면 \(P^2\mathbf v = \lambda^2\mathbf v = P\mathbf v = \lambda\mathbf v\), \(\lambda^2 = \lambda\). (나) 대칭이라 대각화되고, 계수 = 0이 아닌 고유값 수 = 1의 개수 = 고유값 합 = 대각합. (다) 전개하면 바로 나옵니다. <span class="qed">∎</span></p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(P\mathbf v = \lambda\mathbf v\)이면 \(P^2\mathbf v = \lambda^2\mathbf v\)인데 \(P^2 = P\)이므로 \(\lambda^2 = \lambda\), 곧 \(\lambda = 0\) 또는 1이다. \(P\)는 대칭이라 대각화되므로, 계수는 0이 아닌 고유값의 수, 곧 1의 개수이다. 그런데 1의 개수는 고유값의 합이고, 고유값의 합은 대각합이다. 마지막 성질은 \((I - P)^2 = I - 2P + P^2 = I - P\)로 전개하면 바로 나온다. <span class="qed">∎</span></p>
+    <p>계수는 보통 소거를 해야 알 수 있지만, 멱등 행렬은 대각 원소만 더하면 된다는 것이 이 정리의 쓸모이다.</p>
 
-    <h3><span class="no">5.3.2</span>모자 행렬</h3>
-    <p>\(H = X(X^\top X)^{-1}X^\top\)에서 대각합의 순환성 \(\mathrm{tr}(AB) = \mathrm{tr}(BA)\)을 쓰면</p>
-    \[\mathrm{tr}(H) = \mathrm{tr}((X^\top X)^{-1}X^\top X) = \mathrm{tr}(I_p) = p.\]
-    <p>따라서 \(H\)의 계수는 \(p\), \(I - H\)의 계수는 \(n - p\)입니다. 적합값은 \(p\)차원, 잔차는 \(n - p\)차원 공간에 있고, 정규 오차라면 \(\mathrm{SSE}/\sigma^2 = \boldsymbol\varepsilon^\top(I-H)\boldsymbol\varepsilon/\sigma^2 \sim \chi^2_{n-p}\)입니다. \(E(\mathrm{SSE}) = \sigma^2\mathrm{tr}(I - H) = (n-p)\sigma^2\)이라서 \(\mathrm{SSE}/(n-p)\)가 불편추정량입니다. 지렛값 \(h_{ii}\)의 합이 \(p\)라 평균이 \(p/n\)인 이유도 이것입니다(응통10 4.3절).</p>
-
+    <h3><span class="no">5.3.2</span>모자 행렬과 자유도</h3>
+    <p>이제 처음 질문의 행렬, 곧 모자 행렬 \(H = X(X^\top X)^{-1}X^\top\)을 보자. 대각합에는 순환성 \(\mathrm{tr}(AB) = \mathrm{tr}(BA)\)이 있으므로</p>
+    \[\mathrm{tr}(H) = \mathrm{tr}\left((X^\top X)^{-1}X^\top X\right) = \mathrm{tr}(I_p) = p\]
+    <p>이다. 따라서 \(H\)의 계수는 \(p\), \(I - H\)의 계수는 \(n - p\)이다. 적합값은 \(p\)차원, 잔차는 \(n - p\)차원 공간에 있다. 기댓값으로 말하면 \(E(\mathrm{SSE}) = \sigma^2\mathrm{tr}(I - H) = (n - p)\sigma^2\)이라서(연습문제 2), \(\mathrm{SSE}/(n - p)\)가 불편추정량이다. 그리고 정규 오차라면 \(\mathrm{SSE}/\sigma^2 \sim \chi^2_{n-p}\)이다(5.1절과 같은 이유).</p>
+    <p>처음 질문의 둘째 사실도 같은 식에서 나온다. 지렛값 \(h_{ii}\)는 \(H\)의 대각 원소이므로 그 합은 \(p\)이고, 평균은 \(p/n\)이다(응통10 4.3절). 그림 1에서 \(x = 20\)의 지렛값이 크다는 것은 다른 점들의 몫이 그만큼 작다는 뜻이기도 하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.2</span>
-      <p>\(J = \mathbf 1\mathbf 1^\top/n\)이 멱등임을 보이고 대각합을 구하세요.</p>
+      <p>\(J = \mathbf 1\mathbf 1^\top/n\)이 멱등임을 보이고 대각합을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(J^2 = \mathbf 1(\mathbf 1^\top\mathbf 1)\mathbf 1^\top/n^2 = \mathbf 1\mathbf 1^\top/n = J\). 대각 원소가 모두 \(1/n\)이라 대각합 1(계수 1, 평균 방향). \(I - J\)의 대각합은 \(n - 1\).</p>
+    <p><i>풀이.</i> \(J^2 = \mathbf 1(\mathbf 1^\top\mathbf 1)\mathbf 1^\top/n^2 = \mathbf 1\mathbf 1^\top/n = J\)이다. 대각 원소가 모두 \(1/n\)이라 대각합은 1이고, 계수도 1(평균 방향)이다. 따라서 \(I - J\)의 대각합은 \(n - 1\)로, 표본분산의 자유도이다.</p>
+    <div class="tb-note"><span class="lb">주의</span>대각합 \(\mathrm{tr}(AB) = \mathrm{tr}(BA)\)는 성립하지만 \(\mathrm{tr}(ABC) = \mathrm{tr}(BAC)\)는 일반적으로 틀리다. 바꿀 수 있는 것은 순환 순서(\(ABC \to BCA \to CAB\))뿐이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>멱등: 고유값 0/1, 계수 = 대각합.</li>
-        <li>\(\mathrm{tr}(H) = p\), \(\mathrm{tr}(I - H) = n - p\): 회귀의 자유도.</li>
-        <li>\(E(\mathbf e^\top\mathbf e) = (n-p)\sigma^2\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(P^2 = P\)인 대칭 멱등 행렬은 고유값이 0 또는 1이라 계수가 대각합과 같다. 모자 행렬 \(H\)는 대각합의 순환성으로 \(\mathrm{tr}(H) = p\)이므로 잔차의 자유도가 \(n - p\)이고, \(E(\mathrm{SSE}) = (n - p)\sigma^2\)이라 SSE를 \(n - p\)로 나눈 값이 불편추정량이다. 지렛값은 \(H\)의 대각 원소이므로 그 평균은 언제나 \(p/n\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
-      <p class="tb-lv">응용</p>
+      <p class="tb-lv">기본</p>
       <ol>
-        <li>\(E(\mathbf y^\top A\mathbf y) = \mathrm{tr}(A\Sigma) + \boldsymbol\mu^\top A\boldsymbol\mu\)(\(E\mathbf y = \boldsymbol\mu\), \(\mathrm{Var}\,\mathbf y = \Sigma\))를 써서 \(E(\mathrm{SSE})\)를 구하세요.
-          <details><summary>답</summary><p>\(A = I - H\), \(\Sigma = \sigma^2I\), \(\boldsymbol\mu = X\boldsymbol\beta\). \((I - H)X = 0\)이라 둘째 항 0, 첫째 항 \(\sigma^2(n-p)\).</p></details>
+        <li>\(n = 30\), 설명변수가 절편 포함 4개인 회귀에서 지렛값의 평균과 잔차의 자유도를 구하여라.
+          <details><summary>답</summary><p>평균은 \(4/30 = 0.133\)이고, 자유도는 \(30 - 4 = 26\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(E(\mathbf y^\top A\mathbf y) = \mathrm{tr}(A\Sigma) + \boldsymbol\mu^\top A\boldsymbol\mu\)(\(E\mathbf y = \boldsymbol\mu\), \(\mathrm{Var}\,\mathbf y = \Sigma\))를 써서 \(E(\mathrm{SSE})\)를 구하여라.
+          <details><summary>답</summary><p>\(A = I - H\), \(\Sigma = \sigma^2I\), \(\boldsymbol\mu = X\boldsymbol\beta\)이다. \((I - H)X = 0\)이라 둘째 항은 0이고, 첫째 항은 \(\sigma^2(n - p)\)이다.</p></details>
         </li>
       </ol>
     </div>

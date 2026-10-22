@@ -8,59 +8,57 @@
 <article class="card q-card" id="text-s2-inverse" data-kind="본문" data-std="응통2-02-02">
   <header class="card-head"><span class="no"></span><h2>역행렬의 존재 조건</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>역행렬이 존재하는 동치 조건을 정리한다.</li>
-        <li>\(2\times2\) 역행렬 공식과 블록 역행렬을 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬식 (<a href="02-01.html">2.1절</a>), 해의 개수 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">회귀계수는 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)로 구한다. 그런데 범주형 변수를 가변수로 바꿔 넣을 때 범주 수만큼 모두 넣으면 R이 계수 하나를 NA로 내놓는다. 역행렬은 언제 있고, 언제 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="행렬식이 0이 아닌 행렬은 단위 정사각형을 평행사변형으로 보내고, 행렬식이 0인 행렬은 선분으로 납작하게 만드는 모습을 비교한 그림">
+        <path d="M30 145 L230 145" class="ax"/>
+        <path d="M58.6 170 L58.6 20" class="ax"/>
+        <path d="M58.6 145 L115.7 145 L115.7 95 L58.6 95 L58.6 145" class="k dsh"/>
+        <path d="M58.6 145 L172.9 120 L230 45 L115.7 70 L58.6 145" class="a la"/>
+        <text x="130" y="198" text-anchor="middle" class="s">det ≠ 0이면 넓이가 남아 되돌릴 수 있다</text>
+        <path d="M290 145 L490 145" class="ax"/>
+        <path d="M318.6 170 L318.6 20" class="ax"/>
+        <path d="M318.6 145 L375.7 145 L375.7 95 L318.6 95 L318.6 145" class="k dsh"/>
+        <path d="M318.6 145 L432.9 95 L490 70 L375.7 120 L318.6 145" class="d ld"/>
+        <text x="390" y="198" text-anchor="middle" class="s">det = 0이면 선분으로 납작해진다</text>
+      </svg>
+      <figcaption>그림 1. 행렬식이 0이 아니면 정사각형(점선)이 넓이 있는 평행사변형으로 가서 원래대로 되돌릴 수 있다(왼쪽). 행렬식이 0이면 선분으로 납작해져, 같은 점으로 간 여러 점을 구별할 수 없다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬식(<a href="02-01.html">2.1절</a>)과 해의 개수(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
-    <h3>되돌릴 수 있는 변환</h3>
-    <p>\(X^\top X\)의 역행렬이 있어야 회귀계수가 \((X^\top X)^{-1}X^\top\mathbf y\)로 하나로 정해집니다. 역행렬이 있다는 것은 변환을 되돌릴 수 있다는 뜻입니다.</p>
-
-    <h3><span class="no">2.2.1</span>동치 조건</h3>
+    <h3><span class="no">2.2.1</span>되돌릴 수 있는 변환</h3>
+    <p>\(AA^{-1} = A^{-1}A = I\)인 행렬 \(A^{-1}\)을 \(A\)의 <em>역행렬</em>이라 한다. 역행렬이 있다는 것은 변환 \(\mathbf x \mapsto A\mathbf x\)를 되돌릴 수 있다는 뜻이다. 그림 1 오른쪽처럼 \(A\)가 평면을 선분으로 납작하게 만들면, 서로 다른 두 점이 같은 곳으로 가므로 되돌릴 수 없다. 이 관찰을 여러 말로 바꾸면 다음 정리가 된다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 2.2.1 (가역 행렬 정리)</span>
-      <p>\(n\times n\) 행렬 \(A\)에 대해 다음은 모두 동치이다.</p>
-      <ol>
-        <li>\(A^{-1}\)이 존재한다(\(AA^{-1} = A^{-1}A = I\)).</li>
-        <li>\(\det A \ne 0\).</li>
-        <li>계수 = \(n\) (열이 일차독립).</li>
-        <li>\(A\mathbf x = \mathbf 0\)의 해는 \(\mathbf x = \mathbf 0\)뿐.</li>
-        <li>모든 \(\mathbf b\)에 대해 \(A\mathbf x = \mathbf b\)의 해가 하나.</li>
-        <li>0이 고윳값이 아니다.</li>
-      </ol>
+      <span class="lb">정리 2.2.1 <span class="nm">(가역 행렬 정리)</span></span>
+      <p>\(n\times n\) 행렬 \(A\)에 대해 다음은 모두 동치이다. \(A^{-1}\)이 존재한다. \(\det A \ne 0\)이다. 계수가 \(n\)이다(열이 일차독립이다). \(A\mathbf x = \mathbf 0\)의 해는 \(\mathbf x = \mathbf 0\)뿐이다. 모든 \(\mathbf b\)에 대해 \(A\mathbf x = \mathbf b\)의 해가 하나이다. 0이 고윳값이 아니다.</p>
     </div>
-    <p>\((AB)^{-1} = B^{-1}A^{-1}\), \((A^\top)^{-1} = (A^{-1})^\top\). \(2\times2\): \(\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix}^{-1} = \frac{1}{ad - bc}\begin{pmatrix}d &amp; -b\\ -c &amp; a\end{pmatrix}\).</p>
+    <p>정리의 조건들은 모두 같은 말을 다른 각도에서 한 것이다. 예를 들어 \(A\mathbf v = \mathbf 0\)인 \(\mathbf v \ne \mathbf 0\)이 있으면 \(\mathbf x\)와 \(\mathbf x + \mathbf v\)가 같은 곳으로 가므로 되돌릴 수 없고, 열들의 일차결합 \(\sum v_j\mathbf a_j\)가 0이므로 열이 종속이다. 계산 규칙으로는 \((AB)^{-1} = B^{-1}A^{-1}\), \((A^\top)^{-1} = (A^{-1})^\top\)이 있고, \(2\times2\) 행렬은 다음 공식으로 바로 구한다.</p>
+    \[\begin{pmatrix}a &amp; b\\ c &amp; d\end{pmatrix}^{-1} = \frac{1}{ad - bc}\begin{pmatrix}d &amp; -b\\ -c &amp; a\end{pmatrix}\]
 
     <h3><span class="no">2.2.2</span>\(X^\top X\)가 가역인 조건</h3>
-    <p>\(X^\top X\)가 가역 ⟺ \(X\)의 열이 일차독립. (\(X^\top X\mathbf v = 0\)이면 \(\mathbf v^\top X^\top X\mathbf v = \|X\mathbf v\|^2 = 0\)이므로 \(X\mathbf v = \mathbf 0\).) 가변수를 범주 수만큼 다 넣거나(가변수 함정, 응통10 3.1절), 관측 수가 변수 수보다 적으면 가역이 아닙니다.</p>
-
+    <p>처음 질문의 답은 다음 사실이다. \(X^\top X\)가 가역일 필요충분조건은 \(X\)의 열이 일차독립인 것이다. 왜냐하면 \(X^\top X\mathbf v = \mathbf 0\)이면 \(\mathbf v^\top X^\top X\mathbf v = \|X\mathbf v\|^2 = 0\)이므로 \(X\mathbf v = \mathbf 0\)이기 때문이다. 반대로 \(X\mathbf v = \mathbf 0\)이면 당연히 \(X^\top X\mathbf v = \mathbf 0\)이다.</p>
+    <p>가변수를 범주 수만큼 다 넣으면 가변수 열들의 합이 절편 열 \(\mathbf 1\)과 같아져 열이 종속이 된다. 이것이 가변수 함정이며(응통10 3.1절), R이 NA를 내놓는 까닭이다. 관측 수가 변수 수보다 적을 때도 열이 독립일 수 없으므로 가역이 아니다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.2</span>
-      <p>1.1절 예제의 \(X^\top X = \begin{pmatrix}3 &amp; 12\\ 12 &amp; 56\end{pmatrix}\)의 역행렬은?</p>
+      <p>1.1절 예제의 \(X^\top X = \begin{pmatrix}3 &amp; 12\\ 12 &amp; 56\end{pmatrix}\)의 역행렬을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 행렬식 \(168 - 144 = 24\). \(\frac{1}{24}\begin{pmatrix}56 &amp; -12\\ -12 &amp; 3\end{pmatrix}\). (2,2) 원소 \(3/24 = 1/8 = 1/S_{xx}\)(\(S_{xx} = 8\))로, 기울기 분산의 계수입니다(응통10 1.2절).</p>
+    <p><i>풀이.</i> 행렬식은 \(168 - 144 = 24\)이므로 역행렬은 \(\frac{1}{24}\begin{pmatrix}56 &amp; -12\\ -12 &amp; 3\end{pmatrix}\)이다. 여기서 \((2, 2)\) 원소 \(3/24 = 1/8\)은 \(1/S_{xx}\)(\(S_{xx} = 8\))로, 기울기 추정량의 분산 \(\sigma^2/S_{xx}\)의 계수이다(응통10 1.2절).</p>
+    <div class="tb-note"><span class="lb">주의</span>행렬식이 정확히 0이 아니어도 아주 작으면 역행렬의 원소가 매우 커져, 자료가 조금만 바뀌어도 계수가 크게 흔들린다. 이것이 다중공선성 문제이며, 수치 계산에서는 행렬식보다 조건수로 판단한다(응통15).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>가역 ⟺ 행렬식 ≠ 0 ⟺ 열 독립 ⟺ 0이 고윳값 아님.</li>
-        <li>\(X^\top X\) 가역 ⟺ \(X\)의 열 독립.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>역행렬이 있다는 것은 변환을 되돌릴 수 있다는 뜻이고, 이는 행렬식이 0이 아닌 것, 열이 독립인 것, \(A\mathbf x = \mathbf 0\)의 해가 0뿐인 것, 0이 고윳값이 아닌 것과 모두 같다. 회귀의 \(X^\top X\)는 \(X\)의 열이 독립일 때만 가역이므로, 가변수를 범주 수만큼 다 넣거나 관측이 변수보다 적으면 계수가 하나로 정해지지 않는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(n = 5\), 설명변수(절편 포함) 6개면 \(X^\top X\)가 가역일 수 있나요?
-          <details><summary>답</summary><p>아닙니다. \(X\)가 5×6이라 계수가 5 이하이고, 6×6인 \(X^\top X\)의 계수도 5 이하입니다.</p></details>
+        <li>\(n = 5\)이고 설명변수가 절편을 포함해 6개이면 \(X^\top X\)가 가역일 수 있는가?
+          <details><summary>답</summary><p>없다. \(X\)가 \(5\times6\)이라 계수가 5 이하이고, \(6\times6\)인 \(X^\top X\)의 계수도 5 이하이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>범주가 셋인 변수에 가변수 \(d_1, d_2, d_3\)를 모두 넣고 절편도 넣었다. \(X\mathbf v = \mathbf 0\)인 \(\mathbf v \ne \mathbf 0\)을 하나 찾아라.
+          <details><summary>답</summary><p>\(d_1 + d_2 + d_3 = \mathbf 1\)이므로 열 순서를 (절편, \(d_1\), \(d_2\), \(d_3\))로 두면 \(\mathbf v = (1, -1, -1, -1)\)이다.</p></details>
         </li>
       </ol>
     </div>

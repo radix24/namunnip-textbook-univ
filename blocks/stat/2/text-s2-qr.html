@@ -8,57 +8,59 @@
 <article class="card q-card" id="text-s2-qr" data-kind="본문" data-std="응통2-03-03">
   <header class="card-head"><span class="no"></span><h2>그람-슈미트 과정과 QR 분해</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>그람-슈미트 과정으로 정규직교 기저를 만든다.</li>
-        <li>\(A = QR\) 분해를 구하고 최소제곱에 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>사영 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">설명변수들이 서로 상관되어 있으면 계수의 해석도 계산도 어렵다. 같은 열공간을 서로 수직인 단위벡터로 다시 표현할 수 있다면 사영과 최소제곱이 아주 간단해질 것이다. 그런 벡터는 어떻게 만들까? 그리고 R의 <code>lm</code>은 왜 \(X^\top X\)의 역행렬 대신 그 방법을 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="벡터 a2에서 a1 방향 성분을 빼서 a1과 수직인 벡터 v2를 만드는 그람-슈미트 과정">
+        <path d="M151.9 173.1 L414.8 173.1" class="ax"/>
+        <path d="M195.7 195 L195.7 -1.9" class="ax"/>
+        <path d="M195.7 173.1 L397.3 106" class="k dsh"/>
+        <path d="M195.7 173.1 L327.2 129.4 M321.9 134 L327.2 129.4 L320.2 128.8" class="a"/>
+        <path d="M195.7 173.1 L239.5 41.9 M240.1 48.9 L239.5 41.9 L234.9 47.1" class="k"/>
+        <path d="M195.7 173.1 L274.6 146.9 M269.3 151.5 L274.6 146.9 L267.6 146.3" class="a"/>
+        <path d="M274.6 146.9 L239.5 41.9" class="ax dsh"/>
+        <path d="M195.7 173.1 L160.7 68.1 M165.3 73.4 L160.7 68.1 L160.1 75.1" class="d"/>
+        <text x="333.2" y="123.4" class="ta s">a₁</text>
+        <text x="245.5" y="41.9" class="s">a₂</text>
+        <text x="278.6" y="162.9" class="ta s">a₂의 q₁ 방향 성분</text>
+        <text x="154.7" y="68.1" text-anchor="end" class="td s">v₂ = a₂ − (q₁ᵀa₂)q₁</text>
+      </svg>
+      <figcaption>그림 1. 그람-슈미트의 한 단계. \(\mathbf a_2\)에서 \(\mathbf q_1\) 방향 성분(3.2절의 사영)을 빼면 \(\mathbf a_1\)과 수직인 \(\mathbf v_2\)가 남는다. 이를 길이 1로 줄인 것이 \(\mathbf q_2\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>직교 사영(<a href="03-02.html">3.2절</a>)과 LU 분해의 후진 대입(<a href="01-03.html">1.3절</a>)을 쓴다.</div>
 
-    <h3>서로 수직인 축으로 바꾸기</h3>
-    <p>설명변수들이 서로 상관되어 있으면 계수 해석과 계산이 어렵습니다. 같은 열공간을 서로 수직인 단위벡터로 다시 표현하면 사영과 최소제곱이 아주 간단해집니다.</p>
-
-    <h3><span class="no">3.3.1</span>그람-슈미트</h3>
-    <p>독립인 \(\mathbf a_1, \ldots, \mathbf a_n\)에서</p>
-    <ol>
-      <li>\(\mathbf q_1 = \mathbf a_1/\|\mathbf a_1\|\).</li>
-      <li>\(\mathbf v_k = \mathbf a_k - \sum_{j&lt;k}(\mathbf q_j^\top\mathbf a_k)\mathbf q_j\) (앞의 방향 성분을 빼냄), \(\mathbf q_k = \mathbf v_k/\|\mathbf v_k\|\).</li>
-    </ol>
-    <p>\(\mathbf q\)들은 정규직교(\(\mathbf q_i^\top\mathbf q_j = 0\), 길이 1)이고 처음 \(k\)개가 \(\mathbf a_1, \ldots, \mathbf a_k\)와 같은 공간을 만듭니다. 통계로 읽으면 \(\mathbf v_k\)는 "\(\mathbf a_k\)를 앞의 변수들로 회귀한 잔차"입니다.</p>
+    <h3><span class="no">3.3.1</span>그람-슈미트 과정</h3>
+    <p>처음 질문의 첫째 부분은 앞의 방향 성분을 차례로 빼는 것으로 답한다. 독립인 \(\mathbf a_1, \ldots, \mathbf a_n\)이 있을 때 먼저 \(\mathbf q_1 = \mathbf a_1/\|\mathbf a_1\|\)로 둔다. 그다음 \(k = 2, 3, \ldots\)에 대해 \(\mathbf a_k\)에서 앞서 만든 방향의 성분을 모두 빼고 길이를 1로 맞춘다.</p>
+    \[\mathbf v_k = \mathbf a_k - \sum_{j&lt;k}(\mathbf q_j^\top\mathbf a_k)\mathbf q_j, \qquad \mathbf q_k = \frac{\mathbf v_k}{\|\mathbf v_k\|}\]
+    <p>이렇게 만든 \(\mathbf q\)들은 서로 수직이고 길이가 1인 <em>정규직교</em> 벡터이며, 처음 \(k\)개가 \(\mathbf a_1, \ldots, \mathbf a_k\)와 같은 공간을 만든다. 통계로 읽으면 \(\mathbf v_k\)는 \(\mathbf a_k\)를 앞의 변수들로 회귀하고 남은 잔차이다. 그림 1이 \(k = 2\)인 경우이다.</p>
 
     <h3><span class="no">3.3.2</span>QR 분해</h3>
+    <p>그람-슈미트를 거꾸로 읽으면 각 \(\mathbf a_k\)는 \(\mathbf q_1, \ldots, \mathbf q_k\)의 일차결합이다. 이를 행렬로 모으면 다음 분해가 된다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 3.3.1</span>
-      <p>열이 독립인 \(m\times n\) 행렬 \(A = QR\). \(Q\)는 정규직교 열(\(Q^\top Q = I\)), \(R\)은 대각이 양수인 \(n\times n\) 위삼각행렬(\(r_{jk} = \mathbf q_j^\top\mathbf a_k\)).</p>
+      <span class="lb">정리 3.3.1 <span class="nm">(QR 분해)</span></span>
+      <p>열이 독립인 \(m\times n\) 행렬은 \(A = QR\)로 쓸 수 있다. \(Q\)는 정규직교 열을 가진 \(m\times n\) 행렬(\(Q^\top Q = I\))이고, \(R\)은 대각이 양수인 \(n\times n\) 상삼각행렬로 \(r_{jk} = \mathbf q_j^\top\mathbf a_k\)이다.</p>
     </div>
-    <p>최소제곱: \(X^\top X\mathbf b = X^\top\mathbf y\)에 \(X = QR\)을 넣으면 \(R^\top R\mathbf b = R^\top Q^\top\mathbf y\), 곧 \(R\mathbf b = Q^\top\mathbf y\)를 뒤에서부터 대입해 풉니다. 사영 행렬은 \(P = QQ^\top\). 이 방법이 수치적으로 안정적이라 R의 <code>lm</code>이 씁니다(응통15 2.1절).</p>
-
+    <p>이제 처음 질문의 둘째 부분이다. 정규방정식 \(X^\top X\mathbf b = X^\top\mathbf y\)에 \(X = QR\)을 넣으면 \(R^\top R\mathbf b = R^\top Q^\top\mathbf y\)이고, \(R^\top\)이 가역이므로 \(R\mathbf b = Q^\top\mathbf y\)이다. 이것은 상삼각 연립방정식이라 1.3절처럼 뒤에서부터 대입해 풀린다. 사영 행렬도 \(P = QQ^\top\)로 간단해진다. 무엇보다 \(X^\top X\)를 만들지 않으므로, 열들이 거의 종속일 때 생기는 반올림 오차의 증폭을 피한다. 그래서 수치적으로 안정적이고, R의 <code>lm</code>이 이 방법을 쓴다(응통15 2.1절).</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.2</span>
-      <p>\(\mathbf a_1 = (1, 1, 1)\), \(\mathbf a_2 = (2, 4, 6)\)에 그람-슈미트를 적용하세요.</p>
+      <p>\(\mathbf a_1 = (1, 1, 1)\), \(\mathbf a_2 = (2, 4, 6)\)에 그람-슈미트를 적용하고 \(R\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\mathbf q_1 = (1,1,1)/\sqrt3\). \(\mathbf q_1^\top\mathbf a_2 = 12/\sqrt3\), \(\mathbf v_2 = \mathbf a_2 - 4(1,1,1) = (-2, 0, 2)\), \(\mathbf q_2 = (-1, 0, 1)/\sqrt2\). \(\mathbf v_2\)는 \(x\)의 편차(평균을 뺀 값)입니다. \(R = \begin{pmatrix}\sqrt3 &amp; 4\sqrt3\\ 0 &amp; 2\sqrt2\end{pmatrix}\).</p>
+    <p><i>풀이.</i> \(\mathbf q_1 = (1, 1, 1)/\sqrt3\)이다. \(\mathbf q_1^\top\mathbf a_2 = 12/\sqrt3\)이므로 \(\mathbf v_2 = \mathbf a_2 - 4(1, 1, 1) = (-2, 0, 2)\)이고 \(\mathbf q_2 = (-1, 0, 1)/\sqrt2\)이다. 여기서 \(\mathbf v_2\)는 \(x\)에서 평균을 뺀 편차이다. 절편 열에 대한 회귀의 잔차가 곧 편차이기 때문이다. 그리고 \(R = \begin{pmatrix}\sqrt3 &amp; 4\sqrt3\\ 0 &amp; 2\sqrt2\end{pmatrix}\)이다.</p>
+    <div class="tb-note"><span class="lb">주의</span>교과서식 그람-슈미트는 열이 거의 종속이면 반올림 오차로 \(\mathbf q\)들의 직교성이 깨진다. 실제 프로그램은 같은 분해를 하우스홀더 반사로 계산한다. 결과 \(Q\), \(R\)은 같고 계산 경로만 다르다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>그람-슈미트: 앞 방향 성분을 빼고 정규화.</li>
-        <li>\(A = QR\), 최소제곱은 \(R\mathbf b = Q^\top\mathbf y\).</li>
-        <li>각 단계는 앞 변수들에 대한 회귀 잔차.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>그람-슈미트 과정은 각 벡터에서 앞서 만든 방향의 성분을 빼고 길이를 1로 맞춰, 같은 열공간을 정규직교 벡터로 다시 표현한다. 각 단계는 앞의 변수들에 대한 회귀 잔차이다. 이를 모으면 \(A = QR\)이고, 최소제곱은 \(R\mathbf b = Q^\top\mathbf y\)를 후진 대입으로 풀면 된다. \(X^\top X\)를 만들지 않아 수치적으로 안정적이므로 회귀 프로그램이 이 방법을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 \(\mathbf y = (1, 2, 6)\)의 최소제곱 계수를 \(R\mathbf b = Q^\top\mathbf y\)로 구하세요.
-          <details><summary>답</summary><p>\(Q^\top\mathbf y = (9/\sqrt3, 5/\sqrt2)\). \(2\sqrt2 b_2 = 5/\sqrt2\) → \(b_2 = 1.25\). \(\sqrt3b_1 + 4\sqrt3(1.25) = 9/\sqrt3\) → \(b_1 = 3 - 5 = -2\). \(\hat y = -2 + 1.25x\).</p></details>
+        <li>예제 3.3.2에서 \(\mathbf y = (1, 2, 6)\)의 최소제곱 계수를 \(R\mathbf b = Q^\top\mathbf y\)로 구하여라.
+          <details><summary>답</summary><p>\(Q^\top\mathbf y = (9/\sqrt3, 5/\sqrt2)\)이다. \(2\sqrt2b_2 = 5/\sqrt2\)에서 \(b_2 = 1.25\)이고, \(\sqrt3b_1 + 4\sqrt3\times1.25 = 9/\sqrt3\)에서 \(b_1 = -2\)이다. 따라서 \(\hat y = -2 + 1.25x\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(A = QR\)일 때 \(A^\top A = R^\top R\)임을 보여라. 이것은 5.2절의 어떤 분해와 같은가?
+          <details><summary>답</summary><p>\(A^\top A = R^\top Q^\top QR = R^\top R\)이다. 하삼각 \(R^\top\)과 그 전치의 곱이므로 \(A^\top A\)의 촐레스키 분해이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,53 +8,57 @@
 <article class="card q-card" id="text-s2-projection" data-kind="본문" data-std="응통2-03-02">
   <header class="card-head"><span class="no"></span><h2>직교 사영과 최소제곱</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>부분공간으로의 직교 사영 행렬을 구한다.</li>
-        <li>최소제곱 해가 사영임을 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>열공간 (<a href="03-01.html">3.1절</a>), 내적과 직교.</li>
-      </ul>
-    </div>
-
-    <h3>가장 가까운 점 찾기</h3>
-    <p>\(X\boldsymbol\beta = \mathbf y\)는 보통 해가 없습니다(관측이 많아 \(\mathbf y\)가 \(X\)의 열공간 밖에 있음). 그러면 열공간 안에서 \(\mathbf y\)에 가장 가까운 점을 찾는 것이 최선이고, 그 점이 직교 사영입니다.</p>
+    <p class="q-ask">관측이 100개이고 회귀계수가 2개이면 \(X\boldsymbol\beta = \mathbf y\)는 식이 100개, 미지수가 2개라 보통 해가 없다. 그래도 회귀직선은 하나로 정해진다. 해가 없는 방정식에서 무엇을 구한 것일까? 그리고 SST = SSR + SSE는 왜 성립할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="벡터 y를 X의 열공간인 평면 위로 수직으로 내려 사영 y hat을 얻고, 잔차가 평면과 수직인 모습">
+        <path d="M150 160 L380 160 L470 100 L240 100 Z" class="lb b"/>
+        <path d="M150 160 L321.5 10 M318.4 16.3 L321.5 10 L314.9 12.2" class="k"/>
+        <path d="M150 160 L321.5 130 M315.6 133.8 L321.5 130 L314.7 128.4" class="a"/>
+        <path d="M321.5 130 L321.5 10 M324.2 16.4 L321.5 10 L318.8 16.4" class="d"/>
+        <path d="M321.5 120 L331.5 120 L331.5 130" class="k" style="fill:none"/>
+        <text x="313.5" y="14" text-anchor="end">y</text>
+        <text x="327.5" y="148" class="ta">ŷ = Py</text>
+        <text x="337.5" y="70" class="td">y − ŷ (잔차)</text>
+        <text x="460" y="118" text-anchor="end" class="tb s">X의 열공간 C(X)</text>
+        <text x="144" y="164" text-anchor="end" class="s">0</text>
+      </svg>
+      <figcaption>그림 1. 열공간 \(C(X)\) 안에서 \(\mathbf y\)에 가장 가까운 점은 \(\mathbf y\)를 평면에 수직으로 내린 \(\hat{\mathbf y}\)이다. 잔차 \(\mathbf y - \hat{\mathbf y}\)는 평면과 수직이므로 세 벡터가 직각삼각형을 이룬다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>열공간(<a href="03-01.html">3.1절</a>), 내적과 직교, 역행렬(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>한 벡터 위로의 사영</h3>
-    <p>\(\mathbf y\)를 \(\mathbf a\) 방향으로 사영하면 \(\hat{\mathbf y} = \frac{\mathbf a^\top\mathbf y}{\mathbf a^\top\mathbf a}\mathbf a\)이고, 오차 \(\mathbf y - \hat{\mathbf y}\)는 \(\mathbf a\)와 수직입니다. \(\mathbf a = \mathbf 1\)이면 \(\hat{\mathbf y} = \bar y\mathbf 1\): 평균은 1벡터 방향으로의 사영입니다.</p>
+    <p>처음 질문의 상황에서 \(\mathbf y\)는 \(X\)의 열공간 밖에 있다. 그렇다면 열공간 안에서 \(\mathbf y\)에 가장 가까운 점을 찾는 것이 최선이고, 그 점이 직교 사영이다. 가장 단순한 경우부터 보자. \(\mathbf y\)를 벡터 \(\mathbf a\) 방향으로 사영하면</p>
+    \[\hat{\mathbf y} = \frac{\mathbf a^\top\mathbf y}{\mathbf a^\top\mathbf a}\mathbf a\]
+    <p>이고, 오차 \(\mathbf y - \hat{\mathbf y}\)는 \(\mathbf a\)와 수직이다. 실제로 \(\mathbf a^\top(\mathbf y - \hat{\mathbf y}) = \mathbf a^\top\mathbf y - \mathbf a^\top\mathbf y = 0\)이다. 예를 들어 \(\mathbf a = \mathbf 1\)이면 \(\hat{\mathbf y} = \bar y\mathbf 1\)이다. 다시 말해 평균은 \(\mathbf 1\) 방향으로의 사영이다.</p>
 
     <h3><span class="no">3.2.2</span>부분공간으로의 사영</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 3.2.1</span>
-      <p>\(X\)의 열이 독립이면 \(C(X)\)로의 직교 사영 행렬은 \(P = X(X^\top X)^{-1}X^\top\)이고, \(\hat{\mathbf y} = P\mathbf y\)는 \(C(X)\)에서 \(\mathbf y\)에 가장 가까운 점이다. \(P^\top = P\), \(P^2 = P\).</p>
+      <span class="lb">정리 3.2.1 <span class="nm">(사영 행렬)</span></span>
+      <p>\(X\)의 열이 독립이면 \(C(X)\)로의 직교 사영 행렬은 \(P = X(X^\top X)^{-1}X^\top\)이고, \(\hat{\mathbf y} = P\mathbf y\)는 \(C(X)\)에서 \(\mathbf y\)에 가장 가까운 점이다. 또 \(P^\top = P\), \(P^2 = P\)이다.</p>
     </div>
-    <p class="tb-proof">\(\hat{\mathbf y} = X\hat{\mathbf b}\)라 하면 오차 \(\mathbf y - X\hat{\mathbf b}\)가 모든 열과 수직이어야 합니다: \(X^\top(\mathbf y - X\hat{\mathbf b}) = \mathbf 0\), 곧 정규방정식. \(C(X)\)의 다른 점 \(X\mathbf b\)에 대해 \(\|\mathbf y - X\mathbf b\|^2 = \|\mathbf y - \hat{\mathbf y}\|^2 + \|\hat{\mathbf y} - X\mathbf b\|^2\)(피타고라스, 두 벡터가 수직) \(\ge \|\mathbf y - \hat{\mathbf y}\|^2\). <span class="qed">∎</span></p>
-    <p>회귀의 모자 행렬 \(H\)가 바로 이 \(P\)이고, SST = SSR + SSE는 피타고라스 정리입니다(응통10 1.4절).</p>
-
+    <p class="tb-proof"><span class="lb">증명.</span>\(\hat{\mathbf y} = X\hat{\mathbf b}\)라 하면 오차 \(\mathbf y - X\hat{\mathbf b}\)가 모든 열과 수직이어야 하므로 \(X^\top(\mathbf y - X\hat{\mathbf b}) = \mathbf 0\), 곧 정규방정식 \(X^\top X\hat{\mathbf b} = X^\top\mathbf y\)이다. 이를 풀면 \(\hat{\mathbf b} = (X^\top X)^{-1}X^\top\mathbf y\)이고 \(\hat{\mathbf y} = P\mathbf y\)이다. \(C(X)\)의 다른 점 \(X\mathbf b\)에 대해서는 \(\mathbf y - \hat{\mathbf y}\)와 \(\hat{\mathbf y} - X\mathbf b\)가 수직이므로 피타고라스 정리로 \(\|\mathbf y - X\mathbf b\|^2 = \|\mathbf y - \hat{\mathbf y}\|^2 + \|\hat{\mathbf y} - X\mathbf b\|^2 \ge \|\mathbf y - \hat{\mathbf y}\|^2\)이다. <span class="qed">∎</span></p>
+    <p>그러므로 처음 질문의 답은 이렇다. 최소제곱은 해가 없는 방정식 대신, \(\mathbf y\)를 열공간에 내린 사영 \(\hat{\mathbf y}\)를 만드는 계수를 구한 것이다. 회귀의 모자 행렬 \(H\)가 바로 이 \(P\)이다. 또 그림 1의 직각삼각형에 피타고라스 정리를 쓰면 \(\|\mathbf y\|^2 = \|\hat{\mathbf y}\|^2 + \|\mathbf y - \hat{\mathbf y}\|^2\)이고, 평균을 뺀 벡터로 같은 일을 하면 SST = SSR + SSE가 된다(응통10 1.4절).</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.2</span>
-      <p>\(\mathbf y = (1, 2, 6)\)을 \(\mathbf 1 = (1,1,1)\) 방향과 그 직교 여공간으로 나누세요.</p>
+      <p>\(\mathbf y = (1, 2, 6)\)을 \(\mathbf 1 = (1, 1, 1)\) 방향 성분과 그에 수직인 성분으로 나누어라.</p>
     </div>
-    <p><i>풀이.</i> \(\bar y = 3\), \(\hat{\mathbf y} = (3, 3, 3)\), 편차 \((-2, -1, 3)\)(합 0이라 \(\mathbf 1\)과 수직). \(\|\mathbf y\|^2 = 41 = 27 + 14\).</p>
+    <p><i>풀이.</i> \(\bar y = 3\)이므로 \(\hat{\mathbf y} = (3, 3, 3)\)이고 편차는 \((-2, -1, 3)\)이다. 편차의 합이 0이므로 \(\mathbf 1\)과 수직이다. 길이 제곱은 \(\|\mathbf y\|^2 = 41 = 27 + 14\)로 피타고라스 정리가 성립한다.</p>
+    <div class="tb-note"><span class="lb">주의</span>\(P = X(X^\top X)^{-1}X^\top\)을 \(XX^{-1}(X^\top)^{-1}X^\top = I\)로 줄이면 안 된다. \(X\)는 정사각이 아니라 역행렬이 없다. \(P = I\)는 \(X\)가 가역인 정사각 행렬일 때, 곧 열공간이 공간 전체일 때뿐이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사영 = 가장 가까운 점, 오차는 부분공간과 수직.</li>
-        <li>\(P = X(X^\top X)^{-1}X^\top\), 대칭이고 멱등.</li>
-        <li>최소제곱 = 열공간으로의 사영.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>부분공간 안에서 \(\mathbf y\)에 가장 가까운 점은 직교 사영 \(\hat{\mathbf y} = P\mathbf y\)이고, 오차는 부분공간과 수직이다. \(X\)의 열공간으로의 사영 행렬은 \(P = X(X^\top X)^{-1}X^\top\)로 대칭이고 멱등이다. 해가 없는 \(X\boldsymbol\beta = \mathbf y\)에서 최소제곱이 구하는 것은 이 사영을 만드는 계수이며, SST = SSR + SSE는 사영이 만드는 직각삼각형의 피타고라스 정리이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(I - P\)도 사영 행렬임을 보이세요. 어디로의 사영인가요?
-          <details><summary>답</summary><p>\((I-P)^2 = I - 2P + P^2 = I - P\), 대칭. \(C(X)\)의 직교 여공간(잔차 공간)으로의 사영.</p></details>
+        <li>\(I - P\)도 사영 행렬임을 보여라. 어디로의 사영인가?
+          <details><summary>답</summary><p>\((I - P)^2 = I - 2P + P^2 = I - P\)이고 대칭이다. \(C(X)\)에 수직인 잔차 공간으로의 사영이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\mathbf y = (2, 0)\)을 \(\mathbf a = (1, 1)\) 방향으로 사영하고, 오차가 \(\mathbf a\)와 수직인지 확인하여라.
+          <details><summary>답</summary><p>\(\hat{\mathbf y} = \frac{2}{2}(1, 1) = (1, 1)\)이고 오차는 \((1, -1)\)이다. \((1, 1)\cdot(1, -1) = 0\)으로 수직이다.</p></details>
         </li>
       </ol>
     </div>

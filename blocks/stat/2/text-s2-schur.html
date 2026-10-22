@@ -8,65 +8,72 @@
 <article class="card q-card" id="text-s2-schur" data-kind="본문" data-std="응통2-02-03">
   <header class="card-head"><span class="no"></span><h2>블록 행렬의 역행렬과 슈어 보수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>블록 소거로 슈어 보수를 정의한다.</li>
-        <li>블록 행렬의 역행렬과 행렬식을 슈어 보수로 쓴다.</li>
-        <li>슈어 보수가 조건부 분산과 편회귀에 나타나는 이유를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>블록 행렬 (<a href="01-01.html">1.1절</a>), 역행렬 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>변수를 두 묶음으로 나눌 때</h3>
-    <p>공분산 행렬을 "관심 변수"와 "나머지"로 나누면 블록 행렬이 됩니다. 조건부분포(응통19 1.3절), 다중회귀의 한 계수(응통10 2.4절)는 모두 이 블록 행렬의 역행렬 한 부분입니다. 그 공통 재료가 슈어 보수입니다.</p>
+    <p class="q-ask">키와 몸무게를 알 때 혈압의 분산은 얼마나 줄어들까? 다중회귀에서 한 계수의 분산은 왜 다른 변수와의 상관이 클수록 커질까? 서로 달라 보이는 두 질문은 모두 공분산 행렬을 두 묶음으로 나눈 블록 행렬의 역행렬 한 부분으로 답한다. 그 공통 재료는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 190" role="img" aria-label="블록 행렬 M에서 둘째 블록 행에 첫째 블록 행의 배수를 빼면 왼쪽 아래가 0이 되고 오른쪽 아래에 슈어 보수 S가 남는 모습">
+        <rect x="40" y="40" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="70.0" y="75.0" text-anchor="middle">A</text>
+        <rect x="100" y="40" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="130.0" y="75.0" text-anchor="middle">B</text>
+        <rect x="40" y="100" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="70.0" y="135.0" text-anchor="middle">C</text>
+        <rect x="100" y="100" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="130.0" y="135.0" text-anchor="middle">D</text>
+        <text x="100" y="178" text-anchor="middle" class="s">M</text>
+        <path d="M190 100 L320 100 M312 94 L320 100 L312 106" class="ax"/>
+        <text x="255" y="88" text-anchor="middle" class="s">둘째 블록 행에서</text><text x="255" y="122" text-anchor="middle" class="s">첫째의 CA⁻¹배를 뺀다</text>
+        <rect x="340" y="40" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="370.0" y="75.0" text-anchor="middle">A</text>
+        <rect x="400" y="40" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="430.0" y="75.0" text-anchor="middle">B</text>
+        <rect x="340" y="100" width="60" height="60" class="lk" style="stroke:var(--ink-3)"/>
+        <text x="370.0" y="135.0" text-anchor="middle">0</text>
+        <rect x="400" y="100" width="60" height="60" class="lb" style="stroke:var(--ink-3)"/>
+        <text x="430.0" y="135.0" text-anchor="middle">S</text>
+        <text x="400" y="178" text-anchor="middle" class="s">S = D − CA⁻¹B (슈어 보수)</text>
+      </svg>
+      <figcaption>그림 1. 블록 소거. 가우스 소거처럼 둘째 블록 행에서 첫째 블록 행의 \(CA^{-1}\)배를 빼면 왼쪽 아래가 0이 되고, 오른쪽 아래에 슈어 보수 \(S\)가 남는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>블록 행렬(<a href="01-01.html">1.1절</a>), 행렬식(<a href="02-01.html">2.1절</a>), 역행렬(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>블록 소거와 슈어 보수</h3>
-    <p>\(M = \begin{pmatrix}A &amp; B\\ C &amp; D\end{pmatrix}\)에서 \(A\)가 가역이면, 가우스 소거처럼 둘째 블록 행에서 첫째 블록 행의 \(CA^{-1}\)배를 빼면</p>
-    \[\begin{pmatrix}I &amp; 0\\ -CA^{-1} &amp; I\end{pmatrix}M = \begin{pmatrix}A &amp; B\\ 0 &amp; D - CA^{-1}B\end{pmatrix}.\]
+    <p>처음 질문의 공통 재료는 블록 소거에서 남는 덩어리이다. \(M = \begin{pmatrix}A &amp; B\\ C &amp; D\end{pmatrix}\)에서 \(A\)가 가역이라 하자. 가우스 소거에서 아래 행의 피벗 밑을 0으로 만들듯, 둘째 블록 행에서 첫째 블록 행의 \(CA^{-1}\)배를 빼면 다음이 된다.</p>
+    \[\begin{pmatrix}I &amp; 0\\ -CA^{-1} &amp; I\end{pmatrix}M = \begin{pmatrix}A &amp; B\\ 0 &amp; D - CA^{-1}B\end{pmatrix}\]
     <div class="tb-env def">
-      <span class="lb">정의 2.3.1</span>
-      <p>\(M/A = D - CA^{-1}B\)를 \(M\)에서 \(A\)의 <b>슈어 보수</b>라 한다.</p>
+      <span class="lb">정의 2.3.1 <span class="nm">(슈어 보수)</span></span>
+      <p>\(M/A = D - CA^{-1}B\)를 \(M\)에서 \(A\)의 <em>슈어 보수</em>라 한다.</p>
     </div>
-    <p>여기서 바로 \(\det M = \det A\cdot\det(D - CA^{-1}B)\)가 나옵니다(삼각 블록 행렬의 행렬식).</p>
+    <p>왼쪽에 곱한 행렬은 대각이 모두 1인 블록 삼각행렬이라 행렬식이 1이다. 따라서 위 식의 행렬식을 비교하면 곧바로 \(\det M = \det A\cdot\det(D - CA^{-1}B)\)를 얻는다. 수 하나인 \(1\times1\) 블록이라면 \(ad - bc = a(d - c\cdot\frac1a\cdot b)\)라는 익숙한 식이다.</p>
 
     <h3><span class="no">2.3.2</span>블록 역행렬</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 2.3.2</span>
-      <p>\(A\)와 \(S = D - CA^{-1}B\)가 가역이면 \(M^{-1} = \begin{pmatrix}A^{-1} + A^{-1}BS^{-1}CA^{-1} &amp; -A^{-1}BS^{-1}\\ -S^{-1}CA^{-1} &amp; S^{-1}\end{pmatrix}\).</p>
+      <span class="lb">정리 2.3.2 <span class="nm">(블록 역행렬)</span></span>
+      <p>\(A\)와 \(S = D - CA^{-1}B\)가 가역이면</p>
+      \[M^{-1} = \begin{pmatrix}A^{-1} + A^{-1}BS^{-1}CA^{-1} &amp; -A^{-1}BS^{-1}\\ -S^{-1}CA^{-1} &amp; S^{-1}\end{pmatrix}.\]
     </div>
-    <p>핵심은 오른쪽 아래 블록이 슈어 보수의 역 \(S^{-1}\)이라는 점입니다. 공분산 행렬 \(\Sigma\)를 이렇게 나누면 \(S = \Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\)는 응통19 1.3절의 조건부 공분산이고, \(\Sigma^{-1}\)의 오른쪽 아래 블록이 그 역입니다. 정밀도 행렬 \(\Sigma^{-1}\)의 원소가 편상관과 이어지는 이유입니다.</p>
-
+    <p>복잡해 보이지만 기억할 것은 하나이다. 역행렬의 오른쪽 아래 블록이 슈어 보수의 역 \(S^{-1}\)이라는 점이다. 이제 처음 질문으로 돌아가자. 공분산 행렬 \(\Sigma\)를 (키, 몸무게)와 (혈압)으로 나누면 \(S = \Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\)는 키와 몸무게를 알 때 혈압의 조건부 분산이다(응통19 1.3절). 그리고 정밀도 행렬 \(\Sigma^{-1}\)의 오른쪽 아래가 그 역이다. 정밀도 행렬의 원소가 편상관과 이어지는 것도 이 때문이다.</p>
+    <p>회귀에서도 마찬가지이다. \((X^\top X)^{-1}\)의 한 대각 원소는 그 변수 열에서 나머지 열들로 설명되는 부분을 뺀 슈어 보수의 역이다. 다른 변수와의 상관이 크면 남는 부분이 작아지고, 그 역인 계수의 분산은 커진다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.3</span>
-      <p>\(M = \begin{pmatrix}4 &amp; 2\\ 2 &amp; 3\end{pmatrix}\)를 1×1 블록으로 보고 슈어 보수, 행렬식, 역행렬을 구하세요.</p>
+      <p>\(M = \begin{pmatrix}4 &amp; 2\\ 2 &amp; 3\end{pmatrix}\)을 \(1\times1\) 블록으로 보고 슈어 보수, 행렬식, 역행렬을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(S = 3 - 2 \times \frac14 \times 2 = 2\). \(\det M = 4 \times 2 = 8\). 역행렬: 오른쪽 아래 \(1/S = 0.5\), 비대각 \(-\frac{2}{4 \times 2} = -0.25\), 왼쪽 위 \(\frac14 + \frac{2 \times 2}{16 \times 2} = 0.375\). 보통 공식 \(\frac18\begin{pmatrix}3 &amp; -2\\ -2 &amp; 4\end{pmatrix}\)과 같습니다.</p>
+    <p><i>풀이.</i> \(S = 3 - 2\times\frac14\times2 = 2\)이므로 \(\det M = 4\times2 = 8\)이다. 역행렬의 오른쪽 아래는 \(1/S = 0.5\), 비대각은 \(-\frac{2}{4\times2} = -0.25\), 왼쪽 위는 \(\frac14 + \frac{2\times2}{16\times2} = 0.375\)이다. 보통 공식 \(\frac18\begin{pmatrix}3 &amp; -2\\ -2 &amp; 4\end{pmatrix}\)과 같다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(M^{-1}\)의 오른쪽 아래 블록을 \(D^{-1}\)로 착각하기 쉽다. \(D^{-1}\)은 다른 변수를 무시한 것이고, \(S^{-1}\)은 다른 변수의 영향을 뺀 뒤의 것이다. \(B = 0\)일 때만 둘이 같다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>슈어 보수 \(D - CA^{-1}B\) = 블록 소거 뒤 남는 블록.</li>
-        <li>\(\det M = \det A\det S\), \(M^{-1}\)의 오른쪽 아래 = \(S^{-1}\).</li>
-        <li>공분산 행렬에서는 조건부 공분산과 같습니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>블록 행렬을 가우스 소거처럼 블록 단위로 소거하면 오른쪽 아래에 슈어 보수 \(S = D - CA^{-1}B\)가 남고, 여기서 \(\det M = \det A\det S\)와 \(M^{-1}\)의 오른쪽 아래 블록 \(S^{-1}\)이 나온다. 공분산 행렬에서 슈어 보수는 다른 변수를 알 때의 조건부 분산이고, 회귀에서는 다른 변수로 설명되고 남은 변동이다. 그래서 조건부 분산과 회귀계수의 분산이라는 두 질문이 같은 재료로 답해진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\begin{pmatrix}1 &amp; \rho\\ \rho &amp; 1\end{pmatrix}\)의 슈어 보수와 역행렬의 (2,2) 원소는?
-          <details><summary>답</summary><p>\(S = 1 - \rho^2\), (2,2) 원소 \(1/(1 - \rho^2)\). 상관이 1에 가까우면 커져 다중공선성의 분산팽창인자(응통10 4.4절)와 같은 꼴입니다.</p></details>
+        <li>\(\begin{pmatrix}1 &amp; \rho\\ \rho &amp; 1\end{pmatrix}\)의 슈어 보수와 역행렬의 \((2, 2)\) 원소를 구하여라.
+          <details><summary>답</summary><p>\(S = 1 - \rho^2\)이고 \((2, 2)\) 원소는 \(1/(1 - \rho^2)\)이다. 상관이 1에 가까우면 커지며, 다중공선성의 분산팽창인자(응통10 4.4절)와 같은 꼴이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>회귀의 \(X^\top X\)를 \((\mathbf 1, \mathbf x)\)로 나눌 때 \(\mathbf x\) 쪽 슈어 보수가 \(S_{xx}\)임을 보이세요.
-          <details><summary>답</summary><p>\(A = n\), \(B = C^\top = \sum x\), \(D = \sum x^2\). \(S = \sum x^2 - (\sum x)^2/n = S_{xx}\). 그래서 \((X^\top X)^{-1}\)의 (2,2) 원소가 \(1/S_{xx}\), 기울기의 분산 \(\sigma^2/S_{xx}\)입니다.</p></details>
+      <ol start="2">
+        <li>회귀의 \(X^\top X\)를 \((\mathbf 1, \mathbf x)\)로 나눌 때 \(\mathbf x\) 쪽 슈어 보수가 \(S_{xx}\)임을 보여라.
+          <details><summary>답</summary><p>\(A = n\), \(B = C^\top = \sum x\), \(D = \sum x^2\)이므로 \(S = \sum x^2 - (\sum x)^2/n = S_{xx}\)이다. 그래서 \((X^\top X)^{-1}\)의 \((2, 2)\) 원소가 \(1/S_{xx}\)이고, 기울기의 분산은 \(\sigma^2/S_{xx}\)이다.</p></details>
         </li>
       </ol>
     </div>

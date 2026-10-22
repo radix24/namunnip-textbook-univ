@@ -8,57 +8,103 @@
 <article class="card q-card" id="text-s2-power" data-kind="본문" data-std="응통2-04-04">
   <header class="card-head"><span class="no"></span><h2>행렬의 거듭제곱과 마르코프 연쇄의 극한</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>대각화로 \(A^n = PD^nP^{-1}\)을 계산한다.</li>
-        <li>고유값의 크기로 \(A^n\)의 장기 거동을 판단한다.</li>
-        <li>전이행렬의 거듭제곱으로 마르코프 연쇄의 장기 분포를 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>고유값과 대각화 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>같은 변환을 여러 번</h3>
-    <p>인구 이동, 고객 이탈, 날씨처럼 매 시점 같은 규칙으로 상태가 바뀌는 과정은 같은 행렬을 거듭 곱하는 일입니다. 100번 곱하는 대신 고유값으로 바꾸면 지수 계산 하나로 끝나고, 장기적으로 어디로 가는지도 바로 보입니다.</p>
+    <p class="q-ask">오늘 맑으면 내일도 맑을 확률이 0.9, 오늘 비가 오면 내일 맑을 확률이 0.2인 마을이 있다. 오늘 맑다면 20일 뒤에 맑을 확률은 얼마일까? 전이행렬을 20번 곱하면 되지만, 100번, 1000번이라면? 그리고 오늘 날씨가 먼 미래에도 영향을 줄까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="오늘 맑음과 오늘 비에서 출발한 두 경우에 n일 뒤 맑을 확률이 날마다 0.7배씩 차이를 줄이며 2/3로 다가가는 그래프">
+        <line x1="55" y1="175" x2="490" y2="175" class="ax"/>
+        <line x1="55" y1="175" x2="55" y2="20" class="ax"/>
+        <text x="55" y="190" text-anchor="middle" class="s">0</text>
+        <text x="163.8" y="190" text-anchor="middle" class="s">5</text>
+        <text x="272.5" y="190" text-anchor="middle" class="s">10</text>
+        <text x="381.2" y="190" text-anchor="middle" class="s">15</text>
+        <text x="490" y="190" text-anchor="middle" class="s">20</text>
+        <text x="50" y="179" text-anchor="end" class="s">0</text>
+        <text x="50" y="127.4" text-anchor="end" class="s">1/3</text>
+        <text x="50" y="75.6" text-anchor="end" class="s">2/3</text>
+        <text x="50" y="24" text-anchor="end" class="s">1</text>
+        <text x="490" y="204" text-anchor="end" class="s">날 수 n</text>
+        <text x="61" y="24" class="s">n일 뒤 맑을 확률</text>
+        <path d="M55 71.7 L490 71.7" class="ax dsh"/>
+        <path d="M55 20 L76.8 35.5 L98.5 46.3 L120.2 53.9 L142 59.3 L163.8 63 L185.5 65.6 L207.2 67.4 L229 68.7 L250.8 69.6 L272.5 70.2 L294.2 70.6 L316 71 L337.8 71.2 L359.5 71.3 L381.2 71.4 L403 71.5 L424.8 71.5 L446.5 71.6 L468.2 71.6 L490 71.6" class="a"/>
+        <path d="M55 175 L76.8 144 L98.5 122.3 L120.2 107.1 L142 96.5 L163.8 89 L185.5 83.8 L207.2 80.2 L229 77.6 L250.8 75.8 L272.5 74.6 L294.2 73.7 L316 73.1 L337.8 72.7 L359.5 72.4 L381.2 72.2 L403 72 L424.8 71.9 L446.5 71.8 L468.2 71.8 L490 71.7" class="d"/>
+        <circle cx="55" cy="20" r="2.5" class="fa"/>
+        <circle cx="76.8" cy="35.5" r="2.5" class="fa"/>
+        <circle cx="98.5" cy="46.3" r="2.5" class="fa"/>
+        <circle cx="120.2" cy="53.9" r="2.5" class="fa"/>
+        <circle cx="142" cy="59.3" r="2.5" class="fa"/>
+        <circle cx="163.8" cy="63" r="2.5" class="fa"/>
+        <circle cx="185.5" cy="65.6" r="2.5" class="fa"/>
+        <circle cx="207.2" cy="67.4" r="2.5" class="fa"/>
+        <circle cx="229" cy="68.7" r="2.5" class="fa"/>
+        <circle cx="250.8" cy="69.6" r="2.5" class="fa"/>
+        <circle cx="272.5" cy="70.2" r="2.5" class="fa"/>
+        <circle cx="294.2" cy="70.6" r="2.5" class="fa"/>
+        <circle cx="316" cy="71" r="2.5" class="fa"/>
+        <circle cx="337.8" cy="71.2" r="2.5" class="fa"/>
+        <circle cx="359.5" cy="71.3" r="2.5" class="fa"/>
+        <circle cx="381.2" cy="71.4" r="2.5" class="fa"/>
+        <circle cx="403" cy="71.5" r="2.5" class="fa"/>
+        <circle cx="424.8" cy="71.5" r="2.5" class="fa"/>
+        <circle cx="446.5" cy="71.6" r="2.5" class="fa"/>
+        <circle cx="468.2" cy="71.6" r="2.5" class="fa"/>
+        <circle cx="490" cy="71.6" r="2.5" class="fa"/>
+        <circle cx="55" cy="175" r="2.5" class="fd"/>
+        <circle cx="76.8" cy="144" r="2.5" class="fd"/>
+        <circle cx="98.5" cy="122.3" r="2.5" class="fd"/>
+        <circle cx="120.2" cy="107.1" r="2.5" class="fd"/>
+        <circle cx="142" cy="96.5" r="2.5" class="fd"/>
+        <circle cx="163.8" cy="89" r="2.5" class="fd"/>
+        <circle cx="185.5" cy="83.8" r="2.5" class="fd"/>
+        <circle cx="207.2" cy="80.2" r="2.5" class="fd"/>
+        <circle cx="229" cy="77.6" r="2.5" class="fd"/>
+        <circle cx="250.8" cy="75.8" r="2.5" class="fd"/>
+        <circle cx="272.5" cy="74.6" r="2.5" class="fd"/>
+        <circle cx="294.2" cy="73.7" r="2.5" class="fd"/>
+        <circle cx="316" cy="73.1" r="2.5" class="fd"/>
+        <circle cx="337.8" cy="72.7" r="2.5" class="fd"/>
+        <circle cx="359.5" cy="72.4" r="2.5" class="fd"/>
+        <circle cx="381.2" cy="72.2" r="2.5" class="fd"/>
+        <circle cx="403" cy="72" r="2.5" class="fd"/>
+        <circle cx="424.8" cy="71.9" r="2.5" class="fd"/>
+        <circle cx="446.5" cy="71.8" r="2.5" class="fd"/>
+        <circle cx="468.2" cy="71.8" r="2.5" class="fd"/>
+        <circle cx="490" cy="71.7" r="2.5" class="fd"/>
+        <text x="152.9" y="41.7" class="ta s">오늘 맑음에서 출발</text>
+        <text x="102.9" y="144" class="td s">오늘 비에서 출발</text>
+      </svg>
+      <figcaption>그림 1. 날씨 연쇄에서 \(n\)일 뒤 맑을 확률. 어디서 출발하든 장기 비율 2/3으로 다가가며, 남은 차이가 날마다 둘째 고유값 0.7배씩 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고유값과 대각화(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>대각화로 거듭제곱</h3>
-    <p>\(A = PDP^{-1}\)(\(D\)는 고유값 대각 행렬)이면 \(A^2 = PDP^{-1}PDP^{-1} = PD^2P^{-1}\), 일반적으로</p>
-    \[A^n = PD^nP^{-1}, \qquad D^n = \mathrm{diag}(\lambda_1^n, \ldots, \lambda_k^n).\]
-    <p>\(|\lambda| &lt; 1\)인 성분은 \(n\)이 커지면 0으로 사라지고, \(|\lambda| = 1\)인 성분만 남습니다. 가장 큰 \(|\lambda|\)가 1보다 크면 \(A^n\)은 폭발합니다. 둘째로 큰 고유값의 크기가 극한에 다가가는 속도를 정합니다.</p>
+    <p>인구 이동, 고객 이탈, 날씨처럼 매 시점 같은 규칙으로 상태가 바뀌는 과정은 같은 행렬을 거듭 곱하는 일이다. 처음 질문의 열쇠는 거듭제곱을 고유값으로 바꾸는 것이다. \(A = PDP^{-1}\)이고 \(D\)가 고유값의 대각행렬이면, 가운데의 \(P^{-1}P\)가 상쇄되어 \(A^2 = PD^2P^{-1}\)이고 일반적으로 다음이 성립한다.</p>
+    \[A^n = PD^nP^{-1}, \qquad D^n = \mathrm{diag}(\lambda_1^n, \ldots, \lambda_k^n)\]
+    <p>따라서 100번의 행렬 곱이 수의 거듭제곱 몇 개로 바뀐다. 게다가 장기 거동도 바로 보인다. \(|\lambda| &lt; 1\)인 성분은 \(n\)이 커지면 0으로 사라지고, \(|\lambda| = 1\)인 성분만 남는다. 가장 큰 \(|\lambda|\)가 1보다 크면 \(A^n\)은 폭발한다. 그리고 극한에 다가가는 속도는 둘째로 큰 고유값의 크기가 정한다.</p>
 
     <h3><span class="no">4.4.2</span>마르코프 연쇄</h3>
-    <p>전이행렬 \(P\)(행의 합 1, 응통9)는 고유값 1을 가지고, 나머지 고유값은 크기가 1 이하입니다. 정칙인 연쇄에서는 1 말고 크기 1인 고유값이 없어 \(P^n\)의 모든 행이 정상분포 \(\boldsymbol\pi\)(\(\boldsymbol\pi P = \boldsymbol\pi\), 고유값 1의 왼쪽 고유벡터)로 수렴합니다.</p>
-
+    <p>행의 합이 1인 전이행렬 \(P\)(응통9)는 언제나 고유값 1을 가진다. \(P\mathbf 1 = \mathbf 1\)이기 때문이다. 나머지 고유값은 크기가 1 이하이다. 모든 상태끼리 오갈 수 있고 주기가 없는 정칙 연쇄에서는 1 말고 크기 1인 고유값이 없다. 그래서 \(P^n\)의 모든 행이 정상분포 \(\boldsymbol\pi\)로 수렴한다. 여기서 \(\boldsymbol\pi\)는 \(\boldsymbol\pi P = \boldsymbol\pi\)를 만족하는, 고유값 1의 왼쪽 고유벡터이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1</span>
-      <p>날씨 연쇄 \(P = \begin{pmatrix}0.9 &amp; 0.1\\ 0.2 &amp; 0.8\end{pmatrix}\)(1 = 맑음, 2 = 비)의 고유값과 \(P^n\)의 (1,1) 원소, 극한을 구하세요.</p>
+      <p>날씨 연쇄 \(P = \begin{pmatrix}0.9 &amp; 0.1\\ 0.2 &amp; 0.8\end{pmatrix}\)(상태 1은 맑음, 2는 비)의 고유값, 정상분포, \(P^n\)의 \((1, 1)\) 원소를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 대각합 1.7, 행렬식 0.7이라 고유값은 1과 0.7. 정상분포 \(\boldsymbol\pi\): \(0.1\pi_1 = 0.2\pi_2\), \(\boldsymbol\pi = (2/3, 1/3)\). \(P^n\)의 (1,1) 원소 \(= \frac23 + \frac13(0.7)^n\): \(n = 1\)에서 0.9, \(n = 5\)에서 0.723, \(n = 20\)에서 0.667. 오늘 맑으면 20일 뒤 맑을 확률은 장기 비율 2/3에 거의 같아집니다. 오차가 매일 0.7배로 줄어듭니다.</p>
+    <p><i>풀이.</i> 대각합 1.7, 행렬식 0.7이므로 고유값은 1과 0.7이다. 정상분포는 \(0.1\pi_1 = 0.2\pi_2\)에서 \(\boldsymbol\pi = (2/3, 1/3)\)이다. 대각화하면 \(P^n\)의 \((1, 1)\) 원소는 \(\frac23 + \frac13(0.7)^n\)으로, \(n = 1\)에서 0.9, \(n = 5\)에서 0.723, \(n = 20\)에서 0.667이다.</p>
+    <p>그러므로 처음 질문의 답은 약 0.667이다. 오늘 맑으면 20일 뒤 맑을 확률은 장기 비율 2/3과 거의 같아지고, 오늘 날씨의 영향은 매일 0.7배씩 줄어 사라진다. 그림 1에서 두 출발점의 곡선이 같은 값으로 모이는 것이 이 때문이다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>정상분포를 \(P\boldsymbol\pi = \boldsymbol\pi\)(오른쪽 고유벡터)로 구하기 쉽다. 행의 합이 1인 전이행렬에서 오른쪽 고유벡터는 \(\mathbf 1\)이고, 정상분포는 행벡터로 왼쪽에서 곱하는 \(\boldsymbol\pi P = \boldsymbol\pi\)이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(A^n = PD^nP^{-1}\), 고유값의 \(n\)제곱.</li>
-        <li>\(|\lambda| &lt; 1\) 성분은 사라지고, 둘째 고유값이 수렴 속도를 정함.</li>
-        <li>전이행렬은 고유값 1의 고유벡터(정상분포)로 수렴.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>대각화 \(A = PDP^{-1}\)을 쓰면 \(A^n = PD^nP^{-1}\)이라 행렬의 거듭제곱이 고유값의 거듭제곱으로 바뀐다. 크기가 1보다 작은 고유값의 성분은 사라지고, 둘째 고유값이 수렴 속도를 정한다. 전이행렬은 고유값 1을 가지므로 정칙 연쇄의 \(P^n\)은 정상분포로 수렴하며, 날씨 예에서는 오늘 맑아도 20일 뒤 맑을 확률이 장기 비율 2/3에 거의 같아진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(A = \begin{pmatrix}2 &amp; 0\\ 0 &amp; 0.5\end{pmatrix}\)에서 \(A^{10}\)은?
-          <details><summary>답</summary><p>\(\mathrm{diag}(1024, 0.00098)\). 첫 성분은 폭발하고 둘째는 사라집니다.</p></details>
+        <li>\(A = \begin{pmatrix}2 &amp; 0\\ 0 &amp; 0.5\end{pmatrix}\)에서 \(A^{10}\)을 구하여라.
+          <details><summary>답</summary><p>\(\mathrm{diag}(1024, 0.00098)\)이다. 첫 성분은 폭발하고 둘째는 사라진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>예제 4.4.1에서 \(P^n\)의 (1,1) 원소가 장기 비율과 0.01 이내가 되려면 며칠이 필요한가요?
-          <details><summary>답</summary><p>\(\frac13(0.7)^n &lt; 0.01\), \(0.7^n &lt; 0.03\), \(n &gt; \ln 0.03/\ln 0.7 = 9.8\). 10일.</p></details>
+      <ol start="2">
+        <li>예제 4.4.1에서 \(P^n\)의 \((1, 1)\) 원소가 장기 비율과 0.01 이내가 되려면 며칠이 필요한가?
+          <details><summary>답</summary><p>\(\frac13(0.7)^n &lt; 0.01\)이어야 하므로 \(0.7^n &lt; 0.03\), \(n &gt; \ln0.03/\ln0.7 = 9.8\)이다. 10일이다.</p></details>
         </li>
       </ol>
     </div>

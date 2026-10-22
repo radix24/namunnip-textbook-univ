@@ -8,98 +8,76 @@
 <article class="card q-card" id="text-s2-matrix" data-kind="본문" data-std="응통2-01-01">
   <header class="card-head"><span class="no"></span><h2>행렬 연산과 블록 행렬</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬과 벡터가 무엇인지 알고, 덧셈·실수배·곱셈·전치를 계산한다.</li>
-        <li>행렬 곱을 "행과 열의 곱의 합", "열들의 가중합"으로 읽는다.</li>
-        <li>큰 행렬을 덩어리(블록)로 나누어 곱한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>고등학교 수학의 일차방정식과 합의 기호 \(\sum\)(수학I). 행렬과 벡터는 이 절에서 처음부터 설명합니다.</li>
-      </ul>
-    </div>
-
-    <h3>자료는 표이고, 표는 행렬이다</h3>
-    <p>학생 3명의 키와 몸무게를 적은 표를 생각해 봅시다. 한 줄(행)이 학생 한 명, 한 칸(열)이 변수 하나입니다. 이렇게 수를 가로세로로 늘어놓은 직사각형 모양의 표를 <b>행렬</b>이라고 합니다. 통계에서 자료는 거의 언제나 "관측 \(n\)개 × 변수 \(p\)개"의 행렬이고, 평균·분산·회귀계수 같은 통계량을 이 행렬의 계산으로 한꺼번에 쓸 수 있습니다. 선형대수는 그 계산 규칙을 다루는 과목입니다.</p>
+    <p class="q-ask">학생 100명의 키, 몸무게, 나이를 적은 표가 있다. 세 변수의 평균, 분산, 회귀계수를 한 줄의 식으로 쓸 수 있을까? 그러려면 표 전체를 하나의 수처럼 더하고 곱하는 규칙이 필요하다. 그 규칙은 어떻게 생겼을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="행렬 A의 두 열 벡터를 벡터 x의 성분만큼 곱해 이어 붙이면 A x가 되는 모습을 좌표평면에 그린 그림">
+        <line x1="150" y1="180" x2="330" y2="180" class="ax"/>
+        <line x1="175.7" y1="195" x2="175.7" y2="15" class="ax"/>
+        <path d="M175.7 180 L201.4 135 M200.6 142 L201.4 135 L195.9 139.2" class="a"/>
+        <path d="M201.4 135 L227.1 90 M226.3 97 L227.1 90 L221.6 94.2" class="a"/>
+        <path d="M227.1 90 L278.6 30 M276.4 36.7 L278.6 30 L272.3 33.1" class="b"/>
+        <path d="M175.7 180 L227.1 120 M225 126.7 L227.1 120 L220.9 123.1" class="b dsh"/>
+        <path d="M175.7 180 L278.6 30 M277.2 36.9 L278.6 30 L272.7 33.8" class="d"/>
+        <text x="195.4" y="135" text-anchor="end" class="ta s">a₁ = (1, 3)</text>
+        <text x="208.3" y="105" text-anchor="end" class="ta s">2a₁</text>
+        <text x="235.1" y="124" class="tb s">a₂ = (2, 4)</text>
+        <text x="286.6" y="34" class="td s">Ax = 2a₁ + a₂ = (4, 10)</text>
+        <text x="360" y="120" class="s">A의 열 a₁, a₂를</text><text x="360" y="138" class="s">x = (2, 1)만큼 곱해 더한다</text>
+      </svg>
+      <figcaption>그림 1. \(A = \begin{pmatrix}1 &amp; 2\\ 3 &amp; 4\end{pmatrix}\), \(\mathbf x = (2, 1)^\top\)일 때 \(A\mathbf x\)는 첫 열 \(\mathbf a_1\)을 2번, 둘째 열 \(\mathbf a_2\)를 1번 이어 붙인 끝점 \((4, 10)\)이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고등학교 수학의 일차방정식과 합의 기호 \(\sum\)를 쓴다. 행렬과 벡터는 이 절에서 처음부터 설명한다.</div>
 
     <h3><span class="no">1.1.1</span>행렬과 벡터</h3>
+    <p>처음 질문의 표에서 한 줄(행)은 학생 한 명이고, 한 칸(열)은 변수 하나이다. 이렇게 수를 가로세로로 늘어놓은 직사각형 모양의 표가 행렬이다. 통계에서 자료는 거의 언제나 관측 \(n\)개, 변수 \(p\)개인 행렬이고, 평균, 분산, 회귀계수 같은 통계량을 이 행렬의 계산으로 한꺼번에 쓸 수 있다. 선형대수는 그 계산 규칙을 다루는 과목이다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 1.1.1</span>
-      <p class="q-term"><b>행렬</b>: 수를 \(m\)개의 행(가로줄)과 \(n\)개의 열(세로줄)로 늘어놓은 것. 크기를 \(m\times n\)("엠 바이 엔")이라 씁니다.</p>
-      <p class="q-term"><b>성분</b>: \(i\)번째 행, \(j\)번째 열에 있는 수. 행렬 \(A\)의 \((i, j)\) 성분을 \(a_{ij}\)로 씁니다.</p>
-      <p class="q-term"><b>벡터</b>: 열이 하나뿐인 \(n\times1\) 행렬(열벡터). 굵은 소문자 \(\mathbf x\)로 씁니다. 수 \(n\)개를 순서대로 묶은 것이라고 생각하면 됩니다.</p>
+      <span class="lb">정의 1.1.1 <span class="nm">(행렬, 성분, 벡터)</span></span>
+      <p>수를 \(m\)개의 행(가로줄)과 \(n\)개의 열(세로줄)로 늘어놓은 것을 \(m\times n\) <em>행렬</em>이라 한다. \(i\)번째 행, \(j\)번째 열에 있는 수를 \((i, j)\) <em>성분</em>이라 하고, 행렬 \(A\)의 \((i, j)\) 성분을 \(a_{ij}\)로 쓴다. 열이 하나뿐인 \(n\times1\) 행렬을 <em>벡터</em>(열벡터)라 하며, 굵은 소문자 \(\mathbf x\)로 쓴다.</p>
     </div>
-    <p>예를 들어 \(A = \begin{pmatrix}1 & 2 & 3\\ 4 & 5 & 6\end{pmatrix}\)는 \(2\times3\) 행렬이고 \(a_{12} = 2\), \(a_{21} = 4\)입니다. \(\mathbf x = \begin{pmatrix}2\\ 0\\ 1\end{pmatrix}\)은 길이 3인 벡터입니다.</p>
+    <p>예를 들어 \(A = \begin{pmatrix}1 &amp; 2 &amp; 3\\ 4 &amp; 5 &amp; 6\end{pmatrix}\)는 \(2\times3\) 행렬이고 \(a_{12} = 2\), \(a_{21} = 4\)이다. 그리고 \(\mathbf x = (2, 0, 1)^\top\)은 수 세 개를 순서대로 묶은 길이 3인 벡터이다.</p>
 
     <h3><span class="no">1.1.2</span>덧셈, 실수배, 전치</h3>
-    <p>크기가 같은 두 행렬은 같은 자리의 성분끼리 더합니다. 행렬에 실수 \(c\)를 곱하면 모든 성분에 \(c\)를 곱합니다. 표를 통째로 더하거나 단위를 바꾸는 것과 같습니다.</p>
-    <div class="tb-env def">
-      <span class="lb">정의 1.1.2</span>
-      <p><b>전치</b> \(A^\top\)("에이 트랜스포즈"): 행과 열을 바꾼 행렬. \((A^\top)_{ij} = a_{ji}\). \(m\times n\) 행렬의 전치는 \(n\times m\)입니다.</p>
-    </div>
-    <p>위의 \(A\)는 \(A^\top = \begin{pmatrix}1 & 4\\ 2 & 5\\ 3 & 6\end{pmatrix}\)입니다. 열벡터 \(\mathbf x\)를 전치하면 가로로 누운 행벡터 \(\mathbf x^\top = (2, 0, 1)\)이 됩니다.</p>
+    <p>크기가 같은 두 행렬은 같은 자리의 성분끼리 더한다. 행렬에 실수 \(c\)를 곱하면 모든 성분에 \(c\)를 곱한다. 표를 통째로 더하거나 단위를 바꾸는 것과 같다. 한편 행과 열을 바꾼 행렬을 <em>전치</em> \(A^\top\)라 하며, \((A^\top)_{ij} = a_{ji}\)이다. \(m\times n\) 행렬의 전치는 \(n\times m\)이다. 위의 \(A\)는 \(A^\top = \begin{pmatrix}1 &amp; 4\\ 2 &amp; 5\\ 3 &amp; 6\end{pmatrix}\)이고, 열벡터 \(\mathbf x\)를 전치하면 가로로 누운 행벡터 \(\mathbf x^\top = (2, 0, 1)\)이 된다.</p>
 
     <h3><span class="no">1.1.3</span>행렬의 곱셈</h3>
-    <p>행렬 곱은 처음 보면 이상한 규칙 같지만, 가격 계산에서 자연스럽게 나옵니다. 사과 1개 1000원, 배 1개 2000원일 때 사과 3개와 배 2개를 사면 \(1000\times3 + 2000\times2 = 7000\)원입니다. 이것을 "가격 행벡터 \((1000, 2000)\)과 수량 열벡터 \(\begin{pmatrix}3\\ 2\end{pmatrix}\)의 곱"이라고 부르기로 합니다. 같은 자리의 수를 곱해 모두 더하는 것입니다.</p>
+    <p>행렬 곱은 처음 보면 이상한 규칙 같지만, 가격 계산에서 자연스럽게 나온다. 사과 1개가 1000원, 배 1개가 2000원일 때 사과 3개와 배 2개를 사면 \(1000\times3 + 2000\times2 = 7000\)원이다. 이것을 가격 행벡터 \((1000, 2000)\)과 수량 열벡터 \((3, 2)^\top\)의 곱이라 부르기로 하자. 같은 자리의 수를 곱해 모두 더하는 것이다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 1.1.3</span>
-      <p class="q-term"><b>내적</b>: 길이가 같은 두 벡터 \(\mathbf a\), \(\mathbf b\)에 대해 \(\mathbf a^\top\mathbf b = a_1b_1 + a_2b_2 + \cdots + a_nb_n = \sum_k a_kb_k\). 결과는 수 하나입니다.</p>
-      <p class="q-term"><b>행렬 곱</b>: \(A\)가 \(m\times n\), \(B\)가 \(n\times p\)이면 \(AB\)는 \(m\times p\) 행렬이고, \((i, j)\) 성분은 "\(A\)의 \(i\)번째 행"과 "\(B\)의 \(j\)번째 열"의 내적입니다. \((AB)_{ij} = \sum_{k=1}^n a_{ik}b_{kj}\).</p>
+      <span class="lb">정의 1.1.2 <span class="nm">(내적과 행렬 곱)</span></span>
+      <p>길이가 같은 두 벡터의 <em>내적</em>은 \(\mathbf a^\top\mathbf b = \sum_k a_kb_k\)이다. \(A\)가 \(m\times n\), \(B\)가 \(n\times p\)이면 <em>행렬 곱</em> \(AB\)는 \(m\times p\) 행렬이고, \((i, j)\) 성분은 \(A\)의 \(i\)번째 행과 \(B\)의 \(j\)번째 열의 내적 \((AB)_{ij} = \sum_{k=1}^n a_{ik}b_{kj}\)이다.</p>
     </div>
-    <p>\(A\)의 열 수와 \(B\)의 행 수가 같아야 곱할 수 있습니다(가격의 개수와 수량의 개수가 같아야 계산되는 것처럼). 예를 들어</p>
-    <p>\(\begin{pmatrix}1 & 2\\ 3 & 4\end{pmatrix}\begin{pmatrix}5 & 6\\ 7 & 8\end{pmatrix} = \begin{pmatrix}1\cdot5 + 2\cdot7 & 1\cdot6 + 2\cdot8\\ 3\cdot5 + 4\cdot7 & 3\cdot6 + 4\cdot8\end{pmatrix} = \begin{pmatrix}19 & 22\\ 43 & 50\end{pmatrix}\)</p>
-    <p>입니다. 순서를 바꾸어 계산하면 \(\begin{pmatrix}23 & 34\\ 31 & 46\end{pmatrix}\)로 달라집니다.</p>
-    <p><b>계산 규칙.</b> 결합법칙 \((AB)C = A(BC)\)과 분배법칙 \(A(B + C) = AB + AC\)은 수처럼 성립하고, 전치에 대해서는 \((AB)^\top = B^\top A^\top\)(순서가 뒤집힘)입니다. 그러나 위 예처럼 일반적으로 \(AB \ne BA\)입니다. 곱하는 순서를 함부로 바꾸면 안 됩니다. 대각선이 모두 1이고 나머지가 0인 정사각행렬 \(I\)(단위행렬)는 수의 1처럼 \(AI = IA = A\)입니다.</p>
+    <p>가격의 개수와 수량의 개수가 같아야 계산되듯, \(A\)의 열 수와 \(B\)의 행 수가 같아야 곱할 수 있다. 예를 들어 \(\begin{pmatrix}1 &amp; 2\\ 3 &amp; 4\end{pmatrix}\begin{pmatrix}5 &amp; 6\\ 7 &amp; 8\end{pmatrix} = \begin{pmatrix}19 &amp; 22\\ 43 &amp; 50\end{pmatrix}\)이다. 그런데 순서를 바꾸어 계산하면 \(\begin{pmatrix}23 &amp; 34\\ 31 &amp; 46\end{pmatrix}\)로 달라진다.</p>
+    <p>결합법칙 \((AB)C = A(BC)\)과 분배법칙 \(A(B + C) = AB + AC\)은 수처럼 성립하고, 전치에 대해서는 순서가 뒤집혀 \((AB)^\top = B^\top A^\top\)이다. 하지만 위 예처럼 일반적으로 \(AB \ne BA\)이므로 곱하는 순서를 함부로 바꾸면 안 된다. 대각선이 모두 1이고 나머지가 0인 정사각행렬 \(I\)(단위행렬)는 수의 1처럼 \(AI = IA = A\)이다.</p>
 
     <h3><span class="no">1.1.4</span>곱을 읽는 여러 방법</h3>
-    <p>같은 곱을 여러 방식으로 읽을 수 있으면 통계 공식을 이해하기 쉬워집니다. \(A\)의 열들을 \(\mathbf a_1, \ldots, \mathbf a_n\)이라 할 때</p>
-    <ol>
-      <li><b>성분으로</b>: \((AB)_{ij}\)는 \(A\)의 행과 \(B\)의 열의 내적(정의 그대로).</li>
-      <li><b>열의 가중합으로</b>: \(A\mathbf x = x_1\mathbf a_1 + x_2\mathbf a_2 + \cdots + x_n\mathbf a_n\). 곧 \(A\)에 벡터를 곱하면 \(A\)의 열들을 \(\mathbf x\)의 성분만큼 곱해 더한 것입니다. 예를 들어 \(\begin{pmatrix}1 & 2\\ 3 & 4\end{pmatrix}\begin{pmatrix}2\\ 1\end{pmatrix} = 2\begin{pmatrix}1\\ 3\end{pmatrix} + 1\begin{pmatrix}2\\ 4\end{pmatrix} = \begin{pmatrix}4\\ 10\end{pmatrix}\).</li>
-      <li><b>행의 가중합으로</b>: \(\mathbf y^\top A\)는 \(A\)의 행들을 \(\mathbf y\)의 성분만큼 곱해 더한 것.</li>
-      <li><b>열 × 행의 합으로</b>: \(AB = \mathbf a_1\mathbf b_1^\top + \cdots + \mathbf a_n\mathbf b_n^\top\) (\(\mathbf b_k^\top\)은 \(B\)의 \(k\)번째 행). 열벡터와 행벡터의 곱은 행렬이 됩니다.</li>
-    </ol>
-    <p>2번은 회귀분석(응통10)에서 "예측값 \(X\boldsymbol\beta\)는 설명변수 열들을 계수만큼 곱해 더한 것"이라는 해석이고, 4번은 \(X^\top X\)가 관측값마다 만든 작은 행렬의 합이라는 해석입니다.</p>
+    <p>같은 곱을 여러 방식으로 읽을 수 있으면 통계 공식을 이해하기 쉬워진다. 정의 그대로 읽으면 \((AB)_{ij}\)는 행과 열의 내적이다. 그런데 \(A\)의 열들을 \(\mathbf a_1, \ldots, \mathbf a_n\)이라 하면 \(A\mathbf x = x_1\mathbf a_1 + \cdots + x_n\mathbf a_n\)으로도 읽을 수 있다. 다시 말해 \(A\)에 벡터를 곱하면 \(A\)의 열들을 \(\mathbf x\)의 성분만큼 곱해 더한 것이다. 그림 1이 이것을 보여 준다. 같은 방식으로 \(\mathbf y^\top A\)는 \(A\)의 행들의 가중합이다. 마지막으로 \(B\)의 \(k\)번째 행을 \(\mathbf b_k^\top\)라 하면 \(AB = \mathbf a_1\mathbf b_1^\top + \cdots + \mathbf a_n\mathbf b_n^\top\), 곧 열벡터와 행벡터를 곱해 만든 행렬들의 합이다.</p>
+    <p>둘째 읽기는 회귀분석(응통10)에서 예측값 \(X\boldsymbol\beta\)가 설명변수 열들을 계수만큼 곱해 더한 것이라는 해석이 된다. 넷째 읽기는 \(X^\top X\)가 관측값마다 만든 작은 행렬의 합이라는 해석이다.</p>
 
     <h3><span class="no">1.1.5</span>블록 행렬</h3>
-    <p>큰 행렬을 가로세로 선으로 나누어 작은 행렬 덩어리(블록)로 보면, 크기가 맞을 때 덩어리를 성분처럼 곱할 수 있습니다.</p>
-    \[\begin{pmatrix}A & B\\ C & D\end{pmatrix}\begin{pmatrix}E\\ F\end{pmatrix} = \begin{pmatrix}AE + BF\\ CE + DF\end{pmatrix}\]
-    <p>다만 덩어리끼리의 곱도 행렬 곱이라 순서(\(AE\)이지 \(EA\)가 아님)를 지켜야 합니다. 변수를 두 묶음으로 나누어 다룰 때(다변량 분석, 응통19) 자주 씁니다.</p>
+    <p>큰 행렬을 가로세로 선으로 나누어 작은 행렬 덩어리, 곧 블록으로 보면, 크기가 맞을 때 덩어리를 성분처럼 곱할 수 있다.</p>
+    \[\begin{pmatrix}A &amp; B\\ C &amp; D\end{pmatrix}\begin{pmatrix}E\\ F\end{pmatrix} = \begin{pmatrix}AE + BF\\ CE + DF\end{pmatrix}\]
+    <p>물론 덩어리끼리의 곱도 행렬 곱이라 \(EA\)가 아니라 \(AE\)처럼 순서를 지켜야 한다. 변수를 두 묶음으로 나누어 다루는 다변량 분석(응통19)에서 자주 쓴다.</p>
 
     <div class="tb-env ex">
-      <span class="lb">예제 1.1.4</span>
-      <p>세 사람의 자료로 만든 행렬 \(X = \begin{pmatrix}1 & 2\\ 1 & 4\\ 1 & 6\end{pmatrix}\) (첫 열은 모두 1, 둘째 열은 변수 \(x\))에 대해 \(X^\top X\)와 \(\frac13\mathbf 1^\top X\)를 구하세요. \(\mathbf 1\)은 성분이 모두 1인 벡터입니다.</p>
+      <span class="lb">예제 1.1.3</span>
+      <p>세 사람의 자료로 만든 행렬 \(X = \begin{pmatrix}1 &amp; 2\\ 1 &amp; 4\\ 1 &amp; 6\end{pmatrix}\)(첫 열은 모두 1, 둘째 열은 변수 \(x\))에 대해 \(X^\top X\)와 \(\frac13\mathbf 1^\top X\)를 구하여라. \(\mathbf 1\)은 성분이 모두 1인 벡터이다.</p>
     </div>
-    <p><i>풀이.</i> \(X^\top\)는 \(2\times3\)이고 \(X\)는 \(3\times2\)이므로 곱은 \(2\times2\)입니다. \((1, 1)\) 성분은 첫 열끼리의 내적 \(1 + 1 + 1 = 3\), \((1, 2)\) 성분은 첫 열과 둘째 열의 내적 \(2 + 4 + 6 = 12\), \((2, 2)\) 성분은 둘째 열끼리의 내적 \(4 + 16 + 36 = 56\)이므로 \(X^\top X = \begin{pmatrix}3 & 12\\ 12 & 56\end{pmatrix}\)입니다. 곧 성분이 차례로 \(n\), \(\sum x\), \(\sum x^2\)입니다. \(\mathbf 1^\top X = (3, 12)\)이므로 \(\frac13\mathbf 1^\top X = (1, 4)\)로, 각 열의 평균입니다.</p>
+    <p><i>풀이.</i> \(X^\top\)는 \(2\times3\), \(X\)는 \(3\times2\)이므로 곱은 \(2\times2\)이다. \((1, 1)\) 성분은 첫 열끼리의 내적 3, \((1, 2)\) 성분은 첫 열과 둘째 열의 내적 \(2 + 4 + 6 = 12\), \((2, 2)\) 성분은 둘째 열끼리의 내적 \(4 + 16 + 36 = 56\)이다. 따라서 \(X^\top X = \begin{pmatrix}3 &amp; 12\\ 12 &amp; 56\end{pmatrix}\)이고, 성분이 차례로 \(n\), \(\sum x\), \(\sum x^2\)이다. 또 \(\mathbf 1^\top X = (3, 12)\)이므로 \(\frac13\mathbf 1^\top X = (1, 4)\)는 각 열의 평균이다. 처음 질문처럼 평균과 제곱합을 한 줄의 식으로 쓴 것이다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>행렬 곱을 같은 자리 성분끼리 곱하는 것으로 착각하기 쉽다. 그런 곱(원소별 곱)은 따로 있고 표준 행렬 곱과 다르다. R에서도 행렬 곱은 <code>%*%</code>, 원소별 곱은 <code>*</code>로 기호가 다르다(응통3).</div>
 
-    <div class="tb-note">
-      <b>흔한 실수</b>
-      <p>행렬 곱을 같은 자리 성분끼리 곱하는 것으로 착각하기 쉽습니다. 그런 곱(원소별 곱)은 따로 있고 표준 행렬 곱과 다릅니다. R에서도 행렬 곱은 <code>%*%</code>, 원소별 곱은 <code>*</code>로 기호가 다릅니다(응통3).</p>
-    </div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>행렬은 수의 직사각형 표, 벡터는 열이 하나인 행렬입니다. 전치는 행과 열을 바꿉니다.</li>
-        <li>\(AB\)의 \((i, j)\) 성분은 \(A\)의 \(i\)행과 \(B\)의 \(j\)열의 내적입니다. 결합법칙은 성립하지만 교환법칙은 일반적으로 성립하지 않습니다.</li>
-        <li>\(A\mathbf x\)는 \(A\)의 열들의 가중합이고, 큰 행렬은 블록으로 나누어 곱할 수 있습니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>자료 표는 행렬이고, 덧셈과 실수배는 성분끼리, 전치는 행과 열을 바꾸는 연산이다. 행렬 곱 \(AB\)의 \((i, j)\) 성분은 \(A\)의 \(i\)행과 \(B\)의 \(j\)열의 내적이며, 결합법칙은 성립하지만 교환법칙은 일반적으로 성립하지 않는다. \(A\mathbf x\)를 열들의 가중합으로, 큰 행렬을 블록으로 읽으면 평균, 제곱합, 회귀의 예측값 같은 통계량을 한 줄의 행렬식으로 쓸 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.6</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(A = \begin{pmatrix}2 & 0\\ 1 & 3\end{pmatrix}\), \(\mathbf x = \begin{pmatrix}1\\ -1\end{pmatrix}\)일 때 \(A\mathbf x\), \(A^\top\), \(\mathbf x^\top\mathbf x\)를 구하세요.
-          <details><summary>답</summary><p>\(A\mathbf x = \begin{pmatrix}2\\ -2\end{pmatrix}\), \(A^\top = \begin{pmatrix}2 & 1\\ 0 & 3\end{pmatrix}\), \(\mathbf x^\top\mathbf x = 1 + 1 = 2\).</p></details>
+        <li>\(A = \begin{pmatrix}2 &amp; 0\\ 1 &amp; 3\end{pmatrix}\), \(\mathbf x = (1, -1)^\top\)일 때 \(A\mathbf x\), \(A^\top\), \(\mathbf x^\top\mathbf x\)를 구하여라.
+          <details><summary>답</summary><p>\(A\mathbf x = (2, -2)^\top\), \(A^\top = \begin{pmatrix}2 &amp; 1\\ 0 &amp; 3\end{pmatrix}\), \(\mathbf x^\top\mathbf x = 2\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(\mathbf 1\)이 길이 \(n\)인 벡터(성분이 모두 1)일 때 \(\frac1n\mathbf 1\mathbf 1^\top\mathbf x\)는 어떤 벡터인가요?
-          <details><summary>답</summary><p>\(\mathbf 1^\top\mathbf x = \sum x_i\)이므로 \(\frac1n\mathbf 1(\sum x_i) = \bar x\mathbf 1\), 곧 모든 성분이 평균 \(\bar x\)인 벡터입니다. 그래서 \(\mathbf x - \frac1n\mathbf 1\mathbf 1^\top\mathbf x\)는 평균에서의 편차들을 모은 벡터입니다.</p></details>
+      <ol start="2">
+        <li>\(\mathbf 1\)이 성분이 모두 1인 길이 \(n\)인 벡터일 때 \(\frac1n\mathbf 1\mathbf 1^\top\mathbf x\)는 어떤 벡터인가?
+          <details><summary>답</summary><p>\(\mathbf 1^\top\mathbf x = \sum x_i\)이므로 \(\bar x\mathbf 1\), 곧 모든 성분이 평균 \(\bar x\)인 벡터이다. 그래서 \(\mathbf x - \frac1n\mathbf 1\mathbf 1^\top\mathbf x\)는 평균에서의 편차를 모은 벡터이다.</p></details>
         </li>
       </ol>
     </div>
