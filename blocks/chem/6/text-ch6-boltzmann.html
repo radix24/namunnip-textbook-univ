@@ -8,58 +8,64 @@
 <article class="card q-card" id="text-ch6-boltzmann" data-kind="본문" data-std="화학6-06-01">
   <header class="card-head"><span class="no"></span><h2>볼츠만 분포와 분배함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>많은 분자가 에너지 준위에 어떻게 나뉘어 있는지를 볼츠만 분포로 계산한다.</li>
-        <li>분배함수를 정의하고 "열적으로 채워진 준위의 수"로 해석한다.</li>
-        <li>축퇴도와 온도가 준위 점유에 주는 영향을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>양자화된 에너지 준위(상자, 진동자, 회전자) (<a href="02-02.html">2.2절</a>).</li>
-        <li>지수 함수와 무한 등비급수 \(\sum_{n=0}^\infty r^n = 1/(1 - r)\) (공통1).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실온의 HCl 기체에는 분자가 10²³개쯤 있다. 이 가운데 진동이 한 단계 들뜬 분자는 몇 개쯤일까? 그리고 압력이나 엔트로피처럼 수많은 분자의 성질을, 분자 하나의 에너지 준위에서 어떻게 계산해 낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="세 온도에서 고른 간격 준위의 볼츠만 점유 막대">
+        <path d="M40 170 H520" class="ax"/>
+        <rect x="40" y="152" width="121" height="14" class="fa"/>
+        <rect x="40" y="128" width="16" height="14" class="fa"/>
+        <rect x="40" y="104" width="2" height="14" class="fa"/>
+        <rect x="40" y="80" width="1" height="14" class="fa"/>
+        <rect x="40" y="56" width="1" height="14" class="fa"/>
+        <rect x="40" y="32" width="1" height="14" class="fa"/>
+        <text x="165" y="164" class="s">0.86</text>
+        <rect x="210" y="152" width="88" height="14" class="fa"/>
+        <rect x="210" y="128" width="33" height="14" class="fa"/>
+        <rect x="210" y="104" width="12" height="14" class="fa"/>
+        <rect x="210" y="80" width="4" height="14" class="fa"/>
+        <rect x="210" y="56" width="2" height="14" class="fa"/>
+        <rect x="210" y="32" width="1" height="14" class="fa"/>
+        <text x="302" y="164" class="s">0.63</text>
+        <rect x="380" y="152" width="40" height="14" class="fa"/>
+        <rect x="380" y="128" width="28" height="14" class="fa"/>
+        <rect x="380" y="104" width="20" height="14" class="fa"/>
+        <rect x="380" y="80" width="15" height="14" class="fa"/>
+        <rect x="380" y="56" width="10" height="14" class="fa"/>
+        <rect x="380" y="32" width="7" height="14" class="fa"/>
+        <text x="424" y="164" class="s">0.28</text>
+        <g class="s"><text x="110" y="190" text-anchor="middle">kT = 0.5 Δε</text><text x="280" y="190" text-anchor="middle">kT = Δε</text><text x="450" y="190" text-anchor="middle">kT = 3 Δε</text></g>
+        <text x="40" y="22" class="s">막대는 아래에서부터 준위 0, 1, 2, … 의 점유 비율</text>
+      </svg>
+      <figcaption>그림 1. 간격 \(\Delta\varepsilon\)으로 고르게 놓인 준위의 볼츠만 점유. 열에너지 \(kT\)가 간격보다 작으면 거의 모든 분자가 바닥 준위에 있고, \(kT\)가 커질수록 위 준위가 채워진다. 점유의 비율은 늘 위로 갈수록 지수적으로 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>상자, 진동자, 회전자의 양자화된 에너지 준위(<a href="02-02.html">2.2절</a>)와 지수 함수, 무한 등비급수 \(\sum_{n=0}^\infty r^n = 1/(1 - r)\)(공통1)를 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>분자 하나에서 몰 단위로</h3>
-    <p>1~5단원은 분자 하나의 에너지 준위를 다뤘습니다. 그런데 실험에서 재는 압력, 엔탈피, 엔트로피는 10²³개 분자의 성질입니다. 개별 준위에서 이런 거시적 성질로 건너가는 다리가 통계열역학이고, 그 출발점이 "열평형에서 분자들이 준위에 어떻게 나뉘는가"입니다. 5.1절에서 회전선의 세기를 설명할 때 이미 이 분포를 썼습니다.</p>
+    <p>1~5단원은 분자 하나의 에너지 준위를 다뤘다. 그런데 실험에서 재는 압력, 엔탈피, 엔트로피는 10²³개 분자의 성질이다. 개별 준위에서 이런 거시적 성질로 건너가는 다리가 <em>통계열역학</em>이고, 그 출발점은 열평형에서 분자들이 준위에 어떻게 나뉘는가이다. 5.1절에서 회전선의 세기를 설명할 때 이미 이 분포를 썼다.</p>
 
     <h3><span class="no">6.1.2</span>볼츠만 분포</h3>
     <div class="tb-env thm">
       <span class="lb">식 6.1.1 <span class="nm">(볼츠만 분포)</span></span>
-      <p>온도 T에서 열평형에 있는 계의 분자 중 에너지 \(\varepsilon_i\), 축퇴도 \(g_i\)인 준위에 있는 비율은</p>
-      <p>\[ \frac{N_i}{N} = \frac{g_ie^{-\varepsilon_i/kT}}{q}, \qquad q = \sum_j g_je^{-\varepsilon_j/kT} \]</p>
+      <p>온도 \(T\)에서 열평형에 있는 계의 분자 가운데 에너지 \(\varepsilon_i\), 축퇴도 \(g_i\)인 준위에 있는 비율은 다음과 같다.</p>
+      \[\frac{N_i}{N} = \frac{g_ie^{-\varepsilon_i/kT}}{q}, \qquad q = \sum_j g_je^{-\varepsilon_j/kT}\]
     </div>
-    <p>이 식은 분자들이 에너지를 서로 주고받을 때, 전체 에너지가 일정하다는 조건에서 가장 많은 방법으로 실현되는 분포로 유도됩니다(유도는 교재에 따름). 식의 각 부분을 읽어 봅시다.</p>
-    <ul>
-      <li>\(e^{-\varepsilon/kT}\): 에너지가 높을수록 지수적으로 드뭅니다. 비교 기준은 열에너지 kT입니다. 298 K에서 kT = 4.11×10⁻²¹ J = 207 cm⁻¹ = 2.48 kJ/mol(몰당 RT).</li>
-      <li>\(g_i\): 같은 에너지의 상태가 여럿이면 그만큼 더 많이 채워집니다.</li>
-      <li>q: 모든 비율의 합이 1이 되도록 나누는 수입니다.</li>
-    </ul>
-    <p>두 준위의 비는 q 없이 바로 쓸 수 있어 자주 씁니다: \(N_j/N_i = (g_j/g_i)e^{-(\varepsilon_j - \varepsilon_i)/kT}\).</p>
+    <p>이 식은 분자들이 에너지를 서로 주고받을 때, 전체 에너지가 일정하다는 조건에서 가장 많은 방법으로 실현되는 분포로 유도된다. 식을 부분별로 읽어 보자. 먼저 \(e^{-\varepsilon/kT}\)는 에너지가 높은 준위일수록 지수적으로 드물다는 것을 뜻한다. 비교 기준은 열에너지 \(kT\)로, 298 K에서 \(kT = 4.11\times10^{-21}\) J = 207 cm⁻¹이고 몰당 \(RT = 2.48\) kJ/mol이다. 다음으로 \(g_i\)는 같은 에너지의 상태가 여럿이면 그만큼 더 많이 채워진다는 것을 뜻한다. 마지막으로 \(q\)는 모든 비율의 합이 1이 되도록 나누는 수이다.</p>
+    <p>한편 두 준위의 비는 \(q\) 없이 바로 쓸 수 있어 자주 쓴다.</p>
+    \[\frac{N_j}{N_i} = \frac{g_j}{g_i}e^{-(\varepsilon_j - \varepsilon_i)/kT}\]
     <div class="tb-env ex">
-      <span class="lb">예제 6.1.2</span>
+      <span class="lb">예제 6.1.1</span>
       <p>298 K에서 (가) HCl의 첫째 들뜬 진동 준위(2886 cm⁻¹ 위), (나) N₂의 첫째 들뜬 진동 준위(2358 cm⁻¹ 위), (다) 바닥과 1000 cm⁻¹ 떨어진 두 준위계의 들뜬 준위 점유율을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 비는 \(e^{-\Delta\tilde\nu/207.2}\)입니다. (가) \(e^{-13.93} = 8.9\times10^{-7}\). (나) \(e^{-11.38} = 1.1\times10^{-5}\). (다) \(e^{-4.83} = 0.0080\)이고 점유율은 0.0080/(1 + 0.0080) = 0.79%입니다. 이 단원의 자기 점검 질문 "실온에서 HCl의 첫째 들뜬 진동 준위 점유율"의 답이 약 10⁻⁶입니다. 그래서 IR 흡수는 거의 모두 v = 0에서 시작합니다.</p>
+    <p><i>풀이.</i> 바닥에 대한 비는 \(e^{-\Delta\tilde\nu/207.2}\)이다. (가) \(e^{-13.93} = 8.9\times10^{-7}\)이다. (나) \(e^{-11.38} = 1.1\times10^{-5}\)이다. (다) \(e^{-4.83} = 0.0080\)이고, 점유율은 \(0.0080/(1 + 0.0080) = 0.79\%\)이다. 처음 질문의 답은 (가)이다. 실온에서 HCl의 들뜬 진동 준위에는 분자 백만 개 가운데 하나쯤만 있으며, 그래서 IR 흡수는 거의 모두 \(v = 0\)에서 시작한다.</p>
 
     <h3><span class="no">6.1.3</span>분배함수의 뜻</h3>
-    <p class="q-term"><b>분자 분배함수 q</b>: \(q = \sum_j g_je^{-\varepsilon_j/kT}\). 바닥 준위의 에너지를 0으로 잡으면, q는 그 온도에서 분자들이 "실제로 쓰고 있는" 상태의 수를 어림한 것입니다.</p>
-    <p>아주 낮은 온도에서는 모든 분자가 바닥 상태에 있어 q → g₀(보통 1)이고, 온도가 높아질수록 위 준위들이 채워져 q가 커집니다. 예를 들어 진동 준위가 \(h\nu\) 간격으로 고르게 놓였다면(바닥을 0으로)</p>
-    <p>\[ q_\mathrm{vib} = \sum_{v=0}^\infty e^{-vh\nu/kT} = \frac{1}{1 - e^{-h\nu/kT}} \]</p>
-    <p>입니다(등비급수). HCl은 298 K에서 1.0000009로 바닥 상태만 쓰고, I₂(214.5 cm⁻¹)는 1.55로 여러 진동 준위가 채워져 있습니다. 분배함수를 알면 모든 열역학 함수를 계산할 수 있습니다(6.3절). 그래서 통계열역학의 계산은 대부분 "q 구하기"입니다.</p>
-    <div class="tb-note"><b>흔한 오해</b>"온도가 무한히 높으면 위 준위가 바닥 준위보다 많아진다"는 열평형에서는 일어나지 않습니다. T → ∞에서 각 상태의 점유가 같아질 뿐입니다(축퇴도를 고려하면 준위 단위로는 위가 많을 수 있음). 레이저의 밀도 반전은 평형이 아닌 상태입니다. 또 kT와 비교할 때 단위를 맞추세요. 207 cm⁻¹, 2.48 kJ/mol, 0.0257 eV가 모두 298 K의 kT(또는 RT)입니다.</div>
+    <p>볼츠만 분포의 분모 \(q = \sum_j g_je^{-\varepsilon_j/kT}\)를 <em>분자 분배함수</em>라 한다. 바닥 준위의 에너지를 0으로 잡으면, \(q\)는 그 온도에서 분자들이 실제로 쓰고 있는 상태의 수를 어림한 것이다. 아주 낮은 온도에서는 모든 분자가 바닥 상태에 있어 \(q \to g_0\)(보통 1)이고, 온도가 높아질수록 위 준위들이 채워져 \(q\)가 커진다.</p>
+    <p>가령 진동 준위가 \(h\nu\) 간격으로 고르게 놓였다면, 바닥을 0으로 잡아 등비급수로 다음을 얻는다.</p>
+    \[q_\mathrm{vib} = \sum_{v=0}^\infty e^{-vh\nu/kT} = \frac{1}{1 - e^{-h\nu/kT}}\]
+    <p>298 K에서 HCl은 \(q_\mathrm{vib} = 1.0000009\)로 바닥 상태만 쓰고, I₂(214.5 cm⁻¹)는 1.55로 여러 진동 준위가 채워져 있다. 분배함수를 알면 모든 열역학 함수를 계산할 수 있다(6.3절). 처음 질문의 둘째 물음에 대한 답이 이것이며, 그래서 통계열역학의 계산은 대부분 \(q\)를 구하는 일이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>온도가 아주 높으면 위 준위가 바닥 준위보다 많이 채워진다고 생각하기 쉽지만, 열평형에서는 그런 일이 없다. \(T \to \infty\)에서 각 상태의 점유가 같아질 뿐이며, 축퇴도를 고려하면 준위 단위로는 위가 많을 수 있다. 레이저의 밀도 반전은 평형이 아닌 상태이다. 또 \(kT\)와 비교할 때는 단위를 맞추며, 207 cm⁻¹, 2.48 kJ/mol, 0.0257 eV가 모두 298 K의 \(kT\)(또는 \(RT\))이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>볼츠만 분포 \(N_i/N = g_ie^{-\varepsilon_i/kT}/q\). 기준은 kT(298 K에서 207 cm⁻¹).</li>
-        <li>두 준위의 비는 \((g_j/g_i)e^{-\Delta\varepsilon/kT}\).</li>
-        <li>분배함수 q는 열적으로 쓰이는 상태의 수다. 진동: \(q = 1/(1 - e^{-h\nu/kT})\).</li>
-        <li>실온에서 대부분 분자의 진동은 바닥 상태, 회전은 여러 준위가 채워진다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>열평형의 분자는 볼츠만 분포 \(N_i/N = g_ie^{-\varepsilon_i/kT}/q\)를 따라 준위에 나뉘며, 기준은 298 K에서 207 cm⁻¹인 \(kT\)이다. 두 준위의 비는 \((g_j/g_i)e^{-\Delta\varepsilon/kT}\)이어서, 처음 질문의 HCl에서 들뜬 진동 준위의 분자는 백만 개에 하나 꼴이다. 분배함수 \(q\)는 열적으로 쓰이는 상태의 수이고, 진동에서는 \(q = 1/(1 - e^{-h\nu/kT})\)이며, 이것에서 모든 열역학 함수가 나온다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.4</span>연습문제</h3>
