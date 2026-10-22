@@ -8,62 +8,60 @@
 <article class="card q-card" id="text-e22-sserror" data-kind="본문" data-std="전전22-03-02">
   <header class="card-head"><span class="no"></span><h2>시스템 형과 정상상태 오차</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>개루프의 원점 극점 수(시스템 형)를 센다.</li>
-        <li>위치·속도·가속도 오차 상수 K_p, K_v, K_a로 정상상태 오차를 구한다.</li>
-        <li>적분기가 오차를 없애는 원리를 최종값 정리로 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>최종값 정리 (<a href="01-01.html">1.1절</a>), 폐루프 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">레이더 안테나가 비행기를 따라가는데, 정지한 목표는 정확히 가리키지만 일정한 속도로 움직이는 목표는 늘 조금씩 뒤처진다. 이 남는 오차는 이득을 키우면 없어질까? 아니면 제어기 구조 자체를 바꿔야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 형 1 시스템의 경사 입력 추종(개형). G = K/(s(s + 1)(s + 2))는 개루프 원점 극점이 하나인 형 1 시스템이라 계단 입력에는 오차가 없지만, 단위 경사 입력은 일정한 오차 1/K_v로 따라간다. K = 4면 K_v = 2라 오차는 0.5이다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 170 L440 40" class="k dsh" stroke-width="2"/>
+        <path d="M80 170 C130 168, 170 150, 200 138 L440 58" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M390 76 V58" class="d" stroke-width="2.5"/>
+        <g class="s"><text x="300" y="74">목표 r = t</text><text x="300" y="126" class="ta">출력 y</text><text x="398" y="94" class="td">오차 1/K_v = 0.5</text><text x="420" y="186">시간</text></g>
+      </svg>
+      <figcaption>그림 1. 적분기가 하나인 시스템은 일정한 오차가 있어야 일정한 속도의 출력을 낼 수 있으므로, 경사 목표를 같은 기울기로 따라가되 그 오차만큼 늘 뒤처진다(예제 3.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최종값 정리(<a href="01-01.html">1.1절</a>), 폐루프(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>오차 상수</h3>
-    <p>단위 궤환에서 \(E = R/(1 + G)\). 최종값 정리로</p>
+    <p>단위 궤환에서 오차는 \(E = R/(1 + G)\)이다. 최종값 정리로 이 오차의 최종값을 구하면, 입력의 종류와 개루프 G가 원점에 가진 극점의 개수에 따라 결과가 갈린다. 이 개수를 시스템의 형이라 한다. 처음 질문의 답이 이것으로, 남는 오차는 이득이 아니라 형이 결정한다.</p>
     <table class="tb-table">
       <tr><th>입력</th><th>오차</th><th>형 0</th><th>형 1</th><th>형 2</th></tr>
       <tr><td>계단</td><td>1/(1 + K_p), K_p = G(0)</td><td>유한</td><td>0</td><td>0</td></tr>
       <tr><td>경사</td><td>1/K_v, K_v = lim sG</td><td>∞</td><td>유한</td><td>0</td></tr>
       <tr><td>포물선</td><td>1/K_a, K_a = lim s²G</td><td>∞</td><td>∞</td><td>유한</td></tr>
     </table>
+    <p>즉 원점 극점, 곧 적분기가 하나 늘 때마다 한 단계 더 어려운 입력을 오차 없이 따라간다. 왜냐하면 적분기는 오차가 남아 있는 한 출력을 계속 바꾸고, 오차가 0이 되어야만 멈추기 때문이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>\(G = K/(s(s + 1)(s + 2))\)(형 1)에서 K = 4일 때 단위 경사 입력의 정상상태 오차는? (3.1절에서 안정)</p>
     </div>
-    <p><i>풀이.</i> \(K_v = \lim_{s\to0}sG = K/2 = 2\), 오차 0.5. 오차를 0.2로 줄이려면 K = 10이 필요하지만 K &lt; 6이라 불안정해집니다. 정확도와 안정도의 충돌이며, 지상 보상기(4.2절)나 PI 제어(4.3절)로 해결합니다.</p>
+    <p><i>풀이.</i> \(K_v = \lim_{s\to0}sG = K/2 = 2\)이므로 오차는 0.5이다(그림 1). 그런데 오차를 0.2로 줄이려면 K = 10이 필요하지만, K &lt; 6이어야 안정하므로 불안정해진다. 즉 이것이 정확도와 안정도의 충돌이며, 지상 보상기(4.2절)나 PI 제어(4.3절)로 해결한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "최종값 정리는 언제나 쓸 수 있다": 폐루프가 안정할 때만 씁니다. (2) "이득을 키우면 오차가 0이 된다": 형 0에서 계단 오차는 1/(1 + K)로 줄 뿐 0이 되지 않습니다.</div>
+    <p>한편 실제 목표는 계단, 경사, 포물선이 섞여 있다. 예를 들어 위성 추적 안테나는 거의 일정한 각속도로 돌아가므로 경사 입력에 가깝고, 그래서 형 2 루프를 쓰는 경우가 많다. 따라서 설계자는 먼저 목표 신호의 종류를 보고 필요한 형을 정한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>형 = 개루프 원점 극점 수.</li>
-        <li>계단 1/(1 + K_p), 경사 1/K_v, 포물선 1/K_a.</li>
-        <li>적분기(형 증가)가 오차를 없앤다. 안정도와 교환.</li>
-      </ol>
-    </div>
+    <p>그런데 형을 올리는 적분기는 위상을 90° 늦춘다. 그러므로 적분기를 여러 개 넣을수록 안정을 지키기가 어려워지고, 실제로 형 3 이상의 루프는 거의 쓰지 않는다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>최종값 정리를 언제나 쓸 수 있다고 여기기 쉽다. 최종값 정리는 폐루프가 안정할 때만 쓸 수 있다. 또 이득을 키우면 오차가 0이 된다고 생각하기 쉬운데, 형 0에서 계단 오차는 1/(1 + K)로 줄어들 뿐 0이 되지 않는다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>시스템의 형은 개루프 원점 극점의 수이다. 정상상태 오차는 계단 1/(1 + K_p), 경사 1/K_v, 포물선 1/K_a이다. 적분기를 더해 형을 올리면 오차가 없어지지만, 안정도와 맞바꾼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>G = 9/(s + 1)의 계단 정상상태 오차는?
-          <details><summary>답</summary><p>0.1.</p></details>
+          <details><summary>답</summary><p>0.1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>G = 10/(s(s + 5))의 경사 오차는?
-          <details><summary>답</summary><p>K_v = 2, 오차 0.5.</p></details>
+          <details><summary>답</summary><p>K_v = 2, 오차 0.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>형 2 시스템의 계단·경사 오차는?
-          <details><summary>답</summary><p>둘 다 0.</p></details>
+          <details><summary>답</summary><p>둘 다 0이다.</p></details>
         </li>
       </ol>
     </div>

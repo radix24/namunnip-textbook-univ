@@ -8,62 +8,60 @@
 <article class="card q-card" id="text-e22-pid" data-kind="본문" data-std="전전22-04-03">
   <header class="card-head"><span class="no"></span><h2>PID 제어기 각 항의 역할</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비례(P), 적분(I), 미분(D) 항이 응답에 주는 효과를 안다.</li>
-        <li>1차 플랜트에서 P와 PI 제어의 정상상태 오차를 비교한다.</li>
-        <li>미분 항의 잡음 문제와 적분 와인드업을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정상상태 오차 (<a href="03-02.html">3.2절</a>), 2차 시스템 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">산업 현장의 제어 루프는 대부분 PID 제어기 하나로 돌아간다. 비례, 적분, 미분의 세 항은 각각 응답의 무엇을 바꿀까? 그리고 셋을 모두 크게 하면 언제나 좋아질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 P 제어와 PI 제어의 계단 응답(개형). 플랜트 1/(s + 1)에 P 제어 K_p = 9를 쓰면 폐루프 9/(s + 10)이 시상수 0.1 s로 0.9에 머물러 오차 0.1이 남는다. PI 제어 9 + 9/s를 쓰면 폐루프 9/(s + 9)가 시상수 0.111 s로 1에 이르러 오차가 0이 된다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 50 H460" class="k dsh"/>
+        <path d="M80 170 C100 90, 120 66, 160 62 H460" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 170 C102 90, 124 58, 170 51 H460" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M420 62 V50" class="d" stroke-width="2.5"/>
+        <g class="s"><text x="200" y="80" class="ta">P 9: 0.9, 오차 0.1</text><text x="200" y="42" class="tb">PI 9 + 9/s: 오차 0</text><text x="428" y="64" class="td">0.1</text><text x="420" y="186">시간</text></g>
+      </svg>
+      <figcaption>그림 1. 비례 항은 반응을 빠르게 하지만 오차가 있어야 입력을 내므로 오차가 남고, 적분 항은 남은 오차를 쌓아 입력을 키우므로 최종 오차를 없앤다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정상상태 오차(<a href="03-02.html">3.2절</a>), 2차 시스템(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>세 항</h3>
-    \[ u(t) = K_pe + K_i\int e\,dt + K_d\dot e, \qquad C(s) = K_p + \frac{K_i}{s} + K_ds. \]
-    <ul>
-      <li><b>P</b>: 오차에 비례. 반응을 빠르게 하지만 형 0 플랜트의 계단 오차를 없애지 못한다.</li>
-      <li><b>I</b>: 오차의 누적. 원점 극점을 더해 계단 오차를 0으로. 위상이 늦어 넘침·진동이 늘 수 있다.</li>
-      <li><b>D</b>: 오차의 변화율. 감쇠를 더해 넘침을 줄인다. 고주파 잡음을 키우므로 필터를 붙인다.</li>
-    </ul>
+    <div class="tb-env thm">
+      <span class="lb">PID 제어기</span>
+      <p>\[ u(t) = K_pe + K_i\int e\,dt + K_d\dot e \]</p>
+      <p>\[ C(s) = K_p + \frac{K_i}{s} + K_ds \]</p>
+    </div>
+    <p>P 항은 지금의 오차에 비례한다. 반응을 빠르게 하지만, 형 0 플랜트의 계단 오차를 없애지 못한다. 반면 I 항은 오차의 누적이다. 원점 극점을 더해 계단 오차를 0으로 만들지만, 위상이 늦어 넘침과 진동이 늘 수 있다. 그리고 D 항은 오차의 변화율로, 감쇠를 더해 넘침을 줄인다. 다만 고주파 잡음을 키운다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>플랜트 \(1/(s + 1)\), 단위 궤환. (가) P 제어 K_p = 9의 계단 오차와 시상수. (나) PI \(9 + 9/s\)이면?</p>
     </div>
-    <p><i>풀이.</i> (가) 폐루프 \(9/(s + 10)\), 최종값 0.9 → 오차 0.1, 시상수 0.1 s. (나) \(C G = 9(s + 1)/(s(s + 1)) = 9/s\)(영점이 플랜트 극점을 상쇄), 폐루프 \(9/(s + 9)\), 오차 0, 시상수 0.111 s. 적분 항이 오차를 없앴습니다.</p>
-    <p>구동기가 포화되었는데도 적분이 계속 쌓이면(와인드업) 큰 넘침이 생겨, 포화 시 적분을 멈추는 장치를 씁니다. 실무에서는 Ziegler-Nichols 같은 경험 규칙으로 시작해 조정합니다.</p>
+    <p><i>풀이.</i> (가) 폐루프는 \(9/(s + 10)\)이므로 최종값 0.9, 오차 0.1, 시상수 0.1 s이다. (나) \(CG = 9(s + 1)/(s(s + 1)) = 9/s\)로 영점이 플랜트 극점을 상쇄한다. 그러면 폐루프는 \(9/(s + 9)\)이고 오차 0, 시상수 0.111 s이다(그림 1). 즉 적분 항이 오차를 없앴다.</p>
+    <p>그런데 구동기가 포화되었는데도 적분이 계속 쌓이면 큰 넘침이 생기는데, 이것을 와인드업이라 한다. 그래서 포화되면 적분을 멈추는 장치를 둔다. 또 실무에서는 Ziegler-Nichols 같은 경험 규칙으로 이득을 정해 시작하고, 응답을 보며 조정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "이득을 모두 키우면 좋아진다": 넘침, 잡음, 불안정으로 이어집니다. (2) "D 항은 미래를 예측한다": 현재 기울기로 짧게 외삽할 뿐입니다.</div>
+    <p>PID 이득을 정하는 일은 결국 앞에서 배운 도구로 폐루프 극점을 옮기는 일이다. 즉 근궤적(4.1절)으로 보면 PI의 영점과 PD의 영점이 궤적을 끌어당기고, 주파수 응답(5.2절)으로 보면 D 항이 위상을 앞당기고 I 항이 위상을 늦춘다. 그러므로 PID는 진상·지상 보상기의 특별한 경우로 볼 수도 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P 속도, I 정상상태 오차 제거, D 감쇠.</li>
-        <li>예: 1/(s+1), P 9 → 오차 0.1; PI 9 + 9/s → 0.</li>
-        <li>D 잡음 필터, I 와인드업 방지.</li>
-      </ol>
-    </div>
+    <p>한편 산업용 PID는 대부분 디지털로 구현한다. 그러면 적분은 합으로, 미분은 차분으로 바뀌고, 표본화 주기가 지연을 더한다. 따라서 연속 시간으로 정한 이득을 옮길 때는 주기가 충분히 짧은지 함께 확인한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>세 이득을 모두 키우면 좋아진다고 여기기 쉽다. 이득을 지나치게 키우면 넘침, 잡음 증폭, 불안정으로 이어진다. 처음 질문의 둘째 답이 이것이다. 또 D 항이 미래를 예측한다고 생각하기 쉬운데, 현재의 기울기로 아주 짧게 내다볼 뿐이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>P는 반응 속도를, I는 정상상태 오차 제거를, D는 감쇠를 맡는다. 1/(s+1)에 P 9를 쓰면 오차 0.1이 남고, PI 9 + 9/s면 0이 된다. 실제 구현에는 D의 잡음과 I의 와인드업에 대비한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>P 제어 K_p = 19면 예제의 계단 오차는?
-          <details><summary>답</summary><p>0.05.</p></details>
+          <details><summary>답</summary><p>0.05이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>PI 제어기의 극점과 영점은(K_p = 2, K_i = 4)?
-          <details><summary>답</summary><p>극점 0, 영점 −2.</p></details>
+          <details><summary>답</summary><p>극점 0, 영점 −2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>센서 잡음이 큰 시스템에서 D 항을 어떻게 다루는가?
-          <details><summary>답</summary><p>저역 통과 필터를 붙이거나(K_ds/(τs + 1)) 측정값에만 미분(설정값 미분 제외)을 적용합니다.</p></details>
+          <details><summary>답</summary><p>저역 통과 필터를 붙이거나(K_ds/(τs + 1)) 측정값에만 미분(설정값 미분 제외)을 적용한다.</p></details>
         </li>
       </ol>
     </div>

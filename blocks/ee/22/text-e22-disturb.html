@@ -8,56 +8,58 @@
 <article class="card q-card" id="text-e22-disturb" data-kind="본문" data-std="전전22-03-03">
   <header class="card-head"><span class="no"></span><h2>외란 제거와 정상상태 오차</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>플랜트 입력 외란에 대한 폐루프 출력 \(Y/D = G/(1 + CG)\)를 유도한다.</li>
-        <li>P 제어와 PI 제어에서 계단 외란의 정상상태 영향을 계산한다.</li>
-        <li>적분기가 외란을 없애는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정상상태 오차 (<a href="03-02.html">3.2절</a>), PID (<a href="04-03.html">4.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">겨울에 실내 온도를 22 °C로 맞춰 둔 방의 문을 열면 찬바람이 들어와 온도가 떨어진다. 비례 제어 온도 조절기는 히터를 더 세게 틀지만, 문을 연 채로 두면 온도가 22 °C보다 조금 낮은 채로 머문다. 왜 끝까지 되돌리지 못할까? 어떤 제어기라야 외란을 완전히 이겨 낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 계단 외란에 대한 P 제어와 PI 제어(개형). 플랜트 1/(s + 1)에 단위 계단 외란이 들어오면 P 제어 K = 9는 출력이 0.1만큼 벗어난 채로 머물고, PI 제어 9 + 9/s는 적분기가 제어 입력을 서서히 키워 출력을 0으로 되돌린다">
+        <line x1="80" y1="150" x2="460" y2="150" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 150 H140 C160 100, 180 90, 220 90 H460" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 150 H140 C160 100, 175 85, 200 95 S260 145, 320 150 H460" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M140 30 V170" class="k dsh"/>
+        <g class="s"><text x="146" y="40">외란 시작</text><text x="330" y="84" class="ta">P: 0.1 남음</text><text x="330" y="140" class="tb">PI: 0으로 복귀</text><text x="420" y="186">시간</text><text x="86" y="26">출력 변화</text></g>
+      </svg>
+      <figcaption>그림 1. 비례 제어는 출력이 벗어나 있어야 외란을 상쇄할 입력을 낼 수 있어 오차가 남지만, 적분기는 오차가 남아 있는 한 입력을 계속 키우므로 결국 오차를 0으로 만든다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정상상태 오차(<a href="03-02.html">3.2절</a>), PID(<a href="04-03.html">4.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>적분이 이긴다</h3>
-    <p>플랜트 앞에 외란 D가 더해지면 \(Y = \frac{G}{1 + CG}D\). 최종값 정리로 계단 외란의 영향은 \(\lim_{s\to0}\frac{G}{1 + CG}\)입니다. 제어기에 적분기가 있으면 분모가 무한대로 가 영향이 0이 됩니다.</p>
+    <p>플랜트 G 앞에 외란 D가 더해지고 제어기 C가 단위 궤환으로 걸려 있다고 하자. 그러면 외란에서 출력까지의 전달함수는 아래와 같다.</p>
+    <div class="tb-env thm">
+      <span class="lb">외란에서 출력까지</span>
+      <p>\[ \frac{Y}{D} = \frac{G}{1 + CG} \]</p>
+      <p>계단 외란의 최종 영향은 최종값 정리로 \(\lim_{s\to0}\dfrac{G}{1 + CG}\)이다.</p>
+    </div>
+    <p>비례 제어 C = K이면 이 값은 G(0)/(1 + KG(0))로, 이득을 키우면 줄어들 뿐 0이 되지 않는다. 처음 질문의 첫째 답이 이것이다. 출력이 벗어나 있어야만 비례 제어기가 외란을 상쇄할 입력을 내기 때문이다. 반면 제어기에 적분기가 있으면 C(0)이 무한대가 되어 분모가 무한대로 가므로, 영향이 0이 된다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>G = 1/(s + 1). 단위 계단 외란에 대해 P 제어 K = 9와 PI 제어 9 + 9/s의 정상상태 출력 변화는?</p>
     </div>
-    <p><i>풀이.</i> P: G(0)/(1 + 9G(0)) = 1/10 = 0.1. PI: C(0) = ∞ → 0. 실내 온도 제어에서 문을 열어(외란) 열이 새도 적분기가 히터 출력을 서서히 올려 원래 온도로 되돌립니다.</p>
+    <p><i>풀이.</i> P 제어는 G(0)/(1 + 9G(0)) = 1/10 = 0.1이다. 한편 PI 제어는 C(0) = ∞이므로 0이다. 즉 실내 온도 제어에서 문을 열어 열이 새도, 적분기가 히터 출력을 서서히 올려 원래 온도로 되돌린다.</p>
+    <p>외란 제거와 목표 추종은 같은 원리를 다른 쪽에서 본 것이다. 목표 추종의 오차를 없애려면 개루프에 적분기가 있어야 하고(3.2절), 외란을 없애려면 외란이 들어오는 곳보다 앞, 곧 제어기에 적분기가 있어야 한다. 그러므로 플랜트에 적분기가 있더라도 플랜트 앞에서 들어오는 외란에는 제어기의 적분기가 따로 필요하다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "이득만 키우면 외란이 사라진다": 줄어들 뿐이며, 0이 되려면 적분기가 필요합니다. (2) "적분기는 공짜": 위상 지연으로 넘침·진동이 늘 수 있습니다.</div>
+    <p>실제 외란은 계단처럼 한 번 바뀌고 머무는 것만 있지 않다. 그러나 대부분의 외란은 천천히 변하므로, 저주파에서 루프 이득이 클수록 외란이 잘 억눌린다. 따라서 적분기는 저주파 이득을 무한대로 만들어 외란 제거의 가장 기본적인 도구가 된다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Y/D = G/(1 + CG).</li>
-        <li>P: 계단 외란 영향 G(0)/(1 + KG(0)), PI: 0.</li>
-        <li>예: K 9 → 0.1.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>이득만 충분히 키우면 외란이 사라진다고 여기기 쉽다. 이득을 키우면 영향이 줄어들 뿐이며, 0이 되려면 적분기가 필요하다. 또 적분기는 공짜라고 생각하기 쉬운데, 위상 지연 때문에 넘침과 진동이 늘 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>외란에서 출력까지의 전달함수는 Y/D = G/(1 + CG)이다. P 제어의 계단 외란 영향은 G(0)/(1 + KG(0))이고, PI 제어는 0이다. 예제에서 K = 9이면 영향은 0.1이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>P 이득 K = 99면 예제의 영향은?
-          <details><summary>답</summary><p>0.01.</p></details>
+          <details><summary>답</summary><p>0.01이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>G = 2/(s + 1), K = 4의 영향은?
-          <details><summary>답</summary><p>2/9 ≈ 0.22.</p></details>
+          <details><summary>답</summary><p>2/9 ≈ 0.22이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>외란이 경사(점점 커짐)면 PI로 충분한가?
-          <details><summary>답</summary><p>형 1 루프면 일정 오차가 남아 적분기가 하나 더 필요합니다.</p></details>
+          <details><summary>답</summary><p>형 1 루프면 일정 오차가 남아 적분기가 하나 더 필요하다.</p></details>
         </li>
       </ol>
     </div>

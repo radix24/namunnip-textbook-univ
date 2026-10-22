@@ -8,58 +8,65 @@
 <article class="card q-card" id="text-e22-statespace" data-kind="본문" data-std="전전22-06-01">
   <header class="card-head"><span class="no"></span><h2>상태방정식과 전달함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>미분방정식을 상태방정식 \(\dot x = Ax + Bu\), \(y = Cx + Du\)로 쓴다.</li>
-        <li>\(G(s) = C(sI - A)^{-1}B + D\)로 전달함수를 구한다.</li>
-        <li>A의 고유값이 전달함수의 극점임을 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬과 역행렬 (<a href="../16/01-01.html">전전16 1.1절</a>), 고유값 (<a href="../16/04-01.html">전전16 4.1절</a>), 전달함수 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전달함수는 입력과 출력 하나씩의 관계만 담는다. 그런데 드론은 프로펠러 네 개로 위치와 자세 여섯 가지를 함께 다루고, 초기 상태에서 출발하는 응답도 알아야 한다. 시스템 안의 모든 변수를 한꺼번에 다루는 식은 무엇일까? 그 식과 지금까지 쓴 전달함수는 어떻게 이어질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.1.1 상태방정식의 블록선도(개형). ÿ + 3ẏ + 2y = u에서 상태 x₁ = y, x₂ = ẏ로 두면 두 적분기가 직렬로 이어지고, 되먹임 −2x₁ − 3x₂와 입력 u가 x₂의 도함수를 만든다. 전달함수 C(sI − A)⁻¹B는 1/(s² + 3s + 2)이고, A의 고유값 −1, −2가 극점과 같다">
+        <defs><marker id="ah-e22ss" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <circle cx="100" cy="80" r="12" class="lk"/><circle cx="100" cy="80" r="12" class="k" fill="none"/>
+        <rect x="150" y="62" width="50" height="36" class="la"/><rect x="150" y="62" width="50" height="36" class="a" fill="none"/>
+        <rect x="260" y="62" width="50" height="36" class="la"/><rect x="260" y="62" width="50" height="36" class="a" fill="none"/>
+        <rect x="200" y="130" width="50" height="30" class="lb"/><rect x="200" y="130" width="50" height="30" class="b" fill="none"/>
+        <rect x="300" y="160" width="50" height="30" class="lb"/><rect x="300" y="160" width="50" height="30" class="b" fill="none"/>
+        <g marker-end="url(#ah-e22ss)" class="k" stroke-width="2"><line x1="50" y1="80" x2="86" y2="80"/><line x1="112" y1="80" x2="148" y2="80"/><line x1="200" y1="80" x2="258" y2="80"/><line x1="310" y1="80" x2="400" y2="80"/><path d="M230 80 V128 M230 160 V170 H100 V94" fill="none"/><path d="M360 80 V158 M325 190 H90 V94" fill="none"/></g>
+        <g class="s" text-anchor="middle"><text x="175" y="86">∫</text><text x="285" y="86">∫</text><text x="225" y="150">−3</text><text x="325" y="180">−2</text><text x="100" y="85">Σ</text></g>
+        <g class="s"><text x="40" y="72">u</text><text x="214" y="72" class="ta">x₂ = ẏ</text><text x="320" y="72" class="ta">x₁ = y</text><text x="410" y="84">y</text><text x="400" y="130" class="td">G = 1/(s² + 3s + 2)</text><text x="400" y="152" class="td">고유값 −1, −2</text></g>
+      </svg>
+      <figcaption>그림 1. 적분기의 출력을 상태로 삼으면 고차 미분 방정식이 1차 연립 방정식으로 바뀌고, 그 행렬 A의 고유값이 곧 전달함수의 극점이 된다(예제 6.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬과 역행렬(<a href="../16/01-01.html">전전16 1.1절</a>), 고유값(<a href="../16/04-01.html">전전16 4.1절</a>), 전달함수(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>상태와 행렬</h3>
-    <p>\(\ddot y + 3\dot y + 2y = u\)에서 \(x_1 = y\), \(x_2 = \dot y\)로 두면</p>
-    \[ \dot x = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}x + \begin{pmatrix} 0 \\ 1 \end{pmatrix}u, \qquad y = \begin{pmatrix} 1 & 0 \end{pmatrix}x. \]
+    <p>상태는 현재 값만 알면 앞으로의 응답을 모두 정할 수 있는 최소한의 변수 묶음이다. 예를 들어 \(\ddot y + 3\dot y + 2y = u\)에서 \(x_1 = y\), \(x_2 = \dot y\)로 두면, 2차 방정식이 1차 연립 방정식 두 개가 된다(그림 1).</p>
+    <p>\[ \dot x = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}x + \begin{pmatrix} 0 \\ 1 \end{pmatrix}u, \qquad y = \begin{pmatrix} 1 & 0 \end{pmatrix}x \]</p>
+    <div class="tb-env thm">
+      <span class="lb">상태방정식과 전달함수</span>
+      <p>상태방정식은 \(\dot x = Ax + Bu\), \(y = Cx + Du\)이다.</p>
+      <p>전달함수는 \(G(s) = C(sI - A)^{-1}B + D\)이다.</p>
+    </div>
+    <p>처음 질문의 첫째 답이 이것이다. 입력과 출력이 여러 개여도 B와 C의 열과 행만 늘리면 되고, 초기 조건과 내부 변수도 함께 다룬다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
       <p>위 시스템의 전달함수를 \(C(sI - A)^{-1}B\)로 구하고 A의 고유값과 비교하라.</p>
     </div>
-    <p><i>풀이.</i> \(sI - A = \begin{pmatrix} s & -1 \\ 2 & s + 3 \end{pmatrix}\), 행렬식 \(s^2 + 3s + 2\), \((sI - A)^{-1}B = \frac{1}{s^2 + 3s + 2}\begin{pmatrix} 1 \\ s \end{pmatrix}\). \(G = 1/(s^2 + 3s + 2)\). A의 고유값 −1, −2가 극점과 같습니다.</p>
-    <p>같은 전달함수에 상태방정식은 여러 개(좌표 변환 \(x = Tz\))가 있으며, 위의 꼴을 제어기 표준형이라 합니다. 상태방정식은 다입력·다출력과 초기 조건, 내부 변수를 함께 다룰 수 있습니다.</p>
+    <p><i>풀이.</i> \(sI - A = \begin{pmatrix} s & -1 \\ 2 & s + 3 \end{pmatrix}\)이고, 행렬식은 \(s^2 + 3s + 2\)이다. 그러면 \((sI - A)^{-1}B = \frac{1}{s^2 + 3s + 2}\begin{pmatrix} 1 \\ s \end{pmatrix}\)이므로 \(G = 1/(s^2 + 3s + 2)\)이다. 즉 A의 고유값 −1, −2가 극점과 같다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 같은 전달함수에 상태방정식은 여러 개 있다. 좌표 변환 x = Tz로 상태를 바꿔 잡아도 입출력 관계는 그대로이기 때문이다. 위의 꼴은 특성 다항식의 계수가 A의 마지막 행에 그대로 들어가 있어, 제어기 표준형이라 한다(6.3절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "상태 변수는 하나로 정해진다": 좌표 선택에 따라 무수히 많습니다. (2) "A의 고유값은 언제나 모두 극점으로 보인다": 극점-영점 상쇄가 있으면 일부가 전달함수에서 사라집니다(6.2절).</div>
+    <p>상태방정식은 시간 영역에서 바로 풀 수도 있다. 해는 \(x(t) = e^{At}x(0) + \int_0^te^{A(t-\tau)}Bu(\tau)\,d\tau\)이며, 첫째 항이 초기 조건의 응답, 둘째 항이 입력의 응답이다. 그러므로 전달함수로는 볼 수 없던 초기 조건의 영향도 같은 식 안에서 다룬다. 또 행렬 지수 함수 \(e^{At}\)의 모양은 A의 고유값이 정하므로, 고유값의 실수부가 모두 음수이면 상태가 0으로 줄어든다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>ẋ = Ax + Bu, y = Cx + Du.</li>
-        <li>G(s) = C(sI − A)⁻¹B + D.</li>
-        <li>A의 고유값 = 극점(상쇄 없을 때).</li>
-      </ol>
-    </div>
+    <p>실제 수치 해석과 시뮬레이션 프로그램도 대부분 상태방정식을 쓴다. 1차 연립 방정식이라 Runge-Kutta 같은 적분법을 바로 적용할 수 있기 때문이다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>상태 변수가 하나로 정해진다고 여기기 쉽다. 상태는 좌표 선택에 따라 무수히 많다. 또 A의 고유값이 언제나 모두 전달함수의 극점으로 보인다고 생각하기 쉬운데, 극점-영점 상쇄가 있으면 일부가 전달함수에서 사라진다(6.2절).</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>상태방정식은 ẋ = Ax + Bu, y = Cx + Du이다. 전달함수는 G(s) = C(sI − A)⁻¹B + D이다. 상쇄가 없으면 A의 고유값이 곧 극점이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>ÿ + 5ẏ + 6y = u의 제어기 표준형 A는?
-          <details><summary>답</summary><p>[[0, 1], [−6, −5]].</p></details>
+          <details><summary>답</summary><p>[[0, 1], [−6, −5]]이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>A = [[−1, 0], [0, −4]], B = [1; 1], C = [1 1]의 G는?
-          <details><summary>답</summary><p>1/(s + 1) + 1/(s + 4).</p></details>
+          <details><summary>답</summary><p>1/(s + 1) + 1/(s + 4)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>좌표 변환 x = Tz 후의 A'는?
-          <details><summary>답</summary><p>T⁻¹AT(고유값 불변).</p></details>
+          <details><summary>답</summary><p>T⁻¹AT(고유값 불변)이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,58 @@
 <article class="card q-card" id="text-e22-delay" data-kind="본문" data-std="전전22-05-04">
   <header class="card-head"><span class="no"></span><h2>시간 지연과 위상 여유</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>순수 지연 \(e^{-sT}\)의 크기 1, 위상 −ωT를 안다.</li>
-        <li>지연이 이득 교차 주파수에서 위상 여유를 깎는 양을 계산한다.</li>
-        <li>Padé 근사로 지연을 유리 함수로 바꾼다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>위상 여유 (<a href="05-02.html">5.2절</a>), Bode 선도 (<a href="05-03.html">5.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">화성 탐사 로버를 지구에서 조종하면 명령이 닿는 데만 몇 분이 걸린다. 지구 안의 원격 수술 로봇도 통신 지연이 수백 ms쯤 된다. 이 지연은 제어 루프의 무엇을 깎아 먹을까? 같은 루프가 견딜 수 있는 지연의 한계는 얼마일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.4.1 시간 지연에 의한 위상 손실(개형). 교차 주파수 1 rad/s, 위상 여유 45°인 루프에 0.2 s 지연이 생기면 크기는 그대로이고 위상만 0.2 rad(11.5°) 늦어져 위상 여유가 33.5°로 준다. 지연이 0.785 s가 되면 위상 여유가 0이 되어 불안정의 경계에 이른다">
+        <line x1="80" y1="60" x2="460" y2="60" class="ax"/><line x1="80" y1="160" x2="460" y2="160" class="k dsh"/>
+        <path d="M80 80 C200 95, 240 110, 260 115 S380 135, 460 140" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M80 82 C200 102, 230 122, 260 129 S360 165, 420 190" class="d" fill="none" stroke-width="2.5"/>
+        <path d="M260 40 V190" class="k dsh"/>
+        <path d="M260 115 V160" class="b" stroke-width="3"/><path d="M270 129 V160" class="d" stroke-width="3"/>
+        <g class="s"><text x="30" y="64">위상</text><text x="30" y="164">−180°</text><text x="264" y="56">ω_c = 1</text><text x="200" y="110" class="tb">지연 없음 45°</text><text x="278" y="148" class="td">0.2 s 지연 33.5°</text><text x="340" y="186" class="td">위상 −ωT 추가</text></g>
+      </svg>
+      <figcaption>그림 1. 지연은 모든 주파수의 크기를 그대로 두고 위상만 주파수에 비례해 늦추므로, 교차 주파수는 바뀌지 않은 채 그곳의 위상 여유가 ω_cT만큼 줄어든다(예제 5.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>위상 여유(<a href="05-02.html">5.2절</a>), Bode 선도(<a href="05-03.html">5.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>크기는 그대로, 위상만</h3>
-    <p>센서 지연, 통신 지연, 디지털 계산 지연은 \(e^{-sT}\)입니다. 크기 선도는 그대로라 교차 주파수는 같지만, 위상이 ω_cT(라디안)만큼 줄어 위상 여유가 줄어듭니다. 해석에는 \(e^{-sT} \approx \frac{1 - sT/2}{1 + sT/2}\)(1차 Padé)을 씁니다.</p>
+    <p>센서 지연, 통신 지연, 디지털 계산 지연은 모두 신호를 T만큼 늦추며, 전달함수로는 \(e^{-sT}\)이다. s = jω를 넣으면 크기는 1, 위상은 −ωT이다. 그러므로 크기 선도는 그대로라 교차 주파수는 같지만, 위상이 ω_cT 라디안만큼 줄어 위상 여유가 줄어든다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">지연과 위상 여유</span>
+      <p>\(e^{-j\omega T}\)의 크기는 1, 위상은 −ωT이다. 위상 여유는 ω_cT(rad)만큼 줄어든다.</p>
+      <p>해석에는 1차 Padé 근사 \(e^{-sT} \approx \dfrac{1 - sT/2}{1 + sT/2}\)를 쓴다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
       <p>ω_c = 1 rad/s, 위상 여유 45°인 루프에 지연 0.2 s가 생기면? 위상 여유가 0이 되는 지연은?</p>
     </div>
-    <p><i>풀이.</i> 감소 0.2 rad = 11.5° → PM 33.5°. PM 0이 되는 지연: 45° = 0.785 rad → T = 0.785 s. 원격 조종(지연 수백 ms)에서 제어 대역을 낮춰야 하는 이유입니다.</p>
+    <p><i>풀이.</i> 감소는 1 × 0.2 = 0.2 rad, 곧 11.5°이므로 PM은 33.5°가 된다. 또 PM이 0이 되는 지연은 45° = 0.785 rad에서 T = 0.785 s이다. 처음 질문의 둘째 답이 이것이다. 즉 원격 조종처럼 지연이 수백 ms인 경우에는 교차 주파수, 곧 제어 대역을 낮춰야 한다.</p>
+    <p>지연은 보상기로 완전히 되돌릴 수 없다. 진상 보상기가 보태는 위상은 한계가 있지만, 지연의 위상 손실은 주파수에 비례해 끝없이 커지기 때문이다. 그래서 지연이 큰 공정에는 플랜트 모델로 지연 없는 출력을 예측해 궤환하는 Smith 예측기 같은 구조를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "지연은 크기를 줄인다": 크기는 그대로이고 위상만 늦춥니다. (2) "지연은 저주파 제어에 상관없다": ω_cT가 작을 때만 작습니다.</div>
+    <p>디지털 제어기도 지연을 만든다. 표본을 읽고 계산해 내보내는 동안, 그리고 다음 표본까지 출력을 유지하는 동안 신호가 늦어지기 때문이다. 따라서 표본화 주기도 위 식의 T에 더해 위상 여유를 깎는 요인으로 계산한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>e^{−sT}: 크기 1, 위상 −ωT.</li>
-        <li>PM 감소 = ω_cT(rad).</li>
-        <li>Padé (1 − sT/2)/(1 + sT/2).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>지연이 신호의 크기를 줄인다고 여기기 쉽다. 지연은 크기를 그대로 두고 위상만 늦춘다. 또 지연은 느린 제어에는 상관없다고 생각하기 쉬운데, ω_cT가 작을 때만 영향이 작다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>지연 \(e^{-sT}\)는 크기 1, 위상 −ωT이다. 위상 여유는 ω_cT(rad)만큼 준다. 해석에는 Padé 근사 (1 − sT/2)/(1 + sT/2)를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>ω_c = 10, T = 10 ms의 위상 감소는?
-          <details><summary>답</summary><p>0.1 rad ≈ 5.7°.</p></details>
+          <details><summary>답</summary><p>0.1 rad ≈ 5.7°이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>PM 60°인 ω_c = 5 루프가 견디는 최대 지연은?
-          <details><summary>답</summary><p>1.047/5 ≈ 0.21 s.</p></details>
+          <details><summary>답</summary><p>1.047/5 ≈ 0.21 s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>1차 Padé 근사가 오른쪽 반평면 영점을 가지는 것의 뜻은?
-          <details><summary>답</summary><p>지연처럼 처음에 반대 방향으로 반응하는 비최소 위상 특성을 흉내 냅니다.</p></details>
+          <details><summary>답</summary><p>지연처럼 처음에 반대 방향으로 반응하는 비최소 위상 특성을 흉내 낸다.</p></details>
         </li>
       </ol>
     </div>

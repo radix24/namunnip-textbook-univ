@@ -8,58 +8,56 @@
 <article class="card q-card" id="text-e22-model" data-kind="본문" data-std="전전22-01-01">
   <header class="card-head"><span class="no"></span><h2>전기·기계 시스템의 전달함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RLC 회로와 질량-스프링-감쇠기의 미분방정식을 세운다.</li>
-        <li>초기 조건 0의 Laplace 변환으로 전달함수 G(s) = Y(s)/U(s)를 얻는다.</li>
-        <li>전기·기계 시스템의 대응(L ↔ m, R ↔ b, 1/C ↔ k)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Laplace 변환 (<a href="../6/07-01.html">전전6 7.1절</a>), RLC 회로 (<a href="../3/07-01.html">전전3 7.1절</a>), 뉴턴 운동 법칙.</li>
-      </ul>
-    </div>
+    <p class="q-ask">자동차 서스펜션과 라디오의 RLC 회로는 생김새도 재료도 전혀 다르다. 그런데 둘의 응답을 그래프로 그리면 똑같이 출렁이다 가라앉는다. 서로 다른 두 시스템을 같은 식 하나로 다룰 수 있을까? 그 식에서 응답의 모양과 최종값을 바로 읽어 낼 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="질량-스프링-감쇠기와 직렬 RLC 회로의 대응(개형). 질량 m, 감쇠 b, 스프링 k는 각각 인덕턴스 L, 저항 R, 1/C에 대응하고, 전달함수는 1/(ms² + bs + k)와 1/(LCs² + RCs + 1)로 같은 꼴이다. 예제 1.1.1에서 m = 1, b = 2, k = 5이면 극점은 −1 ± j2이고 1 N 계단 힘의 최종 변위는 0.2 m이다">
+        <g class="k" fill="none" stroke-width="2"><path d="M40 40 H140"/><path d="M60 40 V70 M120 40 V60"/><path d="M60 70 L52 76 L68 82 L52 88 L68 94 L60 100 V110"/><rect x="110" y="60" width="20" height="30"/><path d="M120 90 V110"/><rect x="50" y="110" width="80" height="40" class="lk"/></g>
+        <g class="s"><text x="76" y="134">m</text><text x="30" y="90" class="ta">k</text><text x="136" y="80" class="tb">b</text><text x="80" y="176">u (힘) → y</text></g>
+        <g class="k" fill="none" stroke-width="2"><path d="M200 60 H230 L236 50 L248 70 L260 50 L272 70 L278 60 H300"/><path d="M300 60 C305 45, 315 45, 318 60 C321 45, 331 45, 334 60 C337 45, 347 45, 350 60 H370 V80 M360 80 H380 M360 90 H380 M370 90 V120 H200"/></g>
+        <g class="s"><text x="250" y="44" class="tb">R</text><text x="320" y="40" class="ta">L</text><text x="386" y="90">C</text><text x="220" y="140">v_in → v_C</text></g>
+        <g class="s"><text x="420" y="50">m ↔ L</text><text x="420" y="72">b ↔ R</text><text x="420" y="94">k ↔ 1/C</text><text x="420" y="130" class="td">−1 ± j2</text><text x="420" y="152" class="td">y(∞) = 0.2 m</text></g>
+      </svg>
+      <figcaption>그림 1. 관성, 마찰, 복원력이 각각 인덕턴스, 저항, 정전 용량의 역수와 같은 자리에 들어가므로, 두 시스템은 같은 꼴의 전달함수를 가지고 같은 모양의 응답을 보인다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Laplace 변환(<a href="../6/07-01.html">전전6 7.1절</a>), RLC 회로(<a href="../3/07-01.html">전전3 7.1절</a>), 뉴턴 운동 법칙을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>두 시스템</h3>
-    <p><b>질량-스프링-감쇠기</b>: 힘 u, 변위 y에서 \(m\ddot y + b\dot y + ky = u\). 모든 초기 조건이 0이면 \(\frac{d}{dt} \to s\)로 바꿔</p>
-    \[ G(s) = \frac{Y(s)}{U(s)} = \frac{1}{ms^2 + bs + k}. \]
-    <p><b>직렬 RLC</b>: 입력 전압, 출력 축전기 전압이면 \(LC\ddot v_C + RC\dot v_C + v_C = v_{in}\), \(G(s) = \frac{1}{LCs^2 + RCs + 1}\). 두 식의 꼴이 같아, 기계 시스템을 회로로 흉내 낼 수 있습니다.</p>
+    <p>질량-스프링-감쇠기에서 힘을 u, 변위를 y라 하면 \(m\ddot y + b\dot y + ky = u\)이다. 모든 초기 조건이 0이면 Laplace 변환으로 미분이 s의 곱셈으로 바뀌어, 출력과 입력의 비가 s의 유리함수가 된다. 이것을 전달함수라 한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">질량-스프링-감쇠기와 직렬 RLC의 전달함수</span>
+      <p>\[ G(s) = \frac{Y(s)}{U(s)} = \frac{1}{ms^2 + bs + k} \]</p>
+      <p>\[ G(s) = \frac{V_C(s)}{V_{in}(s)} = \frac{1}{LCs^2 + RCs + 1} \]</p>
+    </div>
+    <p>직렬 RLC 회로에서 입력을 전원 전압, 출력을 축전기 전압으로 잡으면 \(LC\ddot v_C + RC\dot v_C + v_C = v_{in}\)이다. 즉 두 식의 꼴이 같아, L은 m, R은 b, 1/C은 k에 대응한다(그림 1). 처음 질문의 첫째 답이 이것이며, 그래서 기계 시스템을 회로로 흉내 내어 실험할 수 있다.</p>
+    <p>전달함수의 분모를 0으로 하는 s, 곧 극점이 응답의 모양을 정한다. 극점의 실수부는 감쇠의 빠르기를, 허수부는 진동 주파수를 준다. 또 최종값 정리에 따라 계단 입력의 최종 출력은 G(0)에 계단 크기를 곱한 값이다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
       <p>m = 1 kg, b = 2 N·s/m, k = 5 N/m. 전달함수, 극점, 1 N 일정한 힘을 줄 때의 최종 변위는?</p>
     </div>
-    <p><i>풀이.</i> \(G = 1/(s^2 + 2s + 5)\), 극점 \(-1 \pm j2\)(감쇠 진동). 최종값 정리 \(y(\infty) = \lim_{s\to0}sG(s)\frac1s = G(0) = 0.2\) m(= 힘/k). 감쇠비는 2.1절의 꼴과 비교해 \(\omega_n = \sqrt5\), \(\zeta = 1/\sqrt5 \approx 0.447\)입니다.</p>
+    <p><i>풀이.</i> \(G = 1/(s^2 + 2s + 5)\)이고, 극점은 \(-1 \pm j2\)이므로 감쇠 진동한다. 최종값 정리로 \(y(\infty) = \lim_{s\to0}sG(s)\frac1s = G(0) = 0.2\) m이며, 이것은 힘/k와 같다. 한편 2.1절의 꼴과 비교하면 \(\omega_n = \sqrt5\), \(\zeta = 1/\sqrt5 \approx 0.447\)이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "전달함수는 초기 조건까지 담는다": 초기 조건 0의 입출력 관계만 담습니다. (2) "전달함수가 같으면 같은 물리 시스템": 꼴이 같아도 물리량은 다릅니다(그래서 대응이 유용).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전달함수가 초기 조건까지 담는다고 여기기 쉽다. 전달함수는 초기 조건이 0일 때의 입출력 관계만 담는다. 또 전달함수가 같으면 같은 물리 시스템이라고 생각하기 쉬운데, 꼴이 같아도 물리량은 다르다. 바로 그 점 때문에 대응 관계가 유용하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>m ÿ + b ẏ + k y = u → 1/(ms² + bs + k).</li>
-        <li>RLC: 1/(LCs² + RCs + 1). L↔m, R↔b, 1/C↔k.</li>
-        <li>최종값 G(0) × 계단 크기.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(m\ddot y + b\dot y + ky = u\)의 전달함수는 1/(ms² + bs + k)이다. 직렬 RLC는 1/(LCs² + RCs + 1)로, L↔m, R↔b, 1/C↔k가 대응한다. 계단 입력의 최종값은 G(0)에 계단 크기를 곱한 값이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>RC 저역 통과(입력 v_in, 출력 v_C)의 전달함수는?
-          <details><summary>답</summary><p>1/(RCs + 1).</p></details>
+          <details><summary>답</summary><p>1/(RCs + 1)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>m = 2, b = 4, k = 8의 극점은?
-          <details><summary>답</summary><p>s² + 2s + 4 = 0 → −1 ± j1.73.</p></details>
+          <details><summary>답</summary><p>s² + 2s + 4 = 0 → −1 ± j1.73이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>DC 모터(각속도 출력)의 전달함수가 1차인 근사는 어떤 가정에서 나오는가?
-          <details><summary>답</summary><p>전기자 인덕턴스를 무시해 전기 시상수가 기계 시상수보다 훨씬 짧다고 볼 때.</p></details>
+          <details><summary>답</summary><p>전기자 인덕턴스를 무시해 전기 시상수가 기계 시상수보다 훨씬 짧다고 볼 때 성립한다.</p></details>
         </li>
       </ol>
     </div>
