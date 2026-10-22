@@ -1309,6 +1309,7 @@ def write_graph(depts, idx, links):
         raise SystemExit(f"개념 지도: 없는 점을 가리키는 선 {bad[:5]}")
     data = {"depts": [{"id": d["id"], "name": d["name"], "short": d["short"]} for d in depts],
             "nodes": nodes, "links": sorted(edges)}
+    (ROOT / "data").mkdir(exist_ok=True)
     (ROOT / "data" / "graph.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     np_ = sum(e[2] == "p" for e in edges)
     print(f"개념 지도: 과목 {sum(n['k'] == 'c' for n in nodes)} · 대단원 {len(seen)} · 고교 {len(hs)} · 선수 선 {np_}")
