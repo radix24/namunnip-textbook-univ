@@ -8,60 +8,71 @@
 <article class="card q-card" id="text-s10-matrix" data-kind="본문" data-std="응통10-02-01">
   <header class="card-head"><span class="no"></span><h2>다중회귀의 행렬 표현과 추정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>다중회귀를 \(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\)로 쓴다.</li>
-        <li>\(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)를 유도하고 계수의 공분산 행렬을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬 곱, 역행렬, 직교 사영 (응통2 01~03단원), 1.1절.</li>
-      </ul>
-    </div>
-
-    <h3>설명변수가 여럿일 때</h3>
-    <p>집값을 넓이 하나로만 설명할 수는 없습니다. 방 개수, 역까지 거리, 건축 연도를 함께 넣으려면 식이 길어지는데, 행렬로 쓰면 변수가 몇 개든 같은 모양이 됩니다.</p>
+    <p class="q-ask">자동차 32대의 연비를 무게 하나로 회귀하면 무게 1,000 lb당 연비가 5.3 mpg 낮다. 그런데 무거운 차는 대개 마력도 크다. 마력이 같은 차끼리 비교하면 무게의 효과는 얼마일까? 그리고 설명변수가 둘, 셋, 열 개로 늘어나도 같은 방법으로 계산할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="mtcars 32대의 무게와 연비 산점도. 마력이 150 미만인 차는 청록, 150 이상인 차는 주황 점이다. 단순회귀 점선은 기울기 −5.34로 가파르고, 다중회귀에서 마력을 100과 250으로 고정한 두 평행선은 기울기 −3.88로 완만하다">
+        <line x1="55" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="101.4" y="195" text-anchor="middle" class="s">2</text>
+        <text x="178.8" y="195" text-anchor="middle" class="s">3</text>
+        <text x="256.2" y="195" text-anchor="middle" class="s">4</text>
+        <text x="333.6" y="195" text-anchor="middle" class="s">5</text>
+        <text x="50" y="172.6" text-anchor="end" class="s">10</text>
+        <text x="50" y="144" text-anchor="end" class="s">15</text>
+        <text x="50" y="115.4" text-anchor="end" class="s">20</text>
+        <text x="50" y="86.9" text-anchor="end" class="s">25</text>
+        <text x="50" y="58.3" text-anchor="end" class="s">30</text>
+        <text x="50" y="29.7" text-anchor="end" class="s">35</text>
+        <text x="380" y="209" text-anchor="end" class="s">무게 wt (천 lb)</text>
+        <text x="61" y="24" class="s">연비 mpg</text>
+        <path d="M55 55.4 L380 183.7" class="k dsh"/>
+        <path d="M55 62.2 L380 155.2" class="b"/>
+        <path d="M55 89.4 L380 182.5" class="c"/>
+        <circle cx="149.4" cy="105.7" r="3" class="fb"/><circle cx="169.1" cy="105.7" r="3" class="fb"/><circle cx="126.2" cy="95.4" r="3" class="fb"/><circle cx="195.4" cy="103.4" r="3" class="fb"/><circle cx="212.9" cy="118.9" r="3" class="fc"/><circle cx="214.4" cy="122.3" r="3" class="fb"/><circle cx="222.9" cy="144" r="3" class="fc"/><circle cx="193.5" cy="86.3" r="3" class="fb"/><circle cx="190.4" cy="95.4" r="3" class="fb"/><circle cx="212.9" cy="116" r="3" class="fb"/><circle cx="212.9" cy="124" r="3" class="fb"/><circle cx="261.6" cy="132" r="3" class="fc"/><circle cx="235.3" cy="126.9" r="3" class="fc"/><circle cx="239.2" cy="138.9" r="3" class="fc"/><circle cx="352.9" cy="166.3" r="3" class="fc"/><circle cx="366.4" cy="166.3" r="3" class="fc"/><circle cx="360.3" cy="141.7" r="3" class="fc"/><circle cx="116.9" cy="40.6" r="3" class="fb"/><circle cx="71.6" cy="52" r="3" class="fb"/><circle cx="88.7" cy="32" r="3" class="fb"/><circle cx="137.4" cy="102.9" r="3" class="fb"/><circle cx="219" cy="137.1" r="3" class="fc"/><circle cx="212.5" cy="138.9" r="3" class="fc"/><circle cx="243.8" cy="149.7" r="3" class="fc"/><circle cx="244.2" cy="116" r="3" class="fc"/><circle cx="96.4" cy="69.7" r="3" class="fb"/><circle cx="112.3" cy="77.1" r="3" class="fb"/><circle cx="63.7" cy="52" r="3" class="fb"/><circle cx="192" cy="135.4" r="3" class="fc"/><circle cx="161" cy="113.1" r="3" class="fc"/><circle cx="222.9" cy="140" r="3" class="fc"/><circle cx="161.8" cy="103.4" r="3" class="fb"/>
+        <text x="395" y="44" class="s">점선은 단순회귀</text><text x="395" y="60" class="s">기울기 −5.34</text><text x="395" y="86" class="s tb">● hp &lt; 150</text><text x="395" y="100" class="s tb">직선은 hp = 100</text><text x="395" y="122" class="s tc">● hp ≥ 150</text><text x="395" y="136" class="s tc">직선은 hp = 250</text><text x="395" y="162" class="s">마력을 고정한 기울기</text><text x="395" y="176" class="s">−3.88 (두 직선 평행)</text>
+      </svg>
+      <figcaption>그림 1. <code>mtcars</code>의 무게와 연비. 단순회귀(점선)의 기울기 −5.34에는 마력의 효과가 섞여 있다. 마력을 100(청록)과 250(주황)으로 고정한 다중회귀 직선은 평행하며 기울기가 −3.88이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬 곱, 역행렬, 직교 사영(응통2 1~3단원)과 최소제곱 추정량(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
+    <p>집값을 넓이 하나로만 설명할 수는 없듯, 연비도 무게 하나로 설명하기 어렵다. 설명변수를 여럿 넣으면 식이 길어지는데, 행렬로 쓰면 변수가 몇 개든 같은 모양이 된다. 처음 질문에 답하면 마력을 고정한 무게의 효과는 3.9 mpg로 더 작다(그림 1).</p>
 
     <h3><span class="no">2.1.1</span>모형</h3>
     <div class="tb-env def">
-      <span class="lb">정의 2.1.1</span>
-      <p>\(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\). \(\mathbf y\)는 \(n \times 1\), \(X\)는 첫 열이 모두 1인 \(n \times p\) 계획행렬(\(p\) = 설명변수 수 + 1), \(E(\boldsymbol\varepsilon) = \mathbf 0\), \(\mathrm{Var}(\boldsymbol\varepsilon) = \sigma^2I\).</p>
+      <span class="lb">정의 2.1.1 <span class="nm">(다중 선형회귀 모형)</span></span>
+      <p>\(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\)이다. 여기서 \(\mathbf y\)는 \(n \times 1\)이고, \(X\)는 첫 열이 모두 1인 \(n \times p\) <em>계획행렬</em>로 \(p\)는 설명변수 수에 1을 더한 값이다. 또 \(E(\boldsymbol\varepsilon) = \mathbf 0\), \(\mathrm{Var}(\boldsymbol\varepsilon) = \sigma^2I\)이다.</p>
     </div>
-    <p>계수 \(\beta_j\)는 "다른 설명변수를 고정했을 때 \(x_j\)가 1 커지면 평균 \(y\)가 얼마나 변하는가"를 뜻합니다. 단순회귀의 기울기와 다릅니다. 넓이의 계수는 방 개수를 고정한 채 넓이만 늘린 효과입니다.</p>
+    <p>계수 \(\beta_j\)는 다른 설명변수를 고정했을 때 \(x_j\)가 1 커지면 평균 \(y\)가 얼마나 변하는지를 뜻한다. 그래서 단순회귀의 기울기와 다르다. 가령 집값 모형에서 넓이의 계수는 방 개수를 고정한 채 넓이만 늘린 효과이다.</p>
 
     <h3><span class="no">2.1.2</span>최소제곱 추정량</h3>
-    <p>\(Q(\mathbf b) = (\mathbf y - X\mathbf b)^\top(\mathbf y - X\mathbf b)\)를 \(\mathbf b\)로 미분하면 \(-2X^\top\mathbf y + 2X^\top X\mathbf b\)이므로 정규방정식 \(X^\top X\mathbf b = X^\top\mathbf y\)를 얻습니다.</p>
+    <p>\(Q(\mathbf b) = (\mathbf y - X\mathbf b)^\top(\mathbf y - X\mathbf b)\)를 \(\mathbf b\)로 미분하면 \(-2X^\top\mathbf y + 2X^\top X\mathbf b\)이다. 이를 0으로 두면 정규방정식 \(X^\top X\mathbf b = X^\top\mathbf y\)를 얻는다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 2.1.2</span>
-      <p>\(X\)의 열이 일차독립이면 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\), \(E(\hat{\boldsymbol\beta}) = \boldsymbol\beta\), \(\mathrm{Var}(\hat{\boldsymbol\beta}) = \sigma^2(X^\top X)^{-1}\).</p>
+      <span class="lb">정리 2.1.2 <span class="nm">(최소제곱 추정량의 평균과 분산)</span></span>
+      <p>\(X\)의 열이 일차독립이면 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)이고, \(E(\hat{\boldsymbol\beta}) = \boldsymbol\beta\), \(\mathrm{Var}(\hat{\boldsymbol\beta}) = \sigma^2(X^\top X)^{-1}\)이다.</p>
     </div>
-    <p class="tb-proof">\(\hat{\boldsymbol\beta} = A\mathbf y\), \(A = (X^\top X)^{-1}X^\top\). \(E = AX\boldsymbol\beta = \boldsymbol\beta\). 확률벡터의 공분산 공식 \(\mathrm{Var}(A\mathbf y) = A\,\mathrm{Var}(\mathbf y)A^\top = \sigma^2AA^\top = \sigma^2(X^\top X)^{-1}\). <span class="qed">∎</span></p>
-    <p>계수 \(\hat\beta_j\)의 표준오차는 \(\sigma^2\)을 \(s^2 = \mathrm{SSE}/(n-p)\)(2.2절)로 바꾼 \(s\sqrt{[(X^\top X)^{-1}]_{jj}}\)입니다. 비대각 원소는 계수 사이의 공분산으로, 설명변수끼리 상관이 크면 커집니다(4.4절의 다중공선성). \(X\)의 열이 일차종속이면(예: 같은 정보를 단위만 바꿔 두 번 넣음) \(X^\top X\)의 역행렬이 없어 계수가 하나로 정해지지 않습니다.</p>
-
+    <p class="tb-proof"><span class="lb">증명.</span> \(\hat{\boldsymbol\beta} = A\mathbf y\), \(A = (X^\top X)^{-1}X^\top\)로 쓰면 \(E(\hat{\boldsymbol\beta}) = AX\boldsymbol\beta = \boldsymbol\beta\)이다. 또 확률벡터의 공분산 공식에서 \(\mathrm{Var}(A\mathbf y) = A\,\mathrm{Var}(\mathbf y)A^\top = \sigma^2AA^\top = \sigma^2(X^\top X)^{-1}\)이다. <span class="qed">∎</span></p>
+    <p>계수 \(\hat\beta_j\)의 표준오차는 \(\sigma^2\)을 \(s^2 = \mathrm{SSE}/(n-p)\)(<a href="02-02.html">2.2절</a>)로 바꾼 \(s\sqrt{[(X^\top X)^{-1}]_{jj}}\)이다. 비대각 원소는 계수 사이의 공분산이며, 설명변수끼리 상관이 크면 커진다(4.4절의 다중공선성). 한편 \(X\)의 열이 일차종속이면, 예컨대 같은 정보를 단위만 바꿔 두 번 넣으면 \(X^\top X\)의 역행렬이 없어 계수가 하나로 정해지지 않는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.3</span>
-      <p>R의 <code>mtcars</code>에서 연비를 무게(<code>wt</code>, 천 lb)와 마력(<code>hp</code>)으로 회귀하세요.</p>
+      <p>R의 <code>mtcars</code>에서 연비 <code>mpg</code>를 무게 <code>wt</code>(천 lb)와 마력 <code>hp</code>로 회귀하라.</p>
     </div>
-    <p><i>풀이.</i> <code>coef(lm(mpg ~ wt + hp, data = mtcars))</code>: 절편 37.23, wt −3.878, hp −0.0318. 마력을 고정하면 무게 1000 lb당 연비가 약 3.9 mpg 낮습니다. 무게만 넣은 단순회귀의 기울기(−5.34)보다 작은 까닭은 2.4절에서 다룹니다.</p>
-    <pre><code>X &lt;- cbind(1, mtcars$wt, mtcars$hp); y &lt;- mtcars$mpg
+    <p><i>풀이.</i> <code>coef(lm(mpg ~ wt + hp, data = mtcars))</code>는 절편 37.23, wt −3.878, hp −0.0318을 준다. 즉 마력을 고정하면 무게 1,000 lb당 연비가 약 3.9 mpg 낮다. 무게만 넣은 단순회귀의 기울기 −5.34보다 작은 까닭은 2.4절에서 다룬다. 행렬 공식으로 직접 계산해도 같은 값이 나온다.</p>
+<pre><code>X &lt;- cbind(1, mtcars$wt, mtcars$hp); y &lt;- mtcars$mpg
 solve(t(X) %*% X, t(X) %*% y)    # 같은 값</code></pre>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\), 공분산 \(\sigma^2(X^\top X)^{-1}\).</li>
-        <li>표준오차는 \(s\sqrt{[(X^\top X)^{-1}]_{jj}}\).</li>
-        <li>계수는 다른 변수를 고정한 효과입니다(2.4절).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>다중회귀는 \(\mathbf y = X\boldsymbol\beta + \boldsymbol\varepsilon\)으로 쓰며, 최소제곱 추정량은 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\), 공분산은 \(\sigma^2(X^\top X)^{-1}\)이다. 계수의 표준오차는 \(s\sqrt{[(X^\top X)^{-1}]_{jj}}\)이다. 계수는 다른 변수를 고정한 효과이므로 단순회귀의 기울기와 다를 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>단순회귀의 \(X\)에서 \(X^\top X\)를 쓰고 \((X^\top X)^{-1}\)의 (2,2) 원소가 \(1/S_{xx}\)임을 보이세요.
-          <details><summary>답</summary><p>\(X^\top X = \begin{pmatrix}n &amp; \sum x\\ \sum x &amp; \sum x^2\end{pmatrix}\), 행렬식 \(nS_{xx}\), (2,2) 원소 \(n/(nS_{xx})\).</p></details>
+        <li>단순회귀의 \(X\)에서 \(X^\top X\)를 쓰고, \((X^\top X)^{-1}\)의 (2,2) 원소가 \(1/S_{xx}\)임을 보여라.
+          <details><summary>답</summary><p>\(X^\top X = \begin{pmatrix}n & \sum x\\ \sum x & \sum x^2\end{pmatrix}\)이고 행렬식은 \(nS_{xx}\)이므로 (2,2) 원소는 \(n/(nS_{xx}) = 1/S_{xx}\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>무게를 lb 단위로 바꾼 열(<code>wt*1000</code>)을 원래 <code>wt</code> 열과 함께 넣으면 어떻게 되는가?
+          <details><summary>답</summary><p>두 열이 일차종속이라 \(X^\top X\)의 역행렬이 없다. 계수가 하나로 정해지지 않으며, R은 한 계수를 <code>NA</code>로 보고한다.</p></details>
         </li>
       </ol>
     </div>

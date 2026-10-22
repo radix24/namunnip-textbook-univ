@@ -8,72 +8,76 @@
 <article class="card q-card" id="text-s10-dw" data-kind="본문" data-std="응통10-04-02">
   <header class="card-head"><span class="no"></span><h2>오차의 자기상관과 Durbin-Watson 검정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>시간 순서 자료에서 오차의 독립성 가정이 깨지는 모습을 안다.</li>
-        <li>Durbin-Watson 통계량을 계산하고 판정한다.</li>
-        <li>자기상관이 있을 때 생기는 문제와 대처를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>잔차 그림 (<a href="04-01.html">4.1절</a>), 잔차의 성질 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>어제의 오차가 오늘로 이어질 때</h3>
-    <p>월별 매출, 일별 기온, 연도별 경제 지표처럼 시간 순서로 모은 자료에서는 모형이 놓친 요인(경기, 계절, 유행)이 여러 시점에 걸쳐 영향을 줍니다. 그러면 이번 달 잔차가 양수일 때 다음 달 잔차도 양수이기 쉽습니다. 독립성 가정이 깨지는 가장 흔한 경우입니다.</p>
+    <p class="q-ask">월별 매출을 광고비로 회귀했더니 잔차가 몇 달씩 양수였다가 몇 달씩 음수로 이어진다. 모형이 놓친 경기나 유행이 여러 달에 걸쳐 영향을 주기 때문이다. 이렇게 이번 달 잔차가 다음 달 잔차와 닮아 있으면 무엇이 문제일까? 그 닮음을 숫자 하나로 잴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="예제 4.2.2의 잔차 10개. 왼쪽 시간 순서 그림에서 잔차가 양수 넷, 음수 넷, 양수 둘로 길게 이어진다. 오른쪽 지연 산점도에서 직전 잔차와 현재 잔차가 오른쪽 위로 늘어서 1차 자기상관이 0.68이다. Durbin-Watson 통계량은 0.42이다">
+        <line x1="50" y1="180" x2="270" y2="180" class="ax"/>
+        <line x1="50" y1="180" x2="50" y2="20" class="ax"/>
+        <text x="61" y="195" text-anchor="middle" class="s">1</text>
+        <text x="127" y="195" text-anchor="middle" class="s">4</text>
+        <text x="193" y="195" text-anchor="middle" class="s">7</text>
+        <text x="259" y="195" text-anchor="middle" class="s">10</text>
+        <text x="45" y="157.3" text-anchor="end" class="s">−1</text>
+        <text x="45" y="104" text-anchor="end" class="s">0</text>
+        <text x="45" y="50.7" text-anchor="end" class="s">1</text>
+        <text x="270" y="209" text-anchor="end" class="s">시점 t</text>
+        <text x="56" y="24" class="s">잔차</text>
+        <path d="M50 100 L270 100" class="k"/>
+        <path d="M61 41.3 L83 62.7 L105 52 L127 89.3 L149 132 L171 164 L193 153.3 L215 126.7 L237 94.7 L259 84" class="a"/>
+        <circle cx="61" cy="41.3" r="3.5" class="fa"/><circle cx="83" cy="62.7" r="3.5" class="fa"/><circle cx="105" cy="52" r="3.5" class="fa"/><circle cx="127" cy="89.3" r="3.5" class="fa"/><circle cx="149" cy="132" r="3.5" class="fd"/><circle cx="171" cy="164" r="3.5" class="fd"/><circle cx="193" cy="153.3" r="3.5" class="fd"/><circle cx="215" cy="126.7" r="3.5" class="fd"/><circle cx="237" cy="94.7" r="3.5" class="fa"/><circle cx="259" cy="84" r="3.5" class="fa"/>
+        <line x1="340" y1="180" x2="500" y2="180" class="ax"/>
+        <line x1="340" y1="180" x2="340" y2="20" class="ax"/>
+        <text x="366.7" y="195" text-anchor="middle" class="s">−1</text>
+        <text x="420" y="195" text-anchor="middle" class="s">0</text>
+        <text x="473.3" y="195" text-anchor="middle" class="s">1</text>
+        <text x="335" y="157.3" text-anchor="end" class="s">−1</text>
+        <text x="335" y="104" text-anchor="end" class="s">0</text>
+        <text x="335" y="50.7" text-anchor="end" class="s">1</text>
+        <text x="500" y="209" text-anchor="end" class="s">e(t−1)</text>
+        <text x="346" y="24" class="s">e(t)</text>
+        <path d="M340 100 L500 100 M420 180 L420 20" class="gd"/>
+        <circle cx="478.7" cy="62.7" r="3.5" class="fb"/><circle cx="457.3" cy="52" r="3.5" class="fb"/><circle cx="468" cy="89.3" r="3.5" class="fb"/><circle cx="430.7" cy="132" r="3.5" class="fb"/><circle cx="388" cy="164" r="3.5" class="fb"/><circle cx="356" cy="153.3" r="3.5" class="fb"/><circle cx="366.7" cy="126.7" r="3.5" class="fb"/><circle cx="393.3" cy="94.7" r="3.5" class="fb"/><circle cx="425.3" cy="84" r="3.5" class="fb"/>
+        <text x="500" y="172" text-anchor="end" class="s">r₁ = 0.68</text><text x="270" y="32" text-anchor="end" class="s">d = 0.42</text>
+      </svg>
+      <figcaption>그림 1. 양의 자기상관이 있는 잔차(예제 4.2.2). 왼쪽 시간 순 그림에서 같은 부호가 길게 이어지고(파랑 양수, 빨강 음수), 오른쪽 지연 산점도(청록)는 오른쪽 위로 늘어선다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>잔차 그림(<a href="04-01.html">4.1절</a>)과 잔차의 성질(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
+    <p>시간 순서로 모은 자료에서는 독립성 가정이 가장 흔하게 깨진다. 처음 질문에 답하면, 문제는 계수보다 표준오차에 생기며, 닮음은 Durbin-Watson 통계량으로 잰다(그림 1).</p>
 
     <h3><span class="no">4.2.1</span>보는 법</h3>
-    <ul>
-      <li><b>시간 순서 잔차 그림</b>: 잔차를 시간 순으로 그리면 같은 부호가 길게 이어지는 물결(양의 자기상관)이나 부호가 번갈아 바뀌는 톱니(음의 자기상관)가 보입니다.</li>
-      <li><b>지연 산점도</b>: \(e_t\)를 \(e_{t-1}\)에 대해 그리면 양의 자기상관일 때 오른쪽 위로 향합니다.</li>
-      <li><b>잔차의 1차 자기상관</b> \(r_1 = \sum_{t=2}^n e_te_{t-1}/\sum_{t=1}^n e_t^2\).</li>
-    </ul>
+    <p>먼저 잔차를 시간 순으로 그린다. 같은 부호가 길게 이어지는 물결은 양의 자기상관이고, 부호가 번갈아 바뀌는 톱니는 음의 자기상관이다. 또 \(e_t\)를 \(e_{t-1}\)에 대해 그린 지연 산점도는 양의 자기상관일 때 오른쪽 위로 향한다. 이를 숫자로 나타낸 것이 잔차의 1차 자기상관 \(r_1 = \sum_{t=2}^n e_te_{t-1}/\sum_{t=1}^n e_t^2\)이다.</p>
 
     <h3><span class="no">4.2.2</span>Durbin-Watson 통계량</h3>
     <div class="tb-env def">
-      <span class="lb">정의 4.2.1</span>
-      <p>\(d = \dfrac{\sum_{t=2}^n(e_t - e_{t-1})^2}{\sum_{t=1}^n e_t^2}\).</p>
+      <span class="lb">정의 4.2.1 <span class="nm">(Durbin-Watson 통계량)</span></span>
+      \[ d = \frac{\sum_{t=2}^n(e_t - e_{t-1})^2}{\sum_{t=1}^n e_t^2} \]
     </div>
-    <p>분자를 전개하면 \(\sum e_t^2 + \sum e_{t-1}^2 - 2\sum e_te_{t-1}\)이므로 \(n\)이 크면 \(d \approx 2(1 - r_1)\)입니다. 자기상관이 없으면 \(d \approx 2\), 강한 양의 자기상관이면 0에 가깝고, 음의 자기상관이면 4에 가깝습니다.</p>
-    <p>오차가 \(\varepsilon_t = \rho\varepsilon_{t-1} + u_t\)(1차 자기회귀, 응통20)를 따른다고 보고 \(H_0: \rho = 0\) 대 \(H_1: \rho &gt; 0\)을 검정합니다. \(d\)의 정확한 분포가 \(X\)에 따라 달라지므로 표는 두 경계 \(d_L, d_U\)를 줍니다. \(d &lt; d_L\)이면 기각, \(d &gt; d_U\)이면 기각하지 않음, 그 사이면 판정 보류입니다. R에서는 <code>lmtest::dwtest(fit)</code>이 p값을 직접 계산합니다.</p>
-
+    <p>분자를 전개하면 \(\sum e_t^2 + \sum e_{t-1}^2 - 2\sum e_te_{t-1}\)이므로, \(n\)이 크면 \(d \approx 2(1 - r_1)\)이다. 따라서 자기상관이 없으면 \(d \approx 2\), 강한 양의 자기상관이면 0에 가깝고, 음의 자기상관이면 4에 가깝다.</p>
+    <p>오차가 1차 자기회귀 \(\varepsilon_t = \rho\varepsilon_{t-1} + u_t\)(응통20)를 따른다고 보고 \(H_0: \rho = 0\) 대 \(H_1: \rho &gt; 0\)을 검정한다. 그런데 \(d\)의 정확한 분포는 \(X\)에 따라 달라지므로, 표는 두 경계 \(d_L, d_U\)를 준다. \(d &lt; d_L\)이면 기각하고, \(d &gt; d_U\)이면 기각하지 않으며, 그 사이면 판정을 보류한다. R에서는 <code>lmtest::dwtest(fit)</code>이 p값을 직접 계산한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.2</span>
-      <p>시간 순서 자료 10개에 단순회귀를 적합한 잔차가 1.1, 0.7, 0.9, 0.2, −0.6, −1.2, −1.0, −0.5, 0.1, 0.3입니다. \(d\)를 구하고 판정하세요(\(n = 10\), 설명변수 1개, 5%에서 \(d_L = 0.88\), \(d_U = 1.32\)).</p>
+      <p>시간 순서 자료 10개에 단순회귀를 적합한 잔차가 1.1, 0.7, 0.9, 0.2, −0.6, −1.2, −1.0, −0.5, 0.1, 0.3이다. \(d\)를 구하고 판정하라. \(n = 10\), 설명변수 1개, 5%에서 \(d_L = 0.88\), \(d_U = 1.32\)이다.</p>
     </div>
-    <p><i>풀이.</i> 연이은 차이의 제곱합: \(0.16 + 0.04 + 0.49 + 0.64 + 0.36 + 0.04 + 0.25 + 0.36 + 0.04 = 2.38\). \(\sum e_t^2 = 5.70\). \(d = 0.42 &lt; d_L\)이므로 양의 자기상관이 있다고 판정합니다. 잔차가 양수 넷, 음수 넷, 양수 둘로 길게 이어지는 모습과 맞습니다(\(r_1 = 0.68\)).</p>
+    <p><i>풀이.</i> 연이은 차이의 제곱합은 \(0.16 + 0.04 + 0.49 + 0.64 + 0.36 + 0.04 + 0.25 + 0.36 + 0.04 = 2.38\)이고, \(\sum e_t^2 = 5.70\)이다. 그러므로 \(d = 0.42 &lt; d_L\)이어서 양의 자기상관이 있다고 판정한다. 이는 잔차가 양수 넷, 음수 넷, 양수 둘로 길게 이어지는 모습(그림 1)과 맞으며, \(r_1 = 0.68\)이다.</p>
 
     <h3><span class="no">4.2.3</span>무엇이 문제이고 어떻게 하나</h3>
-    <p>양의 자기상관이 있어도 최소제곱 추정량은 여전히 불편이지만, 표준오차 공식 \(s^2(X^\top X)^{-1}\)이 틀립니다. 설명변수도 시간에 따라 천천히 변하면 표준오차가 과소평가되어 t 값이 부풀고, 실제로는 없는 관계가 유의하게 나옵니다. 대처는 다음과 같습니다.</p>
-    <ul>
-      <li>빠진 설명변수(추세, 계절 가변수, 지연된 \(y\))를 모형에 넣어 자기상관의 원인을 없앱니다.</li>
-      <li>자기상관 구조를 모형에 넣어 일반화 최소제곱으로 추정합니다(R: <code>nlme::gls(..., correlation = corAR1())</code>). 응통20의 시계열 회귀입니다.</li>
-      <li>계수는 그대로 두고 자기상관에 강한 표준오차(뉴이-웨스트, <code>sandwich::NeweyWest</code>)를 씁니다.</li>
-    </ul>
+    <p>양의 자기상관이 있어도 최소제곱 추정량은 여전히 불편이다. 하지만 표준오차 공식 \(s^2(X^\top X)^{-1}\)이 틀린다. 특히 설명변수도 시간에 따라 천천히 변하면 표준오차가 과소평가되어 t 값이 부풀고, 실제로는 없는 관계가 유의하게 나온다.</p>
+    <p>대처는 세 가지이다. 첫째, 추세, 계절 가변수, 지연된 \(y\) 같은 빠진 설명변수를 넣어 자기상관의 원인을 없앤다. 둘째, 자기상관 구조를 모형에 넣어 일반화 최소제곱으로 추정한다. R의 <code>nlme::gls(..., correlation = corAR1())</code>가 그것이며, 응통20의 시계열 회귀로 이어진다. 셋째, 계수는 그대로 두고 자기상관에 강한 뉴이-웨스트 표준오차(<code>sandwich::NeweyWest</code>)를 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>시간 순서 자료에서는 잔차를 시간 순으로 그려 봅니다.</li>
-        <li>\(d \approx 2(1 - r_1)\), 2 근처면 자기상관 없음, 0에 가까우면 양의 자기상관.</li>
-        <li>자기상관은 계수보다 표준오차를 망칩니다. 변수 추가, GLS, 강건 표준오차로 대처.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>시간 순서 자료에서는 잔차를 시간 순으로 그리고 지연 산점도를 본다. Durbin-Watson 통계량은 \(d \approx 2(1 - r_1)\)이어서 2 근처면 자기상관이 없고, 0에 가까우면 양의 자기상관이다. 자기상관은 계수보다 표준오차를 망치므로, 빠진 변수를 넣거나 일반화 최소제곱이나 강건 표준오차로 대처한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>잔차가 1, −1, 1, −1, 1, −1이면 \(d\)는? 무엇을 뜻하나요?
-          <details><summary>답</summary><p>차이가 모두 ±2라 분자 \(5 \times 4 = 20\), 분모 6, \(d = 3.33\). 4에 가까워 음의 자기상관(부호가 번갈아 바뀜)입니다.</p></details>
+        <li>잔차가 1, −1, 1, −1, 1, −1이면 \(d\)는 얼마인가? 무엇을 뜻하는가?
+          <details><summary>답</summary><p>차이가 모두 ±2라 분자는 \(5 \times 4 = 20\), 분모는 6이므로 \(d = 3.33\)이다. 4에 가까우므로 부호가 번갈아 바뀌는 음의 자기상관이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>횡단면 자료(서로 다른 사람 100명)를 이름의 가나다순으로 정렬해 DW 검정을 하는 것이 의미 있나요? 어떤 순서라면 의미가 있을까요?
-          <details><summary>답</summary><p>가나다순은 오차와 관계가 없어 의미가 없습니다. 자료를 모은 시간 순서, 지리적 순서(이웃 지역), 또는 설명변수 크기 순서(곡선성 점검)처럼 오차가 이어질 이유가 있는 순서에서만 의미가 있습니다.</p></details>
+      <ol start="2">
+        <li>서로 다른 사람 100명의 횡단면 자료를 이름의 가나다순으로 정렬해 DW 검정을 하는 것이 의미 있는가? 어떤 순서라면 의미가 있는가?
+          <details><summary>답</summary><p>가나다순은 오차와 관계가 없으므로 의미가 없다. 자료를 모은 시간 순서, 이웃 지역 같은 지리적 순서, 또는 곡선성을 점검하려는 설명변수 크기 순서처럼 오차가 이어질 이유가 있는 순서에서만 의미가 있다.</p></details>
         </li>
       </ol>
     </div>

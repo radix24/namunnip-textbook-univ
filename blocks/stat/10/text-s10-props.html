@@ -8,72 +8,113 @@
 <article class="card q-card" id="text-s10-props" data-kind="본문" data-std="응통10-01-02">
   <header class="card-head"><span class="no"></span><h2>추정량의 평균과 분산, 오차분산의 추정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\hat\beta_0, \hat\beta_1\)이 불편임을 보이고 분산과 공분산을 구한다.</li>
-        <li>\(s^2 = \mathrm{SSE}/(n-2)\)가 \(\sigma^2\)의 불편추정량인 이유를 안다.</li>
-        <li>분산 공식에서 실험 설계와 중심화의 교훈을 읽는다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱 추정량 (<a href="01-01.html">1.1절</a>), 기대값과 분산의 성질 (응통6 3.1, 5.3절).</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 \(x\) 다섯 점에서 실험을 다시 하면 오차가 달라지므로 최소제곱 직선도 달라진다. 이렇게 다시 그은 직선들은 평균적으로 참 직선과 맞을까? 얼마나 흔들릴까? 그리고 흔들림을 줄이려면 \(x\)를 어디에 두어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="x = 1부터 5까지 다섯 점에서 실험을 40번 다시 해 얻은 최소제곱 직선 40개와 참 직선. 직선들은 x 평균 3 근처에서 좁게 모이고 x = 0이나 6처럼 멀어질수록 넓게 퍼진다">
+        <line x1="55" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="55" y="195" text-anchor="middle" class="s">0</text>
+        <text x="109.2" y="195" text-anchor="middle" class="s">1</text>
+        <text x="163.3" y="195" text-anchor="middle" class="s">2</text>
+        <text x="217.5" y="195" text-anchor="middle" class="s">3</text>
+        <text x="271.7" y="195" text-anchor="middle" class="s">4</text>
+        <text x="325.8" y="195" text-anchor="middle" class="s">5</text>
+        <text x="380" y="195" text-anchor="middle" class="s">6</text>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="152" text-anchor="end" class="s">2</text>
+        <text x="50" y="120" text-anchor="end" class="s">4</text>
+        <text x="50" y="88" text-anchor="end" class="s">6</text>
+        <text x="50" y="56" text-anchor="end" class="s">8</text>
+        <text x="50" y="24" text-anchor="end" class="s">10</text>
+        <text x="380" y="209" text-anchor="end" class="s">x</text>
+        <text x="61" y="24" class="s">y</text>
+        <path d="M55 131.2 L380 77.3" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 133.7 L380 48" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 142.1 L380 55.9" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 147.5 L380 82.6" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 133.7 L380 63.1" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 142 L380 35.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 159 L380 49.2" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 149.8 L380 53.4" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 143.8 L380 67.2" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 132.9 L380 80.7" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 143.2 L380 53.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 102.3 L380 86.7" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 127.7 L380 91.1" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 140.8 L380 76.7" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 117.8 L380 96.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 158.1 L380 39.2" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 130.3 L380 45.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 145.4 L380 42.4" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 164.2 L380 62.2" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 129.9 L380 58.1" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 125.1 L380 63.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 140.1 L380 54.9" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 125.3 L380 79.2" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 127.2 L380 72.3" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 143.9 L380 40.9" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 134.7 L380 58.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 142.8 L380 29.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 145.4 L380 51.6" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 120.9 L380 91.7" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 134.5 L380 57.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 127.2 L380 58.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 133.8 L380 91.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 142.4 L380 46.5" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 137.4 L380 64.6" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 145 L380 63.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 154.7 L380 45.9" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 136.3 L380 39.6" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 122.2 L380 64.1" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 120 L380 78.8" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 145.4 L380 85.1" class="a" style="stroke-width:0.8;opacity:0.4"/>
+        <path d="M55 138.4 L380 61.6" class="d"/>
+        <path d="M217.5 180 L217.5 20" class="k dsh"/>
+        <text x="395" y="44" class="s ta">다시 한 실험 40번의</text><text x="395" y="60" class="s ta">최소제곱 직선</text><text x="395" y="84" class="s td">참 직선 2.6 + 0.8x</text><text x="395" y="110" class="s">x̄ = 3(점선)에서 좁고</text><text x="395" y="126" class="s">멀어질수록 퍼진다</text><text x="395" y="152" class="s">x = 0에서의 폭이</text><text x="395" y="168" class="s">절편의 흔들림</text>
+      </svg>
+      <figcaption>그림 1. 같은 설계(\(x\) = 1~5)로 실험을 40번 다시 해 얻은 최소제곱 직선(연한 파랑)과 참 직선(빨강). 직선들은 \(\bar x = 3\)에서 좁게 모이고, 멀어질수록 넓게 퍼진다. 그래서 \(x = 0\)의 값인 절편이 기울기보다 많이 흔들린다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱 추정량(<a href="01-01.html">1.1절</a>)과 기댓값과 분산의 성질(응통6 3.1절, 5.3절)을 쓴다.</div>
+    <p>추정량의 평균은 평균적으로 참값을 맞히는지를, 분산은 얼마나 흔들리는지를 답한다. 처음 질문의 답부터 말하면, 다시 그은 직선은 평균적으로 참 직선과 맞고, 흔들림은 \(x\)가 넓게 퍼질수록 작다(그림 1). 이 두 가지가 1.3절의 t 검정과 1.5절의 예측구간을 만드는 재료이다.</p>
 
-    <h3>같은 실험을 다시 하면</h3>
-    <p>같은 \(x\)에서 실험을 다시 하면 오차가 달라져 기울기도 달라집니다. 추정량의 평균은 "평균적으로 참값을 맞히는가", 분산은 "얼마나 흔들리는가"를 답합니다. 이 두 가지가 1.3절의 t 검정과 1.5절의 예측구간을 만드는 재료입니다.</p>
-
-    <h3><span class="no">1.2.1</span>기울기와 절편의 평균, 분산</h3>
+    <h3><span class="no">1.2.1</span>기울기와 절편의 평균과 분산</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 1.2.1</span>
-      <p>\(E(\hat\beta_1) = \beta_1\), \(\mathrm{Var}(\hat\beta_1) = \dfrac{\sigma^2}{S_{xx}}\). \(E(\hat\beta_0) = \beta_0\), \(\mathrm{Var}(\hat\beta_0) = \sigma^2\left(\dfrac1n + \dfrac{\bar x^2}{S_{xx}}\right)\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\dfrac{\bar x\sigma^2}{S_{xx}}\).</p>
+      <span class="lb">정리 1.2.1 <span class="nm">(추정량의 평균과 분산)</span></span>
+      <p>\(E(\hat\beta_1) = \beta_1\), \(\mathrm{Var}(\hat\beta_1) = \dfrac{\sigma^2}{S_{xx}}\)이고, \(E(\hat\beta_0) = \beta_0\), \(\mathrm{Var}(\hat\beta_0) = \sigma^2\left(\dfrac1n + \dfrac{\bar x^2}{S_{xx}}\right)\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\dfrac{\bar x\sigma^2}{S_{xx}}\)이다.</p>
     </div>
-    <p class="tb-proof">\(\sum(x_i - \bar x) = 0\)이므로 \(S_{xy} = \sum(x_i - \bar x)Y_i\), 곧 \(\hat\beta_1 = \sum c_iY_i\), \(c_i = (x_i - \bar x)/S_{xx}\). \(\sum c_i = 0\), \(\sum c_ix_i = 1\)이므로 \(E(\hat\beta_1) = \sum c_i(\beta_0 + \beta_1x_i) = \beta_1\). 독립이므로 \(\mathrm{Var}(\hat\beta_1) = \sigma^2\sum c_i^2 = \sigma^2/S_{xx}\). 또 \(\mathrm{Cov}(\bar Y, \hat\beta_1) = \frac{\sigma^2}{n}\sum c_i = 0\)이므로 \(\hat\beta_0 = \bar Y - \hat\beta_1\bar x\)에서 \(\mathrm{Var}(\hat\beta_0) = \frac{\sigma^2}{n} + \bar x^2\frac{\sigma^2}{S_{xx}}\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\bar x\,\mathrm{Var}(\hat\beta_1)\). <span class="qed">∎</span></p>
-    <p>정규성은 쓰지 않았습니다. 오차의 평균 0, 등분산, 무상관만으로 충분합니다. 여기에 정규성을 더하면 \(\hat\beta_1\)이 \(Y_i\)의 일차결합이므로 정확히 정규분포를 따릅니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span> \(\sum(x_i - \bar x) = 0\)이므로 \(S_{xy} = \sum(x_i - \bar x)Y_i\)이다. 그러므로 \(\hat\beta_1 = \sum c_iY_i\), \(c_i = (x_i - \bar x)/S_{xx}\)로 쓸 수 있다. 여기서 \(\sum c_i = 0\), \(\sum c_ix_i = 1\)이므로 \(E(\hat\beta_1) = \sum c_i(\beta_0 + \beta_1x_i) = \beta_1\)이다. 또 \(Y_i\)가 독립이므로 \(\mathrm{Var}(\hat\beta_1) = \sigma^2\sum c_i^2 = \sigma^2/S_{xx}\)이다. 한편 \(\mathrm{Cov}(\bar Y, \hat\beta_1) = \frac{\sigma^2}{n}\sum c_i = 0\)이므로, \(\hat\beta_0 = \bar Y - \hat\beta_1\bar x\)에서 \(\mathrm{Var}(\hat\beta_0) = \frac{\sigma^2}{n} + \bar x^2\frac{\sigma^2}{S_{xx}}\), \(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\bar x\,\mathrm{Var}(\hat\beta_1)\)이다. <span class="qed">∎</span></p>
+    <p>증명에서 정규성은 쓰지 않았다. 오차의 평균이 0이고, 분산이 같고, 서로 상관이 없다는 것만으로 충분하다. 여기에 정규성을 더하면 \(\hat\beta_1\)은 \(Y_i\)의 일차결합이므로 정확히 정규분포를 따른다.</p>
 
     <h3><span class="no">1.2.2</span>공식이 주는 교훈</h3>
-    <ul>
-      <li><b>\(x\)를 넓게</b>: \(S_{xx}\)가 클수록 기울기가 정확합니다. 같은 비용이면 \(x\)를 넓은 범위에 퍼뜨려 실험합니다.</li>
-      <li><b>표본 크기</b>: \(x\)를 같은 방식으로 늘리면 \(S_{xx}\)가 \(n\)에 비례해 커지고 표준오차는 \(1/\sqrt n\)로 줄어듭니다.</li>
-      <li><b>절편은 \(\bar x\)에서 멀수록 부정확</b>: 절편은 \(x = 0\)에서의 예측이라, 0이 자료에서 멀면 분산이 커집니다. 기울기와 절편은 \(\bar x &gt; 0\)이면 음의 상관을 갖습니다(기울기를 높이면 \((\bar x, \bar y)\)를 지나기 위해 절편이 내려감).</li>
-      <li><b>중심화</b>: \(x\) 대신 \(x - \bar x\)를 쓰면 절편이 \(\bar y\)가 되고 공분산이 0이 됩니다. 계수 해석과 수치 계산이 모두 편해집니다.</li>
-    </ul>
+    <p>\(\mathrm{Var}(\hat\beta_1) = \sigma^2/S_{xx}\)에서 보듯 \(S_{xx}\)가 클수록 기울기가 정확하다. 그래서 같은 비용이면 \(x\)를 넓은 범위에 퍼뜨려 실험한다. 또 \(x\)를 같은 방식으로 늘리면 \(S_{xx}\)가 \(n\)에 비례해 커지므로 표준오차는 \(1/\sqrt n\)로 줄어든다.</p>
+    <p>절편은 \(x = 0\)에서의 예측이므로, 0이 자료에서 멀면 분산이 커진다(그림 1). 그리고 \(\bar x &gt; 0\)이면 기울기와 절편은 음의 상관을 갖는다. 직선이 \((\bar x, \bar y)\) 근처를 지나야 하므로 기울기가 올라가면 절편이 내려가기 때문이다. 그런데 \(x\) 대신 중심화한 \(x - \bar x\)를 쓰면 절편이 \(\bar y\)가 되고 공분산이 0이 되어, 계수 해석과 수치 계산이 모두 편해진다.</p>
 
     <h3><span class="no">1.2.3</span>오차분산의 추정</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 1.2.2</span>
-      <p>\(\mathrm{SSE} = \sum e_i^2\)에 대해 \(E(\mathrm{SSE}) = (n-2)\sigma^2\). 따라서 \(s^2 = \mathrm{MSE} = \mathrm{SSE}/(n-2)\)는 \(\sigma^2\)의 불편추정량이다.</p>
+      <span class="lb">정리 1.2.2 <span class="nm">(오차분산의 불편추정량)</span></span>
+      <p>\(\mathrm{SSE} = \sum e_i^2\)에 대해 \(E(\mathrm{SSE}) = (n-2)\sigma^2\)이다. 따라서 \(s^2 = \mathrm{MSE} = \mathrm{SSE}/(n-2)\)는 \(\sigma^2\)의 불편추정량이다.</p>
     </div>
-    <p>직관: 잔차는 오차와 달리 1.1절의 두 제약(\(\sum e_i = 0\), \(\sum x_ie_i = 0\))을 만족하므로 자유롭게 움직이는 방향이 \(n - 2\)개뿐입니다. \(n\)으로 나누면 \(\sigma^2\)을 체계적으로 작게 추정합니다. 일반 증명은 02단원에서 모자 행렬의 대각합으로 합니다(\(E(\mathrm{SSE}) = \sigma^2\,\mathrm{tr}(I - H) = (n-p)\sigma^2\)). 표준오차는 \(\sigma\)를 \(s\)로 바꿔 \(\mathrm{se}(\hat\beta_1) = s/\sqrt{S_{xx}}\)로 씁니다.</p>
-
+    <p>왜 \(n - 2\)로 나눌까? 잔차는 오차와 달리 1.1절의 두 제약 \(\sum e_i = 0\), \(\sum x_ie_i = 0\)을 만족하므로 자유롭게 움직이는 방향이 \(n - 2\)개뿐이다. 따라서 \(n\)으로 나누면 \(\sigma^2\)을 체계적으로 작게 추정한다. 일반적인 증명은 2단원에서 모자 행렬의 대각합으로 한다(\(E(\mathrm{SSE}) = \sigma^2\,\mathrm{tr}(I - H) = (n-p)\sigma^2\)). 표준오차는 \(\sigma\)를 \(s\)로 바꾸어 \(\mathrm{se}(\hat\beta_1) = s/\sqrt{S_{xx}}\)로 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.3</span>
-      <p>1.1절 연습 자료(\(x\) = 1~5, \(S_{xx} = 10\), SSE = 3.6)에서 \(s^2\)과 두 계수의 표준오차, 두 추정량의 상관계수를 구하세요.</p>
+      <p>1.1절 연습문제의 자료(\(x\) = 1~5, \(S_{xx} = 10\), SSE = 3.6)에서 \(s^2\)과 두 계수의 표준오차, 두 추정량의 상관계수를 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(s^2 = 3.6/3 = 1.2\). \(\mathrm{se}(\hat\beta_1) = \sqrt{1.2/10} = 0.346\), \(\mathrm{se}(\hat\beta_0) = \sqrt{1.2(0.2 + 9/10)} = \sqrt{1.32} = 1.149\). 공분산 \(-3 \times 1.2/10 = -0.36\), 상관 \(-0.36/(0.346 \times 1.149) = -0.905\). \(x\)를 중심화하면 이 강한 음의 상관이 사라집니다.</p>
+    <p><i>풀이.</i> \(s^2 = 3.6/3 = 1.2\)이다. 그러면 \(\mathrm{se}(\hat\beta_1) = \sqrt{1.2/10} = 0.346\), \(\mathrm{se}(\hat\beta_0) = \sqrt{1.2(0.2 + 9/10)} = \sqrt{1.32} = 1.149\)이다. 공분산은 \(-3 \times 1.2/10 = -0.36\)이므로 상관은 \(-0.36/(0.346 \times 1.149) = -0.905\)이다. 이 강한 음의 상관은 \(x\)를 중심화하면 사라진다. 그림 1의 모의실험에서도 기울기 40개의 표준편차는 0.27로, 직선이 40개뿐이라 흔들림이 있지만 이론값 0.346과 비슷하다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\hat\beta_0, \hat\beta_1\)은 불편, \(\mathrm{Var}(\hat\beta_1) = \sigma^2/S_{xx}\).</li>
-        <li>\(\mathrm{Cov}(\hat\beta_0, \hat\beta_1) = -\bar x\sigma^2/S_{xx}\), 중심화하면 0.</li>
-        <li>\(s^2 = \mathrm{SSE}/(n-2)\)는 불편, 자유도 2를 잃는 이유는 잔차의 두 제약.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(\hat\beta_0, \hat\beta_1\)은 불편추정량이고 \(\mathrm{Var}(\hat\beta_1) = \sigma^2/S_{xx}\)이므로, \(x\)를 넓게 퍼뜨릴수록 기울기가 정확하다. 두 추정량의 공분산은 \(-\bar x\sigma^2/S_{xx}\)이며 \(x\)를 중심화하면 0이 된다. 오차분산은 \(s^2 = \mathrm{SSE}/(n-2)\)로 불편 추정하며, 자유도 2를 잃는 까닭은 잔차에 걸린 두 제약이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(x\)를 [0, 10]에서 10개 고를 수 있다면 기울기를 가장 정확히 추정하는 배치는? 1, 2, …, 10에 하나씩 둘 때와 표준오차를 비교하세요.
-          <details><summary>답</summary><p>\(S_{xx}\)를 최대로: 0에 5개, 10에 5개, \(S_{xx} = 250\). 1~10 균등 배치는 \(S_{xx} = 82.5\). 표준오차 비 \(\sqrt{250/82.5} = 1.74\)배 차이. 다만 양 끝에만 두면 직선성을 점검할 수 없으므로 실제로는 가운데에도 몇 개 둡니다.</p></details>
+        <li>\(x\)를 [0, 10]에서 10개 고를 수 있다면 기울기를 가장 정확히 추정하는 배치는 무엇인가? 1, 2, …, 10에 하나씩 둘 때와 표준오차를 비교하라.
+          <details><summary>답</summary><p>\(S_{xx}\)를 최대로 하는 배치, 곧 0에 5개, 10에 5개이며 \(S_{xx} = 250\)이다. 1~10 균등 배치는 \(S_{xx} = 82.5\)이므로 표준오차가 \(\sqrt{250/82.5} = 1.74\)배 차이 난다. 다만 양 끝에만 두면 직선성을 점검할 수 없으므로 실제로는 가운데에도 몇 개 둔다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(\hat\beta_1\)이 \(\beta_1\)의 선형 불편추정량 가운데 분산이 가장 작음을 보이세요(\(\sum a_iY_i\)가 불편이려면 \(\sum a_i = 0\), \(\sum a_ix_i = 1\)).
-          <details><summary>답</summary><p>\(a_i = c_i + d_i\)로 쓰면 조건에서 \(\sum d_i = 0\), \(\sum d_ix_i = 0\), 따라서 \(\sum c_id_i = 0\). \(\mathrm{Var} = \sigma^2(\sum c_i^2 + \sum d_i^2) \ge \sigma^2\sum c_i^2\). 단순회귀의 가우스-마르코프 정리(2.3절)입니다.</p></details>
+      <ol start="2">
+        <li>\(\hat\beta_1\)이 \(\beta_1\)의 선형 불편추정량 가운데 분산이 가장 작음을 보여라. \(\sum a_iY_i\)가 불편이려면 \(\sum a_i = 0\), \(\sum a_ix_i = 1\)이어야 한다.
+          <details><summary>답</summary><p>\(a_i = c_i + d_i\)로 쓰면 조건에서 \(\sum d_i = 0\), \(\sum d_ix_i = 0\)이고, 따라서 \(\sum c_id_i = 0\)이다. 그러므로 \(\mathrm{Var} = \sigma^2(\sum c_i^2 + \sum d_i^2) \ge \sigma^2\sum c_i^2\)이다. 이것이 단순회귀의 가우스-마르코프 정리(2.3절)이다.</p></details>
         </li>
       </ol>
     </div>

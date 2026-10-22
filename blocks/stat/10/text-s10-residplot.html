@@ -8,59 +8,81 @@
 <article class="card q-card" id="text-s10-residplot" data-kind="본문" data-std="응통10-04-01">
   <header class="card-head"><span class="no"></span><h2>잔차 그림으로 가정 점검하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>잔차 대 적합값 그림, 정규 분위수 그림, 척도-위치 그림을 읽는다.</li>
-        <li>스튜던트화 잔차를 쓰는 이유를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>모자 행렬 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>모형을 믿기 전에</h3>
-    <p>추정과 검정의 모든 결과는 1.1절의 가정 위에 서 있습니다. 가정은 오차에 대한 것인데 오차는 볼 수 없으니, 그 대리인인 잔차를 그려 봅니다.</p>
+    <p class="q-ask">지금까지의 t 검정, 신뢰구간, 예측구간은 모두 오차가 독립이고 분산이 같으며 정규분포를 따른다는 가정 위에 서 있다. 그런데 오차는 볼 수 없다. 가정이 맞는지 어떻게 확인할까? 그리고 <code>cars</code> 자료의 직선 모형은 그 확인을 통과할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="cars 회귀의 진단 그림 두 개. 왼쪽 잔차 대 적합값 그림에서 적합값이 커질수록 잔차가 넓게 퍼지는 나팔 모양이 보인다. 오른쪽 정규 Q-Q 그림에서 스튜던트화 잔차의 위쪽 끝이 직선 위로 휘어 오른쪽 꼬리가 길다">
+        <line x1="50" y1="180" x2="235" y2="180" class="ax"/>
+        <line x1="50" y1="180" x2="50" y2="20" class="ax"/>
+        <text x="59.2" y="195" text-anchor="middle" class="s">0</text>
+        <text x="133.2" y="195" text-anchor="middle" class="s">40</text>
+        <text x="207.2" y="195" text-anchor="middle" class="s">80</text>
+        <text x="45" y="174.6" text-anchor="end" class="s">−30</text>
+        <text x="45" y="118.1" text-anchor="end" class="s">0</text>
+        <text x="45" y="61.6" text-anchor="end" class="s">30</text>
+        <text x="235" y="209" text-anchor="end" class="s">적합값</text>
+        <text x="56" y="24" class="s">잔차</text>
+        <path d="M50 114.1 L235 114.1" class="k dsh"/>
+        <circle cx="55.8" cy="106.9" r="2.6" class="fa"/><circle cx="55.8" cy="91.8" r="2.6" class="fa"/><circle cx="77.7" cy="125.3" r="2.6" class="fa"/><circle cx="77.7" cy="91.4" r="2.6" class="fa"/><circle cx="84.9" cy="110.1" r="2.6" class="fa"/><circle cx="92.2" cy="128.8" r="2.6" class="fa"/><circle cx="99.5" cy="121.2" r="2.6" class="fa"/><circle cx="99.5" cy="106.1" r="2.6" class="fa"/><circle cx="99.5" cy="91" r="2.6" class="fa"/><circle cx="106.8" cy="130.5" r="2.6" class="fa"/><circle cx="106.8" cy="109.7" r="2.6" class="fa"/><circle cx="114" cy="143.5" r="2.6" class="fa"/><circle cx="114" cy="132.2" r="2.6" class="fa"/><circle cx="114" cy="124.7" r="2.6" class="fa"/><circle cx="114" cy="117.1" r="2.6" class="fa"/><circle cx="121.3" cy="128.3" r="2.6" class="fa"/><circle cx="121.3" cy="113.3" r="2.6" class="fa"/><circle cx="121.3" cy="113.3" r="2.6" class="fa"/><circle cx="121.3" cy="90.7" r="2.6" class="fa"/><circle cx="128.6" cy="135.7" r="2.6" class="fa"/><circle cx="128.6" cy="116.9" r="2.6" class="fa"/><circle cx="128.6" cy="71.7" r="2.6" class="fa"/><circle cx="128.6" cy="34.1" r="2.6" class="fa"/><circle cx="135.9" cy="154.4" r="2.6" class="fa"/><circle cx="135.9" cy="143.1" r="2.6" class="fa"/><circle cx="135.9" cy="90.4" r="2.6" class="fa"/><circle cx="143.1" cy="139.2" r="2.6" class="fa"/><circle cx="143.1" cy="124.2" r="2.6" class="fa"/><circle cx="150.4" cy="146.6" r="2.6" class="fa"/><circle cx="150.4" cy="131.6" r="2.6" class="fa"/><circle cx="150.4" cy="112.7" r="2.6" class="fa"/><circle cx="157.7" cy="135.2" r="2.6" class="fa"/><circle cx="157.7" cy="108.9" r="2.6" class="fa"/><circle cx="157.7" cy="71.2" r="2.6" class="fa"/><circle cx="157.7" cy="56.1" r="2.6" class="fa"/><circle cx="165" cy="153.9" r="2.6" class="fa"/><circle cx="165" cy="135.1" r="2.6" class="fa"/><circle cx="165" cy="93.7" r="2.6" class="fa"/><circle cx="172.2" cy="168.8" r="2.6" class="fa"/><circle cx="172.2" cy="138.7" r="2.6" class="fa"/><circle cx="172.2" cy="131.2" r="2.6" class="fa"/><circle cx="172.2" cy="123.7" r="2.6" class="fa"/><circle cx="172.2" cy="108.6" r="2.6" class="fa"/><circle cx="186.8" cy="119.6" r="2.6" class="fa"/><circle cx="194.1" cy="149.6" r="2.6" class="fa"/><circle cx="201.3" cy="126.9" r="2.6" class="fa"/><circle cx="201.3" cy="85.5" r="2.6" class="fa"/><circle cx="201.3" cy="83.6" r="2.6" class="fa"/><circle cx="201.3" cy="32.8" r="2.6" class="fa"/><circle cx="208.6" cy="106.1" r="2.6" class="fa"/>
+        <path d="M59.2 136.7 L225.8 174.4 M59.2 91.5 L225.8 35.1" class="c dsh"/>
+        <line x1="300" y1="180" x2="495" y2="180" class="ax"/>
+        <line x1="300" y1="180" x2="300" y2="20" class="ax"/>
+        <text x="322.5" y="195" text-anchor="middle" class="s">−2</text>
+        <text x="397.5" y="195" text-anchor="middle" class="s">0</text>
+        <text x="472.5" y="195" text-anchor="middle" class="s">2</text>
+        <text x="295" y="168" text-anchor="end" class="s">−2</text>
+        <text x="295" y="114.7" text-anchor="end" class="s">0</text>
+        <text x="295" y="61.3" text-anchor="end" class="s">2</text>
+        <text x="495" y="209" text-anchor="end" class="s">정규 분위수</text>
+        <text x="306" y="24" class="s">스튜던트화 잔차</text>
+        <path d="M300 180 L495 41.3" class="k dsh"/>
+        <circle cx="310.3" cy="162" r="2.6" class="fb"/><circle cx="327" cy="148.2" r="2.6" class="fb"/><circle cx="335.8" cy="147.9" r="2.6" class="fb"/><circle cx="342.2" cy="144.4" r="2.6" class="fb"/><circle cx="347.2" cy="140.9" r="2.6" class="fb"/><circle cx="351.5" cy="138.1" r="2.6" class="fb"/><circle cx="355.3" cy="137.7" r="2.6" class="fb"/><circle cx="358.6" cy="134" r="2.6" class="fb"/><circle cx="361.7" cy="133.7" r="2.6" class="fb"/><circle cx="364.6" cy="130.8" r="2.6" class="fb"/><circle cx="367.3" cy="130.3" r="2.6" class="fb"/><circle cx="369.8" cy="130.3" r="2.6" class="fb"/><circle cx="372.2" cy="127.6" r="2.6" class="fb"/><circle cx="374.5" cy="126.9" r="2.6" class="fb"/><circle cx="376.7" cy="126.7" r="2.6" class="fb"/><circle cx="378.9" cy="126" r="2.6" class="fb"/><circle cx="381" cy="124.6" r="2.6" class="fb"/><circle cx="383.1" cy="123.9" r="2.6" class="fb"/><circle cx="385.1" cy="122.9" r="2.6" class="fb"/><circle cx="387" cy="121.4" r="2.6" class="fb"/><circle cx="389" cy="120.5" r="2.6" class="fb"/><circle cx="390.9" cy="120" r="2.6" class="fb"/><circle cx="392.8" cy="119.6" r="2.6" class="fb"/><circle cx="394.7" cy="117.3" r="2.6" class="fb"/><circle cx="396.6" cy="115.9" r="2.6" class="fb"/><circle cx="398.4" cy="113.5" r="2.6" class="fb"/><circle cx="400.3" cy="113.3" r="2.6" class="fb"/><circle cx="402.2" cy="109.9" r="2.6" class="fb"/><circle cx="404.1" cy="109.9" r="2.6" class="fb"/><circle cx="406" cy="109.4" r="2.6" class="fb"/><circle cx="408" cy="106.9" r="2.6" class="fb"/><circle cx="409.9" cy="106.6" r="2.6" class="fb"/><circle cx="411.9" cy="105.8" r="2.6" class="fb"/><circle cx="414" cy="105.5" r="2.6" class="fb"/><circle cx="416.1" cy="103.6" r="2.6" class="fb"/><circle cx="418.3" cy="103.1" r="2.6" class="fb"/><circle cx="420.5" cy="102.9" r="2.6" class="fb"/><circle cx="422.8" cy="91.5" r="2.6" class="fb"/><circle cx="425.2" cy="89" r="2.6" class="fb"/><circle cx="427.7" cy="89" r="2.6" class="fb"/><circle cx="430.4" cy="88.8" r="2.6" class="fb"/><circle cx="433.3" cy="88.8" r="2.6" class="fb"/><circle cx="436.4" cy="88.6" r="2.6" class="fb"/><circle cx="439.7" cy="83.3" r="2.6" class="fb"/><circle cx="443.5" cy="81.5" r="2.6" class="fb"/><circle cx="447.8" cy="71.2" r="2.6" class="fb"/><circle cx="452.8" cy="70.6" r="2.6" class="fb"/><circle cx="459.2" cy="56.6" r="2.6" class="fb"/><circle cx="468" cy="36.1" r="2.6" class="fb"/><circle cx="484.7" cy="32.8" r="2.6" class="fb"/>
+      </svg>
+      <figcaption>그림 1. <code>cars</code> 회귀의 진단 그림. 왼쪽 잔차 대 적합값(파랑)은 적합값이 커질수록 퍼지는 나팔 모양(주황 점선)이고, 오른쪽 Q-Q 그림(청록)은 위쪽 끝이 직선 위로 휜다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>모자 행렬과 잔차의 성질(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
+    <p>가정은 오차에 대한 것이지만 오차는 볼 수 없다. 처음 질문의 답은 그 대리인인 잔차를 그려 보는 것이다. <code>cars</code> 모형은 그림 1에서 보듯 등분산과 정규성에 약한 문제를 보인다.</p>
 
     <h3><span class="no">4.1.1</span>잔차의 성질과 표준화</h3>
-    <p>\(\mathbf e = (I - H)\mathbf y\)이므로 \(\mathrm{Var}(e_i) = \sigma^2(1 - h_{ii})\)입니다(\(h_{ii}\)는 \(H\)의 대각 원소, 지렛값). 오차와 달리 잔차는 분산이 점마다 다르고 서로 상관이 있습니다. 그래서 크기를 비교할 때는 표준화합니다.</p>
+    <p>\(\mathbf e = (I - H)\mathbf y\)이므로 \(\mathrm{Var}(e_i) = \sigma^2(1 - h_{ii})\)이다. 여기서 \(h_{ii}\)는 \(H\)의 대각원소인 지렛값이다. 즉 잔차는 오차와 달리 분산이 점마다 다르고 서로 상관이 있다. 그래서 크기를 비교할 때는 표준화한다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 4.1.1</span>
-      <p><b>내적 스튜던트화 잔차</b>: \(r_i = \dfrac{e_i}{s\sqrt{1 - h_{ii}}}\). \(s\)를 \(i\)번째 점을 뺀 \(s_{(i)}\)로 바꾼 것을 외적 스튜던트화 잔차라 하며, 모형이 맞으면 \(t_{n-p-1}\)을 따릅니다.</p>
+      <span class="lb">정의 4.1.1 <span class="nm">(스튜던트화 잔차)</span></span>
+      <p>\(r_i = \dfrac{e_i}{s\sqrt{1 - h_{ii}}}\)를 <em>내적 스튜던트화 잔차</em>라 한다. \(s\)를 \(i\)번째 점을 뺀 \(s_{(i)}\)로 바꾼 것은 외적 스튜던트화 잔차라 하며, 모형이 맞으면 \(t_{n-p-1}\)을 따른다.</p>
     </div>
-    <p>절댓값이 2~3을 넘으면 이상값 후보로 봅니다.</p>
+    <p>절댓값이 2~3을 넘으면 이상값 후보로 본다. 예컨대 <code>cars</code>에서 가장 큰 스튜던트화 잔차는 2.92이다.</p>
 
     <h3><span class="no">4.1.2</span>세 가지 그림</h3>
+    <p>가장 기본은 표 1의 세 그림이다.</p>
     <table class="tw">
-      <tr><th>그림</th><th>보는 가정</th><th>문제의 모양</th></tr>
-      <tr><td>잔차 대 적합값</td><td>선형성, 등분산</td><td>곡선(U자) 무늬, 나팔 모양</td></tr>
-      <tr><td>정규 분위수(Q-Q)</td><td>정규성</td><td>양 끝이 직선에서 휨(두꺼운 꼬리), S자</td></tr>
-      <tr><td>척도-위치 (\(\sqrt{|r_i|}\) 대 적합값)</td><td>등분산</td><td>오른쪽으로 올라가는 추세</td></tr>
+      <caption>표 1. 잔차 진단 그림과 보는 가정</caption>
+      <thead><tr><th>그림</th><th>보는 가정</th><th>문제의 모양</th></tr></thead>
+      <tbody>
+        <tr><td>잔차 대 적합값</td><td>선형성, 등분산</td><td>곡선(U자) 무늬, 나팔 모양</td></tr>
+        <tr><td>정규 분위수(Q-Q)</td><td>정규성</td><td>양 끝이 직선에서 휨(두꺼운 꼬리), S자</td></tr>
+        <tr><td>척도-위치(\(\sqrt{|r_i|}\) 대 적합값)</td><td>등분산</td><td>오른쪽으로 올라가는 추세</td></tr>
+      </tbody>
     </table>
-    <p>시간 순서로 모은 자료라면 잔차를 시간 순으로 그려 독립성(자기상관)도 봅니다. 이웃한 잔차가 같은 부호로 몰리면 독립이 깨진 것입니다(응통20).</p>
-    <p>이 절의 실습 카드에서 참 모형을 바꿔 가며 각 무늬를 직접 볼 수 있습니다.</p>
-
+    <p>시간 순서로 모은 자료라면 잔차를 시간 순으로 그려 독립성도 본다. 이웃한 잔차가 같은 부호로 몰리면 독립이 깨진 것이다(<a href="04-02.html">4.2절</a>). 이 절의 실습 카드에서 참 모형을 바꿔 가며 각 무늬를 직접 볼 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.2</span>
-      <p><code>cars</code> 회귀의 진단 그림을 그리고 해석하세요.</p>
+      <p><code>cars</code> 회귀의 진단 그림을 그리고 해석하라.</p>
     </div>
-    <p><i>풀이.</i> <code>par(mfrow = c(2, 2)); plot(fit)</code>. 잔차 대 적합값에서 적합값이 커질수록 잔차가 넓게 퍼지는 나팔 모양이 약하게 보이고, Q-Q 그림의 위쪽 끝이 직선 위로 휩니다(오른쪽 꼬리가 깁니다). 제동 거리는 속도의 제곱에 가깝게 늘어난다는 물리 법칙을 생각하면 \(\sqrt{\text{dist}}\)를 반응으로 쓰는 변환(05단원)을 고려할 만합니다.</p>
+    <p><i>풀이.</i> <code>par(mfrow = c(2, 2)); plot(fit)</code>을 실행한다. 잔차 대 적합값에서는 적합값이 커질수록 잔차가 넓게 퍼지는 나팔 모양이 약하게 보이고, Q-Q 그림의 위쪽 끝은 직선 위로 휜다. 다시 말해 오른쪽 꼬리가 길다(그림 1). 그런데 제동 거리는 속도의 제곱에 가깝게 늘어난다는 물리 법칙이 있다. 그러므로 \(\sqrt{\text{dist}}\)를 반응으로 쓰는 변환(5단원)을 고려할 만하다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>잔차 대 적합값 그림에 직선 추세가 없다고 선형성이 확인된 것은 아니다. 2.2절에서 보았듯 잔차와 적합값의 상관은 언제나 0이다. 그러므로 의미 있는 신호는 곡선이나 나팔 같은 다른 모양뿐이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>잔차 분산은 \(\sigma^2(1 - h_{ii})\): 스튜던트화해서 비교.</li>
-        <li>잔차-적합값(선형·등분산), Q-Q(정규), 척도-위치(등분산), 시간 순(독립).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>잔차의 분산은 \(\sigma^2(1 - h_{ii})\)로 점마다 다르므로, 스튜던트화해서 크기를 비교한다. 잔차 대 적합값 그림은 선형성과 등분산을, Q-Q 그림은 정규성을, 척도-위치 그림은 등분산을, 시간 순 그림은 독립성을 본다. 문제가 보이면 변환(5단원)이나 다른 모형을 검토한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>잔차 대 \(x\) 그림에 무늬가 없는데 잔차 대 다른 변수 \(z\)(모형에 없음) 그림에 직선 추세가 보이면?
-          <details><summary>답</summary><p>\(z\)가 반응을 설명하는데 모형에서 빠졌습니다. \(z\)를 설명변수로 넣는 것을 검토합니다.</p></details>
+        <li>잔차 대 \(x\) 그림에는 무늬가 없는데, 모형에 없는 다른 변수 \(z\)에 대한 잔차 그림에는 직선 추세가 보인다. 무엇을 뜻하는가?
+          <details><summary>답</summary><p>\(z\)가 반응을 설명하는데 모형에서 빠졌다는 뜻이다. \(z\)를 설명변수로 넣는 것을 검토한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>지렛값이 0.5인 점의 잔차 분산은 지렛값이 0.02인 점의 몇 배인가? 왜 스튜던트화가 필요한가?
+          <details><summary>답</summary><p>\((1 - 0.5)/(1 - 0.02) = 0.51\)배이다. 지렛값이 큰 점은 직선을 자기 쪽으로 끌어당겨 잔차가 작게 나오므로, 날것의 잔차로는 이상값을 놓칠 수 있다.</p></details>
         </li>
       </ol>
     </div>
