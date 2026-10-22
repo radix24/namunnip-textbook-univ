@@ -8,49 +8,62 @@
 <article class="card q-card" id="text-m15-fft" data-kind="본문" data-std="수학15-06-02">
   <header class="card-head"><span class="no"></span><h2>고속 푸리에 변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>DFT를 정의대로 계산하면 곱셈이 약 \(N^2\)번 필요함을 안다.</li>
-        <li>짝수 번째와 홀수 번째로 나누는 분할정복으로 \(N = 2^n\)일 때 계산량이 \(O(N\log N)\)으로 줄어드는 이유를 설명한다.</li>
-        <li>FFT가 다항식 곱셈 같은 계산을 빠르게 하는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>이산 푸리에 변환 (<a href="06-01.html">6.1절</a>), 점화식으로 수열 구하기(고등학교 수열).</li>
-      </ul>
-    </div>
+    <p class="q-ask">이산 푸리에 변환을 정의대로 계산하면 표본이 \(N\)개일 때 곱셈이 약 \(N^2\)번 든다. 표본이 백만 개라면 곱셈이 1조 번이다. 이 계산을 훨씬 빠르게 할 방법은 없을까? 1의 거듭제곱근의 어떤 성질이 계산을 줄여 줄까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="정의대로의 계산량과 고속 푸리에 변환의 계산량 비교">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M65.1 167.3 L80.2 159.6 L95.4 151.9 L110.5 144.2 L125.6 136.5 L140.7 128.8 L155.9 121.1 L171.0 113.3 L186.1 105.6 L201.2 97.9 L216.3 90.2 L231.5 82.5 L246.6 74.8 L261.7 67.1 L276.8 59.4 L292.0 51.7 L307.1 44.0 L322.2 36.3 L337.3 28.6 L352.4 20.9" class="d" style="fill:none"/>
+        <path d="M65.1 175.0 L80.2 167.3 L95.4 161.2 L110.5 155.7 L125.6 150.6 L140.7 145.8 L155.9 141.1 L171.0 136.5 L186.1 132.0 L201.2 127.5 L216.3 123.1 L231.5 118.8 L246.6 114.5 L261.7 110.2 L276.8 106.0 L292.0 101.8 L307.1 97.6 L322.2 93.4 L337.3 89.3 L352.4 85.1" class="a" style="fill:none"/>
+        <circle cx="201.2" cy="97.9" r="3" class="fd"/>
+        <circle cx="201.2" cy="127.5" r="3" class="fa"/>
+        <circle cx="352.4" cy="20.9" r="3" class="fd"/>
+        <circle cx="352.4" cy="85.1" r="3" class="fa"/>
+        <text x="50" y="190" text-anchor="middle" class="s">1</text>
+        <text x="126" y="190" text-anchor="middle" class="s">32</text>
+        <text x="201" y="190" text-anchor="middle" class="s">1024</text>
+        <text x="277" y="190" text-anchor="middle" class="s">3.3만</text>
+        <text x="352" y="190" text-anchor="middle" class="s">105만</text>
+        <text x="44" y="179" text-anchor="end" class="s">1</text>
+        <text x="44" y="141" text-anchor="end" class="s">10³</text>
+        <text x="44" y="102" text-anchor="end" class="s">10⁶</text>
+        <text x="44" y="64" text-anchor="end" class="s">10⁹</text>
+        <text x="44" y="25" text-anchor="end" class="s">10¹²</text>
+        <text x="205" y="207" text-anchor="middle" class="s">N (로그 눈금)</text>
+        <text x="375" y="40" class="td">정의대로 N²</text>
+        <text x="375" y="60" class="ta">FFT (N/2) log₂ N</text>
+        <text x="375" y="80" class="s">N = 1024 에서</text>
+        <text x="375" y="100" class="s">105만 번 대 5120 번</text>
+        <text x="375" y="120" class="s">N = 2²⁰ 이면 10만 배 차이</text>
+      </svg>
+      <figcaption>그림 1. 가로와 세로를 모두 로그 눈금으로 그린 곱셈 횟수이다. 정의대로 계산하면 \(N^2\)(빨강)이고, 고속 푸리에 변환은 \(\frac N2\log_2N\)(파랑)이다. \(N = 1024\)에서 약 200배, \(N = 2^{20}\)에서 약 10만 배 차이가 난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이산 푸리에 변환(<a href="06-01.html">6.1절</a>)과 점화식으로 수열 구하기를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>정의대로 계산하면</h3>
-    <p>\(\hat f(k) = \frac1N\sum_{n=0}^{N-1}f(n)\zeta_N^{-kn}\)을 \(k = 0, \dots, N - 1\) 모두에 대해 구하려면 \(k\)마다 곱셈 \(N\)번, 전체 약 \(N^2\)번이 듭니다. \(N = 1024\)이면 약 105만 번, \(N = 10^6\)이면 \(10^{12}\)번입니다.</p>
+    <p>\(\hat f(k) = \frac1N\sum_{n=0}^{N-1}f(n)\zeta_N^{-kn}\)을 \(k = 0, \dots, N - 1\) 모두에 대해 구하려면, \(k\)마다 곱셈이 \(N\)번이라 전체 약 \(N^2\)번이 든다. \(N = 1024\)이면 약 105만 번이고, \(N = 10^6\)이면 \(10^{12}\)번이다.</p>
 
-    <h3><span class="no">6.2.2</span>짝·홀로 나누기</h3>
-    <p>\(N = 2M\)이라 합시다. \(\zeta_N^2 = \zeta_M\)이므로 합을 짝수 \(n = 2m\)과 홀수 \(n = 2m + 1\)로 나누면</p>
-    \[\hat f(k) = \frac12\left(\frac1M\sum_{m=0}^{M-1}f(2m)\zeta_M^{-km} + \zeta_N^{-k}\cdot\frac1M\sum_{m=0}^{M-1}f(2m + 1)\zeta_M^{-km}\right) = \frac12\left(\hat f_0(k) + \zeta_N^{-k}\hat f_1(k)\right).\]
-    <p>여기서 \(f_0(m) = f(2m)\), \(f_1(m) = f(2m + 1)\)은 \(\mathbb Z_M\) 위의 함수이고 \(\hat f_0, \hat f_1\)은 크기 \(M\)인 DFT입니다. \(\hat f_0(k)\)는 \(k\)에 대해 주기 \(M\)이므로 \(k = 0, \dots, M - 1\)만 구하면 되고, \(\zeta_N^{-(k+M)} = -\zeta_N^{-k}\)이라</p>
+    <h3><span class="no">6.2.2</span>짝수 번째와 홀수 번째로 나누기</h3>
+    <p>\(N = 2M\)이라 하자. \(\zeta_N^2 = \zeta_M\)이므로 합을 짝수 \(n = 2m\)과 홀수 \(n = 2m + 1\)로 나누면 다음과 같다.</p>
+    \[\hat f(k) = \frac12\left(\frac1M\sum_{m=0}^{M-1}f(2m)\zeta_M^{-km} + \zeta_N^{-k}\cdot\frac1M\sum_{m=0}^{M-1}f(2m + 1)\zeta_M^{-km}\right) = \frac12\left(\hat f_0(k) + \zeta_N^{-k}\hat f_1(k)\right)\]
+    <p>여기서 \(f_0(m) = f(2m)\), \(f_1(m) = f(2m + 1)\)은 \(\mathbb Z_M\) 위의 함수이고, \(\hat f_0\)과 \(\hat f_1\)은 크기 \(M\)인 이산 푸리에 변환이다. \(\hat f_0(k)\)와 \(\hat f_1(k)\)는 \(k\)에 대해 주기가 \(M\)이므로 \(k = 0, \dots, M - 1\)만 구하면 된다. 게다가 \(\zeta_N^{-(k+M)} = -\zeta_N^{-k}\)이므로 다음이 성립한다.</p>
     \[\hat f(k) = \tfrac12\left(\hat f_0(k) + \zeta_N^{-k}\hat f_1(k)\right), \qquad \hat f(k + M) = \tfrac12\left(\hat f_0(k) - \zeta_N^{-k}\hat f_1(k)\right)\]
-    <p>로 두 값을 한 번의 곱 \(\zeta_N^{-k}\hat f_1(k)\)으로 얻습니다(나비 연산).</p>
+    <p>곧 곱 \(\zeta_N^{-k}\hat f_1(k)\) 한 번으로 두 값을 얻는다. 이 계산 단위를 나비 연산이라 한다.</p>
 
     <h3><span class="no">6.2.3</span>계산량</h3>
-    <div class="tb-env thm"><b>정리 6.2.1</b> \(N = 2^n\)이면 크기 \(N\)인 DFT를 곱셈 약 \(\frac N2\log_2N\)번(덧셈은 \(N\log_2N\)번)으로 계산할 수 있다.</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>크기 \(N\)의 곱셈 수를 \(T(N)\)이라 하면 위의 분해로 \(T(N) = 2T(\frac N2) + \frac N2\), \(T(1) = 0\)이다. \(a_n = T(2^n)/2^n\)으로 두면 \(a_n = a_{n-1} + \frac12\), \(a_0 = 0\)이라 \(a_n = \frac n2\), 즉 \(T(2^n) = \frac n2\cdot2^n\). (\(\frac12\)을 곱하는 것은 마지막에 한 번에 처리한다고 본다.) <span class="qed">∎</span></p>
+    <div class="tb-env thm">
+      <span class="lb">정리 6.2.1</span>
+      <p>\(N = 2^n\)이면 크기 \(N\)인 이산 푸리에 변환을 곱셈 약 \(\frac N2\log_2N\)번, 덧셈 \(N\log_2N\)번으로 계산할 수 있다.</p>
     </div>
-    <p>\(N = 1024\)이면 \(\frac{1024}2\cdot10 = 5120\)번으로, 정의대로의 약 105만 번보다 200배 적습니다. \(N\)이 커질수록 차이는 \(\frac{2N}{\log_2N}\)배로 벌어집니다. 1965년 쿨리와 튜키가 이 알고리즘을 발표하면서 디지털 신호 처리가 실용화되었습니다(가우스가 1805년경 이미 같은 생각을 했다는 기록이 있습니다).</p>
+    <p class="tb-proof"><span class="lb">증명.</span>크기 \(N\)일 때의 곱셈 횟수를 \(T(N)\)이라 하면, 위의 분해에서 \(T(N) = 2T(\frac N2) + \frac N2\)이고 \(T(1) = 0\)이다. 마지막의 \(\frac12\)을 곱하는 일은 끝에 한 번에 처리한다고 본다. \(a_n = T(2^n)/2^n\)으로 두면 \(a_n = a_{n-1} + \frac12\), \(a_0 = 0\)이므로 \(a_n = \frac n2\)이고, 따라서 \(T(2^n) = \frac n2\cdot2^n\)이다. <span class="qed">∎</span></p>
+    <p>\(N = 1024\)이면 \(\frac{1024}2\cdot10 = 5120\)번으로, 정의대로의 약 105만 번보다 200배 적다. \(N\)이 커질수록 차이는 \(\frac{2N}{\log_2N}\)배로 벌어진다. 1965년 쿨리와 튜키가 이 알고리즘을 발표하면서 디지털 신호 처리가 실용화되었으며, 가우스가 1805년 무렵 이미 같은 생각을 했다는 기록도 있다.</p>
 
-    <h3><span class="no">6.2.4</span>응용: 다항식 곱셈</h3>
-    <p>차수가 \(N\) 미만인 두 다항식의 곱을 그대로 계산하면 곱셈이 \(N^2\)번입니다. 계수열을 길이 \(2N\)으로 늘려 DFT하면 곱의 계수열은 합성곱이므로(6.1절 연습 2) 변환끼리 곱하고 역변환하면 됩니다. FFT 세 번과 곱셈 \(2N\)번으로 \(O(N\log N)\)이 되어, 아주 큰 정수의 곱셈도 이 방법으로 합니다.</p>
+    <h3><span class="no">6.2.4</span>다항식 곱셈</h3>
+    <p>차수가 \(N\) 미만인 두 다항식의 곱을 그대로 계산하면 곱셈이 \(N^2\)번 든다. 그런데 곱의 계수열은 두 계수열의 합성곱이다. 그러므로 계수열을 길이 \(2N\)으로 늘려 변환하고, 변환끼리 곱한 뒤 역변환하면 된다. 고속 푸리에 변환 세 번과 곱셈 \(2N\)번이면 되므로 \(O(N\log N)\)이 되며, 아주 큰 정수의 곱셈도 이 방법으로 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) FFT가 DFT와 다른 근사 변환이라고 여긴다. 결과는 정확히 같고 계산 순서만 다르다. (2) \(N\)이 2의 거듭제곱이 아니면 쓸 수 없다고 여긴다. \(N\)을 소인수로 나누는 일반적인 분할이 있다. 다만 \(N\)이 큰 소수이면 다른 기법이 필요하다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>고속 푸리에 변환이 이산 푸리에 변환을 근사하는 다른 변환이라고 여기기 쉽지만, 결과는 정확히 같고 계산 순서만 다르다. 또 \(N\)이 2의 거듭제곱이 아니면 쓸 수 없다고 생각하는 것도 틀렸다. \(N\)을 소인수들로 나누는 일반적인 분할이 있으며, \(N\)이 큰 소수일 때에만 다른 기법이 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정의대로 하면 \(N^2\)번.</li>
-        <li>짝·홀 분해: \(\hat f(k), \hat f(k + M) = \frac12(\hat f_0(k) \pm \zeta_N^{-k}\hat f_1(k))\).</li>
-        <li>\(T(N) = 2T(\frac N2) + \frac N2\)에서 \(T(N) = \frac N2\log_2N\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 표본을 짝수 번째와 홀수 번째로 나누면 크기 \(N\)인 변환이 크기 \(\frac N2\)인 변환 두 개와 나비 연산으로 바뀐다. 이것은 \(\zeta_N^2 = \zeta_M\)과 \(\zeta_N^{-(k+M)} = -\zeta_N^{-k}\)라는 1의 거듭제곱근의 성질 덕분이다. 이 분할을 되풀이하면 곱셈이 \(N^2\)에서 \(\frac N2\log_2N\)으로 줄어, 백만 개의 표본도 순식간에 변환할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.5</span>연습문제</h3>

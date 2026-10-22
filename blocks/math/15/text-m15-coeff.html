@@ -8,52 +8,80 @@
 <article class="card q-card" id="text-m15-coeff" data-kind="본문" data-std="수학15-01-01">
   <header class="card-head"><span class="no"></span><h2>푸리에 계수와 매끄러움</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>복소지수 꼴의 푸리에 계수 \(\hat f(n) = \frac1{2\pi}\int f(\theta)e^{-in\theta}d\theta\)를 계산한다.</li>
-        <li>부분적분으로 "\(f\)가 \(k\)번 매끄러우면 \(\hat f(n) = O(|n|^{-k})\)"를 보인다.</li>
-        <li>계수의 감쇠 속도로 함수의 매끄러움(점프, 꺾임)을 읽는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\), 부분적분, 실수 꼴 푸리에 급수 (<a href="../math11/06-01.html">수학11 6.1절</a>, 함께 보면 좋음).</li>
-      </ul>
-    </div>
+    <p class="q-ask">사각파, 삼각파, \(e^{\cos\theta}\)는 모두 주기함수이지만 생김새가 매끄러운 정도는 크게 다르다. 함수의 매끄러움은 푸리에 계수에 어떻게 드러날까? 계수만 보고 함수가 얼마나 매끄러운지 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="세 함수의 푸리에 계수 크기를 로그 눈금으로 비교한 그래프">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M50.0 24.6 L145.4 33.8 L189.8 38.0 L219.0 40.9 L240.8 43.0 L258.3 44.6 L285.2 47.2 L314.4 50.1 L348.3 53.3" class="a" style="fill:none"/>
+        <circle cx="50.0" cy="24.6" r="2.4" class="fa"/>
+        <circle cx="145.4" cy="33.8" r="2.4" class="fa"/>
+        <circle cx="189.8" cy="38.0" r="2.4" class="fa"/>
+        <circle cx="219.0" cy="40.9" r="2.4" class="fa"/>
+        <circle cx="240.8" cy="43.0" r="2.4" class="fa"/>
+        <circle cx="258.3" cy="44.6" r="2.4" class="fa"/>
+        <circle cx="285.2" cy="47.2" r="2.4" class="fa"/>
+        <circle cx="314.4" cy="50.1" r="2.4" class="fa"/>
+        <circle cx="348.3" cy="53.3" r="2.4" class="fa"/>
+        <path d="M50.0 24.6 L145.4 43.0 L189.8 51.5 L219.0 57.1 L240.8 61.4 L258.3 64.7 L285.2 69.9 L314.4 75.5 L348.3 82.1" class="c" style="fill:none"/>
+        <circle cx="50.0" cy="24.6" r="2.4" class="fc"/>
+        <circle cx="145.4" cy="43.0" r="2.4" class="fc"/>
+        <circle cx="189.8" cy="51.5" r="2.4" class="fc"/>
+        <circle cx="219.0" cy="57.1" r="2.4" class="fc"/>
+        <circle cx="240.8" cy="61.4" r="2.4" class="fc"/>
+        <circle cx="258.3" cy="64.7" r="2.4" class="fc"/>
+        <circle cx="285.2" cy="69.9" r="2.4" class="fc"/>
+        <circle cx="314.4" cy="75.5" r="2.4" class="fc"/>
+        <circle cx="348.3" cy="82.1" r="2.4" class="fc"/>
+        <path d="M50.0 25.6 L145.4 52.7 L189.8 89.5 L219.0 132.5 L240.8 180.0 L258.3 231.0" class="d" style="fill:none"/>
+        <circle cx="50.0" cy="25.6" r="2.4" class="fd"/>
+        <circle cx="145.4" cy="52.7" r="2.4" class="fd"/>
+        <circle cx="189.8" cy="89.5" r="2.4" class="fd"/>
+        <circle cx="219.0" cy="132.5" r="2.4" class="fd"/>
+        <circle cx="240.8" cy="180.0" r="2.4" class="fd"/>
+        <circle cx="258.3" cy="231.0" r="2.4" class="fd"/>
+        <text x="50" y="190" text-anchor="middle" class="s">1</text>
+        <text x="150" y="190" text-anchor="middle" class="s">3.2</text>
+        <text x="250" y="190" text-anchor="middle" class="s">10</text>
+        <text x="350" y="190" text-anchor="middle" class="s">32</text>
+        <text x="44" y="25" text-anchor="end" class="s">1</text>
+        <text x="44" y="63" text-anchor="end" class="s">10⁻²</text>
+        <text x="44" y="102" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="140" text-anchor="end" class="s">10⁻⁶</text>
+        <text x="44" y="179" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="205" y="207" text-anchor="middle" class="s">n (로그 눈금)</text>
+        <text x="375" y="40" class="ta">사각파, 기울기 −1</text>
+        <text x="375" y="60" class="tc">삼각파, 기울기 −2</text>
+        <text x="375" y="80" class="td">e^cos θ, 직선보다 빠름</text>
+        <text x="375" y="100" class="s">세로 = |f̂(n)| (로그)</text>
+        <text x="375" y="120" class="s">홀수 n 만 표시</text>
+      </svg>
+      <figcaption>그림 1. 가로와 세로를 모두 로그 눈금으로 그린 계수의 크기 \(|\hat f(n)|\)이다. 점프가 있는 사각파(파랑)는 기울기 \(-1\), 꺾인 점이 있는 삼각파(주황)는 기울기 \(-2\)인 직선을 따른다. 무한히 매끄러운 \(e^{\cos\theta}\)(빨강)는 어떤 직선보다도 빨리 떨어진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\)와 부분적분을 쓰고, 실수 꼴 푸리에 급수(<a href="../math11/06-01.html">수학11 6.1절</a>)를 함께 보면 좋다.</div>
 
     <h3><span class="no">1.1.1</span>복소지수 꼴</h3>
-    <p>\(2\pi\)-주기 함수 \(f\)의 푸리에 계수와 급수를 복소지수로 쓰면 식이 짧아집니다.</p>
+    <p>\(2\pi\)를 주기로 하는 함수 \(f\)의 푸리에 계수와 급수를 복소지수로 쓰면 식이 짧아진다.</p>
     \[\hat f(n) = \frac1{2\pi}\int_{-\pi}^\pi f(\theta)e^{-in\theta}\,d\theta \quad (n \in \mathbb Z), \qquad f(\theta) \sim \sum_{n=-\infty}^\infty\hat f(n)e^{in\theta}.\]
-    <p>오일러 공식으로 \(\cos n\theta = \frac{e^{in\theta} + e^{-in\theta}}2\)이므로 실수 꼴과의 관계는 \(a_n = \hat f(n) + \hat f(-n)\), \(b_n = i(\hat f(n) - \hat f(-n))\)이고, \(f\)가 실수값이면 \(\hat f(-n) = \overline{\hat f(n)}\)입니다. 핵심 계산은</p>
+    <p>오일러 공식에서 \(\cos n\theta = \frac{e^{in\theta} + e^{-in\theta}}2\)이므로 실수 꼴과의 관계는 \(a_n = \hat f(n) + \hat f(-n)\), \(b_n = i(\hat f(n) - \hat f(-n))\)이다. 또 \(f\)가 실수값이면 \(\hat f(-n) = \overline{\hat f(n)}\)이다. 이 모든 계산의 바탕은 지수함수들이 직교한다는 다음 사실이다.</p>
     \[\frac1{2\pi}\int_{-\pi}^\pi e^{im\theta}e^{-in\theta}\,d\theta = \begin{cases}1 &amp; m = n\\0 &amp; m \ne n\end{cases}\]
-    <p>로, 지수함수들이 직교한다는 것입니다(\(m \ne n\)이면 \(e^{i(m-n)\theta}\)의 원시함수가 주기함수라 한 주기 적분이 0).</p>
+    <p>\(m \ne n\)이면 \(e^{i(m-n)\theta}\)의 원시함수가 주기함수라서 한 주기에 걸친 적분이 0이 되기 때문이다.</p>
 
-    <h3><span class="no">1.1.2</span>예</h3>
-    <ul>
-      <li><b>사각파</b> \(f = \operatorname{sgn}\theta\): \(\hat f(n) = \frac{1 - (-1)^n}{i\pi n}\), 곧 홀수 \(n\)에서 \(\frac2{i\pi n}\). 크기 \(\sim\frac1{|n|}\).</li>
-      <li><b>삼각파</b> \(f = |\theta|\): \(\hat f(0) = \frac\pi2\), 홀수 \(n\)에서 \(-\frac2{\pi n^2}\). 크기 \(\sim\frac1{n^2}\).</li>
-      <li><b>매끄러운 함수</b> \(f = e^{\cos\theta}\): 모든 미분이 연속이고 \(\hat f(n) = I_n(1)\) (변형 베셀 함수)로 \(\frac1{2^n n!}\) 정도의 빠르기로 줄어든다.</li>
-    </ul>
-    <p>점프가 있는 사각파는 \(\frac1n\), 연속이지만 꺾인 삼각파는 \(\frac1{n^2}\), 무한히 매끄러운 함수는 어떤 거듭제곱보다도 빠르게 줄어듭니다.</p>
+    <h3><span class="no">1.1.2</span>세 가지 예</h3>
+    <p>먼저 사각파 \(f = \operatorname{sgn}\theta\)의 계수는 \(\hat f(n) = \frac{1 - (-1)^n}{i\pi n}\)이다. 곧 홀수 \(n\)에서 \(\frac2{i\pi n}\)이고 짝수에서 0이므로 크기가 \(\frac1{|n|}\)처럼 줄어든다. 다음으로 삼각파 \(f = |\theta|\)는 \(\hat f(0) = \frac\pi2\)이고 홀수 \(n\)에서 \(-\frac2{\pi n^2}\)이라 크기가 \(\frac1{n^2}\)처럼 줄어든다. 끝으로 \(f = e^{\cos\theta}\)는 모든 계의 도함수가 연속이며, 계수가 변형 베셀 함수의 값 \(I_n(1)\)이라 대략 \(\frac1{2^nn!}\)의 빠르기로 줄어든다.</p>
+    <p>그림 1에서 보듯이 점프가 있는 사각파는 \(\frac1n\), 연속이지만 꺾인 삼각파는 \(\frac1{n^2}\)의 빠르기를 보인다. 그리고 무한히 매끄러운 함수의 계수는 어떤 거듭제곱보다도 빠르게 줄어든다.</p>
 
     <h3><span class="no">1.1.3</span>매끄러움과 감쇠</h3>
     <div class="tb-env thm">
       <span class="lb">정리 1.1.1</span>
-      <p>\(f\)가 \(2\pi\)-주기이고 \(C^k\) (\(k\)번 미분 가능하고 \(f^{(k)}\)이 연속)이면 \(\widehat{f^{(k)}}(n) = (in)^k\hat f(n)\)이고, 따라서 \(|\hat f(n)| \le \frac{C}{|n|^k}\) (\(C = \max|f^{(k)}|\)).</p>
+      <p>\(f\)가 \(2\pi\)-주기이고 \(C^k\) 함수, 곧 \(k\)번 미분 가능하고 \(f^{(k)}\)이 연속이면 \(\widehat{f^{(k)}}(n) = (in)^k\hat f(n)\)이다. 따라서 \(C = \max|f^{(k)}|\)라 할 때 \(|\hat f(n)| \le \frac{C}{|n|^k}\)이다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(k = 1\)이면 부분적분으로 \(\frac1{2\pi}\int f'(\theta)e^{-in\theta}d\theta = \frac1{2\pi}[f(\theta)e^{-in\theta}]_{-\pi}^\pi + \frac{in}{2\pi}\int f(\theta)e^{-in\theta}d\theta = in\hat f(n)\) (주기성으로 경계항이 0). 반복하면 \((in)^k\hat f(n) = \widehat{f^{(k)}}(n)\)이고 \(|\widehat{f^{(k)}}(n)| \le \max|f^{(k)}|\)이다. <span class="qed">∎</span></p>
-    <p>거꾸로 계수가 빨리 줄면 함수가 매끄럽습니다. 예를 들어 \(\sum|n|^k|\hat f(n)| &lt; \infty\)이면 급수를 항별로 \(k\)번 미분해도 균등수렴하므로 \(f \in C^k\)입니다. 매끄러움과 계수의 감쇠는 거의 같은 정보입니다. 같은 절의 탐구 카드에서 감쇠 속도를 로그 그래프로 비교합니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(k = 1\)일 때 부분적분하면 \(\frac1{2\pi}\int f'(\theta)e^{-in\theta}d\theta = \frac1{2\pi}[f(\theta)e^{-in\theta}]_{-\pi}^\pi + \frac{in}{2\pi}\int f(\theta)e^{-in\theta}d\theta\)이다. 주기성 때문에 경계항이 0이므로 이 값은 \(in\hat f(n)\)이다. 이것을 되풀이하면 \(\widehat{f^{(k)}}(n) = (in)^k\hat f(n)\)이고, \(|\widehat{f^{(k)}}(n)| \le \max|f^{(k)}|\)이므로 부등식이 나온다. <span class="qed">∎</span></p>
+    <p>거꾸로 계수가 빨리 줄면 함수가 매끄럽다. 예를 들어 \(\sum|n|^k|\hat f(n)| &lt; \infty\)이면 급수를 항별로 \(k\)번 미분해도 균등수렴하므로 \(f \in C^k\)이다. 그러므로 매끄러움과 계수의 감쇠는 거의 같은 정보를 담고 있다. 같은 절의 탐구 카드에서 감쇠 속도를 로그 그래프로 직접 비교해 본다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "\(f\)가 \(C^1\)이면 계수가 \(\frac1{n^2}\)로 준다": \(\frac1n\)보다 빠를 뿐(\(o(\frac1n)\))이다. (2) 주기 확장에서 생기는 점프를 잊는다. \(f(\theta) = \theta\)는 \((-\pi, \pi)\)에서 매끄럽지만 주기 확장하면 \(\pm\pi\)에서 점프가 있어 계수가 \(\frac1n\)로만 준다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(f\)가 \(C^1\)이면 계수가 \(\frac1{n^2}\)처럼 준다고 여기기 쉽지만, 정리가 보장하는 것은 \(\frac1n\)보다 빨리, 곧 \(o(\frac1n)\)으로 준다는 것뿐이다. 또 주기 확장에서 생기는 점프를 잊는 실수가 있다. \(f(\theta) = \theta\)는 \((-\pi, \pi)\)에서 매끄럽지만 주기적으로 늘이면 \(\pm\pi\)에서 점프가 생겨 계수가 \(\frac1n\)로만 줄어든다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\hat f(n) = \frac1{2\pi}\int fe^{-in\theta}\), \(e^{in\theta}\)들은 직교.</li>
-        <li>\(C^k\)이면 \(\widehat{f^{(k)}} = (in)^k\hat f\), \(|\hat f(n)| = O(|n|^{-k})\).</li>
-        <li>점프 → \(\frac1n\), 꺾임 → \(\frac1{n^2}\), 무한히 매끄러움 → 어떤 거듭제곱보다 빠름.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 함수의 매끄러움은 푸리에 계수가 줄어드는 빠르기로 드러난다. \(C^k\) 함수는 \(\widehat{f^{(k)}}(n) = (in)^k\hat f(n)\)이라 계수가 \(|n|^{-k}\)보다 빨리 줄고, 거꾸로 계수가 충분히 빨리 줄면 함수가 매끄럽다. 그래서 점프가 있으면 \(\frac1n\), 꺾인 점이 있으면 \(\frac1{n^2}\), 무한히 매끄러우면 어떤 거듭제곱보다 빠르게 줄어든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>
