@@ -8,74 +8,60 @@
 <article class="card q-card" id="text-a14-bigdata" data-kind="본문" data-std="천우14-06-01">
   <header class="card-head"><span class="no"></span><h2>대용량 관측 자료의 저장과 처리 체계</h2><span class="kind">본문 · 6.1절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>현대 서베이의 자료량을 어림한다.</li>
-        <li>자료 처리 파이프라인과 경보 체계, 자료 보관소의 구조를 안다.</li>
-        <li>자료를 계산 쪽으로 옮기는 대신 계산을 자료 쪽으로 옮기는 흐름을 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>FITS와 영상 처리 (<a href="../13/01-02.html">천우13 1.2절</a>), 공개 자료 보관소 (<a href="../7/06-02.html">천우7 6.2절</a>).</li>
-      </ul>
-    </div>
-
-<h3>하룻밤에 20 TB</h3>
-    <p>현대 천문학의 관측 기기는 사람이 다 볼 수 없을 만큼 많은 자료를 만듭니다. 자료를 저장하고, 자동으로 처리하고, 전 세계 연구자가 쓰게 하는 체계도 관측 기기의 일부입니다.</p>
+    <p class="q-ask">루빈 천문대는 하룻밤에 20 TB의 자료를 만들고, 밤마다 하늘에서 바뀐 것을 알리는 경보를 1천만 건 낸다. 사람이 이것을 다 볼 수는 없다. 게다가 10년 치 자료는 연구자가 자기 컴퓨터로 내려받을 수조차 없다. 그렇다면 이 자료는 어떻게 처리하고, 연구자는 어떻게 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="천문 자료량을 로그 축 막대로 비교한 그림. LSST 하룻밤 20 TB, SDSS 전체 약 50 TB, Gaia 공개 자료 약 3 PB, LSST 10년 원자료 약 40 PB이다. 막대 끝에 1 Gbps로 내려받는 시간이 적혀 있어 각각 2일, 5일, 0.8년, 10년이다">
+        <text x="122" y="41" text-anchor="end" class="s">LSST 하룻밤</text><rect x="130" y="25" width="70.3" height="24" class="la a"/><text x="206.3" y="41" class="s">2일</text>
+        <text x="122" y="77" text-anchor="end" class="s">SDSS 전체</text><rect x="130" y="61" width="91.7" height="24" class="lk k"/><text x="227.7" y="77" class="s">5일</text>
+        <text x="122" y="113" text-anchor="end" class="s">Gaia 공개 자료</text><rect x="130" y="97" width="187.8" height="24" class="lb b"/><text x="323.8" y="113" class="s">0.8년</text>
+        <text x="122" y="149" text-anchor="end" class="s">LSST 10년 원자료</text><rect x="130" y="133" width="248.5" height="24" class="lc c"/><text x="384.5" y="149" class="s">10년</text>
+        <line x1="130" y1="169" x2="400" y2="169" class="ax"/>
+        <text x="130" y="184" text-anchor="middle" class="s">1 TB</text>
+        <text x="184" y="184" text-anchor="middle" class="s">10</text>
+        <text x="238" y="184" text-anchor="middle" class="s">100</text>
+        <text x="292" y="184" text-anchor="middle" class="s">1 PB</text>
+        <text x="346" y="184" text-anchor="middle" class="s">10</text>
+        <text x="400" y="184" text-anchor="middle" class="s">100 PB</text>
+        <text x="410" y="20" class="s">막대 끝의 수는</text><text x="410" y="36" class="s">1 Gbps로</text><text x="410" y="52" class="s">내려받는 시간</text><text x="10" y="203" class="s">자료량(로그 축, 대략값)</text>
+      </svg>
+      <figcaption>그림 1. 서베이 자료량과 내려받는 시간(대략값). PB 단위 자료는 1 Gbps로 내려받는 데 몇 년이 걸리므로, 계산을 자료 쪽으로 옮겨야 한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>FITS와 영상 처리(천우13 1.2절)와 공개 자료 보관소(천우7 6.2절)를 쓴다.</div>
+    <p>현대 천문학의 관측 기기는 사람이 다 볼 수 없을 만큼 많은 자료를 만든다. 처음 질문의 답은 자료를 자동으로 처리하는 파이프라인과, 전 세계 연구자가 자료 센터에서 직접 분석하는 체계이다(그림 1). 그러므로 이런 체계도 관측 기기의 일부이다.</p>
 
     <h3><span class="no">6.1.1</span>자료량</h3>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
-      <p>루빈 천문대의 LSST 카메라(32억 픽셀, 16비트)가 30초 노출 두 장을 한 쌍으로, 밤에 약 800쌍을 찍습니다. 하룻밤 원자료는 대략 몇 TB입니까?</p>
+      <p>루빈 천문대의 LSST 카메라(32억 픽셀, 16비트)는 30초 노출 두 장을 한 쌍으로 밤에 약 800쌍을 찍는다. 하룻밤 원자료는 대략 몇 TB인가?</p>
     </div>
-    <p><i>풀이.</i> 한 장 \(3.2\times10^9\times2\) 바이트 = 6.4 GB. 쌍마다 2장, 800쌍이면 1,600장 × 6.4 GB ≈ 10 TB입니다. 보정 영상과 중간 산출물을 더하면 하룻밤 약 20 TB, 10년 동안 원자료만 수십 PB입니다.</p>
-    <ul>
-      <li class="q-term">SDSS(2000~): 전체 수십 TB.</li>
-      <li class="q-term">Gaia: 별 약 18억 개의 위치·운동·측광·스펙트럼, 공개 자료 수 PB.</li>
-      <li class="q-term">SKA(전파, 건설 중): 상관기 출력이 초당 TB 수준이라 실시간으로 처리해 줄여야 한다.</li>
-    </ul>
+    <p><i>풀이.</i> 한 장은 \(3.2 \times 10^9 \times 2\) 바이트, 곧 6.4 GB이다. 쌍마다 2장씩 800쌍이면 1,600장이므로 약 10 TB이다. 여기에 보정 영상과 중간 산출물을 더하면 하룻밤 약 20 TB이고, 10년이면 원자료만 수십 PB이다.</p>
+    <p>다른 서베이와 견주면 규모가 분명해진다. 2000년에 시작한 SDSS는 전체가 수십 TB이다. 반면 별 약 18억 개의 위치, 운동, 측광, 스펙트럼을 담은 Gaia의 공개 자료는 수 PB이다. 또 건설 중인 전파 망원경 SKA는 상관기 출력이 초당 TB 수준이라, 실시간으로 처리해 줄이지 않으면 저장조차 할 수 없다.</p>
 
     <h3><span class="no">6.1.2</span>처리 체계</h3>
-    <ol class="tb-steps">
-      <li><b>실시간 처리</b>: 망원경 옆에서 영상마다 보정·차영상(<a href="../13/03-02.html">천우13 3.2절</a>의 PSF 맞춤 빼기)을 해, 밝기나 위치가 바뀐 천체를 1분 안에 찾아 경보를 낸다. LSST는 밤마다 경보 약 1천만 건.</li>
-      <li><b>경보 중개</b>: 경보를 받아 분류·필터링해 연구자에게 나눠 주는 중개 시스템(ANTARES, ALeRCE, Fink 등). 초신성, 킬로노바, 소행성 후보를 골라 후속 관측한다.</li>
-      <li><b>정기 자료 공개</b>: 1년쯤마다 전체 영상을 다시 처리해 깊은 합성 영상과 천체 목록을 공개한다(자료 공개, DR).</li>
-      <li><b>보관과 접근</b>: 자료 보관소(MAST, IRSA, ESA 보관소, 한국천문연구원 KASI 자료 센터)에서 VO 표준(TAP, ADQL, SIA)으로 검색한다.</li>
-    </ol>
+    <p>먼저 망원경 옆에서 영상마다 보정과 차영상(천우13 3.2절의 PSF 맞춤 빼기)을 실시간으로 해, 밝기나 위치가 바뀐 천체를 1분 안에 찾아 경보를 낸다. LSST는 밤마다 경보를 약 1천만 건 낸다. 그다음 ANTARES, ALeRCE, Fink 같은 경보 중개 시스템이 경보를 받아 분류하고 걸러 연구자에게 나눠 준다. 연구자는 그 가운데 초신성, 킬로노바, 소행성 후보를 골라 후속 관측한다.</p>
+    <p>한편 1년쯤마다 전체 영상을 다시 처리해 깊은 합성 영상과 천체 목록을 공개하는데, 이것을 자료 공개(DR)라 한다. 자료는 MAST, IRSA, ESA 보관소, 한국천문연구원 자료 센터 같은 보관소에 쌓이고, 연구자는 TAP, ADQL, SIA 같은 VO 표준으로 검색한다.</p>
 
-    <h3><span class="no">6.1.3</span>계산을 자료로</h3>
-    <p>PB 단위 자료는 내려받을 수 없습니다(1 Gbps로 1 PB에 약 3개월). 그래서 자료 센터 옆의 계산 환경(과학 플랫폼, 클라우드 노트북)에서 분석 코드를 돌리고 결과만 가져오는 방식으로 바뀌고 있습니다. 머신러닝으로 천체 분류, 이상 천체 찾기, 측광 적색 이동 추정을 하는 것도 이 흐름의 일부입니다.</p>
-    <div class="tb-note"><b>주의</b> 자동 처리는 사람의 눈으로 볼 때보다 체계적 오류(보정 실수, 인공물)를 놓치기 쉽습니다. 처리 판(버전)과 품질 표시를 기록하고, 결과에 쓰인 처리 판을 논문에 밝혀야 재현할 수 있습니다(<a href="../10/01-02.html">천우10 1.2절</a>).</div>
+    <h3><span class="no">6.1.3</span>계산을 자료 쪽으로</h3>
+    <p>PB 단위 자료는 내려받을 수 없다. 1 Gbps로 1 PB를 옮기는 데 약 3개월이 걸리기 때문이다(그림 1). 그래서 자료 센터 옆의 계산 환경, 곧 과학 플랫폼이나 클라우드 노트북에서 분석 코드를 돌리고 결과만 가져오는 방식으로 바뀌고 있다. 머신러닝으로 천체를 분류하고, 이상 천체를 찾고, 측광 적색 이동을 추정하는 것도 이 흐름의 일부이다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>자동 처리는 사람이 눈으로 볼 때보다 보정 실수나 인공물 같은 체계적 오류를 놓치기 쉽다. 그러므로 처리 판(버전)과 품질 표시를 기록하고, 결과에 쓰인 처리 판을 논문에 밝혀야 재현할 수 있다(천우10 1.2절).</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>LSST: 하룻밤 약 20 TB, 10년 수십 PB. Gaia 수 PB, SKA는 실시간 처리 필수.</li>
-        <li>실시간 차영상 → 경보(밤 약 1천만 건) → 중개 시스템 → 후속 관측.</li>
-        <li>정기 자료 공개와 VO 표준(TAP, ADQL)으로 보관소 접근.</li>
-        <li>자료를 옮기지 않고 계산을 자료 센터 쪽으로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>LSST는 하룻밤 약 20 TB, 10년 수십 PB를 만들고, Gaia는 수 PB, SKA는 실시간 처리가 필수이다. 실시간 차영상이 경보를 내고, 중개 시스템이 걸러 후속 관측으로 이어진다. 정기 자료 공개와 VO 표준으로 보관소에 접근하며, 자료를 옮기는 대신 계산을 자료 센터 쪽으로 옮긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>1 Gbps로 1 TB를 옮기는 시간은?
-          <details><summary>답</summary><p>\(8\times10^{12}/10^9 = 8{,}000\) s ≈ 2.2시간.</p></details>
-        </li>
-        <li>경보 중개 시스템의 역할은?
-          <details><summary>답</summary><p>수많은 경보를 분류·필터링해 연구 목적에 맞는 것만 연구자에게 전달합니다.</p></details>
+        <li>1 Gbps로 1 TB를 옮기는 데 걸리는 시간은 얼마인가?
+          <details><summary>답</summary><p>\(8 \times 10^{12}/10^9 = 8{,}000\) s, 곧 약 2.2시간이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>4,096² 픽셀 32비트 실수 영상 1만 장의 크기는?
-          <details><summary>답</summary><p>\(4096^2\times4\times10^4 = 6.7\times10^{11}\) 바이트 ≈ 0.67 TB.</p></details>
+      <ol start="2">
+        <li>4,096² 픽셀 32비트 실수 영상 1만 장의 크기는 얼마인가?
+          <details><summary>답</summary><p>\(4096^2 \times 4 \times 10^4 = 6.7 \times 10^{11}\) 바이트, 곧 약 0.67 TB이다.</p></details>
         </li>
-        <li>하루 20 TB를 10년 저장하려면?
-          <details><summary>답</summary><p>약 73 PB.</p></details>
+        <li>하루 20 TB를 10년 동안 저장하려면 얼마의 공간이 필요한가?
+          <details><summary>답</summary><p>\(20 \times 3650 = 73{,}000\) TB, 곧 약 73 PB이다.</p></details>
         </li>
       </ol>
     </div>
