@@ -8,23 +8,41 @@
 <article class="card q-card" id="text-m24-unix" data-kind="본문" data-std="수학24-01-01">
   <header class="card-head"><span class="no"></span><h2>Unix 명령으로 파일 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>디렉터리 구조와 절대 경로, 상대 경로를 이해한다.</li>
-        <li><code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>으로 파일을 다룬다.</li>
-        <li><code>cat</code>, <code>head</code>, <code>tail</code>, <code>wc</code>, <code>grep</code>으로 자료 파일의 내용을 살펴본다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>컴퓨터의 파일과 폴더 개념. 실습 환경: Linux, macOS의 터미널 또는 Windows의 Git Bash, WSL.</li>
-      </ul>
-    </div>
+    <p class="q-ask">계산 결과 파일이 수백 개 쌓이면, 마우스로 하나씩 열어 보는 방법으로는 감당할 수 없다. 글자로 명령을 내려 파일을 찾고 옮기고 살펴보는 방법은 무엇일까? 파일의 위치는 어떻게 가리키며, 어떤 명령은 왜 특히 조심해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="Unix 파일 시스템의 나무 구조와 경로">
+        <line x1="58" y1="30" x2="88" y2="30" class="a"/>
+        <line x1="128" y1="30" x2="158" y2="30" class="a"/>
+        <line x1="198" y1="30" x2="228" y2="30" class="a"/>
+        <line x1="268" y1="30" x2="298" y2="30" class="a"/>
+        <line x1="338" y1="30" x2="398" y2="22" class="gd"/>
+        <line x1="338" y1="30" x2="398" y2="48" class="a"/>
+        <line x1="338" y1="30" x2="398" y2="74" class="gd"/>
+        <line x1="58" y1="30" x2="88" y2="80" class="gd"/>
+        <line x1="58" y1="30" x2="88" y2="120" class="gd"/>
+        <text x="40" y="34" text-anchor="middle" class="s">/</text>
+        <text x="110" y="34" text-anchor="middle" class="s">home</text>
+        <text x="180" y="34" text-anchor="middle" class="s">kim</text>
+        <text x="250" y="34" text-anchor="middle" class="s">proj</text>
+        <text x="320" y="34" text-anchor="middle" class="s">data</text>
+        <text x="420" y="26" text-anchor="middle" class="s">run1.csv</text>
+        <text x="420" y="52" text-anchor="middle" class="s">run2.csv</text>
+        <text x="420" y="78" text-anchor="middle" class="s">run3.csv</text>
+        <text x="110" y="84" text-anchor="middle" class="s">etc</text>
+        <text x="110" y="124" text-anchor="middle" class="s">tmp</text>
+        <rect x="225" y="8" width="250" height="82" class="d" style="fill:none;stroke-dasharray:4 3"/>
+        <text x="40" y="150" class="ta">절대 경로 /home/kim/proj/data/run2.csv</text>
+        <text x="40" y="172" class="td">작업 디렉터리 /home/kim 에서의 상대 경로 proj/data/run2.csv</text>
+        <text x="40" y="194" class="s">. = 현재 위치, .. = 한 단계 위, ~ = 홈 디렉터리</text>
+      </svg>
+      <figcaption>그림 1. Unix 파일 시스템은 뿌리 <code>/</code>에서 갈라지는 나무 모양이다. 파란 길을 따라 뿌리부터 쓴 것이 절대 경로이고, 작업 디렉터리 <code>/home/kim</code>에서 시작하면 점선 상자 안의 길만 쓴 상대 경로 <code>proj/data/run2.csv</code>가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>컴퓨터의 파일과 폴더 개념을 쓴다. 실습 환경은 Linux, macOS의 터미널이나 Windows의 Git Bash, WSL이다.</div>
 
     <h3><span class="no">1.1.1</span>파일 시스템</h3>
-    <p>Unix의 파일은 뿌리 <code>/</code>에서 갈라지는 나무 모양으로 놓입니다. <code>/home/kim/proj/data.csv</code>처럼 뿌리부터 쓴 것이 <b>절대 경로</b>, 지금 있는 곳(작업 디렉터리)에서부터 쓴 <code>proj/data.csv</code>가 <b>상대 경로</b>입니다. <code>.</code>은 현재 디렉터리, <code>..</code>은 한 단계 위, <code>~</code>은 홈 디렉터리입니다.</p>
+    <p>Unix의 파일은 그림 1처럼 뿌리 <code>/</code>에서 갈라지는 나무 모양으로 놓인다. <code>/home/kim/proj/data.csv</code>처럼 뿌리부터 쓴 것이 <em>절대 경로</em>이고, 지금 있는 곳, 곧 작업 디렉터리에서부터 쓴 <code>proj/data.csv</code>가 <em>상대 경로</em>이다. 또 <code>.</code>은 현재 디렉터리, <code>..</code>은 한 단계 위, <code>~</code>은 홈 디렉터리를 뜻한다.</p>
     <pre><code>pwd                 # 지금 위치 출력
-mkdir -p proj/data  # 디렉터리 만들기 (-p: 중간 것도)
+mkdir -p proj/data  # 디렉터리 만들기 (-p 는 중간 것도)
 cd proj             # 이동
 ls -l               # 자세히 나열 (권한, 크기, 날짜)
 cd ..               # 위로</code></pre>
@@ -34,10 +52,10 @@ cd ..               # 위로</code></pre>
 mv backup.csv old.csv         # 이름 바꾸기(이동)
 rm old.csv                    # 삭제 (휴지통 없음!)
 cp -r data data_copy          # 디렉터리 통째로 복사</code></pre>
-    <p><code>rm</code>은 되돌릴 수 없습니다. 특히 <code>rm -r</code>은 디렉터리 전체를 지우므로 경로를 두 번 확인하는 습관이 필요합니다. <code>*</code>는 아무 글자열에 맞는 와일드카드라 <code>ls data/*.csv</code>는 <code>data</code> 안의 csv 파일 전부입니다.</p>
+    <p><code>rm</code>은 되돌릴 수 없다. 특히 <code>rm -r</code>은 디렉터리 전체를 지우므로 경로를 두 번 확인하는 습관이 필요하다. 한편 <code>*</code>는 아무 글자열에 맞는 와일드카드이므로, <code>ls data/*.csv</code>는 <code>data</code> 안의 csv 파일 전부를 나열한다.</p>
 
     <h3><span class="no">1.1.3</span>내용 살펴보기</h3>
-    <p><code>data</code>에 실험 결과 <code>run1.csv</code>, <code>run2.csv</code>, <code>run3.csv</code>가 있고 각각 머리줄 <code>x,y</code>와 두 줄의 자료가 있다고 합시다.</p>
+    <p><code>data</code>에 실험 결과 <code>run1.csv</code>, <code>run2.csv</code>, <code>run3.csv</code>가 있고, 각각 머리줄 <code>x,y</code>와 두 줄의 자료가 있다고 하자.</p>
     <pre><code>$ cat data/run2.csv
 x,y
 0,2
@@ -49,19 +67,16 @@ $ wc -l data/*.csv
  9 total
 $ grep -c ',' data/run3.csv
 3</code></pre>
-    <p><code>cat</code>은 내용 전체, <code>head -n 5</code>와 <code>tail -n 5</code>는 처음과 끝 5줄, <code>wc -l</code>은 줄 수, <code>grep 패턴 파일</code>은 패턴이 든 줄을 찾습니다(<code>-c</code>는 개수만). 큰 자료 파일을 편집기로 열기 전에 이 명령들로 모양을 먼저 확인합니다.</p>
-    <div class="tb-env ex"><b>예 1.1.1</b> 계산 결과 파일이 수백 개일 때 <code>ls results/ | wc -l</code>로 개수를, <code>grep -l NaN results/*.txt</code>로 계산이 깨진 파일 목록을 바로 얻습니다.</div>
-
-    <div class="tb-note"><b>흔한 오해</b>(1) <code>rm</code>으로 지운 파일이 휴지통에 간다고 여긴다. 바로 사라진다. (2) 상대 경로가 스크립트 파일의 위치 기준이라 여긴다. 명령을 실행한 작업 디렉터리 기준이다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>절대 경로(<code>/</code>부터), 상대 경로(현재 위치부터), <code>.</code> <code>..</code> <code>~</code>.</li>
-        <li><code>ls cd mkdir cp mv rm</code>: 이동·만들기·복사·이름 바꾸기·삭제.</li>
-        <li><code>cat head tail wc grep</code>: 내용 확인.</li>
-      </ol>
+    <p><code>cat</code>은 내용 전체를, <code>head -n 5</code>와 <code>tail -n 5</code>는 처음과 끝 5줄을 보여 준다. 또 <code>wc -l</code>은 줄 수를 세고, <code>grep 패턴 파일</code>은 패턴이 든 줄을 찾으며 <code>-c</code>를 붙이면 개수만 센다. 그러므로 큰 자료 파일을 편집기로 열기 전에 이 명령들로 모양을 먼저 확인한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>계산 결과 파일이 <code>results/</code>에 수백 개 있을 때, 파일의 개수와 계산이 깨져 <code>NaN</code>이 든 파일의 목록을 얻어라.</p>
     </div>
+    <p><i>풀이.</i> <code>ls results/ | wc -l</code>로 개수를 세고, <code>grep -l NaN results/*.txt</code>로 <code>NaN</code>이 든 파일의 이름만 나열하면 된다. 여기서 <code>-l</code>은 줄 대신 파일 이름을 출력하라는 뜻이다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>rm</code>으로 지운 파일이 휴지통에 간다고 여기기 쉽지만, 바로 사라져 되살릴 수 없다. 또 상대 경로가 스크립트 파일이 있는 위치를 기준으로 한다고 생각하는 것도 틀렸다. 상대 경로는 명령을 실행한 작업 디렉터리를 기준으로 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, Unix에서는 <code>cd</code>, <code>ls</code>, <code>cp</code>, <code>mv</code>, <code>rm</code> 같은 명령으로 파일을 다루고, <code>cat</code>, <code>head</code>, <code>wc</code>, <code>grep</code>으로 내용을 살펴본다. 파일의 위치는 뿌리부터 쓴 절대 경로나 작업 디렉터리부터 쓴 상대 경로로 가리킨다. <code>rm</code>은 휴지통 없이 바로 지우므로 특히 조심해야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>

@@ -8,29 +8,62 @@
 <article class="card q-card" id="text-m24-shell" data-kind="본문" data-std="수학24-01-02">
   <header class="card-head"><span class="no"></span><h2>파이프와 셸 스크립트</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>표준 입출력, 리다이렉션 <code>&gt;</code> <code>&gt;&gt;</code>, 파이프 <code>|</code>로 명령을 잇는다.</li>
-        <li><code>sort</code>, <code>cut</code>, <code>uniq</code>로 자료를 가공한다.</li>
-        <li>변수, <code>for</code> 반복문, 인수를 쓰는 셸 스크립트로 반복 실험을 자동화한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Unix 기본 명령 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">세 실험 파일에서 \(y\)가 가장 큰 줄 하나를 찾으려면 프로그램을 따로 짜야 할까? 작은 명령 여러 개를 이어 붙여 한 번에 해낼 수는 없을까? 그리고 같은 작업을 매개변수만 바꿔 여러 번 되풀이할 때, 실수 없이 재현하는 방법은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="cat, grep, sort, tail을 잇는 파이프라인">
+        <rect x="20" y="20" width="112" height="26" class="fa" style="fill-opacity:0.15"/>
+        <rect x="20" y="20" width="112" height="26" class="a" style="fill:none"/>
+        <text x="76" y="38" text-anchor="middle" class="ta">cat data/*.csv</text>
+        <text x="76" y="70" text-anchor="middle" class="s">x,y</text>
+        <text x="76" y="89" text-anchor="middle" class="s">0,0</text>
+        <text x="76" y="108" text-anchor="middle" class="s">1,1</text>
+        <text x="76" y="127" text-anchor="middle" class="s">x,y</text>
+        <text x="76" y="146" text-anchor="middle" class="s">0,2</text>
+        <text x="76" y="165" text-anchor="middle" class="s">…</text>
+        <line x1="134.0" y1="33.0" x2="145.8" y2="33.0" class="k"/>
+        <path d="M150.0,33.0 L143.0,29.5 L143.0,36.5 Z" class="fk"/>
+        <rect x="152" y="20" width="112" height="26" class="fa" style="fill-opacity:0.15"/>
+        <rect x="152" y="20" width="112" height="26" class="a" style="fill:none"/>
+        <text x="208" y="38" text-anchor="middle" class="ta">grep -v x</text>
+        <text x="208" y="70" text-anchor="middle" class="s">0,0</text>
+        <text x="208" y="89" text-anchor="middle" class="s">1,1</text>
+        <text x="208" y="108" text-anchor="middle" class="s">0,2</text>
+        <text x="208" y="127" text-anchor="middle" class="s">1,4</text>
+        <text x="208" y="146" text-anchor="middle" class="s">0,3</text>
+        <text x="208" y="165" text-anchor="middle" class="s">1,9</text>
+        <line x1="266.0" y1="33.0" x2="277.8" y2="33.0" class="k"/>
+        <path d="M282.0,33.0 L275.0,29.5 L275.0,36.5 Z" class="fk"/>
+        <rect x="284" y="20" width="112" height="26" class="fa" style="fill-opacity:0.15"/>
+        <rect x="284" y="20" width="112" height="26" class="a" style="fill:none"/>
+        <text x="340" y="38" text-anchor="middle" class="ta">sort -t, -k2 -n</text>
+        <text x="340" y="70" text-anchor="middle" class="s">0,0</text>
+        <text x="340" y="89" text-anchor="middle" class="s">1,1</text>
+        <text x="340" y="108" text-anchor="middle" class="s">0,2</text>
+        <text x="340" y="127" text-anchor="middle" class="s">0,3</text>
+        <text x="340" y="146" text-anchor="middle" class="s">1,4</text>
+        <text x="340" y="165" text-anchor="middle" class="td">1,9</text>
+        <line x1="398.0" y1="33.0" x2="409.8" y2="33.0" class="k"/>
+        <path d="M414.0,33.0 L407.0,29.5 L407.0,36.5 Z" class="fk"/>
+        <rect x="416" y="20" width="112" height="26" class="fa" style="fill-opacity:0.15"/>
+        <rect x="416" y="20" width="112" height="26" class="a" style="fill:none"/>
+        <text x="472" y="38" text-anchor="middle" class="ta">tail -1</text>
+        <text x="472" y="70" text-anchor="middle" class="td">1,9</text>
+        <text x="272" y="200" text-anchor="middle" class="s">| 는 앞 명령의 출력을 뒤 명령의 입력으로 넘긴다</text>
+      </svg>
+      <figcaption>그림 1. 파이프라인 <code>cat | grep -v x | sort -t, -k2 -n | tail -1</code>의 각 단계를 지난 자료이다. 세 파일을 합치고, 머리줄을 빼고, 둘째 칸의 숫자로 정렬한 뒤 마지막 줄을 취하면, 모든 실험에서 \(y\)가 가장 큰 줄 <code>1,9</code>(빨강)가 남는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Unix 기본 명령(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>입출력과 파이프</h3>
-    <p>명령은 표준 입력에서 읽고 표준 출력에 씁니다. <code>명령 &gt; 파일</code>은 출력을 파일에 쓰고(덮어씀), <code>&gt;&gt;</code>는 뒤에 덧붙이며, <code>명령1 | 명령2</code>는 앞 명령의 출력을 뒤 명령의 입력으로 넘깁니다. 작은 도구를 이어 붙여 큰 일을 하는 것이 Unix의 방식입니다.</p>
+    <p>명령은 표준 입력에서 읽고 표준 출력에 쓴다. <code>명령 &gt; 파일</code>은 출력을 파일에 덮어쓰고, <code>&gt;&gt;</code>는 뒤에 덧붙이며, <code>명령1 | 명령2</code>는 앞 명령의 출력을 뒤 명령의 입력으로 넘긴다. 이렇게 작은 도구를 이어 붙여 큰 일을 하는 것이 Unix의 방식이다.</p>
     <pre><code>$ cat data/*.csv | grep -v x | sort -t, -k2 -n | tail -1
 1,9</code></pre>
-    <p>세 파일을 합치고(<code>cat</code>), 머리줄을 빼고(<code>grep -v</code>: 패턴이 없는 줄), 쉼표로 나눈 둘째 칸을 숫자로 정렬해(<code>sort -t, -k2 -n</code>) 마지막 줄을 취했습니다. 즉 모든 실험에서 \(y\)가 가장 큰 줄입니다.</p>
+    <p>이 명령은 그림 1처럼 세 파일을 합치고(<code>cat</code>), 패턴이 없는 줄만 남겨 머리줄을 빼고(<code>grep -v</code>), 쉼표로 나눈 둘째 칸을 숫자로 정렬해(<code>sort -t, -k2 -n</code>) 마지막 줄을 취한다. 즉 모든 실험에서 \(y\)가 가장 큰 줄을 찾는다.</p>
 
     <h3><span class="no">1.2.2</span>셸 스크립트</h3>
-    <p>명령을 파일에 적어 두면 같은 작업을 몇 번이든 똑같이 되풀이할 수 있습니다.</p>
+    <p>명령을 파일에 적어 두면 같은 작업을 몇 번이든 똑같이 되풀이할 수 있다.</p>
     <pre><code>#!/bin/bash
-# last.sh: 각 실험 파일의 마지막 y값을 출력
+# last.sh 는 각 실험 파일의 마지막 y값을 출력
 for f in data/run*.csv; do
     y=$(tail -1 "$f" | cut -d, -f2)
     echo "$f $y"
@@ -39,23 +72,21 @@ done</code></pre>
 data/run1.csv 1
 data/run2.csv 4
 data/run3.csv 9</code></pre>
-    <p><code>$( )</code>는 명령의 출력을 값으로 받고, <code>cut -d, -f2</code>는 쉼표로 나눈 둘째 칸입니다. 변수는 <code>"$f"</code>처럼 따옴표로 감싸야 파일 이름에 빈칸이 있어도 안전합니다. <code>chmod +x last.sh</code>를 하면 <code>./last.sh</code>로 바로 실행됩니다.</p>
-    <div class="tb-env ex"><b>예 1.2.1 (매개변수 훑기)</b> 프로그램 <code>sim</code>을 격자 크기 \(n = 16, 32, 64, 128\)로 돌리고 결과를 따로 저장하려면
-      <pre><code>for n in 16 32 64 128; do
+    <p>여기서 <code>$( )</code>는 명령의 출력을 값으로 받고, <code>cut -d, -f2</code>는 쉼표로 나눈 둘째 칸을 뽑는다. 변수는 <code>"$f"</code>처럼 따옴표로 감싸야 파일 이름에 빈칸이 있어도 안전하다. 또 <code>chmod +x last.sh</code>를 하면 <code>./last.sh</code>로 바로 실행할 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>프로그램 <code>sim</code>을 격자 크기 \(n = 16, 32, 64, 128\)로 돌리고 결과를 따로 저장하는 명령을 써라.</p>
+    </div>
+    <p><i>풀이.</i> 다음과 같이 반복문으로 매개변수를 훑는다. 손으로 네 번 치는 것보다 실수가 적고, 같은 실험을 나중에 정확히 재현할 수 있다.</p>
+    <pre><code>for n in 16 32 64 128; do
     ./sim $n &gt; out_$n.txt
 done</code></pre>
-      손으로 네 번 치는 것보다 실수가 적고, 같은 실험을 나중에 정확히 재현할 수 있습니다.</div>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) <code>&gt;</code>가 덧붙인다고 여긴다. 기존 내용을 지우고 쓴다. 덧붙이기는 <code>&gt;&gt;</code>. (2) 변수를 따옴표 없이 써도 된다고 여긴다. 빈칸이 든 값이 여러 인수로 쪼개진다.</div>
+    <p>셸 스크립트는 실험의 기록이기도 하다. 어떤 매개변수로 어떤 프로그램을 돌렸는지가 파일에 그대로 남으므로, 몇 달 뒤에도 같은 결과를 다시 만들 수 있다. 그래서 실험이 끝나면 스크립트를 결과 파일과 함께 보관하고, 가능하면 Git 같은 버전 관리 도구로 바뀐 내용을 기록해 둔다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>&gt;</code> 덮어쓰기, <code>&gt;&gt;</code> 덧붙이기, <code>|</code> 이어 붙이기.</li>
-        <li><code>sort cut uniq grep</code>로 자료 가공.</li>
-        <li>스크립트: <code>for</code>, <code>$( )</code>, <code>"$변수"</code>로 반복 실험 자동화.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>&gt;</code>가 파일 뒤에 덧붙인다고 여기기 쉽지만, 기존 내용을 지우고 새로 쓴다. 덧붙이려면 <code>&gt;&gt;</code>를 써야 한다. 또 변수를 따옴표 없이 써도 된다고 생각하는 것도 틀렸다. 따옴표가 없으면 빈칸이 든 값이 여러 인수로 쪼개진다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 따로 프로그램을 짜지 않아도 파이프 <code>|</code>로 <code>cat</code>, <code>grep</code>, <code>sort</code>, <code>tail</code>을 이어 붙이면 \(y\)가 가장 큰 줄을 한 번에 찾을 수 있다. 같은 작업을 매개변수만 바꿔 되풀이할 때는 반복문을 담은 셸 스크립트로 적어 두면, 실수 없이 몇 번이든 똑같이 재현할 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
@@ -74,7 +105,7 @@ done</code></pre>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>스크립트가 첫 인수로 받은 디렉터리의 csv 파일 수를 출력하도록 써라(인수가 없으면 사용법을 출력하고 끝).
-          <details><summary>답</summary><p><code>[ -z "$1" ] &amp;&amp; { echo "usage: $0 dir"; exit 1; }</code> 다음 줄에 <code>ls "$1"/*.csv | wc -l</code>.</p></details>
+          <details><summary>답</summary><p><code>[ -z "$1" ] &amp;&amp; { echo "(usage) $0 dir"; exit 1; }</code> 다음 줄에 <code>ls "$1"/*.csv | wc -l</code>.</p></details>
         </li>
       </ol>
     </div>

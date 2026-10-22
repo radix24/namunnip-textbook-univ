@@ -8,21 +8,85 @@
 <article class="card q-card" id="text-m24-secant" data-kind="본문" data-std="수학24-05-03">
   <header class="card-head"><span class="no"></span><h2>할선법과 종료 조건</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>도함수 대신 두 점의 기울기를 쓰는 할선법을 구현한다.</li>
-        <li>수렴 차수 \(\frac{1 + \sqrt5}2 \approx 1.618\)을 출력으로 관찰한다.</li>
-        <li>절대 오차, 상대 오차, 잔차, 반복 상한을 섞은 종료 조건을 설계한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>뉴턴 방법 (<a href="05-02.html">5.2절</a>), 기계 엡실론 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">뉴턴 방법은 빠르지만 도함수가 필요하다. 도함수 대신 최근 두 점을 잇는 직선의 기울기를 쓰면 어떨까? 그렇게 하면 얼마나 느려지며, 계산량까지 따지면 오히려 나을 수도 있을까? 그리고 반복을 언제 멈춰야 안전할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="이분법, 할선법, 뉴턴 방법의 오차 비교">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M60.3 38.7 L70.7 29.6 L81.0 32.6 L91.3 36.2 L101.7 41.7 L112.0 43.8 L122.3 47.8 L132.7 48.2 L143.0 59.3 L153.3 51.1 L163.7 54.3 L174.0 58.2 L184.3 66.2 L194.7 62.6 L205.0 67.3 L215.3 74.3 L225.7 70.7 L236.0 75.2 L246.3 82.8 L256.7 78.5 L267.0 82.7 L277.3 100.4 L287.7 85.5 L298.0 88.3 L308.3 91.1 L318.7 94.2 L329.0 97.7 L339.3 102.9 L349.7 106.0 L360.0 107.9" class="gd" style="fill:none"/>
+        <circle cx="60.3" cy="38.7" r="2.3" class="fk"/>
+        <circle cx="70.7" cy="29.6" r="2.3" class="fk"/>
+        <circle cx="81.0" cy="32.6" r="2.3" class="fk"/>
+        <circle cx="91.3" cy="36.2" r="2.3" class="fk"/>
+        <circle cx="101.7" cy="41.7" r="2.3" class="fk"/>
+        <circle cx="112.0" cy="43.8" r="2.3" class="fk"/>
+        <circle cx="122.3" cy="47.8" r="2.3" class="fk"/>
+        <circle cx="132.7" cy="48.2" r="2.3" class="fk"/>
+        <circle cx="143.0" cy="59.3" r="2.3" class="fk"/>
+        <circle cx="153.3" cy="51.1" r="2.3" class="fk"/>
+        <circle cx="163.7" cy="54.3" r="2.3" class="fk"/>
+        <circle cx="174.0" cy="58.2" r="2.3" class="fk"/>
+        <circle cx="184.3" cy="66.2" r="2.3" class="fk"/>
+        <circle cx="194.7" cy="62.6" r="2.3" class="fk"/>
+        <circle cx="205.0" cy="67.3" r="2.3" class="fk"/>
+        <circle cx="215.3" cy="74.3" r="2.3" class="fk"/>
+        <circle cx="225.7" cy="70.7" r="2.3" class="fk"/>
+        <circle cx="236.0" cy="75.2" r="2.3" class="fk"/>
+        <circle cx="246.3" cy="82.8" r="2.3" class="fk"/>
+        <circle cx="256.7" cy="78.5" r="2.3" class="fk"/>
+        <circle cx="267.0" cy="82.7" r="2.3" class="fk"/>
+        <circle cx="277.3" cy="100.4" r="2.3" class="fk"/>
+        <circle cx="287.7" cy="85.5" r="2.3" class="fk"/>
+        <circle cx="298.0" cy="88.3" r="2.3" class="fk"/>
+        <circle cx="308.3" cy="91.1" r="2.3" class="fk"/>
+        <circle cx="318.7" cy="94.2" r="2.3" class="fk"/>
+        <circle cx="329.0" cy="97.7" r="2.3" class="fk"/>
+        <circle cx="339.3" cy="102.9" r="2.3" class="fk"/>
+        <circle cx="349.7" cy="106.0" r="2.3" class="fk"/>
+        <circle cx="360.0" cy="107.9" r="2.3" class="fk"/>
+        <path d="M60.3 30.3 L70.7 34.8 L81.0 41.7 L91.3 53.6 L101.7 72.5 L112.0 103.2 L122.3 152.8 L132.7 175.0 L143.0 175.0" class="d" style="fill:none"/>
+        <circle cx="60.3" cy="30.3" r="2.3" class="fd"/>
+        <circle cx="70.7" cy="34.8" r="2.3" class="fd"/>
+        <circle cx="81.0" cy="41.7" r="2.3" class="fd"/>
+        <circle cx="91.3" cy="53.6" r="2.3" class="fd"/>
+        <circle cx="101.7" cy="72.5" r="2.3" class="fd"/>
+        <circle cx="112.0" cy="103.2" r="2.3" class="fd"/>
+        <circle cx="122.3" cy="152.8" r="2.3" class="fd"/>
+        <circle cx="132.7" cy="175.0" r="2.3" class="fd"/>
+        <circle cx="143.0" cy="175.0" r="2.3" class="fd"/>
+        <path d="M60.3 26.7 L70.7 32.2 L81.0 42.1 L91.3 61.3 L101.7 99.7 L112.0 175.0 L122.3 175.0" class="a" style="fill:none"/>
+        <circle cx="60.3" cy="26.7" r="2.3" class="fa"/>
+        <circle cx="70.7" cy="32.2" r="2.3" class="fa"/>
+        <circle cx="81.0" cy="42.1" r="2.3" class="fa"/>
+        <circle cx="91.3" cy="61.3" r="2.3" class="fa"/>
+        <circle cx="101.7" cy="99.7" r="2.3" class="fa"/>
+        <circle cx="112.0" cy="175.0" r="2.3" class="fa"/>
+        <circle cx="122.3" cy="175.0" r="2.3" class="fa"/>
+        <text x="50" y="190" text-anchor="middle" class="s">0</text>
+        <text x="102" y="190" text-anchor="middle" class="s">5</text>
+        <text x="153" y="190" text-anchor="middle" class="s">10</text>
+        <text x="205" y="190" text-anchor="middle" class="s">15</text>
+        <text x="257" y="190" text-anchor="middle" class="s">20</text>
+        <text x="308" y="190" text-anchor="middle" class="s">25</text>
+        <text x="360" y="190" text-anchor="middle" class="s">30</text>
+        <text x="44" y="28" text-anchor="end" class="s">1</text>
+        <text x="44" y="63" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="99" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="44" y="135" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="44" y="170" text-anchor="end" class="s">10⁻¹⁶</text>
+        <text x="205" y="207" text-anchor="middle" class="s">반복 횟수</text>
+        <text x="372" y="40" class="s">근까지의 오차, 시작은 1 과 2</text>
+        <text x="372" y="60" class="s">검정 = 이분법 (매번 절반)</text>
+        <text x="372" y="80" class="td">할선법 (차수 약 1.6)</text>
+        <text x="372" y="100" class="ta">뉴턴 방법 (차수 2, x₀ = 1)</text>
+        <text x="372" y="120" class="s">곡선이 꺾여 내려갈수록 빠르다</text>
+      </svg>
+      <figcaption>그림 1. \(x^3 - x - 2 = 0\)의 근까지의 오차를 반복 횟수에 따라 로그 눈금으로 그렸다. 이분법(검정)은 직선으로 천천히 내려가고, 할선법(빨강)과 뉴턴 방법(파랑)은 갈수록 가파르게 꺾여 내려간다. 할선법은 뉴턴 방법보다 몇 번 더 걸릴 뿐이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>뉴턴 방법(<a href="05-02.html">5.2절</a>)과 기계 엡실론(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>할선법</h3>
-    <p>뉴턴 방법의 \(f'(x_k)\)를 최근 두 점의 기울기 \(\frac{f(x_k) - f(x_{k-1})}{x_k - x_{k-1}}\)로 바꿉니다.</p>
+    <p>뉴턴 방법의 \(f'(x_k)\)를 최근 두 점의 기울기 \(\frac{f(x_k) - f(x_{k-1})}{x_k - x_{k-1}}\)로 바꾼 것을 할선법이라 한다.</p>
     <pre><code>def secant(f, x0, x1, tol=1e-12, maxit=50):
     for k in range(1, maxit + 1):
         x2 = x1 - f(x1)*(x1 - x0)/(f(x1) - f(x0))
@@ -31,7 +95,6 @@
         if abs(x1 - x0) &lt; tol:
             return x1
     raise RuntimeError('수렴하지 않음')
-
 secant(lambda x: x**3 - x - 2, 1.0, 2.0)</code></pre>
     <pre><code>1 1.3333333333333335
 2 1.462686567164179
@@ -41,27 +104,17 @@ secant(lambda x: x**3 - x - 2, 1.0, 2.0)</code></pre>
 6 1.5213797079848717
 7 1.5213797068045645
 8 1.5213797068045676</code></pre>
-    <p>근까지의 오차는 \(0.19, 0.059, 0.0098, 4.5\times10^{-4}, 3.4\times10^{-6}, 1.2\times10^{-9}, 3.1\times10^{-15}\)입니다. 매번 대략 1.6제곱으로 줄어(로그로 보면 지수가 \(\times1.6\)), 뉴턴(\(\times2\))보다 느리지만 이분법보다 훨씬 빠릅니다. 반복마다 \(f\)를 한 번만 새로 계산하므로(\(f'\) 계산 없음) 계산량으로는 뉴턴과 비슷하거나 낫습니다.</p>
+    <p>근까지의 오차는 \(0.19, 0.059, 0.0098, 4.5\times10^{-4}, 3.4\times10^{-6}, 1.2\times10^{-9}, 3.1\times10^{-15}\)이다. 즉 매번 대략 1.6제곱으로 줄어, 로그로 보면 지수가 약 1.6배씩 커진다. 그래서 뉴턴 방법의 2배보다 느리지만 이분법보다 훨씬 빠르다. 게다가 반복마다 \(f\)만 한 번 새로 계산하고 \(f'\)은 계산하지 않으므로, 계산량으로는 뉴턴 방법과 비슷하거나 낫다.</p>
 
     <h3><span class="no">5.3.2</span>종료 조건</h3>
-    <p>어느 하나만으로는 위험합니다.</p>
-    <ul>
-      <li>\(|x_{k+1} - x_k| &lt; \text{tol}\): 근이 매우 크면(\(10^{10}\)) 간격이 \(10^{-6}\)보다 작아질 수 없어 끝나지 않는다. → 상대 조건 \(|x_{k+1} - x_k| &lt; \text{rtol}\cdot|x_{k+1}|\)을 함께.</li>
-      <li>\(|f(x_k)| &lt; \text{tol}\): \(f\)의 크기 단위에 좌우된다. \(10^6f\)는 같은 근인데 조건이 다르다.</li>
-      <li>반복 상한: 수렴하지 않는 경우를 위해 늘 둔다.</li>
-    </ul>
-    <p>실전 라이브러리는 <code>abs(dx) &lt; atol + rtol*abs(x)</code> 꼴(예: <code>atol = 1e-12</code>, <code>rtol = 4*eps</code>)과 반복 상한을 함께 씁니다.</p>
+    <p>종료 조건은 어느 하나만으로는 위험하다. 먼저 \(|x_{k+1} - x_k| &lt; \text{tol}\)만 쓰면, 근이 \(10^{10}\)처럼 매우 클 때 간격이 \(10^{-6}\)보다 작아질 수 없어 끝나지 않는다. 그러므로 상대 조건 \(|x_{k+1} - x_k| &lt; \text{rtol}\cdot|x_{k+1}|\)을 함께 쓴다. 다음으로 \(|f(x_k)| &lt; \text{tol}\)은 \(f\)의 크기 단위에 좌우되어, \(10^6f\)는 근이 같은데도 조건이 달라진다. 끝으로 수렴하지 않는 경우를 위해 반복 상한을 늘 둔다.</p>
+    <p>실전 라이브러리는 <code>abs(dx) &lt; atol + rtol*abs(x)</code> 꼴의 조건, 예를 들어 <code>atol = 1e-12</code>, <code>rtol = 4*eps</code>와 반복 상한을 함께 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 할선법이 이분법처럼 늘 수렴한다고 여긴다. 두 점이 근을 끼고 있지 않아도 되는 대신 발산할 수 있다(근을 끼도록 유지하는 변형이 가위치법). (2) \(f(x_1) = f(x_0)\)인 경우를 생각하지 않는다. 0으로 나누므로 검사가 필요하다.</div>
+    <p>할선법을 한 단계 더 넓히면, 최근 세 점을 지나는 포물선의 근을 다음 값으로 삼는 뮐러 방법이나, 그 역함수를 2차 보간하는 방법이 된다. SciPy의 <code>brentq</code>는 이런 보간 단계와 이분법을 섞어, 근을 끼고 있는 구간을 늘 유지하면서도 대개 할선법만큼 빠르게 수렴한다. 그래서 실전에서는 직접 구현하기보다 이런 검증된 함수를 쓰는 편이 안전하다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>할선법: 기울기를 두 점으로, 수렴 차수 약 1.618.</li>
-        <li>도함수 불필요, 반복당 \(f\) 한 번.</li>
-        <li>종료: 절대 + 상대 변화량, 잔차, 반복 상한.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>할선법이 이분법처럼 늘 수렴한다고 여기기 쉽지만, 두 점이 근을 끼고 있지 않아도 되는 대신 발산할 수 있다. 두 점이 늘 근을 끼도록 유지하는 변형은 가위치법이다. 또 \(f(x_1) = f(x_0)\)인 경우를 생각하지 않는 것도 틀렸다. 그때는 0으로 나누게 되므로 검사가 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 도함수 대신 두 점을 잇는 할선의 기울기를 쓰는 할선법은 수렴 차수가 약 1.6으로 뉴턴 방법의 2보다 조금 느리다. 그러나 반복마다 \(f\)를 한 번만 계산하므로 계산량까지 따지면 뉴턴 방법과 비슷하거나 낫다. 반복은 절대 오차와 상대 오차를 함께 본 조건과 반복 상한을 같이 써서 멈춘다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>

@@ -8,53 +8,60 @@
 <article class="card q-card" id="text-m24-quad" data-kind="본문" data-std="수학24-06-03">
   <header class="card-head"><span class="no"></span><h2>구적법 구현과 정확도 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>합성 사다리꼴 공식과 심프슨 공식을 벡터화해 구현한다.</li>
-        <li>구간 수를 두 배로 할 때 오차가 \(\frac14\) (사다리꼴), \(\frac1{16}\) (심프슨)로 줆을 확인한다.</li>
-        <li>매끄럽지 않은 함수에서 차수가 떨어지는 것을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정적분과 리만 합, 벡터화 (<a href="03-02.html">3.2절</a>). 이론은 수학16 4장.</li>
-      </ul>
-    </div>
+    <p class="q-ask">정적분을 수치로 구할 때, 구간마다 직선으로 근사하는 것과 포물선으로 근사하는 것은 얼마나 차이가 날까? 같은 함수 계산 횟수로 몇 자리를 얻을 수 있을까? 그리고 함수가 매끄럽지 않으면 고차 공식의 이점은 여전히 남을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="사다리꼴 공식과 심프슨 공식의 오차를 로그 눈금으로 그린 그래프">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M79.2 30.4 L108.3 36.9 L137.5 43.3 L166.6 49.7 L195.8 56.1 L225.0 62.5 L254.1 69.0 L283.3 75.4 L312.5 81.8 L341.6 88.2" class="d" style="fill:none"/>
+        <path d="M79.2 49.5 L108.3 62.3 L137.5 75.1 L166.6 87.9 L195.8 100.8 L225.0 113.6 L254.1 126.5 L283.3 139.3 L312.5 152.1 L341.6 165.0" class="a" style="fill:none"/>
+        <path d="M79.2 27.8 L108.3 32.4 L137.5 37.1 L166.6 41.8 L195.8 46.5 L225.0 51.3 L254.1 56.1 L283.3 60.9 L312.5 65.7 L341.6 70.5" class="d" style="fill:none;stroke-dasharray:5 4"/>
+        <path d="M79.2 31.5 L108.3 36.3 L137.5 41.1 L166.6 45.9 L195.8 50.7 L225.0 55.5 L254.1 60.3 L283.3 65.2 L312.5 70.0 L341.6 74.8" class="a" style="fill:none;stroke-dasharray:5 4"/>
+        <text x="50" y="190" text-anchor="middle" class="s">1</text>
+        <text x="147" y="190" text-anchor="middle" class="s">10</text>
+        <text x="244" y="190" text-anchor="middle" class="s">100</text>
+        <text x="341" y="190" text-anchor="middle" class="s">1000</text>
+        <text x="44" y="19" text-anchor="end" class="s">1</text>
+        <text x="44" y="62" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="104" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="44" y="147" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="205" y="207" text-anchor="middle" class="s">구간 수 n</text>
+        <text x="372" y="40" class="td">사다리꼴, 기울기 −2</text>
+        <text x="372" y="60" class="ta">심프슨, 기울기 −4</text>
+        <text x="372" y="80" class="s">실선 = ∫₀¹ eˣ dx</text>
+        <text x="372" y="100" class="s">점선 = ∫₀¹ √x dx</text>
+        <text x="372" y="120" class="s">매끄럽지 않으면 둘 다 느리다</text>
+      </svg>
+      <figcaption>그림 1. 구간 수 \(n\)에 따른 사다리꼴 공식(빨강)과 심프슨 공식(파랑)의 오차를 로그-로그 눈금으로 그렸다. 매끄러운 \(\int_0^1e^xdx\)(실선)에서는 기울기가 각각 \(-2\)와 \(-4\)이지만, 끝점에서 도함수가 발산하는 \(\int_0^1\sqrt x\,dx\)(점선)에서는 둘 다 기울기 약 \(-1.5\)로 느려진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정적분과 리만 합, 벡터화(<a href="03-02.html">3.2절</a>)를 쓴다. 이론은 수학16 4장에서 다룬다.</div>
 
     <h3><span class="no">6.3.1</span>구현</h3>
     <pre><code>import numpy as np
 def trap(f, a, b, n):
     x = np.linspace(a, b, n + 1); y = f(x); h = (b - a)/n
     return h*(y.sum() - (y[0] + y[-1])/2)
-
 def simpson(f, a, b, n):        # n은 짝수
     x = np.linspace(a, b, n + 1); y = f(x); h = (b - a)/n
     return h/3*(y[0] + y[-1] + 4*y[1:-1:2].sum() + 2*y[2:-1:2].sum())</code></pre>
-    <p>사다리꼴은 구간마다 직선, 심프슨은 두 구간마다 포물선으로 근사합니다. 홀수 번째 점(<code>y[1:-1:2]</code>)에 4, 짝수 번째 내부 점(<code>y[2:-1:2]</code>)에 2의 가중치를 줍니다.</p>
+    <p>사다리꼴 공식은 구간마다 직선으로, 심프슨 공식은 두 구간마다 포물선으로 근사한다. 심프슨 공식에서는 홀수 번째 점(<code>y[1:-1:2]</code>)에 4, 짝수 번째 내부 점(<code>y[2:-1:2]</code>)에 2의 가중치를 준다.</p>
 
     <h3><span class="no">6.3.2</span>비교</h3>
-    <p>\(\int_0^1e^xdx = e - 1 \approx 1.7182818285\)에서:</p>
+    <p>\(\int_0^1e^xdx = e - 1 \approx 1.7182818285\)를 두 공식으로 구하면 다음과 같다.</p>
     <table>
       <tr><th>\(n\)</th><th>사다리꼴</th><th>오차</th><th>심프슨</th><th>오차</th></tr>
       <tr><td>4</td><td>1.7272219046</td><td>8.94e-03</td><td>1.7183188419</td><td>3.70e-05</td></tr>
       <tr><td>8</td><td>1.7205185922</td><td>2.24e-03</td><td>1.7182841547</td><td>2.33e-06</td></tr>
       <tr><td>16</td><td>1.7188411286</td><td>5.59e-04</td><td>1.7182819741</td><td>1.46e-07</td></tr>
     </table>
-    <p>\(n\)을 두 배로 하면 사다리꼴 오차는 약 4배(\(O(h^2)\)), 심프슨은 약 16배(\(O(h^4)\)) 줄어듭니다. 함수 계산 17번으로 심프슨은 7자리, 사다리꼴은 3자리입니다.</p>
+    <p>\(n\)을 두 배로 하면 사다리꼴 오차는 약 4배 줄어 \(O(h^2)\)이고, 심프슨 오차는 약 16배 줄어 \(O(h^4)\)이다. 그래서 함수 계산 17번으로 심프슨 공식은 7자리, 사다리꼴 공식은 3자리를 얻는다.</p>
 
     <h3><span class="no">6.3.3</span>매끄럽지 않을 때</h3>
-    <p>오차 공식은 \(f''\), \(f^{(4)}\)가 유계라는 가정에서 나옵니다. \(\int_0^1\sqrt x\,dx = \frac23\)처럼 끝점에서 도함수가 발산하면 두 방법 모두 오차가 \(n^{-1.5}\) 정도로만 줄어 심프슨의 이점이 사라집니다. 이럴 때는 변수 치환(\(x = t^2\))으로 특이성을 없애거나, 특이점 근처를 촘촘히 나누는 적응 구적법(SciPy <code>quad</code>)을 씁니다. 반대로 주기함수를 한 주기 전체에서 적분하면 사다리꼴이 지수적으로 빠르게 수렴합니다(수학15의 푸리에 계수).</p>
+    <p>그런데 오차 공식은 \(f''\), \(f^{(4)}\)가 유계라는 가정에서 나온다. \(\int_0^1\sqrt x\,dx = \frac23\)처럼 끝점에서 도함수가 발산하면, 그림 1의 점선처럼 두 방법 모두 오차가 \(n^{-1.5}\) 정도로만 줄어 심프슨의 이점이 사라진다. 이럴 때는 \(x = t^2\) 같은 변수 치환으로 특이성을 없애거나, 특이점 근처를 촘촘히 나누는 SciPy <code>quad</code> 같은 적응 구적법을 쓴다. 반대로 주기함수를 한 주기 전체에서 적분하면 사다리꼴 공식이 지수적으로 빠르게 수렴하며, 수학15의 푸리에 계수 계산이 그 예이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 심프슨 공식에 홀수 \(n\)을 넣는다. 구간을 두 개씩 묶으므로 짝수여야 한다. (2) 고차 공식이 늘 낫다고 여긴다. 함수가 매끄럽지 않으면 차수의 이점이 없다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>심프슨 공식에 홀수 \(n\)을 넣어도 된다고 여기기 쉽지만, 구간을 두 개씩 묶으므로 \(n\)은 짝수여야 한다. 또 고차 공식이 늘 낫다고 생각하는 것도 틀렸다. 함수가 매끄럽지 않으면 차수의 이점이 사라진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사다리꼴 \(O(h^2)\), 심프슨 \(O(h^4)\): \(n\) 두 배에 오차 \(\frac14\), \(\frac1{16}\).</li>
-        <li>벡터화한 한 줄 구현.</li>
-        <li>특이성이 있으면 차수 저하 → 치환·적응 구적.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 매끄러운 함수에서 직선 근사인 사다리꼴 공식의 오차는 \(O(h^2)\), 포물선 근사인 심프슨 공식의 오차는 \(O(h^4)\)이라, 함수 계산 17번으로 각각 3자리와 7자리를 얻는다. 하지만 \(\sqrt x\)처럼 끝점에서 도함수가 발산하면 둘 다 \(n^{-1.5}\) 정도로만 줄어 고차 공식의 이점이 사라지므로, 치환이나 적응 구적법을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.4</span>연습문제</h3>

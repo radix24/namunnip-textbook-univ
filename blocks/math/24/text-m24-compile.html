@@ -8,22 +8,42 @@
 <article class="card q-card" id="text-m24-compile" data-kind="본문" data-std="수학24-01-03">
   <header class="card-head"><span class="no"></span><h2>C 프로그램의 컴파일과 실행</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>원시 코드 → 컴파일 → 실행 파일의 과정과, 인터프리터 언어(Python)와의 차이를 안다.</li>
-        <li><code>gcc</code>로 C 프로그램을 컴파일하고 수학 라이브러리를 연결한다(<code>-lm</code>).</li>
-        <li>컴파일 오류와 실행 시간 오류를 구별하고 메시지를 읽는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>셸 명령 (<a href="01-02.html">1.2절</a>), 반복문과 함수 같은 프로그래밍 기초.</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 반복 계산이 Python에서는 느리고 C나 Fortran에서는 수십 배 빠르다. 그 차이는 어디서 올까? C 프로그램은 어떻게 실행 파일로 만들어 돌리며, 오류가 나면 그 메시지를 어떻게 읽어야 할까? 컴파일만 되면 프로그램이 맞다고 할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="바빌로니아 방법의 오차를 로그 눈금으로 그린 그래프">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M75.8 25.0 L140.4 39.5 L205.0 68.4 L269.6 126.0 L334.2 162.4" class="a" style="fill:none"/>
+        <circle cx="75.8" cy="25.0" r="4" class="fa"/>
+        <circle cx="140.4" cy="39.5" r="4" class="fa"/>
+        <circle cx="205.0" cy="68.4" r="4" class="fa"/>
+        <circle cx="269.6" cy="126.0" r="4" class="fa"/>
+        <circle cx="334.2" cy="162.4" r="4" class="fa"/>
+        <line x1="50.0" y1="162.4" x2="360.0" y2="162.4" class="d"/>
+        <text x="76" y="190" text-anchor="middle" class="s">1</text>
+        <text x="140" y="190" text-anchor="middle" class="s">2</text>
+        <text x="205" y="190" text-anchor="middle" class="s">3</text>
+        <text x="270" y="190" text-anchor="middle" class="s">4</text>
+        <text x="334" y="190" text-anchor="middle" class="s">5</text>
+        <text x="44" y="19" text-anchor="end" class="s">1</text>
+        <text x="44" y="57" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="94" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="44" y="132" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="44" y="170" text-anchor="end" class="s">10⁻¹⁶</text>
+        <text x="205" y="207" text-anchor="middle" class="s">반복 횟수 k</text>
+        <text x="372" y="40" class="ta">|xₖ − √2| (로그 눈금)</text>
+        <text x="372" y="60" class="s">자릿수가 매번 약 두 배</text>
+        <text x="372" y="80" class="s">→ 이차 수렴 (뉴턴 방법)</text>
+        <text x="372" y="100" class="td">빨강 = 배정밀도 한계</text>
+        <text x="372" y="120" class="s">약 2.2 × 10⁻¹⁶</text>
+      </svg>
+      <figcaption>그림 1. 아래 C 프로그램이 출력한 \(\sqrt2\)의 바빌로니아 방법의 오차 \(|x_k - \sqrt2|\)(파랑)를 로그 눈금으로 그렸다. 맞는 자릿수가 반복마다 약 두 배로 늘다가, 다섯째 반복에서 배정밀도의 한계 \(2.2\times10^{-16}\)(빨강)에 닿아 더 줄지 않는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>셸 명령(<a href="01-02.html">1.2절</a>)과 반복문, 함수 같은 프로그래밍 기초를 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>컴파일</h3>
-    <p>C와 Fortran은 원시 코드를 기계어로 미리 번역(컴파일)한 실행 파일을 만들어 돌립니다. 번역에 시간이 들지만 실행은 빠릅니다. Python은 실행할 때마다 한 줄씩 해석하므로 편하지만, 같은 반복문이 수십 배 느릴 수 있습니다. 그래서 과학계산은 핵심 계산을 C·Fortran으로 짜거나, 그렇게 짜인 라이브러리(NumPy 등)를 부릅니다(3.2절).</p>
-    <pre><code>/* sqrt2.c: 바빌로니아 방법으로 √2 */
+    <p>C와 Fortran은 원시 코드를 기계어로 미리 번역, 곧 컴파일한 실행 파일을 만들어 돌린다. 번역에 시간이 들지만 실행은 빠르다. 반면 Python은 실행할 때마다 한 줄씩 해석하므로 편하지만, 같은 반복문이 수십 배 느릴 수 있다. 그래서 과학계산에서는 핵심 계산을 C나 Fortran으로 짜거나, 3.2절에서 보듯 그렇게 짜인 NumPy 같은 라이브러리를 부른다.</p>
+    <pre><code>/* sqrt2.c - 바빌로니아 방법으로 √2 */
 #include &lt;stdio.h&gt;
 #include &lt;math.h&gt;
 int main(void) {
@@ -41,26 +61,17 @@ $ ./sqrt2
 3 1.414215686274510 2.1e-06
 4 1.414213562374690 1.6e-12
 5 1.414213562373095 2.2e-16</code></pre>
-    <p><code>-o</code>는 실행 파일 이름, <code>-Wall</code>은 경고를 모두 켜기, <code>-O2</code>는 최적화, <code>-lm</code>은 수학 라이브러리(<code>sqrt</code>, <code>fabs</code>) 연결입니다. 오차가 매번 대략 제곱으로 줄어드는 것은 이 방법이 \(x^2 - 2 = 0\)에 대한 뉴턴 방법이기 때문입니다(5.2절). 마지막 오차 \(2.2\times10^{-16}\)은 배정밀도의 한계라 더 줄지 않습니다(4.2절).</p>
+    <p>여기서 <code>-o</code>는 실행 파일 이름, <code>-Wall</code>은 경고를 모두 켜기, <code>-O2</code>는 최적화, <code>-lm</code>은 <code>sqrt</code>와 <code>fabs</code>가 든 수학 라이브러리를 연결하라는 뜻이다. 그림 1처럼 오차가 매번 대략 제곱으로 줄어드는 것은 이 방법이 \(x^2 - 2 = 0\)에 대한 뉴턴 방법이기 때문이며, 이는 5.2절에서 다룬다. 마지막 오차 \(2.2\times10^{-16}\)은 4.2절에서 볼 배정밀도의 한계라서 더 줄지 않는다.</p>
 
     <h3><span class="no">1.3.2</span>오류 읽기</h3>
-    <ul>
-      <li><b>컴파일 오류</b>: 문법이나 타입이 틀려 실행 파일이 만들어지지 않는다. 메시지 <code>sqrt2.c:6:9: error: expected ';'</code>는 6번째 줄 9번째 글자 근처라는 뜻이다. 첫 오류부터 고친다(뒤 오류는 앞 오류의 여파인 경우가 많다).</li>
-      <li><b>링크 오류</b>: <code>undefined reference to 'sqrt'</code>는 함수 정의를 찾지 못한 것으로, <code>-lm</code>을 빠뜨렸을 때 흔하다.</li>
-      <li><b>실행 시간 오류</b>: 컴파일은 되었지만 실행 중 문제. 배열 범위를 넘으면 <code>Segmentation fault</code>, 0으로 나누면 <code>inf</code>나 <code>nan</code>이 출력된다.</li>
-    </ul>
-    <p>Fortran도 같은 흐름입니다(<code>gfortran -O2 -o prog prog.f90</code>). 여러 파일로 된 프로그램은 <code>make</code>와 <code>Makefile</code>로 바뀐 파일만 다시 컴파일합니다.</p>
+    <p>오류에는 세 종류가 있다. 첫째는 컴파일 오류로, 문법이나 타입이 틀려 실행 파일이 만들어지지 않는다. 가령 메시지 <code>sqrt2.c:6:9: error: expected ';'</code>는 6번째 줄 9번째 글자 근처가 문제라는 뜻이다. 뒤의 오류는 앞 오류의 여파인 경우가 많으므로 첫 오류부터 고친다.</p>
+    <p>둘째는 링크 오류이다. 예를 들어 <code>undefined reference to 'sqrt'</code>는 함수의 정의를 찾지 못했다는 뜻으로, <code>-lm</code>을 빠뜨렸을 때 흔히 나온다.</p>
+    <p>셋째는 실행 시간 오류로, 컴파일은 되었지만 실행 중에 문제가 생긴 것이다. 배열의 범위를 넘으면 <code>Segmentation fault</code>가 나고, 0으로 나누면 <code>inf</code>나 <code>nan</code>이 출력된다.</p>
+    <p>Fortran도 같은 흐름이며 <code>gfortran -O2 -o prog prog.f90</code>으로 컴파일한다. 여러 파일로 된 프로그램은 <code>make</code>와 <code>Makefile</code>을 써서 바뀐 파일만 다시 컴파일한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 경고는 무시해도 된다고 여긴다. 초기화하지 않은 변수 같은 경고는 실제 버그인 경우가 많다. (2) 컴파일되면 맞는 프로그램이라 여긴다. 문법만 확인한 것이다. 결과를 아는 경우(예: \(\sqrt2\))로 검증해야 한다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>경고는 무시해도 된다고 여기기 쉽지만, 초기화하지 않은 변수 같은 경고는 실제 버그인 경우가 많다. 또 컴파일되면 맞는 프로그램이라고 생각하는 것도 틀렸다. 컴파일은 문법만 확인한 것이므로, \(\sqrt2\)처럼 결과를 아는 경우로 검증해야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>컴파일 언어: 미리 번역해 빠름. <code>gcc -O2 -Wall -o 이름 파일.c -lm</code>.</li>
-        <li>컴파일 오류(줄 번호), 링크 오류(<code>-lm</code>), 실행 시간 오류(segfault, nan).</li>
-        <li>알려진 답으로 검증하는 습관.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, C와 Fortran은 미리 기계어로 번역한 실행 파일을 돌리므로 한 줄씩 해석하는 Python보다 빠르며, <code>gcc -O2 -Wall -o 이름 파일 -lm</code>으로 컴파일한다. 오류는 컴파일, 링크, 실행 시간 오류로 나누어 첫 메시지부터 읽는다. 컴파일은 문법만 확인하므로, 그림 1처럼 답을 아는 경우로 결과를 검증해야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.3</span>연습문제</h3>
