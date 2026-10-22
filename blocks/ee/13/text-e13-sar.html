@@ -8,69 +8,63 @@
 <article class="card q-card" id="text-e13-sar" data-kind="본문" data-std="전전13-06-02">
   <header class="card-head"><span class="no"></span><h2>SAR A/D 변환기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>SAR ADC가 비교기, DAC, 레지스터로 이진 탐색을 하는 순서를 따라간다.</li>
-        <li>N비트 변환에 N번 비교가 필요하고, 변환 중 입력을 붙잡는 샘플-홀드가 필요함을 안다.</li>
-        <li>SAR, 플래시, 시그마-델타 ADC의 속도·해상도 절충을 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>R-2R DAC (<a href="06-01.html">6.1절</a>), 이진 탐색 (<a href="../1/03-02.html">전전1 3.2절</a>), 비교기 (<a href="../9/05-03.html">전전9 5.3절</a>), 이 절의 탐구 카드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러의 ADC는 3.30 V라는 전압을 8비트 숫자로 바꾼다. 256개 단계를 하나씩 올라가며 비교하면 최악에 255번이 든다. 훨씬 적은 횟수로 끝낼 방법은 없을까? 숫자 맞히기 놀이에서 "더 커요, 더 작아요"를 들으며 범위를 줄여 가듯 할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="8비트 SAR ADC의 이진 탐색(예제 6.2.1, V_ref = 5 V, V_in = 3.30 V). 시험 전압은 2.500, 3.750, 3.125, 3.438, 3.281, 3.359, 3.320, 3.301 V로 입력을 중심으로 좁혀 들고, 입력보다 낮아 유지한 비트는 1, 높아 버린 비트는 0이 되어 결과 10101000(168, 3.281 V)을 8번 비교로 얻는다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <path d="M60 92 H470" class="d dsh" stroke-width="2"/>
+        <path d="M64 140.0 H106" class="a" stroke-width="3"/><path d="M114 65.0 H156" class="c" stroke-width="3"/><path d="M164 102.5 H206" class="a" stroke-width="3"/><path d="M214 83.8 H256" class="c" stroke-width="3"/><path d="M264 93.1 H306" class="a" stroke-width="3"/><path d="M314 88.4 H356" class="c" stroke-width="3"/><path d="M364 90.8 H406" class="c" stroke-width="3"/><path d="M414 92.0 H456" class="c" stroke-width="3"/>
+        <g text-anchor="middle" class="s"><text x="85" y="186">1</text><text x="135" y="186">0</text><text x="185" y="186">1</text><text x="235" y="186">0</text><text x="285" y="186">1</text><text x="335" y="186">0</text><text x="385" y="186">0</text><text x="435" y="186">0</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="54">4 V</text><text x="54" y="174">2 V</text></g>
+        <text x="470" y="86" text-anchor="end" class="td">V_in 3.30</text>
+        <text x="70" y="156" class="ta">유지(1)</text><text x="120" y="58" class="tc">버림(0)</text>
+        <text x="260" y="40" class="s">결과 10101000 = 168, 3.281 V</text>
+      </svg>
+      <figcaption>그림 1. SAR ADC는 최상위 비트부터 하나씩 1로 놓아 DAC 전압과 입력을 비교하므로 매번 가능한 범위가 절반으로 줄어, 8비트를 8번의 비교로 정한다(예제 6.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>R-2R DAC(<a href="06-01.html">6.1절</a>), 이진 탐색(<a href="../1/03-02.html">전전1 3.2절</a>), 비교기(<a href="../9/05-03.html">전전9 5.3절</a>), 이 절의 탐구 카드를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>순서</h3>
-    <ol>
-      <li>샘플-홀드로 입력 \(V_{in}\)을 잡아 둔다.</li>
-      <li>최상위 비트를 1로 놓고(1000…) DAC 출력 \(V_{ref}/2\)와 비교. \(V_{in} \ge\) DAC이면 1을 유지, 아니면 0으로.</li>
-      <li>다음 비트를 1로 놓고 다시 비교. N번 반복하면 끝.</li>
-    </ol>
-    <p>매번 가능한 범위를 반으로 줄이는 이진 탐색이라 N비트에 N번 비교면 됩니다.</p>
+    <p>SAR(축차 비교형) ADC는 세 단계로 변환한다. 먼저 샘플-홀드로 입력 \(V_{in}\)을 잡아 둔다. 그다음 최상위 비트를 1로 놓고(1000…) DAC 출력 \(V_{ref}/2\)와 비교해, \(V_{in}\)이 DAC 이상이면 1을 유지하고 아니면 0으로 바꾼다. 이어서 다음 비트를 1로 놓고 다시 비교하며, 이를 N번 되풀이하면 끝난다.</p>
+    <p>즉 매번 가능한 범위를 반으로 줄이는 이진 탐색이어서, N비트에 N번 비교면 된다. 처음 질문의 답이 이것이며, 8비트는 255번 대신 8번이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
-      <p>8비트, \(V_{ref}\) = 5 V, \(V_{in}\) = 3.30 V. 각 단계의 시험 코드와 결과를 쓰라.</p>
+      <p>8비트, \(V_{ref}\) = 5 V, \(V_{in}\) = 3.30 V이다. 각 단계의 시험 코드와 결과를 쓰라.</p>
     </div>
-    <p><i>풀이.</i> 10000000(2.500 V) 유지 → 11000000(3.750) 버림 → 10100000(3.125) 유지 → 10110000(3.438) 버림 → 10101000(3.281) 유지 → 10101100(3.359) 버림 → 10101010(3.320) 버림 → 10101001(3.301) 버림. 결과 10101000 = 168, 3.281 V, 양자화 오차 18.75 mV(1 LSB 19.53 mV 안). 탐구 카드에서 입력을 바꿔 봅니다.</p>
+    <p><i>풀이.</i> 10000000(2.500 V)은 유지, 11000000(3.750)은 버림, 10100000(3.125)은 유지, 10110000(3.438)은 버림이다. 이어서 10101000(3.281)은 유지, 10101100(3.359)과 10101010(3.320), 10101001(3.301)은 모두 버림이다(그림 1). 그래서 결과는 10101000 = 168, 3.281 V이고, 양자화 오차 18.75 mV는 1 LSB 19.53 mV 안이다. 탐구 카드에서 입력을 바꿔 볼 수 있다.</p>
 
     <h3><span class="no">6.2.2</span>다른 구조와 비교</h3>
+    <p>ADC 구조는 비교를 어떻게 나누느냐에 따라 속도와 해상도가 갈린다.</p>
     <table class="tb-table">
       <tr><th>구조</th><th>비교 횟수</th><th>특징</th></tr>
       <tr><td>플래시</td><td>비교기 2ᴺ − 1개가 한 번에</td><td>가장 빠름(GS/s), 비교기 수가 지수적이라 6~8비트</td></tr>
-      <tr><td>SAR</td><td>N번 차례로</td><td>중간 속도(수 MS/s), 8~18비트, 저전력. 마이크로컨트롤러 내장 ADC</td></tr>
+      <tr><td>SAR</td><td>N번 차례로</td><td>중간 속도(수 MS/s), 8~18비트, 저전력, 마이크로컨트롤러 내장 ADC</td></tr>
       <tr><td>시그마-델타</td><td>1비트를 매우 빠르게 많이</td><td>느리지만 고해상도(16~24비트), 오디오·계측</td></tr>
     </table>
+    <p>그러므로 SAR은 비교기 하나와 DAC 하나로 중간 속도와 좋은 해상도를 함께 얻는, 전력 대비 효율이 좋은 구조이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "SAR은 입력을 계속 따라간다": 변환 중에는 샘플-홀드가 잡아 둔 값을 씁니다. 그동안 입력이 변하면 오류가 생깁니다. (2) "비트가 많을수록 변환 시간이 같다": SAR은 비트 수에 비례해 비교 단계가 늘어납니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>SAR이 입력을 계속 따라간다고 여기기 쉽지만, 변환 중에는 샘플-홀드가 잡아 둔 값을 쓴다. 그동안 입력이 변하면 오류가 생기므로 샘플-홀드가 꼭 필요하다. 비트가 많아도 변환 시간이 같다는 생각도 틀리며, SAR은 비트 수에 비례해 비교 단계가 늘어난다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>샘플-홀드 → 최상위 비트부터 시험 → 비교로 유지/버림 → N번.</li>
-        <li>이진 탐색: N비트에 N번 비교.</li>
-        <li>플래시(빠름, 저해상도), SAR(중간), 시그마-델타(느림, 고해상도).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>SAR ADC는 샘플-홀드한 뒤 최상위 비트부터 시험하고, 비교 결과로 유지나 버림을 정하기를 N번 되풀이한다. 이진 탐색이어서 N비트에 N번 비교면 된다. 플래시는 빠르고 해상도가 낮으며, SAR은 중간, 시그마-델타는 느리고 해상도가 높다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>12비트 SAR의 비교 횟수는?
-          <details><summary>답</summary><p>12번.</p></details>
+          <details><summary>답</summary><p>12번이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>8비트, 5 V에서 입력 1.00 V의 변환 결과 코드는?
-          <details><summary>답</summary><p>1.00/0.01953 = 51.2 → 51(00110011), 0.996 V.</p></details>
+          <details><summary>답</summary><p>1.00/0.01953 = 51.2이므로 코드 51(00110011)이고, 0.996 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>SAR 클록 20 MHz, 비교 한 번에 1클록, 샘플링에 2클록이면 12비트의 최대 변환율은?
-          <details><summary>답</summary><p>14클록, 약 1.43 MS/s.</p></details>
+          <details><summary>답</summary><p>14클록이 들므로 약 1.43 MS/s이다.</p></details>
         </li>
       </ol>
     </div>

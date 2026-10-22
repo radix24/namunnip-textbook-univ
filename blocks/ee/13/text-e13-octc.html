@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e13-octc" data-kind="본문" data-std="전전13-01-04">
   <header class="card-head"><span class="no"></span><h2>개방 시상수법으로 대역폭 어림하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>축전기마다 다른 축전기를 개방하고 본 저항으로 시상수를 구한다.</li>
-        <li>\(f_H \approx 1/(2\pi\sum R_iC_i)\)로 고역 차단 주파수를 어림한다.</li>
-        <li>가장 큰 시상수가 대역폭을 제한하는 곳임을 찾는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Miller 근사 (<a href="01-01.html">1.1절</a>), CS 고역 응답 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">축전기가 서너 개만 얽혀도 회로의 정확한 극점을 구하려면 3차, 4차 방정식을 풀어야 한다. 설계 중에 매번 그렇게 할 수는 없다. 축전기를 하나씩 따로 보고 간단히 더하기만 해서 대역폭을 어림할 방법은 없을까? 그리고 어느 축전기가 대역폭을 가장 많이 깎는지도 함께 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="공통 소스 증폭기의 개방 시상수 합(예제 1.4.1). τ_gs = 1 ns, τ_gd = 4.4 ns, τ_L = 0.5 ns를 더한 5.9 ns에서 f_H ≈ 27 MHz를 얻으며, 가장 작은 C_gd(20 fF)의 몫이 큰 저항 220 kΩ을 보아 전체의 75%를 차지한다">
+        <rect x="80" y="70" width="60" height="44" class="lb"/><rect x="140" y="70" width="264" height="44" class="la"/><rect x="404" y="70" width="30" height="44" class="lc"/>
+        <rect x="80" y="70" width="354" height="44" class="k" fill="none"/>
+        <text x="110" y="97" text-anchor="middle" class="tb">τ_gs 1</text>
+        <text x="272" y="97" text-anchor="middle" class="ta">τ_gd 4.4 ns (75%)</text>
+        <text x="419" y="62" text-anchor="middle" class="tc">τ_L 0.5</text>
+        <text x="80" y="140" class="s">C_gs 100 fF × 10 kΩ</text>
+        <text x="200" y="158" class="s">C_gd 20 fF × 220 kΩ</text>
+        <text x="380" y="140" class="s">C_L 50 fF × 10 kΩ</text>
+        <text x="80" y="44" class="td">합 5.9 ns, f_H ≈ 1/(2π × 5.9 ns) = 27 MHz</text>
+      </svg>
+      <figcaption>그림 1. 축전기마다 나머지를 떼고 본 저항과의 곱을 더하면 대역폭을 어림할 수 있고, 각 항의 크기가 곧 그 축전기가 대역폭을 깎는 몫이어서 개선할 곳이 바로 보인다(예제 1.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Miller 근사(<a href="01-01.html">1.1절</a>), CS 고역 응답(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>시상수의 합</h3>
-    <p>여러 축전기가 얽힌 회로의 정확한 극점은 구하기 어렵습니다. 각 축전기 C_i에 대해 나머지를 개방하고 그 단자에서 본 저항 R_i를 구해 \(\tau_i = R_iC_i\)를 더하면, 주극점이 있을 때 \(\omega_H \approx 1/\sum\tau_i\)입니다.</p>
+    <p>여러 축전기가 얽힌 회로의 정확한 극점은 구하기 어렵다. 그래서 개방 시상수법을 쓴다. 각 축전기 \(C_i\)에 대해 나머지 축전기를 모두 개방하고, 그 단자에서 본 저항 \(R_i\)를 구해 \(\tau_i = R_iC_i\)를 계산한다. 이를 모두 더하면, 주극점이 뚜렷할 때 \(\omega_H \approx 1/\sum\tau_i\)이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>이 방법이 통하는 이유는 1.2절에서 보았다. 전달 함수 분모의 1차 계수 \(b_1\)이 바로 개방 시상수의 합이고, 주극점이 다른 극점보다 훨씬 낮으면 \(\omega_{p1} \approx 1/b_1\)이기 때문이다. 게다가 각 항은 그 축전기가 대역폭을 깎는 몫이어서, 가장 큰 항을 줄이는 것이 대역폭을 넓히는 가장 빠른 길이다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
-      <p>CS 증폭기: R_sig = 10 kΩ, C_gs = 100 fF, C_gd = 20 fF, g_m = 2 mS, R_L' = 10 kΩ, C_L = 50 fF. f_H는?</p>
+      <p>CS 증폭기에서 R_sig = 10 kΩ, C_gs = 100 fF, C_gd = 20 fF, g_m = 2 mS, R_L' = 10 kΩ, C_L = 50 fF이다. f_H는?</p>
     </div>
-    <p><i>풀이.</i> τ_gs = 10 k × 100 f = 1 ns. C_gd가 보는 저항 R_sig(1 + g_mR_L') + R_L' = 220 kΩ → τ_gd = 4.4 ns. τ_L = 0.5 ns. 합 5.9 ns → f_H ≈ 27 MHz. C_gd 항이 75%로, 대역폭을 넓히려면 캐스코드(1.3절)나 R_sig 감소가 효과적입니다.</p>
+    <p><i>풀이.</i> τ_gs = 10 k × 100 f = 1 ns이다. C_gd가 보는 저항은 R_sig(1 + g_mR_L') + R_L' = 220 kΩ이므로 τ_gd = 4.4 ns이다. τ_L = 0.5 ns이다. 합은 5.9 ns이므로 f_H ≈ 27 MHz이다(그림 1). 이 가운데 C_gd 항이 75%를 차지하므로, 대역폭을 넓히려면 캐스코드(1.3절)나 R_sig 감소가 효과적이다.</p>
+    <p>C_gd가 보는 저항 220 kΩ은 신호원 저항의 22배이다. 이는 C_gd 양 끝에 시험 전류를 흘리면, 게이트 쪽 전압 변화가 증폭되어 드레인 쪽에서 크게 반대로 움직이기 때문이다. 즉 Miller 효과가 저항 쪽에 나타난 것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "가장 큰 축전기가 대역폭을 정한다": 그 축전기가 보는 저항과의 곱이 중요합니다(C_gd는 작아도 큰 저항을 봄). (2) "개방 시상수법은 정확하다": 주극점이 뚜렷할 때 좋은 어림이며, 극점이 가까우면 대역폭을 조금 낮게 줍니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>가장 큰 축전기가 대역폭을 정한다고 여기기 쉽지만, 그 축전기가 보는 저항과의 곱이 중요하다. C_gd는 작아도 큰 저항을 보아 가장 큰 시상수를 만든다. 개방 시상수법이 정확하다는 생각도 틀리다. 주극점이 뚜렷할 때 좋은 어림이며, 극점이 가까우면 대역폭을 조금 낮게 준다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>τ_i = R_iC_i(나머지 C 개방).</li>
-        <li>f_H ≈ 1/(2πΣτ_i).</li>
-        <li>예: 5.9 ns → 27 MHz, C_gd 항이 지배.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>개방 시상수법은 나머지 축전기를 개방하고 본 저항으로 \(\tau_i = R_iC_i\)를 구해 더한다. 대역폭은 \(f_H \approx 1/(2\pi\sum\tau_i)\)로 어림한다. 예제에서는 합 5.9 ns로 27 MHz이며, C_gd 항이 지배한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Στ = 1 ns의 f_H는?
-          <details><summary>답</summary><p>약 159 MHz.</p></details>
+          <details><summary>답</summary><p>약 159 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 R_sig를 1 kΩ로 줄이면 f_H는?
-          <details><summary>답</summary><p>τ = 0.1 + 0.4 + 0.5 = 1.0 ns → 약 159 MHz.</p></details>
+          <details><summary>답</summary><p>τ = 0.1 + 0.4 + 0.5 = 1.0 ns이므로 약 159 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>C_gd가 보는 저항식에서 1 + g_mR_L'의 뜻은?
-          <details><summary>답</summary><p>Miller 효과로 C_gd가 입력에서 그만큼 커 보이는 것과 같습니다.</p></details>
+          <details><summary>답</summary><p>Miller 효과로 C_gd가 입력에서 그만큼 커 보이는 것과 같다.</p></details>
         </li>
       </ol>
     </div>

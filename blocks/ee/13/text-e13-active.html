@@ -8,60 +8,58 @@
 <article class="card q-card" id="text-e13-active" data-kind="본문" data-std="전전13-04-02">
   <header class="card-head"><span class="no"></span><h2>2차 능동 필터 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>2차 저역 통과의 표준형 \(\omega_0^2/(s^2 + (\omega_0/Q)s + \omega_0^2)\)과 Q의 뜻을 안다.</li>
-        <li>Sallen-Key와 다중 궤환(MFB) 회로로 원하는 \(f_0\), Q를 만드는 부품값을 정한다.</li>
-        <li>고차 필터를 2차 단의 직렬로 나누는 방법을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>필터 차수 (<a href="04-01.html">4.1절</a>), Sallen-Key 실험 (<a href="../9/05-01.html">전전9 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">5차 버터워스 필터가 필요하다는 것은 알았다. 그렇다면 실제 회로는 어떻게 만들까? 인덕터 없이 저항, 축전기, 연산증폭기만으로 2차 필터를 만들 수 있을까? 그리고 그 필터의 차단 주파수와 응답 모양은 각각 어느 부품이 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="2차 저역 통과 필터의 크기 응답을 Q에 따라 비교(예제 4.2.1, f₀ = 2 kHz). Q = 0.707(버터워스)은 봉우리 없이 f₀에서 −3 dB이고, Q = 2는 f₀ 근처에 +6 dB 봉우리가 솟는다. 두 경우 모두 f₀ 위에서 −40 dB/decade로 줄어든다">
+        <line x1="60" y1="110" x2="470" y2="110" class="ax"/><line x1="60" y1="40" x2="60" y2="176" class="ax"/>
+        <path d="M60.0 110.0 L70.0 110.0 L80.0 110.0 L90.0 110.1 L100.0 110.1 L110.0 110.2 L120.0 110.3 L130.0 110.4 L140.0 110.6 L150.0 111.0 L160.0 111.6 L170.0 112.5 L180.0 113.8 L190.0 115.8 L200.0 118.7 L210.0 122.7 L220.0 127.9 L230.0 134.6 L240.0 142.6 L250.0 151.6 L260.0 161.6 L270.0 170.0 L280.0 170.0 L290.0 170.0 L300.0 170.0 L310.0 170.0 L320.0 170.0 L330.0 170.0 L340.0 170.0 L350.0 170.0 L360.0 170.0 L370.0 170.0 L380.0 170.0 L390.0 170.0 L400.0 170.0 L410.0 170.0 L420.0 170.0 L430.0 170.0 L440.0 170.0 L450.0 170.0 L460.0 170.0" class="a" stroke-width="2.5"/>
+        <path d="M60.0 108.9 L70.0 108.6 L80.0 108.2 L90.0 107.7 L100.0 107.1 L110.0 106.3 L120.0 105.3 L130.0 104.1 L140.0 102.5 L150.0 100.4 L160.0 97.8 L170.0 94.3 L180.0 90.0 L190.0 84.5 L200.0 78.2 L210.0 73.0 L220.0 73.8 L230.0 84.6 L240.0 101.7 L250.0 120.0 L260.0 137.5 L270.0 153.9 L280.0 169.4 L290.0 170.0 L300.0 170.0 L310.0 170.0 L320.0 170.0 L330.0 170.0 L340.0 170.0 L350.0 170.0 L360.0 170.0 L370.0 170.0 L380.0 170.0 L390.0 170.0 L400.0 170.0 L410.0 170.0 L420.0 170.0 L430.0 170.0 L440.0 170.0 L450.0 170.0 L460.0 170.0" class="b" stroke-width="2"/>
+        <path d="M220.2 40 V176" class="k dsh"/>
+        <circle cx="220.2" cy="128" r="4" class="fa"/><circle cx="220.2" cy="73.9" r="4" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="60" y="190">316 Hz</text><text x="220.2" y="190">2 kHz</text><text x="460" y="190">31.6 kHz</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="114">0 dB</text><text x="54" y="74">+6</text></g>
+        <text x="228" y="140" class="ta">Q = 0.707, −3 dB</text>
+        <text x="228" y="68" class="tb">Q = 2, +6 dB 봉우리</text>
+        <text x="330" y="160" class="s">−40 dB/dec</text>
+      </svg>
+      <figcaption>그림 1. 2차 필터는 고유 주파수 f₀가 차단 위치를, Q가 그 근처 응답의 모양을 정하므로, 같은 f₀에서도 Q = 0.707이면 평탄한 버터워스가 되고 Q가 크면 봉우리가 솟는다(예제 4.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>필터 차수(<a href="04-01.html">4.1절</a>), Sallen-Key 실험(<a href="../9/05-01.html">전전9 5.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>표준형</h3>
-    <p>2차 저역 통과 \(H(s) = \frac{K\omega_0^2}{s^2 + (\omega_0/Q)s + \omega_0^2}\). Q = 0.707이면 버터워스, Q가 크면 \(f_0\) 근처에 봉우리. 고차 버터워스는 각 2차 단의 Q가 다른 단을 이어 만듭니다(4차: Q = 0.541과 1.307, 확인 필요: 표에서 확인).</p>
+    <p>2차 저역 통과 필터의 표준형은 \(H(s) = \frac{K\omega_0^2}{s^2 + (\omega_0/Q)s + \omega_0^2}\)이다. 여기서 \(\omega_0\)는 차단 위치를, Q는 그 근처 응답의 모양을 정한다. Q = 0.707이면 버터워스이고, Q가 크면 \(f_0\) 근처에 봉우리가 생긴다(그림 1). 처음 질문의 셋째 답이 이것이다. 고차 버터워스는 Q가 서로 다른 2차 단들을 이어 만들며, 가령 4차는 Q = 0.541과 1.307인 두 단이다(표에서 확인 필요).</p>
 
     <h3><span class="no">4.2.2</span>Sallen-Key(이득 1, 같은 R)</h3>
-    <p>\(f_0 = \frac{1}{2\pi R\sqrt{C_1C_2}}\), \(Q = \frac12\sqrt{C_1/C_2}\)(\(C_1\)은 되먹임, \(C_2\)는 접지 쪽). Q가 축전기 비만으로 정해져 부품 오차에 덜 민감합니다.</p>
+    <p>Sallen-Key 회로는 연산증폭기 하나에 저항 둘, 축전기 둘로 2차 저역 통과 필터를 만든다. 처음 질문의 첫째, 둘째 답이 이것이다. 두 저항이 같고 이득이 1이면 \(f_0 = \frac{1}{2\pi R\sqrt{C_1C_2}}\), \(Q = \frac12\sqrt{C_1/C_2}\)이며, \(C_1\)은 되먹임 쪽, \(C_2\)는 접지 쪽 축전기이다. 즉 Q가 축전기 비만으로 정해져 부품 오차에 덜 민감하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>\(f_0\) = 2 kHz 버터워스(Q = 0.707) Sallen-Key를 C₂ = 10 nF로 설계하라.</p>
     </div>
-    <p><i>풀이.</i> \(C_1 = 4Q^2C_2 = 2C_2 = 20\) nF. \(\sqrt{C_1C_2} = 14.14\) nF, \(R = 1/(2\pi \times 2000 \times 14.14\text{ n}) \approx 5.63\) kΩ(표준값 5.6 kΩ이면 \(f_0\) ≈ 2.01 kHz). 연산증폭기의 이득-대역폭 곱은 \(f_0\)의 100배 이상(200 kHz 이상)으로 고릅니다.</p>
-    <p><b>다중 궤환(MFB)</b> 회로는 반전 이득을 갖고 높은 Q를 만들기 쉬우며, 대역 통과 필터로 자주 씁니다.</p>
+    <p><i>풀이.</i> \(C_1 = 4Q^2C_2 = 2C_2 = 20\) nF이다. \(\sqrt{C_1C_2} = 14.14\) nF이므로 \(R = 1/(2\pi \times 2000 \times 14.14\text{ n}) \approx 5.63\) kΩ이며, 표준값 5.6 kΩ이면 \(f_0\) ≈ 2.01 kHz이다. 연산증폭기의 이득-대역폭 곱은 \(f_0\)의 100배 이상, 곧 200 kHz 이상으로 고른다.</p>
+    <p>한편 다중 궤환(MFB) 회로는 반전 이득을 가지며 높은 Q를 만들기 쉬워, 대역 통과 필터로 자주 쓴다. 어느 회로든 고차 필터는 이런 2차 단을 직렬로 이어 만든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "Q가 큰 단을 앞에 둬야 한다": 봉우리 때문에 앞단에서 포화할 수 있어 보통 낮은 Q 단을 앞에 둡니다. (2) "부품값을 계산대로 고르면 끝": 표준값과 허용 오차로 \(f_0\), Q가 몇 % 달라지므로 민감도를 확인합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>Q가 큰 단을 앞에 둬야 한다고 여기기 쉽지만, 봉우리 때문에 앞단에서 포화할 수 있으므로 보통 낮은 Q 단을 앞에 둔다. 부품값을 계산대로 고르면 끝이라는 생각도 틀리다. 표준값과 허용 오차 때문에 \(f_0\)와 Q가 몇 % 달라지므로 민감도를 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>표준형 \(K\omega_0^2/(s^2 + (\omega_0/Q)s + \omega_0^2)\), 버터워스 Q = 0.707.</li>
-        <li>Sallen-Key(같은 R, 이득 1): \(f_0 = 1/(2\pi R\sqrt{C_1C_2})\), \(Q = \frac12\sqrt{C_1/C_2}\).</li>
-        <li>고차 = 2차 단의 직렬, 낮은 Q 단을 앞에.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>2차 저역 통과 필터의 표준형은 \(K\omega_0^2/(s^2 + (\omega_0/Q)s + \omega_0^2)\)이고, 버터워스는 Q = 0.707이다. 같은 R, 이득 1인 Sallen-Key에서는 \(f_0 = 1/(2\pi R\sqrt{C_1C_2})\), \(Q = \frac12\sqrt{C_1/C_2}\)이다. 고차 필터는 2차 단을 직렬로 잇고, 낮은 Q 단을 앞에 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Q = 0.5 Sallen-Key의 C₁/C₂는?
-          <details><summary>답</summary><p>1(같은 값).</p></details>
+          <details><summary>답</summary><p>1이며, 두 축전기가 같은 값이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>C₁ = 47 nF, C₂ = 10 nF, R = 10 kΩ의 f₀와 Q는?
-          <details><summary>답</summary><p>\(f_0 = 1/(2\pi \times 10^4 \times 21.7\text{ n}) \approx 734\) Hz, \(Q = 0.5\sqrt{4.7} \approx 1.08\).</p></details>
+          <details><summary>답</summary><p>\(f_0 = 1/(2\pi \times 10^4 \times 21.7\text{ n}) \approx 734\) Hz이고, \(Q = 0.5\sqrt{4.7} \approx 1.08\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제 필터에서 \(f_0\)에서의 이득과 위상은?
-          <details><summary>답</summary><p>이득 Q = 0.707(−3 dB), 위상 −90°.</p></details>
+          <details><summary>답</summary><p>이득은 Q = 0.707(−3 dB)이고, 위상은 −90°이다.</p></details>
         </li>
       </ol>
     </div>

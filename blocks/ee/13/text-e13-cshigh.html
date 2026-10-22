@@ -8,58 +8,55 @@
 <article class="card q-card" id="text-e13-cshigh" data-kind="본문" data-std="전전13-01-02">
   <header class="card-head"><span class="no"></span><h2>공통 소스 증폭기의 고역 차단 주파수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>공통 소스 증폭기의 고주파 등가 회로에서 정확한 전달 함수를 구한다.</li>
-        <li>분모 계수 \(b_1\)로 주극점을 어림하는 방법(개방 시정수의 합)을 쓴다.</li>
-        <li>Miller 근사와 정확한 해의 차이(극점 분리, 우반면 영점)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Miller 정리 (<a href="01-01.html">1.1절</a>), 2차 다항식의 근.</li>
-      </ul>
-    </div>
+    <p class="q-ask">Miller 정리로 공통 소스 증폭기의 입력 극점을 1.27 MHz로 어림했다. 그런데 출력 쪽에도 부하 용량이 있으니 극점이 하나 더 있을 것이다. 정확히 계산하면 두 극점은 어디에 있을까? 출력 극점도 Miller 근사로 믿을 만하게 구할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="공통 소스 증폭기의 이득 크기 Bode 선도(예제 1.2.1, 개념적 정확 계산). 중간 대역 이득 26 dB(20배)에서 주극점 1.21 MHz부터 −20 dB/decade로 줄고, 둘째 극점 119 MHz부터 −40 dB/decade로 더 빨리 준다. Miller로 어림한 출력 극점 21 MHz보다 둘째 극점이 훨씬 높다">
+        <line x1="60" y1="176" x2="470" y2="176" class="ax"/><line x1="60" y1="40" x2="60" y2="176" class="ax"/>
+        <path d="M60.0 69.9 L70.0 69.9 L80.0 70.0 L90.0 70.0 L100.0 70.0 L110.0 70.0 L120.0 70.0 L130.0 70.0 L140.0 70.0 L150.0 70.1 L160.0 70.2 L170.0 70.4 L180.0 70.7 L190.0 71.2 L200.0 72.1 L210.0 73.5 L220.0 75.6 L230.0 78.6 L240.0 82.4 L250.0 87.0 L260.0 92.3 L270.0 97.9 L280.0 103.8 L290.0 109.8 L300.0 116.0 L310.0 122.2 L320.0 128.5 L330.0 135.0 L340.0 141.5 L350.0 148.3 L360.0 155.4 L370.0 163.1 L380.0 171.5" class="a" stroke-width="2.5"/>
+        <path d="M226.7 50 V176 M386 50 V176" class="k dsh"/><path d="M325.8 50 V176" class="b dsh"/>
+        <g text-anchor="middle" class="s"><text x="60" y="190">10 kHz</text><text x="226.7" y="190">1.21 MHz</text><text x="325.8" y="46">21</text><text x="386" y="190">119 MHz</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="74">26 dB</text></g>
+        <text x="236" y="60" class="td">주극점</text><text x="392" y="60" class="td">둘째 극점</text>
+        <text x="250" y="120" class="ta">−20 dB/dec</text>
+        <text x="340" y="38" class="tb">Miller 출력 극점 어림</text>
+      </svg>
+      <figcaption>그림 1. C_gd가 입력과 출력을 이어 두 극점을 서로 밀어내므로, 주극점은 개방 시정수의 합으로 잘 어림되지만 둘째 극점은 Miller 근사의 21 MHz보다 훨씬 높은 119 MHz에 놓인다(예제 1.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Miller 정리(<a href="01-01.html">1.1절</a>), 2차 다항식의 근을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>정확한 전달 함수</h3>
-    <p>입력 마디와 출력 마디에 KCL을 쓰면(신호원 \(R_{sig}\), 부하 \(R_L'\), \(C_{gs}\), \(C_{gd}\), \(C_L\))</p>
+    <p>신호원 \(R_{sig}\), 부하 \(R_L'\), 그리고 \(C_{gs}\), \(C_{gd}\), \(C_L\)이 있는 공통 소스 증폭기의 입력 마디와 출력 마디에 KCL을 쓰면 다음 전달 함수를 얻는다.</p>
     \[ \frac{V_o}{V_{sig}} = \frac{-g_mR_L'(1 - sC_{gd}/g_m)}{1 + b_1s + b_2s^2}, \quad b_1 = R_{sig}[C_{gs} + C_{gd}(1 + g_mR_L')] + R_L'(C_L + C_{gd}). \]
-    <p>\(b_2 = R_{sig}R_L'(C_{gs}C_{gd} + C_{gs}C_L + C_{gd}C_L)\). 두 극점이 멀리 떨어져 있으면 주극점은 \(\omega_{p1} \approx 1/b_1\)입니다. \(b_1\)은 각 축전기마다 다른 축전기를 떼고 본 저항과의 곱(개방 시정수)을 더한 것과 같아, 큰 회로에서도 대역폭을 빨리 어림하는 데 씁니다.</p>
+    <p>둘째 계수는 \(b_2 = R_{sig}R_L'(C_{gs}C_{gd} + C_{gs}C_L + C_{gd}C_L)\)이다. 두 극점이 멀리 떨어져 있으면 주극점은 \(\omega_{p1} \approx 1/b_1\)이다. 그런데 \(b_1\)은 각 축전기마다 다른 축전기를 떼고 본 저항과의 곱, 곧 개방 시정수를 모두 더한 것과 같다. 그래서 큰 회로에서도 대역폭을 빨리 어림하는 데 쓴다(1.4절).</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>1.1절 예제의 값과 \(C_L\) = 1 pF로 \(b_1\), 주극점 어림, 정확한 두 극점과 영점을 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(b_1 = 10\text{k} \times 12.5\text{p} + 5\text{k} \times 1.5\text{p} = 132.5\) ns → \(1/(2\pi b_1) = 1.20\) MHz. 정확한 극점 1.213 MHz와 119 MHz(−3 dB 1.213 MHz). Miller로 어림한 출력 극점 \(1/(2\pi R_L'(C_L + C_{gd})) = 21\) MHz보다 둘째 극점이 훨씬 높은데, \(C_{gd}\)가 두 극점을 서로 밀어내기 때문입니다(극점 분리, 2.3절의 보상 원리). 영점 \(g_m/(2\pi C_{gd}) = 1.27\) GHz는 우반면이라 위상을 더 늦춥니다.</p>
+    <p><i>풀이.</i> \(b_1 = 10\text{k} \times 12.5\text{p} + 5\text{k} \times 1.5\text{p} = 132.5\) ns이므로 \(1/(2\pi b_1) = 1.20\) MHz이다. 정확한 극점은 1.213 MHz와 119 MHz이며, −3 dB 주파수는 1.213 MHz이다(그림 1). 처음 질문의 첫째 답이 이것이다. 그런데 Miller로 어림한 출력 극점 \(1/(2\pi R_L'(C_L + C_{gd})) = 21\) MHz보다 둘째 극점이 훨씬 높다. \(C_{gd}\)가 두 극점을 서로 밀어내기 때문이며, 이를 극점 분리라 한다(2.3절의 보상 원리). 처음 질문의 둘째 답이 이것이다. 한편 영점 \(g_m/(2\pi C_{gd}) = 1.27\) GHz는 우반면에 있어 위상을 더 늦춘다.</p>
+    <p>우반면 영점은 \(C_{gd}\)를 지나 입력에서 출력으로 곧바로 새는 전류가 트랜지스터의 반전 전류와 같아지는 주파수에서 생긴다. 그 위에서는 새는 전류가 이겨 출력 부호가 바뀌므로, 크기는 늘지만 위상은 늦어진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "출력 극점은 R_L'와 C_L만으로 정해진다": C_gd를 통한 결합으로 크게 달라집니다. (2) "−3 dB 주파수는 언제나 가장 낮은 극점이다": 두 극점이 가까우면 더 낮아집니다(같은 두 극점이면 0.64배).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>출력 극점이 \(R_L'\)와 \(C_L\)만으로 정해진다고 여기기 쉽지만, \(C_{gd}\)를 통한 결합으로 크게 달라진다. −3 dB 주파수가 언제나 가장 낮은 극점이라는 생각도 틀리다. 두 극점이 가까우면 더 낮아지며, 같은 두 극점이면 그 0.64배가 된다(연습문제 3).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정확한 2극점 식, \(b_1\) = 개방 시정수의 합.</li>
-        <li>주극점 ≈ \(1/(2\pi b_1)\). 예제 1.20 MHz(정확 1.21 MHz).</li>
-        <li>극점 분리로 둘째 극점이 높아지고, 우반면 영점 \(g_m/C_{gd}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>공통 소스 증폭기의 정확한 전달 함수는 두 극점을 가지며, \(b_1\)은 개방 시정수의 합이다. 주극점은 \(1/(2\pi b_1)\)로 어림하며, 예제에서 1.20 MHz(정확 1.21 MHz)이다. 극점 분리로 둘째 극점이 높아지고, \(g_m/C_{gd}\)에 우반면 영점이 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(b_1\) = 50 ns이면 주극점 어림은?
-          <details><summary>답</summary><p>약 3.18 MHz.</p></details>
+          <details><summary>답</summary><p>약 3.18 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 \(C_L\)을 10 pF로 키우면 \(b_1\)과 주극점 어림은?
-          <details><summary>답</summary><p>\(b_1 = 125 + 52.5 = 177.5\) ns, 약 0.90 MHz.</p></details>
+          <details><summary>답</summary><p>\(b_1 = 125 + 52.5 = 177.5\) ns이므로 약 0.90 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>두 극점이 같은 주파수 \(f_p\)일 때 −3 dB 주파수는?
-          <details><summary>답</summary><p>\((1 + (f/f_p)^2) = \sqrt2\)에서 \(f = f_p\sqrt{\sqrt2 - 1} \approx 0.644f_p\).</p></details>
+          <details><summary>답</summary><p>\((1 + (f/f_p)^2) = \sqrt2\)에서 \(f = f_p\sqrt{\sqrt2 - 1} \approx 0.644f_p\)이다.</p></details>
         </li>
       </ol>
     </div>
