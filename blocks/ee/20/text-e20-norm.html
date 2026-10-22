@@ -8,58 +8,54 @@
 <article class="card q-card" id="text-e20-norm" data-kind="본문" data-std="전전20-01-01">
   <header class="card-head"><span class="no"></span><h2>노름, 내적, 직교 분해의 공학적 쓰임</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>벡터 노름(ℓ₁, ℓ₂, ℓ∞)과 내적을 정의하고 신호의 크기·유사도에 쓴다.</li>
-        <li>부분공간 정사영으로 벡터를 성분과 나머지로 직교 분해한다.</li>
-        <li>상관(코사인 유사도)과 잡음 제거에 적용한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>선형대수 (<a href="../16/03-01.html">전전16 3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">측정 신호의 "크기"를 숫자 하나로 말하려면 무엇을 써야 할까? 에너지, 가장 큰 순간값, 절댓값의 합은 서로 다른 답을 준다. 또 알려진 간섭 성분이 섞인 신호에서 그 간섭만 깨끗이 빼내려면 어떻게 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 정사영 분해(개형). b = (1, 2, 2)를 a = (1, 1, 0) 방향 성분 (1.5, 1.5, 0)과 나머지 (−0.5, 0.5, 2)로 나누면 두 성분은 서로 직교하고, ‖b‖² = 9 = 4.5 + 4.5로 피타고라스 관계가 성립한다">
+        <defs><marker id="ah-e20nrm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M80 170 L420 170" class="k dsh"/><text x="424" y="174" class="s">a 방향</text>
+        <g marker-end="url(#ah-e20nrm)"><line x1="80" y1="170" x2="300" y2="40" class="a" stroke-width="3"/><line x1="80" y1="170" x2="300" y2="170" class="c" stroke-width="3"/><line x1="300" y1="170" x2="300" y2="42" class="d" stroke-width="3"/></g>
+        <path d="M300 170 h-12 v-12 h12" class="k" fill="none"/>
+        <g class="s"><text x="160" y="96" class="ta">b = (1, 2, 2)</text><text x="160" y="188" class="tc">정사영 (1.5, 1.5, 0)</text><text x="308" y="110" class="td">나머지 (−0.5, 0.5, 2)</text></g>
+        <g class="s"><text x="330" y="50">(aᵀb/aᵀa) a</text><text x="330" y="70">나머지와 직교, 내적 0</text><text x="330" y="140">‖b‖² = 9 = 4.5 + 4.5</text></g>
+      </svg>
+      <figcaption>그림 1. 정사영은 b에서 a 방향으로 가장 가까운 점이므로 나머지가 a와 직교하고, 그래서 두 성분의 제곱 노름 합이 원래 제곱 노름과 같다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>선형대수(<a href="../16/03-01.html">전전16 3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>노름</h3>
-    <p class="q-term">\(\|x\|_2 = \sqrt{\sum x_i^2}\)(에너지), \(\|x\|_1 = \sum|x_i|\)(절댓값 합), \(\|x\|_\infty = \max|x_i|\)(최대). 신호 n개 표본의 실효값은 \(\|x\|_2/\sqrt n\).</p>
-    <p>코사인 유사도 \(\cos\theta = \frac{\langle x, y\rangle}{\|x\|\|y\|}\)는 크기와 무관한 모양의 닮음입니다(정합 필터, 패턴 인식).</p>
+    <p>벡터의 크기를 재는 방법이 노름이다. \(\|x\|_2 = \sqrt{\sum x_i^2}\)는 에너지에, \(\|x\|_1 = \sum|x_i|\)는 절댓값의 합에, \(\|x\|_\infty = \max|x_i|\)는 가장 큰 값에 해당한다. 그래서 신호 n개 표본의 실효값은 \(\|x\|_2/\sqrt n\)이다. 처음 질문의 첫째 답이 이것이며, 목적에 맞는 노름을 고른다.</p>
+    <p>또 두 벡터가 얼마나 닮았는지는 코사인 유사도 \(\cos\theta = \frac{\langle x, y\rangle}{\|x\|\|y\|}\)로 잰다. 크기와 무관하게 모양의 닮음만 보므로, 정합 필터와 패턴 인식에 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
       <p>b = (1, 2, 2)를 a = (1, 1, 0) 방향 성분과 나머지로 나누고, 두 성분이 직교함을 확인하라.</p>
     </div>
-    <p><i>풀이.</i> 정사영 \(\frac{a^Tb}{a^Ta}a = \frac32(1, 1, 0) = (1.5, 1.5, 0)\). 나머지 (−0.5, 0.5, 2). 내적 −0.75 + 0.75 + 0 = 0. 노름 \(\|b\|^2 = 9 = 4.5 + 4.5\)(피타고라스).</p>
-    <p>측정 신호에서 알려진 간섭(예: 60 Hz 사인과 코사인이 펼치는 부분공간)의 정사영을 빼면 그 간섭을 제거할 수 있습니다.</p>
+    <p><i>풀이.</i> 정사영은 \(\frac{a^Tb}{a^Ta}a = \frac32(1, 1, 0) = (1.5, 1.5, 0)\)이고, 나머지는 (−0.5, 0.5, 2)이다. 두 성분의 내적은 −0.75 + 0.75 + 0 = 0이므로 직교한다. 노름도 \(\|b\|^2 = 9 = 4.5 + 4.5\)로 피타고라스 관계를 만족한다(그림 1).</p>
+    <p>같은 방법을 신호에 쓰면 간섭을 뺄 수 있다. 측정 신호에서 알려진 간섭, 예를 들어 60 Hz 사인과 코사인이 펼치는 부분공간으로의 정사영을 빼면 그 간섭이 사라진다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "노름은 하나뿐이다": 목적에 따라 다릅니다(ℓ₁은 희소성, ℓ∞는 최악값). (2) "내적 0이면 두 신호가 무관하다": 선형 상관이 없다는 뜻입니다.</div>
+    <p>그렇다면 노름은 어떻게 고를까? 예를 들어 측정값에 직선을 맞출 때 잔차의 ℓ₂ 노름을 최소로 하면 계산은 쉽지만, 크게 튄 측정 하나가 제곱으로 커져 직선을 끌어당긴다. 반면 ℓ₁ 노름을 최소로 하면 튄 값의 영향이 제곱이 아니라 1차로만 들어가 결과가 덜 흔들린다. 그래서 이상값이 섞인 자료에는 ℓ₁ 맞춤을 쓰고, 가장 큰 오차를 제한해야 하는 필터 설계에는 ℓ∞를 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>ℓ₂ 에너지, ℓ₁ 절댓값 합, ℓ∞ 최대.</li>
-        <li>정사영 (aᵀb/aᵀa)a, 나머지와 직교, 피타고라스.</li>
-        <li>코사인 유사도, 간섭 부분공간 제거.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>노름은 하나뿐이라고 여기기 쉽다. 목적에 따라 다른 노름을 쓰며, ℓ₁은 희소성을 키우고(5.2절) ℓ∞는 최악값을 본다. 또 내적이 0이면 두 신호가 무관하다고 생각하기 쉬운데, 내적 0은 선형 상관이 없다는 뜻일 뿐이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>ℓ₂는 에너지, ℓ₁은 절댓값 합, ℓ∞는 최대값이다. 정사영 (aᵀb/aᵀa)a는 나머지와 직교하고 피타고라스 관계를 만족한다. 코사인 유사도로 모양을 비교하고, 간섭 부분공간으로의 정사영을 빼서 간섭을 없앤다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>(3, −4)의 ℓ₁, ℓ₂, ℓ∞는?
-          <details><summary>답</summary><p>7, 5, 4.</p></details>
+          <details><summary>답</summary><p>ℓ₁ 7, ℓ₂ 5, ℓ∞ 4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>(1, 0, 1)과 (1, 1, 0)의 코사인 유사도는?
-          <details><summary>답</summary><p>1/2.</p></details>
+          <details><summary>답</summary><p>1/(√2 × √2) = 1/2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>신호 x에서 직류 성분(모든 원소 같은 방향)을 정사영으로 빼는 것은 무엇과 같은가?
-          <details><summary>답</summary><p>평균을 빼는 것과 같습니다.</p></details>
+          <details><summary>답</summary><p>평균을 빼는 것과 같다.</p></details>
         </li>
       </ol>
     </div>

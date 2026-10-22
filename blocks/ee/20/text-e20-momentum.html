@@ -8,21 +8,22 @@
 <article class="card q-card" id="text-e20-momentum" data-kind="본문" data-std="전전20-04-04">
   <header class="card-head"><span class="no"></span><h2>운동량 방법과 Adam</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>운동량(모멘텀)이 길쭉한 골짜기에서 지그재그를 줄이는 원리를 안다.</li>
-        <li>Adam의 1차·2차 적률 추정과 매개변수별 학습률을 안다.</li>
-        <li>이차 함수에서 경사하강과 운동량 방법의 반복 수를 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>경사하강과 조건수 (<a href="04-01.html">4.1절</a>), SGD (<a href="04-03.html">4.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">등고선이 길쭉한 골짜기에서 경사하강법은 골짜기 벽 사이를 오가며 바닥을 따라서는 아주 천천히 나아간다(4.1절). 공이 굴러 내려가듯 지난 걸음의 속도를 조금 이어받으면 나아질까? 딥러닝에서 흔히 쓰는 Adam은 무엇을 더 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.4.1 조건수 100인 f = x² + 100y²를 (10, 1)에서 풀 때 거리가 10⁻⁶ 아래로 갈 때까지의 반복 수. 경사하강(α 0.0099)은 807번, 운동량(β 0.9, α 0.0099)은 271번, 최적에 가까운 운동량(β 0.81, α 0.0164)은 148번이다">
+        <line x1="80" y1="160" x2="480" y2="160" class="ax"/>
+        <rect x="80" y="40" width="380" height="28" class="lk"/><rect x="80" y="84" width="127.6" height="28" class="la"/><rect x="80" y="128" width="69.7" height="28" class="lc"/>
+        <g class="k" fill="none"><rect x="80" y="40" width="380" height="28"/><rect x="80" y="84" width="127.6" height="28"/><rect x="80" y="128" width="69.7" height="28"/></g>
+        <g class="s"><text x="90" y="59">경사하강 807번</text><text x="216" y="103" class="ta">운동량 β 0.9, 271번</text><text x="158" y="147" class="tc">운동량 β 0.81, α 0.0164, 148번</text></g>
+        <text x="80" y="186" class="s">κ = 100, 수축 비 0.98(경사하강) 대 0.82(운동량 최적)</text>
+      </svg>
+      <figcaption>그림 1. 운동량은 골짜기 바닥을 따라 일관된 방향의 걸음을 쌓아 가속하고, 벽 사이를 오가는 성분은 서로 상쇄시키므로 같은 문제를 몇 배 적은 반복으로 푼다(예제 4.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>경사하강과 조건수(<a href="04-01.html">4.1절</a>), SGD(<a href="04-03.html">4.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>속도를 쌓기</h3>
-    <p>운동량: \(v \leftarrow \beta v - \alpha\nabla f\), \(x \leftarrow x + v\). 일관된 방향(골짜기 바닥)으로는 속도가 쌓이고, 오락가락하는 방향은 상쇄됩니다. Adam은 기울기의 이동 평균(1차)과 제곱의 이동 평균(2차)으로 매개변수마다 보폭을 정합니다.</p><pre><code>import numpy as np
+    <p>운동량 방법은 \(v \leftarrow \beta v - \alpha\nabla f\), \(x \leftarrow x + v\)로 걸음을 정한다. 즉 지난 걸음의 β배를 이어받는다. 그러면 골짜기 바닥처럼 일관된 방향으로는 속도가 쌓이고, 벽 사이를 오락가락하는 방향은 서로 상쇄된다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>또 Adam은 기울기의 이동 평균(1차 적률)과 기울기 제곱의 이동 평균(2차 적률)을 함께 쓴다. 1차 적률은 운동량 역할을 하고, 2차 적률로 매개변수마다 보폭을 따로 정한다. 처음 질문의 둘째 답이 이것이다. 아래 코드는 조건수 100인 이차 함수에서 경사하강과 운동량 방법의 반복 수를 비교한다.</p><pre><code>import numpy as np
 k = 100.0                                   # f = x² + k y², 조건수 100
 grad = lambda p: np.array([2 * p[0], 2 * k * p[1]])
 def run(beta, alpha):
@@ -35,7 +36,7 @@ def run(beta, alpha):
 print("경사하강(α 0.0099):", run(0.0, 0.0099), "번")
 print("운동량(β 0.9, α 0.0099):", run(0.9, 0.0099), "번")
 print("운동량(β 0.81, α 0.0164):", run(0.81, 0.0164), "번")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>경사하강(α 0.0099): 807 번
 운동량(β 0.9, α 0.0099): 271 번
 운동량(β 0.81, α 0.0164): 148 번</code></pre>
@@ -43,37 +44,33 @@ print("운동량(β 0.81, α 0.0164):", run(0.81, 0.0164), "번")</code></pre>
       <span class="lb">예제 4.4.1</span>
       <p>조건수 100인 위 문제에서 경사하강과 운동량 방법의 반복 수를 비교하라.</p>
     </div>
-    <p><i>풀이.</i> 실행 결과처럼 운동량 방법이 수 배 적은 반복으로 수렴합니다. 이론적으로 최적 매개변수에서 경사하강의 수축 비 (κ − 1)/(κ + 1)이 운동량(Heavy-ball)에서는 \((\sqrt\kappa - 1)/(\sqrt\kappa + 1)\)로 좋아집니다(κ = 100: 0.98 대 0.82).</p>
+    <p><i>풀이.</i> 실행 결과처럼 운동량 방법이 수 배 적은 반복으로 수렴한다(그림 1). 이론적으로도 최적 매개변수에서 경사하강의 수축 비 (κ − 1)/(κ + 1)이, 운동량(Heavy-ball)에서는 \((\sqrt\kappa - 1)/(\sqrt\kappa + 1)\)로 좋아진다. κ = 100이면 0.98 대 0.82이다.</p>
+    <p>즉 운동량은 조건수 κ의 영향을 √κ로 줄인다. 그래서 등고선이 길쭉할수록 이득이 크다. 다만 β와 α를 함께 잘 골라야 하며, 실무에서는 β = 0.9 정도로 두고 α만 조정하는 경우가 많다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "운동량은 항상 안정": β와 α가 크면 진동·발산합니다. (2) "Adam이 언제나 최선": 문제에 따라 SGD + 운동량이 일반화가 더 좋은 경우도 있습니다(확인 필요).</div>
+    <p>운동량을 물리로 보면 이해가 쉽다. x는 공의 위치, v는 속도, −∇f는 경사가 주는 힘이고, β는 마찰로 속도가 조금씩 줄어드는 비율이다. 그래서 β가 1에 가까울수록 마찰이 작아 공이 멀리 굴러가고, 그만큼 최소점을 지나쳐 출렁이기도 쉽다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>v ← βv − α∇f, x ← x + v.</li>
-        <li>수축 비 (√κ − 1)/(√κ + 1).</li>
-        <li>Adam: 매개변수별 적응 보폭.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>운동량은 언제나 안정하다고 여기기 쉽다. β와 α가 크면 쌓인 속도 때문에 최소점을 지나쳐 진동하거나 발산한다. 또 Adam이 언제나 최선이라고 생각하기 쉬운데, 문제에 따라서는 SGD에 운동량을 더한 방법이 새 자료에 대한 성능, 곧 일반화가 더 좋은 경우도 있다(확인 필요).</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>운동량 방법은 v ← βv − α∇f, x ← x + v이다. 최적 매개변수에서 수축 비는 (√κ − 1)/(√κ + 1)이다. Adam은 매개변수마다 보폭을 적응적으로 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>β = 0이면 운동량 방법은?
-          <details><summary>답</summary><p>경사하강.</p></details>
+          <details><summary>답</summary><p>경사하강법이 된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>κ = 10 000에서 경사하강과 운동량 최적 수축 비는?
-          <details><summary>답</summary><p>약 0.9998 대 0.980.</p></details>
+          <details><summary>답</summary><p>약 0.9998 대 0.980이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>Adam의 2차 적률이 하는 일은?
-          <details><summary>답</summary><p>기울기가 큰 매개변수의 보폭을 줄이고 작은 것은 키웁니다.</p></details>
+          <details><summary>답</summary><p>기울기가 큰 매개변수의 보폭을 줄이고 작은 것은 키운다.</p></details>
         </li>
       </ol>
     </div>

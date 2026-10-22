@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e20-wls" data-kind="본문" data-std="전전20-02-04">
   <header class="card-head"><span class="no"></span><h2>가중 최소제곱과 측정 신뢰도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>측정마다 잡음 분산이 다를 때 가중 \(w_i = 1/\sigma_i^2\)로 최소제곱을 한다.</li>
-        <li>가중 최소제곱 해 \((A^TWA)^{-1}A^TWb\)를 쓴다.</li>
-        <li>추정 분산이 줄어드는 것을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱 (<a href="../16/03.html">전전16 3단원</a>), 다목적 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 전압을 정밀한 계측기로 쟀더니 10.0 V, 값싼 계측기로 쟀더니 10.6 V가 나왔다. 두 값을 단순히 평균하면 될까? 계측기마다 믿을 만한 정도가 다를 때, 두 측정을 어떻게 합쳐야 가장 정확한 추정이 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.4.1 두 측정의 가중 결합. σ = 0.1인 측정 10.0과 σ = 0.2인 측정 10.6을 가중치 1/σ² = 100, 25로 결합하면 추정은 10.12이고 표준편차는 0.089로, 좋은 측정 하나(0.1)보다 작다. 단순 평균 10.3은 나쁜 측정을 너무 믿은 값이다">
+        <line x1="80" y1="150" x2="480" y2="150" class="ax"/>
+        <g text-anchor="middle" class="s"><text x="80" y="170">9.6</text><text x="194.3" y="170">10.0</text><text x="365.7" y="170">10.6</text><text x="480" y="170">11.0</text></g>
+        <path d="M165.7 60 H222.9 M165.7 54 V66 M222.9 54 V66" class="a" stroke-width="2"/><circle cx="194.3" cy="60" r="5" class="fa"/>
+        <path d="M308.6 90 H422.8 M308.6 84 V96 M422.8 84 V96" class="c" stroke-width="2"/><circle cx="365.7" cy="90" r="5" class="fc"/>
+        <path d="M203.2 125 H254 M203.2 119 V131 M254 119 V131" class="d" stroke-width="2.5"/><circle cx="228.6" cy="125" r="5" class="fd"/>
+        <path d="M280 40 V150" class="k dsh"/>
+        <g class="s"><text x="230" y="52" class="ta">10.0 ± 0.1 (w = 100)</text><text x="380" y="82" class="tc">10.6 ± 0.2 (w = 25)</text><text x="262" y="122" class="td">가중 10.12 ± 0.089</text><text x="286" y="36">단순 평균 10.3</text></g>
+      </svg>
+      <figcaption>그림 1. 분산이 작은 측정에 분산의 역수만큼 큰 가중치를 주면 추정이 정밀한 측정 쪽으로 끌리고, 두 측정의 정보를 모두 써서 어느 한쪽보다 작은 불확도를 얻는다(예제 2.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱(<a href="../16/03.html">전전16 3단원</a>), 다목적(<a href="02-03.html">2.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.4.1</span>믿을 만한 측정에 더 무게</h3>
-    <p>잡음 분산 σᵢ²이 다르면 \(\sum(a_i^Tx - b_i)^2/\sigma_i^2\)를 최소화합니다. 가우시안 잡음에서 이것이 최대가능도 추정이고, 해 \(\hat x = (A^TWA)^{-1}A^TWb\), 공분산 \((A^TWA)^{-1}\)입니다.</p>
+    <p>측정마다 잡음 분산 σᵢ²이 다르면, 잔차를 각 분산으로 나눈 \(\sum(a_i^Tx - b_i)^2/\sigma_i^2\)를 최소화한다. 이것을 가중 최소제곱이라 하며, 처음 질문의 답이다. 즉 가중치를 \(w_i = 1/\sigma_i^2\)로 두어 믿을 만한 측정의 잔차를 더 무겁게 센다.</p>
+    <p>잡음이 가우시안이면 이것이 곧 최대가능도 추정이다. 해는 \(\hat x = (A^TWA)^{-1}A^TWb\)이고, 추정의 공분산은 \((A^TWA)^{-1}\)이다. 따라서 해와 함께 그 불확도도 바로 얻는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.4.1</span>
       <p>같은 양을 σ = 0.1인 측정으로 10.0, σ = 0.2인 측정으로 10.6을 얻었다. 가중 추정과 표준편차는?</p>
     </div>
-    <p><i>풀이.</i> w = 100, 25 → x̂ = (100 × 10.0 + 25 × 10.6)/125 = 10.12. 분산 1/125 → σ = 0.089로 좋은 측정 하나(0.1)보다 작습니다. 단순 평균 10.3은 나쁜 측정을 너무 믿은 값입니다.</p>
+    <p><i>풀이.</i> 가중치는 w = 100, 25이므로 x̂ = (100 × 10.0 + 25 × 10.6)/125 = 10.12이다. 분산은 1/125이므로 σ = 0.089이고, 좋은 측정 하나(0.1)보다도 작다(그림 1).</p>
+    <p>반면 단순 평균 10.3은 나쁜 측정을 좋은 측정만큼 믿은 값이다. 즉 가중 결합은 정밀한 측정 쪽으로 끌리면서도 나쁜 측정의 정보까지 조금 보태어, 어느 하나만 쓸 때보다 나은 추정을 준다.</p>
+    <p>이 생각은 센서 융합으로 이어진다. 예를 들어 GPS와 관성 센서를 함께 쓰는 위치 추정은 두 센서의 불확도에 따라 가중치를 정하고, 그 가중치를 시간에 따라 바꿔 가는 칼만 필터로 일반화된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "모든 측정을 똑같이 믿는다": 분산이 다르면 불리합니다. (2) "가중치는 아무렇게나 정해도 된다": 1/σ²일 때 분산이 최소입니다.</div>
+    <p>가중 최소제곱은 계산으로는 보통의 최소제곱과 같다. 각 행 \(a_i^T\)와 \(b_i\)를 \(1/\sigma_i\)로 나눈 뒤 평범하게 풀면 되기 때문이다. 즉 측정마다 단위를 '표준편차 몇 배'로 바꿔 모든 잔차를 같은 눈금으로 비교하는 셈이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>w_i = 1/σ_i², x̂ = (AᵀWA)⁻¹AᵀWb.</li>
-        <li>공분산 (AᵀWA)⁻¹.</li>
-        <li>예: 10.12 ± 0.089.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모든 측정을 똑같이 믿어도 된다고 여기기 쉽다. 분산이 다른 측정을 같은 가중치로 합치면, 나쁜 측정이 추정을 끌어당겨 불리하다. 또 가중치는 아무렇게나 정해도 된다고 생각하기 쉬운데, 추정 분산을 최소로 하는 가중치는 분산의 역수 1/σ²이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>가중치는 w_i = 1/σ_i²이고, 해는 x̂ = (AᵀWA)⁻¹AᵀWb이다. 추정의 공분산은 (AᵀWA)⁻¹이다. 예제의 추정은 10.12 ± 0.089이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>σ = 1, 1인 두 측정 3, 5의 가중 추정은?
-          <details><summary>답</summary><p>4.</p></details>
+          <details><summary>답</summary><p>가중치가 같아 평균인 4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>σ = 1, 2인 두 측정의 추정 분산은?
-          <details><summary>답</summary><p>1/(1 + 0.25) = 0.8.</p></details>
+          <details><summary>답</summary><p>1/(1 + 0.25) = 0.8이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>어떤 측정의 σ를 모르면?
-          <details><summary>답</summary><p>잔차로 추정하거나 같은 기기의 반복 측정으로 정합니다.</p></details>
+          <details><summary>답</summary><p>잔차로 추정하거나 같은 기기의 반복 측정으로 정한다.</p></details>
         </li>
       </ol>
     </div>

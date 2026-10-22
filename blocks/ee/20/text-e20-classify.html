@@ -8,57 +8,54 @@
 <article class="card q-card" id="text-e20-classify" data-kind="본문" data-std="전전20-05-01">
   <header class="card-head"><span class="no"></span><h2>최소제곱 분류기와 로지스틱 회귀</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>±1 레이블에 선형 모델을 최소제곱으로 맞춰 분류하는 방법을 안다.</li>
-        <li>로지스틱 회귀의 확률 모델 \(\sigma(w^Tx + b)\)와 교차 엔트로피 손실을 쓴다.</li>
-        <li>경사하강으로 로지스틱 회귀를 학습하는 갱신식을 유도한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱 (<a href="../16/03-01.html">전전16 3.1절</a>), 경사하강 (<a href="04-01.html">4.1절</a>), 볼록성 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">센서 측정값 하나로 부품이 정상인지 불량인지 가르고 싶다. 최소제곱으로 선을 그어 나눌 수도 있지만, 이미 확실히 정상인 부품까지 선을 끌어당긴다. 대신 "불량일 확률"을 내놓는 분류기는 어떻게 만들고, 어떻게 학습시킬까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="로지스틱 회귀의 시그모이드 곡선(개형). 1차원 자료 x = 1, 2(레이블 0)와 x = 3, 4(레이블 1)에 맞춘 확률 곡선 p = σ(wx + b)가 0에서 1로 매끄럽게 오르며, p = 0.5가 되는 경계 −b/w는 2.5 근처이다. 예제 5.1.1에서 w = 0, b = 0에서 보폭 0.5로 한 번 갱신하면 w = 1, b = 0이 된다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 165 C200 165, 230 160, 260 100 S320 35, 440 35" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 100 H440" class="k dsh"/><path d="M260 30 V170" class="d dsh"/>
+        <g class="fc"><circle cx="152" cy="165" r="5"/><circle cx="224" cy="165" r="5"/></g><g class="fd"><circle cx="296" cy="35" r="5"/><circle cx="368" cy="35" r="5"/></g>
+        <g text-anchor="middle" class="s"><text x="152" y="186">1</text><text x="224" y="186">2</text><text x="296" y="186">3</text><text x="368" y="186">4</text><text x="430" y="186">x</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="39">1</text><text x="74" y="104">0.5</text><text x="74" y="169">0</text></g>
+        <text x="266" y="60" class="td">경계 −b/w ≈ 2.5</text><text x="320" y="80" class="ta">p = σ(wx + b)</text>
+      </svg>
+      <figcaption>그림 1. 시그모이드는 선형 점수를 0과 1 사이의 확률로 바꾸므로, 경계에서 먼 점은 이미 확률이 0이나 1에 가까워 손실에 거의 기여하지 않고 경계 근처의 점이 학습을 이끈다(예제 5.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱(<a href="../16/03-01.html">전전16 3.1절</a>), 경사하강(<a href="04-01.html">4.1절</a>), 볼록성(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>두 분류기</h3>
-    <p><b>최소제곱 분류기</b>: \(\min\sum(w^Tx_i + b - y_i)^2\), \(y_i = \pm1\). 판정 sign(wᵀx + b). 간단하지만 경계에서 먼 점(이미 맞게 분류된 점)도 벌점을 받아 경계가 끌려갑니다.</p>
-    <p><b>로지스틱 회귀</b>: \(P(y = 1 \mid x) = \sigma(w^Tx + b)\), \(\sigma(z) = 1/(1 + e^{-z})\). 손실 \(-\sum[y_i\log p_i + (1 - y_i)\log(1 - p_i)]\)(y ∈ {0, 1})는 볼록이고, 기울기는 \(\sum(p_i - y_i)x_i\)로 간단합니다.</p>
+    <p>가장 간단한 것은 최소제곱 분류기이다. 레이블을 \(y_i = \pm1\)로 두고 \(\min\sum(w^Tx_i + b - y_i)^2\)을 푼 뒤, sign(wᵀx + b)로 판정한다. 그런데 이 방법은 경계에서 멀리 떨어져 이미 맞게 분류된 점까지 "±1에서 벗어났다"며 벌점을 받아, 경계가 그쪽으로 끌려간다.</p>
+    <p>반면 로지스틱 회귀는 확률을 모델로 삼는다. \(P(y = 1 \mid x) = \sigma(w^Tx + b)\)이고 \(\sigma(z) = 1/(1 + e^{-z})\)이다(그림 1). 처음 질문의 첫째 답이 이것이다. 레이블을 y ∈ {0, 1}로 두면 손실은 교차 엔트로피 \(-\sum[y_i\log p_i + (1 - y_i)\log(1 - p_i)]\)이며, 이것은 볼록이고 기울기가 \(\sum(p_i - y_i)x_i\)로 간단하다. 그래서 경사하강으로 학습한다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
       <p>1차원 자료 x = 1, 2(레이블 0), x = 3, 4(레이블 1). w = 0, b = 0에서 시작해 보폭 0.5로 경사하강 한 번 한 뒤 (w, b)는?</p>
     </div>
-    <p><i>풀이.</i> 처음 모든 p = 0.5. 기울기 \(\partial/\partial w = \sum(p_i - y_i)x_i = 0.5(1 + 2) - 0.5(3 + 4) = -2\), \(\partial/\partial b = 0.5 \times 2 - 0.5 \times 2 = 0\). 갱신 w = 0 − 0.5 × (−2) = 1, b = 0. 다음 반복부터 b가 음수로 움직여 경계 −b/w가 2.5 쪽으로 갑니다(분리 가능한 자료는 w가 계속 커짐).</p>
+    <p><i>풀이.</i> 처음에는 모든 p = 0.5이다. 기울기는 \(\partial/\partial w = \sum(p_i - y_i)x_i = 0.5(1 + 2) - 0.5(3 + 4) = -2\), \(\partial/\partial b = 0.5 \times 2 - 0.5 \times 2 = 0\)이다. 따라서 w = 0 − 0.5 × (−2) = 1, b = 0이다.</p>
+    <p>다음 반복부터는 b가 음수로 움직여 경계 −b/w가 2.5 쪽으로 간다. 그런데 이 자료처럼 두 범주가 완전히 분리되면, 학습을 계속할수록 w가 끝없이 커져 확률이 0과 1로 치닫는다. 이것을 막는 것이 정규화이다(5.2절).</p>
+    <p>또 기울기 \(\sum(p_i - y_i)x_i\)를 보면 학습의 성질이 드러난다. 이미 맞게 분류되어 \(p_i\)가 \(y_i\)에 가까운 점은 기울기에 거의 기여하지 않고, 틀리거나 애매한 점이 주로 경계를 움직인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "로지스틱 회귀는 회귀다": 확률을 내는 분류기입니다. (2) "완전히 분리되는 자료면 학습이 끝난다": 가중치가 무한히 커지려 해 정규화(5.2절)가 필요합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>로지스틱 회귀는 이름처럼 회귀 방법이라고 여기기 쉽다. 실제로는 범주의 확률을 내는 분류기이다. 또 완전히 분리되는 자료면 학습이 금방 끝난다고 생각하기 쉬운데, 손실을 계속 줄이려 가중치가 무한히 커지려 하므로 정규화나 조기 종료가 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>최소제곱 분류기: 간단, 먼 점에 끌림.</li>
-        <li>로지스틱: σ(wᵀx + b), 교차 엔트로피(볼록), 기울기 Σ(p − y)x.</li>
-        <li>분리 가능 자료는 정규화 필요.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>최소제곱 분류기는 간단하지만 경계에서 먼 점에 끌린다. 로지스틱 회귀는 σ(wᵀx + b)로 확률을 내고, 교차 엔트로피 손실은 볼록이며 기울기는 Σ(p − y)x이다. 분리 가능한 자료에는 정규화가 필요하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>σ(0)과 σ(2)는?
-          <details><summary>답</summary><p>0.5, 약 0.881.</p></details>
+          <details><summary>답</summary><p>σ(0) = 0.5, σ(2) ≈ 0.881이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>w = 1, b = −2.5에서 x = 3의 확률은?
-          <details><summary>답</summary><p>σ(0.5) ≈ 0.622.</p></details>
+          <details><summary>답</summary><p>σ(0.5) ≈ 0.622이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>로지스틱 손실의 헤세가 양의 준정부호인 이유는?
-          <details><summary>답</summary><p>\(\sum p_i(1 - p_i)x_ix_i^T\)로 각 항이 양의 준정부호입니다.</p></details>
+          <details><summary>답</summary><p>\(\sum p_i(1 - p_i)x_ix_i^T\)로 각 항이 양의 준정부호이기 때문이다.</p></details>
         </li>
       </ol>
     </div>

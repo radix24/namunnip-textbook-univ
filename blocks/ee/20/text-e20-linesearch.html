@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e20-linesearch" data-kind="본문" data-std="전전20-04-05">
   <header class="card-head"><span class="no"></span><h2>선탐색: 보폭을 자동으로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>충분한 감소(Armijo) 조건 \(f(x + t\Delta x) \le f(x) + ct\nabla f^T\Delta x\)를 안다.</li>
-        <li>백트래킹으로 t를 β배씩 줄이며 조건을 만족하는 보폭을 찾는다.</li>
-        <li>고정 보폭과 비교한 장점을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>경사하강 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">경사하강법의 보폭은 너무 크면 발산하고 너무 작으면 느리다. 그런데 함수의 곡률을 미리 알지 못하면 알맞은 보폭을 정할 수 없다. 반복마다 보폭을 자동으로 정하되, 함수 값이 확실히 줄어드는 만큼만 받아들이는 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.5.1 f(x) = x²를 x = 3에서 Δx = −6 방향으로 줄일 때의 백트래킹 선탐색. 보폭 t에 따른 f(x + tΔx)(곡선)와 Armijo 기준선 f(x) + ct∇fᵀΔx(c = 0.3, 점선). t = 1에서는 f = 9가 기준 −1.8보다 커서 거절되고, t를 절반으로 줄인 0.5에서는 f = 0이 기준 3.6 아래라 받아들여진다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 50 Q260 290 440 50" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 50 L440 180" class="d dsh" stroke-width="2"/>
+        <circle cx="440" cy="50" r="5" class="fc"/><circle cx="260" cy="170" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0</text><text x="260" y="186">t = 0.5</text><text x="440" y="186">t = 1</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">9</text><text x="74" y="174">0</text></g>
+        <text x="330" y="44" class="tc">t = 1, f = 9, 거절</text><text x="268" y="160" class="td">t = 0.5, f = 0, 받아들임</text><text x="110" y="100" class="s">Armijo 기준선</text>
+      </svg>
+      <figcaption>그림 1. 보폭을 1에서 시작해 절반씩 줄이다가, 함수 값이 기울기로 예상한 감소의 일정 비율 이상 줄어드는 첫 보폭을 받아들이므로, 곡률을 몰라도 발산하지 않는 보폭이 정해진다(예제 4.5.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>경사하강(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.5.1</span>충분히 내려갈 때까지 줄이기</h3>
-    <p>t = 1에서 시작해 Armijo 조건(c ≈ 0.3)을 만족할 때까지 t ← βt(β ≈ 0.5)로 줄입니다. 곡률을 몰라도 발산하지 않는 보폭을 자동으로 찾습니다.</p>
+    <p>백트래킹 선탐색은 보폭 t = 1에서 시작해, 아래 Armijo 조건을 만족할 때까지 t ← βt(β ≈ 0.5)로 줄인다. 처음 질문의 답이 이 방법이다.</p>
+    <p>\[ f(x + t\Delta x) \le f(x) + ct\,\nabla f^T\Delta x \]</p>
+    <p>오른쪽은 기울기로 예상한 감소의 c배(c ≈ 0.3)만큼 줄어든 값이다. 즉 함수 값이 예상의 일정 비율 이상 줄어들 때만 그 보폭을 받아들인다(그림 1). 그래서 곡률을 몰라도 발산하지 않는 보폭을 자동으로 찾는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.5.1</span>
       <p>f(x) = x², x = 3에서 경사 방향 Δx = −6, c = 0.3, β = 0.5. 받아들여지는 첫 t는?</p>
     </div>
-    <p><i>풀이.</i> f(x) = 9, ∇fᵀΔx = −36. t = 1: x = −3, f = 9 ≤ 9 − 10.8? 아니오. t = 0.5: x = 0, f = 0 ≤ 9 − 5.4 = 3.6 → 받아들임. 이 경우 한 번에 최소점에 갑니다. 곡률이 다른 함수에서도 같은 절차로 안전한 보폭을 찾습니다.</p>
+    <p><i>풀이.</i> f(x) = 9이고 ∇fᵀΔx = −36이다. t = 1이면 x = −3, f = 9인데, 기준값 9 − 10.8 = −1.8보다 커서 거절한다. t = 0.5이면 x = 0, f = 0으로 기준값 9 − 5.4 = 3.6보다 작아 받아들인다.</p>
+    <p>이 경우에는 한 번에 최소점에 간다. 그러나 이것은 우연이 아니라, 곡률이 다른 함수에서도 같은 절차로 안전한 보폭을 찾는다는 데 의미가 있다. 곡률이 크면 보폭이 더 많이 줄고, 작으면 1에 가까운 보폭이 그대로 받아들여진다.</p>
+    <p>또 c와 β는 결과에 크게 민감하지 않다. c가 너무 크면 거의 모든 보폭을 거절해 진척이 느리고, β가 너무 작으면 보폭이 지나치게 줄어든다. 그래서 보통 c는 0.01~0.3, β는 0.3~0.8 사이에서 고른다(확인 필요).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "보폭은 작을수록 안전하고 좋다": 너무 작으면 진척이 느립니다. (2) "선탐색은 비싸다": 함수 값 계산 몇 번이면 되어 기울기 계산보다 싼 경우가 많습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>보폭은 작을수록 안전하고 좋다고 여기기 쉽다. 너무 작은 보폭은 발산하지 않을 뿐 진척이 느려, 같은 정확도에 훨씬 많은 반복이 든다. 또 선탐색은 비싸다고 생각하기 쉬운데, 함수 값을 몇 번 더 계산하면 되므로 기울기 계산보다 싼 경우가 많다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Armijo: f(x + tΔx) ≤ f(x) + ct∇fᵀΔx.</li>
-        <li>백트래킹 t ← βt.</li>
-        <li>예: x² at 3 → t = 0.5.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Armijo 조건은 f(x + tΔx) ≤ f(x) + ct∇fᵀΔx이다. 백트래킹은 조건을 만족할 때까지 t ← βt로 줄인다. 예를 들어 f = x²를 x = 3에서 줄이면 t = 0.5가 받아들여진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>c = 0이면 조건의 뜻은?
-          <details><summary>답</summary><p>조금이라도 줄어들면 받아들임.</p></details>
+          <details><summary>답</summary><p>조금이라도 줄어들면 받아들인다는 뜻이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f = 4x², x = 1, Δx = −8, c 0.3, β 0.5의 첫 t는?
-          <details><summary>답</summary><p>t = 0.125(t = 0.25에서 x = −1로 f 같음, 0.125에서 x = 0).</p></details>
+          <details><summary>답</summary><p>t = 0.125이다(t = 0.25에서는 x = −1로 f가 같고, 0.125에서 x = 0).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>Newton 방향에서 t = 1이 자주 받아들여지는 이유는?
-          <details><summary>답</summary><p>이차 근사가 정확해 한 걸음이 적절하기 때문입니다.</p></details>
+          <details><summary>답</summary><p>이차 근사가 정확해 한 걸음이 적절하기 때문이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e20-rayleigh" data-kind="본문" data-std="전전20-01-03">
   <header class="card-head"><span class="no"></span><h2>Rayleigh 몫과 이차 형식 최적화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(R(x) = x^TAx/x^Tx\)의 최댓값·최솟값이 대칭 A의 최대·최소 고유값임을 안다.</li>
-        <li>단위 노름 제약의 이차 형식 최적화를 고유값 문제로 푼다.</li>
-        <li>PCA와 빔포밍에서의 의미를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>고유값 (<a href="../16/04.html">전전16 4단원</a>), 노름 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">안테나 배열의 가중치를 정해 신호 대 잡음비를 최대로 하거나, 자료를 가장 넓게 퍼지게 보이는 방향을 찾는 문제는 모두 \(x^TAx\)를 최대로 하는 일이다. 그런데 x를 키우기만 하면 값이 끝없이 커진다. 크기를 고정했을 때 최댓값은 얼마이고, 어느 방향에서 나올까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.3.1 A = [[3, 1], [1, 3]]에서 단위 벡터 x의 방향각에 따른 Rayleigh 몫 xᵀAx. 방향각 45°(x = (1, 1)/√2)에서 최대 4, 135°(x = (1, −1)/√2)에서 최소 2이며, 이 두 값과 방향이 A의 고유값과 고유벡터이다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 100 C110 70, 140 50, 170 50 S230 70, 260 100 S320 150, 350 150 S410 130, 440 100" class="a" fill="none" stroke-width="2.5"/>
+        <circle cx="170" cy="50" r="5" class="fd"/><circle cx="350" cy="150" r="5" class="fc"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0°</text><text x="170" y="186">45°</text><text x="350" y="186">135°</text><text x="440" y="186">180°</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">4</text><text x="74" y="104">3</text><text x="74" y="154">2</text></g>
+        <text x="180" y="44" class="td">최대 λ_max = 4, x = (1, 1)/√2</text><text x="250" y="166" class="tc">최소 λ_min = 2, x = (1, −1)/√2</text>
+      </svg>
+      <figcaption>그림 1. 크기를 1로 고정한 x를 한 바퀴 돌리면 xᵀAx가 고유값 사이를 오가며, 최대와 최소는 축 방향이 아니라 고유벡터 방향에서 나온다(예제 1.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고유값(<a href="../16/04.html">전전16 4단원</a>), 노름(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>고유값이 극값</h3>
-    <p>대칭 A에서 \(\max_{\|x\|=1}x^TAx = \lambda_{max}\), 최솟값은 \(\lambda_{min}\)이고 극값은 해당 고유벡터에서 얻습니다. 라그랑주 승수로 \(Ax = \lambda x\)가 나오기 때문입니다.</p>
+    <p>x를 키우면 \(x^TAx\)도 커지므로, 크기를 고정한 비 \(R(x) = x^TAx/x^Tx\)를 본다. 이것을 Rayleigh 몫이라 한다. 대칭 행렬 A에서 \(\max_{\|x\|=1}x^TAx = \lambda_{max}\)이고, 최솟값은 \(\lambda_{min}\)이며, 극값은 해당 고유벡터에서 나온다(그림 1). 처음 질문의 답이 이것이다.</p>
+    <p>그 까닭은 라그랑주 승수법(공통 다변수 미적분)에 있다. 제약 \(x^Tx = 1\) 아래에서 \(x^TAx\)를 미분해 0으로 두면 \(Ax = \lambda x\), 곧 고유값 문제가 나오고, 그때 목적 값은 \(x^TAx = \lambda\)이기 때문이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1</span>
       <p>A = [[3, 1], [1, 3]]에서 ‖x‖ = 1일 때 xᵀAx의 최댓값과 최솟값, 그때의 x는?</p>
     </div>
-    <p><i>풀이.</i> 고유값 4, 2 → 최대 4(x = (1, 1)/√2), 최소 2(x = (1, −1)/√2). PCA의 첫 주성분은 공분산 행렬에서 이 최댓값 방향이고(전전23 5.2절), 안테나 배열의 SNR 최대 가중치도 같은 꼴입니다.</p>
+    <p><i>풀이.</i> 고유값은 4와 2이다. 따라서 최대는 4이고 x = (1, 1)/√2에서, 최소는 2이고 x = (1, −1)/√2에서 나온다.</p>
+    <p>이 결과는 여러 곳에 쓰인다. 자료의 공분산 행렬에서 이 최댓값을 주는 방향이 PCA의 첫 주성분이다(전전23 5.2절). 또 안테나 배열에서 신호 대 잡음비를 최대로 하는 가중치도 같은 꼴의 문제로 풀린다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "x를 키우면 xᵀAx도 커진다": 그래서 노름을 고정한 비(몫)를 봅니다. (2) "극값은 축 방향에서": 고유벡터 방향(여기서는 대각선)입니다.</div>
+    <p>또 이 성질은 최대 고유값을 구하는 계산과도 이어진다. 거듭제곱법으로 고유벡터를 어림한 뒤 그 벡터의 Rayleigh 몫을 계산하면, 벡터의 오차보다 훨씬 작은 오차로 고유값을 얻는다. 극값 근처에서는 몫이 방향의 작은 변화에 거의 변하지 않기 때문이다. 한편 분모에 다른 행렬 B를 넣은 \(x^TAx/x^TBx\)는 일반화 Rayleigh 몫이며, 그 극값은 \(Ax = \lambda Bx\)의 고유값이다. 신호 공분산과 잡음 공분산이 각각 A와 B인 빔포밍이 이 꼴이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>max xᵀAx/xᵀx = λ_max, min = λ_min.</li>
-        <li>극값은 고유벡터에서.</li>
-        <li>PCA, 빔포밍.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>극값이 좌표축 방향에서 나온다고 여기기 쉽다. 극값은 고유벡터 방향에서 나오며, 예제에서는 대각선 방향이다. 행렬이 대각 행렬일 때만 고유벡터가 축과 일치한다. 또 A가 대칭이 아니면 이 성질이 그대로 성립하지 않으므로, 먼저 \((A + A^T)/2\)로 대칭 부분만 남긴다. \(x^TAx\)의 값은 대칭 부분만으로 정해지기 때문이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Rayleigh 몫의 최댓값은 λ_max, 최솟값은 λ_min이다. 극값은 고유벡터에서 나온다. PCA와 빔포밍이 이 성질을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>A = diag(5, 1)의 Rayleigh 몫 범위는?
-          <details><summary>답</summary><p>1 ~ 5.</p></details>
+          <details><summary>답</summary><p>1 ~ 5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>x = (1, 0)에서 [[3,1],[1,3]]의 R(x)는?
-          <details><summary>답</summary><p>3.</p></details>
+          <details><summary>답</summary><p>xᵀAx/xᵀx = 3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>공분산 행렬에서 R(x)의 뜻은?
-          <details><summary>답</summary><p>방향 x로 정사영한 자료의 분산.</p></details>
+          <details><summary>답</summary><p>방향 x로 정사영한 자료의 분산이다.</p></details>
         </li>
       </ol>
     </div>

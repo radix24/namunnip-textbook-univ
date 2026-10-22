@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e20-matnorm" data-kind="본문" data-std="전전20-01-02">
   <header class="card-head"><span class="no"></span><h2>행렬 노름과 조건수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>유도 노름 \(\|A\| = \max\|Ax\|/\|x\|\)를 정의하고 2-노름이 최대 특이값임을 안다.</li>
-        <li>1-노름(열 합 최대), ∞-노름(행 합 최대)을 계산한다.</li>
-        <li>조건수로 문제의 민감도를 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>노름과 내적 (<a href="01-01.html">1.1절</a>), SVD (<a href="../16/05.html">전전16 5단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">행렬 A를 곱하는 시스템에 입력을 넣으면, 출력은 입력보다 최대 몇 배까지 커질 수 있을까? 그리고 입력에 1%의 오차가 있을 때 해에는 최대 몇 %의 오차가 생길까? 행렬 하나에 이런 숫자를 붙이는 방법은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 행렬 A = [[3, 1], [1, 3]]이 단위원을 타원으로 바꾸는 모습(개형). 대각선 (1, 1) 방향은 4배, (1, −1) 방향은 2배로 늘어나므로 2-노름은 가장 크게 늘이는 배율 4이고, 조건수는 4/2 = 2이다">
+        <circle cx="130" cy="100" r="30" class="k dsh" fill="none"/>
+        <ellipse cx="380" cy="100" rx="113" ry="57" class="a" fill="none" stroke-width="2.5" transform="rotate(-45 380 100)"/>
+        <path d="M300 180 L460 20" class="k dsh" opacity="0.5"/><path d="M340 60 L420 140" class="k dsh" opacity="0.5"/>
+        <path d="M380 100 L460 20" class="d" stroke-width="3"/><path d="M380 100 L420 140" class="c" stroke-width="3"/>
+        <g class="s"><text x="100" y="150">단위원</text><text x="200" y="104">× A →</text><text x="430" y="40" class="td">σ_max = 4</text><text x="426" y="150" class="tc">σ_min = 2</text></g>
+        <g class="s"><text x="40" y="186">‖A‖₂ = 4, ‖A‖₁ = ‖A‖∞ = 4, κ = 4/2 = 2</text></g>
+      </svg>
+      <figcaption>그림 1. 행렬은 단위원을 타원으로 바꾸므로, 가장 긴 반지름이 행렬이 벡터를 늘이는 최대 배율이고 가장 긴 반지름과 가장 짧은 반지름의 비가 조건수가 된다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>노름과 내적(<a href="01-01.html">1.1절</a>), SVD(<a href="../16/05.html">전전16 5단원</a>)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>가장 많이 늘이는 배율</h3>
-    <p>\(\|A\|_2 = \sigma_{max}\), \(\|A\|_1 = \max_j\sum_i|a_{ij}|\), \(\|A\|_\infty = \max_i\sum_j|a_{ij}|\). 조건수 \(\kappa_2 = \sigma_{max}/\sigma_{min}\)은 입력 상대 오차가 출력에서 몇 배까지 커지는지의 상한입니다.</p>
+    <p>행렬 노름은 행렬이 벡터를 늘이는 최대 배율로 정의한다. 이것을 유도 노름이라 한다. 2-노름은 가장 큰 특이값 \(\|A\|_2 = \sigma_{max}\)이다(그림 1). 1-노름은 열마다 절댓값을 더한 값 가운데 최댓값 \(\|A\|_1 = \max_j\sum_i|a_{ij}|\)이고, ∞-노름은 행마다 더한 값 가운데 최댓값 \(\|A\|_\infty = \max_i\sum_j|a_{ij}|\)이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>또 조건수 \(\kappa_2 = \sigma_{max}/\sigma_{min}\)은 입력의 상대 오차가 출력에서 최대 몇 배까지 커지는지를 나타내는 상한이다. 처음 질문의 둘째 답이 이것이며, 조건수가 \(10^k\)이면 해에서 유효숫자를 약 k자리 잃는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>A = [[3, 1], [1, 3]]의 1, ∞, 2-노름과 조건수는?</p>
     </div>
-    <p><i>풀이.</i> 열 합·행 합 최대 4 → ‖A‖₁ = ‖A‖∞ = 4. 대칭이라 특이값 = |고유값| = 4, 2 → ‖A‖₂ = 4, κ = 2. 조건이 좋은 행렬입니다.</p>
+    <p><i>풀이.</i> 열 합과 행 합의 최댓값이 모두 4이므로 ‖A‖₁ = ‖A‖∞ = 4이다. 또 A가 대칭이라 특이값이 고유값의 절댓값과 같아 4, 2이므로 ‖A‖₂ = 4이고 κ = 2이다. 즉 조건이 좋은 행렬이다.</p>
+    <p>한편 세 노름은 일반적으로 서로 다르다. 그런데 계산 비용은 크게 달라서, 1-노름과 ∞-노름은 원소 합만으로 바로 구하지만 2-노름은 특이값을 구해야 한다. 그래서 대략의 크기만 필요하면 계산이 싼 노름을 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "노름은 원소의 최댓값": 유도 노름은 벡터를 늘이는 최대 배율입니다. (2) "대칭 행렬의 조건수는 고유값 비가 아니다": 대칭이면 |고유값| 비가 곧 2-노름 조건수입니다.</div>
+    <p>조건수의 뜻을 숫자로 보면 이렇다. 예를 들어 κ = 1000인 행렬로 연립방정식을 풀 때 오른쪽 항에 0.1%의 측정 오차가 있으면, 해의 상대 오차는 최대 100%까지 커질 수 있다. 따라서 측정 행렬을 설계할 때는 조건수를 작게 유지하고, 조건수가 크면 정규화(2.1절)로 해를 안정시킨다. 즉 노름은 크기를, 조건수는 민감도를 알려 준다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>‖A‖₂ = σ_max, ‖A‖₁ 열 합 최대, ‖A‖∞ 행 합 최대.</li>
-        <li>κ₂ = σ_max/σ_min.</li>
-        <li>예: [[3,1],[1,3]] → 4, κ 2.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>행렬 노름을 원소 가운데 최댓값으로 여기기 쉽다. 유도 노름은 원소 하나가 아니라 행렬이 벡터를 늘이는 최대 배율이다. 또 대칭 행렬의 조건수는 고유값과 무관하다고 생각하기 쉬운데, 대칭이면 고유값 절댓값의 비가 곧 2-노름 조건수이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>‖A‖₂는 σ_max, ‖A‖₁은 열 합 최대, ‖A‖∞는 행 합 최대이다. 조건수는 κ₂ = σ_max/σ_min이다. 예를 들어 [[3, 1], [1, 3]]은 노름 4, 조건수 2이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>[[1, −2], [3, 4]]의 ∞-노름은?
-          <details><summary>답</summary><p>7.</p></details>
+          <details><summary>답</summary><p>행 합 최대 3 + 4 = 7이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 행렬의 1-노름은?
-          <details><summary>답</summary><p>6.</p></details>
+          <details><summary>답</summary><p>열 합 최대 2 + 4 = 6이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>직교 행렬의 2-노름 조건수는?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>특이값이 모두 1이므로 1이다.</p></details>
         </li>
       </ol>
     </div>

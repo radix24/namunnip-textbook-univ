@@ -8,58 +8,55 @@
 <article class="card q-card" id="text-e20-ridge" data-kind="본문" data-std="전전20-02-01">
   <header class="card-head"><span class="no"></span><h2>정규화 최소제곱</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>목적 \(\|Ax - b\|^2 + \lambda\|x\|^2\)의 해 \((A^TA + \lambda I)^{-1}A^Tb\)를 유도한다.</li>
-        <li>λ가 해의 크기와 오차의 절충을 정하는 것을 수치로 본다.</li>
-        <li>나쁜 조건의 문제를 안정화하는 효과를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>최소제곱과 정규 방정식 (<a href="../16/03-01.html">전전16 3.1절</a>), 기울기와 미분.</li>
-      </ul>
-    </div>
+    <p class="q-ask">측정점 세 개에 직선을 맞췄더니 한 점이 유난히 커서 직선이 가파르게 기울었다. 자료가 적거나 행렬의 열이 거의 종속일 때, 최소제곱 해는 잡음에 크게 흔들린다. 해가 지나치게 커지지 않도록 붙잡아 두는 방법은 무엇이고, 그 대가는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 점 (0, 6), (1, 0), (2, 0)에 맞춘 직선 C + Dt. λ = 0이면 최소제곱 해 (5, −3)으로 가파르고, λ = 1이면 (2.4, −1.2), λ = 10이면 (0.484, −0.097)로 계수가 0 쪽으로 줄어 자료를 덜 따라간다">
+        <line x1="80" y1="143.75" x2="440" y2="143.75" class="ax"/><line x1="110" y1="20" x2="110" y2="180" class="ax"/>
+        <path d="M110 56.25 L410 161.25" class="a" stroke-width="2.5"/><path d="M110 101.75 L410 143.75" class="c" stroke-width="2.5"/><path d="M110 135.3 L410 138.7" class="d" stroke-width="2.5"/>
+        <g class="fk"><circle cx="110" cy="38.75" r="5"/><circle cx="260" cy="143.75" r="5"/><circle cx="410" cy="143.75" r="5"/></g>
+        <g class="s"><text x="118" y="36">(0, 6)</text><text x="250" y="162">(1, 0)</text><text x="396" y="134">(2, 0)</text></g>
+        <g class="s"><text x="300" y="60" class="ta">λ = 0, 5 − 3t</text><text x="300" y="82" class="tc">λ = 1, 2.4 − 1.2t</text><text x="300" y="104" class="td">λ = 10, 0.48 − 0.10t</text></g>
+      </svg>
+      <figcaption>그림 1. 계수의 크기에 벌점을 주면 해가 0 쪽으로 끌려가 자료에 덜 민감해지며, λ가 클수록 학습 자료를 덜 따라가는 대신 잡음에도 덜 흔들린다(예제 2.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최소제곱과 정규 방정식(<a href="../16/03-01.html">전전16 3.1절</a>), 기울기와 미분을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>유도</h3>
-    <p>\(J(x) = \|Ax - b\|^2 + \lambda\|x\|^2\)의 기울기 \(2A^T(Ax - b) + 2\lambda x = 0\)에서</p>
+    <p>정규화 최소제곱은 잔차에 계수 크기의 벌점을 더한 \(J(x) = \|Ax - b\|^2 + \lambda\|x\|^2\)을 최소화한다. 처음 질문의 첫째 답이 이것이며, 리지 회귀라고도 한다. 기울기 \(2A^T(Ax - b) + 2\lambda x = 0\)에서 해는 다음과 같다.</p>
     \[ \hat x = (A^TA + \lambda I)^{-1}A^Tb. \]
-    <p>λ &gt; 0이면 \(A^TA + \lambda I\)는 언제나 가역(양의 정부호)이라, A의 열이 거의 종속이어도 해가 안정합니다. SVD로 보면 각 특이 방향의 계수를 \(\sigma_i^2/(\sigma_i^2 + \lambda)\)배로 줄입니다.</p>
+    <p>λ &gt; 0이면 \(A^TA + \lambda I\)는 언제나 양의 정부호라 가역이다. 그래서 A의 열이 거의 종속이어도 해가 안정하다. 또 SVD로 보면, 각 특이 방향의 계수를 \(\sigma_i^2/(\sigma_i^2 + \lambda)\)배로 줄인다. 즉 특이값이 작아 잡음을 크게 키우던 방향일수록 많이 줄어든다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
       <p>t = 0, 1, 2에서 b = 6, 0, 0에 직선 C + Dt를 맞출 때 λ = 0, 1, 10의 해는?</p>
     </div>
-    <p><i>풀이.</i> λ = 0: (5, −3). λ = 1: \(\begin{pmatrix} 4 & 3 \\ 3 & 6 \end{pmatrix}x = (6, 0)\) → (2.4, −1.2). λ = 10: (0.484, −0.097). λ가 클수록 계수가 0 쪽으로 줄어 자료를 덜 따라갑니다. 적당한 λ는 검증 자료의 오차로 고릅니다(5.2절).</p>
+    <p><i>풀이.</i> λ = 0이면 보통 최소제곱 해 (5, −3)이다. λ = 1이면 \(\begin{pmatrix} 4 & 3 \\ 3 & 6 \end{pmatrix}x = (6, 0)\)에서 (2.4, −1.2)이다. λ = 10이면 (0.484, −0.097)이다(그림 1).</p>
+    <p>따라서 λ가 클수록 계수가 0 쪽으로 줄어 자료를 덜 따라간다. 처음 질문의 둘째 답이 이것이다. 그 대가로 학습 자료에 대한 오차는 커지므로, 적당한 λ는 학습에 쓰지 않은 검증 자료의 오차로 고른다(5.2절, 5.4절).</p>
+    <p>한편 실제 계산에서는 역행렬을 구하지 않는다. A 아래에 \(\sqrt\lambda I\)를 쌓은 행렬로 보통의 최소제곱을 풀면 같은 해가 나오며, 이 방법은 다목적 최소제곱(2.3절)으로 이어진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "정규화는 오차를 줄인다": 학습 자료 오차는 늘고, 새 자료에 대한 오차(일반화)를 줄이는 것이 목적입니다. (2) 상수항(절편)까지 줄이는지 여부는 선택이며 보통 절편은 정규화하지 않습니다.</div>
+    <p>주의할 점이 하나 더 있다. 벌점 \(\lambda\|x\|^2\)은 모든 계수를 같은 기준으로 줄이므로, 변수의 단위가 다르면 결과가 단위 선택에 따라 달라진다. 예를 들어 길이를 m에서 mm로 바꾸면 그 계수는 1000분의 1이 되어 벌점의 영향을 거의 받지 않는다. 그래서 정규화하기 전에 각 변수를 평균 0, 표준편차 1로 맞추는 표준화를 먼저 한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>x̂ = (AᵀA + λI)⁻¹Aᵀb, λ &gt; 0이면 언제나 해가 유일.</li>
-        <li>특이 방향마다 σ²/(σ² + λ)배 축소.</li>
-        <li>λ는 검증 오차로 선택.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>정규화가 오차를 줄인다고 여기기 쉽다. 학습 자료에 대한 오차는 오히려 늘고, 줄어드는 것은 새 자료에 대한 오차, 곧 일반화 오차이다. 또 상수항(절편)까지 줄일지는 선택 사항이며, 보통 절편은 정규화하지 않는다. 자료 전체를 위아래로 옮기기만 해도 절편이 바뀌기 때문이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>정규화 최소제곱의 해는 x̂ = (AᵀA + λI)⁻¹Aᵀb이고, λ &gt; 0이면 언제나 유일하다. 특이 방향마다 계수를 σ²/(σ² + λ)배로 줄인다. λ는 검증 오차로 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>A = I(단위), b = (2, 4), λ = 1의 해는?
-          <details><summary>답</summary><p>(1, 2): b/(1 + λ).</p></details>
+          <details><summary>답</summary><p>b/(1 + λ) = (1, 2)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>특이값 0.1인 방향의 계수는 λ = 0.01일 때 몇 배로 줄어드는가?
-          <details><summary>답</summary><p>0.01/(0.01 + 0.01) = 0.5배.</p></details>
+          <details><summary>답</summary><p>0.01/(0.01 + 0.01) = 0.5배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>λ → ∞의 해와 의미는?
-          <details><summary>답</summary><p>0. 자료를 무시하고 가장 작은 해만 선호합니다.</p></details>
+          <details><summary>답</summary><p>0이다. 자료를 무시하고 가장 작은 해만 고른다.</p></details>
         </li>
       </ol>
     </div>

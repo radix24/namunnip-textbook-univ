@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e20-hinge" data-kind="본문" data-std="전전20-05-03">
   <header class="card-head"><span class="no"></span><h2>SVM 힌지 손실과 부분 기울기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>힌지 손실 \(\max(0, 1 - y(w^Tx + b))\)와 정규화 항으로 SVM을 쓴다.</li>
-        <li>힌지 손실의 부분 기울기로 경사하강 갱신식을 만든다.</li>
-        <li>로지스틱 손실과 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>분류기 (<a href="05-01.html">5.1절</a>), 볼록성 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">로지스틱 회귀는 이미 확실히 맞게 분류된 점에도 작은 손실을 남긴다. 경계에서 충분히 떨어진 점은 아예 무시하고, 경계 가까이의 점만으로 경계를 정하면 어떨까? 그런 손실은 꺾인 점이 있는데, 미분할 수 없는 곳에서는 어떻게 경사하강을 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="힌지 손실과 로지스틱 손실을 여유 y·f(x)에 대해 그린 그림(개형). 힌지 손실 max(0, 1 − y·f(x))는 여유가 1 이상이면 정확히 0이고 그 아래에서는 직선으로 커지며, 여유 1에서 꺾인다. 로지스틱 손실은 여유가 커져도 0에 다가갈 뿐 0이 되지 않는다. 예제 5.3.1의 첫 점은 여유 0.5로 손실 0.5, 둘째 점은 여유 1.5로 손실 0이다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="200" y1="30" x2="200" y2="170" class="ax"/>
+        <path d="M80 50 L320 170 H440" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 70 C180 110, 260 150, 440 166" class="c" fill="none" stroke-width="2"/>
+        <circle cx="260" cy="140" r="5" class="fd"/><circle cx="380" cy="170" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="200" y="186">0</text><text x="320" y="186">1</text><text x="430" y="186">y·f(x)</text></g>
+        <g class="s"><text x="90" y="44" class="ta">힌지 max(0, 1 − y·f)</text><text x="300" y="130" class="tc">로지스틱</text><text x="226" y="128" class="td">여유 0.5, 손실 0.5</text><text x="350" y="160" class="td">여유 1.5, 손실 0</text><text x="324" y="166">꺾임</text></g>
+      </svg>
+      <figcaption>그림 1. 힌지 손실은 여유가 1 이상인 점에서 정확히 0이라 그런 점은 학습에 아무 영향을 주지 않고, 여유 1 안쪽의 점, 곧 서포트 벡터만 경계를 정한다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>분류기(<a href="05-01.html">5.1절</a>), 볼록성(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>여유 1 안쪽만 벌점</h3>
-    <p>\(J = \frac\lambda2\|w\|^2 + \frac1n\sum\max(0, 1 - y_i(w^Tx_i + b))\). 여유 \(y(w^Tx + b) \ge 1\)인 점은 벌점이 없고, 그 안쪽 점만 기울기 \(-y_ix_i\)를 줍니다. 볼록이지만 꺾인 점이 있어 부분 기울기를 씁니다.</p>
+    <p>서포트 벡터 머신(SVM)은 아래 목적 함수를 최소화한다. 첫째 항은 정규화이고, 둘째 항이 힌지 손실이다.</p>
+    <p>\[ J = \frac\lambda2\|w\|^2 + \frac1n\sum\max(0, 1 - y_i(w^Tx_i + b)) \]</p>
+    <p>여기서 \(y(w^Tx + b)\)를 여유라 한다. 여유가 1 이상인 점은 벌점이 없고, 그 안쪽의 점만 기울기 \(-y_ix_i\)를 준다(그림 1). 처음 질문의 첫째 답이 이것이다. 즉 경계에서 충분히 떨어진 점은 학습에서 빠진다.</p>
+    <p>그런데 힌지 손실은 볼록이지만 여유 1에서 꺾여 미분할 수 없다. 그래서 꺾인 점에서는 기울기 대신 부분 기울기를 쓴다. 부분 기울기는 그 점에서 함수 아래에 그을 수 있는 직선들의 기울기 가운데 하나이며, 처음 질문의 둘째 답이 이것이다. 볼록 함수에서는 부분 기울기로 경사하강을 해도, 보폭을 줄여 가면 최적에 다가간다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>w = (0.5, 0), b = 0, λ = 0. 점 (x = (1, 1), y = +1)과 (x = (3, 0), y = +1)의 손실과 부분 기울기는?</p>
     </div>
-    <p><i>풀이.</i> 첫 점: 여유 0.5 &lt; 1 → 손실 0.5, w 기울기 −(1, 1). 둘째: 여유 1.5 ≥ 1 → 손실 0, 기울기 0. 이미 확실히 맞는 점은 학습에 영향을 주지 않아(서포트 벡터만 중요) 로지스틱 손실과 다릅니다.</p>
+    <p><i>풀이.</i> 첫 점은 여유가 0.5로 1보다 작으므로, 손실은 0.5이고 w에 대한 기울기는 −(1, 1)이다. 둘째 점은 여유가 1.5로 1 이상이므로, 손실도 기울기도 0이다.</p>
+    <p>따라서 이미 확실히 맞는 점은 학습에 영향을 주지 않는다. 경계를 정하는 것은 여유 1 안쪽이나 그 위에 놓인 서포트 벡터뿐이며, 이 점이 모든 점이 조금씩 영향을 주는 로지스틱 손실과 다르다. 그래서 학습이 끝난 SVM은 서포트 벡터만 기억하면 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "힌지 손실도 모든 점에서 미분 가능": 여유 = 1에서 꺾여 부분 기울기를 씁니다. (2) "맞게 분류되면 손실 0": 여유 1보다 작으면 맞아도 벌점이 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>맞게 분류되기만 하면 손실이 0이라고 여기기 쉽다. 여유가 0과 1 사이인 점은 맞게 분류되었어도 벌점을 받는다. 경계에 너무 가까이 붙은 점까지 밀어내 여유를 넓히려는 것이 힌지 손실의 목적이다. 또 힌지 손실도 모든 점에서 미분할 수 있다고 생각하기 쉬운데, 여유 1에서 꺾이므로 부분 기울기를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>힌지 max(0, 1 − y·f(x)) + 정규화.</li>
-        <li>여유 ≥ 1이면 기울기 0, 아니면 −yx.</li>
-        <li>서포트 벡터만 학습에 기여.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>SVM은 힌지 손실 max(0, 1 − y·f(x))에 정규화를 더해 최소화한다. 여유가 1 이상이면 기울기가 0이고, 아니면 −yx이다. 서포트 벡터만 학습에 기여한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>여유 y·f(x) = −0.5(틀림)의 힌지 손실은?
-          <details><summary>답</summary><p>1.5.</p></details>
+          <details><summary>답</summary><p>max(0, 1 + 0.5) = 1.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>여유 2의 로지스틱 손실 ln(1 + e⁻²)은?
-          <details><summary>답</summary><p>약 0.127(0이 아님).</p></details>
+          <details><summary>답</summary><p>약 0.127로 0이 아니다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>λ를 키우면 마진은?
-          <details><summary>답</summary><p>넓어지고 훈련 오류는 늘 수 있습니다.</p></details>
+          <details><summary>답</summary><p>넓어지고, 훈련 오류는 늘 수 있다.</p></details>
         </li>
       </ol>
     </div>

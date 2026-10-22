@@ -8,62 +8,55 @@
 <article class="card q-card" id="text-e20-standard" data-kind="본문" data-std="전전20-03-02">
   <header class="card-head"><span class="no"></span><h2>볼록 최적화 표준형</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>볼록 최적화 표준형(볼록 목적, 볼록 부등식, 아핀 등식)을 안다.</li>
-        <li>선형 계획(LP), 이차 계획(QP)으로 공학 문제를 쓴다.</li>
-        <li>볼록하지 않은 문제를 볼록하게 바꾸는 기법(변수 변환, 완화)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>볼록 함수 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">발전소 두 곳으로 수요 100 kW를 채우되 비용은 가장 적게 하고 싶다. 출력 한계와 수요 조건을 식으로 적으면 어떤 꼴의 최적화 문제가 될까? 그 꼴이라면 해가 어디에 있는지 미리 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 발전기 출력 배분 LP. 가로는 p₁(0~100 kW), 세로는 p₂이다. 출력 한계 0 ≤ p₁ ≤ 60, 0 ≤ p₂ ≤ 80이 만드는 직사각형과 수요 직선 p₁ + p₂ = 100이 만나는 선분이 실현 가능 영역이다. 비용 2p₁ + 3p₂는 선분의 끝점 (60, 40)에서 240원으로 가장 작고, 다른 끝점 (20, 80)에서는 280원이다">
+        <line x1="80" y1="170" x2="340" y2="170" class="ax"/><line x1="80" y1="20" x2="80" y2="170" class="ax"/>
+        <rect x="80" y="50" width="150" height="120" class="lk"/><rect x="80" y="50" width="150" height="120" class="k dsh" fill="none"/>
+        <path d="M80 20 L330 170" class="k dsh" opacity="0.5"/>
+        <path d="M130 50 L230 110" class="a" stroke-width="4"/>
+        <circle cx="230" cy="110" r="6" class="fd"/><circle cx="130" cy="50" r="5" class="fc"/>
+        <g class="s"><text x="236" y="114" class="td">(60, 40), 240원</text><text x="136" y="44" class="tc">(20, 80), 280원</text><text x="236" y="186">p₁ ≤ 60</text><text x="20" y="54">p₂ ≤ 80</text><text x="300" y="160">p₁ + p₂ = 100</text></g>
+        <g class="s"><text x="360" y="60">min 2p₁ + 3p₂</text><text x="360" y="82">s.t. p₁ + p₂ = 100</text><text x="360" y="104">0 ≤ p₁ ≤ 60, 0 ≤ p₂ ≤ 80</text><text x="360" y="136" class="ta">LP 해는 꼭짓점</text></g>
+      </svg>
+      <figcaption>그림 1. 목적과 제약이 모두 선형이면 비용은 실현 가능 영역 위에서 한 방향으로만 줄어들므로, 최적은 영역의 꼭짓점, 여기서는 선분의 끝점에 놓인다(예제 3.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>볼록 함수(<a href="03-01.html">3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>표준형</h3>
+    <p>볼록 최적화 문제는 아래 표준형으로 쓴다. f₀와 fᵢ가 볼록이고 등식 제약이 아핀이면 볼록 문제이다. 처음 질문의 첫째 답이 이 꼴이다.</p>
     \[ \min f_0(x)\quad\text{s.t.}\quad f_i(x) \le 0\ (i = 1..m),\quad Ax = b, \]
-    <p>f₀, fᵢ가 볼록이면 볼록 문제입니다.</p>
-    <ul>
-      <li><b>LP</b>: 목적과 제약이 모두 선형. 예: 발전기 출력 배분의 비용 최소화.</li>
-      <li><b>QP</b>: 목적이 볼록 이차, 제약 선형. 예: 정규화 최소제곱, 포트폴리오.</li>
-    </ul>
+    <p>가장 흔한 두 종류가 있다. 목적과 제약이 모두 선형인 것이 선형 계획(LP)으로, 발전기 출력 배분의 비용 최소화가 그 예이다. 목적이 볼록 이차식이고 제약이 선형인 것이 이차 계획(QP)으로, 정규화 최소제곱(2.1절)과 포트폴리오 최적화가 그 예이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>발전기 둘(비용 2원/kW, 3원/kW, 최대 60, 80 kW)로 수요 100 kW를 공급하는 최소 비용 배분을 LP로 쓰고 풀라.</p>
     </div>
-    <p><i>풀이.</i> min 2p₁ + 3p₂, s.t. p₁ + p₂ = 100, 0 ≤ p₁ ≤ 60, 0 ≤ p₂ ≤ 80. 싼 발전기를 최대로: p₁ = 60, p₂ = 40, 비용 240원. LP의 해는 실현 가능 영역의 꼭짓점에 있습니다.</p>
-    <p>볼록하지 않은 문제는 변수 변환(예: 기하 계획의 로그 변환), 완화(정수 제약을 연속으로), 근사(국소 선형화)로 볼록 문제로 만들어 풉니다.</p>
+    <p><i>풀이.</i> 문제는 min 2p₁ + 3p₂, s.t. p₁ + p₂ = 100, 0 ≤ p₁ ≤ 60, 0 ≤ p₂ ≤ 80이다. 싼 발전기를 최대로 쓰면 p₁ = 60, p₂ = 40이고 비용은 240원이다(그림 1).</p>
+    <p>즉 LP의 해는 실현 가능 영역의 꼭짓점에 있다. 처음 질문의 둘째 답이 이것이다. 목적 함수가 선형이라 영역 안쪽에서는 언제나 더 줄일 방향이 있기 때문이다(3.4절).</p>
+    <p>한편 볼록하지 않은 문제도 볼록 문제로 바꿔 푸는 경우가 많다. 변수를 바꾸는 방법(예를 들어 기하 계획의 로그 변환), 정수 제약을 연속 제약으로 푸는 완화, 국소 선형화 같은 근사가 그 수단이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "등식 제약은 아무 함수나 된다": 볼록 문제의 등식은 아핀이어야 합니다. (2) "LP는 꼭짓점을 다 세면 된다": 꼭짓점이 지수적으로 많아 단체법·내점법을 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>등식 제약에는 아무 함수나 써도 된다고 여기기 쉽다. 볼록 문제의 등식 제약은 아핀이어야 한다. 아핀이 아닌 등식은 곡선이나 곡면 위를 따라가야 해서 실현 가능 영역이 볼록이 아니기 때문이다. 또 LP는 꼭짓점을 다 세어 보면 된다고 생각하기 쉬운데, 변수가 많으면 꼭짓점 수가 지수적으로 늘어나므로 단체법이나 내점법을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>볼록 목적 + 볼록 부등식 + 아핀 등식.</li>
-        <li>LP, QP. LP 해는 꼭짓점.</li>
-        <li>변환·완화로 볼록화.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>볼록 문제는 볼록 목적, 볼록 부등식 제약, 아핀 등식 제약으로 이루어진다. LP와 QP가 대표적이며, LP의 해는 꼭짓점에 있다. 비볼록 문제는 변환, 완화, 근사로 볼록화한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>min x² s.t. x ≥ 2의 해는?
-          <details><summary>답</summary><p>x = 2.</p></details>
+          <details><summary>답</summary><p>x = 2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 수요가 150 kW면?
-          <details><summary>답</summary><p>p₁ = 60, p₂ = 80은 140이라 불가능(제약 위반) → 실현 가능 해 없음.</p></details>
+          <details><summary>답</summary><p>p₁ = 60, p₂ = 80을 더해도 140이라 수요를 채울 수 없으므로, 실현 가능한 해가 없다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>등식 제약 x² + y² = 1은 볼록 문제에 넣을 수 있는가?
-          <details><summary>답</summary><p>아닙니다(아핀이 아님). x² + y² ≤ 1로 완화하면 볼록입니다.</p></details>
+          <details><summary>답</summary><p>아핀이 아니라 넣을 수 없다. x² + y² ≤ 1로 완화하면 볼록이다.</p></details>
         </li>
       </ol>
     </div>
