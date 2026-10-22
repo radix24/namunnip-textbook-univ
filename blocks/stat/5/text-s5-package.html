@@ -8,62 +8,71 @@
 <article class="card q-card" id="text-s5-package" data-kind="본문" data-std="응통5-07-01">
   <header class="card-head"><span class="no"></span><h2>통계패키지로 분석 절차 수행하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>R에서 자료를 읽고, 요약하고, 검정하는 기본 흐름을 익힌다.</li>
-        <li>출력에서 필요한 값(추정값, 검정통계량, p값, 신뢰구간)을 찾아 읽는다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>이 과목 2~6장의 방법들.</li>
-      </ul>
-    </div>
-
-    <h3>어떤 패키지든 흐름은 같다</h3>
-    <p>요람은 SAS, SPSS, MINITAB, R을 들지만 분석의 흐름은 같습니다. 자료 읽기 → 확인과 정리 → 그림과 요약 → 모형과 검정 → 결과 해석. 여기서는 무료인 R로 보입니다.</p>
+    <p class="q-ask">지금까지 평균, 신뢰구간, t 검정, 카이제곱 검정, 회귀를 손으로 계산했다. 실제 조사 자료는 수백 명, 수십 변수라 손으로는 할 수 없다. SAS, SPSS, MINITAB, R처럼 패키지마다 화면은 다른데, 무엇을 어떤 순서로 하고 쏟아지는 출력에서 무엇을 읽어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 170" role="img" aria-label="읽기, 확인과 정리, 요약과 그림, 모형과 검정, 해석의 다섯 단계를 화살표로 이은 분석 흐름도. 이상한 결과가 나오면 확인 단계로 돌아가는 점선 화살표가 있다">
+        <rect x="10" y="60" width="88" height="50" class="lk k"/><text x="54.0" y="82.0" text-anchor="middle" class="s">읽기</text>
+        <text x="54.0" y="97.0" text-anchor="middle" class="s">read.csv</text>
+        <rect x="112" y="60" width="88" height="50" class="lk k"/><text x="156.0" y="82.0" text-anchor="middle" class="s">확인, 정리</text>
+        <text x="156.0" y="97.0" text-anchor="middle" class="s">str, summary</text>
+        <path d="M98 85 L110 85 M103.6 87.7 L110 85 L103.6 82.3" class="ax"/>
+        <rect x="214" y="60" width="88" height="50" class="lk k"/><text x="258.0" y="82.0" text-anchor="middle" class="s">요약, 그림</text>
+        <text x="258.0" y="97.0" text-anchor="middle" class="s">mean, boxplot</text>
+        <path d="M200 85 L212 85 M205.6 87.7 L212 85 L205.6 82.3" class="ax"/>
+        <rect x="316" y="60" width="88" height="50" class="lb b"/><text x="360.0" y="82.0" text-anchor="middle" class="s">모형, 검정</text>
+        <text x="360.0" y="97.0" text-anchor="middle" class="s">t.test, lm</text>
+        <path d="M302 85 L314 85 M307.6 87.7 L314 85 L307.6 82.3" class="ax"/>
+        <rect x="418" y="60" width="88" height="50" class="lk k"/><text x="462.0" y="82.0" text-anchor="middle" class="s">해석</text>
+        <text x="462.0" y="97.0" text-anchor="middle" class="s">추정값과 구간</text>
+        <path d="M404 85 L416 85 M409.6 87.7 L416 85 L409.6 82.3" class="ax"/>
+        <text x="260" y="40" text-anchor="middle" class="s">SAS, SPSS, MINITAB, R 어느 패키지든 같은 흐름</text>
+        <path d="M450 112 C 450 150, 60 150, 54 114" class="k dsh" style="fill:none"/><text x="260" y="160" text-anchor="middle" class="s">이상한 결과가 나오면 확인 단계로 돌아간다</text>
+      </svg>
+      <figcaption>그림 1. 분석의 흐름. 어떤 패키지든 읽기, 확인과 정리, 요약과 그림, 모형과 검정(청록), 해석의 순서를 따르며, 이상한 결과가 나오면 확인 단계로 돌아간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이 과목 2~6단원의 방법들을 쓴다.</div>
 
     <h3><span class="no">7.1.1</span>자료 읽기와 확인</h3>
-    <pre><code>d &lt;- read.csv("survey.csv")      # 같은 폴더의 CSV 파일
+    <p>처음 질문의 첫째 답은 그림 1의 흐름이다. 패키지마다 명령은 달라도 순서는 같으므로, 여기서는 무료인 R로 보인다. 먼저 자료를 읽고 확인한다.</p>
+<pre><code>d &lt;- read.csv("survey.csv")      # 같은 폴더의 CSV 파일
 str(d)          # 변수 이름, 형식, 앞부분 값
 summary(d)      # 변수별 요약, 결측값(NA) 수
 d$major &lt;- factor(d$major)       # 범주형으로 지정</code></pre>
-    <p>숫자여야 할 변수가 문자로 읽혔는지, 결측값이 몇 개인지, 범위를 벗어난 값(나이 250)이 있는지 먼저 봅니다.</p>
+    <p>이때 숫자여야 할 변수가 문자로 읽혔는지, 결측값이 몇 개인지, 범위를 벗어난 값(나이 250)이 있는지를 먼저 본다. 또 학과 코드처럼 숫자로 적힌 범주형 변수는 <code>factor</code>로 바꾸어야 평균 같은 엉뚱한 계산을 막는다(<a href="01-04.html">1.4절</a>).</p>
 
     <h3><span class="no">7.1.2</span>요약과 그림</h3>
-    <pre><code>mean(d$hours, na.rm = TRUE); sd(d$hours, na.rm = TRUE)
+<pre><code>mean(d$hours, na.rm = TRUE); sd(d$hours, na.rm = TRUE)
 table(d$major)
 boxplot(hours ~ major, data = d)</code></pre>
+    <p>검정 전에 요약과 그림을 보는 까닭은, 이상값이나 치우침처럼 검정의 가정을 흔드는 문제를 먼저 찾기 위해서이다(<a href="02-04.html">2.4절</a>).</p>
 
     <h3><span class="no">7.1.3</span>검정과 출력 읽기</h3>
-    <pre><code>t.test(hours ~ sex, data = d)         # 웰치 이표본 t 검정
+<pre><code>t.test(hours ~ sex, data = d)         # 웰치 이표본 t 검정
 chisq.test(table(d$major, d$mode))    # 독립성 검정
 summary(lm(score ~ hours, data = d))  # 단순회귀</code></pre>
-    <p><code>t.test</code> 출력의 <code>t</code>는 검정통계량, <code>df</code>는 자유도, <code>p-value</code>는 p값, <code>95 percent confidence interval</code>은 두 평균 차이의 신뢰구간입니다. <code>lm</code>의 <code>Coefficients</code> 표에서 <code>Estimate</code>는 \(b_0, b_1\), <code>Std. Error</code>는 표준오차, <code>Pr(&gt;|t|)</code>는 "계수가 0"을 검정한 p값입니다.</p>
-
+    <p>둘째 질문, 출력에서 읽을 것은 정해져 있다. <code>t.test</code> 출력의 <code>t</code>는 검정통계량, <code>df</code>는 자유도, <code>p-value</code>는 p값, <code>95 percent confidence interval</code>은 두 평균 차이의 신뢰구간이다. 또 <code>lm</code>의 <code>Coefficients</code> 표에서 <code>Estimate</code>는 \(b_0\), \(b_1\), <code>Std. Error</code>는 표준오차, <code>Pr(&gt;|t|)</code>는 "계수가 0"을 검정한 p값이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.1</span>
-      <p>R에 내장된 <code>sleep</code> 자료(10명에게 두 수면제를 준 추가 수면 시간)를 분석하세요.</p>
+      <p>R에 내장된 sleep 자료(10명에게 두 수면제를 준 추가 수면 시간)를 분석하여라.</p>
     </div>
-    <p><i>풀이.</i> 같은 10명이 두 약을 모두 먹었으므로 대응표본입니다.</p>
-    <pre><code>with(sleep, t.test(extra[group == 2], extra[group == 1], paired = TRUE))</code></pre>
-    <p>평균 차이 1.58시간, \(t = 4.06\), 자유도 9, p값 0.0028, 95% 신뢰구간 [0.70, 2.46]. 약 2가 약 1보다 수면을 더 늘린다고 봅니다.</p>
+<pre><code>with(sleep, t.test(extra[group == 2], extra[group == 1], paired = TRUE))</code></pre>
+    <p><i>풀이.</i> 같은 10명이 두 약을 모두 먹었으므로 대응표본이다(<a href="04-03.html">4.3절</a>). 출력에서 평균 차이 1.58시간, \(t = 4.06\), 자유도 9, p값 0.0028, 95% 신뢰구간 [0.70, 2.46]을 읽는다. 따라서 약 2가 약 1보다 수면을 더 늘린다고 본다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>패키지는 자료 구조를 알지 못한다. sleep 자료를 짝을 무시하고 <code>t.test(extra ~ group, data = sleep)</code>로 분석해도 오류 없이 결과가 나오지만, p값이 약 0.079로 유의하지 않게 바뀐다. 어떤 검정이 맞는지는 자료가 어떻게 모였는지를 아는 사람이 정한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>읽기 → 확인 → 요약·그림 → 검정 → 해석.</li>
-        <li>범주형 변수는 factor로 지정합니다.</li>
-        <li>출력에서 추정값, 표준오차, 검정통계량, 자유도, p값, 신뢰구간을 찾습니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>통계패키지로 하는 분석은 어떤 패키지든 읽기, 확인과 정리, 요약과 그림, 모형과 검정, 해석의 순서를 따른다. 읽은 뒤에는 형식, 결측, 범위를 확인하고 범주형 변수를 지정하며, 검정 전에 그림으로 가정을 점검한다. 출력에서는 추정값, 표준오차, 검정통계량, 자유도, p값, 신뢰구간을 찾아 읽되, 맞는 검정을 고르는 것은 패키지가 아니라 분석자의 몫이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>sleep</code> 자료를 짝을 무시하고 <code>t.test(extra ~ group, data = sleep)</code>로 분석하면 p값은 어떻게 되나요?
-          <details><summary>답</summary><p>약 0.079로 유의하지 않습니다. 사람 사이 차이가 섞여 검정력이 떨어집니다.</p></details>
+        <li><code>summary(d)</code>에서 나이 변수의 최댓값이 250으로 나왔다. 무엇을 해야 하는가?
+          <details><summary>답</summary><p>입력 실수일 가능성이 크므로 원자료를 확인한다. 고칠 수 없으면 결측으로 처리하고, 처리한 사실과 개수를 보고서에 적는다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>sleep 자료를 짝을 무시하고 이표본 검정하면 p값이 0.079로 커지는 까닭을 설명하여라.
+          <details><summary>답</summary><p>사람마다 기본 수면 반응이 크게 달라, 짝을 무시하면 그 개인차가 표준오차에 섞여 들어가 \(t\)가 작아지고 검정력이 떨어진다.</p></details>
         </li>
       </ol>
     </div>

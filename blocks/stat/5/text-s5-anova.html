@@ -8,72 +8,87 @@
 <article class="card q-card" id="text-s5-anova" data-kind="본문" data-std="응통5-05-01">
   <header class="card-head"><span class="no"></span><h2>일원 분산분석</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>전체 변동을 집단 간 변동과 집단 내 변동으로 나눈다.</li>
-        <li>분산분석표를 만들고 F 검정을 한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>이표본 t 검정 (<a href="04-03.html">4.3절</a>), 다중 비교 (<a href="04-05.html">4.5절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>세 집단을 한 번에</h3>
-    <p>세 가지 비료로 키운 콩의 수확량을 비교하려 합니다. 쌍마다 t 검정을 세 번 하면 다중 비교 문제가 생깁니다. "세 평균이 모두 같다"를 한 번에 검정하는 방법이 분산분석(ANOVA)입니다. 이름과 달리 평균을 비교하는 방법이며, 변동을 나누어 비교하기 때문에 이런 이름이 붙었습니다.</p>
+    <p class="q-ask">세 가지 비료로 키운 콩의 수확량을 비교하려 한다. 쌍마다 t 검정을 세 번 하면 4.5절의 다중 비교 문제가 생긴다. "세 평균이 모두 같다"를 한 번에 검정할 수는 없을까? 평균을 비교하려는데 왜 그 방법의 이름은 "분산"분석일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 190" role="img" aria-label="비료 A, B, C 세 집단의 수확량 점과 집단 평균선, 전체 평균선. 집단 평균과 전체 평균의 차이는 주황 막대, 각 자료와 집단 평균의 차이는 파랑 막대로 표시했다">
+        <line x1="60" y1="165" x2="490" y2="165" class="ax"/>
+        <line x1="60" y1="165" x2="60" y2="40" class="ax"/>
+        <text x="55" y="160.7" text-anchor="end" class="s">4</text>
+        <text x="55" y="127.3" text-anchor="end" class="s">6</text>
+        <text x="55" y="94" text-anchor="end" class="s">8</text>
+        <text x="55" y="60.7" text-anchor="end" class="s">10</text>
+        <text x="66" y="44" class="s">수확량 (kg)</text>
+        <path d="M60 106.7 L490 106.7" class="k dsh"/><text x="488" y="101.7" text-anchor="end" class="s">전체 평균 7</text>
+        <path d="M95.8 123.3 L167.5 123.3" class="b" style="stroke-width:2.5"/>
+        <path d="M174.7 106.7 L174.7 123.3" class="c" style="stroke-width:2"/>
+        <path d="M114.5 123.3 L114.5 140" class="a"/><circle cx="114.5" cy="140" r="4" class="fk"/>
+        <path d="M131.7 123.3 L131.7 123.3" class="a"/><circle cx="131.7" cy="123.3" r="4" class="fk"/>
+        <path d="M148.9 123.3 L148.9 106.7" class="a"/><circle cx="148.9" cy="106.7" r="4" class="fk"/>
+        <text x="131.7" y="182" text-anchor="middle" class="s">비료 A (평균 6)</text>
+        <path d="M239.2 73.3 L310.8 73.3" class="b" style="stroke-width:2.5"/>
+        <path d="M318 106.7 L318 73.3" class="c" style="stroke-width:2"/>
+        <path d="M257.8 73.3 L257.8 90" class="a"/><circle cx="257.8" cy="90" r="4" class="fk"/>
+        <path d="M275 73.3 L275 73.3" class="a"/><circle cx="275" cy="73.3" r="4" class="fk"/>
+        <path d="M292.2 73.3 L292.2 56.7" class="a"/><circle cx="292.2" cy="56.7" r="4" class="fk"/>
+        <text x="275" y="182" text-anchor="middle" class="s">비료 B (평균 9)</text>
+        <path d="M382.5 123.3 L454.2 123.3" class="b" style="stroke-width:2.5"/>
+        <path d="M461.3 106.7 L461.3 123.3" class="c" style="stroke-width:2"/>
+        <path d="M401.1 123.3 L401.1 140" class="a"/><circle cx="401.1" cy="140" r="4" class="fk"/>
+        <path d="M418.3 123.3 L418.3 106.7" class="a"/><circle cx="418.3" cy="106.7" r="4" class="fk"/>
+        <path d="M435.5 123.3 L435.5 123.3" class="a"/><circle cx="435.5" cy="123.3" r="4" class="fk"/>
+        <text x="418.3" y="182" text-anchor="middle" class="s">비료 C (평균 6)</text>
+        <text x="70" y="14" class="s tc">주황 막대 집단 평균 − 전체 평균 (SSB)</text><text x="300" y="14" class="s ta">파랑 막대 자료 − 집단 평균 (SSW)</text>
+      </svg>
+      <figcaption>그림 1. 변동의 분해. 각 자료가 전체 평균(점선)에서 떨어진 거리는, 집단 평균(굵은 선)이 전체 평균에서 떨어진 몫(주황, 집단 간)과 자료가 집단 평균에서 떨어진 몫(파랑, 집단 내)으로 나뉜다. 주황이 파랑보다 크면 집단 평균이 다르다는 증거이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이표본 t 검정(<a href="04-04.html">4.4절</a>)과 다중 비교(<a href="04-05.html">4.5절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>변동의 분해</h3>
-    <p>집단 \(i = 1, \ldots, k\)에 자료 \(y_{ij}\)가 \(n_i\)개씩, 전체 \(N\)개 있다고 합시다. 집단 평균을 \(\bar y_i\), 전체 평균을 \(\bar y\)라 하면</p>
-    \[\underbrace{\sum_{i,j}(y_{ij} - \bar y)^2}_{SST} = \underbrace{\sum_i n_i(\bar y_i - \bar y)^2}_{SSB} + \underbrace{\sum_{i,j}(y_{ij} - \bar y_i)^2}_{SSW}.\]
-    <p class="tb-proof">\(y_{ij} - \bar y = (y_{ij} - \bar y_i) + (\bar y_i - \bar y)\)를 제곱해 더하면 교차항이 \(2\sum_i(\bar y_i - \bar y)\sum_j(y_{ij} - \bar y_i)\)이고, 안쪽 합은 집단 평균의 정의에 따라 0입니다. <span class="qed">∎</span></p>
-    <p>SSB는 집단 평균들이 서로 얼마나 다른지, SSW는 같은 집단 안에서 얼마나 흩어졌는지를 잽니다.</p>
+    <p>"세 평균이 모두 같다"를 한 번에 검정하는 방법이 <em>분산분석</em>(ANOVA)이다. 처음 질문의 둘째 부분부터 답하면, 이 방법은 평균을 비교하되 그림 1처럼 변동을 나누어 비교하기 때문에 이런 이름이 붙었다. 집단 \(i = 1, \ldots, k\)에 자료 \(y_{ij}\)가 \(n_i\)개씩, 전체 \(N\)개 있다고 하자. 집단 평균을 \(\bar y_i\), 전체 평균을 \(\bar y\)라 하면 다음이 성립한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">결과 5.1.1 <span class="nm">(제곱합 분해)</span></span>
+      \[\underbrace{\sum_{i,j}(y_{ij} - \bar y)^2}_{SST} = \underbrace{\sum_i n_i(\bar y_i - \bar y)^2}_{SSB} + \underbrace{\sum_{i,j}(y_{ij} - \bar y_i)^2}_{SSW}\]
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span> \(y_{ij} - \bar y = (y_{ij} - \bar y_i) + (\bar y_i - \bar y)\)를 제곱해 더하면 교차항이 \(2\sum_i(\bar y_i - \bar y)\sum_j(y_{ij} - \bar y_i)\)이고, 안쪽 합은 집단 평균의 정의에 따라 0이다. <span class="qed">∎</span></p>
+    <p>SSB는 집단 평균들이 서로 얼마나 다른지, SSW는 같은 집단 안에서 얼마나 흩어졌는지를 잰다.</p>
 
     <h3><span class="no">5.1.2</span>F 검정</h3>
     <div class="tb-env thm">
-      <span class="lb">결과 5.1.1</span>
-      <p>\(H_0: \mu_1 = \cdots = \mu_k\). 각 집단이 같은 분산의 정규분포이고 서로 독립이면, \(H_0\) 아래에서</p>
+      <span class="lb">결과 5.1.2 <span class="nm">(F 검정)</span></span>
       \[F = \frac{SSB/(k-1)}{SSW/(N-k)}\]
-      <p>는 자유도 \((k-1, N-k)\)인 F 분포를 따른다. F가 크면 기각한다.</p>
+      <p>\(H_0: \mu_1 = \cdots = \mu_k\)이고 각 집단이 같은 분산의 정규분포이며 서로 독립이면, \(H_0\) 아래에서 \(F\)는 자유도 \((k-1, N-k)\)인 F 분포를 따른다. \(F\)가 크면 기각한다.</p>
     </div>
-    <p>분자 MSB와 분모 MSW는 모두 \(H_0\) 아래에서 \(\sigma^2\)의 추정량입니다. 집단 평균이 다르면 MSB만 커지므로 비 F가 1보다 훨씬 커집니다.</p>
-
+    <p>분자 MSB와 분모 MSW는 모두 \(H_0\) 아래에서 \(\sigma^2\)의 추정량이다. 그런데 집단 평균이 다르면 MSB만 커지므로 비 \(F\)가 1보다 훨씬 커진다. 이것이 처음 질문의 첫째 답, 곧 세 평균을 한 번에 비교하는 방법이다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 5.1.2</span>
-      <p>비료 A: 5, 6, 7. B: 8, 9, 10. C: 5, 7, 6 (단위: kg). 분산분석표를 만드세요.</p>
+      <span class="lb">예제 5.1.1</span>
+      <p>비료 A의 수확량이 5, 6, 7, B가 8, 9, 10, C가 5, 7, 6(단위 kg)이다. 분산분석표를 만들어라.</p>
     </div>
-    <p><i>풀이.</i> 집단 평균 6, 9, 6, 전체 평균 7. SSB = \(3(1 + 4 + 1) = 18\). SSW = A \(1+0+1\) + B \(1+0+1\) + C \(1+1+0\) = 6. 자유도 2와 6.</p>
+    <p><i>풀이.</i> 집단 평균은 6, 9, 6이고 전체 평균은 7이다. SSB \(= 3(1 + 4 + 1) = 18\)이고, SSW는 A \(1+0+1\), B \(1+0+1\), C \(1+1+0\)을 더한 6이다. 자유도는 2와 6이다.</p>
     <table class="tw">
       <tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>F</th></tr>
       <tr><td>집단 간</td><td>18</td><td>2</td><td>9</td><td>9</td></tr>
       <tr><td>집단 내</td><td>6</td><td>6</td><td>1</td><td></td></tr>
       <tr><td>합계</td><td>24</td><td>8</td><td></td><td></td></tr>
     </table>
-    <p>\(F_{0.05}(2, 6) = 5.14\)보다 크므로 기각합니다(p값 약 0.016). 세 평균이 모두 같지는 않습니다. 어느 쌍이 다른지는 사후 비교(응통13 02단원)로 봅니다.</p>
-    <pre><code>y &lt;- c(5,6,7, 8,9,10, 5,7,6); g &lt;- factor(rep(c("A","B","C"), each = 3))
+    <p>\(F = 9\)가 \(F_{0.05}(2, 6) = 5.14\)보다 크므로 기각한다(p값 약 0.016). 즉 세 평균이 모두 같지는 않다. 어느 쌍이 다른지는 사후 비교(응통13 2단원)로 본다.</p>
+<pre><code>y &lt;- c(5,6,7, 8,9,10, 5,7,6); g &lt;- factor(rep(c("A","B","C"), each = 3))
 summary(aov(y ~ g))</code></pre>
+    <div class="tb-note"><span class="lb">주의</span>F 검정이 기각되었다고 모든 평균이 서로 다른 것은 아니다. 예제에서도 A와 C는 평균이 같고 B만 다르다. "적어도 하나가 다르다"는 결론만 주므로, 어느 집단이 다른지는 다중 비교를 보정한 사후 비교로 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>SST = SSB + SSW.</li>
-        <li>\(F = \mathrm{MSB}/\mathrm{MSW}\), 자유도 \((k-1, N-k)\).</li>
-        <li>가정: 독립, 정규, 등분산. 기각 뒤에는 사후 비교.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>분산분석은 전체 변동을 집단 평균 사이의 변동(SSB)과 집단 안의 변동(SSW)으로 나누고(SST = SSB + SSW), 두 평균제곱의 비 \(F = \mathrm{MSB}/\mathrm{MSW}\)를 자유도 \((k-1, N-k)\)의 F 분포와 비교해 여러 평균이 모두 같은지 한 번에 검정한다. 가정은 독립, 정규, 등분산이며, 기각한 뒤에는 사후 비교로 어느 집단이 다른지 본다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>집단이 2개일 때 F 검정과 합동 분산 t 검정의 관계는?
-          <details><summary>답</summary><p>\(F = t^2\)이고 p값이 같습니다.</p></details>
+        <li>집단이 2개일 때 F 검정과 합동분산 t 검정은 어떤 관계인가?
+          <details><summary>답</summary><p>\(F = t^2\)이고 p값이 같다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>예제에서 B의 값을 6, 7, 8로 바꾸면 F는?
-          <details><summary>답</summary><p>집단 평균 6, 7, 6, 전체 평균 6.33. SSB = \(3(0.111 + 0.444 + 0.111) = 2\), SSW = 6, \(F = (2/2)/(6/6) = 1\). 기각하지 않습니다.</p></details>
+      <ol start="2">
+        <li>예제에서 B의 값을 6, 7, 8로 바꾸면 \(F\)는 얼마인가?
+          <details><summary>답</summary><p>집단 평균은 6, 7, 6이고 전체 평균은 6.33이다. SSB \(= 3(0.111 + 0.444 + 0.111) = 2\), SSW = 6이므로 \(F = (2/2)/(6/6) = 1\)이고 기각하지 않는다.</p></details>
         </li>
       </ol>
     </div>
