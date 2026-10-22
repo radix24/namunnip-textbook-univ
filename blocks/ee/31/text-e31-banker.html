@@ -8,21 +8,23 @@
 <article class="card q-card" id="text-e31-banker" data-kind="본문" data-std="전전31-03-04">
   <header class="card-head"><span class="no"></span><h2>은행원 알고리즘과 안전 상태</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>최대 요구량, 할당량, 남은 자원으로 필요량 행렬을 만든다.</li>
-        <li>안전 순서를 찾아 안전 상태인지 판정한다.</li>
-        <li>요청을 들어줄지 결정한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>교착 상태 조건 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자원이 여러 종류이고 프로세스도 여럿이면, 지금 상태가 안전한지 손으로 따지기 어렵다. 프로세스마다 앞으로 더 필요한 양과 지금 남은 양을 비교해, 모두 끝낼 수 있는 순서를 찾아야 한다. 이 순서는 어떻게 체계적으로 찾을까? 그리고 그 결과로 요청을 들어줄지 말지는 어떻게 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1 은행원 알고리즘(개형). 자원 3종류, 남은 자원 (3, 3, 2)에서 Need = Max − Allocation을 구해 Work로 채울 수 있는 프로세스를 차례로 끝내면 P1, P3, P0, P2, P4 순서로 모두 끝나 안전하고, 끝난 뒤 Work는 전체 자원 (10, 5, 7)이 된다">
+        <defs><marker id="ah-e31bk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="a" fill="none" stroke-width="2"><rect x="30" y="80" width="70" height="36"/><rect x="130" y="80" width="70" height="36"/><rect x="230" y="80" width="70" height="36"/><rect x="330" y="80" width="70" height="36"/><rect x="430" y="80" width="70" height="36"/></g>
+        <g class="k" stroke-width="1.5"><line x1="100" y1="98" x2="128" y2="98" marker-end="url(#ah-e31bk)"/><line x1="200" y1="98" x2="228" y2="98" marker-end="url(#ah-e31bk)"/><line x1="300" y1="98" x2="328" y2="98" marker-end="url(#ah-e31bk)"/><line x1="400" y1="98" x2="428" y2="98" marker-end="url(#ah-e31bk)"/></g>
+        <g class="s" text-anchor="middle"><text x="65" y="102">P1</text><text x="165" y="102">P3</text><text x="265" y="102">P0</text><text x="365" y="102">P2</text><text x="465" y="102">P4</text></g>
+        <g class="s"><text x="30" y="60" class="tb">Work (3, 3, 2), Need = Max − Alloc</text><text x="30" y="150" class="td">끝난 뒤 Work (10, 5, 7)</text></g>
+      </svg>
+      <figcaption>그림 1. 남은 자원으로 필요량을 채울 수 있는 프로세스를 끝냈다고 보고 그 할당을 돌려받는 일을 반복해, 모두 끝나면 안전 상태이다(예제 3.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>교착 상태 조건(<a href="03-02.html">3.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>모두 끝낼 수 있는 순서</h3>
-    <p>Need = Max − Allocation. 남은 자원(Work)으로 Need를 채울 수 있는 프로세스를 찾아 끝냈다고 보고 그 할당을 돌려받는 일을 반복해, 모두 끝낼 수 있으면 안전 상태입니다. 요청을 들어준 뒤에도 안전할 때만 실제로 할당합니다.</p><pre><code>alloc = {"P0": [0, 1, 0], "P1": [2, 0, 0], "P2": [3, 0, 2], "P3": [2, 1, 1], "P4": [0, 0, 2]}
+    <p>먼저 프로세스마다 앞으로 더 필요한 양 Need = Max − Allocation을 구한다. 그리고 남은 자원(Work)으로 Need를 채울 수 있는 프로세스를 찾아, 끝났다고 보고 그 할당을 돌려받는다. 이 일을 반복해 모두 끝낼 수 있으면 안전 상태이다(그림 1). 처음 질문의 첫째 답이 이 안전성 검사이다.</p>
+    <p>그러면 요청을 들어준 뒤에도 안전할 때만 실제로 할당한다. 처음 질문의 둘째 답이 이 규칙이다. 아래 코드는 안전성 검사를 그대로 따라 한다.</p>
+    <pre><code>alloc = {"P0": [0, 1, 0], "P1": [2, 0, 0], "P2": [3, 0, 2], "P3": [2, 1, 1], "P4": [0, 0, 2]}
 maxm  = {"P0": [7, 5, 3], "P1": [3, 2, 2], "P2": [9, 0, 2], "P3": [2, 2, 2], "P4": [4, 3, 3]}
 work = [3, 3, 2]
 need = {p: [m - a for m, a in zip(maxm[p], alloc[p])] for p in alloc}
@@ -37,44 +39,40 @@ while len(done) &lt; len(alloc):
     else:
         break
 print("안전 순서:", order, "/ 끝난 뒤 Work:", work)</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>Need: {'P0': [7, 4, 3], 'P1': [1, 2, 2], 'P2': [6, 0, 0], 'P3': [0, 1, 1], 'P4': [4, 3, 1]}
 안전 순서: ['P1', 'P3', 'P0', 'P2', 'P4'] / 끝난 뒤 Work: [10, 5, 7]</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
       <p>위 상태(자원 3종류, 남은 자원 (3, 3, 2))는 안전한가?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 안전 순서 P1 → P3 → P0 → P2 → P4가 있어 안전합니다(순서는 하나가 아닐 수 있음). 모든 작업이 끝나면 Work가 전체 자원 (10, 5, 7)이 됩니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 안전 순서 P1 → P3 → P0 → P2 → P4가 있으므로 안전하다(순서는 하나가 아닐 수 있다). 그리고 모든 작업이 끝나면 Work가 전체 자원 (10, 5, 7)이 된다.</p>
+    <p>즉 이 검사는 최악의 경우, 곧 모든 프로세스가 최대량을 요구하는 경우를 가정한다. 그러므로 안전하다고 판정되면 프로세스들이 어떤 순서로 요청하더라도 교착 없이 끝낼 수 있다.</p>
+    <p>한편 요청이 올 때마다 이 검사를 하므로, 프로세스 n개와 자원 m종류이면 검사 한 번에 대략 n²m번의 비교가 든다. 따라서 프로세스가 많은 일반 운영체제에서는 부담이 크다.</p>
+    <p>그리고 실제 시스템에서는 프로세스가 미리 최대 요구량을 알리기 어렵다. 그래서 이 알고리즘은 자원과 작업이 미리 정해진 임베디드 시스템이나 데이터베이스의 잠금 관리처럼 특수한 곳에서 생각을 빌려 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "불안전 상태 = 교착 상태": 불안전하면 교착이 생길 수 있을 뿐입니다. (2) "은행원 알고리즘은 실무에서 흔하다": 최대 요구를 미리 알아야 해 일반 OS에서는 드뭅니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>불안전 상태가 곧 교착 상태라고 여기기 쉽다. 불안전하면 교착이 생길 수 있을 뿐이다. 또 은행원 알고리즘이 실무에서 흔하다고 생각하기 쉬운데, 최대 요구를 미리 알아야 해 일반 OS에서는 드물다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Need = Max − Allocation.</li>
-        <li>Work로 채울 수 있는 프로세스를 반복 선택.</li>
-        <li>요청 후에도 안전할 때만 승인.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>필요량은 Need = Max − Allocation이다. Work로 채울 수 있는 프로세스를 반복해 골라 끝내 본다. 요청 뒤에도 안전할 때만 승인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>P1의 Need는?
-          <details><summary>답</summary><p>(1, 2, 2).</p></details>
+          <details><summary>답</summary><p>(1, 2, 2)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>처음 Work (3, 3, 2)로 바로 끝낼 수 있는 프로세스는?
-          <details><summary>답</summary><p>P1, P3.</p></details>
+          <details><summary>답</summary><p>P1, P3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>교착 상태 예방과 회피의 차이는?
-          <details><summary>답</summary><p>예방은 네 조건 중 하나를 막고, 회피는 상태를 보며 위험한 요청을 미룹니다.</p></details>
+          <details><summary>답</summary><p>예방은 네 조건 중 하나를 막고, 회피는 상태를 보며 위험한 요청을 미룬다.</p></details>
         </li>
       </ol>
     </div>

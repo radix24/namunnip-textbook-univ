@@ -8,57 +8,54 @@
 <article class="card q-card" id="text-e31-sched" data-kind="본문" data-std="전전31-02-01">
   <header class="card-head"><span class="no"></span><h2>스케줄링 알고리즘과 평균 대기 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>FCFS, SJF, 라운드 로빈(RR)의 동작을 Gantt 도표로 그린다.</li>
-        <li>각 알고리즘의 평균 대기 시간을 계산한다.</li>
-        <li>응답 시간과 처리율의 절충, 시간 할당량의 선택을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>프로세스 개념(이 절에서 정리).</li>
-      </ul>
-    </div>
+    <p class="q-ask">CPU는 하나인데 실행하려는 프로그램은 여럿이다. 운영체제는 누구에게 먼저 CPU를 줄지 정해야 한다. 오래 걸리는 작업이 먼저 오면 짧은 작업들이 줄줄이 기다리게 된다. 순서를 정하는 방법에는 어떤 것이 있을까? 그리고 방법에 따라 평균 대기 시간은 얼마나 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 스케줄링과 평균 대기 시간(개형). P1(24), P2(3), P3(3)이 시각 0에 도착하면 FCFS는 평균 대기 17, SJF는 P2, P3, P1 순으로 3, RR(q = 4)은 5.67이다">
+        <g class="s"><text x="20" y="54">FCFS</text><text x="20" y="104">SJF</text><text x="20" y="154">RR</text></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="80" y="40" width="240" height="22"/><rect x="320" y="40" width="30" height="22"/><rect x="350" y="40" width="30" height="22"/></g>
+        <g class="b" fill="none" stroke-width="2"><rect x="80" y="90" width="30" height="22"/><rect x="110" y="90" width="30" height="22"/><rect x="140" y="90" width="240" height="22"/></g>
+        <g class="d" fill="none" stroke-width="2"><rect x="80" y="140" width="40" height="22"/><rect x="120" y="140" width="30" height="22"/><rect x="150" y="140" width="30" height="22"/><rect x="180" y="140" width="200" height="22"/></g>
+        <g class="s" text-anchor="middle"><text x="200" y="56">P1</text><text x="335" y="56">P2</text><text x="365" y="56">P3</text><text x="95" y="106">P2</text><text x="125" y="106">P3</text><text x="260" y="106">P1</text><text x="100" y="156">P1</text><text x="135" y="156">P2</text><text x="165" y="156">P3</text><text x="280" y="156">P1</text></g>
+        <g class="s"><text x="400" y="56" class="ta">평균 17</text><text x="400" y="106" class="tb">평균 3</text><text x="400" y="156" class="td">평균 5.67</text></g>
+      </svg>
+      <figcaption>그림 1. 긴 작업이 먼저 실행되면 짧은 작업들이 그만큼 기다리고, 짧은 작업을 먼저 하면 평균 대기가 가장 짧다(예제 2.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로세스 개념(이 절에서 정리)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>세 알고리즘</h3>
-    <p><b>FCFS</b>: 온 순서대로. <b>SJF</b>: 실행 시간이 가장 짧은 것부터(평균 대기 최소). <b>RR</b>: 시간 할당량 q씩 돌아가며.</p>
+    <p>FCFS는 온 순서대로 실행한다. 그리고 SJF는 실행 시간이 가장 짧은 것부터 실행하며, 평균 대기 시간이 최소이다. 한편 RR은 시간 할당량 q씩 돌아가며 실행한다. 처음 질문의 첫째 답이 이 세 가지이다.</p>
+    <p>즉 프로세스는 실행 중인 프로그램이며, 운영체제는 실행할 준비가 된 프로세스들을 대기열에 두고 그 가운데 하나를 골라 CPU를 준다. 그래서 이 고르는 규칙이 스케줄링 알고리즘이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
       <p>P1(24), P2(3), P3(3)가 시각 0에 P1, P2, P3 순으로 도착했다. FCFS, SJF, RR(q = 4)의 평균 대기 시간은?</p>
     </div>
-    <p><i>풀이.</i> FCFS: 대기 0, 24, 27 → 17. SJF: P2, P3, P1 → 0, 3, 6 → 3. RR: P1 0–4, P2 4–7, P3 7–10, P1 10–30. 대기 P1 = 10 − 4 = 6, P2 = 4, P3 = 7 → 5.67. 긴 작업 하나가 앞에 서면 짧은 작업들이 오래 기다리는 호위 효과가 FCFS의 약점입니다.</p>
-    <p>SJF는 실행 시간을 미리 알아야 해 실제로는 과거 실행 시간으로 추정합니다. RR은 q가 너무 크면 FCFS가 되고, 너무 작으면 문맥 교환 비용이 커집니다.</p>
+    <p><i>풀이.</i> FCFS는 대기가 0, 24, 27이므로 평균 17이다. 그리고 SJF는 P2, P3, P1 순으로 0, 3, 6이므로 평균 3이다. 한편 RR은 P1 0–4, P2 4–7, P3 7–10, P1 10–30이므로, 대기가 P1 = 10 − 4 = 6, P2 = 4, P3 = 7로 평균 5.67이다(그림 1). 처음 질문의 둘째 답이 이 값들이다.</p>
+    <p>따라서 긴 작업 하나가 앞에 서면 짧은 작업들이 오래 기다리는 호위 효과가 FCFS의 약점이다.</p>
+    <p>그런데 SJF는 실행 시간을 미리 알아야 하므로, 실제로는 과거 실행 시간으로 추정한다. 그리고 RR은 q가 너무 크면 FCFS가 되고, 너무 작으면 문맥 교환 비용이 커진다(2.3절).</p>
+    <p>한편 실제 운영체제는 여러 대기열에 우선순위를 두고, 대화형 작업처럼 짧게 자주 쓰는 프로세스를 앞에 둔다. 즉 짧은 작업을 먼저 처리한다는 SJF의 생각을 추정과 우선순위로 흉내 낸다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "RR이 언제나 평균 대기가 가장 작다": 응답성은 좋지만 평균 대기는 SJF가 최소입니다. (2) "SJF는 공정하다": 긴 작업이 계속 밀리는 기아가 생길 수 있어 노화(aging)를 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>RR이 언제나 평균 대기가 가장 작다고 여기기 쉽다. 응답성은 좋지만 평균 대기는 SJF가 최소이다. 또 SJF는 공정하다고 생각하기 쉬운데, 긴 작업이 계속 밀리는 기아가 생길 수 있어 노화(aging)를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>FCFS, SJF(평균 대기 최소), RR(응답성).</li>
-        <li>예: 17, 3, 5.67.</li>
-        <li>q 선택: 크면 FCFS, 작으면 문맥 교환 비용.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>FCFS는 도착 순, SJF는 평균 대기 최소, RR은 응답성이 좋다. 예제에서 평균 대기는 17, 3, 5.67이다. q는 크면 FCFS가 되고, 작으면 문맥 교환 비용이 커진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제에서 P2, P3, P1 순 FCFS의 평균 대기는?
-          <details><summary>답</summary><p>3(SJF와 같음).</p></details>
+          <details><summary>답</summary><p>3(SJF와 같음)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>RR q = 2면 P2의 대기 시간은?
-          <details><summary>답</summary><p>P1 0–2, P2 2–4, P3 4–6, P1 6–8, P2 8–9 … P2 대기 = 2 + 4 = 6.</p></details>
+          <details><summary>답</summary><p>P1 0–2, P2 2–4, P3 4–6, P1 6–8, P2 8–9 … P2 대기 = 2 + 4 = 6이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>대화형 시스템에서 q를 정하는 기준은?
-          <details><summary>답</summary><p>대부분의 짧은 상호 작용이 한 번에 끝날 만큼 크고, 문맥 교환 비용보다 충분히 크게.</p></details>
+          <details><summary>답</summary><p>대부분의 짧은 상호 작용이 한 번에 끝날 만큼 크고, 문맥 교환 비용보다 충분히 크게 정한다.</p></details>
         </li>
       </ol>
     </div>

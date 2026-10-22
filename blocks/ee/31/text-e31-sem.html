@@ -8,21 +8,23 @@
 <article class="card q-card" id="text-e31-sem" data-kind="본문" data-std="전전31-03-01">
   <header class="card-head"><span class="no"></span><h2>세마포어로 푸는 생산자-소비자 문제</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>경쟁 조건과 임계 구역을 정의한다.</li>
-        <li>empty, full 계수 세마포어와 상호 배제 락으로 유한 버퍼 문제를 푼다.</li>
-        <li>세마포어 순서를 바꾸면 교착이 생기는 경우를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>프로세스와 스레드 (<a href="02-01.html">2.1절</a>), Python 스레드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">한 스레드는 데이터를 만들어 버퍼에 넣고, 다른 스레드는 그것을 꺼내 처리한다. 버퍼가 가득 차면 만드는 쪽이, 비면 꺼내는 쪽이 기다려야 한다. 그리고 둘이 동시에 버퍼를 건드리면 내용이 꼬인다. 이 세 가지를 어떻게 한꺼번에 맞출까? 그리고 대기와 잠금의 순서를 잘못 정하면 어떤 일이 생길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.1.1 생산자-소비자(개형). 크기 5 버퍼에서 empty 세마포어(처음 5)는 빈 칸 수를, full(처음 0)은 찬 칸 수를 세고, 락은 버퍼 조작을 하나씩만 하게 한다. 100개를 주고받으면 합 4950이 순서대로 전달되며, 생산자가 락을 먼저 잡고 empty를 기다리면 교착이 생긴다">
+        <rect x="40" y="70" width="90" height="50" class="b" fill="none" stroke-width="2"/>
+        <rect x="420" y="70" width="90" height="50" class="b" fill="none" stroke-width="2"/>
+        <g class="a" fill="none" stroke-width="2"><rect x="180" y="75" width="40" height="40"/><rect x="220" y="75" width="40" height="40"/><rect x="260" y="75" width="40" height="40"/><rect x="300" y="75" width="40" height="40"/><rect x="340" y="75" width="40" height="40"/></g>
+        <path d="M130 95 H178 M382 95 H418" class="k" stroke-width="2"/>
+        <g class="s" text-anchor="middle"><text x="85" y="100">생산자</text><text x="465" y="100">소비자</text></g>
+        <g class="s"><text x="180" y="60" class="ta">버퍼 5칸 + 락</text><text x="40" y="160">empty(5) → 락 → 넣기 → full↑</text><text x="40" y="186" class="td">결과 100개, 합 4950, 순서 유지</text></g>
+      </svg>
+      <figcaption>그림 1. 계수 세마포어 두 개가 빈 칸과 찬 칸을 세어 기다릴 때를 정하고, 락이 버퍼를 한 번에 한 스레드만 고치게 한다(예제 3.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>프로세스와 스레드(<a href="02-01.html">2.1절</a>), Python 스레드를 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>세 개의 동기화 객체</h3>
-    <p>크기 N 버퍼에서 생산자는 빈 칸이 있어야, 소비자는 찬 칸이 있어야 진행합니다. empty(처음 N), full(처음 0) 세마포어로 개수를, 락으로 버퍼 조작의 상호 배제를 맡깁니다. 아래는 크기 5 버퍼로 100개를 주고받는 Python 코드입니다.</p>
+    <p>크기 N 버퍼에서 생산자는 빈 칸이 있어야, 소비자는 찬 칸이 있어야 진행한다. 그래서 empty(처음 N)와 full(처음 0) 세마포어로 개수를 세고, 락으로 버퍼 조작의 상호 배제를 맡긴다(그림 1). 처음 질문의 첫째 답이 이 세 객체이다.</p>
+    <p>즉 세마포어의 acquire는 값이 0이면 기다렸다가 1을 빼고, release는 1을 더하며 기다리는 스레드를 깨운다. 아래는 크기 5 버퍼로 100개를 주고받는 Python 코드이다.</p>
     <pre><code>import threading
 N, SIZE = 100, 5
 buf, lock = [], threading.Lock()
@@ -42,43 +44,39 @@ def consumer():
 t1, t2 = threading.Thread(target=producer), threading.Thread(target=consumer)
 t1.start(); t2.start(); t1.join(); t2.join()
 print("소비한 개수:", len(got), "합:", sum(got), "순서 유지:", got == list(range(N)))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>소비한 개수: 100 합: 4950 순서 유지: True</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
       <p>생산자가 empty.acquire() 전에 락을 먼저 잡으면 무슨 일이 생기는가?</p>
     </div>
-    <p><i>풀이.</i> 버퍼가 가득 찬 상태에서 생산자가 락을 쥔 채 empty를 기다리면, 소비자는 락을 얻지 못해 꺼낼 수 없어 서로 영원히 기다립니다(교착). 개수 세마포어를 먼저, 락을 나중에 잡아야 합니다.</p>
+    <p><i>풀이.</i> 버퍼가 가득 찬 상태에서 생산자가 락을 쥔 채 empty를 기다리면, 소비자는 락을 얻지 못해 꺼낼 수 없다. 그러면 서로 영원히 기다린다(교착). 처음 질문의 둘째 답이 이것이다. 따라서 개수 세마포어를 먼저, 락을 나중에 잡아야 한다.</p>
+    <p>즉 기다릴 수 있는 일을 하는 동안에는 다른 스레드가 필요로 하는 락을 쥐고 있으면 안 된다. 그래서 락은 버퍼를 고치는 아주 짧은 구간에만 잡는다.</p>
+    <p>한편 같은 문제는 조건 변수로도 풀 수 있다. 예를 들어 Python의 queue.Queue는 내부에서 락과 조건 변수로 이 구조를 구현해 두어, 응용에서는 put과 get만 부르면 된다.</p>
+    <p>그리고 생산자-소비자 구조는 운영체제 곳곳에 있다. 따라서 키보드 입력 버퍼, 네트워크 수신 버퍼, 프린터 대기열이 모두 같은 원리로 동작한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "락 하나면 충분하다": 락은 동시 접근만 막고, 버퍼가 비었을 때 기다리게 하는 것은 계수 세마포어(또는 조건 변수)가 합니다. (2) "Python에는 GIL이 있어 동기화가 필요 없다": 리스트 조작 여러 단계 사이에 스레드가 바뀔 수 있어 필요합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>락 하나면 충분하다고 여기기 쉽다. 락은 동시 접근만 막고, 버퍼가 비었을 때 기다리게 하는 것은 계수 세마포어(또는 조건 변수)가 한다. 또 Python에는 GIL이 있어 동기화가 필요 없다고 생각하기 쉬운데, 리스트 조작 여러 단계 사이에 스레드가 바뀔 수 있어 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>empty(N), full(0), 락.</li>
-        <li>예: 100개, 합 4950, 순서 유지(실제 실행).</li>
-        <li>세마포어 → 락 순서. 반대면 교착.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>생산자-소비자는 empty(N), full(0), 락으로 푼다. 예제 프로그램은 100개, 합 4950을 순서대로 전달한다(실제 실행). 세마포어를 먼저, 락을 나중에 잡으며, 반대면 교착이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>버퍼 크기 10이면 empty의 처음 값은?
-          <details><summary>답</summary><p>10.</p></details>
+          <details><summary>답</summary><p>10이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>소비자가 full.acquire()를 빼먹으면?
-          <details><summary>답</summary><p>빈 버퍼에서 꺼내려다 오류가 납니다.</p></details>
+          <details><summary>답</summary><p>빈 버퍼에서 꺼내려다 오류가 난다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>생산자 2, 소비자 2이면 코드에서 바꿀 것은?
-          <details><summary>답</summary><p>구조는 같습니다. 세마포어와 락이 여럿에게도 맞게 동작합니다.</p></details>
+          <details><summary>답</summary><p>구조는 같다. 세마포어와 락이 여럿에게도 맞게 동작한다.</p></details>
         </li>
       </ol>
     </div>

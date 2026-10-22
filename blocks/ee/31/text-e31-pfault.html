@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e31-pfault" data-kind="본문" data-std="전전31-04-05">
   <header class="card-head"><span class="no"></span><h2>페이지 부재 비용과 스래싱</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>페이지 부재율로 유효 접근 시간을 계산한다.</li>
-        <li>성능 저하를 제한하는 부재율 상한을 구한다.</li>
-        <li>작업 집합과 스래싱의 관계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>페이지 교체 (<a href="04-01.html">4.1절</a>), TLB (<a href="04-03.html">4.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">메모리가 모자란 컴퓨터에서 프로그램을 여러 개 띄우면, 어느 순간 디스크 불빛만 깜박이고 아무것도 움직이지 않는다. 필요한 페이지를 디스크에서 읽어 오는 일이 끝없이 되풀이되기 때문이다. 페이지 부재는 성능을 얼마나 떨어뜨릴까? 그리고 이런 상태는 어떻게 벗어날까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.5.1 페이지 부재 비용과 스래싱(개형). 메모리 접근 100 ns, 디스크 부재 처리 8 ms에서 성능 저하를 10% 이내로 하려면 부재율이 1.25 × 10⁻⁶ 미만, 곧 약 80만 번 접근에 한 번 이하여야 하고, 다중 프로그래밍 수가 너무 늘면 CPU 이용률이 오히려 떨어지는 스래싱이 생긴다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 160 C160 90 240 50 290 50 C330 50 360 100 400 160" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M290 30 V170" class="k dsh"/>
+        <g class="s"><text x="300" y="44" class="td">스래싱 시작</text><text x="86" y="26">CPU 이용률</text><text x="380" y="186">다중 프로그래밍 수</text></g>
+        <g class="s"><text x="330" y="100">EAT = (1 − p)t_m + p·t_f</text><text x="330" y="126" class="ta">10% 이내: p &lt; 1.25×10⁻⁶</text></g>
+      </svg>
+      <figcaption>그림 1. 프로세스를 더 넣으면 처음에는 CPU 이용률이 오르지만, 작업 집합의 합이 메모리를 넘는 순간부터 부재가 폭증해 이용률이 급격히 떨어진다(예제 4.5.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>페이지 교체(<a href="04-01.html">4.1절</a>), TLB(<a href="04-03.html">4.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.5.1</span>디스크는 백만 배 느리다</h3>
-    <p>부재율 p, 메모리 접근 t_m, 부재 처리 시간 t_f이면 EAT = (1 − p)t_m + p·t_f입니다. 디스크 부재 처리는 수 ms라 p가 아주 작아야 합니다. 프로세스들의 작업 집합 합이 메모리보다 크면 계속 부재가 나 CPU가 놀고(스래싱), 프로세스 수를 줄여야 합니다.</p>
+    <p>부재율이 p, 메모리 접근이 t_m, 부재 처리 시간이 t_f이면, 평균 접근 시간은 EAT = (1 − p)t_m + p·t_f이다. 그런데 디스크 부재 처리는 수 ms이므로, p가 아주 작아야 한다. 처음 질문의 첫째 답이 이 식이다.</p>
+    <p>그리고 프로세스들의 작업 집합 합이 메모리보다 크면, 계속 부재가 나 CPU가 논다(스래싱, 그림 1). 그래서 프로세스 수를 줄여야 한다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.5.1</span>
-      <p>t_m = 100 ns, t_f = 8 ms. 성능 저하를 10% 이내로 하려면 부재율이 얼마 이하여야 하나?</p>
+      <p>t_m = 100 ns, t_f = 8 ms. 성능 저하를 10% 이내로 하려면 부재율이 얼마 이하여야 하는가?</p>
     </div>
-    <p><i>풀이.</i> 110 > 100 + p(8×10⁶ − 100) → p &lt; 1.25×10⁻⁶(약 80만 번 접근에 한 번). SSD(약 0.1 ms)면 10⁻⁴까지 허용됩니다. 스래싱 때는 다중 프로그래밍 수를 늘릴수록 CPU 이용률이 오히려 떨어집니다.</p>
+    <p><i>풀이.</i> 110 > 100 + p(8×10⁶ − 100)이므로 p &lt; 1.25×10⁻⁶, 곧 약 80만 번 접근에 한 번이다. 한편 SSD(약 0.1 ms)이면 10⁻⁴까지 허용된다. 그리고 스래싱 때는 다중 프로그래밍 수를 늘릴수록 CPU 이용률이 오히려 떨어진다.</p>
+    <p>즉 디스크와 메모리의 속도 차가 너무 커서, 아주 드문 부재도 전체 성능을 크게 깎는다. 그러므로 가상 메모리는 대부분의 접근이 이미 메모리에 있다는 지역성에 기대어서만 쓸 만하다.</p>
+    <p>한편 작업 집합은 최근 일정 시간 동안 쓴 페이지들의 모음이다. 그래서 운영체제는 프로세스마다 작업 집합이 메모리에 들어가도록 프레임을 나눠 주고, 다 들어가지 않으면 일부 프로세스를 잠시 쉬게 한다.</p>
+    <p>그리고 스마트폰처럼 디스크로 내보내기 어려운 기기는 메모리가 모자라면 오래 쓰지 않은 앱을 아예 종료한다. 따라서 다시 열면 앱이 처음부터 다시 시작된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "메모리가 부족하면 조금 느려질 뿐": 스래싱이 나면 수백 배 느려집니다. (2) "프로세스를 더 넣으면 CPU 이용률이 오른다": 스래싱 영역에서는 떨어집니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>메모리가 부족하면 조금 느려질 뿐이라고 여기기 쉽다. 스래싱이 나면 수백 배 느려진다. 또 프로세스를 더 넣으면 CPU 이용률이 오른다고 생각하기 쉬운데, 스래싱 영역에서는 떨어진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>EAT = (1 − p)t_m + p·t_f.</li>
-        <li>10% 이내: p &lt; 1.25×10⁻⁶(디스크).</li>
-        <li>작업 집합 합 &gt; 메모리 → 스래싱.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평균 접근 시간은 EAT = (1 − p)t_m + p·t_f이다. 디스크에서 10% 이내로 하려면 p &lt; 1.25×10⁻⁶이다. 작업 집합의 합이 메모리를 넘으면 스래싱이 생긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>p = 10⁻⁵, t_f = 8 ms의 EAT는?
-          <details><summary>답</summary><p>약 180 ns.</p></details>
+          <details><summary>답</summary><p>약 180 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>t_f = 0.1 ms(SSD)의 10% 한계 p는?
-          <details><summary>답</summary><p>약 10⁻⁴.</p></details>
+          <details><summary>답</summary><p>약 10⁻⁴이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>스래싱을 막는 OS 방법은?
-          <details><summary>답</summary><p>부재율 감시로 프로세스를 일시 내보내 다중 프로그래밍 수를 줄입니다.</p></details>
+          <details><summary>답</summary><p>부재율 감시로 프로세스를 일시 내보내 다중 프로그래밍 수를 줄인다.</p></details>
         </li>
       </ol>
     </div>

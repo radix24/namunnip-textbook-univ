@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e31-tlb" data-kind="본문" data-std="전전31-04-03">
   <header class="card-head"><span class="no"></span><h2>TLB와 유효 메모리 접근 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>페이지 테이블을 거치면 메모리 접근이 두 번 필요함을 안다.</li>
-        <li>TLB 적중률로 유효 접근 시간(EAT)을 계산한다.</li>
-        <li>TLB 도달 범위와 큰 페이지의 효과를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>페이징 (<a href="04-01.html">4.1절</a>), 다단계 페이지 테이블 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">가상 메모리를 쓰면 프로그램의 메모리 접근마다 먼저 페이지 테이블을 읽어 물리 주소를 구해야 한다. 그러면 모든 메모리 접근이 적어도 두 배로 느려질 것 같다. 그런데 실제 컴퓨터는 거의 느려지지 않는다. 그 비밀은 무엇일까? 그리고 평균 접근 시간은 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 TLB와 유효 접근 시간(개형). 메모리 접근 100 ns, TLB 1 ns, 적중률 98%이면 유효 접근 시간은 0.98 × 101 + 0.02 × 201 = 103 ns로, TLB가 없을 때 200 ns의 절반에 가깝다. TLB 64항목, 4 KB 페이지의 도달 범위는 256 KB이다">
+        <rect x="40" y="70" width="90" height="50" class="k" fill="none" stroke-width="2"/>
+        <rect x="180" y="70" width="90" height="50" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="320" y="30" width="90" height="40" class="b" fill="none" stroke-width="2"/>
+        <rect x="320" y="120" width="90" height="40" class="k" fill="none" stroke-width="2"/>
+        <path d="M130 95 H178 M270 85 L318 50 M270 105 L318 140" class="k" stroke-width="1.5"/>
+        <g class="s" text-anchor="middle"><text x="85" y="99">가상 주소</text><text x="225" y="99" class="ta">TLB 1 ns</text><text x="365" y="54" class="tb">페이지 테이블</text><text x="365" y="144">메모리 100 ns</text></g>
+        <g class="s"><text x="430" y="80">적중 98%</text><text x="430" y="106" class="td">EAT 103 ns</text><text x="430" y="132">TLB 없음 200 ns</text></g>
+      </svg>
+      <figcaption>그림 1. 최근 주소 변환을 담은 TLB가 적중하면 페이지 테이블을 읽지 않고 바로 물리 주소를 얻으므로, 평균 접근 시간이 메모리 한 번에 가까워진다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>페이징(<a href="04-01.html">4.1절</a>), 다단계 페이지 테이블(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>주소 변환 캐시</h3>
-    <p>가상 주소를 바꾸려면 페이지 테이블을 읽어야 하므로 접근이 두 배가 됩니다. 최근 변환을 담는 TLB가 적중하면 바로 물리 주소를 얻습니다. \(\mathrm{EAT} = h(t_{TLB} + t_m) + (1 - h)(t_{TLB} + 2t_m)\)(1단계 테이블).</p>
+    <p>가상 주소를 바꾸려면 페이지 테이블을 읽어야 하므로 접근이 두 배가 된다. 그런데 최근 변환을 담는 TLB가 적중하면 바로 물리 주소를 얻는다(그림 1). 처음 질문의 첫째 답이 이 TLB이다.</p>
+    <p>그러면 1단계 테이블에서 유효 접근 시간은 \(\mathrm{EAT} = h(t_{TLB} + t_m) + (1 - h)(t_{TLB} + 2t_m)\)이다. 처음 질문의 둘째 답이 이 식이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>t_m = 100 ns, t_TLB = 1 ns, 적중률 98%의 EAT는? TLB가 없으면?</p>
     </div>
-    <p><i>풀이.</i> 0.98 × 101 + 0.02 × 201 = 103 ns, TLB 없이 200 ns. 4단계 페이지 테이블이면 실패 때 접근이 5번이라 적중률이 더 중요합니다. 항목 64개, 4 KB 페이지의 TLB 도달 범위는 256 KB로, 큰 자료는 2 MB 큰 페이지를 쓰면 실패가 줄어듭니다.</p>
+    <p><i>풀이.</i> 0.98 × 101 + 0.02 × 201 = 103 ns이고, TLB가 없으면 200 ns이다. 그리고 4단계 페이지 테이블이면 실패 때 접근이 5번이므로, 적중률이 더 중요하다. 한편 항목 64개, 4 KB 페이지의 TLB 도달 범위는 256 KB이므로, 큰 자료는 2 MB 큰 페이지를 쓰면 실패가 준다.</p>
+    <p>즉 TLB가 잘 듣는 것은 프로그램이 짧은 시간 동안 몇몇 페이지만 거듭 쓰는 지역성 덕분이다. 그래서 같은 계산이라도 자료를 띄엄띄엄 넓게 오가는 프로그램은 TLB 실패가 잦아 느려진다.</p>
+    <p>한편 TLB 실패를 처리하는 방식도 두 가지이다. 즉 하드웨어가 페이지 테이블을 직접 걷는 방식과, 운영체제가 예외로 받아 소프트웨어로 채우는 방식이 있다.</p>
+    <p>그리고 TLB는 보통 수십에서 수천 항목으로 아주 작고 빠르다. 따라서 큰 서버의 데이터베이스나 과학 계산은 큰 페이지를 써서 같은 항목 수로 더 넓은 메모리를 덮는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "페이징은 공짜": TLB 실패마다 테이블 접근이 더해집니다. (2) "TLB는 데이터 캐시": 주소 변환만 담습니다.</div>
+    <p>예를 들어 TLB 적중률이 99%에서 95%로만 떨어져도, 4단계 테이블에서는 평균 접근 시간이 눈에 띄게 늘어난다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>EAT = h(t_TLB + t_m) + (1 − h)(t_TLB + 2t_m).</li>
-        <li>예: 98% → 103 ns.</li>
-        <li>도달 범위 = 항목 × 페이지 크기.</li>
-      </ol>
-    </div>
+    <p>그래서 운영체제는 프로세스를 바꿀 때 TLB를 어떻게 다룰지도 정해야 한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>페이징은 공짜라고 여기기 쉽다. TLB 실패마다 테이블 접근이 더해진다. 또 TLB는 데이터 캐시라고 생각하기 쉬운데, 주소 변환만 담는다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>유효 접근 시간은 EAT = h(t_TLB + t_m) + (1 − h)(t_TLB + 2t_m)이다. 예제의 98%는 103 ns이다. TLB 도달 범위는 항목 수 × 페이지 크기이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>적중률 90%의 EAT(예제 값)는?
-          <details><summary>답</summary><p>111 ns.</p></details>
+          <details><summary>답</summary><p>111 ns이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>TLB 128항목, 2 MB 페이지의 도달 범위는?
-          <details><summary>답</summary><p>256 MB.</p></details>
+          <details><summary>답</summary><p>256 MB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>문맥 교환 때 TLB를 비우지 않으려면?
-          <details><summary>답</summary><p>ASID(주소 공간 번호) 태그를 씁니다.</p></details>
+          <details><summary>답</summary><p>ASID(주소 공간 번호) 태그를 쓴다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,21 +8,23 @@
 <article class="card q-card" id="text-e31-disksched" data-kind="본문" data-std="전전31-05-03">
   <header class="card-head"><span class="no"></span><h2>디스크 스케줄링</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>FCFS, SSTF, SCAN, C-SCAN의 헤드 이동 거리를 계산한다.</li>
-        <li>기아 문제와 공평성을 비교한다.</li>
-        <li>SSD에서 디스크 스케줄링의 의미가 바뀌는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>파일 시스템 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">하드 디스크는 회전하는 원판 위를 헤드가 오가며 읽고 쓴다. 여러 프로그램이 디스크 곳곳의 블록을 동시에 요청하면, 들어온 순서대로 처리할 때 헤드가 이쪽 끝과 저쪽 끝을 바쁘게 오간다. 요청 순서를 어떻게 바꾸면 헤드를 덜 움직일까? 그리고 그 대가로 생기는 문제는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 디스크 스케줄링(개형). 실린더 0~199, 헤드 53에서 요청 98, 183, 37, 122, 14, 124, 65, 67을 처리할 때 FCFS는 640실린더, 가까운 것부터 처리하는 SSTF는 236실린더, 0 쪽으로 먼저 쓸고 돌아오는 SCAN은 236실린더를 움직인다">
+        <line x1="60" y1="40" x2="520" y2="40" class="ax"/>
+        <g class="s" text-anchor="middle"><text x="60" y="32">0</text><text x="290" y="32">100</text><text x="520" y="32">199</text></g>
+        <path d="M182 60 L210 80 L215 100 L145 120 L92 140 L285 160 L340 175 L345 185 L480 195" class="a" fill="none" stroke-width="2"/>
+        <g class="fd"><circle cx="182" cy="60" r="4"/></g>
+        <g class="s"><text x="186" y="56">53</text><text x="380" y="80" class="ta">SSTF 236</text><text x="380" y="104">SCAN 236</text><text x="380" y="128" class="td">FCFS 640</text></g>
+      </svg>
+      <figcaption>그림 1. 가까운 요청부터 처리하거나 한쪽 방향으로 쓸면서 처리하면, 도착 순서대로 처리할 때보다 헤드 이동이 크게 준다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파일 시스템(<a href="05-01.html">5.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>팔을 덜 움직이기</h3>
-    <p>하드 디스크는 헤드 이동(탐색)이 가장 오래 걸려 요청 순서를 바꿔 이동 거리를 줄입니다. SSTF는 가까운 것부터 해 짧지만 먼 요청이 굶을 수 있고, SCAN은 엘리베이터처럼 한쪽 끝까지 갔다가 돌아옵니다.</p><pre><code>q = [98, 183, 37, 122, 14, 124, 65, 67]
+    <p>하드 디스크는 헤드 이동(탐색)이 가장 오래 걸린다. 그래서 요청 순서를 바꿔 이동 거리를 줄인다. 처음 질문의 첫째 답이 아래 두 방법이다.</p>
+    <p>SSTF는 지금 위치에서 가장 가까운 요청부터 처리해 이동이 짧다. 그런데 먼 요청이 계속 밀려 굶을 수 있다. 처음 질문의 둘째 답이 이 기아이다. 한편 SCAN은 엘리베이터처럼 한쪽 끝까지 가며 처리하고 돌아오면서 처리한다. 아래 코드는 세 방식의 이동 거리를 계산한다.</p>
+    <pre><code>q = [98, 183, 37, 122, 14, 124, 65, 67]
 start = 53
 def total(seq, s=start):
     t = 0
@@ -37,7 +39,7 @@ scan = sorted([x for x in q if x &lt; start], reverse=True) + [0] + sorted(x for
 print("FCFS 이동:", total(q))
 print("SSTF 순서:", sstf, "이동:", total(sstf))
 print("SCAN(0 쪽 먼저) 순서:", scan, "이동:", total(scan))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>FCFS 이동: 640
 SSTF 순서: [65, 67, 37, 14, 98, 122, 124, 183] 이동: 236
 SCAN(0 쪽 먼저) 순서: [37, 14, 0, 65, 67, 98, 122, 124, 183] 이동: 236</code></pre>
@@ -45,37 +47,34 @@ SCAN(0 쪽 먼저) 순서: [37, 14, 0, 65, 67, 98, 122, 124, 183] 이동: 236</c
       <span class="lb">예제 5.3.1</span>
       <p>실린더 0~199, 헤드 53, 요청 98, 183, 37, 122, 14, 124, 65, 67의 세 방식 이동 거리는?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 FCFS 640, SSTF 236, SCAN 236실린더입니다. SSTF는 이 예에서 짧지만 가운데 요청이 계속 오면 끝 쪽 요청이 오래 기다릴 수 있습니다. SSD는 탐색이 없어 요청 합치기와 공평성 위주 스케줄러를 씁니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 FCFS 640, SSTF 236, SCAN 236실린더이다(그림 1). 그런데 SSTF는 이 예에서 짧지만, 가운데 요청이 계속 오면 끝 쪽 요청이 오래 기다릴 수 있다. 한편 SSD는 탐색이 없으므로, 요청 합치기와 공평성 위주의 스케줄러를 쓴다.</p>
+    <p>즉 디스크 스케줄링은 처리량과 공평성 사이의 맞바꿈이다. 그래서 실제 운영체제는 SCAN 계열을 바탕으로 하되, 요청마다 마감 시간을 두어 너무 오래 기다린 요청을 먼저 처리하기도 한다.</p>
+    <p>그리고 디스크 안의 제어기도 자체 큐로 요청 순서를 다시 바꾼다. 따라서 운영체제와 디스크 제어기가 함께 순서를 다듬어, 회전 지연까지 줄인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "SSTF가 늘 최적": 최소 이동을 보장하지도 공평하지도 않습니다. (2) "SSD에도 엘리베이터 알고리즘이 필수": 탐색 시간이 없어 의미가 작습니다.</div>
+    <p>예를 들어 SSTF와 SCAN이 이 예에서 같은 236실린더를 움직였지만, 요청이 계속 들어오는 실제 상황에서는 SCAN이 끝 쪽 요청도 한 번의 왕복 안에 처리한다는 점에서 더 예측 가능하다. 그러므로 대기 시간의 최댓값이 중요한 시스템은 SCAN 계열을 고른다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>FCFS 640, SSTF 236, SCAN 236(예제).</li>
-        <li>SSTF: 기아 가능.</li>
-        <li>SSD: 탐색 없음.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>SSTF가 늘 최적이라고 여기기 쉽다. 최소 이동을 보장하지도 공평하지도 않다. 또 SSD에도 엘리베이터 알고리즘이 필수라고 생각하기 쉬운데, 탐색 시간이 없어 의미가 작다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>예제의 이동 거리는 FCFS 640, SSTF 236, SCAN 236이다. SSTF는 기아가 생길 수 있다. SSD는 탐색이 없어 다른 기준의 스케줄러를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>헤드 50에서 요청 10, 90의 FCFS 이동은?
-          <details><summary>답</summary><p>120.</p></details>
+          <details><summary>답</summary><p>120이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 경우 SSTF 이동은?
-          <details><summary>답</summary><p>120(10까지 40 후 90까지 80).</p></details>
+          <details><summary>답</summary><p>120(10까지 40 후 90까지 80)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>C-SCAN이 SCAN보다 공평한 이유는?
-          <details><summary>답</summary><p>한 방향으로만 서비스해 양 끝의 대기 시간이 고르게 됩니다.</p></details>
+          <details><summary>답</summary><p>한 방향으로만 서비스해 양 끝의 대기 시간이 고르게 된다.</p></details>
         </li>
       </ol>
     </div>

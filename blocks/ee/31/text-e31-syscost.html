@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e31-syscost" data-kind="본문" data-std="전전31-01-02">
   <header class="card-head"><span class="no"></span><h2>시스템 호출 비용과 버퍼링</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>사용자 모드와 커널 모드 전환에 드는 비용을 안다.</li>
-        <li>작은 입출력을 버퍼로 모아 시스템 호출 수를 줄이는 효과를 계산한다.</li>
-        <li>표준 입출력 라이브러리가 버퍼를 두는 이유를 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>시스템 호출 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">1 MB 파일을 만드는 프로그램 두 개가 있다. 하나는 1바이트씩 쓰고, 다른 하나는 4 KB씩 모아 쓴다. 쓰는 데이터는 같은데도 첫 프로그램이 훨씬 느리다. 시스템 호출은 일반 함수 호출보다 얼마나 비쌀까? 그리고 버퍼로 모아 쓰는 대신 무엇을 조심해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 버퍼링의 효과(개형). 시스템 호출 한 번에 200 ns이면 1 MB를 1바이트씩 쓸 때 2²⁰번으로 0.21 s, 4 KB 버퍼로 모으면 256번으로 51 μs가 들어 약 4000배 줄어든다">
+        <g class="a" stroke-width="1"><path d="M60 60 V100 M64 60 V100 M68 60 V100 M72 60 V100 M76 60 V100 M80 60 V100 M84 60 V100 M88 60 V100 M92 60 V100 M96 60 V100 M100 60 V100 M104 60 V100 M108 60 V100 M112 60 V100 M116 60 V100 M120 60 V100"/></g>
+        <g class="s"><text x="60" y="50" class="ta">1바이트씩 2²⁰번</text><text x="130" y="86">… 0.21 s</text></g>
+        <g class="b" fill="none" stroke-width="2.5"><rect x="300" y="60" width="40" height="40"/><rect x="350" y="60" width="40" height="40"/><rect x="400" y="60" width="40" height="40"/></g>
+        <g class="s"><text x="300" y="50" class="tb">4 KB씩 256번</text><text x="450" y="86">… 51 μs</text><text x="160" y="160" class="td">호출 수를 줄이면 약 4000배 빠름</text></g>
+      </svg>
+      <figcaption>그림 1. 같은 데이터라도 커널 경계를 넘는 횟수가 비용을 정하므로, 버퍼에 모아 한 번에 넘기면 호출 비용이 크게 준다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>시스템 호출(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>경계를 넘는 값</h3>
-    <p>시스템 호출은 트랩으로 커널 모드에 들어가 레지스터를 저장하고, 검사하고, 돌아오는 과정이라 함수 호출보다 수십~수백 배 비쌉니다. 그래서 C의 <code>fwrite</code>나 <code>printf</code>는 사용자 공간 버퍼에 모았다가 가득 차면 <code>write</code>를 한 번 부릅니다.</p>
+    <p>시스템 호출은 트랩으로 커널 모드에 들어가 레지스터를 저장하고, 검사하고, 돌아오는 과정이다. 그래서 함수 호출보다 수십~수백 배 비싸다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그러므로 C의 <code>fwrite</code>나 <code>printf</code>는 사용자 공간 버퍼에 모았다가, 가득 차면 <code>write</code>를 한 번 부른다(그림 1). 즉 작은 쓰기 여러 번을 큰 쓰기 한 번으로 바꾼다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>시스템 호출 한 번 200 ns(가상), 1 MB를 1바이트씩 write로 쓰면 호출 비용만 얼마인가? 4 KB 버퍼로 모으면?</p>
     </div>
-    <p><i>풀이.</i> 1바이트씩: 2²⁰ × 200 ns = 0.21 s. 4 KB 버퍼: 256번 × 200 ns = 51 μs로 약 4000배 줄어듭니다. 대신 프로그램이 갑자기 끝나면 버퍼에 남은 내용이 사라질 수 있어 <code>fflush</code>가 필요합니다.</p>
+    <p><i>풀이.</i> 1바이트씩이면 2²⁰ × 200 ns = 0.21 s이다. 그리고 4 KB 버퍼로 모으면 256번 × 200 ns = 51 μs이므로, 약 4000배 준다. 그런데 프로그램이 갑자기 끝나면 버퍼에 남은 내용이 사라질 수 있으므로, <code>fflush</code>가 필요하다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>즉 버퍼링은 속도와 즉시성 사이의 맞바꿈이다. 그래서 C 라이브러리는 화면 출력은 줄 단위로, 파일 출력은 블록 단위로 버퍼링하는 식으로 대상에 따라 방식을 달리한다.</p>
+    <p>한편 운영체제 커널도 디스크 쓰기를 메모리에 잠시 모았다가 한꺼번에 내보낸다. 따라서 write가 돌아왔다고 데이터가 디스크에 닿은 것은 아니며, 확실히 저장하려면 fsync 같은 호출이 따로 필요하다.</p>
+    <p>그리고 버퍼 크기는 클수록 호출이 주지만, 메모리를 더 쓰고 첫 데이터가 나가기까지 늦어진다. 그러므로 보통 디스크 블록이나 페이지 크기의 배수로 정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "시스템 호출은 일반 함수와 비용이 같다": 모드 전환과 검사 때문에 훨씬 비쌉니다. (2) "printf는 바로 화면에 쓴다": 버퍼링되어 줄바꿈이나 flush 때 나갈 수 있습니다.</div>
+    <p>예를 들어 로그를 한 줄씩 바로 파일에 쓰는 서버는 초당 수만 번의 시스템 호출을 낼 수 있다. 그러므로 로그 라이브러리는 메모리에 모았다가 주기적으로 한꺼번에 쓰는 방식을 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>모드 전환 비용이 큼.</li>
-        <li>버퍼로 호출 수를 줄임: 1 MB/4 KB = 256번.</li>
-        <li>flush로 버퍼 비우기.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>시스템 호출은 일반 함수와 비용이 같다고 여기기 쉽다. 모드 전환과 검사 때문에 훨씬 비싸다. 또 printf는 바로 화면에 쓴다고 생각하기 쉬운데, 버퍼링되어 줄바꿈이나 flush 때 나갈 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>시스템 호출은 모드 전환 비용이 크다. 버퍼로 호출 수를 줄이며, 예제에서는 1 MB/4 KB = 256번이다. flush로 버퍼를 비운다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>1 MB를 64 KB 버퍼로 쓰면 호출 수는?
-          <details><summary>답</summary><p>16번.</p></details>
+          <details><summary>답</summary><p>16번이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>호출 1 μs, 10만 번이면 비용은?
-          <details><summary>답</summary><p>0.1 s.</p></details>
+          <details><summary>답</summary><p>0.1 s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>버퍼링이 대화형 프로그램에서 문제가 되는 경우는?
-          <details><summary>답</summary><p>프롬프트가 늦게 보이는 경우라 줄 단위 버퍼나 flush를 씁니다.</p></details>
+          <details><summary>답</summary><p>프롬프트가 늦게 보이는 경우라 줄 단위 버퍼나 flush를 쓴다.</p></details>
         </li>
       </ol>
     </div>

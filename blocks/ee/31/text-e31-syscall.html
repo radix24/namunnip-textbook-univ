@@ -8,63 +8,55 @@
 <article class="card q-card" id="text-e31-syscall" data-kind="본문" data-std="전전31-01-01">
   <header class="card-head"><span class="no"></span><h2>시스템 호출이 처리되는 과정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>사용자 모드와 커널 모드의 구분과 그 이유를 안다.</li>
-        <li>write() 호출이 라이브러리 → 트랩 → 커널 처리 → 복귀로 가는 과정을 설명한다.</li>
-        <li>시스템 호출의 비용과 줄이는 방법(버퍼링)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>인터럽트와 예외 (<a href="../25/02-01.html">전전25 2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">C 프로그램에서 printf 한 줄로 화면에 글자를 쓰면, 그 요청은 결국 운영체제의 커널을 거쳐 장치에 닿는다. 그런데 사용자 프로그램은 장치나 다른 프로그램의 메모리를 직접 건드리지 못하게 막혀 있다. 그렇다면 프로그램은 커널에게 어떻게 일을 부탁할까? 그리고 그 부탁에는 얼마의 비용이 들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="시스템 호출 과정(개형). 프로그램이 라이브러리 함수 write를 부르면 라이브러리가 호출 번호와 인자를 레지스터에 넣고 트랩 명령을 실행하며, CPU가 커널 모드로 바뀌어 처리 함수를 찾아 인자를 검사하고 수행한 뒤 결과를 레지스터에 넣고 사용자 모드로 돌아온다. 호출 한 번 200 ns에서 1바이트씩 100만 번 쓰면 0.2 s, 4 KB 버퍼로 모으면 약 49 μs이다">
+        <path d="M40 90 H520" class="k dsh"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="40" y="30" width="100" height="40"/><rect x="170" y="30" width="100" height="40"/></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="300" y="110" width="100" height="40"/><rect x="420" y="110" width="100" height="40"/></g>
+        <path d="M140 50 H170 M270 50 L300 130 M400 130 H420 M470 110 L270 60" class="d" fill="none" stroke-width="1.5"/>
+        <g class="s" text-anchor="middle"><text x="90" y="54">write()</text><text x="220" y="54">번호·인자, 트랩</text><text x="350" y="134" class="ta">검사·처리</text><text x="470" y="134" class="ta">장치</text></g>
+        <g class="s"><text x="44" y="86">사용자 모드</text><text x="44" y="104">커널 모드</text><text x="40" y="180" class="td">1바이트 × 10⁶ = 0.2 s, 4 KB 버퍼 = 49 μs</text></g>
+      </svg>
+      <figcaption>그림 1. 사용자 프로그램은 트랩 명령으로만 커널에 들어갈 수 있고, 커널이 인자를 검사한 뒤 처리하고 돌아오므로 호출마다 일정한 비용이 든다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>인터럽트와 예외(<a href="../25/02-01.html">전전25 2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>순서</h3>
-    <ol>
-      <li>프로그램이 C 라이브러리 함수 write(fd, buf, n)를 부른다.</li>
-      <li>라이브러리가 시스템 호출 번호와 인자를 레지스터에 넣고 트랩 명령(x86-64 syscall, ARM svc)을 실행한다.</li>
-      <li>CPU가 커널 모드로 바뀌고, 커널의 진입점이 번호로 처리 함수를 찾는다.</li>
-      <li>커널이 인자(포인터가 사용자 영역인지)를 검사하고 파일 시스템·장치 드라이버를 거쳐 처리한다.</li>
-      <li>결과(쓴 바이트 수 또는 오류)를 레지스터에 넣고 사용자 모드로 돌아간다.</li>
-    </ol>
-    <p>사용자 프로그램이 장치와 다른 프로세스의 메모리에 직접 접근하지 못하게 하려고 모드를 나누며, 커널에 들어가는 문은 시스템 호출(과 인터럽트·예외)뿐입니다.</p>
+    <p>먼저 프로그램이 C 라이브러리 함수 write(fd, buf, n)를 부른다. 그러면 라이브러리가 시스템 호출 번호와 인자를 레지스터에 넣고, 트랩 명령(x86-64의 syscall, ARM의 svc)을 실행한다(그림 1).</p>
+    <p>그리고 CPU가 커널 모드로 바뀌고, 커널의 진입점이 번호로 처리 함수를 찾는다. 이어서 커널은 인자를 검사하고, 특히 포인터가 사용자 영역을 가리키는지 확인한 뒤, 파일 시스템과 장치 드라이버를 거쳐 처리한다.</p>
+    <p>마지막으로 결과(쓴 바이트 수 또는 오류)를 레지스터에 넣고 사용자 모드로 돌아간다. 처음 질문의 첫째 답이 이 순서이다.</p>
+    <p>즉 사용자 프로그램이 장치와 다른 프로세스의 메모리에 직접 접근하지 못하게 하려고 모드를 나눈다. 그래서 커널에 들어가는 문은 시스템 호출(과 인터럽트, 예외)뿐이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1(가상 비용)</span>
       <p>시스템 호출 한 번에 200 ns가 든다. 1바이트씩 100만 번 write하는 것과 4 KB 버퍼에 모아 쓰는 것의 호출 비용은?</p>
     </div>
-    <p><i>풀이.</i> 100만 번 × 200 ns = 0.2 s. 버퍼링: 10⁶/4096 ≈ 245번 → 약 49 μs. C의 printf/fwrite가 사용자 영역 버퍼를 두는 이유입니다.</p>
+    <p><i>풀이.</i> 100만 번 × 200 ns = 0.2 s이다. 그런데 버퍼에 모으면 10⁶/4096 ≈ 245번이므로 약 49 μs이다. 처음 질문의 둘째 답이 이 비용이다. 그래서 C의 printf와 fwrite는 사용자 영역 버퍼를 둔다.</p>
+    <p>한편 시스템 호출의 비용은 모드를 바꾸는 일 자체뿐 아니라, 커널에 들어갔다 나오며 캐시와 TLB가 흐트러지는 데서도 생긴다. 따라서 성능이 중요한 프로그램은 호출 수를 줄이는 방향으로 설계한다.</p>
+    <p>그리고 운영체제마다 시스템 호출 번호와 인자 규칙이 다르다. 그러므로 같은 C 프로그램이라도 운영체제가 바뀌면 라이브러리가 그 규칙에 맞춰 호출을 다시 만든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "라이브러리 함수 = 시스템 호출": printf는 라이브러리 함수이고, 내부에서 필요할 때만 write를 부릅니다. (2) "커널 모드에서는 아무 검사도 없다": 커널은 사용자 인자를 철저히 검사해야 합니다(보안).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>라이브러리 함수가 곧 시스템 호출이라고 여기기 쉽다. printf는 라이브러리 함수이고, 내부에서 필요할 때만 write를 부른다. 또 커널 모드에서는 아무 검사도 없다고 생각하기 쉬운데, 커널은 사용자 인자를 철저히 검사해야 한다(보안).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사용자/커널 모드, 트랩으로 진입.</li>
-        <li>번호 → 처리 함수 → 검사 → 수행 → 복귀.</li>
-        <li>호출 비용 → 버퍼링.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사용자 모드와 커널 모드를 나누고, 트랩으로 커널에 들어간다. 커널은 번호로 처리 함수를 찾아 인자를 검사하고 수행한 뒤 돌아온다. 호출 비용이 크므로 버퍼링으로 호출 수를 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>시스템 호출 번호는 어디에 넣는가?
-          <details><summary>답</summary><p>정해진 레지스터(예: x86-64 rax).</p></details>
+          <details><summary>답</summary><p>정해진 레지스터(x86-64의 rax 등)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 버퍼 64 KB면 호출 수는?
-          <details><summary>답</summary><p>약 16번.</p></details>
+          <details><summary>답</summary><p>약 16번이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>커널이 사용자 포인터를 검사하지 않으면 생기는 문제는?
-          <details><summary>답</summary><p>사용자가 커널 메모리 주소를 넘겨 읽거나 덮어쓸 수 있습니다.</p></details>
+          <details><summary>답</summary><p>사용자가 커널 메모리 주소를 넘겨 읽거나 덮어쓸 수 있다.</p></details>
         </li>
       </ol>
     </div>

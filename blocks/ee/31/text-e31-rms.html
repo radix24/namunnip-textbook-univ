@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e31-rms" data-kind="본문" data-std="전전31-02-05">
   <header class="card-head"><span class="no"></span><h2>실시간 스케줄링: RMS와 EDF</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>주기 작업의 이용률 \(U = \sum C_i/T_i\)를 계산한다.</li>
-        <li>Rate Monotonic의 충분 조건 \(U \le n(2^{1/n} - 1)\)을 쓴다.</li>
-        <li>EDF는 U ≤ 1이면 스케줄 가능함을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>스케줄링 알고리즘 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자동차의 브레이크 제어 프로그램은 5 ms마다, 엔진 제어는 10 ms마다 반드시 계산을 끝내야 한다. 평균적으로 빠른 것으로는 부족하고, 단 한 번이라도 마감을 놓치면 위험하다. 여러 주기 작업을 어떤 순서로 실행해야 모든 마감을 지킬까? 그리고 주어진 작업들이 마감을 다 지킬 수 있는지는 어떻게 미리 판정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.5.1 실시간 스케줄링(개형). 작업 (C, T) = (1, 4), (1, 5), (3, 10) ms의 이용률은 0.25 + 0.2 + 0.3 = 0.75로 RMS 한계 0.780 이하라 RMS로 모든 마감을 지키며, EDF는 이용률 1 이하면 가능하다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/>
+        <rect x="120" y="70" width="60" height="100" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="120" y="140" width="60" height="30" class="b" opacity="0.4"/>
+        <rect x="120" y="116" width="60" height="24" class="d" opacity="0.4"/>
+        <rect x="120" y="80" width="60" height="36" class="k" opacity="0.2"/>
+        <path d="M100 75 H220" class="b dsh"/>
+        <path d="M100 70 H220" class="k dsh"/>
+        <path d="M100 50 H220" class="d dsh"/>
+        <g class="s"><text x="230" y="80" class="tb">RMS 한계 0.780 (n = 3)</text><text x="230" y="54" class="td">EDF 한계 1</text><text x="190" y="120" class="ta">U = 0.75</text><text x="100" y="190">(1,4) 0.25 + (1,5) 0.2 + (3,10) 0.3</text></g>
+      </svg>
+      <figcaption>그림 1. 작업마다의 이용률 C/T를 더한 값이 RMS 한계 아래면 고정 우선순위로도 모든 마감을 지키고, EDF는 1까지 쓸 수 있다(예제 2.5.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>스케줄링 알고리즘(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.5.1</span>마감을 지키는 순서</h3>
-    <p>RMS는 주기가 짧은 작업에 높은 고정 우선순위를 줍니다. n개 작업의 이용률이 \(n(2^{1/n} - 1)\)(n = 3이면 0.780, n → ∞면 0.693) 이하면 모든 마감을 지킵니다(충분 조건). EDF는 마감이 가까운 작업을 먼저 해 U ≤ 1이면 됩니다.</p>
+    <p>RMS는 주기가 짧은 작업에 높은 고정 우선순위를 준다. 그리고 EDF는 마감이 가장 가까운 작업을 먼저 실행한다. 처음 질문의 첫째 답이 이 두 순서이다.</p>
+    <p>판정에는 이용률 \(U = \sum C_i/T_i\)를 쓴다. 즉 n개 작업의 이용률이 \(n(2^{1/n} - 1)\)(n = 3이면 0.780, n → ∞이면 0.693) 이하면 RMS로 모든 마감을 지킨다(충분 조건). 한편 EDF는 U ≤ 1이면 된다(그림 1). 처음 질문의 둘째 답이 이 판정이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.5.1</span>
       <p>작업 (C, T) = (1, 4), (1, 5), (3, 10) ms. 이용률과 RMS 판정은?</p>
     </div>
-    <p><i>풀이.</i> U = 0.25 + 0.2 + 0.3 = 0.75 ≤ 0.780 → RMS로 스케줄 가능. U가 0.78과 1 사이면 RMS는 정밀 분석(응답 시간 분석)이 필요하고, EDF는 가능합니다. 자동차·항공 제어 소프트웨어가 이런 분석을 거칩니다.</p>
+    <p><i>풀이.</i> U = 0.25 + 0.2 + 0.3 = 0.75 ≤ 0.780이므로 RMS로 스케줄 가능하다. 그런데 U가 0.78과 1 사이이면, RMS는 정밀 분석(응답 시간 분석)이 필요하고 EDF는 가능하다. 그래서 자동차와 항공 제어 소프트웨어가 이런 분석을 거친다.</p>
+    <p>즉 RMS 한계는 어떤 주기 조합에서도 통하는 보수적인 기준이다. 그러므로 이 한계를 넘는 작업 집합도 실제로는 가능한 경우가 많으며, 이때는 각 작업의 최악 응답 시간을 직접 계산한다.</p>
+    <p>한편 이 분석은 각 작업의 최악 실행 시간 C를 알아야 한다. 따라서 실시간 시스템에서는 캐시와 분기 예측처럼 실행 시간을 흔드는 요소를 줄이거나, 최악의 경우를 넉넉히 잡는다.</p>
+    <p>그리고 일반 운영체제는 평균 응답을 좋게 하는 데 맞춰져 있어, 이런 보장을 하지 않는다. 그래서 마감이 중요한 제어 장치는 실시간 운영체제(RTOS)를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "U ≤ 1이면 RMS도 늘 가능": RMS는 더 낮은 한계가 있습니다. (2) "RMS 한계를 넘으면 불가능": 충분 조건이라 넘어도 가능할 수 있습니다.</div>
+    <p>예를 들어 작업 하나를 더 넣으면 이용률이 오르는 동시에 n이 늘어 RMS 한계가 내려간다. 그러므로 작업을 추가할 때마다 판정을 처음부터 다시 한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>U = ΣC_i/T_i.</li>
-        <li>RMS: U ≤ n(2^{1/n} − 1)이면 가능.</li>
-        <li>EDF: U ≤ 1.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>U ≤ 1이면 RMS도 늘 가능하다고 여기기 쉽다. RMS는 더 낮은 한계가 있다. 또 RMS 한계를 넘으면 불가능하다고 생각하기 쉬운데, 충분 조건이라 넘어도 가능할 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>이용률은 U = ΣC_i/T_i이다. RMS는 U ≤ n(2^(1/n) − 1)이면 가능하다. EDF는 U ≤ 1이면 가능하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>n = 2의 RMS 한계는?
-          <details><summary>답</summary><p>약 0.828.</p></details>
+          <details><summary>답</summary><p>약 0.828이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>(2, 5), (2, 7)의 U는?
-          <details><summary>답</summary><p>약 0.686.</p></details>
+          <details><summary>답</summary><p>약 0.686이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>RMS가 실무에서 많이 쓰이는 이유는?
-          <details><summary>답</summary><p>고정 우선순위라 구현이 쉽고 과부하 때 어떤 작업이 놓칠지 예측 가능해서.</p></details>
+          <details><summary>답</summary><p>고정 우선순위라 구현이 쉽고 과부하 때 어떤 작업이 놓칠지 예측할 수 있기 때문이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,57 +8,54 @@
 <article class="card q-card" id="text-e31-pt" data-kind="본문" data-std="전전31-04-02">
   <header class="card-head"><span class="no"></span><h2>다단계 페이지 테이블이 필요한 이유</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>단일 단계 페이지 테이블의 크기를 계산한다.</li>
-        <li>2단계(10/10/12) 분할로 쓰지 않는 영역의 표를 생략하는 원리를 안다.</li>
-        <li>TLB가 다단계 변환 비용을 숨기는 방식을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>페이지 교체 (<a href="04-01.html">4.1절</a>), 2진수 비트 분할.</li>
-      </ul>
-    </div>
+    <p class="q-ask">가상 메모리에서는 프로세스마다 가상 페이지를 물리 프레임에 대응시키는 페이지 테이블이 있다. 32비트 주소에 4 KB 페이지만 해도 이 표 하나가 4 MB나 된다. 프로세스가 수백 개이면 표만으로 메모리가 바닥난다. 어떻게 표를 작게 만들까? 그리고 64비트 시스템은 표를 몇 단계로 나눌까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1 2단계 페이지 테이블(개형). 32비트 주소를 상위 10비트(바깥 표), 다음 10비트(안쪽 표), 12비트 오프셋으로 나누면, 코드, 힙, 스택 4 MB씩만 쓰는 프로세스는 안쪽 표 3개와 바깥 표 1개로 16 KB만 필요해 단일 표 4 MB의 256분의 1이다">
+        <g class="k" fill="none" stroke-width="2"><rect x="40" y="30" width="100" height="26"/><rect x="140" y="30" width="100" height="26"/><rect x="240" y="30" width="120" height="26"/></g>
+        <g class="s" text-anchor="middle"><text x="90" y="48">10비트</text><text x="190" y="48">10비트</text><text x="300" y="48">오프셋 12</text></g>
+        <rect x="60" y="80" width="60" height="100" class="b" fill="none" stroke-width="2.5"/>
+        <g class="a" fill="none" stroke-width="2"><rect x="200" y="80" width="60" height="30"/><rect x="200" y="115" width="60" height="30"/><rect x="200" y="150" width="60" height="30"/></g>
+        <path d="M120 90 H200 M120 130 H200 M120 170 H200" class="k" stroke-width="1"/>
+        <g class="s"><text x="66" y="134" class="tb">바깥</text><text x="270" y="100" class="ta">코드</text><text x="270" y="134" class="ta">힙</text><text x="270" y="168" class="ta">스택</text><text x="360" y="110" class="td">4 × 4 KB = 16 KB</text><text x="360" y="140">단일 표 4 MB</text></g>
+      </svg>
+      <figcaption>그림 1. 페이지 번호를 둘로 나눠 바깥 표가 안쪽 표를 가리키게 하면, 프로세스가 실제로 쓰는 영역의 안쪽 표만 만들면 된다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>페이지 교체(<a href="04-01.html">4.1절</a>), 2진수 비트 분할을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>크기 문제</h3>
-    <p>32비트 주소, 4 KB 페이지면 페이지 번호 20비트 → 2²⁰개 항목 × 4 B = 4 MB가 프로세스마다 필요합니다. 대부분의 프로세스는 주소 공간 일부(코드, 힙, 스택)만 쓰므로 표 대부분이 비어 있습니다.</p>
-    <p>2단계로 나눠(상위 10비트 → 바깥 표, 다음 10비트 → 안쪽 표, 12비트 오프셋), 쓰는 영역의 안쪽 표만 만듭니다.</p>
+    <p>32비트 주소에 4 KB 페이지이면 페이지 번호가 20비트이므로, 2²⁰개 항목 × 4 B = 4 MB가 프로세스마다 필요하다. 그런데 대부분의 프로세스는 주소 공간의 일부(코드, 힙, 스택)만 쓰므로, 표의 대부분이 비어 있다.</p>
+    <p>그래서 2단계로 나눈다. 즉 상위 10비트로 바깥 표를, 다음 10비트로 안쪽 표를 찾고, 나머지 12비트를 오프셋으로 쓴다(그림 1). 그러면 쓰는 영역의 안쪽 표만 만들면 된다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>프로세스가 코드 4 MB, 힙 4 MB, 스택 4 MB(서로 멀리 떨어짐)만 쓴다. 2단계 표의 크기는? 64비트(실제 48비트 주소, 4단계, 단계당 9비트)에서는 왜 단계가 더 필요한가?</p>
     </div>
-    <p><i>풀이.</i> 안쪽 표 하나가 1024 × 4 KB = 4 MB를 담당하므로 안쪽 표 3개 + 바깥 표 1개 = 4 × 4 KB = 16 KB(단일 단계 4 MB의 256분의 1). 48비트는 페이지 번호 36비트라 단일 표는 2³⁶ × 8 B = 512 GB로 불가능해, 9비트씩 4단계로 나눕니다. 대신 주소 변환에 메모리 접근이 4번 더 필요해, 최근 변환을 저장하는 TLB가 대부분(99% 이상, 확인 필요: 작업마다)을 바로 처리합니다.</p>
+    <p><i>풀이.</i> 안쪽 표 하나가 1024 × 4 KB = 4 MB를 담당하므로, 안쪽 표 3개와 바깥 표 1개로 4 × 4 KB = 16 KB이다(단일 단계 4 MB의 256분의 1). 그리고 48비트는 페이지 번호가 36비트라, 단일 표는 2³⁶ × 8 B = 512 GB로 불가능하다. 따라서 9비트씩 4단계로 나눈다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 주소 변환에 메모리 접근이 4번 더 필요하다. 그래서 최근 변환을 저장하는 TLB가 대부분(99% 이상, 작업마다 다르므로 확인 필요)을 바로 처리한다(4.3절).</p>
+    <p>즉 다단계 표는 공간을 아끼는 대신 시간을 쓰는 구조이며, 그 시간을 TLB가 숨긴다. 그러므로 TLB 적중률이 떨어지는 프로그램은 다단계 표의 비용을 그대로 느낀다.</p>
+    <p>한편 단계당 비트 수는 표 하나가 한 페이지에 딱 맞도록 정한다. 예를 들어 4 KB 페이지에 8바이트 항목이면 512개가 들어가므로 단계당 9비트가 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "다단계면 언제나 더 크다": 꽉 쓰면 조금 크지만, 듬성듬성 쓰는 실제 프로세스에서는 훨씬 작습니다. (2) "TLB는 데이터 캐시": 주소 변환 결과만 저장합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>다단계면 언제나 더 크다고 여기기 쉽다. 주소 공간을 꽉 쓰면 조금 크지만, 듬성듬성 쓰는 실제 프로세스에서는 훨씬 작다. 또 TLB는 데이터 캐시라고 생각하기 쉬운데, 주소 변환 결과만 저장한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>단일 표: 2²⁰ × 4 B = 4 MB(32비트).</li>
-        <li>2단계: 쓰는 영역만 안쪽 표. 예: 16 KB.</li>
-        <li>64비트는 4단계, TLB로 비용 숨김.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>32비트 단일 표는 2²⁰ × 4 B = 4 MB이다. 2단계 표는 쓰는 영역의 안쪽 표만 두며, 예제에서는 16 KB이다. 64비트는 4단계로 나누고 TLB로 비용을 숨긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>16 KB 페이지, 32비트 주소의 페이지 번호 비트 수는?
-          <details><summary>답</summary><p>18비트.</p></details>
+          <details><summary>답</summary><p>18비트이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 프로세스가 연속 12 MB만 쓰면 2단계 표 크기는?
-          <details><summary>답</summary><p>안쪽 3 + 바깥 1 = 16 KB(같음).</p></details>
+          <details><summary>답</summary><p>안쪽 3 + 바깥 1 = 16 KB(같음)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>TLB 적중 시간 1 ns, 부재 시 4단계 × 100 ns, 적중률 99%의 평균 변환 시간은?
-          <details><summary>답</summary><p>0.99 × 1 + 0.01 × 401 ≈ 5 ns.</p></details>
+          <details><summary>답</summary><p>0.99 × 1 + 0.01 × 401 ≈ 5 ns이다.</p></details>
         </li>
       </ol>
     </div>

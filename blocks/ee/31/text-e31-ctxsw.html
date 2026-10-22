@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e31-ctxsw" data-kind="본문" data-std="전전31-02-03">
   <header class="card-head"><span class="no"></span><h2>문맥 교환 비용과 시간 할당량</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>문맥 교환에 드는 직접·간접 비용을 안다.</li>
-        <li>시간 할당량과 문맥 교환 시간으로 오버헤드 비율을 계산한다.</li>
-        <li>할당량을 정할 때 응답성과 효율의 절충을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>CPU 스케줄링 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">라운드 로빈 스케줄러는 프로세스마다 짧은 시간을 주고 돌아가며 CPU를 넘긴다. 시간을 아주 짧게 쪼개면 모두가 동시에 도는 것처럼 반응이 빨라질 것 같다. 그런데 CPU를 다른 프로세스로 넘길 때마다 드는 비용이 있다. 그 비용은 무엇이며, 시간 할당량은 얼마로 정해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 문맥 교환 오버헤드(개형). 교환 시간 0.1 ms에서 할당량 10 ms이면 오버헤드는 0.99%, 1 ms이면 9.1%이고, 프로세스가 10개일 때 다시 차례가 오기까지 최대 대기는 10 ms에서 90.9 ms, 1 ms에서 9.9 ms이다">
+        <line x1="40" y1="60" x2="520" y2="60" class="ax"/>
+        <g class="a" fill="none" stroke-width="2"><rect x="40" y="44" width="200" height="16"/><rect x="242" y="44" width="200" height="16"/></g>
+        <g class="d" fill="none" stroke-width="2"><rect x="240" y="44" width="2" height="16"/><rect x="442" y="44" width="2" height="16"/></g>
+        <g class="s"><text x="44" y="36" class="ta">q 10 ms, 오버헤드 0.99%, 대기 90.9 ms</text></g>
+        <line x1="40" y1="140" x2="520" y2="140" class="ax"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="40" y="124" width="20" height="16"/><rect x="62" y="124" width="20" height="16"/><rect x="84" y="124" width="20" height="16"/><rect x="106" y="124" width="20" height="16"/><rect x="128" y="124" width="20" height="16"/><rect x="150" y="124" width="20" height="16"/></g>
+        <g class="s"><text x="44" y="116" class="tb">q 1 ms, 오버헤드 9.1%, 대기 9.9 ms</text><text x="300" y="180" class="td">오버헤드 = s/(q + s)</text></g>
+      </svg>
+      <figcaption>그림 1. 할당량을 줄이면 차례가 빨리 돌아오지만, 교환 시간이 차지하는 몫이 커져 쓸모 있는 실행 시간이 준다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>CPU 스케줄링(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>갈아타는 비용</h3>
-    <p>문맥 교환은 레지스터 저장·복원과 커널 코드 실행(직접 비용)에, 캐시·TLB가 새 프로세스로 바뀌며 생기는 실패(간접 비용)가 더해집니다. 라운드 로빈 할당량 q, 교환 시간 s이면 오버헤드는 s/(q + s)입니다.</p>
+    <p>문맥 교환에는 레지스터를 저장하고 복원하며 커널 코드를 실행하는 직접 비용이 든다. 그리고 캐시와 TLB가 새 프로세스의 내용으로 바뀌며 생기는 실패, 곧 간접 비용이 더해진다. 처음 질문의 첫째 답이 이 두 비용이다.</p>
+    <p>그러면 라운드 로빈 할당량이 q, 교환 시간이 s일 때 오버헤드는 s/(q + s)이다(그림 1). 그리고 실행 가능한 프로세스가 n개이면, 한 프로세스가 다시 차례를 받기까지 최대 (n − 1)(q + s)를 기다린다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>s = 0.1 ms. q = 10 ms와 q = 1 ms의 오버헤드는? 실행 가능한 프로세스가 10개면 각 프로세스가 다시 차례를 받기까지 최대 대기는?</p>
     </div>
-    <p><i>풀이.</i> 10 ms: 0.99%, 1 ms: 9.1%. 대기는 9 × (q + s): 10 ms면 90.9 ms, 1 ms면 9.9 ms. 할당량이 작으면 반응은 빠르지만 오버헤드가 크고, 크면 FCFS처럼 됩니다.</p>
+    <p><i>풀이.</i> q = 10 ms이면 0.99%, q = 1 ms이면 9.1%이다. 그리고 대기는 9 × (q + s)이므로, 10 ms면 90.9 ms, 1 ms면 9.9 ms이다. 따라서 할당량이 작으면 반응은 빠르지만 오버헤드가 크고, 크면 FCFS처럼 된다. 처음 질문의 둘째 답이 이 맞바꿈이다.</p>
+    <p>즉 할당량은 사람이 느끼는 반응 시간과 CPU 효율 사이에서 정한다. 그래서 일반 운영체제는 수 ms에서 수십 ms 사이의 할당량을 쓰고, 대화형 작업에는 우선순위를 높여 빨리 차례가 오게 한다.</p>
+    <p>한편 간접 비용은 측정하기 어렵지만 직접 비용보다 클 때가 많다. 예를 들어 새로 들어온 프로세스는 처음 한동안 캐시 실패가 잦아, 교환 직후의 실행이 느리다.</p>
+    <p>그리고 같은 이유로 운영체제는 프로세스를 되도록 같은 코어에서 다시 실행하려 한다. 그러면 그 코어의 캐시에 남은 내용을 다시 쓸 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "할당량은 작을수록 공평하고 좋다": 오버헤드가 커집니다. (2) "문맥 교환 비용은 레지스터 저장뿐": 캐시 오염이 더 클 때가 많습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>할당량은 작을수록 공평하고 좋다고 여기기 쉽다. 오버헤드가 커진다. 또 문맥 교환 비용은 레지스터 저장뿐이라고 생각하기 쉬운데, 캐시 오염이 더 클 때가 많다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>오버헤드 = s/(q + s).</li>
-        <li>최대 대기 ≈ (n − 1)(q + s).</li>
-        <li>응답성 vs 효율.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>문맥 교환 오버헤드는 s/(q + s)이다. 최대 대기는 약 (n − 1)(q + s)이다. 할당량은 응답성과 효율 사이에서 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>q = 5 ms, s = 0.05 ms의 오버헤드는?
-          <details><summary>답</summary><p>약 1%.</p></details>
+          <details><summary>답</summary><p>약 1%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>n = 5, q = 20 ms, s = 0.1 ms의 최대 대기는?
-          <details><summary>답</summary><p>80.4 ms.</p></details>
+          <details><summary>답</summary><p>80.4 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>스레드 교환이 프로세스 교환보다 싼 이유는?
-          <details><summary>답</summary><p>같은 주소 공간이라 페이지 테이블·TLB를 바꾸지 않기 때문입니다.</p></details>
+          <details><summary>답</summary><p>같은 주소 공간이라 페이지 테이블·TLB를 바꾸지 않기 때문이다.</p></details>
         </li>
       </ol>
     </div>
