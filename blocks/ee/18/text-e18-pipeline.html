@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e18-pipeline" data-kind="본문" data-std="전전18-02-05">
   <header class="card-head"><span class="no"></span><h2>단계별 지연과 병목</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>처리 단계들이 파이프라인으로 이어질 때 처리량은 가장 느린 단계가 정함을 안다.</li>
-        <li>지연(단계 합)과 처리량(병목의 역수)을 구별해 계산한다.</li>
-        <li>병목 단계를 병렬화하는 효과를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>큐잉 (<a href="02-04.html">2.4절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">카메라 영상을 전처리, 추론, 후처리 세 단계로 처리하는 장치가 있다. 단계마다 걸리는 시간이 다를 때, 초당 몇 장을 처리할 수 있고 한 장은 몇 ms 만에 결과가 나올까? 가장 느린 단계에 장치를 하나 더 붙이면 둘 다 좋아질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.5.1 전처리 5 ms, 추론 12 ms, 후처리 8 ms 파이프라인의 시간표. 세 단계가 서로 다른 프레임을 동시에 처리하며, 가장 느린 추론 단계가 12 ms마다 한 프레임씩 내보내므로 처리량은 83 fps이고, 프레임 하나의 지연은 단계 합인 25 ms이다">
+        <g class="s"><text x="20" y="57">전처리</text><text x="20" y="97">추론</text><text x="20" y="137">후처리</text></g>
+        <rect x="80" y="40" width="40" height="26" class="la"/><rect x="176" y="40" width="40" height="26" class="lb"/><rect x="272" y="40" width="40" height="26" class="lc"/>
+        <rect x="120" y="80" width="96" height="26" class="la"/><rect x="216" y="80" width="96" height="26" class="lb"/><rect x="312" y="80" width="96" height="26" class="lc"/>
+        <rect x="216" y="120" width="64" height="26" class="la"/><rect x="312" y="120" width="64" height="26" class="lb"/><rect x="408" y="120" width="64" height="26" class="lc"/>
+        <g class="k" fill="none"><rect x="120" y="80" width="96" height="26"/><rect x="216" y="80" width="96" height="26"/><rect x="312" y="80" width="96" height="26"/></g>
+        <g text-anchor="middle" class="s"><text x="100" y="58">1</text><text x="196" y="58">2</text><text x="292" y="58">3</text><text x="168" y="98">1</text><text x="264" y="98">2</text><text x="360" y="98">3</text><text x="248" y="138">1</text><text x="344" y="138">2</text><text x="440" y="138">3</text></g>
+        <path d="M80 160 H280 M80 154 V166 M280 154 V166" class="d"/><text x="180" y="180" text-anchor="middle" class="td">프레임 1 지연 25 ms</text>
+        <text x="360" y="30" text-anchor="middle" class="ta">추론이 병목, 12 ms마다 1장 → 83 fps</text>
+      </svg>
+      <figcaption>그림 1. 단계들이 서로 다른 프레임을 동시에 처리하므로 한 장의 지연은 단계 시간의 합이지만, 장이 나오는 간격은 가장 느린 단계가 정한다(예제 2.5.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>큐잉(<a href="02-04.html">2.4절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.5.1</span>가장 느린 단계</h3>
-    <p>카메라 → 전처리 → 추론 → 후처리가 동시에(파이프라인) 돌면, 한 프레임의 지연은 단계 시간의 합이고 처리량은 1/(가장 긴 단계 시간)입니다.</p>
+    <p>카메라, 전처리, 추론, 후처리가 파이프라인으로 동시에 돌면 각 단계는 서로 다른 프레임을 맡는다(그림 1). 그래서 한 프레임의 지연은 단계 시간의 합이고, 처리량은 1/(가장 긴 단계 시간)이다. 처음 질문의 첫째 답이 이것이며, 가장 느린 단계를 병목이라 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.5.1</span>
       <p>전처리 5 ms, 추론 12 ms, 후처리 8 ms. 지연과 최대 프레임률은? 추론을 두 개 장치로 나누면?</p>
     </div>
-    <p><i>풀이.</i> 지연 25 ms, 처리량 1/12 ms = 83 fps. 추론 장치 두 개가 프레임을 번갈아 맡으면 실효 6 ms → 병목은 후처리 8 ms로 바뀌어 125 fps, 지연은 그대로 25 ms. 처리량과 지연은 다르게 개선됩니다.</p>
+    <p><i>풀이.</i> 지연은 5 + 12 + 8 = 25 ms이고, 처리량은 1/12 ms = 83 fps이다. 추론 장치 두 개가 프레임을 번갈아 맡으면 추론 단계의 실효 간격이 6 ms가 되어 병목은 후처리 8 ms로 바뀌고, 처리량은 125 fps가 된다.</p>
+    <p>그런데 이때 각 프레임은 여전히 한 장치에서 12 ms 동안 추론되므로 지연은 그대로 25 ms이다. 처음 질문의 둘째 답이 이것이며, 처리량과 지연은 다른 방법으로 개선된다. 지연을 줄이려면 추론 자체를 빠르게 하거나 한 프레임을 여러 장치가 나눠 계산해야 한다.</p>
+    <p>또 병목을 병렬화하면 병목이 다음으로 느린 단계로 옮겨 간다. 예제에서도 추론을 둘로 나눈 뒤에는 후처리를 개선해야 더 빨라진다. 그러므로 개선은 언제나 현재 병목부터 차례로 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "병렬화하면 지연도 준다": 프레임 단위 병렬화는 처리량만 늘립니다. (2) "모든 단계를 똑같이 빠르게 할 필요": 병목 단계만 개선하면 됩니다.</div>
+    <p>한편 실제 파이프라인에서는 단계 사이에 버퍼를 두어 앞 단계가 잠깐 빨라지거나 느려져도 흐름이 끊기지 않게 한다. 하지만 버퍼에 프레임이 쌓여 기다리면 그만큼 지연이 늘어나므로, 버퍼 크기는 흔들림을 흡수할 만큼만 작게 잡는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>지연 = Σ단계, 처리량 = 1/max단계.</li>
-        <li>예: 25 ms, 83 fps.</li>
-        <li>병목을 병렬화하면 다음 병목으로 이동.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모든 단계를 똑같이 빠르게 만들어야 한다고 여기기 쉽다. 처리량은 병목 단계만 정하므로, 병목이 아닌 단계를 빠르게 해도 처리량은 그대로이다. 다만 지연은 모든 단계의 합이므로, 지연 사양이 빠듯하면 병목이 아닌 단계도 줄일 대상이 된다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>파이프라인의 지연은 단계 시간의 합이고, 처리량은 가장 긴 단계 시간의 역수이다. 예제에서는 지연 25 ms, 처리량 83 fps이다. 병목을 병렬화하면 처리량이 늘고 병목은 다음 단계로 옮겨 간다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>단계 3, 7, 4 ms의 처리량은?
-          <details><summary>답</summary><p>약 143 fps.</p></details>
+          <details><summary>답</summary><p>1/7 ms이므로 약 143 fps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 경우 지연은?
-          <details><summary>답</summary><p>14 ms.</p></details>
+          <details><summary>답</summary><p>3 + 7 + 4 = 14 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>추론 자체를 두 배 빠르게(6 ms) 하면 지연은?
-          <details><summary>답</summary><p>19 ms(예제 조건).</p></details>
+          <details><summary>답</summary><p>예제 조건에서 5 + 6 + 8 = 19 ms이다.</p></details>
         </li>
       </ol>
     </div>

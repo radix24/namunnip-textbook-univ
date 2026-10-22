@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e18-amdahlacc" data-kind="본문" data-std="전전18-04-05">
   <header class="card-head"><span class="no"></span><h2>가속기 도입의 전체 속도 향상</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Amdahl 법칙으로 가속기의 전체 효과를 계산한다.</li>
-        <li>자료 전송 시간까지 포함한 실효 속도 향상을 구한다.</li>
-        <li>가속 대상 선정 기준을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Amdahl 법칙 (<a href="../14/01-02.html">전전14 1.2절</a>), 가속기 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">행렬 곱을 20배 빠르게 하는 가속기를 달았는데, 프로그램 전체는 세 배도 빨라지지 않았다. 가속기가 제 몫을 못 한 것일까? 전체 속도 향상의 한계는 무엇이 정하고, 가속기로 데이터를 보내고 받는 시간은 어떻게 셈해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.5.1 실행 시간 막대. 원래는 기타 30%와 행렬 곱 70%로 1.0이다. 행렬 곱을 20배 빠르게 하면 0.3 + 0.035 = 0.335로 2.99배이고, 자료 전송 0.1을 더하면 0.435로 2.30배이다. 가속기가 아무리 빨라도 기타 30% 때문에 한계는 3.33배이다">
+        <rect x="100" y="40" width="120" height="30" class="la"/><rect x="220" y="40" width="280" height="30" class="ld"/>
+        <rect x="100" y="90" width="120" height="30" class="la"/><rect x="220" y="90" width="14" height="30" class="ld"/>
+        <rect x="100" y="140" width="120" height="30" class="la"/><rect x="220" y="140" width="14" height="30" class="ld"/><rect x="234" y="140" width="40" height="30" class="lc"/>
+        <g class="k" fill="none"><rect x="100" y="40" width="400" height="30"/><rect x="100" y="90" width="134" height="30"/><rect x="100" y="140" width="174" height="30"/></g>
+        <g class="s"><text x="20" y="60">원래</text><text x="20" y="110">가속</text><text x="20" y="160">전송 포함</text></g>
+        <g text-anchor="middle"><text x="160" y="60" class="ta">기타 0.3</text><text x="360" y="60" class="td">행렬 곱 0.7</text><text x="254" y="160" class="tc">0.1</text></g>
+        <g class="s"><text x="244" y="110">0.335 → 2.99배</text><text x="284" y="160">0.435 → 2.30배</text></g>
+        <text x="160" y="190" text-anchor="middle" class="ta">기타 0.3이 남아 한계 3.33배</text>
+      </svg>
+      <figcaption>그림 1. 가속기는 행렬 곱 막대만 줄일 뿐 나머지 30%는 그대로 남고 전송 시간까지 더해지므로, 전체 시간은 그 남은 부분이 정한다(예제 4.5.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Amdahl 법칙(<a href="../14/01-02.html">전전14 1.2절</a>), 가속기(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.5.1</span>가속되지 않는 부분이 한계</h3>
-    <p>전체 시간 중 비율 f를 s배 빠르게 하면 속도 향상은 \(1/((1 - f) + f/s)\). 가속기로 자료를 보내고 받는 시간 t_x를 더하면 더 줄어듭니다.</p>
+    <p>전체 시간 중 비율 f를 s배 빠르게 하면 속도 향상은 \(1/((1 - f) + f/s)\)이다. 이것이 Amdahl 법칙이다. s가 아무리 커져도 분모에는 \(1 - f\)가 남으므로 한계는 \(1/(1 - f)\)이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그런데 가속기를 쓰려면 자료를 보내고 결과를 받아야 한다. 그 시간 t_x를 원래 전체 시간에 대한 비율로 나타내면 속도 향상은 \(1/((1 - f) + f/s + t_x)\)로 더 줄어든다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.5.1</span>
       <p>시간의 70%가 행렬 곱이고 가속기가 20배 빠르다. 전체 속도 향상은? 자료 전송에 원래 시간의 10%가 추가되면?</p>
     </div>
-    <p><i>풀이.</i> 1/(0.3 + 0.035) = 2.99배. 전송 포함: 1/(0.3 + 0.035 + 0.1) = 2.30배. 가속기를 아무리 빠르게 해도 한계는 1/0.3 = 3.33배라, 나머지 30%(전처리 등)와 전송을 줄이는 것이 더 중요할 수 있습니다.</p>
+    <p><i>풀이.</i> 속도 향상은 1/(0.3 + 0.035) = 2.99배이다. 전송을 포함하면 1/(0.3 + 0.035 + 0.1) = 2.30배이다(그림 1).</p>
+    <p>즉 가속기를 아무리 빠르게 해도 한계는 1/0.3 = 3.33배이다. 그러므로 가속기를 40배로 바꾸는 것보다, 나머지 30%인 전처리 등을 줄이거나 전송을 계산과 겹치는 편이 더 효과가 클 수 있다. 가속 대상을 고를 때도 같은 기준을 쓴다. 전체 시간에서 차지하는 몫이 크고, 전송량에 비해 계산량이 많은 부분을 먼저 가속한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "가속기가 20배면 전체도 크게 빨라진다": 가속 비율이 한계를 정합니다. (2) "전송은 무시할 수 있다": 작은 작업에서는 전송이 이득을 다 먹을 수 있습니다.</div>
+    <p>한편 전송을 계산과 겹치면 t_x의 상당 부분을 숨길 수 있다. 가속기가 지금 조각을 계산하는 동안 다음 조각을 미리 보내는 이중 버퍼링이 그 방법이다. 이때 전송이 계산보다 짧기만 하면 전송 시간은 첫 조각에서 한 번만 드러난다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>S = 1/((1 − f) + f/s + t_x).</li>
-        <li>한계 1/(1 − f).</li>
-        <li>예: 70%, 20배 → 2.99(전송 10% → 2.30).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>가속기가 20배면 전체도 크게 빨라진다고 여기기 쉽다. 전체 효과는 가속된 비율이 한계를 정한다. 또 전송은 무시할 수 있다고 생각하기 쉬운데, 작은 작업에서는 전송이 가속 이득을 다 먹어 버릴 수 있으므로 작업을 묶어 한꺼번에 보낸다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>가속기를 쓴 전체 속도 향상은 S = 1/((1 − f) + f/s + t_x)이다. 한계는 1/(1 − f)이다. 예제에서 70%를 20배로 하면 2.99배이고, 전송 10%를 더하면 2.30배이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f = 0.9, s = 10의 속도 향상은?
-          <details><summary>답</summary><p>약 5.26.</p></details>
+          <details><summary>답</summary><p>1/(0.1 + 0.09) ≈ 5.26배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f = 0.9의 이론 한계는?
-          <details><summary>답</summary><p>10배.</p></details>
+          <details><summary>답</summary><p>1/(1 − 0.9) = 10배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>작업 하나가 0.1 ms인데 전송이 0.2 ms면 가속기를 쓸 가치가 있는가?
-          <details><summary>답</summary><p>없습니다. 전송만으로 원래 시간보다 깁니다(여러 작업을 묶어 보내면 달라짐).</p></details>
+          <details><summary>답</summary><p>없다. 전송만으로 원래 시간보다 길다(여러 작업을 묶어 보내면 달라진다).</p></details>
         </li>
       </ol>
     </div>

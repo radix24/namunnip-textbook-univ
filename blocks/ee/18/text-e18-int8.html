@@ -8,21 +8,25 @@
 <article class="card q-card" id="text-e18-int8" data-kind="본문" data-std="전전18-04-03">
   <header class="card-head"><span class="no"></span><h2>양자화로 가속기 효율 높이기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가중치와 활성값을 INT8로 양자화하는 방법(스케일, 영점)을 안다.</li>
-        <li>비트 수에 따른 메모리와 연산 에너지 절감을 계산한다.</li>
-        <li>정확도 손실과 그 대책(보정, 양자화 인식 학습)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>가속기 구조 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">신경망 가중치는 보통 32비트 부동소수점으로 학습한다. 이것을 8비트 정수로 바꾸면 메모리와 연산 에너지가 크게 줄 텐데, 그만큼 정확도도 무너지지 않을까? 실수를 정수로 어떻게 옮기고, 그 오차는 얼마나 클까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 대칭 INT8 양자화. 가중치 1000개의 최대 절댓값 0.1876을 정수 127에 맞춰 스케일 s = 0.001477로 나누고 반올림한다. 위 실수축의 구간 [−0.1876, 0.1876]이 아래 정수축 [−127, 127]로 옮겨지고, 오차는 칸 폭의 절반(최대 0.000735) 이내이다. 메모리는 4000바이트에서 1000바이트로 줄고 신호 대 양자화 잡음비는 41.4 dB이다">
+        <line x1="60" y1="50" x2="500" y2="50" class="ax"/><line x1="60" y1="140" x2="500" y2="140" class="ax"/>
+        <g class="k"><line x1="80" y1="56" x2="80" y2="134"/><line x1="280" y1="56" x2="280" y2="134"/><line x1="480" y1="56" x2="480" y2="134"/><line x1="380" y1="56" x2="380" y2="134" opacity="0.5"/><line x1="180" y1="56" x2="180" y2="134" opacity="0.5"/></g>
+        <g class="k"><line x1="80" y1="134" x2="80" y2="146"/><line x1="180" y1="134" x2="180" y2="146"/><line x1="280" y1="134" x2="280" y2="146"/><line x1="380" y1="134" x2="380" y2="146"/><line x1="480" y1="134" x2="480" y2="146"/></g>
+        <g text-anchor="middle" class="ta"><text x="80" y="40">−0.1876</text><text x="280" y="40">0</text><text x="480" y="40">0.1876</text></g>
+        <g text-anchor="middle" class="tc"><text x="80" y="162">−127</text><text x="180" y="162">−64</text><text x="280" y="162">0</text><text x="380" y="162">64</text><text x="480" y="162">127</text></g>
+        <text x="510" y="54" class="s">실수 w</text><text x="510" y="144" class="s">정수 q</text>
+        <text x="290" y="100" class="s">q = round(w/s), s = 0.001477</text>
+        <text x="280" y="188" text-anchor="middle" class="td">4000 B → 1000 B, 잡음비 41.4 dB, 최대 오차 0.000735</text>
+      </svg>
+      <figcaption>그림 1. 실수 구간을 256개 칸으로 고르게 나눠 가장 가까운 칸 번호만 저장하므로, 메모리는 1/4이 되고 오차는 칸 폭의 절반을 넘지 않는다(예제 4.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가속기 구조(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>32비트 → 8비트</h3>
-    <p>실수 x를 \(q = \text{round}(x/s) + z\)(스케일 s, 영점 z)로 8비트 정수에 넣습니다. 메모리와 대역은 1/4, 곱셈기 면적·에너지는 수 분의 1에서 수십 분의 1입니다(45 nm에서 INT8 곱 약 0.2 pJ, FP32 곱 약 3.7 pJ, 확인 필요).</p><pre><code>import numpy as np
+    <p>양자화는 실수 x를 \(q = \text{round}(x/s) + z\)로 8비트 정수에 넣는 일이다. 여기서 s는 스케일, z는 영점이며, 값이 0을 중심으로 대칭이면 z = 0으로 둔다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그러면 메모리와 대역은 1/4로 줄고, 곱셈기의 면적과 에너지는 수 분의 1에서 수십 분의 1로 준다. 예를 들어 45 nm 공정에서 INT8 곱은 약 0.2 pJ, FP32 곱은 약 3.7 pJ이다(확인 필요). 아래 코드는 가중치 1000개를 대칭 INT8로 양자화하고 오차를 잰다.</p><pre><code>import numpy as np
 rng = np.random.default_rng(1)
 w = rng.normal(0, 0.05, 1000)                       # 가중치
 s = np.abs(w).max() / 127                           # 대칭 양자화 스케일
@@ -31,7 +35,7 @@ err = w - q * s
 print(f"스케일 {s:.6f}, 최대 오차 {np.abs(err).max():.6f}, 오차 RMS {np.sqrt((err ** 2).mean()):.6f}")
 print(f"신호 대 양자화 잡음비 {10 * np.log10((w ** 2).mean() / (err ** 2).mean()):.1f} dB")
 print("메모리:", w.astype(np.float32).nbytes, "바이트 →", q.nbytes, "바이트")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>스케일 0.001477, 최대 오차 0.000735, 오차 RMS 0.000422
 신호 대 양자화 잡음비 41.4 dB
 메모리: 4000 바이트 → 1000 바이트</code></pre>
@@ -39,37 +43,31 @@ print("메모리:", w.astype(np.float32).nbytes, "바이트 →", q.nbytes, "바
       <span class="lb">예제 4.3.1</span>
       <p>위 결과에서 메모리 절감과 신호 대 양자화 잡음비는? 왜 이 정도 잡음으로 신경망 정확도가 크게 떨어지지 않는가?</p>
     </div>
-    <p><i>풀이.</i> 4000 → 1000바이트(1/4). 잡음비는 실행 결과의 값(약 40 dB대)입니다. 신경망은 많은 곱의 합이라 개별 오차가 평균되고, 학습된 모델이 작은 잡음에 둔감해 대체로 정확도 손실이 1% 안팎입니다(확인 필요: 모델마다). 손실이 크면 보정 자료로 스케일을 고르거나 양자화를 고려해 다시 학습합니다.</p>
+    <p><i>풀이.</i> 메모리는 4000바이트에서 1000바이트로 1/4이 된다. 잡음비는 실행 결과의 값으로 약 40 dB대이다. 처음 질문의 셋째 답이 이것이다.</p>
+    <p>그런데 신경망은 많은 곱의 합이라 개별 오차가 서로 평균되고, 학습된 모델은 작은 잡음에 둔감하다. 그래서 정확도 손실은 대체로 1% 안팎이다(모델마다 다르므로 확인 필요). 처음 질문의 첫째 답이 이것이다. 손실이 크면 보정 자료로 스케일을 다시 고르거나, 양자화를 고려해 다시 학습한다. 이것을 양자화 인식 학습이라 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "비트를 줄이면 정확도가 비례해 준다": 8비트까지는 손실이 작은 경우가 많습니다. (2) "한 스케일을 모든 층에 쓴다": 층·채널마다 범위가 달라 각각 정합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>한 스케일을 모든 층에 쓰는 실수가 흔하다. 층과 채널마다 값의 범위가 크게 달라, 범위가 넓은 층에 맞춘 스케일을 범위가 좁은 층에 쓰면 대부분의 값이 몇 칸 안에 몰려 오차가 커진다. 그래서 층이나 채널마다 스케일을 따로 정한다. 또 비트를 줄이면 정확도가 비례해 준다고 여기기 쉬운데, 8비트까지는 손실이 작은 경우가 많고 그 아래에서 급격히 나빠진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>q = round(x/s) + z, 대칭이면 z = 0.</li>
-        <li>메모리 1/4, 연산 에너지 크게 감소.</li>
-        <li>보정·양자화 인식 학습으로 손실 줄임.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>양자화는 q = round(x/s) + z이고, 대칭이면 z = 0이다. 메모리는 1/4이 되고 연산 에너지가 크게 준다. 정확도 손실은 보정과 양자화 인식 학습으로 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>1억 개 가중치의 FP32와 INT8 크기는?
-          <details><summary>답</summary><p>400 MB, 100 MB.</p></details>
+          <details><summary>답</summary><p>FP32는 400 MB, INT8은 100 MB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>최대 |w| = 0.5의 대칭 INT8 스케일은?
-          <details><summary>답</summary><p>0.5/127 ≈ 0.00394.</p></details>
+          <details><summary>답</summary><p>0.5/127 ≈ 0.00394이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>4비트로 줄이면 양자화 잡음은 대략 몇 dB 커지는가?
-          <details><summary>답</summary><p>약 24 dB(비트당 6 dB).</p></details>
+          <details><summary>답</summary><p>비트당 약 6 dB이므로 약 24 dB 커진다.</p></details>
         </li>
       </ol>
     </div>

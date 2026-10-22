@@ -8,21 +8,24 @@
 <article class="card q-card" id="text-e18-measure" data-kind="본문" data-std="전전18-05-02">
   <header class="card-head"><span class="no"></span><h2>성능 측정 방법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>실행 시간을 반복 측정하고 중앙값·백분위로 요약한다.</li>
-        <li>예열(warm-up)과 측정 오버헤드를 처리한다.</li>
-        <li>프로파일러로 시간이 쓰이는 곳을 찾는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>검증 계획 (<a href="01-03.html">1.3절</a>), 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">새 추론 코드를 한 번 실행해 시간을 재 보니 45 ms가 나왔다. 다시 재니 10 ms였다. 둘 중 무엇이 진짜 성능일까? 실행 시간을 믿을 만하게 재고 보고하려면 몇 번을 어떻게 재야 하고, 이상하게 튄 값은 어떻게 다뤄야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 측정값 8개(10, 11, 10, 12, 10, 45, 11, 10 ms)의 점 그림. 대부분 10~12 ms에 모여 있고 45 ms 하나가 멀리 떨어져 있다. 평균 14.9 ms는 이 하나에 끌려 어느 측정값과도 가깝지 않고, 중앙값 10.5 ms가 전형값을 나타낸다">
+        <line x1="80" y1="160" x2="480" y2="160" class="ax"/>
+        <g class="fa"><circle cx="160" cy="150" r="5"/><circle cx="160" cy="138" r="5"/><circle cx="160" cy="126" r="5"/><circle cx="160" cy="114" r="5"/><circle cx="168" cy="150" r="5"/><circle cx="168" cy="138" r="5"/><circle cx="176" cy="150" r="5"/></g>
+        <circle cx="440" cy="150" r="5" class="fd"/>
+        <path d="M199 50 V160" class="d dsh"/><path d="M164 70 V160" class="c" stroke-width="2"/>
+        <g text-anchor="middle" class="s"><text x="80" y="176">0</text><text x="160" y="176">10</text><text x="240" y="176">20</text><text x="440" y="176">45</text><text x="470" y="192">ms</text></g>
+        <text x="206" y="56" class="td">평균 14.9</text><text x="110" y="66" class="tc">중앙값 10.5</text>
+        <text x="440" y="134" text-anchor="middle" class="td">튄 값 하나</text>
+      </svg>
+      <figcaption>그림 1. 측정 시간 분포는 한쪽으로 긴 꼬리를 가져 평균이 드문 큰 값에 끌리므로, 전형적인 성능은 중앙값으로, 튄 값은 백분위와 최악값으로 따로 보고한다(예제 5.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>검증 계획(<a href="01-03.html">1.3절</a>), 프로젝트(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>한 번 재면 안 된다</h3>
-    <p>첫 실행은 캐시가 비어 있고 JIT·드라이버 초기화가 섞여 느립니다. 예열 몇 번 뒤 여러 번 재서 중앙값과 95·99 백분위를 보고합니다. GPU·가속기는 비동기라 동기화한 뒤 시간을 잽니다. 아래는 Python 측정 골격입니다(측정값은 컴퓨터마다 달라 결과는 싣지 않음).</p><pre><code>import time, statistics as st
+    <p>첫 실행은 캐시가 비어 있고, JIT 컴파일과 드라이버 초기화가 섞여 느리다. 그래서 몇 번 예열한 뒤 여러 번 재서, 중앙값과 95·99번째 백분위를 보고한다. 처음 질문의 첫째 답이 이것이다. 또 GPU와 가속기는 명령을 비동기로 처리하므로, 작업이 끝날 때까지 동기화한 뒤 시간을 잰다.</p>
+    <p>아래는 Python으로 쓴 측정 골격이다. 측정값은 컴퓨터마다 달라 결과는 싣지 않는다.</p><pre><code>import time, statistics as st
 def bench(fn, warmup=5, repeat=50):
     for _ in range(warmup):
         fn()                                  # 예열: 캐시·초기화
@@ -39,37 +42,34 @@ print(f"중앙값 {med:.2f} ms, 95% {p95:.2f} ms, 최악 {worst:.2f} ms")</code>
       <span class="lb">예제 5.2.1</span>
       <p>측정값 10, 11, 10, 12, 10, 45, 11, 10 ms를 얻었다. 평균과 중앙값 중 무엇을 보고하고, 45 ms는 어떻게 다루는가?</p>
     </div>
-    <p><i>풀이.</i> 평균 14.9 ms는 45 ms 하나에 끌려 대표성이 없고, 중앙값 10.5 ms가 전형값입니다. 45 ms는 버리지 말고 최악·백분위로 따로 보고하며, 원인(다른 프로세스, 쓰레기 수집, 열 제한)을 찾습니다.</p>
+    <p><i>풀이.</i> 평균 14.9 ms는 45 ms 하나에 끌려 대표성이 없고, 중앙값 10.5 ms가 전형값이다(그림 1). 45 ms는 버리지 말고 최악값과 백분위로 따로 보고하며, 다른 프로세스의 간섭, 쓰레기 수집, 열 제한 같은 원인을 찾는다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>튄 값을 버리지 않는 까닭은, 실시간 사양이 바로 그 꼬리를 문제 삼기 때문이다(1.3절). 사용자는 평균이 아니라 가끔 생기는 긴 멈춤을 기억한다.</p>
+    <p>또한 어디에 시간이 쓰이는지는 프로파일러로 찾는다. 프로파일러는 함수나 층마다 걸린 시간을 나눠 보여 주므로, 전체 시간의 대부분을 차지하는 병목을 먼저 고칠 수 있다(2.5절, 4.5절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "가장 빠른 값을 보고": 재현되지 않는 최선값이라 오해를 부릅니다. (2) "측정 코드는 결과에 영향이 없다": 타이머 호출, 출력문이 짧은 작업에서는 상당한 몫입니다.</div>
+    <p>그런데 반복 횟수는 얼마나 되어야 할까? 중앙값은 수십 번이면 안정되지만, 99번째 백분위는 그 위쪽에 표본이 충분히 있어야 하므로 수백에서 수천 번이 필요하다. 따라서 보고하려는 통계에 맞춰 반복 횟수를 정하고, 그 횟수를 함께 적는다(5.3절).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>예열 → 반복 → 중앙값·백분위.</li>
-        <li>가속기는 동기화 후 측정.</li>
-        <li>이상값은 따로 보고, 원인 조사.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>가장 빠른 값을 성능으로 보고하기 쉽다. 그 값은 다시 재현되지 않는 최선값이라 오해를 부른다. 또 측정 코드는 결과에 영향이 없다고 여기기 쉬운데, 타이머 호출이나 출력문은 짧은 작업에서 상당한 몫을 차지하므로 측정 구간 밖으로 뺀다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>측정은 예열, 반복, 중앙값과 백분위 보고의 순서로 한다. 가속기는 동기화한 뒤 시간을 잰다. 튄 값은 따로 보고하고 원인을 조사한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>측정 3, 3, 4, 100의 중앙값은?
-          <details><summary>답</summary><p>3.5.</p></details>
+          <details><summary>답</summary><p>(3 + 4)/2 = 3.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>한 번 실행이 1 μs인 함수를 재는 좋은 방법은?
-          <details><summary>답</summary><p>1000번을 한 번에 재서 나눕니다(타이머 오버헤드 감소).</p></details>
+          <details><summary>답</summary><p>1000번을 한 번에 재서 나눈다. 그러면 타이머 오버헤드의 몫이 줄어든다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>노트북에서 측정이 점점 느려지는 이유 하나는?
-          <details><summary>답</summary><p>발열로 클록이 내려가는 열 제한.</p></details>
+          <details><summary>답</summary><p>발열로 클록이 내려가는 열 제한 때문이다.</p></details>
         </li>
       </ol>
     </div>

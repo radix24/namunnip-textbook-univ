@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e18-power" data-kind="본문" data-std="전전18-02-02">
   <header class="card-head"><span class="no"></span><h2>전력 모델</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>동적 전력 αCV²f와 누설 전력 V·I_leak을 합한 전력 모델을 세운다.</li>
-        <li>작업당 에너지를 계산한다.</li>
-        <li>전압·주파수 조절의 효과를 모델로 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>처리량·지연 모델 (<a href="02-01.html">2.1절</a>), 동적 전력 (<a href="../30/04-01.html">전전30 4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">배터리를 아끼려고 칩의 클록을 절반으로 낮췄는데, 같은 일을 끝내는 데 든 에너지가 오히려 늘었다. 어떻게 이런 일이 생길까? 전력을 이루는 항은 무엇이고, 에너지를 줄이려면 무엇을 함께 낮춰야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 10⁹ 클록 작업의 에너지(전압 0.8 V 고정). 1 GHz에서는 동적 0.192 J과 누설 0.04 J로 합 0.232 J이다. 0.5 GHz로 낮추면 동적 에너지는 0.192 J 그대로이고 시간이 두 배라 누설이 0.08 J로 늘어 합 0.272 J이 된다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="40" x2="80" y2="170" class="ax"/>
+        <rect x="150" y="93.2" width="80" height="76.8" class="la"/><rect x="150" y="77.2" width="80" height="16" class="ld"/>
+        <rect x="330" y="93.2" width="80" height="76.8" class="la"/><rect x="330" y="61.2" width="80" height="32" class="ld"/>
+        <g class="k" fill="none"><rect x="150" y="77.2" width="80" height="92.8"/><rect x="330" y="61.2" width="80" height="108.8"/></g>
+        <g text-anchor="middle"><text x="190" y="135" class="ta">동적 0.192</text><text x="370" y="135" class="ta">동적 0.192</text><text x="190" y="89" class="td">누설 0.04</text><text x="370" y="81" class="td">누설 0.08</text>
+          <text x="190" y="70" class="s">합 0.232 J</text><text x="370" y="54" class="s">합 0.272 J</text><text x="190" y="186" class="s">1 GHz, 1 s</text><text x="370" y="186" class="s">0.5 GHz, 2 s</text></g>
+        <text x="74" y="44" text-anchor="end" class="s">에너지</text>
+      </svg>
+      <figcaption>그림 1. 동적 에너지는 클록 수에만 비례해 주파수와 무관하지만 누설 에너지는 걸린 시간에 비례하므로, 전압을 그대로 두고 느리게 하면 누설만 늘어 에너지가 커진다(예제 2.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>처리량·지연 모델(<a href="02-01.html">2.1절</a>), 동적 전력(<a href="../30/04-01.html">전전30 4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>두 항</h3>
-    <p>\(P = \alpha CV^2f + VI_{leak}\). 작업 하나에 N 클록이 걸리면 에너지 \(E = PN/f = \alpha CV^2N + VI_{leak}N/f\): 동적 에너지는 주파수와 무관하고, 누설 에너지는 느리게 할수록 커집니다.</p>
+    <p>칩의 전력은 두 항으로 모델링한다. 트랜지스터가 켜지고 꺼질 때마다 충전하는 동적 전력 \(\alpha CV^2f\)와, 꺼져 있어도 새는 누설 전력 \(VI_{leak}\)이다. 따라서 \(P = \alpha CV^2f + VI_{leak}\)이다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>작업 하나에 N 클록이 걸리면 시간은 \(N/f\)이므로, 에너지는 \(E = PN/f = \alpha CV^2N + VI_{leak}N/f\)이다. 이 식에서 동적 에너지는 주파수와 무관하고, 누설 에너지는 느리게 할수록 커진다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>α = 0.15, C = 2 nF, V = 0.8 V, f = 1 GHz, I_leak = 50 mA. 전력은? 10⁹ 클록 작업의 에너지는?</p>
     </div>
-    <p><i>풀이.</i> 동적 0.15 × 2×10⁻⁹ × 0.64 × 10⁹ = 0.192 W, 누설 0.04 W, 합 0.232 W. 에너지 0.232 J(1 s). f를 0.5 GHz로 낮추면(전압 같음) 동적 0.192 J 그대로, 누설 0.08 J로 늘어 0.272 J — 전압을 함께 낮추지 않으면 느리게 하는 것이 오히려 손해입니다.</p>
+    <p><i>풀이.</i> 동적 전력은 0.15 × 2×10⁻⁹ × 0.64 × 10⁹ = 0.192 W이고, 누설 전력은 0.04 W이므로 합은 0.232 W이다. 작업이 1 s 걸리므로 에너지는 0.232 J이다.</p>
+    <p>그런데 전압은 그대로 두고 f만 0.5 GHz로 낮추면, 동적 에너지는 0.192 J 그대로인데 누설 에너지가 0.08 J로 늘어 합이 0.272 J이 된다(그림 1). 즉 전압을 함께 낮추지 않으면 느리게 하는 것이 오히려 손해이다. 전압을 낮추면 \(V^2\) 항이 줄어 동적 에너지가 크게 줄어드는데, 이것이 전압·주파수 조절(DVFS, 3.1절)의 원리이다.</p>
+    <p>반대로 누설이 큰 칩에서는 최대 속도로 빨리 일을 끝내고 전원을 꺼 버리는 편이 유리할 수 있다. 어느 쪽이 나은지는 두 항의 크기를 이 모델에 넣어 비교해 보면 정해진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "주파수를 낮추면 에너지가 준다": 전압을 함께 낮춰야 줄고, 누설이 크면 늘 수 있습니다. (2) "누설은 무시할 만하다": 미세 공정에서는 전체의 상당 부분입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>누설은 작아서 무시해도 된다고 여기기 쉽다. 하지만 미세 공정에서는 문턱 전압이 낮아 누설 전류가 커지므로 누설이 전체 전력의 상당 부분을 차지한다. 특히 대부분의 시간을 대기 상태로 보내는 기기에서는 누설이 배터리 수명을 정한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P = αCV²f + VI_leak.</li>
-        <li>E = αCV²N + VI_leak·N/f.</li>
-        <li>예: 0.232 W, 0.232 J/10⁹ 클록.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전력은 P = αCV²f + VI_leak이다. 작업당 에너지는 E = αCV²N + VI_leak·N/f이다. 예제의 칩은 0.232 W이고, 10⁹ 클록 작업에 0.232 J을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>V를 0.8 → 0.6 V로 낮추면 동적 전력은 몇 배인가?
-          <details><summary>답</summary><p>0.5625배.</p></details>
+          <details><summary>답</summary><p>(0.6/0.8)² = 0.5625배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>누설만 있는 대기 상태 0.8 V × 50 mA의 하루 에너지는?
-          <details><summary>답</summary><p>3456 J(0.96 Wh).</p></details>
+          <details><summary>답</summary><p>0.04 W × 86 400 s = 3456 J(0.96 Wh)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>작업 후 빨리 끝내고 전원을 끄는 것이 유리한 조건은?
-          <details><summary>답</summary><p>누설이 커서 느리게 할 때의 누설 에너지가 클 때.</p></details>
+          <details><summary>답</summary><p>누설이 커서 느리게 할 때 쌓이는 누설 에너지가 클 때이다.</p></details>
         </li>
       </ol>
     </div>

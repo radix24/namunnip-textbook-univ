@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e18-reuse" data-kind="본문" data-std="전전18-04-04">
   <header class="card-head"><span class="no"></span><h2>자료 재사용과 온칩 버퍼 크기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬 곱을 타일로 나눠 온칩 버퍼에서 재사용하는 방법을 안다.</li>
-        <li>타일 크기 T에 따른 버퍼 크기 3T²·b와 연산 강도 ~T를 계산한다.</li>
-        <li>버퍼 크기와 메모리 대역의 절충을 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>roofline 모델 (<a href="02-01.html">2.1절</a>), 시스톨릭 배열 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">큰 행렬 곱을 가속기에서 돌리면 연산기보다 외부 메모리가 먼저 지친다. 칩 안에 작은 버퍼를 두고 행렬을 조각내 계산하면 메모리에서 읽는 양을 얼마나 줄일 수 있을까? 버퍼는 얼마나 커야 하고, 무작정 키우면 좋을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="행렬 곱의 타일링. 결과 행렬 C의 T×T 타일 하나를 만들려면 A의 같은 행 띠와 B의 같은 열 띠에서 T×T 타일을 차례로 가져와 곱한다. 타일 세 개(A, B, C)를 온칩 버퍼에 두면 버퍼 크기는 3T²b이고, 2T³ 연산 동안 3T²b 바이트를 옮기므로 연산 강도는 2T/(3b)이다. 예제 4.4.1의 T = 64, FP16이면 24 KB, 21.3 FLOP/B이다">
+        <rect x="40" y="60" width="120" height="120" class="k" fill="none"/><rect x="40" y="90" width="120" height="30" class="la"/><rect x="70" y="90" width="30" height="30" class="a" fill="none" stroke-width="2"/>
+        <rect x="190" y="60" width="120" height="120" class="k" fill="none"/><rect x="250" y="60" width="30" height="120" class="lc"/><rect x="250" y="90" width="30" height="30" class="c" fill="none" stroke-width="2"/>
+        <rect x="340" y="60" width="120" height="120" class="k" fill="none"/><rect x="400" y="90" width="30" height="30" class="ld"/><rect x="400" y="90" width="30" height="30" class="d" fill="none" stroke-width="2"/>
+        <g text-anchor="middle"><text x="100" y="52" class="ta">A</text><text x="250" y="52" class="tc">B</text><text x="400" y="52" class="td">C</text><text x="175" y="125" class="s">×</text><text x="325" y="125" class="s">=</text>
+          <text x="85" y="110" class="s">T</text></g>
+        <g class="s"><text x="470" y="80">버퍼 3T²b</text><text x="470" y="100">강도 2T/(3b)</text><text x="470" y="130" class="ta">T 64, FP16</text><text x="470" y="150" class="ta">24 KB</text><text x="470" y="170" class="ta">21.3 FLOP/B</text></g>
+        <text x="250" y="196" text-anchor="middle" class="s">A의 행 띠와 B의 열 띠에서 타일을 차례로 가져와 C 타일에 누적</text>
+      </svg>
+      <figcaption>그림 1. 타일 하나를 버퍼에 올려 두면 그 안의 원소마다 T번씩 재사용되므로, 타일이 클수록 같은 연산에 필요한 외부 메모리 이동이 줄어든다(예제 4.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>roofline 모델(<a href="02-01.html">2.1절</a>), 시스톨릭 배열(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>타일이 클수록 재사용</h3>
-    <p>N×N 행렬 곱을 T×T 타일로 나누면, 타일 세 개(A, B, C)를 버퍼에 두고 2T³ 연산을 하는 동안 외부 메모리에서 약 3T²b 바이트(b: 원소 바이트)를 읽습니다. 연산 강도 ≈ 2T³/(3T²b) = 2T/(3b)라 T가 클수록 메모리 대역 부담이 줄어듭니다.</p>
+    <p>N×N 행렬 곱을 T×T 타일로 나누면, 타일 세 개(A, B, C)를 온칩 버퍼에 두고 그 사이에서 2T³ 연산을 한다(그림 1). 그동안 외부 메모리에서는 약 3T²b 바이트만 읽고 쓰는데, 여기서 b는 원소 하나의 바이트 수이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>따라서 연산 강도는 \(2T^3/(3T^2b) = 2T/(3b)\)로 T에 비례한다. 즉 타일이 클수록 메모리 대역 부담이 줄고, roofline에서 연산 한계 쪽으로 옮겨 간다(2.1절).</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1</span>
       <p>T = 64, 원소 2바이트(FP16)의 버퍼 크기와 연산 강도는?</p>
     </div>
-    <p><i>풀이.</i> 버퍼 3 × 64² × 2 = 24 KB, 강도 2 × 64/(3 × 2) = 21.3 FLOP/B. 대역 100 GB/s면 2.1 TFLOPS까지 대역이 받쳐 줍니다. T를 두 배로 하면 버퍼 4배, 강도 2배입니다.</p>
+    <p><i>풀이.</i> 버퍼는 3 × 64² × 2 = 24 KB이고, 강도는 2 × 64/(3 × 2) = 21.3 FLOP/B이다. 대역이 100 GB/s면 2.1 TFLOPS까지 대역이 받쳐 준다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 T를 두 배로 하면 버퍼는 4배가 되고 강도는 2배가 된다. 즉 버퍼 면적은 T²으로, 이득은 T로 늘어나므로 버퍼를 키울수록 면적당 이득은 줄어든다. 또 강도가 칩의 꺾이는 점을 넘으면 이미 연산 한계라, 더 키워도 빨라지지 않는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "버퍼는 클수록 좋다": 면적과 접근 에너지가 늘고, 강도가 roofline 꺾이는 점을 넘으면 이득이 없습니다. (2) "타일링은 정확도를 바꾼다": 덧셈 순서만 바뀌어(부동소수점 오차 수준) 결과는 같습니다.</div>
+    <p>실제 가속기는 버퍼를 하나만 두지 않고 계층으로 쌓는다. 각 PE 옆의 작은 레지스터, 배열 전체가 함께 쓰는 수백 KB의 온칩 버퍼, 그리고 외부 DRAM 순이다. 그래서 타일링도 계층마다 한 번씩 하며, 아래 계층일수록 작은 타일을 더 자주 재사용한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>버퍼 ≈ 3T²b, 강도 ≈ 2T/(3b).</li>
-        <li>예: T 64, FP16 → 24 KB, 21.3 FLOP/B.</li>
-        <li>강도가 꺾이는 점을 넘으면 연산 한계.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>버퍼는 클수록 좋다고 여기기 쉽다. 버퍼가 커지면 면적과 한 번 접근할 때의 에너지가 늘고, 강도가 roofline의 꺾이는 점을 넘으면 이득이 없다. 처음 질문의 셋째 답이 이것이다. 또 타일링이 계산 결과를 바꾼다고 생각하기도 하는데, 덧셈 순서만 바뀌므로 부동소수점 반올림 수준의 차이만 생긴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>타일링에서 버퍼는 약 3T²b, 연산 강도는 약 2T/(3b)이다. 예를 들어 T = 64, FP16이면 24 KB, 21.3 FLOP/B이다. 강도가 꺾이는 점을 넘으면 연산 한계가 되어 버퍼를 더 키울 이유가 없다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>T = 32, FP32의 버퍼 크기는?
-          <details><summary>답</summary><p>12 KB.</p></details>
+          <details><summary>답</summary><p>3 × 32² × 4 = 12 KB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 경우 연산 강도는?
-          <details><summary>답</summary><p>약 5.3 FLOP/B.</p></details>
+          <details><summary>답</summary><p>2 × 32/(3 × 4) ≈ 5.3 FLOP/B이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>꺾이는 점이 20 FLOP/B인 칩에서 FP16 타일은 최소 몇이면 연산 한계인가?
-          <details><summary>답</summary><p>T ≥ 60.</p></details>
+          <details><summary>답</summary><p>2T/6 ≥ 20에서 T ≥ 60이다.</p></details>
         </li>
       </ol>
     </div>

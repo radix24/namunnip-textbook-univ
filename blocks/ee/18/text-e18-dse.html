@@ -8,21 +8,26 @@
 <article class="card q-card" id="text-e18-dse" data-kind="본문" data-std="전전18-03-02">
   <header class="card-head"><span class="no"></span><h2>설계 공간 탐색</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>설계 변수와 그 범위로 설계 공간을 정의한다.</li>
-        <li>전수 탐색, 무작위 탐색, 탐욕 탐색의 비용과 품질을 비교한다.</li>
-        <li>제약 조건을 만족하는 설계 중 목표가 가장 좋은 것을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>파레토 최적 (<a href="03-01.html">3.1절</a>), 모델 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">가속기의 연산기 수, 버퍼 크기, 클록을 정해야 한다. 값의 조합이 수십 개라면 모두 계산해 보면 되지만, 변수가 여섯 개에 값이 열 개씩이면 백만 개가 된다. 어디까지 전부 시험할 수 있고, 그보다 크면 어떻게 좋은 설계를 찾을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 장난감 가속기 모델의 설계 36개(PE 4가지 × 버퍼 3가지 × 클록 3가지)를 전력(가로)과 처리량(세로)으로 찍은 그림. 채운 점은 전력 1 W 이하·면적 6 mm² 이하 제약을 만족하고, 빈 점은 어긴다. 제약 안에서 처리량이 가장 큰 설계는 PE 64개, 버퍼 128 KB, 1.0 GHz로 64 GOPS, 0.996 W, 4.48 mm²이다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="20" x2="80" y2="170" class="ax"/>
+        <path d="M280 20 V170" class="d dsh"/>
+        <g class="k" fill="none"><circle cx="305" cy="115" r="4"/><circle cx="330" cy="101" r="4"/><circle cx="330" cy="136" r="4"/><circle cx="356" cy="101" r="4"/><circle cx="382" cy="136" r="4"/><circle cx="407" cy="101" r="4"/><circle cx="407" cy="60" r="4"/><circle cx="458" cy="32" r="4"/></g>
+        <g class="fa"><circle cx="142" cy="161" r="4"/><circle cx="151" cy="156" r="4"/><circle cx="158" cy="153" r="4"/><circle cx="167" cy="161" r="4"/><circle cx="177" cy="142" r="4"/><circle cx="177" cy="156" r="4"/><circle cx="183" cy="153" r="4"/><circle cx="190" cy="136" r="4"/><circle cx="202" cy="142" r="4"/><circle cx="215" cy="136" r="4"/><circle cx="218" cy="161" r="4"/><circle cx="228" cy="136" r="4"/><circle cx="228" cy="156" r="4"/><circle cx="234" cy="153" r="4"/><circle cx="254" cy="115" r="4"/><circle cx="254" cy="136" r="4"/><circle cx="254" cy="142" r="4"/><circle cx="266" cy="136" r="4"/><circle cx="279" cy="101" r="4"/></g>
+        <circle cx="279" cy="101" r="9" class="c" fill="none" stroke-width="2"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0</text><text x="280" y="186">1 W</text><text x="480" y="186">2 W</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="105">64</text><text x="74" y="30">GOPS</text></g>
+        <text x="190" y="90" class="tc">제약 안 최고, 64 GOPS</text><text x="290" y="30" class="td">전력 제약 1 W</text>
+        <text x="380" y="160" class="s">빈 점은 제약 위반</text>
+      </svg>
+      <figcaption>그림 1. 설계 변수의 모든 조합을 모델로 계산해 제약을 어기는 점을 걸러 내면, 남은 점 가운데 목표가 가장 좋은 점이 답이 되며 그 점은 대개 제약의 경계 가까이에 있다(예제 3.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파레토 최적(<a href="03-01.html">3.1절</a>), 모델(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>얼마나 많이 시험하나</h3>
-    <p>변수 k개가 각각 m개 값을 가지면 설계가 mᵏ개라, 모델이 빨라야 전수 탐색이 가능합니다. 클 때는 무작위 표본, 한 변수씩 바꾸는 탐욕 탐색, 베이지안 최적화를 씁니다.</p><pre><code>import itertools
+    <p>설계 공간은 설계 변수와 그 범위로 정의한다. 변수 k개가 각각 m개 값을 가지면 설계는 mᵏ개이므로, 모델이 빨라야 전부 시험하는 전수 탐색이 가능하다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>공간이 클 때는 다른 탐색을 쓴다. 무작위로 표본을 뽑는 무작위 탐색, 한 변수씩 바꿔 가며 좋아지는 쪽으로 가는 탐욕 탐색, 지금까지의 결과로 다음에 시험할 점을 고르는 베이지안 최적화가 그 예이다. 처음 질문의 둘째 답이 이것이다. 아래 코드는 작은 장난감 모델의 36개 설계를 전수 탐색한다.</p><pre><code>import itertools
 best = None
 for pe, buf, f in itertools.product([16, 32, 64, 128], [64, 128, 256], [0.5, 0.8, 1.0]):
     thr = min(pe * f, buf / 2) * 1.0                 # 처리량(GOPS): 연산 또는 대역 한계
@@ -33,44 +38,40 @@ for pe, buf, f in itertools.product([16, 32, 64, 128], [64, 128, 256], [0.5, 0.8
             best = (thr, pe, buf, f, round(power, 3), area)
 print("설계 수:", 4 * 3 * 3)
 print("제약 안 최고 처리량(GOPS, PE, 버퍼 KB, GHz, W, mm²):", best)</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>설계 수: 36
 제약 안 최고 처리량(GOPS, PE, 버퍼 KB, GHz, W, mm²): (64.0, 64, 128, 1.0, 0.996, 4.48)</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>위 장난감 모델에서 전수 탐색으로 찾은 설계는? 변수가 6개(값 10개씩)면 전수 탐색이 가능한가?</p>
     </div>
-    <p><i>풀이.</i> 36개 설계 중 제약을 만족하며 처리량이 가장 큰 것이 실행 결과의 설계입니다. 10⁶개는 모델이 1 ms면 약 17분이라 가능하지만, 시뮬레이션이 1분이면 2년이라 불가능해 표본 탐색을 씁니다.</p>
+    <p><i>풀이.</i> 36개 설계 가운데 제약을 만족하며 처리량이 가장 큰 것이 실행 결과의 설계이다(그림 1). 변수가 6개이면 10⁶개인데, 모델이 1 ms면 약 17분이라 가능하다. 그러나 시뮬레이션 한 번이 1분이면 2년이 걸려 불가능하므로 표본 탐색을 쓴다.</p>
+    <p>그림 1을 보면 가장 좋은 설계가 전력 제약 바로 안쪽에 있다. 제약이 있는 최적화에서는 흔한 일로, 남는 전력을 처리량으로 바꿀 수 있는 한 그렇게 하는 것이 이득이기 때문이다. 그러므로 제약 경계 근처를 촘촘히 탐색하면 같은 시간에 더 좋은 설계를 찾는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "모든 조합을 시험해야 최선": 모델이 비싸면 영리한 탐색으로 충분히 좋은 해를 찾습니다. (2) "제약은 나중에 확인": 탐색 중에 걸러야 시간을 아낍니다.</div>
+    <p>한편 탐색의 품질은 모델의 정확도를 넘지 못한다. 예를 들어 위 모델은 처리량을 연산과 대역 가운데 작은 쪽으로만 어림하므로, 실제 칩에서는 순위가 바뀔 수 있다. 따라서 빠른 모델로 후보를 몇 개로 줄인 뒤, 그 후보만 정밀한 시뮬레이션으로 다시 평가하는 두 단계 방식을 흔히 쓴다. 즉 싼 모델은 넓게, 비싼 모델은 좁게 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>설계 수 mᵏ.</li>
-        <li>전수·무작위·탐욕·베이지안 탐색.</li>
-        <li>제약 만족 + 목표 최적.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모든 조합을 시험해야 최선을 찾는다고 여기기 쉽다. 모델이 비싸면 영리한 탐색으로 충분히 좋은 해를 훨씬 빨리 찾는다. 또 제약은 탐색이 끝난 뒤에 확인해도 된다고 생각하기 쉬운데, 탐색 중에 걸러야 비싼 평가를 아낄 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>변수 k개, 값 m개씩이면 설계 수는 mᵏ이다. 탐색은 전수, 무작위, 탐욕, 베이지안 방법 가운데 모델 비용에 맞춰 고른다. 제약을 만족하는 설계 중 목표가 가장 좋은 것을 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>변수 3개, 값 5개씩의 설계 수는?
-          <details><summary>답</summary><p>125.</p></details>
+          <details><summary>답</summary><p>5³ = 125개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>모델 평가 1초, 하루에 시험할 수 있는 설계 수는?
-          <details><summary>답</summary><p>86 400.</p></details>
+          <details><summary>답</summary><p>86 400개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>탐욕 탐색이 놓칠 수 있는 것은?
-          <details><summary>답</summary><p>변수 사이 상호작용 때문에 생기는 더 좋은 조합(국소 최적).</p></details>
+          <details><summary>답</summary><p>변수 사이 상호작용 때문에 생기는 더 좋은 조합을 놓치고 국소 최적에 머물 수 있다.</p></details>
         </li>
       </ol>
     </div>

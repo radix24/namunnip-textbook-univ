@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e18-systolic" data-kind="본문" data-std="전전18-04-02">
   <header class="card-head"><span class="no"></span><h2>시스톨릭 배열로 행렬 곱하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>처리 요소(PE)를 격자로 놓고 자료를 이웃으로 넘기며 곱셈-누산하는 시스톨릭 배열을 안다.</li>
-        <li>N×N 배열로 N×N 행렬 곱의 사이클 수 3N − 2를 계산한다.</li>
-        <li>자료 재사용으로 메모리 접근이 줄어드는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬 곱 가속기 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">시스톨릭 배열(4.1절)에 행렬을 넣으면 결과가 한꺼번에 나오지 않고 물결처럼 대각선을 따라 차례로 완성된다. N×N 배열로 N×N 행렬을 곱하는 데는 정확히 몇 사이클이 걸릴까? 작은 행렬 하나만 곱할 때 연산기는 얼마나 놀게 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="출력 고정형 3×3 시스톨릭 배열의 비스듬한 입력(개형). A의 i번째 행은 i 사이클 늦게, B의 j번째 열은 j 사이클 늦게 들어가므로 PE(i, j)에는 a_ik와 b_kj가 같은 사이클에 만난다. 마지막 PE(2, 2)는 3N − 2 = 7번째 사이클에 끝난다. 예제 4.2.1의 16×16 곱은 46 사이클에 4096 MAC으로 이용률 약 35%이다">
+        <g class="la"><rect x="250" y="70" width="44" height="30"/><rect x="304" y="70" width="44" height="30"/><rect x="358" y="70" width="44" height="30"/><rect x="250" y="110" width="44" height="30"/><rect x="304" y="110" width="44" height="30"/><rect x="358" y="110" width="44" height="30"/><rect x="250" y="150" width="44" height="30"/><rect x="304" y="150" width="44" height="30"/><rect x="358" y="150" width="44" height="30"/></g>
+        <rect x="358" y="150" width="44" height="30" class="d" fill="none" stroke-width="2"/>
+        <g text-anchor="middle" class="tc"><text x="225" y="90">a₀₀</text><text x="195" y="90">a₀₁</text><text x="165" y="90">a₀₂</text>
+          <text x="195" y="130">a₁₀</text><text x="165" y="130">a₁₁</text><text x="135" y="130">a₁₂</text>
+          <text x="165" y="170">a₂₀</text><text x="135" y="170">a₂₁</text><text x="105" y="170">a₂₂</text></g>
+        <g text-anchor="middle" class="td"><text x="272" y="60">b₀₀</text><text x="272" y="42">b₁₀</text><text x="272" y="24">b₂₀</text>
+          <text x="326" y="42">b₀₁</text><text x="326" y="24">b₁₁</text><text x="326" y="8">b₂₁</text>
+          <text x="380" y="24">b₀₂</text><text x="380" y="8">b₁₂</text></g>
+        <text x="380" y="175" text-anchor="middle" class="s">끝 PE</text>
+        <g class="s"><text x="420" y="90">한 칸 늦을 때마다</text><text x="420" y="110">한 사이클 지연</text><text x="420" y="140" class="ta">3N − 2 = 7 사이클</text><text x="420" y="160">(N = 3)</text></g>
+      </svg>
+      <figcaption>그림 1. 행과 열을 한 사이클씩 어긋나게 넣어야 같은 k의 두 값이 각 PE에서 만나므로, 마지막 PE에는 2(N − 1) 사이클 늦게 첫 값이 닿고 N 사이클 동안 누적해 3N − 2 사이클에 끝난다(4.2.1, N = 3).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬 곱 가속기(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>심장 박동처럼 흐르는 자료</h3>
-    <p>A의 행은 왼쪽에서 오른쪽으로, B의 열은 위에서 아래로 한 칸씩 흘러가고, 각 PE는 만나는 두 값을 곱해 자기 누산기에 더합니다. 자료가 이웃 PE로만 전달되어 배선이 짧고, 한 번 읽은 값을 N번 재사용합니다. 출력 고정형 N×N 배열은 \(3N - 2\) 사이클에 곱을 끝냅니다(입력을 비스듬히 넣는 시간 포함).</p>
+    <p>출력 고정형 시스톨릭 배열에서는 각 PE가 결과 원소 \(c_{ij}\) 하나를 맡아 그 자리에 누산한다. A의 행은 왼쪽에서 오른쪽으로, B의 열은 위에서 아래로 한 칸씩 흘러가고, 각 PE는 만나는 두 값을 곱해 자기 누산기에 더한다. 자료가 심장 박동처럼 한 박자씩 이웃 PE로만 전달되어 배선이 짧고, 한 번 읽은 값을 N번 재사용한다.</p>
+    <p>다만 같은 k의 두 값이 PE(i, j)에서 만나려면, A의 i번째 행은 i 사이클, B의 j번째 열은 j 사이클 늦게 넣어야 한다(그림 1). 그러면 마지막 PE(N − 1, N − 1)에는 첫 값이 2(N − 1) 사이클 늦게 닿고, 거기서 N 사이클 동안 누산하므로 전체는 \(3N - 2\) 사이클이다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>16×16 배열로 16×16 행렬 곱의 사이클 수와 MAC 수, 1 GHz에서의 실효 처리량은?</p>
     </div>
-    <p><i>풀이.</i> 3 × 16 − 2 = 46 사이클, MAC 16³ = 4096. 실효 4096/46 = 89 MAC/사이클(최대 256의 35%). 큰 행렬을 연속으로 흘려 넣으면 채우는 시간이 가려져 이용률이 100%에 가까워집니다. 구글 TPU가 이 구조입니다(확인 필요: 세부).</p>
+    <p><i>풀이.</i> 사이클 수는 3 × 16 − 2 = 46이고, MAC 수는 16³ = 4096이다. 따라서 실효 처리량은 4096/46 = 89 MAC/사이클로, 최대 256의 35%이다. 처음 질문의 둘째 답이 이것이며, 1 GHz에서는 약 8.9×10¹⁰ MAC/s이다.</p>
+    <p>그런데 큰 행렬을 조각으로 나눠 연속으로 흘려 넣으면, 한 조각이 빠져나가는 동안 다음 조각이 들어와 채우고 비우는 시간이 가려진다. 그래서 이용률이 100%에 가까워진다. 즉 시스톨릭 배열은 작은 곱 하나보다 큰 곱을 쉬지 않고 흘릴 때 제 성능을 낸다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "PE 수만큼 언제나 빠르다": 채우기·비우기 시간과 메모리 대역이 이용률을 깎습니다. (2) "각 PE가 메모리에서 직접 읽는다": 가장자리 PE만 읽고 나머지는 이웃에게 받습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>각 PE가 메모리에서 직접 값을 읽는다고 여기기 쉽다. 실제로는 가장자리 PE만 읽고 나머지는 이웃에게서 받으므로, PE가 늘어도 메모리 포트 수는 배열의 한 변 길이에만 비례한다. 또 PE 수만큼 언제나 빠르다고 생각하기 쉬운데, 채우기와 비우기 시간, 그리고 메모리 대역이 이용률을 깎는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>A는 가로, B는 세로로 흐르며 PE가 MAC.</li>
-        <li>N×N 곱: 3N − 2 사이클, N³ MAC.</li>
-        <li>재사용 N배, 짧은 배선.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>시스톨릭 배열에서 A는 가로, B는 세로로 흐르며 PE가 MAC을 한다. N×N 곱은 3N − 2 사이클에 N³ MAC이다. 값마다 N번 재사용되고 배선이 짧다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>8×8 배열의 8×8 곱 사이클 수는?
-          <details><summary>답</summary><p>22.</p></details>
+          <details><summary>답</summary><p>3 × 8 − 2 = 22 사이클이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>128×128 배열, 1 GHz의 최대 MAC/s는?
-          <details><summary>답</summary><p>1.64×10¹³.</p></details>
+          <details><summary>답</summary><p>16 384 × 10⁹ = 1.64×10¹³이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>행렬이 배열보다 크면 어떻게 하나?
-          <details><summary>답</summary><p>타일로 나눠 여러 번 계산하고 부분합을 더합니다.</p></details>
+          <details><summary>답</summary><p>타일로 나눠 여러 번 계산하고 부분합을 더한다.</p></details>
         </li>
       </ol>
     </div>

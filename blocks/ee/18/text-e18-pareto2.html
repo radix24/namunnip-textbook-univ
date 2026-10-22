@@ -8,21 +8,27 @@
 <article class="card q-card" id="text-e18-pareto2" data-kind="본문" data-std="전전18-03-04">
   <header class="card-head"><span class="no"></span><h2>파레토 앞쪽을 찾는 프로그램</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>어떤 목표에서도 다른 설계에 지지 않는(지배되지 않는) 설계를 판정한다.</li>
-        <li>후보 목록에서 파레토 앞쪽을 계산하는 코드를 쓴다.</li>
-        <li>앞쪽 위에서 사양에 맞는 설계를 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>파레토 곡선 (<a href="03-01.html">3.1절</a>), 설계 공간 탐색 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">설계 공간 탐색(3.2절)을 돌렸더니 후보가 수백 개 나왔다. 사람이 하나하나 비교할 수 없을 때, 고를 가치가 있는 설계만 프로그램으로 추려 낼 수 있을까? 그 가운데서 전력 사양에 맞는 하나는 어떻게 고를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1 설계 일곱 개의 지연(가로)과 전력(세로), 둘 다 작을수록 좋다. G(8 ms, 3.0 W), A(10, 2.0), D(15, 1.2), B(25, 1.0), E(30, 0.9)가 파레토 앞쪽이다. C(12, 2.5)는 A에, F(20, 1.5)는 D에 지배된다. 전력 1.3 W 이하에서 지연이 가장 작은 설계는 D이다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M120 30 V46.7 H146.7 V100 H213.3 V135.3 H346.7 V146.7 H413.3 V151.3 H480" class="a dsh" fill="none"/>
+        <path d="M80 132.6 H480" class="c dsh"/>
+        <g class="fa"><circle cx="120" cy="46.7" r="6"/><circle cx="146.7" cy="100" r="6"/><circle cx="213.3" cy="135.3" r="6"/><circle cx="346.7" cy="146.7" r="6"/><circle cx="413.3" cy="151.3" r="6"/></g>
+        <g class="k" fill="none"><circle cx="173.3" cy="76.7" r="6"/><circle cx="280" cy="112" r="6"/></g>
+        <circle cx="213.3" cy="135.3" r="10" class="d" fill="none" stroke-width="2"/>
+        <g class="s"><text x="128" y="44">G</text><text x="152" y="96">A</text><text x="180" y="74">C</text><text x="218" y="154">D</text><text x="286" y="108">F</text><text x="352" y="164">B</text><text x="418" y="166">E</text></g>
+        <g text-anchor="middle" class="s"><text x="80" y="186">5</text><text x="213" y="186">15</text><text x="347" y="186">25</text><text x="460" y="186">지연 ms</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="136">1.3 W</text><text x="74" y="40">전력</text></g>
+        <text x="300" y="128" class="tc">전력 사양 1.3 W</text><text x="200" y="64" class="s">C는 A에, F는 D에 짐</text>
+      </svg>
+      <figcaption>그림 1. 왼쪽 아래로 갈수록 좋은 그림에서 다른 점의 오른쪽 위에 놓인 점을 지우면 계단 꼴의 앞쪽이 남고, 사양 선 아래의 앞쪽 점 가운데 가장 왼쪽 점이 답이 된다(예제 3.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>파레토 곡선(<a href="03-01.html">3.1절</a>), 설계 공간 탐색(<a href="03-02.html">3.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>지배되지 않는 점</h3>
-    <p>설계 a가 b보다 모든 목표에서 같거나 좋고 하나 이상에서 더 좋으면 a가 b를 지배합니다. 아무에게도 지배되지 않는 설계들이 파레토 앞쪽이며, 그 밖의 설계는 고를 이유가 없습니다.</p><pre><code>designs = {  # 이름: (지연 ms, 전력 W) - 둘 다 작을수록 좋음
+    <p>설계 a가 b보다 모든 목표에서 같거나 좋고 하나 이상에서 더 좋으면 a가 b를 지배한다(3.1절). 아무에게도 지배되지 않는 설계들이 파레토 앞쪽이며, 그 밖의 설계는 고를 이유가 없다. 이 정의는 그대로 프로그램이 된다. 설계마다 자기를 지배하는 다른 설계가 있는지 확인해, 없으면 앞쪽에 넣는다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>아래 코드는 일곱 설계의 지연과 전력으로 앞쪽을 구하고, 그 가운데 전력 1.3 W 이하에서 지연이 가장 작은 설계를 고른다.</p><pre><code>designs = {  # 이름: (지연 ms, 전력 W) - 둘 다 작을수록 좋음
     "A": (10, 2.0), "B": (25, 1.0), "C": (12, 2.5), "D": (15, 1.2),
     "E": (30, 0.9), "F": (20, 1.5), "G": (8, 3.0),
 }
@@ -32,44 +38,40 @@ front = [k for k, p in designs.items()
          if not any(dominates(q, p) for j, q in designs.items() if j != k)]
 print("파레토 앞쪽:", sorted(front, key=lambda k: designs[k][0]))
 print("전력 1.3 W 이하에서 지연 최소:", min((k for k in front if designs[k][1] &lt;= 1.3), key=lambda k: designs[k][0]))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>파레토 앞쪽: ['G', 'A', 'D', 'B', 'E']
 전력 1.3 W 이하에서 지연 최소: D</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
       <p>위 결과에서 C와 F가 앞쪽에 없는 이유는?</p>
     </div>
-    <p><i>풀이.</i> C(12 ms, 2.5 W)는 A(10 ms, 2.0 W)에 두 목표 모두 집니다. F(20 ms, 1.5 W)는 D(15 ms, 1.2 W)에 집니다. 남은 G, A, D, B, E가 지연-전력 절충의 앞쪽이고, 전력 사양 1.3 W에서는 D가 최선입니다.</p>
+    <p><i>풀이.</i> C(12 ms, 2.5 W)는 A(10 ms, 2.0 W)에 두 목표 모두 진다. F(20 ms, 1.5 W)는 D(15 ms, 1.2 W)에 진다. 남은 G, A, D, B, E가 지연-전력 절충의 앞쪽이다(그림 1).</p>
+    <p>그다음 사양으로 하나를 고른다. 전력 사양 1.3 W를 만족하는 앞쪽 설계는 D, B, E이고, 그 가운데 지연이 가장 작은 D가 최선이다. 처음 질문의 둘째 답이 이것이다. 즉 앞쪽 계산은 후보를 줄이고, 사양과 우선순위가 마지막 하나를 정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "앞쪽 위 설계 중 하나가 늘 최선": 사양(제약)과 우선순위를 더해야 하나를 고릅니다. (2) "앞쪽은 연속 곡선": 실제 후보는 이산적인 점들입니다.</div>
+    <p>앞쪽을 구한 뒤에는 그 모양도 살펴본다. 앞쪽이 가파르게 꺾이는 곳, 곧 조금만 양보하면 다른 기준이 크게 좋아지는 무릎 근처의 설계는 사양이 조금 바뀌어도 좋은 선택으로 남는 경우가 많다. 예제에서는 A에서 D로 가면 지연이 5 ms 늘고 전력이 0.8 W 줄어드는데, 이런 교환 비율이 설계 결정의 근거가 된다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>지배: 모든 목표 ≤, 하나 &lt;.</li>
-        <li>지배되지 않는 설계 = 파레토 앞쪽.</li>
-        <li>예: G, A, D, B, E. 1.3 W 제약 → D.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>파레토 앞쪽을 매끄러운 연속 곡선으로 여기기 쉽다. 실제 후보는 이산적인 점들이어서 앞쪽은 계단 꼴이고, 두 점 사이의 설계는 존재하지 않을 수 있다. 그래서 사양이 두 점 사이에 걸리면 한쪽 기준을 조금 양보하거나, 그 근처를 다시 탐색해 새 후보를 만든다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>모든 목표에서 같거나 좋고 하나에서 더 좋으면 지배한다. 지배되지 않는 설계의 집합이 파레토 앞쪽이다. 예제의 앞쪽은 G, A, D, B, E이고, 1.3 W 제약에서는 D를 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>(5 ms, 2 W)와 (6 ms, 2 W) 중 지배하는 것은?
-          <details><summary>답</summary><p>(5 ms, 2 W).</p></details>
+          <details><summary>답</summary><p>(5 ms, 2 W)가 지배한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>앞쪽 판정의 단순 알고리즘 계산량은(설계 n개)?
-          <details><summary>답</summary><p>O(n²).</p></details>
+          <details><summary>답</summary><p>모든 쌍을 비교하므로 O(n²)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>목표가 셋(지연, 전력, 면적)이면 앞쪽은?
-          <details><summary>답</summary><p>3차원 곡면 위 점들이라 더 많은 설계가 지배되지 않습니다.</p></details>
+          <details><summary>답</summary><p>3차원 곡면 위의 점들이 되며, 목표가 늘수록 더 많은 설계가 지배되지 않는다.</p></details>
         </li>
       </ol>
     </div>
