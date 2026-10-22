@@ -8,89 +8,72 @@
 <article class="card q-card" id="text-e3-bode" data-kind="본문" data-std="전전3-08-02">
   <header class="card-head"><span class="no"></span><h2>전달함수와 보드 도표</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>회로의 주파수 응답을 전달함수 \(H(j\omega)\)로 나타낸다.</li>
-        <li>데시벨과 로그 주파수 축을 쓰는 이유를 안다.</li>
-        <li>상수, 원점 극·영점, 1차 극·영점의 직선 근사를 더해 보드 도표를 손으로 그린다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>페이저 해석 (<a href="07-02.html">7.2절</a>).</li>
-        <li>로그의 성질 \(\log ab = \log a + \log b\) (고교 수학I).</li>
-      </ul>
-    </div>
+    <p class="q-ask">오디오 증폭기의 설명서에는 "20 Hz에서 20 kHz까지 평탄"이라고 적혀 있다. 증폭기가 주파수마다 신호를 몇 배로 키우는지를 한눈에 보여 주는 그림이 있다면 좋을 것이다. 그런데 주파수는 수 Hz에서 수 MHz까지, 이득은 0.001배에서 1000배까지 걸친다. 이 넓은 범위를 어떻게 한 장에, 그것도 손으로 그릴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 215" role="img" aria-label="예제 전달함수의 크기 보드 도표. 직선 근사는 40 dB에서 시작해 10에서 오르고 100에서 60 dB로 평평해지며 10^4에서 내려간다. 실제 곡선은 꺾이는 점에서 3 dB 차이">
+        <line x1="60" y1="190" x2="520" y2="190" class="ax"/><line x1="60" y1="20" x2="60" y2="190" class="ax"/>
+        <g text-anchor="middle" class="s"><text x="60" y="206">1</text><text x="137" y="206">10</text><text x="213" y="206">100</text><text x="290" y="206">10³</text><text x="367" y="206">10⁴</text><text x="443" y="206">10⁵</text><text x="520" y="206">10⁶ rad/s</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="194">20</text><text x="54" y="130">40</text><text x="54" y="66">60 dB</text></g>
+        <path d="M60 126 H520 M60 62 H520" class="gd"/>
+        <path d="M60 126 L137 126 L213 62 L367 62 L520 190" class="c dsh"/>
+        <path d="M60 125.9 L68 125.8 L75 125.7 L83 125.5 L91 125.2 L98 124.7 L106 124.0 L114 122.9 L121 121.4 L129 119.3 L137 116.5 L144 113.0 L152 108.9 L160 104.2 L167 99.2 L175 94.0 L183 88.8 L190 83.8 L198 79.1 L206 75.0 L213 71.5 L221 68.7 L229 66.6 L236 65.1 L244 64.0 L252 63.3 L259 62.9 L267 62.6 L275 62.4 L282 62.3 L290 62.3 L298 62.3 L305 62.4 L313 62.6 L321 62.9 L328 63.3 L336 64.1 L344 65.1 L351 66.7 L359 68.8 L367 71.6 L374 75.2 L382 79.5 L390 84.3 L397 89.6 L405 95.3 L413 101.3 L420 107.3 L428 113.5 L436 119.8 L443 126.1 L451 132.5 L459 138.9 L466 145.2 L474 151.6 L482 158.0 L489 164.4 L497 170.8 L505 177.2 L512 183.6 L520 190.0" class="a"/>
+        <circle cx="290" cy="62.3" r="4" class="fa"/><text x="290" y="52" text-anchor="middle" class="ta">ω = 1000, 59.9 dB</text>
+        <text x="175" y="110" class="tc">+20 dB/decade</text><text x="452" y="118" class="tc">−20</text>
+        <text x="200" y="160" class="s">점선은 직선 근사, 실선은 실제</text>
+      </svg>
+      <figcaption>그림 1. 가로축을 로그 주파수, 세로축을 데시벨로 잡으면 인수들의 곱인 전달함수가 직선들의 합이 되므로, 꺾이는 점마다 기울기를 ±20 dB/decade씩 바꾸는 것만으로 크기 응답을 그릴 수 있다(예제 8.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>페이저 해석(<a href="07-02.html">7.2절</a>), 로그의 성질 \(\log ab = \log a + \log b\)를 쓴다.</div>
 
     <h3><span class="no">8.2.1</span>전달함수</h3>
-    <p>필터, 증폭기, 스피커는 "어떤 주파수를 얼마나 통과시키는가"로 평가합니다. 입력 페이저 \(\mathbf X\)와 출력 페이저 \(\mathbf Y\)의 비</p>
+    <p>필터, 증폭기, 스피커는 어떤 주파수를 얼마나 통과시키는지로 평가한다. 입력 페이저 \(\mathbf X\)와 출력 페이저 \(\mathbf Y\)의 비를 전달함수라 한다.</p>
     \[ H(j\omega) = \frac{\mathbf Y}{\mathbf X} \]
-    <p>를 전달함수라 합니다. 크기 \(|H|\)는 진폭이 몇 배가 되는지, 각 \(\angle H\)는 위상이 얼마나 바뀌는지입니다. 예를 들어 RC 저역 통과 필터(입력 — R — 출력 — C — 접지)는 분압으로 \(H = \frac{1/(j\omega C)}{R + 1/(j\omega C)} = \frac{1}{1 + j\omega RC}\)입니다.</p>
+    <p>크기 \(|H|\)는 진폭이 몇 배가 되는지를, 각 \(\angle H\)는 위상이 얼마나 바뀌는지를 알려 준다. 가령 입력에서 R을 거쳐 출력, 출력에서 C를 거쳐 접지로 이은 RC 저역 통과 필터는 분압으로 \(H = \frac{1/(j\omega C)}{R + 1/(j\omega C)} = \frac{1}{1 + j\omega RC}\)이다.</p>
 
     <h3><span class="no">8.2.2</span>데시벨과 로그 축</h3>
-    <p>주파수 응답은 수 Hz부터 수 MHz까지, 이득은 0.001배부터 1000배까지처럼 범위가 넓습니다. 그래서 가로축은 \(\log\omega\), 세로축은 데시벨로 씁니다.</p>
-    \[ |H|_\text{dB} = 20\log_{10}|H|. \]
-    <p>20을 쓰는 이유는 데시벨이 원래 전력 비 \(10\log_{10}(P_2/P_1)\)이고 전력은 진폭의 제곱이기 때문입니다. 외워 둘 값: 2배 ≈ 6 dB, \(\sqrt2\)배 ≈ 3 dB, 10배 = 20 dB, \(1/\sqrt2\) ≈ −3 dB. 데시벨의 진짜 장점은 곱이 합이 된다는 것입니다. 전달함수가 인수들의 곱이면, 보드 도표는 각 인수의 그림을 <b>더해서</b> 그릴 수 있습니다.</p>
+    <p>범위가 넓으므로 가로축은 \(\log\omega\)로, 세로축은 데시벨로 쓴다.</p>
+    \[ |H|_\text{dB} = 20\log_{10}|H| \]
+    <p>20을 쓰는 이유는 데시벨이 원래 전력 비 \(10\log_{10}(P_2/P_1)\)이고 전력은 진폭의 제곱이기 때문이다. 2배는 약 6 dB, \(\sqrt2\)배는 약 3 dB, 10배는 20 dB, \(1/\sqrt2\)배는 약 −3 dB이므로 이 값들은 외워 두자. 데시벨의 진짜 장점은 곱이 합이 된다는 데 있다. 따라서 전달함수가 인수들의 곱이면 보드 도표는 각 인수의 그림을 더해서 그릴 수 있다. 처음 질문의 답이 이것이다.</p>
 
     <h3><span class="no">8.2.3</span>기본 인수 넷의 직선 근사</h3>
-    <p class="q-term"><b>상수 \(K\)</b>: 크기 \(20\log|K|\) dB의 수평선, 위상 0°(K &lt; 0이면 180°).</p>
-    <p class="q-term"><b>원점 영점 \(j\omega\)</b>: \(20\log\omega\). 기울기 +20 dB/decade, \(\omega = 1\)에서 0 dB. 위상 +90°. 원점 극 \(1/j\omega\)은 부호가 반대.</p>
-    <p class="q-term"><b>1차 영점 \(1 + j\omega/\omega_c\)</b>: \(\omega \ll \omega_c\)에서 0 dB, \(\omega \gg \omega_c\)에서 기울기 +20 dB/decade. 꺾이는 점 \(\omega_c\)에서 실제는 +3 dB. 위상은 \(0.1\omega_c\)에서 \(10\omega_c\)까지 0°에서 90°로.</p>
-    <p class="q-term"><b>1차 극 \(1/(1 + j\omega/\omega_c)\)</b>: 1차 영점의 부호를 뒤집은 것. 꺾인 뒤 −20 dB/decade, \(\omega_c\)에서 −3 dB, 위상 0° → −90°.</p>
-    <p>1차 인수의 직선 근사가 맞는 이유: \(|1 + jx| = \sqrt{1 + x^2}\)는 \(x \ll 1\)이면 약 1(0 dB), \(x \gg 1\)이면 약 \(x\)(\(20\log x\), 기울기 20 dB/decade)입니다. 두 직선이 만나는 곳이 \(x = 1\)이고, 그곳의 실제 값 \(\sqrt2\)가 +3 dB입니다.</p>
-
+    <p>상수 \(K\)는 크기 \(20\log|K|\) dB의 수평선이고, 위상은 0°(\(K &lt; 0\)이면 180°)이다. 원점 영점 \(j\omega\)는 \(20\log\omega\)이므로 \(\omega = 1\)에서 0 dB를 지나는 기울기 +20 dB/decade의 직선이며, 위상은 +90°이다. 원점 극 \(1/j\omega\)는 부호가 반대이다.</p>
+    <p>1차 영점 \(1 + j\omega/\omega_c\)는 \(\omega \ll \omega_c\)에서 0 dB이고 \(\omega \gg \omega_c\)에서 기울기 +20 dB/decade이다. 꺾이는 점 \(\omega_c\)에서 실제 값은 +3 dB이고, 위상은 \(0.1\omega_c\)에서 \(10\omega_c\)까지 0°에서 90°로 바뀐다. 1차 극 \(1/(1 + j\omega/\omega_c)\)는 그 부호를 뒤집은 것으로, 꺾인 뒤 −20 dB/decade로 내려가고 \(\omega_c\)에서 −3 dB이며 위상은 0°에서 −90°로 간다.</p>
+    <p>1차 인수의 직선 근사가 맞는 이유를 보자. \(|1 + jx| = \sqrt{1 + x^2}\)는 \(x \ll 1\)이면 약 1, 곧 0 dB이고, \(x \gg 1\)이면 약 \(x\), 곧 기울기 20 dB/decade의 \(20\log x\)이다. 두 직선이 만나는 곳이 \(x = 1\)이며, 그곳의 실제 값 \(\sqrt2\)가 +3 dB이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.2.1</span>
       <p>\(H(j\omega) = \dfrac{100\,(1 + j\omega/10)}{(1 + j\omega/100)(1 + j\omega/10^4)}\)의 크기 보드 도표를 직선 근사로 그리고, \(\omega = 1000\)에서의 값을 근사와 정확한 값으로 비교하여라.</p>
     </div>
-    <p><i>풀이.</i> 인수별로: 상수 100 → 40 dB. 영점 10에서 +20, 극 100에서 −20, 극 \(10^4\)에서 −20 dB/decade가 더해집니다. 구간별 기울기:</p>
-    <ul>
-      <li>\(\omega &lt; 10\): 0, 40 dB.</li>
-      <li>\(10 &lt; \omega &lt; 100\): +20 dB/decade, 100에서 60 dB.</li>
-      <li>\(100 &lt; \omega &lt; 10^4\): 0, 60 dB 유지.</li>
-      <li>\(\omega &gt; 10^4\): −20 dB/decade.</li>
-    </ul>
-    <p>\(\omega = 1000\)에서 근사 60 dB. 정확한 값: \(|H| = 100\frac{\sqrt{1 + 10^4}}{\sqrt{1 + 100}\sqrt{1 + 0.01}} = 100\times\frac{100.005}{10.050\times1.005} \approx 990\), 곧 59.9 dB. 꺾이는 점에서 떨어진 곳이라 근사가 잘 맞습니다. 이 절의 보드선도 탐구 카드에서 이런 도표를 직접 만들어 볼 수 있습니다.</p>
+    <p><i>풀이.</i> 상수 100은 40 dB이다. 여기에 영점 10에서 +20, 극 100에서 −20, 극 \(10^4\)에서 −20 dB/decade가 더해진다. 그러므로 \(\omega &lt; 10\)에서는 40 dB로 평평하고, 10에서 100 사이는 +20 dB/decade로 올라 100에서 60 dB가 된다. 100에서 \(10^4\)까지는 영점과 극이 상쇄해 60 dB를 유지하고, \(10^4\) 이후에는 −20 dB/decade로 내려간다(그림 1의 점선).</p>
+    <p>\(\omega = 1000\)에서 근사는 60 dB이다. 정확한 값은 \(|H| = 100\frac{\sqrt{1 + 10^4}}{\sqrt{1 + 100}\sqrt{1 + 0.01}} = 100\times\frac{100.005}{10.050\times1.005} \approx 990\), 곧 59.9 dB이다. 꺾이는 점에서 떨어진 곳이라 근사가 잘 맞는다. 반면 꺾이는 점 10, 100, \(10^4\) 근처에서는 실선과 점선이 3 dB쯤 벌어진다.</p>
 
     <h3><span class="no">8.2.4</span>필터의 이름</h3>
-    <p>크기 보드 도표의 모양으로 필터를 부릅니다.</p>
-    <p class="q-term"><b>저역 통과</b>: 낮은 주파수를 통과, 높은 주파수를 감쇠. RC(출력 C), RL(출력 R).</p>
-    <p class="q-term"><b>고역 통과</b>: 반대. RC(출력 R), RL(출력 L).</p>
-    <p class="q-term"><b>대역 통과·대역 차단</b>: 특정 대역만 통과 또는 차단. RLC 공진 회로(8.3절).</p>
-    <p>−3 dB가 되는 주파수를 차단 주파수(대역의 경계)라 합니다. 이때 출력 전력이 절반입니다.</p>
+    <p>크기 보드 도표의 모양으로 필터를 부른다. 낮은 주파수를 통과시키고 높은 주파수를 감쇠시키면 저역 통과 필터로, 출력을 C에서 꺼낸 RC나 R에서 꺼낸 RL이 그렇다. 그 반대는 고역 통과 필터로, 출력을 R에서 꺼낸 RC나 L에서 꺼낸 RL이 그렇다. 특정 대역만 통과시키거나 차단하면 대역 통과, 대역 차단 필터라 하며 RLC 공진 회로(8.3절)로 만든다. 한편 크기가 −3 dB가 되는 주파수를 차단 주파수라 하며, 이 때 출력 전력은 절반이다.</p>
 
-    <div class="tb-note"><b>주의</b>보드 도표의 가로축이 \(\omega\)(rad/s)인지 \(f\)(Hz)인지 확인하세요. \(\omega = 2\pi f\)라 꺾이는 점의 숫자가 6.28배 다릅니다. 또 데시벨은 비(ratio)의 단위라, "출력이 20 dB"처럼 쓰려면 기준(dBV는 1 V 기준, dBm은 1 mW 기준)을 밝혀야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>보드 도표의 가로축이 \(\omega\)(rad/s)인지 \(f\)(Hz)인지 확인하자. \(\omega = 2\pi f\)이므로 꺾이는 점의 숫자가 6.28배 다르다. 또 데시벨은 비의 단위여서, "출력이 20 dB"처럼 쓰려면 dBV(1 V 기준)나 dBm(1 mW 기준)처럼 기준을 밝혀야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(H(j\omega) = \mathbf Y/\mathbf X\). \(|H|_\text{dB} = 20\log|H|\), 가로축은 \(\log\omega\).</li>
-        <li>인수의 곱 → dB의 합. 1차 영점(극)은 꺾이는 점부터 ±20 dB/decade, 꺾이는 점에서 ±3 dB 오차.</li>
-        <li>위상은 꺾이는 점의 1/10 ~ 10배에서 ±90°만큼 바뀐다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전달함수 \(H(j\omega) = \mathbf Y/\mathbf X\)의 크기를 데시벨 \(20\log|H|\)로, 주파수를 로그 축으로 그리면 인수들의 곱이 합이 되므로, 상수와 극, 영점의 직선 근사를 더하는 것만으로 손으로 보드 도표를 그릴 수 있다. 1차 영점이나 극은 꺾이는 점부터 기울기를 ±20 dB/decade 바꾸고 그 점에서 ±3 dB 오차를 내며, 위상은 꺾이는 점의 1/10배에서 10배 사이에서 ±90°만큼 바뀐다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.2.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>0.01배, 0.5배, 1000배는 각각 몇 dB인가?
-          <details><summary>답</summary><p>−40 dB, 약 −6 dB, 60 dB.</p></details>
+          <details><summary>답</summary><p>−40 dB, 약 −6 dB, 60 dB이다.</p></details>
         </li>
-        <li>RC 고역 통과(입력 — C — 출력 — R — 접지)의 전달함수와 차단 주파수는?
-          <details><summary>답</summary><p>\(H = \frac{j\omega RC}{1 + j\omega RC}\), \(\omega_c = 1/RC\).</p></details>
+        <li>입력에서 C를 거쳐 출력, 출력에서 R을 거쳐 접지로 이은 RC 고역 통과 필터의 전달함수와 차단 주파수는?
+          <details><summary>답</summary><p>\(H = \frac{j\omega RC}{1 + j\omega RC}\), \(\omega_c = 1/RC\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
-        <li>\(H = \frac{10\,j\omega}{(1 + j\omega/100)(1 + j\omega/1000)}\)의 직선 근사로 100 ~ 1000 rad/s 구간의 크기(dB)를 구하여라.
-          <details><summary>답</summary><p>원점 영점과 상수: \(20\log(10\omega)\), \(\omega = 100\)에서 60 dB. 100 이후 극이 상쇄해 평평, 60 dB. 1000 이후 −20 dB/decade.</p></details>
+        <li>\(H = \frac{10\,j\omega}{(1 + j\omega/100)(1 + j\omega/1000)}\)의 직선 근사로 100에서 1000 rad/s 구간의 크기(dB)를 구하여라.
+          <details><summary>답</summary><p>원점 영점과 상수가 \(20\log(10\omega)\)이므로 \(\omega = 100\)에서 60 dB이다. 100 이후 극이 상쇄해 60 dB로 평평하고, 1000 이후 −20 dB/decade로 내려간다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>같은 RC 저역 통과 필터 두 개를 버퍼 없이 이으면 전달함수가 단순히 제곱이 되지 않는다. 그 이유를 부하 효과로 설명하고, 연산증폭기 폴로어를 사이에 넣으면 왜 제곱이 되는지 설명하여라.
-          <details><summary>답</summary><p>둘째 필터가 첫째 필터의 출력에서 전류를 빼므로(부하) 첫째의 전달함수가 바뀐다. 폴로어는 입력 전류가 0이고 출력 임피던스가 0이라 두 필터가 서로 영향을 주지 않아, 전달함수가 곱이 된다(4.1절).</p></details>
+          <details><summary>답</summary><p>둘째 필터가 첫째 필터의 출력에서 전류를 빼므로 첫째의 전달함수가 바뀐다. 폴로어는 입력 전류가 0이고 출력 임피던스가 0이어서 두 필터가 서로 영향을 주지 않으므로, 전달함수가 곱이 된다(4.1절).</p></details>
         </li>
       </ol>
     </div>

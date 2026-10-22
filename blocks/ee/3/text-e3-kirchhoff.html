@@ -8,110 +8,100 @@
 <article class="card q-card" id="text-e3-kirchhoff" data-kind="본문" data-std="전전3-02-01">
   <header class="card-head"><span class="no"></span><h2>키르히호프 법칙과 분압·분류</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>마디, 가지, 고리를 구별하고 키르히호프 전류 법칙(KCL)과 전압 법칙(KVL)을 쓴다.</li>
-        <li>직렬·병렬 저항을 하나로 합친다.</li>
-        <li>분압 법칙과 분류 법칙을 유도하고 쓸 수 있는 조건을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>수동 부호 규약과 옴의 법칙 (<a href="01-01.html">1.1절</a>, <a href="01-02.html">1.2절</a>).</li>
-        <li>전하 보존과 에너지 보존 (고교 물리학I, <a href="../../common/4/05-01.html">공통4 5단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">12 V를 10 kΩ과 5 kΩ으로 나누어 가운데에서 4 V를 얻었다. 그런데 거기에 5 kΩ짜리 회로를 이었더니 2.4 V로 떨어졌다. 분압 공식은 언제 믿을 수 있고 언제 믿을 수 없을까? 회로를 푸는 데 필요한 법칙은 결국 몇 개일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 210" role="img" aria-label="12 V 분압기 10 kΩ과 5 kΩ, 가운데 마디에 5 kΩ 부하를 달기 전후의 출력 전압">
+        <path d="M60 30 H180 V60 M180 120 V140 M180 180 V190 H60 V30" class="k"/>
+        <circle cx="60" cy="110" r="18" class="lk"/><circle cx="60" cy="110" r="18" class="k"/><text x="60" y="106" text-anchor="middle" class="s">+</text><text x="60" y="122" text-anchor="middle" class="s">−</text><text x="30" y="114" text-anchor="end">12 V</text>
+        <rect x="170" y="60" width="20" height="60" class="la"/><rect x="170" y="60" width="20" height="60" class="a"/><text x="198" y="94" class="ta">10 k</text>
+        <rect x="170" y="140" width="20" height="40" class="la"/><rect x="170" y="140" width="20" height="40" class="a"/><text x="198" y="164" class="ta">5 k</text>
+        <circle cx="180" cy="130" r="4" class="fk"/><path d="M180 130 H240" class="k"/><text x="246" y="134">출력 4 V</text>
+        <path d="M340 30 H460 V60 M460 120 V140 M460 180 V190 H340 V30" class="k"/>
+        <circle cx="340" cy="110" r="18" class="lk"/><circle cx="340" cy="110" r="18" class="k"/><text x="340" y="106" text-anchor="middle" class="s">+</text><text x="340" y="122" text-anchor="middle" class="s">−</text>
+        <rect x="450" y="60" width="20" height="60" class="la"/><rect x="450" y="60" width="20" height="60" class="a"/>
+        <rect x="450" y="140" width="20" height="40" class="la"/><rect x="450" y="140" width="20" height="40" class="a"/>
+        <path d="M460 130 H520 V140 M520 180 V190 H460" class="k"/><rect x="510" y="140" width="20" height="40" class="ld"/><rect x="510" y="140" width="20" height="40" class="d"/><text x="534" y="164" class="td">5 k</text>
+        <circle cx="460" cy="130" r="4" class="fk"/><text x="400" y="206" text-anchor="middle" class="td">부하를 달면 2.4 V</text>
+      </svg>
+      <figcaption>그림 1. 분압 공식은 두 저항에 같은 전류가 흐를 때만 맞으며, 가운데 마디에 부하를 달면 아래 저항과 부하가 병렬이 되어 2.5 kΩ으로 줄어들고 출력이 4 V에서 2.4 V로 떨어진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>수동 부호 규약과 옴의 법칙(<a href="01-01.html">1.1절</a>, <a href="01-02.html">1.2절</a>), 고교 물리의 전하 보존과 에너지 보존(<a href="../../common/4/05-01.html">공통4 5단원</a>)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>회로의 말: 마디, 가지, 고리</h3>
-    <p>회로를 풀려면 먼저 회로의 모양을 말로 가리킬 수 있어야 합니다. 세 낱말을 한 줄씩 정의합니다.</p>
-    <p class="q-term"><b>가지(branch)</b>: 소자 하나(또는 직렬로만 이어진 소자 묶음)가 차지하는 길.</p>
-    <p class="q-term"><b>마디(node)</b>: 두 개 이상의 가지가 만나는 점. 도선으로만 이어진 점들은 모두 한 마디다.</p>
-    <p class="q-term"><b>고리(loop)</b>: 한 마디에서 출발해 같은 마디를 두 번 지나지 않고 처음으로 돌아오는 닫힌 길.</p>
-    <p>"도선으로만 이어진 점들은 한 마디"라는 말을 놓치면 마디 수를 잘못 셉니다. 회로도에서 도선이 꺾이거나 여러 갈래로 그려져도, 그 사이에 소자가 없으면 모두 같은 전위의 한 마디입니다.</p>
+    <p>회로를 풀려면 먼저 회로의 모양을 말로 가리킬 수 있어야 한다. 소자 하나, 또는 직렬로만 이어진 소자 묶음이 차지하는 길을 가지라 한다. 두 개 이상의 가지가 만나는 점을 마디라 하는데, 도선으로만 이어진 점들은 모두 한 마디이다. 그리고 한 마디에서 출발해 같은 마디를 두 번 지나지 않고 처음으로 돌아오는 닫힌 길을 고리라 한다.</p>
+    <p>여기서 "도선으로만 이어진 점들은 한 마디"를 놓치면 마디 수를 잘못 센다. 회로도에서 도선이 꺾이거나 여러 갈래로 그려져도, 그 사이에 소자가 없으면 모두 같은 전위의 한 마디이다.</p>
 
     <h3><span class="no">2.1.2</span>키르히호프의 두 법칙</h3>
-    <p>회로를 푸는 데 필요한 식은 두 가지 보존 법칙과 소자의 규칙(옴의 법칙 등)뿐입니다.</p>
+    <p>처음 질문의 둘째 부분에 답하자. 회로를 푸는 데 필요한 식은 두 가지 보존 법칙과 소자의 규칙뿐이다.</p>
     <div class="tb-env thm">
       <span class="lb">법칙 2.1.1 <span class="nm">(키르히호프 전류 법칙, KCL)</span></span>
-      <p>어느 마디에서든 들어오는 전류의 합은 나가는 전류의 합과 같다. 들어오는 전류를 +, 나가는 전류를 −로 세면 \(\sum_k i_k = 0\).</p>
+      <p>어느 마디에서든 들어오는 전류의 합은 나가는 전류의 합과 같다. 들어오는 전류를 +, 나가는 전류를 −로 세면 \(\sum_k i_k = 0\)이다.</p>
     </div>
-    <p>근거는 전하 보존입니다. 마디는 전하를 쌓아 둘 수 없는 점이므로(집중 정수 가정), 들어온 만큼 나가야 합니다.</p>
+    <p>근거는 전하 보존이다. 집중 정수 가정에서 마디는 전하를 쌓아 둘 수 없는 점이므로, 들어온 만큼 나가야 한다.</p>
     <div class="tb-env thm">
       <span class="lb">법칙 2.1.2 <span class="nm">(키르히호프 전압 법칙, KVL)</span></span>
-      <p>어느 고리를 따라 한 바퀴 돌며 전압을 더하면 0이다: \(\sum_k v_k = 0\). 돌다가 소자의 + 쪽에서 들어가면 \(+v\), − 쪽에서 들어가면 \(-v\)로 센다.</p>
+      <p>어느 고리를 따라 한 바퀴 돌며 전압을 더하면 0이다. 곧 \(\sum_k v_k = 0\)이며, 돌다가 소자의 + 쪽에서 들어가면 \(+v\), − 쪽에서 들어가면 \(-v\)로 센다.</p>
     </div>
-    <p>근거는 전위가 위치마다 하나로 정해진다는 사실(에너지 보존)입니다. 산을 한 바퀴 돌아 제자리에 오면 오르내린 높이의 합이 0인 것과 같습니다. 부호 약속은 돌기 전에 하나 정해 끝까지 지키면 됩니다.</p>
+    <p>근거는 전위가 위치마다 하나로 정해진다는 사실, 곧 에너지 보존이다. 산을 한 바퀴 돌아 제자리에 오면 오르내린 높이의 합이 0인 것과 같다. 부호 약속은 돌기 전에 하나 정해 끝까지 지키면 된다.</p>
 
     <h3><span class="no">2.1.3</span>직렬과 병렬</h3>
-    <p>같은 전류가 지나가는 소자들은 <b>직렬</b>, 같은 두 마디에 양 끝이 붙은 소자들은 <b>병렬</b>입니다.</p>
+    <p>같은 전류가 지나가는 소자들을 직렬, 같은 두 마디에 양 끝이 붙은 소자들을 병렬이라 한다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.1.3 <span class="nm">(등가 저항)</span></span>
-      <p>직렬: \(R_\text{eq} = R_1 + R_2 + \cdots + R_n\).</p>
-      <p>병렬: \(\dfrac{1}{R_\text{eq}} = \dfrac{1}{R_1} + \cdots + \dfrac{1}{R_n}\), 곧 \(G_\text{eq} = G_1 + \cdots + G_n\). 두 개면 \(R_1\parallel R_2 = \dfrac{R_1R_2}{R_1 + R_2}\).</p>
+      <p>직렬은 \(R_\text{eq} = R_1 + \cdots + R_n\)이다. 병렬은 \(\dfrac{1}{R_\text{eq}} = \dfrac{1}{R_1} + \cdots + \dfrac{1}{R_n}\), 곧 \(G_\text{eq} = G_1 + \cdots + G_n\)이고, 두 개면 \(R_1\parallel R_2 = \dfrac{R_1R_2}{R_1 + R_2}\)이다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>직렬에서는 전류 \(i\)가 같고 KVL로 전체 전압이 각 전압의 합이므로 \(v = R_1i + \cdots + R_ni = (R_1 + \cdots + R_n)i\). 병렬에서는 전압 \(v\)가 같고 KCL로 전체 전류가 각 전류의 합이므로 \(i = v/R_1 + \cdots + v/R_n\). <span class="qed">∎</span></p>
-    <p>병렬 등가 저항은 가장 작은 저항보다도 작습니다. 길이 하나 더 생기면 전류가 더 쉽게 흐르기 때문입니다. 같은 저항 \(R\) 두 개를 병렬로 하면 \(R/2\)입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>직렬에서는 전류 \(i\)가 같고, KVL로 전체 전압이 각 전압의 합이므로 \(v = R_1i + \cdots + R_ni = (R_1 + \cdots + R_n)i\)이다. 병렬에서는 전압 \(v\)가 같고, KCL로 전체 전류가 각 전류의 합이므로 \(i = v/R_1 + \cdots + v/R_n\)이다. <span class="qed">∎</span></p>
+    <p>병렬 등가 저항은 가장 작은 저항보다도 작다. 길이 하나 더 생기면 전류가 더 쉽게 흐르기 때문이다. 같은 저항 \(R\) 두 개를 병렬로 하면 \(R/2\)이다.</p>
 
     <h3><span class="no">2.1.4</span>분압 법칙</h3>
-    <p>구하려는 것: 전압 \(v\)가 직렬 저항 \(R_1, R_2\)에 걸릴 때 \(R_2\)에 걸리는 전압.</p>
-    <p>직렬이라 전류는 \(i = v/(R_1 + R_2)\)이고, \(R_2\)의 전압은 \(R_2 i\)입니다. 따라서</p>
-    \[ v_2 = \frac{R_2}{R_1 + R_2}\,v. \]
-    <p>전압은 저항에 비례해 나뉩니다. 큰 저항이 큰 전압을 가져갑니다. 이 식은 <b>두 저항에 같은 전류가 흐를 때만</b> 맞습니다. 가운데 마디에 다른 가지(부하)가 붙어 전류가 새어 나가면 쓸 수 없습니다.</p>
+    <p>전압 \(v\)가 직렬 저항 \(R_1, R_2\)에 걸릴 때 \(R_2\)의 전압을 구해 보자. 직렬이라 전류는 \(i = v/(R_1 + R_2)\)이고, \(R_2\)의 전압은 \(R_2 i\)이므로 다음과 같다.</p>
+    \[ v_2 = \frac{R_2}{R_1 + R_2}\,v \]
+    <p>전압은 저항에 비례해 나뉘며 큰 저항이 큰 전압을 가져간다. 그런데 유도의 첫 줄을 보자. 두 저항에 같은 전류가 흐른다고 했다. 따라서 이 식은 같은 전류가 흐를 때만 맞는다. 가운데 마디에 부하가 붙어 전류가 새어 나가면 쓸 수 없다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.4</span>
       <p>12 V를 \(R_1 = 10\ \text{k}\Omega\), \(R_2 = 5\ \text{k}\Omega\)으로 나누어 가운데 마디에서 4 V를 얻었다. 여기에 5 kΩ 부하를 달면 몇 V가 되는가?</p>
     </div>
-    <p><i>풀이.</i> 부하가 없으면 \(12\times5/15 = 4\) V. 부하를 달면 \(R_2\)와 부하가 병렬이 되어 \(5\parallel5 = 2.5\ \text{k}\Omega\)이므로 \(12\times2.5/12.5 = 2.4\) V. 부하가 분압기 저항과 비슷하면 전압이 크게 떨어집니다. 그래서 기준 전압을 분압기로 만들 때는 부하 저항이 \(R_2\)보다 훨씬 커야 하고, 그렇지 않으면 연산증폭기 버퍼(4.1절)를 넣습니다. 아날로그실험의 측정기 부하 효과 카드가 같은 현상입니다.</p>
+    <p><i>풀이.</i> 부하가 없으면 \(12\times5/15 = 4\) V이다. 부하를 달면 그림 1처럼 \(R_2\)와 부하가 병렬이 되어 \(5\parallel5 = 2.5\ \text{k}\Omega\)이므로 \(12\times2.5/12.5 = 2.4\) V이다. 처음 질문의 첫째 답이 이것이다. 부하가 분압기 저항과 비슷하면 전압이 크게 떨어진다. 그래서 분압기로 기준 전압을 만들 때는 부하 저항이 \(R_2\)보다 훨씬 커야 하고, 그렇지 않으면 연산증폭기 버퍼(4.1절)를 넣는다. 아날로그실험의 측정기 부하 효과도 같은 현상이다.</p>
 
     <h3><span class="no">2.1.5</span>분류 법칙</h3>
-    <p>구하려는 것: 전류 \(i\)가 병렬 저항 \(R_1, R_2\)로 나뉠 때 \(R_2\)로 가는 전류.</p>
-    <p>병렬이라 전압은 \(v = i(R_1\parallel R_2) = i\frac{R_1R_2}{R_1 + R_2}\)이고 \(i_2 = v/R_2\)이므로</p>
-    \[ i_2 = \frac{R_1}{R_1 + R_2}\,i. \]
-    <p>분자에 <b>반대쪽</b> 저항이 옵니다. 전류는 저항이 작은 길로 더 많이 갑니다. 컨덕턴스로 쓰면 \(i_2 = \frac{G_2}{G_1 + G_2}i\)로 분압과 같은 모양이 됩니다.</p>
-
+    <p>이번에는 전류 \(i\)가 병렬 저항 \(R_1, R_2\)로 나뉠 때 \(R_2\)로 가는 전류를 구하자. 병렬이라 전압은 \(v = i(R_1\parallel R_2) = i\frac{R_1R_2}{R_1 + R_2}\)이고 \(i_2 = v/R_2\)이므로 다음과 같다.</p>
+    \[ i_2 = \frac{R_1}{R_1 + R_2}\,i \]
+    <p>분자에 반대쪽 저항이 온다는 데 주의하자. 전류는 저항이 작은 길로 더 많이 간다. 컨덕턴스로 쓰면 \(i_2 = \frac{G_2}{G_1 + G_2}i\)로 분압과 같은 모양이 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.5</span>
       <p>30 V 전원에 6 Ω이 직렬로 있고, 그 뒤에 12 Ω과 6 Ω이 병렬로 있다. 각 저항의 전류와 전압을 구하고 전력 균형을 확인하여라.</p>
     </div>
-    <p><i>풀이.</i> 병렬 부분 \(12\parallel6 = 4\ \Omega\), 전체 \(6 + 4 = 10\ \Omega\), 전원 전류 3 A. 분압: 병렬 부분 전압 \(30\times4/10 = 12\) V, 직렬 6 Ω에 18 V. 분류: 12 Ω에 \(3\times6/18 = 1\) A, 6 Ω에 \(3\times12/18 = 2\) A (검산: \(12/12 = 1\), \(12/6 = 2\)). 전력: 저항들 \(54 + 12 + 24 = 90\) W, 전원 \(30\times3 = 90\) W 공급. 맞습니다.</p>
+    <p><i>풀이.</i> 병렬 부분은 \(12\parallel6 = 4\ \Omega\), 전체는 \(6 + 4 = 10\ \Omega\)이므로 전원 전류는 3 A이다. 분압으로 병렬 부분 전압은 \(30\times4/10 = 12\) V, 직렬 6 Ω에는 18 V이다. 분류로 12 Ω에는 \(3\times6/18 = 1\) A, 6 Ω에는 \(3\times12/18 = 2\) A가 흐른다. \(12/12 = 1\), \(12/6 = 2\)로 검산된다. 전력은 저항들이 \(54 + 12 + 24 = 90\) W를 흡수하고 전원이 \(30\times3 = 90\) W를 공급하여 맞는다.</p>
 
-    <div class="tb-note"><b>주의</b>분류 법칙에서 분자에 자기 저항을 넣는 실수가 가장 흔합니다. 확인 방법: 한쪽 저항을 0으로 보내 보세요. \(R_1 \to 0\)이면 전류는 모두 \(R_1\)으로 가야 하므로 \(i_2 \to 0\)이어야 합니다. \(\frac{R_1}{R_1 + R_2}\)은 그렇게 되고, \(\frac{R_2}{R_1 + R_2}\)은 1이 되어 틀립니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>분류 법칙에서 분자에 자기 저항을 넣는 실수가 가장 흔하다. 확인하는 방법은 한쪽 저항을 0으로 보내 보는 것이다. \(R_1 \to 0\)이면 전류는 모두 \(R_1\)으로 가야 하므로 \(i_2 \to 0\)이어야 한다. \(\frac{R_1}{R_1 + R_2}\)은 그렇게 되고, \(\frac{R_2}{R_1 + R_2}\)은 1이 되어 틀린다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>KCL(전하 보존): 마디로 들어오는 전류 합 = 나가는 전류 합. KVL(에너지 보존): 고리를 돌며 전압 합 = 0.</li>
-        <li>직렬은 저항의 합, 병렬은 컨덕턴스의 합.</li>
-        <li>분압 \(v_2 = \frac{R_2}{R_1 + R_2}v\)는 같은 전류일 때만, 분류 \(i_2 = \frac{R_1}{R_1 + R_2}i\)는 분자가 반대쪽 저항.</li>
-        <li>부하가 붙으면 분압비가 바뀐다. 극단값(0, ∞)을 넣어 식을 검산한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>회로를 푸는 법칙은 전하 보존의 KCL과 에너지 보존의 KVL, 그리고 소자의 규칙뿐이다. 이 둘에서 직렬은 저항의 합, 병렬은 컨덕턴스의 합이 나오고, 분압 \(v_2 = \frac{R_2}{R_1 + R_2}v\)와 분류 \(i_2 = \frac{R_1}{R_1 + R_2}i\)가 나온다. 분압은 두 저항에 같은 전류가 흐를 때만 맞으므로, 부하를 달면 4 V가 2.4 V로 떨어진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.6</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>2 kΩ, 3 kΩ, 6 kΩ의 병렬 등가 저항은?
-          <details><summary>답</summary><p>\(1/(1/2 + 1/3 + 1/6) = 1\ \text{k}\Omega\).</p></details>
+          <details><summary>답</summary><p>\(1/(1/2 + 1/3 + 1/6) = 1\ \text{k}\Omega\)이다.</p></details>
         </li>
         <li>9 V를 1 kΩ과 2 kΩ 직렬로 나눌 때 2 kΩ의 전압은?
-          <details><summary>답</summary><p>6 V.</p></details>
+          <details><summary>답</summary><p>6 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>5 V에서 3.3 V를 분압기로 만들려 한다. \(R_2 = 10\ \text{k}\Omega\)이면 \(R_1\)은? 이 출력에 100 kΩ 입력 저항의 칩을 이으면 몇 V가 되는가?
-          <details><summary>답</summary><p>\(R_1 = 10\times(5 - 3.3)/3.3 \approx 5.15\ \text{k}\Omega\). 부하 후 \(R_2' = 10\parallel100 = 9.09\ \text{k}\Omega\), 출력 \(5\times9.09/14.24 \approx 3.19\) V.</p></details>
+          <details><summary>답</summary><p>\(R_1 = 10\times(5 - 3.3)/3.3 \approx 5.15\ \text{k}\Omega\)이다. 부하 후 \(R_2' = 10\parallel100 = 9.09\ \text{k}\Omega\)이므로 출력은 \(5\times9.09/14.24 \approx 3.19\) V이다.</p></details>
         </li>
         <li>10 mA 전류원에 1 kΩ과 \(R\)이 병렬로 있다. \(R\)에 2 mA가 흐르려면 \(R\)은?
-          <details><summary>답</summary><p>1 kΩ에 8 mA, 전압 8 V, \(R = 4\ \text{k}\Omega\).</p></details>
+          <details><summary>답</summary><p>1 kΩ에 8 mA가 흘러 전압이 8 V이므로 \(R = 4\ \text{k}\Omega\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="5">
         <li>같은 저항 \(R\) 12개로 정육면체의 모서리를 만들었다. 몸체 대각선 양 끝 사이 등가 저항을 구하여라.
           <details><summary>힌트</summary><p>대칭 때문에 출발점과 이어진 세 꼭짓점은 같은 전위다. 같은 전위의 점들은 이어도 전류가 바뀌지 않는다.</p></details>
-          <details><summary>답</summary><p>세 층으로 묶으면 \(R/3 + R/6 + R/3 = 5R/6\).</p></details>
+          <details><summary>답</summary><p>세 층으로 묶으면 \(R/3 + R/6 + R/3 = 5R/6\)이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,88 +8,89 @@
 <article class="card q-card" id="text-e3-acpower" data-kind="본문" data-std="전전3-08-01">
   <header class="card-head"><span class="no"></span><h2>교류 전력: 평균 전력, 실효값, 복소 전력, 역률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>순시 전력과 평균 전력을 구하고 실효값의 뜻을 안다.</li>
-        <li>복소 전력 \(\mathbf S = P + jQ\), 피상 전력, 역률을 정의하고 계산한다.</li>
-        <li>역률 개선 축전기를 설계한다.</li>
-        <li>교류의 최대 전력 전달 조건 \(\mathbf Z_L = \mathbf Z_\text{Th}^*\)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>페이저와 임피던스 (<a href="07-01.html">7.1절</a>), 전력과 수동 부호 규약 (<a href="01-01.html">1.1절</a>), 최대 전력 전달 (<a href="03-03.html">3.3절</a>).</li>
-        <li>삼각함수의 곱을 합으로: \(\cos A\cos B = \frac12[\cos(A - B) + \cos(A + B)]\) (고교 수학I·미적분).</li>
-      </ul>
-    </div>
+    <p class="q-ask">공장의 전동기가 10 kW의 일을 하는데, 220 V 전선에는 45 A가 아니라 65 A가 흐른다. 하는 일은 같은데 왜 전류가 더 흐를까? 그리고 전동기 옆에 축전기 하나를 달았더니 전류가 48 A로 줄었다면, 축전기는 무엇을 한 것일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 210" role="img" aria-label="전력 삼각형. 유효 전력 10 kW는 그대로이고 병렬 축전기가 무효 전력을 10.2에서 3.29 kvar로 줄여 피상 전력이 14.29에서 10.53 kVA로 준다">
+        <defs><marker id="ah-ap1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M80 185 L230 32 L230 185 Z" class="ld"/>
+        <path d="M80 185 L230 135.6 L230 185 Z" class="lb"/>
+        <path d="M80 185 H230" class="a"/>
+        <path d="M230 185 V32" class="d"/>
+        <path d="M80 185 L230 32" class="d dsh"/>
+        <path d="M80 185 L230 135.6" class="b"/>
+        <g marker-end="url(#ah-ap1)"><path d="M262 34 V132" class="c"/></g>
+        <text x="155" y="202" text-anchor="middle" class="ta">P = 10 kW</text>
+        <text x="236" y="28" class="td">Q₁ = 10.20 kvar</text>
+        <text x="236" y="150" class="tb">Q₂ = 3.29</text>
+        <text x="270" y="90" class="tc">축전기 −6.91 kvar</text>
+        <text x="120" y="100" text-anchor="end" class="td">14.29 kVA</text>
+        <text x="150" y="150" class="tb">10.53 kVA</text>
+        <text x="380" y="70" class="s">역률 0.70 → 0.95</text>
+        <text x="380" y="95" class="s">전류 65.0 A → 47.8 A</text>
+        <text x="380" y="120" class="s">220 V, 60 Hz, C ≈ 379 μF</text>
+      </svg>
+      <figcaption>그림 1. 전동기의 인덕터 성분이 주고받기만 하는 무효 전력 \(Q\) 때문에 피상 전력이 유효 전력보다 커져 전류가 더 흐르므로, 병렬 축전기로 음의 \(Q\)를 보태 지우면 하는 일 \(P\)는 그대로 두고 전류만 줄일 수 있다(예제 8.1.3).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>페이저와 임피던스(<a href="07-01.html">7.1절</a>), 전력과 수동 부호 규약(<a href="01-01.html">1.1절</a>), 최대 전력 전달(<a href="03-03.html">3.3절</a>), 그리고 삼각함수의 곱을 합으로 바꾸는 공식 \(\cos A\cos B = \frac12[\cos(A - B) + \cos(A + B)]\)를 쓴다.</div>
 
     <h3><span class="no">8.1.1</span>순시 전력과 평균 전력</h3>
-    <p>\(v = V_m\cos(\omega t + \theta_v)\), \(i = I_m\cos(\omega t + \theta_i)\)일 때 순시 전력은 곱을 합으로 바꾸어</p>
-    \[ p(t) = vi = \frac{V_mI_m}{2}\cos(\theta_v - \theta_i) + \frac{V_mI_m}{2}\cos(2\omega t + \theta_v + \theta_i). \]
-    <p>둘째 항은 두 배 주파수로 출렁이고 한 주기 평균이 0입니다. 그래서 평균 전력은 첫째 항입니다.</p>
-    \[ P = \frac{V_mI_m}{2}\cos(\theta_v - \theta_i). \]
-    <p>\(\theta = \theta_v - \theta_i\)는 임피던스의 각입니다. 저항(\(\theta = 0\))은 \(P = V_mI_m/2\)를 모두 흡수하고, 순수 인덕터·축전기(\(\theta = \pm90°\))는 평균 전력이 0입니다. 에너지를 받았다가 돌려주기만 하기 때문입니다(1.1절 연습 5).</p>
+    <p>\(v = V_m\cos(\omega t + \theta_v)\), \(i = I_m\cos(\omega t + \theta_i)\)일 때 순시 전력은 곱을 합으로 바꾸어 다음과 같이 쓴다.</p>
+    \[ p(t) = vi = \frac{V_mI_m}{2}\cos(\theta_v - \theta_i) + \frac{V_mI_m}{2}\cos(2\omega t + \theta_v + \theta_i) \]
+    <p>둘째 항은 두 배 주파수로 출렁이고 한 주기 평균이 0이다. 그러므로 평균 전력은 첫째 항이다.</p>
+    \[ P = \frac{V_mI_m}{2}\cos(\theta_v - \theta_i) \]
+    <p>\(\theta = \theta_v - \theta_i\)는 임피던스의 각이다. 저항은 \(\theta = 0\)이어서 \(V_mI_m/2\)를 모두 흡수하지만, 순수 인덕터와 축전기는 \(\theta = \pm90°\)이어서 평균 전력이 0이다. 에너지를 받았다가 돌려주기만 하기 때문이다(1.1절 연습 5).</p>
 
     <h3><span class="no">8.1.2</span>실효값</h3>
     <div class="tb-env">
       <span class="lb">정의 8.1.1 <span class="nm">(실효값)</span></span>
       <p>주기 신호 \(x(t)\)의 실효값(RMS)은 \(X_\text{rms} = \sqrt{\frac1T\int_0^Tx^2\,dt}\)이다. 같은 저항에서 같은 평균 전력을 내는 직류 값이다.</p>
     </div>
-    <p>사인파 \(V_m\cos\omega t\)는 \(\cos^2\)의 평균이 \(\frac12\)이라 \(V_\text{rms} = V_m/\sqrt2\)입니다. 가정용 220 V는 실효값이고 진폭은 약 311 V입니다. 실효값을 쓰면 \(P = V_\text{rms}I_\text{rms}\cos\theta\)로, 직류 식 \(P = VI\)에 \(\cos\theta\)만 붙은 모양이 됩니다. 전력 계산에서는 페이저의 크기도 실효값으로 쓰는 것이 관례입니다.</p>
+    <p>사인파 \(V_m\cos\omega t\)는 \(\cos^2\)의 평균이 \(\frac12\)이므로 \(V_\text{rms} = V_m/\sqrt2\)이다. 가정용 220 V는 실효값이며 진폭은 약 311 V이다. 실효값을 쓰면 \(P = V_\text{rms}I_\text{rms}\cos\theta\)로, 직류 식 \(P = VI\)에 \(\cos\theta\)만 붙은 모양이 된다. 그래서 전력 계산에서는 페이저의 크기도 실효값으로 쓰는 것이 관례이다.</p>
 
     <h3><span class="no">8.1.3</span>복소 전력과 역률</h3>
     <div class="tb-env">
       <span class="lb">정의 8.1.2 <span class="nm">(복소 전력)</span></span>
-      <p>실효값 페이저 \(\mathbf V\), \(\mathbf I\)(수동 부호 규약)에 대해 \(\mathbf S = \mathbf V\mathbf I^* = P + jQ\).</p>
+      <p>수동 부호 규약의 실효값 페이저 \(\mathbf V\), \(\mathbf I\)에 대해 복소 전력은 \(\mathbf S = \mathbf V\mathbf I^* = P + jQ\)이다.</p>
     </div>
-    <p class="q-term"><b>유효 전력 \(P\)</b> (W): 실제로 일을 하거나 열이 되는 평균 전력. \(P = |\mathbf V||\mathbf I|\cos\theta\).</p>
-    <p class="q-term"><b>무효 전력 \(Q\)</b> (var): L과 C가 주고받는 전력의 크기. 인덕터는 \(Q &gt; 0\), 축전기는 \(Q &lt; 0\).</p>
-    <p class="q-term"><b>피상 전력 \(|\mathbf S|\)</b> (VA): 전압 실효값 × 전류 실효값. 전선과 변압기가 견뎌야 하는 크기.</p>
-    <p class="q-term"><b>역률 pf</b> = \(P/|\mathbf S| = \cos\theta\). 전류가 전압보다 늦으면 "늦은 역률"(유도성).</p>
-    <p>켤레 \(\mathbf I^*\)를 쓰는 이유: \(\mathbf V\mathbf I^* = |\mathbf V||\mathbf I|\angle(\theta_v - \theta_i)\)이라 실수부가 정확히 평균 전력이 됩니다. 임피던스로 쓰면 \(\mathbf S = |\mathbf I|^2\mathbf Z = |\mathbf I|^2R + j|\mathbf I|^2X\). 복소 전력은 보존됩니다: 한 회로의 모든 소자의 \(\mathbf S\) 합은 0(1.1절 전력 균형의 복소 판).</p>
+    <p>실수부 \(P\)는 유효 전력(W)으로, 실제로 일을 하거나 열이 되는 평균 전력 \(|\mathbf V||\mathbf I|\cos\theta\)이다. 허수부 \(Q\)는 무효 전력(var)으로, L과 C가 주고받는 전력의 크기이며 인덕터는 \(Q &gt; 0\), 축전기는 \(Q &lt; 0\)이다. 크기 \(|\mathbf S|\)는 피상 전력(VA)으로, 전압 실효값과 전류 실효값의 곱이며 전선과 변압기가 견뎌야 하는 양이다. 역률은 \(P/|\mathbf S| = \cos\theta\)이고, 전류가 전압보다 늦으면 늦은 역률(유도성)이라 한다.</p>
+    <p>켤레 \(\mathbf I^*\)를 쓰는 이유는 \(\mathbf V\mathbf I^* = |\mathbf V||\mathbf I|\angle(\theta_v - \theta_i)\)여서 실수부가 정확히 평균 전력이 되기 때문이다. 임피던스로 쓰면 \(\mathbf S = |\mathbf I|^2\mathbf Z = |\mathbf I|^2R + j|\mathbf I|^2X\)이다. 또한 복소 전력은 보존되어, 한 회로의 모든 소자의 \(\mathbf S\)를 더하면 0이다. 1.1절 전력 균형의 복소수 판이다.</p>
 
     <h3><span class="no">8.1.4</span>역률 개선</h3>
-    <p>공장의 전동기는 인덕터 성분이 커서 역률이 0.7쯤입니다. 같은 일(\(P\))을 하는데도 전류가 \(1/0.7 \approx 1.43\)배 흘러, 전선 손실(\(I^2R\))이 두 배쯤 되고 설비가 커집니다. 부하와 병렬로 축전기를 달아 음의 \(Q\)로 인덕터의 \(Q\)를 지우면 \(P\)는 그대로이고 전류가 줄어듭니다.</p>
+    <p>처음 질문의 답이 여기 있다. 공장의 전동기는 인덕터 성분이 커서 역률이 0.7쯤이다. 같은 일 \(P\)를 하는데도 전류가 \(1/0.7 \approx 1.43\)배 흘러 전선 손실 \(I^2R\)이 두 배쯤 되고 설비가 커진다. 그래서 부하와 병렬로 축전기를 달아 음의 \(Q\)로 인덕터의 \(Q\)를 지운다. 그러면 \(P\)는 그대로이고 전류가 줄어든다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 8.1.3</span>
       <p>220 V(실효), 60 Hz 전원에 10 kW, 역률 0.7(늦음)인 부하가 있다. 역률을 0.95(늦음)로 올리는 병렬 축전기와, 개선 전후 전원 전류를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 개선 전: \(|\mathbf S| = 10/0.7 = 14.29\) kVA, \(Q_1 = \sqrt{14.29^2 - 10^2} = 10.20\) kvar, 전류 \(14290/220 = 65.0\) A. 개선 후: \(\theta_2 = \arccos0.95 = 18.19°\), \(Q_2 = 10\tan18.19° = 3.29\) kvar. 축전기가 공급할 무효 전력 \(Q_C = 10.20 - 3.29 = 6.91\) kvar. \(Q_C = V^2\omega C\)에서 \(C = \frac{6910}{220^2\times377} \approx 379\ \mu\text{F}\). 개선 후 \(|\mathbf S| = 10/0.95 = 10.53\) kVA, 전류 47.8 A로 26% 줄었습니다.</p>
+    <p><i>풀이.</i> 개선 전에는 \(|\mathbf S| = 10/0.7 = 14.29\) kVA, \(Q_1 = \sqrt{14.29^2 - 10^2} = 10.20\) kvar이고 전류는 \(14290/220 = 65.0\) A이다. 개선 후에는 \(\theta_2 = \arccos0.95 = 18.19°\)이므로 \(Q_2 = 10\tan18.19° = 3.29\) kvar이다. 따라서 축전기가 공급할 무효 전력은 \(Q_C = 10.20 - 3.29 = 6.91\) kvar이고, \(Q_C = V^2\omega C\)에서 \(C = \frac{6910}{220^2\times377} \approx 379\ \mu\text{F}\)이다. 개선 후 \(|\mathbf S| = 10/0.95 = 10.53\) kVA, 전류는 47.8 A로 26% 줄었다(그림 1).</p>
 
     <h3><span class="no">8.1.5</span>교류의 최대 전력 전달</h3>
-    <p>테브난 등가 \(\mathbf V_\text{Th}\), \(\mathbf Z_\text{Th} = R_\text{Th} + jX_\text{Th}\)에 부하 \(\mathbf Z_L = R_L + jX_L\)을 달면 부하 평균 전력은 \(P = \frac{|\mathbf V_\text{Th}|^2R_L}{(R_\text{Th} + R_L)^2 + (X_\text{Th} + X_L)^2}\)입니다. \(X_L\)은 분모의 둘째 항에만 있으므로 먼저 \(X_L = -X_\text{Th}\)로 그 항을 0으로 만들고, 남은 식은 3.3절과 같아 \(R_L = R_\text{Th}\)입니다. 곧 \(\mathbf Z_L = \mathbf Z_\text{Th}^*\)(켤레 정합), 최대 전력 \(|\mathbf V_\text{Th}|^2/(4R_\text{Th})\)(실효값 기준)입니다.</p>
+    <p>테브난 등가 \(\mathbf V_\text{Th}\), \(\mathbf Z_\text{Th} = R_\text{Th} + jX_\text{Th}\)에 부하 \(\mathbf Z_L = R_L + jX_L\)을 달면 부하 평균 전력은 다음과 같다.</p>
+    \[ P = \frac{|\mathbf V_\text{Th}|^2R_L}{(R_\text{Th} + R_L)^2 + (X_\text{Th} + X_L)^2} \]
+    <p>\(X_L\)은 분모의 둘째 항에만 있으므로, 먼저 \(X_L = -X_\text{Th}\)로 그 항을 0으로 만든다. 그러면 남은 식이 3.3절과 같아 \(R_L = R_\text{Th}\)이다. 곧 \(\mathbf Z_L = \mathbf Z_\text{Th}^*\)인 켤레 정합에서 최대 전력 \(|\mathbf V_\text{Th}|^2/(4R_\text{Th})\)(실효값 기준)를 얻는다.</p>
 
-    <div class="tb-note"><b>주의</b>평균 전력을 \(V_mI_m\)으로 계산하는 실수가 흔합니다. 진폭을 쓰면 \(\frac12\)이 붙고, 실효값을 쓰면 붙지 않습니다. 문제의 전압이 진폭인지 실효값인지 먼저 확인하세요(가정용 "220 V"는 실효값).</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>평균 전력을 \(V_mI_m\)으로 계산하는 실수가 흔하다. 진폭을 쓰면 \(\frac12\)이 붙고, 실효값을 쓰면 붙지 않는다. 문제의 전압이 진폭인지 실효값인지 먼저 확인하자. 가정용 220 V는 실효값이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(P = \frac{V_mI_m}{2}\cos\theta = V_\text{rms}I_\text{rms}\cos\theta\). 사인파 실효값 = 진폭/√2.</li>
-        <li>\(\mathbf S = \mathbf V\mathbf I^* = P + jQ\), 역률 \(\cos\theta = P/|\mathbf S|\). 복소 전력은 보존된다.</li>
-        <li>역률 개선: 병렬 축전기로 \(Q\)를 줄인다. \(C = Q_C/(\omega V_\text{rms}^2)\).</li>
-        <li>교류 최대 전력: \(\mathbf Z_L = \mathbf Z_\text{Th}^*\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>교류의 평균 전력은 \(V_\text{rms}I_\text{rms}\cos\theta\)이고 사인파의 실효값은 진폭의 \(1/\sqrt2\)이다. 복소 전력 \(\mathbf S = \mathbf V\mathbf I^* = P + jQ\)에서 L과 C가 주고받기만 하는 무효 전력 \(Q\)가 피상 전력을 키워 역률 \(\cos\theta\)를 낮추므로, 병렬 축전기 \(C = Q_C/(\omega V_\text{rms}^2)\)로 \(Q\)를 지우면 같은 일을 더 적은 전류로 한다. 교류에서 최대 전력은 켤레 정합 \(\mathbf Z_L = \mathbf Z_\text{Th}^*\)일 때 전달된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">8.1.6</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\mathbf Z = 30 + j40\ \Omega\)에 220 V(실효)를 걸면 \(P\), \(Q\), 역률은?
-          <details><summary>답</summary><p>\(|\mathbf I| = 4.4\) A, \(P = 4.4^2\times30 = 581\) W, \(Q = 774\) var, pf 0.6(늦음).</p></details>
+          <details><summary>답</summary><p>\(|\mathbf I| = 4.4\) A이므로 \(P = 4.4^2\times30 = 581\) W, \(Q = 774\) var, 역률 0.6(늦음)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 8.1.3에서 역률을 1로 만들려면 축전기는 얼마이고, 전류는 얼마가 되는가?
-          <details><summary>답</summary><p>\(Q_C = 10.20\) kvar, \(C \approx 559\ \mu\text{F}\), 전류 45.5 A.</p></details>
+          <details><summary>답</summary><p>\(Q_C = 10.20\) kvar이므로 \(C \approx 559\ \mu\text{F}\)이고, 전류는 45.5 A이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>삼각파(진폭 \(A\), 평균 0)의 실효값이 \(A/\sqrt3\)임을 보여라.
-          <details><summary>힌트</summary><p>한 주기의 4분의 1에서 \(x = At/(T/4)\)이고 나머지는 대칭.</p></details>
-          <details><summary>답</summary><p>\(\frac{1}{T/4}\int_0^{T/4}\big(\frac{4At}{T}\big)^2dt = \frac{4}{T}\cdot\frac{16A^2}{T^2}\cdot\frac{(T/4)^3}{3} = \frac{A^2}{3}\). 제곱근을 취하면 \(A/\sqrt3\).</p></details>
+        <li>평균이 0이고 진폭이 \(A\)인 삼각파의 실효값이 \(A/\sqrt3\)임을 보여라.
+          <details><summary>힌트</summary><p>한 주기의 4분의 1에서 \(x = At/(T/4)\)이고 나머지는 대칭이다.</p></details>
+          <details><summary>답</summary><p>\(\frac{1}{T/4}\int_0^{T/4}\big(\frac{4At}{T}\big)^2dt = \frac{4}{T}\cdot\frac{16A^2}{T^2}\cdot\frac{(T/4)^3}{3} = \frac{A^2}{3}\)이므로, 제곱근을 취하면 \(A/\sqrt3\)이다.</p></details>
         </li>
       </ol>
     </div>
