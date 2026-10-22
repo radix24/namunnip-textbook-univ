@@ -8,77 +8,115 @@
 <article class="card q-card" id="text-s4-resample" data-kind="본문" data-std="응통4-06-03">
   <header class="card-head"><span class="no"></span><h2>붓스트랩과 순열 검정을 파이썬으로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li><code>np.random.default_rng</code>로 재현 가능한 난수 생성기를 만든다.</li>
-        <li>벡터화로 붓스트랩 표본을 한꺼번에 뽑아 신뢰구간을 구한다.</li>
-        <li>순열 검정을 구현하고 <code>scipy.stats.permutation_test</code>와 비교한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>모의실험 (<a href="06-02.html">6.2절</a>), 배열 인덱싱 (<a href="03-03.html">3.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>R에서 한 일을 파이썬으로</h3>
-    <p>응통3 4.3절에서 R로 한 재표집을 파이썬으로 옮깁니다. NumPy에서는 반복문 대신 2차원 배열로 표본을 한꺼번에 뽑으면 훨씬 빠릅니다.</p>
+    <p class="q-ask">통근 시간 10개 <code>[12, 15, 9, 20, 14, 11, 30, 13, 10, 16]</code>의 중앙값은 13.5분이다. 30분짜리 값 하나가 끼어 있어 평균보다 중앙값이 대표값으로 낫지만, 중앙값의 표준오차에는 간단한 공식이 없다. 응통3에서 R로 했던 재표집을 파이썬으로 옮기면, 반복문 5000번 없이 한 번에 계산할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 195" role="img" aria-label="통근 시간 자료에서 뽑은 붓스트랩 중앙값 5000개의 분포 막대그래프. 표본 중앙값 13.5에 실선, 95% 백분위 구간 양 끝에 점선이 있다">
+        <line x1="50" y1="160" x2="490" y2="160" class="ax"/>
+        <line x1="50" y1="160" x2="50" y2="18" class="ax"/>
+        <text x="68.3" y="175" text-anchor="middle" class="s">9</text>
+        <text x="105" y="175" text-anchor="middle" class="s">10</text>
+        <text x="141.7" y="175" text-anchor="middle" class="s">11</text>
+        <text x="178.3" y="175" text-anchor="middle" class="s">12</text>
+        <text x="215" y="175" text-anchor="middle" class="s">13</text>
+        <text x="251.7" y="175" text-anchor="middle" class="s">14</text>
+        <text x="288.3" y="175" text-anchor="middle" class="s">15</text>
+        <text x="325" y="175" text-anchor="middle" class="s">16</text>
+        <text x="361.7" y="175" text-anchor="middle" class="s">17</text>
+        <text x="398.3" y="175" text-anchor="middle" class="s">18</text>
+        <text x="435" y="175" text-anchor="middle" class="s">19</text>
+        <text x="471.7" y="175" text-anchor="middle" class="s">20</text>
+        <text x="45" y="164" text-anchor="end" class="s">0.0</text>
+        <text x="45" y="116.7" text-anchor="end" class="s">0.1</text>
+        <text x="45" y="69.3" text-anchor="end" class="s">0.2</text>
+        <text x="45" y="22" text-anchor="end" class="s">0.3</text>
+        <text x="490" y="189" text-anchor="end" class="s">붓스트랩 중앙값</text>
+        <text x="56" y="22" class="s">비율</text>
+        <rect x="61" y="159.9" width="14.7" height="0.1" class="la a"/>
+        <rect x="79.3" y="159.7" width="14.7" height="0.3" class="la a"/>
+        <rect x="97.7" y="157" width="14.7" height="3" class="la a"/>
+        <rect x="116" y="152.4" width="14.7" height="7.6" class="la a"/>
+        <rect x="134.3" y="144.5" width="14.7" height="15.5" class="la a"/>
+        <rect x="152.7" y="137.7" width="14.7" height="22.3" class="la a"/>
+        <rect x="171" y="118.9" width="14.7" height="41.1" class="la a"/>
+        <rect x="189.3" y="108.2" width="14.7" height="51.8" class="la a"/>
+        <rect x="207.7" y="94.9" width="14.7" height="65.1" class="la a"/>
+        <rect x="226" y="99.3" width="14.7" height="60.7" class="la a"/>
+        <rect x="244.3" y="95.3" width="14.7" height="64.7" class="la a"/>
+        <rect x="262.7" y="111.7" width="14.7" height="48.3" class="la a"/>
+        <rect x="281" y="117.4" width="14.7" height="42.6" class="la a"/>
+        <rect x="299.3" y="137.1" width="14.7" height="22.9" class="la a"/>
+        <rect x="317.7" y="148.3" width="14.7" height="11.7" class="la a"/>
+        <rect x="336" y="159.3" width="14.7" height="0.7" class="la a"/>
+        <rect x="354.3" y="158.8" width="14.7" height="1.2" class="la a"/>
+        <rect x="372.7" y="156.5" width="14.7" height="3.5" class="la a"/>
+        <rect x="391" y="153.7" width="14.7" height="6.3" class="la a"/>
+        <rect x="464.3" y="157.3" width="14.7" height="2.7" class="la a"/>
+        <rect x="519.3" y="159.9" width="14.7" height="0.1" class="la a"/>
+        <rect x="537.7" y="159.9" width="14.7" height="0.1" class="la a"/>
+        <rect x="556" y="159.9" width="14.7" height="0.1" class="la a"/>
+        <rect x="574.3" y="159.7" width="14.7" height="0.3" class="la a"/>
+        <rect x="647.7" y="159.3" width="14.7" height="0.7" class="la a"/>
+        <path d="M141.7 160 L141.7 32.2" class="d dsh"/>
+        <path d="M380 160 L380 32.2" class="d dsh"/>
+        <path d="M233.3 160 L233.3 18" class="c"/>
+        <text x="238.3" y="22.7" class="s tc">표본 중앙값 13.5</text>
+        <text x="385" y="41.7" class="s td">95% 구간 [11, 17.5]</text>
+      </svg>
+      <figcaption>그림 1. 붓스트랩 중앙값 5000개의 분포. 자료가 10개뿐이라 중앙값이 몇 개의 값에만 몰리며, 2.5%와 97.5% 백분위수(빨간 점선)가 95% 신뢰구간이 된다. 막대는 한 번의 난수 실행 결과이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>모의실험(<a href="06-02.html">6.2절</a>), 팬시 인덱싱(<a href="03-03.html">3.3절</a>), 응통3 4.3절의 붓스트랩과 순열 검정을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>난수 생성기</h3>
-    <pre><code>import numpy as np
+    <p>재표집은 난수를 많이 쓰므로 결과를 다시 만들 수 있게 생성기를 먼저 정한다(<a href="03-02.html">3.2절</a>).</p>
+<pre><code>import numpy as np
 rng = np.random.default_rng(2026)   # 시드가 있는 생성기
 rng.integers(0, 10, size=5)          # 정수
 rng.choice([1, 2, 3], size=5, replace=True)
 rng.permutation(5)                   # 0~4를 섞기</code></pre>
-    <p>예전 방식 <code>np.random.seed</code>보다 생성기 객체를 쓰는 것이 권장됩니다. 함수에 <code>rng</code>를 인자로 넘기면 어디서 난수를 썼는지 분명해집니다.</p>
+    <p>분석 함수에 <code>rng</code>를 인자로 넘기면 어디서 난수를 썼는지 분명해지고, 같은 시드로 같은 결과를 다시 얻는다.</p>
 
     <h3><span class="no">6.3.2</span>붓스트랩</h3>
-    <pre><code>x = np.array([12, 15, 9, 20, 14, 11, 30, 13, 10, 16])
+    <p>처음 질문의 핵심 기법은 복원 추출할 번호를 행렬 하나로 한꺼번에 뽑는 것이다. \(B \times n\) 번호 행렬 <code>idx</code>로 <code>x[idx]</code>를 만들면 행 하나가 붓스트랩 표본 하나가 되고, <code>axis=1</code>로 행마다 중앙값을 낸다.</p>
+<pre><code>x = np.array([12, 15, 9, 20, 14, 11, 30, 13, 10, 16])
 B = 5000
 idx = rng.integers(0, len(x), size=(B, len(x)))   # B × n 복원 추출 번호
 boot = np.median(x[idx], axis=1)                   # 행마다 중앙값
 boot.std(ddof=1), np.percentile(boot, [2.5, 97.5])</code></pre>
+    <p>붓스트랩 중앙값들의 표준편차가 중앙값의 표준오차 추정값이고, 2.5%와 97.5% 백분위수가 백분위 신뢰구간이다. 그림 1을 그린 실행에서는 표준오차가 약 1.6분, 구간이 [11, 17.5]분이었다. 실행마다 값이 조금씩 다르므로, \(B\)를 늘려 소수 첫째 자리가 안정되는지 확인한다.</p>
 
     <h3><span class="no">6.3.3</span>순열 검정</h3>
-    <pre><code>a = np.array([12, 15, 18]); b = np.array([20, 22, 25])
+    <p>이번에는 두 집단 비교이다. 귀무가설 아래에서는 집단 이름표가 아무 의미가 없으므로, 이름표를 뒤섞어 얻는 차이들과 관측한 차이를 비교한다.</p>
+<pre><code>a = np.array([12, 15, 18]); b = np.array([20, 22, 25])
 obs = b.mean() - a.mean()
 allv = np.concatenate([a, b])
-perm = np.array([ (p := rng.permutation(allv))[3:].mean() - p[:3].mean()
-                  for _ in range(10000) ])
+perm = np.array([(p := rng.permutation(allv))[3:].mean() - p[:3].mean()
+                 for _ in range(10000)])
 (perm &gt;= obs).mean()                               # 약 0.05
-
 from scipy.stats import permutation_test
 permutation_test((b, a), lambda u, v: u.mean() - v.mean(),
-                 alternative="greater").pvalue     # 작은 표본은 정확 계산: 0.05</code></pre>
-    <p><code>permutation_test</code>는 가능한 배치 수가 적으면 모두 세서 정확한 p값을 줍니다. 이 자료는 \(\binom63 = 20\)가지라 \(1/20 = 0.05\)입니다(응통3 4.3절과 같은 결과).</p>
-
+                 alternative="greater").pvalue     # 작은 표본은 정확 계산, 0.05</code></pre>
+    <p>관측 차이는 \(22.33 - 15 = 7.33\)이다. 여섯 값을 세 개씩 나누는 방법은 \(\binom63 = 20\)가지이고, 그 가운데 차이가 7.33 이상인 것은 실제 배치 하나뿐이다. 그래서 정확한 p값은 \(1/20 = 0.05\)이다. <code>permutation_test</code>는 이렇게 배치 수가 적으면 모두 세어 정확한 값을 주고, 많으면 무작위로 뽑는다. 응통3 4.3절과 같은 결과이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
-      <p><code>idx = rng.integers(0, 10, size=(5000, 10))</code>은 몇 개의 난수를 만들고, 반복문으로 5000번 뽑는 것과 무엇이 다른가요?</p>
+      <p><code>idx = rng.integers(0, 10, size=(5000, 10))</code>은 난수를 몇 개 만들고, 반복문으로 5000번 뽑는 것과 무엇이 다른가?</p>
     </div>
-    <p><i>풀이.</i> 50000개를 한 번에 만듭니다. 결과의 통계적 성질은 같지만 계산이 C 수준 반복으로 처리되어 수십 배 빠릅니다. 메모리가 \(B \times n\)만큼 필요하므로 \(n\)이 아주 크면 묶음으로 나눠 처리합니다.</p>
+    <p><i>풀이.</i> 50000개를 한 번에 만든다. 결과의 통계적 성질은 같지만 계산이 C 수준의 반복으로 처리되어 수십 배 빠르다. 대신 메모리가 \(B \times n\)만큼 필요하므로 \(n\)이 아주 크면 묶음으로 나누어 처리한다.</p>
+    <div class="tb-note"><span class="lb">주의</span>자료가 작을 때 중앙값의 붓스트랩 분포는 그림 1처럼 몇 개의 값에만 몰려 매끄럽지 않다. 그러면 백분위 구간이 자료 값의 간격에 크게 좌우되므로, 표본이 아주 작을 때는 구간을 대략적인 어림으로 읽는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>rng = np.random.default_rng(시드)</code>로 재현성.</li>
-        <li>번호 행렬 <code>x[idx]</code>와 <code>axis=1</code>로 붓스트랩을 벡터화.</li>
-        <li><code>permutation_test</code>는 작은 표본에서 정확 p값.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>재표집은 <code>default_rng(시드)</code> 생성기로 재현성을 확보하고 시작한다. 붓스트랩은 \(B \times n\) 번호 행렬로 <code>x[idx]</code>를 만든 뒤 <code>axis=1</code>로 통계량을 계산해 반복문 없이 벡터화하며, 그 표준편차와 백분위수가 표준오차와 신뢰구간이다. 순열 검정은 이름표를 섞어 관측 차이와 비교하고, <code>scipy.stats.permutation_test</code>는 배치 수가 적으면 정확한 p값을 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>평균의 붓스트랩 표준오차를 구하는 한 줄 코드를 쓰세요(<code>x</code>, <code>rng</code>, <code>B</code>가 있음).
-          <details><summary>답</summary><p><code>x[rng.integers(0, len(x), (B, len(x)))].mean(axis=1).std(ddof=1)</code>.</p></details>
+        <li>평균의 붓스트랩 표준오차를 구하는 한 줄 코드를 써라(<code>x</code>, <code>rng</code>, <code>B</code>가 있다).
+          <details><summary>답</summary><p><code>x[rng.integers(0, len(x), (B, len(x)))].mean(axis=1).std(ddof=1)</code>이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>같은 시드로 두 번 실행했는데 붓스트랩 결과가 다릅니다. 가능한 원인은?
-          <details><summary>답</summary><p>생성기를 만든 뒤 다른 곳에서 난수를 먼저 소비해 위치가 달라졌거나, 생성기를 함수마다 새로 만들지 않고 전역으로 공유했을 수 있습니다. 분석 단계마다 생성기를 명시적으로 넘기거나 같은 시드로 새로 만듭니다.</p></details>
+      <ol start="2">
+        <li>같은 시드로 두 번 실행했는데 붓스트랩 결과가 다르다. 가능한 원인은 무엇인가?
+          <details><summary>답</summary><p>생성기를 만든 뒤 다른 곳에서 난수를 먼저 써 수열의 위치가 달라졌거나, 생성기를 전역으로 공유해 실행 순서에 따라 소비량이 달라졌을 수 있다. 분석 단계마다 생성기를 명시적으로 넘기거나 같은 시드로 새로 만든다.</p></details>
         </li>
       </ol>
     </div>

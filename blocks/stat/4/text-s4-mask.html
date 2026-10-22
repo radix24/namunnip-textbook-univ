@@ -8,34 +8,48 @@
 <article class="card q-card" id="text-s4-mask" data-kind="본문" data-std="응통4-03-03">
   <header class="card-head"><span class="no"></span><h2>불리언 마스크와 팬시 인덱싱</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>조건식으로 불리언 배열을 만들고 원소를 고른다.</li>
-        <li>정수 배열로 원하는 위치를 한꺼번에 고른다(팬시 인덱싱).</li>
-        <li>복사본과 뷰의 차이를 알고 값을 안전하게 바꾼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>NumPy 배열 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>반복문 없이 고르기</h3>
-    <p>"점수가 60점 미만인 학생", "결측이 아닌 값", "상위 10%"처럼 조건에 맞는 원소를 고르는 일은 분석의 기본입니다. NumPy에서는 반복문 대신 조건식 하나로 합니다. pandas의 행 고르기(5.1절)도 같은 원리입니다.</p>
+    <p class="q-ask">"60점 미만인 학생", "결측이 아닌 값", "가장 큰 두 값"처럼 조건에 맞는 원소를 고르는 일은 분석에서 끝없이 나온다. 반복문을 돌며 하나씩 검사하지 않고 조건식 한 줄로 고를 수 있을까? 그리고 고른 원소를 고치면 원래 배열도 바뀔까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 165" role="img" aria-label="배열 x의 각 원소에 조건 x 대 3을 적용해 참 거짓 배열을 만들고, 참인 자리의 원소만 모아 새 배열을 만드는 그림">
+        <text x="95" y="36" text-anchor="end" class="s">x</text>
+        <text x="95" y="86" text-anchor="end" class="s">x &gt; 3</text>
+        <text x="95" y="146" text-anchor="end" class="s">x[x &gt; 3]</text>
+        <rect x="110" y="20" width="46" height="24" class="lk k"/><text x="133.0" y="36" text-anchor="middle" class="s">3</text>
+        <rect x="110" y="70" width="46" height="24" class="lk k"/><text x="133.0" y="86" text-anchor="middle" class="s">False</text>
+        <rect x="162" y="20" width="46" height="24" class="lb b"/><text x="185.0" y="36" text-anchor="middle" class="s">8</text>
+        <rect x="162" y="70" width="46" height="24" class="lb b"/><text x="185.0" y="86" text-anchor="middle" class="s">True</text>
+        <rect x="214" y="20" width="46" height="24" class="lk k"/><text x="237.0" y="36" text-anchor="middle" class="s">1</text>
+        <rect x="214" y="70" width="46" height="24" class="lk k"/><text x="237.0" y="86" text-anchor="middle" class="s">False</text>
+        <rect x="266" y="20" width="46" height="24" class="lb b"/><text x="289.0" y="36" text-anchor="middle" class="s">9</text>
+        <rect x="266" y="70" width="46" height="24" class="lb b"/><text x="289.0" y="86" text-anchor="middle" class="s">True</text>
+        <rect x="318" y="20" width="46" height="24" class="lb b"/><text x="341.0" y="36" text-anchor="middle" class="s">4</text>
+        <rect x="318" y="70" width="46" height="24" class="lb b"/><text x="341.0" y="86" text-anchor="middle" class="s">True</text>
+        <path d="M185 94 L133 128" class="b dsh"/>
+        <rect x="110" y="130" width="46" height="24" class="lb b"/><text x="133.0" y="146" text-anchor="middle" class="s">8</text>
+        <path d="M289 94 L185 128" class="b dsh"/>
+        <rect x="162" y="130" width="46" height="24" class="lb b"/><text x="185.0" y="146" text-anchor="middle" class="s">9</text>
+        <path d="M341 94 L237 128" class="b dsh"/>
+        <rect x="214" y="130" width="46" height="24" class="lb b"/><text x="237.0" y="146" text-anchor="middle" class="s">4</text>
+        <text x="420" y="86" class="s">개수 3, 비율 0.6</text>
+      </svg>
+      <figcaption>그림 1. 불리언 마스크. 조건 <code>x &gt; 3</code>은 원소마다 참과 거짓을 매긴 배열이고, <code>x[x &gt; 3]</code>은 참인 자리(청록)의 원소만 순서대로 모은 새 배열이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy 배열(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>불리언 마스크</h3>
-    <pre><code>import numpy as np
+    <p>배열에 비교 연산을 걸면 원소마다 참과 거짓이 매겨진 배열이 나온다. 이것을 <em>불리언 마스크</em>라 하며, 대괄호에 넣으면 참인 자리만 골라진다(그림 1).</p>
+<pre><code>import numpy as np
 x = np.array([3, 8, 1, 9, 4])
 mask = x &gt; 3            # array([False, True, False, True, True])
 x[mask]                 # array([8, 9, 4])
-x[(x &gt; 2) &amp; (x &lt; 9)]    # array([3, 8, 4])  -- and는 &amp;, or는 |, 괄호 필수
+x[(x &gt; 2) &amp; (x &lt; 9)]    # array([3, 8, 4])  and는 &amp;, or는 |, 괄호 필수
 mask.sum(), mask.mean() # 3, 0.6  (조건을 만족하는 개수와 비율)
 np.where(x &gt; 3, x, 0)   # array([0, 8, 0, 9, 4])</code></pre>
-    <p>파이썬의 <code>and</code>, <code>or</code>는 배열에 쓸 수 없고 <code>&amp;</code>, <code>|</code>, <code>~</code>(부정)를 씁니다. 연산자 우선순위 때문에 각 조건을 괄호로 감쌉니다. <code>True</code>가 1로 계산되어 <code>sum</code>은 개수, <code>mean</code>은 비율이 됩니다.</p>
+    <p>여기서 조건을 잇는 데 파이썬의 <code>and</code>, <code>or</code>는 쓸 수 없다. 이들은 값 하나의 참거짓만 묻기 때문이다. 대신 원소별로 계산하는 <code>&amp;</code>, <code>|</code>, <code>~</code>(부정)를 쓰고, 이 연산자들이 비교보다 먼저 계산되므로 조건마다 괄호로 감싼다. 또 참이 1로 계산되므로 <code>sum</code>은 개수, <code>mean</code>은 비율이다. pandas의 행 고르기(<a href="05-01.html">5.1절</a>)도 같은 원리이다.</p>
 
     <h3><span class="no">3.3.2</span>팬시 인덱싱</h3>
-    <pre><code>x[[0, 2, 4]]            # array([3, 1, 4])
+    <p>조건 대신 위치를 정수 배열로 주어 한꺼번에 고를 수도 있다. 이를 <em>팬시 인덱싱</em>이라 한다. 처음 질문의 "가장 큰 두 값"은 정렬 순서를 돌려주는 <code>argsort</code>와 함께 쓴다.</p>
+<pre><code>x[[0, 2, 4]]            # array([3, 1, 4])
 idx = np.argsort(x)     # array([2, 0, 4, 1, 3]) 작은 값의 위치 순서
 x[idx]                  # array([1, 3, 4, 8, 9]) 정렬
 x[idx[-2:]]             # array([8, 9]) 가장 큰 두 값
@@ -43,38 +57,35 @@ A = np.arange(12).reshape(3, 4)
 A[A[:, 0] &gt; 0]          # 첫 열이 양수인 행들</code></pre>
 
     <h3><span class="no">3.3.3</span>복사본과 뷰</h3>
-    <p>슬라이싱(<code>x[1:3]</code>)은 원래 배열을 가리키는 뷰라 고치면 원본이 바뀌고, 마스크와 팬시 인덱싱의 결과는 복사본이라 고쳐도 원본이 그대로입니다. 원본의 조건부 원소를 바꾸려면 <code>x[x &lt; 0] = 0</code>처럼 대입문 왼쪽에 마스크를 씁니다.</p>
-
+    <p>이제 둘째 질문이다. 답은 고르는 방법에 따라 다르다. 슬라이싱 <code>x[1:3]</code>은 원래 배열의 일부를 가리키는 <em>뷰</em>여서, 결과를 고치면 원본이 바뀐다. 반면 마스크와 팬시 인덱싱의 결과는 새로 만든 <em>복사본</em>이라 고쳐도 원본이 그대로이다. 그렇다면 원본의 조건부 원소를 바꾸려면 어떻게 할까? <code>x[x &lt; 0] = 0</code>처럼 대입문 왼쪽에 마스크를 쓰면 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
-      <p>점수 배열 <code>s = np.array([55, 72, 90, 48, 66, 81])</code>에서 60점 미만 학생 수, 60점 이상 학생의 평균, 60점 미만을 60점으로 올린 배열을 구하세요.</p>
+      <p>점수 배열 <code>s = np.array([55, 72, 90, 48, 66, 81])</code>에서 60점 미만 학생 수, 60점 이상 학생의 평균, 60점 미만을 60점으로 올린 배열을 구하여라.</p>
     </div>
-    <pre><code>(s &lt; 60).sum()            # 2
+<pre><code>(s &lt; 60).sum()            # 2
 s[s &gt;= 60].mean()         # (72 + 90 + 66 + 81)/4 = 77.25
 t = s.copy(); t[t &lt; 60] = 60
 t                         # array([60, 72, 90, 60, 66, 81])</code></pre>
+    <p><i>풀이.</i> 개수는 마스크의 합이고, 평균은 마스크로 고른 배열의 평균이다. 마지막은 원본 <code>s</code>를 지키려고 <code>copy</code>로 복사한 뒤 왼쪽에 마스크를 써서 바꾸었다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>결측을 빼려고 <code>x[x != np.nan]</code>을 쓰면 아무것도 걸러지지 않는다. <code>nan</code>은 자기 자신과도 같지 않아 <code>nan != nan</code>이 늘 참이기 때문이다. 결측은 <code>np.isnan</code>으로 찾는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>x[조건]</code>으로 고르기, <code>&amp; | ~</code>와 괄호.</li>
-        <li><code>x[[위치들]]</code>, <code>argsort</code>로 순서대로 고르기.</li>
-        <li>슬라이스는 뷰, 마스크·팬시는 복사본. 원본을 바꿀 때는 왼쪽에 마스크.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>비교 연산은 불리언 마스크를 만들고, <code>x[조건]</code>은 참인 자리의 원소만 고른다. 조건은 <code>&amp;</code>, <code>|</code>, <code>~</code>와 괄호로 잇고, 마스크의 합과 평균은 개수와 비율이다. 위치 배열로 고르는 팬시 인덱싱과 <code>argsort</code>를 함께 쓰면 정렬과 상위 값 고르기가 된다. 슬라이스는 원본을 가리키는 뷰이고 마스크와 팬시 인덱싱의 결과는 복사본이므로, 원본을 바꿀 때는 대입문 왼쪽에 마스크를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>x = np.array([2, -1, 5, -3, 0])</code>에서 음수를 모두 0으로 바꾼 뒤의 합은?
-          <details><summary>답</summary><p><code>x[x &lt; 0] = 0</code> → <code>[2, 0, 5, 0, 0]</code>, 합 7.</p></details>
+        <li><code>x = np.array([2, -1, 5, -3, 0])</code>에서 음수를 모두 0으로 바꾼 뒤의 합은 얼마인가?
+          <details><summary>답</summary><p><code>x[x &lt; 0] = 0</code>으로 <code>[2, 0, 5, 0, 0]</code>이 되어 합은 7이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li><code>np.nan</code>이 섞인 배열의 평균을 결측을 빼고 구하는 방법 두 가지를 쓰세요.
-          <details><summary>답</summary><p><code>x[~np.isnan(x)].mean()</code> 또는 <code>np.nanmean(x)</code>. <code>x[x != np.nan]</code>은 <code>nan != nan</code>이 항상 참이라 걸러지지 않습니다.</p></details>
+      <ol start="2">
+        <li><code>np.nan</code>이 섞인 배열의 평균을 결측을 빼고 구하는 방법 두 가지를 써라.
+          <details><summary>답</summary><p><code>x[~np.isnan(x)].mean()</code> 또는 <code>np.nanmean(x)</code>이다.</p></details>
+        </li>
+        <li><code>y = x[1:3]</code>와 <code>z = x[[1, 2]]</code>를 만든 뒤 <code>y[0] = 100</code>, <code>z[1] = 200</code>을 하면 <code>x</code>는 어떻게 되는가? (<code>x = np.array([3, 8, 1, 9, 4])</code>)
+          <details><summary>답</summary><p>슬라이스 <code>y</code>는 뷰이므로 <code>x[1]</code>이 100으로 바뀌고, <code>z</code>는 복사본이므로 <code>x</code>에 영향이 없다. 결과는 <code>[3, 100, 1, 9, 4]</code>이다.</p></details>
         </li>
       </ol>
     </div>

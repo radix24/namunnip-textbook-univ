@@ -8,27 +8,47 @@
 <article class="card q-card" id="text-s4-rootfind" data-kind="본문" data-std="응통4-04-01">
   <header class="card-head"><span class="no"></span><h2>이분법과 뉴턴 방법으로 근 찾기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이분법과 뉴턴 방법을 함수로 구현한다.</li>
-        <li>두 방법의 수렴 속도와 안정성을 비교한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>중간값 정리와 테일러 근사 (응통1 1.2, 2.3절), 함수 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>방정식을 컴퓨터로 풀기</h3>
-    <p>내부수익률(IRR), 분위수, 최대가능도 방정식처럼 손으로 풀 수 없는 방정식 \(f(x) = 0\)이 많습니다. 반복해서 근에 다가가는 두 가지 기본 방법을 직접 만들어 봅니다.</p>
+    <p class="q-ask">250만 원을 내고 3년 동안 해마다 100만 원씩 받는 투자의 수익률은 얼마일까? 내부수익률은 \(\sum_{t=1}^{3} 100/(1+r)^t = 250\)의 근인데, 이 방정식은 손으로 풀리지 않는다. 분위수, 최대가능도 방정식도 마찬가지이다. 컴퓨터는 이런 방정식 \(f(x) = 0\)을 어떻게 풀까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="루트 2를 구할 때 반복 횟수에 따른 오차를 로그 눈금으로 그린 그래프. 이분법은 직선으로 천천히 줄고 뉴턴 방법은 다섯 번 만에 기계 정밀도에 닿는다">
+        <line x1="60" y1="170" x2="490" y2="170" class="ax"/>
+        <line x1="60" y1="170" x2="60" y2="15" class="ax"/>
+        <text x="60" y="185" text-anchor="middle" class="s">0</text>
+        <text x="121.4" y="185" text-anchor="middle" class="s">5</text>
+        <text x="182.9" y="185" text-anchor="middle" class="s">10</text>
+        <text x="244.3" y="185" text-anchor="middle" class="s">15</text>
+        <text x="305.7" y="185" text-anchor="middle" class="s">20</text>
+        <text x="367.1" y="185" text-anchor="middle" class="s">25</text>
+        <text x="428.6" y="185" text-anchor="middle" class="s">30</text>
+        <text x="490" y="185" text-anchor="middle" class="s">35</text>
+        <text x="55" y="28.1" text-anchor="end" class="s">1</text>
+        <text x="55" y="64.6" text-anchor="end" class="s">1e-4</text>
+        <text x="55" y="101.1" text-anchor="end" class="s">1e-8</text>
+        <text x="55" y="137.5" text-anchor="end" class="s">1e-12</text>
+        <text x="55" y="174" text-anchor="end" class="s">1e-16</text>
+        <text x="490" y="199" text-anchor="end" class="s">반복 횟수</text>
+        <text x="66" y="19" class="s">오차</text>
+        <path d="M72.3 26.9 L84.6 29.6 L96.9 32.4 L109.1 35.1 L121.4 37.8 L133.7 40.6 L146 43.3 L158.3 46.1 L170.6 48.8 L182.9 51.6 L195.1 54.3 L207.4 57.1 L219.7 59.8 L232 62.5 L244.3 65.3 L256.6 68 L268.9 70.8 L281.1 73.5 L293.4 76.3 L305.7 79 L318 81.8 L330.3 84.5 L342.6 87.2 L354.9 90 L367.1 92.7 L379.4 95.5 L391.7 98.2 L404 101 L416.3 103.7 L428.6 106.5 L440.9 109.2 L453.1 111.9 L465.4 114.7 L477.7 117.4" class="b"/>
+        <path d="M72.3 33.8 L84.6 47.9 L96.9 75.8 L109.1 131.7 L121.4 170 L133.7 166.8" class="c"/>
+        <circle cx="72.3" cy="33.8" r="2.5" class="fc"/>
+        <circle cx="84.6" cy="47.9" r="2.5" class="fc"/>
+        <circle cx="96.9" cy="75.8" r="2.5" class="fc"/>
+        <circle cx="109.1" cy="131.7" r="2.5" class="fc"/>
+        <circle cx="121.4" cy="170" r="2.5" class="fc"/>
+        <circle cx="133.7" cy="166.8" r="2.5" class="fc"/>
+        <text x="305.7" y="60.6" class="s tb">이분법 (오차 한계가 반복마다 절반)</text>
+        <text x="139.9" y="142.6" class="s tc">뉴턴 (자릿수가 약 두 배씩)</text>
+      </svg>
+      <figcaption>그림 1. \(\sqrt2\)를 구할 때의 오차(로그 눈금). 이분법(청록)은 반복마다 오차 한계가 절반이 되어 34번 만에 \(10^{-10}\)에 이르고, 뉴턴 방법(주황)은 1에서 출발해 오차가 0.086, 0.0025, \(2 \times 10^{-6}\), \(2 \times 10^{-12}\)로 자릿수가 두 배씩 늘어난다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>중간값 정리와 테일러 근사(응통1 1.2절, 2.3절), 함수(<a href="01-01.html">1.1절</a>), 예외(<a href="02-03.html">2.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>이분법</h3>
-    <p>\(f(a)\)와 \(f(b)\)의 부호가 다르면 중간값 정리로 사이에 근이 있습니다. 가운데 점 \(m\)에서 부호를 보고 근이 있는 절반만 남깁니다.</p>
-    <pre><code>def bisect(f, a, b, tol=1e-10, maxit=200):
+    <p>컴퓨터는 근을 한 번에 구하지 않고, 근에 점점 다가가는 수열을 만든다. 가장 단순한 방법부터 보자. \(f(a)\)와 \(f(b)\)의 부호가 다르면 중간값 정리에 따라 그 사이에 근이 있다. 그래서 가운데 점 \(m\)에서 부호를 보고 근이 있는 절반만 남기기를 되풀이하면 된다. 이것이 <em>이분법</em>이다.</p>
+<pre><code>def bisect(f, a, b, tol=1e-10, maxit=200):
     fa = f(a)
     if fa * f(b) &gt; 0:
-        raise ValueError("f(a)와 f(b)의 부호가 같습니다.")
+        raise ValueError("f(a)와 f(b)의 부호가 같다.")
     for _ in range(maxit):
         m = (a + b) / 2
         fm = f(m)
@@ -39,44 +59,47 @@
         else:
             a, fa = m, fm
     return (a + b) / 2</code></pre>
-    <p>매 단계 구간이 절반이 되므로 오차가 \(2^{-k}\)로 줄어듭니다(선형 수렴, 약 3.3단계마다 한 자리). 느리지만 부호가 바뀌는 구간만 있으면 반드시 수렴합니다.</p>
+    <p>단계마다 구간이 절반이 되므로 오차가 \(2^{-k}\)로 줄어든다. 이것을 <em>선형 수렴</em>이라 하며, 그림 1에서 로그 눈금의 직선으로 보인다. \(\log_2 10 \approx 3.3\)이므로 약 3.3단계마다 한 자리씩 정확해진다. 느리지만 부호가 바뀌는 구간만 있으면 반드시 수렴한다는 것이 장점이다.</p>
 
     <h3><span class="no">4.1.2</span>뉴턴 방법</h3>
-    <p>현재 점에서 접선을 그어 그 접선의 근으로 옮깁니다: \(x_{k+1} = x_k - f(x_k)/f'(x_k)\).</p>
-    <pre><code>def newton(f, df, x0, tol=1e-12, maxit=50):
+    <p>더 빠른 방법은 기울기를 쓴다. 현재 점 \(x_k\)에서 \(f\)를 접선으로 근사하면 \(f(x) \approx f(x_k) + f'(x_k)(x - x_k)\)이고, 이 접선의 근으로 옮겨 간다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정의 4.1.1 <span class="nm">(뉴턴 방법)</span></span>
+      \[x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}\]
+    </div>
+<pre><code>def newton(f, df, x0, tol=1e-12, maxit=50):
     x = x0
     for k in range(maxit):
         step = f(x) / df(x)
         x -= step
         if abs(step) &lt; tol:
             return x, k + 1
-    raise RuntimeError("수렴하지 않았습니다.")</code></pre>
-    <p>근 근처에서는 2차 수렴(맞는 자릿수가 매번 약 두 배)이라 매우 빠르지만, 출발점이 멀거나 \(f'\)이 0에 가까우면 발산할 수 있습니다. 실무에서는 이분법으로 좁힌 뒤 뉴턴으로 마무리하는 혼합 방법(브렌트 방법, <code>scipy.optimize.brentq</code>)을 씁니다.</p>
-
+    raise RuntimeError("수렴하지 않았다.")</code></pre>
+    <p>근 \(r\) 근처에서는 오차가 \(e_{k+1} \approx \frac{f''(r)}{2f'(r)} e_k^2\)으로, 다음 오차가 지금 오차의 제곱에 비례한다. 이것을 <em>2차 수렴</em>이라 하며, 맞는 자릿수가 매번 약 두 배가 된다(그림 1). 하지만 출발점이 멀거나 \(f'\)이 0에 가까우면 접선이 엉뚱한 곳을 가리켜 발산할 수 있다. 그래서 실무에서는 이분법으로 근을 가둔 채 빠른 단계를 섞는 혼합 방법인 브렌트 방법(<code>scipy.optimize.brentq</code>)을 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
-      <p>\(\sqrt2\)를 \(f(x) = x^2 - 2\)의 근으로 두 방법으로 구하고 반복 횟수를 비교하세요.</p>
+      <p>\(\sqrt2\)를 \(f(x) = x^2 - 2\)의 근으로 두 방법으로 구하고 반복 횟수를 비교하여라.</p>
     </div>
-    <pre><code>f = lambda x: x * x - 2
+<pre><code>f = lambda x: x * x - 2
 print(bisect(f, 1, 2))                       # 1.41421356..., 34번 반복
 print(newton(f, lambda x: 2 * x, 1.0))       # (1.4142135623730951, 6)</code></pre>
-    <p>뉴턴 방법은 1 → 1.5 → 1.4167 → 1.41422 → …로 다섯 번째에 기계 정밀도에 닿습니다.</p>
+    <p><i>풀이.</i> 뉴턴 방법은 \(x_{k+1} = x_k/2 + 1/x_k\)이 되어 1, 1.5, 1.41667, 1.414216, …으로 움직이고 네 번째에 오차가 \(10^{-12}\) 아래가 된다. 여섯 번째 걸음은 크기가 기준보다 작은지 확인하는 단계이다. 반면 이분법은 구간 길이 1을 \(10^{-10}\)까지 줄이는 데 \(\log_2 10^{10} \approx 33\)번이 넘게 걸린다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>뉴턴 방법에 도함수를 잘못 넣어도 수렴은 할 수 있다. 다만 2차 수렴이 사라져 느려질 뿐이라 잘못을 알아채기 어렵다. 반복 횟수가 예상보다 많으면 도함수부터 수치 미분(<a href="04-03.html">4.3절</a>)과 비교해 보자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>이분법: 확실하지만 느림(선형 수렴).</li>
-        <li>뉴턴: 빠르지만(2차 수렴) 좋은 출발점 필요.</li>
-        <li>실무는 혼합 방법(brentq).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>손으로 풀리지 않는 방정식 \(f(x) = 0\)은 근에 다가가는 반복으로 푼다. 이분법은 부호가 바뀌는 구간을 절반씩 줄여 반드시 수렴하지만 오차가 \(2^{-k}\)로 줄어드는 선형 수렴이라 느리다. 뉴턴 방법은 접선의 근으로 옮겨 가며 근 근처에서 자릿수가 두 배씩 느는 2차 수렴을 보이지만, 좋은 출발점이 필요하다. 실무에서는 두 장점을 섞은 브렌트 방법을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.3</span>연습문제</h3>
-      <p class="tb-lv">응용</p>
+      <p class="tb-lv">기본</p>
       <ol>
-        <li>3년 동안 매년 말 100만 원씩 받는 투자에 250만 원을 냈습니다. 내부수익률 \(r\)(\(\sum_{t=1}^3 100/(1+r)^t = 250\))을 이분법으로 구하세요.
-          <details><summary>답</summary><p><code>bisect(lambda r: sum(100 / (1 + r) ** t for t in (1, 2, 3)) - 250, 0, 1)</code> → 약 0.097(9.7%).</p></details>
+        <li>구간 [0, 1]에서 이분법으로 오차를 \(10^{-6}\) 아래로 줄이려면 대략 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(2^{-k} &lt; 10^{-6}\)에서 \(k &gt; 6\log_2 10 \approx 19.9\)이므로 20번이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>처음 질문의 내부수익률 \(r\)을 이분법으로 구하여라.
+          <details><summary>답</summary><p><code>bisect(lambda r: sum(100 / (1 + r) ** t for t in (1, 2, 3)) - 250, 0, 1)</code>은 약 0.097, 곧 9.7%이다. \(r = 0\)에서는 300 &gt; 250, \(r = 1\)에서는 87.5 &lt; 250이라 부호가 바뀐다.</p></details>
         </li>
       </ol>
     </div>

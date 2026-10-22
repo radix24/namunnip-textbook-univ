@@ -8,66 +8,94 @@
 <article class="card q-card" id="text-s4-groupby" data-kind="본문" data-std="응통4-05-02">
   <header class="card-head"><span class="no"></span><h2>그룹 요약, 피벗, 결합</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li><code>groupby</code>로 집단별 요약을 한다.</li>
-        <li>피벗 표를 만들고 넓은·긴 형식을 바꾼다.</li>
-        <li>두 표를 <code>merge</code>로 결합한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pandas 기초 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>나누고, 적용하고, 합치기</h3>
-    <p>"지역별 평균 매출", "월별 제품별 판매량 표"처럼 집단으로 나누어 요약하는 일이 분석의 대부분입니다. pandas의 <code>groupby</code>는 자료를 집단으로 나누고(split), 함수를 적용하고(apply), 결과를 합칩니다(combine).</p>
+    <p class="q-ask">"지역별 평균 매출", "월별 제품별 판매량 표", "매장 정보와 매출 기록을 매장 번호로 합친 표"는 보고서에 가장 자주 들어가는 표이다. 반복문으로 지역마다 행을 골라 평균을 내면 지역이 열 개만 되어도 코드가 길어진다. 이런 집단별 요약을 한 줄로 쓰는 공통 원리가 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 175" role="img" aria-label="지역 A와 B가 섞인 표를 지역별로 나누고, 각 집단에 평균을 적용한 뒤, 결과를 한 표로 합치는 세 단계 그림">
+        <text x="64" y="20" text-anchor="middle" class="s">원래 표</text>
+        <rect x="20" y="28" width="44" height="22" class="lk k"/><text x="42.0" y="43" text-anchor="middle" class="s">region</text>
+        <rect x="64" y="28" width="44" height="22" class="lk k"/><text x="86.0" y="43" text-anchor="middle" class="s">sales</text>
+        <rect x="20" y="50" width="44" height="22" class="la a"/><text x="42.0" y="65" text-anchor="middle" class="s">A</text>
+        <rect x="64" y="50" width="44" height="22" class="la a"/><text x="86.0" y="65" text-anchor="middle" class="s">3</text>
+        <rect x="20" y="72" width="44" height="22" class="lc c"/><text x="42.0" y="87" text-anchor="middle" class="s">B</text>
+        <rect x="64" y="72" width="44" height="22" class="lc c"/><text x="86.0" y="87" text-anchor="middle" class="s">4</text>
+        <rect x="20" y="94" width="44" height="22" class="la a"/><text x="42.0" y="109" text-anchor="middle" class="s">A</text>
+        <rect x="64" y="94" width="44" height="22" class="la a"/><text x="86.0" y="109" text-anchor="middle" class="s">5</text>
+        <rect x="20" y="116" width="44" height="22" class="lc c"/><text x="42.0" y="131" text-anchor="middle" class="s">B</text>
+        <rect x="64" y="116" width="44" height="22" class="lc c"/><text x="86.0" y="131" text-anchor="middle" class="s">8</text>
+        <rect x="20" y="138" width="44" height="22" class="lc c"/><text x="42.0" y="153" text-anchor="middle" class="s">B</text>
+        <rect x="64" y="138" width="44" height="22" class="lc c"/><text x="86.0" y="153" text-anchor="middle" class="s">6</text>
+        <text x="230" y="20" text-anchor="middle" class="s">나누기 (split)</text>
+        <rect x="190" y="40" width="44" height="22" class="la a"/><text x="212.0" y="55" text-anchor="middle" class="s">A</text>
+        <rect x="234" y="40" width="44" height="22" class="la a"/><text x="256.0" y="55" text-anchor="middle" class="s">3, 5</text>
+        <rect x="190" y="110" width="44" height="22" class="lc c"/><text x="212.0" y="125" text-anchor="middle" class="s">B</text>
+        <rect x="234" y="110" width="44" height="22" class="lc c"/><text x="256.0" y="125" text-anchor="middle" class="s">4, 8, 6</text>
+        <path d="M112 85 L186 52 M181.2 57.1 L186 52 L179.0 52.1" class="ax"/>
+        <path d="M112 105 L186 120 M179.1 121.4 L186 120 L180.2 116.0" class="ax"/>
+        <text x="345" y="20" text-anchor="middle" class="s">적용 (mean)</text>
+        <rect x="320" y="40" width="50" height="22" class="la a"/><text x="345.0" y="55" text-anchor="middle" class="s">4</text>
+        <rect x="320" y="110" width="50" height="22" class="lc c"/><text x="345.0" y="125" text-anchor="middle" class="s">6</text>
+        <path d="M280 51 L316 51 M309.6 53.7 L316 51 L309.6 48.3" class="ax"/>
+        <path d="M280 121 L316 121 M309.6 123.7 L316 121 L309.6 118.3" class="ax"/>
+        <text x="460" y="20" text-anchor="middle" class="s">합치기 (combine)</text>
+        <rect x="415" y="60" width="44" height="22" class="la a"/><text x="437.0" y="75" text-anchor="middle" class="s">A</text>
+        <rect x="459" y="60" width="44" height="22" class="la a"/><text x="481.0" y="75" text-anchor="middle" class="s">4</text>
+        <rect x="415" y="82" width="44" height="22" class="lc c"/><text x="437.0" y="97" text-anchor="middle" class="s">B</text>
+        <rect x="459" y="82" width="44" height="22" class="lc c"/><text x="481.0" y="97" text-anchor="middle" class="s">6</text>
+        <path d="M372 51 L412 70 M405.0 69.7 L412 70 L407.3 64.8" class="ax"/>
+        <path d="M372 121 L412 94 M408.2 99.9 L412 94 L405.1 95.3" class="ax"/>
+      </svg>
+      <figcaption>그림 1. 나누고, 적용하고, 합치기. 표를 지역별로 나누어(A는 3, 5, B는 4, 8, 6) 집단마다 평균을 구하고(4와 6), 결과를 지역마다 한 행인 표로 합친다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pandas 기초(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>groupby</h3>
-    <pre><code>df.groupby("region")["sales"].mean()
+    <p>처음 질문의 공통 원리는 그림 1의 세 단계이다. 자료를 집단으로 나누고(split), 집단마다 함수를 적용하고(apply), 결과를 합친다(combine). pandas의 <code>groupby</code>가 이 일을 한다.</p>
+<pre><code>df.groupby("region")["sales"].mean()
 df.groupby(["region", "month"]).agg(total=("sales", "sum"),
                                     n=("sales", "size"),
                                     avg=("sales", "mean")).reset_index()
 df["share"] = df["sales"] / df.groupby("region")["sales"].transform("sum")  # 집단 내 비율</code></pre>
-    <p><code>agg</code>는 집단마다 한 행으로 요약하고, <code>transform</code>은 원래 행 수를 유지하며 집단 값을 붙입니다.</p>
+    <p>두 번째 줄의 <code>agg</code>는 결과 열 이름과 (열, 함수) 쌍을 짝지어 집단마다 한 행으로 요약하며, <code>reset_index</code>는 집단 이름을 인덱스에서 보통 열로 되돌린다. 반면 <code>transform</code>은 원래 행 수를 그대로 두고 각 행에 그 집단의 값을 붙인다. 그래서 셋째 줄처럼 행마다 집단 합계로 나누어 집단 안의 비율을 구할 때 쓴다.</p>
 
     <h3><span class="no">5.2.2</span>피벗과 형식 바꾸기</h3>
-    <pre><code>pd.pivot_table(df, index="region", columns="month", values="sales",
-               aggfunc="sum", margins=True)          # 합계 행·열 포함
+    <p>둘째 표, 곧 행은 지역이고 열은 월인 교차표는 <em>피벗 표</em>로 만든다.</p>
+<pre><code>pd.pivot_table(df, index="region", columns="month", values="sales",
+               aggfunc="sum", margins=True)          # 합계 행과 열 포함
 pd.crosstab(df["sex"], df["agegrp"], normalize="index")   # 행별 비율 분할표
 long = df_wide.melt(id_vars="id", var_name="month", value_name="score")  # 넓은 → 긴
 wide = long.pivot(index="id", columns="month", values="score")           # 긴 → 넓은</code></pre>
+    <p>한편 같은 자료도 두 모양으로 담을 수 있다. 한 사람의 여러 달 점수를 한 행에 늘어놓은 <em>넓은 형식</em>은 사람이 읽기 좋고, (사람, 달, 점수)를 한 행씩 쌓은 <em>긴 형식</em>은 groupby와 그래프에 쓰기 좋다. <code>melt</code>와 <code>pivot</code>은 둘 사이를 오간다. R의 <code>pivot_longer</code>, <code>pivot_wider</code>(응통3)와 같은 일이다.</p>
 
     <h3><span class="no">5.2.3</span>결합</h3>
-    <pre><code>pd.merge(sales, info, on="store", how="inner")   # how: inner, left, right, outer
+    <p>셋째 표는 두 표를 열쇠 열로 잇는 결합이다.</p>
+<pre><code>pd.merge(sales, info, on="store", how="inner")   # how는 inner, left, right, outer
 pd.concat([df_2025, df_2026], ignore_index=True)  # 위아래로 이어 붙이기</code></pre>
-    <p>결합 뒤 <code>len()</code>으로 행 수를 확인하고, <code>validate="many_to_one"</code> 인수로 열쇠 중복을 검사할 수 있습니다.</p>
-
+    <p><code>inner</code>는 양쪽에 다 있는 열쇠만, <code>left</code>는 왼쪽 표의 행을 모두 남긴다. 그런데 오른쪽 표에 같은 열쇠가 두 번 있으면 왼쪽 행이 두 배로 불어나 합계가 부풀려진다. 그러므로 결합 뒤에는 <code>len()</code>으로 행 수를 확인하고, <code>validate="many_to_one"</code> 인수로 열쇠 중복을 미리 검사한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
-      <p>seaborn에 들어 있는 <code>tips</code> 자료(식당 팁)에서 요일·시간대별 평균 팁 비율 표를 만드세요.</p>
+      <p>seaborn에 들어 있는 tips 자료(식당의 계산 금액과 팁)에서 요일과 시간대별 평균 팁 비율 표를 만들어라.</p>
     </div>
-    <pre><code>import seaborn as sns
+<pre><code>import seaborn as sns
 tips = sns.load_dataset("tips")
 tips["rate"] = tips["tip"] / tips["total_bill"]
 pd.pivot_table(tips, index="day", columns="time", values="rate", aggfunc="mean").round(3)</code></pre>
+    <p><i>풀이.</i> 먼저 행마다 팁 비율 열을 만들고, 피벗 표로 요일을 행, 시간대를 열에 두어 칸마다 평균을 낸다. 관측이 없는 칸(예를 들어 주말 점심)은 NaN으로 나온다. 같은 결과는 <code>tips.groupby(["day", "time"])["rate"].mean().unstack()</code>으로도 얻는다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>집단별 평균 비율을 구하려다 <code>groupby(...)["rate"].mean()</code>과 <code>tip</code> 합 ÷ <code>total_bill</code> 합을 섞어 쓰면 값이 다르다. 앞의 것은 손님마다 비율의 평균이고, 뒤의 것은 금액으로 가중한 비율이다. 무엇을 보고할지 먼저 정하자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>groupby().agg()</code> 요약, <code>transform</code>은 행 유지.</li>
-        <li><code>pivot_table</code>, <code>crosstab</code>, <code>melt</code>/<code>pivot</code>.</li>
-        <li><code>merge</code>, <code>concat</code> 뒤 행 수 확인.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>집단별 요약은 나누고, 적용하고, 합치는 세 단계이며 pandas에서는 <code>groupby</code>가 맡는다. <code>agg</code>는 집단마다 한 행으로 요약하고 <code>transform</code>은 행 수를 그대로 둔 채 집단 값을 붙인다. 교차표는 <code>pivot_table</code>과 <code>crosstab</code>으로 만들고, <code>melt</code>와 <code>pivot</code>으로 긴 형식과 넓은 형식을 오간다. 두 표는 <code>merge</code>와 <code>concat</code>으로 잇되, 결합 뒤 행 수를 늘 확인한다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">5.2.3</span>연습문제</h3>
+      <h3><span class="no">5.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>R의 <code>d |&gt; group_by(cyl) |&gt; summarise(m = mean(mpg), n = n())</code>에 해당하는 pandas 코드는?
-          <details><summary>답</summary><p><code>df.groupby("cyl").agg(m=("mpg", "mean"), n=("mpg", "size"))</code>.</p></details>
+        <li>R의 <code>d |&gt; group_by(cyl) |&gt; summarise(m = mean(mpg), n = n())</code>에 해당하는 pandas 코드를 써라.
+          <details><summary>답</summary><p><code>df.groupby("cyl").agg(m=("mpg", "mean"), n=("mpg", "size"))</code>이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>매출 표 1000행을 매장 정보 표와 <code>store</code>로 <code>left</code> 결합했더니 1012행이 되었다. 무엇이 문제이고 어떻게 확인하는가?
+          <details><summary>답</summary><p>매장 정보 표에 같은 <code>store</code>가 두 번 이상 있어 해당 매출 행이 복제되었다. <code>info["store"].duplicated().sum()</code>으로 중복을 찾고, <code>validate="many_to_one"</code>을 주면 결합할 때 오류로 알려 준다.</p></details>
         </li>
       </ol>
     </div>

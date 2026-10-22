@@ -8,23 +8,35 @@
 <article class="card q-card" id="text-s4-exceptions" data-kind="본문" data-std="응통4-02-03">
   <header class="card-head"><span class="no"></span><h2>예외 처리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li><code>try/except</code>로 오류에 대응한다.</li>
-        <li>잘못된 입력에 대해 의미 있는 오류를 일으킨다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>함수와 클래스 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">설문 1만 건의 소득 칸을 숫자로 바꾸는데, 9998번째 응답에 "없음"이 적혀 있어 프로그램이 멈췄다. 앞의 9997건 작업도 함께 날아갔다. 지저분한 자료 하나 때문에 전체가 멈추지 않게 하려면 어떻게 해야 할까? 반대로 정말 잘못된 입력은 어떻게 분명히 알려야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 190" role="img" aria-label="다섯 개의 문자열이 try 블록을 거쳐 숫자로 바뀐 것은 values로, 바뀌지 않은 것은 except를 거쳐 bad 목록으로 나뉘는 흐름도">
+        <text x="20" y="22" class="s">raw</text>
+        <rect x="120" y="8" width="56" height="26" class="lk k"/><text x="148.0" y="25" text-anchor="middle" class="s">"12"</text>
+        <rect x="180" y="8" width="56" height="26" class="lk k"/><text x="208.0" y="25" text-anchor="middle" class="s">"7"</text>
+        <rect x="240" y="8" width="56" height="26" class="ld d"/><text x="268.0" y="25" text-anchor="middle" class="s">"없음"</text>
+        <rect x="300" y="8" width="56" height="26" class="ld d"/><text x="328.0" y="25" text-anchor="middle" class="s">""</text>
+        <rect x="360" y="8" width="56" height="26" class="lk k"/><text x="388.0" y="25" text-anchor="middle" class="s">"3.5"</text>
+        <rect x="185" y="62" width="150" height="34" class="lk k"/><text x="260.0" y="83.0" text-anchor="middle" class="s">try: float(r)</text>
+        <path d="M148 34 L260 61 M253.1 62.1 L260 61 L254.4 56.8" class="ax"/>
+        <path d="M208 34 L260 61 M253.0 60.4 L260 61 L255.5 55.6" class="ax"/>
+        <path d="M268 34 L260 61 M259.2 54.0 L260 61 L264.4 55.6" class="ax"/>
+        <path d="M328 34 L260 61 M265.0 56.1 L260 61 L267.0 61.2" class="ax"/>
+        <path d="M388 34 L260 61 M265.7 57.0 L260 61 L266.9 62.3" class="ax"/>
+        <rect x="40" y="135" width="190" height="40" class="lb b"/><text x="135.0" y="152.0" text-anchor="middle" class="s">성공하면 values</text>
+        <text x="135.0" y="167.0" text-anchor="middle" class="s">[12.0, 7.0, 3.5]</text>
+        <rect x="290" y="135" width="190" height="40" class="ld d"/><text x="385.0" y="152.0" text-anchor="middle" class="s">except ValueError면 bad</text>
+        <text x="385.0" y="167.0" text-anchor="middle" class="s">인덱스 [2, 3]</text>
+        <path d="M230 96 L150 134 M154.7 128.8 L150 134 L157.0 133.7" class="ax"/>
+        <path d="M290 96 L370 134 M363.0 133.7 L370 134 L365.3 128.8" class="ax"/>
+      </svg>
+      <figcaption>그림 1. <code>try/except</code>로 나누어 담기. 숫자로 바뀌는 세 값은 <code>values</code>에, <code>ValueError</code>를 일으킨 "없음"과 빈 문자열(빨강)은 위치만 <code>bad</code>에 기록하고 계속 진행한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>함수와 클래스(<a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
-    <h3>자료는 언제나 지저분하다</h3>
-    <p>숫자여야 할 칸에 "없음"이 적혀 있거나, 파일이 없거나, 0으로 나누는 일이 생깁니다. 프로그램이 첫 오류에서 멈추는 대신 문제를 기록하고 계속 진행하게 하거나, 무엇이 잘못됐는지 분명히 알려 줘야 합니다.</p>
-
-    <h3><span class="no">2.3.1</span>try / except</h3>
-    <pre><code>raw = ["12", "7", "없음", "", "3.5"]
+    <h3><span class="no">2.3.1</span>try와 except</h3>
+    <p>실행 중에 생기는 오류를 파이썬은 <em>예외</em>라 부르며, <code>ValueError</code>, <code>ZeroDivisionError</code>처럼 종류마다 이름이 있다. 예외가 생길 수 있는 코드를 <code>try</code> 블록에 넣고, 그 종류의 예외가 생겼을 때 할 일을 <code>except</code> 블록에 적는다. 그림 1의 흐름은 다음 코드이다.</p>
+<pre><code>raw = ["12", "7", "없음", "", "3.5"]
 values, bad = [], []
 for i, r in enumerate(raw):
     try:
@@ -32,31 +44,41 @@ for i, r in enumerate(raw):
     except ValueError:              # 숫자로 바꿀 수 없을 때만 잡음
         bad.append(i)
 print(values, bad)                  # [12.0, 7.0, 3.5] [2, 3]</code></pre>
-    <p>잡을 오류의 종류를 구체적으로 적습니다. 모든 오류를 잡는 <code>except:</code>는 진짜 버그까지 숨기므로 피합니다. <code>finally</code> 블록은 오류가 있든 없든 실행됩니다(파일 닫기 등). 파일은 <code>with open(...) as f:</code>를 쓰면 자동으로 닫힙니다.</p>
+    <p>처음 질문의 첫째 부분은 이렇게 풀린다. 바꿀 수 없는 응답은 위치만 기록하고 다음으로 넘어가므로, 나머지 작업은 그대로 남는다. 다만 잡을 예외의 종류를 구체적으로 적어야 한다. 모든 예외를 잡는 <code>except:</code>는 오타나 진짜 버그까지 숨기기 때문이다. 또 <code>finally</code> 블록은 예외가 있든 없든 실행되므로 정리 작업을 둔다. 물론 파일은 <code>with open(...) as f:</code>(<a href="01-03.html">1.3절</a>)를 쓰면 자동으로 닫힌다.</p>
 
-    <h3><span class="no">2.3.2</span>오류 일으키기</h3>
-    <pre><code>def variance(xs):
+    <h3><span class="no">2.3.2</span>예외 일으키기</h3>
+    <p>그렇다면 둘째 부분, 정말 잘못된 입력은 어떻게 할까? 이때는 문제를 발견한 곳에서 <code>raise</code>로 이유를 담은 예외를 일으킨다.</p>
+<pre><code>def variance(xs):
     if len(xs) &lt; 2:
-        raise ValueError("분산을 구하려면 관측이 2개 이상 필요합니다.")
+        raise ValueError("분산을 구하려면 관측이 2개 이상 필요하다.")
     m = sum(xs) / len(xs)
     return sum((x - m) ** 2 for x in xs) / (len(xs) - 1)</code></pre>
-    <p>잘못된 입력을 조용히 넘기면 나중에 엉뚱한 결과로 나타나 찾기 어렵습니다. 문제를 발견한 곳에서 이유를 담아 오류를 일으키는 편이 낫습니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>try/except 오류종류</code>로 예상한 오류만 처리.</li>
-        <li><code>with</code>로 파일 자동 닫기.</li>
-        <li>잘못된 입력은 <code>raise</code>로 분명하게 알림.</li>
-      </ol>
+    <p>관측이 하나뿐인데 조용히 넘기면 \(n - 1 = 0\)으로 나누는 오류가 엉뚱한 곳에서 나거나 잘못된 값이 뒤로 전해져, 원인을 찾기 어렵다. 반면 입구에서 이유를 밝혀 멈추면 고칠 곳이 바로 보인다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.3.1</span>
+      <p><code>variance([5])</code>를 부르되 프로그램이 멈추지 않고 오류 문장을 출력하게 하여라.</p>
     </div>
+<pre><code>try:
+    variance([5])
+except ValueError as e:
+    print("건너뜀", e)        # 건너뜀 분산을 구하려면 관측이 2개 이상 필요하다.</code></pre>
+    <p><i>풀이.</i> <code>as e</code>로 예외 객체를 받으면 <code>raise</code>할 때 담은 문장을 꺼낼 수 있다. 즉 예외를 일으키는 쪽은 이유를 밝히고, 받는 쪽은 그 이유를 보고 어떻게 할지 정한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><code>try</code> 블록을 너무 크게 잡으면 어느 줄에서 예외가 났는지 알 수 없고, 예상하지 못한 같은 종류의 예외까지 잡힌다. <code>try</code>에는 예외가 날 수 있는 한두 줄만 넣자.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>예상한 오류는 <code>try/except 예외종류</code>로 그 종류만 잡아 기록하고 계속 진행하며, 모든 오류를 잡는 맨 <code>except:</code>는 버그를 숨기므로 피한다. 정리 작업은 <code>finally</code>나 <code>with</code>에 맡긴다. 함수에 잘못된 입력이 들어오면 <code>raise</code>로 이유를 담아 그 자리에서 알리고, 받는 쪽은 <code>except ... as e</code>로 이유를 읽어 처리한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>1 / 0</code>, <code>int("a")</code>, <code>[1, 2][5]</code>가 일으키는 오류 종류는?
-          <details><summary>답</summary><p><code>ZeroDivisionError</code>, <code>ValueError</code>, <code>IndexError</code>.</p></details>
+        <li><code>1 / 0</code>, <code>int("a")</code>, <code>[1, 2][5]</code>가 일으키는 예외의 종류는 무엇인가?
+          <details><summary>답</summary><p>차례로 <code>ZeroDivisionError</code>, <code>ValueError</code>, <code>IndexError</code>이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>딕셔너리 <code>d</code>에서 열쇠 <code>k</code>가 없으면 0을 쓰는 코드를 <code>try/except</code>로 쓰고, 예외 없이 같은 일을 하는 방법도 써라.
+          <details><summary>답</summary><p><code>try: v = d[k]</code> 다음 <code>except KeyError: v = 0</code>이다. 예외 없이는 <code>v = d.get(k, 0)</code>(<a href="01-02.html">1.2절</a>)이다.</p></details>
         </li>
       </ol>
     </div>

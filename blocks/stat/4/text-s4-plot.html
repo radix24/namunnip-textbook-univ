@@ -8,56 +8,83 @@
 <article class="card q-card" id="text-s4-plot" data-kind="본문" data-std="응통4-05-03">
   <header class="card-head"><span class="no"></span><h2>그래프로 분포와 관계 나타내기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>matplotlib의 그림-축 구조로 그래프를 그린다.</li>
-        <li>seaborn으로 분포와 집단 비교 그래프를 빠르게 그린다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pandas (<a href="05-01.html">5.1절</a>), 응통5 2.3절 그래프 읽기.</li>
-      </ul>
-    </div>
-
-    <h3>그림과 축</h3>
-    <p>matplotlib은 파이썬 그래프의 기반입니다. 그림(Figure) 안에 축(Axes)을 하나 이상 만들고, 축에 그래프를 그리는 구조를 이해하면 원하는 대로 꾸밀 수 있습니다.</p>
+    <p class="q-ask">보고서에 계산 금액의 분포와, 계산 금액과 팁의 관계를 나란히 넣으려 한다. 인터넷에서 찾은 파이썬 그래프 코드는 어떤 것은 <code>plt.plot(...)</code>, 어떤 것은 <code>ax.plot(...)</code>으로 시작해 섞어 쓰면 엉뚱한 곳에 그려진다. 둘은 무엇이 다르고, 그래프 두 개를 한 그림에 원하는 대로 배치하려면 무엇을 알아야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="그림 전체를 뜻하는 Figure 상자 안에 히스토그램과 산점도가 그려진 두 개의 Axes 상자가 나란히 놓인 구조도">
+        <rect x="15" y="15" width="490" height="170" class="k" style="fill:none"/>
+        <text x="25" y="32" class="s">Figure (fig) 그림 전체, savefig로 저장</text>
+        <rect x="40" y="45" width="200" height="125" class="la a"/>
+        <text x="48" y="60" class="s ta">Axes axes[0]</text>
+        <path d="M65 150 L225 150 M65 150 L65 70" class="ax"/>
+        <rect x="280" y="45" width="200" height="125" class="la a"/>
+        <text x="288" y="60" class="s ta">Axes axes[1]</text>
+        <path d="M305 150 L465 150 M305 150 L305 70" class="ax"/>
+        <rect x="70" y="129" width="22" height="21" class="fk" style="stroke:none"/>
+        <rect x="94" y="101" width="22" height="49" class="fk" style="stroke:none"/>
+        <rect x="118" y="73" width="22" height="77" class="fk" style="stroke:none"/>
+        <rect x="142" y="87" width="22" height="63" class="fk" style="stroke:none"/>
+        <rect x="166" y="115" width="22" height="35" class="fk" style="stroke:none"/>
+        <rect x="190" y="136" width="22" height="14" class="fk" style="stroke:none"/>
+        <circle cx="321.0" cy="135.0" r="3" class="fa"/>
+        <circle cx="337.0" cy="123.8" r="3" class="fa"/>
+        <circle cx="353.0" cy="127.5" r="3" class="fa"/>
+        <circle cx="377.0" cy="112.5" r="3" class="fa"/>
+        <circle cx="385.0" cy="116.2" r="3" class="fa"/>
+        <circle cx="401.0" cy="101.2" r="3" class="fa"/>
+        <circle cx="425.0" cy="105.0" r="3" class="fa"/>
+        <circle cx="441.0" cy="90.0" r="3" class="fa"/>
+        <circle cx="449.0" cy="93.8" r="3" class="fa"/>
+        <text x="140" y="165" text-anchor="middle" class="s">ax.set(xlabel=...)</text><text x="380" y="165" text-anchor="middle" class="s">ax.set(xlabel=...)</text>
+      </svg>
+      <figcaption>그림 1. matplotlib의 그림과 축. 그림(Figure) 하나 안에 축(Axes)이 여럿 들어가고, 히스토그램과 산점도는 각각의 축에 그린다. 축 이름과 제목도 축마다 정한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pandas(<a href="05-01.html">5.1절</a>)와 그래프 읽기(응통5 2.3절)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>matplotlib</h3>
-    <pre><code>import matplotlib.pyplot as plt
+    <p>matplotlib은 파이썬 그래프의 기반이다. 그림 1처럼 그림(<em>Figure</em>) 안에 축(<em>Axes</em>)을 하나 이상 만들고, 각 축에 그래프를 그린다. 처음 질문의 답이 여기 있다. <code>ax.plot</code>은 지정한 축에 그리고, <code>plt.plot</code>은 "지금 활성화된 축"에 그린다. 그래서 축이 여럿일 때 <code>plt</code>를 쓰면 마지막으로 만든 축에 그려지기 쉽다. 축 객체에 직접 그리는 습관을 들이자.</p>
+<pre><code>import matplotlib.pyplot as plt
 fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
 axes[0].hist(tips["total_bill"], bins=20, color="grey", edgecolor="white")
 axes[0].set(xlabel="계산 금액 ($)", ylabel="빈도", title="분포")
 axes[1].scatter(tips["total_bill"], tips["tip"], s=12, alpha=0.6)
 axes[1].set(xlabel="계산 금액 ($)", ylabel="팁 ($)", title="관계")
 fig.tight_layout(); fig.savefig("fig/tips.png", dpi=200)
-# 한글: plt.rcParams["font.family"] = "Malgun Gothic"(윈도우) 또는 "AppleGothic"(맥)
+# 한글 글꼴은 plt.rcParams["font.family"] = "Malgun Gothic"(윈도) 또는 "AppleGothic"(맥)
 #       plt.rcParams["axes.unicode_minus"] = False</code></pre>
+    <p><code>plt.subplots(1, 2)</code>는 한 행 두 열의 축을 가진 그림을 만들어 그림과 축 배열을 돌려준다. 이어서 축마다 그리고 <code>set</code>으로 축 이름과 제목을 붙인 뒤, <code>tight_layout</code>으로 겹침을 정리하고 <code>savefig</code>로 저장한다. 한편 기본 글꼴은 한글을 그리지 못하므로 주석의 두 줄로 글꼴을 바꾸고, 음수 부호가 깨지지 않게 한다.</p>
 
     <h3><span class="no">5.3.2</span>seaborn</h3>
-    <pre><code>import seaborn as sns
+    <p>그런데 집단마다 색을 달리하거나 패널을 나누는 그래프를 matplotlib만으로 그리면 반복문이 필요하다. seaborn은 데이터프레임과 열 이름만 주면 이런 그래프를 바로 그린다.</p>
+<pre><code>import seaborn as sns
 sns.boxplot(data=tips, x="day", y="tip")                       # 집단 비교
 sns.histplot(data=tips, x="total_bill", hue="time", kde=True)  # 집단별 분포
 sns.scatterplot(data=tips, x="total_bill", y="tip", hue="smoker")
 sns.lmplot(data=tips, x="total_bill", y="tip", col="time")     # 회귀선 + 패널
 sns.pairplot(tips, hue="sex")                                  # 산점도 행렬</code></pre>
-    <p>seaborn은 데이터프레임과 열 이름으로 그리며, 색(<code>hue</code>), 패널(<code>col</code>, <code>row</code>)에 변수를 대응시키는 방식이 ggplot2(응통3 3.2절)와 비슷합니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>fig, ax = plt.subplots()</code>, <code>ax.set(...)</code>, <code>savefig</code>.</li>
-        <li>seaborn: <code>data</code>, <code>x</code>, <code>y</code>, <code>hue</code>, <code>col</code>로 빠르게.</li>
-        <li>축 이름, 단위, 한글 글꼴 설정.</li>
-      </ol>
+    <p>변수를 색(<code>hue</code>), 패널(<code>col</code>, <code>row</code>)에 대응시키는 방식은 ggplot2(응통3 3.2절)와 비슷하다. 또 seaborn은 matplotlib 위에서 돌아가므로, <code>sns.boxplot(..., ax=axes[0])</code>처럼 그릴 축을 지정해 그림 1의 배치 안에 넣을 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.3.1</span>
+      <p>팁 비율(tip / total_bill)의 분포를 흡연 여부별로 겹쳐 그리되, 두 집단의 크기가 달라도 모양을 비교할 수 있게 하여라.</p>
     </div>
+<pre><code>sns.histplot(data=tips.assign(rate=tips.tip / tips.total_bill),
+             x="rate", hue="smoker", stat="density", common_norm=False)</code></pre>
+    <p><i>풀이.</i> 빈도로 그리면 사람이 많은 집단의 막대가 높아 모양을 비교하기 어렵다. 따라서 <code>stat="density"</code>로 넓이를 1로 맞추고, <code>common_norm=False</code>로 집단마다 따로 정규화한다.</p>
+    <div class="tb-note"><span class="lb">주의</span>그래프에는 축 이름과 단위를 늘 붙인다. 화면에서는 열 이름 <code>total_bill</code>로 충분해 보여도, 보고서를 읽는 사람에게는 "계산 금액 ($)"처럼 뜻과 단위가 있어야 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>matplotlib은 그림(Figure) 안에 축(Axes)을 두고 축마다 그리는 구조이므로, <code>fig, ax = plt.subplots()</code>로 시작해 <code>ax</code>에 직접 그리고 <code>ax.set</code>으로 이름을 붙인 뒤 <code>savefig</code>로 저장한다. seaborn은 데이터프레임과 열 이름, <code>hue</code>, <code>col</code>로 집단별 그래프를 빠르게 그리고, <code>ax=</code>로 원하는 축에 넣을 수 있다. 축 이름과 단위, 한글 글꼴 설정을 잊지 말자.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>팁 비율(<code>tip / total_bill</code>)의 분포를 흡연 여부별로 겹쳐 그리는 코드를 쓰세요.
-          <details><summary>답</summary><p><code>sns.histplot(data=tips.assign(rate=tips.tip / tips.total_bill), x="rate", hue="smoker", stat="density", common_norm=False)</code>.</p></details>
+        <li>2행 2열의 축을 만들어 오른쪽 아래 축에만 산점도를 그리는 코드를 써라.
+          <details><summary>답</summary><p><code>fig, axes = plt.subplots(2, 2)</code> 다음 <code>axes[1, 1].scatter(x, y)</code>이다. 축 배열이 2차원이므로 두 인덱스를 쓴다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>요일별 팁 상자그림(seaborn)과 계산 금액 히스토그램(matplotlib)을 한 그림에 나란히 넣는 코드를 써라.
+          <details><summary>답</summary><p><code>fig, axes = plt.subplots(1, 2)</code>, <code>sns.boxplot(data=tips, x="day", y="tip", ax=axes[0])</code>, <code>axes[1].hist(tips["total_bill"], bins=20)</code>이다.</p></details>
         </li>
       </ol>
     </div>

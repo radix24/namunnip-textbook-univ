@@ -8,68 +8,91 @@
 <article class="card q-card" id="text-s4-dates" data-kind="본문" data-std="응통4-05-04">
   <header class="card-head"><span class="no"></span><h2>pandas로 날짜와 시계열 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>문자열 열을 날짜형으로 바꾸고 연, 월, 요일을 뽑는다.</li>
-        <li>날짜를 인덱스로 두고 일별 자료를 주·월 단위로 다시 묶는다.</li>
-        <li>이동 평균과 증감률을 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>pandas 기초와 groupby (<a href="05-01.html">5.1절</a>, <a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>시간 순서가 있는 표</h3>
-    <p>매출, 방문자, 센서 값은 거의 모두 시각과 함께 기록됩니다. 날짜를 날짜형으로 다루면 "월별 합계", "지난주 대비 증가율" 같은 계산이 한 줄로 끝납니다.</p>
+    <p class="q-ask">온라인 가게의 일별 매출이 월요일에 "지난 일요일보다 60% 줄었다"는 경고를 띄웠다. 정말 장사가 안 된 걸까, 아니면 원래 주말에 많이 팔리는 것일까? 날짜가 붙은 자료에서 월별 합계, 같은 요일끼리의 비교, 들쭉날쭉함을 걷어 낸 추세는 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 195" role="img" aria-label="8주 동안의 가상 일별 매출. 주말마다 솟는 들쭉날쭉한 선 위에 7일 이동 평균이 매끄러운 상승 추세를 보여 준다">
+        <line x1="50" y1="165" x2="495" y2="165" class="ax"/>
+        <line x1="50" y1="165" x2="50" y2="15" class="ax"/>
+        <text x="50" y="180" text-anchor="middle" class="s">0</text>
+        <text x="105.6" y="180" text-anchor="middle" class="s">7</text>
+        <text x="161.2" y="180" text-anchor="middle" class="s">14</text>
+        <text x="216.9" y="180" text-anchor="middle" class="s">21</text>
+        <text x="272.5" y="180" text-anchor="middle" class="s">28</text>
+        <text x="328.1" y="180" text-anchor="middle" class="s">35</text>
+        <text x="383.8" y="180" text-anchor="middle" class="s">42</text>
+        <text x="439.4" y="180" text-anchor="middle" class="s">49</text>
+        <text x="495" y="180" text-anchor="middle" class="s">56</text>
+        <text x="45" y="169" text-anchor="end" class="s">40</text>
+        <text x="45" y="100.8" text-anchor="end" class="s">80</text>
+        <text x="45" y="32.6" text-anchor="end" class="s">120</text>
+        <text x="495" y="194" text-anchor="end" class="s">날짜 (일)</text>
+        <text x="56" y="19" class="s">매출</text>
+        <path d="M50 130.5 L57.9 125.5 L65.9 134.3 L73.8 125.3 L81.8 118.7 L89.7 80.7 L97.7 68.2 L105.6 135.2 L113.6 124.8 L121.5 132 L129.5 132.1 L137.4 125.3 L145.4 77.9 L153.3 75.1 L161.2 116.2 L169.2 97.8 L177.1 111.2 L185.1 135.6 L193 116.5 L201 81.7 L208.9 79.9 L216.9 103.2 L224.8 118.2 L232.8 135.2 L240.7 111.4 L248.7 116.8 L256.6 82.6 L264.6 79.3 L272.5 118.2 L280.4 111.4 L288.4 114.8 L296.3 109 L304.3 90.3 L312.2 74 L320.2 73.4 L328.1 109.6 L336.1 95.2 L344 112.9 L352 90.3 L359.9 117.7 L367.9 71.6 L375.8 60.9 L383.8 111.1 L391.7 107.9 L399.6 96.3 L407.6 92.8 L415.5 98.4 L423.5 59.1 L431.4 41.8 L439.4 93.4 L447.3 99.2 L455.3 83.7 L463.2 104.7 L471.2 93.1 L479.1 44.7 L487.1 50.9" class="k"/>
+        <circle cx="89.7" cy="80.7" r="2.5" class="fc"/>
+        <circle cx="97.7" cy="68.2" r="2.5" class="fc"/>
+        <circle cx="145.4" cy="77.9" r="2.5" class="fc"/>
+        <circle cx="153.3" cy="75.1" r="2.5" class="fc"/>
+        <circle cx="201" cy="81.7" r="2.5" class="fc"/>
+        <circle cx="208.9" cy="79.9" r="2.5" class="fc"/>
+        <circle cx="256.6" cy="82.6" r="2.5" class="fc"/>
+        <circle cx="264.6" cy="79.3" r="2.5" class="fc"/>
+        <circle cx="312.2" cy="74" r="2.5" class="fc"/>
+        <circle cx="320.2" cy="73.4" r="2.5" class="fc"/>
+        <circle cx="367.9" cy="71.6" r="2.5" class="fc"/>
+        <circle cx="375.8" cy="60.9" r="2.5" class="fc"/>
+        <circle cx="423.5" cy="59.1" r="2.5" class="fc"/>
+        <circle cx="431.4" cy="41.8" r="2.5" class="fc"/>
+        <circle cx="479.1" cy="44.7" r="2.5" class="fc"/>
+        <circle cx="487.1" cy="50.9" r="2.5" class="fc"/>
+        <path d="M97.7 111.9 L105.6 112.5 L113.6 112.4 L121.5 112.1 L129.5 113.1 L137.4 114 L145.4 113.6 L153.3 114.6 L161.2 111.9 L169.2 108.1 L177.1 105.1 L185.1 105.6 L193 104.3 L201 104.9 L208.9 105.6 L216.9 103.7 L224.8 106.6 L232.8 110.1 L240.7 106.6 L248.7 106.6 L256.6 106.8 L264.6 106.7 L272.5 108.8 L280.4 107.8 L288.4 104.9 L296.3 104.6 L304.3 100.8 L312.2 99.6 L320.2 98.7 L328.1 97.5 L336.1 95.2 L344 94.9 L352 92.2 L359.9 96.1 L367.9 95.8 L375.8 94 L383.8 94.2 L391.7 96.1 L399.6 93.7 L407.6 94 L415.5 91.3 L423.5 89.5 L431.4 86.8 L439.4 84.2 L447.3 83 L455.3 81.2 L463.2 82.9 L471.2 82.1 L479.1 80.1 L487.1 81.4" class="a" style="stroke-width:2.5"/>
+        <text x="113.6" y="30.3" class="s tc">주말(주황 점)마다 솟는 일별 매출</text>
+        <text x="288.4" y="134.3" class="s ta">7일 이동 평균 rolling(7).mean()</text>
+      </svg>
+      <figcaption>그림 1. 가상의 일별 매출 8주. 주말(주황 점)마다 매출이 솟아 하루하루의 증감은 요일 효과에 휘둘리지만, 7일 이동 평균(파랑)은 요일 효과를 걷어 내 완만한 상승 추세를 보여 준다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>pandas 기초와 groupby(<a href="05-01.html">5.1절</a>, <a href="05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>날짜형으로 바꾸기</h3>
-    <pre><code>import pandas as pd
+    <p>매출, 방문자, 센서 값은 거의 모두 시각과 함께 기록된다. 그런데 CSV에서 읽은 날짜는 그냥 문자열이어서 요일을 묻거나 날짜끼리 뺄 수 없다. 그래서 먼저 날짜형으로 바꾼다.</p>
+<pre><code>import pandas as pd
 df = pd.DataFrame({"date": ["2026-03-01", "2026-03-02", "2026-03-08", "2026-03-09"],
                    "sales": [30, 20, 50, 10]})
 df["date"] = pd.to_datetime(df["date"])
 df["dow"] = df["date"].dt.dayofweek      # 월 = 0, …, 일 = 6
 df["month"] = df["date"].dt.month
-df.groupby("dow")["sales"].sum()         # 0: 30, 6: 80</code></pre>
-    <p>형식이 다르면 <code>pd.to_datetime(s, format="%d/%m/%Y")</code>처럼 지정합니다. <code>.dt</code> 접근자로 <code>year</code>, <code>day_name()</code>, <code>quarter</code> 등을 뽑습니다. 날짜끼리 빼면 <code>Timedelta</code>가 되어 <code>.dt.days</code>로 일수를 얻습니다.</p>
+df.groupby("dow")["sales"].sum()         # 0이 30, 6이 80</code></pre>
+    <p>형식이 다르면 <code>pd.to_datetime(s, format="%d/%m/%Y")</code>처럼 지정한다. 날짜형 열은 <code>.dt</code> 접근자로 <code>year</code>, <code>day_name()</code>, <code>quarter</code> 등을 뽑는다. 또 날짜끼리 빼면 기간을 나타내는 Timedelta가 되어 <code>.dt.days</code>로 일수를 얻는다.</p>
 
     <h3><span class="no">5.4.2</span>다시 묶기와 이동 계산</h3>
-    <pre><code>ts = df.set_index("date")["sales"]
+    <p>날짜를 인덱스로 두면 시간 단위의 계산이 한 줄로 끝난다.</p>
+<pre><code>ts = df.set_index("date")["sales"]
 ts.resample("W").sum()          # 주 단위 합계(기본은 일요일에 끝나는 주)
 ts.resample("MS").mean()        # 월초 기준 월평균
 ts.rolling(7).mean()            # 7개 관측 이동 평균
 ts.pct_change()                 # 직전 대비 증감률
 ts.shift(1)                     # 한 칸 미루기(전날 값)</code></pre>
-    <p><code>resample</code>은 시간 단위의 <code>groupby</code>입니다. 빠진 날짜가 있으면 <code>rolling(7)</code>은 "관측 7개"라 7일과 다를 수 있으므로, <code>rolling("7D")</code>로 기간을 지정하거나 <code>asfreq("D")</code>로 빈 날을 먼저 채웁니다.</p>
-
+    <p><code>resample</code>은 시간 단위의 groupby이다. 한편 <code>rolling(7).mean()</code>은 직전 7개 관측의 평균인 <em>이동 평균</em>으로, 그림 1처럼 일주일을 통째로 평균하면 요일 효과가 상쇄되어 추세만 남는다. 다만 빠진 날짜가 있으면 "관측 7개"가 7일보다 길 수 있다. 이때는 <code>rolling("7D")</code>로 기간을 지정하거나 <code>asfreq("D")</code>로 빈 날을 먼저 채운다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
-      <p>위 자료에서 3월 1일과 8일이 같은 요일인지, 두 날의 매출 증가율은 얼마인지 구하세요.</p>
+      <p>위 자료에서 3월 1일과 8일이 같은 요일인지 확인하고, 두 날 사이의 매출 증가율을 구하여라. 3월 8일과 9일의 비교와는 무엇이 다른가?</p>
     </div>
-    <p><i>풀이.</i> 두 날 모두 <code>dayofweek</code> 6(일요일)입니다(7일 차이). 증가율 \((50 - 30)/30 = 66.7\%\). 같은 요일끼리 비교해야 요일 효과(응통17 5.4절의 계절)를 빼고 볼 수 있습니다: <code>ts.pct_change(periods=2)</code>는 이 자료에서 두 칸 전과 비교합니다.</p>
+    <p><i>풀이.</i> 두 날 모두 <code>dayofweek</code>가 6(일요일)이고 7일 차이이다. 증가율은 \((50 - 30)/30 = 66.7\%\)이다. 반면 3월 8일(일)에서 9일(월)로는 \((10 - 50)/50 = -80\%\)이지만, 이것은 처음 질문의 경고처럼 요일 효과가 섞인 비교이다. 같은 요일끼리 비교해야 요일 효과(응통17 5.4절의 계절)를 빼고 볼 수 있으며, 이 자료에서는 <code>ts.pct_change(periods=2)</code>가 두 칸 전, 곧 한 주 전과 비교한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><code>pct_change()</code>는 "한 칸 전"과 비교할 뿐 "하루 전"을 알지 못한다. 빠진 날이 있는 자료에서는 하루 전이 아닌 날과 비교하게 되므로, <code>asfreq("D")</code>로 날짜를 촘촘히 맞춘 뒤 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>pd.to_datetime</code>과 <code>.dt</code>로 날짜 요소 추출.</li>
-        <li><code>resample</code>(시간 단위 묶기), <code>rolling</code>, <code>pct_change</code>, <code>shift</code>.</li>
-        <li>빠진 날짜를 확인하고 같은 요일·같은 달끼리 비교합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>날짜 문자열은 <code>pd.to_datetime</code>으로 날짜형으로 바꾸고 <code>.dt</code>로 연, 월, 요일을 뽑는다. 날짜를 인덱스로 두면 <code>resample</code>로 주와 월 단위로 묶고, <code>rolling</code>으로 이동 평균을, <code>pct_change</code>와 <code>shift</code>로 증감과 지연 값을 계산한다. 요일 효과가 있는 자료는 이동 평균이나 같은 요일끼리의 비교로 추세를 보며, 빠진 날짜를 먼저 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>주문일 열 <code>order</code>와 배송일 열 <code>ship</code>(둘 다 날짜형)이 있을 때 배송 소요일 평균을 구하는 코드를 쓰세요.
-          <details><summary>답</summary><p><code>(df["ship"] - df["order"]).dt.days.mean()</code>.</p></details>
+        <li>주문일 열 <code>order</code>와 배송일 열 <code>ship</code>(둘 다 날짜형)이 있을 때 배송 소요일 평균을 구하는 코드를 써라.
+          <details><summary>답</summary><p><code>(df["ship"] - df["order"]).dt.days.mean()</code>이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>일별 자료에 주말 매출이 없는 날(행 자체가 없음)이 있습니다. <code>rolling(7).mean()</code>이 왜 틀릴 수 있고 어떻게 고치나요?
-          <details><summary>답</summary><p>관측 7개가 9~10일에 걸칠 수 있습니다. <code>ts.asfreq("D", fill_value=0)</code>으로 빈 날을 0(또는 결측)으로 채운 뒤 계산하거나 <code>rolling("7D")</code>를 씁니다.</p></details>
+      <ol start="2">
+        <li>일별 자료에 주말 매출이 없는 날(행 자체가 없음)이 있다. <code>rolling(7).mean()</code>이 왜 틀릴 수 있고 어떻게 고치는가?
+          <details><summary>답</summary><p>관측 7개가 9~10일에 걸칠 수 있기 때문이다. <code>ts.asfreq("D", fill_value=0)</code>으로 빈 날을 0(또는 결측)으로 채운 뒤 계산하거나 <code>rolling("7D")</code>를 쓴다.</p></details>
         </li>
       </ol>
     </div>

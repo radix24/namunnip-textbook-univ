@@ -8,24 +8,28 @@
 <article class="card q-card" id="text-s4-strings" data-kind="본문" data-std="응통4-01-03">
   <header class="card-head"><span class="no"></span><h2>문자열 처리와 파일 입출력</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>문자열을 자르고, 합치고, 바꾸고, f-문자열로 서식을 만든다.</li>
-        <li><code>with open</code>으로 텍스트 파일을 안전하게 읽고 쓴다.</li>
-        <li>정규표현식 모듈 <code>re</code>로 패턴을 찾는다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>자료형과 반복 (<a href="01-01.html">1.1절</a>), 리스트와 딕셔너리 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>표가 되기 전의 자료</h3>
-    <p>로그 파일, 설문 자유 응답, 웹에서 받은 텍스트는 처음에 문자열 덩어리입니다. pandas(5.1절)로 넘기기 전에 문자열을 정리하는 일이 자주 필요합니다.</p>
+    <p class="q-ask">설문의 주소 칸에 <code>"  Seoul, Gangnam  "</code>처럼 앞뒤 공백이 붙은 응답이 들어오고, 서버 로그에는 날짜와 오류가 한 줄 문자열로 섞여 있다. 이런 자료는 표가 되기 전에 문자열 덩어리이다. 어떻게 잘라 내고 정리해야 분석할 수 있는 모양이 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 190" role="img" aria-label="공백이 붙은 문자열을 strip으로 다듬고 split으로 나누는 과정과, 정규표현식 findall로 숫자만 뽑아내는 과정을 화살표로 이은 그림">
+        <rect x="15" y="30" width="150" height="34" class="lk k"/><text x="90.0" y="51.0" text-anchor="middle" class="s">"  Seoul, Gangnam  "</text>
+        <rect x="195" y="30" width="130" height="34" class="la a"/><text x="260.0" y="51.0" text-anchor="middle" class="s">"Seoul, Gangnam"</text>
+        <rect x="355" y="30" width="150" height="34" class="lb b"/><text x="430.0" y="51.0" text-anchor="middle" class="s">['Seoul', 'Gangnam']</text>
+        <path d="M165 47 L195 47 M188.6 49.7 L195 47 L188.6 44.3" class="ax"/>
+        <path d="M325 47 L355 47 M348.6 49.7 L355 47 L348.6 44.3" class="ax"/>
+        <text x="180" y="22" text-anchor="middle" class="s">strip()</text><text x="340" y="22" text-anchor="middle" class="s">split(", ")</text>
+        <rect x="15" y="110" width="150" height="34" class="lk k"/><text x="90.0" y="131.0" text-anchor="middle" class="s">"A12 B3 C456"</text>
+        <rect x="255" y="110" width="160" height="34" class="lc c"/><text x="335.0" y="131.0" text-anchor="middle" class="s">['12', '3', '456']</text>
+        <path d="M165 127 L255 127 M248.6 129.7 L255 127 L248.6 124.3" class="ax"/>
+        <text x="210" y="102" text-anchor="middle" class="s">re.findall(r"\d+", s)</text>
+        <text x="260" y="180" text-anchor="middle" class="s">문자열은 바뀌지 않으므로 결과를 새 변수에 담는다</text>
+      </svg>
+      <figcaption>그림 1. 문자열 정리의 두 갈래. 위는 <code>strip</code>으로 양끝 공백을 없앤 뒤 <code>split</code>으로 나누고, 아래는 정규표현식으로 숫자 덩어리만 뽑는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>자료형과 반복(<a href="01-01.html">1.1절</a>), 리스트와 딕셔너리(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>문자열 메서드</h3>
-    <pre><code>s = "  Seoul, Gangnam  "
+    <p>처음 질문의 주소 응답부터 다듬어 보자. 그림 1의 위 갈래가 바로 아래 코드의 첫 두 줄이다.</p>
+<pre><code>s = "  Seoul, Gangnam  "
 s.strip()                 # 'Seoul, Gangnam' (양끝 공백 제거)
 s.strip().split(", ")     # ['Seoul', 'Gangnam']
 "-".join(["2026", "03", "15"])   # '2026-03-15'
@@ -33,52 +37,48 @@ s.strip().split(", ")     # ['Seoul', 'Gangnam']
 "report.csv".endswith(".csv")    # True
 n, m = 7, 3.14159
 f"표본 {n}개, 평균 {m:.2f}"      # '표본 7개, 평균 3.14'</code></pre>
-    <p>문자열은 바꿀 수 없는(불변) 자료형이라 메서드는 새 문자열을 돌려줍니다. 결과를 변수에 다시 담아야 합니다.</p>
+    <p>여기서 주의할 점은 문자열이 바꿀 수 없는(불변) 자료형이라는 것이다. 그래서 메서드는 원래 문자열을 고치지 않고 새 문자열을 돌려주며, 결과를 변수에 다시 담아야 한다.</p>
 
     <h3><span class="no">1.3.2</span>파일 읽고 쓰기</h3>
-    <pre><code>with open("data.txt", encoding="utf-8") as f:
+    <p>이제 문자열을 파일에서 읽어 오자. 텍스트 파일은 <code>with open</code>으로 연다.</p>
+<pre><code>with open("data.txt", encoding="utf-8") as f:
     lines = [line.rstrip("\n") for line in f]   # 한 줄씩
 
 with open("out.txt", "w", encoding="utf-8") as f:
-    f.write("결과: 42\n")</code></pre>
-    <p><code>with</code> 문은 블록이 끝나면 오류가 나도 파일을 자동으로 닫습니다. 한글이 있으면 <code>encoding="utf-8"</code>을 명시합니다(윈도의 기본 인코딩은 다를 수 있음). 표 형식 파일은 <code>csv</code> 모듈이나 pandas의 <code>read_csv</code>가 편합니다.</p>
+    f.write("결과 42\n")</code></pre>
+    <p><code>with</code> 문은 블록이 끝나면 오류가 나도 파일을 자동으로 닫는다. 한편 한글이 있으면 <code>encoding="utf-8"</code>을 꼭 적는다. 윈도의 기본 인코딩은 다를 수 있기 때문이다. 표 형식 파일이라면 <code>csv</code> 모듈이나 pandas의 <code>read_csv</code>(<a href="05-01.html">5.1절</a>)가 더 편하다.</p>
 
     <h3><span class="no">1.3.3</span>정규표현식</h3>
-    <pre><code>import re
-re.findall(r"\d+", "A12 B3 C456")          # ['12', '3', '456']
-re.sub(r"\s+", " ", "too   many  spaces")   # 'too many spaces'
+    <p>그런데 로그처럼 모양이 불규칙하면 <code>split</code>만으로는 원하는 조각을 꺼내기 어렵다. 이때는 글자의 패턴을 기술하는 정규표현식을 쓴다. 그림 1의 아래 갈래가 첫 줄이다.</p>
+<pre><code>import re
+re.findall(r"\d+", "A12 B3 C456")             # ['12', '3', '456']
+re.sub(r"\s+", " ", "too   many  spaces")     # 'too many spaces'
 bool(re.match(r"^\d{3}-\d{4}$", "123-4567"))  # True</code></pre>
-    <p><code>\d</code>(숫자), <code>\s</code>(공백), <code>+</code>(한 번 이상), <code>{n}</code>(정확히 \(n\)번), <code>^ $</code>(시작과 끝). 문자열 앞의 <code>r</code>은 역슬래시를 그대로 두는 원시 문자열입니다.</p>
-
+    <p>패턴에서 <code>\d</code>는 숫자, <code>\s</code>는 공백, <code>+</code>는 한 번 이상, <code>{n}</code>은 정확히 \(n\)번, <code>^</code>와 <code>$</code>는 시작과 끝을 뜻한다. 또 문자열 앞의 <code>r</code>은 역슬래시를 그대로 두는 원시 문자열이므로, 패턴은 늘 <code>r"..."</code>로 쓰는 습관을 들이자.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1</span>
-      <p>문장 <code>"the cat and the hat and the bat"</code>에서 가장 많이 나온 단어 두 개를 세세요.</p>
+      <p>문장 <code>"the cat and the hat and the bat"</code>에서 가장 많이 나온 단어 두 개를 세어라.</p>
     </div>
-    <pre><code>from collections import Counter
+<pre><code>from collections import Counter
 Counter("the cat and the hat and the bat".split()).most_common(2)
 # [('the', 3), ('and', 2)]</code></pre>
+    <p><i>풀이.</i> <code>split()</code>은 인자가 없으면 공백 덩어리마다 자른다. 그러면 단어 리스트가 되고, <code>Counter</code>(<a href="01-02.html">1.2절</a>)가 빈도를 센다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><code>s.strip()</code>만 쓰고 <code>s</code>를 다시 출력하면 공백이 그대로 남아 있다. 불변 자료형의 메서드는 새 값을 돌려줄 뿐이므로 <code>s = s.strip()</code>처럼 다시 담아야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>strip</code>, <code>split</code>, <code>join</code>, <code>replace</code>, f-문자열.</li>
-        <li><code>with open(..., encoding="utf-8")</code>로 안전하게 읽고 쓰기.</li>
-        <li><code>re.findall</code>, <code>re.sub</code>로 패턴 처리.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>표가 되기 전의 문자열은 <code>strip</code>, <code>split</code>, <code>join</code>, <code>replace</code>로 다듬고 f-문자열로 서식을 만든다. 문자열은 불변이므로 결과를 새 변수에 담는다. 파일은 <code>with open(..., encoding="utf-8")</code>으로 열어 자동으로 닫히게 하고, 모양이 불규칙한 텍스트는 <code>re.findall</code>, <code>re.sub</code> 같은 정규표현식으로 필요한 조각만 꺼낸다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>"95, 82, 77"</code>을 정수 리스트로 바꾸고 평균을 구하세요.
-          <details><summary>답</summary><p><code>xs = [int(t) for t in "95, 82, 77".split(", ")]</code>, 평균 <code>sum(xs)/len(xs)</code> = 84.67.</p></details>
+        <li><code>"95, 82, 77"</code>을 정수 리스트로 바꾸고 평균을 구하여라.
+          <details><summary>답</summary><p><code>xs = [int(t) for t in "95, 82, 77".split(", ")]</code>이고 평균 <code>sum(xs)/len(xs)</code>는 84.67이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>로그 줄 <code>"2026-03-15 10:20:05 ERROR disk full"</code>들에서 오류(ERROR) 줄의 날짜만 모으는 코드를 쓰세요.
-          <details><summary>답</summary><p><code>dates = [ln.split()[0] for ln in lines if " ERROR " in ln]</code>. 정규표현식으로는 <code>re.match(r"(\d{4}-\d{2}-\d{2}) \S+ ERROR", ln)</code>의 그룹 1.</p></details>
+      <ol start="2">
+        <li>로그 줄 <code>"2026-03-15 10:20:05 ERROR disk full"</code>들의 리스트 <code>lines</code>에서 오류(ERROR) 줄의 날짜만 모으는 코드를 써라.
+          <details><summary>답</summary><p><code>dates = [ln.split()[0] for ln in lines if " ERROR " in ln]</code>이다. 정규표현식으로는 <code>re.match(r"(\d{4}-\d{2}-\d{2}) \S+ ERROR", ln)</code>의 그룹 1을 쓴다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,29 +8,48 @@
 <article class="card q-card" id="text-s4-pandas" data-kind="본문" data-std="응통4-05-01">
   <header class="card-head"><span class="no"></span><h2>pandas로 자료 읽고 정리하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>데이터프레임을 읽고, 열과 행을 고르고, 새 열을 만든다.</li>
-        <li>결측값과 자료형을 처리한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>NumPy (<a href="03-01.html">3.1절</a>). R의 데이터프레임(응통3)을 알면 비교하며 익힐 수 있습니다.</li>
-      </ul>
-    </div>
-
-    <h3>파이썬의 데이터프레임</h3>
-    <p>pandas는 표 형태 자료를 다루는 표준 도구입니다. R의 데이터프레임과 dplyr이 하는 일을 대부분 할 수 있습니다.</p>
+    <p class="q-ask">설문 자료를 엑셀에서 CSV로 저장해 읽었더니 소득 칸에 "1,200"처럼 쉼표가 들어가 문자열로 읽혔고, 무응답은 "-"나 999로 적혀 있으며, 성별은 "남", "남자", "M"이 섞여 있다. R에서는 데이터프레임과 dplyr로 정리했다. 파이썬에서는 이런 표를 무엇으로 읽고 어떻게 정리할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 185" role="img" aria-label="인덱스와 열 이름이 붙은 작은 데이터프레임. age 열 하나는 Series로, 여성 행의 age와 income 칸은 loc 선택으로 칠해져 있다">
+        <rect x="150" y="30" width="64" height="22" class="lk k"/><text x="182.0" y="45" text-anchor="middle" class="s">age</text>
+        <rect x="214" y="30" width="64" height="22" class="lk k"/><text x="246.0" y="45" text-anchor="middle" class="s">sex</text>
+        <rect x="278" y="30" width="64" height="22" class="lk k"/><text x="310.0" y="45" text-anchor="middle" class="s">income</text>
+        <rect x="110" y="52" width="40" height="22" class="lk k"/><text x="130.0" y="67" text-anchor="middle" class="s">0</text>
+        <rect x="150" y="52" width="64" height="22" class="lb b"/><text x="182.0" y="67" text-anchor="middle" class="s">34</text>
+        <rect x="214" y="52" width="64" height="22" class="k" style="fill:none"/><text x="246" y="67" text-anchor="middle" class="s">F</text>
+        <rect x="278" y="52" width="64" height="22" class="lb b"/><text x="310.0" y="67" text-anchor="middle" class="s">410</text>
+        <rect x="110" y="74" width="40" height="22" class="lk k"/><text x="130.0" y="89" text-anchor="middle" class="s">1</text>
+        <rect x="150" y="74" width="64" height="22" class="k" style="fill:none"/><text x="182" y="89" text-anchor="middle" class="s">27</text>
+        <rect x="214" y="74" width="64" height="22" class="k" style="fill:none"/><text x="246" y="89" text-anchor="middle" class="s">M</text>
+        <rect x="278" y="74" width="64" height="22" class="k" style="fill:none"/><text x="310" y="89" text-anchor="middle" class="s">280</text>
+        <rect x="110" y="96" width="40" height="22" class="lk k"/><text x="130.0" y="111" text-anchor="middle" class="s">2</text>
+        <rect x="150" y="96" width="64" height="22" class="lb b"/><text x="182.0" y="111" text-anchor="middle" class="s">45</text>
+        <rect x="214" y="96" width="64" height="22" class="k" style="fill:none"/><text x="246" y="111" text-anchor="middle" class="s">F</text>
+        <rect x="278" y="96" width="64" height="22" class="lb b"/><text x="310.0" y="111" text-anchor="middle" class="s">520</text>
+        <rect x="110" y="118" width="40" height="22" class="lk k"/><text x="130.0" y="133" text-anchor="middle" class="s">3</text>
+        <rect x="150" y="118" width="64" height="22" class="k" style="fill:none"/><text x="182" y="133" text-anchor="middle" class="s">31</text>
+        <rect x="214" y="118" width="64" height="22" class="k" style="fill:none"/><text x="246" y="133" text-anchor="middle" class="s">M</text>
+        <rect x="278" y="118" width="64" height="22" class="k" style="fill:none"/><text x="310" y="133" text-anchor="middle" class="s">350</text>
+        <rect x="151" y="53" width="62" height="86" class="a" style="fill:none;stroke-width:2.5"/>
+        <text x="130" y="22" text-anchor="middle" class="s">인덱스</text>
+        <text x="246" y="22" text-anchor="middle" class="s">열 이름 (columns)</text>
+        <path d="M182 145 L182 160" class="a"/><text x="182" y="174" text-anchor="middle" class="s ta">df["age"] (Series)</text>
+        <text x="360" y="80" class="s tb">df.loc[df["sex"] == "F",</text><text x="372" y="96" class="s tb">["age", "income"]]</text>
+      </svg>
+      <figcaption>그림 1. 데이터프레임의 짜임. 행에는 인덱스, 열에는 이름이 붙는다. 열 하나 <code>df["age"]</code>는 Series(파랑 테두리)이고, <code>loc</code>은 행 조건과 열 이름으로 칸을 고른다(청록).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>NumPy(<a href="03-01.html">3.1절</a>)와 불리언 마스크(<a href="03-03.html">3.3절</a>)를 쓴다. R의 데이터프레임(응통3)을 알면 비교하며 익힐 수 있다.</div>
 
     <h3><span class="no">5.1.1</span>읽기와 둘러보기</h3>
-    <pre><code>import pandas as pd
+    <p>파이썬에서 표 형태 자료를 다루는 표준 도구는 pandas이다. pandas의 <em>데이터프레임</em>은 그림 1처럼 행에 인덱스, 열에 이름이 붙은 표이고, 열 하나는 <em>Series</em>라는 이름 붙은 1차원 배열이다. R의 데이터프레임과 dplyr이 하는 일을 대부분 할 수 있다. 처음 질문의 자료는 결측 표시를 지정해 읽는다.</p>
+<pre><code>import pandas as pd
 df = pd.read_csv("survey.csv", encoding="cp949", na_values=["", "-", "999"])
 df.head(); df.info(); df.describe()
 df.shape; df.columns; df.dtypes</code></pre>
+    <p>한국어 윈도 엑셀이 저장한 CSV는 흔히 cp949 인코딩이다. 또 <code>na_values</code>에 적은 문자열은 결측(NaN)으로 읽힌다. 읽은 뒤에는 <code>info</code>로 열마다 자료형과 결측 아닌 개수를, <code>describe</code>로 요약 통계를 먼저 본다.</p>
 
     <h3><span class="no">5.1.2</span>고르기와 만들기</h3>
-    <pre><code>df["age"]                         # 열 하나 (Series)
+<pre><code>df["age"]                         # 열 하나 (Series)
 df[["age", "income"]]             # 여러 열
 df[df["age"] &gt;= 30]               # 조건으로 행
 df.loc[df["sex"] == "F", ["age", "income"]]   # 행 조건 + 열 이름
@@ -38,31 +57,37 @@ df.iloc[0:5, 0:2]                 # 위치로
 df = df.assign(log_inc=np.log(df["income"]))  # 새 열
 df["agegrp"] = pd.cut(df["age"], bins=[0, 29, 39, 49, 200],
                       labels=["20대 이하", "30대", "40대", "50대 이상"])</code></pre>
-    <p><code>loc</code>은 이름(열 이름, 행 이름표), <code>iloc</code>은 정수 위치입니다. 조건을 여러 개 묶을 때는 <code>&amp;</code>, <code>|</code>와 괄호를 씁니다: <code>df[(df.age &gt; 30) &amp; (df.sex == "F")]</code>.</p>
+    <p><code>loc</code>은 이름(열 이름, 행 인덱스)으로, <code>iloc</code>은 정수 위치로 고른다. 그래서 <code>loc</code>의 범위는 끝을 포함하고 <code>iloc</code>은 파이썬 규칙대로 끝을 뺀다. 행 조건은 NumPy의 불리언 마스크와 같은 원리이므로, 조건을 여러 개 묶을 때는 <code>df[(df.age &gt; 30) &amp; (df.sex == "F")]</code>처럼 <code>&amp;</code>, <code>|</code>와 괄호를 쓴다.</p>
 
-    <h3><span class="no">5.1.3</span>결측과 형</h3>
-    <pre><code>df.isna().sum()                   # 열별 결측 수
+    <h3><span class="no">5.1.3</span>결측과 자료형</h3>
+    <p>이제 처음 질문의 지저분한 칸들을 정리하자.</p>
+<pre><code>df.isna().sum()                   # 열별 결측 수
 df = df.dropna(subset=["income"]) # 소득 결측 행 제거
 df["income"] = pd.to_numeric(df["income"].str.replace(",", ""), errors="coerce")
 df["date"] = pd.to_datetime(df["date"])
 df["sex"] = df["sex"].replace({"남자": "M", "남": "M", "여자": "F", "여": "F"}).astype("category")</code></pre>
-    <p><code>errors="coerce"</code>는 숫자로 바꿀 수 없는 값을 결측(NaN)으로 만듭니다. 처리 전후의 행 수와 결측 수를 기록해 둡니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>read_csv</code>(인코딩, 결측 표시) → <code>info</code>, <code>describe</code>.</li>
-        <li><code>df[조건]</code>, <code>loc</code>(이름), <code>iloc</code>(위치), <code>assign</code>.</li>
-        <li><code>isna</code>, <code>to_numeric(errors="coerce")</code>, <code>to_datetime</code>.</li>
-      </ol>
+    <p>쉼표를 지운 뒤 <code>to_numeric</code>으로 숫자로 바꾸는데, <code>errors="coerce"</code>는 숫자로 바꿀 수 없는 값을 오류 대신 결측으로 만든다. 성별은 표기를 하나로 맞춘 뒤 범주형으로 바꾼다. 한편 이런 처리는 자료를 조용히 바꾸므로, 처리 전후의 행 수와 결측 수를 기록해 두어야 나중에 결과를 설명할 수 있다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.1.1</span>
+      <p>R의 <code>d[d$cyl == 4, c("mpg", "hp")]</code>에 해당하는 pandas 코드를 쓰고, 행 이름표 대신 위치로 처음 세 행만 고르는 코드도 써라.</p>
     </div>
+    <p><i>풀이.</i> 행 조건과 열 이름을 함께 쓰므로 <code>df.loc[df["cyl"] == 4, ["mpg", "hp"]]</code>이다. 처음 세 행은 위치이므로 <code>df.iloc[0:3]</code>인데, R의 <code>d[1:3, ]</code>과 달리 0부터 세고 끝 3은 빠진다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><code>df[df.age &gt; 30]["income"] = 0</code>처럼 고른 결과에 다시 대입하면 복사본만 바뀌고 원본은 그대로일 수 있다(<code>SettingWithCopyWarning</code>). 원본을 바꿀 때는 <code>df.loc[df.age &gt; 30, "income"] = 0</code>처럼 <code>loc</code> 하나로 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>pandas의 데이터프레임은 인덱스와 열 이름이 붙은 표이고 열 하나는 Series이다. <code>read_csv</code>에 인코딩과 결측 표시를 주어 읽고 <code>info</code>, <code>describe</code>로 둘러본다. 행과 열은 조건, <code>loc</code>(이름), <code>iloc</code>(위치)으로 고르고 <code>assign</code>, <code>pd.cut</code>으로 새 열을 만든다. 지저분한 칸은 <code>to_numeric(errors="coerce")</code>, <code>to_datetime</code>, <code>replace</code>로 정리하되 처리 전후의 행 수와 결측 수를 기록한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>R의 <code>d[d$cyl == 4, c("mpg", "hp")]</code>에 해당하는 pandas 코드는?
-          <details><summary>답</summary><p><code>df.loc[df["cyl"] == 4, ["mpg", "hp"]]</code>.</p></details>
+        <li><code>pd.to_numeric(pd.Series(["1,200", "없음", "350"]).str.replace(",", ""), errors="coerce")</code>의 결과는 무엇인가?
+          <details><summary>답</summary><p><code>[1200.0, NaN, 350.0]</code>이다. 결측이 섞이면 정수 대신 실수형이 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>인덱스가 <code>[10, 20, 30, 40]</code>인 데이터프레임에서 <code>df.loc[10:30]</code>과 <code>df.iloc[1:3]</code>은 각각 몇 행인가?
+          <details><summary>답</summary><p><code>loc</code>은 이름 10부터 30까지 끝을 포함해 3행, <code>iloc</code>은 위치 1, 2의 2행(인덱스 20, 30)이다.</p></details>
         </li>
       </ol>
     </div>
