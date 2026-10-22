@@ -8,52 +8,48 @@
 <article class="card q-card" id="text-m18-weibull" data-kind="본문" data-std="기계18-05-03">
   <header class="card-head"><span class="no"></span><h2>세라믹 강도의 Weibull 분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>취성 재료의 강도가 확률로 다뤄지는 이유를 안다.</li>
-        <li>Weibull 분포로 주어진 응력의 파괴 확률을 계산한다.</li>
-        <li>부피 효과와 설계 응력 정하기에 적용한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>세라믹의 취성 (<a href="05-01.html">5.1절</a>), 파괴 인성 (<a href="03-02.html">3.2절</a>), 지수와 로그.</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 공정으로 만든 알루미나 시편 30개를 당기면, 어떤 것은 200 MPa에서, 어떤 것은 350 MPa에서 깨진다. 강도가 이렇게 흩어지는 재료로 부품을 만들 때 설계 응력은 어떻게 정할까? 평균 강도를 그대로 쓰면 안 되는 까닭은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 Weibull 파괴 확률(개형). 특성 강도 300 MPa, Weibull 계수 10인 알루미나의 파괴 확률은 응력이 오르면 S자 꼴로 0에서 1로 오른다. 200 MPa에서 파괴 확률 1.7%이고, 파괴 확률 1% 이하가 되는 설계 응력은 189 MPa로 평균 강도(약 285 MPa)보다 훨씬 낮다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M90 168 C200 167, 240 160, 280 120 S330 40, 430 34" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 92 H300 V170" class="k dsh"/>
+        <circle cx="232" cy="164" r="5" class="fd"/><circle cx="222" cy="166" r="4" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="212" y="186">189</text><text x="246" y="186">200</text><text x="300" y="186">300 MPa</text><text x="420" y="186">응력 σ</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="34">1</text><text x="74" y="96">0.63</text><text x="74" y="174">0</text></g>
+        <text x="240" y="150" class="td">200 MPa에서 1.7%</text><text x="120" y="140" class="tb">1%가 되는 189 MPa</text><text x="310" y="80" class="ta">P_f = 1 − exp[−(σ/σ₀)^m]</text>
+      </svg>
+      <figcaption>그림 1. 취성 재료의 강도는 시편 속 가장 큰 흠이 정하므로 확률로만 말할 수 있고, 파괴 확률을 작게 묶으려면 설계 응력을 평균 강도보다 훨씬 낮게 잡아야 한다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>세라믹의 취성(<a href="05-01.html">5.1절</a>), 파괴 인성(<a href="03-02.html">3.2절</a>), 지수와 로그를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>가장 약한 고리</h3>
-    <p>세라믹은 흠 하나에서 균열이 시작되면 바로 파괴되므로, 강도는 그 시편 안의 가장 큰(가장 불리한) 흠이 정합니다. 흠의 크기는 시편마다 우연히 다르므로 강도도 흩어지고, 부피가 클수록 큰 흠이 있을 확률이 높아 평균 강도가 낮습니다.</p>
+    <p>세라믹은 흠 하나에서 균열이 시작되면 바로 파괴되므로, 강도는 그 시편 안의 가장 큰(가장 불리한) 흠이 정한다. 그런데 흠의 크기는 시편마다 우연히 다르므로 강도도 흩어진다. 처음 질문의 첫째 답이 이것이다. 또 부피가 클수록 큰 흠이 있을 확률이 높아 평균 강도가 낮다.</p>
     <div class="tb-env thm">
       <span class="lb">Weibull 분포</span>
       <p>\[P_s = \exp\left[-\left(\frac\sigma{\sigma_0}\right)^m\right]\]</p>
       <p>\[P_f = 1 - P_s\]</p>
-      <p>\(P_s\): 응력 \(\sigma\)에서 살아남을 확률, \(\sigma_0\): 63%가 깨지는 특성 강도, \(m\): Weibull 계수(클수록 흩어짐이 작음; 세라믹 5~20, 강 약 100).</p>
-      <p>부피 효과: \(\sigma_2/\sigma_1 = (V_1/V_2)^{1/m}\).</p>
+      <p>\(P_s\)는 응력 σ에서 살아남을 확률이고, \(\sigma_0\)는 특성 강도이다. m은 Weibull 계수로, 클수록 흩어짐이 작다. 세라믹은 5~20, 강은 약 100이다.</p>
+      <p>부피 효과는 \(\sigma_2/\sigma_1 = (V_1/V_2)^{1/m}\)이다.</p>
     </div>
-
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1 <span class="nm">(파괴 확률)</span></span>
-      <p>\(\sigma_0\) = 300 MPa, \(m\) = 10인 알루미나 부품에 200 MPa를 가하면 파괴 확률은? 파괴 확률 1% 이하의 설계 응력은?</p>
+      <p>\(\sigma_0\) = 300 MPa, m = 10인 알루미나 부품에 200 MPa를 가하면 파괴 확률은? 파괴 확률 1% 이하의 설계 응력은?</p>
     </div>
-    <p><i>풀이.</i> \((200/300)^{10} = 0.0173\), \(P_f = 1 - e^{-0.0173} = 1.7\)%. 1% 조건: \((\sigma/300)^{10} = -\ln0.99 = 0.01005\), \(\sigma = 300\times0.01005^{0.1} = 189\) MPa. 평균 강도(약 285 MPa)보다 훨씬 낮게 설계해야 합니다.</p>
+    <p><i>풀이.</i> \((200/300)^{10} = 0.0173\)이므로 \(P_f = 1 - e^{-0.0173} = 1.7\)%이다. 1% 조건에서는 \((\sigma/300)^{10} = -\ln0.99 = 0.01005\)이므로 \(\sigma = 300\times0.01005^{0.1} = 189\) MPa이다(그림 1). 즉 평균 강도(약 285 MPa)보다 훨씬 낮게 설계해야 한다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>m의 뜻도 그림에서 읽을 수 있다. m이 크면 곡선이 \(\sigma_0\) 근처에서 가파르게 서서, 그보다 조금만 낮은 응력에서도 파괴 확률이 거의 0이 된다. 반대로 m이 작으면 곡선이 완만하게 누워, 낮은 응력에서도 깨지는 시편이 꽤 남는다. 그래서 공정을 다듬어 흠의 크기를 고르게 하면, 평균 강도가 같아도 쓸 수 있는 설계 응력이 올라간다.</p>
+    <p>결국 취성 재료의 설계는 "강도가 얼마인가"가 아니라 "이 응력에서 몇 개 중 몇 개가 깨지는가"를 묻는다. 그래서 같은 재료라도 허용하는 파괴 확률이 엄격한 부품일수록 설계 응력이 더 낮아진다.</p>
 
-    <div class="tb-note"><b>주의</b>시험 시편보다 부피가 10배 큰 부품은 같은 파괴 확률에서 강도가 \(10^{-1/10} = 0.79\)배로 낮아집니다(\(m\) = 10). 작은 시편 결과를 큰 부품에 그대로 쓰면 위험합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>작은 시편의 시험 결과를 큰 부품에 그대로 쓰기 쉽다. m = 10일 때 시험 시편보다 부피가 10배 큰 부품은, 같은 파괴 확률에서 강도가 \(10^{-1/10} = 0.79\)배로 낮아진다. 따라서 부피 효과를 보정하지 않으면 위험하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>취성 재료 강도 = 가장 큰 흠 → 확률.</li>
-        <li>\(P_f = 1 - \exp[-(\sigma/\sigma_0)^m]\).</li>
-        <li>부피 클수록 약함, \(m\) 클수록 신뢰성 높음.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>취성 재료의 강도는 가장 큰 흠이 정하므로 확률로 다룬다. 파괴 확률은 \(P_f = 1 - \exp[-(\sigma/\sigma_0)^m]\)이다. 부피가 클수록 약하고, m이 클수록 신뢰성이 높다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\sigma = \sigma_0\)일 때 파괴 확률은?
-          <details><summary>답</summary><p>\(1 - e^{-1} = 63.2\)%.</p></details>
+          <details><summary>답</summary><p>\(1 - e^{-1} = 63.2\)%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>

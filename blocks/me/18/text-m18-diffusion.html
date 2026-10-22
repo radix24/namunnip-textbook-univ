@@ -8,60 +8,55 @@
 <article class="card q-card" id="text-m18-diffusion" data-kind="본문" data-std="기계18-02-02">
   <header class="card-head"><span class="no"></span><h2>확산과 침탄 깊이</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Fick의 제1, 제2 법칙의 뜻을 안다.</li>
-        <li>확산 계수의 온도 의존성(Arrhenius 식)을 계산한다.</li>
-        <li>오차 함수 해로 침탄 깊이와 시간을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>점결함 (<a href="02-01.html">2.1절</a>), 지수와 로그(고등학교 수학), 열전도와의 비교(<a href="../me12/01-01.html">열전달 1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">기어의 이는 표면만 단단하고 속은 질겨야 한다. 그래서 부드러운 강을 탄소가 많은 분위기에서 오래 가열해 표면으로 탄소를 스며들게 한다. 탄소는 얼마나 빨리, 얼마나 깊이 들어갈까? 원하는 깊이를 얻으려면 몇 시간을 구워야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 가스 침탄의 탄소 농도 분포(개형). 표면 농도를 1.0%로 유지하면 처음 0.20%인 강 속으로 탄소가 퍼져 들어가며, 농도는 1 − erf(x/2√(Dt)) 꼴로 깊이에 따라 줄어든다. 950 °C에서 깊이 0.5 mm의 농도가 0.60%가 되려면 약 7.0시간이 걸린다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 40 C140 70, 180 110, 230 140 S330 162, 440 164" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 164 H440" class="k dsh"/><path d="M80 102 H200 V170" class="d dsh"/>
+        <circle cx="200" cy="102" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">표면</text><text x="200" y="186">0.5 mm</text><text x="420" y="186">깊이 x</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="44">1.0%</text><text x="74" y="106">0.60</text><text x="74" y="168">0.20</text></g>
+        <text x="210" y="96" class="td">7.0시간 뒤</text><text x="280" y="140" class="ta">C = C₀ + (C_s − C₀)[1 − erf(x/2√(Dt))]</text>
+      </svg>
+      <figcaption>그림 1. 표면에서 들어온 탄소가 농도 기울기를 따라 안으로 퍼지므로 농도는 깊이에 따라 오차 함수 꼴로 줄고, 같은 농도가 닿는 깊이는 √(Dt)에 비례해 늘어난다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>점결함(<a href="02-01.html">2.1절</a>), 지수와 로그(고등학교 수학), 열전도와의 비교(<a href="../me12/01-01.html">열전달 1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>Fick의 법칙</h3>
-    <p>원자는 공공이나 격자 사이를 뛰어다니며 농도가 높은 곳에서 낮은 곳으로 퍼집니다. 열이 온도 차로 흐르는 것과 같은 모양입니다.</p>
+    <p>원자는 공공이나 격자 사이를 뛰어다니며 농도가 높은 곳에서 낮은 곳으로 퍼진다. 열이 온도 차로 흐르는 것과 같은 모양이다.</p>
     <div class="tb-env thm">
       <span class="lb">Fick의 법칙</span>
-      <p>제1법칙(정상 상태): \(J = -D\,\dfrac{dC}{dx}\). 확산 유속은 농도 기울기에 비례.</p>
-      <p>제2법칙(시간에 따라 변함): \(\dfrac{\partial C}{\partial t} = D\dfrac{\partial^2C}{\partial x^2}\). 열전도 방정식과 같은 꼴.</p>
+      <p>제1법칙(정상 상태)은 \(J = -D\,\dfrac{dC}{dx}\)로, 확산 유속이 농도 기울기에 비례한다.</p>
+      <p>제2법칙(시간에 따라 변함)은 \(\dfrac{\partial C}{\partial t} = D\dfrac{\partial^2C}{\partial x^2}\)로, 열전도 방정식과 같은 꼴이다.</p>
     </div>
-    <p>확산 계수 \(D\)는 원자가 뛰어넘을 에너지 장벽 \(Q\)(활성화 에너지)에 따라 온도에 대해 지수 함수로 변합니다.</p>
+    <p>처음 질문의 첫째 답인 "얼마나 빨리"는 확산 계수 D가 정한다. D는 원자가 뛰어넘을 에너지 장벽 Q, 곧 활성화 에너지에 따라 온도에 대해 지수 함수로 변한다.</p>
     <p>\[ D = D_0\exp\left(-\frac{Q}{RT}\right) \]</p>
 
     <h3><span class="no">2.2.2</span>표면 농도를 고정했을 때의 해</h3>
-    <p>처음 농도 \(C_0\)인 두꺼운 강재의 표면을 농도 \(C_s\)로 유지하면(가스 침탄), 제2법칙의 해는</p>
+    <p>처음 농도 \(C_0\)인 두꺼운 강재의 표면을 농도 \(C_s\)로 유지하면(가스 침탄), 제2법칙의 해는 아래와 같다.</p>
     <div class="tb-env thm">
       <span class="lb">반무한체 확산</span>
       <p>\[ \frac{C(x, t) - C_0}{C_s - C_0} = 1 - \operatorname{erf}\left(\frac{x}{2\sqrt{Dt}}\right) \]</p>
-      <p>\(\operatorname{erf}\)는 오차 함수로, \(\operatorname{erf}(0.4769) = 0.5\), \(\operatorname{erf}(1) = 0.843\). 깊이는 \(\sqrt{Dt}\)에 비례한다.</p>
+      <p>erf는 오차 함수로, erf(0.4769) = 0.5, erf(1) = 0.843이다. 같은 농도가 닿는 깊이는 \(\sqrt{Dt}\)에 비례한다.</p>
     </div>
-
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1 <span class="nm">(기어의 침탄)</span></span>
       <p>탄소 0.20%인 강 기어를 950 °C에서 표면 탄소 1.0%로 침탄해, 깊이 0.5 mm에서 0.60%가 되게 하려 한다. 필요한 시간은? (오스테나이트 속 탄소: \(D_0 = 2.3\times10^{-5}\) m²/s, \(Q = 148\) kJ/mol)</p>
     </div>
-    <p><i>풀이.</i> \((0.60 - 0.20)/(1.0 - 0.20) = 0.5\)이므로 \(\operatorname{erf}(z) = 0.5\), \(z = 0.4769\). \(D = 2.3\times10^{-5}\exp(-148000/(8.314\times1223)) = 1.10\times10^{-11}\) m²/s. \(x/(2\sqrt{Dt}) = 0.4769\)에서 \(t = (0.0005/0.9538)^2/D = 2.50\times10^4\) s, 약 7.0시간입니다.</p>
+    <p><i>풀이.</i> (0.60 − 0.20)/(1.0 − 0.20) = 0.5이므로 erf(z) = 0.5에서 z = 0.4769이다. \(D = 2.3\times10^{-5}\exp(-148000/(8.314\times1223)) = 1.10\times10^{-11}\) m²/s이다. 따라서 \(x/(2\sqrt{Dt}) = 0.4769\)에서 \(t = (0.0005/0.9538)^2/D = 2.50\times10^4\) s, 약 7.0시간이다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>즉 깊이는 시간의 제곱근에 비례하므로, 깊이를 2배로 하려면 시간이 4배 필요하다. 그래서 깊은 침탄층은 매우 오래 걸리고, 시간을 줄이려면 온도를 올려 D를 키운다. 다만 온도를 올리면 결정립이 커져 인성이 떨어지므로, 온도와 시간 사이에서 절충한다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 깊이를 2배로 하려면 시간이 4배 필요합니다(1 mm면 약 28시간). (2) 온도를 1050 °C로 올리면 \(D\)가 3배가 되어 2.3시간으로 줄지만, 결정립이 커져 인성이 떨어집니다. (3) 침탄 뒤 담금질해야 표면이 단단해집니다(4.2절).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>침탄만 하면 표면이 단단해진다고 여기기 쉽다. 침탄은 표면의 탄소 농도를 높일 뿐이고, 그 뒤 담금질을 해야 표면이 마르텐사이트로 바뀌어 단단해진다(4.2절). 또 확산 깊이가 시간에 비례한다고 생각하기 쉬운데, 시간의 제곱근에 비례한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(J = -D\,dC/dx\), 제2법칙은 열전도와 같은 꼴.</li>
-        <li>\(D = D_0e^{-Q/RT}\): 온도에 매우 민감.</li>
-        <li>깊이 ∝ \(\sqrt{Dt}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Fick 제1법칙은 J = −D dC/dx이고, 제2법칙은 열전도와 같은 꼴이다. 확산 계수 \(D = D_0e^{-Q/RT}\)는 온도에 매우 민감하다. 같은 농도가 닿는 깊이는 √(Dt)에 비례한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 조건에서 5시간 침탄하면 0.60% 깊이는?
-          <details><summary>답</summary><p>깊이 ∝ \(\sqrt t\): \(0.5\sqrt{5/6.96} = 0.42\) mm.</p></details>
+          <details><summary>답</summary><p>깊이는 \(\sqrt t\)에 비례하므로 \(0.5\sqrt{5/6.96} = 0.42\) mm이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
