@@ -8,66 +8,60 @@
 <article class="card q-card" id="text-e12-pcm" data-kind="본문" data-std="전전12-06-01">
   <header class="card-head"><span class="no"></span><h2>PCM의 비트율과 양자화 SNR</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>PCM의 세 단계(표본화, 양자화, 부호화)를 안다.</li>
-        <li>비트율 = 표본화율 × 비트 수를 계산한다.</li>
-        <li>양자화 SNR ≈ 6.02n + 1.76 dB(최대 진폭 사인파)를 유도하고 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>표본화 정리 (<a href="../6/06-01.html">전전6 6.1절</a>), 균일 분포의 분산 (<a href="../11/02-01.html">전전11 2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전화 음성은 8비트, CD 음악은 16비트로 기록한다. 비트가 두 배이면 소리는 얼마나 깨끗해질까? 그 대가로 비트율은 얼마나 늘까? 같은 16비트라도 작은 소리를 녹음하면 깨끗함이 그대로일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="PCM의 신호 대 양자화 잡음비를 비트 수에 따라 그린 직선(예제 6.1.1). 최대 진폭 사인파에서 SQNR ≈ 6.02n + 1.76 dB로 8비트 49.9 dB, 16비트 98.1 dB이며, 신호 진폭이 최대의 1/10이면 직선이 20 dB 내려가 16비트에서 78.1 dB이다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <path d="M60 141.8 L460 63" class="a" stroke-width="2.5"/>
+        <path d="M60 163.6 L460 84.8" class="b dsh" stroke-width="2"/>
+        <circle cx="193.3" cy="115.6" r="4" class="fa"/><circle cx="460" cy="63" r="4" class="fa"/><circle cx="460" cy="84.8" r="4" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">4</text><text x="193.3" y="186">8</text><text x="460" y="186">16비트  n</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="67">98</text><text x="54" y="120">50</text><text x="54" y="174">0</text></g>
+        <text x="200" y="110" class="ta">8비트 49.9 dB</text>
+        <text x="380" y="56" class="ta">98.1</text>
+        <text x="380" y="106" class="tb">진폭 1/10, 78.1</text>
+        <text x="100" y="60" class="s">1비트마다 약 6 dB</text>
+      </svg>
+      <figcaption>그림 1. 비트가 하나 늘 때마다 양자화 간격이 절반이 되어 잡음 전력이 4분의 1, 곧 6 dB 줄지만, 공식은 최대 진폭 기준이어서 작은 신호는 그만큼 SQNR을 잃는다(예제 6.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>표본화 정리(<a href="../6/06-01.html">전전6 6.1절</a>), 균일 분포의 분산(<a href="../11/02-01.html">전전11 2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>세 단계</h3>
-    <ol>
-      <li><b>표본화</b>: 대역 W인 메시지를 2W 이상으로 표본(전화 8 kHz, CD 44.1 kHz).</li>
-      <li><b>양자화</b>: 표본값을 \(L = 2^n\)개 단계 중 가장 가까운 값으로 반올림.</li>
-      <li><b>부호화</b>: 단계 번호를 n비트로.</li>
-    </ol>
-    <p>비트율 \(R = n f_s\). 전화 8비트 × 8 kHz = 64 kbps, CD 16비트 × 44.1 kHz × 2채널 = 1.4112 Mbps.</p>
+    <p>펄스 부호 변조(PCM)는 아날로그 메시지를 세 단계로 비트로 바꾼다. 먼저 대역 W인 메시지를 2W 이상의 비율로 표본화하며, 전화는 8 kHz, CD는 44.1 kHz를 쓴다. 다음으로 표본값을 \(L = 2^n\)개 단계 가운데 가장 가까운 값으로 반올림해 양자화한다. 마지막으로 단계 번호를 n비트로 부호화한다.</p>
+    <p>그래서 비트율은 \(R = n f_s\)이다. 전화는 8비트 × 8 kHz = 64 kbps이고, CD는 16비트 × 44.1 kHz × 2채널 = 1.4112 Mbps이다.</p>
 
     <h3><span class="no">6.1.2</span>양자화 잡음</h3>
-    <p>범위 \(\pm V\)를 L단계로 나누면 간격 \(\Delta = 2V/L\). 오차가 \((-\Delta/2, \Delta/2)\)에 균일하다고 보면 잡음 전력 \(\Delta^2/12\). 최대 진폭 사인파의 전력 \(V^2/2\)와 비교하면</p>
+    <p>범위 \(\pm V\)를 L단계로 나누면 간격은 \(\Delta = 2V/L\)이다. 오차가 \((-\Delta/2, \Delta/2)\)에 균일하다고 보면 잡음 전력은 \(\Delta^2/12\)이다. 이를 최대 진폭 사인파의 전력 \(V^2/2\)와 비교하면 다음을 얻는다.</p>
     \[ \text{SQNR} = \frac{V^2/2}{\Delta^2/12} = \frac32L^2 = \frac32\cdot4^n \;\Rightarrow\; 6.02n + 1.76\text{ dB}. \]
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
       <p>(가) 8비트, (나) 16비트의 SQNR. (다) 신호 진폭이 최대의 1/10이면 16비트에서 SQNR은?</p>
     </div>
-    <p><i>풀이.</i> (가) 49.9 dB. (나) 98.1 dB. (다) 신호 전력이 1/100(−20 dB), 잡음은 같으므로 78.1 dB. 작은 소리일수록 SQNR이 나빠져, 전화는 작은 값을 촘촘하게 양자화하는 비균일 양자화(μ-law, A-law)를 씁니다.</p>
-    <p>비트가 하나 늘면 SQNR이 약 6 dB 좋아지고 비트율도 늘어납니다. 비트 수와 대역폭의 교환입니다.</p>
+    <p><i>풀이.</i> (가) 49.9 dB이다. (나) 98.1 dB이다(그림 1). (다) 신호 전력이 1/100(−20 dB)이고 잡음은 같으므로 78.1 dB이다. 처음 질문의 셋째 답이 이것이다. 즉 작은 소리일수록 SQNR이 나빠지므로, 전화는 작은 값을 촘촘하게 양자화하는 비균일 양자화(μ-law, A-law)를 쓴다.</p>
+    <p>정리하면 비트가 하나 늘 때마다 SQNR이 약 6 dB 좋아지고, 비트율도 그만큼 늘어난다. 8비트에서 16비트로 가면 SQNR이 48 dB 좋아지고 비트율은 두 배가 되며, 처음 질문의 첫째, 둘째 답이 이것이다. 즉 비트 수와 대역폭을 맞바꾸는 셈이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "비트를 늘리면 표본화 오차가 준다": 비트 수는 양자화 오차, 표본화율은 담을 수 있는 대역을 정합니다. (2) "SQNR 공식은 모든 신호에 맞다": 최대 진폭 사인파 기준입니다. 음성처럼 진폭이 작고 변하는 신호는 더 낮습니다. (3) 비트가 적으면(2~3비트) 오차가 신호와 상관되어 균일 잡음 가정이 맞지 않습니다(카드에서 3비트 측정 19.1 dB, 공식 19.8 dB).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>비트를 늘리면 표본화 오차가 준다고 여기기 쉽지만, 비트 수는 양자화 오차를, 표본화율은 담을 수 있는 대역을 정한다. SQNR 공식이 모든 신호에 맞는다는 생각도 틀리다. 공식은 최대 진폭 사인파 기준이어서, 음성처럼 진폭이 작고 변하는 신호는 더 낮다. 또 2~3비트처럼 비트가 적으면 오차가 신호와 상관되어 균일 잡음 가정이 맞지 않는다(카드에서 3비트 측정 19.1 dB, 공식 19.8 dB).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>PCM: 표본화 → 양자화 → 부호화. 비트율 \(nf_s\).</li>
-        <li>SQNR ≈ 6.02n + 1.76 dB(최대 진폭 사인파).</li>
-        <li>1비트당 약 6 dB. 작은 신호는 SQNR이 낮다 → 비균일 양자화.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>PCM은 표본화, 양자화, 부호화의 세 단계로 이루어지며, 비트율은 \(nf_s\)이다. SQNR은 최대 진폭 사인파에서 약 6.02n + 1.76 dB로, 1비트당 약 6 dB이다. 작은 신호는 SQNR이 낮으므로 비균일 양자화를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>음성 4 kHz 대역을 Nyquist율로 12비트 PCM하면 비트율은?
-          <details><summary>답</summary><p>8 kHz × 12 = 96 kbps.</p></details>
+          <details><summary>답</summary><p>8 kHz × 12 = 96 kbps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>SQNR 60 dB 이상이 필요하면 최소 비트 수는?
-          <details><summary>답</summary><p>(60 − 1.76)/6.02 ≈ 9.7 → 10비트.</p></details>
+          <details><summary>답</summary><p>(60 − 1.76)/6.02 ≈ 9.7이므로 10비트가 필요하다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>24비트 오디오의 이론 SQNR은? 실제 ADC가 이를 내기 어려운 이유는?
-          <details><summary>답</summary><p>약 146 dB. 회로의 열잡음과 기준 전압 잡음이 그보다 훨씬 커서, 실제 유효 비트 수(ENOB)는 20비트 안팎입니다(확인 필요: 부품별).</p></details>
+          <details><summary>답</summary><p>약 146 dB이다. 하지만 회로의 열잡음과 기준 전압 잡음이 그보다 훨씬 커서, 실제 유효 비트 수(ENOB)는 20비트 안팎이다(부품별로 다름, 확인 필요).</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e12-zoh" data-kind="본문" data-std="전전12-06-03">
   <header class="card-head"><span class="no"></span><h2>영차 유지 재구성과 sinc 감쇠</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>DAC가 표본을 계단으로 유지할 때 생기는 주파수 응답 \(\text{sinc}(f/f_s)\)를 유도한다.</li>
-        <li>Nyquist 주파수에서 −3.9 dB 감쇠를 계산한다.</li>
-        <li>보정 필터와 과표본화로 줄이는 방법을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>표본화 정리 (<a href="../6/06.html">전전6 6단원</a>), PCM (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">DAC는 표본값을 다음 표본이 올 때까지 그대로 붙잡아 두어 계단 모양의 전압을 낸다. 이 계단은 원래의 매끄러운 신호와 얼마나 다를까? 48 kHz로 재생하는 음악에서 높은 음은 낮은 음과 같은 크기로 나올까? 계단의 모서리는 스펙트럼에 무엇을 남길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="영차 유지 DAC의 주파수 응답 |sinc(f/f_s)|(예제 6.3.1). 나이퀴스트 주파수 f_s/2(48 kHz DAC에서 24 kHz)에서 0.637(−3.9 dB), f_s/4(12 kHz)에서 0.900(−0.9 dB)이고, f_s에서 0이 되며 그 위에도 영상이 남는다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <rect x="60" y="40" width="133.3" height="130" class="lk"/>
+        <path d="M60.0 50.0 L66.7 50.1 L73.3 50.5 L80.0 51.1 L86.7 52.0 L93.3 53.1 L100.0 54.4 L106.7 56.0 L113.3 57.7 L120.0 59.7 L126.7 62.0 L133.3 64.4 L140.0 67.0 L146.7 69.8 L153.3 72.8 L160.0 75.9 L166.7 79.2 L173.3 82.6 L180.0 86.2 L186.7 89.8 L193.3 93.6 L200.0 97.5 L206.7 101.4 L213.3 105.4 L220.0 109.5 L226.7 113.5 L233.3 117.6 L240.0 121.8 L246.7 125.9 L253.3 129.9 L260.0 134.0 L266.7 138.0 L273.3 141.9 L280.0 145.8 L286.7 149.6 L293.3 153.3 L300.0 156.9 L306.7 160.4 L313.3 163.7 L320.0 166.9 L326.7 170.0 L333.3 167.1 L340.0 164.3 L346.7 161.7 L353.3 159.3 L360.0 157.0 L366.7 154.9 L373.3 153.0 L380.0 151.3 L386.7 149.7 L393.3 148.4 L400.0 147.2 L406.7 146.2 L413.3 145.4 L420.0 144.8 L426.7 144.3 L433.3 144.1 L440.0 143.9 L446.7 144.0 L453.3 144.2 L460.0 144.5" class="a" stroke-width="2.5"/>
+        <circle cx="126.7" cy="62" r="4" class="fd"/><circle cx="193.3" cy="93.6" r="4" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">0</text><text x="193.3" y="186">f_s/2</text><text x="326.7" y="186">f_s</text><text x="460" y="186">1.5f_s</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="54">1</text><text x="54" y="174">0</text></g>
+        <text x="132" y="58" class="td">−0.9 dB</text><text x="200" y="90" class="td">−3.9 dB</text>
+        <text x="66" y="36" class="s">통과 대역</text>
+        <text x="340" y="136" class="s">영상, 재구성 필터로 제거</text>
+      </svg>
+      <figcaption>그림 1. 표본값을 한 표본 시간 동안 붙잡는 것은 폭 T_s 구형 펄스와의 합성곱이므로 스펙트럼에 sinc가 곱해져, 통과 대역 위쪽의 높은 음이 깎이고 f_s 너머에 영상이 남는다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>표본화 정리(<a href="../6/06.html">전전6 6단원</a>), PCM(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>계단의 스펙트럼</h3>
-    <p>DAC는 각 표본값을 다음 표본까지 유지합니다. 이는 임펄스 열에 폭 T_s 구형 펄스를 합성곱한 것이라, 스펙트럼에 \(|\text{sinc}(f/f_s)|\)가 곱해집니다(sinc(x) = sin πx/πx).</p>
+    <p>DAC는 각 표본값을 다음 표본까지 유지하며, 이를 영차 유지라 한다. 이것은 표본값을 담은 임펄스 열에 폭 \(T_s\)인 구형 펄스를 합성곱한 것과 같다. 그래서 스펙트럼에 구형 펄스의 Fourier 변환 \(|\text{sinc}(f/f_s)|\)가 곱해진다(sinc(x) = sin πx/πx). 처음 질문의 첫째 답이 이것으로, 계단은 원래 신호에 주파수에 따라 다른 감쇠를 준다.</p>
+    <p>또 임펄스 열의 스펙트럼은 \(f_s\)마다 되풀이되므로, sinc로 줄어들기는 해도 \(f_s \pm f\) 같은 영상 성분이 남는다(그림 1). 처음 질문의 셋째 답이 이것이며, 계단의 날카로운 모서리가 바로 이 고주파 영상이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>f_s = 48 kHz DAC에서 24 kHz(나이퀴스트)와 12 kHz의 감쇠는?</p>
     </div>
-    <p><i>풀이.</i> f/f_s = 0.5: sinc = 2/π = 0.637 → −3.9 dB. 0.25: 0.900 → −0.9 dB. 고음이 약간 줄어들므로 디지털 보정 필터(역 sinc)나 4~8배 과표본화로 줄입니다. 계단의 고조파 영상(f_s ± f)은 재구성 저역 통과 필터로 지웁니다.</p>
+    <p><i>풀이.</i> f/f_s = 0.5에서 sinc = 2/π = 0.637이므로 −3.9 dB이다. 0.25에서는 0.900이므로 −0.9 dB이다. 즉 고음이 약간 줄어들며, 처음 질문의 둘째 답이 이것이다. 그래서 디지털 보정 필터(역 sinc)를 쓰거나 4~8배 과표본화로 감쇠를 줄인다. 계단이 남긴 영상(\(f_s \pm f\))은 재구성 저역 통과 필터로 지운다.</p>
+    <p>과표본화가 효과적인 이유도 그림에서 보인다. 같은 음악을 8배인 384 kHz로 재생하면 20 kHz는 \(f/f_s \approx 0.05\)에 놓여 감쇠가 0.04 dB 정도로 줄고, 첫 영상도 384 kHz 근처로 멀어져 재구성 필터를 완만하게 만들어도 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "DAC 출력은 원래 아날로그 그대로": 계단 때문에 sinc 감쇠와 영상이 생깁니다. (2) "과표본화는 음질을 바꾸지 않는다": sinc 감쇠를 줄이고 재구성 필터를 쉽게 만듭니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>DAC 출력이 원래 아날로그 그대로라고 여기기 쉽지만, 계단 때문에 sinc 감쇠와 영상이 생긴다. 과표본화가 음질을 바꾸지 않는다는 생각도 틀리다. 과표본화는 sinc 감쇠를 줄이고 재구성 필터를 쉽게 만든다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>영차 유지: × sinc(f/f_s).</li>
-        <li>나이퀴스트에서 −3.9 dB.</li>
-        <li>역 sinc 보정, 과표본화.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>영차 유지 DAC는 스펙트럼에 \(\text{sinc}(f/f_s)\)를 곱한다. 그래서 나이퀴스트 주파수에서 −3.9 dB 감쇠하고, \(f_s\) 너머에 영상이 남는다. 역 sinc 보정과 과표본화로 감쇠를 줄이고, 재구성 필터로 영상을 지운다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f/f_s = 0.1의 감쇠(dB)는?
-          <details><summary>답</summary><p>약 −0.14 dB.</p></details>
+          <details><summary>답</summary><p>약 −0.14 dB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>4배 과표본화하면 원래 나이퀴스트 주파수의 감쇠는?
-          <details><summary>답</summary><p>f/f_s = 0.125 → 약 −0.22 dB.</p></details>
+          <details><summary>답</summary><p>f/f_s = 0.125이므로 약 −0.22 dB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>첫 영상 주파수(f_s − f)에서 sinc 값은 f = 0.4f_s일 때?
-          <details><summary>답</summary><p>|sinc(0.6)| ≈ 0.50.</p></details>
+          <details><summary>답</summary><p>|sinc(0.6)| ≈ 0.50이다.</p></details>
         </li>
       </ol>
     </div>

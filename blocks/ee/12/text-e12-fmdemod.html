@@ -8,62 +8,65 @@
 <article class="card q-card" id="text-e12-fmdemod" data-kind="본문" data-std="전전12-04-02">
   <header class="card-head"><span class="no"></span><h2>FM 복조기의 원리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>주파수 변화를 진폭 변화로 바꾸는 판별기(미분 + 포락선 검파)의 원리를 안다.</li>
-        <li>위상 고정 루프(PLL)가 순간 주파수를 따라가며 복조하는 원리를 안다.</li>
-        <li>복조 전 리미터가 진폭 잡음을 없애는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>FM 신호 (<a href="04-01.html">4.1절</a>), 포락선 검파 (<a href="02-02.html">2.2절</a>), 미분.</li>
-      </ul>
-    </div>
+    <p class="q-ask">FM 신호는 진폭이 늘 같고 주파수만 흔들린다. 그래서 AM 수신기의 포락선 검파기에 넣으면 아무 소리도 나오지 않는다. 그렇다면 주파수의 흔들림을 어떻게 전압의 흔들림으로 바꿔 소리를 꺼낼까? 진폭에 섞인 잡음은 그 과정에서 어떻게 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="FM 복조의 두 방식(예제 4.2.1). 위는 판별기로, 리미터가 진폭을 고르게 자른 뒤 미분기(또는 비탈 회로)가 주파수를 진폭으로 바꾸고 포락선 검파가 메시지를 꺼낸다. 아래는 PLL로, 위상 검출기와 루프 필터가 VCO를 받은 신호에 맞춰 따라가게 하며 VCO 제어 전압이 메시지에 비례한다">
+        <defs><marker id="ah-e12fd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="80" y="36" width="80" height="34" class="lb"/><rect x="80" y="36" width="80" height="34" class="b"/><text x="120" y="58" text-anchor="middle" class="tb">리미터</text>
+        <rect x="190" y="36" width="80" height="34" class="la"/><rect x="190" y="36" width="80" height="34" class="a"/><text x="230" y="58" text-anchor="middle" class="ta">미분</text>
+        <rect x="300" y="36" width="90" height="34" class="lc"/><rect x="300" y="36" width="90" height="34" class="c"/><text x="345" y="58" text-anchor="middle" class="tc">포락선 검파</text>
+        <path d="M30 53 H78" class="k" marker-end="url(#ah-e12fd)"/><path d="M160 53 H188" class="k" marker-end="url(#ah-e12fd)"/><path d="M270 53 H298" class="k" marker-end="url(#ah-e12fd)"/><path d="M390 53 H430" class="k" marker-end="url(#ah-e12fd)"/>
+        <text x="436" y="58" class="td">m(t)</text>
+        <text x="30" y="30" class="s">판별기</text>
+        <rect x="80" y="120" width="90" height="34" class="lb"/><rect x="80" y="120" width="90" height="34" class="b"/><text x="125" y="142" text-anchor="middle" class="tb">위상 검출</text>
+        <rect x="200" y="120" width="90" height="34" class="lk"/><rect x="200" y="120" width="90" height="34" class="k"/><text x="245" y="142" text-anchor="middle" class="s">루프 필터</text>
+        <rect x="200" y="166" width="90" height="28" class="la"/><rect x="200" y="166" width="90" height="28" class="a"/><text x="245" y="185" text-anchor="middle" class="ta">VCO</text>
+        <path d="M30 137 H78" class="k" marker-end="url(#ah-e12fd)"/><path d="M170 137 H198" class="k" marker-end="url(#ah-e12fd)"/>
+        <path d="M290 137 H320 V180 H292" class="k" marker-end="url(#ah-e12fd)"/><path d="M200 180 H125 V156" class="k" marker-end="url(#ah-e12fd)"/>
+        <path d="M320 137 H430" class="k" marker-end="url(#ah-e12fd)"/>
+        <text x="436" y="134" class="td">제어 전압 ∝ m(t)</text>
+        <text x="30" y="114" class="s">PLL</text>
+      </svg>
+      <figcaption>그림 1. 판별기는 미분으로 주파수 흔들림을 진폭 흔들림으로 바꿔 포락선 검파로 꺼내고, PLL은 VCO가 순간 주파수를 따라가게 만들어 그 제어 전압을 그대로 메시지로 쓴다(예제 4.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>FM 신호(<a href="04-01.html">4.1절</a>), 포락선 검파(<a href="02-02.html">2.2절</a>), 미분을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>판별기</h3>
-    <p>FM 신호 \(s = A_c\cos\theta(t)\), \(\theta' = 2\pi[f_c + k_fm(t)]\)를 미분하면</p>
+    <p>FM 신호 \(s = A_c\cos\theta(t)\)에서 \(\theta' = 2\pi[f_c + k_fm(t)]\)이므로, 미분하면 다음과 같다.</p>
     \[ \frac{ds}{dt} = -A_c\cdot2\pi[f_c + k_fm(t)]\sin\theta(t). \]
-    <p>진폭이 순간 주파수에 비례하는 AM 같은 신호가 되므로, 포락선 검파로 \(f_c + k_fm(t)\)를 얻고 직류(f_c)를 빼면 메시지입니다. 실제로는 미분 대신 주파수에 따라 이득이 직선으로 변하는 동조 회로의 비탈을 씁니다.</p>
-    <p>앞에 <b>리미터</b>(진폭을 일정하게 자르는 회로)를 둡니다. 잡음이나 페이딩으로 진폭이 흔들리면 판별기 출력에 그대로 섞이기 때문입니다. FM이 진폭 잡음에 강한 이유입니다.</p>
+    <p>즉 진폭이 순간 주파수에 비례하는 AM 같은 신호가 되므로, 포락선 검파로 \(f_c + k_fm(t)\)를 얻고 직류 성분 \(f_c\)를 빼면 메시지가 남는다. 처음 질문의 첫째 답이 이것이다. 실제 회로에서는 미분 대신, 주파수에 따라 이득이 직선으로 변하는 동조 회로의 비탈을 쓴다.</p>
+    <p>판별기 앞에는 진폭을 일정하게 자르는 리미터를 둔다. 잡음이나 페이딩으로 진폭이 흔들리면, 미분 출력의 진폭에 그 흔들림이 그대로 섞이기 때문이다. 그래서 리미터가 진폭 잡음을 없애 주며, FM이 진폭 잡음에 강한 이유가 이것이다. 처음 질문의 둘째 답이 이것이다.</p>
 
     <h3><span class="no">4.2.2</span>PLL</h3>
-    <p>전압 제어 발진기(VCO)의 위상을 받은 신호와 비교(위상 검출기)하고, 그 오차를 걸러 VCO 제어 전압으로 되돌립니다. 루프가 고정되면 VCO 주파수가 받은 신호의 순간 주파수를 따라가므로, VCO 제어 전압이 곧 메시지에 비례합니다.</p>
+    <p>PLL은 전압 제어 발진기(VCO)의 위상을 받은 신호와 위상 검출기로 비교하고, 그 오차를 루프 필터로 걸러 VCO 제어 전압으로 되돌린다. 루프가 고정되면 VCO 주파수가 받은 신호의 순간 주파수를 따라가므로, VCO 제어 전압이 곧 메시지에 비례한다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>\(k_f\) = 75 kHz/V로 변조한 FM을 VCO 감도 \(K_v\) = 150 kHz/V인 PLL로 복조한다. 메시지 1 V(정점)일 때 VCO 제어 전압의 정점과, 판별기(기울기 10 mV/kHz)를 쓸 때 출력 정점은?</p>
     </div>
-    <p><i>풀이.</i> 순간 주파수 편이 75 kHz. PLL: VCO가 75 kHz를 따라가려면 제어 전압 75/150 = 0.5 V. 판별기: 75 kHz × 10 mV/kHz = 0.75 V. 두 방법 모두 출력이 메시지에 비례하고, 비례 상수가 다를 뿐입니다.</p>
+    <p><i>풀이.</i> 순간 주파수 편이는 75 kHz이다. PLL에서는 VCO가 75 kHz를 따라가려면 제어 전압이 75/150 = 0.5 V여야 한다. 판별기에서는 75 kHz × 10 mV/kHz = 0.75 V이다. 즉 두 방법 모두 출력이 메시지에 비례하고, 비례 상수가 다를 뿐이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "FM 수신에 포락선 검파기를 바로 쓰면 된다": FM은 포락선이 일정해 바로 쓰면 아무것도 나오지 않습니다. 미분 또는 판별 회로가 먼저 필요합니다. (2) PLL은 넓은 범위를 따라가지만 처음 고정(포착)되는 범위는 더 좁습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>FM 수신에 포락선 검파기를 바로 쓰면 된다고 여기기 쉽지만, FM은 포락선이 일정해 바로 쓰면 아무것도 나오지 않는다. 미분이나 판별 회로가 먼저 필요하다. 또 PLL은 고정된 뒤에는 넓은 범위를 따라가지만, 처음 고정되는 포착 범위는 그보다 좁다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>판별기: 미분(또는 비탈 회로)으로 주파수 → 진폭, 포락선 검파.</li>
-        <li>리미터로 진폭 잡음 제거.</li>
-        <li>PLL: VCO 제어 전압이 메시지에 비례.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>판별기는 미분이나 비탈 회로로 주파수를 진폭으로 바꾼 뒤 포락선 검파한다. 그 앞의 리미터가 진폭 잡음을 없앤다. PLL에서는 VCO 제어 전압이 메시지에 비례한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>판별기 기울기 5 mV/kHz, 편이 ±50 kHz면 출력 정점은?
-          <details><summary>답</summary><p>0.25 V.</p></details>
+          <details><summary>답</summary><p>0.25 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>PLL의 VCO 감도 100 kHz/V, 받은 FM의 순간 편이가 +30 kHz일 때 제어 전압 변화는?
-          <details><summary>답</summary><p>+0.3 V.</p></details>
+          <details><summary>답</summary><p>+0.3 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>판별기 앞 리미터가 없으면 신호 진폭이 ±20% 흔들릴 때 출력은 어떻게 되는가?
-          <details><summary>답</summary><p>미분 출력의 진폭이 주파수와 함께 진폭에도 비례해, 메시지가 20% 크기로 출렁이며 왜곡됩니다.</p></details>
+          <details><summary>답</summary><p>미분 출력의 진폭이 주파수와 함께 진폭에도 비례해, 메시지가 20% 크기로 출렁이며 왜곡된다.</p></details>
         </li>
       </ol>
     </div>
