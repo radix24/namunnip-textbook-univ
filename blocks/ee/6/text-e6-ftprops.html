@@ -8,85 +8,89 @@
 <article class="card q-card" id="text-e6-ftprops" data-kind="본문" data-std="전전6-04-02">
   <header class="card-head"><span class="no"></span><h2>Fourier 변환의 성질과 컨볼루션 정리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>선형성, 시간 이동, 주파수 이동, 척도, 미분, 쌍대성, Parseval 성질을 쓴다.</li>
-        <li>컨볼루션 정리 \(x * h \leftrightarrow X(j\omega)H(j\omega)\)를 증명하고, 그 쌍대인 곱셈 정리를 안다.</li>
-        <li>변환표와 성질만으로 LTI 시스템의 출력을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>기본 변환쌍 (<a href="04-01.html">4.1절</a>), 컨볼루션 (<a href="02-01.html">2.1절</a>), 부분분수 (고교 수학, <a href="../../common/8/05-01.html">공통8 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">시정수가 다른 두 RC 필터를 이어 붙였을 때 출력을 구하려면 2단원에서는 컨볼루션 적분을 경우를 나눠 풀어야 했다. 주파수 영역으로 옮겨 가면 이 적분이 더 쉬운 계산으로 바뀔까? 바뀐다면 무엇으로 바뀌고, 다시 시간 영역으로는 어떻게 돌아올까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1. 입력 x = e^{−t}u(t)를 h = e^{−2t}u(t)인 시스템에 넣은 출력 y = (e^{−t} − e^{−2t})u(t)는 t = ln 2 ≈ 0.69에서 최댓값 0.25에 이른다. 주파수 영역에서는 Y = XH의 곱 하나로 구한다">
+        <line x1="60" y1="170" x2="520" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M60.0 40.0 L68.8 52.4 L77.6 63.6 L86.4 73.7 L95.2 82.9 L104.0 91.2 L112.8 98.7 L121.6 105.4 L130.4 111.6 L139.2 117.1 L148.0 122.2 L156.8 126.7 L165.6 130.8 L174.4 134.6 L183.2 137.9 L192.0 141.0 L200.8 143.8 L209.6 146.3 L218.4 148.5 L227.2 150.6 L236.0 152.4 L244.8 154.1 L253.6 155.6 L262.4 157.0 L271.2 158.2 L280.0 159.3 L288.8 160.3 L297.6 161.3 L306.4 162.1 L315.2 162.8 L324.0 163.5 L332.8 164.1 L341.6 164.7 L350.4 165.2 L359.2 165.7 L368.0 166.1 L376.8 166.4 L385.6 166.8 L394.4 167.1 L403.2 167.4 L412.0 167.6 L420.8 167.8 L429.6 168.1 L438.4 168.2 L447.2 168.4 L456.0 168.6 L464.8 168.7 L473.6 168.8 L482.4 168.9 L491.2 169.0 L500.0 169.1" class="a"/>
+        <path d="M60.0 40.0 L68.8 63.6 L77.6 82.9 L86.4 98.7 L95.2 111.6 L104.0 122.2 L112.8 130.8 L121.6 137.9 L130.4 143.8 L139.2 148.5 L148.0 152.4 L156.8 155.6 L165.6 158.2 L174.4 160.3 L183.2 162.1 L192.0 163.5 L200.8 164.7 L209.6 165.7 L218.4 166.4 L227.2 167.1 L236.0 167.6 L244.8 168.1 L253.6 168.4 L262.4 168.7 L271.2 168.9 L280.0 169.1 L288.8 169.3 L297.6 169.4 L306.4 169.5 L315.2 169.6 L324.0 169.7 L332.8 169.7 L341.6 169.8 L350.4 169.8 L359.2 169.9 L368.0 169.9 L376.8 169.9 L385.6 169.9 L394.4 169.9 L403.2 169.9 L412.0 170.0 L420.8 170.0 L429.6 170.0 L438.4 170.0 L447.2 170.0 L456.0 170.0 L464.8 170.0 L473.6 170.0 L482.4 170.0 L491.2 170.0 L500.0 170.0" class="b"/>
+        <path d="M60.0 170.0 L68.8 158.8 L77.6 150.7 L86.4 145.0 L95.2 141.3 L104.0 139.0 L112.8 137.8 L121.6 137.5 L130.4 137.8 L139.2 138.6 L148.0 139.8 L156.8 141.1 L165.6 142.6 L174.4 144.2 L183.2 145.8 L192.0 147.5 L200.8 149.1 L209.6 150.6 L218.4 152.1 L227.2 153.5 L236.0 154.8 L244.8 156.0 L253.6 157.2 L262.4 158.3 L271.2 159.3 L280.0 160.2 L288.8 161.1 L297.6 161.9 L306.4 162.6 L315.2 163.2 L324.0 163.8 L332.8 164.4 L341.6 164.9 L350.4 165.4 L359.2 165.8 L368.0 166.2 L376.8 166.5 L385.6 166.9 L394.4 167.2 L403.2 167.4 L412.0 167.7 L420.8 167.9 L429.6 168.1 L438.4 168.3 L447.2 168.4 L456.0 168.6 L464.8 168.7 L473.6 168.8 L482.4 168.9 L491.2 169.0 L500.0 169.1" class="d"/>
+        <circle cx="121" cy="137.5" r="4" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">0</text><text x="148" y="186">1</text><text x="236" y="186">2</text><text x="324" y="186">3</text><text x="510" y="186">t</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="44">1</text></g>
+        <text x="110" y="70" class="ta">x = e^{−t}</text>
+        <text x="80" y="110" class="tb">h = e^{−2t}</text>
+        <text x="130" y="128" class="td">y 최대 0.25 (t = 0.69)</text>
+        <text x="300" y="70" class="s">Y = X·H = 1/((1 + jω)(2 + jω))</text>
+        <text x="300" y="92" class="s">부분분수로 y = e^{−t} − e^{−2t}</text>
+      </svg>
+      <figcaption>그림 1. 컨볼루션 정리에 따라 시간 영역의 컨볼루션은 주파수 영역의 곱셈이 되므로, 두 변환을 곱한 뒤 부분분수로 표의 꼴로 쪼개 역변환하면 적분 없이 출력을 얻는다(예제 4.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기본 변환쌍(<a href="04-01.html">4.1절</a>), 컨볼루션(<a href="02-01.html">2.1절</a>), 부분분수(고교 수학, <a href="../../common/8/05-01.html">공통8 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>성질이 필요한 이유</h3>
-    <p>모든 신호의 변환을 적분으로 구하는 것은 번거롭습니다. 대신 몇 개의 기본쌍(4.1절)과 "신호를 이렇게 바꾸면 변환은 저렇게 바뀐다"는 성질 몇 개를 알면 대부분의 변환을 조립할 수 있습니다. 아래에서 \(x \leftrightarrow X(j\omega)\)라 씁니다.</p>
-    <p class="q-term"><b>선형성</b>: \(ax_1 + bx_2 \leftrightarrow aX_1 + bX_2\).</p>
-    <p class="q-term"><b>시간 이동</b>: \(x(t - t_0) \leftrightarrow e^{-j\omega t_0}X(j\omega)\). 크기 스펙트럼은 그대로, 위상만 \(-\omega t_0\) 더해진다.</p>
-    <p class="q-term"><b>주파수 이동(변조)</b>: \(e^{j\omega_0t}x(t) \leftrightarrow X(j(\omega - \omega_0))\). 스펙트럼 전체가 \(\omega_0\)만큼 옮겨 간다(4.3절).</p>
-    <p class="q-term"><b>척도</b>: \(x(at) \leftrightarrow \frac{1}{|a|}X(j\omega/a)\).</p>
-    <p class="q-term"><b>미분·적분</b>: \(\frac{dx}{dt} \leftrightarrow j\omega X\). 적분은 \(\frac{X}{j\omega} + \pi X(0)\delta(\omega)\).</p>
-    <p class="q-term"><b>쌍대성</b>: \(x(t) \leftrightarrow X(j\omega)\)이면 \(X(jt) \leftrightarrow 2\pi x(-\omega)\). 펄스 ↔ sinc이므로 sinc ↔ 펄스.</p>
-    <p class="q-term"><b>Parseval</b>: \(\int|x|^2dt = \frac{1}{2\pi}\int|X|^2d\omega\). 에너지는 어느 영역에서 재도 같다.</p>
-    <p>시간 이동의 증명 하나를 보면 나머지도 같은 방식입니다: \(\int x(t - t_0)e^{-j\omega t}dt\)에서 \(\sigma = t - t_0\)로 치환하면 \(e^{-j\omega t_0}\int x(\sigma)e^{-j\omega\sigma}d\sigma\).</p>
+    <p>모든 신호의 변환을 적분으로 구하는 것은 번거롭다. 대신 몇 개의 기본쌍(4.1절)과 "신호를 이렇게 바꾸면 변환은 저렇게 바뀐다"는 성질 몇 개를 알면 대부분의 변환을 조립할 수 있다. 아래에서 \(x \leftrightarrow X(j\omega)\)라 쓴다.</p>
+    <table class="tb-table">
+      <tr><th>성질</th><th>시간 영역</th><th>주파수 영역</th></tr>
+      <tr><td>선형성</td><td>\(ax_1 + bx_2\)</td><td>\(aX_1 + bX_2\)</td></tr>
+      <tr><td>시간 이동</td><td>\(x(t - t_0)\)</td><td>\(e^{-j\omega t_0}X(j\omega)\)</td></tr>
+      <tr><td>주파수 이동(변조)</td><td>\(e^{j\omega_0t}x(t)\)</td><td>\(X(j(\omega - \omega_0))\)</td></tr>
+      <tr><td>척도</td><td>\(x(at)\)</td><td>\(\frac{1}{|a|}X(j\omega/a)\)</td></tr>
+      <tr><td>미분</td><td>\(dx/dt\)</td><td>\(j\omega X\)</td></tr>
+      <tr><td>적분</td><td>\(\int_{-\infty}^tx\,d\tau\)</td><td>\(\frac{X}{j\omega} + \pi X(0)\delta(\omega)\)</td></tr>
+      <tr><td>쌍대성</td><td>\(X(jt)\)</td><td>\(2\pi x(-\omega)\)</td></tr>
+    </table>
+    <p>표에서 시간 이동은 크기 스펙트럼을 그대로 두고 위상만 \(-\omega t_0\) 더하며, 주파수 이동은 스펙트럼 전체를 \(\omega_0\)만큼 옮긴다(4.3절). 쌍대성에 따라 펄스와 sinc가 짝이므로 sinc와 펄스도 짝이다. 또 Parseval 관계 \(\int|x|^2dt = \frac{1}{2\pi}\int|X|^2d\omega\)는 에너지를 어느 영역에서 재도 같다는 뜻이다.</p>
+    <p>시간 이동의 증명 하나를 보면 나머지도 같은 방식이다. \(\int x(t - t_0)e^{-j\omega t}dt\)에서 \(\sigma = t - t_0\)로 치환하면 \(e^{-j\omega t_0}\int x(\sigma)e^{-j\omega\sigma}d\sigma\)가 된다.</p>
 
     <h3><span class="no">4.2.2</span>컨볼루션 정리</h3>
     <div class="tb-env thm">
       <span class="lb">정리 4.2.1</span>
-      <p>\(y = x * h\)이면 \(Y(j\omega) = X(j\omega)H(j\omega)\). 쌍대로, \(x(t)p(t) \leftrightarrow \frac{1}{2\pi}X * P\).</p>
+      <p>\(y = x * h\)이면 \(Y(j\omega) = X(j\omega)H(j\omega)\)이다. 쌍대로, \(x(t)p(t) \leftrightarrow \frac{1}{2\pi}X * P\)이다.</p>
     </div>
     <div class="tb-proof">
-      <p>구하려는 것은 \(Y\)를 X와 H로 쓰는 것입니다. 정의에 컨볼루션을 넣고 적분 순서를 바꿉니다.</p>
+      <p>구하려는 것은 \(Y\)를 X와 H로 쓰는 것이다. 정의에 컨볼루션을 넣고 적분 순서를 바꾼다.</p>
       \[ Y = \int\Big[\int x(\tau)h(t - \tau)d\tau\Big]e^{-j\omega t}dt = \int x(\tau)\Big[\int h(t - \tau)e^{-j\omega t}dt\Big]d\tau. \]
-      <p>안쪽 괄호는 시간 이동 성질로 \(e^{-j\omega\tau}H(j\omega)\)입니다. H는 \(\tau\)와 무관하므로 밖으로 나오고, 남은 \(\int x(\tau)e^{-j\omega\tau}d\tau = X\)입니다. ∎</p>
+      <p>식의 안쪽 괄호는 시간 이동 성질로 \(e^{-j\omega\tau}H(j\omega)\)이다. H는 \(\tau\)와 무관하므로 밖으로 나오고, 남은 \(\int x(\tau)e^{-j\omega\tau}d\tau = X\)이다. ∎</p>
     </div>
-    <p>3.2절의 고유함수 성질을 모든 신호로 넓힌 결과입니다. 입력을 주파수 성분으로 쪼개고(X), 성분마다 H를 곱하고, 다시 모읍니다. 시간 영역의 어려운 컨볼루션이 주파수 영역의 곱셈이 됩니다.</p>
+    <p>이것은 3.2절의 고유함수 성질을 모든 신호로 넓힌 결과이다. 입력을 주파수 성분 X로 쪼개고, 성분마다 H를 곱하고, 다시 모은다. 처음 질문의 답이 이것으로, 시간 영역의 어려운 컨볼루션이 주파수 영역의 곱셈이 된다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>\(h(t) = e^{-2t}u(t)\)인 시스템에 \(x(t) = e^{-t}u(t)\)를 넣을 때 출력을 주파수 영역에서 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 1단계(변환): \(X = \frac{1}{1 + j\omega}\), \(H = \frac{1}{2 + j\omega}\). 2단계(곱): \(Y = \frac{1}{(1 + j\omega)(2 + j\omega)}\). 3단계(역변환): 표에 있는 꼴로 쪼개기 위해 부분분수를 씁니다. \(v = j\omega\)로 두면 \(\frac{1}{(1 + v)(2 + v)} = \frac{A}{1 + v} + \frac{B}{2 + v}\), \(A = \frac{1}{2 - 1} = 1\) (\(v = -1\) 대입), \(B = \frac{1}{1 - 2} = -1\). 따라서 \(y(t) = (e^{-t} - e^{-2t})u(t)\).</p>
-    <p>검산: 2.1절 연습 4의 공식 \(\frac{e^{-at} - e^{-bt}}{b - a}\)에 a = 1, b = 2를 넣으면 같은 결과입니다. 수치: \(y\)는 \(t = \ln 2 \approx 0.693\)에서 최댓값 \(0.5 - 0.25 = 0.25\).</p>
+    <p><i>풀이.</i> 먼저 변환하면 \(X = \frac{1}{1 + j\omega}\), \(H = \frac{1}{2 + j\omega}\)이고, 곱하면 \(Y = \frac{1}{(1 + j\omega)(2 + j\omega)}\)이다. 이제 역변환을 위해 표에 있는 꼴로 쪼갠다. \(v = j\omega\)로 두면 \(\frac{1}{(1 + v)(2 + v)} = \frac{A}{1 + v} + \frac{B}{2 + v}\)에서, \(v = -1\)을 대입해 \(A = \frac{1}{2 - 1} = 1\), \(v = -2\)를 대입해 \(B = \frac{1}{1 - 2} = -1\)이다. 따라서 \(y(t) = (e^{-t} - e^{-2t})u(t)\)이다.</p>
+    <p>검산하면 2.1절 연습 4의 공식 \(\frac{e^{-at} - e^{-bt}}{b - a}\)에 a = 1, b = 2를 넣은 것과 같다. 또 수치로 보면 \(y\)는 \(t = \ln 2 \approx 0.693\)에서 최댓값 \(0.5 - 0.25 = 0.25\)이다(그림 1).</p>
 
     <h3><span class="no">4.2.3</span>필터링의 그림</h3>
-    <p>\(|Y| = |X||H|\), \(\angle Y = \angle X + \angle H\). 그림으로는 입력 스펙트럼에 필터의 크기 응답을 "덮어씌우는" 일입니다. 이상 저역 통과 필터 \(H = 1\) (\(|\omega| &lt; W\))를 쓰면 W 위의 성분이 완전히 사라집니다. 이 절의 예제 카드에서 두 펄스의 컨볼루션을 이 방법으로 확인합니다.</p>
+    <p>정리에서 \(|Y| = |X||H|\), \(\angle Y = \angle X + \angle H\)이다. 그림으로는 입력 스펙트럼에 필터의 크기 응답을 덮어씌우는 일이며, 예를 들어 이상 저역 통과 필터 \(H = 1\) (\(|\omega| &lt; W\))를 쓰면 W 위의 성분이 완전히 사라진다. 이 절의 예제 카드에서 두 펄스의 컨볼루션을 이 방법으로 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 곱셈 정리의 \(\frac{1}{2\pi}\)를 빠뜨리기 쉽습니다(f를 쓰면 없음). (2) "시간 이동은 스펙트럼을 바꾸지 않는다"는 크기에 대해서만 맞습니다. 위상은 \(-\omega t_0\)만큼 바뀝니다. (3) 부분분수를 하지 않고 \(\frac{1}{(1 + j\omega)(2 + j\omega)}\)의 역변환을 \(e^{-t}\cdot e^{-2t}\)로 쓰는 실수: 주파수 영역의 곱은 시간 영역의 곱이 아니라 컨볼루션입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(\frac{1}{(1 + j\omega)(2 + j\omega)}\)의 역변환을 부분분수 없이 \(e^{-t}\cdot e^{-2t}\)로 쓰는 실수가 흔하다. 주파수 영역의 곱은 시간 영역의 곱이 아니라 컨볼루션이다. 또 곱셈 정리의 \(\frac{1}{2\pi}\)를 빠뜨리기 쉬운데, f를 쓰면 없다. "시간 이동은 스펙트럼을 바꾸지 않는다"는 말도 크기에 대해서만 맞고, 위상은 \(-\omega t_0\)만큼 바뀐다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>이동 ↔ 위상 \(e^{-j\omega t_0}\), 변조 ↔ 주파수 이동, 미분 ↔ \(j\omega\), 척도 ↔ 반비례, 쌍대성, Parseval.</li>
-        <li>컨볼루션 ↔ 곱 (\(Y = XH\)), 곱 ↔ \(\frac1{2\pi}\)컨볼루션.</li>
-        <li>출력 구하기: 변환 → 곱 → 부분분수 → 표로 역변환.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Fourier 변환의 성질에서 시간 이동은 위상 \(e^{-j\omega t_0}\), 변조는 주파수 이동, 미분은 \(j\omega\)의 곱, 척도는 반비례로 나타나며, 쌍대성과 Parseval 관계가 성립한다. 컨볼루션 정리에 따라 컨볼루션은 곱 \(Y = XH\)가 되고, 반대로 곱은 \(\frac1{2\pi}\)을 곱한 컨볼루션이 된다. 그래서 LTI 시스템의 출력은 변환하고, 곱하고, 부분분수로 쪼개 표로 역변환하는 순서로 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(e^{-(t-2)}u(t - 2)\)의 변환은?
-          <details><summary>답</summary><p>\(\frac{e^{-j2\omega}}{1 + j\omega}\).</p></details>
+          <details><summary>답</summary><p>\(\frac{e^{-j2\omega}}{1 + j\omega}\)이다.</p></details>
         </li>
         <li>\(\frac{\sin 3t}{\pi t}\)의 변환을 쌍대성(또는 4.1절 연습 3)으로 구하여라.
-          <details><summary>답</summary><p>\(|\omega| &lt; 3\)에서 1, 그 밖에서 0.</p></details>
+          <details><summary>답</summary><p>\(|\omega| &lt; 3\)에서 1, 그 밖에서 0이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(h = e^{-t}u(t)\), \(x = e^{-t}u(t)\)일 때 \(Y\)와 \(y(t)\)를 구하여라.
-          <details><summary>답</summary><p>\(Y = \frac{1}{(1 + j\omega)^2}\), \(y = te^{-t}u(t)\)(4.1절 연습 4).</p></details>
+          <details><summary>답</summary><p>\(Y = \frac{1}{(1 + j\omega)^2}\)이므로 \(y = te^{-t}u(t)\)이다(4.1절 연습 4).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>Parseval로 \(\int_{-\infty}^{\infty}\frac{\sin^2 t}{t^2}dt\)를 구하여라.
-          <details><summary>힌트</summary><p>\(\frac{\sin t}{t} \leftrightarrow \pi\) (\(|\omega| &lt; 1\)).</p></details>
-          <details><summary>답</summary><p>\(\frac{1}{2\pi}\int_{-1}^{1}\pi^2d\omega = \pi\).</p></details>
+          <details><summary>힌트</summary><p>\(\frac{\sin t}{t} \leftrightarrow \pi\) (\(|\omega| &lt; 1\))이다.</p></details>
+          <details><summary>답</summary><p>\(\frac{1}{2\pi}\int_{-1}^{1}\pi^2d\omega = \pi\)이다.</p></details>
         </li>
       </ol>
     </div>

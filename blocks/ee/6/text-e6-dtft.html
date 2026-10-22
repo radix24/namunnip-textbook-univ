@@ -8,82 +8,75 @@
 <article class="card q-card" id="text-e6-dtft" data-kind="본문" data-std="전전6-05-01">
   <header class="card-head"><span class="no"></span><h2>이산시간 Fourier 변환(DTFT)</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>수열의 DTFT \(X(e^{j\omega}) = \sum x[n]e^{-j\omega n}\)과 역변환을 쓴다.</li>
-        <li>DTFT가 \(2\pi\) 주기 함수인 이유와, 낮은 주파수(\(\omega \approx 0\))와 높은 주파수(\(\omega \approx \pi\))의 뜻을 설명한다.</li>
-        <li>직사각 수열, 지수 수열의 DTFT와 이동 평균 필터의 주파수 응답을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>연속시간 Fourier 변환 (<a href="04-01.html">4.1절</a>), DTFS (<a href="03-01.html">3.1절</a>), 등비급수의 합 공식.</li>
-      </ul>
-    </div>
+    <p class="q-ask">센서 값을 네 개씩 평균 내면 잡음이 줄어든다. 그런데 평균이 어떤 주파수는 그대로 통과시키고 어떤 주파수는 완전히 지우는지 알 수 있을까? 또 수열에서는 \(\cos(0.1\pi n)\)과 \(\cos(2.1\pi n)\)이 같은 수열이라는데, 그렇다면 이산시간의 "주파수"는 무엇을 뜻할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="4점 이동 평균의 주파수 응답 크기 |H(e^{jω})| = |sin 2ω|/(4|sin(ω/2)|)를 −2π에서 2π까지 그린 것. ω = 0에서 1이고, ω = ±π/2, ±π에서 0이며, 모양이 2π마다 되풀이된다">
+        <rect x="170" y="40" width="220" height="125" class="lk"/>
+        <line x1="50" y1="160" x2="510" y2="160" class="ax"/><line x1="280" y1="40" x2="280" y2="170" class="ax"/>
+        <path d="M60.0 50.0 L62.8 50.4 L65.5 51.7 L68.2 53.8 L71.0 56.7 L73.8 60.3 L76.5 64.7 L79.2 69.7 L82.0 75.4 L84.8 81.5 L87.5 88.1 L90.2 95.1 L93.0 102.4 L95.8 109.9 L98.5 117.4 L101.2 125.0 L104.0 132.5 L106.8 139.8 L109.5 146.9 L112.2 153.7 L115.0 160.0 L117.8 154.1 L120.5 148.8 L123.2 144.1 L126.0 140.0 L128.8 136.6 L131.5 133.9 L134.2 131.9 L137.0 130.6 L139.8 130.1 L142.5 130.2 L145.2 131.0 L148.0 132.5 L150.8 134.5 L153.5 137.1 L156.2 140.2 L159.0 143.6 L161.8 147.4 L164.5 151.5 L167.2 155.7 L170.0 160.0 L172.8 155.7 L175.5 151.5 L178.2 147.4 L181.0 143.6 L183.8 140.2 L186.5 137.1 L189.2 134.5 L192.0 132.5 L194.8 131.0 L197.5 130.2 L200.2 130.1 L203.0 130.6 L205.8 131.9 L208.5 133.9 L211.2 136.6 L214.0 140.0 L216.8 144.1 L219.5 148.8 L222.2 154.1 L225.0 160.0 L227.8 153.7 L230.5 146.9 L233.2 139.8 L236.0 132.5 L238.8 125.0 L241.5 117.4 L244.2 109.9 L247.0 102.4 L249.8 95.1 L252.5 88.1 L255.3 81.5 L258.0 75.4 L260.8 69.7 L263.5 64.7 L266.2 60.3 L269.0 56.7 L271.8 53.8 L274.5 51.7 L277.2 50.4 L280.0 50.0 L282.8 50.4 L285.5 51.7 L288.2 53.8 L291.0 56.7 L293.8 60.3 L296.5 64.7 L299.2 69.7 L302.0 75.4 L304.8 81.5 L307.5 88.1 L310.2 95.1 L313.0 102.4 L315.8 109.9 L318.5 117.4 L321.2 125.0 L324.0 132.5 L326.8 139.8 L329.5 146.9 L332.2 153.7 L335.0 160.0 L337.8 154.1 L340.5 148.8 L343.2 144.1 L346.0 140.0 L348.8 136.6 L351.5 133.9 L354.2 131.9 L357.0 130.6 L359.7 130.1 L362.5 130.2 L365.2 131.0 L368.0 132.5 L370.8 134.5 L373.5 137.1 L376.3 140.2 L379.0 143.6 L381.8 147.4 L384.5 151.5 L387.2 155.7 L390.0 160.0 L392.8 155.7 L395.5 151.5 L398.2 147.4 L401.0 143.6 L403.7 140.2 L406.5 137.1 L409.2 134.5 L412.0 132.5 L414.8 131.0 L417.5 130.2 L420.2 130.1 L423.0 130.6 L425.8 131.9 L428.5 133.9 L431.2 136.6 L434.0 140.0 L436.8 144.1 L439.5 148.8 L442.2 154.1 L445.0 160.0 L447.7 153.7 L450.5 146.9 L453.2 139.8 L456.0 132.5 L458.8 125.0 L461.5 117.4 L464.3 109.9 L467.0 102.4 L469.8 95.1 L472.5 88.1 L475.2 81.5 L478.0 75.4 L480.8 69.7 L483.5 64.7 L486.2 60.3 L489.0 56.7 L491.7 53.8 L494.5 51.7 L497.2 50.4 L500.0 50.0" class="a"/>
+        <g class="fd"><circle cx="335" cy="160" r="3.5"/><circle cx="390" cy="160" r="3.5"/><circle cx="225" cy="160" r="3.5"/><circle cx="170" cy="160" r="3.5"/></g>
+        <g text-anchor="middle" class="s"><text x="280" y="178">0</text><text x="335" y="178">π/2</text><text x="390" y="178">π</text><text x="170" y="178">−π</text><text x="500" y="178">2π</text><text x="60" y="178">−2π</text></g>
+        <g text-anchor="end" class="s"><text x="274" y="54">1</text></g>
+        <text x="280" y="32" text-anchor="middle" class="s">한 주기 −π &lt; ω ≤ π 만 보면 된다</text>
+        <text x="400" y="100" class="ta">L = 4 평균</text>
+        <text x="350" y="146" class="td">영점 π/2, π</text>
+        <text x="280" y="196" text-anchor="middle" class="s">ω (rad/표본)</text>
+      </svg>
+      <figcaption>그림 1. 수열의 주파수 응답은 \(2\pi\)마다 되풀이되므로 한 주기만 보면 되며, 4점 이동 평균은 직류를 그대로 통과시키고 한 주기가 4표본이나 2표본인 진동(\(\omega = \pi/2, \pi\))은 정확히 지운다(예제 5.1.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연속시간 Fourier 변환(<a href="04-01.html">4.1절</a>), DTFS(<a href="03-01.html">3.1절</a>), 등비급수의 합 공식을 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>정의</h3>
-    <p>컴퓨터 안의 신호는 수열 \(x[n]\)입니다. 연속시간 변환의 적분을 합으로 바꾸면 이산시간 Fourier 변환이 됩니다.</p>
+    <p>컴퓨터 안의 신호는 수열 \(x[n]\)이다. 연속시간 변환의 적분을 합으로 바꾸면 이산시간 Fourier 변환(DTFT)이 된다.</p>
     \[ X(e^{j\omega}) = \sum_{n=-\infty}^{\infty}x[n]\,e^{-j\omega n}, \qquad x[n] = \frac{1}{2\pi}\int_{2\pi}X(e^{j\omega})\,e^{j\omega n}\,d\omega. \]
-    <p class="q-term"><b>이산 각주파수</b> \(\omega\): 단위는 [rad/표본]. 표본 사이에 위상이 얼마나 도는가.</p>
-    <p class="q-term"><b>표기 \(X(e^{j\omega})\)</b>: 7단원의 Z-변환 \(X(z)\)를 단위원 \(z = e^{j\omega}\) 위에서 잰 것이라는 뜻.</p>
-    <p>DTFT가 존재하려면(보통의 함수로) \(\sum|x[n]| &lt; \infty\)이면 충분합니다. 2.2절의 안정 조건 \(\sum|h| &lt; \infty\)와 같으므로, 안정한 시스템은 언제나 주파수 응답 \(H(e^{j\omega})\)를 가집니다.</p>
+    <p>식의 이산 각주파수 \(\omega\)는 단위가 [rad/표본]으로, 표본 사이에 위상이 얼마나 도는가를 뜻한다. 또 \(X(e^{j\omega})\)라는 표기는 7단원의 Z-변환 \(X(z)\)를 단위원 \(z = e^{j\omega}\) 위에서 잰 것이라는 뜻이다.</p>
+    <p>DTFT가 보통의 함수로 존재하려면 \(\sum|x[n]| &lt; \infty\)이면 충분하다. 이것은 2.2절의 안정 조건 \(\sum|h| &lt; \infty\)와 같으므로, 안정한 시스템은 언제나 주파수 응답 \(H(e^{j\omega})\)를 가진다.</p>
 
     <h3><span class="no">5.1.2</span>왜 주기 \(2\pi\)인가</h3>
-    <p>구하려는 것: \(X(e^{j(\omega + 2\pi)})\)와 \(X(e^{j\omega})\)의 관계. 각 항의 지수에서 \(e^{-j(\omega + 2\pi)n} = e^{-j\omega n}e^{-j2\pi n} = e^{-j\omega n}\)입니다(n이 정수라 \(e^{-j2\pi n} = 1\)). 따라서 모든 항이 같아 \(X(e^{j(\omega + 2\pi)}) = X(e^{j\omega})\).</p>
-    <p>물리적인 뜻: 정수 n에서만 보면 \(\cos(0.1\pi n)\)과 \(\cos(2.1\pi n)\)은 같은 수열입니다. 이산시간에는 \(2\pi\)보다 큰 주파수가 따로 없습니다. 그래서 \(-\pi &lt; \omega \le \pi\) 한 구간만 보면 됩니다.</p>
-    <ul>
-      <li>\(\omega \approx 0\) (또는 \(2\pi\)의 정수배): 천천히 변하는 신호, 낮은 주파수.</li>
-      <li>\(\omega = \pi\): \((-1)^n = e^{j\pi n}\), 매 표본마다 부호가 바뀌는 가장 빠른 신호.</li>
-    </ul>
-    <p>표본화 주기가 \(T_s\)이면 연속 주파수와 \(\omega = \Omega T_s\) (Ω는 rad/s)로 연결됩니다. \(\omega = \pi\)가 표본화 주파수의 절반에 해당하며, 6단원에서 다시 봅니다.</p>
+    <p>구하려는 것은 \(X(e^{j(\omega + 2\pi)})\)와 \(X(e^{j\omega})\)의 관계이다. n이 정수라 \(e^{-j2\pi n} = 1\)이므로 각 항의 지수에서 \(e^{-j(\omega + 2\pi)n} = e^{-j\omega n}e^{-j2\pi n} = e^{-j\omega n}\)이다. 따라서 모든 항이 같아 \(X(e^{j(\omega + 2\pi)}) = X(e^{j\omega})\)이다.</p>
+    <p>물리적으로 보면, 정수 n에서만 보면 \(\cos(0.1\pi n)\)과 \(\cos(2.1\pi n)\)은 같은 수열이다. 즉 이산시간에는 \(2\pi\)보다 큰 주파수가 따로 없으므로 \(-\pi &lt; \omega \le \pi\) 한 구간만 보면 된다. 처음 질문의 둘째 답이 이것이다. 그 구간에서 \(\omega \approx 0\)(또는 \(2\pi\)의 정수배)은 천천히 변하는 낮은 주파수이고, \(\omega = \pi\)는 \((-1)^n = e^{j\pi n}\), 곧 매 표본마다 부호가 바뀌는 가장 빠른 신호이다.</p>
+    <p>표본화 주기가 \(T_s\)이면 연속 주파수 Ω(rad/s)와 \(\omega = \Omega T_s\)로 연결된다. 따라서 \(\omega = \pi\)가 표본화 주파수의 절반에 해당하며, 6단원에서 다시 본다.</p>
 
     <h3><span class="no">5.1.3</span>기본 DTFT 계산</h3>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
       <p>\(x[n] = a^nu[n]\) (\(|a| &lt; 1\))의 DTFT를 구하고, \(a = 0.5\)일 때 \(\omega = 0\)과 \(\omega = \pi\)에서의 크기를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 등비급수: \(X = \sum_{n\ge0}(ae^{-j\omega})^n = \frac{1}{1 - ae^{-j\omega}}\) (공비의 크기 \(|a| &lt; 1\)이라 수렴). \(a = 0.5\): \(\omega = 0\)이면 \(\frac{1}{0.5} = 2\), \(\omega = \pi\)이면 \(\frac{1}{1.5} \approx 0.667\). 양의 a는 저역 통과입니다. \(a = -0.5\)이면 값이 뒤바뀌어 고역 통과가 됩니다(2.2절 예제 카드의 시스템).</p>
+    <p><i>풀이.</i> 공비의 크기 \(|a| &lt; 1\)이라 등비급수가 수렴하므로 \(X = \sum_{n\ge0}(ae^{-j\omega})^n = \frac{1}{1 - ae^{-j\omega}}\)이다. \(a = 0.5\)이면 \(\omega = 0\)에서 \(\frac{1}{0.5} = 2\), \(\omega = \pi\)에서 \(\frac{1}{1.5} \approx 0.667\)이다. 즉 양의 a는 저역 통과이고, \(a = -0.5\)이면 값이 뒤바뀌어 고역 통과가 된다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 5.1.2</span>
       <p>L점 이동 평균 \(h[n] = \frac1L\) (\(0 \le n \le L - 1\))의 주파수 응답 크기를 구하고, L = 4일 때 영점을 찾아라.</p>
     </div>
-    <p><i>풀이.</i> 유한 등비합: \(H = \frac1L\sum_{n=0}^{L-1}e^{-j\omega n} = \frac1L\cdot\frac{1 - e^{-j\omega L}}{1 - e^{-j\omega}}\). 분자와 분모에서 반각 지수를 묶어 내면 \(\frac{e^{-j\omega L/2}(e^{j\omega L/2} - e^{-j\omega L/2})}{e^{-j\omega/2}(e^{j\omega/2} - e^{-j\omega/2})}\)이므로</p>
+    <p><i>풀이.</i> 유한 등비합으로 \(H = \frac1L\sum_{n=0}^{L-1}e^{-j\omega n} = \frac1L\cdot\frac{1 - e^{-j\omega L}}{1 - e^{-j\omega}}\)이다. 분자와 분모에서 반각 지수를 묶어 내면 \(\frac{e^{-j\omega L/2}(e^{j\omega L/2} - e^{-j\omega L/2})}{e^{-j\omega/2}(e^{j\omega/2} - e^{-j\omega/2})}\)이므로 다음과 같다.</p>
     \[ |H(e^{j\omega})| = \frac{1}{L}\left|\frac{\sin(\omega L/2)}{\sin(\omega/2)}\right|, \qquad \angle H = -\omega\frac{L - 1}{2}. \]
-    <p>\(\omega = 0\)에서 1(직류 그대로), 영점은 \(\sin(\omega L/2) = 0\), 곧 \(\omega = 2\pi k/L\) (k ≠ 0). L = 4이면 \(\omega = \pi/2, \pi\). 한 주기 4표본인 진동은 4점 평균으로 정확히 지워집니다. 위상이 직선(\(-1.5\omega\))이라 모든 성분이 똑같이 1.5표본 늦어집니다(선형 위상, 8단원).</p>
+    <p>식은 \(\omega = 0\)에서 1이어서 직류를 그대로 통과시키고, 영점은 \(\sin(\omega L/2) = 0\), 곧 \(\omega = 2\pi k/L\) (k ≠ 0)이다. L = 4이면 \(\omega = \pi/2, \pi\)이므로 한 주기 4표본인 진동은 4점 평균으로 정확히 지워진다(그림 1). 처음 질문의 첫째 답이 이것이다. 또 위상이 \(-1.5\omega\)로 직선이라 모든 성분이 똑같이 1.5표본 늦어지는데, 이를 선형 위상이라 한다(8단원).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "\(\omega\)를 키우면 더 높은 주파수"는 \(\pi\)까지만 맞습니다. \(\omega = 1.9\pi\)는 \(-0.1\pi\)와 같은, 낮은 주파수입니다. (2) DTFT는 \(\omega\)에 대해 연속 함수입니다. 수열이 이산이라 변환도 이산이라고 생각하기 쉬운데, 이산이 되는 것은 신호가 주기일 때(DTFS)나 다음 절의 DFT입니다. (3) 연속 Fourier 변환과 혼동해 \(X(j\omega)\)라 쓰면 주기성이 사라진 것처럼 보이므로 \(X(e^{j\omega})\) 표기를 지키세요.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"\(\omega\)를 키우면 더 높은 주파수"는 \(\pi\)까지만 맞다. \(\omega = 1.9\pi\)는 \(-0.1\pi\)와 같은 낮은 주파수이다. 또 수열이 이산이라 변환도 이산이라고 생각하기 쉬운데, DTFT는 \(\omega\)에 대해 연속 함수이다. 이산이 되는 것은 신호가 주기일 때(DTFS)나 다음 절의 DFT이다. 연속 Fourier 변환과 혼동해 \(X(j\omega)\)라 쓰면 주기성이 사라진 것처럼 보이므로 \(X(e^{j\omega})\) 표기를 지키자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(X(e^{j\omega}) = \sum x[n]e^{-j\omega n}\), 역변환은 \(2\pi\) 한 주기 적분.</li>
-        <li>DTFT는 \(2\pi\) 주기. \(\omega \approx 0\)이 저주파, \(\omega = \pi\)가 최고 주파수.</li>
-        <li>\(a^nu[n] \leftrightarrow \frac1{1 - ae^{-j\omega}}\). L점 평균: \(|H| = \frac{|\sin(\omega L/2)|}{L|\sin(\omega/2)|}\), 영점 \(2\pi k/L\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>DTFT는 \(X(e^{j\omega}) = \sum x[n]e^{-j\omega n}\)이고 역변환은 \(2\pi\) 한 주기의 적분이다. n이 정수이므로 DTFT는 \(2\pi\) 주기이며, \(\omega \approx 0\)이 저주파, \(\omega = \pi\)가 가장 높은 주파수이다. 기본 쌍은 \(a^nu[n] \leftrightarrow \frac1{1 - ae^{-j\omega}}\)이고, L점 이동 평균은 \(|H| = \frac{|\sin(\omega L/2)|}{L|\sin(\omega/2)|}\)로 \(\omega = 2\pi k/L\)에서 영점을 가진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(x = \delta[n] + 2\delta[n-1] + \delta[n-2]\)의 DTFT와 \(\omega = 0, \pi/2, \pi\)에서의 크기는?
-          <details><summary>답</summary><p>\(X = 1 + 2e^{-j\omega} + e^{-j2\omega} = e^{-j\omega}(2 + 2\cos\omega)\). 크기 4, 2, 0.</p></details>
+          <details><summary>답</summary><p>\(X = 1 + 2e^{-j\omega} + e^{-j2\omega} = e^{-j\omega}(2 + 2\cos\omega)\)이므로 크기는 4, 2, 0이다.</p></details>
         </li>
         <li>\(\cos(0.3\pi n)\)과 같은 수열이 되는 \(\cos(\omega n)\)을 \(\pi &lt; \omega &lt; 3\pi\)에서 모두 찾아라.
-          <details><summary>답</summary><p>\(\omega = 1.7\pi\)(\(= 2\pi - 0.3\pi\)), \(2.3\pi\).</p></details>
+          <details><summary>답</summary><p>\(\omega = 1.7\pi\)(\(= 2\pi - 0.3\pi\))와 \(2.3\pi\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(y[n] = x[n] - x[n-1]\)(차분기)의 \(|H|\)를 구하고 어떤 필터인지 말하여라.
-          <details><summary>답</summary><p>\(|1 - e^{-j\omega}| = 2|\sin(\omega/2)|\). \(\omega = 0\)에서 0, \(\pi\)에서 2. 고역 통과.</p></details>
+          <details><summary>답</summary><p>\(|1 - e^{-j\omega}| = 2|\sin(\omega/2)|\)이다. \(\omega = 0\)에서 0, \(\pi\)에서 2이므로 고역 통과이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>\(x[n] = (-1)^na^nu[n]\)의 DTFT가 \(X(e^{j(\omega - \pi)})\)임을 보이고, 이것으로 저역 통과 필터를 고역 통과로 바꾸는 방법을 설명하여라.
-          <details><summary>답</summary><p>\((-1)^n = e^{j\pi n}\)이므로 주파수 이동 성질로 \(\pi\)만큼 이동. 임펄스 응답에 \((-1)^n\)을 곱하면 응답 곡선이 \(\pi\)만큼 옮겨 저역 통과가 고역 통과가 됩니다.</p></details>
+          <details><summary>답</summary><p>\((-1)^n = e^{j\pi n}\)이므로 주파수 이동 성질로 \(\pi\)만큼 이동한다. 그래서 임펄스 응답에 \((-1)^n\)을 곱하면 응답 곡선이 \(\pi\)만큼 옮겨 저역 통과가 고역 통과가 된다.</p></details>
         </li>
       </ol>
     </div>

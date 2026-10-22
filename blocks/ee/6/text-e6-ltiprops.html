@@ -8,83 +8,77 @@
 <article class="card q-card" id="text-e6-ltiprops" data-kind="본문" data-std="전전6-02-02">
   <header class="card-head"><span class="no"></span><h2>임펄스 응답으로 읽는 인과성과 안정성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>LTI 시스템이 인과적일 조건 \(h(t) = 0\) (\(t &lt; 0\))을 유도한다.</li>
-        <li>BIBO 안정의 필요충분조건 \(\int|h|\,dt &lt; \infty\) (이산은 \(\sum|h[n]| &lt; \infty\))을 증명한다.</li>
-        <li>FIR과 IIR, 무기억, 가역 성질을 임펄스 응답으로 판정한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>시스템 성질의 정의 (<a href="01-02.html">1.2절</a>), 컨볼루션 (<a href="02-01.html">2.1절</a>), 등비급수의 수렴 (고교 수학).</li>
-      </ul>
-    </div>
+    <p class="q-ask">어떤 디지털 필터의 임펄스 응답을 재 보니 시간이 지날수록 줄어들었다. 그렇다면 이 필터는 어떤 유계 입력에도 출력이 끝없이 커지지 않는다고 장담할 수 있을까? 임펄스 응답만 보고 시스템이 안정한지, 미래를 보지 않는지 판정할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="임펄스 응답 h[n] = aⁿu[n]. 왼쪽 a = 0.5는 줄어드는 수열로 절댓값의 합이 2여서 안정하고, 오른쪽 a = 1.1은 늘어나는 수열로 합이 발산해 불안정하다. 둘 다 n &lt; 0에서 0이므로 인과적이다">
+        <line x1="30" y1="160" x2="250" y2="160" class="ax"/><line x1="300" y1="160" x2="520" y2="160" class="ax"/>
+        <path d="M50 160 V60.0 M76 160 V110.0 M102 160 V135.0 M128 160 V147.5 M154 160 V153.8 M180 160 V156.9 M206 160 V158.4 M232 160 V159.2" class="b"/>
+        <g class="fb"><circle cx="50" cy="60.0" r="3.5"/><circle cx="76" cy="110.0" r="3.5"/><circle cx="102" cy="135.0" r="3.5"/><circle cx="128" cy="147.5" r="3.5"/><circle cx="154" cy="153.8" r="3.5"/><circle cx="180" cy="156.9" r="3.5"/><circle cx="206" cy="158.4" r="3.5"/><circle cx="232" cy="159.2" r="3.5"/></g>
+        <path d="M320 160 V110.0 M346 160 V105.0 M372 160 V99.5 M398 160 V93.4 M424 160 V86.8 M450 160 V79.5 M476 160 V71.4 M502 160 V62.6" class="d"/>
+        <g class="fd"><circle cx="320" cy="110.0" r="3.5"/><circle cx="346" cy="105.0" r="3.5"/><circle cx="372" cy="99.5" r="3.5"/><circle cx="398" cy="93.4" r="3.5"/><circle cx="424" cy="86.8" r="3.5"/><circle cx="450" cy="79.5" r="3.5"/><circle cx="476" cy="71.4" r="3.5"/><circle cx="502" cy="62.6" r="3.5"/></g>
+        <g text-anchor="middle" class="s"><text x="50" y="176">0</text><text x="232" y="176">7</text><text x="320" y="176">0</text><text x="502" y="176">7</text></g>
+        <text x="140" y="40" text-anchor="middle" class="tb">a = 0.5, Σ|h| = 2, 안정</text>
+        <text x="410" y="40" text-anchor="middle" class="td">a = 1.1, Σ|h| = ∞, 불안정</text>
+        <text x="280" y="196" text-anchor="middle" class="s">둘 다 n &lt; 0에서 h = 0이므로 인과적</text>
+      </svg>
+      <figcaption>그림 1. LTI 시스템의 안정성은 임펄스 응답 절댓값의 합이 유한한지로 정해지므로, 줄어드는 \(0.5^n\)은 안정하고 늘어나는 \(1.1^n\)은 불안정하며, 인과성은 음의 시간에서 임펄스 응답이 0인지로 정해진다(예제 2.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>시스템 성질의 정의(<a href="01-02.html">1.2절</a>), 컨볼루션(<a href="02-01.html">2.1절</a>), 고교 수학의 등비급수 수렴을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>LTI이면 h가 모든 것을 말한다</h3>
-    <p>1.2절에서는 성질을 입출력 식으로 판정했습니다. LTI 시스템은 \(h\) 하나로 완전히 정해지므로, 나머지 성질도 \(h\)만 보고 판정할 수 있어야 합니다. 이 절은 그 조건을 하나씩 유도합니다. 이산시간으로 설명하고 연속시간 식을 함께 적습니다.</p>
+    <p>1.2절에서는 성질을 입출력 식으로 판정했다. 그런데 LTI 시스템은 \(h\) 하나로 완전히 정해지므로, 나머지 성질도 \(h\)만 보고 판정할 수 있어야 한다. 이 절은 그 조건을 하나씩 유도하며, 이산시간으로 설명하고 연속시간 식을 함께 적는다.</p>
 
     <h3><span class="no">2.2.2</span>인과성</h3>
-    <p>구하려는 것: \(y[n]\)이 미래 입력 \(x[k]\) (\(k &gt; n\))에 의존하지 않을 조건.</p>
-    <p>\(y[n] = \sum_k x[k]h[n - k]\)에서 \(k &gt; n\)인 항의 계수는 \(h[n - k]\), 곧 음수 번째 \(h\)입니다. 이 항들이 모든 입력에 대해 사라지려면 \(h[m] = 0\) (\(m &lt; 0\))이어야 합니다. 거꾸로 이 조건이면 합이 \(k \le n\)까지만 남습니다.</p>
-    <p class="q-term"><b>LTI 인과 조건</b>: \(h[n] = 0\) (\(n &lt; 0\)), \(h(t) = 0\) (\(t &lt; 0\)). "임펄스를 넣기 전에는 반응하지 않는다."</p>
+    <p>구하려는 것은 \(y[n]\)이 미래 입력 \(x[k]\) (\(k &gt; n\))에 의존하지 않을 조건이다. \(y[n] = \sum_k x[k]h[n - k]\)에서 \(k &gt; n\)인 항의 계수는 \(h[n - k]\), 곧 음수 번째 \(h\)이다. 따라서 이 항들이 모든 입력에 대해 사라지려면 \(h[m] = 0\) (\(m &lt; 0\))이어야 하고, 거꾸로 이 조건이면 합이 \(k \le n\)까지만 남는다.</p>
+    <p>즉 LTI 시스템이 인과적일 조건은 \(h[n] = 0\) (\(n &lt; 0\)), 연속시간에서는 \(h(t) = 0\) (\(t &lt; 0\))이다. 임펄스를 넣기 전에는 반응하지 않는다는 뜻이다.</p>
 
     <h3><span class="no">2.2.3</span>BIBO 안정성</h3>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.1</span>
-      <p>LTI 시스템이 BIBO 안정일 필요충분조건은 \(S = \sum_n|h[n]| &lt; \infty\) (연속: \(\int|h(t)|dt &lt; \infty\))이다.</p>
+      <p>LTI 시스템이 BIBO 안정일 필요충분조건은 \(S = \sum_n|h[n]| &lt; \infty\) (연속시간에서는 \(\int|h(t)|dt &lt; \infty\))이다.</p>
     </div>
     <div class="tb-proof">
-      <p><i>충분성.</i> \(|x[n]| \le B\)이면 삼각부등식으로 \(|y[n]| = |\sum_k h[k]x[n - k]| \le \sum_k|h[k]|\,B = SB\). 출력이 \(SB\)로 유계입니다.</p>
-      <p><i>필요성.</i> \(S = \infty\)인데도 안정이라고 가정하고 모순을 찾습니다. 유계 입력 \(x[k] = \text{sgn}(h[-k])\)(값은 −1, 0, 1)을 넣으면 \(y[0] = \sum_k h[k]x[-k] = \sum_k|h[k]| = \infty\). 유계 입력에 무한한 출력이 나왔으므로 불안정입니다. ∎</p>
+      <p><i>충분성.</i> \(|x[n]| \le B\)이면 삼각부등식으로 \(|y[n]| = |\sum_k h[k]x[n - k]| \le \sum_k|h[k]|\,B = SB\)이다. 따라서 출력이 \(SB\)로 유계이다.</p>
+      <p><i>필요성.</i> \(S = \infty\)인데도 안정이라고 가정하고 모순을 찾는다. 값이 −1, 0, 1인 유계 입력 \(x[k] = \text{sgn}(h[-k])\)를 넣으면 \(y[0] = \sum_k h[k]x[-k] = \sum_k|h[k]| = \infty\)이다. 유계 입력에 무한한 출력이 나왔으므로 불안정이다. ∎</p>
     </div>
-    <p>필요성의 증명이 "가장 나쁜 입력"을 만들어 보인다는 점을 기억하세요. 각 순간 입력의 부호를 \(h\)와 맞춰 모든 항이 같은 방향으로 쌓이게 한 것입니다.</p>
+    <p>필요성의 증명이 가장 나쁜 입력을 만들어 보인다는 점을 기억하자. 각 순간 입력의 부호를 \(h\)와 맞춰 모든 항이 같은 방향으로 쌓이게 한 것이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>\(h[n] = a^nu[n]\)인 시스템의 인과성과 안정성을 a에 따라 판정하여라. 또 \(h(t) = e^{-2t}u(t)\)와 \(h(t) = u(t)\)는?</p>
     </div>
-    <p><i>풀이.</i> \(n &lt; 0\)에서 0이므로 인과입니다. \(\sum_{n \ge 0}|a|^n\)은 등비급수로, \(|a| &lt; 1\)이면 \(\frac{1}{1 - |a|}\)로 수렴하고 \(|a| \ge 1\)이면 발산합니다. 따라서 \(|a| &lt; 1\)일 때만 안정. 예: \(a = 0.5\)이면 \(S = 2\)이므로 \(|x| \le 1\)인 입력에 대해 \(|y| \le 2\)가 보장됩니다. 연속시간: \(\int_0^\infty e^{-2t}dt = 0.5\)로 안정. \(u(t)\)(적분기)는 \(\int_0^\infty 1\,dt = \infty\)로 불안정. 실제로 계단 입력을 넣으면 출력이 \(t\)로 끝없이 커집니다.</p>
+    <p><i>풀이.</i> \(n &lt; 0\)에서 0이므로 인과적이다. \(\sum_{n \ge 0}|a|^n\)은 등비급수로, \(|a| &lt; 1\)이면 \(\frac{1}{1 - |a|}\)로 수렴하고 \(|a| \ge 1\)이면 발산한다. 따라서 \(|a| &lt; 1\)일 때만 안정하다(그림 1). 예를 들어 \(a = 0.5\)이면 \(S = 2\)이므로 \(|x| \le 1\)인 입력에 대해 \(|y| \le 2\)가 보장된다. 연속시간에서는 \(\int_0^\infty e^{-2t}dt = 0.5\)이므로 안정하다. 그러나 적분기 \(u(t)\)는 \(\int_0^\infty 1\,dt = \infty\)로 불안정하며, 실제로 계단 입력을 넣으면 출력이 \(t\)로 끝없이 커진다.</p>
 
     <h3><span class="no">2.2.4</span>그 밖의 성질</h3>
-    <p class="q-term"><b>무기억</b>: \(h[n] = K\delta[n]\). 지금 입력에 상수를 곱하는 것뿐이다.</p>
-    <p class="q-term"><b>가역</b>: \(h * h_{\text{inv}} = \delta\)인 \(h_{\text{inv}}\)가 있다. 예: 누산기 \(h = u[n]\)의 역은 차분기 \(\delta[n] - \delta[n - 1]\).</p>
-    <p class="q-term"><b>FIR</b>(유한 임펄스 응답): \(h\)가 유한 개의 표본에서만 0이 아니다. 계수가 유한하면 항상 안정이다.</p>
-    <p class="q-term"><b>IIR</b>(무한 임펄스 응답): \(h\)가 끝없이 이어진다. 되먹임(2.3절)이 있으면 대개 IIR이고, 안정성을 따로 확인해야 한다.</p>
+    <p>무기억 시스템은 \(h[n] = K\delta[n]\)으로, 지금 입력에 상수를 곱하는 것뿐이다. 또 \(h * h_{\text{inv}} = \delta\)인 \(h_{\text{inv}}\)가 있으면 가역이며, 예를 들어 누산기 \(h = u[n]\)의 역은 차분기 \(\delta[n] - \delta[n - 1]\)이다.</p>
+    <p>한편 \(h\)가 유한 개의 표본에서만 0이 아닌 시스템을 FIR(유한 임펄스 응답)이라 하며, 계수가 유한하면 항상 안정하다. 반면 \(h\)가 끝없이 이어지는 IIR(무한 임펄스 응답) 시스템은 되먹임(2.3절)이 있을 때 흔히 생기고, 안정성을 따로 확인해야 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>"\(h(t) \to 0\)이면 안정"은 틀립니다. \(h(t) = \frac{1}{t+1}u(t)\)는 0으로 가지만 \(\int_0^\infty\frac{dt}{t+1} = \infty\)라 불안정입니다. 크기가 줄어드는 것만이 아니라 넓이가 유한해야 합니다. 또 BIBO 불안정이 "모든 입력에서 출력이 발산"을 뜻하지는 않습니다. 발산하는 유계 입력이 하나라도 있으면 불안정입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"\(h(t) \to 0\)이면 안정"은 틀리다. \(h(t) = \frac{1}{t+1}u(t)\)는 0으로 가지만 \(\int_0^\infty\frac{dt}{t+1} = \infty\)라 불안정하다. 처음 질문에 장담할 수 없는 이유가 이것으로, 크기가 줄어드는 것만이 아니라 넓이가 유한해야 한다. 또 BIBO 불안정이 모든 입력에서 출력이 발산한다는 뜻은 아니며, 발산하는 유계 입력이 하나라도 있으면 불안정이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>LTI 인과 ⇔ \(h = 0\) (음의 시간).</li>
-        <li>LTI BIBO 안정 ⇔ \(\sum|h| &lt; \infty\) (\(\int|h| &lt; \infty\)). 필요성은 \(x = \text{sgn}(h[-k])\)로 증명.</li>
-        <li>무기억 ⇔ \(h = K\delta\). FIR은 늘 안정, IIR은 안정성을 따로 따져야 한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>LTI 시스템은 음의 시간에서 \(h = 0\)일 때 인과적이고, \(\sum|h| &lt; \infty\)(연속시간에서는 \(\int|h| &lt; \infty\))일 때 BIBO 안정하다. 안정 조건의 필요성은 부호를 맞춘 입력 \(x = \text{sgn}(h[-k])\)로 증명한다. 무기억 시스템은 \(h = K\delta\)이고, FIR 시스템은 늘 안정하지만 IIR 시스템은 안정성을 따로 따져야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(h[n] = (0.8)^{|n|}\)은 인과인가? 안정인가?
-          <details><summary>답</summary><p>\(n &lt; 0\)에서 0이 아니므로 비인과. \(\sum = 1 + 2\cdot\frac{0.8}{0.2} = 9\)로 안정.</p></details>
+          <details><summary>답</summary><p>\(n &lt; 0\)에서 0이 아니므로 비인과이다. \(\sum = 1 + 2\cdot\frac{0.8}{0.2} = 9\)이므로 안정하다.</p></details>
         </li>
         <li>\(h(t) = e^{t}u(-t)\)는?
-          <details><summary>답</summary><p>비인과(음의 시간에서 0이 아님), \(\int_{-\infty}^0e^t dt = 1\)로 안정.</p></details>
+          <details><summary>답</summary><p>음의 시간에서 0이 아니므로 비인과이고, \(\int_{-\infty}^0e^t dt = 1\)이므로 안정하다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(h[n] = (0.5)^nu[n]\)에 \(|x| \le 3\)인 입력을 넣을 때 \(|y|\)의 최댓값의 상한은? 그 상한에 닿는 입력은?
-          <details><summary>답</summary><p>\(3 \times 2 = 6\). \(x[n] = 3\)(상수)이면 정상 상태에서 \(y \to 6\)(h가 모두 양수라 부호 맞추기가 상수 입력).</p></details>
+          <details><summary>답</summary><p>상한은 \(3 \times 2 = 6\)이다. h가 모두 양수라 부호를 맞춘 입력이 상수이므로, \(x[n] = 3\)이면 정상 상태에서 \(y \to 6\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>\(h(t) = \frac{\sin t}{t}\)인 시스템(이상 저역 통과 필터)이 BIBO 안정이 아님을 보여라.
-          <details><summary>힌트</summary><p>\(\int|\sin t/t|dt\)를 반주기 구간별로 아래에서 어림.</p></details>
-          <details><summary>답</summary><p>구간 \([k\pi, (k+1)\pi]\)에서 \(|\sin t/t| \ge |\sin t|/((k+1)\pi)\)이고 \(\int|\sin| = 2\)이므로 \(\int \ge \sum\frac{2}{(k+1)\pi} = \infty\)(조화급수). 이상 필터는 실제로 만들 수 없는 이유 중 하나입니다(8단원).</p></details>
+          <details><summary>힌트</summary><p>\(\int|\sin t/t|dt\)를 반주기 구간별로 아래에서 어림한다.</p></details>
+          <details><summary>답</summary><p>구간 \([k\pi, (k+1)\pi]\)에서 \(|\sin t/t| \ge |\sin t|/((k+1)\pi)\)이고 \(\int|\sin| = 2\)이므로, \(\int \ge \sum\frac{2}{(k+1)\pi} = \infty\)(조화급수)이다. 이것이 이상 필터를 실제로 만들 수 없는 이유 중 하나이다(8단원).</p></details>
         </li>
       </ol>
     </div>
