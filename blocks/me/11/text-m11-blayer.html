@@ -8,69 +8,65 @@
 <article class="card q-card" id="text-m11-blayer" data-kind="본문" data-std="기계11-03-01">
   <header class="card-head"><span class="no"></span><h2>평판 경계층: 두께와 마찰 항력</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>경계층이 생기는 이유와 두께의 뜻을 안다.</li>
-        <li>층류(Blasius 해)와 난류 경계층의 두께, 국소·평균 마찰계수를 구한다.</li>
-        <li>천이를 고려한 평판의 마찰 항력을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>점성과 전단 응력, Reynolds 수 (<a href="../me5/01-01.html">유체역학 1단원</a>), d'Alembert 역설 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">평판을 따라 바람이 불면 판 바로 위의 공기는 판에 붙어 멈추고, 조금 떨어진 곳은 바람 속도 그대로이다. 그 사이의 얇은 층은 얼마나 두꺼울까? 바람이 5 m/s에서 30 m/s로 6배 빨라지면 판이 받는 마찰 항력은 6배일까, 36배일까, 아니면 그보다 더 클까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="30 m/s 공기 흐름 속 길이 1 m 평판의 경계층 두께(예제 3.1.1). 앞전에서 0.25 m까지는 층류로 두께가 1.8 mm까지 천천히 자라고, Re_x = 5×10⁵에서 난류로 천이한 뒤 훨씬 두꺼워져 뒷전에서 약 20 mm가 된다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax" stroke-width="3"/><line x1="60" y1="40" x2="60" y2="170" class="ax"/>
+        <path d="M60.0 169.8 L65.0 167.8 L70.0 167.0 L75.0 166.3 L80.0 165.7 L85.0 165.2 L90.0 164.7 L95.0 164.3 L100.0 163.9 L105.0 163.5 L110.0 163.2 L115.0 162.9 L120.0 162.5 L125.0 162.2 L130.0 161.9 L135.0 161.7 L140.0 161.4 L145.0 161.1 L150.0 160.9 L155.0 160.6 L160.0 160.4" class="b" stroke-width="2.5"/>
+        <path d="M160.0 133.5 L170.0 130.6 L180.0 127.7 L190.0 124.9 L200.0 122.2 L210.0 119.5 L220.0 116.8 L230.0 114.1 L240.0 111.5 L250.0 108.9 L260.0 106.4 L270.0 103.9 L280.0 101.3 L290.0 98.9 L300.0 96.4 L310.0 94.0 L320.0 91.5 L330.0 89.1 L340.0 86.7 L350.0 84.4 L360.0 82.0 L370.0 79.7 L380.0 77.3 L390.0 75.0 L400.0 72.7 L410.0 70.5 L420.0 68.2 L430.0 65.9 L440.0 63.7 L450.0 61.5 L460.0 59.2" class="a" stroke-width="2.5"/>
+        <path d="M160 40 V170" class="k dsh"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">앞전</text><text x="160" y="186">0.25 m 천이</text><text x="460" y="186">1 m</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="63">20 mm</text><text x="54" y="174">0</text></g>
+        <text x="70" y="150" class="tb">층류</text>
+        <text x="300" y="90" class="ta">난류, δ/x = 0.37Re_x^(−1/5)</text>
+        <text x="400" y="54" class="td">약 20 mm</text>
+      </svg>
+      <figcaption>그림 1. 벽에 붙은 유체의 느림이 점성으로 바깥쪽에 퍼지며 경계층이 하류로 두꺼워지고, 난류로 바뀐 뒤에는 소용돌이가 섞임을 키워 훨씬 빨리 두꺼워진다(예제 3.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>점성과 전단 응력, Reynolds 수(<a href="../me5/01-01.html">유체역학 1단원</a>), d'Alembert 역설(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>경계층</h3>
-    <p>물체 표면의 유체는 벽에 붙어 속도가 0이고(점착 조건), 벽에서 멀어지며 바깥 흐름 속도 \(U\)까지 빨라집니다. 이 속도 변화가 일어나는 얇은 층이 경계층입니다. 경계층 밖은 점성 효과가 작아 포텐셜 흐름처럼 다룰 수 있습니다.</p>
-    <p class="q-term"><b>경계층 두께</b> \(\delta\): 속도가 바깥 흐름의 99%가 되는 벽에서의 거리.</p>
-    <p class="q-term"><b>국소 Reynolds 수</b> \(\text{Re}_x = Ux/\nu\): 앞전에서 거리 \(x\)를 길이로 쓴 Reynolds 수. 평판에서는 약 \(5\times10^5\)에서 층류가 난류로 천이한다.</p>
-    <p>경계층은 앞전에서 0으로 시작해 하류로 갈수록 두꺼워집니다. 벽 마찰로 느려진 유체가 쌓이고, 점성이 그 느림을 바깥쪽으로 퍼뜨리기 때문입니다.</p>
+    <p>물체 표면의 유체는 벽에 붙어 속도가 0이고(점착 조건), 벽에서 멀어지며 바깥 흐름 속도 \(U\)까지 빨라진다. 이 속도 변화가 일어나는 얇은 층이 경계층이다. 경계층 밖은 점성 효과가 작아 포텐셜 흐름처럼 다룰 수 있다. 그 두께 \(\delta\)는 속도가 바깥 흐름의 99%가 되는 벽에서의 거리로 정한다.</p>
+    <p>경계층의 상태는 앞전에서 거리 \(x\)를 길이로 쓴 국소 Reynolds 수 \(\text{Re}_x = Ux/\nu\)로 판단하며, 평판에서는 약 \(5\times10^5\)에서 층류가 난류로 천이한다. 경계층은 앞전에서 0으로 시작해 하류로 갈수록 두꺼워진다. 벽 마찰로 느려진 유체가 쌓이고, 점성이 그 느림을 바깥쪽으로 퍼뜨리기 때문이다.</p>
 
     <h3><span class="no">3.1.2</span>층류와 난류 경계층</h3>
     <div class="tb-env thm">
       <span class="lb">평판 경계층 (압력 구배 없음)</span>
-      <p>층류(Blasius 해, \(\text{Re}_x &lt; 5\times10^5\)): \(\dfrac{\delta}{x} = \dfrac{5.0}{\sqrt{\text{Re}_x}}\), \(c_f = \dfrac{0.664}{\sqrt{\text{Re}_x}}\), 길이 \(L\) 평균 \(C_f = \dfrac{1.328}{\sqrt{\text{Re}_L}}\)</p>
-      <p>난류(1/7 제곱 법칙, 앞전부터 난류로 가정): \(\dfrac{\delta}{x} = \dfrac{0.37}{\text{Re}_x^{1/5}}\), \(C_f = \dfrac{0.074}{\text{Re}_L^{1/5}}\)</p>
-      <p>천이 포함(\(5\times10^5\)에서 천이): \(C_f = \dfrac{0.074}{\text{Re}_L^{1/5}} - \dfrac{1742}{\text{Re}_L}\)</p>
-      <p>마찰 항력(한 면) \(D = C_f\cdot\frac12\rho U^2\cdot bL\).</p>
+      <p>층류(Blasius 해, \(\text{Re}_x &lt; 5\times10^5\))에서는 \(\dfrac{\delta}{x} = \dfrac{5.0}{\sqrt{\text{Re}_x}}\), \(c_f = \dfrac{0.664}{\sqrt{\text{Re}_x}}\)이고, 길이 \(L\)의 평균은 \(C_f = \dfrac{1.328}{\sqrt{\text{Re}_L}}\)이다.</p>
+      <p>난류(1/7 제곱 법칙, 앞전부터 난류로 가정)에서는 \(\dfrac{\delta}{x} = \dfrac{0.37}{\text{Re}_x^{1/5}}\), \(C_f = \dfrac{0.074}{\text{Re}_L^{1/5}}\)이다.</p>
+      <p>\(5\times10^5\)에서 천이하는 경우를 포함하면 \(C_f = \dfrac{0.074}{\text{Re}_L^{1/5}} - \dfrac{1742}{\text{Re}_L}\)이다.</p>
+      <p>한 면의 마찰 항력은 \(D = C_f\cdot\frac12\rho U^2\cdot bL\)이다.</p>
     </div>
-    <p>난류 경계층은 소용돌이가 바깥의 빠른 유체를 벽 쪽으로 섞어 들이므로 더 두껍고 벽 근처 속도 기울기가 가팔라 마찰이 큽니다. 국소 마찰계수 \(c_f\)는 앞전에서 크고 하류로 갈수록 작아집니다(층류는 \(x^{-1/2}\)에 비례).</p>
+    <p>난류 경계층은 소용돌이가 바깥의 빠른 유체를 벽 쪽으로 섞어 들이므로 더 두껍고, 벽 근처 속도 기울기가 가팔라 마찰이 크다. 한편 국소 마찰계수 \(c_f\)는 앞전에서 크고 하류로 갈수록 작아지며, 층류에서는 \(x^{-1/2}\)에 비례한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1 <span class="nm">(1 m 평판)</span></span>
       <p>길이 1 m 평판에 공기(\(\nu = 1.5\times10^{-5}\) m²/s, \(\rho = 1.2\) kg/m³)가 (가) 5 m/s, (나) 30 m/s로 흐른다. 뒷전의 경계층 두께와 폭 1 m당 한 면의 마찰 항력은?</p>
     </div>
-    <p><i>풀이.</i> (가) \(\text{Re}_L = 3.33\times10^5\) 층류. \(\delta = 5.0/\sqrt{3.33\times10^5} = 8.7\) mm, \(C_f = 0.0023\), \(D = 0.0023\times15\times1 = 0.035\) N. (나) \(\text{Re}_L = 2\times10^6\), 앞쪽 0.25 m는 층류. 난류 두께 어림 \(\delta = 0.37/(2\times10^6)^{0.2} = 20\) mm. \(C_f = 0.00406 - 0.00087 = 0.0032\), \(D = 0.0032\times540 = 1.72\) N. 속도는 6배인데 항력은 약 50배로, 난류와 \(U^2\)의 영향이 겹쳤습니다.</p>
+    <p><i>풀이.</i> (가) \(\text{Re}_L = 3.33\times10^5\)이므로 층류이다. \(\delta = 5.0/\sqrt{3.33\times10^5} = 8.7\) mm, \(C_f = 0.0023\)이므로 \(D = 0.0023\times15\times1 = 0.035\) N이다. (나) \(\text{Re}_L = 2\times10^6\)이고, 앞쪽 0.25 m는 층류이다. 난류 두께를 어림하면 \(\delta = 0.37/(2\times10^6)^{0.2} = 20\) mm이다(그림 1). \(C_f = 0.00406 - 0.00087 = 0.0032\)이므로 \(D = 0.0032\times540 = 1.72\) N이다. 처음 질문의 첫째 답이 이 두께이다.</p>
+    <p>즉 속도는 6배인데 항력은 약 50배이며, 처음 질문의 둘째 답이 이것이다. \(U^2\)에 따른 36배에, 경계층 대부분이 난류가 되며 마찰계수가 커진 효과가 겹쳤기 때문이다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 공식들은 압력 구배가 없는 매끈한 평판용입니다. 곡면이나 거친 면은 다릅니다. (2) 천이 Re는 바깥 흐름의 난류 세기와 표면 거칠기에 따라 \(10^5\)~\(3\times10^6\)으로 달라집니다. (3) 경계층이 두께 1~2 cm로 얇다는 것이 경계층 근사(벽에 수직한 압력 변화 무시)의 근거입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>이 공식들을 아무 표면에나 쓰는 실수가 흔하다. 공식들은 압력 구배가 없는 매끈한 평판용이며, 곡면이나 거친 면은 다르다. 또 천이 Re는 바깥 흐름의 난류 세기와 표면 거칠기에 따라 \(10^5\)~\(3\times10^6\)으로 달라진다. 경계층이 1~2 cm로 얇다는 점이 벽에 수직한 압력 변화를 무시하는 경계층 근사의 근거이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>경계층: 점착 조건으로 생기는 얇은 속도 변화 층, \(\delta\)는 99% 속도 지점.</li>
-        <li>층류 \(\delta/x = 5.0/\sqrt{\text{Re}_x}\), \(C_f = 1.328/\sqrt{\text{Re}_L}\); 난류 \(\delta/x = 0.37\text{Re}_x^{-1/5}\), \(C_f = 0.074\text{Re}_L^{-1/5}\).</li>
-        <li>천이 포함 \(C_f = 0.074\text{Re}_L^{-1/5} - 1742/\text{Re}_L\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>경계층은 점착 조건 때문에 생기는 얇은 속도 변화 층이며, 두께 \(\delta\)는 99% 속도 지점이다. 층류에서는 \(\delta/x = 5.0/\sqrt{\text{Re}_x}\), \(C_f = 1.328/\sqrt{\text{Re}_L}\)이고, 난류에서는 \(\delta/x = 0.37\text{Re}_x^{-1/5}\), \(C_f = 0.074\text{Re}_L^{-1/5}\)이다. 천이를 포함하면 \(C_f = 0.074\text{Re}_L^{-1/5} - 1742/\text{Re}_L\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 (가)에서 앞전에서 0.25 m 지점의 경계층 두께는?
-          <details><summary>답</summary><p>\(\text{Re}_x = 8.33\times10^4\), \(\delta = 0.25\times5/288.7 = 4.3\) mm. 두께는 \(\sqrt x\)에 비례한다.</p></details>
+          <details><summary>답</summary><p>\(\text{Re}_x = 8.33\times10^4\), \(\delta = 0.25\times5/288.7 = 4.3\) mm이다. 두께는 \(\sqrt x\)에 비례한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>물(\(\nu = 1.0\times10^{-6}\))이 2 m/s로 길이 0.5 m 평판을 따라 흐를 때 천이 위치는?
-          <details><summary>답</summary><p>\(x = 5\times10^5\times10^{-6}/2 = 0.25\) m, 판의 가운데.</p></details>
+          <details><summary>답</summary><p>\(x = 5\times10^5\times10^{-6}/2 = 0.25\) m로, 판의 가운데이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>층류 평판의 항력이 \(U^{1.5}\)에 비례함을 보이고, 길이를 두 배로 하면 항력이 몇 배가 되는지 구하여라.
-          <details><summary>답</summary><p>\(D \propto C_fU^2L \propto (UL)^{-1/2}U^2L = U^{1.5}L^{0.5}\). 길이 두 배면 \(\sqrt2 = 1.41\)배. 뒤쪽은 경계층이 두꺼워 마찰이 작기 때문이다.</p></details>
+          <details><summary>답</summary><p>\(D \propto C_fU^2L \propto (UL)^{-1/2}U^2L = U^{1.5}L^{0.5}\)이다. 그래서 길이가 두 배이면 \(\sqrt2 = 1.41\)배. 뒤쪽은 경계층이 두꺼워 마찰이 작기 때문이다.</p></details>
         </li>
       </ol>
     </div>
