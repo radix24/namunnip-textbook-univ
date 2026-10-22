@@ -8,47 +8,67 @@
 <article class="card q-card" id="text-m23-induced" data-kind="본문" data-std="수학23-02-02">
   <header class="card-head"><span class="no"></span><h2>유도 준동형과 위상 불변성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>연속사상 \(f : (X, x_0) \to (Y, y_0)\)가 유도하는 준동형 \(f_* : \pi_1(X, x_0) \to \pi_1(Y, y_0)\)를 정의한다.</li>
-        <li>함자성 \((g\circ f)_* = g_*\circ f_*\), \((\mathrm{id})_* = \mathrm{id}\)를 보이고, 위상동형이면 기본군이 동형임을 결론짓는다.</li>
-        <li>호모토피 동치도 기본군의 동형을 줌을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>기본군 (<a href="02-01.html">2.1절</a>), 호모토피 동치 (<a href="01-03.html">1.3절</a>), 군 준동형 (<a href="../math12/index.html">수학12</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">연속사상은 고리를 고리로 보내므로, 두 공간의 기본군 사이에도 무언가를 유도할 것 같다. 그렇게 유도된 것은 어떤 성질을 가질까? 그 성질을 쓰면 두 공간이 위상동형이 아님을 대수적으로 보일 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="평면과 원점을 뺀 평면에서 같은 고리">
+        <circle cx="130" cy="95" r="62" class="a" style="fill:none"/>
+        <circle cx="130" cy="95" r="42" class="gd" style="fill:none"/>
+        <circle cx="130" cy="95" r="22" class="gd" style="fill:none"/>
+        <circle cx="130" cy="95" r="3" class="fk"/>
+        <text x="130" y="185" text-anchor="middle" class="s">ℝ² 안의 고리</text>
+        <text x="130" y="203" text-anchor="middle" class="ta">점으로 줄어든다, [α] = 1</text>
+        <circle cx="400" cy="95" r="62" class="a" style="fill:none"/>
+        <circle cx="400" cy="95" r="7" class="d" style="fill:none"/>
+        <line x1="462.0" y1="95.0" x2="423.6" y2="95.0" class="gd"/>
+        <path d="M420.0,95.0 L426.0,98.0 L426.0,92.0 Z" class="fgd"/>
+        <line x1="443.8" y1="138.8" x2="416.7" y2="111.7" class="gd"/>
+        <path d="M414.1,109.1 L416.3,115.5 L420.5,111.3 Z" class="fgd"/>
+        <line x1="400.0" y1="157.0" x2="400.0" y2="118.6" class="gd"/>
+        <path d="M400.0,115.0 L397.0,121.0 L403.0,121.0 Z" class="fgd"/>
+        <line x1="356.2" y1="138.8" x2="383.3" y2="111.7" class="gd"/>
+        <path d="M385.9,109.1 L379.5,111.3 L383.7,115.5 Z" class="fgd"/>
+        <line x1="338.0" y1="95.0" x2="376.4" y2="95.0" class="gd"/>
+        <path d="M380.0,95.0 L374.0,92.0 L374.0,98.0 Z" class="fgd"/>
+        <line x1="356.2" y1="51.2" x2="383.3" y2="78.3" class="gd"/>
+        <path d="M385.9,80.9 L383.7,74.5 L379.5,78.7 Z" class="fgd"/>
+        <line x1="400.0" y1="33.0" x2="400.0" y2="71.4" class="gd"/>
+        <path d="M400.0,75.0 L403.0,69.0 L397.0,69.0 Z" class="fgd"/>
+        <line x1="443.8" y1="51.2" x2="416.7" y2="78.3" class="gd"/>
+        <path d="M414.1,80.9 L420.5,78.7 L416.3,74.5 Z" class="fgd"/>
+        <text x="400" y="185" text-anchor="middle" class="s">ℝ² − {0} 안의 고리</text>
+        <text x="400" y="203" text-anchor="middle" class="td">구멍에 걸린다, [α] ≠ 1</text>
+      </svg>
+      <figcaption>그림 1. 같은 원 모양의 고리(파랑)가 평면에서는 점점 작은 원(회색)을 거쳐 한 점으로 줄어들지만, 원점을 뺀 평면에서는 빠진 점(빨강)에 걸려 줄어들지 못한다. 그래서 원을 평면에 넣는 포함사상은 단사이지만, 기본군에서는 \(\mathbb Z\)를 자명군으로 보낸다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>기본군(<a href="02-01.html">2.1절</a>), 호모토피 동치(<a href="01-03.html">1.3절</a>), 군 준동형(<a href="../math12/index.html">수학12</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>유도 준동형</h3>
-    <p>\(f(x_0) = y_0\)인 연속사상 \(f\)는 고리 \(\alpha\)를 고리 \(f\circ\alpha\)로 보냅니다. 경로 호모토피 \(H\)는 \(f\circ H\)로 보내지므로</p>
+    <p>\(f(x_0) = y_0\)인 연속사상 \(f\)는 고리 \(\alpha\)를 고리 \(f\circ\alpha\)로 보내고, 경로 호모토피 \(H\)는 \(f\circ H\)로 보낸다. 그러므로 다음이 잘 정의되며, \(f\circ(\alpha * \beta) = (f\circ\alpha) * (f\circ\beta)\)이므로 준동형이다. 이를 \(f\)가 유도하는 준동형이라 한다.</p>
     \[f_*([\alpha]) = [f\circ\alpha]\]
-    <p>가 잘 정의되고, \(f\circ(\alpha * \beta) = (f\circ\alpha) * (f\circ\beta)\)라 준동형입니다.</p>
-    <div class="tb-env thm"><b>정리 2.2.1 (함자성)</b> \((g\circ f)_* = g_*\circ f_*\), \((\mathrm{id}_X)_* = \mathrm{id}_{\pi_1(X, x_0)}\).</div>
-    <div class="tb-env thm"><b>따름정리 2.2.2</b> \(f : X \to Y\)가 위상동형이면 \(f_*\)는 동형사상이다.</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>역사상 \(g\)에 대해 \(g_*f_* = (gf)_* = \mathrm{id}\), \(f_*g_* = \mathrm{id}\). <span class="qed">∎</span></p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.1 <span class="nm">(함자성)</span></span>
+      <p>\((g\circ f)_* = g_*\circ f_*\)이고 \((\mathrm{id}_X)_* = \mathrm{id}_{\pi_1(X, x_0)}\)이다.</p>
     </div>
-    <p>이것이 기본군을 쓰는 방식입니다. 두 공간의 기본군이 다르면 위상동형이 아닙니다. 위상수학의 질문(같은 공간인가?)을 대수의 질문(같은 군인가?)으로 옮기는 것이 대수적 위상수학의 기본 전략입니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">따름정리 2.2.2</span>
+      <p>\(f : X \to Y\)가 위상동형이면 \(f_*\)는 동형사상이다.</p>
+    </div>
+    <p class="tb-proof"><span class="lb">증명.</span>역사상 \(g\)에 대해 함자성으로 \(g_*f_* = (gf)_* = \mathrm{id}\)이고 \(f_*g_* = \mathrm{id}\)이다. <span class="qed">∎</span></p>
+    <p>이것이 기본군을 쓰는 방식이다. 두 공간의 기본군이 다르면 위상동형이 아니다. 즉 같은 공간인가라는 위상수학의 질문을 같은 군인가라는 대수의 질문으로 옮기는 것이 대수적 위상수학의 기본 전략이다.</p>
 
     <h3><span class="no">2.2.2</span>호모토피 불변성</h3>
-    <div class="tb-env thm"><b>정리 2.2.3</b> \(f \simeq g : X \to Y\)이고 호모토피 \(H\)가 \(H(x_0, t) = y_0\)으로 기점을 고정하면 \(f_* = g_*\). 일반적으로 \(H(x_0, \cdot)\)이라는 경로 \(h\)에 대해 \(g_* = \hat h\circ f_*\). 따라서 호모토피 동치는 기본군의 동형을 준다.</div>
-    <p>그래서 \(\mathbb R^2 - \{0\}\)과 \(S^1\), 뫼비우스 띠와 \(S^1\)은 기본군이 같고, 수축 가능 공간의 기본군은 자명합니다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.3</span>
+      <p>\(f \simeq g : X \to Y\)이고 호모토피 \(H\)가 \(H(x_0, t) = y_0\)으로 기점을 고정하면 \(f_* = g_*\)이다. 일반적으로는 경로 \(h = H(x_0, \cdot)\)에 대해 \(g_* = \hat h\circ f_*\)이다. 따라서 호모토피 동치는 기본군의 동형을 준다.</p>
+    </div>
+    <p>그래서 \(\mathbb R^2 - \{0\}\)과 \(S^1\), 뫼비우스 띠와 \(S^1\)은 기본군이 같고, 수축 가능 공간의 기본군은 자명하다.</p>
 
     <h3><span class="no">2.2.3</span>포함사상과 수축</h3>
-    <p>부분공간 \(A \subset X\)로의 수축 \(r : X \to A\) (\(r|_A = \mathrm{id}\))가 있으면 포함사상 \(i\)에 대해 \(r\circ i = \mathrm{id}_A\)이므로 \(r_*i_* = \mathrm{id}\), 즉 \(i_*\)는 단사이고 \(r_*\)는 전사입니다. 이 간단한 관찰이 2.4절 브라우어 부동점 정리의 핵심입니다. 원판 \(D^2\)에서 경계 \(S^1\)로의 수축이 있다면 \(\pi_1(S^1) = \mathbb Z\)가 \(\pi_1(D^2) = 1\)에 단사로 들어가야 해 모순입니다.</p>
+    <p>부분공간 \(A \subset X\)로의 수축 \(r : X \to A\), 곧 \(r|_A = \mathrm{id}\)인 사상이 있다고 하자. 그러면 포함사상 \(i\)에 대해 \(r\circ i = \mathrm{id}_A\)이므로 \(r_*i_* = \mathrm{id}\)이다. 즉 \(i_*\)는 단사이고 \(r_*\)는 전사이다. 이 간단한 관찰이 2.4절 브라우어 부동점 정리의 열쇠이다. 원판 \(D^2\)에서 경계 \(S^1\)로의 수축이 있다면 \(\pi_1(S^1) = \mathbb Z\)가 \(\pi_1(D^2) = 1\)에 단사로 들어가야 하므로 모순이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 단사인 연속사상이 기본군에서도 단사라 여긴다. 원을 평면에 넣는 포함 \(S^1 \to \mathbb R^2\)는 단사지만 \(f_*\)는 \(\mathbb Z \to 1\)이다. (2) 기본군이 같으면 위상동형이라 여긴다. 점과 \(\mathbb R^n\), \(S^2\)와 점은 기본군이 같다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>단사인 연속사상은 기본군에서도 단사라고 여기기 쉽지만, 그림 1의 포함사상 \(S^1 \to \mathbb R^2\)는 단사인데도 \(f_*\)는 \(\mathbb Z \to 1\)이다. 또 기본군이 같으면 위상동형이라고 생각하는 것도 틀렸다. 점과 \(\mathbb R^n\), \(S^2\)와 점은 기본군이 같지만 위상동형이 아니다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(f_*[\alpha] = [f\circ\alpha]\), 함자성.</li>
-        <li>위상동형, 호모토피 동치이면 기본군 동형.</li>
-        <li>수축 \(r\)이 있으면 \(i_*\) 단사: 브라우어 정리의 열쇠.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 연속사상 \(f\)는 기본군 사이의 준동형 \(f_*([\alpha]) = [f\circ\alpha]\)를 유도하고, 이는 합성과 항등사상을 보존하며 호모토피로 바꿔도 변하지 않는다. 그래서 위상동형이나 호모토피 동치는 기본군의 동형을 주고, 기본군이 다른 두 공간은 위상동형이 아니다. 수축이 있으면 포함사상이 기본군에서 단사가 된다는 사실도 여기서 나온다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.4</span>연습문제</h3>
