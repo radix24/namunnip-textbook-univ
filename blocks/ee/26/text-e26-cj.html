@@ -8,26 +8,26 @@
 <article class="card q-card" id="text-e26-cj" data-kind="본문" data-std="전전26-02-03">
   <header class="card-head"><span class="no"></span><h2>접합 정전용량과 바랙터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>역방향 바이어스에서 공핍 폭이 넓어져 정전용량이 줄어드는 원리를 안다.</li>
-        <li>\(C_j = \varepsilon A/W\), \(W \propto \sqrt{V_{bi} + V_R}\)를 계산한다.</li>
-        <li>가변 용량 다이오드(바랙터)의 응용을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>공핍 폭 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">라디오의 채널을 바꾸거나 휴대전화가 주파수를 맞출 때, 회로 안에서는 기계적으로 돌리는 가변 축전기 대신 전압으로 정전용량을 바꾸는 다이오드가 쓰인다. 역바이어스 다이오드는 왜 축전기처럼 동작할까? 그리고 그 정전용량은 전압에 따라 얼마나 바뀔까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 접합 정전용량(개형). N_D = 10¹⁶, V_bi = 0.8 V인 p⁺n 접합에서 역바이어스를 0, 3.2, 7.2 V로 키우면 공핍 폭이 0.322, 0.719, 1.017 μm로 넓어지고 단위 넓이 정전용량은 32.2, 14.4, 10.2 nF/cm²로 줄어 (V_bi + V_R)^(−1/2)에 비례한다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 40 C140 100 220 125 440 140" class="a" fill="none" stroke-width="2.5"/>
+        <g class="fd"><circle cx="80" cy="40" r="5"/><circle cx="230" cy="122" r="5"/><circle cx="380" cy="137" r="5"/></g>
+        <g class="s"><text x="90" y="36" class="ta">32.2</text><text x="236" y="114">14.4</text><text x="386" y="130">10.2 nF/cm²</text><text x="76" y="186">0</text><text x="220" y="186">3.2</text><text x="370" y="186">7.2 V_R</text><text x="250" y="60" class="td">C ∝ (V_bi + V_R)^(−1/2)</text></g>
+      </svg>
+      <figcaption>그림 1. 역바이어스를 키우면 공핍층이 넓어져 두 중성 영역 사이의 간격이 커지므로, 정전용량이 전압의 제곱근에 반비례해 준다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>공핍 폭(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>전압으로 바뀌는 축전기</h3>
-    <p>공핍 영역은 두 도체(중성 영역) 사이 유전체처럼 작동해 \(C_j/A = \varepsilon_s/W\). 한쪽 계단 접합에서 \(W = \sqrt{2\varepsilon_s(V_{bi} + V_R)/(qN)}\)이므로 C는 \((V_{bi} + V_R)^{-1/2}\)에 비례합니다.</p><pre><code>import math
+    <p>공핍 영역은 두 도체(중성 영역) 사이의 유전체처럼 작동하므로, \(C_j/A = \varepsilon_s/W\)이다. 처음 질문의 첫째 답이 이것이다. 그리고 한쪽 계단 접합에서 \(W = \sqrt{2\varepsilon_s(V_{bi} + V_R)/(qN)}\)이므로, C는 \((V_{bi} + V_R)^{-1/2}\)에 비례한다. 아래 코드는 세 역바이어스에서 W와 C를 계산한다.</p>
+    <pre><code>import math
 q, eps, N, Vbi = 1.602e-19, 11.7 * 8.854e-14, 1e16, 0.8
 for VR in (0, 3.2, 7.2):
     W = math.sqrt(2 * eps * (Vbi + VR) / (q * N))
     print(f"V_R {VR:3.1f} V: W {W * 1e4:.3f} um, C/A {eps / W * 1e9:.1f} nF/cm^2")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>V_R 0.0 V: W 0.322 um, C/A 32.2 nF/cm^2
 V_R 3.2 V: W 0.719 um, C/A 14.4 nF/cm^2
 V_R 7.2 V: W 1.017 um, C/A 10.2 nF/cm^2</code></pre>
@@ -35,37 +35,36 @@ V_R 7.2 V: W 1.017 um, C/A 10.2 nF/cm^2</code></pre>
       <span class="lb">예제 2.3.1</span>
       <p>p⁺n 접합, N_D = 10¹⁶ cm⁻³, V_bi = 0.8 V. 역바이어스 0과 7.2 V에서 공핍 폭과 단위 넓이 정전용량은?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 0 V: 0.322 μm, 32.2 nF/cm², 7.2 V: 1.017 μm, 10.2 nF/cm²로 V_bi + V_R이 10배가 되어 C가 1/√10배입니다. 이 성질로 바랙터가 전압 제어 발진기의 주파수를 바꿉니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 0 V는 0.322 μm, 32.2 nF/cm²이고, 7.2 V는 1.017 μm, 10.2 nF/cm²이다(그림 1). 즉 V_bi + V_R이 10배가 되어 C가 1/√10배가 된다. 처음 질문의 둘째 답이 이것이다. 그래서 바랙터는 이 성질로 전압 제어 발진기의 주파수를 바꾼다.</p>
+    <p>한편 바랙터용 다이오드는 도핑 분포를 일부러 바꿔, C가 전압에 더 급하게 변하도록 만들기도 한다. 그러면 같은 전압 범위에서 주파수를 더 넓게 바꿀 수 있다.</p>
+    <p>그리고 일반 다이오드와 트랜지스터의 접합에도 같은 정전용량이 있다. 따라서 고속 스위칭 회로에서는 이 접합 정전용량이 충전과 방전에 시간을 써서 동작 속도를 제한한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "다이오드 정전용량은 일정": 바이어스에 따라 크게 바뀝니다. (2) "순방향에서도 접합 용량만 보면 된다": 순방향은 확산 용량이 커집니다.</div>
+    <p>예를 들어 바랙터 하나와 인덕터로 만든 LC 공진기의 주파수는 \(1/(2\pi\sqrt{LC})\)이다. 그러므로 C가 10배 바뀌면 주파수는 약 3.2배 바뀌며, 역전압 몇 볼트로 넓은 주파수 범위를 조절할 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>C_j/A = ε_s/W, W ∝ √(V_bi + V_R).</li>
-        <li>예: 0 V 32.2 → 7.2 V 10.2 nF/cm².</li>
-        <li>바랙터 → VCO 튜닝.</li>
-      </ol>
-    </div>
+    <p>그런데 접합 정전용량은 바이어스에 따라 바뀌므로, 큰 신호가 걸리면 정전용량이 신호와 함께 흔들려 일그러짐이 생긴다. 그래서 바랙터 회로는 신호 진폭을 역바이어스보다 충분히 작게 유지한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>다이오드 정전용량은 일정하다고 여기기 쉽다. 바이어스에 따라 크게 바뀐다. 또 순방향에서도 접합 용량만 보면 된다고 생각하기 쉬운데, 순방향에서는 확산 용량이 커진다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>접합 정전용량은 C_j/A = ε_s/W이고, W ∝ √(V_bi + V_R)이다. 예제에서는 0 V의 32.2 nF/cm²가 7.2 V에서 10.2 nF/cm²로 준다. 바랙터는 이 성질로 VCO를 튜닝한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>V_bi + V_R이 4배가 되면 C는?
-          <details><summary>답</summary><p>1/2.</p></details>
+          <details><summary>답</summary><p>1/2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>넓이 100 μm × 100 μm, 32.2 nF/cm²의 C는?
-          <details><summary>답</summary><p>약 3.2 pF.</p></details>
+          <details><summary>답</summary><p>약 3.2 pF이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>1/C² 대 V_R 그래프로 얻는 것은?
-          <details><summary>답</summary><p>기울기로 도핑 농도, 절편으로 V_bi.</p></details>
+          <details><summary>답</summary><p>기울기로 도핑 농도, 절편으로 V_bi이다.</p></details>
         </li>
       </ol>
     </div>
