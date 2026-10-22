@@ -8,66 +8,70 @@
 <article class="card q-card" id="text-s11-cohort" data-kind="본문" data-std="응통11-02-04">
   <header class="card-head"><span class="no"></span><h2>코호트와 퍼널 분석</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>퍼널의 단계별 전환율과 전체 전환율을 계산한다.</li>
-        <li>가입 시점별 코호트 잔존표를 만들고 읽는다.</li>
-        <li>전체 평균이 구성 변화 때문에 움직이는 경우를 가려낸다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>SQL 집계 (<a href="02-03.html">2.3절</a>), 비율과 조건부 확률 (응통6).</li>
-      </ul>
-    </div>
-
-    <h3>사용자는 단계를 거쳐 떠난다</h3>
-    <p>서비스 지표는 대개 "몇 명이 다음 단계로 갔는가", "몇 명이 계속 남았는가"를 묻습니다. 퍼널은 한 시점의 단계 이동을, 코호트는 같은 시기에 시작한 사람들의 시간에 따른 변화를 봅니다.</p>
+    <p class="q-ask">쇼핑 앱 방문자 1만 명 가운데 600명만 구매했다. 나머지 9,400명은 어디에서 떠났을까? 또 1월에 가입한 사람과 3월에 가입한 사람 가운데 어느 쪽이 더 오래 남는지는 어떻게 공정하게 비교할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="구매 퍼널 막대그래프. 방문 10,000명, 상품 조회 4,000명, 장바구니 1,200명, 구매 600명이며, 단계별 전환율은 40%, 30%, 50%이다. 조회에서 장바구니로 가는 단계가 빨강으로 강조되어 가장 많이 빠지는 곳임을 보여 준다">
+        <line x1="55" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="152" text-anchor="end" class="s">2,500</text>
+        <text x="50" y="120" text-anchor="end" class="s">5,000</text>
+        <text x="50" y="88" text-anchor="end" class="s">7,500</text>
+        <text x="50" y="56" text-anchor="end" class="s">10,000</text>
+        <text x="61" y="24" class="s">사람 수</text>
+        <rect x="65.6" y="52" width="60" height="128" class="la a"/><text x="95.6" y="195" text-anchor="middle" class="s">방문</text><text x="95.6" y="47" text-anchor="middle" class="s">10,000</text>
+        <rect x="146.9" y="128.8" width="60" height="51.2" class="la a"/><text x="176.9" y="195" text-anchor="middle" class="s">상품 조회</text><text x="176.9" y="123.8" text-anchor="middle" class="s">4,000</text>
+        <text x="136.2" y="106.8" text-anchor="middle" class="s ta">→ 40%</text>
+        <rect x="228.1" y="164.6" width="60" height="15.4" class="ld d"/><text x="258.1" y="195" text-anchor="middle" class="s">장바구니</text><text x="258.1" y="159.6" text-anchor="middle" class="s">1,200</text>
+        <text x="217.5" y="138.8" text-anchor="middle" class="s td">→ 30%</text>
+        <rect x="309.4" y="172.3" width="60" height="7.7" class="la a"/><text x="339.4" y="195" text-anchor="middle" class="s">구매</text><text x="339.4" y="167.3" text-anchor="middle" class="s">600</text>
+        <text x="298.8" y="138.8" text-anchor="middle" class="s ta">→ 50%</text>
+        <text x="395" y="44" class="s">전체 전환율</text><text x="395" y="60" class="s">0.4 × 0.3 × 0.5 = 6%</text><text x="395" y="92" class="s td">조회 → 장바구니에서</text><text x="395" y="108" class="s td">가장 많이 빠진다</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.4.1의 구매 퍼널. 전체 전환율 6%는 단계별 전환율의 곱이며, 상품 조회에서 장바구니로 가는 단계(빨강, 30%)에서 가장 많이 빠진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>SQL 집계(<a href="02-03.html">2.3절</a>)와 비율과 조건부 확률(응통6)을 쓴다.</div>
+    <p>서비스 지표는 대개 몇 명이 다음 단계로 갔는지, 몇 명이 계속 남았는지를 묻는다. 처음 질문의 두 물음에 대한 답이 각각 퍼널과 코호트이다. 퍼널은 한 시점의 단계 이동을 보고(그림 1), 코호트는 같은 시기에 시작한 사람들의 시간에 따른 변화를 본다.</p>
 
     <h3><span class="no">2.4.1</span>퍼널</h3>
-    <p>방문 → 상품 조회 → 장바구니 → 구매처럼 단계를 정하고, 단계 \(k\)의 전환율을 \(n_{k+1}/n_k\)로 둡니다. 전체 전환율은 단계별 전환율의 곱입니다.</p>
-    \[\frac{n_K}{n_1} = \prod_{k=1}^{K-1} \frac{n_{k+1}}{n_k}.\]
-    <p>가장 많이 빠지는 단계가 개선의 첫 후보지만, 단계마다 개선 난이도가 다르므로 1.5절의 우선순위 점수와 함께 봅니다.</p>
+    <p>방문, 상품 조회, 장바구니, 구매처럼 단계를 정하고, 단계 \(k\)의 전환율을 \(n_{k+1}/n_k\)로 둔다. 그러면 전체 전환율은 단계별 전환율의 곱이다.</p>
+    \[ \frac{n_K}{n_1} = \prod_{k=1}^{K-1} \frac{n_{k+1}}{n_k} \]
+    <p>가장 많이 빠지는 단계가 개선의 첫 후보이다. 다만 단계마다 개선 난이도가 다르므로 1.5절의 우선순위 점수와 함께 본다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>방문 10,000, 상품 조회 4,000, 장바구니 1,200, 구매 600일 때 단계별 전환율과 전체 전환율은 얼마인가?</p>
+    </div>
+    <p><i>풀이.</i> 단계별로 40%, 30%, 50%이다. 그러므로 전체는 \(0.4 \times 0.3 \times 0.5 = 0.06\), 곧 \(600/10{,}000 = 6\%\)이다. 조회에서 장바구니로 가는 단계(30%)에서 가장 많이 빠진다.</p>
 
     <h3><span class="no">2.4.2</span>코호트 잔존표</h3>
-    <p>가입한 달(코호트)을 행, 가입 후 경과 개월을 열로 두고 칸에 "그 달에 활동한 비율"을 적습니다. 같은 열(같은 나이)끼리 비교해야 공정합니다. 최근 코호트는 오른쪽 칸이 아직 비어 있는 삼각형 모양이 됩니다.</p>
+    <p>가입한 달, 곧 코호트를 행에, 가입 후 경과 개월을 열에 두고, 칸에는 그 달에 활동한 비율을 적는다(표 1). 같은 열, 곧 같은 나이끼리 비교해야 공정하다. 그래서 최근 코호트는 오른쪽 칸이 아직 비어 있는 삼각형 모양이 된다.</p>
     <table class="tw">
-      <tr><th>코호트</th><th>가입자</th><th>1개월</th><th>2개월</th><th>3개월</th></tr>
-      <tr><td>1월</td><td>1000</td><td>40%</td><td>30%</td><td>26%</td></tr>
-      <tr><td>2월</td><td>800</td><td>45%</td><td>34%</td><td></td></tr>
-      <tr><td>3월</td><td>1200</td><td>38%</td><td></td><td></td></tr>
+      <caption>표 1. 월별 가입 코호트의 잔존율</caption>
+      <thead><tr><th>코호트</th><th>가입자</th><th>1개월</th><th>2개월</th><th>3개월</th></tr></thead>
+      <tbody>
+        <tr><td>1월</td><td>1,000</td><td>40%</td><td>30%</td><td>26%</td></tr>
+        <tr><td>2월</td><td>800</td><td>45%</td><td>34%</td><td></td></tr>
+        <tr><td>3월</td><td>1,200</td><td>38%</td><td></td><td></td></tr>
+      </tbody>
     </table>
 
     <h3><span class="no">2.4.3</span>구성 변화</h3>
-    <p>전체 잔존율은 유입 경로별 잔존율의 가중평균이므로, 각 경로의 잔존율이 그대로여도 잔존율이 낮은 경로의 비중이 커지면 전체가 떨어집니다(응통18의 심프슨 역설과 같은 구조). 전체가 움직이면 먼저 세부 집단으로 나눠 봅니다.</p>
+    <p>전체 잔존율은 유입 경로별 잔존율의 가중평균이다. 그러므로 각 경로의 잔존율이 그대로여도, 잔존율이 낮은 경로의 비중이 커지면 전체가 떨어진다. 이는 응통18의 심프슨 역설과 같은 구조이다. 따라서 전체 지표가 움직이면 먼저 세부 집단으로 나눠 본다.</p>
 
-    <div class="tb-env ex">
-      <span class="lb">예제 2.4.1</span>
-      <p>방문 10000, 상품 조회 4000, 장바구니 1200, 구매 600일 때 단계별 전환율과 전체 전환율은?</p>
-    </div>
-    <p><i>풀이.</i> 40%, 30%, 50%. 전체 \(0.4 \times 0.3 \times 0.5 = 0.06\), 곧 \(600/10000 = 6\%\). 조회 → 장바구니(30%)에서 가장 많이 빠집니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전체 전환율 = 단계별 전환율의 곱.</li>
-        <li>코호트는 같은 경과 시점끼리 비교합니다.</li>
-        <li>전체 지표의 변화는 구성 변화일 수 있으니 나눠 봅니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>퍼널의 전체 전환율은 단계별 전환율의 곱이며, 가장 많이 빠지는 단계가 개선의 첫 후보이다. 코호트 잔존표는 같은 경과 시점끼리 비교한다. 전체 지표의 변화는 구성 변화일 수 있으므로 세부 집단으로 나눠 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.4.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>위 잔존표에서 1개월 잔존율이 가장 높은 코호트와, 1월 코호트의 1개월 → 2개월 유지율(남은 사람 중 다시 남은 비율)은?
-          <details><summary>답</summary><p>2월(45%). \(30/40 = 0.75\).</p></details>
+        <li>표 1에서 1개월 잔존율이 가장 높은 코호트는 무엇인가? 1월 코호트에서 1개월째 남은 사람 가운데 2개월째에도 남은 비율은 얼마인가?
+          <details><summary>답</summary><p>2월 코호트(45%)이다. 1월 코호트는 \(30/40 = 0.75\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>예제에서 장바구니 전환을 30%에서 36%로 올리는 것과 구매 전환을 50%에서 55%로 올리는 것 중 구매 수가 더 늘어나는 쪽은?
-          <details><summary>답</summary><p>앞: \(4000 \times 0.36 \times 0.5 = 720\)(+120). 뒤: \(1200 \times 0.55 = 660\)(+60). 상대 개선이 20% 대 10%라 앞쪽이 큽니다.</p></details>
+      <ol start="2">
+        <li>예제 2.4.1에서 장바구니 전환을 30%에서 36%로 올리는 것과 구매 전환을 50%에서 55%로 올리는 것 가운데, 구매 수가 더 늘어나는 쪽은 어디인가?
+          <details><summary>답</summary><p>앞은 \(4{,}000 \times 0.36 \times 0.5 = 720\)(+120), 뒤는 \(1{,}200 \times 0.55 = 660\)(+60)이다. 상대 개선이 20% 대 10%이므로 앞쪽이 크다.</p></details>
         </li>
       </ol>
     </div>
