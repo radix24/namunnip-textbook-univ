@@ -8,61 +8,80 @@
 <article class="card q-card" id="text-s21-predictive" data-kind="본문" data-std="응통21-01-03">
   <header class="card-head"><span class="no"></span><h2>사후 예측분포</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>모수의 불확실성을 적분해 새 관측의 분포를 구한다.</li>
-        <li>베타-이항 예측분포를 계산한다.</li>
-        <li>추정값을 꽂아 넣은 예측과 사후 예측의 차이를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>사후분포 (<a href="01-01.html">1.1절</a>), 켤레 사전분포 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>모수가 아니라 다음 관측에 관심이 있을 때</h3>
-    <p>"다음 환자가 치료에 반응할 확률", "내일 사고가 3건 이상일 확률"처럼 실제 질문은 모수보다 관측 가능한 미래에 관한 경우가 많습니다. 베이즈 방법은 모수를 모른다는 사실까지 반영해 이런 확률을 계산합니다.</p>
+    <p class="q-ask">신약을 환자 10명에게 썼더니 7명이 반응했다. 의사가 궁금한 것은 반응률 \(\theta\) 자체보다, 다음 환자 세 명 가운데 몇 명이 반응할지이다. 추정값 하나를 이항분포에 꽂아 넣으면 될까? 그러면 \(\theta\)를 정확히 모른다는 사실은 어디로 갈까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="다음 세 번 가운데 성공 수의 확률 막대. 사후 예측인 베타-이항(파랑, Beta(8, 4))은 0.055, 0.220, 0.396, 0.330이고, θ = 2/3을 꽂아 넣은 이항(주황)은 0.037, 0.222, 0.444, 0.296이다. 사후 예측이 0과 3에서 더 크다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="97.5" y="195" text-anchor="middle" class="s">0</text>
+        <text x="172.5" y="195" text-anchor="middle" class="s">1</text>
+        <text x="247.5" y="195" text-anchor="middle" class="s">2</text>
+        <text x="322.5" y="195" text-anchor="middle" class="s">3</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="152" text-anchor="end" class="s">0.1</text>
+        <text x="55" y="120" text-anchor="end" class="s">0.2</text>
+        <text x="55" y="88" text-anchor="end" class="s">0.3</text>
+        <text x="55" y="56" text-anchor="end" class="s">0.4</text>
+        <text x="55" y="24" text-anchor="end" class="s">0.5</text>
+        <text x="360" y="209" text-anchor="end" class="s">다음 세 번 중 성공 수</text>
+        <text x="66" y="24" class="s">확률</text>
+        <rect x="66.5" y="162.4" width="26" height="17.6" class="fa"/>
+        <text x="79.5" y="158.4" text-anchor="middle" class="s ta">0.055</text>
+        <rect x="102.5" y="168.2" width="26" height="11.8" class="fc"/>
+        <text x="115.5" y="164.2" text-anchor="middle" class="s tc">0.037</text>
+        <rect x="141.5" y="109.6" width="26" height="70.4" class="fa"/>
+        <text x="154.5" y="105.6" text-anchor="middle" class="s ta">0.220</text>
+        <rect x="177.5" y="109" width="26" height="71" class="fc"/>
+        <text x="190.5" y="105" text-anchor="middle" class="s tc">0.222</text>
+        <rect x="216.5" y="53.3" width="26" height="126.7" class="fa"/>
+        <text x="229.5" y="49.3" text-anchor="middle" class="s ta">0.396</text>
+        <rect x="252.5" y="37.9" width="26" height="142.1" class="fc"/>
+        <text x="265.5" y="33.9" text-anchor="middle" class="s tc">0.444</text>
+        <rect x="291.5" y="74.4" width="26" height="105.6" class="fa"/>
+        <text x="304.5" y="70.4" text-anchor="middle" class="s ta">0.330</text>
+        <rect x="327.5" y="85.3" width="26" height="94.7" class="fc"/>
+        <text x="340.5" y="81.3" text-anchor="middle" class="s tc">0.296</text>
+        <text x="375" y="60" class="s ta">사후 예측</text><text x="375" y="76" class="s ta">베타-이항, Beta(8, 4)</text><text x="375" y="108" class="s tc">꽂아 넣은 예측</text><text x="375" y="124" class="s tc">이항, θ = 2/3</text><text x="375" y="156" class="s">양 끝이 더 두껍다</text>
+      </svg>
+      <figcaption>그림 1. 예제 1.3.1의 예측. 사후 예측(파랑)은 꽂아 넣은 예측(주황)보다 양 끝(0번, 3번)의 확률이 커서 더 넓게 퍼진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>사후분포(<a href="01-01.html">1.1절</a>)와 켤레 사전분포(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 \(\theta\)의 사후분포로 평균을 내는 것이다. 다음 환자가 반응할 확률이나 내일 사고가 3건 이상일 확률처럼, 실제 질문은 모수보다 관측 가능한 미래에 관한 경우가 많다. 베이즈 방법은 모수를 모른다는 사실까지 반영해 이런 확률을 계산하며, 그 결과는 추정값을 꽂아 넣은 예측보다 넓게 퍼진다(그림 1).</p>
 
     <h3><span class="no">1.3.1</span>정의</h3>
     <div class="tb-env def">
-      <span class="lb">정의 1.3.1</span>
-      <p>자료 \(\mathbf y\)를 본 뒤 새 관측 \(\tilde y\)의 <b>사후 예측분포</b>: \(p(\tilde y \mid \mathbf y) = \int p(\tilde y \mid \theta)\,p(\theta \mid \mathbf y)\,d\theta\).</p>
+      <span class="lb">정의 1.3.1 <span class="nm">(사후 예측분포)</span></span>
+      <p>자료 \(\mathbf y\)를 본 뒤 새 관측 \(\tilde y\)의 사후 예측분포는 \(p(\tilde y \mid \mathbf y) = \int p(\tilde y \mid \theta)\,p(\theta \mid \mathbf y)\,d\theta\)이다.</p>
     </div>
-    <p>모수마다의 예측을 사후 확률로 가중 평균한 것입니다. 표본 추출 오차(같은 \(\theta\)에서도 \(\tilde y\)가 흩어짐)와 모수 불확실성이 함께 들어가므로, 추정값 \(\hat\theta\)를 꽂아 넣은 \(p(\tilde y \mid \hat\theta)\)보다 넓게 퍼집니다. 응통10 1.5절의 예측구간이 신뢰구간보다 넓은 것과 같은 이유입니다.</p>
+    <p>즉 모수마다의 예측을 사후 확률로 가중 평균한 것이다. 여기에는 같은 \(\theta\)에서도 \(\tilde y\)가 흩어지는 표본 추출 오차와 모수의 불확실성이 함께 들어간다. 그래서 추정값 \(\hat\theta\)를 꽂아 넣은 \(p(\tilde y \mid \hat\theta)\)보다 넓게 퍼진다. 응통10 1.5절에서 예측구간이 신뢰구간보다 넓은 것과 같은 이유이다.</p>
 
     <h3><span class="no">1.3.2</span>베타-이항 예측</h3>
-    <p>사후 \(\theta \sim \mathrm{Beta}(a, b)\)에서 다음 한 번이 성공할 확률은 \(E(\theta) = a/(a+b)\)이고, 앞으로 \(m\)번 가운데 \(k\)번 성공할 확률은</p>
+    <p>사후가 \(\theta \sim \mathrm{Beta}(a, b)\)이면 다음 한 번이 성공할 확률은 \(E(\theta) = a/(a+b)\)이다. 또 앞으로 \(m\)번 가운데 \(k\)번 성공할 확률은 다음 베타-이항분포이며, 평균이 같은 이항분포보다 분산이 크다.</p>
     \[P(\tilde Y = k) = \binom mk\frac{B(a + k, b + m - k)}{B(a, b)}\]
-    <p>(베타-이항분포)입니다. 같은 평균의 이항분포보다 분산이 큽니다.</p>
-
     <div class="tb-env ex">
-      <span class="lb">예제 1.3.2</span>
-      <p>사후분포가 \(\mathrm{Beta}(8, 4)\)입니다. 다음 두 번이 모두 성공할 확률을 사후 예측으로 구하고, \(\hat\theta = 2/3\)을 꽂은 값과 비교하세요.</p>
+      <span class="lb">예제 1.3.1</span>
+      <p>사후분포가 \(\mathrm{Beta}(8, 4)\)이다. 다음 두 번이 모두 성공할 확률을 사후 예측으로 구하고, \(\hat\theta = 2/3\)을 꽂은 값과 비교하라.</p>
     </div>
-    <p><i>풀이.</i> \(E(\theta^2) = \frac{a(a+1)}{(a+b)(a+b+1)} = \frac{8 \times 9}{12 \times 13} = 0.462\). 꽂은 값 \((2/3)^2 = 0.444\). 모수 불확실성 때문에 극단 결과(둘 다 성공, 둘 다 실패)의 확률이 조금 커집니다. 다음 세 번 가운데 성공 수의 확률은 0.055, 0.220, 0.396, 0.330입니다.</p>
+    <p><i>풀이.</i> \(E(\theta^2) = \dfrac{a(a+1)}{(a+b)(a+b+1)} = \dfrac{8 \times 9}{12 \times 13} = 0.462\)이고, 꽂은 값은 \((2/3)^2 = 0.444\)이다. 모수의 불확실성 때문에 둘 다 성공이나 둘 다 실패 같은 극단 결과의 확률이 조금 커진다. 마찬가지로 다음 세 번 가운데 성공 수의 확률은 0.055, 0.220, 0.396, 0.330으로, 이항분포의 0.037, 0.222, 0.444, 0.296보다 양 끝이 두껍다(그림 1).</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>표본이 작을 때 추정값을 꽂아 넣은 예측구간을 그대로 쓰면 미래를 지나치게 확신하게 된다. 특히 성공이 한 번도 없을 때 \(\hat\theta = 0\)을 꽂으면 다음 성공 확률이 0이 되지만, 사후 예측은 0이 아닌 확률을 준다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(p(\tilde y \mid \mathbf y) = \int p(\tilde y \mid \theta)p(\theta \mid \mathbf y)d\theta\).</li>
-        <li>베타 사후 → 베타-이항 예측, 다음 성공 확률은 사후 평균.</li>
-        <li>꽂아 넣은 예측보다 넓어 모수 불확실성을 반영합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사후 예측분포는 \(p(\tilde y \mid \mathbf y) = \int p(\tilde y \mid \theta)p(\theta \mid \mathbf y)d\theta\)이다. 베타 사후에서는 베타-이항 예측이 나오고, 다음 성공 확률은 사후 평균이다. 꽂아 넣은 예측보다 넓어 모수의 불확실성을 반영한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>사후 \(\mathrm{Beta}(3, 7)\)에서 다음 관측이 성공할 확률은?
-          <details><summary>답</summary><p>\(3/10 = 0.3\).</p></details>
+        <li>사후 \(\mathrm{Beta}(3, 7)\)에서 다음 관측이 성공할 확률은 얼마인가?
+          <details><summary>답</summary><p>\(3/10 = 0.3\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>정규 모형 \(y \sim N(\mu, \sigma^2)\)(\(\sigma\) 앎)에서 사후 \(\mu \sim N(m, v)\)이면 새 관측의 예측분포는?
-          <details><summary>답</summary><p>\(\tilde y = \mu + \varepsilon\)이고 둘이 독립이므로 \(N(m, v + \sigma^2)\). 분산이 관측 잡음과 모수 불확실성의 합입니다.</p></details>
+      <ol start="2">
+        <li>정규 모형 \(y \sim N(\mu, \sigma^2)\)(\(\sigma\)를 앎)에서 사후가 \(\mu \sim N(m, v)\)이면 새 관측의 예측분포는 무엇인가?
+          <details><summary>답</summary><p>\(\tilde y = \mu + \varepsilon\)이고 둘이 독립이므로 \(N(m, v + \sigma^2)\)이다. 분산이 관측 잡음과 모수 불확실성의 합이다.</p></details>
+        </li>
+        <li>사후 \(\mathrm{Beta}(1, 11)\)에서 다음 두 번이 모두 실패할 확률을 구하라.
+          <details><summary>답</summary><p>\(E[(1-\theta)^2] = \dfrac{11 \times 12}{12 \times 13} = 0.846\)이다.</p></details>
         </li>
       </ol>
     </div>

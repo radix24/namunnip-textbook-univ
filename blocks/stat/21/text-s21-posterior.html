@@ -8,52 +8,67 @@
 <article class="card q-card" id="text-s21-posterior" data-kind="본문" data-std="응통21-01-01">
   <header class="card-head"><span class="no"></span><h2>베이즈 정리로 사후분포 구하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>모수를 확률변수로 보는 베이즈 추론의 틀을 안다.</li>
-        <li>사후분포 ∝ 가능도 × 사전분포로 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>응통6 1.3절 베이즈 정리, 응통7 1.1절 가능도.</li>
-      </ul>
-    </div>
-
-    <h3>모수에 대한 믿음을 확률로</h3>
-    <p>빈도주의에서 모수 \(\theta\)는 모르는 상수이고 확률은 자료에만 붙습니다. 베이즈 추론은 \(\theta\)에 대한 불확실성을 확률분포로 나타내고, 자료를 볼 때마다 그 분포를 베이즈 정리로 갱신합니다. "이 동전의 앞면 확률이 0.6보다 클 확률은?" 같은 질문에 직접 답할 수 있습니다.</p>
+    <p class="q-ask">공장 기계는 대개 정상이지만 열에 한 번쯤은 고장 나 있다. 오늘 만든 제품 10개를 검사했더니 불량이 2개 나왔다. 이제 기계가 고장 났을 확률은 얼마일까? 그리고 이런 질문에 답하려면 모수를 어떻게 바라봐야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="기계 상태 두 가지의 사전 확률(파랑)과 사후 확률(주황) 막대. 정상(불량률 0.05)은 0.9에서 0.742로, 고장(불량률 0.3)은 0.1에서 0.258로 바뀐다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="144" text-anchor="end" class="s">0.25</text>
+        <text x="55" y="104" text-anchor="end" class="s">0.5</text>
+        <text x="55" y="64" text-anchor="end" class="s">0.75</text>
+        <text x="55" y="24" text-anchor="end" class="s">1</text>
+        <text x="66" y="24" class="s">확률</text>
+        <rect x="99" y="36" width="30" height="144" class="fa"/>
+        <text x="114" y="32" text-anchor="middle" class="s ta">0.9</text>
+        <rect x="141" y="61.3" width="30" height="118.7" class="fc"/>
+        <text x="156" y="57.3" text-anchor="middle" class="s tc">0.742</text>
+        <text x="135" y="198" text-anchor="middle" class="s">정상, 불량률 0.05</text>
+        <rect x="249" y="164" width="30" height="16" class="fa"/>
+        <text x="264" y="160" text-anchor="middle" class="s ta">0.1</text>
+        <rect x="291" y="138.7" width="30" height="41.3" class="fc"/>
+        <text x="306" y="134.7" text-anchor="middle" class="s tc">0.258</text>
+        <text x="285" y="198" text-anchor="middle" class="s">고장, 불량률 0.3</text>
+        <text x="375" y="60" class="s ta">사전 확률</text><text x="375" y="92" class="s tc">사후 확률</text><text x="375" y="108" class="s tc">10개 중 불량 2개 뒤</text><text x="375" y="140" class="s">고장 확률이</text><text x="375" y="156" class="s">0.1에서 0.26으로</text>
+      </svg>
+      <figcaption>그림 1. 예제 1.1.1의 갱신. 불량 2개를 본 뒤 고장의 확률이 사전(파랑) 0.1에서 사후(주황) 0.26으로 오른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>베이즈 정리(응통6 1.3절)와 가능도(응통7 1.1절)를 쓴다.</div>
+    <p>처음 질문의 답은 약 26%이다. 기계의 상태를 확률변수로 보고, 검사 결과를 베이즈 정리로 반영하면 10%였던 믿음이 26%로 갱신된다(그림 1). 빈도주의에서 모수 \(\theta\)는 모르는 상수이고 확률은 자료에만 붙는다. 반면 베이즈 추론은 \(\theta\)에 대한 불확실성을 확률분포로 나타내고, 자료를 볼 때마다 그 분포를 갱신한다. 그래서 이 동전의 앞면 확률이 0.6보다 클 확률은 얼마인가 같은 질문에 직접 답할 수 있다.</p>
 
     <h3><span class="no">1.1.1</span>구성 요소</h3>
-    <p class="q-term"><b>사전분포</b> \(p(\theta)\): 자료를 보기 전의 믿음.</p>
-    <p class="q-term"><b>가능도</b> \(p(\mathbf y \mid \theta)\): 모수가 \(\theta\)일 때 자료가 나올 확률(응통7 1.1절과 같음). 굵은 \(\mathbf y\)는 관측값 \(y_1, \ldots, y_n\)을 한데 묶어 쓴 기호이고, 세로선 "\(\mid\)" 오른쪽은 조건(고등학교 조건부확률 \(P(A \mid B)\)의 \(B\))입니다.</p>
-    <p class="q-term"><b>사후분포</b> \(p(\theta \mid \mathbf y)\): 자료를 본 뒤의 믿음.</p>
+    <p>사전분포 \(p(\theta)\)는 자료를 보기 전의 믿음이다. 가능도 \(p(\mathbf y \mid \theta)\)는 모수가 \(\theta\)일 때 자료가 나올 확률로, 응통7 1.1절의 가능도와 같다. 여기서 굵은 \(\mathbf y\)는 관측값 \(y_1, \ldots, y_n\)을 한데 묶어 쓴 기호이고, 세로선 \(\mid\)의 오른쪽은 조건(조건부확률 \(P(A \mid B)\)의 \(B\))이다. 끝으로 사후분포 \(p(\theta \mid \mathbf y)\)는 자료를 본 뒤의 믿음이다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 1.1.1</span>
-      \[p(\theta \mid \mathbf y) = \frac{p(\mathbf y \mid \theta)p(\theta)}{p(\mathbf y)} \propto p(\mathbf y \mid \theta)\,p(\theta),\quad p(\mathbf y) = \int p(\mathbf y \mid \theta)p(\theta)\,d\theta.\]
+      <span class="lb">정리 1.1.1 <span class="nm">(베이즈 정리)</span></span>
+      \[p(\theta \mid \mathbf y) = \frac{p(\mathbf y \mid \theta)p(\theta)}{p(\mathbf y)} \propto p(\mathbf y \mid \theta)\,p(\theta),\quad p(\mathbf y) = \int p(\mathbf y \mid \theta)p(\theta)\,d\theta\]
     </div>
-    <p>분모 \(p(\mathbf y)\)(주변 가능도)는 \(\theta\)와 무관한 상수라, 사후분포의 모양은 분자로 정해집니다. 분모는 넓이를 1로 맞추는 역할만 합니다.</p>
-
+    <p>분모 \(p(\mathbf y)\)는 주변 가능도라 부르며, \(\theta\)와 무관한 상수이다. 따라서 사후분포의 모양은 분자로 정해지고, 분모는 넓이를 1로 맞추는 역할만 한다. 즉 사후분포는 가능도와 사전분포의 곱에 비례한다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 1.1.2</span>
-      <p>공장 기계가 정상(불량률 0.05)일 사전 확률 0.9, 고장(불량률 0.3)일 사전 확률 0.1입니다. 제품 10개 중 불량 2개가 나왔다면 고장일 사후 확률은?</p>
+      <span class="lb">예제 1.1.1</span>
+      <p>공장 기계가 정상(불량률 0.05)일 사전 확률이 0.9, 고장(불량률 0.3)일 사전 확률이 0.1이다. 제품 10개 중 불량이 2개 나왔다면 고장일 사후 확률은 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> 가능도 \(\binom{10}{2}0.05^2(0.95)^8 = 45\times0.0025\times0.6634 = 0.0746\), \(\binom{10}{2}0.3^2(0.7)^8 = 45\times0.09\times0.0576 = 0.2335\). 사후 확률 \(\frac{0.1\times0.2335}{0.9\times0.0746 + 0.1\times0.2335} = \frac{0.02335}{0.0905} \approx 0.26\). 불량 2개로 고장 확률이 10%에서 26%로 올랐습니다.</p>
+    <p><i>풀이.</i> 정상일 때의 가능도는 \(\binom{10}{2}0.05^2(0.95)^8 = 45 \times 0.0025 \times 0.6634 = 0.0746\)이고, 고장일 때는 \(\binom{10}{2}0.3^2(0.7)^8 = 45 \times 0.09 \times 0.0576 = 0.2335\)이다. 그러므로 사후 확률은</p>
+    \[\frac{0.1 \times 0.2335}{0.9 \times 0.0746 + 0.1 \times 0.2335} = \frac{0.02335}{0.0905} \approx 0.26\]
+    <p>이다. 불량 2개로 고장 확률이 10%에서 26%로 올랐다(그림 1).</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p>고장일 때 불량 2개가 나올 가능도가 정상일 때의 3배이니 고장일 확률도 높다고 생각하기 쉽다. 그러나 사전 확률이 9 대 1로 정상 쪽에 기울어 있으므로, 사후 오즈는 \(3.13 \times 1/9 = 0.35\)로 여전히 정상 쪽이 더 그럴듯하다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사후 ∝ 가능도 × 사전.</li>
-        <li>주변 가능도는 정규화 상수.</li>
-        <li>모수에 대한 확률 질문에 직접 답함.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사후분포는 가능도와 사전분포의 곱에 비례하고, 주변 가능도는 정규화 상수이다. 모수를 확률변수로 보므로 모수에 대한 확률 질문에 직접 답할 수 있다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">1.1.3</span>연습문제</h3>
+      <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 다음 10개도 불량 2개가 나오면 고장일 사후 확률은?
-          <details><summary>답</summary><p>사전을 0.26으로 두고 다시: \(0.26\times0.2335/(0.26\times0.2335 + 0.74\times0.0746) = 0.0607/0.1159 \approx 0.52\).</p></details>
+        <li>예제에서 다음 10개도 불량이 2개 나오면 고장일 사후 확률은 얼마인가?
+          <details><summary>답</summary><p>사전을 0.26으로 두고 다시 계산하면 \(0.26 \times 0.2335/(0.26 \times 0.2335 + 0.74 \times 0.0746) = 0.0607/0.1159 \approx 0.52\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 제품 10개가 모두 정상이었다면 고장일 사후 확률은 얼마인가?
+          <details><summary>답</summary><p>가능도는 \(0.95^{10} = 0.599\)와 \(0.7^{10} = 0.028\)이므로 \(0.1 \times 0.028/(0.9 \times 0.599 + 0.1 \times 0.028) = 0.005\)이다. 고장 가능성이 거의 사라진다.</p></details>
+        </li>
+        <li>사전 확률을 모두 0.5로 바꾸면 예제의 사후 확률은 얼마가 되는가?
+          <details><summary>답</summary><p>\(0.2335/(0.0746 + 0.2335) = 0.76\)이다. 사전이 같으면 사후 오즈가 가능도의 비 3.13과 같다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,62 +8,69 @@
 <article class="card q-card" id="text-s21-jamesstein" data-kind="본문" data-std="응통21-05-03">
   <header class="card-head"><span class="no"></span><h2>제임스-스타인 축소 추정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>평균 여러 개를 함께 추정할 때 표본평균이 최선이 아닐 수 있음을 안다.</li>
-        <li>제임스-스타인 추정량을 계산하고 경험적 베이즈로 해석한다.</li>
-        <li>축소가 이득이 되는 조건과 한계를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>베이즈 추정량과 위험 (<a href="05-01.html">5.1절</a>), 정규-정규 켤레 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>스타인의 역설</h3>
-    <p>\(x_i \sim N(\theta_i, 1)\), \(i = 1, \ldots, p\)가 서로 독립일 때, 각 \(\theta_i\)를 \(x_i\)로 추정하는 것은 하나씩 보면 최선입니다. 그런데 스타인(1956)은 \(p \ge 3\)이면 전체 제곱 오차 \(\sum(\hat\theta_i - \theta_i)^2\)의 기대값을 모든 \(\boldsymbol\theta\)에서 더 작게 만드는 추정량이 있음을 보였습니다. 서로 무관한 양(밀 가격, 야구 타율, 강수량)을 함께 추정해도 마찬가지라 역설처럼 들립니다.</p>
+    <p class="q-ask">밀 가격, 야구 선수의 타율, 어느 도시의 강수량을 각각 측정값으로 추정한다. 셋은 서로 아무 관계가 없으니, 각자 자기 측정값을 쓰는 것이 최선일 것 같다. 그런데 셋을 함께 0 쪽으로 조금씩 당기면 전체 오차가 줄어든다고 한다. 어떻게 그럴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="관측 x = (2, −1, 0.5, 1.5, −2)(위, 파랑 점)가 축소 계수 0.739로 0(검정 점선) 쪽으로 당겨진 제임스-스타인 추정값 (1.48, −0.74, 0.37, 1.11, −1.48)(아래, 주황 점)로 선이 이어져 있다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="90" y="195" text-anchor="middle" class="s">-2</text>
+        <text x="150" y="195" text-anchor="middle" class="s">-1</text>
+        <text x="210" y="195" text-anchor="middle" class="s">0</text>
+        <text x="270" y="195" text-anchor="middle" class="s">1</text>
+        <text x="330" y="195" text-anchor="middle" class="s">2</text>
+        <path d="M210 180 L210 20" class="k dsh"/>
+        <path d="M60 60 L360 60 M60 140 L360 140" class="gd"/>
+        <path d="M330 64.8 L298.7 132" class="k"/>
+        <circle cx="330" cy="60" r="4.5" class="fa"/><circle cx="298.7" cy="140" r="4.5" class="fc"/>
+        <path d="M150 64.8 L165.7 132" class="k"/>
+        <circle cx="150" cy="60" r="4.5" class="fa"/><circle cx="165.7" cy="140" r="4.5" class="fc"/>
+        <path d="M240 64.8 L232.2 132" class="k"/>
+        <circle cx="240" cy="60" r="4.5" class="fa"/><circle cx="232.2" cy="140" r="4.5" class="fc"/>
+        <path d="M300 64.8 L276.5 132" class="k"/>
+        <circle cx="300" cy="60" r="4.5" class="fa"/><circle cx="276.5" cy="140" r="4.5" class="fc"/>
+        <path d="M90 64.8 L121.3 132" class="k"/>
+        <circle cx="90" cy="60" r="4.5" class="fa"/><circle cx="121.3" cy="140" r="4.5" class="fc"/>
+        <text x="64" y="50" class="s ta">관측 x</text><text x="64" y="158" class="s tc">제임스-스타인</text>
+        <text x="375" y="60" class="s">p = 5, ‖x‖² = 11.5</text><text x="375" y="92" class="s tc">축소 계수</text><text x="375" y="108" class="s tc">1 − 3/11.5 = 0.739</text><text x="375" y="140" class="s">모든 값을 0 쪽으로</text><text x="375" y="156" class="s">약 26% 당긴다</text>
+      </svg>
+      <figcaption>그림 1. 예제 5.3.1의 축소. 모든 관측(파랑)이 같은 비율로 0 쪽으로 당겨져 제임스-스타인 추정값(주황)이 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>베이즈 추정량과 위험(<a href="05-01.html">5.1절</a>), 정규-정규 켤레(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 스타인의 역설이다. \(x_i \sim N(\theta_i, 1)\), \(i = 1, \ldots, p\)가 서로 독립일 때 각 \(\theta_i\)를 \(x_i\)로 추정하는 것은 하나씩 보면 최선이다. 그런데 스타인(1956)은 \(p \ge 3\)이면 전체 제곱 오차 \(\sum(\hat\theta_i - \theta_i)^2\)의 기대값을 모든 \(\boldsymbol\theta\)에서 더 작게 만드는 추정량이 있음을 보였다. 서로 무관한 양을 함께 추정해도 마찬가지라 역설처럼 들린다(그림 1).</p>
 
     <h3><span class="no">5.3.1</span>추정량</h3>
     <div class="tb-env def">
-      <span class="lb">정의 5.3.1</span>
-      <p>\(\hat{\boldsymbol\theta}^{JS} = \left(1 - \dfrac{p - 2}{\|\mathbf x\|^2}\right)\mathbf x\). 공통 값 \(\mu\) 쪽으로 줄이려면 \(\bar x + \left(1 - \dfrac{p - 3}{\sum(x_i - \bar x)^2}\right)(x_i - \bar x)\).</p>
+      <span class="lb">정의 5.3.1 <span class="nm">(제임스-스타인 추정량)</span></span>
+      <p>\(\hat{\boldsymbol\theta}^{JS} = \left(1 - \dfrac{p - 2}{\|\mathbf x\|^2}\right)\mathbf x\)이다. 공통 값 쪽으로 줄이려면 \(\bar x + \left(1 - \dfrac{p - 3}{\sum(x_i - \bar x)^2}\right)(x_i - \bar x)\)를 쓴다.</p>
     </div>
-    <p>모든 좌표를 같은 비율로 0(또는 전체 평균) 쪽으로 당깁니다. \(\|\mathbf x\|^2\)이 작으면(관측들이 0 근처에 모여 있으면) 많이 당기고, 크면 조금 당깁니다. 위험은 \(p - (p-2)^2E[1/\|\mathbf x\|^2] &lt; p\)로 표본평균의 위험 \(p\)보다 항상 작습니다.</p>
+    <p>이 추정량은 모든 좌표를 같은 비율로 0(또는 전체 평균) 쪽으로 당긴다. 이때 관측들이 0 근처에 모여 \(\|\mathbf x\|^2\)이 작으면 많이 당기고, 크면 조금 당긴다. 그리고 위험이 \(p - (p-2)^2E[1/\|\mathbf x\|^2]\)이라 표본평균의 위험 \(p\)보다 언제나 작다. 특히 참값들이 모두 0 근처에 있으면 \(\|\mathbf x\|^2\)이 \(p\) 정도라 위험이 약 2까지 줄어, \(p\)가 클수록 이득이 크다.</p>
 
     <h3><span class="no">5.3.2</span>경험적 베이즈 해석</h3>
-    <p>\(\theta_i \sim N(0, \tau^2)\)라는 사전을 두면 베이즈 추정량은 \(\left(1 - \frac{1}{1 + \tau^2}\right)x_i\)입니다. \(\tau^2\)를 모르므로 자료로 추정하면(\(\|\mathbf x\|^2\)의 기대값이 \(p(1 + \tau^2)\)), \(1/(1 + \tau^2)\)의 불편추정량이 \((p - 2)/\|\mathbf x\|^2\)이고 이것이 제임스-스타인 추정량입니다. 여러 평균이 서로 정보를 빌려 쓰는 것으로, 6.4절 계층 모형의 출발점입니다.</p>
-    <div class="tb-note">
-      <b>주의</b> 이득은 전체 제곱 오차의 합에 대한 것이고, 특정 좌표 하나(극단적으로 큰 \(\theta_i\))는 오히려 나빠질 수 있습니다. 개별 값이 중요한 결정(가장 높은 곳 하나를 고르기)에서는 이 점을 고려합니다.
-    </div>
-
+    <p>\(\theta_i \sim N(0, \tau^2)\)라는 사전을 두면 베이즈 추정량은 \(\left(1 - \frac{1}{1 + \tau^2}\right)x_i\)이다. 그런데 \(\tau^2\)를 모르므로 자료로 추정한다. \(\|\mathbf x\|^2\)의 기대값이 \(p(1 + \tau^2)\)이고, \(1/(1 + \tau^2)\)의 불편추정량이 \((p - 2)/\|\mathbf x\|^2\)이므로 이것을 넣으면 제임스-스타인 추정량이 된다. 다시 말해 여러 평균이 서로 정보를 빌려 쓰는 것이며, <a href="06-04.html">6.4절</a> 계층 모형의 출발점이다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 5.3.2</span>
-      <p>\(p = 5\), \(\mathbf x = (2, -1, 0.5, 1.5, -2)\)(각 분산 1)의 제임스-스타인 추정값은?</p>
+      <span class="lb">예제 5.3.1</span>
+      <p>\(p = 5\), \(\mathbf x = (2, -1, 0.5, 1.5, -2)\)(각 분산 1)의 제임스-스타인 추정값을 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(\|\mathbf x\|^2 = 4 + 1 + 0.25 + 2.25 + 4 = 11.5\), 축소 계수 \(1 - 3/11.5 = 0.739\). 추정값 (1.48, −0.74, 0.37, 1.11, −1.48). 모든 값이 0 쪽으로 약 26% 당겨졌습니다.</p>
+    <p><i>풀이.</i> \(\|\mathbf x\|^2 = 4 + 1 + 0.25 + 2.25 + 4 = 11.5\)이므로 축소 계수는 \(1 - 3/11.5 = 0.739\)이다. 따라서 추정값은 (1.48, −0.74, 0.37, 1.11, −1.48)이며, 모든 값이 0 쪽으로 약 26% 당겨졌다(그림 1).</p>
+    <div class="tb-note"><span class="lb">주의</span><p>이득은 전체 제곱 오차의 합에 대한 것이다. 그래서 특정 좌표 하나, 특히 극단적으로 큰 \(\theta_i\)는 오히려 나빠질 수 있으므로, 가장 높은 곳 하나를 고르는 것처럼 개별 값이 중요한 결정에서는 이 점을 고려한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(p \ge 3\)이면 표본평균보다 전체 위험이 작은 축소 추정량이 있습니다.</li>
-        <li>\(\hat{\boldsymbol\theta}^{JS} = (1 - (p-2)/\|\mathbf x\|^2)\mathbf x\).</li>
-        <li>경험적 베이즈: 사전 분산을 자료로 추정한 베이즈 추정량.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(p \ge 3\)이면 표본평균보다 전체 위험이 작은 축소 추정량 \(\hat{\boldsymbol\theta}^{JS} = (1 - (p-2)/\|\mathbf x\|^2)\mathbf x\)가 있다. 이것은 사전 분산을 자료로 추정한 경험적 베이즈 추정량이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(p = 10\), \(\|\mathbf x\|^2 = 16\)이면 축소 계수는?
-          <details><summary>답</summary><p>\(1 - 8/16 = 0.5\). 절반으로 줄입니다.</p></details>
+        <li>\(p = 10\), \(\|\mathbf x\|^2 = 16\)이면 축소 계수는 얼마인가?
+          <details><summary>답</summary><p>\(1 - 8/16 = 0.5\)로, 절반으로 줄인다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(\|\mathbf x\|^2 &lt; p - 2\)이면 계수가 음수가 됩니다. 어떻게 고치나요?
-          <details><summary>답</summary><p>음수면 부호가 뒤집혀 이상하므로 계수를 0으로 자릅니다(양수부 제임스-스타인, \(\max(0, 1 - (p-2)/\|\mathbf x\|^2)\)). 이 추정량은 원래 제임스-스타인보다도 위험이 작습니다.</p></details>
+      <ol start="2">
+        <li>\(\|\mathbf x\|^2 &lt; p - 2\)이면 계수가 음수가 된다. 어떻게 고치는가?
+          <details><summary>답</summary><p>음수면 부호가 뒤집혀 이상하므로 계수를 0으로 자른 양수부 제임스-스타인 \(\max(0, 1 - (p-2)/\|\mathbf x\|^2)\)을 쓴다. 이 추정량은 원래 제임스-스타인보다도 위험이 작다.</p></details>
+        </li>
+        <li>예제에서 추정한 \(1/(1 + \hat\tau^2)\)과 \(\hat\tau^2\)를 구하라.
+          <details><summary>답</summary><p>\(1/(1 + \hat\tau^2) = 3/11.5 = 0.261\)이므로 \(\hat\tau^2 = 2.83\)이다. 참값들이 관측 잡음(분산 1)보다 넓게 퍼져 있다고 본 것이다.</p></details>
         </li>
       </ol>
     </div>

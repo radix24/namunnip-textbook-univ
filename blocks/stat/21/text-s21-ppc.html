@@ -8,57 +8,75 @@
 <article class="card q-card" id="text-s21-ppc" data-kind="본문" data-std="응통21-04-02">
   <header class="card-head"><span class="no"></span><h2>사후 예측 점검</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>적합한 모형으로 가상 자료를 만들어 실제 자료와 비교한다.</li>
-        <li>점검 통계량을 고르고 사후 예측 p값을 계산한다.</li>
-        <li>점검 결과로 모형을 어떻게 고칠지 판단한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>사후 예측분포 (<a href="01-03.html">1.3절</a>), 사후 표본 (<a href="03-03.html">3.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>이 모형으로 이런 자료가 나올까</h3>
-    <p>베이즈 인자(4.1절)는 모형끼리 비교하지만, 후보 모형이 모두 틀렸을 수도 있습니다. 사후 예측 점검은 "적합한 모형이 실제 자료와 닮은 자료를 만들어 내는가"를 직접 봅니다. 닮지 않았다면 그 차이가 모형을 고칠 방향을 알려 줍니다.</p>
+    <p class="q-ask">하루 사고 건수에 포아송 모형을 맞췄다. 베이즈 인자로 다른 후보와 비교할 수도 있지만, 후보가 모두 틀렸을 수도 있다. 다른 모형 없이 이 모형 하나가 자료를 제대로 설명하는지 확인할 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="포아송 모형에서 만든 가상 자료 4000개(각 30일)의 0건 일수 분포 막대. 대부분 1일에서 8일 사이(파랑)이고 3일과 4일이 가장 많다. 실제 0건 일수 9(빨간 점선) 이상인 비율(주황)은 0.03이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="69.4" y="195" text-anchor="middle" class="s">0</text>
+        <text x="125.6" y="195" text-anchor="middle" class="s">3</text>
+        <text x="181.9" y="195" text-anchor="middle" class="s">6</text>
+        <text x="238.1" y="195" text-anchor="middle" class="s">9</text>
+        <text x="294.4" y="195" text-anchor="middle" class="s">12</text>
+        <text x="350.6" y="195" text-anchor="middle" class="s">15</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="144" text-anchor="end" class="s">0.05</text>
+        <text x="55" y="104" text-anchor="end" class="s">0.1</text>
+        <text x="55" y="64" text-anchor="end" class="s">0.15</text>
+        <text x="55" y="24" text-anchor="end" class="s">0.2</text>
+        <text x="360" y="209" text-anchor="end" class="s">가상 자료의 0건 일수</text>
+        <text x="66" y="24" class="s">비율</text>
+        <rect x="62.4" y="165.6" width="14" height="14.4" class="fa"/>
+        <rect x="81.1" y="124.4" width="14" height="55.6" class="fa"/>
+        <rect x="99.9" y="66.2" width="14" height="113.8" class="fa"/>
+        <rect x="118.6" y="34.8" width="14" height="145.2" class="fa"/>
+        <rect x="137.4" y="32.6" width="14" height="147.4" class="fa"/>
+        <rect x="156.1" y="59.4" width="14" height="120.6" class="fa"/>
+        <rect x="174.9" y="86.2" width="14" height="93.8" class="fa"/>
+        <rect x="193.6" y="130.4" width="14" height="49.6" class="fa"/>
+        <rect x="212.4" y="146.4" width="14" height="33.6" class="fa"/>
+        <rect x="231.1" y="164.6" width="14" height="15.4" class="fc"/>
+        <rect x="249.9" y="175" width="14" height="5" class="fc"/>
+        <rect x="268.6" y="176.2" width="14" height="3.8" class="fc"/>
+        <rect x="287.4" y="178.6" width="14" height="1.4" class="fc"/>
+        <rect x="306.1" y="179.8" width="14" height="0.2" class="fc"/>
+        <rect x="324.9" y="179.8" width="14" height="0.2" class="fc"/>
+        <rect x="343.6" y="180" width="14" height="0" class="fc"/>
+        <path d="M238.1 180 L238.1 20" class="d dsh"/>
+        <text x="375" y="44" class="s">포아송 모형의 가상 자료</text><text x="375" y="60" class="s">4000개, 각 30일</text><text x="375" y="92" class="s td">실제 0건 일수 9</text><text x="375" y="124" class="s tc">9일 이상인 비율</text><text x="375" y="140" class="s tc">0.03, 사후 예측 p값</text>
+      </svg>
+      <figcaption>그림 1. 예제 4.2.1의 사후 예측 점검. 실제 0건 일수 9(빨간 점선)는 가상 자료 분포의 오른쪽 끝에 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>사후 예측분포(<a href="01-03.html">1.3절</a>)와 사후 표본(<a href="03-03.html">3.3절</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 모형으로 가상 자료를 만들어 실제 자료와 비교하는 것이다. 적합한 모형이 실제 자료와 닮은 자료를 만들어 내는지를 직접 보고, 닮지 않았다면 그 차이가 모형을 고칠 방향을 알려 준다(그림 1). 이것을 사후 예측 점검이라 한다.</p>
 
     <h3><span class="no">4.2.1</span>절차</h3>
-    <ol>
-      <li>사후 표본 \(\theta^{(s)}\)마다 원래 자료와 같은 크기의 가상 자료 \(\mathbf y^{\text{rep}(s)}\)를 모형에서 뽑습니다.</li>
-      <li>관심 있는 특징을 재는 점검 통계량 \(T\)(0의 개수, 최댓값, 분산 대 평균의 비, 자기상관 등)를 실제 자료와 가상 자료에서 각각 계산합니다.</li>
-      <li>가상 자료의 \(T\) 분포에서 실제 \(T\)가 어디에 있는지 봅니다. 사후 예측 p값 \(= P(T(\mathbf y^{\text{rep}}) \ge T(\mathbf y) \mid \mathbf y)\)가 0이나 1에 가까우면 모형이 그 특징을 재현하지 못합니다.</li>
-    </ol>
-    <p>점검 통계량은 모형이 직접 맞추지 않는 특징을 고릅니다. 포아송 모형의 평균은 언제나 잘 맞으므로 평균 대신 0의 비율이나 분산을 봅니다. 그림으로 실제 자료의 히스토그램 위에 가상 자료 수십 개를 겹쳐 그리는 것도 효과적입니다(R: <code>bayesplot::ppc_dens_overlay</code>).</p>
-
+    <p>먼저 사후 표본 \(\theta^{(s)}\)마다 원래 자료와 같은 크기의 가상 자료 \(\mathbf y^{\text{rep}(s)}\)를 모형에서 뽑는다. 다음으로 관심 있는 특징을 재는 점검 통계량 \(T\)를 실제 자료와 가상 자료에서 각각 계산한다. 가령 0의 개수, 최댓값, 분산 대 평균의 비, 자기상관 같은 것이다. 끝으로 가상 자료의 \(T\) 분포에서 실제 \(T\)가 어디에 있는지 본다.</p>
+    <p>이때 사후 예측 p값 \(P(T(\mathbf y^{\text{rep}}) \ge T(\mathbf y) \mid \mathbf y)\)가 0이나 1에 가까우면 모형이 그 특징을 재현하지 못한 것이다. 그런데 점검 통계량은 모형이 직접 맞추지 않는 특징으로 골라야 한다. 예를 들어 포아송 모형의 평균은 언제나 잘 맞으므로, 평균 대신 0의 비율이나 분산을 본다. 또 실제 자료의 히스토그램 위에 가상 자료 수십 개를 겹쳐 그리는 것도 효과적이다(R의 <code>bayesplot::ppc_dens_overlay</code>).</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
-      <p>하루 사고 건수 30일치의 평균이 2.0, 0건인 날이 9일입니다. 포아송 모형에 맞추면 가상 자료의 0건 일수는 대략 얼마로 예상되나요?</p>
+      <p>하루 사고 건수 30일치의 평균이 2.0이고, 0건인 날이 9일이다. 포아송 모형에 맞추면 가상 자료의 0건 일수는 대략 얼마로 예상되는가?</p>
     </div>
-    <p><i>풀이.</i> \(\lambda \approx 2\)에서 0건 확률 \(e^{-2} = 0.135\), 30일 중 약 4.1일. 가상 자료의 0건 일수는 대부분 1~8일 사이에 있어 실제 9일은 오른쪽 끝입니다. 0이 지나치게 많다는 신호이므로 음이항이나 영과잉 모형(응통18 5.3절)을 검토합니다.</p>
+    <p><i>풀이.</i> \(\lambda \approx 2\)에서 0건 확률은 \(e^{-2} = 0.135\)이므로 30일 중 약 4.1일이다. 사후 표본으로 가상 자료 4000개를 만들면 0건 일수는 대부분 1일에서 8일 사이에 있고, 9일 이상인 비율은 0.03이다(그림 1). 즉 실제 9일은 오른쪽 끝이며, 0이 지나치게 많다는 신호이다. 그러므로 음이항이나 영과잉 모형(응통18 5.3절)을 검토한다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>사후 예측 p값은 같은 자료로 모형을 맞추고 점검하므로 0.5 쪽으로 몰리는 경향이 있다. 그래서 일반적인 p값처럼 0.05를 기준으로 기계적으로 판정하기보다, 어떤 특징이 어긋나는지를 그림과 함께 읽는다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사후 표본으로 가상 자료를 만들어 실제 자료와 비교합니다.</li>
-        <li>모형이 직접 맞추지 않는 특징을 점검 통계량으로.</li>
-        <li>극단적인 사후 예측 p값은 모형을 고칠 방향을 알려 줍니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사후 표본으로 가상 자료를 만들어 실제 자료와 비교한다. 점검 통계량은 모형이 직접 맞추지 않는 특징으로 고른다. 극단적인 사후 예측 p값은 모형을 고칠 방향을 알려 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>정규 모형을 맞춘 자료의 점검 통계량으로 표본 평균을 쓰면 왜 쓸모가 없나요?
-          <details><summary>답</summary><p>모형이 평균을 자료에 맞춰 추정하므로 가상 자료의 평균도 실제 평균 근처에 모여, 모형이 틀려도 거의 항상 통과합니다. 왜도, 최댓값, 꼬리 비율 같은 특징을 씁니다.</p></details>
+        <li>정규 모형을 맞춘 자료의 점검 통계량으로 표본 평균을 쓰면 왜 쓸모가 없는가?
+          <details><summary>답</summary><p>모형이 평균을 자료에 맞춰 추정하므로 가상 자료의 평균도 실제 평균 근처에 모여, 모형이 틀려도 거의 언제나 통과한다. 왜도, 최댓값, 꼬리 비율 같은 특징을 쓴다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>시계열 자료에 독립 정규 모형을 맞췄습니다. 어떤 점검 통계량으로 모형의 결함을 드러낼 수 있나요?
-          <details><summary>답</summary><p>시차 1 자기상관 \(r_1\)이나 같은 부호가 이어지는 최대 길이. 독립 모형의 가상 자료는 \(r_1 \approx 0\)이므로 실제 \(r_1\)이 크면 극단 p값이 나옵니다.</p></details>
+      <ol start="2">
+        <li>시계열 자료에 독립 정규 모형을 맞췄다. 어떤 점검 통계량으로 모형의 결함을 드러낼 수 있는가?
+          <details><summary>답</summary><p>시차 1 자기상관 \(r_1\)이나 같은 부호가 이어지는 최대 길이를 쓴다. 독립 모형의 가상 자료는 \(r_1 \approx 0\)이므로, 실제 \(r_1\)이 크면 극단적인 p값이 나온다.</p></details>
+        </li>
+        <li>예제의 자료에서 점검 통계량으로 분산 대 평균의 비를 쓰면 무엇을 기대하는가?
+          <details><summary>답</summary><p>포아송 가상 자료의 비는 1 근처에 모인다. 0이 많은 실제 자료는 분산이 커서 비가 1보다 크게 나올 것이므로, 과대산포도 함께 드러난다.</p></details>
         </li>
       </ol>
     </div>
