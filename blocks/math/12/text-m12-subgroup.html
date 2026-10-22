@@ -8,69 +8,78 @@
 <article class="card q-card" id="text-m12-subgroup" data-kind="본문" data-std="수학12-01-02">
   <header class="card-head"><span class="no"></span><h2>부분군과 판정법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>부분군을 정의하고, 한 줄짜리 판정법(\(a, b \in H \Rightarrow ab^{-1} \in H\))과 유한 부분집합의 판정법을 증명한다.</li>
-        <li>생성된 부분군 \(\langle S\rangle\), 중심 \(Z(G)\), 중심화군을 부분군으로 확인한다.</li>
-        <li>부분군의 교집합은 부분군이지만 합집합은 일반적으로 아님을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>군의 공리와 기본 성질 (<a href="01-01.html">1.1절</a>), 부분공간 판정법과 비교하면 좋습니다 (<a href="../math1/02-02.html">수학1 2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">짝수 전체는 정수의 덧셈만으로 그 자체가 군이다. 행렬식이 1인 행렬 전체도 행렬의 곱만으로 군이다. 큰 군 안에 숨어 있는 이런 작은 군을 찾으려면 공리 네 가지를 매번 다 확인해야 할까? 더 짧은 판정법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="S3의 부분군 포함 관계도">
+        <line x1="190" y1="36" x2="100" y2="91" class="gd"/>
+        <line x1="190" y1="36" x2="190" y2="91" class="gd"/>
+        <line x1="190" y1="36" x2="260" y2="91" class="gd"/>
+        <line x1="190" y1="36" x2="330" y2="91" class="gd"/>
+        <line x1="100" y1="111" x2="190" y2="166" class="gd"/>
+        <line x1="190" y1="111" x2="190" y2="166" class="gd"/>
+        <line x1="260" y1="111" x2="190" y2="166" class="gd"/>
+        <line x1="330" y1="111" x2="190" y2="166" class="gd"/>
+        <text x="190" y="30" text-anchor="middle" class="s">S₃</text>
+        <text x="100" y="105" text-anchor="middle" class="ta">⟨r⟩ = A₃</text>
+        <text x="190" y="105" text-anchor="middle" class="tc">⟨s⟩</text>
+        <text x="260" y="105" text-anchor="middle" class="tc">⟨rs⟩</text>
+        <text x="330" y="105" text-anchor="middle" class="tc">⟨r²s⟩</text>
+        <text x="190" y="180" text-anchor="middle" class="s">{e}</text>
+        <text x="30" y="34" class="s">위수 6</text>
+        <text x="30" y="109" class="s">위수 3, 2</text>
+        <text x="30" y="184" class="s">위수 1</text>
+        <text x="380" y="40" class="s">선 = 포함 관계</text>
+        <text x="380" y="60" class="ta">파랑 = 위수 3</text>
+        <text x="380" y="80" class="tc">주황 = 위수 2 (셋)</text>
+        <text x="380" y="100" class="s">부분군 6개</text>
+        <text x="380" y="120" class="s">합집합은 부분군 아님</text>
+      </svg>
+      <figcaption>그림 1. 대칭군 \(S_3\)의 부분군 여섯 개와 포함 관계이다. 위수 3인 \(\langle r\rangle\)(파랑) 하나와 위수 2인 부분군(주황) 셋이 \(\{e\}\)와 \(S_3\) 사이에 있다. 두 부분군 \(\langle s\rangle\)과 \(\langle rs\rangle\)의 합집합은 원소 3개라 부분군이 아니다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>군의 공리와 기본 성질(<a href="01-01.html">1.1절</a>)을 쓴다. 부분공간 판정법(<a href="../math1/02-02.html">수학1 2.2절</a>)과 비교하면 좋다.</div>
 
     <h3><span class="no">1.2.1</span>군 안의 군</h3>
-    <p>짝수 전체 \(2\mathbb Z\)는 정수의 덧셈만으로 그 자체가 군입니다. 행렬식이 1인 \(2\times2\) 행렬 전체 \(SL_2(\mathbb R)\)도 \(GL_2(\mathbb R)\)의 곱셈만으로 군입니다. 이렇게 큰 군의 연산을 그대로 써서 군이 되는 부분집합을 부분군이라 합니다. 군의 구조를 이해하는 첫 단계는 그 안의 부분군을 찾는 것입니다.</p>
+    <p>큰 군의 연산을 그대로 써서 군이 되는 부분집합을 부분군이라 한다. 그리고 군의 구조를 이해하는 첫 단계는 그 안의 부분군을 찾는 것이다.</p>
     <div class="tb-env">
       <span class="lb">정의 1.2.1 <span class="nm">(부분군)</span></span>
-      <p>군 \(G\)의 부분집합 \(H\)가 \(G\)의 연산으로 군이 되면 \(H\)를 \(G\)의 <b>부분군</b>이라 하고 \(H \le G\)로 쓴다. \(\{e\}\)와 \(G\)를 자명한 부분군이라 한다.</p>
+      <p>군 \(G\)의 부분집합 \(H\)가 \(G\)의 연산으로 군이 되면 \(H\)를 \(G\)의 <em>부분군</em>이라 하고 \(H \le G\)로 쓴다. \(\{e\}\)와 \(G\)를 자명한 부분군이라 한다.</p>
     </div>
-    <p>정의를 그대로 확인하려면 닫힘, 결합법칙, 항등원, 역원을 모두 봐야 합니다. 그런데 결합법칙은 \(G\)에서 이미 성립하니 공짜이고, 나머지도 한 조건으로 줄일 수 있습니다.</p>
+    <p>정의를 그대로 확인하려면 닫힘, 결합법칙, 항등원, 역원을 모두 봐야 한다. 그런데 결합법칙은 \(G\)에서 이미 성립하니 공짜이고, 나머지도 한 조건으로 줄일 수 있다.</p>
 
     <h3><span class="no">1.2.2</span>판정법</h3>
     <div class="tb-env thm">
       <span class="lb">정리 1.2.2 <span class="nm">(부분군 판정법)</span></span>
-      <p>군 \(G\)의 공집합이 아닌 부분집합 \(H\)에 대해 다음은 동치이다.</p>
-      <p>(a) \(H \le G\). (b) \(a, b \in H\)이면 \(ab \in H\)이고 \(a^{-1} \in H\). (c) \(a, b \in H\)이면 \(ab^{-1} \in H\).</p>
+      <p>군 \(G\)의 공집합이 아닌 부분집합 \(H\)에 대해 다음은 동치이다. (a) \(H \le G\). (b) \(a, b \in H\)이면 \(ab \in H\)이고 \(a^{-1} \in H\). (c) \(a, b \in H\)이면 \(ab^{-1} \in H\).</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>(a ⇒ b) \(H\)의 항등원 \(e_H\)는 \(e_He_H = e_H = e_He\)에서 \(G\)의 소거법칙으로 \(e_H = e\)이다. 그러면 \(H\) 안의 역원도 \(G\)의 역원과 같다(역원의 유일성). 닫힘은 정의에 들어 있다. (b ⇒ c) \(b^{-1} \in H\)이고 닫힘으로 \(ab^{-1} \in H\). (c ⇒ a) \(H\)에 원소 \(a\)가 있으므로 \(e = aa^{-1} \in H\). 그러면 \(b^{-1} = eb^{-1} \in H\). 또 \(ab = a(b^{-1})^{-1} \in H\)라 닫혀 있다. 결합법칙은 \(G\)에서 물려받는다. <span class="qed">∎</span></p>
-    <p>(c)를 확인할 때 첫 단계는 늘 "\(H\)가 공집합이 아님", 보통 \(e \in H\)를 보이는 것입니다. 이것을 빠뜨리면 공집합도 (c)를 만족하는 셈이 됩니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>(a)에서 (b)로 간다. \(H\)의 항등원 \(e_H\)는 \(e_He_H = e_H = e_He\)에서 \(G\)의 소거법칙으로 \(e_H = e\)이다. 그러면 역원의 유일성으로 \(H\) 안의 역원도 \(G\)의 역원과 같고, 닫힘은 정의에 들어 있다. (b)에서 (c)로 간다. \(b^{-1} \in H\)이고 닫힘으로 \(ab^{-1} \in H\)이다. (c)에서 (a)로 간다. \(H\)에 원소 \(a\)가 있으므로 \(e = aa^{-1} \in H\)이다. 그러면 \(b^{-1} = eb^{-1} \in H\)이고, \(ab = a(b^{-1})^{-1} \in H\)라 닫혀 있다. 결합법칙은 \(G\)에서 물려받는다. <span class="qed">∎</span></p>
+    <p>(c)를 확인할 때 첫 단계는 늘 \(H\)가 공집합이 아님을, 보통 \(e \in H\)를 보이는 것이다. 이것을 빠뜨리면 공집합도 (c)를 만족하는 셈이 된다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 1.2.3 <span class="nm">(유한 부분집합)</span></span>
       <p>\(H\)가 공집합이 아닌 유한 부분집합이고 곱에 대해 닫혀 있으면 \(H \le G\)이다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(a \in H\)이면 \(a, a^2, a^3, \dots\)가 모두 \(H\)에 있고 \(H\)가 유한이라 \(a^i = a^j\) (\(i &lt; j\))인 지수가 있다. 소거하면 \(a^{j-i} = e\). \(n = j - i \ge 1\)이면 \(e = a^n \in H\)이고 \(a^{-1} = a^{n-1} \in H\) (\(n = 1\)이면 \(a = e\), \(a^{-1} = e\)). 판정법 (b)로 끝난다. <span class="qed">∎</span></p>
-    <p>무한이면 닫힘만으로 부족합니다. \(\mathbb N\)은 \((\mathbb Z, +)\)에서 덧셈에 닫혀 있지만 역원이 없습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(a \in H\)이면 \(a, a^2, a^3, \dots\)가 모두 \(H\)에 있고, \(H\)가 유한이라 \(a^i = a^j\) (\(i &lt; j\))인 지수가 있다. 소거하면 \(a^{j-i} = e\)이다. \(n = j - i \ge 1\)이면 \(e = a^n \in H\)이고 \(a^{-1} = a^{n-1} \in H\)이다. 따라서 판정법 (b)로 끝난다. <span class="qed">∎</span></p>
+    <p>무한이면 닫힘만으로 부족하다. 예를 들어 \(\mathbb N\)은 \((\mathbb Z, +)\)에서 덧셈에 닫혀 있지만 역원이 없다.</p>
 
     <h3><span class="no">1.2.3</span>중요한 부분군들</h3>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.4</span>
       <p>다음이 부분군임을 보여라. (a) \(n\mathbb Z \le \mathbb Z\). (b) \(SL_2(\mathbb R) \le GL_2(\mathbb R)\). (c) 중심 \(Z(G) = \{z : \text{모든 } g\text{에서 } zg = gz\}\).</p>
     </div>
-    <p><i>풀이.</i> (a) \(0 \in n\mathbb Z\), \(na - nb = n(a - b)\). (b) \(\det I = 1\), \(\det(AB^{-1}) = \frac{\det A}{\det B} = 1\). (c) \(e \in Z(G)\). \(z, w \in Z(G)\)이면 \(wg = gw\)에 양쪽으로 \(w^{-1}\)을 곱해 \(gw^{-1} = w^{-1}g\), 따라서 \(zw^{-1}g = zgw^{-1} = gzw^{-1}\). 판정법 (c)를 덧셈 군에서 쓰면 "\(a - b \in H\)"가 됩니다.</p>
+    <p><i>풀이.</i> (a) \(0 \in n\mathbb Z\)이고 \(na - nb = n(a - b)\)이다. 덧셈 군에서는 판정법 (c)가 "\(a - b \in H\)"가 된다. (b) \(\det I = 1\)이고 \(\det(AB^{-1}) = \frac{\det A}{\det B} = 1\)이다. (c) \(e \in Z(G)\)이다. \(z, w \in Z(G)\)이면 \(wg = gw\)에 양쪽으로 \(w^{-1}\)을 곱해 \(gw^{-1} = w^{-1}g\)이고, 따라서 \(zw^{-1}g = zgw^{-1} = gzw^{-1}\)이다.</p>
     <div class="tb-env">
       <span class="lb">정의 1.2.5 <span class="nm">(생성된 부분군)</span></span>
-      <p>\(S \subseteq G\)를 포함하는 가장 작은 부분군을 \(\langle S\rangle\)이라 한다. 이는 \(S\)를 포함하는 모든 부분군의 교집합이고, \(S\)의 원소와 그 역원을 유한 번 곱한 것 전체와 같다. \(S = \{a\}\)이면 \(\langle a\rangle = \{a^k : k \in \mathbb Z\}\)이다.</p>
+      <p>\(S \subseteq G\)를 포함하는 가장 작은 부분군을 \(\langle S\rangle\)이라 한다. 이것은 \(S\)를 포함하는 모든 부분군의 교집합이고, \(S\)의 원소와 그 역원을 유한 번 곱한 것 전체와 같다. \(S = \{a\}\)이면 \(\langle a\rangle = \{a^k : k \in \mathbb Z\}\)이다.</p>
     </div>
-    <p>교집합이 부분군인 이유: 각 부분군이 \(e\)를 포함하고 \(ab^{-1}\)에 대해 닫혀 있으면 교집합도 그렇습니다. 반면 합집합은 다릅니다. \(2\mathbb Z \cup 3\mathbb Z\)는 2와 3을 포함하지만 \(2 + 3 = 5\)를 포함하지 않습니다.</p>
+    <p>교집합이 부분군인 이유는, 각 부분군이 \(e\)를 포함하고 \(ab^{-1}\)에 대해 닫혀 있으면 교집합도 그렇기 때문이다. 반면 합집합은 다르다. \(2\mathbb Z \cup 3\mathbb Z\)는 2와 3을 포함하지만 \(2 + 3 = 5\)를 포함하지 않는다. 그림 1의 \(\langle s\rangle \cup \langle rs\rangle\)도 같은 이유로 부분군이 아니다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.6</span>
       <p>\(\mathbb Z\)에서 \(\langle 4, 6\rangle\)을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(4x + 6y\) 꼴 전체입니다. 이 값은 모두 2의 배수이고, \(2 = 4\cdot(-1) + 6\cdot1\)이 그 안에 있으므로 \(\langle 4, 6\rangle = 2\mathbb Z = \langle \gcd(4, 6)\rangle\)입니다(베주 항등식). 다음 절에서 \(\mathbb Z\)의 모든 부분군이 \(n\mathbb Z\) 꼴임을 봅니다.</p>
+    <p><i>풀이.</i> \(\langle 4, 6\rangle\)은 \(4x + 6y\) 꼴 전체이다. 이 값은 모두 2의 배수이고, \(2 = 4\cdot(-1) + 6\cdot1\)이 그 안에 있으므로 베주 항등식으로 \(\langle 4, 6\rangle = 2\mathbb Z = \langle \gcd(4, 6)\rangle\)이다. 다음 절에서 \(\mathbb Z\)의 모든 부분군이 \(n\mathbb Z\) 꼴임을 본다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 부분군의 항등원이 \(G\)의 항등원과 다를 수 있다고 생각한다: 판정법 증명에서 보았듯 같다. 그래서 \(\{1, 3, 5, 7\}\)은 \((\mathbb Z_8, +)\)의 부분군이 아니다(0이 없음). (2) 다른 연산으로 군이 되는 부분집합을 부분군이라 한다: \(\{1, 3, 5, 7\}\)은 \(\mathbb Z_8\)의 <i>곱셈</i>으로는 군이지만 \((\mathbb Z_8, +)\)의 부분군은 아니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>부분군의 항등원이 \(G\)의 항등원과 다를 수 있다고 생각하기 쉽지만, 판정법 증명에서 보았듯 같다. 그래서 \(\{1, 3, 5, 7\}\)은 0이 없으므로 \((\mathbb Z_8, +)\)의 부분군이 아니다. 또 다른 연산으로 군이 되는 부분집합을 부분군이라 하는 것도 틀렸다. \(\{1, 3, 5, 7\}\)은 \(\mathbb Z_8\)의 곱셈으로는 군이지만 \((\mathbb Z_8, +)\)의 부분군은 아니다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(H \le G \iff H \ne \varnothing\)이고 \(a, b \in H \Rightarrow ab^{-1} \in H\).</li>
-        <li>유한 부분집합은 곱에 닫혀 있기만 하면 부분군이다.</li>
-        <li>부분군의 교집합은 부분군, 합집합은 대개 아니다. \(\langle S\rangle\)은 \(S\)를 포함하는 가장 작은 부분군이다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 공리를 다 확인할 필요는 없다. 공집합이 아닌 \(H\)에서 \(a, b \in H\)이면 \(ab^{-1} \in H\)라는 한 조건만 보이면 부분군이며, 결합법칙은 물려받고 항등원과 역원은 이 조건에서 나온다. 유한 부분집합은 곱에 닫혀 있기만 해도 부분군이다. 부분군의 교집합은 부분군이지만 합집합은 일반적으로 아니며, 생성된 부분군 \(\langle S\rangle\)은 \(S\)를 포함하는 가장 작은 부분군이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.4</span>연습문제</h3>
