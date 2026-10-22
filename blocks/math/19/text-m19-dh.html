@@ -8,53 +8,87 @@
 <article class="card q-card" id="text-m19-dh" data-kind="본문" data-std="수학19-06-02">
   <header class="card-head"><span class="no"></span><h2>이산로그와 디피-헬먼 키 교환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(\mathbb F_p^\times\)에서 \(g^x\)는 빠르게 계산되지만 \(g^x\)에서 \(x\)를 구하는 이산로그는 어렵다는 비대칭을 이해한다.</li>
-        <li>제곱을 반복하는 빠른 거듭제곱으로 \(g^x \bmod p\)를 \(O(\log x)\)번의 곱셈으로 계산한다.</li>
-        <li>디피-헬먼 키 교환의 절차와 안전성의 근거를 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>원시근과 순환군 (<a href="04-04.html">4.4절</a>), 이진법.</li>
-      </ul>
-    </div>
+    <p class="q-ask">두 사람이 모든 대화가 도청되는 통신로로 이야기하면서, 도청자는 모르는 공통 비밀 키를 만들 수 있을까? 그러려면 한 방향으로는 계산이 쉽고 반대 방향으로는 매우 어려운 연산이 필요하다. 유한체의 곱셈군에서 그런 연산을 찾을 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="5의 거듭제곱을 23으로 나눈 나머지의 그래프">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M56.9 168.2 L70.7 141.0 L84.4 161.4 L98.2 106.9 L112.0 147.8 L125.8 38.8 L139.6 120.5 L153.3 59.3 L167.1 66.1 L180.9 100.1 L194.7 113.7 L208.4 25.2 L222.2 52.4 L236.0 32.0 L249.8 86.5 L263.6 45.6 L277.3 154.6 L291.1 72.9 L304.9 134.1 L318.7 127.3 L332.4 93.3 L346.2 79.7" class="gd" style="fill:none"/>
+        <circle cx="56.9" cy="168.2" r="3" class="fa"/>
+        <circle cx="70.7" cy="141.0" r="3" class="fa"/>
+        <circle cx="84.4" cy="161.4" r="3" class="fa"/>
+        <circle cx="98.2" cy="106.9" r="3" class="fa"/>
+        <circle cx="112.0" cy="147.8" r="3" class="fa"/>
+        <circle cx="125.8" cy="38.8" r="3" class="fa"/>
+        <circle cx="139.6" cy="120.5" r="3" class="fa"/>
+        <circle cx="153.3" cy="59.3" r="3" class="fa"/>
+        <circle cx="167.1" cy="66.1" r="3" class="fa"/>
+        <circle cx="180.9" cy="100.1" r="3" class="fa"/>
+        <circle cx="194.7" cy="113.7" r="3" class="fa"/>
+        <circle cx="208.4" cy="25.2" r="3" class="fa"/>
+        <circle cx="222.2" cy="52.4" r="3" class="fa"/>
+        <circle cx="236.0" cy="32.0" r="3" class="fa"/>
+        <circle cx="249.8" cy="86.5" r="3" class="fa"/>
+        <circle cx="263.6" cy="45.6" r="3" class="fa"/>
+        <circle cx="277.3" cy="154.6" r="3" class="fa"/>
+        <circle cx="291.1" cy="72.9" r="3" class="fa"/>
+        <circle cx="304.9" cy="134.1" r="3" class="fa"/>
+        <circle cx="318.7" cy="127.3" r="3" class="fa"/>
+        <circle cx="332.4" cy="93.3" r="3" class="fa"/>
+        <circle cx="346.2" cy="79.7" r="3" class="fa"/>
+        <circle cx="139.6" cy="120.5" r="4.5" class="fd"/>
+        <circle cx="263.6" cy="45.6" r="4.5" class="fc"/>
+        <text x="57" y="190" text-anchor="middle" class="s">0</text>
+        <text x="126" y="190" text-anchor="middle" class="s">5</text>
+        <text x="195" y="190" text-anchor="middle" class="s">10</text>
+        <text x="264" y="190" text-anchor="middle" class="s">15</text>
+        <text x="332" y="190" text-anchor="middle" class="s">20</text>
+        <text x="44" y="172" text-anchor="end" class="s">1</text>
+        <text x="44" y="145" text-anchor="end" class="s">5</text>
+        <text x="44" y="111" text-anchor="end" class="s">10</text>
+        <text x="44" y="77" text-anchor="end" class="s">15</text>
+        <text x="44" y="43" text-anchor="end" class="s">20</text>
+        <text x="205" y="207" text-anchor="middle" class="s">지수 x</text>
+        <text x="375" y="40" class="ta">5ˣ mod 23</text>
+        <text x="375" y="60" class="s">값이 마구 흩어짐</text>
+        <text x="375" y="80" class="td">앨리스 A = 5⁶ = 8</text>
+        <text x="375" y="100" class="tc">밥 B = 5¹⁵ = 19</text>
+        <text x="375" y="120" class="s">공통 키 5⁹⁰ = 2</text>
+      </svg>
+      <figcaption>그림 1. \(x = 0, 1, \dots, 21\)에 대해 \(5^x\)를 23으로 나눈 나머지(파랑)이다. 값이 마구 흩어져 있어서, 값만 보고 지수 \(x\)를 짐작하기 어렵다. 앨리스가 보내는 \(5^6 \equiv 8\)(빨강)과 밥이 보내는 \(5^{15} \equiv 19\)(주황)로 두 사람은 공통 키 2를 얻는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>원시근과 순환군(<a href="04-04.html">4.4절</a>), 이진법을 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>이산로그 문제</h3>
-    <p>\(g\)가 \(\mathbb F_p^\times\)의 원시근이면 모든 \(h \ne 0\)은 \(h = g^x\)로 쓰이고, \(x \in \{0, \dots, p - 2\}\)를 \(h\)의 <b>이산로그</b> \(\log_gh\)라 합니다. 실수의 로그와 달리 \(g^x\)의 값이 \(x\)에 따라 마구 흩어져(4.4절 탐구 카드) 크기 비교로 \(x\)를 좁힐 수 없습니다. 알려진 가장 좋은 알고리즘도 \(p \approx 2^{2048}\)이면 현실적인 시간에 풀지 못합니다.</p>
+    <p>\(g\)가 \(\mathbb F_p^\times\)의 원시근이면 0이 아닌 모든 \(h\)는 \(h = g^x\)로 쓰이며, 이때 \(x \in \{0, \dots, p - 2\}\)를 \(h\)의 <em>이산로그</em> \(\log_gh\)라 한다. 실수의 로그와 달리 \(g^x\)의 값은 그림 1처럼 \(x\)에 따라 마구 흩어져서, 크기를 비교해 \(x\)를 좁혀 갈 수 없다. 알려진 가장 좋은 알고리즘도 \(p \approx 2^{2048}\)이면 현실적인 시간 안에 이 문제를 풀지 못한다.</p>
 
     <h3><span class="no">6.2.2</span>빠른 거듭제곱</h3>
-    <p>반대 방향 \(g^x \bmod p\)는 쉽습니다. \(x\)를 이진법으로 쓰고 \(g, g^2, g^4, g^8, \dots\)을 제곱으로 구해 필요한 것만 곱합니다.</p>
-    <div class="tb-env ex"><b>예 6.2.1</b> \(5^{13} \bmod 23\): \(13 = 8 + 4 + 1\). \(5^1 = 5\), \(5^2 = 25 \equiv 2\), \(5^4 \equiv 4\), \(5^8 \equiv 16\). \(5^{13} \equiv 16\cdot4\cdot5 = 320 \equiv 21\). 곱셈 5번(제곱 3번 + 곱 2번)으로 끝납니다. 2048비트 지수도 약 3000번의 곱셈이면 됩니다.</div>
+    <p>반대 방향인 \(g^x \bmod p\)의 계산은 쉽다. \(x\)를 이진법으로 쓰고 \(g, g^2, g^4, g^8, \dots\)을 제곱을 되풀이해 구한 뒤, 필요한 것만 곱하면 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.1</span>
+      <p>\(5^{13} \bmod 23\)을 빠른 거듭제곱으로 계산하여라.</p>
+    </div>
+    <p><i>풀이.</i> \(13 = 8 + 4 + 1\)이다. 제곱을 되풀이하면 \(5^1 = 5\), \(5^2 = 25 \equiv 2\), \(5^4 \equiv 4\), \(5^8 \equiv 16\)이다. 따라서 \(5^{13} \equiv 16\cdot4\cdot5 = 320 \equiv 21\)이며, 제곱 3번과 곱 2번, 모두 곱셈 5번으로 끝난다. 2048비트 지수도 약 3000번의 곱셈이면 계산된다.</p>
 
     <h3><span class="no">6.2.3</span>디피-헬먼 키 교환</h3>
-    <p>앨리스와 밥이 도청되는 통신로로 공통 비밀 키를 만들려 합니다.</p>
-    <ol>
-      <li>공개: 큰 소수 \(p\)와 원시근 \(g\).</li>
-      <li>앨리스는 비밀 \(a\)를 골라 \(A = g^a\)를, 밥은 비밀 \(b\)를 골라 \(B = g^b\)를 공개로 보낸다.</li>
-      <li>앨리스는 \(B^a = g^{ab}\), 밥은 \(A^b = g^{ab}\)를 계산한다. 이 \(g^{ab}\)가 공통 키이다.</li>
-    </ol>
-    <div class="tb-env ex"><b>예 6.2.2</b> \(p = 23\), \(g = 5\), \(a = 6\), \(b = 15\). \(A = 5^6 \equiv 8\), \(B = 5^{15} \equiv 19\). 앨리스는 \(19^6 \equiv 2\), 밥은 \(8^{15} \equiv 2\). 공통 키 2입니다.</div>
-    <p>도청자는 \(p, g, A, B\)를 알지만 \(g^{ab}\)를 얻으려면 \(A\)에서 \(a\)를 구하는(이산로그) 것 외에 알려진 효율적 방법이 없습니다. 같은 원리를 타원곡선 위의 군에서 쓰면 더 짧은 키로 같은 안전성을 얻습니다(인터넷 TLS의 기본).</p>
-
-    <div class="tb-note"><b>흔한 오해</b>(1) 공개 정보로 \(g^{ab}\)를 \(A\cdot B = g^{a+b}\)로 구할 수 있다고 여긴다. 필요한 것은 \(g^{ab}\)이지 \(g^{a+b}\)가 아니다. (2) 디피-헬먼만으로 상대가 누구인지 확인된다고 여긴다. 중간자 공격을 막으려면 서명 같은 인증이 따로 필요하다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(g^x\)는 제곱 반복으로 빠르게, \(x = \log_gh\)는 어렵게: 일방향성.</li>
-        <li>DH: \(A = g^a\), \(B = g^b\)를 교환해 \(g^{ab}\)를 공유.</li>
-        <li>안전성은 이산로그(정확히는 DH 문제)의 어려움에 기댄다.</li>
-      </ol>
+    <p>앨리스와 밥이 도청되는 통신로로 공통 비밀 키를 만들려 한다. 먼저 큰 소수 \(p\)와 원시근 \(g\)를 공개한다. 다음으로 앨리스는 비밀 \(a\)를 골라 \(A = g^a\)를 보내고, 밥은 비밀 \(b\)를 골라 \(B = g^b\)를 보낸다. 그러면 앨리스는 \(B^a = g^{ab}\)를, 밥은 \(A^b = g^{ab}\)를 계산할 수 있으며, 이 \(g^{ab}\)가 공통 키이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 6.2.2</span>
+      <p>\(p = 23\), \(g = 5\), \(a = 6\), \(b = 15\)일 때 공통 키를 구하여라.</p>
     </div>
+    <p><i>풀이.</i> \(A = 5^6 \equiv 8\)이고 \(B = 5^{15} \equiv 19\)이다. 앨리스는 \(19^6 \equiv 2\)를, 밥은 \(8^{15} \equiv 2\)를 계산하므로 공통 키는 2이다.</p>
+    <p>도청자는 \(p, g, A, B\)를 모두 알지만, \(g^{ab}\)를 얻으려면 \(A\)에서 \(a\)를 구하는 이산로그 말고는 알려진 효율적인 방법이 없다. 한편 같은 원리를 타원곡선 위의 군에서 쓰면 더 짧은 키로 같은 안전성을 얻으며, 이것이 인터넷 TLS의 기본 방식이다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>공개된 \(A\)와 \(B\)를 곱해 공통 키를 얻을 수 있다고 여기기 쉽지만, \(A\cdot B = g^{a+b}\)이고 필요한 것은 \(g^{ab}\)이다. 또 디피-헬먼만으로 상대가 누구인지 확인된다고 생각하는 것도 틀렸다. 중간에서 두 사람인 척하는 공격을 막으려면 서명 같은 인증이 따로 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 유한체의 곱셈군에서 \(g^x\)를 계산하는 것은 빠른 거듭제곱으로 쉽지만, 그 값에서 \(x\)를 되찾는 이산로그는 매우 어렵다. 디피-헬먼 키 교환은 이 비대칭을 써서, 두 사람이 \(g^a\)와 \(g^b\)만 공개하고도 각자 \(g^{ab}\)를 계산해 공통 키를 만든다. 도청자는 \(g^a\)와 \(g^b\)를 알아도 이산로그를 풀지 못하므로 \(g^{ab}\)를 얻을 수 없다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(3^{10} \bmod 11\)을 계산하여라.
-          <details><summary>답</summary><p>페르마 소정리로 1. (제곱 반복: \(3^2 = 9\), \(3^4 = 81 \equiv 4\), \(3^8 \equiv 16 \equiv 5\), \(3^{10} = 5\cdot9 = 45 \equiv 1\).)</p></details>
+          <details><summary>답</summary><p>페르마 소정리로 1. ((제곱 반복) \(3^2 = 9\), \(3^4 = 81 \equiv 4\), \(3^8 \equiv 16 \equiv 5\), \(3^{10} = 5\cdot9 = 45 \equiv 1\).)</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
