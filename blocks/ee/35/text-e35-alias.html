@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e35-alias" data-kind="본문" data-std="전전35-01-01">
   <header class="card-head"><span class="no"></span><h2>에일리어싱이 생기는 주파수 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>표본화 후 스펙트럼이 f_s 간격으로 반복됨을 안다.</li>
-        <li>신호 주파수 f를 f_s의 정수배만큼 옮겨 [0, f_s/2] 안의 겉보기 주파수를 구한다.</li>
-        <li>앤티에일리어싱 필터의 역할을 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Nyquist 표본화 정리 (<a href="../6/06-01.html">전전6 6.1절</a>, <a href="../6/06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">아날로그 신호를 디지털로 바꾸려면 일정한 간격으로 값을 읽는다. 그런데 너무 드물게 읽으면, 빠르게 떨리는 신호가 표본 위에서는 느린 신호처럼 보인다. 표본화한 뒤에는 원래 무엇이었는지 알 길이 없다. 표본화 주파수보다 높은 신호는 몇 Hz로 보일까? 그리고 이런 착시를 막으려면 어디에 무엇을 두어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 에일리어싱(개형). 표본화 주파수 8 kHz에서 5 kHz 사인파는 3 kHz로, 7 kHz와 9 kHz 사인파는 모두 1 kHz로 보이며, 0부터 4 kHz 구간으로 접혀 들어온다">
+        <line x1="40" y1="160" x2="520" y2="160" class="ax"/>
+        <path d="M200 30 V160 M360 30 V160" class="k dsh"/>
+        <g class="b" stroke-width="3"><path d="M240 160 V80"/><path d="M320 160 V80"/><path d="M400 160 V80"/></g>
+        <g class="a" stroke-width="3"><path d="M120 160 V80"/><path d="M80 160 V80"/></g>
+        <path d="M240 75 Q180 40 120 75 M320 75 Q200 20 80 75 M400 75 Q240 10 80 72" class="d" fill="none" stroke-width="1.5"/>
+        <g class="s" text-anchor="middle"><text x="40" y="180">0</text><text x="200" y="180">4 kHz</text><text x="360" y="180">8 kHz</text><text x="240" y="196" class="tb">5</text><text x="320" y="196" class="tb">7</text><text x="400" y="196" class="tb">9</text><text x="120" y="196" class="ta">3</text><text x="80" y="196" class="ta">1</text></g>
+      </svg>
+      <figcaption>그림 1. 표본화하면 스펙트럼이 표본화 주파수 간격으로 되풀이되어, f_s/2 위의 성분이 0~f_s/2 구간의 낮은 주파수로 접혀 보인다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Nyquist 표본화 정리(<a href="../6/06-01.html">전전6 6.1절</a>, <a href="../6/06-02.html">6.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>겉보기 주파수</h3>
-    <p>\(\cos(2\pi fn/f_s)\)는 f를 f_s만큼 바꾸거나 부호를 바꿔도 같은 표본을 줍니다. 그래서 표본만 보면 f는 \(|f - kf_s|\)(k는 결과가 [0, f_s/2]에 들도록 고른 정수)로 보입니다.</p>
+    <p>표본 \(\cos(2\pi fn/f_s)\)는 f를 f_s만큼 바꾸거나 부호를 바꿔도 같은 값을 준다. 즉 n이 정수이므로 \(2\pi(f + f_s)n/f_s\)는 \(2\pi fn/f_s\)와 2π의 정수배만큼만 다르다.</p>
+    <p>그래서 표본만 보면 f는 \(|f - kf_s|\)로 보이며, k는 결과가 [0, f_s/2]에 들도록 고른 정수이다. 처음 질문의 첫째 답이 이 겉보기 주파수이다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
-      <p>f_s = 8 kHz에서 5 kHz, 7 kHz, 9 kHz 사인파는 각각 몇 Hz로 보이는가?</p>
+      <p>f_s = 8 kHz에서 5 kHz, 7 kHz, 9 kHz 사인파는 각각 몇 Hz로 보이는지 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 5 kHz: |5 − 8| = 3 kHz. 7 kHz: |7 − 8| = 1 kHz. 9 kHz: |9 − 8| = 1 kHz. 7 kHz와 9 kHz가 표본 위에서 1 kHz와 구별되지 않습니다. 그래서 ADC 앞에 f_s/2(4 kHz) 위를 충분히 깎는 아날로그 저역 통과 필터를 둡니다. 실제 필터는 경사가 유한해, 통과 대역 3.4 kHz 전화 음성에 8 kHz 표본화를 쓰는 식으로 여유를 둡니다.</p>
+    <p><i>풀이.</i> 5 kHz는 |5 − 8| = 3 kHz, 7 kHz는 |7 − 8| = 1 kHz, 9 kHz는 |9 − 8| = 1 kHz로 보인다. 그러면 7 kHz와 9 kHz가 표본 위에서 1 kHz와 구별되지 않는다.</p>
+    <p>그래서 ADC 앞에 f_s/2(4 kHz) 위를 충분히 깎는 아날로그 저역 통과 필터, 곧 앤티에일리어싱 필터를 둔다. 처음 질문의 둘째 답이 이 필터이다. 그런데 실제 필터는 경사가 유한해, 통과 대역 3.4 kHz인 전화 음성에 8 kHz 표본화를 쓰는 식으로 여유를 둔다.</p>
+    <p>한편 에일리어싱은 시간 축 신호에만 생기는 것이 아니다. 예를 들어 디지털 카메라로 촘촘한 줄무늬 옷을 찍으면 화소 간격보다 촘촘한 무늬가 굵은 물결무늬(모아레)로 보이는데, 같은 원리이다.</p>
+    <p>그러므로 표본화 주파수를 정할 때는 신호의 최고 주파수만이 아니라, 앞단 필터가 얼마나 날카로운지도 함께 본다. 필터가 완만할수록 표본화 주파수를 더 높여 여유를 키운다.</p>
+    <p>그리고 오디오 CD의 44.1 kHz는 사람이 듣는 20 kHz의 두 배보다 조금 높다. 즉 20 kHz와 22.05 kHz 사이의 좁은 구간이 필터의 전이 대역이 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "표본화 뒤에 디지털 필터로 에일리어싱을 지울 수 있다": 겹친 성분은 원래 성분과 구별할 수 없어 표본화 전에 막아야 합니다. (2) "f_s = 2f면 충분": 정확히 2f에서는 위상에 따라 0만 표본화될 수 있어 2f보다 커야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>표본화 뒤에 디지털 필터로 에일리어싱을 지울 수 있다고 여기기 쉽다. 겹친 성분은 원래 성분과 구별할 수 없어 표본화 전에 막아야 한다. 또 f_s = 2f면 충분하다고 생각하기 쉬운데, 정확히 2f에서는 위상에 따라 0만 표본화될 수 있어 2f보다 커야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>스펙트럼이 f_s 간격으로 반복.</li>
-        <li>겉보기 주파수 |f − kf_s| ∈ [0, f_s/2].</li>
-        <li>예: 8 kHz에서 5 → 3 kHz, 7·9 → 1 kHz. 앤티에일리어싱 필터.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>표본화하면 스펙트럼이 f_s 간격으로 반복된다. 겉보기 주파수는 |f − kf_s| ∈ [0, f_s/2]이다. 예제의 8 kHz 표본화에서 5 kHz는 3 kHz로, 7·9 kHz는 1 kHz로 보이므로 앤티에일리어싱 필터를 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f_s = 1 kHz에서 600 Hz는?
-          <details><summary>답</summary><p>400 Hz.</p></details>
+          <details><summary>답</summary><p>400 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f_s = 44.1 kHz에서 30 kHz 초음파는?
-          <details><summary>답</summary><p>14.1 kHz.</p></details>
+          <details><summary>답</summary><p>14.1 kHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>바퀴가 영화에서 거꾸로 도는 것처럼 보이는 이유를 같은 원리로 설명하라.
-          <details><summary>답</summary><p>회전 주파수가 프레임률의 절반을 넘어 음의 낮은 주파수로 보이기 때문입니다.</p></details>
+        <li>바퀴가 영화에서 거꾸로 도는 것처럼 보이는 이유를 같은 원리로 설명하여라.
+          <details><summary>답</summary><p>회전 주파수가 프레임률의 절반을 넘어 음의 낮은 주파수로 보이기 때문이다.</p></details>
         </li>
       </ol>
     </div>

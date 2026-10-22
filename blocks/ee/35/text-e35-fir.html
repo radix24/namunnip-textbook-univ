@@ -8,21 +8,21 @@
 <article class="card q-card" id="text-e35-fir" data-kind="본문" data-std="전전35-04-01">
   <header class="card-head"><span class="no"></span><h2>창 함수법으로 FIR 저역 통과 필터 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>이상적 저역 통과의 sinc 임펄스 응답을 유한 길이로 자르고 창을 곱한다.</li>
-        <li>NumPy로 계수를 계산하고 몇 주파수에서 응답을 확인한다.</li>
-        <li>탭 수와 창이 전이 폭과 저지 대역 감쇠를 정함을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>창 함수 (<a href="03-01.html">3.1절</a>), DTFT (<a href="../6/05-01.html">전전6 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">이상적인 저역 통과 필터는 차단 주파수 아래는 그대로, 위는 완전히 0으로 만든다. 그런데 그 임펄스 응답은 sinc 함수라 양쪽으로 끝없이 이어져, 실제로는 만들 수 없다. 끝없는 응답을 유한한 탭으로 자르면 무엇이 달라질까? 그리고 탭 수와 창 종류는 각각 무엇을 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="실습과 예제 4.1.1 창 함수법 FIR(개형). f_s = 8 kHz, 차단 1 kHz, 31탭 Hamming 창으로 설계하면 1 kHz에서 −6.0 dB, 1.5 kHz에서 −54.5 dB, 3 kHz에서 −61.8 dB이고, 전이 폭을 약 400 Hz로 줄이려면 약 67탭이 필요하다">
+        <line x1="60" y1="170" x2="500" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M60 50 H150 Q180 50 190 90 Q205 160 220 165 H500" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M60 50 H190 V165 H500" class="k dsh"/>
+        <g class="fd"><circle cx="190" cy="90" r="5"/><circle cx="225" cy="164" r="5"/></g>
+        <g class="s"><text x="200" y="88" class="ta">1 kHz −6.0 dB</text><text x="240" y="150" class="td">1.5 kHz −54.5 dB</text><text x="300" y="70">31탭 Hamming</text><text x="300" y="96">400 Hz 전이 → 67탭</text><text x="440" y="190">주파수</text></g>
+      </svg>
+      <figcaption>그림 1. 잘라 낸 sinc에 창을 곱하면 차단 근처에 유한한 전이 대역이 생기고, 탭 수는 전이 폭을, 창 종류는 저지 감쇠를 정한다(실습과 예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>창 함수(<a href="03-01.html">3.1절</a>)와 DTFT(<a href="../6/05-01.html">전전6 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>실습</h3>
-    <p>f_s = 8 kHz, 차단 1 kHz, 31탭, Hamming 창으로 설계하고 0~3 kHz에서 크기를 계산합니다.</p>
+    <p>창 함수법은 이상적 저역 통과의 sinc 임펄스 응답을 가운데 N개만 자르고, 창을 곱해 잘린 끝을 부드럽게 한다. 아래는 f_s = 8 kHz, 차단 1 kHz, 31탭, Hamming 창으로 설계하고 0~3 kHz에서 크기를 계산한 것이다.</p>
     <pre><code>import numpy as np
 fs, fc, N = 8000, 1000, 31                  # 표본화 8 kHz, 차단 1 kHz, 탭 31개
 n = np.arange(N) - (N - 1) / 2
@@ -33,7 +33,7 @@ print("가운데 계수 h[15] =", round(h[15], 4), " 대칭:", np.allclose(h, h[
 for f in (0, 500, 1000, 1500, 2000, 3000):
     H = np.sum(h * np.exp(-2j * np.pi * f / fs * np.arange(N)))
     print(f"{f:5d} Hz: |H| = {abs(H):.4f} ({20 * np.log10(abs(H) + 1e-12):7.1f} dB)")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>가운데 계수 h[15] = 0.2507  대칭: True
     0 Hz: |H| = 1.0000 (    0.0 dB)
   500 Hz: |H| = 1.0031 (    0.0 dB)
@@ -41,42 +41,37 @@ for f in (0, 500, 1000, 1500, 2000, 3000):
  1500 Hz: |H| = 0.0019 (  -54.5 dB)
  2000 Hz: |H| = 0.0011 (  -59.3 dB)
  3000 Hz: |H| = 0.0008 (  -61.8 dB)</code></pre>
-    <p><i>해석.</i> 계수가 대칭이라 선형 위상(모든 주파수가 같은 지연 15표본)입니다. 차단 주파수에서 −6 dB(창법의 특징), 1.5 kHz부터 −54 dB 아래로 떨어져 Hamming 창의 저지 감쇠(약 −53 dB)와 맞습니다. 전이 폭은 대략 \(3.3f_s/N\)(Hamming)이라 탭을 두 배로 하면 전이가 절반으로 좁아집니다.</p>
+    <p>계수가 대칭이라 선형 위상이다. 즉 모든 주파수가 같은 시간만큼 늦게 나와 파형 모양이 찌그러지지 않는다. 그리고 차단 주파수에서 −6 dB인 것은 창법의 특징이다.</p>
+    <p>1.5 kHz부터는 −54 dB 아래로 떨어져, Hamming 창의 저지 감쇠(약 −53 dB)와 맞는다(그림 1). 처음 질문의 첫째 답이 이 전이 대역과 유한한 감쇠이다. 한편 전이 폭은 대략 \(3.3f_s/N\)(Hamming)이라, 탭을 두 배로 하면 전이가 절반으로 좁아진다. 처음 질문의 둘째 답이 이 역할 분담, 곧 탭 수는 전이 폭을, 창은 저지 감쇠를 정한다는 것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
-      <p>전이 폭을 약 400 Hz로 줄이려면 Hamming 창으로 몇 탭이 필요한가?</p>
+      <p>전이 폭을 약 400 Hz로 줄이려면 Hamming 창으로 몇 탭이 필요한지 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(N \approx 3.3 \times 8000/400 = 66\) → 대칭을 위해 67탭. 직사각형 창으로 자르면 같은 탭에서 전이는 좁지만 저지 감쇠가 약 −21 dB로 나쁩니다.</p>
+    <p><i>풀이.</i> \(N \approx 3.3 \times 8000/400 = 66\)이므로, 대칭을 위해 67탭이다. 그런데 직사각형 창으로 자르면 같은 탭에서 전이는 좁지만 저지 감쇠가 약 −21 dB로 나쁘다.</p>
+    <p>그러므로 설계는 먼저 필요한 저지 감쇠로 창을 고르고, 그다음 필요한 전이 폭으로 탭 수를 정하는 순서로 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "탭을 늘리면 저지 감쇠도 깊어진다": 창법의 최대 감쇠는 창 종류가 정하고 탭은 전이 폭을 정합니다. (2) "FIR은 늘 IIR보다 낫다": 선형 위상·안정성은 장점이지만 같은 날카로움에 탭(연산)이 훨씬 많습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>탭을 늘리면 저지 감쇠도 깊어진다고 여기기 쉽다. 창법의 최대 감쇠는 창 종류가 정하고, 탭은 전이 폭을 정한다. 또 FIR은 늘 IIR보다 낫다고 생각하기 쉬운데, 선형 위상과 안정성은 장점이지만 같은 날카로움에 탭(연산)이 훨씬 많다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>sinc를 자르고 창을 곱함, 대칭 → 선형 위상.</li>
-        <li>예(31탭 Hamming): 1 kHz −6 dB, 1.5 kHz 이상 −54 dB 아래(실제 계산).</li>
-        <li>탭 수 → 전이 폭, 창 → 저지 감쇠.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>창 함수법은 sinc를 자르고 창을 곱하며, 대칭 계수는 선형 위상을 준다. 실습의 31탭 Hamming은 1 kHz에서 −6 dB, 1.5 kHz 이상에서 −54 dB 아래이다(실제 계산). 탭 수는 전이 폭을, 창은 저지 감쇠를 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>31탭 대칭 FIR의 군지연은?
-          <details><summary>답</summary><p>15표본.</p></details>
+          <details><summary>답</summary><p>15표본이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f_s 48 kHz, 전이 1 kHz, Hamming의 탭 수 어림은?
-          <details><summary>답</summary><p>약 158.</p></details>
+          <details><summary>답</summary><p>약 158이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>고역 통과를 저역 통과 계수로 만드는 방법은?
-          <details><summary>답</summary><p>δ[n − 15] − h[n](스펙트럼 반전) 또는 (−1)ⁿ을 곱해 주파수 이동.</p></details>
+          <details><summary>답</summary><p>δ[n − 15] − h[n](스펙트럼 반전) 또는 (−1)ⁿ을 곱해 주파수 이동이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e35-bilinear" data-kind="본문" data-std="전전35-04-02">
   <header class="card-head"><span class="no"></span><h2>쌍일차 변환으로 IIR 필터 만들기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(s = 2f_s\frac{1 - z^{-1}}{1 + z^{-1}}\)로 아날로그 전달함수를 디지털로 바꾼다.</li>
-        <li>주파수 휨 \(\omega_a = 2f_s\tan(\omega_d/2)\)과 사전 휨(prewarping)을 쓴다.</li>
-        <li>1차 RC 저역 통과를 변환하고 차단 주파수에서 −3 dB를 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Laplace 변환 (<a href="../6/07-01.html">전전6 7.1절</a>), z-변환 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">아날로그 필터 설계는 오랜 역사가 있어, 버터워스나 체비쇼프 같은 좋은 원형이 표로 정리되어 있다. 이 원형을 디지털 필터로 옮길 수 있다면 IIR 필터를 쉽게 만들 수 있다. 그런데 s-평면의 필터를 z-평면으로 옮기면서 안정성을 지키려면 어떤 변환을 써야 할까? 그리고 옮기는 과정에서 주파수는 그대로 보존될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1 쌍일차 변환과 사전 휨(개형). f_s = 8 kHz에서 디지털 차단 1 kHz는 사전 휨으로 아날로그 6627.4 rad/s가 되고, 변환한 1차 저역 통과는 K = 0.2929, a = −0.4142로 1 kHz에서 |H| = 0.7071(−3 dB)이다">
+        <line x1="60" y1="170" x2="300" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M60 170 Q170 160 220 110 T290 30" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M60 170 L290 60" class="k dsh"/>
+        <circle cx="146" cy="150" r="5" class="fd"/>
+        <g class="s"><text x="150" y="140" class="tb">6627 rad/s</text><text x="200" y="190">ω_d</text><text x="70" y="40">ω_a = 2f_s tan(ω_d/2)</text></g>
+        <g class="s"><text x="330" y="70">K = 0.2929</text><text x="330" y="96">a = −0.4142</text><text x="330" y="122" class="ta">1 kHz에서 −3 dB</text></g>
+      </svg>
+      <figcaption>그림 1. 쌍일차 변환은 무한한 아날로그 주파수 축을 유한한 디지털 주파수 구간에 압축하므로, 원하는 디지털 차단을 먼저 휘어 아날로그 원형을 설계한다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Laplace 변환(<a href="../6/07-01.html">전전6 7.1절</a>)과 z-변환(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>변환과 휨</h3>
-    <p>쌍일차 변환은 s-평면 왼쪽 반평면을 단위원 안으로 옮겨 안정성을 지키고, 허수축 전체를 단위원 한 바퀴에 압축합니다. 그 결과 아날로그 주파수와 디지털 주파수가 \(\omega_a = 2f_s\tan(\omega_d/2)\)로 휘므로, 원하는 디지털 차단 주파수를 먼저 이 식으로 바꿔 아날로그 원형을 설계합니다.</p>
+    <p>쌍일차 변환은 \(s = 2f_s(1 - z^{-1})/(1 + z^{-1})\)로 s를 바꾼다. 이 변환은 s-평면 왼쪽 반평면을 단위원 안으로 옮기므로, 안정한 아날로그 필터는 안정한 디지털 필터가 된다. 처음 질문의 첫째 답이 이 변환이다.</p>
+    <p>그런데 이 변환은 허수축 전체를 단위원 한 바퀴에 압축한다. 그 결과 아날로그 주파수와 디지털 주파수가 \(\omega_a = 2f_s\tan(\omega_d/2)\)로 휜다. 처음 질문의 둘째 답이 이 휨으로, 주파수는 그대로 보존되지 않는다. 그래서 원하는 디지털 차단 주파수를 먼저 이 식으로 바꿔(사전 휨) 아날로그 원형을 설계한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
-      <p>f_s = 8 kHz에서 차단 1 kHz인 1차 저역 통과 \(H(s) = \omega_a/(s + \omega_a)\)를 변환하라.</p>
+      <p>f_s = 8 kHz에서 차단 1 kHz인 1차 저역 통과 \(H(s) = \omega_a/(s + \omega_a)\)를 변환하여라.</p>
     </div>
-    <p><i>풀이.</i> ω_d = 2π/8, \(\omega_a = 16000\tan(\pi/8) = 6627.4\) rad/s(휨 없이 2π × 1000 = 6283.2를 쓰면 차단이 어긋남). 대입하면 \(H(z) = K\frac{1 + z^{-1}}{1 + az^{-1}}\), \(K = \frac{\omega_a}{\omega_a + 2f_s} = 0.2929\), \(a = \frac{\omega_a - 2f_s}{\omega_a + 2f_s} = -0.4142\). 1 kHz에서 \(|H| = 0.7071\)(−3 dB)로 맞습니다. 차분방정식은 \(y[n] = 0.4142y[n - 1] + 0.2929(x[n] + x[n - 1])\).</p>
+    <p><i>풀이.</i> ω_d = 2π/8이므로 \(\omega_a = 16000\tan(\pi/8) = 6627.4\) rad/s이다. 휨 없이 2π × 1000 = 6283.2를 쓰면 차단이 어긋난다. 대입하면 \(H(z) = K\frac{1 + z^{-1}}{1 + az^{-1}}\)이고, \(K = \frac{\omega_a}{\omega_a + 2f_s} = 0.2929\), \(a = \frac{\omega_a - 2f_s}{\omega_a + 2f_s} = -0.4142\)이다.</p>
+    <p>그러면 1 kHz에서 \(|H| = 0.7071\)(−3 dB)로 맞는다(그림 1). 그리고 차분방정식은 \(y[n] = 0.4142y[n - 1] + 0.2929(x[n] + x[n - 1])\)이다.</p>
+    <p>즉 휨은 낮은 주파수에서는 거의 없고, 나이퀴스트 주파수에 가까워질수록 커진다. 따라서 차단이 f_s에 비해 아주 낮으면 사전 휨의 효과가 작지만, 예제처럼 f_s/8쯤이면 5% 넘게 어긋난다.</p>
+    <p>한편 쌍일차 변환은 차단 주파수 같은 한 점만 정확히 맞춘다. 그러므로 대역 통과처럼 맞춰야 할 주파수가 둘이면, 두 경계 주파수를 모두 사전 휨으로 바꾼 뒤 원형을 설계한다.</p>
+    <p>그리고 같은 날카로움을 얻는 데 IIR은 FIR(4.1절)보다 계수가 훨씬 적다. 예를 들어 이 1차 필터는 계수 세 개뿐이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "주파수가 그대로 옮겨진다": 높은 주파수일수록 휨이 커서 사전 휨이 필요합니다. (2) "IIR도 선형 위상이다": 일반적으로 위상이 비선형입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>주파수가 그대로 옮겨진다고 여기기 쉽다. 높은 주파수일수록 휨이 커서 사전 휨이 필요하다. 또 IIR도 선형 위상이라고 생각하기 쉬운데, 일반적으로 위상이 비선형이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>s = 2f_s(1 − z⁻¹)/(1 + z⁻¹), 안정성 보존.</li>
-        <li>사전 휨 ω_a = 2f_s tan(ω_d/2).</li>
-        <li>예: K = 0.2929, a = −0.4142, 1 kHz에서 −3 dB.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>쌍일차 변환은 s = 2f_s(1 − z⁻¹)/(1 + z⁻¹)로 안정성을 보존한다. 사전 휨은 ω_a = 2f_s tan(ω_d/2)이다. 예제는 K = 0.2929, a = −0.4142로 1 kHz에서 −3 dB이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>쌍일차 변환에서 s = 0은 z = ?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f_s = 8 kHz, f = 2 kHz의 사전 휨 ω_a는?
-          <details><summary>답</summary><p>16000 tan(π/4) = 16 000 rad/s.</p></details>
+          <details><summary>답</summary><p>16000 tan(π/4) = 16 000 rad/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>s = ∞는 어디로 가는가?
-          <details><summary>답</summary><p>z = −1(나이퀴스트 주파수).</p></details>
+          <details><summary>답</summary><p>z = −1(나이퀴스트 주파수)이다.</p></details>
         </li>
       </ol>
     </div>
