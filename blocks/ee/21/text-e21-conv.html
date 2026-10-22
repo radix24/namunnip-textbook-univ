@@ -8,64 +8,71 @@
 <article class="card q-card" id="text-e21-conv" data-kind="본문" data-std="전전21-05-04">
   <header class="card-head"><span class="no"></span><h2>길쌈 부호와 Viterbi 복호</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>시프트 레지스터와 생성 다항식으로 길쌈 부호를 만든다.</li>
-        <li>부호화 출력 열을 계산한다.</li>
-        <li>트렐리스와 Viterbi 복호(최소 거리 경로 찾기)의 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>블록 부호 (<a href="05-01.html">5.1절</a>), 코딩 이득 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">블록 부호는 메시지를 덩어리로 끊어 따로따로 부호화한다. 그런데 비트가 끝없이 흘러가는 음성이나 위성 링크라면, 앞 비트를 기억하며 이어서 부호화하는 편이 낫지 않을까? 그렇게 만든 긴 비트열은 수신측에서 어떻게 효율적으로 복호할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="(7, 5)₈ 길쌈 부호기(개형). 입력 u_k와 앞의 두 비트 u_(k−1), u_(k−2)를 담은 레지스터에서 c₁ = u_k ⊕ u_(k−1) ⊕ u_(k−2), c₂ = u_k ⊕ u_(k−2)를 낸다. 예제 5.4.1에서 입력 1011과 꼬리 0 두 개의 출력은 11 10 00 01 01 11이다">
+        <defs><marker id="ah-e21cv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="k"><rect x="120" y="80" width="50" height="40" fill="none"/><rect x="200" y="80" width="50" height="40" fill="none"/><rect x="280" y="80" width="50" height="40" fill="none"/></g>
+        <g class="s" text-anchor="middle"><text x="145" y="104">u_k</text><text x="225" y="104">u_k−1</text><text x="305" y="104">u_k−2</text></g>
+        <circle cx="225" cy="40" r="12" class="la"/><circle cx="225" cy="160" r="12" class="lb"/>
+        <g class="s" text-anchor="middle"><text x="225" y="45">⊕</text><text x="225" y="165">⊕</text></g>
+        <g marker-end="url(#ah-e21cv)"><line x1="60" y1="100" x2="118" y2="100" class="k" stroke-width="2"/><line x1="145" y1="80" x2="216" y2="48" class="a"/><line x1="225" y1="80" x2="225" y2="54" class="a"/><line x1="305" y1="80" x2="234" y2="48" class="a"/><line x1="145" y1="120" x2="216" y2="152" class="b"/><line x1="305" y1="120" x2="234" y2="152" class="b"/><line x1="237" y1="40" x2="380" y2="40" class="a" stroke-width="2"/><line x1="237" y1="160" x2="380" y2="160" class="b" stroke-width="2"/></g>
+        <g class="s"><text x="60" y="92">입력</text><text x="388" y="44" class="ta">c₁ (7)</text><text x="388" y="164" class="tb">c₂ (5)</text><text x="388" y="96">1011 →</text><text x="388" y="118" class="td">11 10 00 01 01 11</text></g>
+      </svg>
+      <figcaption>그림 1. 출력 비트가 지금 입력뿐 아니라 레지스터에 남은 앞의 두 비트에도 달려 있으므로, 한 입력 비트의 영향이 여러 출력에 퍼져 연속된 열 전체로 오류를 고칠 수 있다(예제 5.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>블록 부호(<a href="05-01.html">5.1절</a>), 코딩 이득(<a href="05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>기억이 있는 부호</h3>
-    <p>부호율 1/2, 구속 길이 3의 (7, 5)₈ 부호는 입력 비트와 앞의 두 비트로 두 출력을 냅니다: \(c_1 = u_k \oplus u_{k-1} \oplus u_{k-2}\), \(c_2 = u_k \oplus u_{k-2}\). 자유 거리 5라 경판정으로 2비트 오류까지 고칩니다. Viterbi 복호는 상태 4개의 트렐리스에서 받은 열과 해밍 거리가 가장 작은 경로를 동적 계획으로 찾습니다.</p><pre><code>def encode(bits):
+    <p>길쌈 부호는 입력 비트와 레지스터에 남은 앞 비트들로 출력을 만든다. 처음 질문의 첫째 답이 이것이다. 예를 들어 부호율 1/2, 구속 길이 3의 (7, 5)₈ 부호는 입력 비트와 앞의 두 비트로 두 출력을 낸다(그림 1).</p>
+    <div class="tb-env thm">
+      <span class="lb">(7, 5)₈ 길쌈 부호</span>
+      <p>\[ c_1 = u_k \oplus u_{k-1} \oplus u_{k-2} \]</p>
+      <p>\[ c_2 = u_k \oplus u_{k-2} \]</p>
+    </div>
+    <p>이 부호의 자유 거리는 5이므로, 경판정으로도 가까이 몰린 2비트 오류까지 고친다. 그리고 레지스터 내용, 곧 앞의 두 비트가 부호기의 상태이다. 아래 코드는 이 부호기를 그대로 구현한다.</p>
+<pre><code>def encode(bits):
     s1 = s2 = 0; out = []
     for u in bits + [0, 0]:                      # 끝에 0 두 개로 상태를 비움
         out.append(f"{u ^ s1 ^ s2}{u ^ s2}")
         s2, s1 = s1, u
     return out
 print("입력 1011 → 출력:", " ".join(encode([1, 0, 1, 1])))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>입력 1011 → 출력: 11 10 00 01 01 11</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
       <p>입력 1011의 (7, 5) 부호 출력은? 부호율과 꼬리 비트의 역할은?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 11 10 00 01 01 11(꼬리 0 두 개 포함). 부호율 1/2이지만 꼬리 때문에 실제로는 4/12. 꼬리는 상태를 0으로 돌려 복호기가 끝 상태를 알게 합니다. 긴 메시지에서는 꼬리의 몫이 작아집니다.</p>
+    <p><i>풀이.</i> 실행 결과는 꼬리 0 두 개를 포함해 11 10 00 01 01 11이다. 부호율은 1/2이지만 꼬리 때문에 실제로는 4/12이다. 꼬리는 상태를 0으로 돌려 복호기가 끝 상태를 알게 한다. 다만 긴 메시지에서는 꼬리의 몫이 작아진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "길쌈 부호는 블록마다 독립": 이전 비트를 기억해 연속된 열 전체로 복호합니다. (2) "Viterbi는 모든 경로를 다 비교한다": 상태마다 살아남는 경로 하나만 유지해 계산이 길이에 비례합니다.</div>
+    <h3><span class="no">5.4.2</span>Viterbi 복호</h3>
+    <p>상태가 시간에 따라 바뀌는 모양을 펼쳐 그리면 트렐리스가 된다. 그러면 복호는 받은 열과 해밍 거리(연판정이면 유클리드 거리)가 가장 작은 트렐리스 경로를 찾는 문제가 된다. Viterbi 복호는 이것을 동적 계획으로 푼다. 즉 매 시점 상태마다 그 상태로 들어오는 경로 가운데 가장 좋은 하나만 남기고 나머지를 버린다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>(7, 5) 부호: c₁ = u ⊕ u₋₁ ⊕ u₋₂, c₂ = u ⊕ u₋₂.</li>
-        <li>자유 거리 5 → 경판정 2비트 정정.</li>
-        <li>Viterbi: 상태별 최선 경로, 계산 ∝ 길이.</li>
-      </ol>
-    </div>
+    <p>길쌈 부호는 구속 길이를 늘리면 자유 거리가 커져 더 강해지지만, 상태 수가 지수 함수로 늘어 Viterbi 복호기의 계산도 함께 커진다. 그래서 실제 시스템은 성능과 복호기 크기 사이에서 구속 길이를 고른다. 또 출력 일부를 규칙적으로 버리는 펑처링으로 부호율을 2/3, 3/4처럼 높이기도 한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>길쌈 부호도 블록마다 독립이라고 여기기 쉽다. 길쌈 부호는 이전 비트를 기억하므로 연속된 열 전체로 복호한다. 또 Viterbi 복호가 모든 경로를 다 비교한다고 생각하기 쉬운데, 상태마다 살아남는 경로 하나만 유지해 계산량이 메시지 길이에 비례한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>(7, 5) 부호는 c₁ = u ⊕ u₋₁ ⊕ u₋₂, c₂ = u ⊕ u₋₂이다. 자유 거리가 5라 경판정으로 2비트를 고친다. Viterbi 복호는 상태마다 최선 경로만 남겨 계산량이 길이에 비례한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>구속 길이 3 부호의 상태 수는?
-          <details><summary>답</summary><p>4.</p></details>
+          <details><summary>답</summary><p>4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>입력 1의 출력(처음 상태 0)은?
-          <details><summary>답</summary><p>11.</p></details>
+          <details><summary>답</summary><p>11이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>구속 길이 7 부호(Wi-Fi 등)의 상태 수는?
-          <details><summary>답</summary><p>64.</p></details>
+          <details><summary>답</summary><p>64이다.</p></details>
         </li>
       </ol>
     </div>

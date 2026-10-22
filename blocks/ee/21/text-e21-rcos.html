@@ -8,58 +8,59 @@
 <article class="card q-card" id="text-e21-rcos" data-kind="본문" data-std="전전21-02-02">
   <header class="card-head"><span class="no"></span><h2>상승 코사인 펄스의 대역폭</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>상승 코사인 펄스의 롤오프 계수 α와 대역폭 \(B = (1 + \alpha)R_s/2\)를 계산한다.</li>
-        <li>α가 클수록 꼬리가 빨리 줄어 시점 오차에 강해지는 교환 관계를 안다.</li>
-        <li>송수신에 제곱근 상승 코사인 필터를 나눠 두는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Nyquist 기준 (<a href="02-01.html">2.1절</a>), 정합 필터 (<a href="../11/06-01.html">전전11 6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">sinc 펄스를 쓰면 대역폭을 가장 아낄 수 있지만, 실제 장비는 그렇게 만들지 않는다. 대역을 조금 더 쓰는 대신 무엇을 얻을까? 기호율이 정해졌을 때 실제로 필요한 대역폭은 얼마일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="상승 코사인 스펙트럼(개형). Nyquist 주파수 R_s/2 주위에서 롤오프 α만큼 코사인 모양으로 부드럽게 줄어 기저대역 대역폭은 (1 + α)R_s/2이다. 예제 2.2.1에서 1 M기호/초, α = 0.25이면 625 kHz이고, QPSK로 반송파에 실으면 1.25 MHz에 2 Mb/s, 1.6 b/s/Hz이다">
+        <line x1="60" y1="160" x2="460" y2="160" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 50 H210 C230 50, 250 160, 270 160 H440" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 50 H240 V160" class="k dsh"/>
+        <path d="M80 50 H160 C200 50, 280 160, 320 160" class="b dsh" fill="none" stroke-width="2"/>
+        <g text-anchor="middle" class="s"><text x="240" y="178">R_s/2</text><text x="275" y="194" class="ta">625 kHz</text><text x="320" y="178" class="tb">α = 1</text><text x="440" y="178">f</text></g>
+        <text x="300" y="70" class="ta">α = 0.25, B = (1 + α)R_s/2</text><text x="300" y="94" class="s">점선 직사각형은 sinc(α = 0)</text><text x="300" y="118" class="s">QPSK 1.6 b/s/Hz</text>
+      </svg>
+      <figcaption>그림 1. 스펙트럼 모서리를 롤오프 α만큼 부드럽게 깎으면 대역은 (1 + α)배 넓어지지만, 시간 영역의 꼬리가 빨리 줄어 표본 시점 오차와 필터 구현의 부담이 작아진다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Nyquist 기준(<a href="02-01.html">2.1절</a>), 정합 필터(<a href="../11/06-01.html">전전11 6.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>롤오프와 대역폭</h3>
-    <p>상승 코사인 스펙트럼은 Nyquist 주파수 \(R_s/2\) 주위에서 코사인 모양으로 부드럽게 줄어들며, 그 폭을 롤오프 α(0~1)로 정합니다.</p>
-    \[ B = \frac{(1 + \alpha)R_s}{2}\ \text{(기저대역)}, \qquad B_{\text{RF}} = (1 + \alpha)R_s\ \text{(반송파 변조 후)}. \]
+    <p>상승 코사인 스펙트럼은 Nyquist 주파수 \(R_s/2\) 주위에서 코사인 모양으로 부드럽게 줄어든다. 그 폭은 롤오프 α(0~1)로 정한다(그림 1). 모서리를 부드럽게 깎으면 시간 영역의 꼬리가 \(1/t^3\)으로 빨리 줄어든다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">상승 코사인 펄스의 대역폭</span>
+      <p>\[ B = \frac{(1 + \alpha)R_s}{2}\ \text{(기저대역)} \]</p>
+      <p>\[ B_{\text{RF}} = (1 + \alpha)R_s\ \text{(반송파 변조 후)} \]</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p>기호율 1 M기호/초, α = 0.25인 기저대역 대역폭과, QPSK로 반송파에 실었을 때의 대역폭·비트율·스펙트럼 효율은?</p>
+      <p>기호율 1 M기호/초, α = 0.25인 기저대역 대역폭과, QPSK로 반송파에 실었을 때의 대역폭, 비트율, 스펙트럼 효율은?</p>
     </div>
-    <p><i>풀이.</i> 기저대역 625 kHz. 반송파 대역 1.25 MHz, QPSK는 기호당 2비트라 2 Mb/s, 효율 2/1.25 = 1.6 b/s/Hz. α = 0(sinc)이면 2 b/s/Hz지만 구현이 불가능하고, α = 1이면 1 b/s/Hz지만 꼬리가 가장 빨리 줄어듭니다. 이동통신은 대략 0.2~0.35를 씁니다(확인 필요: 표준마다).</p>
-    <p>잡음에 대한 최적 수신(정합 필터, 3.2절)과 무ISI를 함께 얻기 위해 송신과 수신에 각각 제곱근 상승 코사인 필터를 두어 곱이 상승 코사인이 되게 합니다.</p>
+    <p><i>풀이.</i> 기저대역 대역폭은 1.25 × 1/2 = 625 kHz이다. 반송파 대역은 1.25 MHz이고, QPSK는 기호당 2비트라 비트율은 2 Mb/s이다. 따라서 효율은 2/1.25 = 1.6 b/s/Hz이다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>α = 0(sinc)이면 2 b/s/Hz이지만 구현이 불가능하다. 반대로 α = 1이면 1 b/s/Hz로 떨어지지만 꼬리가 가장 빨리 줄어든다. 그래서 이동통신은 대략 0.2~0.35를 쓴다(확인 필요, 표준마다 다르다).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "α가 작을수록 좋다": 대역은 좁아지지만 꼬리가 길어 시점 오차와 필터 길이 부담이 큽니다. (2) "제곱근 상승 코사인 필터 하나만 거친 신호도 ISI가 없다": 두 개를 거쳐야 Nyquist 조건을 만족합니다.</div>
+    <h3><span class="no">2.2.2</span>제곱근 상승 코사인 필터</h3>
+    <p>수신기는 잡음에 대해 최적인 정합 필터(3.2절)도 갖춰야 하고, ISI도 없애야 한다. 그래서 송신과 수신에 각각 제곱근 상승 코사인 필터를 두어, 두 필터의 곱이 상승 코사인이 되게 한다. 이렇게 하면 수신 필터는 송신 펄스에 정합되고, 전체 응답은 Nyquist 기준을 만족한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>B = (1 + α)R_s/2(기저대역), (1 + α)R_s(RF).</li>
-        <li>예: 1 M기호/초, α 0.25 → 625 kHz, QPSK 1.6 b/s/Hz.</li>
-        <li>송수신 제곱근 상승 코사인 = 정합 + 무ISI.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>α가 작을수록 언제나 좋다고 여기기 쉽다. 대역은 좁아지지만 꼬리가 길어 시점 오차와 필터 길이의 부담이 커진다. 또 제곱근 상승 코사인 필터 하나만 거친 신호도 ISI가 없다고 생각하기 쉬운데, 송신과 수신의 두 필터를 모두 거쳐야 Nyquist 조건을 만족한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>상승 코사인 펄스의 대역폭은 기저대역 (1 + α)R_s/2, RF (1 + α)R_s이다. 1 M기호/초, α 0.25이면 625 kHz이고 QPSK 효율은 1.6 b/s/Hz이다. 송수신 제곱근 상승 코사인 필터로 정합과 무ISI를 함께 얻는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>R_s = 2 M기호/초, α = 0.5의 기저대역 대역폭은?
-          <details><summary>답</summary><p>1.5 MHz.</p></details>
+          <details><summary>답</summary><p>1.5 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>RF 대역 5 MHz, α = 0.25에서 16-QAM의 비트율은?
-          <details><summary>답</summary><p>R_s = 4 M기호/초, 16 Mb/s.</p></details>
+          <details><summary>답</summary><p>R_s = 4 M기호/초이고 16 Mb/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>α를 0.2에서 0.5로 바꾸면 같은 대역에서 비트율은 몇 % 줄어드는가?
-          <details><summary>답</summary><p>1.2/1.5 = 0.8 → 20% 감소.</p></details>
+          <details><summary>답</summary><p>1.2/1.5 = 0.8이므로 20% 줄어든다.</p></details>
         </li>
       </ol>
     </div>

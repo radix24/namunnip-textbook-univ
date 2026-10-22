@@ -8,57 +8,60 @@
 <article class="card q-card" id="text-e21-eff" data-kind="본문" data-std="전전21-04-02">
   <header class="card-head"><span class="no"></span><h2>대역폭 효율과 전력 효율</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>스펙트럼 효율 \(\eta = R_b/B\)와 전력 효율(필요 E_b/N₀)을 정의한다.</li>
-        <li>M-PSK·QAM은 대역 효율, M-FSK는 전력 효율 쪽임을 안다.</li>
-        <li>Shannon 한계 곡선 위에서 변조 방식의 위치를 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Shannon 용량 (<a href="01-02.html">1.2절</a>), 변조 방식 (<a href="04-01.html">4.1절</a>), 상승 코사인 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">16-QAM은 QPSK보다 같은 대역에 두 배 비트를 싣지만 전력이 더 든다. 반대로 대역을 넉넉히 쓰고 전력을 아끼는 방식도 있다. 대역과 전력을 동시에 아끼는 방식은 만들 수 없을까? 지금 쓰는 방식은 이론의 한계에서 얼마나 떨어져 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="대역폭 효율과 전력 효율 평면(개형). 가로축 E_b/N₀, 세로축 스펙트럼 효율 η에 Shannon 경계 E_b/N₀ = (2^η − 1)/η를 그리면 경계 왼쪽 위는 불가능한 영역이다. 예제 4.2.1에서 α = 0.25의 16-QAM은 η = 3.2이고, 이 효율의 Shannon 한계는 4.1 dB인데 실제로는 10⁻⁶에 14.4 dB가 들어 약 10 dB 떨어져 있다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M100 168 C140 150, 160 120, 180 100 S240 50, 300 36" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M195 90 H360" class="d dsh" stroke-width="2"/>
+        <circle cx="195" cy="90" r="5" class="fa"/><circle cx="360" cy="90" r="6" class="fb"/><circle cx="300" cy="130" r="6" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="195" y="186">4.1</text><text x="300" y="186">10.5</text><text x="360" y="186">14.4 dB</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="94">3.2</text><text x="74" y="134">1.6</text></g>
+        <text x="370" y="86" class="tb">16-QAM</text><text x="310" y="126" class="tb">QPSK</text><text x="250" y="82" class="td">약 10 dB</text><text x="110" y="60" class="ta">불가능</text><text x="86" y="26" class="s">η (b/s/Hz)</text>
+      </svg>
+      <figcaption>그림 1. Shannon 경계는 주어진 스펙트럼 효율에 필요한 최소 E_b/N₀를 주므로, 어떤 방식도 경계의 왼쪽 위로 갈 수 없고 실제 변조는 경계 오른쪽에서 그 간격만큼 전력을 더 쓴다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Shannon 용량(<a href="01-02.html">1.2절</a>), 변조 방식(<a href="04-01.html">4.1절</a>), 상승 코사인(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>두 효율</h3>
-    <p>상승 코사인(α) 대역에서 M진 선형 변조의 스펙트럼 효율은 \(\eta = \log_2M/(1 + \alpha)\) b/s/Hz입니다. M을 키우면 η는 커지지만 필요한 E_b/N₀도 커집니다. 반대로 M-FSK는 M을 키우면 대역은 넓어지고(η ≈ 2log₂M/M) 필요한 E_b/N₀는 줄어듭니다.</p>
-    <p>Shannon 용량에서 \(E_b/N_0 \ge (2^\eta - 1)/\eta\)가 나오며, 이 곡선이 두 효율의 이론적 경계입니다.</p>
+    <p>변조 방식은 두 잣대로 평가한다. 대역폭 효율은 1 Hz당 몇 b/s를 보내는지이고, 전력 효율은 목표 오류율에 E_b/N₀가 얼마나 드는지이다. 롤오프 α인 상승 코사인 대역에서 M진 선형 변조의 스펙트럼 효율은 아래와 같다.</p>
+    <div class="tb-env thm">
+      <span class="lb">스펙트럼 효율과 Shannon 경계</span>
+      <p>\[ \eta = \frac{\log_2M}{1 + \alpha}\ \text{b/s/Hz} \]</p>
+      <p>\[ \frac{E_b}{N_0} \ge \frac{2^\eta - 1}{\eta} \]</p>
+    </div>
+    <p>M을 키우면 η는 커지지만 필요한 E_b/N₀도 커진다. 반대로 M-FSK는 M을 키우면 대역이 넓어지고(η ≈ 2log₂M/M) 필요한 E_b/N₀는 줄어든다. 즉 두 효율은 서로 맞바꾸는 관계이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>Shannon 용량 \(C = B\log_2(1 + \text{SNR})\)에서 \(\text{SNR} = \eta E_b/N_0\)로 두면 아래쪽 식이 나온다. 이 곡선이 두 효율의 이론적 경계이며, 어떤 방식도 경계 너머로 갈 수 없다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>α = 0.25에서 QPSK, 16-QAM의 η는? η = 3.2 b/s/Hz에서 Shannon 한계의 E_b/N₀는?</p>
     </div>
-    <p><i>풀이.</i> QPSK 1.6, 16-QAM 3.2 b/s/Hz. \((2^{3.2} - 1)/3.2 = 2.56\) → 4.1 dB. 16-QAM은 10⁻⁶에 14.4 dB(4.1절)라 한계보다 약 10 dB 떨어져 있고, 이 간격을 채널 코딩(5장)으로 줄입니다.</p>
+    <p><i>풀이.</i> QPSK는 2/1.25 = 1.6, 16-QAM은 4/1.25 = 3.2 b/s/Hz이다. 그리고 \((2^{3.2} - 1)/3.2 = 2.56\)이므로 한계는 4.1 dB이다. 그런데 16-QAM은 10⁻⁶에 14.4 dB가 들므로(4.1절) 한계보다 약 10 dB 떨어져 있다. 처음 질문의 둘째 답이 이것이며, 이 간격을 채널 코딩(5장)으로 줄인다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "대역도 넓고 전력도 적게 쓰는 방식이 있다": 둘은 교환 관계이며 Shannon 한계를 넘을 수 없습니다. (2) "η는 기호당 비트 수": 롤오프에 따른 대역 확장을 나눠야 합니다.</div>
+    <p>실제 시스템은 이 평면 위에서 자리를 고른다. 예를 들어 심우주 탐사선은 대역은 넉넉하지만 전력이 극도로 모자라 경계의 왼쪽 아래, 곧 낮은 η 영역에서 동작한다. 반면 케이블 모뎀과 광대역 무선은 대역이 비싸고 SNR이 높아 오른쪽 위, 곧 높은 η 영역을 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>η = log₂M/(1 + α). M↑ → η↑, 필요 E_b/N₀↑.</li>
-        <li>M-FSK는 반대(전력 효율).</li>
-        <li>Shannon: E_b/N₀ ≥ (2^η − 1)/η.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>대역도 적게 쓰고 전력도 적게 쓰는 방식이 있다고 여기기 쉽다. 둘은 교환 관계이며 Shannon 경계를 넘을 수 없다. 또 η를 기호당 비트 수로 착각하기 쉬운데, 롤오프에 따른 대역 확장 (1 + α)로 나눠야 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>스펙트럼 효율은 η = log₂M/(1 + α)이며, M이 커지면 η와 필요한 E_b/N₀가 함께 커진다. M-FSK는 반대로 전력 효율을 얻는다. Shannon 경계 E_b/N₀ ≥ (2^η − 1)/η가 두 효율의 한계를 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>α = 0에서 64-QAM의 η는?
-          <details><summary>답</summary><p>6 b/s/Hz.</p></details>
+          <details><summary>답</summary><p>6 b/s/Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>η = 1의 Shannon 한계 E_b/N₀는?
-          <details><summary>답</summary><p>1(0 dB).</p></details>
+          <details><summary>답</summary><p>1(0 dB)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>위성(전력 제한)과 도심 이동통신(대역 제한)에 각각 어울리는 방향은?
-          <details><summary>답</summary><p>위성은 낮은 차수 변조와 강한 부호(전력 효율), 이동통신은 높은 차수 QAM(대역 효율).</p></details>
+          <details><summary>답</summary><p>위성은 낮은 차수 변조와 강한 부호(전력 효율)를, 이동통신은 높은 차수 QAM(대역 효율)을 쓴다.</p></details>
         </li>
       </ol>
     </div>

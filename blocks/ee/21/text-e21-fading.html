@@ -8,56 +8,62 @@
 <article class="card q-card" id="text-e21-fading" data-kind="본문" data-std="전전21-06-04">
   <header class="card-head"><span class="no"></span><h2>페이딩 채널과 다이버시티</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Rayleigh 페이딩에서 BPSK 평균 오류 확률이 1/(4E_b/N₀)로 천천히 줄어듦을 안다.</li>
-        <li>다이버시티(안테나 L개)로 오류 확률이 (E_b/N₀)^{−L}로 줄어듦을 계산한다.</li>
-        <li>링크 버짓의 페이딩 여유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>오류 확률 (<a href="03-02.html">3.2절</a>), 링크 버짓 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">휴대폰을 들고 몇 걸음만 옮겨도 수신 막대가 오르내린다. 평균 신호는 충분히 센데 왜 통화가 가끔 끊길까? 그리고 안테나를 하나 더 다는 것만으로 이 문제가 크게 나아지는 까닭은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="Rayleigh 페이딩과 다이버시티(개형). 페이딩 채널의 BPSK 오류 확률은 1/(4γ̄)로 AWGN보다 훨씬 느리게 줄고, 독립 경로 L개를 합치면 γ̄의 −L승으로 기울기가 가팔라진다. 예제 6.4.1에서 평균 20 dB일 때 페이딩 BPSK는 2.5×10⁻³, 안테나 2개 MRC면 1.9×10⁻⁵이다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M90 40 L430 110" class="a" stroke-width="2.5"/>
+        <path d="M90 45 L430 165" class="b" stroke-width="2.5"/>
+        <path d="M90 45 C150 60, 180 100, 210 170" class="k dsh" fill="none" stroke-width="2"/>
+        <line x1="300" y1="30" x2="300" y2="170" class="k dsh"/>
+        <circle cx="300" cy="85" r="5" class="fa"/><circle cx="300" cy="122" r="5" class="fb"/>
+        <g text-anchor="middle" class="s"><text x="300" y="186">20 dB</text><text x="420" y="186">평균 E_b/N₀</text></g>
+        <g class="s"><text x="308" y="80" class="ta">L = 1: 2.5×10⁻³</text><text x="308" y="136" class="tb">L = 2: 1.9×10⁻⁵</text><text x="150" y="150">AWGN</text><text x="86" y="26">P_b (로그)</text></g>
+      </svg>
+      <figcaption>그림 1. 페이딩 채널에서는 가끔 빠지는 깊은 골이 오류를 지배해 곡선이 완만하게 내려가지만, 독립인 경로를 여럿 합치면 모두 동시에 골에 빠질 확률이 작아져 곡선의 기울기 자체가 가팔라진다(예제 6.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>오류 확률(<a href="03-02.html">3.2절</a>), 링크 버짓(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.4.1</span>깊은 골이 문제</h3>
-    <p>이동 무선 채널은 반사파들의 간섭으로 수신 세기가 무작위로 출렁입니다(Rayleigh 페이딩). 평균 SNR이 커도 가끔 깊은 골에 빠져 오류가 나므로, BPSK 평균 \(P_b \approx 1/(4\bar\gamma)\)(γ̄: 평균 E_b/N₀)로 AWGN보다 훨씬 느리게 줄어듭니다. 독립 페이딩 경로 L개를 합치면 \(P_b \approx \binom{2L-1}{L}(4\bar\gamma)^{-L}\)입니다.</p>
+    <p>이동 무선 채널에서는 여러 반사파가 서로 보강하거나 상쇄해, 수신 세기가 무작위로 출렁인다. 직접 보이는 경로가 없을 때 이 출렁임을 Rayleigh 페이딩이라 한다. 평균 SNR이 커도 가끔 깊은 골에 빠져 오류가 난다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">Rayleigh 페이딩에서 BPSK와 다이버시티</span>
+      <p>\[ P_b \approx \frac1{4\bar\gamma} \]</p>
+      <p>\[ P_b \approx \binom{2L-1}{L}(4\bar\gamma)^{-L}\ \text{(독립 경로 L개, MRC)} \]</p>
+      <p>\(\bar\gamma\)는 평균 E_b/N₀이다.</p>
+    </div>
+    <p>AWGN에서는 오류 확률이 SNR에 대해 지수 함수로 줄지만, 페이딩에서는 1/γ̄로 훨씬 느리게 준다. 그런데 독립으로 페이딩하는 경로 L개를 합치면, 모두 동시에 골에 빠질 확률이 작아져 오류 확률이 γ̄의 −L승으로 준다(그림 1). 이것을 다이버시티라 하며, 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.4.1</span>
       <p>평균 E_b/N₀ = 20 dB에서 페이딩 BPSK의 P_b는? 안테나 2개 MRC면? AWGN이면?</p>
     </div>
-    <p><i>풀이.</i> 1/(4 × 100) = 2.5×10⁻³. 2개: 3 × (1/400)² = 1.9×10⁻⁵(130배 개선). AWGN이면 Q(√200) ≈ 10⁻⁴⁶ 수준으로 사실상 0. 페이딩이 성능을 크게 깎고, 다이버시티가 그 대부분을 되찾습니다.</p>
+    <p><i>풀이.</i> 1/(4 × 100) = 2.5×10⁻³이다. 안테나 2개면 3 × (1/400)² = 1.9×10⁻⁵로 약 130배 개선된다. 한편 AWGN이면 Q(√200) ≈ 10⁻⁴⁶ 수준으로 사실상 0이다. 즉 페이딩이 성능을 크게 깎고, 다이버시티가 그 대부분을 되찾는다.</p>
+    <p>독립인 경로는 공간, 주파수, 시간에서 얻는다. 파장의 절반쯤 떨어진 안테나, 서로 멀리 떨어진 부반송파, 인터리버로 흩어 놓은 비트가 그 예이다. 그러므로 OFDM과 채널 부호, 다중 안테나는 모두 이 원리로 페이딩에 맞선다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "평균 SNR이 높으면 페이딩은 상관없다": 순간적인 깊은 골 때문에 오류가 지배됩니다. (2) "안테나를 두 개 쓰면 3 dB 이득": 전력 이득 외에 기울기가 바뀌는 다이버시티 이득이 훨씬 큽니다.</div>
+    <p>여러 경로를 합치는 방법도 여럿이다. 가장 센 가지 하나만 고르는 선택 결합은 간단하지만, 각 가지에 그 세기만큼 가중치를 주어 위상을 맞춰 더하는 최대비 결합(MRC)이 SNR을 가장 크게 만든다. 따라서 위 식처럼 MRC를 기준으로 다이버시티 이득을 따진다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Rayleigh BPSK: P_b ≈ 1/(4γ̄).</li>
-        <li>L중 다이버시티: ∝ γ̄^{−L}.</li>
-        <li>예(20 dB): 2.5×10⁻³ → 2개 1.9×10⁻⁵.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>평균 SNR이 높으면 페이딩은 상관없다고 여기기 쉽다. 순간적인 깊은 골 때문에 오류가 지배된다. 또 안테나를 두 개 쓰면 이득이 3 dB뿐이라고 생각하기 쉬운데, 전력을 모으는 이득 외에 곡선의 기울기를 바꾸는 다이버시티 이득이 훨씬 크다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Rayleigh 페이딩에서 BPSK는 P_b ≈ 1/(4γ̄)이다. L중 다이버시티에서는 오류 확률이 γ̄^{−L}에 비례한다. 평균 20 dB에서 2.5×10⁻³이던 오류 확률이 안테나 2개로 1.9×10⁻⁵가 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>γ̄ = 30 dB 페이딩 BPSK의 P_b는?
-          <details><summary>답</summary><p>2.5×10⁻⁴.</p></details>
+          <details><summary>답</summary><p>2.5×10⁻⁴이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 경우 2중 다이버시티는?
-          <details><summary>답</summary><p>약 1.9×10⁻⁷.</p></details>
+          <details><summary>답</summary><p>약 1.9×10⁻⁷이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>MIMO의 다이버시티 차수(송 2, 수 2)는?
-          <details><summary>답</summary><p>최대 4.</p></details>
+          <details><summary>답</summary><p>최대 4이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,61 +8,58 @@
 <article class="card q-card" id="text-e21-mod" data-kind="본문" data-std="전전21-04-01">
   <header class="card-head"><span class="no"></span><h2>BPSK, QPSK, QAM의 성상도와 오류 성능</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>BPSK, QPSK, 16-QAM의 성상도를 그리고 점 사이 최소 거리를 평균 에너지로 나타낸다.</li>
-        <li>Gray 부호화에서 비트 오류 확률의 근사식을 쓴다.</li>
-        <li>같은 오류 확률에 필요한 E_b/N₀를 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>오류 확률 (<a href="03-02.html">3.2절</a>), 이 절의 탐구 카드(성상도와 잡음).</li>
-      </ul>
-    </div>
+    <p class="q-ask">휴대폰은 전파가 좋을 때는 한 기호에 비트를 많이 싣고, 나쁠 때는 적게 싣는다. 비트를 많이 실으면 같은 대역으로 더 빨리 보낼 수 있는데, 그 대가는 무엇일까? BPSK, QPSK, 16-QAM은 같은 오류율을 얻는 데 전력이 얼마나 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="QPSK와 16-QAM의 성상도(개형). QPSK는 I, Q 두 축에 네 점이고 16-QAM은 각 축 4준위(±1, ±3)로 16점이다. 예제 4.1.1에서 비트 오류 10⁻⁶에 BPSK와 QPSK는 10.5 dB, 16-QAM은 14.4 dB가 필요해 약 3.9 dB 더 든다">
+        <line x1="60" y1="100" x2="200" y2="100" class="ax"/><line x1="130" y1="30" x2="130" y2="170" class="ax"/>
+        <g class="fa"><circle cx="100" cy="70" r="6"/><circle cx="160" cy="70" r="6"/><circle cx="100" cy="130" r="6"/><circle cx="160" cy="130" r="6"/></g>
+        <line x1="240" y1="100" x2="400" y2="100" class="ax"/><line x1="320" y1="30" x2="320" y2="170" class="ax"/>
+        <g class="fb"><circle cx="260" cy="40" r="4"/><circle cx="300" cy="40" r="4"/><circle cx="340" cy="40" r="4"/><circle cx="380" cy="40" r="4"/><circle cx="260" cy="80" r="4"/><circle cx="300" cy="80" r="4"/><circle cx="340" cy="80" r="4"/><circle cx="380" cy="80" r="4"/><circle cx="260" cy="120" r="4"/><circle cx="300" cy="120" r="4"/><circle cx="340" cy="120" r="4"/><circle cx="380" cy="120" r="4"/><circle cx="260" cy="160" r="4"/><circle cx="300" cy="160" r="4"/><circle cx="340" cy="160" r="4"/><circle cx="380" cy="160" r="4"/></g>
+        <g class="s" text-anchor="middle"><text x="130" y="190" class="ta">QPSK 10.5 dB</text><text x="320" y="190" class="tb">16-QAM 14.4 dB</text></g>
+        <g class="s"><text x="206" y="96">I</text><text x="134" y="28">Q</text><text x="420" y="70">10⁻⁶에서</text><text x="420" y="94" class="td">약 3.9 dB 더</text></g>
+      </svg>
+      <figcaption>그림 1. 같은 평균 에너지 안에 점을 더 많이 넣으면 점 사이가 가까워져 잡음에 약해지므로, 16-QAM은 QPSK보다 두 배의 비트를 싣는 대신 같은 오류율에 약 3.9 dB 더 큰 에너지가 든다(예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>오류 확률(<a href="03-02.html">3.2절</a>), 이 절의 탐구 카드(성상도와 잡음)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>세 방식</h3>
-    <ul>
-      <li><b>BPSK</b>: 기호당 1비트, \(P_b = Q(\sqrt{2E_b/N_0})\).</li>
-      <li><b>QPSK</b>: 서로 직교하는 I, Q축에 BPSK 둘. 기호당 2비트, 비트 오류 확률은 BPSK와 같다. 대역폭은 절반.</li>
-      <li><b>16-QAM</b>: I, Q 각각 4준위(±1, ±3). Gray 부호화 근사 \(P_b \approx \frac34Q\left(\sqrt{\frac45\frac{E_b}{N_0}}\right)\).</li>
-    </ul>
+    <p>BPSK는 기호당 1비트를 싣고, 비트 오류 확률은 \(P_b = Q(\sqrt{2E_b/N_0})\)이다. QPSK는 서로 직교하는 I축과 Q축에 BPSK를 하나씩 실은 것이다. 그래서 기호당 2비트를 싣고, 비트 오류 확률은 BPSK와 같으며, 같은 비트율에 대역폭은 절반이다.</p>
+    <p>16-QAM은 I축과 Q축 각각에 4준위(±1, ±3)를 두어 16점을 만든다(그림 1). 기호당 4비트를 싣고, Gray 부호화를 쓰면 비트 오류 확률은 아래처럼 어림한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">16-QAM의 비트 오류 확률(Gray, 근사)</span>
+      <p>\[ P_b \approx \frac34Q\left(\sqrt{\frac45\frac{E_b}{N_0}}\right) \]</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>P_b = 10⁻⁶에 필요한 E_b/N₀를 BPSK(QPSK), 16-QAM에 대해 구하라.</p>
     </div>
-    <p><i>풀이.</i> 근사식을 수치로 풀면 BPSK·QPSK 10.5 dB, 16-QAM 14.4 dB. 16-QAM은 같은 대역에 비트를 두 배(QPSK 대비) 실지만 약 3.9 dB 전력이 더 듭니다. 점을 많이 넣을수록 같은 평균 에너지에서 점 사이가 가까워지기 때문입니다.</p>
-    <p class="q-term"><b>Gray 부호화</b>: 이웃한 점끼리 한 비트만 다르게 배정해, 가장 흔한 오류(이웃 점으로)가 비트 하나의 오류가 되게 한다.</p>
+    <p><i>풀이.</i> 근사식을 수치로 풀면 BPSK와 QPSK는 10.5 dB, 16-QAM은 14.4 dB이다. 즉 16-QAM은 같은 대역에 QPSK의 두 배 비트를 싣지만, 약 3.9 dB 전력이 더 든다. 처음 질문의 둘째 답이 이것이다. 점을 많이 넣을수록 같은 평균 에너지에서 점 사이가 가까워지기 때문이며, 처음 질문의 첫째 답인 대가도 바로 이 전력이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "QPSK는 BPSK보다 오류가 많다": 비트당 에너지로 비교하면 같습니다. (2) "기호 오류 확률과 비트 오류 확률은 같다": Gray 부호화에서 대략 \(P_b \approx P_s/\log_2M\)입니다.</div>
+    <h3><span class="no">4.1.2</span>Gray 부호화</h3>
+    <p>Gray 부호화는 이웃한 점끼리 한 비트만 다르게 비트를 배정하는 방법이다. 그러면 가장 흔한 오류, 곧 이웃 점으로 넘어가는 오류가 비트 하나의 오류가 된다. 그래서 Gray 부호화에서는 대략 \(P_b \approx P_s/\log_2M\)이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>BPSK = QPSK(비트 기준) Q(√(2E_b/N₀)).</li>
-        <li>16-QAM ≈ (3/4)Q(√(0.8E_b/N₀)).</li>
-        <li>10⁻⁶: QPSK 10.5 dB, 16-QAM 14.4 dB.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>QPSK는 점이 더 많으니 BPSK보다 오류가 많다고 여기기 쉽다. 비트당 에너지로 비교하면 두 방식의 비트 오류 확률은 같다. 또 기호 오류 확률과 비트 오류 확률을 같게 보기 쉬운데, Gray 부호화에서는 비트 오류 확률이 기호 오류 확률의 약 1/log₂M이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>BPSK와 QPSK는 비트 기준으로 같은 \(Q(\sqrt{2E_b/N_0})\)이다. 16-QAM은 약 \((3/4)Q(\sqrt{0.8E_b/N_0})\)이다. 10⁻⁶에 QPSK는 10.5 dB, 16-QAM은 14.4 dB가 든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>QPSK의 기호당 비트 수와 성상점 수는?
-          <details><summary>답</summary><p>2비트, 4점.</p></details>
+          <details><summary>답</summary><p>2비트, 4점이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>16-QAM 성상점 좌표 ±1, ±3의 평균 에너지는?
-          <details><summary>답</summary><p>(1 + 9) × 2/2 = 10(각 축 평균 5, 두 축 합).</p></details>
+          <details><summary>답</summary><p>(1 + 9) × 2/2 = 10이다(각 축 평균 5, 두 축 합).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>64-QAM으로 가면 16-QAM보다 E_b/N₀가 더 드는가?
-          <details><summary>답</summary><p>예, 대략 4 dB 더 듭니다(확인 필요: 정확한 값은 근사식으로 계산).</p></details>
+          <details><summary>답</summary><p>그렇다. 대략 4 dB 더 든다(확인 필요, 정확한 값은 근사식으로 계산).</p></details>
         </li>
       </ol>
     </div>

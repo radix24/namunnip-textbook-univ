@@ -8,61 +8,61 @@
 <article class="card q-card" id="text-e21-qfunc" data-kind="본문" data-std="전전21-03-02">
   <header class="card-head"><span class="no"></span><h2>이진 신호의 비트 오류 확률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가우시안 꼬리 확률 Q(x)로 이진 신호의 오류 확률을 쓴다.</li>
-        <li>BPSK(대척) \(Q(\sqrt{2E_b/N_0})\)와 직교 신호 \(Q(\sqrt{E_b/N_0})\)의 3 dB 차이를 거리로 설명한다.</li>
-        <li>목표 오류 확률에 필요한 E_b/N₀를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정규 분포 (<a href="../11/02-01.html">전전11 2.1절</a>), 정합 필터 (<a href="../11/06-01.html">전전11 6.1절</a>), 결정 영역 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">통신 규격서에는 "비트 오류율 10⁻⁶ 이하"처럼 목표가 적혀 있다. 그렇다면 이 목표를 맞추려면 신호 에너지를 잡음에 비해 얼마나 크게 해야 할까? 그리고 0과 1을 서로 다른 두 파형으로 나타내는 방법 가운데 어느 쪽이 에너지를 아낄까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="BPSK와 직교 FSK의 비트 오류 확률(개형). 신호점 사이 거리가 성능을 정해, BPSK는 Q(√(2E_b/N₀)), 직교 FSK는 Q(√(E_b/N₀))로 같은 오류에 3 dB 더 든다. 예제 3.2.1에서 BPSK는 9.6 dB에서 약 10⁻⁵, 10.5 dB에서 10⁻⁶이다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M90 40 C180 50, 240 90, 300 160" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M130 40 C230 50, 300 90, 370 160" class="b dsh" fill="none" stroke-width="2.5"/>
+        <circle cx="275" cy="130" r="5" class="fd"/><circle cx="292" cy="150" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="275" y="186">9.6</text><text x="300" y="186">10.5 dB</text><text x="420" y="186">E_b/N₀</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="134">10⁻⁵</text><text x="74" y="154">10⁻⁶</text></g>
+        <text x="150" y="80" class="ta">BPSK</text><text x="320" y="100" class="tb">직교 FSK, 3 dB 오른쪽</text><text x="86" y="26" class="s">P_b (로그)</text>
+      </svg>
+      <figcaption>그림 1. 오류는 잡음이 두 신호점 사이 경계를 넘을 때 일어나므로 성능은 점 사이 거리로 정해지고, 거리가 가까운 직교 신호는 같은 오류율에 3 dB 더 큰 에너지가 든다(예제 3.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정규 분포(<a href="../11/02-01.html">전전11 2.1절</a>), 정합 필터(<a href="../11/06-01.html">전전11 6.1절</a>), 결정 영역(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>거리와 오류 확률</h3>
-    <p>두 신호점 사이 거리가 d이면, 잡음이 경계(d/2)를 넘을 확률이 오류 확률입니다.</p>
-    \[ P_e = Q\left(\frac{d/2}{\sqrt{N_0/2}}\right) = Q\left(\sqrt{\frac{d^2}{2N_0}}\right), \qquad Q(x) = \int_x^\infty\frac{e^{-t^2/2}}{\sqrt{2\pi}}dt. \]
-    <ul>
-      <li><b>대척(BPSK)</b>: \(\pm\sqrt{E_b}\), \(d^2 = 4E_b\) → \(Q(\sqrt{2E_b/N_0})\).</li>
-      <li><b>직교(FSK)</b>: \(d^2 = 2E_b\) → \(Q(\sqrt{E_b/N_0})\). 같은 오류에 3 dB 더 필요.</li>
-    </ul>
+    <p>두 신호점 사이 거리가 d이면 경계는 가운데(d/2)에 있다. 그러므로 한 축 위 잡음(분산 \(N_0/2\))이 d/2를 넘을 확률이 곧 오류 확률이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">이진 신호의 오류 확률</span>
+      <p>\[ P_e = Q\left(\frac{d/2}{\sqrt{N_0/2}}\right) = Q\left(\sqrt{\frac{d^2}{2N_0}}\right) \]</p>
+      <p>\[ Q(x) = \int_x^\infty\frac{e^{-t^2/2}}{\sqrt{2\pi}}dt \]</p>
+    </div>
+    <p>대척 신호인 BPSK는 두 점이 \(\pm\sqrt{E_b}\)라 \(d^2 = 4E_b\)이므로, \(P_b = Q(\sqrt{2E_b/N_0})\)이다. 반면 직교 신호인 FSK는 두 점이 서로 다른 축 위에 있어 \(d^2 = 2E_b\)이므로, \(P_b = Q(\sqrt{E_b/N_0})\)이다. 즉 같은 오류에 직교 신호가 3 dB 더 필요하다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>BPSK에서 E_b/N₀ = 9.6 dB의 비트 오류 확률은? 10⁻⁶을 얻으려면?</p>
     </div>
-    <p><i>풀이.</i> 9.6 dB = 9.12, \(\sqrt{18.24} = 4.27\), Q(4.27) ≈ 9.7 × 10⁻⁶(약 10⁻⁵). 10⁻⁶에는 Q(x) = 10⁻⁶에서 x ≈ 4.75, \(E_b/N_0 = 4.75^2/2\) → 10.5 dB. 같은 E_b/N₀ 10.5 dB로 직교 FSK는 오류 확률 약 3.9 × 10⁻⁴에 그칩니다.</p>
+    <p><i>풀이.</i> 9.6 dB는 9.12이므로 \(\sqrt{18.24} = 4.27\)이고, Q(4.27) ≈ 9.7 × 10⁻⁶, 곧 약 10⁻⁵이다. 10⁻⁶에는 Q(x) = 10⁻⁶에서 x ≈ 4.75이므로 \(E_b/N_0 = 4.75^2/2\), 곧 10.5 dB가 필요하다(그림 1). 한편 같은 10.5 dB에서 직교 FSK는 오류 확률이 약 3.9 × 10⁻⁴에 그친다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "1 dB 차이는 작다": 오류 확률 곡선이 가팔라서 10⁻⁶ 근처에서 1 dB가 오류율을 수 배~10배 바꿉니다. (2) "Q(x)는 정규 분포의 밀도": 오른쪽 꼬리 넓이(확률)입니다.</div>
+    <p>Q 함수는 닫힌 꼴이 없어 표나 근사식으로 계산한다. 큰 x에서는 \(Q(x) \approx e^{-x^2/2}/(x\sqrt{2\pi})\)이 잘 맞고, 위에서 묶는 \(Q(x) \le \frac12e^{-x^2/2}\)도 자주 쓴다. 따라서 오류 확률은 E_b/N₀가 커질수록 지수 함수로 줄어들고, 곡선이 높은 SNR에서 급격히 꺾여 내려간다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P_e = Q(√(d²/(2N₀))). 거리가 성능을 정함.</li>
-        <li>BPSK Q(√(2E_b/N₀)), 직교 Q(√(E_b/N₀)), 3 dB 차.</li>
-        <li>BPSK 10⁻⁶ ≈ 10.5 dB, 10⁻⁵ ≈ 9.6 dB.</li>
-      </ol>
-    </div>
+    <p>그런데 이 식들은 수신기가 정합 필터로 신호 에너지를 모두 모았다는 가정 위에 있다. 정합 필터는 출력 SNR을 최대로 만드는 필터이며, 그때의 SNR이 바로 \(d^2/(2N_0)\)이다. 즉 필터가 어긋나면 같은 E_b/N₀에서도 오류 확률이 이 값보다 나빠진다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>1 dB 차이는 작다고 여기기 쉽다. 오류 확률 곡선이 가팔라서, 10⁻⁶ 근처에서는 1 dB가 오류율을 수 배에서 10배까지 바꾼다. 또 Q(x)를 정규 분포의 밀도로 착각하기 쉬운데, Q(x)는 오른쪽 꼬리의 넓이, 곧 확률이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>이진 신호의 오류 확률은 \(P_e = Q(\sqrt{d^2/(2N_0)})\)로, 신호점 사이 거리가 성능을 정한다. BPSK는 \(Q(\sqrt{2E_b/N_0})\), 직교 신호는 \(Q(\sqrt{E_b/N_0})\)로 3 dB 차이가 난다. BPSK는 10⁻⁶에 약 10.5 dB, 10⁻⁵에 약 9.6 dB가 든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Q(0)은?
-          <details><summary>답</summary><p>0.5.</p></details>
+          <details><summary>답</summary><p>0.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>직교 FSK로 10⁻⁶을 얻는 E_b/N₀는?
-          <details><summary>답</summary><p>약 13.5 dB(BPSK + 3 dB).</p></details>
+          <details><summary>답</summary><p>약 13.5 dB(BPSK + 3 dB)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>On-off 키잉(0과 √(2E_b), 평균 에너지 E_b)의 오류 확률은?
-          <details><summary>답</summary><p>d² = 2E_b라 직교와 같은 Q(√(E_b/N₀)).</p></details>
+          <details><summary>답</summary><p>d² = 2E_b라 직교와 같은 Q(√(E_b/N₀))이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e21-ofdm" data-kind="본문" data-std="전전21-06-03">
   <header class="card-head"><span class="no"></span><h2>OFDM의 부반송파와 순환 전치</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>넓은 대역을 많은 좁은 부반송파로 나누는 OFDM의 구조를 안다.</li>
-        <li>부반송파 간격, 기호 길이, 순환 전치 오버헤드를 계산한다.</li>
-        <li>다중 경로 지연 확산을 순환 전치로 견디는 원리를 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>다중화 (<a href="../12/03.html">전전12 3단원</a>), FFT (<a href="../6/05.html">전전6 5단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실내에서 Wi-Fi 전파는 벽과 가구에 부딪혀 여러 경로로 조금씩 늦게 도착한다. 20 MHz 대역 하나에 기호를 빠르게 보내면 이 지연 때문에 기호들이 서로 겹친다. 대역을 잘게 나눠 천천히 보내면 문제가 풀릴까? 나눈 부반송파들이 서로 겹쳐도 괜찮을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="OFDM 기호와 순환 전치(개형). 기호 길이 3.2 μs의 끝부분 0.8 μs를 앞에 복사해 붙이면 전체 4 μs가 된다. 예제 6.3.1의 Wi-Fi(20 MHz, 64개 부반송파)에서 부반송파 간격은 312.5 kHz, 순환 전치 오버헤드는 20%이고, 0.8 μs, 곧 240 m 경로 차보다 짧은 지연은 기호 간 간섭을 만들지 않는다">
+        <rect x="80" y="70" width="80" height="50" class="ld"/><rect x="160" y="70" width="320" height="50" class="la"/>
+        <rect x="80" y="70" width="400" height="50" class="k" fill="none"/>
+        <rect x="400" y="70" width="80" height="50" class="d dsh" fill="none" stroke-width="2"/>
+        <path d="M440 64 C400 30, 160 30, 120 64" class="d" fill="none" stroke-width="2"/>
+        <g class="s" text-anchor="middle"><text x="120" y="100" class="td">CP 0.8 μs</text><text x="320" y="100" class="ta">유효 기호 T = 3.2 μs</text><text x="280" y="30">끝부분 복사</text></g>
+        <g class="s"><text x="80" y="146">전체 4 μs, 오버헤드 20%</text><text x="80" y="170">Δf = 20 MHz/64 = 312.5 kHz</text><text x="320" y="146" class="td">지연 ≤ 0.8 μs (240 m)</text><text x="320" y="170">→ 기호 간 간섭 없음</text></g>
+      </svg>
+      <figcaption>그림 1. 기호 끝부분을 앞에 복사해 두면 지연된 경로가 이전 기호가 아니라 같은 기호의 복사본과 겹치므로, 순환 전치보다 짧은 다중 경로 지연은 기호 간 간섭을 만들지 않는다(예제 6.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>다중화(<a href="../12/03.html">전전12 3단원</a>), FFT(<a href="../6/05.html">전전6 5단원</a>)를 쓴다.</div>
 
-    <h3><span class="no">6.3.1</span>좁게 나누고 앞에 붙이기</h3>
-    <p>대역 B를 N개 부반송파로 나누면 간격 Δf = B/N, 기호 길이 T = 1/Δf입니다. 부반송파들이 서로 직교해 겹쳐도 분리되고(IFFT/FFT로 구현), 기호 앞에 끝부분을 복사한 순환 전치(CP)를 붙이면 CP보다 짧은 다중 경로 지연은 기호 사이 간섭을 만들지 않습니다.</p>
+    <h3><span class="no">6.3.1</span>좁게 나누기</h3>
+    <p>대역 B를 N개 부반송파로 나누면 부반송파 간격은 Δf = B/N, 기호 길이는 T = 1/Δf가 된다. 즉 기호가 N배 길어져, 같은 다중 경로 지연이 기호 길이에 비해 훨씬 작아진다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>부반송파들의 스펙트럼은 서로 겹치지만, 간격이 정확히 1/T라 서로 직교한다. 그래서 각 부반송파의 정확한 주파수에서 표본화하면 다른 부반송파의 성분이 0이 되어 분리된다. 처음 질문의 둘째 답이 이것이다. 또 이 변조와 복조는 IFFT와 FFT로 한꺼번에 구현할 수 있어, 수백 개의 부반송파도 값싼 칩 하나로 처리한다.</p>
+
+    <h3><span class="no">6.3.2</span>순환 전치</h3>
+    <p>기호 앞에 끝부분을 복사해 붙인 것을 순환 전치(CP)라 한다(그림 1). CP보다 짧은 다중 경로 지연은 이전 기호가 아니라 같은 기호의 복사본과 겹치므로, 기호 사이 간섭을 만들지 않는다. 게다가 채널의 효과가 부반송파마다 복소수 하나를 곱하는 꼴로 바뀌어, 등화가 아주 간단해진다.</p>
+    <div class="tb-env thm">
+      <span class="lb">OFDM의 기본 관계</span>
+      <p>부반송파 간격 Δf = B/N, 유효 기호 길이 T = 1/Δf이다.</p>
+      <p>CP 길이가 지연 확산 이상이면 ISI가 없고, 오버헤드는 CP/(T + CP)이다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
-      <p>Wi-Fi(802.11a): 20 MHz, 64개 부반송파, CP 0.8 μs. 부반송파 간격, 기호 길이, CP 오버헤드, 견디는 경로 차 거리는?</p>
+      <p>Wi-Fi(802.11a)는 20 MHz, 64개 부반송파, CP 0.8 μs이다. 부반송파 간격, 기호 길이, CP 오버헤드, 견디는 경로 차 거리는?</p>
     </div>
-    <p><i>풀이.</i> Δf = 312.5 kHz, T = 3.2 μs, CP 포함 4 μs → 오버헤드 20%. 0.8 μs × 3×10⁸ = 240 m의 경로 차까지 견딥니다. 실내 반사(수십 m)에 충분합니다.</p>
+    <p><i>풀이.</i> Δf = 20 MHz/64 = 312.5 kHz이고, T = 3.2 μs이다. CP를 포함하면 4 μs이므로 오버헤드는 0.8/4 = 20%이다. 그리고 0.8 μs × 3×10⁸ m/s = 240 m의 경로 차까지 견딘다. 따라서 수십 m 수준인 실내 반사에는 충분하다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "부반송파가 겹치면 간섭한다": 직교라 정확한 주파수에서 표본화하면 분리됩니다. (2) "CP는 공짜": 그만큼 시간과 전력을 쓰는 오버헤드입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>부반송파가 겹치면 서로 간섭한다고 여기기 쉽다. 부반송파들은 직교하므로 정확한 주파수에서 표본화하면 분리된다. 또 CP가 공짜라고 생각하기 쉬운데, CP 구간은 정보를 싣지 않고 시간과 전력을 쓰는 오버헤드이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Δf = B/N, T = 1/Δf.</li>
-        <li>CP ≥ 지연 확산 → ISI 없음, 오버헤드 CP/(T + CP).</li>
-        <li>예: 312.5 kHz, 3.2 μs, 20%, 240 m.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>OFDM은 Δf = B/N, T = 1/Δf로 대역을 잘게 나눈다. CP가 지연 확산 이상이면 ISI가 없고, 오버헤드는 CP/(T + CP)이다. Wi-Fi 예는 312.5 kHz, 3.2 μs, 20%, 240 m이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>10 MHz, 1024개 부반송파의 간격은?
-          <details><summary>답</summary><p>약 9.77 kHz.</p></details>
+          <details><summary>답</summary><p>약 9.77 kHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>그 기호 길이는?
-          <details><summary>답</summary><p>102.4 μs.</p></details>
+          <details><summary>답</summary><p>102.4 μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>주파수 오프셋에 OFDM이 민감한 이유는?
-          <details><summary>답</summary><p>부반송파 간격이 좁아 작은 오프셋도 직교성을 깨 이웃 간섭이 생기기 때문입니다.</p></details>
+          <details><summary>답</summary><p>부반송파 간격이 좁아 작은 오프셋도 직교성을 깨 이웃 간섭이 생기기 때문이다.</p></details>
         </li>
       </ol>
     </div>

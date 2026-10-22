@@ -8,57 +8,60 @@
 <article class="card q-card" id="text-e21-space" data-kind="본문" data-std="전전21-03-01">
   <header class="card-head"><span class="no"></span><h2>신호 공간과 결정 영역</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>정규 직교 기저로 신호를 신호 공간의 점(벡터)으로 나타낸다.</li>
-        <li>같은 사전 확률에서 최대 우도 결정 영역이 최소 거리(수직 이등분선) 규칙임을 안다.</li>
-        <li>사전 확률이 다르면 결정 경계가 이동함(MAP)을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정규 직교 기저 (<a href="../16/03-02.html">전전16 3.2절</a>), 가우시안 분포와 Bayes 정리 (<a href="../11/01-01.html">전전11 1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">수신기에 들어온 파형은 잡음 때문에 보낸 파형과 조금씩 다르다. 그러면 수신기는 무엇을 기준으로 "이건 +1이었다"고 판정할까? 그리고 +1이 −1보다 훨씬 자주 나온다는 사실을 미리 알고 있다면, 판정 기준을 바꿔야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="1차원 신호 공간과 결정 경계(개형). 신호점 −1과 +1에 잡음 분산 0.25의 가우시안 잡음이 더해진다. 두 신호의 사전 확률이 같으면 경계는 가운데 0이고, 예제 3.1.1에서 P(+1) = 0.8이면 MAP 경계가 −0.173으로 옮겨 흔한 +1 쪽 영역이 넓어진다">
+        <line x1="60" y1="160" x2="460" y2="160" class="ax"/>
+        <path d="M80 158 C120 156, 140 60, 160 60 C180 60, 200 156, 240 158" class="b" fill="none" stroke-width="2"/>
+        <path d="M200 158 C240 156, 280 30, 340 30 C400 30, 440 156, 460 158" class="a" fill="none" stroke-width="2.5"/>
+        <line x1="250" y1="30" x2="250" y2="170" class="k dsh"/><line x1="232" y1="30" x2="232" y2="170" class="d" stroke-width="2"/>
+        <g text-anchor="middle" class="s"><text x="160" y="178" class="tb">−1</text><text x="340" y="178" class="ta">+1</text><text x="262" y="194">0</text><text x="216" y="194" class="td">−0.173</text></g>
+        <text x="350" y="60" class="ta">P(+1) = 0.8</text><text x="100" y="50" class="tb">P(−1) = 0.2</text><text x="260" y="22" class="td">MAP 경계</text>
+      </svg>
+      <figcaption>그림 1. 사전 확률이 같으면 두 신호점의 한가운데가 경계이지만, 한쪽 신호가 더 흔하면 그쪽을 고르는 편이 덜 틀리므로 경계가 드문 신호 쪽으로 옮겨 간다(예제 3.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정규 직교 기저(<a href="../16/03-02.html">전전16 3.2절</a>), 가우시안 분포와 Bayes 정리(<a href="../11/01-01.html">전전11 1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>점과 거리</h3>
-    <p>M개 신호를 정규 직교 기저 \(\phi_1, \phi_2, \dots\)로 전개하면 각 신호는 좌표 벡터 \(s_i\)가 됩니다(BPSK: 1차원 두 점, QPSK: 2차원 네 점). 백색 가우시안 잡음은 모든 축에 같은 분산 \(N_0/2\)로 더해지므로, 받은 점 r에서 가장 그럴듯한 신호는 거리가 가장 가까운 점입니다.</p>
-    <p class="q-term"><b>결정 영역</b>: 각 신호점에 더 가까운 점들의 모임. 두 점 사이 경계는 수직 이등분선(평면에서는 Voronoi 분할).</p>
+    <p>M개 신호를 정규 직교 기저 \(\phi_1, \phi_2, \dots\)로 전개하면 각 신호는 좌표 벡터 \(s_i\)가 된다. 예를 들어 BPSK는 1차원의 두 점이고, QPSK는 2차원의 네 점이다. 이렇게 파형을 점으로 바꾸면, 복잡한 파형 비교가 기하학 문제로 바뀐다.</p>
+    <p>백색 가우시안 잡음은 모든 축에 같은 분산 \(N_0/2\)로 더해진다. 그러므로 받은 점 r에서 가장 그럴듯한 신호는 r에 거리가 가장 가까운 신호점이다. 이것을 최대 우도(ML) 판정이라 하며, 처음 질문의 첫째 답이 이것이다.</p>
+
+    <h3><span class="no">3.1.2</span>결정 영역</h3>
+    <p>각 신호점에 더 가까운 점들의 모임을 그 신호의 결정 영역이라 한다. 두 점 사이의 경계는 수직 이등분선이고, 평면에서는 Voronoi 분할이 된다. 그런데 사전 확률이 다르면 거리만 볼 수 없다. 이때는 우도에 사전 확률을 곱해 비교하는 최대 사후 확률(MAP) 판정을 쓴다.</p>
+    <div class="tb-env thm">
+      <span class="lb">이진 MAP 경계</span>
+      <p>신호 ±A, 잡음 분산 σ²일 때 경계는 \(\gamma = \dfrac{\sigma^2}{2A}\ln\dfrac{P(-1)}{P(+1)}\)이다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
-      <p>1차원 신호 +1, −1, 잡음 분산 σ² = 0.25. (가) 같은 확률일 때 경계. (나) P(+1) = 0.8이면 MAP 경계는?</p>
+      <p>1차원 신호 +1, −1, 잡음 분산 σ² = 0.25. (가) 같은 확률일 때 경계는? (나) P(+1) = 0.8이면 MAP 경계는?</p>
     </div>
-    <p><i>풀이.</i> (가) 0. (나) 우도비를 사전 확률비와 비교하면 경계 \(\gamma = \frac{\sigma^2}{2A}\ln\frac{P(-1)}{P(+1)} = 0.125\ln0.25 = -0.173\). 흔한 +1 쪽 영역이 넓어집니다.</p>
+    <p><i>풀이.</i> (가) 두 점의 한가운데인 0이다. (나) 우도비를 사전 확률비와 비교하면 경계는 \(\gamma = 0.125\ln0.25 = -0.173\)이다(그림 1). 즉 흔한 +1 쪽 영역이 넓어진다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "최소 거리 규칙은 언제나 최적": 사전 확률이 같고 잡음이 백색 가우시안일 때 최적입니다. (2) "차원이 신호 개수와 같다": 16-QAM은 신호 16개지만 2차원입니다.</div>
+    <p>실제 수신기는 이 판정을 상관기나 정합 필터로 한다. 받은 파형을 각 기저 함수와 곱해 적분하면 좌표 r이 나오고, 그 뒤에는 r과 각 신호점의 거리만 비교하면 된다. 그래서 신호 공간은 수신기 구조와 오류 확률 계산(3.2절)을 하나의 그림으로 묶어 준다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>신호 = 기저 좌표의 점. 잡음은 각 축 분산 N₀/2.</li>
-        <li>같은 사전 확률: 최소 거리(수직 이등분선) = ML.</li>
-        <li>MAP 경계 이동 γ = σ²/(2A) ln(P₋/P₊).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>최소 거리 규칙이 언제나 최적이라고 여기기 쉽다. 이 규칙은 사전 확률이 같고 잡음이 백색 가우시안일 때 최적이다. 또 신호 공간의 차원이 신호 개수와 같다고 생각하기 쉬운데, 16-QAM은 신호가 16개이지만 2차원이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>신호는 기저 좌표의 점이고, 잡음은 각 축에 분산 N₀/2로 더해진다. 사전 확률이 같으면 최소 거리(수직 이등분선) 판정이 ML 판정이다. 사전 확률이 다르면 MAP 경계가 γ = σ²/(2A) ln(P₋/P₊)만큼 옮겨 간다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>QPSK 네 점(±1, ±1)의 결정 영역은?
-          <details><summary>답</summary><p>네 사분면.</p></details>
+          <details><summary>답</summary><p>네 사분면이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 P(+1) = 0.5, σ²가 바뀌면 경계는?
-          <details><summary>답</summary><p>그대로 0.</p></details>
+          <details><summary>답</summary><p>그대로 0이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제 (나)에서 σ²를 1로 키우면 경계는?
-          <details><summary>답</summary><p>0.5 ln 0.25 ≈ −0.693(잡음이 클수록 사전 확률의 영향이 커짐).</p></details>
+          <details><summary>답</summary><p>0.5 ln 0.25 ≈ −0.693이다(잡음이 클수록 사전 확률의 영향이 커진다).</p></details>
         </li>
       </ol>
     </div>

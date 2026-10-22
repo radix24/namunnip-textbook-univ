@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e21-union" data-kind="본문" data-std="전전21-03-03">
   <header class="card-head"><span class="no"></span><h2>M진 신호의 오류 확률 어림</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가장 가까운 이웃 수와 최소 거리로 기호 오류 확률을 어림(합 상한)한다.</li>
-        <li>M-PSK의 \(P_s \approx 2Q(\sqrt{2E_s/N_0}\sin(\pi/M))\)를 계산한다.</li>
-        <li>기호 오류와 비트 오류의 관계(Gray)를 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>결정 영역과 Q 함수 (<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">신호점이 두 개일 때는 오류 확률을 Q 함수 하나로 정확히 쓸 수 있었다. 그런데 8개, 16개로 점이 늘면 결정 영역의 모양이 복잡해져 정확한 계산이 어렵다. 이럴 때 오류 확률을 빠르게 어림하는 방법은 없을까? 그리고 기호 하나가 틀리면 비트는 몇 개가 틀릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="8-PSK와 가장 가까운 이웃(개형). 원 위 8개 점 가운데 한 점의 가장 가까운 이웃은 양옆 두 점이며, 거리는 d_min = 2√E_s sin(π/8)이다. 높은 SNR에서는 이 두 이웃으로 틀리는 경우가 거의 전부라 P_s ≈ 2Q(d_min/√(2N₀))이고, 예제 3.3.1에서 15 dB이면 P_s ≈ 2.3×10⁻³, Gray 부호화로 P_b ≈ 7.8×10⁻⁴이다">
+        <circle cx="160" cy="100" r="70" class="k dsh" fill="none"/>
+        <g class="fk"><circle cx="230" cy="100" r="5"/><circle cx="209" cy="51" r="5"/><circle cx="160" cy="30" r="5"/><circle cx="111" cy="51" r="5"/><circle cx="90" cy="100" r="5"/><circle cx="111" cy="149" r="5"/><circle cx="160" cy="170" r="5"/></g>
+        <circle cx="209" cy="149" r="6" class="fa"/>
+        <path d="M209 149 L230 100 M209 149 L160 170" class="d" stroke-width="2.5"/>
+        <g class="s"><text x="222" y="160" class="ta">보낸 점</text><text x="236" y="128" class="td">d_min</text><text x="236" y="96">이웃 1</text><text x="150" y="190">이웃 2</text></g>
+        <g class="s"><text x="300" y="60">P_s ≈ N_nn Q(d_min/√(2N₀))</text><text x="300" y="84">d_min = 2√E_s sin(π/M)</text><text x="300" y="116" class="td">15 dB: P_s ≈ 2.3×10⁻³</text><text x="300" y="140" class="td">Gray: P_b ≈ 7.8×10⁻⁴</text></g>
+      </svg>
+      <figcaption>그림 1. 잡음이 작으면 보낸 점에서 가장 가까운 이웃으로 넘어가는 오류가 압도적으로 많으므로, 오류 확률은 가장 가까운 거리와 그런 이웃의 수만으로 어림할 수 있다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>결정 영역과 Q 함수(<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>가까운 이웃이 지배한다</h3>
-    <p>높은 SNR에서는 가장 가까운 이웃으로 틀리는 경우가 거의 전부라 \(P_s \approx N_{nn}Q(d_{min}/\sqrt{2N_0})\)(N_nn: 가장 가까운 이웃 수). M-PSK는 이웃 2개, \(d_{min} = 2\sqrt{E_s}\sin(\pi/M)\)입니다.</p>
+    <p>M진 신호에서 오류는 보낸 점이 다른 어느 점으로든 넘어가는 사건의 합집합이다. 그 확률은 각 쌍의 오류 확률을 더한 값보다 작으므로, 합으로 위에서 묶을 수 있다(합 상한). 그런데 Q 함수는 거리가 조금만 멀어져도 급격히 작아진다. 그래서 높은 SNR에서는 가장 가까운 이웃으로 틀리는 항이 거의 전부를 차지한다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">가장 가까운 이웃 어림</span>
+      <p>\[ P_s \approx N_{nn}Q\left(\frac{d_{min}}{\sqrt{2N_0}}\right) \]</p>
+      <p>\(N_{nn}\)은 가장 가까운 이웃의 수이다. M-PSK는 \(N_{nn} = 2\), \(d_{min} = 2\sqrt{E_s}\sin(\pi/M)\)이다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>8-PSK, E_s/N₀ = 15 dB의 기호 오류 확률과 비트 오류 확률(Gray)은?</p>
     </div>
-    <p><i>풀이.</i> √(2 × 31.6) × sin22.5° = 3.04 → P_s ≈ 2Q(3.04) = 2.3×10⁻³, P_b ≈ P_s/3 = 7.8×10⁻⁴. 같은 E_s에서 QPSK(sin45°)보다 거리가 훨씬 가까워 오류가 많습니다.</p>
+    <p><i>풀이.</i> 15 dB는 31.6이므로 √(2 × 31.6) × sin22.5° = 3.04이다. 따라서 P_s ≈ 2Q(3.04) = 2.3×10⁻³이다. 그리고 Gray 부호화에서는 기호 오류가 대개 비트 하나의 오류이므로, P_b ≈ P_s/3 = 7.8×10⁻⁴이다(그림 1). 처음 질문의 둘째 답이 이것이다. 같은 E_s에서 8-PSK는 QPSK보다 점 사이가 훨씬 가까워 오류가 많다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "합 상한은 낮은 SNR에서도 정확": 낮은 SNR에서는 1을 넘을 만큼 과대 평가할 수 있습니다. (2) "기호 오류 하나는 비트 여러 개 오류": Gray 부호화면 대개 한 비트만 틀립니다.</div>
+    <p>이 어림은 성상도를 설계할 때도 쓰인다. 같은 평균 에너지에서 최소 거리를 크게 하고, 그 거리에 있는 이웃 수를 줄이는 배치가 좋은 성상도이다. 예를 들어 점이 많을 때 원 위에만 늘어놓는 PSK보다, 평면을 고르게 채우는 QAM이 최소 거리를 더 크게 유지한다(4.1절).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P_s ≈ N_nn Q(d_min/√(2N₀)).</li>
-        <li>M-PSK: 2Q(√(2E_s/N₀)sin(π/M)).</li>
-        <li>예: 8-PSK 15 dB → 2.3×10⁻³, P_b ≈ 7.8×10⁻⁴.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>합 상한이 낮은 SNR에서도 정확하다고 여기기 쉽다. 낮은 SNR에서는 여러 항이 겹쳐 세어져, 확률이 1을 넘을 만큼 과대 평가할 수도 있다. 또 기호 오류 하나가 비트 여러 개의 오류라고 생각하기 쉬운데, Gray 부호화면 대개 한 비트만 틀린다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>높은 SNR에서는 \(P_s \approx N_{nn}Q(d_{min}/\sqrt{2N_0})\)로 어림한다. M-PSK는 \(2Q(\sqrt{2E_s/N_0}\sin(\pi/M))\)이다. 8-PSK, 15 dB이면 P_s ≈ 2.3×10⁻³, P_b ≈ 7.8×10⁻⁴이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>QPSK의 가장 가까운 이웃 수는?
-          <details><summary>답</summary><p>2.</p></details>
+          <details><summary>답</summary><p>2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>16-PSK의 sin(π/M)은?
-          <details><summary>답</summary><p>약 0.195.</p></details>
+          <details><summary>답</summary><p>약 0.195이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>같은 E_s에서 8-PSK와 QPSK의 거리 비는?
-          <details><summary>답</summary><p>sin22.5°/sin45° ≈ 0.54.</p></details>
+          <details><summary>답</summary><p>sin22.5°/sin45° ≈ 0.54이다.</p></details>
         </li>
       </ol>
     </div>
