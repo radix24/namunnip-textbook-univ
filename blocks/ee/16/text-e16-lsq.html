@@ -8,58 +8,61 @@
 <article class="card q-card" id="text-e16-lsq" data-kind="본문" data-std="전전16-03-01">
   <header class="card-head"><span class="no"></span><h2>최소제곱으로 자료에 모형 맞추기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>해가 없는 Ax = b에서 오차 제곱합을 최소로 하는 x̂을 정규 방정식 \(A^TA\hat{\mathbf x} = A^T\mathbf b\)로 구한다.</li>
-        <li>기하적으로 b를 열공간에 정사영한 것임을 안다.</li>
-        <li>직선·다항식 맞춤과 측정 자료(센서 보정)에 적용한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>네 부분공간과 직교 (<a href="02-01.html">2.1절</a>), 공분산과 평균 (<a href="../11/03-01.html">전전11 3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">온도 센서를 보정하려고 세 번 측정했더니 점 세 개가 한 직선 위에 놓이지 않는다. 미지수는 기울기와 절편 두 개인데 식이 세 개라 정확한 해가 없다. 그렇다면 "가장 잘 맞는" 직선은 무엇이고, 어떻게 한 번에 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.1.1의 최소제곱 직선 맞춤. 측정점 (0, 6), (1, 0), (2, 0)에 맞춘 직선 b = 5 − 3t는 각 시각에서 5, 2, −1을 주고, 오차는 1, −2, 1로 합이 0, 제곱합이 6이다. 오차 벡터는 A의 두 열 (1, 1, 1), (0, 1, 2)와 직교한다">
+        <line x1="80" y1="170" x2="400" y2="170" class="ax"/><line x1="100" y1="190" x2="100" y2="30" class="ax"/>
+        <path d="M100 130 H400" class="k dsh"/>
+        <path d="M80 42 L380 162" class="a" stroke-width="2.5"/>
+        <path d="M100 34 V50 M220 130 V98 M340 130 V146" class="d" stroke-width="2"/>
+        <g class="fd"><circle cx="100" cy="34" r="5"/><circle cx="220" cy="130" r="5"/><circle cx="340" cy="130" r="5"/></g>
+        <g class="fa"><circle cx="100" cy="50" r="3"/><circle cx="220" cy="98" r="3"/><circle cx="340" cy="146" r="3"/></g>
+        <g text-anchor="middle" class="s"><text x="100" y="186">t = 0</text><text x="220" y="186">1</text><text x="340" y="186">2</text></g>
+        <g class="td"><text x="108" y="46">+1</text><text x="228" y="118">−2</text><text x="348" y="142">+1</text></g>
+        <text x="260" y="60" class="ta">b = 5 − 3t</text>
+        <text x="94" y="134" text-anchor="end" class="s">0</text>
+        <g class="s"><text x="420" y="70">오차 (1, −2, 1)</text><text x="420" y="90">합 0, 제곱합 6</text><text x="420" y="110">두 열과 직교</text></g>
+      </svg>
+      <figcaption>그림 1. 오차의 제곱합이 가장 작은 직선에서는 오차 벡터가 모형이 만들 수 있는 모든 방향과 직교하므로, 직교 조건 Aᵀe = 0 하나로 최소제곱 해를 얻는다(예제 3.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>네 부분공간과 직교(<a href="02-01.html">2.1절</a>), 공분산과 평균(<a href="../11/03-01.html">전전11 3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>정규 방정식</h3>
-    <p>측정이 모형보다 많으면 Ax = b(m &gt; n)는 보통 해가 없습니다. \(\|A\mathbf x - \mathbf b\|^2\)을 최소로 하는 x̂는 오차 \(\mathbf e = \mathbf b - A\hat{\mathbf x}\)가 열공간과 직교할 때, 곧 \(A^T\mathbf e = 0\)일 때입니다.</p>
+    <p>측정이 모형의 미지수보다 많으면 Ax = b(m &gt; n)는 보통 해가 없다. b가 A의 열공간 밖에 있기 때문이다. 그래서 "가장 잘 맞는" 해를 오차의 제곱합 \(\|A\mathbf x - \mathbf b\|^2\)을 가장 작게 하는 x̂로 정한다.</p>
+    <p>그런데 열공간 위에서 b에 가장 가까운 점은 b에서 열공간으로 내린 수선의 발이다. 그러므로 오차 \(\mathbf e = \mathbf b - A\hat{\mathbf x}\)가 열공간과 직교할 때, 곧 \(A^T\mathbf e = 0\)일 때 제곱합이 가장 작다. 이것을 풀어 쓰면 정규 방정식이 되며, 처음 질문의 답이 이것이다.</p>
     \[ A^TA\hat{\mathbf x} = A^T\mathbf b, \qquad \mathbf p = A\hat{\mathbf x} = A(A^TA)^{-1}A^T\mathbf b. \]
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
       <p>시각 t = 0, 1, 2의 측정 b = 6, 0, 0에 직선 b = C + Dt를 맞춰라.</p>
     </div>
-    <p><i>풀이.</i> \(A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 1 & 2 \end{pmatrix}\), \(A^TA = \begin{pmatrix} 3 & 3 \\ 3 & 5 \end{pmatrix}\), \(A^T\mathbf b = (6, 0)\). 풀면 C = 5, D = −3. 맞춘 값 5, 2, −1, 오차 1, −2, 1(합 0, 제곱합 6). 오차 벡터가 두 열 (1,1,1), (0,1,2)와 직교함을 확인할 수 있습니다.</p>
-    <p>센서 보정(입력-출력 직선의 기울기와 오프셋), 다항식 맞춤, 채널 추정이 모두 같은 계산입니다. \(A^TA\)가 거의 특이하면(다항식 차수가 높을 때) 오차가 커지므로 QR(3.2절)로 풉니다.</p>
+    <p><i>풀이.</i> \(A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 1 & 2 \end{pmatrix}\)이므로 \(A^TA = \begin{pmatrix} 3 & 3 \\ 3 & 5 \end{pmatrix}\), \(A^T\mathbf b = (6, 0)\)이다. 이를 풀면 C = 5, D = −3이다.</p>
+    <p>맞춘 값은 5, 2, −1이고 오차는 1, −2, 1이다(그림 1). 오차의 합이 0이고 제곱합은 6이며, 오차 벡터가 두 열 (1,1,1), (0,1,2)와 직교함을 확인할 수 있다.</p>
+    <p>센서 보정(입력-출력 직선의 기울기와 오프셋), 다항식 맞춤, 채널 추정이 모두 같은 계산이다. 다만 \(A^TA\)가 거의 특이하면, 예를 들어 맞추는 다항식의 차수가 높을 때는 오차가 커지므로 QR(3.2절)로 푼다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "최소제곱 직선은 모든 점을 지난다": 오차 제곱합이 최소일 뿐입니다. (2) "차수를 높이면 언제나 좋은 모형이다": 측정 잡음까지 맞추는 과적합이 생깁니다. (3) 수직 거리의 제곱합이지 점과 직선의 수직 거리(전체 최소제곱)가 아닙니다.</div>
+    <p>정규 방정식은 미지수 개수만큼의 작은 정사각 방정식이라는 점도 장점이다. 측정이 1000개, 미지수가 2개라면 1000×2 행렬 A를 다루지만, 실제로 푸는 것은 2×2 행렬 \(A^TA\)이다. 그래서 측정이 아무리 많아도 계산은 금방 끝나고, 측정을 늘릴수록 우연한 오차가 평균되어 기울기와 절편이 더 정확해진다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(A^TA\hat x = A^Tb\): 오차가 열공간에 직교.</li>
-        <li>b의 열공간 정사영 \(p = A\hat x\).</li>
-        <li>직선·다항식 맞춤, 센서 보정. 조건이 나쁘면 QR.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>최소제곱 직선이 모든 점을 지나지 않으니 틀린 답이라고 여기기 쉽다. 하지만 측정에 오차가 있으면 모든 점을 지나는 직선은 없고, 최소제곱 직선은 오차의 제곱합을 가장 작게 하는 가장 정직한 타협이다. 또 오차가 아주 큰 점 하나가 있으면 제곱 때문에 직선이 그쪽으로 끌려가므로, 이상점을 먼저 살핀다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>최소제곱 해는 오차가 열공간에 직교하는 조건에서 나오는 정규 방정식 \(A^TA\hat x = A^Tb\)로 구한다. \(p = A\hat x\)는 b를 열공간에 정사영한 것이다. 직선·다항식 맞춤과 센서 보정에 쓰며, 조건이 나쁘면 QR로 푼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>점 (0, 1), (1, 3), (2, 5)에 맞춘 직선은?
-          <details><summary>답</summary><p>모두 직선 위에 있어 b = 1 + 2t, 오차 0.</p></details>
+          <details><summary>답</summary><p>모두 직선 위에 있어 b = 1 + 2t이고 오차는 0이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 오차 (1, −2, 1)이 열 (1,1,1), (0,1,2)와 직교함을 확인하라.
-          <details><summary>답</summary><p>1 − 2 + 1 = 0, 0 − 2 + 2 = 0.</p></details>
+          <details><summary>답</summary><p>1 − 2 + 1 = 0, 0 − 2 + 2 = 0이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>상수 모형 b = C(모든 측정의 평균)을 정규 방정식으로 유도하라.
-          <details><summary>답</summary><p>A = (1, …, 1)ᵀ, \(A^TA = m\), \(A^Tb = \sum b_i\), C = 평균.</p></details>
+          <details><summary>답</summary><p>A = (1, …, 1)ᵀ, \(A^TA = m\), \(A^Tb = \sum b_i\)이므로 C는 평균이다.</p></details>
         </li>
       </ol>
     </div>

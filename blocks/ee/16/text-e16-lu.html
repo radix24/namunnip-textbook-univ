@@ -8,59 +8,59 @@
 <article class="card q-card" id="text-e16-lu" data-kind="본문" data-std="전전16-01-01">
   <header class="card-head"><span class="no"></span><h2>가우스 소거와 LU 분해</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가우스 소거로 연립방정식을 위 삼각 꼴로 바꾸고 뒤로 대입해 푼다.</li>
-        <li>소거에 쓴 곱수를 모아 A = LU로 쓰고, 같은 A에 우변이 여러 개일 때 재사용한다.</li>
-        <li>피벗이 0이면 행 교환(PA = LU)이 필요함을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬 곱과 연립방정식 (<a href="../../common/2/02-03.html">공통2 2.3절</a>), 마디 해석 (<a href="../3/02-02.html">전전3 2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">회로 시뮬레이터는 마디 수천 개짜리 회로의 연립방정식을 시간 간격마다 수천 번 푼다. 회로는 그대로이고 전원 값만 바뀌는데도 매번 처음부터 소거를 해야 할까? 한 번 한 계산을 저장해 두었다가 다시 쓸 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1의 소거를 A = LU로 정리한 그림. A = [[2, 1, 1], [4, −6, 0], [−2, 7, 2]]에서 행2 − 2 × 행1, 행3 + 행1, 행3 + 행2를 하면 위 삼각 행렬 U = [[2, 1, 1], [0, −8, −2], [0, 0, 1]]이 되고, 쓴 곱수 2, −1, −1을 대각 아래에 모은 것이 L = [[1, 0, 0], [2, 1, 0], [−1, −1, 1]]이다">
+        <g font-family="monospace" class="s" text-anchor="middle">
+          <text x="80" y="70">2   1   1</text><text x="80" y="95">4  −6   0</text><text x="80" y="120">−2   7   2</text>
+          <text x="280" y="70">1   0   0</text><text x="280" y="95" class="td">2   1   0</text><text x="280" y="120" class="td">−1  −1   1</text>
+          <text x="460" y="70" class="ta">2   1   1</text><text x="460" y="95" class="ta">0  −8  −2</text><text x="460" y="120" class="ta">0   0   1</text>
+        </g>
+        <g class="s" text-anchor="middle"><text x="80" y="40">A</text><text x="280" y="40" class="td">L (곱수)</text><text x="460" y="40" class="ta">U (소거 결과)</text></g>
+        <text x="180" y="98" text-anchor="middle" class="s">=</text><text x="370" y="98" text-anchor="middle" class="s">×</text>
+        <text x="280" y="160" text-anchor="middle" class="s">회로가 같으면 L, U를 한 번 만들고, 우변이 바뀔 때마다 대입만 다시 한다</text>
+        <text x="280" y="180" text-anchor="middle" class="s">소거 약 n³/3번, 대입 약 n²번</text>
+      </svg>
+      <figcaption>그림 1. 소거에 쓴 곱수를 모은 L과 소거 결과 U의 곱이 원래 행렬이므로, 같은 행렬에 우변만 바뀌면 L과 U로 대입만 다시 해 훨씬 빨리 푼다(예제 1.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬 곱과 연립방정식(<a href="../../common/2/02-03.html">공통2 2.3절</a>), 마디 해석(<a href="../3/02-02.html">전전3 2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>소거</h3>
-    <p>첫 열의 피벗(대각 원소) 아래를 0으로 만들도록 "아래 행 − 곱수 × 피벗 행"을 하고, 다음 열로 넘어갑니다. 위 삼각 행렬 U가 되면 마지막 식부터 거꾸로 풉니다(뒤로 대입).</p>
+    <p>연립방정식은 미지수를 하나씩 없애는 소거로 푼다. 먼저 첫 열의 피벗(대각 원소) 아래를 0으로 만들도록 "아래 행 − 곱수 × 피벗 행"을 하고, 다음 열로 넘어간다. 그러면 위 삼각 행렬 U가 되고, 마지막 식부터 거꾸로 풀면 된다. 이것을 뒤로 대입이라 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
       <p>\(\begin{pmatrix} 2 & 1 & 1 \\ 4 & -6 & 0 \\ -2 & 7 & 2 \end{pmatrix}\mathbf x = \begin{pmatrix} 5 \\ -2 \\ 9 \end{pmatrix}\)을 소거로 풀고 L과 U를 쓰라.</p>
     </div>
-    <p><i>풀이.</i> 행2 − 2 × 행1, 행3 − (−1) × 행1 → \(\begin{pmatrix} 2 & 1 & 1 \\ 0 & -8 & -2 \\ 0 & 8 & 3 \end{pmatrix}\), 우변 (5, −12, 14). 행3 − (−1) × 행2 → U = \(\begin{pmatrix} 2 & 1 & 1 \\ 0 & -8 & -2 \\ 0 & 0 & 1 \end{pmatrix}\), 우변 (5, −12, 2). 뒤로 대입: z = 2, y = (−12 + 4)/(−8) = 1, x = (5 − 1 − 2)/2 = 1. 곱수를 대각 아래에 모으면 \(L = \begin{pmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & -1 & 1 \end{pmatrix}\), A = LU.</p>
+    <p><i>풀이.</i> 행2 − 2 × 행1, 행3 − (−1) × 행1을 하면 \(\begin{pmatrix} 2 & 1 & 1 \\ 0 & -8 & -2 \\ 0 & 8 & 3 \end{pmatrix}\)이 되고, 우변은 (5, −12, 14)이다. 다시 행3 − (−1) × 행2를 하면 U = \(\begin{pmatrix} 2 & 1 & 1 \\ 0 & -8 & -2 \\ 0 & 0 & 1 \end{pmatrix}\)이고, 우변은 (5, −12, 2)이다.</p>
+    <p>이제 뒤로 대입하면 z = 2, y = (−12 + 4)/(−8) = 1, x = (5 − 1 − 2)/2 = 1이다. 또 쓴 곱수 2, −1, −1을 대각 아래 제자리에 모으면 \(L = \begin{pmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & -1 & 1 \end{pmatrix}\)이고, A = LU이다(그림 1).</p>
 
     <h3><span class="no">1.1.2</span>왜 LU인가</h3>
-    <p>소거는 n×n에 약 \(n^3/3\)번의 곱셈, 뒤로 대입은 \(n^2\)번입니다. 회로 시뮬레이터가 같은 회로(같은 A)에 입력(우변)만 바꿔 여러 번 풀 때 L, U를 한 번만 만들고 대입만 반복하면 훨씬 빠릅니다. 피벗이 0이거나 아주 작으면 행을 바꿔(부분 피벗팅) 수치 오차를 줄이고, 이를 PA = LU로 씁니다.</p>
+    <p>소거는 n×n 행렬에 약 \(n^3/3\)번의 곱셈이 들고, 뒤로 대입은 약 \(n^2\)번이다. 그런데 회로 시뮬레이터처럼 같은 회로(같은 A)에 입력(우변)만 바꿔 여러 번 풀 때는, L과 U를 한 번만 만들고 대입만 되풀이하면 된다. 처음 질문의 답이 이것이다.</p>
+    <p>우변 \(\mathbf b\)가 바뀌면 먼저 \(L\mathbf c = \mathbf b\)를 앞으로 대입해 풀고, 이어 \(U\mathbf x = \mathbf c\)를 뒤로 대입해 푼다. 두 단계 모두 \(n^2\) 정도여서, n이 크면 소거를 다시 하는 것보다 수백 배 빠르다(연습문제 3).</p>
+    <p>한편 피벗이 0이거나 아주 작으면 그 행으로 나눌 수 없거나 오차가 커진다. 이때는 행을 바꿔(부분 피벗팅) 가장 큰 원소를 피벗으로 쓰고, 이를 PA = LU로 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "역행렬을 구해 곱하는 것이 빠르다": 역행렬 계산은 LU보다 약 3배 비싸고 오차도 큽니다. (2) "피벗은 0만 아니면 된다": 아주 작은 피벗은 반올림 오차를 키우므로 큰 값을 골라 행을 바꿉니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>L에 곱수의 부호를 바꿔 넣는 실수가 흔하다. "행 − 곱수 × 피벗 행"에서 뺀 곱수를 그대로 L에 넣어야 A = LU가 성립하며, 예제에서 행3 + 행1은 곱수 −1이다. 또 피벗이 0이 되면 소거가 막히는데, 행렬이 특이해서가 아니라 행 순서 때문일 수 있으니 먼저 행 교환을 해 본다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>소거 → 위 삼각 U → 뒤로 대입. 곱수를 모으면 L, A = LU.</li>
-        <li>소거 약 n³/3, 대입 n². 같은 A에 우변이 여러 개면 LU 재사용.</li>
-        <li>피벗 0·작으면 행 교환 PA = LU.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>소거로 위 삼각 행렬 U를 만들고 뒤로 대입해 푼다. 쓴 곱수를 모으면 L이고, A = LU이다. 소거는 약 n³/3번, 대입은 n²번이므로 같은 A에 우변이 여러 개면 LU를 다시 쓰고, 피벗이 0이거나 작으면 행 교환 PA = LU를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>x + 2y = 5, 3x + 4y = 6을 소거로 풀라.
-          <details><summary>답</summary><p>행2 − 3행1: −2y = −9, y = 4.5, x = −4.</p></details>
+          <details><summary>답</summary><p>행2 − 3 × 행1로 −2y = −9이므로 y = 4.5, x = −4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제의 L, U로 우변 (1, 0, 0)을 풀 때 필요한 두 단계는?
-          <details><summary>답</summary><p>Lc = b(앞으로 대입) 후 Ux = c(뒤로 대입).</p></details>
+          <details><summary>답</summary><p>Lc = b를 앞으로 대입해 푼 뒤 Ux = c를 뒤로 대입해 푼다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>n = 1000이면 소거와 대입의 곱셈 수 비는?
-          <details><summary>답</summary><p>약 3.3×10⁸ 대 10⁶, 약 333배.</p></details>
+          <details><summary>답</summary><p>약 3.3×10⁸ 대 10⁶으로 약 333배이다.</p></details>
         </li>
       </ol>
     </div>

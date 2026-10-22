@@ -8,56 +8,60 @@
 <article class="card q-card" id="text-e16-orthmat" data-kind="본문" data-std="전전16-03-04">
   <header class="card-head"><span class="no"></span><h2>직교 행렬: 회전과 반사</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>\(Q^TQ = I\)인 직교 행렬이 길이와 각을 보존함을 안다.</li>
-        <li>2차원 회전 행렬과 Householder 반사 \(H = I - 2uu^T\)를 쓴다.</li>
-        <li>행렬식 ±1로 회전과 반사를 구별한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정규직교 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">그림을 돌리거나 거울에 비춰도 모양과 크기는 그대로이다. 이렇게 길이와 각을 바꾸지 않는 변환은 행렬로 어떤 성질을 가질까? 그런 행렬의 역행렬은 왜 계산할 필요가 없을까? 회전과 반사는 행렬로 어떻게 구별할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1의 두 직교 변환. 30° 회전 R은 (1, 0)을 (0.866, 0.5)로 보내고 행렬식이 1이다. u = (1, 1)/√2에 수직인 직선에 대한 Householder 반사 H = I − 2uuᵀ는 (1, 0)을 (0, −1)로 보내고 행렬식이 −1이다. 두 경우 모두 길이 1이 그대로이다">
+        <defs><marker id="ah-e16om" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <circle cx="140" cy="100" r="60" class="k dsh" fill="none"/><circle cx="400" cy="100" r="60" class="k dsh" fill="none"/>
+        <path d="M140 100 H198" class="b" stroke-width="2.5" marker-end="url(#ah-e16om)"/>
+        <path d="M140 100 L190 71" class="a" stroke-width="2.5" marker-end="url(#ah-e16om)"/>
+        <path d="M400 100 H458" class="b" stroke-width="2.5" marker-end="url(#ah-e16om)"/>
+        <path d="M400 100 V158" class="c" stroke-width="2.5" marker-end="url(#ah-e16om)"/>
+        <path d="M340 40 L460 160" class="k" stroke-width="1.5"/>
+        <path d="M400 100 L428 72" class="d dsh" marker-end="url(#ah-e16om)"/>
+        <text x="202" y="104" class="tb">(1, 0)</text><text x="194" y="66" class="ta">(0.866, 0.5)</text><text x="160" y="92" class="s">30°</text>
+        <text x="462" y="104" class="tb">(1, 0)</text><text x="408" y="176" class="tc">(0, −1)</text><text x="432" y="68" class="td">u</text><text x="350" y="56" class="s">거울면</text>
+        <g text-anchor="middle" class="s"><text x="140" y="190">회전 R(30°), det = 1</text><text x="400" y="190">반사 H = I − 2uuᵀ, det = −1</text></g>
+      </svg>
+      <figcaption>그림 1. 직교 행렬은 단위 원 위의 점을 단위 원 위로만 옮겨 길이를 지키며, 방향을 그대로 두는 회전은 행렬식이 1이고 방향을 뒤집는 반사는 −1이다(예제 3.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정규직교(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>길이를 지키는 변환</h3>
-    <p>\(\|Qx\|^2 = x^TQ^TQx = \|x\|^2\). 2차원 회전 \(R(\theta) = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}\)(det 1), 단위 벡터 u에 수직인 면에 대한 반사 \(H = I - 2uu^T\)(det −1).</p>
+    <p>열들이 정규직교인 정사각 행렬 Q를 직교 행렬이라 한다. 그러면 \(Q^TQ = I\)이고, \(\|Qx\|^2 = x^TQ^TQx = \|x\|^2\)이어서 길이가 그대로이다. 내적도 같은 방법으로 보존되므로 각도 그대로이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>또 \(Q^TQ = I\)는 곧 \(Q^{-1} = Q^T\)라는 뜻이다. 그래서 역행렬을 소거로 구할 필요 없이 전치만 하면 되며, 처음 질문의 둘째 답이 이것이다.</p>
+    <p>대표적인 직교 행렬은 두 가지이다. 2차원 회전 \(R(\theta) = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}\)는 행렬식이 1이고, 단위 벡터 u에 수직인 면에 대한 반사 \(H = I - 2uu^T\)는 행렬식이 −1이다. 직교 행렬의 행렬식은 늘 ±1이므로, 그 부호로 회전과 반사를 구별한다. 처음 질문의 셋째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
       <p>(1, 0)을 30° 회전한 결과와, u = (1, 1)/√2에 대한 Householder 반사로 (1, 0)을 보내면?</p>
     </div>
-    <p><i>풀이.</i> R(30°)(1, 0) = (0.866, 0.5). H = I − 2uuᵀ = [[0, −1], [−1, 0]] → (0, −1). 둘 다 길이 1 유지. Householder 반사는 벡터를 한 축으로 보내는 데 써서 QR 분해를 안정하게 계산합니다.</p>
+    <p><i>풀이.</i> R(30°)(1, 0) = (0.866, 0.5)이다. H = I − 2uuᵀ = [[0, −1], [−1, 0]]이므로 (1, 0)은 (0, −1)로 간다(그림 1). 둘 다 길이 1을 그대로 지킨다.</p>
+    <p>Householder 반사는 거울면을 잘 골라 어떤 벡터든 한 좌표축 위로 보낼 수 있다. 그래서 행렬의 열을 차례로 축 위로 보내 아래쪽을 0으로 만들면 R이 되고, 쓴 반사들을 곱한 것이 Q가 된다. QR 분해를 안정하게 계산하는 표준 방법이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "직교 행렬은 회전뿐": 반사(det −1)도 포함합니다. (2) "R(θ)의 역행렬은 다시 계산해야": Rᵀ = R(−θ)입니다.</div>
+    <p>수치 계산에서 직교 행렬이 사랑받는 이유도 같다. 길이를 바꾸지 않으므로 반올림 오차도 키우지 않으며, 조건수가 1이다. 그래서 행렬을 다루는 안정한 알고리즘들은 대부분 직교 행렬을 곱해 가며 문제를 단순한 꼴로 바꾼다. QR 분해, 고유값 계산, SVD가 모두 이런 방식이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>QᵀQ = I → 길이·각 보존, Q⁻¹ = Qᵀ.</li>
-        <li>회전 det 1, 반사 det −1.</li>
-        <li>Householder H = I − 2uuᵀ.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>열들이 서로 직교하기만 하면 직교 행렬이라고 여기기 쉽다. 직교 행렬은 열들이 직교하면서 길이도 1이어야 하며, 길이가 1이 아니면 \(Q^TQ\)가 대각 행렬일 뿐 I가 아니어서 \(Q^{-1} = Q^T\)가 성립하지 않는다. 또 직교 행렬이라도 행렬식만으로는 회전 각을 알 수 없고, 회전인지 반사인지만 알 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>QᵀQ = I이면 길이와 각이 보존되고, Q⁻¹ = Qᵀ이다. 회전은 행렬식이 1, 반사는 −1이다. Householder 반사 H = I − 2uuᵀ로 QR을 안정하게 계산한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>R(90°)(1, 0)은?
-          <details><summary>답</summary><p>(0, 1).</p></details>
+          <details><summary>답</summary><p>(0, 1)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>R(θ)R(φ)는?
-          <details><summary>답</summary><p>R(θ + φ).</p></details>
+          <details><summary>답</summary><p>R(θ + φ)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>u = (0, 1)의 Householder 반사는?
-          <details><summary>답</summary><p>[[1, 0], [0, −1]](x축 반사).</p></details>
+          <details><summary>답</summary><p>[[1, 0], [0, −1]], 곧 x축 반사이다.</p></details>
         </li>
       </ol>
     </div>

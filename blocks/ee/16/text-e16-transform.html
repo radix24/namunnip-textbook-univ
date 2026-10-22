@@ -8,61 +8,59 @@
 <article class="card q-card" id="text-e16-transform" data-kind="본문" data-std="전전16-02-02">
   <header class="card-head"><span class="no"></span><h2>선형변환을 행렬로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>선형변환의 정의(합과 상수배 보존)를 안다.</li>
-        <li>기저의 상을 열로 놓아 변환의 행렬을 만든다.</li>
-        <li>회전, 반사, 투영, 미분 연산자를 행렬로 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>부분공간 (<a href="02-01.html">2.1절</a>), 삼각함수.</li>
-      </ul>
-    </div>
+    <p class="q-ask">회전, 대칭, 투영 같은 기하 변환이나 미분 같은 연산이 행렬 하나로 쓰인다고 한다. 변환을 행렬로 바꾸려면 모든 벡터가 어디로 가는지 다 알아야 할까? 몇 개만 알면 될까? 다항식을 미분하는 일도 정말 행렬 곱이 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="30° 회전 T가 표준 기저 e₁ = (1, 0)을 (0.866, 0.5)로, e₂ = (0, 1)을 (−0.5, 0.866)으로 보낸다. 이 두 상을 열로 놓은 [[0.866, −0.5], [0.5, 0.866]]이 T의 행렬이다">
+        <defs><marker id="ah-e16tf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <line x1="60" y1="150" x2="320" y2="150" class="ax"/><line x1="180" y1="190" x2="180" y2="30" class="ax"/>
+        <path d="M180 150 H278" class="k dsh" marker-end="url(#ah-e16tf)"/><path d="M180 150 V52" class="k dsh" marker-end="url(#ah-e16tf)"/>
+        <path d="M180 150 L264.9 101" class="a" stroke-width="2.5" marker-end="url(#ah-e16tf)"/>
+        <path d="M180 150 L131 65.1" class="c" stroke-width="2.5" marker-end="url(#ah-e16tf)"/>
+        <text x="284" y="154" class="s">e₁</text><text x="186" y="48" class="s">e₂</text>
+        <text x="268" y="96" class="ta">T(e₁)</text><text x="96" y="62" class="tc">T(e₂)</text>
+        <text x="200" y="132" class="s">30°</text>
+        <g class="s"><text x="350" y="80">T의 행렬 = [T(e₁) T(e₂)]</text></g>
+        <g font-family="monospace" class="s"><text x="370" y="110" class="ta">0.866</text><text x="440" y="110" class="tc">−0.5</text><text x="370" y="130" class="ta">0.5</text><text x="440" y="130" class="tc">0.866</text></g>
+      </svg>
+      <figcaption>그림 1. 선형변환은 기저 벡터가 가는 곳만 알면 모든 벡터가 가는 곳이 정해지므로, 기저의 상을 열로 늘어놓은 것이 곧 변환의 행렬이다(2.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>부분공간(<a href="02-01.html">2.1절</a>), 삼각함수를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>행렬 만들기</h3>
-    <p>T가 선형이면 기저 \(\mathbf v_1, \dots, \mathbf v_n\)의 상 \(T(\mathbf v_j)\)만 알면 모든 벡터의 상이 정해집니다. 그 상을 출력 기저로 나타낸 좌표를 j번째 열로 놓은 것이 T의 행렬입니다.</p>
-    <ul>
-      <li>θ 회전: \(\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}\)(e₁ → (cos θ, sin θ)).</li>
-      <li>x축 대칭: \(\mathrm{diag}(1, -1)\). 단위벡터 a 방향 투영: \(\mathbf a\mathbf a^T\).</li>
-    </ul>
+    <p>T가 선형이면 \(T(c_1\mathbf v_1 + \cdots + c_n\mathbf v_n) = c_1T(\mathbf v_1) + \cdots + c_nT(\mathbf v_n)\)이다. 그래서 기저 \(\mathbf v_1, \dots, \mathbf v_n\)의 상 \(T(\mathbf v_j)\)만 알면 모든 벡터의 상이 정해진다. 처음 질문의 첫째 답이 이것으로, 기저 벡터 n개만 알면 된다.</p>
+    <p>이제 그 상을 출력 기저로 나타낸 좌표를 j번째 열로 놓으면 T의 행렬이 된다(그림 1). 예를 들어 θ 회전은 e₁을 (cos θ, sin θ)로, e₂를 (−sin θ, cos θ)로 보내므로 행렬이 \(\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}\)이다. 또 x축 대칭은 \(\mathrm{diag}(1, -1)\)이고, 단위벡터 a 방향 투영은 \(\mathbf a\mathbf a^T\)이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>2차 이하 다항식 공간(기저 1, x, x²)에서 미분 연산자 D의 행렬을 구하고, \(p = 3 + 2x + 5x^2\)에 적용하라.</p>
     </div>
-    <p><i>풀이.</i> D(1) = 0, D(x) = 1, D(x²) = 2x → 열 (0,0,0), (1,0,0), (0,2,0): \(D = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 2 \\ 0 & 0 & 0 \end{pmatrix}\). (3, 2, 5) → (2, 10, 0), 곧 2 + 10x. 직접 미분과 같습니다. D의 영공간은 상수(차원 1), D는 가역이 아닙니다.</p>
-    <p>변환을 합성하면 행렬을 곱합니다(오른쪽 행렬이 먼저 적용). 이 절의 탐구 카드(5.1절)에서 2×2 행렬이 원을 타원으로 바꾸는 모습을 봅니다.</p>
+    <p><i>풀이.</i> D(1) = 0, D(x) = 1, D(x²) = 2x이므로 열이 (0,0,0), (1,0,0), (0,2,0)이어서 \(D = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 2 \\ 0 & 0 & 0 \end{pmatrix}\)이다. p의 좌표 (3, 2, 5)에 곱하면 (2, 10, 0), 곧 2 + 10x로 직접 미분한 것과 같다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>또 D의 영공간은 상수(차원 1)이므로 D는 가역이 아니다. 미분하면 상수항이 사라져 원래 다항식을 되찾을 수 없기 때문이다.</p>
+    <p>변환을 잇달아 하면 행렬을 곱하는데, 오른쪽 행렬이 먼저 적용된다. 이 절의 탐구 카드(5.1절)에서 2×2 행렬이 원을 타원으로 바꾸는 모습을 본다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "평행 이동 x + b는 선형변환이다": 0을 0으로 보내지 않아 선형이 아닙니다(아핀). (2) "행렬은 변환 하나에 하나로 정해진다": 기저를 바꾸면 행렬이 바뀝니다(닮음 \(B^{-1}AB\)).</div>
+    <p>같은 방법은 다항식이나 함수처럼 화살표로 그리기 어려운 공간에도 그대로 통한다. 미분, 적분, 평행 이동처럼 일차결합을 보존하는 연산이면 모두 선형변환이고, 기저를 정하면 행렬이 된다. 그래서 컴퓨터는 미분 방정식을 풀 때 함수를 기저 계수의 벡터로, 미분을 행렬로 바꿔 연립방정식처럼 다룬다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>열 j = T(기저 j)의 좌표.</li>
-        <li>회전·대칭·투영·미분의 행렬.</li>
-        <li>합성 = 행렬 곱, 기저 변경 = 닮음.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>기저의 상을 행으로 늘어놓는 실수가 흔하다. 행렬과 벡터의 곱 Ax는 A의 열을 x의 성분으로 일차결합한 것이므로, 기저 j의 상은 j번째 열에 와야 한다. 또 합성 TS를 할 때 S가 먼저 적용된다는 순서를 거꾸로 쓰기 쉽다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>선형변환의 행렬은 j번째 열에 기저 j의 상의 좌표를 놓아 만든다. 회전, 대칭, 투영, 미분 모두 이렇게 행렬이 된다. 변환의 합성은 행렬 곱이고, 기저를 바꾸면 닮은 행렬이 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>90° 회전 행렬과 (1, 2)의 상은?
-          <details><summary>답</summary><p>\(\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}\), (−2, 1).</p></details>
+          <details><summary>답</summary><p>\(\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}\)이고 (1, 2)의 상은 (−2, 1)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>(1, 1)/√2 방향 투영 행렬은?
-          <details><summary>답</summary><p>\(\frac12\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}\).</p></details>
+          <details><summary>답</summary><p>\(\frac12\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제의 D를 세 번 곱한 D³은? 그 의미는?
-          <details><summary>답</summary><p>영행렬. 2차 다항식을 세 번 미분하면 0(멱영).</p></details>
+          <details><summary>답</summary><p>영행렬이다. 2차 다항식을 세 번 미분하면 0이 되기 때문이다(멱영).</p></details>
         </li>
       </ol>
     </div>

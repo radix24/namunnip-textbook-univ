@@ -8,57 +8,55 @@
 <article class="card q-card" id="text-e16-det" data-kind="본문" data-std="전전16-01-02">
   <header class="card-head"><span class="no"></span><h2>행렬식과 가역성</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행렬식의 세 기본 성질(단위 행렬 1, 행 교환 시 부호 반전, 각 행에 선형)을 안다.</li>
-        <li>삼각 행렬의 행렬식이 대각 원소의 곱임을 이용해 소거로 계산한다.</li>
-        <li>det A ≠ 0 ⇔ 가역 ⇔ Ax = 0의 해가 0뿐임을 연결한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>LU 분해 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">연립방정식에 해가 하나만 있는지 미리 알고 싶다. 행렬식이라는 수 하나가 0인지 아닌지로 판단할 수 있다는데, 그 수는 무엇을 뜻하고 어떻게 빨리 계산할까? 3×3을 넘으면 교과서의 전개 공식은 너무 길어지는데, 다른 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="행렬 A = [[2, 1], [1, 2]]가 단위 정사각형을 두 열 벡터 (2, 1)과 (1, 2)로 이루어진 평행사변형으로 옮기는 모습. 평행사변형의 넓이는 |det A| = 2 × 2 − 1 × 1 = 3으로, 넓이가 3배가 된다. 행렬식이 0이면 평행사변형이 선분으로 납작해진다">
+        <defs><marker id="ah-e16dt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <line x1="60" y1="170" x2="300" y2="170" class="ax"/><line x1="80" y1="190" x2="80" y2="30" class="ax"/>
+        <path d="M80 170 H120 V130 H80 Z" class="lb"/><path d="M80 170 H120 V130 H80 Z" class="b" fill="none"/>
+        <path d="M80 170 L160 130 L200 50 L120 90 Z" class="la"/><path d="M80 170 L160 130 L200 50 L120 90 Z" class="a" fill="none"/>
+        <path d="M80 170 L158 131" class="d" stroke-width="2" marker-end="url(#ah-e16dt)"/><path d="M80 170 L119 92" class="d" stroke-width="2" marker-end="url(#ah-e16dt)"/>
+        <text x="166" y="138" class="td">(2, 1)</text><text x="96" y="86" class="td">(1, 2)</text>
+        <text x="86" y="160" class="tb">1</text><text x="140" y="110" class="ta">넓이 3</text>
+        <g class="s"><text x="320" y="70">det A = 2·2 − 1·1 = 3</text><text x="320" y="94">|det A| = 넓이 배율</text><text x="320" y="118">det = 0 → 납작해짐(가역 아님)</text><text x="320" y="142">큰 행렬은 소거 피벗의 곱으로</text></g>
+      </svg>
+      <figcaption>그림 1. 행렬식의 크기는 행렬이 넓이(부피)를 몇 배로 바꾸는지 나타내므로, 0이면 공간이 한 차원 납작해져 되돌릴 수 없어 해가 하나로 정해지지 않는다(1.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>LU 분해(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>성질과 계산</h3>
-    <p>행렬식은 (1) det I = 1, (2) 두 행을 바꾸면 부호가 바뀜, (3) 한 행에 대해 선형인 함수로 정해집니다. 여기서 "한 행의 배수를 다른 행에서 빼도 값이 그대로", "det AB = det A det B", "삼각 행렬은 대각 곱"이 나옵니다. 그래서 소거로 U를 만들면 \(\det A = \pm(\text{피벗의 곱})\)(행 교환 횟수만큼 부호).</p>
+    <p>행렬식은 세 가지 성질로 정해진다. 단위 행렬의 행렬식은 1이고, 두 행을 바꾸면 부호가 바뀌며, 한 행에 대해 선형이다. 여기서 "한 행의 배수를 다른 행에서 빼도 값이 그대로이다", "det AB = det A det B", "삼각 행렬의 행렬식은 대각 원소의 곱이다"가 나온다.</p>
+    <p>그러므로 소거로 U를 만들면 \(\det A = \pm(\text{피벗의 곱})\)이고, 부호는 행 교환 횟수가 정한다. 전개 공식 대신 소거로 계산하면 큰 행렬도 \(n^3/3\) 정도의 계산으로 끝나며, 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>1.1절 예제 A의 행렬식과, 세 번째 행을 첫 행 + 둘째 행으로 바꾼 행렬의 행렬식은?</p>
     </div>
-    <p><i>풀이.</i> 피벗 2, −8, 1 → det A = −16. 셋째 행이 앞 두 행의 합이면 소거에서 셋째 행이 모두 0이 되어 피벗이 0 → det = 0, 가역이 아닙니다. 이때 Ax = 0에 0 아닌 해가 있습니다(열들이 일차 종속).</p>
-    <p>기하적으로 |det A|는 단위 정사각형(정육면체)이 A로 옮겨진 평행사변형(평행육면체)의 넓이(부피)입니다. 0이면 공간이 납작해집니다(5.1절 탐구 카드).</p>
+    <p><i>풀이.</i> 피벗이 2, −8, 1이므로 det A = −16이다. 셋째 행이 앞 두 행의 합이면 소거에서 셋째 행이 모두 0이 되어 피벗이 0이므로 det = 0이고, 가역이 아니다. 이때는 Ax = 0에 0이 아닌 해가 있는데, 열들이 일차 종속이기 때문이다.</p>
+    <p>기하적으로 |det A|는 단위 정사각형(정육면체)이 A로 옮겨진 평행사변형(평행육면체)의 넓이(부피)이다(그림 1). 그래서 행렬식이 0이면 공간이 납작해져 서로 다른 벡터가 같은 곳으로 가고, 되돌릴 수 없다. 처음 질문의 첫째 답이 이것이다(5.1절 탐구 카드).</p>
+    <p>다만 수치 계산에서는 행렬식이 0에 가까운지로 특이성을 판단하기 어렵다. 행렬을 10배 하면 n×n 행렬식은 10ⁿ배가 되어, 크기만으로는 가까운지 먼지 알 수 없기 때문이다. 그래서 거의 특이한지는 조건수(1.4절)로 판단한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "det(A + B) = det A + det B": 성립하지 않습니다. (2) "행렬식이 작으면 거의 특이하다": 크기는 단위에 따라 바뀌므로, 거의 특이한지는 조건수(가장 큰 특이값/가장 작은 특이값)로 판단합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>행렬식이 아주 작으면 행렬이 거의 특이하다고 여기기 쉽다. 하지만 diag(0.1, …, 0.1)인 20×20 행렬은 행렬식이 10⁻²⁰이어도 단위 행렬의 0.1배일 뿐 아무 문제가 없다. 행렬식은 가역 여부를 정확히 가려 주지만, 얼마나 위험한지는 조건수가 알려 준다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>det = ±피벗의 곱(소거로 계산).</li>
-        <li>det A ≠ 0 ⇔ 가역 ⇔ 열이 일차 독립.</li>
-        <li>|det| = 부피 배율. 특이성 판단은 조건수로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>행렬식은 소거로 구한 피벗의 곱에 행 교환에 따른 부호를 붙인 값이다. det A ≠ 0이면 가역이고, 이는 열이 일차 독립인 것과 같다. |det|는 부피 배율이며, 거의 특이한지는 조건수로 판단한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\begin{pmatrix} 3 & 1 \\ 6 & 2 \end{pmatrix}\)의 행렬식과 가역성은?
-          <details><summary>답</summary><p>0, 가역 아님(둘째 행 = 2 × 첫 행).</p></details>
+          <details><summary>답</summary><p>0이므로 가역이 아니다(둘째 행 = 2 × 첫 행).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>det A = 4인 3×3에서 det(2A)와 det(A⁻¹)는?
-          <details><summary>답</summary><p>2³ × 4 = 32, 1/4.</p></details>
+          <details><summary>답</summary><p>det(2A) = 2³ × 4 = 32, det(A⁻¹) = 1/4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>det(AB) = det A det B를 써서 직교 행렬 Q(QᵀQ = I)의 행렬식이 ±1임을 보이라.
-          <details><summary>답</summary><p>det Qᵀ det Q = (det Q)² = 1.</p></details>
+          <details><summary>답</summary><p>det Qᵀ det Q = (det Q)² = det I = 1이므로 det Q = ±1이다.</p></details>
         </li>
       </ol>
     </div>

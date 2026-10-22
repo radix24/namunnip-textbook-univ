@@ -8,56 +8,60 @@
 <article class="card q-card" id="text-e16-inverse" data-kind="본문" data-std="전전16-01-03">
   <header class="card-head"><span class="no"></span><h2>역행렬과 Gauss-Jordan 소거</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>[A | I]를 Gauss-Jordan 소거해 역행렬을 구한다.</li>
-        <li>2×2 역행렬 공식과 Cramer 규칙을 안다.</li>
-        <li>역행렬을 직접 구하기보다 연립방정식을 푸는 것이 효율적인 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Gauss 소거와 LU (<a href="01-01.html">1.1절</a>), 행렬식 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">\(A\mathbf x = \mathbf b\)의 해는 \(\mathbf x = A^{-1}\mathbf b\)라고 쓴다. 그렇다면 역행렬을 먼저 구해 두고 곱하는 것이 가장 좋은 풀이법일까? 역행렬은 어떻게 구하고, 실무에서는 왜 역행렬을 잘 구하지 않는다고 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.3.1의 Gauss-Jordan 소거. A = [[2, 1], [5, 3]] 옆에 단위 행렬을 붙인 [A | I]에 행 연산을 하여 왼쪽을 단위 행렬로 만들면, 오른쪽에 A⁻¹ = [[3, −1], [−5, 2]]가 남는다. det A = 1이다">
+        <defs><marker id="ah-e16iv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g font-family="monospace" class="s" text-anchor="middle">
+          <text x="80" y="90" class="ta">2  1</text><text x="80" y="115" class="ta">5  3</text>
+          <text x="150" y="90">1  0</text><text x="150" y="115">0  1</text>
+          <text x="370" y="90">1  0</text><text x="370" y="115">0  1</text>
+          <text x="440" y="90" class="td">3  −1</text><text x="440" y="115" class="td">−5   2</text>
+        </g>
+        <path d="M115 72 V124 M405 72 V124" class="k"/>
+        <path d="M200 102 H320" class="k" marker-end="url(#ah-e16iv)"/><text x="260" y="94" text-anchor="middle" class="s">행 연산</text>
+        <g text-anchor="middle" class="s"><text x="115" y="56">[ A | I ]</text><text x="405" y="56">[ I | A⁻¹ ]</text></g>
+        <text x="280" y="160" text-anchor="middle" class="s">실무에서는 A⁻¹b 대신 LU로 바로 푼다 (연산 약 1/3, 오차도 작음)</text>
+      </svg>
+      <figcaption>그림 1. 행 연산을 A와 단위 행렬에 똑같이 하므로, A를 단위 행렬로 바꾸는 연산을 단위 행렬에 하면 그것이 곧 A⁻¹가 된다(예제 1.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Gauss 소거와 LU(<a href="01-01.html">1.1절</a>), 행렬식(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>[A | I] → [I | A⁻¹]</h3>
-    <p>A 옆에 단위 행렬을 붙이고 행 연산으로 왼쪽을 I로 만들면 오른쪽이 \(A^{-1}\)입니다. 2×2는 \(\begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1} = \frac1{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}\).</p>
+    <p>A 옆에 단위 행렬을 붙이고 행 연산으로 왼쪽을 I로 만들면 오른쪽이 \(A^{-1}\)이다. 이것을 Gauss-Jordan 소거라 한다. 행 연산들을 모두 곱한 행렬 \(E\)가 \(EA = I\)를 만족하므로 \(E = A^{-1}\)이고, 같은 연산을 받은 오른쪽은 \(EI = A^{-1}\)이 되기 때문이다(그림 1). 처음 질문의 둘째 답, 곧 역행렬을 구하는 법이 이것이다.</p>
+    <p>또 2×2 행렬은 공식이 있어 \(\begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1} = \frac1{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}\)이다. 대각 원소를 맞바꾸고 나머지 부호를 바꾼 뒤 행렬식으로 나누면 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1</span>
       <p>\(A = \begin{pmatrix} 2 & 1 \\ 5 & 3 \end{pmatrix}\)의 역행렬과, Ax = (1, 2)의 해를 Cramer 규칙으로 구하라.</p>
     </div>
-    <p><i>풀이.</i> det = 6 − 5 = 1, \(A^{-1} = \begin{pmatrix} 3 & -1 \\ -5 & 2 \end{pmatrix}\). Cramer: x₁ = det[[1,1],[2,3]]/1 = 1, x₂ = det[[2,1],[5,2]]/1 = −1. A⁻¹(1, 2) = (1, −1)로 같습니다. n이 크면 역행렬 계산은 LU 풀이의 약 3배 연산이고 수치 오차도 커서, 실무에서는 A⁻¹b 대신 LU로 바로 풉니다.</p>
+    <p><i>풀이.</i> det = 6 − 5 = 1이므로 \(A^{-1} = \begin{pmatrix} 3 & -1 \\ -5 & 2 \end{pmatrix}\)이다. Cramer 규칙으로는 x₁ = det[[1,1],[2,3]]/1 = 1, x₂ = det[[2,1],[5,2]]/1 = −1이다. A⁻¹(1, 2) = (1, −1)로 같다.</p>
+    <p>그런데 n이 크면 역행렬 계산은 LU 풀이의 약 3배 연산이 들고, 수치 오차도 커진다. 게다가 역행렬은 성긴 행렬도 꽉 찬 행렬로 만들어 기억 장소를 많이 쓴다. 그래서 실무에서는 A⁻¹b를 계산하는 대신 LU로 바로 푼다. 처음 질문의 첫째, 셋째 답이 이것이다.</p>
+    <p>Cramer 규칙도 같은 이유로 2×2나 3×3 같은 작은 계에서만 쓴다. 행렬식을 n + 1번 계산해야 해, 큰 계에서는 소거보다 훨씬 느리다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "Cramer 규칙이 큰 행렬에도 좋다": 행렬식 n + 1개를 계산해 매우 비쌉니다. (2) "모든 정사각 행렬에 역행렬이 있다": det = 0이면 없습니다.</div>
+    <p>역행렬이 쓸모없다는 뜻은 아니다. 공식을 유도하거나, 작은 행렬의 성질을 따지거나, 같은 행렬의 역을 여러 곳에서 해석적으로 다룰 때는 역행렬로 쓰는 편이 깔끔하다. 다만 수치 계산에서 해를 구할 때는 "역행렬을 곱한다"를 "그 연립방정식을 푼다"로 읽고 LU로 푸는 것이 원칙이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>[A | I] 소거 → [I | A⁻¹].</li>
-        <li>2×2 공식, Cramer 규칙(작은 계에만).</li>
-        <li>실무는 A⁻¹b 대신 LU 풀이.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>(AB)⁻¹을 A⁻¹B⁻¹로 쓰는 실수가 흔하다. AB를 되돌리려면 나중에 한 B를 먼저 되돌려야 하므로 (AB)⁻¹ = B⁻¹A⁻¹이다(연습문제 3). 또 2×2 공식에서 대각 원소를 맞바꾸지 않고 부호만 바꾸는 실수도 자주 나오므로, 결과에 A를 곱해 I가 나오는지 확인한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>[A | I]를 소거해 [I | A⁻¹]을 얻는다. 2×2 공식과 Cramer 규칙은 작은 계에만 쓴다. 실무에서는 A⁻¹b를 구하는 대신 LU로 바로 푼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>[[1, 2], [3, 4]]의 역행렬은?
-          <details><summary>답</summary><p>[[−2, 1], [1.5, −0.5]].</p></details>
+          <details><summary>답</summary><p>[[−2, 1], [1.5, −0.5]]이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>대각 행렬 diag(2, 5)의 역행렬은?
-          <details><summary>답</summary><p>diag(0.5, 0.2).</p></details>
+          <details><summary>답</summary><p>diag(0.5, 0.2)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>(AB)⁻¹는?
-          <details><summary>답</summary><p>B⁻¹A⁻¹.</p></details>
+          <details><summary>답</summary><p>B⁻¹A⁻¹이다(순서가 바뀐다).</p></details>
         </li>
       </ol>
     </div>

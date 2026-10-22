@@ -8,56 +8,61 @@
 <article class="card q-card" id="text-e16-pinv" data-kind="본문" data-std="전전16-05-03">
   <header class="card-head"><span class="no"></span><h2>의사역행렬과 최소 노름 해</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>SVD로 의사역행렬 \(A^+ = V\Sigma^+U^T\)를 정의한다.</li>
-        <li>해가 무수히 많을 때 노름이 가장 작은 해 \(A^T(AA^T)^{-1}b\)를 구한다.</li>
-        <li>해가 없을 때 최소제곱 해와의 관계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>SVD (<a href="05-01.html">5.1절</a>), 최소제곱 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">관절이 일곱 개인 로봇 팔로 손끝을 한 점에 보내는 방법은 무수히 많다. 반대로 측정이 너무 많아 정확한 해가 없는 문제도 있다. 해가 없을 때도, 해가 무수히 많을 때도 "가장 그럴듯한 해" 하나를 정하는 규칙이 있을까? 그 해는 어떻게 계산할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 x₁ + x₂ = 2의 해 집합(직선)과 최소 노름 해. 해는 직선 위 어디든 되지만, 원점에서 직선에 내린 수선의 발 (1, 1)이 노름 √2로 가장 작으며, 이것이 A⁺b이다. 최소 노름 해는 행공간 (1, 1) 방향 위에 있다">
+        <line x1="60" y1="160" x2="360" y2="160" class="ax"/><line x1="100" y1="190" x2="100" y2="20" class="ax"/>
+        <path d="M90 30 L240 180" class="a" stroke-width="2.5"/>
+        <path d="M100 160 L160 100" class="d" stroke-width="2"/>
+        <path d="M100 160 L130 70 M100 160 L190 130" class="k dsh" stroke-width="1"/>
+        <circle cx="160" cy="100" r="5" class="fd"/><circle cx="130" cy="70" r="3" class="fk"/><circle cx="190" cy="130" r="3" class="fk"/>
+        <path d="M153 93 L160 86 L167 93" class="k" fill="none"/>
+        <text x="170" y="96" class="td">(1, 1), 노름 √2 최소</text>
+        <text x="200" y="160" class="ta">해 직선 x₁ + x₂ = 2</text>
+        <text x="110" y="176" class="s">원점</text>
+        <g class="s"><text x="380" y="60">해가 많을 때</text><text x="380" y="80">→ 노름이 가장 작은 해</text><text x="380" y="110">해가 없을 때</text><text x="380" y="130">→ 최소제곱 해</text></g>
+      </svg>
+      <figcaption>그림 1. 해가 무수히 많으면 의사역행렬은 원점에 가장 가까운 해, 곧 영공간 성분이 없는 해를 골라 주므로 해가 하나로 정해진다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>SVD(<a href="05-01.html">5.1절</a>), 최소제곱(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>하나로 정하는 규칙</h3>
-    <p>A⁺b는 (1) 해가 없으면 최소제곱 해, (2) 해가 많으면 그중 노름이 가장 작은 해를 줍니다. 행이 독립이면 \(A^+ = A^T(AA^T)^{-1}\), 열이 독립이면 \((A^TA)^{-1}A^T\)입니다.</p>
+    <p>이때 쓰는 것이 의사역행렬이다. 의사역행렬 A⁺는 Ax = b에서 해 하나를 정하는 규칙이다. 해가 없으면 최소제곱 해를 주고, 해가 많으면 그 가운데 노름이 가장 작은 해를 준다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그러면 A⁺는 어떻게 구할까? SVD로 쓰면 \(A^+ = V\Sigma^+U^T\)이고, \(\Sigma^+\)는 0이 아닌 특이값의 역수를 대각에 놓은 행렬이다. 행이 독립이면 \(A^+ = A^T(AA^T)^{-1}\), 열이 독립이면 \((A^TA)^{-1}A^T\)로도 계산한다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>여기서 최소 노름 해가 특별한 까닭은, 해 집합이 특수해에 영공간을 더한 것(2.4절)이고 그 가운데 영공간 성분이 0인 해가 원점에 가장 가깝기 때문이다. 이 해는 행공간 위에 있다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>x₁ + x₂ = 2의 최소 노름 해는? x₁ + 2x₂ = 5는?</p>
     </div>
-    <p><i>풀이.</i> A = [1, 1]: A⁺ = (1, 1)/2 → x = (1, 1), 노름 √2(해 직선에서 원점에 가장 가까운 점). A = [1, 2]: AAᵀ = 5 → x = (1, 2)/5 × 5 = (1, 2). 로봇 팔처럼 관절이 목표보다 많을 때 가장 적게 움직이는 해를 고르는 데 씁니다.</p>
+    <p><i>풀이.</i> A = [1, 1]이면 A⁺ = (1, 1)/2이므로 x = (1, 1)이고 노름은 √2이다. 해 직선에서 원점에 가장 가까운 점이다(그림 1). A = [1, 2]이면 AAᵀ = 5이므로 x = (1, 2)/5 × 5 = (1, 2)이다.</p>
+    <p>로봇 팔처럼 관절이 목표보다 많을 때, 의사역행렬은 관절을 가장 적게 움직이는 해를 고른다. 같은 원리로 안테나 배열에서 원하는 방향의 이득을 맞추면서 전력을 가장 적게 쓰는 가중치를 정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "의사역행렬은 근사 역행렬": 정해진 규칙(최소제곱, 최소 노름)을 만족하는 유일한 행렬입니다. (2) "작은 특이값도 그대로 뒤집는다": 잡음이 커지므로 작은 σ는 0으로 자르기도 합니다(정규화).</div>
+    <p>한편 의사역행렬은 작은 특이값에 예민하다. \(\Sigma^+\)는 특이값의 역수를 쓰므로, 아주 작은 특이값은 아주 큰 수가 되어 잡음을 크게 키운다. 그래서 실제 계산에서는 기준보다 작은 특이값을 0으로 보고 버리는데, 이것이 절단 SVD이며 정규화의 한 방법이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>A⁺ = VΣ⁺Uᵀ.</li>
-        <li>행 독립: Aᵀ(AAᵀ)⁻¹ → 최소 노름 해.</li>
-        <li>열 독립: (AᵀA)⁻¹Aᵀ → 최소제곱 해.</li>
-      </ol>
-    </div>
+    <p>같은 규칙은 측정이 모자란 추정 문제에도 쓴다. 미지수보다 측정이 적으면 측정과 맞는 해가 무수히 많은데, 최소 노름 해는 측정이 말해 주지 않는 성분을 모두 0으로 두는 가장 보수적인 선택이다. 영상 복원이나 안테나 배열의 신호 추정에서 출발점으로 이 해를 쓰는 이유이다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(A^+ = (A^TA)^{-1}A^T\) 공식을 아무 행렬에나 쓰는 실수가 흔하다. 이 식은 열이 독립일 때만 \(A^TA\)가 가역이어서 쓸 수 있고, 예제처럼 행이 독립인 넓은 행렬에는 \(A^T(AA^T)^{-1}\)을 써야 한다. 둘 다 안 되는 계수 부족 행렬은 SVD로 구한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>의사역행렬은 \(A^+ = V\Sigma^+U^T\)이다. 행이 독립이면 \(A^T(AA^T)^{-1}\)로 최소 노름 해를 준다. 열이 독립이면 \((A^TA)^{-1}A^T\)로 최소제곱 해를 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>2x₁ = 4의 A⁺b는?
-          <details><summary>답</summary><p>2.</p></details>
+          <details><summary>답</summary><p>2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>x₁ + x₂ + x₂ … x₁ + x₂ + x₃ = 3의 최소 노름 해는?
-          <details><summary>답</summary><p>(1, 1, 1).</p></details>
+          <details><summary>답</summary><p>(1, 1, 1)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>A가 가역이면 A⁺는?
-          <details><summary>답</summary><p>A⁻¹.</p></details>
+          <details><summary>답</summary><p>A⁻¹이다.</p></details>
         </li>
       </ol>
     </div>
