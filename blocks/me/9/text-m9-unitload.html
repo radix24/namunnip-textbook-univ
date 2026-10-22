@@ -8,63 +8,63 @@
 <article class="card q-card" id="text-m9-unitload" data-kind="본문" data-std="기계9-05-02">
   <header class="card-head"><span class="no"></span><h2>가상일과 단위 하중법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가상일 원리로 구조물의 한 점 변위를 구하는 단위 하중법을 안다.</li>
-        <li>트러스와 보의 처짐을 \(\sum NnL/(EA)\), \(\int Mm\,dx/(EI)\)로 계산한다.</li>
-        <li>Castigliano 정리와의 관계를 이해한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Castigliano 정리 (<a href="05-01.html">5.1절</a>), 트러스 부재력(고체역학).</li>
-      </ul>
-    </div>
+    <p class="q-ask">벽에 붙인 두 부재 브래킷 끝에 10 kN을 매달면 절점이 얼마나 내려갈까? 부재마다 늘고 준 길이는 \(NL/(EA)\)로 쉽게 구하지만, 두 부재가 서로 다른 방향으로 늘고 줄 때 절점이 어디로 얼마나 움직이는지 기하학으로 따지기는 번거롭다. 원하는 방향의 변위만 곧바로 계산하는 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="2부재 브래킷의 실제 하중 상태와 단위 하중 상태(예제 5.2.1). 실제 10 kN에서 수평 부재 A는 −10 kN(압축), 경사 부재 B는 +14.14 kN이고, 구하려는 수직 방향의 단위 하중에서는 n_A = −1, n_B = +1.414이다. 두 상태의 부재력을 곱해 더하면 수직 처짐 1.91 mm를 얻는다">
+        <defs><marker id="ah-m9ul" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M60 30 V180 M320 30 V180" class="k" stroke-width="4"/>
+        <path d="M60 50 H180 M60 170 L180 50" class="a" stroke-width="3"/>
+        <path d="M320 50 H440 M320 170 L440 50" class="b" stroke-width="3"/>
+        <circle cx="180" cy="50" r="4" class="fk"/><circle cx="440" cy="50" r="4" class="fk"/>
+        <path d="M180 54 V100" class="d" stroke-width="2" marker-end="url(#ah-m9ul)"/><path d="M440 54 V100" class="d" stroke-width="2" marker-end="url(#ah-m9ul)"/>
+        <text x="188" y="94" class="td">10 kN</text><text x="448" y="94" class="td">1</text>
+        <text x="90" y="44" class="ta">N_A = −10</text><text x="66" y="130" class="ta">N_B = +14.14</text>
+        <text x="350" y="44" class="tb">n_A = −1</text><text x="326" y="130" class="tb">n_B = +1.414</text>
+        <g text-anchor="middle" class="s"><text x="120" y="196">실제 하중 상태</text><text x="380" y="196">단위 하중 상태</text></g>
+        <text x="200" y="150" class="s">δ = Σ NnL/(EA) = 1.91 mm</text>
+      </svg>
+      <figcaption>그림 1. 구하려는 변위 방향에 단위 하중을 건 상태의 부재력이 각 부재 변형의 기여 정도를 알려 주므로, 실제 부재력과 곱해 더하기만 하면 기하학 없이 그 방향의 변위가 나온다(예제 5.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Castigliano 정리(<a href="05-01.html">5.1절</a>), 트러스 부재력(고체역학)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>단위 하중법</h3>
-    <p>변위를 알고 싶은 점에 그 방향으로 가상의 단위 하중(1 N)을 건 상태의 내력 \(n\)(또는 \(m\))을 구합니다. 실제 하중 상태의 내력 \(N\)(또는 \(M\))과 곱해 더하면 그 점의 실제 변위가 됩니다. 단위 하중이 실제 변형을 따라 한 가상일이 내부 가상 변형 에너지와 같다는 원리입니다.</p>
+    <p>변위를 알고 싶은 점에 그 방향으로 가상의 단위 하중(1 N)을 건 상태에서 내력 \(n\)(또는 \(m\))을 구한다. 이것을 실제 하중 상태의 내력 \(N\)(또는 \(M\))과 곱해 더하면 그 점의 실제 변위가 된다. 처음 질문의 답이 이 방법이다. 근거는 단위 하중이 실제 변형을 따라 한 가상일이 내부의 가상 변형 에너지와 같다는 가상일 원리이다.</p>
     <div class="tb-env thm">
       <span class="lb">단위 하중법</span>
-      <p>트러스: \(\displaystyle\delta = \sum\frac{N_in_iL_i}{E_iA_i}\)</p>
-      <p>보: \(\displaystyle\delta = \int_0^L\frac{M(x)m(x)}{EI}\,dx\), 회전각은 단위 모멘트를 건다.</p>
+      <p>트러스에서는 \(\displaystyle\delta = \sum\frac{N_in_iL_i}{E_iA_i}\)이다.</p>
+      <p>보에서는 \(\displaystyle\delta = \int_0^L\frac{M(x)m(x)}{EI}\,dx\)이고, 회전각을 구할 때는 단위 모멘트를 건다.</p>
     </div>
-    <p>Castigliano 정리에서 가상 하중을 넣고 미분한 뒤 0으로 두는 과정과 결과가 같고, 계산을 표로 정리하기 쉬워 트러스에서 특히 편리합니다.</p>
-
+    <p>\(n_i\)는 "그 점이 단위만큼 움직이려면 부재 \(i\)가 얼마나 일하는가"를 나타내는 가중치로 볼 수 있다. 그래서 실제 늘음 \(N_iL_i/(E_iA_i)\)에 이 가중치를 곱해 더하면, 각 부재의 늘음이 절점 변위에 기여하는 몫을 모두 모으게 된다.</p>
+    <p>이 방법은 Castigliano 정리에서 가상 하중을 넣고 미분한 뒤 0으로 두는 과정과 결과가 같다. 그런데 미분 없이 곱해 더하기만 하므로 계산을 표로 정리하기 쉬워, 부재가 많은 트러스에서 특히 편리하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1 <span class="nm">(2부재 브래킷)</span></span>
       <p>벽에 붙은 수평 부재 A(길이 1 m)와 경사 부재 B(길이 \(\sqrt2\) m, 45°)가 만나는 절점에 아래로 10 kN이 걸린다. \(EA = 2\times10^7\) N(둘 다). 절점의 수직 처짐은?</p>
     </div>
-    <p><i>풀이.</i> 실제: \(N_A = -10\) kN(압축), \(N_B = +14.14\) kN. 단위 하중(아래로 1): \(n_A = -1\), \(n_B = +1.414\). \(\delta = [(-10000)(-1)(1000) + (14142)(1.414)(1414)]/(2\times10^7) = (1.0\times10^7 + 2.83\times10^7)/(2\times10^7) = 1.91\) mm. 컴퓨터해석기반설계 1.3절의 FEM 결과(1.91 mm)와 같습니다.</p>
+    <p><i>풀이.</i> 실제 상태에서는 \(N_A = -10\) kN(압축), \(N_B = +14.14\) kN이다. 아래로 단위 하중 1을 건 상태에서는 \(n_A = -1\), \(n_B = +1.414\)이다(그림 1). 그러면 \(\delta = [(-10000)(-1)(1000) + (14142)(1.414)(1414)]/(2\times10^7) = (1.0\times10^7 + 2.83\times10^7)/(2\times10^7) = 1.91\) mm이다. 이 값은 컴퓨터해석기반설계 1.3절의 FEM 결과(1.91 mm)와 같다.</p>
+    <p>두 부재의 몫을 따로 보면, 경사 부재 B가 처짐의 약 74%를 만든다. 그러므로 브래킷을 더 단단하게 하려면 B의 단면을 키우는 편이 효과가 크다.</p>
 
-    <div class="tb-note"><b>주의</b>단위 하중법은 선형 탄성, 작은 변형에서 성립합니다. 단위 하중의 방향이 구하는 변위의 방향을 정하므로, 결과가 음수면 가정한 방향과 반대로 움직인 것입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>결과의 부호를 잘못 읽는 실수가 흔하다. 단위 하중의 방향이 구하는 변위의 방향을 정하므로, 결과가 음수이면 가정한 방향과 반대로 움직인 것이다. 또 단위 하중법은 선형 탄성과 작은 변형에서만 성립한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>구할 변위 방향에 단위 하중 → 내력 \(n\), \(m\).</li>
-        <li>\(\delta = \sum NnL/(EA)\), \(\int Mm\,dx/(EI)\).</li>
-        <li>Castigliano와 같은 결과, 표 계산이 편리.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>구할 변위 방향에 단위 하중을 걸어 내력 \(n\), \(m\)을 구한다. 변위는 트러스에서 \(\delta = \sum NnL/(EA)\), 보에서 \(\int Mm\,dx/(EI)\)이다. 결과는 Castigliano 정리와 같고, 표 계산이 편리하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>외팔보 끝 하중 \(P\)의 끝 처짐을 단위 하중법으로 구하여라(\(M = -Px\), \(m = -x\), \(x\): 끝에서).
-          <details><summary>답</summary><p>\(\int_0^LPx^2\,dx/(EI) = PL^3/(3EI)\).</p></details>
+          <details><summary>답</summary><p>\(\int_0^LPx^2\,dx/(EI) = PL^3/(3EI)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 브래킷 절점의 수평 처짐은? (단위 하중 수평 오른쪽: \(n_A = 1\), \(n_B = 0\))
-          <details><summary>답</summary><p>\((-10000)(1)(1000)/(2\times10^7) = -0.5\) mm, 즉 왼쪽(벽 쪽)으로 0.5 mm.</p></details>
+          <details><summary>답</summary><p>\((-10000)(1)(1000)/(2\times10^7) = -0.5\) mm이다. 즉 왼쪽(벽 쪽)으로 0.5 mm 움직인다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>단순보 중앙 하중 \(P\)의 끝(지지점) 회전각을 단위 모멘트로 구하여라.
-          <details><summary>답</summary><p>왼쪽 지지점에 단위 모멘트를 걸면 \(m = 1 - x/L\). \(\int Mm\,dx/(EI)\)를 두 구간으로 계산하면 \(PL^2/(16EI)\).</p></details>
+          <details><summary>답</summary><p>왼쪽 지지점에 단위 모멘트를 걸면 \(m = 1 - x/L\)이다. \(\int Mm\,dx/(EI)\)를 두 구간으로 계산하면 \(PL^2/(16EI)\)이다.</p></details>
         </li>
       </ol>
     </div>
