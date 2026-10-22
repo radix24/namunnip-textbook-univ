@@ -8,57 +8,56 @@
 <article class="card q-card" id="text-m8-symdiag" data-kind="본문" data-std="수학8-03-03">
   <header class="card-head"><span class="no"></span><h2>실대칭 행렬의 직교 대각화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>실대칭 행렬이 실직교 행렬로 대각화된다는 실 스펙트럼 정리를 안다.</li>
-        <li>고유값, 고유공간, 고유공간 안의 그람-슈미트로 \(A = QDQ^T\)를 구한다.</li>
-        <li>스펙트럼 분해 \(A = \sum\lambda_i\mathbf q_i\mathbf q_i^T\)의 기하학적 뜻을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>스펙트럼 정리 (<a href="03-02.html">3.2절</a>), 에르미트 행렬의 고유값은 실수 (<a href="02-02.html">2.2절</a>), 그람-슈미트.</li>
-      </ul>
-    </div>
+    <p class="q-ask">실대칭 행렬은 에르미트이므로 고유값이 모두 실수이다. 그렇다면 복소수를 쓰지 않고 실수만으로, 실직교 행렬로 대각화할 수 있을까? 중복 고유값이 있을 때는 고유벡터를 어떻게 골라야 하고, 그렇게 얻은 분해는 기하학적으로 무엇을 뜻할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="대칭 행렬이 벡터를 서로 수직인 고유 방향 성분으로 나눠 늘이는 그림">
+        <line x1="60" y1="145.9" x2="240" y2="145.9" class="ax"/>
+        <line x1="94.6" y1="15" x2="94.6" y2="195" class="ax"/>
+        <line x1="66.9" y1="178.6" x2="201.9" y2="19.1" class="gd"/>
+        <line x1="66.9" y1="113.2" x2="132.7" y2="190.9" class="gd"/>
+        <line x1="94.6" y1="145.9" x2="146.5" y2="133.6" class="k"/>
+        <circle cx="146.5" cy="133.6" r="3" class="fk"/>
+        <line x1="94.6" y1="145.9" x2="125.8" y2="109.1" class="a dsh"/>
+        <circle cx="125.8" cy="109.1" r="3" class="fa"/>
+        <line x1="94.6" y1="145.9" x2="115.4" y2="170.5" class="b dsh"/>
+        <circle cx="115.4" cy="170.5" r="3" class="fb"/>
+        <line x1="94.6" y1="145.9" x2="188.1" y2="35.5" class="a"/>
+        <circle cx="188.1" cy="35.5" r="3" class="fa"/>
+        <line x1="94.6" y1="145.9" x2="208.8" y2="60.0" class="c"/>
+        <circle cx="208.8" cy="60.0" r="3" class="fc"/>
+        <text x="150" y="142" class="s">x</text>
+        <text x="212" y="60" class="tc">Ax</text>
+        <text x="262" y="40" class="s">A = [[2, 1], [1, 2]]</text>
+        <text x="262" y="60" class="ta">q₁ 성분 → 3배</text>
+        <text x="262" y="80" class="tb">q₂ 성분 → 1배</text>
+        <text x="262" y="100" class="tc">더하면 Ax</text>
+        <text x="262" y="120" class="s">회색 = 서로 수직인 고유 축</text>
+      </svg>
+      <figcaption>그림 1. 대칭 행렬 \(\begin{pmatrix}2 &amp; 1\\1 &amp; 2\end{pmatrix}\)은 벡터 \(\mathbf x\)(검정)를 서로 수직인 고유 방향 \(\mathbf q_1\)(파랑)과 \(\mathbf q_2\)(청록) 성분으로 나누고, 각각 고유값 3배와 1배로 늘인 뒤 더해 \(A\mathbf x\)(주황)를 만든다. 회전 성분이 없다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>스펙트럼 정리(<a href="03-02.html">3.2절</a>), 에르미트 행렬의 고유값은 실수라는 사실(<a href="02-02.html">2.2절</a>), 그람-슈미트 과정을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>실 스펙트럼 정리</h3>
-    <div class="tb-env">
+    <div class="tb-env thm">
       <span class="lb">정리 3.3.1</span>
       <p>실정사각행렬 \(A\)가 대칭(\(A^T = A\))일 필요충분조건은 \(A = QDQ^T\)인 실직교 행렬 \(Q\)와 실대각행렬 \(D\)가 있는 것이다.</p>
     </div>
-    <p>⇐는 \((QDQ^T)^T = QDQ^T\)로 바로 나옵니다. ⇒: 실대칭은 에르미트이므로 고유값이 모두 실수입니다. 실고유값이면 실고유벡터를 잡을 수 있으므로 슈어 정리의 증명을 모두 실수 범위에서 할 수 있고(\(U\)가 실직교), 3.2절의 보조정리로 \(T\)가 대각입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(A = QDQ^T\)이면 \((QDQ^T)^T = QDQ^T\)이므로 대칭이다. 거꾸로 실대칭은 에르미트이므로 고유값이 모두 실수이다. 실고유값이면 실고유벡터를 잡을 수 있으므로 슈어 정리의 증명을 모두 실수 범위에서 할 수 있고, 그래서 \(U\)를 실직교 행렬 \(Q\)로 잡을 수 있다. 이제 \(T = Q^TAQ\)는 대칭이므로 정규이고, 3.2절의 보조정리로 대각이다. <span class="qed">∎</span></p>
 
     <h3><span class="no">3.3.2</span>계산 절차</h3>
-    <ol>
-      <li>특성방정식으로 고유값 \(\lambda_1, \dots, \lambda_k\)를 구한다(모두 실수).</li>
-      <li>각 고유공간 \(N(A - \lambda_jI)\)의 기저를 구한다.</li>
-      <li>각 고유공간 안에서 그람-슈미트로 정규직교화한다. 서로 다른 고유공간은 이미 직교하므로(정리 2.2.2) 따로 할 필요가 없다.</li>
-      <li>모두 모아 \(Q\)의 열로, 고유값을 같은 순서로 \(D\)의 대각에 놓는다.</li>
-    </ol>
+    <p>직교 대각화는 네 단계로 한다. 먼저 특성방정식으로 고유값을 구하며, 모두 실수이다. 다음으로 각 고유공간 \(N(A - \lambda_jI)\)의 기저를 구한다. 이제 각 고유공간 안에서만 그람-슈미트로 정규직교화한다. 서로 다른 고유공간은 정리 2.2.2에 따라 이미 직교하므로 따로 할 필요가 없다. 끝으로 모두 모아 \(Q\)의 열로 놓고, 고유값을 같은 순서로 \(D\)의 대각에 놓는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.2</span>
       <p>\(A = \begin{pmatrix}2 &amp; 1 &amp; 1\\1 &amp; 2 &amp; 1\\1 &amp; 1 &amp; 2\end{pmatrix}\)를 직교 대각화하여라.</p>
     </div>
-    <p><i>풀이.</i> \(A = I + J\) (\(J\)는 모든 성분이 1). \(J\)의 고유값은 3(벡터 \((1,1,1)\))과 0(중복도 2, 합이 0인 벡터들)이므로 \(A\)의 고유값은 4, 1, 1입니다.</p>
-    <ul>
-      <li>\(\lambda = 4\): \(\mathbf q_1 = \frac1{\sqrt3}(1, 1, 1)\).</li>
-      <li>\(\lambda = 1\): 고유공간은 \(x + y + z = 0\). 기저 \((1, -1, 0)\), \((1, 0, -1)\)에 그람-슈미트: \(\mathbf q_2 = \frac1{\sqrt2}(1, -1, 0)\), \((1, 0, -1) - \frac12(1, -1, 0) = (\frac12, \frac12, -1)\)을 정규화해 \(\mathbf q_3 = \frac1{\sqrt6}(1, 1, -2)\).</li>
-    </ul>
-    <p>\(Q = (\mathbf q_1\ \mathbf q_2\ \mathbf q_3)\), \(D = \mathrm{diag}(4, 1, 1)\). 검산: \(\mathbf q_1\)은 \(\mathbf q_2, \mathbf q_3\)과 자동으로 직교하고, \(\operatorname{tr}A = 6 = 4 + 1 + 1\), \(\det A = 4\)입니다.</p>
+    <p><i>풀이.</i> 모든 성분이 1인 행렬을 \(J\)라 하면 \(A = I + J\)이다. \(J\)의 고유값은 3(벡터 \((1,1,1)\))과 0(중복도 2, 성분의 합이 0인 벡터들)이므로 \(A\)의 고유값은 4, 1, 1이다. \(\lambda = 4\)의 고유벡터는 \(\mathbf q_1 = \frac1{\sqrt3}(1, 1, 1)\)이다. \(\lambda = 1\)의 고유공간은 평면 \(x + y + z = 0\)이고, 기저 \((1, -1, 0)\), \((1, 0, -1)\)에 그람-슈미트를 쓰면 \(\mathbf q_2 = \frac1{\sqrt2}(1, -1, 0)\)이고, \((1, 0, -1) - \frac12(1, -1, 0) = (\frac12, \frac12, -1)\)을 정규화해 \(\mathbf q_3 = \frac1{\sqrt6}(1, 1, -2)\)이다. 따라서 \(Q = (\mathbf q_1\ \mathbf q_2\ \mathbf q_3)\), \(D = \mathrm{diag}(4, 1, 1)\)이다. 검산하면 \(\mathbf q_1\)은 \(\mathbf q_2, \mathbf q_3\)과 저절로 직교하고, \(\operatorname{tr}A = 6 = 4 + 1 + 1\), \(\det A = 4\)이다.</p>
 
     <h3><span class="no">3.3.3</span>스펙트럼 분해의 그림</h3>
-    <p>\(A = \sum\lambda_i\mathbf q_i\mathbf q_i^T\)를 벡터 \(\mathbf x\)에 적용하면 \(A\mathbf x = \sum\lambda_i(\mathbf q_i^T\mathbf x)\mathbf q_i\)입니다. 곧 (1) \(\mathbf x\)를 서로 수직인 고유 방향 성분으로 나누고, (2) 각 성분을 고유값 배로 늘이거나 줄이고, (3) 다시 더합니다. 대칭 행렬은 "직교하는 축을 따라 각자 늘이는" 변환이고 회전 성분이 없습니다. 예제에서 \(A\)는 \((1,1,1)\) 방향을 4배, 그에 수직인 평면을 그대로(1배) 둡니다. 같은 절의 탐구 카드에서 벡터를 끌어 이 분해를 볼 수 있습니다.</p>
+    <p>\(A = \sum\lambda_i\mathbf q_i\mathbf q_i^T\)를 벡터 \(\mathbf x\)에 적용하면 \(A\mathbf x = \sum\lambda_i(\mathbf q_i^T\mathbf x)\mathbf q_i\)이다. 곧 \(\mathbf x\)를 서로 수직인 고유 방향 성분으로 나누고, 각 성분을 고유값 배로 늘이거나 줄인 뒤, 다시 더한다. 그러므로 대칭 행렬은 직교하는 축을 따라 각자 늘이는 변환이고 회전 성분이 없으며, 그림 1이 그 모습이다. 예제에서 \(A\)는 \((1,1,1)\) 방향을 4배로 늘이고 그에 수직인 평면은 그대로 둔다. 같은 절의 탐구 카드에서 벡터를 끌어 이 분해를 볼 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 중복 고유값의 고유공간에서 아무 기저나 \(Q\)에 넣는다: 같은 고유공간 안에서는 직교화해야 한다. (2) 고유벡터를 정규화하지 않아 \(Q^TQ \ne I\)가 된다. (3) \(D\)의 고유값 순서와 \(Q\)의 열 순서를 맞추지 않는다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>중복 고유값의 고유공간에서 아무 기저나 \(Q\)에 넣기 쉬운데, 같은 고유공간 안에서는 직교화해야 한다. 또 고유벡터를 정규화하지 않아 \(Q^TQ \ne I\)가 되는 실수가 있다. \(D\)의 고유값 순서와 \(Q\)의 열 순서를 맞추지 않는 것도 틀린 분해를 만든다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>실대칭 ⇔ \(A = QDQ^T\) (실직교 \(Q\), 실대각 \(D\)).</li>
-        <li>절차: 고유값 → 고유공간 기저 → 고유공간 안에서만 그람-슈미트 → 모으기.</li>
-        <li>\(A\mathbf x = \sum\lambda_i(\mathbf q_i^T\mathbf x)\mathbf q_i\): 직교 축을 따라 늘이기.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문의 답은 "할 수 있다"이다. 실대칭 행렬은 고유값이 실수라 슈어 정리를 실수 범위에서 쓸 수 있으므로 \(A = QDQ^T\)인 실직교 \(Q\)와 실대각 \(D\)로 대각화된다. 중복 고유값이 있으면 그 고유공간 안에서만 그람-슈미트로 직교화하면 되고, 서로 다른 고유공간은 이미 직교한다. 기하학적으로 \(A\mathbf x = \sum\lambda_i(\mathbf q_i^T\mathbf x)\mathbf q_i\)는 서로 수직인 축을 따라 각자 늘이는 변환이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.4</span>연습문제</h3>
