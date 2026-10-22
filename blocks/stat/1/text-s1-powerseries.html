@@ -8,69 +8,98 @@
 <article class="card q-card" id="text-s1-powerseries" data-kind="본문" data-std="응통1-04-02">
   <header class="card-head"><span class="no"></span><h2>거듭제곱급수와 등비급수로 기댓값 계산하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>등비급수에서 \(\sum nx^{n-1} = \frac{1}{(1-x)^2}\)을 이끌어 내고, 이를 써서 기하분포의 평균과 분산을 구한다.</li>
-        <li>\(e^x\)의 급수를 써서 포아송분포의 확률의 합과 평균을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>급수 판정 (<a href="04-01.html">4.1절</a>), 테일러 전개 (<a href="02-03.html">2.3절</a>), 고등학교 미적분의 등비급수, 확률과 통계의 평균과 분산 \(V(X) = E(X^2) - \{E(X)\}^2\).</li>
-      </ul>
-    </div>
+    <p class="q-ask">주사위를 6이 나올 때까지 던지면 평균 몇 번 던지게 될까? 답은 6번인데, 이것을 구하려면 \(1\cdot p + 2\cdot qp + 3\cdot q^2p + \cdots\)라는 끝없는 합을 계산해야 한다. 이런 합은 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 212" role="img" aria-label="처음 6이 나올 때까지 던진 횟수의 확률을 막대로 그리고 평균 6을 표시한 그림">
+        <line x1="60" y1="180" x2="490" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="76.5" y="195" text-anchor="middle" class="s">1</text>
+        <text x="142.7" y="195" text-anchor="middle" class="s">5</text>
+        <text x="225.4" y="195" text-anchor="middle" class="s">10</text>
+        <text x="308.1" y="195" text-anchor="middle" class="s">15</text>
+        <text x="390.8" y="195" text-anchor="middle" class="s">20</text>
+        <text x="473.5" y="195" text-anchor="middle" class="s">25</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="139.6" text-anchor="end" class="s">0.05</text>
+        <text x="55" y="95.1" text-anchor="end" class="s">0.1</text>
+        <text x="55" y="50.7" text-anchor="end" class="s">0.15</text>
+        <text x="490" y="209" text-anchor="end" class="s">처음 6이 나올 때까지 던진 횟수 n</text>
+        <text x="64" y="16" class="s">P(N = n)</text>
+        <rect x="70.8" y="31.9" width="11.6" height="148.1" class="la"/>
+        <rect x="87.3" y="56.5" width="11.6" height="123.5" class="la"/>
+        <rect x="103.8" y="77.1" width="11.6" height="102.9" class="la"/>
+        <rect x="120.4" y="94.3" width="11.6" height="85.7" class="la"/>
+        <rect x="136.9" y="108.6" width="11.6" height="71.4" class="la"/>
+        <rect x="153.4" y="120.5" width="11.6" height="59.5" class="la"/>
+        <rect x="170" y="130.4" width="11.6" height="49.6" class="la"/>
+        <rect x="186.5" y="138.7" width="11.6" height="41.3" class="la"/>
+        <rect x="203.1" y="145.5" width="11.6" height="34.5" class="la"/>
+        <rect x="219.6" y="151.3" width="11.6" height="28.7" class="la"/>
+        <rect x="236.1" y="156.1" width="11.6" height="23.9" class="la"/>
+        <rect x="252.7" y="160.1" width="11.6" height="19.9" class="la"/>
+        <rect x="269.2" y="163.4" width="11.6" height="16.6" class="la"/>
+        <rect x="285.8" y="166.2" width="11.6" height="13.8" class="la"/>
+        <rect x="302.3" y="168.5" width="11.6" height="11.5" class="la"/>
+        <rect x="318.8" y="170.4" width="11.6" height="9.6" class="la"/>
+        <rect x="335.4" y="172" width="11.6" height="8" class="la"/>
+        <rect x="351.9" y="173.3" width="11.6" height="6.7" class="la"/>
+        <rect x="368.4" y="174.4" width="11.6" height="5.6" class="la"/>
+        <rect x="385" y="175.4" width="11.6" height="4.6" class="la"/>
+        <rect x="401.5" y="176.1" width="11.6" height="3.9" class="la"/>
+        <rect x="418.1" y="176.8" width="11.6" height="3.2" class="la"/>
+        <rect x="434.6" y="177.3" width="11.6" height="2.7" class="la"/>
+        <rect x="451.1" y="177.8" width="11.6" height="2.2" class="la"/>
+        <rect x="467.7" y="178.1" width="11.6" height="1.9" class="la"/>
+        <path d="M159.2 180 L159.2 28.9" class="d dsh"/>
+        <text x="165.2" y="37.8" class="td">평균 1/p = 6</text>
+      </svg>
+      <figcaption>그림 1. 처음 6이 나올 때까지 던진 횟수는 1번일 확률이 가장 크고 뒤로 갈수록 등비수열로 줄어든다. 꼬리가 길게 뻗어 있어 평균은 6이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>급수 판정(<a href="04-01.html">4.1절</a>), 테일러 전개(<a href="02-03.html">2.3절</a>), 고등학교 미적분의 등비급수, 확률과 통계의 평균과 분산 \(V(X) = E(X^2) - \{E(X)\}^2\)을 쓴다.</div>
 
-    <h3>합을 실제로 구하기</h3>
-    <p>4.1절의 판정법은 급수가 수렴하는지까지만 알려 줍니다. 평균이 실제로 얼마인지 알려면 합을 계산해야 합니다. 통계에서 만나는 무한급수 대부분은 두 가지, 곧 등비급수와 \(e^x\)의 급수로 바꾸어 계산할 수 있습니다.</p>
+    <h3><span class="no">4.2.1</span>합을 실제로 구하기</h3>
+    <p>4.1절의 판정법은 급수가 수렴하는지까지만 알려 준다. 평균이 실제로 얼마인지 알려면 합을 계산해야 한다. 다행히 통계에서 만나는 무한급수 대부분은 두 가지, 곧 등비급수와 \(e^x\)의 급수로 바꾸어 계산할 수 있다.</p>
 
-    <h3><span class="no">4.2.1</span>등비급수에서 \(\sum nx^{n-1}\)로</h3>
-    <p>고등학교에서 배운 등비급수의 합은 \(|x| &lt; 1\)일 때 \(\sum_{n=0}^\infty x^n = 1 + x + x^2 + \cdots = \dfrac{1}{1-x}\)입니다. 평균을 구할 때는 각 항에 \(n\)이 곱해진 합 \(T = \sum_{n=1}^\infty nx^{n-1} = 1 + 2x + 3x^2 + \cdots\)이 필요합니다. 등비급수의 합을 구할 때 썼던 "\(S - xS\)" 방법을 그대로 쓰면 됩니다.</p>
-    <p>\(T - xT = (1 + 2x + 3x^2 + \cdots) - (x + 2x^2 + 3x^3 + \cdots) = 1 + x + x^2 + \cdots = \dfrac{1}{1-x}\)</p>
-    <p>이므로 \((1 - x)T = \frac{1}{1-x}\), 곧</p>
+    <h3><span class="no">4.2.2</span>등비급수에서 \(\sum nx^{n-1}\)로</h3>
+    <p>고등학교에서 배운 등비급수의 합은 \(|x| &lt; 1\)일 때 \(\sum_{n=0}^\infty x^n = \dfrac{1}{1-x}\)이다. 그런데 평균을 구할 때는 각 항에 \(n\)이 곱해진 합 \(T = \sum_{n=1}^\infty nx^{n-1} = 1 + 2x + 3x^2 + \cdots\)이 필요하다. 이때 등비급수의 합을 구할 때 썼던 "\(S - xS\)" 방법을 그대로 쓰면 된다. \(T\)에서 \(xT\)를 빼면 계수가 한 칸씩 어긋나 지워지고</p>
+    \[T - xT = 1 + x + x^2 + \cdots = \frac{1}{1-x}\]
+    <p>가 남는다. 따라서 \((1 - x)T = \frac{1}{1-x}\)이고, 결국</p>
     \[\sum_{n=1}^\infty nx^{n-1} = \frac{1}{(1-x)^2}\quad(|x| &lt; 1)\]
-    <p>입니다. 같은 결과를 "\(\frac{1}{1-x} = \sum x^n\)의 양변을 \(x\)로 미분"해서 얻을 수도 있습니다. 수렴 범위 안에서는 무한급수도 다항식처럼 항마다 미분해도 된다는 사실이 알려져 있고(대학 해석학의 정리), 한 번 더 미분하면 \(\sum_{n=2}^\infty n(n-1)x^{n-2} = \frac{2}{(1-x)^3}\)도 얻습니다.</p>
+    <p>이다. 같은 결과를 \(\frac{1}{1-x} = \sum x^n\)의 양변을 \(x\)로 미분해서 얻을 수도 있다. 수렴 범위 안에서는 무한급수도 다항식처럼 항마다 미분해도 된다는 정리가 있기 때문이다. 한 번 더 미분하면 \(\sum_{n=2}^\infty n(n-1)x^{n-2} = \frac{2}{(1-x)^3}\)도 얻는다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
-      <p>성공 확률이 \(p\)인 시행을 처음 성공할 때까지 반복할 때 시행 횟수 \(N\)의 분포는 \(P(N = n) = (1-p)^{n-1}p\) (\(n = 1, 2, \ldots\))입니다(기하분포). \(N\)의 평균과 분산을 구하세요.</p>
+      <p>성공 확률이 \(p\)인 시행을 처음 성공할 때까지 반복할 때 시행 횟수 \(N\)의 분포는 \(P(N = n) = (1-p)^{n-1}p\) (\(n = 1, 2, \ldots\))이다(기하분포). \(N\)의 평균과 분산을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(q = 1 - p\)로 씁니다. 먼저 확률의 합은 \(p\sum_{n=1}^\infty q^{n-1} = \frac{p}{1-q} = 1\)로 제대로 된 분포입니다.</p>
-    <p>평균: \(E(N) = \sum_{n=1}^\infty n\,q^{n-1}p = p\cdot\frac{1}{(1-q)^2} = \frac{p}{p^2} = \frac1p\). 주사위에서 6이 처음 나올 때까지 평균 \(1/(1/6) = 6\)번 던집니다.</p>
-    <p>분산: \(E(N^2)\)를 바로 구하기보다 \(E[N(N-1)]\)을 먼저 구하는 것이 편합니다. \(E[N(N-1)] = \sum n(n-1)q^{n-1}p = pq\sum_{n=2}^\infty n(n-1)q^{n-2} = pq\cdot\frac{2}{p^3} = \frac{2q}{p^2}\)입니다. \(E(N^2) = E[N(N-1)] + E(N)\)이므로</p>
-    <p>\(V(N) = \dfrac{2q}{p^2} + \dfrac1p - \dfrac{1}{p^2} = \dfrac{2q + p - 1}{p^2} = \dfrac{q}{p^2}\)입니다.</p>
+    <p><i>풀이.</i> \(q = 1 - p\)로 쓴다. 먼저 확률의 합은 \(p\sum_{n=1}^\infty q^{n-1} = \frac{p}{1-q} = 1\)이므로 제대로 된 분포이다. 평균은 위 결과에 \(x = q\)를 넣어 \(E(N) = p\sum_{n=1}^\infty n\,q^{n-1} = p\cdot\frac{1}{(1-q)^2} = \frac1p\)이다. 처음 질문의 주사위는 \(p = 1/6\)이므로 평균 6번 던진다.</p>
+    <p>분산은 \(E(N^2)\)를 바로 구하기보다 \(E[N(N-1)]\)을 먼저 구하는 것이 편하다. 둘째 미분 결과를 쓰면 \(E[N(N-1)] = pq\sum_{n=2}^\infty n(n-1)q^{n-2} = pq\cdot\frac{2}{p^3} = \frac{2q}{p^2}\)이다. 그런데 \(E(N^2) = E[N(N-1)] + E(N)\)이므로</p>
+    \[V(N) = \frac{2q}{p^2} + \frac1p - \frac{1}{p^2} = \frac{2q + p - 1}{p^2} = \frac{q}{p^2}\]
+    <p>이다. 주사위라면 \(V = (5/6)/(1/36) = 30\), 표준편차는 약 5.5이다. 평균 6번이지만 그림 1의 긴 꼬리 때문에 흩어짐이 크다.</p>
 
-    <h3><span class="no">4.2.2</span>지수함수의 급수</h3>
-    <p>2.3절의 테일러 전개에서 \(e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots = \sum_{n=0}^\infty\frac{x^n}{n!}\)이었고, 이 급수는 모든 \(x\)에서 수렴합니다(4.1절 예제의 비 판정).</p>
+    <h3><span class="no">4.2.3</span>지수함수의 급수</h3>
+    <p>둘째 도구는 2.3절의 테일러 전개 \(e^x = \sum_{n=0}^\infty\frac{x^n}{n!}\)이다. 이 급수는 4.1절 예제의 비 판정에 따라 모든 \(x\)에서 수렴한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.2</span>
-      <p>포아송분포 \(P(N = n) = e^{-\lambda}\dfrac{\lambda^n}{n!}\) (\(n = 0, 1, 2, \ldots\))의 확률을 모두 더하면 1임을 보이고, 평균을 구하세요.</p>
+      <p>포아송분포 \(P(N = n) = e^{-\lambda}\dfrac{\lambda^n}{n!}\) (\(n = 0, 1, 2, \ldots\))의 확률을 모두 더하면 1임을 보이고, 평균을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 확률의 합은 \(e^{-\lambda}\sum\frac{\lambda^n}{n!} = e^{-\lambda}e^\lambda = 1\)입니다.</p>
-    <p>평균은 \(\sum_{n=0}^\infty n\,e^{-\lambda}\frac{\lambda^n}{n!}\)입니다. \(n = 0\)인 항은 0이므로 \(n = 1\)부터 더하고, \(\frac{n}{n!} = \frac{1}{(n-1)!}\)로 약분합니다. 그러면 \(e^{-\lambda}\sum_{n=1}^\infty\frac{\lambda^n}{(n-1)!} = \lambda e^{-\lambda}\sum_{n=1}^\infty\frac{\lambda^{n-1}}{(n-1)!}\)이고, \(m = n - 1\)로 바꾸면 남은 합이 \(\sum_{m=0}^\infty\frac{\lambda^m}{m!} = e^\lambda\)이므로 평균은 \(\lambda e^{-\lambda}e^\lambda = \lambda\)입니다.</p>
+    <p><i>풀이.</i> 확률의 합은 \(e^{-\lambda}\sum\frac{\lambda^n}{n!} = e^{-\lambda}e^\lambda = 1\)이다. 평균은 \(\sum_{n=0}^\infty n\,e^{-\lambda}\frac{\lambda^n}{n!}\)인데, \(n = 0\)인 항은 0이므로 \(n = 1\)부터 더하고 \(\frac{n}{n!} = \frac{1}{(n-1)!}\)로 약분한다. 그러면 \(\lambda e^{-\lambda}\sum_{n=1}^\infty\frac{\lambda^{n-1}}{(n-1)!}\)이 된다. 여기서 \(m = n - 1\)로 바꾸면 남은 합이 \(\sum_{m=0}^\infty\frac{\lambda^m}{m!} = e^\lambda\)이므로 평균은 \(\lambda\)이다.</p>
 
-    <div class="tb-note">
-      <b>흔한 실수</b>
-      <p>합의 첫 번째 \(n\)을 바꾸면서 식의 \(n\)을 바꾸지 않는 실수가 흔합니다. "\(m = n - 1\)"처럼 새 문자를 도입해 시작값(\(n = 1 \to m = 0\))과 식 안의 \(n\)을 함께 바꾸면 틀리지 않습니다.</p>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>합의 시작값을 바꾸면서 식 안의 \(n\)을 바꾸지 않는 실수가 흔하다. "\(m = n - 1\)"처럼 새 문자를 도입해 시작값(\(n = 1\)이면 \(m = 0\))과 식 안의 \(n\)을 함께 바꾸면 틀리지 않는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\sum x^n = \frac{1}{1-x}\)에서 \(S - xS\) 방법(또는 미분)으로 \(\sum nx^{n-1} = \frac{1}{(1-x)^2}\)을 얻습니다.</li>
-        <li>\(e^x = \sum\frac{x^n}{n!}\)과 지표 옮기기로 포아송 계산을 합니다.</li>
-        <li>분산은 \(E[N(N-1)]\)을 먼저 구한 뒤 \(V = E[N(N-1)] + E(N) - \{E(N)\}^2\)으로 계산하면 편합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>등비급수 \(\sum x^n = \frac{1}{1-x}\)에 \(S - xS\) 방법이나 미분을 쓰면 \(\sum nx^{n-1} = \frac{1}{(1-x)^2}\)을 얻고, 이것으로 기하분포의 평균 \(1/p\)와 분산 \(q/p^2\)을 구한다. 그래서 주사위를 6이 나올 때까지 던지면 평균 6번이다. 포아송 계산은 \(e^x = \sum\frac{x^n}{n!}\)과 시작값 옮기기로 하며, 분산은 \(E[N(N-1)]\)을 먼저 구하면 편하다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <h3><span class="no">4.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\displaystyle\sum_{n=1}^\infty\frac{n}{2^n}\)을 구하세요.
-          <details><summary>답</summary><p>\(\frac12\sum n(\frac12)^{n-1} = \frac12\cdot\frac{1}{(1/2)^2} = 2\).</p></details>
+        <li>\(\displaystyle\sum_{n=1}^\infty\frac{n}{2^n}\)을 구하여라.
+          <details><summary>답</summary><p>\(\frac12\sum n(\frac12)^{n-1} = \frac12\cdot\frac{1}{(1/2)^2} = 2\)이다.</p></details>
         </li>
-        <li>포아송분포의 분산을 \(E[N(N-1)]\)로 구하세요.
-          <details><summary>답</summary><p>\(E[N(N-1)] = e^{-\lambda}\sum_{n=2}^\infty\frac{\lambda^n}{(n-2)!} = \lambda^2\), 분산 \(\lambda^2 + \lambda - \lambda^2 = \lambda\). 평균과 분산이 같습니다.</p></details>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>포아송분포의 분산을 \(E[N(N-1)]\)로 구하여라.
+          <details><summary>답</summary><p>\(E[N(N-1)] = e^{-\lambda}\sum_{n=2}^\infty\frac{\lambda^n}{(n-2)!} = \lambda^2\)이므로 분산은 \(\lambda^2 + \lambda - \lambda^2 = \lambda\)이다. 평균과 분산이 같다.</p></details>
         </li>
       </ol>
     </div>
