@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e19-bpf" data-kind="본문" data-std="전전19-05-03">
   <header class="card-head"><span class="no"></span><h2>저역 원형에서 대역 통과 필터로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>저역 원형의 직렬 L은 직렬 LC, 병렬 C는 병렬 LC로 바꾸는 대역 통과 변환을 안다.</li>
-        <li>중심 주파수 f₀와 상대 대역폭 Δ로 소자값을 계산한다.</li>
-        <li>Δ가 작을 때 소자값이 극단적으로 되는 문제를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>저역 통과 설계 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">휴대전화의 수신 필터는 1 GHz 근처의 100 MHz 폭만 통과시켜야 한다. 저역 통과 원형(5.2절)을 그대로 두고, 그것을 대역 통과 필터로 바꾸는 간단한 규칙이 있을까? 그 규칙을 적용했을 때 나오는 소자값은 실제로 만들 수 있는 크기일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 저역 원형에서 대역 통과로의 변환. 원형의 병렬 소자 g는 같은 자리의 병렬 LC 공진기로 바뀐다(C = g/(ω₀ΔR₀), L = ΔR₀/(ω₀g)). f₀ = 1 GHz, 상대 대역폭 Δ = 0.1, R₀ = 50 Ω, g = 1이면 31.8 pF와 0.80 nH이다">
+        <defs><marker id="ah-e19bpf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M40 50 H160" class="k" stroke-width="2"/><path d="M100 50 V80 M85 80 H115 M85 88 H115 M100 88 V120 M90 120 H110" class="k" fill="none" stroke-width="2"/>
+        <text x="122" y="88" class="ta">g = 1</text><text x="100" y="146" text-anchor="middle" class="s">저역 원형, 병렬 C</text>
+        <path d="M190 85 H260" class="k" stroke-width="2" marker-end="url(#ah-e19bpf)"/><text x="225" y="76" text-anchor="middle" class="s">변환</text>
+        <path d="M290 50 H470" class="k" stroke-width="2"/>
+        <path d="M350 50 V80 M335 80 H365 M335 88 H365 M350 88 V120" class="c" fill="none" stroke-width="2"/>
+        <path d="M410 50 V62 q12 4 0 8 q12 4 0 8 q12 4 0 8 q12 4 0 8 V120" class="d" fill="none" stroke-width="2"/>
+        <path d="M350 120 H410 M380 120 V128 M370 128 H390" class="k" fill="none" stroke-width="2"/>
+        <text x="300" y="92" class="tc">31.8 pF</text><text x="420" y="92" class="td">0.80 nH</text>
+        <text x="380" y="146" text-anchor="middle" class="s">대역 통과, 병렬 LC (f₀ = 1 GHz)</text>
+        <text x="280" y="180" text-anchor="middle" class="s">f₀ = 1 GHz, Δ = 0.1, R₀ = 50 Ω</text>
+      </svg>
+      <figcaption>그림 1. 주파수 변환이 원형의 0 rad/s를 f₀로 옮기므로, 원형의 병렬 축전기는 f₀에서 공진하는 병렬 LC가 되어 통과 대역 한가운데에서는 아무것도 없는 듯 신호를 통과시킨다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>저역 통과 설계(<a href="05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>주파수 변환</h3>
-    <p>\(\omega \to \frac1\Delta\left(\frac\omega{\omega_0} - \frac{\omega_0}\omega\right)\), \(\Delta = (\omega_2 - \omega_1)/\omega_0\). 병렬 원형 소자 g는 병렬 공진기 \(C = g/(\omega_0\Delta R_0)\), \(L = \Delta R_0/(\omega_0g)\)가 됩니다(직렬은 반대).</p>
+    <p>저역 원형을 대역 통과로 바꾸는 규칙은 주파수 변환 하나이다. \(\omega \to \frac1\Delta\left(\frac\omega{\omega_0} - \frac{\omega_0}\omega\right)\)이고, 여기서 \(\Delta = (\omega_2 - \omega_1)/\omega_0\)는 상대 대역폭이다. 이 변환은 원형의 0 rad/s를 중심 주파수 \(\omega_0\)로, ±1 rad/s를 대역의 양 끝으로 옮긴다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그 결과 원형의 병렬 소자 g는 병렬 공진기가 되어 \(C = g/(\omega_0\Delta R_0)\), \(L = \Delta R_0/(\omega_0g)\)이다(그림 1). 직렬 소자 g는 반대로 직렬 공진기가 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>f₀ = 1 GHz, 대역폭 100 MHz(Δ = 0.1), R₀ = 50 Ω에서 g = 1 병렬 원형 소자의 대역 통과 소자는?</p>
     </div>
-    <p><i>풀이.</i> C = 1/(2π×10⁹ × 0.1 × 50) = 31.8 pF, L = 0.1 × 50/(2π×10⁹) = 0.80 nH. 0.8 nH는 너무 작아 집중 소자로 만들기 어렵고 기생 성분에 묻혀, GHz 좁은 대역 필터는 결합 공진기(선로, 공동)로 만듭니다.</p>
+    <p><i>풀이.</i> C = 1/(2π×10⁹ × 0.1 × 50) = 31.8 pF이고, L = 0.1 × 50/(2π×10⁹) = 0.80 nH이다.</p>
+    <p>그런데 0.8 nH는 너무 작아 집중 소자로 만들기 어렵고, 부품의 기생 성분에 묻혀 버린다. 처음 질문의 둘째 답이 이것이다. 그래서 GHz의 좁은 대역 필터는 집중 소자 대신, 선로나 공동으로 만든 공진기 여러 개를 약하게 결합해 만든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "대역 통과 필터는 저역과 고역 필터를 이으면 된다": 넓은 대역에서는 되지만 좁은 대역은 공진기 결합이 낫습니다. (2) "Δ가 작을수록 만들기 쉽다": 소자값이 극단으로 가고 손실의 영향이 커집니다.</div>
+    <p>결합 공진기 필터도 설계의 출발점은 같은 원형이다. 원형의 g 계수에서 공진기 사이의 결합 계수와 양 끝의 외부 Q를 계산하고, 그 값을 공진기 사이 간격이나 결합 구멍의 크기로 구현한다. 즉 소자값 대신 결합의 세기로 같은 응답을 만드는 셈이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>병렬 g → 병렬 LC: C = g/(ω₀ΔR₀), L = ΔR₀/(ω₀g).</li>
-        <li>직렬 g → 직렬 LC(반대).</li>
-        <li>예: 1 GHz, 10% → 31.8 pF, 0.80 nH.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>대역이 좁을수록 필터를 만들기 쉽다고 여기기 쉽다. Δ가 작아지면 병렬 소자의 L은 더 작아지고 C는 더 커져 소자값이 극단으로 가고, 공진기 손실의 영향도 1/Δ배로 커진다. 또 저역과 고역 필터를 이으면 대역 통과가 된다고 생각하기 쉬운데, 넓은 대역에서는 되지만 좁은 대역에서는 공진기 결합 방식이 낫다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>병렬 원형 소자 g는 병렬 LC가 되어 C = g/(ω₀ΔR₀), L = ΔR₀/(ω₀g)이다. 직렬 소자는 반대로 직렬 LC가 된다. 예를 들어 1 GHz, 10% 대역이면 31.8 pF, 0.80 nH이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Δ = 0.2로 넓히면 같은 C는?
-          <details><summary>답</summary><p>15.9 pF.</p></details>
+          <details><summary>답</summary><p>Δ가 두 배이므로 15.9 pF이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>공진 확인: LC = 1/ω₀²인가?
-          <details><summary>답</summary><p>31.8 pF × 0.80 nH = 2.53×10⁻²⁰ = 1/(2π×10⁹)².</p></details>
+          <details><summary>답</summary><p>31.8 pF × 0.80 nH = 2.53×10⁻²⁰ = 1/(2π×10⁹)²이므로 맞다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>직렬 원형 g = 2(R₀ 50, f₀ 1 GHz, Δ 0.1)의 직렬 L은?
-          <details><summary>답</summary><p>gR₀/(ω₀Δ) = 159 nH.</p></details>
+          <details><summary>답</summary><p>gR₀/(ω₀Δ) = 159 nH이다.</p></details>
         </li>
       </ol>
     </div>

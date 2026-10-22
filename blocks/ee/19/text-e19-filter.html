@@ -8,58 +8,55 @@
 <article class="card q-card" id="text-e19-filter" data-kind="본문" data-std="전전19-05-02">
   <header class="card-head"><span class="no"></span><h2>삽입 손실법으로 저역 통과 필터 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>원형 필터의 g 계수(정규화 소자값)를 표에서 고른다.</li>
-        <li>임피던스·주파수 변환으로 실제 L, C 값을 계산한다.</li>
-        <li>Richards 변환과 단차 임피던스로 분포 정수 필터를 만드는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>필터 차수 (<a href="../13/04-01.html">전전13 4.1절</a>), 마이크로스트립 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">1 GHz 위의 간섭을 막는 저역 통과 필터를 50 Ω 계에 넣고 싶다. 축전기와 인덕터 값을 처음부터 계산해야 할까, 아니면 미리 정리된 표에서 가져올 수 있을까? 그리고 GHz에서는 몇 pF, 몇 nH짜리 부품을 실제로 어떻게 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 3차 버터워스 저역 통과 필터(f_c = 1 GHz, 50 Ω)의 응답과 소자값. 원형 g 계수 1, 2, 1에서 C₁ = 3.18 pF, L₂ = 15.9 nH, C₃ = 3.18 pF을 얻는다. |S₂₁|은 차단 주파수에서 −3 dB이고, 그 위로 60 dB/decade로 떨어져 10 GHz에서 약 −60 dB이다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <polyline points="80,40.0 180,40.0 210,40.1 230,40.3 240,40.5 250,41.0 260,41.9 270,43.5 280,46.0 290,49.5 300,53.9 310,59.0 320,64.5 330,70.3 340,76.1 350,82.1 360,88.0 380,100.0 400,112.0 420,124.0 440,136.0 460,148.0 480,160.0" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M280 30 V170" class="k dsh"/><circle cx="280" cy="46" r="4" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0.1</text><text x="280" y="186">1 GHz</text><text x="480" y="186">10</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="44">0 dB</text><text x="74" y="164">−60</text></g>
+        <text x="290" y="42" class="td">−3 dB</text><text x="400" y="100" class="ta">60 dB/decade</text>
+        <g class="s"><text x="100" y="80">C₁ 3.18 pF</text><text x="100" y="100">L₂ 15.9 nH</text><text x="100" y="120">C₃ 3.18 pF</text><text x="100" y="140" class="tc">g = 1, 2, 1</text></g>
+      </svg>
+      <figcaption>그림 1. 차단 1 rad/s, 1 Ω의 원형 필터 소자값을 주파수와 임피던스에 맞춰 늘이고 줄이기만 하면 실제 필터가 되므로, 응답 모양은 원형이 정하고 차단점만 옮겨 간다(예제 5.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>필터 차수(<a href="../13/04-01.html">전전13 4.1절</a>), 마이크로스트립(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>원형에서 실제로</h3>
-    <p>차단 1 rad/s, 1 Ω 기준의 원형 사다리 필터의 소자값 g₁, g₂, …가 표로 주어집니다(3차 버터워스: 1, 2, 1). 실제 차단 \(\omega_c\), 저항 \(R_0\)으로 바꾸면</p>
+    <p>삽입 손실법에서는 차단 주파수 1 rad/s, 기준 저항 1 Ω인 원형 사다리 필터의 소자값 g₁, g₂, …를 표에서 가져온다. 예를 들어 3차 버터워스는 1, 2, 1이다. 처음 질문의 첫째 답이 이것이며, 실제 차단 \(\omega_c\)와 저항 \(R_0\)에 맞추려면 아래처럼 바꾸기만 하면 된다.</p>
     \[ C = \frac{g}{\omega_cR_0}, \qquad L = \frac{gR_0}{\omega_c}. \]
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
       <p>f_c = 1 GHz, R₀ = 50 Ω, 3차 버터워스(병렬 C로 시작) 저역 통과의 소자값은?</p>
     </div>
-    <p><i>풀이.</i> \(\omega_c = 2\pi\times10^9\). C₁ = 1/(ω_c × 50) = 3.18 pF, L₂ = 2 × 50/ω_c = 15.9 nH, C₃ = 3.18 pF. 1 GHz에서 −3 dB, 10배 위에서 약 −60 dB입니다.</p>
-    <p>GHz 대역에서는 이 소자값을 집중 소자로 만들기 어려워, 짧은 고임피던스 선로(직렬 L처럼), 저임피던스 선로(병렬 C처럼)로 바꾸거나(단차 임피던스), Richards 변환과 Kuroda 등식으로 스텁 회로로 만듭니다.</p>
+    <p><i>풀이.</i> \(\omega_c = 2\pi\times10^9\)이다. 따라서 C₁ = 1/(ω_c × 50) = 3.18 pF, L₂ = 2 × 50/ω_c = 15.9 nH, C₃ = 3.18 pF이다. 응답은 1 GHz에서 −3 dB이고, 10배 위에서 약 −60 dB이다(그림 1).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "g 계수는 어떤 필터에도 같다": 응답(버터워스, 체비셰프)과 차수마다 다른 표를 씁니다. (2) "분포 정수 필터도 모든 주파수에서 저역 통과다": 선로의 주기성 때문에 높은 주파수에서 통과 대역이 반복됩니다.</div>
+    <h3><span class="no">5.2.2</span>선로로 만들기</h3>
+    <p>그런데 GHz 대역에서는 이런 소자값을 집중 소자로 만들기 어렵다. 부품 자체의 기생 성분이 그만큼 크기 때문이다. 그래서 짧은 고임피던스 선로를 직렬 인덕터처럼, 짧은 저임피던스 선로를 병렬 축전기처럼 쓰는데, 이것을 단차 임피던스 필터라 한다. 또는 Richards 변환으로 소자를 스텁으로 바꾸고, Kuroda 등식으로 스텁을 실제로 만들 수 있는 배치로 옮긴다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>원형 g 계수 → C = g/(ω_cR₀), L = gR₀/ω_c.</li>
-        <li>3차 버터워스 1 GHz, 50 Ω: 3.18 pF, 15.9 nH, 3.18 pF.</li>
-        <li>고주파는 선로 조각(단차 임피던스, Richards)으로 구현.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>분포 정수 필터도 집중 소자 필터처럼 모든 높은 주파수를 막는다고 여기기 쉽다. 선로의 임피던스는 길이에 대해 주기적으로 되풀이되므로, 높은 주파수에서 통과 대역이 다시 나타난다. 또 g 계수는 어떤 필터에나 같다고 생각하기 쉬운데, 버터워스와 체비셰프 같은 응답과 차수마다 다른 표를 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>원형 g 계수에서 C = g/(ω_cR₀), L = gR₀/ω_c로 바꾼다. 3차 버터워스 1 GHz, 50 Ω은 3.18 pF, 15.9 nH, 3.18 pF이다. 높은 주파수에서는 단차 임피던스나 Richards 변환으로 선로 조각을 써서 구현한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>2 GHz로 바꾸면 C₁은?
-          <details><summary>답</summary><p>1.59 pF.</p></details>
+          <details><summary>답</summary><p>주파수가 두 배이므로 1.59 pF이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>R₀ = 75 Ω, f_c = 1 GHz의 L₂는?
-          <details><summary>답</summary><p>23.9 nH.</p></details>
+          <details><summary>답</summary><p>2 × 75/ω_c = 23.9 nH이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>5차 버터워스 g 계수(0.618, 1.618, 2, 1.618, 0.618)로 1 GHz, 50 Ω의 가운데 C₃(병렬 시작 기준)는?
-          <details><summary>답</summary><p>2/(ω_c × 50) = 6.37 pF.</p></details>
+          <details><summary>답</summary><p>2/(ω_c × 50) = 6.37 pF이다.</p></details>
         </li>
       </ol>
     </div>

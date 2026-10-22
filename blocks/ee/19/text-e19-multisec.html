@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e19-multisec" data-kind="본문" data-std="전전19-04-02">
   <header class="card-head"><span class="no"></span><h2>다단 1/4 파장 변환기로 넓은 대역 정합</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>단일 1/4 파장 변환기의 대역 한계를 안다.</li>
-        <li>2단 이항(binomial) 변환기의 임피던스를 로그 근사로 계산한다.</li>
-        <li>단 수와 대역폭의 관계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>λ/4 변환기 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">λ/4 변환기 하나는 설계 주파수에서만 정확히 정합되고, 주파수가 조금만 벗어나도 반사가 커진다. 넓은 주파수 대역에서 정합을 유지하려면 어떻게 해야 할까? 임피던스를 한 번에 바꾸지 않고 여러 계단으로 나누면 무엇이 좋아지고, 무엇을 잃을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1 50 Ω에서 100 Ω으로의 임피던스 계단. 단일 λ/4 변환기는 70.7 Ω 한 단(점선)이고, 2단 이항 변환기는 59.5 Ω과 84.1 Ω 두 단(실선)으로 비를 나눈다. 경계마다 반사가 작아지고 서로 상쇄되어 대역이 넓어지는 대신 길이가 λ/2로 두 배가 된다">
+        <line x1="60" y1="170" x2="480" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M60 150 H160 V131 H260 V81.8 H360 V50 H460" class="a" fill="none" stroke-width="3"/>
+        <path d="M60 150 H160 V108.6 H260 V50" class="c dsh" fill="none" stroke-width="2"/>
+        <g class="s"><text x="70" y="144">50 Ω</text><text x="170" y="126" class="ta">59.5</text><text x="270" y="76" class="ta">84.1</text><text x="370" y="44">100 Ω (부하)</text><text x="170" y="102" class="tc">단일 70.7</text></g>
+        <g text-anchor="middle" class="s"><text x="210" y="186">λ/4</text><text x="310" y="186">λ/4</text><text x="110" y="186">전원</text></g>
+        <g text-anchor="end" class="s"><text x="56" y="54">100</text><text x="56" y="154">50</text></g>
+        <text x="380" y="120" class="s">ln Z 를 1/4, 2/4, 1/4로 나눔</text>
+      </svg>
+      <figcaption>그림 1. 임피던스 비를 여러 단으로 나누면 경계마다 작은 반사가 생기고, 그 반사들이 서로 다른 거리에서 돌아와 상쇄되므로 넓은 대역에서 전체 반사가 작게 유지된다(예제 4.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>λ/4 변환기(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>여러 단으로 나누기</h3>
-    <p>임피던스 비를 여러 단에 나누면 각 경계의 반사가 작아지고 서로 상쇄되어 대역이 넓어집니다. N단 이항 변환기는 반사 응답이 최대 평탄이며, 로그 근사로 \(\ln Z_{n+1} - \ln Z_n = 2^{-N}\binom Nn\ln(Z_L/Z_0)\)입니다.</p>
+    <p>임피던스 비를 여러 단으로 나누면 각 경계의 반사가 작아진다. 게다가 반사들이 서로 다른 거리에서 돌아와 상쇄되므로 대역이 넓어진다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>단마다 임피던스를 어떻게 나눌지는 원하는 반사 응답이 정한다. N단 이항 변환기는 설계 주파수에서 반사 응답이 최대 평탄이 되며, 로그 근사로 \(\ln Z_{n+1} - \ln Z_n = 2^{-N}\binom Nn\ln(Z_L/Z_0)\)이다. 즉 전체 로그 비를 이항 계수의 비율로 나눈다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>50 Ω에서 100 Ω으로 2단 이항 변환기의 두 임피던스는?</p>
     </div>
-    <p><i>풀이.</i> ln(100/50) = 0.693. 2단: 계수 1/4, 2/4, 1/4 → ln Z₁ = ln50 + 0.173 → Z₁ = 59.5 Ω, ln Z₂ = ln Z₁ + 0.347 → Z₂ = 84.1 Ω. 단일 단(70.7 Ω)보다 대역폭이 넓고 길이는 두 배(λ/2)입니다.</p>
+    <p><i>풀이.</i> ln(100/50) = 0.693이다. 2단이면 계수는 1/4, 2/4, 1/4이므로 ln Z₁ = ln 50 + 0.173, 곧 Z₁ = 59.5 Ω이다. 이어서 ln Z₂ = ln Z₁ + 0.347이므로 Z₂ = 84.1 Ω이다.</p>
+    <p>이 변환기는 단일 단(70.7 Ω)보다 대역폭이 넓지만, 길이가 두 배인 λ/2가 된다. 처음 질문의 둘째 답이 이 맞바꿈이다. 단 수가 늘수록 대역은 넓어지고 길이와 선로 손실도 함께 늘어난다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "단을 늘리면 크기만 커진다": 대역폭이 넓어지는 대가로 길어집니다. (2) "이항형이 언제나 최선": 같은 단 수에서 Chebyshev형이 더 넓은 대역(리플 허용)을 줍니다.</div>
+    <p>단을 아주 많이 늘린 극한은 임피던스가 계단 없이 매끈하게 바뀌는 테이퍼 선로이다. 테이퍼는 길이가 파장보다 충분히 길면 그 위의 모든 주파수에서 반사가 작아, 넓은 대역의 정합에 쓴다. 다만 낮은 주파수일수록 파장이 길어 필요한 길이도 길어지므로, 대역의 아래쪽 끝이 테이퍼의 길이를 정한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>다단: 비를 나눠 반사를 작게, 서로 상쇄.</li>
-        <li>2단 이항: 50 → 59.5 → 84.1 → 100 Ω.</li>
-        <li>길이 Nλ/4, Chebyshev형은 더 넓은 대역.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>이항형이 언제나 최선이라고 여기기 쉽다. 이항형은 설계 주파수 근처가 가장 평탄할 뿐, 같은 단 수에서 대역 안에 작은 리플을 허용하는 Chebyshev형이 더 넓은 대역을 준다. 그래서 대역 안 반사의 최댓값만 정해져 있으면 Chebyshev형을 고르는 경우가 많다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>다단 변환기는 임피던스 비를 나눠 반사를 작게 하고 서로 상쇄시킨다. 2단 이항 변환기는 50, 59.5, 84.1, 100 Ω의 계단이다. 길이는 Nλ/4이고, Chebyshev형은 같은 단 수에서 더 넓은 대역을 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>50 ↔ 200 Ω 단일 단 변환기 Z₁은?
-          <details><summary>답</summary><p>100 Ω.</p></details>
+          <details><summary>답</summary><p>√(50 × 200) = 100 Ω이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 비를 2단 이항으로 하면 Z₁, Z₂는?
-          <details><summary>답</summary><p>약 70.7, 141 Ω.</p></details>
+          <details><summary>답</summary><p>약 70.7 Ω과 141 Ω이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>1단과 2단 중 같은 반사 허용치에서 대역이 넓은 것은?
-          <details><summary>답</summary><p>2단.</p></details>
+          <details><summary>답</summary><p>2단이다.</p></details>
         </li>
       </ol>
     </div>

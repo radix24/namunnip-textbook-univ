@@ -8,62 +8,54 @@
 <article class="card q-card" id="text-e19-wilkinson" data-kind="본문" data-std="전전19-06-01">
   <header class="card-head"><span class="no"></span><h2>Wilkinson 전력 분배기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>λ/4 선로 두 개와 저항 하나로 된 Wilkinson 분배기의 구조를 안다.</li>
-        <li>S 행렬 \(\frac{-j}{\sqrt2}\begin{pmatrix}0&1&1\\1&0&0\\1&0&0\end{pmatrix}\)과 세 포트 정합, 출력 포트 격리를 설명한다.</li>
-        <li>짝·홀 모드 해석으로 저항의 역할을 이해한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>무손실 상반 회로망 (<a href="03-02.html">3.2절</a>), λ/4 변환기 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">안테나 두 개에 송신 전력을 똑같이 나눠 주고 싶다. 선로를 그냥 두 갈래로 나누면 입력에서 본 임피던스가 25 Ω이 되어 반사가 생기고, 한쪽 안테나의 반사가 다른 쪽으로 새어 들어간다. 세 포트가 모두 정합되고 두 출력이 서로 영향을 주지 않는 분배기는 어떻게 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="Wilkinson 전력 분배기의 구조(Z₀ = 50 Ω). 포트 1에서 특성 임피던스 √2Z₀ = 70.7 Ω인 λ/4 선로 두 개가 갈라져 포트 2와 3에 닿고, 두 출력 사이에 2Z₀ = 100 Ω 저항을 단다. 예제 6.1.1에서 포트 1에 1 W를 넣으면 포트 2와 3에 0.5 W(−3 dB)씩 나가고, 포트 2에 넣은 신호는 포트 3에 나가지 않는다">
+        <path d="M40 100 H120" class="k" stroke-width="3"/>
+        <path d="M120 100 C160 100, 200 50, 300 50" class="a" fill="none" stroke-width="3"/><path d="M120 100 C160 100, 200 150, 300 150" class="a" fill="none" stroke-width="3"/>
+        <path d="M300 50 H400 M300 150 H400" class="k" stroke-width="3"/>
+        <path d="M300 50 V70 l8 5 l-16 10 l16 10 l-16 10 l16 10 l-8 5 V150" class="d" fill="none" stroke-width="2"/>
+        <g class="s"><text x="30" y="92">포트 1</text><text x="408" y="54">포트 2, 0.5 W</text><text x="408" y="154">포트 3, 0.5 W</text></g>
+        <text x="190" y="60" class="ta">λ/4, 70.7 Ω</text><text x="190" y="152" class="ta">λ/4, 70.7 Ω</text><text x="316" y="104" class="td">100 Ω</text>
+        <text x="30" y="186" class="s">짝 모드는 저항에 전류 없음, 홀 모드는 저항이 흡수 → 포트 2, 3 격리</text>
+      </svg>
+      <figcaption>그림 1. 두 출력에 같은 신호가 나갈 때는 저항 양 끝 전압이 같아 손실이 없고, 한 출력에서 들어온 신호는 저항이 흡수하므로 다른 출력에 닿지 않는다(6.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>무손실 상반 회로망(<a href="03-02.html">3.2절</a>), λ/4 변환기(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>구조와 동작</h3>
-    <p>입력 포트 1에서 두 갈래로 특성 임피던스 \(\sqrt2Z_0 = 70.7\) Ω인 λ/4 선로가 나가 포트 2, 3에 닿고, 두 출력 사이에 \(2Z_0 = 100\) Ω 저항을 답니다.</p>
-    <ul>
-      <li><b>입력 정합</b>: 각 λ/4 선로가 50 Ω 부하를 \(70.7^2/50 = 100\) Ω으로 바꾸고, 둘이 병렬이라 50 Ω.</li>
-      <li><b>짝 모드</b>(포트 2, 3에 같은 신호): 두 출력 전압이 같아 저항에 전류가 없다 → 손실 없이 분배.</li>
-      <li><b>홀 모드</b>(포트 2, 3에 반대 신호): 저항이 흡수해 출력 포트끼리 격리되고 각 포트가 정합된다.</li>
-    </ul>
+    <p>Wilkinson 분배기는 입력 포트 1에서 특성 임피던스 \(\sqrt2Z_0 = 70.7\) Ω인 λ/4 선로 두 개가 갈라져 포트 2와 3에 닿고, 두 출력 사이에 \(2Z_0 = 100\) Ω 저항을 단 구조이다(그림 1). 처음 질문의 답이 이 구조이며, 세 가지로 동작을 설명할 수 있다.</p>
+    <p>먼저 입력 정합이다. 이때 각 λ/4 선로가 50 Ω 부하를 \(70.7^2/50 = 100\) Ω으로 바꾸고, 그 둘이 병렬이라 입력에서는 50 Ω으로 보인다. 다음으로 짝 모드, 곧 포트 2와 3에 같은 신호가 있을 때는 두 출력 전압이 같아 저항에 전류가 흐르지 않으므로 손실 없이 분배된다. 마지막으로 홀 모드, 곧 포트 2와 3에 반대 신호가 있을 때는 저항이 그 신호를 흡수해 출력 포트끼리 격리되고 각 포트가 정합된다.</p>
     \[ S = \frac{-j}{\sqrt2}\begin{pmatrix} 0 & 1 & 1 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \end{pmatrix}. \]
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
       <p>포트 1에 1 W를 넣으면 각 출력의 전력과 dB는? 포트 2에 1 W를 넣으면 포트 3에는?</p>
     </div>
-    <p><i>풀이.</i> |S₂₁|² = 1/2: 각 0.5 W(−3 dB), 위상 −90°. 포트 2 입력: S₁₂로 0.5 W가 포트 1로, S₃₂ = 0이라 포트 3에는 0(격리), 나머지 0.5 W는 저항에서 소비됩니다. 무손실이 아니어야 세 포트 정합이 가능하다는 3.2절의 결과와 맞습니다.</p>
+    <p><i>풀이.</i> |S₂₁|² = 1/2이므로 각 출력에 0.5 W(−3 dB)가 나가고, 위상은 −90°이다. 한편 포트 2에 넣으면 S₁₂로 0.5 W가 포트 1로 가고, S₃₂ = 0이라 포트 3에는 나가지 않는다(격리). 따라서 나머지 0.5 W는 저항에서 소비된다.</p>
+    <p>즉 Wilkinson 분배기는 무손실이 아니다. 무손실 상반 3포트는 세 포트가 모두 정합될 수 없다는 3.2절의 정리를, 저항으로 일부 손실을 허용해 피한 것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "분배기는 신호를 3 dB 잃는다": 둘로 나눈 것이라 각 출력이 −3 dB일 뿐, 짝 모드 손실은 0입니다. (2) "저항은 언제나 열을 낸다": 출력이 같은 크기·위상이면 전류가 흐르지 않습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>분배기가 신호를 3 dB 잃는다고 여기기 쉽다. 각 출력이 −3 dB인 것은 전력을 둘로 나눴기 때문일 뿐, 두 출력을 합하면 입력 전력과 같아 짝 모드 손실은 0이다. 또 저항이 언제나 열을 낸다고 생각하기 쉬운데, 두 출력이 같은 크기와 위상이면 저항에는 전류가 흐르지 않는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>λ/4 선로(√2 Z₀) 두 개 + 2Z₀ 저항.</li>
-        <li>S₂₁ = S₃₁ = −j/√2, S₂₃ = 0(격리), 세 포트 정합.</li>
-        <li>짝 모드 무손실, 홀 모드는 저항이 흡수.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Wilkinson 분배기는 √2 Z₀인 λ/4 선로 두 개와 2Z₀ 저항으로 만든다. S₂₁ = S₃₁ = −j/√2이고 S₂₃ = 0이라 출력끼리 격리되며, 세 포트가 모두 정합된다. 짝 모드에서는 손실이 없고, 홀 모드 신호는 저항이 흡수한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>Z₀ = 75 Ω 계 Wilkinson의 선로 Z와 저항은?
-          <details><summary>답</summary><p>106 Ω, 150 Ω.</p></details>
+          <details><summary>답</summary><p>선로는 √2 × 75 = 106 Ω, 저항은 150 Ω이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>포트 2, 3에 같은 위상 0.5 W씩 넣으면 포트 1 출력은(결합기로 쓰기)?
-          <details><summary>답</summary><p>1 W(합성).</p></details>
+          <details><summary>답</summary><p>1 W로 합성된다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>포트 2, 3에 같은 크기 반대 위상 신호를 넣으면 포트 1 출력은?
-          <details><summary>답</summary><p>0. 전력은 저항에서 소비됩니다.</p></details>
+          <details><summary>답</summary><p>0이다. 전력은 저항에서 소비된다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,52 @@
 <article class="card q-card" id="text-e19-abcd" data-kind="본문" data-std="전전19-03-03">
   <header class="card-head"><span class="no"></span><h2>ABCD 행렬과 연쇄 연결</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>2포트의 ABCD 행렬을 정의하고 연쇄 연결은 행렬 곱임을 안다.</li>
-        <li>직렬·병렬 소자와 선로의 ABCD를 쓴다.</li>
-        <li>ABCD에서 S₂₁, S₁₁로 바꾼다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>S 파라미터 (<a href="03-01.html">3.1절</a>), 행렬 곱 (<a href="../16/01.html">전전16 1단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">필터는 직렬 인덕터, 병렬 축전기, 선로 조각을 차례로 이은 사다리 회로이다. 소자 하나하나의 S 파라미터를 알아도, 여러 개를 이었을 때 전체 S₂₁은 어떻게 구할까? S 행렬끼리 곱하면 될 것 같은데, 정말 그럴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="ABCD 행렬로 연쇄 연결을 계산하는 방법. 직렬 임피던스 Z는 [[1, Z], [0, 1]], 병렬 어드미턴스 Y는 [[1, 0], [Y, 1]]이고, 이어 붙인 회로의 ABCD는 순서대로 곱한 행렬이다. 마지막에 한 번만 S₂₁ = 2/(A + B/Z₀ + CZ₀ + D)로 바꾼다. 예제 3.3.1의 직렬 50 Ω은 분모 3에서 S₂₁ = 2/3이다">
+        <rect x="40" y="40" width="100" height="44" class="la"/><rect x="200" y="40" width="100" height="44" class="lc"/><rect x="360" y="40" width="100" height="44" class="lb"/>
+        <g class="k" fill="none"><rect x="40" y="40" width="100" height="44"/><rect x="200" y="40" width="100" height="44"/><rect x="360" y="40" width="100" height="44"/></g>
+        <g text-anchor="middle"><text x="90" y="67" class="ta">직렬 Z</text><text x="250" y="67" class="tc">병렬 Y</text><text x="410" y="67" class="tb">선로</text><text x="170" y="67" class="s">→</text><text x="330" y="67" class="s">→</text></g>
+        <g text-anchor="middle" class="s"><text x="90" y="110">[[1, Z], [0, 1]]</text><text x="170" y="110">×</text><text x="250" y="110">[[1, 0], [Y, 1]]</text><text x="330" y="110">×</text><text x="410" y="110">[[cos, jZ₀sin], …]</text></g>
+        <text x="250" y="146" text-anchor="middle" class="td">= 전체 [[A, B], [C, D]] → S₂₁ = 2/(A + B/Z₀ + CZ₀ + D)</text>
+        <text x="250" y="176" text-anchor="middle" class="s">예: 직렬 50 Ω → A 1, B 50, C 0, D 1 → S₂₁ = 2/3</text>
+      </svg>
+      <figcaption>그림 1. ABCD 행렬은 출력 쪽 전압과 전류를 입력 쪽으로 넘기므로, 앞 블록의 출력이 곧 다음 블록의 입력이 되어 연쇄 연결이 순서대로 곱하는 일로 바뀐다(예제 3.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>S 파라미터(<a href="03-01.html">3.1절</a>), 행렬 곱(<a href="../16/01.html">전전16 1단원</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>곱하면 연결</h3>
-    <p>\(\begin{pmatrix} V_1 \\ I_1 \end{pmatrix} = \begin{pmatrix} A & B \\ C & D \end{pmatrix}\begin{pmatrix} V_2 \\ I_2 \end{pmatrix}\). 직렬 Z: [[1, Z], [0, 1]], 병렬 Y: [[1, 0], [Y, 1]]. 연쇄 연결은 순서대로 곱합니다. Z₀ 계에서 \(S_{21} = \frac{2}{A + B/Z_0 + CZ_0 + D}\), \(S_{11} = \frac{A + B/Z_0 - CZ_0 - D}{A + B/Z_0 + CZ_0 + D}\).</p>
+    <p>ABCD 행렬은 출력 쪽 전압과 전류로 입력 쪽 전압과 전류를 나타낸다. 식으로는 \(\begin{pmatrix} V_1 \\ I_1 \end{pmatrix} = \begin{pmatrix} A & B \\ C & D \end{pmatrix}\begin{pmatrix} V_2 \\ I_2 \end{pmatrix}\)이다. 그래서 블록을 이으면 앞 블록의 출력이 다음 블록의 입력이 되어, 연쇄 연결은 행렬을 순서대로 곱하는 일이 된다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>기본 소자의 ABCD는 간단하다. 직렬 임피던스 Z는 [[1, Z], [0, 1]], 병렬 어드미턴스 Y는 [[1, 0], [Y, 1]]이다. 전체 행렬을 구한 뒤에는 Z₀ 계에서 \(S_{21} = \frac{2}{A + B/Z_0 + CZ_0 + D}\), \(S_{11} = \frac{A + B/Z_0 - CZ_0 - D}{A + B/Z_0 + CZ_0 + D}\)로 한 번만 바꾸면 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>직렬 50 Ω(Z₀ = 50)의 S₂₁, S₁₁을 ABCD로 구하라. 3.1절 결과와 같은가?</p>
     </div>
-    <p><i>풀이.</i> A = 1, B = 50, C = 0, D = 1 → 분모 3, S₂₁ = 2/3, S₁₁ = 1/3로 같습니다. 여러 소자를 이으면 행렬을 곱한 뒤 한 번만 바꾸면 되어 필터 해석에 편합니다.</p>
+    <p><i>풀이.</i> A = 1, B = 50, C = 0, D = 1이므로 분모는 1 + 1 + 0 + 1 = 3이다. 따라서 S₂₁ = 2/3, S₁₁ = (1 + 1 − 0 − 1)/3 = 1/3으로, 3.1절 결과와 같다.</p>
+    <p>즉 소자 하나에서는 별 이득이 없지만, 소자가 여럿이면 행렬을 곱한 뒤 마지막에 한 번만 바꾸면 되어 필터 해석(5.2절)이 훨씬 편해진다. 또 선로 조각의 ABCD는 [[cos βl, jZ₀ sin βl], [j sin βl/Z₀, cos βl]]이므로, 집중 소자와 선로를 섞은 회로도 같은 방법으로 다룬다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "S 행렬도 곱하면 연쇄": S는 곱으로 이어지지 않아 ABCD(또는 T 행렬)로 바꿔 곱합니다. (2) "ABCD 원소는 모두 무차원": B는 Ω, C는 S 단위입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>S 행렬도 곱하면 연쇄 연결이 된다고 여기기 쉽다. 처음 질문의 둘째 답이 이것이다. S 행렬은 각 포트의 들어가는 파와 나오는 파를 섞어 놓은 것이라, 앞 블록의 출력 파가 다음 블록의 입력 파와 바로 맞물리지 않는다. 그래서 ABCD나 T 행렬로 바꿔 곱한 뒤 다시 S로 돌린다. 또 ABCD 원소가 모두 무차원이라고 생각하기 쉬운데, B는 Ω, C는 S 단위이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>직렬 [[1, Z], [0, 1]], 병렬 [[1, 0], [Y, 1]].</li>
-        <li>연쇄 = 행렬 곱.</li>
-        <li>S₂₁ = 2/(A + B/Z₀ + CZ₀ + D).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>직렬 소자의 ABCD는 [[1, Z], [0, 1]], 병렬 소자는 [[1, 0], [Y, 1]]이다. 연쇄 연결은 행렬 곱이다. 전체를 구한 뒤 S₂₁ = 2/(A + B/Z₀ + CZ₀ + D)로 바꾼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>병렬 Y = 0.02 S(Z₀ 50)의 S₂₁은?
-          <details><summary>답</summary><p>2/(1 + 1 + 1) = 2/3.</p></details>
+          <details><summary>답</summary><p>2/(1 + 1 + 1) = 2/3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>길이 0인 선로의 ABCD는?
-          <details><summary>답</summary><p>단위 행렬.</p></details>
+          <details><summary>답</summary><p>단위 행렬이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>상반 2포트의 ABCD 성질은?
-          <details><summary>답</summary><p>AD − BC = 1.</p></details>
+          <details><summary>답</summary><p>AD − BC = 1이다.</p></details>
         </li>
       </ol>
     </div>

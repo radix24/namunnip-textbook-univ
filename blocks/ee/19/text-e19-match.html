@@ -8,58 +8,61 @@
 <article class="card q-card" id="text-e19-match" data-kind="본문" data-std="전전19-04-01">
   <header class="card-head"><span class="no"></span><h2>L형 정합 회로와 1/4 파장 변환기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>두 리액턴스 소자로 실수 부하를 Z₀에 맞추는 L형 회로를 설계한다.</li>
-        <li>Q = √(R_high/R_low − 1)로 소자값을 정하고 대역폭과의 관계를 안다.</li>
-        <li>1/4 파장 변환기의 Z₀ = √(Z_inZ_L)과 대역 한계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Smith 도표 (<a href="01-01.html">1.1절</a>), 공진과 Q (<a href="../3/08-03.html">전전3 8.3절</a>), 단일 스텁 정합 (<a href="../10/04-03.html">전전10 4.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">200 Ω짜리 안테나를 50 Ω 송신기에 그대로 이으면 SWR이 4가 되어 전력의 36%가 되돌아온다. 소자 두 개만으로 이 부하를 50 Ω처럼 보이게 만들 수 있을까? 소자를 쓰지 않고 선로 한 조각만으로도 할 수 있을까, 그리고 두 방법은 어떤 대가를 치를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1 200 Ω 부하를 50 Ω 전원에 맞추는 두 방법. 위는 L형 정합으로, 100 MHz에서 직렬 인덕터 137.8 nH를 전원 쪽에, 병렬 축전기 13.8 pF를 부하 쪽에 둔다(Q = √3). 아래는 1/4 파장 변환기로, 특성 임피던스 √(50 × 200) = 100 Ω인 λ/4 선로를 사이에 넣는다">
+        <rect x="30" y="30" width="60" height="30" class="la"/><rect x="30" y="30" width="60" height="30" class="a" fill="none"/>
+        <path d="M90 45 H120 q6 -12 12 0 q6 -12 12 0 q6 -12 12 0 q6 -12 12 0 H220" class="k" fill="none" stroke-width="2"/>
+        <path d="M220 45 V60 M205 60 H235 M205 68 H235 M220 68 V84 M210 84 H230" class="k" fill="none" stroke-width="2"/>
+        <path d="M220 45 H300" class="k" stroke-width="2"/>
+        <rect x="300" y="30" width="60" height="30" class="ld"/><rect x="300" y="30" width="60" height="30" class="d" fill="none"/>
+        <g text-anchor="middle"><text x="60" y="50" class="ta">50 Ω</text><text x="330" y="50" class="td">200 Ω</text><text x="144" y="26" class="s">L 137.8 nH</text><text x="262" y="70" class="s">C 13.8 pF</text></g>
+        <rect x="30" y="130" width="60" height="30" class="la"/><rect x="30" y="130" width="60" height="30" class="a" fill="none"/>
+        <rect x="120" y="135" width="150" height="20" class="lc"/><rect x="120" y="135" width="150" height="20" class="c" fill="none"/>
+        <path d="M90 145 H120 M270 145 H300" class="k" stroke-width="2"/>
+        <rect x="300" y="130" width="60" height="30" class="ld"/><rect x="300" y="130" width="60" height="30" class="d" fill="none"/>
+        <g text-anchor="middle"><text x="60" y="150" class="ta">50 Ω</text><text x="330" y="150" class="td">200 Ω</text><text x="195" y="149" class="tc">Z₁ = 100 Ω</text><text x="195" y="174" class="s">길이 λ/4</text></g>
+        <g class="s"><text x="390" y="40">L형, Q = √(200/50 − 1)</text><text x="390" y="60">= 1.73, 대역 약 f/Q</text><text x="390" y="140">λ/4 변환기</text><text x="390" y="160">Z₁ = √(Z₀R_L), 한 주파수</text></g>
+      </svg>
+      <figcaption>그림 1. 리액턴스 두 개가 부하의 큰 저항을 작은 저항으로 바꾸고, λ/4 선로는 임피던스를 Z₁²/Z_L로 뒤집으므로, 두 방법 모두 설계 주파수에서 200 Ω을 50 Ω으로 보이게 한다(예제 4.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Smith 도표(<a href="01-01.html">1.1절</a>), 공진과 Q(<a href="../3/08-03.html">전전3 8.3절</a>), 단일 스텁 정합(<a href="../10/04-03.html">전전10 4.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>L형 정합</h3>
-    <p>큰 저항 쪽에 병렬 소자, 작은 저항 쪽에 직렬 소자를 둡니다. 두 저항이 \(R_H\), \(R_L\)이면</p>
+    <p>L형 정합은 리액턴스 소자 두 개로 실수 부하를 Z₀에 맞춘다. 큰 저항 쪽에 병렬 소자를, 작은 저항 쪽에 직렬 소자를 두며, 두 저항이 \(R_H\), \(R_L\)이면 소자값은 아래 식으로 정한다. 처음 질문의 첫째 답이 이것이다.</p>
     \[ Q = \sqrt{\frac{R_H}{R_L} - 1}, \qquad X_s = QR_L, \qquad X_p = \frac{R_H}{Q}. \]
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>100 MHz에서 200 Ω 부하를 50 Ω 전원에 맞춰라(직렬 인덕터, 병렬 축전기).</p>
     </div>
-    <p><i>풀이.</i> Q = √3 = 1.732. 직렬 X = 86.6 Ω → L = 86.6/(2π × 10⁸) = 137.8 nH. 병렬 X = 200/1.732 = 115.5 Ω → C = 1/(2π × 10⁸ × 115.5) = 13.8 pF(부하 쪽 병렬). 대역폭은 대략 f/Q로 넓지 않습니다. 비가 크면 Q가 커져 대역이 좁아지므로 여러 단으로 나눕니다.</p>
-    <p><b>1/4 파장 변환기</b>: \(Z_1 = \sqrt{Z_0R_L} = \sqrt{50 \times 200} = 100\) Ω, 길이 λ/4. 설계 주파수에서만 정확하고, 여러 단을 이어(Chebyshev 변환기) 대역을 넓힙니다.</p>
+    <p><i>풀이.</i> Q = √3 = 1.732이다. 직렬 리액턴스는 X = 86.6 Ω이므로 L = 86.6/(2π × 10⁸) = 137.8 nH이다. 병렬 리액턴스는 X = 200/1.732 = 115.5 Ω이므로 C = 1/(2π × 10⁸ × 115.5) = 13.8 pF이고, 이 축전기는 부하 쪽에 병렬로 둔다(그림 1).</p>
+    <p>대역폭은 대략 f/Q로, 넓지 않다. 그런데 임피던스 비가 크면 Q가 커져 대역이 더 좁아지므로, 이때는 정합을 여러 단으로 나눈다. 처음 질문의 셋째 답의 한쪽이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "L형 소자는 아무 쪽에 둬도 된다": 병렬 소자는 큰 저항 쪽이어야 해가 있습니다. (2) "정합은 모든 주파수에서 된다": 리액턴스 소자가 주파수에 따라 바뀌어 대역이 제한됩니다(Bode-Fano 한계).</div>
+    <h3><span class="no">4.1.2</span>1/4 파장 변환기</h3>
+    <p>소자 대신 선로를 쓸 수도 있다. 특성 임피던스 \(Z_1 = \sqrt{Z_0R_L} = \sqrt{50 \times 200} = 100\) Ω인 선로를 λ/4 길이로 넣으면, 입력에서 본 임피던스가 \(Z_1^2/R_L = 50\) Ω이 된다. 처음 질문의 둘째 답이 이것이다. 다만 길이가 정확히 λ/4인 설계 주파수에서만 맞으므로, 넓은 대역에는 여러 단을 잇는다(4.2절).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>L형: Q = √(R_H/R_L − 1), X_s = QR_L, X_p = R_H/Q.</li>
-        <li>예: 200 → 50 Ω @ 100 MHz: 137.8 nH, 13.8 pF.</li>
-        <li>λ/4 변환기 Z₁ = √(Z₀R_L), 단일 주파수.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>정합은 한 번 해 두면 모든 주파수에서 된다고 여기기 쉽다. 리액턴스 소자와 선로의 전기적 길이가 주파수에 따라 바뀌므로 정합은 설계 주파수 근처에서만 성립한다. 게다가 리액턴스 정합으로 얻을 수 있는 대역폭에는 이론적 한계가 있는데, 이것을 Bode-Fano 한계라 한다. 또 L형 소자를 아무 쪽에나 두면 해가 없으므로, 병렬 소자는 반드시 큰 저항 쪽에 둔다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>L형 정합은 Q = √(R_H/R_L − 1), X_s = QR_L, X_p = R_H/Q로 소자를 정한다. 예를 들어 200 Ω을 100 MHz에서 50 Ω에 맞추면 137.8 nH, 13.8 pF이다. λ/4 변환기는 Z₁ = √(Z₀R_L)이며 한 주파수에서 정확하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>1000 Ω과 50 Ω의 L형 Q는?
-          <details><summary>답</summary><p>√19 ≈ 4.36.</p></details>
+          <details><summary>답</summary><p>√19 ≈ 4.36이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>75 Ω 부하를 50 Ω에 λ/4로 맞출 변환기 Z₀는?
-          <details><summary>답</summary><p>약 61.2 Ω.</p></details>
+          <details><summary>답</summary><p>√(50 × 75) ≈ 61.2 Ω이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제의 L형 정합에서 대역폭 어림(Q의 역수)은?
-          <details><summary>답</summary><p>약 100/1.73 ≈ 58 MHz.</p></details>
+          <details><summary>답</summary><p>약 100/1.73 ≈ 58 MHz이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,58 +8,56 @@
 <article class="card q-card" id="text-e19-sparam" data-kind="본문" data-std="전전19-03-01">
   <header class="card-head"><span class="no"></span><h2>2단자쌍 회로망의 S 파라미터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>입사파와 반사파의 비로 S 파라미터를 정의한다.</li>
-        <li>직렬·병렬 임피던스 하나로 된 회로망의 S₁₁, S₂₁을 계산한다.</li>
-        <li>dB로 나타낸 반사 손실과 삽입 손실을 읽는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>반사 계수 (<a href="01-01.html">1.1절</a>), 2포트 회로 (<a href="../3/09-02.html">전전3 9.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">저주파 회로는 단자를 단락하거나 개방해서 전압과 전류를 재면 특성을 알 수 있다. 그런데 GHz에서는 단락선도 인덕터가 되고 개방단도 복사를 해서 그런 측정이 불가능하다. 그렇다면 고주파 부품의 특성은 무엇으로 나타내고 무엇으로 잴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.1.1 2단자쌍 회로망과 S 파라미터. 포트마다 들어가는 파 a와 나오는 파 b를 쓰고, 포트 2를 Z₀로 끝냈을 때 S₁₁ = b₁/a₁은 반사, S₂₁ = b₂/a₁은 전달이다. 50 Ω 계의 직렬 저항 50 Ω이면 S₁₁ = 1/3, S₂₁ = 2/3이고, 입사 전력 가운데 1/9이 반사, 4/9가 전달, 나머지 4/9가 저항에서 소비된다">
+        <defs><marker id="ah-e19sp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="200" y="50" width="120" height="80" class="la"/><rect x="200" y="50" width="120" height="80" class="a" fill="none" stroke-width="2"/>
+        <text x="260" y="86" text-anchor="middle" class="ta">2포트</text><text x="260" y="106" text-anchor="middle" class="s">직렬 R = 50 Ω</text>
+        <g class="k" marker-end="url(#ah-e19sp)"><line x1="90" y1="70" x2="196" y2="70"/><line x1="196" y1="110" x2="90" y2="110"/><line x1="324" y1="70" x2="430" y2="70"/></g>
+        <g class="s"><text x="100" y="62">a₁ 입사</text><text x="100" y="126">b₁ = S₁₁a₁</text><text x="340" y="62">b₂ = S₂₁a₁</text><text x="440" y="114">Z₀ 끝</text></g>
+        <rect x="430" y="96" width="30" height="24" class="k" fill="none"/>
+        <g class="s"><text x="90" y="160">S₁₁ = 1/3 (반사 1/9)</text><text x="260" y="160">S₂₁ = 2/3 (전달 4/9)</text><text x="200" y="182" class="td">나머지 4/9는 저항에서 소비</text></g>
+      </svg>
+      <figcaption>그림 1. 고주파에서는 전압과 전류 대신 각 포트에 들어가고 나오는 파의 비를 재므로, 포트를 Z₀로 끝낸 채 반사와 전달을 그대로 측정할 수 있다(예제 3.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>반사 계수(<a href="01-01.html">1.1절</a>), 2포트 회로(<a href="../3/09-02.html">전전3 9.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>정의</h3>
-    <p>고주파에서는 전압·전류를 직접 재기 어렵고 단락·개방도 만들기 어려워, 각 포트에 들어가는 파 \(a_i\)와 나오는 파 \(b_i\)(Z₀ 정합 기준)로 회로망을 나타냅니다.</p>
+    <p>고주파에서는 전압과 전류를 직접 재기 어렵고, 단락과 개방도 만들기 어렵다. 그래서 각 포트에 들어가는 파 \(a_i\)와 나오는 파 \(b_i\)를 Z₀ 정합을 기준으로 정의하고, 그 비로 회로망을 나타낸다. 처음 질문의 첫째 답이 이것이다.</p>
     \[ \begin{pmatrix} b_1 \\ b_2 \end{pmatrix} = \begin{pmatrix} S_{11} & S_{12} \\ S_{21} & S_{22} \end{pmatrix}\begin{pmatrix} a_1 \\ a_2 \end{pmatrix}. \]
-    <p>\(S_{11}\)은 포트 2를 Z₀로 끝냈을 때 포트 1의 반사 계수, \(S_{21}\)은 포트 1에서 2로의 전달(이득·손실)입니다. 벡터 네트워크 분석기(VNA)가 이 값을 주파수별로 잽니다.</p>
+    <p>여기서 \(S_{11}\)은 포트 2를 Z₀로 끝냈을 때 포트 1의 반사 계수이고, \(S_{21}\)은 포트 1에서 2로의 전달, 곧 이득이나 손실이다(그림 1). 이 값을 주파수별로 재는 장비가 벡터 네트워크 분석기(VNA)이며, 처음 질문의 둘째 답이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
       <p>50 Ω 계에서 두 포트 사이 직렬 저항 R = 50 Ω의 S₁₁, S₂₁과 dB 값은?</p>
     </div>
-    <p><i>풀이.</i> 포트 2가 50 Ω으로 끝나면 포트 1에서 본 임피던스 100 Ω: \(S_{11} = (100 - 50)/(150) = 1/3\)(반사 손실 9.5 dB). \(S_{21} = 2Z_0/(R + 2Z_0) = 2/3\)(−3.5 dB). \(|S_{11}|^2 + |S_{21}|^2 = 0.556 &lt; 1\): 나머지는 저항에서 소비됩니다.</p>
+    <p><i>풀이.</i> 포트 2가 50 Ω으로 끝나면 포트 1에서 본 임피던스는 100 Ω이다. 따라서 \(S_{11} = (100 - 50)/150 = 1/3\)이고, 반사 손실은 9.5 dB이다. 또 \(S_{21} = 2Z_0/(R + 2Z_0) = 2/3\)이므로 −3.5 dB이다.</p>
+    <p>그런데 \(|S_{11}|^2 + |S_{21}|^2 = 0.556\)으로 1보다 작다. 나머지 0.444는 저항에서 열로 소비된 몫이다(그림 1). 즉 반사와 전달의 전력 합으로 회로망 안의 손실을 알 수 있다(3.2절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "S₂₁은 전압 이득과 같다": Z₀ 기준 파의 비로, 기준 임피던스가 바뀌면 값이 달라집니다. (2) "S₁₁이 0 dB면 좋다": 0 dB는 전반사입니다. 반사 손실은 클수록(S₁₁ dB가 작을수록) 좋습니다.</div>
+    <p>또한 S 파라미터는 위상까지 담은 복소수이다. 크기는 dB로, 위상은 도로 나타내며, 예를 들어 길이 l인 정합 선로는 |S₂₁| = 1이고 위상만 −βl이다. 그래서 VNA는 크기뿐 아니라 위상도 재며, 이 위상으로 선로의 전기적 길이와 지연을 알아낸다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>b = S a. S₁₁ 반사, S₂₁ 전달(Z₀ 정합 기준).</li>
-        <li>직렬 R: S₁₁ = R/(R + 2Z₀), S₂₁ = 2Z₀/(R + 2Z₀).</li>
-        <li>반사 손실 −20log|S₁₁|, 삽입 손실 −20log|S₂₁|.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>S₁₁이 0 dB면 좋다고 여기기 쉽다. 0 dB는 |S₁₁| = 1, 곧 전반사이므로 가장 나쁜 정합이다. 반사 손실은 클수록, S₁₁의 dB 값은 작을수록 좋다. 또 S₂₁을 전압 이득과 같다고 생각하기 쉬운데, S₂₁은 Z₀ 기준 파의 비여서 기준 임피던스가 바뀌면 값도 달라진다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>S 파라미터는 b = Sa로 정의하며, S₁₁은 반사, S₂₁은 전달이다(Z₀ 정합 기준). 직렬 R은 S₁₁ = R/(R + 2Z₀), S₂₁ = 2Z₀/(R + 2Z₀)이다. 반사 손실은 −20 log|S₁₁|, 삽입 손실은 −20 log|S₂₁|이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>|S₂₁| = 0.5는 몇 dB인가?
-          <details><summary>답</summary><p>−6 dB.</p></details>
+          <details><summary>답</summary><p>20 log 0.5 = −6 dB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>병렬 저항 R = 25 Ω(접지로)의 S₁₁, S₂₁(Z₀ = 50)은?
-          <details><summary>답</summary><p>부하 25 ∥ 50 = 16.7 Ω: S₁₁ = −0.5, S₂₁ = 1 + S₁₁ = 0.5.</p></details>
+          <details><summary>답</summary><p>부하가 25 ∥ 50 = 16.7 Ω이므로 S₁₁ = −0.5이고, S₂₁ = 1 + S₁₁ = 0.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>정합 증폭기의 S₂₁ = 10 dB, S₁₂ = −30 dB의 의미는?
-          <details><summary>답</summary><p>앞으로 10배 전력 이득, 뒤로는 1/1000만 새어 나가는 좋은 격리.</p></details>
+          <details><summary>답</summary><p>앞으로는 10배 전력 이득이 있고, 뒤로는 1/1000만 새어 나가는 좋은 격리를 뜻한다.</p></details>
         </li>
       </ol>
     </div>
