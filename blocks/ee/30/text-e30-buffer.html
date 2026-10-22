@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e30-buffer" data-kind="본문" data-std="전전30-01-04">
   <header class="card-head"><span class="no"></span><h2>큰 부하 구동: 버퍼 체인</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>큰 정전용량을 작은 게이트로 구동할 때 단계적으로 커지는 인버터 체인을 쓴다.</li>
-        <li>단계당 팬아웃 약 4(FO4)로 단계 수를 정한다.</li>
-        <li>체인 지연을 최소화하는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전파 지연 (<a href="01-02.html">1.2절</a>), 논리적 노력 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">칩 안의 작은 게이트가 칩 밖으로 나가는 출력 핀이나 수천 개의 플립플롭에 퍼지는 클록선을 직접 구동하면, 부하가 너무 커서 엄청나게 느려진다. 그렇다고 아주 큰 인버터 하나를 두면, 그 큰 인버터를 구동하는 앞단이 또 느려진다. 큰 부하는 어떻게 구동해야 가장 빠를까? 그리고 인버터를 몇 단 두어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.4.1 버퍼 체인(개형). 부하가 입력의 1024배이면 인버터를 단마다 4배씩 키워 5단을 두는 것이 최적이고, 단당 지연이 팬아웃에 비례한다고 보면 5단 × 4 = 20으로, 한 단으로 1024를 구동하는 것보다 약 50배 빠르다">
+        <g class="a" fill="none" stroke-width="2"><path d="M40 90 L60 100 L40 110 Z"/><path d="M90 85 L120 100 L90 115 Z"/><path d="M150 78 L190 100 L150 122 Z"/><path d="M220 68 L275 100 L220 132 Z"/><path d="M305 55 L380 100 L305 145 Z"/></g>
+        <path d="M60 100 H90 M120 100 H150 M190 100 H220 M275 100 H305 M380 100 H420" class="k" stroke-width="1.5"/>
+        <rect x="420" y="70" width="60" height="60" class="b" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="40" y="70">1</text><text x="95" y="70">4</text><text x="160" y="66">16</text><text x="236" y="56">64</text><text x="330" y="44">256</text><text x="426" y="104" class="tb">C_L 1024</text><text x="40" y="176" class="td">5단 × 4 = 20 대 1단 × 1024</text></g>
+      </svg>
+      <figcaption>그림 1. 인버터를 단마다 일정한 비율로 키워 부하까지 이어 가면 각 단이 감당하는 부하 비가 같아져 전체 지연이 가장 작다(예제 1.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전파 지연(<a href="01-02.html">1.2절</a>), 논리적 노력(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>조금씩 키우기</h3>
-    <p>입력 정전용량 C_in인 게이트로 C_L을 바로 구동하면 매우 느립니다. 인버터를 N단 두고 단마다 f배씩 키우면 \(f^N = C_L/C_{in}\), 총 지연은 N에 단당 지연을 곱한 값이며, f ≈ 4 근처에서 최소가 됩니다(자기 부하 포함, 확인 필요: 공정마다 3~4).</p>
+    <p>입력 정전용량이 C_in인 게이트로 C_L을 바로 구동하면 매우 느리다. 그래서 인버터를 N단 두고 단마다 f배씩 키운다. 그러면 \(f^N = C_L/C_{in}\)이고, 총 지연은 N에 단당 지연을 곱한 값이다(그림 1). 처음 질문의 첫째 답이 이 버퍼 체인이다.</p>
+    <p>그리고 f ≈ 4 근처에서 총 지연이 가장 작아진다(자기 부하 포함, 공정마다 3~4이므로 확인 필요). 즉 단 수는 N = log₄(C_L/C_in)으로 어림하며, 처음 질문의 둘째 답이 이 식이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
       <p>C_L/C_in = 1024의 최적 단 수는(f = 4)? 단 하나로 구동하는 것과 비교하면?</p>
     </div>
-    <p><i>풀이.</i> N = log₄1024 = 5단. 단당 지연이 팬아웃에 비례한다고 보면 5단 × 4 = 20 대 1단 × 1024로 약 50배 빠릅니다(고유 지연 무시). 칩 출력 패드와 클록 버퍼가 이렇게 설계됩니다.</p>
+    <p><i>풀이.</i> N = log₄1024 = 5단이다. 그리고 단당 지연이 팬아웃에 비례한다고 보면 5단 × 4 = 20 대 1단 × 1024이므로, 약 50배 빠르다(고유 지연 무시). 그래서 칩 출력 패드와 클록 버퍼가 이렇게 설계된다.</p>
+    <p>즉 각 단은 자기 입력보다 4배 큰 부하만 구동하므로, 모든 단이 같은 짧은 지연을 가진다. 한편 단을 하나 더하면 지연이 한 단만큼 늘지만, 각 단의 부하 비가 줄어 그 이상을 아낀다.</p>
+    <p>그런데 f가 최적에서 조금 벗어나도 지연은 크게 늘지 않는다. 그러므로 실제 설계에서는 면적과 전력을 줄이려고 f를 4보다 조금 크게 잡기도 한다.</p>
+    <p>그리고 클록 트리는 이 원리를 나무 모양으로 펼친 것이다. 따라서 칩 전체에 클록을 고르게 나눠 주려면, 각 가지의 버퍼 크기와 단 수를 맞춰 도착 시각의 차이(스큐)를 줄인다(3.2절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "인버터를 더하면 늘 느려진다": 큰 부하에서는 오히려 빨라집니다. (2) "단 수는 많을수록 좋다": f가 너무 작으면 단 고유 지연이 쌓입니다.</div>
+    <p>예를 들어 칩 밖의 회로 기판 배선은 수 pF로, 칩 안 게이트 입력의 수천 배이다. 그러므로 출력 패드 앞에는 대개 여러 단의 점점 커지는 버퍼가 놓인다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>f^N = C_L/C_in, f ≈ 4.</li>
-        <li>N = log₄(C_L/C_in).</li>
-        <li>예: 1024 → 5단.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>인버터를 더하면 늘 느려진다고 여기기 쉽다. 큰 부하에서는 오히려 빨라진다. 또 단 수는 많을수록 좋다고 생각하기 쉬운데, f가 너무 작으면 단마다의 고유 지연이 쌓인다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>버퍼 체인은 f^N = C_L/C_in으로 키우며, f ≈ 4가 좋다. 단 수는 N = log₄(C_L/C_in)이다. 예제의 1024배 부하는 5단이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>C_L/C_in = 64의 단 수는?
-          <details><summary>답</summary><p>3단.</p></details>
+          <details><summary>답</summary><p>3단이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>단 수가 짝수여야 하는 경우는?
-          <details><summary>답</summary><p>출력 논리 반전이 없어야 할 때(필요하면 f를 조정).</p></details>
+          <details><summary>답</summary><p>출력 논리 반전이 없어야 할 때(필요하면 f를 조정)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>f = e가 최적인 경우는?
-          <details><summary>답</summary><p>자기 부하(고유 지연)를 무시할 때.</p></details>
+          <details><summary>답</summary><p>자기 부하(고유 지연)를 무시할 때이다.</p></details>
         </li>
       </ol>
     </div>

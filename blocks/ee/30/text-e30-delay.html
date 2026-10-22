@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e30-delay" data-kind="본문" data-std="전전30-01-02">
   <header class="card-head"><span class="no"></span><h2>인버터 전파 지연의 RC 추정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>켜진 트랜지스터를 등가 저항 R_eq로, 부하를 C_L로 본 RC 모형을 세운다.</li>
-        <li>50% 지연 \(t_p = 0.69R_{eq}C_L\)을 계산한다.</li>
-        <li>크기를 키우거나 부하를 줄여 지연을 줄이는 절충을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>RC 회로의 과도 응답 (<a href="../3/07.html">전전3 7단원</a>), VTC (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">CPU의 클록 주파수는 결국 게이트 하나가 출력을 바꾸는 데 걸리는 시간이 쌓여 정해진다. 인버터 하나의 지연은 수십 ps에 불과하지만, 그 값이 무엇으로 정해지는지 알아야 회로를 빠르게 만들 수 있다. 인버터의 지연은 어떻게 어림할까? 그리고 트랜지스터를 크게 만들면 언제나 빨라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 인버터 전파 지연(개형). nMOS 등가 저항 10 kΩ, pMOS 20 kΩ, 부하 10 fF이면 하강 지연 69 ps, 상승 지연 138 ps, 평균 103.5 ps이고, 폭을 2배로 하면 자기 부하가 늘어 부하 12 fF에서 62.1 ps가 된다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 40 H120 C160 40 190 150 300 168 H450" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 105 H460" class="k dsh"/>
+        <path d="M120 30 V170 M168 30 V170" class="d dsh"/>
+        <g class="s"><text x="86" y="100">V_DD/2</text><text x="124" y="186">t_pHL 69 ps</text><text x="200" y="60" class="ta">0.69 R_eq C_L</text><text x="300" y="130">R_eq,n 10 kΩ, C_L 10 fF</text><text x="300" y="154" class="td">평균 t_p 103.5 ps</text></g>
+      </svg>
+      <figcaption>그림 1. 트랜지스터를 등가 저항으로 보면 출력 전압은 RC 지수 곡선으로 떨어지고, 절반에 이르는 시간이 0.69 R_eq C_L이다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>RC 회로의 과도 응답(<a href="../3/07.html">전전3 7단원</a>), VTC(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>RC 모형</h3>
-    <p>출력이 내려갈 때 nMOS가 부하 축전기 C_L을 방전합니다. nMOS를 등가 저항 R_eq로 보면 출력이 V_DD/2에 이르는 시간은 \(\ln2\cdot R_{eq}C_L = 0.69R_{eq}C_L\)입니다. 상승은 pMOS로 같은 계산을 하고, \(t_p = (t_{pHL} + t_{pLH})/2\).</p>
+    <p>출력이 내려갈 때는 nMOS가 부하 축전기 C_L을 방전한다. 그래서 nMOS를 등가 저항 R_eq로 보면, 출력이 V_DD/2에 이르는 시간은 \(\ln2\cdot R_{eq}C_L = 0.69R_{eq}C_L\)이다(그림 1). 처음 질문의 첫째 답이 이 식이다.</p>
+    <p>그리고 상승은 pMOS로 같은 계산을 하며, 전파 지연은 \(t_p = (t_{pHL} + t_{pLH})/2\)이다. 즉 지연은 구동 트랜지스터의 저항과 출력에 달린 정전용량의 곱으로 정해진다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>R_eq,n = 10 kΩ, R_eq,p = 20 kΩ, C_L = 10 fF. t_pHL, t_pLH, t_p는? 트랜지스터 폭을 모두 2배로 하면(자기 부하 2 fF 포함, 외부 8 fF)?</p>
     </div>
-    <p><i>풀이.</i> 69 ps, 138 ps, 평균 103.5 ps. 폭 2배면 R_eq가 절반, 자기 부하는 4 fF로 늘어 C_L = 12 fF: t_p = 0.69 × (5 + 10)/2 × 12 = 62.1 ps. 외부 부하가 자기 부하보다 클 때만 크기를 키우는 효과가 크고, 그렇지 않으면 이득이 줄어듭니다(2.2절 논리적 노력).</p>
+    <p><i>풀이.</i> t_pHL = 69 ps, t_pLH = 138 ps이고, 평균은 103.5 ps이다. 그리고 폭을 2배로 하면 R_eq가 절반이 되지만, 자기 부하가 4 fF로 늘어 C_L = 12 fF이다. 그러면 t_p = 0.69 × (5 + 10)/2 × 12 = 62.1 ps이다.</p>
+    <p>따라서 외부 부하가 자기 부하보다 클 때만 크기를 키우는 효과가 크고, 그렇지 않으면 이득이 준다(2.2절 논리적 노력). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>즉 트랜지스터를 키우면 자기 출력은 빨라지지만, 그 게이트를 구동하는 앞단에는 더 큰 부하가 된다. 그러므로 회로 전체의 지연은 한 게이트만이 아니라 경로 전체의 크기 배분으로 따져야 한다.</p>
+    <p>한편 실제 부하에는 다음 게이트의 입력 정전용량뿐 아니라 배선 정전용량도 들어간다. 그래서 미세 공정에서는 긴 배선의 정전용량과 저항이 지연을 크게 좌우한다.</p>
+    <p>그리고 R_eq는 전원 전압과 온도에 따라서도 바뀐다. 따라서 칩의 타이밍은 가장 느린 조건(낮은 전압, 높은 온도)에서도 맞도록 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "R_eq는 선형 영역 저항": 실제로는 포화와 선형을 지나는 동안의 평균값입니다. (2) "트랜지스터를 키우면 언제나 빨라진다": 앞단 부하가 늘어 전체 경로는 느려질 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>R_eq는 선형 영역의 저항이라고 여기기 쉽다. 실제로는 포화와 선형 영역을 지나는 동안의 평균값이다. 또 트랜지스터를 키우면 언제나 빨라진다고 생각하기 쉬운데, 앞단 부하가 늘어 전체 경로는 느려질 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>t_p = 0.69 R_eq C_L.</li>
-        <li>예: 10 kΩ, 20 kΩ, 10 fF → 103.5 ps.</li>
-        <li>크기 증가는 자기 부하·앞단 부하와 절충.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전파 지연은 t_p = 0.69 R_eq C_L이다. 예제의 10 kΩ, 20 kΩ, 10 fF는 103.5 ps이다. 크기를 키우는 일은 자기 부하와 앞단 부하 사이의 절충이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>R_eq 5 kΩ, C_L 20 fF의 t_pHL은?
-          <details><summary>답</summary><p>69 ps.</p></details>
+          <details><summary>답</summary><p>69 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>pMOS 폭을 2배로 해 R_eq,p = 10 kΩ로 하면(부하 같음) 예제 t_p는?
-          <details><summary>답</summary><p>69 ps.</p></details>
+          <details><summary>답</summary><p>69 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>V_DD를 낮추면 R_eq와 지연은?
-          <details><summary>답</summary><p>구동 전류가 줄어 R_eq와 지연이 커집니다.</p></details>
+          <details><summary>답</summary><p>구동 전류가 줄어 R_eq와 지연이 커진다.</p></details>
         </li>
       </ol>
     </div>

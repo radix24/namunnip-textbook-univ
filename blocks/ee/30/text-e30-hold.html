@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e30-hold" data-kind="본문" data-std="전전30-03-02">
   <header class="card-head"><span class="no"></span><h2>홀드 제약과 클록 스큐</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>홀드 조건 \(t_{cq,min} + t_{logic,min} \ge t_{hold} + t_{skew}\)를 쓴다.</li>
-        <li>홀드 위반을 찾고 지연 버퍼로 고친다.</li>
-        <li>셋업 위반과 달리 클록을 늦춰도 홀드 위반은 고쳐지지 않음을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>셋업 제약 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">칩을 다 만들고 시험해 보니 어느 클록 주파수에서도 특정 플립플롭이 엉뚱한 값을 잡았다. 클록을 아무리 늦춰도 고쳐지지 않았다. 셋업 위반이라면 클록을 늦추면 풀렸을 텐데, 이 문제는 왜 사라지지 않을까? 그리고 설계 단계에서 어떻게 막아야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.2.1 홀드 위반(개형). t_cq,min 50 ps와 최소 논리 지연 20 ps로 데이터가 70 ps에 도착하지만, 홀드 30 ps에 받는 쪽 클록 스큐 50 ps를 더한 요구는 80 ps라 10 ps 위반이고, 경로에 10 ps 이상의 지연 버퍼를 넣어 고친다">
+        <line x1="60" y1="100" x2="500" y2="100" class="ax"/>
+        <rect x="60" y="80" width="100" height="20" class="k" fill="none" stroke-width="2"/>
+        <rect x="160" y="80" width="40" height="20" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M220 40 V160" class="d dsh"/>
+        <path d="M60 40 V160" class="k dsh"/>
+        <g class="s"><text x="66" y="76">t_cq 50</text><text x="164" y="76" class="ta">논리 20</text><text x="150" y="130">도착 70 ps</text><text x="226" y="60" class="td">요구 80 ps (홀드 30 + 스큐 50)</text><text x="226" y="150" class="td">10 ps 위반 → 지연 버퍼</text></g>
+      </svg>
+      <figcaption>그림 1. 받는 쪽 클록이 늦을수록 새 데이터가 지켜야 할 도착 시각이 뒤로 밀리며, 빠른 경로가 그보다 먼저 오면 홀드 위반이다(예제 3.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>셋업 제약(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>너무 빨라도 문제</h3>
-    <p>새 데이터가 너무 빨리 도착해 같은 클록 가장자리의 앞 값을 덮으면 홀드 위반입니다. 받는 플립플롭 클록이 스큐만큼 늦게 오면 더 불리합니다. 주파수와 무관해 칩이 만들어진 뒤에는 고칠 수 없으므로 설계 때 반드시 확인합니다.</p>
+    <p>새 데이터가 너무 빨리 도착해 같은 클록 가장자리의 앞 값을 덮으면 홀드 위반이다. 그리고 받는 플립플롭의 클록이 스큐만큼 늦게 오면 더 불리하다(그림 1).</p>
+    <p>그런데 홀드 조건 \(t_{cq,min} + t_{logic,min} \ge t_{hold} + t_{skew}\)에는 클록 주기가 없다. 즉 같은 가장자리에서 출발한 데이터와 그 가장자리의 포획 사이의 경주이므로, 주파수를 바꿔도 결과가 같다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>따라서 칩이 만들어진 뒤에는 고칠 수 없으므로, 설계 때 반드시 확인한다. 처음 질문의 둘째 답이 이 설계 단계의 검증이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>t_cq,min 50 ps, 최소 논리 지연 20 ps, t_hold 30 ps, 받는 쪽 클록이 50 ps 늦는다(스큐). 홀드 여유와 고치는 방법은?</p>
     </div>
-    <p><i>풀이.</i> 도착 70 ps, 요구 80 ps → 10 ps 위반. 경로에 지연 버퍼(10 ps 이상)를 넣습니다. 클록 주파수를 낮춰도 해결되지 않는다는 점이 셋업 위반과 다릅니다.</p>
+    <p><i>풀이.</i> 도착은 50 + 20 = 70 ps이고, 요구는 30 + 50 = 80 ps이므로 10 ps 위반이다. 그래서 경로에 지연 버퍼(10 ps 이상)를 넣는다. 한편 클록 주파수를 낮춰도 해결되지 않는다는 점이 셋업 위반과 다르다.</p>
+    <p>즉 홀드를 고치려면 빠른 경로를 일부러 늦춰야 한다. 그런데 버퍼를 넣으면 같은 경로의 최대 지연도 늘 수 있으므로, 셋업 여유를 해치지 않는지 함께 확인한다.</p>
+    <p>그리고 클록 스큐는 칩의 위치와 온도, 공정 편차에 따라 바뀐다. 그러므로 홀드 검사는 클록이 가장 크게 어긋나고 데이터가 가장 빠른 조건, 곧 빠른 공정과 높은 전압에서 한다.</p>
+    <p>한편 실제 설계 도구는 배치와 배선이 끝난 뒤 홀드 위반 경로에 버퍼를 자동으로 넣는다. 따라서 설계자는 남은 위반이 없는지 마지막 타이밍 보고서로 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "홀드 위반은 클록을 늦추면 고쳐진다": 주파수와 무관합니다. (2) "스큐는 늘 나쁘다": 셋업에는 도움이 될 수도 있습니다(시간 빌림).</div>
+    <p>즉 셋업 검사는 가장 느린 경로를, 홀드 검사는 가장 빠른 경로를 찾는 일이다. 그래서 타이밍 도구는 경로마다 최대 지연과 최소 지연을 따로 계산해 두 검사에 각각 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>t_cq,min + t_logic,min ≥ t_hold + t_skew.</li>
-        <li>위반 → 지연 버퍼.</li>
-        <li>주파수와 무관.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>홀드 위반은 클록을 늦추면 고쳐진다고 여기기 쉽다. 주파수와 무관하다. 또 스큐는 늘 나쁘다고 생각하기 쉬운데, 셋업에는 도움이 될 수도 있다(시간 빌림).</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>홀드 조건은 t_cq,min + t_logic,min ≥ t_hold + t_skew이다. 위반은 지연 버퍼로 고친다. 홀드는 주파수와 무관하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>스큐 0이면 예제의 여유는?
-          <details><summary>답</summary><p>+40 ps.</p></details>
+          <details><summary>답</summary><p>+40 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>스큐 100 ps면 필요한 버퍼 지연은?
-          <details><summary>답</summary><p>60 ps.</p></details>
+          <details><summary>답</summary><p>60 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>시프트 레지스터에서 홀드 위반이 잘 생기는 이유는?
-          <details><summary>답</summary><p>플립플롭 사이 논리가 없어 최소 지연이 매우 짧기 때문입니다.</p></details>
+          <details><summary>답</summary><p>플립플롭 사이 논리가 없어 최소 지연이 매우 짧기 때문이다.</p></details>
         </li>
       </ol>
     </div>

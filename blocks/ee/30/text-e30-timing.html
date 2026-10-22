@@ -8,57 +8,59 @@
 <article class="card q-card" id="text-e30-timing" data-kind="본문" data-std="전전30-03-01">
   <header class="card-head"><span class="no"></span><h2>셋업·홀드 제약과 최대 클록 주파수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>셋업 제약 \(T \ge t_{cq} + t_{logic,max} + t_{setup} - t_{skew}\)를 쓴다.</li>
-        <li>홀드 제약 \(t_{cq} + t_{logic,min} \ge t_{hold} + t_{skew}\)를 쓴다.</li>
-        <li>클록 스큐가 두 제약에 반대로 작용함을 계산으로 보인다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>플립플롭 (<a href="../4/05.html">전전4 5단원</a>), 게이트 지연 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">동기 회로에서는 플립플롭이 클록마다 값을 내보내고, 그 값이 논리를 지나 다음 플립플롭에 저장된다. 클록을 너무 빠르게 하면 데이터가 제때 도착하지 못한다. 클록 주기는 얼마까지 줄일 수 있을까? 그리고 데이터가 너무 일찍 도착해도 문제가 되는 이유는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.1.1 셋업과 홀드 제약(개형). t_cq 50 ps, 논리 최대 400 ps, 셋업 30 ps이면 스큐 0에서 최소 주기 480 ps(2.08 GHz)이고, 포획 클록이 20 ps 늦으면 460 ps(2.17 GHz)로 줄지만, 홀드 여유는 70 ps에서 50 ps로 준다">
+        <line x1="60" y1="60" x2="500" y2="60" class="ax"/>
+        <rect x="60" y="44" width="40" height="16" class="k" fill="none" stroke-width="2"/>
+        <rect x="100" y="44" width="320" height="16" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="420" y="44" width="24" height="16" class="d" fill="none" stroke-width="2"/>
+        <path d="M60 30 V170 M444 30 V170" class="k dsh"/>
+        <g class="s"><text x="62" y="80">t_cq 50</text><text x="200" y="80" class="ta">논리 최대 400</text><text x="400" y="80" class="td">셋업 30</text><text x="200" y="26">T ≥ 480 ps (2.08 GHz)</text></g>
+        <line x1="60" y1="140" x2="500" y2="140" class="ax"/>
+        <rect x="60" y="124" width="40" height="16" class="k" fill="none" stroke-width="2"/>
+        <rect x="100" y="124" width="30" height="16" class="b" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="140" y="136" class="tb">최소 30: 홀드 80 ≥ 10(+스큐)</text></g>
+      </svg>
+      <figcaption>그림 1. 가장 느린 경로는 다음 가장자리 전 셋업 시간 안에 도착해야 하고, 가장 빠른 경로는 같은 가장자리의 홀드 시간이 지난 뒤에 도착해야 한다(예제 3.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>플립플롭(<a href="../4/05.html">전전4 5단원</a>), 게이트 지연(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>두 제약</h3>
-    <p>발사 플립플롭에서 나간 데이터가 논리를 지나 포획 플립플롭에 다음 클록 가장자리보다 t_setup 먼저 도착해야 합니다(셋업). 동시에 같은 가장자리에서 새로 나간 데이터가 너무 빨리 도착해 이전 값을 망치면 안 됩니다(홀드). 포획 클록이 t_skew만큼 늦게 오면</p>
-    \[ T \ge t_{cq} + t_{logic,max} + t_{setup} - t_{skew}, \qquad t_{cq} + t_{logic,min} \ge t_{hold} + t_{skew}. \]
+    <p>발사 플립플롭에서 나간 데이터는 논리를 지나, 포획 플립플롭에 다음 클록 가장자리보다 t_setup 먼저 도착해야 한다. 이것이 셋업 제약이며, 처음 질문의 첫째 답이다(그림 1).</p>
+    <p>그런데 같은 가장자리에서 새로 나간 데이터가 너무 빨리 도착하면, 포획 플립플롭이 이전 값을 잡는 중에 값을 망친다. 이것이 홀드 제약이며, 처음 질문의 둘째 답이다. 그리고 포획 클록이 t_skew만큼 늦게 오면 두 제약은 아래와 같다.</p>
+    <p>\[ T \ge t_{cq} + t_{logic,max} + t_{setup} - t_{skew}, \qquad t_{cq} + t_{logic,min} \ge t_{hold} + t_{skew}. \]</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
       <p>t_cq = 50 ps, 논리 최대 400 ps, 최소 30 ps, t_setup = 30 ps, t_hold = 10 ps. 스큐 0과 +20 ps(포획 늦음)의 최대 주파수와 홀드 여유는?</p>
     </div>
-    <p><i>풀이.</i> 스큐 0: T ≥ 480 ps → 2.08 GHz, 홀드 80 ≥ 10(여유 70 ps). 스큐 +20: T ≥ 460 ps → 2.17 GHz, 홀드 80 ≥ 30(여유 50 ps). 양의 스큐는 셋업에 유리하고 홀드에 불리합니다. 셋업 위반은 클록을 늦춰 고칠 수 있지만, 홀드 위반은 주파수와 무관해 지연 소자를 넣어야 합니다.</p>
+    <p><i>풀이.</i> 스큐 0이면 T ≥ 480 ps이므로 2.08 GHz이고, 홀드는 80 ≥ 10으로 여유가 70 ps이다. 그리고 스큐 +20이면 T ≥ 460 ps로 2.17 GHz이지만, 홀드는 80 ≥ 30으로 여유가 50 ps이다. 즉 양의 스큐는 셋업에 유리하고 홀드에 불리하다.</p>
+    <p>따라서 셋업 위반은 클록을 늦춰 고칠 수 있지만, 홀드 위반은 주파수와 무관해 지연 소자를 넣어야 한다.</p>
+    <p>그래서 칩 설계의 타이밍 검증은 수백만 개 경로마다 두 식을 모두 확인한다. 즉 정적 타이밍 분석 도구가 가장 느린 경로로 최대 주파수를, 가장 빠른 경로로 홀드 위반을 찾는다.</p>
+    <p>한편 셋업 여유가 가장 작은 경로를 임계 경로라 한다. 그러므로 칩을 더 빠르게 하려면 임계 경로의 논리를 줄이거나 게이트 크기를 다시 정한다(2.2절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "홀드 위반도 클록을 낮추면 해결": 홀드 식에는 T가 없습니다. (2) "스큐는 늘 해롭다": 일부러 스큐를 주어 느린 경로를 돕는 설계도 있습니다(유용한 스큐).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>홀드 위반도 클록을 낮추면 해결된다고 여기기 쉽다. 홀드 식에는 T가 없다. 또 스큐는 늘 해롭다고 생각하기 쉬운데, 일부러 스큐를 주어 느린 경로를 돕는 설계도 있다(유용한 스큐).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>셋업: T ≥ t_cq + t_max + t_setup − skew.</li>
-        <li>홀드: t_cq + t_min ≥ t_hold + skew(주파수 무관).</li>
-        <li>예: 480 ps(2.08 GHz) → 스큐 20 ps면 460 ps.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>셋업 제약은 T ≥ t_cq + t_max + t_setup − skew이다. 홀드 제약은 t_cq + t_min ≥ t_hold + skew이며, 주파수와 무관하다. 예제의 480 ps(2.08 GHz)는 스큐 20 ps에서 460 ps가 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>t_cq 40, 논리 500, setup 20, 스큐 0의 최대 주파수는?
-          <details><summary>답</summary><p>560 ps → 약 1.79 GHz.</p></details>
+          <details><summary>답</summary><p>560 ps → 약 1.79 GHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 스큐 −30 ps(포획이 빠름)면 최소 주기는?
-          <details><summary>답</summary><p>510 ps.</p></details>
+          <details><summary>답</summary><p>510 ps이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>논리 최소 지연이 0인 시프트 레지스터의 홀드 조건은(스큐 0)?
-          <details><summary>답</summary><p>t_cq ≥ t_hold.</p></details>
+          <details><summary>답</summary><p>t_cq ≥ t_hold이다.</p></details>
         </li>
       </ol>
     </div>

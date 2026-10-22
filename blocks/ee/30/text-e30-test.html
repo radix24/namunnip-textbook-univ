@@ -8,57 +8,53 @@
 <article class="card q-card" id="text-e30-test" data-kind="본문" data-std="전전30-06-02">
   <header class="card-head"><span class="no"></span><h2>고착 고장 모델과 테스트 벡터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>신호선이 0 또는 1에 붙은 고착 고장(SA0, SA1) 모델을 안다.</li>
-        <li>고장을 활성화하고 출력까지 전파하는 테스트 벡터를 만든다.</li>
-        <li>고장 검출률과 최소 테스트 집합을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>조합 논리 (<a href="../4/03.html">전전4 3단원</a>), 설계 흐름 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">공장에서 갓 나온 칩 가운데 일부는 먼지나 공정 결함 때문에 어딘가가 망가져 있다. 칩마다 가능한 입력을 다 넣어 보면 확실하겠지만, 입력이 수백 개이면 우주의 나이만큼 걸린다. 적은 수의 시험 입력으로 결함을 찾으려면 무엇을 가정하고 어떤 입력을 골라야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.2.1 고착 고장 시험(개형). 2입력 AND의 단일 고착 고장 6개(A, B, Y 각 SA0, SA1)는 입력 11로 세 SA0 고장을, 01로 A SA1과 Y SA1을, 10으로 B SA1을 잡아 세 벡터 {11, 01, 10}으로 모두 검출한다">
+        <path d="M120 50 H170 A50 50 0 0 1 170 150 H120 Z" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M60 75 H120 M60 125 H120 M220 100 H290" class="k" stroke-width="2"/>
+        <circle cx="90" cy="75" r="5" class="fd"/>
+        <g class="s"><text x="40" y="70">A</text><text x="40" y="130">B</text><text x="296" y="104">Y</text><text x="80" y="62" class="td">SA0/SA1</text></g>
+        <g class="s"><text x="340" y="60" class="ta">11 → SA0 셋</text><text x="340" y="86">01 → A SA1, Y SA1</text><text x="340" y="112">10 → B SA1</text><text x="340" y="146" class="td">{11, 01, 10}, 검출률 100%</text></g>
+      </svg>
+      <figcaption>그림 1. 고장을 신호선이 0이나 1에 붙어 버린 것으로 보고, 그 선에 반대 값을 주면서 차이가 출력까지 보이는 입력을 고르면 적은 벡터로 모든 고장을 잡는다(예제 6.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>조합 논리(<a href="../4/03.html">전전4 3단원</a>), 설계 흐름(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>활성화와 전파</h3>
-    <p>제조 결함을 신호선이 0(SA0) 또는 1(SA1)에 고정된 것으로 모델링합니다. 고장을 찾으려면 그 선에 고장 값과 반대 값을 주고(활성화), 그 차이가 출력까지 보이도록 나머지 입력을 정합니다(전파).</p>
+    <p>제조 결함을 신호선이 0(SA0) 또는 1(SA1)에 고정된 것으로 모델링한다. 처음 질문의 첫째 답이 이 고착 고장 모델이다. 그러면 결함의 종류가 무수히 많아도, 시험할 고장은 신호선 수의 두 배로 줄어든다.</p>
+    <p>그리고 고장을 찾으려면 그 선에 고장 값과 반대 값을 주고(활성화), 그 차이가 출력까지 보이도록 나머지 입력을 정한다(전파). 처음 질문의 둘째 답이 이 두 조건이다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
       <p>2입력 AND Y = AB의 단일 고착 고장(A, B, Y 각 SA0/SA1, 6개)을 모두 검출하는 최소 테스트 집합은?</p>
     </div>
-    <p><i>풀이.</i> AB = 11: A SA0, B SA0, Y SA0 검출(정상 1, 고장 0). AB = 01: A SA1 검출(정상 0, 고장 1), Y SA1도 검출. AB = 10: B SA1 검출. {11, 01, 10} 세 벡터로 6개 모두(검출률 100%). 00은 Y SA1만 잡아 필요 없습니다. n입력 AND는 n + 1개 벡터로 충분하며, 전수 시험(2ⁿ)보다 훨씬 적습니다.</p>
-    <p>순차 회로는 내부 상태를 정하기 어려워, 플립플롭을 시프트 레지스터로 잇는 스캔 체인(전전32 5.1절)으로 조합 회로 문제로 바꿉니다.</p>
+    <p><i>풀이.</i> AB = 11은 A SA0, B SA0, Y SA0을 잡는다(정상 1, 고장 0). 그리고 AB = 01은 A SA1을 잡고(정상 0, 고장 1), Y SA1도 잡는다. AB = 10은 B SA1을 잡는다. 따라서 {11, 01, 10} 세 벡터로 6개를 모두 검출한다(검출률 100%). 한편 00은 Y SA1만 잡아 필요 없다.</p>
+    <p>즉 n입력 AND는 n + 1개 벡터로 충분하며, 전수 시험(2ⁿ)보다 훨씬 적다. 그래서 실제 칩의 시험 벡터는 자동 시험 패턴 생성(ATPG) 도구가 고장 모델을 바탕으로 만든다.</p>
+    <p>그런데 순차 회로는 내부 상태를 정하기 어렵다. 그러므로 플립플롭을 시프트 레지스터로 잇는 스캔 체인(전전32 5.1절)으로 조합 회로 문제로 바꾼다.</p>
+    <p>그리고 시험은 칩을 고객에게 보내기 전 마지막 관문이다. 따라서 검출률이 조금만 낮아도, 많이 팔리는 칩에서는 불량품 수가 크게 늘어난다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "기능 시험을 하면 제조 결함도 잡힌다": 기능 벡터는 고장 검출률이 낮을 수 있어 고장 모델 기반 벡터(ATPG)를 씁니다. (2) "고착 고장이 실제 결함의 전부": 지연 고장, 브리지 고장 모델도 함께 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>기능 시험을 하면 제조 결함도 잡힌다고 여기기 쉽다. 기능 벡터는 고장 검출률이 낮을 수 있어, 고장 모델 기반 벡터(ATPG)를 쓴다. 또 고착 고장이 실제 결함의 전부라고 생각하기 쉬운데, 지연 고장과 브리지 고장 모델도 함께 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>SA0/SA1, 활성화 + 전파.</li>
-        <li>예: AND2는 {11, 01, 10}로 6개 고장 모두.</li>
-        <li>순차 회로는 스캔 체인으로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>고착 고장은 SA0과 SA1이며, 활성화와 전파로 검출한다. 예제의 AND2는 {11, 01, 10}으로 6개 고장을 모두 잡는다. 순차 회로는 스캔 체인으로 시험한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>OR2 Y = A + B의 Y SA1을 잡는 벡터는?
-          <details><summary>답</summary><p>00.</p></details>
+          <details><summary>답</summary><p>00이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>OR2의 최소 테스트 집합은?
-          <details><summary>답</summary><p>{00, 10, 01}.</p></details>
+          <details><summary>답</summary><p>{00, 10, 01}이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>고장 1000개 중 970개를 검출하면 검출률은?
-          <details><summary>답</summary><p>97%.</p></details>
+          <details><summary>답</summary><p>97%이다.</p></details>
         </li>
       </ol>
     </div>

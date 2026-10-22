@@ -8,59 +8,58 @@
 <article class="card q-card" id="text-e30-gate" data-kind="본문" data-std="전전30-02-01">
   <header class="card-head"><span class="no"></span><h2>정적 CMOS 게이트 설계와 크기 결정</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>풀다운(nMOS)과 풀업(pMOS)을 쌍대 구조로 연결해 NAND, NOR, 복합 게이트를 만든다.</li>
-        <li>기준 인버터(n 1, p 2)와 같은 구동 세기가 되도록 직렬 소자의 폭을 정한다.</li>
-        <li>NAND가 NOR보다 선호되는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>불 대수 (<a href="../4/02.html">전전4 2단원</a>), 등가 저항 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">NAND와 NOR는 진리표로는 쉽게 쓰지만, 트랜지스터로 만들면 어느 것은 직렬, 어느 것은 병렬로 이어진다. 정적 CMOS 게이트의 트랜지스터는 어떤 규칙으로 연결할까? 그리고 직렬로 이은 트랜지스터는 얼마나 키워야 인버터만큼 빨라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 NAND2와 NOR2의 크기(개형). 기준 인버터를 nMOS 폭 1, pMOS 폭 2로 두면 NAND2는 직렬 nMOS 각 2, 병렬 pMOS 각 2로 입력 정전용량이 4이고, NOR2는 병렬 nMOS 각 1, 직렬 pMOS 각 4로 입력 정전용량이 5이다">
+        <g class="b" fill="none" stroke-width="2"><rect x="60" y="30" width="40" height="30"/><rect x="120" y="30" width="40" height="30"/></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="90" y="100" width="40" height="30"/><rect x="90" y="140" width="40" height="30"/></g>
+        <g class="s"><text x="66" y="50">p 2</text><text x="126" y="50">p 2</text><text x="96" y="120" class="ta">n 2</text><text x="96" y="160" class="ta">n 2</text><text x="60" y="190">NAND2 입력 4</text></g>
+        <g class="b" fill="none" stroke-width="2"><rect x="330" y="20" width="40" height="30"/><rect x="330" y="58" width="40" height="30"/></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="300" y="130" width="40" height="30"/><rect x="360" y="130" width="40" height="30"/></g>
+        <g class="s"><text x="336" y="40" class="tb">p 4</text><text x="336" y="78" class="tb">p 4</text><text x="306" y="150">n 1</text><text x="366" y="150">n 1</text><text x="300" y="190" class="td">NOR2 입력 5</text></g>
+      </svg>
+      <figcaption>그림 1. 직렬로 이은 트랜지스터는 저항이 더해지므로 그만큼 넓혀 최악의 경로 저항을 기준 인버터와 같게 맞춘다(예제 2.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>불 대수(<a href="../4/02.html">전전4 2단원</a>), 등가 저항(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>쌍대 구조</h3>
-    <p>출력이 0이어야 할 조건을 nMOS로 만듭니다(직렬 = AND, 병렬 = OR). pMOS는 그 쌍대(직렬 ↔ 병렬)로 연결합니다. 예: \(Y = \overline{AB}\)(NAND2)는 nMOS 두 개 직렬, pMOS 두 개 병렬.</p>
+    <p>출력이 0이어야 할 조건을 nMOS로 만든다. 즉 직렬은 AND, 병렬은 OR이다. 그리고 pMOS는 그 쌍대, 곧 직렬과 병렬을 맞바꿔 연결한다. 처음 질문의 첫째 답이 이 규칙이다.</p>
+    <p>예를 들어 \(Y = \overline{AB}\)(NAND2)는 nMOS 두 개가 직렬, pMOS 두 개가 병렬이다(그림 1). 그래서 두 입력이 모두 1일 때만 출력이 0으로 끌려간다.</p>
+
     <h3><span class="no">2.1.2</span>크기</h3>
-    <p>기준 인버터를 nMOS 폭 1, pMOS 폭 2(이동도 비 2 가정)로 두고, 최악의 경로 저항이 같도록 직렬 소자를 키웁니다.</p>
+    <p>기준 인버터를 nMOS 폭 1, pMOS 폭 2(이동도 비 2 가정)로 둔다. 그리고 최악의 경로 저항이 기준과 같도록 직렬 소자를 키운다. 처음 질문의 둘째 답이 이 크기 결정이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
       <p>NAND2, NOR2의 트랜지스터 폭과 입력 하나의 정전 용량(폭 합)은?</p>
     </div>
-    <p><i>풀이.</i> NAND2: nMOS 직렬 두 개라 각 2, pMOS 병렬이라 각 2 → 입력 정전 용량 4(인버터 3의 4/3배). NOR2: nMOS 병렬 각 1, pMOS 직렬 두 개라 각 4 → 입력 5(5/3배). NOR는 느린 pMOS가 직렬이라 커서, 같은 기능이면 NAND 구조를 선호합니다.</p>
-    <p>복합 게이트 \(Y = \overline{A(B + C)}\)는 nMOS A와 (B ∥ C)의 직렬, pMOS A ∥ (B, C 직렬)로 한 단에 만들어 게이트 수와 지연을 줄입니다.</p>
+    <p><i>풀이.</i> NAND2는 nMOS가 직렬 두 개라 각 2, pMOS가 병렬이라 각 2이므로 입력 정전 용량이 4이다(인버터 3의 4/3배). 그리고 NOR2는 nMOS가 병렬이라 각 1, pMOS가 직렬 두 개라 각 4이므로 입력이 5이다(5/3배). 따라서 NOR는 느린 pMOS가 직렬이라 커서, 같은 기능이면 NAND 구조를 선호한다.</p>
+    <p>그리고 복합 게이트 \(Y = \overline{A(B + C)}\)는 nMOS A와 (B ∥ C)를 직렬로, pMOS는 A ∥ (B, C 직렬)로 한 단에 만든다. 즉 게이트 수와 지연을 함께 줄인다.</p>
+    <p>한편 입력 정전 용량이 크다는 것은 그 게이트를 구동하는 앞단에 큰 부하가 된다는 뜻이다. 그래서 같은 기능이라도 입력 정전 용량이 작은 구조가 회로 전체를 빠르게 하며, 이 비율을 2.2절의 논리적 노력으로 정리한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "정적 CMOS로 AND를 한 단에 만든다": 정적 CMOS 한 단은 반전 함수만 만듭니다(AND = NAND + 인버터). (2) "입력 수를 늘려도 괜찮다": 직렬이 길어져 지연이 급증해 보통 4입력 이하로 씁니다.</div>
+    <p>그리고 직렬 트랜지스터 사이의 중간 노드에도 정전 용량이 있어, 입력이 바뀌는 순서에 따라 지연이 조금씩 달라진다. 따라서 가장 늦게 도착하는 입력을 출력에 가까운 트랜지스터에 연결하면 지연을 줄일 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>nMOS 직렬 = AND(→ 0), pMOS는 쌍대.</li>
-        <li>NAND2: n 2, p 2(입력 4). NOR2: n 1, p 4(입력 5).</li>
-        <li>NAND 선호, 복합 게이트로 단 수 감소.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>정적 CMOS로 AND를 한 단에 만들 수 있다고 여기기 쉽다. 정적 CMOS 한 단은 반전 함수만 만든다(AND = NAND + 인버터). 또 입력 수를 늘려도 괜찮다고 생각하기 쉬운데, 직렬이 길어져 지연이 급증하므로 보통 4입력 이하로 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>nMOS 직렬은 AND(출력 0)이고, pMOS는 그 쌍대로 연결한다. NAND2는 n 2, p 2(입력 4), NOR2는 n 1, p 4(입력 5)이다. NAND를 선호하며, 복합 게이트로 단 수를 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>NAND3의 nMOS 폭은?
-          <details><summary>답</summary><p>각 3.</p></details>
+          <details><summary>답</summary><p>각 3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>NOR3의 pMOS 폭과 입력 정전 용량은?
-          <details><summary>답</summary><p>각 6, 입력 7.</p></details>
+          <details><summary>답</summary><p>각 6, 입력 7이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>Y = ¬(AB + C)의 nMOS 구조는?
-          <details><summary>답</summary><p>(A, B 직렬) ∥ C.</p></details>
+          <details><summary>답</summary><p>(A, B 직렬) ∥ C이다.</p></details>
         </li>
       </ol>
     </div>

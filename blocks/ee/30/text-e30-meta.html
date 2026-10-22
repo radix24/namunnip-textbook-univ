@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e30-meta" data-kind="본문" data-std="전전30-03-03">
   <header class="card-head"><span class="no"></span><h2>준안정성과 동기화기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비동기 입력이 셋업·홀드 창에 걸리면 준안정 상태가 됨을 안다.</li>
-        <li>MTBF = \(e^{t_r/\tau}/(T_0f_{clk}f_{data})\)를 계산한다.</li>
-        <li>2단 플립플롭 동기화기의 효과를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>셋업·홀드 (<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">사람이 누르는 버튼이나 다른 클록으로 움직이는 회로의 신호는 언제 바뀔지 모른다. 그 신호가 플립플롭의 셋업·홀드 창 한가운데에서 바뀌면, 출력이 0도 1도 아닌 중간값에 한동안 머문다. 이 준안정 상태는 얼마나 오래 갈까? 그리고 회로가 이 때문에 고장 날 확률은 어떻게 줄일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 준안정성과 동기화기(개형). τ = 20 ps, T₀ = 20 ps, 클록 1 GHz, 데이터 100 MHz에서 해결 시간 1 ns를 주는 2단 동기화기의 평균 고장 간격은 2.6 × 10¹⁵ s(약 8천만 년)이지만, 해결 시간이 0.5 ns이면 3.6 × 10⁴ s(약 10시간)로 실제 고장이 난다">
+        <line x1="60" y1="100" x2="300" y2="100" class="k dsh"/>
+        <path d="M60 100 C120 100 160 96 200 70 C220 56 240 40 300 36" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M60 100 C130 100 170 104 210 130 C230 146 250 160 300 164" class="b" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="64" y="94">중간값</text><text x="250" y="30" class="ta">1</text><text x="250" y="180" class="tb">0</text><text x="120" y="190">해결 시간 t_r</text></g>
+        <g class="s"><text x="330" y="60">MTBF = e^(t_r/τ)/(T₀ f_clk f_data)</text><text x="330" y="96" class="ta">1 ns → 약 8천만 년</text><text x="330" y="126" class="td">0.5 ns → 약 10시간</text></g>
+      </svg>
+      <figcaption>그림 1. 중간값에 걸린 출력은 결국 0이나 1로 떨어지지만 걸리는 시간이 무작위이며, 기다리는 시간을 늘릴수록 아직 정해지지 않았을 확률이 지수적으로 준다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>셋업·홀드(<a href="03-01.html">3.1절</a>, <a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>0도 1도 아닌 순간</h3>
-    <p>외부 버튼이나 다른 클록 영역 신호는 언제든 바뀌어, 셋업·홀드 창에 걸리면 플립플롭 출력이 한동안 중간값에 머뭅니다. 해결 시간 t_r 안에 정해지지 않을 확률은 \(e^{-t_r/\tau}\)로 줄어, 둘째 플립플롭이 한 주기를 기다리게 하면 MTBF가 지수적으로 늘어납니다.</p>
+    <p>외부 버튼이나 다른 클록 영역의 신호는 언제든 바뀐다. 그래서 셋업·홀드 창에 걸리면 플립플롭 출력이 한동안 중간값에 머문다(그림 1). 그리고 해결 시간 t_r 안에 정해지지 않을 확률은 \(e^{-t_r/\tau}\)로 준다. 처음 질문의 첫째 답이 이것으로, 준안정은 끝은 나지만 그 시간이 무작위이다.</p>
+    <p>따라서 둘째 플립플롭이 한 주기를 기다리게 하면(2단 동기화기), MTBF가 지수적으로 는다. 처음 질문의 둘째 답이 아래 식과 이 동기화기이다.</p>
+    <p>\[ \mathrm{MTBF} = \frac{e^{t_r/\tau}}{T_0 f_{clk} f_{data}} \]</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>τ = 20 ps, T₀ = 20 ps(가상 공정값), f_clk = 1 GHz, f_data = 100 MHz. 해결 시간 1 ns(2단 동기화기)의 MTBF는? 0.5 ns면?</p>
     </div>
-    <p><i>풀이.</i> 1 ns: e⁵⁰/(20×10⁻¹² × 10⁹ × 10⁸) = 2.6×10¹⁵ s(약 8천만 년). 0.5 ns: e²⁵/(2×10⁶) = 3.6×10⁴ s(약 10시간)로 실제 고장이 납니다. 해결 시간을 조금만 줄여도 MTBF가 크게 변합니다.</p>
+    <p><i>풀이.</i> 1 ns이면 e⁵⁰/(20×10⁻¹² × 10⁹ × 10⁸) = 2.6×10¹⁵ s로 약 8천만 년이다. 그런데 0.5 ns이면 e²⁵/(2×10⁶) = 3.6×10⁴ s, 즉 약 10시간으로 실제 고장이 난다. 그러므로 해결 시간을 조금만 줄여도 MTBF가 크게 변한다.</p>
+    <p>즉 클록이 빨라지면 해결에 쓸 수 있는 시간이 줄어 MTBF가 급격히 나빠진다. 그래서 아주 빠른 클록 영역에서는 3단 동기화기를 쓰기도 한다.</p>
+    <p>한편 τ는 플립플롭의 되먹임 고리가 얼마나 빨리 한쪽으로 기우는지를 나타내는 공정 값이다. 따라서 동기화기에는 τ가 작은, 곧 이득이 큰 전용 플립플롭을 쓴다.</p>
+    <p>그리고 여러 비트를 함께 넘길 때는 비트마다 동기화하는 것만으로는 부족하다. 그러므로 다른 클록 영역 사이의 데이터는 그레이 코드 포인터를 쓰는 FIFO나 핸드셰이크로 주고받는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "동기화기를 쓰면 준안정이 사라진다": 확률을 아주 작게 만들 뿐입니다. (2) "여러 비트 버스를 비트마다 동기화하면 된다": 비트마다 다른 주기에 잡혀 값이 섞여, 그레이 코드나 핸드셰이크를 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>동기화기를 쓰면 준안정이 사라진다고 여기기 쉽다. 확률을 아주 작게 만들 뿐이다. 또 여러 비트 버스를 비트마다 동기화하면 된다고 생각하기 쉬운데, 비트마다 다른 주기에 잡혀 값이 섞이므로 그레이 코드나 핸드셰이크를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>MTBF = e^{t_r/τ}/(T₀f_clkf_data).</li>
-        <li>예: 1 ns → 2.6×10¹⁵ s, 0.5 ns → 10시간.</li>
-        <li>2단 동기화기, 다비트는 그레이 코드·FIFO.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평균 고장 간격은 MTBF = e^(t_r/τ)/(T₀f_clkf_data)이다. 예제에서 1 ns는 2.6×10¹⁵ s, 0.5 ns는 10시간이다. 2단 동기화기를 쓰고, 여러 비트는 그레이 코드와 FIFO로 넘긴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>t_r를 τ만큼 늘리면 MTBF는?
-          <details><summary>답</summary><p>e배.</p></details>
+          <details><summary>답</summary><p>e배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f_data를 10배로 하면?
-          <details><summary>답</summary><p>1/10.</p></details>
+          <details><summary>답</summary><p>1/10이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>비동기 FIFO 포인터에 그레이 코드를 쓰는 이유는?
-          <details><summary>답</summary><p>한 번에 한 비트만 바뀌어 잘못 잡혀도 앞이나 뒤 값이 되기 때문입니다.</p></details>
+          <details><summary>답</summary><p>한 번에 한 비트만 바뀌어 잘못 잡혀도 앞이나 뒤 값이 되기 때문이다.</p></details>
         </li>
       </ol>
     </div>

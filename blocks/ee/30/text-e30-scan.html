@@ -8,56 +8,52 @@
 <article class="card q-card" id="text-e30-scan" data-kind="본문" data-std="전전30-06-03">
   <header class="card-head"><span class="no"></span><h2>스캔 체인과 테스트 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>플립플롭을 시프트 레지스터로 묶는 스캔 설계를 안다.</li>
-        <li>패턴 수와 체인 길이로 테스트 시간을 계산한다.</li>
-        <li>고장 검출률과 테스트 비용의 관계를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>고착 고장 모델 (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">칩 안의 플립플롭 수만 개는 바깥 핀에서 직접 보이지 않는다. 그래서 특정 내부 상태를 만들거나, 내부 고장의 결과를 밖에서 확인하기가 매우 어렵다. 칩 안을 들여다보는 통로를 어떻게 만들까? 그리고 그 통로로 시험하는 데 시간은 얼마나 걸릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.3.1 스캔 체인(개형). 테스트 모드에서 플립플롭을 체인으로 이어 상태를 밀어 넣고 한 클록 동작시킨 뒤 결과를 밀어 내며, 플립플롭 10000개를 길이 1000인 체인 10개로 나누고 패턴 2000개를 50 MHz로 시프트하면 시험 시간은 40 ms이다">
+        <defs><marker id="ah-e30sc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="a" fill="none" stroke-width="2"><rect x="90" y="80" width="50" height="40"/><rect x="170" y="80" width="50" height="40"/><rect x="250" y="80" width="50" height="40"/><rect x="330" y="80" width="50" height="40"/></g>
+        <g class="k" stroke-width="1.5"><line x1="40" y1="100" x2="88" y2="100" marker-end="url(#ah-e30sc)"/><line x1="140" y1="100" x2="168" y2="100" marker-end="url(#ah-e30sc)"/><line x1="220" y1="100" x2="248" y2="100" marker-end="url(#ah-e30sc)"/><line x1="300" y1="100" x2="328" y2="100" marker-end="url(#ah-e30sc)"/><line x1="380" y1="100" x2="430" y2="100" marker-end="url(#ah-e30sc)"/></g>
+        <g class="s"><text x="20" y="90">shift-in</text><text x="400" y="90">shift-out</text><text x="96" y="104">FF</text><text x="176" y="104">FF</text><text x="256" y="104">FF</text><text x="336" y="104">FF</text><text x="90" y="150" class="ta">체인 길이 1000 × 10개</text><text x="90" y="176" class="td">2000 × 1000/50 MHz = 40 ms</text></g>
+      </svg>
+      <figcaption>그림 1. 테스트 모드에서 플립플롭을 한 줄로 이으면 내부 상태를 한 비트씩 밀어 넣고 밀어 낼 수 있어, 순차 회로를 조합 회로처럼 시험한다(예제 6.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고착 고장 모델(<a href="06-02.html">6.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>속을 들여다보는 통로</h3>
-    <p>테스트 모드에서 모든 플립플롭을 체인으로 이어, 원하는 상태를 밀어 넣고(shift-in) 한 클록 동작시킨 뒤 결과를 밀어 내어(shift-out) 비교합니다. 순차 회로 테스트가 조합 회로 테스트로 바뀌어 자동 패턴 생성이 가능해집니다. 시간은 대략 패턴 수 × 체인 길이 / 시프트 주파수입니다.</p>
+    <p>테스트 모드에서는 모든 플립플롭을 체인으로 잇는다. 그리고 원하는 상태를 밀어 넣고(shift-in), 한 클록 동작시킨 뒤, 결과를 밀어 내어(shift-out) 기대값과 비교한다(그림 1). 처음 질문의 첫째 답이 이 스캔 체인이다.</p>
+    <p>즉 순차 회로 시험이 조합 회로 시험으로 바뀌므로, 자동 패턴 생성이 가능해진다. 한편 시험 시간은 대략 패턴 수 × 체인 길이 / 시프트 주파수이며, 처음 질문의 둘째 답이 이 식이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>플립플롭 10000개를 체인 10개로 나눔(길이 1000), 패턴 2000개, 시프트 50 MHz. 테스트 시간은?</p>
     </div>
-    <p><i>풀이.</i> 2000 × 1000/50 MHz = 40 ms(캡처 클록 무시). 체인을 100개로 나누면 4 ms지만 칩 핀이 더 필요해 압축 회로를 둡니다. 검출률을 99%에서 99.9%로 올리려면 패턴이 크게 늘어 테스트 비용이 오릅니다.</p>
+    <p><i>풀이.</i> 2000 × 1000/50 MHz = 40 ms이다(캡처 클록 무시). 그런데 체인을 100개로 나누면 4 ms이지만 칩 핀이 더 필요하므로, 압축 회로를 둔다. 그리고 검출률을 99%에서 99.9%로 올리려면 패턴이 크게 늘어, 시험 비용이 오른다.</p>
+    <p>즉 시험 시간은 체인을 짧게 나눌수록 줄지만, 체인마다 입출력 핀이 필요하다. 그래서 실제 칩은 적은 핀으로 받은 패턴을 칩 안에서 여러 체인으로 풀어 주는 압축 해제기를 둔다.</p>
+    <p>그리고 스캔 플립플롭은 입력 앞에 정상 데이터와 스캔 데이터를 고르는 멀티플렉서를 더한 것이다. 따라서 설계 도구가 합성 단계에서 일반 플립플롭을 스캔 플립플롭으로 자동으로 바꾸고 체인을 잇는다.</p>
+    <p>한편 같은 체인은 칩이 동작하지 않을 때 내부 상태를 읽어 고장 원인을 찾는 디버깅에도 쓴다. 그러므로 스캔은 양산 시험뿐 아니라 시제품 분석에서도 중요한 도구이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "스캔은 정상 동작에 영향이 없다": 멀티플렉서가 더해져 지연과 면적이 조금 늘어납니다. (2) "검출률 100%가 목표": 비용 대비 효과로 보통 99% 안팎을 목표로 합니다(확인 필요).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>스캔은 정상 동작에 영향이 없다고 여기기 쉽다. 멀티플렉서가 더해져 지연과 면적이 조금 는다. 또 검출률 100%가 목표라고 생각하기 쉬운데, 비용 대비 효과로 보통 99% 안팎을 목표로 한다(확인 필요).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>스캔: shift-in → 캡처 → shift-out.</li>
-        <li>시간 ≈ 패턴 × 체인 길이/f_shift.</li>
-        <li>예: 2000 × 1000/50 MHz = 40 ms.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>스캔 시험은 shift-in, 캡처, shift-out의 순서이다. 시간은 약 패턴 수 × 체인 길이/f_shift이다. 예제에서는 2000 × 1000/50 MHz = 40 ms이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>체인 20개(길이 500)면 예제 시간은?
-          <details><summary>답</summary><p>20 ms.</p></details>
+          <details><summary>답</summary><p>20 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>시프트 100 MHz면(체인 10개)?
-          <details><summary>답</summary><p>20 ms.</p></details>
+          <details><summary>답</summary><p>20 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>테스트 시간이 비용인 이유는?
-          <details><summary>답</summary><p>고가 테스트 장비 사용 시간이 칩마다 들기 때문입니다.</p></details>
+          <details><summary>답</summary><p>고가 테스트 장비 사용 시간이 칩마다 들기 때문이다.</p></details>
         </li>
       </ol>
     </div>

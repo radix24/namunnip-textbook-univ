@@ -8,58 +8,55 @@
 <article class="card q-card" id="text-e30-vtc" data-kind="본문" data-std="전전30-01-01">
   <header class="card-head"><span class="no"></span><h2>CMOS 인버터의 VTC와 잡음 여유</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>nMOS와 pMOS 전류가 같다는 조건으로 전압 전달 특성(VTC)을 구한다.</li>
-        <li>스위칭 문턱 V_M과 크기 비 k_p/k_n의 관계를 계산한다.</li>
-        <li>기울기 −1인 점에서 V_IL, V_IH와 잡음 여유 NM_L, NM_H를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>MOSFET 전류 식 (<a href="../8/02.html">전전8 2단원</a>), 이 절의 탐구 카드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">디지털 회로는 0과 1만 다룬다지만, 실제 전선 위의 전압은 잡음으로 조금씩 흔들린다. 입력이 0.1 V쯤 흔들려도 다음 게이트가 0과 1을 틀리지 않으려면 인버터는 어떤 특성을 가져야 할까? 인버터의 입력-출력 곡선은 어떤 모양이며, 잡음을 얼마나 견딜 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 CMOS 인버터 VTC(개형). V_DD = 1.2 V, 대칭 소자에서 스위칭 문턱 V_M = 0.6 V이고, 기울기가 −1인 두 점 V_IL = 0.520 V, V_IH = 0.680 V에서 잡음 여유 NM_L = 0.446 V, NM_H = 0.445 V로 대칭이다">
+        <line x1="80" y1="170" x2="400" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 40 H190 C215 42 225 60 240 100 C255 140 265 158 290 160 H390" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 170 L390 30" class="k dsh"/>
+        <g class="fd"><circle cx="218" cy="56" r="4"/><circle cx="262" cy="148" r="4"/><circle cx="240" cy="100" r="4"/></g>
+        <g class="s"><text x="196" y="186">V_IL 0.52</text><text x="266" y="186">V_IH 0.68</text><text x="246" y="96" class="td">V_M 0.6</text><text x="86" y="26">V_out</text><text x="380" y="186">V_in</text></g>
+        <g class="s"><text x="420" y="70" class="ta">NM_L 0.446 V</text><text x="420" y="96" class="tb">NM_H 0.445 V</text><text x="420" y="130">V_DD 1.2 V</text></g>
+      </svg>
+      <figcaption>그림 1. 인버터의 입력-출력 곡선은 가운데에서 급하게 떨어지며, 기울기가 −1인 두 점 바깥의 입력 범위가 잡음을 견디는 여유가 된다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>MOSFET 전류 식(<a href="../8/02.html">전전8 2단원</a>), 이 절의 탐구 카드를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>VTC</h3>
-    <p>입력 V_in에서 nMOS(게이트-소스 V_in)와 pMOS(소스-게이트 V_DD − V_in)를 지나는 전류가 같도록 V_out이 정해집니다. 두 소자가 모두 포화인 가운데 구간에서 이득이 매우 커, 출력이 급하게 바뀝니다.</p>
-    \[ V_M = \frac{V_{Tn} + r(V_{DD} - |V_{Tp}|)}{1 + r}, \qquad r = \sqrt{k_p/k_n}. \]
-    <p class="q-term">V_IL, V_IH: VTC 기울기가 −1인 두 입력 전압. NM_L = V_IL − V_OL, NM_H = V_OH − V_IH(여기서 V_OH, V_OL은 그 두 점의 출력).</p>
+    <p>입력 V_in에서 nMOS(게이트-소스 V_in)와 pMOS(소스-게이트 V_DD − V_in)를 지나는 전류가 같도록 V_out이 정해진다. 그리고 두 소자가 모두 포화인 가운데 구간에서 이득이 매우 커, 출력이 급하게 바뀐다(그림 1). 처음 질문의 첫째 답이 이 모양이다.</p>
+    <p>\[ V_M = \frac{V_{Tn} + r(V_{DD} - |V_{Tp}|)}{1 + r}, \qquad r = \sqrt{k_p/k_n}. \]</p>
+    <p class="q-term">V_IL과 V_IH는 VTC의 기울기가 −1인 두 입력 전압이다. 그리고 잡음 여유는 NM_L = V_IL − V_OL, NM_H = V_OH − V_IH이며, 여기서 V_OH와 V_OL은 그 두 점의 출력이다.</p>
+    <p>즉 앞 게이트의 출력이 잡음 여유만큼 흔들려도, 다음 게이트는 여전히 같은 논리값으로 읽는다. 처음 질문의 둘째 답이 이 잡음 여유이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
       <p>V_DD = 1.2 V, V_Tn = |V_Tp| = 0.3 V, k_p = k_n(대칭). V_M과 잡음 여유는? (긴 채널 제곱 법칙, 채널 길이 변조 λ = 0.05/V로 수치 계산)</p>
     </div>
-    <p><i>풀이.</i> V_M = 0.6 V. 수치로 기울기 −1 점을 찾으면 V_IL = 0.520 V(V_OH = 1.125), V_IH = 0.680 V(V_OL = 0.075), NM_L = 0.446 V, NM_H = 0.445 V로 대칭입니다. (λ = 0이면 공식 V_IL = (3V_DD + 2V_T)/8 = 0.525 V.) k_p/k_n을 4로 하면 V_M이 0.7 V로 올라 NM_H가 줄어듭니다. 탐구 카드에서 바꿔 봅니다.</p>
+    <p><i>풀이.</i> V_M = 0.6 V이다. 그리고 수치로 기울기 −1 점을 찾으면 V_IL = 0.520 V(V_OH = 1.125), V_IH = 0.680 V(V_OL = 0.075)이므로, NM_L = 0.446 V, NM_H = 0.445 V로 대칭이다(λ = 0이면 공식 V_IL = (3V_DD + 2V_T)/8 = 0.525 V). 한편 k_p/k_n을 4로 하면 V_M이 0.7 V로 올라 NM_H가 준다. 탐구 카드에서 바꿔 본다.</p>
+    <p>그래서 CMOS 인버터는 출력이 거의 0과 V_DD까지 내려가고 올라가며, 가운데의 높은 이득이 흔들린 입력을 다시 깨끗한 0과 1로 되살린다. 즉 게이트를 여러 단 지나도 잡음이 쌓이지 않는 것이 디지털 회로의 가장 큰 장점이다.</p>
+    <p>그런데 전원 전압이 낮아지면 잡음 여유도 함께 준다. 그러므로 저전압 회로에서는 전원 잡음과 이웃 배선의 간섭을 더 엄격하게 관리한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "pMOS와 nMOS를 같은 크기로 만들면 대칭": 홀 이동도가 작아 pMOS 폭을 약 2~3배로 해야 k_p = k_n입니다. (2) "잡음 여유는 V_DD/2": 문턱과 이득에 따라 달라 그보다 작습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>pMOS와 nMOS를 같은 크기로 만들면 대칭이라고 여기기 쉽다. 홀 이동도가 작아 pMOS 폭을 약 2~3배로 해야 k_p = k_n이다. 또 잡음 여유는 V_DD/2라고 생각하기 쉬운데, 문턱과 이득에 따라 달라 그보다 작다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>I_n = I_p로 VTC, V_M = (V_Tn + r(V_DD − |V_Tp|))/(1 + r).</li>
-        <li>기울기 −1 점 → V_IL, V_IH → NM_L, NM_H.</li>
-        <li>예: 대칭, 1.2 V → V_M 0.6 V, NM 약 0.445 V.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>VTC는 I_n = I_p로 정해지며, V_M = (V_Tn + r(V_DD − |V_Tp|))/(1 + r)이다. 기울기 −1 점에서 V_IL, V_IH를 읽어 NM_L, NM_H를 구한다. 예제의 대칭 인버터는 V_M 0.6 V, NM 약 0.445 V이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>대칭 인버터에서 V_DD = 1.0 V면 V_M은?
-          <details><summary>답</summary><p>0.5 V.</p></details>
+          <details><summary>답</summary><p>0.5 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>r = 0.5(pMOS가 약함), V_DD = 1.2, V_T = 0.3의 V_M은?
-          <details><summary>답</summary><p>(0.3 + 0.45)/1.5 = 0.5 V.</p></details>
+          <details><summary>답</summary><p>(0.3 + 0.45)/1.5 = 0.5 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>V_M이 V_DD/2보다 낮으면 어느 잡음 여유가 줄어드는가?
-          <details><summary>답</summary><p>NM_L.</p></details>
+          <details><summary>답</summary><p>NM_L이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,57 +8,56 @@
 <article class="card q-card" id="text-e30-power" data-kind="본문" data-std="전전30-04-01">
   <header class="card-head"><span class="no"></span><h2>동적 전력 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>충방전 전력 \(P = \alpha CV_{DD}^2f\)를 유도하고 계산한다.</li>
-        <li>활동률 α의 뜻(클록당 0 → 1 전이 확률)을 안다.</li>
-        <li>단락 전류와 누설 전력을 함께 어림한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>축전기 에너지 ½CV² (<a href="../3/06.html">전전3 6단원</a>), 인버터 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">스마트폰으로 게임을 하면 손이 뜨거워질 만큼 칩이 열을 낸다. 트랜지스터는 켜고 끄기만 할 뿐인데, 그 전력은 어디에서 쓰일까? 칩이 쓰는 동적 전력은 무엇으로 정해지며, 전원 전압을 조금 낮추면 얼마나 줄어들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1 동적 전력(개형). 스위칭 정전 용량 합 1 nF, 전이 확률 0.1, 전원 1.0 V, 1 GHz이면 동적 전력은 0.1 W이고, 전압을 0.8 V로 낮추면 0.064 W로 36% 준다. 누설 50 mW를 더하면 1.0 V에서 총 0.15 W이다">
+        <rect x="80" y="40" width="60" height="120" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="180" y="83" width="60" height="77" class="b" fill="none" stroke-width="2.5"/>
+        <rect x="280" y="40" width="60" height="120" class="a" fill="none" stroke-width="1.5"/>
+        <rect x="280" y="10" width="60" height="30" class="d" fill="none" stroke-width="2"/>
+        <line x1="60" y1="160" x2="380" y2="160" class="ax"/>
+        <g class="s" text-anchor="middle"><text x="110" y="180">1.0 V</text><text x="210" y="180">0.8 V</text><text x="310" y="180">1.0 V + 누설</text><text x="110" y="34" class="ta">0.1 W</text><text x="210" y="76" class="tb">0.064 W</text><text x="310" y="30" class="td">0.15 W</text></g>
+        <g class="s"><text x="400" y="80">P = αCV_DD²f</text><text x="400" y="106">전압 0.8배 → 0.64배</text></g>
+      </svg>
+      <figcaption>그림 1. 동적 전력은 전압의 제곱에 비례하므로 전압을 조금만 낮춰도 크게 줄며, 여기에 쉬어도 새는 누설 전력이 더해진다(예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>축전기 에너지 ½CV²(<a href="../3/06.html">전전3 6단원</a>), 인버터(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>유도</h3>
-    <p>출력이 0 → 1로 바뀔 때 전원에서 \(CV_{DD}^2\)의 에너지가 나가 절반은 pMOS에서 열로, 절반은 축전기에 저장되고, 1 → 0 때 저장분이 nMOS에서 열이 됩니다. 클록당 0 → 1 전이 확률이 α면</p>
-    \[ P_{dyn} = \alpha C V_{DD}^2 f. \]
+    <p>출력이 0 → 1로 바뀔 때 전원에서 \(CV_{DD}^2\)의 에너지가 나간다. 그 가운데 절반은 pMOS에서 열이 되고, 절반은 축전기에 저장된다. 그리고 1 → 0 때 저장분이 nMOS에서 열이 된다. 처음 질문의 첫째 답이 이것으로, 전력은 부하 정전 용량을 충전하고 방전하는 데 쓰인다.</p>
+    <p>그러면 클록당 0 → 1 전이 확률이 α일 때 동적 전력은 아래와 같다. 처음 질문의 둘째 답이 이 식이다.</p>
+    <p>\[ P_{dyn} = \alpha C V_{DD}^2 f. \]</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>칩의 스위칭 정전 용량 합 1 nF, α = 0.1, V_DD = 1.0 V, f = 1 GHz. 동적 전력은? V_DD를 0.8 V로 낮추면? 누설 전류 50 mA를 더하면 총 전력은(1.0 V)?</p>
     </div>
-    <p><i>풀이.</i> 0.1 × 10⁻⁹ × 1 × 10⁹ = 0.1 W. 0.8 V: 0.064 W(36% 감소). 누설 50 mW 더해 0.15 W. 공정이 미세해질수록 누설 비중이 커져, 쓰지 않는 블록의 전원을 끄는 전력 게이팅(전전32 5.2절)이 중요해졌습니다.</p>
+    <p><i>풀이.</i> 0.1 × 10⁻⁹ × 1 × 10⁹ = 0.1 W이다. 그리고 0.8 V이면 0.064 W로 36% 준다(그림 1). 처음 질문의 셋째 답이 이것이다. 한편 누설 50 mW를 더하면 0.15 W이다. 그래서 공정이 미세해질수록 누설 비중이 커져, 쓰지 않는 블록의 전원을 끄는 전력 게이팅(전전32 5.2절)이 중요해졌다.</p>
+    <p>즉 전력을 줄이는 방법은 식의 네 항에서 나온다. 전압을 낮추고, 스위칭 정전 용량을 줄이고, 쓰지 않는 회로의 전이를 막아 α를 낮추고, 필요 없을 때 주파수를 낮춘다.</p>
+    <p>그 가운데 쓰지 않는 블록의 클록을 끄는 클록 게이팅은 α를 0으로 만드는 가장 흔한 방법이다. 따라서 칩 설계 도구는 레지스터가 값을 바꾸지 않는 동안 클록을 자동으로 막는 회로를 넣는다.</p>
+    <p>그리고 입력이 천천히 바뀌는 동안 nMOS와 pMOS가 잠깐 함께 켜져 흐르는 단락 전류도 있다. 그러므로 신호의 기울기를 가파르게 유지하는 것도 전력을 줄이는 데 도움이 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "전력은 V_DD에 비례": 제곱에 비례합니다. (2) "클록 신호의 α도 0.1": 클록은 매 주기 오르내려 α = 1이라, 클록 망이 전력의 큰 몫을 차지합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전력은 V_DD에 비례한다고 여기기 쉽다. 제곱에 비례한다. 또 클록 신호의 α도 0.1이라고 생각하기 쉬운데, 클록은 매 주기 오르내려 α = 1이므로 클록 망이 전력의 큰 몫을 차지한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P = αCV_DD²f.</li>
-        <li>예: 1 nF, 0.1, 1 V, 1 GHz → 0.1 W, 0.8 V면 0.064 W.</li>
-        <li>누설·단락 전력을 더함. 클록 α = 1.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>동적 전력은 P = αCV_DD²f이다. 예제의 1 nF, 0.1, 1 V, 1 GHz는 0.1 W이고, 0.8 V면 0.064 W이다. 여기에 누설과 단락 전력을 더하며, 클록은 α = 1이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>V_DD를 절반으로 하면 동적 전력은(같은 f)?
-          <details><summary>답</summary><p>4분의 1.</p></details>
+          <details><summary>답</summary><p>4분의 1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>C = 100 pF, α = 1(클록), 1 V, 2 GHz의 전력은?
-          <details><summary>답</summary><p>0.2 W.</p></details>
+          <details><summary>답</summary><p>0.2 W이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>전이 1번에 소비되는 에너지를 축전기가 저장하는 에너지와 비교하라.
-          <details><summary>답</summary><p>전원은 CV²을 내고 축전기는 ½CV²를 저장, 나머지는 pMOS에서 열이 됩니다.</p></details>
+        <li>전이 1번에 소비되는 에너지를 축전기가 저장하는 에너지와 비교하여라.
+          <details><summary>답</summary><p>전원은 CV²을 내고 축전기는 ½CV²를 저장, 나머지는 pMOS에서 열이 된다.</p></details>
         </li>
       </ol>
     </div>

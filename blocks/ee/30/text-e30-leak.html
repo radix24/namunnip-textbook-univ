@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e30-leak" data-kind="본문" data-std="전전30-04-03">
   <header class="card-head"><span class="no"></span><h2>누설 전력과 전원 차단</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>칩 정적 전력 = 누설 전류 × V_DD를 계산한다.</li>
-        <li>전원 차단(power gating)으로 쉬는 블록의 누설을 줄인다.</li>
-        <li>다중 문턱 전압 셀의 절충을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>동적 전력 (<a href="04-01.html">4.1절</a>), 저전력 기법 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">스마트폰 화면을 꺼 두어도 배터리는 조금씩 닳는다. 칩 안의 회로가 아무 계산도 하지 않을 때도 트랜지스터를 통해 전류가 새기 때문이다. 쉬고 있는 회로의 누설 전력은 얼마나 될까? 그리고 그 누설을 줄이려면 회로를 어떻게 꺼야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 누설 전력과 전원 차단(개형). 누설 100 mA, V_DD 1.0 V이면 정적 전력은 100 mW이고, 블록의 80%가 쉬는 동안 sleep 트랜지스터로 전원을 끊어 남은 20%만 누설하면 20 mW로 준다">
+        <path d="M60 40 H500" class="k" stroke-width="2"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="80" y="70" width="70" height="50"/><rect x="170" y="70" width="70" height="50"/><rect x="260" y="70" width="70" height="50"/><rect x="350" y="70" width="70" height="50"/></g>
+        <rect x="440" y="70" width="40" height="50" class="a" fill="none" stroke-width="2.5"/>
+        <g class="d" stroke-width="2"><path d="M115 40 V58 M205 40 V58 M295 40 V58 M385 40 V58"/></g>
+        <path d="M460 40 V70" class="a" stroke-width="2"/>
+        <g class="s"><text x="70" y="30">V_DD 1.0 V</text><text x="100" y="150" class="td">80% 쉬는 블록, sleep로 차단</text><text x="420" y="150" class="ta">20% 동작</text><text x="100" y="180">100 mW → 20 mW</text></g>
+      </svg>
+      <figcaption>그림 1. 쉬는 블록과 전원 사이의 sleep 트랜지스터를 끄면 그 블록의 누설 경로가 끊겨, 동작하는 블록의 누설만 남는다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>동적 전력(<a href="04-01.html">4.1절</a>), 저전력 기법(<a href="04-02.html">4.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>쉬어도 새는 전력</h3>
-    <p>문턱 아래 누설과 게이트 누설로 칩은 쉬어도 전력을 씁니다. 쉬는 블록과 전원 사이에 큰 sleep 트랜지스터를 두고 끄면 누설이 크게 줄지만, 다시 켤 때 시간과 에너지가 들고 상태를 따로 보관해야 합니다. 빠른 경로에만 낮은 V_T 셀을 쓰는 다중 V_T도 흔합니다.</p>
+    <p>문턱 아래 누설과 게이트 누설 때문에, 칩은 쉬어도 정적 전력 \(P_{static} = I_{leak}V_{DD}\)를 쓴다. 처음 질문의 첫째 답이 이 식이다.</p>
+    <p>그래서 쉬는 블록과 전원 사이에 큰 sleep 트랜지스터를 두고 끄면, 누설이 크게 준다(그림 1). 처음 질문의 둘째 답이 이 전원 차단이다. 그런데 다시 켤 때 시간과 에너지가 들고, 블록의 상태를 따로 보관해야 한다.</p>
+    <p>한편 빠른 경로에만 문턱이 낮은 셀을 쓰고 나머지에는 문턱이 높은 셀을 쓰는 다중 V_T도 흔하다. 즉 속도가 필요한 곳에만 누설을 허용한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>누설 100 mA, V_DD 1.0 V. 블록의 80%가 쉬는 동안 전원을 끄면(남은 20%만 누설) 정적 전력은?</p>
     </div>
-    <p><i>풀이.</i> 기본 100 mW → 20 mW(sleep 트랜지스터 누설 무시). 휴대 기기 대기 시간이 수 배 늘어납니다. 다시 켤 때 수 μs와 큰 돌입 전류가 있어 아주 짧은 휴식에는 쓰지 않습니다.</p>
+    <p><i>풀이.</i> 기본 100 mW가 20 mW로 준다(sleep 트랜지스터 누설 무시). 그래서 휴대 기기의 대기 시간이 수 배 는다. 그런데 다시 켤 때 수 μs와 큰 돌입 전류가 있으므로, 아주 짧은 휴식에는 쓰지 않는다.</p>
+    <p>즉 전원 차단은 쉬는 시간이 켜고 끄는 데 드는 에너지를 갚을 만큼 길 때만 이득이다. 그러므로 칩의 전력 관리기는 작업 예측으로 블록을 언제 끌지 정한다.</p>
+    <p>그리고 누설은 온도가 오를수록 지수적으로 는다. 따라서 칩이 뜨거워지면 누설이 늘어 더 뜨거워지는 되먹임이 생길 수 있어, 고성능 칩은 온도를 보고 속도를 낮추기도 한다.</p>
+    <p>한편 전압을 더 낮춰 상태만 유지하는 방법도 있다. 예를 들어 SRAM은 값을 지킬 수 있는 가장 낮은 전압으로 내려 누설을 줄인 채 내용을 보존하기도 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "클록 게이팅이면 누설도 준다": 동적 전력만 줄고 누설은 그대로입니다. (2) "전원 차단은 공짜": 켜고 끌 때 에너지와 지연이 있습니다.</div>
+    <p>예를 들어 같은 칩이라도 공정이 바뀌어 트랜지스터가 작아질수록 문턱 전압을 낮춰야 하므로, 전체 전력에서 누설이 차지하는 몫이 커졌다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>P_static = I_leak·V_DD.</li>
-        <li>전원 차단: 쉬는 블록 누설 제거.</li>
-        <li>다중 V_T: 빠른 경로만 저 V_T.</li>
-      </ol>
-    </div>
+    <p>그래서 저전력 칩의 데이터시트는 동작 전력과 함께 대기 전류를 따로 적는다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>클록 게이팅이면 누설도 준다고 여기기 쉽다. 동적 전력만 줄고 누설은 그대로이다. 또 전원 차단은 공짜라고 생각하기 쉬운데, 켜고 끌 때 에너지와 지연이 든다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>정적 전력은 P_static = I_leak·V_DD이다. 전원 차단은 쉬는 블록의 누설을 없앤다. 다중 V_T는 빠른 경로에만 낮은 V_T를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>누설 50 mA, V_DD 0.8 V의 정적 전력은?
-          <details><summary>답</summary><p>40 mW.</p></details>
+          <details><summary>답</summary><p>40 mW이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>블록 60%를 끄면(예제)?
-          <details><summary>답</summary><p>40 mW.</p></details>
+          <details><summary>답</summary><p>40 mW이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>전원 차단 블록의 레지스터 값을 지키려면?
-          <details><summary>답</summary><p>유지(retention) 플립플롭이나 외부 저장.</p></details>
+          <details><summary>답</summary><p>유지(retention) 플립플롭이나 외부 저장이다.</p></details>
         </li>
       </ol>
     </div>
