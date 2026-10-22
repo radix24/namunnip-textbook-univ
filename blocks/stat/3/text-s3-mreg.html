@@ -6,71 +6,104 @@
 }
 -->
 <article class="card q-card" id="text-s3-mreg" data-kind="본문" data-std="응통3-05-04">
-  <header class="card-head"><span class="no"></span><h2>다중회귀를 R로: 적합, 진단, 예측</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>다중회귀를 R로 적합하고 진단하고 예측하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li><code>lm</code>의 공식 문법으로 여러 설명변수, 범주형 변수, 상호작용을 넣는다.</li>
-        <li><code>summary</code>, <code>confint</code>, <code>plot</code>으로 결과와 진단 그림을 읽는다.</li>
-        <li><code>predict</code>로 신뢰구간과 예측구간을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>단순 회귀 (<a href="05-02.html">5.2절</a>), 다중회귀의 이론 (응통10 02단원).</li>
-      </ul>
-    </div>
-
-    <h3>한 줄의 공식</h3>
-    <p>5.2절의 단순 회귀를 설명변수 여러 개로 넓힙니다. 이론은 응통10에서 자세히 다루고, 여기서는 R로 실제 분석을 끝까지 하는 순서를 익힙니다.</p>
+    <p class="q-ask">연비를 무게 하나가 아니라 무게와 마력으로 함께 설명하고 싶다. 모형을 적합하고, 계수를 읽고, 모형이 자료에 맞는지 점검하고, 새 차의 연비를 구간과 함께 예측하는 데까지 R로는 몇 줄이 필요할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="lm(mpg ~ wt + hp)의 잔차를 적합값에 대해 그린 진단 그림. 잔차의 추세가 U자로 굽어 있다">
+        <line x1="55" y1="175" x2="490" y2="175" class="ax"/>
+        <line x1="55" y1="175" x2="55" y2="20" class="ax"/>
+        <text x="94.5" y="190" text-anchor="middle" class="s">10</text>
+        <text x="193.4" y="190" text-anchor="middle" class="s">15</text>
+        <text x="292.3" y="190" text-anchor="middle" class="s">20</text>
+        <text x="391.1" y="190" text-anchor="middle" class="s">25</text>
+        <text x="490" y="190" text-anchor="middle" class="s">30</text>
+        <text x="50" y="166.1" text-anchor="end" class="s">-4</text>
+        <text x="50" y="114.4" text-anchor="end" class="s">0</text>
+        <text x="50" y="62.8" text-anchor="end" class="s">4</text>
+        <text x="490" y="204" text-anchor="end" class="s">적합값</text>
+        <text x="61" y="24" class="s">잔차</text>
+        <path d="M55 110.4 L490 110.4" class="ax dsh"/>
+        <circle cx="362.9" cy="143.6" r="3.5" class="fb"/>
+        <circle cx="343.4" cy="130.9" r="3.5" class="fb"/>
+        <circle cx="396.6" cy="142.4" r="3.5" class="fb"/>
+        <circle cx="317.3" cy="108.7" r="3.5" class="fb"/>
+        <circle cx="259.2" cy="105.6" r="3.5" class="fb"/>
+        <circle cx="301.6" cy="141.1" r="3.5" class="fb"/>
+        <circle cx="205.3" cy="127.2" r="3.5" class="fb"/>
+        <circle cx="349.4" cy="90.9" r="3.5" class="fb"/>
+        <circle cx="331.7" cy="100" r="3.5" class="fb"/>
+        <circle cx="291.9" cy="120.5" r="3.5" class="fb"/>
+        <circle cx="291.9" cy="138.6" r="3.5" class="fb"/>
+        <circle cx="207.8" cy="101.7" r="3.5" class="fb"/>
+        <circle cx="233.8" cy="107.1" r="3.5" class="fb"/>
+        <circle cx="230" cy="131.7" r="3.5" class="fb"/>
+        <circle cx="101.6" cy="109.8" r="3.5" class="fb"/>
+        <circle cx="81.9" cy="97" r="3.5" class="fb"/>
+        <circle cx="78.6" cy="39.3" r="3.5" class="fb"/>
+        <circle cx="422.8" cy="35.5" r="3.5" class="fb"/>
+        <circle cx="476.4" cy="96.4" r="3.5" class="fb"/>
+        <circle cx="451.4" cy="34.8" r="3.5" class="fb"/>
+        <circle cx="383" cy="150.3" r="3.5" class="fb"/>
+        <circle cx="268.8" cy="153.2" r="3.5" class="fb"/>
+        <circle cx="275.3" cy="161.3" r="3.5" class="fb"/>
+        <circle cx="184.6" cy="126.6" r="3.5" class="fb"/>
+        <circle cx="228.1" cy="78.9" r="3.5" class="fb"/>
+        <circle cx="443.1" cy="114.6" r="3.5" class="fb"/>
+        <circle cx="411.6" cy="110.9" r="3.5" class="fb"/>
+        <circle cx="445.9" cy="76.4" r="3.5" class="fb"/>
+        <circle cx="224" cy="120.1" r="3.5" class="fb"/>
+        <circle cx="310.6" cy="126.2" r="3.5" class="fb"/>
+        <circle cx="148.7" cy="81.2" r="3.5" class="fb"/>
+        <circle cx="351.3" cy="130.9" r="3.5" class="fb"/>
+        <path d="M78.6 68.9 L81.9 70.8 L85.2 72.6 L88.5 74.5 L91.8 76.3 L95.2 78.1 L98.5 79.8 L101.8 81.5 L105.1 83.2 L108.4 84.9 L111.7 86.5 L115 88.1 L118.4 89.6 L121.7 91.1 L125 92.6 L128.3 94.1 L131.6 95.5 L134.9 96.9 L138.3 98.3 L141.6 99.6 L144.9 100.9 L148.2 102.2 L151.5 103.4 L154.8 104.6 L158.1 105.8 L161.5 106.9 L164.8 108.1 L168.1 109.1 L171.4 110.2 L174.7 111.2 L178 112.2 L181.4 113.1 L184.7 114.1 L188 115 L191.3 115.8 L194.6 116.6 L197.9 117.4 L201.2 118.2 L204.6 118.9 L207.9 119.6 L211.2 120.3 L214.5 120.9 L217.8 121.5 L221.1 122.1 L224.4 122.7 L227.8 123.2 L231.1 123.7 L234.4 124.1 L237.7 124.5 L241 124.9 L244.3 125.3 L247.7 125.6 L251 125.9 L254.3 126.1 L257.6 126.4 L260.9 126.6 L264.2 126.7 L267.5 126.9 L270.9 127 L274.2 127 L277.5 127.1 L280.8 127.1 L284.1 127 L287.4 127 L290.8 126.9 L294.1 126.8 L297.4 126.6 L300.7 126.4 L304 126.2 L307.3 126 L310.6 125.7 L314 125.4 L317.3 125 L320.6 124.7 L323.9 124.3 L327.2 123.8 L330.5 123.4 L333.8 122.9 L337.2 122.3 L340.5 121.8 L343.8 121.2 L347.1 120.5 L350.4 119.9 L353.7 119.2 L357.1 118.5 L360.4 117.7 L363.7 116.9 L367 116.1 L370.3 115.3 L373.6 114.4 L376.9 113.5 L380.3 112.5 L383.6 111.6 L386.9 110.6 L390.2 109.5 L393.5 108.5 L396.8 107.4 L400.2 106.2 L403.5 105.1 L406.8 103.9 L410.1 102.6 L413.4 101.4 L416.7 100.1 L420 98.8 L423.4 97.4 L426.7 96 L430 94.6 L433.3 93.2 L436.6 91.7 L439.9 90.2 L443.3 88.6 L446.6 87.1 L449.9 85.5 L453.2 83.8 L456.5 82.1 L459.8 80.4 L463.1 78.7 L466.5 76.9 L469.8 75.2 L473.1 73.3 L476.4 71.5" class="d"/>
+        <text x="371.4" y="32.9" class="td s">잔차의 추세가 U자로 굽음</text>
+      </svg>
+      <figcaption>그림 1. <code>lm(mpg ~ wt + hp, data = mtcars)</code>의 잔차 대 적합값 그림. 잔차가 0 둘레에 고르게 흩어져야 하는데, 양 끝이 높고 가운데가 낮은 U자 추세(빨강)가 보여 관계가 휘어 있음을 알려 준다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>단순 회귀(<a href="05-02.html">5.2절</a>)와 다중회귀의 이론(응통10 02단원)을 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>공식 문법</h3>
+    <p>처음 질문의 첫 단계는 모형을 공식으로 쓰는 것이다. 이론은 응통10에서 자세히 다루고, 여기서는 R로 분석을 끝까지 하는 순서를 익힌다.</p>
     <table class="tw">
       <tr><th>공식</th><th>뜻</th></tr>
       <tr><td><code>y ~ x1 + x2</code></td><td>두 설명변수</td></tr>
       <tr><td><code>y ~ x1 + factor(g)</code></td><td>범주형은 가변수로 자동 변환</td></tr>
-      <tr><td><code>y ~ x1 * x2</code></td><td>주효과 + 상호작용 (<code>x1 + x2 + x1:x2</code>)</td></tr>
+      <tr><td><code>y ~ x1 * x2</code></td><td>주효과와 상호작용(<code>x1 + x2 + x1:x2</code>)</td></tr>
       <tr><td><code>y ~ x + I(x^2)</code></td><td>제곱항(<code>I()</code>로 감쌈)</td></tr>
-      <tr><td><code>log(y) ~ .</code></td><td>반응 로그, 나머지 모든 변수</td></tr>
+      <tr><td><code>log(y) ~ .</code></td><td>반응의 로그, 나머지 모든 변수</td></tr>
     </table>
 
     <h3><span class="no">5.4.2</span>적합에서 예측까지</h3>
-    <pre><code>fit &lt;- lm(mpg ~ wt + hp, data = mtcars)
+<pre><code>fit &lt;- lm(mpg ~ wt + hp, data = mtcars)
 summary(fit)          # 계수, 표준오차, t, p, R^2
 confint(fit)          # 계수의 95% 신뢰구간
 par(mfrow = c(2, 2)); plot(fit)   # 진단 그림 네 장
 new &lt;- data.frame(wt = 3, hp = 150)
 predict(fit, new, interval = "confidence")   # 평균 반응의 구간
 predict(fit, new, interval = "prediction")   # 새 차 한 대의 구간</code></pre>
-    <p>진단 그림 네 장은 (1) 잔차 대 적합값(곡선, 깔때기), (2) 정규 Q-Q, (3) 척도-위치(등분산), (4) 잔차 대 지렛값(쿡 거리)입니다(응통10 4단원). 두 구간 가운데 예측구간이 항상 더 넓습니다(응통10 1.5절).</p>
-
+    <p>그러므로 답은 여섯 줄이다. <code>summary</code>로 계수를 읽고, <code>confint</code>로 계수의 신뢰구간을 얻는다. 진단 그림 네 장은 잔차 대 적합값(곡선이나 깔때기 모양), 정규 Q-Q, 척도-위치(등분산), 잔차 대 지렛값(쿡 거리)이다(응통10 04단원). 그림 1이 그 첫 장인데, U자 추세가 보이므로 무게의 제곱항이나 로그 변환을 고려할 만하다. 한편 두 구간 가운데 새 차 한 대의 예측구간은 개별 차의 흩어짐까지 담으므로 평균 반응의 신뢰구간보다 늘 넓다(응통10 1.5절).</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
-      <p><code>lm(mpg ~ wt + hp, data = mtcars)</code>의 계수가 절편 37.227, wt −3.878, hp −0.0318입니다. 무게 3(천 lb), 마력 150인 차의 연비 예측값은?</p>
+      <p><code>lm(mpg ~ wt + hp, data = mtcars)</code>의 계수가 절편 37.227, wt −3.878, hp −0.0318이다. 무게 3(천 lb), 마력 150인 차의 연비 예측값을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(37.227 - 3.878 \times 3 - 0.0318 \times 150 = 37.227 - 11.634 - 4.77 = 20.82\) mpg. <code>predict</code>의 <code>fit</code> 값과 같고, 구간은 <code>interval</code> 인자로 함께 얻습니다.</p>
+    <p><i>풀이.</i> \(37.227 - 3.878\times3 - 0.0318\times150 = 37.227 - 11.634 - 4.77 = 20.82\) mpg이다. <code>predict</code>의 <code>fit</code> 값과 같으며, 구간은 <code>interval</code> 인자로 함께 얻는다. 여기서 wt의 계수 −3.878은 마력을 고정했을 때 무게가 1천 lb 늘면 연비가 3.9 mpg 준다는 뜻이다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>계수를 읽을 때 다른 변수를 고정한다는 조건을 빠뜨리기 쉽다. 단순 회귀의 기울기 −5.34와 다중회귀의 −3.88이 다른 것은, 다중회귀에서는 마력이 같은 차끼리 비교하기 때문이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>+</code>, <code>*</code>, <code>factor()</code>, <code>I()</code>로 모형을 씁니다.</li>
-        <li><code>summary</code>, <code>confint</code>, <code>plot(fit)</code>으로 결과와 진단.</li>
-        <li><code>predict(..., interval = )</code>로 신뢰·예측구간.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>다중회귀는 <code>+</code>, <code>*</code>, <code>factor()</code>, <code>I()</code>로 공식을 쓰고 <code>lm</code>으로 적합한 뒤, <code>summary</code>와 <code>confint</code>로 다른 변수를 고정한 계수와 그 신뢰구간을 읽는다. <code>plot(fit)</code>의 진단 그림 네 장으로 모형이 자료에 맞는지 점검하는데, 잔차의 굽은 추세는 관계가 휘었다는 신호이다. 새 관측값은 <code>predict(..., interval = )</code>로 예측하며, 개별 예측구간은 평균의 신뢰구간보다 넓다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>lm(mpg ~ wt * am, data = mtcars)</code>에 들어가는 항을 모두 쓰세요.
-          <details><summary>답</summary><p>절편, <code>wt</code>, <code>am</code>, <code>wt:am</code>(상호작용).</p></details>
+        <li><code>lm(mpg ~ wt * am, data = mtcars)</code>에 들어가는 항을 모두 써라.
+          <details><summary>답</summary><p>절편, <code>wt</code>, <code>am</code>, 상호작용 <code>wt:am</code>이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li><code>cyl</code>(4, 6, 8)을 <code>lm(mpg ~ cyl)</code>로 넣는 것과 <code>lm(mpg ~ factor(cyl))</code>로 넣는 것의 차이는?
-          <details><summary>답</summary><p>앞은 실린더 수를 숫자로 보아 2개 늘 때마다 같은 양 변한다고 가정(기울기 1개), 뒤는 6기통·8기통을 4기통과 따로 비교(계수 2개)합니다. 효과가 직선이라는 근거가 없으면 <code>factor</code>가 안전합니다.</p></details>
+      <ol start="2">
+        <li><code>cyl</code>(4, 6, 8)을 <code>lm(mpg ~ cyl)</code>로 넣는 것과 <code>lm(mpg ~ factor(cyl))</code>로 넣는 것은 어떻게 다른가?
+          <details><summary>답</summary><p>앞은 기통 수를 숫자로 보아 2개 늘 때마다 같은 양 변한다고 가정하고(기울기 1개), 뒤는 6기통과 8기통을 4기통과 따로 비교한다(계수 2개). 효과가 직선이라는 근거가 없으면 <code>factor</code>가 안전하다.</p></details>
         </li>
       </ol>
     </div>

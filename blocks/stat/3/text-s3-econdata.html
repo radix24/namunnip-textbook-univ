@@ -8,55 +8,89 @@
 <article class="card q-card" id="text-s3-econdata" data-kind="본문" data-std="응통3-05-01">
   <header class="card-head"><span class="no"></span><h2>공개 경제 자료 요약하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>공개 경제 통계를 내려받아 정리하고 요약한다.</li>
-        <li>시계열 자료를 그래프로 나타내고 증가율을 계산한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>자료 읽기와 정리 (<a href="02-01.html">2.1</a>~<a href="02-04.html">2.4절</a>), 그래프 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>자료를 어디서 얻나</h3>
-    <p>한국은행 경제통계시스템(ECOS), 통계청 국가통계포털(KOSIS), 미국 세인트루이스 연준(FRED)은 GDP, 물가, 고용, 금리 같은 경제 자료를 무료로 제공합니다. 대부분 CSV로 받거나 API로 직접 불러올 수 있습니다.</p>
+    <p class="q-ask">뉴스에서 "소비자물가가 전년 같은 달보다 3.1% 올랐다"고 한다. 왜 지난달이 아니라 작년 같은 달과 비교할까? 한국은행이나 통계청의 공개 자료를 직접 받아 이런 숫자를 R로 계산할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 210" role="img" aria-label="1949년부터 1960년까지 연평균 항공 승객 수를 막대로 그리고 막대 위에 전년 대비 증가율을 적은 그래프">
+        <line x1="55" y1="170" x2="490" y2="170" class="ax"/>
+        <line x1="55" y1="170" x2="55" y2="25" class="ax"/>
+        <text x="109.4" y="185" text-anchor="middle" class="s">1950</text>
+        <text x="181.9" y="185" text-anchor="middle" class="s">1952</text>
+        <text x="254.4" y="185" text-anchor="middle" class="s">1954</text>
+        <text x="326.9" y="185" text-anchor="middle" class="s">1956</text>
+        <text x="399.4" y="185" text-anchor="middle" class="s">1958</text>
+        <text x="471.9" y="185" text-anchor="middle" class="s">1960</text>
+        <text x="50" y="174" text-anchor="end" class="s">0</text>
+        <text x="50" y="146.1" text-anchor="end" class="s">100</text>
+        <text x="50" y="118.2" text-anchor="end" class="s">200</text>
+        <text x="50" y="90.3" text-anchor="end" class="s">300</text>
+        <text x="50" y="62.5" text-anchor="end" class="s">400</text>
+        <text x="50" y="34.6" text-anchor="end" class="s">500</text>
+        <text x="490" y="199" text-anchor="end" class="s">연도</text>
+        <text x="61" y="29" class="s">연평균 승객 (천 명)</text>
+        <rect x="61.1" y="134.7" width="24" height="35.3" class="la a"/>
+        <rect x="97.4" y="131.1" width="24" height="38.9" class="la a"/>
+        <rect x="133.6" y="122.5" width="24" height="47.5" class="la a"/>
+        <rect x="169.9" y="115.1" width="24" height="54.9" class="la a"/>
+        <rect x="206.1" y="107.3" width="24" height="62.7" class="la a"/>
+        <rect x="242.4" y="103.4" width="24" height="66.6" class="la a"/>
+        <rect x="278.6" y="90.8" width="24" height="79.2" class="la a"/>
+        <rect x="314.9" y="78.5" width="24" height="91.5" class="la a"/>
+        <rect x="351.1" y="67.3" width="24" height="102.7" class="la a"/>
+        <rect x="387.4" y="63.8" width="24" height="106.2" class="la a"/>
+        <rect x="423.6" y="50.6" width="24" height="119.4" class="la a"/>
+        <rect x="459.9" y="37.2" width="24" height="132.8" class="la a"/>
+        <text x="109.4" y="126.1" text-anchor="middle" class="s">10%</text>
+        <text x="145.6" y="117.5" text-anchor="middle" class="s">22%</text>
+        <text x="181.9" y="110.1" text-anchor="middle" class="s">16%</text>
+        <text x="218.1" y="102.3" text-anchor="middle" class="s">14%</text>
+        <text x="254.4" y="98.4" text-anchor="middle" class="s">6%</text>
+        <text x="290.6" y="85.8" text-anchor="middle" class="s">19%</text>
+        <text x="326.9" y="73.5" text-anchor="middle" class="s">16%</text>
+        <text x="363.1" y="62.3" text-anchor="middle" class="s">12%</text>
+        <text x="399.4" y="58.8" text-anchor="middle" class="td s">3%</text>
+        <text x="435.6" y="45.6" text-anchor="middle" class="s">12%</text>
+        <text x="471.9" y="32.2" text-anchor="middle" class="s">11%</text>
+        <text x="80.4" y="52.9" class="s">막대 위 숫자는 전년 대비 증가율</text>
+      </svg>
+      <figcaption>그림 1. R 내장 <code>AirPassengers</code>의 연평균 승객 수와 전년 대비 증가율. 승객은 12년 동안 약 3.8배가 되었고, 해마다 3~22%씩 늘었다(빨간 숫자는 증가율이 낮은 해).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>자료 읽기와 정리(<a href="02-01.html">2.1</a>~<a href="02-04.html">2.4절</a>), 날짜 다루기(<a href="02-05.html">2.5절</a>), 그래프(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>시계열 정리</h3>
-    <pre><code>d &lt;- read.csv("cpi.csv")                      # 열: date, cpi (월별 소비자물가지수)
+    <p>처음 질문의 둘째 부분부터 답하자. 한국은행 경제통계시스템(ECOS), 통계청 국가통계포털(KOSIS), 미국 세인트루이스 연준(FRED)은 GDP, 물가, 고용, 금리 같은 경제 자료를 무료로 제공하며, 대부분 CSV로 받거나 API로 직접 불러올 수 있다. 받은 월별 물가 자료는 다음처럼 정리한다.</p>
+<pre><code>d &lt;- read.csv("cpi.csv")                      # 열은 date, cpi (월별 소비자물가지수)
 d$date &lt;- as.Date(d$date)
 d &lt;- d[order(d$date), ]
 d$yoy &lt;- 100 * (d$cpi / c(rep(NA, 12), head(d$cpi, -12)) - 1)   # 전년 동월 대비 %
 summary(d$yoy)
 plot(d$date, d$yoy, type = "l", xlab = "", ylab = "물가상승률 (%, 전년 동월 대비)")
 abline(h = 2, lty = 2)                          # 물가 목표 2%</code></pre>
-    <p>경제 시계열에서 자주 쓰는 변환: 전기 대비 증가율, 전년 동기 대비 증가율(계절성 제거 효과), 로그 차분(\(\Delta\log x \approx\) 증가율), 실질값(명목값 ÷ 물가지수 × 100).</p>
-
+    <p>즉 날짜형으로 바꾸고 날짜순으로 정렬한 뒤, 12칸 앞의 값으로 나누어 전년 동월 대비 증가율을 만든다. 이제 첫째 부분에 답할 수 있다. 물가와 매출 같은 월별 자료에는 계절에 따른 오르내림이 있어서, 지난달과 비교하면 계절 효과가 섞인다. 반면 작년 같은 달과 비교하면 계절 효과가 상쇄된다.</p>
+    <p>한편 경제 시계열에서 자주 쓰는 변환은 네 가지이다. 전기 대비 증가율, 계절성을 없애는 전년 동기 대비 증가율, 증가율의 근사인 로그 차분 \(\Delta\log x\), 그리고 명목값을 물가지수로 나누고 100을 곱한 실질값이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
-      <p>R 내장 <code>AirPassengers</code>(1949~1960 월별 항공 승객 수)로 연평균과 전년 대비 증가율을 구하세요.</p>
+      <p>R 내장 <code>AirPassengers</code>(1949~1960 월별 항공 승객 수, 천 명)로 연평균과 전년 대비 증가율을 구하여라.</p>
     </div>
-    <pre><code>yr &lt;- tapply(AirPassengers, floor(time(AirPassengers)), mean)
+<pre><code>yr &lt;- tapply(AirPassengers, floor(time(AirPassengers)), mean)
 round(yr); round(100 * diff(yr) / head(yr, -1), 1)
 plot(log(AirPassengers))     # 로그 척도에서 추세와 계절 진폭이 일정해짐</code></pre>
-    <p>연평균 승객이 1949년 약 127천 명에서 1960년 약 476천 명으로 늘었고, 해마다 3~22%(평균 약 13%) 증가했습니다. 원래 척도에서는 계절 진폭이 점점 커지지만 로그 척도에서는 일정해, 곱셈적 구조임을 보여 줍니다(응통17 3.1절).</p>
+    <p><i>풀이.</i> 그림 1처럼 연평균 승객이 1949년 약 127천 명에서 1960년 약 476천 명으로 늘었고, 해마다 3~22%(평균 약 13%) 증가했다. 그런데 원래 척도에서는 계절 진폭이 점점 커지지만 로그 척도에서는 일정하다. 이것은 계절 효과가 수준에 비례하는 곱셈적 구조임을 보여 준다(응통17 3.1절).</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>증가율을 계산하기 전에 날짜순 정렬을 빠뜨리기 쉽다. 내려받은 자료가 최신순이면 12칸 앞이 미래가 되어 부호가 뒤집힌 증가율이 나온다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>ECOS, KOSIS, FRED에서 자료를 받음.</li>
-        <li>날짜 형 변환, 정렬, 증가율·로그 차분.</li>
-        <li>시계열은 선 그래프, 기준선과 단위를 표시.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>ECOS, KOSIS, FRED 같은 공개 경제 자료는 CSV나 API로 받아, 날짜형으로 바꾸고 날짜순으로 정렬한 뒤 증가율, 로그 차분, 실질값으로 변환해 요약한다. 월별 자료에는 계절 효과가 있으므로 지난달이 아니라 작년 같은 달과 비교해야 계절 효과가 상쇄된 증가율을 얻는다. 시계열은 선 그래프로 그리고 기준선과 단위를 적는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>명목 임금이 5% 오르고 물가가 3% 올랐다면 실질 임금 증가율은 대략?
-          <details><summary>답</summary><p>\(1.05/1.03 - 1 \approx 1.9\%\). 로그 근사로 약 2%.</p></details>
+        <li>명목 임금이 5% 오르고 물가가 3% 올랐다면 실질 임금 증가율은 대략 얼마인가?
+          <details><summary>답</summary><p>\(1.05/1.03 - 1 \approx 1.9\%\)이다. 로그 근사로는 약 2%이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>로그 차분 \(\log x_t - \log x_{t-1}\)이 증가율의 근사인 까닭을 설명하여라.
+          <details><summary>답</summary><p>\(\log(x_t/x_{t-1}) = \log(1 + g) \approx g\)이기 때문이다. 증가율 \(g\)가 작을수록 정확하다.</p></details>
         </li>
       </ol>
     </div>

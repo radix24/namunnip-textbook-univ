@@ -8,57 +8,73 @@
 <article class="card q-card" id="text-s3-io" data-kind="본문" data-std="응통3-02-01">
   <header class="card-head"><span class="no"></span><h2>외부 자료 읽고 저장하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>CSV, 엑셀 자료를 읽고 저장한다.</li>
-        <li>작업 폴더, 인코딩, 결측 표시 문제를 해결한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>데이터프레임 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>자료는 밖에서 온다</h3>
-    <p>공공데이터포털, 통계청, 회사 데이터베이스에서 받은 자료를 R로 읽는 것이 분석의 첫 단계입니다. 이 단계의 사소한 실수(한글 깨짐, 숫자가 문자로 읽힘)가 뒤의 모든 결과를 망칠 수 있습니다.</p>
+    <p class="q-ask">공공데이터포털에서 받은 CSV 파일을 R로 읽었더니 한글이 깨지고, 소득 열의 평균이 계산되지 않는다. 자료를 읽는 첫 단계의 사소한 실수가 뒤의 모든 결과를 망칠 수 있다. 어떻게 읽고, 무엇을 확인해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 185" role="img" aria-label="파일을 읽고, 확인하고, 정리하고, 저장하는 자료 읽기의 흐름. 확인 단계에서 문제가 보이면 읽기 인수를 고쳐 다시 읽는다">
+        <rect x="15" y="70" width="80" height="40" class="lc c"/><text x="55.0" y="87.0" text-anchor="middle" class="s">파일</text>
+        <text x="55.0" y="102.0" text-anchor="middle" class="s">CSV, 엑셀</text>
+        <rect x="120" y="70" width="95" height="40" class="la a"/><text x="167.5" y="87.0" text-anchor="middle" class="s">읽기</text>
+        <text x="167.5" y="102.0" text-anchor="middle" class="s">인코딩, 결측 표시</text>
+        <rect x="240" y="70" width="85" height="40" class="lb b"/><text x="282.5" y="87.0" text-anchor="middle" class="s">확인</text>
+        <text x="282.5" y="102.0" text-anchor="middle" class="s">str, summary</text>
+        <rect x="350" y="70" width="70" height="40" class="la a"/><text x="385.0" y="87.0" text-anchor="middle" class="s">정리</text>
+        <text x="385.0" y="102.0" text-anchor="middle" class="s">2.2~2.5절</text>
+        <rect x="445" y="70" width="65" height="40" class="lc c"/><text x="477.5" y="87.0" text-anchor="middle" class="s">저장</text>
+        <text x="477.5" y="102.0" text-anchor="middle" class="s">CSV, RDS</text>
+        <path d="M95 90 L120 90 M113.6 92.7 L120 90 L113.6 87.3" class="ax"/>
+        <path d="M215 90 L240 90 M233.6 92.7 L240 90 L233.6 87.3" class="ax"/>
+        <path d="M325 90 L350 90 M343.6 92.7 L350 90 L343.6 87.3" class="ax"/>
+        <path d="M420 90 L445 90 M438.6 92.7 L445 90 L438.6 87.3" class="ax"/>
+        <path d="M282 115 L282 150 L167 150 L167 115" class="ax dsh"/><text x="225" y="168" text-anchor="middle" class="s">문제가 보이면 읽기 인수를 고쳐 다시 읽는다</text>
+        <text x="260" y="40" text-anchor="middle" class="s">경로는 프로젝트 폴더 기준 상대 경로로</text>
+      </svg>
+      <figcaption>그림 1. 외부 자료를 다루는 흐름. 읽은 직후의 확인 단계에서 깨진 글자나 문자로 읽힌 숫자를 찾으면, 읽기 인수를 고쳐 처음부터 다시 읽는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>데이터프레임(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>읽기</h3>
-    <pre><code>getwd()                                   # 현재 작업 폴더
+    <p>처음 질문의 두 문제는 읽기 인수로 해결한다. 예를 들어 CSV는 <code>read.csv</code>로 읽고, 인코딩과 결측 표시를 지정한다.</p>
+<pre><code>getwd()                                   # 현재 작업 폴더
 d &lt;- read.csv("data/survey.csv")          # 프로젝트 폴더 기준 상대 경로
 d &lt;- read.csv("survey.csv", fileEncoding = "CP949")   # 한글 윈도우 엑셀 CSV
 d &lt;- read.csv("survey.csv", na.strings = c("", "NA", "-", "999"))
 # readr 패키지: readr::read_csv("survey.csv", locale = readr::locale(encoding = "EUC-KR"))
 # 엑셀: readxl::read_excel("survey.xlsx", sheet = 1)</code></pre>
-    <p>절대 경로(<code>C:/Users/...</code>)보다 프로젝트 폴더 기준 상대 경로를 쓰면 다른 컴퓨터에서도 코드가 돌아갑니다(RStudio 프로젝트). 읽은 뒤에는 반드시 <code>str(d)</code>, <code>head(d)</code>, <code>summary(d)</code>로 확인합니다.</p>
+    <p><code>C:/Users/...</code> 같은 절대 경로보다 프로젝트 폴더 기준 상대 경로를 쓰면 다른 컴퓨터에서도 코드가 돌아간다(RStudio 프로젝트). 그리고 읽은 뒤에는 반드시 <code>str(d)</code>, <code>head(d)</code>, <code>summary(d)</code>로 확인한다. 그림 1의 확인 단계가 이것이다.</p>
 
     <h3><span class="no">2.1.2</span>흔한 문제</h3>
-    <ul>
-      <li>한글이 깨짐: 파일 인코딩(UTF-8 또는 CP949/EUC-KR)을 맞춥니다.</li>
-      <li>숫자가 문자로 읽힘: 천 단위 쉼표("1,234"), "-" 같은 결측 표시. <code>as.numeric(gsub(",", "", x))</code>.</li>
-      <li>결측이 999나 빈칸: <code>na.strings</code>로 지정.</li>
-      <li>첫 줄이 제목이 아님: <code>header</code>, <code>skip</code> 인수.</li>
-    </ul>
+    <p>확인 단계에서 자주 보이는 문제는 네 가지이다. 먼저 한글이 깨지면 파일 인코딩(UTF-8 또는 CP949, EUC-KR)을 맞춘다. 숫자가 문자로 읽히면 대개 천 단위 쉼표("1,234")나 "-" 같은 결측 표시 때문이므로, <code>as.numeric(gsub(",", "", x))</code>로 바꾼다. 또 결측이 999나 빈칸으로 적혀 있으면 <code>na.strings</code>로 지정한다. 첫 줄이 제목이 아니면 <code>header</code>와 <code>skip</code> 인수를 쓴다. 따라서 처음 질문의 깨진 한글은 인코딩 문제이고, 평균이 안 되는 소득 열은 문자로 읽힌 숫자 문제이다.</p>
 
     <h3><span class="no">2.1.3</span>저장</h3>
-    <pre><code>write.csv(d, "out/clean.csv", row.names = FALSE, fileEncoding = "UTF-8")
+    <p>정리한 자료는 두 형식으로 저장해 두면 편하다.</p>
+<pre><code>write.csv(d, "out/clean.csv", row.names = FALSE, fileEncoding = "UTF-8")
 saveRDS(d, "out/clean.rds"); d2 &lt;- readRDS("out/clean.rds")   # R 객체 그대로(형식 보존)</code></pre>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>read.csv</code>(인코딩, 결측 표시), 상대 경로.</li>
-        <li>읽은 뒤 <code>str</code>, <code>summary</code>로 확인.</li>
-        <li>정리한 자료는 CSV와 RDS로 저장.</li>
-      </ol>
+    <p>여기서 CSV는 다른 프로그램과 주고받기 좋고, RDS는 factor 수준이나 날짜형 같은 R의 형식까지 그대로 보존한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.1.1</span>
+      <p>읽은 자료의 <code>str(d)</code>에서 소득 열이 <code>chr</code>로 나왔고, <code>head(d$income)</code>는 <code>"3,200" "없음" "4,100"</code>이었다. 숫자로 바르게 바꾸어라.</p>
     </div>
+<pre><code>x &lt;- d$income
+x[x == "없음"] &lt;- NA
+d$income &lt;- as.numeric(gsub(",", "", x))
+summary(d$income)</code></pre>
+    <p><i>풀이.</i> 즉 결측 표시를 먼저 <code>NA</code>로 바꾸고 쉼표를 지운 뒤 숫자로 바꾼다. 이 순서를 지키면 강제 변환 경고 없이 바뀌며, 처음부터 <code>na.strings = "없음"</code>으로 읽어도 된다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><code>write.csv</code>에서 <code>row.names = FALSE</code>를 빼면 행 번호가 이름 없는 첫 열로 저장된다. 다시 읽을 때마다 <code>X</code>라는 쓸모없는 열이 하나씩 늘어난다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>외부 자료는 <code>read.csv</code>로 읽되, 한글이 깨지면 인코딩을, 숫자가 문자로 읽히면 쉼표와 결측 표시를 맞춘다. 경로는 프로젝트 폴더 기준 상대 경로로 쓰고, 읽은 직후 <code>str</code>과 <code>summary</code>로 확인해 문제가 보이면 읽기 인수를 고쳐 다시 읽는다. 정리한 자료는 다른 프로그램용 CSV와 형식을 보존하는 RDS로 저장한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li><code>str(d)</code>에서 소득 열이 <code>chr</code>로 나왔습니다. 원인 두 가지와 해결은?
-          <details><summary>답</summary><p>쉼표가 든 숫자, "없음" 같은 문자 결측. <code>gsub</code>으로 쉼표를 지우고 결측 표시를 <code>na.strings</code>로 지정한 뒤 <code>as.numeric</code>.</p></details>
+        <li><code>str(d)</code>에서 소득 열이 <code>chr</code>로 나왔다. 원인 두 가지와 해결 방법은 무엇인가?
+          <details><summary>답</summary><p>쉼표가 든 숫자와 "없음" 같은 문자 결측이다. <code>gsub</code>으로 쉼표를 지우고 결측 표시를 <code>na.strings</code>로 지정한 뒤 <code>as.numeric</code>으로 바꾼다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>factor로 정리한 자료를 CSV로 저장했다가 다시 읽으면 무엇이 달라지는가?
+          <details><summary>답</summary><p>수준의 순서가 사라지고 문자로 읽힌다. 형식을 보존하려면 RDS로 저장하거나, 다시 읽은 뒤 <code>factor(..., levels = ...)</code>로 순서를 다시 정한다.</p></details>
         </li>
       </ol>
     </div>

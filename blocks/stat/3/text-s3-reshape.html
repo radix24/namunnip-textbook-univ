@@ -8,53 +8,107 @@
 <article class="card q-card" id="text-s3-reshape" data-kind="본문" data-std="응통3-02-04">
   <header class="card-head"><span class="no"></span><h2>넓은 형식과 긴 형식</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>깔끔한 자료(tidy data)의 원칙을 안다.</li>
-        <li>넓은 형식과 긴 형식 사이를 바꾼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>그룹 요약 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>같은 자료, 두 모양</h3>
-    <p>학생별 1~3월 점수를 한 행에 세 열로 적을 수도(넓은 형식), 학생-월 조합마다 한 행으로 적을 수도(긴 형식) 있습니다. 사람이 보기에는 넓은 쪽이, 그래프와 모형에는 긴 쪽이 편합니다.</p>
+    <p class="q-ask">학생별 1~3월 점수를 엑셀에 적으면 보통 한 학생이 한 줄이고 달마다 한 열이다. 그런데 이 표로 월별 평균 그래프를 그리거나 학생별 추이를 회귀로 분석하려면 R이 불편해한다. 같은 자료를 어떤 모양으로 바꿔야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="학생 세 명의 세 달 점수를 한 행에 세 열로 적은 넓은 형식 표와, 학생-월마다 한 행인 아홉 행의 긴 형식 표를 서로 바꾸는 그림">
+        <rect x="15" y="50" width="38" height="18" class="lk k"/><text x="34.0" y="63" text-anchor="middle" class="s">id</text>
+        <rect x="53" y="50" width="38" height="18" class="lk k"/><text x="72.0" y="63" text-anchor="middle" class="s">m1</text>
+        <rect x="91" y="50" width="38" height="18" class="lk k"/><text x="110.0" y="63" text-anchor="middle" class="s">m2</text>
+        <rect x="129" y="50" width="38" height="18" class="lk k"/><text x="148.0" y="63" text-anchor="middle" class="s">m3</text>
+        <rect x="15" y="68" width="38" height="18" class="k" style="fill:none"/><text x="34.0" y="81" text-anchor="middle" class="s">1</text>
+        <rect x="53" y="68" width="38" height="18" class="la a"/><text x="72.0" y="81" text-anchor="middle" class="s">70</text>
+        <rect x="91" y="68" width="38" height="18" class="la a"/><text x="110.0" y="81" text-anchor="middle" class="s">75</text>
+        <rect x="129" y="68" width="38" height="18" class="la a"/><text x="148.0" y="81" text-anchor="middle" class="s">78</text>
+        <rect x="15" y="86" width="38" height="18" class="k" style="fill:none"/><text x="34.0" y="99" text-anchor="middle" class="s">2</text>
+        <rect x="53" y="86" width="38" height="18" class="k" style="fill:none"/><text x="72.0" y="99" text-anchor="middle" class="s">80</text>
+        <rect x="91" y="86" width="38" height="18" class="k" style="fill:none"/><text x="110.0" y="99" text-anchor="middle" class="s">82</text>
+        <rect x="129" y="86" width="38" height="18" class="k" style="fill:none"/><text x="148.0" y="99" text-anchor="middle" class="s">85</text>
+        <rect x="15" y="104" width="38" height="18" class="k" style="fill:none"/><text x="34.0" y="117" text-anchor="middle" class="s">3</text>
+        <rect x="53" y="104" width="38" height="18" class="k" style="fill:none"/><text x="72.0" y="117" text-anchor="middle" class="s">65</text>
+        <rect x="91" y="104" width="38" height="18" class="k" style="fill:none"/><text x="110.0" y="117" text-anchor="middle" class="s">70</text>
+        <rect x="129" y="104" width="38" height="18" class="k" style="fill:none"/><text x="148.0" y="117" text-anchor="middle" class="s">72</text>
+        <text x="91" y="40" text-anchor="middle" class="s">넓은 형식 (3행)</text>
+        <path d="M180 90 L250 90 M243.6 92.7 L250 90 L243.6 87.3" class="ax"/>
+        <text x="215" y="80" text-anchor="middle" class="s">pivot_longer</text>
+        <path d="M250 110 L180 110 M186.4 107.3 L180 110 L186.4 112.7" class="ax"/>
+        <text x="215" y="128" text-anchor="middle" class="s">pivot_wider</text>
+        <rect x="270" y="10" width="52" height="18" class="lk k"/><text x="296.0" y="23" text-anchor="middle" class="s">id</text>
+        <rect x="322" y="10" width="52" height="18" class="lk k"/><text x="348.0" y="23" text-anchor="middle" class="s">month</text>
+        <rect x="374" y="10" width="52" height="18" class="lk k"/><text x="400.0" y="23" text-anchor="middle" class="s">score</text>
+        <rect x="270" y="28" width="52" height="18" class="la a"/><text x="296.0" y="41" text-anchor="middle" class="s">1</text>
+        <rect x="322" y="28" width="52" height="18" class="la a"/><text x="348.0" y="41" text-anchor="middle" class="s">m1</text>
+        <rect x="374" y="28" width="52" height="18" class="la a"/><text x="400.0" y="41" text-anchor="middle" class="s">70</text>
+        <rect x="270" y="46" width="52" height="18" class="la a"/><text x="296.0" y="59" text-anchor="middle" class="s">1</text>
+        <rect x="322" y="46" width="52" height="18" class="la a"/><text x="348.0" y="59" text-anchor="middle" class="s">m2</text>
+        <rect x="374" y="46" width="52" height="18" class="la a"/><text x="400.0" y="59" text-anchor="middle" class="s">75</text>
+        <rect x="270" y="64" width="52" height="18" class="la a"/><text x="296.0" y="77" text-anchor="middle" class="s">1</text>
+        <rect x="322" y="64" width="52" height="18" class="la a"/><text x="348.0" y="77" text-anchor="middle" class="s">m3</text>
+        <rect x="374" y="64" width="52" height="18" class="la a"/><text x="400.0" y="77" text-anchor="middle" class="s">78</text>
+        <rect x="270" y="82" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="95" text-anchor="middle" class="s">2</text>
+        <rect x="322" y="82" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="95" text-anchor="middle" class="s">m1</text>
+        <rect x="374" y="82" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="95" text-anchor="middle" class="s">80</text>
+        <rect x="270" y="100" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="113" text-anchor="middle" class="s">2</text>
+        <rect x="322" y="100" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="113" text-anchor="middle" class="s">m2</text>
+        <rect x="374" y="100" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="113" text-anchor="middle" class="s">82</text>
+        <rect x="270" y="118" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="131" text-anchor="middle" class="s">2</text>
+        <rect x="322" y="118" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="131" text-anchor="middle" class="s">m3</text>
+        <rect x="374" y="118" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="131" text-anchor="middle" class="s">85</text>
+        <rect x="270" y="136" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="149" text-anchor="middle" class="s">3</text>
+        <rect x="322" y="136" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="149" text-anchor="middle" class="s">m1</text>
+        <rect x="374" y="136" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="149" text-anchor="middle" class="s">65</text>
+        <rect x="270" y="154" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="167" text-anchor="middle" class="s">3</text>
+        <rect x="322" y="154" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="167" text-anchor="middle" class="s">m2</text>
+        <rect x="374" y="154" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="167" text-anchor="middle" class="s">70</text>
+        <rect x="270" y="172" width="52" height="18" class="k" style="fill:none"/><text x="296.0" y="185" text-anchor="middle" class="s">3</text>
+        <rect x="322" y="172" width="52" height="18" class="k" style="fill:none"/><text x="348.0" y="185" text-anchor="middle" class="s">m3</text>
+        <rect x="374" y="172" width="52" height="18" class="k" style="fill:none"/><text x="400.0" y="185" text-anchor="middle" class="s">72</text>
+        <text x="440" y="30" class="s">긴 형식</text><text x="440" y="46" class="s">(9행)</text>
+        <text x="91" y="150" text-anchor="middle" class="s">파란 칸은 학생 1의 점수</text>
+      </svg>
+      <figcaption>그림 1. 같은 자료의 두 모양. 넓은 형식(왼쪽)의 학생 1 점수 세 칸은 긴 형식(오른쪽)에서 세 행이 된다. <code>pivot_longer</code>와 <code>pivot_wider</code>로 서로 바꾼다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>그룹 요약(<a href="02-03.html">2.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.4.1</span>깔끔한 자료</h3>
+    <p>처음 질문의 엑셀 표는 넓은 형식이고, R이 편해하는 것은 긴 형식이다. 왜 그런지는 다음 원칙으로 설명된다.</p>
     <div class="tb-env def">
-      <span class="lb">정의 2.4.1</span>
-      <p><b>깔끔한 자료</b>: (1) 변수마다 한 열, (2) 관측마다 한 행, (3) 값마다 한 칸.</p>
+      <span class="lb">정의 2.4.1 <span class="nm">(깔끔한 자료)</span></span>
+      <p>변수마다 한 열, 관측마다 한 행, 값마다 한 칸인 자료를 <em>깔끔한 자료</em>(tidy data)라 한다.</p>
     </div>
-    <p>"1월", "2월"이 열 이름이면 "월"이라는 변수가 열 이름에 숨어 있어 원칙 1을 어깁니다. 긴 형식으로 바꾸면 월과 점수가 각각 한 열이 됩니다.</p>
+    <p>넓은 형식에서는 "1월", "2월"이 열 이름이므로 월이라는 변수가 열 이름에 숨어 있어 첫째 원칙을 어긴다. 긴 형식으로 바꾸면 월과 점수가 각각 한 열이 되고, 학생과 월의 조합 하나가 한 행이 된다. 그래서 월별로 묶거나 월을 그래프의 가로축에 놓는 일이 바로 된다.</p>
 
     <h3><span class="no">2.4.2</span>바꾸기</h3>
-    <pre><code>wide &lt;- data.frame(id = 1:3, m1 = c(70, 80, 65), m2 = c(75, 82, 70), m3 = c(78, 85, 72))
+<pre><code>wide &lt;- data.frame(id = 1:3, m1 = c(70, 80, 65), m2 = c(75, 82, 70), m3 = c(78, 85, 72))
 # tidyr
 long &lt;- tidyr::pivot_longer(wide, cols = m1:m3, names_to = "month", values_to = "score")
 back &lt;- tidyr::pivot_wider(long, names_from = month, values_from = score)
 # 기본 R
 long2 &lt;- reshape(wide, direction = "long", varying = c("m1", "m2", "m3"),
                  v.names = "score", timevar = "month", times = 1:3, idvar = "id")</code></pre>
-    <p>긴 형식 9행(3명 × 3달). 이렇게 하면 <code>tapply(long$score, long$month, mean)</code>로 월별 평균을, <code>ggplot(long, aes(month, score, group = id)) + geom_line()</code>으로 학생별 추이를 바로 그릴 수 있습니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>깔끔한 자료: 변수 = 열, 관측 = 행.</li>
-        <li><code>pivot_longer</code> / <code>pivot_wider</code> (또는 <code>reshape</code>).</li>
-        <li>모형과 그래프는 긴 형식, 보고 표는 넓은 형식.</li>
-      </ol>
+    <p>긴 형식은 3명 × 3달 = 9행이다. 이렇게 바꾸면 <code>tapply(long$score, long$month, mean)</code>으로 월별 평균을, <code>ggplot(long, aes(month, score, group = id)) + geom_line()</code>으로 학생별 추이를 바로 그릴 수 있다. 처음 질문의 답이 이것이다. 반대로 사람에게 보여 줄 보고 표는 넓은 형식이 읽기 좋으므로, 분석은 긴 형식으로 하고 마지막에 <code>pivot_wider</code>로 되돌린다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.4.1</span>
+      <p>위의 <code>long</code>에서 월별 평균 점수를 구하고, 다시 넓은 형식으로 되돌린 표가 <code>wide</code>와 같은지 확인하여라.</p>
     </div>
+<pre><code>tapply(long$score, long$month, mean)   # m1 71.7, m2 75.7, m3 78.3
+all.equal(as.data.frame(back), wide)   # TRUE</code></pre>
+    <p><i>풀이.</i> 긴 형식에서는 월이 한 열이라 바로 묶을 수 있다. 되돌린 표는 원래와 같다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>긴 형식에서 \(id\) 열을 빠뜨리면 어느 점수가 누구의 것인지 사라져 넓은 형식으로 되돌릴 수 없다. 바꾸기 전에 각 관측을 구별하는 열이 있는지 확인하자.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>같은 자료라도 한 줄에 여러 시점을 적는 넓은 형식과 관측마다 한 행인 긴 형식이 있다. 변수마다 한 열, 관측마다 한 행이라는 깔끔한 자료의 원칙에 맞는 것은 긴 형식이라, 그래프와 모형, 그룹 요약은 긴 형식에서 바로 된다. 그래서 엑셀식 넓은 표는 <code>pivot_longer</code>로 바꾸어 분석하고, 보고할 때 <code>pivot_wider</code>로 되돌린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>R 내장 <code>WorldPhones</code>(연도 × 대륙 전화 수 행렬)를 긴 형식 데이터프레임으로 바꾸세요.
-          <details><summary>답</summary><p><code>as.data.frame(as.table(WorldPhones))</code>로 연도, 대륙, 값 세 열의 긴 형식이 됩니다.</p></details>
+        <li>R 내장 <code>WorldPhones</code>(연도 × 대륙 전화 수 행렬)를 긴 형식 데이터프레임으로 바꾸어라.
+          <details><summary>답</summary><p><code>as.data.frame(as.table(WorldPhones))</code>로 연도, 대륙, 값의 세 열인 긴 형식이 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>학생 30명의 12개월 점수를 긴 형식으로 바꾸면 몇 행, 몇 열이 되는가?
+          <details><summary>답</summary><p>\(30\times12 = 360\)행이고, id, month, score의 3열이다.</p></details>
         </li>
       </ol>
     </div>

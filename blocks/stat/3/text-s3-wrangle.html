@@ -8,22 +8,67 @@
 <article class="card q-card" id="text-s3-wrangle" data-kind="본문" data-std="응통3-02-03">
   <header class="card-head"><span class="no"></span><h2>필터, 정렬, 그룹 요약, 결합</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>행 고르기, 열 고르기, 정렬, 새 변수 만들기, 그룹 요약을 한다.</li>
-        <li>두 표를 열쇠 변수로 결합한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>자료 정리 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>다섯 가지 동사</h3>
-    <p>자료 정리의 대부분은 다섯 동작의 조합입니다. 고르기(행), 고르기(열), 정렬, 변수 만들기, 요약. dplyr 패키지는 이것을 동사 이름의 함수로 제공하고, 파이프 <code>|&gt;</code>로 이어 씁니다.</p>
+    <p class="q-ask">매장별 매출 표와 매장별 지역 표가 따로 있다. 지역별 평균 매출을 내려면 두 표를 붙이고, 묶고, 요약해야 한다. 그런데 한 표에만 있는 매장은 어떻게 될까? 자료 정리의 수많은 작업은 몇 가지 동작으로 정리될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 250" role="img" aria-label="매출 표와 지역 표를 매장 번호로 결합할 때, 공통 열쇠만 남기면 3행이 되고 매출 표를 기준으로 하면 짝이 없는 4번 매장의 지역이 NA인 4행이 되는 그림">
+        <rect x="15" y="30" width="46" height="18" class="lk k"/><text x="38.0" y="43" text-anchor="middle" class="s">store</text>
+        <rect x="61" y="30" width="46" height="18" class="lk k"/><text x="84.0" y="43" text-anchor="middle" class="s">amount</text>
+        <rect x="15" y="48" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="61" text-anchor="middle" class="s">1</text>
+        <rect x="61" y="48" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="61" text-anchor="middle" class="s">120</text>
+        <rect x="15" y="66" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="79" text-anchor="middle" class="s">2</text>
+        <rect x="61" y="66" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="79" text-anchor="middle" class="s">80</text>
+        <rect x="15" y="84" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="97" text-anchor="middle" class="s">3</text>
+        <rect x="61" y="84" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="97" text-anchor="middle" class="s">150</text>
+        <rect x="15" y="102" width="46" height="18" class="ld d"/><text x="38.0" y="115" text-anchor="middle" class="s">4</text>
+        <rect x="61" y="102" width="46" height="18" class="ld d"/><text x="84.0" y="115" text-anchor="middle" class="s">60</text>
+        <rect x="15" y="150" width="46" height="18" class="lk k"/><text x="38.0" y="163" text-anchor="middle" class="s">store</text>
+        <rect x="61" y="150" width="46" height="18" class="lk k"/><text x="84.0" y="163" text-anchor="middle" class="s">region</text>
+        <rect x="15" y="168" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="181" text-anchor="middle" class="s">1</text>
+        <rect x="61" y="168" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="181" text-anchor="middle" class="s">서울</text>
+        <rect x="15" y="186" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="199" text-anchor="middle" class="s">2</text>
+        <rect x="61" y="186" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="199" text-anchor="middle" class="s">부산</text>
+        <rect x="15" y="204" width="46" height="18" class="k" style="fill:none"/><text x="38.0" y="217" text-anchor="middle" class="s">3</text>
+        <rect x="61" y="204" width="46" height="18" class="k" style="fill:none"/><text x="84.0" y="217" text-anchor="middle" class="s">서울</text>
+        <rect x="15" y="222" width="46" height="18" class="ld d"/><text x="38.0" y="235" text-anchor="middle" class="s">5</text>
+        <rect x="61" y="222" width="46" height="18" class="ld d"/><text x="84.0" y="235" text-anchor="middle" class="s">대구</text>
+        <text x="61" y="22" text-anchor="middle" class="s">sales</text><text x="61" y="143" text-anchor="middle" class="s">info</text>
+        <rect x="170" y="30" width="46" height="18" class="lk k"/><text x="193.0" y="43" text-anchor="middle" class="s">store</text>
+        <rect x="216" y="30" width="46" height="18" class="lk k"/><text x="239.0" y="43" text-anchor="middle" class="s">amount</text>
+        <rect x="262" y="30" width="46" height="18" class="lk k"/><text x="285.0" y="43" text-anchor="middle" class="s">region</text>
+        <rect x="170" y="48" width="46" height="18" class="k" style="fill:none"/><text x="193.0" y="61" text-anchor="middle" class="s">1</text>
+        <rect x="216" y="48" width="46" height="18" class="k" style="fill:none"/><text x="239.0" y="61" text-anchor="middle" class="s">120</text>
+        <rect x="262" y="48" width="46" height="18" class="k" style="fill:none"/><text x="285.0" y="61" text-anchor="middle" class="s">서울</text>
+        <rect x="170" y="66" width="46" height="18" class="k" style="fill:none"/><text x="193.0" y="79" text-anchor="middle" class="s">2</text>
+        <rect x="216" y="66" width="46" height="18" class="k" style="fill:none"/><text x="239.0" y="79" text-anchor="middle" class="s">80</text>
+        <rect x="262" y="66" width="46" height="18" class="k" style="fill:none"/><text x="285.0" y="79" text-anchor="middle" class="s">부산</text>
+        <rect x="170" y="84" width="46" height="18" class="k" style="fill:none"/><text x="193.0" y="97" text-anchor="middle" class="s">3</text>
+        <rect x="216" y="84" width="46" height="18" class="k" style="fill:none"/><text x="239.0" y="97" text-anchor="middle" class="s">150</text>
+        <rect x="262" y="84" width="46" height="18" class="k" style="fill:none"/><text x="285.0" y="97" text-anchor="middle" class="s">서울</text>
+        <text x="239" y="22" text-anchor="middle" class="s">공통 열쇠만 (3행)</text>
+        <rect x="345" y="30" width="46" height="18" class="lk k"/><text x="368.0" y="43" text-anchor="middle" class="s">store</text>
+        <rect x="391" y="30" width="46" height="18" class="lk k"/><text x="414.0" y="43" text-anchor="middle" class="s">amount</text>
+        <rect x="437" y="30" width="46" height="18" class="lk k"/><text x="460.0" y="43" text-anchor="middle" class="s">region</text>
+        <rect x="345" y="48" width="46" height="18" class="k" style="fill:none"/><text x="368.0" y="61" text-anchor="middle" class="s">1</text>
+        <rect x="391" y="48" width="46" height="18" class="k" style="fill:none"/><text x="414.0" y="61" text-anchor="middle" class="s">120</text>
+        <rect x="437" y="48" width="46" height="18" class="k" style="fill:none"/><text x="460.0" y="61" text-anchor="middle" class="s">서울</text>
+        <rect x="345" y="66" width="46" height="18" class="k" style="fill:none"/><text x="368.0" y="79" text-anchor="middle" class="s">2</text>
+        <rect x="391" y="66" width="46" height="18" class="k" style="fill:none"/><text x="414.0" y="79" text-anchor="middle" class="s">80</text>
+        <rect x="437" y="66" width="46" height="18" class="k" style="fill:none"/><text x="460.0" y="79" text-anchor="middle" class="s">부산</text>
+        <rect x="345" y="84" width="46" height="18" class="k" style="fill:none"/><text x="368.0" y="97" text-anchor="middle" class="s">3</text>
+        <rect x="391" y="84" width="46" height="18" class="k" style="fill:none"/><text x="414.0" y="97" text-anchor="middle" class="s">150</text>
+        <rect x="437" y="84" width="46" height="18" class="k" style="fill:none"/><text x="460.0" y="97" text-anchor="middle" class="s">서울</text>
+        <rect x="345" y="102" width="46" height="18" class="ld d"/><text x="368.0" y="115" text-anchor="middle" class="s">4</text>
+        <rect x="391" y="102" width="46" height="18" class="ld d"/><text x="414.0" y="115" text-anchor="middle" class="s">60</text>
+        <rect x="437" y="102" width="46" height="18" class="ld d"/><text x="460.0" y="115" text-anchor="middle" class="s">NA</text>
+        <text x="414" y="22" text-anchor="middle" class="s">all.x = TRUE (4행)</text>
+        <text x="300" y="160" class="s">빨간 행은 짝이 없는 열쇠</text><text x="300" y="178" class="s">결합 뒤에는 행 수를 꼭 확인한다</text>
+      </svg>
+      <figcaption>그림 1. 두 표의 결합. 공통 열쇠만 남기면 짝이 없는 4번과 5번 매장이 빠지고, <code>all.x = TRUE</code>로 매출 표를 기준으로 하면 4번 매장이 지역 <code>NA</code>로 남는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>자료 정리(<a href="02-02.html">2.2절</a>)와 <code>tapply</code>(<a href="01-03.html">1.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>기본 R과 dplyr</h3>
+    <p>처음 질문의 둘째 부분부터 답하자. 자료 정리의 대부분은 다섯 동작, 곧 행 고르기, 열 고르기, 정렬, 변수 만들기, 그룹 요약의 조합이다. dplyr 패키지는 이것을 동사 이름의 함수로 제공한다.</p>
     <table class="tw">
       <tr><th>동작</th><th>기본 R</th><th>dplyr</th></tr>
       <tr><td>행 고르기</td><td><code>d[d$cyl == 4, ]</code></td><td><code>filter(d, cyl == 4)</code></td></tr>
@@ -32,41 +77,42 @@
       <tr><td>변수 만들기</td><td><code>d$kpl &lt;- d$mpg * 0.425</code></td><td><code>mutate(d, kpl = mpg * 0.425)</code></td></tr>
       <tr><td>그룹 요약</td><td><code>aggregate(mpg ~ cyl, d, mean)</code></td><td><code>d |&gt; group_by(cyl) |&gt; summarise(m = mean(mpg), n = n())</code></td></tr>
     </table>
-    <p><code>|&gt;</code>(R 4.1 이상)는 왼쪽 결과를 오른쪽 함수의 첫 인수로 넘깁니다. "자료를 → 거르고 → 묶고 → 요약한다"처럼 읽힙니다.</p>
-
-    <h3><span class="no">2.3.2</span>결합</h3>
-    <pre><code>sales &lt;- data.frame(store = c(1, 2, 3, 4), amount = c(120, 80, 150, 60))
-info  &lt;- data.frame(store = c(1, 2, 3, 5), region = c("서울", "부산", "서울", "대구"))
-merge(sales, info, by = "store")                 # 공통 열쇠만: 1, 2, 3
-merge(sales, info, by = "store", all.x = TRUE)   # sales 기준: 4번은 region NA
-# dplyr: inner_join(sales, info, by = "store"), left_join(...)</code></pre>
-    <p>결합 뒤에는 행 수가 예상과 같은지 꼭 확인합니다. 열쇠가 중복되면 행이 불어납니다.</p>
-
+    <p>파이프 <code>|&gt;</code>(R 4.1 이상)는 왼쪽 결과를 오른쪽 함수의 첫 인수로 넘긴다. 그래서 자료를 거르고, 묶고, 요약하는 순서대로 코드가 읽힌다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
-      <p><code>mtcars</code>에서 기통 수별 대수, 평균 연비, 평균 마력을 연비 순으로 구하세요.</p>
+      <p><code>mtcars</code>에서 기통 수별 대수, 평균 연비, 평균 마력을 연비가 높은 순으로 구하여라.</p>
     </div>
-    <pre><code>library(dplyr)
+<pre><code>library(dplyr)
 mtcars |&gt; group_by(cyl) |&gt;
   summarise(n = n(), mpg = mean(mpg), hp = mean(hp)) |&gt;
   arrange(desc(mpg))
 # 4기통 11대 26.7 82.6 / 6기통 7대 19.7 122 / 8기통 14대 15.1 209</code></pre>
+    <p><i>풀이.</i> 묶고, 요약하고, 정렬하는 세 단계가 파이프로 이어진다. 기통이 많을수록 마력은 크고 연비는 낮다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>filter, select, arrange, mutate, group_by + summarise.</li>
-        <li>파이프로 단계를 이어 읽기 쉽게.</li>
-        <li>결합(merge, join) 뒤 행 수 확인.</li>
-      </ol>
-    </div>
+    <h3><span class="no">2.3.2</span>결합</h3>
+    <p>이제 처음 질문의 두 표를 붙이자. 공통 열(열쇠)로 행을 맞추는 것이 결합이다.</p>
+<pre><code>sales &lt;- data.frame(store = c(1, 2, 3, 4), amount = c(120, 80, 150, 60))
+info  &lt;- data.frame(store = c(1, 2, 3, 5), region = c("서울", "부산", "서울", "대구"))
+merge(sales, info, by = "store")                 # 공통 열쇠만 1, 2, 3
+merge(sales, info, by = "store", all.x = TRUE)   # sales 기준, 4번은 region NA
+# dplyr: inner_join(sales, info, by = "store"), left_join(...)</code></pre>
+    <p>그림 1처럼 기본은 두 표에 모두 있는 열쇠만 남긴다. 따라서 한 표에만 있는 매장은 빠지고, <code>all.x = TRUE</code>(dplyr의 <code>left_join</code>)를 쓰면 왼쪽 표의 행을 모두 남기되 짝이 없는 칸은 <code>NA</code>가 된다. 결합 뒤에는 행 수가 예상과 같은지 꼭 확인한다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span>열쇠가 한쪽 표에서 중복되면 결합 뒤 행이 불어난다. 예를 들어 지역 표에 1번 매장이 두 번 적혀 있으면 1번 매장의 매출이 두 번 세어져 합계가 틀린다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>자료 정리는 행 고르기, 열 고르기, 정렬, 변수 만들기, 그룹 요약의 다섯 동작으로 대부분 해결되며, dplyr의 <code>filter</code>, <code>select</code>, <code>arrange</code>, <code>mutate</code>, <code>group_by</code>와 <code>summarise</code>를 파이프로 이으면 순서대로 읽힌다. 두 표는 열쇠로 결합하는데, 기본은 공통 열쇠만 남겨 한 표에만 있는 행이 빠지고, 왼쪽 기준 결합은 짝 없는 칸을 <code>NA</code>로 남긴다. 결합 뒤에는 행 수를 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>기본 R로 예제의 결과를 만드세요.
-          <details><summary>답</summary><p><code>a &lt;- aggregate(cbind(mpg, hp) ~ cyl, mtcars, mean); a$n &lt;- table(mtcars$cyl); a[order(-a$mpg), ]</code>.</p></details>
+        <li>기본 R로 예제 2.3.1의 결과를 만들어라.
+          <details><summary>답</summary><p><code>a &lt;- aggregate(cbind(mpg, hp) ~ cyl, mtcars, mean); a$n &lt;- as.vector(table(mtcars$cyl)); a[order(-a$mpg), ]</code>이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>그림 1의 두 표를 <code>all = TRUE</code>로 결합하면 몇 행이 되며, 어떤 칸이 <code>NA</code>인가?
+          <details><summary>답</summary><p>5행이다. 4번 매장의 지역과 5번 매장의 매출이 <code>NA</code>이다.</p></details>
         </li>
       </ol>
     </div>
