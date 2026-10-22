@@ -6,85 +6,84 @@
 }
 -->
 <article class="card q-card" id="text-a13-wcs" data-kind="본문" data-std="천우13-04-03">
-  <header class="card-head"><span class="no"></span><h2>천체 좌표 보정(astrometry)으로 영상에 좌표 부여하기</h2><span class="kind">본문 · 4.3절</span></header>
+  <header class="card-head"><span class="no"></span><h2>천체 좌표 보정으로 영상에 좌표 부여하기</h2><span class="kind">본문 · 4.3절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>WCS 머리말(CRPIX, CRVAL, CD 행렬)과 접평면 투영을 안다.</li>
-        <li>픽셀 좌표를 적경·적위로 바꾸는 계산을 한다.</li>
-        <li>기준 성표(Gaia)와 맞춰 WCS를 구하는 절차를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>FITS 머리말 (<a href="01-02.html">1.2절</a>), 천구 좌표 (<a href="../1/01-01.html">천우1 1.1절</a>).</li>
-      </ul>
-    </div>
-
-<h3>픽셀을 하늘 좌표로</h3>
-    <p>영상의 (x, y) 픽셀이 하늘의 어느 (α, δ)인지 알려 주는 규칙을 WCS(World Coordinate System)라 하며, FITS 머리말에 적습니다. 이 규칙을 구하는 일이 천체 좌표 보정입니다. 좌표가 있어야 다른 파장의 영상과 겹치고, 성표와 비교하고, 새 천체를 보고할 수 있습니다.</p>
+    <p class="q-ask">영상에서 새 소행성을 찾았다. 그런데 "픽셀 (812, 395)에 있다"고 보고할 수는 없다. 다른 천문대에서도 찾아볼 수 있게 하늘 좌표 (α, δ)로 알려야 한다. 영상의 픽셀이 하늘의 어디인지 알려 주는 규칙은 어떻게 적고, 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="북쪽이 위, 동쪽이 왼쪽인 검출기 격자. 기준 픽셀 CRPIX(α0, δ0)에서 오른쪽으로 100픽셀(35″) 떨어진 별이 있다. 픽셀 척도 0.35″, CD 행렬 (−s 0; 0 s)이며, 오른쪽은 서쪽이라 ξ = −35″이고, δ0 = +60°에서 적경 차는 −70″, 곧 −4.67초이다">
+        <rect x="40" y="25" width="260" height="170" class="lk k"/>
+        <path d="M60.0 25 L60.0 195" class="gd"/>
+        <path d="M80.0 25 L80.0 195" class="gd"/>
+        <path d="M100.0 25 L100.0 195" class="gd"/>
+        <path d="M120.0 25 L120.0 195" class="gd"/>
+        <path d="M140.0 25 L140.0 195" class="gd"/>
+        <path d="M160.0 25 L160.0 195" class="gd"/>
+        <path d="M180.0 25 L180.0 195" class="gd"/>
+        <path d="M200.0 25 L200.0 195" class="gd"/>
+        <path d="M220.0 25 L220.0 195" class="gd"/>
+        <path d="M240.0 25 L240.0 195" class="gd"/>
+        <path d="M260.0 25 L260.0 195" class="gd"/>
+        <path d="M280.0 25 L280.0 195" class="gd"/>
+        <path d="M40 43.888888888888886 L300 43.888888888888886" class="gd"/>
+        <path d="M40 62.77777777777778 L300 62.77777777777778" class="gd"/>
+        <path d="M40 81.66666666666666 L300 81.66666666666666" class="gd"/>
+        <path d="M40 100.55555555555556 L300 100.55555555555556" class="gd"/>
+        <path d="M40 119.44444444444444 L300 119.44444444444444" class="gd"/>
+        <path d="M40 138.33333333333331 L300 138.33333333333331" class="gd"/>
+        <path d="M40 157.22222222222223 L300 157.22222222222223" class="gd"/>
+        <path d="M40 176.11111111111111 L300 176.11111111111111" class="gd"/>
+        <circle cx="140.0" cy="110.0" r="5" class="fc"/><text x="132.0" y="100.0" text-anchor="end" class="s tc">CRPIX (α₀, δ₀)</text>
+        <circle cx="240.0" cy="110.0" r="5" class="fa"/><path d="M146.0 124.0 L234.0 124.0" class="a"/><text x="190.0" y="140.0" text-anchor="middle" class="s ta">100픽셀 = 35″</text>
+        <path d="M342 130 L342 85 M344.7 91.4 L342 85 L339.3 91.4" class="k"/>
+        <text x="342" y="77" text-anchor="middle" class="s">북</text>
+        <path d="M342 130 L308 130 M314.4 127.3 L308 130 L314.4 132.7" class="k"/>
+        <text x="325" y="146" text-anchor="middle" class="s">동</text>
+        <text x="380" y="44" class="s">CD = (−s 0; 0 s)</text><text x="380" y="60" class="s">s = 0.35″/픽셀</text><text x="380" y="92" class="s ta">오른쪽은 서쪽</text><text x="380" y="108" class="s ta">ξ = −35″</text><text x="380" y="140" class="s">δ₀ = +60°이면</text><text x="380" y="156" class="s">Δα ≈ ξ/cos δ₀</text><text x="380" y="172" class="s">= −70″ = −4.67 s</text>
+      </svg>
+      <figcaption>그림 1. 예제 4.3.1의 픽셀과 하늘 좌표. 기준 픽셀(주황)에서 오른쪽으로 100픽셀 떨어진 별(파랑)은 서쪽으로 35″이며, 적위 60°에서는 적경 차가 그 두 배인 70″가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>FITS 머리말(<a href="01-02.html">1.2절</a>)과 천구 좌표(<a href="../1/01-01.html">천우1 1.1절</a>)를 쓴다.</div>
+    <p>영상의 (x, y) 픽셀이 하늘의 어느 (α, δ)인지 알려 주는 규칙을 WCS(World Coordinate System)라 하며, FITS 머리말에 적는다. 이 규칙을 구하는 일이 천체 좌표 보정(astrometry)이다. 처음 질문의 답은, 기준 픽셀과 그 좌표, 그리고 척도와 회전을 담은 행렬로 적고, 성표의 별과 짝지어 구한다는 것이다(그림 1).</p>
 
     <h3><span class="no">4.3.1</span>접평면 투영</h3>
-    <p>망원경은 하늘의 구면을 평평한 검출기에 투영합니다. 기준점(시야 중심 근처의 \(\alpha_0, \delta_0\))에서 구에 접하는 평면으로 중심 투영한 것이 <b>그노몬(TAN) 투영</b>이고, 접평면 좌표 \((\xi, \eta)\)는</p>
+    <p>망원경은 하늘의 구면을 평평한 검출기에 투영한다. 시야 중심 근처의 기준점 \((\alpha_0, \delta_0)\)에서 구에 접하는 평면으로 중심 투영한 것이 그노몬(TAN) 투영이다. 접평면 좌표 \((\xi, \eta)\)는 다음과 같다.</p>
     \[ \xi = \frac{\cos\delta\sin(\alpha - \alpha_0)}{\cos c}, \quad \eta = \frac{\cos\delta_0\sin\delta - \sin\delta_0\cos\delta\cos(\alpha - \alpha_0)}{\cos c} \]
-    <p>(\(\cos c = \sin\delta_0\sin\delta + \cos\delta_0\cos\delta\cos(\alpha - \alpha_0)\))입니다.</p>
+    <p>여기서 \(\cos c = \sin\delta_0\sin\delta + \cos\delta_0\cos\delta\cos(\alpha - \alpha_0)\)이다.</p>
 
     <h3><span class="no">4.3.2</span>WCS 키워드</h3>
-    <ul>
-      <li class="q-term"><code>CTYPE1 = 'RA---TAN'</code>, <code>CTYPE2 = 'DEC--TAN'</code>: 투영 종류.</li>
-      <li class="q-term"><code>CRPIX1, CRPIX2</code>: 기준 픽셀(1부터 셈).</li>
-      <li class="q-term"><code>CRVAL1, CRVAL2</code>: 기준 픽셀의 \(\alpha_0, \delta_0\)(도).</li>
-      <li class="q-term"><code>CD1_1, CD1_2, CD2_1, CD2_2</code>: 픽셀 차이를 접평면 좌표(도)로 바꾸는 행렬. 척도와 회전, 뒤집힘을 담는다: \(\begin{pmatrix}\xi\\\eta\end{pmatrix} = CD\begin{pmatrix}x - x_0\\y - y_0\end{pmatrix}\).</li>
-      <li class="q-term">광학 왜곡이 크면 SIP 다항식 계수(<code>A_p_q</code>, <code>B_p_q</code>)를 더한다.</li>
-    </ul>
-    <p>북쪽이 위, 동쪽이 왼쪽이고 회전이 없으면 \(CD = \begin{pmatrix}-s&0\\0&s\end{pmatrix}\)입니다(\(s\)는 도/픽셀, 적경은 동쪽인 왼쪽으로 증가).</p>
+    <p><code>CTYPE1 = 'RA---TAN'</code>, <code>CTYPE2 = 'DEC--TAN'</code>은 투영 종류를 밝힌다. <code>CRPIX1, CRPIX2</code>는 1부터 세는 기준 픽셀이고, <code>CRVAL1, CRVAL2</code>는 그 픽셀의 \(\alpha_0, \delta_0\)(도)이다. 또 <code>CD1_1, CD1_2, CD2_1, CD2_2</code>는 픽셀 차이를 접평면 좌표(도)로 바꾸는 행렬로, 척도와 회전과 뒤집힘을 담는다. 곧 \(\begin{pmatrix}\xi\\\eta\end{pmatrix} = CD\begin{pmatrix}x - x_0\\y - y_0\end{pmatrix}\)이다. 광학 왜곡이 크면 SIP 다항식 계수(<code>A_p_q</code>, <code>B_p_q</code>)를 더한다.</p>
+    <p>북쪽이 위, 동쪽이 왼쪽이고 회전이 없으면 \(CD = \begin{pmatrix}-s&0\\0&s\end{pmatrix}\)이다. 여기서 \(s\)는 도/픽셀이며, 적경이 동쪽인 왼쪽으로 증가하므로 첫 원소가 음수이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
-      <p>픽셀 척도 0.35″, 회전 없음, 기준점 \(\delta_0 = +60°\)인 영상에서 기준 픽셀보다 오른쪽으로 100픽셀 떨어진 별의 적경 차는?</p>
+      <p>픽셀 척도 0.35″, 회전 없음, 기준점 \(\delta_0 = +60°\)인 영상에서, 기준 픽셀보다 오른쪽으로 100픽셀 떨어진 별의 적경 차는 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> \(\xi = -100\times0.35″ = -35″\)(오른쪽은 서쪽). 작은 각에서 \(\Delta\alpha \approx \xi/\cos\delta_0 = -70″\), 시간 단위로 \(-4.67\) s입니다. 적위가 높을수록 같은 거리가 큰 적경 차가 됩니다.</p>
+    <p><i>풀이.</i> 오른쪽은 서쪽이므로 \(\xi = -100\times0.35″ = -35″\)이다. 작은 각에서 \(\Delta\alpha \approx \xi/\cos\delta_0 = -70″\)이며, 시간 단위로는 −4.67초이다(그림 1). 즉 적위가 높을수록 같은 거리가 큰 적경 차가 된다.</p>
 
     <h3><span class="no">4.3.3</span>WCS 구하기</h3>
-    <ol class="tb-steps">
-      <li>영상의 별을 검출하고 위치를 잰다(4.1절).</li>
-      <li>대략의 위치를 모르면 astrometry.net처럼 별 네 개의 기하 모양(쿼드)을 미리 만든 색인과 맞춰 하늘 위치를 찾는다(블라인드 풀이). 대략 알면 그 근처 성표 별과 바로 짝짓는다.</li>
-      <li>Gaia 성표의 별(관측 날짜로 고유 운동 보정)과 짝지어 CRVAL, CD(와 SIP)를 최소제곱으로 맞춘다.</li>
-      <li>잔차 rms(보통 0.05~0.2″)를 확인하고 머리말에 쓴다.</li>
-    </ol>
-    <pre><code>from astropy.wcs import WCS
+    <p>먼저 영상의 별을 검출하고 위치를 잰다(4.1절). 대략의 위치를 모르면 astrometry.net처럼 별 네 개의 기하 모양, 곧 쿼드를 미리 만든 색인과 맞춰 하늘 위치를 찾는다. 이를 블라인드 풀이라 한다. 대략 알면 그 근처 성표 별과 바로 짝짓는다. 그다음 관측 날짜로 고유 운동을 보정한 Gaia 성표의 별과 짝지어 CRVAL, CD, SIP를 최소제곱으로 맞춘다. 끝으로 잔차 rms가 보통 0.05~0.2″인지 확인하고 머리말에 쓴다. 파이썬에서는 다음과 같이 쓴다.</p>
+<pre><code>from astropy.wcs import WCS
 from astropy.io import fits
 w = WCS(fits.getheader("field_wcs.fits"))
 ra, dec = w.pixel_to_world_values(511.0, 383.0)   # 0부터 세는 픽셀 좌표</code></pre>
-    <div class="tb-note"><b>주의</b> astropy의 <code>pixel_to_world</code>는 0부터 세는 픽셀을, FITS의 CRPIX는 1부터 세는 픽셀을 씁니다. 또 성표 별의 고유 운동을 보정하지 않으면 수십 년 차이에서 수 ″의 오차가 생깁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>astropy의 <code>pixel_to_world</code>는 0부터 세는 픽셀을, FITS의 CRPIX는 1부터 세는 픽셀을 쓴다. 또 성표 별의 고유 운동을 보정하지 않으면 수십 년 차이에서 수 ″의 오차가 생긴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>WCS: CRPIX(기준 픽셀), CRVAL(그 좌표), CD 행렬(척도·회전), 투영(TAN), 왜곡(SIP).</li>
-        <li>접평면 좌표 \((\xi, \eta) = CD(x - x_0, y - y_0)\), 적경 차 \(\approx \xi/\cos\delta\).</li>
-        <li>블라인드 풀이(쿼드 색인) 또는 성표와 짝지어 최소제곱으로 맞춘다.</li>
-        <li>Gaia 고유 운동 보정, 0·1 시작 차이에 주의.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>WCS는 기준 픽셀 CRPIX, 그 좌표 CRVAL, 척도와 회전을 담은 CD 행렬, TAN 같은 투영, SIP 왜곡으로 적는다. 접평면 좌표는 \((\xi, \eta) = CD(x - x_0, y - y_0)\)이고 적경 차는 \(\xi/\cos\delta\)에 가깝다. 블라인드 풀이나 성표 짝짓기로 맞추며, Gaia 고유 운동 보정과 0과 1 시작의 차이에 주의한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>CRVAL1, CRVAL2는 무엇입니까?
-          <details><summary>답</summary><p>기준 픽셀의 적경과 적위(도).</p></details>
-        </li>
-        <li>픽셀 척도 1″, 회전 없음이면 CD1_1과 CD2_2는(도 단위)?
-          <details><summary>답</summary><p>\(-2.78\times10^{-4}\)과 \(+2.78\times10^{-4}\).</p></details>
+        <li>픽셀 척도 1″, 회전 없음이면 CD1_1과 CD2_2는 도 단위로 얼마인가?
+          <details><summary>답</summary><p>\(-2.78\times10^{-4}\)과 \(+2.78\times10^{-4}\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>적위 0°에서 기준 픽셀보다 왼쪽으로 50픽셀(척도 0.5″) 떨어진 별의 적경 차는?
-          <details><summary>답</summary><p>\(+25″\) = \(+1.67\) s.</p></details>
+      <ol start="2">
+        <li>적위 0°에서 기준 픽셀보다 왼쪽으로 50픽셀(척도 0.5″) 떨어진 별의 적경 차는 얼마인가?
+          <details><summary>답</summary><p>\(+25″\), 곧 \(+1.67\)초이다.</p></details>
         </li>
-        <li>잔차 rms가 0.1″이고 별 50개로 맞췄다면 기준점 위치의 불확도는 대략?
-          <details><summary>답</summary><p>\(0.1/\sqrt{50} \approx 0.014″\).</p></details>
+        <li>잔차 rms가 0.1″이고 별 50개로 맞췄다면 기준점 위치의 불확도는 대략 얼마인가?
+          <details><summary>답</summary><p>\(0.1/\sqrt{50} \approx 0.014″\)이다.</p></details>
         </li>
       </ol>
     </div>

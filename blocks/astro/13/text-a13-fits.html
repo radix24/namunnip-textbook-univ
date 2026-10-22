@@ -8,77 +8,64 @@
 <article class="card q-card" id="text-a13-fits" data-kind="본문" data-std="천우13-01-02">
   <header class="card-head"><span class="no"></span><h2>FITS 형식과 머리말 정보 읽기</h2><span class="kind">본문 · 1.2절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>FITS 파일의 구조(머리말 카드, 2,880바이트 블록, 자료 부분)를 안다.</li>
-        <li>필수 키워드와 자주 쓰는 관측 키워드를 읽는다.</li>
-        <li>BZERO, BSCALE로 저장 값과 물리 값을 변환한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>표 자료 읽기 (<a href="../6/01-02.html">천우6 1.2절</a>).</li>
-      </ul>
-    </div>
-
-<h3>천문학의 공용어</h3>
-    <p>FITS(Flexible Image Transport System)는 1981년 천문학자들이 정한 자료 형식으로, 지금도 거의 모든 천문 영상, 스펙트럼, 표가 이 형식으로 오갑니다. 사람이 읽을 수 있는 머리말과 기계가 읽는 자료를 한 파일에 담고, 40년 전 파일도 지금 그대로 읽힙니다.</p>
+    <p class="q-ask">40년 전 천문대에서 찍은 영상 파일을 오늘 파이썬으로 그대로 열 수 있을까? 일상의 그림 파일 형식은 그사이 여러 번 바뀌었다. 천문학자들은 영상과 함께 노출 시간, 필터, 관측 시각, 좌표 같은 정보를 어떻게 한 파일에 담아 왔을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="FITS 파일의 구조. 기본 HDU 머리말과 자료, 확장 머리말과 자료가 차례로 이어지고, 머리말은 SIMPLE, BITPIX, NAXIS, NAXIS1, BZERO, EXPTIME, FILTER, END 같은 80글자 카드로 이루어진다">
+        <rect x="20" y="40" width="110" height="50" class="lc c"/><text x="75.0" y="63.0" text-anchor="middle" class="s">기본 HDU 머리말</text><text x="75.0" y="77.0" text-anchor="middle" class="s">카드 80글자 × n</text>
+        <rect x="130" y="40" width="130" height="50" class="la a"/><text x="195.0" y="63.0" text-anchor="middle" class="s">기본 HDU 자료</text><text x="195.0" y="77.0" text-anchor="middle" class="s">이진 배열 (영상)</text>
+        <rect x="260" y="40" width="100" height="50" class="lc c"/><text x="310.0" y="63.0" text-anchor="middle" class="s">확장 머리말</text><text x="310.0" y="77.0" text-anchor="middle" class="s">XTENSION</text>
+        <rect x="360" y="40" width="140" height="50" class="lb b"/><text x="430.0" y="63.0" text-anchor="middle" class="s">확장 자료</text><text x="430.0" y="77.0" text-anchor="middle" class="s">표, 오차 영상 등</text>
+        <text x="20" y="28" class="s">FITS 파일 하나 = HDU 여러 개 (모두 2,880바이트 블록 단위)</text>
+        <text x="30" y="118" class="s" style="font-family:monospace;font-size:9px">SIMPLE  =                    T</text>
+        <text x="30" y="130" class="s" style="font-family:monospace;font-size:9px">BITPIX  =                   16</text>
+        <text x="30" y="142" class="s" style="font-family:monospace;font-size:9px">NAXIS   =                    2</text>
+        <text x="30" y="154" class="s" style="font-family:monospace;font-size:9px">NAXIS1  =                 1024</text>
+        <text x="30" y="166" class="s" style="font-family:monospace;font-size:9px">BZERO   =                32768</text>
+        <text x="30" y="178" class="s" style="font-family:monospace;font-size:9px">EXPTIME =                300.0 / 초</text>
+        <text x="30" y="190" class="s" style="font-family:monospace;font-size:9px">FILTER  = 'V       '</text>
+        <text x="30" y="202" class="s" style="font-family:monospace;font-size:9px">END</text>
+        <path d="M20 106 L20 210 M20 106 L130 90" class="c" style="fill:none"/><text x="300" y="130" class="s">물리 값 = BZERO + BSCALE × 저장 값</text><text x="300" y="156" class="s">numpy는 d[y, x], 0부터</text><text x="300" y="172" class="s">FITS 좌표는 1부터</text>
+      </svg>
+      <figcaption>그림 1. FITS 파일의 짜임. 사람이 읽는 머리말(주황)과 기계가 읽는 이진 자료(파랑, 청록)가 HDU로 짝지어 이어지며, 모두 2,880바이트 블록 단위로 채운다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>표 자료 읽기(<a href="../6/01-02.html">천우6 1.2절</a>)를 쓴다.</div>
+    <p>FITS(Flexible Image Transport System)는 1981년 천문학자들이 정한 자료 형식이다. 지금도 거의 모든 천문 영상, 스펙트럼, 표가 이 형식으로 오간다. 처음 질문의 답은, 사람이 읽을 수 있는 머리말과 기계가 읽는 자료를 한 파일에 담고 형식을 바꾸지 않아 40년 전 파일도 그대로 읽힌다는 것이다(그림 1).</p>
 
     <h3><span class="no">1.2.1</span>구조</h3>
-    <ul>
-      <li class="q-term"><b>HDU</b>(Header Data Unit): 머리말 + 자료. 파일은 기본 HDU 하나와 확장 HDU 여러 개로 이루어진다.</li>
-      <li class="q-term"><b>머리말</b>: 한 줄 80글자의 '카드'들. <code>키워드 = 값 / 설명</code> 꼴이며 <code>END</code>로 끝난다. 2,880바이트(카드 36장) 단위로 채운다.</li>
-      <li class="q-term"><b>자료</b>: 이진수 배열. 역시 2,880바이트 단위, 큰 끝(big-endian) 순서.</li>
-    </ul>
+    <p>FITS 파일은 머리말과 자료로 된 HDU(Header Data Unit)들로 이루어지며, 기본 HDU 하나와 확장 HDU 여러 개를 가질 수 있다. 머리말은 한 줄 80글자의 카드들로, <code>키워드 = 값 / 설명</code> 꼴이며 <code>END</code>로 끝난다. 자료는 큰 끝(big-endian) 순서의 이진수 배열이다. 그리고 머리말과 자료 모두 2,880바이트, 곧 카드 36장 단위로 채운다.</p>
 
     <h3><span class="no">1.2.2</span>키워드</h3>
-    <ul>
-      <li class="q-term">필수: <code>SIMPLE</code>(표준 FITS), <code>BITPIX</code>(픽셀 자료형: 8, 16, 32, −32 실수, −64 배정밀도), <code>NAXIS</code>(차원 수), <code>NAXIS1</code>, <code>NAXIS2</code>(각 축 길이).</li>
-      <li class="q-term">관측: <code>DATE-OBS</code>(관측 시각, UTC), <code>EXPTIME</code>(노출 시간, 초), <code>FILTER</code>, <code>OBJECT</code>, <code>AIRMASS</code>, <code>GAIN</code>, <code>RDNOISE</code>.</li>
-      <li class="q-term">좌표: <code>CTYPE1/2</code>, <code>CRPIX1/2</code>, <code>CRVAL1/2</code>, <code>CD1_1</code> 등(WCS, <a href="04-03.html">4.3절</a>).</li>
-      <li class="q-term">변환: <code>BZERO</code>, <code>BSCALE</code>: 물리 값 = BZERO + BSCALE × 저장 값.</li>
-    </ul>
+    <p>필수 키워드는 표준 FITS임을 밝히는 <code>SIMPLE</code>, 픽셀 자료형 <code>BITPIX</code>(8, 16, 32, −32 실수, −64 배정밀도), 차원 수 <code>NAXIS</code>, 각 축 길이 <code>NAXIS1</code>, <code>NAXIS2</code>이다. 관측 정보로는 UTC 관측 시각 <code>DATE-OBS</code>, 초 단위 노출 시간 <code>EXPTIME</code>, <code>FILTER</code>, <code>OBJECT</code>, <code>AIRMASS</code>, <code>GAIN</code>, <code>RDNOISE</code>가 흔하다. 또 좌표 정보 <code>CTYPE1/2</code>, <code>CRPIX1/2</code>, <code>CRVAL1/2</code>, <code>CD1_1</code> 등은 WCS(<a href="04-03.html">4.3절</a>)를 이룬다. 한편 <code>BZERO</code>와 <code>BSCALE</code>은 물리 값 = BZERO + BSCALE × 저장 값의 변환을 정한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
-      <p>16비트 부호 있는 정수(BITPIX = 16, −32,768~32,767)로 0~65,535의 CCD 값을 저장하려고 BZERO = 32768, BSCALE = 1을 씁니다. 저장 값이 −12,000이면 실제 ADU는? 1,024×1,024 영상의 자료 부분은 몇 바이트입니까?</p>
+      <p>16비트 부호 있는 정수(BITPIX = 16, −32,768~32,767)로 0~65,535의 CCD 값을 저장하려고 BZERO = 32768, BSCALE = 1을 쓴다. 저장 값이 −12,000이면 실제 ADU는 얼마인가? 1,024×1,024 영상의 자료 부분은 몇 바이트인가?</p>
     </div>
-    <p><i>풀이.</i> \(32768 + (-12000) = 20{,}768\) ADU입니다. 자료는 \(1024^2\times2 = 2{,}097{,}152\)바이트이고, 2,880의 배수로 채우면 729블록 = 2,099,520바이트입니다.</p>
-    <pre><code>from astropy.io import fits
+    <p><i>풀이.</i> \(32768 + (-12000) = 20{,}768\) ADU이다. 자료는 \(1024^2\times2 = 2{,}097{,}152\)바이트이고, 2,880의 배수로 채우면 729블록, 곧 2,099,520바이트이다. 파이썬에서는 astropy로 다음과 같이 읽는다.</p>
+<pre><code>from astropy.io import fits
 with fits.open("ngc1234_V_001.fits") as hdul:
     hdul.info()                       # HDU 목록
     h = hdul[0].header; d = hdul[0].data   # BZERO/BSCALE은 자동 적용
     print(h["EXPTIME"], h["FILTER"], h["DATE-OBS"], d.shape, d.dtype)</code></pre>
-    <p>numpy 배열은 <code>d[y, x]</code>(행, 열) 순서이고 0부터 세지만, FITS 머리말의 픽셀 좌표(CRPIX 등)는 1부터 셉니다. 이 한 칸 차이는 흔한 실수의 원인입니다.</p>
-    <div class="tb-note"><b>주의</b> 머리말의 값은 관측 프로그램이 자동으로 적은 것이라 틀릴 수 있습니다(필터 바퀴 위치 오류, 시계 오차). 중요한 값(노출 시간, 필터, 시각)은 관측 일지와 대조하고, 처리 단계마다 <code>HISTORY</code> 카드로 무엇을 했는지 남깁니다.</div>
+    <p>numpy 배열은 <code>d[y, x]</code>, 곧 (행, 열) 순서이고 0부터 센다. 그러나 FITS 머리말의 픽셀 좌표(CRPIX 등)는 1부터 센다. 이 한 칸 차이는 흔한 실수의 원인이다.</p>
+    <div class="tb-note"><span class="lb">주의</span>머리말의 값은 관측 프로그램이 자동으로 적은 것이라 필터 바퀴 위치 오류나 시계 오차로 틀릴 수 있다. 그러므로 노출 시간, 필터, 시각 같은 중요한 값은 관측 일지와 대조하고, 처리 단계마다 <code>HISTORY</code> 카드로 무엇을 했는지 남긴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>FITS: 80글자 머리말 카드 + 이진 자료, 2,880바이트 블록. HDU 여러 개 가능.</li>
-        <li>필수 SIMPLE, BITPIX, NAXIS, NAXISn. 관측 DATE-OBS, EXPTIME, FILTER 등.</li>
-        <li>물리 값 = BZERO + BSCALE × 저장 값(16비트 무부호는 BZERO = 32768).</li>
-        <li>numpy는 [y, x]·0부터, FITS 좌표는 1부터.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>FITS는 80글자 머리말 카드와 이진 자료를 2,880바이트 블록으로 담으며, HDU를 여러 개 가질 수 있다. 필수 키워드는 SIMPLE, BITPIX, NAXIS, NAXISn이고, DATE-OBS, EXPTIME, FILTER 같은 관측 정보가 따른다. 물리 값은 BZERO + BSCALE × 저장 값이며, numpy는 [y, x] 순서로 0부터, FITS 좌표는 1부터 센다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>BITPIX = −32는 어떤 자료형?
-          <details><summary>답</summary><p>32비트 부동소수점(단정밀도 실수).</p></details>
-        </li>
-        <li>머리말 카드 한 장은 몇 글자?
-          <details><summary>답</summary><p>80글자.</p></details>
+        <li>BITPIX = −32는 어떤 자료형인가?
+          <details><summary>답</summary><p>32비트 부동소수점, 곧 단정밀도 실수이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>BZERO = 100, BSCALE = 0.5, 저장 값 400이면 물리 값은?
-          <details><summary>답</summary><p>\(100 + 0.5\times400 = 300\).</p></details>
+      <ol start="2">
+        <li>BZERO = 100, BSCALE = 0.5, 저장 값 400이면 물리 값은 얼마인가?
+          <details><summary>답</summary><p>\(100 + 0.5\times400 = 300\)이다.</p></details>
         </li>
-        <li>2,048×4,096 영상을 BITPIX = −32로 저장하면 자료는 약 몇 MB?
-          <details><summary>답</summary><p>\(2048\times4096\times4 = 33.6\times10^6\) 바이트, 약 32 MiB.</p></details>
+        <li>2,048×4,096 영상을 BITPIX = −32로 저장하면 자료는 약 몇 MB인가?
+          <details><summary>답</summary><p>\(2048\times4096\times4 = 33.6\times10^6\)바이트, 약 32 MiB이다.</p></details>
         </li>
       </ol>
     </div>

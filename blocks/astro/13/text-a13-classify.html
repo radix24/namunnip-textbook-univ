@@ -8,74 +8,77 @@
 <article class="card q-card" id="text-a13-classify" data-kind="본문" data-std="천우13-05-02">
   <header class="card-head"><span class="no"></span><h2>다중 분광 자료로 간단한 분류하기</h2><span class="kind">본문 · 5.2절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>띠별 반사율의 차이(분광 특성)로 지표를 구별한다.</li>
-        <li>식생 지수 NDVI를 계산하고 해석한다.</li>
-        <li>무감독(k-평균)·감독(최소 거리) 분류와 정확도 평가를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>방사 보정 (<a href="05-01.html">5.1절</a>), 색지수 (<a href="../3/01-03.html">천우3 1.3절</a>).</li>
-      </ul>
-    </div>
-
-<h3>색으로 땅을 나누기</h3>
-    <p>별을 색지수로 분류하듯, 지표도 띠별 반사율로 나눌 수 있습니다. 식물은 엽록소가 빨간 빛을 흡수하고 잎 구조가 근적외선을 강하게 반사하며, 물은 근적외선을 거의 흡수하고, 흙은 파장에 따라 완만히 밝아집니다.</p>
+    <p class="q-ask">천문학자는 별을 색지수로 분류한다. 위성 영상의 땅도 색으로 나눌 수 있을까? 사람 눈에는 숲과 풀밭이 비슷한 초록이지만, 위성은 근적외선까지 본다. 띠별 반사율 몇 개로 식물, 물, 흙을 어떻게 가려낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="적색과 근적외선 반사율의 특징 공간. 식물(파랑, 평균 0.05, 0.45), 물(청록, 0.04, 0.02), 흙(주황, 0.25, 0.30)의 세 무리와 NDVI가 0.8, 0.5, 0인 선이 그려져 있다. 픽셀 (0.10, 0.35)는 식물 평균에 가장 가깝다">
+        <line x1="55" y1="180" x2="330" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="55" y="195" text-anchor="middle" class="s">0</text>
+        <text x="123.8" y="195" text-anchor="middle" class="s">0.1</text>
+        <text x="192.5" y="195" text-anchor="middle" class="s">0.2</text>
+        <text x="261.2" y="195" text-anchor="middle" class="s">0.3</text>
+        <text x="330" y="195" text-anchor="middle" class="s">0.4</text>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="130.7" text-anchor="end" class="s">0.2</text>
+        <text x="50" y="77.3" text-anchor="end" class="s">0.4</text>
+        <text x="50" y="24" text-anchor="end" class="s">0.6</text>
+        <text x="330" y="209" text-anchor="end" class="s">적색 반사율</text>
+        <text x="61" y="24" class="s">근적외선 반사율</text>
+        <path d="M55 180 L100.8 20" class="gd"/><text x="103.8" y="32" class="s">NDVI 0.8</text>
+        <path d="M55 180 L192.5 20" class="gd"/><text x="195.5" y="20" class="s">NDVI 0.5</text>
+        <path d="M55 180 L295.6 86.7" class="gd"/><text x="298.6" y="86.7" class="s">NDVI 0</text>
+        <circle cx="79.7" cy="58.5" r="2.5" class="la a"/><circle cx="102.7" cy="49.8" r="2.5" class="la a"/><circle cx="101.6" cy="59.7" r="2.5" class="la a"/><circle cx="92.8" cy="61.6" r="2.5" class="la a"/><circle cx="75.9" cy="63.1" r="2.5" class="la a"/><circle cx="99.1" cy="58.3" r="2.5" class="la a"/><circle cx="86.1" cy="67" r="2.5" class="la a"/><circle cx="88.4" cy="63.9" r="2.5" class="la a"/><circle cx="89.8" cy="56.8" r="2.5" class="la a"/><circle cx="66" cy="60.6" r="2.5" class="la a"/><circle cx="74.4" cy="66.2" r="2.5" class="la a"/><circle cx="76.7" cy="52.6" r="2.5" class="la a"/><circle cx="96.2" cy="56.7" r="2.5" class="la a"/><circle cx="81.8" cy="69.5" r="2.5" class="la a"/><circle cx="85.5" cy="58.7" r="2.5" class="la a"/><circle cx="88.6" cy="55.4" r="2.5" class="la a"/><circle cx="85.7" cy="48.1" r="2.5" class="la a"/><circle cx="96.1" cy="46.8" r="2.5" class="la a"/><circle cx="91.9" cy="61.5" r="2.5" class="la a"/><circle cx="80.7" cy="54.6" r="2.5" class="la a"/><circle cx="100.1" cy="59" r="2.5" class="la a"/><circle cx="93.6" cy="61.8" r="2.5" class="la a"/><circle cx="85.1" cy="61.9" r="2.5" class="la a"/><circle cx="70.1" cy="66.7" r="2.5" class="la a"/><circle cx="89.8" cy="59.2" r="2.5" class="la a"/>
+        <circle cx="89.4" cy="60" r="5" class="fa"/><text x="97.4" y="52" class="s ta">식물</text>
+        <circle cx="93.6" cy="170.5" r="2.5" class="lb b"/><circle cx="86.8" cy="174.4" r="2.5" class="lb b"/><circle cx="59.3" cy="174.4" r="2.5" class="lb b"/><circle cx="73.4" cy="171.4" r="2.5" class="lb b"/><circle cx="79.6" cy="176.9" r="2.5" class="lb b"/><circle cx="76.9" cy="176.6" r="2.5" class="lb b"/><circle cx="62.4" cy="185.3" r="2.5" class="lb b"/><circle cx="94.9" cy="171.8" r="2.5" class="lb b"/><circle cx="77.9" cy="177" r="2.5" class="lb b"/><circle cx="78.7" cy="153.2" r="2.5" class="lb b"/><circle cx="87.7" cy="174.7" r="2.5" class="lb b"/><circle cx="75.5" cy="190.4" r="2.5" class="lb b"/><circle cx="83.7" cy="165.5" r="2.5" class="lb b"/><circle cx="92" cy="173" r="2.5" class="lb b"/><circle cx="76.2" cy="182.6" r="2.5" class="lb b"/><circle cx="83.2" cy="177.5" r="2.5" class="lb b"/><circle cx="70.7" cy="163.8" r="2.5" class="lb b"/><circle cx="72.7" cy="178.4" r="2.5" class="lb b"/><circle cx="57.9" cy="163.4" r="2.5" class="lb b"/><circle cx="80.7" cy="175.2" r="2.5" class="lb b"/><circle cx="85.3" cy="180.3" r="2.5" class="lb b"/><circle cx="76" cy="172.8" r="2.5" class="lb b"/><circle cx="73.9" cy="172.6" r="2.5" class="lb b"/><circle cx="94.8" cy="169.7" r="2.5" class="lb b"/><circle cx="96.9" cy="167.6" r="2.5" class="lb b"/>
+        <circle cx="82.5" cy="174.7" r="5" class="fb"/><text x="90.5" y="188.7" class="s tb">물</text>
+        <circle cx="244.6" cy="98.2" r="2.5" class="lc c"/><circle cx="231.2" cy="107.3" r="2.5" class="lc c"/><circle cx="224.9" cy="104.9" r="2.5" class="lc c"/><circle cx="226" cy="107" r="2.5" class="lc c"/><circle cx="230.1" cy="82.9" r="2.5" class="lc c"/><circle cx="218.8" cy="96.2" r="2.5" class="lc c"/><circle cx="233.2" cy="104.9" r="2.5" class="lc c"/><circle cx="223.7" cy="103.5" r="2.5" class="lc c"/><circle cx="231.3" cy="104.3" r="2.5" class="lc c"/><circle cx="253.5" cy="94.3" r="2.5" class="lc c"/><circle cx="238.5" cy="85.7" r="2.5" class="lc c"/><circle cx="240.9" cy="100.8" r="2.5" class="lc c"/><circle cx="230.5" cy="99.8" r="2.5" class="lc c"/><circle cx="229.5" cy="93.6" r="2.5" class="lc c"/><circle cx="206.3" cy="111.2" r="2.5" class="lc c"/><circle cx="223.4" cy="97.1" r="2.5" class="lc c"/><circle cx="221.7" cy="101.4" r="2.5" class="lc c"/><circle cx="238.1" cy="95.6" r="2.5" class="lc c"/><circle cx="225.6" cy="102.3" r="2.5" class="lc c"/><circle cx="211.5" cy="96.9" r="2.5" class="lc c"/><circle cx="227.8" cy="106.5" r="2.5" class="lc c"/><circle cx="231.6" cy="102.6" r="2.5" class="lc c"/><circle cx="223.1" cy="111.2" r="2.5" class="lc c"/><circle cx="235.7" cy="105.3" r="2.5" class="lc c"/><circle cx="229.5" cy="98.8" r="2.5" class="lc c"/>
+        <circle cx="226.9" cy="100" r="5" class="fc"/><text x="234.9" y="92" class="s tc">흙</text>
+        <rect x="118.8" y="81.7" width="10" height="10" class="fd"/><path d="M123.8 86.7 L89.4 60" class="d dsh"/>
+        <text x="345" y="44" class="s">특징 공간의 세 무리</text><text x="345" y="72" class="s td">■ 픽셀 (0.10, 0.35)</text><text x="345" y="88" class="s td">가장 가까운 평균은</text><text x="345" y="104" class="s td">식물 (거리² 0.0125)</text><text x="345" y="136" class="s">회색 선은</text><text x="345" y="152" class="s">NDVI가 같은 곳</text>
+      </svg>
+      <figcaption>그림 1. 적색-근적외선 특징 공간(모의 자료). 지표마다 무리를 이루며, 회색 선은 NDVI가 같은 곳이다. 빨강 픽셀은 최소 거리 분류로 식물에 배정된다(예제 5.2.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>방사 보정(<a href="05-01.html">5.1절</a>)과 색지수(<a href="../3/01-03.html">천우3 1.3절</a>)를 쓴다.</div>
+    <p>식물은 엽록소가 빨간 빛을 흡수하고 잎 구조가 근적외선을 강하게 반사한다. 반면 물은 근적외선을 거의 흡수하고, 흙은 파장에 따라 완만히 밝아진다. 처음 질문의 답은 이 차이를 이용하는 것이다. 띠별 반사율로 만든 지수나 특징 공간에서 지표가 무리를 이룬다(그림 1).</p>
 
     <h3><span class="no">5.2.1</span>식생 지수</h3>
     \[ \text{NDVI} = \frac{\rho_{NIR} - \rho_{Red}}{\rho_{NIR} + \rho_{Red}} \]
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
-      <p>건강한 식물(근적외선 0.45, 적색 0.05), 물(0.02, 0.04), 맨흙(0.30, 0.25)의 NDVI는?</p>
+      <p>건강한 식물(근적외선 0.45, 적색 0.05), 물(0.02, 0.04), 맨흙(0.30, 0.25)의 NDVI는 각각 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> 식물 \(0.40/0.50 = 0.80\), 물 \(-0.02/0.06 = -0.33\), 흙 \(0.05/0.55 = 0.09\)입니다. 이처럼 NDVI 하나로도 세 지표가 뚜렷이 나뉩니다. 차와 합의 비라서 조명(그늘, 태양 각) 차이가 상당 부분 지워지는 장점이 있습니다.</p>
+    <p><i>풀이.</i> 식물은 \(0.40/0.50 = 0.80\), 물은 \(-0.02/0.06 = -0.33\), 흙은 \(0.05/0.55 = 0.09\)이다. 즉 NDVI 하나로도 세 지표가 뚜렷이 나뉜다. 또 차와 합의 비이므로 그늘이나 태양 각 같은 조명 차이가 상당 부분 지워진다.</p>
 
     <h3><span class="no">5.2.2</span>분류 방법</h3>
-    <ul>
-      <li class="q-term"><b>특징 공간</b>: 픽셀 하나를 띠 \(n\)개의 반사율로 된 \(n\)차원 점으로 본다. 같은 지표는 한 무리로 모인다.</li>
-      <li class="q-term"><b>무감독 분류</b>(k-평균): 무리 수 \(k\)를 정하고, 무작위 중심에서 시작해 '가장 가까운 중심에 배정 → 중심 다시 계산'을 반복. 나중에 각 무리가 무엇인지 사람이 이름을 붙인다.</li>
-      <li class="q-term"><b>감독 분류</b>: 지표를 아는 훈련 영역에서 무리별 평균(와 공분산)을 구한 뒤, 각 픽셀을 가장 가까운 평균(최소 거리) 또는 가능도가 가장 큰 무리(최대 가능도, 공분산 고려)에 배정. 요즘은 랜덤 포레스트, 신경망도 쓴다.</li>
-    </ul>
+    <p>픽셀 하나를 띠 \(n\)개의 반사율로 된 \(n\)차원 점으로 보면, 같은 지표는 한 무리로 모인다. 이 공간을 특징 공간이라 한다. 무감독 분류인 k-평균은 무리 수 \(k\)를 정하고, 무작위 중심에서 시작해 가장 가까운 중심에 배정하고 중심을 다시 계산하는 일을 반복한다. 그다음 각 무리가 무엇인지 사람이 이름을 붙인다.</p>
+    <p>반면 감독 분류는 지표를 아는 훈련 영역에서 무리별 평균과 공분산을 구한다. 그다음 각 픽셀을 가장 가까운 평균(최소 거리)이나, 공분산까지 고려해 가능도가 가장 큰 무리(최대 가능도)에 배정한다. 요즘은 랜덤 포레스트나 신경망도 쓴다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.2</span>
-      <p>무리 평균(적색, 근적외선)이 식물 (0.05, 0.45), 물 (0.04, 0.02), 흙 (0.25, 0.30)일 때 픽셀 (0.10, 0.35)는 최소 거리 분류로 무엇입니까?</p>
+      <p>무리 평균(적색, 근적외선)이 식물 (0.05, 0.45), 물 (0.04, 0.02), 흙 (0.25, 0.30)일 때, 픽셀 (0.10, 0.35)는 최소 거리 분류로 무엇인가?</p>
     </div>
-    <p><i>풀이.</i> 거리 제곱: 식물 \(0.0025 + 0.01 = 0.0125\), 물 \(0.0036 + 0.1089 = 0.1125\), 흙 \(0.0225 + 0.0025 = 0.025\). 가장 가까운 식물입니다(NDVI 0.56, 덜 무성한 식물이나 흙과 섞인 픽셀).</p>
+    <p><i>풀이.</i> 거리 제곱은 식물 \(0.0025 + 0.01 = 0.0125\), 물 \(0.0036 + 0.1089 = 0.1125\), 흙 \(0.0225 + 0.0025 = 0.025\)이다. 그러므로 가장 가까운 식물로 분류된다(그림 1). 이 픽셀의 NDVI는 0.56으로, 덜 무성한 식물이거나 흙과 섞인 픽셀이다.</p>
 
     <h3><span class="no">5.2.3</span>정확도 평가</h3>
-    <p>훈련에 쓰지 않은 검증 픽셀로 <b>혼동 행렬</b>(실제 무리 × 분류된 무리의 개수 표)을 만들고, 대각 성분의 합 ÷ 전체로 전체 정확도를 구합니다. 무리마다 놓친 비율(생산자 정확도)과 잘못 넣은 비율(사용자 정확도)도 봅니다. 천문학의 별·은하·퀘이사 색 분류에서 완전성과 순도를 따지는 것과 같습니다.</p>
-    <div class="tb-note"><b>주의</b> 한 픽셀에 여러 지표가 섞이면(혼합 픽셀) 어느 무리에도 잘 맞지 않습니다. 해상도가 낮을수록 심하며, 혼합 비율을 푸는 분광 분리(선형 혼합 모형)를 쓰기도 합니다.</div>
+    <p>훈련에 쓰지 않은 검증 픽셀로, 실제 무리와 분류된 무리의 개수를 교차한 <em>혼동 행렬</em>을 만든다. 그리고 대각 성분의 합을 전체로 나눠 전체 정확도를 구한다. 또 무리마다 놓친 비율(생산자 정확도)과 잘못 넣은 비율(사용자 정확도)도 본다. 이는 천문학의 별, 은하, 퀘이사 색 분류에서 완전성과 순도를 따지는 것과 같다.</p>
+    <div class="tb-note"><span class="lb">주의</span>한 픽셀에 여러 지표가 섞인 혼합 픽셀은 어느 무리에도 잘 맞지 않는다. 해상도가 낮을수록 심하며, 혼합 비율을 푸는 분광 분리, 곧 선형 혼합 모형을 쓰기도 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>지표마다 띠별 반사율이 다르다: 식물은 근적외선 밝음, 물은 어두움.</li>
-        <li>NDVI = (NIR − Red)/(NIR + Red): 식물 약 0.8, 흙 약 0.1, 물 음수.</li>
-        <li>무감독(k-평균)과 감독(최소 거리, 최대 가능도) 분류.</li>
-        <li>검증 자료의 혼동 행렬로 정확도를 평가한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>지표마다 띠별 반사율이 달라, 식물은 근적외선이 밝고 물은 어둡다. NDVI = (NIR − Red)/(NIR + Red)는 식물 약 0.8, 흙 약 0.1, 물 음수이다. 특징 공간에서 k-평균 같은 무감독 분류나 최소 거리, 최대 가능도 같은 감독 분류를 하고, 검증 자료의 혼동 행렬로 정확도를 평가한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>NDVI의 범위는?
-          <details><summary>답</summary><p>−1~+1.</p></details>
-        </li>
-        <li>k-평균 분류에서 사람이 하는 일은?
-          <details><summary>답</summary><p>무리 수를 정하고, 결과 무리에 지표 이름을 붙이는 일.</p></details>
+        <li>NDVI의 범위는 얼마인가?
+          <details><summary>답</summary><p>−1~+1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>근적외선 0.35, 적색 0.10의 NDVI는?
-          <details><summary>답</summary><p>0.25/0.45 = 0.56.</p></details>
+      <ol start="2">
+        <li>근적외선 0.35, 적색 0.10의 NDVI는 얼마인가?
+          <details><summary>답</summary><p>0.25/0.45 = 0.56이다.</p></details>
         </li>
-        <li>검증 픽셀 200개 가운데 대각 성분 합이 172이면 전체 정확도는?
-          <details><summary>답</summary><p>86%.</p></details>
+        <li>검증 픽셀 200개 가운데 혼동 행렬의 대각 성분 합이 172이면 전체 정확도는 얼마인가?
+          <details><summary>답</summary><p>86%이다.</p></details>
         </li>
       </ol>
     </div>

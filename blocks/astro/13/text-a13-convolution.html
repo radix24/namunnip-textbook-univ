@@ -8,75 +8,69 @@
 <article class="card q-card" id="text-a13-convolution" data-kind="본문" data-std="천우13-02-02">
   <header class="card-head"><span class="no"></span><h2>회선 필터로 잡음을 줄이고 경계 찾기</h2><span class="kind">본문 · 2.2절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>회선(합성곱)의 정의와 핵(kernel)을 안다.</li>
-        <li>평균, 가우스, 중앙값 필터의 잡음 감소와 신호 손실을 비교한다.</li>
-        <li>경계 검출 필터(Sobel, 라플라시안)의 원리를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>히스토그램과 표시 (<a href="02-01.html">2.1절</a>), 유한 차분 (<a href="../6/04-01.html">천우6 4.1절</a>).</li>
-      </ul>
-    </div>
-
-<h3>이웃과 섞어 보기</h3>
-    <p>픽셀 하나의 값에는 잡음이 많지만, 별이나 은하는 여러 픽셀에 걸쳐 있습니다. 이웃 픽셀을 적당히 섞으면 잡음은 줄고 천체는 남습니다. 이를 수학적으로 쓴 것이 회선입니다.</p>
+    <p class="q-ask">희미한 별 하나가 잡음에 묻혀 있다. 픽셀 하나만 보면 잡음과 구별되지 않지만, 별은 여러 픽셀에 걸쳐 있다. 이웃 픽셀을 섞으면 별을 드러낼 수 있을까? 그렇다면 얼마나 넓게 섞어야 가장 잘 보일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="실습 카드의 가상 영상에서 필터별 희미한 별의 S/N. 가우스 필터는 σk 0.5, 1.0, 1.5, 2.0, 3.0픽셀에서 2.23, 5.22, 6.09, 6.05, 5.13으로 별 크기 1.5픽셀 근처에서 가장 크다. 필터 없음 1.27, 3×3 상자 4.92, 3×3 중앙값 4.18이 가로선으로 표시되어 있다">
+        <line x1="55" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="55" y="195" text-anchor="middle" class="s">0</text>
+        <text x="101.2" y="195" text-anchor="middle" class="s">0.5</text>
+        <text x="147.4" y="195" text-anchor="middle" class="s">1</text>
+        <text x="193.6" y="195" text-anchor="middle" class="s">1.5</text>
+        <text x="239.8" y="195" text-anchor="middle" class="s">2</text>
+        <text x="286.1" y="195" text-anchor="middle" class="s">2.5</text>
+        <text x="332.3" y="195" text-anchor="middle" class="s">3</text>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="138.3" text-anchor="end" class="s">2</text>
+        <text x="50" y="92.6" text-anchor="end" class="s">4</text>
+        <text x="50" y="46.9" text-anchor="end" class="s">6</text>
+        <text x="360" y="209" text-anchor="end" class="s">가우스 필터 σk (픽셀)</text>
+        <text x="61" y="24" class="s">별의 S/N</text>
+        <path d="M101.2 129 L147.4 60.7 L193.6 40.8 L239.8 41.7 L332.3 62.7" class="a"/>
+        <circle cx="101.2" cy="129" r="4" class="fa"/><circle cx="147.4" cy="60.7" r="4" class="fa"/><circle cx="193.6" cy="40.8" r="4" class="fa"/><circle cx="239.8" cy="41.7" r="4" class="fa"/><circle cx="332.3" cy="62.7" r="4" class="fa"/>
+        <path d="M55 151 L360 151" class="k dsh"/><text x="370" y="155" class="s ">필터 없음 1.27</text>
+        <path d="M55 67.5 L360 67.5" class="b dsh"/><text x="370" y="71.5" class="s tb">3×3 상자 4.92</text>
+        <path d="M55 84.5 L360 84.5" class="c dsh"/><text x="370" y="88.5" class="s tc">3×3 중앙값 4.18</text>
+        <path d="M193.6 180 L193.6 40.8" class="gd"/><text x="197.6" y="174" class="s">별 크기 1.5 px</text><text x="370" y="40" class="s ta">가우스 최대 6.09</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.2.1의 필터별 S/N. 가우스 필터(파랑)는 별의 크기(1.5픽셀)와 비슷한 폭에서 가장 크며, 이것이 정합 필터이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>히스토그램과 표시(<a href="02-01.html">2.1절</a>)와 유한 차분(<a href="../6/04-01.html">천우6 4.1절</a>)을 쓴다.</div>
+    <p>이웃 픽셀을 적당히 섞으면 잡음은 줄고 천체는 남는다. 이를 수학적으로 쓴 것이 회선이다. 처음 질문의 답은, 별상과 같은 모양과 크기의 가우스로 섞을 때 S/N이 가장 커진다는 것이다(그림 1).</p>
 
     <h3><span class="no">2.2.1</span>회선</h3>
     \[ B(i, j) = \sum_{a, b}K(a, b)\,A(i + a, j + b) \]
-    <p>핵 \(K\)를 영상 위로 옮기며 곱해 더합니다(엄밀한 회선은 핵을 뒤집지만, 대칭인 핵에서는 같음). 핵의 합을 1로 맞추면 평균 밝기가 유지됩니다.</p>
-    <ul>
-      <li class="q-term"><b>상자(평균) 필터</b>: 3×3 모두 1/9. 독립 잡음을 1/3로 줄인다.</li>
-      <li class="q-term"><b>가우스 필터</b>: \(K \propto e^{-(a^2 + b^2)/2\sigma_k^2}\). 잡음을 약 \(1/(2\sqrt\pi\sigma_k)\)배로 줄인다. 별상과 같은 모양의 가우스로 회선하면 점 광원의 S/N이 가장 커진다(정합 필터).</li>
-      <li class="q-term"><b>중앙값 필터</b>: 이웃의 중앙값. 회선은 아니지만, 한 픽셀만 튀는 우주선이나 불량 픽셀을 거의 완전히 없앤다.</li>
-    </ul>
+    <p>핵 \(K\)를 영상 위로 옮기며 곱해 더한다. 엄밀한 회선은 핵을 뒤집지만, 대칭인 핵에서는 같다. 또 핵의 합을 1로 맞추면 평균 밝기가 유지된다.</p>
+    <p>3×3 상자 필터는 모든 칸이 1/9로, 독립 잡음을 1/3로 줄인다. 가우스 필터 \(K \propto e^{-(a^2 + b^2)/2\sigma_k^2}\)는 잡음을 약 \(1/(2\sqrt\pi\sigma_k)\)배로 줄인다. 그리고 별상과 같은 모양의 가우스로 회선하면 점 광원의 S/N이 가장 커지며, 이를 정합 필터라 한다. 한편 이웃의 중앙값을 취하는 중앙값 필터는 회선은 아니지만, 한 픽셀만 튀는 우주선이나 불량 픽셀을 거의 완전히 없앤다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 2.2.1 <span class="nm">(아래 실습 카드 결과)</span></span>
-      <p>잡음 10인 가상 영상에 희미한 별(최고값 약 25, 표준편차 1.5 px)과 우주선 한 점(+200)이 있습니다. 필터별 결과는?</p>
+      <span class="lb">예제 2.2.1</span>
+      <p>이 절의 실습 카드에서, 잡음 10인 가상 영상에 희미한 별(최고값 약 25, 표준편차 1.5픽셀)과 우주선 한 점(+200)이 있다. 필터별 결과는 어떠한가?</p>
     </div>
-    <ul>
-      <li class="q-term">필터 없음: 잡음 9.79, 별 중심 12.45(잡음에 묻힘), S/N 1.27, 우주선 213.5.</li>
-      <li class="q-term">3×3 상자: 잡음 3.26, S/N 4.92, 우주선 28.6.</li>
-      <li class="q-term">3×3 중앙값: 잡음 3.97, S/N 4.18, 우주선 5.4(거의 사라짐).</li>
-      <li class="q-term">가우스 \(\sigma_k\) = 0.5, 1.0, 1.5, 2.0, 3.0 px: S/N 2.23, 5.22, 6.09, 6.05, 5.13. 별의 크기(1.5 px)와 비슷할 때 가장 크다.</li>
-    </ul>
+    <p><i>풀이.</i> 필터가 없으면 잡음 9.79, 별 중심 12.45로 잡음에 묻혀 S/N이 1.27이고, 우주선은 213.5이다. 3×3 상자 필터는 잡음을 3.26으로 줄여 S/N 4.92를 주지만 우주선이 28.6으로 남는다. 반면 3×3 중앙값 필터는 S/N 4.18에 우주선을 5.4로 거의 없앤다. 가우스 필터는 \(\sigma_k\) = 0.5, 1.0, 1.5, 2.0, 3.0픽셀에서 S/N이 2.23, 5.22, 6.09, 6.05, 5.13으로, 별의 크기(1.5픽셀)와 비슷할 때 가장 크다(그림 1).</p>
 
     <h3><span class="no">2.2.2</span>경계 검출</h3>
-    <p>밝기가 급히 바뀌는 곳(경계)은 1차 도함수가 크거나 2차 도함수의 부호가 바뀌는 곳입니다. 차분을 핵으로 쓰면</p>
+    <p>밝기가 급히 바뀌는 경계는 1차 도함수가 크거나 2차 도함수의 부호가 바뀌는 곳이다. 차분을 핵으로 쓰면 다음과 같다. 가운데 칸이 계산하는 픽셀인 3×3 가중치 표이다.</p>
     \[ K_{Sobel,x} = \begin{pmatrix}-1&0&1\\-2&0&2\\-1&0&1\end{pmatrix}, \qquad K_{Laplace} = \begin{pmatrix}0&1&0\\1&-4&1\\0&1&0\end{pmatrix} \]
-    <p>입니다(가운데 칸이 계산하는 픽셀인 3×3 가중치 표). Sobel은 가로 방향 기울기를(세로 방향은 전치), 라플라시안은 모든 방향의 굽음을 봅니다. 천문학에서는 위성 궤적 같은 선 찾기, 은하 경계, 태양 흑점·홍염 경계, 우주선 찾기(라플라시안 가장자리 검출, L.A.Cosmic)에 씁니다. 도함수는 잡음을 키우므로 보통 가우스로 먼저 부드럽게 합니다.</p>
-    <div class="tb-note"><b>주의</b> 부드럽게 한 영상은 픽셀끼리 잡음이 상관되어, 그 영상에서 잰 rms로 점 광원의 측광 오차를 계산하면 틀립니다. 필터는 검출과 보기에 쓰고, 측광은 원래 영상에서 합니다.</div>
+    <p>Sobel은 가로 방향 기울기를 보고(세로 방향은 전치), 라플라시안은 모든 방향의 굽음을 본다. 천문학에서는 위성 궤적 같은 선 찾기, 은하 경계, 태양 흑점과 홍염의 경계, 우주선 찾기(라플라시안 가장자리 검출, L.A.Cosmic)에 쓴다. 다만 도함수는 잡음을 키우므로 보통 가우스로 먼저 부드럽게 한다.</p>
+    <div class="tb-note"><span class="lb">주의</span>부드럽게 한 영상은 픽셀끼리 잡음이 상관된다. 그러므로 그 영상에서 잰 rms로 점 광원의 측광 오차를 계산하면 틀린다. 필터는 검출과 보기에 쓰고, 측광은 원래 영상에서 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>회선 \(B = K \ast A\): 핵의 합을 1로 맞춘다.</li>
-        <li>상자·가우스는 잡음을 줄이고 별을 퍼뜨린다. 별상 크기의 가우스가 검출 S/N을 가장 키운다(정합 필터).</li>
-        <li>중앙값 필터는 우주선 같은 튀는 픽셀을 없앤다.</li>
-        <li>Sobel(기울기), 라플라시안(굽음)으로 경계를 찾는다. 측광은 원래 영상으로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>회선 \(B = K \ast A\)는 핵을 옮기며 곱해 더하는 연산이고, 핵의 합을 1로 맞춘다. 상자와 가우스 필터는 잡음을 줄이며, 별상 크기의 가우스가 검출 S/N을 가장 키운다. 중앙값 필터는 우주선 같은 튀는 픽셀을 없애고, Sobel과 라플라시안은 경계를 찾는다. 측광은 원래 영상으로 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>독립 잡음 σ인 영상에 5×5 상자 필터를 쓰면 잡음은?
-          <details><summary>답</summary><p>σ/5.</p></details>
-        </li>
-        <li>한 픽셀만 밝은 우주선을 없애기 좋은 필터는?
-          <details><summary>답</summary><p>중앙값 필터.</p></details>
+        <li>독립 잡음 σ인 영상에 5×5 상자 필터를 쓰면 잡음은 얼마가 되는가?
+          <details><summary>답</summary><p>σ/5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>가우스 필터 \(\sigma_k = 2\) px의 잡음 감소 배율은?
-          <details><summary>답</summary><p>\(1/(2\sqrt\pi\times2) = 0.141\).</p></details>
+      <ol start="2">
+        <li>가우스 필터 \(\sigma_k = 2\)픽셀의 잡음 감소 배율은 얼마인가?
+          <details><summary>답</summary><p>\(1/(2\sqrt\pi\times2) = 0.141\)이다.</p></details>
         </li>
-        <li>라플라시안 핵을 값 (0, 0, 10, 0, 0)인 가로 한 줄 가운데에 적용하면(위아래 0)?
-          <details><summary>답</summary><p>\(0 + 0 - 40 + 0 + 0 = -40\): 고립된 밝은 점에서 큰 음수가 되어 쉽게 찾는다.</p></details>
+        <li>위아래가 모두 0인 가로 한 줄 (0, 0, 10, 0, 0)의 가운데에 라플라시안 핵을 적용하면 값은 얼마인가?
+          <details><summary>답</summary><p>\(0 + 0 - 40 + 0 + 0 = -40\)이다. 고립된 밝은 점에서 큰 음수가 되므로 쉽게 찾는다.</p></details>
         </li>
       </ol>
     </div>
