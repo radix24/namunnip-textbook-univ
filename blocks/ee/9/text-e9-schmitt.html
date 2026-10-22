@@ -8,65 +8,65 @@
 <article class="card q-card" id="text-e9-schmitt" data-kind="본문" data-std="전전9-05-03">
   <header class="card-head"><span class="no"></span><h2>비교기, 슈미트 트리거, 이완 발진기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비교기가 잡음 섞인 입력에서 여러 번 떨리는(채터링) 이유를 안다.</li>
-        <li>양의 되먹임으로 두 문턱 \(\pm\beta V_{sat}\)와 히스테리시스를 만든다.</li>
-        <li>슈미트 트리거와 RC로 구형파 발진기를 만들고 주기 \(T = 2RC\ln\frac{1+\beta}{1-\beta}\)를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>RC 충방전 (<a href="../3/05-02.html">전전3 5.2절</a>), 로그(고교 수학I), 이 절의 실습 카드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">온도 센서의 느린 전압이 0 V를 지날 때 경보를 한 번 울리고 싶다. 그런데 비교기 출력을 디지털 회로로 세어 보니, 한 번 지날 때마다 펄스가 서너 개씩 들어온다. 신호에 섞인 작은 잡음 때문이다. 잡음은 그대로 둔 채 출력을 한 번만 바뀌게 할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="반전 슈미트 트리거의 입력-출력 특성(예제 5.3.1, V_sat = ±10 V, β = 0.0909). 출력이 +10 V인 동안은 입력이 +0.909 V를 넘어야 −10 V로 바뀌고, −10 V인 동안은 −0.909 V 아래로 내려가야 돌아온다. 두 문턱의 차 1.82 V가 히스테리시스이다">
+        <defs><marker id="ah-e9sh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <line x1="60" y1="100" x2="470" y2="100" class="ax"/><line x1="260" y1="25" x2="260" y2="175" class="ax"/>
+        <rect x="169.1" y="40" width="181.8" height="120" class="la"/>
+        <path d="M60 40 H350.9 V160 H460" class="a" stroke-width="2.5"/>
+        <path d="M460 160 H169.1 V40" class="b dsh" stroke-width="2"/>
+        <path d="M300 40 H330" class="k" marker-end="url(#ah-e9sh)"/>
+        <path d="M230 160 H200" class="k" marker-end="url(#ah-e9sh)"/>
+        <g text-anchor="middle" class="s"><text x="169.1" y="186">−0.909</text><text x="260" y="186">0</text><text x="350.9" y="186">+0.909 V</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="44">+10 V</text><text x="54" y="164">−10 V</text></g>
+        <text x="190" y="120" class="ta">히스테리시스 1.82 V</text>
+        <text x="360" y="64" class="ta">입력이 오를 때</text>
+        <text x="80" y="140" class="tb">입력이 내릴 때</text>
+        <text x="420" y="94" class="s">입력</text>
+      </svg>
+      <figcaption>그림 1. 출력을 비반전 입력에 되돌리면 문턱이 출력 상태에 따라 위아래로 옮겨 가므로, 입력이 한 문턱을 넘은 뒤에는 잡음으로 조금 되돌아와도 다른 문턱에 닿기 전까지 출력이 바뀌지 않는다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>RC 충방전(<a href="../3/05-02.html">전전3 5.2절</a>), 로그(고교 수학I), 이 절의 실습 카드를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>비교기의 문제</h3>
-    <p>연산증폭기를 되먹임 없이 쓰면 입력이 문턱(예: 0 V)보다 조금만 커도 출력이 \(+V_{sat}\), 작으면 \(-V_{sat}\)이 되는 비교기입니다. 느린 신호에 잡음이 섞이면 문턱 근처에서 입력이 문턱을 여러 번 오가므로 출력도 여러 번 떨립니다. 디지털 회로가 이를 펄스 여러 개로 세면 오작동합니다.</p>
+    <p>연산증폭기를 되먹임 없이 쓰면, 입력이 문턱(가령 0 V)보다 조금만 커도 출력이 \(+V_{sat}\), 작으면 \(-V_{sat}\)이 되는 비교기이다. 그런데 느린 신호에 잡음이 섞이면 문턱 근처에서 입력이 문턱을 여러 번 오가므로 출력도 여러 번 떨리는데, 이를 채터링이라 한다. 디지털 회로가 이를 펄스 여러 개로 세면 오작동한다.</p>
 
     <h3><span class="no">5.3.2</span>슈미트 트리거</h3>
-    <p>출력을 분압기 \(R_1, R_2\)로 나눠 비반전 입력에 되돌리고(양의 되먹임), 신호는 반전 입력에 넣습니다. 되먹임 비율 \(\beta = R_1/(R_1 + R_2)\)이면 비반전 입력의 전압은 \(\beta V_{out}\)입니다. 출력이 \(+V_{sat}\)인 동안은 입력이 \(+\beta V_{sat}\)를 넘어야 출력이 −로 바뀌고, 출력이 \(-V_{sat}\)인 동안은 \(-\beta V_{sat}\) 아래로 내려가야 +로 돌아옵니다. 문턱이 출력 상태에 따라 바뀌는 것입니다. 두 문턱의 차 \(2\beta V_{sat}\)가 히스테리시스이고, 잡음의 첨두-첨두보다 크게 잡으면 떨림이 사라집니다.</p>
+    <p>출력을 분압기 \(R_1, R_2\)로 나눠 비반전 입력에 되돌리고(양의 되먹임), 신호는 반전 입력에 넣는다. 되먹임 비율이 \(\beta = R_1/(R_1 + R_2)\)이면 비반전 입력의 전압은 \(\beta V_{out}\)이다. 그러면 출력이 \(+V_{sat}\)인 동안은 입력이 \(+\beta V_{sat}\)를 넘어야 출력이 −로 바뀌고, 출력이 \(-V_{sat}\)인 동안은 \(-\beta V_{sat}\) 아래로 내려가야 +로 돌아온다. 즉 문턱이 출력 상태에 따라 바뀐다(그림 1).</p>
+    <p>두 문턱의 차 \(2\beta V_{sat}\)를 히스테리시스라 하며, 이것을 잡음의 첨두-첨두보다 크게 잡으면 떨림이 사라진다. 처음 질문의 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
       <p>\(V_{sat} = \pm10\) V, \(R_1\) = 10 kΩ, \(R_2\) = 100 kΩ. (가) 두 문턱과 히스테리시스. (나) 이 슈미트 트리거의 출력을 R = 10 kΩ로 C = 0.1 μF에 충전하고 축전기 전압을 반전 입력에 넣은 발진기의 주기와 주파수.</p>
     </div>
-    <p><i>풀이.</i> (가) β = 10/110 = 0.0909, 문턱 ±0.909 V, 히스테리시스 1.82 V. (나) 축전기 전압은 한 문턱에서 다른 문턱까지 \(\pm V_{sat}\)를 향해 지수적으로 움직입니다. 반주기 동안 \(-\beta V\)에서 \(+\beta V\)까지 가는 시간은 \(RC\ln\frac{1+\beta}{1-\beta}\)이므로 \(T = 2RC\ln\frac{1.0909}{0.9091} = 2 \times 1\text{ ms} \times 0.1823 \approx 0.365\) ms, f ≈ 2.74 kHz. (실습 카드의 처음 값은 C = 10 nF라 주파수가 10배인 27.4 kHz입니다. 또 실습 카드의 비교 모드는 신호를 비반전 입력에 넣는 배치라, 출력 부호와 문턱 부호의 관계가 이 절과 반대입니다.)</p>
+    <p><i>풀이.</i> (가) β = 10/110 = 0.0909이므로 문턱은 ±0.909 V, 히스테리시스는 1.82 V이다. (나) 축전기 전압은 한 문턱에서 다른 문턱까지 \(\pm V_{sat}\)를 향해 지수적으로 움직인다. 반주기 동안 \(-\beta V\)에서 \(+\beta V\)까지 가는 시간은 \(RC\ln\frac{1+\beta}{1-\beta}\)이므로, \(T = 2RC\ln\frac{1.0909}{0.9091} = 2 \times 1\text{ ms} \times 0.1823 \approx 0.365\) ms, f ≈ 2.74 kHz이다.</p>
+    <p>실습 카드의 처음 값은 C = 10 nF라 주파수가 10배인 27.4 kHz이다. 또 실습 카드의 비교 모드는 신호를 비반전 입력에 넣는 배치라, 출력 부호와 문턱 부호의 관계가 이 절과 반대이다.</p>
 
     <h3><span class="no">5.3.3</span>측정할 때</h3>
-    <ul>
-      <li>입력에 느린 삼각파를 넣고 X-Y 모드(가로 입력, 세로 출력)로 보면 히스테리시스 고리가 사각형으로 보여 두 문턱을 바로 읽는다.</li>
-      <li>연산증폭기는 비교기 전용 부품보다 느리므로(슬루율, 5.2절) 높은 주파수 발진기에서는 모서리가 기울고 주파수가 계산보다 낮아진다.</li>
-    </ul>
+    <p>입력에 느린 삼각파를 넣고 X-Y 모드(가로 입력, 세로 출력)로 보면 히스테리시스 고리가 사각형으로 보여 두 문턱을 바로 읽는다. 한편 연산증폭기는 비교기 전용 부품보다 느리므로(슬루율, 5.2절), 높은 주파수 발진기에서는 모서리가 기울고 주파수가 계산보다 낮아진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "히스테리시스는 클수록 좋다": 크면 작은 신호 변화를 놓치고 반응 시점이 늦어집니다. 잡음보다 조금 크게 잡습니다. (2) 양의 되먹임과 음의 되먹임을 바꿔 연결하면 증폭기가 비교기가 되거나 그 반대가 됩니다. 핀 번호를 확인하세요.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>히스테리시스는 클수록 좋다고 여기기 쉽지만, 크면 작은 신호 변화를 놓치고 반응 시점이 늦어지므로 잡음보다 조금 크게 잡는다. 또 양의 되먹임과 음의 되먹임을 바꿔 연결하면 증폭기가 비교기가 되거나 그 반대가 되므로 핀 번호를 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>비교기는 잡음이 있으면 문턱 근처에서 떨린다.</li>
-        <li>슈미트 트리거: 문턱 \(\pm\beta V_{sat}\), 히스테리시스 \(2\beta V_{sat}\), \(\beta = R_1/(R_1+R_2)\).</li>
-        <li>이완 발진기: \(T = 2RC\ln\frac{1+\beta}{1-\beta}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>비교기는 잡음이 있으면 문턱 근처에서 여러 번 떨린다. 슈미트 트리거는 양의 되먹임으로 문턱을 \(\pm\beta V_{sat}\)로 나누어 히스테리시스 \(2\beta V_{sat}\)를 만들며, \(\beta = R_1/(R_1+R_2)\)이다. 여기에 RC를 더한 이완 발진기의 주기는 \(T = 2RC\ln\frac{1+\beta}{1-\beta}\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(V_{sat}\) = ±12 V, \(R_1\) = 4.7 kΩ, \(R_2\) = 47 kΩ의 문턱은?
-          <details><summary>답</summary><p>β = 0.0909, ±1.09 V.</p></details>
+          <details><summary>답</summary><p>β = 0.0909이므로 ±1.09 V이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>\(R_1 = R_2\)(β = 0.5), R = 10 kΩ, C = 47 nF 발진기의 주파수는?
-          <details><summary>답</summary><p>\(T = 2RC\ln3 \approx 1.03\) ms, 약 968 Hz.</p></details>
+          <details><summary>답</summary><p>\(T = 2RC\ln3 \approx 1.03\) ms이므로 약 968 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>잡음 첨두-첨두 0.3 V인 신호에서 떨림을 없애려면 \(V_{sat}\) = 10 V일 때 β를 얼마 이상으로 하는가?
-          <details><summary>답</summary><p>\(2\beta \times 10 > 0.3\), β > 0.015. 여유를 두어 0.03 정도(실습 카드의 처음 값).</p></details>
+          <details><summary>답</summary><p>\(2\beta \times 10 > 0.3\)이므로 β > 0.015이다. 여유를 두어 실습 카드의 처음 값인 0.03 정도로 한다.</p></details>
         </li>
       </ol>
     </div>

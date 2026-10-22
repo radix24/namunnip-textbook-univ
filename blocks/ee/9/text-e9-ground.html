@@ -8,56 +8,63 @@
 <article class="card q-card" id="text-e9-ground" data-kind="본문" data-std="전전9-06-03">
   <header class="card-head"><span class="no"></span><h2>접지와 배선이 만드는 측정 잡음</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>공유 접지선의 저항에 흐르는 전류가 신호에 오차를 더하는 원리를 안다.</li>
-        <li>접지 루프와 60 Hz 험(hum)의 원인을 설명한다.</li>
-        <li>별 접지, 짧은 프로브 접지, 차동 측정으로 잡음을 줄인다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>디버깅 (<a href="06-01.html">6.1절</a>), 측정기 부하 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">센서의 10 mV 신호를 재는데, 옆의 전동기가 돌기 시작하면 측정값이 100 mV 넘게 튄다. 센서도 전동기도 전원의 같은 0 V에 이어져 있는데, 0 V가 어떻게 신호를 흔들 수 있을까? 같은 전선을 쓰더라도 배선을 바꾸면 이 문제를 없앨 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="공유 접지와 별 접지(예제 6.3.1). 왼쪽은 전동기 전류 2 A와 센서 신호가 저항 0.05 Ω인 같은 접지선을 지나 센서 기준점이 100 mV 들려 신호 10 mV의 10배 오차가 생긴다. 오른쪽은 두 귀환선이 전원의 한 점에서만 만나는 별 접지로, 센서 기준점에 전동기 전류가 흐르지 않는다">
+        <rect x="30" y="30" width="60" height="40" class="lk"/><rect x="30" y="30" width="60" height="40" class="k"/>
+        <rect x="150" y="30" width="60" height="40" class="ld"/><rect x="150" y="30" width="60" height="40" class="d"/>
+        <rect x="230" y="30" width="40" height="40" class="lb"/><rect x="230" y="30" width="40" height="40" class="b"/>
+        <path d="M60 70 V140 H250 V70 M180 70 V140" class="k"/>
+        <path d="M80 140 H160" class="d" stroke-width="4"/>
+        <text x="40" y="54" class="s">전원</text><text x="160" y="54" class="td">전동기</text><text x="234" y="54" class="tb">센서</text>
+        <text x="84" y="158" class="td">2 A × 0.05 Ω = 100 mV</text>
+        <text x="40" y="188" class="s">공유 접지, 오차 100 mV</text>
+        <rect x="310" y="30" width="60" height="40" class="lk"/><rect x="310" y="30" width="60" height="40" class="k"/>
+        <rect x="420" y="30" width="60" height="40" class="ld"/><rect x="420" y="30" width="60" height="40" class="d"/>
+        <rect x="500" y="30" width="40" height="40" class="lb"/><rect x="500" y="30" width="40" height="40" class="b"/>
+        <path d="M340 70 V150" class="k"/>
+        <path d="M340 150 H450 V70" class="d" stroke-width="3"/>
+        <path d="M340 140 Q420 120 520 120 V70" class="b" stroke-width="2"/>
+        <circle cx="340" cy="140" r="4" class="fk"/>
+        <text x="320" y="54" class="s">전원</text><text x="430" y="54" class="td">전동기</text><text x="504" y="54" class="tb">센서</text>
+        <text x="320" y="188" class="s">별 접지, 한 점에서만 만남</text>
+      </svg>
+      <figcaption>그림 1. 접지선도 저항이 있으므로 큰 전류가 지나는 구간에는 전압이 생기고, 신호의 기준점이 그 구간을 공유하면 그 전압이 신호에 더해지지만, 귀환선을 전원의 한 점에서만 만나게 하면 신호 쪽 접지에는 큰 전류가 흐르지 않는다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>디버깅(<a href="06-01.html">6.1절</a>), 측정기 부하(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>접지선도 저항이다</h3>
-    <p>큰 전류(전동기, LED, 디지털 회로)와 작은 신호가 같은 접지선을 쓰면, 그 선의 저항에 생기는 전압이 신호 기준점을 흔듭니다. 장비 여러 대의 접지가 서로 다른 경로로 이어져 고리를 이루면, 주변 교류 자계가 고리에 전압을 유도해 60 Hz 험이 생깁니다. 오실로스코프 프로브의 긴 접지선은 고리를 만들어 고속 신호에 울림(ringing)을 더합니다.</p>
+    <p>전동기, LED, 디지털 회로처럼 큰 전류와 작은 신호가 같은 접지선을 쓰면, 그 선의 저항에 생기는 전압이 신호의 기준점을 흔든다. 처음 질문의 첫째 답이 이것으로, 접지는 어디서나 0 V가 아니라 전류가 흐르는 만큼 지점마다 전압이 다르다.</p>
+    <p>한편 장비 여러 대의 접지가 서로 다른 경로로 이어져 고리를 이루면, 주변 교류 자계가 그 고리에 전압을 유도해 60 Hz 험(hum)이 생긴다. 이를 접지 루프라 한다. 또 오실로스코프 프로브의 긴 접지선은 작은 고리를 만들어 고속 신호에 울림(ringing)을 더한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>센서 신호 10 mV를 재는데, 같은 접지선(저항 0.05 Ω)으로 전동기 전류 2 A가 흐른다. 측정 오차는? 대책은?</p>
     </div>
-    <p><i>풀이.</i> 0.05 × 2 = 100 mV로 신호의 10배 오차입니다. 대책: 전동기와 센서의 접지를 전원 한 점에서만 만나게 하는 별 접지, 센서 신호를 차동으로 재기, 전동기 귀환선을 굵게 하기. 오실로스코프에서는 스프링형 짧은 접지를 씁니다.</p>
+    <p><i>풀이.</i> 0.05 × 2 = 100 mV이므로 신호의 10배 오차이다(그림 1). 따라서 대책으로는 먼저 전동기와 센서의 접지를 전원 한 점에서만 만나게 하는 별 접지가 있다. 그다음 센서 신호를 차동으로 재거나, 전동기 귀환선을 굵게 해 저항을 줄인다. 그리고 오실로스코프에서는 스프링형 짧은 접지를 쓴다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>차동 측정이 효과적인 이유는 6.2절 CMRR과 같다. 센서의 두 선에 함께 실린 접지 전압은 공통 모드가 되어, 차동 증폭기가 지워 버린다. 그래서 접지 배선을 고치기 어려운 현장에서는 차동 측정이 가장 손쉬운 대책이 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "접지는 어디나 0 V": 전류가 흐르면 지점마다 전압이 다릅니다. (2) "오실로스코프 접지를 아무 데나 물려도 된다": 프로브 접지는 장비 접지와 이어져 있어 회로의 다른 점에 물리면 단락이 생길 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>접지는 어디나 0 V라고 여기기 쉽지만, 전류가 흐르면 지점마다 전압이 다르다. 오실로스코프 접지를 아무 데나 물려도 된다는 생각도 위험하다. 프로브 접지는 장비 접지와 이어져 있어, 회로의 다른 점에 물리면 단락이 생길 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>공유 접지선 저항 × 큰 전류 = 신호 오차.</li>
-        <li>접지 루프 → 60 Hz 험.</li>
-        <li>별 접지, 차동 측정, 짧은 프로브 접지.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>공유 접지선의 저항에 큰 전류가 흐르면 그 곱만큼 신호 기준점이 흔들려 오차가 된다. 장비 접지가 고리를 이루면 접지 루프가 60 Hz 험을 만든다. 별 접지로 귀환 경로를 나누고, 차동으로 측정하고, 프로브 접지를 짧게 해 잡음을 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>접지선 0.1 Ω에 500 mA가 흐르면 기준점 전압 차는?
-          <details><summary>답</summary><p>50 mV.</p></details>
+          <details><summary>답</summary><p>50 mV이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>신호 1 mV를 1% 정확도로 재려면 접지선 전압을 얼마 이하로 해야 하는가?
-          <details><summary>답</summary><p>10 μV 이하.</p></details>
+          <details><summary>답</summary><p>10 μV 이하이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>차동 측정이 접지 잡음에 강한 이유는?
-          <details><summary>답</summary><p>두 입력에 함께 들어온 잡음(공통 모드)을 빼기 때문입니다.</p></details>
+          <details><summary>답</summary><p>두 입력에 함께 들어온 잡음(공통 모드)을 빼기 때문이다.</p></details>
         </li>
       </ol>
     </div>
