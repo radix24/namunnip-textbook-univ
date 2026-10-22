@@ -8,51 +8,47 @@
 <article class="card q-card" id="text-m17-freudenstein" data-kind="본문" data-std="기계17-03-03">
   <header class="card-head"><span class="no"></span><h2>Freudenstein 식으로 함수 생성 링크 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>4절 링크의 입력각-출력각 관계를 Freudenstein 식으로 쓴다.</li>
-        <li>세 정밀점으로 \(K_1, K_2, K_3\)의 연립 1차방정식을 세워 푼다.</li>
-        <li>\(K\)에서 링크 길이를 되찾는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>벡터 루프 (<a href="02-01.html">2.1절</a>), 연립 1차방정식 (<a href="../me16/03-01.html">공학수치해석 3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자동차 조향 링크는 핸들을 돌린 각에 맞춰 바퀴가 정해진 각만큼 꺾여야 한다. 입력 각과 출력 각 사이의 원하는 관계를 4절 링크로 만들려면 네 길이를 어떻게 정할까? 커플러 각까지 얽힌 식을 피해, 입력과 출력만으로 된 식을 세울 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 4절 링크(d = 4, a = 1.5, b = 4, c = 3)의 입력각 θ₂와 출력각 θ₄의 관계 곡선(0°~120°). Freudenstein 식에 정밀점 세 쌍 (30°, 77.4°), (60°, 82.7°), (90°, 95.5°)를 넣어 K₁ = 2.667, K₂ = 1.335, K₃ = 1.251을 얻고, 여기서 a = 1.50, c = 3.00, b = 4.00을 되찾는다">
+        <line x1="80" y1="170" x2="440" y2="170" class="ax"/><line x1="80" y1="25" x2="80" y2="170" class="ax"/>
+        <polyline points="80,94.0 95,101.9 110,108.5 125,113.8 140,117.6 155,120.1 170,121.3 185,121.2 200,120.0 215,117.8 230,114.8 245,110.9 260,106.5 275,101.4 290,95.9 305,90.0 320,83.8 335,77.3 350,70.7 365,63.8 380,56.9 395,49.9 410,42.8 425,35.8 440,28.8" class="a" fill="none" stroke-width="2.5"/>
+        <g class="fd"><circle cx="170" cy="121.3" r="5"/><circle cx="260" cy="106.4" r="5"/><circle cx="350" cy="70.6" r="5"/></g>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0</text><text x="170" y="186">30</text><text x="260" y="186">60</text><text x="350" y="186">90</text><text x="430" y="186">θ₂ (°)</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="174">60</text><text x="74" y="34">110 θ₄</text></g>
+        <g class="s"><text x="150" y="146" class="td">(30, 77.4)</text><text x="240" y="130" class="td">(60, 82.7)</text><text x="300" y="62" class="td">(90, 95.5)</text></g>
+        <text x="450" y="90" class="s">K₁ 2.667</text><text x="450" y="110" class="s">K₂ 1.335</text><text x="450" y="130" class="s">K₃ 1.251</text>
+      </svg>
+      <figcaption>그림 1. 입력각과 출력각의 관계에서 정밀점 세 쌍을 고르면, 커플러 각을 지운 Freudenstein 식이 계수 세 개에 대한 1차식이 되어 링크 길이를 바로 풀 수 있다(예제 3.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>벡터 루프(<a href="02-01.html">2.1절</a>), 연립 1차방정식(<a href="../me16/03-01.html">공학수치해석 3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>Freudenstein 식</h3>
-    <p>벡터 루프의 두 성분 식에서 커플러 각 \(\theta_3\)를 지우면(제곱해 더함) 입력각 \(\theta_2\)와 출력각 \(\theta_4\)만의 관계가 남습니다.</p>
+    <p>벡터 루프의 두 성분 식에서 커플러 각 \(\theta_3\)를 지우면, 곧 두 식을 정리해 제곱해 더하면, 입력각 \(\theta_2\)와 출력각 \(\theta_4\)만의 관계가 남는다. 처음 질문의 둘째 답이 이 식이다.</p>
     <div class="tb-env thm">
       <span class="lb">Freudenstein 식</span>
       <p>\[ K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_2 - \theta_4) \]</p>
       <p>\[ K_1 = \frac da, \quad K_2 = \frac dc, \quad K_3 = \frac{a^2 - b^2 + c^2 + d^2}{2ac} \]</p>
     </div>
-    <p>원하는 입력-출력 관계에서 정밀점 세 쌍 \((\theta_2, \theta_4)\)를 고르면, 미지수 \(K_1, K_2, K_3\)에 대한 연립 1차방정식이 됩니다. 풀어서 \(d\)를 정하면 \(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\)입니다.</p>
+    <p>원하는 입력-출력 관계에서 정밀점 세 쌍 \((\theta_2, \theta_4)\)를 고르면, 미지수 \(K_1, K_2, K_3\)에 대한 연립 1차방정식이 된다. 이것을 풀고 지면 길이 d를 정하면, \(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\)으로 나머지 길이가 정해진다. 처음 질문의 첫째 답이 이것이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1 <span class="nm">(입력 30°, 60°, 90°)</span></span>
       <p>입력각 30°, 60°, 90°에서 출력각이 77.4°, 82.7°, 95.5°가 되는 4절 링크를 \(d = 4\)로 설계하여라.</p>
     </div>
-    <p><i>풀이.</i> 세 식의 계수(\(\cos\theta_4\), \(-\cos\theta_2\), 1 | \(\cos(\theta_2 - \theta_4)\)): (0.2181, −0.8660, 1 | 0.6769), (0.1271, −0.5, 1 | 0.9225), (−0.0958, 0, 1 | 0.9954). 풀면 \(K_1 = 2.667\), \(K_2 = 1.335\), \(K_3 = 1.251\). \(a = 1.50\), \(c = 3.00\), \(b = 4.00\). 1.2절의 크랭크-로커를 되찾았습니다(정밀점을 그 링크에서 뽑았기 때문).</p>
+    <p><i>풀이.</i> 세 식의 계수(\(\cos\theta_4\), \(-\cos\theta_2\), 1 | \(\cos(\theta_2 - \theta_4)\))는 (0.2181, −0.8660, 1 | 0.6769), (0.1271, −0.5, 1 | 0.9225), (−0.0958, 0, 1 | 0.9954)이다. 이것을 풀면 \(K_1 = 2.667\), \(K_2 = 1.335\), \(K_3 = 1.251\)이다. 따라서 a = 1.50, c = 3.00, b = 4.00이다.</p>
+    <p>즉 1.2절의 크랭크-로커를 그대로 되찾았다. 정밀점을 그 링크의 입출력 곡선에서 뽑았기 때문이다(그림 1). 실제 설계에서는 원하는 함수에서 정밀점을 뽑으므로, 결과 링크가 그 함수를 정밀점에서만 정확히 따른다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 정밀점 사이에서는 원하는 함수와 어긋나는 구조 오차가 생깁니다. 구간의 Chebyshev 점에 정밀점을 두면 최대 오차가 작아집니다. (2) 결과 길이가 음수이거나 \(b^2 &lt; 0\)이면 그 정밀점으로는 링크가 없으므로 점이나 각도 기준을 바꿉니다. (3) Grashof 조건과 분기도 확인합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>계산이 풀리면 언제나 쓸 수 있는 링크가 나온다고 여기기 쉽다. 결과 길이가 음수이거나 \(b^2 &lt; 0\)이면 그 정밀점으로는 링크가 존재하지 않으므로, 정밀점이나 각도 기준을 바꿔야 한다. 또 정밀점 사이에서는 원하는 함수와 어긋나는 구조 오차가 생기므로 Chebyshev 점에 정밀점을 두고, Grashof 조건과 분기도 함께 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_2 - \theta_4)\).</li>
-        <li>세 정밀점 → 3 × 3 연립 1차방정식.</li>
-        <li>\(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Freudenstein 식은 \(K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_2 - \theta_4)\)이다. 정밀점 세 개로 3 × 3 연립 1차방정식을 세운다. 길이는 \(a = d/K_1\), \(c = d/K_2\), \(b^2 = a^2 + c^2 + d^2 - 2acK_3\)로 되찾는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(d = 10\), \(a = 2\), \(b = 8\), \(c = 6\)인 링크의 \(K_1, K_2, K_3\)는?
-          <details><summary>답</summary><p>\(K_1 = 5\), \(K_2 = 1.667\), \(K_3 = (4 - 64 + 36 + 100)/24 = 3.167\).</p></details>
+          <details><summary>답</summary><p>\(K_1 = 5\), \(K_2 = 1.667\), \(K_3 = (4 - 64 + 36 + 100)/24 = 3.167\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>

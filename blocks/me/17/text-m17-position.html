@@ -8,64 +8,61 @@
 <article class="card q-card" id="text-m17-position" data-kind="본문" data-std="기계17-02-01">
   <header class="card-head"><span class="no"></span><h2>벡터 루프로 4절 링크의 위치 구하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>4절 링크를 닫힌 벡터 루프 방정식으로 나타낸다.</li>
-        <li>크랭크 각이 주어질 때 커플러 각과 로커 각을 구한다.</li>
-        <li>같은 크랭크 각에 조립 방법이 두 가지(열림·교차)임을 이해한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Grashof 조건 (<a href="01-02.html">1.2절</a>), 벡터의 성분과 삼각함수(고등학교 수학).</li>
-      </ul>
-    </div>
+    <p class="q-ask">크랭크를 60°로 돌려 놓았을 때 4절 링크의 커플러와 로커는 정확히 어느 각도에 있을까? 삼각함수가 얽힌 연립방정식을 정면으로 풀어야 할까, 아니면 더 쉬운 길이 있을까? 그리고 같은 크랭크 각에 답이 하나뿐일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 크랭크 60°에서 점 B를 두 원의 교점으로 구하는 그림(d = 4, a = 1.5, b = 4, c = 3, 개형). B는 A를 중심으로 반지름 b = 4인 원과 O₄를 중심으로 반지름 c = 3인 원의 교점이다. 위쪽 교점이 열린 조립(θ₃ = 24.8°, θ₄ = 82.7°), 아래쪽 교점이 교차 조립(θ₃ = −68.4°, θ₄ = −126.3°)이다">
+        <path d="M60 120 H260" class="k" stroke-width="2"/>
+        <circle cx="118.75" cy="87.5" r="100" class="c dsh" fill="none"/><circle cx="200" cy="120" r="75" class="b dsh" fill="none"/>
+        <path d="M100 120 L118.75 87.5 L209.6 45.6 L200 120" class="a" fill="none" stroke-width="4"/>
+        <path d="M118.75 87.5 L144.4 180.5 L200 120" class="d dsh" fill="none" stroke-width="2"/>
+        <g class="fk"><circle cx="100" cy="120" r="5"/><circle cx="118.75" cy="87.5" r="5"/><circle cx="200" cy="120" r="5"/></g>
+        <circle cx="209.6" cy="45.6" r="5" class="fa"/><circle cx="144.4" cy="180.5" r="5" class="fd"/>
+        <g class="s"><text x="84" y="138">O₂</text><text x="206" y="138">O₄</text><text x="100" y="80">A</text><text x="216" y="44" class="ta">B 열린 조립</text><text x="152" y="194" class="td">B′ 교차 조립</text></g>
+        <g class="s"><text x="320" y="50">A에서 거리 b = 4 (점선 원)</text><text x="320" y="70">O₄에서 거리 c = 3 (점선 원)</text><text x="320" y="100" class="ta">열린, θ₃ 24.8°, θ₄ 82.7°</text><text x="320" y="122" class="td">교차, θ₃ −68.4°, θ₄ −126.3°</text></g>
+      </svg>
+      <figcaption>그림 1. 크랭크 끝 A가 정해지면 B는 A에서 커플러 길이, O₄에서 로커 길이만큼 떨어진 점이어야 하므로 두 원의 교점이 되고, 교점이 둘이라 조립 방법도 둘이다(예제 2.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Grashof 조건(<a href="01-02.html">1.2절</a>), 벡터의 성분과 삼각함수(고등학교 수학)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>벡터 루프 방정식</h3>
-    <p>지면 핀 \(O_2\)를 원점, 다른 지면 핀 \(O_4\)를 \(x\)축 위 \((d, 0)\)에 둡니다. 크랭크 \(O_2A\)(길이 \(a\), 각 \(\theta_2\)), 커플러 \(AB\)(\(b\), \(\theta_3\)), 로커 \(O_4B\)(\(c\), \(\theta_4\))를 벡터로 보면, \(O_2\)에서 \(B\)까지 두 경로가 같아야 합니다.</p>
+    <p>지면 핀 \(O_2\)를 원점에, 다른 지면 핀 \(O_4\)를 x축 위 (d, 0)에 둔다. 크랭크 \(O_2A\)(길이 a, 각 \(\theta_2\)), 커플러 AB(b, \(\theta_3\)), 로커 \(O_4B\)(c, \(\theta_4\))를 벡터로 보면, \(O_2\)에서 B까지 가는 두 경로가 같아야 한다.</p>
     <p>\[ \vec a + \vec b = \vec d + \vec c \]</p>
-    <p>\(x\), \(y\) 성분으로 나누면</p>
+    <p>이것을 x, y 성분으로 나누면 다음 두 식이 된다.</p>
     <p>\[a\cos\theta_2 + b\cos\theta_3 = d + c\cos\theta_4\]</p>
     <p>\[a\sin\theta_2 + b\sin\theta_3 = c\sin\theta_4\]</p>
-    <p>\(\theta_2\)를 알면 미지수는 \(\theta_3\), \(\theta_4\) 둘이고 식도 둘입니다(자유도 1과 일치).</p>
+    <p>\(\theta_2\)를 알면 미지수는 \(\theta_3\), \(\theta_4\) 둘이고 식도 둘이므로, 자유도 1과 맞는다.</p>
 
     <h3><span class="no">2.1.2</span>두 원의 교점으로 풀기</h3>
-    <p>삼각함수 식을 직접 풀기보다 그림으로 보면 쉽습니다. \(A = (a\cos\theta_2, a\sin\theta_2)\)가 정해지면, \(B\)는 "A에서 거리 \(b\)"이고 "\(O_4\)에서 거리 \(c\)"인 점, 곧 두 원의 교점입니다.</p>
+    <p>그런데 삼각함수 식을 직접 풀기보다 그림으로 보면 쉽다. \(A = (a\cos\theta_2, a\sin\theta_2)\)가 정해지면, B는 A에서 거리 b이고 \(O_4\)에서 거리 c인 점, 곧 두 원의 교점이다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">계산 절차</span>
-      <p>① \(e = |O_4 - A|\). \(e > b + c\)이거나 \(e &lt; |b - c|\)이면 조립 불가. ② \(A\)에서 \(O_4\) 방향으로 \(m = (b^2 - c^2 + e^2)/(2e)\) 간 점에서, 수직으로 \(\pm\sqrt{b^2 - m^2}\) 떨어진 두 점이 \(B\)의 후보. ③ \(\theta_3 = \operatorname{atan2}(B - A)\), \(\theta_4 = \operatorname{atan2}(B - O_4)\).</p>
+      <p>먼저 \(e = |O_4 - A|\)를 구한다. \(e > b + c\)이거나 \(e &lt; |b - c|\)이면 그 크랭크 각에서는 조립할 수 없다. 다음으로 A에서 \(O_4\) 방향으로 \(m = (b^2 - c^2 + e^2)/(2e)\)만큼 간 점에서, 수직으로 \(\pm\sqrt{b^2 - m^2}\) 떨어진 두 점이 B의 후보이다. 끝으로 \(\theta_3 = \operatorname{atan2}(B - A)\), \(\theta_4 = \operatorname{atan2}(B - O_4)\)로 각을 구한다.</p>
     </div>
-    <p>두 후보가 열린(open) 조립과 교차(crossed) 조립입니다. 실제 기구는 조립할 때 정한 쪽을 계속 따라가며, 크랭크-로커는 운전 중에 다른 쪽으로 넘어가지 않습니다.</p>
+    <p>두 후보는 열린(open) 조립과 교차(crossed) 조립이다. 처음 질문의 둘째 답이 이것이다. 실제 기구는 조립할 때 정한 쪽을 계속 따라가며, 크랭크-로커는 운전 중에 다른 쪽으로 넘어가지 않는다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1 <span class="nm">(크랭크 60°)</span></span>
       <p>\(d = 4\), \(a = 1.5\), \(b = 4\), \(c = 3\)(1.2절 예제)에서 \(\theta_2 = 60°\)일 때 열린 조립의 \(\theta_3\), \(\theta_4\)를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(A = (0.75, 1.299)\). \(O_4 - A = (3.25, -1.299)\), \(e = 3.500\). \(m = (16 - 9 + 12.25)/7 = 2.750\), \(\sqrt{16 - 7.5625} = 2.905\). 단위 벡터 \(u = (0.9286, -0.3712)\), 수직 \((0.3712, 0.9286)\). 위쪽 해: \(B - A = 2.750u + 2.905(0.3712, 0.9286) = (2.554 + 1.078, -1.021 + 2.698) = (3.632, 1.677)\), \(B = (4.382, 2.976)\). 따라서 \(\theta_3 = \operatorname{atan2}(1.677, 3.632) = 24.8°\), \(\theta_4 = \operatorname{atan2}(2.976, 0.382) = 82.7°\). 검산: \(1.5\cos60° + 4\cos24.8° = 4.38 = 4 + 3\cos82.7°\) ✓. 교차 조립은 \(\theta_3 = -68.4°\), \(\theta_4 = -126.3°\)입니다.</p>
+    <p><i>풀이.</i> A = (0.75, 1.299)이고 \(O_4 - A = (3.25, -1.299)\)이므로 e = 3.500이다. m = (16 − 9 + 12.25)/7 = 2.750이고 \(\sqrt{16 - 7.5625} = 2.905\)이다. 단위 벡터는 u = (0.9286, −0.3712), 그 수직은 (0.3712, 0.9286)이다.</p>
+    <p>위쪽 해는 B − A = 2.750u + 2.905(0.3712, 0.9286) = (3.632, 1.677)이므로 B = (4.382, 2.976)이다. 따라서 \(\theta_3 = \operatorname{atan2}(1.677, 3.632) = 24.8°\), \(\theta_4 = \operatorname{atan2}(2.976, 0.382) = 82.7°\)이다. 검산하면 \(1.5\cos60° + 4\cos24.8° = 4.38 = 4 + 3\cos82.7°\)로 맞는다. 교차 조립은 \(\theta_3 = -68.4°\), \(\theta_4 = -126.3°\)이다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) \(\arctan\) 대신 사분면을 구별하는 \(\operatorname{atan2}(y, x)\)를 씁니다. (2) Freudenstein 식이나 반각 공식으로 \(\theta_4\)를 닫힌 꼴로 구하는 방법도 같은 두 해를 줍니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>각을 구할 때 arctan을 쓰는 실수가 흔하다. arctan은 −90°~90°만 돌려주므로, 로커가 둘째·셋째 사분면에 있으면 엉뚱한 각이 나온다. 그래서 사분면을 구별하는 atan2(y, x)를 쓴다. Freudenstein 식이나 반각 공식으로 \(\theta_4\)를 닫힌 꼴로 구해도 같은 두 해가 나온다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\vec a + \vec b = \vec d + \vec c\): 성분 식 2개, 미지수 2개.</li>
-        <li>B는 두 원의 교점. 조립 불가면 그 크랭크 각에 도달 못 함.</li>
-        <li>해가 둘: 열린·교차 조립.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>벡터 루프 \(\vec a + \vec b = \vec d + \vec c\)는 성분 식 2개에 미지수 2개이다. B는 두 원의 교점이며, 조립할 수 없으면 그 크랭크 각에는 닿지 못한다. 해는 열린 조립과 교차 조립 둘이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 링크에서 \(\theta_2 = 0\)이면 \(e\)는? 조립 가능한가?
-          <details><summary>답</summary><p>\(A = (1.5, 0)\), \(e = 2.5\). \(|b - c| = 1 \le 2.5 \le 7\)이므로 가능.</p></details>
+          <details><summary>답</summary><p>\(A = (1.5, 0)\), \(e = 2.5\). \(|b - c| = 1 \le 2.5 \le 7\)이므로 조립할 수 있다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>슬라이더-크랭크(크랭크 \(r\), 커넥팅 로드 \(l\), 오프셋 0)에서 피스톤 위치 \(x\)를 크랭크 각 \(\theta\)로 나타내어라.
-          <details><summary>답</summary><p>루프 \(r\cos\theta + l\cos\phi = x\), \(r\sin\theta = l\sin\phi\)에서 \(x = r\cos\theta + \sqrt{l^2 - r^2\sin^2\theta}\). (<a href="../me6/04-01.html">동역학</a>의 크랭크 기구와 같다.)</p></details>
+          <details><summary>답</summary><p>루프 \(r\cos\theta + l\cos\phi = x\), \(r\sin\theta = l\sin\phi\)에서 \(x = r\cos\theta + \sqrt{l^2 - r^2\sin^2\theta}\)이다. (<a href="../me6/04-01.html">동역학</a>의 크랭크 기구와 같다.)</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
