@@ -8,45 +8,55 @@
 <article class="card q-card" id="text-p2-thevenin" data-kind="본문" data-std="물리2-02-02">
   <header class="card-head"><span class="no"></span><h2>테브난과 노턴 등가 회로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>복잡한 선형 회로를 전압원 하나와 저항 하나(테브난), 전류원 하나와 저항 하나(노턴)로 바꾼다.</li>
-        <li>개방 전압과 단락 전류를 재어 등가 회로를 실험으로 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>키르히호프 법칙 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">10 V를 1 kΩ 두 개로 나눈 분할기에서 5 V를 꺼내 쓰려 했는데, 500 Ω짜리 장치를 이으니 출력이 2.5 V로 떨어졌다. 부하를 바꿀 때마다 회로 전체를 다시 풀어야 할까? 아니면 출력 단자에서 본 회로를 더 단순한 무언가로 바꿔 생각할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="복잡한 회로를 테브난 등가 회로로 바꾸는 그림과 부하에 따른 전력">
+        <rect x="20" y="40" width="100" height="90" class="lk"/><text x="70" y="80" text-anchor="middle" class="s">저항과</text><text x="70" y="98" text-anchor="middle" class="s">전원의 그물</text>
+        <path d="M120 60 H140 M120 110 H140" class="k"/><circle cx="142" cy="60" r="3" class="fk"/><circle cx="142" cy="110" r="3" class="fk"/>
+        <text x="160" y="90" class="s">=</text>
+        <path d="M200 110 V95 M200 75 V60 H215" class="k"/><line x1="188" y1="95" x2="212" y2="95" class="k"/><line x1="193" y1="85" x2="207" y2="85" class="k"/><path d="M200 85 V75" class="k"/>
+        <text x="186" y="128" text-anchor="middle" class="s">V_th</text>
+        <path d="M215 60 l4 -6 l8 12 l8 -12 l8 12 l8 -12 l4 6" class="a"/><text x="235" y="44" text-anchor="middle" class="ta">R_th</text>
+        <path d="M255 60 H275 M200 110 H275" class="k"/><circle cx="275" cy="60" r="3" class="fk"/><circle cx="275" cy="110" r="3" class="fk"/>
+        <line x1="320" y1="170" x2="540" y2="170" class="ax"/><line x1="320" y1="30" x2="320" y2="170" class="ax"/>
+        <path d="M320 155 L327 151 L335 147 L342 142 L349 135 L357 128 L364 119 L371 110 L379 99 L386 88 L393 77 L401 66 L408 57 L415 49 L423 44 L430 43 L437 44 L445 49 L452 57 L459 66 L467 77 L474 88 L481 99 L489 110 L496 119 L503 128 L511 135 L518 142 L525 147 L533 151 L540 155" class="a"/>
+        <path d="M320 166 L327 165 L335 164 L342 162 L349 161 L357 158 L364 156 L371 153 L379 149 L386 144 L393 139 L401 134 L408 128 L415 121 L423 114 L430 106 L437 99 L445 92 L452 85 L459 79 L467 73 L474 68 L481 64 L489 60 L496 57 L503 54 L511 52 L518 50 L525 49 L533 48 L540 47" class="b"/>
+        <line x1="430" y1="166" x2="430" y2="174" class="ax"/><text x="430" y="186" text-anchor="middle" class="s">R_L = R_th</text>
+        <text x="540" y="200" text-anchor="end" class="s">R_L (로그)</text>
+        <text x="440" y="36" class="ta">부하 전력</text><text x="490" y="44" class="tb">부하 전압</text>
+      </svg>
+      <figcaption>그림 1. 저항과 전원의 그물은 두 단자에서 보면 전압원 \(V_{\text{th}}\)와 직렬 저항 \(R_{\text{th}}\)로 바뀌며(왼쪽), 부하가 받는 전력은 \(R_L = R_{\text{th}}\)에서 가장 크고 부하 전압은 \(R_L\)이 클수록 \(V_{\text{th}}\)에 다가간다(오른쪽).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>키르히호프 법칙(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>등가 회로</h3>
+    <p>저항과 전원으로만 된 회로는 선형이다. 단자 전압과 단자 전류 사이의 관계가 직선이라는 뜻이다. 직선은 두 점으로 정해지므로, 단자를 열었을 때의 전압과 단자를 이었을 때의 전류만 알면 바깥에서 본 회로의 행동이 모두 정해진다. 이 생각을 정리한 것이 다음 정리이다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 2.2.1 (테브난)</span>
-      <p>저항과 전원으로 된 선형 회로의 두 단자는, 바깥에서 보면 전압원 \(V_{\text{th}}\)와 직렬 저항 \(R_{\text{th}}\)로 바꿀 수 있다. \(V_{\text{th}}\)는 단자를 열었을 때의 전압(개방 전압), \(R_{\text{th}} = V_{\text{oc}}/I_{\text{sc}}\) (\(I_{\text{sc}}\)는 단자를 이었을 때의 전류).</p>
+      <span class="lb">정리 2.2.1 <span class="nm">(테브난)</span></span>
+      <p>저항과 전원으로 된 선형 회로의 두 단자는, 바깥에서 보면 전압원 \(V_{\text{th}}\)와 직렬 저항 \(R_{\text{th}}\)로 바꿀 수 있다. \(V_{\text{th}}\)는 단자를 열었을 때의 개방 전압 \(V_{\text{oc}}\)이고, \(R_{\text{th}} = V_{\text{oc}}/I_{\text{sc}}\)이다. 여기서 \(I_{\text{sc}}\)는 단자를 이었을 때의 단락 전류이다.</p>
     </div>
-    <p>노턴 등가 회로는 전류원 \(I_N = I_{\text{sc}}\)와 병렬 저항 \(R_{\text{th}}\)입니다. 둘은 \(V_{\text{th}} = I_NR_{\text{th}}\)로 서로 바뀝니다.</p>
-    <p>계산으로 \(R_{\text{th}}\)를 구할 때는 회로 안의 전압원을 단락(도선), 전류원을 개방(끊음)한 뒤 단자에서 본 저항을 구합니다.</p>
+    <p>같은 회로를 전류원 \(I_N = I_{\text{sc}}\)와 병렬 저항 \(R_{\text{th}}\)로 바꿀 수도 있는데, 이것이 노턴 등가 회로이다. 둘은 \(V_{\text{th}} = I_NR_{\text{th}}\)로 서로 바뀐다. 계산으로 \(R_{\text{th}}\)를 구할 때는 회로 안의 전압원을 도선으로 단락하고 전류원을 끊어 개방한 뒤, 단자에서 본 저항을 구하면 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.2</span>
       <p>10 V 전원과 \(R_1 = 1\) kΩ, \(R_2 = 1\) kΩ으로 된 분할기의 출력 단자의 테브난 등가 회로는?</p>
     </div>
-    <p><i>풀이.</i> \(V_{\text{th}} = 5\) V. 전원을 단락하면 단자에서 \(R_1\parallel R_2 = 500\ \Omega\). 그러므로 이 분할기는 "5 V, 내부 저항 500 Ω인 전원"처럼 행동합니다. 여기에 500 Ω 부하를 이으면 출력은 2.5 V로 떨어집니다.</p>
+    <p><i>풀이.</i> 단자를 열면 분할기 출력이므로 \(V_{\text{th}} = 5\) V이다. 전원을 단락하면 단자에서 \(R_1\)과 \(R_2\)가 병렬로 보이므로 \(R_{\text{th}} = 500\ \Omega\)이다. 그러므로 이 분할기는 "5 V, 내부 저항 500 Ω인 전원"처럼 행동한다. 처음 질문의 수수께끼가 이렇게 풀린다. 여기에 500 Ω 부하를 이으면 \(R_{\text{th}}\)와 부하가 전압을 반씩 나눠 가지므로 출력은 2.5 V로 떨어진다. 이제 부하가 바뀌어도 회로 전체가 아니라 이 두 소자짜리 회로만 다시 풀면 된다.</p>
 
-    <h3><span class="no">2.2.2</span>실험으로 구하기와 최대 전력</h3>
-    <p>단락 전류를 바로 재면 위험할 수 있으므로, 보통 부하 저항 \(R_L\)을 두세 가지로 바꾸며 단자 전압을 잽니다. \(V_L = V_{\text{th}}\frac{R_L}{R_L + R_{\text{th}}}\)이므로 \(\frac1{V_L} = \frac1{V_{\text{th}}} + \frac{R_{\text{th}}}{V_{\text{th}}}\frac1{R_L}\)을 직선으로 맞추면 두 값을 얻습니다(<a href="../../common/11/05-03.html">공통11 5.3절</a>).</p>
-    <p>부하가 받는 전력 \(P = \frac{V_{\text{th}}^2R_L}{(R_L + R_{\text{th}})^2}\)은 \(R_L = R_{\text{th}}\)일 때 가장 큽니다(최대 전력 전달, 이때 효율은 50%). 반대로 전압을 정확히 전달하려면 \(R_L \gg R_{\text{th}}\)이어야 합니다. 1.4절의 계기 부하 효과는 이 원리의 한 예입니다.</p>
+    <h3><span class="no">2.2.2</span>실험으로 구하기</h3>
+    <p>정의대로 단락 전류를 바로 재면 큰 전류가 흘러 위험할 수 있다. 그래서 실험에서는 부하 저항 \(R_L\)을 두세 가지로 바꾸며 단자 전압을 잰다. \(V_L = V_{\text{th}}\frac{R_L}{R_L + R_{\text{th}}}\)을 뒤집으면</p>
+    \[\frac1{V_L} = \frac1{V_{\text{th}}} + \frac{R_{\text{th}}}{V_{\text{th}}}\cdot\frac1{R_L}\]
+    <p>이다. 따라서 \(1/V_L\)을 \(1/R_L\)에 대해 그리면 직선이 되고, 절편에서 \(V_{\text{th}}\)를, 기울기에서 \(R_{\text{th}}\)를 얻는다(<a href="../../common/11/05-03.html">공통11 5.3절</a>).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>테브난: \(V_{\text{th}} = V_{\text{oc}}\), \(R_{\text{th}} = V_{\text{oc}}/I_{\text{sc}}\). 노턴: \(I_N = I_{\text{sc}}\).</li>
-        <li>최대 전력은 \(R_L = R_{\text{th}}\), 전압 전달은 \(R_L \gg R_{\text{th}}\).</li>
-      </ol>
-    </div>
+    <h3><span class="no">2.2.3</span>최대 전력과 전압 전달</h3>
+    <p>등가 회로가 있으면 부하에 어떤 저항을 이어야 좋은지도 바로 답할 수 있다. 부하가 받는 전력은</p>
+    \[P = \frac{V_{\text{th}}^2R_L}{(R_L + R_{\text{th}})^2}\]
+    <p>이다. \(R_L\)이 아주 작으면 전류는 크지만 전압이 거의 0이고, 아주 크면 전압은 크지만 전류가 거의 0이라 둘 다 전력이 작다. 그 사이 \(R_L = R_{\text{th}}\)에서 전력이 가장 크며(그림 1의 주황 곡선), 이것을 최대 전력 전달이라 한다. 이 때 \(R_{\text{th}}\)도 같은 전력을 소모하므로 효율은 50%이다.</p>
+    <p>그런데 목적이 전력이 아니라 전압을 정확히 전달하는 것이라면 이야기가 다르다. 그림 1의 파란 곡선처럼 부하 전압은 \(R_L \gg R_{\text{th}}\)일 때 \(V_{\text{th}}\)에 다가간다. 1.4절에서 본 계기의 부하 효과가 바로 이 원리의 한 예이다. 전압계의 큰 \(R_V\)가 부하이고, 재는 회로의 \(R_{\text{th}}\)가 그보다 충분히 작아야 정확히 잴 수 있다.</p>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>선형 회로의 두 단자는 개방 전압 \(V_{\text{th}}\)와 \(R_{\text{th}} = V_{\text{oc}}/I_{\text{sc}}\)인 직렬 저항으로 바꿀 수 있고, 노턴 등가 회로는 같은 것을 전류원과 병렬 저항으로 쓴 것이다. 처음 질문의 분할기는 5 V, 500 Ω 전원과 같아서 500 Ω 부하에 2.5 V만 전한다. 부하가 받는 전력은 \(R_L = R_{\text{th}}\)에서 가장 크고, 전압을 정확히 전하려면 \(R_L \gg R_{\text{th}}\)이어야 한다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <h3><span class="no">2.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>건전지의 개방 전압이 1.58 V, 10 Ω을 이었을 때 1.42 V였다. 내부 저항은?
