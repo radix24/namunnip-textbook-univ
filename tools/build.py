@@ -1346,11 +1346,11 @@ def main():
     print(f"더 읽을거리: 대단원 {len(READING)} · 문헌 {sum(map(len, READING.values()))} · 3학년 이상인데 빈 대단원 {len(need)}")
     idx = build_index(out, blocks)
     links = load_links(idx)
-    write_graph(out, idx, links)
     n_pages, n_cards = write_pages(out, blocks, idx, links)
     print(f"연결표: 대상 {len(links['pre'])} · 선수로 쓰인 코드 {len(links['post'])}")
     summ = place.build(out, blocks, EXAM_POLICY)
     print(f"학과 배치: {place.SCHOOL_NAME} " + " · ".join(f"{k} {len(v['courses'])}" for k, v in summ.items()))
+    write_graph(out, idx, links)   # place.build가 data/*.json을 지우므로 그 뒤에 쓴다
     # 로드맵·학습 기록·check_exams.py가 쓰는 전 학과 합본(옛 js/toc.js의 window.UNIV와 같은 내용):
     # QURI 코드, pre 글, sub, open, path, unis, s.u, 절별 카드 id(s.k, u.r)에 과목마다 영문 모듈 id를 더한 것.
     # 학과에서 쓰는 과목명은 data/yonsei-<학과>.json(code로 대응)에 있다.
