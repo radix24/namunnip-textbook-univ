@@ -8,57 +8,72 @@
 <article class="card q-card" id="text-m10-cf" data-kind="본문" data-std="수학10-07-01">
   <header class="card-head"><span class="no"></span><h2>연분수와 수렴분수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>유리수의 연분수 전개가 유클리드 호제법의 몫임을 보고, 실수의 연분수 전개를 구한다.</li>
-        <li>수렴분수의 점화식 \(p_n = a_np_{n-1} + p_{n-2}\)과 \(p_nq_{n-1} - p_{n-1}q_n = (-1)^{n-1}\)을 증명한다.</li>
-        <li>수렴분수가 최선의 유리 근사이고 \(|x - p_n/q_n| &lt; 1/q_n^2\)임을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>유클리드 호제법 (<a href="01-01.html">1.1절</a>), 바닥함수, 귀납법.</li>
-      </ul>
-    </div>
+    <p class="q-ask">원주율을 \(22/7\)로 어림하면 오차가 약 0.001이고, \(355/113\)으로 어림하면 오차가 약 0.0000003이다. 분모가 겨우 113인데 왜 이렇게 정확할까? 분모가 정해져 있을 때 무리수에 가장 가까운 분수는 어떻게 찾을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="원주율의 수렴분수와 오차">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <circle cx="75.8" cy="15.0" r="3" class="fc"/>
+        <circle cx="75.8" cy="27.3" r="4" class="fa"/>
+        <circle cx="140.4" cy="39.6" r="3" class="fc"/>
+        <circle cx="140.4" cy="57.2" r="4" class="fa"/>
+        <line x1="75.8" y1="27.3" x2="140.4" y2="57.2" class="a"/>
+        <circle cx="205.0" cy="73.9" r="3" class="fc"/>
+        <circle cx="205.0" cy="74.3" r="4" class="fa"/>
+        <line x1="140.4" y1="57.2" x2="205.0" y2="74.3" class="a"/>
+        <circle cx="269.6" cy="74.7" r="3" class="fc"/>
+        <circle cx="269.6" cy="110.6" r="4" class="fa"/>
+        <line x1="205.0" y1="74.3" x2="269.6" y2="110.6" class="a"/>
+        <circle cx="334.2" cy="146.5" r="3" class="fc"/>
+        <circle cx="334.2" cy="149.4" r="4" class="fa"/>
+        <line x1="269.6" y1="110.6" x2="334.2" y2="149.4" class="a"/>
+        <text x="76" y="190" text-anchor="middle" class="s">3</text>
+        <text x="140" y="190" text-anchor="middle" class="s">22/7</text>
+        <text x="205" y="190" text-anchor="middle" class="s">333/106</text>
+        <text x="270" y="190" text-anchor="middle" class="s">355/113</text>
+        <text x="334" y="190" text-anchor="middle" class="s">103993/…</text>
+        <text x="44" y="164" text-anchor="end" class="s">10⁻¹⁰</text>
+        <text x="44" y="135" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="44" y="106" text-anchor="end" class="s">10⁻⁶</text>
+        <text x="44" y="77" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="48" text-anchor="end" class="s">10⁻²</text>
+        <text x="44" y="19" text-anchor="end" class="s">1</text>
+        <text x="365" y="40" class="ta">파랑 = |π − p/q|</text>
+        <text x="365" y="60" class="tc">주황 = 1/q²</text>
+        <text x="365" y="80" class="s">늘 1/q² 보다 작다</text>
+        <text x="365" y="100" class="s">355/113 은 다음 몫</text>
+        <text x="365" y="120" class="s">292 가 커서 특히 작다</text>
+      </svg>
+      <figcaption>그림 1. \(\pi = [3; 7, 15, 1, 292, \dots]\)의 수렴분수 \(p/q\)와 오차 \(|\pi - p/q|\)(파랑)를 로그 눈금으로 그린 것이다. 오차는 늘 \(1/q^2\)(주황)보다 작다. 특히 \(355/113\)은 다음 부분몫 292가 커서 \(1/q^2\)보다 훨씬 작다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>유클리드 호제법(<a href="01-01.html">1.1절</a>), 바닥함수와 귀납법을 쓴다.</div>
 
     <h3><span class="no">7.1.1</span>정의</h3>
     <div class="tb-env">
       <span class="lb">정의 7.1.1</span>
-      <p class="q-term"><b>단순 연분수</b>: \([a_0; a_1, a_2, \dots] = a_0 + \cfrac1{a_1 + \cfrac1{a_2 + \cdots}}\), \(a_0\)은 정수, \(a_i \ge 1\) (\(i \ge 1\))은 정수.</p>
-      <p class="q-term"><b>전개 방법</b>: \(x_0 = x\), \(a_n = \lfloor x_n\rfloor\), \(x_{n+1} = 1/(x_n - a_n)\). \(x_n\)이 정수가 되면 멈춘다.</p>
-      <p class="q-term"><b>수렴분수</b>: \(\frac{p_n}{q_n} = [a_0; a_1, \dots, a_n]\).</p>
+      <p>정수 \(a_0\)과 양의 정수 \(a_1, a_2, \dots\)로 만든 \([a_0; a_1, a_2, \dots] = a_0 + \cfrac1{a_1 + \cfrac1{a_2 + \cdots}}\)를 <em>단순 연분수</em>라 한다. 실수 \(x\)의 전개는 \(x_0 = x\), \(a_n = \lfloor x_n\rfloor\), \(x_{n+1} = 1/(x_n - a_n)\)으로 하고 \(x_n\)이 정수가 되면 멈춘다. 앞부분까지 자른 \(\frac{p_n}{q_n} = [a_0; a_1, \dots, a_n]\)을 <em>수렴분수</em>라 한다.</p>
     </div>
-    <p>유리수에서는 이 과정이 정확히 유클리드 호제법입니다. \(\frac{67}{29}\): \(67 = 2\cdot29 + 9\), \(29 = 3\cdot9 + 2\), \(9 = 4\cdot2 + 1\), \(2 = 2\cdot1\)이므로 몫을 늘어놓아 \([2; 3, 4, 2]\). 유한 번에 끝나는 것은 유리수뿐이고, 무리수의 전개는 끝이 없습니다.</p>
+    <p>유리수에서는 이 과정이 정확히 유클리드 호제법이다. 예를 들어 \(67 = 2\cdot29 + 9\), \(29 = 3\cdot9 + 2\), \(9 = 4\cdot2 + 1\), \(2 = 2\cdot1\)이므로 몫을 늘어놓아 \(\frac{67}{29} = [2; 3, 4, 2]\)이다. 그러므로 유한 번에 끝나는 것은 유리수뿐이고, 무리수의 전개는 끝이 없다.</p>
 
     <h3><span class="no">7.1.2</span>수렴분수의 점화식</h3>
-    <div class="tb-env">
+    <div class="tb-env thm">
       <span class="lb">정리 7.1.2</span>
-      <p>\(p_{-2} = 0\), \(p_{-1} = 1\), \(q_{-2} = 1\), \(q_{-1} = 0\)으로 두고 \(p_n = a_np_{n-1} + p_{n-2}\), \(q_n = a_nq_{n-1} + q_{n-2}\)이면 \([a_0; \dots, a_n] = p_n/q_n\)이다. 또 \(p_nq_{n-1} - p_{n-1}q_n = (-1)^{n-1}\).</p>
+      <p>\(p_{-2} = 0\), \(p_{-1} = 1\), \(q_{-2} = 1\), \(q_{-1} = 0\)으로 두고 \(p_n = a_np_{n-1} + p_{n-2}\), \(q_n = a_nq_{n-1} + q_{n-2}\)이라 하면 \([a_0; \dots, a_n] = p_n/q_n\)이다. 또 \(p_nq_{n-1} - p_{n-1}q_n = (-1)^{n-1}\)이다.</p>
     </div>
-    <div class="tb-proof">
-      <p>첫째 주장: \(n\)에 대한 귀납법. 어떤 실수 \(t\)에 대해 \([a_0; \dots, a_{n-1}, t] = \frac{tp_{n-1} + p_{n-2}}{tq_{n-1} + q_{n-2}}\)임을 보이면 \(t = a_n\)을 넣어 결론을 얻는다. \(n\)에서 \(n+1\)로: \([a_0; \dots, a_n, t] = [a_0; \dots, a_{n-1}, a_n + 1/t]\)이므로 귀납 가정에 \(a_n + 1/t\)를 넣고 분자·분모에 \(t\)를 곱하면 \(\frac{t(a_np_{n-1} + p_{n-2}) + p_{n-1}}{t(a_nq_{n-1} + q_{n-2}) + q_{n-1}} = \frac{tp_n + p_{n-1}}{tq_n + q_{n-1}}\).</p>
-      <p>둘째 주장: \(p_nq_{n-1} - p_{n-1}q_n = (a_np_{n-1} + p_{n-2})q_{n-1} - p_{n-1}(a_nq_{n-1} + q_{n-2}) = -(p_{n-1}q_{n-2} - p_{n-2}q_{n-1})\). 부호가 매번 바뀌고 \(n = -1\)에서 \(p_{-1}q_{-2} - p_{-2}q_{-1} = 1\). <span class="qed">∎</span></p>
-    </div>
-    <p>둘째 주장에서 \(\gcd(p_n, q_n) = 1\) (수렴분수는 기약분수)이고, 양변을 \(q_nq_{n-1}\)로 나누면 연속한 수렴분수의 차가 \(\frac{(-1)^{n-1}}{q_nq_{n-1}}\)입니다. 그래서 수렴분수는 \(x\)의 양쪽을 번갈아 오가며 다가가고 \(\left|x - \frac{p_n}{q_n}\right| &lt; \frac1{q_nq_{n+1}} &lt; \frac1{q_n^2}\)입니다. 또한 \(67/29\)에서 \(p_2q_3 - p_3q_2 = 30\cdot29 - 67\cdot13 = 870 - 871 = -1\)이므로 \(67\cdot13 - 29\cdot30 = 1\): 베주 계수가 수렴분수에서 나옵니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>첫째 주장은 더 강한 사실, 곧 모든 양의 실수 \(t\)에 대해 \([a_0; \dots, a_{n-1}, t] = \frac{tp_{n-1} + p_{n-2}}{tq_{n-1} + q_{n-2}}\)임을 \(n\)에 대한 귀납법으로 보이면 \(t = a_n\)을 넣어 얻는다. \(n\)에서 \(n + 1\)로 갈 때 \([a_0; \dots, a_n, t] = [a_0; \dots, a_{n-1}, a_n + 1/t]\)이므로, 귀납 가정에 \(a_n + 1/t\)를 넣고 분자와 분모에 \(t\)를 곱하면 \(\frac{t(a_np_{n-1} + p_{n-2}) + p_{n-1}}{t(a_nq_{n-1} + q_{n-2}) + q_{n-1}} = \frac{tp_n + p_{n-1}}{tq_n + q_{n-1}}\)이다. 둘째 주장은 \(p_nq_{n-1} - p_{n-1}q_n = (a_np_{n-1} + p_{n-2})q_{n-1} - p_{n-1}(a_nq_{n-1} + q_{n-2}) = -(p_{n-1}q_{n-2} - p_{n-2}q_{n-1})\)에서 부호가 매번 바뀌고, \(n = -1\)에서 값이 1이므로 나온다. <span class="qed">∎</span></p>
+    <p>둘째 주장에서 \(\gcd(p_n, q_n) = 1\), 곧 수렴분수는 기약분수이다. 또 양변을 \(q_nq_{n-1}\)로 나누면 연속한 수렴분수의 차가 \(\frac{(-1)^{n-1}}{q_nq_{n-1}}\)이다. 그래서 수렴분수는 \(x\)의 양쪽을 번갈아 오가며 다가가고 \(\left|x - \frac{p_n}{q_n}\right| &lt; \frac1{q_nq_{n+1}} &lt; \frac1{q_n^2}\)이다. 한편 \(67/29\)에서 \(p_2q_3 - p_3q_2 = 30\cdot29 - 67\cdot13 = -1\)이므로 \(67\cdot13 - 29\cdot30 = 1\)이다. 즉 베주 계수가 수렴분수에서 나온다.</p>
 
     <h3><span class="no">7.1.3</span>최선의 근사</h3>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.3</span>
       <p>\(\pi = [3; 7, 15, 1, 292, \dots]\)의 수렴분수와 오차를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(3\), \(\frac{22}7\), \(\frac{333}{106}\), \(\frac{355}{113}\), \(\frac{103993}{33102}\). 오차 \(|\pi - 22/7| \approx 1.26\times10^{-3}\), \(|\pi - 355/113| \approx 2.67\times10^{-7}\). 다음 부분몫 292가 아주 커서 \(355/113\)이 유난히 좋은 근사입니다(오차 \(\approx 1/(292\cdot113^2)\)). 분모가 113 이하인 어떤 분수도 \(355/113\)보다 \(\pi\)에 가깝지 않습니다(수렴분수의 최선 근사 성질). 같은 절의 탐구 카드에서 여러 수의 수렴분수를 볼 수 있습니다.</p>
-    <p>황금비 \(\varphi = [1; 1, 1, \dots]\)는 부분몫이 모두 1이라 수렴분수(피보나치 수의 비)가 가장 느리게 다가갑니다: 가장 "근사하기 어려운" 무리수입니다.</p>
+    <p><i>풀이.</i> 점화식으로 수렴분수는 \(3\), \(\frac{22}7\), \(\frac{333}{106}\), \(\frac{355}{113}\), \(\frac{103993}{33102}\)이다. 오차는 \(|\pi - 22/7| \approx 1.26\times10^{-3}\)이고 \(|\pi - 355/113| \approx 2.67\times10^{-7}\)이다. 다음 부분몫 292가 아주 커서 오차가 대략 \(1/(292\cdot113^2)\)이므로 \(355/113\)이 유난히 좋은 근사이다. 실제로 분모가 113 이하인 어떤 분수도 \(355/113\)보다 \(\pi\)에 가깝지 않으며, 이것이 수렴분수의 최선 근사 성질이다. 같은 절의 탐구 카드에서 여러 수의 수렴분수를 볼 수 있다.</p>
+    <p>반대로 황금비 \(\varphi = [1; 1, 1, \dots]\)는 부분몫이 모두 1이라 수렴분수, 곧 피보나치 수의 비가 가장 느리게 다가간다. 다시 말해 황금비는 분수로 근사하기 가장 어려운 무리수이다.</p>
 
-    <div class="tb-note"><b>흔한 실수</b>(1) 음수의 전개에서 \(a_0\)을 버림 대신 버림을 0쪽으로 한다: \(a_0 = \lfloor x\rfloor\)이라 \(-1.5\)이면 \(-2\). (2) 수렴분수를 분자·분모를 따로 연분수로 계산한다: 점화식을 쓰면 간단하다. (3) 부동소수점으로 오래 전개한다: 반올림 오차가 쌓여 뒤쪽 부분몫이 틀린다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>음수를 전개할 때 \(a_0\)을 0 쪽으로 버리는 실수가 많다. \(a_0 = \lfloor x\rfloor\)이므로 \(-1.5\)이면 \(-2\)이다. 또 수렴분수를 매번 연분수를 풀어 계산하기 쉬운데, 점화식을 쓰면 간단하다. 부동소수점으로 오래 전개하는 것도 주의해야 하며, 반올림 오차가 쌓여 뒤쪽 부분몫이 틀린다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(a_n = \lfloor x_n\rfloor\), \(x_{n+1} = 1/(x_n - a_n)\). 유리수에서는 호제법의 몫.</li>
-        <li>\(p_n = a_np_{n-1} + p_{n-2}\), \(q_n\)도 같음. \(p_nq_{n-1} - p_{n-1}q_n = (-1)^{n-1}\).</li>
-        <li>수렴분수는 번갈아 다가가며 \(|x - p_n/q_n| &lt; 1/q_n^2\). 다음 부분몫이 크면 특히 좋은 근사.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, \(355/113\)은 \(\pi\)의 연분수 \([3; 7, 15, 1, 292, \dots]\)을 292 앞에서 자른 수렴분수이다. 수렴분수는 늘 \(|x - p_n/q_n| &lt; 1/(q_nq_{n+1})\)을 만족하는데, 다음 부분몫 292가 커서 \(q_{n+1}\)이 크므로 오차가 유난히 작다. 수렴분수는 점화식 \(p_n = a_np_{n-1} + p_{n-2}\)로 구하며, 분모가 그 이하인 분수 가운데 가장 가까운 근사이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.1.4</span>연습문제</h3>
