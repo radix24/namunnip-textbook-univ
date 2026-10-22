@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e29-frag" data-kind="본문" data-std="전전29-04-03">
   <header class="card-head"><span class="no"></span><h2>IP 단편화와 MTU</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>링크 MTU보다 큰 데이터그램이 단편으로 나뉘는 방식을 안다.</li>
-        <li>단편의 길이, 오프셋(8바이트 단위), 플래그를 계산한다.</li>
-        <li>경로 MTU 탐색과 IPv6의 차이를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>IP 주소 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">링크마다 한 번에 실을 수 있는 프레임 크기, 곧 MTU가 다르다. 큰 패킷을 보냈는데 도중의 링크가 그 크기를 감당하지 못하면 어떻게 될까? IPv4는 패킷을 어떤 규칙으로 잘라 보내고, 어디에서 다시 붙일까? 그리고 요즘은 왜 되도록 자르지 않으려 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 IP 단편화(개형). 총 4000바이트(헤더 20) 데이터그램을 MTU 1500 링크로 보내면 데이터 3980바이트가 1480, 1480, 1020바이트로 나뉘고, 오프셋은 8바이트 단위로 0, 185, 370, 더 있음 플래그는 1, 1, 0이 된다">
+        <rect x="40" y="40" width="440" height="30" class="b" fill="none" stroke-width="2"/>
+        <g class="s"><text x="50" y="60">4000 B (데이터 3980)</text></g>
+        <g class="a" fill="none" stroke-width="2.5"><rect x="40" y="110" width="160" height="30"/><rect x="210" y="110" width="160" height="30"/><rect x="380" y="110" width="110" height="30"/></g>
+        <g class="s" text-anchor="middle"><text x="120" y="130">1480</text><text x="290" y="130">1480</text><text x="435" y="130">1020</text><text x="120" y="164" class="td">오프셋 0, MF 1</text><text x="290" y="164" class="td">185, MF 1</text><text x="435" y="164" class="td">370, MF 0</text></g>
+      </svg>
+      <figcaption>그림 1. MTU보다 큰 데이터그램은 데이터를 8바이트 배수로 잘라 단편마다 헤더를 붙이고, 오프셋으로 원래 자리를 표시한다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>IP 주소(<a href="04-01.html">4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>잘라 보내고 끝에서 붙이기</h3>
-    <p>IPv4 라우터는 MTU보다 큰 데이터그램을 데이터 부분이 8바이트 배수가 되게 나누고, 오프셋(8바이트 단위)과 “더 있음” 플래그를 붙입니다. 재조립은 목적지에서만 합니다. 단편 하나만 잃어도 전체를 다시 보내야 해, 보통 경로 MTU 탐색으로 단편화를 피하고 IPv6는 라우터 단편화를 없앴습니다.</p>
+    <p>IPv4 라우터는 MTU보다 큰 데이터그램을, 데이터 부분이 8바이트 배수가 되게 나눈다. 그리고 단편마다 오프셋(8바이트 단위)과 "더 있음" 플래그를 붙인다(그림 1). 처음 질문의 첫째 답이 이 규칙이다.</p>
+    <p>재조립은 목적지에서만 한다. 즉 중간 라우터는 단편을 각각 독립된 패킷처럼 전달하며, 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>총 4000바이트(헤더 20) 데이터그램을 MTU 1500 링크로 보낼 때 단편들의 데이터 길이와 오프셋은?</p>
     </div>
-    <p><i>풀이.</i> 데이터 3980바이트 → 1480, 1480, 1020바이트. 오프셋 0, 185, 370(1480/8 = 185), 플래그 1, 1, 0. 각 단편은 헤더 20바이트를 더해 1500, 1500, 1040바이트입니다.</p>
+    <p><i>풀이.</i> 데이터 3980바이트가 1480, 1480, 1020바이트로 나뉜다. 그러면 오프셋은 0, 185, 370(1480/8 = 185)이고, 플래그는 1, 1, 0이다. 그리고 각 단편은 헤더 20바이트를 더해 1500, 1500, 1040바이트이다.</p>
+    <p>그런데 단편 하나만 잃어도 전체를 다시 보내야 한다. 그래서 보통 경로 MTU 탐색으로 단편화를 피하고, IPv6는 라우터의 단편화를 없앴다. 처음 질문의 셋째 답이 이것이다.</p>
+    <p>즉 경로 MTU 탐색은 단편화 금지 표시를 붙여 보내고, 너무 크다는 오류 메시지가 오면 크기를 줄여 다시 보내는 방법이다. 따라서 송신자는 경로에서 가장 작은 MTU에 맞춘 크기로 보낸다.</p>
+    <p>한편 터널이나 VPN은 패킷에 헤더를 하나 더 씌우므로, 실질 MTU가 줄어든다. 그러므로 VPN을 쓰면 큰 패킷이 단편화되거나 버려져 연결이 이상하게 느려지는 일이 생기며, 이때는 MTU 설정부터 확인한다.</p>
+    <p>그리고 이더넷의 MTU는 보통 1500바이트이다. 그래서 TCP는 연결을 맺을 때 이에 맞춘 최대 세그먼트 크기(MSS 1460바이트 등)를 서로 알려, 처음부터 잘리지 않는 크기로 보낸다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "오프셋은 바이트 단위": 8바이트 단위입니다. (2) "중간 라우터가 재조립한다": 목적지에서만 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>오프셋은 바이트 단위라고 여기기 쉽다. 8바이트 단위이다. 또 중간 라우터가 재조립한다고 생각하기 쉬운데, 목적지에서만 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>단편 데이터 = 8의 배수(마지막 제외).</li>
-        <li>오프셋 = 바이트/8, 마지막만 플래그 0.</li>
-        <li>예: 3980 → 1480, 1480, 1020; 0, 185, 370.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>단편 데이터는 마지막을 빼고 8의 배수이다. 오프셋은 바이트/8이고, 마지막 단편만 플래그가 0이다. 예제의 3980바이트는 1480, 1480, 1020과 오프셋 0, 185, 370이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>데이터 2960바이트, MTU 1500의 단편 수는?
-          <details><summary>답</summary><p>2개.</p></details>
+          <details><summary>답</summary><p>2개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>MTU 576(헤더 20)에서 단편당 최대 데이터는?
-          <details><summary>답</summary><p>552바이트.</p></details>
+          <details><summary>답</summary><p>552바이트이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>단편화가 성능에 나쁜 이유는?
-          <details><summary>답</summary><p>단편 하나만 잃어도 전체가 버려집니다.</p></details>
+          <details><summary>답</summary><p>단편 하나만 잃어도 전체가 버려진다.</p></details>
         </li>
       </ol>
     </div>

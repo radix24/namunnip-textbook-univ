@@ -8,21 +8,22 @@
 <article class="card q-card" id="text-e29-crc" data-kind="본문" data-std="전전29-05-02">
   <header class="card-head"><span class="no"></span><h2>CRC 오류 검출 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>생성 다항식으로 나눈 나머지를 CRC로 붙이는 방식을 안다.</li>
-        <li>모듈로-2 나눗셈으로 CRC를 계산한다.</li>
-        <li>CRC가 검출하는 오류(버스트 길이 ≤ r 등)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>링크 계층 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전선이나 무선을 지나는 동안 프레임의 비트 몇 개가 잡음으로 뒤집힐 수 있다. 받는 쪽은 받은 프레임이 망가졌는지 어떻게 알아챌까? 이더넷과 Wi-Fi는 프레임 끝에 붙인 몇 바이트로 이를 판단한다. 그 값은 어떻게 계산하며, 어떤 오류까지 잡아낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 CRC 계산(개형). 데이터 101110 뒤에 0 세 개를 붙여 생성자 1001로 모듈로-2 나눗셈을 하면 나머지 011이 나오고, 101110011을 보내면 받는 쪽 나머지가 000이며, 한 비트가 바뀐 101010011은 나머지 100이 되어 오류로 검출된다">
+        <rect x="60" y="50" width="180" height="34" class="b" fill="none" stroke-width="2"/>
+        <rect x="240" y="50" width="90" height="34" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="90" y="72">D = 101110</text><text x="256" y="72" class="ta">R = 011</text><text x="350" y="72">G = 1001</text></g>
+        <g class="s"><text x="60" y="120">받음 101110011 → 나머지 000(정상)</text><text x="60" y="150" class="td">받음 101010011 → 나머지 100(오류)</text></g>
+      </svg>
+      <figcaption>그림 1. 보내는 쪽은 데이터를 생성자로 나눈 나머지를 붙여, 전체가 생성자로 나누어떨어지게 만들고, 받는 쪽은 나머지가 0인지 본다(예제 5.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>링크 계층(<a href="05-01.html">5.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>나머지를 붙이기</h3>
-    <p>데이터 D 뒤에 r개의 0을 붙여 r + 1비트 생성자 G로 모듈로-2(XOR) 나눗셈을 하고, 나머지 R을 붙여 보냅니다. 받는 쪽은 전체를 G로 나눠 나머지가 0이 아니면 오류로 판정합니다. 길이 r 이하의 버스트 오류는 모두 검출됩니다.</p><pre><code>def rem(bits, gen):
+    <p>데이터 D 뒤에 r개의 0을 붙여 r + 1비트 생성자 G로 모듈로-2(XOR) 나눗셈을 하고, 나머지 R을 붙여 보낸다. 그러면 보낸 비트 전체는 G로 나누어떨어진다. 처음 질문의 첫째 답이 이 계산이다.</p>
+    <p>그리고 받는 쪽은 전체를 G로 나눠, 나머지가 0이 아니면 오류로 판정한다(그림 1). 한편 길이 r 이하의 버스트 오류는 모두 검출된다. 처음 질문의 둘째 답이 이것이다. 아래 코드는 이 나눗셈을 그대로 따라 한다.</p>
+    <pre><code>def rem(bits, gen):
     b = [int(x) for x in bits]; g = [int(x) for x in gen]
     for i in range(len(b) - len(g) + 1):
         if b[i]:
@@ -34,7 +35,7 @@ R = rem(D + "000", G)
 print("CRC:", R, "/ 보내는 비트:", D + R)
 print("받은 쪽 나머지(오류 없음):", rem(D + R, G))
 print("한 비트 오류(101010011) 나머지:", rem("101010011", G))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>CRC: 011 / 보내는 비트: 101110011
 받은 쪽 나머지(오류 없음): 000
 한 비트 오류(101010011) 나머지: 100</code></pre>
@@ -42,37 +43,35 @@ print("한 비트 오류(101010011) 나머지:", rem("101010011", G))</code></pr
       <span class="lb">예제 5.2.1</span>
       <p>D = 101110, G = 1001(r = 3)의 CRC는? 한 비트가 바뀌면?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 R = 011, 보내는 비트 101110011. 오류 없으면 나머지 000, 한 비트가 바뀐 101010011은 나머지가 0이 아니라 검출됩니다. 이더넷은 32비트 CRC를 씁니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 R = 011이고, 보내는 비트는 101110011이다. 그리고 오류가 없으면 나머지는 000이다. 그런데 한 비트가 바뀐 101010011은 나머지가 0이 아니므로 검출된다. 한편 이더넷은 32비트 CRC를 쓴다.</p>
+    <p>즉 모듈로-2 나눗셈은 자리 올림이 없는 XOR만 쓰므로, 하드웨어에서는 시프트 레지스터 몇 개와 XOR 게이트로 아주 빠르게 계산한다. 그래서 수십 Gb/s의 링크도 프레임마다 CRC를 계산할 수 있다.</p>
+    <p>그리고 생성자는 아무렇게나 고르지 않는다. 따라서 표준 CRC-32의 생성자는 흔한 오류 유형을 잘 잡도록 수학적으로 골라 정해 둔 다항식이다.</p>
+    <p>한편 CRC는 링크마다 따로 계산하고, 프레임이 다음 링크로 넘어갈 때 다시 붙인다. 그러므로 라우터 안에서 생긴 오류까지 잡으려면 TCP의 검사합 같은 종단 간 검사가 따로 필요하다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "CRC는 오류를 고친다": 검출만 하고 재전송으로 해결합니다. (2) "CRC는 모든 오류를 잡는다": 생성자의 배수 꼴 오류는 놓칩니다(확률 매우 낮음).</div>
+    <p>예를 들어 CRC 오류가 늘어나는 링크는 케이블이나 커넥터 불량을 의심한다. 그래서 스위치는 포트마다 CRC 오류 수를 세어 관리자에게 보여 준다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>D·2^r를 G로 나눈 나머지 R.</li>
-        <li>예: 101110, 1001 → 011.</li>
-        <li>버스트 ≤ r 모두 검출.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>CRC가 오류를 고친다고 여기기 쉽다. 검출만 하고, 재전송으로 해결한다. 또 CRC는 모든 오류를 잡는다고 생각하기 쉬운데, 생성자의 배수 꼴 오류는 놓친다(확률은 매우 낮다).</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>CRC는 D·2^r를 G로 나눈 나머지 R이다. 예제의 101110과 1001은 011이다. 길이 r 이하의 버스트 오류는 모두 검출된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>G = 10011이면 r은?
-          <details><summary>답</summary><p>4.</p></details>
+          <details><summary>답</summary><p>4이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>CRC-32가 검출하지 못할 확률(무작위 오류) 어림은?
-          <details><summary>답</summary><p>약 2⁻³² ≈ 2.3×10⁻¹⁰.</p></details>
+          <details><summary>답</summary><p>약 2⁻³² ≈ 2.3×10⁻¹⁰이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>패리티 비트가 놓치는 오류는?
-          <details><summary>답</summary><p>짝수 개 비트 오류.</p></details>
+          <details><summary>답</summary><p>짝수 개 비트 오류이다.</p></details>
         </li>
       </ol>
     </div>

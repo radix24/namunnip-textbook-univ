@@ -8,61 +8,54 @@
 <article class="card q-card" id="text-e29-delay" data-kind="본문" data-std="전전29-01-01">
   <header class="card-head"><span class="no"></span><h2>전송, 전파, 큐잉 지연 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>전송 지연 L/R, 전파 지연 d/s, 처리·큐잉 지연을 구별한다.</li>
-        <li>여러 홉을 지나는 종단 간 지연을 계산한다.</li>
-        <li>트래픽 강도 La/R이 1에 가까우면 큐잉 지연이 급증함을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>단위 변환(비트, 바이트, 초).</li>
-      </ul>
-    </div>
+    <p class="q-ask">해외 게임 서버에 접속하면 화면 반응이 한 박자 늦다. 인터넷 회선을 더 빠른 상품으로 바꿨는데도 이 지연은 거의 줄지 않았다. 패킷 하나가 목적지에 닿기까지 걸리는 시간은 어떤 몫들로 나뉠까? 그리고 링크를 빠르게 바꾸면 어느 몫만 줄어들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.1.1 네 가지 지연(개형). 1500바이트 패킷을 100 Mb/s 링크로 2000 km 보내면 전송 지연은 120 μs, 전파 지연은 10 ms이고, 라우터 2개를 거쳐 링크 3개를 지나면 전송이 세 번 일어나 10.36 ms가 된다. 장거리에서는 전파 지연이 지배한다">
+        <rect x="40" y="80" width="60" height="40" class="k" fill="none" stroke-width="2"/>
+        <rect x="460" y="80" width="60" height="40" class="k" fill="none" stroke-width="2"/>
+        <path d="M100 100 H460" class="b" stroke-width="2"/>
+        <rect x="100" y="90" width="30" height="20" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="48" y="104">송신</text><text x="468" y="104">수신</text><text x="96" y="80" class="ta">전송 L/R 120 μs</text><text x="230" y="130" class="tb">전파 d/s 10 ms (2000 km)</text></g>
+        <g class="s"><text x="40" y="170">처리(μs) + 큐잉(부하에 따라)</text><text x="330" y="170" class="td">홉 3개: 10.36 ms</text></g>
+      </svg>
+      <figcaption>그림 1. 패킷을 링크로 내보내는 전송 지연은 링크 속도가, 신호가 달려가는 전파 지연은 거리가 정하므로, 장거리에서는 링크를 빠르게 해도 전파 지연이 남는다(예제 1.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>단위 변환(비트, 바이트, 초)을 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>네 지연</h3>
-    <ul>
-      <li><b>전송 지연</b> L/R: 패킷 L비트를 링크 속도 R로 내보내는 시간.</li>
-      <li><b>전파 지연</b> d/s: 신호가 거리 d를 속도 s(광섬유 약 2 × 10⁸ m/s)로 가는 시간.</li>
-      <li><b>처리 지연</b>: 헤더 검사, 경로 결정(보통 μs).</li>
-      <li><b>큐잉 지연</b>: 출력 큐에서 기다리는 시간. 트래픽 강도 La/R(a: 초당 패킷 수)이 1에 가까우면 급증, 1을 넘으면 패킷 손실.</li>
-    </ul>
+    <p>첫째는 전송 지연 L/R이다. 즉 패킷 L비트를 링크 속도 R로 모두 내보내는 데 걸리는 시간이다. 그리고 둘째는 전파 지연 d/s로, 신호가 거리 d를 속도 s(광섬유에서 약 2 × 10⁸ m/s)로 가는 시간이다(그림 1).</p>
+    <p>셋째는 처리 지연이다. 라우터가 헤더를 검사하고 경로를 정하는 시간으로, 보통 μs 수준이다.</p>
+    <p>넷째는 큐잉 지연이다. 출력 큐에서 차례를 기다리는 시간이며, 트래픽 강도 La/R(a는 초당 패킷 수)이 1에 가까우면 급증하고, 1을 넘으면 패킷이 손실된다. 처음 질문의 첫째 답이 이 네 가지이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.1.1</span>
       <p>1500바이트 패킷을 100 Mb/s 링크로 2000 km 보낸다. 전송·전파 지연은? 같은 링크로 라우터 2개(링크 3개, 각 667 km)를 거치면(저장 후 전달, 큐잉·처리 무시)?</p>
     </div>
-    <p><i>풀이.</i> 전송 12000/10⁸ = 120 μs, 전파 2×10⁶/2×10⁸ = 10 ms. 홉 3개: 전송 3 × 120 μs = 0.36 ms + 전파 10 ms = 10.36 ms. 장거리에서는 전파 지연이, 느린 링크에서는 전송 지연이 지배합니다.</p>
+    <p><i>풀이.</i> 전송 지연은 12000/10⁸ = 120 μs이고, 전파 지연은 2×10⁶/2×10⁸ = 10 ms이다. 그리고 홉이 3개이면 라우터마다 패킷을 다 받은 뒤 다시 보내므로, 전송이 3 × 120 μs = 0.36 ms이고 전파 10 ms를 더해 10.36 ms이다.</p>
+    <p>따라서 장거리에서는 전파 지연이, 느린 링크에서는 전송 지연이 지배한다. 처음 질문의 둘째 답이 이것이다. 즉 더 빠른 회선은 전송 지연만 줄이며, 해외 서버까지의 전파 지연은 빛의 속도가 정한다.</p>
+    <p>한편 실제 응답 시간은 왕복 시간(RTT)으로 느낀다. 그래서 요청과 응답이 여러 번 오가는 프로그램은 RTT의 몇 배만큼 늦어지며, 이를 줄이려고 서버를 사용자 가까이에 두는 방법(1.8절)을 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "전송 지연과 전파 지연은 같다": 전송은 링크 속도, 전파는 거리에 달려 있습니다. (2) "대역폭을 늘리면 지연이 줄어든다": 전송 지연만 줄고 전파 지연은 그대로입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전송 지연과 전파 지연은 같다고 여기기 쉽다. 전송은 링크 속도에, 전파는 거리에 달려 있다. 또 대역폭을 늘리면 지연이 모두 준다고 생각하기 쉬운데, 전송 지연만 줄고 전파 지연은 그대로이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전송 L/R, 전파 d/s, 처리, 큐잉.</li>
-        <li>예: 1500 B, 100 Mb/s, 2000 km → 120 μs, 10 ms.</li>
-        <li>La/R → 1이면 큐잉 지연 급증.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>지연은 전송 L/R, 전파 d/s, 처리, 큐잉의 네 가지이다. 예제의 1500 B, 100 Mb/s, 2000 km는 120 μs와 10 ms이다. La/R이 1에 가까우면 큐잉 지연이 급증한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>1 Gb/s로 1500바이트의 전송 지연은?
-          <details><summary>답</summary><p>12 μs.</p></details>
+          <details><summary>답</summary><p>12 μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>서울-뉴욕 약 11 000 km 광섬유의 편도 전파 지연은?
-          <details><summary>답</summary><p>약 55 ms.</p></details>
+          <details><summary>답</summary><p>약 55 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>패킷 1000비트, 초당 900개, R = 1 Mb/s의 트래픽 강도는?
-          <details><summary>답</summary><p>0.9(큐잉 지연이 큼).</p></details>
+          <details><summary>답</summary><p>0.9(큐잉 지연이 큼)이다.</p></details>
         </li>
       </ol>
     </div>

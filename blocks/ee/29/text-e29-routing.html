@@ -8,57 +8,55 @@
 <article class="card q-card" id="text-e29-routing" data-kind="본문" data-std="전전29-04-02">
   <header class="card-head"><span class="no"></span><h2>링크 상태와 거리 벡터 라우팅</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>링크 상태(Dijkstra)로 최단 경로 표를 계산한다.</li>
-        <li>거리 벡터(Bellman-Ford) 교환과 무한 카운트 문제를 설명한다.</li>
-        <li>OSPF, RIP, BGP가 쓰는 방식을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>그래프와 최단 경로 (<a href="../2/06.html">전전2 6단원</a>), 서브넷 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">라우터는 패킷이 올 때마다 어느 이웃으로 보낼지 즉시 정해야 한다. 그러려면 목적지마다 가장 좋은 다음 홉을 미리 알고 있어야 한다. 라우터들은 서로 무엇을 주고받아 이 경로를 알아낼까? 그리고 링크가 끊기면 그 소식은 어떻게 퍼질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.2.1 최단 경로(개형). 링크 비용이 u-v 2, u-w 5, v-w 1, v-x 7, w-x 2이면 u에서 v는 2, w는 v를 거쳐 3, x는 v와 w를 거쳐 5이고 다음 홉은 모두 v이다">
+        <g class="k" fill="none" stroke-width="2"><circle cx="80" cy="100" r="18"/><circle cx="240" cy="40" r="18"/><circle cx="240" cy="160" r="18"/><circle cx="420" cy="100" r="18"/></g>
+        <g class="b" stroke-width="1.5"><path d="M96 90 L224 48"/><path d="M96 110 L224 152"/><path d="M240 58 V142"/><path d="M256 48 L404 92"/><path d="M256 152 L404 108"/></g>
+        <g class="a" stroke-width="3.5"><path d="M96 90 L224 48"/><path d="M240 58 V142"/><path d="M256 152 L404 108"/></g>
+        <g class="s" text-anchor="middle"><text x="80" y="105">u</text><text x="240" y="45">v</text><text x="240" y="165">w</text><text x="420" y="105">x</text></g>
+        <g class="s"><text x="150" y="58">2</text><text x="150" y="150">5</text><text x="246" y="104">1</text><text x="330" y="60">7</text><text x="330" y="146">2</text><text x="440" y="60" class="ta">u → x = 5</text><text x="440" y="84">다음 홉 v</text></g>
+      </svg>
+      <figcaption>그림 1. 링크 비용으로 최단 경로를 구하면 u에서 모든 목적지로 가는 첫 홉이 v로 정해진다(예제 4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>그래프와 최단 경로(<a href="../2/06.html">전전2 6단원</a>), 서브넷(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>두 방식</h3>
-    <p><b>링크 상태</b>: 모든 라우터가 링크 비용을 네트워크 전체에 알리고, 각자 전체 지도로 Dijkstra를 돌린다(OSPF). <b>거리 벡터</b>: 이웃에게 "나에서 각 목적지까지 거리" 표만 알리고, \(D_x(y) = \min_v[c(x, v) + D_v(y)]\)로 갱신한다(RIP).</p>
+    <p>링크 상태 방식에서는 모든 라우터가 자기 링크의 비용을 네트워크 전체에 알린다. 그러면 각 라우터가 전체 지도를 갖고 Dijkstra 알고리즘으로 최단 경로를 계산한다(OSPF). 처음 질문의 첫째 답은 이 방식과 아래 거리 벡터 방식이다.</p>
+    <p>한편 거리 벡터 방식에서는 이웃에게 "나에서 각 목적지까지의 거리" 표만 알리고, \(D_x(y) = \min_v[c(x, v) + D_v(y)]\)로 갱신한다(RIP). 즉 전체 지도 없이 이웃의 거리만 믿고 자기 거리를 고친다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
       <p>링크 u-v 2, u-w 5, v-w 1, v-x 7, w-x 2. u에서 각 노드까지 최단 거리와 다음 홉은?</p>
     </div>
-    <p><i>풀이.</i> Dijkstra: v 2(v), w 3(v 경유), x 5(v → w 경유). 다음 홉은 모두 v.</p>
-    <p>거리 벡터에서 링크가 끊기면, 이웃이 옛 경로를 다시 알려 주어 거리가 1씩 천천히 커지는 무한 카운트가 생길 수 있습니다. 독 역전(poisoned reverse), 최대 거리 제한(RIP 15)으로 줄입니다. 기관 사이 경로는 정책을 담는 경로 벡터 프로토콜 BGP가 맡습니다.</p>
+    <p><i>풀이.</i> Dijkstra로 구하면 v는 2(v), w는 v를 거쳐 3, x는 v와 w를 거쳐 5이다(그림 1). 그래서 다음 홉은 모두 v이다.</p>
+    <p>그런데 거리 벡터에서 링크가 끊기면, 이웃이 옛 경로를 다시 알려 주어 거리가 1씩 천천히 커지는 무한 카운트가 생길 수 있다. 처음 질문의 둘째 답이 이 느린 수렴이다. 그래서 독 역전(poisoned reverse)이나 최대 거리 제한(RIP 15)으로 문제를 줄인다.</p>
+    <p>한편 링크 상태 방식은 변화가 생기면 그 소식이 네트워크 전체로 퍼지고, 모든 라우터가 새 지도로 다시 계산하므로 빨리 수렴한다.</p>
+    <p>그리고 기관 사이의 경로는 정책을 담는 경로 벡터 프로토콜 BGP가 맡는다. 즉 인터넷은 기관 안에서는 OSPF 같은 내부 라우팅을, 기관 사이에서는 BGP를 쓰는 두 층으로 이루어진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "라우팅은 언제나 최단 경로": 기관 사이(BGP)는 정책과 계약이 우선입니다. (2) "거리 벡터는 전체 지도를 안다": 이웃의 거리 표만 압니다.</div>
+    <p>그리고 링크 비용은 관리자가 정한다. 예를 들어 빠른 링크에 작은 비용을 주면 트래픽이 그쪽으로 몰리므로, 비용을 조정해 링크 사이의 부하를 나눈다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>링크 상태: 전체 지도 + Dijkstra(OSPF).</li>
-        <li>거리 벡터: D_x(y) = min[c + D_v(y)](RIP), 무한 카운트.</li>
-        <li>예: u → v 2, w 3, x 5.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>라우팅은 언제나 최단 경로를 고른다고 여기기 쉽다. 기관 사이(BGP)는 정책과 계약이 우선이다. 또 거리 벡터는 전체 지도를 안다고 생각하기 쉬운데, 이웃의 거리 표만 안다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>링크 상태는 전체 지도와 Dijkstra를 쓴다(OSPF). 거리 벡터는 D_x(y) = min[c + D_v(y)]로 갱신하며, 무한 카운트 문제가 있다(RIP). 예제에서 u → v 2, w 3, x 5이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제에서 w-x 비용이 10으로 바뀌면 u → x 최단은?
-          <details><summary>답</summary><p>u-v-x = 9.</p></details>
+          <details><summary>답</summary><p>u-v-x = 9이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>거리 벡터 갱신 식을 쓰라.
-          <details><summary>답</summary><p>D_x(y) = min_v[c(x, v) + D_v(y)].</p></details>
+        <li>거리 벡터 갱신 식을 써라.
+          <details><summary>답</summary><p>D_x(y) = min_v[c(x, v) + D_v(y)]이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>링크 상태 방식의 단점은?
-          <details><summary>답</summary><p>모든 라우터가 전체 지도를 저장·계산하고 변화 때 알림이 넘칩니다(큰 망에서는 영역으로 나눔).</p></details>
+          <details><summary>답</summary><p>모든 라우터가 전체 지도를 저장·계산하고 변화 때 알림이 넘친다(큰 망에서는 영역으로 나눔).</p></details>
         </li>
       </ol>
     </div>

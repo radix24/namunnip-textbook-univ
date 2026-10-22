@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e29-queue" data-kind="본문" data-std="전전29-01-04">
   <header class="card-head"><span class="no"></span><h2>큐잉 지연: M/M/1 모형</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>트래픽 세기 ρ = λ/μ와 큐잉 지연의 관계를 안다.</li>
-        <li>M/M/1 평균 체류 시간 \(T = 1/(\mu - \lambda)\)를 계산한다.</li>
-        <li>Little 법칙 \(N = \lambda T\)를 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전송·전파·큐잉 지연 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">링크 사용률이 50%일 때는 지연을 거의 느끼지 못하다가, 90%를 넘기면 갑자기 모든 것이 느려진다. 사용률은 두 배도 안 늘었는데 지연은 몇 배로 뛴다. 라우터 큐에서 기다리는 시간은 부하에 따라 어떻게 늘어날까? 그리고 큐에 쌓인 패킷 수는 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.4.1 M/M/1 큐잉 지연(개형). 처리율 1000 패킷/s에서 도착률 800이면 평균 체류 시간 5 ms, 대기 패킷 4개이고, 도착률 950이면 20 ms, 19개로 부하가 19% 늘었는데 지연은 4배가 된다. 체류 시간은 1/(μ − λ)로 ρ가 1에 가까워질수록 급격히 커진다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 164 C250 160 360 150 400 120 C430 90 440 50 448 30" class="a" fill="none" stroke-width="2.5"/>
+        <g class="fd"><circle cx="400" cy="120" r="5"/><circle cx="440" cy="54" r="5"/></g>
+        <path d="M460 30 V170" class="k dsh"/>
+        <g class="s"><text x="300" y="116">ρ 0.8: 5 ms, N 4</text><text x="300" y="50" class="ta">ρ 0.95: 20 ms, N 19</text><text x="466" y="186">ρ = 1</text><text x="90" y="26">T</text><text x="120" y="150" class="td">T = 1/(μ − λ)</text></g>
+      </svg>
+      <figcaption>그림 1. 도착률이 처리율에 다가갈수록 평균 체류 시간이 1/(μ − λ)로 치솟으므로, 부하가 조금만 늘어도 지연은 크게 는다(예제 1.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전송·전파·큐잉 지연(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>ρ가 1에 가까워지면</h3>
-    <p>패킷이 평균 λ개/s로 무작위로 오고 링크가 μ개/s를 처리하면(M/M/1), 평균 체류 시간 \(T = 1/(\mu - \lambda)\)로 ρ → 1에서 급격히 커집니다. 평균 대기 패킷 수는 Little 법칙 \(N = \lambda T\)입니다.</p>
+    <p>패킷이 평균 λ개/s로 무작위로 오고 링크가 μ개/s를 처리하는 모형을 M/M/1이라 한다. 그러면 평균 체류 시간은 \(T = 1/(\mu - \lambda)\)이므로, 사용률 ρ = λ/μ가 1에 다가가면 급격히 커진다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>그리고 평균 대기 패킷 수는 Little 법칙 \(N = \lambda T\)로 구한다. 즉 시스템 안에 있는 평균 개수는 도착률과 머무는 시간의 곱이다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
       <p>μ = 1000 패킷/s, λ = 800 패킷/s의 평균 체류 시간과 대기 패킷 수는? λ = 950이면?</p>
     </div>
-    <p><i>풀이.</i> ρ = 0.8: T = 5 ms, N = 4. ρ = 0.95: T = 20 ms, N = 19. 부하가 19% 늘었는데 지연은 4배가 되어, 링크를 90% 넘게 쓰지 않도록 여유를 둡니다.</p>
+    <p><i>풀이.</i> ρ = 0.8이면 T = 1/200 = 5 ms이고 N = 800 × 0.005 = 4개이다. 그리고 ρ = 0.95이면 T = 20 ms, N = 19개이다. 따라서 부하가 19% 늘었는데 지연은 4배가 되므로, 링크를 90% 넘게 쓰지 않도록 여유를 둔다.</p>
+    <p>즉 큐잉 지연이 이렇게 비선형인 것은 패킷이 고르게 오지 않고 무작위로 몰려 오기 때문이다. 그러므로 평균 부하가 처리 능력보다 작아도, 몰려 올 때 쌓인 큐가 다 빠지기 전에 다음 무리가 오면 대기가 길어진다.</p>
+    <p>한편 라우터의 버퍼가 너무 크면 큐가 길게 쌓여 지연이 커지고, 너무 작으면 몰려 온 패킷을 버린다. 그래서 버퍼 크기와 큐 관리 방식은 지연과 손실 사이의 맞바꿈으로 정한다.</p>
+    <p>그리고 같은 원리는 네트워크 밖에서도 보인다. 예를 들어 은행 창구나 서버의 요청 처리도 사용률이 높아지면 대기 시간이 급증하므로, 처리 용량을 정할 때 같은 식으로 여유를 어림한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "부하에 비례해 지연이 는다": ρ → 1에서 폭발적으로 늘어납니다. (2) "ρ &gt; 1이어도 큐가 언젠가 비워진다": 계속 쌓여 결국 버려집니다.</div>
+    <p>따라서 망 설계에서는 평균 사용률뿐 아니라 가장 붐비는 시간의 사용률을 기준으로 용량을 잡는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>ρ = λ/μ, T = 1/(μ − λ).</li>
-        <li>N = λT(Little).</li>
-        <li>예: 0.8 → 5 ms, 0.95 → 20 ms.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>부하에 비례해 지연이 는다고 여기기 쉽다. ρ → 1에서 폭발적으로 는다. 또 ρ &gt; 1이어도 큐가 언젠가 비워진다고 생각하기 쉬운데, 계속 쌓여 결국 버려진다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>사용률은 ρ = λ/μ이고, 평균 체류 시간은 T = 1/(μ − λ)이다. 평균 개수는 Little 법칙 N = λT로 구한다. 예제에서 ρ 0.8은 5 ms, 0.95는 20 ms이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>μ 500, λ 400의 T는?
-          <details><summary>답</summary><p>10 ms.</p></details>
+          <details><summary>답</summary><p>10 ms이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 경우 N은?
-          <details><summary>답</summary><p>4개.</p></details>
+          <details><summary>답</summary><p>4개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>Little 법칙이 M/M/1에만 성립하나?
-          <details><summary>답</summary><p>아닙니다. 안정된 대부분의 시스템에 성립합니다.</p></details>
+          <details><summary>답</summary><p>아니다. 안정된 대부분의 시스템에 성립한다.</p></details>
         </li>
       </ol>
     </div>

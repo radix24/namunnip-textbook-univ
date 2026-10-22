@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e29-window" data-kind="본문" data-std="전전29-03-03">
   <header class="card-head"><span class="no"></span><h2>창 크기와 링크 이용률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>정지-대기의 이용률 \(U = (L/R)/(RTT + L/R)\)를 계산한다.</li>
-        <li>파이프라인 창 크기 N으로 이용률을 높인다.</li>
-        <li>선택적 반복에서 순서 번호 공간이 창의 두 배 이상이어야 하는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정지-대기·Go-Back-N (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">대륙을 가로지르는 1 Gb/s 링크는 굵고 긴 파이프와 같다. 그 파이프를 데이터로 가득 채워야 링크를 제대로 쓰는 셈이다. 그렇다면 확인을 받기 전에 한꺼번에 내보낼 수 있는 양, 곧 창은 얼마나 커야 할까? 그리고 순서 번호는 몇 개가 있어야 헷갈리지 않을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 창 크기와 이용률(개형). R = 1 Gb/s, 패킷 1500바이트, RTT 30 ms이면 정지-대기 이용률은 0.0004이고, 이용률 100%에는 창 크기 2501이 필요하며, 이는 대역폭-지연 곱 30 Mb(3.75 MB)가 링크 위를 날고 있어야 한다는 뜻이다">
+        <rect x="60" y="70" width="440" height="50" class="b" fill="none" stroke-width="2"/>
+        <g class="a" fill="none" stroke-width="2"><rect x="70" y="80" width="24" height="30"/><rect x="100" y="80" width="24" height="30"/><rect x="130" y="80" width="24" height="30"/><rect x="160" y="80" width="24" height="30"/><rect x="190" y="80" width="24" height="30"/><rect x="220" y="80" width="24" height="30"/></g>
+        <g class="s"><text x="260" y="100">… 파이프 가득 N = 2501</text><text x="60" y="60" class="tb">R × RTT = 30 Mb (3.75 MB)</text><text x="60" y="150" class="ta">U = N(L/R)/(RTT + L/R)</text><text x="60" y="176" class="td">정지-대기 U = 0.0004</text></g>
+      </svg>
+      <figcaption>그림 1. 링크를 가득 쓰려면 대역폭-지연 곱만큼의 데이터가 확인을 기다리는 동안 계속 날고 있어야 한다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정지-대기·Go-Back-N(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>파이프를 채우기</h3>
-    <p>한 패킷을 보내고 ACK를 기다리면 링크가 대부분 놉니다. N개를 연달아 보내면 \(U = N(L/R)/(RTT + L/R)\)(최대 1). 대역폭-지연 곱(R × RTT)만큼 비행 중이어야 링크가 가득 찹니다. 선택적 반복은 받는 쪽도 창을 가지므로 순서 번호가 창 크기의 두 배 이상이어야 옛 패킷과 새 패킷을 혼동하지 않습니다.</p>
+    <p>한 패킷을 보내고 ACK를 기다리면 링크가 대부분 논다. 그런데 N개를 연달아 보내면 이용률은 \(U = N(L/R)/(RTT + L/R)\)(최대 1)이다. 그래서 대역폭-지연 곱(R × RTT)만큼 비행 중이어야 링크가 가득 찬다(그림 1). 처음 질문의 첫째 답이 이것이다.</p>
+    <p>한편 선택적 반복은 받는 쪽도 창을 가진다. 그러므로 순서 번호가 창 크기의 두 배 이상이어야 옛 패킷과 새 패킷을 혼동하지 않는다. 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>R = 1 Gb/s, 패킷 1500바이트, RTT 30 ms. 정지-대기 이용률과 100% 이용에 필요한 N은?</p>
     </div>
-    <p><i>풀이.</i> L/R = 12 μs, U = 0.012/30.012 = 0.0004. N = 2501. 대역폭-지연 곱 30 Mb(3.75 MB)가 비행 중이어야 하므로 TCP 창도 그만큼 커야 합니다(3.5절).</p>
+    <p><i>풀이.</i> L/R = 12 μs이므로 U = 0.012/30.012 = 0.0004이다. 그러면 N = 2501이 필요하다. 즉 대역폭-지연 곱 30 Mb(3.75 MB)가 비행 중이어야 하므로, TCP 창도 그만큼 커야 한다(3.5절).</p>
+    <p>그런데 초기 TCP의 창 필드는 16비트라 최대 64 KB였다. 따라서 위 예제처럼 수 MB의 창이 필요한 링크를 위해, 창 크기에 배율을 곱하는 창 확장 옵션이 나중에 더해졌다.</p>
+    <p>즉 대역폭-지연 곱은 링크의 "부피"이다. 그러므로 빠르고 긴 링크일수록 송신 버퍼와 수신 버퍼, 그리고 혼잡 창이 모두 커야 링크를 다 쓴다.</p>
+    <p>한편 같은 원리는 디스크나 메모리 같은 저장 장치의 요청에도 적용된다. 예를 들어 응답이 느린 장치에 요청을 하나씩 보내면 장치가 놀므로, 여러 요청을 겹쳐 보내 대기 시간을 숨긴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "빠른 링크면 정지-대기도 충분": 링크가 빠를수록 이용률은 더 떨어집니다. (2) "순서 번호는 창 크기만큼이면 된다": 선택적 반복은 2배 이상 필요합니다.</div>
+    <p>그리고 창이 너무 크면 손실 하나에 다시 보낼 양도 커진다. 따라서 창 크기는 링크를 채울 만큼 크되, 네트워크가 감당할 수 있는 만큼으로 조절된다(3.2절).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>U = N(L/R)/(RTT + L/R).</li>
-        <li>N ≥ (RTT + L/R)/(L/R).</li>
-        <li>선택적 반복: 순서 번호 ≥ 2N.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>빠른 링크면 정지-대기도 충분하다고 여기기 쉽다. 링크가 빠를수록 이용률은 더 떨어진다. 또 순서 번호는 창 크기만큼이면 된다고 생각하기 쉬운데, 선택적 반복은 2배 이상 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>창 N개의 이용률은 U = N(L/R)/(RTT + L/R)이다. 가득 쓰려면 N ≥ (RTT + L/R)/(L/R)이다. 선택적 반복에는 순서 번호가 2N 이상 필요하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>L/R = 1 ms, RTT 9 ms의 정지-대기 U는?
-          <details><summary>답</summary><p>0.1.</p></details>
+          <details><summary>답</summary><p>0.1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 조건에서 U = 1인 N은?
-          <details><summary>답</summary><p>10.</p></details>
+          <details><summary>답</summary><p>10이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>창 4인 선택적 반복의 최소 순서 번호 수는?
-          <details><summary>답</summary><p>8.</p></details>
+          <details><summary>답</summary><p>8이다.</p></details>
         </li>
       </ol>
     </div>

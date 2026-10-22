@@ -8,56 +8,54 @@
 <article class="card q-card" id="text-e29-tcpthru" data-kind="본문" data-std="전전29-03-04">
   <header class="card-head"><span class="no"></span><h2>TCP 처리량과 손실률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>AIMD 동작에서 평균 처리량이 \(1.22\,MSS/(RTT\sqrt p)\)임을 안다.</li>
-        <li>손실률과 RTT가 처리량에 주는 영향을 계산한다.</li>
-        <li>고속 장거리 전송의 어려움을 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>TCP 혼잡 제어 (<a href="03-02.html">3.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">10 Gb/s 연구망으로 해외 연구소에 데이터를 보냈는데, TCP 흐름 하나는 겨우 수십 Mb/s밖에 내지 못했다. 링크는 거의 비어 있었는데도 그랬다. TCP 흐름 하나의 평균 속도는 무엇이 정할까? 그리고 아주 빠른 장거리 링크를 TCP 하나로 다 쓰려면 손실이 얼마나 적어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.4.1 TCP 처리량과 손실률(개형). 혼잡 창이 손실 때마다 반으로 줄고 RTT마다 1 MSS씩 느는 톱니 모양에서 평균 처리량은 1.22 MSS/(RTT√p)이며, MSS 1460바이트, RTT 100 ms, 손실률 10⁻⁴이면 14.2 Mb/s이고, 10 Gb/s를 얻으려면 손실률이 약 2 × 10⁻¹⁰이어야 한다">
+        <line x1="60" y1="170" x2="500" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M60 110 L160 50 L160 110 L260 50 L260 110 L360 50 L360 110 L460 50" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M60 80 H480" class="k dsh"/>
+        <g class="s"><text x="66" y="26">cwnd</text><text x="380" y="76">평균</text><text x="70" y="140" class="ta">1.22 MSS/(RTT√p)</text><text x="70" y="164" class="td">1460 B, 100 ms, 10⁻⁴ → 14.2 Mb/s</text><text x="300" y="140">10 Gb/s → p ≈ 2×10⁻¹⁰</text></g>
+      </svg>
+      <figcaption>그림 1. 손실 때마다 반으로 줄고 천천히 다시 오르는 톱니 모양의 평균이 TCP 처리량이며, 손실이 잦거나 RTT가 길수록 낮아진다(예제 3.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>TCP 혼잡 제어(<a href="03-02.html">3.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.4.1</span>톱니 평균</h3>
-    <p>혼잡 창이 손실 때마다 반으로 줄고 RTT마다 1 MSS씩 느는 AIMD에서, 평균 처리량은 근사적으로 \(1.22\,MSS/(RTT\sqrt p)\)(p: 손실률)입니다. 같은 손실률이면 RTT가 긴 흐름이 불리합니다.</p>
+    <p>혼잡 창이 손실 때마다 반으로 줄고 RTT마다 1 MSS씩 느는 AIMD에서, 평균 처리량은 근사적으로 \(1.22\,MSS/(RTT\sqrt p)\)이다(p는 손실률, 그림 1). 처음 질문의 첫째 답이 이 식이다.</p>
+    <p>즉 손실이 잦을수록 창이 자주 반으로 꺾여 평균이 낮고, RTT가 길수록 창이 다시 커지는 데 오래 걸린다. 그래서 같은 손실률이면 RTT가 긴 흐름이 불리하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.4.1</span>
-      <p>MSS 1460바이트, RTT 100 ms, 손실률 10⁻⁴의 처리량은? 10 Gb/s를 얻으려면 손실률이 얼마여야 하나?</p>
+      <p>MSS 1460바이트, RTT 100 ms, 손실률 10⁻⁴의 처리량은? 10 Gb/s를 얻으려면 손실률이 얼마여야 하는가?</p>
     </div>
-    <p><i>풀이.</i> 1.22 × 11680/(0.1 × 0.01) = 14.2 Mb/s. 10 Gb/s: √p = 1.22 × 11680/(0.1 × 10¹⁰) = 1.42×10⁻⁵ → p ≈ 2×10⁻¹⁰. 현실적이지 않아 BBR 같은 다른 혼잡 제어나 병렬 흐름을 씁니다.</p>
+    <p><i>풀이.</i> 1.22 × 11680/(0.1 × 0.01) = 14.2 Mb/s이다. 그리고 10 Gb/s를 얻으려면 √p = 1.22 × 11680/(0.1 × 10¹⁰) = 1.42×10⁻⁵이므로 p ≈ 2×10⁻¹⁰이다. 처음 질문의 둘째 답이 이것이다. 따라서 이런 손실률은 현실적이지 않아, BBR 같은 다른 혼잡 제어나 병렬 흐름을 쓴다.</p>
+    <p>즉 장거리 고속 전송에서 TCP의 한계는 링크 속도가 아니라 손실률과 RTT이다. 그러므로 대용량 과학 데이터를 보내는 곳은 여러 TCP 흐름을 동시에 열거나, 손실에 덜 민감한 전송 방식을 쓴다.</p>
+    <p>한편 이 식은 손실이 드물고 무작위로 생긴다는 가정에서 나온다. 그래서 손실이 몰려서 일어나거나 타임아웃이 잦으면, 실제 처리량은 이 값보다 더 낮다.</p>
+    <p>그리고 같은 식은 공정성 문제도 보여 준다. 예를 들어 가까운 서버와 먼 서버에서 동시에 받으면 같은 병목을 지나도 가까운 쪽 흐름이 더 많은 몫을 가져간다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "대역폭이 크면 TCP가 알아서 다 쓴다": 손실과 RTT가 상한을 정합니다. (2) "RTT는 처리량과 무관": 반비례합니다.</div>
+    <p>따라서 이 식은 TCP 성능 문제를 진단하는 출발점으로 쓰인다. 즉 측정한 RTT와 손실률을 넣어 기대 처리량을 구하고, 실제 값이 그보다 크게 낮으면 다른 병목을 찾는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>처리량 ≈ 1.22 MSS/(RTT√p).</li>
-        <li>예: 1460 B, 100 ms, 10⁻⁴ → 14.2 Mb/s.</li>
-        <li>RTT 길면 불리.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>대역폭이 크면 TCP가 알아서 다 쓴다고 여기기 쉽다. 손실과 RTT가 상한을 정한다. 또 RTT는 처리량과 무관하다고 생각하기 쉬운데, 처리량은 RTT에 반비례한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>TCP 처리량은 약 1.22 MSS/(RTT√p)이다. 예제의 1460 B, 100 ms, 10⁻⁴는 14.2 Mb/s이다. RTT가 길면 불리하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>손실률을 1/4로 줄이면 처리량은?
-          <details><summary>답</summary><p>2배.</p></details>
+          <details><summary>답</summary><p>2배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>RTT 50 ms(나머지 예제와 같음)의 처리량은?
-          <details><summary>답</summary><p>약 28.5 Mb/s.</p></details>
+          <details><summary>답</summary><p>약 28.5 Mb/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>같은 병목을 RTT 10 ms와 100 ms 흐름이 나누면?
-          <details><summary>답</summary><p>RTT 짧은 흐름이 약 10배 더 받습니다.</p></details>
+          <details><summary>답</summary><p>RTT 짧은 흐름이 약 10배 더 받는다.</p></details>
         </li>
       </ol>
     </div>
