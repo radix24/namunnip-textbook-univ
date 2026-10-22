@@ -8,57 +8,61 @@
 <article class="card q-card" id="text-e24-pf" data-kind="본문" data-std="전전24-02-02">
   <header class="card-head"><span class="no"></span><h2>정류기 입력 전류의 고조파와 역률</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>정류기 입력 전류가 사각파에 가까워 고조파를 포함함을 안다.</li>
-        <li>역률 = 변위 역률 × 왜곡 역률 \((I_1/I)\cos\phi_1\)을 계산한다.</li>
-        <li>능동 역률 보정(PFC) 회로의 필요성을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Fourier 급수 (<a href="../6/03-01.html">전전6 3.1절</a>), 위상 제어 정류 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">정류기가 쓰는 유효 전력은 같은데, 전력 회사의 배선과 변압기에는 그보다 훨씬 큰 전류가 흐른다. 전압은 정현파인데 전류가 사각파처럼 일그러져 있기 때문이다. 일그러진 전류는 역률을 얼마나 깎고, 어떤 고조파를 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 사각파 입력 전류와 고조파(개형). 큰 인덕턴스 부하의 단상 정류기 입력 전류는 진폭 I_d의 사각파이고, 기본파 실효값은 0.9I_d, 홀수 고조파는 I₁/n이다. THD는 48.3%이고 역률은 0.9 cos α로, α = 30°이면 0.78, 3고조파는 기본파의 33.3%이다">
+        <line x1="60" y1="100" x2="300" y2="100" class="ax"/>
+        <path d="M60 100 C90 40, 120 40, 150 100 S210 160, 240 100" class="k dsh" fill="none"/>
+        <path d="M60 100 V50 H150 V150 H240 V100" class="a" fill="none" stroke-width="2.5"/>
+        <line x1="340" y1="170" x2="520" y2="170" class="ax"/>
+        <g class="fb"><rect x="350" y="50" width="20" height="120"/><rect x="390" y="130" width="20" height="40"/><rect x="430" y="146" width="20" height="24"/><rect x="470" y="153" width="20" height="17"/></g>
+        <g class="s" text-anchor="middle"><text x="360" y="186">1</text><text x="400" y="186">3</text><text x="440" y="186">5</text><text x="480" y="186">7</text><text x="400" y="124" class="tb">33.3%</text></g>
+        <g class="s"><text x="70" y="40" class="ta">사각파 전류 I_d</text><text x="60" y="186">THD 48.3%, PF 0.9 cos α</text></g>
+      </svg>
+      <figcaption>그림 1. 사각파 전류는 기본파에 크기가 1/n로 줄어드는 홀수 고조파가 더해진 것이므로, 유효 전력은 기본파만 내는데 실효 전류는 고조파까지 포함해 커져 역률이 깎인다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Fourier 급수(<a href="../6/03-01.html">전전6 3.1절</a>), 위상 제어 정류(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>사각파 전류</h3>
-    <p>큰 인덕턴스 부하의 단상 전파 정류기에서 입력 전류는 진폭 I_d의 사각파이며, α만큼 전압보다 늦습니다. Fourier 급수로 기본파 실효값 \(I_1 = \frac{2\sqrt2}{\pi}I_d = 0.9I_d\), 홀수 고조파 \(I_n = I_1/n\)입니다. 총 실효값은 I_d이므로</p>
-    \[ \text{PF} = \frac{P}{V I} = \frac{I_1}{I}\cos\alpha = 0.9\cos\alpha,\qquad \text{THD} = \sqrt{(I/I_1)^2 - 1} = 48.3\%. \]
+    <p>큰 인덕턴스 부하의 단상 전파 정류기에서 입력 전류는 진폭 \(I_d\)의 사각파이며, 전압보다 α만큼 늦다(그림 1). 이것을 Fourier 급수로 나누면 기본파 실효값은 \(I_1 = \frac{2\sqrt2}{\pi}I_d = 0.9I_d\)이고, 홀수 고조파는 \(I_n = I_1/n\)이다. 처음 질문의 둘째 답이 이것이다. 그런데 유효 전력은 같은 주파수인 기본파만 내므로, 총 실효값 \(I_d\)에 비해 역률이 깎인다.</p>
+    <div class="tb-env thm">
+      <span class="lb">왜곡 전류의 역률</span>
+      <p>\[ \text{PF} = \frac{P}{VI} = \frac{I_1}{I}\cos\alpha = 0.9\cos\alpha \]</p>
+      <p>\[ \text{THD} = \sqrt{(I/I_1)^2 - 1} = 48.3\% \]</p>
+    </div>
+    <p>즉 역률은 위상차에 의한 변위 역률 cos α와, 일그러짐에 의한 왜곡 인자 \(I_1/I\)의 곱이다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>α = 30°의 역률은? 3고조파 전류는 기본파의 몇 %인가?</p>
     </div>
-    <p><i>풀이.</i> PF = 0.9 × 0.866 = 0.78. 3고조파 33.3%. 역률이 낮으면 같은 전력에 큰 전류가 흘러 배선·변압기 손실이 늘고, 고조파는 계통 전압을 일그러뜨려 다른 기기에 영향을 줍니다. 그래서 규격(예: IEC 61000-3-2, 확인 필요)이 고조파를 제한하며, 노트북 충전기 이상 기기는 부스트 컨버터로 입력 전류를 정현파로 만드는 능동 PFC를 둡니다(역률 0.99 수준).</p>
+    <p><i>풀이.</i> PF = 0.9 × 0.866 = 0.78이고, 3고조파는 33.3%이다. 그런데 역률이 낮으면 같은 전력에 큰 전류가 흘러 배선과 변압기 손실이 늘고, 고조파는 계통 전압을 일그러뜨려 다른 기기에 영향을 준다. 그래서 규격(예를 들어 IEC 61000-3-2, 확인 필요)이 고조파를 제한한다. 따라서 노트북 충전기 이상의 기기는 부스트 컨버터로 입력 전류를 정현파로 만드는 능동 PFC를 두어 역률을 0.99 수준으로 높인다(2.4절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "역률은 cos(전압-전류 위상차)": 정현파일 때만 맞고, 왜곡 전류에서는 I₁/I를 곱해야 합니다. (2) "콘덴서를 달면 역률이 좋아진다": 변위 역률은 보상되지만 고조파는 줄지 않습니다.</div>
+    <p>고조파 가운데 3의 배수 고조파는 3상 계통에서 특히 문제가 된다. 세 상의 3고조파가 같은 위상이라 중성선에서 상쇄되지 않고 더해지기 때문이다. 그래서 단상 부하가 많은 건물은 중성선이 과열되지 않도록 굵게 설계한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사각파 전류: I₁ = 0.9I_d, I_n = I₁/n, THD 48.3%.</li>
-        <li>PF = (I₁/I)cos φ₁ = 0.9cos α.</li>
-        <li>능동 PFC로 정현파 입력 전류.</li>
-      </ol>
-    </div>
+    <p>고조파 전류를 줄이는 다른 방법으로는 특정 차수에 맞춘 LC 필터를 계통 쪽에 다는 수동 필터가 있다. 그러나 필터는 크고 무거우며 계통과 공진할 위험도 있어, 새 기기는 대부분 능동 PFC를 쓴다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>역률은 언제나 cos(전압과 전류의 위상차)라고 여기기 쉽다. 이것은 정현파일 때만 맞고, 왜곡된 전류에서는 \(I_1/I\)를 곱해야 한다. 또 축전기를 달면 역률이 좋아진다고 생각하기 쉬운데, 변위 역률은 보상되지만 고조파는 줄지 않는다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>사각파 전류는 I₁ = 0.9I_d, I_n = I₁/n이며 THD는 48.3%이다. 역률은 PF = (I₁/I)cos φ₁ = 0.9 cos α이다. 능동 PFC로 입력 전류를 정현파로 만들어 역률을 높인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>α = 0의 역률은?
-          <details><summary>답</summary><p>0.9.</p></details>
+          <details><summary>답</summary><p>0.9이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>5고조파는 기본파의 몇 %인가?
-          <details><summary>답</summary><p>20%.</p></details>
+          <details><summary>답</summary><p>20%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>PF 0.78, 10 kW 부하의 230 V 입력 실효 전류는?
-          <details><summary>답</summary><p>10000/(230 × 0.78) ≈ 55.7 A.</p></details>
+          <details><summary>답</summary><p>10000/(230 × 0.78) ≈ 55.7 A이다.</p></details>
         </li>
       </ol>
     </div>

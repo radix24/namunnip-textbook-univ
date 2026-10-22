@@ -8,56 +8,58 @@
 <article class="card q-card" id="text-e24-lcfilter" data-kind="본문" data-std="전전24-04-03">
   <header class="card-head"><span class="no"></span><h2>인버터 출력 LC 필터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>PWM 고조파를 거르는 2차 LC 저역 통과 필터를 설계한다.</li>
-        <li>차단 주파수와 스위칭 주파수에서의 감쇠를 계산한다.</li>
-        <li>공진 감쇠(댐핑)의 필요를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>SPWM 고조파 (<a href="04-01.html">4.1절</a>), 2차 필터 (<a href="../13/04.html">전전13 4단원</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">태양광 인버터는 직류를 PWM 펄스로 바꾸지만, 집 안 콘센트로 보낼 때는 깨끗한 50 Hz 정현파여야 한다. 펄스 속 수 kHz의 스위칭 성분만 골라 없애고 50 Hz는 그대로 통과시키려면 어떤 필터를 어디에 두어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.3.1 인버터 출력 LC 필터(개형). L = 1 mH, C = 10 μF이면 차단 주파수는 1.59 kHz이고, 그 위에서 크기가 40 dB/dec로 줄어 10 kHz 스위칭 성분은 32 dB(약 1/40) 감쇠한다. 50 Hz 기본파는 거의 그대로 통과하며, 공진 봉우리는 감쇠가 필요하다">
+        <line x1="80" y1="90" x2="460" y2="90" class="ax"/><line x1="80" y1="20" x2="80" y2="180" class="ax"/>
+        <path d="M80 90 H200 C220 90, 230 50, 240 60 C250 80, 280 120, 440 170" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M100 20 V180 M240 20 V180 M380 20 V180" class="k dsh"/>
+        <g class="s"><text x="90" y="196">50 Hz</text><text x="220" y="196">1.59 kHz</text><text x="370" y="196">10 kHz</text><text x="246" y="46" class="td">공진 봉우리</text><text x="388" y="150" class="ta">−32 dB</text><text x="300" y="110">−40 dB/dec</text></g>
+      </svg>
+      <figcaption>그림 1. LC 필터는 차단 주파수 위에서 10배마다 100분의 1로 줄이므로, 차단을 기본파와 스위칭 주파수 사이에 두면 기본파는 통과하고 스위칭 성분은 크게 줄어든다(예제 4.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>SPWM 고조파(<a href="04-01.html">4.1절</a>), 2차 필터(<a href="../13/04.html">전전13 4단원</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>기본파는 통과, 스위칭은 차단</h3>
-    <p>\(f_c = 1/(2\pi\sqrt{LC})\)를 기본파(50/60 Hz)보다 충분히 높고 스위칭 주파수보다 충분히 낮게 둡니다. 차단 위에서 40 dB/dec로 줄어 \(f_s\)에서 감쇠 ≈ \(40\log(f_s/f_c)\) dB입니다. 공진 봉우리는 저항이나 제어로 감쇠시킵니다.</p>
+    <p>LC 저역 통과 필터의 차단 주파수 \(f_c = 1/(2\pi\sqrt{LC})\)를, 기본파(50/60 Hz)보다 충분히 높고 스위칭 주파수보다 충분히 낮게 둔다(그림 1). 처음 질문의 답이 이것이다. 그러면 차단 위에서 크기가 40 dB/dec로 줄어든다.</p>
+    <div class="tb-env thm">
+      <span class="lb">LC 필터의 감쇠</span>
+      <p>\[ f_c = \frac{1}{2\pi\sqrt{LC}}, \qquad A(f_s) \approx 40\log_{10}\frac{f_s}{f_c}\ \text{dB} \]</p>
+      <p>차단 주파수 근처의 공진 봉우리는 저항이나 제어로 감쇠시킨다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1</span>
       <p>L = 1 mH, C = 10 μF의 차단 주파수와 10 kHz 스위칭 성분의 감쇠는?</p>
     </div>
-    <p><i>풀이.</i> f_c = 1.59 kHz, 감쇠 40log(10/1.59) = 32 dB(약 1/40). 기본파 50 Hz는 거의 그대로 통과합니다. 태양광 인버터와 UPS의 출력 필터가 이런 꼴입니다(계통 연계는 LCL).</p>
+    <p><i>풀이.</i> \(f_c = 1/(2\pi\sqrt{10^{-8}}) = 1.59\) kHz이므로, 감쇠는 40 log(10/1.59) = 32 dB, 약 1/40이다. 반면 기본파 50 Hz는 거의 그대로 통과한다. 태양광 인버터와 UPS의 출력 필터가 이런 꼴이며, 계통에 직접 잇는 경우에는 인덕터를 하나 더 둔 LCL 필터를 쓴다.</p>
+    <p>공진을 감쇠시키는 방법으로는 수동 감쇠와 능동 감쇠가 있다. 수동 감쇠는 회로에 저항을 넣고, 능동 감쇠는 필터 전류나 전압을 재어 인버터 제어로 가상의 저항처럼 동작하게 한다. 그러므로 능동 감쇠는 손실 없이 봉우리를 누를 수 있지만, 제어 대역이 공진보다 충분히 높아야 한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "필터 차단을 기본파 바로 위에 두면 좋다": 큰 L·C가 필요하고 기본파 전압 강하가 커집니다. (2) "LC 필터는 감쇠 없이도 안정": 공진에서 큰 봉우리가 생겨 감쇠가 필요합니다.</div>
+    <p>필터 축전기에는 기본파에서도 전류가 흐르므로, C를 너무 크게 하면 인버터가 쓸모없는 무효 전류를 계속 공급해야 한다. 따라서 보통 C의 무효 전력이 정격의 5% 안팎이 되도록 정하고, 나머지 감쇠는 L로 맞춘다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>f_c = 1/(2π√(LC)), f_s에서 40log(f_s/f_c) dB.</li>
-        <li>기본파 ≪ f_c ≪ f_s.</li>
-        <li>예: 1 mH, 10 μF → 1.59 kHz, 32 dB.</li>
-      </ol>
-    </div>
+    <p>필터 인덕터는 부피와 무게에서 인버터의 큰 몫을 차지한다. 따라서 스위칭 주파수를 높여 같은 감쇠를 작은 L과 C로 얻는 것이 소형화의 주된 방법이다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>차단 주파수를 기본파 바로 위에 두면 가장 깨끗하다고 여기기 쉽다. 그러면 큰 L과 C가 필요하고, 기본파의 전압 강하와 무효 전류가 커진다. 또 LC 필터는 감쇠 없이도 안정하다고 생각하기 쉬운데, 공진에서 큰 봉우리가 생겨 감쇠가 필요하다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>LC 필터의 차단 주파수는 f_c = 1/(2π√(LC))이고, 기본파와 스위칭 주파수 사이에 둔다. 차단 위에서 40 dB/dec로 줄어 스위칭 성분이 40 log(f_s/f_c) dB 감쇠한다. 공진 봉우리는 수동이나 능동 감쇠로 누른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f_c = 1 kHz, f_s = 20 kHz의 감쇠는?
-          <details><summary>답</summary><p>52 dB.</p></details>
+          <details><summary>답</summary><p>52 dB이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>L = 2 mH, C = 20 μF의 f_c는?
-          <details><summary>답</summary><p>약 796 Hz.</p></details>
+          <details><summary>답</summary><p>약 796 Hz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>공진 감쇠를 위해 C에 직렬 저항을 넣으면 손해는?
-          <details><summary>답</summary><p>그 저항에서 손실이 생깁니다.</p></details>
+          <details><summary>답</summary><p>그 저항에서 손실이 생긴다.</p></details>
         </li>
       </ol>
     </div>

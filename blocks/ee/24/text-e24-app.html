@@ -8,62 +8,58 @@
 <article class="card q-card" id="text-e24-app" data-kind="본문" data-std="전전24-05-02">
   <header class="card-head"><span class="no"></span><h2>전기차와 태양광의 전력 변환 단계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>전기차 충전기(PFC → 절연 DC-DC)와 구동계(인버터 → 전동기)의 변환 단계를 안다.</li>
-        <li>태양광 시스템의 MPPT 부스트와 계통 연계 인버터를 안다.</li>
-        <li>단계별 효율을 곱해 전체 효율을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>이 과목의 2~4단원.</li>
-      </ul>
-    </div>
+    <p class="q-ask">전기차를 집에서 충전하면 콘센트의 교류가 몇 개의 변환 단계를 거쳐 배터리에 들어가고, 달릴 때는 배터리의 직류가 다시 교류가 되어 전동기를 돌린다. 지붕의 태양광 패널에서 나온 전기도 비슷한 길을 거친다. 이 과목에서 배운 변환기들은 실제 시스템에서 어떻게 이어질까? 단계를 거칠수록 에너지는 얼마나 줄어들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 전기차 완속 충전 경로(개형). 교류 계통에서 능동 PFC 정류(98%), 절연 DC-DC(97%), 배터리 충전(95%)을 거치면 전체 효율은 0.903으로, 계통에서 10 kWh를 받으면 배터리에는 약 9.03 kWh가 저장된다">
+        <defs><marker id="ah-e24ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="k" fill="none"><rect x="30" y="70" width="80" height="40"/><rect x="140" y="70" width="80" height="40"/><rect x="250" y="70" width="90" height="40"/><rect x="370" y="70" width="80" height="40"/></g>
+        <g marker-end="url(#ah-e24ap)" class="k" stroke-width="2"><line x1="110" y1="90" x2="138" y2="90"/><line x1="220" y1="90" x2="248" y2="90"/><line x1="340" y1="90" x2="368" y2="90"/></g>
+        <g class="s" text-anchor="middle"><text x="70" y="95">교류 계통</text><text x="180" y="95" class="ta">PFC</text><text x="295" y="95" class="tb">절연 DC-DC</text><text x="410" y="95">배터리</text><text x="180" y="130" class="ta">98%</text><text x="295" y="130" class="tb">97%</text><text x="410" y="130">충전 95%</text></g>
+        <g class="s"><text x="140" y="170" class="td">0.98 × 0.97 × 0.95 = 0.903 → 10 kWh 중 9.03 kWh</text></g>
+      </svg>
+      <figcaption>그림 1. 에너지는 변환 단계를 차례로 지나며 각 단계의 효율이 곱해지므로, 단계 하나하나가 높은 효율이어도 전체 효율은 그보다 눈에 띄게 낮아진다(예제 5.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>이 과목의 2~4단원을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>전기차</h3>
-    <ul>
-      <li><b>완속 충전기(OBC)</b>: 교류 계통 → 능동 PFC 정류(2.2절) → 고주파 변압기 절연 DC-DC → 배터리(약 400 V 또는 800 V).</li>
-      <li><b>구동</b>: 배터리 → 3상 인버터(SiC, 4.1절) → 영구 자석 전동기. 감속 시 회생 제동으로 배터리를 충전.</li>
-      <li><b>보조</b>: 고전압 → 12 V 벅형 절연 DC-DC.</li>
-    </ul>
+    <p>전기차의 완속 충전기(OBC)는 교류 계통을 능동 PFC로 정류하고(2.4절), 고주파 변압기로 절연한 DC-DC 컨버터를 거쳐 약 400 V나 800 V의 배터리에 넣는다(그림 1). 그리고 주행할 때는 배터리의 직류를 SiC 소자의 3상 인버터(4.1절)로 교류로 바꿔 영구 자석 전동기를 돌린다. 한편 고전압 배터리에서 12 V 보조 전원을 얻는 데는 벅형 절연 DC-DC를 쓴다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>감속할 때는 전동기가 발전기로 동작하는 회생 제동으로 배터리를 다시 충전한다. 즉 인버터는 전력을 양방향으로 흘려야 하며, 같은 소자와 회로로 구동과 회생을 함께 한다.</p>
+
     <h3><span class="no">5.2.2</span>태양광</h3>
-    <p>태양전지 패널은 전압-전류 곡선에서 전력이 최대인 점이 일사량·온도에 따라 바뀝니다. 부스트 컨버터의 듀티를 조절해 그 점을 추적(MPPT, 전전28 4.2절)하고, 인버터가 계통 전압·주파수에 맞춰 전류를 넣습니다.</p>
+    <p>태양전지 패널은 전압-전류 곡선에서 전력이 최대인 점이 일사량과 온도에 따라 바뀐다. 그래서 부스트 컨버터의 듀티를 조절해 그 점을 따라가는 최대 전력점 추적(MPPT, 전전28 4.2절)을 하고, 인버터가 계통의 전압과 주파수에 맞춰 전류를 넣는다.</p>
+    <div class="tb-env thm">
+      <span class="lb">여러 단계의 효율</span>
+      <p>\[ \eta_{\text{전체}} = \eta_1\eta_2\cdots\eta_n \]</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1(가상 효율)</span>
       <p>OBC가 PFC 98%, DC-DC 97%, 배터리 충전 효율 95%다. 계통에서 10 kWh를 받으면 배터리에 저장되는 에너지는?</p>
     </div>
-    <p><i>풀이.</i> 0.98 × 0.97 × 0.95 = 0.903, 약 9.03 kWh. 단계가 늘수록 효율이 곱해져 떨어지므로, 단계 수를 줄이거나 각 단계 효율을 높이는 것이 설계 목표입니다.</p>
+    <p><i>풀이.</i> 0.98 × 0.97 × 0.95 = 0.903이므로, 약 9.03 kWh이다. 처음 질문의 둘째 답이 이것이다. 즉 단계가 늘수록 효율이 곱해져 떨어지므로, 단계 수를 줄이거나 각 단계의 효율을 높이는 것이 설계 목표이다.</p>
+    <p>잃은 에너지는 모두 열이 된다. 그러므로 효율 1%를 올리는 것은 손실 열을 크게 줄여, 방열판과 냉각 장치를 작게 만드는 효과도 있다. 예를 들어 효율 97%에서 98%로 올리면 손실이 3분의 1 줄어든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "급속 충전도 차 안의 충전기를 쓴다": 급속 충전은 충전소의 큰 컨버터가 직류를 바로 배터리에 줍니다. (2) "패널은 언제나 정격 전압에서 최대 전력": 조건마다 최대 전력점이 바뀝니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>급속 충전도 차 안의 충전기를 쓴다고 여기기 쉽다. 급속 충전은 충전소의 큰 컨버터가 직류를 배터리에 바로 준다. 또 태양광 패널은 언제나 정격 전압에서 최대 전력을 낸다고 생각하기 쉬운데, 최대 전력점은 조건마다 바뀐다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>전기차: PFC → 절연 DC-DC → 배터리 → 인버터 → 전동기.</li>
-        <li>태양광: MPPT 부스트 → 계통 연계 인버터.</li>
-        <li>전체 효율 = 단계 효율의 곱.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>전기차는 PFC와 절연 DC-DC로 충전하고, 인버터로 전동기를 돌리며 회생 제동을 한다. 태양광은 부스트 컨버터로 MPPT를 하고 인버터로 계통에 넣는다. 전체 효율은 각 단계 효율의 곱이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>효율 95%, 95% 두 단계의 전체 효율은?
-          <details><summary>답</summary><p>90.25%.</p></details>
+          <details><summary>답</summary><p>90.25%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>인버터 효율 97%, 출력 100 kW의 손실은?
-          <details><summary>답</summary><p>입력 103.1 kW, 손실 약 3.1 kW.</p></details>
+          <details><summary>답</summary><p>입력 103.1 kW, 손실 약 3.1 kW이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>회생 제동 때 인버터는 어느 방향으로 전력을 보내는가?
-          <details><summary>답</summary><p>전동기(발전기 동작)에서 배터리 쪽으로(교류 → 직류).</p></details>
+          <details><summary>답</summary><p>전동기(발전기 동작)에서 배터리 쪽으로(교류 → 직류)이다.</p></details>
         </li>
       </ol>
     </div>

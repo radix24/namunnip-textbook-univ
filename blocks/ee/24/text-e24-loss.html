@@ -8,58 +8,58 @@
 <article class="card q-card" id="text-e24-loss" data-kind="본문" data-std="전전24-01-02">
   <header class="card-head"><span class="no"></span><h2>도통 손실과 스위칭 손실 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>도통 손실 \(I_{rms}^2R_{on}\)(또는 \(V_{on}I_{avg}\))을 계산한다.</li>
-        <li>선형 전환 근사로 스위칭 손실 \(\frac12VI(t_r + t_f)f_s\)를 계산한다.</li>
-        <li>손실과 주파수의 절충, 방열 설계(접합 온도)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전력과 실효값 (<a href="../3/08.html">전전3 8단원</a>), 소자 특성 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전력 스위치는 완전히 켜지거나 완전히 꺼져 있을 때는 열을 거의 내지 않는다. 그런데 실제 컨버터의 스위치는 방열판이 필요할 만큼 뜨거워진다. 열은 언제, 얼마나 생길까? 그리고 그 열로 소자 온도가 한계를 넘지 않는지 어떻게 확인할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 스위칭 손실(개형). 스위치가 켜지고 꺼지는 짧은 시간 동안 전압과 전류가 함께 존재해 에너지를 잃는다. 400 V, 10 A, R_on 20 mΩ, 듀티 0.5, 전환 시간 각 50 ns, 100 kHz에서 도통 손실은 1 W, 스위칭 손실은 20 W이고, 전환 시간을 각 10 ns로 줄이면 스위칭 손실은 4 W가 된다">
+        <line x1="60" y1="170" x2="460" y2="170" class="ax"/>
+        <path d="M60 50 H140 L180 160 H300 L340 50 H460" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M60 160 H140 L180 70 H300 L340 160 H460" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M140 160 L160 110 L180 160 Z M300 160 L320 110 L340 160 Z" class="fd" opacity="0.7"/>
+        <g class="s"><text x="70" y="44" class="ta">전압</text><text x="200" y="64" class="tb">전류</text><text x="140" y="190" class="td">겹치는 구간에서 손실</text></g>
+        <g class="s"><text x="360" y="100">도통 1 W</text><text x="360" y="124" class="td">스위칭 20 W</text><text x="360" y="148">10 ns면 4 W</text></g>
+      </svg>
+      <figcaption>그림 1. 켜지고 꺼지는 동안 전압이 내려가기 전에 전류가 오르고, 그 겹친 넓이만큼 매번 에너지를 잃으므로, 전압이 높고 주파수가 높을수록 스위칭 손실이 도통 손실을 크게 넘어선다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전력과 실효값(<a href="../3/08.html">전전3 8단원</a>), 소자 특성(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>두 손실</h3>
-    <p><b>도통 손실</b>: 켜져 있는 동안 \(P = I^2R_{on}D\). <b>스위칭 손실</b>: 켜지고 꺼지는 동안 전압과 전류가 동시에 존재해, 직선으로 바뀐다고 보면 한 번에 \(\frac12VIt\)의 에너지를 잃습니다.</p>
-    \[ P_{sw} = \frac12V_{in}I(t_r + t_f)f_s. \]
+    <p>도통 손실은 켜져 있는 동안 소자의 저항이나 전압 강하에서 생긴다. 반면 스위칭 손실은 켜지고 꺼지는 동안 전압과 전류가 동시에 존재해 생긴다(그림 1). 처음 질문의 첫째 답이 이것이다. 전압과 전류가 직선으로 바뀐다고 보면, 전환 한 번에 \(\frac12VIt\)의 에너지를 잃는다.</p>
+    <div class="tb-env thm">
+      <span class="lb">도통 손실과 스위칭 손실</span>
+      <p>\[ P_c = I^2R_{on}D, \qquad P_{sw} = \frac12V_{in}I(t_r + t_f)f_s \]</p>
+      <p>접합 온도는 \(T_J = T_A + PR_{\theta JA}\)이다(\(R_{\theta JA}\)는 열저항, °C/W).</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>400 V, 10 A, R_on = 20 mΩ, D = 0.5, t_r = t_f = 50 ns, f_s = 100 kHz. 도통·스위칭 손실은? 전환 시간을 각 10 ns로 줄이면?</p>
     </div>
-    <p><i>풀이.</i> 도통 10² × 0.02 × 0.5 = 1 W. 스위칭 ½ × 400 × 10 × 100 ns × 10⁵ = 20 W. 전환 시간 20 ns(합)면 4 W. 고전압에서는 스위칭 손실이 지배적이라 빠른 소자(SiC)가 효과적이고, 손실이 주파수에 비례하므로 주파수를 무작정 올릴 수 없습니다.</p>
-    <p>총 손실 P와 열저항 \(R_{\theta JA}\)(°C/W)로 접합 온도 \(T_J = T_A + PR_{\theta JA}\)를 구해 최대(Si 보통 150 °C, 확인 필요) 아래인지 확인합니다. 예: 5 W, 25 °C, 10 °C/W → 75 °C.</p>
+    <p><i>풀이.</i> 도통 손실은 10² × 0.02 × 0.5 = 1 W이다. 스위칭 손실은 ½ × 400 × 10 × 100 ns × 10⁵ = 20 W이고, 전환 시간 합을 20 ns로 줄이면 4 W이다. 즉 고전압에서는 스위칭 손실이 지배적이라 빠른 소자(SiC)가 효과적이다. 그리고 스위칭 손실이 주파수에 비례하므로 주파수를 무작정 올릴 수는 없다.</p>
+    <p>총 손실 P와 열저항으로 접합 온도를 구하면, 최대 허용 온도(Si는 보통 150 °C, 확인 필요) 아래인지 확인할 수 있다. 처음 질문의 둘째 답이 이것이다. 예를 들어 5 W, 주위 25 °C, 10 °C/W이면 접합 온도는 75 °C이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "손실은 도통 손실만 보면 된다": 고주파·고전압에서는 스위칭 손실이 훨씬 큽니다. (2) "R_on은 상수": 온도가 오르면 커져(Si MOSFET은 100 °C에서 약 1.5배) 손실이 늘어납니다.</div>
+    <p>손실을 줄이는 또 하나의 길은 전압이나 전류가 0일 때 스위칭하는 것이다. 공진 회로로 스위치 양단 전압을 0으로 만든 뒤 켜는 영전압 스위칭(ZVS)을 쓰면, 겹치는 넓이가 거의 사라져 높은 주파수에서도 손실이 작다. 그래서 고밀도 충전기와 서버 전원은 이런 소프트 스위칭 방식을 많이 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>도통 I²R_on D, 스위칭 ½VI(t_r + t_f)f_s.</li>
-        <li>예: 1 W 대 20 W, 고전압은 스위칭 손실이 지배.</li>
-        <li>T_J = T_A + P R_θ.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>R_on이 상수라고 여기기 쉽다. R_on은 온도가 오르면 커져, Si MOSFET은 100 °C에서 약 1.5배가 되어 손실이 더 늘어난다. 또 손실은 도통 손실만 보면 된다고 생각하기 쉬운데, 고주파와 고전압에서는 스위칭 손실이 훨씬 크다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>도통 손실은 I²R_on D, 스위칭 손실은 ½VI(t_r + t_f)f_s이다. 예제에서는 1 W 대 20 W로, 고전압에서는 스위칭 손실이 지배한다. 접합 온도는 T_J = T_A + PR_θ로 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>100 V, 5 A, t_r + t_f = 40 ns, 200 kHz의 스위칭 손실은?
-          <details><summary>답</summary><p>2 W.</p></details>
+          <details><summary>답</summary><p>2 W이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>총 손실 8 W, R_θ 5 °C/W, T_A 40 °C의 T_J는?
-          <details><summary>답</summary><p>80 °C.</p></details>
+          <details><summary>답</summary><p>80 °C이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>주파수를 두 배로 하면 어떤 손실이 늘고 무엇을 얻는가?
-          <details><summary>답</summary><p>스위칭 손실이 두 배, 대신 인덕터·축전기를 작게 할 수 있습니다(3.2절).</p></details>
+          <details><summary>답</summary><p>스위칭 손실이 두 배, 대신 인덕터·축전기를 작게 할 수 있다(3.2절).</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e24-vmc" data-kind="본문" data-std="전전24-03-05">
   <header class="card-head"><span class="no"></span><h2>컨버터의 전압 모드 제어</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>출력 전압을 재서 듀티비를 조절하는 궤환 루프를 안다.</li>
-        <li>벅 컨버터의 듀티→출력 전달함수(LC 2차)를 쓴다.</li>
-        <li>보상기로 위상 여유를 확보하는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>벅 (<a href="03-01.html">3.1절</a>), 위상 여유 (<a href="../22/05-02.html">전전22 5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">벅 컨버터의 출력을 재어 목표보다 낮으면 듀티를 늘리고 높으면 줄이는, 단순한 되먹임을 걸었다. 그런데 부하가 바뀔 때마다 출력이 크게 출렁이고 심하면 계속 진동한다. 단순한 되먹임이 왜 불안정해질까? 출력 전압을 안정하게 지키려면 제어기를 어떻게 설계할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.5.1 벅 컨버터의 듀티-출력 전달함수(개형). 출력 LC 필터 때문에 공진 주파수 10.7 kHz에서 크기에 봉우리가 생기고 위상이 −180° 가까이 급격히 꺾인다. 저주파 이득은 12(21.6 dB)이고, 교차 주파수는 스위칭 주파수의 1/5~1/10쯤에 두므로 공진보다 높아 보상기가 위상을 보태야 한다">
+        <line x1="80" y1="90" x2="460" y2="90" class="ax"/><line x1="80" y1="20" x2="80" y2="180" class="ax"/>
+        <path d="M80 50 H200 C220 50, 230 30, 240 40 C250 60, 300 110, 440 150" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 110 H200 C230 112, 240 150, 260 170 H440" class="b" fill="none" stroke-width="2"/>
+        <path d="M240 20 V180" class="k dsh"/>
+        <g class="s"><text x="86" y="44" class="ta">21.6 dB</text><text x="246" y="30" class="td">f₀ 10.7 kHz</text><text x="300" y="166" class="tb">위상 −180°</text><text x="400" y="104">f</text><text x="320" y="70">교차는 f_s의 1/5~1/10</text></g>
+      </svg>
+      <figcaption>그림 1. 출력 LC 필터의 공진에서 위상이 −180° 가까이 급히 떨어지므로, 보상 없이 이득만 걸면 교차 주파수에서 위상 여유가 없어 출렁이고, 보상기가 그 근처에 위상을 보태야 안정해진다(예제 3.5.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>벅(<a href="03-01.html">3.1절</a>), 위상 여유(<a href="../22/05-02.html">전전22 5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.5.1</span>LC 공진을 다루기</h3>
-    <p>벅의 듀티 d에서 출력 v_o로의 소신호 전달함수는 \(G_{vd} = \frac{V_{in}}{LCs^2 + (L/R)s + 1}\)로, 출력 LC의 공진 주파수 \(1/(2\pi\sqrt{LC})\)에서 위상이 −180° 가까이 꺾입니다. 그래서 PWM 비교기와 함께 위상을 보태는 보상기(Type III)로 교차 주파수 근처에 위상 여유를 만듭니다.</p>
+    <p>벅 컨버터의 듀티 d에서 출력 \(v_o\)로 가는 소신호 전달함수는 출력 LC 필터의 2차 전달함수이다. 그래서 LC의 공진 주파수에서 위상이 −180° 가까이 꺾인다(그림 1). 처음 질문의 첫째 답이 이것이다. 즉 이 근처에서 이득이 1을 넘으면 위상 여유가 없어 출렁인다.</p>
+    <div class="tb-env thm">
+      <span class="lb">벅 컨버터의 듀티-출력 전달함수</span>
+      <p>\[ G_{vd} = \frac{V_{in}}{LCs^2 + (L/R)s + 1}, \qquad f_0 = \frac{1}{2\pi\sqrt{LC}} \]</p>
+    </div>
+    <p>그러므로 PWM 비교기와 함께 위상을 보태는 보상기(Type III)를 써서, 교차 주파수 근처에 충분한 위상 여유를 만든다. 처음 질문의 둘째 답이 이것이다. 보상기는 영점 두 개로 공진의 위상 손실을 되돌리고, 적분기로 정상상태 오차를 없앤다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.5.1</span>
       <p>L = 10 μH, C = 22 μF, V_in = 12 V의 공진 주파수와 저주파 이득은? 교차 주파수를 어디쯤 두나?</p>
     </div>
-    <p><i>풀이.</i> f_0 = 1/(2π√(2.2×10⁻¹⁰)) = 10.7 kHz, 저주파 이득 12(21.6 dB, PWM 이득 1 가정). 교차 주파수는 보통 스위칭 주파수의 1/5~1/10(500 kHz면 50~100 kHz) 근처에 둡니다(확인 필요). 이는 LC 공진보다 높아 보상기가 위상을 보태야 합니다.</p>
+    <p><i>풀이.</i> \(f_0 = 1/(2\pi\sqrt{2.2\times10^{-10}}) = 10.7\) kHz이고, 저주파 이득은 PWM 이득을 1로 보면 12(21.6 dB)이다. 그리고 교차 주파수는 보통 스위칭 주파수의 1/5~1/10, 곧 500 kHz면 50~100 kHz 근처에 둔다(확인 필요). 이것은 LC 공진보다 높으므로, 보상기가 위상을 보태야 한다.</p>
+    <p>교차 주파수가 높을수록 부하가 갑자기 바뀔 때 출력이 빨리 회복된다. 그래서 프로세서 전원처럼 부하 변화가 큰 곳은 교차 주파수를 되도록 높이고, 출력 축전기를 넉넉히 둔다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "출력을 재서 듀티만 바꾸면 안정": LC 공진의 위상 때문에 보상 없이는 진동합니다. (2) "교차 주파수는 높을수록 좋다": 스위칭 잡음과 표본화 지연 때문에 한계가 있습니다.</div>
+    <p>실제 설계에서는 출력 축전기의 ESR이 만드는 영점도 함께 본다. 전해 축전기처럼 ESR이 크면 그 영점이 위상을 조금 보태 주지만, ESR이 아주 작은 세라믹 축전기는 그렇지 않아 보상기가 위상을 더 많이 보태야 한다. 그러므로 축전기를 바꾸면 보상기도 다시 맞춘다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>G_vd = V_in/(LCs² + (L/R)s + 1).</li>
-        <li>LC 공진에서 위상 −180°.</li>
-        <li>Type III 보상, 교차 ≈ f_s/5~10.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>출력을 재서 듀티만 바꾸면 저절로 안정하다고 여기기 쉽다. LC 공진의 위상 때문에 보상 없이는 진동한다. 또 교차 주파수는 높을수록 좋다고 생각하기 쉬운데, 스위칭 잡음과 표본화 지연 때문에 한계가 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>벅의 듀티-출력 전달함수는 출력 LC의 2차 꼴이고, 공진 f₀ = 1/(2π√(LC))에서 위상이 크게 꺾인다. Type III 보상기로 교차 주파수 근처에 위상을 보탠다. 교차 주파수는 스위칭 주파수의 1/5~1/10쯤에 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>L = 4.7 μH, C = 47 μF의 f_0은?
-          <details><summary>답</summary><p>약 10.7 kHz.</p></details>
+          <details><summary>답</summary><p>약 10.7 kHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>저부하(R 큼)에서 공진 봉우리는?
-          <details><summary>답</summary><p>감쇠가 작아 봉우리가 커집니다.</p></details>
+          <details><summary>답</summary><p>감쇠가 작아 봉우리가 커진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>전류 모드 제어의 장점은?
-          <details><summary>답</summary><p>인덕터 전류를 직접 제어해 전달함수가 1차에 가까워지고 보상이 쉬워집니다.</p></details>
+          <details><summary>답</summary><p>인덕터 전류를 직접 제어해 전달함수가 1차에 가까워지고 보상이 쉬워진다.</p></details>
         </li>
       </ol>
     </div>
