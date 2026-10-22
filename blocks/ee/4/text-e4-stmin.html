@@ -8,57 +8,59 @@
 <article class="card q-card" id="text-e4-stmin" data-kind="본문" data-std="전전4-06-03">
   <header class="card-head"><span class="no"></span><h2>상태 최소화와 상태 할당</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>같은 입력에 같은 출력과 같은(동치) 다음 상태를 갖는 두 상태를 합친다.</li>
-        <li>분할 정제로 동치 상태를 찾는다.</li>
-        <li>상태 할당(2진, 원-핫, 그레이)이 회로 크기에 주는 영향을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>상태도 설계 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">처음 그린 상태도에는 상태가 넷인데, 따져 보니 그 가운데 둘은 밖에서 보기에 똑같이 행동한다. 그렇다면 둘을 하나로 합쳐도 되지 않을까? 겉으로 같아 보이는 상태를 정말 합쳐도 되는지는 어떻게 판정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 180" role="img" aria-label="분할 정제. 처음 묶음 A, B, C, D를 출력으로 나누면 A, B와 C, D가 되고, x = 1의 다음 상태 묶음으로 다시 나누면 A와 B가 갈라지며 C와 D는 끝까지 함께 남는다">
+        <defs><marker id="ah-sm1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="40" y="60" width="110" height="40" class="lk"/><rect x="40" y="60" width="110" height="40" class="k"/>
+        <text x="95" y="85" text-anchor="middle" class="s">A B C D</text>
+        <rect x="210" y="40" width="70" height="34" class="la"/><rect x="210" y="40" width="70" height="34" class="a"/>
+        <rect x="210" y="90" width="70" height="34" class="lc"/><rect x="210" y="90" width="70" height="34" class="c"/>
+        <text x="245" y="62" text-anchor="middle" class="ta">A B</text><text x="245" y="112" text-anchor="middle" class="tc">C D</text>
+        <rect x="350" y="25" width="50" height="30" class="la"/><rect x="350" y="25" width="50" height="30" class="a"/>
+        <rect x="350" y="60" width="50" height="30" class="la"/><rect x="350" y="60" width="50" height="30" class="a"/>
+        <rect x="350" y="100" width="70" height="34" class="lc"/><rect x="350" y="100" width="70" height="34" class="c"/>
+        <text x="375" y="45" text-anchor="middle" class="ta">A</text><text x="375" y="80" text-anchor="middle" class="ta">B</text><text x="385" y="122" text-anchor="middle" class="tc">C ≡ D</text>
+        <g class="k" marker-end="url(#ah-sm1)"><path d="M152 80 H206"/><path d="M282 80 H346"/></g>
+        <text x="180" y="150" text-anchor="middle" class="s">출력으로 나눔</text><text x="315" y="160" text-anchor="middle" class="s">다음 상태 묶음으로 나눔</text>
+        <text x="440" y="70" class="s">더 나뉘지 않음</text><text x="440" y="90" class="s">→ 상태 3개</text>
+      </svg>
+      <figcaption>그림 1. 출력이 다른 상태부터 나누고, 같은 묶음 안에서 다음 상태가 다른 묶음으로 가는 상태를 다시 나누기를 되풀이하면, 끝까지 함께 남은 상태들은 밖에서 구별할 수 없으므로 하나로 합칠 수 있다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>상태도 설계(<a href="06-01.html">6.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>동치 상태 합치기</h3>
-    <p>상태표에서 (1) 출력이 다른 상태끼리 나누고, (2) 각 묶음 안에서 다음 상태가 서로 다른 묶음으로 가는 상태를 다시 나누기를 바뀌지 않을 때까지 반복합니다. 같은 묶음에 남은 상태들은 밖에서 구별할 수 없으므로 하나로 합칩니다.</p>
+    <p>상태표에서 먼저 출력이 다른 상태끼리 나눈다. 이어 각 묶음 안에서 다음 상태가 서로 다른 묶음으로 가는 상태를 다시 나누고, 이를 바뀌지 않을 때까지 되풀이한다. 그러면 같은 묶음에 남은 상태들은 어떤 입력을 넣어도 밖에서 구별할 수 없으므로 하나로 합친다. 처음 질문의 답이 이 분할 정제이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
-      <p>Moore 기계 상태표: A(출력 0; x=0→A, x=1→B), B(0; A, C), C(1; A, D), D(1; A, D). 최소화하라.</p>
+      <p>무어 기계의 상태표가 A(출력 0, x = 0이면 A, x = 1이면 B), B(0, A, C), C(1, A, D), D(1, A, D)이다. 최소화하여라.</p>
     </div>
-    <p><i>풀이.</i> 출력으로 {A, B}, {C, D}. x = 1의 다음 상태: A → B({A, B}), B → C({C, D})로 다른 묶음이라 A와 B를 나눕니다. C → D, D → D는 같은 묶음, x = 0은 모두 A라 C와 D는 동치입니다. 결과 A, B, C 세 상태(D를 C로 합침)이며 플립플롭이 2개로 충분합니다. 이 기계는 "1이 두 번 이상 연속" 검출기입니다.</p>
-    <p>상태 할당: 2진 할당은 플립플롭이 가장 적고(⌈log₂n⌉개), 원-핫(상태마다 플립플롭 하나)은 다음 상태 논리가 간단해 FPGA에서 흔히 씁니다.</p>
+    <p><i>풀이.</i> 출력으로 나누면 {A, B}와 {C, D}이다. x = 1의 다음 상태를 보면 A는 B로 가서 {A, B}에, B는 C로 가서 {C, D}에 들어가므로 다른 묶음이라 A와 B를 나눈다. 반면 C와 D는 x = 1이면 둘 다 D로, x = 0이면 둘 다 A로 가므로 같은 묶음에 남는다. 따라서 C와 D는 동치이다(그림 1). 결과는 D를 C로 합친 A, B, C 세 상태이고 플립플롭 2개로 충분하다. 이 기계는 1이 두 번 이상 연속되면 출력 1을 내는 검출기이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "출력이 같으면 합칠 수 있다": 다음 상태들도 동치여야 합니다. (2) "상태가 적을수록 회로가 항상 작다": 할당 방식에 따라 조합 논리가 더 커질 수 있습니다.</div>
+    <p>상태 수가 정해지면 부호를 붙인다. 2진 할당은 플립플롭이 가장 적어 \(\lceil\log_2n\rceil\)개이고, 상태마다 플립플롭을 하나씩 두는 원-핫 할당은 다음 상태 논리가 간단해 FPGA에서 흔히 쓴다(6.1절). 다만 상태가 줄었다고 회로가 늘 작아지는 것은 아니다. 할당 방식에 따라 조합 논리의 크기가 달라지기 때문이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>출력으로 나누고, 다음 상태 묶음으로 계속 나눔(분할 정제).</li>
-        <li>예: A, B, C, D → A, B, C(C ≡ D).</li>
-        <li>할당: 2진(플립플롭 최소), 원-핫(논리 간단).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"출력이 같으면 합칠 수 있다"는 틀리다. 다음 상태들도 동치여야 한다. 예제에서 A와 B는 출력이 같지만 x = 1에서 가는 곳이 달라 합칠 수 없었다. 또 상태가 적을수록 회로가 항상 작다는 생각도 할당에 따라 틀릴 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>상태 최소화는 출력으로 나눈 뒤 다음 상태가 가는 묶음으로 계속 나누는 분할 정제로 하며, 끝까지 같은 묶음에 남은 상태는 밖에서 구별할 수 없으므로 합친다. 예제의 A, B, C, D는 C와 D가 동치여서 세 상태로 줄었다. 그 다음 플립플롭이 적은 2진 할당이나 논리가 간단한 원-핫 할당으로 부호를 붙인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>상태 5개를 2진 할당하면 플립플롭 수는?
-          <details><summary>답</summary><p>3개.</p></details>
+          <details><summary>답</summary><p>3개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 기계를 원-핫으로 하면?
-          <details><summary>답</summary><p>5개.</p></details>
+          <details><summary>답</summary><p>5개이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>두 상태가 출력은 같고 다음 상태가 서로 상대방이면 합칠 수 있는가?
-          <details><summary>답</summary><p>다른 조건이 같다면 예. 서로를 가리키는 것은 같은 묶음 안이라 구별되지 않습니다.</p></details>
+          <details><summary>답</summary><p>다른 입력에서의 조건도 같다면 합칠 수 있다. 서로를 가리키는 것은 같은 묶음 안에서 움직이는 것이어서 밖에서 구별되지 않는다.</p></details>
         </li>
       </ol>
     </div>

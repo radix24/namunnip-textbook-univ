@@ -8,22 +8,27 @@
 <article class="card q-card" id="text-e4-codes" data-kind="본문" data-std="전전4-01-02">
   <header class="card-head"><span class="no"></span><h2>BCD와 그레이 코드</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>10진 자리마다 4비트를 쓰는 BCD로 수를 나타낸다.</li>
-        <li>이웃한 수가 한 비트만 다른 그레이 코드를 만들고 2진수와 서로 바꾼다.</li>
-        <li>그레이 코드가 회전 인코더와 카르노 맵에 쓰이는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2진수와 2의 보수 (<a href="01-01.html">1.1절</a>), XOR.</li>
-      </ul>
-    </div>
+    <p class="q-ask">로봇 팔 관절의 회전 인코더가 각도를 3비트로 읽는다. 3(011)에서 4(100)로 넘어가는 순간 세 비트가 모두 바뀌는데, 세 센서가 정확히 같은 순간에 바뀌지는 않는다. 그 짧은 틈에 컴퓨터는 엉뚱한 각도 7을 읽을 수도 있다. 이런 사고를 막는 수 표기법이 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="3에서 4로 넘어갈 때 2진수는 세 비트가 모두 바뀌어 중간에 아무 값이나 보일 수 있지만, 그레이 코드는 010에서 110으로 한 비트만 바뀐다">
+        <text x="40" y="40" class="s">2진수</text>
+        <g class="s" text-anchor="middle"><text x="160" y="40">0 1 1</text><text x="400" y="40">1 0 0</text></g>
+        <rect x="120" y="25" width="80" height="22" class="la"/><rect x="360" y="25" width="80" height="22" class="la"/>
+        <path d="M200 36 H360" class="d dsh"/><text x="280" y="30" text-anchor="middle" class="td">세 비트가 바뀜</text>
+        <text x="280" y="62" text-anchor="middle" class="td">사이에 000, 111 같은 값이 잠깐 보일 수 있음</text>
+        <text x="40" y="120" class="s">그레이</text>
+        <g class="s" text-anchor="middle"><text x="160" y="120">0 1 0</text><text x="400" y="120">1 1 0</text></g>
+        <rect x="120" y="105" width="80" height="22" class="lb"/><rect x="360" y="105" width="80" height="22" class="lb"/>
+        <path d="M200 116 H360" class="b"/><text x="280" y="110" text-anchor="middle" class="tb">맨 앞 한 비트만 바뀜</text>
+        <text x="280" y="142" text-anchor="middle" class="tb">3 아니면 4만 보임</text>
+        <text x="160" y="170" text-anchor="middle" class="s">3</text><text x="400" y="170" text-anchor="middle" class="s">4</text>
+      </svg>
+      <figcaption>그림 1. 그레이 코드는 이웃한 수가 한 비트만 다르도록 만든 부호이므로, 여러 비트를 동시에 읽는 센서가 경계를 지날 때 이웃한 두 값 가운데 하나만 보이고 엉뚱한 값은 나오지 않는다(예제 1.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2진수와 2의 보수(<a href="01-01.html">1.1절</a>), 두 비트가 다를 때 1이 되는 XOR을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>두 코드</h3>
-    <p><b>BCD</b>: 10진수 각 자리를 0000~1001로 따로 씁니다. 2026 → 0010 0000 0010 0110. 7세그먼트 표시와 계산기처럼 10진 자리를 다루는 곳에 편하지만 1010~1111을 쓰지 않아 비트를 낭비합니다.</p>
-    <p><b>그레이 코드</b>: \(g = b \oplus (b \gg 1)\). 이웃한 수가 한 비트만 다르므로, 회전 인코더처럼 여러 비트를 동시에 읽을 때 경계에서 엉뚱한 값을 읽는 일이 없습니다.</p>
+    <p>BCD는 10진수 각 자리를 0000에서 1001로 따로 쓰는 부호여서, 2026은 0010 0000 0010 0110이 된다. 7세그먼트 표시와 계산기처럼 10진 자리를 다루는 곳에 편하지만, 1010에서 1111을 쓰지 않으므로 비트를 낭비한다. 반면 그레이 코드는 \(g = b \oplus (b \gg 1)\)로 만든다. 이웃한 수가 한 비트만 다르므로, 회전 인코더처럼 여러 비트를 동시에 읽을 때 경계에서 엉뚱한 값을 읽는 일이 없다. 처음 질문의 답이 이것이다. 거꾸로 그레이 코드를 2진수로 되돌릴 때는 위쪽 비트를 차례로 XOR한다.</p>
     <pre><code>for b in range(8):
     g = b ^ (b &gt;&gt; 1)
     back, x = 0, g
@@ -31,7 +36,7 @@
         back ^= x; x &gt;&gt;= 1
     print(b, format(b, "03b"), "→ 그레이", format(g, "03b"), "→ 되돌림", back)
 print("BCD 2026:", " ".join(format(int(c), "04b") for c in "2026"))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 다음과 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>0 000 → 그레이 000 → 되돌림 0
 1 001 → 그레이 001 → 되돌림 1
 2 010 → 그레이 011 → 되돌림 2
@@ -41,41 +46,35 @@ print("BCD 2026:", " ".join(format(int(c), "04b") for c in "2026"))</code></pre>
 6 110 → 그레이 101 → 되돌림 6
 7 111 → 그레이 100 → 되돌림 7
 BCD 2026: 0010 0000 0010 0110</code></pre>
+    <p>출력의 그레이 열을 위에서 아래로 읽으면 이웃한 두 줄이 늘 한 비트만 다르고, 마지막 100과 처음 000도 한 비트만 다르다. 그래서 회전처럼 한 바퀴 도는 위치에도 쓸 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>2진수로 3(011)에서 4(100)로 넘어갈 때 센서가 세 비트를 조금씩 다른 순간에 읽으면 어떤 값이 잠깐 보일 수 있는가? 그레이 코드는?</p>
     </div>
-    <p><i>풀이.</i> 세 비트가 모두 바뀌므로 000~111 어느 값이든 잠깐 보일 수 있습니다(예: 111 = 7). 그레이 코드는 010 → 110으로 한 비트만 바뀌어 3 또는 4만 보입니다.</p>
+    <p><i>풀이.</i> 세 비트가 모두 바뀌므로 000에서 111까지 어느 값이든 잠깐 보일 수 있다. 가령 111, 곧 7이 보일 수 있다. 반면 그레이 코드는 010에서 110으로 한 비트만 바뀌므로 3 또는 4만 보인다(그림 1).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "BCD 1001 + 0001 = 1010이 답": BCD에서는 10이 넘으면 6(0110)을 더해 자리올림을 맞춥니다(0001 0000). (2) "그레이 코드로 바로 더할 수 있다": 산술에는 2진수로 바꿔 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"BCD로 1001 + 0001 = 1010이 답"은 틀리다. BCD에서는 한 자리가 9를 넘으면 6(0110)을 더해 자리올림을 맞추므로 답은 0001 0000이다. 또 그레이 코드로 바로 더할 수 있다고 생각하기 쉬운데, 산술에는 2진수로 바꿔 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>BCD: 10진 자리마다 4비트, 7세그먼트·계산기.</li>
-        <li>그레이: g = b ⊕ (b ≫ 1), 이웃 수가 한 비트 차이.</li>
-        <li>회전 인코더와 카르노 맵 배치에 쓰임.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>BCD는 10진 자리마다 4비트를 써서 7세그먼트 표시와 계산기에 편하고, 그레이 코드 \(g = b \oplus (b \gg 1)\)는 이웃한 수가 한 비트만 다르므로 여러 비트를 동시에 읽는 회전 인코더의 경계 오류를 막는다. 같은 성질 덕분에 그레이 순서는 카르노 맵의 칸 배치에도 쓰인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>59의 BCD는?
-          <details><summary>답</summary><p>0101 1001.</p></details>
+          <details><summary>답</summary><p>0101 1001이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>2진 1011의 그레이 코드는?
-          <details><summary>답</summary><p>1011 ⊕ 0101 = 1110.</p></details>
+          <details><summary>답</summary><p>1011 ⊕ 0101 = 1110이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>그레이 1101을 2진수로 바꾸라.
-          <details><summary>답</summary><p>1, 1⊕1 = 0, 0⊕0 = 0, 0⊕1 = 1 → 1001.</p></details>
+        <li>그레이 1101을 2진수로 바꾸어라.
+          <details><summary>답</summary><p>맨 앞은 1, 다음은 1⊕1 = 0, 그 다음은 0⊕0 = 0, 마지막은 0⊕1 = 1이므로 1001이다.</p></details>
         </li>
       </ol>
     </div>

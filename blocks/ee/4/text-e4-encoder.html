@@ -8,58 +8,58 @@
 <article class="card q-card" id="text-e4-encoder" data-kind="본문" data-std="전전4-04-04">
   <header class="card-head"><span class="no"></span><h2>디코더와 우선순위 인코더</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>n비트 입력으로 2ⁿ개 출력 중 하나를 켜는 디코더를 설계한다.</li>
-        <li>여러 입력 중 가장 높은 번호를 2진수로 내는 우선순위 인코더를 설계한다.</li>
-        <li>디코더로 임의의 논리 함수와 메모리 주소 선택을 구현한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>멀티플렉서 (<a href="04-02.html">4.2절</a>), 표준형 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">키보드 컨트롤러와 프린터가 동시에 CPU를 부른다. CPU는 한 번에 하나만 처리할 수 있으니 누구의 요청을 먼저 들어줄지 정해야 한다. 여러 신호선이 한꺼번에 1이 되었을 때 가장 중요한 것의 번호 하나만 뽑아내는 회로는 어떻게 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="4입력 우선순위 인코더. 입력 D3 D2 D1 D0 = 0110이 들어오면 1인 것 가운데 가장 높은 D2의 번호 10이 나오고 유효 비트 V는 1이다">
+        <defs><marker id="ah-en1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="200" y="30" width="120" height="130" class="la"/><rect x="200" y="30" width="120" height="130" class="a"/>
+        <text x="260" y="98" text-anchor="middle" class="ta">우선순위</text><text x="260" y="116" text-anchor="middle" class="ta">인코더</text>
+        <path d="M140 50 H200 M140 80 H200 M140 110 H200 M140 140 H200 M320 70 H380 M320 100 H380 M320 140 H380" class="k"/>
+        <g class="s" text-anchor="end"><text x="134" y="54">D₃ = 0</text><text x="134" y="114">D₁ = 1</text><text x="134" y="144">D₀ = 0</text></g>
+        <rect x="80" y="70" width="58" height="18" class="lc"/><text x="134" y="84" text-anchor="end" class="tc">D₂ = 1</text>
+        <g class="s"><text x="386" y="74">Y₁ = 1</text><text x="386" y="104">Y₀ = 0</text><text x="386" y="144">V = 1</text></g>
+        <text x="440" y="90" class="tc">→ 번호 2</text>
+        <text x="60" y="180" class="s">D₁도 1이지만 D₂가 우선</text>
+      </svg>
+      <figcaption>그림 1. 우선순위 인코더는 1인 입력 가운데 번호가 가장 큰 것만 2진수로 내고, 입력이 하나라도 있는지를 유효 비트 V로 알리므로, 동시에 들어온 여러 요청에서 가장 급한 것 하나를 고른다(예제 4.4.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>멀티플렉서와 디코더(<a href="04-02.html">4.2절</a>), 표준형(<a href="02-03.html">2.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.4.1</span>디코더</h3>
-    <p>2-to-4 디코더는 입력 \(A_1A_0\)의 각 조합에서 출력 하나만 1(\(Y_0 = \bar A_1\bar A_0\), …, \(Y_3 = A_1A_0\))입니다. 출력이 곧 최소항이므로, 원하는 최소항 출력을 OR로 묶으면 어떤 함수든 만들 수 있습니다. 메모리에서는 주소를 받아 한 줄(워드)만 선택하는 데 씁니다.</p>
+    <p>2-to-4 디코더는 입력 \(A_1A_0\)의 각 조합에서 출력 하나만 1이 되며, \(Y_0 = \bar A_1\bar A_0\)부터 \(Y_3 = A_1A_0\)까지이다. 출력이 곧 최소항이므로, 원하는 최소항 출력을 OR로 묶으면 어떤 함수든 만들 수 있다. 메모리에서는 주소를 받아 한 줄(워드)만 선택하는 데 쓴다.</p>
+
     <h3><span class="no">4.4.2</span>우선순위 인코더</h3>
-    <p>입력 \(D_3D_2D_1D_0\) 중 1인 가장 높은 번호를 2진수로 내고, 아무것도 1이 아니면 유효 출력 V = 0입니다. \(Y_1 = D_3 + D_2\), \(Y_0 = D_3 + \bar D_2D_1\), \(V = D_3 + D_2 + D_1 + D_0\).</p>
+    <p>우선순위 인코더는 입력 \(D_3D_2D_1D_0\) 가운데 1인 가장 높은 번호를 2진수로 내고, 아무것도 1이 아니면 유효 출력 V를 0으로 한다. 식은 다음과 같다.</p>
+    \[ Y_1 = D_3 + D_2, \qquad Y_0 = D_3 + \bar D_2D_1, \qquad V = D_3 + D_2 + D_1 + D_0 \]
+    <p>\(Y_1\)은 번호가 2나 3일 때 1이어야 하므로 \(D_3\)이나 \(D_2\)가 1이면 1이다. 한편 \(Y_0\)은 번호가 3이거나 1일 때 1이어야 하는데, 번호가 1이 되려면 \(D_1\)이 1이고 그보다 높은 \(D_2\)가 0이어야 하므로 \(\bar D_2D_1\)이 들어간다. 처음 질문의 답이 이 회로이며, 높은 번호의 입력이 낮은 번호의 항을 막는 꼴로 우선순위가 정해진다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1</span>
-      <p>입력 0110이면 출력은? 인터럽트 제어기에서 우선순위 인코더를 쓰는 이유는?</p>
+      <p>입력이 0110이면 출력은? 인터럽트 제어기에서 우선순위 인코더를 쓰는 이유는?</p>
     </div>
-    <p><i>풀이.</i> 가장 높은 1은 D₂ → Y = 10, V = 1. 검산: \(Y_1 = 0 + 1 = 1\), \(Y_0 = 0 + \bar 1\cdot1 = 0\). 여러 장치가 동시에 요청하면 가장 중요한 요청의 번호를 CPU에 알려야 하기 때문입니다.</p>
+    <p><i>풀이.</i> 가장 높은 1은 \(D_2\)이므로 Y = 10, V = 1이다. 검산하면 \(Y_1 = 0 + 1 = 1\), \(Y_0 = 0 + \bar 1\cdot1 = 0\)이다(그림 1). 여러 장치가 동시에 요청하면 가장 중요한 요청의 번호를 CPU에 알려야 하기 때문에 우선순위 인코더를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "보통 인코더도 여러 입력을 처리한다": 단순 인코더는 입력이 하나만 1이라고 가정해 둘 이상이면 틀린 값을 냅니다. (2) "V 출력은 필요 없다": 입력이 모두 0인 경우와 D₀만 1인 경우가 Y = 00으로 같아 구별에 필요합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"보통 인코더도 여러 입력을 처리한다"는 틀리다. 단순 인코더는 입력이 하나만 1이라고 가정하므로 둘 이상이면 틀린 값을 낸다. 또 V 출력이 필요 없다고 생각하기 쉽지만, 입력이 모두 0인 경우와 \(D_0\)만 1인 경우가 둘 다 Y = 00이어서 둘을 구별하려면 V가 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>디코더: 출력 = 최소항, OR로 함수 구현, 주소 선택.</li>
-        <li>우선순위 인코더: Y₁ = D₃ + D₂, Y₀ = D₃ + D̄₂D₁, V.</li>
-        <li>인터럽트 우선순위 처리.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>디코더의 출력은 최소항이어서 OR로 함수를 만들거나 메모리 주소를 선택하는 데 쓴다. 우선순위 인코더는 \(Y_1 = D_3 + D_2\), \(Y_0 = D_3 + \bar D_2D_1\)처럼 높은 입력이 낮은 입력을 막도록 만들어 1인 입력 가운데 가장 높은 번호만 내고, 유효 비트 V로 입력이 있는지를 알린다. 그래서 동시에 들어온 인터럽트 가운데 가장 급한 것을 고를 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>3-to-8 디코더에서 입력 101이면 켜지는 출력은?
-          <details><summary>답</summary><p>Y₅.</p></details>
+          <details><summary>답</summary><p>\(Y_5\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>디코더 하나와 OR 게이트로 F = Σm(1, 2, 7)을 만들려면?
-          <details><summary>답</summary><p>3-to-8 디코더의 Y₁, Y₂, Y₇을 OR합니다.</p></details>
+        <li>디코더 하나와 OR 게이트로 \(F = \Sigma m(1, 2, 7)\)을 만들려면?
+          <details><summary>답</summary><p>3-to-8 디코더의 \(Y_1\), \(Y_2\), \(Y_7\)을 OR한다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>입력 0001과 0000을 우선순위 인코더 출력으로 구별하는 방법은?
-          <details><summary>답</summary><p>둘 다 Y = 00이지만 V가 1과 0으로 다릅니다.</p></details>
+          <details><summary>답</summary><p>둘 다 Y = 00이지만 V가 각각 1과 0으로 다르다.</p></details>
         </li>
       </ol>
     </div>

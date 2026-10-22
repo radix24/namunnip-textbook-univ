@@ -8,21 +8,33 @@
 <article class="card q-card" id="text-e4-shift" data-kind="본문" data-std="전전4-05-04">
   <header class="card-head"><span class="no"></span><h2>시프트 레지스터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>D 플립플롭을 이어 한 클록마다 비트가 옮겨 가는 시프트 레지스터를 설계한다.</li>
-        <li>직렬 입력-병렬 출력(SIPO)과 병렬 입력-직렬 출력(PISO)의 쓰임을 안다.</li>
-        <li>링 카운터와 존슨 카운터의 상태 순서를 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>D 플립플롭 (<a href="05-01.html">5.1절</a>), 카운터 (<a href="05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">USB나 UART 같은 직렬 통신은 선 하나로 비트를 하나씩 보낸다. 그런데 CPU는 8비트나 32비트를 한꺼번에 다룬다. 한 줄로 들어오는 비트를 모아 한 번에 읽을 수 있게 하는 회로는 어떻게 만들까? 플립플롭을 줄지어 이으면 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="4비트 직렬 입력 시프트 레지스터에 1, 0, 1, 1을 차례로 넣었을 때 클록마다 Q0에서 Q3까지의 값. 비트가 한 칸씩 오른쪽으로 밀려 4클록 뒤 1101이 된다">
+        <g class="s" text-anchor="middle"><text x="200" y="28">Q₀</text><text x="260" y="28">Q₁</text><text x="320" y="28">Q₂</text><text x="380" y="28">Q₃</text></g>
+        <g class="s" text-anchor="end"><text x="160" y="58">클록 1 (입력 1)</text><text x="160" y="93">클록 2 (입력 0)</text><text x="160" y="128">클록 3 (입력 1)</text><text x="160" y="163">클록 4 (입력 1)</text></g>
+        <g class="gd">
+          <rect x="175" y="40" width="50" height="28"/><rect x="235" y="40" width="50" height="28"/><rect x="295" y="40" width="50" height="28"/><rect x="355" y="40" width="50" height="28"/>
+          <rect x="175" y="75" width="50" height="28"/><rect x="235" y="75" width="50" height="28"/><rect x="295" y="75" width="50" height="28"/><rect x="355" y="75" width="50" height="28"/>
+          <rect x="175" y="110" width="50" height="28"/><rect x="235" y="110" width="50" height="28"/><rect x="295" y="110" width="50" height="28"/><rect x="355" y="110" width="50" height="28"/>
+          <rect x="175" y="145" width="50" height="28"/><rect x="235" y="145" width="50" height="28"/><rect x="295" y="145" width="50" height="28"/><rect x="355" y="145" width="50" height="28"/>
+        </g>
+        <g class="la"><rect x="176" y="41" width="48" height="26"/><rect x="236" y="76" width="48" height="26"/><rect x="176" y="111" width="48" height="26"/><rect x="296" y="111" width="48" height="26"/><rect x="176" y="146" width="48" height="26"/><rect x="236" y="146" width="48" height="26"/><rect x="356" y="146" width="48" height="26"/></g>
+        <g text-anchor="middle" class="ta">
+          <text x="200" y="59">1</text><text x="260" y="59" class="s">0</text><text x="320" y="59" class="s">0</text><text x="380" y="59" class="s">0</text>
+          <text x="200" y="94" class="s">0</text><text x="260" y="94">1</text><text x="320" y="94" class="s">0</text><text x="380" y="94" class="s">0</text>
+          <text x="200" y="129">1</text><text x="260" y="129" class="s">0</text><text x="320" y="129">1</text><text x="380" y="129" class="s">0</text>
+          <text x="200" y="164">1</text><text x="260" y="164">1</text><text x="320" y="164" class="s">0</text><text x="380" y="164">1</text>
+        </g>
+        <text x="420" y="164" class="tc">← 4클록 뒤 병렬로 읽음</text>
+      </svg>
+      <figcaption>그림 1. 같은 클록을 받는 D 플립플롭을 줄지어 이으면 각 플립플롭이 모서리 직전의 앞 칸 값을 잡으므로 비트가 클록마다 한 칸씩 밀리고, 4클록 뒤에는 직렬로 들어온 네 비트를 한꺼번에 읽을 수 있다(아래 코드의 실행 결과).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>D 플립플롭(<a href="05-01.html">5.1절</a>), 카운터(<a href="05-02.html">5.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>한 칸씩 옮기기</h3>
-    <p>D 플립플롭 Q₀ → Q₁ → Q₂ → Q₃을 같은 클록으로 이으면, 클록마다 입력 비트가 한 칸씩 이동합니다. 직렬로 들어온 비트를 4클록 뒤에 병렬로 읽으면(SIPO) 직렬 통신 수신, 병렬로 넣고 한 비트씩 내보내면(PISO) 송신에 씁니다(UART, SPI).</p>
+    <p>D 플립플롭 \(Q_0\), \(Q_1\), \(Q_2\), \(Q_3\)을 같은 클록으로 앞에서 뒤로 이으면, 클록마다 입력 비트가 한 칸씩 이동한다. 처음 질문의 답이 이것이다. 직렬로 들어온 비트를 4클록 뒤에 병렬로 읽는 방식(SIPO)은 직렬 통신의 수신에 쓰고, 병렬로 넣고 한 비트씩 내보내는 방식(PISO)은 송신에 쓴다. UART와 SPI가 그 예이다.</p>
+    <p>한편 마지막 출력을 처음 입력으로 되돌리면 카운터가 된다. 마지막 비트를 그대로 처음으로 보내면 1 하나가 도는 링 카운터이고, 마지막 비트를 뒤집어 처음으로 보내면 존슨 카운터이다. 아래 코드는 직렬 입력과 두 카운터를 흉내 낸다.</p>
     <pre><code>q = [0, 0, 0, 0]
 for clk, bit in enumerate([1, 0, 1, 1], 1):     # 직렬 입력 1, 0, 1, 1
     q = [bit] + q[:-1]
@@ -35,48 +47,42 @@ for _ in range(8):
     john = [1 - john[-1]] + john[:-1]               # 존슨: 마지막 비트를 뒤집어 처음으로
 print("링 카운터 :", rs[:4])
 print("존슨 카운터:", js)</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 다음과 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>클록 1: Q0..Q3 = [1, 0, 0, 0]
 클록 2: Q0..Q3 = [0, 1, 0, 0]
 클록 3: Q0..Q3 = [1, 0, 1, 0]
 클록 4: Q0..Q3 = [1, 1, 0, 1]
 링 카운터 : ['1000', '0100', '0010', '0001']
 존슨 카운터: ['0000', '1000', '1100', '1110', '1111', '0111', '0011', '0001']</code></pre>
+    <p>첫 네 줄이 그림 1이다. 넷째 클록 뒤의 1101을 오른쪽에서 왼쪽으로 읽으면 들어온 순서 1, 0, 1, 1이 된다. 즉 먼저 들어온 비트일수록 멀리 밀려나 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
       <p>4비트 링 카운터와 존슨 카운터는 각각 몇 개의 상태를 도는가?</p>
     </div>
-    <p><i>풀이.</i> 링 카운터는 1 하나가 도는 4상태(1000, 0100, 0010, 0001), 존슨 카운터는 0000, 1000, 1100, 1110, 1111, 0111, 0011, 0001의 8상태(2n)입니다. 두 경우 모두 상태마다 두 비트 이하만 보면 해독할 수 있어 단계 신호 생성에 씁니다.</p>
+    <p><i>풀이.</i> 링 카운터는 1 하나가 도는 1000, 0100, 0010, 0001의 4상태이고, 존슨 카운터는 0000, 1000, 1100, 1110, 1111, 0111, 0011, 0001의 8상태, 곧 2n상태이다. 두 경우 모두 상태마다 두 비트 이하만 보면 해독할 수 있어서 단계 신호를 만드는 데 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "같은 클록이면 모든 비트가 한꺼번에 첫 칸으로 간다": 각 플립플롭이 클록 직전의 앞 칸 값을 잡으므로 한 칸씩만 이동합니다. (2) "링 카운터는 아무 초기값에서나 시작해도 된다": 1이 정확히 하나 들어 있게 초기화해야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>"같은 클록이면 모든 비트가 한꺼번에 첫 칸으로 간다"는 틀리다. 각 플립플롭이 클록 직전의 앞 칸 값을 잡으므로 한 칸씩만 이동한다. 또 링 카운터는 아무 초기값에서나 시작해도 되는 것이 아니라, 1이 정확히 하나 들어 있게 초기화해야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>시프트 레지스터: 클록마다 한 칸 이동.</li>
-        <li>SIPO(수신), PISO(송신).</li>
-        <li>링 카운터 n상태, 존슨 카운터 2n상태.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>같은 클록의 D 플립플롭을 줄지어 이은 시프트 레지스터는 클록마다 비트를 한 칸씩 옮기므로, 직렬 입력을 병렬로 모으거나(SIPO, 수신) 병렬 값을 직렬로 내보내는(PISO, 송신) 데 쓴다. 마지막 출력을 처음 입력으로 되돌리면 n상태를 도는 링 카운터가, 뒤집어 되돌리면 2n상태를 도는 존슨 카운터가 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>SIPO에 1, 1, 0을 넣은 뒤(3비트, 처음 000) 상태는?
-          <details><summary>답</summary><p>Q₀Q₁Q₂ = 011.</p></details>
+        <li>처음 000인 3비트 SIPO에 1, 1, 0을 넣은 뒤의 상태는?
+          <details><summary>답</summary><p>\(Q_0Q_1Q_2\) = 011이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>8비트 존슨 카운터의 상태 수는?
-          <details><summary>답</summary><p>16.</p></details>
+          <details><summary>답</summary><p>16이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>왼쪽 시프트가 2배 곱셈이 되는 이유와 조건은?
-          <details><summary>답</summary><p>자릿값이 하나씩 올라가기 때문이며, 넘치는 비트가 없어야 합니다.</p></details>
+          <details><summary>답</summary><p>모든 비트의 자릿값이 하나씩 올라가기 때문이며, 넘치는 비트가 없어야 한다.</p></details>
         </li>
       </ol>
     </div>

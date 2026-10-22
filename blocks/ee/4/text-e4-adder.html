@@ -8,76 +8,70 @@
 <article class="card q-card" id="text-e4-adder" data-kind="본문" data-std="전전4-04-01">
   <header class="card-head"><span class="no"></span><h2>가산기와 감산기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>반가산기와 전가산기의 진리표와 식을 유도한다.</li>
-        <li>전가산기 n개로 리플 캐리 가산기를, XOR를 더해 가감산기를 만든다.</li>
-        <li>조합 회로 설계 절차(명세 → 진리표 → 최소화 → 회로)를 익힌다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2의 보수와 오버플로 (<a href="01-01.html">1.1절</a>), 카르노 맵 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">CPU의 산술 장치는 덧셈과 뺄셈을 같은 회로로 한다. 1.1절에서 뺄셈을 덧셈으로 바꾸는 2의 보수를 배웠으니, 이제 실제 게이트로 그 회로를 만들 차례이다. 1비트 덧셈 회로를 어떻게 만들고, 그것을 이어 여러 비트를 어떻게 더할까? 뺄셈으로 바꾸는 스위치는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="4비트 리플 캐리 가감산기에 A = 0110, B = 1001, M = 1을 넣은 모습. B가 뒤집혀 0110이 되고 맨 아래 올림 1이 들어가 결과 1101이 나오며, C4 = 0, C3 = 1이라 오버플로 V = 1이다">
+        <defs><marker id="ah-ad1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="70" y="70" width="80" height="50" class="la"/><rect x="70" y="70" width="80" height="50" class="a"/>
+        <rect x="180" y="70" width="80" height="50" class="la"/><rect x="180" y="70" width="80" height="50" class="a"/>
+        <rect x="290" y="70" width="80" height="50" class="la"/><rect x="290" y="70" width="80" height="50" class="a"/>
+        <rect x="400" y="70" width="80" height="50" class="la"/><rect x="400" y="70" width="80" height="50" class="a"/>
+        <g text-anchor="middle" class="ta"><text x="110" y="100">FA3</text><text x="220" y="100">FA2</text><text x="330" y="100">FA1</text><text x="440" y="100">FA0</text></g>
+        <g class="k" marker-end="url(#ah-ad1)"><path d="M400 95 H372"/><path d="M290 95 H262"/><path d="M180 95 H152"/><path d="M510 95 H482"/><path d="M70 95 H40"/></g>
+        <g text-anchor="middle" class="s"><text x="385" y="88">C1=0</text><text x="275" y="88">C2=1</text><text x="165" y="88">C3=1</text><text x="50" y="88">C4=0</text><text x="520" y="88">C0=M=1</text></g>
+        <g text-anchor="middle" class="s"><text x="110" y="40">A3 0, B3⊕M 0</text><text x="220" y="40">A2 1, B2⊕M 1</text><text x="330" y="40">A1 1, B1⊕M 1</text><text x="440" y="40">A0 0, B0⊕M 0</text></g>
+        <path d="M110 46 V70 M220 46 V70 M330 46 V70 M440 46 V70 M110 120 V140 M220 120 V140 M330 120 V140 M440 120 V140" class="k"/>
+        <g text-anchor="middle" class="tb"><text x="110" y="156">S3 = 1</text><text x="220" y="156">S2 = 1</text><text x="330" y="156">S1 = 0</text><text x="440" y="156">S0 = 1</text></g>
+        <text x="280" y="186" text-anchor="middle" class="td">결과 1101 = −3, V = C4 ⊕ C3 = 1 (6 − (−7) = 13은 범위 밖)</text>
+      </svg>
+      <figcaption>그림 1. 전가산기를 올림으로 이어 놓고, 제어 신호 M이 1이면 B의 비트를 XOR로 뒤집고 맨 아래 올림에 1을 넣으므로, 같은 회로가 \(A + B' + 1 = A - B\)를 계산하고 오버플로는 위 두 올림의 XOR로 알아낸다(예제 4.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2의 보수와 오버플로(<a href="01-01.html">1.1절</a>), 카르노 맵(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>조합 회로 설계 절차</h3>
-    <p>조합 회로는 출력이 지금 입력만으로 정해지는 회로입니다(기억이 없음). 설계는 늘 같은 순서로 합니다.</p>
-    <ol>
-      <li>명세를 읽고 입력과 출력에 이름을 붙인다.</li>
-      <li>진리표를 만든다.</li>
-      <li>출력마다 카르노 맵이나 불 대수로 최소화한다.</li>
-      <li>게이트 회로로 그리고, 진리표로 검산한다.</li>
-    </ol>
+    <p>조합 회로는 출력이 지금 입력만으로 정해지는, 곧 기억이 없는 회로이다. 따라서 설계는 늘 같은 순서로 한다. 명세를 읽고 입력과 출력에 이름을 붙인 뒤 진리표를 만든다. 이어 출력마다 카르노 맵이나 불 대수로 최소화하고, 끝으로 게이트 회로로 그려 진리표로 검산한다.</p>
 
     <h3><span class="no">4.1.2</span>반가산기와 전가산기</h3>
-    <p>1비트 두 개를 더하는 <b>반가산기</b>: 입력 A, B, 출력 합 S, 올림 C. 진리표 00 → 00, 01 → 10, 10 → 10, 11 → 01(S, C 순)에서 바로</p>
-    \[ S = A \oplus B, \qquad C = AB. \]
-    <p>여러 자리를 더하려면 아래 자리에서 올라온 올림도 더해야 하므로 입력이 셋인 <b>전가산기</b>가 필요합니다. 입력 \(A, B, C_\text{in}\)의 진리표에서 S는 1의 개수가 홀수일 때 1(패리티), \(C_\text{out}\)은 둘 이상이 1일 때 1(다수결)입니다.</p>
-    \[ S = A \oplus B \oplus C_\text{in}, \qquad C_\text{out} = AB + C_\text{in}(A \oplus B). \]
-    <p>\(C_\text{out}\)의 카르노 맵 결과는 \(AB + AC_\text{in} + BC_\text{in}\)인데, 위처럼 \(A \oplus B\)를 S와 함께 쓰도록 바꾸면 반가산기 두 개 + OR 하나로 전가산기를 만들 수 있습니다. 두 식이 같은 이유: \(A \oplus B = AB' + A'B\)이므로 \(C_\text{in}(A \oplus B) + AB\)를 전개하고 흡수하면 \(AB + AC_\text{in} + BC_\text{in}\)이 됩니다.</p>
+    <p>1비트 두 개를 더하는 반가산기는 입력 A, B와 출력 합 S, 올림 C를 가진다. 진리표가 (S, C) 순으로 00이면 00, 01이면 10, 10이면 10, 11이면 01이므로 바로 다음을 얻는다.</p>
+    \[ S = A \oplus B, \qquad C = AB \]
+    <p>그런데 여러 자리를 더하려면 아래 자리에서 올라온 올림도 더해야 하므로, 입력이 셋인 전가산기가 필요하다. 입력 \(A, B, C_\text{in}\)의 진리표에서 S는 1의 개수가 홀수일 때 1(패리티)이고, \(C_\text{out}\)은 둘 이상이 1일 때 1(다수결)이다.</p>
+    \[ S = A \oplus B \oplus C_\text{in}, \qquad C_\text{out} = AB + C_\text{in}(A \oplus B) \]
+    <p>\(C_\text{out}\)의 카르노 맵 결과는 \(AB + AC_\text{in} + BC_\text{in}\)이다. 그런데 위처럼 \(A \oplus B\)를 S와 함께 쓰도록 바꾸면 반가산기 두 개와 OR 하나로 전가산기를 만들 수 있다. 두 식이 같은 까닭은 \(A \oplus B = AB' + A'B\)이므로 \(C_\text{in}(A \oplus B) + AB\)를 전개하고 흡수하면 \(AB + AC_\text{in} + BC_\text{in}\)이 되기 때문이다.</p>
 
     <h3><span class="no">4.1.3</span>리플 캐리 가산기</h3>
-    <p>전가산기 n개를 이어 i번째의 \(C_\text{out}\)을 i+1번째의 \(C_\text{in}\)에 넣으면 n비트 가산기가 됩니다. 맨 아래 \(C_0\)은 0(덧셈) 또는 1(뺄셈). 손으로 하는 세로 덧셈과 똑같습니다. 올림이 아래에서 위로 한 자리씩 물결처럼 전해져 <b>리플 캐리</b>라 부릅니다. 단점은 느리다는 것입니다. 최악의 경우(\(0111\cdots1 + 1\)) 올림이 n자리를 모두 지나야 하므로 지연이 n에 비례합니다(디지털실험의 가산기 카드에서 약 \(2n + 1\)단). 4.3절에서 이를 개선합니다.</p>
+    <p>전가산기 n개를 이어 i번째의 \(C_\text{out}\)을 i+1번째의 \(C_\text{in}\)에 넣으면 n비트 가산기가 된다. 맨 아래 \(C_0\)은 덧셈이면 0, 뺄셈이면 1이다. 즉 손으로 하는 세로 덧셈과 똑같다. 올림이 아래에서 위로 한 자리씩 물결처럼 전해지므로 리플 캐리라 부른다.</p>
+    <p>하지만 단점은 느리다는 것이다. 최악의 경우인 \(0111\cdots1 + 1\)에서는 올림이 n자리를 모두 지나야 하므로 지연이 n에 비례하여 약 \(2n + 1\)단이 된다. 4.3절에서 이를 개선한다.</p>
 
     <h3><span class="no">4.1.4</span>가감산기</h3>
-    <p>1.1절에서 \(A - B = A + B' + 1\)이었습니다. 제어 신호 M을 두고 각 B비트를 \(B_i \oplus M\)으로 바꿔 넣고 \(C_0 = M\)으로 하면, M = 0이면 \(A + B\), M = 1이면 \(A + B' + 1 = A - B\)입니다. XOR가 "M이 1일 때만 뒤집는" 조건부 NOT 역할을 합니다. 오버플로는 \(V = C_n \oplus C_{n-1}\)(1.1절 정리 1.1.3)을 XOR 하나로 만듭니다.</p>
-
+    <p>1.1절에서 \(A - B = A + B' + 1\)이었다. 제어 신호 M을 두고 각 B비트를 \(B_i \oplus M\)으로 바꿔 넣고 \(C_0 = M\)으로 하면, M = 0이면 \(A + B\), M = 1이면 \(A + B' + 1 = A - B\)이다. 다시 말해 XOR가 M이 1일 때만 뒤집는 조건부 NOT 역할을 하는 셈이다. 처음 질문의 답이 그림 1이다. 오버플로는 1.1절 정리 1.1.3의 \(V = C_n \oplus C_{n-1}\)을 XOR 하나로 만든다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>4비트 가감산기에 A = 0110(6), B = 1001(−7), M = 1을 넣었다. 각 자리의 B 입력, 올림, 결과, 오버플로를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> M = 1이라 B를 뒤집어 0110, \(C_0 = 1\). \(0110 + 0110 + 1\): 0자리 0 + 0 + 1 = 1(올림 0), 1자리 1 + 1 + 0 = 0(올림 1), 2자리 1 + 1 + 1 = 1(올림 1), 3자리 0 + 0 + 1 = 1(올림 0). 결과 1101 = −3, \(C_4 = 0\), \(C_3 = 1\), V = 1. 참값 6 − (−7) = 13은 범위(−8 ~ 7) 밖이라 오버플로가 맞습니다.</p>
+    <p><i>풀이.</i> M = 1이라 B를 뒤집어 0110이 들어가고 \(C_0 = 1\)이다. 이제 \(0110 + 0110 + 1\)을 자리마다 보면, 0자리는 0 + 0 + 1 = 1(올림 0), 1자리는 1 + 1 + 0 = 0(올림 1), 2자리는 1 + 1 + 1 = 1(올림 1), 3자리는 0 + 0 + 1 = 1(올림 0)이다. 결과는 1101 = −3이고 \(C_4 = 0\), \(C_3 = 1\)이므로 V = 1이다. 참값 6 − (−7) = 13은 범위 −8에서 7 밖이므로 오버플로가 맞다.</p>
 
-    <div class="tb-note"><b>주의</b>전가산기의 \(C_\text{out} = AB + C_\text{in}(A \oplus B)\)에서 \(A \oplus B\) 대신 \(A + B\)를 써도 같은 값이 나옵니다(A = B = 1이면 AB가 이미 1). 그러나 S와 공유할 수 있는 것은 \(A \oplus B\)이므로, 게이트 수를 줄이려면 XOR 쪽을 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>전가산기의 \(C_\text{out} = AB + C_\text{in}(A \oplus B)\)에서 \(A \oplus B\) 대신 \(A + B\)를 써도 같은 값이 나온다. A = B = 1이면 AB가 이미 1이기 때문이다. 그러나 S와 공유할 수 있는 것은 \(A \oplus B\)이므로, 게이트 수를 줄이려면 XOR 쪽을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>반가산기 \(S = A \oplus B\), \(C = AB\). 전가산기 \(S = A \oplus B \oplus C_\text{in}\), \(C_\text{out} = AB + C_\text{in}(A \oplus B)\).</li>
-        <li>전가산기 n개 = 리플 캐리 가산기. 지연은 n에 비례.</li>
-        <li>가감산기: \(B_i \oplus M\), \(C_0 = M\). 오버플로 \(V = C_n \oplus C_{n-1}\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>반가산기는 \(S = A \oplus B\), \(C = AB\)이고, 아래 올림까지 더하는 전가산기는 \(S = A \oplus B \oplus C_\text{in}\), \(C_\text{out} = AB + C_\text{in}(A \oplus B)\)이다. 전가산기 n개를 올림으로 이으면 지연이 n에 비례하는 리플 캐리 가산기가 되고, B 입력에 \(B_i \oplus M\)을, 맨 아래 올림에 M을 넣으면 같은 회로가 뺄셈까지 하는 가감산기가 된다. 오버플로는 \(V = C_n \oplus C_{n-1}\)로 판정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>전가산기의 진리표 8줄을 쓰고 S와 \(C_\text{out}\)의 최소항을 적어라.
-          <details><summary>답</summary><p>S = Σm(1, 2, 4, 7), \(C_\text{out}\) = Σm(3, 5, 6, 7) (입력 순서 A, B, \(C_\text{in}\)).</p></details>
+          <details><summary>답</summary><p>입력 순서를 A, B, \(C_\text{in}\)으로 하면 \(S = \Sigma m(1, 2, 4, 7)\), \(C_\text{out} = \Sigma m(3, 5, 6, 7)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>반감산기(A − B, 출력 차 D와 빌림 \(B_o\))의 식을 구하여라.
-          <details><summary>답</summary><p>\(D = A \oplus B\), \(B_o = A'B\).</p></details>
+          <details><summary>답</summary><p>\(D = A \oplus B\), \(B_o = A'B\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>두 2비트 수 \(A_1A_0\), \(B_1B_0\)의 크기 비교기(A &gt; B이면 1)를 4변수 카르노 맵으로 설계하여라.
-          <details><summary>답</summary><p>\(F = A_1B_1' + A_0B_1'B_0' + A_1A_0B_0'\). (윗자리가 크거나, 윗자리가 같고 아랫자리가 큰 경우)</p></details>
+          <details><summary>답</summary><p>\(F = A_1B_1' + A_0B_1'B_0' + A_1A_0B_0'\)이다. 윗자리가 크거나, 윗자리가 같고 아랫자리가 큰 경우를 묶은 것이다.</p></details>
         </li>
       </ol>
     </div>

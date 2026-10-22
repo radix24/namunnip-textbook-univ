@@ -8,73 +8,65 @@
 <article class="card q-card" id="text-e4-fpga" data-kind="본문" data-std="전전4-07-02">
   <header class="card-head"><span class="no"></span><h2>프로그래머블 논리: ROM, PLA, FPGA</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>ROM과 PLA가 진리표와 곱의 합을 하드웨어로 그대로 담는 방식임을 안다.</li>
-        <li>FPGA의 구성 요소(순람표 LUT, 플립플롭, 배선, 입출력 블록)를 설명한다.</li>
-        <li>HDL 코드가 FPGA 위의 회로가 되기까지의 흐름(합성, 배치·배선, 비트스트림)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>디코더와 MUX로 함수 만들기 (<a href="04-02.html">4.2절</a>), HDL (<a href="07-01.html">7.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">새 칩을 하나 만들려면 수개월과 큰 비용이 든다. 그런데 FPGA 보드는 Verilog 코드를 고쳐 몇 분 만에 다른 회로로 바꿀 수 있다. 이미 만들어진 칩이 어떻게 나중에 아무 회로나 될 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="FPGA 논리 셀. 3입력 LUT에 전가산기 합 S의 진리표 8비트 01101001이 저장되어 있고, 출력이 플립플롭을 거치거나 거치지 않고 MUX로 나간다">
+        <rect x="130" y="40" width="130" height="130" class="la"/><rect x="130" y="40" width="130" height="130" class="a"/>
+        <text x="195" y="34" text-anchor="middle" class="ta">3입력 LUT</text>
+        <g class="s" text-anchor="middle">
+          <text x="165" y="60">000</text><text x="165" y="75">001</text><text x="165" y="90">010</text><text x="165" y="105">011</text><text x="165" y="120">100</text><text x="165" y="135">101</text><text x="165" y="150">110</text><text x="165" y="165">111</text>
+        </g>
+        <g class="ta" text-anchor="middle">
+          <text x="225" y="60">0</text><text x="225" y="75">1</text><text x="225" y="90">1</text><text x="225" y="105">0</text><text x="225" y="120">1</text><text x="225" y="135">0</text><text x="225" y="150">0</text><text x="225" y="165">1</text>
+        </g>
+        <path d="M70 80 H130 M70 105 H130 M70 130 H130 M260 105 H300 V70 H330 M300 105 V140 H420 M370 70 H390 V95 H420" class="k"/>
+        <g class="s" text-anchor="end"><text x="64" y="84">A</text><text x="64" y="109">B</text><text x="64" y="134">Cin</text></g>
+        <rect x="330" y="50" width="40" height="40" class="lc"/><rect x="330" y="50" width="40" height="40" class="c"/><text x="350" y="74" text-anchor="middle" class="tc">FF</text>
+        <path d="M420 80 L450 92 L450 148 L420 160 Z" class="lb"/><path d="M420 80 L450 92 L450 148 L420 160 Z" class="b"/>
+        <path d="M450 120 H500" class="k"/><text x="506" y="124" class="s">출력</text>
+        <text x="300" y="190" text-anchor="middle" class="s">비트스트림이 LUT 내용, MUX 선택, 배선 스위치를 정함</text>
+      </svg>
+      <figcaption>그림 1. FPGA의 순람표는 k입력 진리표를 그대로 저장하는 작은 메모리이므로 저장 내용만 바꾸면 어떤 k변수 함수든 되고, 그 뒤의 플립플롭과 MUX, 셀 사이 배선 스위치까지 전원을 켤 때 읽는 비트스트림이 정한다(전가산기의 합 S를 실은 예).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>디코더와 MUX로 함수 만들기(<a href="04-02.html">4.2절</a>), HDL(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>만들어 둔 칩을 나중에 프로그램한다</h3>
-    <p>지금까지는 게이트를 골라 회로를 "만드는" 이야기였습니다. 그러나 새 칩을 만드는 데는 수개월과 큰 비용이 듭니다. 프로그래머블 논리는 일반적인 구조의 칩을 먼저 만들어 두고, 연결과 내용을 나중에 정해 원하는 회로가 되게 합니다.</p>
+    <p>지금까지는 게이트를 골라 회로를 만드는 이야기였다. 프로그래머블 논리는 일반적인 구조의 칩을 먼저 만들어 두고, 연결과 내용을 나중에 정해 원하는 회로가 되게 한다. 처음 질문의 답이 이 생각이다.</p>
 
     <h3><span class="no">7.2.2</span>ROM과 PLA</h3>
-    <p class="q-term"><b>ROM</b>: n비트 주소, m비트 출력의 메모리. 주소 디코더가 모든 최소항을 만들고, 각 출력은 원하는 최소항을 OR한다(4.2절 디코더 + OR). 곧 진리표를 통째로 저장한다. n이 커지면 크기가 \(2^n\)으로 커진다.</p>
-    <p class="q-term"><b>PLA</b>: 프로그램할 수 있는 AND 배열과 OR 배열. 최소항 전부가 아니라 필요한 곱 항만 만들고 OR한다. 3단원에서 줄인 곱의 합을 그대로 싣는다. 출력끼리 같은 곱 항을 나눠 쓸 수 있다.</p>
+    <p>ROM은 n비트 주소와 m비트 출력의 메모리이다. 주소 디코더가 모든 최소항을 만들고 각 출력은 원하는 최소항을 OR하므로(4.2절의 디코더와 OR), 곧 진리표를 통째로 저장한다. 다만 n이 커지면 크기가 \(2^n\)으로 커진다. 반면 PLA는 프로그램할 수 있는 AND 배열과 OR 배열로, 최소항 전부가 아니라 필요한 곱 항만 만들어 OR한다. 3단원에서 줄인 곱의 합을 그대로 싣는 셈이며, 출력끼리 같은 곱 항을 나눠 쓸 수 있다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.2.1</span>
       <p>전가산기를 ROM과 PLA로 구현할 때 크기를 비교하여라.</p>
     </div>
-    <p><i>풀이.</i> ROM: 주소 3비트(A, B, Cin), 출력 2비트(S, Cout) → 8 × 2비트. 저장 내용은 진리표 그대로: S = 0,1,1,0,1,0,0,1, Cout = 0,0,0,1,0,1,1,1. PLA: S는 최소항 4개(더 줄지 않음), Cout은 AB, ACin, BCin 3개 → 곱 항 7개를 나눠 쓸 것이 없어 AND 배열 7줄. 변수가 적으면 ROM이 단순하고, 변수가 많고 곱 항이 적으면 PLA가 작습니다.</p>
+    <p><i>풀이.</i> ROM은 주소 3비트(A, B, Cin)와 출력 2비트(S, Cout)이므로 8 × 2비트이다. 저장 내용은 진리표 그대로 S = 0, 1, 1, 0, 1, 0, 0, 1, Cout = 0, 0, 0, 1, 0, 1, 1, 1이다. PLA는 S가 더 줄지 않는 최소항 4개, Cout이 AB, ACin, BCin 3개여서 곱 항 7개를 나눠 쓸 것이 없으므로 AND 배열이 7줄이다. 따라서 변수가 적으면 ROM이 단순하고, 변수가 많고 곱 항이 적으면 PLA가 작다.</p>
 
     <h3><span class="no">7.2.3</span>FPGA의 구성</h3>
-    <p>FPGA(field-programmable gate array)는 오늘날 가장 널리 쓰이는 프로그래머블 논리입니다. 칩 위에 같은 블록이 수만~수백만 개 바둑판처럼 놓여 있습니다.</p>
-    <p class="q-term"><b>순람표(LUT)</b>: k입력(보통 4~6) 작은 메모리. 진리표 \(2^k\)비트를 저장해 어떤 k변수 함수든 구현한다(4.2절 MUX로 함수 만들기의 일반화). 이 절의 LUT 카드에서 직접 본다.</p>
-    <p class="q-term"><b>플립플롭</b>: LUT 출력 옆에 붙어, 그 값을 클록에 맞춰 저장할지 그냥 내보낼지 고른다. LUT + 플립플롭이 기본 논리 셀.</p>
-    <p class="q-term"><b>배선 자원</b>: 논리 셀 사이를 잇는 도선과 스위치 행렬. 어느 스위치를 켤지가 연결을 정한다. 칩 면적과 지연의 상당 부분을 차지한다.</p>
-    <p class="q-term"><b>입출력 블록과 특수 블록</b>: 핀, 블록 메모리(BRAM), 곱셈기(DSP), 클록 관리기(PLL).</p>
-    <p>LUT 내용과 스위치 상태는 전원을 켤 때 외부 플래시에서 읽어 오는 <b>비트스트림</b>으로 정해집니다(대부분 SRAM형이라 전원을 끄면 지워짐).</p>
+    <p>FPGA(field-programmable gate array)는 오늘날 가장 널리 쓰이는 프로그래머블 논리로, 칩 위에 같은 블록이 수만에서 수백만 개 바둑판처럼 놓여 있다. 그 중심은 순람표(LUT)이다. 보통 4에서 6입력인 작은 메모리여서 진리표 \(2^k\)비트를 저장해 어떤 k변수 함수든 구현하며, 4.2절의 MUX로 함수 만들기를 일반화한 것이다(그림 1).</p>
+    <p>LUT 출력 옆에는 플립플롭이 붙어 그 값을 클록에 맞춰 저장할지 그냥 내보낼지 고르며, LUT와 플립플롭이 기본 논리 셀을 이룬다. 논리 셀 사이는 도선과 스위치 행렬로 이루어진 배선 자원이 잇는데, 어느 스위치를 켤지가 연결을 정하고 칩 면적과 지연의 상당 부분을 차지한다. 또 핀을 다루는 입출력 블록과 블록 메모리(BRAM), 곱셈기(DSP), 클록 관리기(PLL) 같은 특수 블록이 있다.</p>
+    <p>LUT 내용과 스위치 상태는 전원을 켤 때 외부 플래시에서 읽어 오는 비트스트림으로 정해진다. 대부분 SRAM형이어서 전원을 끄면 지워진다.</p>
 
     <h3><span class="no">7.2.4</span>HDL에서 비트스트림까지</h3>
-    <ol>
-      <li><b>합성</b>: HDL을 게이트와 플립플롭 회로로 바꾸고 최소화한다(3단원의 일을 컴퓨터가).</li>
-      <li><b>기술 매핑</b>: 회로를 k입력 LUT와 플립플롭 단위로 나눈다.</li>
-      <li><b>배치와 배선</b>: 각 LUT를 칩의 어느 자리에 둘지, 어떤 도선으로 이을지 정한다.</li>
-      <li><b>타이밍 분석</b>: 모든 경로의 지연을 계산해 클록 제약을 지키는지 확인한다(5.3절, 임계 경로 카드).</li>
-      <li><b>비트스트림 생성</b>과 다운로드.</li>
-    </ol>
-    <p>FPGA는 같은 회로를 전용 칩(ASIC)으로 만들 때보다 느리고 전력을 더 쓰지만, 몇 분 만에 고칠 수 있어 시제품, 소량 제품, 통신 장비, AI 가속기 실험에 씁니다.</p>
+    <p>먼저 합성 단계에서 HDL을 게이트와 플립플롭 회로로 바꾸고 최소화한다. 3단원의 일을 컴퓨터가 하는 셈이다. 이어 기술 매핑으로 회로를 k입력 LUT와 플립플롭 단위로 나누고, 배치와 배선으로 각 LUT를 칩의 어느 자리에 둘지와 어떤 도선으로 이을지 정한다. 그 다음 타이밍 분석으로 모든 경로의 지연을 계산해 클록 제약을 지키는지 확인하고(5.3절), 끝으로 비트스트림을 만들어 내려받는다.</p>
+    <p>FPGA는 같은 회로를 전용 칩(ASIC)으로 만들 때보다 느리고 전력을 더 쓰지만, 몇 분 만에 고칠 수 있다. 그래서 시제품, 소량 제품, 통신 장비, AI 가속기 실험에 쓴다.</p>
 
-    <div class="tb-note"><b>주의</b>FPGA에서 "게이트 수"는 의미가 약합니다. 4입력 AND 하나든 4입력 XOR 세 개를 합친 함수든 LUT 하나입니다. 자원은 LUT와 플립플롭 개수로 셉니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>FPGA에서 게이트 수는 의미가 약하다. 4입력 AND 하나든 4입력 XOR 세 개를 합친 함수든 LUT 하나이기 때문이다. 그러므로 자원은 LUT와 플립플롭 개수로 센다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>ROM = 디코더 + OR, 진리표를 통째로. PLA = 프로그램 가능한 AND·OR 배열, 곱의 합을 그대로.</li>
-        <li>FPGA = LUT(진리표 메모리) + 플립플롭 + 배선 + 입출력·특수 블록. 비트스트림으로 설정한다.</li>
-        <li>흐름: 합성 → 기술 매핑 → 배치·배선 → 타이밍 분석 → 비트스트림.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>ROM은 디코더와 OR로 진리표를 통째로 저장하고, PLA는 프로그램할 수 있는 AND와 OR 배열에 곱의 합을 그대로 싣는다. FPGA는 진리표 메모리인 LUT와 플립플롭, 배선, 입출력과 특수 블록으로 이루어지며, 그 내용과 연결을 비트스트림으로 정하므로 이미 만든 칩이 나중에 아무 회로나 될 수 있다. HDL은 합성, 기술 매핑, 배치와 배선, 타이밍 분석을 거쳐 비트스트림이 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>6입력 LUT 하나는 몇 비트를 저장하는가? 6변수 함수는 모두 몇 가지인가?
-          <details><summary>답</summary><p>64비트, \(2^{64}\)가지.</p></details>
+          <details><summary>답</summary><p>64비트를 저장하고, 6변수 함수는 \(2^{64}\)가지이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>아무 8변수 함수든 만들 수 있도록 4입력 LUT를 MUX 분해 방법으로 쌓으면 몇 개가 드는가?
           <details><summary>힌트</summary><p>4.2절 정리 4.2.1처럼 변수를 하나씩 데이터 쪽으로 넘긴다.</p></details>
-          <details><summary>답</summary><p>4변수 함수 16개(앞 4변수의 각 값마다)와 16:1 MUX. 16:1 MUX를 4입력 LUT로 쌓으면 2:1 MUX(입력 3개라 LUT 하나)가 15개 필요해, 이 방법으로는 31개. 함수에 따라 훨씬 적게 들 수 있고, 실제 FPGA는 LUT 사이에 전용 MUX를 두어 이 비용을 줄인다.</p></details>
+          <details><summary>답</summary><p>앞 4변수의 각 값마다 4변수 함수 16개와 16:1 MUX가 필요하다. 16:1 MUX를 4입력 LUT로 쌓으면 입력이 3개인 2:1 MUX가 LUT 하나씩 15개 들어, 이 방법으로는 모두 31개이다. 함수에 따라 훨씬 적게 들 수 있고, 실제 FPGA는 LUT 사이에 전용 MUX를 두어 이 비용을 줄인다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,69 +8,71 @@
 <article class="card q-card" id="text-e4-nand" data-kind="본문" data-std="전전4-02-02">
   <header class="card-head"><span class="no"></span><h2>범용 게이트: NAND만으로 모든 회로를</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>NAND 하나로 NOT, AND, OR를 만들 수 있어 어떤 논리 함수도 구현할 수 있음을 보인다.</li>
-        <li>2단 AND-OR(곱의 합) 회로를 NAND-NAND 회로로 바로 바꾼다.</li>
-        <li>CMOS에서 NAND가 선호되는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>드 모르간 법칙과 곱의 합 표준형 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">칩 공장은 게이트 종류가 적을수록 설계와 제조가 단순해진다. 만약 단 한 종류의 게이트만 찍어 낼 수 있다면, 그것으로 AND, OR, NOT이 필요한 모든 회로를 만들 수 있을까? 게이트 수는 얼마나 늘어날까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="AB + CD를 만드는 AND 두 개와 OR 하나의 회로가, 모든 게이트를 NAND로 바꾼 NAND 세 개의 회로와 같다">
+        <g class="k">
+          <path d="M60 40 H80 M60 60 H80 M60 120 H80 M60 140 H80 M120 50 H150 V80 H174 M120 130 H150 V100 H174 M225 90 H250"/>
+          <path d="M350 40 H370 M350 60 H370 M350 120 H370 M350 140 H370 M418 50 H440 V80 H460 M418 130 H440 V100 H460 M508 90 H540"/>
+        </g>
+        <path d="M80 30 H100 A20 20 0 0 1 100 70 H80 Z" class="la"/><path d="M80 30 H100 A20 20 0 0 1 100 70 H80 Z" class="a"/>
+        <path d="M80 110 H100 A20 20 0 0 1 100 150 H80 Z" class="la"/><path d="M80 110 H100 A20 20 0 0 1 100 150 H80 Z" class="a"/>
+        <path d="M170 70 Q185 90 170 110 Q210 110 225 90 Q210 70 170 70 Z" class="lc"/><path d="M170 70 Q185 90 170 110 Q210 110 225 90 Q210 70 170 70 Z" class="c"/>
+        <path d="M370 30 H390 A20 20 0 0 1 390 70 H370 Z" class="lb"/><path d="M370 30 H390 A20 20 0 0 1 390 70 H370 Z" class="b"/><circle cx="414" cy="50" r="4" class="b"/>
+        <path d="M370 110 H390 A20 20 0 0 1 390 150 H370 Z" class="lb"/><path d="M370 110 H390 A20 20 0 0 1 390 150 H370 Z" class="b"/><circle cx="414" cy="130" r="4" class="b"/>
+        <path d="M460 70 H480 A20 20 0 0 1 480 110 H460 Z" class="lb"/><path d="M460 70 H480 A20 20 0 0 1 480 110 H460 Z" class="b"/><circle cx="504" cy="90" r="4" class="b"/>
+        <g class="s"><text x="54" y="44" text-anchor="end">A</text><text x="54" y="64" text-anchor="end">B</text><text x="54" y="124" text-anchor="end">C</text><text x="54" y="144" text-anchor="end">D</text>
+        <text x="344" y="44" text-anchor="end">A</text><text x="344" y="64" text-anchor="end">B</text><text x="344" y="124" text-anchor="end">C</text><text x="344" y="144" text-anchor="end">D</text></g>
+        <text x="256" y="94" class="s">F</text><text x="546" y="94" class="s">F</text>
+        <text x="150" y="178" text-anchor="middle" class="s">AND-OR</text><text x="440" y="178" text-anchor="middle" class="tb">NAND-NAND (게이트 수 같음)</text>
+        <text x="300" y="94" text-anchor="middle" class="s">=</text>
+      </svg>
+      <figcaption>그림 1. 드 모르간 법칙에 따라 AND 출력의 NOT과 OR 입력의 NOT이 짝지어 지워지므로, 2단 곱의 합 회로는 모든 게이트를 NAND로 바꾸기만 하면 게이트 수가 늘지 않는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>드 모르간 법칙과 곱의 합 표준형(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
-    <h3><span class="no">2.2.1</span>왜 한 가지 게이트로</h3>
-    <p>칩을 만들 때 게이트 종류가 적을수록 설계와 제조가 단순합니다. 모든 논리 함수는 곱의 합(2.1절)으로 쓸 수 있으니 AND, OR, NOT 세 가지면 충분합니다. 그런데 이 셋을 모두 NAND 하나로 만들 수 있다면, NAND만으로 무엇이든 만들 수 있습니다. 이런 게이트를 <b>범용 게이트</b>라 합니다.</p>
+    <h3><span class="no">2.2.1</span>한 가지 게이트로 만드는 까닭</h3>
+    <p>모든 논리 함수는 곱의 합(2.1절)으로 쓸 수 있으므로 AND, OR, NOT 세 가지면 충분하다. 그런데 이 셋을 모두 NAND 하나로 만들 수 있다면, NAND만으로 무엇이든 만들 수 있다. 이런 게이트를 범용 게이트라 한다.</p>
 
     <h3><span class="no">2.2.2</span>NAND로 기본 게이트 만들기</h3>
     <div class="tb-env thm">
       <span class="lb">정리 2.2.1 <span class="nm">(NAND의 범용성)</span></span>
       <p>NAND 게이트만으로 NOT, AND, OR를 만들 수 있다. 따라서 모든 논리 함수를 NAND만으로 구현할 수 있다.</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>NOT: 두 입력을 묶으면 \((AA)' = A'\)(멱등). AND: NAND 뒤에 NOT(NAND)을 달면 \(((AB)')' = AB\). OR: 드 모르간에 의해 \(A + B = (A'B')'\)이므로 두 입력을 각각 NAND로 뒤집은 뒤 NAND에 넣는다. 세 기본 게이트가 만들어졌고 모든 함수는 곱의 합으로 쓸 수 있으므로 결론이 성립한다. <span class="qed">∎</span></p>
-    <p>OR에 NAND 3개, AND에 2개가 듭니다. 그대로 바꾸면 게이트 수가 늘지만, 다음 방법을 쓰면 늘지 않습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>두 입력을 묶으면 멱등 법칙으로 \((AA)' = A'\)이므로 NOT이 된다. NAND 뒤에 이 NOT을 달면 \(((AB)')' = AB\)이므로 AND가 된다. 또 드 모르간 법칙으로 \(A + B = (A'B')'\)이므로, 두 입력을 각각 NAND로 뒤집은 뒤 NAND에 넣으면 OR가 된다. 세 기본 게이트가 만들어졌고 모든 함수는 곱의 합으로 쓸 수 있으므로 결론이 성립한다. <span class="qed">∎</span></p>
+    <p>그대로 바꾸면 OR에 NAND 3개, AND에 2개가 들어 게이트 수가 는다. 그러나 다음 방법을 쓰면 늘지 않는다.</p>
 
     <h3><span class="no">2.2.3</span>AND-OR를 NAND-NAND로</h3>
-    <p>곱의 합 \(F = AB + CD\)를 드 모르간으로 두 번 뒤집으면</p>
-    \[ F = \big((AB + CD)'\big)' = \big((AB)'(CD)'\big)'. \]
-    <p>곧 첫째 단의 AND를 모두 NAND로, 둘째 단의 OR도 NAND로 바꾸면 끝입니다. 게이트 수는 그대로입니다. 그림으로 보면, AND 출력의 "동그라미(NOT)"와 OR 입력의 "동그라미"가 짝지어 지워지는 것입니다(OR 입력에 동그라미를 단 것 = NAND, 드 모르간).</p>
-    <p>규칙: <b>2단 곱의 합 회로는 모든 게이트를 NAND로 바꾸면 된다.</b> 단, 첫째 단에 들어가지 않고 OR로 바로 가는 변수(항이 변수 하나뿐인 경우)는 뒤집어서 넣어야 합니다.</p>
-
+    <p>곱의 합 \(F = AB + CD\)를 드 모르간 법칙으로 두 번 뒤집으면 다음과 같다.</p>
+    \[ F = \big((AB + CD)'\big)' = \big((AB)'(CD)'\big)' \]
+    <p>곧 첫째 단의 AND를 모두 NAND로, 둘째 단의 OR도 NAND로 바꾸면 끝이며 게이트 수는 그대로이다. 그림으로 보면 AND 출력의 NOT 동그라미와 OR 입력의 NOT 동그라미가 짝지어 지워지는 것이다. 입력에 동그라미를 단 OR가 드 모르간 법칙으로 NAND이기 때문이다(그림 1). 처음 질문의 답이 이것이다.</p>
+    <p>규칙으로 정리하면, 2단 곱의 합 회로는 모든 게이트를 NAND로 바꾸면 된다. 다만 첫째 단을 거치지 않고 OR로 바로 가는 변수, 곧 변수 하나뿐인 항은 뒤집어서 넣어야 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.2</span>
       <p>\(F = AB' + C\)를 NAND 게이트만으로 구현하고 게이트 수를 세어라. 입력 B', C'은 없다고 하자.</p>
     </div>
-    <p><i>풀이.</i> \(F = ((AB')'\,C')'\). 필요한 것: B를 뒤집는 NAND 1개(\(B'\)), \(AB'\)의 NAND 1개, C를 뒤집는 NAND 1개(\(C'\)), 마지막 NAND 1개. 총 4개. 항 C가 변수 하나라 뒤집어 넣는다는 규칙을 썼습니다. 진리표로 확인: \(A = 1, B = 0\)이면 \((AB')' = 0\)이라 마지막 NAND 출력 1. C = 1이면 \(C' = 0\)이라 역시 1. 나머지는 0. \(AB' + C\)와 같습니다.</p>
+    <p><i>풀이.</i> \(F = ((AB')'\,C')'\)이다. B를 뒤집는 NAND 1개, \(AB'\)의 NAND 1개, C를 뒤집는 NAND 1개, 마지막 NAND 1개로 모두 4개가 든다. 항 C가 변수 하나여서 뒤집어 넣는다는 규칙을 썼다. 진리표로 확인하면, \(A = 1\), \(B = 0\)일 때 \((AB')' = 0\)이라 마지막 NAND 출력이 1이고, \(C = 1\)이면 \(C' = 0\)이라 역시 1이며, 나머지는 0이다. 따라서 \(AB' + C\)와 같다.</p>
 
-    <h3><span class="no">2.2.4</span>CMOS에서는 왜 NAND인가</h3>
-    <p>CMOS 공정에서 NAND와 NOR는 트랜지스터 4개로 만들어지고(2입력), AND와 OR는 그 뒤에 인버터가 붙어 6개가 듭니다. 그래서 칩의 기본 게이트는 반전 게이트입니다. NAND와 NOR 중에서는 NAND가 직렬로 놓이는 트랜지스터가 NMOS 쪽이고, NMOS가 PMOS보다 빨라서(전자의 이동도가 큼) 같은 크기에서 NAND가 빠릅니다(전전30 디지털전자회로). NOR도 범용 게이트이며, 합의 곱(POS) 회로는 NOR-NOR로 바꿉니다.</p>
+    <h3><span class="no">2.2.4</span>CMOS에서 NAND를 쓰는 까닭</h3>
+    <p>CMOS 공정에서 2입력 NAND와 NOR는 트랜지스터 4개로 만들어지지만, AND와 OR는 그 뒤에 인버터가 붙어 6개가 든다. 그래서 칩의 기본 게이트는 반전 게이트이다. 또 NAND와 NOR 가운데서는 NAND의 직렬 트랜지스터가 NMOS 쪽이고, 전자의 이동도가 커서 NMOS가 PMOS보다 빠르므로 같은 크기에서 NAND가 빠르다(전전30 디지털전자회로). 한편 NOR도 범용 게이트이며, 합의 곱(POS) 회로는 NOR-NOR로 바꾼다.</p>
 
-    <div class="tb-note"><b>주의</b>NAND-NAND로 바꾼 회로의 중간 신호는 원래 회로의 신호와 반대입니다. 디버깅할 때 중간 마디를 재면 원래 AND 출력의 NOT이 나온다는 것을 기억하세요.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>NAND-NAND로 바꾼 회로의 중간 신호는 원래 회로의 신호와 반대이다. 디버깅할 때 중간 마디를 재면 원래 AND 출력의 NOT이 나온다는 것을 기억하자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>NAND로 NOT(입력 묶기), AND(NAND+NOT), OR(입력 뒤집기 + NAND)를 만든다. 그래서 범용이다.</li>
-        <li>2단 AND-OR = NAND-NAND(드 모르간 두 번). 변수 하나짜리 항은 뒤집어 넣는다.</li>
-        <li>CMOS의 기본은 반전 게이트이고, 그중 NAND가 빠르다. POS는 NOR-NOR.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>NAND는 입력을 묶으면 NOT, 뒤에 NOT을 달면 AND, 입력을 뒤집어 넣으면 OR가 되므로 범용 게이트이다. 게다가 2단 AND-OR 회로는 드 모르간 법칙을 두 번 써서 게이트 수를 늘리지 않고 NAND-NAND로 바꿀 수 있으며, 변수 하나짜리 항만 뒤집어 넣는다. CMOS의 기본은 반전 게이트이고 그중 NAND가 빠르며, POS 회로는 NOR-NOR로 바꾼다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>NOR만으로 NOT, OR, AND를 만드는 방법을 쓰라.
-          <details><summary>답</summary><p>NOT: \((A + A)'\). OR: NOR + NOT. AND: \(A'\), \(B'\)를 NOR에: \((A' + B')' = AB\).</p></details>
+        <li>NOR만으로 NOT, OR, AND를 만드는 방법을 써라.
+          <details><summary>답</summary><p>NOT은 \((A + A)'\)이고, OR는 NOR 뒤에 NOT을 단다. AND는 \(A'\), \(B'\)를 NOR에 넣어 \((A' + B')' = AB\)로 만든다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>XOR \(A \oplus B = AB' + A'B\)를 NAND 4개로 만드는 방법을 찾아라.
           <details><summary>힌트</summary><p>\(N = (AB)'\)을 먼저 만들고 \((AN)'\)과 \((BN)'\)을 만든다.</p></details>
-          <details><summary>답</summary><p>\(N = (AB)'\), \(X = (AN)' = (A(A' + B'))' = (AB')'\), \(Y = (BN)' = (A'B)'\), \(F = (XY)' = AB' + A'B\). 4개.</p></details>
+          <details><summary>답</summary><p>\(N = (AB)'\), \(X = (AN)' = (A(A' + B'))' = (AB')'\), \(Y = (BN)' = (A'B)'\)이고, \(F = (XY)' = AB' + A'B\)이다. 모두 4개이다.</p></details>
         </li>
       </ol>
     </div>

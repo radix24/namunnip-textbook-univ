@@ -8,88 +8,80 @@
 <article class="card q-card" id="text-e4-boolean" data-kind="본문" data-std="전전4-02-01">
   <header class="card-head"><span class="no"></span><h2>불 대수와 논리 게이트</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>AND, OR, NOT과 진리표로 논리 함수를 정의한다.</li>
-        <li>불 대수의 법칙(드 모르간 포함)으로 식을 간단히 한다.</li>
-        <li>최소항·최대항과 곱의 합·합의 곱 표준형을 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>명제와 진리값, "그리고·또는·아니다" (고교 수학, 집합과 명제).</li>
-        <li>2진수 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">진리표를 보고 그대로 회로를 만들면 출력이 1인 줄마다 AND 게이트가 하나씩 필요하다. 그런데 같은 진리표를 게이트 두 개로 만들 수도 있다. 게이트를 줄이려면 식을 어떻게 다뤄야 할까? 0과 1만 있는 세계에도 일반 대수 같은 계산 규칙이 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 195" role="img" aria-label="진리표에서 출력이 1인 줄은 001, 011, 101, 110 넷이고, 네 항의 곱의 합을 불 대수로 줄이면 AND 하나와 XOR 하나로 된 F = AB ⊕ C 회로가 된다">
+        <rect x="190" y="54" width="24" height="16" class="la"/><rect x="190" y="90" width="24" height="16" class="la"/><rect x="190" y="126" width="24" height="16" class="la"/><rect x="190" y="144" width="24" height="16" class="la"/>
+        <text x="80" y="28" class="s">A B C</text><text x="146" y="28" class="s">AB</text><text x="198" y="28" class="ta">F</text>
+        <path d="M70 34 H230" class="k"/>
+<text x="80" y="48" class="s">0 0 0</text><text x="150" y="48" class="s">0</text><text x="200" y="48" class="s">0</text>
+<text x="80" y="66" class="s">0 0 1</text><text x="150" y="66" class="s">0</text><text x="200" y="66" class="ta">1</text>
+<text x="80" y="84" class="s">0 1 0</text><text x="150" y="84" class="s">0</text><text x="200" y="84" class="s">0</text>
+<text x="80" y="102" class="s">0 1 1</text><text x="150" y="102" class="s">0</text><text x="200" y="102" class="ta">1</text>
+<text x="80" y="120" class="s">1 0 0</text><text x="150" y="120" class="s">0</text><text x="200" y="120" class="s">0</text>
+<text x="80" y="138" class="s">1 0 1</text><text x="150" y="138" class="s">0</text><text x="200" y="138" class="ta">1</text>
+<text x="80" y="156" class="s">1 1 0</text><text x="150" y="156" class="s">1</text><text x="200" y="156" class="ta">1</text>
+<text x="80" y="174" class="s">1 1 1</text><text x="150" y="174" class="s">1</text><text x="200" y="174" class="s">0</text>
+        <path d="M340 60 H360 A20 20 0 0 1 360 100 H340 Z" class="lb"/><path d="M340 60 H360 A20 20 0 0 1 360 100 H340 Z" class="b"/>
+        <path d="M420 80 Q435 100 420 120 Q460 120 480 100 Q460 80 420 80 Z" class="lc"/><path d="M420 80 Q435 100 420 120 Q460 120 480 100 Q460 80 420 80 Z" class="c"/>
+        <path d="M412 80 Q427 100 412 120" class="c"/>
+        <path d="M300 70 H340 M300 90 H340 M380 80 H400 V90 H424 M300 140 H400 V110 H424 M480 100 H520" class="k"/>
+        <g class="s"><text x="292" y="74" text-anchor="end">A</text><text x="292" y="94" text-anchor="end">B</text><text x="292" y="144" text-anchor="end">C</text><text x="526" y="104">F</text></g>
+        <text x="360" y="54" text-anchor="middle" class="tb">AND</text><text x="452" y="140" text-anchor="middle" class="tc">XOR</text>
+        <text x="400" y="180" text-anchor="middle" class="s">네 항의 곱의 합 → F = AB ⊕ C</text>
+      </svg>
+      <figcaption>그림 1. 진리표의 1인 줄 네 개를 곧이곧대로 옮기면 AND 네 개와 OR 하나가 들지만, 불 대수의 법칙으로 식을 줄이면 같은 함수를 게이트 두 개로 만들 수 있다(예제 2.1.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>명제와 진리값, "그리고, 또는, 아니다"(고교 수학의 집합과 명제), 2진수(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>세 가지 기본 연산</h3>
-    <p>디지털 회로가 하는 일은 결국 0과 1을 받아 0과 1을 내는 함수입니다. 변수 값이 0 또는 1뿐인 이런 함수를 다루는 대수를 불(Boole) 대수라 합니다. 기본 연산 셋을 한 줄씩 정의합니다.</p>
-    <p class="q-term"><b>AND</b> \(A\cdot B\) (또는 \(AB\)): 둘 다 1일 때만 1. 직렬 스위치.</p>
-    <p class="q-term"><b>OR</b> \(A + B\): 하나라도 1이면 1. 병렬 스위치.</p>
-    <p class="q-term"><b>NOT</b> \(A'\) (또는 \(\bar A\)): 뒤집기.</p>
-    <p>여기서 \(+\)는 산술 덧셈이 아닙니다. \(1 + 1 = 1\)입니다. 이 밖에 자주 쓰는 게이트로 NAND \((AB)'\), NOR \((A + B)'\), XOR \(A \oplus B\)(서로 다를 때 1), XNOR(같을 때 1)가 있습니다. n개 입력의 함수는 진리표 \(2^n\)줄로 완전히 정해집니다.</p>
+    <p>디지털 회로가 하는 일은 결국 0과 1을 받아 0과 1을 내는 함수이다. 변수 값이 0 또는 1뿐인 이런 함수를 다루는 대수를 불(Boole) 대수라 한다. 기본 연산은 셋이다. AND \(A\cdot B\)(또는 \(AB\))는 둘 다 1일 때만 1이어서 직렬 스위치와 같고, OR \(A + B\)는 하나라도 1이면 1이어서 병렬 스위치와 같으며, NOT \(A'\)(또는 \(\bar A\))은 값을 뒤집는다.</p>
+    <p>여기서 \(+\)는 산술 덧셈이 아니어서 \(1 + 1 = 1\)이다. 이 밖에 자주 쓰는 게이트로 NAND \((AB)'\), NOR \((A + B)'\), 서로 다를 때 1인 XOR \(A \oplus B\), 같을 때 1인 XNOR가 있다. n개 입력의 함수는 진리표 \(2^n\)줄로 완전히 정해진다.</p>
 
     <h3><span class="no">2.1.2</span>불 대수의 법칙</h3>
-    <p>각 법칙은 변수가 0과 1뿐이므로 진리표로 모든 경우를 확인하면 증명됩니다. 중요한 것을 짝으로 적습니다(왼쪽과 오른쪽은 AND와 OR, 0과 1을 바꾼 쌍대).</p>
-    <ul>
-      <li>항등: \(A + 0 = A\), \(A\cdot1 = A\). 지배: \(A + 1 = 1\), \(A\cdot0 = 0\).</li>
-      <li>멱등: \(A + A = A\), \(AA = A\). 보원: \(A + A' = 1\), \(AA' = 0\).</li>
-      <li>교환, 결합, 분배: \(A(B + C) = AB + AC\), 그리고 일반 대수에는 없는 \(A + BC = (A + B)(A + C)\).</li>
-      <li>흡수: \(A + AB = A\), \(A(A + B) = A\).</li>
-      <li>드 모르간: \((A + B)' = A'B'\), \((AB)' = A' + B'\).</li>
-    </ul>
+    <p>변수가 0과 1뿐이므로 각 법칙은 진리표로 모든 경우를 확인하면 증명된다. 중요한 것을 짝으로 적자. 짝은 AND와 OR, 0과 1을 서로 바꾼 쌍대이다. 항등 법칙은 \(A + 0 = A\), \(A\cdot1 = A\)이고, 지배 법칙은 \(A + 1 = 1\), \(A\cdot0 = 0\)이다. 멱등 법칙은 \(A + A = A\), \(AA = A\)이고, 보원 법칙은 \(A + A' = 1\), \(AA' = 0\)이다.</p>
+    <p>교환, 결합, 분배 법칙 \(A(B + C) = AB + AC\)도 성립하는데, 일반 대수에는 없는 \(A + BC = (A + B)(A + C)\)도 성립한다는 점이 다르다. 또 흡수 법칙 \(A + AB = A\), \(A(A + B) = A\)와 드 모르간 법칙 \((A + B)' = A'B'\), \((AB)' = A' + B'\)이 식을 줄이는 데 자주 쓰인다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 2.1.1 <span class="nm">(합의 정리)</span></span>
       <p>\(AB + A'C + BC = AB + A'C\).</p>
     </div>
-    <p class="tb-proof"><span class="lb">증명.</span>\(BC = BC(A + A')\)(보원, 항등)\( = ABC + A'BC\)(분배). 그러면 \(AB + A'C + ABC + A'BC = AB(1 + C) + A'C(1 + B)\)(분배)\( = AB + A'C\)(지배, 항등). <span class="qed">∎</span></p>
-    <p>\(BC\)항은 "A가 1이면 AB가, A가 0이면 A'C가 이미 덮는" 항이라 필요 없습니다. 이런 남는 항을 찾는 눈을 기르는 것이 간단히 하기의 핵심이고, 3단원의 카르노 맵이 이를 그림으로 해 줍니다.</p>
-
+    <p class="tb-proof"><span class="lb">증명.</span>보원과 항등 법칙으로 \(BC = BC(A + A')\)이고, 분배 법칙으로 이는 \(ABC + A'BC\)이다. 그러면 \(AB + A'C + ABC + A'BC = AB(1 + C) + A'C(1 + B)\)이고, 지배와 항등 법칙으로 \(AB + A'C\)이다. <span class="qed">∎</span></p>
+    <p>\(BC\)항은 A가 1이면 \(AB\)가, A가 0이면 \(A'C\)가 이미 덮는 항이어서 필요 없다. 이런 남는 항을 찾는 눈을 기르는 것이 간단히 하기의 요령이며, 3단원의 카르노 맵이 이를 그림으로 해 준다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.2</span>
       <p>\(F = A'B'C + A'BC + AB'C + ABC'\)를 간단히 하여라.</p>
     </div>
-    <p><i>풀이.</i> 앞 두 항: \(A'C(B' + B) = A'C\). 셋째 항과 첫째 항: \(B'C(A' + A) = B'C\). 그런데 첫째 항을 두 번 쓸 수 있는 근거는 멱등 \(X = X + X\)입니다. 따라서 \(F = A'C + B'C + ABC'\). 여기서 \(A'C + B'C = (A' + B')C = (AB)'C\)이므로 \(F = (AB)'C + AB\,C'\), 곧 \(F = AB \oplus C\). 진리표로 확인하면 C와 AB가 다를 때 1인 함수와 같습니다.</p>
+    <p><i>풀이.</i> 앞 두 항은 \(A'C(B' + B) = A'C\)이다. 셋째 항과 첫째 항은 \(B'C(A' + A) = B'C\)인데, 첫째 항을 두 번 쓸 수 있는 근거는 멱등 법칙 \(X = X + X\)이다. 따라서 \(F = A'C + B'C + ABC'\)이다. 그런데 \(A'C + B'C = (A' + B')C = (AB)'C\)이므로 \(F = (AB)'C + AB\,C'\), 곧 \(F = AB \oplus C\)이다. 처음 질문의 답이 그림 1로, 진리표로 확인하면 C와 AB가 다를 때 1인 함수와 같다.</p>
 
     <h3><span class="no">2.1.3</span>표준형</h3>
-    <p class="q-term"><b>최소항</b> \(m_k\): 모든 변수가 한 번씩(그대로 또는 NOT) 들어간 AND 항으로, 진리표의 k번째 줄에서만 1. 예: 3변수에서 \(m_5 = AB'C\)(101).</p>
-    <p class="q-term"><b>곱의 합(SOP) 표준형</b>: 출력이 1인 줄의 최소항을 OR. \(F = \Sigma m(\cdots)\).</p>
-    <p class="q-term"><b>최대항</b> \(M_k\): 모든 변수가 들어간 OR 항으로, k번째 줄에서만 0. \(M_5 = A' + B + C'\).</p>
-    <p class="q-term"><b>합의 곱(POS) 표준형</b>: 출력이 0인 줄의 최대항을 AND. \(F = \Pi M(\cdots)\).</p>
-    <p>진리표가 있으면 표준형은 바로 쓸 수 있습니다. 표준형은 길지만 기계적으로 만들 수 있다는 것이 장점이고, 간단히 하는 출발점입니다. \(m_k' = M_k\)(드 모르간)이므로 F의 최소항 번호와 최대항 번호는 서로 나머지입니다.</p>
+    <p>모든 변수가 그대로 또는 NOT으로 한 번씩 들어간 AND 항을 최소항 \(m_k\)라 하며, 진리표의 k번째 줄에서만 1이다. 예를 들어 3변수에서 \(m_5 = AB'C\)(101)이다. 출력이 1인 줄의 최소항을 OR한 \(F = \Sigma m(\cdots)\)를 곱의 합(SOP) 표준형이라 한다. 반대로 모든 변수가 들어간 OR 항을 최대항 \(M_k\)라 하며 k번째 줄에서만 0이다. 가령 \(M_5 = A' + B + C'\)이다. 출력이 0인 줄의 최대항을 AND한 \(F = \Pi M(\cdots)\)를 합의 곱(POS) 표준형이라 한다.</p>
+    <p>진리표가 있으면 표준형은 바로 쓸 수 있다. 표준형은 길지만 기계적으로 만들 수 있다는 것이 장점이고, 간단히 하는 출발점이다. 또 드 모르간 법칙으로 \(m_k' = M_k\)이므로, F의 최소항 번호와 최대항 번호는 서로 나머지이다(2.3절).</p>
 
-    <div class="tb-note"><b>주의</b>\((A + B)' = A' + B'\)라고 쓰는 실수가 가장 흔합니다. 드 모르간은 "뒤집으면 AND와 OR가 바뀐다"입니다. 의심스러우면 \(A = 1, B = 0\)을 넣어 보세요: 왼쪽 0, 틀린 오른쪽 1.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\((A + B)' = A' + B'\)라고 쓰는 실수가 가장 흔하다. 드 모르간 법칙은 뒤집으면 AND와 OR가 바뀐다는 것이다. 의심스러우면 \(A = 1\), \(B = 0\)을 넣어 보자. 왼쪽은 0인데 틀린 오른쪽은 1이 나온다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>AND, OR, NOT과 진리표. 불 대수에서 \(1 + 1 = 1\), \(A + BC = (A + B)(A + C)\).</li>
-        <li>흡수, 드 모르간, 합의 정리로 식을 줄인다. 모든 법칙은 진리표로 확인할 수 있다.</li>
-        <li>SOP 표준형 \(\Sigma m\)(1인 줄), POS 표준형 \(\Pi M\)(0인 줄).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>불 대수는 0과 1만 있는 AND, OR, NOT의 대수로, \(1 + 1 = 1\)이고 \(A + BC = (A + B)(A + C)\)처럼 일반 대수와 다른 법칙도 있지만 모든 법칙은 진리표로 확인할 수 있다. 흡수, 드 모르간, 합의 정리로 식을 줄이면 같은 진리표를 더 적은 게이트로 만들 수 있으며, 그 출발점은 1인 줄의 최소항을 더한 SOP 표준형 \(\Sigma m\)이나 0인 줄의 최대항을 곱한 POS 표준형 \(\Pi M\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(F = (A + B)(A + B')\)를 간단히 하여라.
-          <details><summary>답</summary><p>\(A + BB' = A\) (분배의 쌍대).</p></details>
+          <details><summary>답</summary><p>분배 법칙의 쌍대로 \(A + BB' = A\)이다.</p></details>
         </li>
         <li>\(F(A,B,C) = \Sigma m(1, 2, 6)\)을 POS 표준형으로 써라.
-          <details><summary>답</summary><p>\(\Pi M(0, 3, 4, 5, 7)\).</p></details>
+          <details><summary>답</summary><p>\(\Pi M(0, 3, 4, 5, 7)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
-        <li>\(F = ((A + B')C)'\)를 드 모르간으로 NOT이 변수에만 붙게 바꿔라.
-          <details><summary>답</summary><p>\((A + B')' + C' = A'B + C'\).</p></details>
+        <li>\(F = ((A + B')C)'\)를 드 모르간 법칙으로 NOT이 변수에만 붙게 바꾸어라.
+          <details><summary>답</summary><p>\((A + B')' + C' = A'B + C'\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>합의 정리의 쌍대 \((A + B)(A' + C)(B + C) = (A + B)(A' + C)\)를 증명하여라.
-          <details><summary>답</summary><p>쌍대 원리: 원래 정리에서 AND↔OR, 0↔1을 바꾸면 성립한다. 직접 증명은 \(B + C = (B + C) + AA'\)로 같은 방법.</p></details>
+          <details><summary>답</summary><p>쌍대 원리에 따라 원래 정리에서 AND와 OR, 0과 1을 바꾸면 성립한다. 직접 증명하려면 \(B + C = (B + C) + AA'\)로 같은 방법을 쓴다.</p></details>
         </li>
       </ol>
     </div>
