@@ -8,28 +8,39 @@
 <article class="card q-card" id="text-e1-binary" data-kind="본문" data-std="전전1-01-04">
   <header class="card-head"><span class="no"></span><h2>2진수와 16진수로 수와 문자 나타내기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>10진수를 2진수, 16진수로 바꾸고 되돌린다.</li>
-        <li>n비트로 나타낼 수 있는 경우의 수 2ⁿ을 계산한다.</li>
-        <li>문자가 코드(ASCII, 유니코드)로 저장되는 방식을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>거듭제곱(고교 수학), Python 기초 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">컴퓨터 안에는 0과 1밖에 없는데, 173 같은 수나 '가' 같은 글자는 어떻게 저장될까? 그리고 프로그래머는 왜 0과 1을 길게 늘어놓는 대신 AD 같은 16진수를 즐겨 쓸까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 170" role="img" aria-label="173을 8비트 2진수와 16진수 두 자리로 나타낸 그림">
+        <g text-anchor="middle">
+          <text x="80" y="30" class="s">128</text><text x="140" y="30" class="s">64</text><text x="200" y="30" class="s">32</text><text x="260" y="30" class="s">16</text>
+          <text x="320" y="30" class="s">8</text><text x="380" y="30" class="s">4</text><text x="440" y="30" class="s">2</text><text x="500" y="30" class="s">1</text>
+        </g>
+        <rect x="55" y="40" width="50" height="40" class="la"/><rect x="175" y="40" width="50" height="40" class="la"/><rect x="295" y="40" width="50" height="40" class="la"/>
+        <rect x="355" y="40" width="50" height="40" class="la"/><rect x="475" y="40" width="50" height="40" class="la"/>
+        <path d="M55 40 H535 V80 H55 Z M105 40 V80 M165 40 V80 M225 40 V80 M285 40 V80 M345 40 V80 M405 40 V80 M465 40 V80" class="k"/>
+        <g text-anchor="middle" font-size="18"><text x="80" y="67">1</text><text x="140" y="67">0</text><text x="200" y="67">1</text><text x="260" y="67">0</text><text x="320" y="67">1</text><text x="380" y="67">1</text><text x="440" y="67">0</text><text x="500" y="67">1</text></g>
+        <path d="M55 95 H285 M345 95 H535" class="c"/>
+        <text x="170" y="118" text-anchor="middle" class="tc">1010 = 10 = A</text><text x="440" y="118" text-anchor="middle" class="tc">1101 = 13 = D</text>
+        <text x="280" y="155" text-anchor="middle">128 + 32 + 8 + 4 + 1 = 173 = 0xAD</text>
+      </svg>
+      <figcaption>그림 1. 2진수의 각 자리는 1, 2, 4, …를 뜻하므로 켜진 자리의 값을 더하면 173이 되고, 4비트씩 묶으면 16진수 한 자리씩이 되어 AD로 짧게 쓸 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>거듭제곱과 Python 기초(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>자릿값</h3>
-    <p>10진수 345는 3×10² + 4×10 + 5입니다. 2진수는 자릿값이 1, 2, 4, 8, …이고, 16진수는 0~9와 A~F(10~15)를 쓰며 4비트가 한 자리입니다. 컴퓨터가 0과 1만 쓰는 것은 전압이 높다/낮다 두 상태가 잡음에 강하기 때문입니다.</p>
+    <p>10진수 345는 \(3\times10^2 + 4\times10 + 5\)이다. 자리마다 10배씩 커지는 값이 붙어 있고, 각 자리에는 0~9 가운데 하나가 들어간다. 2진수도 규칙은 같고 밑만 2로 바뀐다. 각 자리의 값은 오른쪽부터 1, 2, 4, 8, …이고, 자리에는 0이나 1만 들어간다.</p>
+    <p>그림 1의 8칸에서 1이 들어간 자리의 값을 더하면 \(128 + 32 + 8 + 4 + 1 = 173\)이다. 거꾸로 173을 2진수로 바꾸려면 2로 나눈 나머지를 차례로 적고 거꾸로 읽으면 된다. 173, 86, 43, 21, 10, 5, 2, 1을 2로 나눈 나머지는 1, 0, 1, 1, 0, 1, 0, 1이고, 거꾸로 읽으면 10101101이다.</p>
+    <p>그런데 컴퓨터는 왜 하필 2진수를 쓸까? 칩 안의 전압은 잡음 때문에 조금씩 흔들린다. 열 단계를 구분하려면 그 흔들림이 아주 작아야 하지만, 높다와 낮다 두 단계만 구분하면 꽤 흔들려도 읽기가 틀리지 않는다.</p>
+
+    <h3><span class="no">1.4.2</span>16진수는 4비트의 줄임말</h3>
+    <p>2진수는 길다. 32비트 주소를 0과 1로 쓰면 32자리가 된다. 그래서 4비트씩 끊어 한 글자로 쓰는데, 4비트는 0부터 15까지 16가지이므로 0~9 다음에 A(10)~F(15)를 붙인다. 이것이 16진수이다. 그림 1에서 10101101을 1010과 1101로 끊으면 각각 10과 13, 곧 A와 D이므로 173은 16진수로 AD이다.</p>
+    <p>여기서 16진수가 새로운 종류의 수가 아니라는 점을 기억하자. 같은 비트 열을 사람이 읽기 좋게 줄여 쓴 표기일 뿐이고, 한 자리가 정확히 4비트에 맞물리므로 바꾸는 데 계산이 거의 필요 없다. Python에서는 다음처럼 바로 확인할 수 있다.</p>
     <pre><code>n = 173
 print(bin(n), hex(n), int("10101101", 2), int("AD", 16))
 for bits in (1, 8, 16, 32):
     print(f"{bits}비트로 나타낼 수 있는 경우의 수: {2 ** bits}")
 for ch in "A가":
     print(ch, "코드", ord(ch), "UTF-8 바이트", ch.encode("utf-8"))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
 <pre><code>0b10101101 0xad 173 173
 1비트로 나타낼 수 있는 경우의 수: 2
 8비트로 나타낼 수 있는 경우의 수: 256
@@ -37,41 +48,33 @@ for ch in "A가":
 32비트로 나타낼 수 있는 경우의 수: 4294967296
 A 코드 65 UTF-8 바이트 b'A'
 가 코드 44032 UTF-8 바이트 b'\xea\xb0\x80'</code></pre>
-    <div class="tb-env ex">
-      <span class="lb">예제 1.4.1</span>
-      <p>173을 손으로 2진수로 바꿔라. 16진수로는?</p>
-    </div>
-    <p><i>풀이.</i> 2로 계속 나눈 나머지를 거꾸로 읽으면 173 → 1, 86 → 0, 43 → 1, 21 → 1, 10 → 0, 5 → 1, 2 → 0, 1 → 1: 10101101. 4비트씩 나누면 1010 = A, 1101 = D → AD. 위 실행 결과와 같습니다. 영문자 A는 1바이트(65), 한글 '가'는 UTF-8로 3바이트입니다.</p>
+    <p>위 출력은 Python 3.12에서 실제로 실행한 결과이다. 비트가 하나 늘 때마다 각 경우에 0과 1이 붙어 경우의 수가 두 배가 되므로, \(n\)비트로는 \(2^n\)가지를 나타낸다. 8비트, 곧 1바이트는 256가지이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "16진수는 다른 종류의 수": 같은 수를 짧게 쓰는 표기일 뿐입니다. (2) "1 KB = 1000바이트로 늘 같다": 메모리에서는 1024바이트(KiB)를 쓰기도 해 표기를 확인합니다.</div>
+    <h3><span class="no">1.4.3</span>문자는 번호로 저장된다</h3>
+    <p>글자도 결국 수로 저장된다. 글자마다 번호를 정한 표가 있어서, 영문자 A는 65번, 한글 '가'는 유니코드 44032번이다. 이 번호를 바이트로 바꾸는 방식이 UTF-8이다. 65는 1바이트에 들어가지만 44032는 1바이트(256가지)로도, 2바이트에 규칙용 비트를 뺀 자리로도 모자라서 3바이트를 쓴다. 따라서 한글 문서는 같은 글자 수의 영문 문서보다 파일이 더 크다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>2진수 자릿값 1, 2, 4, …, 16진수 한 자리 = 4비트.</li>
-        <li>n비트 → 2ⁿ가지.</li>
-        <li>문자는 코드 번호로 저장(UTF-8에서 한글 3바이트).</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>1 KB가 언제나 1000바이트라고 생각하기 쉽다. 저장 장치 광고는 1000바이트를 쓰지만, 메모리와 운영체제는 1024바이트(KiB로 쓰기도 한다)를 쓰는 경우가 많아 표기를 확인해야 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>컴퓨터는 수를 자리마다 1, 2, 4, …의 값이 붙은 2진수로 저장하고, 173은 10101101이다. 16진수는 이 비트를 4개씩 묶어 한 글자로 쓴 줄임말이라 173을 AD로 짧게 적는다. 글자는 번호로 바뀌어 저장되며, 한글은 UTF-8에서 3바이트를 차지한다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">1.4.2</span>연습문제</h3>
+      <h3><span class="no">1.4.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>2진수 1111은 10진수로?
+        <li>2진수 1111은 10진수로 얼마인가?
           <details><summary>답</summary><p>15.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>10진수 200을 16진수로?
+        <li>10진수 200을 16진수로 나타내어라.
           <details><summary>답</summary><p>C8.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>RGB 색을 성분마다 8비트로 쓰면 색의 가짓수는?
-          <details><summary>답</summary><p>2²⁴ = 16 777 216.</p></details>
+          <details><summary>답</summary><p>\(2^{24} = 16\,777\,216\).</p></details>
         </li>
       </ol>
     </div>

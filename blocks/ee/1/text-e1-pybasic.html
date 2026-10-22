@@ -8,55 +8,50 @@
 <article class="card q-card" id="text-e1-pybasic" data-kind="본문" data-std="전전1-02-01">
   <header class="card-head"><span class="no"></span><h2>Python 기본 문법으로 계산 문제 풀기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>변수, 수와 문자열, 리스트, 딕셔너리를 써서 자료를 담는다.</li>
-        <li>조건문(if)과 반복문(for, while)으로 계산 순서를 만든다.</li>
-        <li>print와 f-문자열로 결과를 읽기 좋게 출력한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>고교 정보 교과의 기초(있으면 좋음). 없어도 이 절부터 시작할 수 있습니다. Python 3를 설치하거나 온라인 실행 환경을 씁니다.</li>
-      </ul>
-    </div>
+    <p class="q-ask">5 V 전원에 LED를 달 때 저항을 220 Ω, 330 Ω, 470 Ω 가운데 무엇으로 해야 전류가 20 mA를 넘지 않을까? 계산기로 세 번 누르면 되는 일을 굳이 프로그램으로 쓰면 무엇이 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 220" role="img" aria-label="저항값마다 전류를 계산하고 20 mA를 넘는지 검사하는 흐름도">
+        <defs><marker id="ah-e1py" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <rect x="20" y="20" width="150" height="40" class="k"/><text x="95" y="45" text-anchor="middle">v = 5</text>
+        <rect x="20" y="90" width="150" height="40" class="la"/><rect x="20" y="90" width="150" height="40" class="a"/><text x="95" y="108" text-anchor="middle">for r in</text><text x="95" y="123" text-anchor="middle" class="s">[220, 330, 470]</text>
+        <rect x="210" y="90" width="130" height="40" class="k"/><text x="275" y="115" text-anchor="middle">i = v / r</text>
+        <path d="M380 110 L430 90 L480 110 L430 130 Z" class="lc"/><path d="M380 110 L430 90 L480 110 L430 130 Z" class="c"/><text x="430" y="115" text-anchor="middle" class="s">i &gt; 0.02?</text>
+        <rect x="380" y="160" width="160" height="40" class="k"/><text x="460" y="185" text-anchor="middle">"저항을 키워라" 출력</text>
+        <g class="k" marker-end="url(#ah-e1py)"><path d="M95 60 V88"/><path d="M170 110 H208"/><path d="M340 110 H378"/><path d="M450 122 V158"/><path d="M480 110 H545 V75 H125 V88"/></g>
+        <text x="458" y="148" class="s">예</text><text x="500" y="104" class="s">아니오</text>
+        <text x="330" y="68" text-anchor="middle" class="ta">다음 r로 되돌아감</text>
+      </svg>
+      <figcaption>그림 1. 프로그램은 값을 이름에 담고(대입), 같은 계산을 값만 바꿔 되풀이하고(반복), 조건에 따라 갈래를 고르는(조건문) 세 가지 흐름으로 짜인다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고교 정보 교과의 기초가 있으면 좋지만 없어도 된다. Python 3를 설치하거나 온라인 실행 환경을 쓴다.</div>
 
-    <h3><span class="no">2.1.1</span>왜 Python인가</h3>
-    <p>공학에서는 같은 계산을 값만 바꿔 여러 번 하거나, 자료 수천 개를 정리하는 일이 많습니다. Python은 문법이 짧고 읽기 쉬우며, 수치 계산(NumPy)과 그래프(Matplotlib) 도구가 풍부해 공학 계산의 표준처럼 쓰입니다.</p>
+    <h3><span class="no">2.1.1</span>왜 프로그램으로 쓰는가</h3>
+    <p>LED 문제는 옴의 법칙 \(I = V/R\) 하나로 풀린다. 저항이 셋이면 계산기로 충분하지만, 후보가 스물네 개로 늘거나 전원 전압을 바꿔 다시 따져야 하면 이야기가 달라진다. 프로그램은 계산의 순서 자체를 적어 두는 것이어서, 값만 바꾸면 같은 순서를 몇 번이든 다시 실행한다. Python은 문법이 짧고, 수치 계산(NumPy)과 그래프(Matplotlib) 도구가 넉넉해 공학 계산에 널리 쓰인다.</p>
 
-    <h3><span class="no">2.1.2</span>값을 담는 그릇</h3>
-    <p class="q-term"><b>변수</b>: 값에 붙인 이름. <code>v = 5</code>는 "v라는 이름으로 5를 가리켜라".</p>
-    <p class="q-term"><b>자료형</b>: 정수(int) <code>3</code>, 실수(float) <code>3.0</code>, 문자열(str) <code>"저항"</code>, 참거짓(bool) <code>True</code>.</p>
-    <p class="q-term"><b>리스트</b>: 순서 있는 값의 줄 <code>[1, 2, 3]</code>. 0번부터 센다.</p>
-    <p class="q-term"><b>딕셔너리</b>: 이름(키)으로 값을 찾는 표 <code>{"냉장고": 40, "전등": 10}</code>.</p>
+    <h3><span class="no">2.1.2</span>이름과 값</h3>
+    <p>프로그램의 첫 줄은 대개 값에 이름을 붙이는 일이다. <code>v = 5</code>라고 쓰면 \(v\)라는 이름이 5를 가리키게 된다. 수학의 등호와 달리 이것은 "같다"는 주장이 아니라 오른쪽 값을 왼쪽 이름에 담으라는 명령이고, 이를 대입이라 한다. 같은지 비교할 때는 <code>==</code>를 쓴다.</p>
+    <p>값에는 종류가 있다. <code>3</code>은 정수(int), <code>3.0</code>은 실수(float), <code>"저항"</code>은 문자열(str), <code>True</code>는 참거짓(bool)이다. 이 종류를 자료형이라 한다. 여러 값을 순서대로 모은 <code>[220, 330, 470]</code>은 리스트이며, 2.3절에서 자세히 다룬다.</p>
 
-    <h3><span class="no">2.1.3</span>흐름 만들기</h3>
-<pre><code>v, r = 5, 220            # 전압 5 V, 저항 220 Ω
-i = v / r                # 옴의 법칙
-print(f"전류 {i * 1000:.1f} mA")       # 전류 22.7 mA
-
-if i &gt; 0.02:
-    print("LED 정격 20 mA 초과: 저항을 키우세요")
-
+    <h3><span class="no">2.1.3</span>되풀이와 갈래</h3>
+    <p>이제 그림 1의 흐름을 코드로 옮겨 보자.</p>
+<pre><code>v = 5                                  # 전압 5 V
 for r in [220, 330, 470]:              # 여러 값으로 반복
-    print(r, "Ω →", round(v / r * 1000, 1), "mA")</code></pre>
-    <p>들여쓰기(보통 공백 4칸)가 문장의 묶음을 나타냅니다. <code>if</code>나 <code>for</code> 줄 끝의 콜론(:) 다음 줄부터 들여 쓴 부분이 그 안에서 실행됩니다.</p>
+    i = v / r                          # 옴의 법칙
+    print(r, "Ω →", round(i * 1000, 1), "mA")
+    if i &gt; 0.02:
+        print("  LED 정격 20 mA 초과: 저항을 키워라")</code></pre>
+    <p><code>for</code> 줄은 리스트의 값을 하나씩 꺼내 \(r\)에 담고, 그 아래 들여 쓴 줄들을 매번 실행한다. 들여쓰기(보통 공백 4칸)가 어디까지가 반복의 몸통인지를 정하므로, Python에서 들여쓰기는 모양이 아니라 문법이다. <code>if</code> 줄도 마찬가지여서, 조건이 참일 때만 그 아래 들여 쓴 줄이 실행된다.</p>
+
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
-      <p>위 코드의 마지막 반복이 출력하는 세 줄을 예측하라.</p>
+      <p>위 코드가 출력하는 내용을 실행하기 전에 예측하여라.</p>
     </div>
-    <p><i>풀이.</i> 5/220 = 0.022727 A → 22.7 mA, 5/330 → 15.2 mA, 5/470 → 10.6 mA. 출력은 <code>220 Ω → 22.7 mA</code>, <code>330 Ω → 15.2 mA</code>, <code>470 Ω → 10.6 mA</code>입니다. print에 여러 값을 쉼표로 주면 공백 하나로 띄워 출력합니다.</p>
+    <p><i>풀이.</i> \(5/220 = 0.02273\) A이므로 첫 줄은 <code>220 Ω → 22.7 mA</code>이고, 0.02를 넘으므로 경고가 한 줄 더 나온다. 이어서 \(5/330\)은 15.2 mA, \(5/470\)은 10.6 mA로 둘 다 경고가 없다. print에 값을 쉼표로 여러 개 주면 사이에 공백 하나를 넣어 출력한다. 따라서 처음 질문의 답은 330 Ω 이상이다.</p>
+    <p>여기서 전원을 3.3 V로 바꾸고 싶다면 첫 줄만 고치면 된다. 이것이 계산기와 프로그램의 차이이다. 출력 자릿수를 맞추고 싶으면 f-문자열 <code>f"{i*1000:.1f} mA"</code>를 쓰는데, 중괄호 안의 <code>:.1f</code>가 소수점 아래 한 자리를 뜻한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "<code>=</code>는 같다는 뜻이다": 오른쪽 값을 왼쪽 이름에 담는 대입입니다. 같은지 비교는 <code>==</code>. (2) "<code>7 / 2</code>는 3이다": Python 3에서는 3.5이고, 몫만 원하면 <code>7 // 2</code>입니다. (3) 리스트의 첫 원소는 <code>xs[1]</code>이 아니라 <code>xs[0]</code>입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>7 / 2</code>가 3이라고 생각하는 경우가 있는데, Python 3에서는 3.5이고 몫만 원하면 <code>7 // 2</code>를 쓴다. 또 리스트의 첫 원소는 <code>xs[1]</code>이 아니라 <code>xs[0]</code>이다. 사람은 1부터 세지만 Python은 0부터 센다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>변수는 값의 이름. int, float, str, bool, 리스트, 딕셔너리.</li>
-        <li>if로 갈래, for/while로 반복. 들여쓰기가 묶음을 정한다.</li>
-        <li>f-문자열 <code>f"{x:.1f}"</code>로 자릿수를 정해 출력한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>LED 저항 문제는 값을 이름에 담는 대입, 후보를 하나씩 꺼내는 <code>for</code> 반복, 20 mA를 넘는지 묻는 <code>if</code> 갈래로 짜면 330 Ω 이상이 답으로 나온다. 프로그램은 계산의 순서를 적어 두므로 전압이나 후보가 바뀌어도 한 줄만 고치면 다시 풀린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
@@ -68,14 +63,14 @@ for r in [220, 330, 470]:              # 여러 값으로 반복
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>1부터 100까지 짝수의 합을 for 문으로 구하는 코드를 쓰라. 결과는?
-          <details><summary>답</summary><p><code>s = 0</code> 다음 <code>for k in range(2, 101, 2): s += k</code>. 결과 2550.</p></details>
+        <li>1부터 100까지 짝수의 합을 for 문으로 구하는 코드를 써라. 결과는?
+          <details><summary>답</summary><p><code>s = 0</code> 다음 <code>for k in range(2, 101, 2): s += k</code>. 결과는 2550이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>딕셔너리 <code>{"A": 3, "B": 7, "C": 5}</code>에서 값이 가장 큰 키를 찾는 방법 두 가지는?
-          <details><summary>답</summary><p>반복문으로 최댓값과 키를 갱신하거나, <code>max(d, key=d.get)</code>. 결과 "B".</p></details>
+          <details><summary>답</summary><p>반복문으로 최댓값과 키를 갱신하거나 <code>max(d, key=d.get)</code>를 쓴다. 결과는 "B"이다.</p></details>
         </li>
       </ol>
     </div>

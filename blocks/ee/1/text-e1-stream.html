@@ -8,68 +8,65 @@
 <article class="card q-card" id="text-e1-stream" data-kind="본문" data-std="전전1-06-02">
   <header class="card-head"><span class="no"></span><h2>동영상 스트리밍이 전달되는 길</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>스트리밍 동영상이 서버(클라우드) → 인터넷 → 접속망 → 기기로 가는 경로를 단계별로 설명한다.</li>
-        <li>압축하지 않은 영상의 비트율을 계산하고, 압축이 왜 필요한지 수치로 보인다.</li>
-        <li>버퍼와 화질 자동 조절(적응형 스트리밍)이 끊김을 줄이는 원리를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>곱셈과 단위(비트, 바이트, k·M·G), 2진수(고교 정보).</li>
-      </ul>
-    </div>
+    <p class="q-ask">1시간짜리 고화질 영화를 압축하지 않고 그대로 보내면 몇 GB가 될까? 그 양을 집의 인터넷으로 실시간에 받을 수 있을까? 받을 수 없다면, 영상은 어떤 길을 거쳐 어떻게 줄어든 채 휴대폰에 도착할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="압축 서버, CDN, 인터넷, 접속망, 기기 버퍼로 이어지는 스트리밍 경로">
+        <defs><marker id="ah-e1st" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g text-anchor="middle">
+          <rect x="10" y="50" width="90" height="56" class="k"/><text x="55" y="74">압축</text><text x="55" y="92" class="s">화질별 여러 벌</text>
+          <rect x="120" y="50" width="90" height="56" class="k"/><text x="165" y="74">클라우드</text><text x="165" y="92" class="s">CDN 캐시</text>
+          <rect x="230" y="50" width="90" height="56" class="k"/><text x="275" y="74">인터넷</text><text x="275" y="92" class="s">패킷, 라우터</text>
+          <rect x="340" y="50" width="90" height="56" class="k"/><text x="385" y="74">접속망</text><text x="385" y="92" class="s">광·Wi-Fi·5G</text>
+          <rect x="450" y="50" width="100" height="56" class="lc"/><rect x="450" y="50" width="100" height="56" class="c"/><text x="500" y="74">기기</text><text x="500" y="92" class="s">버퍼 → 재생</text>
+        </g>
+        <g class="k" marker-end="url(#ah-e1st)"><path d="M100 78 H118"/><path d="M210 78 H228"/><path d="M320 78 H338"/><path d="M430 78 H448"/></g>
+        <text x="55" y="34" text-anchor="middle" class="td">1.49 Gbps</text><text x="500" y="34" text-anchor="middle" class="ta">약 5 Mbps</text>
+        <path d="M80 30 H460" class="d dsh"/>
+        <text x="280" y="140" text-anchor="middle" class="s">속도가 떨어지면 버퍼로 버티고, 버퍼가 줄면 낮은 화질 조각으로 바꾼다</text>
+        <rect x="460" y="150" width="80" height="16" class="k"/><rect x="460" y="150" width="50" height="16" class="la"/><text x="450" y="163" text-anchor="end" class="s">버퍼</text>
+      </svg>
+      <figcaption>그림 1. 동영상은 수백 배로 압축되어 사용자 가까운 캐시 서버에서 출발하고, 패킷으로 나뉘어 인터넷과 접속망을 지난 뒤, 기기의 버퍼에 몇 초 분량이 쌓인 채 재생된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>비트와 바이트, 접두어 k·M·G, 2진수(<a href="01-04.html">1.4절</a>)를 쓴다.</div>
 
-    <h3><span class="no">6.2.1</span>경로</h3>
-    <ol>
-      <li><b>제작과 압축</b>: 원본 영상을 압축(코덱: H.264, HEVC, AV1 등)해 화질별로 여러 벌 만든다.</li>
-      <li><b>클라우드와 CDN</b>: 파일을 데이터센터에 두고, 사용자 가까이 있는 캐시 서버(CDN)에 복사해 먼 거리 전송을 줄인다.</li>
-      <li><b>인터넷</b>: 영상을 작은 묶음(패킷)으로 나누어 여러 라우터를 거쳐 보낸다. 각 패킷에 주소가 붙는다.</li>
-      <li><b>접속망</b>: 집의 광케이블·Wi-Fi 또는 이동통신(4G/5G) 기지국에서 기기로.</li>
-      <li><b>기기</b>: 몇 초 분량을 미리 받아 버퍼에 쌓고, 압축을 풀어 화면에 보여 준다.</li>
-    </ol>
-
-    <h3><span class="no">6.2.2</span>압축이 없으면</h3>
-    <p class="q-term"><b>비트율</b>: 1초에 보내는 비트 수(bps). 8비트 = 1바이트.</p>
+    <h3><span class="no">6.2.1</span>압축하지 않으면</h3>
+    <p>먼저 처음 질문의 숫자부터 구해 보자. 1초에 보내는 비트 수를 비트율이라 하고 bps로 센다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
-      <p>1920×1080 화소, 화소당 24비트(빨강·초록·파랑 각 8비트), 초당 30장인 영상의 압축 전 비트율과 1시간 분량의 크기는? 300배로 압축하면?</p>
+      <p>1920×1080 화소, 화소당 24비트(빨강, 초록, 파랑 각 8비트), 초당 30장인 영상의 압축 전 비트율과 1시간 분량의 크기는? 300배로 압축하면?</p>
     </div>
-    <p><i>풀이.</i> \(1920 \times 1080 \times 24 \times 30 \approx 1.49\times10^9\) bps(1.49 Gbps). 1시간이면 \(1.49\times10^9 \times 3600/8 \approx 672\) GB. 300배 압축하면 약 4.98 Mbps, 1시간 약 2.24 GB로 가정용 인터넷으로 충분합니다. 압축은 이웃 화소와 이웃 장면이 비슷하다는 점을 이용해 바뀐 부분만 보내는 방식으로 이루어집니다(신호처리, 확인 필요: 실제 서비스 비트율은 장면과 코덱에 따라 다름).</p>
+    <p><i>풀이.</i> 한 장이 \(1920\times1080\times24\) 비트이고 1초에 30장이므로 비트율은 약 \(1.49\times10^9\) bps, 곧 1.49 Gbps이다. 1시간이면 \(1.49\times10^9\times3600\) 비트이고, 8비트가 1바이트이므로 약 672 GB이다. 집의 100 Mbps 인터넷보다 15배나 빠른 속도가 필요하니 실시간 전송은 불가능하다. 하지만 300배로 압축하면 약 5 Mbps, 1시간에 약 2.24 GB가 되어 가정용 인터넷으로 충분하다.</p>
+    <p>이렇게 큰 압축이 가능한 까닭은 영상에 되풀이가 많기 때문이다. 한 장 안에서 이웃한 화소는 색이 거의 같고, 이웃한 두 장면은 대부분이 그대로이다. 그래서 H.264, HEVC, AV1 같은 코덱은 바뀐 부분과 움직임만 적어 보낸다. 실제 서비스의 비트율은 장면과 코덱에 따라 다르다(확인 필요).</p>
 
-    <h3><span class="no">6.2.3</span>끊기지 않게</h3>
-    <p>통신 속도는 시간에 따라 변합니다. 기기는 버퍼에 몇 초~수십 초 분량을 미리 받아 두고, 속도가 떨어지면 버퍼를 쓰며 버팁니다. 버퍼가 줄어들면 더 낮은 화질(더 작은 비트율)의 조각을 받도록 바꾸는데, 이것이 적응형 스트리밍입니다. 화면이 갑자기 흐려졌다가 다시 선명해지는 것이 이 동작입니다.</p>
+    <h3><span class="no">6.2.2</span>서버에서 기기까지</h3>
+    <p>압축된 영상은 화질별로 여러 벌 만들어져 데이터센터, 곧 클라우드에 놓인다. 그런데 모든 시청자가 한 데이터센터에서 받으면 먼 거리를 오가느라 느리고 서버도 붐빈다. 그래서 같은 파일을 사용자 가까이에 있는 캐시 서버들에 복사해 두는데, 이 서버망을 CDN이라 한다.</p>
+    <p>이제 영상은 작은 묶음인 패킷으로 나뉘어 인터넷을 지난다. 패킷마다 주소가 붙어 있어 라우터들이 그 주소를 보고 다음 길을 고른다. 마지막 구간인 접속망은 집의 광케이블과 Wi-Fi, 또는 이동통신 기지국이다. 그림 1의 다섯 상자가 이 경로이며, 1.1절에서 본 여러 분야가 상자마다 들어 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "100 Mbps 인터넷이면 100 MB를 1초에 받는다": 비트(b)와 바이트(B)는 8배 다릅니다. 100 Mbps는 초당 12.5 MB입니다. (2) "스트리밍은 파일을 다 받은 뒤 재생한다": 조금씩 받으며 재생합니다. (3) 끊김의 원인은 통신 속도만이 아니라 서버 혼잡, Wi-Fi 간섭, 기기의 압축 해제 성능일 수도 있습니다.</div>
+    <h3><span class="no">6.2.3</span>끊기지 않게 하는 장치</h3>
+    <p>그런데 통신 속도는 시간에 따라 오르내린다. 기기는 몇 초에서 수십 초 분량을 미리 받아 버퍼에 쌓아 두고, 속도가 잠깐 떨어지면 버퍼를 꺼내 쓰며 버틴다. 버퍼가 계속 줄면 더 낮은 비트율의 조각을 받도록 바꾸는데, 이것이 적응형 스트리밍이다. 화면이 갑자기 흐려졌다가 다시 선명해지는 것이 바로 이 동작이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>압축 → 클라우드·CDN → 인터넷(패킷) → 접속망 → 기기(버퍼, 압축 해제).</li>
-        <li>1080p30 압축 전 약 1.49 Gbps, 압축으로 수 Mbps.</li>
-        <li>버퍼와 적응형 스트리밍이 속도 변화를 흡수한다.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>100 Mbps 인터넷이면 100 MB를 1초에 받는다고 생각하기 쉽다. 하지만 비트(b)와 바이트(B)는 8배 차이여서 100 Mbps는 초당 12.5 MB이다. 또 끊김의 원인이 통신 속도만은 아니다. 서버 혼잡, Wi-Fi 간섭, 기기의 압축 해제 성능도 원인이 될 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>1080p 30장 영상은 압축 전 1.49 Gbps, 1시간에 약 672 GB여서 그대로는 보낼 수 없다. 코덱이 되풀이를 덜어 내 수 Mbps로 줄이고, CDN이 가까운 곳에서 보내며, 패킷이 인터넷과 접속망을 지나 기기의 버퍼에 쌓인다. 버퍼와 적응형 스트리밍이 속도의 오르내림을 흡수해 끊김을 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>50 Mbps로 2 GB 파일을 받는 데 걸리는 시간은?
-          <details><summary>답</summary><p>2 GB = 16 Gb, 16,000/50 = 320초(약 5분 20초).</p></details>
+          <details><summary>답</summary><p>2 GB는 16 Gb이므로 \(16\,000/50 = 320\)초, 약 5분 20초이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>3840×2160, 24비트, 60 fps의 압축 전 비트율은? 1080p30의 몇 배인가?
-          <details><summary>답</summary><p>약 11.9 Gbps, 8배(화소 4배 × 장 수 2배).</p></details>
+          <details><summary>답</summary><p>약 11.9 Gbps로 8배이다. 화소가 4배, 장 수가 2배이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>버퍼에 20초 분량(5 Mbps 영상)이 있다. 통신 속도가 3 Mbps로 떨어지면 몇 초 뒤 버퍼가 비는가?
-          <details><summary>답</summary><p>1초마다 2 Mb 부족. 버퍼 100 Mb(20 s × 5 Mbps)이므로 50초 뒤. 그 전에 화질을 낮추면 끊기지 않습니다.</p></details>
+          <details><summary>답</summary><p>1초마다 2 Mb가 모자란다. 버퍼는 \(20\times5 = 100\) Mb이므로 50초 뒤에 빈다. 그 전에 화질을 낮추면 끊기지 않는다.</p></details>
         </li>
       </ol>
     </div>

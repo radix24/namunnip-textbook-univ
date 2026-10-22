@@ -8,53 +8,49 @@
 <article class="card q-card" id="text-e1-func" data-kind="본문" data-std="전전1-02-02">
   <header class="card-head"><span class="no"></span><h2>함수로 프로그램 나누기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>def로 함수를 정의하고, 매개변수와 반환값으로 자료를 주고받는다.</li>
-        <li>같은 계산을 함수로 묶어 여러 곳에서 다시 쓴다.</li>
-        <li>기본값 매개변수와 설명 문자열(docstring)로 함수를 쓰기 쉽게 만든다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Python 기본 문법 (<a href="02-01.html">2.1절</a>), 고교 수학의 함수 \(y = f(x)\).</li>
-      </ul>
-    </div>
+    <p class="q-ask">회로 계산 프로그램에 병렬 저항 공식 \(R_1R_2/(R_1+R_2)\)이 열 번 나온다. 그런데 한 곳에 괄호를 잘못 쳤다면 열 곳을 다 뒤져야 할까? 같은 계산을 한 번만 쓰고 여러 번 부르는 방법은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="함수가 인수를 받아 계산한 뒤 값을 돌려주는 상자 그림">
+        <defs><marker id="ah-e1fn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <text x="60" y="70" text-anchor="middle">1000</text><text x="60" y="120" text-anchor="middle">1000</text>
+        <rect x="170" y="40" width="220" height="110" class="lk"/><rect x="170" y="40" width="220" height="110" class="k"/>
+        <text x="280" y="32" text-anchor="middle" class="ta">def parallel(r1, r2)</text>
+        <text x="190" y="72" class="s">r1 = 1000</text><text x="190" y="122" class="s">r2 = 1000</text>
+        <text x="280" y="100" text-anchor="middle">r1 * r2 / (r1 + r2)</text>
+        <text x="500" y="100" text-anchor="middle" class="tc">500.0</text>
+        <g class="k" marker-end="url(#ah-e1fn)"><path d="M85 66 H168"/><path d="M85 116 H168"/><path d="M390 96 H468"/></g>
+        <text x="125" y="58" text-anchor="middle" class="s">인수</text><text x="430" y="88" text-anchor="middle" class="s">return</text>
+        <text x="280" y="176" text-anchor="middle" class="s">상자 안의 이름(r1, r2)은 밖에서 보이지 않는다</text>
+      </svg>
+      <figcaption>그림 1. 함수는 들어온 값을 매개변수라는 이름에 담아 계산하고 결과 하나를 돌려주는 상자이며, 상자 안에서 쓴 이름은 밖과 섞이지 않는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Python 기본 문법(<a href="02-01.html">2.1절</a>)과 고교 수학의 함수 \(y = f(x)\)를 쓴다.</div>
 
-    <h3><span class="no">2.2.1</span>수학의 함수와 프로그램의 함수</h3>
-    <p>수학에서 \(f(x) = x^2\)는 입력 x를 받아 값을 돌려줍니다. 프로그램의 함수도 같습니다. 다른 점은 입력이 여러 개일 수 있고, 계산 과정에 여러 문장이 들어갈 수 있다는 것입니다.</p>
+    <h3><span class="no">2.2.1</span>수학의 함수와 같은 생각</h3>
+    <p>수학에서 \(f(x) = x^2\)은 입력 \(x\)를 받아 값 하나를 돌려준다. 프로그램의 함수도 같은 생각에서 출발한다. 다른 점은 입력이 여러 개일 수 있고, 값을 만드는 과정에 여러 문장을 쓸 수 있다는 것뿐이다. 병렬 저항을 함수로 만들어 보자.</p>
 <pre><code>def parallel(r1, r2):
     """두 저항의 병렬 합성 저항"""
     return r1 * r2 / (r1 + r2)
 
 print(parallel(1000, 1000))     # 500.0
 print(parallel(220, 330))       # 132.0</code></pre>
-    <p class="q-term"><b>매개변수</b>: 함수 정의의 괄호 안 이름(r1, r2). 부를 때 넣은 값(인수)이 여기에 담긴다.</p>
-    <p class="q-term"><b>반환값</b>: <code>return</code> 뒤의 값. return이 없으면 None을 돌려준다.</p>
-    <p class="q-term"><b>지역 변수</b>: 함수 안에서 만든 변수는 함수 밖에서 보이지 않는다.</p>
+    <p><code>def</code> 줄의 괄호 안 이름 <code>r1</code>, <code>r2</code>를 매개변수라 하고, 부를 때 넣은 값 1000, 1000을 인수라 한다. 함수를 부르면 그림 1처럼 인수가 매개변수에 담기고, 몸통이 실행된 뒤 <code>return</code> 뒤의 값이 부른 자리로 돌아온다. 따라서 <code>parallel(1000, 1000)</code>이라는 식 전체가 500.0이라는 값이 된다.</p>
+    <p>세 따옴표로 쓴 첫 줄은 설명 문자열(docstring)이다. 실행에는 영향이 없지만 <code>help(parallel)</code>로 읽을 수 있어서, 몇 달 뒤의 자신이나 동료가 함수의 뜻을 바로 안다.</p>
 
-    <h3><span class="no">2.2.2</span>왜 나누는가</h3>
-    <ul>
-      <li><b>재사용</b>: 병렬 계산이 열 번 나오면 식을 열 번 쓰는 대신 함수를 열 번 부른다. 식이 틀렸으면 한 곳만 고친다.</li>
-      <li><b>읽기 쉬움</b>: <code>parallel(r1, r2)</code>는 식보다 뜻이 바로 보인다.</li>
-      <li><b>시험하기 쉬움</b>: 함수 하나씩 답을 아는 값으로 확인할 수 있다(1 kΩ ∥ 1 kΩ = 500 Ω).</li>
-    </ul>
+    <h3><span class="no">2.2.2</span>나누면 무엇이 좋은가</h3>
+    <p>처음 질문으로 돌아가 보자. 공식을 열 번 쓰는 대신 함수를 열 번 부르면, 공식이 틀렸을 때 고칠 곳은 <code>def</code> 아래 한 줄뿐이다. 게다가 <code>parallel(r1, r2)</code>라는 이름은 식보다 뜻이 바로 읽힌다. 시험하기도 쉬워진다. 1 kΩ 두 개의 병렬은 500 Ω이라는 답을 이미 알고 있으므로, 함수 하나만 따로 불러 맞는지 확인할 수 있다.</p>
+    <p>또 함수 안에서 만든 변수는 함수 밖에서 보이지 않는다. 이를 지역 변수라 한다. 다시 말해 큰 프로그램을 함수로 나누면 각 부분이 자기 이름만 신경 쓰면 되므로, 다른 곳의 같은 이름과 부딪칠 걱정이 줄어든다.</p>
+
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p>점수 리스트의 평균을 돌려주는 함수 <code>mean</code>과, 평균을 등급으로 바꾸는 함수 <code>letter(score, cuts=(90, 80, 70, 60))</code>를 설계하라. <code>letter(85.0)</code>과 <code>letter(85.0, cuts=(95, 85, 75, 65))</code>의 결과는?</p>
+      <p>점수 리스트의 평균을 돌려주는 <code>mean</code>과, 평균을 등급으로 바꾸는 <code>letter(score, cuts=(90, 80, 70, 60))</code>을 설계하여라. <code>letter(85.0)</code>과 <code>letter(85.0, cuts=(95, 85, 75, 65))</code>의 결과는?</p>
     </div>
-    <p><i>풀이.</i> <code>mean</code>은 <code>sum(xs) / len(xs)</code>. <code>letter</code>는 "A, B, C, D와 기준 점수를 차례로 짝지어, 점수가 기준 이상인 첫 등급을 돌려주고 모두 아니면 F". 기본 기준이면 85 ≥ 80으로 B, 엄격한 기준이면 85 ≥ 85로 역시 B입니다. 기본값 덕분에 대부분은 <code>letter(m)</code>처럼 짧게 부르고, 필요할 때만 기준을 바꿉니다. 이 절의 실습에서 실행 결과를 확인합니다.</p>
+    <p><i>풀이.</i> <code>mean</code>은 <code>sum(xs) / len(xs)</code>를 돌려주면 된다. <code>letter</code>는 A, B, C, D를 기준 점수와 차례로 짝지어, 점수가 기준 이상인 첫 등급을 돌려주고 모두 아니면 F를 돌려준다. 기본 기준에서는 85가 90에 못 미치고 80 이상이므로 B이다. 엄격한 기준에서도 85가 95에는 못 미치고 85 이상이므로 역시 B이다.</p>
+    <p>여기서 <code>cuts=(90, 80, 70, 60)</code>처럼 매개변수에 값을 미리 정해 두는 것을 기본값이라 한다. 대부분은 <code>letter(m)</code>처럼 짧게 부르고, 기준을 바꿀 때만 두 번째 인수를 준다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "함수 안에서 print하면 값을 돌려준 것이다": 화면에 보일 뿐 다른 계산에 쓸 수 없습니다. 쓰려면 return. (2) "함수를 정의하면 실행된다": def는 만들기만 하고, 이름 뒤에 괄호를 붙여 불러야 실행됩니다. (3) 리스트를 매개변수로 받아 함수 안에서 바꾸면 밖의 리스트도 바뀝니다(같은 리스트를 가리키므로).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>함수 안에서 <code>print</code>하면 값을 돌려준 것이라고 착각하기 쉽다. 화면에 보일 뿐이어서 그 값을 다른 계산에 쓸 수 없고, 쓰려면 <code>return</code>해야 한다. 또 <code>def</code>는 함수를 만들기만 할 뿐 실행하지 않는다. 이름 뒤에 괄호를 붙여 불러야 몸통이 실행된다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li><code>def 이름(매개변수):</code> … <code>return 값</code>.</li>
-        <li>재사용, 읽기, 시험이 쉬워진다. 고칠 곳이 한 곳.</li>
-        <li>기본값 매개변수로 자주 쓰는 경우를 짧게 부른다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>병렬 저항 공식을 <code>def parallel(r1, r2)</code>로 한 번만 써 두면 열 곳에서 부르더라도 고칠 곳은 한 줄이다. 함수는 인수를 매개변수에 담아 계산하고 값 하나를 돌려주는 상자이며, 안의 이름이 밖과 섞이지 않아 큰 프로그램을 나누어 짓고 하나씩 시험할 수 있게 해 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
@@ -66,14 +62,14 @@ print(parallel(220, 330))       # 132.0</code></pre>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>섭씨를 화씨로 바꾸는 함수 <code>c2f(c)</code>를 쓰고 <code>c2f(36.5)</code>를 구하라.
-          <details><summary>답</summary><p><code>return c * 9 / 5 + 32</code>, 97.7.</p></details>
+        <li>섭씨를 화씨로 바꾸는 함수 <code>c2f(c)</code>를 쓰고 <code>c2f(36.5)</code>를 구하여라.
+          <details><summary>답</summary><p><code>return c * 9 / 5 + 32</code>이고 결과는 97.7이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li><code>series(*rs)</code>처럼 저항을 몇 개든 받는 직렬 합성 함수를 쓰라.
-          <details><summary>답</summary><p><code>def series(*rs): return sum(rs)</code>. <code>*rs</code>는 넣은 값들을 묶음(튜플)으로 받습니다. 4.2절 실습에서 씁니다.</p></details>
+        <li><code>series(*rs)</code>처럼 저항을 몇 개든 받는 직렬 합성 함수를 써라.
+          <details><summary>답</summary><p><code>def series(*rs): return sum(rs)</code>. <code>*rs</code>는 넣은 값들을 튜플 하나로 묶어 받는다. 4.2절에서 쓴다.</p></details>
         </li>
       </ol>
     </div>

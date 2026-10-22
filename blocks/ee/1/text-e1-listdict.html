@@ -8,21 +8,35 @@
 <article class="card q-card" id="text-e1-listdict" data-kind="본문" data-std="전전1-02-03">
   <header class="card-head"><span class="no"></span><h2>리스트와 딕셔너리로 자료 다루기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>리스트로 순서 있는 자료를 저장하고 인덱스, 슬라이싱, 반복으로 다룬다.</li>
-        <li>딕셔너리로 이름(키)에 값을 붙여 찾는다.</li>
-        <li>합계, 평균, 최댓값과 개수 세기를 코드로 쓴다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Python 기본 문법 (<a href="02-01.html">2.1절</a>), 함수 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">한 시간마다 잰 온도 다섯 개와, 부품 상자에서 꺼낸 부품 이름 여섯 개가 있다. 온도는 평균과 최고값을, 부품은 종류마다 몇 개인지를 알고 싶다. 두 자료는 모양이 다른데, 각각 어떤 그릇에 담아야 계산이 쉬울까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="번호로 꺼내는 리스트와 이름표로 꺼내는 딕셔너리를 비교한 그림">
+        <text x="20" y="28">리스트 temps</text>
+        <g text-anchor="middle">
+          <rect x="20" y="40" width="60" height="40" class="k"/><rect x="80" y="40" width="60" height="40" class="k"/><rect x="140" y="40" width="60" height="40" class="k"/><rect x="200" y="40" width="60" height="40" class="k"/><rect x="260" y="40" width="60" height="40" class="k"/>
+          <text x="50" y="65">21.5</text><text x="110" y="65">22.0</text><text x="170" y="65">23.4</text><text x="230" y="65">22.8</text><text x="290" y="65">24.1</text>
+          <text x="50" y="98" class="ta">0</text><text x="110" y="98" class="ta">1</text><text x="170" y="98" class="ta">2</text><text x="230" y="98" class="ta">3</text><text x="290" y="98" class="ta">4</text>
+          <text x="290" y="114" class="s">−1</text>
+        </g>
+        <text x="360" y="28">딕셔너리 count</text>
+        <rect x="360" y="40" width="90" height="34" class="lc"/><rect x="360" y="74" width="90" height="34" class="lc"/><rect x="360" y="108" width="90" height="34" class="lc"/>
+        <path d="M360 40 H540 V142 H360 Z M360 74 H540 M360 108 H540 M450 40 V142" class="k"/>
+        <g text-anchor="middle"><text x="405" y="62" class="tc">"저항"</text><text x="405" y="96" class="tc">"LED"</text><text x="405" y="130" class="tc">"축전기"</text>
+        <text x="495" y="62">3</text><text x="495" y="96">2</text><text x="495" y="130">1</text></g>
+        <text x="170" y="165" text-anchor="middle" class="s">자리 번호(0부터)로 꺼낸다</text>
+        <text x="450" y="165" text-anchor="middle" class="s">키(이름표)로 꺼낸다</text>
+      </svg>
+      <figcaption>그림 1. 측정값처럼 순서가 뜻이 있는 자료는 번호로 꺼내는 리스트에, 부품별 개수처럼 이름과 값이 짝을 이루는 자료는 키로 꺼내는 딕셔너리에 담는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Python 기본 문법(<a href="02-01.html">2.1절</a>)과 함수(<a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
-    <h3><span class="no">2.3.1</span>두 그릇</h3>
-    <p><b>리스트</b>는 번호(0부터)로 꺼내는 줄 세운 상자, <b>딕셔너리</b>는 이름표로 꺼내는 사물함입니다. 측정값 여러 개는 리스트, "부품 이름 → 개수" 같은 대응은 딕셔너리가 편합니다.</p>
+    <h3><span class="no">2.3.1</span>순서가 있는 자료, 리스트</h3>
+    <p>온도는 잰 순서 자체가 정보이다. 세 번째 값이 오후 2시의 온도라면, 그 자리를 바꾸면 자료의 뜻이 달라진다. 이런 자료는 그림 1 왼쪽처럼 칸을 한 줄로 세운 리스트에 담는다. 칸에는 0부터 번호가 붙고, 이 번호를 인덱스라 한다. <code>temps[0]</code>은 첫 값, <code>temps[-1]</code>은 끝에서 첫 값이다.</p>
+    <p>한 번에 여러 칸을 잘라 낼 수도 있다. <code>temps[:3]</code>은 0, 1, 2번 칸이며 3번은 들어가지 않는다. 이렇게 끝을 빼고 세는 규칙 덕분에 <code>temps[:3]</code>과 <code>temps[3:]</code>을 이으면 원래 리스트가 빈틈없이 다시 만들어진다. 요약값은 내장 함수로 바로 구한다. 합은 <code>sum</code>, 개수는 <code>len</code>이므로 평균은 둘을 나누면 되고, 최고값은 <code>max</code>이다.</p>
+
+    <h3><span class="no">2.3.2</span>이름이 붙은 자료, 딕셔너리</h3>
+    <p>그런데 부품 개수는 사정이 다르다. "저항이 몇 개인가"를 묻는데 저항이 몇 번 칸에 있는지 기억해야 한다면 불편하다. 그래서 이름표(키)로 바로 값을 꺼내는 딕셔너리를 쓴다. <code>count["저항"]</code>이라고 쓰면 순서와 상관없이 3이 나온다.</p>
+    <p>개수를 세는 코드를 보자. 부품 이름을 하나씩 꺼내 그 키의 값을 1씩 늘린다.</p>
     <pre><code>temps = [21.5, 22.0, 23.4, 22.8, 24.1]        # 한 시간마다 잰 온도
 print("첫 값", temps[0], "마지막 값", temps[-1], "앞 세 개", temps[:3])
 print("평균", round(sum(temps) / len(temps), 2), "최고", max(temps))
@@ -33,46 +47,40 @@ for p in parts:
     count[p] = count.get(p, 0) + 1
 print(count)
 print("저항은", count["저항"], "개")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
 <pre><code>첫 값 21.5 마지막 값 24.1 앞 세 개 [21.5, 22.0, 23.4]
 평균 22.76 최고 24.1
 {'저항': 3, 'LED': 2, '축전기': 1}
 저항은 3 개</code></pre>
+    <p>위 출력은 Python 3.12에서 실제로 실행한 결과이다. 평균 22.76은 \(113.8/5\)이고, 부품은 저항 셋, LED 둘, 축전기 하나로 처음 질문의 두 답이 한 번에 나왔다.</p>
+
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>위 코드에서 <code>count.get(p, 0) + 1</code> 대신 <code>count[p] + 1</code>을 쓰면 무슨 일이 생기는가?</p>
     </div>
-    <p><i>풀이.</i> 처음 나온 부품은 아직 키가 없어 KeyError가 납니다. get은 키가 없을 때 기본값 0을 돌려주므로 처음 본 부품도 셀 수 있습니다.</p>
+    <p><i>풀이.</i> 첫 부품 "저항"을 만났을 때 딕셔너리는 아직 비어 있다. 없는 키를 꺼내려 했으므로 KeyError가 나고 프로그램이 멈춘다. 반면 <code>get(p, 0)</code>은 키가 없으면 기본값 0을 돌려주므로, 처음 본 부품도 0에서 1로 세기 시작한다. 다시 말해 <code>get</code>은 "처음 보는 경우"를 따로 다루지 않아도 되게 해 준다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "리스트 번호는 1부터": Python은 0부터 셉니다. (2) "b = a로 복사하면 따로 바뀐다": 같은 리스트를 가리키므로 b를 바꾸면 a도 바뀝니다(복사는 a.copy()).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span><code>b = a</code>로 리스트를 복사했다고 생각하기 쉽다. 실제로는 두 이름이 같은 리스트를 가리키므로 <code>b</code>를 바꾸면 <code>a</code>도 바뀐다. 따로 두려면 <code>b = a.copy()</code>를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>리스트: 순서·번호(0부터), 슬라이싱 a[i:j].</li>
-        <li>딕셔너리: 키 → 값, get(키, 기본값).</li>
-        <li>sum, len, max로 요약값 계산.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>온도처럼 순서가 뜻을 갖는 자료는 리스트에 담아 인덱스와 <code>sum</code>, <code>len</code>, <code>max</code>로 요약하면 평균 22.76과 최고 24.1이 나온다. 부품처럼 이름과 값이 짝인 자료는 딕셔너리에 담고 <code>get(키, 0)</code>으로 세면 종류별 개수가 한 번에 나온다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">2.3.2</span>연습문제</h3>
+      <h3><span class="no">2.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>temps[1:4]는?
-          <details><summary>답</summary><p>[22.0, 23.4, 22.8].</p></details>
+        <li><code>temps[1:4]</code>는?
+          <details><summary>답</summary><p><code>[22.0, 23.4, 22.8]</code>.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>점수 딕셔너리 {'kim': 80, 'lee': 95}에서 가장 높은 사람의 이름을 구하는 식은?
-          <details><summary>답</summary><p>max(d, key=d.get) → 'lee'.</p></details>
+        <li>점수 딕셔너리 <code>{'kim': 80, 'lee': 95}</code>에서 가장 높은 사람의 이름을 구하는 식은?
+          <details><summary>답</summary><p><code>max(d, key=d.get)</code>이고 결과는 'lee'이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>리스트에서 25 이상인 값만 모은 새 리스트를 한 줄로 쓰면?
-          <details><summary>답</summary><p>[t for t in temps if t >= 25].</p></details>
+        <li>리스트에서 25 이상인 값만 모은 새 리스트를 한 줄로 써라.
+          <details><summary>답</summary><p><code>[t for t in temps if t &gt;= 25]</code>.</p></details>
         </li>
       </ol>
     </div>

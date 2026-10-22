@@ -8,21 +8,32 @@
 <article class="card q-card" id="text-e1-fit" data-kind="본문" data-std="전전1-05-02">
   <header class="card-head"><span class="no"></span><h2>측정 자료에 직선 맞추기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>측정점에 가장 잘 맞는 직선을 최소제곱으로 구하는 뜻을 안다.</li>
-        <li>np.polyfit으로 기울기와 절편을 구하고 물리량(저항)을 읽는다.</li>
-        <li>잔차로 맞춤의 좋고 나쁨을 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>일차함수(고교 수학), NumPy (<a href="04-03.html">4.3절</a>), 미니 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">저항 하나에 전압을 0 V부터 5 V까지 바꿔 걸며 전류를 여섯 번 쟀다. 점들은 거의 한 줄로 서 있지만 정확히 한 직선 위에 있지는 않다. 이 점들에서 저항값 하나를 읽어 내려면 어떤 직선을 그어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 262" role="img" aria-label="전압-전류 측정점 여섯 개와 최소제곱 직선, 아래에 확대한 잔차">
+        <line x1="80" y1="185" x2="520" y2="185" class="ax"/><line x1="80" y1="20" x2="80" y2="185" class="ax"/>
+        <text x="74" y="189" text-anchor="end" class="s">0</text><text x="74" y="129" text-anchor="end" class="s">2</text><text x="74" y="69" text-anchor="end" class="s">4 mA</text>
+        <text x="80" y="200" text-anchor="middle" class="s">0</text><text x="248" y="200" text-anchor="middle" class="s">2</text><text x="416" y="200" text-anchor="middle" class="s">4</text><text x="500" y="200" text-anchor="middle" class="s">5 V</text>
+        <path d="M80 184.8 L500 34.7" class="a"/>
+        <g class="fd"><circle cx="80" cy="184.4" r="4"/><circle cx="164" cy="155.6" r="4"/><circle cx="248" cy="123.5" r="4"/><circle cx="332" cy="96.2" r="4"/><circle cx="416" cy="64.1" r="4"/><circle cx="500" cy="34.7" r="4"/></g>
+        <text x="300" y="60" class="ta">I = 1.0003 V + 0.0076 (mA)</text>
+        <line x1="80" y1="235" x2="520" y2="235" class="gd"/>
+        <text x="74" y="239" text-anchor="end" class="s">잔차</text>
+        <g class="d"><path d="M80 235 V231.4"/><path d="M164 235 V243.4"/><path d="M248 235 V222.4"/><path d="M332 235 V249.4"/><path d="M416 235 V228.7"/><path d="M500 235 V234.7"/></g>
+        <text x="520" y="255" text-anchor="end" class="s">세로 300배 확대, ±0.05 mA 안</text>
+      </svg>
+      <figcaption>그림 1. 최소제곱 직선은 점과 직선의 세로 차이(잔차)를 제곱해 더한 값이 가장 작은 직선이며, 잔차를 확대해 보면 부호가 고르게 섞여 직선 모형이 잘 맞는다는 것을 알 수 있다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고교 수학의 일차함수, NumPy(<a href="04-03.html">4.3절</a>), 미니 프로젝트(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
-    <h3><span class="no">5.2.1</span>최소제곱 직선</h3>
-    <p>측정값에는 잡음이 있어 점이 정확히 한 직선 위에 있지 않습니다. 각 점과 직선의 세로 차이(잔차)를 제곱해 더한 값이 가장 작은 직선을 고르는 것이 최소제곱법입니다.</p>
+    <h3><span class="no">5.2.1</span>두 점만 이으면 안 되는 이유</h3>
+    <p>옴의 법칙 \(I = V/R\)에 따르면 전류는 전압에 비례하므로, 전압-전류 그래프는 원점을 지나는 직선이고 기울기가 \(1/R\)이다. 그런데 측정에는 잡음이 섞여 점들이 직선에서 조금씩 벗어난다. 두 점만 골라 이으면 그 두 점의 잡음이 기울기에 그대로 들어가고, 어떤 두 점을 고르느냐에 따라 저항값이 달라진다.</p>
+    <p>그러므로 여섯 점을 모두 써서 "가장 잘 맞는" 직선을 정해야 한다. 그러려면 먼저 "잘 맞는다"를 수로 정의해야 한다. 점마다 측정값과 직선의 세로 차이를 잔차라 하자. 잔차는 양수도 음수도 있어서 그냥 더하면 서로 지워지므로, 제곱해서 더한다.</p>
+    \[ S(a, b) = \sum_{k} \bigl(I_k - (aV_k + b)\bigr)^2 \]
+    <p>이 \(S\)를 가장 작게 하는 기울기 \(a\)와 절편 \(b\)를 고르는 방법을 최소제곱법이라 한다. \(S\)는 \(a\)와 \(b\)의 이차식이므로 꼭짓점이 하나뿐이고, 따라서 답도 하나로 정해진다.</p>
+
+    <h3><span class="no">5.2.2</span>컴퓨터로 맞추기</h3>
+    <p>NumPy의 <code>np.polyfit(x, y, 1)</code>은 1차식, 곧 직선을 최소제곱으로 맞춰 기울기와 절편을 돌려준다.</p>
     <pre><code>import numpy as np
 V = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])               # 건 전압(V)
 I = np.array([0.02, 0.98, 2.05, 2.96, 4.03, 5.01]) / 1000    # 잰 전류(A)
@@ -31,29 +42,23 @@ print(f"기울기 {a * 1000:.4f} mA/V, 절편 {b * 1000:.4f} mA")
 print(f"저항 R = 1/기울기 = {1 / a:.1f} 옴")
 res = I - (a * V + b)
 print("잔차(mA):", np.round(res * 1000, 3))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
 <pre><code>기울기 1.0003 mA/V, 절편 0.0076 mA
 저항 R = 1/기울기 = 999.7 옴
 잔차(mA): [ 0.012 -0.028  0.042 -0.048  0.021  0.001]</code></pre>
+    <p>위 출력은 Python 3.12에서 실제로 실행한 결과이다. 기울기 1.0003 mA/V의 역수가 999.7 Ω이므로 이 저항은 1 kΩ이라고 읽는다. 처음 질문의 답이 이것이다.</p>
+
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
-      <p>위 결과에서 저항값을 읽고, 직선 모형이 맞는지 잔차로 판단하라.</p>
+      <p>위 결과의 잔차를 보고 직선 모형이 이 자료에 맞는지 판단하여라. 절편 0.0076 mA는 무엇을 뜻하는가?</p>
     </div>
-    <p><i>풀이.</i> 기울기 약 1.0 mA/V → R ≈ 1 kΩ(실행 결과의 값). 잔차가 ±0.05 mA 안에서 부호가 섞여 고르게 흩어져 있어 옴의 법칙(직선)이 잘 맞습니다. 잔차가 한쪽으로 휘어지는 모양이면 다이오드처럼 직선이 아닌 관계를 의심합니다.</p>
+    <p><i>풀이.</i> 잔차는 모두 ±0.05 mA 안에 있고, 그림 1 아래처럼 부호가 양, 음, 양, 음으로 섞여 고르게 흩어져 있다. 따라서 남은 차이는 무작위 잡음으로 보이며 직선 모형이 잘 맞는다. 만약 잔차가 가운데는 음수이고 양 끝은 양수인 식으로 한쪽으로 휘어진 모양이었다면, 다이오드처럼 직선이 아닌 관계를 의심해야 한다. 한편 옴의 법칙대로라면 절편은 0이어야 한다. 0.0076 mA는 잔차와 같은 크기여서 잡음 범위 안이고, 전류계의 작은 영점 오차로 볼 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "두 점만 이으면 충분": 잡음이 그대로 결과에 들어가 여러 점을 맞추는 것이 정확합니다. (2) "잔차가 작으면 모형이 옳다": 잔차의 모양(패턴)도 봐야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>잔차가 작으면 모형이 옳다고 판단하기 쉽다. 하지만 크기만큼 모양도 중요하다. 곡선 자료에 직선을 맞추어도 잔차는 작을 수 있으며, 그때 잔차는 한쪽으로 휘는 뚜렷한 무늬를 보인다. 잔차를 그려 무늬가 없는지 확인하는 습관을 들이자.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>최소제곱: 잔차 제곱합 최소.</li>
-        <li>np.polyfit(x, y, 1) → 기울기, 절편.</li>
-        <li>잔차의 크기와 모양으로 모형 판단.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>여섯 측정점에 잔차 제곱합이 가장 작은 직선을 맞추면 기울기 1.0003 mA/V를 얻고, 그 역수에서 저항이 약 1 kΩ임을 읽는다. 잔차가 ±0.05 mA 안에서 부호가 고르게 섞여 있으므로 직선 모형, 곧 옴의 법칙이 이 자료를 잘 설명한다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">5.2.2</span>연습문제</h3>
+      <h3><span class="no">5.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>I-V 직선의 기울기가 2 mA/V면 저항은?
@@ -62,14 +67,14 @@ print("잔차(mA):", np.round(res * 1000, 3))</code></pre>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
-        <li>절편이 0이 아니게 나오는 실험적 이유 하나는?
-          <details><summary>답</summary><p>전류계의 영점 오차나 측정 잡음.</p></details>
+        <li>절편이 0이 아니게 나오는 실험적 이유를 하나 들어라.
+          <details><summary>답</summary><p>전류계의 영점 오차나 측정 잡음이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>곡선 관계(예: 지수)를 직선 맞춤으로 다루는 방법은?
-          <details><summary>답</summary><p>로그를 취해 직선으로 바꾼 뒤 맞춥니다.</p></details>
+        <li>지수 관계 \(y = ce^{kx}\)를 직선 맞춤으로 다루는 방법은?
+          <details><summary>답</summary><p>양변에 로그를 취하면 \(\ln y = kx + \ln c\)로 직선이 되므로, \(x\)와 \(\ln y\)에 직선을 맞춘다.</p></details>
         </li>
       </ol>
     </div>
