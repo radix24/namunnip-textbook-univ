@@ -8,21 +8,28 @@
 <article class="card q-card" id="text-p6-boolean" data-kind="본문" data-std="물리6-01-01">
   <header class="card-head"><span class="no"></span><h2>부울 대수와 논리 회로 간소화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>기본 논리 게이트와 진리표, 부울 대수의 법칙을 쓴다.</li>
-        <li>부울 대수의 법칙과 드모르간 법칙으로 논리식을 간단히 하고 NAND만으로 바꾼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>2진수 (<a href="../../common/10/06-01.html">공통10 6.1절</a>), 트랜지스터 스위치 (<a href="../2/05-01.html">물리2 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">실험실 서랍에 NAND 게이트 IC만 잔뜩 있고 AND, OR, NOT은 하나도 없다. 그래도 원하는 논리 회로를 모두 만들 수 있을까? 그리고 복잡한 논리식을 게이트 수가 적은 식으로 줄이는 규칙은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="NAND 게이트 하나로 NOT, 둘로 AND, 셋으로 OR를 만드는 연결">
+        <g class="k">
+          <path d="M40 50 H70 M55 50 V40 H70 M55 50 V60 H70"/><path d="M70 30 H95 A20 20 0 0 1 95 70 H70 Z" fill="none"/><circle cx="119" cy="50" r="4" fill="none"/><path d="M123 50 H150"/>
+          <path d="M220 40 H250 M220 60 H250"/><path d="M250 30 H275 A20 20 0 0 1 275 70 H250 Z" fill="none"/><circle cx="299" cy="50" r="4" fill="none"/>
+          <path d="M303 50 H320 M320 50 V40 H335 M320 50 V60 H335"/><path d="M335 30 H360 A20 20 0 0 1 360 70 H335 Z" fill="none"/><circle cx="384" cy="50" r="4" fill="none"/><path d="M388 50 H410"/>
+        </g>
+        <text x="40" y="44" class="s">A</text><text x="155" y="54" class="s">Ā</text>
+        <text x="205" y="44" class="s">A</text><text x="205" y="64" class="s">B</text><text x="415" y="54" class="s">AB</text>
+        <text x="95" y="100" text-anchor="middle" class="ta">NOT = NAND 하나</text>
+        <text x="315" y="100" text-anchor="middle" class="ta">AND = NAND 뒤에 NOT</text>
+        <text x="280" y="145" text-anchor="middle" class="tb">OR = 두 입력을 각각 NOT 한 뒤 NAND</text>
+        <text x="280" y="170" text-anchor="middle" class="s">드모르간 법칙 Ā·B̄ 의 부정 = A + B</text>
+      </svg>
+      <figcaption>그림 1. NAND 게이트만으로 다른 게이트를 만드는 방법. 두 입력을 묶으면 NOT, NAND 뒤에 NOT을 붙이면 AND, 두 입력을 각각 NOT 한 뒤 NAND에 넣으면 드모르간 법칙에 따라 OR가 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2진수(<a href="../../common/10/06-01.html">공통10 6.1절</a>)와 트랜지스터 스위치(<a href="../2/05-01.html">물리2 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>논리 게이트</h3>
-    <p>디지털 회로는 전압을 두 상태(High = 1, Low = 0)로만 다룹니다. 5 V TTL 논리에서는 대략 2 V 이상이 1, 0.8 V 이하가 0입니다(계열마다 다름). 잡음이 조금 섞여도 판정이 바뀌지 않는다는 것이 디지털의 장점입니다.</p>
-    <table class="tb-table">
+    <p>디지털 회로는 전압을 High(1)와 Low(0) 두 상태로만 다룬다. 5 V TTL 논리에서는 대략 2 V 이상이 1, 0.8 V 이하가 0이며, 정확한 값은 계열마다 다르다. 그래서 잡음이 조금 섞여도 판정이 바뀌지 않으며, 이것이 디지털의 장점이다. 이런 두 상태를 입력으로 받아 정해진 규칙으로 출력을 내는 회로를 <em>논리 게이트</em>라 한다.</p>
+<table class="tb-table">
       <thead><tr><th>게이트</th><th>식</th><th>1이 되는 경우</th></tr></thead>
       <tbody>
         <tr><td>NOT</td><td>\(\bar A\)</td><td>\(A = 0\)</td></tr>
@@ -33,24 +40,21 @@
         <tr><td>XOR</td><td>\(A \oplus B\)</td><td>서로 다를 때</td></tr>
       </tbody>
     </table>
-    <p>NAND(또는 NOR) 하나만으로 모든 논리 함수를 만들 수 있어 만능 게이트라 부릅니다. 예를 들어 NOT은 NAND의 두 입력을 묶은 것이고, AND는 NAND 뒤에 NOT을, OR는 두 입력에 NOT을 붙인 NAND입니다(드모르간 법칙).</p>
+    <p>표의 게이트 가운데 NAND 하나만으로, 또는 NOR 하나만으로 모든 논리 함수를 만들 수 있어 이 둘을 만능 게이트라 부른다. 처음 질문의 답이 이것이다. 그림 1처럼 NOT은 NAND의 두 입력을 묶은 것이고, AND는 NAND 뒤에 NOT을 붙인 것이다. 또 OR는 두 입력에 각각 NOT을 붙이고 NAND에 넣은 것이며, 그 근거가 아래의 드모르간 법칙이다.</p>
 
     <h3><span class="no">1.1.2</span>부울 대수</h3>
-    <ul class="tb-list">
-      <li>\(A + 0 = A\), \(A\cdot1 = A\), \(A + 1 = 1\), \(A\cdot0 = 0\), \(A + A = A\), \(A + \bar A = 1\), \(A\bar A = 0\).</li>
-      <li>분배: \(A(B + C) = AB + AC\), \(A + BC = (A + B)(A + C)\).</li>
-      <li>흡수: \(A + AB = A\), \(A + \bar AB = A + B\).</li>
-      <li><b>드모르간</b>: \(\overline{AB} = \bar A + \bar B\), \(\overline{A + B} = \bar A\bar B\).</li>
-    </ul>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>NOT, AND, OR, NAND, NOR, XOR. NAND만으로 모든 함수.</li>
-        <li>드모르간 \(\overline{AB} = \bar A + \bar B\).</li>
-        <li>흡수 \(A + AB = A\), \(A + \bar AB = A + B\)로 식을 줄인다.</li>
-      </ol>
+    <p>논리식을 다루는 대수를 <em>부울 대수</em>라 한다. 먼저 0과 1에 대한 기본 법칙이 있다. \(A + 0 = A\), \(A\cdot1 = A\), \(A + 1 = 1\), \(A\cdot0 = 0\)이고, 같은 변수끼리는 \(A + A = A\), \(A + \bar A = 1\), \(A\bar A = 0\)이다. 다음으로 분배 법칙은 \(A(B + C) = AB + AC\)뿐 아니라 \(A + BC = (A + B)(A + C)\)도 성립해 보통의 대수와 다르다. 또 흡수 법칙 \(A + AB = A\), \(A + \bar AB = A + B\)는 식을 줄이는 데 자주 쓴다.</p>
+    <p>가장 중요한 것은 <em>드모르간 법칙</em>이다.</p>
+    \[\overline{AB} = \bar A + \bar B, \qquad \overline{A + B} = \bar A\bar B\]
+    <p>곧 곱의 부정은 부정의 합이고, 합의 부정은 부정의 곱이다. 그러므로 \(A + B = \overline{\bar A\bar B}\)이며, 이것이 그림 1의 OR 구성이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.1.1</span>
+      <p>\(F = AB + A\bar B + \bar AB\)를 간단히 하고, NAND 게이트만으로 만들어라.</p>
     </div>
+    <p><i>풀이.</i> 앞의 두 항을 묶으면 \(AB + A\bar B = A(B + \bar B) = A\)이다. 따라서 \(F = A + \bar AB\)이고, 흡수 법칙으로 \(F = A + B\)가 된다. 원래 식대로라면 AND 셋, OR 하나, NOT 둘이 필요했지만 이제 OR 하나이다. 이것을 NAND로 만들면 \(F = \overline{\bar A\bar B}\)이므로, 두 입력을 각각 NAND로 부정한 뒤 NAND 하나에 넣는다. NAND 세 개면 충분하며, 74HC00 IC 하나에 NAND가 넷 들어 있다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(\overline{AB}\)를 \(\bar A\bar B\)로 쓰기 쉽지만 둘은 다르다. \(A = 1\), \(B = 0\)이면 \(\overline{AB} = 1\)이지만 \(\bar A\bar B = 0\)이다. 부정 막대를 쪼갤 때는 곱과 합을 서로 바꿔야 한다. 또 부울 대수의 \(+\)는 산술 덧셈이 아니라서 \(1 + 1 = 1\)이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>기본 게이트는 NOT, AND, OR, NAND, NOR, XOR이며, 처음 질문처럼 NAND 하나만으로도 모든 함수를 만들 수 있다. 드모르간 법칙 \(\overline{AB} = \bar A + \bar B\)와 \(\overline{A + B} = \bar A\bar B\)가 그 근거이다. 흡수 법칙 \(A + AB = A\)와 \(A + \bar AB = A + B\)로 식을 줄이면 게이트 수가 줄어든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.3</span>연습문제</h3>

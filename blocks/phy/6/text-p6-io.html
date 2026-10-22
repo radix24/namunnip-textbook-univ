@@ -8,20 +8,44 @@
 <article class="card q-card" id="text-p6-io" data-kind="본문" data-std="물리6-05-02">
   <header class="card-head"><span class="no"></span><h2>저수준 코드로 입출력 제어하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>입출력 포트 레지스터의 비트를 바꿔 핀을 켜고 끄는 방법을 안다.</li>
-        <li>비트 연산으로 다른 비트를 건드리지 않고 핀 하나만 바꾸고, 어셈블리와의 관계를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>마이크로프로세서 구조 (<a href="05-01.html">5.1절</a>), C 언어 (<a href="../../common/10/04-01.html">공통10 4.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러 프로그램에서 LED를 켜는 한 줄은 칩의 핀 하나를 5 V로 올리는 일이다. 소프트웨어의 명령이 어떻게 하드웨어 핀의 전압이 될까? 그리고 같은 포트에 이어진 다른 핀들을 건드리지 않고 핀 하나만 바꾸려면 어떻게 해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="포트 레지스터의 8비트와 핀, 비트 5만 OR로 1로 만드는 과정">
+        <g class="s"><text x="60" y="45" text-anchor="end">PORTB</text><text x="60" y="95" text-anchor="end">1 &lt;&lt; 5</text><text x="60" y="145" text-anchor="end">결과</text></g>
+        <rect x="70" y="25" width="50" height="30" class="lk"/><text x="95" y="45" text-anchor="middle" class="s">0</text>
+        <rect x="120" y="25" width="50" height="30" class="lk"/><text x="145" y="45" text-anchor="middle" class="s">1</text>
+        <rect x="170" y="25" width="50" height="30" class="lk"/><text x="195" y="45" text-anchor="middle" class="s">0</text>
+        <rect x="220" y="25" width="50" height="30" class="lk"/><text x="245" y="45" text-anchor="middle" class="s">0</text>
+        <rect x="270" y="25" width="50" height="30" class="lk"/><text x="295" y="45" text-anchor="middle" class="s">1</text>
+        <rect x="320" y="25" width="50" height="30" class="lk"/><text x="345" y="45" text-anchor="middle" class="s">0</text>
+        <rect x="370" y="25" width="50" height="30" class="lk"/><text x="395" y="45" text-anchor="middle" class="s">0</text>
+        <rect x="420" y="25" width="50" height="30" class="lk"/><text x="445" y="45" text-anchor="middle" class="s">1</text>
+        <rect x="70" y="75" width="50" height="30" class="lk"/><text x="95" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="120" y="75" width="50" height="30" class="lk"/><text x="145" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="170" y="75" width="50" height="30" class="la"/><text x="195" y="95" text-anchor="middle" class="s">1</text>
+        <rect x="220" y="75" width="50" height="30" class="lk"/><text x="245" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="270" y="75" width="50" height="30" class="lk"/><text x="295" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="320" y="75" width="50" height="30" class="lk"/><text x="345" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="370" y="75" width="50" height="30" class="lk"/><text x="395" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="420" y="75" width="50" height="30" class="lk"/><text x="445" y="95" text-anchor="middle" class="s">0</text>
+        <rect x="70" y="125" width="50" height="30" class="lk"/><text x="95" y="145" text-anchor="middle" class="s">0</text>
+        <rect x="120" y="125" width="50" height="30" class="lk"/><text x="145" y="145" text-anchor="middle" class="s">1</text>
+        <rect x="170" y="125" width="50" height="30" class="la"/><text x="195" y="145" text-anchor="middle" class="s">1</text>
+        <rect x="220" y="125" width="50" height="30" class="lk"/><text x="245" y="145" text-anchor="middle" class="s">0</text>
+        <rect x="270" y="125" width="50" height="30" class="lk"/><text x="295" y="145" text-anchor="middle" class="s">1</text>
+        <rect x="320" y="125" width="50" height="30" class="lk"/><text x="345" y="145" text-anchor="middle" class="s">0</text>
+        <rect x="370" y="125" width="50" height="30" class="lk"/><text x="395" y="145" text-anchor="middle" class="s">0</text>
+        <rect x="420" y="125" width="50" height="30" class="lk"/><text x="445" y="145" text-anchor="middle" class="s">1</text>
+        <g class="s"><text x="95" y="178" text-anchor="middle">7</text><text x="145" y="178" text-anchor="middle">6</text><text x="195" y="178" text-anchor="middle">5</text><text x="245" y="178" text-anchor="middle">4</text><text x="295" y="178" text-anchor="middle">3</text><text x="345" y="178" text-anchor="middle">2</text><text x="395" y="178" text-anchor="middle">1</text><text x="445" y="178" text-anchor="middle">0</text></g>
+        <text x="480" y="95" class="s">OR</text>
+        <text x="480" y="145" class="ta">5번 핀만 High</text>
+      </svg>
+      <figcaption>그림 1. 출력 레지스터 PORTB와 \(1 \ll 5\)의 비트 OR. 5번 비트만 1이 되고 나머지 비트는 원래 값을 그대로 지킨다. 레지스터의 각 비트가 핀 하나의 전압을 정한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>마이크로프로세서 구조(<a href="05-01.html">5.1절</a>)와 C 언어(<a href="../../common/10/04-01.html">공통10 4.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>포트 레지스터</h3>
-    <p>마이크로컨트롤러의 핀은 특정 메모리 주소의 레지스터 비트와 연결되어 있습니다(메모리 사상 입출력). 예를 들어 AVR 계열에서는 방향 레지스터(DDRx)의 비트를 1로 하면 그 핀이 출력이 되고, 출력 레지스터(PORTx)의 비트로 High/Low를 정하며, 입력은 PINx 레지스터에서 읽습니다(이름은 칩마다 다르므로 사양서 확인 필요).</p>
+    <p>마이크로컨트롤러의 핀은 특정 메모리 주소의 레지스터 비트와 이어져 있다. 그래서 그 주소에 값을 쓰면 핀의 전압이 바뀌며, 이것을 메모리 사상 입출력이라 한다. 처음 질문의 답이 이것이다. 예를 들어 AVR 계열에서는 방향 레지스터 DDRx의 비트를 1로 하면 그 핀이 출력이 되고, 출력 레지스터 PORTx의 비트로 High와 Low를 정하며, 입력은 PINx 레지스터에서 읽는다. 이름은 칩마다 다르므로 사양서로 확인한다.</p>
 <pre><code>/* C로 쓴 저수준 제어 (AVR 예시) */
 DDRB  |=  (1 &lt;&lt; 5);      /* B포트 5번 핀을 출력으로 */
 PORTB |=  (1 &lt;&lt; 5);      /* 5번 핀 High: LED 켜기 */
@@ -29,18 +53,18 @@ PORTB &amp;= ~(1 &lt;&lt; 5);      /* 5번 핀 Low: LED 끄기 */
 if (PINB &amp; (1 &lt;&lt; 0)) {   /* 0번 핀 입력이 High이면 */
     /* ... */
 }</code></pre>
-    <p>비트 연산이 핵심입니다. <code>|=</code>(OR)로 특정 비트만 1, <code>&amp;= ~</code>(AND NOT)로 특정 비트만 0, <code>^=</code>(XOR)로 특정 비트만 뒤집고, <code>&amp;</code>로 특정 비트를 검사합니다. 다른 비트를 건드리지 않는다는 점이 중요합니다.</p>
+    <p>여기서는 비트 연산이 중요하다. <code>|=</code>(OR)는 특정 비트만 1로, <code>&amp;= ~</code>(AND NOT)는 특정 비트만 0으로, <code>^=</code>(XOR)는 특정 비트만 뒤집으며, <code>&amp;</code>는 특정 비트를 검사한다. 그림 1처럼 OR 상대가 0인 비트는 원래 값을 지키고, AND 상대가 1인 비트도 원래 값을 지킨다. 그러므로 이 연산들은 같은 포트의 다른 핀을 건드리지 않으며, 처음 질문의 둘째 물음에 대한 답이 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 5.2.1</span>
+      <p>PORTB가 0b0100 1001일 때 <code>PORTB &amp;= ~(1 &lt;&lt; 3);</code>을 실행하면 결과는? <code>PORTB = (1 &lt;&lt; 3);</code>과는 어떻게 다른가?</p>
+    </div>
+    <p><i>풀이.</i> \(\sim(1 \ll 3)\)은 0b1111 0111이고, 0b0100 1001과 AND 하면 0b0100 0001이 된다. 3번 비트만 0이 되고 6번과 0번은 그대로이다. 반면 대입 <code>=</code>를 쓰면 PORTB가 통째로 0b0000 1000이 되어, 다른 핀에 이어진 LED가 모두 꺼지고 3번만 켜진다.</p>
 
     <h3><span class="no">5.2.2</span>기계어와 어셈블리</h3>
-    <p>컴파일러는 위 C 코드를 기계어로 바꿉니다. 사람이 읽을 수 있게 기계어를 기호로 쓴 것이 어셈블리어입니다. 예를 들어 비트 하나를 켜는 명령은 <code>SBI PORTB, 5</code>처럼 한 줄(한 클록 정도)입니다. 저수준으로 쓰면 실행 시간을 클록 단위로 정확히 알 수 있어, 정밀한 타이밍이 필요한 측정에서 씁니다.</p>
+    <p>컴파일러는 위의 C 코드를 기계어로 바꾼다. 사람이 읽을 수 있게 기계어를 기호로 쓴 것이 어셈블리어이다. 예를 들어 비트 하나를 켜는 명령은 <code>SBI PORTB, 5</code>처럼 한 줄이고, 한 클록 정도에 끝난다. 이렇게 저수준으로 쓰면 실행 시간을 클록 단위로 정확히 알 수 있어, 정밀한 타이밍이 필요한 측정에서 쓴다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>입력으로 쓸 핀의 상태를 PORTx에서 읽으려 하기 쉽지만, PORTx는 내보내려는 값을 담은 레지스터이고 실제 핀의 전압은 PINx에서 읽는다. 또 출력 핀을 GND에 바로 이은 채 High로 두면 큰 전류가 흘러 핀이 망가질 수 있으므로, 버튼은 입력 핀에 저항과 함께 잇는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>포트 레지스터의 비트로 핀 방향, 출력, 입력을 다룬다. <code>|=</code>, <code>&amp;= ~</code>, <code>&amp;</code>.</li>
-        <li>저수준 코드는 실행 시간을 클록 단위로 알 수 있다. 타이머·인터럽트는 5.3절.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>마이크로컨트롤러의 핀은 메모리 주소에 놓인 포트 레지스터의 비트와 이어져 있어, 처음 질문처럼 소프트웨어가 그 비트를 쓰면 핀의 전압이 바뀐다. 방향, 출력, 입력 레지스터를 <code>|=</code>, <code>&amp;= ~</code>, <code>^=</code>, <code>&amp;</code>의 비트 연산으로 다루면 다른 핀을 건드리지 않는다. 저수준 코드는 실행 시간을 클록 단위로 알 수 있으며, 타이머와 인터럽트는 5.3절에서 다룬다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.3</span>연습문제</h3>

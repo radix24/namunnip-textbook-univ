@@ -8,40 +8,41 @@
 <article class="card q-card" id="text-p6-comb" data-kind="본문" data-std="물리6-01-03">
   <header class="card-head"><span class="no"></span><h2>조합 회로: 가산기와 논리 IC</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>반가산기와 전가산기를 설계하고 여러 비트 덧셈으로 잇는다.</li>
-        <li>논리 IC로 조합 회로를 만들고 진리표로 동작을 확인하는 요령을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>부울 대수 (<a href="01-01.html">1.1절</a>), 카르노 맵 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">계산기 속에서 두 수를 더하는 것도 0과 1을 다루는 게이트들이다. 한 자리의 덧셈은 어떤 게이트로 만들고, 여러 자리의 덧셈은 그것을 어떻게 이어 만들까? 그리고 이런 회로를 실제 IC로 꾸밀 때 무엇을 조심해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 190" role="img" aria-label="전가산기 네 개를 올림으로 이은 4비트 리플 캐리 가산기">
+        <g class="k">
+          <rect x="60" y="60" width="80" height="60" fill="none"/><rect x="180" y="60" width="80" height="60" fill="none"/><rect x="300" y="60" width="80" height="60" fill="none"/><rect x="420" y="60" width="80" height="60" fill="none"/>
+          <path d="M80 40 V60 M120 40 V60 M200 40 V60 M240 40 V60 M320 40 V60 M360 40 V60 M440 40 V60 M480 40 V60"/>
+          <path d="M100 120 V150 M220 120 V150 M340 120 V150 M460 120 V150"/>
+        </g>
+        <g class="a"><path d="M420 90 H380 M300 90 H260 M180 90 H140 M60 90 H30"/><path d="M387 85 l-7 5 7 5 M267 85 l-7 5 7 5 M147 85 l-7 5 7 5 M37 85 l-7 5 7 5"/></g>
+        <g class="s"><text x="100" y="95" text-anchor="middle">FA</text><text x="220" y="95" text-anchor="middle">FA</text><text x="340" y="95" text-anchor="middle">FA</text><text x="460" y="95" text-anchor="middle">FA</text>
+        <text x="100" y="32" text-anchor="middle">A₃ B₃</text><text x="220" y="32" text-anchor="middle">A₂ B₂</text><text x="340" y="32" text-anchor="middle">A₁ B₁</text><text x="460" y="32" text-anchor="middle">A₀ B₀</text>
+        <text x="100" y="168" text-anchor="middle">S₃</text><text x="220" y="168" text-anchor="middle">S₂</text><text x="340" y="168" text-anchor="middle">S₁</text><text x="460" y="168" text-anchor="middle">S₀</text></g>
+        <text x="30" y="80" class="ta">Cout</text><text x="510" y="94" class="s">Cin = 0</text>
+        <text x="280" y="185" text-anchor="middle" class="ta">올림이 오른쪽에서 왼쪽으로 차례로 전달됨</text>
+      </svg>
+      <figcaption>그림 1. 전가산기(FA) 네 개를 올림으로 이은 4비트 리플 캐리 가산기. 각 자리의 올림이 다음 자리로 차례로 전달되므로, 비트 수가 많으면 마지막 자리의 결과가 나오기까지 시간이 걸린다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>부울 대수(<a href="01-01.html">1.1절</a>)와 카르노 맵(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.3.1</span>가산기</h3>
-    <ul class="tb-list">
-      <li><b>반가산기</b>: 두 비트 \(A, B\)를 더해 합 \(S = A \oplus B\), 올림 \(C = AB\).</li>
-      <li><b>전가산기</b>: 아래 자리에서 올라온 \(C_{\text{in}}\)까지 세 비트를 더함. \(S = A \oplus B \oplus C_{\text{in}}\), \(C_{\text{out}} = AB + C_{\text{in}}(A \oplus B)\).</li>
-    </ul>
-    <p>전가산기 \(n\)개를 올림으로 이으면 \(n\)비트 덧셈기(리플 캐리 가산기)가 됩니다. 올림이 자리마다 차례로 전달되어 비트 수가 많으면 느려지므로, 실제 프로세서는 올림을 미리 계산하는 방식을 씁니다. 뺄셈은 2의 보수(<a href="../../common/10/06-01.html">공통10 6.1절</a>)를 더해서 합니다.</p>
+    <p>출력이 그 순간의 입력만으로 정해지는 회로를 조합 회로라 하며, 가산기가 대표적이다. 먼저 <em>반가산기</em>는 두 비트 \(A\), \(B\)를 더해 합 \(S = A \oplus B\)와 올림 \(C = AB\)를 낸다. 그런데 둘째 자리부터는 아래 자리에서 올라온 올림까지 세 비트를 더해야 한다. 그래서 <em>전가산기</em>는 \(A\), \(B\), \(C_{\text{in}}\)을 더해 다음을 낸다.</p>
+    \[S = A \oplus B \oplus C_{\text{in}}, \qquad C_{\text{out}} = AB + C_{\text{in}}(A \oplus B)\]
+    <p>그림 1처럼 전가산기 \(n\)개를 올림으로 이으면 \(n\)비트 덧셈기가 되며, 이것을 리플 캐리 가산기라 한다. 처음 질문의 첫째 답이 이것이다. 다만 올림이 자리마다 차례로 전달되어 비트 수가 많으면 느려지므로, 실제 프로세서는 올림을 미리 계산하는 방식을 쓴다. 또 뺄셈은 2의 보수(<a href="../../common/10/06-01.html">공통10 6.1절</a>)를 더해서 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.3.1</span>
       <p>4비트 가산기로 0110 + 0111을 계산하고 각 자리의 올림을 써라.</p>
     </div>
-    <p><i>풀이.</i> 0자리: 0 + 1 = 1, 올림 0. 1자리: 1 + 1 = 0, 올림 1. 2자리: 1 + 1 + 1 = 1, 올림 1. 3자리: 0 + 0 + 1 = 1, 올림 0. 결과 1101(= 13). 6 + 7 = 13이 맞습니다.</p>
+    <p><i>풀이.</i> 0자리는 0 + 1 = 1이고 올림 0이다. 1자리는 1 + 1 = 0이고 올림 1이다. 2자리는 올림까지 1 + 1 + 1 = 1이고 올림 1이다. 3자리는 0 + 0 + 1 = 1이고 올림 0이다. 그러므로 결과는 1101, 곧 13이며 6 + 7 = 13과 맞는다.</p>
 
     <h3><span class="no">1.3.2</span>IC로 만들기</h3>
-    <p>74HC00(NAND 4개), 74HC08(AND), 74HC86(XOR) 같은 논리 IC를 브레드보드에 꽂아 회로를 만듭니다. 전원(VCC, GND) 핀을 잊지 않고, 쓰지 않는 입력은 떠 있게 두지 말고 전원이나 접지에 묶습니다(CMOS 입력이 떠 있으면 동작이 불안정하고 전류가 늘 수 있음). 각 IC 전원 핀 옆에 0.1 μF 축전기를 달아 순간 전류에 의한 잡음을 줄입니다. 동작 확인은 스위치 입력과 LED 출력으로 진리표를 한 줄씩 채우는 방법이 기본입니다. 핀 배치와 전압 조건은 반드시 사양서로 확인합니다.</p>
+    <p>실험에서는 74HC00(NAND 4개), 74HC08(AND), 74HC86(XOR) 같은 논리 IC를 브레드보드에 꽂아 회로를 만든다. 이때 몇 가지를 조심한다. 먼저 전원 VCC와 GND 핀을 잊지 않고 연결한다. 다음으로 쓰지 않는 입력은 떠 있게 두지 말고 전원이나 접지에 묶는다. CMOS 입력이 떠 있으면 동작이 불안정하고 전류가 늘 수 있기 때문이다. 또 각 IC 전원 핀 옆에 0.1 μF 축전기를 달아 순간 전류에 의한 잡음을 줄인다.</p>
+    <p>동작은 스위치 입력과 LED 출력으로 진리표를 한 줄씩 채워 확인하는 것이 기본이다. 핀 배치와 전압 조건은 반드시 사양서로 확인한다. 처음 질문의 둘째 물음에 대한 답이 이것이다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>회로가 이상하게 동작하면 설계가 틀렸다고 생각하기 쉽지만, 실험에서는 떠 있는 입력이나 빠진 전원 핀이 원인인 경우가 훨씬 많다. 떠 있는 CMOS 입력은 손을 가까이 대기만 해도 0과 1을 오간다. 진리표를 확인하기 전에 전원과 입력 연결부터 점검한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>반가산기 \(S = A \oplus B\), \(C = AB\). 전가산기를 이어 \(n\)비트 덧셈.</li>
-        <li>IC: 전원 핀, 안 쓰는 입력 묶기, 바이패스 축전기.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>반가산기는 \(S = A \oplus B\), \(C = AB\)를 내고, 전가산기는 아래 자리 올림까지 더하며, 처음 질문처럼 전가산기를 올림으로 이으면 \(n\)비트 덧셈기가 된다. 올림이 차례로 전달되어 비트 수가 많으면 느려진다. IC로 만들 때는 전원 핀을 연결하고, 안 쓰는 입력을 묶고, 바이패스 축전기를 단다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.3.3</span>연습문제</h3>

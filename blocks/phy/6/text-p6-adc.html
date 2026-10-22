@@ -8,35 +8,51 @@
 <article class="card q-card" id="text-p6-adc" data-kind="본문" data-std="물리6-04-03">
   <header class="card-head"><span class="no"></span><h2>D/A 변환 회로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가중 저항형, R-2R 사다리형 D/A 변환기의 출력을 구한다.</li>
-        <li>D/A 출력의 계단 모양과 필터, PWM을 쓴 간단한 D/A를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>연산증폭기 가산기 (<a href="../2/06-02.html">물리2 6.2절</a>), 양자화 (<a href="04-02.html">4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">마이크로컨트롤러로 실험 장치의 전압을 0 V부터 5 V까지 원하는 값으로 내보내고 싶다. 그런데 디지털 핀은 0 V와 5 V 두 값만 낼 수 있다. 숫자를 전압으로 바꾸는 회로는 어떻게 만들고, 핀 하나로 그 흉내를 내는 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="R-2R 사다리형 D/A 변환기, 마디마다 전류가 반씩 나뉨">
+        <g class="k">
+          <path d="M60 60 H460"/>
+          <path d="M140 60 V90 M240 60 V90 M340 60 V90 M440 60 V90"/>
+          <rect x="130" y="90" width="20" height="40" fill="none"/><rect x="230" y="90" width="20" height="40" fill="none"/><rect x="330" y="90" width="20" height="40" fill="none"/><rect x="430" y="90" width="20" height="40" fill="none"/>
+          <rect x="180" y="52" width="40" height="16" fill="none"/><rect x="280" y="52" width="40" height="16" fill="none"/><rect x="380" y="52" width="40" height="16" fill="none"/>
+          <path d="M140 130 V150 M240 130 V150 M340 130 V150 M440 130 V150"/>
+        </g>
+        <g class="s"><text x="200" y="46" text-anchor="middle">R</text><text x="300" y="46" text-anchor="middle">R</text><text x="400" y="46" text-anchor="middle">R</text>
+        <text x="160" y="115">2R</text><text x="260" y="115">2R</text><text x="360" y="115">2R</text><text x="460" y="115">2R</text>
+        <text x="140" y="168" text-anchor="middle">b₃</text><text x="240" y="168" text-anchor="middle">b₂</text><text x="340" y="168" text-anchor="middle">b₁</text><text x="440" y="168" text-anchor="middle">b₀</text></g>
+        <path d="M60 60 H30" class="a"/><text x="30" y="50" class="ta">V_out</text>
+        <text x="300" y="192" text-anchor="middle" class="tb">마디마다 오른쪽을 본 저항이 2R이라 전류가 반씩 나뉨</text>
+      </svg>
+      <figcaption>그림 1. 4비트 R-2R 사다리형 D/A 변환기. 각 비트가 2R 저항을 거쳐 기준 전압이나 접지에 이어지고, 어느 마디에서 보아도 오른쪽 저항이 2R이라 비트의 기여가 자리마다 정확히 절반씩 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연산증폭기 가산기(<a href="../2/06-02.html">물리2 6.2절</a>)와 양자화(<a href="04-02.html">4.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>D/A 변환</h3>
-    <ul class="tb-list">
-      <li><b>가중 저항형</b>: 각 비트를 \(R, 2R, 4R, \dots\)로 반전 가산기에 넣는다. 출력 \(\propto\sum b_k2^k\). 비트가 많으면 저항값의 범위가 너무 넓어 정밀하게 만들기 어렵다.</li>
-      <li><b>R-2R 사다리형</b>: \(R\)과 \(2R\) 두 값만으로 같은 결과를 낸다. 각 마디에서 전류가 정확히 반씩 나뉘는 성질을 쓴다. 실제 D/A 칩에 흔하다.</li>
-    </ul>
-    <p>\(n\)비트 D/A의 출력은 \(V_{\text{out}} = V_{\text{ref}}\frac{D}{2^n}\) (\(D\)는 입력 정수)입니다. 출력은 계단 모양이라 뒤에 저역 통과 필터를 달아 매끈하게 합니다. 마이크로컨트롤러에서는 PWM(펄스 폭 변조) 출력을 필터로 평균해 간단한 D/A로 쓰기도 합니다.</p>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>D/A: \(V_{\text{ref}}D/2^n\), R-2R 사다리.</li>
-        <li>출력은 계단 모양이라 저역 통과 필터로 매끈하게. PWM + 필터로 간단한 D/A. A/D는 4.4절.</li>
-      </ol>
+    <p>정수를 그에 비례하는 전압으로 바꾸는 것을 <em>D/A 변환</em>이라 한다. \(n\)비트 D/A 변환기의 출력은 입력 정수 \(D\)에 대해 다음과 같다.</p>
+    \[V_{\text{out}} = V_{\text{ref}}\frac{D}{2^n}\]
+    <p>가장 단순한 방법은 가중 저항형이다. 각 비트를 \(R, 2R, 4R, \dots\)의 저항으로 반전 가산기(물리2 6.2절)에 넣으면 출력이 \(\sum b_k2^k\)에 비례한다. 그런데 비트가 많으면 저항값의 범위가 너무 넓어진다. 12비트라면 가장 큰 저항이 가장 작은 것의 2048배인데, 그 모두를 같은 상대 정밀도로 만들기는 어렵다.</p>
+    <p>그래서 실제 D/A 칩은 대부분 그림 1의 <em>R-2R 사다리형</em>을 쓴다. \(R\)과 \(2R\) 두 값만으로 같은 결과를 낸다. 사다리의 어느 마디에서 오른쪽을 보아도 합성 저항이 \(2R\)이 되므로, 각 마디에서 전류가 정확히 반씩 나뉘기 때문이다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.1</span>
+      <p>\(V_{\text{ref}} = 5.00\) V인 8비트 D/A 변환기에 \(D = 200\)을 넣으면 출력은? 한 단계의 크기는?</p>
     </div>
+    <p><i>풀이.</i> \(V_{\text{out}} = 5.00\times200/256 = 3.91\) V이다. 한 단계는 \(5.00/256 = 19.5\) mV이므로, 출력은 19.5 mV 간격으로만 고를 수 있다.</p>
+
+    <h3><span class="no">4.3.2</span>계단을 매끈하게, 그리고 PWM</h3>
+    <p>D/A 출력은 코드가 바뀔 때마다 한 단계씩 뛰는 계단 모양이다. 그래서 파형을 만들 때는 뒤에 저역 통과 필터를 달아 계단의 모서리를 매끈하게 한다. 또 표본화 정리(4.1절)처럼 출력 갱신 진동수의 절반보다 높은 성분은 계단에서 생긴 찌꺼기이므로 걸러야 한다.</p>
+    <p>한편 D/A 칩이 없을 때는 PWM, 곧 펄스 폭 변조를 쓴다. 디지털 핀으로 일정한 주기의 사각파를 내면서 High인 시간의 비율, 곧 듀티비를 바꾸면, 평균 전압이 \(V_{\text{High}}\times\)듀티비가 된다. 이것을 저역 통과 필터로 평균하면 간단한 D/A가 되며, 처음 질문의 둘째 답이 이것이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 4.3.2</span>
+      <p>5 V 핀에서 듀티비 30%의 PWM을 RC 필터로 평균하면 출력은 약 몇 V인가? PWM 진동수가 1 kHz일 때 필터의 차단 진동수는 어느 정도로 잡는가?</p>
+    </div>
+    <p><i>풀이.</i> 평균 전압은 \(5\times0.30 = 1.5\) V이다. PWM의 1 kHz 성분을 충분히 줄이려면 차단 진동수를 그보다 훨씬 낮게, 예컨대 10 Hz쯤으로 잡는다. 1차 RC 필터라면 1 kHz 성분이 약 100분의 1로 줄어든다. 대신 출력이 바뀔 때 따라가는 시간이 수십 ms로 길어진다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>\(n\)비트 D/A의 최대 출력이 \(V_{\text{ref}}\)라고 생각하기 쉽지만, 가장 큰 코드 \(2^n - 1\)에서 \(V_{\text{ref}}(1 - 2^{-n})\)으로 한 단계 모자란다. 또 PWM 출력을 필터 없이 전압계로 재면 계기가 평균을 보여 줄 뿐, 실제 핀 전압은 여전히 0 V와 5 V를 오간다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>D/A 변환기는 정수 \(D\)를 \(V_{\text{ref}}D/2^n\)으로 바꾸며, 실제 칩은 \(R\)과 \(2R\)만으로 정밀하게 만들 수 있는 R-2R 사다리를 쓴다. 출력은 계단 모양이라 저역 통과 필터로 매끈하게 한다. 처음 질문의 핀 하나로는 PWM의 듀티비를 바꾸고 필터로 평균해 간단한 D/A를 만든다. A/D 변환은 4.4절에서 다룬다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">4.3.2</span>연습문제</h3>
+      <h3><span class="no">4.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>기준 전압 2.5 V인 12비트 D/A에 \(D = 2048\)을 넣으면 출력은?
