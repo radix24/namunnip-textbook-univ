@@ -383,6 +383,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
   <link rel="stylesheet" href="{rel}css/qcard.css">
   <link rel="stylesheet" href="{rel}css/qtext.css">
   <link rel="stylesheet" href="{rel}assets/katex/katex.min.css">{extra_head}
+  <link rel="stylesheet" href="{rel}css/shared.css">
 </head>
 <body{rec}{body_attrs}>
 
