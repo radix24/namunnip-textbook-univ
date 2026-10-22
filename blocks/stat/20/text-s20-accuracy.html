@@ -8,62 +8,118 @@
 <article class="card q-card" id="text-s20-accuracy" data-kind="본문" data-std="응통20-05-03">
   <header class="card-head"><span class="no"></span><h2>예측 정확도의 평가</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>MAE, RMSE, MAPE, MASE로 예측 오차를 요약한다.</li>
-        <li>시간 순서를 지키는 이동 원점 교차검증을 한다.</li>
-        <li>단순 기준 예측과 비교해 모형의 가치를 판단한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>ARIMA 예측 (<a href="05-01.html">5.1절</a>), 지수평활 (<a href="05-02.html">5.2절</a>), 교차검증 (응통10 6.3절).</li>
-      </ul>
-    </div>
-
-    <h3>적합이 아니라 예측으로 평가</h3>
-    <p>AIC(4.1절)는 같은 자료 안의 적합을 비교하지만, 실무에서 중요한 것은 아직 보지 않은 미래를 얼마나 잘 맞히는가입니다. 시계열에서는 무작위로 자료를 나누는 보통 교차검증을 쓰면 미래 자료로 과거를 예측하는 셈이 되어 안 됩니다.</p>
+    <p class="q-ask">두 예측 방법 가운데 하나를 골라 내년 운영에 쓰려 한다. 지금까지의 자료에 더 잘 맞는 쪽을 고르면 될까? 그리고 보통의 교차검증처럼 자료를 무작위로 나눠 평가하면 무엇이 잘못될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="이동 원점 교차검증의 다섯 줄. 각 줄에서 앞쪽 칸(파랑)으로 적합하고 바로 다음 한 칸(주황)을 예측해 평가하며, 줄이 내려갈수록 원점이 한 칸씩 오른쪽으로 옮겨 적합 구간이 길어진다">
+        <text x="70" y="44" text-anchor="end" class="s">원점 1</text>
+        <rect x="80" y="30" width="22" height="20" class="fa"/>
+        <rect x="104" y="30" width="22" height="20" class="fa"/>
+        <rect x="128" y="30" width="22" height="20" class="fa"/>
+        <rect x="152" y="30" width="22" height="20" class="fa"/>
+        <rect x="176" y="30" width="22" height="20" class="fa"/>
+        <rect x="200" y="30" width="22" height="20" class="fa"/>
+        <rect x="224" y="30" width="22" height="20" class="fc"/>
+        <rect x="248" y="30" width="22" height="20" class="lk"/>
+        <rect x="272" y="30" width="22" height="20" class="lk"/>
+        <rect x="296" y="30" width="22" height="20" class="lk"/>
+        <rect x="320" y="30" width="22" height="20" class="lk"/>
+        <rect x="344" y="30" width="22" height="20" class="lk"/>
+        <rect x="368" y="30" width="22" height="20" class="lk"/>
+        <text x="70" y="74" text-anchor="end" class="s">원점 2</text>
+        <rect x="80" y="60" width="22" height="20" class="fa"/>
+        <rect x="104" y="60" width="22" height="20" class="fa"/>
+        <rect x="128" y="60" width="22" height="20" class="fa"/>
+        <rect x="152" y="60" width="22" height="20" class="fa"/>
+        <rect x="176" y="60" width="22" height="20" class="fa"/>
+        <rect x="200" y="60" width="22" height="20" class="fa"/>
+        <rect x="224" y="60" width="22" height="20" class="fa"/>
+        <rect x="248" y="60" width="22" height="20" class="fc"/>
+        <rect x="272" y="60" width="22" height="20" class="lk"/>
+        <rect x="296" y="60" width="22" height="20" class="lk"/>
+        <rect x="320" y="60" width="22" height="20" class="lk"/>
+        <rect x="344" y="60" width="22" height="20" class="lk"/>
+        <rect x="368" y="60" width="22" height="20" class="lk"/>
+        <text x="70" y="104" text-anchor="end" class="s">원점 3</text>
+        <rect x="80" y="90" width="22" height="20" class="fa"/>
+        <rect x="104" y="90" width="22" height="20" class="fa"/>
+        <rect x="128" y="90" width="22" height="20" class="fa"/>
+        <rect x="152" y="90" width="22" height="20" class="fa"/>
+        <rect x="176" y="90" width="22" height="20" class="fa"/>
+        <rect x="200" y="90" width="22" height="20" class="fa"/>
+        <rect x="224" y="90" width="22" height="20" class="fa"/>
+        <rect x="248" y="90" width="22" height="20" class="fa"/>
+        <rect x="272" y="90" width="22" height="20" class="fc"/>
+        <rect x="296" y="90" width="22" height="20" class="lk"/>
+        <rect x="320" y="90" width="22" height="20" class="lk"/>
+        <rect x="344" y="90" width="22" height="20" class="lk"/>
+        <rect x="368" y="90" width="22" height="20" class="lk"/>
+        <text x="70" y="134" text-anchor="end" class="s">원점 4</text>
+        <rect x="80" y="120" width="22" height="20" class="fa"/>
+        <rect x="104" y="120" width="22" height="20" class="fa"/>
+        <rect x="128" y="120" width="22" height="20" class="fa"/>
+        <rect x="152" y="120" width="22" height="20" class="fa"/>
+        <rect x="176" y="120" width="22" height="20" class="fa"/>
+        <rect x="200" y="120" width="22" height="20" class="fa"/>
+        <rect x="224" y="120" width="22" height="20" class="fa"/>
+        <rect x="248" y="120" width="22" height="20" class="fa"/>
+        <rect x="272" y="120" width="22" height="20" class="fa"/>
+        <rect x="296" y="120" width="22" height="20" class="fc"/>
+        <rect x="320" y="120" width="22" height="20" class="lk"/>
+        <rect x="344" y="120" width="22" height="20" class="lk"/>
+        <rect x="368" y="120" width="22" height="20" class="lk"/>
+        <text x="70" y="164" text-anchor="end" class="s">원점 5</text>
+        <rect x="80" y="150" width="22" height="20" class="fa"/>
+        <rect x="104" y="150" width="22" height="20" class="fa"/>
+        <rect x="128" y="150" width="22" height="20" class="fa"/>
+        <rect x="152" y="150" width="22" height="20" class="fa"/>
+        <rect x="176" y="150" width="22" height="20" class="fa"/>
+        <rect x="200" y="150" width="22" height="20" class="fa"/>
+        <rect x="224" y="150" width="22" height="20" class="fa"/>
+        <rect x="248" y="150" width="22" height="20" class="fa"/>
+        <rect x="272" y="150" width="22" height="20" class="fa"/>
+        <rect x="296" y="150" width="22" height="20" class="fa"/>
+        <rect x="320" y="150" width="22" height="20" class="fc"/>
+        <rect x="344" y="150" width="22" height="20" class="lk"/>
+        <rect x="368" y="150" width="22" height="20" class="lk"/>
+        <path d="M80 192 L392 192" class="ax"/><text x="392" y="207" text-anchor="end" class="s">시간</text>
+        <text x="405" y="60" class="s ta">적합에 쓰는 구간</text><text x="405" y="92" class="s tc">예측해 평가하는</text><text x="405" y="108" class="s tc">한 기 앞</text><text x="405" y="140" class="s">원점을 한 기씩 옮기며</text><text x="405" y="156" class="s">오차를 모은다</text>
+      </svg>
+      <figcaption>그림 1. 이동 원점 교차검증. 언제나 과거(파랑)로 미래(주황)를 예측하며, 원점을 한 기씩 옮겨 오차를 모은다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>ARIMA 예측(<a href="05-01.html">5.1절</a>), 지수평활(<a href="05-02.html">5.2절</a>), 교차검증(응통10 6.3절)을 쓴다.</div>
+    <p>처음 질문의 답은 적합이 아니라 예측으로 평가해야 한다는 것이다. AIC(<a href="04-01.html">4.1절</a>)는 같은 자료 안의 적합을 비교하지만, 실무에서 중요한 것은 아직 보지 않은 미래를 얼마나 잘 맞히는가이다. 그런데 자료를 무작위로 나누면 미래 자료로 과거를 예측하는 셈이 되므로, 시간 순서를 지키며 평가해야 한다(그림 1).</p>
 
     <h3><span class="no">5.3.1</span>오차 지표</h3>
-    <p>예측 오차 \(e_t = y_t - \hat y_t\)에 대해</p>
-    <ul>
-      <li><b>MAE</b> \(= \text{mean}|e_t|\): 원래 단위, 해석이 쉬움.</li>
-      <li><b>RMSE</b> \(= \sqrt{\text{mean}\,e_t^2}\): 큰 오차를 더 벌함.</li>
-      <li><b>MAPE</b> \(= 100 \times \text{mean}|e_t/y_t|\): 단위 없는 %. \(y_t\)가 0 근처면 폭발하고, 과소 예측보다 과대 예측을 덜 벌하는 비대칭이 있습니다.</li>
-      <li><b>MASE</b>: MAE를 단순 예측(직전 값 그대로, 계절 자료는 지난해 같은 달)의 표본 내 MAE로 나눈 값. 1보다 작으면 단순 예측보다 낫습니다.</li>
-    </ul>
+    <p>예측 오차를 \(e_t = y_t - \hat y_t\)라 하자. 평균 절대 오차 \(\mathrm{MAE} = \mathrm{mean}|e_t|\)는 원래 단위라 해석이 쉽다. 반면 평균제곱근 오차 \(\mathrm{RMSE} = \sqrt{\mathrm{mean}\,e_t^2}\)는 큰 오차를 더 무겁게 벌한다.</p>
+    <p>평균 절대 백분율 오차 \(\mathrm{MAPE} = 100 \times \mathrm{mean}|e_t/y_t|\)는 단위가 없어 계열끼리 비교하기 좋다. 하지만 \(y_t\)가 0 근처면 폭발하고, 과소 예측보다 과대 예측을 더 무겁게 벌하는 비대칭이 있다. 한편 MASE는 MAE를 단순 예측(직전 값 그대로, 계절 자료는 지난해 같은 달)의 표본 내 MAE로 나눈 값이다. 그래서 1보다 작으면 단순 예측보다 낫다는 뜻이다.</p>
 
     <h3><span class="no">5.3.2</span>이동 원점 교차검증</h3>
-    <p>처음 \(k\)기로 적합해 \(k + h\)기를 예측하고, 원점을 한 기씩 옮겨(학습 구간을 늘리며) 되풀이한 오차를 모읍니다. 항상 과거로 미래를 예측하므로 실제 운영 상황을 흉내 냅니다. R: <code>forecast::tsCV(y, forecastfunction, h = 1)</code>.</p>
-    <p>모형이 복잡할수록 표본 안 적합은 좋아지지만 예측 오차는 그렇지 않은 경우가 많습니다. 여러 방법의 예측을 평균한 결합 예측이 개별 최선보다 안정적인 경우도 흔합니다.</p>
-
+    <p>처음 \(k\)기로 적합해 \(k + h\)기를 예측하고, 원점을 한 기씩 옮겨 학습 구간을 늘리며 되풀이한 오차를 모은다(그림 1). 이 방법은 항상 과거로 미래를 예측하므로 실제 운영 상황을 흉내 낸다. R에서는 <code>forecast::tsCV(y, forecastfunction, h = 1)</code>을 쓴다.</p>
+    <p>모형이 복잡할수록 표본 안 적합은 좋아지지만 예측 오차는 그렇지 않은 경우가 많다. 또 여러 방법의 예측을 평균한 결합 예측이 개별 최선보다 안정적인 경우도 흔하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
-      <p>실제 50, 55, 52, 60에 대해 방법 A의 예측 48, 56, 55, 57과 방법 B의 51, 53, 50, 62가 있습니다. MAE, RMSE, MAPE를 비교하세요.</p>
+      <p>실제값 50, 55, 52, 60에 대해 방법 A의 예측 48, 56, 55, 57과 방법 B의 예측 51, 53, 50, 62가 있다. MAE, RMSE, MAPE를 비교하라.</p>
     </div>
-    <p><i>풀이.</i> A 오차 2, −1, −3, 3: MAE 2.25, RMSE 2.40, MAPE 4.1%. B 오차 −1, 2, 2, −2: MAE 1.75, RMSE 1.80, MAPE 3.2%. 세 지표 모두 B가 낫습니다. 지표가 엇갈리면(예: MAE는 A, RMSE는 B) 큰 오차의 비용이 얼마나 큰지로 고릅니다.</p>
+    <p><i>풀이.</i> A의 오차는 2, −1, −3, 3이라 MAE 2.25, RMSE 2.40, MAPE 4.1%이다. 반면 B의 오차는 −1, 2, 2, −2라 MAE 1.75, RMSE 1.80, MAPE 3.2%이다. 따라서 세 지표 모두 B가 낫다. 만약 지표가 엇갈리면(MAE는 A, RMSE는 B처럼) 큰 오차의 비용이 얼마나 큰지로 고른다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>복잡한 모형을 평가할 때는 먼저 단순 예측과 비교한다. 직전 값을 그대로 쓰는 예측조차 이기지 못하는 모형은, 표본 안 적합이 아무리 좋아도 쓸 이유가 없다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>MAE(단위), RMSE(큰 오차 벌점), MAPE(%, 0 근처 위험), MASE(단순 예측 대비).</li>
-        <li>시간 순서를 지키는 이동 원점 교차검증.</li>
-        <li>단순 기준 예측을 이기는지가 첫 시험입니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>MAE는 원래 단위, RMSE는 큰 오차에 벌점, MAPE는 백분율이지만 0 근처에서 위험하고, MASE는 단순 예측 대비 성능이다. 평가는 시간 순서를 지키는 이동 원점 교차검증으로 하며, 단순 기준 예측을 이기는지가 첫 시험이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>실제값이 2, 예측이 4이면 그 시점의 절대 백분율 오차는? 실제 4, 예측 2라면?
-          <details><summary>답</summary><p>100%와 50%. 같은 크기의 오차인데 과대 예측이 두 배로 벌을 받습니다(MAPE의 비대칭).</p></details>
+        <li>실제값이 2, 예측이 4이면 그 시점의 절대 백분율 오차는 얼마인가? 실제 4, 예측 2라면?
+          <details><summary>답</summary><p>100%와 50%이다. 같은 크기의 오차인데 과대 예측이 두 배로 벌을 받는다(MAPE의 비대칭).</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>새 모형의 MASE가 1.15입니다. 무엇을 뜻하나요?
-          <details><summary>답</summary><p>직전 값을 그대로 쓰는 단순 예측보다 평균 15% 나쁩니다. 복잡한 모형을 쓸 이유가 없으므로 모형을 다시 보거나 단순 예측을 씁니다.</p></details>
+      <ol start="2">
+        <li>새 모형의 MASE가 1.15이다. 무엇을 뜻하는가?
+          <details><summary>답</summary><p>직전 값을 그대로 쓰는 단순 예측보다 평균 15% 나쁘다. 복잡한 모형을 쓸 이유가 없으므로 모형을 다시 보거나 단순 예측을 쓴다.</p></details>
+        </li>
+        <li>예제의 두 방법의 예측을 평균한 결합 예측의 MAE를 구하라.
+          <details><summary>답</summary><p>결합 예측은 49.5, 54.5, 52.5, 59.5라 오차가 0.5, 0.5, −0.5, 0.5이고 MAE는 0.5이다. 두 방법의 오차가 서로 반대 방향이라 크게 상쇄되었다.</p></details>
         </li>
       </ol>
     </div>

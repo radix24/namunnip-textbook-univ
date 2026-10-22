@@ -8,57 +8,166 @@
 <article class="card q-card" id="text-s20-kalman" data-kind="본문" data-std="응통20-07-01">
   <header class="card-head"><span class="no"></span><h2>상태공간 모형과 칼만 필터</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>관측식과 상태식으로 이루어진 상태공간 모형을 쓴다.</li>
-        <li>칼만 필터의 예측·갱신 단계를 국소 수준 모형으로 이해한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>응통6 5.4절 다변량 정규의 조건부분포, 응통21 베이즈 갱신(있으면 도움).</li>
-      </ul>
-    </div>
-
-    <h3>보이지 않는 수준을 따라가기</h3>
-    <p>여론조사 지지율은 진짜 지지율에 표본 오차가 더해진 값이고, 진짜 지지율 자체도 조금씩 움직입니다. 관측에는 잡음이 있고 참값은 숨어 변할 때, 관측이 올 때마다 참값의 추정을 갱신하는 방법이 칼만 필터입니다.</p>
+    <p class="q-ask">여론조사 지지율은 진짜 지지율에 표본 오차가 더해진 값이다. 게다가 진짜 지지율도 주마다 조금씩 움직인다. 지난주 추정이 40%였는데 이번 주 조사가 46%로 나왔다면, 진짜 지지율을 얼마로 보아야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="나일강 연 유량 100년(1871년부터 1970년, 파랑 점)과 국소 수준 모형의 칼만 필터 추정(주황). 관측은 456에서 1370 사이로 크게 흩어지지만 필터 추정은 완만하게 움직이며, 1899년 무렵부터 약 1100에서 약 850으로 낮아진 수준을 따라간다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="87.3" y="195" text-anchor="middle" class="s">1880</text>
+        <text x="147.9" y="195" text-anchor="middle" class="s">1900</text>
+        <text x="208.5" y="195" text-anchor="middle" class="s">1920</text>
+        <text x="269.1" y="195" text-anchor="middle" class="s">1940</text>
+        <text x="329.7" y="195" text-anchor="middle" class="s">1960</text>
+        <text x="55" y="184" text-anchor="end" class="s">400</text>
+        <text x="55" y="152" text-anchor="end" class="s">600</text>
+        <text x="55" y="120" text-anchor="end" class="s">800</text>
+        <text x="55" y="88" text-anchor="end" class="s">1000</text>
+        <text x="55" y="56" text-anchor="end" class="s">1200</text>
+        <text x="55" y="24" text-anchor="end" class="s">1400</text>
+        <text x="360" y="209" text-anchor="end" class="s">연도</text>
+        <circle cx="60" cy="64.8" r="2.2" class="fa"/>
+        <circle cx="63" cy="58.4" r="2.2" class="fa"/>
+        <circle cx="66.1" cy="89.9" r="2.2" class="fa"/>
+        <circle cx="69.1" cy="50.4" r="2.2" class="fa"/>
+        <circle cx="72.1" cy="58.4" r="2.2" class="fa"/>
+        <circle cx="75.2" cy="58.4" r="2.2" class="fa"/>
+        <circle cx="78.2" cy="113.9" r="2.2" class="fa"/>
+        <circle cx="81.2" cy="47.2" r="2.2" class="fa"/>
+        <circle cx="84.2" cy="24.8" r="2.2" class="fa"/>
+        <circle cx="87.3" cy="61.6" r="2.2" class="fa"/>
+        <circle cx="90.3" cy="84.8" r="2.2" class="fa"/>
+        <circle cx="93.3" cy="94.4" r="2.2" class="fa"/>
+        <circle cx="96.4" cy="66.4" r="2.2" class="fa"/>
+        <circle cx="99.4" cy="85" r="2.2" class="fa"/>
+        <circle cx="102.4" cy="80.8" r="2.2" class="fa"/>
+        <circle cx="105.5" cy="90.4" r="2.2" class="fa"/>
+        <circle cx="108.5" cy="55.2" r="2.2" class="fa"/>
+        <circle cx="111.5" cy="116.2" r="2.2" class="fa"/>
+        <circle cx="114.5" cy="90.7" r="2.2" class="fa"/>
+        <circle cx="117.6" cy="61.6" r="2.2" class="fa"/>
+        <circle cx="120.6" cy="68" r="2.2" class="fa"/>
+        <circle cx="123.6" cy="50.4" r="2.2" class="fa"/>
+        <circle cx="126.7" cy="60" r="2.2" class="fa"/>
+        <circle cx="129.7" cy="44" r="2.2" class="fa"/>
+        <circle cx="132.7" cy="42.4" r="2.2" class="fa"/>
+        <circle cx="135.8" cy="48.8" r="2.2" class="fa"/>
+        <circle cx="138.8" cy="79.2" r="2.2" class="fa"/>
+        <circle cx="141.8" cy="68" r="2.2" class="fa"/>
+        <circle cx="144.8" cy="120.2" r="2.2" class="fa"/>
+        <circle cx="147.9" cy="109.6" r="2.2" class="fa"/>
+        <circle cx="150.9" cy="104.2" r="2.2" class="fa"/>
+        <circle cx="153.9" cy="133" r="2.2" class="fa"/>
+        <circle cx="157" cy="93.6" r="2.2" class="fa"/>
+        <circle cx="160" cy="110.7" r="2.2" class="fa"/>
+        <circle cx="163" cy="131.8" r="2.2" class="fa"/>
+        <circle cx="166.1" cy="97.4" r="2.2" class="fa"/>
+        <circle cx="169.1" cy="133.3" r="2.2" class="fa"/>
+        <circle cx="172.1" cy="80.8" r="2.2" class="fa"/>
+        <circle cx="175.2" cy="76" r="2.2" class="fa"/>
+        <circle cx="178.2" cy="89" r="2.2" class="fa"/>
+        <circle cx="181.2" cy="111" r="2.2" class="fa"/>
+        <circle cx="184.2" cy="127.8" r="2.2" class="fa"/>
+        <circle cx="187.3" cy="171" r="2.2" class="fa"/>
+        <circle cx="190.3" cy="112.2" r="2.2" class="fa"/>
+        <circle cx="193.3" cy="131.7" r="2.2" class="fa"/>
+        <circle cx="196.4" cy="64.8" r="2.2" class="fa"/>
+        <circle cx="199.4" cy="68" r="2.2" class="fa"/>
+        <circle cx="202.4" cy="110.9" r="2.2" class="fa"/>
+        <circle cx="205.5" cy="121.8" r="2.2" class="fa"/>
+        <circle cx="208.5" cy="112.6" r="2.2" class="fa"/>
+        <circle cx="211.5" cy="121.1" r="2.2" class="fa"/>
+        <circle cx="214.5" cy="108.8" r="2.2" class="fa"/>
+        <circle cx="217.6" cy="105.8" r="2.2" class="fa"/>
+        <circle cx="220.6" cy="106.1" r="2.2" class="fa"/>
+        <circle cx="223.6" cy="132.3" r="2.2" class="fa"/>
+        <circle cx="226.7" cy="108.8" r="2.2" class="fa"/>
+        <circle cx="229.7" cy="125" r="2.2" class="fa"/>
+        <circle cx="232.7" cy="116.6" r="2.2" class="fa"/>
+        <circle cx="235.8" cy="77.6" r="2.2" class="fa"/>
+        <circle cx="238.8" cy="122.6" r="2.2" class="fa"/>
+        <circle cx="241.8" cy="119" r="2.2" class="fa"/>
+        <circle cx="244.8" cy="105.6" r="2.2" class="fa"/>
+        <circle cx="247.9" cy="108.8" r="2.2" class="fa"/>
+        <circle cx="250.9" cy="93" r="2.2" class="fa"/>
+        <circle cx="253.9" cy="86.6" r="2.2" class="fa"/>
+        <circle cx="257" cy="100.5" r="2.2" class="fa"/>
+        <circle cx="260" cy="112.5" r="2.2" class="fa"/>
+        <circle cx="263" cy="82.4" r="2.2" class="fa"/>
+        <circle cx="266.1" cy="120.6" r="2.2" class="fa"/>
+        <circle cx="269.1" cy="135.8" r="2.2" class="fa"/>
+        <circle cx="272.1" cy="140.2" r="2.2" class="fa"/>
+        <circle cx="275.2" cy="108.6" r="2.2" class="fa"/>
+        <circle cx="278.2" cy="114.1" r="2.2" class="fa"/>
+        <circle cx="281.2" cy="125.3" r="2.2" class="fa"/>
+        <circle cx="284.2" cy="115.8" r="2.2" class="fa"/>
+        <circle cx="287.3" cy="77.6" r="2.2" class="fa"/>
+        <circle cx="290.3" cy="106.4" r="2.2" class="fa"/>
+        <circle cx="293.3" cy="104.2" r="2.2" class="fa"/>
+        <circle cx="296.4" cy="108.3" r="2.2" class="fa"/>
+        <circle cx="299.4" cy="101.6" r="2.2" class="fa"/>
+        <circle cx="302.4" cy="125" r="2.2" class="fa"/>
+        <circle cx="305.5" cy="124.2" r="2.2" class="fa"/>
+        <circle cx="308.5" cy="109.9" r="2.2" class="fa"/>
+        <circle cx="311.5" cy="76" r="2.2" class="fa"/>
+        <circle cx="314.5" cy="97.1" r="2.2" class="fa"/>
+        <circle cx="317.6" cy="86.2" r="2.2" class="fa"/>
+        <circle cx="320.6" cy="116.5" r="2.2" class="fa"/>
+        <circle cx="323.6" cy="96.3" r="2.2" class="fa"/>
+        <circle cx="326.7" cy="88" r="2.2" class="fa"/>
+        <circle cx="329.7" cy="113.6" r="2.2" class="fa"/>
+        <circle cx="332.7" cy="80.8" r="2.2" class="fa"/>
+        <circle cx="335.8" cy="99" r="2.2" class="fa"/>
+        <circle cx="338.8" cy="99.8" r="2.2" class="fa"/>
+        <circle cx="341.8" cy="56.8" r="2.2" class="fa"/>
+        <circle cx="344.8" cy="98.1" r="2.2" class="fa"/>
+        <circle cx="347.9" cy="124.6" r="2.2" class="fa"/>
+        <circle cx="350.9" cy="97" r="2.2" class="fa"/>
+        <circle cx="353.9" cy="129.1" r="2.2" class="fa"/>
+        <circle cx="357" cy="129.8" r="2.2" class="fa"/>
+        <circle cx="360" cy="125.6" r="2.2" class="fa"/>
+        <path d="M60 64.8 L63 61.5 L66.1 72.4 L69.1 65.2 L72.1 63.2 L75.2 61.8 L78.2 76.2 L81.2 68.3 L84.2 56.6 L87.3 57.9 L90.3 65.1 L93.3 73 L96.4 71.2 L99.4 74.9 L102.4 76.5 L105.5 80.2 L108.5 73.5 L111.5 84.9 L114.5 86.5 L117.6 79.8 L120.6 76.7 L123.6 69.6 L126.7 67.1 L129.7 60.9 L132.7 56 L135.8 54.1 L138.8 60.8 L141.8 62.7 L144.8 78 L147.9 86.5 L150.9 91.2 L153.9 102.3 L157 100 L160 102.9 L163 110.6 L166.1 107.1 L169.1 114.1 L172.1 105.2 L175.2 97.4 L178.2 95.1 L181.2 99.4 L184.2 107 L187.3 124.1 L190.3 120.9 L193.3 123.8 L196.4 108 L199.4 97.3 L202.4 101 L205.5 106.5 L208.5 108.1 L211.5 111.6 L214.5 110.9 L217.6 109.5 L220.6 108.6 L223.6 114.9 L226.7 113.3 L229.7 116.4 L232.7 116.5 L235.8 106.1 L238.8 110.5 L241.8 112.8 L244.8 110.9 L247.9 110.3 L250.9 105.7 L253.9 100.6 L257 100.5 L260 103.7 L263 98 L266.1 104.1 L269.1 112.6 L272.1 119.9 L275.2 116.9 L278.2 116.2 L281.2 118.6 L284.2 117.9 L287.3 107.1 L290.3 106.9 L293.3 106.2 L296.4 106.8 L299.4 105.4 L302.4 110.6 L305.5 114.2 L308.5 113.1 L311.5 103.2 L314.5 101.6 L317.6 97.5 L320.6 102.5 L323.6 100.9 L326.7 97.4 L329.7 101.8 L332.7 96.2 L335.8 96.9 L338.8 97.7 L341.8 86.8 L344.8 89.8 L347.9 99.1 L350.9 98.5 L353.9 106.7 L357 112.9 L360 116.3" class="c"/>
+        <text x="375" y="44" class="s ta">나일강 연 유량</text><text x="375" y="60" class="s ta">1억 세제곱미터</text><text x="375" y="92" class="s tc">칼만 필터의</text><text x="375" y="108" class="s tc">숨은 수준 추정</text><text x="375" y="140" class="s">1899년 무렵 아스완</text><text x="375" y="156" class="s">댐 뒤 수준이 낮아진다</text>
+      </svg>
+      <figcaption>그림 1. 나일강 유량의 칼만 필터. 잡음 섞인 관측(파랑)에서 숨은 수준(주황)을 시점마다 갱신하며 추정한다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>다변량 정규의 조건부분포(응통6 5.4절)를 쓴다. 베이즈 갱신(응통21)을 알면 도움이 된다.</div>
+    <p>처음 질문의 답은 40과 46 사이의 가중평균이다. 관측에는 잡음이 있고 참값은 숨어서 변하므로, 지난 추정과 새 관측을 각각의 불확실성에 따라 섞어야 한다. 관측이 올 때마다 이렇게 참값의 추정을 갱신하는 방법이 칼만 필터이다(그림 1).</p>
 
     <h3><span class="no">7.1.1</span>국소 수준 모형</h3>
-    <p class="q-term"><b>관측식</b>: \(y_t = \mu_t + \varepsilon_t\), \(\varepsilon_t \sim N(0, \sigma_\varepsilon^2)\).</p>
-    <p class="q-term"><b>상태식</b>: \(\mu_t = \mu_{t-1} + \eta_t\), \(\eta_t \sim N(0, \sigma_\eta^2)\).</p>
-    <p>숨은 수준 \(\mu_t\)는 랜덤워크로 움직이고, 우리는 잡음 섞인 \(y_t\)만 봅니다. 일반 상태공간 모형은 이것을 행렬로 넓혀 추세, 계절, 회귀 효과, ARIMA까지 모두 담습니다.</p>
+    <p>관측식과 상태식 두 개로 이루어진 다음 모형을 생각하자.</p>
+    \[y_t = \mu_t + \varepsilon_t, \quad \varepsilon_t \sim N(0, \sigma_\varepsilon^2), \qquad \mu_t = \mu_{t-1} + \eta_t, \quad \eta_t \sim N(0, \sigma_\eta^2)\]
+    <p>여기서 숨은 수준 \(\mu_t\)는 랜덤워크로 움직이고, 우리는 잡음 섞인 \(y_t\)만 본다. 일반적인 상태공간 모형은 이것을 행렬로 넓혀 추세, 계절, 회귀 효과, ARIMA까지 모두 담는다.</p>
 
     <h3><span class="no">7.1.2</span>칼만 필터</h3>
-    <p>시점 \(t-1\)까지의 관측으로 \(\mu_{t-1} \sim N(m_{t-1}, P_{t-1})\)이라 합시다.</p>
-    <ol>
-      <li><b>예측</b>: \(\mu_t\)의 예측 평균 \(m_{t-1}\), 분산 \(P_{t-1} + \sigma_\eta^2\)(상태가 움직여 불확실성이 커짐).</li>
-      <li><b>갱신</b>: 새 관측 \(y_t\)가 오면 \(m_t = m_{t-1} + K_t(y_t - m_{t-1})\), \(P_t = (1 - K_t)(P_{t-1} + \sigma_\eta^2)\), 칼만 이득 \(K_t = \dfrac{P_{t-1} + \sigma_\eta^2}{P_{t-1} + \sigma_\eta^2 + \sigma_\varepsilon^2}\).</li>
-    </ol>
-    <p>새 추정은 예측과 관측의 가중평균이고, 가중치 \(K_t\)는 상대적 불확실성으로 정해집니다. 관측 잡음이 크면 관측을 덜 믿고(\(K\) 작음), 상태 변화가 크면 관측을 더 믿습니다. 정규 가정 아래 이것은 정확한 베이즈 갱신(응통6 5.4절의 조건부분포)이고, 장기적으로 \(K_t\)는 일정해져 지수평활과 같아집니다.</p>
-
+    <p>시점 \(t-1\)까지의 관측으로 \(\mu_{t-1} \sim N(m_{t-1}, P_{t-1})\)이라 하자. 먼저 예측 단계에서 \(\mu_t\)의 예측 평균은 \(m_{t-1}\), 예측 분산은 \(P_{t-1} + \sigma_\eta^2\)이다. 상태가 움직이므로 불확실성이 커진다. 다음으로 갱신 단계에서 새 관측 \(y_t\)가 오면 다음과 같이 고친다.</p>
+    \[K_t = \frac{P_{t-1} + \sigma_\eta^2}{P_{t-1} + \sigma_\eta^2 + \sigma_\varepsilon^2}, \qquad m_t = m_{t-1} + K_t(y_t - m_{t-1}), \qquad P_t = (1 - K_t)(P_{t-1} + \sigma_\eta^2)\]
+    <p>즉 새 추정은 예측과 관측의 가중평균이고, 가중치인 칼만 이득 \(K_t\)는 상대적 불확실성으로 정해진다. 그래서 관측 잡음이 크면 관측을 덜 믿고(\(K\)가 작음), 상태 변화가 크면 관측을 더 믿는다. 정규 가정 아래 이것은 정확한 베이즈 갱신(응통6 5.4절의 조건부분포)이며, 시간이 지나면 \(K_t\)가 일정해져 지수평활(<a href="05-02.html">5.2절</a>)과 같아진다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.1.1</span>
-      <p>\(m_{t-1} = 40\), \(P_{t-1} = 3\), \(\sigma_\eta^2 = 1\), \(\sigma_\varepsilon^2 = 4\), 새 여론조사 \(y_t = 46\)이면 갱신된 추정은?</p>
+      <p>\(m_{t-1} = 40\), \(P_{t-1} = 3\), \(\sigma_\eta^2 = 1\), \(\sigma_\varepsilon^2 = 4\)이고 새 여론조사가 \(y_t = 46\)이면 갱신된 추정은 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> 예측 분산 4, \(K = 4/8 = 0.5\). \(m_t = 40 + 0.5\times6 = 43\), \(P_t = 0.5\times4 = 2\). 조사 결과 46을 그대로 믿지 않고 이전 추정과 반반 섞습니다.</p>
+    <p><i>풀이.</i> 예측 분산이 4이므로 \(K = 4/8 = 0.5\)이다. 따라서 \(m_t = 40 + 0.5 \times 6 = 43\), \(P_t = 0.5 \times 4 = 2\)이다. 조사 결과 46을 그대로 믿지 않고 이전 추정과 반반 섞은 셈이며, 불확실성은 4에서 2로 줄었다.</p>
     <pre><code>fit &lt;- StructTS(Nile, type = "level"); fit$coef   # 분산 추정
 plot(Nile); lines(tsSmooth(fit), col = "red")       # 숨은 수준의 평활 추정</code></pre>
+    <div class="tb-note"><span class="lb">주의</span><p>칼만 필터의 결과는 두 분산 \(\sigma_\eta^2\)와 \(\sigma_\varepsilon^2\)에 달려 있다. 실제로는 이 값을 모르므로 가능도를 최대로 하여 추정하는데, 그림 1의 나일강 자료에서는 \(\hat\sigma_\eta^2 = 1469\), \(\hat\sigma_\varepsilon^2 = 15099\)로 관측 잡음이 훨씬 크다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>관측식 + 상태식, 숨은 상태를 추정.</li>
-        <li>예측(불확실성 증가) → 갱신(관측과 가중평균).</li>
-        <li>칼만 이득 = 상대적 불확실성, 정규면 베이즈 갱신.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>상태공간 모형은 관측식과 상태식으로 숨은 상태를 나타낸다. 칼만 필터는 예측 단계에서 불확실성을 키우고, 갱신 단계에서 예측과 관측을 가중평균한다. 칼만 이득은 상대적 불확실성이며, 정규 가정 아래 베이즈 갱신과 같다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">7.1.2</span>연습문제</h3>
+      <h3><span class="no">7.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 \(\sigma_\varepsilon^2 = 0\)(관측에 잡음 없음)이면 \(K\)와 \(m_t\)는?
-          <details><summary>답</summary><p>\(K = 1\), \(m_t = 46\). 잡음이 없으면 관측이 곧 참값입니다.</p></details>
+        <li>예제에서 \(\sigma_\varepsilon^2 = 0\)(관측에 잡음 없음)이면 \(K\)와 \(m_t\)는 얼마인가?
+          <details><summary>답</summary><p>\(K = 1\), \(m_t = 46\)이다. 잡음이 없으면 관측이 곧 참값이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제 다음 주 조사가 44였다. 같은 분산으로 한 번 더 갱신하라.
+          <details><summary>답</summary><p>예측 분산 \(2 + 1 = 3\), \(K = 3/7 = 0.43\)이므로 \(m = 43 + 0.43 \times 1 = 43.4\), \(P = 0.57 \times 3 = 1.71\)이다.</p></details>
+        </li>
+        <li>\(\sigma_\eta^2 = 1\), \(\sigma_\varepsilon^2 = 4\)일 때 정상 상태의 칼만 이득을 구하라.
+          <details><summary>답</summary><p>정상 상태의 예측 분산 \(p\)는 \(p = 4p/(p + 4) + 1\), 곧 \(p^2 - p - 4 = 0\)을 풀어 \(p = 2.56\)이다. 따라서 \(K = 2.56/6.56 = 0.39\)이고, 이것이 대응하는 지수평활의 \(\alpha\)이다.</p></details>
         </li>
       </ol>
     </div>

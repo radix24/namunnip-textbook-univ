@@ -8,55 +8,68 @@
 <article class="card q-card" id="text-s20-sarima" data-kind="본문" data-std="응통20-06-01">
   <header class="card-head"><span class="no"></span><h2>계절형 ARIMA 모형</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>계절형 ARIMA(p,d,q)(P,D,Q)<sub>s</sub>의 구조를 이해한다.</li>
-        <li>항공 모형을 적합하고 예측한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>차분 (<a href="03-01.html">3.1절</a>), ARIMA 적합 (<a href="04-01.html">4.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>해마다의 의존성도 모형에</h3>
-    <p>월별 자료는 지난달뿐 아니라 작년 같은 달과도 닮습니다. 계절형 ARIMA는 짧은 시차의 ARMA 구조와 계절 시차(\(s, 2s, \ldots\))의 ARMA 구조를 곱해 둘 다 담습니다.</p>
+    <p class="q-ask">올해 7월 항공 승객 수를 예측하려면 6월 승객 수가 중요하다. 그런데 작년 7월 승객 수도 그만큼 중요하다. 지난달과 작년 같은 달, 두 가지 의존성을 한 모형에 어떻게 담을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="1955년부터 1960년까지의 월별 항공 승객(파랑, 천 명)과 항공 모형의 1961년과 1962년 예측(주황) 및 95% 구간(연한 주황). 예측은 추세와 여름 봉우리를 이어 가며 1962년 12월 약 525이고, 구간은 위쪽이 더 넓어 상한이 약 689이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">1955</text>
+        <text x="135" y="195" text-anchor="middle" class="s">1957</text>
+        <text x="210" y="195" text-anchor="middle" class="s">1959</text>
+        <text x="285" y="195" text-anchor="middle" class="s">1961</text>
+        <text x="360" y="195" text-anchor="middle" class="s">1963</text>
+        <text x="55" y="184" text-anchor="end" class="s">200</text>
+        <text x="55" y="130.7" text-anchor="end" class="s">400</text>
+        <text x="55" y="77.3" text-anchor="end" class="s">600</text>
+        <text x="55" y="24" text-anchor="end" class="s">800</text>
+        <text x="360" y="209" text-anchor="end" class="s">연도</text>
+        <path d="M285 104.3 L288.1 109.9 L291.3 93 L294.4 87.7 L297.5 81.5 L300.6 57.9 L303.8 30.3 L306.9 29.8 L310 61.9 L313.1 79.6 L316.2 99.6 L319.4 84 L322.5 75.5 L325.6 82.6 L328.8 62 L331.9 55.6 L335 47.9 L338.1 18.9 L341.2 -15 L344.4 -16 L347.5 23.1 L350.6 44.6 L353.7 69 L356.9 49.5 L356.9 126.5 L353.7 136.4 L350.6 120.4 L347.5 105.6 L344.4 79.5 L341.2 77.5 L338.1 96.5 L335 112.9 L331.9 115.8 L328.8 117.9 L325.6 129.7 L322.5 122.5 L319.4 124.9 L316.2 135.1 L313.1 119 L310 104.1 L306.9 77.9 L303.8 76.1 L300.6 95.4 L297.5 112 L294.4 115 L291.3 117.1 L288.1 128.9 L285 121.6 Z" class="lc"/>
+        <path d="M60 168.8 L63.1 171.2 L66.3 162.1 L69.4 161.6 L72.5 161.3 L75.6 149.3 L78.8 136.3 L81.9 140.8 L85 150.1 L88.1 160.3 L91.2 170.1 L94.4 159.2 L97.5 157.6 L100.6 159.5 L103.8 148.8 L106.9 149.9 L110 148.5 L113.1 133.6 L116.2 123.2 L119.4 125.3 L122.5 138.7 L125.6 151.7 L128.7 161.1 L131.9 151.7 L135 149.3 L138.1 153.1 L141.3 138.4 L144.4 140.5 L147.5 138.7 L150.6 120.8 L153.8 109.3 L156.9 108.8 L160 125.6 L163.1 140.8 L166.2 152 L169.4 143.7 L172.5 142.7 L175.6 148.5 L178.8 136.8 L181.9 140.5 L185 136.5 L188.1 117.3 L191.2 102.4 L194.4 98.7 L197.5 125.6 L200.6 137.6 L203.7 150.7 L206.9 143.5 L210 137.3 L213.1 142.1 L216.3 125.1 L219.4 127.7 L222.5 121.3 L225.6 107.5 L228.8 87.2 L231.9 84.3 L235 109.9 L238.1 124.8 L241.2 136.8 L244.4 125.3 L247.5 122.1 L250.6 129.1 L253.8 121.6 L256.9 110.4 L260 107.5 L263.1 90.7 L266.2 67.5 L269.4 71.7 L272.5 97.9 L275.6 110.4 L278.7 129.3 L281.9 118.1" class="a"/>
+        <path d="M281.9 118.1 L285 113.2 L288.1 119.8 L291.3 105.6 L294.4 102 L297.5 97.6 L300.6 77.8 L303.8 54.7 L306.9 55.4 L310 84.5 L313.1 100.7 L316.2 118.7 L319.4 106.1 L322.5 101.1 L325.6 108.3 L328.8 92.7 L331.9 88.8 L335 83.9 L338.1 62.1 L341.2 36.6 L344.4 37.5 L347.5 69.4 L350.6 87.3 L353.7 107.1 L356.9 93.2" class="c"/>
+        <path d="M285 180 L285 20" class="k dsh"/>
+        <text x="375" y="44" class="s ta">항공 승객, 천 명</text><text x="375" y="76" class="s tc">항공 모형의 2년 예측</text><text x="375" y="92" class="s tc">과 95% 구간</text><text x="375" y="124" class="s">로그에서 되돌려</text><text x="375" y="140" class="s">구간이 위로 더 넓다</text>
+      </svg>
+      <figcaption>그림 1. 예제 6.1.1의 예측. 항공 모형(주황)은 모수 두 개로 추세와 계절 무늬를 함께 이어 간다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>차분(<a href="03-01.html">3.1절</a>)과 ARIMA 적합(<a href="04-01.html">4.1절</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 두 다항식의 곱이다. 계절형 ARIMA는 짧은 시차의 ARMA 구조와 계절 시차(\(s, 2s, \ldots\))의 ARMA 구조를 곱해 둘 다 담는다. 그래서 그림 1처럼 해마다 커지는 계절 무늬를 적은 모수로 이어 갈 수 있다.</p>
 
     <h3><span class="no">6.1.1</span>구조</h3>
-    <p>후진 연산자 \(Bx_t = x_{t-1}\)으로 쓰면 ARIMA(p,d,q)(P,D,Q)<sub>s</sub>는</p>
-    \[\Phi_P(B^s)\phi_p(B)(1-B)^d(1-B^s)^Dx_t = \Theta_Q(B^s)\theta_q(B)e_t.\]
-    <p>소문자는 짧은 시차, 대문자는 계절 시차 다항식입니다. 계절 차분 \(D\)는 보통 1 이하. 식별은 ACF·PACF의 계절 시차(12, 24, …)에서 같은 절단·감소 규칙을 적용합니다.</p>
+    <p>후향 연산자 \(Bx_t = x_{t-1}\)로 쓰면 ARIMA(\(p, d, q\))(\(P, D, Q\))\(_s\)는</p>
+    \[\Phi_P(B^s)\phi_p(B)(1-B)^d(1-B^s)^Dx_t = \Theta_Q(B^s)\theta_q(B)e_t\]
+    <p>이다. 여기서 소문자는 짧은 시차의 다항식이고, 대문자는 계절 시차의 다항식이다. 계절 차분 횟수 \(D\)는 보통 1 이하이다. 식별할 때는 ACF와 PACF의 계절 시차(12, 24, …)에 같은 절단과 감소 규칙(<a href="02-02.html">2.2절</a>)을 적용한다.</p>
 
     <h3><span class="no">6.1.2</span>항공 모형</h3>
-    <p>ARIMA(0,1,1)(0,1,1)<sub>12</sub>: \((1-B)(1-B^{12})\log y_t = (1 + \theta B)(1 + \Theta B^{12})e_t\). 모수 두 개로 추세와 계절성이 함께 변하는 많은 월별 자료를 잘 설명해, 박스와 젠킨스의 항공 승객 분석 이후 기준 모형으로 쓰입니다.</p>
-
+    <p>ARIMA(0,1,1)(0,1,1)\(_{12}\)은 \((1-B)(1-B^{12})\log y_t = (1 + \theta B)(1 + \Theta B^{12})e_t\)이다. 이 모형은 모수 두 개로 추세와 계절성이 함께 변하는 많은 월별 자료를 잘 설명한다. 그래서 박스와 젠킨스의 항공 승객 분석 이후 기준 모형으로 쓰이며, 항공 모형이라 불린다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
-      <p><code>AirPassengers</code>에 항공 모형을 적합하고 2년을 예측하세요.</p>
+      <p><code>AirPassengers</code>에 항공 모형을 적합하고 2년을 예측하라.</p>
     </div>
     <pre><code>fit &lt;- arima(log(AirPassengers), order = c(0, 1, 1),
              seasonal = list(order = c(0, 1, 1), period = 12))
 fit                                   # ma1 약 −0.40, sma1 약 −0.56
 p &lt;- predict(fit, n.ahead = 24)
 ts.plot(AirPassengers, exp(p$pred), exp(p$pred + 1.96 * p$se), exp(p$pred - 1.96 * p$se), lty = c(1, 1, 2, 2))</code></pre>
-    <p>로그 척도에서 예측하고 지수로 되돌렸으므로 점예측은 중앙값에 해당하고 구간은 비대칭입니다. 계수는 ma1 = −0.40, sma1 = −0.56입니다.</p>
+    <p><i>풀이.</i> 계수는 \(\hat\theta = -0.40\), \(\hat\Theta = -0.56\)이다. 로그 척도에서 예측하고 지수로 되돌렸으므로 점예측은 평균이 아니라 중앙값에 해당하고, 구간은 위쪽이 더 넓은 비대칭이 된다(그림 1). 예를 들어 1962년 12월의 예측은 약 525천 명이고 95% 구간의 상한은 약 689천 명이다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>계절 차분과 1차 차분을 모두 한 뒤 상수항을 넣으면 예측에 이차 추세가 생긴다. 그래서 \(d + D \ge 2\)이면 보통 상수항을 넣지 않으며, R의 <code>arima</code>도 차분이 있으면 상수항을 빼고 적합한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>짧은 시차 × 계절 시차 다항식의 곱.</li>
-        <li>계절 시차의 ACF·PACF로 P, Q 식별.</li>
-        <li>항공 모형은 월별 자료의 기준 모형.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>계절형 ARIMA는 짧은 시차와 계절 시차의 다항식을 곱한 모형이다. P와 Q는 계절 시차의 ACF와 PACF로 식별한다. 항공 모형 ARIMA(0,1,1)(0,1,1)\(_{12}\)은 월별 자료의 기준 모형이다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">6.1.2</span>연습문제</h3>
+      <h3><span class="no">6.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>분기 자료의 계절 주기 \(s\)는? ARIMA(1,0,0)(1,0,0)<sub>4</sub>를 전개하면 어떤 시차가 나오나요?
-          <details><summary>답</summary><p>\(s = 4\). \((1 - \phi B)(1 - \Phi B^4)x_t = e_t\)이라 시차 1, 4, 5가 나옵니다(5는 곱의 교차항).</p></details>
+        <li>분기 자료의 계절 주기 \(s\)는 얼마인가? ARIMA(1,0,0)(1,0,0)\(_4\)를 전개하면 어떤 시차가 나오는가?
+          <details><summary>답</summary><p>\(s = 4\)이다. \((1 - \phi B)(1 - \Phi B^4)x_t = e_t\)이라 시차 1, 4, 5가 나오며, 5는 곱의 교차항이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>항공 모형의 오른쪽 \((1 + \theta B)(1 + \Theta B^{12})e_t\)를 전개하면 MA 항이 어느 시차에 생기는가?
+          <details><summary>답</summary><p>시차 1, 12, 13이다. 시차 13의 계수는 \(\theta\Theta\)로, 따로 추정하지 않고 두 계수의 곱으로 정해진다.</p></details>
+        </li>
+        <li>항공 모형을 적합한 잔차의 ACF가 시차 12에서 크게 남았다면 무엇을 의심하는가?
+          <details><summary>답</summary><p>계절 구조가 다 잡히지 않은 것이다. 계절 AR 항(P = 1)을 더하거나 계절 MA의 차수를 바꿔 보고 다시 진단한다.</p></details>
         </li>
       </ol>
     </div>

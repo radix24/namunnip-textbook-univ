@@ -8,50 +8,70 @@
 <article class="card q-card" id="text-s20-fit" data-kind="본문" data-std="응통20-04-01">
   <header class="card-head"><span class="no"></span><h2>ARIMA 적합과 차수 선택</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>ARIMA를 최대가능도로 적합하고 계수를 읽는다.</li>
-        <li>AIC·BIC로 후보 모형 가운데 고른다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>식별 (<a href="02-02.html">2.2절</a>), 응통10 6.1절 정보기준.</li>
-      </ul>
-    </div>
-
-    <h3>식별 다음 단계</h3>
-    <p>ACF·PACF로 후보를 골랐으면 모수를 추정하고 후보끼리 비교합니다. 박스-젠킨스 절차는 식별 → 추정 → 진단을 되풀이합니다.</p>
+    <p class="q-ask">호르몬 측정값 48개의 ACF와 PACF를 보니 AR(1)도, AR(3)도, ARMA(1,1)도 그럴듯하다. 셋을 모두 적합하면 차수가 큰 모형일수록 자료에 더 잘 맞는다. 그렇다면 언제나 가장 큰 모형을 골라야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="lh 자료에 맞춘 세 모형의 정보기준 막대. AIC(파랑)는 AR(1) 64.8, AR(3) 64.2, ARMA(1,1) 65.5로 AR(3)이 가장 작고, BIC(주황)는 AR(1) 70.4, AR(3) 73.5, ARMA(1,1) 73.0으로 AR(1)이 가장 작다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="55" y="184" text-anchor="end" class="s">60</text>
+        <text x="55" y="144" text-anchor="end" class="s">64</text>
+        <text x="55" y="104" text-anchor="end" class="s">68</text>
+        <text x="55" y="64" text-anchor="end" class="s">72</text>
+        <text x="55" y="24" text-anchor="end" class="s">76</text>
+        <text x="66" y="24" class="s">정보기준</text>
+        <rect x="88" y="132.4" width="18" height="47.6" class="fa"/>
+        <text x="97" y="128.4" text-anchor="middle" class="s ta">64.8</text>
+        <rect x="114" y="76.3" width="18" height="103.7" class="fc"/>
+        <text x="123" y="72.3" text-anchor="middle" class="s tc">70.4</text>
+        <text x="110" y="198" text-anchor="middle" class="s">AR(1)</text>
+        <rect x="188" y="138.2" width="18" height="41.8" class="fa"/>
+        <text x="197" y="134.2" text-anchor="middle" class="s ta">64.2</text>
+        <rect x="214" y="44.6" width="18" height="135.4" class="fc"/>
+        <text x="223" y="40.6" text-anchor="middle" class="s tc">73.5</text>
+        <text x="210" y="198" text-anchor="middle" class="s">AR(3)</text>
+        <rect x="288" y="124.8" width="18" height="55.2" class="fa"/>
+        <text x="297" y="120.8" text-anchor="middle" class="s ta">65.5</text>
+        <rect x="314" y="49.9" width="18" height="130.1" class="fc"/>
+        <text x="323" y="45.9" text-anchor="middle" class="s tc">73.0</text>
+        <text x="310" y="198" text-anchor="middle" class="s">ARMA(1,1)</text>
+        <text x="375" y="60" class="s ta">AIC, 가장 작은 것은</text><text x="375" y="76" class="s ta">AR(3) 64.2</text><text x="375" y="108" class="s tc">BIC, 가장 작은 것은</text><text x="375" y="124" class="s tc">AR(1) 70.4</text><text x="375" y="156" class="s">세로축은 60에서 시작</text>
+      </svg>
+      <figcaption>그림 1. 예제 4.1.1의 정보기준. AIC(파랑)는 AR(3)을 조금 낫게 보지만, 모수에 벌점을 더 주는 BIC(주황)는 AR(1)을 고른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>식별(<a href="02-02.html">2.2절</a>)과 정보기준(응통10 6.1절)을 쓴다.</div>
+    <p>처음 질문의 답은 아니다이다. 모수를 늘리면 가능도는 늘 커지지만, 늘어난 모수가 잡음까지 따라가 예측은 오히려 나빠질 수 있다. 그래서 가능도에 모수 개수의 벌점을 더한 정보기준으로 후보를 비교한다(그림 1). 박스-젠킨스 절차는 식별, 추정, 진단을 되풀이하며 모형을 다듬는다.</p>
 
     <h3><span class="no">4.1.1</span>추정</h3>
-    <p>정규 잡음을 가정한 최대가능도(조건부 제곱합으로 시작해 정확한 가능도로 마무리)를 씁니다. R: <code>arima(x, order = c(p, d, q))</code>. 출력은 계수, 표준오차, \(\hat\sigma^2\), 로그가능도, AIC입니다. 계수/표준오차가 2보다 작으면 그 항이 필요한지 의심합니다.</p>
+    <p>ARIMA는 정규 잡음을 가정한 최대가능도로 추정한다. 보통 조건부 제곱합으로 시작값을 구한 뒤 정확한 가능도로 마무리하며, R에서는 <code>arima(x, order = c(p, d, q))</code>를 쓴다. 출력에는 계수와 표준오차, \(\hat\sigma^2\), 로그가능도, AIC가 나온다. 이때 계수를 표준오차로 나눈 값이 2보다 작으면 그 항이 정말 필요한지 의심한다.</p>
 
     <h3><span class="no">4.1.2</span>차수 선택</h3>
-    <p>후보마다 AIC \(= -2\ell + 2k\), BIC \(= -2\ell + k\log n\)을 구해 작은 것을 고릅니다. 같은 \(d\)(차분 횟수)끼리만 비교합니다(차분하면 자료가 바뀌므로). <code>forecast::auto.arima</code>는 단위근 검정으로 \(d\)를 정한 뒤 AIC로 p, q를 단계적으로 찾습니다. 가능하면 간단한 모형(절약의 원칙)을 고릅니다.</p>
-
+    <p>후보마다 \(\mathrm{AIC} = -2\ell + 2k\)와 \(\mathrm{BIC} = -2\ell + k\log n\)을 구해 작은 것을 고른다. 여기서 \(k\)는 추정한 모수의 개수이다. 그런데 차분하면 자료 자체가 바뀌므로, 차분 횟수 \(d\)가 같은 모형끼리만 비교해야 한다. 한편 <code>forecast::auto.arima</code>는 단위근 검정으로 \(d\)를 먼저 정한 뒤 AIC로 \(p\)와 \(q\)를 단계적으로 찾는다. 정보기준의 차이가 작으면 더 간단한 모형을 고르는데, 이것을 절약의 원칙이라 한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
-      <p>R의 <code>lh</code>(48개 호르몬 측정값)에 AR(1), AR(3), ARMA(1,1)을 적합해 비교하세요.</p>
+      <p>R의 <code>lh</code>(48개 호르몬 측정값)에 AR(1), AR(3), ARMA(1,1)을 적합해 비교하라.</p>
     </div>
     <pre><code>sapply(list(c(1,0,0), c(3,0,0), c(1,0,1)), function(o) AIC(arima(lh, order = o)))
 arima(lh, order = c(1, 0, 0))</code></pre>
-    <p>AR(1)의 \(\hat\phi = 0.57\)(표준오차 0.12)입니다. AIC는 AR(1) 64.8, AR(3) 64.2, ARMA(1,1) 65.5로 AR(3)이 조금 작지만 차이가 0.6뿐이라 더 간단한 AR(1)을 우선 후보로 둡니다. 잔차 진단(4.2절)으로 최종 결정합니다.</p>
+    <p><i>풀이.</i> AR(1)의 \(\hat\phi = 0.57\)(표준오차 0.12)이다. AIC는 AR(1) 64.8, AR(3) 64.2, ARMA(1,1) 65.5로 AR(3)이 조금 작다. 하지만 차이가 0.6뿐이고, \(n = 48\)에서 벌점이 더 큰 BIC는 AR(1)을 가장 작게 본다(그림 1). 따라서 더 간단한 AR(1)을 우선 후보로 두고, 잔차 진단(<a href="04-02.html">4.2절</a>)으로 최종 결정한다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p>AIC가 가장 작은 모형이 참 모형이라고 믿기 쉽다. 그러나 AIC 차이가 2 안쪽이면 두 모형은 사실상 비슷하게 지지되므로, 해석과 예측이 쉬운 쪽을 고르고 진단으로 확인한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>최대가능도 적합, 계수/표준오차 확인.</li>
-        <li>같은 \(d\)의 후보를 AIC·BIC로 비교.</li>
-        <li>단순한 모형을 우선.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>ARIMA는 최대가능도로 적합하고, 계수와 표준오차의 비로 항의 필요를 살핀다. 차분 횟수가 같은 후보끼리 AIC와 BIC로 비교하며, 차이가 작으면 단순한 모형을 고른다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">4.1.2</span>연습문제</h3>
+      <h3><span class="no">4.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>ARIMA(1,1,0)과 ARMA(2,0)의 AIC를 직접 비교해도 되나요?
-          <details><summary>답</summary><p>안 됩니다. 차분 횟수가 달라 가능도가 다른 자료(차분 계열 대 원계열)에서 계산됩니다.</p></details>
+        <li>ARIMA(1,1,0)과 ARMA(2,0)의 AIC를 직접 비교해도 되는가?
+          <details><summary>답</summary><p>안 된다. 차분 횟수가 달라, 가능도가 서로 다른 자료(차분 계열과 원계열)에서 계산되기 때문이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>로그가능도가 −29.4인 AR(1)(모수 3개, 절편과 \(\phi\)와 \(\sigma^2\))의 AIC를 구하라.
+          <details><summary>답</summary><p>\(-2(-29.4) + 2 \times 3 = 64.8\)이다. 예제의 출력과 같다.</p></details>
+        </li>
+        <li>\(n = 48\)에서 모수 하나를 더할 때 BIC의 벌점은 AIC의 벌점보다 얼마나 큰가?
+          <details><summary>답</summary><p>BIC는 \(\log 48 = 3.87\), AIC는 2를 더하므로 약 1.9배이다. 그래서 BIC는 더 작은 모형을 고르는 경향이 있다.</p></details>
         </li>
       </ol>
     </div>

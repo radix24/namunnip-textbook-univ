@@ -8,63 +8,82 @@
 <article class="card q-card" id="text-s20-expsmooth" data-kind="본문" data-std="응통20-05-02">
   <header class="card-head"><span class="no"></span><h2>지수평활 예측</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>단순 지수평활이 과거 관측의 지수 가중 평균임을 안다.</li>
-        <li>홀트 방법으로 수준과 추세를, 홀트-윈터스로 계절까지 갱신한다.</li>
-        <li>지수평활과 ARIMA의 관계를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>ARIMA 예측 (<a href="05-01.html">5.1절</a>), 확정적·확률적 추세 (<a href="03-03.html">3.3절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>최근 값에 더 큰 무게를</h3>
-    <p>재고 수천 품목의 수요를 매주 예측하는 일처럼 모형을 하나하나 고를 수 없을 때, 간단하고 튼튼한 지수평활이 널리 쓰입니다. 최근 관측일수록 더 큰 무게를 주는 가중 평균으로 수준을 갱신합니다.</p>
+    <p class="q-ask">상점의 재고 담당자가 수천 품목의 수요를 매주 예측해야 한다. 품목마다 ACF를 그려 ARIMA를 고를 시간은 없다. 최근 판매량에 무게를 더 두는 간단한 규칙 하나로 충분히 좋은 예측을 할 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="판매량 100, 104, 99, 106, 110, 108(파랑 점)과 α = 0.3의 평활 수준(주황) 100, 101.2, 100.54, 102.18, 104.52, 105.57. 수준은 관측의 오르내림을 걸러 완만하게 올라가고, 다음 기 예측은 105.6이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="81.4" y="195" text-anchor="middle" class="s">1</text>
+        <text x="124.3" y="195" text-anchor="middle" class="s">2</text>
+        <text x="167.1" y="195" text-anchor="middle" class="s">3</text>
+        <text x="210" y="195" text-anchor="middle" class="s">4</text>
+        <text x="252.9" y="195" text-anchor="middle" class="s">5</text>
+        <text x="295.7" y="195" text-anchor="middle" class="s">6</text>
+        <text x="338.6" y="195" text-anchor="middle" class="s">7</text>
+        <text x="55" y="184" text-anchor="end" class="s">96</text>
+        <text x="55" y="144" text-anchor="end" class="s">100</text>
+        <text x="55" y="104" text-anchor="end" class="s">104</text>
+        <text x="55" y="64" text-anchor="end" class="s">108</text>
+        <text x="55" y="24" text-anchor="end" class="s">112</text>
+        <text x="360" y="209" text-anchor="end" class="s">시점</text>
+        <path d="M81.4 140 L124.3 100 L167.1 150 L210 80 L252.9 40 L295.7 60" class="a dsh"/>
+        <circle cx="81.4" cy="140" r="3.5" class="fa"/>
+        <circle cx="124.3" cy="100" r="3.5" class="fa"/>
+        <circle cx="167.1" cy="150" r="3.5" class="fa"/>
+        <circle cx="210" cy="80" r="3.5" class="fa"/>
+        <circle cx="252.9" cy="40" r="3.5" class="fa"/>
+        <circle cx="295.7" cy="60" r="3.5" class="fa"/>
+        <path d="M81.4 140 L124.3 128 L167.1 134.6 L210 118.2 L252.9 94.8 L295.7 84.3" class="c"/>
+        <circle cx="81.4" cy="140" r="3" class="fc"/>
+        <circle cx="124.3" cy="128" r="3" class="fc"/>
+        <circle cx="167.1" cy="134.6" r="3" class="fc"/>
+        <circle cx="210" cy="118.2" r="3" class="fc"/>
+        <circle cx="252.9" cy="94.8" r="3" class="fc"/>
+        <circle cx="295.7" cy="84.3" r="3" class="fc"/>
+        <path d="M295.7 84.3 L338.6 84.3" class="c dsh"/>
+        <circle cx="338.6" cy="84.3" r="4" class="lc"/><text x="338.6" y="74.3" text-anchor="middle" class="s tc">105.6</text>
+        <text x="375" y="44" class="s ta">판매량 관측</text><text x="375" y="76" class="s tc">평활 수준 ℓ, α = 0.3</text><text x="375" y="108" class="s">관측의 오르내림을</text><text x="375" y="124" class="s">걸러 완만하게 따라간다</text><text x="375" y="156" class="s tc">다음 기 예측 105.6</text>
+      </svg>
+      <figcaption>그림 1. 예제 5.2.1의 단순 지수평활. 평활 수준(주황)이 관측(파랑)을 완만하게 따라가며, 마지막 수준이 다음 기 예측이 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>ARIMA 예측(<a href="05-01.html">5.1절</a>)과 확정적 추세와 확률적 추세(<a href="03-03.html">3.3절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 지수평활이다. 새 관측이 들어올 때마다 지금까지의 수준을 새 관측 쪽으로 조금씩 옮기면, 최근 관측일수록 무게가 큰 가중 평균이 된다(그림 1). 이 방법은 간단하고 튼튼해서 품목이 많은 수요 예측에 널리 쓰인다.</p>
 
     <h3><span class="no">5.2.1</span>단순 지수평활</h3>
-    <p>수준 \(\ell_t = \alpha y_t + (1 - \alpha)\ell_{t-1}\), 다음 예측 \(\hat y_{t+1} = \ell_t\)(\(0 &lt; \alpha &lt; 1\)). 풀어 쓰면 \(\ell_t = \alpha\sum_{j \ge 0}(1 - \alpha)^jy_{t-j}\)로 과거 관측의 지수 가중 평균입니다. \(\alpha\)가 크면 최근 변화에 빨리 반응하고, 작으면 잡음을 더 많이 걸러 냅니다. 추세나 계절이 없는 계열에 알맞고, 먼 미래 예측도 모두 \(\ell_t\)로 같습니다.</p>
+    <p>수준을 \(\ell_t = \alpha y_t + (1 - \alpha)\ell_{t-1}\)(\(0 &lt; \alpha &lt; 1\))로 갱신하고, 다음 예측을 \(\hat y_{t+1} = \ell_t\)로 둔다. 이 식을 풀어 쓰면 \(\ell_t = \alpha\sum_{j \ge 0}(1 - \alpha)^jy_{t-j}\)이므로, 과거 관측의 지수 가중 평균이다. 그래서 \(\alpha\)가 크면 최근 변화에 빨리 반응하고, 작으면 잡음을 더 많이 걸러 낸다. 이 방법은 추세나 계절이 없는 계열에 알맞으며, 먼 미래 예측도 모두 \(\ell_t\)로 같다.</p>
 
     <h3><span class="no">5.2.2</span>홀트와 홀트-윈터스</h3>
-    <ul>
-      <li><b>홀트(추세)</b>: \(\ell_t = \alpha y_t + (1 - \alpha)(\ell_{t-1} + b_{t-1})\), \(b_t = \beta(\ell_t - \ell_{t-1}) + (1 - \beta)b_{t-1}\), \(h\)기 앞 예측 \(\ell_t + hb_t\).</li>
-      <li><b>홀트-윈터스(계절)</b>: 여기에 계절 성분 \(s_t\)(주기 \(m\))를 더하거나(덧셈) 곱해(곱셈) 갱신하고, 예측에 같은 계절의 성분을 붙입니다.</li>
-      <li><b>감쇠 추세</b>: 추세가 영원히 이어지지 않도록 \(b\)를 \(\phi\)배씩 줄여 가는 방식으로, 장기 예측이 과하게 치솟는 것을 막아 실무 성능이 좋은 편입니다.</li>
-    </ul>
-    <p>평활 모수는 한 걸음 앞 예측 오차 제곱합을 최소로 하도록 추정합니다. R: <code>forecast::ets(y)</code>는 오차·추세·계절의 형태(ETS)를 정보 기준으로 자동 선택합니다.</p>
+    <p>추세가 있으면 홀트 방법으로 수준과 기울기를 함께 갱신한다.</p>
+    \[\ell_t = \alpha y_t + (1 - \alpha)(\ell_{t-1} + b_{t-1}), \qquad b_t = \beta(\ell_t - \ell_{t-1}) + (1 - \beta)b_{t-1}\]
+    <p>이때 \(h\)기 앞 예측은 \(\ell_t + hb_t\)이다. 또 계절이 있으면 홀트-윈터스 방법으로 주기 \(m\)의 계절 성분 \(s_t\)를 더하거나(덧셈형) 곱해(곱셈형) 갱신하고, 예측에 같은 계절의 성분을 붙인다. 한편 추세가 영원히 이어지지 않도록 \(b\)를 \(\phi\)배씩 줄여 가는 감쇠 추세는 장기 예측이 과하게 치솟는 것을 막아 실무 성능이 좋은 편이다.</p>
+    <p>평활 모수는 한 걸음 앞 예측 오차의 제곱합을 최소로 하도록 추정한다. 가령 R의 <code>forecast::ets(y)</code>는 오차, 추세, 계절의 형태(ETS)를 정보기준으로 자동 선택한다.</p>
 
     <h3><span class="no">5.2.3</span>ARIMA와의 관계</h3>
-    <p>단순 지수평활의 예측은 ARIMA(0, 1, 1) \(\nabla y_t = \varepsilon_t - (1 - \alpha)\varepsilon_{t-1}\)의 최적 예측과 같고, 홀트 방법은 ARIMA(0, 2, 2)와 대응합니다. 지수평활은 상태공간 모형(07단원)으로 쓸 수 있어 예측구간도 계산됩니다.</p>
-
+    <p>단순 지수평활의 예측은 ARIMA(0,1,1) \(\nabla y_t = \varepsilon_t - (1 - \alpha)\varepsilon_{t-1}\)의 최적 예측과 같다. 마찬가지로 홀트 방법은 ARIMA(0,2,2)와 대응한다. 즉 지수평활은 확률적 추세를 가정한 모형이며, 상태공간 모형(<a href="07-01.html">7.1절</a>)으로 쓸 수 있어 예측구간도 계산된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
-      <p>판매량 100, 104, 99, 106, 110, 108에 \(\alpha = 0.3\), \(\ell_1 = 100\)으로 단순 지수평활을 하세요.</p>
+      <p>판매량 100, 104, 99, 106, 110, 108에 \(\alpha = 0.3\), \(\ell_1 = 100\)으로 단순 지수평활을 하라.</p>
     </div>
-    <p><i>풀이.</i> \(\ell_2 = 0.3(104) + 0.7(100) = 101.2\), \(\ell_3 = 0.3(99) + 0.7(101.2) = 100.54\), \(\ell_4 = 102.18\), \(\ell_5 = 104.52\), \(\ell_6 = 0.3(108) + 0.7(104.52) = 105.57\). 다음 기 예측 105.6. 관측의 오르내림이 평활되어 완만한 수준으로 따라갑니다.</p>
+    <p><i>풀이.</i> \(\ell_2 = 0.3(104) + 0.7(100) = 101.2\), \(\ell_3 = 0.3(99) + 0.7(101.2) = 100.54\)이다. 같은 방식으로 \(\ell_4 = 102.18\), \(\ell_5 = 104.52\), \(\ell_6 = 0.3(108) + 0.7(104.52) = 105.57\)이므로 다음 기 예측은 105.6이다. 관측의 오르내림이 걸러져 수준이 완만하게 따라간다(그림 1).</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>추세가 뚜렷한 계열에 단순 지수평활을 쓰면 수준이 늘 실제보다 뒤처진다. 그림 1에서도 판매량이 오르는 동안 주황 선이 파랑 점보다 아래에 머문다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>단순 지수평활 = 지수 가중 평균, \(\alpha\)는 반응 속도.</li>
-        <li>홀트는 추세, 홀트-윈터스는 계절까지, 감쇠 추세가 장기 예측에 안전.</li>
-        <li>단순 지수평활 ⟺ ARIMA(0, 1, 1).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>단순 지수평활은 과거 관측의 지수 가중 평균이고, \(\alpha\)가 반응 속도를 정한다. 홀트는 추세를, 홀트-윈터스는 계절까지 갱신하며, 감쇠 추세가 장기 예측에 안전하다. 단순 지수평활은 ARIMA(0,1,1)의 예측과 같다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\alpha = 0.3\)일 때 최근 관측, 1기 전, 2기 전의 가중치는?
-          <details><summary>답</summary><p>0.3, \(0.3 \times 0.7 = 0.21\), \(0.3 \times 0.49 = 0.147\).</p></details>
+        <li>\(\alpha = 0.3\)일 때 최근 관측, 1기 전, 2기 전 관측의 가중치는 얼마인가?
+          <details><summary>답</summary><p>0.3, \(0.3 \times 0.7 = 0.21\), \(0.3 \times 0.49 = 0.147\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>추세가 있는 계열에 단순 지수평활을 쓰면 예측이 어떻게 되나요?
-          <details><summary>답</summary><p>수준이 늘 실제보다 뒤처져, 증가 추세라면 예측이 체계적으로 낮게 나옵니다. 홀트 방법으로 추세를 함께 갱신합니다.</p></details>
+      <ol start="2">
+        <li>추세가 있는 계열에 단순 지수평활을 쓰면 예측이 어떻게 되는가?
+          <details><summary>답</summary><p>수준이 늘 실제보다 뒤처져, 증가 추세라면 예측이 체계적으로 낮게 나온다. 홀트 방법으로 추세를 함께 갱신한다.</p></details>
+        </li>
+        <li>홀트 방법에서 \(\ell_t = 120\), \(b_t = 3\)이면 4기 앞 예측은 얼마인가? 감쇠 계수 \(\phi = 0.8\)인 감쇠 추세라면?
+          <details><summary>답</summary><p>홀트는 \(120 + 4 \times 3 = 132\)이다. 감쇠 추세는 \(120 + 3(0.8 + 0.64 + 0.512 + 0.4096) = 127.1\)이다.</p></details>
         </li>
       </ol>
     </div>

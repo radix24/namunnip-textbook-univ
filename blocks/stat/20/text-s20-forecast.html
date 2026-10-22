@@ -8,52 +8,83 @@
 <article class="card q-card" id="text-s20-forecast" data-kind="본문" data-std="응통20-05-01">
   <header class="card-head"><span class="no"></span><h2>예측값과 예측구간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>ARIMA 모형으로 점예측을 단계적으로 계산한다.</li>
-        <li>예측 오차 분산과 예측구간이 시차에 따라 넓어짐을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>ARIMA (<a href="03-01.html">3.1절</a>), 조건부 기대값 (응통9 1.1절).</li>
-      </ul>
-    </div>
-
-    <h3>모형을 미래로 굴리기</h3>
-    <p>시계열 분석의 가장 큰 쓸모는 예측입니다. 현재까지의 관측이 주어졌을 때 미래 값의 조건부 기대값이 평균제곱오차를 가장 작게 하는 예측입니다.</p>
+    <p class="q-ask">평균이 50인 계열의 마지막 관측이 60이다. 내일 값은 60일까, 50일까, 그 사이일까? 그리고 일주일 뒤를 예측할 때는 내일을 예측할 때보다 얼마나 덜 확신해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="AR(1)(μ = 50, φ = 0.6, σ = 2)의 예측. 마지막 관측 60(주황 점)에서 예측값(파랑)이 56, 53.6, …으로 평균 50(검정 점선)에 다가가고, 95% 구간(연한 파랑)은 h = 1의 ±3.92에서 넓어져 계열 전체의 구간 50 ± 4.9(빨간 점선)에 다가간다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="71.5" y="195" text-anchor="middle" class="s">0</text>
+        <text x="117.7" y="195" text-anchor="middle" class="s">2</text>
+        <text x="163.8" y="195" text-anchor="middle" class="s">4</text>
+        <text x="210" y="195" text-anchor="middle" class="s">6</text>
+        <text x="256.2" y="195" text-anchor="middle" class="s">8</text>
+        <text x="302.3" y="195" text-anchor="middle" class="s">10</text>
+        <text x="348.5" y="195" text-anchor="middle" class="s">12</text>
+        <text x="55" y="184" text-anchor="end" class="s">40</text>
+        <text x="55" y="153.2" text-anchor="end" class="s">45</text>
+        <text x="55" y="122.5" text-anchor="end" class="s">50</text>
+        <text x="55" y="91.7" text-anchor="end" class="s">55</text>
+        <text x="55" y="60.9" text-anchor="end" class="s">60</text>
+        <text x="55" y="30.2" text-anchor="end" class="s">65</text>
+        <text x="360" y="209" text-anchor="end" class="s">예측 시차 h</text>
+        <path d="M94.6 57.4 L117.7 68.2 L140.8 75.7 L163.8 80.6 L186.9 83.6 L210 85.5 L233.1 86.6 L256.2 87.3 L279.2 87.7 L302.3 87.9 L325.4 88.1 L348.5 88.2 L348.5 148.5 L325.4 148.4 L302.3 148.2 L279.2 148 L256.2 147.6 L233.1 146.9 L210 145.7 L186.9 143.7 L163.8 140.4 L140.8 134.6 L117.7 124.4 L94.6 105.7 Z" class="la"/>
+        <path d="M71.5 88.3 L360 88.3" class="d dsh"/>
+        <path d="M71.5 148.6 L360 148.6" class="d dsh"/>
+        <path d="M71.5 118.5 L360 118.5" class="k dsh"/>
+        <path d="M71.5 56.9 L94.6 81.5 L117.7 96.3 L140.8 105.2 L163.8 110.5 L186.9 113.7 L210 115.6 L233.1 116.7 L256.2 117.4 L279.2 117.8 L302.3 118.1 L325.4 118.2 L348.5 118.3" class="a"/>
+        <circle cx="94.6" cy="81.5" r="2.5" class="fa"/>
+        <circle cx="117.7" cy="96.3" r="2.5" class="fa"/>
+        <circle cx="140.8" cy="105.2" r="2.5" class="fa"/>
+        <circle cx="163.8" cy="110.5" r="2.5" class="fa"/>
+        <circle cx="186.9" cy="113.7" r="2.5" class="fa"/>
+        <circle cx="210" cy="115.6" r="2.5" class="fa"/>
+        <circle cx="233.1" cy="116.7" r="2.5" class="fa"/>
+        <circle cx="256.2" cy="117.4" r="2.5" class="fa"/>
+        <circle cx="279.2" cy="117.8" r="2.5" class="fa"/>
+        <circle cx="302.3" cy="118.1" r="2.5" class="fa"/>
+        <circle cx="325.4" cy="118.2" r="2.5" class="fa"/>
+        <circle cx="348.5" cy="118.3" r="2.5" class="fa"/>
+        <circle cx="71.5" cy="56.9" r="4" class="fc"/>
+        <text x="375" y="44" class="s tc">마지막 관측 60</text><text x="375" y="76" class="s ta">예측값과 95% 구간</text><text x="375" y="108" class="s">검정 점선은 평균 50</text><text x="375" y="140" class="s td">빨간 점선은 50 ± 4.9</text><text x="375" y="156" class="s td">계열 전체의 구간</text>
+      </svg>
+      <figcaption>그림 1. 예제 5.1.1의 예측. 예측값(파랑)은 평균으로 돌아가고, 구간은 넓어지다가 계열 전체의 구간(빨간 점선)에서 멈춘다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>ARIMA(<a href="03-01.html">3.1절</a>)와 조건부 기대값(응통9 1.1절)을 쓴다.</div>
+    <p>처음 질문의 답은 그 사이이다. 정상 AR(1)이라면 내일 예측은 평균 쪽으로 \(\phi\)만큼 당겨진 값이고, 먼 미래로 갈수록 평균 50에 다가간다. 또 예측구간은 시차가 커질수록 넓어지지만, 정상 계열에서는 계열 전체의 산포보다 넓어지지 않는다(그림 1).</p>
 
     <h3><span class="no">5.1.1</span>점예측</h3>
-    <p>시점 \(n\)까지 관측했을 때 \(h\)기 뒤 예측 \(\hat x_{n+h} = E(x_{n+h} \mid x_n, x_{n-1}, \ldots)\). 계산 규칙: 모형식에서 미래 \(x\)는 예측값으로, 미래 \(e\)는 0으로, 과거 \(e\)는 잔차로 바꿉니다.</p>
-    <p>AR(1)(평균 \(\mu\)): \(\hat x_{n+h} = \mu + \phi^h(x_n - \mu)\). 시차가 커지면 평균으로 돌아갑니다. 랜덤워크: \(\hat x_{n+h} = x_n\).</p>
+    <p>시점 \(n\)까지 관측했을 때 \(h\)기 뒤 예측은 조건부 기대값 \(\hat x_{n+h} = E(x_{n+h} \mid x_n, x_{n-1}, \ldots)\)이며, 이것이 평균제곱오차를 가장 작게 한다. 계산할 때는 모형식에서 미래 \(x\)를 예측값으로, 미래 \(e\)를 0으로, 과거 \(e\)를 잔차로 바꾼다.</p>
+    <p>예를 들어 평균이 \(\mu\)인 AR(1)은 \(\hat x_{n+h} = \mu + \phi^h(x_n - \mu)\)이므로 시차가 커지면 평균으로 돌아간다. 반면 랜덤워크는 \(\hat x_{n+h} = x_n\)으로, 현재 값이 그대로 모든 미래의 예측이다. 그런데 MA 항이 있으면 과거 잡음 \(e_n, e_{n-1}, \ldots\)이 필요하므로, 적합에서 얻은 잔차를 대신 넣어 계산을 시작한다.</p>
 
     <h3><span class="no">5.1.2</span>예측구간</h3>
     <p>정상 ARMA를 \(x_t - \mu = \sum_{j\ge0}\psi_je_{t-j}\)(\(\psi_0 = 1\))로 쓰면 \(h\)기 예측 오차의 분산은</p>
-    \[\sigma^2\sum_{j=0}^{h-1}\psi_j^2.\]
-    <p>AR(1)은 \(\psi_j = \phi^j\)라 \(\sigma^2\frac{1 - \phi^{2h}}{1 - \phi^2}\)로 계열 분산에 다가가고, 랜덤워크는 \(\psi_j = 1\)이라 \(h\sigma^2\)로 끝없이 커집니다. 95% 구간 \(\hat x_{n+h} \pm 1.96\sqrt{\text{분산}}\). 이 구간은 모형이 맞고 모수를 안다고 가정한 것이라 실제보다 좁을 수 있습니다.</p>
-
+    \[\sigma^2\sum_{j=0}^{h-1}\psi_j^2\]
+    <p>이다. AR(1)은 \(\psi_j = \phi^j\)라 이 분산이 \(\sigma^2(1 - \phi^{2h})/(1 - \phi^2)\)이 되어 계열 분산에 다가간다. 하지만 랜덤워크는 \(\psi_j = 1\)이라 \(h\sigma^2\)로 끝없이 커진다. 95% 구간은 \(\hat x_{n+h} \pm 1.96\sqrt{\text{분산}}\)이다. 다만 이 구간은 모형이 맞고 모수를 정확히 안다고 가정한 것이라 실제보다 좁을 수 있다. 특히 표본이 작으면 추정한 \(\hat\phi\)의 오차가 커서, 실제 적중률이 95%에 못 미치는 일이 흔하다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
-      <p>\(\mu = 50\), \(\phi = 0.6\), \(\sigma = 2\), \(x_n = 60\)인 AR(1)의 1, 2기 뒤 예측과 95% 구간은?</p>
+      <p>\(\mu = 50\), \(\phi = 0.6\), \(\sigma = 2\), \(x_n = 60\)인 AR(1)의 1기 뒤와 2기 뒤 예측과 95% 구간을 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(\hat x_{n+1} = 50 + 0.6\times10 = 56\), 분산 4, 구간 \(56 \pm 3.92\). \(\hat x_{n+2} = 50 + 3.6 = 53.6\), 분산 \(4(1 + 0.36) = 5.44\), 구간 \(53.6 \pm 4.57\).</p>
+    <p><i>풀이.</i> \(\hat x_{n+1} = 50 + 0.6 \times 10 = 56\)이고 분산이 4라 구간은 \(56 \pm 3.92\)이다. 다음으로 \(\hat x_{n+2} = 50 + 3.6 = 53.6\)이고 분산이 \(4(1 + 0.36) = 5.44\)라 구간은 \(53.6 \pm 4.57\)이다(그림 1).</p>
     <pre><code>fit &lt;- arima(lh, order = c(1, 0, 0)); predict(fit, n.ahead = 6)</code></pre>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p>예측값이 평균으로 돌아가는 것을 보고 모형이 미래를 밋밋하게 본다고 오해하기 쉽다. 그러나 이것은 먼 미래에 대해 알 수 있는 정보가 평균뿐이라는 뜻이며, 실제 경로는 넓어진 구간 안에서 계속 오르내린다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>예측 = 조건부 기대값, 미래 잡음은 0으로.</li>
-        <li>오차 분산 \(\sigma^2\sum_{j&lt;h}\psi_j^2\): 정상이면 상한, 단위근이면 무한히 증가.</li>
-        <li>구간은 모형 불확실성을 빼서 낙관적일 수 있음.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>예측은 조건부 기대값이며 미래 잡음을 0으로 둔다. 오차 분산 \(\sigma^2\sum_{j&lt;h}\psi_j^2\)는 정상이면 상한이 있고 단위근이면 끝없이 커진다. 구간은 모형의 불확실성을 빼고 계산하므로 낙관적일 수 있다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">5.1.2</span>연습문제</h3>
+      <h3><span class="no">5.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 \(h \to \infty\)이면 예측과 구간은?
-          <details><summary>답</summary><p>예측 50, 분산 \(4/0.64 = 6.25\), 구간 \(50 \pm 4.9\)(계열의 무조건 분포).</p></details>
+        <li>예제에서 \(h \to \infty\)이면 예측과 구간은 어떻게 되는가?
+          <details><summary>답</summary><p>예측은 50, 분산은 \(4/0.64 = 6.25\)이라 구간은 \(50 \pm 4.9\)이다. 계열의 무조건 분포와 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>예제에서 3기 뒤 예측과 오차 분산을 구하라.
+          <details><summary>답</summary><p>\(50 + 10 \times 0.216 = 52.16\), 분산 \(4(1 + 0.36 + 0.1296) = 5.96\)이다.</p></details>
+        </li>
+        <li>MA(1) \(x_t = e_t + 0.5e_{t-1}\)(\(\sigma = 1\))에서 마지막 잔차가 \(\hat e_n = 2\)이다. 1기 뒤와 2기 뒤 예측을 구하라.
+          <details><summary>답</summary><p>\(\hat x_{n+1} = 0.5 \times 2 = 1\), \(\hat x_{n+2} = 0\)이다. MA(1)은 2기 뒤부터 평균을 예측한다.</p></details>
         </li>
       </ol>
     </div>

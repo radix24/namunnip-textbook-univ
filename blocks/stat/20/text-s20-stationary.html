@@ -8,56 +8,113 @@
 <article class="card q-card" id="text-s20-stationary" data-kind="본문" data-std="응통20-01-02">
   <header class="card-head"><span class="no"></span><h2>약정상성과 자기상관함수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>약정상성을 정의하고 예와 반례를 든다.</li>
-        <li>표본 자기상관함수를 계산하고 백색잡음 판정에 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>구성 요소 (<a href="01-01.html">1.1절</a>), 상관계수 (응통6 5.2절).</li>
-      </ul>
-    </div>
-
-    <h3>통계적 성질이 시간에 따라 변하지 않는다</h3>
-    <p>시계열 한 줄만 관측하면서 평균이나 상관을 추정하려면, 그 성질이 시점마다 같아야 합니다. 이 조건이 정상성이고, ARMA 모형의 전제입니다.</p>
+    <p class="q-ask">시계열은 한 줄밖에 관측되지 않는다. 같은 날의 주가를 여러 번 다시 관측할 수는 없다. 그런데도 한 줄의 자료로 평균이나 상관을 추정하려면 무엇이 성립해야 할까? 그리고 어떤 계열은 그 조건을 만족하고 어떤 계열은 만족하지 못할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="두 계열의 자기상관함수. 왼쪽은 모의 랜덤워크(n = 200, 주황)의 표본 ACF로, 시차 1에서 0.96, 5에서 0.80, 10에서 0.56, 20에서 0.17로 아주 천천히 줄어든다. 오른쪽은 MA(1)(θ = 0.5, 파랑)의 이론 ACF로 시차 1만 0.4이고 그 뒤는 0이다">
+        <line x1="40" y1="180" x2="230" y2="180" class="ax"/>
+        <line x1="40" y1="180" x2="40" y2="30" class="ax"/>
+        <text x="40" y="195" text-anchor="middle" class="s">0</text>
+        <text x="130.5" y="195" text-anchor="middle" class="s">10</text>
+        <text x="221" y="195" text-anchor="middle" class="s">20</text>
+        <text x="35" y="149.4" text-anchor="end" class="s">0</text>
+        <text x="35" y="91.7" text-anchor="end" class="s">0.5</text>
+        <text x="35" y="34" text-anchor="end" class="s">1</text>
+        <text x="230" y="209" text-anchor="end" class="s">시차 h</text>
+        <path d="M40 145.4 L230 145.4" class="ax"/><text x="135" y="18" text-anchor="middle" class="s tc">랜덤워크 (n = 200)</text>
+        <path d="M49 145.4 L49 34.2" class="c" style="stroke-width:3"/>
+        <path d="M58.1 145.4 L58.1 38.7" class="c" style="stroke-width:3"/>
+        <path d="M67.1 145.4 L67.1 43.2" class="c" style="stroke-width:3"/>
+        <path d="M76.2 145.4 L76.2 48" class="c" style="stroke-width:3"/>
+        <path d="M85.2 145.4 L85.2 52.9" class="c" style="stroke-width:3"/>
+        <path d="M94.3 145.4 L94.3 58.7" class="c" style="stroke-width:3"/>
+        <path d="M103.3 145.4 L103.3 64.2" class="c" style="stroke-width:3"/>
+        <path d="M112.4 145.4 L112.4 69.6" class="c" style="stroke-width:3"/>
+        <path d="M121.4 145.4 L121.4 75.4" class="c" style="stroke-width:3"/>
+        <path d="M130.5 145.4 L130.5 80.7" class="c" style="stroke-width:3"/>
+        <path d="M139.5 145.4 L139.5 85.8" class="c" style="stroke-width:3"/>
+        <path d="M148.6 145.4 L148.6 90.9" class="c" style="stroke-width:3"/>
+        <path d="M157.6 145.4 L157.6 96" class="c" style="stroke-width:3"/>
+        <path d="M166.7 145.4 L166.7 101.3" class="c" style="stroke-width:3"/>
+        <path d="M175.7 145.4 L175.7 106" class="c" style="stroke-width:3"/>
+        <path d="M184.8 145.4 L184.8 110.4" class="c" style="stroke-width:3"/>
+        <path d="M193.8 145.4 L193.8 114.1" class="c" style="stroke-width:3"/>
+        <path d="M202.9 145.4 L202.9 118" class="c" style="stroke-width:3"/>
+        <path d="M211.9 145.4 L211.9 121.6" class="c" style="stroke-width:3"/>
+        <path d="M221 145.4 L221 125.2" class="c" style="stroke-width:3"/>
+        <line x1="290" y1="180" x2="480" y2="180" class="ax"/>
+        <line x1="290" y1="180" x2="290" y2="30" class="ax"/>
+        <text x="290" y="195" text-anchor="middle" class="s">0</text>
+        <text x="380.5" y="195" text-anchor="middle" class="s">10</text>
+        <text x="471" y="195" text-anchor="middle" class="s">20</text>
+        <text x="285" y="149.4" text-anchor="end" class="s">0</text>
+        <text x="285" y="91.7" text-anchor="end" class="s">0.5</text>
+        <text x="285" y="34" text-anchor="end" class="s">1</text>
+        <text x="480" y="209" text-anchor="end" class="s">시차 h</text>
+        <path d="M290 145.4 L480 145.4" class="ax"/><text x="385" y="18" text-anchor="middle" class="s ta">MA(1), θ = 0.5 (이론값)</text>
+        <path d="M299 145.4 L299 99.2" class="a" style="stroke-width:3"/>
+        <path d="M308.1 145.4 L308.1 145.4" class="a" style="stroke-width:3"/>
+        <path d="M317.1 145.4 L317.1 145.4" class="a" style="stroke-width:3"/>
+        <path d="M326.2 145.4 L326.2 145.4" class="a" style="stroke-width:3"/>
+        <path d="M335.2 145.4 L335.2 145.4" class="a" style="stroke-width:3"/>
+        <path d="M344.3 145.4 L344.3 145.4" class="a" style="stroke-width:3"/>
+        <path d="M353.3 145.4 L353.3 145.4" class="a" style="stroke-width:3"/>
+        <path d="M362.4 145.4 L362.4 145.4" class="a" style="stroke-width:3"/>
+        <path d="M371.4 145.4 L371.4 145.4" class="a" style="stroke-width:3"/>
+        <path d="M380.5 145.4 L380.5 145.4" class="a" style="stroke-width:3"/>
+        <path d="M389.5 145.4 L389.5 145.4" class="a" style="stroke-width:3"/>
+        <path d="M398.6 145.4 L398.6 145.4" class="a" style="stroke-width:3"/>
+        <path d="M407.6 145.4 L407.6 145.4" class="a" style="stroke-width:3"/>
+        <path d="M416.7 145.4 L416.7 145.4" class="a" style="stroke-width:3"/>
+        <path d="M425.7 145.4 L425.7 145.4" class="a" style="stroke-width:3"/>
+        <path d="M434.8 145.4 L434.8 145.4" class="a" style="stroke-width:3"/>
+        <path d="M443.8 145.4 L443.8 145.4" class="a" style="stroke-width:3"/>
+        <path d="M452.9 145.4 L452.9 145.4" class="a" style="stroke-width:3"/>
+        <path d="M461.9 145.4 L461.9 145.4" class="a" style="stroke-width:3"/>
+        <path d="M471 145.4 L471 145.4" class="a" style="stroke-width:3"/>
+        <text x="135" y="208" text-anchor="middle" class="s">아주 천천히 줄어든다</text><text x="385" y="208" text-anchor="middle" class="s">시차 1만 0.4, 그 뒤 0</text>
+      </svg>
+      <figcaption>그림 1. 정상이 아닌 랜덤워크(주황)의 표본 ACF는 아주 천천히 줄어들고, 정상인 MA(1)(파랑)의 ACF는 시차 1 뒤에 끊긴다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>구성 요소(<a href="01-01.html">1.1절</a>)와 상관계수(응통6 5.2절)를 쓴다.</div>
+    <p>처음 질문의 답은 정상성이다. 계열의 평균과 상관 구조가 시점마다 같아야, 한 줄 안의 여러 시점을 같은 분포의 반복처럼 써서 추정할 수 있다. 그래서 정상성은 ARMA 모형의 전제이다. 백색잡음이나 MA(1)은 이 조건을 만족하지만, 추세가 있는 계열이나 랜덤워크는 만족하지 못하며, 그 차이가 자기상관함수에 드러난다(그림 1).</p>
 
     <h3><span class="no">1.2.1</span>정의</h3>
     <div class="tb-env def">
-      <span class="lb">정의 1.2.1</span>
-      <p>\(E(x_t) = \mu\)가 일정하고 \(\mathrm{Cov}(x_t, x_{t+h}) = \gamma(h)\)가 \(t\)와 무관하게 시차 \(h\)에만 의존하면 <b>약정상</b>. \(\gamma(h)\)를 자기공분산함수, \(\rho(h) = \gamma(h)/\gamma(0)\)을 자기상관함수(ACF)라 한다.</p>
+      <span class="lb">정의 1.2.1 <span class="nm">(약정상성)</span></span>
+      <p>\(E(x_t) = \mu\)가 일정하고 \(\mathrm{Cov}(x_t, x_{t+h}) = \gamma(h)\)가 \(t\)와 무관하게 시차 \(h\)에만 의존하면 약정상이라 한다. \(\gamma(h)\)를 자기공분산함수, \(\rho(h) = \gamma(h)/\gamma(0)\)을 자기상관함수(ACF)라 한다.</p>
     </div>
     <div class="tb-env def">
-      <span class="lb">정의 1.2.2</span>
-      <p><b>백색잡음</b>: 평균 0, 분산 \(\sigma^2\), 서로 무상관(\(\rho(h) = 0\), \(h \ne 0\)).</p>
+      <span class="lb">정의 1.2.2 <span class="nm">(백색잡음)</span></span>
+      <p>평균 0, 분산 \(\sigma^2\)이고 서로 무상관인(\(h \ne 0\)이면 \(\rho(h) = 0\)) 계열을 백색잡음이라 한다.</p>
     </div>
-    <p>정상의 예: 백색잡음, \(|\phi| &lt; 1\)인 AR(1). 정상이 아닌 예: 추세가 있는 계열(평균이 변함), 랜덤워크(분산 \(t\sigma^2\)이 커짐), 계절성이 있는 계열.</p>
+    <p>예를 들어 백색잡음과 \(|\phi| &lt; 1\)인 AR(1)은 정상이다. 반면 평균이 변하는 추세 계열, 분산 \(t\sigma^2\)이 커지는 랜덤워크, 계절성이 있는 계열은 정상이 아니다. 한편 강정상성은 결합분포 전체가 시간 이동에 대해 변하지 않는다는 더 강한 조건인데, 정규 계열에서는 평균과 공분산이 분포를 정하므로 둘이 같다.</p>
 
     <h3><span class="no">1.2.2</span>표본 ACF</h3>
-    <p>\(\hat\rho(h) = \dfrac{\sum_{t=1}^{n-h}(x_t - \bar x)(x_{t+h} - \bar x)}{\sum(x_t - \bar x)^2}\). 백색잡음이면 \(\hat\rho(h)\)는 근사적으로 \(N(0, 1/n)\)이라, 그림의 \(\pm 2/\sqrt n\) 띠 안에 대부분(약 95%) 들어갑니다. 여러 시차를 한꺼번에 검정할 때는 융-박스 검정(4.2절)을 씁니다. 추세가 있는 계열의 표본 ACF는 아주 천천히 줄어듭니다.</p>
-
+    <p>표본 자기상관은 \(\hat\rho(h) = \dfrac{\sum_{t=1}^{n-h}(x_t - \bar x)(x_{t+h} - \bar x)}{\sum(x_t - \bar x)^2}\)이다. 백색잡음이면 \(\hat\rho(h)\)는 근사적으로 \(N(0, 1/n)\)이라, 그림의 \(\pm 2/\sqrt n\) 띠 안에 대부분(약 95%) 들어간다(<a href="01-03.html">1.3절</a>). 한편 추세가 있거나 랜덤워크인 계열의 표본 ACF는 아주 천천히 줄어든다(그림 1).</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.3</span>
-      <p>\(x_t = e_t + 0.5e_{t-1}\)(\(e_t\)는 백색잡음, 분산 1)의 평균과 \(\gamma(0), \gamma(1), \gamma(2)\)를 구하고 정상인지 판정하세요.</p>
+      <p>\(x_t = e_t + 0.5e_{t-1}\)(\(e_t\)는 분산 1인 백색잡음)의 평균과 \(\gamma(0)\), \(\gamma(1)\), \(\gamma(2)\)를 구하고 정상인지 판정하라.</p>
     </div>
-    <p><i>풀이.</i> 평균 0. \(\gamma(0) = 1 + 0.25 = 1.25\), \(\gamma(1) = \mathrm{Cov}(e_t + 0.5e_{t-1}, e_{t+1} + 0.5e_t) = 0.5\), \(\gamma(2) = 0\). 모두 \(t\)와 무관하므로 정상. \(\rho(1) = 0.4\). 이것이 MA(1)입니다(2.1절).</p>
+    <p><i>풀이.</i> 평균은 0이다. \(\gamma(0) = 1 + 0.25 = 1.25\), \(\gamma(1) = \mathrm{Cov}(e_t + 0.5e_{t-1}, e_{t+1} + 0.5e_t) = 0.5\), \(\gamma(2) = 0\)이다. 모두 \(t\)와 무관하므로 정상이고, \(\rho(1) = 0.4\)이다(그림 1). 이것이 MA(1)이다(<a href="02-01.html">2.1절</a>).</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>정상이 아닌 계열에서 표본 ACF를 구하면 시차마다 큰 값이 나오는데, 이를 강한 자기상관 구조로 읽기 쉽다. 그러나 그것은 대개 추세나 랜덤워크 때문이므로, 먼저 차분이나 추세 제거로 정상으로 만든 뒤 ACF를 본다(<a href="03-01.html">3.1절</a>).</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>약정상: 평균 일정, 공분산이 시차에만 의존.</li>
-        <li>백색잡음: 무상관.</li>
-        <li>표본 ACF와 \(\pm2/\sqrt n\) 띠.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>약정상 계열은 평균이 일정하고 공분산이 시차에만 의존한다. 백색잡음은 무상관인 정상 계열이다. 표본 ACF와 \(\pm 2/\sqrt n\) 띠로 의존 구조를 보며, 천천히 줄어드는 ACF는 비정상의 신호이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(x_t = 3 + 0.1t + e_t\)는 정상인가요?
-          <details><summary>답</summary><p>평균 \(3 + 0.1t\)가 변하므로 아닙니다. 추세를 빼거나 차분하면 정상이 됩니다.</p></details>
+        <li>\(x_t = 3 + 0.1t + e_t\)는 정상인가?
+          <details><summary>답</summary><p>평균 \(3 + 0.1t\)가 변하므로 정상이 아니다. 추세를 빼거나 차분하면 정상이 된다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(x_t = e_t - 0.8e_{t-1}\)의 \(\rho(1)\)을 구하라.
+          <details><summary>답</summary><p>\(\gamma(0) = 1.64\), \(\gamma(1) = -0.8\)이므로 \(\rho(1) = -0.49\)이다.</p></details>
+        </li>
+        <li>랜덤워크 \(x_t = x_{t-1} + e_t\)(\(x_0 = 0\))의 \(\mathrm{Var}(x_t)\)와 \(\mathrm{Cov}(x_t, x_{t+h})\)를 구하라.
+          <details><summary>답</summary><p>\(\mathrm{Var}(x_t) = t\sigma^2\), \(\mathrm{Cov}(x_t, x_{t+h}) = t\sigma^2\)이다. 둘 다 \(t\)에 의존하므로 정상이 아니다.</p></details>
         </li>
       </ol>
     </div>

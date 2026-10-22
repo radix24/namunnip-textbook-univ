@@ -8,59 +8,95 @@
 <article class="card q-card" id="text-s20-armaacf" data-kind="본문" data-std="응통20-02-01">
   <header class="card-head"><span class="no"></span><h2>AR(1)과 MA(1)의 자기상관 유도</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>AR(p), MA(q), ARMA 모형을 정의한다.</li>
-        <li>AR(1)과 MA(1)의 ACF를 유도하고 정상·가역 조건을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>정상성과 ACF (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>과거로 현재를 설명하기</h3>
-    <p>오늘 값이 어제 값에 비례해 정해지거나(자기회귀), 최근 며칠의 충격이 합쳐져 정해진다(이동평균)고 가정하면, 의존 구조를 모수 몇 개로 나타낼 수 있습니다.</p>
+    <p class="q-ask">오늘의 기온은 어제의 기온과 닮고, 그제와는 조금 덜 닮는다. 오늘 값이 어제 값에 비례해 정해진다고 가정하면, 사흘 전과의 상관은 얼마일까? 그리고 잡음의 분산이 1인데 계열 전체의 분산은 왜 그보다 커질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="AR(1) 모형의 이론 자기상관 막대 두 개. φ = 0.8(파랑)이면 ρ(h) = 0.8^h로 0.8, 0.64, 0.51, …처럼 기하급수적으로 줄고, φ = −0.6(주황)이면 −0.6, 0.36, −0.22, …처럼 부호가 번갈아 줄어든다">
+        <line x1="40" y1="180" x2="230" y2="180" class="ax"/>
+        <line x1="40" y1="180" x2="40" y2="30" class="ax"/>
+        <text x="40" y="195" text-anchor="middle" class="s">0</text>
+        <text x="126.4" y="195" text-anchor="middle" class="s">5</text>
+        <text x="212.7" y="195" text-anchor="middle" class="s">10</text>
+        <text x="35" y="166.4" text-anchor="end" class="s">-0.5</text>
+        <text x="35" y="122.2" text-anchor="end" class="s">0</text>
+        <text x="35" y="78.1" text-anchor="end" class="s">0.5</text>
+        <text x="35" y="34" text-anchor="end" class="s">1</text>
+        <text x="230" y="209" text-anchor="end" class="s">시차 h</text>
+        <path d="M40 118.2 L230 118.2" class="ax"/><text x="135" y="18" text-anchor="middle" class="s ta">AR(1), φ = 0.8</text>
+        <path d="M57.3 118.2 L57.3 47.6" class="a" style="stroke-width:3"/>
+        <path d="M74.5 118.2 L74.5 61.8" class="a" style="stroke-width:3"/>
+        <path d="M91.8 118.2 L91.8 73.1" class="a" style="stroke-width:3"/>
+        <path d="M109.1 118.2 L109.1 82.1" class="a" style="stroke-width:3"/>
+        <path d="M126.4 118.2 L126.4 89.3" class="a" style="stroke-width:3"/>
+        <path d="M143.6 118.2 L143.6 95.1" class="a" style="stroke-width:3"/>
+        <path d="M160.9 118.2 L160.9 99.7" class="a" style="stroke-width:3"/>
+        <path d="M178.2 118.2 L178.2 103.4" class="a" style="stroke-width:3"/>
+        <path d="M195.5 118.2 L195.5 106.4" class="a" style="stroke-width:3"/>
+        <path d="M212.7 118.2 L212.7 108.8" class="a" style="stroke-width:3"/>
+        <line x1="290" y1="180" x2="480" y2="180" class="ax"/>
+        <line x1="290" y1="180" x2="290" y2="30" class="ax"/>
+        <text x="290" y="195" text-anchor="middle" class="s">0</text>
+        <text x="376.4" y="195" text-anchor="middle" class="s">5</text>
+        <text x="462.7" y="195" text-anchor="middle" class="s">10</text>
+        <text x="285" y="166.4" text-anchor="end" class="s">-0.5</text>
+        <text x="285" y="122.2" text-anchor="end" class="s">0</text>
+        <text x="285" y="78.1" text-anchor="end" class="s">0.5</text>
+        <text x="285" y="34" text-anchor="end" class="s">1</text>
+        <text x="480" y="209" text-anchor="end" class="s">시차 h</text>
+        <path d="M290 118.2 L480 118.2" class="ax"/><text x="385" y="18" text-anchor="middle" class="s tc">AR(1), φ = -0.6</text>
+        <path d="M307.3 118.2 L307.3 171.2" class="c" style="stroke-width:3"/>
+        <path d="M324.5 118.2 L324.5 86.5" class="c" style="stroke-width:3"/>
+        <path d="M341.8 118.2 L341.8 137.3" class="c" style="stroke-width:3"/>
+        <path d="M359.1 118.2 L359.1 106.8" class="c" style="stroke-width:3"/>
+        <path d="M376.4 118.2 L376.4 125.1" class="c" style="stroke-width:3"/>
+        <path d="M393.6 118.2 L393.6 114.1" class="c" style="stroke-width:3"/>
+        <path d="M410.9 118.2 L410.9 120.7" class="c" style="stroke-width:3"/>
+        <path d="M428.2 118.2 L428.2 116.8" class="c" style="stroke-width:3"/>
+        <path d="M445.5 118.2 L445.5 119.1" class="c" style="stroke-width:3"/>
+        <path d="M462.7 118.2 L462.7 117.7" class="c" style="stroke-width:3"/>
+        <text x="135" y="208" text-anchor="middle" class="s">ρ(h) = 0.8^h, 기하급수적 감소</text><text x="385" y="208" text-anchor="middle" class="s">부호가 번갈아 감소</text>
+      </svg>
+      <figcaption>그림 1. AR(1)의 자기상관. \(\rho(h) = \phi^h\)라 \(\phi &gt; 0\)이면 기하급수적으로(파랑), \(\phi &lt; 0\)이면 부호가 번갈아(주황) 줄어든다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정상성과 ACF(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 \(\phi^3\)이다. 오늘 값이 어제 값의 \(\phi\)배에 새 충격을 더한 것이라면, 상관은 하루 멀어질 때마다 \(\phi\)배씩 줄어든다(그림 1). 또 과거의 충격이 계속 남아 쌓이므로 계열의 분산은 잡음의 분산보다 크다. 일반적으로 오늘 값이 어제 값에 비례하는 자기회귀(AR)나, 최근 며칠의 충격이 합쳐지는 이동평균(MA)을 가정하면 의존 구조를 모수 몇 개로 나타낼 수 있다.</p>
 
     <h3><span class="no">2.1.1</span>모형</h3>
-    <p class="q-term"><b>AR(p)</b>: \(x_t = \phi_1x_{t-1} + \cdots + \phi_px_{t-p} + e_t\).</p>
-    <p class="q-term"><b>MA(q)</b>: \(x_t = e_t + \theta_1e_{t-1} + \cdots + \theta_qe_{t-q}\).</p>
-    <p class="q-term"><b>ARMA(p, q)</b>: 둘을 합친 것.</p>
-    <p>\(e_t\)는 백색잡음(분산 \(\sigma^2\)), 평균이 0이 아니면 \(x_t - \mu\)로 씁니다.</p>
+    <p>AR(\(p\))는 \(x_t = \phi_1x_{t-1} + \cdots + \phi_px_{t-p} + e_t\)이고, MA(\(q\))는 \(x_t = e_t + \theta_1e_{t-1} + \cdots + \theta_qe_{t-q}\)이며, 둘을 합친 것이 ARMA(\(p, q\))이다. 여기서 \(e_t\)는 분산 \(\sigma^2\)인 백색잡음이고, 평균이 0이 아니면 \(x_t - \mu\)로 쓴다.</p>
 
     <h3><span class="no">2.1.2</span>AR(1)</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 2.1.1</span>
-      <p>\(x_t = \phi x_{t-1} + e_t\)는 \(|\phi| &lt; 1\)이면 정상이고 \(\gamma(0) = \dfrac{\sigma^2}{1-\phi^2}\), \(\rho(h) = \phi^{|h|}\).</p>
+      <span class="lb">정리 2.1.1 <span class="nm">(AR(1)의 자기상관)</span></span>
+      <p>\(x_t = \phi x_{t-1} + e_t\)는 \(|\phi| &lt; 1\)이면 정상이고, \(\gamma(0) = \dfrac{\sigma^2}{1 - \phi^2}\), \(\rho(h) = \phi^{|h|}\)이다.</p>
     </div>
-    <p class="tb-proof">정상이면 양변의 분산이 같아 \(\gamma(0) = \phi^2\gamma(0) + \sigma^2\)(\(e_t\)는 과거 \(x\)와 무상관), 곧 \(\gamma(0) = \sigma^2/(1-\phi^2)\)이고, 이것이 양수려면 \(|\phi| &lt; 1\). 양변에 \(x_{t-h}\)를 곱해 기대값을 취하면(\(h \ge 1\)) \(\gamma(h) = \phi\gamma(h-1)\), 따라서 \(\rho(h) = \phi^h\). <span class="qed">∎</span></p>
-    <p>ACF가 기하급수적으로 줄어듭니다(\(\phi &lt; 0\)이면 부호가 번갈아). 같은 절의 실습 카드에서 \(\phi\)를 바꿔 볼 수 있습니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span> 정상이면 양변의 분산이 같고 \(e_t\)는 과거 \(x\)와 무상관이므로 \(\gamma(0) = \phi^2\gamma(0) + \sigma^2\), 곧 \(\gamma(0) = \sigma^2/(1 - \phi^2)\)이다. 이것이 양수려면 \(|\phi| &lt; 1\)이어야 한다. 또 양변에 \(x_{t-h}\)를 곱해 기대값을 취하면(\(h \ge 1\)) \(\gamma(h) = \phi\gamma(h-1)\)이므로 \(\rho(h) = \phi^h\)이다. <span class="qed">∎</span></p>
+    <p>그래서 ACF가 기하급수적으로 줄어들고, \(\phi &lt; 0\)이면 부호가 번갈아 나타난다(그림 1). 같은 절의 실습 카드에서 \(\phi\)를 바꿔 볼 수 있다.</p>
 
     <h3><span class="no">2.1.3</span>MA(1)</h3>
-    <p>1.2절 예제처럼 \(\rho(1) = \dfrac{\theta}{1+\theta^2}\), \(\rho(h) = 0\)(\(h \ge 2\)). MA(1)은 언제나 정상이지만, \(\theta\)와 \(1/\theta\)가 같은 ACF를 주므로 \(|\theta| &lt; 1\)(가역 조건)인 쪽을 택합니다. 가역이면 MA를 무한 AR로 쓸 수 있어 과거 관측으로 현재 충격을 되살릴 수 있습니다.</p>
-
+    <p><a href="01-02.html">1.2절</a> 예제와 같이 MA(1)은 \(\rho(1) = \dfrac{\theta}{1 + \theta^2}\)이고 \(h \ge 2\)이면 \(\rho(h) = 0\)이다. 즉 MA(1)은 언제나 정상이다. 그런데 \(\theta\)와 \(1/\theta\)가 같은 ACF를 주므로 \(|\theta| &lt; 1\)인 쪽을 택하는데, 이것이 가역 조건이다. 가역이면 MA를 무한 AR로 쓸 수 있어, 과거 관측으로 현재의 충격을 되살릴 수 있다(<a href="02-03.html">2.3절</a>).</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.2</span>
-      <p>\(\phi = 0.8\), \(\sigma^2 = 1\)인 AR(1)의 분산과 \(\rho(3)\)은?</p>
+      <p>\(\phi = 0.8\), \(\sigma^2 = 1\)인 AR(1)의 분산과 \(\rho(3)\)을 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(\gamma(0) = 1/0.36 = 2.78\). \(\rho(3) = 0.512\). 잡음 분산이 1이어도 의존성 때문에 계열의 분산은 2.78로 커집니다.</p>
+    <p><i>풀이.</i> \(\gamma(0) = 1/0.36 = 2.78\)이고 \(\rho(3) = 0.8^3 = 0.512\)이다(그림 1). 즉 잡음의 분산이 1이어도 의존성 때문에 계열의 분산은 2.78로 커진다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>\(\phi\)가 1에 가까울수록 \(\gamma(0) = \sigma^2/(1 - \phi^2)\)가 폭발하고 ACF가 아주 천천히 줄어, 랜덤워크(\(\phi = 1\))와 구별하기 어려워진다(<a href="03-02.html">3.2절</a>).</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>AR(1): \(|\phi| &lt; 1\)이면 정상, \(\rho(h) = \phi^h\).</li>
-        <li>MA(1): \(\rho(1) = \theta/(1+\theta^2)\), 이후 0, 가역 \(|\theta| &lt; 1\).</li>
-        <li>일반 AR(p) 정상 조건: 특성 다항식의 근이 단위원 밖.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>AR(1)은 \(|\phi| &lt; 1\)이면 정상이고 \(\rho(h) = \phi^h\), \(\gamma(0) = \sigma^2/(1 - \phi^2)\)이다. MA(1)은 \(\rho(1) = \theta/(1 + \theta^2)\)이고 그 뒤 0이며, 가역 조건은 \(|\theta| &lt; 1\)이다. 일반 AR(\(p\))의 정상 조건은 특성 다항식의 근이 단위원 밖에 있는 것이다(<a href="02-03.html">2.3절</a>).</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>MA(1)에서 \(\rho(1)\)의 최댓값은?
-          <details><summary>답</summary><p>\(\theta/(1+\theta^2)\)은 \(\theta = 1\)에서 최대 0.5. MA(1)의 시차 1 상관은 ±0.5를 넘을 수 없습니다.</p></details>
+        <li>MA(1)에서 \(\rho(1)\)의 최댓값은 얼마인가?
+          <details><summary>답</summary><p>\(\theta/(1 + \theta^2)\)는 \(\theta = 1\)에서 최대 0.5이다. MA(1)의 시차 1 상관은 ±0.5를 넘을 수 없다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>AR(1)의 \(\rho(1) = 0.9\)이면 \(\rho(1)\)이 처음 0.5 아래로 떨어지는 시차는 얼마인가?
+          <details><summary>답</summary><p>\(0.9^h &lt; 0.5\)에서 \(h &gt; \log 0.5/\log 0.9 = 6.6\)이므로 시차 7이다.</p></details>
+        </li>
+        <li>\(\phi = -0.6\), \(\sigma^2 = 2\)인 AR(1)의 분산과 \(\rho(2)\)를 구하라.
+          <details><summary>답</summary><p>\(\gamma(0) = 2/0.64 = 3.125\), \(\rho(2) = 0.36\)이다.</p></details>
         </li>
       </ol>
     </div>

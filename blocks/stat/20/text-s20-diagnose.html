@@ -8,58 +8,83 @@
 <article class="card q-card" id="text-s20-diagnose" data-kind="본문" data-std="응통20-04-02">
   <header class="card-head"><span class="no"></span><h2>잔차 자기상관 검정으로 진단하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>적합한 모형의 잔차가 백색잡음인지 그림과 융-박스 검정으로 점검한다.</li>
-        <li>진단 결과로 모형을 고친다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>ARIMA 적합 (<a href="04-01.html">4.1절</a>), 표본 ACF (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>모형이 의존 구조를 다 잡았나</h3>
-    <p>좋은 시계열 모형은 자료의 의존성을 모두 설명해, 남은 잔차가 예측할 수 없는 백색잡음이어야 합니다. 잔차에 자기상관이 남아 있으면 그만큼 예측을 개선할 여지가 있다는 뜻입니다.</p>
+    <p class="q-ask">AR(1)을 골라 적합했다. 그런데 이 모형이 자료의 의존 구조를 다 잡았는지는 어떻게 알까? 모형이 놓친 것이 있다면 그 흔적은 어디에 남을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="lh 자료에 맞춘 AR(1)의 잔차 ACF 막대 16개(파랑)와 ±0.29 빨간 점선 띠. 가장 큰 막대는 시차 3의 −0.26으로 모든 막대가 띠 안에 들고, 융-박스 p값은 0.41이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="130.6" y="195" text-anchor="middle" class="s">4</text>
+        <text x="201.2" y="195" text-anchor="middle" class="s">8</text>
+        <text x="271.8" y="195" text-anchor="middle" class="s">12</text>
+        <text x="342.4" y="195" text-anchor="middle" class="s">16</text>
+        <text x="55" y="184" text-anchor="end" class="s">-0.4</text>
+        <text x="55" y="144" text-anchor="end" class="s">-0.2</text>
+        <text x="55" y="104" text-anchor="end" class="s">0</text>
+        <text x="55" y="64" text-anchor="end" class="s">0.2</text>
+        <text x="55" y="24" text-anchor="end" class="s">0.4</text>
+        <text x="360" y="209" text-anchor="end" class="s">시차</text>
+        <text x="66" y="24" class="s">잔차 ACF</text>
+        <path d="M60 100 L360 100" class="ax"/>
+        <path d="M60 42.3 L360 42.3" class="d dsh"/>
+        <path d="M60 157.7 L360 157.7" class="d dsh"/>
+        <path d="M77.6 100 L77.6 72.9" class="a" style="stroke-width:3"/>
+        <path d="M95.3 100 L95.3 101.5" class="a" style="stroke-width:3"/>
+        <path d="M112.9 100 L112.9 152" class="a" style="stroke-width:3"/>
+        <path d="M130.6 100 L130.6 121.6" class="a" style="stroke-width:3"/>
+        <path d="M148.2 100 L148.2 127.3" class="a" style="stroke-width:3"/>
+        <path d="M165.9 100 L165.9 78.7" class="a" style="stroke-width:3"/>
+        <path d="M183.5 100 L183.5 100.9" class="a" style="stroke-width:3"/>
+        <path d="M201.2 100 L201.2 71.1" class="a" style="stroke-width:3"/>
+        <path d="M218.8 100 L218.8 120.3" class="a" style="stroke-width:3"/>
+        <path d="M236.5 100 L236.5 119.5" class="a" style="stroke-width:3"/>
+        <path d="M254.1 100 L254.1 123.6" class="a" style="stroke-width:3"/>
+        <path d="M271.8 100 L271.8 87.3" class="a" style="stroke-width:3"/>
+        <path d="M289.4 100 L289.4 77.6" class="a" style="stroke-width:3"/>
+        <path d="M307.1 100 L307.1 110.4" class="a" style="stroke-width:3"/>
+        <path d="M324.7 100 L324.7 94.2" class="a" style="stroke-width:3"/>
+        <path d="M342.4 100 L342.4 80.8" class="a" style="stroke-width:3"/>
+        <text x="375" y="44" class="s">lh의 AR(1) 잔차</text><text x="375" y="76" class="s td">점선은 ±2/√48 = ±0.29</text><text x="375" y="108" class="s ta">막대 16개가 모두</text><text x="375" y="124" class="s ta">띠 안에 든다</text><text x="375" y="156" class="s">융-박스 p = 0.41</text>
+      </svg>
+      <figcaption>그림 1. 예제 4.2.1의 잔차 ACF. 모든 막대(파랑)가 \(\pm 2/\sqrt{48}\) 띠(빨간 점선) 안에 들어 남은 자기상관의 증거가 없다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>ARIMA 적합(<a href="04-01.html">4.1절</a>)과 표본 ACF(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 잔차이다. 좋은 시계열 모형은 자료의 의존성을 모두 설명하므로, 남은 잔차는 예측할 수 없는 백색잡음이어야 한다. 반대로 잔차에 자기상관이 남아 있으면 그만큼 예측을 개선할 여지가 있다는 뜻이다(그림 1).</p>
 
     <h3><span class="no">4.2.1</span>점검 항목</h3>
-    <ul>
-      <li>잔차 시계열 그림: 추세, 분산 변화, 이상점.</li>
-      <li>잔차 ACF: 막대가 \(\pm2/\sqrt n\) 안에.</li>
-      <li>잔차의 정규 Q-Q 그림: 예측구간이 정규 가정에 기대므로.</li>
-      <li>융-박스 검정: 여러 시차의 자기상관을 한꺼번에.</li>
-    </ul>
+    <p>먼저 잔차 시계열 그림에서 추세나 분산의 변화, 이상점이 없는지 본다. 다음으로 잔차 ACF의 막대가 \(\pm 2/\sqrt n\) 띠 안에 드는지 본다. 또 예측구간이 정규 가정에 기대므로 잔차의 정규 Q-Q 그림도 확인한다. 끝으로 여러 시차의 자기상관을 한꺼번에 묻는 융-박스 검정을 한다.</p>
     <div class="tb-env thm">
-      <span class="lb">결과 4.2.1 (융-박스)</span>
+      <span class="lb">정리 4.2.1 <span class="nm">(융-박스 검정)</span></span>
       <p>\(Q = n(n+2)\sum_{h=1}^{H}\dfrac{\hat\rho_e(h)^2}{n-h}\)는 잔차가 백색잡음이면 근사적으로 \(\chi^2_{H - p - q}\)를 따른다.</p>
     </div>
-    <p>p값이 작으면 잔차에 자기상관이 남은 것입니다. 남은 자기상관의 시차를 보고 항을 추가합니다(예: 시차 12의 막대가 크면 계절 항). \(H\)는 보통 10~20(계절 자료는 \(2s\)).</p>
-
+    <p>p값이 작으면 잔차에 자기상관이 남은 것이다. 그러면 남은 자기상관의 시차를 보고 항을 추가하는데, 가령 시차 12의 막대가 크면 계절 항을 넣는다. 여기서 \(H\)는 보통 10에서 20 사이로 잡고, 계절 자료에서는 \(2s\)로 잡는다. 자유도에서 \(p + q\)를 빼는 까닭은 추정한 계수가 잔차의 자기상관을 일부 없애 \(Q\)가 작아지기 때문이다. 예를 들어 AR(1)을 맞추면 잔차의 시차 1 자기상관이 거의 0이 되도록 \(\hat\phi\)가 정해지므로, 그 시차는 검정에 정보를 보태지 못한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.1</span>
-      <p>4.1절의 <code>lh</code> AR(1) 모형을 진단하세요.</p>
+      <p><a href="04-01.html">4.1절</a>의 <code>lh</code> AR(1) 모형을 진단하라.</p>
     </div>
     <pre><code>fit &lt;- arima(lh, order = c(1, 0, 0))
 tsdiag(fit)                                         # 잔차, 잔차 ACF, 융-박스 p값
 Box.test(residuals(fit), lag = 10, type = "Ljung-Box", fitdf = 1)</code></pre>
-    <p>융-박스 p값이 0.41로 커서 잔차에 남은 자기상관의 증거가 없습니다. AR(1)로 충분하다고 봅니다.</p>
+    <p><i>풀이.</i> 잔차 ACF의 막대가 모두 띠 안에 들고(그림 1), 융-박스 통계량은 \(Q = 9.36\)(자유도 9), p값은 0.41이다. 즉 잔차에 남은 자기상관의 증거가 없으므로 AR(1)로 충분하다고 본다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>융-박스 검정을 통과했다고 모형이 옳다는 증명은 아니다. 특히 \(n\)이 작으면 검정력이 낮으므로, 잔차 그림과 Q-Q 그림을 함께 보고 예측 성능(<a href="05-03.html">5.3절</a>)으로도 확인한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>잔차는 백색잡음이어야 함.</li>
-        <li>잔차 그림, ACF, Q-Q, 융-박스(자유도 \(H - p - q\)).</li>
-        <li>남은 시차에 맞춰 모형을 고침.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>적합한 모형의 잔차는 백색잡음이어야 한다. 잔차 그림, 잔차 ACF, Q-Q 그림, 융-박스 검정(자유도 \(H - p - q\))으로 점검하고, 자기상관이 남은 시차에 맞춰 모형을 고친다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">4.2.3</span>연습문제</h3>
+      <h3><span class="no">4.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>ARMA(1,1) 잔차로 \(H = 12\)인 융-박스 검정을 하면 자유도는?
-          <details><summary>답</summary><p>\(12 - 1 - 1 = 10\).</p></details>
+        <li>ARMA(1,1) 잔차로 \(H = 12\)인 융-박스 검정을 하면 자유도는 얼마인가?
+          <details><summary>답</summary><p>\(12 - 1 - 1 = 10\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>월별 자료에 맞춘 ARIMA(1,1,1)의 잔차 ACF에서 시차 12의 막대만 0.35로 띠를 넘는다. 무엇을 고치는가?
+          <details><summary>답</summary><p>계절 의존성이 남은 것이므로 계절 MA(1) 같은 계절 항을 넣은 SARIMA(<a href="06-01.html">6.1절</a>)를 적합하고 다시 진단한다.</p></details>
+        </li>
+        <li>\(n = 100\)에서 잔차의 \(\hat\rho_e(1) = 0.3\)이고 다른 시차는 모두 0이라 하자. \(H = 1\)일 때의 \(Q\)를 구하라.
+          <details><summary>답</summary><p>\(Q = 100 \times 102 \times 0.09/99 = 9.27\)이다. 자유도 1의 5% 기준 3.84보다 크므로 자기상관이 남았다.</p></details>
         </li>
       </ol>
     </div>
