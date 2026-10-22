@@ -394,7 +394,7 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
 <main class="wrap">
 {body}
   <footer class="site-foot">
-    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a><a class="foot-mail mono" href="{rel}credits.html">출처와 라이선스</a></p>
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a><a class="foot-mail mono" href="{rel}credits.html">크레딧</a></p>
     <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
     <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
   </footer>
