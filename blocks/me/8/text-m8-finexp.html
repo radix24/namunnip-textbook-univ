@@ -8,63 +8,65 @@
 <article class="card q-card" id="text-m8-finexp" data-kind="본문" data-std="기계8-03-02">
   <header class="card-head"><span class="no"></span><h2>핀 실험: 온도 분포로 대류 계수 역산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>막대 핀 길이를 따라 잰 온도로 핀 변수 \(m\)을 구한다.</li>
-        <li>\(m\)에서 대류 열전달 계수 \(h\)를 역산한다.</li>
-        <li>긴 핀 근사가 맞는지(\(mL\))와 끝 손실의 영향을 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>대류 열전달 계수 측정 (<a href="03-01.html">3.1절</a>), 핀의 온도 분포(<a href="../me12/03-01.html">열전달 3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">3.1절에서는 식는 금속 구로 대류 열전달 계수를 쟀다. 이번에는 한쪽 끝을 가열한 긴 알루미늄 막대가 정상 상태에 이른 뒤, 길이를 따라 온도를 잰다. 뿌리에서 멀어질수록 온도가 떨어지는데, 그 떨어지는 빠르기에서 h를 알아낼 수 있을까? 막대가 충분히 길지 않으면 어떻게 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="지름 10 mm, 길이 0.2 m 알루미늄 핀의 정상 상태 온도 분포(예제 3.2.1). 뿌리 80 °C, 주위 20 °C에서 온도 차는 e^(−mx)로 줄어 50 mm에서 50 °C이므로 m = 13.9 m⁻¹이고, h = m²kD/4 = 96 W/(m²·K)이다. mL = 2.8이라 끝에서도 온도 차가 처음의 약 6%로 줄어 긴 핀 근사가 대체로 맞는다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="20" x2="60" y2="170" class="ax"/>
+        <path d="M60 170 H460" class="k dsh"/>
+        <rect x="60" y="176" width="400" height="8" class="lk"/><rect x="60" y="176" width="400" height="8" class="k"/>
+        <path d="M60 50.0 L80 65.5 L100 79.1 L120 90.8 L140 101.1 L160 110.0 L180 117.8 L200 124.5 L220 130.4 L240 135.5 L260 140.0 L280 143.9 L300 147.3 L320 150.2 L340 152.8 L360 155.0 L380 156.9 L400 158.6 L420 160.1 L440 161.4 L460 162.5" class="d" stroke-width="2.5"/>
+        <g class="fd"><circle cx="60" cy="50" r="5"/><circle cx="160" cy="110" r="5"/></g>
+        <path d="M160 110 V170 M160 110 H60" class="gd"/>
+        <g text-anchor="end" class="s"><text x="54" y="54">80 °C</text><text x="54" y="114">50</text><text x="54" y="166">20</text></g>
+        <g text-anchor="middle" class="s"><text x="160" y="196">50 mm</text><text x="460" y="196">200 mm</text></g>
+        <text x="168" y="104" class="td">θ/θ_b = 0.5</text>
+        <text x="220" y="70" class="s">θ/θ_b = e^(−mx), m = 13.9 m⁻¹</text>
+        <text x="220" y="90" class="s">h = m²kD/4 = 96 W/(m²·K)</text>
+        <text x="330" y="140" class="s">mL = 2.8</text>
+      </svg>
+      <figcaption>그림 1. 핀의 각 조각은 받은 열의 일부를 표면 대류로 잃고 나머지를 다음 조각으로 넘기므로 온도 차가 길이를 따라 지수적으로 줄고, 그 감소율이 대류 열전달 계수와 전도도의 비를 알려 준다(예제 3.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>대류 열전달 계수 측정(<a href="03-01.html">3.1절</a>), 핀의 온도 분포(<a href="../me12/03-01.html">열전달 3.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>원리</h3>
-    <p>한쪽 끝을 일정 온도로 가열한 막대 핀에 열전대를 일정 간격으로 붙이고 정상 상태 온도를 잽니다. 주위 온도와의 차이 \(\theta = T - T_\infty\)는 긴 핀에서 지수적으로 줄어듭니다.</p>
+    <p>한쪽 끝을 일정 온도로 가열한 막대 핀에 열전대를 일정 간격으로 붙이고 정상 상태 온도를 잰다. 주위 온도와의 차이 \(\theta = T - T_\infty\)는 긴 핀에서 지수적으로 줄어든다. 그래서 그 감소율 m에서 h를 거꾸로 구하며, 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">긴 핀 근사</span>
       <p>\[\frac\theta{\theta_b} = e^{-mx},\qquad m = \sqrt{\frac{hP}{kA_c}} = \sqrt{\frac{4h}{kD}}\ (\text{원형 핀})\]</p>
-      <p>\(\ln(\theta/\theta_b)\)-\(x\) 그래프 기울기 = \(-m\), 따라서 \(h = m^2kD/4\).</p>
-      <p>긴 핀 근사 조건: \(mL \gtrsim 2.5\).</p>
+      <p>\(\ln(\theta/\theta_b)\)-\(x\) 그래프 기울기가 \(-m\)이므로 \(h = m^2kD/4\)이다.</p>
+      <p>긴 핀 근사의 조건은 \(mL \gtrsim 2.5\)이다.</p>
     </div>
+    <p>긴 핀 근사는 끝까지 가면서 온도 차가 거의 0이 되어 끝에서 나가는 열을 무시할 수 있다는 가정이다. 그런데 막대가 짧아 \(mL\)이 작으면 끝에서도 열이 빠져나가, 끝 쪽 온도가 지수 곡선보다 덜 떨어진다. 처음 질문의 둘째 답이 이것이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1 <span class="nm">(알루미늄 핀)</span></span>
       <p>지름 10 mm 알루미늄 핀(\(k\) = 200 W/m·K), 길이 0.2 m. 뿌리 80 °C, 주위 20 °C에서 \(x\) = 50 mm 점이 50 °C였다. \(h\)는? 긴 핀 근사가 맞는가?</p>
     </div>
-    <p><i>풀이.</i> \(\theta/\theta_b = 30/60 = 0.5\), \(m = \ln2/0.05 = 13.9\) m⁻¹. \(h = 13.9^2\times200\times0.01/4 = 96\) W/m²·K(팬 바람 정도). \(mL = 2.8\)로 긴 핀 근사가 대체로 맞습니다.</p>
+    <p><i>풀이.</i> \(\theta/\theta_b = 30/60 = 0.5\)이므로 \(m = \ln2/0.05 = 13.9\) m⁻¹이다. 그러면 \(h = 13.9^2\times200\times0.01/4 = 96\) W/m²·K로, 팬 바람 정도이다(그림 1). \(mL = 2.8\)이므로 긴 핀 근사가 대체로 맞는다.</p>
+    <p>이 실험에서 \(h\)는 \(m\)의 제곱으로 들어가므로 \(m\)의 오차가 두 배로 커진다. 가령 열전대 하나의 위치가 2 mm 틀리면 50 mm 기준으로 \(m\)이 4% 틀리고, \(h\)는 8% 틀린다. 그래서 열전대 위치를 정확히 재고, 여러 점의 직선 맞춤으로 그 영향을 줄인다.</p>
 
-    <div class="tb-note"><b>주의</b>점 두 개만 쓰면 한 열전대 오차가 그대로 \(m\)에 들어갑니다. 여러 점의 \(\ln\theta\)를 직선으로 맞추고, 끝 쪽 점이 직선에서 벗어나면 끝 손실(유한 핀) 효과이므로 그 점들은 빼거나 유한 핀 식으로 맞춥니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>점 두 개만 쓰는 실수가 흔한데, 그러면 한 열전대 오차가 그대로 \(m\)에 들어간다. 여러 점의 \(\ln\theta\)를 직선으로 맞추고, 끝 쪽 점이 직선에서 벗어나면 끝 손실(유한 핀) 효과이므로 그 점들은 빼거나 유한 핀 식으로 맞춘다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\ln\theta\)-\(x\) 직선 기울기 = \(-m\).</li>
-        <li>\(h = m^2kD/4\) (원형 핀).</li>
-        <li>\(mL\)로 긴 핀 근사 확인, 여러 점으로 직선 맞춤.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>긴 핀의 정상 상태 온도 차는 \(\theta/\theta_b = e^{-mx}\)로 줄므로, \(\ln\theta\)-\(x\) 직선의 기울기가 \(-m\)이다. 원형 핀이면 \(h = m^2kD/4\)이다. \(mL\)로 긴 핀 근사를 확인하고, 여러 점으로 직선 맞춤을 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(m\) = 10 m⁻¹인 긴 핀에서 뿌리로부터 0.1 m 지점의 \(\theta/\theta_b\)는?
-          <details><summary>답</summary><p>\(e^{-1} = 0.37\).</p></details>
+          <details><summary>답</summary><p>\(e^{-1} = 0.37\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 측정을 구리 핀(\(k\) = 400)으로 하면 같은 \(h\)에서 \(m\)은?
-          <details><summary>답</summary><p>\(m \propto 1/\sqrt k\): \(13.9/\sqrt2 = 9.8\) m⁻¹. 온도가 더 천천히 떨어진다.</p></details>
+          <details><summary>답</summary><p>\(m \propto 1/\sqrt k\)이므로 \(13.9/\sqrt2 = 9.8\) m⁻¹이다. 온도가 더 천천히 떨어진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>핀에서 나가는 열량을 뿌리 근처 온도 기울기로 구하는 방법은?
-          <details><summary>답</summary><p>\(\dot Q = -kA_c\,dT/dx|_{x=0} = kA_cm\theta_b\)(긴 핀). 뿌리 근처 두 점의 온도 차로 기울기를 어림해도 된다.</p></details>
+          <details><summary>답</summary><p>긴 핀이면 \(\dot Q = -kA_c\,dT/dx|_{x=0} = kA_cm\theta_b\)이다. 뿌리 근처 두 점의 온도 차로 기울기를 어림해도 된다.</p></details>
         </li>
       </ol>
     </div>

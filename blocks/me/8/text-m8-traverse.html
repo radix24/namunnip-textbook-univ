@@ -8,62 +8,63 @@
 <article class="card q-card" id="text-m8-traverse" data-kind="본문" data-std="기계8-01-05">
   <header class="card-head"><span class="no"></span><h2>피토관 횡단 측정으로 유량 구하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>피토관 동압으로 점 속도를 구한다.</li>
-        <li>관 단면을 가로지르며 잰 속도 분포를 적분해 유량과 평균 속도를 구한다.</li>
-        <li>측정 위치 선택(같은 넓이 고리)과 수치 적분 오차를 판단한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>벤투리·오리피스 유량 측정 (<a href="01-02.html">1.2절</a>), 사다리꼴 적분.</li>
-      </ul>
-    </div>
+    <p class="q-ask">환기 덕트의 공기 유량을 알고 싶은데, 유량계를 달 자리가 없다. 대신 피토관 하나를 덕트 단면을 가로질러 옮기며 여러 점의 속도를 잴 수는 있다. 그 점 속도들로 유량을 어떻게 구할까? 중심 속도에 단면적을 곱하면 될까, 아니면 벽 근처를 더 꼼꼼히 재야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="지름 0.2 m 덕트의 속도 분포와 유량 적분(예제 1.5.1). 반지름 0, 25, 50, 75, 100 mm에서 속도가 10.0, 9.8, 9.1, 7.8, 0 m/s이고, 피적분 함수 2πru는 0, 1.54, 2.86, 3.68, 0이다. 사다리꼴 적분으로 유량 0.202 m³/s, 평균 속도 6.42 m/s를 얻으며, 벽 근처 점이 없어 마지막 구간을 직선으로 처리해 유량을 작게 잡는다">
+        <line x1="60" y1="170" x2="470" y2="170" class="ax"/><line x1="60" y1="20" x2="60" y2="170" class="ax"/>
+        <path d="M60 170 L160 123.8 L260 84.2 L360 59.7 L460 170 Z" class="lc"/>
+        <path d="M60 170 L160 123.8 L260 84.2 L360 59.7 L460 170" class="c" stroke-width="2"/>
+        <path d="M60 40 L160 42.6 L260 51.7 L360 68.6 L460 170" class="a" stroke-width="2.5"/>
+        <g class="fa"><circle cx="60" cy="40" r="4"/><circle cx="160" cy="42.6" r="4"/><circle cx="260" cy="51.7" r="4"/><circle cx="360" cy="68.6" r="4"/><circle cx="460" cy="170" r="4"/></g>
+        <path d="M360 68.6 C420 72 450 100 460 170" class="a dsh"/>
+        <g text-anchor="middle" class="s"><text x="60" y="186">0</text><text x="160" y="186">25</text><text x="260" y="186">50</text><text x="360" y="186">75</text><text x="460" y="186">100 mm</text></g>
+        <g text-anchor="end" class="s"><text x="54" y="44">10 m/s</text><text x="54" y="174">0</text></g>
+        <text x="70" y="32" class="ta">속도 u(r)</text>
+        <text x="200" y="130" class="tc">2πru, 넓이 = Q = 0.202 m³/s</text>
+        <text x="380" y="60" class="s">실제 난류 분포</text>
+      </svg>
+      <figcaption>그림 1. 바깥쪽 고리일수록 넓이가 커서 속도에 반지름을 곱한 피적분 함수가 벽 근처에서 가장 크므로, 유량은 벽 가까운 측정에 크게 좌우되고 그 구간을 성기게 재면 적분이 유량을 작게 잡는다(예제 1.5.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>벤투리·오리피스 유량 측정(<a href="01-02.html">1.2절</a>), 사다리꼴 적분을 쓴다.</div>
 
     <h3><span class="no">1.5.1</span>점 속도와 적분</h3>
+    <p>피토관의 전압과 정압의 차 Δp로 점 속도를 구하고, 그 분포를 단면에 걸쳐 적분하면 유량이 된다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">피토관과 유량 적분</span>
-      <p>\[u = \sqrt{\frac{2\Delta p}{\rho}}\qquad(\Delta p: \text{전압} - \text{정압})\]</p>
+      <p>\[u = \sqrt{\frac{2\Delta p}{\rho}}\]</p>
       <p>\[Q = \int_0^R 2\pi r\,u(r)\,dr,\qquad \bar V = \frac Q{\pi R^2}\]</p>
     </div>
-    <p>바깥쪽 고리가 넓이를 많이 차지하므로 벽 근처 측정이 유량에 크게 기여합니다. 반지름을 같은 간격으로 재면 벽 근처가 성기므로, 규격(로그-선형법 등)은 같은 넓이 고리의 대표 위치에서 잽니다.</p>
+    <p>바깥쪽 고리가 넓이를 많이 차지하므로, 피적분 함수 \(2\pi ru\)는 벽 근처에서 크고 벽 근처 측정이 유량에 크게 기여한다(그림 1). 그래서 반지름을 같은 간격으로 재면 벽 근처가 성기므로, 규격(로그-선형법 등)은 넓이가 같은 고리의 대표 위치에서 잰다. 처음 질문의 둘째 답이 이것으로, 중심 속도에 단면적을 곱하면 유량을 크게 잡는다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 1.5.1 <span class="nm">(덕트 횡단)</span></span>
       <p>지름 0.2 m 원형 덕트에서 반지름 0, 25, 50, 75, 100 mm 위치의 속도가 10.0, 9.8, 9.1, 7.8, 0 m/s였다. 사다리꼴 적분으로 유량과 평균 속도는? 중심 피토관의 동압은?</p>
     </div>
-    <p><i>풀이.</i> 피적분 함수 \(2\pi ru\): 0, 1.539, 2.859, 3.676, 0. 사다리꼴 합 \(0.025\times(0/2 + 1.539 + 2.859 + 3.676 + 0/2) = 0.202\) m³/s, 평균 속도 6.42 m/s(중심의 64%). 중심 동압 \(\tfrac12\times1.2\times100 = 60\) Pa.</p>
+    <p><i>풀이.</i> 피적분 함수 \(2\pi ru\)는 0, 1.539, 2.859, 3.676, 0이다. 사다리꼴 합은 \(0.025\times(0/2 + 1.539 + 2.859 + 3.676 + 0/2) = 0.202\) m³/s이고, 평균 속도는 6.42 m/s로 중심의 64%이다(그림 1). 중심 동압은 \(\tfrac12\times1.2\times100 = 60\) Pa이다.</p>
+    <p>이 결과를 1.2절의 유량계 값과 견주면 둘 중 어느 쪽이 믿을 만한지 가를 수 있다. 횡단 측정은 장치가 단순한 대신 점마다 정상 상태를 기다려야 하고 적분 오차가 있으며, 유량계는 빠르지만 보정이 필요하다. 그래서 현장에서는 횡단 측정으로 유량계를 한 번 보정해 두고, 그 뒤로는 유량계로 계속 잰다.</p>
 
-    <div class="tb-note"><b>주의</b>벽(\(u\) = 0)과 75 mm 사이에서 속도가 급히 떨어지는데 점이 없어 사다리꼴이 이 구간을 직선으로 처리합니다. 실제 난류 분포는 벽 근처까지 속도가 유지되므로 이 계산은 유량을 작게 잡습니다. 벽 근처에 측정점을 더 두거나 같은 넓이 위치를 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>벽 근처에 측정점을 두지 않는 실수가 흔하다. 예제에서는 벽(\(u\) = 0)과 75 mm 사이에서 속도가 급히 떨어지는데 점이 없어, 사다리꼴이 이 구간을 직선으로 처리한다. 그런데 실제 난류 분포는 벽 근처까지 속도가 유지되므로 이 계산은 유량을 작게 잡는다. 그래서 벽 근처에 측정점을 더 두거나 넓이가 같은 고리의 위치를 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(u = \sqrt{2\Delta p/\rho}\).</li>
-        <li>\(Q = \int2\pi ru\,dr\), 평균 = \(Q/A\).</li>
-        <li>벽 근처가 유량에 크게 기여: 같은 넓이 고리 위치에서 잰다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>피토관으로 점 속도 \(u = \sqrt{2\Delta p/\rho}\)를 재고, 단면에 걸쳐 \(Q = \int2\pi ru\,dr\)로 적분해 유량을 구하며, 평균 속도는 \(Q/A\)이다. 벽 근처가 유량에 크게 기여하므로 넓이가 같은 고리의 위치에서 잰다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>피토관 동압 24 Pa(공기 1.2)이면 속도는?
-          <details><summary>답</summary><p>\(\sqrt{40} = 6.3\) m/s.</p></details>
+          <details><summary>답</summary><p>\(\sqrt{40} = 6.3\) m/s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>층류 원관 유동(포물선 분포)에서 평균 속도는 중심 속도의 몇 배인가? 예제의 비(0.64)와 비교하여라.
-          <details><summary>답</summary><p>0.5배. 예제는 0.64로, 실제 난류(약 0.8)보다 작게 나와 벽 근처 적분 오차가 있음을 보여 준다.</p></details>
+          <details><summary>답</summary><p>0.5배이다. 예제는 0.64로 실제 난류(약 0.8)보다 작게 나와, 벽 근처 적분 오차가 있음을 보여 준다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>반지름 \(R\) 원을 넓이가 같은 고리 \(N\)개로 나눌 때 \(k\)번째 고리의 바깥 반지름은?
-          <details><summary>답</summary><p>\(r_k = R\sqrt{k/N}\). 넓이가 \(\pi r^2\)에 비례하기 때문이다.</p></details>
+          <details><summary>답</summary><p>넓이가 \(\pi r^2\)에 비례하므로 \(r_k = R\sqrt{k/N}\)이다.</p></details>
         </li>
       </ol>
     </div>
