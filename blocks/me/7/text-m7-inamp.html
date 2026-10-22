@@ -8,62 +8,62 @@
 <article class="card q-card" id="text-m7-inamp" data-kind="본문" data-std="기계7-05-03">
   <header class="card-head"><span class="no"></span><h2>계장 증폭기로 브리지 신호 키우기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>브리지 출력처럼 큰 공통 전압 위에 실린 작은 차동 신호를 증폭하는 계장 증폭기의 구조를 안다.</li>
-        <li>ADC 범위에 맞는 이득과 이득 저항을 정한다.</li>
-        <li>공통 모드 제거비(CMRR)가 측정 오차에 주는 영향을 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Wheatstone 브리지 (<a href="02-02.html">2.2절</a>), 연산증폭기 기본 회로 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">5 V로 구동한 로드셀 브리지의 두 출력 단자는 둘 다 2.5 V 근처에 있고, 하중이 걸려도 그 차이는 2 mV에 불과하다. 2.5 V는 버리고 2 mV만 2000배 키우고 싶은데, 증폭기가 2.5 V를 조금이라도 따라 키우면 어떻게 될까? 그 새는 양은 무엇이 정할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="공통 전압 2.5 V가 계장 증폭기의 공통 모드 제거비(CMRR)에 따라 새어 드는 입력 환산 오차를 최대 신호 2 mV에 대한 비율로 나타낸 것(예제 5.3.1). CMRR 80 dB이면 250 μV로 12.5%, 100 dB이면 25 μV로 1.25%, 120 dB이면 2.5 μV로 0.125%이다">
+        <line x1="180" y1="40" x2="180" y2="150" class="ax"/>
+        <rect x="180" y="50" width="250" height="24" class="fd"/>
+        <rect x="180" y="86" width="25" height="24" class="fb"/>
+        <rect x="180" y="122" width="3" height="24" class="fa"/>
+        <g text-anchor="end" class="s"><text x="172" y="67">CMRR 80 dB</text><text x="172" y="103">100 dB</text><text x="172" y="139">120 dB</text></g>
+        <text x="438" y="67" class="td">250 μV, 12.5%</text>
+        <text x="213" y="103" class="tb">25 μV, 1.25%</text>
+        <text x="191" y="139" class="ta">2.5 μV, 0.125%</text>
+        <text x="180" y="30" class="s">공통 전압 2.5 V가 새어 든 입력 환산 오차 (최대 신호 2 mV 대비)</text>
+        <text x="180" y="176" class="s">V_CM × 10^(−CMRR/20)</text>
+      </svg>
+      <figcaption>그림 1. 증폭기가 공통 전압을 지우는 비율이 20 dB 좋아질 때마다 새어 드는 오차가 1/10로 줄어들므로, 수 mV의 브리지 신호를 1% 안팎으로 재려면 CMRR이 100 dB쯤은 되어야 한다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Wheatstone 브리지(<a href="02-02.html">2.2절</a>), 연산증폭기 기본 회로(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>왜 계장 증폭기인가</h3>
-    <p>5 V로 구동한 브리지의 두 출력 단자는 둘 다 약 2.5 V에 있고, 그 차이(신호)는 수 mV입니다. 연산증폭기 하나로 만든 차동 증폭기는 입력 임피던스가 낮아 브리지에 부하를 주고, 저항 불일치로 2.5 V 공통 전압 일부를 신호로 잘못 키웁니다. 계장 증폭기(INA)는 입력 버퍼 두 개 + 차동단으로 입력 임피던스가 매우 크고, 저항 하나 \(R_G\)로 이득을 정합니다.</p>
+    <p>5 V로 구동한 브리지의 두 출력 단자는 둘 다 약 2.5 V에 있고, 그 차이인 신호는 수 mV이다. 연산증폭기 하나로 만든 차동 증폭기는 입력 임피던스가 낮아 브리지에 부하를 주고, 저항 불일치 때문에 2.5 V 공통 전압의 일부를 신호로 잘못 키운다. 처음 질문의 걱정이 바로 이것이다.</p>
+    <p>계장 증폭기(INA)는 입력 버퍼 두 개와 차동단으로 이루어져 입력 임피던스가 매우 크고, 저항 하나 \(R_G\)로 이득을 정한다. 공통 전압을 얼마나 잘 지우는지는 공통 모드 제거비(CMRR)가 정하며, 처음 질문의 둘째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">계장 증폭기 (대표 소자 예)</span>
-      <p>이득 \(G = 1 + \dfrac{50\text{ k}\Omega}{R_G}\) (소자마다 상수가 다름, 데이터시트 확인)</p>
-      <p>공통 모드 오차(입력 환산) \(\approx V_{CM}\times10^{-\text{CMRR}/20}\)</p>
+      <p>이득은 \(G = 1 + \dfrac{50\text{ k}\Omega}{R_G}\)이다(소자마다 상수가 다르므로 데이터시트를 확인한다).</p>
+      <p>입력 환산 공통 모드 오차는 \(\approx V_{CM}\times10^{-\text{CMRR}/20}\)이다.</p>
     </div>
 
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1 <span class="nm">(로드셀 증폭)</span></span>
       <p>로드셀 브리지(5 V 구동) 최대 출력 2 mV를 0~5 V ADC의 4 V까지 키우려면 이득과 \(R_G\)는? CMRR 100 dB면 공통 전압 2.5 V에 의한 오차는 최대 신호의 몇 %인가?</p>
     </div>
-    <p><i>풀이.</i> \(G = 4/0.002 = 2000\), \(R_G = 50000/1999 = 25.0\) Ω. 공통 모드 오차 \(2.5\times10^{-5} = 25\) μV(입력 환산), 2 mV 신호의 1.25%. 공통 전압이 일정하면 영점 보정으로 지울 수 있지만, 전원 변동으로 공통 전압이 흔들리면 그만큼 측정이 흔들립니다.</p>
+    <p><i>풀이.</i> \(G = 4/0.002 = 2000\)이므로 \(R_G = 50000/1999 = 25.0\) Ω이다. 공통 모드 오차는 입력 환산 \(2.5\times10^{-5} = 25\) μV로, 2 mV 신호의 1.25%이다(그림 1).</p>
+    <p>공통 전압이 일정하면 이 오차는 영점 보정으로 지울 수 있다. 그런데 전원 변동으로 공통 전압이 흔들리면 그만큼 측정이 흔들린다. 가령 5 V 전원이 1% 흔들리면 공통 전압은 25 mV 변하고, 100 dB에서 입력 환산 0.25 μV, 곧 신호의 0.0125%만큼 출력이 움직인다. 이는 작지만 정밀 측정에서는 안정된 기준 전원을 쓰는 이유가 된다.</p>
 
-    <div class="tb-note"><b>주의</b>이득 2000에서는 증폭기 입력 오프셋 전압(수십 μV)도 신호의 수 %가 되어 영점 보정이 필요합니다. 이득을 크게 할수록 대역폭이 줄어드는 것도 데이터시트에서 확인합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>공통 모드 오차만 따지고 오프셋을 잊는 실수가 흔하다. 이득 2000에서는 증폭기 입력 오프셋 전압(수십 μV)도 신호의 수 %가 되므로 영점 보정이 필요하다. 이득을 크게 할수록 대역폭이 줄어드는 것도 데이터시트에서 확인한다(5.1절).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>계장 증폭기: 높은 입력 임피던스, 높은 CMRR, \(R_G\) 하나로 이득.</li>
-        <li>\(G\) = ADC 범위 / 최대 신호.</li>
-        <li>공통 모드 오차 \(V_{CM}10^{-\text{CMRR}/20}\), 오프셋은 영점 보정.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>계장 증폭기는 입력 임피던스와 CMRR이 높고 저항 하나 \(R_G\)로 이득을 정하므로, 큰 공통 전압 위의 작은 브리지 신호를 증폭하는 데 쓴다. 이득은 ADC 범위를 최대 신호로 나누어 정한다. 공통 모드 오차는 \(V_{CM}10^{-\text{CMRR}/20}\)이고, 오프셋은 영점 보정으로 지운다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(G = 1 + 50\text{ k}\Omega/R_G\)에서 \(R_G\) = 100 Ω이면 이득은?
-          <details><summary>답</summary><p>501.</p></details>
+          <details><summary>답</summary><p>501이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>CMRR 80 dB 소자로 예제를 바꾸면 공통 모드 오차는 신호의 몇 %인가?
-          <details><summary>답</summary><p>\(2.5\times10^{-4} = 250\) μV, 12.5%.</p></details>
+          <details><summary>답</summary><p>\(2.5\times10^{-4} = 250\) μV이므로 12.5%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>12비트 ADC(0~5 V)로 예제를 측정할 때 한 단계(LSB)는 하중으로 몇 %에 해당하는가(4 V = 최대 하중)?
-          <details><summary>답</summary><p>LSB \(5/4096 = 1.22\) mV, 최대 4 V의 0.031%.</p></details>
+          <details><summary>답</summary><p>LSB는 \(5/4096 = 1.22\) mV이므로 최대 4 V의 0.031%이다.</p></details>
         </li>
       </ol>
     </div>
