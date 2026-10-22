@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개념 지도 — QURI</title>
+  <meta name="description" content="QURI의 모든 과목과 대단원을 한 장에 놓고, 어떤 대단원을 먼저 알아야 하는지 선으로 이은 지도. 학과마다 색이 다릅니다.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="QURI 큐리">
+  <meta property="og:title" content="개념 지도 — QURI">
+  <meta property="og:description" content="QURI의 모든 과목과 대단원을 한 장에 놓고, 어떤 대단원을 먼저 알아야 하는지 선으로 이은 지도. 학과마다 색이 다릅니다.">
+  <meta property="og:url" content="https://radix24.github.io/namunnip-textbook-univ/graph.html">
+  <meta property="og:image" content="https://radix24.github.io/namunnip-textbook-univ/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f5f5f2">
+  <script>(function(){var d=document.documentElement,q=/[?&]theme=(dark|light)\b/.exec(location.search),t=q&&q[1];if(!t)try{t=localStorage.getItem("quri-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(t==="dark")document.querySelector('meta[name="theme-color"]').content="#12131c";try{if(localStorage.getItem("quri-terms")==="ko")d.dataset.terms="ko"}catch(e){}})()</script>
+  <meta name="apple-mobile-web-app-title" content="QURI">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tb.css">
+  <link rel="stylesheet" href="css/quri.css">
+  <link rel="stylesheet" href="css/univ.css">
+</head>
+<body data-view="graph" class="gv-body">
+
+<header class="top">
+  <a class="brand" href="./"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
+  <nav class="crumbs" aria-label="위치"><span aria-hidden="true">/</span><b>개념 지도</b></nav>
+  <div class="top-right"><a href="./#courses">과목</a><a href="roadmap.html">로드맵</a><a href="record.html">학습 기록</a><button type="button" class="theme-btn" aria-label="다크 모드" aria-pressed="false" title="다크 모드 켜고 끄기"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</header>
+
+<main class="gv">
+  <div class="gv-stage">
+    <canvas id="gv-canvas" aria-label="개념 지도. 큰 점은 과목, 작은 점은 대단원, 회색 네모는 고등학교 내용. 색은 학과, 선은 먼저 알아야 할 대단원."></canvas>
+
+    <div class="gv-top">
+      <input type="search" id="gv-search" placeholder="과목이나 대단원 찾기 — 예: 푸리에, 엔트로피" aria-label="과목이나 대단원 찾기" list="gv-names">
+      <datalist id="gv-names"></datalist>
+      <div class="gv-btns">
+        <button type="button" id="gv-fit" title="전체 보기" aria-label="전체 보기"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+        <button type="button" id="gv-gear" title="학과와 표시 고르기" aria-label="학과와 표시 고르기" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="8" cy="18" r="2" fill="currentColor"/></svg></button>
+      </div>
+    </div>
+
+    <aside class="gv-settings" id="gv-settings" hidden>
+      <details open>
+        <summary>학과</summary>
+        <div class="gv-courses" id="gv-depts"></div>
+        <button type="button" class="gv-reset" id="gv-all">모두 보기</button>
+      </details>
+      <details open>
+        <summary>표시</summary>
+        <label class="gv-row"><span>대단원 점</span><input type="checkbox" id="gv-units" checked></label>
+        <label class="gv-row"><span>고등학교 내용</span><input type="checkbox" id="gv-hs" checked></label>
+        <label class="gv-row"><span>과목 안의 소속선</span><input type="checkbox" id="gv-member" checked></label>
+        <label class="gv-row"><span>다른 학과로 이어지는 선만</span><input type="checkbox" id="gv-cross"></label>
+      </details>
+    </aside>
+
+    <p class="gv-hint" id="gv-hint">끌어서 이동 · 휠이나 두 손가락으로 확대 · 점을 누르면 자세히 · 두 번 누르면 그 페이지로</p>
+  </div>
+
+  <aside class="gv-panel" id="gv-panel" hidden>
+    <button type="button" class="gv-close" aria-label="닫기">×</button>
+    <div id="gv-detail"></div>
+  </aside>
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/graph.js"></script>
+</body>
+</html>

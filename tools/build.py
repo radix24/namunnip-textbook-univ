@@ -388,13 +388,13 @@ def page(rel, title, desc, body, extra_head="", scripts=(), back=("./", "← 과
 
 <header class="top">
   <a class="brand" href="{rel}"><svg class="brand-mark"><use href="#nm"/></svg><span class="q-name">QURI</span></a>
-  <div class="top-right"><a class="place-chip" href="{rel}?pick" hidden></a><a href="{rel}record.html">학습 기록</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
+  <div class="top-right"><a class="place-chip" href="{rel}?pick" hidden></a><a href="{rel}graph.html">개념 지도</a><a href="{rel}record.html">학습 기록</a><a href="{back[0]}">{back[1]}</a>{THEME_BTN}</div>
 </header>
 
 <main class="wrap">
 {body}
   <footer class="site-foot">
-    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a></p>
+    <p class="foot-org"><a class="foot-home" href="https://nmnp.kr"><svg class="brand-mark" aria-hidden="true"><use href="#nm"/></svg><b>나뭇잎</b><span class="mono">nmnp.kr</span></a><a class="foot-mail mono" href="mailto:contact@nmnp.kr">contact@nmnp.kr</a><a class="foot-mail mono" href="{rel}credits.html">출처와 라이선스</a></p>
     <p class="mono small">QURI · 큐리 · 질문에서 증명까지</p>
     <p class="mono small dim">과목·대단원·성취기준·카드는 QURI가 만들었습니다.</p>
   </footer>
@@ -1001,7 +1001,7 @@ def write_pages(depts, blocks, sidx, links):
       {side}
       {f'<ol id="toc-list">{toc}</ol>' if toc else '<p class="small dim">준비 중</p>'}
       <p class="progress mono small"></p>
-      <p class="toc-links mono small"><a href="{u["n"]}.html">대단원 {un} 절 목록</a><br><a href="{rel}record.html">내 학습 기록</a></p>
+      <p class="toc-links mono small"><a href="{u["n"]}.html">대단원 {un} 절 목록</a><br><a href="{rel}graph.html?u={esc(c["code"])}-{u["n"]}">개념 지도에서 보기</a><br><a href="{rel}record.html">내 학습 기록</a></p>
     </aside>
     <div class="sec-main">
 {main_html}
@@ -1271,6 +1271,49 @@ def selftest():
     print("자체 시험 통과")
 
 
+def write_graph(depts, idx, links):
+    """개념 지도(graph.html) 데이터 → data/graph.json.
+    점: 과목(k=c)·대단원(k=u)·고교 내용(k=h). 선: [앞, 뒤, 종류] — m은 대단원→과목 소속, p는 선수→대상(연결표를 대단원 단위로 묶음)."""
+    nodes, seen = [], set()
+    for d in depts:
+        for c in d["courses"]:
+            nodes.append({"id": c["code"], "k": "c", "d": d["id"], "t": c["name"], "p": mpath(c["code"]), "y": c["y"]})
+            for u in c["units"]:
+                uc = f'{c["code"]}-{u["n"]}'
+                nodes.append({"id": uc, "k": "u", "d": d["id"], "t": u["t"], "p": idx[uc]["path"], "c": c["code"], "n": int(u["n"])})
+                seen.add(uc)
+    edges = {(n["id"], n["c"], "m") for n in nodes if n["k"] == "u"}
+
+    def unit_of(code):
+        if code.startswith("고교:"):
+            return code
+        x = idx.get(code)
+        if not x:
+            return None
+        return code if x["unit"] else code.rsplit("-", 1)[0]
+    hs = {}
+    for tgt, pres in links["pre"].items():
+        b = unit_of(tgt)
+        for p in pres:
+            a = unit_of(p)
+            if not a or not b or a == b:
+                continue
+            if a.startswith("고교:"):
+                name = a[3:].strip()
+                hs.setdefault(a, {"id": a, "k": "h", "d": "hs", "t": name})
+            edges.add((a, b, "p"))
+    nodes += sorted(hs.values(), key=lambda n: n["id"])
+    ids = {n["id"] for n in nodes}
+    bad = [e for e in edges if e[0] not in ids or e[1] not in ids]
+    if bad:
+        raise SystemExit(f"개념 지도: 없는 점을 가리키는 선 {bad[:5]}")
+    data = {"depts": [{"id": d["id"], "name": d["name"], "short": d["short"]} for d in depts],
+            "nodes": nodes, "links": sorted(edges)}
+    (ROOT / "data" / "graph.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
+    np_ = sum(e[2] == "p" for e in edges)
+    print(f"개념 지도: 과목 {sum(n['k'] == 'c' for n in nodes)} · 대단원 {len(seen)} · 고교 {len(hs)} · 선수 선 {np_}")
+
+
 def main():
     global SRC
     if "--selftest" in sys.argv:
@@ -1302,6 +1345,7 @@ def main():
     print(f"더 읽을거리: 대단원 {len(READING)} · 문헌 {sum(map(len, READING.values()))} · 3학년 이상인데 빈 대단원 {len(need)}")
     idx = build_index(out, blocks)
     links = load_links(idx)
+    write_graph(out, idx, links)
     n_pages, n_cards = write_pages(out, blocks, idx, links)
     print(f"연결표: 대상 {len(links['pre'])} · 선수로 쓰인 코드 {len(links['post'])}")
     summ = place.build(out, blocks, EXAM_POLICY)
@@ -1319,7 +1363,7 @@ def main():
     print(f"data/univ.json: 학과 {len(out)} · 과목 {total['courses']} · 대단원 {total['units']} · 성취기준 {total['stds']}")
     print(f"c/: 페이지 {n_pages} · 카드 {n_cards}")
     # 검색 엔진용 사이트맵(빌드 산출물). robots.txt는 radix24.github.io 저장소에 있다
-    pages = ["", "roadmap.html"] + sorted(p.relative_to(ROOT).as_posix().removesuffix("index.html") for p in (ROOT / "c").rglob("*.html"))
+    pages = ["", "roadmap.html", "graph.html"] + sorted(p.relative_to(ROOT).as_posix().removesuffix("index.html") for p in (ROOT / "c").rglob("*.html"))
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                       + "".join(f"<url><loc>{SITE_URL}{u}</loc></url>\n" for u in pages) + "</urlset>\n",
                                       encoding="utf-8", newline="\n")
