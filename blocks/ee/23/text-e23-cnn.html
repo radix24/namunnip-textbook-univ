@@ -8,21 +8,25 @@
 <article class="card q-card" id="text-e23-cnn" data-kind="본문" data-std="전전23-04-02">
   <header class="card-head"><span class="no"></span><h2>합성곱 신경망으로 영상 분류</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>합성곱 층의 출력 크기 \((W - K + 2P)/S + 1\)과 매개변수 수를 계산한다.</li>
-        <li>가중치 공유와 국소 연결이 매개변수를 줄이는 효과를 수치로 본다.</li>
-        <li>작은 CNN의 학습 과정(손실, 최적화기, 에폭, 검증)을 코드로 구성한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>역전파 (<a href="04-01.html">4.1절</a>), 2차원 합성곱 (<a href="../6/02-01.html">전전6 2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">32 × 32 컬러 사진 한 장은 숫자 3072개이다. 이것을 완전 연결 신경망에 넣으면 첫 층의 가중치만 수천만 개가 되어 금세 과적합한다. 그런데 합성곱 신경망은 훨씬 적은 가중치로 사진을 더 잘 분류한다. 무엇을 줄였길래 가능할까? 그리고 실제 학습은 어떤 순서로 돌릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="작은 CNN의 층별 크기(개형). 32×32×3 입력이 3×3 합성곱 16개(매개변수 448)로 32×32×16, 최대 풀링으로 16×16×16, 3×3 합성곱 32개(매개변수 4640)로 16×16×32, 최대 풀링으로 8×8×32가 되고, 완전 연결층(매개변수 20490)이 10개 클래스 점수를 낸다. 합계 25578개로, 같은 출력을 완전 연결로 만들면 5천만 개가 넘는다">
+        <rect x="30" y="60" width="50" height="80" class="lk"/><rect x="100" y="60" width="60" height="80" class="la"/><rect x="180" y="80" width="44" height="40" class="la"/><rect x="244" y="76" width="56" height="48" class="lb"/><rect x="320" y="90" width="36" height="20" class="lb"/><rect x="380" y="70" width="14" height="60" class="lc"/>
+        <g class="s" text-anchor="middle"><text x="55" y="156">32×32×3</text><text x="130" y="156" class="ta">32×32×16</text><text x="202" y="136">16×16×16</text><text x="272" y="140" class="tb">16×16×32</text><text x="338" y="126">8×8×32</text><text x="387" y="146" class="tc">10</text></g>
+        <g class="s" text-anchor="middle"><text x="130" y="52" class="ta">합성곱 448</text><text x="272" y="66" class="tb">합성곱 4640</text><text x="387" y="62" class="tc">완전 연결 20490</text></g>
+        <g class="s"><text x="420" y="100" class="td">합계 25578</text><text x="420" y="122">완전 연결이면</text><text x="420" y="144">5천만 개 넘음</text></g>
+      </svg>
+      <figcaption>그림 1. 작은 필터 하나를 영상의 모든 위치에 같이 쓰므로 가중치 수가 영상 크기와 무관해지고, 풀링으로 크기를 줄여 가며 층을 쌓아도 매개변수는 수만 개에 머문다(4.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>역전파(<a href="04-01.html">4.1절</a>), 2차원 합성곱(<a href="../6/02-01.html">전전6 2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.2.1</span>크기와 매개변수</h3>
-    <p>입력 C채널, 필터 K×K를 N개 쓰면 매개변수는 \(K^2CN + N\)(편향)입니다. 영상 크기와 무관합니다(같은 필터를 모든 위치에 공유). 아래 코드는 32×32 컬러 영상용 작은 CNN의 층별 크기를 계산합니다.</p>
+    <p>합성곱 층은 K×K 크기의 작은 필터를 영상 위에서 밀며 같은 가중치로 곱해 더한다. 그래서 입력 C채널에 필터 N개를 쓰면 매개변수는 편향까지 \(K^2CN + N\)이고, 영상 크기와 무관하다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">합성곱 층의 크기</span>
+      <p>출력 크기는 (W − K + 2P)/S + 1이다(W 입력 크기, P 패딩, S 보폭). 매개변수는 \(K^2CN + N\)이다.</p>
+    </div>
+    <p>아래 코드는 32×32 컬러 영상용 작은 CNN의 층별 크기를 계산한다(그림 1).</p>
     <pre><code># 32×32 컬러 영상을 받는 작은 CNN의 층별 출력 크기와 매개변수 수
 def conv(h, w, c, k, n, s=1, p=0):
     ho, wo = (h - k + 2 * p) // s + 1, (w - k + 2 * p) // s + 1
@@ -39,7 +43,7 @@ fc = h * w * c * 10 + 10; total += fc
 print(f"{'fc→10':16s} → 10, 매개변수 {fc}")
 print("합계 매개변수:", total)
 print("같은 입력을 완전 연결로 32×32×16에 잇는다면:", 32 * 32 * 3 * 32 * 32 * 16 + 32 * 32 * 16)</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>conv3x3,16,pad1  → 32×32×16, 매개변수 448
 maxpool2         → 16×16×16, 매개변수 0
 conv3x3,32,pad1  → 16×16×32, 매개변수 4640
@@ -47,9 +51,10 @@ maxpool2         → 8×8×32, 매개변수 0
 fc→10            → 10, 매개변수 20490
 합계 매개변수: 25578
 같은 입력을 완전 연결로 32×32×16에 잇는다면: 50348032</code></pre>
-    <p>합성곱 두 층의 매개변수는 5천 개 남짓인데, 같은 크기 출력을 완전 연결로 만들면 5천만 개가 넘습니다. 영상의 국소 패턴(경계, 질감)이 위치와 무관하게 나타난다는 성질을 구조에 넣은 덕분입니다.</p>
+    <p>즉 합성곱 두 층의 매개변수는 5천 개 남짓인데, 같은 크기의 출력을 완전 연결로 만들면 5천만 개가 넘는다. 영상의 경계나 질감 같은 국소 패턴이 위치와 무관하게 나타난다는 성질을 구조에 넣은 덕분이다.</p>
+
     <h3><span class="no">4.2.2</span>학습 순서</h3>
-    <p>PyTorch로 짜면 대략 다음과 같습니다(참고 코드, 자료 적재 부분 생략).</p>
+    <p>PyTorch로 짜면 대략 다음과 같다(참고 코드, 자료 적재 부분 생략). 처음 질문의 둘째 답이 이것이다.</p>
     <pre><code>model = nn.Sequential(
     nn.Conv2d(3, 16, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
     nn.Conv2d(16, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
@@ -64,37 +69,30 @@ for epoch in range(10):
     with torch.no_grad():
         acc = sum((model(x).argmax(1) == y).sum().item() for x, y in val_loader) / len(val_set)
     print(epoch, acc)</code></pre>
-    <p>에폭마다 검증 정확도를 보고, 검증 정확도가 더 오르지 않으면 멈춥니다(조기 종료). 자료 증강(뒤집기, 자르기)은 훈련 자료에만 적용합니다.</p>
+    <p>에폭마다 검증 정확도를 보고, 검증 정확도가 더 오르지 않으면 학습을 멈춘다(조기 종료). 또 뒤집기나 자르기 같은 자료 증강은 훈련 자료에만 적용한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "층이 깊을수록 언제나 좋다": 자료가 적으면 과적합하므로 사전 학습 모델(전전33 4.1절)을 씁니다. (2) "검증 때도 model.train() 상태로 두어도 된다": 드롭아웃·배치 정규화가 다르게 동작하므로 eval()로 바꿉니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>층이 깊을수록 언제나 좋다고 여기기 쉽다. 자료가 적으면 깊은 모델은 과적합하므로, 큰 자료로 미리 학습한 모델을 가져와 미세 조정한다(전전33 4.1절). 또 검증할 때도 model.train() 상태로 두어도 된다고 생각하기 쉬운데, 드롭아웃과 배치 정규화가 다르게 동작하므로 eval()로 바꿔야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>출력 크기 (W − K + 2P)/S + 1, 매개변수 K²CN + N.</li>
-        <li>가중치 공유로 매개변수가 수천 배 줄어든다(예: 5천 대 5천만).</li>
-        <li>손실·최적화기·에폭·검증·조기 종료.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>합성곱 층의 출력 크기는 (W − K + 2P)/S + 1, 매개변수는 K²CN + N이다. 가중치 공유로 매개변수가 수천 배 줄어든다(예제에서 5천 대 5천만). 학습은 손실, 최적화기, 에폭, 검증, 조기 종료의 순서로 돌린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>입력 28×28, 5×5 필터, 패딩 0, 보폭 1의 출력 크기는?
-          <details><summary>답</summary><p>24×24.</p></details>
+          <details><summary>답</summary><p>24×24이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>입력 64채널에 3×3 필터 128개 층의 매개변수는?
-          <details><summary>답</summary><p>3·3·64·128 + 128 = 73 856.</p></details>
+          <details><summary>답</summary><p>3·3·64·128 + 128 = 73 856이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>보폭 2, 패딩 1, 3×3 필터로 32×32 입력의 출력 크기는?
-          <details><summary>답</summary><p>(32 − 3 + 2)/2 + 1 = 16(내림).</p></details>
+          <details><summary>답</summary><p>(32 − 3 + 2)/2 + 1 = 16(내림)이다.</p></details>
         </li>
       </ol>
     </div>

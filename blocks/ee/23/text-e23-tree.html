@@ -8,56 +8,60 @@
 <article class="card q-card" id="text-e23-tree" data-kind="본문" data-std="전전23-03-03">
   <header class="card-head"><span class="no"></span><h2>결정 트리와 정보 이득</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>특징 값으로 자료를 나누는 결정 트리의 구조를 안다.</li>
-        <li>엔트로피 감소(정보 이득)로 가장 좋은 분할을 고른다.</li>
-        <li>트리의 과적합과 가지치기, 앙상블(랜덤 포레스트)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>엔트로피 (<a href="../21/01-01.html">전전21 1.1절</a>), 과적합 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">스무고개처럼 "나이가 40보다 많은가?", "소득이 얼마를 넘는가?" 같은 질문을 차례로 던져 자료를 나누면 분류기가 된다. 그런데 매번 어떤 질문을 던져야 가장 빨리 답에 다가갈까? 질문을 끝없이 이어 가면 왜 오히려 나빠질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 정보 이득 비교(개형). 양성 10, 음성 10인 노드(엔트로피 1)를 분할 A로 나누면 8+/2−, 2+/8−가 되어 자식 엔트로피 0.722, 이득 0.278이고, 분할 B로 나누면 9+/1−, 1+/9−가 되어 자식 엔트로피 0.469, 이득 0.531이다. 더 깨끗하게 나누는 B가 선택된다">
+        <rect x="220" y="20" width="120" height="34" class="lk"/><rect x="220" y="20" width="120" height="34" class="k" fill="none"/>
+        <path d="M250 54 L130 100 M310 54 L430 100" class="k" stroke-width="2"/>
+        <rect x="60" y="100" width="70" height="30" class="la"/><rect x="140" y="100" width="70" height="30" class="la"/>
+        <rect x="350" y="100" width="70" height="30" class="lb"/><rect x="430" y="100" width="70" height="30" class="lb"/>
+        <g class="s" text-anchor="middle"><text x="280" y="42">10+ / 10−, H = 1</text><text x="95" y="120" class="ta">8+/2−</text><text x="175" y="120" class="ta">2+/8−</text><text x="385" y="120" class="tb">9+/1−</text><text x="465" y="120" class="tb">1+/9−</text>
+        <text x="135" y="152" class="ta">A: 자식 H 0.722</text><text x="135" y="174" class="ta">이득 0.278</text><text x="425" y="152" class="tb">B: 자식 H 0.469</text><text x="425" y="174" class="td">이득 0.531, 선택</text></g>
+      </svg>
+      <figcaption>그림 1. 질문 하나로 나눈 뒤 각 무리가 얼마나 한 부류로 모였는지를 엔트로피로 재면, 불확실성을 가장 많이 줄이는 질문이 가장 좋은 분할이 된다(예제 3.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>엔트로피(<a href="../21/01-01.html">전전21 1.1절</a>), 과적합(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>가장 깨끗하게 나누기</h3>
-    <p>노드의 엔트로피 \(H = -\sum p_k\log_2p_k\). 분할 후 자식들의 가중 평균 엔트로피를 뺀 값이 정보 이득이며, 이득이 가장 큰 특징·문턱으로 나눕니다. 깊이 제한, 최소 표본 수, 가지치기로 과적합을 막고, 여러 트리를 평균한 랜덤 포레스트가 실무에서 강력합니다.</p>
+    <p>결정 트리는 특징 하나와 문턱 하나로 자료를 둘로 나누는 일을 되풀이한다. 그러면 노드마다 섞인 정도를 엔트로피로 재고, 분할로 그것이 얼마나 줄었는지를 본다. 처음 질문의 첫째 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">엔트로피와 정보 이득</span>
+      <p>노드의 엔트로피는 \(H = -\sum p_k\log_2p_k\)이다.</p>
+      <p>정보 이득은 부모의 엔트로피에서 자식들의 가중 평균 엔트로피를 뺀 값이며, 이득이 가장 큰 특징과 문턱으로 나눈다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1</span>
       <p>양성 10, 음성 10인 노드를 분할 A(왼쪽 8+/2−, 오른쪽 2+/8−)와 분할 B(왼쪽 9+/1−, 오른쪽 1+/9−) 중 어느 것이 이득이 큰가?</p>
     </div>
-    <p><i>풀이.</i> 부모 H = 1. A: 자식 각 H(0.8) = 0.722 → 이득 0.278. B: 자식 각 H(0.9) = 0.469 → 이득 0.531. B가 더 깨끗하게 나눠 선택됩니다.</p>
+    <p><i>풀이.</i> 부모의 엔트로피는 1이다. A는 자식이 각각 H(0.8) = 0.722이므로 이득이 0.278이다. 반면 B는 자식이 각각 H(0.9) = 0.469이므로 이득이 0.531이다(그림 1). 따라서 더 깨끗하게 나누는 B가 선택된다.</p>
+    <p>트리는 이렇게 매번 가장 좋은 분할을 탐욕적으로 고른다. 그런데 끝까지 나누면 잎 하나에 표본 하나만 남아, 훈련 자료를 모두 외운 트리가 된다. 처음 질문의 둘째 답이 이것이다. 그러므로 깊이 제한, 잎의 최소 표본 수, 가지치기로 과적합을 막는다. 또 여러 트리를 평균한 랜덤 포레스트가 실무에서 강력하다(6.4절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "트리는 깊을수록 좋다": 훈련 자료를 외워 과적합합니다. (2) "트리는 특징 크기 조정이 필요": 문턱 비교만 해 표준화가 필요 없습니다.</div>
+    <p>결정 트리는 해석하기 쉽다는 장점도 크다. 예측 하나가 어떤 질문들을 거쳐 나왔는지를 그대로 따라 읽을 수 있기 때문이다. 그래서 대출 심사나 의료처럼 판단 근거를 설명해야 하는 분야에서 얕은 트리를 즐겨 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>H = −Σp log₂p, 이득 = H(부모) − 가중 H(자식).</li>
-        <li>예: 8/2 분할 0.278, 9/1 분할 0.531.</li>
-        <li>깊이 제한·가지치기·랜덤 포레스트.</li>
-      </ol>
-    </div>
+    <p>트리는 회귀에도 쓴다. 이때는 엔트로피 대신 각 잎 안의 분산을 불순도로 삼고, 잎에 든 표본의 평균을 예측값으로 낸다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>트리는 깊을수록 좋다고 여기기 쉽다. 깊은 트리는 훈련 자료를 외워 과적합한다. 또 트리도 특징 크기를 조정해야 한다고 생각하기 쉬운데, 트리는 문턱과 비교만 하므로 표준화가 필요 없다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>엔트로피는 H = −Σp log₂p이고, 정보 이득은 부모 H에서 자식들의 가중 H를 뺀 값이다. 예제에서 8/2 분할은 0.278, 9/1 분할은 0.531의 이득을 준다. 깊이 제한, 가지치기, 랜덤 포레스트로 과적합을 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>양성 5, 음성 5 노드의 엔트로피는?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>모두 양성인 노드의 엔트로피는?
-          <details><summary>답</summary><p>0.</p></details>
+          <details><summary>답</summary><p>0이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>지니 불순도 1 − Σp²의 50:50 값은?
-          <details><summary>답</summary><p>0.5.</p></details>
+          <details><summary>답</summary><p>0.5이다.</p></details>
         </li>
       </ol>
     </div>

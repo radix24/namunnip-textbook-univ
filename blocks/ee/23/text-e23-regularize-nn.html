@@ -8,56 +8,57 @@
 <article class="card q-card" id="text-e23-regularize-nn" data-kind="본문" data-std="전전23-04-04">
   <header class="card-head"><span class="no"></span><h2>신경망 학습 안정화: 드롭아웃과 정규화 층</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>드롭아웃이 학습 때 뉴런을 무작위로 끄고 출력을 보정하는 방식을 안다.</li>
-        <li>배치 정규화가 층 입력 분포를 맞춰 학습을 빠르게 하는 원리를 안다.</li>
-        <li>학습·추론 모드의 차이를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>CNN 학습 (<a href="04-02.html">4.2절</a>), 과적합 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">큰 신경망은 훈련 자료를 금세 외워 버리고, 층이 깊어질수록 학습이 불안정해진다. 학습 중에 뉴런을 무작위로 꺼 버리거나, 층마다 입력을 다시 표준화하면 이 문제가 줄어든다고 한다. 뉴런을 끄는 것이 어떻게 도움이 될까? 그리고 학습 때와 추론 때 이 층들은 어떻게 다르게 동작할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.4.1 드롭아웃(개형). p = 0.5 드롭아웃 층에서 출력 2.0인 뉴런은 학습 때 확률 0.5로 0이 되고, 확률 0.5로 2.0/(1 − 0.5) = 4.0이 되어 기댓값이 2.0으로 유지된다. 추론 때는 드롭아웃 없이 2.0을 그대로 내보낸다">
+        <g class="k" fill="none"><circle cx="80" cy="50" r="14"/><circle cx="80" cy="100" r="14"/><circle cx="80" cy="150" r="14"/><circle cx="200" cy="50" r="14"/><circle cx="200" cy="150" r="14"/></g>
+        <circle cx="200" cy="100" r="14" class="lk"/><path d="M190 90 L210 110 M210 90 L190 110" class="d" stroke-width="2"/>
+        <g class="a"><line x1="94" y1="50" x2="186" y2="50"/><line x1="94" y1="100" x2="186" y2="50"/><line x1="94" y1="150" x2="186" y2="150"/><line x1="94" y1="100" x2="186" y2="150"/></g>
+        <g class="s"><text x="40" y="190">학습 때 무작위로 끔</text><text x="220" y="104" class="td">꺼짐</text></g>
+        <g class="s"><text x="300" y="60">출력 2.0, p = 0.5</text><text x="300" y="86" class="ta">학습 때 0 또는 4.0, 기댓값 2.0</text><text x="300" y="112" class="tb">추론 때 그대로 2.0</text><text x="300" y="150">1/(1 − p)배로 보정</text></g>
+      </svg>
+      <figcaption>그림 1. 학습 때마다 일부 뉴런을 꺼서 특정 뉴런에 기대지 못하게 하고, 남은 출력을 키워 기댓값을 맞춰 두면, 추론 때는 아무것도 끄지 않고 그대로 써도 같은 크기의 신호가 나간다(예제 4.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>CNN 학습(<a href="04-02.html">4.2절</a>), 과적합(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
-    <h3><span class="no">4.4.1</span>두 기법</h3>
-    <p><b>드롭아웃</b>: 학습 때 각 뉴런을 확률 p로 0으로 만들고 남은 출력을 1/(1 − p)배 해 기댓값을 맞춥니다. 여러 작은 망을 평균하는 효과로 과적합을 줄입니다. <b>배치 정규화</b>: 미니배치의 평균·분산으로 층 입력을 표준화하고 학습 가능한 크기·이동을 곱합니다. 추론 때는 학습 중 모은 이동 평균을 씁니다.</p>
+    <h3><span class="no">4.4.1</span>드롭아웃</h3>
+    <p>드롭아웃은 학습 때 각 뉴런을 확률 p로 0으로 만들고, 남은 출력을 1/(1 − p)배 해 기댓값을 맞춘다(그림 1). 그러면 망이 특정 뉴런 몇 개에 기대 훈련 자료를 외우기 어렵다. 즉 매 단계 다른 작은 망을 학습하는 셈이어서, 여러 망을 평균하는 효과로 과적합을 줄인다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.4.1</span>
       <p>드롭아웃 p = 0.5인 층의 어떤 뉴런 출력이 2.0이다. 학습 때와 추론 때 다음 층으로 가는 값은?</p>
     </div>
-    <p><i>풀이.</i> 학습: 확률 0.5로 0, 0.5로 2.0/(1 − 0.5) = 4.0 → 기댓값 2.0. 추론: 드롭아웃 없이 2.0. 보정 덕분에 추론 때 따로 크기를 맞출 필요가 없습니다.</p>
+    <p><i>풀이.</i> 학습 때는 확률 0.5로 0, 확률 0.5로 2.0/(1 − 0.5) = 4.0이 되어 기댓값이 2.0이다. 한편 추론 때는 드롭아웃 없이 2.0을 그대로 보낸다. 따라서 학습 때 미리 보정해 둔 덕분에, 추론 때 따로 크기를 맞출 필요가 없다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "추론 때도 드롭아웃을 켠다": 기본은 끄며, 켜면 결과가 매번 달라집니다. (2) "배치 정규화는 배치 크기와 무관": 배치가 아주 작으면 통계가 흔들려 다른 정규화(층 정규화)를 씁니다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>드롭아웃: 확률 p로 끄고 1/(1 − p) 보정.</li>
-        <li>배치 정규화: 미니배치 표준화 + 크기·이동.</li>
-        <li>model.eval()로 추론 모드.</li>
-      </ol>
+    <div class="tb-env thm">
+      <span class="lb">배치 정규화</span>
+      <p>\[ \hat x = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}, \qquad y = \gamma\hat x + \beta \]</p>
+      <p>\(\mu_B\), \(\sigma_B^2\)는 미니배치의 평균과 분산이고, γ와 β는 학습하는 크기와 이동이다.</p>
     </div>
+    <p>배치 정규화는 층 입력을 미니배치 통계로 표준화해, 앞 층이 바뀌어도 다음 층이 받는 분포가 크게 흔들리지 않게 한다. 그러면 더 큰 학습률로도 안정하게 학습한다. 그리고 추론 때는 미니배치 통계 대신 학습 중 모아 둔 이동 평균을 쓴다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그래서 두 층 모두 학습 모드와 추론 모드가 다르며, 코드에서는 model.train()과 model.eval()로 바꾼다. 이 전환을 잊으면 같은 모델이 검증 때 전혀 다른 결과를 낸다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>추론 때도 드롭아웃을 켜 두는 것이 기본이라고 여기기 쉽다. 기본은 끄며, 켜 두면 같은 입력에도 결과가 매번 달라진다. 또 배치 정규화는 배치 크기와 무관하다고 생각하기 쉬운데, 배치가 아주 작으면 통계가 흔들리므로 층 정규화 같은 다른 정규화를 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>드롭아웃은 확률 p로 뉴런을 끄고 1/(1 − p)로 보정한다. 배치 정규화는 미니배치로 표준화한 뒤 크기와 이동을 학습한다. 추론 때는 model.eval()로 바꿔 두 층을 추론 모드로 둔다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>p = 0.2 드롭아웃의 보정 배수는?
-          <details><summary>답</summary><p>1.25.</p></details>
+          <details><summary>답</summary><p>1.25이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>배치 평균 4, 표준편차 2에서 입력 6의 정규화 값은?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>추론 때 배치 정규화가 미니배치 통계를 쓰지 않는 이유는?
-          <details><summary>답</summary><p>입력 하나만 와도 같은 결과를 내야 하기 때문입니다.</p></details>
+          <details><summary>답</summary><p>입력 하나만 와도 같은 결과를 내야 하기 때문이다.</p></details>
         </li>
       </ol>
     </div>

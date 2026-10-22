@@ -8,57 +8,55 @@
 <article class="card q-card" id="text-e23-metric" data-kind="본문" data-std="전전23-06-01">
   <header class="card-head"><span class="no"></span><h2>문제에 맞는 평가 지표</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>혼동 행렬에서 정확도, 정밀도, 재현율, F1을 계산한다.</li>
-        <li>클래스 불균형에서 정확도가 오해를 부르는 이유를 수치로 보인다.</li>
-        <li>문제의 비용 구조에 맞는 지표와 임계값을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>조건부 확률 (<a href="../11/01-01.html">전전11 1.1절</a>), 분류기 (<a href="../20/05-01.html">전전20 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">불량률이 1%인 공장에서 "모두 정상"이라고만 답하는 분류기는 정확도가 99%이다. 그런데 이 분류기는 불량을 하나도 찾지 못한다. 정확도만 보면 왜 속을까? 문제에 따라 어떤 지표로 모델을 평가해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.1.1 혼동 행렬과 지표(개형). 1000개 중 불량 10개에서 분류기 결과가 TP 8, FN 2, FP 40, TN 950이면 정확도 95.8%, 정밀도 16.7%, 재현율 80%, F1 0.276이다. 모두 정상이라 하는 분류기는 정확도 99%이지만 재현율이 0이다">
+        <g class="k" fill="none"><rect x="80" y="40" width="200" height="120"/><line x1="180" y1="40" x2="180" y2="160"/><line x1="80" y1="100" x2="280" y2="100"/></g>
+        <rect x="81" y="41" width="98" height="58" class="la"/><rect x="181" y="101" width="98" height="58" class="la"/>
+        <g class="s" text-anchor="middle"><text x="130" y="76" class="ta">TP 8</text><text x="230" y="76">FN 2</text><text x="130" y="136">FP 40</text><text x="230" y="136" class="ta">TN 950</text><text x="130" y="32">예측 불량</text><text x="230" y="32">예측 정상</text></g>
+        <g class="s"><text x="20" y="74">실제 불량</text><text x="20" y="134">실제 정상</text></g>
+        <g class="s"><text x="310" y="60">정확도 95.8%</text><text x="310" y="84" class="td">정밀도 16.7%</text><text x="310" y="108" class="td">재현율 80%</text><text x="310" y="132">F1 0.276</text><text x="310" y="164" class="tb">모두 정상: 정확도 99%, 재현율 0</text></g>
+      </svg>
+      <figcaption>그림 1. 드문 부류가 섞인 자료에서는 흔한 부류만 맞혀도 정확도가 높게 나오므로, 실제 양성을 얼마나 찾았는지와 양성이라 한 것이 얼마나 맞았는지를 따로 재야 모델의 쓸모가 드러난다(예제 6.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>조건부 확률(<a href="../11/01-01.html">전전11 1.1절</a>), 분류기(<a href="../20/05-01.html">전전20 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>혼동 행렬</h3>
-    <p class="q-term">정밀도 = TP/(TP + FP): 양성이라 한 것 중 맞은 비율. 재현율 = TP/(TP + FN): 실제 양성 중 찾은 비율. F1 = 둘의 조화 평균.</p>
+    <p>분류 결과는 실제와 예측의 조합으로 네 칸의 혼동 행렬에 정리한다(그림 1). 그러면 정확도 말고도 여러 지표를 읽을 수 있다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정밀도, 재현율, F1</span>
+      <p>정밀도는 TP/(TP + FP)로, 양성이라 한 것 가운데 맞은 비율이다. 재현율은 TP/(TP + FN)으로, 실제 양성 가운데 찾은 비율이다.</p>
+      <p>F1은 정밀도와 재현율의 조화 평균이다.</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
-      <p>1000명 중 불량 10개. 분류기 결과 TP 8, FN 2, FP 40, TN 950. 각 지표와, 모두 '정상'이라 하는 분류기의 정확도는?</p>
+      <p>1000개 중 불량 10개. 분류기 결과 TP 8, FN 2, FP 40, TN 950. 각 지표와, 모두 '정상'이라 하는 분류기의 정확도는?</p>
     </div>
-    <p><i>풀이.</i> 정확도 958/1000 = 95.8%, 정밀도 8/48 = 16.7%, 재현율 80%, F1 = 0.276. 모두 정상이라 하면 정확도 99%로 더 높지만 불량을 하나도 못 찾습니다. 불균형 자료에서는 정밀도·재현율, PR 곡선, ROC-AUC를 함께 봅니다.</p>
-    <p>놓치면 위험한 문제(질병 선별, 결함 검사)는 재현율을, 오경보가 비싼 문제(스팸이 아닌 메일을 지우기)는 정밀도를 우선하고, 확률 출력의 임계값을 옮겨 둘을 조절합니다. 회귀는 평균 제곱 오차(큰 오차에 민감), 평균 절대 오차(이상치에 덜 민감)를 목적에 맞게 고릅니다.</p>
+    <p><i>풀이.</i> 정확도는 958/1000 = 95.8%, 정밀도는 8/48 = 16.7%, 재현율은 80%, F1은 0.276이다. 그런데 모두 정상이라 하면 정확도가 99%로 더 높지만, 불량을 하나도 찾지 못한다. 처음 질문의 첫째 답이 이것이다. 그러므로 불균형 자료에서는 정밀도와 재현율, PR 곡선, ROC-AUC(6.3절)를 함께 본다.</p>
+    <p>어느 지표를 앞세울지는 오류의 비용이 정한다. 놓치면 위험한 문제(질병 선별, 결함 검사)는 재현율을, 오경보가 비싼 문제(스팸이 아닌 메일을 지우기)는 정밀도를 우선한다. 그리고 확률 출력의 임계값을 옮겨 둘을 조절한다. 한편 회귀에서는 큰 오차에 민감한 평균 제곱 오차와 이상치에 덜 민감한 평균 절대 오차를 목적에 맞게 고른다. 처음 질문의 둘째 답이 이것이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "정확도 99%면 좋은 모델": 기준선(가장 흔한 클래스) 정확도와 비교해야 합니다. (2) "임계값은 늘 0.5": 비용과 사전 확률에 맞게 정합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>정확도 99%면 좋은 모델이라고 여기기 쉽다. 가장 흔한 부류만 답하는 기준선의 정확도와 비교해야 한다. 또 임계값은 늘 0.5라고 생각하기 쉬운데, 오류의 비용과 사전 확률에 맞게 정한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정밀도 TP/(TP + FP), 재현율 TP/(TP + FN), F1.</li>
-        <li>불균형에서는 정확도가 오해를 부름(예: 99% 대 95.8%).</li>
-        <li>비용 구조로 지표와 임계값 선택.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>정밀도는 TP/(TP + FP), 재현율은 TP/(TP + FN)이고 F1은 둘의 조화 평균이다. 불균형 자료에서는 정확도가 오해를 부른다(예제에서 99% 대 95.8%). 오류의 비용 구조로 지표와 임계값을 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>TP 30, FP 10의 정밀도는?
-          <details><summary>답</summary><p>75%.</p></details>
+          <details><summary>답</summary><p>75%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 임계값을 낮춰 TP 10, FP 100이 되었다면 재현율과 정밀도는?
-          <details><summary>답</summary><p>100%, 약 9.1%.</p></details>
+          <details><summary>답</summary><p>100%, 약 9.1%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>암 선별 검사에서 우선할 지표는?
-          <details><summary>답</summary><p>재현율(놓치는 환자를 줄이기), 이후 정밀 검사로 오경보를 거릅니다.</p></details>
+          <details><summary>답</summary><p>재현율(놓치는 환자를 줄이기), 이후 정밀 검사로 오경보를 거른다.</p></details>
         </li>
       </ol>
     </div>

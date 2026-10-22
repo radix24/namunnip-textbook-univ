@@ -8,58 +8,58 @@
 <article class="card q-card" id="text-e23-backprop" data-kind="본문" data-std="전전23-04-01">
   <header class="card-head"><span class="no"></span><h2>계산 그래프로 보는 역전파</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>연산을 노드로 나눈 계산 그래프에서 연쇄 법칙으로 기울기를 뒤에서부터 구한다.</li>
-        <li>뉴런 하나(선형, 시그모이드, 제곱 손실)의 기울기를 손으로 계산한다.</li>
-        <li>역전파의 비용이 순전파와 같은 차수임을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>연쇄 법칙(공통 미분), 로지스틱 회귀 기울기 (<a href="../20/05-01.html">전전20 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">매개변수가 수백만 개인 신경망을 경사하강으로 학습하려면 손실을 매개변수 하나하나로 미분해야 한다. 매개변수마다 따로 미분하면 계산이 끝없이 늘어날 텐데, 실제로는 순전파 한 번과 비슷한 비용으로 모든 기울기를 얻는다. 어떻게 그럴 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.1.1 계산 그래프와 역전파(개형). x = 2, w = 0.5, b = 1에서 순전파로 z = 2, a = σ(2) = 0.8808, L = ½(a − 1)² = 0.0071을 계산해 저장한다. 역전파로 ∂L/∂a = −0.1192, σ'(z) = 0.1050을 곱해 ∂L/∂z = −0.0125, ∂L/∂w = −0.0250, ∂L/∂b = −0.0125를 얻는다">
+        <defs><marker id="ah-e23bp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="k" fill="none"><circle cx="80" cy="60" r="20"/><circle cx="80" cy="130" r="20"/><circle cx="200" cy="90" r="24"/><circle cx="320" cy="90" r="24"/><circle cx="440" cy="90" r="24"/></g>
+        <g marker-end="url(#ah-e23bp)" class="a" stroke-width="2"><line x1="100" y1="66" x2="176" y2="84"/><line x1="100" y1="124" x2="176" y2="96"/><line x1="224" y1="90" x2="296" y2="90"/><line x1="344" y1="90" x2="416" y2="90"/></g>
+        <g marker-end="url(#ah-e23bp)" class="d dsh" stroke-width="2"><path d="M416 110 C380 140, 360 140, 340 112" fill="none"/><path d="M296 110 C260 140, 240 140, 220 112" fill="none"/></g>
+        <g class="s" text-anchor="middle"><text x="80" y="65">w</text><text x="80" y="135">b</text><text x="200" y="95">z</text><text x="320" y="95">a</text><text x="440" y="95">L</text></g>
+        <g class="s"><text x="180" y="50" class="ta">z = wx + b = 2</text><text x="300" y="50" class="ta">a = 0.8808</text><text x="420" y="50" class="ta">L = 0.0071</text><text x="360" y="160" class="td">×(a − y)</text><text x="240" y="160" class="td">×σ'(z) = 0.105</text><text x="40" y="186" class="td">∂L/∂w = −0.0250, ∂L/∂b = −0.0125</text></g>
+      </svg>
+      <figcaption>그림 1. 순전파에서 각 노드의 값을 저장해 두면, 출력에서부터 국소 미분을 차례로 곱해 내려오는 것만으로 모든 매개변수의 기울기를 한 번에 얻는다(예제 4.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연쇄 법칙(공통 미분), 로지스틱 회귀 기울기(<a href="../20/05-01.html">전전20 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.1.1</span>연쇄 법칙을 그래프로</h3>
-    <p>\(z = wx + b\), \(a = \sigma(z)\), \(L = \frac12(a - y)^2\). 순전파로 z, a, L을 계산해 저장한 뒤, 뒤에서부터 국소 미분을 곱해 갑니다.</p>
-    \[ \frac{\partial L}{\partial a} = a - y,\quad \frac{\partial L}{\partial z} = \frac{\partial L}{\partial a}\sigma'(z) = (a - y)a(1 - a),\quad \frac{\partial L}{\partial w} = \frac{\partial L}{\partial z}x,\quad \frac{\partial L}{\partial b} = \frac{\partial L}{\partial z}. \]
+    <p>신경망의 계산을 덧셈, 곱셈, 활성 함수 같은 작은 연산의 그래프로 그린다(그림 1). 예를 들어 \(z = wx + b\), \(a = \sigma(z)\), \(L = \frac12(a - y)^2\)이다. 먼저 순전파로 z, a, L을 계산해 저장한다. 그런 뒤 뒤에서부터 각 연산의 국소 미분을 곱해 가면 연쇄 법칙이 그대로 실행된다.</p>
+    <div class="tb-env thm">
+      <span class="lb">한 뉴런의 역전파</span>
+      <p>\[ \frac{\partial L}{\partial a} = a - y,\quad \frac{\partial L}{\partial z} = (a - y)a(1 - a) \]</p>
+      <p>\[ \frac{\partial L}{\partial w} = \frac{\partial L}{\partial z}x,\quad \frac{\partial L}{\partial b} = \frac{\partial L}{\partial z} \]</p>
+    </div>
     <div class="tb-env ex">
       <span class="lb">예제 4.1.1</span>
       <p>x = 2, y = 1, w = 0.5, b = 1에서 L과 ∂L/∂w, ∂L/∂b를 구하라.</p>
     </div>
-    <p><i>풀이.</i> z = 2, a = σ(2) = 0.8808, L = ½(0.1192)² = 0.00710. ∂L/∂a = −0.1192, σ' = a(1 − a) = 0.1050, ∂L/∂z = −0.01252, ∂L/∂w = −0.02503, ∂L/∂b = −0.01252. 음수라 w, b를 키우면 손실이 줄어듭니다.</p>
-    <p>층이 많아도 같은 방식입니다. 한 노드에서 여러 갈래로 나간 값은 돌아오는 기울기를 더합니다. 순전파의 중간값을 저장해 다시 쓰므로 전체 비용이 순전파의 몇 배 정도이고, 이것이 수백만 개 매개변수를 학습할 수 있는 이유입니다.</p>
+    <p><i>풀이.</i> z = 2이고 a = σ(2) = 0.8808이므로 L = ½(0.1192)² = 0.00710이다. 거꾸로 내려오면 ∂L/∂a = −0.1192, σ' = a(1 − a) = 0.1050이므로 ∂L/∂z = −0.01252이다. 따라서 ∂L/∂w = −0.02503, ∂L/∂b = −0.01252이다. 즉 둘 다 음수이므로 w와 b를 키우면 손실이 줄어든다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "역전파는 학습 알고리즘이다": 기울기를 계산하는 방법이며, 갱신은 경사하강(또는 Adam)이 합니다. (2) "시그모이드를 깊게 쌓아도 기울기가 잘 전달된다": σ' ≤ 0.25가 곱해져 기울기가 사라질 수 있어 ReLU 등을 씁니다.</div>
+    <p>층이 많아도 방법은 같다. 다만 한 노드에서 여러 갈래로 나간 값은, 돌아오는 기울기들을 더한다. 그리고 순전파의 중간값을 저장해 다시 쓰므로, 전체 비용이 순전파의 몇 배 수준에 그친다. 처음 질문의 답이 이것이며, 수백만 개 매개변수를 학습할 수 있는 이유이다.</p>
+    <p>그 대신 메모리가 든다. 역전파에 쓸 중간값을 모두 저장해야 하기 때문이다. 그래서 큰 모델을 학습할 때는 일부 중간값만 저장하고 필요할 때 다시 계산하는 방법으로 메모리와 계산을 맞바꾸기도 한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>순전파로 중간값 저장, 역방향으로 국소 미분 곱.</li>
-        <li>예: ∂L/∂w = −0.0250, ∂L/∂b = −0.0125.</li>
-        <li>갈래가 합쳐지면 기울기를 더한다. 비용은 순전파 수준.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>역전파를 학습 알고리즘 그 자체로 여기기 쉽다. 역전파는 기울기를 계산하는 방법이며, 매개변수 갱신은 경사하강이나 Adam이 한다. 또 시그모이드를 깊게 쌓아도 기울기가 잘 전달된다고 생각하기 쉬운데, 층마다 σ' ≤ 0.25가 곱해져 기울기가 사라질 수 있다. 그래서 ReLU 같은 활성 함수를 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>역전파는 순전파로 중간값을 저장한 뒤, 역방향으로 국소 미분을 곱해 간다. 예제에서 ∂L/∂w = −0.0250, ∂L/∂b = −0.0125이다. 갈래가 합쳐지면 기울기를 더하며, 비용은 순전파 수준이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>σ(0)에서 σ'(0)은?
-          <details><summary>답</summary><p>0.25.</p></details>
+          <details><summary>답</summary><p>0.25이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 y = 0이면 ∂L/∂b는?
-          <details><summary>답</summary><p>0.8808 × 0.1050 ≈ 0.0925.</p></details>
+          <details><summary>답</summary><p>0.8808 × 0.1050 ≈ 0.0925이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>ReLU의 기울기는?
-          <details><summary>답</summary><p>z &gt; 0이면 1, z &lt; 0이면 0.</p></details>
+          <details><summary>답</summary><p>z &gt; 0이면 1, z &lt; 0이면 0이다.</p></details>
         </li>
       </ol>
     </div>

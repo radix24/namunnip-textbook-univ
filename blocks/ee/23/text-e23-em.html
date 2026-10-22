@@ -8,21 +8,29 @@
 <article class="card q-card" id="text-e23-em" data-kind="본문" data-std="전전23-05-03">
   <header class="card-head"><span class="no"></span><h2>EM 알고리즘 한 단계 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가우스 혼합의 E 단계(책임도)와 M 단계(평균 갱신)를 손으로 계산한다.</li>
-        <li>반복할수록 로그 가능도가 줄지 않음을 안다.</li>
-        <li>k-평균과의 차이를 수치로 본다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>k-평균과 GMM (<a href="05-01.html">5.1절</a>), Bayes 정리.</li>
-      </ul>
-    </div>
+    <p class="q-ask">두 종류의 부품이 섞인 상자에서 무게만 재었다. 어느 부품이 어느 종류인지 알면 종류별 평균 무게를 바로 구할 수 있고, 평균 무게를 알면 각 부품의 종류를 짐작할 수 있다. 그런데 둘 다 모른다면? 서로를 기다리는 이 두 문제를 어떻게 함께 풀까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 EM 한 단계(개형). 점 1, 2, 4, 5와 두 성분(평균 1.5, 4.5, 분산 1)에서 E 단계는 각 점의 성분 1 책임도를 0.9975, 0.9526, 0.0474, 0.0025로 계산하고, M 단계는 책임도로 가중한 평균을 1.5524, 4.4476으로 갱신한다. k-평균이었다면 0/1로 나눠 1.5, 4.5에서 바로 멈춘다">
+        <line x1="60" y1="150" x2="500" y2="150" class="ax"/>
+        <path d="M60 148 C100 140, 120 40, 150 40 S200 140, 240 148" class="a" fill="none" stroke-width="2"/>
+        <path d="M280 148 C320 140, 340 40, 370 40 S420 140, 460 148" class="b" fill="none" stroke-width="2"/>
+        <g class="fk"><circle cx="120" cy="150" r="5"/><circle cx="180" cy="150" r="5"/><circle cx="300" cy="150" r="5"/><circle cx="360" cy="150" r="5"/></g>
+        <g class="s" text-anchor="middle"><text x="120" y="170">1</text><text x="180" y="170">2</text><text x="300" y="170">4</text><text x="360" y="170">5</text><text x="180" y="190" class="td">책임도 0.9526</text></g>
+        <g class="s"><text x="100" y="30" class="ta">성분 1, μ 1.5 → 1.5524</text><text x="320" y="30" class="tb">성분 2, μ 4.5 → 4.4476</text></g>
+      </svg>
+      <figcaption>그림 1. 현재 성분 분포로 각 점이 어느 성분에서 왔을지 확률을 나눠 주고, 그 확률로 가중해 성분의 평균을 다시 구하는 일을 번갈아 하면, 두 미지수가 서로를 고쳐 가며 함께 수렴한다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>k-평균과 GMM(<a href="05-01.html">5.1절</a>), Bayes 정리를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>부드러운 할당</h3>
-    <p>E 단계: 점 x가 성분 k에서 왔을 사후 확률 \(r_k(x) \propto \pi_kN(x;\mu_k,\sigma_k^2)\). M 단계: \(\mu_k = \sum r_k(x)x/\sum r_k(x)\). 둘을 번갈아 하면 로그 가능도가 단조 증가합니다.</p><pre><code>import math
+    <p>EM 알고리즘은 숨은 변수(어느 성분에서 왔는가)와 매개변수(성분의 평균)를 번갈아 추정한다. 처음 질문의 답이 이것이다. E 단계에서는 현재 매개변수로 숨은 변수의 사후 확률, 곧 책임도를 계산하고, M 단계에서는 그 책임도로 가중해 매개변수를 다시 구한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">가우스 혼합의 EM</span>
+      <p>E 단계는 \(r_k(x) \propto \pi_kN(x;\mu_k,\sigma_k^2)\)이다.</p>
+      <p>M 단계는 \(\mu_k = \sum r_k(x)x/\sum r_k(x)\)이다. 둘을 번갈아 하면 로그 가능도가 단조 증가한다.</p>
+    </div>
+    <p>아래 코드는 점 네 개와 두 성분으로 이 과정을 세 번 되풀이한다.</p>
+    <pre><code>import math
 xs = [1.0, 2.0, 4.0, 5.0]
 mu = [1.5, 4.5]; sig = 1.0; pi = [0.5, 0.5]
 N = lambda x, m: math.exp(-(x - m) ** 2 / (2 * sig ** 2))
@@ -31,7 +39,7 @@ for it in range(3):
     mu = [sum(ri * x for ri, x in zip(r, xs)) / sum(r),
           sum((1 - ri) * x for ri, x in zip(r, xs)) / sum(1 - ri for ri in r)]
     print(f"반복 {it + 1}: 책임도 {[round(v, 4) for v in r]}, 평균 {[round(m, 4) for m in mu]}")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>반복 1: 책임도 [0.9975, 0.9526, 0.0474, 0.0025], 평균 [1.5524, 4.4476]
 반복 2: 책임도 [0.997, 0.9476, 0.0524, 0.003], 평균 [1.5585, 4.4415]
 반복 3: 책임도 [0.9969, 0.947, 0.053, 0.0031], 평균 [1.5592, 4.4408]</code></pre>
@@ -39,37 +47,33 @@ for it in range(3):
       <span class="lb">예제 5.3.1</span>
       <p>위 첫 반복에서 x = 2의 책임도와 갱신된 평균은? k-평균이었다면?</p>
     </div>
-    <p><i>풀이.</i> x = 2: 0.9526(성분 1). 평균 (1.552, 4.448)로 처음(1.5, 4.5)보다 조금 서로 가까워졌습니다(가운데 점들이 반대 성분에도 조금 기여). k-평균은 0/1로 나눠 (1.5, 4.5)에서 바로 멈춥니다.</p>
+    <p><i>풀이.</i> x = 2의 성분 1 책임도는 0.9526이다. 그리고 평균은 (1.552, 4.448)로, 처음 (1.5, 4.5)보다 조금 서로 가까워졌다. 가운데 점들이 반대 성분에도 조금씩 기여하기 때문이다(그림 1). 반면 k-평균은 점을 0/1로 나누므로 (1.5, 4.5)에서 바로 멈춘다.</p>
+    <p>EM은 가우스 혼합만의 방법이 아니다. 숨은 상태를 가진 은닉 마르코프 모형, 빠진 값이 있는 자료의 추정처럼 "숨은 것을 알면 쉽게 풀리는" 문제라면 같은 두 단계로 푼다. 그러므로 EM은 특정 모형이 아니라 하나의 풀이 틀이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "EM은 전역 최적을 보장": 국소 최적이라 시작점에 따라 다릅니다. (2) "책임도는 0 아니면 1": 그것은 k-평균이고, EM은 확률로 나눕니다.</div>
+    <p>EM의 두 단계는 하나의 하한을 번갈아 키우는 것으로 볼 수 있다. 즉 E 단계는 현재 매개변수에서 로그 가능도에 꼭 맞는 하한을 만들고, M 단계는 그 하한을 매개변수에 대해 최대화한다. 따라서 매 반복에서 로그 가능도가 줄어들 수 없다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>E: r_k ∝ π_kN(x; μ_k, σ²).</li>
-        <li>M: μ_k = Σr x/Σr.</li>
-        <li>로그 가능도 단조 증가, 국소 최적.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>EM이 전역 최적을 보장한다고 여기기 쉽다. 로그 가능도가 늘어나기만 할 뿐 국소 최적에서 멈출 수 있어, 시작점에 따라 결과가 다르다. 또 책임도는 0 아니면 1이라고 생각하기 쉬운데, 그것은 k-평균이고 EM은 확률로 나눈다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>E 단계는 책임도 r_k ∝ π_kN(x; μ_k, σ²)를 계산한다. M 단계는 μ_k = Σr x/Σr로 평균을 갱신한다. 로그 가능도는 단조 증가하지만 국소 최적에서 멈출 수 있다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>두 성분이 같은 평균이면 책임도는(π 같음)?
-          <details><summary>답</summary><p>0.5씩.</p></details>
+          <details><summary>답</summary><p>0.5씩이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>책임도 (1, 1, 0, 0)이면 갱신 μ₁은(xs 1, 2, 4, 5)?
-          <details><summary>답</summary><p>1.5.</p></details>
+          <details><summary>답</summary><p>1.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>분산도 갱신하려면 M 단계 식은?
-          <details><summary>답</summary><p>σ_k² = Σr(x − μ_k)²/Σr.</p></details>
+          <details><summary>답</summary><p>σ_k² = Σr(x − μ_k)²/Σr이다.</p></details>
         </li>
       </ol>
     </div>

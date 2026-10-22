@@ -8,60 +8,59 @@
 <article class="card q-card" id="text-e23-l1l2" data-kind="본문" data-std="전전23-02-02">
   <header class="card-head"><span class="no"></span><h2>L1, L2 정규화의 효과 비교</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>L2는 가중치를 비율로 줄이고, L1은 일정량을 빼서 작은 가중치를 0으로 만드는 것을 1변수 예로 보인다.</li>
-        <li>L1의 희소성이 특징 선택에 쓰임을 안다.</li>
-        <li>두 정규화를 섞은 엘라스틱넷의 동기를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정규화 최소제곱 (<a href="../20/02-01.html">전전20 2.1절</a>, <a href="../20/05-02.html">5.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">특징이 수천 개인 회귀 모델을 만들었더니 모든 계수가 조금씩 0이 아닌 값을 가져, 어떤 특징이 중요한지 알 수 없었다. 벌점을 바꿨더니 대부분의 계수가 정확히 0이 되고 몇 개만 남았다. 같은 "계수를 작게 하라"는 벌점인데 왜 이렇게 다르게 동작할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 L1과 L2 정규화의 해(개형). 최소제곱 해가 a인 1변수 문제에서 L2 해는 a/(1 + λ)로 비율만큼 줄고, L1 해는 sign(a)max(|a| − λ, 0)으로 λ만큼 깎이며 |a| ≤ λ면 정확히 0이 된다. λ = 1에서 a = 3이면 L2 1.5, L1 2이고, a = 0.5면 L2 0.25, L1 0이다">
+        <line x1="60" y1="110" x2="460" y2="110" class="ax"/><line x1="260" y1="20" x2="260" y2="190" class="ax"/>
+        <path d="M60 160 L460 60" class="b" stroke-width="2.5"/>
+        <path d="M60 176 L210 110 H310 L460 44" class="a" stroke-width="2.5"/>
+        <path d="M60 190 L460 30" class="k dsh"/>
+        <g class="s"><text x="440" y="124">a</text><text x="266" y="30">w</text><text x="380" y="56" class="ta">L1, λ만큼 깎음</text><text x="380" y="96" class="tb">L2, 1/(1 + λ)배</text><text x="216" y="130" class="td">|a| ≤ λ → 0</text><text x="80" y="40">점선은 벌점 없음 (w = a)</text></g>
+      </svg>
+      <figcaption>그림 1. L2 벌점은 해를 원점 쪽으로 일정 비율만큼 끌어당기지만, L1 벌점은 일정한 양만큼 깎아 내므로 작은 계수는 0에 닿아 그대로 멈춘다(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정규화 최소제곱(<a href="../20/02-01.html">전전20 2.1절</a>, <a href="../20/05-02.html">5.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>1변수에서 보기</h3>
-    <p>최소제곱 해가 a인 가장 간단한 경우 \(\min_w \frac12(w - a)^2 + \text{벌점}\)을 풉니다.</p>
-    <ul>
-      <li><b>L2</b> (\(\frac\lambda2w^2\)): \(w = a/(1 + \lambda)\). 언제나 0이 아니고 비율로 줄어든다.</li>
-      <li><b>L1</b> (\(\lambda|w|\)): \(w = \text{sign}(a)\max(|a| - \lambda, 0)\)(연판정 임계). |a| ≤ λ면 정확히 0.</li>
-    </ul>
+    <p>최소제곱 해가 a인 가장 간단한 경우, \(\min_w \frac12(w - a)^2 + \text{벌점}\)을 풀어 두 벌점을 비교한다.</p>
+    <div class="tb-env thm">
+      <span class="lb">L2와 L1 정규화의 1변수 해</span>
+      <p>L2 벌점 \(\frac\lambda2w^2\)의 해는 \(w = a/(1 + \lambda)\)로, 언제나 0이 아니고 비율로 줄어든다.</p>
+      <p>L1 벌점 \(\lambda|w|\)의 해는 \(w = \text{sign}(a)\max(|a| - \lambda, 0)\)(연판정 임계)으로, |a| ≤ λ면 정확히 0이다.</p>
+    </div>
+    <p>즉 L2는 비율로 줄이고, L1은 일정한 양만큼 깎는다(그림 1). 처음 질문의 답이 이것이다. 그래서 L1을 쓰면 작은 계수들이 0이 되어 희소한 모델이 나온다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
       <p>λ = 1에서 a = 3, a = 0.5일 때 L1, L2 해는?</p>
     </div>
-    <p><i>풀이.</i> a = 3: L2 1.5, L1 2. a = 0.5: L2 0.25, L1 0. 큰 계수는 L1이 덜 줄이고, 작은 계수는 L1이 아예 없앱니다. 특징이 수천 개인데 일부만 의미 있을 때 L1(라쏘)이 중요한 특징만 남깁니다. 서로 비슷한 특징이 여럿이면 L1은 그중 하나만 고르는 경향이 있어, L2를 섞은 엘라스틱넷을 씁니다.</p>
+    <p><i>풀이.</i> a = 3이면 L2 해는 1.5, L1 해는 2이다. 그리고 a = 0.5이면 L2 해는 0.25, L1 해는 0이다. 즉 큰 계수는 L1이 덜 줄이고, 작은 계수는 L1이 아예 없앤다.</p>
+    <p>그러므로 특징이 수천 개인데 일부만 의미 있을 때 L1(라쏘)이 중요한 특징만 남긴다. 그런데 서로 비슷한 특징이 여럿이면 L1은 그 가운데 하나만 고르는 경향이 있다. 이때는 L2를 섞은 엘라스틱넷을 쓴다.</p>
+    <p>두 벌점의 차이는 2차원 그림으로도 볼 수 있다. 제곱 오차의 등고선이 L2 벌점의 원과 만나는 점은 대개 축 위에 있지 않지만, L1 벌점의 마름모와는 꼭짓점, 곧 한 좌표가 0인 점에서 만나기 쉽다. 차원이 높을수록 이런 꼭짓점과 모서리가 많아져 희소한 해가 더 흔해진다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "L2도 충분히 크면 0이 된다": 0에 가까워질 뿐 정확히 0은 아닙니다. (2) "특징의 단위는 상관없다": 정규화 벌점은 계수 크기에 걸리므로 특징을 표준화한 뒤 적용합니다.</div>
+    <p>실제 계산에서는 L1 문제를 좌표 하강법으로 푼다. 계수 하나만 남기고 나머지를 고정하면 위의 1변수 문제가 되므로, 각 계수에 연판정 임계를 번갈아 적용하면 된다. 따라서 1변수 해가 곧 라쏘 알고리즘의 핵심 단계이다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>L2: a/(1 + λ), 비율 축소.</li>
-        <li>L1: 연판정 임계, |a| ≤ λ면 0(희소).</li>
-        <li>특징 표준화 후 적용, 엘라스틱넷은 둘을 섞음.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>L2도 λ를 충분히 키우면 계수가 0이 된다고 여기기 쉽다. L2 해는 0에 가까워질 뿐 정확히 0이 되지는 않는다. 또 특징의 단위는 상관없다고 생각하기 쉬운데, 벌점은 계수 크기에 걸리므로 특징을 표준화한 뒤 적용해야 한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>L2 정규화의 해는 a/(1 + λ)로 비율만큼 준다. L1 정규화는 연판정 임계로, |a| ≤ λ면 0이 되어 희소한 해를 준다. 특징을 표준화한 뒤 적용하며, 엘라스틱넷은 둘을 섞는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>λ = 2, a = −5의 L1 해는?
-          <details><summary>답</summary><p>−3.</p></details>
+          <details><summary>답</summary><p>−3이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>λ = 2, a = −5의 L2 해는?
-          <details><summary>답</summary><p>−5/3 ≈ −1.67.</p></details>
+          <details><summary>답</summary><p>−5/3 ≈ −1.67이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>L1 벌점이 0에서 미분 불가능한 것이 왜 희소성을 만드는가?
-          <details><summary>답</summary><p>0에서 기울기가 [−λ, λ] 구간이라, 자료 쪽 기울기 |a|가 λ보다 작으면 0이 최적점이 되기 때문입니다.</p></details>
+          <details><summary>답</summary><p>0에서 기울기가 [−λ, λ] 구간이라, 자료 쪽 기울기 |a|가 λ보다 작으면 0이 최적점이 되기 때문이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,58 @@
 <article class="card q-card" id="text-e23-softmax" data-kind="본문" data-std="전전23-02-03">
   <header class="card-head"><span class="no"></span><h2>다중 분류: 소프트맥스와 교차 엔트로피</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>점수(logit)를 확률로 바꾸는 소프트맥스를 계산한다.</li>
-        <li>다중 분류 교차 엔트로피 손실과 기울기 p − y를 쓴다.</li>
-        <li>로지스틱 회귀가 두 클래스 특수 경우임을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>로지스틱 회귀 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">사진을 고양이, 개, 새 가운데 하나로 분류하는 신경망은 마지막에 클래스마다 점수 하나씩을 낸다. 이 점수는 음수일 수도, 아주 클 수도 있다. 점수를 합이 1인 확률로 바꾸려면 어떻게 할까? 그리고 그 확률로 무엇을 줄여야 신경망이 정답 쪽으로 학습할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 소프트맥스(개형). 점수 (2, 1, 0)을 지수 함수로 바꿔 합으로 나누면 확률 (0.665, 0.245, 0.090)이 된다. 정답이 클래스 0이면 손실은 −ln 0.665 = 0.408이고, 점수에 대한 기울기는 p − y = (−0.335, 0.245, 0.090)으로 정답 점수는 올리고 나머지는 내리는 방향이다">
+        <line x1="60" y1="170" x2="260" y2="170" class="ax"/><line x1="320" y1="170" x2="520" y2="170" class="ax"/>
+        <rect x="80" y="70" width="40" height="100" class="la"/><rect x="140" y="120" width="40" height="50" class="la"/><rect x="200" y="168" width="40" height="2" class="la"/>
+        <rect x="340" y="37" width="40" height="133" class="lb"/><rect x="400" y="121" width="40" height="49" class="lb"/><rect x="460" y="152" width="40" height="18" class="lb"/>
+        <g class="s" text-anchor="middle"><text x="100" y="64" class="ta">2</text><text x="160" y="114" class="ta">1</text><text x="220" y="160" class="ta">0</text><text x="360" y="30" class="tb">0.665</text><text x="420" y="114" class="tb">0.245</text><text x="480" y="146" class="tb">0.090</text><text x="160" y="190">점수 z</text><text x="420" y="190">확률 p</text></g>
+        <text x="270" y="100" class="s">e^z / Σe^z</text><text x="330" y="60" class="td">손실 0.408</text>
+      </svg>
+      <figcaption>그림 1. 점수를 지수 함수로 바꾸면 모두 양수가 되고 큰 점수가 더 크게 벌어지며, 합으로 나누면 확률이 되므로 정답 확률의 로그를 손실로 삼아 학습할 수 있다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>로지스틱 회귀(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>점수를 확률로</h3>
-    <p>\(p_k = e^{z_k}/\sum_je^{z_j}\). 정답 클래스 c의 손실 \(-\log p_c\), 점수에 대한 기울기는 \(p - y\)(y는 원-핫)로 간단합니다.</p>
+    <p>소프트맥스는 점수 z를 지수 함수로 바꾼 뒤 합으로 나눠 확률로 만든다(그림 1). 처음 질문의 첫째 답이 이것이다. 그리고 정답 클래스 c의 확률에 음의 로그를 취한 교차 엔트로피를 손실로 쓴다. 처음 질문의 둘째 답이 이것이며, 이것은 2.1절의 최대가능도를 여러 클래스로 넓힌 것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">소프트맥스와 교차 엔트로피</span>
+      <p>\[ p_k = \frac{e^{z_k}}{\sum_je^{z_j}}, \qquad L = -\log p_c \]</p>
+      <p>점수에 대한 기울기는 \(\partial L/\partial z = p - y\)이다(y는 정답만 1인 원-핫 벡터).</p>
+    </div>
+    <p>기울기가 예측 확률과 정답의 차이로 간단히 나오는 것이 이 조합의 장점이다. 즉 정답 클래스의 점수는 확률이 1에 모자란 만큼 올리고, 다른 클래스의 점수는 그 확률만큼 내린다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
       <p>점수 (2, 1, 0), 정답 클래스 0. 확률, 손실, 기울기는?</p>
     </div>
-    <p><i>풀이.</i> e² = 7.389, e = 2.718, 1 → 합 11.107 → p = (0.665, 0.245, 0.090). 손실 −ln0.665 = 0.408. 기울기 (−0.335, 0.245, 0.090): 정답 점수는 올리고 나머지는 내리는 방향입니다.</p>
+    <p><i>풀이.</i> e² = 7.389, e = 2.718, e⁰ = 1이므로 합은 11.107이고, p = (0.665, 0.245, 0.090)이다. 따라서 손실은 −ln 0.665 = 0.408이다. 또 기울기는 (−0.335, 0.245, 0.090)으로, 정답 점수는 올리고 나머지는 내리는 방향이다.</p>
+    <p>클래스가 둘이면 소프트맥스는 로지스틱 회귀의 시그모이드와 같아진다. 두 점수의 차이 \(z_1 - z_0\)만 확률에 영향을 주기 때문이다. 그러므로 소프트맥스 분류기는 로지스틱 회귀의 다중 클래스 판이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "점수가 가장 큰 클래스의 확률은 1": 다른 점수에 따라 달라집니다. (2) "소프트맥스는 점수에 상수를 더하면 바뀐다": 모든 점수에 같은 수를 더해도 확률은 같습니다(계산 안정화에 씀).</div>
+    <p>또 소프트맥스의 점수를 온도 T로 나누면 분포의 날카로움을 조절할 수 있다. T가 작으면 가장 큰 점수에 확률이 몰리고, T가 크면 확률이 고르게 퍼진다. 그래서 언어 모델의 문장 생성이나 지식 증류에서 이 온도를 손잡이로 쓴다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>p_k = e^{z_k}/Σe^{z_j}.</li>
-        <li>손실 −log p_c, 기울기 p − y.</li>
-        <li>예: (2, 1, 0) → 0.665, 손실 0.408.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>점수가 가장 큰 클래스의 확률은 1이라고 여기기 쉽다. 그 확률은 다른 점수들과의 차이에 따라 달라진다. 또 모든 점수에 같은 상수를 더하면 확률이 바뀐다고 생각하기 쉬운데, 분자와 분모에 같은 인수가 곱해져 확률은 그대로이다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>소프트맥스는 p_k = e^{z_k}/Σe^{z_j}로 점수를 확률로 바꾼다. 손실은 −log p_c이고, 기울기는 p − y이다. 점수 (2, 1, 0), 정답 0이면 확률 0.665, 손실 0.408이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>점수 (0, 0)의 확률은?
-          <details><summary>답</summary><p>(0.5, 0.5).</p></details>
+          <details><summary>답</summary><p>(0.5, 0.5)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>점수 (3, 3, 3)의 정답 손실은?
-          <details><summary>답</summary><p>ln3 ≈ 1.099.</p></details>
+          <details><summary>답</summary><p>ln3 ≈ 1.099이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>점수 (1000, 999)를 그대로 계산하면 생기는 문제와 대책은?
-          <details><summary>답</summary><p>e¹⁰⁰⁰이 넘쳐(overflow) 최댓값을 빼고 계산합니다.</p></details>
+          <details><summary>답</summary><p>e¹⁰⁰⁰이 넘쳐(overflow) 최댓값을 빼고 계산한다.</p></details>
         </li>
       </ol>
     </div>

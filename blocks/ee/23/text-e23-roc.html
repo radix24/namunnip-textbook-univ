@@ -8,21 +8,28 @@
 <article class="card q-card" id="text-e23-roc" data-kind="본문" data-std="전전23-06-03">
   <header class="card-head"><span class="no"></span><h2>ROC 곡선과 AUC</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>판정 문턱을 바꾸며 참 양성률과 거짓 양성률의 곡선(ROC)을 그린다.</li>
-        <li>곡선 아래 넓이(AUC)를 계산하고 해석한다.</li>
-        <li>불균형 자료에서 PR 곡선과 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>평가 지표 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">분류기는 보통 0과 1 사이의 점수를 내고, 그 점수가 문턱을 넘으면 양성이라고 판정한다. 그런데 문턱을 바꾸면 정밀도와 재현율이 모두 달라진다. 문턱 하나를 정하기 전에, 모델이 양성과 음성을 얼마나 잘 가려내는지 한 숫자로 요약할 수는 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.3.1 ROC 곡선(개형). 점수 10개의 문턱을 높은 값에서 낮은 값으로 내리며 (FPR, TPR)을 찍으면 계단 모양 곡선이 된다. 곡선 아래 넓이 AUC는 0.8이고, 이는 양성 점수가 음성 점수보다 높은 쌍의 비율 0.8과 같다">
+        <line x1="80" y1="170" x2="260" y2="170" class="ax"/><line x1="80" y1="170" x2="80" y2="10" class="ax"/>
+        <path d="M80 170 V106 H116 V42 H152 V10 H260" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 170 L260 10" class="k dsh"/>
+        <path d="M80 170 V106 H116 V42 H152 V10 H260 V170 Z" class="la" opacity="0.5"/>
+        <g class="s"><text x="160" y="186">FPR</text><text x="40" y="90">TPR</text><text x="170" y="120" class="ta">AUC 0.8</text><text x="190" y="160">대각선 = 무작위</text></g>
+        <g class="s"><text x="300" y="60">문턱을 내리며 (FPR, TPR) 기록</text><text x="300" y="90" class="ta">AUC = P(양성 점수 &gt; 음성 점수)</text><text x="300" y="120" class="td">쌍 비율 0.8과 일치</text></g>
+      </svg>
+      <figcaption>그림 1. 문턱을 내릴 때마다 양성은 참 양성으로, 음성은 거짓 양성으로 넘어오므로 그 경로가 ROC 곡선이 되고, 곡선 아래 넓이는 양성이 음성보다 높은 점수를 받는 비율과 같다(예제 6.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>평가 지표(<a href="06-01.html">6.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>문턱을 훑기</h3>
-    <p>모델이 낸 점수의 문턱을 높은 값에서 낮은 값으로 내리며 (FPR, TPR)을 찍으면 ROC 곡선입니다. AUC는 무작위 양성 하나의 점수가 무작위 음성 하나보다 높을 확률과 같습니다(무작위 0.5, 완벽 1).</p><pre><code>scores = [0.95, 0.9, 0.8, 0.7, 0.6, 0.55, 0.4, 0.3, 0.2, 0.1]
+    <p>모델이 낸 점수의 문턱을 높은 값에서 낮은 값으로 내리며, 거짓 양성 비율(FPR)과 참 양성 비율(TPR)을 점으로 찍으면 ROC 곡선이 된다(그림 1). 그리고 곡선 아래 넓이를 AUC라 한다. 처음 질문의 답이 이것이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">AUC의 뜻</span>
+      <p>AUC는 무작위로 고른 양성 하나의 점수가 무작위로 고른 음성 하나의 점수보다 높을 확률과 같다.</p>
+    </div>
+    <p>즉 AUC는 문턱을 정하지 않고 모델의 순위 매기는 능력만 요약한다. 아래 코드는 점수 10개로 ROC 점과 AUC를 계산하고, 양성·음성 쌍의 비율과 비교한다.</p>
+    <pre><code>scores = [0.95, 0.9, 0.8, 0.7, 0.6, 0.55, 0.4, 0.3, 0.2, 0.1]
 labels = [1,    1,   0,   1,   1,   0,    0,   1,   0,   0]
 P, N = sum(labels), len(labels) - sum(labels)
 pts, tp, fp = [(0.0, 0.0)], 0, 0
@@ -33,44 +40,42 @@ auc = sum((x2 - x1) * (y1 + y2) / 2 for (x1, y1), (x2, y2) in zip(pts, pts[1:]))
 pairs = sum(1 for sp, yp in zip(scores, labels) if yp for sn, yn in zip(scores, labels) if not yn and sp &gt; sn)
 print("ROC 점(FPR, TPR):", [(round(a, 2), round(b, 2)) for a, b in pts])
 print(f"AUC(사다리꼴) {auc:.3f}, 양성&gt;음성 쌍 비율 {pairs / (P * N):.3f}")</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과(Python 3.12에서 실제 실행)는 다음과 같다.</p>
 <pre><code>ROC 점(FPR, TPR): [(0.0, 0.0), (0.0, 0.2), (0.0, 0.4), (0.2, 0.4), (0.2, 0.6), (0.2, 0.8), (0.4, 0.8), (0.6, 0.8), (0.6, 1.0), (0.8, 1.0), (1.0, 1.0)]
 AUC(사다리꼴) 0.800, 양성&gt;음성 쌍 비율 0.800</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1</span>
       <p>위 결과의 AUC와 그 뜻은?</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 AUC 0.8과 '양성 점수가 음성보다 높은 쌍의 비율' 0.8이 같습니다. 무작위로 고른 양성·음성 쌍의 80%를 올바른 순서로 매깁니다. 문턱 하나의 정확도와 달리 문턱과 무관한 순위 능력을 요약합니다.</p>
+    <p><i>풀이.</i> 실행 결과에서 사다리꼴로 구한 AUC 0.8과, 양성 점수가 음성 점수보다 높은 쌍의 비율 0.8이 같다. 즉 무작위로 고른 양성·음성 쌍의 80%를 올바른 순서로 매긴다. 따라서 문턱 하나의 정확도와 달리, 문턱과 무관한 순위 능력을 요약한다.</p>
+    <p>그런데 실제 시스템은 결국 문턱 하나로 운영된다. 그러므로 AUC로 모델을 고른 뒤에는, 운영할 문턱에서의 정밀도와 재현율을 따로 확인하고 오류 비용(6.1절)에 맞춰 문턱을 정한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "AUC가 높으면 어떤 문턱에서도 좋다": 운영할 문턱 근처 성능은 따로 봐야 합니다. (2) "불균형 자료에도 ROC가 충분": 양성이 아주 드물면 PR 곡선이 차이를 더 잘 보여 줍니다.</div>
+    <p>AUC는 점수의 크기가 아니라 순서만 본다. 그래서 점수에 단조 증가 함수를 씌워도 AUC는 변하지 않으며, 점수가 잘 보정된 확률인지는 따로 확인해야 한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>문턱을 훑어 (FPR, TPR).</li>
-        <li>AUC = P(양성 점수 > 음성 점수).</li>
-        <li>예: 0.8. 불균형에는 PR 곡선.</li>
-      </ol>
-    </div>
+    <p>또 곡선의 모양 자체도 정보를 준다. 왼쪽 위로 가파르게 솟는 곡선은 높은 점수 몇 개만으로 양성을 많이 찾는다는 뜻이므로, 상위 일부만 검사하는 선별 작업에 알맞다. 따라서 같은 AUC라도 쓰임새에 따라 더 나은 곡선이 다를 수 있다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>AUC가 높으면 어떤 문턱에서도 좋다고 여기기 쉽다. AUC는 곡선 전체의 평균이라, 운영할 문턱 근처의 성능은 따로 봐야 한다. 또 불균형 자료에도 ROC만으로 충분하다고 생각하기 쉬운데, 양성이 아주 드물면 PR 곡선이 모델 사이의 차이를 더 잘 보여 준다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>ROC 곡선은 문턱을 훑어 (FPR, TPR)을 찍은 것이다. AUC는 양성 점수가 음성 점수보다 높을 확률이다. 예제의 AUC는 0.8이며, 불균형 자료에는 PR 곡선을 함께 본다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>무작위 점수의 AUC는?
-          <details><summary>답</summary><p>0.5.</p></details>
+          <details><summary>답</summary><p>0.5이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>모든 양성 점수가 모든 음성보다 높으면 AUC는?
-          <details><summary>답</summary><p>1.</p></details>
+          <details><summary>답</summary><p>1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>AUC 0.3이면?
-          <details><summary>답</summary><p>점수를 뒤집으면 0.7(방향이 반대).</p></details>
+          <details><summary>답</summary><p>점수를 뒤집으면 0.7(방향이 반대)이다.</p></details>
         </li>
       </ol>
     </div>
