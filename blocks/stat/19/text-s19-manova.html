@@ -8,61 +8,226 @@
 <article class="card q-card" id="text-s19-manova" data-kind="본문" data-std="응통19-02-02">
   <header class="card-head"><span class="no"></span><h2>다변량 분산분석</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>여러 집단의 평균벡터를 비교하는 MANOVA의 제곱합 행렬을 만든다.</li>
-        <li>윌크스 람다 등 검정통계량을 해석한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>호텔링 T² (<a href="02-01.html">2.1절</a>), 응통13 2.1절 일원배치.</li>
-      </ul>
-    </div>
-
-    <h3>분산분석을 행렬로</h3>
-    <p>세 가지 교수법이 국어·영어·수학 점수에 영향을 주는지 보려면 일원 분산분석을 세 번 하는 대신, 세 점수를 한 벡터로 보고 한 번에 검정합니다.</p>
+    <p class="q-ask">붓꽃 세 종의 꽃받침과 꽃잎 측정값 네 개가 다른지 알고 싶다. 측정값마다 일원 분산분석을 네 번 하면 다중 비교 문제가 생기고, 네 측정값이 서로 얽혀 있다는 정보도 버린다. 세 집단 이상의 평균벡터를 한 번에 비교하려면 분산분석을 어떻게 넓혀야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="붓꽃 150송이의 꽃잎 길이(cm)와 너비(cm) 산점도. setosa(주황)는 왼쪽 아래에 따로 모이고, versicolor(파랑)와 virginica(청록)는 오른쪽 위로 이어지며 조금 겹친다. 검은 +는 종별 평균벡터이다. 측정값 4개의 MANOVA에서 윌크스 람다는 0.023이다">
+        <line x1="60" y1="180" x2="340" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="80" y="195" text-anchor="middle" class="s">1</text>
+        <text x="120" y="195" text-anchor="middle" class="s">2</text>
+        <text x="160" y="195" text-anchor="middle" class="s">3</text>
+        <text x="200" y="195" text-anchor="middle" class="s">4</text>
+        <text x="240" y="195" text-anchor="middle" class="s">5</text>
+        <text x="280" y="195" text-anchor="middle" class="s">6</text>
+        <text x="320" y="195" text-anchor="middle" class="s">7</text>
+        <text x="55" y="178.3" text-anchor="end" class="s">0</text>
+        <text x="55" y="121.1" text-anchor="end" class="s">1</text>
+        <text x="55" y="64" text-anchor="end" class="s">2</text>
+        <text x="340" y="209" text-anchor="end" class="s">꽃잎 길이 (cm)</text>
+        <text x="66" y="24" class="s">꽃잎 너비 (cm)</text>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="108" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="168.6" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="168.6" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="84" cy="168.6" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="88" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="108" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="108" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="80" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="108" cy="145.7" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="116" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="168.6" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="88" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="168.6" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="92" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="140" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="116" cy="151.4" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="157.1" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="104" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="100" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="96" cy="162.9" r="2.4" class="fc" style="opacity:0.5"/>
+        <circle cx="228" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="236" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="200" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="224" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="228" cy="82.9" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="172" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="224" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="196" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="180" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="208" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="200" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="228" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="184" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="216" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="204" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="196" cy="111.4" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="232" cy="71.4" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="200" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="236" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="228" cy="105.7" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="212" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="216" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="232" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="240" cy="77.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="180" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="192" cy="111.4" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="188" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="196" cy="105.7" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="244" cy="82.9" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="220" cy="82.9" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="228" cy="88.6" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="216" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="204" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="200" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="216" cy="105.7" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="224" cy="94.3" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="200" cy="105.7" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="172" cy="117.1" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="208" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="208" cy="105.7" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="208" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="212" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="160" cy="111.4" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="204" cy="100" r="2.4" class="fa" style="opacity:0.5"/>
+        <circle cx="280" cy="31.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="65.7" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="276" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="272" cy="48.6" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="304" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="220" cy="77.1" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="292" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="272" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="284" cy="31.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="252" cy="65.7" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="260" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="240" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="37.1" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="252" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="260" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="308" cy="48.6" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="316" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="240" cy="88.6" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="268" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="236" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="308" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="236" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="268" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="280" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="232" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="236" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="272" cy="82.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="284" cy="65.7" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="296" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="48.6" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="88.6" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="94.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="284" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="37.1" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="260" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="232" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="256" cy="54.3" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="264" cy="37.1" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="65.7" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="276" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="268" cy="31.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="248" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="240" cy="65.7" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="248" cy="60" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="256" cy="42.9" r="2.4" class="fb" style="opacity:0.5"/>
+        <circle cx="244" cy="71.4" r="2.4" class="fb" style="opacity:0.5"/>
+        <path d="M91.5 160.2 L105.5 160.2 M98.5 153.2 L98.5 167.2" class="k" style="stroke-width:2.5"/>
+        <path d="M203.4 98.5 L217.4 98.5 M210.4 91.5 L210.4 105.5" class="k" style="stroke-width:2.5"/>
+        <path d="M255.1 58.5 L269.1 58.5 M262.1 51.5 L262.1 65.5" class="k" style="stroke-width:2.5"/>
+        <text x="355" y="44" class="s tc">setosa</text><text x="355" y="62" class="s ta">versicolor</text><text x="355" y="80" class="s tb">virginica</text><text x="355" y="112" class="s">+는 종별 평균벡터</text><text x="355" y="144" class="s">측정값 4개의 MANOVA</text><text x="355" y="160" class="s">윌크스 람다 0.023</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.2.1의 세 종. 종별 평균벡터(+)가 크게 떨어져 있어, 측정값 4개의 MANOVA에서 윌크스 람다가 0.023으로 0에 가깝다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>호텔링 T²(<a href="02-01.html">2.1절</a>)와 일원배치(응통13 2.1절)를 쓴다.</div>
+    <p>처음 질문의 답은 다변량 분산분석(MANOVA)이다. 일원 분산분석의 제곱합을 제곱합 행렬로 바꾸고, 집단 간 행렬과 집단 내 행렬의 비를 고유값으로 요약한다. 그러면 네 측정값을 한 벡터로 보고 한 번에 검정할 수 있다(그림 1).</p>
 
     <h3><span class="no">2.2.1</span>제곱합 행렬</h3>
-    <p>일원배치의 SSB, SSW를 행렬로 바꿉니다.</p>
-    <p class="q-term"><b>집단 간</b>: \(B = \sum_k n_k(\bar{\mathbf x}_k - \bar{\mathbf x})(\bar{\mathbf x}_k - \bar{\mathbf x})^\top\).</p>
-    <p class="q-term"><b>집단 내</b>: \(W = \sum_k\sum_i(\mathbf x_{ki} - \bar{\mathbf x}_k)(\mathbf x_{ki} - \bar{\mathbf x}_k)^\top\).</p>
-    <p>\(T = B + W\)(전체). 일변량에서는 \(F = \frac{SSB/(g-1)}{SSW/(N-g)}\)였지만 행렬은 나눌 수 없어, \(W^{-1}B\)의 고유값 \(\lambda_1, \lambda_2, \ldots\)로 요약합니다.</p>
+    <p>일원배치의 SSB와 SSW를 행렬로 바꾼다. 집단 간 행렬은 \(B = \sum_k n_k(\bar{\mathbf x}_k - \bar{\mathbf x})(\bar{\mathbf x}_k - \bar{\mathbf x})^\top\)이고, 집단 내 행렬은 \(W = \sum_k\sum_i(\mathbf x_{ki} - \bar{\mathbf x}_k)(\mathbf x_{ki} - \bar{\mathbf x}_k)^\top\)이며, 전체는 \(T = B + W\)이다. 그런데 일변량에서는 \(F = \frac{SSB/(g-1)}{SSW/(N-g)}\)처럼 나눌 수 있었지만 행렬은 나눌 수 없다. 그래서 \(W^{-1}B\)의 고유값 \(\lambda_1, \lambda_2, \ldots\)로 요약한다.</p>
 
     <h3><span class="no">2.2.2</span>검정통계량</h3>
+    <p>고유값을 요약하는 방법에 따라 검정통계량이 여럿이다(표 1). 각 통계량은 근사 F로 바꿔 p값을 얻는다.</p>
     <table class="tw">
-      <tr><th>이름</th><th>식</th></tr>
-      <tr><td>윌크스 람다</td><td>\(\Lambda = \dfrac{|W|}{|B + W|} = \prod\frac{1}{1 + \lambda_j}\) (작을수록 차이 큼)</td></tr>
-      <tr><td>필라이 대각합</td><td>\(\sum\frac{\lambda_j}{1 + \lambda_j}\) (가정 위반에 가장 강건)</td></tr>
-      <tr><td>호텔링-롤리 대각합</td><td>\(\sum\lambda_j\)</td></tr>
-      <tr><td>로이 최대근</td><td>\(\lambda_1\)</td></tr>
+      <caption>표 1. MANOVA의 검정통계량</caption>
+      <thead><tr><th>이름</th><th>식</th><th>특징</th></tr></thead>
+      <tbody>
+        <tr><td>윌크스 람다</td><td>\(\Lambda = \dfrac{|W|}{|B + W|} = \prod\frac{1}{1 + \lambda_j}\)</td><td>작을수록 차이가 큼, 우도비 검정에서 나옴</td></tr>
+        <tr><td>필라이 대각합</td><td>\(\sum\frac{\lambda_j}{1 + \lambda_j}\)</td><td>가정 위반에 가장 강건</td></tr>
+        <tr><td>호텔링-롤리 대각합</td><td>\(\sum\lambda_j\)</td><td></td></tr>
+        <tr><td>로이 최대근</td><td>\(\lambda_1\)</td><td>차이가 한 방향에 몰릴 때 강력</td></tr>
+      </tbody>
     </table>
-    <p>각 통계량은 근사 F로 바꿔 p값을 얻습니다. 윌크스 람다는 우도비 검정에서 나오며, 일변량이면 \(SSW/SST = 1 - R^2\)입니다.</p>
-
+    <p>즉 윌크스 람다는 일변량이면 \(SSW/SST = 1 - R^2\)으로, 설명되지 않은 몫이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p><code>iris</code> 세 종의 측정값 4개를 MANOVA로 비교하세요.</p>
+      <p>iris 세 종의 측정값 4개를 MANOVA로 비교하라.</p>
     </div>
     <pre><code>fit &lt;- manova(cbind(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width) ~ Species, data = iris)
 summary(fit, test = "Wilks"); summary(fit, test = "Pillai")
 summary.aov(fit)       # 변수별 일원 분산분석</code></pre>
-    <p>윌크스 람다가 0.023으로 0에 가까워 세 종의 평균벡터가 크게 다릅니다. 변수별 분산분석으로 어느 측정값이 차이를 만드는지 봅니다.</p>
+    <p><i>풀이.</i> 윌크스 람다가 0.023으로 0에 가까워(근사 F = 199.1, 자유도 8, 288) 세 종의 평균벡터가 크게 다르다. 필라이 대각합도 1.19로 같은 결론이다(그림 1). 그다음 변수별 분산분석으로 어느 측정값이 차이를 만드는지 본다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>MANOVA는 다변량 정규와 집단 공분산이 같다는 가정을 쓴다. 집단 크기가 다르고 공분산도 다르면 결과가 왜곡될 수 있으므로, 그럴 때는 가정 위반에 가장 강건한 필라이 대각합을 보고한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(B\), \(W\) 제곱합 행렬, \(W^{-1}B\)의 고유값으로 요약.</li>
-        <li>윌크스, 필라이, 호텔링-롤리, 로이.</li>
-        <li>가정: 다변량 정규, 집단 공분산 동일.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>MANOVA는 제곱합을 행렬 \(B\)와 \(W\)로 바꾸고 \(W^{-1}B\)의 고유값으로 요약한다. 검정통계량은 윌크스, 필라이, 호텔링-롤리, 로이가 있으며, 다변량 정규와 공분산 동일을 가정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(W^{-1}B\)의 고유값이 4, 0.25이면 윌크스 람다는?
-          <details><summary>답</summary><p>\(\frac{1}{5}\cdot\frac{1}{1.25} = 0.16\).</p></details>
+        <li>\(W^{-1}B\)의 고유값이 4와 0.25이면 윌크스 람다는 얼마인가?
+          <details><summary>답</summary><p>\(\frac15 \cdot \frac{1}{1.25} = 0.16\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위 고유값으로 필라이 대각합과 로이 최대근을 구하라.
+          <details><summary>답</summary><p>필라이는 \(4/5 + 0.25/1.25 = 0.8 + 0.2 = 1.0\), 로이 최대근은 4이다.</p></details>
+        </li>
+        <li>집단이 2개이면 \(W^{-1}B\)의 0이 아닌 고유값은 몇 개이고, MANOVA는 무엇과 같아지는가?
+          <details><summary>답</summary><p>\(B\)의 계수가 1이라 고유값이 하나뿐이고, 네 통계량이 모두 이표본 호텔링 \(T^2\)(<a href="02-01.html">2.1절</a>)와 같은 검정이 된다.</p></details>
         </li>
       </ol>
     </div>
