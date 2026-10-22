@@ -8,37 +8,46 @@
 <article class="card q-card" id="text-e2-traversal" data-kind="본문" data-std="전전2-03-01">
   <header class="card-head"><span class="no"></span><h2>이진 트리와 네 가지 순회</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>트리의 용어(뿌리, 자식, 잎, 깊이, 높이)와 이진 트리의 노드 구조를 안다.</li>
-        <li>전위, 중위, 후위 순회를 재귀로, 레벨 순회를 큐로 구현한다.</li>
-        <li>순회 결과에서 트리를 되살리는 조건과, 각 순회의 쓰임(복사, 정렬된 출력, 삭제·수식 계산)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>재귀 (<a href="01-01.html">1.1절</a>), 연결 리스트의 노드 (<a href="02-01.html">2.1절</a>), 큐 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">폴더 하나의 전체 크기를 구하려면 하위 폴더의 크기를 먼저 알아야 하고, 목차를 출력하려면 제목을 먼저 쓰고 그 아래를 써야 한다. 같은 트리를 돌아다니는데 왜 방문하는 순서가 달라야 할까? 트리의 노드를 빠짐없이 한 번씩 방문하는 방법은 몇 가지일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 230" role="img" aria-label="키 50, 30, 70, 20, 40, 60, 80, 35로 된 이진 트리와 네 순회의 결과">
+        <path d="M150 30 L90 80 M150 30 L210 80 M90 80 L55 130 M90 80 L125 130 M125 130 L100 180 M210 80 L180 130 M210 80 L240 130" class="k"/>
+        <g text-anchor="middle" font-size="12">
+          <circle cx="150" cy="30" r="16" class="lc"/><circle cx="150" cy="30" r="16" class="c"/><text x="150" y="34">50</text>
+          <circle cx="90" cy="80" r="16" class="la"/><circle cx="90" cy="80" r="16" class="a"/><text x="90" y="84">30</text>
+          <circle cx="210" cy="80" r="16" class="la"/><circle cx="210" cy="80" r="16" class="a"/><text x="210" y="84">70</text>
+          <circle cx="55" cy="130" r="16" class="la"/><circle cx="55" cy="130" r="16" class="a"/><text x="55" y="134">20</text>
+          <circle cx="125" cy="130" r="16" class="la"/><circle cx="125" cy="130" r="16" class="a"/><text x="125" y="134">40</text>
+          <circle cx="180" cy="130" r="16" class="la"/><circle cx="180" cy="130" r="16" class="a"/><text x="180" y="134">60</text>
+          <circle cx="240" cy="130" r="16" class="la"/><circle cx="240" cy="130" r="16" class="a"/><text x="240" y="134">80</text>
+          <circle cx="100" cy="180" r="16" class="la"/><circle cx="100" cy="180" r="16" class="a"/><text x="100" y="184">35</text>
+        </g>
+        <g font-size="12">
+          <text x="290" y="50"><tspan class="tc">전위</tspan>  50 30 20 40 35 70 60 80</text>
+          <text x="290" y="85"><tspan class="tc">중위</tspan>  20 30 35 40 50 60 70 80</text>
+          <text x="290" y="120"><tspan class="tc">후위</tspan>  20 35 40 30 60 80 70 50</text>
+          <text x="290" y="155"><tspan class="tc">레벨</tspan>  50 30 70 20 40 60 80 35</text>
+        </g>
+        <text x="290" y="200" class="s">뿌리 50이 전위에서는 처음, 후위에서는 마지막에 온다</text>
+      </svg>
+      <figcaption>그림 1. 같은 트리라도 뿌리를 자식보다 먼저 보는 전위, 왼쪽과 오른쪽 사이에 보는 중위, 자식 뒤에 보는 후위, 층별로 보는 레벨 순회는 서로 다른 순서를 낸다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>재귀(<a href="01-01.html">1.1절</a>), 연결 리스트의 노드(<a href="02-01.html">2.1절</a>), 큐(<a href="02-03.html">2.3절</a>)를 쓴다.</div>
 
-    <h3><span class="no">3.1.1</span>트리 용어</h3>
-    <p class="q-term"><b>트리</b>: 노드와 간선으로 된 계층 구조. 맨 위 하나가 뿌리이고, 뿌리가 아닌 노드는 부모가 정확히 하나다(고리가 없다).</p>
-    <p class="q-term"><b>잎</b>: 자식이 없는 노드. <b>깊이</b>: 뿌리에서 그 노드까지의 간선 수. <b>높이</b>: 뿌리에서 가장 깊은 잎까지의 간선 수(빈 트리는 −1, 노드 하나는 0).</p>
-    <p class="q-term"><b>이진 트리</b>: 각 노드의 자식이 최대 둘(왼쪽, 오른쪽). 높이 h인 이진 트리의 노드는 최대 \(2^{h+1} - 1\)개이므로, n개 노드의 높이는 적어도 \(\lfloor\log_2n\rfloor\)이다.</p>
-    <p>파일 시스템의 폴더, 컴파일러가 만드는 수식 트리, 3.2절의 탐색 트리, 3.3절의 힙이 모두 트리입니다.</p>
+    <h3><span class="no">3.1.1</span>트리와 이진 트리</h3>
+    <p>트리는 노드와 간선으로 된 계층 구조이다. 맨 위 하나를 뿌리라 하고, 뿌리가 아닌 노드는 부모가 정확히 하나여서 고리가 생기지 않는다. 자식이 없는 노드는 잎이다. 뿌리에서 어떤 노드까지의 간선 수를 그 노드의 깊이라 하고, 뿌리에서 가장 깊은 잎까지의 간선 수를 트리의 높이라 한다. 노드 하나짜리 트리의 높이는 0이고, 빈 트리는 −1로 둔다.</p>
+    <p>이 가운데 각 노드의 자식이 왼쪽과 오른쪽 둘 이하인 트리를 이진 트리라 한다. 높이가 \(h\)인 이진 트리에는 노드가 많아야 \(1 + 2 + \cdots + 2^h = 2^{h+1} - 1\)개 들어간다. 거꾸로 말하면 노드 \(n\)개를 담는 이진 트리의 높이는 적어도 \(\lfloor\log_2 n\rfloor\)이다. 파일 시스템의 폴더, 컴파일러가 만드는 수식 트리, 3.2절의 탐색 트리, 3.3절의 힙이 모두 트리이다.</p>
 
     <h3><span class="no">3.1.2</span>깊이 우선 순회 세 가지</h3>
-    <p>"뿌리를 언제 방문하는가"로 나뉩니다. 각 노드에서 할 일은 (방문, 왼쪽 부분 트리, 오른쪽 부분 트리) 세 가지입니다.</p>
+    <p>각 노드에서 할 일은 세 가지이다. 자기 자신을 방문하고, 왼쪽 부분 트리를 돌고, 오른쪽 부분 트리를 돈다. 이 셋의 순서 가운데 "자기 자신을 언제 방문하는가"만 바꾸면 세 순회가 나온다.</p>
 <pre><code>def preorder(t):  return [] if t is None else [t.key] + preorder(t.left) + preorder(t.right)
 def inorder(t):   return [] if t is None else inorder(t.left) + [t.key] + inorder(t.right)
 def postorder(t): return [] if t is None else postorder(t.left) + postorder(t.right) + [t.key]</code></pre>
-    <p class="q-term"><b>전위</b>(뿌리 → 왼쪽 → 오른쪽): 트리 복사, 구조 출력(목차).</p>
-    <p class="q-term"><b>중위</b>(왼쪽 → 뿌리 → 오른쪽): 이진 탐색 트리에서 정렬된 순서(3.2절).</p>
-    <p class="q-term"><b>후위</b>(왼쪽 → 오른쪽 → 뿌리): 자식을 먼저 처리해야 하는 일. 폴더 크기 계산, 메모리 해제, 수식 트리의 계산(후위 표기, 2.2절).</p>
-    <p>각 노드를 한 번씩 방문하므로 모두 O(n)입니다. (위 코드는 리스트를 이어 붙이는 비용 때문에 실제로는 더 들 수 있지만, 결과 리스트에 append하는 방식으로 쓰면 O(n)입니다.)</p>
+    <p>그러면 자신을 먼저 방문하는 전위 순회는 위에서부터 구조를 그대로 옮기므로 트리 복사나 목차 출력에 쓴다. 자신을 왼쪽과 오른쪽 사이에 방문하는 중위 순회는 3.2절의 이진 탐색 트리에서 키를 정렬된 순서로 낸다. 자신을 마지막에 방문하는 후위 순회는 자식을 먼저 처리해야 하는 일에 맞는다. 처음 질문의 폴더 크기 계산이 그렇고, 메모리 해제와 수식 트리의 계산(2.2절의 후위 표기)도 그렇다.</p>
+    <p>따라서 세 순회 모두 노드를 한 번씩 방문하므로 \(O(n)\)이다. 다만 위 코드처럼 리스트를 이어 붙이면 그 비용이 더 들 수 있고, 결과 리스트 하나에 append하도록 쓰면 \(O(n)\)이 된다.</p>
 
     <h3><span class="no">3.1.3</span>레벨 순회</h3>
-    <p>깊이 0, 1, 2, … 순서로 위에서 아래, 왼쪽에서 오른쪽으로 방문합니다. 먼저 발견한 노드를 먼저 처리해야 하므로 큐를 씁니다.</p>
+    <p>한편 깊이 0, 1, 2, …의 순서로, 같은 층 안에서는 왼쪽부터 방문하는 순회도 있다. 이 때는 먼저 발견한 노드를 먼저 처리해야 하므로 2.3절의 큐를 쓴다.</p>
 <pre><code>from collections import deque
 def levelorder(t):
     out, q = [], deque([t] if t else [])
@@ -48,51 +57,38 @@ def levelorder(t):
         if n.left: q.append(n.left)
         if n.right: q.append(n.right)
     return out</code></pre>
+
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
-      <p>50, 30, 70, 20, 40, 60, 80, 35를 차례로 이진 탐색 트리에 넣어 만든 트리(3.2절 규칙)의 네 순회와 높이를 구하여라.</p>
+      <p>50, 30, 70, 20, 40, 60, 80, 35를 차례로 이진 탐색 트리에 넣어 만든 트리(3.2절의 규칙)의 네 순회와 높이를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 트리: 50(30(20, 40(35, ·)), 70(60, 80)). 실습 카드의 코드 결과와 같습니다.</p>
-    <ul>
-      <li>전위: 50, 30, 20, 40, 35, 70, 60, 80</li>
-      <li>중위: 20, 30, 35, 40, 50, 60, 70, 80(정렬됨)</li>
-      <li>후위: 20, 35, 40, 30, 60, 80, 70, 50(뿌리가 마지막)</li>
-      <li>레벨: 50, 30, 70, 20, 40, 60, 80, 35</li>
-      <li>높이: 3(50 → 30 → 40 → 35)</li>
-    </ul>
+    <p><i>풀이.</i> 트리는 그림 1과 같다. 이제 전위 순회는 뿌리 50에서 시작해 왼쪽 부분 트리를 다 돈 뒤 오른쪽으로 가므로 50, 30, 20, 40, 35, 70, 60, 80이다. 중위 순회는 20, 30, 35, 40, 50, 60, 70, 80으로 정렬되어 나온다. 후위 순회는 20, 35, 40, 30, 60, 80, 70, 50으로 뿌리가 마지막이다. 레벨 순회는 50, 30, 70, 20, 40, 60, 80, 35이다. 가장 긴 길은 50, 30, 40, 35이므로 높이는 3이다. 이 결과는 실습 카드의 코드 출력과 같다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "전위와 후위만 알면 트리를 되살릴 수 있다": 일반 이진 트리는 중위 순회가 함께 있어야 유일하게 정해집니다(전위 + 중위, 또는 후위 + 중위). (2) 레벨 순회를 스택으로 구현하면 깊이 우선(전위의 변형)이 됩니다. (3) 재귀 순회는 트리 높이만큼 호출이 쌓이므로, 한쪽으로 치우친 긴 트리(높이 수천 이상)에서 Python의 재귀 한도(기본 1000)를 넘을 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>전위와 후위 순회만 알면 트리를 되살릴 수 있다고 생각하기 쉽다. 일반 이진 트리는 중위 순회가 함께 있어야 하나로 정해진다(전위와 중위, 또는 후위와 중위). 또 레벨 순회를 큐 대신 스택으로 구현하면 깊이 우선 순회가 되어 버린다. 재귀 순회는 높이만큼 호출이 쌓이므로, 한쪽으로 길게 치우친 트리에서는 Python의 재귀 한도(기본 1000)를 넘을 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>이진 트리: 자식 최대 둘. n개 노드의 높이 ≥ \(\lfloor\log_2n\rfloor\).</li>
-        <li>전위(복사), 중위(정렬 출력), 후위(아래부터 계산·해제): 재귀, O(n).</li>
-        <li>레벨 순회: 큐, O(n).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>트리를 빠짐없이 도는 깊이 우선 순회는 자기 자신을 언제 방문하느냐에 따라 전위, 중위, 후위 세 가지이고, 여기에 큐로 층별로 도는 레벨 순회가 더해져 네 가지이다. 폴더 크기처럼 자식이 먼저 필요하면 후위를, 목차처럼 위부터 써야 하면 전위를 쓰며, 모두 \(O(n)\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>수식 트리 *( +(3, 4), −(5, 2) )의 후위 순회와 값은?
-          <details><summary>답</summary><p>3 4 + 5 2 − *, 값 21.</p></details>
+          <details><summary>답</summary><p><code>3 4 + 5 2 − *</code>이고 값은 21이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>전위 A B D E C F, 중위 D B E A F C인 이진 트리를 그려라.
-          <details><summary>답</summary><p>뿌리 A(전위 첫째). 중위에서 A 왼쪽 D B E, 오른쪽 F C. 왼쪽 부분: 전위 B D E → B(D, E). 오른쪽: 전위 C F, 중위 F C → C(F, ·).</p></details>
+          <details><summary>답</summary><p>전위의 첫째인 A가 뿌리이다. 중위에서 A 왼쪽은 D B E, 오른쪽은 F C이다. 왼쪽 부분은 전위 B D E이므로 B(D, E), 오른쪽은 전위 C F, 중위 F C이므로 C(F, ·)이다.</p></details>
         </li>
-        <li>트리의 노드 수와 높이를 재귀로 구하는 함수를 쓰라.
-          <details><summary>답</summary><p><code>size(t) = 0 if t is None else 1 + size(t.left) + size(t.right)</code>, <code>height(t) = -1 if t is None else 1 + max(height(t.left), height(t.right))</code>. 둘 다 후위 순회 꼴.</p></details>
+        <li>트리의 노드 수와 높이를 재귀로 구하는 함수를 써라.
+          <details><summary>답</summary><p><code>size(t) = 0 if t is None else 1 + size(t.left) + size(t.right)</code>, <code>height(t) = -1 if t is None else 1 + max(height(t.left), height(t.right))</code>. 둘 다 후위 순회 꼴이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
-        <li>재귀 없이 스택으로 중위 순회를 구현하는 방법을 설명하라.
-          <details><summary>답</summary><p>현재 노드에서 왼쪽으로 내려가며 모두 push. 더 내려갈 수 없으면 pop해 방문하고 그 노드의 오른쪽 자식으로 이동해 반복. 스택이 비고 현재 노드가 없으면 끝.</p></details>
+        <li>재귀 없이 스택으로 중위 순회를 구현하는 방법을 설명하여라.
+          <details><summary>답</summary><p>현재 노드에서 왼쪽으로 내려가며 모두 push한다. 더 내려갈 수 없으면 pop해 방문하고 그 노드의 오른쪽 자식으로 옮겨 되풀이한다. 스택이 비고 현재 노드도 없으면 끝난다.</p></details>
         </li>
       </ol>
     </div>

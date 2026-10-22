@@ -8,26 +8,34 @@
 <article class="card q-card" id="text-e2-dijkstra" data-kind="본문" data-std="전전2-07-03">
   <header class="card-head"><span class="no"></span><h2>Dijkstra 최단 경로와 음의 간선</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가중 그래프의 단일 출발점 최단 경로 문제와 완화(relaxation) 연산을 안다.</li>
-        <li>Dijkstra 알고리즘을 힙으로 구현하고 O((V + E) log V)임을 보인다.</li>
-        <li>음의 간선이 있으면 Dijkstra가 틀리는 이유를 반례로 보이고, Bellman-Ford가 해결하는 방식을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>BFS (<a href="07-01.html">7.1절</a>), 힙과 우선순위 큐 (<a href="03-03.html">3.3절</a>), Prim 알고리즘 (<a href="07-02.html">7.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">내비게이션은 도로마다 걸리는 시간이 다른 지도에서 가장 빠른 길을 찾는다. 간선 수가 적은 길이 가장 짧은 길은 아니므로 BFS로는 안 된다. 그렇다면 가까운 곳부터 하나씩 "이제 확정"이라고 못 박아 가는 방법은 언제 옳고, 언제 틀릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 220" role="img" aria-label="가중 그래프에서 Dijkstra가 A부터 C, B, D, E 순서로 거리를 확정하는 과정">
+        <path d="M80 110 L200 50 M80 110 L200 170 M200 50 L200 170 M200 50 L330 110 M200 170 L330 110 M330 110 L460 110" class="gd"/>
+        <path d="M80 110 L200 170 L200 50 L330 110 L460 110" class="c"/>
+        <g text-anchor="middle" font-size="12">
+          <text x="132" y="72" class="s">4</text><text x="132" y="152">1</text><text x="212" y="114">2</text><text x="270" y="70">5</text><text x="270" y="158" class="s">8</text><text x="395" y="102">3</text>
+        </g>
+        <g text-anchor="middle">
+          <circle cx="80" cy="110" r="18" class="lc"/><circle cx="80" cy="110" r="18" class="c"/><text x="80" y="115">A</text>
+          <circle cx="200" cy="50" r="18" class="lc"/><circle cx="200" cy="50" r="18" class="c"/><text x="200" y="55">B</text>
+          <circle cx="200" cy="170" r="18" class="lc"/><circle cx="200" cy="170" r="18" class="c"/><text x="200" y="175">C</text>
+          <circle cx="330" cy="110" r="18" class="lc"/><circle cx="330" cy="110" r="18" class="c"/><text x="330" y="115">D</text>
+          <circle cx="460" cy="110" r="18" class="lc"/><circle cx="460" cy="110" r="18" class="c"/><text x="460" y="115">E</text>
+        </g>
+        <g font-size="12" class="ta"><text x="72" y="148">0 ①</text><text x="222" y="40">3 ③</text><text x="222" y="200">1 ②</text><text x="344" y="146">8 ④</text><text x="474" y="146">11 ⑤</text></g>
+        <text x="280" y="214" text-anchor="middle" class="s">숫자는 확정된 거리, 동그라미는 확정 순서. A–B 4보다 A–C–B 3이 짧다</text>
+      </svg>
+      <figcaption>그림 1. Dijkstra는 아직 확정하지 않은 정점 가운데 거리 추정값이 가장 작은 것을 차례로 확정하며, 확정된 정점에서 나가는 간선으로 이웃의 추정값을 줄여 간다(주황은 최단 경로 트리).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>BFS(<a href="07-01.html">7.1절</a>), 힙과 우선순위 큐(<a href="03-03.html">3.3절</a>), Prim 알고리즘(<a href="07-02.html">7.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.3.1</span>완화</h3>
-    <p>BFS는 간선 무게가 모두 같을 때의 최단 거리입니다. 무게가 다르면 간선 수가 적다고 짧지 않습니다. 내비게이션, 네트워크 라우팅(OSPF), 칩 배선 경로 찾기가 이 문제입니다.</p>
-    <p class="q-term"><b>거리 추정값</b> d[v]: 지금까지 찾은 s → v 경로 중 가장 짧은 길이. 처음에는 d[s] = 0, 나머지 ∞.</p>
-    <p class="q-term"><b>완화</b>: 간선 u → v(무게 w)에 대해 d[u] + w &lt; d[v]이면 d[v]를 d[u] + w로 줄인다. 모든 최단 경로 알고리즘은 완화를 어떤 순서로 하느냐의 차이다.</p>
+    <p>BFS는 간선 무게가 모두 같을 때의 최단 거리를 준다. 무게가 다르면 간선 수가 적다고 짧지 않다. 그림 1에서 A–B는 간선 하나이지만 무게가 4이고, A–C–B는 간선 둘이지만 3이다. 내비게이션, 네트워크 라우팅(OSPF), 칩의 배선 경로 찾기가 모두 이 문제이다.</p>
+    <p>최단 경로 알고리즘은 모두 같은 연산 하나를 쓴다. 지금까지 찾은 \(s\)에서 \(v\)까지의 경로 가운데 가장 짧은 길이를 거리 추정값 \(d[v]\)라 하자. 처음에는 \(d[s] = 0\)이고 나머지는 무한대이다. 이제 간선 \(u \to v\)(무게 \(w\))에 대해 \(d[u] + w &lt; d[v]\)이면 \(d[v]\)를 \(d[u] + w\)로 줄인다. 이를 완화라 한다. 알고리즘들의 차이는 완화를 어떤 순서로 하느냐뿐이다.</p>
 
     <h3><span class="no">7.3.2</span>Dijkstra 알고리즘</h3>
-    <p>아직 확정하지 않은 정점 중 d가 가장 작은 것을 꺼내 확정하고, 그 정점에서 나가는 간선을 모두 완화합니다. 가장 작은 것을 꺼내는 데 힙을 씁니다.</p>
+    <p>Dijkstra 알고리즘은 아직 확정하지 않은 정점 가운데 \(d\)가 가장 작은 것을 꺼내 확정하고, 그 정점에서 나가는 간선을 모두 완화한다. 가장 작은 것을 꺼내는 데는 힙을 쓴다.</p>
 <pre><code>import heapq
 def dijkstra(adj, s):
     dist, pq = {s: 0}, [(0, s)]
@@ -40,55 +48,48 @@ def dijkstra(adj, s):
                 dist[v] = d + w
                 heapq.heappush(pq, (dist[v], v))
     return dist</code></pre>
-    <p>각 간선이 힙에 많아야 한 번 들어가므로 힙 연산 O(E)번, 각각 O(log E) = O(log V): 전체 O((V + E) log V).</p>
-    <p><b>왜 맞는가(무게가 모두 0 이상일 때).</b> 꺼낸 정점 u의 d[u]가 진짜 최단 거리보다 크다고 가정해 봅시다. 진짜 최단 경로는 어딘가에서 아직 확정하지 않은 정점 x를 처음 지나야 하고, x까지의 부분 경로는 확정된 정점들만 지나므로 d[x]는 이미 그 길이로 완화되어 있습니다. 무게가 음수가 아니면 x 다음 구간의 길이가 0 이상이라 d[x] ≤ 진짜 거리 &lt; d[u]인데, 그러면 u가 아니라 x가 먼저 꺼내졌어야 하므로 모순입니다.</p>
+    <p>각 간선은 힙에 많아야 한 번 들어가므로 힙 연산은 \(O(E)\)번이고, 각각 \(O(\log E) = O(\log V)\)이다. 따라서 전체는 \(O((V + E)\log V)\)이다.</p>
+    <p>그런데 꺼낸 순간 "확정"이라고 해도 되는 근거는 무엇일까? 무게가 모두 0 이상이라고 하자. 꺼낸 정점 \(u\)의 \(d[u]\)가 진짜 최단 거리보다 크다고 가정해 보자. 그러면 진짜 최단 경로는 어딘가에서 아직 확정되지 않은 정점 \(x\)를 처음 지나야 하고, \(x\)까지의 부분 경로는 확정된 정점만 지나므로 \(d[x]\)는 이미 그 길이로 완화되어 있다. 이 때 무게가 음수가 아니면 \(x\) 다음 구간의 길이가 0 이상이므로 \(d[x] \le\) 진짜 거리 \(&lt; d[u]\)이다. 그렇다면 \(u\)보다 \(x\)가 먼저 꺼내졌어야 하므로 모순이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 7.3.1</span>
-      <p>7.1·7.2절의 가중 그래프(A–B 4, A–C 1, B–C 2, B–D 5, C–D 8, D–E 3)에서 A로부터의 최단 거리를 구하라.</p>
+      <p>7.1·7.2절의 가중 그래프(A–B 4, A–C 1, B–C 2, B–D 5, C–D 8, D–E 3)에서 A로부터의 최단 거리를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> A(0) 확정 → C = 1, B = 4. C(1) 확정 → B = min(4, 1 + 2) = 3, D = 9. B(3) 확정 → D = min(9, 3 + 5) = 8. D(8) 확정 → E = 11. 결과 A 0, C 1, B 3, D 8, E 11. 간선 수로는 A–B가 한 번이지만 A–C–B(3)가 더 짧습니다.</p>
+    <p><i>풀이.</i> A(0)를 확정하면 C = 1, B = 4가 된다. 가장 작은 C(1)를 확정하면 B = min(4, 1 + 2) = 3, D = 9가 된다. 이어서 B(3)를 확정하면 D = min(9, 3 + 5) = 8이고, D(8)를 확정하면 E = 11이다. 결과는 A 0, C 1, B 3, D 8, E 11이며 그림 1과 같다. 간선 수로는 A–B가 한 번이지만 A–C–B가 3으로 더 짧다.</p>
 
     <h3><span class="no">7.3.3</span>음의 간선에서 실패하는 이유</h3>
     <div class="tb-env ex">
       <span class="lb">예제 7.3.2</span>
-      <p>방향 그래프 S → A(2), S → B(5), A → C(4), B → A(−4)에서 S로부터의 최단 거리를 구하라. 꺼낸 정점을 다시 고치지 않는 Dijkstra는 무엇을 내놓는가?</p>
+      <p>방향 그래프 S → A(2), S → B(5), A → C(4), B → A(−4)에서 S로부터의 최단 거리를 구하여라. 꺼낸 정점을 다시 고치지 않는 Dijkstra는 무엇을 내놓는가?</p>
     </div>
-    <p><i>풀이.</i> 진짜 최단 거리: A는 S → B → A로 5 − 4 = 1, C는 1 + 4 = 5. Dijkstra는 S를 꺼내 A = 2, B = 5로 둔 뒤, 가장 작은 A(2)를 확정하고 C = 6을 만듭니다. 그다음 C(6)보다 작은 B(5)를 꺼내 A를 1로 줄일 수 있지만 A는 이미 확정되어 고치지 않습니다. 결과 A 2, C 6으로 틀립니다. 위 증명의 "x 다음 구간 ≥ 0"이 음의 간선 때문에 깨진 것입니다.</p>
-    <p class="q-term"><b>Bellman-Ford</b>: 모든 간선의 완화를 V − 1번 되풀이한다. 최단 경로는 간선이 많아야 V − 1개이므로 음의 간선이 있어도 맞는다. O(VE). 한 번 더 했을 때 줄어드는 값이 있으면 음의 고리(돌수록 짧아지는 고리)가 있다는 뜻이다. 예제에 쓰면 A 1, C 5를 올바르게 얻습니다.</p>
+    <p><i>풀이.</i> 진짜 최단 거리는 A가 S → B → A로 \(5 - 4 = 1\), C가 \(1 + 4 = 5\)이다. 그런데 Dijkstra는 S를 꺼내 A = 2, B = 5로 둔 뒤, 가장 작은 A(2)를 확정하고 C = 6을 만든다. 다음에 B(5)를 꺼내면 A를 1로 줄일 수 있지만, A는 이미 확정되어 고치지 않는다. 그래서 A 2, C 6으로 틀린다. 위 증명의 "\(x\) 다음 구간의 길이는 0 이상"이 음의 간선 때문에 깨진 것이다. 처음 질문의 답이 이것이다. 확정은 무게가 0 이상일 때만 옳다.</p>
+    <p>음의 간선이 있으면 Bellman-Ford를 쓴다. 모든 간선의 완화를 \(V - 1\)번 되풀이하는 방법으로, 최단 경로는 간선을 많아야 \(V - 1\)개 지나므로 음의 간선이 있어도 맞는다. 비용은 \(O(VE)\)이다. 한 번 더 했을 때 줄어드는 값이 있으면 돌수록 짧아지는 음의 고리가 있다는 뜻이다. 이 예제에 쓰면 A 1, C 5를 올바르게 얻으며, 7.5절에서 자세히 다룬다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "음의 간선은 모든 무게에 상수를 더해 없애면 된다": 간선 수가 다른 경로마다 다른 양이 더해져 최단 경로가 바뀝니다(MST와 다른 점). (2) 힙에서 꺼낸 항목이 낡았는지(<code>d &gt; dist[u]</code>) 확인하지 않으면 같은 정점을 여러 번 처리합니다(결과는 맞아도 느려짐). (3) Dijkstra는 무가중 그래프에서도 맞지만 BFS(O(V + E))보다 느립니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>음의 간선은 모든 무게에 같은 상수를 더해 없애면 된다고 생각하기 쉽다. 하지만 간선 수가 다른 경로마다 더해지는 양이 달라 최단 경로가 바뀐다. 간선의 순서만 쓰는 MST와 다른 점이다. 또 힙에서 꺼낸 항목이 낡았는지(<code>d &gt; dist[u]</code>) 확인하지 않으면 같은 정점을 여러 번 처리한다. 결과는 맞아도 느려진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>완화: d[u] + w &lt; d[v]이면 줄인다.</li>
-        <li>Dijkstra: 가장 작은 d를 힙으로 꺼내 확정. 무게 ≥ 0에서 정확, O((V + E) log V).</li>
-        <li>음의 간선이면 확정이 틀릴 수 있다 → Bellman-Ford(O(VE)), 음의 고리 검출.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Dijkstra는 확정되지 않은 정점 가운데 거리 추정값이 가장 작은 것을 힙으로 꺼내 확정하고 이웃을 완화하며, 무게가 모두 0 이상일 때 \(O((V + E)\log V)\)에 정확한 최단 거리를 준다. 음의 간선이 있으면 이미 확정한 정점으로 더 짧게 오는 길이 나중에 나타나 틀릴 수 있으므로, 모든 간선을 \(V - 1\)번 완화하는 Bellman-Ford를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제 7.3.1에서 A → E 최단 경로를 정점 순서로 쓰라.
-          <details><summary>답</summary><p>A → C → B → D → E(1 + 2 + 5 + 3 = 11).</p></details>
+        <li>예제 7.3.1에서 A → E 최단 경로를 정점 순서로 써라.
+          <details><summary>답</summary><p>A → C → B → D → E이고, 길이는 \(1 + 2 + 5 + 3 = 11\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>최단 경로 자체를 얻으려면 Dijkstra 코드를 어떻게 고치는가?
-          <details><summary>답</summary><p>d[v]를 줄일 때 prev[v] = u를 기록. 도착점에서 prev를 거꾸로 따라가면 경로.</p></details>
+          <details><summary>답</summary><p>\(d[v]\)를 줄일 때 <code>prev[v] = u</code>를 기록한다. 도착점에서 prev를 거꾸로 따라가면 경로가 나온다.</p></details>
         </li>
-        <li>정점 10만, 간선 50만인 도로망에서 Dijkstra(힙)와 배열로 최솟값을 매번 찾는 O(V²) 버전의 연산 수를 어림하라.
-          <details><summary>답</summary><p>힙: \((V + E)\log_2V \approx 6\times10^5 \times 17 \approx 10^7\). 배열: \(V^2 = 10^{10}\). 약 천 배 차이.</p></details>
+        <li>정점 10만, 간선 50만인 도로망에서 Dijkstra(힙)와, 배열에서 최솟값을 매번 찾는 \(O(V^2)\) 버전의 연산 수를 어림하여라.
+          <details><summary>답</summary><p>힙 버전은 \((V + E)\log_2 V \approx 6\times10^5\times17 \approx 10^7\), 배열 버전은 \(V^2 = 10^{10}\)으로 약 천 배 차이이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>환율 그래프(간선 무게 \(-\log(\text{환율})\))에서 음의 고리가 있다는 것은 무엇을 뜻하는가?
-          <details><summary>답</summary><p>고리를 한 바퀴 돌며 환전하면 원래 통화가 늘어나는 차익 거래 기회. Bellman-Ford의 음의 고리 검출로 찾을 수 있습니다.</p></details>
+          <details><summary>답</summary><p>고리를 한 바퀴 돌며 환전하면 원래 통화가 늘어나는 차익 거래 기회이다. Bellman-Ford의 음의 고리 검출로 찾을 수 있다.</p></details>
         </li>
       </ol>
     </div>

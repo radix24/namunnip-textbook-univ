@@ -8,84 +8,85 @@
 <article class="card q-card" id="text-e2-asymptotic" data-kind="본문" data-std="전전2-01-02">
   <header class="card-head"><span class="no"></span><h2>점근 표기: O, Ω, Θ</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>O, Ω, Θ의 정의를 상수 c와 n₀로 쓰고, 주어진 함수가 어느 집합에 속하는지 증명한다.</li>
-        <li>자주 나오는 증가율의 순서 \(1 &lt; \log n &lt; n &lt; n\log n &lt; n^2 &lt; 2^n &lt; n!\)을 안다.</li>
-        <li>점근 표기로 두 알고리즘을 비교하고, 작은 n에서는 상수가 중요할 수 있음을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>연산 횟수 세기 (<a href="01-01.html">1.1절</a>), 극한과 로그의 성질(고교 수학, <a href="../../common/1/01-01.html">공통1</a>).</li>
-      </ul>
+    <p class="q-ask">알고리즘 A는 연산을 \(100n\log_2 n\)번, B는 \(n^2\)번 한다. \(n = 100\)이면 A가 66,000번, B가 10,000번으로 B가 빠르다. 그러면 B가 더 좋은 알고리즘일까? 계수 100 같은 숫자는 버리고 무엇을 보아야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 230" role="img" aria-label="로그 눈금에서 100 n log n과 n²의 연산 수 곡선이 n 약 1000에서 교차하는 그래프">
+        <line x1="70" y1="200" x2="530" y2="200" class="ax"/><line x1="70" y1="20" x2="70" y2="200" class="ax"/>
+        <g text-anchor="middle" class="s"><text x="70" y="216">10</text><text x="220" y="216">100</text><text x="370" y="216">1000</text><text x="520" y="216">10⁴</text></g>
+        <text x="530" y="228" text-anchor="end" class="s">n</text>
+        <g text-anchor="end" class="s"><text x="64" y="204">1</text><text x="64" y="144">10³</text><text x="64" y="84">10⁶</text><text x="64" y="24">10⁹</text></g>
+        <path d="M70 129.6 L115 121.3 L175 111.0 L220 103.6 L265 96.3 L325 87.0 L370 80.0 L415 73.2 L475 64.2 L520 57.5" class="a"/>
+        <path d="M70 160.0 L115 148.0 L175 132.0 L220 120.0 L265 108.0 L325 92.0 L370 80.0 L415 68.0 L475 52.0 L520 40.0" class="d"/>
+        <path d="M70 180.0 L220 160.0 L370 140.0 L520 120.0" class="gd"/>
+        <path d="M70 189.6 L220 183.6 L370 180.0 L520 177.5" class="gd"/>
+        <circle cx="370" cy="80" r="5" class="fk"/><text x="376" y="98" class="s">n ≈ 1000에서 교차</text>
+        <text x="100" y="116" class="ta">A: 100 n log₂n</text><text x="140" y="150" class="td">B: n²</text>
+        <text x="524" y="124" class="s">n</text><text x="524" y="181" class="s">log n</text>
+      </svg>
+      <figcaption>그림 1. 계수 100 때문에 작은 \(n\)에서는 \(n^2\)이 더 작지만, 증가율이 큰 \(n^2\)은 \(n \approx 1000\)에서 \(100n\log_2 n\)을 앞지르고 그 뒤로는 격차가 끝없이 벌어진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연산 횟수 세기(<a href="01-01.html">1.1절</a>)와 고교 수학의 극한, 로그의 성질(<a href="../../common/1/01-01.html">공통1</a>)을 쓴다.</div>
+
+    <h3><span class="no">1.2.1</span>증가율만 남기기</h3>
+    <p>1.1절의 \(\frac{n(n - 1)}{2}\)과 \(3n^2 + 5n\)은 계수와 낮은 차수 항이 다르지만, \(n\)이 커지면 둘 다 \(n^2\)처럼 늘어난다. 계수는 컴퓨터와 언어에 따라 바뀌지만, 증가율은 알고리즘 자체의 성질이다. 그래서 증가율만 남기고 나머지를 버리는 말을 쓰는데, 이것이 점근 표기이다.</p>
+    <div class="tb-env">
+      <span class="lb">정의 1.2.1 <span class="nm">(O, Ω, Θ)</span></span>
+      <p>양의 상수 \(c\)와 \(n_0\)가 있어 모든 \(n \ge n_0\)에서 \(f(n) \le c\,g(n)\)이면 \(f(n) = O(g(n))\)이라 한다(위 한계). 같은 조건에서 \(f(n) \ge c\,g(n)\)이면 \(f(n) = \Omega(g(n))\)이라 한다(아래 한계). 둘 다 성립해 \(c_1 g(n) \le f(n) \le c_2 g(n)\)이면 \(f(n) = \Theta(g(n))\)이라 한다.</p>
     </div>
+    <p>정의의 두 부분이 무엇을 버리는지 보자. 상수 \(c\)는 계수를 버리고, \(n_0\)는 작은 \(n\)에서 일어나는 일을 버린다. 그림 1에서 \(n_0\)보다 오른쪽만 보고, 세로로 몇 배 늘리거나 줄이는 것은 상관하지 않겠다는 뜻이다. 또 "="를 쓰지만 실제로는 "속한다"는 뜻이어서 \(n = O(n^2)\)은 맞는 느슨한 위 한계이고, \(n^2 = O(n)\)은 틀리다.</p>
 
-    <h3><span class="no">1.2.1</span>왜 대략만 보는가</h3>
-    <p>1.1절의 \(\frac{n(n - 1)}{2}\)과 \(3n^2 + 5n\)은 계수와 낮은 차수 항이 다르지만, n이 커지면 둘 다 n²처럼 늘어납니다. 계수는 컴퓨터와 언어에 따라 바뀌지만, 증가율은 알고리즘 자체의 성질입니다. 점근 표기는 이 증가율만 남기는 언어입니다.</p>
-    <p class="q-term"><b>O(빅오, 위 한계)</b>: \(f(n) = O(g(n))\) ⇔ 양의 상수 c와 \(n_0\)가 있어 모든 \(n \ge n_0\)에서 \(f(n) \le c\,g(n)\).</p>
-    <p class="q-term"><b>Ω(빅오메가, 아래 한계)</b>: \(f(n) \ge c\,g(n)\) (\(n \ge n_0\)).</p>
-    <p class="q-term"><b>Θ(빅세타, 꽉 낀 한계)</b>: O이면서 Ω. \(c_1g(n) \le f(n) \le c_2g(n)\).</p>
-    <p>"=" 기호를 쓰지만 실제로는 "속한다"는 뜻입니다. \(n = O(n^2)\)은 맞지만(느슨한 위 한계), \(n^2 = O(n)\)은 틀립니다.</p>
-
-    <h3><span class="no">1.2.2</span>정의로 증명하기</h3>
+    <h3><span class="no">1.2.2</span>정의로 보이기, 극한으로 판정하기</h3>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
-      <p>\(f(n) = 3n^2 + 5n + 2 = \Theta(n^2)\)임을 c와 \(n_0\)를 찾아 보여라.</p>
+      <p>\(f(n) = 3n^2 + 5n + 2 = \Theta(n^2)\)임을 \(c\)와 \(n_0\)를 찾아 보여라.</p>
     </div>
-    <p><i>풀이.</i> 위 한계: \(n \ge 1\)이면 \(5n \le 5n^2\), \(2 \le 2n^2\)이므로 \(f(n) \le 10n^2\). c = 10, \(n_0 = 1\). 아래 한계: 모든 항이 양수라 \(f(n) \ge 3n^2\). c = 3. 따라서 \(3n^2 \le f(n) \le 10n^2\) (\(n \ge 1\)), Θ(n²)입니다.</p>
-    <p><b>극한으로 판정.</b> \(\lim_{n\to\infty}f(n)/g(n) = L\)이 0이 아닌 유한한 값이면 Θ, 0이면 f가 더 느리게 자람(\(f = O(g)\), Θ는 아님), ∞이면 더 빠르게 자람(\(f = \Omega(g)\)). 예: \(\lim\frac{\log n}{n} = 0\)이므로 \(\log n = O(n)\).</p>
+    <p><i>풀이.</i> 위 한계부터 보자. \(n \ge 1\)이면 \(5n \le 5n^2\)이고 \(2 \le 2n^2\)이므로 \(f(n) \le 10n^2\)이다. 따라서 \(c = 10\), \(n_0 = 1\)로 \(O(n^2)\)이다. 아래 한계는 모든 항이 양수이므로 \(f(n) \ge 3n^2\)에서 \(c = 3\)으로 충분하다. 그러므로 \(n \ge 1\)에서 \(3n^2 \le f(n) \le 10n^2\)이고 \(f(n) = \Theta(n^2)\)이다.</p>
+    <p>매번 상수를 찾기는 번거로우므로 극한을 쓰기도 한다. \(\lim_{n\to\infty} f(n)/g(n) = L\)이 0이 아닌 유한한 값이면 \(\Theta\)이고, 0이면 \(f\)가 더 느리게 자라 \(f = O(g)\)이며, 무한대이면 더 빠르게 자라 \(f = \Omega(g)\)이다. 가령 \(\lim \frac{\log n}{n} = 0\)이므로 \(\log n = O(n)\)이다.</p>
 
     <h3><span class="no">1.2.3</span>증가율의 사다리</h3>
+    <p>자주 만나는 증가율을 느린 것부터 늘어놓으면 다음과 같다.</p>
     <table class="tb-table">
-      <tr><th>표기</th><th>이름</th><th>예</th><th>n = 10⁶일 때 연산 수</th></tr>
+      <tr><th>표기</th><th>이름</th><th>예</th><th>\(n = 10^6\)일 때 연산 수</th></tr>
       <tr><td>\(O(1)\)</td><td>상수</td><td>배열 인덱싱</td><td>1</td></tr>
       <tr><td>\(O(\log n)\)</td><td>로그</td><td>이진 탐색</td><td>약 20</td></tr>
       <tr><td>\(O(n)\)</td><td>선형</td><td>최댓값 찾기</td><td>10⁶</td></tr>
       <tr><td>\(O(n\log n)\)</td><td>선형 로그</td><td>병합 정렬</td><td>약 2×10⁷</td></tr>
       <tr><td>\(O(n^2)\)</td><td>이차</td><td>모든 쌍 비교</td><td>10¹²</td></tr>
-      <tr><td>\(O(2^n)\)</td><td>지수</td><td>모든 부분집합</td><td>(n = 60이면 이미 10¹⁸)</td></tr>
+      <tr><td>\(O(2^n)\)</td><td>지수</td><td>모든 부분집합</td><td>(\(n = 60\)이면 이미 10¹⁸)</td></tr>
     </table>
-    <p>초당 10⁹번 연산하는 컴퓨터라면 n = 10⁶에서 \(n\log n\)은 0.02초, n²은 1000초(약 17분)입니다. 자료가 커질수록 알고리즘의 차수가 하드웨어 속도보다 훨씬 중요합니다.</p>
+    <p>1초에 10⁹번 연산하는 컴퓨터라면 \(n = 10^6\)에서 \(n\log n\)은 0.02초, \(n^2\)은 1000초, 곧 약 17분이다. 자료가 커질수록 알고리즘의 차수가 하드웨어의 속도보다 훨씬 큰 차이를 만든다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 1.2.2</span>
-      <p>알고리즘 A는 \(100n\log_2n\)번, B는 \(n^2\)번 연산한다. 어느 n부터 A가 빠른가?</p>
+      <p>처음 질문의 A(\(100n\log_2 n\))와 B(\(n^2\))에서, 어느 \(n\)부터 A가 빠른가?</p>
     </div>
-    <p><i>풀이.</i> \(100\log_2n &lt; n\)이 되는 n. n = 512면 \(100 \times 9 = 900 &gt; 512\), n = 1024면 1000 &lt; 1024. 대략 n ≈ 1000부터 A가 빠르고(정확히는 997 근처), 그보다 작은 입력에서는 차수가 높은 B가 빠릅니다. 그래서 실제 정렬 라이브러리는 작은 구간에서 삽입 정렬(\(O(n^2)\), 작은 상수)로 바꿉니다.</p>
+    <p><i>풀이.</i> 양변을 \(n\)으로 나누면 \(100\log_2 n &lt; n\)이 되는 \(n\)을 찾으면 된다. \(n = 512\)이면 \(100\times9 = 900 &gt; 512\)이고, \(n = 1024\)이면 \(1000 &lt; 1024\)이다. 따라서 대략 \(n \approx 1000\)부터 A가 빠르다(정확히는 997 근처). 그림 1의 교차점이 이것이다. 처음 질문에 답하면, \(n = 100\)에서 B가 빠른 것은 계수 덕분이고, 큰 입력에서는 증가율이 낮은 A가 이긴다. 실제 정렬 라이브러리가 작은 구간에서만 \(O(n^2)\)이지만 상수가 작은 삽입 정렬로 바꾸는 까닭도 여기에 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "O는 최악 경우, Ω는 최선 경우": 표기는 함수의 한계일 뿐이고, 어느 경우(최악·평균·최선)의 함수에든 쓸 수 있습니다. 예: 삽입 정렬의 최악 경우는 Θ(n²), 최선 경우는 Θ(n). (2) 로그의 밑: \(\log_2n\)과 \(\log_{10}n\)은 상수배 차이라 점근 표기에서 밑을 쓰지 않습니다. (3) "O(n) 알고리즘은 언제나 O(n²) 알고리즘보다 빠르다": 큰 n에서만 보장되고, 상수에 따라 작은 n에서는 반대일 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>O는 최악 경우, Ω는 최선 경우라고 생각하기 쉽다. 하지만 이 표기는 함수의 한계를 말할 뿐이어서, 최악이든 평균이든 최선이든 어느 경우의 함수에나 쓸 수 있다. 삽입 정렬의 최악 경우는 \(\Theta(n^2)\), 최선 경우는 \(\Theta(n)\)이다. 또 \(\log_2 n\)과 \(\log_{10} n\)은 상수배 차이라 점근 표기에서는 로그의 밑을 쓰지 않는다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>O(위), Ω(아래), Θ(둘 다). 상수 c, \(n_0\)로 정의하거나 비의 극한으로 판정.</li>
-        <li>\(1 &lt; \log n &lt; n &lt; n\log n &lt; n^2 &lt; 2^n\).</li>
-        <li>큰 n에서는 차수가, 작은 n에서는 상수가 결정한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(n = 100\)에서 B가 빠른 것은 A의 계수 100 때문이며, 증가율을 비교하면 \(n^2\)이 \(n\log n\)보다 빨리 자라 \(n \approx 1000\)부터는 A가 이긴다. 점근 표기 O, Ω, Θ는 상수 \(c\)로 계수를, \(n_0\)로 작은 입력을 버리고 증가율만 남기며, 큰 \(n\)에서는 차수가, 작은 \(n\)에서는 상수가 빠르기를 정한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(5n^3 - 100n^2 + 7\)은 어떤 Θ인가?
-          <details><summary>답</summary><p>Θ(n³).</p></details>
+          <details><summary>답</summary><p>\(\Theta(n^3)\).</p></details>
         </li>
         <li>\(\log(n^2)\)과 \(\log n\)의 관계는?
-          <details><summary>답</summary><p>\(\log(n^2) = 2\log n\), 같은 Θ(log n).</p></details>
+          <details><summary>답</summary><p>\(\log(n^2) = 2\log n\)이므로 같은 \(\Theta(\log n)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(n^2 \ne O(n)\)임을 귀류법으로 보여라.
-          <details><summary>답</summary><p>c, \(n_0\)가 있어 \(n^2 \le cn\)이라면 \(n \le c\)가 모든 \(n \ge n_0\)에서 성립해야 하지만, \(n = \max(n_0, c + 1)\)에서 모순.</p></details>
+          <details><summary>답</summary><p>\(c\), \(n_0\)가 있어 \(n^2 \le cn\)이라면 \(n \le c\)가 모든 \(n \ge n_0\)에서 성립해야 하지만, \(n = \max(n_0, c + 1)\)에서 모순이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>\(2^{n+1} = O(2^n)\)인가? \(2^{2n} = O(2^n)\)인가?
-          <details><summary>답</summary><p>앞은 예(\(2 \cdot 2^n\), c = 2). 뒤는 아니오(\(2^{2n}/2^n = 2^n \to \infty\)). 지수의 계수는 상수배가 아닙니다.</p></details>
+          <details><summary>답</summary><p>앞은 \(2\cdot2^n\)이므로 \(c = 2\)로 성립한다. 뒤는 \(2^{2n}/2^n = 2^n \to \infty\)이므로 성립하지 않는다. 지수의 계수는 상수배가 아니다.</p></details>
         </li>
       </ol>
     </div>

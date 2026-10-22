@@ -8,33 +8,42 @@
 <article class="card q-card" id="text-e2-hashimpl" data-kind="본문" data-std="전전2-06-02">
   <header class="card-head"><span class="no"></span><h2>해시 테이블 구현: 해시 함수, 재해싱, 삭제</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>문자열 같은 키를 정수로 바꾸는 해시 함수(다항식 해시)를 만든다.</li>
-        <li>put, get, delete와 적재율에 따른 재해싱을 갖춘 체이닝 해시 테이블을 구현한다.</li>
-        <li>해시 테이블에 넣는 키가 지켜야 할 조건(같으면 같은 해시, 바뀌지 않음)을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>체이닝과 개방 주소법 (<a href="06-01.html">6.1절</a>), 동적 배열의 분할상환 (<a href="01-03.html">1.3절</a>), Python 클래스 (<a href="../../common/10/03-03.html">공통10 3.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">문자열 "ab"와 "ba"의 글자 코드를 더하면 똑같이 195이다. 이것을 해시 값으로 쓰면 두 키가 늘 충돌한다. 문자열을 고르게 흩어지는 수로 바꾸려면 어떻게 해야 할까? 그리고 표가 차서 칸 수를 두 배로 늘릴 때, 옛 표를 새 표 앞쪽에 그대로 복사하면 왜 안 될까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 220" role="img" aria-label="칸 4개 표에서 칸 8개 표로 재해싱할 때 키의 칸 번호가 k mod 4에서 k mod 8로 바뀌어 다시 배치되는 그림">
+        <text x="20" y="22">칸 4개 (k mod 4)</text>
+        <g text-anchor="middle" font-size="12">
+          <rect x="20" y="32" width="60" height="30" class="k"/><rect x="80" y="32" width="60" height="30" class="k"/><rect x="140" y="32" width="60" height="30" class="k"/><rect x="200" y="32" width="60" height="30" class="k"/>
+          <text x="50" y="52">8, 12</text><text x="110" y="52">5</text><text x="170" y="52"> </text><text x="230" y="52">3, 7</text>
+          <text x="50" y="76" class="s">0</text><text x="110" y="76" class="s">1</text><text x="170" y="76" class="s">2</text><text x="230" y="76" class="s">3</text>
+        </g>
+        <text x="20" y="122">칸 8개 (k mod 8)</text>
+        <g text-anchor="middle" font-size="12">
+          <rect x="20" y="132" width="60" height="30" class="la"/><rect x="80" y="132" width="60" height="30" class="k"/><rect x="140" y="132" width="60" height="30" class="k"/><rect x="200" y="132" width="60" height="30" class="la"/>
+          <rect x="260" y="132" width="60" height="30" class="lc"/><rect x="320" y="132" width="60" height="30" class="la"/><rect x="380" y="132" width="60" height="30" class="k"/><rect x="440" y="132" width="60" height="30" class="lc"/>
+          <path d="M20 132 H500 V162 H20 Z M80 132 V162 M140 132 V162 M200 132 V162 M260 132 V162 M320 132 V162 M380 132 V162 M440 132 V162" class="k"/>
+          <text x="50" y="152">8</text><text x="230" y="152">3</text><text x="290" y="152" class="tc">12</text><text x="350" y="152">5</text><text x="470" y="152" class="tc">7</text>
+          <text x="50" y="176" class="s">0</text><text x="110" y="176" class="s">1</text><text x="170" y="176" class="s">2</text><text x="230" y="176" class="s">3</text><text x="290" y="176" class="s">4</text><text x="350" y="176" class="s">5</text><text x="410" y="176" class="s">6</text><text x="470" y="176" class="s">7</text>
+        </g>
+        <path d="M55 62 L285 132 M235 62 L465 132 M110 62 L345 132" class="c dsh"/>
+        <text x="280" y="204" text-anchor="middle" class="s">12와 7은 칸 번호가 바뀌어 옮겨 가고, 8과 3은 제자리에 남는다</text>
+      </svg>
+      <figcaption>그림 1. 칸 번호는 \(k \bmod m\)으로 정해지므로 칸 수가 4에서 8로 바뀌면 키마다 칸을 다시 계산해야 하며, 옛 표를 그대로 복사하면 12와 7을 엉뚱한 칸에서 찾게 된다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>체이닝과 개방 주소법(<a href="06-01.html">6.1절</a>), 동적 배열의 분할상환(<a href="01-03.html">1.3절</a>), Python 클래스(<a href="../../common/10/03-03.html">공통10 3.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>문자열 해시</h3>
-    <p>구하려는 것: 문자열을 고르게 흩어지는 정수로 바꾸는 방법. 글자 코드를 그냥 더하면 "ab"와 "ba"가 같은 값이 됩니다. 자리마다 다른 가중치를 주는 다항식 해시를 씁니다.</p>
-    \[ h(s) = \left(s_0b^{L-1} + s_1b^{L-2} + \cdots + s_{L-1}\right) \bmod m. \]
-    <p>Horner 방법으로 한 글자씩 \(h \leftarrow (h\cdot b + s_i) \bmod m\)을 되풀이하면 O(L)에 계산됩니다. b는 31이나 131 같은 작은 소수를 흔히 씁니다(확인 필요: 언어마다 다른 상수를 씀). 예: b = 31, m = 1009이면 "ab" → (97·31 + 98) mod 1009 = 3105 mod 1009 = 78, "ba" → (98·31 + 97) mod 1009 = 3135 mod 1009 = 108로 다릅니다.</p>
+    <p>글자 코드를 그냥 더하면 글자의 순서가 사라진다. "ab"와 "ba"가 같아지는 까닭이다. 그래서 자리마다 다른 가중치를 주는 다항식 해시를 쓴다. 길이 \(L\)인 문자열의 글자 코드를 \(s_0, s_1, \dots\)라 할 때 다음과 같다.</p>
+    \[ h(s) = \left(s_0 b^{L-1} + s_1 b^{L-2} + \cdots + s_{L-1}\right) \bmod m \]
+    <p>이 때 거듭제곱을 따로 계산할 필요는 없다. 호너 방법으로 한 글자씩 \(h \leftarrow (h\cdot b + s_i) \bmod m\)을 되풀이하면 \(O(L)\)에 끝나고, 중간값도 \(m\)보다 커지지 않는다. \(b\)는 31이나 131 같은 작은 소수를 흔히 쓴다(언어마다 다른 상수를 쓰므로 확인 필요). \(b = 31\), \(m = 1009\)로 계산하면 "ab"는 \((97\cdot31 + 98) \bmod 1009 = 78\), "ba"는 \((98\cdot31 + 97) \bmod 1009 = 108\)로 달라진다. 처음 질문의 첫째 답이 이것이다.</p>
 
     <h3><span class="no">6.2.2</span>체이닝 테이블 구현</h3>
 <pre><code>class HashMap:
     def __init__(self, m=8):
         self.t = [[] for _ in range(m)]
         self.n = 0
-
     def _bucket(self, k):
         return self.t[hash(k) % len(self.t)]
-
     def put(self, k, v):
         b = self._bucket(k)
         for i, (kk, _) in enumerate(b):
@@ -45,13 +54,11 @@
         self.n += 1
         if self.n &gt; 2 * len(self.t):  # 적재율 2를 넘으면
             self._resize(2 * len(self.t))
-
     def get(self, k, default=None):
         for kk, v in self._bucket(k):
             if kk == k:
                 return v
         return default
-
     def delete(self, k):
         b = self._bucket(k)
         for i, (kk, _) in enumerate(b):
@@ -59,53 +66,43 @@
                 b.pop(i); self.n -= 1
                 return True
         return False
-
     def _resize(self, m):
         old = [p for b in self.t for p in b]
         self.t = [[] for _ in range(m)]
         for k, v in old:
             self._bucket(k).append((k, v))</code></pre>
-    <p>재해싱은 칸 수가 바뀌므로 모든 키의 칸을 다시 계산해야 합니다(그냥 복사하면 안 됨). 칸 수를 두 배로 하므로 1.3절과 같은 이유로 put의 분할상환 비용이 O(1)입니다.</p>
+    <p>그러면 코드에서 두 곳을 눈여겨보자. 하나는 <code>get</code>과 <code>put</code>이 칸을 찾은 뒤에도 <code>kk == k</code>로 키 자체를 비교한다는 점이다. 해시가 같아도 충돌일 수 있기 때문이다. 다른 하나는 <code>_resize</code>이다. 적재율이 2를 넘으면 칸 수를 두 배로 늘리는데, 이 때 옛 키들을 모두 꺼내 새 표에서 칸을 다시 계산해 넣는다.</p>
+    <p>왜 그냥 복사하면 안 될까? 칸 번호는 \(k \bmod m\)으로 정해지므로 \(m\)이 바뀌면 칸 번호도 바뀐다. 그림 1에서 12는 칸 4개일 때 칸 0에 있었지만 칸 8개에서는 칸 4로 가야 한다. 옛 자리에 둔 채로 두면 <code>get(12)</code>가 칸 4를 보고 "없다"고 답한다. 처음 질문의 둘째 답이 이것이다. 따라서 재해싱은 모든 키를 다시 배치하는 \(O(n)\)의 일이지만, 칸 수를 두 배로 늘리므로 1.3절과 같은 이유로 <code>put</code>의 분할상환 비용은 \(O(1)\)이다.</p>
 
-    <h3><span class="no">6.2.3</span>키의 조건</h3>
-    <ul>
-      <li><b>같은 키는 같은 해시</b>: <code>a == b</code>이면 <code>hash(a) == hash(b)</code>여야 한다. 그렇지 않으면 같은 키가 다른 칸에 들어가 찾지 못한다.</li>
-      <li><b>바뀌지 않음</b>: 넣은 뒤 키가 바뀌면 해시도 바뀌어 원래 칸에서 찾지 못한다. 그래서 Python은 리스트를 딕셔너리 키로 허용하지 않고(TypeError), 튜플은 허용한다.</li>
-    </ul>
-    <p>Python의 <code>dict</code>는 개방 주소법(무작위에 가까운 조사 순서)으로 구현되어 있고 적재율 약 2/3에서 키웁니다(확인 필요: 구현 세부는 버전마다 다름). 3.7부터는 넣은 순서도 기억합니다.</p>
+    <h3><span class="no">6.2.3</span>키가 지켜야 할 조건</h3>
+    <p>한편 해시 테이블이 제대로 돌려면 키가 두 조건을 지켜야 한다. 첫째, <code>a == b</code>이면 <code>hash(a) == hash(b)</code>여야 한다. 그렇지 않으면 같은 키가 다른 칸에 들어가 찾지 못한다. 둘째, 넣은 뒤에 키가 바뀌면 안 된다. 그러면 해시도 바뀌어 원래 칸에서 찾을 수 없다. Python이 리스트를 딕셔너리 키로 받지 않고(TypeError) 튜플은 받는 까닭이 이것이다.</p>
+    <p>그런데 Python의 <code>dict</code>는 체이닝이 아니라 무작위에 가까운 조사 순서를 쓰는 개방 주소법으로 구현되어 있고, 적재율 약 2/3에서 표를 키운다(구현 세부는 버전마다 달라 확인 필요). 3.7부터는 넣은 순서도 기억한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 재해싱할 때 옛 배열을 새 배열 앞쪽에 그대로 복사하는 실수: 칸 번호가 \(\bmod m\)으로 정해지므로 m이 바뀌면 모두 다시 계산합니다. (2) 해시 값이 같으면 같은 키라고 판단하는 실수: 충돌이 있으므로 마지막에 키 자체를 <code>==</code>로 비교해야 합니다. (3) 사용자 정의 클래스에서 <code>__eq__</code>만 고치고 <code>__hash__</code>를 맞추지 않으면 딕셔너리 동작이 깨집니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>해시 값이 같으면 같은 키라고 판단하는 실수가 흔하다. 충돌이 있으므로 마지막에 키 자체를 <code>==</code>로 비교해야 한다. 또 사용자 정의 클래스에서 <code>__eq__</code>만 고치고 <code>__hash__</code>를 그에 맞추지 않으면 첫째 조건이 깨져 딕셔너리 동작이 망가진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>문자열 해시: \(h \leftarrow (h\cdot b + s_i) \bmod m\), O(길이).</li>
-        <li>체이닝 테이블: 칸의 리스트에서 키 비교. 적재율이 넘으면 두 배로 재해싱(모든 키 다시 배치), 분할상환 O(1).</li>
-        <li>키는 같으면 같은 해시, 바뀌지 않아야 한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>문자열은 자리마다 \(b\)의 거듭제곱을 곱하는 다항식 해시를 호너 방법으로 \(O(L)\)에 계산해 순서를 살린다. 칸 번호가 \(k \bmod m\)이므로 표를 키울 때는 모든 키의 칸을 다시 계산해야 하며, 두 배씩 키우면 분할상환 \(O(1)\)이다. 키는 같으면 같은 해시를 내야 하고, 넣은 뒤 바뀌지 않아야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>b = 31, m = 1009일 때 "abc"의 다항식 해시는? (a = 97, b = 98, c = 99)
-          <details><summary>답</summary><p>((97·31 + 98)·31 + 99) mod 1009 = (3105·31 + 99) mod 1009 = 96354 mod 1009 = 499.</p></details>
+        <li>\(b = 31\), \(m = 1009\)일 때 "abc"의 다항식 해시는? (a = 97, b = 98, c = 99)
+          <details><summary>답</summary><p>\(((97\cdot31 + 98)\cdot31 + 99) \bmod 1009 = (3105\cdot31 + 99) \bmod 1009 = 96354 \bmod 1009 = 499\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>위 <code>HashMap</code>에 키 20개를 넣으면 재해싱이 몇 번 일어나고 마지막 칸 수는?
-          <details><summary>답</summary><p>n = 17에서 m = 8 → 16(17 &gt; 16). n = 33이 되지 않으므로 한 번, 칸 16.</p></details>
+          <details><summary>답</summary><p>\(n = 17\)에서 \(17 &gt; 16\)이므로 칸 8개가 16개로 늘어난다. \(n\)이 33이 되지 않으므로 한 번뿐이고 마지막 칸 수는 16이다.</p></details>
         </li>
-        <li>두 문자열이 같은지 매번 끝까지 비교하는 대신, 해시를 먼저 비교하면 무엇이 좋아지는가? 그래도 마지막 비교가 필요한 이유는?
-          <details><summary>답</summary><p>해시가 다르면 바로 다르다고 판단(대부분의 경우 빠름). 해시가 같아도 충돌일 수 있으므로 같다고 결론 내리려면 실제 비교가 필요합니다(Rabin-Karp 문자열 검색의 원리).</p></details>
+        <li>두 문자열이 같은지 매번 끝까지 비교하는 대신 해시를 먼저 비교하면 무엇이 좋아지는가? 그래도 마지막 비교가 필요한 이유는?
+          <details><summary>답</summary><p>해시가 다르면 바로 다르다고 판단할 수 있어 대부분 빨라진다. 그러나 해시가 같아도 충돌일 수 있으므로 같다고 결론 내리려면 실제 비교가 필요하다. Rabin-Karp 문자열 검색의 원리이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>Python에서 <code>d = {}; k = [1, 2]; d[tuple(k)] = 'x'; k.append(3)</code> 뒤 <code>d[(1, 2)]</code>는 무엇인가? 리스트를 키로 허용했다면 어떤 문제가 생겼을까?
-          <details><summary>답</summary><p>'x'(튜플은 넣을 때 만든 복사본이라 그대로). 리스트를 키로 넣고 나중에 바꾸면 해시가 바뀌어 원래 칸에서 찾을 수 없고, 같은 내용을 새로 만들어도 다른 칸에 가서 못 찾습니다.</p></details>
+          <details><summary>답</summary><p>튜플은 넣을 때 만든 복사본이라 그대로이므로 'x'이다. 리스트를 키로 넣고 나중에 바꾸면 해시가 바뀌어 원래 칸에서 찾을 수 없고, 같은 내용을 새로 만들어도 다른 칸으로 가서 찾지 못한다.</p></details>
         </li>
       </ol>
     </div>
