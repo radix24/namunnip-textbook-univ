@@ -8,36 +8,63 @@
 <article class="card q-card" id="text-a10-rt" data-kind="본문" data-std="천우10-04-02">
   <header class="card-head"><span class="no"></span><h2>평행판 대기에서 복사 전달 방정식 수치로 풀기</h2><span class="kind">본문 · 4.2절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>평행판 대기의 복사 전달 방정식과 형식해를 쓴다.</li>
-        <li>원천 함수가 주어질 때 나오는 세기를 수치 적분으로 계산한다.</li>
-        <li>산란이 있는 대기에서 람다 반복과 그 수렴 문제를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>복사 전달 방정식 (<a href="../4/07-02.html">천우4 7.2절</a>), 수치 적분 (<a href="../6/04-02.html">천우6 4.2절</a>).</li>
-      </ul>
-    </div>
-
-<h3>별의 표면에서 나오는 빛을 계산하기</h3>
-    <p>별의 스펙트럼과 주연 감광은 대기 속 복사 전달의 결과입니다. 대기의 두께가 별의 반지름보다 훨씬 얇으면 평평한 판의 층들로 보아도 됩니다(평행판 근사). 전산천문학이 N체와 함께 다루는 두 번째 큰 주제입니다.</p>
+    <p class="q-ask">태양 사진을 보면 원반의 가장자리가 가운데보다 눈에 띄게 어둡다. 태양은 고르게 뜨거운 공 같은데 왜 가장자리만 어두울까? 대기의 온도 분포를 알면 원반 위 각 지점의 밝기를 계산할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="회색 대기의 에딩턴 근사에서 원반 위 방향 μ에 따른 상대 세기. 직선 0.4 + 0.6μ 위에 수치 적분으로 구한 점들이 놓인다. 오른쪽에는 가장자리로 갈수록 어두워지는 원반 그림이 있다">
+        <line x1="60" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="124" y="195" text-anchor="middle" class="s">0.2</text>
+        <text x="188" y="195" text-anchor="middle" class="s">0.4</text>
+        <text x="252" y="195" text-anchor="middle" class="s">0.6</text>
+        <text x="316" y="195" text-anchor="middle" class="s">0.8</text>
+        <text x="380" y="195" text-anchor="middle" class="s">1</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="154.9" text-anchor="end" class="s">0.2</text>
+        <text x="55" y="125.8" text-anchor="end" class="s">0.4</text>
+        <text x="55" y="96.7" text-anchor="end" class="s">0.6</text>
+        <text x="55" y="67.6" text-anchor="end" class="s">0.8</text>
+        <text x="55" y="38.5" text-anchor="end" class="s">1</text>
+        <text x="380" y="209" text-anchor="end" class="s">μ = cos θ (1이 원반 중심)</text>
+        <text x="66" y="24" class="s">I(μ) / I(1)</text>
+        <path d="M60 121.8 L92 113.1 L124 104.4 L156 95.6 L188 86.9 L220 78.2 L252 69.5 L284 60.7 L316 52 L348 43.3 L380 34.5" class="a"/>
+        <circle cx="76" cy="117.5" r="4" class="fd"/>
+        <circle cx="92" cy="113.1" r="4" class="fd"/>
+        <circle cx="124" cy="104.4" r="4" class="fd"/>
+        <circle cx="156" cy="95.6" r="4" class="fd"/>
+        <circle cx="220" cy="78.2" r="4" class="fd"/>
+        <circle cx="284" cy="60.7" r="4" class="fd"/>
+        <circle cx="380" cy="34.5" r="4" class="fd"/>
+        <circle cx="450" cy="110" r="52.0" class="fc" style="fill-opacity:0.45"/>
+        <circle cx="450" cy="110" r="46.8" class="fc" style="fill-opacity:0.65"/>
+        <circle cx="450" cy="110" r="41.6" class="fc" style="fill-opacity:0.72"/>
+        <circle cx="450" cy="110" r="36.4" class="fc" style="fill-opacity:0.77"/>
+        <circle cx="450" cy="110" r="31.2" class="fc" style="fill-opacity:0.81"/>
+        <circle cx="450" cy="110" r="26.0" class="fc" style="fill-opacity:0.84"/>
+        <circle cx="450" cy="110" r="20.8" class="fc" style="fill-opacity:0.86"/>
+        <circle cx="450" cy="110" r="15.6" class="fc" style="fill-opacity:0.88"/>
+        <circle cx="450" cy="110" r="10.4" class="fc" style="fill-opacity:0.89"/>
+        <circle cx="450" cy="110" r="5.2" class="fc" style="fill-opacity:0.90"/>
+        <text x="450" y="180" text-anchor="middle" class="s">가장자리가 어둡다</text>
+        <text x="70" y="40" class="s ta">선 0.4 + 0.6μ</text><text x="70" y="56" class="s td">점 수치 적분</text>
+      </svg>
+      <figcaption>그림 1. 회색 에딩턴 대기의 주연 감광. 형식해를 수치 적분한 값(빨간 점)이 해석해 \(0.4 + 0.6\mu\)(파랑)와 맞으며, 원반 가장자리(\(\mu \to 0\))는 가운데의 40% 밝기이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>복사 전달 방정식(<a href="../4/07-02.html">천우4 7.2절</a>)과 수치 적분(<a href="../6/04-02.html">천우6 4.2절</a>)을 쓴다.</div>
+    <p>별의 스펙트럼과 주연 감광은 대기 속 복사 전달의 결과이다. 대기의 두께가 별의 반지름보다 훨씬 얇으면 평평한 판의 층들로 보아도 되며, 이를 평행판 근사라 한다. 복사 전달은 N체와 함께 전산천문학의 두 번째 큰 주제이다.</p>
 
     <h3><span class="no">4.2.1</span>방정식과 형식해</h3>
-    <p>광학적 깊이 \(\tau\)(안쪽으로 증가)와 방향 \(\mu = \cos\theta\)(바깥쪽이 양수)에 대해</p>
-    \[ \mu\frac{dI}{d\tau} = I - S \]
-    <p>입니다. \(S\)는 원천 함수(국소 열평형에서 플랑크 함수 \(B\)). 표면(\(\tau = 0\))에서 바깥으로 나오는 세기의 형식해는</p>
+    <p>안쪽으로 증가하는 광학적 깊이 \(\tau\)와, 바깥쪽이 양수인 방향 \(\mu = \cos\theta\)에 대해 복사 전달 방정식은 \(\mu\,dI/d\tau = I - S\)이다. 여기서 \(S\)는 원천 함수로, 국소 열평형에서는 플랑크 함수 \(B\)이다. 그러면 표면(\(\tau = 0\))에서 바깥으로 나오는 세기의 형식해는 다음과 같다.</p>
     \[ I(0, \mu) = \int_0^\infty S(\tau)\,e^{-\tau/\mu}\,\frac{d\tau}{\mu} \]
-    <p>입니다. 각 깊이의 원천이 \(e^{-\tau/\mu}\)만큼 흡수되며 더해진다는 뜻입니다.</p>
+    <p>즉 각 깊이의 원천이 \(e^{-\tau/\mu}\)만큼 흡수되며 더해진다.</p>
 
-    <h3><span class="no">4.2.2</span>Eddington-Barbier와 주연 감광</h3>
-    <p>\(S = a + b\tau\)(선형)이면 적분이 정확히 \(I(0, \mu) = a + b\mu\)가 됩니다. 곧 \(\mu\) 방향으로 나오는 세기는 깊이 \(\tau = \mu\)의 원천 함수와 같습니다(Eddington-Barbier 관계). 회색 대기의 에딩턴 근사에서 \(S \propto \tau + \frac23\)이므로</p>
+    <h3><span class="no">4.2.2</span>에딩턴-바르비에 관계와 주연 감광</h3>
+    <p>\(S = a + b\tau\)처럼 선형이면 적분이 정확히 \(I(0, \mu) = a + b\mu\)가 된다. 다시 말해 \(\mu\) 방향으로 나오는 세기는 깊이 \(\tau = \mu\)의 원천 함수와 같으며, 이를 에딩턴-바르비에 관계라 한다. 회색 대기의 에딩턴 근사에서는 \(S \propto \tau + \frac23\)이므로 다음을 얻는다.</p>
     \[ \frac{I(\mu)}{I(1)} = \frac{\frac23 + \mu}{\frac53} = 0.4 + 0.6\mu \]
-    <p>입니다. 원반 가장자리(\(\mu \to 0\))는 가운데의 40% 밝기로, 태양에서 실제로 보이는 주연 감광과 비슷합니다.</p>
+    <p>처음 질문의 답이 여기에 있다. 가장자리(\(\mu\)가 작음)에서는 비스듬히 보므로 얕은 깊이(\(\tau = \mu\))의 차가운 층만 보이고, 그래서 어둡다. 원반 가장자리는 가운데의 40% 밝기로, 태양에서 실제로 보이는 주연 감광과 비슷하다(그림 1).</p>
 
     <h3><span class="no">4.2.3</span>수치 적분</h3>
-    <p>\(S(\tau)\)가 표로 주어지면 \(\tau\)를 로그 간격 격자(표면 근처를 촘촘히)로 나누고, 각 칸에서 \(S\)를 선형으로 보아 정확히 적분한 값을 더합니다.</p>
+    <p>\(S(\tau)\)가 표로 주어지면 \(\tau\)를 표면 근처가 촘촘한 로그 간격 격자로 나누고, 각 칸에서 적분해 더한다.</p>
     <pre><code>import numpy as np
 tau = np.concatenate([[0], np.logspace(-4, 1.5, 400)])
 S = tau + 2/3                                    # 에딩턴 회색 대기 (상대값)
@@ -45,40 +72,29 @@ def I0(mu):
     w = np.exp(-tau / mu)
     return np.trapz(S * w, tau) / mu
 print([round(I0(m) / I0(1), 4) for m in (1, 0.5, 0.2)])   # [1.0, 0.7, 0.52]</code></pre>
-    <p>사다리꼴 공식이어도 격자가 촘촘하면 해석해 \(0.4 + 0.6\mu\)(1, 0.7, 0.52)와 소수 넷째 자리까지 맞습니다. 이렇게 답을 아는 경우로 코드를 시험한 뒤 실제 대기 모형의 \(S(\tau)\)를 넣습니다.</p>
+    <p>사다리꼴 공식이어도 격자가 촘촘하면 해석해 \(0.4 + 0.6\mu\)의 값 1, 0.7, 0.52와 소수 넷째 자리까지 맞는다. 이렇게 답을 아는 경우로 코드를 시험한 뒤, 실제 대기 모형의 \(S(\tau)\)를 넣는다.</p>
 
     <h3><span class="no">4.2.4</span>산란과 람다 반복</h3>
-    <p>산란이 있으면 원천 함수가 복사장 자체에 의존합니다: \(S = (1 - \epsilon)J + \epsilon B\)(\(J\)는 평균 세기, \(\epsilon\)은 흡수 비율). \(S\)를 추측해 \(J\)를 계산하고 다시 \(S\)를 고치는 <b>람다 반복</b>은 \(\epsilon\)이 작을 때(산란이 지배) 매우 느리게 수렴하고, 바뀜이 작아 수렴한 것처럼 보이는 함정이 있습니다. 실제 코드는 가속 람다 반복(ALI)이나 연립방정식으로 한 번에 푸는 방법(Feautrier)을 씁니다.</p>
-    <div class="tb-note"><b>주의</b> 평행판 근사는 대기 두께가 반지름보다 훨씬 얇을 때만 맞습니다. 적색 초거성처럼 대기가 두꺼운 별은 구면 복사 전달이 필요합니다.</div>
+    <p>산란이 있으면 원천 함수가 복사장 자체에 의존해, 평균 세기를 \(J\), 흡수 비율을 \(\epsilon\)이라 할 때 \(S = (1 - \epsilon)J + \epsilon B\)가 된다. 이때 \(S\)를 추측해 \(J\)를 계산하고 다시 \(S\)를 고치는 <em>람다 반복</em>은, \(\epsilon\)이 작아 산란이 지배하면 매우 느리게 수렴한다. 게다가 바뀜이 작아 수렴한 것처럼 보이는 함정이 있다. 그래서 실제 코드는 가속 람다 반복(ALI)이나, 연립방정식으로 한 번에 푸는 포트리에 방법을 쓴다.</p>
+    <div class="tb-note"><span class="lb">주의</span>평행판 근사는 대기 두께가 반지름보다 훨씬 얇을 때만 맞는다. 적색 초거성처럼 대기가 두꺼운 별에는 구면 복사 전달이 필요하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\mu\,dI/d\tau = I - S\), 형식해 \(I(0,\mu) = \int S e^{-\tau/\mu}d\tau/\mu\).</li>
-        <li>선형 \(S\)에서 \(I(0,\mu) = S(\tau = \mu)\) (Eddington-Barbier).</li>
-        <li>회색 에딩턴 대기의 주연 감광 \(I(\mu)/I(1) = 0.4 + 0.6\mu\).</li>
-        <li>산란이 지배하면 람다 반복이 느리므로 ALI나 Feautrier 방법을 쓴다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평행판 대기의 복사 전달 방정식은 \(\mu\,dI/d\tau = I - S\)이고, 형식해는 \(I(0,\mu) = \int S e^{-\tau/\mu}d\tau/\mu\)이다. 선형 원천 함수에서는 \(I(0,\mu) = S(\tau = \mu)\)이며, 회색 에딩턴 대기의 주연 감광은 \(0.4 + 0.6\mu\)이다. 산란이 지배하면 람다 반복이 느리므로 ALI나 포트리에 방법을 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.5</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>에딩턴 회색 대기에서 \(\mu = 0.5\)의 상대 세기는?
-          <details><summary>답</summary><p>0.7.</p></details>
-        </li>
-        <li>Eddington-Barbier 관계로 \(\mu = 1\)(원반 중심)의 세기는 어느 깊이의 원천 함수입니까?
-          <details><summary>답</summary><p>\(\tau = 1\).</p></details>
+        <li>에딩턴-바르비에 관계로 보면 원반 중심(\(\mu = 1\))의 세기는 어느 깊이의 원천 함수인가?
+          <details><summary>답</summary><p>\(\tau = 1\)의 원천 함수이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>\(S = 1 + 3\tau\)이면 \(I(0, \mu)\)와 \(I(0.2)/I(1)\)은?
-          <details><summary>답</summary><p>\(1 + 3\mu\), \(1.6/4 = 0.4\).</p></details>
+      <ol start="2">
+        <li>\(S = 1 + 3\tau\)이면 \(I(0, \mu)\)와 \(I(0.2)/I(1)\)은 얼마인가?
+          <details><summary>답</summary><p>\(I(0,\mu) = 1 + 3\mu\)이고 \(I(0.2)/I(1) = 1.6/4 = 0.4\)이다.</p></details>
         </li>
-        <li>원반 가장자리가 어두운 까닭을 Eddington-Barbier로 설명하세요.
-          <details><summary>답</summary><p>가장자리(\(\mu\) 작음)에서는 얕은 깊이(\(\tau = \mu\))의 차가운 층을 보므로 원천 함수가 작아 어둡습니다.</p></details>
+        <li>파장이 짧을수록 주연 감광이 더 뚜렷한 까닭을 에딩턴-바르비에 관계로 설명하여라.
+          <details><summary>답</summary><p>짧은 파장에서는 플랑크 함수가 온도에 더 민감해, 같은 깊이 차이(\(\tau = \mu\)와 \(\tau = 1\))에서 원천 함수의 비가 더 크다. 그래서 가장자리와 중심의 밝기 차이가 커진다.</p></details>
         </li>
       </ol>
     </div>

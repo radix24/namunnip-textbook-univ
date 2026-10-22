@@ -8,71 +8,70 @@
 <article class="card q-card" id="text-a10-eigen" data-kind="본문" data-std="천우10-02-02">
   <header class="card-head"><span class="no"></span><h2>고유값 문제를 수치로 풀기</h2><span class="kind">본문 · 2.2절</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>거듭제곱 방법으로 가장 큰 고유값을 구하고 수렴 속도를 안다.</li>
-        <li>라이브러리의 고유값 풀이를 쓰고 결과를 확인한다.</li>
-        <li>천문학의 고유값 문제(진동 모드, 안정성, 주성분 분석)를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>고유값과 고유벡터 (<a href="../../math/2/index.html">수학2 선형대수</a>), LU 분해 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
-
-<h3>고유값이 나오는 곳</h3>
-    <p>\(A\mathbf v = \lambda\mathbf v\)를 만족하는 \(\lambda\)와 \(\mathbf v\)가 고유값과 고유벡터입니다. 별의 진동 모드(성진학), 궤도나 평형의 안정성(선형화한 계의 고유값의 부호), 수많은 스펙트럼을 몇 개의 기본 성분으로 요약하는 주성분 분석(공분산 행렬의 고유벡터)이 모두 고유값 문제입니다.</p>
+    <p class="q-ask">별의 진동 모드, 라그랑주점의 안정성, 수만 개 스펙트럼의 주성분은 모두 \(A\mathbf v = \lambda\mathbf v\)의 고유값과 고유벡터로 답한다. 손으로는 특성방정식을 풀지만, \(1000\times1000\) 행렬이면 1000차 방정식이 된다. 컴퓨터는 고유값을 어떻게 구할까? 그리고 그 계산은 얼마나 빨리 끝날까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="거듭제곱 방법에서 반복 횟수에 따른 가장 큰 고유값의 상대 오차를 로그 눈금으로 그린 그래프. 두 고유값의 비가 1/3이면 15번 안에 기계 정밀도에 이르고, 1/2이면 약 25번, 0.9이면 30번 뒤에도 오차가 10의 −3제곱 근처에 머문다">
+        <line x1="60" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="166.7" y="195" text-anchor="middle" class="s">10</text>
+        <text x="273.3" y="195" text-anchor="middle" class="s">20</text>
+        <text x="380" y="195" text-anchor="middle" class="s">30</text>
+        <text x="55" y="184" text-anchor="end" class="s">10⁻¹⁶</text>
+        <text x="55" y="144" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="55" y="104" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="55" y="64" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="55" y="24" text-anchor="end" class="s">10⁰</text>
+        <text x="380" y="209" text-anchor="end" class="s">반복 횟수</text>
+        <text x="66" y="24" class="s">고유값의 상대 오차</text>
+        <path d="M70.7 24.8 L81.3 31.8 L92 40.9 L102.7 50.4 L113.3 59.9 L124 69.5 L134.7 79 L145.3 88.6 L156 98.1 L166.7 107.6 L177.3 117.2 L188 126.7 L198.7 136.3 L209.3 145.8 L220 155.3 L230.7 164.9 L241.3 175.3 L252 180 L262.7 180 L273.3 180 L284 180 L294.7 180 L305.3 180 L316 180 L326.7 180 L337.3 180 L348 180 L358.7 180 L369.3 180 L380 180" class="a"/>
+        <path d="M70.7 26 L81.3 30 L92 35.3 L102.7 41.1 L113.3 47.1 L124 53.1 L134.7 59.1 L145.3 65.2 L156 71.2 L166.7 77.2 L177.3 83.2 L188 89.2 L198.7 95.3 L209.3 101.3 L220 107.3 L230.7 113.3 L241.3 119.3 L252 125.4 L262.7 131.4 L273.3 137.4 L284 143.4 L294.7 149.4 L305.3 155.5 L316 161.5 L326.7 167.5 L337.3 173.5 L348 179.5 L358.7 180 L369.3 180 L380 180" class="b"/>
+        <path d="M70.7 33 L81.3 33.5 L92 34 L102.7 34.6 L113.3 35.2 L124 35.9 L134.7 36.6 L145.3 37.3 L156 38.1 L166.7 38.8 L177.3 39.6 L188 40.5 L198.7 41.3 L209.3 42.2 L220 43 L230.7 43.9 L241.3 44.8 L252 45.7 L262.7 46.6 L273.3 47.5 L284 48.4 L294.7 49.3 L305.3 50.2 L316 51.1 L326.7 52 L337.3 52.9 L348 53.8 L358.7 54.7 L369.3 55.6 L380 56.5" class="d"/>
+        <text x="395" y="44" class="s">λ₂/λ₁</text><text x="395" y="66" class="s ta">1/3</text><text x="395" y="84" class="s tb">1/2</text><text x="395" y="102" class="s td">0.9</text><text x="395" y="136" class="s">레일리 몫의 오차는</text><text x="395" y="152" class="s">(λ₂/λ₁)²씩 준다</text>
+      </svg>
+      <figcaption>그림 1. 거듭제곱 방법의 수렴(대칭 행렬, 레일리 몫). 오차는 반복마다 \((\lambda_2/\lambda_1)^2\)배로 줄어, 두 고유값이 많이 다를수록(파랑) 빠르고 비슷하면(빨강) 매우 느리다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>고유값과 고유벡터(<a href="../../math/2/index.html">수학2 선형대수</a>)와 LU 분해(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 반복이다. 특성방정식을 풀지 않고, 행렬을 거듭 곱하거나 분해하기를 되풀이해 고유값에 다가간다. 가장 단순한 방법이 거듭제곱 방법이다.</p>
 
     <h3><span class="no">2.2.1</span>거듭제곱 방법</h3>
-    <p>아무 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하면, 가장 큰(절댓값) 고유값 \(\lambda_1\)의 고유벡터 성분이 다른 성분보다 \((\lambda_1/\lambda_2)^k\)배 빨리 자라 결국 그 방향만 남습니다. 고유값은 레일리 몫 \(\mathbf v^T A\mathbf v/\mathbf v^T\mathbf v\)로 읽습니다.</p>
+    <p>아무 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하면, 절댓값이 가장 큰 고유값 \(\lambda_1\)의 고유벡터 성분이 다른 성분보다 \((\lambda_1/\lambda_2)^k\)배 빨리 자라 결국 그 방향만 남는다. 그때 고유값은 레일리 몫 \(\mathbf v^T A\mathbf v/\mathbf v^T\mathbf v\)로 읽는다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p>\(A = \begin{pmatrix}2&1\\1&2\end{pmatrix}\)(고유값 3, 1)에 \(\mathbf v_0 = (1, 0)\)에서 거듭제곱 방법을 두 번 적용하고 레일리 몫을 구하세요.</p>
+      <p>\(A = \begin{pmatrix}2&1\\1&2\end{pmatrix}\)(고유값 3, 1)에 \(\mathbf v_0 = (1, 0)\)에서 거듭제곱 방법을 두 번 적용하고 레일리 몫을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\mathbf v_1 = A\mathbf v_0 = (2, 1)\), \(A\mathbf v_1 = (5, 4)\), 레일리 몫 \((2\cdot5 + 1\cdot4)/5 = 2.8\). \(\mathbf v_2 = (5, 4)\), \(A\mathbf v_2 = (14, 13)\), 몫 \((70 + 52)/41 = 2.976\). 오차가 0.2에서 0.024로 약 \((1/3)^2 = 1/9\)씩 줄어듭니다(대칭 행렬에서 레일리 몫은 비의 제곱으로 수렴).</p>
-    <p>두 고유값이 비슷하면(\(\lambda_2/\lambda_1 \approx 1\)) 수렴이 매우 느립니다. 원하는 값 \(\sigma\) 근처의 고유값은 \((A - \sigma I)^{-1}\)에 거듭제곱 방법을 쓰는 역반복으로 구하며, 이때 매번 LU로 연립방정식을 풉니다.</p>
+    <p><i>풀이.</i> \(\mathbf v_1 = A\mathbf v_0 = (2, 1)\)이고 \(A\mathbf v_1 = (5, 4)\)이므로 레일리 몫은 \((2\cdot5 + 1\cdot4)/5 = 2.8\)이다. 다음으로 \(\mathbf v_2 = (5, 4)\), \(A\mathbf v_2 = (14, 13)\)에서 몫은 \((70 + 52)/41 = 2.976\)이다. 즉 오차가 0.2에서 0.024로 약 \((1/3)^2 = 1/9\)씩 줄어든다. 대칭 행렬에서 레일리 몫은 고유값 비의 제곱으로 수렴하기 때문이다(그림 1).</p>
+    <p>그런데 두 고유값이 비슷하면(\(\lambda_2/\lambda_1 \approx 1\)) 수렴이 매우 느리다. 이때는 원하는 값 \(\sigma\) 근처의 고유값을 \((A - \sigma I)^{-1}\)에 거듭제곱 방법을 쓰는 역반복으로 구하며, 매번 LU 분해로 연립방정식을 푼다.</p>
 
     <h3><span class="no">2.2.2</span>라이브러리</h3>
-    <p>모든 고유값은 QR 알고리즘(LAPACK)으로 구합니다. 계산량은 \(n^3\) 정도입니다.</p>
+    <p>모든 고유값은 LAPACK의 QR 알고리즘으로 구하며, 계산량은 \(n^3\) 정도이다. 따라서 처음 질문의 \(1000\times1000\) 행렬도 1초 안팎이면 끝난다.</p>
     <pre><code>import numpy as np
 A = np.array([[2., 1], [1, 2]])
 w, V = np.linalg.eigh(A)      # 대칭 행렬용: w = [1, 3], V의 열이 고유벡터
 print(A @ V[:, 1] - w[1] * V[:, 1])   # 확인: 0에 가까워야 함</code></pre>
-    <p>대칭 행렬에는 <code>eigh</code>(빠르고 고유값이 실수로 정렬됨), 일반 행렬에는 <code>eig</code>(복소수 고유값 가능)를 씁니다. 큰 희소 행렬에서 몇 개만 필요하면 <code>scipy.sparse.linalg.eigsh</code>를 씁니다.</p>
+    <p>대칭 행렬에는 빠르고 고유값을 실수로 정렬해 주는 <code>eigh</code>를, 일반 행렬에는 복소수 고유값도 주는 <code>eig</code>를 쓴다. 큰 희소 행렬에서 몇 개만 필요하면 <code>scipy.sparse.linalg.eigsh</code>를 쓴다.</p>
 
     <h3><span class="no">2.2.3</span>안정성 판단</h3>
-    <p>평형점 근처에서 \(\dot{\mathbf x} = J\mathbf x\)(\(\dot{\mathbf x}\)는 각 성분의 시간 변화율)로 선형화하면, \(J\)의 고유값 실수부가 모두 음수면 안정, 하나라도 양수면 불안정입니다. 예를 들어 삼체 문제의 라그랑주점 L1~L3에서는 양의 실수 고유값이 있어 불안정합니다(<a href="../8/04-03.html">천우8 4.3절</a>).</p>
-    <div class="tb-note"><b>주의</b> 고유벡터는 크기와 부호가 정해지지 않아 라이브러리마다 \(-\mathbf v\)를 줄 수도 있습니다. 결과를 비교할 때는 부호와 정규화를 맞추세요.</div>
+    <p>평형점 근처에서 \(\dot{\mathbf x} = J\mathbf x\)로 선형화하자. 여기서 \(\dot{\mathbf x}\)는 각 성분의 시간 변화율이다. 그러면 \(J\)의 고유값 실수부가 모두 음수면 안정하고, 하나라도 양수면 불안정하다. 예를 들어 삼체 문제의 라그랑주점 L1~L3에서는 양의 실수 고유값이 있어 불안정하다(<a href="../8/04-03.html">천우8 4.3절</a>).</p>
+    <div class="tb-note"><span class="lb">주의</span>고유벡터는 크기와 부호가 정해지지 않아, 라이브러리마다 \(-\mathbf v\)를 줄 수도 있다. 결과를 비교할 때는 부호와 정규화를 맞춘다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>거듭제곱 방법: \(A^k\mathbf v_0\)가 가장 큰 고유값의 고유벡터로 수렴, 오차 비 \(\lambda_2/\lambda_1\).</li>
-        <li>역반복으로 원하는 값 근처의 고유값을 구한다.</li>
-        <li>라이브러리: 대칭은 eigh, 일반은 eig, 희소는 eigsh.</li>
-        <li>선형화한 계의 고유값 실수부 부호로 안정성을 판단한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>거듭제곱 방법은 \(A^k\mathbf v_0\)가 가장 큰 고유값의 고유벡터로 수렴하는 것을 이용하며, 오차는 고유값 비로 줄어든다. 원하는 값 근처의 고유값은 역반복으로, 모든 고유값은 라이브러리의 QR 알고리즘으로 구한다(대칭은 eigh, 일반은 eig, 희소는 eigsh). 선형화한 계의 고유값 실수부의 부호로 평형의 안정성을 판단한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(\begin{pmatrix}3&0\\0&1\end{pmatrix}\)에 \((1, 1)\)을 세 번 곱하면?
-          <details><summary>답</summary><p>\((27, 1)\). 첫 성분이 지배합니다.</p></details>
-        </li>
-        <li>고유값 5와 4.9인 행렬에서 거듭제곱 방법의 수렴은 빠릅니까?
-          <details><summary>답</summary><p>느립니다. 한 번에 오차가 0.98배밖에 줄지 않습니다.</p></details>
+        <li>고유값 5와 4.9인 행렬에서 거듭제곱 방법의 수렴은 빠른가?
+          <details><summary>답</summary><p>느리다. 벡터의 오차가 한 번에 0.98배밖에 줄지 않는다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>거듭제곱 방법으로 오차를 \(10^{-6}\)으로 줄이려면 \(\lambda_2/\lambda_1 = 0.5\)에서 몇 번(벡터 기준)?
-          <details><summary>답</summary><p>\(0.5^k = 10^{-6}\), \(k = 20\)번.</p></details>
+      <ol start="2">
+        <li>\(\lambda_2/\lambda_1 = 0.5\)에서 벡터의 오차를 \(10^{-6}\)으로 줄이려면 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(0.5^k = 10^{-6}\)에서 \(k = 20\)번이다.</p></details>
         </li>
-        <li>\(J = \begin{pmatrix}0&1\\4&0\end{pmatrix}\)인 평형점은 안정합니까?
-          <details><summary>답</summary><p>고유값 \(\pm2\). 양수 2가 있어 불안정합니다.</p></details>
+        <li>\(J = \begin{pmatrix}0&1\\4&0\end{pmatrix}\)인 평형점은 안정한가?
+          <details><summary>답</summary><p>고유값이 \(\pm2\)이고 양수 2가 있으므로 불안정하다.</p></details>
         </li>
       </ol>
     </div>
