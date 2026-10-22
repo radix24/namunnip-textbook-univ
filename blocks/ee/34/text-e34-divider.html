@@ -8,60 +8,59 @@
 <article class="card q-card" id="text-e34-divider" data-kind="본문" data-std="전전34-02-03">
   <header class="card-head"><span class="no"></span><h2>클록 분주기 설계</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>고속 보드 클록을 카운터로 나눠 느린 클록이나 활성 신호를 만든다.</li>
-        <li>필요한 카운터 최댓값과 비트 수를 계산한다.</li>
-        <li>분주 클록 대신 클록 활성(enable)을 쓰는 이유를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>카운터 (<a href="02-01.html">2.1절</a>), 최대 주파수 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">FPGA 안의 여러 블록은 서로 다른 속도로 움직여야 한다. 표시기는 수백 Hz로, 스톱워치는 100 Hz로, LED는 1 Hz로 바뀐다. 이 느린 박자를 빠른 클록 하나에서 얻는 회로가 분주기이다. 몇 클록마다 박자를 내면 될까? 그리고 만든 박자를 회로에 어떤 모양으로 나눠 주어야 안전할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 분주기(개형). 50 MHz에서 2 Hz 허용 펄스를 만들려면 N = 25,000,000으로 0부터 24,999,999까지 세는 25비트 카운터가 필요하고, 1 Hz로 바꾸면 N = 50,000,000, 최댓값 49,999,999로 26비트가 필요하다">
+        <line x1="40" y1="160" x2="520" y2="160" class="ax"/>
+        <path d="M60 150 L250 50 L250 150 L440 50 L440 150" class="b" fill="none" stroke-width="2"/>
+        <path d="M245 160 V130 H255 V160 M435 160 V130 H445 V160" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="60" y="40" class="tb">카운터 0 → 24,999,999</text><text x="230" y="182" class="ta">tick(1클록 폭)</text><text x="300" y="100">2 Hz는 25비트</text><text x="300" y="124" class="td">1 Hz는 26비트</text></g>
+      </svg>
+      <figcaption>그림 1. 카운터가 N − 1에 닿을 때마다 한 클록 폭의 허용 펄스를 내고 0으로 돌아가며, 비트 수는 최댓값을 담을 만큼 정한다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>카운터(<a href="02-01.html">2.1절</a>)와 최대 주파수(<a href="02-02.html">2.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>세어서 느리게</h3>
-    <p>f_in을 f_out으로 나누려면 카운터가 N = f_in/f_out 클록마다 한 번 펄스를 내면 됩니다(듀티 50% 출력이면 N/2마다 반전). FPGA에서는 분주된 신호를 클록으로 쓰기보다 원래 클록에 한 주기 폭 활성 펄스를 만들어 쓰는 편이 타이밍 분석과 클록 배선에 안전합니다.</p><pre><code>// 50 MHz -&gt; 2 Hz 활성 펄스
+    <p>f_in을 f_out으로 나누려면 카운터가 N = f_in/f_out 클록마다 한 번 펄스를 내면 된다. 처음 질문의 첫째 답이 이 N이며, 듀티 50% 출력이 필요하면 N/2마다 반전한다.</p>
+    <p>그런데 FPGA에서는 분주된 신호를 클록으로 쓰기보다, 원래 클록에 한 주기 폭의 활성 펄스를 만들어 쓰는 편이 안전하다. 처음 질문의 둘째 답이 이것으로, 타이밍 분석과 클록 배선이 원래 클록 하나로 정리되기 때문이다. 아래는 50 MHz에서 2 Hz 활성 펄스를 만드는 코드이다.</p>
+<pre><code>// 50 MHz -&gt; 2 Hz 활성 펄스
 reg [24:0] cnt;               // 0 .. 24_999_999 에는 25비트 필요
 always @(posedge clk)
   if (cnt == 25_000_000 - 1) begin cnt &lt;= 0; tick &lt;= 1; end
   else begin cnt &lt;= cnt + 1; tick &lt;= 0; end</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
-      <p>위 코드(50 MHz → 2 Hz)의 카운터 최댓값과 비트 수는? 1 Hz로 바꾸려면?</p>
+      <p>위 코드(50 MHz → 2 Hz)의 카운터 최댓값과 비트 수를 구하여라. 1 Hz로 바꾸려면 어떻게 하는지도 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 2 Hz: N = 25,000,000 → 최댓값 24,999,999, 2²⁴ = 16.8M &lt; 25M ≤ 2²⁵이라 25비트. 1 Hz: N = 50,000,000 → 최댓값 49,999,999, 26비트(2²⁵ = 33.5M &lt; 50M). 비트 수를 하나 덜 잡으면 카운터가 비교 값에 닿지 못해 tick이 나오지 않으므로 시뮬레이션으로 주기를 꼭 확인합니다.</p>
+    <p><i>풀이.</i> 2 Hz는 N = 25,000,000이므로 최댓값은 24,999,999이고, 2²⁴ = 16.8M &lt; 25M ≤ 2²⁵이라 25비트이다. 그리고 1 Hz는 N = 50,000,000이므로 최댓값 49,999,999, 26비트이다(2²⁵ = 33.5M &lt; 50M)(그림 1).</p>
+    <p>비트 수를 하나 덜 잡으면 카운터가 비교 값에 닿지 못해 tick이 나오지 않는다. 그러므로 시뮬레이션으로 주기를 꼭 확인한다.</p>
+    <p>즉 tick을 쓰는 블록은 <code>if (tick)</code> 조건 안에서만 상태를 바꾼다. 그러면 모든 플립플롭이 같은 50 MHz 클록으로 움직이면서도, 실제 변화는 2 Hz로만 일어난다.</p>
+    <p>한편 시뮬레이션에서 2천5백만 클록을 돌리면 오래 걸린다. 따라서 분주값을 매개변수로 두고, 시험할 때만 작은 값으로 바꿔 몇 번의 tick을 빨리 확인한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "분주한 신호를 클록으로 바로 쓰면 된다": 클록 스큐와 타이밍 분석 문제가 생깁니다. (2) "카운터 비트 수는 대충 넉넉히": 최댓값을 담는 최소 비트를 계산해야 비교가 맞습니다.</div>
+    <p>결국 분주기는 FPGA 설계에서 가장 자주 쓰는 블록이며, 스톱워치(5.1절)나 표시기 시분할(4.1절)도 같은 구조로 박자를 얻는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>N = f_in/f_out, 0~N − 1.</li>
-        <li>비트 = ⌈log₂N⌉.</li>
-        <li>분주 클록보다 활성 펄스.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>분주한 신호를 클록으로 바로 쓰면 된다고 여기기 쉽다. 클록 스큐와 타이밍 분석 문제가 생긴다. 또 카운터 비트 수는 대충 넉넉히 잡으면 된다고 생각하기 쉬운데, 최댓값을 담는 최소 비트를 계산해 두어야 비교가 맞는지 확인할 수 있다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>분주비는 N = f_in/f_out이고 카운터는 0~N − 1을 센다. 비트 수는 ⌈log₂N⌉이다. 분주 클록보다 활성 펄스를 쓴다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>100 MHz → 1 kHz의 N은?
-          <details><summary>답</summary><p>100,000.</p></details>
+          <details><summary>답</summary><p>100,000이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>그 카운터 비트 수는?
-          <details><summary>답</summary><p>17비트.</p></details>
+          <details><summary>답</summary><p>17비트이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>50% 듀티 1 Hz 사각파를 만들려면?
-          <details><summary>답</summary><p>25,000,000클록마다 출력을 반전합니다.</p></details>
+          <details><summary>답</summary><p>25,000,000클록마다 출력을 반전한다.</p></details>
         </li>
       </ol>
     </div>

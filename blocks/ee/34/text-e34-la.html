@@ -8,56 +8,52 @@
 <article class="card q-card" id="text-e34-la" data-kind="본문" data-std="전전34-05-03">
   <header class="card-head"><span class="no"></span><h2>로직 분석기로 디버깅하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>신호 속도에 맞는 표본화 주파수를 정한다.</li>
-        <li>메모리 깊이와 표본화 주파수로 기록 시간을 계산한다.</li>
-        <li>트리거 조건으로 원하는 순간을 잡는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>UART (<a href="04-01.html">4.1절</a>), 설계 프로젝트 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">FPGA 회로가 이상하게 동작할 때, 시뮬레이션에서는 멀쩡한 경우가 있다. 실제 보드 위의 신호를 봐야 하는데, 오실로스코프는 채널이 두세 개뿐이고 디지털 신호는 수십 개다. 여러 디지털 신호를 한꺼번에 기록하려면 얼마나 자주 표본을 떠야 할까? 그리고 한정된 메모리로 원하는 순간을 어떻게 잡을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 로직 분석기 설정(개형). UART 115200 bps의 비트 시간은 8.68 μs이고 8배 표본화는 약 0.92 MHz라 1 MHz로 설정하며, 1 M표본 메모리로 1초를 기록해 약 11,520바이트를 담는다. 50 MHz 내부 신호를 ILA 1024표본으로 보면 20 μs뿐이다">
+        <path d="M40 60 H100 V100 H170 V60 H240 V100 H310 V60 H520" class="b" fill="none" stroke-width="2"/>
+        <g class="fd"><circle cx="60" cy="130" r="3"/><circle cx="75" cy="130" r="3"/><circle cx="90" cy="130" r="3"/><circle cx="105" cy="130" r="3"/><circle cx="120" cy="130" r="3"/><circle cx="135" cy="130" r="3"/><circle cx="150" cy="130" r="3"/><circle cx="165" cy="130" r="3"/></g>
+        <path d="M100 30 V160" class="d dsh"/>
+        <g class="s"><text x="40" y="44">비트 8.68 μs</text><text x="180" y="134" class="tb">1 MHz 표본</text><text x="106" y="176" class="td">트리거</text><text x="330" y="96" class="ta">1 M표본 → 1 s</text><text x="330" y="122">약 11,520바이트</text></g>
+      </svg>
+      <figcaption>그림 1. 비트 하나에 표본이 여러 개 들어가도록 표본화하고, 메모리 깊이를 표본화 주파수로 나눈 시간만큼 트리거 전후를 기록한다(예제 5.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>UART(<a href="04-01.html">4.1절</a>)와 설계 프로젝트(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>보이지 않는 신호를 보기</h3>
-    <p>로직 분석기(또는 FPGA 내장 ILA)는 여러 디지털 신호를 표본화해 기록합니다. 비트 시간보다 충분히 짧게(보통 4~10배 이상) 표본화해야 가장자리 위치를 정확히 봅니다. 기록 시간 = 메모리 깊이/표본화 주파수이므로, 빠르게 찍으면 짧게만 볼 수 있어 트리거로 관심 순간을 잡습니다.</p>
+    <p>로직 분석기(또는 FPGA 내장 ILA)는 여러 디지털 신호를 표본화해 0과 1로 기록한다. 그리고 비트 시간보다 충분히 짧게, 보통 비트 속도의 4~10배 이상으로 표본화해야 모서리 위치를 정확히 본다. 처음 질문의 첫째 답이 이 배수이다.</p>
+    <p>기록 시간은 메모리 깊이/표본화 주파수이다. 그래서 빠르게 찍으면 짧게만 볼 수 있고, 트리거로 관심 순간을 잡는다. 처음 질문의 둘째 답이 이 트리거로, 예를 들어 "UART 수신선이 처음 0으로 떨어질 때"를 조건으로 두면 그 앞뒤만 기록한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
-      <p>UART 115200 bps의 비트 시간과 8배 표본화 주파수는? 메모리 1 M표본에서 그 주파수로 기록할 수 있는 시간과 바이트 수(10비트 프레임)는?</p>
+      <p>UART 115200 bps의 비트 시간과 8배 표본화 주파수를 구하여라. 메모리 1 M표본에서 그 주파수로 기록할 수 있는 시간과 바이트 수(10비트 프레임)도 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 비트 8.68 μs, 표본화 약 0.92 MHz(1 MHz로 설정). 기록 1 s → 약 11,520바이트. 50 MHz 내부 신호를 ILA로 보면 1024표본이 20 μs뿐이라 트리거가 필수입니다.</p>
+    <p><i>풀이.</i> 비트 시간은 8.68 μs이고, 표본화는 약 0.92 MHz라 1 MHz로 설정한다. 그러면 기록은 1 s, 약 11,520바이트이다(그림 1). 그런데 50 MHz 내부 신호를 ILA로 보면 1024표본이 20 μs뿐이라 트리거가 필수이다.</p>
+    <p>즉 외부 로직 분석기는 보드 핀에 나온 신호만 보지만, ILA는 FPGA 안의 아무 신호나 볼 수 있다. 따라서 상태 기계의 현재 상태처럼 핀으로 나오지 않는 신호를 볼 때는 ILA를 쓴다.</p>
+    <p>한편 로직 분석기 프로그램은 기록한 파형을 UART, SPI, I2C 같은 규약으로 해석해 문자나 바이트로 보여 주기도 한다. 그러면 파형을 비트마다 읽지 않아도 무엇을 주고받았는지 바로 안다.</p>
+    <p>그리고 디버깅은 가설에서 출발한다. 예를 들어 "버튼을 누를 때 카운터가 두 번 오른다"는 현상이면, 버튼 신호와 디바운스 출력과 카운터 값을 함께 기록해 어느 단계에서 펄스가 두 번 나오는지 본다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "표본화는 신호 주파수와 같으면 된다": 가장자리를 놓치거나 위치가 크게 틀립니다. (2) "메모리가 깊으면 다 해결": 빠른 신호에서는 깊이도 금방 찹니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>표본화는 신호 주파수와 같으면 된다고 여기기 쉽다. 모서리를 놓치거나 위치가 크게 틀린다. 또 메모리가 깊으면 다 해결된다고 생각하기 쉬운데, 빠른 신호에서는 깊이도 금방 찬다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>표본화 ≥ 4~10 × 신호 속도.</li>
-        <li>기록 시간 = 깊이/표본화 주파수.</li>
-        <li>트리거로 순간 포착.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>표본화는 신호 속도의 4~10배 이상으로 한다. 기록 시간은 깊이/표본화 주파수이다. 트리거로 관심 순간을 잡는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>9600 bps의 비트 시간은?
-          <details><summary>답</summary><p>약 104 μs.</p></details>
+          <details><summary>답</summary><p>약 104 μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>4 M표본(2²²), 10 MHz의 기록 시간은?
-          <details><summary>답</summary><p>약 0.42 s.</p></details>
+          <details><summary>답</summary><p>약 0.42 s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>ILA가 FPGA 자원을 쓰는 이유는?
-          <details><summary>답</summary><p>기록용 BRAM과 트리거 논리를 설계 안에 넣기 때문입니다.</p></details>
+          <details><summary>답</summary><p>기록용 BRAM과 트리거 논리를 설계 안에 넣기 때문이다.</p></details>
         </li>
       </ol>
     </div>

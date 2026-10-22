@@ -8,56 +8,52 @@
 <article class="card q-card" id="text-e34-report" data-kind="본문" data-std="전전34-05-02">
   <header class="card-head"><span class="no"></span><h2>FPGA 구현 보고서 읽기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>자원 사용률(LUT, FF, BRAM, DSP)을 해석한다.</li>
-        <li>WNS(최악 여유)로 타이밍 충족과 최대 주파수를 판단한다.</li>
-        <li>보고서 경고(래치, 제약 없음)를 찾아 고친다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>설계 프로젝트 (<a href="05-01.html">5.1절</a>), 최대 클록 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">FPGA 도구로 설계를 구현하면, 비트스트림 파일과 함께 긴 보고서가 쏟아져 나온다. 대부분의 학생은 "성공"이라는 글자만 보고 넘어간다. 그런데 이 보고서에는 설계가 칩을 얼마나 쓰는지, 얼마나 빠르게 돌 수 있는지가 숫자로 적혀 있다. 어떤 숫자부터 보아야 할까? 그리고 그 숫자로 최대 클록을 어떻게 어림할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.2.1 구현 보고서(개형, 가상 보고서). LUT 2,400/20,800은 11.5%, FF 1,900/41,600은 4.6%이고, 100 MHz 제약에서 WNS +1.2 ns이면 f_max는 1/(10 − 1.2) ns로 약 114 MHz이다">
+        <line x1="60" y1="60" x2="400" y2="60" class="ax"/><line x1="60" y1="110" x2="400" y2="110" class="ax"/>
+        <path d="M60 60 H99" class="a" stroke-width="10"/><path d="M60 110 H76" class="b" stroke-width="10"/>
+        <g class="s"><text x="60" y="44" class="ta">LUT 11.5%</text><text x="60" y="94" class="tb">FF 4.6%</text><text x="60" y="150">제약 10 ns, WNS +1.2 ns</text><text x="60" y="176" class="td">f_max ≈ 1/8.8 ns = 114 MHz</text></g>
+      </svg>
+      <figcaption>그림 1. 사용률은 자원이 얼마나 남았는지를, WNS는 가장 나쁜 경로가 제약 주기보다 얼마나 일찍 끝나는지를 알려 준다(예제 5.2.1, 개형, 가상값).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>설계 프로젝트(<a href="05-01.html">5.1절</a>)와 최대 클록(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">5.2.1</span>숫자로 확인하는 설계</h3>
-    <p>구현 뒤 사용률 보고서는 자원이 얼마나 남았는지, 타이밍 보고서의 WNS는 가장 나쁜 경로의 여유를 알려 줍니다. WNS ≥ 0이면 제약 클록을 만족하며, 대략 f_max ≈ 1/(T − WNS)입니다. “latch inferred”, “no clock constraint” 경고는 대부분 설계 실수입니다.</p>
+    <p>구현 뒤 사용률 보고서는 LUT, 플립플롭, 메모리 블록 같은 자원이 얼마나 남았는지 알려 준다. 그리고 타이밍 보고서의 WNS는 가장 나쁜 경로의 여유이다. 처음 질문의 첫째 답이 이 두 보고서이다.</p>
+    <p>WNS ≥ 0이면 제약 클록을 만족한다. 그러면 가장 나쁜 경로는 주기보다 WNS만큼 일찍 끝나므로, 대략 f_max ≈ 1/(T − WNS)이다. 처음 질문의 둘째 답이 이 식이다.</p>
+    <p>그런데 숫자만큼 경고도 중요하다. "latch inferred", "no clock constraint" 경고는 대부분 설계 실수이다. 즉 의도하지 않은 래치가 생겼거나, 도구가 클록을 몰라 타이밍 검사를 하지 않았다는 뜻이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.2.1</span>
-      <p>LUT 2,400/20,800, FF 1,900/41,600(가상 보고서). 100 MHz 제약에서 WNS +1.2 ns. 사용률과 최대 주파수 어림은?</p>
+      <p>LUT 2,400/20,800, FF 1,900/41,600(가상 보고서)이다. 100 MHz 제약에서 WNS +1.2 ns이다. 사용률과 최대 주파수를 어림하여라.</p>
     </div>
-    <p><i>풀이.</i> LUT 11.5%, FF 4.6%. f_max ≈ 1/(10 − 1.2) ns = 114 MHz. 학생 프로젝트에서 WNS가 음수면 대개 큰 조합 논리(나눗셈, 긴 비교 사슬)나 제약 없는 비동기 입력이 원인입니다.</p>
+    <p><i>풀이.</i> LUT는 11.5%, FF는 4.6%이다. 그리고 f_max ≈ 1/(10 − 1.2) ns = 114 MHz이다(그림 1). 학생 프로젝트에서 WNS가 음수면 대개 큰 조합 논리(나눗셈, 긴 비교 사슬)나 제약 없는 비동기 입력이 원인이다.</p>
+    <p>한편 이 어림은 가장 나쁜 경로 하나만 본 값이다. 클록을 실제로 올리면 배치와 배선이 달라져 다른 경로가 가장 나빠질 수 있으므로, 새 제약으로 다시 구현해 확인한다.</p>
+    <p>그리고 사용률이 높을수록 배치·배선이 어려워져 타이밍도 나빠지기 쉽다. 따라서 큰 설계는 사용률에 여유를 남겨 두는 것이 좋다.</p>
+    <p>예를 들어 보고서에서 가장 나쁜 경로의 시작점과 끝점을 보면, 어느 블록의 어떤 연산이 느린지 바로 알 수 있다. 그러면 그 경로에 레지스터를 넣거나 연산을 나누어 고친다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "합성만 성공하면 동작한다": 타이밍과 경고를 확인해야 합니다. (2) "WNS가 크면 클록을 마음대로 올려도 된다": 입출력 장치 타이밍도 함께 봐야 합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>합성만 성공하면 동작한다고 여기기 쉽다. 타이밍과 경고를 확인해야 한다. 또 WNS가 크면 클록을 마음대로 올려도 된다고 생각하기 쉬운데, 입출력 장치 타이밍도 함께 봐야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>사용률 = 사용/전체.</li>
-        <li>f_max ≈ 1/(T − WNS).</li>
-        <li>래치·무제약 경고 확인.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>사용률은 사용/전체이다. 최대 주파수는 f_max ≈ 1/(T − WNS)로 어림한다. 래치와 무제약 경고를 꼭 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>WNS −0.5 ns, 제약 10 ns의 f_max 어림은?
-          <details><summary>답</summary><p>약 95 MHz.</p></details>
+          <details><summary>답</summary><p>약 95 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>BRAM 30/50의 사용률은?
-          <details><summary>답</summary><p>60%.</p></details>
+          <details><summary>답</summary><p>60%이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>TNS(총 음수 여유)가 WNS와 다른 정보는?
-          <details><summary>답</summary><p>위반 경로 전체의 합으로, 고칠 경로가 얼마나 많은지 알려 줍니다.</p></details>
+          <details><summary>답</summary><p>위반 경로 전체의 합으로, 고칠 경로가 얼마나 많은지 알려 준다.</p></details>
         </li>
       </ol>
     </div>

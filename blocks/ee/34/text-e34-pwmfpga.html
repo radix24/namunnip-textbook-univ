@@ -8,58 +8,56 @@
 <article class="card q-card" id="text-e34-pwmfpga" data-kind="본문" data-std="전전34-04-05">
   <header class="card-head"><span class="no"></span><h2>FPGA로 PWM 만들기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>N비트 카운터와 비교기로 PWM을 만든다.</li>
-        <li>PWM 주파수와 듀티 분해능을 계산한다.</li>
-        <li>LED 밝기와 서보 제어에 맞는 설정을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>카운터 (<a href="02-01.html">2.1절</a>), 클록 분주기 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">FPGA의 출력 핀은 0 아니면 1만 낼 수 있다. 그런데 LED를 반쯤 밝게 하거나 모터를 천천히 돌리려면 그 사이의 값이 필요하다. 핀을 아주 빠르게 켰다 껐다 하며 켜 있는 시간의 비율을 바꾸면, 평균으로는 중간값이 된다. 이 비율을 카운터로 어떻게 만들까? 그리고 카운터 비트 수를 바꾸면 무엇이 좋아지고 무엇을 잃을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 4.5.1 FPGA PWM(개형). 50 MHz 클록의 8비트 카운터가 0부터 255를 돌고 카운터가 duty보다 작을 때 출력 1이면, PWM 주파수는 195.3 kHz, 분해능 1/256이고 duty = 64이면 듀티비 25%이다">
+        <path d="M40 160 L200 40 V160 L360 40 V160" class="b" fill="none" stroke-width="2"/>
+        <path d="M40 130 H360" class="d dsh"/>
+        <path d="M40 180 V170 H80 V190 H200 V170 H240 V190 H360" class="a" fill="none" stroke-width="2.5" transform="translate(0,-10)"/>
+        <g class="s"><text x="210" y="56" class="tb">카운터 0 → 255</text><text x="370" y="134" class="td">duty = 64</text><text x="370" y="170" class="ta">출력 25%</text><text x="370" y="56">195.3 kHz</text><text x="370" y="82">분해능 1/256</text></g>
+      </svg>
+      <figcaption>그림 1. 톱니처럼 오르는 카운터가 duty 값보다 작은 동안만 출력을 1로 두면, duty에 비례하는 비율로 켜진 구형파가 나온다(예제 4.5.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>카운터(<a href="02-01.html">2.1절</a>)와 클록 분주기(<a href="02-03.html">2.3절</a>)를 쓴다.</div>
 
     <h3><span class="no">4.5.1</span>카운터와 비교</h3>
-    <p>N비트 카운터가 0~2ᴺ − 1을 돌고, 카운터 &lt; duty일 때 출력 1이면 듀티 = duty/2ᴺ, 주파수 = f_clk/2ᴺ입니다. 비트를 늘리면 분해능이 좋아지고 주파수는 낮아집니다.</p><pre><code>reg [7:0] cnt;
+    <p>N비트 카운터가 0~2ᴺ − 1을 돌고, 카운터 &lt; duty일 때 출력 1이면 듀티 = duty/2ᴺ이다. 처음 질문의 첫째 답이 이 비교로, 코드는 아래처럼 세 줄이면 된다.</p>
+<pre><code>reg [7:0] cnt;
 always @(posedge clk) cnt &lt;= cnt + 1;
 assign pwm = (cnt &lt; duty);    // duty: 0..255</code></pre>
+    <p>그리고 카운터가 한 바퀴 도는 데 2ᴺ 클록이 걸리므로 주파수 = f_clk/2ᴺ이다. 따라서 비트를 늘리면 분해능이 좋아지고 주파수는 낮아진다. 처음 질문의 둘째 답이 이 절충이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.5.1</span>
-      <p>50 MHz, 8비트의 PWM 주파수와 분해능은? duty = 64의 듀티비는?</p>
+      <p>50 MHz, 8비트의 PWM 주파수와 분해능을 구하여라. duty = 64의 듀티비도 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 195.3 kHz, 1/256 단계, 64/256 = 25%. LED 밝기에는 충분하지만 서보(50 Hz, 1~2 ms)에는 분주기로 카운터 속도를 낮추고 비트를 늘려야 합니다(전전25 4.4절).</p>
+    <p><i>풀이.</i> 주파수는 195.3 kHz, 분해능은 1/256 단계이고, 듀티비는 64/256 = 25%이다(그림 1). LED 밝기에는 충분하다. 그런데 서보(50 Hz, 1~2 ms)에는 분주기로 카운터 속도를 낮추고 비트를 늘려야 한다(전전25 4.4절).</p>
+    <p>즉 PWM 설계는 쓰는 곳이 원하는 주파수에서 출발한다. LED는 눈이 깜빡임을 느끼지 못할 만큼, 모터는 소음이 들리지 않을 만큼 높이고, 그 주파수에서 클록이 허락하는 비트 수를 정한다.</p>
+    <p>한편 duty 값을 카운터가 도는 도중에 바꾸면, 한 주기 안에서 출력이 두 번 바뀌는 짧은 펄스가 생길 수 있다. 그래서 새 duty 값은 카운터가 0으로 돌아오는 순간에만 받아들이도록 레지스터에 한 번 더 저장한다.</p>
+    <p>그리고 출력 핀의 평균 전압은 듀티에 비례한다. 예를 들어 3.3 V 핀에서 듀티 25%이면 평균 0.825 V이며, RC 저역 통과를 달면 이 평균에 가까운 아날로그 전압을 얻는다.</p>
+    <p>그러므로 PWM은 FPGA에서 가장 간단한 디지털-아날로그 변환 방법으로도 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "duty = 255면 100%": 이 구조에서는 255/256이 최대입니다. (2) "PWM 주파수는 높을수록 좋다": 구동 소자 스위칭 손실이 커집니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>duty = 255면 100%라고 여기기 쉽다. 이 구조에서는 255/256이 최대이다. 또 PWM 주파수는 높을수록 좋다고 생각하기 쉬운데, 구동 소자 스위칭 손실이 커진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>f_PWM = f_clk/2ᴺ, 듀티 = duty/2ᴺ.</li>
-        <li>예: 50 MHz, 8비트 → 195 kHz, 25%.</li>
-        <li>비트 ↑ 분해능 ↑ 주파수 ↓.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>PWM 주파수는 f_clk/2ᴺ, 듀티는 duty/2ᴺ이다. 예제의 50 MHz, 8비트는 195 kHz이고 duty 64는 25%이다. 비트를 늘리면 분해능이 오르고 주파수가 내려간다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>50 MHz, 10비트의 주파수는?
-          <details><summary>답</summary><p>약 48.8 kHz.</p></details>
+          <details><summary>답</summary><p>약 48.8 kHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>100% 듀티를 내려면?
-          <details><summary>답</summary><p>비교를 ≤로 바꾸거나 별도 조건을 둡니다.</p></details>
+          <details><summary>답</summary><p>비교를 ≤로 바꾸거나 별도 조건을 둔다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>LED 밝기 단계가 낮은 쪽에서 거칠게 보이는 이유는?
-          <details><summary>답</summary><p>눈의 밝기 감각이 로그적이라 낮은 듀티 단계 차이가 크게 느껴집니다.</p></details>
+          <details><summary>답</summary><p>눈의 밝기 감각이 로그적이라 낮은 듀티 단계 차이가 크게 느껴진다.</p></details>
         </li>
       </ol>
     </div>

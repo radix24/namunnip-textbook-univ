@@ -8,64 +8,58 @@
 <article class="card q-card" id="text-e34-timing" data-kind="본문" data-std="전전34-02-02">
   <header class="card-head"><span class="no"></span><h2>셋업·홀드와 최대 클록 주파수</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>플립플롭의 셋업·홀드 시간과 클록-출력 지연의 뜻을 안다.</li>
-        <li>임계 경로로 최대 클록 주파수 \(f_{max} = 1/(t_{cq} + t_{logic} + t_{su})\)를 계산한다.</li>
-        <li>클록 스큐가 셋업과 홀드에 반대로 작용하는 것을 계산으로 확인한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전파 지연 (<a href="01-02.html">1.2절</a>), 카운터 (<a href="02-01.html">2.1절</a>), 이 절의 실습 카드.</li>
-      </ul>
-    </div>
+    <p class="q-ask">동기식 회로에서 데이터는 클록 모서리마다 플립플롭을 떠나 조합 논리를 지나 다음 플립플롭에 도착한다. 너무 늦게 도착해도, 너무 일찍 도착해도 값이 틀린다. 클록을 얼마나 빠르게 할 수 있는지는 무엇이 정할까? 그리고 클록을 늦춰도 고쳐지지 않는 오류가 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 셋업과 홀드(개형). t_cq 3 ns, 조합 논리 최장 9 ns, t_su 2 ns이면 주기가 14 ns 이상이어야 해 f_max는 약 71.4 MHz이고, 최단 경로 4.5 ns는 홀드 1 ns에 여유 3.5 ns가 있지만 스큐 4 ns이면 5 ns를 만족하지 못해 홀드 위반이 된다">
+        <line x1="40" y1="160" x2="520" y2="160" class="ax"/>
+        <rect x="60" y="60" width="45" height="30" class="k" fill="none" stroke-width="2"/>
+        <rect x="105" y="60" width="135" height="30" class="b" fill="none" stroke-width="2.5"/>
+        <rect x="240" y="60" width="30" height="30" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M60 40 V160 M270 40 V160" class="k dsh"/>
+        <rect x="60" y="110" width="45" height="24" class="k" fill="none" stroke-width="2"/><rect x="105" y="110" width="22" height="24" class="d" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="62" y="54">t_cq 3</text><text x="130" y="54" class="tb">조합 논리 9 ns</text><text x="236" y="54" class="ta">t_su 2</text><text x="200" y="182">T ≥ 14 ns, 71.4 MHz</text><text x="140" y="128" class="td">최단 4.5 ns, 홀드 확인</text></g>
+      </svg>
+      <figcaption>그림 1. 가장 긴 경로는 다음 모서리 전에 도착해야 하고(셋업), 가장 짧은 경로는 방금 잡은 값을 덮지 않을 만큼 늦게 도착해야 한다(홀드)(예제 2.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전파 지연(<a href="01-02.html">1.2절</a>)과 카운터(<a href="02-01.html">2.1절</a>)를 쓰고, 이 절의 실습 카드와 함께 본다.</div>
 
     <h3><span class="no">2.2.1</span>세 가지 시간</h3>
-    <p class="q-term"><b>클록-출력 지연</b> \(t_{cq}\): 클록 모서리에서 플립플롭 출력이 바뀔 때까지.</p>
-    <p class="q-term"><b>셋업 시간</b> \(t_{su}\): 받는 플립플롭의 입력이 모서리 전에 미리 안정되어야 하는 시간.</p>
-    <p class="q-term"><b>홀드 시간</b> \(t_h\): 모서리 뒤에도 입력이 그대로 있어야 하는 시간.</p>
-    <p>보내는 플립플롭 → 조합 논리 → 받는 플립플롭 경로에서, 데이터는 한 모서리에 출발해 다음 모서리 전에 도착해야 합니다(셋업). 동시에 같은 모서리에서 새로 출발한 데이터가 너무 빨리 도착해 받는 쪽이 방금 잡은 값을 덮으면 안 됩니다(홀드).</p>
+    <p>클록-출력 지연 \(t_{cq}\)는 클록 모서리에서 플립플롭 출력이 바뀔 때까지의 시간이다. 그리고 셋업 시간 \(t_{su}\)는 받는 플립플롭의 입력이 모서리 전에 미리 안정되어야 하는 시간이고, 홀드 시간 \(t_h\)는 모서리 뒤에도 입력이 그대로 있어야 하는 시간이다.</p>
+    <p>보내는 플립플롭 → 조합 논리 → 받는 플립플롭 경로에서, 데이터는 한 모서리에 출발해 다음 모서리 전에 도착해야 한다(셋업). 동시에 같은 모서리에서 새로 출발한 데이터가 너무 빨리 도착해, 받는 쪽이 방금 잡은 값을 덮으면 안 된다(홀드). 두 조건을 식으로 쓰면 아래와 같다.</p>
     \[ t_{cq} + t_{logic,max} + t_{su} \le T + t_{skew}, \qquad t_{cq} + t_{cd} \ge t_h + t_{skew}. \]
-    <p>\(t_{cd}\)는 가장 짧은 경로의 지연, \(t_{skew}\)는 받는 쪽 클록이 늦게 도착하는 시간입니다.</p>
+    <p>여기서 \(t_{cd}\)는 가장 짧은 경로의 지연, \(t_{skew}\)는 받는 쪽 클록이 늦게 도착하는 시간이다. 처음 질문의 첫째 답이 왼쪽 식으로, 가장 긴 경로가 주기 T의 하한을 정한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p>\(t_{cq}\) = 3 ns, 조합 논리 최장 6단 × 1.5 ns, 최단 1단, \(t_{su}\) = 2 ns, \(t_h\) = 1 ns. (가) 스큐 0에서 최대 클록 주파수와 홀드 여유. (나) 스큐 4 ns이면?</p>
+      <p>\(t_{cq}\) = 3 ns, 조합 논리 최장 6단 × 1.5 ns, 최단 1단, \(t_{su}\) = 2 ns, \(t_h\) = 1 ns이다. (가) 스큐 0에서 최대 클록 주파수와 홀드 여유를 구하여라. (나) 스큐 4 ns이면 어떻게 되는지 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) T ≥ 3 + 9 + 2 = 14 ns → \(f_{max} \approx 71.4\) MHz. 홀드: 3 + 1.5 = 4.5 ≥ 1, 여유 3.5 ns. (나) 셋업: T ≥ 14 − 4 = 10 ns(100 MHz까지 가능해 보임). 홀드: 4.5 ≥ 1 + 4 = 5를 만족하지 못합니다. 홀드 위반은 클록을 늦춰도 고쳐지지 않는 오류입니다(식에 T가 없음). 짧은 경로에 지연을 더하거나 스큐를 줄여야 합니다.</p>
+    <p><i>풀이.</i> (가) T ≥ 3 + 9 + 2 = 14 ns이므로 \(f_{max} \approx 71.4\) MHz이다. 그리고 홀드는 3 + 1.5 = 4.5 ≥ 1이라 여유 3.5 ns이다(그림 1). (나) 셋업은 T ≥ 14 − 4 = 10 ns라 100 MHz까지 가능해 보인다. 그런데 홀드는 4.5 ≥ 1 + 4 = 5를 만족하지 못한다.</p>
+    <p>처음 질문의 둘째 답이 이 홀드 위반이다. 즉 오른쪽 식에는 T가 없으므로, 클록을 늦춰도 고쳐지지 않는다. 그래서 짧은 경로에 지연을 더하거나 스큐를 줄여야 한다.</p>
 
     <h3><span class="no">2.2.2</span>확인 방법</h3>
-    <p>FPGA 도구의 정적 타이밍 분석(STA)이 모든 경로에 대해 이 식을 검사하고 여유(slack)를 보고합니다. 실습에서는 클록 주파수를 올려 가며 카운터나 가산기 결과가 틀리기 시작하는 주파수를 찾아, 계산한 \(f_{max}\)와 비교할 수 있습니다(실제로는 온도와 전압에 따라 다름).</p>
+    <p>FPGA 도구의 정적 타이밍 분석(STA)이 모든 경로에 대해 이 식을 검사하고 여유(slack)를 보고한다. 한편 실습에서는 클록 주파수를 올려 가며 카운터나 가산기 결과가 틀리기 시작하는 주파수를 찾아, 계산한 \(f_{max}\)와 비교할 수 있다(실제로는 온도와 전압에 따라 다름).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "클록을 늦추면 모든 타이밍 문제가 해결된다": 홀드 위반은 T와 무관합니다. (2) "스큐는 언제나 나쁘다": 셋업에는 여유를 주지만 홀드에는 해롭습니다. (3) 비동기 입력(버튼, 다른 클록 영역)은 셋업·홀드를 지킬 수 없어 준안정 상태가 생길 수 있으므로 플립플롭 두 개로 동기화합니다(4.2절).</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>클록을 늦추면 모든 타이밍 문제가 해결된다고 여기기 쉽다. 홀드 위반은 T와 무관하다. 또 스큐는 언제나 나쁘다고 생각하기 쉬운데, 셋업에는 여유를 주지만 홀드에는 해롭다. 그리고 비동기 입력(버튼, 다른 클록 영역)은 셋업·홀드를 지킬 수 없어 준안정 상태가 생길 수 있으므로, 플립플롭 두 개로 동기화한다(4.2절).</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>셋업: \(t_{cq} + t_{logic,max} + t_{su} \le T + t_{skew}\).</li>
-        <li>홀드: \(t_{cq} + t_{cd} \ge t_h + t_{skew}\). T와 무관해 클록을 늦춰도 안 고쳐진다.</li>
-        <li>STA가 모든 경로의 여유를 계산한다. 비동기 입력은 동기화기로.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>셋업 조건은 \(t_{cq} + t_{logic,max} + t_{su} \le T + t_{skew}\)이다. 홀드 조건 \(t_{cq} + t_{cd} \ge t_h + t_{skew}\)는 T와 무관해 클록을 늦춰도 안 고쳐진다. STA가 모든 경로의 여유를 계산하며, 비동기 입력은 동기화기로 받는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(t_{cq}\) = 2, \(t_{logic}\) = 10, \(t_{su}\) = 1 ns이면 \(f_{max}\)는?
-          <details><summary>답</summary><p>약 76.9 MHz.</p></details>
+          <details><summary>답</summary><p>약 76.9 MHz이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 (가)에서 100 MHz로 돌리려면 조합 논리 최장 지연을 얼마로 줄여야 하는가?
-          <details><summary>답</summary><p>10 − 3 − 2 = 5 ns 이하(1.5 ns 게이트로 3단).</p></details>
+          <details><summary>답</summary><p>10 − 3 − 2 = 5 ns 이하(1.5 ns 게이트로 3단)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제 (나)의 홀드 위반을 짧은 경로에 버퍼를 넣어 고치려면 몇 ns를 더해야 하는가? 그때 셋업은?
-          <details><summary>답</summary><p>\(t_{cd} \ge 5 - 3 = 2\) ns이므로 0.5 ns 이상 더합니다. 최장 경로가 아니면 셋업에는 영향이 없습니다.</p></details>
+          <details><summary>답</summary><p>\(t_{cd} \ge 5 - 3 = 2\) ns이므로 0.5 ns 이상 더한다. 최장 경로가 아니면 셋업에는 영향이 없다.</p></details>
         </li>
       </ol>
     </div>
