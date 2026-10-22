@@ -8,85 +8,74 @@
 <article class="card q-card" id="text-e7-theorems" data-kind="본문" data-std="전전7-01-02">
   <header class="card-head"><span class="no"></span><h2>기울기, 발산, 회전과 두 적분 정리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>기울기, 발산, 회전의 물리적 뜻을 "작은 부피에서 나가는 선속", "작은 고리를 도는 순환"으로 설명한다.</li>
-        <li>원통·구 좌표의 발산과 회전 공식을 쓴다.</li>
-        <li>발산 정리와 Stokes 정리로 선속과 순환을 계산하고, 전하·전류와 연결한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>회전과 발산 (<a href="../../common/2/07-05.html">공통2 7.5절</a>), Stokes 정리 (<a href="../../common/2/08-03.html">8.3절</a>), 발산 정리 (<a href="../../common/2/08-04.html">8.4절</a>), 좌표계 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">전하가 있는 곳에서는 전기력선이 새어 나오고, 전류가 흐르는 곳 둘레에서는 자기력선이 소용돌이친다. "새어 나온다"와 "소용돌이친다"를 한 점에서 숫자로 잴 수 있을까? 그리고 그 점별 숫자를 모으면 큰 면이나 고리 전체에 대해 무엇을 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="발산과 회전의 그림. 왼쪽은 한 점에서 퍼져 나가는 장으로, 둘레의 작은 상자에서 나가는 선속이 들어오는 선속보다 커서 발산이 양수이다. 오른쪽은 H = 2ρ aφ처럼 축 둘레를 도는 장으로, 작은 고리를 따라 도는 순환이 있어 회전이 0이 아니며 그 값 4가 전류 밀도이다">
+        <defs><marker id="ah-e7th" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="a" marker-end="url(#ah-e7th)"><path d="M128.0 100.0 L168.0 100.0 M122.7 87.3 L151.0 59.0 M110.0 82.0 L110.0 42.0 M97.3 87.3 L69.0 59.0 M92.0 100.0 L52.0 100.0 M97.3 112.7 L69.0 141.0 M110.0 118.0 L110.0 158.0 M122.7 112.7 L151.0 141.0"/></g>
+        <circle cx="110" cy="100" r="5" class="fa"/>
+        <rect x="140" y="88" width="24" height="24" class="d dsh"/>
+        <text x="110" y="186" text-anchor="middle" class="s">발산: 상자에서 나가는 선속 / 부피</text>
+        <circle cx="380" cy="100" r="25" class="b"/><circle cx="380" cy="100" r="50" class="b"/><circle cx="380" cy="100" r="72" class="b"/>
+        <g class="b" marker-end="url(#ah-e7th)"><path d="M382 75 H376"/><path d="M382 50 H374"/><path d="M382 28 H372"/></g>
+        <rect x="414" y="88" width="24" height="24" class="d dsh"/>
+        <g class="fk"><circle cx="380" cy="100" r="2"/><circle cx="426" cy="100" r="2"/></g>
+        <text x="452" y="96" class="td">J = ∇×H = 4</text>
+        <text x="380" y="190" text-anchor="middle" class="s">회전: 고리를 도는 순환 / 넓이</text>
+      </svg>
+      <figcaption>그림 1. 발산은 한 점 둘레의 작은 부피에서 나가는 단위 부피당 선속이고 회전은 작은 고리를 도는 단위 넓이당 순환이므로, 두 적분 정리로 이 점별 값을 모으면 큰 면의 선속과 큰 고리의 순환이 된다(예제 1.2.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>회전과 발산(<a href="../../common/2/07-05.html">공통2 7.5절</a>), Stokes 정리(<a href="../../common/2/08-03.html">8.3절</a>), 발산 정리(<a href="../../common/2/08-04.html">8.4절</a>), 좌표계(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
-    <div class="tb-note"><b>고교 수학만 배웠다면 먼저 읽기</b>
-      <ul>
-        <li><b>편미분</b> \(\partial V/\partial x\): V가 x, y, z 세 변수의 함수일 때, y와 z는 상수로 두고 x로만 미분한 것. 예: \(V = x^2y\)이면 \(\partial V/\partial x = 2xy\), \(\partial V/\partial y = x^2\). 계산은 고교 미분과 같다.</li>
-        <li><b>기울기</b> \(\nabla V = \frac{\partial V}{\partial x}\mathbf a_x + \frac{\partial V}{\partial y}\mathbf a_y + \frac{\partial V}{\partial z}\mathbf a_z\): 세 방향의 기울기를 모은 벡터. 등산로 지도에서 가장 가파르게 올라가는 방향과 그 경사에 해당한다.</li>
-        <li><b>선속(면 적분)</b> \(\oint\mathbf D\cdot d\mathbf S\): 닫힌 면을 작은 조각으로 나누고, 조각마다 "면을 수직으로 뚫고 나가는 성분 × 조각 넓이"를 모두 더한 값. 물이 그물망을 빠져나가는 양을 떠올리면 된다. 원 기호 \(\oint\)는 닫힌 면(또는 닫힌 고리)이라는 표시.</li>
-        <li><b>발산과 회전</b>은 아래 정의처럼 "작은 상자에서 나가는 양 ÷ 부피", "작은 고리를 도는 양 ÷ 넓이"로 이해하면 충분하다. 곡선 좌표의 긴 공식은 외울 필요가 없고 표에서 찾아 쓰며, 이 과목에서 실제로 쓰는 것은 r이나 ρ 하나에만 의존하는 간단한 경우다.</li>
-      </ul>
-      <p>아래 1.2.1의 뜻을 먼저 이 절의 탐구 카드(평면에서 선속 세기)로 보고 식을 읽으면 훨씬 쉽습니다.</p>
-    </div>
+    <p class="tb-aside">고교 수학만 배웠다면 이 상자를 먼저 읽자. 편미분 \(\partial V/\partial x\)는 V가 x, y, z 세 변수의 함수일 때 y와 z는 상수로 두고 x로만 미분한 것으로, 계산은 고교 미분과 같다. 예를 들어 \(V = x^2y\)이면 \(\partial V/\partial x = 2xy\), \(\partial V/\partial y = x^2\)이다. 기울기 \(\nabla V = \frac{\partial V}{\partial x}\mathbf a_x + \frac{\partial V}{\partial y}\mathbf a_y + \frac{\partial V}{\partial z}\mathbf a_z\)는 세 방향의 기울기를 모은 벡터로, 등산로 지도에서 가장 가파르게 올라가는 방향과 그 경사에 해당한다. 선속(면 적분) \(\oint\mathbf D\cdot d\mathbf S\)는 닫힌 면을 작은 조각으로 나누고, 조각마다 면을 수직으로 뚫고 나가는 성분과 조각 넓이를 곱해 모두 더한 값이며, 원 기호 \(\oint\)는 닫힌 면(또는 닫힌 고리)이라는 표시이다. 발산과 회전은 아래 정의처럼 작은 상자에서 나가는 양을 부피로, 작은 고리를 도는 양을 넓이로 나눈 것으로 이해하면 충분하다. 곡선 좌표의 긴 공식은 표에서 찾아 쓰고, 이 과목에서 실제로 쓰는 것은 r이나 ρ 하나에만 의존하는 간단한 경우이다. 이 절의 탐구 카드(평면에서 선속 세기)를 먼저 보고 식을 읽으면 훨씬 쉽다.</p>
 
     <h3><span class="no">1.2.1</span>세 미분 연산의 뜻</h3>
-    <p class="q-term"><b>기울기</b> \(\nabla V\): 스칼라장 V가 가장 빨리 증가하는 방향과 그 증가율. 전위에서 전계를 얻는 \(\mathbf E = -\nabla V\)(2.3절).</p>
-    <p class="q-term"><b>발산</b> \(\nabla\cdot\mathbf D = \lim_{\Delta v \to 0}\frac{\oint\mathbf D\cdot d\mathbf S}{\Delta v}\): 한 점 둘레의 작은 부피에서 나가는 단위 부피당 선속. 샘(양)과 흡입구(음)를 잰다. 정전계에서 \(\nabla\cdot\mathbf D = \rho_v\)(전하가 선속의 샘).</p>
-    <p class="q-term"><b>회전</b> \(\nabla\times\mathbf H\): 한 점 둘레의 작은 고리를 도는 단위 넓이당 순환(소용돌이). 정자계에서 \(\nabla\times\mathbf H = \mathbf J\)(전류가 순환의 원인).</p>
-    <p>정의가 극한으로 되어 있어서, 직교 좌표에서는 작은 정육면체로 \(\nabla\cdot\mathbf D = \frac{\partial D_x}{\partial x} + \frac{\partial D_y}{\partial y} + \frac{\partial D_z}{\partial z}\)를 얻고, 곡선 좌표에서는 면의 넓이가 위치에 따라 달라 다음 공식이 됩니다.</p>
+    <p>기울기 \(\nabla V\)는 스칼라장 V가 가장 빨리 증가하는 방향과 그 증가율이며, 전위에서 전계를 얻는 \(\mathbf E = -\nabla V\)(2.3절)에 쓴다. 발산 \(\nabla\cdot\mathbf D = \lim_{\Delta v \to 0}\frac{\oint\mathbf D\cdot d\mathbf S}{\Delta v}\)는 한 점 둘레의 작은 부피에서 나가는 단위 부피당 선속으로, 샘(양)과 흡입구(음)를 잰다. 정전계에서는 \(\nabla\cdot\mathbf D = \rho_v\)이므로 전하가 선속의 샘이다. 또 회전 \(\nabla\times\mathbf H\)는 한 점 둘레의 작은 고리를 도는 단위 넓이당 순환, 곧 소용돌이이며, 정자계에서는 \(\nabla\times\mathbf H = \mathbf J\)이므로 전류가 순환의 원인이다. 처음 질문의 첫째 답이 이 두 양이다(그림 1).</p>
+    <p>정의가 극한으로 되어 있으므로, 직교 좌표에서는 작은 정육면체로 \(\nabla\cdot\mathbf D = \frac{\partial D_x}{\partial x} + \frac{\partial D_y}{\partial y} + \frac{\partial D_z}{\partial z}\)를 얻는다. 그런데 곡선 좌표에서는 면의 넓이가 위치에 따라 달라 다음 공식이 된다.</p>
     \[ \nabla\cdot\mathbf D = \frac1\rho\frac{\partial(\rho D_\rho)}{\partial\rho} + \frac1\rho\frac{\partial D_\phi}{\partial\phi} + \frac{\partial D_z}{\partial z} = \frac{1}{r^2}\frac{\partial(r^2D_r)}{\partial r} + \frac{1}{r\sin\theta}\frac{\partial(\sin\theta D_\theta)}{\partial\theta} + \frac{1}{r\sin\theta}\frac{\partial D_\phi}{\partial\phi}. \]
-    <p>원통 좌표에서 \(\phi\) 성분만 있는 \(\mathbf H = H_\phi(\rho)\mathbf a_\phi\)의 회전은 \(\nabla\times\mathbf H = \frac1\rho\frac{d(\rho H_\phi)}{d\rho}\mathbf a_z\)입니다. 이 두 꼴(구 대칭의 발산, 축 대칭의 회전)이 이 과목에서 가장 자주 쓰입니다.</p>
+    <p>식과 함께, 원통 좌표에서 \(\phi\) 성분만 있는 \(\mathbf H = H_\phi(\rho)\mathbf a_\phi\)의 회전 \(\nabla\times\mathbf H = \frac1\rho\frac{d(\rho H_\phi)}{d\rho}\mathbf a_z\)를 알아 두자. 구 대칭의 발산과 축 대칭의 회전, 이 두 꼴이 이 과목에서 가장 자주 쓰인다.</p>
 
     <h3><span class="no">1.2.2</span>발산 정리와 Stokes 정리</h3>
     \[ \oint_S\mathbf D\cdot d\mathbf S = \int_V\nabla\cdot\mathbf D\,dv, \qquad \oint_C\mathbf H\cdot d\mathbf L = \int_S(\nabla\times\mathbf H)\cdot d\mathbf S. \]
-    <p>뜻은 정의에서 바로 나옵니다. 큰 부피를 작은 부피들로 쪼개면, 이웃한 작은 부피 사이의 면에서 나가고 들어오는 선속이 상쇄되어 바깥 껍질의 선속만 남습니다. 고리도 마찬가지입니다. 전자기학에서는 이 두 정리로 Maxwell 방정식의 적분형(Gauss, Ampère)과 미분형을 오갑니다(6.2절).</p>
+    <p>식의 뜻은 정의에서 바로 나온다. 큰 부피를 작은 부피들로 쪼개면, 이웃한 작은 부피 사이의 면에서 나가고 들어오는 선속이 상쇄되어 바깥 껍질의 선속만 남는다. 고리도 마찬가지이다. 처음 질문의 둘째 답이 이것이며, 전자기학에서는 이 두 정리로 Maxwell 방정식의 적분형(Gauss, Ampère)과 미분형을 오간다(6.2절).</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
       <p>\(\mathbf D = 5r^2\,\mathbf a_r\) mC/m²일 때 반지름 4 m인 구에 대해 발산 정리의 양변을 계산하고, 그 안의 전하를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 왼쪽(면 적분): 구면에서 \(\mathbf D\)는 면에 수직이고 크기가 일정 \(5 \times 16 = 80\) mC/m². 넓이 \(4\pi \times 16 = 64\pi\) m². 선속 \(80 \times 64\pi = 5120\pi\) mC. 오른쪽(부피 적분): \(\nabla\cdot\mathbf D = \frac{1}{r^2}\frac{d}{dr}(5r^4) = 20r\). \(\int_0^4 20r\cdot4\pi r^2dr = 80\pi\cdot\frac{4^4}{4} = 5120\pi\) mC. 일치합니다. Gauss 법칙으로 안의 전하는 \(5120\pi\) mC ≈ 16.1 C(가상의 큰 값)입니다.</p>
+    <p><i>풀이.</i> 먼저 면 적분을 보자. 구면에서 \(\mathbf D\)는 면에 수직이고 크기가 \(5 \times 16 = 80\) mC/m²로 일정하며, 넓이는 \(4\pi \times 16 = 64\pi\) m²이므로 선속은 \(80 \times 64\pi = 5120\pi\) mC이다. 다음으로 부피 적분은 \(\nabla\cdot\mathbf D = \frac{1}{r^2}\frac{d}{dr}(5r^4) = 20r\)이므로 \(\int_0^4 20r\cdot4\pi r^2dr = 80\pi\cdot\frac{4^4}{4} = 5120\pi\) mC이다. 두 값이 일치하며, Gauss 법칙으로 안의 전하는 \(5120\pi\) mC ≈ 16.1 C(가상의 큰 값)이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 1.2.2</span>
       <p>\(\mathbf H = 2\rho\,\mathbf a_\phi\) A/m일 때 반지름 a인 원 둘레의 순환을 두 방법으로 구하고, 전류 밀도를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 선적분: \(d\mathbf L = a\,d\phi\,\mathbf a_\phi\), \(\oint = \int_0^{2\pi}2a\cdot a\,d\phi = 4\pi a^2\). 면적분: \(\nabla\times\mathbf H = \frac1\rho\frac{d}{d\rho}(2\rho^2)\mathbf a_z = 4\mathbf a_z\), \(\int 4\,dS = 4\pi a^2\). 일치합니다. \(\mathbf J = \nabla\times\mathbf H = 4\mathbf a_z\) A/m²: 균일한 전류가 흐르는 도선 내부의 자계 모양입니다(4.2절).</p>
+    <p><i>풀이.</i> 선적분은 \(d\mathbf L = a\,d\phi\,\mathbf a_\phi\)이므로 \(\oint = \int_0^{2\pi}2a\cdot a\,d\phi = 4\pi a^2\)이다. 면적분은 \(\nabla\times\mathbf H = \frac1\rho\frac{d}{d\rho}(2\rho^2)\mathbf a_z = 4\mathbf a_z\)이므로 \(\int 4\,dS = 4\pi a^2\)이고, 두 값이 일치한다. 따라서 \(\mathbf J = \nabla\times\mathbf H = 4\mathbf a_z\) A/m²이며, 이것은 균일한 전류가 흐르는 도선 내부의 자계 모양이다(4.2절, 그림 1).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 곡선 좌표의 발산을 직교 좌표처럼 \(\partial D_r/\partial r\)로만 쓰는 실수: \(\mathbf D = \mathbf a_r/r^2\)(점전하)의 발산은 원점 밖에서 0인데, \(\partial D_r/\partial r = -2/r^3\)으로 잘못 나옵니다. (2) 발산이 0이면 선속도 0이라는 오해: 원점에 점전하가 있으면 발산이 원점에서만 무한대(델타 함수)라, 원점을 둘러싼 면의 선속은 0이 아닙니다. (3) Stokes 정리의 면 방향은 고리 방향과 오른손 규칙으로 맞춥니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>발산이 0이면 선속도 0이라는 생각은 틀리다. 원점에 점전하가 있으면 발산이 원점에서만 무한대(델타 함수)이므로, 원점을 둘러싼 면의 선속은 0이 아니다. 또 곡선 좌표의 발산을 직교 좌표처럼 \(\partial D_r/\partial r\)로만 쓰면, 점전하의 \(\mathbf D = \mathbf a_r/r^2\)처럼 원점 밖에서 발산이 0인 장이 \(-2/r^3\)으로 잘못 나온다. Stokes 정리의 면 방향은 고리 방향과 오른손 규칙으로 맞춘다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>기울기: 가장 빠른 증가. 발산: 단위 부피당 나가는 선속. 회전: 단위 넓이당 순환.</li>
-        <li>구 대칭: \(\nabla\cdot\mathbf D = \frac{1}{r^2}\frac{d(r^2D_r)}{dr}\). 축 대칭: \(\nabla\times\mathbf H = \frac1\rho\frac{d(\rho H_\phi)}{d\rho}\mathbf a_z\).</li>
-        <li>발산 정리(선속 ↔ 샘), Stokes 정리(순환 ↔ 회전). 전하·전류와 연결된다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>기울기는 스칼라장이 가장 빨리 증가하는 방향과 증가율, 발산은 단위 부피당 나가는 선속, 회전은 단위 넓이당 순환이다. 구 대칭에서는 \(\nabla\cdot\mathbf D = \frac{1}{r^2}\frac{d(r^2D_r)}{dr}\), 축 대칭에서는 \(\nabla\times\mathbf H = \frac1\rho\frac{d(\rho H_\phi)}{d\rho}\mathbf a_z\)를 자주 쓴다. 발산 정리는 선속과 샘을, Stokes 정리는 순환과 회전을 이으며, 각각 전하와 전류로 연결된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\mathbf D = x^2\mathbf a_x + y\mathbf a_y\)의 발산은?
-          <details><summary>답</summary><p>\(2x + 1\).</p></details>
+          <details><summary>답</summary><p>\(2x + 1\)이다.</p></details>
         </li>
         <li>\(V = x^2y\)의 기울기를 (1, 2, 0)에서 구하여라.
-          <details><summary>답</summary><p>\(2xy\mathbf a_x + x^2\mathbf a_y = 4\mathbf a_x + \mathbf a_y\).</p></details>
+          <details><summary>답</summary><p>\(2xy\mathbf a_x + x^2\mathbf a_y = 4\mathbf a_x + \mathbf a_y\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(\mathbf D = \frac{Q}{4\pi r^2}\mathbf a_r\)의 발산이 \(r &gt; 0\)에서 0임을 보이고, 반지름 R인 구의 선속을 구하여라.
-          <details><summary>답</summary><p>\(\frac{1}{r^2}\frac{d}{dr}\frac{Q}{4\pi} = 0\). 선속 \(\frac{Q}{4\pi R^2}\cdot4\pi R^2 = Q\)(R과 무관).</p></details>
+          <details><summary>답</summary><p>\(\frac{1}{r^2}\frac{d}{dr}\frac{Q}{4\pi} = 0\)이다. 선속은 \(\frac{Q}{4\pi R^2}\cdot4\pi R^2 = Q\)로 R과 무관하다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>한 변 1 m 정육면체(0 ≤ x, y, z ≤ 1)에서 \(\mathbf D = xy\,\mathbf a_x + z\,\mathbf a_z\)의 선속을 발산 정리로 구하고, 여섯 면의 면적분으로 확인하여라.
-          <details><summary>답</summary><p>\(\nabla\cdot\mathbf D = y + 1\), \(\int(y + 1)dv = 1.5\). 면: x = 1 면 \(\int y\,dy\,dz = 0.5\), x = 0 면 0, z = 1 면 1, z = 0 면 0, y 면 0. 합 1.5.</p></details>
+          <details><summary>답</summary><p>\(\nabla\cdot\mathbf D = y + 1\)이므로 \(\int(y + 1)dv = 1.5\)이다. 면으로는 x = 1 면이 \(\int y\,dy\,dz = 0.5\), z = 1 면이 1이고, x = 0, z = 0, y 면은 모두 0이므로 합이 1.5이다.</p></details>
         </li>
       </ol>
     </div>

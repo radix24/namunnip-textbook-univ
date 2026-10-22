@@ -8,25 +8,34 @@
 <article class="card q-card" id="text-e7-maxwell" data-kind="본문" data-std="전전7-06-02">
   <header class="card-head"><span class="no"></span><h2>변위 전류와 Maxwell 방정식</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>시변장에서 Ampère 법칙이 연속 방정식과 모순되는 이유와 변위 전류 \(\partial\mathbf D/\partial t\)로 고치는 과정을 따라간다.</li>
-        <li>Maxwell 방정식 네 개를 미분형과 적분형으로 쓰고, 발산 정리와 Stokes 정리로 서로 바꾼다.</li>
-        <li>전도 전류와 변위 전류의 크기를 비교해 물질이 도체처럼 행동하는지 판정한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>변위 전류 입문 (<a href="../../common/4/09-01.html">공통4 9.1절</a>), Gauss·Ampère·Faraday 법칙 (<a href="02-02.html">2.2절</a>, <a href="04-02.html">4.2절</a>, <a href="06-01.html">6.1절</a>), 두 적분 정리 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">교류 전원에 축전기를 이으면 도선에는 전류가 흐르는데, 두 판 사이는 비어 있어 전하가 건너가지 못한다. 그렇다면 도선을 둘러싼 고리에 Ampère 법칙을 쓸 때, 고리에 걸친 면을 판 사이로 지나가게 부풀리면 감싼 전류가 0이 되어 버린다. 같은 고리의 자계가 면을 고르는 방법에 따라 달라질 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="교류로 충전되는 평행판 축전기(예제 6.2.1). 도선을 둘러싼 고리에 걸친 평평한 면 S1은 전도 전류 5.56 mA를 감싸고, 판 사이로 부풀린 면 S2는 전도 전류가 없지만 변하는 전계가 만드는 변위 전류 5.56 mA를 감싸 두 면이 같은 값을 준다">
+        <defs><marker id="ah-e7mx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <path d="M40 100 H250 M310 100 H520" class="k"/>
+        <path d="M250 50 V150 M310 50 V150" class="k" stroke-width="4"/>
+        <g class="b" marker-end="url(#ah-e7mx)"><path d="M262 65 H298"/><path d="M262 85 H298"/><path d="M262 115 H298"/><path d="M262 135 H298"/></g>
+        <path d="M80 100 H130" class="a" stroke-width="3" marker-end="url(#ah-e7mx)"/>
+        <ellipse cx="180" cy="100" rx="10" ry="34" class="c"/>
+        <path d="M180 66 C250 40 290 40 290 100 C290 160 250 160 180 134" class="d dsh"/>
+        <text x="60" y="88" class="ta">I = 5.56 mA</text>
+        <text x="150" y="160" class="tc">S1</text>
+        <text x="272" y="40" class="td">S2</text>
+        <text x="320" y="64" class="tb">J_d = ∂D/∂t</text>
+        <text x="320" y="82" class="s">I_d = 5.56 mA</text>
+        <text x="130" y="186" class="s">같은 고리, 두 면 모두 ∮H·dL = 5.56 mA</text>
+        <text x="380" y="130" class="s">C = 88.5 pF, 1 MHz, 10 V</text>
+      </svg>
+      <figcaption>그림 1. 판 사이에는 전하가 건너가지 않지만 변하는 전계가 도선의 전도 전류와 같은 크기의 변위 전류를 이루므로, 고리에 걸친 면을 어디로 골라도 Ampère-Maxwell 법칙이 같은 자계를 준다(예제 6.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>변위 전류 입문(<a href="../../common/4/09-01.html">공통4 9.1절</a>), Gauss·Ampère·Faraday 법칙(<a href="02-02.html">2.2절</a>, <a href="04-02.html">4.2절</a>, <a href="06-01.html">6.1절</a>), 두 적분 정리(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.2.1</span>Ampère 법칙의 모순</h3>
-    <p>구하려는 것: 시변장에서도 성립하는 Ampère 법칙. 정자계의 \(\nabla\times\mathbf H = \mathbf J\)의 양변에 발산을 취하면, 회전의 발산은 언제나 0이므로 \(\nabla\cdot\mathbf J = 0\)이어야 합니다. 그런데 전하 보존(연속 방정식)은</p>
+    <p>정자계의 \(\nabla\times\mathbf H = \mathbf J\)에서 양변의 발산을 취하면, 회전의 발산은 언제나 0이므로 \(\nabla\cdot\mathbf J = 0\)이어야 한다. 그런데 전하 보존을 나타내는 연속 방정식은 다음과 같다.</p>
     \[ \nabla\cdot\mathbf J = -\frac{\partial\rho_v}{\partial t}. \]
-    <p>축전기를 충전할 때처럼 전하가 쌓이는 곳에서는 \(\partial\rho_v/\partial t \ne 0\)이라 모순입니다. Maxwell은 \(\rho_v = \nabla\cdot\mathbf D\)를 넣어 \(\nabla\cdot\left(\mathbf J + \frac{\partial\mathbf D}{\partial t}\right) = 0\)임을 보고, 우변에 이 항을 더했습니다.</p>
-    <p class="q-term"><b>변위 전류 밀도</b> \(\mathbf J_d = \partial\mathbf D/\partial t\) [A/m²]: 전하의 이동이 아니라 전계의 변화. 축전기 판 사이에서 전도 전류를 이어 준다.</p>
+    <p>축전기를 충전할 때처럼 전하가 쌓이는 곳에서는 \(\partial\rho_v/\partial t \ne 0\)이라 두 식이 어긋난다. 처음 질문의 고리와 두 면이 바로 이 모순을 보여 준다. Maxwell은 \(\rho_v = \nabla\cdot\mathbf D\)를 넣어 \(\nabla\cdot\left(\mathbf J + \frac{\partial\mathbf D}{\partial t}\right) = 0\)임을 보고, Ampère 법칙의 우변에 이 항을 더했다.</p>
     \[ \nabla\times\mathbf H = \mathbf J + \frac{\partial\mathbf D}{\partial t}. \]
+    <p>새로 더한 \(\mathbf J_d = \partial\mathbf D/\partial t\) [A/m²]를 변위 전류 밀도라 한다. 이것은 전하의 이동이 아니라 전계의 변화이며, 축전기 판 사이에서 끊긴 전도 전류를 이어 준다.</p>
 
     <h3><span class="no">6.2.2</span>Maxwell 방정식</h3>
     <table class="tb-table">
@@ -36,51 +45,45 @@
       <tr><td>Gauss</td><td>\(\nabla\cdot\mathbf D = \rho_v\)</td><td>\(\oint\mathbf D\cdot d\mathbf S = Q_{enc}\)</td></tr>
       <tr><td>자기 Gauss</td><td>\(\nabla\cdot\mathbf B = 0\)</td><td>\(\oint\mathbf B\cdot d\mathbf S = 0\)</td></tr>
     </table>
-    <p>여기에 구성 관계 \(\mathbf D = \epsilon\mathbf E\), \(\mathbf B = \mu\mathbf H\), \(\mathbf J = \sigma\mathbf E\)와 Lorentz 힘을 더하면 고전 전자기 현상 전체를 설명합니다.</p>
-    <p><b>바꾸는 방법.</b> 회전이 있는 식(Faraday, Ampère)은 미분형의 양변을 열린 면 S에서 적분하고 왼쪽에 Stokes 정리를 쓰면 적분형이 됩니다. 발산이 있는 식(두 Gauss)은 부피 V에서 적분하고 발산 정리를 씁니다. 거꾸로 적분형이 모든 면·부피에서 성립하므로 적분 안의 식이 같아야 해 미분형을 얻습니다. 예: \(\oint\mathbf D\cdot d\mathbf S = \int_V\nabla\cdot\mathbf D\,dv = \int_V\rho_vdv\)가 모든 V에서 성립 → \(\nabla\cdot\mathbf D = \rho_v\).</p>
+    <p>여기에 구성 관계 \(\mathbf D = \epsilon\mathbf E\), \(\mathbf B = \mu\mathbf H\), \(\mathbf J = \sigma\mathbf E\)와 Lorentz 힘을 더하면 고전 전자기 현상 전체를 설명한다.</p>
+    <p>두 꼴은 적분 정리로 오간다. 회전이 있는 Faraday와 Ampère 식은 미분형의 양변을 열린 면 S에서 적분하고 왼쪽에 Stokes 정리를 쓰면 적분형이 된다. 발산이 있는 두 Gauss 식은 부피 V에서 적분하고 발산 정리를 쓴다. 거꾸로 적분형이 모든 면과 부피에서 성립하면 적분 안의 식이 같아야 하므로 미분형을 얻는다. 예를 들어 \(\oint\mathbf D\cdot d\mathbf S = \int_V\nabla\cdot\mathbf D\,dv = \int_V\rho_vdv\)가 모든 V에서 성립하므로 \(\nabla\cdot\mathbf D = \rho_v\)이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 6.2.1</span>
       <p>넓이 0.01 m², 간격 1 mm 공기 평행판 축전기에 \(v(t) = 10\sin(2\pi\cdot10^6t)\) V를 걸었다. 판 사이 변위 전류의 첨두값을 구하고, 회로의 전도 전류와 같음을 보여라.</p>
     </div>
-    <p><i>풀이.</i> \(D = \epsilon_0v/d\), \(J_d = \frac{\epsilon_0}{d}\frac{dv}{dt}\). 첨두 \(J_d = \frac{8.854\times10^{-12}}{10^{-3}} \times 10 \times 2\pi\times10^6 \approx 0.556\) A/m², 판 넓이를 곱해 \(I_d \approx 5.56\) mA. 전도 전류 \(C\,dv/dt\): \(C = \epsilon_0A/d = 88.5\) pF, 첨두 \(88.5\text{ p} \times 6.28\times10^7 \approx 5.56\) mA. 같습니다. 판 사이를 감싸는 면을 골라도 도선을 감싸는 면을 골라도 Ampère-Maxwell 법칙이 같은 값을 줍니다.</p>
+    <p><i>풀이.</i> \(D = \epsilon_0v/d\)이므로 \(J_d = \frac{\epsilon_0}{d}\frac{dv}{dt}\)이고, 첨두는 \(J_d = \frac{8.854\times10^{-12}}{10^{-3}} \times 10 \times 2\pi\times10^6 \approx 0.556\) A/m²이다. 판 넓이를 곱하면 \(I_d \approx 5.56\) mA이다. 한편 전도 전류는 \(C\,dv/dt\)이고 \(C = \epsilon_0A/d = 88.5\) pF이므로 첨두가 \(88.5\text{ p} \times 6.28\times10^7 \approx 5.56\) mA로 같다. 따라서 판 사이를 지나는 면을 골라도 도선을 지나는 면을 골라도 Ampère-Maxwell 법칙이 같은 값을 주며(그림 1), 처음 질문의 답이 이것이다.</p>
 
     <h3><span class="no">6.2.3</span>도체인가 유전체인가</h3>
-    <p>정현파 시변장에서 \(|\mathbf J|/|\mathbf J_d| = \sigma/(\omega\epsilon)\)입니다. 이 비가 1보다 훨씬 크면 좋은 도체, 훨씬 작으면 좋은 유전체로 봅니다. 구리(\(\sigma = 5.8\times10^7\))는 광 주파수 아래에서 늘 도체입니다. 바닷물(\(\sigma \approx 4\) S/m, \(\epsilon_r \approx 80\), 확인 필요: 염도·온도에 따라 다름)은 1 MHz에서 비가 약 900으로 도체지만, 10 GHz에서는 약 0.09로 유전체처럼 행동합니다. 잠수함 통신에 매우 낮은 주파수를 쓰는 이유가 여기서 시작합니다(전전10).</p>
+    <p>정현파 시변장에서 전도 전류와 변위 전류의 비는 \(|\mathbf J|/|\mathbf J_d| = \sigma/(\omega\epsilon)\)이다. 이 비가 1보다 훨씬 크면 좋은 도체, 훨씬 작으면 좋은 유전체로 본다. 구리(\(\sigma = 5.8\times10^7\))는 광 주파수 아래에서 늘 도체이다.</p>
+    <p>그런데 같은 물질도 주파수에 따라 달라진다. 바닷물(\(\sigma \approx 4\) S/m, \(\epsilon_r \approx 80\), 확인 필요: 염도와 온도에 따라 다름)은 1 MHz에서 비가 약 900이라 도체이지만, 10 GHz에서는 약 0.09로 유전체처럼 행동한다. 잠수함 통신에 매우 낮은 주파수를 쓰는 이유가 여기서 시작한다(전전10).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "변위 전류는 실제 전하가 움직이는 전류다": 진공에서도 존재하는 전계의 변화 항입니다(유전체에서는 분극 전하의 움직임이 일부 포함). (2) Maxwell 방정식 네 개가 모두 독립이라는 오해: 두 발산 식은 시간 변화가 있을 때 회전 식과 연속 방정식에서 따라 나옵니다(초기 조건으로). (3) 정적인 경우의 식(\(\nabla\times\mathbf E = 0\))을 시변장에 그대로 쓰는 실수.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>변위 전류를 실제 전하가 움직이는 전류로 여기기 쉽지만, 진공에서도 존재하는 전계의 변화 항이다. 유전체에서는 분극 전하의 움직임이 일부 들어 있을 뿐이다. 또 네 방정식이 모두 독립이라고 생각하기 쉬운데, 시간 변화가 있으면 두 발산 식은 회전 식과 연속 방정식에서 따라 나오고 초기 조건으로만 따로 필요하다. 정적인 경우의 \(\nabla\times\mathbf E = 0\)을 시변장에 그대로 쓰는 실수도 흔하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>연속 방정식과의 모순을 \(\mathbf J_d = \partial\mathbf D/\partial t\)로 고친 Ampère-Maxwell 법칙.</li>
-        <li>네 방정식: 회전 둘(Faraday, Ampère-Maxwell)은 Stokes, 발산 둘(Gauss, 자기 Gauss)은 발산 정리로 미분형 ↔ 적분형.</li>
-        <li>\(\sigma/(\omega\epsilon)\)로 도체·유전체를 판정. 주파수에 따라 같은 물질이 다르게 행동한다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>정자계의 Ampère 법칙은 연속 방정식과 어긋나므로, Maxwell은 변위 전류 \(\mathbf J_d = \partial\mathbf D/\partial t\)를 더해 \(\nabla\times\mathbf H = \mathbf J + \partial\mathbf D/\partial t\)로 고쳤다. 그 결과 축전기 판 사이에서도 고리의 자계가 면의 선택과 무관해진다. 네 방정식 가운데 회전 식인 Faraday와 Ampère-Maxwell은 Stokes 정리로, 발산 식인 두 Gauss 법칙은 발산 정리로 미분형과 적분형을 오간다. 비 \(\sigma/(\omega\epsilon)\)로 도체와 유전체를 가르며, 같은 물질도 주파수에 따라 다르게 행동한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>공기에서 \(\mathbf E = 100\cos(10^9t)\mathbf a_x\) V/m의 변위 전류 밀도 첨두는?
-          <details><summary>답</summary><p>\(\epsilon_0 \times 100 \times 10^9 \approx 0.885\) A/m².</p></details>
+          <details><summary>답</summary><p>\(\epsilon_0 \times 100 \times 10^9 \approx 0.885\) A/m²이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>건조한 흙(\(\sigma = 10^{-4}\) S/m, \(\epsilon_r = 4\))이 도체처럼 행동하는 주파수 범위는(비 10 이상)?
-          <details><summary>답</summary><p>\(\sigma/(\omega\epsilon) \ge 10\) → \(f \le \frac{10^{-4}}{10 \times 2\pi \times 4\epsilon_0} \approx 45\) kHz.</p></details>
+          <details><summary>답</summary><p>\(\sigma/(\omega\epsilon) \ge 10\)이어야 하므로 \(f \le \frac{10^{-4}}{10 \times 2\pi \times 4\epsilon_0} \approx 45\) kHz이다.</p></details>
         </li>
         <li>\(\nabla\cdot\mathbf B = 0\)의 적분형을 발산 정리로 유도하라.
-          <details><summary>답</summary><p>\(\int_V\nabla\cdot\mathbf B\,dv = 0 = \oint_S\mathbf B\cdot d\mathbf S\).</p></details>
+          <details><summary>답</summary><p>\(\int_V\nabla\cdot\mathbf B\,dv = 0 = \oint_S\mathbf B\cdot d\mathbf S\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>진공(\(\rho_v = 0\), \(\mathbf J = 0\))에서 Maxwell 방정식으로부터 \(\nabla^2\mathbf E = \mu_0\epsilon_0\frac{\partial^2\mathbf E}{\partial t^2}\)를 유도하고, 전파 속도를 구하여라.
-          <details><summary>힌트</summary><p>Faraday 식에 회전을 취하고 \(\nabla\times\nabla\times\mathbf E = \nabla(\nabla\cdot\mathbf E) - \nabla^2\mathbf E\).</p></details>
-          <details><summary>답</summary><p>\(\nabla\times\nabla\times\mathbf E = -\mu_0\frac{\partial}{\partial t}\nabla\times\mathbf H = -\mu_0\epsilon_0\frac{\partial^2\mathbf E}{\partial t^2}\), \(\nabla\cdot\mathbf E = 0\)이라 파동 방정식. 속도 \(1/\sqrt{\mu_0\epsilon_0} \approx 3\times10^8\) m/s: 빛이 전자기파임을 보인 Maxwell의 결론(전전10).</p></details>
+          <details><summary>힌트</summary><p>Faraday 식에 회전을 취하고 \(\nabla\times\nabla\times\mathbf E = \nabla(\nabla\cdot\mathbf E) - \nabla^2\mathbf E\)를 쓴다.</p></details>
+          <details><summary>답</summary><p>\(\nabla\times\nabla\times\mathbf E = -\mu_0\frac{\partial}{\partial t}\nabla\times\mathbf H = -\mu_0\epsilon_0\frac{\partial^2\mathbf E}{\partial t^2}\)이고 \(\nabla\cdot\mathbf E = 0\)이라 파동 방정식이 된다. 속도는 \(1/\sqrt{\mu_0\epsilon_0} \approx 3\times10^8\) m/s로, 빛이 전자기파임을 보인 Maxwell의 결론이다(전전10).</p></details>
         </li>
       </ol>
     </div>
