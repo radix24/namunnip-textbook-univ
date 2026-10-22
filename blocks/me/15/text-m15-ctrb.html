@@ -8,65 +8,65 @@
 <article class="card q-card" id="text-m15-ctrb" data-kind="본문" data-std="기계15-06-03">
   <header class="card-head"><span class="no"></span><h2>가제어성과 적분 동작을 넣은 상태 피드백</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>입력으로 모든 상태를 움직일 수 있는지(가제어성)를 행렬 계수로 판정한다.</li>
-        <li>가제어하지 않으면 극점 배치가 불가능한 이유를 안다.</li>
-        <li>적분 상태를 더해 정상상태 오차 없는 상태 피드백을 설계한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>상태방정식과 극점 배치 (<a href="06-01.html">6.1절</a>), 관측기와 가관측성 (<a href="06-02.html">6.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">똑같은 수레 두 대에 같은 힘을 걸면 두 수레를 함께 밀고 당길 수는 있지만, 둘 사이의 간격은 어떻게 해도 바꿀 수 없다. 입력으로 모든 상태를 움직일 수 있는지를 미리 판정하는 방법은 무엇일까? 그리고 상태 피드백에 정상상태 오차가 남을 때는 무엇을 더해야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="같은 힘 u를 받는 똑같은 수레 두 대(ẍ₁ = u, ẍ₂ = u). 입력은 두 수레의 평균 위치는 움직이지만 간격 x₁ − x₂에는 닿지 않는다. 그래서 이 계는 가제어하지 않다">
+        <defs><marker id="ah-m15ctrb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <line x1="40" y1="130" x2="520" y2="130" class="ax"/>
+        <rect x="120" y="80" width="80" height="44" class="la"/><rect x="120" y="80" width="80" height="44" class="a" fill="none"/>
+        <rect x="340" y="80" width="80" height="44" class="la"/><rect x="340" y="80" width="80" height="44" class="a" fill="none"/>
+        <g class="k"><circle cx="140" cy="127" r="3"/><circle cx="180" cy="127" r="3"/><circle cx="360" cy="127" r="3"/><circle cx="400" cy="127" r="3"/></g>
+        <g class="d" stroke-width="2" marker-end="url(#ah-m15ctrb)"><line x1="60" y1="102" x2="118" y2="102"/><line x1="280" y1="102" x2="338" y2="102"/></g>
+        <g text-anchor="middle"><text x="160" y="107" class="ta">x₁</text><text x="380" y="107" class="ta">x₂</text><text x="80" y="94" class="td">u</text><text x="300" y="94" class="td">u</text></g>
+        <path d="M160 152 H380 M160 146 V158 M380 146 V158" class="c"/><text x="270" y="172" text-anchor="middle" class="tc">간격 x₁ − x₂, 입력이 바꿀 수 없음</text>
+        <text x="270" y="40" text-anchor="middle" class="s">평균 위치는 움직일 수 있음</text>
+      </svg>
+      <figcaption>그림 1. 두 수레가 언제나 똑같은 힘을 받으므로 둘의 차이에 대한 운동 방정식에는 입력이 사라지고, 그 방향은 어떤 피드백으로도 움직일 수 없다(6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>상태방정식과 극점 배치(<a href="06-01.html">6.1절</a>), 관측기와 가관측성(<a href="06-02.html">6.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>가제어성 판정</h3>
-    <p>\(\dot{\mathbf x} = A\mathbf x + B u\)(상태 \(n\)개)에서 입력이 모든 상태 방향에 영향을 줄 수 있어야 극점을 원하는 곳으로 옮길 수 있습니다.</p>
+    <p>\(\dot{\mathbf x} = A\mathbf x + B u\)(상태 \(n\)개)에서 입력이 모든 상태 방향에 영향을 줄 수 있어야 극점을 원하는 곳으로 옮길 수 있다. 이 성질을 가제어성이라 하고, 아래 행렬의 계수로 판정한다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">가제어성 행렬</span>
       <p>\[\mathcal C = [\,B\ \ AB\ \ A^2B\ \cdots\ A^{n-1}B\,],\qquad \operatorname{rank}\mathcal C = n \iff \text{가제어}\]</p>
     </div>
-    <p>예를 들어 같은 힘을 받는 똑같은 수레 두 대는 평균 위치는 움직일 수 있지만 두 수레의 차이는 입력으로 바꿀 수 없어 가제어하지 않습니다. 구동기 위치를 정하는 단계에서 확인할 일입니다.</p>
+    <p>\(B\)는 입력이 상태를 처음 미는 방향이고, \(AB\), \(A^2B\)는 그 움직임이 계의 동역학을 타고 퍼져 나가는 방향이다. 그래서 이 방향들이 상태 공간 전체를 덮어야 모든 상태에 닿는다.</p>
+    <p>처음 질문의 두 수레가 가제어하지 않은 예이다(그림 1). 평균 위치는 움직일 수 있지만, 두 수레의 차이는 입력으로 바꿀 수 없다. 그러므로 가제어성은 구동기를 어디에 몇 개 달지 정하는 단계에서 확인할 일이다.</p>
 
     <h3><span class="no">6.3.2</span>적분 동작 추가</h3>
-    <p>상태 피드백 \(u = -K\mathbf x\)만으로는 플랜트 이득이 바뀌면 정상상태 오차가 남습니다. 오차의 적분 \(z = \int(r - y)\,dt\)를 새 상태로 더하고 \(u = -K\mathbf x + k_iz\)로 두면, 정상상태에서 \(\dot z = 0\)이므로 \(y = r\)이 됩니다.</p>
+    <p>상태 피드백 \(u = -K\mathbf x\)만 쓰면, 플랜트 이득이 바뀌거나 외란이 있을 때 정상상태 오차가 남는다. 그래서 오차의 적분 \(z = \int(r - y)\,dt\)를 새 상태로 더하고 \(u = -K\mathbf x + k_iz\)로 둔다. 그러면 정상상태에서 \(\dot z = 0\)이므로 \(y = r\)이 된다. 처음 질문의 둘째 답이 이것이며, 3.2절에서 적분기가 오차를 없앤 것과 같은 원리이다.</p>
+    <p>이때 늘어난 계(상태 \(n + 1\)개)가 가제어해야 적분 상태까지 포함한 극점을 모두 배치할 수 있다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1 <span class="nm">(이중 적분기)</span></span>
       <p>마찰 없는 질량 \(\ddot x = u\)(상태 \(x\), \(\dot x\))가 가제어한지 판정하고 극점을 −2, −2에 두는 이득을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(A = \begin{bmatrix}0&amp;1\\0&amp;0\end{bmatrix}\), \(B = \begin{bmatrix}0\\1\end{bmatrix}\), \(AB = \begin{bmatrix}1\\0\end{bmatrix}\). \(\mathcal C\)의 계수가 2라 가제어합니다. \(u = -k_1x - k_2\dot x\)이면 특성식 \(s^2 + k_2s + k_1 = (s + 2)^2\)에서 \(k_1\) = 4, \(k_2\) = 4.</p>
+    <p><i>풀이.</i> \(A = \begin{bmatrix}0&amp;1\\0&amp;0\end{bmatrix}\), \(B = \begin{bmatrix}0\\1\end{bmatrix}\)이고 \(AB = \begin{bmatrix}1\\0\end{bmatrix}\)이다. \(\mathcal C\)의 계수가 2이므로 가제어하다. \(u = -k_1x - k_2\dot x\)이면 특성식이 \(s^2 + k_2s + k_1 = (s + 2)^2\)이므로 \(k_1\) = 4, \(k_2\) = 4이다.</p>
+    <p>여기서 \(B\)는 속도만 밀지만, \(AB\)가 그 속도가 위치로 번지는 방향을 더해 두 방향이 평면을 덮는다. 즉 힘을 위치에 직접 걸 수 없어도, 속도를 거쳐 위치까지 닿으므로 가제어하다.</p>
 
-    <div class="tb-note"><b>주의</b>계수 판정은 예 또는 아니오만 알려 줍니다. 수치상 거의 계수가 모자라면(가제어성 행렬이 특이에 가까우면) 이론상 가제어해도 큰 입력이 필요해 실제로는 제어가 어렵습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>계수 판정에서 가제어로 나오면 실제로도 제어가 쉽다고 여기기 쉽다. 계수 판정은 예 또는 아니오만 알려 준다. 가제어성 행렬이 특이에 가까워 계수가 수치상 겨우 채워지는 경우에는, 이론상 가제어해도 어떤 방향을 움직이려면 아주 큰 입력이 필요해 실제로는 제어가 어렵다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\operatorname{rank}[B\ AB\ \cdots] = n\)이면 가제어, 극점 배치 가능.</li>
-        <li>가제어하지 않는 모드는 피드백으로 옮길 수 없다.</li>
-        <li>적분 상태 추가 → 정상상태 오차 0.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>\(\operatorname{rank}[B\ AB\ \cdots] = n\)이면 가제어하고, 극점을 모두 배치할 수 있다. 가제어하지 않은 모드는 피드백으로 옮길 수 없다. 적분 상태를 더하면 정상상태 오차가 0이 된다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(A = \begin{bmatrix}-1&amp;0\\0&amp;-2\end{bmatrix}\), \(B = \begin{bmatrix}1\\0\end{bmatrix}\)은 가제어한가?
-          <details><summary>답</summary><p>\(AB = (-1, 0)^T\)로 \(B\)와 평행, 계수 1이라 가제어하지 않다. 두 번째 상태에 입력이 닿지 않는다.</p></details>
+          <details><summary>답</summary><p>\(AB = (-1, 0)^T\)로 \(B\)와 평행하여 계수가 1이므로 가제어가 아니다. 두 번째 상태에 입력이 닿지 않는다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>같은 질량 두 개에 같은 힘 \(u\)가 걸린다(\(\ddot x_1 = u\), \(\ddot x_2 = u\)). 가제어성 행렬의 계수는?
-          <details><summary>답</summary><p>상태 4개인데 \(B = (0,1,0,1)^T\), \(AB = (1,0,1,0)^T\), \(A^2B = 0\)이라 계수 2. \(x_1 - x_2\)는 바꿀 수 없다.</p></details>
+          <details><summary>답</summary><p>상태 4개인데 \(B = (0,1,0,1)^T\), \(AB = (1,0,1,0)^T\), \(A^2B = 0\)이므로 계수는 2이다. \(x_1 - x_2\)는 바꿀 수 없다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제에서 극점을 −4, −4로 옮기면 이득은? 이득과 극점 거리의 관계를 말하여라.
-          <details><summary>답</summary><p>\((s + 4)^2\)에서 \(k_1\) = 16, \(k_2\) = 8. 극점을 두 배 멀리 보내면 위치 이득이 4배라, 빠른 응답은 큰 입력을 요구한다.</p></details>
+          <details><summary>답</summary><p>\((s + 4)^2\)에서 \(k_1\) = 16, \(k_2\) = 8이다. 극점을 두 배 멀리 보내면 위치 이득이 4배라, 빠른 응답은 큰 입력을 요구한다.</p></details>
         </li>
       </ol>
     </div>

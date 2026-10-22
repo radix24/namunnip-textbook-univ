@@ -8,62 +8,63 @@
 <article class="card q-card" id="text-m15-delay" data-kind="본문" data-std="기계15-05-03">
   <header class="card-head"><span class="no"></span><h2>시간 지연과 위상 여유</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>시간 지연 \(e^{-s\tau}\)이 크기는 그대로 두고 위상만 \(\omega\tau\)만큼 늦춤을 안다.</li>
-        <li>교차 주파수와 위상 여유에서 견딜 수 있는 최대 지연을 구한다.</li>
-        <li>지연이 있을 때 이득을 낮춰 위상 여유를 되찾는 방법을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Bode 선도와 안정 여유 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">원격 조종 로봇이나 통신망 너머의 제어기는 신호가 수십 ms 늦게 도착한다. 지연은 신호의 크기를 줄이지 않는데도 왜 계를 불안정하게 만들까? 이 계는 지연을 얼마까지 견딜 수 있고, 빠르게 제어할수록 무엇이 불리해질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.3.1 L(s) = 10/(s(s + 2))의 위상 곡선(선형 진동수 축 0~8 rad/s). 지연이 없으면 교차 주파수 2.86 rad/s에서 위상이 −145.1°로 위상 여유 34.9°이다. 지연 0.1 s는 그곳 위상을 16.4° 더 늦춰 여유가 18.5°로 줄고, 지연 0.213 s이면 위상이 −180°에 닿아 여유가 0이 된다">
+        <line x1="80" y1="40" x2="480" y2="40" class="ax"/><line x1="80" y1="30" x2="80" y2="195" class="ax"/>
+        <path d="M80 148 H480" class="d dsh"/>
+        <polyline points="80,40.0 100,53.6 120,66.2 140,77.2 160,86.4 180,94.0 200,100.2 220,105.4 240,109.6 260,113.1 280,116.1 300,118.7 320,120.9 340,122.8 360,124.4 380,125.9 400,127.2 420,128.3 440,129.4 460,130.3 480,131.2" class="a" fill="none" stroke-width="2.5"/>
+        <polyline points="80,40.0 100,56.3 120,71.7 140,85.4 160,97.4 180,107.8 200,116.7 220,124.6 240,131.6 260,137.9 280,143.6 300,148.9 320,153.9 340,158.5 360,162.9 380,167.1 400,171.2 420,175.1 440,178.9 460,182.6 480,186.2" class="c" fill="none" stroke-width="2.5"/>
+        <polyline points="80,40.0 100,59.4 120,77.9 140,94.7 160,109.8 180,123.3 200,135.4 220,146.4 240,156.5 260,165.9 280,174.7 300,183.1 320,191.2" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M223 40 V195" class="k dsh"/>
+        <g class="fd"><circle cx="223" cy="106.1" r="4"/><circle cx="223" cy="125.8" r="4"/><circle cx="223" cy="148" r="4"/></g>
+        <g text-anchor="end" class="s"><text x="74" y="44">−90°</text><text x="74" y="152">−180°</text></g>
+        <text x="223" y="34" text-anchor="middle" class="s">ω_c = 2.86 rad/s</text>
+        <text x="330" y="114" class="ta">지연 없음, PM 34.9°</text><text x="330" y="164" class="tc">τ = 0.1 s, PM 18.5°</text><text x="240" y="180" class="tb">τ_max = 0.213 s, PM 0</text>
+      </svg>
+      <figcaption>그림 1. 지연은 크기 곡선은 그대로 두고 위상만 진동수에 비례해 늦추므로, 교차 주파수에서의 위상 여유를 깎다가 지연이 τ_max에 이르면 여유가 0이 된다(예제 5.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Bode 선도와 안정 여유(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.3.1</span>지연의 주파수 응답</h3>
-    <p>컨베이어로 운반되는 재료, 통신망, 계산 시간처럼 신호가 \(\tau\)초 늦게 전달되면 전달함수에 \(e^{-s\tau}\)가 곱해집니다. \(s = j\omega\)에서 크기는 1이고 위상은 \(-\omega\tau\)(rad)입니다. Bode 크기 선도는 그대로인데 위상 선도만 높은 주파수로 갈수록 끝없이 내려갑니다.</p>
+    <p>컨베이어로 운반되는 재료, 통신망, 계산 시간처럼 신호가 \(\tau\)초 늦게 전달되면 전달함수에 \(e^{-s\tau}\)가 곱해진다. \(s = j\omega\)를 넣으면 크기는 1이고 위상은 \(-\omega\tau\)(rad)이다. 그래서 Bode 크기 선도는 그대로인데, 위상 선도만 높은 주파수로 갈수록 끝없이 내려간다(그림 1). 처음 질문의 첫째 답이 이것이며, 크기를 건드리지 않아도 위상 여유가 줄면 계는 불안정해진다.</p>
     <div class="tb-env thm">
       <span class="lb">지연 여유</span>
       <p>\[\phi_{m,\text{지연}} = \phi_m - \omega_c\tau\cdot\frac{180°}\pi,\qquad \tau_{\max} = \frac{\phi_m\ (\text{rad})}{\omega_c}\]</p>
     </div>
-    <p>교차 주파수 \(\omega_c\)가 높을수록(빠른 제어일수록) 같은 지연이 더 큰 위상을 잡아먹습니다. 지연이 큰 공정에서 빠른 제어가 어려운 이유입니다.</p>
+    <p>이 식에서 교차 주파수 \(\omega_c\)가 높을수록, 곧 빠른 제어일수록 같은 지연이 더 큰 위상을 잡아먹는다. 처음 질문의 셋째 답이 이것이며, 지연이 큰 공정에서 빠른 제어가 어려운 이유이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1 <span class="nm">(위치 서보)</span></span>
       <p>\(L(s) = 10/(s(s + 2))\)의 교차 주파수, 위상 여유, 견딜 수 있는 최대 지연은?</p>
     </div>
-    <p><i>풀이.</i> \(|L| = 1\)에서 \(\omega^2(\omega^2 + 4) = 100\), \(\omega_c = 2.86\) rad/s. 위상 \(-90° - \tan^{-1}(1.43) = -145.1°\)라 \(\phi_m = 34.9°\) = 0.610 rad. \(\tau_{\max} = 0.610/2.86 = 0.213\) s입니다.</p>
+    <p><i>풀이.</i> \(|L| = 1\)에서 \(\omega^2(\omega^2 + 4) = 100\)이므로 \(\omega_c = 2.86\) rad/s이다. 위상은 \(-90° - \tan^{-1}(1.43) = -145.1°\)이므로 \(\phi_m = 34.9°\), 곧 0.610 rad이다. 따라서 \(\tau_{\max} = 0.610/2.86 = 0.213\) s이다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그림 1을 보면 지연 0.1 s만으로도 교차 주파수에서 위상이 16.4° 늦어져 여유가 18.5°로 줄어든다. 즉 τ_max는 안정의 경계일 뿐이고, 적당한 감쇠를 유지하려면 실제 지연은 그보다 훨씬 작아야 한다. 지연을 줄일 수 없으면 이득을 낮춰 교차 주파수를 내리고, 그만큼 응답 속도를 포기한다.</p>
 
-    <div class="tb-note"><b>주의</b>지연을 Padé 근사 \(e^{-s\tau} \approx (1 - s\tau/2)/(1 + s\tau/2)\)로 바꾸면 근궤적이나 Routh 판별법을 쓸 수 있습니다. 이 근사는 오른쪽 반평면 영점을 가지므로 역응답도 함께 나타냅니다.</div>
+    <p>한편 지연은 이득 여유도 바꾼다. 지연이 없으면 이 계의 위상은 −180°에 끝내 닿지 않아 이득 여유가 무한대이지만, 지연이 생기면 위상이 끝없이 내려가므로 어느 진동수에서는 반드시 −180°를 지난다. 그래서 지연이 있는 계는 이득을 무작정 키울 수 없다(연습문제 3).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(e^{-s\tau}\): 크기 1, 위상 \(-\omega\tau\).</li>
-        <li>\(\tau_{\max} = \phi_m/\omega_c\).</li>
-        <li>빠른 제어일수록 지연에 민감.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>지연이 있는 계에 근궤적이나 Routh 판별법을 그대로 쓰려는 실수가 흔하다. \(e^{-s\tau}\)는 유리함수가 아니어서 다항식 특성방정식이 나오지 않는다. 이때는 Padé 근사 \(e^{-s\tau} \approx (1 - s\tau/2)/(1 + s\tau/2)\)로 바꿔 쓴다. 이 근사는 오른쪽 반평면 영점을 가지므로 처음에 반대로 움직이는 역응답도 함께 나타낸다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>지연 \(e^{-s\tau}\)는 크기가 1이고 위상이 \(-\omega\tau\)이다. 견딜 수 있는 최대 지연은 \(\tau_{\max} = \phi_m/\omega_c\)이다. 빠른 제어일수록 지연에 민감하다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\omega_c\) = 10 rad/s에서 지연 0.1 s가 줄이는 위상 여유는?
-          <details><summary>답</summary><p>1 rad = 57.3°.</p></details>
+          <details><summary>답</summary><p>\(10\times0.1 = 1\) rad, 곧 57.3°이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에 지연 0.05 s가 있으면 위상 여유는?
-          <details><summary>답</summary><p>\(2.86\times0.05 = 0.143\) rad = 8.2°, \(34.9 - 8.2 = 26.7°\).</p></details>
+          <details><summary>답</summary><p>\(2.86\times0.05 = 0.143\) rad = 8.2°이므로 \(34.9 - 8.2 = 26.7°\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>지연 0.05 s에서 이득 여유는? (위상이 −180°인 주파수를 수치로 찾아라.)
-          <details><summary>답</summary><p>\(90° + \tan^{-1}(\omega/2) + \omega\times0.05\times57.3° = 180°\)에서 \(\omega \approx 6.22\) rad/s, \(|L| = 10/(6.22\times6.53) = 0.246\), 이득 여유 약 4.1배(12 dB). 지연이 없으면 이득 여유는 무한대다.</p></details>
+          <details><summary>답</summary><p>\(90° + \tan^{-1}(\omega/2) + \omega\times0.05\times57.3° = 180°\)에서 \(\omega \approx 6.22\) rad/s이고, \(|L| = 10/(6.22\times6.53) = 0.246\)이므로 이득 여유는 약 4.1배(12 dB)이다. 지연이 없으면 이득 여유는 무한대다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,63 +8,61 @@
 <article class="card q-card" id="text-m15-mason" data-kind="본문" data-std="기계15-02-03">
   <header class="card-head"><span class="no"></span><h2>신호 흐름도와 Mason 이득 공식</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>블록선도를 마디와 가지로 된 신호 흐름도로 바꾼다.</li>
-        <li>전방 경로, 루프, 비접촉 루프를 찾는다.</li>
-        <li>Mason 이득 공식으로 전달함수를 한 번에 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>블록선도 간략화 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">블록선도에 고리가 둘셋 얽혀 있으면 합산점을 옮기고 고리를 하나씩 줄이는 일이 번거롭고 실수하기 쉽다. 그림을 보고 경로와 고리만 세어 전달함수를 한 번에 적는 방법은 없을까? 그때 가장 흔히 틀리는 곳은 어디일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1의 신호 흐름도. 마디 R, x1, x2, x3, x4, Y가 가지 1, G1, G2, G3, 1로 이어진 전방 경로 하나(P1 = G1G2G3)가 있고, G1 둘레에 지역 루프 L1 = −G1H1, G3 둘레에 L2 = −G3H2가 있다. 두 루프는 마디를 공유하지 않아 서로 닿지 않는다">
+        <defs><marker id="ah-m15msn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <g class="fk"><circle cx="40" cy="80" r="5"/><circle cx="130" cy="80" r="5"/><circle cx="220" cy="80" r="5"/><circle cx="310" cy="80" r="5"/><circle cx="400" cy="80" r="5"/><circle cx="500" cy="80" r="5"/></g>
+        <g class="k" marker-end="url(#ah-m15msn)"><line x1="46" y1="80" x2="123" y2="80"/><line x1="136" y1="80" x2="213" y2="80"/><line x1="226" y1="80" x2="303" y2="80"/><line x1="316" y1="80" x2="393" y2="80"/><line x1="406" y1="80" x2="493" y2="80"/></g>
+        <path d="M220 86 Q175 140 132 88" class="c" fill="none" marker-end="url(#ah-m15msn)"/><path d="M400 86 Q355 140 312 88" class="c" fill="none" marker-end="url(#ah-m15msn)"/>
+        <g text-anchor="middle" class="s"><text x="40" y="66">R</text><text x="130" y="66">x₁</text><text x="220" y="66">x₂</text><text x="310" y="66">x₃</text><text x="400" y="66">x₄</text><text x="500" y="66">Y</text><text x="85" y="74">1</text><text x="450" y="74">1</text></g>
+        <g text-anchor="middle"><text x="175" y="74" class="ta">G₁</text><text x="265" y="74" class="ta">G₂</text><text x="355" y="74" class="ta">G₃</text><text x="175" y="134" class="tc">−H₁</text><text x="355" y="134" class="tc">−H₂</text></g>
+        <text x="280" y="176" text-anchor="middle" class="s">L₁ = −G₁H₁, L₂ = −G₃H₂, 공유 마디 없음 → 서로 닿지 않음</text>
+      </svg>
+      <figcaption>그림 1. 변수를 마디로, 블록을 이득을 단 가지로 그리면 전방 경로와 루프가 눈에 보이고, 두 지역 루프가 마디를 공유하지 않으므로 Δ에 두 루프의 곱 항이 들어간다(예제 2.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>블록선도 간략화(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>신호 흐름도</h3>
-    <p>신호 흐름도는 변수를 마디(점)로, 블록을 화살표 가지(이득)로 나타냅니다. 마디의 값은 들어오는 가지들의 합이고, 피드백의 빼기는 가지 이득에 음수로 넣습니다. 루프가 여럿 얽힌 블록선도는 하나씩 간략화하기보다 Mason 공식이 빠릅니다.</p>
+    <p>신호 흐름도는 변수를 마디(점)로, 블록을 화살표 가지(이득)로 나타낸다. 마디의 값은 들어오는 가지들의 합이고, 피드백의 빼기는 가지 이득에 음수로 넣는다(그림 1). 그래서 루프가 여럿 얽힌 블록선도는 하나씩 간략화하기보다 Mason 공식으로 한 번에 푸는 편이 빠르다. 처음 질문의 첫째 답이 이 공식이다.</p>
     <div class="tb-env thm">
       <span class="lb">Mason 이득 공식</span>
       <p>\[T = \frac{\sum_k P_k\Delta_k}{\Delta},\qquad \Delta = 1 - \sum L_i + \sum L_iL_j - \sum L_iL_jL_k + \cdots\]</p>
-      <p>\(P_k\): \(k\)번째 전방 경로 이득, \(L_i\): 루프 이득, \(L_iL_j\): 서로 닿지 않는 루프 쌍의 곱, \(\Delta_k\): 경로 \(k\)에 닿지 않는 루프만으로 만든 \(\Delta\).</p>
+      <p>\(P_k\)는 \(k\)번째 전방 경로 이득이고 \(L_i\)는 루프 이득이다. \(L_iL_j\)는 서로 닿지 않는 루프 쌍의 곱이며, \(\Delta_k\)는 경로 \(k\)에 닿지 않는 루프만으로 만든 \(\Delta\)이다.</p>
     </div>
-    <p>두 루프가 마디를 하나라도 공유하면 "닿는다"고 합니다. 모든 루프가 경로에 닿으면 \(\Delta_k = 1\)입니다.</p>
+    <p>여기서 두 루프가 마디를 하나라도 공유하면 닿는다고 한다. 또 모든 루프가 경로에 닿으면 \(\Delta_k = 1\)이다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1 <span class="nm">(지역 루프 두 개)</span></span>
       <p>\(G_1\), \(G_2\), \(G_3\)가 직렬이고 \(G_1\) 둘레에 지역 피드백 \(H_1\), \(G_3\) 둘레에 \(H_2\)가 있다(둘 다 음). 전달함수는?</p>
     </div>
-    <p><i>풀이.</i> 경로 \(P_1 = G_1G_2G_3\). 루프 \(L_1 = -G_1H_1\), \(L_2 = -G_3H_2\)는 서로 닿지 않습니다. \(\Delta = 1 + G_1H_1 + G_3H_2 + G_1H_1G_3H_2 = (1 + G_1H_1)(1 + G_3H_2)\), 두 루프 모두 경로에 닿아 \(\Delta_1 = 1\). \(T = G_1G_2G_3/[(1 + G_1H_1)(1 + G_3H_2)]\)로, 각 지역 루프를 따로 줄여 곱한 것과 같습니다.</p>
+    <p><i>풀이.</i> 전방 경로는 \(P_1 = G_1G_2G_3\) 하나이다. 루프 \(L_1 = -G_1H_1\)과 \(L_2 = -G_3H_2\)는 서로 닿지 않으므로 \(\Delta = 1 + G_1H_1 + G_3H_2 + G_1H_1G_3H_2 = (1 + G_1H_1)(1 + G_3H_2)\)이다. 두 루프가 모두 경로에 닿으므로 \(\Delta_1 = 1\)이고, 따라서 \(T = G_1G_2G_3/[(1 + G_1H_1)(1 + G_3H_2)]\)이다.</p>
+    <p>이 결과는 각 지역 루프를 따로 줄여 곱한 것과 같다. 즉 서로 떨어진 루프는 독립적으로 작용한다는 사실이 \(\Delta\)의 곱 항으로 나타난 것이다. 반대로 루프가 마디를 공유하면 곱 항이 빠지고, 결과를 단순히 곱으로 나눌 수 없다(연습문제 2).</p>
 
-    <div class="tb-note"><b>주의</b>가장 흔한 실수는 서로 닿는 루프의 곱을 \(\Delta\)에 넣는 것입니다. 루프를 모두 적은 뒤 쌍마다 공유 마디가 있는지 하나씩 확인합니다.</div>
+    <p>그러므로 실제로 풀 때는 순서를 정해 두는 편이 안전하다. 먼저 입력에서 출력까지 가는 전방 경로를 모두 적고, 이어서 같은 마디로 돌아오는 루프를 모두 적는다. 그다음 루프 쌍과 세 쌍마다 공유 마디를 확인해 \(\Delta\)를 만들고, 마지막으로 경로마다 닿지 않는 루프만 남겨 \(\Delta_k\)를 만든다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>마디 = 변수, 가지 = 이득.</li>
-        <li>\(T = \sum P_k\Delta_k/\Delta\).</li>
-        <li>\(\Delta\)의 곱 항은 비접촉 루프만.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>가장 흔한 실수는 서로 닿는 루프의 곱을 \(\Delta\)에 넣는 것이다. 처음 질문의 둘째 답이 이것이다. 루프를 모두 적은 뒤 쌍마다 공유 마디가 있는지 하나씩 확인하고, 같은 방법으로 각 경로에 닿지 않는 루프를 골라 \(\Delta_k\)를 만든다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>신호 흐름도에서 마디는 변수, 가지는 이득이다. 전달함수는 \(T = \sum P_k\Delta_k/\Delta\)이다. \(\Delta\)의 곱 항에는 서로 닿지 않는 루프만 넣는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>단일 루프 \(G\), 피드백 \(H\)(음)를 Mason 공식으로 풀어라.
-          <details><summary>답</summary><p>\(P_1 = G\), \(L_1 = -GH\), \(\Delta = 1 + GH\), \(T = G/(1 + GH)\).</p></details>
+          <details><summary>답</summary><p>\(P_1 = G\), \(L_1 = -GH\), \(\Delta = 1 + GH\)이므로 \(T = G/(1 + GH)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>\(G_1G_2\) 직렬에 전체 피드백 \(H\)와 \(G_2\) 둘레 지역 피드백 \(H_2\)가 있다. 전달함수는?
-          <details><summary>답</summary><p>두 루프 \(-G_1G_2H\), \(-G_2H_2\)는 \(G_2\)를 공유해 닿는다. \(T = G_1G_2/(1 + G_1G_2H + G_2H_2)\).</p></details>
+          <details><summary>답</summary><p>두 루프 \(-G_1G_2H\), \(-G_2H_2\)는 \(G_2\)를 공유해 닿는다. 따라서 \(T = G_1G_2/(1 + G_1G_2H + G_2H_2)\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>예제에서 \(G_1 = G_3 = 10\), \(H_1 = H_2 = 1\), \(G_2 = 1\)이면 \(T\)는? 지역 피드백이 \(G_1\), \(G_3\)의 변동에 대한 민감도를 어떻게 바꾸는가?
-          <details><summary>답</summary><p>\(T = 100/121 = 0.826\). 각 지역 루프의 이득이 \(10/11 \approx 1/H\)라 \(G_1\), \(G_3\)가 크게 변해도 \(T\)는 거의 바뀌지 않는다.</p></details>
+          <details><summary>답</summary><p>\(T = 100/121 = 0.826\)이다. 각 지역 루프의 이득이 \(10/11 \approx 1/H\)라 \(G_1\), \(G_3\)가 크게 변해도 \(T\)는 거의 바뀌지 않는다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,21 +8,25 @@
 <article class="card q-card" id="text-m15-linearize" data-kind="본문" data-std="기계15-01-02">
   <header class="card-head"><span class="no"></span><h2>동작점에서 선형화하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>비선형 시스템을 평형점(동작점) 근처의 작은 변화로 보면 선형으로 근사할 수 있음을 안다.</li>
-        <li>접선의 기울기(미분)로 선형화 계수를 구한다.</li>
-        <li>물탱크 수위와 진자를 선형화해 전달함수를 얻는다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전달함수 (<a href="01-01.html">1.1절</a>), 미분과 접선(고등학교 미적분).</li>
-      </ul>
-    </div>
+    <p class="q-ask">바닥에 구멍이 난 물탱크는 수위가 높을수록 물이 세게 빠지는데, 그 유량은 수위의 제곱근에 비례한다. 이런 비선형 계에도 1.1절의 전달함수를 쓸 수 있을까? 그리고 똑같은 진자라도 아래로 매달렸을 때와 거꾸로 섰을 때 무엇이 달라질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 물탱크 바닥 구멍의 유출 유량 q_out = a√(2gh) 곡선과, 평형 수위 h₀ = 1 m(q₀ = 0.0443 m³/s)에서의 접선. 접선의 기울기는 q₀/(2h₀) = 1/R이고 유동 저항 R = 45.2 s/m²이다. 동작점 근처에서는 곡선과 접선이 거의 겹친다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 170 C90 140, 100 132, 130 120 S220 90, 280 81.4 S420 52, 480 44.7" class="a" stroke-width="2.5"/>
+        <path d="M120 116.8 L440 46" class="c" stroke-width="2"/>
+        <path d="M280 81.4 V170 M80 81.4 H280" class="k dsh"/>
+        <circle cx="280" cy="81.4" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0</text><text x="280" y="186">h₀ = 1</text><text x="460" y="186">h (m)</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="85">q₀ 0.0443</text><text x="74" y="40">q_out</text></g>
+        <text x="300" y="120" class="ta">q_out = a√(2gh)</text><text x="330" y="40" class="tc">접선 기울기 1/R = q₀/(2h₀)</text>
+        <text x="290" y="76" class="td">동작점</text>
+      </svg>
+      <figcaption>그림 1. 제어기가 계를 동작점 근처에 붙잡아 두면 곡선을 그 점의 접선으로 바꿔도 오차가 작으므로, 접선의 기울기가 선형 모델의 계수가 된다(예제 1.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전달함수(<a href="01-01.html">1.1절</a>), 미분과 접선(고등학교 미적분)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>접선으로 근사하기</h3>
-    <p>실제 시스템에는 비선형 항이 많습니다(구멍으로 빠지는 유량 \(\propto\sqrt h\), 진자의 \(\sin\theta\), 공기 저항 \(\propto v^2\)). 제어기는 보통 시스템을 원하는 동작점 근처에 붙잡아 두므로, 그 근처의 작은 변화만 보면 곡선을 접선으로 바꿔도 됩니다.</p>
+    <p>실제 시스템에는 비선형 항이 많다. 구멍으로 빠지는 유량은 \(\sqrt h\)에 비례하고, 진자에는 \(\sin\theta\)가, 공기 저항에는 \(v^2\)이 들어간다. 그런데 제어기는 보통 시스템을 원하는 동작점 근처에 붙잡아 두므로, 그 근처의 작은 변화만 보면 곡선을 접선으로 바꿔도 된다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">선형화</span>
       \[f(x_0 + \delta x) \approx f(x_0) + \left.\frac{df}{dx}\right|_{x_0}\delta x\]
@@ -30,47 +34,42 @@
     </div>
 
     <h3><span class="no">1.2.2</span>물탱크</h3>
-    <p>단면적 \(A\)인 탱크에 유량 \(q_{in}\)이 들어오고 바닥 구멍(넓이 \(a\))으로 \(q_{out} = a\sqrt{2gh}\)가 빠집니다. \(A\dot h = q_{in} - a\sqrt{2gh}\)는 \(\sqrt h\) 때문에 비선형입니다. 수위 \(h_0\)에서 평형이면 \(q_0 = a\sqrt{2gh_0}\)이고, 기울기 \(dq_{out}/dh = q_0/(2h_0)\)이므로</p>
+    <p>단면적 \(A\)인 탱크에 유량 \(q_{in}\)이 들어오고, 넓이 \(a\)인 바닥 구멍으로 \(q_{out} = a\sqrt{2gh}\)가 빠진다. 그러면 \(A\dot h = q_{in} - a\sqrt{2gh}\)는 \(\sqrt h\) 때문에 비선형이다. 수위 \(h_0\)에서 평형이면 \(q_0 = a\sqrt{2gh_0}\)이고, 접선의 기울기는 \(dq_{out}/dh = q_0/(2h_0)\)이다(그림 1). 이것을 넣으면 다음 선형 모델을 얻는다.</p>
     \[A\,\delta\dot h = \delta q_{in} - \frac{\delta h}{R},\quad R = \frac{2h_0}{q_0}\quad\Rightarrow\quad \frac{\delta H}{\delta Q_{in}} = \frac{R}{ARs + 1}\]
-    <p>입니다. \(R\)은 "유동 저항"으로, 전기 회로의 저항과 같은 역할입니다.</p>
+    <p>여기서 \(R\)을 유동 저항이라 하며, 전기 회로의 저항과 같은 역할을 한다. 결국 탱크도 DC 모터와 같은 1차 계가 된다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1 <span class="nm">(탱크 수위)</span></span>
       <p>단면 1 m² 탱크의 바닥 구멍 넓이가 0.01 m²이고 수위 1 m에서 평형이다. 평형 유량, 유동 저항, 시간 상수는? 유입 유량을 1 L/s 늘리면 수위는 결국 얼마나 오르나?</p>
     </div>
-    <p><i>풀이.</i> \(q_0 = 0.01\sqrt{19.62} = 0.0443\) m³/s. \(R = 2/0.0443 = 45.2\) s/m², 시간 상수 \(AR = 45\) s. 정상 상태 수위 변화 \(R\times0.001 = 45\) mm(약 2분 15초 지나면 95%). 비선형 식으로 정확히 풀면 \(h = ((q_0 + 0.001)/(a\sqrt{2g}))^2 = 1.0457\) m로 거의 같습니다.</p>
+    <p><i>풀이.</i> \(q_0 = 0.01\sqrt{19.62} = 0.0443\) m³/s이므로 \(R = 2/0.0443 = 45.2\) s/m²이고, 시간 상수는 \(AR = 45\) s이다. 정상 상태 수위 변화는 \(R\times0.001 = 45\) mm이며, 약 2분 15초가 지나면 그 95%에 이른다.</p>
+    <p>비선형 식으로 정확히 풀면 \(h = ((q_0 + 0.001)/(a\sqrt{2g}))^2 = 1.0457\) m로 거의 같다. 즉 유량을 2% 남짓 바꾼 정도의 작은 변화에서는 접선 모델이 충분히 맞다.</p>
 
     <h3><span class="no">1.2.3</span>진자</h3>
-    <p>진자 \(ml^2\ddot\theta + mgl\sin\theta = T\)를 아래 평형(\(\theta = 0\))에서 선형화하면 \(\sin\theta \approx \theta\)이고, 거꾸로 선 평형(\(\theta = \pi\))에서는 \(\sin(\pi + \delta) \approx -\delta\)라 \(ml^2\ddot\delta - mgl\delta = T\)가 됩니다. 부호가 바뀌어 극점 하나가 양수(불안정)가 되므로, 거꾸로 선 진자(세그웨이, 로켓 자세)는 제어 없이는 넘어집니다.</p>
+    <p>진자 \(ml^2\ddot\theta + mgl\sin\theta = T\)를 아래 평형(\(\theta = 0\))에서 선형화하면 \(\sin\theta \approx \theta\)이다. 그런데 거꾸로 선 평형(\(\theta = \pi\))에서는 \(\sin(\pi + \delta) \approx -\delta\)이므로 \(ml^2\ddot\delta - mgl\delta = T\)가 된다.</p>
+    <p>이때 부호가 바뀌어 극점 하나가 양수, 곧 불안정해진다. 그래서 세그웨이나 로켓 자세처럼 거꾸로 선 진자는 제어 없이는 넘어진다. 처음 질문의 둘째 답이 이것이며, 같은 계라도 어느 동작점에서 선형화하느냐에 따라 모델의 성질이 완전히 달라진다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 선형화 모델은 동작점 근처에서만 맞습니다. 변화가 크면 동작점을 바꿔 다시 선형화합니다(이득 스케줄링). (2) 마찰, 포화(최대 출력), 백래시 같은 불연속 비선형은 선형화할 수 없습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>한 번 선형화한 모델을 모든 운전 범위에 그대로 써도 된다고 여기기 쉽다. 선형화 모델은 동작점 근처에서만 맞으므로, 변화가 크면 동작점을 바꿔 다시 선형화하는데 이것을 이득 스케줄링이라 한다. 또 마찰, 포화(최대 출력), 백래시처럼 꺾이거나 끊긴 비선형은 접선을 그을 수 없어 이 방법으로 선형화할 수 없다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>동작점 근처: \(f \approx f(x_0) + f'(x_0)\delta x\).</li>
-        <li>탱크: \(R = 2h_0/q_0\), \(\delta H/\delta Q = R/(ARs + 1)\).</li>
-        <li>거꾸로 선 진자는 선형화하면 불안정 극점이 있다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>동작점 근처에서는 \(f \approx f(x_0) + f'(x_0)\delta x\)로 근사한다. 물탱크는 \(R = 2h_0/q_0\)이고, \(\delta H/\delta Q = R/(ARs + 1)\)이다. 거꾸로 선 진자를 선형화하면 불안정 극점이 나타난다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 탱크를 수위 4 m에서 운전하면 \(R\)과 시간 상수는?
-          <details><summary>답</summary><p>\(q_0 = 0.0886\), \(R = 8/0.0886 = 90.3\), 시간 상수 90 s. 수위가 높을수록 느려진다.</p></details>
+          <details><summary>답</summary><p>\(q_0 = 0.0886\), \(R = 8/0.0886 = 90.3\)이므로 시간 상수는 90 s이다. 수위가 높을수록 느려진다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>공기 저항 \(F = 0.5v^2\) N을 받는 물체를 속도 20 m/s 근처에서 선형화한 감쇠 계수는?
-          <details><summary>답</summary><p>\(dF/dv = v = 20\) N·s/m.</p></details>
+          <details><summary>답</summary><p>\(dF/dv = v = 20\) N·s/m이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>거꾸로 선 진자(\(l = 1\) m)의 선형화 모델에서 불안정 극점의 값은? 넘어지는 빠르기를 말하여라.
-          <details><summary>답</summary><p>\(\ddot\delta = (g/l)\delta\), 극점 \(s = \pm\sqrt{9.81} = \pm3.13\). 기울기가 약 0.32 s마다 \(e\)배로 커진다. 제어기는 이보다 충분히 빨리 반응해야 한다.</p></details>
+          <details><summary>답</summary><p>\(\ddot\delta = (g/l)\delta\)이므로 극점은 \(s = \pm\sqrt{9.81} = \pm3.13\)이다. 기울기가 약 0.32 s마다 \(e\)배로 커진다. 제어기는 이보다 충분히 빨리 반응해야 한다.</p></details>
         </li>
       </ol>
     </div>

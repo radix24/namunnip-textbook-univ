@@ -8,60 +8,59 @@
 <article class="card q-card" id="text-m15-zn" data-kind="본문" data-std="기계15-04-03">
   <header class="card-head"><span class="no"></span><h2>PID 실전 튜닝: Ziegler-Nichols와 적분 와인드업</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>모델 없이 실험으로 PID 이득을 정하는 Ziegler-Nichols 방법 두 가지를 안다.</li>
-        <li>한계 이득과 한계 주기에서 PID 이득을 계산한다.</li>
-        <li>구동기 포화 때 생기는 적분 와인드업과 그 방지법을 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>근궤적과 PID (<a href="04-01.html">4.1절</a>), Routh 판별법 (<a href="03-01.html">3.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">공장의 가열로나 펌프는 정확한 전달함수를 모르는 경우가 많다. 모델 없이도 PID 이득의 첫 값을 정하는 실험이 있을까? 그리고 히터가 이미 최대 출력인데도 적분기가 오차를 계속 쌓으면 무슨 일이 생길까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="적분 와인드업의 개형. 목표값으로 오르는 동안 구동기가 최대 출력에 포화되어 있으면 적분기에 오차가 계속 쌓인다. 와인드업을 막지 않으면 목표에 닿은 뒤에도 쌓인 적분 때문에 크게 넘치고 늦게 자리 잡으며, 조건부 적분을 쓰면 조금만 넘치고 빨리 자리 잡는다">
+        <line x1="80" y1="170" x2="480" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <rect x="80" y="30" width="150" height="140" class="lk"/>
+        <path d="M80 70 H480" class="k dsh"/>
+        <path d="M80 170 L230 75 C270 50, 290 32, 320 36 S370 92, 400 80 S450 66, 480 70" class="d" fill="none" stroke-width="2.5"/>
+        <path d="M80 170 L230 75 C250 66, 265 62, 290 66 S340 72, 480 70" class="a" fill="none" stroke-width="2.5"/>
+        <text x="155" y="46" text-anchor="middle" class="s">구동기 포화 구간</text>
+        <text x="330" y="28" class="td">와인드업, 크게 넘침</text><text x="330" y="96" class="ta">조건부 적분, 조금 넘침</text>
+        <text x="440" y="62" class="s">목표</text>
+        <g text-anchor="middle" class="s"><text x="460" y="186">시간</text><text x="80" y="186">0</text></g>
+      </svg>
+      <figcaption>그림 1. 구동기가 포화된 동안에도 적분기가 오차를 쌓으면 목표에 닿은 뒤 그 적분이 풀릴 때까지 출력이 최대에 머물러 크게 넘치므로, 포화 중에는 적분을 멈춰야 한다(4.3.2, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>근궤적과 PID(<a href="04-01.html">4.1절</a>), Routh 판별법(<a href="03-01.html">3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">4.3.1</span>Ziegler-Nichols 방법</h3>
-    <p>현장에서는 정확한 모델이 없을 때가 많습니다. Ziegler-Nichols는 간단한 실험 하나로 첫 이득을 정해 주는 경험 규칙입니다.</p>
+    <p>현장에서는 정확한 모델이 없을 때가 많다. Ziegler-Nichols 방법은 간단한 실험 하나로 PID의 첫 이득을 정해 주는 경험 규칙이며, 처음 질문의 첫째 답이 이것이다. 제어기는 \(u = K_p[e + \tfrac1{T_i}\int e\,dt + T_d\dot e]\) 꼴로 쓴다.</p>
     <div class="tb-env thm">
-      <span class="lb">두 가지 방법 (\(u = K_p[e + \tfrac1{T_i}\int e\,dt + T_d\dot e]\))</span>
-      <p>한계 감도법: 비례 제어만으로 이득을 올려 지속 진동이 생기는 \(K_u\)와 주기 \(P_u\)를 잰다. PID: \(K_p = 0.6K_u\), \(T_i = P_u/2\), \(T_d = P_u/8\). PI: \(K_p = 0.45K_u\), \(T_i = P_u/1.2\).</p>
-      <p>계단 응답법: 개루프 계단 응답에서 이득 \(K\), 지연 \(L\), 시정수 \(T\)를 읽는다. PID: \(K_p = 1.2T/(KL)\), \(T_i = 2L\), \(T_d = 0.5L\).</p>
+      <span class="lb">두 가지 방법</span>
+      <p>한계 감도법은 비례 제어만으로 이득을 올려 지속 진동이 생기는 이득 \(K_u\)와 그 주기 \(P_u\)를 잰다. PID는 \(K_p = 0.6K_u\), \(T_i = P_u/2\), \(T_d = P_u/8\)로, PI는 \(K_p = 0.45K_u\), \(T_i = P_u/1.2\)로 정한다.</p>
+      <p>계단 응답법은 개루프 계단 응답에서 이득 \(K\), 지연 \(L\), 시정수 \(T\)를 읽는다. PID는 \(K_p = 1.2T/(KL)\), \(T_i = 2L\), \(T_d = 0.5L\)로 정한다.</p>
     </div>
-    <p>이 규칙은 감쇠비 약 0.2(1/4 감쇠비)를 목표로 해서 오버슈트가 큰 편입니다. 출발점으로 쓰고 \(K_p\)를 줄이거나 \(T_i\)를 늘려 다듬습니다.</p>
-
-    <h3><span class="no">4.3.2</span>적분 와인드업</h3>
-    <p>밸브가 완전히 열리거나 모터 전압이 한계에 닿으면(포화) 출력은 더 빨리 따라가지 못하는데, 적분기는 오차를 계속 쌓습니다. 오차가 반대가 되어도 쌓인 적분이 풀릴 때까지 구동기가 포화에 머물러 큰 오버슈트가 생깁니다. 포화 중에는 적분을 멈추거나(조건부 적분), 포화 초과분을 적분기에 되먹임(역계산)해 막습니다.</p>
+    <p>이 규칙은 진폭이 한 주기마다 1/4로 줄어드는 응답, 곧 감쇠비 약 0.2를 목표로 하므로 오버슈트가 큰 편이다. 그래서 출발점으로만 쓰고, \(K_p\)를 줄이거나 \(T_i\)를 늘려 다듬는다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 4.3.1 <span class="nm">(3중 지연 공정)</span></span>
       <p>\(G = 1/(s + 1)^3\)의 한계 이득과 한계 주기를 구하고 Ziegler-Nichols PID 이득을 정하여라.</p>
     </div>
-    <p><i>풀이.</i> 특성식 \(s^3 + 3s^2 + 3s + 1 + K = 0\). Routh에서 \(9 = 1 + K\)일 때 경계라 \(K_u\) = 8, 진동수 \(\omega_u = \sqrt3\), \(P_u = 2\pi/\sqrt3 = 3.63\) s. PID: \(K_p = 4.8\), \(T_i = 1.81\) s, \(T_d = 0.45\) s.</p>
+    <p><i>풀이.</i> 특성식은 \(s^3 + 3s^2 + 3s + 1 + K = 0\)이다. Routh 표에서 \(9 = 1 + K\)일 때 경계이므로 \(K_u\) = 8이고, 진동수는 \(\omega_u = \sqrt3\), 주기는 \(P_u = 2\pi/\sqrt3 = 3.63\) s이다. 따라서 PID 이득은 \(K_p = 4.8\), \(T_i = 1.81\) s, \(T_d = 0.45\) s이다.</p>
+    <p>실제 현장에서는 이 Routh 계산 대신 이득을 직접 올려 보며 진동이 이어지는 순간의 이득과 주기를 잰다. 즉 모델이 있으면 계산으로, 없으면 실험으로 같은 두 숫자를 얻는다.</p>
 
-    <div class="tb-note"><b>주의</b>한계 감도 실험은 실제 설비를 안정 경계까지 몰고 가므로 위험할 수 있습니다. 큰 설비에서는 계단 응답법이나 릴레이 되먹임 실험(진폭이 제한된 진동)을 씁니다.</div>
+    <h3><span class="no">4.3.2</span>적분 와인드업</h3>
+    <p>밸브가 완전히 열리거나 모터 전압이 한계에 닿으면, 곧 구동기가 포화되면 출력은 더 빨리 따라가지 못한다. 그런데 적분기는 그동안에도 오차를 계속 쌓는다. 그래서 오차의 부호가 바뀐 뒤에도 쌓인 적분이 풀릴 때까지 구동기가 포화에 머물러 큰 오버슈트가 생긴다(그림 1). 이것을 적분 와인드업이라 하며, 처음 질문의 둘째 답이다.</p>
+    <p>이를 막는 방법은 두 가지이다. 포화 중에는 적분을 멈추는 조건부 적분, 그리고 포화로 잘린 초과분을 적분기에 되먹여 적분값을 끌어내리는 역계산이다. 실제 PID 제어기에는 대부분 둘 중 하나가 들어 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>한계 감도: \(0.6K_u\), \(P_u/2\), \(P_u/8\).</li>
-        <li>계단 응답: \(1.2T/(KL)\), \(2L\), \(0.5L\).</li>
-        <li>포화 + 적분 = 와인드업 → 조건부 적분·역계산.</li>
-      </ol>
-    </div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>한계 감도 실험을 큰 설비에 그대로 하는 실수가 흔하다. 이 실험은 실제 설비를 안정 경계까지 몰고 가 지속 진동을 일으키므로 위험할 수 있다. 큰 설비에서는 계단 응답법을 쓰거나, 릴레이로 진폭이 제한된 진동을 일으켜 한계 이득과 주기를 재는 릴레이 되먹임 실험을 쓴다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>한계 감도법은 \(K_p = 0.6K_u\), \(T_i = P_u/2\), \(T_d = P_u/8\)이고, 계단 응답법은 \(K_p = 1.2T/(KL)\), \(T_i = 2L\), \(T_d = 0.5L\)이다. 구동기가 포화된 채로 적분하면 와인드업이 생긴다. 조건부 적분이나 역계산으로 막는다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(K_u\) = 10, \(P_u\) = 2 s일 때 ZN PI 이득은?
-          <details><summary>답</summary><p>\(K_p = 4.5\), \(T_i = 1.67\) s.</p></details>
+          <details><summary>답</summary><p>\(K_p = 4.5\), \(T_i = 1.67\) s이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제 PID를 \(K_p + K_i/s + K_ds\) 꼴로 바꿔라.
-          <details><summary>답</summary><p>\(K_i = K_p/T_i = 2.65\), \(K_d = K_pT_d = 2.18\).</p></details>
+          <details><summary>답</summary><p>\(K_i = K_p/T_i = 2.65\), \(K_d = K_pT_d = 2.18\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

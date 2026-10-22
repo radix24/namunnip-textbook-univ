@@ -8,67 +8,64 @@
 <article class="card q-card" id="text-m15-block" data-kind="본문" data-std="기계15-02-01">
   <header class="card-head"><span class="no"></span><h2>블록선도와 간략화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>신호가 흐르는 길을 블록(전달함수), 합산점, 분기점으로 그린다.</li>
-        <li>직렬, 병렬, 피드백 연결을 하나의 전달함수로 바꾼다.</li>
-        <li>폐루프 전달함수 \(G/(1 + GH)\)의 뜻과 피드백의 효과를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전달함수 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">모터 위치를 원하는 각도로 맞추려면 센서로 현재 위치를 재고, 목표와의 차이만큼 모터를 돌리면 된다. 이렇게 출력을 되먹이는 고리 전체를 하나의 전달함수로 쓸 수 있을까? 그리고 되먹임을 하면 무엇이 좋아지고, 그 대가는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 모터 위치 제어의 블록선도. 목표 R에서 측정 Y를 뺀 오차가 비례 제어기 K와 모터 G_p = 10/(s(0.1s + 1))를 거쳐 출력 Y가 되고, 센서(이득 1)로 되먹인다. 폐루프 전달함수는 100K/(s² + 10s + 100K)이며 K = 2.5이면 고유진동수 15.8 rad/s, 감쇠비 0.32이다">
+        <defs><marker id="ah-m15blk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fk"/></marker></defs>
+        <circle cx="100" cy="80" r="12" class="k" fill="none"/>
+        <rect x="150" y="60" width="70" height="40" class="k" fill="none"/><rect x="270" y="60" width="140" height="40" class="k" fill="none"/>
+        <g class="k" marker-end="url(#ah-m15blk)"><line x1="40" y1="80" x2="86" y2="80"/><line x1="112" y1="80" x2="148" y2="80"/><line x1="220" y1="80" x2="268" y2="80"/><line x1="410" y1="80" x2="500" y2="80"/><path d="M450 80 V140 H100 V94" fill="none"/></g>
+        <g text-anchor="middle"><text x="185" y="85" class="ta">K</text><text x="340" y="85" class="ta">10/(s(0.1s + 1))</text></g>
+        <g class="s"><text x="30" y="72">R</text><text x="508" y="85">Y</text><text x="80" y="72">+</text><text x="106" y="110">−</text><text x="240" y="72">U</text><text x="122" y="72">E</text><text x="250" y="156">센서 H = 1</text></g>
+        <text x="280" y="186" text-anchor="middle" class="td">Y/R = 100K/(s² + 10s + 100K), K = 2.5 → ω_n 15.8 rad/s, ζ 0.32</text>
+      </svg>
+      <figcaption>그림 1. 오차가 제어기와 플랜트를 지나 출력이 되고 그 출력이 다시 빼지므로, 고리 전체가 하나의 폐루프 전달함수 G/(1 + GH)로 묶이고 제어기 이득이 그 극점을 옮긴다(예제 2.1.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전달함수(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>기본 연결</h3>
+    <p>블록선도는 신호가 흐르는 길을 블록(전달함수), 합산점, 분기점으로 그린 그림이다. 블록 두 개를 직렬로 이으면 전달함수를 곱하고, 병렬로 놓아 더하면 전달함수를 더한다. 가장 중요한 것은 피드백 연결이다.</p>
     <div class="tb-env thm">
       <span class="lb">블록선도 간략화</span>
-      <p>직렬: \(G_1G_2\). 병렬(합): \(G_1 + G_2\).</p>
-      <p>음의 피드백(앞먹임 \(G\), 되먹임 \(H\)): \[\frac{Y}{R} = \frac{G}{1 + GH}\]</p>
+      <p>직렬은 \(G_1G_2\), 병렬(합)은 \(G_1 + G_2\)이다. 앞먹임 \(G\), 되먹임 \(H\)인 음의 피드백은 다음과 같다. \[\frac{Y}{R} = \frac{G}{1 + GH}\]</p>
     </div>
-    <p>피드백 식은 이렇게 얻습니다. 오차 \(E = R - HY\), 출력 \(Y = GE\)이므로 \(Y = G(R - HY)\), 정리하면 \(Y(1 + GH) = GR\)입니다. \(GH\)를 루프 전달함수(고리 이득)라 합니다.</p>
+    <p>피드백 식은 이렇게 얻는다. 오차는 \(E = R - HY\), 출력은 \(Y = GE\)이므로 \(Y = G(R - HY)\)이고, 정리하면 \(Y(1 + GH) = GR\)이다. 여기서 \(GH\)를 루프 전달함수 또는 고리 이득이라 한다. 처음 질문의 첫째 답이 이 식이다.</p>
 
     <h3><span class="no">2.1.2</span>간략화 요령</h3>
-    <p>복잡한 선도는 합산점·분기점을 블록 앞뒤로 옮겨(옮길 때 해당 블록을 곱하거나 나눠 신호를 보존) 기본 연결만 남게 한 뒤 안쪽 고리부터 차례로 줄입니다. 신호 흐름도와 Mason 공식을 쓰면 여러 고리가 얽힌 경우를 한 번에 풀 수 있습니다.</p>
+    <p>복잡한 선도는 합산점과 분기점을 블록 앞뒤로 옮겨 기본 연결만 남게 한 뒤, 안쪽 고리부터 차례로 줄인다. 옮길 때는 해당 블록을 곱하거나 나눠 신호가 그대로 남게 한다. 한편 여러 고리가 얽힌 경우에는 신호 흐름도와 Mason 공식(2.3절)이 한 번에 풀어 준다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1 <span class="nm">(모터 위치 제어)</span></span>
       <p>비례 제어기 \(K\)가 DC 모터 위치 모델 \(G_p = \frac{10}{s(0.1s + 1)}\)를 구동하고, 위치 센서(이득 1)로 되먹인다. 폐루프 전달함수와 \(K = 2.5\)일 때 고유진동수·감쇠비는?</p>
     </div>
-    <p><i>풀이.</i> 앞먹임 \(KG_p\), \(H = 1\): \(\frac{Y}{R} = \frac{10K}{0.1s^2 + s + 10K} = \frac{100K}{s^2 + 10s + 100K}\). \(K = 2.5\)면 \(\omega_n^2 = 250\), \(\omega_n = 15.8\) rad/s, \(2\zeta\omega_n = 10\)에서 \(\zeta = 0.32\). 제어기 이득으로 폐루프 극점(응답의 빠르기와 감쇠)을 옮길 수 있습니다(2.2절, 4단원).</p>
+    <p><i>풀이.</i> 앞먹임은 \(KG_p\)이고 \(H = 1\)이므로 \(\frac{Y}{R} = \frac{10K}{0.1s^2 + s + 10K} = \frac{100K}{s^2 + 10s + 100K}\)이다. \(K = 2.5\)이면 \(\omega_n^2 = 250\)에서 \(\omega_n = 15.8\) rad/s이고, \(2\zeta\omega_n = 10\)에서 \(\zeta = 0.32\)이다(그림 1).</p>
+    <p>즉 제어기 이득 하나로 폐루프 극점, 곧 응답의 빠르기와 감쇠를 옮길 수 있다. 이 생각이 2.2절의 응답 지표와 4단원의 근궤적으로 이어진다.</p>
 
     <h3><span class="no">2.1.3</span>피드백의 효과</h3>
-    <p>루프 이득 \(GH\)가 크면 \(Y/R \approx 1/H\)로, 플랜트 \(G\)가 조금 바뀌어도(부하, 온도, 노화) 출력이 거의 영향을 받지 않습니다. 외란이 플랜트에 들어와도 \(1/(1 + GH)\)배로 줄어듭니다. 대가로 이득이 크면 진동하거나 불안정해질 수 있어(3단원) 그 사이 균형을 찾는 것이 제어 설계입니다.</p>
+    <p>루프 이득 \(GH\)가 크면 \(Y/R \approx 1/H\)가 된다. 그래서 부하, 온도, 노화로 플랜트 \(G\)가 조금 바뀌어도 출력은 거의 영향을 받지 않는다. 또 외란이 플랜트에 들어와도 \(1/(1 + GH)\)배로 줄어든다. 처음 질문의 둘째 답이 이것이다.</p>
+    <p>그런데 그 대가로 이득이 크면 진동하거나 불안정해질 수 있다(3단원). 결국 둔감함과 안정성 사이의 균형을 찾는 것이 제어 설계이다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 피드백 부호를 확인합니다. 양의 피드백이면 \(G/(1 - GH)\)입니다. (2) 블록선도는 신호의 흐름이지 에너지나 물질의 흐름이 아닙니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>피드백의 부호를 확인하지 않는 실수가 흔하다. 되먹인 신호를 더하는 양의 피드백이면 전달함수는 \(G/(1 - GH)\)가 되어 성질이 정반대가 된다. 또 블록선도는 신호의 흐름을 나타낼 뿐 에너지나 물질의 흐름이 아니므로, 블록 사이의 선에 동력이 실린다고 생각하면 안 된다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>직렬 곱, 병렬 합, 피드백 \(G/(1 + GH)\).</li>
-        <li>합산점·분기점을 옮겨 안쪽 고리부터 줄인다.</li>
-        <li>큰 루프 이득: 플랜트 변화·외란에 둔감, 대신 안정성 주의.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>블록선도에서 직렬은 곱, 병렬은 합, 피드백은 \(G/(1 + GH)\)이다. 복잡한 선도는 합산점과 분기점을 옮겨 안쪽 고리부터 줄인다. 루프 이득이 크면 플랜트 변화와 외란에 둔감해지지만, 안정성에 주의해야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(G = 5/(s + 1)\), \(H = 1\)인 폐루프 전달함수와 정상 상태 이득은?
-          <details><summary>답</summary><p>\(5/(s + 6)\), 정상 이득 \(5/6 = 0.83\).</p></details>
+          <details><summary>답</summary><p>폐루프 전달함수는 \(5/(s + 6)\)이고, 정상 이득은 \(5/6 = 0.83\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 감쇠비 0.5를 얻으려면 \(K\)는?
-          <details><summary>답</summary><p>\(2\zeta\omega_n = 10\) → \(\omega_n = 10\), \(100K = 100\), \(K = 1\).</p></details>
+          <details><summary>답</summary><p>\(2\zeta\omega_n = 10\)에서 \(\omega_n = 10\)이므로 \(100K = 100\), 곧 \(K = 1\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>1번 계에서 플랜트 이득이 5에서 4로 20% 떨어지면 폐루프 정상 이득은 몇 % 바뀌는가?
-          <details><summary>답</summary><p>\(4/5 = 0.80\), 0.833에서 4% 감소. 피드백이 플랜트 변화를 5분의 1로 줄였다.</p></details>
+          <details><summary>답</summary><p>\(4/5 = 0.80\)이므로 0.833에서 4% 줄어든다. 피드백이 플랜트 변화를 5분의 1로 줄였다.</p></details>
         </li>
       </ol>
     </div>
