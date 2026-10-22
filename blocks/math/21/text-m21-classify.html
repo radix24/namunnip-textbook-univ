@@ -8,44 +8,72 @@
 <article class="card q-card" id="text-m21-classify" data-kind="본문" data-std="수학21-02-02">
   <header class="card-head"><span class="no"></span><h2>상태의 분류: 재귀, 일시, 주기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>상태 사이의 통신 관계로 연쇄를 류(class)로 나누고 기약 연쇄를 정의한다.</li>
-        <li>재귀와 일시를 정의하고 판정법 \(\sum_np_{ii}^{(n)} = \infty\)를 증명한다.</li>
-        <li>주기를 정의하고, 재귀성과 주기가 류 전체의 성질임을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>전이행렬과 \(P^n\) (<a href="02-01.html">2.1절</a>), 등비급수, 최대공약수.</li>
-      </ul>
-    </div>
+    <p class="q-ask">마르코프 연쇄의 상태 가운데에는 한번 떠나면 다시 오지 않는 것도 있고, 몇 번이고 되돌아오는 것도 있다. 두 경우를 무엇으로 가를 수 있을까? 정수 위를 걷는 공정한 랜덤워크는 출발점으로 꼭 돌아올까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="일시 류와 닫힌 재귀 류가 있는 전이 그림">
+        <circle cx="60" cy="110" r="18" class="d" style="fill:none"/>
+        <text x="60" y="115" text-anchor="middle" class="td">1</text>
+        <circle cx="160" cy="110" r="18" class="d" style="fill:none"/>
+        <text x="160" y="115" text-anchor="middle" class="td">2</text>
+        <circle cx="280" cy="70" r="18" class="a" style="fill:none"/>
+        <text x="280" y="75" text-anchor="middle" class="ta">3</text>
+        <circle cx="280" cy="160" r="18" class="a" style="fill:none"/>
+        <text x="280" y="165" text-anchor="middle" class="ta">4</text>
+        <circle cx="380" cy="115" r="18" class="a" style="fill:none"/>
+        <text x="380" y="120" text-anchor="middle" class="ta">5</text>
+        <line x1="78.0" y1="104.0" x2="137.8" y2="104.0" class="k"/>
+        <path d="M142.0,104.0 L135.0,100.5 L135.0,107.5 Z" class="fk"/>
+        <line x1="142.0" y1="117.0" x2="82.2" y2="117.0" class="k"/>
+        <path d="M78.0,117.0 L85.0,120.5 L85.0,113.5 Z" class="fk"/>
+        <line x1="176.0" y1="100.0" x2="258.9" y2="78.1" class="k"/>
+        <path d="M263.0,77.0 L255.3,75.4 L257.1,82.2 Z" class="fk"/>
+        <line x1="280.0" y1="89.0" x2="280.0" y2="136.8" class="k"/>
+        <path d="M280.0,141.0 L283.5,134.0 L276.5,134.0 Z" class="fk"/>
+        <line x1="297.0" y1="154.0" x2="359.2" y2="123.8" class="k"/>
+        <path d="M363.0,122.0 L355.2,121.9 L358.2,128.2 Z" class="fk"/>
+        <line x1="363.0" y1="106.0" x2="300.8" y2="77.7" class="k"/>
+        <path d="M297.0,76.0 L301.9,82.1 L304.8,75.7 Z" class="fk"/>
+        <path d="M51,94 C38,62 82,62 69,94" class="k" style="fill:none"/>
+        <line x1="73.0" y1="82.0" x2="70.4" y2="89.1" class="k"/>
+        <path d="M69.0,93.0 L74.7,87.6 L68.1,85.2 Z" class="fk"/>
+        <rect x="30" y="50" width="160" height="100" class="d" style="fill:none;stroke-dasharray:4 3"/>
+        <rect x="250" y="25" width="160" height="170" class="a" style="fill:none;stroke-dasharray:4 3"/>
+        <text x="110" y="168" text-anchor="middle" class="td">일시 류 {1, 2}</text>
+        <text x="330" y="208" text-anchor="middle" class="ta">닫힌 재귀 류 {3, 4, 5}</text>
+        <text x="418" y="50" class="s">1과 2는 서로 오가지만</text>
+        <text x="418" y="71" class="s">3으로 떠나면</text>
+        <text x="418" y="92" class="s">다시 오지 못한다.</text>
+        <text x="418" y="113" class="s">3 → 4 → 5 → 3은</text>
+        <text x="418" y="134" class="s">빠져나갈 곳이 없다.</text>
+        <text x="418" y="155" class="s">고리 길이 3, 주기 3</text>
+      </svg>
+      <figcaption>그림 1. 상태를 점으로, 양의 전이를 화살표로 그린 전이 그림이다. 상태 1과 2는 서로 오갈 수 있는 류(빨강 점선)이지만 3으로 떠나면 돌아오지 못하므로 일시 상태이다. 3, 4, 5는 빠져나갈 길이 없는 닫힌 류(파랑 점선)이고 모두 재귀이며, 돌아오는 길이가 늘 3의 배수라 주기가 3이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전이행렬과 \(P^n\)(<a href="02-01.html">2.1절</a>), 등비급수, 최대공약수를 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>통신과 류</h3>
-    <p>어떤 \(n\)에 대해 \(p_{ij}^{(n)} > 0\)이면 "\(i\)에서 \(j\)로 갈 수 있다"(\(i \to j\))고 하고, 서로 갈 수 있으면 <b>통신한다</b>(\(i \leftrightarrow j\))고 합니다. 이는 동치관계라 상태 집합이 류로 나뉩니다. 류가 하나뿐이면 <b>기약</b> 연쇄입니다. 전이 그림(상태를 점, 양의 전이를 화살표로)에서 서로 오갈 수 있는 덩어리가 류입니다.</p>
+    <p>어떤 \(n\)에 대해 \(p_{ij}^{(n)} > 0\)이면 \(i\)에서 \(j\)로 갈 수 있다고 하고 \(i \to j\)로 쓴다. 서로 갈 수 있으면 <em>통신한다</em>고 하고 \(i \leftrightarrow j\)로 쓴다. 이것은 동치관계이므로 상태 집합이 류로 나뉜다. 류가 하나뿐이면 <em>기약</em> 연쇄라 한다. 그림 1 같은 전이 그림에서 서로 오갈 수 있는 덩어리가 바로 류이다.</p>
 
     <h3><span class="no">2.2.2</span>재귀와 일시</h3>
-    <p>\(X_0 = i\)에서 출발해 언젠가 다시 \(i\)로 돌아올 확률을 \(f_i = P(X_n = i\ \text{for some}\ n \ge 1 \mid X_0 = i)\)라 할 때 \(f_i = 1\)이면 <b>재귀</b>, \(f_i &lt; 1\)이면 <b>일시</b> 상태입니다. 일시 상태에서는 돌아올 때마다 다시 \(1 - f_i\)의 확률로 영영 떠나므로 방문 횟수 \(V_i\)가 기하분포를 따릅니다.</p>
-    <div class="tb-env thm"><b>정리 2.2.1</b> \(i\)가 재귀 ⟺ \(\sum_{n\ge1}p_{ii}^{(n)} = \infty\).</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>\(i\)에서 출발할 때 방문 횟수 \(V_i = \sum_{n\ge1}\mathbf 1[X_n = i]\)의 기대값은 \(\sum_np_{ii}^{(n)}\)이다. 강한 마르코프 성질로 \(P(V_i \ge k) = f_i^k\)이므로 \(E[V_i] = \sum_{k\ge1}f_i^k\)는 \(f_i &lt; 1\)이면 \(\frac{f_i}{1 - f_i} &lt; \infty\), \(f_i = 1\)이면 \(\infty\). <span class="qed">∎</span></p>
+    <p>\(X_0 = i\)에서 출발해 언젠가 다시 \(i\)로 돌아올 확률을 \(f_i = P(\text{어떤 } n \ge 1\text{에 대해 } X_n = i \mid X_0 = i)\)라 하자. \(f_i = 1\)이면 \(i\)를 <em>재귀</em> 상태, \(f_i &lt; 1\)이면 <em>일시</em> 상태라 한다. 일시 상태에서는 돌아올 때마다 다시 \(1 - f_i\)의 확률로 영영 떠나므로, 방문 횟수가 기하분포를 따른다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.2.1</span>
+      <p>\(i\)가 재귀일 필요충분조건은 \(\sum_{n\ge1}p_{ii}^{(n)} = \infty\)이다.</p>
     </div>
-    <p>\(i \leftrightarrow j\)이고 \(i\)가 재귀이면 \(p_{jj}^{(a+n+b)} \ge p_{ji}^{(a)}p_{ii}^{(n)}p_{ij}^{(b)}\)이라 \(j\)도 재귀입니다. 그래서 재귀성은 류의 성질입니다. 상태가 유한한 기약 연쇄는 어딘가를 무한히 방문해야 하므로 모든 상태가 재귀입니다.</p>
-    <div class="tb-env ex"><b>예 2.2.2 (정수 위 랜덤워크)</b> 확률 \(p\)로 +1, \(q\)로 −1. 돌아오려면 짝수 걸음이 필요하고 \(p_{00}^{(2n)} = \binom{2n}n(pq)^n \approx \frac{(4pq)^n}{\sqrt{\pi n}}\) (스털링 공식). \(p = \frac12\)이면 \(4pq = 1\)이라 합이 \(\sum\frac1{\sqrt{\pi n}} = \infty\), 재귀입니다. \(p \ne \frac12\)이면 \(4pq &lt; 1\)이라 수렴, 일시입니다. 2차원 대칭 랜덤워크는 \(\approx\frac1{\pi n}\)로 재귀, 3차원은 \(\approx n^{-3/2}\)로 일시입니다(폴리아).</div>
+    <p class="tb-proof"><span class="lb">증명.</span>\(i\)에서 출발할 때 방문 횟수 \(V_i = \sum_{n\ge1}\mathbf 1[X_n = i]\)의 기대값은 \(\sum_np_{ii}^{(n)}\)이다. 강한 마르코프 성질에 의해 \(P(V_i \ge k) = f_i^k\)이므로 \(E[V_i] = \sum_{k\ge1}f_i^k\)이다. 이 값은 \(f_i &lt; 1\)이면 \(\frac{f_i}{1 - f_i} &lt; \infty\)이고, \(f_i = 1\)이면 \(\infty\)이다. <span class="qed">∎</span></p>
+    <p>\(i \leftrightarrow j\)이고 \(i\)가 재귀이면 \(p_{jj}^{(a+n+b)} \ge p_{ji}^{(a)}p_{ii}^{(n)}p_{ij}^{(b)}\)이므로 \(j\)도 재귀이다. 그래서 재귀성은 류의 성질이다. 따라서 상태가 유한한 기약 연쇄는 어딘가를 무한히 방문해야 하므로 모든 상태가 재귀이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.2.2</span>
+      <p>정수 위에서 확률 \(p\)로 +1, \(q = 1 - p\)로 −1만큼 움직이는 랜덤워크가 재귀인지 판정하여라.</p>
+    </div>
+    <p><i>풀이.</i> 돌아오려면 짝수 걸음이 필요하고, 스털링 공식으로 \(p_{00}^{(2n)} = \binom{2n}n(pq)^n \approx \frac{(4pq)^n}{\sqrt{\pi n}}\)이다. \(p = \frac12\)이면 \(4pq = 1\)이라 합 \(\sum\frac1{\sqrt{\pi n}}\)이 발산하므로 재귀이다. \(p \ne \frac12\)이면 \(4pq &lt; 1\)이라 합이 수렴하므로 일시이다. 한편 2차원 대칭 랜덤워크는 \(p_{00}^{(2n)} \approx \frac1{\pi n}\)이라 재귀이고, 3차원은 \(n^{-3/2}\) 정도라 일시이다. 이것을 폴리아 정리라 한다.</p>
 
     <h3><span class="no">2.2.3</span>주기</h3>
-    <p>\(d(i) = \gcd\{n \ge 1 : p_{ii}^{(n)} > 0\}\)을 \(i\)의 <b>주기</b>라 하고, \(d = 1\)이면 비주기입니다. 같은 류의 상태는 주기가 같습니다. 랜덤워크는 주기 2이고, 자기 자신으로 가는 화살표(\(p_{ii} > 0\))가 하나라도 있는 기약 연쇄는 비주기입니다. 주기는 2.3절의 극한 정리에서 수렴을 막는 유일한 장애물입니다.</p>
+    <p>\(d(i) = \gcd\{n \ge 1 : p_{ii}^{(n)} > 0\}\)을 \(i\)의 <em>주기</em>라 하고, \(d = 1\)이면 비주기라 한다. 같은 류의 상태는 주기가 같다. 랜덤워크는 주기가 2이고, 그림 1의 닫힌 류는 주기가 3이다. 반면 자기 자신으로 가는 화살표(\(p_{ii} > 0\))가 하나라도 있는 기약 연쇄는 비주기이다. 2.3절에서 보듯 주기는 극한 정리에서 수렴을 막는 유일한 걸림돌이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 무한히 많은 상태가 있는 기약 연쇄도 늘 재귀라고 여긴다. 비대칭 랜덤워크는 기약이지만 일시다. (2) 주기를 "돌아오는 가장 짧은 시간"으로 여긴다. 돌아올 수 있는 모든 시간의 최대공약수다. 길이 2와 3인 고리가 있으면 주기는 1이다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>상태가 무한히 많은 기약 연쇄도 늘 재귀라고 여기기 쉽지만, 비대칭 랜덤워크는 기약인데도 일시이다. 또 주기를 돌아오는 가장 짧은 시간이라고 생각하는 것도 틀렸다. 주기는 돌아올 수 있는 모든 시간의 최대공약수이므로, 길이 2와 3인 고리가 함께 있으면 주기는 1이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>통신 관계로 류를 나누고, 류가 하나면 기약.</li>
-        <li>재귀 ⟺ \(\sum p_{ii}^{(n)} = \infty\), 류의 성질, 유한 기약이면 재귀.</li>
-        <li>주기는 돌아오는 시간들의 최대공약수, 류의 성질.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 돌아올 확률 \(f_i\)가 1이면 재귀, 1보다 작으면 일시이며, 이는 \(\sum_np_{ii}^{(n)}\)이 발산하는지로 가를 수 있다. 재귀성과 주기는 서로 통신하는 류 전체가 함께 가지는 성질이다. 공정한 랜덤워크는 \(p_{00}^{(2n)} \approx \frac1{\sqrt{\pi n}}\)의 합이 발산하므로 출발점으로 확률 1로 돌아온다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.4</span>연습문제</h3>

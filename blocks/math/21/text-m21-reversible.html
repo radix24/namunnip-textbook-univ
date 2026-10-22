@@ -8,50 +8,64 @@
 <article class="card q-card" id="text-m21-reversible" data-kind="본문" data-std="수학21-02-05">
   <header class="card-head"><span class="no"></span><h2>가역 연쇄와 그래프 위의 랜덤워크</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>상세균형 조건 \(\pi_ip_{ij} = \pi_jp_{ji}\)이 정상분포를 주는 이유를 안다.</li>
-        <li>그래프 위 랜덤워크의 정상분포가 차수에 비례함을 보인다.</li>
-        <li>원하는 분포를 정상분포로 갖는 연쇄를 만드는 메트로폴리스 방법을 이해한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>정상분포 (<a href="02-03.html">2.3절</a>), 그래프의 차수(꼭짓점에 붙은 변의 수).</li>
-      </ul>
-    </div>
+    <p class="q-ask">정상분포를 구하려면 보통 연립방정식 \(\pi P = \pi\)를 풀어야 한다. 그런데 이웃한 두 상태 사이의 흐름만 맞추면 되는 경우가 있다면 계산이 훨씬 쉬워지지 않을까? 거꾸로, 원하는 분포를 정상분포로 갖는 연쇄를 일부러 만들 수도 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="그래프 위 랜덤워크와 차수에 비례하는 정상분포">
+        <line x1="70" y1="160" x2="190" y2="160" class="k"/>
+        <line x1="70" y1="160" x2="130" y2="70" class="k"/>
+        <line x1="190" y1="160" x2="130" y2="70" class="k"/>
+        <line x1="130" y1="70" x2="270" y2="50" class="k"/>
+        <circle cx="70" cy="160" r="20" class="fa"/>
+        <text x="94" y="178" class="ta">a  2/8</text>
+        <circle cx="190" cy="160" r="20" class="fa"/>
+        <text x="214" y="178" class="ta">b  2/8</text>
+        <circle cx="130" cy="70" r="26" class="fa"/>
+        <text x="160" y="88" class="ta">c  3/8</text>
+        <circle cx="270" cy="50" r="14" class="fa"/>
+        <text x="288" y="68" class="ta">d  1/8</text>
+        <text x="340" y="50" class="s">원의 크기 = 차수 = 머무는 비율</text>
+        <text x="340" y="72" class="ta">π = (2/8, 2/8, 3/8, 1/8)</text>
+        <text x="340" y="94" class="s">이웃 u, v 사이 흐름은 모두</text>
+        <text x="340" y="116" class="s">π_u · 1/deg u = 1/8로 같다.</text>
+        <text x="340" y="138" class="s">d로 돌아오는 평균 걸음 = 8</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.5.3의 그래프이다. 각 꼭짓점의 원 크기는 차수에 비례하고, 랜덤워크가 그곳에 머무는 비율 \(\pi_v = \frac{\deg v}{8}\)도 차수에 비례한다. 이웃한 두 꼭짓점 사이를 오가는 흐름은 어느 변에서나 \(\frac18\)로 같으며, 이것이 상세균형이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>정상분포(<a href="02-03.html">2.3절</a>)와 그래프의 차수, 곧 꼭짓점에 붙은 변의 수를 쓴다.</div>
 
     <h3><span class="no">2.5.1</span>상세균형</h3>
-    <p>정상분포의 식 \(\pi_j = \sum_i\pi_ip_{ij}\)은 상태 \(j\)로 들어오는 흐름 전체와 나가는 흐름 전체가 같다는 뜻입니다. 이보다 강하게, <b>모든 쌍마다</b> 오가는 흐름이 같을 수 있습니다.</p>
-    <div class="tb-env thm"><b>정리 2.5.1</b> 확률벡터 \(\pi\)가 모든 \(i, j\)에 대해 \(\pi_ip_{ij} = \pi_jp_{ji}\) (상세균형)를 만족하면 \(\pi\)는 정상분포이다.</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>\(\sum_i\pi_ip_{ij} = \sum_i\pi_jp_{ji} = \pi_j\sum_ip_{ji} = \pi_j\). <span class="qed">∎</span></p>
+    <p>정상분포의 식 \(\pi_j = \sum_i\pi_ip_{ij}\)은 상태 \(j\)로 들어오는 흐름 전체와 나가는 흐름 전체가 같다는 뜻이다. 그런데 이보다 강하게, 모든 쌍마다 오가는 흐름이 같을 수도 있다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.5.1</span>
+      <p>확률벡터 \(\pi\)가 모든 \(i, j\)에 대해 상세균형 \(\pi_ip_{ij} = \pi_jp_{ji}\)를 만족하면 \(\pi\)는 정상분포이다.</p>
     </div>
-    <p>상세균형을 만족하는 연쇄를 <b>가역</b>이라 합니다. 정상 상태에서 영상을 거꾸로 돌려도 같은 확률 법칙으로 보이기 때문입니다. 장점은 계산입니다. \(n\)개의 연립방정식 대신 이웃한 쌍의 비 \(\frac{\pi_j}{\pi_i} = \frac{p_{ij}}{p_{ji}}\)를 따라가며 곱하면 됩니다. 한 줄로 늘어선 연쇄(이웃으로만 움직이는 출생-사망 연쇄)는 늘 가역입니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>\(\sum_i\pi_ip_{ij} = \sum_i\pi_jp_{ji} = \pi_j\sum_ip_{ji} = \pi_j\)이다. <span class="qed">∎</span></p>
+    <p>상세균형을 만족하는 연쇄를 <em>가역</em>이라 한다. 정상 상태에서 영상을 거꾸로 돌려도 같은 확률 법칙으로 보이기 때문이다. 이 성질의 장점은 계산에 있다. \(n\)개의 연립방정식을 푸는 대신 이웃한 쌍의 비 \(\frac{\pi_j}{\pi_i} = \frac{p_{ij}}{p_{ji}}\)를 따라가며 곱하면 된다. 가령 이웃으로만 움직이는 출생-사망 연쇄처럼 한 줄로 늘어선 연쇄는 늘 가역이다.</p>
 
     <h3><span class="no">2.5.2</span>그래프 위의 랜덤워크</h3>
-    <p>연결된 그래프의 꼭짓점 \(v\)에서 이웃 \(\deg v\)개 가운데 하나를 같은 확률로 골라 움직이면 \(p_{uv} = \frac1{\deg u}\) (\(u, v\)가 이웃)입니다.</p>
-    <div class="tb-env thm"><b>정리 2.5.2</b> 변이 \(|E|\)개인 연결 그래프 위 랜덤워크의 정상분포는 \(\pi_v = \frac{\deg v}{2|E|}\)이다.</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>이웃한 \(u, v\)에 대해 \(\pi_up_{uv} = \frac{\deg u}{2|E|}\cdot\frac1{\deg u} = \frac1{2|E|} = \pi_vp_{vu}\). 차수의 합은 \(2|E|\)라 합이 1. <span class="qed">∎</span></p>
+    <p>연결된 그래프의 꼭짓점 \(u\)에서 이웃 \(\deg u\)개 가운데 하나를 같은 확률로 골라 움직이면, 이웃한 \(u, v\)에 대해 \(p_{uv} = \frac1{\deg u}\)이다.</p>
+    <div class="tb-env thm">
+      <span class="lb">정리 2.5.2</span>
+      <p>변이 \(|E|\)개인 연결 그래프 위 랜덤워크의 정상분포는 \(\pi_v = \frac{\deg v}{2|E|}\)이다.</p>
     </div>
-    <div class="tb-env ex"><b>예 2.5.3</b> 삼각형 \(a, b, c\)에 꼭짓점 \(d\)가 \(c\)에만 붙은 그래프(변 4개)에서 차수는 \(2, 2, 3, 1\)이라 \(\pi = \left(\frac28, \frac28, \frac38, \frac18\right)\)입니다. \(d\)에서 출발해 \(d\)로 돌아오는 평균 걸음 수는 \(\frac1{\pi_d} = 8\)입니다(정리 2.3.2).</div>
+    <p class="tb-proof"><span class="lb">증명.</span>이웃한 \(u, v\)에 대해 \(\pi_up_{uv} = \frac{\deg u}{2|E|}\cdot\frac1{\deg u} = \frac1{2|E|} = \pi_vp_{vu}\)이므로 상세균형이 성립한다. 차수의 합은 \(2|E|\)이므로 합이 1이다. <span class="qed">∎</span></p>
+    <div class="tb-env ex">
+      <span class="lb">예제 2.5.3</span>
+      <p>삼각형 \(a, b, c\)에 꼭짓점 \(d\)가 \(c\)에만 붙은 그래프에서 랜덤워크의 정상분포와, \(d\)에서 출발해 \(d\)로 돌아오는 평균 걸음 수를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 변이 4개이고 차수는 \(2, 2, 3, 1\)이므로 \(\pi = \left(\frac28, \frac28, \frac38, \frac18\right)\)이다. 정리 2.3.2에 의해 \(d\)로 돌아오는 평균 걸음 수는 \(\frac1{\pi_d} = 8\)이다. 그림 1에서 보듯 차수가 큰 \(c\)에 가장 오래 머문다.</p>
 
     <h3><span class="no">2.5.3</span>메트로폴리스 방법</h3>
-    <p>거꾸로, 주어진 분포 \(\pi\)를 정상분포로 갖는 연쇄를 만들고 싶을 때가 있습니다(표본 추출, 통계물리). 대칭인 제안 확률 \(g_{ij} = g_{ji}\)로 후보 \(j\)를 뽑고, 확률 \(\min\left(1, \frac{\pi_j}{\pi_i}\right)\)로 받아들이고 아니면 제자리에 머뭅니다. 그러면 \(p_{ij} = g_{ij}\min\left(1, \frac{\pi_j}{\pi_i}\right)\)이고</p>
+    <p>거꾸로, 표본 추출이나 통계물리에서는 주어진 분포 \(\pi\)를 정상분포로 갖는 연쇄를 만들고 싶을 때가 있다. 대칭인 제안 확률 \(g_{ij} = g_{ji}\)로 후보 \(j\)를 뽑고, 확률 \(\min\left(1, \frac{\pi_j}{\pi_i}\right)\)로 받아들이며, 받아들이지 않으면 제자리에 머문다. 그러면 \(p_{ij} = g_{ij}\min\left(1, \frac{\pi_j}{\pi_i}\right)\)이므로 다음과 같이 상세균형이 성립한다.</p>
     \[\pi_ip_{ij} = g_{ij}\min(\pi_i, \pi_j) = \pi_jp_{ji}\]
-    <p>라 상세균형이 성립합니다. \(\pi\)를 상수배까지만 알아도 비 \(\frac{\pi_j}{\pi_i}\)만 쓰므로 정규화 상수를 모르는 복잡한 분포에서도 쓸 수 있습니다. 이것이 마르코프 연쇄 몬테카를로(MCMC)의 출발점입니다.</p>
+    <p>이 방법은 비 \(\frac{\pi_j}{\pi_i}\)만 쓰므로 \(\pi\)를 상수배까지만 알아도 된다. 그래서 정규화 상수를 모르는 복잡한 분포에서도 쓸 수 있으며, 이것이 마르코프 연쇄 몬테카를로(MCMC)의 출발점이다.<sup class="fn"><a href="#fn-text-m21-reversible-1">1</a></sup></p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 모든 정상분포가 상세균형을 만족한다고 여긴다. \(1 \to 2 \to 3 \to 1\)로 도는 연쇄는 균등분포가 정상이지만 반대 방향 흐름이 0이라 가역이 아니다. (2) 그래프 위 랜덤워크가 모든 꼭짓점에 같은 시간을 머문다고 여긴다. 차수가 큰 꼭짓점에 더 오래 머문다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>모든 정상분포가 상세균형을 만족한다고 여기기 쉽지만, \(1 \to 2 \to 3 \to 1\)로 도는 연쇄는 균등분포가 정상분포인데도 반대 방향 흐름이 0이라 가역이 아니다. 또 그래프 위 랜덤워크가 모든 꼭짓점에 같은 시간 동안 머문다고 생각하는 것도 틀렸다. 그림 1처럼 차수가 큰 꼭짓점에 더 오래 머문다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>상세균형 \(\pi_ip_{ij} = \pi_jp_{ji}\) ⟹ 정상분포.</li>
-        <li>그래프 랜덤워크: \(\pi_v = \frac{\deg v}{2|E|}\).</li>
-        <li>메트로폴리스: 수락 확률 \(\min(1, \pi_j/\pi_i)\)로 원하는 \(\pi\)를 정상분포로.</li>
-      </ol>
-    </div>
+    <ol class="fn-list">
+      <li id="fn-text-m21-reversible-1">공돌이의 수학정리노트, 「Markov Chain Monte Carlo」(<a href="https://angeloyeo.github.io/2020/09/17/MCMC.html">링크</a>)는 후보를 제안하고 높이의 비로 받아들이는 과정을 그림으로 따라가며, 표본의 히스토그램이 목표 분포에 맞아 가는 모습을 보여 준다.</li>
+    </ol>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 모든 쌍에서 \(\pi_ip_{ij} = \pi_jp_{ji}\)가 성립하는 가역 연쇄라면 이웃한 상태의 비만 따라가며 곱해 정상분포를 얻는다. 그래프 위 랜덤워크는 가역이며 정상분포가 차수에 비례한다. 거꾸로 메트로폴리스 방법은 상세균형을 맞추도록 받아들일 확률을 정해, 원하는 분포를 정상분포로 갖는 연쇄를 만든다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.5.4</span>연습문제</h3>
@@ -64,7 +78,7 @@
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>체스판의 킹이 놓인 칸에서 갈 수 있는 칸 가운데 하나로 무작위로 움직인다. 모서리 칸에서 출발해 다시 그 칸으로 돌아오는 평균 수를 구하여라.
-          <details><summary>답</summary><p>차수: 모서리 3(4칸), 변 5(24칸), 안쪽 8(36칸). \(2|E| = 12 + 120 + 288 = 420\). \(\frac{420}3 = 140\).</p></details>
+          <details><summary>답</summary><p>(차수) 모서리 3(4칸), 변 5(24칸), 안쪽 8(36칸). \(2|E| = 12 + 120 + 288 = 420\). \(\frac{420}3 = 140\).</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
