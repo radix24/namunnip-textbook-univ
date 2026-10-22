@@ -8,56 +8,60 @@
 <article class="card q-card" id="text-e33-sobel" data-kind="본문" data-std="전전33-02-04">
   <header class="card-head"><span class="no"></span><h2>기울기와 Sobel 경계 검출</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>Sobel 커널로 가로·세로 기울기를 계산한다.</li>
-        <li>기울기 크기와 방향으로 경계를 판정한다.</li>
-        <li>Canny 검출기의 단계(평활, 기울기, 비최대 억제, 이력 문턱)를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>합성곱 필터 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">물체의 윤곽은 밝기가 갑자기 바뀌는 곳이다. 밝기를 언덕의 높이로 보면, 윤곽은 경사가 가파른 비탈에 해당한다. 영상에서 이 경사를 어떻게 잴까? 그리고 경사의 방향과 윤곽선의 방향은 어떤 관계일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.4.1 Sobel 기울기(개형). 3×3 구역의 위 두 줄이 10, 아래 줄이 50이면 G_x = 0, G_y = 160이고 크기 160이며, 경계는 가로 방향이고 기울기는 세로 방향이다">
+        <g class="k" fill="none" stroke-width="1.5"><rect x="60" y="40" width="40" height="40"/><rect x="100" y="40" width="40" height="40"/><rect x="140" y="40" width="40" height="40"/><rect x="60" y="80" width="40" height="40"/><rect x="100" y="80" width="40" height="40"/><rect x="140" y="80" width="40" height="40"/></g>
+        <g class="b" fill="none" stroke-width="2.5"><rect x="60" y="120" width="40" height="40"/><rect x="100" y="120" width="40" height="40"/><rect x="140" y="120" width="40" height="40"/></g>
+        <path d="M50 120 H190" class="d" stroke-width="2.5"/>
+        <path d="M240 60 V140" class="a" stroke-width="2.5"/><path d="M234 130 L240 140 L246 130" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s" text-anchor="middle"><text x="80" y="64">10</text><text x="120" y="64">10</text><text x="160" y="64">10</text><text x="80" y="104">10</text><text x="120" y="104">10</text><text x="160" y="104">10</text><text x="80" y="144">50</text><text x="120" y="144">50</text><text x="160" y="144">50</text></g>
+        <g class="s"><text x="260" y="90" class="ta">기울기 G_y = 160</text><text x="260" y="116">G_x = 0</text><text x="260" y="142" class="td">경계는 가로</text></g>
+      </svg>
+      <figcaption>그림 1. 위아래 밝기 차이가 큰 구역에서는 세로 방향 기울기가 크고, 경계선은 그 기울기에 수직인 가로 방향으로 놓인다(예제 2.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>합성곱 필터(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.4.1</span>밝기가 급하게 바뀌는 곳</h3>
-    <p>Sobel 커널 \(G_x = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\), \(G_y\)는 그 전치입니다. 크기 \(\sqrt{G_x^2 + G_y^2}\)가 문턱보다 크면 경계이고, 방향은 경계에 수직입니다. Canny는 가는 선과 끊김 없는 경계를 위해 여러 단계를 더합니다.</p>
+    <p>영상의 경사는 가로와 세로 방향의 밝기 차이로 잰다. Sobel 커널 \(G_x = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\)은 좌우 차이를, 그 전치 \(G_y\)는 위아래 차이를 잰다. 처음 질문의 첫째 답이 이 두 커널이다.</p>
+    <p>그리고 두 값을 묶은 크기가 문턱보다 크면 경계로 본다. 가운데 줄에 2를 두는 것은 바로 옆 화소를 더 무겁게 보아, 차이를 재면서도 잡음을 조금 평균하기 위해서이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.4.1</span>
-      <p>3×3 구역 위 두 줄이 10, 아래 줄이 50인 영상의 Sobel G_x, G_y와 크기는?</p>
+      <p>3×3 구역 위 두 줄이 10, 아래 줄이 50인 영상의 Sobel G_x, G_y와 크기를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> G_x = 0(좌우 같음), G_y = (50 + 100 + 50) − (10 + 20 + 10) = 160, 크기 160 → 가로 방향 경계(기울기는 세로). 잡음이 많으면 먼저 Gauss 평활로 거짓 경계를 줄입니다.</p>
+    <p><i>풀이.</i> 좌우가 같으므로 G_x = 0이고, G_y = (50 + 100 + 50) − (10 + 20 + 10) = 160이다. 그러면 크기는 160이고, 가로 방향 경계(기울기는 세로)이다(그림 1). 처음 질문의 둘째 답이 이 관계로, 기울기는 경계에 수직이다.</p>
+    <p>잡음이 많으면 먼저 Gauss 평활로 거짓 경계를 줄인다. 즉 미분은 작은 흔들림도 키우므로, 흐린 뒤 미분하는 순서가 기본이다.</p>
+    <p>한편 Sobel 결과를 문턱으로 자르기만 하면 경계가 여러 화소 두께로 뭉툭하게 나오고, 약한 부분에서 끊긴다. 그래서 Canny는 평활, 기울기, 비최대 억제, 이력 문턱의 여러 단계를 더해 가늘고 이어진 경계를 만든다.</p>
+    <p>그리고 기울기 방향은 경계 검출 다음 단계에서도 쓴다. 예를 들어 특징점 기술자는 점 주변의 기울기 방향 분포를 모아 벡터로 만든다(2.2절).</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "경계 방향과 기울기 방향은 같다": 서로 수직입니다. (2) "문턱 하나면 충분": Canny는 두 문턱(이력)으로 약한 경계를 이어 줍니다.</div>
+    <p>예를 들어 차선 검출기는 도로 영상에서 Sobel 기울기를 구한 뒤, 차선 방향에 가까운 기울기를 가진 화소만 남겨 선을 찾는다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Sobel G_x, G_y → 크기·방향.</li>
-        <li>예: G_y 160, G_x 0.</li>
-        <li>Canny: 평활 → 기울기 → 비최대 억제 → 이력 문턱.</li>
-      </ol>
-    </div>
+    <p>결국 Sobel은 가장 간단한 미분 필터이며, 더 정교한 경계 검출기와 특징 기술자의 바탕이 된다.</p>
+
+    <p>그래서 경계 검출 결과는 문턱을 몇 가지로 바꿔 가며 확인한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>경계 방향과 기울기 방향은 같다고 여기기 쉽다. 서로 수직이다. 또 문턱 하나면 충분하다고 생각하기 쉬운데, Canny는 두 문턱(이력)으로 약한 경계를 이어 준다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>Sobel G_x, G_y로 기울기의 크기와 방향을 구한다. 예제에서는 G_y 160, G_x 0이다. Canny는 평활, 기울기, 비최대 억제, 이력 문턱을 거친다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>왼쪽 열 0, 오른쪽 열 100(가운데 열 50)의 G_x는?
-          <details><summary>답</summary><p>400.</p></details>
+          <details><summary>답</summary><p>400이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>G_x = 30, G_y = 40의 크기는?
-          <details><summary>답</summary><p>50.</p></details>
+          <details><summary>답</summary><p>50이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>비최대 억제의 역할은?
-          <details><summary>답</summary><p>기울기 방향으로 가장 큰 화소만 남겨 경계를 한 화소 폭으로 만듭니다.</p></details>
+          <details><summary>답</summary><p>기울기 방향으로 가장 큰 화소만 남겨 경계를 한 화소 폭으로 만든다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,59 @@
 <article class="card q-card" id="text-e33-stereo" data-kind="본문" data-std="전전33-05-04">
   <header class="card-head"><span class="no"></span><h2>스테레오 깊이 계산</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>평행 스테레오의 깊이 \(Z = fB/d\)를 계산한다.</li>
-        <li>깊이 분해능 \(\Delta Z \approx Z^2\Delta d/(fB)\)를 계산한다.</li>
-        <li>기준선과 거리의 절충을 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>깊이 카메라 원리 (<a href="05-01.html">5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">한쪽 눈을 감고 손가락을 보다가 다른 쪽 눈으로 바꾸면 손가락이 옆으로 뛴다. 가까운 손가락은 많이 뛰고, 먼 건물은 거의 그대로이다. 두 카메라도 같은 원리로 거리를 잴 수 있다. 위치 차이와 거리는 어떤 관계일까? 그리고 그 위치 차이를 한 화소 틀리면 거리는 얼마나 틀릴까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.4.1 스테레오 깊이(개형). f = 700화소, B = 0.12 m, 시차 20화소이면 깊이 4.2 m이고, 1화소 시차 오차의 깊이 오차는 약 0.21 m(5%)이며, 1 m에서는 약 1.2 cm로 가까울수록 정확하다">
+        <line x1="60" y1="170" x2="480" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M80 40 Q140 140 240 156 T460 166" class="b" fill="none" stroke-width="2.5"/>
+        <circle cx="250" cy="157" r="5" class="fd"/>
+        <g class="s"><text x="260" y="146" class="ta">d 20 px → 4.2 m</text><text x="260" y="120">1 px 오차 → ±0.21 m</text><text x="400" y="190">시차 d</text><text x="70" y="40">깊이 Z</text><text x="110" y="70" class="td">Z = fB/d</text></g>
+      </svg>
+      <figcaption>그림 1. 깊이는 시차에 반비례하므로, 시차가 작은 먼 곳에서는 한 화소 오차가 큰 깊이 오차가 된다(예제 5.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>깊이 카메라 원리(<a href="05-01.html">5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">5.4.1</span>두 눈의 차이</h3>
-    <p>나란한 두 카메라에서 같은 점의 가로 위치 차(시차) d는 깊이에 반비례합니다: \(Z = fB/d\)(f: 화소 단위 초점 거리, B: 기준선). 시차를 1화소 틀리면 깊이 오차는 Z²에 비례해 커집니다.</p>
+    <p>나란한 두 카메라에서 같은 점의 가로 위치 차를 시차 d라 한다. 닮음비로 보면 \(Z = fB/d\)이며, f는 화소 단위 초점 거리, B는 두 카메라 사이 거리(기준선)이다. 처음 질문의 첫째 답이 이 반비례 관계이다.</p>
+    <p>그리고 이 식을 d로 미분하면 \(\Delta Z \approx Z^2\Delta d/(fB)\)이다. 즉 시차를 1화소 틀리면 깊이 오차는 Z²에 비례해 커진다. 처음 질문의 둘째 답이 이 식이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.4.1</span>
-      <p>f = 700화소, B = 0.12 m, 시차 20화소의 깊이와 1화소 시차 오차의 깊이 오차는?</p>
+      <p>f = 700화소, B = 0.12 m, 시차 20화소의 깊이와 1화소 시차 오차의 깊이 오차를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> Z = 84/20 = 4.2 m, ΔZ ≈ 4.2²/84 = 0.21 m(5%). 1 m에서는 약 1.2 cm로 가까울수록 정확합니다. 멀리까지 재려면 기준선을 넓히지만 가까운 물체가 한쪽 카메라에만 보이는 문제가 생깁니다.</p>
+    <p><i>풀이.</i> Z = 84/20 = 4.2 m이고, ΔZ ≈ 4.2²/84 = 0.21 m(5%)이다(그림 1). 그런데 1 m에서는 약 1.2 cm로, 가까울수록 정확하다.</p>
+    <p>멀리까지 재려면 기준선을 넓힌다. 그러나 그러면 가까운 물체가 한쪽 카메라에만 보이는 문제가 생긴다. 따라서 기준선은 재려는 거리 범위에 맞춰 정한다.</p>
+    <p>한편 시차를 구하려면 왼쪽 영상의 각 화소가 오른쪽 영상의 어디에 있는지 찾아야 한다. 두 카메라를 나란히 맞춰(정렬) 두면 짝은 같은 행 위에만 있으므로, 한 줄을 따라 찾으면 된다. 그러므로 정렬이 틀어지면 짝을 엉뚱한 행에서 찾게 되어, 보정을 다시 해야 한다.</p>
+    <p>그리고 시차를 화소보다 잘게, 예를 들어 0.25화소 단위로 추정하면 오차가 그만큼 준다(5.1절 예제). 그래서 실제 스테레오 알고리즘은 이웃 화소의 비용을 보간해 부화소 시차를 구한다.</p>
+    <p>예를 들어 자율주행차의 스테레오 카메라는 기준선을 수십 cm로 넓혀, 수십 m 앞의 차량까지 깊이를 잰다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "스테레오 깊이 정확도는 거리와 무관": 거리 제곱으로 나빠집니다. (2) "무늬 없는 벽도 잘 잰다": 대응점을 찾기 어려워 구조광을 더합니다.</div>
+    <p>결국 스테레오 카메라의 정확도는 초점 거리, 기준선, 시차를 찾는 정밀도의 세 가지가 정한다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Z = fB/d.</li>
-        <li>ΔZ ≈ Z²Δd/(fB).</li>
-        <li>예: 4.2 m, ±0.21 m.</li>
-      </ol>
-    </div>
+    <p>그래서 스테레오 카메라 사양표에는 거리별 깊이 오차가 함께 적혀 있다.</p>
+
+    <p>한편 두 영상에서 한쪽에만 보이는 영역(가림)은 짝이 없어 깊이를 구할 수 없다. 따라서 깊이 지도에는 물체 가장자리를 따라 빈 곳이 생긴다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>스테레오 깊이 정확도는 거리와 무관하다고 여기기 쉽다. 거리 제곱으로 나빠진다. 또 무늬 없는 벽도 잘 잰다고 생각하기 쉬운데, 대응점을 찾기 어려워 구조광을 더한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>스테레오 깊이는 Z = fB/d이다. 깊이 오차는 ΔZ ≈ Z²Δd/(fB)이다. 예제에서는 4.2 m, ±0.21 m이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>시차 40화소의 깊이(예제 카메라)는?
-          <details><summary>답</summary><p>2.1 m.</p></details>
+          <details><summary>답</summary><p>2.1 m이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>B를 두 배로 하면 같은 거리의 ΔZ는?
-          <details><summary>답</summary><p>1/2.</p></details>
+          <details><summary>답</summary><p>1/2이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>시차 0이면?
-          <details><summary>답</summary><p>무한히 멀다는 뜻입니다.</p></details>
+          <details><summary>답</summary><p>무한히 멀다는 뜻이다.</p></details>
         </li>
       </ol>
     </div>

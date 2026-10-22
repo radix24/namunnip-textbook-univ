@@ -8,21 +8,23 @@
 <article class="card q-card" id="text-e33-histeq" data-kind="본문" data-std="전전33-02-03">
   <header class="card-head"><span class="no"></span><h2>히스토그램 평활화</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>영상 밝기 히스토그램과 누적 분포를 계산한다.</li>
-        <li>누적 분포로 밝기를 다시 매겨 대비를 늘린다.</li>
-        <li>국소 평활화(CLAHE)의 필요를 안다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>필터링 (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">안개 낀 날 찍은 사진은 전체가 뿌옇게 회색으로만 보인다. 밝기 값이 0부터 255까지 쓸 수 있는데, 실제로는 좁은 구간에 몰려 있기 때문이다. 이 좁은 구간을 넓게 펴면 대비가 살아날 것 같다. 밝기 값을 어떤 규칙으로 바꾸면 될까? 그리고 영상 전체에 같은 규칙을 쓰면 무엇이 문제일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.3.1 히스토그램 평활화(개형). 52부터 104 사이에 몰린 16화소에 누적 분포 변환을 쓰면 52는 16, 104는 255로 바뀌어 결과 범위가 16부터 255까지 넓어진다">
+        <line x1="40" y1="170" x2="250" y2="170" class="ax"/><line x1="300" y1="170" x2="520" y2="170" class="ax"/>
+        <g class="b" fill="none" stroke-width="2"><rect x="80" y="130" width="8" height="40"/><rect x="92" y="110" width="8" height="60"/><rect x="104" y="110" width="8" height="60"/><rect x="116" y="150" width="8" height="20"/><rect x="128" y="140" width="8" height="30"/></g>
+        <g class="a" fill="none" stroke-width="2"><rect x="310" y="130" width="8" height="40"/><rect x="340" y="110" width="8" height="60"/><rect x="380" y="110" width="8" height="60"/><rect x="430" y="150" width="8" height="20"/><rect x="500" y="140" width="8" height="30"/></g>
+        <path d="M200 90 H290" class="k" stroke-width="2"/><path d="M282 84 L290 90 L282 96" class="k" fill="none" stroke-width="2"/>
+        <g class="s"><text x="60" y="190" class="tb">52 ~ 104</text><text x="370" y="190" class="ta">16 ~ 255</text><text x="200" y="80">CDF로 변환</text></g>
+      </svg>
+      <figcaption>그림 1. 누적 분포로 밝기 값을 바꾸면 몰려 있던 값들이 전체 범위로 퍼지며, 많이 쓰인 값 사이의 간격이 크게 벌어진다(예제 2.3.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>필터링(<a href="02-01.html">2.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.3.1</span>고르게 펴기</h3>
-    <p>밝기 값 k를 \(s_k = \mathrm{round}((L - 1)\cdot\mathrm{CDF}(k))\)로 바꾸면 많이 몰린 밝기 구간이 넓게 퍼져 대비가 커집니다. 영상 전체에 하나의 변환을 쓰면 일부 영역이 지나치게 밝아질 수 있어 작은 구역마다 하는 CLAHE를 씁니다.</p><pre><code>img = [52, 55, 61, 59, 79, 61, 76, 61, 62, 59, 55, 104, 94, 85, 59, 71]
+    <p>밝기 값 k를 \(s_k = \mathrm{round}((L - 1)\cdot\mathrm{CDF}(k))\)로 바꾼다. 처음 질문의 첫째 답이 이 누적 분포(CDF) 변환이다. CDF는 많이 쓰인 값에서 가파르게 오르므로, 몰린 밝기 구간이 넓게 퍼져 대비가 커진다.</p>
+    <p>아래는 16화소 영상에 이 변환을 적용한 것이다.</p>
+<pre><code>img = [52, 55, 61, 59, 79, 61, 76, 61, 62, 59, 55, 104, 94, 85, 59, 71]
 L = 256
 vals = sorted(set(img))
 n = len(img)
@@ -33,44 +35,46 @@ mapping = {v: round((L - 1) * cdf[v]) for v in vals}
 print("변환표:", mapping)
 out = [mapping[v] for v in img]
 print("원래 범위:", min(img), "~", max(img), "/ 평활화 후:", min(out), "~", max(out))</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>변환표: {52: 16, 55: 48, 59: 96, 61: 143, 62: 159, 71: 175, 76: 191, 79: 207, 85: 223, 94: 239, 104: 255}
 원래 범위: 52 ~ 104 / 평활화 후: 16 ~ 255</code></pre>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
-      <p>위 16화소(52~104 범위)를 평활화한 결과 범위는?</p>
+      <p>위 16화소(52~104 범위)를 평활화한 결과 범위를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 실행 결과 최솟값 52는 CDF 1/16 → 16, 최댓값 104는 255로 바뀌어 대비가 크게 늘었습니다. 가장 많은 값(59, 61 각 3개)은 간격이 크게 벌어집니다.</p>
+    <p><i>풀이.</i> 실행 결과 최솟값 52는 CDF 1/16 → 16, 최댓값 104는 255로 바뀌어 대비가 크게 늘었다(그림 1). 그리고 가장 많은 값(59, 61 각 3개)은 간격이 크게 벌어진다.</p>
+    <p>그런데 영상 전체에 하나의 변환을 쓰면, 어두운 부분과 밝은 부분이 섞인 영상에서 일부 영역이 지나치게 밝아질 수 있다. 처음 질문의 둘째 답이 이것이다. 그래서 작은 구역마다 따로 평활화하고 기울기를 제한하는 CLAHE를 쓴다.</p>
+    <p>즉 평활화는 히스토그램 모양만 보고 정하는 변환이라, 무엇이 중요한 내용인지는 모른다. 따라서 잡음이 몰린 어두운 구간도 함께 펴져 잡음이 눈에 띌 수 있다.</p>
+    <p>한편 변환표는 밝기 값마다 하나씩만 있으므로, 같은 값을 가진 화소는 늘 같은 값으로 바뀐다. 그러므로 평활화는 화소의 순서(어느 쪽이 더 밝은지)를 바꾸지 않는다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "평활화는 늘 영상을 좋게 만든다": 잡음도 함께 키우고 자연스럽지 않을 수 있습니다. (2) "결과 히스토그램이 완전히 평평하다": 이산 값이라 근사적으로만 고릅니다.</div>
+    <p>예를 들어 역광으로 찍어 얼굴이 어둡게 나온 사진에 평활화를 쓰면 얼굴의 윤곽이 드러나지만, 하늘은 지나치게 하얘질 수 있다.</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>s_k = round((L − 1)·CDF(k)).</li>
-        <li>몰린 구간을 넓게 폄.</li>
-        <li>CLAHE: 구역별 + 기울기 제한.</li>
-      </ol>
-    </div>
+    <p>결국 평활화는 사람이 보기 좋게 하거나, 뒤 단계 알고리즘이 쓸 대비를 확보하려는 전처리로 쓴다.</p>
+
+    <p>그래서 평활화 결과는 원본과 나란히 놓고 확인하는 것이 좋다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>평활화는 늘 영상을 좋게 만든다고 여기기 쉽다. 잡음도 함께 키우고 자연스럽지 않을 수 있다. 또 결과 히스토그램이 완전히 평평하다고 생각하기 쉬운데, 이산 값이라 근사적으로만 고르다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>평활화는 s_k = round((L − 1)·CDF(k))로 몰린 구간을 넓게 편다. CLAHE는 구역마다 하고 기울기를 제한한다. 예제의 52~104는 16~255로 넓어진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>모든 화소가 같은 값이면 평활화 결과는?
-          <details><summary>답</summary><p>모두 255(CDF 1).</p></details>
+          <details><summary>답</summary><p>모두 255(CDF 1)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>CDF(k) = 0.5인 값은 몇으로 바뀌나(L = 256)?
-          <details><summary>답</summary><p>128(반올림 127.5).</p></details>
+          <details><summary>답</summary><p>128(반올림 127.5)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>의료 X선 영상에 CLAHE를 쓰는 이유는?
-          <details><summary>답</summary><p>부위마다 밝기가 달라 국소 대비를 따로 키워야 해서.</p></details>
+          <details><summary>답</summary><p>부위마다 밝기가 달라 국소 대비를 따로 키워야 해서이다.</p></details>
         </li>
       </ol>
     </div>

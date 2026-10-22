@@ -8,21 +8,22 @@
 <article class="card q-card" id="text-e33-filter" data-kind="본문" data-std="전전33-02-01">
   <header class="card-head"><span class="no"></span><h2>합성곱 필터로 잡음 제거와 경계 검출</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>3×3 상자 필터와 가우시안 필터로 잡음을 줄인다.</li>
-        <li>Sobel 필터로 수평 기울기를 구해 경계를 찾는다.</li>
-        <li>작은 배열에 필터를 직접 적용해 결과를 해석한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2차원 합성곱 (<a href="../6/02-01.html">전전6 2.1절</a>), CNN의 필터 (<a href="../23/04-02.html">전전23 4.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">사진의 자글자글한 잡음을 줄이는 일과, 물체의 윤곽선을 찾아내는 일은 정반대처럼 보인다. 하나는 영상을 매끄럽게 하고, 다른 하나는 급한 변화를 도드라지게 한다. 그런데 두 일 모두 작은 숫자 표 하나를 영상 위로 미끄러뜨리는 같은 계산으로 한다. 표의 숫자만 바꾸면 무엇이 달라질까? 그리고 잡음이 경계 검출을 어떻게 방해할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.1.1 합성곱 필터(개형). 왼쪽 0, 오른쪽 100인 세로 경계 영상에 상자 필터를 쓰면 셋째 행이 6.7, 40, 66.7, 100으로 완만해지고, Sobel x 필터는 경계 열에서 400, 평탄한 곳에서 0을 내며 잡음 점이 있는 행은 280, 340으로 흔들린다">
+        <line x1="40" y1="170" x2="520" y2="170" class="ax"/>
+        <path d="M60 160 H150 V60 H240" class="k" fill="none" stroke-width="2"/>
+        <path d="M290 160 L320 154 L350 120 L380 93 L410 60" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M430 160 L455 160 L470 40 L485 40 L500 160" class="a" fill="none" stroke-width="2.5"/>
+        <g class="s"><text x="60" y="48">원래 경계 0 → 100</text><text x="280" y="48" class="tb">상자 필터</text><text x="290" y="190">6.7, 40, 66.7, 100</text><text x="430" y="30" class="ta">Sobel x 400</text><text x="430" y="190">평탄 0</text></g>
+      </svg>
+      <figcaption>그림 1. 같은 영상에 평균하는 커널을 쓰면 경계가 완만해지고, 좌우 차이를 재는 커널을 쓰면 경계에서만 큰 값이 나온다(실습, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2차원 합성곱(<a href="../6/02-01.html">전전6 2.1절</a>)과 CNN의 필터(<a href="../23/04-02.html">전전23 4.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">2.1.1</span>실습</h3>
-    <p>왼쪽 3열은 0, 오른쪽 3열은 100인 6×6 영상(세로 경계)에 잡음 점 하나(60)를 넣고, 상자 필터와 Sobel x 필터 \(\begin{pmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{pmatrix}\)을 적용합니다(OpenCV의 filter2D처럼 커널을 뒤집지 않는 상관 계산, 가장자리 제외).</p>
+    <p>필터는 3×3 같은 작은 커널을 영상 위로 옮기며, 덮인 화소와 커널 값을 곱해 더한 것을 새 화소 값으로 삼는다. 처음 질문의 첫째 답은 이 커널 값이 계산의 성격을 정한다는 것이다. 모두 같은 양수면 이웃의 평균이 되어 매끄러워지고, 부호가 섞이면 이웃 사이의 차이가 되어 경계가 드러난다.</p>
+    <p>아래는 왼쪽 3열은 0, 오른쪽 3열은 100인 6×6 영상(세로 경계)에 잡음 점 하나(60)를 넣고, 상자 필터와 Sobel x 필터 \(\begin{pmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{pmatrix}\)을 적용한 것이다(OpenCV의 filter2D처럼 커널을 뒤집지 않는 상관 계산, 가장자리 제외).</p>
     <pre><code>import numpy as np
 img = np.zeros((6, 6)); img[:, 3:] = 100.0
 img[2, 1] = 60.0   # 잡음 한 점
@@ -37,46 +38,41 @@ def conv(a, k):
 print("상자 필터 결과(셋째 행):", np.round(conv(img, box)[1], 1))
 print("Sobel x 결과(셋째 행):", conv(img, sx)[1])
 print("Sobel x 결과(넷째 행):", conv(img, sx)[2])</code></pre>
-    <p>실행 결과(Python 3.12에서 실제 실행):</p>
+    <p>실행 결과는 아래와 같다(Python 3.12에서 실제 실행).</p>
 <pre><code>상자 필터 결과(셋째 행): [  6.7  40.   66.7 100. ]
 Sobel x 결과(셋째 행): [  0. 280. 400.   0.]
 Sobel x 결과(넷째 행): [  0. 340. 400.   0.]</code></pre>
-    <p><i>해석.</i> 상자 필터는 잡음 점과 경계를 함께 흐립니다(경계가 0 → 100 대신 6.7, 40, 66.7, 100으로 완만). Sobel은 경계가 있는 가운데 두 열에서 큰 값(400)을, 평탄한 곳에서 0을 냅니다. 잡음 점이 있는 행은 280, 340처럼 흔들리므로, 실제로는 가우시안으로 먼저 흐리고 기울기를 구합니다(Canny 검출기는 여기에 얇게 만들기와 이중 문턱을 더함).</p>
+    <p>상자 필터는 잡음 점과 경계를 함께 흐린다. 즉 경계가 0 → 100 대신 6.7, 40, 66.7, 100으로 완만해진다(그림 1). 그리고 Sobel은 경계가 있는 가운데 두 열에서 큰 값(400)을, 평탄한 곳에서 0을 낸다.</p>
+    <p>그런데 잡음 점이 있는 행은 280, 340처럼 흔들린다. 처음 질문의 둘째 답이 이것으로, 미분 필터는 잡음까지 키운다. 그래서 실제로는 가우시안으로 먼저 흐리고 기울기를 구한다. Canny 검출기는 여기에 얇게 만들기와 이중 문턱을 더한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.1.1</span>
-      <p>점 잡음(소금-후추)에는 상자 필터보다 중간값 필터가 나은 이유는?</p>
+      <p>점 잡음(소금-후추)에는 상자 필터보다 중간값 필터가 나은 이유를 설명하여라.</p>
     </div>
-    <p><i>풀이.</i> 평균은 튀는 값 하나에 끌리지만, 중간값은 이웃 9개 중 가운데 값이라 튀는 값을 무시하고 경계도 덜 흐립니다.</p>
+    <p><i>풀이.</i> 평균은 튀는 값 하나에 끌리지만, 중간값은 이웃 9개 중 가운데 값이라 튀는 값을 무시한다. 그리고 경계도 덜 흐린다.</p>
+    <p>한편 CNN의 첫 층도 같은 계산을 한다. 다만 커널 값을 사람이 정하지 않고 자료에서 배우며, 학습이 끝난 첫 층 커널은 흔히 Sobel과 비슷한 경계 검출기 모양이 된다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "필터는 영상을 선명하게만 한다": 평활 필터는 흐리게, 미분 필터는 경계를 강조합니다. (2) "합성곱과 상관은 늘 같다": 대칭 커널에서만 같고, Sobel처럼 비대칭이면 부호가 바뀝니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>필터는 영상을 선명하게만 한다고 여기기 쉽다. 평활 필터는 흐리게, 미분 필터는 경계를 강조한다. 또 합성곱과 상관은 늘 같다고 생각하기 쉬운데, 대칭 커널에서만 같고 Sobel처럼 비대칭이면 부호가 바뀐다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>평활(상자, 가우시안, 중간값)로 잡음 감소.</li>
-        <li>Sobel로 기울기, 경계에서 큰 값(예: 400).</li>
-        <li>흐린 뒤 미분(Canny).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>평활 필터(상자, 가우시안, 중간값)는 잡음을 줄인다. Sobel은 기울기를 재어 경계에서 큰 값(실습에서 400)을 낸다. 잡음 때문에 흐린 뒤 미분한다(Canny).</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>상자 3×3 필터 계수의 합은?
-          <details><summary>답</summary><p>1(밝기 유지).</p></details>
+          <details><summary>답</summary><p>1(밝기 유지)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>Sobel y 필터는?
-          <details><summary>답</summary><p>[[−1, −2, −1], [0, 0, 0], [1, 2, 1]].</p></details>
+          <details><summary>답</summary><p>[[−1, −2, −1], [0, 0, 0], [1, 2, 1]]이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
-        <li>기울기 크기와 방향을 Sobel x, y로 쓰라.
-          <details><summary>답</summary><p>√(G_x² + G_y²), atan2(G_y, G_x).</p></details>
+        <li>기울기 크기와 방향을 Sobel x, y로 써 보아라.
+          <details><summary>답</summary><p>√(G_x² + G_y²), atan2(G_y, G_x)이다.</p></details>
         </li>
       </ol>
     </div>

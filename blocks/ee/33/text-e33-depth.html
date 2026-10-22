@@ -8,60 +8,55 @@
 <article class="card q-card" id="text-e33-depth" data-kind="본문" data-std="전전33-05-01">
   <header class="card-head"><span class="no"></span><h2>깊이 카메라의 측정 원리</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>스테레오 깊이 Z = fB/d와 깊이 오차 \(\delta Z = Z^2\delta d/(fB)\)를 계산한다.</li>
-        <li>구조광과 ToF(직접·위상)의 원리와 모호 거리를 안다.</li>
-        <li>용도별(거리, 실내·실외, 해상도) 방식을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>핀홀 모델 (<a href="01-01.html">1.1절</a>), 위상과 주파수.</li>
-      </ul>
-    </div>
+    <p class="q-ask">보통 카메라는 색과 밝기는 알려 주지만, 물체가 얼마나 멀리 있는지는 알려 주지 않는다. 로봇 청소기나 스마트폰 얼굴 인식은 화소마다 거리를 아는 깊이 카메라를 쓴다. 깊이 카메라는 거리를 어떤 원리로 잴까? 그리고 방식마다 어떤 상황에서 정확도가 떨어질까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 5.1.1 깊이 측정(개형). 스테레오에서 f = 700 px, B = 0.12 m, 시차 20 px이면 깊이 4.2 m, 시차 오차 0.25 px의 깊이 오차는 약 5 cm이고, ToF에서 왕복 20 ns는 3 m, 20 MHz 위상 방식의 모호 거리는 7.5 m이다">
+        <circle cx="60" cy="80" r="8" class="b" fill="none" stroke-width="2"/><circle cx="60" cy="130" r="8" class="b" fill="none" stroke-width="2"/>
+        <circle cx="260" cy="105" r="5" class="fd"/>
+        <path d="M68 80 L260 105 L68 130" class="a" fill="none" stroke-width="2"/>
+        <path d="M40 80 V130" class="k" stroke-width="2"/>
+        <g class="s"><text x="20" y="110">B</text><text x="120" y="70" class="ta">Z = fB/d = 4.2 m</text><text x="120" y="160">시차 오차 0.25 px → 약 5 cm</text></g>
+        <path d="M330 100 H490" class="d" stroke-width="2"/><path d="M482 94 L490 100 L482 106" class="d" fill="none" stroke-width="2"/>
+        <g class="s"><text x="330" y="80" class="td">ToF 왕복 20 ns → 3 m</text><text x="330" y="130">20 MHz 모호 거리 7.5 m</text></g>
+      </svg>
+      <figcaption>그림 1. 스테레오는 두 카메라의 시차로, ToF는 빛의 왕복 시간으로 거리를 재며, 스테레오의 오차는 거리의 제곱에 비례해 커진다(예제 5.1.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>핀홀 모델(<a href="01-01.html">1.1절</a>)과 위상·주파수를 쓴다.</div>
 
     <h3><span class="no">5.1.1</span>세 방식</h3>
-    <ul>
-      <li><b>스테레오</b>: 기준선 B만큼 떨어진 두 카메라에서 같은 점의 가로 차이(시차) d. \(Z = fB/d\). 질감 없는 벽에서 약하다.</li>
-      <li><b>구조광</b>: 알려진 무늬를 쏘고 그 변형으로 깊이를 구한다. 실내 근거리에 정확, 햇빛에 약하다.</li>
-      <li><b>ToF</b>: 빛이 돌아오는 시간 \(Z = c\Delta t/2\). 위상 방식은 변조 주파수 f_m에서 모호 거리 \(c/(2f_m)\)가 생긴다.</li>
-    </ul>
+    <p>첫째는 스테레오이다. 기준선 B만큼 떨어진 두 카메라에서 같은 점의 가로 차이(시차) d를 재면 \(Z = fB/d\)이다. 사람의 두 눈과 같은 원리이며, 질감 없는 벽에서는 같은 점을 찾기 어려워 약하다.</p>
+    <p>둘째는 구조광이다. 알려진 무늬를 쏘고 그 무늬가 물체 표면에서 휜 모양으로 깊이를 구한다. 그래서 실내 근거리에서 정확하지만, 햇빛이 무늬를 덮으면 약하다.</p>
+    <p>셋째는 ToF이다. 빛이 돌아오는 시간으로 \(Z = c\Delta t/2\)를 구하며, 위상 방식은 변조 주파수 f_m에서 모호 거리 \(c/(2f_m)\)가 생긴다. 처음 질문의 첫째 답이 이 세 원리, 곧 시차, 무늬 변형, 비행 시간이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.1.1</span>
-      <p>(가) f = 700 px, B = 0.12 m, d = 20 px의 깊이와, 시차 오차 0.25 px의 깊이 오차. (나) 왕복 20 ns의 거리, 20 MHz 위상 ToF의 모호 거리.</p>
+      <p>(가) f = 700 px, B = 0.12 m, d = 20 px의 깊이와, 시차 오차 0.25 px의 깊이 오차를 구하여라. (나) 왕복 20 ns의 거리와 20 MHz 위상 ToF의 모호 거리를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> (가) Z = 84/20 = 4.2 m, δZ = 4.2² × 0.25/84 = 0.0525 m(약 5 cm). 거리가 두 배면 오차는 네 배라 스테레오는 먼 곳에 약합니다. (나) 3 m, 모호 거리 7.5 m(그 이상은 접혀 보여 두 주파수를 섞어 풂).</p>
+    <p><i>풀이.</i> (가) Z = 84/20 = 4.2 m이고, δZ = 4.2² × 0.25/84 = 0.0525 m(약 5 cm)이다. 그런데 거리가 두 배면 오차는 네 배라 스테레오는 먼 곳에 약하다. (나) 거리는 3 m이고, 모호 거리는 7.5 m이다(그림 1). 그 이상은 접혀 보여 두 주파수를 섞어 푼다.</p>
+    <p>즉 처음 질문의 둘째 답은 방식마다 다르다. 스테레오는 먼 곳과 무늬 없는 표면에서, 구조광은 햇빛 아래에서, ToF는 모호 거리 너머와 반사가 이상한 표면에서 약하다.</p>
+    <p>그러므로 실제 기기는 여러 방식을 섞기도 한다. 예를 들어 무늬를 쏘는 적외선 투사기를 스테레오 카메라에 더하면, 질감 없는 벽에도 무늬가 생겨 시차를 찾을 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "깊이 오차는 거리와 무관": 스테레오는 거리 제곱에 비례합니다. (2) "ToF는 모든 표면에서 정확": 검은 표면, 거울, 여러 번 반사된 빛(다중 경로)에서 오차가 큽니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>깊이 오차는 거리와 무관하다고 여기기 쉽다. 스테레오는 거리 제곱에 비례한다. 또 ToF는 모든 표면에서 정확하다고 생각하기 쉬운데, 검은 표면, 거울, 여러 번 반사된 빛(다중 경로)에서 오차가 크다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>스테레오 Z = fB/d, δZ = Z²δd/(fB).</li>
-        <li>구조광(실내 근거리), ToF Z = cΔt/2, 모호 거리 c/(2f_m).</li>
-        <li>예: 4.2 m ± 5 cm, 20 ns → 3 m.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>스테레오는 Z = fB/d, δZ = Z²δd/(fB)이다. 구조광은 실내 근거리에, ToF는 Z = cΔt/2와 모호 거리 c/(2f_m)로 쓴다. 예제는 4.2 m ± 5 cm, 20 ns → 3 m이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">5.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>B를 두 배로 하면 같은 거리의 깊이 오차는?
-          <details><summary>답</summary><p>절반.</p></details>
+          <details><summary>답</summary><p>절반이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>100 MHz 위상 ToF의 모호 거리는?
-          <details><summary>답</summary><p>1.5 m.</p></details>
+          <details><summary>답</summary><p>1.5 m이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>야외 햇빛 아래 로봇에 맞는 방식은?
-          <details><summary>답</summary><p>스테레오(수동) 또는 햇빛에 강한 펄스 ToF·라이다. 구조광은 약합니다.</p></details>
+          <details><summary>답</summary><p>스테레오(수동) 또는 햇빛에 강한 펄스 ToF·라이다가 맞다. 구조광은 햇빛에 약하다.</p></details>
         </li>
       </ol>
     </div>

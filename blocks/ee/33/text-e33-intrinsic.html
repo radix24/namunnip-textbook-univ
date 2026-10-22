@@ -8,56 +8,55 @@
 <article class="card q-card" id="text-e33-intrinsic" data-kind="본문" data-std="전전33-01-02">
   <header class="card-head"><span class="no"></span><h2>카메라 내부 행렬과 화소 좌표</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>초점 거리(화소 단위)와 주점으로 내부 행렬 K를 만든다.</li>
-        <li>카메라 좌표의 점을 화소 좌표로 바꾼다.</li>
-        <li>센서 화소 크기와 초점 거리에서 f_px를 계산한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>핀홀 카메라 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">카메라 사양표에는 초점 거리가 mm로, 이미지 센서의 화소 크기가 μm로 적혀 있다. 그런데 영상 처리 프로그램은 모든 위치를 화소 번호로 다룬다. 미터로 잰 세상의 점을 화소 번호로 바꾸려면 무엇을 알아야 할까? 그리고 같은 점이 멀어지면 화소 위치는 어떻게 바뀔까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.2.1 내부 행렬(개형). 초점 거리 4 mm, 화소 2 μm이면 f_px = 2000이고, 1920×1080 영상의 주점 (960, 540)에서 카메라 좌표 (0.5, 0.2, 5) m 점은 정규화 좌표 (0.1, 0.04)를 거쳐 화소 (1160, 620)에 찍히며, 10 m로 멀어지면 (1060, 580)으로 주점 쪽에 다가간다">
+        <rect x="60" y="30" width="320" height="150" class="b" fill="none" stroke-width="2"/>
+        <circle cx="220" cy="105" r="5" class="fd"/>
+        <circle cx="320" cy="135" r="5" class="fd"/>
+        <circle cx="270" cy="120" r="5" class="fd"/>
+        <path d="M220 105 L320 135" class="k dsh"/>
+        <g class="s"><text x="180" y="96">주점 (960, 540)</text><text x="300" y="158" class="ta">5 m → (1160, 620)</text><text x="230" y="140" class="td">10 m → (1060, 580)</text><text x="400" y="60">f_px = 4 mm/2 μm</text><text x="400" y="84">= 2000</text></g>
+      </svg>
+      <figcaption>그림 1. 정규화 좌표에 화소 단위 초점 거리를 곱하고 주점을 더하면 화소 좌표가 되며, 멀어진 점은 주점 쪽으로 다가간다(예제 1.2.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>핀홀 카메라(<a href="01-01.html">1.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>미터에서 화소로</h3>
-    <p>핀홀 투영으로 얻은 정규화 좌표 (X/Z, Y/Z)에 화소 단위 초점 거리 f_x, f_y를 곱하고 주점 (c_x, c_y)를 더하면 화소 좌표입니다: \(u = f_xX/Z + c_x\), \(v = f_yY/Z + c_y\). f_px = 초점 거리/화소 크기입니다.</p>
+    <p>핀홀 투영으로 얻은 정규화 좌표 (X/Z, Y/Z)는 단위가 없는 비율이다. 여기에 화소 단위 초점 거리 f_x, f_y를 곱하고 주점 (c_x, c_y)를 더하면 화소 좌표가 된다.</p>
+    <p>즉 \(u = f_xX/Z + c_x\), \(v = f_yY/Z + c_y\)이고, 화소 단위 초점 거리는 f_px = 초점 거리/화소 크기이다. 처음 질문의 첫째 답이 이 네 값, 곧 f_x, f_y, c_x, c_y이며 이를 묶은 것이 내부 행렬이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.2.1</span>
-      <p>초점 거리 4 mm, 화소 2 μm, 영상 1920×1080(주점 가운데). 카메라 좌표 (0.5, 0.2, 5) m 점의 화소 좌표는?</p>
+      <p>초점 거리 4 mm, 화소 2 μm, 영상 1920×1080(주점 가운데)이다. 카메라 좌표 (0.5, 0.2, 5) m 점의 화소 좌표를 구하여라.</p>
     </div>
-    <p><i>풀이.</i> f_px = 2000. 정규화 (0.1, 0.04) → u = 200 + 960 = 1160, v = 80 + 540 = 620. 같은 점이 두 배 멀리(10 m) 있으면 (1060, 580)으로 주점 쪽으로 다가갑니다.</p>
+    <p><i>풀이.</i> f_px = 2000이다. 그리고 정규화 좌표 (0.1, 0.04)에서 u = 200 + 960 = 1160, v = 80 + 540 = 620이다(그림 1).</p>
+    <p>같은 점이 두 배 멀리(10 m) 있으면 (1060, 580)으로 주점 쪽으로 다가간다. 처음 질문의 둘째 답이 이것으로, 주점에서의 거리가 Z에 반비례한다.</p>
+    <p>한편 f_x와 f_y가 다를 수도 있다. 화소가 정사각형이 아니거나 영상을 가로세로 다른 비율로 줄였으면 두 값이 달라지므로, 내부 행렬에는 두 값을 따로 둔다.</p>
+    <p>그러므로 같은 카메라라도 영상 해상도를 바꾸면 내부 행렬도 바꿔야 한다. 예를 들어 영상을 가로세로 절반으로 줄이면 f_px와 주점 좌표도 모두 절반이 된다.</p>
+    <p>그리고 내부 행렬은 카메라마다 조금씩 다르다. 따라서 정밀한 측정에는 사양표 값 대신, 알려진 무늬를 여러 각도에서 찍어 추정한 값을 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "초점 거리는 mm로 바로 쓴다": 화소 단위로 바꿔야 합니다. (2) "주점은 늘 영상 정가운데": 보정으로 재야 하며 조금 어긋나 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>초점 거리를 mm로 바로 쓰면 된다고 여기기 쉽다. 화소 단위로 바꿔야 한다. 또 주점은 늘 영상 정가운데라고 생각하기 쉬운데, 보정으로 재야 하며 조금 어긋나 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>u = f_xX/Z + c_x, v = f_yY/Z + c_y.</li>
-        <li>f_px = f/화소 크기.</li>
-        <li>예: (0.5, 0.2, 5) → (1160, 620).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>화소 좌표는 u = f_xX/Z + c_x, v = f_yY/Z + c_y이다. 화소 단위 초점 거리는 f/화소 크기이다. 예제의 점 (0.5, 0.2, 5)는 (1160, 620)에 찍힌다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>f 6 mm, 화소 3 μm의 f_px는?
-          <details><summary>답</summary><p>2000.</p></details>
+          <details><summary>답</summary><p>2000이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>f_px 1000, 주점 (640, 360), 점 (1, 0, 4)의 u는?
-          <details><summary>답</summary><p>890.</p></details>
+          <details><summary>답</summary><p>890이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>카메라 보정에 체커보드를 쓰는 이유는?
-          <details><summary>답</summary><p>모서리 위치를 정확히 알아 K와 왜곡을 추정할 수 있어서.</p></details>
+          <details><summary>답</summary><p>모서리 위치를 정확히 알아 K와 왜곡을 추정할 수 있어서이다.</p></details>
         </li>
       </ol>
     </div>

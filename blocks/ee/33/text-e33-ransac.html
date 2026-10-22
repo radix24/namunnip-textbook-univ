@@ -8,56 +8,53 @@
 <article class="card q-card" id="text-e33-ransac" data-kind="본문" data-std="전전33-02-05">
   <header class="card-head"><span class="no"></span><h2>호모그래피와 RANSAC</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>평면이나 회전 카메라에서 두 영상을 잇는 호모그래피를 안다.</li>
-        <li>잘못된 정합이 섞일 때 RANSAC 반복 횟수를 계산한다.</li>
-        <li>파노라마 이어 붙이기에 적용한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>특징점 정합 (<a href="02-02.html">2.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">두 사진의 특징점을 짝지으면 상당수가 틀린 짝이다. 틀린 짝이 섞인 채로 최소제곱을 풀면, 몇 개의 엉뚱한 짝이 결과를 크게 끌어당긴다. 틀린 짝을 견디며 두 사진 사이의 변환을 구하려면 어떻게 해야 할까? 그리고 몇 번이나 시도해야 믿을 만할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.5.1 RANSAC 반복 횟수(개형). 표본 크기 4, 성공 확률 0.99에서 정상치 비율 50%이면 72번, 70%이면 17번 반복이 필요하며, 정상치 비율이 낮아질수록 반복 수가 급히 늘어난다">
+        <line x1="60" y1="170" x2="480" y2="170" class="ax"/><line x1="60" y1="30" x2="60" y2="170" class="ax"/>
+        <path d="M100 40 Q160 150 250 160 T460 166" class="b" fill="none" stroke-width="2.5"/>
+        <circle cx="200" cy="148" r="5" class="fd"/><circle cx="330" cy="163" r="5" class="fd"/>
+        <g class="s"><text x="210" y="140" class="ta">w 0.5 → 72번</text><text x="340" y="154" class="td">w 0.7 → 17번</text><text x="400" y="190">정상치 비율 w</text><text x="70" y="40">반복 수 N</text></g>
+      </svg>
+      <figcaption>그림 1. 네 쌍이 모두 맞는 짝일 확률이 정상치 비율의 네제곱이라, 비율이 낮아지면 필요한 반복 수가 급히 늘어난다(예제 2.5.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>특징점 정합(<a href="02-02.html">2.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.5.1</span>틀린 짝을 견디는 추정</h3>
-    <p>호모그래피 H(3×3, 자유도 8)는 정합 4쌍으로 구할 수 있습니다. 정합에 틀린 짝(이상치)이 섞이면 RANSAC이 무작위로 4쌍을 뽑아 H를 만들고 맞는 짝 수를 세는 일을 반복합니다. 정상치 비율 w, 성공 확률 p에 필요한 반복 \(N = \log(1 - p)/\log(1 - w^s)\).</p>
+    <p>호모그래피 H는 평면 위 점을 다른 사진의 점으로 옮기는 3×3 행렬이며, 크기를 정하지 않으므로 자유도가 8이다. 한 쌍이 식 두 개를 주므로 정합 4쌍으로 구할 수 있다.</p>
+    <p>그리고 정합에 틀린 짝(이상치)이 섞이면, RANSAC이 무작위로 4쌍을 뽑아 H를 만들고 맞는 짝 수를 세는 일을 반복한다. 처음 질문의 첫째 답이 이 방법으로, 틀린 짝이 하나도 없는 표본이 한 번이라도 뽑히면 그 H가 가장 많은 짝을 맞힌다.</p>
+    <p>정상치 비율 w, 성공 확률 p에 필요한 반복은 \(N = \log(1 - p)/\log(1 - w^s)\)이다. 즉 한 번 뽑은 s쌍이 모두 정상치일 확률이 wˢ이고, N번 모두 실패할 확률을 1 − p 아래로 둔다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.5.1</span>
-      <p>정상치 50%, s = 4, p = 0.99의 반복 횟수는? 정상치 70%면?</p>
+      <p>정상치 50%, s = 4, p = 0.99의 반복 횟수를 구하여라. 정상치 70%면 어떻게 되는지도 구하여라.</p>
     </div>
-    <p><i>풀이.</i> N = ln0.01/ln(1 − 0.0625) = 71.4 → 72번. 70%면 17번. 정상치 비율이 낮으면 반복이 급격히 늘어, 정합 단계에서 비율 검사로 틀린 짝을 미리 줄입니다.</p>
+    <p><i>풀이.</i> N = ln0.01/ln(1 − 0.0625) = 71.4이므로 72번이다. 그리고 70%면 17번이다(그림 1). 처음 질문의 둘째 답이 이 식으로, 정상치 비율이 낮으면 반복이 급격히 는다. 그러므로 정합 단계에서 비율 검사로 틀린 짝을 미리 줄인다.</p>
+    <p>한편 "맞는 짝"을 세려면 문턱이 필요하다. H로 옮긴 점이 실제 짝과 몇 화소 이내이면 정상치로 세며, 문턱이 너무 작으면 맞는 짝도 버리고 너무 크면 틀린 짝까지 받아들인다.</p>
+    <p>그리고 RANSAC은 호모그래피만이 아니라 직선, 원, 평면 맞추기 같은 여러 모형에 쓴다. 따라서 모형마다 필요한 최소 표본 수 s만 바꾸면 같은 틀을 그대로 쓴다.</p>
+    <p>예를 들어 라이다 점구름에서 바닥 평면을 찾을 때도 점 세 개를 뽑아 평면을 세우고, 가까운 점 수를 세는 일을 반복한다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "점이 많을수록 RANSAC이 느려진다": 반복 수는 표본 크기 s와 w로 정해집니다. (2) "RANSAC 결과는 늘 같다": 무작위라 실행마다 조금 다를 수 있습니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>점이 많을수록 RANSAC이 느려진다고 여기기 쉽다. 반복 수는 표본 크기 s와 w로 정해진다. 또 RANSAC 결과는 늘 같다고 생각하기 쉬운데, 무작위라 실행마다 조금 다를 수 있다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>H: 8자유도, 4쌍.</li>
-        <li>N = log(1 − p)/log(1 − w^s).</li>
-        <li>예: w 0.5 → 72, 0.7 → 17.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>호모그래피는 자유도 8로 4쌍이면 정해진다. RANSAC 반복 수는 N = log(1 − p)/log(1 − wˢ)이다. 예제에서 w 0.5이면 72번, 0.7이면 17번이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.5.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>직선(s = 2), w = 0.5, p = 0.99의 N은?
-          <details><summary>답</summary><p>약 17.</p></details>
+          <details><summary>답</summary><p>약 17이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>w = 0.5, s = 8(기본 행렬 8점)의 N은?
-          <details><summary>답</summary><p>약 1177.</p></details>
+          <details><summary>답</summary><p>약 1177이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>호모그래피가 맞지 않는 경우는?
-          <details><summary>답</summary><p>평면이 아니고 카메라가 이동해 시차가 생길 때.</p></details>
+          <details><summary>답</summary><p>평면이 아니고 카메라가 이동해 시차가 생길 때이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,56 +8,56 @@
 <article class="card q-card" id="text-e33-color" data-kind="본문" data-std="전전33-01-04">
   <header class="card-head"><span class="no"></span><h2>색 공간과 회색조 변환</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>RGB를 밝기 Y = 0.299R + 0.587G + 0.114B로 바꾼다.</li>
-        <li>HSV가 색 기반 분할에 편리한 이유를 안다.</li>
-        <li>조명 변화에 강한 색 표현을 고른다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>영상의 형성 (<a href="01-01.html">1.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">컬러 사진을 흑백으로 바꿀 때 빨강, 초록, 파랑 세 값을 그냥 평균하면 될 것 같다. 그런데 같은 세기의 초록과 파랑을 보면 사람 눈에는 초록이 훨씬 밝아 보인다. 흑백 밝기는 세 채널을 어떻게 섞어야 할까? 그리고 조명이 바뀌어도 "빨간 공"을 찾으려면 어떤 색 표현이 편할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 1.4.1 회색조 변환(개형). 화소 (200, 100, 50)는 BT.601 가중치로 Y = 59.8 + 58.7 + 5.7 = 124.2이고 단순 평균은 116.7이며, 색상 H는 20도(주황)이다">
+        <line x1="60" y1="170" x2="420" y2="170" class="ax"/>
+        <rect x="80" y="74" width="50" height="96" class="d" fill="none" stroke-width="2.5"/>
+        <rect x="160" y="74" width="50" height="96" class="a" fill="none" stroke-width="2.5"/>
+        <rect x="240" y="155" width="50" height="15" class="b" fill="none" stroke-width="2.5"/>
+        <path d="M60 75 H420" class="k dsh"/>
+        <g class="s" text-anchor="middle"><text x="105" y="66">0.299R 59.8</text><text x="185" y="56">0.587G 58.7</text><text x="265" y="146">0.114B 5.7</text></g>
+        <g class="s"><text x="330" y="100" class="ta">Y = 124.2</text><text x="330" y="124">평균 116.7</text><text x="330" y="148" class="td">H = 20°</text></g>
+      </svg>
+      <figcaption>그림 1. 회색조 밝기는 눈의 감도에 맞춰 초록에 가장 큰 가중치를 주어 더하므로, 같은 화소라도 단순 평균과 값이 다르다(예제 1.4.1, 개형).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>영상의 형성(<a href="01-01.html">1.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.4.1</span>눈이 느끼는 밝기</h3>
-    <p>사람 눈은 초록에 가장 민감해 회색조 변환에서 G 가중치가 큽니다(BT.601 계수). HSV는 색상(H)을 밝기와 분리해, “빨간 공 찾기”처럼 색으로 나눌 때 조명이 바뀌어도 H 범위를 그대로 쓸 수 있습니다.</p>
+    <p>사람 눈은 초록에 가장 민감하고 파랑에 가장 둔하다. 그래서 회색조 변환은 Y = 0.299R + 0.587G + 0.114B처럼 G 가중치를 크게 둔다(BT.601 계수). 처음 질문의 첫째 답이 이 가중 합이다.</p>
+    <p>그리고 HSV는 색을 색상(H), 채도(S), 밝기(V)로 나눈다. 따라서 "빨간 공 찾기"처럼 색으로 나눌 때, 조명이 바뀌어 밝기가 달라져도 H 범위를 그대로 쓸 수 있다. 처음 질문의 둘째 답이 이 표현이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 1.4.1</span>
-      <p>화소 (R, G, B) = (200, 100, 50)의 회색조 값은? 단순 평균과 비교하면?</p>
+      <p>화소 (R, G, B) = (200, 100, 50)의 회색조 값을 구하고, 단순 평균과 비교하여라.</p>
     </div>
-    <p><i>풀이.</i> Y = 59.8 + 58.7 + 5.7 = 124.2, 평균 116.7. 파란 성분이 많은 화소는 평균보다 Y가 훨씬 어둡게 나옵니다. 이 화소는 H = 60 × (100 − 50)/150 = 20°(주황)입니다.</p>
+    <p><i>풀이.</i> Y = 59.8 + 58.7 + 5.7 = 124.2이고, 평균은 116.7이다(그림 1). 파란 성분이 많은 화소는 평균보다 Y가 훨씬 어둡게 나온다. 그리고 이 화소는 H = 60 × (100 − 50)/150 = 20°(주황)이다.</p>
+    <p>즉 R, G, B는 센서가 재는 값이고, Y나 H는 그 값을 목적에 맞게 다시 묶은 것이다. 그러므로 같은 영상이라도 할 일에 따라 다른 색 공간으로 바꿔 처리한다.</p>
+    <p>한편 HSV의 H는 각도라 0°와 360°가 같은 빨강이다. 그래서 빨간색 범위를 고를 때는 0° 근처와 360° 근처를 함께 잡아야 한다.</p>
+    <p>그리고 딥러닝 모델은 보통 RGB 세 채널을 그대로 입력으로 받는다. 따라서 색 공간 변환은 주로 고전적인 영상 처리나 전처리 단계에서 쓴다.</p>
+    <p>예를 들어 공장의 색 검사기는 HSV로 바꾼 뒤 H와 S의 범위를 정해 불량 색을 고른다. 이렇게 하면 조명 밝기가 조금 바뀌어도 같은 문턱을 쓸 수 있다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) "회색조는 세 채널 평균": 눈의 감도에 맞춘 가중 합을 씁니다. (2) "HSV면 조명과 완전히 무관": 아주 어둡거나 채도가 낮으면 H가 불안정합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>회색조는 세 채널의 평균이라고 여기기 쉽다. 눈의 감도에 맞춘 가중 합을 쓴다. 또 HSV면 조명과 완전히 무관하다고 생각하기 쉬운데, 아주 어둡거나 채도가 낮으면 H가 불안정하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Y = 0.299R + 0.587G + 0.114B.</li>
-        <li>HSV: 색상 분리 → 색 기반 분할.</li>
-        <li>예: (200, 100, 50) → 124.2.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>회색조는 Y = 0.299R + 0.587G + 0.114B이다. HSV는 색상을 밝기와 분리해 색 기반 분할에 쓴다. 예제의 (200, 100, 50)은 Y 124.2, H 20°이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.4.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>(0, 255, 0)의 Y는?
-          <details><summary>답</summary><p>약 149.7.</p></details>
+          <details><summary>답</summary><p>약 149.7이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>(0, 0, 255)의 Y는?
-          <details><summary>답</summary><p>약 29.1.</p></details>
+          <details><summary>답</summary><p>약 29.1이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>OpenCV가 기본으로 BGR 순서를 쓰는 데서 생기는 흔한 실수는?
-          <details><summary>답</summary><p>R과 B를 바꿔 계산해 색과 밝기가 틀어집니다.</p></details>
+          <details><summary>답</summary><p>R과 B를 바꿔 계산해 색과 밝기가 틀어진다.</p></details>
         </li>
       </ol>
     </div>
