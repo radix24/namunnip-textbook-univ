@@ -8,99 +8,81 @@
 <article class="card q-card" id="text-m2-transform" data-kind="본문" data-std="기계2-06-01">
   <header class="card-head"><span class="no"></span><h2>평면 응력 변환과 Mohr 원</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>한 점의 응력 상태를 작은 정사각형 요소에 그린다.</li>
-        <li>요소를 돌렸을 때의 응력을 변환식으로 구하고, 주응력과 최대 전단 응력을 찾는다.</li>
-        <li>같은 계산을 Mohr 원으로 그림으로 한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>수직 응력과 전단 응력, 짝 전단 응력 (<a href="02-02.html">2.2절</a>, <a href="05-03.html">5.3절</a>).</li>
-        <li>삼각함수의 배각 공식: \(\cos^2\theta = \frac{1 + \cos2\theta}{2}\), \(\sin^2\theta = \frac{1 - \cos2\theta}{2}\), \(2\sin\theta\cos\theta = \sin2\theta\) (고교 수학I·미적분).</li>
-      </ul>
-    </div>
+    <p class="q-ask">분필을 당기면 축에 수직으로 똑 끊어지지만, 비틀면 45° 나선 모양으로 끊어진다. 축에 수직인 단면만 보면 비틀린 분필에는 전단 응력뿐이고 수직 응력은 없다. 그런데 왜 비스듬한 면으로 끊어질까? 한 점에서 가장 위험한 방향은 어떻게 찾을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 240" role="img" aria-label="σx 80, σy −20, τxy 30 MPa인 응력 상태의 Mohr 원. 중심 30, 반지름 58.3, 주응력 88.3과 −28.3">
+        <line x1="40" y1="120" x2="540" y2="120" class="ax"/><line x1="200" y1="20" x2="200" y2="225" class="ax"/>
+        <text x="540" y="112" text-anchor="end" class="s">σ (MPa)</text><text x="206" y="232" class="s">τ (아래가 양)</text>
+        <circle cx="245" cy="120" r="87.5" class="a"/>
+        <circle cx="245" cy="120" r="3" class="fk"/><text x="245" y="136" text-anchor="middle" class="s">C 30</text>
+        <circle cx="320" cy="165" r="5" class="fc"/><text x="327" y="182" class="tc">X (80, 30)</text>
+        <circle cx="170" cy="75" r="5" class="fc"/><text x="100" y="70" class="tc">Y (−20, −30)</text>
+        <path d="M170 75 L320 165" class="c"/>
+        <circle cx="332.5" cy="120" r="5" class="fd"/><text x="339" y="114" class="td">σ₁ 88.3</text>
+        <circle cx="157.5" cy="120" r="5" class="fd"/><text x="92" y="114" class="td">σ₂ −28.3</text>
+        <path d="M245 32.5 V207.5" class="gd dsh"/><text x="251" y="30" class="s">τ_max = R = 58.3</text>
+        <path d="M290 120 A45 45 0 0 1 283.6 143.2" class="d"/><text x="296" y="150" class="s">2θ_p = 31°</text>
+        <text x="420" y="60" class="s">원 위에서 2θ 돌면</text><text x="420" y="76" class="s">요소는 θ 돈다</text>
+      </svg>
+      <figcaption>그림 1. 한 점의 응력을 \((\sigma, \tau)\) 평면에 찍으면 요소를 돌릴 때 점이 원 위를 움직이며, 원이 가로축과 만나는 두 점이 전단 응력이 없는 면의 주응력이고, 맨 위·아래가 최대 전단 응력이다(그림의 눈금은 1.5 px/MPa).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>수직 응력과 전단 응력, 짝 전단 응력(<a href="02-02.html">2.2절</a>, <a href="05-03.html">5.3절</a>), 고교 수학의 삼각함수 배각 공식 \(\cos^2\theta = \frac{1 + \cos2\theta}{2}\), \(\sin^2\theta = \frac{1 - \cos2\theta}{2}\), \(2\sin\theta\cos\theta = \sin2\theta\)를 쓴다.</div>
 
     <h3><span class="no">6.1.1</span>왜 방향을 바꿔 보아야 하는가</h3>
-    <p>분필을 당기면 축에 수직으로 똑 끊어지지만, 비틀면 45° 나선 모양으로 끊어집니다. 축에 수직인 단면만 보면 비틀림에는 전단 응력만 있고 수직 응력은 없는데, 왜 비스듬한 면으로 끊어질까요? 같은 점이라도 <b>어느 방향의 면</b>을 보느냐에 따라 응력이 다르기 때문입니다. 분필(취성 재료)은 인장 응력이 가장 큰 면으로 끊어지고, 비틀림에서는 그 면이 45°에 있습니다. 재료가 견디는지 판단하려면 모든 방향 중 응력이 가장 큰 방향을 찾아야 합니다.</p>
+    <p>같은 점이라도 어느 방향의 면을 보느냐에 따라 응력이 다르다. 분필 같은 취성 재료는 인장 응력이 가장 큰 면으로 끊어지는데, 비틀림에서는 그 면이 축에서 45° 기울어 있다. 처음 질문의 실마리가 이것이다. 그러므로 재료가 견디는지 판단하려면 모든 방향 가운데 응력이 가장 큰 방향을 찾아야 한다.</p>
 
     <h3><span class="no">6.1.2</span>응력 요소와 부호</h3>
-    <p>한 점 둘레에서 \(x\), \(y\)축에 나란한 아주 작은 정사각형(요소)을 떼어 냅니다. 얇은 판처럼 \(z\) 방향 면에는 응력이 없는 상태를 <b>평면 응력</b>이라 하고, 세 성분으로 나타냅니다.</p>
-    <p class="q-term">\(\sigma_x\): \(x\)면(법선이 \(x\)방향인 면)의 수직 응력. 인장이 양.</p>
-    <p class="q-term">\(\sigma_y\): \(y\)면의 수직 응력.</p>
-    <p class="q-term">\(\tau_{xy}\): \(x\)면에서 \(+y\) 방향으로 작용하는 전단 응력. 양의 \(x\)면에서 \(+y\) 방향이면 양. 짝 전단 응력이므로 \(y\)면에도 같은 크기로 작용한다.</p>
+    <p>한 점 둘레에서 \(x\), \(y\)축에 나란한 아주 작은 정사각형, 곧 요소를 떼어 낸다. 얇은 판처럼 \(z\) 방향 면에는 응력이 없는 상태를 평면 응력이라 하며, 세 성분으로 나타낸다. \(\sigma_x\)는 법선이 \(x\) 방향인 면의 수직 응력, \(\sigma_y\)는 \(y\)면의 수직 응력이고 인장이 양이다. \(\tau_{xy}\)는 양의 \(x\)면에서 \(+y\) 방향으로 작용할 때 양인 전단 응력이며, 짝 전단 응력이므로 \(y\)면에도 같은 크기로 작용한다.</p>
 
     <h3><span class="no">6.1.3</span>변환식</h3>
-    <p>요소를 반시계 방향으로 \(\theta\)만큼 돌린 축 \(x'\), \(y'\)에서의 응력을 구합니다. 원래 요소를 비스듬한 면으로 잘라 삼각형 쐐기를 만들고, 그 쐐기의 힘 평형을 씁니다(응력 × 넓이 = 힘). 비스듬한 면의 넓이를 \(A\)라 하면 \(x\)면 쪽 넓이는 \(A\cos\theta\), \(y\)면 쪽 넓이는 \(A\sin\theta\)입니다. 비스듬한 면의 법선 방향 힘 평형을 정리하고 배각 공식을 쓰면 다음 식이 나옵니다.</p>
+    <p>요소를 반시계로 \(\theta\)만큼 돌린 축 \(x'\), \(y'\)에서의 응력을 구해 보자. 원래 요소를 비스듬한 면으로 잘라 삼각형 쐐기를 만들고, 응력에 넓이를 곱한 힘으로 쐐기의 평형을 쓴다. 비스듬한 면의 넓이를 \(A\)라 하면 \(x\)면 쪽 넓이는 \(A\cos\theta\), \(y\)면 쪽은 \(A\sin\theta\)이다. 비스듬한 면의 법선 방향 힘 평형을 정리하고 배각 공식을 쓰면 다음 식이 나온다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 6.1.1 <span class="nm">(평면 응력 변환식)</span></span>
-      \[\sigma_{x'} = \frac{\sigma_x + \sigma_y}{2} + \frac{\sigma_x - \sigma_y}{2}\cos2\theta + \tau_{xy}\sin2\theta\]
-      \[\tau_{x'y'} = -\frac{\sigma_x - \sigma_y}{2}\sin2\theta + \tau_{xy}\cos2\theta\]
+      \[ \sigma_{x'} = \frac{\sigma_x + \sigma_y}{2} + \frac{\sigma_x - \sigma_y}{2}\cos2\theta + \tau_{xy}\sin2\theta \]
+      \[ \tau_{x'y'} = -\frac{\sigma_x - \sigma_y}{2}\sin2\theta + \tau_{xy}\cos2\theta \]
       <p>\(\sigma_{y'}\)은 첫 식에 \(\theta + 90°\)를 넣은 값이며, \(\sigma_{x'} + \sigma_{y'} = \sigma_x + \sigma_y\)이다.</p>
     </div>
-    <p>식에 \(2\theta\)가 나오는 것에 주목하세요. 요소를 180° 돌리면 같은 면을 다시 보는 것이므로, 응력은 180°마다(\(2\theta\)로는 360°마다) 반복되어야 합니다.</p>
+    <p>식에 \(2\theta\)가 나오는 데 주목하자. 요소를 180° 돌리면 같은 면을 다시 보는 것이므로, 응력은 180°마다, 곧 \(2\theta\)로는 360°마다 되풀이되어야 한다.</p>
 
     <h3><span class="no">6.1.4</span>주응력과 최대 전단 응력</h3>
-    <p>\(\sigma_{x'}\)가 가장 크거나 작아지는 방향을 찾으려면 \(\theta\)로 미분해 0으로 둡니다. 그 조건은 \(\tau_{x'y'} = 0\)과 같습니다. 곧 <b>수직 응력이 극값인 면에는 전단 응력이 없습니다</b>.</p>
+    <p>그러면 \(\sigma_{x'}\)가 가장 크거나 작아지는 방향은 어디일까? \(\theta\)로 미분해 0으로 두면, 그 조건이 \(\tau_{x'y'} = 0\)과 같아진다. 다시 말해 수직 응력이 극값인 면에는 전단 응력이 없다. 이 면의 수직 응력을 주응력이라 하고 큰 것을 \(\sigma_1\), 작은 것을 \(\sigma_2\)라 하며, 그 면의 법선 방향을 주방향이라 한다. 주방향은 서로 90° 떨어진 두 방향이다.</p>
     <div class="tb-env thm">
       <span class="lb">정리 6.1.2 <span class="nm">(주응력)</span></span>
-      \[\tan2\theta_p = \frac{2\tau_{xy}}{\sigma_x - \sigma_y}\]
-      \[\sigma_{1,2} = \frac{\sigma_x + \sigma_y}{2} \pm R\]
-      \[R = \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}\]
-      <p>최대 면내 전단 응력은 \(\tau_{\max} = R\)이고, 주방향에서 45° 돌아간 면에 생긴다. 그 면의 수직 응력은 평균값 \((\sigma_x + \sigma_y)/2\)이다.</p>
+      <p>\(\tan2\theta_p = \dfrac{2\tau_{xy}}{\sigma_x - \sigma_y}\)이고, \(\sigma_{1,2} = \dfrac{\sigma_x + \sigma_y}{2} \pm R\), \(R = \sqrt{\left(\dfrac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}\)이다. 최대 면내 전단 응력은 \(\tau_{\max} = R\)이고 주방향에서 45° 돌아간 면에 생기며, 그 면의 수직 응력은 평균값 \((\sigma_x + \sigma_y)/2\)이다.</p>
     </div>
-    <p class="q-term"><b>주응력</b>: 전단 응력이 0인 면의 수직 응력. 가장 큰 것이 \(\sigma_1\), 가장 작은 것이 \(\sigma_2\).</p>
-    <p class="q-term"><b>주방향</b>: 주응력이 걸리는 면의 법선 방향. 서로 90° 떨어진 두 방향이다.</p>
+    <p>이제 처음 질문에 답할 수 있다. 비틀린 분필의 점은 \(\sigma_x = \sigma_y = 0\), \(\tau_{xy} = \tau\)인 순수 전단이다. 그러면 \(\tan2\theta_p\)가 무한대여서 \(\theta_p = 45°\)이고, 주응력은 \(\pm\tau\)이다. 따라서 45° 면에 전단 응력과 같은 크기의 인장이 걸리고, 분필은 그 면을 따라 끊어진다.</p>
 
     <h3><span class="no">6.1.5</span>Mohr 원</h3>
-    <p>변환식 두 개를 제곱해 더하면 \(\theta\)가 사라지고 다음 식이 남습니다.</p>
-    \[\left(\sigma_{x'} - \frac{\sigma_x + \sigma_y}{2}\right)^2 + \tau_{x'y'}^2 = R^2\]
-    <p>이것은 \((\sigma, \tau)\) 평면에서 중심 \(C = ((\sigma_x + \sigma_y)/2, 0)\), 반지름 \(R\)인 원입니다. 요소를 돌리면 응력 점이 이 원 위를 움직입니다. 그리는 순서는 다음과 같습니다.</p>
-    <ol>
-      <li>가로축 \(\sigma\), 세로축 \(\tau\)를 그린다. 이 책은 \(\tau\)축을 <b>아래쪽이 양</b>이 되게 그린다(그래야 요소를 반시계로 돌릴 때 점도 반시계로 돈다).</li>
-      <li>점 X\((\sigma_x, \tau_{xy})\)와 Y\((\sigma_y, -\tau_{xy})\)를 찍는다. 두 점을 잇는 선분이 지름이고, 가로축과 만나는 점이 중심 \(C\)이다.</li>
-      <li>원과 가로축의 교점이 주응력 \(\sigma_1\), \(\sigma_2\), 맨 위·아래 점이 최대 전단 응력 \(\pm R\)이다.</li>
-      <li>요소를 \(\theta\) 돌린 면의 응력은 X에서 같은 방향으로 \(2\theta\) 돈 점이다.</li>
-    </ol>
-
+    <p>변환식 두 개를 제곱해 더하면 \(\theta\)가 사라지고 다음 식이 남는다.</p>
+    \[ \left(\sigma_{x'} - \frac{\sigma_x + \sigma_y}{2}\right)^2 + \tau_{x'y'}^2 = R^2 \]
+    <p>이것은 \((\sigma, \tau)\) 평면에서 중심 \(C = ((\sigma_x + \sigma_y)/2, 0)\), 반지름 \(R\)인 원이다. 요소를 돌리면 응력 점이 이 원 위를 움직이는데, 이 원을 Mohr 원이라 한다. 그리는 방법은 이렇다. 가로축에 \(\sigma\), 세로축에 \(\tau\)를 두되 \(\tau\)축은 아래쪽이 양이 되게 그린다. 그래야 요소를 반시계로 돌릴 때 점도 반시계로 돈다. 점 X\((\sigma_x, \tau_{xy})\)와 Y\((\sigma_y, -\tau_{xy})\)를 찍으면 두 점을 잇는 선분이 지름이고, 가로축과 만나는 점이 중심이다. 원과 가로축의 교점이 주응력이고, 맨 위와 아래 점이 최대 전단 응력 \(\pm R\)이다. 요소를 \(\theta\) 돌린 면의 응력은 X에서 같은 방향으로 \(2\theta\) 돈 점이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.3</span>
       <p>\(\sigma_x = 80\), \(\sigma_y = -20\), \(\tau_{xy} = 30\) MPa인 점의 주응력, 주방향, 최대 전단 응력을 구하고, 30° 돌린 면의 응력을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> 중심 \(C = 30\) MPa, \(R = \sqrt{50^2 + 30^2} = 58.3\) MPa. 주응력은 \(\sigma_1 = 88.3\), \(\sigma_2 = -28.3\) MPa. \(\tan2\theta_p = 60/100 = 0.6\)에서 \(2\theta_p = 31.0°\), \(\theta_p = 15.5°\)(\(\sigma_1\)의 방향). 최대 전단 응력은 58.3 MPa로 \(\theta = 15.5° + 45° = 60.5°\) 면에 생기고, 그 면의 수직 응력은 30 MPa입니다.</p>
-    <p>\(\theta = 30°\)이면 \(\cos60° = 0.5\), \(\sin60° = 0.866\)이므로</p>
-    \[\sigma_{x'} = 30 + 50(0.5) + 30(0.866) = 81.0\ \text{MPa}\]
-    \[\tau_{x'y'} = -50(0.866) + 30(0.5) = -28.3\ \text{MPa}\]
-    <p>\(\sigma_{y'} = 60 - 81.0 = -21.0\) MPa. 이 절의 탐구 카드에서 θ = 30°로 놓고 확인해 보세요.</p>
+    <p><i>풀이.</i> 중심은 \(C = 30\) MPa, 반지름은 \(R = \sqrt{50^2 + 30^2} = 58.3\) MPa이다. 따라서 주응력은 \(\sigma_1 = 88.3\), \(\sigma_2 = -28.3\) MPa이다(그림 1). \(\tan2\theta_p = 60/100 = 0.6\)에서 \(2\theta_p = 31.0°\), 곧 \(\theta_p = 15.5°\)가 \(\sigma_1\)의 방향이다. 최대 전단 응력은 58.3 MPa로 \(\theta = 15.5° + 45° = 60.5°\) 면에 생기고, 그 면의 수직 응력은 30 MPa이다. 이제 \(\theta = 30°\)이면 \(\cos60° = 0.5\), \(\sin60° = 0.866\)이므로 다음과 같다.</p>
+    \[ \sigma_{x'} = 30 + 50(0.5) + 30(0.866) = 81.0\ \text{MPa}, \qquad \tau_{x'y'} = -50(0.866) + 30(0.5) = -28.3\ \text{MPa} \]
+    <p>또 \(\sigma_{y'} = 60 - 81.0 = -21.0\) MPa이다. 이 절의 탐구 카드에서 \(\theta = 30°\)로 놓고 확인해 볼 수 있다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) Mohr 원 위의 각은 요소 회전각의 두 배입니다. (2) \(\tan2\theta_p\)는 두 각(90° 차이)을 주므로, 어느 것이 \(\sigma_1\)인지 변환식에 넣어 확인하세요. (3) 평면 응력에서도 \(z\) 방향 주응력 \(\sigma_3 = 0\)이 있으므로, 두 면내 주응력의 부호가 같으면 실제 최대 전단 응력은 \(\sigma_1/2\)(면외)일 수 있습니다. 압력 용기(6.2절)가 그런 경우입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>Mohr 원 위의 각이 요소 회전각의 두 배라는 것을 잊기 쉽다. 또 \(\tan2\theta_p\)는 90° 차이 나는 두 각을 주므로, 어느 쪽이 \(\sigma_1\)인지 변환식에 넣어 확인해야 한다. 평면 응력에서도 \(z\) 방향 주응력 \(\sigma_3 = 0\)이 있으므로, 두 면내 주응력의 부호가 같으면 실제 최대 전단 응력은 면외의 \(\sigma_1/2\)일 수 있다. 6.2절의 압력 용기가 그런 경우이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>같은 점이라도 면의 방향에 따라 응력이 다르다. 변환식은 \(2\theta\)의 삼각함수이다.</li>
-        <li>주응력 \(\sigma_{1,2} = C \pm R\)이 걸리는 면에는 전단 응력이 없다. \(\tan2\theta_p = 2\tau_{xy}/(\sigma_x - \sigma_y)\).</li>
-        <li>최대 면내 전단 응력 \(R\)은 주방향에서 45° 떨어진 면에 생긴다.</li>
-        <li>Mohr 원: 중심 \((\sigma_x + \sigma_y)/2\), 반지름 \(R\). 요소를 \(\theta\) 돌리면 원 위에서 \(2\theta\) 돈다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>같은 점이라도 면의 방향에 따라 응력이 달라지며, 변환식은 \(2\theta\)의 삼각함수로 그 변화를 준다. 전단 응력이 없는 면의 주응력 \(C \pm R\)이 수직 응력의 극값이고, 최대 전단 응력 \(R\)은 45° 떨어진 면에 생긴다. 비틀린 분필은 순수 전단이어서 45° 면에 같은 크기의 인장이 걸리므로 그 면으로 끊어지며, Mohr 원은 이 모든 관계를 원 하나로 보여 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.6</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\sigma_x = 60\), \(\sigma_y = 20\), \(\tau_{xy} = 0\) MPa. 주응력과 최대 면내 전단 응력은?
-          <details><summary>답</summary><p>이미 전단이 없으므로 \(\sigma_1 = 60\), \(\sigma_2 = 20\). \(R = 20\) MPa(45° 면).</p></details>
+          <details><summary>답</summary><p>이미 전단이 없으므로 \(\sigma_1 = 60\), \(\sigma_2 = 20\)이다. \(R = 20\) MPa이고 45° 면에 생긴다.</p></details>
         </li>
         <li>순수 전단 \(\tau_{xy} = 40\) MPa의 주응력과 주방향은?
-          <details><summary>답</summary><p>\(C = 0\), \(R = 40\). \(\sigma_1 = 40\)(45°), \(\sigma_2 = -40\)(135°).</p></details>
+          <details><summary>답</summary><p>\(C = 0\), \(R = 40\)이므로 \(\sigma_1 = 40\)(45°), \(\sigma_2 = -40\)(135°)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="3">
         <li>\(\sigma_x = -50\), \(\sigma_y = 10\), \(\tau_{xy} = -40\) MPa. 주응력, \(\theta_p\), 최대 전단 응력을 구하여라.
-          <details><summary>답</summary><p>\(C = -20\), \(R = \sqrt{30^2 + 40^2} = 50\). \(\sigma_1 = 30\), \(\sigma_2 = -70\). \(\tan2\theta_p = -80/(-60) = 1.333\): \(2\theta_p = 53.1°\) 또는 \(233.1°\). \(\theta = 26.6°\)를 넣으면 \(\sigma_{x'} = -20 - 30(0.6) - 40(0.8) = -70\)이므로 이것이 \(\sigma_2\) 방향, \(\sigma_1\)은 116.6°. \(\tau_{\max} = 50\) MPa.</p></details>
+          <details><summary>답</summary><p>\(C = -20\), \(R = \sqrt{30^2 + 40^2} = 50\)이므로 \(\sigma_1 = 30\), \(\sigma_2 = -70\)이다. \(\tan2\theta_p = -80/(-60) = 1.333\)에서 \(2\theta_p = 53.1°\) 또는 \(233.1°\)이다. \(\theta = 26.6°\)를 넣으면 \(\sigma_{x'} = -20 - 30(0.6) - 40(0.8) = -70\)이므로 이것이 \(\sigma_2\)의 방향이고, \(\sigma_1\)은 116.6°이다. \(\tau_{\max} = 50\) MPa이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
