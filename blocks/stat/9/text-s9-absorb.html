@@ -8,68 +8,81 @@
 <article class="card q-card" id="text-s9-absorb" data-kind="본문" data-std="응통9-03-03">
   <header class="card-head"><span class="no"></span><h2>흡수 연쇄: 흡수 확률과 기대 흡수 시간</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>흡수 상태와 일시 상태로 전이행렬을 표준형으로 나눈다.</li>
-        <li>기본 행렬 \(N = (I - Q)^{-1}\)로 기대 방문 횟수와 기대 흡수 시간을 구한다.</li>
-        <li>\(B = NR\)로 어느 흡수 상태에 닿을지의 확률을 구한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>전이행렬 (<a href="03-01.html">3.1절</a>), 상태의 분류 (<a href="03-02.html">3.2절</a>), 역행렬 (응통2 02단원).</li>
-      </ul>
-    </div>
-
-    <h3>언제 끝나고, 어떻게 끝나나</h3>
-    <p>도박꾼의 파산, 고객이 결국 구매하거나 이탈하는 과정, 환자가 회복하거나 사망하는 과정처럼 "한번 들어가면 나오지 않는" 상태가 있는 연쇄가 많습니다. 관심은 정상분포가 아니라 두 질문입니다. 어느 끝(흡수 상태)에 도달하는가, 그리고 거기까지 몇 단계 걸리는가. 2.1절에서 점화식으로 풀었던 문제를 행렬로 한꺼번에 풉니다.</p>
+    <p class="q-ask">고객은 결국 구매하거나 이탈하고, 환자는 회복하거나 사망하며, 도박꾼은 목표에 닿거나 파산한다. 이렇게 한번 들어가면 나오지 않는 상태가 있을 때 궁금한 것은 두 가지이다. 어느 끝에 닿을까? 그리고 거기까지 몇 단계 걸릴까? 2.1절에서는 점화식을 하나씩 풀었는데, 상태가 많아도 한꺼번에 풀 방법이 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="0과 10이 흡수 상태인 대칭 랜덤워크에서 처음 가진 돈 k에 따른 흡수까지의 기대 단계 수 막대와 10에 흡수될 확률. 기대 단계 수는 9, 16, 21, 24, 25, 24, 21, 16, 9로 k(10 − k)이고, 10에 흡수될 확률은 0.1에서 0.9까지 직선 k/10이다">
+        <line x1="55" y1="180" x2="380" y2="180" class="ax"/>
+        <line x1="55" y1="180" x2="55" y2="20" class="ax"/>
+        <text x="55" y="195" text-anchor="middle" class="s">0</text>
+        <text x="120" y="195" text-anchor="middle" class="s">2</text>
+        <text x="185" y="195" text-anchor="middle" class="s">4</text>
+        <text x="250" y="195" text-anchor="middle" class="s">6</text>
+        <text x="315" y="195" text-anchor="middle" class="s">8</text>
+        <text x="380" y="195" text-anchor="middle" class="s">10</text>
+        <text x="50" y="184" text-anchor="end" class="s">0</text>
+        <text x="50" y="155.4" text-anchor="end" class="s">5</text>
+        <text x="50" y="126.9" text-anchor="end" class="s">10</text>
+        <text x="50" y="98.3" text-anchor="end" class="s">15</text>
+        <text x="50" y="69.7" text-anchor="end" class="s">20</text>
+        <text x="50" y="41.1" text-anchor="end" class="s">25</text>
+        <text x="380" y="209" text-anchor="end" class="s">처음 가진 돈 k</text>
+        <text x="61" y="24" class="s">흡수까지 기대 단계 수</text>
+        <rect x="76.5" y="128.6" width="22" height="51.4" class="la a"/><text x="87.5" y="123.6" text-anchor="middle" class="s">9</text>
+        <rect x="109" y="88.6" width="22" height="91.4" class="la a"/><text x="120" y="83.6" text-anchor="middle" class="s">16</text>
+        <rect x="141.5" y="60" width="22" height="120" class="la a"/><text x="152.5" y="55" text-anchor="middle" class="s">21</text>
+        <rect x="174" y="42.9" width="22" height="137.1" class="la a"/><text x="185" y="37.9" text-anchor="middle" class="s">24</text>
+        <rect x="206.5" y="37.1" width="22" height="142.9" class="la a"/><text x="217.5" y="32.1" text-anchor="middle" class="s">25</text>
+        <rect x="239" y="42.9" width="22" height="137.1" class="la a"/><text x="250" y="37.9" text-anchor="middle" class="s">24</text>
+        <rect x="271.5" y="60" width="22" height="120" class="la a"/><text x="282.5" y="55" text-anchor="middle" class="s">21</text>
+        <rect x="304" y="88.6" width="22" height="91.4" class="la a"/><text x="315" y="83.6" text-anchor="middle" class="s">16</text>
+        <rect x="336.5" y="128.6" width="22" height="51.4" class="la a"/><text x="347.5" y="123.6" text-anchor="middle" class="s">9</text>
+        <path d="M87.5 164 L120 148 L152.5 132 L185 116 L217.5 100 L250 84 L282.5 68 L315 52 L347.5 36" class="d"/>
+        <circle cx="87.5" cy="164" r="3.5" class="fd"/><circle cx="120" cy="148" r="3.5" class="fd"/><circle cx="152.5" cy="132" r="3.5" class="fd"/><circle cx="185" cy="116" r="3.5" class="fd"/><circle cx="217.5" cy="100" r="3.5" class="fd"/><circle cx="250" cy="84" r="3.5" class="fd"/><circle cx="282.5" cy="68" r="3.5" class="fd"/><circle cx="315" cy="52" r="3.5" class="fd"/><circle cx="347.5" cy="36" r="3.5" class="fd"/>
+        <text x="395" y="44" class="s">대칭, 0과 10이 흡수</text><text x="395" y="70" class="s ta">막대 N1의 성분</text><text x="395" y="86" class="s ta">= k(10 − k)</text><text x="395" y="112" class="s td">점 10에 흡수될</text><text x="395" y="128" class="s td">확률 (오른쪽 눈금</text><text x="395" y="144" class="s td">0~1) = k/10</text>
+      </svg>
+      <figcaption>그림 1. 기본 행렬로 한꺼번에 구한 기대 흡수 시간(막대)과 흡수 확률(빨간 점, 오른쪽 눈금 0~1). 0과 10이 흡수 상태인 대칭 랜덤워크에서 \(N = (I - Q)^{-1}\)을 실제로 계산한 결과가 2.1절의 \(k(10-k)\)와 \(k/10\)에 맞는다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>전이행렬(<a href="03-01.html">3.1절</a>), 상태의 분류(<a href="03-02.html">3.2절</a>), 역행렬(<a href="../2/02-01.html">응통2 2단원</a>)을 쓴다.</div>
+    <p>처음 질문의 답은 행렬이다. 전이행렬을 일시 상태와 흡수 상태로 나누면, 역행렬 하나로 모든 출발점의 흡수 확률과 기대 흡수 시간을 함께 얻는다(그림 1).</p>
 
     <h3><span class="no">3.3.1</span>표준형</h3>
     <div class="tb-env def">
-      <span class="lb">정의 3.3.1</span>
-      <p>\(P_{ii} = 1\)인 상태를 <b>흡수 상태</b>라 합니다. 모든 상태에서 흡수 상태로 갈 수 있는 연쇄를 <b>흡수 연쇄</b>라 하며, 일시 상태를 앞에 두면 전이행렬은 \(P = \begin{pmatrix} Q &amp; R \\ 0 &amp; I \end{pmatrix}\) 꼴입니다. \(Q\)는 일시 상태 사이, \(R\)은 일시 상태에서 흡수 상태로의 전이확률입니다.</p>
+      <span class="lb">정의 3.3.1 <span class="nm">(흡수 연쇄)</span></span>
+      <p>\(P_{ii} = 1\)인 상태를 <em>흡수 상태</em>라 하고, 모든 상태에서 흡수 상태로 갈 수 있는 연쇄를 <em>흡수 연쇄</em>라 한다. 일시 상태를 앞에 두면 전이행렬은 \(P = \begin{pmatrix} Q & R \\ 0 & I \end{pmatrix}\) 꼴이 된다. 여기서 \(Q\)는 일시 상태 사이, \(R\)은 일시 상태에서 흡수 상태로의 전이확률이다.</p>
     </div>
-    <p>흡수 연쇄에서는 확률 1로 결국 흡수되므로 \(Q^n \to 0\)입니다.</p>
+    <p>흡수 연쇄에서는 확률 1로 결국 흡수되므로 \(Q^n \to 0\)이다.</p>
 
     <h3><span class="no">3.3.2</span>기본 행렬</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 3.3.2</span>
-      <p>\(N = (I - Q)^{-1} = I + Q + Q^2 + \cdots\)가 존재하고, \(N_{ij}\)는 일시 상태 \(i\)에서 출발해 흡수되기 전까지 일시 상태 \(j\)를 방문하는 기대 횟수이다(출발 시점 포함). 따라서 (가) \(i\)에서 흡수까지의 기대 단계 수는 \(t = N\mathbf 1\)의 \(i\)번째 성분, (나) \(i\)에서 출발해 흡수 상태 \(k\)에 흡수될 확률은 \(B = NR\)의 \((i, k)\) 성분이다.</p>
+      <span class="lb">정리 3.3.1 <span class="nm">(기본 행렬)</span></span>
+      <p>\(N = (I - Q)^{-1} = I + Q + Q^2 + \cdots\)가 존재하고, \(N_{ij}\)는 일시 상태 \(i\)에서 출발해 흡수되기 전까지 일시 상태 \(j\)를 방문하는 기대 횟수이다(출발 시점 포함). 따라서 (가) \(i\)에서 흡수까지의 기대 단계 수는 \(t = N\mathbf 1\)의 \(i\)번째 성분이고, (나) \(i\)에서 출발해 흡수 상태 \(k\)에 흡수될 확률은 \(B = NR\)의 \((i, k)\) 성분이다.</p>
     </div>
-    <p class="tb-proof">\((Q^n)_{ij}\)는 \(n\)단계 뒤 아직 흡수되지 않고 \(j\)에 있을 확률이므로 \(j\) 방문 횟수의 기대값은 \(\sum_n(Q^n)_{ij} = N_{ij}\). \(Q^n \to 0\)이 등비급수의 수렴을 보장합니다. (가)는 모든 일시 상태의 방문 횟수를 더한 것입니다. (나) 마지막으로 머문 일시 상태가 \(j\)이고 거기서 \(k\)로 넘어갈 확률을 더하면 \(\sum_j N_{ij}R_{jk}\)입니다. <span class="qed">∎</span></p>
-    <p>(가)와 (나)는 첫 단계 분석의 행렬판이기도 합니다. \(t = \mathbf 1 + Qt\), \(B = R + QB\)를 풀면 같은 답이 나옵니다.</p>
-
+    <p class="tb-proof"><span class="lb">증명.</span> \((Q^n)_{ij}\)는 \(n\)단계 뒤 아직 흡수되지 않고 \(j\)에 있을 확률이므로, \(j\) 방문 횟수의 기댓값은 \(\sum_n(Q^n)_{ij} = N_{ij}\)이다. 이때 \(Q^n \to 0\)이 등비급수의 수렴을 보장한다. (가)는 모든 일시 상태의 방문 횟수를 더한 것이다. (나)는 마지막으로 머문 일시 상태가 \(j\)이고 거기서 \(k\)로 넘어갈 확률을 더한 \(\sum_j N_{ij}R_{jk}\)이다. <span class="qed">∎</span></p>
+    <p>(가)와 (나)는 첫 단계 분석의 행렬판이기도 하다. 다시 말해 \(t = \mathbf 1 + Qt\), \(B = R + QB\)를 풀면 같은 답이 나온다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 3.3.3</span>
-      <p>대칭 랜덤워크에서 0과 4가 흡수 상태인 도박꾼의 파산(일시 상태 1, 2, 3)의 \(N\), 기대 흡수 시간, 4에 흡수될 확률을 구하세요.</p>
+      <span class="lb">예제 3.3.1</span>
+      <p>0과 4가 흡수 상태인 대칭 랜덤워크(일시 상태 1, 2, 3)에서 \(N\), 기대 흡수 시간, 4에 흡수될 확률을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(Q = \begin{pmatrix}0 &amp; 1/2 &amp; 0\\ 1/2 &amp; 0 &amp; 1/2\\ 0 &amp; 1/2 &amp; 0\end{pmatrix}\). \(I - Q\)의 역행렬은 \(N = \begin{pmatrix}3/2 &amp; 1 &amp; 1/2\\ 1 &amp; 2 &amp; 1\\ 1/2 &amp; 1 &amp; 3/2\end{pmatrix}\). 행의 합 \(t = (3, 4, 3)\)으로 2.1절의 \(k(N-k)\) = 3, 4, 3과 같습니다. \(R\)의 "4로 가는" 열은 \((0, 0, 1/2)^\top\)이므로 \(B\)의 그 열은 \((1/4, 1/2, 3/4)\), 곧 \(k/4\)입니다.</p>
+    <p><i>풀이.</i> \(Q = \begin{pmatrix}0 & 1/2 & 0\\ 1/2 & 0 & 1/2\\ 0 & 1/2 & 0\end{pmatrix}\)이고, \(I - Q\)의 역행렬은 \(N = \begin{pmatrix}3/2 & 1 & 1/2\\ 1 & 2 & 1\\ 1/2 & 1 & 3/2\end{pmatrix}\)이다. 행의 합 \(t = (3, 4, 3)\)은 2.1절의 \(k(4-k)\)와 같다. 또 \(R\)에서 4로 가는 열은 \((0, 0, 1/2)^\top\)이므로 \(B\)의 그 열은 \((1/4, 1/2, 3/4)\), 곧 \(k/4\)이다. R로는 다음과 같이 계산한다.</p>
     <pre><code>Q &lt;- matrix(c(0,.5,0, .5,0,.5, 0,.5,0), 3, byrow = TRUE)
 N &lt;- solve(diag(3) - Q); rowSums(N)
 R &lt;- matrix(c(.5,0, 0,0, 0,.5), 3, byrow = TRUE)   # 열: 0으로, 4로
 N %*% R</code></pre>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>표준형 \(\begin{pmatrix}Q &amp; R\\ 0 &amp; I\end{pmatrix}\), 기본 행렬 \(N = (I - Q)^{-1}\).</li>
-        <li>\(N_{ij}\): 기대 방문 횟수, \(N\mathbf 1\): 기대 흡수 시간, \(NR\): 흡수 확률.</li>
-        <li>첫 단계 분석의 점화식을 행렬로 한꺼번에 푼 것입니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>흡수 연쇄의 전이행렬은 표준형 \(\begin{pmatrix}Q & R\\ 0 & I\end{pmatrix}\)으로 쓰며, 기본 행렬 \(N = (I - Q)^{-1}\)의 성분은 기대 방문 횟수이다. 기대 흡수 시간은 \(N\mathbf 1\), 흡수 확률은 \(NR\)이다. 이는 첫 단계 분석의 점화식을 행렬로 한꺼번에 푼 것이다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">3.3.4</span>연습문제</h3>
+      <h3><span class="no">3.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>일시 상태 하나(1)와 흡수 상태 두 개(0, 2)가 있고 \(P_{11} = 0.5\), \(P_{10} = 0.2\), \(P_{12} = 0.3\)입니다. 기대 흡수 시간과 2에 흡수될 확률은?
-          <details><summary>답</summary><p>\(N = 1/(1 - 0.5) = 2\). 기대 시간 2단계. \(B = 2 \times 0.3 = 0.6\).</p></details>
+        <li>일시 상태 하나(1)와 흡수 상태 두 개(0, 2)가 있고 \(P_{11} = 0.5\), \(P_{10} = 0.2\), \(P_{12} = 0.3\)이다. 기대 흡수 시간과 2에 흡수될 확률은 얼마인가?
+          <details><summary>답</summary><p>\(N = 1/(1 - 0.5) = 2\)이므로 기대 시간은 2단계이고, \(B = 2 \times 0.3 = 0.6\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>동전을 던져 앞앞(HH)이 처음 나올 때까지의 기대 횟수를 흡수 연쇄로 구하세요(상태: 처음, H 하나, HH).
-          <details><summary>답</summary><p>\(Q = \begin{pmatrix}1/2 &amp; 1/2\\ 1/2 &amp; 0\end{pmatrix}\), \(I - Q = \begin{pmatrix}1/2 &amp; -1/2\\ -1/2 &amp; 1\end{pmatrix}\), 행렬식 1/4, \(N = \begin{pmatrix}4 &amp; 2\\ 2 &amp; 2\end{pmatrix}\). 처음에서의 기대 시간 \(4 + 2 = 6\)번.</p></details>
+      <ol start="2">
+        <li>동전을 던져 앞앞(HH)이 처음 나올 때까지의 기대 횟수를 흡수 연쇄로 구하여라(상태는 처음, H 하나, HH).
+          <details><summary>답</summary><p>\(Q = \begin{pmatrix}1/2 & 1/2\\ 1/2 & 0\end{pmatrix}\), \(I - Q = \begin{pmatrix}1/2 & -1/2\\ -1/2 & 1\end{pmatrix}\)이고 행렬식은 1/4이므로 \(N = \begin{pmatrix}4 & 2\\ 2 & 2\end{pmatrix}\)이다. 처음에서의 기대 시간은 \(4 + 2 = 6\)번으로, 1.1절의 답과 같다.</p></details>
         </li>
       </ol>
     </div>
