@@ -8,37 +8,85 @@
 <article class="card q-card" id="text-m16-lu" data-kind="본문" data-std="수학16-03-02">
   <header class="card-head"><span class="no"></span><h2>LU 분해와 숄레스키 분해</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가우스 소거가 \(A = LU\) (\(L\)은 대각이 1인 하삼각, \(U\)는 상삼각) 분해와 같음을 보이고 승수가 \(L\)의 성분임을 안다.</li>
-        <li>한 번 분해해 두면 오른쪽 변이 여러 개여도 \(O(n^2)\)으로 풀 수 있음을 이해한다.</li>
-        <li>대칭 양정치 행렬의 숄레스키 분해 \(A = LL^T\)를 계산하고 구현한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>가우스 소거와 피벗팅 (<a href="03-01.html">3.1절</a>), 행렬의 곱과 전치, 양정치 행렬 (<a href="../math8/index.html">수학8</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">같은 행렬 \(A\)에 오른쪽 변 \(\mathbf b\)만 바꾼 방정식을 수천 번 풀어야 한다면, 매번 처음부터 가우스 소거를 해야 할까? 소거 과정에서 얻은 정보를 저장해 두었다가 다시 쓸 수는 없을까? 그리고 행렬이 대칭이고 양정치이면 무엇을 더 아낄 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="행렬 A를 하삼각 L과 상삼각 U의 곱으로 나타낸 그림">
+        <text x="47.0" y="72.0" text-anchor="middle" class="s">2</text>
+        <text x="81.0" y="72.0" text-anchor="middle" class="s">1</text>
+        <text x="115.0" y="72.0" text-anchor="middle" class="s">1</text>
+        <text x="47.0" y="106.0" text-anchor="middle" class="s">4</text>
+        <text x="81.0" y="106.0" text-anchor="middle" class="s">3</text>
+        <text x="115.0" y="106.0" text-anchor="middle" class="s">3</text>
+        <text x="47.0" y="140.0" text-anchor="middle" class="s">8</text>
+        <text x="81.0" y="140.0" text-anchor="middle" class="s">7</text>
+        <text x="115.0" y="140.0" text-anchor="middle" class="s">9</text>
+        <rect x="30" y="50" width="102" height="102" class="gd" style="fill:none"/>
+        <text x="152" y="106" text-anchor="middle" class="s">=</text>
+        <text x="187.0" y="72.0" text-anchor="middle" class="s">1</text>
+        <text x="221.0" y="72.0" text-anchor="middle" class="s">0</text>
+        <text x="255.0" y="72.0" text-anchor="middle" class="s">0</text>
+        <rect x="170" y="84" width="34" height="34" class="fc" style="opacity:0.35"/>
+        <text x="187.0" y="106.0" text-anchor="middle" class="s">2</text>
+        <text x="221.0" y="106.0" text-anchor="middle" class="s">1</text>
+        <text x="255.0" y="106.0" text-anchor="middle" class="s">0</text>
+        <rect x="170" y="118" width="34" height="34" class="fc" style="opacity:0.35"/>
+        <text x="187.0" y="140.0" text-anchor="middle" class="s">4</text>
+        <rect x="204" y="118" width="34" height="34" class="fc" style="opacity:0.35"/>
+        <text x="221.0" y="140.0" text-anchor="middle" class="s">3</text>
+        <text x="255.0" y="140.0" text-anchor="middle" class="s">1</text>
+        <rect x="170" y="50" width="102" height="102" class="gd" style="fill:none"/>
+        <text x="290" y="106" text-anchor="middle" class="s">×</text>
+        <rect x="310" y="50" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="327.0" y="72.0" text-anchor="middle" class="s">2</text>
+        <rect x="344" y="50" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="361.0" y="72.0" text-anchor="middle" class="s">1</text>
+        <rect x="378" y="50" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="395.0" y="72.0" text-anchor="middle" class="s">1</text>
+        <text x="327.0" y="106.0" text-anchor="middle" class="s">0</text>
+        <rect x="344" y="84" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="361.0" y="106.0" text-anchor="middle" class="s">1</text>
+        <rect x="378" y="84" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="395.0" y="106.0" text-anchor="middle" class="s">1</text>
+        <text x="327.0" y="140.0" text-anchor="middle" class="s">0</text>
+        <text x="361.0" y="140.0" text-anchor="middle" class="s">0</text>
+        <rect x="378" y="118" width="34" height="34" class="fa" style="opacity:0.35"/>
+        <text x="395.0" y="140.0" text-anchor="middle" class="s">2</text>
+        <rect x="310" y="50" width="102" height="102" class="gd" style="fill:none"/>
+        <text x="81" y="180" text-anchor="middle" class="s">A</text>
+        <text x="221" y="180" text-anchor="middle" class="tc">L, 승수를 적어 둠</text>
+        <text x="361" y="180" text-anchor="middle" class="ta">U, 소거 결과</text>
+        <text x="440" y="70" class="s">det A</text>
+        <text x="440" y="90" class="s">= 2 · 1 · 2 = 4</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.2.1의 행렬 \(A\)를 \(L\)과 \(U\)의 곱으로 나타낸 것이다. \(L\)의 대각선 아래(주황)에는 소거할 때 쓴 승수가 그대로 적혀 있고, \(U\)(파랑)는 소거가 끝난 상삼각 행렬이다. 행렬식은 \(U\)의 대각 성분의 곱 4이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>가우스 소거와 피벗팅(<a href="03-01.html">3.1절</a>), 행렬의 곱과 전치, 양정치 행렬(<a href="../math8/index.html">수학8</a>)을 쓴다.</div>
 
-    <h3><span class="no">3.2.1</span>소거는 분해다</h3>
-    <p>가우스 소거에서 \(k\)단계에 승수 \(m_{ik}\)를 곱해 빼는 것은 기본행렬을 왼쪽에 곱하는 것과 같습니다. 이것을 모두 되돌리면</p>
-    \[A = LU, \qquad L = \begin{pmatrix}1 & & \\ m_{21} & 1 & \\ m_{31} & m_{32} & 1\end{pmatrix}\]
-    <p>(\(n = 3\)의 경우)이고 \(U\)는 소거가 끝난 상삼각 행렬입니다. 승수를 버리지 않고 \(L\)의 자리에 적어 두기만 하면 분해가 됩니다. 피벗팅을 하면 \(PA = LU\) (\(P\)는 행 교환의 순열 행렬)입니다.</p>
-    <div class="tb-env ex"><b>예 3.2.1</b> \(A = \begin{pmatrix}2 & 1 & 1\\ 4 & 3 & 3\\ 8 & 7 & 9\end{pmatrix}\)이면 승수 \(m_{21} = 2\), \(m_{31} = 4\)로 1열을 지운 뒤 \(m_{32} = 3\)이고
-      \[L = \begin{pmatrix}1 & 0 & 0\\ 2 & 1 & 0\\ 4 & 3 & 1\end{pmatrix}, \qquad U = \begin{pmatrix}2 & 1 & 1\\ 0 & 1 & 1\\ 0 & 0 & 2\end{pmatrix}.\]</div>
+    <h3><span class="no">3.2.1</span>소거는 분해이다</h3>
+    <p>가우스 소거의 \(k\)단계에서 승수 \(m_{ik}\)를 곱해 빼는 것은 기본행렬을 왼쪽에 곱하는 것과 같다. 이것들을 모두 되돌리면 \(n = 3\)일 때 다음을 얻는다.</p>
+    \[A = LU, \qquad L = \begin{pmatrix}1 &amp; &amp; \\ m_{21} &amp; 1 &amp; \\ m_{31} &amp; m_{32} &amp; 1\end{pmatrix}\]
+    <p>여기서 \(U\)는 소거가 끝난 상삼각 행렬이다. 즉 승수를 버리지 않고 \(L\)의 자리에 적어 두기만 하면 분해가 된다. 피벗팅을 하면 행 교환의 순열 행렬 \(P\)에 대해 \(PA = LU\)가 된다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.1</span>
+      <p>\(A = \begin{pmatrix}2 &amp; 1 &amp; 1\\ 4 &amp; 3 &amp; 3\\ 8 &amp; 7 &amp; 9\end{pmatrix}\)의 LU 분해를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 승수 \(m_{21} = 2\), \(m_{31} = 4\)로 1열을 지운 뒤 \(m_{32} = 3\)으로 2열을 지운다. 따라서 \(L = \begin{pmatrix}1 &amp; 0 &amp; 0\\ 2 &amp; 1 &amp; 0\\ 4 &amp; 3 &amp; 1\end{pmatrix}\), \(U = \begin{pmatrix}2 &amp; 1 &amp; 1\\ 0 &amp; 1 &amp; 1\\ 0 &amp; 0 &amp; 2\end{pmatrix}\)이며, 그림 1이 이 분해이다.</p>
 
     <h3><span class="no">3.2.2</span>분해를 쓰는 법</h3>
-    <p>\(A\mathbf x = \mathbf b\)는 \(L\mathbf y = \mathbf b\)를 앞으로 대입, \(U\mathbf x = \mathbf y\)를 뒤로 대입으로 풀면 됩니다. 둘 다 약 \(n^2\)번입니다. 같은 \(A\)에 오른쪽 변만 바뀌는 문제(시간에 따라 바뀌는 하중, 역행렬의 열 등)가 많으므로, 비싼 분해(\(\frac23n^3\))는 한 번만 하고 대입만 반복합니다. 행렬식도 \(\det A = \pm\prod u_{ii}\)로 바로 나옵니다.</p>
+    <p>\(A\mathbf x = \mathbf b\)는 먼저 \(L\mathbf y = \mathbf b\)를 앞으로 대입해 풀고, 다음에 \(U\mathbf x = \mathbf y\)를 뒤로 대입해 풀면 된다. 두 대입은 모두 약 \(n^2\)번의 계산이다. 시간에 따라 바뀌는 하중이나 역행렬의 각 열처럼 같은 \(A\)에 오른쪽 변만 바뀌는 문제가 많으므로, 비싼 분해는 \(\frac23n^3\)번의 계산으로 한 번만 하고 대입만 되풀이한다. 행렬식도 \(\det A = \pm\prod u_{ii}\)로 곧바로 나온다.</p>
 
     <h3><span class="no">3.2.3</span>숄레스키 분해</h3>
-    <p>\(A\)가 대칭이고 양정치(모든 \(\mathbf x \ne 0\)에 대해 \(\mathbf x^TA\mathbf x > 0\))이면 피벗팅 없이 \(A = LL^T\) (\(L\)은 대각이 양수인 하삼각)로 분해됩니다. 성분을 비교하면 \(j = 1, 2, \dots\)열 순서로</p>
-    \[\ell_{jj} = \sqrt{a_{jj} - \sum_{k&lt;j}\ell_{jk}^2}, \qquad \ell_{ij} = \frac1{\ell_{jj}}\left(a_{ij} - \sum_{k&lt;j}\ell_{ik}\ell_{jk}\right)\ (i > j).\]
-    <p>양정치이면 제곱근 안이 늘 양수입니다(이것이 실패하면 양정치가 아니라는 판정법도 됩니다). 계산량은 LU의 절반인 약 \(\frac13n^3\)이고 저장도 절반입니다.</p>
-    <div class="tb-env ex"><b>예 3.2.2</b> \(A = \begin{pmatrix}4 & 2 & 2\\ 2 & 5 & 3\\ 2 & 3 & 6\end{pmatrix}\)이면 \(\ell_{11} = 2\), \(\ell_{21} = \ell_{31} = 1\), \(\ell_{22} = \sqrt{5 - 1} = 2\), \(\ell_{32} = \frac{3 - 1}2 = 1\), \(\ell_{33} = \sqrt{6 - 1 - 1} = 2\).</div>
+    <p>\(A\)가 대칭이고 양정치, 곧 모든 \(\mathbf x \ne 0\)에 대해 \(\mathbf x^TA\mathbf x > 0\)이면, 피벗팅 없이 대각 성분이 양수인 하삼각 행렬 \(L\)로 \(A = LL^T\)라 분해된다. 이것을 <em>숄레스키 분해</em>라 하며, 성분을 비교하면 \(j = 1, 2, \dots\)열 순서로 다음과 같이 구한다.</p>
+    \[\ell_{jj} = \sqrt{a_{jj} - \sum_{k&lt;j}\ell_{jk}^2}, \qquad \ell_{ij} = \frac1{\ell_{jj}}\left(a_{ij} - \sum_{k&lt;j}\ell_{ik}\ell_{jk}\right)\ (i > j)\]
+    <p>양정치이면 제곱근 안이 늘 양수이며, 거꾸로 이것이 실패하면 양정치가 아니라는 판정법도 된다. 계산량은 LU 분해의 절반인 약 \(\frac13n^3\)이고 저장 공간도 절반이다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.2.2</span>
+      <p>\(A = \begin{pmatrix}4 &amp; 2 &amp; 2\\ 2 &amp; 5 &amp; 3\\ 2 &amp; 3 &amp; 6\end{pmatrix}\)의 숄레스키 분해를 구하여라.</p>
+    </div>
+    <p><i>풀이.</i> 1열에서 \(\ell_{11} = 2\), \(\ell_{21} = \ell_{31} = 1\)이다. 2열에서 \(\ell_{22} = \sqrt{5 - 1} = 2\), \(\ell_{32} = \frac{3 - 1}2 = 1\)이고, 3열에서 \(\ell_{33} = \sqrt{6 - 1 - 1} = 2\)이다.</p>
 
     <h3><span class="no">3.2.4</span>구현</h3>
-    <p>숄레스키 분해를 파이썬으로 쓰면 다음과 같습니다(행렬은 리스트의 리스트).</p>
+    <p>숄레스키 분해를 파이썬으로 쓰면 다음과 같으며, 행렬은 리스트의 리스트로 나타낸다.</p>
     <pre><code>def cholesky(A):
     n = len(A); L = [[0.0]*n for _ in range(n)]
     for j in range(n):
@@ -48,18 +96,11 @@
         for i in range(j+1, n):
             L[i][j] = (A[i][j] - sum(L[i][k]*L[j][k] for k in range(j))) / L[j][j]
     return L</code></pre>
-    <p>실제 계산에서는 NumPy의 <code>numpy.linalg.cholesky</code>, SciPy의 <code>scipy.linalg.lu_factor</code>처럼 최적화된 라이브러리(LAPACK)를 씁니다.</p>
+    <p>실제 계산에서는 NumPy의 <code>numpy.linalg.cholesky</code>나 SciPy의 <code>scipy.linalg.lu_factor</code>처럼 최적화된 라이브러리를 쓴다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) 역행렬을 구해 \(A^{-1}\mathbf b\)를 계산하는 것이 낫다고 여긴다. 역행렬은 분해보다 약 3배 비싸고 덜 정확하다. (2) 모든 대칭 행렬이 숄레스키 분해된다고 여긴다. 양정치여야 한다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>역행렬을 구해 \(A^{-1}\mathbf b\)를 계산하는 편이 낫다고 여기기 쉽지만, 역행렬을 구하는 일은 분해보다 약 3배 비싸고 덜 정확하다. 또 모든 대칭 행렬이 숄레스키 분해된다고 생각하는 것도 틀렸다. 대칭일 뿐 아니라 양정치여야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>가우스 소거 = \(LU\) 분해(승수가 \(L\)), 피벗팅이 있으면 \(PA = LU\).</li>
-        <li>분해 \(\frac23n^3\) 한 번, 오른쪽 변마다 대입 \(2n^2\).</li>
-        <li>대칭 양정치: \(A = LL^T\), 계산량 절반, 피벗팅 불필요.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 매번 소거할 필요가 없다. 소거에서 쓴 승수를 하삼각 행렬 \(L\)에 적어 두면 \(A = LU\)라는 분해가 되고, 그 뒤로는 오른쪽 변이 바뀔 때마다 \(n^2\)번 정도의 앞으로 대입과 뒤로 대입만 하면 된다. 행렬이 대칭이고 양정치이면 숄레스키 분해 \(A = LL^T\)를 써서 계산과 저장을 다시 절반으로 줄인다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.5</span>연습문제</h3>

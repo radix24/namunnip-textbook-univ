@@ -8,43 +8,97 @@
 <article class="card q-card" id="text-m16-pivot" data-kind="본문" data-std="수학16-03-01">
   <header class="card-head"><span class="no"></span><h2>가우스 소거와 피벗팅</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>가우스 소거와 뒤로 대입의 계산량이 \(\frac23n^3\) 정도임을 센다.</li>
-        <li>피벗(나누는 대각 성분)이 매우 작으면 반올림 오차가 폭발하는 예를 보인다.</li>
-        <li>부분 피벗팅(열에서 절댓값이 가장 큰 성분을 피벗으로)이 문제를 해결하는 이유를 승수의 크기로 설명한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>행렬과 기본 행 연산 (<a href="../math1/index.html">수학1</a>), 부동소수점과 자릿수 손실 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">연립일차방정식은 가우스 소거로 기계적으로 풀 수 있다. 그런데 컴퓨터에서 소거하면 해가 거의 1인 간단한 방정식에서 \(x = 0\)이라는 엉뚱한 답이 나오기도 한다. 행렬에는 문제가 없는데 왜 이런 일이 생길까? 소거의 순서를 어떻게 바꾸면 피할 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="피벗 크기에 따른 소거 결과의 오차">
+        <line x1="50" y1="175.0" x2="360" y2="175.0" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M65.1 160.4 L80.2 151.3 L95.4 145.2 L110.5 135.5 L125.6 125.4 L140.7 123.9 L155.9 106.5 L171.0 97.7 L186.1 90.9 L201.2 86.8 L216.3 86.8 L231.5 65.3 L246.6 55.1 L261.7 51.4 L276.8 51.4 L292.0 23.1 L307.1 23.9 L322.2 23.9 L337.3 23.9 L352.4 23.9" class="d" style="fill:none"/>
+        <path d="M65.1 175.0 L80.2 163.0 L95.4 175.0 L110.5 163.0 L125.6 175.0 L140.7 163.0 L155.9 175.0 L171.0 163.0 L186.1 175.0 L201.2 175.0 L216.3 175.0 L231.5 175.0 L246.6 163.0 L261.7 175.0 L276.8 163.0 L292.0 163.0 L307.1 175.0 L322.2 175.0 L337.3 175.0 L352.4 175.0" class="a" style="fill:none"/>
+        <circle cx="65.1" cy="160.4" r="2.2" class="fd"/>
+        <circle cx="80.2" cy="151.3" r="2.2" class="fd"/>
+        <circle cx="95.4" cy="145.2" r="2.2" class="fd"/>
+        <circle cx="110.5" cy="135.5" r="2.2" class="fd"/>
+        <circle cx="125.6" cy="125.4" r="2.2" class="fd"/>
+        <circle cx="140.7" cy="123.9" r="2.2" class="fd"/>
+        <circle cx="155.9" cy="106.5" r="2.2" class="fd"/>
+        <circle cx="171.0" cy="97.7" r="2.2" class="fd"/>
+        <circle cx="186.1" cy="90.9" r="2.2" class="fd"/>
+        <circle cx="201.2" cy="86.8" r="2.2" class="fd"/>
+        <circle cx="216.3" cy="86.8" r="2.2" class="fd"/>
+        <circle cx="231.5" cy="65.3" r="2.2" class="fd"/>
+        <circle cx="246.6" cy="55.1" r="2.2" class="fd"/>
+        <circle cx="261.7" cy="51.4" r="2.2" class="fd"/>
+        <circle cx="276.8" cy="51.4" r="2.2" class="fd"/>
+        <circle cx="292.0" cy="23.1" r="2.2" class="fd"/>
+        <circle cx="307.1" cy="23.9" r="2.2" class="fd"/>
+        <circle cx="322.2" cy="23.9" r="2.2" class="fd"/>
+        <circle cx="337.3" cy="23.9" r="2.2" class="fd"/>
+        <circle cx="352.4" cy="23.9" r="2.2" class="fd"/>
+        <circle cx="65.1" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="80.2" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="95.4" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="110.5" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="125.6" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="140.7" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="155.9" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="171.0" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="186.1" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="201.2" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="216.3" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="231.5" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="246.6" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="261.7" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="276.8" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="292.0" cy="163.0" r="2.2" class="fa"/>
+        <circle cx="307.1" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="322.2" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="337.3" cy="175.0" r="2.2" class="fa"/>
+        <circle cx="352.4" cy="175.0" r="2.2" class="fa"/>
+        <text x="65" y="190" text-anchor="middle" class="s">10⁻¹</text>
+        <text x="126" y="190" text-anchor="middle" class="s">10⁻⁵</text>
+        <text x="201" y="190" text-anchor="middle" class="s">10⁻¹⁰</text>
+        <text x="277" y="190" text-anchor="middle" class="s">10⁻¹⁵</text>
+        <text x="352" y="190" text-anchor="middle" class="s">10⁻²⁰</text>
+        <text x="44" y="28" text-anchor="end" class="s">1</text>
+        <text x="44" y="63" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="44" y="99" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="44" y="135" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="44" y="170" text-anchor="end" class="s">10⁻¹⁶</text>
+        <text x="205" y="207" text-anchor="middle" class="s">피벗 ε</text>
+        <text x="375" y="40" class="td">피벗팅 없이 구한 x 의 오차</text>
+        <text x="375" y="60" class="ta">부분 피벗팅</text>
+        <text x="375" y="80" class="s">ε 가 작을수록 오차가 커져</text>
+        <text x="375" y="100" class="s">ε ≤ 10⁻¹⁶ 이면 오차 100% 이상</text>
+        <text x="375" y="120" class="s">피벗팅하면 늘 10⁻¹⁶ 이하</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.1.1의 방정식을 피벗 \(\varepsilon\)을 바꿔 가며 풀었을 때 \(x\)의 오차이다. 피벗팅 없이 소거하면(빨강) 오차가 대략 \(\frac{10^{-16}}\varepsilon\)으로 커져, \(\varepsilon \le 10^{-16}\)이면 답이 완전히 틀린다. 두 행을 바꾸는 부분 피벗팅(파랑)을 쓰면 오차가 늘 \(10^{-16}\) 이하이다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>행렬과 기본 행 연산(<a href="../math1/index.html">수학1</a>), 부동소수점과 자릿수 손실(<a href="01-02.html">1.2절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.1.1</span>가우스 소거의 계산량</h3>
-    <p>\(A\mathbf x = \mathbf b\) (\(A\)는 \(n\times n\))에서 \(k\)번째 단계는 \(k\)행 아래의 각 행 \(i\)에서 승수 \(m_{ik} = \frac{a_{ik}}{a_{kk}}\)를 곱한 \(k\)행을 뺍니다. 이 단계의 곱셈은 약 \((n - k)^2\)번이므로 전체는 \(\sum_k(n - k)^2 \approx \frac{n^3}3\)번(덧셈도 같은 수)이고, 곱셈과 덧셈을 합쳐 약 \(\frac23n^3\)번입니다. 뒤로 대입은 \(n^2\) 정도로 훨씬 적습니다. \(n = 1000\)이면 약 \(7\times10^8\)번입니다.</p>
+    <p>\(n\times n\) 행렬 \(A\)에 대한 \(A\mathbf x = \mathbf b\)에서, 가우스 소거의 \(k\)번째 단계는 \(k\)행 아래의 각 행 \(i\)에서 승수 \(m_{ik} = \frac{a_{ik}}{a_{kk}}\)를 곱한 \(k\)행을 뺀다. 이때 나누는 수 \(a_{kk}\)를 피벗이라 한다. 이 단계의 곱셈은 약 \((n - k)^2\)번이므로 전체는 \(\sum_k(n - k)^2 \approx \frac{n^3}3\)번이고, 덧셈도 같은 수라 합쳐서 약 \(\frac23n^3\)번이다. 뒤로 대입은 \(n^2\) 정도로 훨씬 적다. 예를 들어 \(n = 1000\)이면 약 \(7\times10^8\)번이다.</p>
 
     <h3><span class="no">3.1.2</span>작은 피벗의 위험</h3>
-    <div class="tb-env ex"><b>예 3.1.1</b> \(\varepsilon = 10^{-20}\)일 때
-      \[\begin{pmatrix}\varepsilon & 1\\ 1 & 1\end{pmatrix}\begin{pmatrix}x\\ y\end{pmatrix} = \begin{pmatrix}1\\ 2\end{pmatrix}\]
-      의 해는 \(x = \frac1{1 - \varepsilon} \approx 1\), \(y = \frac{1 - 2\varepsilon}{1 - \varepsilon} \approx 1\)입니다. 피벗 \(\varepsilon\)으로 소거하면 승수가 \(10^{20}\)이라 둘째 행이 \((0,\ 1 - 10^{20})\), 오른쪽이 \(2 - 10^{20}\)이 되는데, 배정밀도에서 둘 다 \(-10^{20}\)으로 반올림되어 \(y = 1\)입니다. 그런데 \(x = \frac{1 - y}\varepsilon = 0\)이 나옵니다. 참값 1과 완전히 다릅니다.</div>
-    <p>문제는 행렬이 아니라 소거 순서입니다. 승수가 크면 \(k\)행의 작은 반올림 오차가 크게 증폭되어 다른 행에 더해지고, 그 행의 원래 정보(여기서는 1과 2)가 지워집니다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.1</span>
+      <p>\(\varepsilon = 10^{-20}\)일 때 \(\begin{pmatrix}\varepsilon &amp; 1\\ 1 &amp; 1\end{pmatrix}\begin{pmatrix}x\\ y\end{pmatrix} = \begin{pmatrix}1\\ 2\end{pmatrix}\)을 피벗 \(\varepsilon\)으로 소거해 풀어라.</p>
+    </div>
+    <p><i>풀이.</i> 참값은 \(x = \frac1{1 - \varepsilon} \approx 1\), \(y = \frac{1 - 2\varepsilon}{1 - \varepsilon} \approx 1\)이다. 피벗 \(\varepsilon\)으로 소거하면 승수가 \(10^{20}\)이라 둘째 행이 \((0,\ 1 - 10^{20})\), 오른쪽이 \(2 - 10^{20}\)이 된다. 배정밀도에서는 둘 다 \(-10^{20}\)으로 반올림되어 \(y = 1\)이다. 그런데 이것을 첫째 식에 넣으면 \(x = \frac{1 - y}\varepsilon = 0\)이 나와 참값 1과 완전히 다르다.</p>
+    <p>문제는 행렬이 아니라 소거 순서에 있다. 승수가 크면 \(k\)행의 작은 반올림 오차가 크게 증폭되어 다른 행에 더해지고, 그 행이 원래 담고 있던 정보, 여기서는 1과 2가 지워진다.</p>
 
     <h3><span class="no">3.1.3</span>부분 피벗팅</h3>
-    <p>각 단계에서 \(k\)열의 \(k\)행 이하 성분 중 <b>절댓값이 가장 큰 것</b>이 있는 행을 \(k\)행과 바꾼 뒤 소거합니다. 그러면 모든 승수가 \(|m_{ik}| \le 1\)이 되어 오차가 크게 증폭되지 않습니다.</p>
-    <div class="tb-env ex"><b>예 3.1.2</b> 예 3.1.1에서 두 행을 바꾸면 피벗이 1, 승수가 \(\varepsilon\)이라 둘째 행은 \((0,\ 1 - \varepsilon) \approx (0, 1)\), 오른쪽은 \(1 - 2\varepsilon \approx 1\)이 되어 \(y = 1\), \(x = 2 - y = 1\)입니다. 정확합니다.</div>
-    <p>부분 피벗팅은 이론적으로 최악의 경우 성분이 \(2^{n-1}\)배까지 커질 수 있지만 실제 문제에서는 거의 일어나지 않아, 표준 라이브러리의 기본 방법입니다. 행 교환은 순열 행렬 \(P\)로 기록하며 다음 절의 \(PA = LU\)가 됩니다.</p>
-
-    <div class="tb-note"><b>흔한 오해</b>(1) 피벗이 0일 때만 행을 바꾸면 된다고 여긴다. 0이 아니어도 작으면 위험하다. (2) 피벗팅이 조건이 나쁜 문제(3.3절)까지 해결한다고 여긴다. 피벗팅은 알고리즘의 불안정성을 없앨 뿐, 문제 자체의 민감도는 바꾸지 못한다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>가우스 소거 약 \(\frac23n^3\)번, 뒤로 대입 약 \(n^2\)번.</li>
-        <li>작은 피벗은 큰 승수를 만들어 반올림 오차를 증폭한다.</li>
-        <li>부분 피벗팅: 열에서 가장 큰 성분을 피벗으로, 승수 \(|m| \le 1\).</li>
-      </ol>
+    <p>각 단계에서 \(k\)열의 \(k\)행 이하 성분 가운데 절댓값이 가장 큰 것이 있는 행을 \(k\)행과 바꾼 뒤 소거한다. 이것을 <em>부분 피벗팅</em>이라 한다. 그러면 모든 승수가 \(|m_{ik}| \le 1\)이 되어 오차가 크게 증폭되지 않는다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 3.1.2</span>
+      <p>예제 3.1.1을 부분 피벗팅으로 풀어라.</p>
     </div>
+    <p><i>풀이.</i> 두 행을 바꾸면 피벗이 1이고 승수가 \(\varepsilon\)이다. 둘째 행은 \((0,\ 1 - \varepsilon) \approx (0, 1)\), 오른쪽은 \(1 - 2\varepsilon \approx 1\)이 되어 \(y = 1\)이고, \(x = 2 - y = 1\)이다. 결과가 정확하다.</p>
+    <p>부분 피벗팅에서도 이론적으로는 최악의 경우 성분이 \(2^{n-1}\)배까지 커질 수 있다. 하지만 실제 문제에서는 거의 일어나지 않아, 표준 라이브러리의 기본 방법으로 쓰인다. 행 교환은 순열 행렬 \(P\)로 기록하며, 다음 절에서 이것이 \(PA = LU\)라는 분해가 된다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>피벗이 0일 때만 행을 바꾸면 된다고 여기기 쉽지만, 0이 아니어도 작으면 위험하다. 또 피벗팅이 조건이 나쁜 문제까지 해결한다고 생각하는 것도 틀렸다. 피벗팅은 알고리즘의 불안정성을 없앨 뿐, 3.3절에서 볼 문제 자체의 민감도는 바꾸지 못한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 엉뚱한 답은 작은 피벗으로 나누어 승수가 커지면서 반올림 오차가 증폭되고 다른 행의 정보를 지우기 때문에 생긴다. 행렬이 아니라 소거 순서의 문제이므로, 각 단계에서 절댓값이 가장 큰 성분을 피벗으로 고르는 부분 피벗팅으로 피할 수 있다. 그러면 모든 승수가 1 이하가 되어, 예제의 방정식도 정확하게 풀린다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.1.4</span>연습문제</h3>

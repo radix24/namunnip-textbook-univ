@@ -8,47 +8,98 @@
 <article class="card q-card" id="text-m16-heatfd" data-kind="본문" data-std="수학16-07-02">
   <header class="card-head"><span class="no"></span><h2>열방정식의 양적 방법과 안정 조건</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>열방정식 \(u_t = u_{xx}\)를 시간은 전진 차분, 공간은 중심 차분으로 바꾼 양적(FTCS) 방법을 세운다.</li>
-        <li>푸리에 모드를 넣는 폰 노이만 분석으로 증폭률 \(g = 1 - 4r\sin^2\frac{\theta}2\)를 구하고, 안정 조건 \(r = \frac k{h^2} \le \frac12\)를 유도한다.</li>
-        <li>이 조건이 6.3절의 강성 문제와 같은 현상임을 이해한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>경계치 문제의 이산화 (<a href="07-01.html">7.1절</a>), 절대 안정 영역 (<a href="06-03.html">6.3절</a>), 삼각함수의 덧셈정리와 반각 공식(고등학교 수학).</li>
-      </ul>
-    </div>
+    <p class="q-ask">열방정식을 격자 위에서 풀 때 새 시각의 온도를 옛 시각의 값으로 바로 계산하면 간단하다. 그런데 시간 간격을 조금만 크게 잡아도 온도가 톱니 모양으로 출렁이며 폭발하는 일이 생긴다. 왜 그럴까? 안전한 시간 간격은 얼마이며, 그것을 어떻게 미리 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 545 212" role="img" aria-label="안정 조건 안팎에서 양적 방법으로 계산한 온도">
+        <line x1="50" y1="120.1" x2="360" y2="120.1" class="ax"/>
+        <line x1="50.0" y1="15" x2="50.0" y2="175" class="ax"/>
+        <path d="M50.0 120.1 L65.5 115.8 L81.0 111.6 L96.5 107.6 L112.0 104.0 L127.5 100.7 L143.0 97.9 L158.5 95.6 L174.0 93.9 L189.5 92.9 L205.0 92.6 L220.5 92.9 L236.0 93.9 L251.5 95.6 L267.0 97.9 L282.5 100.7 L298.0 104.0 L313.5 107.6 L329.0 111.6 L344.5 115.8 L360.0 120.1" class="a" style="fill:none"/>
+        <circle cx="50.0" cy="120.1" r="2" class="fa"/>
+        <circle cx="65.5" cy="115.8" r="2" class="fa"/>
+        <circle cx="81.0" cy="111.6" r="2" class="fa"/>
+        <circle cx="96.5" cy="107.6" r="2" class="fa"/>
+        <circle cx="112.0" cy="104.0" r="2" class="fa"/>
+        <circle cx="127.5" cy="100.7" r="2" class="fa"/>
+        <circle cx="143.0" cy="97.9" r="2" class="fa"/>
+        <circle cx="158.5" cy="95.6" r="2" class="fa"/>
+        <circle cx="174.0" cy="93.9" r="2" class="fa"/>
+        <circle cx="189.5" cy="92.9" r="2" class="fa"/>
+        <circle cx="205.0" cy="92.6" r="2" class="fa"/>
+        <circle cx="220.5" cy="92.9" r="2" class="fa"/>
+        <circle cx="236.0" cy="93.9" r="2" class="fa"/>
+        <circle cx="251.5" cy="95.6" r="2" class="fa"/>
+        <circle cx="267.0" cy="97.9" r="2" class="fa"/>
+        <circle cx="282.5" cy="100.7" r="2" class="fa"/>
+        <circle cx="298.0" cy="104.0" r="2" class="fa"/>
+        <circle cx="313.5" cy="107.6" r="2" class="fa"/>
+        <circle cx="329.0" cy="111.6" r="2" class="fa"/>
+        <circle cx="344.5" cy="115.8" r="2" class="fa"/>
+        <circle cx="360.0" cy="120.1" r="2" class="fa"/>
+        <path d="M50.0 120.1 L65.5 105.1 L81.0 132.9 L96.5 76.4 L112.0 144.4 L127.5 52.1 L143.0 153.5 L158.5 34.3 L174.0 159.4 L189.5 25.0 L205.0 161.4 L220.5 25.0 L236.0 159.4 L251.5 34.3 L267.0 153.5 L282.5 52.1 L298.0 144.4 L313.5 76.4 L329.0 132.9 L344.5 105.1 L360.0 120.1" class="d" style="fill:none"/>
+        <circle cx="50.0" cy="120.1" r="2" class="fd"/>
+        <circle cx="65.5" cy="105.1" r="2" class="fd"/>
+        <circle cx="81.0" cy="132.9" r="2" class="fd"/>
+        <circle cx="96.5" cy="76.4" r="2" class="fd"/>
+        <circle cx="112.0" cy="144.4" r="2" class="fd"/>
+        <circle cx="127.5" cy="52.1" r="2" class="fd"/>
+        <circle cx="143.0" cy="153.5" r="2" class="fd"/>
+        <circle cx="158.5" cy="34.3" r="2" class="fd"/>
+        <circle cx="174.0" cy="159.4" r="2" class="fd"/>
+        <circle cx="189.5" cy="25.0" r="2" class="fd"/>
+        <circle cx="205.0" cy="161.4" r="2" class="fd"/>
+        <circle cx="220.5" cy="25.0" r="2" class="fd"/>
+        <circle cx="236.0" cy="159.4" r="2" class="fd"/>
+        <circle cx="251.5" cy="34.3" r="2" class="fd"/>
+        <circle cx="267.0" cy="153.5" r="2" class="fd"/>
+        <circle cx="282.5" cy="52.1" r="2" class="fd"/>
+        <circle cx="298.0" cy="144.4" r="2" class="fd"/>
+        <circle cx="313.5" cy="76.4" r="2" class="fd"/>
+        <circle cx="329.0" cy="132.9" r="2" class="fd"/>
+        <circle cx="344.5" cy="105.1" r="2" class="fd"/>
+        <circle cx="360.0" cy="120.1" r="2" class="fd"/>
+        <text x="50" y="190" text-anchor="middle" class="s">0</text>
+        <text x="205" y="190" text-anchor="middle" class="s">0.5</text>
+        <text x="360" y="190" text-anchor="middle" class="s">1</text>
+        <text x="44" y="170" text-anchor="end" class="s">-0.5</text>
+        <text x="44" y="124" text-anchor="end" class="s">0</text>
+        <text x="44" y="78" text-anchor="end" class="s">0.5</text>
+        <text x="44" y="33" text-anchor="end" class="s">1</text>
+        <text x="375" y="40" class="s">처음 온도 = 삼각형</text>
+        <text x="375" y="60" class="s">h = 1/20, t ≈ 0.1</text>
+        <text x="375" y="80" class="ta">r = 0.45, 매끄럽게 식음</text>
+        <text x="375" y="100" class="td">r = 0.52, 톱니가 자람</text>
+        <text x="375" y="120" class="s">경계 r = 1/2</text>
+      </svg>
+      <figcaption>그림 1. 처음 온도가 삼각형인 막대를 양적 방법으로 \(t \approx 0.1\)까지 계산한 결과이다. \(r = \frac k{h^2} = 0.45\)이면(파랑) 온도가 매끄럽게 식는다. \(r = 0.52\)이면(빨강) 이웃한 점끼리 부호가 엇갈리는 톱니가 자라나 처음 온도보다도 커진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>경계치 문제의 이산화(<a href="07-01.html">7.1절</a>), 절대 안정 영역(<a href="06-03.html">6.3절</a>), 삼각함수의 덧셈정리와 반각 공식을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>양적 방법</h3>
-    <p>공간 간격 \(h\), 시간 간격 \(k\)로 \(u_i^n \approx u(ih, nk)\)라 하면</p>
-    \[\frac{u_i^{n+1} - u_i^n}k = \frac{u_{i-1}^n - 2u_i^n + u_{i+1}^n}{h^2} \quad\Longrightarrow\quad u_i^{n+1} = u_i^n + r\left(u_{i-1}^n - 2u_i^n + u_{i+1}^n\right),\ r = \frac k{h^2}.\]
-    <p>새 값은 옛 값에서 바로 계산되므로(양적) 한 걸음이 \(O(n)\)으로 쌉니다. 절단 오차는 시간 \(O(k)\), 공간 \(O(h^2)\)입니다.</p>
+    <p>공간 간격 \(h\), 시간 간격 \(k\)로 \(u_i^n \approx u(ih, nk)\)라 하면 \(u_t = u_{xx}\)는 다음과 같이 바뀐다.</p>
+    \[\frac{u_i^{n+1} - u_i^n}k = \frac{u_{i-1}^n - 2u_i^n + u_{i+1}^n}{h^2} \quad\Longrightarrow\quad u_i^{n+1} = u_i^n + r\left(u_{i-1}^n - 2u_i^n + u_{i+1}^n\right),\ r = \frac k{h^2}\]
+    <p>새 값이 옛 값에서 바로 계산되므로 <em>양적 방법</em>이라 하며, 한 걸음이 \(O(n)\)으로 싸다. 절단 오차는 시간에 대해 \(O(k)\), 공간에 대해 \(O(h^2)\)이다.</p>
 
     <h3><span class="no">7.2.2</span>폰 노이만 분석</h3>
-    <p>오차를 푸리에 모드 \(u_i^n = g^ne^{\mathrm i i\theta}\) (\(\theta\)는 격자에서 본 진동수, \(\mathrm i = \sqrt{-1}\))로 나눠 하나씩 넣어 봅니다. 그러면 \(e^{\mathrm i(i\pm1)\theta} = e^{\mathrm i i\theta}e^{\pm\mathrm i\theta}\)이므로</p>
-    \[g = 1 + r\left(e^{-\mathrm i\theta} - 2 + e^{\mathrm i\theta}\right) = 1 + r(2\cos\theta - 2) = 1 - 4r\sin^2\frac\theta2.\]
-    <div class="tb-env thm"><b>정리 7.2.1</b> 양적 방법은 \(r = \frac k{h^2} \le \frac12\)일 때 안정하고, \(r > \frac12\)이면 불안정하다.</div>
-    <div class="tb-proof"><b>증명</b>
-      <p>모든 모드가 커지지 않으려면 모든 \(\theta\)에서 \(|g| \le 1\)이어야 한다. \(g \le 1\)은 늘 성립하고, \(g \ge -1\)은 \(4r\sin^2\frac\theta2 \le 2\)이다. 가장 진동이 빠른 모드 \(\theta = \pi\)에서 \(\sin^2\frac\theta2 = 1\)이므로 \(r \le \frac12\)가 필요충분조건이다. <span class="qed">∎</span></p>
+    <p>오차를 푸리에 모드 \(u_i^n = g^ne^{\mathrm i i\theta}\)로 나누어 하나씩 넣어 보자. 여기서 \(\theta\)는 격자에서 본 진동수이고 \(\mathrm i = \sqrt{-1}\)이다. \(e^{\mathrm i(i\pm1)\theta} = e^{\mathrm i i\theta}e^{\pm\mathrm i\theta}\)이므로 한 걸음의 증폭률 \(g\)는 다음과 같다.</p>
+    \[g = 1 + r\left(e^{-\mathrm i\theta} - 2 + e^{\mathrm i\theta}\right) = 1 + r(2\cos\theta - 2) = 1 - 4r\sin^2\frac\theta2\]
+    <div class="tb-env thm">
+      <span class="lb">정리 7.2.1</span>
+      <p>양적 방법은 \(r = \frac k{h^2} \le \frac12\)일 때 안정하고, \(r > \frac12\)이면 불안정하다.</p>
     </div>
-    <p>\(r > \frac12\)이면 \(\theta \approx \pi\)인 톱니 모양 성분이 매 걸음 \(|g| > 1\)배 커집니다. 처음에는 반올림 오차 수준이어도 지수적으로 자라 해를 덮어 버립니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span>모든 모드가 커지지 않으려면 모든 \(\theta\)에서 \(|g| \le 1\)이어야 한다. \(g \le 1\)은 늘 성립하고, \(g \ge -1\)은 \(4r\sin^2\frac\theta2 \le 2\)와 같다. 가장 빠르게 진동하는 모드 \(\theta = \pi\)에서 \(\sin^2\frac\theta2 = 1\)이므로, \(r \le \frac12\)가 필요충분조건이다. <span class="qed">∎</span></p>
+    <p>\(r > \frac12\)이면 \(\theta \approx \pi\)인 톱니 모양 성분이 매 걸음 \(|g| > 1\)배씩 커진다. 그 성분이 처음에는 반올림 오차 수준이어도 지수적으로 자라 해를 덮어 버리며, 그림 1의 빨간 톱니가 바로 그것이다.</p>
 
     <h3><span class="no">7.2.3</span>강성과의 관계</h3>
-    <p>공간만 이산화한 연립 미분방정식 \(\mathbf u' = -\frac1{h^2}\operatorname{tridiag}(-1, 2, -1)\mathbf u\)의 고윳값은 \(-\frac4{h^2}\sin^2\frac{j\pi}{2n}\)으로 \(-\frac4{h^2}\)까지 내려갑니다. 양적 오일러의 조건 \(k|\lambda| \le 2\)에 넣으면 \(k \le \frac{h^2}2\), 즉 같은 조건입니다. \(h\)를 10분의 1로 줄이면 \(k\)는 100분의 1이 되어야 하므로, 촘촘한 격자에서 양적 방법은 매우 느립니다. 같은 절의 탐구 카드에서 \(r\)을 0.5 근처에서 바꿔 봅니다.</p>
-    <div class="tb-env ex"><b>예 7.2.2</b> \([0, 1]\)에서 처음 온도가 삼각형(가운데 1, 양 끝 0), \(h = \frac1{20}\), \(t = 0.1\)까지 계산하면 \(r = 0.45\)에서 최대 오차 \(4.3\times10^{-4}\), \(r = 0.5\)에서 \(2.5\times10^{-3}\)인데, \(r = 0.52\)이면 0.65, \(r = 0.55\)이면 800으로 폭발합니다.</div>
-
-    <div class="tb-note"><b>흔한 오해</b>(1) 불안정은 큰 \(r\)에서 오차가 조금 커지는 것이라고 여긴다. 지수적으로 폭발한다. (2) 처음 온도가 매끄러우면 불안정해도 괜찮다고 여긴다. 반올림 오차가 모든 모드를 조금씩 만들어 결국 폭발한다.</div>
-
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>FTCS: \(u_i^{n+1} = u_i^n + r(u_{i-1}^n - 2u_i^n + u_{i+1}^n)\), \(r = \frac k{h^2}\).</li>
-        <li>증폭률 \(g = 1 - 4r\sin^2\frac\theta2\), 안정 ⟺ \(r \le \frac12\).</li>
-        <li>공간 이산화의 고윳값이 \(-\frac4{h^2}\)까지 가는 강성 문제라 \(k \le \frac{h^2}2\).</li>
-      </ol>
+    <p>공간만 이산화하면 연립 미분방정식 \(\mathbf u' = -\frac1{h^2}\operatorname{tridiag}(-1, 2, -1)\mathbf u\)를 얻는다. 이 행렬의 고윳값은 \(-\frac4{h^2}\sin^2\frac{j\pi}{2n}\)이라 \(-\frac4{h^2}\)까지 내려간다. 이것을 6.3절의 양적 오일러 조건 \(k|\lambda| \le 2\)에 넣으면 \(k \le \frac{h^2}2\)로, 정리 7.2.1과 같은 조건이다. 따라서 \(h\)를 10분의 1로 줄이면 \(k\)는 100분의 1이 되어야 하므로, 촘촘한 격자에서 양적 방법은 매우 느리다. 같은 절의 탐구 카드에서 \(r\)을 0.5 근처에서 바꿔 본다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 7.2.2</span>
+      <p>\([0, 1]\)에서 처음 온도가 가운데 1, 양 끝 0인 삼각형일 때 \(h = \frac1{20}\)로 \(t = 0.1\)까지 계산하면, \(r\)에 따라 오차가 어떻게 달라지는가?</p>
     </div>
+    <p><i>풀이.</i> 최대 오차는 \(r = 0.45\)에서 \(4.3\times10^{-4}\), \(r = 0.5\)에서 \(2.5\times10^{-3}\)이다. 그런데 \(r = 0.52\)이면 0.65, \(r = 0.55\)이면 800으로 폭발한다.</p>
+
+    <div class="tb-note"><span class="lb">흔한 오해</span>불안정이란 큰 \(r\)에서 오차가 조금 커지는 것이라고 여기기 쉽지만, 실제로는 오차가 지수적으로 폭발한다. 또 처음 온도가 매끄러우면 불안정해도 괜찮다고 생각하는 것도 틀렸다. 반올림 오차가 모든 모드를 조금씩 만들어 내므로, 결국 톱니 모드가 자라 폭발한다.</div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>처음 질문에 답하면, 양적 방법에서는 가장 빠르게 진동하는 톱니 모드의 증폭률이 \(g = 1 - 4r\)이라, \(r = \frac k{h^2}\)이 \(\frac12\)을 넘으면 그 모드가 매 걸음 커져 폭발한다. 안전한 시간 간격은 폰 노이만 분석으로 미리 구할 수 있으며, \(k \le \frac{h^2}2\)이다. 이 조건은 공간 이산화가 강성 문제라는 것과 같은 이야기라서, 격자를 촘촘히 하면 시간 간격이 제곱으로 작아져야 한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.4</span>연습문제</h3>
