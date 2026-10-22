@@ -8,45 +8,42 @@
 <article class="card q-card" id="text-p4-brach" data-kind="본문" data-std="물리4-01-02">
   <header class="card-head"><span class="no"></span><h2>최단 시간 곡선</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>최단 시간 곡선 문제를 범함수로 쓴다.</li>
-        <li>독립 변수를 잘 골라 첫 적분으로 2계 방정식을 1계로 줄인다.</li>
-        <li>사이클로이드 해를 얻고 그 성질(직선보다 빠름, 등시성)을 해석한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>오일러-라그랑주 방정식과 첫 적분 (<a href="01-01.html">1.1절</a>), 에너지 보존 (<a href="../1/03-01.html">물리1 3.1절</a>).</li>
-      </ul>
-    </div>
-
-    <p>1.1절의 방정식을 실제 문제에 써 봅니다. 가장 빨리 미끄러져 내려가는 길을 찾는 문제이며, "피적분 함수에 독립 변수가 없다"는 성질을 이용해 2계 방정식을 1계로 줄이는 것이 요령입니다. 직선이 가장 빠르지 않다는 결과는 직관과 어긋나 더 흥미롭습니다.</p>
+    <p class="q-ask">구슬이 마찰 없는 철사를 따라 중력만으로 미끄러져 아래쪽의 한 점까지 간다. 두 점을 잇는 직선이 가장 짧은 길이니 가장 빠를 것 같은데, 정말 그럴까? 가장 빨리 닿는 철사의 모양은 어떻게 찾을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="최단 시간 곡선인 사이클로이드와 직선의 비교">
+        <circle cx="60" cy="30" r="4" class="fk"/><circle cx="460" cy="180" r="4" class="fk"/>
+        <line x1="60" y1="30" x2="460" y2="180" class="b dsh"/>
+        <path d="M60 30 L60 32 L61 34 L62 36 L63 40 L65 44 L68 49 L72 55 L77 61 L83 68 L90 74 L99 82 L109 89 L120 97 L133 105 L147 113 L162 121 L179 128 L197 136 L216 142 L237 149 L259 155 L281 161 L305 166 L330 170 L355 174 L381 176 L407 178 L433 180 L460 180" class="a"/>
+        <text x="70" y="24" class="s">출발 (정지)</text><text x="470" y="184" class="s">도착</text>
+        <text x="300" y="100" class="tb">직선, 3.72√(a/g)</text><text x="120" y="150" class="ta">사이클로이드, π√(a/g)</text>
+        <text x="20" y="110" class="s">y ↓</text>
+      </svg>
+      <figcaption>그림 1. 정지 상태에서 출발해 아래쪽 점까지 가는 데 걸리는 시간은 처음에 거의 수직으로 떨어지는 사이클로이드가 직선보다 약 16% 짧다(끝점이 바퀴 반 바퀴 위치인 경우).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>오일러-라그랑주 방정식과 첫 적분(<a href="01-01.html">1.1절</a>), 에너지 보존(<a href="../1/03-01.html">물리1 3.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">1.2.1</span>문제를 범함수로 쓰기</h3>
-    <p>원점에서 정지 상태로 출발한 구슬이 마찰 없는 철사를 따라 중력만으로 미끄러져 아래쪽 점 \((x_2, y_2)\)에 가장 빨리 닿으려면 철사가 어떤 모양이어야 할까요? 1696년 요한 베르누이가 낸 문제입니다.</p>
-    <p>\(y\)를 아래쪽으로 재면 에너지 보존에서 \(v = \sqrt{2gy}\). 걸리는 시간은</p>
-    \[t = \int\frac{ds}{v} = \frac1{\sqrt{2g}}\int_0^{y_2}\frac{\sqrt{1 + x'^2}}{\sqrt y}\,dy\quad(x\text{를 }y\text{의 함수로}).\]
-    <p class="tb-aside">\(x\)를 \(y\)의 함수로 잡은 까닭: 그러면 피적분 함수에 \(x\) 자체가 나오지 않아 \(\partial f/\partial x' =\) 상수라는 첫 적분을 바로 쓸 수 있습니다. 변수를 잘 고르면 2계 방정식을 풀지 않아도 됩니다.</p>
+    <p>원점에서 정지 상태로 출발한 구슬이 마찰 없는 철사를 따라 중력만으로 미끄러져 아래쪽 점 \((x_2, y_2)\)에 가장 빨리 닿으려면 철사가 어떤 모양이어야 할까? 1696년 요한 베르누이가 낸 이 문제를 <em>최단 시간 곡선</em> 문제라 한다. 1.1절의 방정식을 실제 문제에 써 보는 첫 예이다.</p>
+    <p>\(y\)를 아래쪽으로 재면 에너지 보존에서 \(v = \sqrt{2gy}\)이다. 따라서 걸리는 시간은 다음과 같다.</p>
+    \[t = \int\frac{ds}{v} = \frac1{\sqrt{2g}}\int_0^{y_2}\frac{\sqrt{1 + x'^2}}{\sqrt y}\,dy\quad(x\text{를 }y\text{의 함수로})\]
+    <p>여기서 \(x\)를 \(y\)의 함수로 잡은 까닭이 있다. 그러면 피적분 함수에 \(x\) 자체가 나오지 않아 \(\partial f/\partial x'\)가 상수라는 첫 적분을 바로 쓸 수 있다. 이렇게 변수를 잘 고르면 2계 방정식을 풀지 않아도 된다.</p>
 
     <h3><span class="no">1.2.2</span>사이클로이드</h3>
-    <p>\(f = \sqrt{\frac{1 + x'^2}{y}}\)는 \(x\)를 포함하지 않으므로 \(\frac{\partial f}{\partial x'} = \frac{x'}{\sqrt{y(1 + x'^2)}}\)이 상수입니다. 상수를 \(1/\sqrt{2a}\)로 두고 \(y = a(1 - \cos\theta)\)로 치환하면</p>
+    <p>\(f = \sqrt{(1 + x'^2)/y}\)는 \(x\)를 포함하지 않으므로 \(\frac{\partial f}{\partial x'} = \frac{x'}{\sqrt{y(1 + x'^2)}}\)이 상수이다. 이 상수를 \(1/\sqrt{2a}\)로 두고 제곱해 \(x'\)에 대해 풀면 \(x' = \sqrt{y/(2a - y)}\)이다. 이제 \(y = a(1 - \cos\theta)\)로 치환하면 \(dy = a\sin\theta\,d\theta\), \(\sqrt{y/(2a - y)} = \tan\frac\theta2\)이므로 \(dx = a\tan\frac\theta2\sin\theta\,d\theta = a(1 - \cos\theta)\,d\theta\)이다. 이것을 적분하면 다음을 얻는다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 1.2.1</span>
-      \[x = a(\theta - \sin\theta), \qquad y = a(1 - \cos\theta).\]
+      <span class="lb">정리 1.2.1 <span class="nm">(최단 시간 곡선)</span></span>
+      <p>\[x = a(\theta - \sin\theta), \qquad y = a(1 - \cos\theta)\]</p>
     </div>
-    <p>치환 과정을 짧게 보이면, 상수 조건을 제곱해 \(x'\)에 대해 풀면 \(x' = \sqrt{\frac{y}{2a - y}}\)입니다. \(y = a(1 - \cos\theta)\)를 넣으면 \(dy = a\sin\theta\,d\theta\), \(\sqrt{\frac{y}{2a - y}} = \tan\frac\theta2\)이므로 \(dx = a\tan\frac\theta2\sin\theta\,d\theta = a(1 - \cos\theta)\,d\theta\)이고, 적분하면 위 \(x\)가 됩니다.</p>
-    <p>바퀴 테두리의 한 점이 그리는 곡선인 <b>사이클로이드</b>입니다. \(a\)는 끝점을 지나도록 정합니다. 처음에 거의 수직으로 떨어져 속력을 빨리 얻고, 그 속력으로 남은 거리를 가는 것이 직선보다 유리합니다. 끝점이 출발점보다 충분히 옆에 있으면 사이클로이드가 끝점보다 더 내려갔다가 올라오기도 합니다.</p>
-    <p>사이클로이드에는 어디서 출발하든 바닥에 닿는 시간이 같다는 성질(등시성)도 있습니다. 하위헌스는 이 성질로 진폭에 무관한 주기의 진자 시계를 설계했습니다.</p>
+    <p>이 곡선은 굴러가는 바퀴 테두리의 한 점이 그리는 <em>사이클로이드</em>이고, \(a\)는 끝점을 지나도록 정한다. 그림 1처럼 처음에 거의 수직으로 떨어져 속력을 빨리 얻고, 그 속력으로 남은 거리를 가는 것이 직선보다 유리하다. 처음 질문의 답이 이것이다. 끝점이 출발점보다 충분히 옆에 있으면 사이클로이드가 끝점보다 더 내려갔다가 올라오기도 한다.</p>
+    <div class="tb-env ex">
+      <span class="lb">예제 1.2.1</span>
+      <p>끝점이 \((\pi a, 2a)\), 곧 \(\theta = \pi\)인 경우에 사이클로이드와 직선을 따라 걸리는 시간을 비교하여라.</p>
+    </div>
+    <p><i>풀이.</i> 사이클로이드에서 \(ds/v\)를 \(\theta\)로 쓰면 \(ds = 2a\sin\frac\theta2\,d\theta\), \(v = \sqrt{2ga(1 - \cos\theta)} = 2\sqrt{ga}\sin\frac\theta2\)이므로 \(dt = \sqrt{a/g}\,d\theta\)이고, \(t = \pi\sqrt{a/g} \approx 3.14\sqrt{a/g}\)이다. 직선은 길이 \(L = a\sqrt{\pi^2 + 4}\), 가속도 \(g\cdot2a/L\)인 등가속도 운동이므로 \(t = L/\sqrt{ga} = \sqrt{\pi^2 + 4}\sqrt{a/g} \approx 3.72\sqrt{a/g}\)이다. 따라서 사이클로이드가 약 16% 빠르다.</p>
+    <p>사이클로이드에는 어디서 출발하든 바닥에 닿는 시간이 같다는 성질도 있으며, 이것을 등시성이라 한다. 예제에서 \(dt = \sqrt{a/g}\,d\theta\)가 출발점과 상관없는 꼴이 된 것이 그 실마리이다. 하위헌스는 이 성질로 진폭에 무관한 주기의 진자 시계를 설계했다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>가장 짧은 길이 가장 빠른 길이라고 생각하기 쉽지만, 속력이 위치에 따라 달라지면 그렇지 않다. 빨리 속력을 얻는 것과 길이를 줄이는 것 사이의 균형이 최적의 모양을 정한다. 또 이 문제를 \(y(x)\)로 놓고 풀어도 답은 같지만, 첫 적분을 바로 쓸 수 없어 계산이 훨씬 길어진다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>시간 \(t = \int ds/\sqrt{2gy}\)를 최소화하는 변분 문제.</li>
-        <li>\(x\)를 \(y\)의 함수로 잡으면 첫 적분 하나로 풀린다.</li>
-        <li>해는 사이클로이드 \(x = a(\theta - \sin\theta)\), \(y = a(1 - \cos\theta)\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>최단 시간 곡선 문제는 시간 \(t = \int ds/\sqrt{2gy}\)를 최소화하는 변분 문제이다. \(x\)를 \(y\)의 함수로 잡으면 피적분 함수에 \(x\)가 없어 첫 적분 하나로 풀리고, 해는 사이클로이드 \(x = a(\theta - \sin\theta)\), \(y = a(1 - \cos\theta)\)이다. 처음 질문의 직선은 가장 짧지만 가장 빠르지는 않으며, 사이클로이드는 처음에 가파르게 떨어져 속력을 얻는 덕분에 더 빠르고 등시성도 가진다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.2.3</span>연습문제</h3>

@@ -8,58 +8,47 @@
 <article class="card q-card" id="text-p4-euler" data-kind="본문" data-std="물리4-01-01">
   <header class="card-head"><span class="no"></span><h2>변분법과 오일러-라그랑주 방정식</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>범함수와 그 극값 문제를 이해한다.</li>
-        <li>변분으로 오일러-라그랑주 방정식을 유도하고, 평면 위 두 점 사이의 최단 경로에 쓴다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>부분적분, 편미분 (<a href="../../common/2/04-01.html">공통2 4.1절</a>), 일반역학(1) 전체 (<a href="../1/02-01.html">물리1</a>).</li>
-      </ul>
-    </div>
-
-    <p>미적분에서는 "어떤 \(x\)에서 \(f(x)\)가 가장 작은가"를 \(f'(x) = 0\)으로 풀었습니다. 변분법은 한 단계 위의 질문을 합니다. "어떤 곡선(함수)에서 길이나 시간 같은 양이 가장 작은가." 답은 이번에도 "조금 바꿔도 값이 1차로는 변하지 않는다"는 조건이고, 그 조건을 식으로 쓴 것이 오일러-라그랑주 방정식입니다. 이 방정식이 일반역학(2) 전체의 출발점입니다.</p>
+    <p class="q-ask">미적분에서는 \(f(x)\)가 가장 작아지는 \(x\)를 \(f'(x) = 0\)으로 찾았다. 그렇다면 두 점을 잇는 수많은 곡선 가운데 길이가 가장 짧은 곡선, 내려가는 시간이 가장 짧은 곡선처럼 수가 아니라 함수 하나를 골라야 할 때는 어떤 조건을 풀어야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="양 끝을 고정한 채 정답 곡선을 조금 흔든 변분 곡선">
+        <circle cx="80" cy="150" r="4" class="fk"/><circle cx="480" cy="50" r="4" class="fk"/>
+        <path d="M80 150 C200 140 330 90 480 50" class="a"/>
+        <path d="M80 150 C170 100 330 140 480 50" class="b dsh"/>
+        <path d="M80 150 C230 180 300 50 480 50" class="c dsh"/>
+        <text x="300" y="80" class="ta">정답 곡선 y(x)</text><text x="160" y="105" class="tb">y + αη₁</text><text x="250" y="172" class="tc">y + αη₂</text>
+        <text x="80" y="170" text-anchor="middle" class="s">(x₁, y₁)</text><text x="480" y="40" text-anchor="middle" class="s">(x₂, y₂)</text>
+        <text x="300" y="194" text-anchor="middle" class="s">양 끝에서 η = 0</text>
+      </svg>
+      <figcaption>그림 1. 변분법은 정답 곡선의 양 끝은 그대로 두고 가운데만 조금 흔든 곡선들과 비교하여, 어느 방향으로 흔들어도 범함수가 1차로는 변하지 않는다는 조건을 세운다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>부분적분과 편미분(<a href="../../common/2/04-01.html">공통2 4.1절</a>), 일반역학(1) 전체(<a href="../1/02-01.html">물리1</a>)를 쓴다.</div>
 
     <h3><span class="no">1.1.1</span>범함수</h3>
-    <p>보통 함수는 수를 받아 수를 돌려주지만, <b>범함수</b>는 함수 하나를 받아 수를 돌려줍니다. 예를 들어 두 점 \((x_1, y_1)\), \((x_2, y_2)\)를 잇는 곡선 \(y(x)\)의 길이</p>
+    <p>보통 함수는 수를 받아 수를 돌려주지만, <em>범함수</em>는 함수 하나를 받아 수를 돌려준다. 예를 들어 두 점 \((x_1, y_1)\), \((x_2, y_2)\)를 잇는 곡선 \(y(x)\)의 길이는 곡선마다 다른 값을 준다.</p>
     \[S[y] = \int_{x_1}^{x_2}\sqrt{1 + y'^2}\,dx\]
-    <p>는 곡선마다 다른 값을 줍니다. 일반적으로 \(S[y] = \int_{x_1}^{x_2}f(y, y', x)\,dx\) 꼴의 범함수를 가장 작게(또는 크게, 정상값으로) 하는 곡선을 찾는 것이 변분법입니다.</p>
+    <p>일반적으로 \(S[y] = \int_{x_1}^{x_2}f(y, y', x)\,dx\) 꼴의 범함수를 가장 작게, 크게, 또는 정상값으로 만드는 곡선을 찾는 것이 <em>변분법</em>이다. 처음 질문이 바로 이 문제이며, 답은 이번에도 조금 바꿔도 값이 1차로는 변하지 않는다는 조건이다.</p>
 
     <h3><span class="no">1.1.2</span>오일러-라그랑주 방정식</h3>
-    <p>정답 곡선 \(y(x)\)에 양 끝에서 0인 임의의 함수 \(\eta(x)\)를 조금 더한 \(Y = y + \alpha\eta\)를 생각합니다. \(S(\alpha)\)는 \(\alpha = 0\)에서 정상값이어야 하므로</p>
-    \[\frac{dS}{d\alpha}\Big|_{\alpha=0} = \int\left(\frac{\partial f}{\partial y}\eta + \frac{\partial f}{\partial y'}\eta'\right)dx = \int\eta\left(\frac{\partial f}{\partial y} - \frac{d}{dx}\frac{\partial f}{\partial y'}\right)dx = 0.\]
-    <p class="tb-aside">\(\eta\)의 역할: 정답 곡선을 양 끝은 그대로 두고 가운데만 조금 흔들어 본 것입니다. 정답이라면 어느 방향으로 흔들어도 \(S\)가 1차로는 변하지 않아야 합니다. 함수의 최솟값에서 접선이 수평인 것과 같은 조건입니다.</p>
-    <div class="tb-aside"><b>처음 보는 수학 · \(\alpha\)로 미분하기</b> \(Y = y + \alpha\eta\)이므로 \(\alpha\)를 조금 바꾸면 \(Y\)는 \(\eta\)만큼, 기울기 \(Y'\)은 \(\eta'\)만큼 바뀝니다. \(f\)는 \(Y\)와 \(Y'\) 두 곳을 통해 바뀌므로, 연쇄 법칙으로 \(\frac{df}{d\alpha} = \frac{\partial f}{\partial y}\eta + \frac{\partial f}{\partial y'}\eta'\)입니다. 편미분(물리1 1.3절)은 다른 변수를 상수로 두고 하나로만 미분한 것이고, 둘째 항의 부분적분은 고등학교 미적분의 부분적분법 그대로입니다.</div>
-    <p>둘째 항을 부분적분할 때는 \(\int\frac{\partial f}{\partial y'}\eta'\,dx = \left[\frac{\partial f}{\partial y'}\eta\right]_{x_1}^{x_2} - \int\eta\frac{d}{dx}\frac{\partial f}{\partial y'}\,dx\)를 썼습니다. 목적은 \(\eta'\)을 \(\eta\)로 바꿔 두 항을 \(\eta\)로 묶는 것입니다.</p>
-    <p>둘째 항은 부분적분했고, 경계 항은 \(\eta(x_1) = \eta(x_2) = 0\)이라 사라졌습니다. 이것이 모든 \(\eta\)에 대해 성립하려면 괄호가 0이어야 합니다.</p>
+    <p>정답 곡선 \(y(x)\)에 양 끝에서 0인 임의의 함수 \(\eta(x)\)를 조금 더한 \(Y = y + \alpha\eta\)를 생각하자. 그림 1처럼 정답 곡선을 양 끝은 그대로 두고 가운데만 조금 흔들어 본 것이다. 정답이라면 어느 방향으로 흔들어도 \(S\)가 1차로는 변하지 않아야 하며, 함수의 최솟값에서 접선이 수평인 것과 같은 조건이다. 따라서 \(S(\alpha)\)는 \(\alpha = 0\)에서 정상값이어야 한다.</p>
+    \[\frac{dS}{d\alpha}\Big|_{\alpha=0} = \int\left(\frac{\partial f}{\partial y}\eta + \frac{\partial f}{\partial y'}\eta'\right)dx = \int\eta\left(\frac{\partial f}{\partial y} - \frac{d}{dx}\frac{\partial f}{\partial y'}\right)dx = 0\]
+    <div class="tb-aside"><span class="lb">처음 보는 수학 · α로 미분하기</span>\(Y = y + \alpha\eta\)이므로 \(\alpha\)를 조금 바꾸면 \(Y\)는 \(\eta\)만큼, 기울기 \(Y'\)은 \(\eta'\)만큼 바뀐다. \(f\)는 \(Y\)와 \(Y'\) 두 곳을 통해 바뀌므로, 연쇄 법칙으로 \(df/d\alpha = \frac{\partial f}{\partial y}\eta + \frac{\partial f}{\partial y'}\eta'\)이다. 편미분(물리1 1.3절)은 다른 변수를 상수로 두고 하나로만 미분한 것이고, 둘째 항의 부분적분은 고등학교 미적분의 부분적분법 그대로이다.</div>
+    <p>가운데 등호에서는 둘째 항을 부분적분해 \(\int\frac{\partial f}{\partial y'}\eta'\,dx = \left[\frac{\partial f}{\partial y'}\eta\right]_{x_1}^{x_2} - \int\eta\frac{d}{dx}\frac{\partial f}{\partial y'}\,dx\)를 썼다. 목적은 \(\eta'\)을 \(\eta\)로 바꿔 두 항을 \(\eta\)로 묶는 것이고, 경계 항은 \(\eta(x_1) = \eta(x_2) = 0\)이라 사라진다. 이 적분이 모든 \(\eta\)에 대해 0이려면 괄호가 0이어야 한다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 1.1.1 (오일러-라그랑주 방정식)</span>
-      \[\frac{\partial f}{\partial y} - \frac{d}{dx}\frac{\partial f}{\partial y'} = 0.\]
+      <span class="lb">정리 1.1.1 <span class="nm">(오일러-라그랑주 방정식)</span></span>
+      <p>\[\frac{\partial f}{\partial y} - \frac{d}{dx}\frac{\partial f}{\partial y'} = 0\]</p>
     </div>
-    <p>변수가 여럿이면 각 \(y_i\)마다 같은 꼴의 방정식이 하나씩 생깁니다.</p>
-    <div class="tb-note"><b>주의</b>\(\partial f/\partial y\)와 \(\partial f/\partial y'\)를 계산할 때는 \(y\)와 \(y'\)을 서로 독립인 변수처럼 다룹니다. \(y'\)이 \(y\)의 도함수라는 사실은 그다음 \(\frac{d}{dx}\)를 할 때에만 씁니다. 이 \(\frac{d}{dx}\)는 \(x\)에 대한 전미분이라 \(y(x)\), \(y'(x)\)를 통한 변화를 모두 포함합니다.</div>
+    <p>변수가 여럿이면 각 \(y_i\)마다 같은 꼴의 방정식이 하나씩 생긴다. 이 방정식이 일반역학(2) 전체의 출발점이다. 다만 \(\partial f/\partial y\)와 \(\partial f/\partial y'\)를 계산할 때는 \(y\)와 \(y'\)을 서로 독립인 변수처럼 다룬다. \(y'\)이 \(y\)의 도함수라는 사실은 그다음 \(d/dx\)를 할 때에만 쓰며, 이 \(d/dx\)는 \(x\)에 대한 전미분이라 \(y(x)\), \(y'(x)\)를 통한 변화를 모두 포함한다.</p>
     <div class="tb-env ex">
-      <span class="lb">예제 1.1.2</span>
+      <span class="lb">예제 1.1.1</span>
       <p>평면에서 두 점을 잇는 가장 짧은 곡선을 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(f = \sqrt{1 + y'^2}\)은 \(y\)를 포함하지 않으므로 \(\frac{\partial f}{\partial y'} = \frac{y'}{\sqrt{1 + y'^2}}\)이 상수, 곧 \(y'\)이 상수입니다. 직선입니다.</p>
+    <p><i>풀이.</i> \(f = \sqrt{1 + y'^2}\)은 \(y\)를 포함하지 않으므로 \(\partial f/\partial y = 0\)이고, 방정식은 \(\frac{d}{dx}\frac{\partial f}{\partial y'} = 0\)이 된다. 따라서 \(\frac{\partial f}{\partial y'} = \frac{y'}{\sqrt{1 + y'^2}}\)이 상수, 곧 \(y'\)이 상수이므로 답은 직선이다.</p>
 
     <h3><span class="no">1.1.3</span>첫 적분</h3>
-    <ul class="tb-list">
-      <li>\(f\)가 \(y\)를 포함하지 않으면 \(\partial f/\partial y' =\) 상수(예제 1.1.2).</li>
-      <li>\(f\)가 \(x\)를 직접 포함하지 않으면 \(f - y'\frac{\partial f}{\partial y'} =\) 상수(벨트라미 항등식). 2계 방정식이 1계로 줄어든다. 1.2절 최단 시간 곡선에서 쓴다.</li>
-    </ul>
-    <p>독립 변수를 \(x\) 대신 \(y\)로 잡는 것이 더 편한 경우도 많으니, 적분하기 쉬운 쪽을 고릅니다.</p>
+    <p>방정식을 늘 끝까지 풀 필요는 없다. \(f\)가 \(y\)를 포함하지 않으면 예제 1.1.1처럼 \(\partial f/\partial y'\)가 상수이다. 또 \(f\)가 \(x\)를 직접 포함하지 않으면 \(f - y'\frac{\partial f}{\partial y'}\)가 상수이며, 이것을 벨트라미 항등식이라 한다(1.3절). 어느 쪽이든 2계 방정식이 1계로 줄어든다. 한편 독립 변수를 \(x\) 대신 \(y\)로 잡는 것이 더 편한 경우도 많으므로, 적분하기 쉬운 쪽을 고른다(1.2절의 최단 시간 곡선).</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span>오일러-라그랑주 방정식을 만족하면 늘 최솟값이라고 생각하기 쉽지만, 이 방정식은 정상값의 조건일 뿐이라 최대나 안장점일 수도 있다. 또 \(y\)와 \(y'\)을 독립으로 다룬다는 것은 편미분을 계산할 때의 규칙이며, \(d/dx\)를 할 때는 둘의 관계를 써야 한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>범함수 \(S[y] = \int f(y, y', x)dx\)의 정상 조건 = 오일러-라그랑주 방정식.</li>
-        <li>\(y\) 없으면 \(\partial f/\partial y'\) 보존, \(x\) 없으면 \(f - y'\partial f/\partial y'\) 보존.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>범함수 \(S[y] = \int f(y, y', x)\,dx\)는 함수를 받아 수를 돌려주며, 처음 질문처럼 곡선 하나를 고르는 문제는 범함수의 정상값을 찾는 변분 문제이다. 정답 곡선을 양 끝을 고정한 채 흔들어도 1차 변화가 없다는 조건에서 오일러-라그랑주 방정식 \(\partial f/\partial y - \frac{d}{dx}\partial f/\partial y' = 0\)이 나온다. \(f\)에 \(y\)가 없으면 \(\partial f/\partial y'\)가, \(x\)가 없으면 \(f - y'\partial f/\partial y'\)가 보존되어 방정식이 1계로 준다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">1.1.4</span>연습문제</h3>
