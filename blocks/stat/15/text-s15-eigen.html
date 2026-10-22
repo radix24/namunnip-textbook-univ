@@ -6,58 +6,66 @@
 }
 -->
 <article class="card q-card" id="text-s15-eigen" data-kind="본문" data-std="응통15-02-03">
-  <header class="card-head"><span class="no"></span><h2>고유값의 수치 계산: 거듭제곱법과 특이값 분해</h2><span class="kind">본문</span></header>
+  <header class="card-head"><span class="no"></span><h2>거듭제곱법과 특이값 분해로 고유값 계산하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>거듭제곱법으로 가장 큰 고유값과 고유벡터를 구한다.</li>
-        <li>수렴 속도가 두 고유값의 비에 달려 있음을 안다.</li>
-        <li>주성분분석을 공분산 행렬 대신 자료 행렬의 특이값 분해로 계산하는 이유를 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>QR 분해와 조건수 (<a href="02-01.html">2.1절</a>), 고유값과 특이값 분해 (응통2 04, 06단원).</li>
-      </ul>
-    </div>
-
-    <h3>특성방정식을 풀지 않는다</h3>
-    <p>교과서에서는 \(\det(A - \lambda I) = 0\)을 풀어 고유값을 구하지만, 5차 이상 다항식은 근의 공식이 없고 계수의 작은 오차에도 근이 크게 흔들립니다. 실제 소프트웨어는 행렬에 반복 변환을 가해 고유값을 구합니다. 가장 단순한 방법이 거듭제곱법이고, 표준 방법(QR 알고리즘)도 같은 생각을 확장한 것입니다.</p>
+    <p class="q-ask">교과서에서는 \(\det(A - \lambda I) = 0\)을 풀어 고유값을 구한다. 그런데 변수가 100개인 공분산 행렬이면 100차 다항식이고, 5차 이상에는 근의 공식이 없다. 그렇다면 R의 <code>prcomp</code>는 주성분을 어떻게 구할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="거듭제곱법의 반복 횟수(0~40)에 따른 고유벡터 오차(로그). 고유값이 3.618과 1.382인 행렬(파랑)은 비 0.38로 빠르게 줄어 약 35번에 기계 정밀도에 닿고, 고유값이 10과 9인 행렬(주황)은 비 0.9로 천천히 줄어 40번에도 10⁻² 근처이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="135" y="195" text-anchor="middle" class="s">10</text>
+        <text x="210" y="195" text-anchor="middle" class="s">20</text>
+        <text x="285" y="195" text-anchor="middle" class="s">30</text>
+        <text x="360" y="195" text-anchor="middle" class="s">40</text>
+        <text x="55" y="184" text-anchor="end" class="s">10⁻¹⁶</text>
+        <text x="55" y="144" text-anchor="end" class="s">10⁻¹²</text>
+        <text x="55" y="104" text-anchor="end" class="s">10⁻⁸</text>
+        <text x="55" y="64" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="55" y="24" text-anchor="end" class="s">1</text>
+        <text x="360" y="209" text-anchor="end" class="s">반복 횟수</text>
+        <text x="66" y="24" class="s">고유벡터 오차</text>
+        <path d="M67.5 30.5 L75 34.6 L82.5 38.8 L90 43 L97.5 47.2 L105 51.3 L112.5 55.5 L120 59.7 L127.5 63.9 L135 68.1 L142.5 72.2 L150 76.4 L157.5 80.6 L165 84.8 L172.5 89 L180 93.1 L187.5 97.3 L195 101.5 L202.5 105.7 L210 109.9 L217.5 114 L225 118.2 L232.5 122.4 L240 126.6 L247.5 130.8 L255 134.9 L262.5 139.1 L270 143.3 L277.5 147.5 L285 151.7 L292.5 155.8 L300 160 L307.5 164.1 L315 168.1 L322.5 172.2 L330 174.8 L337.5 179.5 L345 178 L352.5 179.5 L360 178" class="a"/>
+        <path d="M67.5 23.6 L75 24 L82.5 24.4 L90 24.8 L97.5 25.2 L105 25.6 L112.5 26.1 L120 26.5 L127.5 27 L135 27.4 L142.5 27.9 L150 28.3 L157.5 28.8 L165 29.2 L172.5 29.7 L180 30.1 L187.5 30.6 L195 31 L202.5 31.5 L210 31.9 L217.5 32.4 L225 32.8 L232.5 33.3 L240 33.8 L247.5 34.2 L255 34.7 L262.5 35.1 L270 35.6 L277.5 36 L285 36.5 L292.5 37 L300 37.4 L307.5 37.9 L315 38.3 L322.5 38.8 L330 39.3 L337.5 39.7 L345 40.2 L352.5 40.6 L360 41.1" class="c"/>
+        <text x="375" y="44" class="s ta">고유값 3.618, 1.382</text><text x="375" y="60" class="s ta">비 0.38, 빠름</text><text x="375" y="84" class="s tc">고유값 10, 9</text><text x="375" y="100" class="s tc">비 0.9, 느림</text><text x="375" y="132" class="s">오차는 매번</text><text x="375" y="148" class="s">|λ₂/λ₁|배로 준다</text>
+      </svg>
+      <figcaption>그림 1. 거듭제곱법의 수렴. 오차는 매번 \(|\lambda_2/\lambda_1|\)배로 줄어, 두 고유값이 가까운 행렬(주황)에서는 느리다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>QR 분해와 조건수(<a href="02-01.html">2.1절</a>), 고유값과 특이값 분해(응통2 4단원, 6단원)를 쓴다.</div>
+    <p>처음 질문의 답은 특성방정식을 풀지 않는다는 것이다. 다항식의 근은 계수의 작은 오차에도 크게 흔들리므로, 실제 소프트웨어는 행렬에 반복 변환을 가해 고유값을 구한다. 가장 단순한 방법이 거듭제곱법이고(그림 1), 표준 방법인 QR 알고리즘도 같은 생각을 확장한 것이다. 또 주성분은 공분산 행렬이 아니라 자료 행렬의 특이값 분해로 구한다.</p>
 
     <h3><span class="no">2.3.1</span>거듭제곱법</h3>
-    <p>시작 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하고 크기를 맞춥니다: \(\mathbf v_{k+1} = A\mathbf v_k/\|A\mathbf v_k\|\). \(\mathbf v_0 = \sum c_i\mathbf u_i\)(고유벡터 전개)라 하면 \(A^k\mathbf v_0 = \sum c_i\lambda_i^k\mathbf u_i\)이고, \(|\lambda_1| &gt; |\lambda_2|\)이면 첫 항이 지배해 \(\mathbf v_k \to \pm\mathbf u_1\)입니다. 오차는 매번 \(|\lambda_2/\lambda_1|\)배로 줄므로, 두 고유값이 가까우면 느립니다. 고유값은 레일리 몫 \(\mathbf v_k^\top A\mathbf v_k/\mathbf v_k^\top\mathbf v_k\)로 어림합니다.</p>
-    <p>큰 희소 행렬에서 몇 개의 큰 고유값만 필요할 때(웹 페이지 순위, 큰 자료의 주성분 몇 개) 이 방식이 쓰입니다. 응통9의 페이지 순위 정상분포 계산이 거듭제곱법입니다.</p>
-
-    <h3><span class="no">2.3.2</span>주성분은 특이값 분해로</h3>
-    <p>중심화한 자료 행렬 \(X\)(\(n \times p\))의 공분산 행렬은 \(X^\top X/(n-1)\)입니다. 이 행렬을 만들어 고유값 분해하면 조건수가 제곱되어(2.1절) 작은 고유값의 정밀도를 잃습니다. 대신 \(X = UDV^\top\)를 직접 분해하면 \(V\)의 열이 주성분 방향, \(d_j^2/(n-1)\)이 주성분 분산입니다. R의 <code>prcomp</code>는 특이값 분해를, <code>princomp</code>는 공분산 행렬의 고유값 분해를 씁니다.</p>
-
+    <p>시작 벡터 \(\mathbf v_0\)에 \(A\)를 거듭 곱하고 크기를 맞춘다.</p>
+    \[ \mathbf v_{k+1} = \frac{A\mathbf v_k}{\|A\mathbf v_k\|} \]
+    <p class="tb-proof"><span class="lb">유도.</span> 대칭 행렬 \(A\)의 고유벡터로 \(\mathbf v_0 = \sum c_i\mathbf u_i\)라 전개하면 \(A^k\mathbf v_0 = \sum c_i\lambda_i^k\mathbf u_i = \lambda_1^k\left(c_1\mathbf u_1 + \sum_{i \ge 2} c_i(\lambda_i/\lambda_1)^k\mathbf u_i\right)\)이다. 그러므로 \(|\lambda_1| &gt; |\lambda_2|\)이고 \(c_1 \ne 0\)이면 둘째 항부터는 \(|\lambda_2/\lambda_1|^k\)로 사라져 \(\mathbf v_k \to \pm\mathbf u_1\)이다. <span class="qed">∎</span></p>
+    <p>즉 오차는 매번 \(|\lambda_2/\lambda_1|\)배로 줄므로 두 고유값이 가까우면 느리다. 고유값은 레일리 몫 \(\mathbf v_k^\top A\mathbf v_k/\mathbf v_k^\top\mathbf v_k\)로 어림한다. 이 방식은 큰 희소 행렬에서 큰 고유값 몇 개만 필요할 때 쓰이는데, 응통9의 페이지 순위 정상분포 계산이 바로 거듭제곱법이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.3.1</span>
-      <p>\(A = \begin{pmatrix}2 &amp; 1\\ 1 &amp; 3\end{pmatrix}\)에 \(\mathbf v_0 = (1, 1)\)로 거듭제곱법을 하세요(큰 성분이 1이 되게 크기 조정).</p>
+      <p>\(A = \begin{pmatrix}2 & 1\\ 1 & 3\end{pmatrix}\)에 \(\mathbf v_0 = (1, 1)\)로 거듭제곱법을 하라. 매번 큰 성분이 1이 되게 크기를 맞춘다.</p>
     </div>
-    <p><i>풀이.</i> \(A\mathbf v_0 = (3, 4)\) → (0.75, 1), 배율 4. 다음 (2.5, 3.75) → (0.667, 1), 배율 3.75. 계속하면 배율 3.667, 3.636, 3.625, 3.621로 참 고유값 \((5 + \sqrt5)/2 = 3.618\)에 다가가고, 벡터는 (0.618, 1)로 갑니다. 둘째 고유값 1.382와의 비 0.38만큼씩 오차가 줄어 빠르게 수렴합니다.</p>
+    <p><i>풀이.</i> \(A\mathbf v_0 = (3, 4)\)이므로 배율 4, 벡터 (0.75, 1)이다. 다음은 (2.5, 3.75)이므로 배율 3.75, 벡터 (0.667, 1)이다. 계속하면 배율이 3.667, 3.636, 3.625, 3.621로 참 고유값 \((5 + \sqrt5)/2 = 3.618\)에 다가가고, 벡터는 (0.618, 1)로 간다. 둘째 고유값 1.382와의 비 0.38만큼씩 오차가 줄어 빠르게 수렴한다(그림 1).</p>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>거듭제곱법: 곱하고 크기 맞추기, \(|\lambda_2/\lambda_1|\)의 속도로 수렴.</li>
-        <li>고유값은 레일리 몫으로 어림.</li>
-        <li>주성분은 \(X^\top X\)를 만들지 말고 \(X\)의 특이값 분해로.</li>
-      </ol>
-    </div>
+    <h3><span class="no">2.3.2</span>주성분은 특이값 분해로</h3>
+    <p>중심화한 자료 행렬 \(X\)(\(n \times p\))의 공분산 행렬은 \(X^\top X/(n-1)\)이다. 그런데 이 행렬을 만들어 고유값 분해하면 조건수가 제곱되어(<a href="02-01.html">2.1절</a>) 작은 고유값의 정밀도를 잃는다. 대신 \(X = UDV^\top\)를 직접 분해하면 \(V\)의 열이 주성분 방향이고 \(d_j^2/(n-1)\)이 주성분 분산이다. 그래서 R의 <code>prcomp</code>는 특이값 분해를 쓴다. 반면 <code>princomp</code>는 공분산 행렬의 고유값 분해를 쓴다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>고유벡터의 부호는 정해지지 않는다. 같은 자료라도 소프트웨어나 버전에 따라 주성분 적재값의 부호가 뒤집혀 나올 수 있으므로, 부호에 의미를 두고 해석하지 않는다.</p></div>
+
+    <div class="tb-summary"><span class="lb">마무리</span><p>거듭제곱법은 곱하고 크기를 맞추기를 되풀이해 가장 큰 고유벡터를 구하며, 오차는 \(|\lambda_2/\lambda_1|\)배씩 준다. 고유값은 레일리 몫으로 어림하고, 표준 소프트웨어는 같은 생각을 확장한 QR 알고리즘을 쓴다. 주성분은 \(X^\top X\)를 만들지 말고 \(X\)의 특이값 분해로 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>고유값이 10과 9.9인 행렬에 거듭제곱법을 쓰면 오차를 1000분의 1로 줄이는 데 몇 번 반복해야 하나요?
-          <details><summary>답</summary><p>\(0.99^k = 0.001\), \(k = \ln 0.001/\ln 0.99 \approx 687\)번. 고유값이 가까우면 매우 느립니다.</p></details>
+        <li>고유값이 10과 9.9인 행렬에 거듭제곱법을 쓰면 오차를 1000분의 1로 줄이는 데 몇 번 반복해야 하는가?
+          <details><summary>답</summary><p>\(0.99^k = 0.001\)에서 \(k = \ln 0.001/\ln 0.99 \approx 687\)번이다. 고유값이 가까우면 매우 느리다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
-      <ol>
-        <li>가장 작은 고유값을 거듭제곱법으로 구하려면 어떻게 하나요?
-          <details><summary>답</summary><p>\(A^{-1}\)의 고유값은 \(1/\lambda_i\)이므로 \(A^{-1}\)에 거듭제곱법을 씁니다(역 반복법). 역행렬을 만들지 않고 매번 \(A\mathbf w = \mathbf v_k\)를 분해(촐레스키, 2.1절)로 풉니다.</p></details>
+      <ol start="2">
+        <li>가장 작은 고유값을 거듭제곱법으로 구하려면 어떻게 하는가?
+          <details><summary>답</summary><p>\(A^{-1}\)의 고유값은 \(1/\lambda_i\)이므로 \(A^{-1}\)에 거듭제곱법을 쓴다(역 반복법). 역행렬을 만들지 않고 매번 \(A\mathbf w = \mathbf v_k\)를 촐레스키 분해(<a href="02-01.html">2.1절</a>)로 푼다.</p></details>
+        </li>
+        <li>자료 행렬 \(X\)의 특이값이 20, 5, 1이고 \(n = 101\)이다. 첫째 주성분이 설명하는 분산의 비율은 얼마인가?
+          <details><summary>답</summary><p>주성분 분산은 \(d_j^2/100\)이므로 4, 0.25, 0.01이다. 비율은 \(4/4.26 = 0.94\)이다.</p></details>
         </li>
       </ol>
     </div>

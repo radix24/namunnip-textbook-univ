@@ -8,57 +8,126 @@
 <article class="card q-card" id="text-s15-diag" data-kind="본문" data-std="응통15-05-03">
   <header class="card-head"><span class="no"></span><h2>MCMC 수렴 진단</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>경로 그림, 자기상관, 유효 표본 크기, \(\hat R\)로 MCMC 표본을 평가한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>MH와 깁스 (<a href="05-01.html">5.1</a>, <a href="05-02.html">5.2절</a>), 자기상관 (응통20).</li>
-      </ul>
-    </div>
+    <p class="q-ask">MCMC 표본을 1만 개 뽑았다. 그런데 이웃한 표본끼리 상관이 0.9라면, 이 1만 개는 독립 표본 몇 개만큼의 정보를 줄까? 그리고 연쇄가 충분히 오래 돌았는지는 무엇을 보고 판단할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="시차 k(0~30)에 따른 자기상관 막대. ρ = 0.9인 연쇄(주황)는 천천히 줄어 시차 20에서도 0.12가 남고 ESS는 526이며, ρ = 0.3인 연쇄(파랑)는 시차 3에서 거의 0이 되어 ESS가 5385이다(N = 10000)">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="160" y="195" text-anchor="middle" class="s">10</text>
+        <text x="260" y="195" text-anchor="middle" class="s">20</text>
+        <text x="360" y="195" text-anchor="middle" class="s">30</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="104" text-anchor="end" class="s">0.5</text>
+        <text x="55" y="24" text-anchor="end" class="s">1</text>
+        <text x="360" y="209" text-anchor="end" class="s">시차 k</text>
+        <text x="66" y="24" class="s">자기상관 ρₖ</text>
+        <path d="M58 180 L58 20" class="c"/>
+        <path d="M62 180 L62 20" class="a"/>
+        <path d="M68 180 L68 36" class="c"/>
+        <path d="M72 180 L72 132" class="a"/>
+        <path d="M78 180 L78 50.4" class="c"/>
+        <path d="M82 180 L82 165.6" class="a"/>
+        <path d="M88 180 L88 63.4" class="c"/>
+        <path d="M92 180 L92 175.7" class="a"/>
+        <path d="M98 180 L98 75" class="c"/>
+        <path d="M102 180 L102 178.7" class="a"/>
+        <path d="M108 180 L108 85.5" class="c"/>
+        <path d="M112 180 L112 179.6" class="a"/>
+        <path d="M118 180 L118 95" class="c"/>
+        <path d="M122 180 L122 179.9" class="a"/>
+        <path d="M128 180 L128 103.5" class="c"/>
+        <path d="M132 180 L132 180" class="a"/>
+        <path d="M138 180 L138 111.1" class="c"/>
+        <path d="M142 180 L142 180" class="a"/>
+        <path d="M148 180 L148 118" class="c"/>
+        <path d="M152 180 L152 180" class="a"/>
+        <path d="M158 180 L158 124.2" class="c"/>
+        <path d="M162 180 L162 180" class="a"/>
+        <path d="M168 180 L168 129.8" class="c"/>
+        <path d="M172 180 L172 180" class="a"/>
+        <path d="M178 180 L178 134.8" class="c"/>
+        <path d="M182 180 L182 180" class="a"/>
+        <path d="M188 180 L188 139.3" class="c"/>
+        <path d="M192 180 L192 180" class="a"/>
+        <path d="M198 180 L198 143.4" class="c"/>
+        <path d="M202 180 L202 180" class="a"/>
+        <path d="M208 180 L208 147.1" class="c"/>
+        <path d="M212 180 L212 180" class="a"/>
+        <path d="M218 180 L218 150.4" class="c"/>
+        <path d="M222 180 L222 180" class="a"/>
+        <path d="M228 180 L228 153.3" class="c"/>
+        <path d="M232 180 L232 180" class="a"/>
+        <path d="M238 180 L238 156" class="c"/>
+        <path d="M242 180 L242 180" class="a"/>
+        <path d="M248 180 L248 158.4" class="c"/>
+        <path d="M252 180 L252 180" class="a"/>
+        <path d="M258 180 L258 160.5" class="c"/>
+        <path d="M262 180 L262 180" class="a"/>
+        <path d="M268 180 L268 162.5" class="c"/>
+        <path d="M272 180 L272 180" class="a"/>
+        <path d="M278 180 L278 164.2" class="c"/>
+        <path d="M282 180 L282 180" class="a"/>
+        <path d="M288 180 L288 165.8" class="c"/>
+        <path d="M292 180 L292 180" class="a"/>
+        <path d="M298 180 L298 167.2" class="c"/>
+        <path d="M302 180 L302 180" class="a"/>
+        <path d="M308 180 L308 168.5" class="c"/>
+        <path d="M312 180 L312 180" class="a"/>
+        <path d="M318 180 L318 169.7" class="c"/>
+        <path d="M322 180 L322 180" class="a"/>
+        <path d="M328 180 L328 170.7" class="c"/>
+        <path d="M332 180 L332 180" class="a"/>
+        <path d="M338 180 L338 171.6" class="c"/>
+        <path d="M342 180 L342 180" class="a"/>
+        <path d="M348 180 L348 172.5" class="c"/>
+        <path d="M352 180 L352 180" class="a"/>
+        <path d="M358 180 L358 173.2" class="c"/>
+        <path d="M362 180 L362 180" class="a"/>
+        <text x="375" y="44" class="s tc">ρ = 0.9</text><text x="375" y="60" class="s tc">ESS = N/19, 526</text><text x="375" y="84" class="s ta">ρ = 0.3</text><text x="375" y="100" class="s ta">ESS = N/1.86, 5385</text><text x="375" y="136" class="s">N = 10000일 때</text>
+      </svg>
+      <figcaption>그림 1. 예제 5.3.1의 자기상관. 자기상관이 천천히 줄어드는 연쇄(주황)는 같은 \(N\)에서 유효 표본 크기가 훨씬 작다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>MH와 깁스(<a href="05-01.html">5.1절</a>, <a href="05-02.html">5.2절</a>)와 자기상관(응통20)을 쓴다.</div>
+    <p>처음 질문의 답은 약 530개이다. 이웃한 표본이 비슷하면 새 정보가 적기 때문이다(그림 1). MCMC는 충분히 오래 돌리면 맞는 답을 주지만, 얼마나 오래가 충분한지 알려 주는 정리는 없다. 그러므로 여러 각도의 증상을 살펴 문제가 없어 보이는지 확인한다.</p>
 
-    <h3>연쇄가 충분히 돌았나</h3>
-    <p>MCMC는 "충분히 오래 돌리면" 맞는 답을 줍니다. 그런데 얼마나 오래가 충분한지 알려 주는 정리는 없습니다. 증상을 여러 각도로 살펴 문제가 없어 보이는지 확인할 뿐입니다.</p>
+    <h3><span class="no">5.3.1</span>경로 그림과 번인</h3>
+    <p>경로 그림은 반복에 따른 값을 그린 것이다. 잘 섞인 연쇄는 일정한 띠 안에서 털뭉치처럼 오르내린다. 반면 추세나 계단, 한쪽에 갇힌 모습이 보이면 문제이다(<a href="05-01.html">5.1절</a> 그림 1). 또 출발점의 영향이 남은 초기 부분은 번인으로 버린다.</p>
 
-    <h3><span class="no">5.3.1</span>진단 도구</h3>
-    <ul>
-      <li><b>경로 그림</b>: 반복에 따른 값. 잘 섞인 연쇄는 일정한 띠 안에서 털뭉치처럼 오르내립니다. 추세, 계단, 한쪽에 갇힘이 보이면 문제입니다.</li>
-      <li><b>번인</b>: 출발점의 영향이 남은 초기 부분을 버립니다.</li>
-      <li><b>자기상관</b>: 이웃한 표본의 상관. 천천히 줄어들면 정보가 적습니다.</li>
-      <li><b>유효 표본 크기</b>: \(\mathrm{ESS} = \dfrac{N}{1 + 2\sum_{k\ge1}\rho_k}\). 상관된 \(N\)개가 독립 표본 몇 개만큼의 정보를 주는지. 몬테카를로 표준오차는 \(\mathrm{sd}/\sqrt{\mathrm{ESS}}\).</li>
-      <li><b>\(\hat R\)(겔만-루빈)</b>: 서로 멀리 떨어진 출발점에서 연쇄 여러 개를 돌려, 연쇄 사이 분산과 연쇄 안 분산을 비교합니다. 모두 같은 분포로 수렴했으면 1에 가깝고, 1.01(또는 1.05)을 넘으면 더 돌립니다.</li>
-    </ul>
-
+    <h3><span class="no">5.3.2</span>자기상관과 유효 표본 크기</h3>
+    <p>이웃한 표본의 상관이 천천히 줄어들면 정보가 적다. 상관된 \(N\)개가 독립 표본 몇 개만큼의 정보를 주는지를 유효 표본 크기라 한다.</p>
+    \[ \mathrm{ESS} = \frac{N}{1 + 2\sum_{k \ge 1}\rho_k} \]
+    <p>그래서 몬테카를로 표준오차는 \(\mathrm{sd}/\sqrt N\)이 아니라 \(\mathrm{sd}/\sqrt{\mathrm{ESS}}\)로 계산한다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 5.3.1</span>
-      <p>\(N = 10000\)인 연쇄의 자기상관이 \(\rho_k = 0.9^k\)이면 ESS는?</p>
+      <p>\(N = 10000\)인 연쇄의 자기상관이 \(\rho_k = 0.9^k\)이면 ESS는 얼마인가?</p>
     </div>
-    <p><i>풀이.</i> \(\sum_{k\ge1}0.9^k = 9\). \(\mathrm{ESS} = 10000/19 \approx 526\). 만 개를 뽑았지만 독립 표본 약 530개의 정보입니다. AR(1) 과정과 같은 구조입니다(응통20).</p>
+    <p><i>풀이.</i> \(\sum_{k \ge 1}0.9^k = 9\)이므로 \(\mathrm{ESS} = 10000/19 \approx 526\)이다. 즉 만 개를 뽑았지만 독립 표본 약 530개의 정보이다. 반면 \(\rho_k = 0.3^k\)이면 \(\sum = 0.43\)이라 ESS는 약 5,400이다(그림 1). 이것은 AR(1) 과정과 같은 구조이다(응통20).</p>
 
-    <div class="tb-note">
-      <b>주의</b> 진단은 문제를 찾아낼 수는 있어도 수렴을 증명하지는 못합니다. 봉우리가 여러 개인 분포에서 모든 연쇄가 같은 봉우리에 갇히면 \(\hat R\)도 1에 가깝게 나옵니다. 출발점을 다양하게 하고, 가능하면 모의 자료로 참값을 아는 경우를 먼저 시험합니다.
-    </div>
+    <h3><span class="no">5.3.3</span>여러 연쇄와 \(\hat R\)</h3>
+    <p>\(\hat R\)(겔만-루빈 통계량)은 서로 멀리 떨어진 출발점에서 연쇄 여러 개를 돌려, 연쇄 사이 분산과 연쇄 안 분산을 비교한다. 모두 같은 분포로 수렴했으면 1에 가깝고, 1.01(느슨하게는 1.05)을 넘으면 더 돌린다. R의 <code>coda</code> 패키지로 이 진단을 한꺼번에 할 수 있다.</p>
     <pre><code>library(coda)
 ch &lt;- mcmc.list(mcmc(chain1), mcmc(chain2), mcmc(chain3))
 traceplot(ch); autocorr.plot(ch); effectiveSize(ch); gelman.diag(ch)</code></pre>
+    <div class="tb-note"><span class="lb">주의</span><p>진단은 문제를 찾아낼 수는 있어도 수렴을 증명하지는 못한다. 예를 들어 봉우리가 여러 개인 분포에서 모든 연쇄가 같은 봉우리에 갇히면 \(\hat R\)도 1에 가깝게 나온다. 그러므로 출발점을 다양하게 하고, 가능하면 참값을 아는 모의 자료로 먼저 시험한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>경로 그림, 번인, 자기상관, ESS, \(\hat R\).</li>
-        <li>몬테카를로 표준오차는 ESS로 계산.</li>
-        <li>진단은 필요조건일 뿐입니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>경로 그림으로 섞임을 보고, 번인으로 초기 부분을 버리며, 자기상관으로 정보량을 가늠한다. 유효 표본 크기 \(N/(1 + 2\sum\rho_k)\)로 몬테카를로 표준오차를 계산하고, 여러 연쇄의 \(\hat R\)이 1에 가까운지 확인한다. 이 진단들은 필요조건일 뿐이다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">5.3.3</span>연습문제</h3>
+      <h3><span class="no">5.3.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>사후 평균을 표준오차 0.01로 추정하려 합니다. 사후 표준편차 0.5, ESS/N = 0.05이면 반복이 몇 번 필요한가요?
-          <details><summary>답</summary><p>ESS \(= (0.5/0.01)^2 = 2500\) 필요, \(N = 2500/0.05 = 50000\).</p></details>
+        <li>사후 평균을 표준오차 0.01로 추정하려 한다. 사후 표준편차가 0.5이고 ESS/\(N\) = 0.05이면 반복이 몇 번 필요한가?
+          <details><summary>답</summary><p>ESS \(= (0.5/0.01)^2 = 2500\)이 필요하므로 \(N = 2500/0.05 = 50000\)번이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\rho_k = r^k\)일 때 ESS를 \(r\)로 나타내라.
+          <details><summary>답</summary><p>\(\sum_{k \ge 1}r^k = r/(1 - r)\)이므로 \(\mathrm{ESS} = N(1 - r)/(1 + r)\)이다.</p></details>
+        </li>
+        <li>연쇄 넷의 \(\hat R\)이 1.3이었다. 무엇을 해야 하는가?
+          <details><summary>답</summary><p>연쇄들이 아직 같은 분포에 이르지 못했다. 더 오래 돌리거나 제안 폭과 매개화를 고치고, 경로 그림으로 어느 연쇄가 갇혔는지 확인한다.</p></details>
         </li>
       </ol>
     </div>

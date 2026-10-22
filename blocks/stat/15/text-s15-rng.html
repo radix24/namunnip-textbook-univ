@@ -8,65 +8,375 @@
 <article class="card q-card" id="text-s15-rng" data-kind="본문" data-std="응통15-04-02">
   <header class="card-head"><span class="no"></span><h2>역변환법과 기각법으로 난수 만들기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>균일 난수에서 역변환법으로 원하는 분포의 난수를 만든다.</li>
-        <li>기각법의 원리와 효율을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>확률변수의 변환 (응통6 2.2절).</li>
-      </ul>
-    </div>
-
-    <h3>균일 난수 하나로 모든 분포를</h3>
-    <p>컴퓨터의 난수 생성기는 (0, 1) 균일 난수(정확히는 결정적 수열이라 의사 난수)를 만듭니다. 다른 분포의 난수는 모두 이것을 변환해 만듭니다.</p>
+    <p class="q-ask">컴퓨터의 난수 생성기가 기본으로 만드는 것은 0과 1 사이의 균일 난수뿐이다. 그런데 R은 <code>rnorm</code>, <code>rgamma</code>, <code>rbeta</code>로 온갖 분포의 난수를 내놓는다. 균일 난수 하나로 어떻게 정규분포나 베타분포를 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="베타(2, 2) 밀도 f(y) = 6y(1 − y)(파란 곡선)와 그것을 덮는 Mg = 1.5(주황 점선) 아래에 균일하게 뿌린 점 300개. 곡선 아래 점 201개(파랑)는 받아들이고 곡선 위 점 99개(회색)는 버려 수용률이 0.67이다">
+        <line x1="60" y1="180" x2="340" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="130" y="195" text-anchor="middle" class="s">0.25</text>
+        <text x="200" y="195" text-anchor="middle" class="s">0.5</text>
+        <text x="270" y="195" text-anchor="middle" class="s">0.75</text>
+        <text x="340" y="195" text-anchor="middle" class="s">1</text>
+        <text x="55" y="184" text-anchor="end" class="s">0</text>
+        <text x="55" y="134" text-anchor="end" class="s">0.5</text>
+        <text x="55" y="84" text-anchor="end" class="s">1</text>
+        <text x="55" y="34" text-anchor="end" class="s">1.5</text>
+        <text x="340" y="209" text-anchor="end" class="s">y</text>
+        <text x="66" y="24" class="s">밀도</text>
+        <circle cx="150.7" cy="157.4" r="2" class="fa"/>
+        <circle cx="242.3" cy="169.1" r="2" class="fa"/>
+        <circle cx="210" cy="125.1" r="2" class="fa"/>
+        <circle cx="76.2" cy="103.9" r="2" class="lk"/>
+        <circle cx="70.5" cy="115" r="2" class="lk"/>
+        <circle cx="79.6" cy="166.4" r="2" class="fa"/>
+        <circle cx="178.9" cy="56" r="2" class="fa"/>
+        <circle cx="94.7" cy="146.5" r="2" class="fa"/>
+        <circle cx="235.7" cy="37.8" r="2" class="lk"/>
+        <circle cx="221.6" cy="120.5" r="2" class="fa"/>
+        <circle cx="333.4" cy="173" r="2" class="fa"/>
+        <circle cx="300.4" cy="136.6" r="2" class="fa"/>
+        <circle cx="100.4" cy="162.3" r="2" class="fa"/>
+        <circle cx="146.4" cy="57.6" r="2" class="fa"/>
+        <circle cx="110.6" cy="92.8" r="2" class="fa"/>
+        <circle cx="238.9" cy="124.1" r="2" class="fa"/>
+        <circle cx="213.4" cy="170.6" r="2" class="fa"/>
+        <circle cx="76.7" cy="149.1" r="2" class="fa"/>
+        <circle cx="250.5" cy="115.9" r="2" class="fa"/>
+        <circle cx="148" cy="92.2" r="2" class="fa"/>
+        <circle cx="186.9" cy="135" r="2" class="fa"/>
+        <circle cx="282.4" cy="75.2" r="2" class="lk"/>
+        <circle cx="128.3" cy="93.8" r="2" class="fa"/>
+        <circle cx="207.1" cy="48.7" r="2" class="fa"/>
+        <circle cx="264.2" cy="136.8" r="2" class="fa"/>
+        <circle cx="334.4" cy="162.3" r="2" class="lk"/>
+        <circle cx="177.1" cy="66.4" r="2" class="fa"/>
+        <circle cx="102.6" cy="106.7" r="2" class="fa"/>
+        <circle cx="71" cy="79.8" r="2" class="lk"/>
+        <circle cx="274.1" cy="94" r="2" class="fa"/>
+        <circle cx="305.1" cy="132.9" r="2" class="fa"/>
+        <circle cx="254.7" cy="90.8" r="2" class="fa"/>
+        <circle cx="222.4" cy="111.6" r="2" class="fa"/>
+        <circle cx="295.2" cy="38.3" r="2" class="lk"/>
+        <circle cx="192.7" cy="80.4" r="2" class="fa"/>
+        <circle cx="77" cy="74.8" r="2" class="lk"/>
+        <circle cx="241.2" cy="31" r="2" class="lk"/>
+        <circle cx="290.1" cy="137.3" r="2" class="fa"/>
+        <circle cx="168" cy="79.7" r="2" class="fa"/>
+        <circle cx="66.3" cy="110.7" r="2" class="lk"/>
+        <circle cx="107.1" cy="162.4" r="2" class="fa"/>
+        <circle cx="76.5" cy="64.8" r="2" class="lk"/>
+        <circle cx="96.2" cy="142.9" r="2" class="fa"/>
+        <circle cx="169.5" cy="49.3" r="2" class="fa"/>
+        <circle cx="82.6" cy="112.6" r="2" class="lk"/>
+        <circle cx="213.8" cy="47.5" r="2" class="fa"/>
+        <circle cx="289.4" cy="50.4" r="2" class="lk"/>
+        <circle cx="138" cy="117.7" r="2" class="fa"/>
+        <circle cx="160.5" cy="47.4" r="2" class="fa"/>
+        <circle cx="328.2" cy="157.4" r="2" class="fa"/>
+        <circle cx="109.3" cy="145.2" r="2" class="fa"/>
+        <circle cx="125.3" cy="107.3" r="2" class="fa"/>
+        <circle cx="225" cy="140.6" r="2" class="fa"/>
+        <circle cx="61.1" cy="117.2" r="2" class="lk"/>
+        <circle cx="163.4" cy="95" r="2" class="fa"/>
+        <circle cx="326.9" cy="76.4" r="2" class="lk"/>
+        <circle cx="204.3" cy="87.4" r="2" class="fa"/>
+        <circle cx="249.3" cy="171.9" r="2" class="fa"/>
+        <circle cx="311.9" cy="63" r="2" class="lk"/>
+        <circle cx="304.9" cy="60.3" r="2" class="lk"/>
+        <circle cx="169.9" cy="120.2" r="2" class="fa"/>
+        <circle cx="89" cy="84.9" r="2" class="lk"/>
+        <circle cx="77.4" cy="169.9" r="2" class="fa"/>
+        <circle cx="118.5" cy="155.7" r="2" class="fa"/>
+        <circle cx="155.2" cy="172.1" r="2" class="fa"/>
+        <circle cx="60.1" cy="157.3" r="2" class="lk"/>
+        <circle cx="88.4" cy="125.5" r="2" class="fa"/>
+        <circle cx="67.1" cy="48.9" r="2" class="lk"/>
+        <circle cx="231.9" cy="157.7" r="2" class="fa"/>
+        <circle cx="130.6" cy="127.9" r="2" class="fa"/>
+        <circle cx="162" cy="161.6" r="2" class="fa"/>
+        <circle cx="297.7" cy="31" r="2" class="lk"/>
+        <circle cx="190.5" cy="107.4" r="2" class="fa"/>
+        <circle cx="84" cy="164.7" r="2" class="fa"/>
+        <circle cx="155.9" cy="140.3" r="2" class="fa"/>
+        <circle cx="292.1" cy="155.8" r="2" class="fa"/>
+        <circle cx="66.5" cy="37.4" r="2" class="lk"/>
+        <circle cx="207.9" cy="158" r="2" class="fa"/>
+        <circle cx="212.1" cy="175.9" r="2" class="fa"/>
+        <circle cx="207.9" cy="33.2" r="2" class="fa"/>
+        <circle cx="301.7" cy="75.6" r="2" class="lk"/>
+        <circle cx="133.1" cy="125" r="2" class="fa"/>
+        <circle cx="106.8" cy="64.2" r="2" class="lk"/>
+        <circle cx="209.1" cy="63.1" r="2" class="fa"/>
+        <circle cx="152.3" cy="146.5" r="2" class="fa"/>
+        <circle cx="287.2" cy="32.3" r="2" class="lk"/>
+        <circle cx="298.7" cy="59.1" r="2" class="lk"/>
+        <circle cx="289.1" cy="69" r="2" class="lk"/>
+        <circle cx="123.5" cy="102.4" r="2" class="fa"/>
+        <circle cx="159.6" cy="175.7" r="2" class="fa"/>
+        <circle cx="67.8" cy="138.1" r="2" class="lk"/>
+        <circle cx="132.6" cy="76.1" r="2" class="fa"/>
+        <circle cx="327.8" cy="112.9" r="2" class="lk"/>
+        <circle cx="322.4" cy="31.8" r="2" class="lk"/>
+        <circle cx="327.4" cy="125.3" r="2" class="lk"/>
+        <circle cx="121.7" cy="146" r="2" class="fa"/>
+        <circle cx="115.1" cy="149.3" r="2" class="fa"/>
+        <circle cx="234.7" cy="45" r="2" class="fa"/>
+        <circle cx="295.3" cy="108.1" r="2" class="fa"/>
+        <circle cx="242.8" cy="60.1" r="2" class="fa"/>
+        <circle cx="83.7" cy="80.9" r="2" class="lk"/>
+        <circle cx="314.7" cy="62.7" r="2" class="lk"/>
+        <circle cx="270" cy="108.3" r="2" class="fa"/>
+        <circle cx="110" cy="61.6" r="2" class="lk"/>
+        <circle cx="153.1" cy="59.9" r="2" class="fa"/>
+        <circle cx="332.1" cy="120.6" r="2" class="lk"/>
+        <circle cx="172.4" cy="38" r="2" class="fa"/>
+        <circle cx="262.9" cy="154.5" r="2" class="fa"/>
+        <circle cx="95.6" cy="157.3" r="2" class="fa"/>
+        <circle cx="313.4" cy="59" r="2" class="lk"/>
+        <circle cx="100.9" cy="56" r="2" class="lk"/>
+        <circle cx="334.5" cy="81.4" r="2" class="lk"/>
+        <circle cx="158.1" cy="97.7" r="2" class="fa"/>
+        <circle cx="96.7" cy="177.9" r="2" class="fa"/>
+        <circle cx="331.8" cy="82.5" r="2" class="lk"/>
+        <circle cx="207.4" cy="40" r="2" class="fa"/>
+        <circle cx="181.5" cy="49.2" r="2" class="fa"/>
+        <circle cx="291.3" cy="148.3" r="2" class="fa"/>
+        <circle cx="130.5" cy="136.1" r="2" class="fa"/>
+        <circle cx="127.4" cy="92" r="2" class="fa"/>
+        <circle cx="132.6" cy="117.1" r="2" class="fa"/>
+        <circle cx="96.7" cy="43.5" r="2" class="lk"/>
+        <circle cx="159.1" cy="111.3" r="2" class="fa"/>
+        <circle cx="223.3" cy="44.4" r="2" class="fa"/>
+        <circle cx="177.8" cy="42.3" r="2" class="fa"/>
+        <circle cx="200.5" cy="100.2" r="2" class="fa"/>
+        <circle cx="206.6" cy="177.2" r="2" class="fa"/>
+        <circle cx="183.2" cy="152.5" r="2" class="fa"/>
+        <circle cx="61.1" cy="60.1" r="2" class="lk"/>
+        <circle cx="108.3" cy="109" r="2" class="fa"/>
+        <circle cx="263.1" cy="96.5" r="2" class="fa"/>
+        <circle cx="151.3" cy="102.2" r="2" class="fa"/>
+        <circle cx="215.5" cy="62.4" r="2" class="fa"/>
+        <circle cx="89.7" cy="96" r="2" class="lk"/>
+        <circle cx="129.6" cy="138.5" r="2" class="fa"/>
+        <circle cx="276.2" cy="103.8" r="2" class="fa"/>
+        <circle cx="217.3" cy="66" r="2" class="fa"/>
+        <circle cx="315.5" cy="113.5" r="2" class="lk"/>
+        <circle cx="231.5" cy="104.2" r="2" class="fa"/>
+        <circle cx="203.4" cy="76.1" r="2" class="fa"/>
+        <circle cx="186.7" cy="100" r="2" class="fa"/>
+        <circle cx="193.9" cy="38.8" r="2" class="fa"/>
+        <circle cx="255.8" cy="48.5" r="2" class="lk"/>
+        <circle cx="323.8" cy="141.1" r="2" class="lk"/>
+        <circle cx="216.7" cy="38.5" r="2" class="fa"/>
+        <circle cx="295.2" cy="159.4" r="2" class="fa"/>
+        <circle cx="94.1" cy="113.7" r="2" class="lk"/>
+        <circle cx="80.3" cy="143.9" r="2" class="fa"/>
+        <circle cx="80.5" cy="79.6" r="2" class="lk"/>
+        <circle cx="279.5" cy="45.4" r="2" class="lk"/>
+        <circle cx="103.2" cy="72.6" r="2" class="lk"/>
+        <circle cx="244.9" cy="158.6" r="2" class="fa"/>
+        <circle cx="307.2" cy="34.9" r="2" class="lk"/>
+        <circle cx="121.5" cy="37.1" r="2" class="lk"/>
+        <circle cx="171.5" cy="106.9" r="2" class="fa"/>
+        <circle cx="337.2" cy="55.1" r="2" class="lk"/>
+        <circle cx="105.2" cy="115.3" r="2" class="fa"/>
+        <circle cx="204.4" cy="129.1" r="2" class="fa"/>
+        <circle cx="114.8" cy="132.2" r="2" class="fa"/>
+        <circle cx="262.2" cy="177.1" r="2" class="fa"/>
+        <circle cx="215.1" cy="113.9" r="2" class="fa"/>
+        <circle cx="65.1" cy="130.3" r="2" class="lk"/>
+        <circle cx="234.7" cy="103.2" r="2" class="fa"/>
+        <circle cx="78" cy="32.2" r="2" class="lk"/>
+        <circle cx="280.7" cy="34.2" r="2" class="lk"/>
+        <circle cx="89.3" cy="140.2" r="2" class="fa"/>
+        <circle cx="71.1" cy="63.2" r="2" class="lk"/>
+        <circle cx="135.7" cy="160.6" r="2" class="fa"/>
+        <circle cx="178.2" cy="43.3" r="2" class="fa"/>
+        <circle cx="289.3" cy="141.2" r="2" class="fa"/>
+        <circle cx="101.8" cy="42.1" r="2" class="lk"/>
+        <circle cx="219.8" cy="74.9" r="2" class="fa"/>
+        <circle cx="85" cy="171.4" r="2" class="fa"/>
+        <circle cx="252.7" cy="116.2" r="2" class="fa"/>
+        <circle cx="80.3" cy="39.2" r="2" class="lk"/>
+        <circle cx="237.6" cy="59.8" r="2" class="fa"/>
+        <circle cx="83.4" cy="51.6" r="2" class="lk"/>
+        <circle cx="78.7" cy="50.6" r="2" class="lk"/>
+        <circle cx="187.1" cy="129.1" r="2" class="fa"/>
+        <circle cx="214.9" cy="41" r="2" class="fa"/>
+        <circle cx="135" cy="160.6" r="2" class="fa"/>
+        <circle cx="207.5" cy="144.2" r="2" class="fa"/>
+        <circle cx="90.6" cy="155.8" r="2" class="fa"/>
+        <circle cx="74.1" cy="149.7" r="2" class="lk"/>
+        <circle cx="147.4" cy="134.2" r="2" class="fa"/>
+        <circle cx="272.7" cy="136.5" r="2" class="fa"/>
+        <circle cx="200" cy="153.3" r="2" class="fa"/>
+        <circle cx="157.2" cy="177.3" r="2" class="fa"/>
+        <circle cx="130.1" cy="177.7" r="2" class="fa"/>
+        <circle cx="265.3" cy="97.3" r="2" class="fa"/>
+        <circle cx="113" cy="108.8" r="2" class="fa"/>
+        <circle cx="321.7" cy="164.1" r="2" class="fa"/>
+        <circle cx="289.3" cy="115.2" r="2" class="fa"/>
+        <circle cx="198.6" cy="54.8" r="2" class="fa"/>
+        <circle cx="170.1" cy="104" r="2" class="fa"/>
+        <circle cx="252.6" cy="32.6" r="2" class="lk"/>
+        <circle cx="156" cy="55.2" r="2" class="fa"/>
+        <circle cx="257.9" cy="84.6" r="2" class="fa"/>
+        <circle cx="173.3" cy="127.9" r="2" class="fa"/>
+        <circle cx="75.2" cy="160.5" r="2" class="fa"/>
+        <circle cx="79.8" cy="68.9" r="2" class="lk"/>
+        <circle cx="131.6" cy="155.5" r="2" class="fa"/>
+        <circle cx="83.7" cy="53.8" r="2" class="lk"/>
+        <circle cx="303.8" cy="79.4" r="2" class="lk"/>
+        <circle cx="138.9" cy="143.7" r="2" class="fa"/>
+        <circle cx="142.1" cy="111.1" r="2" class="fa"/>
+        <circle cx="104.1" cy="113.1" r="2" class="fa"/>
+        <circle cx="133.7" cy="35.7" r="2" class="lk"/>
+        <circle cx="332.3" cy="97.9" r="2" class="lk"/>
+        <circle cx="128.4" cy="35.1" r="2" class="lk"/>
+        <circle cx="146.7" cy="126.5" r="2" class="fa"/>
+        <circle cx="60.3" cy="122.8" r="2" class="lk"/>
+        <circle cx="192.9" cy="104.6" r="2" class="fa"/>
+        <circle cx="116.3" cy="104.3" r="2" class="fa"/>
+        <circle cx="61.4" cy="140.4" r="2" class="lk"/>
+        <circle cx="85.1" cy="120.1" r="2" class="lk"/>
+        <circle cx="71.7" cy="176.6" r="2" class="fa"/>
+        <circle cx="145.2" cy="145.1" r="2" class="fa"/>
+        <circle cx="224" cy="100.6" r="2" class="fa"/>
+        <circle cx="270.2" cy="81.4" r="2" class="fa"/>
+        <circle cx="260.5" cy="48.1" r="2" class="lk"/>
+        <circle cx="169.1" cy="131.1" r="2" class="fa"/>
+        <circle cx="335.7" cy="157.6" r="2" class="lk"/>
+        <circle cx="262.8" cy="83.5" r="2" class="fa"/>
+        <circle cx="72.3" cy="54.7" r="2" class="lk"/>
+        <circle cx="309.7" cy="85.9" r="2" class="lk"/>
+        <circle cx="265.5" cy="58.2" r="2" class="lk"/>
+        <circle cx="99" cy="101.4" r="2" class="lk"/>
+        <circle cx="201.2" cy="54.8" r="2" class="fa"/>
+        <circle cx="285.3" cy="56" r="2" class="lk"/>
+        <circle cx="223.5" cy="46.1" r="2" class="fa"/>
+        <circle cx="251.2" cy="76" r="2" class="fa"/>
+        <circle cx="124.4" cy="175.3" r="2" class="fa"/>
+        <circle cx="97.3" cy="125.9" r="2" class="fa"/>
+        <circle cx="89.4" cy="54.6" r="2" class="lk"/>
+        <circle cx="216.4" cy="85.8" r="2" class="fa"/>
+        <circle cx="235.3" cy="77.9" r="2" class="fa"/>
+        <circle cx="197" cy="179.5" r="2" class="fa"/>
+        <circle cx="283.4" cy="67.8" r="2" class="lk"/>
+        <circle cx="200.8" cy="99.7" r="2" class="fa"/>
+        <circle cx="244.6" cy="170.1" r="2" class="fa"/>
+        <circle cx="266.3" cy="142.2" r="2" class="fa"/>
+        <circle cx="80.8" cy="140.2" r="2" class="fa"/>
+        <circle cx="264.2" cy="149.2" r="2" class="fa"/>
+        <circle cx="267.2" cy="33.6" r="2" class="lk"/>
+        <circle cx="198.3" cy="122.6" r="2" class="fa"/>
+        <circle cx="194.1" cy="77.4" r="2" class="fa"/>
+        <circle cx="274.8" cy="87.5" r="2" class="fa"/>
+        <circle cx="240" cy="168.4" r="2" class="fa"/>
+        <circle cx="101.3" cy="141.9" r="2" class="fa"/>
+        <circle cx="268.1" cy="134.3" r="2" class="fa"/>
+        <circle cx="219" cy="178.1" r="2" class="fa"/>
+        <circle cx="77" cy="139.7" r="2" class="lk"/>
+        <circle cx="248.2" cy="76.2" r="2" class="fa"/>
+        <circle cx="249.2" cy="136.4" r="2" class="fa"/>
+        <circle cx="204.6" cy="110.3" r="2" class="fa"/>
+        <circle cx="190.6" cy="162.2" r="2" class="fa"/>
+        <circle cx="310.2" cy="150.1" r="2" class="fa"/>
+        <circle cx="333.9" cy="39.6" r="2" class="lk"/>
+        <circle cx="64.9" cy="111.2" r="2" class="lk"/>
+        <circle cx="289.6" cy="34.8" r="2" class="lk"/>
+        <circle cx="185.8" cy="139.7" r="2" class="fa"/>
+        <circle cx="118.8" cy="38.2" r="2" class="lk"/>
+        <circle cx="119" cy="92.8" r="2" class="fa"/>
+        <circle cx="99.7" cy="101.4" r="2" class="lk"/>
+        <circle cx="326.8" cy="160.1" r="2" class="fa"/>
+        <circle cx="289.7" cy="103.7" r="2" class="fa"/>
+        <circle cx="308.3" cy="74.5" r="2" class="lk"/>
+        <circle cx="124.8" cy="45.3" r="2" class="lk"/>
+        <circle cx="196.1" cy="176.3" r="2" class="fa"/>
+        <circle cx="61" cy="106.2" r="2" class="lk"/>
+        <circle cx="186.2" cy="134.7" r="2" class="fa"/>
+        <circle cx="99.4" cy="128.4" r="2" class="fa"/>
+        <circle cx="148.5" cy="54" r="2" class="fa"/>
+        <circle cx="60.5" cy="67.4" r="2" class="lk"/>
+        <circle cx="295" cy="162" r="2" class="fa"/>
+        <circle cx="319.4" cy="73" r="2" class="lk"/>
+        <circle cx="312.4" cy="136.5" r="2" class="fa"/>
+        <circle cx="164.2" cy="121.1" r="2" class="fa"/>
+        <circle cx="339.7" cy="91.6" r="2" class="lk"/>
+        <circle cx="161" cy="115.8" r="2" class="fa"/>
+        <circle cx="137" cy="172.8" r="2" class="fa"/>
+        <circle cx="88.5" cy="54.8" r="2" class="lk"/>
+        <circle cx="140" cy="39.7" r="2" class="lk"/>
+        <circle cx="129.8" cy="140.1" r="2" class="fa"/>
+        <circle cx="203.1" cy="151.5" r="2" class="fa"/>
+        <circle cx="164.5" cy="36.6" r="2" class="lk"/>
+        <circle cx="307.6" cy="58.2" r="2" class="lk"/>
+        <circle cx="236.7" cy="43" r="2" class="fa"/>
+        <circle cx="323.4" cy="97.6" r="2" class="lk"/>
+        <circle cx="261.5" cy="172.6" r="2" class="fa"/>
+        <circle cx="265.1" cy="112.4" r="2" class="fa"/>
+        <circle cx="270.7" cy="83.3" r="2" class="fa"/>
+        <circle cx="140.1" cy="172.7" r="2" class="fa"/>
+        <circle cx="319.5" cy="160.9" r="2" class="fa"/>
+        <circle cx="192.2" cy="128.5" r="2" class="fa"/>
+        <circle cx="143.4" cy="69.1" r="2" class="fa"/>
+        <circle cx="333.4" cy="141" r="2" class="lk"/>
+        <circle cx="243.7" cy="134.9" r="2" class="fa"/>
+        <circle cx="216.1" cy="120.8" r="2" class="fa"/>
+        <path d="M60 30 L340 30" class="c dsh"/>
+        <path d="M60 180 L62.3 175 L64.7 170.2 L67 165.4 L69.3 160.7 L71.7 156 L74 151.5 L76.3 147 L78.7 142.7 L81 138.4 L83.3 134.2 L85.7 130 L88 126 L90.3 122 L92.7 118.2 L95 114.4 L97.3 110.7 L99.7 107 L102 103.5 L104.3 100 L106.7 96.7 L109 93.4 L111.3 90.2 L113.7 87 L116 84 L118.3 81 L120.7 78.2 L123 75.4 L125.3 72.7 L127.7 70 L130 67.5 L132.3 65 L134.7 62.7 L137 60.4 L139.3 58.2 L141.7 56 L144 54 L146.3 52 L148.7 50.2 L151 48.4 L153.3 46.7 L155.7 45 L158 43.5 L160.3 42 L162.7 40.7 L165 39.4 L167.3 38.2 L169.7 37 L172 36 L174.3 35 L176.7 34.2 L179 33.4 L181.3 32.7 L183.7 32 L186 31.5 L188.3 31 L190.7 30.7 L193 30.4 L195.3 30.2 L197.7 30 L200 30 L202.3 30 L204.7 30.2 L207 30.4 L209.3 30.7 L211.7 31 L214 31.5 L216.3 32 L218.7 32.7 L221 33.4 L223.3 34.2 L225.7 35 L228 36 L230.3 37 L232.7 38.2 L235 39.4 L237.3 40.7 L239.7 42 L242 43.5 L244.3 45 L246.7 46.7 L249 48.4 L251.3 50.2 L253.7 52 L256 54 L258.3 56 L260.7 58.2 L263 60.4 L265.3 62.7 L267.7 65 L270 67.5 L272.3 70 L274.7 72.7 L277 75.4 L279.3 78.2 L281.7 81 L284 84 L286.3 87 L288.7 90.2 L291 93.4 L293.3 96.7 L295.7 100 L298 103.5 L300.3 107 L302.7 110.7 L305 114.4 L307.3 118.2 L309.7 122 L312 126 L314.3 130 L316.7 134.2 L319 138.4 L321.3 142.7 L323.7 147 L326 151.5 L328.3 156 L330.7 160.7 L333 165.4 L335.3 170.2 L337.7 175 L340 180" class="a"/>
+        <text x="355" y="44" class="s tc">Mg = 1.5 (점선)</text><text x="355" y="62" class="s ta">f(y) = 6y(1 − y)</text><text x="355" y="98" class="s ta">받아들임 201개</text><text x="355" y="116" class="s">버림 99개 (회색)</text><text x="355" y="140" class="s">수용률 0.67, 이론 2/3</text>
+      </svg>
+      <figcaption>그림 1. 예제 4.2.3의 기각법. \(Mg\) 아래에 점을 고르게 뿌리고 \(f\) 아래에 떨어진 점(파랑)의 가로 좌표만 남기면 \(f\)를 따른다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>확률변수의 변환(응통6 2.2절)을 쓴다.</div>
+    <p>처음 질문의 답은 변환과 선별이다. 분포함수의 역함수에 균일 난수를 넣으면 원하는 분포가 나오고(역변환법), 역함수를 구하기 어려우면 뽑기 쉬운 분포에서 뽑아 일부만 남긴다(기각법, 그림 1). 컴퓨터의 균일 난수는 사실 결정적인 수열이라 의사 난수라 부르지만, 다른 분포의 난수는 모두 이것을 바꿔 만든다.</p>
 
     <h3><span class="no">4.2.1</span>역변환법</h3>
     <div class="tb-env thm">
-      <span class="lb">정리 4.2.1</span>
-      <p>\(U \sim U(0,1)\)이고 \(F^{-1}(u) = \inf\{x : F(x) \ge u\}\)이면 \(X = F^{-1}(U)\)의 분포함수는 \(F\)이다.</p>
+      <span class="lb">정리 4.2.1 <span class="nm">(역변환)</span></span>
+      <p>\(U \sim U(0, 1)\)이고 \(F^{-1}(u) = \inf\{x : F(x) \ge u\}\)이면 \(X = F^{-1}(U)\)의 분포함수는 \(F\)이다.</p>
     </div>
-    <p>\(P(F^{-1}(U) \le x) = P(U \le F(x)) = F(x)\). 지수분포는 \(-\log(1-U)/\lambda\), 이산분포는 누적 확률표에서 \(U\)가 들어가는 칸을 찾습니다. \(F^{-1}\)이 닫힌 꼴이 아니면(정규분포) 수치로 구하거나 다른 방법을 씁니다. 정규 난수는 박스-뮬러 변환 \(\sqrt{-2\log U_1}\cos(2\pi U_2)\)로도 만듭니다.</p>
+    <p class="tb-proof"><span class="lb">증명.</span> \(F^{-1}(u) \le x\)와 \(u \le F(x)\)는 동치이므로 \(P(F^{-1}(U) \le x) = P(U \le F(x)) = F(x)\)이다. <span class="qed">∎</span></p>
+    <p>예를 들어 지수분포는 \(-\log(1 - U)/\lambda\)이다. 이산분포는 누적 확률표에서 \(U\)가 들어가는 칸을 찾는다. 그런데 정규분포처럼 \(F^{-1}\)이 닫힌 꼴이 아니면 수치로 구하거나 다른 방법을 쓴다. 정규 난수는 박스-뮬러 변환 \(\sqrt{-2\log U_1}\cos(2\pi U_2)\)로도 만든다.</p>
 
     <h3><span class="no">4.2.2</span>기각법</h3>
-    <p>목표 밀도 \(f\)를 직접 뽑기 어렵지만, 뽑기 쉬운 밀도 \(g\)와 상수 \(M\)이 있어 모든 \(x\)에서 \(f(x) \le Mg(x)\)라고 합시다.</p>
-    <ol>
-      <li>\(Y \sim g\), \(U \sim U(0,1)\)을 뽑는다.</li>
-      <li>\(U \le f(Y)/(Mg(Y))\)이면 \(Y\)를 받아들이고, 아니면 1로 돌아간다.</li>
-    </ol>
+    <p>목표 밀도 \(f\)는 직접 뽑기 어렵지만, 뽑기 쉬운 밀도 \(g\)와 상수 \(M\)이 있어 모든 \(x\)에서 \(f(x) \le Mg(x)\)라고 하자. 그러면 \(Y \sim g\)와 \(U \sim U(0, 1)\)을 뽑아 \(U \le f(Y)/\{Mg(Y)\}\)이면 \(Y\)를 받아들이고, 아니면 다시 뽑는다.</p>
     <div class="tb-env thm">
-      <span class="lb">정리 4.2.2</span>
+      <span class="lb">정리 4.2.2 <span class="nm">(기각법)</span></span>
       <p>받아들인 \(Y\)의 밀도는 \(f\)이고, 한 번 시도에서 받아들일 확률은 \(1/M\)이다.</p>
     </div>
-    <p>그림으로는 \(Mg\) 아래 영역에 점을 고르게 뿌리고 \(f\) 아래에 떨어진 점의 \(x\) 좌표만 남기는 것입니다. \(f\)의 정규화 상수를 몰라도 됩니다(비만 필요). \(M\)이 1에 가까울수록 효율적입니다.</p>
-
+    <p>그림으로 보면 \(Mg\) 아래 영역에 점을 고르게 뿌리고 \(f\) 아래에 떨어진 점의 \(x\) 좌표만 남기는 것이다(그림 1). 그래서 \(f\)의 정규화 상수를 몰라도 되고 비만 있으면 된다. 또 \(M\)이 1에 가까울수록, 곧 \(g\)가 \(f\)를 꼭 맞게 덮을수록 효율적이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 4.2.3</span>
-      <p>\(\mathrm{Beta}(2, 2)\), \(f(x) = 6x(1-x)\)를 균일 제안분포로 기각법으로 뽑으세요.</p>
+      <p>\(\mathrm{Beta}(2, 2)\), 곧 \(f(x) = 6x(1 - x)\)를 균일 제안분포로 기각법으로 뽑아라.</p>
     </div>
-    <p><i>풀이.</i> \(f\)의 최댓값은 \(x = 0.5\)에서 1.5이므로 \(M = 1.5\), \(g = 1\). \(Y, U\)를 뽑아 \(U \le 4Y(1-Y)\)이면 받아들입니다. 수용률 \(1/1.5 = 2/3\).</p>
+    <p><i>풀이.</i> \(f\)의 최댓값은 \(x = 0.5\)에서 1.5이므로 \(M = 1.5\), \(g = 1\)이다. \(Y\)와 \(U\)를 뽑아 \(U \le 4Y(1 - Y)\)이면 받아들이며, 수용률은 \(1/1.5 = 2/3\)이다. 그림 1의 300번 시도에서는 201개, 곧 0.67을 받아들였다.</p>
     <pre><code>rbeta22 &lt;- function(n) { out &lt;- numeric(0)
   while (length(out) &lt; n) { y &lt;- runif(n); u &lt;- runif(n)
     out &lt;- c(out, y[u &lt;= 4 * y * (1 - y)]) }
   out[1:n] }
 mean(rbeta22(1e5))   # 0.5 근처</code></pre>
+    <div class="tb-note"><span class="lb">주의</span><p>\(f \le Mg\)가 어느 한 곳에서라도 깨지면 그곳의 확률이 모자라게 뽑혀 분포가 틀어진다. 특히 \(g\)의 꼬리가 \(f\)보다 얇으면 어떤 \(M\)으로도 덮을 수 없다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>역변환: \(F^{-1}(U)\).</li>
-        <li>기각법: \(f \le Mg\)인 쉬운 \(g\)로 제안, 확률 \(f/(Mg)\)로 수용, 효율 \(1/M\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>역변환법은 \(X = F^{-1}(U)\)로 원하는 분포를 만들며, 역함수를 구할 수 있는 분포에 쓴다. 기각법은 \(f \le Mg\)인 쉬운 \(g\)에서 제안하고 확률 \(f/(Mg)\)로 받아들이며, 효율은 \(1/M\)이고 정규화 상수가 필요 없다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">4.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>밀도 \(f(x) = 2x\) (\(0 &lt; x &lt; 1\))의 역변환 공식은?
-          <details><summary>답</summary><p>\(F(x) = x^2\), \(X = \sqrt U\).</p></details>
+        <li>밀도 \(f(x) = 2x\)(\(0 &lt; x &lt; 1\))의 역변환 공식은 무엇인가?
+          <details><summary>답</summary><p>\(F(x) = x^2\)이므로 \(X = \sqrt U\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(\mathrm{Beta}(3, 3)\), 곧 \(f(x) = 30x^2(1 - x)^2\)을 균일 제안분포로 기각법으로 뽑으면 수용률은 얼마인가?
+          <details><summary>답</summary><p>최댓값은 \(x = 0.5\)에서 \(30/16 = 1.875\)이므로 수용률은 \(1/1.875 = 0.53\)이다.</p></details>
+        </li>
+        <li>로지스틱 분포 \(F(x) = 1/(1 + e^{-x})\)의 역변환 공식은 무엇인가?
+          <details><summary>답</summary><p>\(u = 1/(1 + e^{-x})\)를 풀면 \(X = \log\{U/(1 - U)\}\)이다.</p></details>
         </li>
       </ol>
     </div>

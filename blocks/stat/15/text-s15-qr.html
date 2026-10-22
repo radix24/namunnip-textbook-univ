@@ -8,59 +8,72 @@
 <article class="card q-card" id="text-s15-qr" data-kind="본문" data-std="응통15-02-01">
   <header class="card-head"><span class="no"></span><h2>QR과 촐레스키로 최소제곱 안정적으로 풀기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>정규방정식을 직접 역행렬로 풀면 생기는 문제(조건수)를 안다.</li>
-        <li>촐레스키 분해와 QR 분해로 최소제곱을 푼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>QR 분해, 촐레스키 분해 (응통2 03, 05단원), 응통10 2.1절.</li>
-      </ul>
-    </div>
-
-    <h3>\((X^\top X)^{-1}\)를 계산하지 마라</h3>
-    <p>교과서의 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)는 이론에는 좋지만 계산 방법으로는 나쁩니다. 역행렬을 구하는 것은 느리고, 설명변수가 거의 일차종속이면 오차가 크게 불어납니다.</p>
+    <p class="q-ask">회귀계수의 공식 \(\hat{\boldsymbol\beta} = (X^\top X)^{-1}X^\top\mathbf y\)는 어느 교과서에나 나온다. 그런데 R의 <code>lm</code>은 이 공식대로 계산하지 않는다. 거의 같은 두 설명변수를 넣으면 이 공식은 엉뚱한 답을 내는데, <code>lm</code>은 여전히 답을 낸다. 무엇이 다를까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="x와 x + δz를 함께 넣은 회귀에서 조건수 log₁₀ κ(X)(0~12)에 따른 계수의 상대 오차(로그). 정규방정식(주황)은 기울기 2로 빠르게 커져 κ = 10⁸ 근처에서 오차 100%(점선)에 이르고, QR 분해(파랑)는 기울기 1로 천천히 커져 κ = 10¹²에서도 10⁻⁴ 정도이다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="156" y="195" text-anchor="middle" class="s">4</text>
+        <text x="252" y="195" text-anchor="middle" class="s">8</text>
+        <text x="348" y="195" text-anchor="middle" class="s">12</text>
+        <text x="55" y="184" text-anchor="end" class="s">-16</text>
+        <text x="55" y="148.4" text-anchor="end" class="s">-12</text>
+        <text x="55" y="112.9" text-anchor="end" class="s">-8</text>
+        <text x="55" y="77.3" text-anchor="end" class="s">-4</text>
+        <text x="55" y="41.8" text-anchor="end" class="s">0</text>
+        <text x="360" y="209" text-anchor="end" class="s">조건수 log₁₀ κ(X)</text>
+        <text x="66" y="24" class="s">log₁₀ 계수의 상대 오차</text>
+        <path d="M60 37.8 L360 37.8" class="k dsh"/>
+        <path d="M71 169.4 L79.7 163.3 L91.2 154.4 L103.1 147 L115.1 142.6 L127.1 135.4 L139 124.5 L151 112.2 L163 102.5 L175 94.5 L187 81 L199 76.9 L211 79.4 L223 59.2 L235 56.7 L247 38.6 L259 32.8 L271 28.9 L283 42.7 L295 33.1 L307 28.9 L319 28.9 L331 42.1 L343 30.2 L355 46.8" class="c"/>
+        <path d="M71 178.9 L79.7 172.8 L91.2 174.9 L103.1 168.2 L115.1 175 L127.1 164.7 L139 160.6 L151 162.8 L163 148 L175 141.3 L187 137.1 L199 133.5 L211 128.9 L223 128.6 L235 126.7 L247 123.1 L259 112.4 L271 110.7 L283 101.3 L295 105.4 L307 98.3 L319 88.9 L331 89.1 L343 97.2 L355 80.4" class="a"/>
+        <text x="375" y="44" class="s tc">정규방정식</text><text x="375" y="60" class="s tc">오차 약 κ² × 10⁻¹⁶</text><text x="375" y="84" class="s ta">QR 분해</text><text x="375" y="100" class="s ta">오차 약 κ × 10⁻¹⁶</text><text x="375" y="132" class="s">점선은 오차 100%</text><text x="375" y="156" class="s">x와 x + δz를 함께 넣은 회귀</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.1.2의 모의실험. 정규방정식(주황)의 오차는 조건수의 제곱에, QR 분해(파랑)의 오차는 조건수에 비례해 커진다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>QR 분해와 촐레스키 분해(응통2 3단원, 5단원)와 최소제곱 추정(응통10 2.1절)을 쓴다.</div>
+    <p>처음 질문의 답은 \(X^\top X\)를 만드는 순간 문제가 나빠진다는 데 있다. 교과서의 공식은 이론에는 좋지만 계산 방법으로는 나쁘다. 역행렬을 구하는 것은 느리고, 설명변수가 거의 일차종속이면 오차가 조건수의 제곱으로 불어난다(그림 1). 그래서 <code>lm</code>은 \(X\)를 직접 QR 분해한다.</p>
 
     <h3><span class="no">2.1.1</span>조건수</h3>
     <div class="tb-env def">
-      <span class="lb">정의 2.1.1</span>
-      <p><b>조건수</b> \(\kappa(A) = \sigma_{\max}/\sigma_{\min}\)(가장 큰 특이값/가장 작은 특이값). 자료의 상대 오차가 해에서 최대 \(\kappa\)배 커질 수 있다.</p>
+      <span class="lb">정의 2.1.1 <span class="nm">(조건수)</span></span>
+      <p>행렬 \(A\)의 조건수는 가장 큰 특이값과 가장 작은 특이값의 비 \(\kappa(A) = \sigma_{\max}/\sigma_{\min}\)이다. 자료의 상대 오차는 해에서 최대 \(\kappa\)배까지 커질 수 있다.</p>
     </div>
-    <p>\(\kappa(X^\top X) = \kappa(X)^2\)이므로 정규방정식을 만들면 조건수가 제곱됩니다. \(\kappa(X) = 10^8\)이면 \(X^\top X\)는 \(10^{16}\)으로 배정밀도의 한계에 닿아 답이 쓸모없어집니다. 다중공선성(응통10 4.4절)이 심한 자료에서 일어납니다.</p>
+    <p>그런데 \(\kappa(X^\top X) = \kappa(X)^2\)이므로 정규방정식을 만들면 조건수가 제곱된다. 예를 들어 \(\kappa(X) = 10^8\)이면 \(X^\top X\)의 조건수는 \(10^{16}\)으로 배정밀도의 한계(<a href="01-01.html">1.1절</a>)에 닿아 답이 쓸모없어진다. 이런 일은 다중공선성이 심한 자료(응통10 4.4절)에서 일어난다.</p>
 
-    <h3><span class="no">2.1.2</span>촐레스키</h3>
-    <p>\(X^\top X = R^\top R\)(\(R\)은 위삼각)로 분해하면 \(R^\top\mathbf z = X^\top\mathbf y\), \(R\boldsymbol\beta = \mathbf z\)를 앞·뒤 대입으로 풉니다. 역행렬보다 약 두 배 빠르지만 정규방정식을 만들기 때문에 조건수 문제는 그대로입니다. 조건이 좋고 \(n\)이 매우 큰 경우에 씁니다.</p>
+    <h3><span class="no">2.1.2</span>촐레스키 분해</h3>
+    <p>\(X^\top X = R^\top R\)(\(R\)은 위삼각)로 분해하면, \(R^\top\mathbf z = X^\top\mathbf y\)와 \(R\boldsymbol\beta = \mathbf z\)를 앞 대입과 뒤 대입으로 차례로 푼다. 역행렬을 구하는 것보다 약 두 배 빠르다. 그러나 정규방정식을 만들기 때문에 조건수 문제는 그대로이다. 따라서 조건이 좋고 \(n\)이 매우 큰 경우에 쓴다.</p>
 
-    <h3><span class="no">2.1.3</span>QR</h3>
-    <p>\(X = QR\)(\(Q\)는 \(n\times p\) 직교 열, \(R\)은 \(p\times p\) 위삼각)이면 \(\|\mathbf y - X\mathbf b\|^2\)을 최소화하는 문제가 \(R\boldsymbol\beta = Q^\top\mathbf y\)로 바뀝니다. 직교 변환은 길이를 보존하므로 조건수가 \(\kappa(X)\)로 유지됩니다. R의 <code>lm</code>은 하우스홀더 QR을 씁니다.</p>
+    <h3><span class="no">2.1.3</span>QR 분해</h3>
+    <p>\(X = QR\)(\(Q\)는 직교하는 \(n \times p\) 열, \(R\)은 \(p \times p\) 위삼각)로 분해하면, \(\|\mathbf y - X\mathbf b\|^2\)을 최소화하는 문제가 \(R\boldsymbol\beta = Q^\top\mathbf y\)로 바뀐다. 직교 변환은 길이를 보존하므로 조건수가 \(\kappa(X)\)로 유지된다. R의 <code>lm</code>은 하우스홀더 QR을 쓴다.</p>
     <pre><code>X &lt;- cbind(1, mtcars$wt, mtcars$hp); y &lt;- mtcars$mpg
 qrX &lt;- qr(X); qr.coef(qrX, y)            # QR
 R &lt;- chol(crossprod(X)); backsolve(R, forwardsolve(t(R), crossprod(X, y)))  # 촐레스키
 solve(crossprod(X), crossprod(X, y))     # 역행렬 없이 연립방정식으로</code></pre>
-
     <div class="tb-env ex">
       <span class="lb">예제 2.1.2</span>
-      <p>\(x\)와 \(x + 10^{-7}z\)(\(z\)는 작은 잡음)를 함께 넣은 회귀에서 두 방법의 차이를 실험해 보세요.</p>
+      <p>\(x\)와 \(x + 10^{-7}z\)(\(z\)는 잡음)를 함께 넣은 회귀에서 정규방정식과 QR의 차이를 실험하라.</p>
     </div>
-    <p><i>풀이.</i> <code>x &lt;- rnorm(100); X &lt;- cbind(1, x, x + 1e-7 * rnorm(100))</code>. <code>kappa(X)</code>는 \(10^7\) 이상, <code>solve(crossprod(X))</code>는 "계산상 특이" 오류를 내거나 큰 오차를 보이지만, <code>qr.solve(X, y)</code>는 답을 냅니다. 물론 이런 자료는 계수 해석 자체가 무의미하므로 변수 하나를 빼야 합니다.</p>
+    <p><i>풀이.</i> <code>x &lt;- rnorm(100); X &lt;- cbind(1, x, x + 1e-7 * rnorm(100))</code>로 만들면 <code>kappa(X)</code>는 \(10^7\) 이상이다. 이때 <code>solve(crossprod(X))</code>는 계산상 특이하다는 오류를 내거나 큰 오차를 보이지만, <code>qr.solve(X, y)</code>는 답을 낸다. 그림 1의 모의실험에서 \(\kappa \approx 2 \times 10^7\)이면 정규방정식의 상대 오차는 약 \(10^{-2}\), QR은 약 \(10^{-10}\)이다.</p>
+    <div class="tb-note"><span class="lb">주의</span><p>QR이 답을 낸다고 해서 그 계수를 해석할 수 있는 것은 아니다. 거의 같은 두 변수의 계수는 통계적으로 매우 불안정하므로, 이런 자료에서는 변수 하나를 빼야 한다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>정규방정식은 조건수를 제곱합니다.</li>
-        <li>촐레스키: 빠름, 조건이 좋을 때. QR: 안정적, 기본값.</li>
-        <li>역행렬을 명시적으로 구하지 않고 연립방정식을 풉니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>조건수 \(\kappa = \sigma_{\max}/\sigma_{\min}\)은 오차가 불어나는 정도이며, 정규방정식은 이를 제곱한다. 촐레스키 분해는 빠르지만 조건이 좋을 때만 쓰고, QR 분해는 조건수를 그대로 유지하므로 기본값이다. 어느 쪽이든 역행렬을 명시적으로 구하지 않고 연립방정식을 푼다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">2.1.3</span>연습문제</h3>
+      <h3><span class="no">2.1.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>QR 분해에서 잔차 제곱합을 \(\boldsymbol\beta\)를 구하지 않고 얻는 방법은?
-          <details><summary>답</summary><p>완전 QR \(X = [Q_1\ Q_2]\begin{pmatrix}R\\0\end{pmatrix}\)에서 \(\mathrm{SSE} = \|Q_2^\top\mathbf y\|^2\).</p></details>
+        <li>\(\kappa(X) = 10^5\)일 때 정규방정식으로 푼 계수의 상대 오차는 대략 얼마까지 커질 수 있는가?
+          <details><summary>답</summary><p>\(\kappa^2 \times 10^{-16} = 10^{-6}\) 정도이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>QR 분해에서 잔차 제곱합을 \(\boldsymbol\beta\)를 구하지 않고 얻는 방법은 무엇인가?
+          <details><summary>답</summary><p>완전 QR \(X = [Q_1\ Q_2]\begin{pmatrix}R\\0\end{pmatrix}\)에서 \(\mathrm{SSE} = \|Q_2^\top\mathbf y\|^2\)이다.</p></details>
+        </li>
+        <li>\(n = 10^6\), \(p = 20\)이고 설명변수들이 거의 직교한다. 촐레스키와 QR 가운데 무엇이 나은가?
+          <details><summary>답</summary><p>조건수가 작으므로 오차 걱정이 없고, \(X^\top X\)만 만들면 되는 촐레스키가 더 빠르다.</p></details>
         </li>
       </ol>
     </div>

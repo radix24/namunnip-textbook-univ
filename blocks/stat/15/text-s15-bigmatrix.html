@@ -8,50 +8,57 @@
 <article class="card q-card" id="text-s15-bigmatrix" data-kind="본문" data-std="응통15-02-02">
   <header class="card-head"><span class="no"></span><h2>큰 행렬 계산을 효율적으로</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>계산 순서, 희소 행렬, 분할 계산으로 큰 행렬 문제를 푼다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>계산 복잡도 (<a href="01-02.html">1.2절</a>), QR (<a href="02-01.html">2.1절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>메모리에 다 올릴 수 없을 때</h3>
-    <p>설명변수 1000개, 관측 1000만 개의 행렬은 실수 하나 8바이트로 80 GB입니다. 계산 순서를 바꾸고 구조를 활용하면 같은 답을 훨씬 적은 메모리와 시간으로 얻을 수 있습니다.</p>
+    <p class="q-ask">관측 1천만 개, 설명변수 50개의 회귀를 메모리 1 GB인 컴퓨터로 적합해야 한다. 자료 행렬 \(X\)만 4 GB라 한 번에 올릴 수도 없다. 그래도 정확히 같은 회귀계수를 얻을 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="필요한 메모리를 로그 막대로 비교한 그림. n = 10만인 모자 행렬 H는 80 GB(빨강), n = 1천만이고 p = 50인 전체 X는 4 GB(주황), 가진 메모리 1 GB(검정, 점선), 10만 행 블록은 40 MB(파랑), 50 × 50인 XᵀX는 20 KB(청록)이다">
+        <text x="192" y="43" text-anchor="end" class="s">모자 행렬 H (n = 10만)</text><rect x="200" y="30" width="266.7" height="18" class="fd"/><text x="472.7" y="43" class="s">80 GB</text>
+        <text x="192" y="73" text-anchor="end" class="s">전체 X (n = 1천만, p = 50)</text><rect x="200" y="60" width="222.8" height="18" class="fc"/><text x="428.8" y="73" class="s">4 GB</text>
+        <text x="192" y="103" text-anchor="end" class="s">가진 메모리</text><rect x="200" y="90" width="202.5" height="18" class="fk"/><text x="408.5" y="103" class="s">1 GB</text>
+        <text x="192" y="133" text-anchor="end" class="s">10만 행 블록</text><rect x="200" y="120" width="155.3" height="18" class="fa"/><text x="361.3" y="133" class="s">40 MB</text>
+        <text x="192" y="163" text-anchor="end" class="s">XᵀX (50 × 50)</text><rect x="200" y="150" width="43.9" height="18" class="fb"/><text x="249.9" y="163" class="s">20 KB</text>
+        <path d="M402.5 22 L402.5 182" class="k dsh"/>
+        <path d="M200 182 L470 182" class="ax"/>
+        <path d="M200 182 l0 4" class="ax"/><text x="200" y="198" text-anchor="middle" class="s">1 KB</text>
+        <path d="M301.2 182 l0 4" class="ax"/><text x="301.2" y="198" text-anchor="middle" class="s">1 MB</text>
+        <path d="M402.5 182 l0 4" class="ax"/><text x="402.5" y="198" text-anchor="middle" class="s">1 GB</text>
+      </svg>
+      <figcaption>그림 1. 예제 2.2.1의 메모리 비교(로그 척도). 전체 \(X\)는 가진 메모리(점선)를 넘지만, 블록과 \(X^\top X\)는 훨씬 작다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>계산 복잡도(<a href="01-02.html">1.2절</a>)와 QR 분해(<a href="02-01.html">2.1절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 그렇다는 것이다. 회귀계수에 필요한 것은 \(X\) 전체가 아니라 \(50 \times 50\) 행렬 \(X^\top X\)와 길이 50의 \(X^\top\mathbf y\)뿐이기 때문이다(그림 1). 일반적으로 계산 순서를 바꾸고 구조를 활용하면 같은 답을 훨씬 적은 메모리와 시간으로 얻는다.</p>
 
     <h3><span class="no">2.2.1</span>곱의 순서</h3>
-    <p>\(A\mathbf B\mathbf x\)(\(A\), \(B\)는 \(n\times n\))를 \((AB)\mathbf x\)로 하면 \(O(n^3)\), \(A(B\mathbf x)\)로 하면 \(O(n^2)\)입니다. 모자 행렬 \(H = X(X^\top X)^{-1}X^\top\)(\(n\times n\))를 만들지 않고 \(H\mathbf y = X\hat{\boldsymbol\beta}\)로 계산하는 것도 같은 원리입니다. 지렛값은 \(H\)의 대각만 필요하므로 \(h_{ii} = \|Q_{i\cdot}\|^2\)(QR의 \(Q\) 행)로 구합니다.</p>
+    <p>\(n \times n\) 행렬 \(A\), \(B\)와 벡터 \(\mathbf x\)에 대해 \(AB\mathbf x\)를 \((AB)\mathbf x\)로 계산하면 \(O(n^3)\)이지만, \(A(B\mathbf x)\)로 하면 \(O(n^2)\)이다. 모자 행렬 \(H = X(X^\top X)^{-1}X^\top\)도 마찬가지이다. \(n \times n\)인 \(H\)를 만들지 않고 \(H\mathbf y = X\hat{\boldsymbol\beta}\)로 계산한다. 또 지렛값은 \(H\)의 대각만 필요하므로 QR의 \(Q\)의 행으로 \(h_{ii} = \|Q_{i\cdot}\|^2\)을 구한다.</p>
 
     <h3><span class="no">2.2.2</span>희소 행렬</h3>
-    <p>가변수가 많은 계획행렬, 문서-단어 행렬은 대부분이 0입니다. 0이 아닌 값과 위치만 저장하면(희소 저장) 메모리와 계산이 0이 아닌 원소 수에 비례합니다. R의 <code>Matrix</code> 패키지, <code>glmnet</code>이 희소 입력을 받습니다.</p>
+    <p>가변수가 많은 계획행렬이나 문서-단어 행렬은 대부분이 0이다. 그러므로 0이 아닌 값과 그 위치만 저장하면 메모리와 계산이 0이 아닌 원소 수에 비례하는데, 이를 희소 저장이라 한다. R의 <code>Matrix</code> 패키지와 <code>glmnet</code>이 희소 입력을 받는다.</p>
 
     <h3><span class="no">2.2.3</span>나누어 계산하기</h3>
-    <p>\(X^\top X = \sum_{\text{블록}}X_b^\top X_b\), \(X^\top\mathbf y = \sum X_b^\top\mathbf y_b\)이므로 자료를 덩어리로 읽어 누적하면 메모리에는 \(p\times p\)만 있으면 됩니다(조건수가 괜찮을 때). R의 <code>biglm</code>이 이렇게 QR을 갱신합니다. 여러 컴퓨터에서 나눠 계산해 합치는 것도 같은 구조입니다.</p>
-
+    <p>행을 블록으로 나누면 \(X^\top X = \sum_b X_b^\top X_b\), \(X^\top\mathbf y = \sum_b X_b^\top\mathbf y_b\)이다. 따라서 자료를 덩어리로 읽어 누적하면 메모리에는 \(p \times p\)만 있으면 된다. 다만 정규방정식이므로 조건수가 괜찮을 때 쓰며, R의 <code>biglm</code>은 같은 생각으로 QR을 갱신해 이 약점을 피한다. 여러 컴퓨터에서 나눠 계산해 합치는 것도 같은 구조이다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1</span>
-      <p>\(n = 10^7\), \(p = 50\) 회귀를 메모리 1 GB로 하려면?</p>
+      <p>\(n = 10^7\), \(p = 50\)인 회귀를 메모리 1 GB로 적합하는 방법을 세워라.</p>
     </div>
-    <p><i>풀이.</i> 전체 \(X\)는 4 GB라 한 번에 올릴 수 없습니다. 10만 행씩(40 MB) 읽어 \(X_b^\top X_b\)(50×50)와 \(X_b^\top\mathbf y_b\)를 누적한 뒤 마지막에 촐레스키로 풉니다. 잔차 제곱합도 \(\mathbf y^\top\mathbf y - \hat{\boldsymbol\beta}^\top X^\top\mathbf y\)로 누적량에서 얻습니다.</p>
+    <p><i>풀이.</i> 전체 \(X\)는 \(10^7 \times 50 \times 8\) 바이트, 곧 4 GB라 한 번에 올릴 수 없다. 대신 10만 행씩(40 MB) 읽어 \(X_b^\top X_b\)(\(50 \times 50\))와 \(X_b^\top\mathbf y_b\)를 누적한 뒤, 마지막에 촐레스키로 푼다(그림 1). 잔차 제곱합도 \(\mathbf y^\top\mathbf y - \hat{\boldsymbol\beta}^\top X^\top\mathbf y\)로 누적량에서 얻는다.</p>
+    <div class="tb-note"><span class="lb">흔한 실수</span><p>진단을 위해 모자 행렬을 통째로 만드는 것은 큰 자료에서 가장 흔한 메모리 낭비이다. \(n = 10^5\)만 되어도 \(H\)는 80 GB이다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>곱의 순서를 바꿔 \(n\times n\) 행렬을 만들지 않습니다.</li>
-        <li>희소 구조를 저장·계산에 활용합니다.</li>
-        <li>충분통계량(\(X^\top X\), \(X^\top\mathbf y\))을 블록별로 누적합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>곱의 순서를 바꿔 \(n \times n\) 행렬을 만들지 않고, 지렛값은 \(Q\)의 행으로 구한다. 0이 대부분인 행렬은 희소 저장으로 메모리와 계산을 줄인다. 충분통계량 \(X^\top X\)와 \(X^\top\mathbf y\)를 블록별로 누적하면 메모리보다 큰 자료의 회귀도 정확히 같은 답으로 적합할 수 있다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">2.2.3</span>연습문제</h3>
+      <h3><span class="no">2.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>\(n = 10^5\)일 때 \(H\)를 만들면 메모리가 얼마나 필요한가요?
-          <details><summary>답</summary><p>\(10^{10}\)개 × 8바이트 = 80 GB. 만들지 않아야 합니다.</p></details>
+        <li>\(n = 10^5\)일 때 \(H\)를 만들면 메모리가 얼마나 필요한가?
+          <details><summary>답</summary><p>\(10^{10}\)개 × 8바이트 = 80 GB이므로 만들지 않아야 한다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(n \times n\) 행렬 \(A\), \(B\)(\(n = 10^4\))와 벡터 \(\mathbf x\)에서 \((AB)\mathbf x\)와 \(A(B\mathbf x)\)의 곱셈 횟수는 각각 대략 얼마인가?
+          <details><summary>답</summary><p>\((AB)\mathbf x\)는 \(n^3 + n^2 \approx 10^{12}\)번, \(A(B\mathbf x)\)는 \(2n^2 = 2 \times 10^8\)번이다.</p></details>
+        </li>
+        <li>블록 누적 방식으로 표본 평균과 분산도 구하려면 무엇을 누적해야 하는가?
+          <details><summary>답</summary><p>개수 \(n\), \(\sum y\), \(\sum y^2\)을 누적한다. 다만 평균이 크면 상쇄 오차(<a href="01-01.html">1.1절</a>)가 생기므로 블록별 평균과 편차 제곱합을 합치는 방식이 더 안전하다.</p></details>
         </li>
       </ol>
     </div>

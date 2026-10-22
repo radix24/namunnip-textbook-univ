@@ -8,53 +8,83 @@
 <article class="card q-card" id="text-s15-newton" data-kind="본문" data-std="응통15-03-01">
   <header class="card-head"><span class="no"></span><h2>뉴턴-랩슨으로 최대가능도 구하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>뉴턴-랩슨 반복식을 유도하고 수렴 성질을 안다.</li>
-        <li>닫힌 꼴이 없는 MLE를 구현한다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>최대가능도 (응통7 1.1절), 응통4 04단원 근 찾기, 테일러 전개.</li>
-      </ul>
-    </div>
-
-    <h3>방정식을 풀 수 없을 때</h3>
-    <p>감마분포의 형상 모수, 로지스틱 회귀의 계수처럼 점수 방정식 \(\ell'(\theta) = 0\)을 손으로 풀 수 없는 경우가 대부분입니다. 컴퓨터로 반복해 근을 찾습니다.</p>
+    <p class="q-ask">자료 \(-1.2, 0.3, 0.8, 1.5, 9.0\)이 코시 분포에서 나왔다고 하자. 위치 모수의 최대가능도 추정값은 손으로 풀 수 없지만, 뉴턴-랩슨을 중앙값에서 시작하면 두 번 만에 답을 얻는다. 그런데 같은 방법을 3에서 시작하면 답 근처에도 가지 못하고 헤맨다. 출발점 하나가 왜 이렇게 큰 차이를 만들까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="코시 위치 모수의 로그가능도 곡선(검정)과 자료 5개의 눈금. 최댓값은 θ = 0.668(파란 점)이다. θ = 3에서 출발한 뉴턴-랩슨(주황 점과 점선)은 6.10, 8.00, 8.32, 8.13으로 오른쪽 평평한 곳을 헤맨다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="81.4" y="195" text-anchor="middle" class="s">-2</text>
+        <text x="124.3" y="195" text-anchor="middle" class="s">0</text>
+        <text x="167.1" y="195" text-anchor="middle" class="s">2</text>
+        <text x="210" y="195" text-anchor="middle" class="s">4</text>
+        <text x="252.9" y="195" text-anchor="middle" class="s">6</text>
+        <text x="295.7" y="195" text-anchor="middle" class="s">8</text>
+        <text x="338.6" y="195" text-anchor="middle" class="s">10</text>
+        <text x="55" y="184" text-anchor="end" class="s">-24</text>
+        <text x="55" y="140.4" text-anchor="end" class="s">-18</text>
+        <text x="55" y="96.7" text-anchor="end" class="s">-12</text>
+        <text x="55" y="53.1" text-anchor="end" class="s">-6</text>
+        <text x="360" y="209" text-anchor="end" class="s">θ</text>
+        <text x="66" y="24" class="s">로그가능도 ℓ(θ)</text>
+        <path d="M60 112.3 L61.5 111 L63 109.7 L64.5 108.4 L66 107.1 L67.5 105.7 L69 104.3 L70.5 102.9 L72 101.5 L73.5 100 L75 98.5 L76.5 97 L78 95.5 L79.5 94 L81 92.5 L82.5 90.9 L84 89.3 L85.5 87.8 L87 86.2 L88.5 84.7 L90 83.1 L91.5 81.6 L93 80.1 L94.5 78.7 L96 77.3 L97.5 75.9 L99 74.6 L100.5 73.3 L102 72.1 L103.5 70.9 L105 69.8 L106.5 68.7 L108 67.6 L109.5 66.5 L111 65.5 L112.5 64.4 L114 63.4 L115.5 62.4 L117 61.4 L118.5 60.4 L120 59.4 L121.5 58.5 L123 57.5 L124.5 56.7 L126 55.8 L127.5 55.1 L129 54.4 L130.5 53.8 L132 53.3 L133.5 52.8 L135 52.5 L136.5 52.3 L138 52.2 L139.5 52.2 L141 52.3 L142.5 52.6 L144 52.9 L145.5 53.4 L147 53.9 L148.5 54.6 L150 55.4 L151.5 56.2 L153 57.2 L154.5 58.2 L156 59.3 L157.5 60.5 L159 61.8 L160.5 63.1 L162 64.5 L163.5 65.9 L165 67.4 L166.5 68.8 L168 70.4 L169.5 71.9 L171 73.4 L172.5 74.9 L174 76.4 L175.5 77.9 L177 79.3 L178.5 80.8 L180 82.2 L181.5 83.6 L183 84.9 L184.5 86.3 L186 87.6 L187.5 88.9 L189 90.1 L190.5 91.4 L192 92.6 L193.5 93.7 L195 94.9 L196.5 96 L198 97.1 L199.5 98.2 L201 99.2 L202.5 100.2 L204 101.2 L205.5 102.2 L207 103.1 L208.5 104 L210 104.9 L211.5 105.8 L213 106.7 L214.5 107.5 L216 108.3 L217.5 109.1 L219 109.9 L220.5 110.7 L222 111.4 L223.5 112.1 L225 112.8 L226.5 113.5 L228 114.2 L229.5 114.9 L231 115.5 L232.5 116.1 L234 116.7 L235.5 117.3 L237 117.9 L238.5 118.5 L240 119 L241.5 119.5 L243 120 L244.5 120.5 L246 121 L247.5 121.5 L249 122 L250.5 122.4 L252 122.8 L253.5 123.2 L255 123.6 L256.5 124 L258 124.4 L259.5 124.7 L261 125.1 L262.5 125.4 L264 125.7 L265.5 126 L267 126.3 L268.5 126.6 L270 126.8 L271.5 127.1 L273 127.3 L274.5 127.5 L276 127.7 L277.5 127.9 L279 128 L280.5 128.2 L282 128.3 L283.5 128.4 L285 128.5 L286.5 128.6 L288 128.7 L289.5 128.8 L291 128.8 L292.5 128.9 L294 128.9 L295.5 128.9 L297 128.9 L298.5 129 L300 129 L301.5 129 L303 129 L304.5 129.1 L306 129.2 L307.5 129.3 L309 129.4 L310.5 129.6 L312 129.8 L313.5 130.1 L315 130.4 L316.5 130.8 L318 131.3 L319.5 131.8 L321 132.4 L322.5 133.1 L324 133.8 L325.5 134.6 L327 135.4 L328.5 136.3 L330 137.1 L331.5 138 L333 139 L334.5 139.9 L336 140.8 L337.5 141.7 L339 142.7 L340.5 143.6 L342 144.5 L343.5 145.4 L345 146.3 L346.5 147.2 L348 148.1 L349.5 149 L351 149.9 L352.5 150.7 L354 151.6 L355.5 152.4 L357 153.2 L358.5 154 L360 154.8" class="k"/>
+        <path d="M98.6 180 l0 -6" class="k"/>
+        <path d="M130.7 180 l0 -6" class="k"/>
+        <path d="M141.4 180 l0 -6" class="k"/>
+        <path d="M156.4 180 l0 -6" class="k"/>
+        <path d="M317.1 180 l0 -6" class="k"/>
+        <path d="M188.6 89.8 L255 123.6" class="c dsh"/>
+        <path d="M255 123.6 L295.7 128.9" class="c dsh"/>
+        <path d="M295.7 128.9 L302.7 129" class="c dsh"/>
+        <path d="M302.7 129 L298.6 129" class="c dsh"/>
+        <circle cx="188.6" cy="89.8" r="3.5" class="fc"/>
+        <circle cx="255" cy="123.6" r="3.5" class="fc"/>
+        <circle cx="295.7" cy="128.9" r="3.5" class="fc"/>
+        <circle cx="302.7" cy="129" r="3.5" class="fc"/>
+        <circle cx="298.6" cy="129" r="3.5" class="fc"/>
+        <text x="182.6" y="107.8" text-anchor="end" class="s tc">출발 3</text>
+        <circle cx="138.6" cy="52.2" r="4.5" class="fa"/><text x="138.6" y="43.2" text-anchor="middle" class="s ta">MLE 0.668</text>
+        <text x="375" y="44" class="s ta">중앙값 0.8에서 출발</text><text x="375" y="60" class="s ta">2번 만에 0.668</text><text x="375" y="84" class="s tc">3에서 출발하면</text><text x="375" y="100" class="s tc">6.10, 8.00, 8.32, 8.13 …</text><text x="375" y="116" class="s tc">으로 헤맨다</text><text x="375" y="148" class="s">눈금은 자료 5개</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.1.1의 로그가능도. 최대점(파랑) 근처에서는 빠르게 수렴하지만, 위로 볼록하지 않은 곳(3)에서 출발하면 뉴턴 단계가 반대쪽으로 튀어 헤맨다(주황).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>최대가능도(응통7 1.1절), 근 찾기(<a href="01-03.html">1.3절</a>), 테일러 전개를 쓴다.</div>
+    <p>처음 질문의 답은 뉴턴-랩슨이 로그가능도를 2차식으로 근사하고 그 꼭짓점으로 옮긴다는 데 있다. 최대점 근처에서는 이 근사가 정확해 매우 빠르다. 그러나 곡선이 아래로 볼록한 곳에서는 근사한 2차식의 꼭짓점이 최소점이라 엉뚱한 쪽으로 간다(그림 1). 감마분포의 형상 모수나 로지스틱 회귀의 계수처럼 점수 방정식 \(\ell'(\theta) = 0\)을 손으로 풀 수 없는 경우가 대부분이므로, 이 성질을 알고 써야 한다.</p>
 
     <h3><span class="no">3.1.1</span>반복식</h3>
-    <p>현재 값 \(\theta_t\) 근처에서 \(\ell'(\theta) \approx \ell'(\theta_t) + \ell''(\theta_t)(\theta - \theta_t)\)를 0으로 두면</p>
-    \[\theta_{t+1} = \theta_t - \frac{\ell'(\theta_t)}{\ell''(\theta_t)}.\]
-    <p>다모수이면 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - H(\boldsymbol\theta_t)^{-1}\nabla\ell(\boldsymbol\theta_t)\)(\(H\)는 헤세 행렬). 로그가능도를 2차식으로 근사하고 그 꼭짓점으로 옮기는 것입니다.</p>
-    <p>참값 근처에서는 <b>2차 수렴</b>합니다. 오차가 매 단계 대략 제곱되어 맞는 자릿수가 두 배씩 늘어납니다. 반면 출발점이 멀거나 로그가능도가 오목하지 않은 곳에서는 발산하거나 최소점으로 갈 수 있으므로, 단계 크기를 줄이는 보호 장치(선 탐색)를 둡니다.</p>
-
+    <p class="tb-proof"><span class="lb">유도.</span> 현재 값 \(\theta_t\) 근처에서 점수를 1차 테일러 전개하면 \(\ell'(\theta) \approx \ell'(\theta_t) + \ell''(\theta_t)(\theta - \theta_t)\)이다. 이것을 0으로 두고 \(\theta\)에 대해 풀면 다음 반복식을 얻는다. <span class="qed">∎</span></p>
+    \[ \theta_{t+1} = \theta_t - \frac{\ell'(\theta_t)}{\ell''(\theta_t)} \]
+    <p>다모수이면 헤세 행렬 \(H\)를 써서 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - H(\boldsymbol\theta_t)^{-1}\nabla\ell(\boldsymbol\theta_t)\)이다. 참값 근처에서는 오차가 매 단계 대략 제곱되어 맞는 자릿수가 두 배씩 늘어나는 2차 수렴을 한다(<a href="01-03.html">1.3절</a>). 반면 출발점이 멀거나 \(\ell'' &gt; 0\)인 곳에서는 발산하거나 최소점 쪽으로 간다. 그래서 단계가 로그가능도를 늘리지 않으면 단계 크기를 줄이는 보호 장치, 곧 선 탐색을 둔다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 3.1.1</span>
-      <p>코시 분포 위치 모수 \(\theta\)의 MLE를 자료 \(-1.2, 0.3, 0.8, 1.5, 9.0\)으로 구하세요.</p>
+      <p>코시 분포 위치 모수 \(\theta\)의 최대가능도 추정값을 자료 \(-1.2, 0.3, 0.8, 1.5, 9.0\)으로 구하라.</p>
     </div>
-    <p><i>풀이.</i> \(\ell(\theta) = -\sum\log(1 + (x_i - \theta)^2)\). \(\ell' = \sum\frac{2(x_i - \theta)}{1 + (x_i - \theta)^2}\), \(\ell'' = \sum\frac{2[(x_i-\theta)^2 - 1]}{[1 + (x_i - \theta)^2]^2}\). 출발점을 중앙값 0.8로 두면 몇 번 만에 약 0.668에 수렴하고, <code>optimize</code>로 찾은 최대점과 같습니다. 평균 2.08은 이상값 9.0에 끌려가지만 MLE는 그렇지 않습니다. 출발점을 9.0 근처로 두면 다른 국소 최대로 갈 수 있으니 가능도를 그려 확인합니다.</p>
+    <p><i>풀이.</i> 로그가능도와 도함수는 다음과 같다.</p>
+    \[ \ell(\theta) = -\sum\log\{1 + (x_i - \theta)^2\}, \quad \ell' = \sum\frac{2(x_i - \theta)}{1 + (x_i - \theta)^2}, \quad \ell'' = \sum\frac{2\{(x_i - \theta)^2 - 1\}}{\{1 + (x_i - \theta)^2\}^2} \]
+    <p>출발점을 중앙값 0.8로 두면 0.6667, 0.6677로 두 번 만에 0.668에 수렴하며, <code>optimize</code>로 찾은 최대점과 같다. 평균 2.08은 이상값 9.0에 끌려가지만 최대가능도 추정값은 그렇지 않다. 한편 3에서 출발하면 \(\ell'' &gt; 0\)이라 6.10, 8.00, 8.32, 8.13으로 오른쪽 평평한 곳을 헤맨다(그림 1). 따라서 가능도를 그려 보고 좋은 출발점을 고른다.</p>
     <pre><code>x &lt;- c(-1.2, 0.3, 0.8, 1.5, 9); th &lt;- median(x)
 for (i in 1:20) { u &lt;- x - th
   g &lt;- sum(2*u/(1+u^2)); h &lt;- sum(2*(u^2-1)/(1+u^2)^2)
   th &lt;- th - g/h }
 th; optimize(function(t) -sum(log(1+(x-t)^2)), c(-5, 10), maximum = TRUE)</code></pre>
+    <div class="tb-note"><span class="lb">주의</span><p>수렴한 뒤 \(-H^{-1}\)은 추정량의 공분산 행렬, 곧 관측 정보량의 역행렬의 추정값이다. 그러므로 뉴턴-랩슨은 추정값과 표준오차를 함께 준다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(\theta_{t+1} = \theta_t - \ell'/\ell''\), 다모수는 헤세 행렬.</li>
-        <li>근처에서 2차 수렴, 멀면 불안정 → 좋은 출발점과 선 탐색.</li>
-        <li>수렴 뒤 \(-H^{-1}\)은 공분산 행렬의 추정값(관측 정보량).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>뉴턴-랩슨 \(\theta_{t+1} = \theta_t - \ell'/\ell''\)은 로그가능도를 2차식으로 근사해 꼭짓점으로 옮기며, 다모수에서는 헤세 행렬을 쓴다. 최대점 근처에서는 2차 수렴하지만 멀거나 \(\ell'' &gt; 0\)인 곳에서는 불안정하므로 좋은 출발점과 선 탐색이 필요하다. 수렴 뒤 \(-H^{-1}\)은 공분산 행렬의 추정값이다.</p></div>
 
     <div class="tb-exercises">
-      <h3><span class="no">3.1.3</span>연습문제</h3>
+      <h3><span class="no">3.1.2</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>포아송 \(\lambda\)에 뉴턴-랩슨을 쓰면 한 단계 식은? 수렴값은?
-          <details><summary>답</summary><p>\(\ell' = S/\lambda - n\), \(\ell'' = -S/\lambda^2\). \(\lambda_{t+1} = \lambda_t + \lambda_t^2(S/\lambda_t - n)/S = 2\lambda_t - n\lambda_t^2/S\). 수렴값 \(S/n = \bar x\).</p></details>
+        <li>포아송 \(\lambda\)에 뉴턴-랩슨을 쓸 때 한 단계 식과 수렴값을 구하라(\(S = \sum x_i\)).
+          <details><summary>답</summary><p>\(\ell' = S/\lambda - n\), \(\ell'' = -S/\lambda^2\)이므로 \(\lambda_{t+1} = 2\lambda_t - n\lambda_t^2/S\)이다. 수렴값은 \(S/n = \bar x\)이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>위 포아송 반복에서 \(\lambda_0 &gt; 2\bar x\)로 시작하면 어떻게 되는가?
+          <details><summary>답</summary><p>\(\lambda_1 = \lambda_0(2 - \lambda_0/\bar x) &lt; 0\)이 되어 모수 공간을 벗어난다. 선 탐색이나 \(\log\lambda\) 변환이 필요하다.</p></details>
+        </li>
+        <li>예제 3.1.1에서 \(\theta = 0.668\)일 때 \(\ell''\)이 약 \(-3.18\)이다. \(\hat\theta\)의 근사 표준오차는 얼마인가?
+          <details><summary>답</summary><p>\(1/\sqrt{3.18} = 0.56\)이다.</p></details>
         </li>
       </ol>
     </div>

@@ -8,54 +8,62 @@
 <article class="card q-card" id="text-s15-vectorize" data-kind="본문" data-std="응통15-06-01">
   <header class="card-head"><span class="no"></span><h2>벡터화와 프로파일링</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>R에서 반복문을 벡터 연산으로 바꿔 빠르게 한다.</li>
-        <li>프로파일링으로 느린 부분을 찾는다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>응통3 01단원 벡터화, 계산 복잡도 (<a href="01-02.html">1.2절</a>).</li>
-      </ul>
-    </div>
-
-    <h3>먼저 재고, 그다음 고친다</h3>
-    <p>코드가 느릴 때 짐작으로 고치면 시간을 낭비하기 쉽습니다. 실행 시간의 90%는 보통 코드의 10%에서 쓰입니다. 그곳을 측정으로 찾고 그곳만 고칩니다.</p>
+    <p class="q-ask">\(E[\max(Z_1, Z_2)]\)를 난수 100만 쌍으로 추정하는 R 코드가 있다. for 문으로 짜면 16초가 걸리는데, 한 줄짜리 <code>mean(pmax(rnorm(n), rnorm(n)))</code>은 0.5초도 안 걸린다. 같은 계산인데 왜 30배 넘게 차이가 날까? 그리고 느린 코드를 고칠 때는 어디부터 손대야 할까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="E[max(Z₁, Z₂)]를 n = 100만으로 추정하는 세 코드의 실행 시간 막대. for 반복문(주황) 16.13초, sapply(빨강) 20.70초, 벡터 연산 pmax(파랑) 0.47초이다">
+        <text x="142" y="56" text-anchor="end" class="s">for 반복문</text><rect x="150" y="40" width="212.6" height="24" class="fc"/><text x="368.6" y="56" class="s">16.13초</text>
+        <text x="142" y="101" text-anchor="end" class="s">sapply</text><rect x="150" y="85" width="272.9" height="24" class="fd"/><text x="428.9" y="101" class="s">20.7초</text>
+        <text x="142" y="146" text-anchor="end" class="s">벡터 연산 pmax</text><rect x="150" y="130" width="6.2" height="24" class="fa"/><text x="162.2" y="146" class="s">0.47초</text>
+        <path d="M150 180 L440 180" class="ax"/><path d="M150 30 L150 180" class="ax"/>
+        <path d="M150 180 l0 4" class="ax"/><text x="150" y="196" text-anchor="middle" class="s">0</text>
+        <path d="M215.9 180 l0 4" class="ax"/><text x="215.9" y="196" text-anchor="middle" class="s">5</text>
+        <path d="M281.8 180 l0 4" class="ax"/><text x="281.8" y="196" text-anchor="middle" class="s">10</text>
+        <path d="M347.7 180 l0 4" class="ax"/><text x="347.7" y="196" text-anchor="middle" class="s">15</text>
+        <path d="M413.6 180 l0 4" class="ax"/><text x="413.6" y="196" text-anchor="middle" class="s">20</text>
+        <text x="295" y="212" text-anchor="middle" class="s">실행 시간 (초), n = 100만</text>
+      </svg>
+      <figcaption>그림 1. 예제 6.1.1의 실행 시간(한 컴퓨터에서 잰 값). <code>sapply</code>도 내부에서 함수를 100만 번 부르므로 for 문보다 빠르지 않고, 벡터 연산(파랑)만 30배 넘게 빠르다.</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>R의 벡터화(응통3 1단원)와 계산 복잡도(<a href="01-02.html">1.2절</a>)를 쓴다.</div>
+    <p>처음 질문의 답은 해석 비용에 있다. R의 반복문은 매 단계 명령을 해석하고 함수를 부르는 비용이 들지만, 벡터 연산은 내부의 C 코드가 한꺼번에 처리한다(그림 1). 그런데 코드가 느릴 때 짐작으로 고치면 시간을 낭비하기 쉽다. 실행 시간의 대부분은 보통 코드의 작은 부분에서 쓰이므로, 그곳을 측정으로 찾고 그곳만 고친다.</p>
 
     <h3><span class="no">6.1.1</span>측정</h3>
+    <p>따라서 고치기 전에 먼저 잰다. 전체 시간은 <code>system.time</code>으로, 여러 방법의 비교는 <code>bench::mark</code>로 잰다. 특히 <code>bench::mark</code>는 결과가 같은지도 함께 확인해 준다. 또 함수별 시간은 <code>Rprof</code>로, 줄별 시간은 <code>profvis</code>로 본다.</p>
     <pre><code>system.time(f(x))                      # 전체 시간
 bench::mark(f1(x), f2(x))              # 여러 방법 비교 (결과가 같은지도 확인)
 Rprof("prof.out"); f(x); Rprof(NULL); summaryRprof("prof.out")   # 함수별 시간
 profvis::profvis(f(x))                 # 줄별 시각화</code></pre>
 
     <h3><span class="no">6.1.2</span>벡터화</h3>
-    <p>R의 반복문은 매 단계 해석 비용이 들지만, 벡터 연산은 내부의 C 코드가 한꺼번에 처리합니다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 6.1.1</span>
-      <p>몬테카를로로 \(E[\max(Z_1, Z_2)]\)를 추정하는 두 코드를 비교하세요.</p>
+      <p>몬테카를로로 \(E[\max(Z_1, Z_2)]\)를 추정하는 두 코드를 비교하라.</p>
     </div>
     <pre><code>n &lt;- 1e6
 f_loop &lt;- function() { s &lt;- 0; for (i in 1:n) s &lt;- s + max(rnorm(1), rnorm(1)); s / n }
 f_vec  &lt;- function() mean(pmax(rnorm(n), rnorm(n)))
 system.time(f_loop()); system.time(f_vec())</code></pre>
-    <p>두 값 모두 \(1/\sqrt\pi \approx 0.564\) 근처이고, 벡터화한 쪽이 수십~수백 배 빠릅니다(컴퓨터에 따라 다름). 그 밖의 요령: 결과를 담을 객체를 미리 만들기, 행렬 연산(<code>crossprod</code>, <code>rowSums</code>) 쓰기, 같은 계산을 반복문 밖으로 빼기. 그래도 느리면 <code>Rcpp</code>로 핵심 부분만 C++로 씁니다.</p>
+    <p><i>풀이.</i> 두 값 모두 \(1/\sqrt\pi \approx 0.564\) 근처이다. 그러나 이 교재를 쓰며 잰 시간은 반복문이 16.1초, 벡터화한 쪽이 0.47초로 약 34배 차이였다(그림 1). 정확한 배율은 컴퓨터에 따라 다르지만, 수십 배에서 수백 배가 흔하다.</p>
+    <p>그 밖의 요령도 있다. 먼저 결과를 담을 객체를 미리 만든다. 벡터에 원소를 하나씩 붙이면 매번 새 벡터를 만들어 복사하므로 전체가 \(O(n^2)\)이 되기 때문이다(<a href="01-02.html">1.2절</a>). 그러므로 <code>numeric(n)</code>으로 길이를 정해 두고 채운다. 또한 <code>crossprod</code>나 <code>rowSums</code> 같은 행렬 함수를 쓰고, 반복마다 같은 값이 나오는 계산은 반복문 밖으로 뺀다. 그래도 느리면 <code>Rcpp</code>로 병목 부분만 C++로 쓴다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p><code>apply</code>나 <code>sapply</code>로 바꾸면 벡터화된다고 생각하기 쉽다. 그러나 이 함수들도 안에서 R 함수를 원소마다 부르므로 속도는 for 문과 비슷하다(그림 1). 진짜 벡터화는 <code>pmax</code>처럼 벡터 전체를 한 번에 받는 함수를 쓰는 것이다. 물론 <code>sapply</code>가 for 문보다 읽기 쉽고 미리 할당을 알아서 해 주는 장점은 있으므로, 속도가 문제되지 않는 곳에서는 써도 좋다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>프로파일링으로 병목을 찾습니다.</li>
-        <li>벡터 연산, 미리 할당, 행렬 함수.</li>
-        <li>빠르게 고친 코드도 결과가 같은지 확인합니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>느린 코드는 먼저 측정해 병목을 찾고, 그곳만 고친다. 벡터 연산은 내부 C 코드가 한꺼번에 처리해 반복문보다 수십 배 빠르며, 미리 할당과 행렬 함수도 도움이 된다. 빠르게 고친 코드도 결과가 같은지 반드시 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.1.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>행렬 <code>X</code>의 열 평균을 반복문 없이 구하는 방법 두 가지는?
-          <details><summary>답</summary><p><code>colMeans(X)</code>, <code>crossprod(rep(1, nrow(X)), X) / nrow(X)</code>.</p></details>
+        <li>행렬 <code>X</code>의 열 평균을 반복문 없이 구하는 방법 두 가지를 써라.
+          <details><summary>답</summary><p><code>colMeans(X)</code>와 <code>crossprod(rep(1, nrow(X)), X) / nrow(X)</code>이다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>프로파일링 결과 전체 20초 가운데 한 함수가 18초를 썼다. 그 함수를 10배 빠르게 하면 전체 시간은 얼마인가?
+          <details><summary>답</summary><p>\(2 + 18/10 = 3.8\)초이다. 나머지 2초를 아무리 줄여도 이만큼의 효과는 없다.</p></details>
+        </li>
+        <li><code>for (i in 1:n) if (x[i] &lt; 0) x[i] &lt;- 0</code>을 벡터화하라.
+          <details><summary>답</summary><p><code>x[x &lt; 0] &lt;- 0</code> 또는 <code>x &lt;- pmax(x, 0)</code>이다.</p></details>
         </li>
       </ol>
     </div>

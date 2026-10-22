@@ -8,60 +8,76 @@
 <article class="card q-card" id="text-s15-scoring" data-kind="본문" data-std="응통15-03-02">
   <header class="card-head"><span class="no"></span><h2>피셔 점수법과 경사하강법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>피셔 점수법을 뉴턴-랩슨과 비교한다.</li>
-        <li>경사하강법과 확률적 경사하강법의 장단점을 안다.</li>
-      </ul>
-      <b>먼저 알아야 할 것</b>
-      <ul>
-        <li>뉴턴-랩슨 (<a href="03-01.html">3.1절</a>), 피셔 정보량 (응통7 3.1절).</li>
-      </ul>
-    </div>
-
-    <h3>헤세 행렬 대신</h3>
-    <p>뉴턴-랩슨은 빠르지만 매 단계 헤세 행렬을 계산하고 풀어야 합니다. 모수가 수백만 개인 신경망에서는 불가능합니다. 그 대안들을 봅니다.</p>
+    <p class="q-ask">뉴턴-랩슨은 빠르지만 매 단계 헤세 행렬을 계산하고 풀어야 한다. 모수가 수백만 개인 신경망이라면 헤세 행렬만 수조 칸이다. 그런데도 딥러닝은 매일 이런 모형을 학습시킨다. 헤세 행렬 없이 어떻게 최적화할까? 그리고 그 대가는 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 520 215" role="img" aria-label="f(θ) = (θ − 3)²에 θ₀ = 0으로 경사하강법을 쓸 때 단계(0~20)에 따른 오차(로그). 학습률 0.4(청록)는 배율 0.2로 가장 빨리, 0.75(주황)는 0.5로, 0.1(파랑)은 0.8로 천천히 줄고, 1.1(빨강)은 배율 −1.2로 커져 발산한다">
+        <line x1="60" y1="180" x2="360" y2="180" class="ax"/>
+        <line x1="60" y1="180" x2="60" y2="20" class="ax"/>
+        <text x="60" y="195" text-anchor="middle" class="s">0</text>
+        <text x="135" y="195" text-anchor="middle" class="s">5</text>
+        <text x="210" y="195" text-anchor="middle" class="s">10</text>
+        <text x="285" y="195" text-anchor="middle" class="s">15</text>
+        <text x="360" y="195" text-anchor="middle" class="s">20</text>
+        <text x="55" y="184" text-anchor="end" class="s">10⁻⁴</text>
+        <text x="55" y="130.7" text-anchor="end" class="s">10⁻²</text>
+        <text x="55" y="77.3" text-anchor="end" class="s">1</text>
+        <text x="55" y="24" text-anchor="end" class="s">100</text>
+        <text x="360" y="209" text-anchor="end" class="s">단계 t</text>
+        <text x="66" y="24" class="s">오차 |θₜ − 3|</text>
+        <path d="M60 60.6 L75 63.2 L90 65.8 L105 68.4 L120 70.9 L135 73.5 L150 76.1 L165 78.7 L180 81.3 L195 83.9 L210 86.5 L225 89 L240 91.6 L255 94.2 L270 96.8 L285 99.4 L300 102 L315 104.5 L330 107.1 L345 109.7 L360 112.3" class="a"/>
+        <path d="M60 60.6 L75 79.2 L90 97.9 L105 116.5 L120 135.2 L135 153.8 L150 172.4" class="b"/>
+        <path d="M60 60.6 L75 68.6 L90 76.7 L105 84.7 L120 92.7 L135 100.7 L150 108.8 L165 116.8 L180 124.8 L195 132.9 L210 140.9 L225 148.9 L240 156.9 L255 165 L270 173" class="c"/>
+        <path d="M60 60.6 L75 58.5 L90 56.4 L105 54.3 L120 52.2 L135 50.1 L150 47.9 L165 45.8 L180 43.7 L195 41.6 L210 39.5 L225 37.4 L240 35.3 L255 33.2 L270 31 L285 28.9 L300 26.8 L315 24.7 L330 22.6 L345 20.5" class="d"/>
+        <text x="375" y="40" class="s td">η = 1.1, 배율 −1.2, 발산</text><text x="375" y="58" class="s ta">η = 0.1, 배율 0.8</text><text x="375" y="76" class="s tc">η = 0.75, 배율 −0.5</text><text x="375" y="94" class="s tb">η = 0.4, 배율 0.2</text><text x="375" y="130" class="s">f(θ) = (θ − 3)²</text><text x="375" y="148" class="s">θ₀ = 0</text>
+      </svg>
+      <figcaption>그림 1. 예제 3.2.1의 학습률과 수렴. 오차는 매 단계 \(1 - 2\eta\)배가 되어, 학습률이 작으면 느리고(파랑) 너무 크면 발산한다(빨강).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>뉴턴-랩슨(<a href="03-01.html">3.1절</a>)과 피셔 정보량(응통7 3.1절)을 쓴다.</div>
+    <p>처음 질문의 답은 기울기만 쓰는 것이다. 경사하강법은 2차 정보 없이 내리막 방향으로 조금씩 움직이므로 한 단계가 아주 싸다. 그 대가로 수렴이 느리고, 학습률이라는 손잡이를 잘 맞춰야 한다(그림 1). 한편 헤세 행렬을 그 기대값으로 바꾸는 피셔 점수법은 통계 모형에서 뉴턴법을 더 안정적으로 만든다.</p>
 
     <h3><span class="no">3.2.1</span>피셔 점수법</h3>
-    <p>관측 헤세 \(-\ell''(\theta)\) 대신 기대값인 피셔 정보량 \(nI(\theta)\)를 씁니다.</p>
-    \[\theta_{t+1} = \theta_t + [nI(\theta_t)]^{-1}\ell'(\theta_t).\]
-    <p>정보량은 항상 양정치라 단계가 늘 오르막 방향이고, 식이 간단한 경우가 많습니다. 일반화선형모형에서 피셔 점수법은 가중치를 바꿔 가며 최소제곱을 되풀이하는 <b>반복 재가중 최소제곱</b>(IRLS)과 같으며, R의 <code>glm</code>이 이 방법을 씁니다. 자연 연결함수(로지스틱 회귀의 로짓)에서는 관측 헤세와 기대 정보량이 같아 뉴턴-랩슨과 똑같습니다.</p>
+    <p>관측 헤세 \(-\ell''(\theta)\) 대신 그 기대값인 피셔 정보량 \(nI(\theta)\)를 쓴다.</p>
+    \[ \theta_{t+1} = \theta_t + [nI(\theta_t)]^{-1}\ell'(\theta_t) \]
+    <p>정보량은 항상 양정치라 단계가 늘 오르막 방향이고, 식도 간단한 경우가 많다. 일반화선형모형에서 피셔 점수법은 가중치를 바꿔 가며 최소제곱을 되풀이하는 반복 재가중 최소제곱(IRLS)과 같으며, R의 <code>glm</code>이 이 방법을 쓴다. 특히 로지스틱 회귀의 로짓 같은 자연 연결함수에서는 관측 헤세와 기대 정보량이 같아 뉴턴-랩슨과 똑같다.</p>
 
     <h3><span class="no">3.2.2</span>경사하강법</h3>
-    <p>최소화할 함수 \(f\)(음의 로그가능도, 손실)에 대해 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - \eta\nabla f(\boldsymbol\theta_t)\). 2차 정보 없이 기울기만 씁니다. 계산은 싸지만 수렴이 1차(선형)이고, 학습률 \(\eta\)가 크면 발산, 작으면 느립니다. 등고선이 길쭉하면(조건수가 크면) 지그재그로 느리게 갑니다.</p>
-    <p><b>확률적 경사하강법</b>(SGD)은 매 단계 자료 일부(미니배치)로 기울기를 추정합니다. 한 단계가 매우 싸서 큰 자료와 딥러닝의 표준입니다. 학습률을 점점 줄여야 수렴합니다.</p>
-
+    <p>최소화할 함수 \(f\)(음의 로그가능도나 손실)에 대해 \(\boldsymbol\theta_{t+1} = \boldsymbol\theta_t - \eta\nabla f(\boldsymbol\theta_t)\)로 움직인다. 계산은 싸지만 수렴은 1차(선형)이다. 또 학습률 \(\eta\)가 크면 발산하고 작으면 느리다. 등고선이 길쭉하면, 곧 조건수가 크면 지그재그로 느리게 간다.</p>
+    <p>확률적 경사하강법(SGD)은 매 단계 자료 일부인 미니배치로 기울기를 추정한다. 한 단계가 매우 싸므로 큰 자료와 딥러닝의 표준이 되었다. 다만 기울기에 잡음이 있으므로 학습률을 점점 줄여야 수렴한다. 여러 방법의 특징을 모으면 표 1과 같다.</p>
     <table class="tw">
-      <tr><th>방법</th><th>단계 비용</th><th>수렴 속도</th><th>쓰는 곳</th></tr>
-      <tr><td>뉴턴-랩슨</td><td>높음 (\(O(p^3)\))</td><td>2차</td><td>모수 적음, 정확도 중요</td></tr>
-      <tr><td>피셔 점수</td><td>높음</td><td>대개 빠름</td><td>GLM (IRLS)</td></tr>
-      <tr><td>준뉴턴(BFGS)</td><td>중간 (\(O(p^2)\))</td><td>초선형</td><td><code>optim</code> 기본 선택지</td></tr>
-      <tr><td>경사하강</td><td>낮음</td><td>1차</td><td>단순한 큰 문제</td></tr>
-      <tr><td>SGD</td><td>매우 낮음</td><td>느리지만 자료가 클 때 유리</td><td>딥러닝, 매우 큰 \(n\)</td></tr>
+      <caption>표 1. 최적화 방법의 비교</caption>
+      <thead><tr><th>방법</th><th>단계 비용</th><th>수렴 속도</th><th>쓰는 곳</th></tr></thead>
+      <tbody>
+        <tr><td>뉴턴-랩슨</td><td>높음 (\(O(p^3)\))</td><td>2차</td><td>모수가 적고 정확도가 중요할 때</td></tr>
+        <tr><td>피셔 점수법</td><td>높음</td><td>대개 빠름</td><td>GLM (IRLS)</td></tr>
+        <tr><td>준뉴턴(BFGS)</td><td>중간 (\(O(p^2)\))</td><td>초선형</td><td><code>optim</code>의 기본 선택지</td></tr>
+        <tr><td>경사하강법</td><td>낮음</td><td>1차</td><td>단순한 큰 문제</td></tr>
+        <tr><td>SGD</td><td>매우 낮음</td><td>느리지만 큰 자료에 유리</td><td>딥러닝, 매우 큰 \(n\)</td></tr>
+      </tbody>
     </table>
-
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
-      <p>\(f(\theta) = (\theta - 3)^2\)에 경사하강법을 \(\eta = 0.1\), \(\theta_0 = 0\)으로 쓰면?</p>
+      <p>\(f(\theta) = (\theta - 3)^2\)에 경사하강법을 \(\eta = 0.1\), \(\theta_0 = 0\)으로 쓰면 어떻게 되는가?</p>
     </div>
-    <p><i>풀이.</i> \(\theta_{t+1} = \theta_t - 0.2(\theta_t - 3)\), 오차 \(e_t = \theta_t - 3\)이 매 단계 0.8배. \(e_t = -3(0.8)^t\), 20단계 뒤 오차 약 0.035. \(\eta = 1.1\)이면 오차가 \(-1.2\)배씩 커져 발산합니다. 뉴턴-랩슨은 한 단계에 3에 도달합니다.</p>
+    <p><i>풀이.</i> \(\nabla f = 2(\theta - 3)\)이므로 \(\theta_{t+1} = \theta_t - 0.2(\theta_t - 3)\)이고, 오차 \(e_t = \theta_t - 3\)은 매 단계 0.8배가 된다. 그러므로 \(e_t = -3(0.8)^t\)이고 20단계 뒤 오차는 약 0.035이다. 반면 \(\eta = 1.1\)이면 오차가 \(-1.2\)배씩 커져 발산한다(그림 1). 뉴턴-랩슨이라면 한 단계에 3에 도달한다.</p>
+    <div class="tb-note"><span class="lb">흔한 오해</span><p>학습률이 클수록 빨리 수렴한다고 생각하기 쉽다. 그러나 이 예에서 가장 빠른 것은 \(\eta = 0.5\)이고, 그보다 크면 오히려 진동하다가 \(\eta \ge 1\)에서는 수렴하지 않는다.</p></div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>피셔 점수: 기대 정보량 사용, GLM의 IRLS.</li>
-        <li>경사하강: 싸고 단순, 1차 수렴, 학습률 조절 필요.</li>
-        <li>문제 크기에 따라 방법을 고릅니다.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>피셔 점수법은 관측 헤세 대신 기대 정보량을 써서 늘 오르막으로 가며, GLM에서는 IRLS와 같다. 경사하강법은 기울기만 써서 싸고 단순하지만 1차 수렴이고 학습률을 맞춰야 하며, SGD는 미니배치로 큰 자료를 다룬다. 따라서 모수의 수와 자료의 크기에 따라 방법을 고른다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
-        <li>예제에서 수렴이 가장 빠른 \(\eta\)는?
-          <details><summary>답</summary><p>오차 배율 \(1 - 2\eta = 0\)인 \(\eta = 0.5\). 한 단계에 수렴(2차 함수에서는 뉴턴과 같음).</p></details>
+        <li>예제 3.2.1에서 수렴이 가장 빠른 \(\eta\)는 얼마인가?
+          <details><summary>답</summary><p>오차 배율 \(1 - 2\eta = 0\)인 \(\eta = 0.5\)이다. 한 단계에 수렴하며, 2차 함수에서는 뉴턴법과 같다.</p></details>
+        </li>
+      </ol>
+      <p class="tb-lv">응용</p>
+      <ol start="2">
+        <li>\(f(\theta_1, \theta_2) = \theta_1^2 + 100\theta_2^2\)에 경사하강법을 쓴다. 발산하지 않는 가장 큰 학습률과 그때 \(\theta_1\) 방향의 오차 배율은 얼마인가?
+          <details><summary>답</summary><p>\(\theta_2\) 방향 배율 \(1 - 200\eta\)의 절댓값이 1보다 작아야 하므로 \(\eta &lt; 0.01\)이다. 그때 \(\theta_1\) 방향 배율은 \(1 - 2\eta \approx 0.98\)이라 매우 느리다. 조건수가 크면 느린 까닭이다.</p></details>
+        </li>
+        <li>베르누이 \(p\)의 피셔 점수법 한 단계 식을 구하라.
+          <details><summary>답</summary><p>\(\ell' = n(\bar x - p)/\{p(1 - p)\}\), \(nI(p) = n/\{p(1 - p)\}\)이므로 \(p_{t+1} = p_t + (\bar x - p_t) = \bar x\)로, 한 단계에 수렴한다.</p></details>
         </li>
       </ol>
     </div>
