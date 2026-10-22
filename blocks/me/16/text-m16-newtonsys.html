@@ -8,54 +8,50 @@
 <article class="card q-card" id="text-m16-newtonsys" data-kind="본문" data-std="기계16-02-02">
   <header class="card-head"><span class="no"></span><h2>연립 비선형방정식과 Jacobian</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>여러 미지수의 비선형방정식을 벡터 꼴로 쓴다.</li>
-        <li>편미분을 모은 Jacobian 행렬을 만든다.</li>
-        <li>Newton 방법을 연립방정식으로 넓혀 푼다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>1변수 Newton 방법 (<a href="02-01.html">2.1절</a>), 연립 1차방정식 (<a href="03-01.html">3.1절</a>), 편미분 (<a href="07-01.html">7.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">4절 링크의 각도나 로봇 팔의 관절 각을 구하려면 미지수 여러 개가 얽힌 비선형방정식을 한꺼번에 풀어야 한다. 1변수 Newton 방법에서 도함수가 하던 역할은 미지수가 여럿일 때 무엇이 맡을까? 그리고 그 방법이 갑자기 실패하는 자세는 어떤 경우일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 2.2.1 원 x² + y² = 4와 곡선 y = e^x − 1의 교점을 연립 Newton 방법으로 찾는 과정. (1, 1)에서 시작해 (1.0758, 1.9242), (1.0095, 1.7378), (1.00419, 1.72965)로 다가가고, 잔차는 0.86, 0.039, 9.5×10⁻⁵, 6.5×10⁻¹⁰로 줄어 2차 수렴한다">
+        <line x1="120" y1="170" x2="380" y2="170" class="ax"/><line x1="200" y1="10" x2="200" y2="190" class="ax"/>
+        <path d="M340 170 A140 140 0 0 0 200 30" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M179 188 Q190 180 200 170 T235 124.6 Q248 106 256 84.2 T270 49.7 T277 29.7" class="c" fill="none" stroke-width="2.5"/>
+        <path d="M270 100 L275.3 35.3 L270.7 48.4" class="d" fill="none" stroke-width="1.5"/>
+        <g class="fd"><circle cx="270" cy="100" r="4"/><circle cx="275.3" cy="35.3" r="4"/><circle cx="270.7" cy="48.4" r="4"/></g>
+        <g class="s"><text x="276" y="104">(1, 1) 시작</text><text x="282" y="32">1회</text><text x="282" y="56">2회, 3회 → 교점</text><text x="330" y="140" class="ta">x² + y² = 4</text><text x="140" y="120" class="tc">y = e^x − 1</text></g>
+        <g class="s"><text x="400" y="60">잔차</text><text x="400" y="80">0.86</text><text x="400" y="100">0.039</text><text x="400" y="120">9.5×10⁻⁵</text><text x="400" y="140">6.5×10⁻¹⁰</text></g>
+      </svg>
+      <figcaption>그림 1. 두 곡선을 현재 점에서 각각 접평면으로 바꿔 그 교점으로 건너가므로, 1변수 Newton과 같이 교점 근처에서는 잔차가 걸음마다 제곱으로 줄어든다(예제 2.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>1변수 Newton 방법(<a href="02-01.html">2.1절</a>), 연립 1차방정식(<a href="03-01.html">3.1절</a>), 편미분(<a href="07-01.html">7.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">2.2.1</span>Jacobian 행렬</h3>
-    <p>미지수 \(\vec x = (x, y)\)와 방정식 \(f_1(x, y) = 0\), \(f_2(x, y) = 0\)이 있을 때, 1변수에서 \(f'\)이 하던 역할을 편미분을 모은 행렬이 합니다.</p>
+    <p>미지수 \(\vec x = (x, y)\)와 방정식 \(f_1(x, y) = 0\), \(f_2(x, y) = 0\)이 있다고 하자. 그러면 1변수에서 \(f'\)이 하던 역할을, 편미분을 모은 Jacobian 행렬이 맡는다. 처음 질문의 첫째 답이 이것이다.</p>
     <p>\[ J = \begin{bmatrix}\partial f_1/\partial x & \partial f_1/\partial y\\ \partial f_2/\partial x & \partial f_2/\partial y\end{bmatrix} \]</p>
     <div class="tb-env thm">
       <span class="lb">연립 Newton 방법</span>
-      <p>\(J(\vec x_k)\,\Delta\vec x = -\vec f(\vec x_k)\)를 풀고 \(\vec x_{k+1} = \vec x_k + \Delta\vec x\).</p>
-      <p>매 반복 연립 1차방정식 하나를 푼다. 근 가까이에서 2차 수렴(맞는 자릿수가 두 배씩).</p>
+      <p>\(J(\vec x_k)\,\Delta\vec x = -\vec f(\vec x_k)\)를 풀고 \(\vec x_{k+1} = \vec x_k + \Delta\vec x\)로 둔다.</p>
+      <p>매 반복마다 연립 1차방정식 하나를 풀며, 근 가까이에서는 맞는 자릿수가 두 배씩 느는 2차 수렴을 한다.</p>
     </div>
 
     <div class="tb-env ex">
       <span class="lb">예제 2.2.1 <span class="nm">(곡선의 교점)</span></span>
       <p>원 \(x^2 + y^2 = 4\)와 곡선 \(y = e^x - 1\)의 교점을 \((1, 1)\)에서 시작해 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(f_1 = x^2 + y^2 - 4\), \(f_2 = y - e^x + 1\), \(J = \begin{bmatrix}2x & 2y\\ -e^x & 1\end{bmatrix}\). 반복하면 \((1.0758, 1.9242)\) → \((1.0095, 1.7378)\) → \((1.00419, 1.72965)\) → \((1.004169, 1.729637)\)이고, 잔차는 0.86 → 0.039 → \(9.5\times10^{-5}\) → \(6.5\times10^{-10}\)으로 2차 수렴합니다.</p>
+    <p><i>풀이.</i> \(f_1 = x^2 + y^2 - 4\), \(f_2 = y - e^x + 1\)로 두면 \(J = \begin{bmatrix}2x & 2y\\ -e^x & 1\end{bmatrix}\)이다. 반복하면 \((1.0758, 1.9242)\), \((1.0095, 1.7378)\), \((1.00419, 1.72965)\), \((1.004169, 1.729637)\) 순으로 다가간다. 잔차는 0.86, 0.039, \(9.5\times10^{-5}\), \(6.5\times10^{-10}\)으로 줄어 2차 수렴한다(그림 1).</p>
 
     <h3><span class="no">2.2.2</span>공학에서</h3>
-    <p>4절 링크의 위치 해석(<a href="../me17/02-01.html">메카니즘설계 2.1절</a>), 로봇 팔의 역기구학, 비선형 회로, 화학 평형이 모두 이 꼴입니다. 편미분을 손으로 구하기 어려우면 차분으로 Jacobian을 근사하거나(할선법의 다변수판인 Broyden 방법), 자동 미분을 씁니다. 처음값이 멀면 발산하므로 물리적으로 그럴듯한 값에서 시작하고, 한 걸음을 줄여 가는 감쇠 Newton을 쓰기도 합니다.</p>
+    <p>4절 링크의 위치 해석(<a href="../me17/02-01.html">메카니즘설계 2.1절</a>), 로봇 팔의 역기구학, 비선형 회로, 화학 평형이 모두 이 꼴이다. 편미분을 손으로 구하기 어려우면 차분으로 Jacobian을 근사하거나, 할선법의 다변수판인 Broyden 방법이나 자동 미분을 쓴다.</p>
+    <p>또 처음 값이 멀면 발산하므로 물리적으로 그럴듯한 값에서 시작한다. 그래도 불안하면 한 걸음을 줄여 가며 잔차가 줄 때만 받아들이는 감쇠 Newton을 쓴다.</p>
 
-    <div class="tb-note"><b>주의</b>\(J\)가 특이(행렬식 0)에 가까우면 \(\Delta\vec x\)가 엄청나게 커집니다. 기구학에서는 이것이 특이 자세(팔이 쭉 펴진 상태)에 해당합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>Jacobian만 구하면 언제나 다음 걸음을 계산할 수 있다고 여기기 쉽다. 하지만 J가 특이에 가까우면, 곧 행렬식이 0에 가까우면 \(\Delta\vec x\)가 엄청나게 커지거나 아예 풀리지 않는다. 기구학에서는 이것이 팔이 쭉 펴진 특이 자세에 해당하며, 처음 질문의 둘째 답이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>Jacobian: 편미분의 행렬.</li>
-        <li>\(J\Delta\vec x = -\vec f\), 반복마다 연립 1차방정식.</li>
-        <li>근 근처 2차 수렴, 처음값과 특이점 주의.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>Jacobian은 편미분을 모은 행렬이다. 연립 Newton 방법은 \(J\Delta\vec x = -\vec f\)를 반복마다 연립 1차방정식으로 푼다. 근 근처에서 2차 수렴하지만, 처음 값과 특이점에 주의한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">2.2.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(f_1 = xy - 2\), \(f_2 = x + y - 3\)의 Jacobian은?
-          <details><summary>답</summary><p>\(\begin{bmatrix}y & x\\ 1 & 1\end{bmatrix}\).</p></details>
+          <details><summary>답</summary><p>\(\begin{bmatrix}y & x\\ 1 & 1\end{bmatrix}\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
@@ -67,7 +63,7 @@
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>변수가 \(n\)개인 문제에서 Jacobian을 전진 차분으로 근사하려면 한 반복에 함수 계산이 몇 번 필요한가?
-          <details><summary>답</summary><p>기준점 1번 + 변수마다 1번씩 \(n\)번, 모두 \(n + 1\)번(벡터 함수 계산 기준).</p></details>
+          <details><summary>답</summary><p>기준점 1번에 변수마다 1번씩 \(n\)번을 더해 모두 \(n + 1\)번이다(벡터 함수 계산 기준).</p></details>
         </li>
       </ol>
     </div>

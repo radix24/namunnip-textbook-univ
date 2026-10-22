@@ -8,59 +8,55 @@
 <article class="card q-card" id="text-m16-power" data-kind="본문" data-std="기계16-03-03">
   <header class="card-head"><span class="no"></span><h2>거듭제곱법으로 고유값 구하기</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>고유값 문제가 진동과 좌굴에서 나오는 이유를 안다.</li>
-        <li>거듭제곱법으로 가장 큰 고유값과 고유벡터를 구한다.</li>
-        <li>역거듭제곱법으로 가장 작은 고유값(최저 고유진동수)을 구한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>연립방정식과 LU 분해 (<a href="03-01.html">3.1절</a>), 다자유도 진동과 모드 (<a href="../me13/05-01.html">기계진동 5.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">자유도가 수천 개인 구조물의 고유진동수를 구하려면 행렬의 고유값을 알아야 한다. 특성방정식을 손으로 풀 수 없을 만큼 차수가 클 때, 행렬을 벡터에 곱하기만 해서 고유값을 찾아낼 수 있을까? 설계에서 가장 궁금한 최저 고유진동수는 어떻게 골라낼까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 3.3.1 A = [[2, −1], [−1, 2]]에 거듭제곱법을 (1, 0)에서 시작해 적용한 고유값 추정. 2, 2.5, 2.8, 2.929, 2.976, 2.992로 참값 3에 다가가며, 오차가 매번 다른 고유값과의 비 1/3씩 줄어든다. 벡터는 (1, −1) 방향으로 간다">
+        <line x1="80" y1="170" x2="420" y2="170" class="ax"/><line x1="80" y1="30" x2="80" y2="170" class="ax"/>
+        <path d="M80 50 H420" class="k dsh"/>
+        <polyline points="80,170 140,110 200,74 260,58.5 320,52.9 380,51" class="a" fill="none" stroke-width="2.5"/>
+        <g class="fd"><circle cx="80" cy="170" r="4"/><circle cx="140" cy="110" r="4"/><circle cx="200" cy="74" r="4"/><circle cx="260" cy="58.5" r="4"/><circle cx="320" cy="52.9" r="4"/><circle cx="380" cy="51" r="4"/></g>
+        <g text-anchor="middle" class="s"><text x="80" y="186">1</text><text x="200" y="186">3</text><text x="380" y="186">6</text><text x="410" y="186">반복</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">3</text><text x="74" y="114">2.5</text><text x="74" y="174">2</text></g>
+        <g class="s"><text x="430" y="54">참값 3</text><text x="430" y="90" class="ta">오차 1, 0.5, 0.2,</text><text x="430" y="108" class="ta">0.071, 0.024, 0.008</text><text x="430" y="130">매번 약 1/3</text><text x="430" y="152">벡터 → (1, −1)</text></g>
+      </svg>
+      <figcaption>그림 1. 벡터에 행렬을 거듭 곱하면 가장 큰 고유값의 성분이 다른 성분보다 그 비만큼 빨리 자라므로, 추정값의 오차가 걸음마다 |λ₂/λ₁| = 1/3씩 줄어든다(예제 3.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>연립방정식과 LU 분해(<a href="03-01.html">3.1절</a>), 다자유도 진동과 모드(<a href="../me13/05-01.html">기계진동 5.1절</a>)를 쓴다.</div>
 
     <h3><span class="no">3.3.1</span>고유값 문제</h3>
-    <p>\(A\vec v = \lambda\vec v\)를 만족하는 \(\lambda\)와 \(\vec v\)를 구하는 문제입니다. 다자유도 진동 \(K\vec v = \omega^2M\vec v\)(고유진동수와 모드 모양), 기둥 좌굴, 주응력(<a href="../me9/01-01.html">응용고체역학 1.1절</a>)이 모두 고유값 문제입니다. 손으로는 특성방정식을 풀지만 차수가 크면 반복법을 씁니다.</p>
+    <p>고유값 문제는 \(A\vec v = \lambda\vec v\)를 만족하는 \(\lambda\)와 \(\vec v\)를 구하는 문제이다. 다자유도 진동 \(K\vec v = \omega^2M\vec v\)에서 고유진동수와 모드 모양을 구하는 일, 기둥 좌굴, 주응력(<a href="../me9/01-01.html">응용고체역학 1.1절</a>)이 모두 여기에 속한다. 손으로는 특성방정식을 풀지만, 차수가 크면 반복법을 쓴다.</p>
 
     <h3><span class="no">3.3.2</span>거듭제곱법</h3>
-    <p>아무 벡터나 행렬을 계속 곱하면, 가장 큰 고유값에 해당하는 성분이 다른 성분보다 빨리 자라 결국 그 고유벡터 방향만 남습니다.</p>
+    <p>아무 벡터에나 행렬을 계속 곱하면, 가장 큰 고유값에 해당하는 성분이 다른 성분보다 빨리 자라 결국 그 고유벡터 방향만 남는다. 처음 질문의 첫째 답이 이것이다.</p>
     <div class="tb-env thm">
       <span class="lb">거듭제곱법</span>
-      <p>\(\vec w = A\vec v_k\), \(\lambda_k\) = \(\vec w\)의 가장 큰 성분, \(\vec v_{k+1} = \vec w/\lambda_k\). 수렴 속도는 \(|\lambda_2/\lambda_1|\)(두 번째로 큰 것과의 비)로 정해진다.</p>
-      <p>역거듭제곱법: \(A^{-1}\)에 적용(실제로는 \(A\vec w = \vec v_k\)를 LU로 푼다)하면 가장 작은 고유값의 역수가 나온다.</p>
+      <p>\(\vec w = A\vec v_k\)를 계산하고, \(\vec w\)의 가장 큰 성분을 \(\lambda_k\)로 삼아 \(\vec v_{k+1} = \vec w/\lambda_k\)로 정규화한다. 수렴 속도는 두 번째로 큰 고유값과의 비 \(|\lambda_2/\lambda_1|\)가 정한다.</p>
+      <p>역거듭제곱법은 \(A^{-1}\)에 같은 일을 하며, 실제로는 \(A\vec w = \vec v_k\)를 LU로 푼다. 그러면 가장 작은 고유값의 역수가 나온다.</p>
     </div>
 
     <div class="tb-env ex">
       <span class="lb">예제 3.3.1 <span class="nm">(2자유도)</span></span>
       <p>\(A = \begin{bmatrix}2 & -1\\ -1 & 2\end{bmatrix}\)의 가장 큰 고유값을 \((1, 0)\)에서 시작해 구하여라.</p>
     </div>
-    <p><i>풀이.</i> \(\lambda\)의 추정값이 2, 2.5, 2.8, 2.929, 2.976, 2.992로 3에 다가가고, 벡터는 \((1, -1)\)로 갑니다(두 질량이 반대로 움직이는 모드). 다른 고유값이 1이라 비 1/3씩 오차가 줄어듭니다.</p>
+    <p><i>풀이.</i> \(\lambda\)의 추정값이 2, 2.5, 2.8, 2.929, 2.976, 2.992로 3에 다가가고, 벡터는 \((1, -1)\)로 간다(그림 1). 이것은 두 질량이 반대로 움직이는 모드이다. 다른 고유값이 1이므로 오차는 매번 1/3씩 줄어든다.</p>
+    <p>그런데 진동 설계에서 가장 궁금한 것은 가장 높은 진동수가 아니라 가장 낮은 고유진동수인 경우가 많다. 이때는 가장 작은 고유값을 찾는 역거듭제곱법을 쓴다. 처음 질문의 둘째 답이 이것이며, 왜 이 방법이 알맞은지는 연습문제 3에서 따져 본다.</p>
 
-    <div class="tb-note"><b>주의</b>(1) 처음 벡터가 원하는 고유벡터 성분을 전혀 갖지 않으면 그 방향을 찾지 못합니다(반올림이 결국 섞어 주지만 느림). (2) 두 고유값의 크기가 비슷하면 매우 느리므로, 실무 프로그램은 이동 역거듭제곱법, Lanczos 방법을 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>처음 벡터를 아무렇게나 고르면 된다고 여기는 실수가 흔하다. 처음 벡터가 원하는 고유벡터 성분을 전혀 갖지 않으면, 반올림 오차가 그 성분을 조금씩 섞어 줄 때까지 엉뚱한 방향에 머문다. 또 두 고유값의 크기가 비슷하면 비가 1에 가까워 수렴이 매우 느리므로, 실무 프로그램은 이동 역거듭제곱법이나 Lanczos 방법을 쓴다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>진동·좌굴·주응력은 고유값 문제.</li>
-        <li>거듭제곱법: 최대 고유값, 속도 \(|\lambda_2/\lambda_1|\).</li>
-        <li>역거듭제곱법: 최소 고유값(최저 고유진동수).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>진동, 좌굴, 주응력은 고유값 문제이다. 거듭제곱법은 최대 고유값을 구하며, 수렴 속도는 \(|\lambda_2/\lambda_1|\)가 정한다. 역거듭제곱법은 최소 고유값, 곧 최저 고유진동수를 구한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>예제 행렬의 정확한 고유값을 특성방정식으로 구하여라.
-          <details><summary>답</summary><p>\((2 - \lambda)^2 - 1 = 0\), \(\lambda = 1, 3\).</p></details>
+          <details><summary>답</summary><p>\((2 - \lambda)^2 - 1 = 0\), \(\lambda = 1, 3\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>예제에서 오차가 처음의 \(10^{-6}\)이 되려면 반복이 대략 몇 번 필요한가?
-          <details><summary>답</summary><p>\((1/3)^n = 10^{-6}\), \(n \approx 12.6\), 약 13번.</p></details>
+          <details><summary>답</summary><p>\((1/3)^n = 10^{-6}\), \(n \approx 12.6\)이므로 약 13번이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>

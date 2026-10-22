@@ -8,51 +8,51 @@
 <article class="card q-card" id="text-m16-stability" data-kind="본문" data-std="기계16-07-02">
   <header class="card-head"><span class="no"></span><h2>양적·음적 방법과 안정 조건</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>1차원 비정상 열전도의 양적 방법과 음적 방법을 세운다.</li>
-        <li>양적 방법의 안정 조건 \(r = \alpha\Delta t/\Delta x^2 \le 1/2\)을 이끌어 낸다.</li>
-        <li>안정성과 정확도를 구별해 시간 간격을 정한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>2차원 열전도 차분 (<a href="07-01.html">7.1절</a>), Euler 방법의 안정 조건 (<a href="06-01.html">6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">막대의 비정상 열전도를 간단한 양적 방법으로 풀었더니, 시간 간격을 조금 키우자 온도가 위아래로 톱니처럼 요동치며 터져 버렸다. 열은 고르게 퍼질 뿐인데 왜 이런 일이 생길까? 간격을 얼마까지 키워도 되는지 미리 알 수 있을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="양적(FTCS) 방법에서 절점마다 부호가 바뀌는 톱니 오차가 한 걸음에 곱해지는 배율 1 − 4r(가로축 r = αΔt/Δx²). r = 0에서 1이고, r = 1/4에서 0이며, r = 1/2에서 −1에 닿는다. 배율의 크기가 1 이하인 안정 영역(음영)은 r ≤ 1/2이고, 그보다 크면 톱니가 걸음마다 커져 발산한다">
+        <line x1="80" y1="170" x2="460" y2="170" class="ax"/><line x1="80" y1="40" x2="80" y2="170" class="ax"/>
+        <rect x="80" y="50" width="250" height="80" class="la"/>
+        <path d="M80 90 H460" class="k dsh"/><path d="M80 130 H460 M80 50 H460" class="k dsh" opacity="0.5"/>
+        <path d="M80 50 L430 162" class="d" stroke-width="2.5"/>
+        <path d="M330 40 V170" class="c" stroke-width="2"/>
+        <circle cx="205" cy="90" r="4" class="fd"/><circle cx="330" cy="130" r="5" class="fd"/>
+        <g text-anchor="middle" class="s"><text x="80" y="186">0</text><text x="205" y="186">1/4</text><text x="330" y="186">1/2</text><text x="440" y="186">r</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="54">1</text><text x="74" y="94">0</text><text x="74" y="134">−1</text></g>
+        <text x="150" y="120" class="ta">안정, |1 − 4r| ≤ 1</text><text x="340" y="60" class="tc">r = 1/2 경계</text><text x="360" y="155" class="td">발산</text>
+        <text x="220" y="80" class="s">배율 1 − 4r</text>
+      </svg>
+      <figcaption>그림 1. 가장 거친 톱니 오차는 걸음마다 1 − 4r배가 되므로, r가 1/2을 넘으면 그 크기가 1보다 커져 오차가 부호를 바꾸며 불어난다(7.2.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>2차원 열전도 차분(<a href="07-01.html">7.1절</a>), Euler 방법의 안정 조건(<a href="06-01.html">6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.2.1</span>양적 방법</h3>
-    <p>막대의 열전도 \(\partial T/\partial t = \alpha\,\partial^2T/\partial x^2\)에서 시간은 전진 차분, 공간은 중심 차분으로 바꾸면</p>
+    <p>막대의 열전도 \(\partial T/\partial t = \alpha\,\partial^2T/\partial x^2\)에서 시간은 전진 차분으로, 공간은 중심 차분으로 바꾸면 아래 양적 방법이 된다.</p>
     <div class="tb-env thm">
       <span class="lb">양적(FTCS) 방법</span>
       <p>\[T_i^{n+1} = T_i^n + r\left(T_{i-1}^n - 2T_i^n + T_{i+1}^n\right)\]</p>
       <p>\[r = \frac{\alpha\Delta t}{\Delta x^2}\]</p>
-      <p>안정 조건: \(r \le 1/2\) (2차원 정사각 격자는 \(r \le 1/4\)).</p>
+      <p>안정 조건은 \(r \le 1/2\)이며, 2차원 정사각 격자에서는 \(r \le 1/4\)이다.</p>
     </div>
-    <p>새 값이 옛 값만으로 바로 계산되어(양적) 간단하지만, 간격 조건이 붙습니다. 식을 \(T_i^{n+1} = rT_{i-1} + (1 - 2r)T_i + rT_{i+1}\)로 쓰면 이유가 보입니다. \(r > 1/2\)이면 자기 자신의 계수 \(1 - 2r\)가 음수가 되어, 지금 뜨거운 절점이 다음 걸음에 오히려 차가워지는 비물리적 결과가 생깁니다.</p>
+    <p>이때 새 값이 옛 값만으로 바로 계산되어 간단하지만, 간격에 조건이 붙는다. 그런데 식을 \(T_i^{n+1} = rT_{i-1} + (1 - 2r)T_i + rT_{i+1}\)로 쓰면 이유가 보인다. \(r > 1/2\)이면 자기 자신의 계수 \(1 - 2r\)가 음수가 되어, 지금 뜨거운 절점이 다음 걸음에 오히려 차가워지는 비물리적 결과가 생긴다. 처음 질문의 첫째 답이 이것이다.</p>
 
     <h3><span class="no">7.2.2</span>안정 조건 이끌어 내기</h3>
-    <p>절점마다 부호가 바뀌는 가장 거친 톱니 모양 오차 \(+\varepsilon, -\varepsilon, +\varepsilon, \dots\)를 넣어 봅니다. 한 절점에서 \(T_{i\pm1} = -\varepsilon\)이므로 새 값은 \(\varepsilon + r(-\varepsilon - 2\varepsilon - \varepsilon) = (1 - 4r)\varepsilon\)입니다. 걸음마다 \(|1 - 4r|\)배가 되므로 커지지 않으려면 \(|1 - 4r| \le 1\), 곧 \(r \le 1/2\)입니다. 일반적인 파형으로 같은 계산을 하는 것이 von Neumann 안정성 해석입니다.</p>
+    <p>절점마다 부호가 바뀌는 가장 거친 톱니 모양 오차 \(+\varepsilon, -\varepsilon, +\varepsilon, \dots\)를 넣어 본다. 한 절점에서 \(T_{i\pm1} = -\varepsilon\)이므로, 새 값은 \(\varepsilon + r(-\varepsilon - 2\varepsilon - \varepsilon) = (1 - 4r)\varepsilon\)이다. 그러므로 걸음마다 \(|1 - 4r|\)배가 되며, 커지지 않으려면 \(|1 - 4r| \le 1\), 곧 \(r \le 1/2\)이어야 한다(그림 1). 처음 질문의 둘째 답이 이것이다.</p>
+    <p>일반적인 파형으로 같은 계산을 하는 것이 von Neumann 안정성 해석이다. 즉 톱니는 격자가 나타낼 수 있는 가장 짧은 파장이라, 이것이 가장 먼저 불안정해진다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 7.2.1 <span class="nm">(강철 막대)</span></span>
       <p>강철(\(\alpha = 1.2\times10^{-5}\) m²/s) 막대를 \(\Delta x = 1\) cm로 나눴다. 양적 방법의 최대 시간 간격은? \(\Delta x\)를 5 mm로 하면?</p>
     </div>
-    <p><i>풀이.</i> \(\Delta t \le 0.5\times(0.01)^2/1.2\times10^{-5} = 4.2\) s. \(\Delta x = 5\) mm이면 \(\Delta t\)가 4분의 1인 1.04 s로 줄고, 절점이 2배라 같은 시간까지 계산량이 8배입니다.</p>
+    <p><i>풀이.</i> \(\Delta t \le 0.5\times(0.01)^2/1.2\times10^{-5} = 4.2\) s이다. \(\Delta x = 5\) mm이면 \(\Delta t\)가 4분의 1인 1.04 s로 줄고 절점이 2배가 되므로, 같은 시간까지의 계산량은 8배이다.</p>
 
     <h3><span class="no">7.2.3</span>음적 방법</h3>
-    <p>공간 차분을 새 시간에서 계산하면 \(-rT_{i-1}^{n+1} + (1 + 2r)T_i^{n+1} - rT_{i+1}^{n+1} = T_i^n\)입니다. 걸음마다 삼중 대각 연립방정식(Thomas 알고리듬, 계산량은 절점 수에 비례)을 풀어야 하지만 어떤 \(r\)에서도 안정합니다. 두 방법의 평균인 Crank-Nicolson은 시간 정확도가 2차입니다. 단, 안정하다고 정확한 것은 아니어서 큰 간격은 변화를 늦게 따라갑니다(실습).</p>
+    <p>공간 차분을 새 시간에서 계산하면 \(-rT_{i-1}^{n+1} + (1 + 2r)T_i^{n+1} - rT_{i+1}^{n+1} = T_i^n\)이 된다. 걸음마다 삼중 대각 연립방정식을 풀어야 하지만(Thomas 알고리듬, 계산량은 절점 수에 비례), 어떤 r에서도 안정하다. 한편 두 방법의 평균인 Crank-Nicolson은 시간 정확도가 2차이다.</p>
+    <p>다만 안정하다고 정확한 것은 아니다. 예를 들어 큰 간격을 쓰면 터지지는 않지만 변화를 늦게 따라가므로, 정확도는 간격을 바꿔 따로 확인한다(실습).</p>
 
-    <div class="tb-note"><b>주의</b>(1) 안정 조건은 가장 작은 격자 간격이 정하므로, 한 곳만 격자를 촘촘히 해도 양적 방법 전체의 시간 간격이 줄어듭니다. (2) 상용 열해석 프로그램이 음적 방법을 기본으로 쓰는 이유입니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>격자를 한 곳만 촘촘히 하면 그곳의 계산만 늘어난다고 여기기 쉽다. 양적 방법의 안정 조건은 가장 작은 격자 간격이 정하므로, 한 곳만 촘촘히 해도 전체의 시간 간격이 줄어든다. 상용 열해석 프로그램이 음적 방법을 기본으로 쓰는 이유이다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>양적 방법: 간단, \(r = \alpha\Delta t/\Delta x^2 \le 1/2\) (2차원 1/4).</li>
-        <li>톱니 오차가 \(|1 - 4r|\)배씩 변함 → 안정 조건.</li>
-        <li>음적 방법: 연립방정식, 무조건 안정, 정확도는 따로 확인.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>양적 방법은 간단하지만 \(r = \alpha\Delta t/\Delta x^2 \le 1/2\)(2차원 1/4)이어야 한다. 톱니 오차가 걸음마다 \(|1 - 4r|\)배가 된다는 데서 이 조건이 나온다. 음적 방법은 연립방정식을 풀지만 무조건 안정하며, 정확도는 따로 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.2.4</span>연습문제</h3>

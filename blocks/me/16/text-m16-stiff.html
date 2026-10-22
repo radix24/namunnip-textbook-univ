@@ -8,64 +8,65 @@
 <article class="card q-card" id="text-m16-stiff" data-kind="본문" data-std="기계16-06-03">
   <header class="card-head"><span class="no"></span><h2>뻣뻣한 방정식과 음적 Euler 방법</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>시간 규모가 매우 다른 과정이 섞인 뻣뻣한 방정식을 판별한다.</li>
-        <li>양적 방법의 안정 한계와 음적 Euler 방법의 무조건 안정성을 비교한다.</li>
-        <li>음적 방법의 한 걸음을 연립방정식으로 푼다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>Euler와 RK4 (<a href="06-01.html">6.1절</a>), 양적·음적 열전도 (<a href="07-02.html">7.2절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">아주 단단한 스프링 하나가 낀 기계를 시뮬레이션했더니, 그 스프링의 진동은 순식간에 사라졌는데도 계산 간격을 마이크로초로 줄이지 않으면 결과가 터져 버린다. 이미 사라진 빠른 과정이 왜 계산 전체의 발목을 잡을까? 간격을 크게 잡아도 터지지 않는 방법은 없을까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="예제 6.3.1 ẏ = −50y, y(0) = 1을 간격 0.05로 네 걸음 푼 결과. 양적 Euler는 걸음마다 −1.5배가 되어 1, −1.5, 2.25, −3.38, 5.06으로 진동하며 발산한다. 음적 Euler는 걸음마다 1/3.5배가 되어 1, 0.286, 0.082, 0.023, 0.0067로 0에 다가간다. 정확한 해는 t = 0.2에서 4.5×10⁻⁵이다">
+        <line x1="80" y1="114" x2="420" y2="114" class="ax"/><line x1="80" y1="30" x2="80" y2="175" class="ax"/>
+        <polyline points="80,100 160,135 240,82.5 320,161.25 400,43.2" class="d" fill="none" stroke-width="2.5"/>
+        <polyline points="80,100 160,110 240,114.9 320,115.7 400,115.9" class="a" fill="none" stroke-width="2.5"/>
+        <path d="M80 100 Q96 105.5 112 108.8 T208 113.7 T400 114" class="k dsh" fill="none"/>
+        <g class="fd"><circle cx="160" cy="135" r="4"/><circle cx="240" cy="82.5" r="4"/><circle cx="320" cy="161.25" r="4"/><circle cx="400" cy="43.2" r="4"/></g>
+        <g class="fa"><circle cx="160" cy="110" r="4"/><circle cx="240" cy="114.9" r="4"/><circle cx="320" cy="115.7" r="4"/><circle cx="400" cy="115.9" r="4"/></g>
+        <circle cx="80" cy="100" r="4" class="fk"/>
+        <g text-anchor="middle" class="s"><text x="80" y="190">0</text><text x="240" y="190">0.1</text><text x="400" y="190">0.2</text></g>
+        <g text-anchor="end" class="s"><text x="74" y="104">1</text><text x="74" y="118">0</text><text x="74" y="47">5</text></g>
+        <text x="300" y="44" class="td">양적, 배율 −1.5, 발산</text><text x="250" y="132" class="ta">음적, 배율 0.286</text><text x="120" y="96" class="s">정확한 해</text>
+      </svg>
+      <figcaption>그림 1. 양적 방법은 지금 값으로 다음 값을 내다보므로 λh가 2를 넘으면 매 걸음 과녁을 지나쳐 진동이 커지고, 음적 방법은 다음 값의 기울기로 거꾸로 맞추므로 어떤 간격에서도 0으로 줄어든다(예제 6.3.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>Euler와 RK4(<a href="06-01.html">6.1절</a>), 양적·음적 열전도(<a href="07-02.html">7.2절</a>)를 쓴다.</div>
 
     <h3><span class="no">6.3.1</span>뻣뻣함</h3>
-    <p>\(\dot y = -\lambda y\)를 양적 Euler로 풀면 \(y_{n+1} = (1 - \lambda h)y_n\)이라 \(h &lt; 2/\lambda\)여야 안정합니다. 계에 아주 빠르게 사라지는 과정(큰 \(\lambda\))과 느리게 변하는 관심 과정이 함께 있으면, 이미 사라진 빠른 과정이 간격을 지배해 엄청나게 많은 걸음이 필요합니다. 이런 계를 뻣뻣하다고 합니다. 예: 매우 단단한 스프링이 낀 다자유도 계, 화학 반응 속도, 작은 시정수 회로.</p>
+    <p>\(\dot y = -\lambda y\)를 양적 Euler로 풀면 \(y_{n+1} = (1 - \lambda h)y_n\)이므로, \(h &lt; 2/\lambda\)여야 안정하다. 그런데 계에 아주 빠르게 사라지는 과정(큰 \(\lambda\))과 느리게 변하는 관심 과정이 함께 있으면, 이미 사라진 빠른 과정이 이 안정 한계로 간격을 지배한다. 그래서 엄청나게 많은 걸음이 필요해지는데, 이런 계를 뻣뻣하다고 한다. 처음 질문의 첫째 답이 이것이다.</p>
+    <p>매우 단단한 스프링이 낀 다자유도 계, 빠른 반응과 느린 반응이 섞인 화학 반응 속도, 작은 시정수가 섞인 회로가 그 예이다.</p>
 
     <h3><span class="no">6.3.2</span>음적 Euler</h3>
     <div class="tb-env thm">
       <span class="lb">음적(후진) Euler 방법</span>
       <p>\[ y_{n+1} = y_n + hf(t_{n+1}, y_{n+1}) \]</p>
-      <p>\(\dot y = -\lambda y\)이면 \(y_{n+1} = y_n/(1 + \lambda h)\): 어떤 \(h\)에서도 크기가 줄어 안정. 대신 매 걸음 \(y_{n+1}\)에 대한 방정식(연립이면 연립방정식, 비선형이면 Newton)을 푼다.</p>
+      <p>\(\dot y = -\lambda y\)이면 \(y_{n+1} = y_n/(1 + \lambda h)\)이므로 어떤 h에서도 크기가 줄어 안정하다. 대신 매 걸음 \(y_{n+1}\)에 대한 방정식을 풀어야 하며, 연립이면 연립방정식, 비선형이면 Newton 반복을 쓴다.</p>
     </div>
+    <p>처음 질문의 둘째 답이 이 방법이다. 다음 값의 기울기로 거꾸로 맞추므로, 빠른 과정이 아무리 빨라도 그 성분이 커지지 않는다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 6.3.1 <span class="nm">(\(\lambda\) = 50)</span></span>
       <p>\(\dot y = -50y\), \(y(0) = 1\)을 \(h = 0.05\)로 4걸음(\(t = 0.2\)) 양적·음적 Euler로 풀어라. 참값 \(e^{-10} = 4.5\times10^{-5}\).</p>
     </div>
-    <p><i>풀이.</i> 양적: 배율 \(1 - 2.5 = -1.5\), 4걸음 뒤 \(1.5^4 = 5.06\)으로 진동하며 커집니다(발산). 음적: 배율 \(1/3.5 = 0.286\), 4걸음 뒤 0.0067로 0에 다가갑니다. 정확도는 거칠지만(빠른 과정은 어차피 금방 사라짐) 안정해서, 느린 과정에 맞춘 큰 간격을 쓸 수 있습니다.</p>
+    <p><i>풀이.</i> 양적 Euler는 배율이 \(1 - 2.5 = -1.5\)이므로, 4걸음 뒤 \(1.5^4 = 5.06\)으로 진동하며 커져 발산한다. 음적 Euler는 배율이 \(1/3.5 = 0.286\)이므로, 4걸음 뒤 0.0067로 0에 다가간다(그림 1).</p>
+    <p>음적 결과의 정확도는 거칠지만, 빠른 과정은 어차피 금방 사라지므로 문제가 되지 않는다. 즉 음적 방법은 안정하기 때문에 느린 과정에 맞춘 큰 간격을 쓸 수 있다.</p>
 
-    <div class="tb-note"><b>주의</b>음적 Euler는 1차라 정확도가 낮고 진동을 지나치게 감쇠시킵니다. 실무에서는 2차 음적 방법(사다리꼴, BDF2)이나 구조 동역학의 Newmark 방법, 계산 프로그램의 뻣뻣한 문제 전용 풀이기(ode15s 등)를 씁니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>음적 방법은 안정하니 정확하다고 여기기 쉽다. 음적 Euler는 1차라 정확도가 낮고, 진동을 실제보다 지나치게 감쇠시킨다. 그래서 실무에서는 2차 음적 방법(사다리꼴, BDF2)이나 구조 동역학의 Newmark 방법, 계산 프로그램의 뻣뻣한 문제 전용 풀이기(ode15s 등)를 쓰고, 정확도는 간격을 바꿔 따로 확인한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>뻣뻣함: 빠른 과정이 양적 방법의 간격을 제한.</li>
-        <li>음적 Euler: \(y_{n+1} = y_n + hf(y_{n+1})\), 무조건 안정.</li>
-        <li>매 걸음 방정식 풀이 필요, 정확도는 따로 확인.</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>뻣뻣한 계에서는 빠른 과정이 양적 방법의 간격을 제한한다. 음적 Euler \(y_{n+1} = y_n + hf(y_{n+1})\)은 무조건 안정하다. 대신 매 걸음 방정식을 풀어야 하고, 정확도는 따로 확인한다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">6.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(\lambda\) = 1000인 과정을 양적 Euler로 풀 때 최대 간격은?
-          <details><summary>답</summary><p>\(h &lt; 0.002\).</p></details>
+          <details><summary>답</summary><p>\(h &lt; 2/1000 = 0.002\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>\(\dot y = -2y + 1\)을 음적 Euler(\(h = 0.5\))로 한 걸음 풀어라(\(y_0 = 0\)).
-          <details><summary>답</summary><p>\(y_1 = 0 + 0.5(-2y_1 + 1)\), \(2y_1 = 0.5\), \(y_1 = 0.25\). 참값 \(0.5(1 - e^{-1}) = 0.316\).</p></details>
+          <details><summary>답</summary><p>\(y_1 = 0 + 0.5(-2y_1 + 1)\), \(2y_1 = 0.5\)이므로 \(y_1 = 0.25\)이다. 참값은 \(0.5(1 - e^{-1}) = 0.316\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="3">
         <li>고유진동수가 1 Hz와 1000 Hz인 두 모드가 있는 구조의 10초 응답을 구한다. 양적 방법과 음적 방법의 걸음 수를 대략 비교하여라. (양적은 빠른 모드 주기의 1/π 이하, 음적은 느린 모드 주기의 1/20 간격)
-          <details><summary>답</summary><p>양적: 간격 약 0.3 ms, 약 3만 걸음. 음적: 간격 50 ms, 200걸음. 걸음당 연립방정식을 풀어도 음적이 훨씬 싸다(빠른 모드 응답은 부정확해지지만 관심 대상이 아니라면 괜찮다).</p></details>
+          <details><summary>답</summary><p>양적 방법은 간격이 약 0.3 ms라 약 3만 걸음이고, 음적 방법은 간격 50 ms로 200걸음이다. 걸음당 연립방정식을 풀어도 음적이 훨씬 싸다(빠른 모드 응답은 부정확해지지만 관심 대상이 아니라면 괜찮다).</p></details>
         </li>
       </ol>
     </div>

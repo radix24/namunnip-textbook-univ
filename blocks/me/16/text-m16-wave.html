@@ -8,24 +8,30 @@
 <article class="card q-card" id="text-m16-wave" data-kind="본문" data-std="기계16-07-03">
   <header class="card-head"><span class="no"></span><h2>파동방정식의 차분과 CFL 조건</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>줄의 진동(파동방정식)을 중심 차분으로 시간 전진한다.</li>
-        <li>CFL 조건 \(c\Delta t/\Delta x \le 1\)의 뜻을 정보 전달 속도로 이해한다.</li>
-        <li>열전도(확산)와 파동(전파)의 안정 조건을 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>양적 방법과 안정 조건 (<a href="07-02.html">7.2절</a>), 연속체 진동 (<a href="../me13/06-01.html">기계진동 6.1절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">기타 줄의 진동을 차분으로 계산하면, 열전도와 마찬가지로 시간 간격에 한계가 있다. 그런데 이번에는 격자를 반으로 줄일 때 시간 간격이 4분의 1이 아니라 절반만 줄어든다. 그 한계는 무엇이 정하고, 열전도와 다른 까닭은 무엇일까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="파동방정식 차분의 의존 영역. 새 값 하나는 한 걸음에 이웃 한 칸까지만 정보를 받으므로, 세 걸음 아래로 내려가면 수치 의존 영역은 좌우 세 칸이다. 실제 파동이 퍼지는 범위 x ± ct가 이 안에 들면(C = cΔt/Δx ≤ 1, 예 C = 0.8) 안정하고, 밖으로 벗어나면(C = 1.5) 수치 계산이 필요한 정보를 받지 못해 불안정하다">
+        <g class="fk"><circle cx="240" cy="40" r="5"/>
+          <circle cx="190" cy="80" r="3"/><circle cx="240" cy="80" r="3"/><circle cx="290" cy="80" r="3"/>
+          <circle cx="140" cy="120" r="3"/><circle cx="190" cy="120" r="3"/><circle cx="240" cy="120" r="3"/><circle cx="290" cy="120" r="3"/><circle cx="340" cy="120" r="3"/>
+          <circle cx="90" cy="160" r="3"/><circle cx="140" cy="160" r="3"/><circle cx="190" cy="160" r="3"/><circle cx="240" cy="160" r="3"/><circle cx="290" cy="160" r="3"/><circle cx="340" cy="160" r="3"/><circle cx="390" cy="160" r="3"/></g>
+        <polygon points="240,40 90,160 390,160" class="lk"/>
+        <path d="M240 40 L90 160 M240 40 L390 160" class="k" stroke-width="2"/>
+        <path d="M240 40 L120 160 M240 40 L360 160" class="a" stroke-width="2.5"/>
+        <path d="M240 40 L15 160 M240 40 L465 160" class="d dsh" stroke-width="2"/>
+        <g class="s"><text x="250" y="36">새 값</text><text x="30" y="186">수치 의존 영역 (한 걸음에 한 칸)</text></g>
+        <text x="365" y="150" class="ta">C = 0.8, 안정</text><text x="430" y="120" class="td">C = 1.5, 불안정</text>
+        <g class="s" text-anchor="end"><text x="80" y="44">n + 1</text><text x="80" y="84">n</text><text x="80" y="124">n − 1</text></g>
+      </svg>
+      <figcaption>그림 1. 차분식은 한 걸음에 이웃 한 칸의 정보만 쓰므로, 실제 파동이 한 걸음 동안 한 칸보다 멀리 가면 새 값이 필요한 정보를 받지 못해 계산이 불안정해진다(7.3.2).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>양적 방법과 안정 조건(<a href="07-02.html">7.2절</a>), 연속체 진동(<a href="../me13/06-01.html">기계진동 6.1절</a>)을 쓴다.</div>
 
     <h3><span class="no">7.3.1</span>파동방정식의 차분</h3>
-    <p>팽팽한 줄의 횡변위 \(u(x, t)\)는 \(\partial^2u/\partial t^2 = c^2\,\partial^2u/\partial x^2\)(\(c = \sqrt{T/\rho_l}\))를 따릅니다. 시간과 공간 모두 2차 중심 차분을 쓰면</p>
+    <p>팽팽한 줄의 횡변위 \(u(x, t)\)는 \(\partial^2u/\partial t^2 = c^2\,\partial^2u/\partial x^2\)를 따르며, 파동 속력은 \(c = \sqrt{T/\rho_l}\)이다. 시간과 공간 모두 2차 중심 차분을 쓰면 다음 식을 얻는다.</p>
     <p>\[u_i^{n+1} = 2u_i^n - u_i^{n-1} + C^2\left(u_{i+1}^n - 2u_i^n + u_{i-1}^n\right)\]</p>
     <p>\[C = \frac{c\Delta t}{\Delta x}\]</p>
-    <p>두 시간층(\(n\), \(n - 1\))의 값으로 다음 층을 바로 계산하는 양적 방법입니다. 처음 두 층은 처음 변위와 처음 속도로 정합니다.</p>
+    <p>두 시간층 n과 n − 1의 값으로 다음 층을 바로 계산하는 양적 방법이다. 처음 두 층은 처음 변위와 처음 속도로 정한다.</p>
 
     <h3><span class="no">7.3.2</span>CFL 조건</h3>
     <div class="tb-env thm">
@@ -33,35 +39,30 @@
       <p>\[ C = \frac{c\Delta t}{\Delta x} \le 1 \]</p>
       <p>한 시간 걸음 동안 실제 파동이 가는 거리 \(c\Delta t\)가 격자 한 칸을 넘으면 안 된다. 수치 계산은 한 걸음에 이웃 한 칸까지만 정보를 전하기 때문이다.</p>
     </div>
+    <p>처음 질문의 첫째 답이 이것이다(그림 1). 실제 파동이 영향을 미치는 범위가 차분식이 정보를 모으는 범위보다 넓으면, 새 값은 자기가 받아야 할 정보를 놓쳐 터진다.</p>
     <div class="tb-env ex">
       <span class="lb">예제 7.3.1 <span class="nm">(기타 줄)</span></span>
       <p>파동 속력 300 m/s인 줄을 \(\Delta x\) = 1 cm로 나눴다. 최대 시간 간격은? \(\Delta x\)를 반으로 하면?</p>
     </div>
-    <p><i>풀이.</i> \(\Delta t \le 0.01/300 = 33\) μs. \(\Delta x\)를 반으로 하면 \(\Delta t\)도 반(17 μs)입니다. 열전도에서는 \(\Delta t ∝ \Delta x^2\)이라 4분의 1이 되는 것과 대조됩니다(확산은 이웃끼리 평균을 내며 퍼지고, 파동은 일정한 속도로 나아가기 때문).</p>
+    <p><i>풀이.</i> \(\Delta t \le 0.01/300 = 33\) μs이다. \(\Delta x\)를 반으로 하면 \(\Delta t\)도 반인 17 μs가 된다.</p>
+    <p>그런데 열전도에서는 \(\Delta t ∝ \Delta x^2\)이라 4분의 1이 되었다(7.2절). 처음 질문의 둘째 답이 이 차이이다. 확산은 이웃끼리 평균을 내며 퍼져 짧은 거리일수록 빨리 고르게 되지만, 파동은 거리와 상관없이 일정한 속도로 나아가기 때문이다.</p>
 
-    <div class="tb-note"><b>주의</b>\(C = 1\)이면 1차원 파동방정식에서 차분 해가 정확한 해와 일치하는 특별한 성질이 있습니다. \(C &lt; 1\)이면 안정하지만 짧은 파장의 속도가 실제와 달라지는 수치 분산이 생겨 파형 뒤에 잔물결이 따라옵니다. 충돌·폭발 해석의 양적 FEM(LS-DYNA 등)도 이 조건 때문에 가장 작은 요소가 시간 간격을 정합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 오해</span>C를 1보다 작게만 하면 결과가 정확하다고 여기기 쉽다. C &lt; 1이면 안정하지만 짧은 파장의 전파 속도가 실제와 달라지는 수치 분산이 생겨, 파형 뒤에 잔물결이 따라온다. 또 충돌·폭발 해석에 쓰는 양적 유한요소 프로그램(LS-DYNA 등)도 이 조건을 따르므로, 가장 작은 요소 하나가 전체 시간 간격을 정한다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>중심 차분: \(u^{n+1} = 2u^n - u^{n-1} + C^2\delta^2u^n\).</li>
-        <li>CFL: \(c\Delta t/\Delta x \le 1\), 정보가 한 칸을 넘으면 안 됨.</li>
-        <li>파동 \(\Delta t ∝ \Delta x\), 확산 \(\Delta t ∝ \Delta x^2\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>파동방정식의 중심 차분은 \(u^{n+1} = 2u^n - u^{n-1} + C^2\delta^2u^n\)이다. CFL 조건 \(c\Delta t/\Delta x \le 1\)은 정보가 한 걸음에 한 칸을 넘으면 안 된다는 뜻이다. 파동은 \(\Delta t ∝ \Delta x\), 확산은 \(\Delta t ∝ \Delta x^2\)이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">7.3.3</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>강철 속 종파 속력 5000 m/s, 요소 크기 2 mm인 충돌 해석의 최대 시간 간격은?
-          <details><summary>답</summary><p>\(0.002/5000 = 0.4\) μs.</p></details>
+          <details><summary>답</summary><p>\(0.002/5000 = 0.4\) μs이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>\(C = 1\)일 때 차분식을 간단히 써라.
-          <details><summary>답</summary><p>\(u_i^{n+1} = u_{i+1}^n + u_{i-1}^n - u_i^{n-1}\).</p></details>
+          <details><summary>답</summary><p>\(u_i^{n+1} = u_{i+1}^n + u_{i-1}^n - u_i^{n-1}\)이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
