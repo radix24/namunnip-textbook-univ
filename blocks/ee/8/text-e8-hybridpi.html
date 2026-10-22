@@ -8,76 +8,72 @@
 <article class="card q-card" id="text-e8-hybridpi" data-kind="본문" data-std="전전8-03-02">
   <header class="card-head"><span class="no"></span><h2>BJT 소신호 모델: 하이브리드 π와 T 모델</h2><span class="kind">본문</span></header>
   <div class="q-body q-text">
-    <div class="tb-goal">
-      <b>이 절에서 배울 것</b>
-      <ul>
-        <li>지수 관계를 동작점에서 선형화해 \(g_m = I_C/V_T\)를 유도한다.</li>
-        <li>\(r_\pi = \beta/g_m\), \(r_e = \alpha/g_m\), \(r_o = V_A/I_C\)를 정의하고 하이브리드 π 모델과 T 모델을 그린다.</li>
-        <li>BJT와 MOSFET의 소신호 변수를 비교한다.</li>
-      </ul>
-      <b style="margin-top:10px">먼저 알아야 할 것</b>
-      <ul>
-        <li>BJT 전류식 (<a href="03-01.html">3.1절</a>), MOSFET 소신호 모델 (<a href="02-03.html">2.3절</a>).</li>
-      </ul>
-    </div>
+    <p class="q-ask">MOSFET은 게이트로 전류가 들어가지 않지만, BJT는 베이스로 작은 전류가 흐르고 그 전류가 전압의 지수 함수이다. 그렇다면 BJT의 소신호 모델은 MOSFET과 무엇이 같고 무엇이 다를까? 같은 1 mA를 흘릴 때 어느 쪽이 신호를 더 크게 키울까?</p>
+    <figure class="q-fig">
+      <svg viewBox="0 0 560 200" role="img" aria-label="같은 1 mA에서 BJT와 MOSFET(V_OV = 0.2 V)의 소신호 변수 비교. 전달 컨덕턴스는 BJT가 I_C/V_T = 40 mA/V, MOSFET이 2I_D/V_OV = 10 mA/V로 BJT가 네 배이지만, 소신호로 볼 수 있는 입력 범위는 BJT가 약 10 mV, MOSFET이 약 40 mV(0.2V_OV)로 MOSFET이 네 배 넓다">
+        <line x1="150" y1="30" x2="150" y2="170" class="ax"/>
+        <rect x="150" y="40" width="280" height="22" class="fa"/>
+        <rect x="150" y="68" width="70" height="22" class="fb"/>
+        <rect x="150" y="112" width="70" height="22" class="fa"/>
+        <rect x="150" y="140" width="280" height="22" class="fb"/>
+        <g text-anchor="end" class="s"><text x="142" y="56">BJT g_m</text><text x="142" y="84">MOS g_m</text><text x="142" y="128">BJT 범위</text><text x="142" y="156">MOS 범위</text></g>
+        <text x="438" y="56" class="ta">40 mA/V</text>
+        <text x="228" y="84" class="tb">10 mA/V</text>
+        <text x="228" y="128" class="ta">≈ 10 mV (≪ V_T)</text>
+        <text x="438" y="156" class="tb">≈ 40 mV</text>
+        <text x="150" y="22" class="s">같은 전류 1 mA, MOSFET V_OV = 0.2 V</text>
+        <text x="150" y="190" class="s">g_m을 정하는 전압이 BJT는 V_T = 25 mV, MOSFET은 V_OV/2 = 100 mV</text>
+      </svg>
+      <figcaption>그림 1. BJT의 전달 컨덕턴스는 열전압으로, MOSFET은 과구동 전압의 절반으로 전류를 나눈 값이므로, 같은 전류에서 BJT가 몇 배 큰 g_m을 얻는 대신 작은 신호로 볼 수 있는 범위는 그만큼 좁다(예제 3.2.1).</figcaption>
+    </figure>
+    <div class="tb-goal"><span class="lb">먼저 알아야 할 것</span>BJT 전류식(<a href="03-01.html">3.1절</a>), MOSFET 소신호 모델(<a href="02-03.html">2.3절</a>)을 쓴다.</div>
 
     <h3><span class="no">3.2.1</span>gm의 유도</h3>
-    <p>구하려는 것: \(v_{be}\)가 \(i_c\)를 얼마나 바꾸는가. \(v_{BE} = V_{BE} + v_{be}\)를 넣으면 \(i_C = I_Se^{V_{BE}/V_T}e^{v_{be}/V_T} = I_Ce^{v_{be}/V_T}\)입니다. \(|v_{be}| \ll V_T\)이면 \(e^x \approx 1 + x\)로</p>
+    <p>\(v_{be}\)가 \(i_c\)를 얼마나 바꾸는지 구해 보자. \(v_{BE} = V_{BE} + v_{be}\)를 넣으면 \(i_C = I_Se^{V_{BE}/V_T}e^{v_{be}/V_T} = I_Ce^{v_{be}/V_T}\)이다. 이제 \(|v_{be}| \ll V_T\)라 하면 \(e^x \approx 1 + x\)이므로 다음을 얻는다.</p>
     \[ i_C \approx I_C + \frac{I_C}{V_T}v_{be}, \qquad g_m = \frac{I_C}{V_T}. \]
-    <p class="q-term"><b>소신호 조건(BJT)</b>: \(|v_{be}| \ll V_T\) (보통 10 mV 이하). MOSFET(\(\ll 2V_{OV}\), 수십~수백 mV)보다 훨씬 좁다.</p>
-    <p>\(I_C = 1\) mA이면 \(g_m = 40\) mA/V입니다. 같은 1 mA의 MOSFET(\(V_{OV} = 0.2\) V)은 \(g_m = 10\) mA/V이므로, 같은 전류에서 BJT의 \(g_m\)이 몇 배 큽니다. 이것이 BJT가 저잡음·고이득 아날로그 회로에서 여전히 쓰이는 이유입니다. 대신 소신호 범위가 좁습니다.</p>
+    <p>따라서 BJT의 소신호 조건은 \(|v_{be}| \ll V_T\), 보통 10 mV 이하이다. 이는 MOSFET의 \(\ll 2V_{OV}\)(수십~수백 mV)보다 훨씬 좁다.</p>
+    <p>\(I_C = 1\) mA이면 \(g_m = 40\) mA/V이다. 같은 1 mA의 MOSFET(\(V_{OV} = 0.2\) V)은 \(g_m = 10\) mA/V이므로, 같은 전류에서 BJT의 \(g_m\)이 몇 배 크다(그림 1). 처음 질문의 둘째 답이 이것으로, BJT가 저잡음·고이득 아날로그 회로에서 여전히 쓰이는 이유이다. 대신 소신호 범위가 좁다.</p>
 
     <h3><span class="no">3.2.2</span>입력 저항과 출력 저항</h3>
-    <p>MOSFET과 달리 BJT는 베이스 전류가 있으므로 베이스에서 본 입력 저항이 유한합니다. \(i_b = i_c/\beta = g_mv_{be}/\beta\)이므로</p>
-    <p class="q-term"><b>베이스 입력 저항</b> \(r_\pi = \dfrac{v_{be}}{i_b} = \dfrac{\beta}{g_m} = \dfrac{V_T}{I_B}\).</p>
-    <p class="q-term"><b>이미터 저항</b> \(r_e = \dfrac{v_{be}}{i_e} = \dfrac{\alpha}{g_m} = \dfrac{V_T}{I_E} \approx \dfrac1{g_m}\). 이미터에서 들여다본 저항.</p>
-    <p class="q-term"><b>출력 저항</b> \(r_o = V_A/I_C\). Early 효과에서.</p>
-    <p>관계 \(r_\pi = (\beta + 1)r_e\)를 기억하면 좋습니다. 이미터에 있는 저항은 베이스에서 보면 \(\beta + 1\)배로 커 보입니다(베이스 전류가 이미터 전류의 \(1/(\beta + 1)\)이기 때문). 이 "저항 반사 규칙"은 4단원에서 계속 씁니다.</p>
+    <p>그런데 MOSFET과 달리 BJT는 베이스 전류가 있으므로 베이스에서 본 입력 저항이 유한하다. \(i_b = i_c/\beta = g_mv_{be}/\beta\)이므로, 베이스 입력 저항은 \(r_\pi = \dfrac{v_{be}}{i_b} = \dfrac{\beta}{g_m} = \dfrac{V_T}{I_B}\)이다. 이미터에서 들여다본 이미터 저항은 \(r_e = \dfrac{v_{be}}{i_e} = \dfrac{\alpha}{g_m} = \dfrac{V_T}{I_E} \approx \dfrac1{g_m}\)이고, Early 효과에서 오는 출력 저항은 \(r_o = V_A/I_C\)이다.</p>
+    <p>관계 \(r_\pi = (\beta + 1)r_e\)를 기억하면 좋다. 베이스 전류가 이미터 전류의 \(1/(\beta + 1)\)이므로, 이미터에 있는 저항은 베이스에서 보면 \(\beta + 1\)배로 커 보인다. 이 저항 반사 규칙은 4단원에서 계속 쓴다.</p>
 
     <h3><span class="no">3.2.3</span>두 가지 등가회로</h3>
-    <p class="q-term"><b>하이브리드 π 모델</b>: B-E 사이 \(r_\pi\), C-E 사이 전류원 \(g_mv_\pi\)와 병렬 \(r_o\). 이미터가 접지된(공통 이미터) 회로에 편하다.</p>
-    <p class="q-term"><b>T 모델</b>: 이미터 쪽에 \(r_e\), 컬렉터에 전류원 \(\alpha i_e\)(또는 \(g_mv_\pi\)), 베이스로는 \(i_b = i_e/(\beta + 1)\)이 흐름. 이미터에 저항이 달리거나 이미터로 신호가 들어가는 회로(공통 베이스, 이미터 폴로어)에 편하다.</p>
-    <p>둘은 같은 소자의 같은 표현이므로 어느 것을 써도 결과는 같습니다. 계산이 간단한 쪽을 고릅니다. MOSFET 모델은 \(\beta \to \infty\)(\(r_\pi \to \infty\))로 둔 경우와 같습니다.</p>
+    <p>하이브리드 π 모델은 B-E 사이에 \(r_\pi\)를, C-E 사이에 전류원 \(g_mv_\pi\)와 병렬 \(r_o\)를 둔다. 이미터가 접지된 공통 이미터 회로에 편하다. T 모델은 이미터 쪽에 \(r_e\)를, 컬렉터에 전류원 \(\alpha i_e\)(또는 \(g_mv_\pi\))를 두고, 베이스로는 \(i_b = i_e/(\beta + 1)\)이 흐르게 한다. 이미터에 저항이 달리거나 이미터로 신호가 들어가는 공통 베이스, 이미터 폴로어 회로에 편하다.</p>
+    <p>둘은 같은 소자의 같은 표현이므로 어느 것을 써도 결과는 같고, 계산이 간단한 쪽을 고른다. 처음 질문의 첫째 답이 여기 있다. 즉 MOSFET 모델은 \(\beta \to \infty\), 곧 \(r_\pi \to \infty\)로 둔 경우와 같다.</p>
 
     <div class="tb-env ex">
       <span class="lb">예제 3.2.1</span>
       <p>예제 3.1.1의 동작점(\(I_C = 0.9\) mA, β = 100)에서 \(g_m, r_\pi, r_e\)를 구하고, \(V_A = 50\) V일 때 \(r_o\)를 구하여라. \(R_E\)를 축전기로 바이패스하고 \(v_{be}\)에 직접 신호를 넣으면 컬렉터 전압 이득은?</p>
     </div>
-    <p><i>풀이.</i> \(g_m = 0.9/0.025 = 36\) mA/V, \(r_\pi = 100/36 = 2.78\) kΩ, \(r_e = 0.990/36 \approx 27.5\) Ω, \(r_o = 50/0.9 \approx 55.6\) kΩ. 공통 이미터 이득 \(-g_m(R_C \parallel r_o) = -36 \times (4.7 \parallel 55.6) = -36 \times 4.33 \approx -156\). 바이패스하지 않고 \(R_E = 3.3\) kΩ이 신호에도 있으면 이득은 약 \(-R_C/(r_e + R_E) \approx -1.4\)로 크게 줄어듭니다(4단원).</p>
-    <p>\(r_\pi\)가 2.78 kΩ이고 바이어스의 \(R_B = 33.3\) kΩ과 병렬이므로, 신호원이 보는 입력 저항은 약 2.57 kΩ입니다. MOSFET 증폭기의 수 MΩ과 대조적입니다.</p>
+    <p><i>풀이.</i> \(g_m = 0.9/0.025 = 36\) mA/V, \(r_\pi = 100/36 = 2.78\) kΩ, \(r_e = 0.990/36 \approx 27.5\) Ω, \(r_o = 50/0.9 \approx 55.6\) kΩ이다. 공통 이미터 이득은 \(-g_m(R_C \parallel r_o) = -36 \times (4.7 \parallel 55.6) = -36 \times 4.33 \approx -156\)이다. 바이패스하지 않아 \(R_E = 3.3\) kΩ이 신호에도 있으면, 이득은 약 \(-R_C/(r_e + R_E) \approx -1.4\)로 크게 줄어든다(4단원).</p>
+    <p>한편 \(r_\pi\)가 2.78 kΩ이고 바이어스의 \(R_B = 33.3\) kΩ과 병렬이므로, 신호원이 보는 입력 저항은 약 2.57 kΩ이다. MOSFET 증폭기의 수 MΩ과 대조적이다.</p>
 
-    <div class="tb-note"><b>흔한 오해</b>(1) \(g_m = \beta/r_\pi\)를 \(g_m = r_\pi/\beta\)로 뒤집는 실수: 단위를 보면 \(g_m\)은 컨덕턴스(1/Ω)입니다. (2) "\(g_m\)이 β에 비례한다": \(g_m = I_C/V_T\)는 β와 무관합니다. β가 바꾸는 것은 \(r_\pi\)입니다. (3) 10 mV를 넘는 \(v_{be}\)에 소신호 이득을 그대로 쓰는 실수: 20 mV만 되어도 지수의 2차 항이 약 \(\frac12 \cdot 0.8 = 40\)%까지 커져 왜곡이 심합니다.</div>
+    <div class="tb-note"><span class="lb">흔한 실수</span>\(g_m = \beta/r_\pi\)를 \(g_m = r_\pi/\beta\)로 뒤집는 실수가 흔한데, 단위를 보면 \(g_m\)은 컨덕턴스(1/Ω)이다. \(g_m\)이 β에 비례한다고 여기는 것도 틀리다. \(g_m = I_C/V_T\)는 β와 무관하고, β가 바꾸는 것은 \(r_\pi\)이다. 또 10 mV를 넘는 \(v_{be}\)에 소신호 이득을 그대로 쓰면 안 된다. 20 mV만 되어도 지수의 2차 항이 약 \(\frac12 \cdot 0.8 = 40\)%까지 커져 왜곡이 심하다.</div>
 
-    <div class="tb-summary">
-      <b>요약</b>
-      <ol>
-        <li>\(g_m = I_C/V_T\) (1 mA에서 40 mA/V). 소신호 조건 \(|v_{be}| \ll V_T\).</li>
-        <li>\(r_\pi = \beta/g_m\), \(r_e = \alpha/g_m\), \(r_\pi = (\beta + 1)r_e\), \(r_o = V_A/I_C\).</li>
-        <li>하이브리드 π(공통 이미터)와 T 모델(이미터에 무언가 있을 때). MOSFET은 \(r_\pi = \infty\).</li>
-      </ol>
-    </div>
+    <div class="tb-summary"><span class="lb">마무리</span><p>BJT의 전달 컨덕턴스는 \(g_m = I_C/V_T\)로 1 mA에서 40 mA/V이며, 소신호 조건은 \(|v_{be}| \ll V_T\)이다. 입력 저항 \(r_\pi = \beta/g_m\), 이미터 저항 \(r_e = \alpha/g_m\), 출력 저항 \(r_o = V_A/I_C\)이고 \(r_\pi = (\beta + 1)r_e\)이다. 공통 이미터 회로에는 하이브리드 π 모델을, 이미터에 무언가 있을 때는 T 모델을 쓰며, MOSFET은 \(r_\pi = \infty\)인 경우이다.</p></div>
 
     <div class="tb-exercises">
       <h3><span class="no">3.2.4</span>연습문제</h3>
       <p class="tb-lv">기본</p>
       <ol>
         <li>\(I_C = 0.25\) mA, β = 200일 때 \(g_m, r_\pi, r_e\)는?
-          <details><summary>답</summary><p>10 mA/V, 20 kΩ, 약 99.5 Ω.</p></details>
+          <details><summary>답</summary><p>10 mA/V, 20 kΩ, 약 99.5 Ω이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">응용</p>
       <ol start="2">
         <li>BJT의 고유 이득 \(g_mr_o\)를 \(V_A\)로 쓰고, \(V_A = 100\) V일 때 값을 구하여라. MOSFET(2.3절 연습 4)과 비교하여라.
-          <details><summary>답</summary><p>\(g_mr_o = V_A/V_T = 4000\). MOSFET은 \(2/(\lambda V_{OV})\), 예: λ = 0.1, \(V_{OV} = 0.2\)이면 100. BJT가 훨씬 큽니다.</p></details>
+          <details><summary>답</summary><p>\(g_mr_o = V_A/V_T = 4000\)이다. MOSFET은 \(2/(\lambda V_{OV})\)로, λ = 0.1, \(V_{OV} = 0.2\)이면 100이므로 BJT가 훨씬 크다.</p></details>
         </li>
         <li>이미터에 100 Ω이 있을 때 베이스에서 본 저항(β = 100, \(r_e = 25\) Ω)은?
-          <details><summary>답</summary><p>\((\beta + 1)(r_e + 100) = 101 \times 125 \approx 12.6\) kΩ.</p></details>
+          <details><summary>답</summary><p>\((\beta + 1)(r_e + 100) = 101 \times 125 \approx 12.6\) kΩ이다.</p></details>
         </li>
       </ol>
       <p class="tb-lv">심화</p>
       <ol start="4">
         <li>\(v_{be} = V_p\cos\omega t\)일 때 \(i_c\)의 2차 고조파와 기본파의 비를 \(V_p/V_T\)로 구하고, 1% 왜곡의 \(V_p\)를 구하여라.
-          <details><summary>답</summary><p>\(e^x \approx 1 + x + x^2/2\), \(x^2/2 = \frac{V_p^2}{4V_T^2}(1 + \cos2\omega t)\). 비 \(V_p/(4V_T)\). 1%면 \(V_p = 1\) mV. MOSFET(\(V_p/4V_{OV}\))과 같은 꼴에서 \(V_{OV}\) 자리에 \(V_T\)가 들어갑니다.</p></details>
+          <details><summary>답</summary><p>\(e^x \approx 1 + x + x^2/2\)이고 \(x^2/2 = \frac{V_p^2}{4V_T^2}(1 + \cos2\omega t)\)이므로 비는 \(V_p/(4V_T)\)이다. 1%면 \(V_p = 1\) mV이다. MOSFET의 \(V_p/4V_{OV}\)와 같은 꼴에서 \(V_{OV}\) 자리에 \(V_T\)가 들어간다.</p></details>
         </li>
       </ol>
     </div>
