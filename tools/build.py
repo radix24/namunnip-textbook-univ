@@ -499,14 +499,24 @@ def renumber(h, secno, hstart=0, estart=0):
     return h, i, k
 
 
-def render_text(b, secno=None):
+def render_text(b, secno=None, bank=False):
     """본문(전공서적식) 블록 → 책 지면. 카드 머리는 페이지 제목이 대신하므로 빼고, 소절 제목에 앵커를 단다.
+    bank이면 끝의 연습문제(tb-exercises)는 지면에서 빼고 그 절의 문제은행 링크를 둔다(문제는 course_bank가 bank.js로 보낸다).
     돌려주는 값: (html, [(앵커, 번호, 소절 제목)], (소절 수, 정의·정리 수))"""
     h = b["html"]
     cnt = (0, 0)
     if secno:
         h, ci, ck = renumber(h, secno)
         cnt = (ci, ck)
+    if bank and secno:
+        m = re.search(r'<div\b[^>]*class="[^"]*\btb-exercises\b[^"]*"[^>]*>', h)
+        box = top_elems(h[m.start():], "div") if m else None
+        if box:
+            s, e, _, inner = box[0]
+            n = sum(len(top_elems(ol, "li")) for _, _, _, ol in top_elems(inner, "ol"))
+            link = (f'<p class="tb-bank"><a href="exam.html?s={secno}">이 절의 연습문제 풀어보기</a>'
+                    '<span class="dim">문제은행에서 힌트와 풀이를 차례로 볼 수 있습니다.</span></p>') if n else ""
+            h = h[:m.start() + s] + link + h[m.start() + e:]
     h = re.sub(r"\s*<header class=\"card-head\">.*?</header>", "", h, count=1, flags=re.S)
     h = h.replace('class="card q-card"', 'class="q-card tb-page"', 1)
     subs = []
@@ -935,7 +945,7 @@ def write_pages(depts, blocks, sidx, links):
                 # 본문(전공서적식)이 있으면 그것이 이 절의 중심이고, 나머지 카드는 보충 자료가 된다
                 text_b = next((b for b in bl if b["kind"] == "본문"), None)
                 rest = [(b, x) for b, x in zip(bl, sc["cards"]) if b is not text_b]
-                text_html, subs, cnt = render_text(text_b, sc["no"]) if text_b else ("", [], (0, 0))
+                text_html, subs, cnt = render_text(text_b, sc["no"], bank=EXAM_POLICY.get(c["code"]) != "none") if text_b else ("", [], (0, 0))
                 # 같은 절의 다른 본문(보충 본문)은 본문 번호에 이어서 매긴다
                 ci, ck = cnt
                 for b, _ in rest:

@@ -40,7 +40,14 @@
 
   const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const okq = (q) => opt.src.has(q.src) && (!opt.hard || q.lv === "응용" || q.lv === "심화");
-  const pool = () => BANK.filter((q) => opt.units.has(q.u) && okq(q));
+  const pool = () => BANK.filter((q) => opt.units.has(q.u) && okq(q) && (!opt.sec || q.s === opt.sec));
+  /* ?s=2.3: 절 페이지의 '이 절의 연습문제' 링크로 들어오면 그 절 문제만, 복습 문항까지 넣어 고른다 */
+  const qs = new URLSearchParams(location.search).get("s");
+  const secItems = qs ? BANK.filter((q) => q.s === qs) : [];
+  if (secItems.length) {
+    opt.sec = qs; opt.scope = "pick"; opt.units = new Set(secItems.map((q) => q.u));
+    opt.src = new Set(secItems.map((q) => q.src)); opt.n = Math.min(opt.n, secItems.length);
+  }
   const uorder = (n) => UNITS.findIndex((u) => u.n === n);
 
   /* 난이도 층: 표시가 없는 복습 문항은 기본으로 센다. 세트마다 층 비율을 맞춰 평균 난이도가 크게 흔들리지 않게 한다
@@ -117,6 +124,7 @@
       <div class="ex-setup">
         <section class="ex-box">
           <h2><span class="ex-step mono">1</span>범위</h2>
+          ${opt.sec ? `<p class="ex-sec">${esc(opt.sec)}절의 연습문제 ${secItems.length}문제만 고른 상태입니다. <button type="button" class="chip" data-clearsec="1">과목 전체 범위로 바꾸기</button></p>` : ""}
           <div class="ex-scopes" role="radiogroup" aria-label="시험 범위">
             ${Object.entries(SCOPES).map(([k, s]) => `<button type="button" class="ex-scope" role="radio" aria-checked="${opt.scope === k}" data-scope="${k}"><b>${s.t}</b><span class="mono">${s.d}</span></button>`).join("")}
             <button type="button" class="ex-scope" role="radio" aria-checked="${opt.scope === "pick"}" data-scope="pick"><b>직접 고르기</b><span class="mono">아래에서 대단원 선택</span></button>
@@ -150,7 +158,13 @@
     const t = e.target.closest("button, [data-act]");
     if (!t) return;
     /* 고르기 */
+    if (t.dataset.clearsec) {
+      opt.sec = ""; opt.scope = first; opt.units = new Set(SCOPES[first].u);
+      opt.src = new Set(HASX ? ["x"] : Object.keys(conf.src).filter((k) => conf.cnt[k]));
+      drawSetup(); return;
+    }
     if (t.dataset.scope) {
+      opt.sec = "";
       opt.scope = t.dataset.scope;
       if (SCOPES[opt.scope]) opt.units = new Set(SCOPES[opt.scope].u);
       drawSetup(); return;
@@ -160,7 +174,7 @@
     if (t.dataset.hard) { opt.hard = t.dataset.hard === "1"; drawSetup(); return; }
     if (t.classList.contains("ex-start")) {
       const set = draw(pool(), opt.n);
-      const label = opt.scope === "pick" ? `직접 고른 범위(대단원 ${[...opt.units].map(Number).sort((a, b) => a - b).join("·")})` : SCOPES[opt.scope].t;
+      const label = opt.sec ? `${opt.sec}절 연습문제` : opt.scope === "pick" ? `직접 고른 범위(대단원 ${[...opt.units].map(Number).sort((a, b) => a - b).join("·")})` : SCOPES[opt.scope].t;
       seenPut(set.map((q) => q.id));
       start(set.map((q) => q.id), label); return;
     }
@@ -191,7 +205,7 @@
   });
   root.addEventListener("change", (e) => {
     const t = e.target;
-    if (t.dataset.unit) { t.checked ? opt.units.add(t.dataset.unit) : opt.units.delete(t.dataset.unit); opt.scope = Object.keys(SCOPES).find((k) => SCOPES[k].u.length === opt.units.size && SCOPES[k].u.every((u) => opt.units.has(u))) || "pick"; drawSetup(); }
+    if (t.dataset.unit) { opt.sec = ""; t.checked ? opt.units.add(t.dataset.unit) : opt.units.delete(t.dataset.unit); opt.scope = Object.keys(SCOPES).find((k) => SCOPES[k].u.length === opt.units.size && SCOPES[k].u.every((u) => opt.units.has(u))) || "pick"; drawSetup(); }
     if (t.dataset.src) { t.checked ? opt.src.add(t.dataset.src) : opt.src.delete(t.dataset.src); drawSetup(); }
     if ("review" in t.dataset) { REVIEW.forEach((k) => (t.checked ? opt.src.add(k) : opt.src.delete(k))); drawSetup(); }
   });
