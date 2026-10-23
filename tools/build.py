@@ -462,9 +462,10 @@ def unit_unis(u):
 def render_card(b, no, std_href):
     """번호, 유형 표시, 다루는 성취기준 줄, 학습 기록 칸을 넣는다"""
     h = b["html"]
-    h = h.replace('<span class="no"></span>', f'<span class="no">{no}</span>', 1)
-    if b["kind"]:
-        h = h.replace("<h2>", f'<h2><span class="q-badge">{esc(b["kind"])}</span>', 1)
+    if b["kind"]:   # 종류 색 칩 안에 '종류 차례'를 쓴다(예제 2)
+        h = h.replace("<h2>", f'<h2><span class="q-badge">{esc(no)}</span>', 1)
+    else:
+        h = h.replace('<span class="no"></span>', f'<span class="no">{no}</span>', 1)
     if b["std"]:
         label = getattr(std_href, "label", None)     # 성취기준 코드는 화면에 쓰지 않고 그 절의 번호(2.1)로 보인다
         links = " ".join(f'<a href="{std_href(s)}">{esc(label(s)) if label else "성취기준"}</a>' for s in b["std"] if not label or label(s))
@@ -915,8 +916,13 @@ def write_pages(depts, blocks, sidx, links):
                     tb = next((b for b in sc["blocks"] if b["kind"] == "본문"), None)
                     if tb:   # 본문이 있는 절은 책의 절 제목을 쓴다(성취기준 문장은 그 아래에)
                         sc["title"] = tb["title"]
-                    sc["cards"] = [{"id": b["id"], "kind": b["kind"], "title": b["title"], "no": f'{sc["no"]}.{j}'}
-                                   for j, b in enumerate(sc["blocks"], 1)]
+                    # 카드 번호는 '종류 차례'(예제 1, 탐구 2). 절 번호 체계(2.3.1)는 본문 안의 소제목·정의·정리만 쓴다
+                    k, sc["cards"] = 0, []
+                    for b in sc["blocks"]:
+                        if b["kind"] != "본문":
+                            k += 1
+                        sc["cards"].append({"id": b["id"], "kind": b["kind"], "title": b["title"],
+                                            "no": "본문" if b["kind"] == "본문" else f'{b["kind"] or "카드"} {k}'})
                 u["secs"] = secs
                 u["cards"] = sum(len(sc["blocks"]) for sc in secs)
                 # toc.js용: 성취기준마다 그 절의 카드 id, 단원 마무리 카드는 u["r"]
