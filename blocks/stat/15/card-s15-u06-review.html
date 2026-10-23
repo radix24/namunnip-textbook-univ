@@ -8,72 +8,72 @@
 <article class="card q-card" id="card-s15-u06-review" data-kind="연습" data-std="응통15-06-01 응통15-06-02 응통15-06-03">
   <header class="card-head"><span class="no"></span><h2>효율적 프로그래밍 단원 마무리 연습</h2><span class="kind">문제 7 · 실습·적용·판단 · 힌트 2단계</span></header>
   <div class="q-body">
-    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 열어 보자. 문제 끝의 [번호]는 다시 볼 절이다.</p>
     <ol class="q-exlist">
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>1부터 \(10^7\)까지의 제곱합을 <code>for</code> 반복문과 벡터화로 계산하고 시간을 비교하는 R 코드를 쓰세요. 벡터화가 빠른 까닭은 무엇인가요? <span class="mono small dim">[06-01]</span></p>
-        <details><summary>힌트 1</summary><p><code>system.time()</code>으로 시간을 잽니다.</p></details>
-        <details><summary>힌트 2</summary><p>R의 반복문은 단계마다 해석기 비용이 듭니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>1부터 \(10^7\)까지의 제곱합을 <code>for</code> 반복문과 벡터화로 계산하고 시간을 비교하는 R 코드를 써라. 벡터화가 빠른 까닭은 무엇인가요? <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>system.time()</code>으로 시간을 잰다.</p></details>
+        <details><summary>힌트 2</summary><p>R의 반복문은 단계마다 해석기 비용이 든다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <pre>n &lt;- 1e7
 system.time({ s &lt;- 0; for (i in 1:n) s &lt;- s + i^2 })
-system.time(sum((1:n)^2))</pre><p>벡터화한 코드가 보통 수십 배 빠릅니다. 반복문은 단계마다 해석기가 명령을 해석하고 객체를 확인하지만, 벡터화 함수는 컴파일된 C 코드 안에서 한 번에 반복하기 때문입니다. (참고로 \(10^7\)의 제곱합은 \(3.3\times10^{20}\)으로 정수 범위를 넘으므로 숫자형으로 계산됩니다.)</p>
+system.time(sum((1:n)^2))</pre><p>벡터화한 코드가 보통 수십 배 빠르다. 반복문은 단계마다 해석기가 명령을 해석하고 객체를 확인하지만, 벡터화 함수는 컴파일된 C 코드 안에서 한 번에 반복하기 때문이다. (참고로 \(10^7\)의 제곱합은 \(3.3\times10^{20}\)으로 정수 범위를 넘으므로 숫자형으로 계산된다.)</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>느린 분석 스크립트에서 어느 부분이 시간을 잡아먹는지 찾는 방법을 쓰세요. 흔히 발견되는 병목 두 가지도 쓰세요. <span class="mono small dim">[06-01]</span></p>
-        <details><summary>힌트 1</summary><p>R에는 함수별 실행 시간을 기록하는 도구가 있습니다.</p></details>
-        <details><summary>힌트 2</summary><p>반복문 안에서 자료를 키우거나 같은 계산을 되풀이하는 경우가 많습니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>느린 분석 스크립트에서 어느 부분이 시간을 잡아먹는지 찾는 방법을 써라. 흔히 발견되는 병목 두 가지도 써라. <span class="mono small dim">[06-01]</span></p>
+        <details><summary>힌트 1</summary><p>R에는 함수별 실행 시간을 기록하는 도구가 있다.</p></details>
+        <details><summary>힌트 2</summary><p>반복문 안에서 자료를 키우거나 같은 계산을 되풀이하는 경우가 많다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p><code>Rprof()</code>나 <code>profvis::profvis({ ... })</code>로 프로파일링하면 줄·함수별 시간이 나와, 짐작이 아니라 측정으로 병목을 찾을 수 있습니다. 흔한 병목: (1) 반복문 안에서 벡터나 데이터프레임을 <code>c()</code>, <code>rbind()</code>로 키우기(미리 크기를 정해 두면 해결), (2) 반복문 안에서 바뀌지 않는 계산(행렬 분해, 파일 읽기)을 매번 다시 하기.</p>
+          <p><code>Rprof()</code>나 <code>profvis::profvis({ ... })</code>로 프로파일링하면 줄·함수별 시간이 나와, 짐작이 아니라 측정으로 병목을 찾을 수 있다. 흔한 병목: (1) 반복문 안에서 벡터나 데이터프레임을 <code>c()</code>, <code>rbind()</code>로 키우기(미리 크기를 정해 두면 해결), (2) 반복문 안에서 바뀌지 않는 계산(행렬 분해, 파일 읽기)을 매번 다시 하기.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>"정규성이 깨진 지수분포 자료에서 t 검정과 윌콕슨 검정의 제1종 오류 확률"을 비교하는 모의실험 연구를 설계하세요. 요인, 반복 횟수, 평가 지표를 쓰세요. <span class="mono small dim">[06-02]</span></p>
-        <details><summary>힌트 1</summary><p>요인으로 표본 크기와 분포를 바꿀 수 있습니다.</p></details>
-        <details><summary>힌트 2</summary><p>제1종 오류 확률을 0.05 근처에서 ±0.005 정도로 추정하려면 반복이 얼마나 필요할까요?</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>"정규성이 깨진 지수분포 자료에서 t 검정과 윌콕슨 검정의 제1종 오류 확률"을 비교하는 모의실험 연구를 설계하여라. 요인, 반복 횟수, 평가 지표를 써라. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>요인으로 표본 크기와 분포를 바꿀 수 있다.</p></details>
+        <details><summary>힌트 2</summary><p>제1종 오류 확률을 0.05 근처에서 ±0.005 정도로 추정하려면 반복이 얼마나 필요할까?</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>요인: 표본 크기(10, 30, 100), 분포(정규, 지수, \(t_3\)), 두 집단이 같은 분포(귀무가설 참). 각 조합에서 자료를 생성해 두 검정을 하고 유의수준 0.05에서 기각 비율을 구합니다.</p><p>반복 횟수: 기각률 0.05의 몬테카를로 표준오차는 \(\sqrt{0.05\times0.95/R}\)이므로 \(R = 10000\)이면 0.0022입니다. 평가 지표는 기각률(과 그 표준오차)이고, 검정력 비교라면 대립가설 조건을 추가합니다. 시드와 코드를 기록해 재현 가능하게 합니다.</p>
+          <p>요인: 표본 크기(10, 30, 100), 분포(정규, 지수, \(t_3\)), 두 집단이 같은 분포(귀무가설 참). 각 조합에서 자료를 생성해 두 검정을 하고 유의수준 0.05에서 기각 비율을 구한다.</p><p>반복 횟수: 기각률 0.05의 몬테카를로 표준오차는 \(\sqrt{0.05\times0.95/R}\)이므로 \(R = 10000\)이면 0.0022이다. 평가 지표는 기각률(과 그 표준오차)이고, 검정력 비교라면 대립가설 조건을 추가한다. 시드와 코드를 기록해 재현 가능하게 한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>모의실험 연구 결과를 보고할 때 지켜야 할 점을 세 가지 이상 쓰세요. <span class="mono small dim">[06-02]</span></p>
-        <details><summary>힌트 1</summary><p>결과의 불확실성(몬테카를로 오차)도 보고해야 합니다.</p></details>
-        <details><summary>힌트 2</summary><p>다른 사람이 같은 결과를 얻을 수 있어야 합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>모의실험 연구 결과를 보고할 때 지켜야 할 점을 세 가지 이상 써라. <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>결과의 불확실성(몬테카를로 오차)도 보고해야 한다.</p></details>
+        <details><summary>힌트 2</summary><p>다른 사람이 같은 결과를 얻을 수 있어야 한다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <p>(1) 자료 생성 과정, 요인과 수준, 반복 횟수를 구체적으로 쓴다. (2) 결과에 몬테카를로 표준오차를 함께 보고한다. (3) 결과를 표뿐 아니라 그림(요인별 기각률 선 그림)으로 보여 준다. (4) 시드, 코드, 소프트웨어 버전을 공개해 재현 가능하게 한다. (5) 연구한 조건 밖으로 결론을 넓히지 않는다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>다음 코드는 왜 느린지 설명하고 고치세요. <span class="mono small dim">[06-01]</span></p>
+        <p class="q-prob"><span class="q-tag">실습</span>다음 코드는 왜 느린지 설명하고 고쳐라. <span class="mono small dim">[06-01]</span></p>
         <pre>res &lt;- data.frame()
 for (i in 1:5000) {
   x &lt;- rnorm(30)
   res &lt;- rbind(res, data.frame(m = mean(x), s = sd(x)))
 }</pre>
-        <details><summary>힌트 1</summary><p><code>rbind</code>는 매번 새 데이터프레임을 만들어 앞의 행을 모두 복사합니다.</p></details>
-        <details><summary>힌트 2</summary><p>결과를 담을 벡터를 미리 만들거나, 리스트에 모은 뒤 한 번에 합칩니다.</p></details>
+        <details><summary>힌트 1</summary><p><code>rbind</code>는 매번 새 데이터프레임을 만들어 앞의 행을 모두 복사한다.</p></details>
+        <details><summary>힌트 2</summary><p>결과를 담을 벡터를 미리 만들거나, 리스트에 모은 뒤 한 번에 합친다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>반복마다 데이터프레임 전체를 복사하므로 총비용이 \(n^2\)에 비례합니다. 데이터프레임 생성 자체도 비쌉니다.</p><pre>m &lt;- s &lt;- numeric(5000)
+          <p>반복마다 데이터프레임 전체를 복사하므로 총비용이 \(n^2\)에 비례한다. 데이터프레임 생성 자체도 비싸다.</p><pre>m &lt;- s &lt;- numeric(5000)
 for (i in 1:5000) { x &lt;- rnorm(30); m[i] &lt;- mean(x); s[i] &lt;- sd(x) }
 res &lt;- data.frame(m, s)
 # 또는 res &lt;- t(replicate(5000, { x &lt;- rnorm(30); c(m = mean(x), s = sd(x)) }))</pre>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">판단</span>신뢰구간의 포함 확률(목표 0.95)을 모의실험으로 ±0.005 이내(95% 신뢰)로 추정하려면 반복이 몇 번 필요한지 구하세요. 1000번 반복으로 0.94가 나왔다면 "포함 확률이 명목값보다 낮다"고 말할 수 있나요? <span class="mono small dim">[06-02]</span></p>
-        <details><summary>힌트 1</summary><p>\(n = 1.96^2\times0.95\times0.05/0.005^2\)입니다.</p></details>
-        <details><summary>힌트 2</summary><p>1000번이면 표준오차는 \(\sqrt{0.95\times0.05/1000} \approx 0.0069\)입니다.</p></details>
+        <p class="q-prob"><span class="q-tag">판단</span>신뢰구간의 포함 확률(목표 0.95)을 모의실험으로 ±0.005 이내(95% 신뢰)로 추정하려면 반복이 몇 번 필요한지 구하여라. 1000번 반복으로 0.94가 나왔다면 "포함 확률이 명목값보다 낮다"고 말할 수 있나요? <span class="mono small dim">[06-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(n = 1.96^2\times0.95\times0.05/0.005^2\)이다.</p></details>
+        <details><summary>힌트 2</summary><p>1000번이면 표준오차는 \(\sqrt{0.95\times0.05/1000} \approx 0.0069\)이다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>약 7300번이 필요합니다. 1000번 반복의 표준오차는 약 0.0069라 0.94는 0.95에서 1.5 표준오차쯤 떨어져 있을 뿐이므로, 포함 확률이 명목값보다 낮다고 단정할 수 없습니다. 반복을 늘리거나 결과를 몬테카를로 신뢰구간(약 [0.926, 0.954])과 함께 보고해야 합니다.</p>
+          <p>약 7300번이 필요하다. 1000번 반복의 표준오차는 약 0.0069라 0.94는 0.95에서 1.5 표준오차쯤 떨어져 있을 뿐이므로, 포함 확률이 명목값보다 낮다고 단정할 수 없다. 반복을 늘리거나 결과를 몬테카를로 신뢰구간(약 [0.926, 0.954])과 함께 보고해야 한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>모의실험 연구의 반복 1만 번을 코어 4개로 나누어 실행하려 합니다. 결과를 재현할 수 있게 하려면 난수를 어떻게 다뤄야 하나요? 작업마다 <code>set.seed(1)</code>을 넣으면 무엇이 잘못되나요? <span class="mono small dim">[06-03]</span></p>
-        <details><summary>힌트 1</summary><p>작업마다 같은 시드를 쓰면 같은 난수열이 나옵니다.</p></details>
-        <details><summary>힌트 2</summary><p>겹치지 않는 난수 흐름을 작업마다 하나씩 배정하는 생성기가 있습니다.</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>모의실험 연구의 반복 1만 번을 코어 4개로 나누어 실행하려 한다. 결과를 재현할 수 있게 하려면 난수를 어떻게 다뤄야 하나요? 작업마다 <code>set.seed(1)</code>을 넣으면 무엇이 잘못되나요? <span class="mono small dim">[06-03]</span></p>
+        <details><summary>힌트 1</summary><p>작업마다 같은 시드를 쓰면 같은 난수열이 나온다.</p></details>
+        <details><summary>힌트 2</summary><p>겹치지 않는 난수 흐름을 작업마다 하나씩 배정하는 생성기가 있다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>작업마다 <code>set.seed(1)</code>이면 네 코어가 같은 난수로 같은 반복을 되풀이해 사실상 2500개의 독립 반복만 얻고, 표준오차를 과소평가합니다.</p><p><code>RNGkind("L'Ecuyer-CMRG")</code>로 한 시드에서 겹치지 않는 흐름을 만들고(<code>clusterSetRNGStream</code>, <code>mclapply</code>의 자동 배정), 사용한 시드·패키지 버전·코어 배분 방식을 기록합니다.</p>
+          <p>작업마다 <code>set.seed(1)</code>이면 네 코어가 같은 난수로 같은 반복을 되풀이해 사실상 2500개의 독립 반복만 얻고, 표준오차를 과소평가한다.</p><p><code>RNGkind("L'Ecuyer-CMRG")</code>로 한 시드에서 겹치지 않는 흐름을 만들고(<code>clusterSetRNGStream</code>, <code>mclapply</code>의 자동 배정), 사용한 시드·패키지 버전·코어 배분 방식을 기록한다.</p>
         </details>
       </li>
     </ol>

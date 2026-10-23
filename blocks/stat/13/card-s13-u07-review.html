@@ -8,61 +8,61 @@
 <article class="card q-card" id="card-s13-u07-review" data-kind="연습" data-std="응통13-07-01 응통13-07-02">
   <header class="card-head"><span class="no"></span><h2>컴퓨터 실습 단원 마무리 연습</h2><span class="kind">문제 6 · 실습·적용·계산·판단 · 힌트 2단계</span></header>
   <div class="q-body">
-    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 열어 보자. 문제 끝의 [번호]는 다시 볼 절이다.</p>
     <ol class="q-exlist">
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>일원배치 자료(반응 <code>y</code>, 처리 <code>g</code>)를 R로 분석하는 코드를 쓰세요. 분산분석표, 튜키 다중 비교, 잔차 그림을 포함하세요. <span class="mono small dim">[07-01]</span></p>
-        <details><summary>힌트 1</summary><p><code>aov()</code>와 <code>summary()</code>, <code>TukeyHSD()</code>, <code>plot()</code>을 씁니다.</p></details>
-        <details><summary>힌트 2</summary><p>처리 변수는 범주형이어야 합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>일원배치 자료(반응 <code>y</code>, 처리 <code>g</code>)를 R로 분석하는 코드를 써라. 분산분석표, 튜키 다중 비교, 잔차 그림을 포함하여라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>aov()</code>와 <code>summary()</code>, <code>TukeyHSD()</code>, <code>plot()</code>을 쓴다.</p></details>
+        <details><summary>힌트 2</summary><p>처리 변수는 범주형이어야 한다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <pre>d$g &lt;- factor(d$g)
 fit &lt;- aov(y ~ g, data = d)
 summary(fit)
 TukeyHSD(fit)
-par(mfrow = c(1, 2)); plot(fit, which = 1:2)</pre><p>응통13-02-01의 자료로 실행하면 \(F = 19\), p = 0.0006, 튜키 비교에서 B−A, B−C가 유의한 결과가 나옵니다.</p>
+par(mfrow = c(1, 2)); plot(fit, which = 1:2)</pre><p>응통13-02-01의 자료로 실행하면 \(F = 19\), p = 0.0006, 튜키 비교에서 B−A, B−C가 유의한 결과가 나온다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>처리가 1, 2, 3이라는 숫자로 기록된 자료에서 <code>aov(y ~ g)</code>를 실행했더니 처리 자유도가 2가 아니라 1로 나왔습니다. 까닭과 해결책을 쓰세요. <span class="mono small dim">[07-01]</span></p>
-        <details><summary>힌트 1</summary><p>숫자 변수는 회귀의 연속 설명변수로 취급됩니다.</p></details>
-        <details><summary>힌트 2</summary><p>자유도 1은 직선 하나의 기울기입니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>처리가 1, 2, 3이라는 숫자로 기록된 자료에서 <code>aov(y ~ g)</code>를 실행했더니 처리 자유도가 2가 아니라 1로 나왔다. 까닭과 해결책을 써라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>숫자 변수는 회귀의 연속 설명변수로 취급된다.</p></details>
+        <details><summary>힌트 2</summary><p>자유도 1은 직선 하나의 기울기이다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p><code>g</code>가 숫자형이라 R이 처리 효과 대신 "g에 대한 직선 회귀"를 적합해 자유도 1이 나온 것입니다. 이 모형은 처리 평균이 1, 2, 3 순서대로 같은 간격으로 변한다고 가정합니다. <code>factor(g)</code>로 바꾸면 처리마다 평균을 따로 두는 일원 분산분석(자유도 2)이 됩니다. 분석 전에 <code>str(d)</code>로 변수 형식을 확인하는 습관이 필요합니다.</p>
+          <p><code>g</code>가 숫자형이라 R이 처리 효과 대신 "g에 대한 직선 회귀"를 적합해 자유도 1이 나온 것이다. 이 모형은 처리 평균이 1, 2, 3 순서대로 같은 간격으로 변한다고 가정한다. <code>factor(g)</code>로 바꾸면 처리마다 평균을 따로 두는 일원 분산분석(자유도 2)이 된다. 분석 전에 <code>str(d)</code>로 변수 형식을 확인하는 습관이 필요하다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>반복이 있는 이원배치 자료를 R로 분석하고 교호작용 그림을 그리는 코드를 쓰세요. <span class="mono small dim">[07-01]</span></p>
-        <details><summary>힌트 1</summary><p>교호작용을 포함한 모형식은 <code>y ~ A * B</code>입니다.</p></details>
-        <details><summary>힌트 2</summary><p>기본 그래픽 함수 <code>interaction.plot()</code>이 있습니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>반복이 있는 이원배치 자료를 R로 분석하고 교호작용 그림을 그리는 코드를 써라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>교호작용을 포함한 모형식은 <code>y ~ A * B</code>이다.</p></details>
+        <details><summary>힌트 2</summary><p>기본 그래픽 함수 <code>interaction.plot()</code>이 있다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <pre>d$A &lt;- factor(d$A); d$B &lt;- factor(d$B)
 fit &lt;- aov(y ~ A * B, data = d)
 summary(fit)
-with(d, interaction.plot(A, B, y, ylab = "평균 반응"))</pre><p>응통13-04-01의 자료면 AB의 \(F = 9\), p = 0.040이 나오고, 그림에서 두 선이 교차합니다.</p>
+with(d, interaction.plot(A, B, y, ylab = "평균 반응"))</pre><p>응통13-04-01의 자료면 AB의 \(F = 9\), p = 0.040이 나오고, 그림에서 두 선이 교차한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>실험 보고서의 구성 요소를 순서대로 쓰고, 각 부분에 꼭 들어가야 할 내용을 한 줄씩 쓰세요. <span class="mono small dim">[07-02]</span></p>
-        <details><summary>힌트 1</summary><p>다른 사람이 실험을 다시 할 수 있어야 합니다.</p></details>
-        <details><summary>힌트 2</summary><p>결과는 수치와 그림, 불확실성을 함께 보여야 합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>실험 보고서의 구성 요소를 순서대로 쓰고, 각 부분에 꼭 들어가야 할 내용을 한 줄씩 써라. <span class="mono small dim">[07-02]</span></p>
+        <details><summary>힌트 1</summary><p>다른 사람이 실험을 다시 할 수 있어야 한다.</p></details>
+        <details><summary>힌트 2</summary><p>결과는 수치와 그림, 불확실성을 함께 보여야 한다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <p>(1) 목적: 무엇을 알고 싶은지, 가설. (2) 설계: 요인과 수준, 실험 단위, 반복 수, 랜덤화·블록화 방법. (3) 실험 수행: 날짜, 순서, 이탈 사항(결측, 실수). (4) 분석: 모형, 가정 점검, 쓴 소프트웨어. (5) 결과: 분산분석표, 평균과 신뢰구간, 다중 비교, 효과 크기, 그림. (6) 결론과 한계: 실무적 의미, 일반화 범위, 후속 실험 제안.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">계산</span>응통13-02-01의 분산분석에서 효과 크기 \(\eta^2 = \mathrm{SS_{Tr}}/\mathrm{SS_T}\)를 구하고 해석하세요. p값만 보고하는 것과 무엇이 다른가요? <span class="mono small dim">[07-02]</span></p>
-        <details><summary>힌트 1</summary><p>\(\mathrm{SS_T} = 50.67 + 12 = 62.67\)입니다.</p></details>
-        <details><summary>힌트 2</summary><p>p값은 표본 크기에 따라 달라지지만 \(\eta^2\)는 차이의 크기를 나타냅니다.</p></details>
+        <p class="q-prob"><span class="q-tag">계산</span>응통13-02-01의 분산분석에서 효과 크기 \(\eta^2 = \mathrm{SS_{Tr}}/\mathrm{SS_T}\)를 구하고 해석하여라. p값만 보고하는 것과 무엇이 다른가요? <span class="mono small dim">[07-02]</span></p>
+        <details><summary>힌트 1</summary><p>\(\mathrm{SS_T} = 50.67 + 12 = 62.67\)이다.</p></details>
+        <details><summary>힌트 2</summary><p>p값은 표본 크기에 따라 달라지지만 \(\eta^2\)는 차이의 크기를 나타낸다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>\(\eta^2 = 50.67/62.67 \approx 0.81\)로, 반응 변동의 약 81%가 처리 차이로 설명됩니다. p값은 "차이가 우연인가"를 말할 뿐 차이가 얼마나 큰지는 말하지 않습니다. 표본에서의 \(\eta^2\)는 모집단 값을 과대추정하는 경향이 있어 \(\omega^2\)를 쓰기도 하며, 평균 차이와 그 신뢰구간을 함께 보고하는 것이 가장 해석하기 쉽습니다.</p>
+          <p>\(\eta^2 = 50.67/62.67 \approx 0.81\)로, 반응 변동의 약 81%가 처리 차이로 설명된다. p값은 "차이가 우연인가"를 말할 뿐 차이가 얼마나 큰지는 말하지 않는다. 표본에서의 \(\eta^2\)는 모집단 값을 과대추정하는 경향이 있어 \(\omega^2\)를 쓰기도 하며, 평균 차이와 그 신뢰구간을 함께 보고하는 것이 가장 해석하기 쉽다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">판단</span>칸마다 반복 수가 다른 불균형 이원배치 자료를 <code>aov(y ~ A + B)</code>와 <code>aov(y ~ B + A)</code>로 분석했더니 A의 제곱합이 서로 달랐습니다. 까닭과 대처를 쓰세요. <span class="mono small dim">[07-01]</span></p>
-        <details><summary>힌트 1</summary><p>R의 <code>aov</code>와 <code>anova</code>는 순차(제1형) 제곱합을 씁니다.</p></details>
-        <details><summary>힌트 2</summary><p>불균형이면 A와 B가 직교하지 않습니다.</p></details>
+        <p class="q-prob"><span class="q-tag">판단</span>칸마다 반복 수가 다른 불균형 이원배치 자료를 <code>aov(y ~ A + B)</code>와 <code>aov(y ~ B + A)</code>로 분석했더니 A의 제곱합이 서로 달랐다. 까닭과 대처를 써라. <span class="mono small dim">[07-01]</span></p>
+        <details><summary>힌트 1</summary><p>R의 <code>aov</code>와 <code>anova</code>는 순차(제1형) 제곱합을 쓴다.</p></details>
+        <details><summary>힌트 2</summary><p>불균형이면 A와 B가 직교하지 않는다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>제1형(순차) 제곱합은 앞에 넣은 변수를 먼저 적합한 뒤 다음 변수가 더하는 설명력을 재므로, 불균형이라 A와 B가 직교하지 않으면 순서에 따라 결과가 달라집니다. 각 요인을 "다른 요인을 모두 넣은 뒤의 기여"로 보고 싶으면 제2형 또는 제3형 제곱합(<code>car::Anova(fit, type = 2)</code>)을 쓰고, 어떤 형을 썼는지 보고합니다. 교호작용이 있으면 제3형은 대비 부호화 설정에도 의존하므로 주의합니다.</p>
+          <p>제1형(순차) 제곱합은 앞에 넣은 변수를 먼저 적합한 뒤 다음 변수가 더하는 설명력을 재므로, 불균형이라 A와 B가 직교하지 않으면 순서에 따라 결과가 달라진다. 각 요인을 "다른 요인을 모두 넣은 뒤의 기여"로 보고 싶으면 제2형 또는 제3형 제곱합(<code>car::Anova(fit, type = 2)</code>)을 쓰고, 어떤 형을 썼는지 보고한다. 교호작용이 있으면 제3형은 대비 부호화 설정에도 의존하므로 주의한다.</p>
         </details>
       </li>
     </ol>

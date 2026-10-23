@@ -8,65 +8,65 @@
 <article class="card q-card" id="card-s20-u04-review" data-kind="연습" data-std="응통20-04-01 응통20-04-02 응통20-04-03">
   <header class="card-head"><span class="no"></span><h2>식별, 추정, 진단 단원 마무리 연습</h2><span class="kind">문제 7 · 실습·적용·판단 · 힌트 2단계</span></header>
   <div class="q-body">
-    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 여세요. 문제 끝의 [번호]는 다시 볼 절입니다.</p>
+    <p>혼자 풀고, 막히면 힌트 1 → 힌트 2 → 풀이 순서로 열어 보자. 문제 끝의 [번호]는 다시 볼 절이다.</p>
     <ol class="q-exlist">
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>R 내장 자료 <code>lh</code>(황체호르몬, 48개)에 AR(1), AR(3), ARMA(1, 1)을 적합하고 AIC로 비교하는 코드를 쓰세요. AIC가 각각 64.8, 64.2, 65.5일 때 어느 모형을 고를지 판단하세요. <span class="mono small dim">[04-01]</span></p>
-        <details><summary>힌트 1</summary><p><code>arima(lh, order = c(p, 0, q))</code>를 씁니다.</p></details>
-        <details><summary>힌트 2</summary><p>AIC 차이가 2보다 작으면 사실상 비슷하다고 봅니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>R 내장 자료 <code>lh</code>(황체호르몬, 48개)에 AR(1), AR(3), ARMA(1, 1)을 적합하고 AIC로 비교하는 코드를 써라. AIC가 각각 64.8, 64.2, 65.5일 때 어느 모형을 고를지 판단하여라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p><code>arima(lh, order = c(p, 0, q))</code>를 쓴다.</p></details>
+        <details><summary>힌트 2</summary><p>AIC 차이가 2보다 작으면 사실상 비슷하다고 본다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
           <pre>f1 &lt;- arima(lh, order = c(1, 0, 0))
 f3 &lt;- arima(lh, order = c(3, 0, 0))
 f11 &lt;- arima(lh, order = c(1, 0, 1))
-sapply(list(f1, f3, f11), AIC)</pre><p>AR(3)이 가장 작지만 AR(1)과의 차이는 0.6뿐이라 사실상 비슷하므로, 모수가 적은 AR(1)을 우선 고르고 잔차 진단으로 충분한지 확인합니다(절약의 원리). 예측 성능이 목적이면 시간 순서를 지킨 검증으로도 비교합니다.</p>
+sapply(list(f1, f3, f11), AIC)</pre><p>AR(3)이 가장 작지만 AR(1)과의 차이는 0.6뿐이라 사실상 비슷하므로, 모수가 적은 AR(1)을 우선 고르고 잔차 진단으로 충분한지 확인합니다(절약의 원리). 예측 성능이 목적이면 시간 순서를 지킨 검증으로도 비교한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>앞의 AR(1) 잔차에 융-박스 검정(시차 10, 적합 모수 1개 보정)을 했더니 \(Q = 9.36\), 자유도 9, p = 0.41이었습니다. 해석하고, 자유도를 보정하는 까닭을 쓰세요. <span class="mono small dim">[04-02]</span></p>
-        <details><summary>힌트 1</summary><p>귀무가설은 "잔차의 자기상관이 시차 10까지 모두 0"입니다.</p></details>
-        <details><summary>힌트 2</summary><p>모수를 추정하면 잔차가 자료에 맞춰져 자기상관이 작아집니다.</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>앞의 AR(1) 잔차에 융-박스 검정(시차 10, 적합 모수 1개 보정)을 했더니 \(Q = 9.36\), 자유도 9, p = 0.41이었다. 해석하고, 자유도를 보정하는 까닭을 써라. <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>귀무가설은 "잔차의 자기상관이 시차 10까지 모두 0"이다.</p></details>
+        <details><summary>힌트 2</summary><p>모수를 추정하면 잔차가 자료에 맞춰져 자기상관이 작아진다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>p = 0.41로 잔차에 남은 자기상관의 증거가 없으므로 AR(1)이 자료의 상관 구조를 충분히 설명한다고 봅니다. 자유도를 시차 수 10에서 추정한 ARMA 모수 수 1을 빼 9로 하는 까닭은, 모수를 자료에 맞춰 추정하면 잔차 자기상관이 인위적으로 작아져 \(Q\)의 분포가 \(\chi^2_{10}\)보다 왼쪽으로 옮겨지기 때문입니다(<code>Box.test(..., fitdf = 1)</code>).</p>
+          <p>p = 0.41로 잔차에 남은 자기상관의 증거가 없으므로 AR(1)이 자료의 상관 구조를 충분히 설명한다고 본다. 자유도를 시차 수 10에서 추정한 ARMA 모수 수 1을 빼 9로 하는 까닭은, 모수를 자료에 맞춰 추정하면 잔차 자기상관이 인위적으로 작아져 \(Q\)의 분포가 \(\chi^2_{10}\)보다 왼쪽으로 옮겨지기 때문입니다(<code>Box.test(..., fitdf = 1)</code>).</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span>ARMA 모형의 모수를 최대가능도로 추정하는 것과 조건부 최소제곱으로 추정하는 것의 차이를 쓰고, R의 <code>arima</code> 기본값은 무엇인지 쓰세요. <span class="mono small dim">[04-01]</span></p>
-        <details><summary>힌트 1</summary><p>조건부 방법은 처음 몇 개 관측값을 고정된 값으로 둡니다.</p></details>
-        <details><summary>힌트 2</summary><p>R의 <code>method</code> 인수를 보세요.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span>ARMA 모형의 모수를 최대가능도로 추정하는 것과 조건부 최소제곱으로 추정하는 것의 차이를 쓰고, R의 <code>arima</code> 기본값은 무엇인지 써라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>조건부 방법은 처음 몇 개 관측값을 고정된 값으로 둔다.</p></details>
+        <details><summary>힌트 2</summary><p>R의 <code>method</code> 인수를 보아라.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>조건부 최소제곱은 처음 \(p\)개 관측값과 초기 오차를 0 등으로 고정하고 나머지의 오차제곱합을 최소로 해 계산이 쉽지만, 표본이 작으면 처음 부분의 정보를 잃습니다. 정확한 최대가능도는 첫 관측값들의 정상 분포까지 포함한 가능도를 칼만 필터로 계산해 더 효율적입니다. R의 <code>arima</code> 기본값은 <code>method = "CSS-ML"</code>로, 조건부 최소제곱으로 시작값을 구한 뒤 최대가능도로 마무리합니다.</p>
+          <p>조건부 최소제곱은 처음 \(p\)개 관측값과 초기 오차를 0 등으로 고정하고 나머지의 오차제곱합을 최소로 해 계산이 쉽지만, 표본이 작으면 처음 부분의 정보를 잃는다. 정확한 최대가능도는 첫 관측값들의 정상 분포까지 포함한 가능도를 칼만 필터로 계산해 더 효율적이다. R의 <code>arima</code> 기본값은 <code>method = "CSS-ML"</code>로, 조건부 최소제곱으로 시작값을 구한 뒤 최대가능도로 마무리한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">적용</span>ARIMA 모형 진단에서 잔차로 확인할 것 세 가지를 쓰세요. <span class="mono small dim">[04-02]</span></p>
-        <details><summary>힌트 1</summary><p>자기상관, 분포, 분산을 생각하세요.</p></details>
-        <details><summary>힌트 2</summary><p>R의 <code>tsdiag()</code>가 여러 그림을 그려 줍니다.</p></details>
+        <p class="q-prob"><span class="q-tag">적용</span>ARIMA 모형 진단에서 잔차로 확인할 것 세 가지를 써라. <span class="mono small dim">[04-02]</span></p>
+        <details><summary>힌트 1</summary><p>자기상관, 분포, 분산을 생각하여라.</p></details>
+        <details><summary>힌트 2</summary><p>R의 <code>tsdiag()</code>가 여러 그림을 그려 준다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>(1) 잔차의 자기상관: ACF 그림과 융-박스 검정으로 남은 구조가 없는지. (2) 분포: 히스토그램과 Q-Q 그림으로 정규성과 이상값(구조 변화, 특이 시점). (3) 분산의 일정함: 잔차 그림과 잔차 제곱의 ACF로 변동성 군집(ARCH 효과)이 없는지. 문제가 있으면 차수를 바꾸거나 변환, 개입 변수, GARCH를 검토합니다.</p>
+          <p>(1) 잔차의 자기상관: ACF 그림과 융-박스 검정으로 남은 구조가 없는지. (2) 분포: 히스토그램과 Q-Q 그림으로 정규성과 이상값(구조 변화, 특이 시점). (3) 분산의 일정함: 잔차 그림과 잔차 제곱의 ACF로 변동성 군집(ARCH 효과)이 없는지. 문제가 있으면 차수를 바꾸거나 변환, 개입 변수, GARCH를 검토한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">판단</span>AIC로 고른 모형이 표본 안에서는 잘 맞는데 미래 예측은 나빴습니다. 시계열에서 모형 선택과 평가를 할 때 지켜야 할 점을 쓰세요. <span class="mono small dim">[04-01]</span></p>
-        <details><summary>힌트 1</summary><p>시계열에서는 무작위 교차검증이 미래 정보를 과거 예측에 쓰게 됩니다.</p></details>
-        <details><summary>힌트 2</summary><p>시간 순서를 지키는 검증이 필요합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">판단</span>AIC로 고른 모형이 표본 안에서는 잘 맞는데 미래 예측은 나빴다. 시계열에서 모형 선택과 평가를 할 때 지켜야 할 점을 써라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>시계열에서는 무작위 교차검증이 미래 정보를 과거 예측에 쓰게 된다.</p></details>
+        <details><summary>힌트 2</summary><p>시간 순서를 지키는 검증이 필요하다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>표본 안 적합도(AIC 포함)는 과적합을 완전히 막지 못하고, 구조 변화가 있으면 과거에 잘 맞던 모형이 미래에 맞지 않을 수 있습니다. 예측 성능은 마지막 일부를 남겨 두고 평가하거나, 원점을 한 칸씩 옮겨 가며 예측하는 순차(롤링) 검증으로 재야 합니다. 무작위로 섞는 교차검증은 미래 자료로 과거를 예측하게 되어 성능을 과대평가합니다.</p>
+          <p>표본 안 적합도(AIC 포함)는 과적합을 완전히 막지 못하고, 구조 변화가 있으면 과거에 잘 맞던 모형이 미래에 맞지 않을 수 있다. 예측 성능은 마지막 일부를 남겨 두고 평가하거나, 원점을 한 칸씩 옮겨 가며 예측하는 순차(롤링) 검증으로 재야 한다. 무작위로 섞는 교차검증은 미래 자료로 과거를 예측하게 되어 성능을 과대평가한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">실습</span><code>forecast::auto.arima</code>처럼 차수를 자동으로 고르는 함수를 쓸 때의 장점과 주의할 점을 쓰세요. <span class="mono small dim">[04-01]</span></p>
-        <details><summary>힌트 1</summary><p>여러 후보를 정보기준으로 비교해 줍니다.</p></details>
-        <details><summary>힌트 2</summary><p>자동 선택이 자료의 특이점(구조 변화, 이상값)을 알지는 못합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">실습</span><code>forecast::auto.arima</code>처럼 차수를 자동으로 고르는 함수를 쓸 때의 장점과 주의할 점을 써라. <span class="mono small dim">[04-01]</span></p>
+        <details><summary>힌트 1</summary><p>여러 후보를 정보기준으로 비교해 준다.</p></details>
+        <details><summary>힌트 2</summary><p>자동 선택이 자료의 특이점(구조 변화, 이상값)을 알지는 못한다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>장점: 단위근 검정으로 차분 차수를 정하고 여러 \((p, q)\) 조합을 AICc로 비교해 빠르고 일관되게 후보를 줍니다. 주의: 자료에 이상값, 구조 변화, 휴일 효과가 있으면 엉뚱한 모형을 고를 수 있고, 고른 모형이 해석상 타당한지 판단하지 않습니다. 결과를 그대로 쓰지 말고 그림, 잔차 진단, 예측 검증으로 확인합니다.</p>
+          <p>장점: 단위근 검정으로 차분 차수를 정하고 여러 \((p, q)\) 조합을 AICc로 비교해 빠르고 일관되게 후보를 준다. 주의: 자료에 이상값, 구조 변화, 휴일 효과가 있으면 엉뚱한 모형을 고를 수 있고, 고른 모형이 해석상 타당한지 판단하지 않는다. 결과를 그대로 쓰지 말고 그림, 잔차 진단, 예측 검증으로 확인한다.</p>
         </details>
       </li>
       <li>
-        <p class="q-prob"><span class="q-tag">모형</span>월별 매출에 신제품 출시(36번째 달) 효과가 즉시 수준을 높이고 이후 증가 속도도 바꿨다고 봅니다. 회귀 + ARMA 오차 모형을 쓰고, 추정해야 할 계수의 뜻을 설명하세요. <span class="mono small dim">[04-03]</span></p>
-        <details><summary>힌트 1</summary><p>계단 변수와 기울기 변화 변수가 필요합니다.</p></details>
-        <details><summary>힌트 2</summary><p>오차는 잔차의 ACF·PACF로 차수를 정합니다.</p></details>
+        <p class="q-prob"><span class="q-tag">모형</span>월별 매출에 신제품 출시(36번째 달) 효과가 즉시 수준을 높이고 이후 증가 속도도 바꿨다고 본다. 회귀 + ARMA 오차 모형을 쓰고, 추정해야 할 계수의 뜻을 설명하여라. <span class="mono small dim">[04-03]</span></p>
+        <details><summary>힌트 1</summary><p>계단 변수와 기울기 변화 변수가 필요하다.</p></details>
+        <details><summary>힌트 2</summary><p>오차는 잔차의 ACF·PACF로 차수를 정한다.</p></details>
         <details class="q-sol"><summary>풀이</summary>
-          <p>\(y_t = \beta_0 + \beta_1t + \beta_2S_t + \beta_3(t - 36)S_t + \eta_t\), \(S_t = I(t \ge 36)\), \(\eta_t \sim\) ARMA(\(p, q\)).</p><p>\(\beta_2\)는 출시 직후 수준 변화, \(\beta_3\)는 출시 뒤 월별 증가 속도의 변화, \(\beta_1\)은 출시 전 추세입니다. 계절이 있으면 계절 가변수나 푸리에 항도 넣습니다.</p>
+          <p>\(y_t = \beta_0 + \beta_1t + \beta_2S_t + \beta_3(t - 36)S_t + \eta_t\), \(S_t = I(t \ge 36)\), \(\eta_t \sim\) ARMA(\(p, q\)).</p><p>\(\beta_2\)는 출시 직후 수준 변화, \(\beta_3\)는 출시 뒤 월별 증가 속도의 변화, \(\beta_1\)은 출시 전 추세이다. 계절이 있으면 계절 가변수나 푸리에 항도 넣는다.</p>
         </details>
       </li>
     </ol>

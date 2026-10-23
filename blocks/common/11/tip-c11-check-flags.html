@@ -10,16 +10,16 @@
   <div class="q-body">
     <section class="q-sec q-when">
       <h3>언제 쓰는가</h3>
-      <p>실행할 때마다 결과가 조금씩 다르거나, 엉뚱한 큰 수가 나오거나, 오류 없이 이상한 값이 나올 때입니다.</p>
+      <p>실행할 때마다 결과가 조금씩 다르거나, 엉뚱한 큰 수가 나오거나, 오류 없이 이상한 값이 나올 때이다.</p>
     </section>
 
     <section class="q-sec">
       <h3>요령</h3>
       <ol class="q-tip">
-        <li><b>경고를 모두 켠다</b><div><code>gfortran -Wall -Wextra</code>로 쓰지 않은 변수, 초기화하지 않은 변수, 형 변환 경고를 봅니다.</div></li>
-        <li><b>실행 중 검사</b><div><code>-fcheck=all</code>은 배열 범위를 넘는 접근, 잘못된 인자를 실행 중에 잡아 줄 번호와 함께 멈춥니다.</div></li>
-        <li><b>어디서 멈췄는지</b><div><code>-g -fbacktrace</code>를 함께 쓰면 오류가 난 줄과 호출 경로가 나옵니다.</div></li>
-        <li><b>고친 뒤 빠르게</b><div>문제를 고친 뒤에는 검사 옵션을 빼고 <code>-O2</code>로 컴파일해 속도를 되찾습니다.</div></li>
+        <li><b>경고를 모두 켠다</b><div><code>gfortran -Wall -Wextra</code>로 쓰지 않은 변수, 초기화하지 않은 변수, 형 변환 경고를 본다.</div></li>
+        <li><b>실행 중 검사</b><div><code>-fcheck=all</code>은 배열 범위를 넘는 접근, 잘못된 인자를 실행 중에 잡아 줄 번호와 함께 멈춘다.</div></li>
+        <li><b>어디서 멈췄는지</b><div><code>-g -fbacktrace</code>를 함께 쓰면 오류가 난 줄과 호출 경로가 나온다.</div></li>
+        <li><b>고친 뒤 빠르게</b><div>문제를 고친 뒤에는 검사 옵션을 빼고 <code>-O2</code>로 컴파일해 속도를 되찾는다.</div></li>
       </ol>
     </section>
 
@@ -33,13 +33,13 @@
 
     <section class="q-sec">
       <h3>바로 풀어보기</h3>
-      <p class="q-prob"><code>real(dp) :: a(5)</code>를 선언하고 <code>do i = 1, 6; a(i) = i; end do</code>를 실행했더니 오류 없이 끝났지만 다른 변수의 값이 바뀌었습니다. 어떤 옵션으로 원인을 찾을 수 있고, 어떤 메시지가 나오나요?</p>
+      <p class="q-prob"><code>real(dp) :: a(5)</code>를 선언하고 <code>do i = 1, 6; a(i) = i; end do</code>를 실행했더니 오류 없이 끝났지만 다른 변수의 값이 바뀌었다. 어떤 옵션으로 원인을 찾을 수 있고, 어떤 메시지가 나오나요?</p>
       <details class="q-sol"><summary>답과 풀이</summary>
         <div>
-          <p>답: <code>-fcheck=bounds</code>(또는 <code>-fcheck=all</code>). '배열 a의 첨자 6이 상한 5를 넘는다'는 실행 오류가 줄 번호와 함께 나옵니다.</p>
-          <code>a(6)</code>은 배열 밖 메모리에 값을 써서 옆에 있는 변수를 덮어씁니다. 기본 컴파일에서는 검사하지 않아 오류가 나지 않습니다.
+          <p>답: <code>-fcheck=bounds</code>(또는 <code>-fcheck=all</code>). '배열 a의 첨자 6이 상한 5를 넘는다'는 실행 오류가 줄 번호와 함께 나온다.</p>
+          <code>a(6)</code>은 배열 밖 메모리에 값을 써서 옆에 있는 변수를 덮어쓴다. 기본 컴파일에서는 검사하지 않아 오류가 나지 않는다.
           <pre><code>gfortran -Wall -fcheck=all -g -fbacktrace prog.f90</code></pre>
-          <p>이렇게 컴파일하면 "Index '6' of dimension 1 of array 'a' above upper bound of 5"와 함께 그 줄에서 멈춥니다. 반복 범위를 <code>size(a)</code>로 고칩니다.</p>
+          <p>이렇게 컴파일하면 "Index '6' of dimension 1 of array 'a' above upper bound of 5"와 함께 그 줄에서 멈춘다. 반복 범위를 <code>size(a)</code>로 고친다.</p>
         </div>
       </details>
     </section>
@@ -53,11 +53,11 @@
 
     <details class="q-board"><summary>영상 콘티 · 40초</summary>
       <ol>
-        <li><b>0~5초</b><span class="scr">메모리 칸이 한 줄로 늘어서 있고, 배열 a의 다섯 칸 바로 옆에 변수 total 칸이 붙어 있습니다.</span><span class="cap">오류가 없는데 값이 바뀐다면?</span></li>
-        <li><b>5~13초</b><span class="scr">반복문이 a(1)부터 a(6)까지 값을 쓰는데, 여섯째 값이 total 칸에 덮어쓰입니다. 아무 경고도 없습니다.</span><span class="cap">배열 밖에 쓴 것입니다.</span></li>
-        <li><b>13~22초</b><span class="scr">컴파일 명령에 <code>-fcheck=all</code> 깃발이 꽂히고, 배열 양 끝에 경비원이 섭니다.</span><span class="cap">검사 옵션을 켭니다.</span></li>
-        <li><b>22~32초</b><span class="scr">다시 실행하자 여섯째 쓰기에서 경비원이 막고 줄 번호와 메시지가 뜹니다.</span><span class="cap">어디서 넘었는지 바로 알려 줍니다.</span></li>
-        <li><b>32~40초</b><span class="scr">고친 뒤 깃발을 <code>-O2</code>로 바꾸자 실행 시간 막대가 줄어듭니다.</span><span class="cap">고친 뒤에는 빠르게.</span></li>
+        <li><b>0~5초</b><span class="scr">메모리 칸이 한 줄로 늘어서 있고, 배열 a의 다섯 칸 바로 옆에 변수 total 칸이 붙어 있다.</span><span class="cap">오류가 없는데 값이 바뀐다면?</span></li>
+        <li><b>5~13초</b><span class="scr">반복문이 a(1)부터 a(6)까지 값을 쓰는데, 여섯째 값이 total 칸에 덮어쓰이다. 아무 경고도 없다.</span><span class="cap">배열 밖에 쓴 것이다.</span></li>
+        <li><b>13~22초</b><span class="scr">컴파일 명령에 <code>-fcheck=all</code> 깃발이 꽂히고, 배열 양 끝에 경비원이 선다.</span><span class="cap">검사 옵션을 켠다.</span></li>
+        <li><b>22~32초</b><span class="scr">다시 실행하자 여섯째 쓰기에서 경비원이 막고 줄 번호와 메시지가 뜬다.</span><span class="cap">어디서 넘었는지 바로 알려 준다.</span></li>
+        <li><b>32~40초</b><span class="scr">고친 뒤 깃발을 <code>-O2</code>로 바꾸자 실행 시간 막대가 줄어든다.</span><span class="cap">고친 뒤에는 빠르게.</span></li>
       </ol>
     </details>
   </div>
